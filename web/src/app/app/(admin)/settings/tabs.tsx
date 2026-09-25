@@ -7,6 +7,7 @@ const TABS: [string, string, string, string][] = [
   ["/onboarding/business", "Virksomhed (S01)", "Virksomhed", "domain"],
   ["/app/settings/team", "Team & roller (S02)", "Team", "group"],
   ["/app/settings/webchat", "Webchat (W01)", "Webchat", "chat"],
+  ["/app/settings/telephony", "Telefoni (S03)", "Telefoni", "call"],
   ["/app/settings/agreement", "Prisaftale", "Aftale", "handshake"],
   ["/app/settings/profile", "Min profil (S08)", "Profil", "person"],
   ["/app/settings/activity", "Aktivitetslog (S09)", "Log", "history"],

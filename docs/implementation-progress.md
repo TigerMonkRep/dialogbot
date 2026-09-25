@@ -2,6 +2,19 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 11 — 25. september 2026 (milepæl B: indgående telefoni via Vapi)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `phone_numbers` (E.164 + udbyder-id, unik, pr. arbejdsrum) og `calls` (unik pr. udbyder-opkalds-id) | implementeret, migreret | Alembic `46c794fe9e35`; op/ned + `alembic check` |
+| `POST /api/v1/webhooks/vapi`: 503 uden `VAPI_SERVER_SECRET`; Bearer eller legacy `X-Vapi-Secret` i konstanttid; nummer→arbejdsrum via Vapi-nummer-id eller E.164 | testet | `tests/test_telephony.py` (7) |
+| `assistant-request`: midlertidig assistent med prompt kun fra godkendt viden + telefonregler (`phone-v1`), hilsen med AI-oplysning; ukendt/inaktivt nummer eller ingen godkendt viden → `{"error": …}` | testet | `test_assistant_request_*` |
+| `end-of-call-report`: opkald + transskription som `phone`-samtale (system/tool-beskeder udeladt), henvendelse + opgave "Ring tilbage" når kunden talte og nummeret kendes; idempotent; ukendte numre `unmatched` | testet | `test_end_of_call_*`, `test_silent_or_anonymous_*` |
+| Kapabilitet `telephony.inbound` = available kun med `VAPI_SERVER_SECRET`; tjek `telephony.test_call`/`forwarding` kræver et rigtigt opkald på et aktivt nummer inden for 30 dage | testet | `test_setup_checks_need_a_real_call` |
+| UI: Indstillinger → Telefoni (vejledning, webhook-URL, numre, seneste opkald); indbakke og henvendelser viser kanal "Telefon" | implementeret, E2E | rejse 14 (1440 + 390) |
+
+**Ikke eksternt verificeret:** ingen Vapi-konto eller nummer; Vapis HMAC-variant er ikke understøttet (Bearer er Vapis standard). Twilio bruges gennem Vapi, så Dialogbot modtager ikke Twilio-webhooks direkte endnu. Udgående kampagneopkald kommer i milepæl C/D.
+
 ## Checkpoint 10 — 25. september 2026 (milepæl B: daglige rapporter)
 
 | Del | Status | Bevis |

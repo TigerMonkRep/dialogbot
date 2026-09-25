@@ -5,7 +5,7 @@ import { Icon } from "@/components/ui";
 
 type Conv = { id: string; channel: string; origin: string | null; status: string; visitor_message_count: number; created_at: string; last_message_at: string; preview: string | null };
 const PER_PAGE = 25;
-const CHANNEL: Record<string, [string, string]> = { webchat: ["Webchat", "chat"] };
+const CHANNEL: Record<string, [string, string]> = { webchat: ["Webchat", "chat"], phone: ["Telefon", "call"] };
 
 /** Inbox: customer conversations (webchat today; phone and callback when those channels exist). */
 export default async function InboxPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
@@ -21,7 +21,7 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
       <div className="flex flex-col gap-space-xs">
         <div className="hidden md:flex items-center gap-space-xs font-label-md text-label-md text-on-surface-variant"><span>Henvendelser</span><Icon name="chevron_right" size={14} /><span className="text-primary font-semibold">Indbakke</span></div>
         <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight">Indbakke</h1>
-        <p className="font-body-sm text-body-sm text-on-surface-variant">Samtaler fra jeres webchat, nyeste først. Telefon og callback kommer, når de kanaler er koblet på.</p>
+        <p className="font-body-sm text-body-sm text-on-surface-variant">Samtaler fra webchat og telefon, nyeste først.</p>
       </div>
       <section className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
         {list.items.length === 0 ? (

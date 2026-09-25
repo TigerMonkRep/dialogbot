@@ -36,8 +36,10 @@ def capabilities() -> list[Capability]:
         Capability("email", "E-mail (konto, invitationer)", email_status, s.app_env,
                    ("Simuleret adapter gemmer beskeder i databasen." if s.email_adapter == "simulated"
                     else "Resend-adapter: 'sent' = accepteret af udbyder; levering/bounce/klage kommer via signeret webhook.")),
-        Capability("telephony.inbound", "Indgående telefoni / viderestilling", "not_implemented", s.app_env,
-                   "Planlagt til etape 2. Ingen udbyder er valgt eller forbundet."),
+        Capability("telephony.inbound", "Indgående telefoni / viderestilling",
+                   "available" if s.vapi_server_secret else "not_implemented", s.app_env,
+                   "Vapi-stemmeassistent på jeres egne numre; svarer kun ud fra godkendt viden."
+                   if s.vapi_server_secret else "Kræver en Vapi-konto og VAPI_SERVER_SECRET; intet nummer er forbundet."),
         Capability("telephony.outbound", "Udgående kampagneopkald", "not_implemented", s.app_env,
                    "Planlagt til etape 4. Betaling starter aldrig opkald."),
         Capability("calendar", "Kalenderforbindelse (Google/Microsoft/CalDAV)", "not_implemented", s.app_env,

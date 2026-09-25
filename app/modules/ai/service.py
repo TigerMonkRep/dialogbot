@@ -83,6 +83,10 @@ CHANNEL_INSTRUCTIONS: dict[str, tuple[str, str]] = {
                               "booke eller tale med en medarbejder, så bed dem trykke på knappen \"Bliv kontaktet\" "
                               "under chatten og efterlade navn og e-mail eller telefon. Bed ikke om CPR-nummer eller "
                               "betalingsoplysninger."),
+    "phone": ("phone-v1", "Kanal: telefonopkald. Svar kort og i hele sætninger, uden punktopstillinger, links eller "
+                          "formatering – alt bliver læst højt. Hvis kunden vil kontaktes, have et tilbud, booke eller tale "
+                          "med en medarbejder, så sig, at en medarbejder ringer tilbage på det nummer, de ringer fra, og "
+                          "spørg om deres navn. Du kan ikke stille om, booke eller tage imod betaling."),
 }
 
 

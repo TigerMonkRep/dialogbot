@@ -42,6 +42,8 @@ services:
         value: claude-opus-5
       - key: ANTHROPIC_API_KEY
         sync: false
+      - key: VAPI_SERVER_SECRET   # voice webhook credential (Bearer); without it telephony is off
+        sync: false
       - key: PUBLIC_BASE_URL
         sync: false
       - key: FRONTEND_BASE_URL

@@ -8,7 +8,10 @@ create role dialogbot_migrate login password 'CHANGE_ME_MIGRATE';
 create role dialogbot_app     login password 'CHANGE_ME_APP';
 
 grant usage, create on schema dialogbot to dialogbot_migrate;
+grant dialogbot_migrate to postgres;  -- Supabase: postgres is not superuser
 alter schema dialogbot owner to dialogbot_migrate;
+alter role dialogbot_migrate set search_path = dialogbot, public;
+alter role dialogbot_app set search_path = dialogbot, public;
 grant usage on schema dialogbot to dialogbot_app;
 
 -- Runtime may read/write application tables but never alter them.

@@ -4,7 +4,7 @@ Dato: 25. september 2026. Gælder milepæl A (GitHub, Supabase, Render, Vercel).
 
 Statusord i dette dokument: **klar i repo** (kode/konfiguration findes og er testet lokalt), **kræver din handling**, **ikke verificeret eksternt** (kan først bekræftes, når ressourcen findes).
 
-## 0. Én ting, der blokerer alt andet: GitHub
+## 0. GitHub — GJORT (25/9): https://github.com/TigerMonkRep/dialogbot, CI grøn
 
 **Hvorfor:** Render og Vercel deployer fra et GitHub-repository. Uden det findes ingen previews, ingen CI-kørsel og ingen staging.
 
@@ -29,7 +29,7 @@ Alternativ uden lokal git: åbn Codespaces på det tomme repo, upload bundlen, k
 |---|---|
 | Hvorfor / hvornår | PostgreSQL til API og worker. Første stagingmiljø. |
 | Dashboard | <https://supabase.com/dashboard> · [SQLAlchemy-vejledning](https://supabase.com/docs/guides/troubleshooting/using-sqlalchemy-with-supabase-FUqebT) · [Data API-sikkerhed](https://supabase.com/docs/guides/api/securing-your-api) |
-| Projekt | `dialogbot-staging`, region **eu-central-1 (Frankfurt)** — samme region som Render-tjenesterne. Produktion oprettes senere som separat projekt. |
+| Projekt | **OPRETTET 25/9:** `dialogbot-staging`, ref `zofdupmpcokvcvstsozm`, eu-central-1, 10 USD/md. Schema, roller og Alembic-head anvendt og verificeret. Produktion oprettes senere som separat projekt. |
 | Klar i repo | `infra/supabase-roles.sql` (schema `dialogbot`, migrationsrolle `dialogbot_migrate`, runtime-rolle `dialogbot_app`); backend understøtter `DB_SCHEMA`, `DB_POOL_SIZE`, `DB_MAX_OVERFLOW`; Alembic migrerer ind i schemaet (verificeret lokalt: 19 tabeller i `dialogbot`, 0 i `public`). |
 | Din handling | (a) Tilkobl Supabase-forbindelsen, når kortet vises nedenfor i chatten, så jeg kan oprette projektet og køre SQL — **eller** opret projektet selv og kør `infra/supabase-roles.sql` i SQL Editor med egne adgangskoder. (b) Settings → API → *Exposed schemas*: sørg for at `dialogbot` **ikke** er med; overvej at deaktivere Data API helt, da al forretningsdata går gennem FastAPI. (c) Kopiér forbindelsesstrenge fra **Connect**-dialogen. |
 | Variabler | `MIGRATION_DATABASE_URL` = direct connection som `dialogbot_migrate` (Render API, kun pre-deploy). `DATABASE_URL` = session pooler eller direct som `dialogbot_app` (Render API + worker). Format: `postgresql+psycopg://dialogbot_app:<pw>@<host>:<port>/postgres`. `DB_SCHEMA=dialogbot`. |

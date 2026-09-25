@@ -5,9 +5,10 @@ Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI
 ## Checkpoint 2 — 25. september 2026 (milepæl A, delvist)
 
 **Commits:** `f24c75f` (etape 1) → `60726df` (milepæl A: frontend, infra, docs).
-**GitHub:** ikke pushet — ingen GitHub-forbindelse i sessionen. Fuld historik ligger i `dialogbot.bundle` (se `docs/services-setup.md` §0).
-**CI:** workflows `CI` (backend) og `Web` (frontend) er skrevet; samme trin er kørt lokalt. Ikke kørt på GitHub.
-**Deploy:** intet deployet. Render-blueprint, Supabase-roller og Vercel-config er klar i repo.
+**GitHub:** https://github.com/TigerMonkRep/dialogbot — `main` på `c874941`, fuld historik (eksternt verificeret via `git ls-remote`).
+**CI:** GitHub Actions run #1 grøn for både `CI` (48 s) og `Web` (35 s) på `c874941`.
+**Supabase (eksternt verificeret):** projekt `dialogbot-staging`, ref `zofdupmpcokvcvstsozm`, eu-central-1, 10 USD/md. bekræftet af bruger. Schema `dialogbot` med roller `dialogbot_migrate` (ejer) og `dialogbot_app` (DML, ingen DDL). Alembic `94af55693109` anvendt som offline-SQL via forbindelsen: 19 tabeller i `dialogbot`, 0 i `public`, `anon`/`authenticated` uden adgang, security-advisor 0 fund. Adgangskoder udleveret én gang i chat (ikke i repo). Udestår i dashboard: bekræft at `dialogbot` ikke er i *Exposed schemas*.
+**Deploy:** Render og Vercel ikke oprettet endnu (forbindelser ikke tilkoblet).
 
 ### Færdigt siden etape 1
 
@@ -23,8 +24,7 @@ Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI
 
 ### Ikke gjort / blokeringer
 
-- **GitHub-push** — blokeret (ingen forbindelse). Brugerhandling: se `docs/services-setup.md` §0.
-- **Supabase/Render/Vercel** — forbindelser findes i katalog men er ikke tilkoblet; alle tre kræver desuden GitHub først (Render/Vercel).
+- **Render/Vercel** — ikke tilkoblet; Render-blueprint klar. Vercel-forbindelse set aktiv, men frontend-preview er meningsløs uden API.
 - **Browserkontrol** (390/1440 px, tastatur, fokus, layout mod Stitch-referencer) — ikke udført; ingen browser i miljøet.
 - Frontend mangler: P02–P09 (offentlige sider), S08 profilside, S09 aktivitetsvisning, G03-wrapper med eksempler, G04-drawer, K02 kilder. Disse er ikke skjult: `/app/setup` viser ikke-implementerede trin som "Ikke tilgængelig".
 - Budget med to scenarier — udestår, indtil priser slås op ved tilkobling.
@@ -32,6 +32,6 @@ Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI
 
 ### Præcis næste handling
 
-1. **Bruger:** opret tomt privat repo `dialogbot`, push `dialogbot.bundle` (3 kommandoer i `docs/services-setup.md` §0). Tilkobl Supabase-, Render- og Vercel-forbindelserne (kort i chatten).
-2. **Claude, når GitHub findes:** verificér remote commit + grøn CI → opret `dialogbot-staging` på Supabase (EU Frankfurt), kør `infra/supabase-roles.sql`, fjern `dialogbot` fra exposed schemas → Render Blueprint fra `infra/render.yaml` med secrets → Vercel-import (Root `web`, `API_BASE_URL`) → gennemfør konto→viden→plan på preview-URL og notér links her.
+1. **Bruger:** tilkobl Render-forbindelsen (eller opret Blueprint manuelt fra `infra/render.yaml`); indsæt `DATABASE_URL`, `MIGRATION_DATABASE_URL`, `DB_SCHEMA=dialogbot`, `FRONTEND_BASE_URL`, `PUBLIC_BASE_URL`, `EMAIL_FROM` som secrets. Hent hosts fra Supabase Connect (session pooler til runtime, direct til migration).
+2. **Claude:** verificér `/health/ready` på Render → Vercel-import (Root `web`, `API_BASE_URL`) → gennemfør konto→viden→plan på preview-URL og notér links her.
 3. **Uafhængigt af adgang:** fortsæt milepæl A-frontend (P02–P09, S08, S09) og forbered Resend-webhook + Anthropic-adapter (milepæl B).

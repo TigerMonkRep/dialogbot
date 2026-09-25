@@ -1,6 +1,7 @@
 import { expect, type APIRequestContext, type Page, type TestInfo } from "@playwright/test";
 
 export const DEMO_PASSWORD = process.env.SEED_DEMO_PASSWORD ?? "DemoPass-2026x";
+export const PREVIEW_CODE = process.env.PREVIEW_ACCESS_CODES?.split(",")[0] ?? "E2E-PREVIEW-2026";
 export const SEEDED = { owner: "owner@fjordgulv.example", admin: "admin@fjordgulv.example", staff: "staff@fjordgulv.example", reader: "reader@fjordgulv.example" };
 const CSRF = { "x-requested-with": "dialogbot" };
 

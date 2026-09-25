@@ -2,6 +2,23 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 7 — 25. september 2026 (ny forside P01 + midlertidig adgangsside P00)
+
+**Grundlag:** Stitch-eksporterne `stitch_dialogbot_2` (P01 forside) og `stitch_dialogbot_3` (P00 midlertidig landingsside med adgangskontrol), desktop + mobil. Kildefiler i `design-reference/landing/` (screen.png i eksporten var ødelagte; siderne er renderet lokalt med `design-reference/tools/stitch-render.mjs`).
+
+| Del | Status | Bevis |
+|---|---|---|
+| P00 `/preview`: forhåndskode (tjekkes på serveren i `/api/preview/unlock`, konstanttids-sammenligning, 0,8 s forsinkelse ved forkert kode) → signeret httpOnly-cookie `db_preview` | implementeret, E2E-testet | rejse 1 (forkert + rigtig kode) og 10 |
+| Gate i `proxy.ts` når `PREVIEW_GATE=on`: `/` og `/signup` → `/preview?next=…`; undtaget: indloggede, invitationslinks (`/signup?next=/invite/…`); fejler lukket uden hemmelighed/koder | implementeret, E2E-testet | rejse 10 |
+| Venteliste `POST /api/v1/waitlist` (offentlig): samtykke påkrævet, e-mail normaliseres, gentagen tilmelding opdaterer svar, samme svar for ny/eksisterende e-mail (ingen enumeration), honeypot | implementeret, testet | `tests/test_waitlist.py` (4), Alembic `c432350c7efd` op/ned + `alembic check` |
+| P01 `/`: hero med eksempelsamtale, to spor (fører hensigt videre til signup), brancheskifter, tre trin + kontrol, overblik, FAQ (`<details>`), afsluttende CTA med prismodellerne A/B | implementeret, E2E-screenshot 1440 + 390 | rejse 1 |
+
+**Ærlighed – bevidste afvigelser fra Stitch:** ingen offentlig demokode ("DGB-PREVIEW" ville gøre beskyttelsen virkningsløs), ingen "Latency < 280 ms", "100 % dansk hosting", "148 virksomheder", CVR/ApS-oplysninger, "Q2 åbning" eller stemmeprøve, der ikke findes. P01 har et "Privat preview"-banner; samtaler er mærket som eksempler; FAQ siger, hvad der virker i dag, og hvad der er planlagt. "Prøv en samtale" er erstattet af "Start opsætning"/"Sådan fungerer det". Links til sider, der ikke findes (priser, privatliv, vilkår), er udeladt.
+
+**Mangler før siden deles bredt:** en kort privatlivstekst med kontaktadresse for ventelisten; en måde at eksportere/slette tilmeldinger (i dag via databasen).
+
+**Ikke deployet/eksternt verificeret:** kræver `PREVIEW_GATE`, `PREVIEW_ACCESS_CODES`, `PREVIEW_COOKIE_SECRET` i Vercel (Production).
+
 ## Checkpoint 6 — 25. september 2026 (milepæl B: Anthropic-adapter bag interface)
 
 **Grundlag:** Resend-webhook merget som `669a67a` (PR #3).
@@ -15,6 +32,8 @@ Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI
 | Afvisning (`stop_reason=refusal`) maskeres med neutral dansk tekst og logges `refused`; 429 → 503 `ai_rate_limited`; øvrige udbyderfejl → 502 `ai_provider_error` (logges `error`) | testet | `test_anthropic_refusal_and_errors`, `test_refusal_is_masked_and_logged` |
 | `POST /workspaces/{id}/assistant/preview` (staff+), `GET /workspaces/{id}/ai/usage` (admin+); fremmed arbejdsrum → 404; uden udbyder → 501 `ai_not_configured` | testet | `test_usage_summary_is_per_workspace_and_admin_only`, `test_not_configured_is_501_…` |
 | Kapabilitet `ai.assistant_preview` (available/simulated/not_implemented efter udbyder). `ai.conversation` forbliver `not_implemented` → UI viser ikke "Aktiv AI" | implementeret, testet | — |
+
+| R06 "Test assistenten" i videnscentret (medarbejder+): ét spørgsmål ad gangen mod `/assistant/preview`, viser svar, model, promptversion, vidensrevision, tokens og prisestimat; admin ser 30-dages forbrug. Markeret som intern test; "simuleret model" vises ved `fake`. Uden udbyder vises den ærlige pladsholder | implementeret, E2E-testet (1440 + 390) | `web/e2e/journeys.spec.ts` rejse 9; E2E-workflow kører `AI_PROVIDER=fake` |
 
 **Ikke eksternt verificeret:** ingen Anthropic-nøgle endnu; model-ID `claude-opus-5` er ikke kaldt mod API'et fra dette miljø. Staging kører `AI_PROVIDER=none`.
 

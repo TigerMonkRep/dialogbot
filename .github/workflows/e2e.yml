@@ -27,11 +27,16 @@ jobs:
       APP_ENV: test
       ENABLE_DEV_TOOLS: "true"
       EMAIL_ADAPTER: simulated
+      AI_PROVIDER: fake        # deterministic test double; the R06 journey never calls a real model
       DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/dialogbot_e2e
       FRONTEND_BASE_URL: http://localhost:3000
       SEED_DEMO_PASSWORD: E2e-Demo-Password-2026
       API_BASE_URL: http://localhost:8000
       BASE_URL: http://localhost:3000
+      # Test-only values for the P00 preview gate (not used by any deployed environment).
+      PREVIEW_GATE: "on"
+      PREVIEW_ACCESS_CODES: E2E-PREVIEW-2026
+      PREVIEW_COOKIE_SECRET: e2e-only-preview-cookie-secret-0123456789
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

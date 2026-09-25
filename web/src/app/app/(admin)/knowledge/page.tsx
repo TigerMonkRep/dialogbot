@@ -2,10 +2,13 @@ import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
+import { AssistantPreview, usd } from "./assistant";
 import { AddPanel, ApproveNewButton, ItemCard, KeepButton, NewItemForm, VersionActions } from "./client";
 import { KIND_LABEL, dateDa, kr, summarize } from "./format";
 
 export type Version = { id: string; item_id: string; version_no: number; status: string; title: string; content: Record<string, unknown>; edit_version: number; submitted_at: string | null };
+type Capability = { key: string; status: "available" | "simulated" | "not_implemented" };
+type Usage = { days: number; totals: { calls: number; input_tokens: number; output_tokens: number; cache_creation_input_tokens: number; cache_read_input_tokens: number; est_cost_usd_micros: number } };
 export type Item = { id: string; kind: string; key: string; approved_version: Version | null; open_draft: Version | null };
 
 const TABS: [string, string, string, string][] = [
@@ -22,12 +25,15 @@ const OTHER_KINDS = ["opening_hours", "coverage_area", "fact", "known_answer", "
 export default async function KnowledgePage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const { tab = "k03" } = await searchParams;
   const ws = await requireWorkspace();
-  const [items, queue, active] = await Promise.all([
+  const canApprove = ws.role === "owner" || ws.role === "admin";
+  const [items, queue, active, caps, usage] = await Promise.all([
     backend<{ items: Item[]; total: number }>(`/workspaces/${ws.id}/knowledge/items?limit=200`),
     backend<Version[]>(`/workspaces/${ws.id}/knowledge/review-queue`),
     backend<{ knowledge_revision: number; items: unknown[] }>(`/workspaces/${ws.id}/assistant/knowledge`),
+    tab === "r06" ? backend<{ items: Capability[] }>("/integrations/capabilities") : Promise.resolve({ items: [] as Capability[] }),
+    tab === "r06" && canApprove ? backend<Usage>(`/workspaces/${ws.id}/ai/usage?days=30`) : Promise.resolve(null),
   ]);
-  const canApprove = ws.role === "owner" || ws.role === "admin";
+  const aiStatus = caps.items.find((c) => c.key === "ai.assistant_preview")?.status ?? "not_implemented";
   const canDraft = ws.role !== "reader";
   const all = items.items;
   const drafts = all.filter((i) => i.open_draft);
@@ -256,7 +262,22 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
         </div>
       )}
 
-      {(tab === "r05" || tab === "r06") && (
+      {tab === "r06" && aiStatus !== "not_implemented" && (
+        <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm">
+            <div>
+              <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">R06</span>
+              <h2 className="font-headline-md text-headline-md text-primary">Test assistenten</h2>
+            </div>
+            {usage && <p className="font-body-sm text-body-sm text-on-surface-variant">Seneste {usage.days} dage: {usage.totals.calls} kald · {usage.totals.input_tokens + usage.totals.cache_creation_input_tokens + usage.totals.cache_read_input_tokens} ind / {usage.totals.output_tokens} ud tokens · {usd(usage.totals.est_cost_usd_micros)}</p>}
+          </div>
+          {active.items.length === 0 ? <Empty text="Der er ingen godkendt viden endnu. Godkend mindst ét emne under K03/K05, før assistenten kan testes." />
+            : !canDraft ? <Empty text="Test af assistenten kræver rollen medarbejder eller højere." />
+            : <AssistantPreview wsId={ws.id} simulated={aiStatus === "simulated"} />}
+        </div>
+      )}
+
+      {(tab === "r05" || (tab === "r06" && aiStatus === "not_implemented")) && (
         <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
           <div>
             <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{tab === "r05" ? "R05" : "R06"}</span>

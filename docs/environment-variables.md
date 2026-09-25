@@ -37,6 +37,9 @@
 | Variabel | Påkrævet | Miljø | Bemærkning |
 |---|---|---|---|
 | `API_BASE_URL` | ja | Production, Preview | Render-API'ets URL (staging til Preview, prod til Production). **Server-only** – ingen `NEXT_PUBLIC_`-variant findes eller må oprettes. |
+| `PREVIEW_GATE` | nej | Production (og Preview efter ønske) | — | `on` = forsiden `/` og `/signup` ligger bag den midlertidige adgangsside `/preview` (P00). Udeladt = siderne er åbne. Indloggede brugere og invitationslinks (`/signup?next=/invite/…`) slipper igennem. |
+| `PREVIEW_ACCESS_CODES` | ved gate | samme | Vælges af jer | Kommaseparerede invitationskoder, mindst 8 tegn hver (kortere ignoreres). Store/små bogstaver er ligegyldige. **Server-only.** |
+| `PREVIEW_COOKIE_SECRET` | ved gate | samme | Tilfældig streng ≥ 32 tegn | Signerer adgangscookien `db_preview` (httpOnly, 30 dage). Udskiftes den, skal alle indtaste en kode igen. Mangler den, låser ingen kode op (fejler lukket). |
 
 Der findes ingen `NEXT_PUBLIC_*` hemmeligheder. Browseren kender kun sit eget origin; sessionen ligger i cookien `db_session` (httpOnly, Secure, SameSite=Lax), det valgte arbejdsrum i `db_ws`.
 

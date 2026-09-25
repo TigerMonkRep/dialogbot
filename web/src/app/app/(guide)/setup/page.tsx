@@ -423,6 +423,18 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
         </div>
       </section>
 
+      {!next && (
+        <section className="py-space-xs">
+          <div className="bg-surface-container-lowest rounded-xl p-space-md shadow-md flex items-start gap-space-xs">
+            <div className="w-8 h-8 rounded-lg bg-surface-container-high text-on-surface-variant flex items-center justify-center flex-shrink-0"><Icon name="hourglass_empty" size={18} /></div>
+            <div className="flex flex-col">
+              <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">Anbefalet næste handling</span>
+              <span className="font-headline-sm text-headline-sm text-primary">Ingen åben handling for din rolle</span>
+              <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">De resterende trin afventer integrationer, der ikke er bygget endnu, eller en anden rolle.</p>
+            </div>
+          </div>
+        </section>
+      )}
       {next && (
         <section className="py-space-xs">
           <div className="bg-surface-container-lowest rounded-xl p-space-md shadow-md flex flex-col gap-space-md relative overflow-hidden">

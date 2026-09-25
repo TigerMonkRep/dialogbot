@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { Alert, Button,  ErrorBox, Field, Input, useSubmit } from "@/components/ui";
 import { AuthFrame } from "@/components/auth-frame";
+import { safeNext } from "@/lib/safe-next";
 import { PasswordField } from "@/components/password-field";
 import type { ApiError } from "@/lib/client";
 
@@ -15,7 +16,7 @@ function LoginForm() {
     const r = await fetch("/api/auth/login", { method: "POST", headers: { "content-type": "application/json", "x-requested-with": "dialogbot" }, body: JSON.stringify(form) });
     if (!r.ok) throw (await r.json()) as ApiError;
     const next = params.get("next");
-    router.push(next && next.startsWith("/") && !next.startsWith("//") ? next : "/app");
+    router.push(safeNext(next));
     router.refresh();
   });
   return (

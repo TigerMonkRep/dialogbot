@@ -1,0 +1,79 @@
+name: E2E
+
+# Browser journeys (Playwright) against the real stack: Next production build → FastAPI + outbox worker → PostgreSQL.
+# Runs at 1440 px and 390 px; full-page screenshots and the HTML report are uploaded as artifacts.
+on:
+  push:
+  pull_request:
+
+jobs:
+  journeys:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: dialogbot_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_ENV: test
+      ENABLE_DEV_TOOLS: "true"
+      EMAIL_ADAPTER: simulated
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/dialogbot_e2e
+      FRONTEND_BASE_URL: http://localhost:3000
+      SEED_DEMO_PASSWORD: E2e-Demo-Password-2026
+      API_BASE_URL: http://localhost:8000
+      BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Backend dependencies, migrations, seed
+        run: |
+          pip install -r requirements.lock
+          alembic upgrade head
+          python -m scripts.seed
+      - name: Start API and worker
+        run: |
+          nohup uvicorn app.main:app --port 8000 > api.log 2>&1 &
+          nohup python -m app.worker.runner > worker.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf localhost:8000/health/ready && break; sleep 1; done
+      - name: Build and start web
+        working-directory: web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run build
+          nohup npm run start -- -p 3000 > ../web.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/login && break; sleep 1; done
+      - name: Playwright journeys (1440 + 390 px)
+        working-directory: web
+        run: npx playwright test
+      - name: Upload screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-${{ github.sha }}
+          path: |
+            web/e2e-screens
+            web/playwright-report
+            web/test-results
+            api.log
+            worker.log
+            web.log
+          retention-days: 14

@@ -14,6 +14,8 @@ function ResetForm() {
   const [confirm, setConfirm] = useState("");
   const { run, pending, error } = useSubmit(async () => {
     await api("/auth/password/reset", { method: "POST", body: JSON.stringify({ token, password }) });
+    // The reset revokes every session server-side; drop the now-dead cookie too, so /login is not skipped.
+    await fetch("/api/auth/logout", { method: "POST", headers: { "x-requested-with": "dialogbot" } });
     router.push("/login?reset=1");
   });
   if (!token) return <Alert>Linket mangler en token. Bestil et nyt link.</Alert>;

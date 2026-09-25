@@ -194,3 +194,17 @@ def test_tasks_crud_assignment_and_filters(client, api, chat):
     # one lead per conversation, also when created by staff
     r = api.post(tok, f"{base}/leads", {"conversation_id": chat["conv"]["conversation_id"]})
     assert r.status_code == 409 and r.json()["lead_id"] == lead["id"]
+
+
+def test_contact_with_callback_window_sets_lead_period_and_task_due(client, chat, db):
+    opts = client.get(f"{PUB}/{chat['key']}/callback-windows").json()
+    assert opts["timezone"] == "Europe/Copenhagen" and opts["options"][0]["key"] == "asap"
+    choice = opts["options"][-1]
+    assert _contact(client, chat, window=choice["key"]).status_code == 422  # phone required for a call back
+    r = _contact(client, chat, phone="+4520304050", window=choice["key"])
+    assert r.status_code == 200, r.text
+    lead = db.scalar(select(Lead))
+    assert lead.callback_from is not None and lead.callback_to > lead.callback_from
+    task = db.scalar(select(Task))
+    assert task.due_at == lead.callback_from and task.title == f"Ring Henrik op – {choice['label']}"
+    assert _contact(client, chat, phone="+4520304050", window="yesterday_am").status_code == 422

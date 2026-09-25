@@ -17,6 +17,7 @@
     '<label>Navn<input name="name" autocomplete="name" maxlength="200" required></label>' +
     '<label>E-mail<input name="email" type="email" autocomplete="email" maxlength="320"></label>' +
     '<label>Telefon<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>' +
+    '<label>Hvornår må vi ringe?<select name="window"><option value="">Ingen præference</option></select></label>' +
     '<label class="check"><input name="consent" type="checkbox" required> Virksomheden må kontakte mig om min henvendelse.</label>' +
     '<p class="err" role="alert" hidden></p>' +
     '<div class="row"><button type="button" class="contact-cancel">Annullér</button><button type="submit">Send</button></div></form>' +
@@ -71,7 +72,17 @@
       });
     });
   }
+  var windowsLoaded = false;
+  function loadWindows() {
+    if (windowsLoaded) return;
+    windowsLoaded = true;
+    api("GET", "/callback-windows").then(function (j) {
+      var sel = contactForm.elements.window;
+      j.options.forEach(function (o) { var op = document.createElement("option"); op.value = o.key; op.textContent = o.label; sel.appendChild(op); });
+    }).catch(function () { windowsLoaded = false; });
+  }
   contactBar.querySelector("button").addEventListener("click", function () {
+    loadWindows();
     contactForm.hidden = false; contactBar.hidden = true; contactForm.querySelector("input[name=name]").focus();
   });
   contactForm.querySelector(".contact-cancel").addEventListener("click", function () {
@@ -81,8 +92,9 @@
     e.preventDefault();
     var f = contactForm.elements, err = contactForm.querySelector(".err");
     var body = { name: f.name.value.trim(), email: f.email.value.trim() || null, phone: f.phone.value.trim() || null,
-                 note: "", consent: f.consent.checked };
+                 note: "", consent: f.consent.checked, window: f.window.value || null };
     var problem = !body.name ? "Skriv dit navn." : (!body.email && !body.phone) ? "Skriv e-mail eller telefonnummer."
+      : (body.window && !body.phone) ? "Skriv dit telefonnummer, så vi kan ringe dig op."
       : !body.consent ? "Sæt flueben, så virksomheden må kontakte dig." : "";
     if (problem) { err.textContent = problem; err.hidden = false; return; }
     err.hidden = true;

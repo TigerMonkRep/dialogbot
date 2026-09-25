@@ -2,6 +2,16 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 14 — 26. september 2026 (callback-tidsvinduer i webchat)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `GET /public/webchat/{key}/callback-windows`: "Hurtigst muligt" + formiddag (8–12) / eftermiddag (12–16) i dag og næste hverdag i arbejdsrummets tidszone; et vindue tilbydes kun, mens mindst én time er tilbage; weekender springes over | testet | `tests/test_callback_windows.py` (2) |
+| "Bliv kontaktet" med tidsrum kræver telefonnummer; `leads.callback_from/to` (Alembic `c89e73f71c6d`); opgaven hedder "Ring … op – <tidsrum>" med frist ved vinduets start; et udløbet vindue afvises (422) | testet | `test_contact_with_callback_window_…` |
+| Chatvinduet viser "Hvornår må vi ringe?"; henvendelsessiden viser "Ønsker opkald …" | implementeret, E2E | rejse 12 udvidet |
+
+**Ikke implementeret:** verifikation af kundens nummer (kræver SMS-udbyder) og automatisk opkald i vinduet (kræver udgående telefoni).
+
 ## Checkpoint 13 — 25. september 2026 (månedlig afregningsoversigt)
 
 | Del | Status | Bevis |

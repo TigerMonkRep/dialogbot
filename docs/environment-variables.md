@@ -18,6 +18,12 @@
 | `EMAIL_ADAPTER` | ja | API, worker | — | `simulated` (dev/test/staging) eller `resend`. |
 | `RESEND_API_KEY` | ved resend | worker (API kun hvis den sender synkront – det gør den ikke) | Resend → API Keys | Staging- og prod-nøgle adskilt. |
 | `RESEND_WEBHOOK_SECRET` | ved resend | API | Resend → Webhooks → endpoint → *Signing secret* (`whsec_…`) | Uden den svarer `POST /api/v1/webhooks/resend` 503. Én pr. miljø. |
+| `AI_PROVIDER` | nej | API | — | `none` (standard: AI-endpoints svarer 501), `anthropic`, eller `fake` (testdobbelt, kun dev/test – afvises ellers ved opstart). |
+| `AI_MODEL_ID` | nej | API | Anthropic → Models | Standard `claude-opus-5`. Logges pr. kald i `ai_usage`. |
+| `ANTHROPIC_API_KEY` | ved anthropic | API | Anthropic Console → API Keys (sæt månedligt forbrugsloft) | Uden nøgle nægter processen at starte med `AI_PROVIDER=anthropic`. |
+| `AI_EFFORT` | nej | API | — | `low` / `medium` (standard) / `high`. |
+| `AI_MAX_OUTPUT_TOKENS` | nej | API | — | Standard 2048 (inkl. tænkning). |
+| `AI_SERVER_FALLBACKS` | nej | API | — | `true` (standard): Anthropics server-side fallback ved politik-afvisning (`fallbacks: "default"`). Sæt `false`, hvis `AI_MODEL_ID` ikke har en standard-fallback. |
 | `EMAIL_FROM` | ved resend | worker | Verificeret afsenderdomæne i Resend | `Dialogbot <noreply@mail.<domæne>>` |
 | `PUBLIC_BASE_URL` | ja | API | Render-URL | Bruges i OpenAPI/links. |
 | `FRONTEND_BASE_URL` | ja | API, worker | Vercel-URL | Links i mails (verificering, reset, invitation). |

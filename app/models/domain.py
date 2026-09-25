@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import (
+    BigInteger,
     Boolean,
     CheckConstraint,
     DateTime,
@@ -343,3 +344,35 @@ class WebhookEvent(Base):
     # applied | ignored | unmatched — what the event did to our records.
     outcome: Mapped[str] = mapped_column(String(16), nullable=False)
     received_at: Mapped[datetime] = ts_now()
+
+
+class AiUsage(Base):
+    """One row per AI model call: who (workspace), what (model, prompt version, knowledge revision)
+    and how much (tokens, estimated cost). Rows are append-only and never contain the prompt text."""
+
+    __tablename__ = "ai_usage"
+    __table_args__ = (Index("ix_ai_usage_workspace_created", "workspace_id", "created_at"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    # assistant_preview (more purposes arrive with webchat/telephony)
+    purpose: Mapped[str] = mapped_column(String(32), nullable=False)
+    provider: Mapped[str] = mapped_column(String(32), nullable=False)
+    requested_model: Mapped[str] = mapped_column(String(100), nullable=False)
+    served_model: Mapped[str | None] = mapped_column(String(100))
+    prompt_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    knowledge_revision: Mapped[int] = mapped_column(Integer, nullable=False)
+    # ok | refused | truncated | error
+    outcome: Mapped[str] = mapped_column(String(16), nullable=False)
+    stop_reason: Mapped[str | None] = mapped_column(String(32))
+    input_tokens: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    output_tokens: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    cache_creation_input_tokens: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    cache_read_input_tokens: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # Estimate from the public list price, in millionths of a US dollar; NULL for an unpriced model.
+    est_cost_usd_micros: Mapped[int | None] = mapped_column(BigInteger)
+    latency_ms: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    provider_request_id: Mapped[str | None] = mapped_column(String(100))
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = ts_now()

@@ -46,6 +46,18 @@ class Settings(BaseSettings):
     # Signing secret of the Resend webhook endpoint ("whsec_..."). Without it the webhook answers 503.
     resend_webhook_secret: str | None = Field(default=None, alias="RESEND_WEBHOOK_SECRET")
 
+    # AI provider behind app/modules/ai. "none" = no model is called (endpoints answer 501);
+    # "fake" is a deterministic test double and is refused outside dev/test.
+    ai_provider: Literal["none", "anthropic", "fake"] = Field(default="none", alias="AI_PROVIDER")
+    ai_model_id: str = Field(default="claude-opus-5", alias="AI_MODEL_ID")
+    ai_effort: Literal["low", "medium", "high"] = Field(default="medium", alias="AI_EFFORT")
+    ai_max_output_tokens: int = Field(default=2048, alias="AI_MAX_OUTPUT_TOKENS")
+    # Anthropic server-side refusal fallback ("fallbacks": "default", beta header server-side-fallback-2026-07-01):
+    # on a policy decline the API re-runs the call on the model's default fallback model. Set false to pin one model
+    # (required if AI_MODEL_ID names a model without a server-defined default fallback).
+    ai_server_fallbacks: bool = Field(default=True, alias="AI_SERVER_FALLBACKS")
+    anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
+
     # Dev tooling: the simulated mailbox and test identities are gated on this.
     enable_dev_tools: bool = Field(default=False, alias="ENABLE_DEV_TOOLS")
 
@@ -66,6 +78,10 @@ class Settings(BaseSettings):
             raise ValueError("EMAIL_ADAPTER=simulated is not allowed in prod; prod cannot claim mail delivery")
         if self.email_adapter == "resend" and not self.resend_api_key:
             raise ValueError("EMAIL_ADAPTER=resend requires RESEND_API_KEY")
+        if self.ai_provider == "anthropic" and not self.anthropic_api_key:
+            raise ValueError("AI_PROVIDER=anthropic requires ANTHROPIC_API_KEY")
+        if self.ai_provider == "fake" and self.app_env not in ("dev", "test"):
+            raise ValueError(f"AI_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
         if self.auth_provider == "external":
             raise ValueError(
                 "AUTH_PROVIDER=external is reserved for a future OIDC integration and is not "

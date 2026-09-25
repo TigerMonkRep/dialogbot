@@ -27,6 +27,11 @@ class Capability:
 def capabilities() -> list[Capability]:
     s = get_settings()
     email_status: CapabilityStatus = "simulated" if s.email_adapter == "simulated" else "available"
+    ai_status: CapabilityStatus = {"anthropic": "available", "fake": "simulated"}.get(s.ai_provider, "not_implemented")
+    ai_note = {
+        "anthropic": f"Anthropic ({s.ai_model_id}). Svarer kun ud fra godkendt viden; kun til intern test – ingen kundekanal er koblet på.",
+        "fake": "Testdobbelt uden rigtig model.",
+    }.get(s.ai_provider, "Ingen AI-udbyder er konfigureret (AI_PROVIDER=none).")
     return [
         Capability("email", "E-mail (konto, invitationer)", email_status, s.app_env,
                    ("Simuleret adapter gemmer beskeder i databasen." if s.email_adapter == "simulated"
@@ -38,6 +43,8 @@ def capabilities() -> list[Capability]:
         Capability("calendar", "Kalenderforbindelse (Google/Microsoft/CalDAV)", "not_implemented", s.app_env,
                    "Planlagt til etape 3. Ingen simuleret test kan aktivere produktion."),
         Capability("payment", "Kortbetaling", "not_implemented", s.app_env, "Planlagt til etape 4."),
+        Capability("ai.assistant_preview", "AI-assistent: intern forhåndsvisning", ai_status, s.app_env,
+                   ai_note),
         Capability("ai.conversation", "AI-samtale / stemmemodel", "not_implemented", s.app_env,
                    "Planlagt til etape 2. Assistenten læser kun godkendt viden via API'et."),
         Capability("knowledge.source_import", "Kildeimport / udtræk / embeddings", "not_implemented", s.app_env,

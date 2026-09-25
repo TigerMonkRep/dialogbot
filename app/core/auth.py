@@ -44,6 +44,8 @@ PERMISSIONS: dict[str, str] = {
     "members.remove": "admin",
     "members.assign_owner": "owner",
     "audit.read": "admin",
+    "assistant.preview": "staff",
+    "ai_usage.read": "admin",
     "agreements.edit": "owner",  # reserved for the billing stage
 }
 

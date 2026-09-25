@@ -654,6 +654,21 @@
         "title": "MemberOut",
         "type": "object"
       },
+      "PreviewIn": {
+        "properties": {
+          "message": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "PreviewIn",
+        "type": "object"
+      },
       "ProfileIn": {
         "properties": {
           "address_line": {
@@ -2127,6 +2142,76 @@
         ]
       }
     },
+    "/api/v1/workspaces/{workspace_id}/ai/usage": {
+      "get": {
+        "description": "Model calls and tokens for this workspace, grouped by model, prompt version and outcome.",
+        "operationId": "ai_usage_api_v1_workspaces__workspace_id__ai_usage_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 366,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ai Usage",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
     "/api/v1/workspaces/{workspace_id}/assistant/knowledge": {
       "get": {
         "description": "Read model for the assistant: only approved, current knowledge.\nThe AI conversation itself is not implemented in this stage.",
@@ -2182,6 +2267,74 @@
         "summary": "Assistant Knowledge",
         "tags": [
           "knowledge"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/assistant/preview": {
+      "post": {
+        "description": "Ask the assistant one question, answered only from approved knowledge. Internal test tool:\nnothing is sent to a customer. 501 when no AI provider is configured; 409 without approved knowledge.",
+        "operationId": "assistant_preview_api_v1_workspaces__workspace_id__assistant_preview_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Assistant Preview",
+        "tags": [
+          "ai"
         ]
       }
     },

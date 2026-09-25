@@ -18,7 +18,7 @@ export const BILL: Record<string, [string, string]> = {
   approved: ["Godkendt", "bg-secondary-container text-on-secondary-container"],
   rejected: ["Afvist", "bg-surface-container-high text-on-surface-variant"],
 };
-export const SOURCE: Record<string, string> = { webchat: "Webchat", manual: "Manuel" };
+export const SOURCE: Record<string, string> = { webchat: "Webchat", phone: "Telefon", manual: "Manuel" };
 
 /** Whole øre → "149,00 kr." */
 export const kr = (minor: number) => `${(minor / 100).toLocaleString("da-DK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kr.`;

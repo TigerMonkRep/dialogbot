@@ -353,6 +353,44 @@ test("13 · Rapporter: dagens tal er foreløbige og viser nye henvendelser; e-ma
   await expect(page.getByLabel("Kl.")).toHaveValue("6");
 });
 
+test("14 · S03: ejer tilknytter nummer, et opkald rapporteres af Vapi og bliver til samtale, henvendelse og opgave", async ({ page }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  const CSRF = { "x-requested-with": "dialogbot" };
+  const item = await (await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/items`, { headers: CSRF, data: { kind: "service", title: "Gulvafslibning", content: { price_net_minor: 14500 } } })).json();
+  await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`, { headers: CSRF });
+  await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`, { headers: CSRF });
+  const number = `+4570${String(Date.now()).slice(-6)}`;
+  const vapiId = `pn_${info.project.name}_${Date.now()}`;
+
+  await page.goto("/app/settings/telephony");
+  await expect(page.getByText("Stemmeforbindelse konfigureret")).toBeVisible();
+  await page.getByLabel("Nummer", { exact: true }).fill(number);
+  await page.getByLabel("Vapi nummer-id").fill(vapiId);
+  await page.getByLabel("Navn", { exact: true }).fill("Hovednummer");
+  await page.getByRole("button", { name: "Tilknyt nummer" }).click();
+  await expect(page.getByText(number)).toBeVisible();
+  await shot(page, info, "s03-telefoni");
+
+  const api = process.env.API_BASE_URL ?? "http://localhost:8000";
+  const auth = { authorization: `Bearer ${process.env.VAPI_SERVER_SECRET ?? "e2e-only-vapi-secret-0123456789"}` };
+  const req = await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: { type: "assistant-request", call: { id: "x", phoneNumberId: vapiId } } } });
+  expect((await req.json()).assistant.model.messages[0].content).toContain("Gulvafslibning");
+  const report = await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: {
+    type: "end-of-call-report", endedReason: "customer-ended-call", analysis: { summary: "Vil have tilbud på afslibning." },
+    call: { id: `call_${vapiId}`, phoneNumberId: vapiId, customer: { number: "+4520304050" }, startedAt: "2026-09-24T08:00:00Z", endedAt: "2026-09-24T08:01:05Z" },
+    artifact: { messages: [{ role: "bot", message: "Hej, du har ringet til os." }, { role: "user", message: "Hvad koster afslibning?" }] } } } });
+  expect((await report.json()).outcome).toBe("applied");
+
+  await page.reload();
+  await expect(page.getByText("Vil have tilbud på afslibning.")).toBeVisible();
+  await page.goto("/app/inbox");
+  await page.getByRole("link", { name: /Hvad koster afslibning\?/ }).click();
+  await expect(page.getByRole("heading", { name: "Telefonopkald" })).toBeVisible();
+  await page.getByRole("link", { name: /Henvendelse:/ }).click();
+  await expect(page.getByText("Ring tilbage til +4520304050")).toBeVisible();
+  await shot(page, info, "telefon-henvendelse");
+});
+
 test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation uden mus", async ({ page }, info) => {
   await login(page, SEEDED.owner);
   await page.goto("/app/setup");

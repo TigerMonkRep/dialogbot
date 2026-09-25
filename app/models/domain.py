@@ -557,3 +557,44 @@ class DailyReport(Base):
     timezone: Mapped[str] = mapped_column(String(64), nullable=False)
     data: Mapped[dict] = mapped_column(JSONB, nullable=False)
     generated_at: Mapped[datetime] = ts_now()
+
+
+class PhoneNumber(Base):
+    """A phone number routed to a workspace. The number is bought/imported at the provider by the
+    customer; this row only maps it (by E.164 and the provider's number id) to a workspace."""
+
+    __tablename__ = "phone_numbers"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    e164: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
+    provider: Mapped[str] = mapped_column(String(16), nullable=False, default="vapi")
+    provider_number_id: Mapped[str | None] = mapped_column(String(100), unique=True)
+    label: Mapped[str] = mapped_column(String(100), nullable=False, default="")
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    greeting: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    created_at: Mapped[datetime] = ts_now()
+
+
+class Call(Base):
+    """One phone call reported by the voice provider (end-of-call report)."""
+
+    __tablename__ = "calls"
+    __table_args__ = (Index("ix_calls_workspace_started", "workspace_id", "started_at"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    phone_number_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("phone_numbers.id", ondelete="SET NULL"))
+    conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="SET NULL"))
+    provider: Mapped[str] = mapped_column(String(16), nullable=False)
+    provider_call_id: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    from_number: Mapped[str | None] = mapped_column(String(40))
+    to_number: Mapped[str | None] = mapped_column(String(40))
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    duration_seconds: Mapped[int | None] = mapped_column(Integer)
+    ended_reason: Mapped[str | None] = mapped_column(String(100))
+    summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    # Provider-reported total cost, millionths of a USD (NULL if not reported).
+    cost_usd_micros: Mapped[int | None] = mapped_column(BigInteger)
+    created_at: Mapped[datetime] = ts_now()

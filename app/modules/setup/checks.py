@@ -54,10 +54,10 @@ CHECKS: dict[str, CheckDefinition] = {
                         ("knowledge",), description="Server-selvtest af det aktive vidensudtræk."),
         CheckDefinition("telephony.test_call", "Prøveopkald til din mobil", ("goals", "knowledge", "integrations"),
                         capability="telephony.inbound", required_when=("inbound_phone",),
-                        description="Kræver en implementeret telefoniudbyder."),
+                        description="Består, når et aktivt nummer har modtaget et opkald inden for 30 dage."),
         CheckDefinition("telephony.forwarding", "Viderestilling fra eksisterende nummer",
                         ("goals", "integrations"), capability="telephony.inbound", required_when=("inbound_phone",),
-                        description="Kræver en implementeret telefoniudbyder."),
+                        description="Består, når et opkald er nået frem via jeres viderestilling inden for 30 dage."),
         CheckDefinition("calendar.connection", "Kalenderforbindelse verificeret", ("goals", "integrations"),
                         capability="calendar", required_when=("booking",),
                         description="Kræver en implementeret kalenderadapter; en simuleret test åbner ikke produktion."),
@@ -148,6 +148,20 @@ def _evaluate(db: OrmSession, workspace_id: uuid.UUID, key: str) -> tuple[bool, 
         items = active_knowledge(db, workspace_id)
         leaked = [i["id"] for i in items if i["status"] != "approved"]
         return not leaked, {"active_items": len(items), "non_approved_leaked": leaked}
+    if key in ("telephony.test_call", "telephony.forwarding"):
+        from app.models import Call, PhoneNumber
+
+        numbers = db.scalars(select(PhoneNumber).where(PhoneNumber.workspace_id == workspace_id,
+                                                       PhoneNumber.active.is_(True))).all()
+        since = _now() - timedelta(days=30)
+        last = db.scalar(select(Call).where(Call.workspace_id == workspace_id, Call.created_at >= since)
+                         .order_by(Call.created_at.desc()).limit(1))
+        return bool(numbers) and last is not None, {
+            "active_numbers": [n.e164 for n in numbers],
+            "last_call_at": last.created_at.isoformat() if last else None,
+            "last_call_to": last.to_number if last else None,
+            "call_received_within_30_days": last is not None,
+        }
     if key == "webchat.widget":
         from app.modules.webchat import service as webchat
 

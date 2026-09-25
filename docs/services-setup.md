@@ -81,9 +81,18 @@ Alternativ uden lokal git: åbn Codespaces på det tomme repo, upload bundlen, k
 | Test / bevis | Jeg kalder `/assistant/preview` på staging med et spørgsmål, der kan besvares af godkendt viden, og et der ikke kan → svar + `ai_usage`-række med `served_model`, tokens og `provider_request_id`. |
 | Udgift | Betaling pr. token. Listepris for `claude-opus-5`: 5 USD / 1 mio. input- og 25 USD / 1 mio. output-tokens (verificér i Console). Et preview-kald med lille vidensbase ≈ 2–4k input + ≤ 2k output ≈ 0,02–0,07 USD. |
 
+## 6. Vapi (+ Twilio) — telefoni (milepæl B)
+
+| | |
+|---|---|
+| Hvorfor | Assistenten skal tage telefonen på jeres nummer. |
+| Klar i repo | `POST /api/v1/webhooks/vapi` (Bearer eller `X-Vapi-Secret`, konstanttid): `assistant-request` → midlertidig assistent med systemprompt **kun** fra godkendt viden + telefonregler (kort, ingen formatering, AI-oplysning i hilsenen); `end-of-call-report` → opkald (`calls`), transskription som `phone`-samtale i indbakken, og hvis kunden sagde noget og nummeret er kendt: henvendelse + opgave "Ring tilbage" (idempotent pr. opkalds-id). Numre tilknyttes arbejdsrum under Indstillinger → Telefoni (E.164 + Vapis nummer-id). Tjekkene `telephony.test_call`/`telephony.forwarding` består først efter et rigtigt opkald. **Ikke verificeret eksternt.** |
+| Din handling | 1) Opret Vapi-konto (evt. med jeres Twilio-konto til danske numre). 2) Opret/importér et nummer — **det koster penge; jeg køber intet uden at vise prisen og få jeres ja**. 3) Vælg en hemmelighed, læg den i Render som `VAPI_SERVER_SECRET`, og opret i Vapi en Bearer-legitimation med samme værdi på nummerets Server URL `https://dialogbot-api-staging.onrender.com/api/v1/webhooks/vapi`; lad nummerets assistent være tom. 4) Tilknyt nummeret i Dialogbot. 5) Viderestil jeres eksisterende nummer hos teleselskabet og ring et prøveopkald. Valgfrit: `VAPI_VOICE_JSON`/`VAPI_TRANSCRIBER_JSON` for dansk stemme/transskribering. |
+| Test / bevis | Prøveopkald → samtale i indbakken med transskription, henvendelse + opgave, og tjekket "Prøveopkald" består i opsætningsguiden. |
+| Udgift | Pr. minut hos Vapi (platform + model + stemme + transskribering) og nummer/minutter hos Twilio. Slå de aktuelle priser op, før I køber — jeg angiver dem ikke fra hukommelsen. |
+
 ## Senere (bed om input, når integrationen er konkret)
 
-- **Vapi + Twilio** (milepæl B): nummer, transskription, samtalemodel og stemme dokumenteres hver for sig; dansk SMS-kapabilitet kontrolleres mod Twilios DK-vejledning. Input: testmodtagernummer, forbrugsloft.
 - **Google Cloud / Microsoft Entra** (milepæl C): redirect-URL'er og scopes leveres, når kalenderadapteren findes.
 - **Stripe** (milepæl D): testmode først; webhook-secret; pris-/aftalemapping.
 

@@ -20,8 +20,8 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
       <Link href="/app/inbox" className="self-start font-label-md text-label-md text-primary flex items-center gap-1"><Icon name="arrow_back" size={18} />Indbakke</Link>
       <div className="flex flex-wrap items-start justify-between gap-space-md">
       <div>
-        <h1 className="font-headline-md text-headline-md text-primary">Webchat-samtale</h1>
-        <p className="font-body-sm text-body-sm text-on-surface-variant">Startet {new Date(c.created_at).toLocaleString("da-DK")}{c.origin ? ` på ${c.origin}` : ""}. Assistenten svarer kun ud fra godkendt viden.</p>
+        <h1 className="font-headline-md text-headline-md text-primary">{c.channel === "phone" ? "Telefonopkald" : "Webchat-samtale"}</h1>
+        <p className="font-body-sm text-body-sm text-on-surface-variant">Startet {new Date(c.created_at).toLocaleString("da-DK")}{c.origin ? (c.channel === "phone" ? ` fra ${c.origin}` : ` på ${c.origin}`) : ""}. Assistenten svarer kun ud fra godkendt viden.</p>
       </div>
       {owned.lead
         ? <Link href={`/app/leads/${owned.lead.id}`} className="font-label-lg text-label-lg text-primary flex items-center gap-1"><Icon name="contact_support" size={18} />Henvendelse: {owned.lead.contact_name || "uden navn"}</Link>

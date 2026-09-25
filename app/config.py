@@ -57,6 +57,14 @@ class Settings(BaseSettings):
     # (required if AI_MODEL_ID names a model without a server-defined default fallback).
     ai_server_fallbacks: bool = Field(default=True, alias="AI_SERVER_FALLBACKS")
     anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
+    # Voice (Vapi). The server secret authenticates Vapi → us (Bearer credential or legacy X-Vapi-Secret).
+    # Without it the voice webhook answers 503 and inbound telephony is reported as not implemented.
+    vapi_server_secret: str | None = Field(default=None, alias="VAPI_SERVER_SECRET")
+    vapi_model_provider: str = Field(default="anthropic", alias="VAPI_MODEL_PROVIDER")
+    vapi_model: str | None = Field(default=None, alias="VAPI_MODEL")  # default: AI_MODEL_ID
+    # Optional JSON objects passed through to Vapi's assistant config (e.g. a Danish voice/transcriber).
+    vapi_voice_json: str | None = Field(default=None, alias="VAPI_VOICE_JSON")
+    vapi_transcriber_json: str | None = Field(default=None, alias="VAPI_TRANSCRIBER_JSON")
     # Spend guard: max AI replies per workspace per 24 h in the public web widget.
     webchat_daily_reply_limit: int = Field(default=300, alias="WEBCHAT_DAILY_REPLY_LIMIT")
 

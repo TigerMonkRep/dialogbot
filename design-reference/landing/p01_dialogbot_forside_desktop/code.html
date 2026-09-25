@@ -1,0 +1,793 @@
+<!DOCTYPE html><html lang="da"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-tint":"#33675c","on-tertiary":"#ffffff","primary-container":"#164e43","surface-container":"#dcf3ee","tertiary-fixed-dim":"#93cef4","on-secondary-container":"#586a0e","surface-dim":"#c8dfda","on-secondary":"#ffffff","on-primary-fixed":"#00201a","error":"#ba1a1a","secondary-fixed":"#d6ec85","surface-container-lowest":"#ffffff","on-tertiary-container":"#80bbe0","background":"#e7fef9","surface-container-highest":"#d0e7e2","on-error":"#ffffff","secondary-container":"#d4ea82","tertiary":"#00334a","inverse-surface":"#203431","surface-bright":"#e7fef9","on-primary-fixed-variant":"#184f44","on-primary":"#ffffff","outline":"#707976","on-secondary-fixed-variant":"#3e4c00","inverse-primary":"#9bd1c3","secondary-fixed-dim":"#bbd06c","on-surface-variant":"#404946","outline-variant":"#bfc9c4","on-tertiary-fixed-variant":"#004c6b","primary":"#00362d","on-background":"#0a1f1c","tertiary-container":"#004b6a","on-secondary-fixed":"#171e00","surface-variant":"#d0e7e2","on-error-container":"#93000a","surface-container-high":"#d6ede8","surface":"#e7fef9","on-tertiary-fixed":"#001e2d","surface-container-low":"#e1f8f3","secondary":"#546508","tertiary-fixed":"#c6e7ff","error-container":"#ffdad6","on-surface":"#0a1f1c","on-primary-container":"#88beb0","inverse-on-surface":"#dff6f0","primary-fixed-dim":"#9bd1c3","primary-fixed":"#b6eede"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"margin":"1rem","gutter-lg":"1.5rem","margin-md":"1.5rem","space-xs":"0.25rem","gutter":"1rem","space-xl":"1.5rem","margin-lg":"2rem","space-sm":"0.5rem","space-md":"0.75rem","space-lg":"1rem"},"fontFamily":{"headline-lg":["Manrope"],"headline-md":["Manrope"],"label-md":["Inter"],"body-lg":["Inter"],"label-sm":["Inter"],"display-lg":["Manrope"],"body-md":["Inter"],"body-sm":["Inter"],"display-lg-mobile":["Manrope"],"headline-lg-mobile":["Manrope"],"label-lg":["Inter"],"headline-sm":["Manrope"]},"fontSize":{"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-md":["22px",{"lineHeight":"30px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"600"}],"display-lg":["36px",{"lineHeight":"44px","letterSpacing":"-0.03em","fontWeight":"700"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"body-sm":["13px",{"lineHeight":"18px","fontWeight":"400"}],"display-lg-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-lg-mobile":["22px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"700"}],"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"600"}],"headline-sm":["18px",{"lineHeight":"26px","letterSpacing":"-0.01em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(22,78,67,0.06)]"><div class="h-20 max-w-7xl mx-auto px-margin-md lg:px-margin-lg flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-sm" data-path="landing-page" href="#"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[20px]">support_agent</span></div><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Dialogbot</span></a><nav class="hidden lg:flex items-center gap-space-lg ml-space-md" data-active-classes="text-primary font-label-lg text-label-lg font-bold"><div class="relative group py-space-sm"><a class="flex items-center gap-space-xs font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="reception" href="#">Løsninger<span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:rotate-180 transition-transform duration-200">expand_more</span></a><div class="absolute left-0 top-full hidden group-hover:block w-56 pt-space-xs"><div class="bg-surface-container-lowest rounded-lg p-space-sm shadow-[0_4px_12px_rgba(23,43,40,0.08),0_1px_2px_rgba(23,43,40,0.04)] flex flex-col gap-space-xs"><a class="p-space-sm rounded-lg hover:bg-surface-container-low transition-colors block" data-path="reception" href="#"><span class="block font-label-lg text-label-lg text-on-surface font-semibold">Reception</span><span class="block font-body-sm text-body-sm text-on-surface-variant">Dansk AI telefonsvarer &amp; viderestilling</span></a><a class="p-space-sm rounded-lg hover:bg-surface-container-low transition-colors block" data-path="campaigns" href="#"><span class="block font-label-lg text-label-lg text-on-surface font-semibold">Kundeopfølgning</span><span class="block font-body-sm text-body-sm text-on-surface-variant">Automatiserede opkald &amp; genaktivering</span></a></div></div></div><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="how-it-works" href="#">Sådan fungerer det</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="pricing" href="#">Priser</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="contact" href="#">Kontakt</a></nav></div><div class="flex items-center gap-space-md"><a class="hidden sm:inline-flex font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-space-md py-space-sm rounded-lg hover:bg-surface-container transition-colors" data-path="login" href="#">Log ind</a><a class="inline-flex items-center justify-center bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg px-gutter-lg py-space-sm rounded-lg transition-all shadow-[0_2px_4px_rgba(22,78,67,0.12)]" data-path="signup" href="#">Start gratis opsætning</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-surface"><div class="flex flex-col w-full">
+<!-- 1. HERO SECTION -->
+<section class="relative bg-primary text-on-primary overflow-hidden pt-12 pb-20 lg:pt-16 lg:pb-28">
+<!-- Atmospheric Ambient Gradient -->
+<div class="absolute inset-0 pointer-events-none opacity-25">
+<div class="absolute -top-32 -left-20 w-96 h-96 rounded-full bg-secondary blur-3xl"></div>
+<div class="absolute top-1/2 -right-32 w-[520px] h-[520px] rounded-full bg-primary-container blur-3xl"></div>
+<div class="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-surface-tint blur-2xl"></div>
+</div>
+<div class="relative max-w-7xl mx-auto px-margin-md lg:px-margin-lg">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-center">
+<!-- Left: Copy & CTA -->
+<div class="lg:col-span-6 flex flex-col gap-space-lg">
+<div class="inline-flex items-center gap-space-xs self-start px-space-md py-space-xs rounded-full bg-secondary/20 text-secondary-fixed text-label-sm font-label-sm backdrop-blur-sm">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse"></span>
+            AI-reception og kundeopfølgning
+          </div>
+<div class="flex flex-col gap-space-sm">
+<h1 class="font-display-lg text-display-lg font-bold text-on-primary tracking-tight">
+              Du driver forretningen. <br>
+<span class="text-secondary-fixed">Dialogbot tager samtalen.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-primary-container max-w-xl leading-relaxed">
+              Besvar opkald og chat, hjælp kunder med at booke, og følg op på tilbud — med en AI-assistent, der bruger din virksomheds viden og følger dine regler.
+            </p>
+</div>
+<div class="flex flex-wrap items-center gap-space-md pt-space-xs">
+<a class="inline-flex items-center justify-center gap-space-xs bg-secondary-fixed hover:bg-secondary-fixed-dim text-on-secondary-fixed font-label-lg text-label-lg px-gutter-lg py-space-md rounded-xl shadow-md transition-all" data-path="demo" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">phone_in_talk</span>
+              Prøv en samtale
+            </a>
+<a class="inline-flex items-center justify-center gap-space-xs bg-surface-container-highest/20 hover:bg-surface-container-highest/30 text-on-primary font-label-lg text-label-lg px-gutter-lg py-space-md rounded-xl transition-all" data-path="signup" href="#">
+              Start opsætning
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<div class="flex items-center gap-space-sm text-label-sm font-label-sm text-on-primary-container/80 pt-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary-fixed">verified</span>
+            Din viden • Din tone • Dine spilleregler
+          </div>
+</div>
+<!-- Right: Interactive Product Demonstration -->
+<div class="lg:col-span-6">
+<div class="bg-surface-container-lowest text-on-surface rounded-xl p-space-md lg:p-space-lg shadow-xl flex flex-col gap-space-md">
+<!-- Demonstration Header -->
+<div class="flex items-center justify-between gap-space-sm pb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary animate-ping"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">
+                  Eksempel på en samtale • Fjord Gulvservice ApS
+                </span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded bg-surface-container-low hover:bg-surface-container text-on-surface text-label-sm font-label-sm transition-colors" id="btn-replay-transcript" type="button">
+<span class="material-symbols-outlined text-[14px]">replay</span>
+                  Start forfra
+                </button>
+</div>
+</div>
+<!-- Two-Column Interactive Simulation -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Left: Live Transcript Simulation -->
+<div class="bg-surface-container-low rounded-lg p-space-md flex flex-col justify-between gap-space-sm">
+<div class="flex items-center justify-between pb-space-xs">
+<span class="text-label-sm font-label-sm text-primary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">record_voice_over</span>
+                    Direkte transskription
+                  </span>
+<span class="px-space-xs py-0.5 rounded bg-surface text-on-surface-variant text-[10px] font-mono">01:14</span>
+</div>
+<div class="flex flex-col gap-space-xs text-body-sm font-body-sm max-h-64 overflow-y-auto pr-1" id="transcript-stream">
+<!-- Message 1 -->
+<div class="chat-row flex flex-col gap-0.5 items-end">
+<span class="text-label-sm font-label-sm text-on-surface-variant text-[10px]">Kunde</span>
+<div class="bg-primary text-on-primary px-space-sm py-1.5 rounded-lg rounded-tr-none max-w-[90%]">
+                      Jeg vil gerne have et tilbud på gulvafslibning.
+                    </div>
+</div>
+<!-- Message 2 -->
+<div class="chat-row flex flex-col gap-0.5 items-start">
+<span class="text-label-sm font-label-sm text-on-surface-variant text-[10px]">Dialogbot</span>
+<div class="bg-surface-container-lowest text-on-surface px-space-sm py-1.5 rounded-lg rounded-tl-none shadow-sm max-w-[90%]">
+                      Selvfølgelig. Hvor stort er arealet?
+                    </div>
+</div>
+<!-- Message 3 -->
+<div class="chat-row flex flex-col gap-0.5 items-end">
+<span class="text-label-sm font-label-sm text-on-surface-variant text-[10px]">Kunde</span>
+<div class="bg-primary text-on-primary px-space-sm py-1.5 rounded-lg rounded-tr-none max-w-[90%]">
+                      Cirka 65 m². Kan I komme forbi på onsdag?
+                    </div>
+</div>
+<!-- Message 4 -->
+<div class="chat-row flex flex-col gap-0.5 items-start">
+<span class="text-label-sm font-label-sm text-on-surface-variant text-[10px]">Dialogbot</span>
+<div class="bg-surface-container-lowest text-on-surface px-space-sm py-1.5 rounded-lg rounded-tl-none shadow-sm max-w-[90%]">
+                      Der er en tid onsdag kl. 10.30. Skal jeg booke den til dig?
+                    </div>
+</div>
+<!-- Message 5 -->
+<div class="chat-row flex flex-col gap-0.5 items-end">
+<span class="text-label-sm font-label-sm text-on-surface-variant text-[10px]">Kunde</span>
+<div class="bg-primary text-on-primary px-space-sm py-1.5 rounded-lg rounded-tr-none max-w-[90%]">
+                      Ja tak.
+                    </div>
+</div>
+</div>
+<div class="pt-space-xs flex items-center justify-between text-[11px] text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Dansk tale (Neural-DK)
+                  </span>
+<span class="">Opkald afsluttet</span>
+</div>
+</div>
+<!-- Right: Instant Structured Result Card -->
+<div class="bg-surface-container-highest/60 rounded-lg p-space-md flex flex-col justify-between gap-space-sm">
+<div>
+<div class="flex items-center gap-space-xs pb-space-sm">
+<span class="inline-flex items-center gap-1 px-space-sm py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                      Besigtigelse booket
+                    </span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-space-sm shadow-sm flex flex-col gap-space-xs mb-space-sm">
+<div class="flex items-center gap-space-xs text-primary font-label-lg text-label-lg font-bold">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                      Onsdag 28. oktober 2026
+                    </div>
+<div class="text-label-sm font-label-sm text-on-surface-variant pl-6">
+                      Kl. 10.30 – 11.15
+                    </div>
+</div>
+<div class="flex flex-col gap-1.5 text-body-sm font-body-sm bg-surface-container-lowest/80 rounded-lg p-space-sm">
+<div class="flex items-center justify-between text-on-surface">
+<span class="text-on-surface-variant">Opgave:</span>
+<span class="font-semibold">65 m² plankegulv</span>
+</div>
+<div class="flex items-center justify-between text-on-surface">
+<span class="text-on-surface-variant">Tildelt:</span>
+<span class="font-semibold">Mads Møller</span>
+</div>
+<div class="flex items-center justify-between text-on-surface">
+<span class="text-on-surface-variant">SMS-bekræftelse:</span>
+<span class="text-secondary font-semibold">Sendt automatisk</span>
+</div>
+</div>
+</div>
+<div class="pt-space-xs text-[11px] leading-tight text-on-surface-variant bg-surface-container-lowest/50 p-2 rounded">
+<span class="material-symbols-outlined text-[13px] align-middle mr-0.5">info</span>
+                  Ingen rigtige opkald eller bookinger fra demonstrationen. Alt sker i et lukket sandkassemiljø.
+                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. VALUE IN 5 SECONDS: THE 2 CORE PRODUCT TRACKS -->
+<section class="py-20 lg:py-28 bg-surface">
+<div class="max-w-7xl mx-auto px-margin-md lg:px-margin-lg">
+<!-- Section Header -->
+<div class="flex flex-col items-center text-center max-w-2xl mx-auto mb-16">
+<span class="text-secondary font-label-sm text-label-sm uppercase tracking-wider mb-space-xs font-semibold">To spor • Én assistent</span>
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">
+          Tag imod nye kunder. Følg op på de eksisterende.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-xs">
+          To specialiserede spor, der deler samme virksomhedsviden og kalenderregler.
+        </p>
+</div>
+<!-- Tracks Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter-lg items-stretch">
+<!-- Track 1: Reception (Indgående) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg lg:p-margin-lg shadow-sm flex flex-col justify-between gap-space-lg">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="px-space-sm py-1 rounded-full bg-surface-container text-primary font-label-sm text-label-sm font-semibold">
+                Indgående henvendelser
+              </span>
+<span class="material-symbols-outlined text-primary text-[24px]">call_received</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface">
+                Når kunden ringer, mens du er optaget.
+              </h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                Dialogbot tager imod henvendelsen, stiller de relevante spørgsmål og hjælper kunden videre. Du får behov, kontaktoplysninger og næste handling samlet.
+              </p>
+</div>
+<!-- Visual: Tri-Channel Inbound Model -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">
+                3 kanaler → Én samlet indbakke
+              </span>
+<div class="grid grid-cols-3 gap-space-xs">
+<div class="bg-surface-container-lowest rounded-lg p-space-sm text-center flex flex-col items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">call</span>
+<span class="font-label-sm text-label-sm font-medium text-on-surface">Telefonopkald</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-space-sm text-center flex flex-col items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">chat</span>
+<span class="font-label-sm text-label-sm font-medium text-on-surface">Web-chat</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-space-sm text-center flex flex-col items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">ring_volume</span>
+<span class="font-label-sm text-label-sm font-medium text-on-surface">Callback</span>
+</div>
+</div>
+<!-- Converged Output Mockup -->
+<div class="bg-surface-container rounded-lg p-space-sm flex items-center justify-between mt-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">inbox</span>
+<span class="font-label-sm text-label-sm font-semibold text-primary">Struktureret henvendelse klar</span>
+</div>
+<span class="text-[11px] font-mono text-on-surface-variant">Automatisk CRM-synk</span>
+</div>
+</div>
+</div>
+<div>
+<a class="inline-flex items-center gap-space-xs text-primary font-label-lg text-label-lg font-bold hover:text-primary-container group" data-path="reception" href="#">
+              Se receptionen
+              <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Track 2: Kundeopfølgning (Udgående) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg lg:p-margin-lg shadow-sm flex flex-col justify-between gap-space-lg">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="px-space-sm py-1 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-semibold">
+                Udgående opfølgning
+              </span>
+<span class="material-symbols-outlined text-secondary text-[24px]">outbox</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface">
+                Tilbud sendt. Samtalen behøver ikke stoppe der.
+              </h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                Vælg kontakter fra din kundeliste, tilpas samtalen, og godkend forløbet. Dialogbot følger op og samler svarene, så du kan tage næste skridt.
+              </p>
+</div>
+<!-- Visual: 4-Step Workflow Chain -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">
+                Automatiseret procesforløb
+              </span>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-xs">
+<div class="bg-surface-container-lowest rounded-lg p-2 flex flex-col gap-1 shadow-sm">
+<span class="text-[10px] font-bold text-secondary">01</span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">Udvalgte kontakter</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-2 flex flex-col gap-1 shadow-sm">
+<span class="text-[10px] font-bold text-secondary">02</span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">Godkendt manus</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-2 flex flex-col gap-1 shadow-sm">
+<span class="text-[10px] font-bold text-secondary">03</span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">Høflig samtale</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-2 flex flex-col gap-1 shadow-sm">
+<span class="text-[10px] font-bold text-secondary">04</span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">Klart resultat</span>
+</div>
+</div>
+<!-- Output Tags -->
+<div class="flex flex-wrap items-center gap-1.5 pt-space-xs">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-[11px] font-medium text-on-surface">
+                  • Ønsker tilbud
+                </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-[11px] font-medium text-on-surface">
+                  • Ønsker tid
+                </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-[11px] font-medium text-on-surface">
+                  • Kontakt senere
+                </span>
+</div>
+</div>
+</div>
+<div>
+<a class="inline-flex items-center gap-space-xs text-primary font-label-lg text-label-lg font-bold hover:text-primary-container group" data-path="campaigns" href="#">
+              Se kundeopfølgning
+              <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. INDUSTRY RELEVANCE: INTERACTIVE INDUSTRY SWITCHER -->
+<section class="py-20 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-margin-md lg:px-margin-lg">
+<div class="flex flex-col items-center text-center max-w-2xl mx-auto mb-12">
+<span class="text-secondary font-label-sm text-label-sm uppercase tracking-wider mb-space-xs font-semibold">Bred anvendelighed</span>
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">
+          Samme assistent. Forskellige arbejdsdage.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-xs">
+          Indhold og spørgsmål tilpasses præcis din virksomheds faglige jargon og regler.
+        </p>
+</div>
+<!-- Switcher Tabs Container -->
+<div class="max-w-4xl mx-auto flex flex-col gap-space-md">
+<!-- Interactive Tabs -->
+<div class="flex items-center justify-center gap-space-xs p-1 bg-surface-container rounded-xl self-center" role="tablist">
+<button class="industry-tab px-space-md py-space-xs rounded-lg text-label-lg font-label-lg font-semibold transition-all bg-primary text-on-primary shadow-sm" data-target="tab-craft" type="button">
+            Håndværk &amp; Byg
+          </button>
+<button class="industry-tab px-space-md py-space-xs rounded-lg text-label-lg font-label-lg font-semibold transition-all text-on-surface-variant hover:text-on-surface" data-target="tab-salon" type="button">
+            Salon &amp; Behandling
+          </button>
+<button class="industry-tab px-space-md py-space-xs rounded-lg text-label-lg font-label-lg font-semibold transition-all text-on-surface-variant hover:text-on-surface" data-target="tab-consulting" type="button">
+            Service &amp; Rådgivning
+          </button>
+</div>
+<!-- Panel 1: Håndværk & Byg (Active) -->
+<div class="industry-panel block bg-surface-container-lowest rounded-xl p-space-lg shadow-sm" id="tab-craft">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter-lg items-center">
+<div class="md:col-span-7 flex flex-col gap-space-md">
+<div class="flex items-center gap-space-xs text-primary font-semibold">
+<span class="material-symbols-outlined text-[20px]">construction</span>
+<span class="font-label-lg text-label-lg">Gulvfirma &amp; Byggehåndværk</span>
+</div>
+<div class="flex flex-col gap-space-sm bg-surface-container-low p-space-md rounded-lg">
+<div class="flex flex-col gap-0.5">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-semibold">Kunde henvender sig:</span>
+<p class="font-body-md text-body-md text-on-surface italic">“Kan I give et overslag på slibning af 65 m² stuegulv?”</p>
+</div>
+<div class="flex flex-col gap-0.5 pt-space-xs">
+<span class="text-label-sm font-label-sm text-primary font-semibold">Dialogbot svarer:</span>
+<p class="font-body-md text-body-md text-on-surface">“Ja, standardprisen for afslibning og 2x lak er 145 kr./m². Vil du have, at Mads kigger forbi til en uforpligtende opmåling på onsdag?”</p>
+</div>
+</div>
+</div>
+<div class="md:col-span-5 bg-surface-container rounded-lg p-space-md flex flex-col gap-space-sm">
+<span class="font-label-sm text-label-sm text-primary font-semibold uppercase tracking-wider">Umiddelbart resultat</span>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface">Besigtigelse reserveret i montørens kalender.</span>
+</div>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface">Opgavekort og adresse automatisk oprettet til mester.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Panel 2: Salon & Behandling (Hidden by default) -->
+<div class="industry-panel hidden bg-surface-container-lowest rounded-xl p-space-lg shadow-sm" id="tab-salon">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter-lg items-center">
+<div class="md:col-span-7 flex flex-col gap-space-md">
+<div class="flex items-center gap-space-xs text-primary font-semibold">
+<span class="material-symbols-outlined text-[20px]">content_cut</span>
+<span class="font-label-lg text-label-lg">Frisør &amp; Skønhedsklinik</span>
+</div>
+<div class="flex flex-col gap-space-sm bg-surface-container-low p-space-md rounded-lg">
+<div class="flex flex-col gap-0.5">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-semibold">Kunde henvender sig:</span>
+<p class="font-body-md text-body-md text-on-surface italic">“Har I en ledig tid til herreklip i morgen efter kl. 16?”</p>
+</div>
+<div class="flex flex-col gap-0.5 pt-space-xs">
+<span class="text-label-sm font-label-sm text-primary font-semibold">Dialogbot svarer:</span>
+<p class="font-body-md text-body-md text-on-surface">“Vi har en ledig stol hos Sara i morgen kl. 16.30. Skal jeg reservere den i dit navn?”</p>
+</div>
+</div>
+</div>
+<div class="md:col-span-5 bg-surface-container rounded-lg p-space-md flex flex-col gap-space-sm">
+<span class="font-label-sm text-label-sm text-primary font-semibold uppercase tracking-wider">Umiddelbart resultat</span>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface">Aftale bekræftet direkte i bookingsystem.</span>
+</div>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface">Automatisk SMS-påmindelse planlagt til kunden.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Panel 3: Service & Rådgivning (Hidden by default) -->
+<div class="industry-panel hidden bg-surface-container-lowest rounded-xl p-space-lg shadow-sm" id="tab-consulting">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter-lg items-center">
+<div class="md:col-span-7 flex flex-col gap-space-md">
+<div class="flex items-center gap-space-xs text-primary font-semibold">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+<span class="font-label-lg text-label-lg">Konsulent &amp; IT-service</span>
+</div>
+<div class="flex flex-col gap-space-sm bg-surface-container-low p-space-md rounded-lg">
+<div class="flex flex-col gap-0.5">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-semibold">Kunde henvender sig:</span>
+<p class="font-body-md text-body-md text-on-surface italic">“Jeg søger rådgivning om overgang til nyt regnskabssystem.”</p>
+</div>
+<div class="flex flex-col gap-0.5 pt-space-xs">
+<span class="text-label-sm font-label-sm text-primary font-semibold">Dialogbot svarer:</span>
+<p class="font-body-md text-body-md text-on-surface">“Det hjælper vi gerne med. Hvor mange brugere er I, og hvornår passer det bedst at tage en 20-minutters introduktion over telefonen?”</p>
+</div>
+</div>
+</div>
+<div class="md:col-span-5 bg-surface-container rounded-lg p-space-md flex flex-col gap-space-sm">
+<span class="font-label-sm text-label-sm text-primary font-semibold uppercase tracking-wider">Umiddelbart resultat</span>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface">Kvalificeret lead med firmastørrelse gemt i CRM.</span>
+</div>
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface">Kalenderinvitation med Teams-link sendt til rådgiver.</span>
+</div>
+</div>
+</div>
+</div>
+<p class="text-center text-body-sm font-body-sm text-on-surface-variant pt-space-xs">
+          Brancherne er eksempler — Dialogbot konfigureres 100% efter dine egne ydelser og arbejdsgange.
+        </p>
+</div>
+</div>
+</section>
+<!-- 4. SIMPLE 3-STEP SETUP WITH COMPLETE CONTROL -->
+<section class="py-20 lg:py-28 bg-surface">
+<div class="max-w-7xl mx-auto px-margin-md lg:px-margin-lg">
+<div class="flex flex-col items-center text-center max-w-2xl mx-auto mb-16">
+<span class="text-secondary font-label-sm text-label-sm uppercase tracking-wider mb-space-xs font-semibold">Gennemskuelig proces</span>
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">
+          Fra din virksomheds viden til den første samtale.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-xs">
+          En personlig opsætningsguide hjælper dig videre trin for trin uden teknisk besvær.
+        </p>
+</div>
+<!-- 3 Visual Step Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-lg mb-12">
+<!-- Step 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold font-headline-sm">
+            1
+          </div>
+<div class="flex flex-col gap-space-xs">
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">
+              Fortæl om din virksomhed
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Tilføj hjemmeside, materiale eller oplysninger manuelt. Ingen tvungen webcrawler, der gætter forkert.
+            </p>
+</div>
+<div class="mt-auto pt-space-sm flex items-center gap-space-xs text-[12px] font-medium text-secondary">
+<span class="material-symbols-outlined text-[16px]">upload_file</span>
+            Upload PDF, URL eller stikord
+          </div>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold font-headline-sm">
+            2
+          </div>
+<div class="flex flex-col gap-space-xs">
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">
+              Gennemgå og tilpas
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Godkend viden, spørgsmål, tone og præcis de handlinger, assistenten må udføre over for kunden.
+            </p>
+</div>
+<div class="mt-auto pt-space-sm flex items-center gap-space-xs text-[12px] font-medium text-secondary">
+<span class="material-symbols-outlined text-[16px]">rule</span>
+            Fuld kontrol over tilladte svar
+          </div>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary font-bold font-headline-sm">
+            3
+          </div>
+<div class="flex flex-col gap-space-xs">
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">
+              Prøv den, før du slår til
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              Test samtalen i et sikkert sandkassemiljø og aktivér de relevante funktioner kontrolleret.
+            </p>
+</div>
+<div class="mt-auto pt-space-sm flex items-center gap-space-xs text-[12px] font-medium text-secondary">
+<span class="material-symbols-outlined text-[16px]">play_circle</span>
+            Gratis test i sandkasse
+          </div>
+</div>
+</div>
+<!-- Feature Card: Du bestemmer -->
+<div class="bg-primary text-on-primary rounded-xl p-space-lg lg:p-margin-lg shadow-md">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-center">
+<div class="lg:col-span-5 flex flex-col gap-space-xs">
+<span class="text-secondary-fixed text-label-sm font-label-sm font-semibold uppercase tracking-wider">Garanti for tryghed</span>
+<h3 class="font-headline-md text-headline-md font-bold text-on-primary">
+              Du bestemmer, hvad Dialogbot må sige og gøre.
+            </h3>
+<p class="font-body-md text-body-md text-on-primary-container leading-relaxed">
+              Ingen løsrevne hallucinationer. Assistenten er stramt afgrænset til virksomhedens forretningsbetingelser.
+            </p>
+</div>
+<div class="lg:col-span-7 flex flex-col gap-space-sm">
+<div class="flex items-start gap-space-sm bg-primary-container/40 p-space-md rounded-lg">
+<span class="material-symbols-outlined text-secondary-fixed text-[22px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-lg text-label-lg font-semibold text-on-primary">Godkendte virksomhedsoplysninger</span>
+<p class="font-body-sm text-body-sm text-on-primary-container">Assistenten svarer udelukkende ud fra de facts, du personligt har bekræftet og godkendt.</p>
+</div>
+</div>
+<div class="flex items-start gap-space-sm bg-primary-container/40 p-space-md rounded-lg">
+<span class="material-symbols-outlined text-secondary-fixed text-[22px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-lg text-label-lg font-semibold text-on-primary">Aftalte bookingregler</span>
+<p class="font-body-sm text-body-sm text-on-primary-container">Respekterer åbningstider, montørernes kørebuffer og eksisterende kalenderaftaler.</p>
+</div>
+</div>
+<div class="flex items-start gap-space-sm bg-primary-container/40 p-space-md rounded-lg">
+<span class="material-symbols-outlined text-secondary-fixed text-[22px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-lg text-label-lg font-semibold text-on-primary">Menneskelig opfølgning</span>
+<p class="font-body-sm text-body-sm text-on-primary-container">Ukendte spørgsmål eller akutte sager stilles straks videre til dit team uden tøven.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. POST-CONVERSATION OWNER CLARITY (THE OUTCOME) -->
+<section class="py-20 lg:py-28 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-margin-md lg:px-margin-lg">
+<div class="flex flex-col items-center text-center max-w-2xl mx-auto mb-16">
+<span class="text-secondary font-label-sm text-label-sm uppercase tracking-wider mb-space-xs font-semibold">Fuld gennemsigtighed</span>
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">
+          Samtalen slutter. Dit overblik begynder.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-xs">
+          Se, hvem der henvendte sig, hvad de har brug for, og hvad næste skridt er — uden at lytte timevis af lydfiler igennem.
+        </p>
+</div>
+<!-- Concrete Action Card Mockup -->
+<div class="max-w-3xl mx-auto bg-surface-container-lowest rounded-xl p-space-lg lg:p-margin-lg shadow-md flex flex-col gap-space-md">
+<!-- Card Header with Contact Info -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold">
+              HV
+            </div>
+<div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface block">Henrik Villumsen</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Strandvejen 42, Hellerup • +45 20 XX XX 12</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="px-space-sm py-1 rounded bg-secondary-container text-on-secondary-fixed text-label-sm font-label-sm font-semibold">
+              Klar til overdragelse
+            </span>
+</div>
+</div>
+<!-- Call Summary Box -->
+<div class="bg-surface-container-low rounded-lg p-space-md flex flex-col gap-space-xs">
+<span class="text-label-sm font-label-sm font-semibold text-primary uppercase tracking-wider">
+            AI Sammenfatning af behov
+          </span>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+            Kunde ønsker afslibning af 65 m² fyrretræsgulv med hvidpigmenteret lak. Har godkendt vejledende m²-pris på 145 kr.
+          </p>
+</div>
+<!-- Action Taken & Next Task -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div class="bg-surface-container rounded-lg p-space-sm flex flex-col gap-1">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Udført handling:</span>
+<p class="font-body-sm text-body-sm text-on-surface">
+              Besigtigelse aftalt til <strong>onsdag 28. okt. kl. 10.30–11.15</strong> (Montør: Mads Møller).
+            </p>
+</div>
+<div class="bg-surface-container rounded-lg p-space-sm flex flex-col gap-1">
+<span class="font-label-sm text-label-sm font-semibold text-primary">Næste opgave for mester:</span>
+<p class="font-body-sm text-body-sm text-on-surface">
+              Opfølgningsopgave oprettet: “Tjek parkeringsforhold før ankomst” (Frist kl. 09.00).
+            </p>
+</div>
+</div>
+<!-- Footer / Evidens Status -->
+<div class="pt-space-xs flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span>
+            Transskription og evidens arkiveret
+          </div>
+<span class="font-mono text-label-sm">ID: DB-84920</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. FREQUENTLY ASKED QUESTIONS -->
+<section class="py-20 lg:py-28 bg-surface">
+<div class="max-w-4xl mx-auto px-margin-md lg:px-margin-lg">
+<div class="flex flex-col items-center text-center max-w-2xl mx-auto mb-16">
+<span class="text-secondary font-label-sm text-label-sm uppercase tracking-wider mb-space-xs font-semibold">Spørgsmål &amp; Svar</span>
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tight">
+          Ofte stillede spørgsmål
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-space-xs">
+          Alt hvad du behøver at vide om teknik, numre, kalendere og kontrol.
+        </p>
+</div>
+<!-- FAQ List (Interactive Accordions) -->
+<div class="flex flex-col gap-space-sm" id="faq-container">
+<!-- Q1 -->
+<div class="faq-item bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<button class="faq-toggle w-full p-space-md lg:p-space-lg flex items-center justify-between text-left gap-space-md hover:bg-surface-container-low/50 transition-colors" type="button">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+              Kan jeg beholde mit eksisterende telefonnummer?
+            </span>
+<span class="material-symbols-outlined text-primary text-[24px] transform transition-transform faq-icon">expand_more</span>
+</button>
+<div class="faq-content hidden px-space-md pb-space-lg lg:px-space-lg text-body-md font-body-md text-on-surface-variant leading-relaxed">
+            Ja. Du viderestiller blot dit eksisterende hovednummer eller mobil til Dialogbot, når du er optaget eller uden for åbningstid. Du bevarer din nuværende teleudbyder, og intet skal flyttes.
+          </div>
+</div>
+<!-- Q2 -->
+<div class="faq-item bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<button class="faq-toggle w-full p-space-md lg:p-space-lg flex items-center justify-between text-left gap-space-md hover:bg-surface-container-low/50 transition-colors" type="button">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+              Kan Dialogbot bruge min kalender?
+            </span>
+<span class="material-symbols-outlined text-primary text-[24px] transform transition-transform faq-icon">expand_more</span>
+</button>
+<div class="faq-content hidden px-space-md pb-space-lg lg:px-space-lg text-body-md font-body-md text-on-surface-variant leading-relaxed">
+            Ja. Dialogbot kan forbindes direkte til Google Workspace eller Microsoft 365. Den læser ledighed med fuld respekt for kørselspuffere, frokostpauser og private kalenderaftaler og opretter bookinger direkte.
+          </div>
+</div>
+<!-- Q3 -->
+<div class="faq-item bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<button class="faq-toggle w-full p-space-md lg:p-space-lg flex items-center justify-between text-left gap-space-md hover:bg-surface-container-low/50 transition-colors" type="button">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+              Kan jeg godkende svar og manuskript først?
+            </span>
+<span class="material-symbols-outlined text-primary text-[24px] transform transition-transform faq-icon">expand_more</span>
+</button>
+<div class="faq-content hidden px-space-md pb-space-lg lg:px-space-lg text-body-md font-body-md text-on-surface-variant leading-relaxed">
+            Ja, 100%. Assistenten går aldrig live før du personligt har gennemgået vidensgrundlaget og godkendt svartekster, toneleje og spørgeguide. Du har til enhver tid fuld redigeringsret.
+          </div>
+</div>
+<!-- Q4 -->
+<div class="faq-item bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<button class="faq-toggle w-full p-space-md lg:p-space-lg flex items-center justify-between text-left gap-space-md hover:bg-surface-container-low/50 transition-colors" type="button">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+              Hvad sker der, hvis assistenten ikke kender svaret?
+            </span>
+<span class="material-symbols-outlined text-primary text-[24px] transform transition-transform faq-icon">expand_more</span>
+</button>
+<div class="faq-content hidden px-space-md pb-space-lg lg:px-space-lg text-body-md font-body-md text-on-surface-variant leading-relaxed">
+            Hvis kunden stiller et spørgsmål uden for det godkendte vidensgrundlag, gætter botten aldrig. Den oplyser høfligt kunden om, at sagen kræver en specialist, noterer beskeden og opretter straks en opfølgningsopgave til dig.
+          </div>
+</div>
+<!-- Q5 -->
+<div class="faq-item bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<button class="faq-toggle w-full p-space-md lg:p-space-lg flex items-center justify-between text-left gap-space-md hover:bg-surface-container-low/50 transition-colors" type="button">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+              Kan den følge op på mine eksisterende tilbud?
+            </span>
+<span class="material-symbols-outlined text-primary text-[24px] transform transition-transform faq-icon">expand_more</span>
+</button>
+<div class="faq-content hidden px-space-md pb-space-lg lg:px-space-lg text-body-md font-body-md text-on-surface-variant leading-relaxed">
+            Ja. I modulet Kundeopfølgning kan du uploade en liste over modtagere af tilbud og lade Dialogbot ringe høfligt op for at høre, om tilbuddet skal uddybes, justeres eller aftales — helt automatisk.
+          </div>
+</div>
+<!-- Q6 -->
+<div class="faq-item bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<button class="faq-toggle w-full p-space-md lg:p-space-lg flex items-center justify-between text-left gap-space-md hover:bg-surface-container-low/50 transition-colors" type="button">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">
+              Hvordan kommer jeg i gang?
+            </span>
+<span class="material-symbols-outlined text-primary text-[24px] transform transition-transform faq-icon">expand_more</span>
+</button>
+<div class="faq-content hidden px-space-md pb-space-lg lg:px-space-lg text-body-md font-body-md text-on-surface-variant leading-relaxed">
+            Du kan starte en gratis testkonto på 5 minutter, gennemgå den guidede opsætning og afprøve assistenten i sandkassen inden du tilslutter telefonen eller inviterer dine kolleger.
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- 7. STRONG FINAL CTA SECTION -->
+<section class="py-20 lg:py-28 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-margin-md lg:px-margin-lg">
+<div class="relative bg-primary text-on-primary rounded-2xl p-space-lg lg:p-20 shadow-xl overflow-hidden text-center flex flex-col items-center">
+<!-- Background Accents -->
+<div class="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-secondary opacity-10 blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-primary-container opacity-40 blur-2xl pointer-events-none"></div>
+<div class="relative max-w-2xl flex flex-col items-center gap-space-md">
+<span class="px-space-sm py-1 rounded-full bg-secondary-fixed/20 text-secondary-fixed text-label-sm font-label-sm font-semibold">
+            Klar til at teste?
+          </span>
+<h2 class="font-headline-lg text-headline-lg font-bold text-on-primary tracking-tight">
+            Prøv din næste kundesamtale.
+          </h2>
+<p class="font-body-lg text-body-lg text-on-primary-container max-w-xl">
+            Oplev Dialogbot, og se hvordan reception og opfølgning kan passe gnidningsfrit ind i din forretning.
+          </p>
+<div class="flex flex-wrap items-center justify-center gap-space-md pt-space-sm">
+<a class="inline-flex items-center justify-center gap-space-xs bg-secondary-fixed hover:bg-secondary-fixed-dim text-on-secondary-fixed font-label-lg text-label-lg px-gutter-lg py-space-md rounded-xl shadow-md transition-all" data-path="demo" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">phone_in_talk</span>
+              Prøv en samtale
+            </a>
+<a class="inline-flex items-center justify-center gap-space-xs bg-surface-container-highest/20 hover:bg-surface-container-highest/30 text-on-primary font-label-lg text-label-lg px-gutter-lg py-space-md rounded-xl transition-all" data-path="signup" href="#">
+              Start opsætning
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<p class="text-on-primary-container/80 text-label-sm font-label-sm pt-space-xs">
+            Gennemskuelige vilkår uden binding. Vælg fast abonnement eller betaling pr. godkendt lead på 
+            <a class="underline hover:text-secondary-fixed transition-colors" data-path="pricing" href="#">vores prisside</a>.
+          </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Client-side Interactive Scripts -->
+<script>
+    // Industry Tab Switcher Micro-interaction
+    const tabButtons = document.querySelectorAll('.industry-tab');
+    const tabPanels = document.querySelectorAll('.industry-panel');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const targetId = button.getAttribute('data-target');
+
+        tabButtons.forEach(btn => {
+          btn.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+          btn.classList.add('text-on-surface-variant');
+        });
+
+        button.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+        button.classList.remove('text-on-surface-variant');
+
+        tabPanels.forEach(panel => {
+          if (panel.id === targetId) {
+            panel.classList.remove('hidden');
+            panel.classList.add('block');
+          } else {
+            panel.classList.remove('block');
+            panel.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // Transcript Replay Micro-interaction
+    const replayBtn = document.getElementById('btn-replay-transcript');
+    const transcriptStream = document.getElementById('transcript-stream');
+
+    if (replayBtn && transcriptStream) {
+      const chatRows = transcriptStream.querySelectorAll('.chat-row');
+      replayBtn.addEventListener('click', () => {
+        chatRows.forEach((row, index) => {
+          row.style.opacity = '0';
+          row.style.transform = 'translateY(8px)';
+          setTimeout(() => {
+            row.style.transition = 'all 0.3s ease-out';
+            row.style.opacity = '1';
+            row.style.transform = 'translateY(0)';
+          }, index * 300);
+        });
+      });
+    }
+
+    // FAQ Accordion Toggle Interaction
+    const faqToggles = document.querySelectorAll('.faq-toggle');
+
+    faqToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const content = toggle.nextElementSibling;
+        const icon = toggle.querySelector('.faq-icon');
+        const isOpen = !content.classList.contains('hidden');
+
+        // Close all
+        document.querySelectorAll('.faq-content').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('rotate-180'));
+
+        if (!isOpen) {
+          content.classList.remove('hidden');
+          icon.classList.add('rotate-180');
+        }
+      });
+    });
+  </script>
+</div></main><footer class="w-full bg-surface-container-low shadow-[0_-1px_0_rgba(220,227,220,0.6)] py-margin-lg"><div class="max-w-7xl mx-auto px-margin-md lg:px-margin-lg"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-gutter-lg pb-margin-lg"><div class="lg:col-span-2 flex flex-col gap-space-md pr-margin-md"><div class="flex items-center gap-space-sm"><img alt="Brand logo. - Primary color: #164e43
+- Font: manrope
+- Mode: light
+- Roundness: rounded-md
+" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V05QJ6ogqjQWFOy45hIopE1L8L12GtzKAoL03rnuk3QGgmKM9MOsMR-7O6ORIaIetfBElhHecaaykH_SmmLkmGC4aIeHNldsLlMhk8SHwIijcyDicoWG9fmHPRmeoWXyFl39oUTfA58hv5tXT4hTdwOsQc5PlbL9MCt5N6AgkeNV7Ls4coD3Gt8P6fge98PhalilHSUXAqPpnxnQNjoD2bIfUoH01Vn1r4Cv13MEMT1umMgSSBUpyi7M4"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Dialogbot</span></div><p class="font-body-md text-body-md text-on-surface-variant max-w-sm">Intelligent dansk AI telefoni og automatiseret reception. Besvar opkald med det samme, opsummer samtaler og synkroniser direkte til jeres forretningssystemer.</p><div class="flex items-center gap-space-sm pt-space-xs"><span class="inline-flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-secondary-container text-on-secondary-fixed text-label-sm font-label-sm"><span class="w-2 h-2 rounded-full bg-secondary"></span>Hosting &amp; drift i EU / Danmark</span></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-lg text-label-lg text-on-surface font-semibold">Løsninger</span><nav class="flex flex-col gap-space-xs" data-active-classes="text-primary font-bold"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="reception" href="#">AI Reception</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="campaigns" href="#">Kundeopfølgning</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="how-it-works" href="#">Telefoni Integrationer</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="pricing" href="#">Priser &amp; Pakker</a></nav></div><div class="flex flex-col gap-space-sm"><span class="font-label-lg text-label-lg text-on-surface font-semibold">Virksomhed</span><nav class="flex flex-col gap-space-xs" data-active-classes="text-primary font-bold"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="contact" href="#">Kontakt os</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="how-it-works" href="#">Om teknologien</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="signup" href="#">Book en demonstration</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="login" href="#">Kundeportal</a></nav></div><div class="flex flex-col gap-space-sm"><span class="font-label-lg text-label-lg text-on-surface font-semibold">Juridisk &amp; Sikkerhed</span><nav class="flex flex-col gap-space-xs" data-active-classes="text-primary font-bold"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-policy" href="#">Privatlivspolitik</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="terms-of-service" href="#">Vilkår og betingelser</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="data-processing-agreement" href="#">Databehandleraftale (DPA)</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="cookie-policy" href="#">Cookiepræferencer</a></nav></div></div><div class="pt-margin-md flex flex-col sm:flex-row items-center justify-between gap-space-md text-on-surface-variant font-body-sm text-body-sm"><p class="">© 2025 Dialogbot ApS • CVR: DK-42918201. Alle rettigheder forbeholdes.</p><p class="flex items-center gap-space-xs">Udviklet med nordisk omtanke for privatliv og samtalekvalitet</p></div></div></footer>
+
+</body></html>

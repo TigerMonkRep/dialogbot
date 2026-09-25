@@ -1065,6 +1065,71 @@
         "title": "SessionOut",
         "type": "object"
       },
+      "SignupIn": {
+        "properties": {
+          "consent": {
+            "title": "Consent",
+            "type": "boolean"
+          },
+          "email": {
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          },
+          "industry": {
+            "anyOf": [
+              {
+                "enum": [
+                  "craft",
+                  "clinic",
+                  "service",
+                  "retail",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry"
+          },
+          "interests": {
+            "items": {
+              "enum": [
+                "missed_calls",
+                "calendar_booking",
+                "quote_followup"
+              ],
+              "type": "string"
+            },
+            "maxItems": 3,
+            "title": "Interests",
+            "type": "array"
+          },
+          "source": {
+            "default": "p00",
+            "enum": [
+              "p00",
+              "p01"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "website": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Website",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "consent"
+        ],
+        "title": "SignupIn",
+        "type": "object"
+      },
       "TokenIn": {
         "properties": {
           "token": {
@@ -1950,6 +2015,45 @@
         "summary": "Preview Invitation",
         "tags": [
           "workspaces"
+        ]
+      }
+    },
+    "/api/v1/waitlist": {
+      "post": {
+        "operationId": "join_waitlist_api_v1_waitlist_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Join Waitlist",
+        "tags": [
+          "waitlist"
         ]
       }
     },

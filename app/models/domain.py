@@ -376,3 +376,23 @@ class AiUsage(Base):
     provider_request_id: Mapped[str | None] = mapped_column(String(100))
     error_code: Mapped[str | None] = mapped_column(String(64))
     created_at: Mapped[datetime] = ts_now()
+
+
+class WaitlistSignup(Base):
+    """Early-access waitlist (P00). One row per e-mail; a repeat signup updates the answers.
+    Only used to tell people when access opens; no account is created."""
+
+    __tablename__ = "waitlist_signups"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    email: Mapped[str] = mapped_column(String(320), nullable=False, unique=True)
+    industry: Mapped[str | None] = mapped_column(String(32))
+    interests: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    # p00 | p01 — which page the signup came from
+    source: Mapped[str] = mapped_column(String(16), nullable=False)
+    # Version of the consent text shown next to the form at signup time.
+    consent_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )

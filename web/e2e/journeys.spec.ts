@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { DEMO_PASSWORD, SEEDED, freshOwner, latestMailLink, login, shot, uniqueEmail } from "./helpers";
+import { DEMO_PASSWORD, PREVIEW_CODE, SEEDED, freshOwner, latestMailLink, login, shot, uniqueEmail } from "./helpers";
 
 /* The eight core journeys of milestone A. Blueprint §9.1 is not in the repository; these cover the flows that
  * exist today (A01–A06, O01–O04, K03–K05, G01/G05, S02/S08/S09) and assert the honesty rules along the way. */
@@ -7,8 +7,16 @@ import { DEMO_PASSWORD, SEEDED, freshOwner, latestMailLink, login, shot, uniqueE
 test("1 · A01→A03→A06: tilmelding med bevaret hensigt, bekræftelse og første arbejdsrum", async ({ page }, info) => {
   const email = uniqueEmail("signup", info);
   await page.goto("/");
+  await expect(page).toHaveURL(/\/preview$/); // PREVIEW_GATE=on in CI: the front page is behind P00
+  await page.getByLabel("Invitationskode").fill("forkert-kode-123");
+  await page.getByRole("button", { name: "Lås op og se forsiden" }).click();
+  await expect(page.getByText("Koden er ikke gyldig.", { exact: false })).toBeVisible();
+  await page.getByLabel("Invitationskode").fill(PREVIEW_CODE.toLowerCase());
+  await page.getByRole("button", { name: "Lås op og se forsiden" }).click();
+  await expect(page.getByRole("heading", { name: /Du driver forretningen/ })).toBeVisible();
+  await expect(page.getByText("Privat preview.", { exact: false })).toBeVisible();
   await shot(page, info, "p01-forside");
-  await page.getByRole("link", { name: /Kampagner/ }).click();
+  await page.getByRole("link", { name: "Start med kundeopfølgning" }).click();
   await expect(page).toHaveURL(/\/signup\?intent=campaigns/);
   await page.getByLabel("Dit navn").fill("E2E Tilmelding");
   await page.getByLabel("E-mail").fill(email);
@@ -198,6 +206,25 @@ test("9 · R06: medarbejder tester assistenten mod godkendt viden; læser kan ik
   await page.goto("/app/knowledge?tab=r06");
   await expect(page.getByText("Test af assistenten kræver rollen medarbejder eller højere.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Spørg assistenten" })).toHaveCount(0);
+});
+
+test("10 · P00: forsiden er skjult bag forhåndskode; venteliste; invitationslink virker uden kode", async ({ page }, info) => {
+  await page.goto("/signup");
+  await expect(page).toHaveURL(/\/preview\?next=%2Fsignup/);
+  await expect(page.getByRole("heading", { name: "Skriv dig op til tidlig adgang" })).toBeVisible();
+  await shot(page, info, "p00-adgang");
+  await page.getByLabel("Din arbejds-e-mail").fill(uniqueEmail("venteliste", info));
+  await page.getByLabel("Virksomhedstype").selectOption("craft");
+  await page.getByRole("button", { name: "Opfølgning på tilbud" }).click();
+  await expect(page.getByRole("button", { name: "Opfølgning på tilbud" })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("checkbox", { name: /I må skrive til mig/ }).check();
+  await page.getByRole("button", { name: "Skriv mig på ventelisten" }).click();
+  await expect(page.getByText("Tak – du står på ventelisten.")).toBeVisible();
+  await shot(page, info, "p00-venteliste-tak");
+  // Colleagues invited by e-mail must reach signup without a preview code.
+  await page.goto("/signup?next=/invite/abc");
+  await expect(page).toHaveURL(/\/signup\?next=/);
+  await expect(page.getByRole("button", { name: "Opret konto" })).toBeVisible();
 });
 
 test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation uden mus", async ({ page }, info) => {

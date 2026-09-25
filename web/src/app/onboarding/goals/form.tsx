@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/lib/client";
-import { Alert, Button, ErrorBox, Field, Select, Textarea, useSubmit } from "@/components/ui";
+import { Alert, Button, ErrorBox, Field, Icon, Select, Textarea, useSubmit } from "@/components/ui";
 
 /** O03/G02: product intent, guidance preference and reception capabilities. Callback belongs to reception; booking is optional. */
 export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Record<string, unknown>; canEdit: boolean }) {
@@ -16,13 +16,13 @@ export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Recor
     setSaved(true); router.refresh();
   });
   const cb = (k: string, label: string, hint?: string) => (
-    <label className="flex items-start gap-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-3 text-body-sm">
-      <input type="checkbox" className="mt-1" checked={Boolean(f[k])} onChange={(e) => { setSaved(false); setF({ ...f, [k]: e.target.checked }); }} disabled={!canEdit} />
-      <span><strong>{label}</strong>{hint && <span className="block text-label-sm text-on-surface-variant">{hint}</span>}</span>
+    <label className={`flex items-start gap-space-md p-space-md rounded-xl bg-surface-container-low transition-all hover:bg-surface-container ${canEdit ? "cursor-pointer" : ""}`}>
+      <input type="checkbox" className="mt-1 w-4 h-4 rounded accent-primary" checked={Boolean(f[k])} onChange={(e) => { setSaved(false); setF({ ...f, [k]: e.target.checked }); }} disabled={!canEdit} />
+      <span className="space-y-0.5"><span className="block font-label-lg text-label-lg font-bold text-on-surface">{label}</span>{hint && <span className="block font-body-sm text-body-sm text-on-surface-variant">{hint}</span>}</span>
     </label>
   );
   return (
-    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-4">
+    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-space-lg">
       <ErrorBox error={error} />
       {saved && <Alert kind="ok">Gemt. Planen er opdateret ud fra dine mål.</Alert>}
       <Field label="Produkt">
@@ -36,7 +36,7 @@ export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Recor
         </Select>
       </Field>
       {reception ? (
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid gap-space-md md:grid-cols-2">
           {cb("inbound_phone", "Indgående telefoni", "Besvarer hovednummer. Kræver telefoniudbyder (senere milepæl).")}
           {cb("webchat", "Hjemmeside-webchat", "Widget på jeres hjemmeside.")}
           {cb("callback", "Bestilt callback", "Hører under reception – ikke en separat prisplan.")}
@@ -46,9 +46,9 @@ export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Recor
       <Field label="Samtalemål (ét pr. linje)" hint="Fx ‘uforpligtende tilbud på gulvafslibning’">
         <Textarea value={(f.conversation_goals as string[] ?? []).join("\n")} onChange={(e) => { setSaved(false); setF({ ...f, conversation_goals: e.target.value.split("\n").filter(Boolean) }); }} disabled={!canEdit} />
       </Field>
-      <div className="flex gap-3">
-        <Button type="submit" disabled={pending || !canEdit}>{pending ? "Gemmer…" : "Gem mål"}</Button>
-        <Button type="button" variant="ghost" onClick={() => router.push("/onboarding/languages")}>Fortsæt til sprog →</Button>
+      <div className="flex flex-wrap items-center justify-end gap-space-md pt-space-sm">
+        <Button type="submit" variant="tonal" icon="save" disabled={pending || !canEdit}>{pending ? "Gemmer…" : "Gem mål"}</Button>
+        <Button type="button" onClick={() => router.push("/onboarding/languages")}>Fortsæt til sprog (O04) <Icon name="arrow_forward" size={18} className="text-secondary-fixed" /></Button>
       </div>
     </form>
   );

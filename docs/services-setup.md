@@ -70,9 +70,19 @@ Alternativ uden lokal git: åbn Codespaces på det tomme repo, upload bundlen, k
 | Test / bevis | Verificeringsmail til testadressen → `email_deliveries.status=sent` med `provider_message_id` → webhook sætter `provider_status=delivered`; `webhook_events` har én række pr. `svix-id`. Resend-dashboardets "Send test event" skal give 200. |
 | Udgift | Free: 3.000 mails/md. (listepris; verificér). |
 
+## 5. Anthropic — AI-assistent (milepæl B)
+
+| | |
+|---|---|
+| Hvorfor | Assistenten skal kunne svare ud fra den godkendte viden. |
+| Dashboard | <https://console.anthropic.com/> · Settings → Limits (forbrugsloft) · API Keys |
+| Klar i repo | `app/modules/ai/`: `AIProvider`-interface, `AnthropicProvider` (officiel `anthropic`-SDK, model fra `AI_MODEL_ID`, standard `claude-opus-5`; prompt caching; server-side refusal-fallback slået til). Prompten bygges **kun** af `active_knowledge` (godkendt, aktuel, ikke-arkiveret viden). Hvert kald logges i `ai_usage` med arbejdsrum, model (anmodet og faktisk), promptversion (`assistant-v1`), vidensrevision, tokens og estimeret pris. Endpoints: `POST /workspaces/{id}/assistant/preview` (staff+, intern test – ingen kundekanal) og `GET /workspaces/{id}/ai/usage` (admin+). `ai.conversation` forbliver `not_implemented`; UI viser ikke "Aktiv AI". **Ikke verificeret eksternt** (ingen nøgle endnu). |
+| Din handling | 1) Opret en API-nøgle i en workspace kun til Dialogbot staging, og sæt et **månedligt forbrugsloft** (fx 20 USD) under Limits. 2) I Render (dialogbot-api-staging): `ANTHROPIC_API_KEY` = nøglen, derefter `AI_PROVIDER=anthropic`. Del aldrig nøglen i chat. |
+| Test / bevis | Jeg kalder `/assistant/preview` på staging med et spørgsmål, der kan besvares af godkendt viden, og et der ikke kan → svar + `ai_usage`-række med `served_model`, tokens og `provider_request_id`. |
+| Udgift | Betaling pr. token. Listepris for `claude-opus-5`: 5 USD / 1 mio. input- og 25 USD / 1 mio. output-tokens (verificér i Console). Et preview-kald med lille vidensbase ≈ 2–4k input + ≤ 2k output ≈ 0,02–0,07 USD. |
+
 ## Senere (bed om input, når integrationen er konkret)
 
-- **Anthropic API** (milepæl B): jeg verificerer model-ID og adgang ved tilkobling; model gemmes i konfiguration (`AI_MODEL_ID`). Input: API-nøgle i Render (API + worker), månedligt forbrugsloft.
 - **Vapi + Twilio** (milepæl B): nummer, transskription, samtalemodel og stemme dokumenteres hver for sig; dansk SMS-kapabilitet kontrolleres mod Twilios DK-vejledning. Input: testmodtagernummer, forbrugsloft.
 - **Google Cloud / Microsoft Entra** (milepæl C): redirect-URL'er og scopes leveres, når kalenderadapteren findes.
 - **Stripe** (milepæl D): testmode først; webhook-secret; pris-/aftalemapping.

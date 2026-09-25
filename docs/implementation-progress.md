@@ -2,6 +2,24 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 6 — 25. september 2026 (milepæl B: Anthropic-adapter bag interface)
+
+**Grundlag:** Resend-webhook merget som `669a67a` (PR #3).
+
+| Del | Status | Bevis |
+|---|---|---|
+| `AI_PROVIDER` (`none`/`anthropic`/`fake`), `AI_MODEL_ID` (standard `claude-opus-5`), `ANTHROPIC_API_KEY`, `AI_EFFORT`, `AI_MAX_OUTPUT_TOKENS`, `AI_SERVER_FALLBACKS`; fejler lukket uden nøgle og afviser `fake` uden for dev/test | implementeret, testet | `test_config_fails_closed` |
+| `AIProvider`-interface + `AnthropicProvider` (officiel SDK `anthropic==1.8.0`, `beta.messages.create`, prompt caching på systemblokken, `output_config.effort`, `fallbacks: "default"` med beta `server-side-fallback-2026-07-01`; kun tekstblokke returneres) | implementeret, testet med stubbet SDK-klient | `test_anthropic_request_shape_and_usage`, `test_anthropic_fallback_model_is_recorded_and_can_be_disabled` |
+| Prompt bygges kun af godkendt viden (kladder, nyere kladder af godkendte emner og andre arbejdsrums viden kommer aldrig med); uden godkendt viden → 409 uden modelkald | testet | `test_prompt_contains_only_approved_knowledge_…`, `test_no_approved_knowledge_is_409_…` |
+| `ai_usage`-log pr. kald: arbejdsrum, bruger, formål, udbyder, anmodet/faktisk model, promptversion `assistant-v1`, vidensrevision, input/output/cache-tokens, estimeret pris (µUSD, kun for kendte modeller), latens, request-id, fejlkode | implementeret, migreret, testet | Alembic `43c189532412`; op/ned testet; `alembic check` ren |
+| Afvisning (`stop_reason=refusal`) maskeres med neutral dansk tekst og logges `refused`; 429 → 503 `ai_rate_limited`; øvrige udbyderfejl → 502 `ai_provider_error` (logges `error`) | testet | `test_anthropic_refusal_and_errors`, `test_refusal_is_masked_and_logged` |
+| `POST /workspaces/{id}/assistant/preview` (staff+), `GET /workspaces/{id}/ai/usage` (admin+); fremmed arbejdsrum → 404; uden udbyder → 501 `ai_not_configured` | testet | `test_usage_summary_is_per_workspace_and_admin_only`, `test_not_configured_is_501_…` |
+| Kapabilitet `ai.assistant_preview` (available/simulated/not_implemented efter udbyder). `ai.conversation` forbliver `not_implemented` → UI viser ikke "Aktiv AI" | implementeret, testet | — |
+
+**Ikke eksternt verificeret:** ingen Anthropic-nøgle endnu; model-ID `claude-opus-5` er ikke kaldt mod API'et fra dette miljø. Staging kører `AI_PROVIDER=none`.
+
+**Præcis næste handling:** Bruger: `docs/services-setup.md` §5 (nøgle + forbrugsloft, to variabler i Render). Claude: preview-kald på staging → `ai_usage`-række med `served_model` og tokens. Derefter webchat-widget på ekstern origin.
+
 ## Checkpoint 5 — 25. september 2026 (milepæl B: Resend-leveringswebhook)
 
 **Grundlag:** milepæl A merget som `85e15b2` (PR #2).

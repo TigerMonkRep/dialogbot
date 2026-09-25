@@ -1,6 +1,7 @@
 from app.models.domain import (  # noqa: F401
     KNOWLEDGE_KINDS,
     VERSION_STATUSES,
+    AiUsage,
     BusinessProfile,
     CheckResult,
     EmailDelivery,

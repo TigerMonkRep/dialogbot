@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;min-height:100%;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed": "#171e00", "on-primary": "#ffffff", "surface-container-high": "#d6ede8", "inverse-on-surface": "#dff6f0", "outline": "#707976", "on-surface": "#0a1f1c", "tertiary-fixed": "#c6e7ff", "tertiary-fixed-dim": "#93cef4", "surface": "#e7fef9", "secondary-fixed": "#d6ec85", "on-tertiary-fixed-variant": "#004c6b", "primary-fixed": "#b6eede", "error-container": "#ffdad6", "on-error": "#ffffff", "primary-fixed-dim": "#9bd1c3", "on-secondary-container": "#586a0e", "error": "#ba1a1a", "surface-container-lowest": "#ffffff", "on-error-container": "#93000a", "on-tertiary": "#ffffff", "on-secondary": "#ffffff", "on-primary-fixed-variant": "#184f44", "inverse-surface": "#203431", "secondary": "#546508", "on-primary-container": "#88beb0", "on-surface-variant": "#404946", "on-tertiary-container": "#80bbe0", "primary-container": "#164e43", "on-background": "#0a1f1c", "surface-container": "#dcf3ee", "outline-variant": "#bfc9c4", "surface-container-low": "#e1f8f3", "secondary-container": "#d4ea82", "tertiary-container": "#004b6a", "tertiary": "#00334a", "surface-dim": "#c8dfda", "surface-bright": "#e7fef9", "surface-container-highest": "#d0e7e2", "inverse-primary": "#9bd1c3", "on-tertiary-fixed": "#001e2d", "surface-variant": "#d0e7e2", "on-primary-fixed": "#00201a", "surface-tint": "#33675c", "secondary-fixed-dim": "#bbd06c", "primary": "#00362d", "background": "#e7fef9", "on-secondary-fixed-variant": "#3e4c00" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-lg": "2rem", "space-xl": "1.5rem", "gutter-lg": "1.5rem", "space-lg": "1rem", "margin-md": "1.5rem", "space-md": "0.75rem", "margin": "1rem", "space-xs": "0.25rem", "gutter": "1rem", "space-sm": "0.5rem" }, "fontFamily": { "display-lg-mobile": ["Manrope"], "label-lg": ["Inter"], "body-sm": ["Inter"], "headline-sm": ["Manrope"], "headline-lg": ["Manrope"], "body-lg": ["Inter"], "headline-lg-mobile": ["Manrope"], "display-lg": ["Manrope"], "body-md": ["Inter"], "label-md": ["Inter"], "label-sm": ["Inter"], "headline-md": ["Manrope"] }, "fontSize": { "display-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-lg-mobile": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600" }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 px-margin flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Gå tilbage" class="w-11 h-11 flex items-center justify-center text-on-surface hover:text-primary transition-colors focus:outline-none" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[22px]">arrow_back</span></button><div class="flex items-center gap-space-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-secondary-container text-[16px]">smart_toy</span></div><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">Dialogbot</span></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-full bg-surface-container-high"><span class="material-symbols-outlined text-secondary text-[14px]">lock</span><span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Sikker</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full bg-surface pt-14 pb-safe"><div class="flex flex-col w-full px-margin pb-margin-lg space-y-space-md">
+<!-- Header Card: Operatør Status & Kontekst -->
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">support_agent</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-space-xs">
+<h1 class="font-headline-sm text-headline-sm text-on-surface truncate">M06 - Supportkø</h1>
+<span class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-1.5 py-0.5 rounded-full font-bold">P9</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">C. Lind • Lead Tech Specialist</p>
+</div>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-high px-2.5 py-1 rounded-full shrink-0">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Vagt Aktiv</span>
+</div>
+</div>
+</div>
+<!-- Filterfaner: Horisontalt swipeable -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 scrollbar-none -mx-margin px-margin">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-3 py-1.5 rounded-full whitespace-nowrap shadow-sm shrink-0 flex items-center gap-1">
+<span>Alle</span>
+<span class="bg-primary-container text-on-primary px-1.5 py-0.2 rounded-full text-[10px]">8</span>
+</button>
+<button class="bg-surface-container-lowest text-on-surface font-label-md text-label-md px-3 py-1.5 rounded-full whitespace-nowrap shadow-sm shrink-0 flex items-center gap-1">
+<span>Åbne</span>
+<span class="bg-surface-container-highest text-on-surface-variant px-1.5 py-0.2 rounded-full text-[10px]">3</span>
+</button>
+<button class="bg-surface-container-lowest text-on-surface font-label-md text-label-md px-3 py-1.5 rounded-full whitespace-nowrap shadow-sm shrink-0 flex items-center gap-1">
+<span>Tildelt mig</span>
+<span class="bg-secondary-container text-on-secondary-container px-1.5 py-0.2 rounded-full text-[10px] font-bold">2</span>
+</button>
+<button class="bg-surface-container-lowest text-on-surface font-label-md text-label-md px-3 py-1.5 rounded-full whitespace-nowrap shadow-sm shrink-0 flex items-center gap-1">
+<span>Afventer kunde</span>
+<span class="bg-surface-container-highest text-on-surface-variant px-1.5 py-0.2 rounded-full text-[10px]">1</span>
+</button>
+</div>
+<!-- Hurtigfiltre & Dropdowns -->
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="bg-surface-container-lowest rounded-lg p-2 shadow-sm flex items-center justify-between">
+<div class="min-w-0 pr-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase tracking-wider text-[10px]">Arbejdsrum</span>
+<span class="font-label-md text-label-md text-on-surface truncate block font-medium">Fjord Gulvservice</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0">unfold_more</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-2 shadow-sm flex items-center justify-between">
+<div class="min-w-0 pr-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase tracking-wider text-[10px]">Prioritet</span>
+<span class="font-label-md text-label-md text-error truncate block font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error shrink-0"></span>
+          Høj (P2)
+        </span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0">filter_list</span>
+</div>
+</div>
+<!-- Sagsliste Kort Stack -->
+<div class="space-y-space-sm">
+<div class="flex items-center justify-between px-0.5">
+<span class="font-label-md text-label-md text-on-surface-variant font-semibold">Aktive Sager i Kø (3)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Sorteret efter SLA</span>
+</div>
+<!-- Sag 1: Valgt / Aktiv sag #SUP-R2-001 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-md space-y-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="bg-error-container text-on-error-container font-label-sm text-label-sm px-2 py-0.5 rounded-md font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">priority_high</span>
+            Høj
+          </span>
+<span class="font-label-sm text-label-sm text-primary font-bold tracking-tight">#SUP-R2-001</span>
+</div>
+<div class="flex items-center gap-1 bg-secondary-fixed text-on-secondary-fixed px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm font-semibold">Under behandling</span>
+</div>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Fjord Gulvservice ApS</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-1 mt-0.5">Udløbet kalenderforbindelse for montør Mads M.</p>
+</div>
+<!-- INC link badge -->
+<div class="bg-surface-container-high rounded-lg px-2.5 py-1.5 flex items-center justify-between">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="material-symbols-outlined text-tertiary-container text-[16px]">link</span>
+<span class="font-label-sm text-label-sm text-on-surface truncate">Relateret: <strong class="text-tertiary">#INC-4412</strong> (M03 Synkronisering)</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant shrink-0 font-medium">SLA: 18m</span>
+</div>
+</div>
+<!-- Sag 2: #SUP-108 Advokat Hald -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-xs opacity-90">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-md font-medium">Mellem</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-bold">#SUP-108</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Modtaget 42m siden</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-semibold">Advokat Hald &amp; Partnere</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Konfiguration af VIP routing for partnertelefoner</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">chevron_right</span>
+</div>
+</div>
+<!-- Sag 3: #SUP-105 Havnebord Café -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-xs opacity-75">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-2 py-0.5 rounded-md font-medium">Lav</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-bold">#SUP-105</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">I går</span>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-semibold">Havnebord Café</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Spørgsmål til ændring af åbningstids-meddelelse</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Detaljevisning af Aktiv Sag #SUP-R2-001 -->
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-sm space-y-space-md">
+<!-- Detalje Header -->
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">mark_chat_unread</span>
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Kundens Oprindelige Henvendelse</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">I dag 09:14</span>
+</div>
+<!-- Kundebesked kort -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md space-y-space-sm shadow-sm">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center font-label-md text-label-md text-primary font-bold">
+          MF
+        </div>
+<div>
+<div class="font-label-md text-label-md text-on-surface font-semibold">Mads Fjord • Daglig Leder</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">mads@fjordgulve.dk • +45 86 12 34 56</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-relaxed">
+        Hej Dialogbot Support. Vores montør Mads Møller kan ikke se nye kundeopkald booket ind i sin Google Kalender her til morgen. Dialogbotten siger under samtalen at tiden er reserveret, men den dukker ikke op. Se vedhæftede skærmbillede fra vores montør-app.
+      </p>
+<!-- Vedhæftet fil -->
+<div class="bg-surface-container rounded-lg p-2.5 flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0">image</span>
+<div class="min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface font-medium truncate block">screenshot_kalender_fejl.png</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant text-[10px]">PNG • 1.4 MB • Google OAuth Token Expired</span>
+</div>
+</div>
+<button class="bg-surface-container-lowest text-on-surface px-2.5 py-1 rounded text-[11px] font-semibold flex items-center gap-1 shadow-sm shrink-0">
+<span class="material-symbols-outlined text-[13px]">visibility</span>
+          Vis
+        </button>
+</div>
+<!-- Thumbnail Visual -->
+<div class="rounded-lg overflow-hidden h-28 w-full relative">
+<img class="w-full h-full object-cover" data-alt="Screenshot of an enterprise mobile calendar interface showing a red warning banner with Danish text stating Google Workspace token expired and synchronization interrupted, high resolution Scandinavian app UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAq67ymmZazi7yY69xKpLGllR5a0FmSnfCGEXmBjblQRK8ACqrkfANMflYU1Bi1IF3qFGids8p2HrxkFZXNqP7NqAyK-8_o9LWOxTfxBmddwk_57GUPGgswm323xXVFDW34kEVyR-eclW-G8o4ukuPV56tAPxD8sD1kqgNADDhfh9PfzZd2DFiJjWp9fMNMss5AKzUXpXv9zbDSEZwr5e2U2aoWpT5zpJKlwT4bnNMGJsnTFnWIOOwr1A"/>
+<div class="absolute inset-0 bg-primary/20 flex items-center justify-center">
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface font-label-sm text-label-sm px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-error text-[14px]">error</span>
+            Auth Error: Token Revoked
+          </span>
+</div>
+</div>
+</div>
+<!-- Tidligere Svar Historik fra Operatør -->
+<div class="space-y-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider px-1 font-semibold text-[10px]">Tidligere Svarhistorik</span>
+<div class="bg-surface-container-lowest rounded-xl p-space-md space-y-1.5 shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[16px]">verified_user</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">C. Lind (Lead Tech / P9)</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">09:32 (18m siden)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          “Hej Mads, tak for henvendelsen. Vi har verificeret fejlen og koblet sagen til teknisk hændelse #INC-4412. Vi er i gang med at genaktivere Google Workspace forbindelsen til Mads Møllers profil.”
+        </p>
+</div>
+</div>
+<!-- To Strengt Adskilte Svarmuligheder (Faner) -->
+<div class="space-y-space-sm pt-space-xs">
+<!-- Fanevælger -->
+<div class="grid grid-cols-2 bg-surface-container-highest p-1 rounded-xl">
+<button class="bg-surface-container-lowest text-on-surface py-2 rounded-lg font-label-md text-label-md font-bold shadow-sm transition-all flex items-center justify-center gap-1" id="tab-public-btn" onclick="switchResponseTab('public')">
+<span class="material-symbols-outlined text-[16px] text-primary">public</span>
+<span>Kundesynligt Svar</span>
+</button>
+<button class="text-on-surface-variant py-2 rounded-lg font-label-md text-label-md font-bold transition-all flex items-center justify-center gap-1" id="tab-internal-btn" onclick="switchResponseTab('internal')">
+<span class="material-symbols-outlined text-[16px] text-error">lock</span>
+<span>Internt Notat (P9)</span>
+</button>
+</div>
+<!-- Svarmulighed 1: Kundesynligt Svar -->
+<div class="space-y-space-sm" id="response-public">
+<div class="bg-surface-container-high text-on-surface p-2.5 rounded-lg flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">info</span>
+<p class="font-body-sm text-body-sm leading-tight text-on-surface-variant">
+            Dette svar publiceres direkte til Mads Fjord på <strong class="text-on-surface">H01 Kundesupportportal</strong> og sendes som bekræftelses-SMS.
+          </p>
+</div>
+<div class="relative">
+<textarea class="w-full bg-surface-container-lowest text-on-surface rounded-xl p-space-md font-body-sm text-body-sm focus:outline-none placeholder-outline-variant shadow-sm resize-none" placeholder="Skriv dit officielle svar til kunden her..." rows="4">Hej Mads,
+
+Google OAuth forbindelsen er nu fornyet centralt via hændelse #INC-4412. Mads Møllers kalender synkroniserer automatisk igen inden for 3 minutter. Alle udestående reservationer er genskabt i hans tidsplan.
+
+Bekræft gerne når det virker hos jer.</textarea>
+</div>
+</div>
+<!-- Svarmulighed 2: Internt Operatørnotat (Fortroligt - P9) -->
+<div class="hidden space-y-space-sm" id="response-internal">
+<!-- Advarselsfarve & Sikkerhedsmarkering -->
+<div class="bg-error-container text-on-error-container p-3 rounded-lg flex items-start gap-2">
+<span class="material-symbols-outlined text-error text-[20px] shrink-0">shield_lock</span>
+<div>
+<div class="font-label-sm text-label-sm font-bold uppercase tracking-wide">Strengt Fortroligt • Kun P9 Operatører</div>
+<p class="font-body-sm text-body-sm mt-0.5">
+              Dette notat logføres i <strong class="text-on-error-container font-bold">M07 Hændelseslog</strong> og vises <span class="underline font-bold uppercase">aldrig</span> for kunden eller i eksterne portaler.
+            </p>
+</div>
+</div>
+<div class="relative">
+<textarea class="w-full bg-surface-container-lowest text-on-surface rounded-xl p-space-md font-body-sm text-body-sm focus:outline-none placeholder-outline-variant shadow-sm resize-none" placeholder="Indtast fortroligt operatørnotat (tekniske parametre, API svar, internt audit)..." rows="4">Root-cause bekræftet: Refresh token udløbet efter API scopes rotation i backend deploy kl. 03:00. P9 token genudstedt manuelt til montør-id #MM-41. Relateret M03 hændelse lukkes når batch job kvitterer OK.</textarea>
+</div>
+</div>
+</div>
+<!-- Handlingsknapper / Action Suite -->
+<div class="space-y-space-xs pt-space-xs">
+<!-- Hovedhandlinger -->
+<div class="grid grid-cols-2 gap-space-sm">
+<button class="bg-primary text-on-primary py-3 px-space-md rounded-xl font-label-md text-label-md font-semibold flex items-center justify-center gap-1.5 shadow-sm active:opacity-90" type="button">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Send svar</span>
+</button>
+<button class="bg-surface-container-lowest text-on-surface py-3 px-space-md rounded-xl font-label-md text-label-md font-semibold flex items-center justify-center gap-1.5 shadow-sm active:bg-surface-container" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Gem kladde</span>
+</button>
+</div>
+<!-- Sekundære Operatørhandlinger -->
+<div class="pt-space-xs space-y-space-xs">
+<button class="w-full bg-surface-container-highest text-tertiary-container py-2.5 px-space-md rounded-xl font-label-md text-label-md font-semibold flex items-center justify-center gap-1.5 active:bg-surface-container-high" type="button">
+<span class="material-symbols-outlined text-[18px]">forward_to_inbox</span>
+<span>Eskalér til M04 Finansiel Tvist</span>
+</button>
+<button class="w-full bg-surface-container-lowest text-error py-2.5 px-space-md rounded-xl font-label-md text-label-md font-bold flex items-center justify-center gap-1.5 active:bg-error-container/20" type="button">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>Luk sag (#SUP-R2-001)</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Billedgalleri Reference Context / System Status Visual -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Integrationshelbred • Google API</span>
+<span class="bg-secondary-fixed text-on-secondary-fixed text-[11px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 99.8% Online
+      </span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="rounded-lg overflow-hidden h-20 relative bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Scandinavian control room modern interface displaying automated Google Cloud Workspace API latency metrics, telemetry chart in pine green and soft citron colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSy2-70fWZGfrVVHnIG-8hRCUJ4Nod1irY0pXAIpjjE7wPEh2qKlT4ylA8XVTOq_73j2JN3bLtndB6ffCISD64ttsTBbGuUrrTDlQlhAs4VqDMC8sOO42C_tP4IzbcKqEOrHNUx431ywXjtcYjU6Fvkt9_HKi4-oROucfOqhXsABv4kiHXpWZlpmUocMN1VNSJuW8lS4E74_XALu-eEgyvW99V9_hmcWq4fBc1y2zlcJ4bp_H3gGRzWA"/>
+<div class="absolute bottom-1 left-1.5 right-1.5 bg-surface/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] font-label-sm text-on-surface truncate">
+          API Gateway P9
+        </div>
+</div>
+<div class="rounded-lg overflow-hidden h-20 relative bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Close up photograph of a contemporary Danish telephony server dashboard with clean soft UI and glowing green connection status indicators on screen." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD33Y474tZxATKOBy7PKnyJCceD_ZatWjqZ8z2FE2TN9hY05p6LDAADW1dXNJTQ6saiFxwwoCTeTro5HXEHKU3SItzVpIKoPi1hLjQ_C1PcyvKNgVDl73t3Bc7EeKFdt0UsgN-q66lesPEC24ROZO93wlNBPKfl7QqimCM_N9W05MnghBo0I9TGB2vOQZRIXYRWoL4tBGwPkDpyxvvOF1I-pEm71TJN_tWXGSOxzOdT7JGKCwnbZwInVA"/>
+<div class="absolute bottom-1 left-1.5 right-1.5 bg-surface/90 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] font-label-sm text-on-surface truncate">
+          Fjord OAuth Pod
+        </div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function switchResponseTab(tab) {
+    const publicBtn = document.getElementById('tab-public-btn');
+    const internalBtn = document.getElementById('tab-internal-btn');
+    const publicContent = document.getElementById('response-public');
+    const internalContent = document.getElementById('response-internal');
+
+    if (tab === 'public') {
+      publicBtn.className = "bg-surface-container-lowest text-on-surface py-2 rounded-lg font-label-md text-label-md font-bold shadow-sm transition-all flex items-center justify-center gap-1";
+      internalBtn.className = "text-on-surface-variant py-2 rounded-lg font-label-md text-label-md font-bold transition-all flex items-center justify-center gap-1";
+      publicContent.classList.remove('hidden');
+      internalContent.classList.add('hidden');
+    } else {
+      internalBtn.className = "bg-error-container text-on-error-container py-2 rounded-lg font-label-md text-label-md font-bold shadow-sm transition-all flex items-center justify-center gap-1";
+      publicBtn.className = "text-on-surface-variant py-2 rounded-lg font-label-md text-label-md font-bold transition-all flex items-center justify-center gap-1";
+      internalContent.classList.remove('hidden');
+      publicContent.classList.add('hidden');
+    }
+  }
+</script></main></body></html>

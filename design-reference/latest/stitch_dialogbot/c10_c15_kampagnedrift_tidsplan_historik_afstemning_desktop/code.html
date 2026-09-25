@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary-fixed": "#00201a", "outline-variant": "#bfc9c4", "tertiary": "#00334a", "secondary-container": "#d4ea82", "surface-container-low": "#e1f8f3", "error-container": "#ffdad6", "surface-container": "#dcf3ee", "on-tertiary-fixed": "#001e2d", "primary": "#00362d", "on-tertiary-fixed-variant": "#004c6b", "surface-variant": "#d0e7e2", "on-error": "#ffffff", "on-secondary-fixed": "#171e00", "surface-container-lowest": "#ffffff", "on-tertiary-container": "#80bbe0", "tertiary-fixed": "#c6e7ff", "inverse-surface": "#203431", "on-surface-variant": "#404946", "primary-fixed-dim": "#9bd1c3", "on-primary": "#ffffff", "surface-container-highest": "#d0e7e2", "background": "#e7fef9", "on-surface": "#0a1f1c", "inverse-primary": "#9bd1c3", "tertiary-fixed-dim": "#93cef4", "error": "#ba1a1a", "on-secondary-container": "#586a0e", "surface-dim": "#c8dfda", "secondary-fixed-dim": "#bbd06c", "surface-tint": "#33675c", "surface-container-high": "#d6ede8", "tertiary-container": "#004b6a", "on-primary-container": "#88beb0", "secondary-fixed": "#d6ec85", "outline": "#707976", "on-error-container": "#93000a", "secondary": "#546508", "primary-container": "#164e43", "on-primary-fixed-variant": "#184f44", "on-secondary": "#ffffff", "surface": "#e7fef9", "on-secondary-fixed-variant": "#3e4c00", "surface-bright": "#e7fef9", "inverse-on-surface": "#dff6f0", "primary-fixed": "#b6eede", "on-background": "#0a1f1c", "on-tertiary": "#ffffff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "margin-lg": "2rem", "gutter": "1rem", "gutter-lg": "1.5rem", "margin": "1rem", "space-md": "0.75rem", "space-xl": "1.5rem", "space-xs": "0.25rem", "margin-md": "1.5rem", "space-lg": "1rem" }, "fontFamily": { "headline-lg-mobile": [ "Manrope" ], "label-lg": [ "Inter" ], "headline-md": [ "Manrope" ], "label-sm": [ "Inter" ], "body-sm": [ "Inter" ], "label-md": [ "Inter" ], "headline-sm": [ "Manrope" ], "display-lg": [ "Manrope" ], "display-lg-mobile": [ "Manrope" ], "headline-lg": [ "Manrope" ], "body-md": [ "Inter" ], "body-lg": [ "Inter" ] }, "fontSize": { "headline-lg-mobile": [ "22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "label-lg": [ "14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" } ], "headline-md": [ "22px", { "lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "label-sm": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" } ], "body-sm": [ "13px", { "lineHeight": "18px", "fontWeight": "400" } ], "label-md": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" } ], "headline-sm": [ "18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "display-lg": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "display-lg-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "headline-lg": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ] } } } };</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col justify-between py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col gap-space-lg"><div class="px-gutter flex items-center gap-space-sm"><img alt="Brand logo. - Primary color: #164e43
+- Font: manrope
+- Mode: light
+- Roundness: rounded-md
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V05QJ6ogqjQWFOy45hIopE1L8L12GtzKAoL03rnuk3QGgmKM9MOsMR-7O6ORIaIetfBElhHecaaykH_SmmLkmGC4aIeHNldsLlMhk8SHwIijcyDicoWG9fmHPRmeoWXyFl39oUTfA58hv5tXT4hTdwOsQc5PlbL9MCt5N6AgkeNV7Ls4coD3Gt8P6fge98PhalilHSUXAqPpnxnQNjoD2bIfUoH01Vn1r4Cv13MEMT1umMgSSBUpyi7M4"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">Dialogbot</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Admin Portal</span></div></div><nav class="flex flex-col gap-space-xs px-space-sm" data-active-classes="bg-primary-container text-on-primary font-label-lg rounded-xl"><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="overblik" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Overblik</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="indbakke" href="#"><span class="material-symbols-outlined text-[20px]">inbox</span><span>Indbakke</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="henvendelser" href="#"><span class="material-symbols-outlined text-[20px]">contact_support</span><span>Henvendelser</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="reception" href="#"><span class="material-symbols-outlined text-[20px]">support_agent</span><span>Reception</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="kampagner" href="#"><span class="material-symbols-outlined text-[20px]">campaign</span><span>Kampagner</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="viden" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span>Viden</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="bookinger" href="#"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span>Bookinger</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="rapporter" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span>Rapporter</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="fakturering" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span>Fakturering</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="indstillinger" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Indstillinger</span></a></nav></div><div class="px-space-md"><div class="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex flex-col min-w-0 flex-1"><span class="font-label-md text-label-md text-on-surface truncate">Mads Fjord</span><span class="font-body-sm text-body-sm text-on-surface-variant truncate">Fjord Gulvservice</span></div></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-space-md"><img alt="Brand logo. - Primary color: #164e43
+- Font: manrope
+- Mode: light
+- Roundness: rounded-md
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V05QJ6ogqjQWFOy45hIopE1L8L12GtzKAoL03rnuk3QGgmKM9MOsMR-7O6ORIaIetfBElhHecaaykH_SmmLkmGC4aIeHNldsLlMhk8SHwIijcyDicoWG9fmHPRmeoWXyFl39oUTfA58hv5tXT4hTdwOsQc5PlbL9MCt5N6AgkeNV7Ls4coD3Gt8P6fge98PhalilHSUXAqPpnxnQNjoD2bIfUoH01Vn1r4Cv13MEMT1umMgSSBUpyi7M4"/><div class="flex items-center gap-space-sm"><span class="font-headline-sm text-headline-sm text-primary">Dialogbot</span><span class="text-outline-variant font-body-sm">/</span><span class="font-label-lg text-label-lg text-on-surface">Fjord Gulvservice ApS</span></div><span class="inline-flex items-center gap-space-xs px-space-sm py-0.5 rounded-full bg-secondary-container font-label-sm text-label-sm text-on-secondary-fixed"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>Demotilstand</span></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl bg-surface-container-low"><span class="material-symbols-outlined text-on-surface-variant text-[18px]">search</span><span class="font-body-sm text-body-sm text-on-surface-variant">Søg i henvendelser...</span></div><button class="w-9 h-9 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="font-label-md text-label-md text-on-surface hidden md:inline-block">Mads Fjord</span></div></div></header><main class="relative pt-16 bg-surface w-full px-gutter-lg py-gutter"><div class="flex flex-col w-full">
+<!-- Top Context Header & Financial Tag -->
+<div class="flex flex-col gap-space-md mb-space-lg">
+<!-- Breadcrumb & High-level Status -->
+<div class="flex flex-wrap items-center justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex items-center gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-primary-container text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[26px]">record_voice_over</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-sm text-headline-sm text-primary">Opfølgning på tilbud — september</span>
+<span class="font-label-sm text-label-sm px-space-sm py-0.5 rounded-full bg-surface-container text-on-surface-variant">ID: c-sep-2026</span>
+<span class="inline-flex items-center gap-space-xs px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+              Gennemført &amp; Afstemt
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Ordre <strong class="text-on-surface">#ORD-5520</strong> • 500 pakker á 9,00 kr. = 4.500,00 kr. ekskl. moms • Betalt via Dankort/Stripe • Afvikler: <span class="text-primary font-label-md">Fjord Gulvservice ApS</span> (+45 70 20 11 90)
+          </p>
+</div>
+</div>
+<!-- Quick Action Toolbar -->
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-space-sm rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-md text-label-md flex items-center gap-space-xs transition-colors" id="btn-export-csv">
+<span class="material-symbols-outlined text-[18px]">download</span>
+          Eksportér CSV
+        </button>
+<button class="px-space-md py-space-sm rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-md text-label-md flex items-center gap-space-xs transition-colors" id="btn-re-dispatch" title="Genprøv webhook-dispatch uden nye opkald">
+<span class="material-symbols-outlined text-[18px]">cached</span>
+          Genprøv Webhook
+        </button>
+<a class="px-space-md py-space-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container flex items-center gap-space-xs transition-all shadow-sm" href="#support-h01">
+<span class="material-symbols-outlined text-[18px]">support</span>
+          Support H01 / M04
+        </a>
+</div>
+</div>
+<!-- Phase Stepper Navigation Tabs (C10/C11 -> C12/C14 -> C13/C15) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm bg-surface-container-low p-space-xs rounded-xl">
+<button class="phase-tab flex items-center justify-between p-space-md rounded-lg bg-surface-container-lowest text-on-surface shadow-sm transition-all text-left" id="tab-btn-prep" onclick="switchCampaignTab('tab-prep')">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm flex items-center justify-center shrink-0">1</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg leading-tight">Planlægning &amp; Readiness</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">C10 Tidsplan • C11 Startgodkendelse</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</button>
+<button class="phase-tab flex items-center justify-between p-space-md rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all text-left" id="tab-btn-live" onclick="switchCampaignTab('tab-live')">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-center shrink-0">2</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg leading-tight">Live Drift &amp; Log</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">C12 Monitorering • C14 Kontakter (301/500)</span>
+</div>
+</div>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-secondary-container text-on-secondary-fixed">AFSLUTTET</span>
+</button>
+<button class="phase-tab flex items-center justify-between p-space-md rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all text-left" id="tab-btn-results" onclick="switchCampaignTab('tab-results')">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded-full bg-surface-container-highest text-on-surface font-label-sm text-label-sm flex items-center justify-center shrink-0">3</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg leading-tight">Slutrapport &amp; Finans</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">C13 Udfald • C15 Refusion (1.800 kr.)</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px]">account_balance_wallet</span>
+</button>
+</div>
+</div>
+<!-- TAB PANE 1: C10 Tidsplan & C11 Startgodkendelse -->
+<div class="tab-content flex flex-col gap-space-lg" id="tab-pane-prep">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- C10: Konfigurerede opkaldsvinduer & Retry Policy -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-space-xl rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px]">calendar_clock</span>
+<h2 class="font-headline-sm text-headline-sm text-primary">C10 • Tidsplan &amp; Vinduer</h2>
+</div>
+<span class="font-label-sm text-label-sm px-space-sm py-1 bg-surface-container-low text-primary rounded-full">
+              Europe/Copenhagen (CET)
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Udgående opkald afvikles udelukkende i lovlige erhvervsvinduer med automatisk forsinkelse og kapacitetsloft.
+          </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md pt-space-xs">
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Primært Formiddagsvindue</span>
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">routine</span>
+<span class="font-label-lg text-label-lg text-on-surface">Hverdage 09:00 — 12:00</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Optimeret til håndværk &amp; B2C boligejere</span>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Sekundært Eftermiddagsvindue</span>
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">routine</span>
+<span class="font-label-lg text-label-lg text-on-surface">Hverdage 13:00 — 16:30</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Spærret automatisk 12:00 - 13:00 (frokost)</span>
+</div>
+</div>
+<!-- Parameter Specifikationer -->
+<div class="grid grid-cols-3 gap-space-sm pt-space-xs text-center">
+<div class="p-space-sm rounded-lg bg-surface">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Retry-interval</span>
+<span class="font-headline-sm text-headline-sm text-primary">120 min</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] block">Mellem opkaldsforsøg</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Maks forsøg / taletid</span>
+<span class="font-headline-sm text-headline-sm text-primary">2 / 180s</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] block">Pr. kontaktpakke</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Samtidige kanaler</span>
+<span class="font-headline-sm text-headline-sm text-primary">3 linjer</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] block">Sip Trunk Concurrency</span>
+</div>
+</div>
+<!-- A-nummer / Caller ID -->
+<div class="flex items-center justify-between p-space-md rounded-xl bg-surface-container">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">phone_in_talk</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary">A-nummer: +45 70 20 11 90</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Fjord Gulvservice ApS • CVR 39218844 (DK Tele-verificeret)</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[24px]">verified</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-lg mt-space-md border-t border-surface-container">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Sidst valideret 26. sep 2026 kl. 08:45 af AI Router Daemon</span>
+<button class="px-space-lg py-space-sm bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-md text-label-md rounded-lg transition-colors">
+            Gem tidsplan
+          </button>
+</div>
+</div>
+<!-- C11: Readiness-tjek forud for start & Startgodkendelse -->
+<div class="lg:col-span-5 bg-surface-container-lowest p-space-xl rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px]">checklist</span>
+<h2 class="font-headline-sm text-headline-sm text-primary">C11 • Startgodkendelse</h2>
+</div>
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-semibold">5/5 KLAR</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Automatiseret syntetisk afviklingsspærre. Alle 5 driftspunkter skal godkendes, før udkaldsmotoren aktiveres.
+          </p>
+<div class="space-y-space-sm">
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+<span class="font-label-md text-label-md text-on-surface">Ordre forudbetalt</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">#ORD-5520 (Dankort)</span>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+<span class="font-label-md text-label-md text-on-surface">500 kontakter valideret</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">E.164 formatering OK</span>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+<span class="font-label-md text-label-md text-on-surface">Manuskript v1.2 godkendt</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">Akustikmodel: Dan-Voice-4</span>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+<span class="font-label-md text-label-md text-on-surface">7 scenarietests bestået</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">100% syntaks-genkendelse</span>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+<span class="font-label-md text-label-md text-on-surface">S10 spærreliste krydstjekket</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">1 fravalg frasorteret</span>
+</div>
+</div>
+</div>
+<div class="mt-space-lg pt-space-md border-t border-surface-container flex flex-col gap-space-sm">
+<div class="p-space-sm rounded-lg bg-surface-container text-[12px] text-on-surface-variant">
+<span class="font-semibold text-primary">Driftsstatus:</span> Kampagnen blev igangsat d. 26. sep kl. 09:00 og stoppet kontrolleret efter 301 forsøgte kontakter for regnskabsafstemning.
+          </div>
+<button class="w-full py-space-md rounded-xl bg-surface-container-high text-on-surface-variant font-label-lg text-label-lg flex items-center justify-center gap-space-sm cursor-not-allowed opacity-75" disabled="">
+<span class="material-symbols-outlined text-[20px]">play_circle</span>
+            Kampagne fuldført &amp; stoppet
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- TAB PANE 2: C12 Live Drift & Monitorering + C14 Kontaktdetalje -->
+<div class="tab-content hidden flex flex-col gap-space-lg" id="tab-pane-live">
+<!-- C12: Adskilte KPI'er Grid -->
+<div class="grid grid-cols-2 lg:grid-cols-6 gap-space-md">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Købte pakker</span>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-display-lg text-display-lg text-primary">500</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">stk.</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-2">Oprindelig kvote (#ORD-5520)</span>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Kontakter forsøgt</span>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-display-lg text-display-lg text-primary">301</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">/ 500</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary font-medium mt-2">300 afsluttede • 1 i kø</span>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Opkaldsforsøg samlet</span>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-display-lg text-display-lg text-primary">420</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">kald</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-2">Gns. 1,40 forsøg/kontakt</span>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Personer nået</span>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-display-lg text-display-lg text-secondary">245</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">samtaler</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-2">81,4% kontaktfrekvens</span>
+</div>
+<!-- Card 5 -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col bg-gradient-to-br from-surface-container-lowest via-surface-container-lowest to-surface-container-low">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Forbrugte pakker</span>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-display-lg text-display-lg text-primary">300</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">stk.</span>
+</div>
+<span class="font-label-md text-label-md text-primary mt-2 font-semibold">2.700,00 kr. forbrugt</span>
+</div>
+<!-- Card 6: Uforbrugte & Refusion -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Uforbrugte pakker</span>
+<div class="flex items-baseline gap-space-xs mt-1">
+<span class="font-display-lg text-display-lg text-on-secondary-container">200</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">stk.</span>
+</div>
+<span class="font-label-md text-label-md text-on-secondary-container mt-2 font-bold">1.800,00 kr. refunderet</span>
+</div>
+</div>
+<!-- Live Driftsstyring & Toggles Bar -->
+<div class="flex flex-wrap items-center justify-between gap-space-md p-space-md bg-surface-container-lowest rounded-xl shadow-sm">
+<div class="flex items-center gap-space-md">
+<span class="font-label-md text-label-md text-on-surface">Driftstilstand:</span>
+<span class="inline-flex items-center gap-1.5 px- space-sm py-1 bg-surface-container text-primary font-label-sm text-label-sm rounded-md">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+          Manuelt stoppet ved #301
+        </span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">Ingen aktive opkald på de 3 SIP-linjer lige nu.</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-space-sm bg-surface-container-high hover:bg-surface-variant text-on-surface-variant rounded-lg font-label-md text-label-md flex items-center gap-space-xs transition-colors" disabled="">
+<span class="material-symbols-outlined text-[18px]">pause</span>
+          Sæt på pause
+        </button>
+<button class="px-space-md py-space-sm bg-surface-container-high hover:bg-surface-variant text-on-surface-variant rounded-lg font-label-md text-label-md flex items-center gap-space-xs transition-colors" disabled="">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+          Genoptag
+        </button>
+<button class="px-space-md py-space-sm bg-primary-container text-on-primary rounded-lg font-label-md text-label-md flex items-center gap-space-xs hover:bg-primary transition-all" onclick="switchCampaignTab('tab-results')">
+<span class="material-symbols-outlined text-[18px]">check_box</span>
+          Gå til Slutrapport &amp; Afstemning
+        </button>
+</div>
+</div>
+<!-- C14 Kontaktdetalje og Opkaldshistorik -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="p-space-lg flex flex-wrap items-center justify-between gap-space-md border-b border-surface-container">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px]">contacts</span>
+<h3 class="font-headline-sm text-headline-sm text-primary">C14 • Kontaktdetaljer &amp; Reelle Opkaldshændelser</h3>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">filter_list</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Viser 4 af 301 kontakter</span>
+</div>
+</div>
+</div>
+<!-- Kontaktliste & Udfoldede logs -->
+<div class="divide-y divide-surface-container">
+<!-- Række 1: Henrik Villumsen (Konverteret: Møde) -->
+<div class="p-space-lg hover:bg-surface-bright/50 transition-colors">
+<div class="flex flex-wrap items-start justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-fixed flex items-center justify-center font-label-md font-bold shrink-0">
+                HV
+              </div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-lg text-label-lg text-on-surface">Henrik Villumsen</span>
+<span class="font-mono font-body-sm text-body-sm text-on-surface-variant">+45 28 XX 42 10</span>
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-semibold">Interesseret • Møde Booket</span>
+</div>
+<div class="flex items-center gap-space-md mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span>1 forsøg gennemført</span>
+<span>•</span>
+<span>94s samtaletid</span>
+<span>•</span>
+<span>Mødebekræftelse: <strong>28. okt kl. 10.30 (#FG-8942)</strong></span>
+</div>
+</div>
+</div>
+<button class="px-space-sm py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm flex items-center gap-1 hover:bg-surface-container-high transition-colors" onclick="toggleLog('log-henrik')">
+<span>Se transskription</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+<!-- Udfoldet AI Transskription -->
+<div class="mt-space-md p-space-md rounded-lg bg-surface-container-low text-body-sm font-body-sm flex flex-col gap-space-xs" id="log-henrik">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm mb-1">
+<span>Opkald optaget d. 26. sep 2026 kl. 09:24:12 (94 sekunder)</span>
+<span class="font-mono">Syntese-ID: v-rec-88219</span>
+</div>
+<p><strong class="text-primary">Dialogbot AI:</strong> "Goddag Henrik, jeg ringer fra Fjord Gulvservice angående det tilbud på gulvafhøvling du modtog i sidste uge. Passer det fint at vende det kort?"</p>
+<p><strong class="text-on-surface">Henrik:</strong> "Ja hej. Jo, vi kiggede på det i går aftes. Vi er klar, men vil gerne have en fagmand ud og måle stuen op først."</p>
+<p><strong class="text-primary">Dialogbot AI:</strong> "Det forstår jeg udmærket! Jeg kan se i mesters kalender, at Mads kan komme forbi onsdag d. 28. oktober kl. 10.30. Skal jeg reservere den tid til dig?"</p>
+<p><strong class="text-on-surface">Henrik:</strong> "Det passer helt perfekt. Send gerne en bekræftelse på SMS."</p>
+<div class="mt-2 pt-2 border-t border-surface-container flex items-center gap-space-sm text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">event_available</span>
+              Handling udført: Oprettet booking #FG-8942 i kalender &amp; SMS-dispatch sendt.
+            </div>
+</div>
+</div>
+<!-- Række 2: Peter Nørgaard (2 forsøg - Tilbudsforespørgsel) -->
+<div class="p-space-lg hover:bg-surface-bright/50 transition-colors">
+<div class="flex flex-wrap items-start justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-label-md font-bold shrink-0">
+                PN
+              </div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-lg text-label-lg text-on-surface">Peter Nørgaard</span>
+<span class="font-mono font-body-sm text-body-sm text-on-surface-variant">+45 21 XX 88 12</span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold">Forespørgsel modtaget</span>
+</div>
+<div class="flex items-center gap-space-md mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span>2 forsøg (1. ubesvaret 09:15, 2. besvaret 11:30)</span>
+<span>•</span>
+<span>48s taletid</span>
+<span>•</span>
+<span>Notat: Udvidet areal til 145 m²</span>
+</div>
+</div>
+</div>
+<button class="px-space-sm py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm flex items-center gap-1 hover:bg-surface-container-high transition-colors" onclick="toggleLog('log-peter')">
+<span>Se historik</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+<!-- Udfoldet log -->
+<div class="hidden mt-space-md p-space-md rounded-lg bg-surface-container-low text-body-sm font-body-sm flex flex-col gap-space-xs" id="log-peter">
+<div class="p-2 rounded bg-surface text-on-surface-variant text-[12px] mb-1">
+<strong>Forsøg 1 (09:15):</strong> Intet svar (Ringing timeout 35s). Sat til retry jf. C10 (+135 min).
+            </div>
+<div class="text-on-surface">
+<span class="font-semibold text-primary">Forsøg 2 (11:30 - 48s):</span> Peter oplyste, at de har tilkøbt ekstra værelser og gerne vil have opdateret tilbuddet til at omfatte 145 m² lakeret egetræ i stedet for 90 m². Opgaven er videresendt til Mads Fjord i henvendelsesoversigten.
+            </div>
+</div>
+</div>
+<!-- Række 3: Lone Kristensen (Fravalg modtaget under opkald -> S10 Spærring) -->
+<div class="p-space-lg hover:bg-surface-bright/50 transition-colors">
+<div class="flex flex-wrap items-start justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center font-label-md font-bold shrink-0">
+                LK
+              </div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-lg text-label-lg text-on-surface">Lone Kristensen</span>
+<span class="font-mono font-body-sm text-body-sm text-on-surface-variant">+45 40 XX 19 02</span>
+<span class="px-space-sm py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">Fravalg registreret</span>
+</div>
+<div class="flex items-center gap-space-md mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span>1 forsøg</span>
+<span>•</span>
+<span>19s taletid</span>
+<span>•</span>
+<span class="text-error font-medium">Skrevet til S10 spærreliste ('Ring ikke igen')</span>
+</div>
+</div>
+</div>
+<div class="inline-flex items-center gap-1 text-error text-[12px] font-semibold bg-error-container/40 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[16px]">block</span>
+              S10 Auto-spærret
+            </div>
+</div>
+</div>
+<!-- Række 4: Jens Bagger (Ubesvaret - Eksplicit UDEN opdigtet transskription) -->
+<div class="p-space-lg hover:bg-surface-bright/50 transition-colors">
+<div class="flex flex-wrap items-start justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-label-md font-bold shrink-0">
+                JB
+              </div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-lg text-label-lg text-on-surface">Jens Bagger</span>
+<span class="font-mono font-body-sm text-body-sm text-on-surface-variant">+45 31 XX 09 54</span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold">Ubesvaret (ingen samtale)</span>
+</div>
+<div class="flex items-center gap-space-md mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span>2 forsøg (begge no-answer)</span>
+<span>•</span>
+<span>0s taletid</span>
+<span>•</span>
+<span>Ingen transskription genereret</span>
+</div>
+</div>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant italic">Kvote forbrugt (2 af 2 forsøg)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- TAB PANE 3: C13 Slutrapport & C15 Kundeafstemning & Refusion -->
+<div class="tab-content hidden flex flex-col gap-space-lg" id="tab-pane-results">
+<!-- C13: Slutrapport & Konverteringsdashboard -->
+<div class="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm">
+<div class="flex flex-wrap items-center justify-between gap-space-md pb-space-lg border-b border-surface-container">
+<div>
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">assessment</span>
+<h2 class="font-headline-sm text-headline-sm text-primary">C13 • Slutrapport &amp; Konverteringsudfald</h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Endelig opgørelse over samtlige 245 gennemførte samtaledialoger fra kampagnen.
+          </p>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-space-sm bg-primary text-on-primary rounded-lg font-label-md text-label-md flex items-center gap-space-xs hover:bg-primary-container transition-all" onclick="alert('Slutrapport fremsendes til mester@fjordgulv.dk')">
+<span class="material-symbols-outlined text-[18px]">send</span>
+            Send slutrapport til mester@fjordgulv.dk
+          </button>
+</div>
+</div>
+<!-- Konverteringsmetrikker & Visualisering -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-space-md my-space-lg">
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Nåede samtaler</span>
+<span class="font-headline-lg text-headline-lg text-primary mt-1">245</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">100% af samtalegrundlag</span>
+</div>
+<div class="p-space-md rounded-xl bg-secondary-container/40 flex flex-col">
+<span class="font-label-sm text-label-sm text-on-secondary-fixed">Direkte Bookinger / Møder</span>
+<span class="font-headline-lg text-headline-lg text-primary mt-1">18</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">7,3% konverteringsrate</span>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tilbudsgennemgange / Opfølgning</span>
+<span class="font-headline-lg text-headline-lg text-primary mt-1">45</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">18,4% kvalificerede leads</span>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Arkiveret uden interesse</span>
+<span class="font-headline-lg text-headline-lg text-outline mt-1">192</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">78,3% takkede pænt nej/udskudt</span>
+</div>
+</div>
+<!-- Webhook Dispatch Status & Sikker Fejlhåndtering -->
+<div class="p-space-md rounded-xl bg-surface-container flex flex-wrap items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md">
+<div class="w-9 h-9 rounded-lg bg-surface-container-highest text-on-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">webhook</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Webhook-integration (CRM-synkronisering)</span>
+<span class="font-body-sm text-body-sm text-error flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+              Fejl v. webhook-dispatch (HTTP 502 Bad Gateway hos kundens CRM kl. 11:42)
+            </span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">Genudsendelse ringer IKKE kontakter op igen</span>
+<button class="px-space-md py-space-xs bg-surface-container-lowest hover:bg-surface-bright text-primary font-label-md text-label-md rounded-lg transition-all shadow-sm flex items-center gap-1" onclick="triggerWebhookRetry(this)">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+            Genprøv levering
+          </button>
+</div>
+</div>
+</div>
+<!-- C15: Kundeafstemning & Finansiel Refusion -->
+<div class="bg-surface-container-lowest p-space-xl rounded-xl shadow-sm flex flex-col gap-space-lg">
+<div class="flex flex-wrap items-center justify-between gap-space-md">
+<div>
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">receipt_long</span>
+<h2 class="font-headline-sm text-headline-sm text-primary">C15 • Finansiel Afstemning &amp; Refusionsstatus</h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Automatisk modregning og udbetaling for uforbrugte kontaktpakker jf. Dialogbots transparente forbrugsmodel.
+          </p>
+</div>
+<!-- De 3 tilstande: Status Badge -->
+<div class="flex items-center gap-space-xs bg-secondary-container px-space-md py-1.5 rounded-full text-on-secondary-fixed font-label-md text-label-md font-bold">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+          Gennemført refusion (1.800,00 kr.)
+        </div>
+</div>
+<!-- Finansiel Fordeling & Modregningsoversigt -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Oprindelig Ordre</span>
+<div class="my-space-sm">
+<span class="font-display-lg text-display-lg text-on-surface">4.500 kr.</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">500 pakker á 9,00 kr.</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary">Betalt via Dankort • #ORD-5520</span>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Faktisk Forbrug</span>
+<div class="my-space-sm">
+<span class="font-display-lg text-display-lg text-primary">2.700 kr.</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">300 pakker á 9,00 kr.</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Afregnet for 300 forsøgte kontakter</span>
+</div>
+<div class="p-space-lg rounded-xl bg-secondary-container/30 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-on-secondary-fixed uppercase">Uforbrugt Volumen &amp; Kredit</span>
+<div class="my-space-sm">
+<span class="font-display-lg text-display-lg text-secondary">1.800 kr.</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">200 pakker á 9,00 kr.</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Kreditnota #KN-8812 udstedt</span>
+</div>
+</div>
+<!-- Specifikation af de 200 uforbrugte enheder -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-space-xs">
+<span class="font-label-md text-label-md text-primary font-semibold">Dokumenteret opgørelse af uforbrugt volumen:</span>
+<ul class="font-body-sm text-body-sm text-on-surface-variant space-y-1 pl-4 list-disc">
+<li><strong>199 pakker (1.791 kr.):</strong> Uforbrugte da kampagnen blev standset efter kontakt #301.</li>
+<li><strong>1 pakke (9 kr.):</strong> Frasorteret forud for start på grund af aktivt S10-fravalg i spærrelisten.</li>
+<li><strong>Refusionstransaktion:</strong> Tilbageført til oprindeligt betalingskort via Stripe (Ref: `re_3Nx7K92eZvKYlo2C`). Kvittering tilgængelig i fakturaarkivet.</li>
+</ul>
+</div>
+<!-- Procesindikator for tilstande (Afventer -> Godkendt -> Gennemført) -->
+<div class="pt-space-md border-t border-surface-container">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-space-sm">Afstemningsflowets trin:</span>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md">
+<div class="flex items-center gap-space-sm p-space-sm rounded-lg bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-semibold">1. Afventer afstemning</span>
+<span class="text-[11px] text-on-surface-variant">Afsluttet d. 26. sep 12:00</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm p-space-sm rounded-lg bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-semibold">2. Godkendt refusion</span>
+<span class="text-[11px] text-on-surface-variant">Valideret af systemet (1.800 kr.)</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm p-space-sm rounded-lg bg-secondary-container text-on-secondary-fixed">
+<span class="material-symbols-outlined text-primary text-[20px]">verified</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold">3. Gennemført refusion</span>
+<span class="text-[11px] text-on-secondary-fixed">Udbetalt til kort / KN-8812</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Support Footer Anchor (H01 / M04) -->
+<div class="mt-space-lg p-space-md bg-surface-container-low rounded-xl flex flex-wrap items-center justify-between gap-space-md text-on-surface-variant" id="support-h01">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">contact_support</span>
+<span class="font-body-sm text-body-sm">
+        Har du spørgsmål til kampagneregnskabet eller ønsker du operatørvejledning (M04)?
+      </span>
+</div>
+<div class="flex items-center gap-space-md">
+<a class="font-label-md text-label-md text-primary hover:underline flex items-center gap-1" href="#">
+        Åbn Support H01
+        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+<span class="text-outline-variant">•</span>
+<a class="font-label-md text-label-md text-primary hover:underline flex items-center gap-1" href="#">
+        Book Operatørbistand (M04)
+        <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Inline Interaction Logic -->
+<script>
+  function switchCampaignTab(tabId) {
+    // Hide all tab panes
+    const panes = document.querySelectorAll('.tab-content');
+    panes.forEach(pane => pane.classList.add('hidden'));
+
+    // Remove active styles from buttons
+    const buttons = document.querySelectorAll('.phase-tab');
+    buttons.forEach(btn => {
+      btn.classList.remove('bg-surface-container-lowest', 'text-on-surface', 'shadow-sm');
+      btn.classList.add('text-on-surface-variant');
+      const badge = btn.querySelector('.w-7');
+      if (badge) {
+        badge.classList.remove('bg-primary-container', 'text-on-primary');
+        badge.classList.add('bg-surface-container-highest', 'text-on-surface');
+      }
+    });
+
+    // Activate current tab
+    if (tabId === 'tab-prep') {
+      document.getElementById('tab-pane-prep').classList.remove('hidden');
+      const activeBtn = document.getElementById('tab-btn-prep');
+      activeBtn.classList.add('bg-surface-container-lowest', 'text-on-surface', 'shadow-sm');
+      activeBtn.classList.remove('text-on-surface-variant');
+      const b = activeBtn.querySelector('.w-7');
+      if (b) { b.classList.add('bg-primary-container', 'text-on-primary'); b.classList.remove('bg-surface-container-highest'); }
+    } else if (tabId === 'tab-live') {
+      document.getElementById('tab-pane-live').classList.remove('hidden');
+      const activeBtn = document.getElementById('tab-btn-live');
+      activeBtn.classList.add('bg-surface-container-lowest', 'text-on-surface', 'shadow-sm');
+      activeBtn.classList.remove('text-on-surface-variant');
+      const b = activeBtn.querySelector('.w-7');
+      if (b) { b.classList.add('bg-primary-container', 'text-on-primary'); b.classList.remove('bg-surface-container-highest'); }
+    } else if (tabId === 'tab-results') {
+      document.getElementById('tab-pane-results').classList.remove('hidden');
+      const activeBtn = document.getElementById('tab-btn-results');
+      activeBtn.classList.add('bg-surface-container-lowest', 'text-on-surface', 'shadow-sm');
+      activeBtn.classList.remove('text-on-surface-variant');
+      const b = activeBtn.querySelector('.w-7');
+      if (b) { b.classList.add('bg-primary-container', 'text-on-primary'); b.classList.remove('bg-surface-container-highest'); }
+    }
+  }
+
+  function toggleLog(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) {
+      el.classList.toggle('hidden');
+    }
+  }
+
+  function triggerWebhookRetry(button) {
+    const origHtml = button.innerHTML;
+    button.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span> Genprøver...';
+    button.disabled = true;
+
+    setTimeout(() => {
+      button.innerHTML = '<span class="material-symbols-outlined text-[16px] text-secondary">check</span> Sendt succesfuldt';
+      button.classList.add('bg-secondary-container', 'text-on-secondary-fixed');
+      const errorText = button.parentElement.parentElement.querySelector('.text-error');
+      if (errorText) {
+        errorText.className = 'font-body-sm text-body-sm text-secondary flex items-center gap-1';
+        errorText.innerHTML = '<span class="w-2 h-2 rounded-full bg-secondary"></span> Rapport payload leveret (HTTP 200 OK)';
+      }
+    }, 1200);
+  }
+
+  document.getElementById('btn-re-dispatch')?.addEventListener('click', function() {
+    switchCampaignTab('tab-results');
+    const retryBtn = document.querySelector('button[onclick*="triggerWebhookRetry"]');
+    if (retryBtn) {
+      retryBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      retryBtn.classList.add('ring-2', 'ring-primary');
+      setTimeout(() => retryBtn.classList.remove('ring-2', 'ring-primary'), 2000);
+    }
+  });
+
+  document.getElementById('btn-export-csv')?.addEventListener('click', function() {
+    alert('Eksportér CSV genererer nu "kampagne_c-sep-2026_opgørelse.csv" med 301 kontaktlinjer og fuld transskriptionsmetadata.');
+  });
+</script></main></div></body></html>

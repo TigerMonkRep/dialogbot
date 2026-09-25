@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_blank" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Manrope:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#e7fef9;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary-container": "#88beb0", "inverse-surface": "#203431", "surface-container-highest": "#d0e7e2", "primary-fixed-dim": "#9bd1c3", "primary-container": "#164e43", "secondary": "#546508", "inverse-on-surface": "#dff6f0", "surface-dim": "#c8dfda", "on-primary-fixed-variant": "#184f44", "on-secondary-fixed-variant": "#3e4c00", "inverse-primary": "#9bd1c3", "surface-bright": "#e7fef9", "primary-fixed": "#b6eede", "error": "#ba1a1a", "on-surface-variant": "#404946", "on-tertiary-container": "#80bbe0", "primary": "#00362d", "on-primary": "#ffffff", "on-error": "#ffffff", "on-tertiary-fixed-variant": "#004c6b", "surface-variant": "#d0e7e2", "tertiary-fixed": "#c6e7ff", "on-primary-fixed": "#00201a", "on-background": "#0a1f1c", "background": "#e7fef9", "secondary-fixed-dim": "#bbd06c", "on-error-container": "#93000a", "outline": "#707976", "on-tertiary-fixed": "#001e2d", "secondary-container": "#d4ea82", "tertiary-container": "#004b6a", "error-container": "#ffdad6", "on-surface": "#0a1f1c", "surface-container-high": "#d6ede8", "on-secondary": "#ffffff", "surface-tint": "#33675c", "tertiary": "#00334a", "secondary-fixed": "#d6ec85", "on-secondary-container": "#586a0e", "outline-variant": "#bfc9c4", "surface-container": "#dcf3ee", "surface-container-lowest": "#ffffff", "on-tertiary": "#ffffff", "surface-container-low": "#e1f8f3", "tertiary-fixed-dim": "#93cef4", "surface": "#e7fef9", "on-secondary-fixed": "#171e00" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-md": "1.5rem", "space-md": "0.75rem", "margin": "1rem", "gutter-lg": "1.5rem", "gutter": "1rem", "space-lg": "1rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "space-xl": "1.5rem", "margin-lg": "2rem" }, "fontFamily": { "headline-lg": ["Manrope"], "headline-md": ["Manrope"], "label-md": ["Inter"], "headline-lg-mobile": ["Manrope"], "label-sm": ["Inter"], "headline-sm": ["Manrope"], "display-lg": ["Manrope"], "display-lg-mobile": ["Manrope"], "body-md": ["Inter"], "body-sm": ["Inter"], "label-lg": ["Inter"], "body-lg": ["Inter"] }, "fontSize": { "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-lg-mobile": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "display-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen relative pt-safe pb-safe"><main class="flex-1 flex flex-col relative w-full bg-surface"><div class="flex flex-col w-full px-margin pb-margin-lg space-y-margin-md">
+<!-- 1. Header & Context Intro -->
+<section class="flex flex-col space-y-space-sm pt-space-sm">
+<div class="inline-flex items-center gap-space-xs px-space-md py-1 bg-surface-container-high text-on-surface-variant rounded-full self-start">
+<span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">PRISER &amp; FORRETNINGSBETINGELSER</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">
+      Gennemskuelige priser for intelligent telefoni
+    </h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+      Vælg mellem fast forudsigelighed eller 100% no-cure-no-pay uden risiko. Skift model med én dags varsel ved månedsskifte.
+    </p>
+<!-- Quick Switcher Tabs -->
+<div class="flex bg-surface-container p-1 rounded-xl gap-1 mt-space-xs">
+<button class="flex-1 py-space-sm px-space-xs text-center rounded-lg font-label-md text-label-md transition-all duration-200 bg-surface-container-lowest text-primary shadow-sm font-semibold" id="tab-model-a" onclick="switchModel('a')">
+        Model A: Fast
+      </button>
+<button class="flex-1 py-space-sm px-space-xs text-center rounded-lg font-label-md text-label-md transition-all duration-200 text-on-surface-variant hover:text-primary" id="tab-model-b" onclick="switchModel('b')">
+        Model B: No-cure (149 kr.)
+      </button>
+</div>
+</section>
+<!-- 2. Dual Pricing Cards (Dynamic Visibility / Emphasis) -->
+<section class="flex flex-col space-y-space-md">
+<!-- Model A Card -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-space-lg shadow-sm space-y-space-md relative overflow-hidden transition-all duration-300" id="card-model-a">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wide text-secondary font-bold">Mest forudsigelige</span>
+<h2 class="font-headline-md text-headline-md text-primary">Model A: Fast Abonnement</h2>
+</div>
+<span class="material-symbols-outlined text-primary-container text-2xl">schedule</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="font-display-lg-mobile text-display-lg-mobile text-primary">1.495</span>
+<span class="font-label-md text-label-md text-on-surface-variant">kr. / måned før moms</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-space-sm text-on-surface font-body-sm text-body-sm flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+<span>0 kr. i leadafgift – alle modtagne henvendelser er gratis</span>
+</div>
+<div class="space-y-space-xs pt-space-xs">
+<div class="flex items-center gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[18px]">chat</span>
+<span class="font-body-md text-body-md"><strong>500 webchats</strong> &amp; omnikanal beskeder</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[18px]">record_voice_over</span>
+<span class="font-body-md text-body-md"><strong>200 minutter</strong> AI-taletid inkluderet</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[18px]">trending_flat</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Ekstra taletid: blot 1,25 kr. / påbegyndt minut</span>
+</div>
+</div>
+</div>
+<!-- Model B Card -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-space-lg shadow-sm space-y-space-md relative overflow-hidden transition-all duration-300" id="card-model-b">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="inline-block px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm font-semibold">
+            Nul Risiko
+          </span>
+<h2 class="font-headline-md text-headline-md text-primary">Model B: No-cure-no-pay</h2>
+</div>
+<span class="material-symbols-outlined text-secondary text-2xl">shield</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="font-display-lg-mobile text-display-lg-mobile text-primary">149</span>
+<span class="font-label-md text-label-md text-on-surface-variant">kr. pr. godkendt lead (0 kr./md.)</span>
+</div>
+<div class="bg-surface-container-low rounded-lg p-space-sm text-on-surface font-body-sm text-body-sm">
+<p class="font-label-sm font-semibold text-primary">Kvalifikationskriterier jf. aftale (f.eks. §4):</p>
+<p class="text-on-surface-variant mt-0.5">Valideret kontaktinfo, fuld opgavebeskrivelse og bekræftet samtykke.</p>
+</div>
+<div class="space-y-space-xs pt-space-xs">
+<div class="flex items-center gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[18px]">check_circle</span>
+<span class="font-body-md text-body-md"><strong>0 kr. i fast abonnement</strong> hver eneste måned</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[18px]">block</span>
+<span class="font-body-md text-body-md">Spam, fejlopkald og ubesvarede koster <strong>0 kr.</strong></span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[18px]">thumb_up</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Faktureres bagud udelukkende på godkendte leads</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Kampagneafsnit -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm space-y-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">campaign</span>
+<h3 class="font-headline-sm text-headline-sm text-primary">Udgående Opkaldskampagner</h3>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-lg text-headline-lg text-primary">9 kr.</span>
+<span class="font-label-md text-label-md text-on-surface-variant">pr. kontaktpakke (forudbetalt)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+      Automatiser opfølgning, mødebooking og kundetilfredshed. Hver pakke giver maksimal opkaldskvalitet.
+    </p>
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs">
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">Op til 2</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">automatiske opkaldsforsøg</span>
+</div>
+<div class="bg-surface-container-low p-space-sm rounded-lg flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">180 sek.</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">AI-taletid pr. kontakt</span>
+</div>
+</div>
+</section>
+<!-- 4. Interactive Price & ROI Calculator -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm space-y-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[22px]">calculate</span>
+<h3 class="font-headline-sm text-headline-sm text-primary">Beregn dit månedlige budget</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+      Justér dine estimerede volumener for receptionsleads og udgående kampagner for at beregne den samlede investering.
+    </p>
+<!-- Slider 1 -->
+<div class="space-y-space-xs bg-surface-container-low p-space-md rounded-xl">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="slider-leads">
+          Receptionsleads (Model B)
+        </label>
+<span class="font-label-lg text-label-lg text-primary font-bold" id="val-leads">14 leads</span>
+</div>
+<input class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-[#164e43]" id="slider-leads" max="60" min="0" oninput="calculateTotal()" step="1" type="range" value="14"/>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant pt-0.5">
+<span>0</span>
+<span class="font-semibold text-primary" id="subtotal-leads">14 × 149 kr. = 2.086 kr.</span>
+<span>60</span>
+</div>
+</div>
+<!-- Slider 2 -->
+<div class="space-y-space-xs bg-surface-container-low p-space-md rounded-xl">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="slider-campaign">
+          Udgående Kontaktpakker
+        </label>
+<span class="font-label-lg text-label-lg text-primary font-bold" id="val-campaign">500 pakker</span>
+</div>
+<input class="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-[#164e43]" id="slider-campaign" max="2500" min="0" oninput="calculateTotal()" step="50" type="range" value="500"/>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant pt-0.5">
+<span>0</span>
+<span class="font-semibold text-primary" id="subtotal-campaign">500 × 9 kr. = 4.500 kr.</span>
+<span>2.500</span>
+</div>
+</div>
+<!-- Dark Green Calculation Summary Box -->
+<div class="bg-primary-container text-on-primary rounded-xl p-space-md space-y-space-sm shadow-md">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-primary-container font-semibold">
+        Estimeret Månedlig Udgift
+      </span>
+<div class="space-y-1 font-body-sm text-body-sm text-surface-container-highest">
+<div class="flex justify-between">
+<span>Receptionsleads (<span id="summary-lead-count">14</span> stk.):</span>
+<span class="font-semibold text-on-primary" id="summary-lead-price">2.086 kr.</span>
+</div>
+<div class="flex justify-between">
+<span>Kampagner (<span id="summary-campaign-count">500</span> stk.):</span>
+<span class="font-semibold text-on-primary" id="summary-campaign-price">4.500 kr.</span>
+</div>
+</div>
+<div class="pt-space-xs">
+<div class="flex justify-between items-baseline">
+<span class="font-headline-sm text-headline-sm text-on-primary">Samlet månedstotal</span>
+<div class="text-right">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary-container font-bold" id="total-price">6.586 kr.</span>
+<span class="block font-label-sm text-label-sm text-on-primary-container">ekskl. moms</span>
+</div>
+</div>
+</div>
+<a class="w-full mt-space-sm bg-secondary-container text-on-secondary-container font-label-lg text-label-lg py-space-md px-space-md rounded-lg flex items-center justify-center gap-space-xs font-bold transition-transform active:scale-[0.98]" href="/signup">
+<span>Start gratis opsætning med disse tal</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- 5. Reconciliation & Refund Example (C15 model) -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm space-y-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[22px]">account_balance_wallet</span>
+<h3 class="font-headline-sm text-headline-sm text-primary">Afstemning &amp; Refusion (C15)</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+      Du betaler kun for reel opkaldsafvikling. Efter endt kampagneperiode foretages en automatisk transparent opgørelse:
+    </p>
+<!-- Visual Ledger Breakdown -->
+<div class="bg-surface-container-low rounded-xl p-space-md space-y-space-xs font-body-sm text-body-sm">
+<div class="flex justify-between items-center text-on-surface">
+<span>Købt volumen (500 pakker)</span>
+<span class="font-semibold">4.500 kr.</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span>Forbrugte kontakter (300 stk.)</span>
+<span>-2.700 kr.</span>
+</div>
+<div class="flex justify-between items-center font-label-lg text-label-lg text-secondary pt-space-xs">
+<span class="flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+          Dokumenteret refunderet (200 stk.)
+        </span>
+<span class="font-bold">1.800 kr.</span>
+</div>
+</div>
+<!-- Explicit Business Rule Box -->
+<div class="bg-surface-container p-space-md rounded-lg flex items-start gap-space-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0 mt-0.5">info</span>
+<p class="text-[12px] leading-relaxed">
+<strong>Eksplicit forretningsregel:</strong> Ubesvarede opkald efter 2 gennemførte forsøg betragtes som en afviklet kontaktpakke og udløser ikke automatisk refusion. Refusion ydes fuldt ud på dokumenteret uforbrugte pakker efter kampagneafslutning.
+      </p>
+</div>
+</section>
+<!-- 6. Conditions & FAQ -->
+<section class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm space-y-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[22px]">quiz</span>
+<h3 class="font-headline-sm text-headline-sm text-primary">Ofte stillede spørgsmål</h3>
+</div>
+<div class="space-y-space-sm">
+<div class="bg-surface-container-low p-space-md rounded-lg space-y-1">
+<h4 class="font-label-lg text-label-lg text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[16px]">swap_horiz</span>
+          Kan vi skifte mellem Model A og Model B?
+        </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Ja, du kan frit skifte model direkte i dashboardet med virkning fra næstkommende kalendermåned.
+        </p>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg space-y-1">
+<h4 class="font-label-lg text-label-lg text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[16px]">hourglass_bottom</span>
+          Hvad koster ekstra taletid i Model A?
+        </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Overstiger du de inkluderede 200 minutter, koster ekstra AI-taletid 1,25 kr. pr. påbegyndt minut uden binding eller strafgebyrer.
+        </p>
+</div>
+</div>
+<!-- Action Link to Interactive Demo -->
+<a class="w-full bg-surface-container text-primary font-label-lg text-label-lg py-space-md px-space-md rounded-lg flex items-center justify-center gap-space-xs hover:bg-surface-container-high transition-colors font-semibold" href="/demo">
+<span>Prøv interaktiv demo</span>
+<span class="material-symbols-outlined text-[18px]">play_circle</span>
+</a>
+</section>
+</div>
+<script>
+  function switchModel(type) {
+    const tabA = document.getElementById('tab-model-a');
+    const tabB = document.getElementById('tab-model-b');
+    const cardA = document.getElementById('card-model-a');
+    const cardB = document.getElementById('card-model-b');
+
+    if (type === 'a') {
+      tabA.className = 'flex-1 py-space-sm px-space-xs text-center rounded-lg font-label-md text-label-md transition-all duration-200 bg-surface-container-lowest text-primary shadow-sm font-semibold';
+      tabB.className = 'flex-1 py-space-sm px-space-xs text-center rounded-lg font-label-md text-label-md transition-all duration-200 text-on-surface-variant hover:text-primary';
+      cardA.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      cardA.classList.add('bg-surface-container-lowest');
+      cardA.classList.remove('opacity-75');
+      cardB.classList.add('opacity-75');
+    } else {
+      tabB.className = 'flex-1 py-space-sm px-space-xs text-center rounded-lg font-label-md text-label-md transition-all duration-200 bg-surface-container-lowest text-primary shadow-sm font-semibold';
+      tabA.className = 'flex-1 py-space-sm px-space-xs text-center rounded-lg font-label-md text-label-md transition-all duration-200 text-on-surface-variant hover:text-primary';
+      cardB.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      cardB.classList.remove('opacity-75');
+      cardA.classList.add('opacity-75');
+    }
+  }
+
+  function formatDkNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  function calculateTotal() {
+    const leads = parseInt(document.getElementById('slider-leads').value, 10);
+    const campaigns = parseInt(document.getElementById('slider-campaign').value, 10);
+
+    const leadCost = leads * 149;
+    const campaignCost = campaigns * 9;
+    const totalCost = leadCost + campaignCost;
+
+    document.getElementById('val-leads').textContent = leads + ' leads';
+    document.getElementById('subtotal-leads').textContent = leads + ' × 149 kr. = ' + formatDkNumber(leadCost) + ' kr.';
+    document.getElementById('summary-lead-count').textContent = leads;
+    document.getElementById('summary-lead-price').textContent = formatDkNumber(leadCost) + ' kr.';
+
+    document.getElementById('val-campaign').textContent = campaigns + ' pakker';
+    document.getElementById('subtotal-campaign').textContent = campaigns + ' × 9 kr. = ' + formatDkNumber(campaignCost) + ' kr.';
+    document.getElementById('summary-campaign-count').textContent = campaigns;
+    document.getElementById('summary-campaign-price').textContent = formatDkNumber(campaignCost) + ' kr.';
+
+    document.getElementById('total-price').textContent = formatDkNumber(totalCost) + ' kr.';
+  }
+</script></main></body></html>

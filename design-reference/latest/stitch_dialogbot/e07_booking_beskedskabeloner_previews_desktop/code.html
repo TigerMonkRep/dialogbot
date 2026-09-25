@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-fixed-variant":"#3e4c00","on-background":"#0a1f1c","inverse-primary":"#9bd1c3","surface":"#e7fef9","surface-dim":"#c8dfda","secondary-fixed":"#d6ec85","surface-container":"#dcf3ee","tertiary-fixed":"#c6e7ff","on-primary-fixed":"#00201a","on-secondary-container":"#586a0e","on-secondary":"#ffffff","tertiary-container":"#004b6a","inverse-surface":"#203431","on-surface":"#0a1f1c","error":"#ba1a1a","surface-bright":"#e7fef9","on-secondary-fixed":"#171e00","on-primary-container":"#88beb0","on-error":"#ffffff","on-tertiary":"#ffffff","surface-tint":"#33675c","outline-variant":"#bfc9c4","surface-container-high":"#d6ede8","on-primary":"#ffffff","tertiary":"#00334a","outline":"#707976","secondary":"#546508","on-tertiary-fixed":"#001e2d","on-error-container":"#93000a","background":"#e7fef9","secondary-container":"#d4ea82","surface-container-highest":"#d0e7e2","primary":"#00362d","primary-fixed":"#b6eede","on-tertiary-fixed-variant":"#004c6b","surface-variant":"#d0e7e2","primary-fixed-dim":"#9bd1c3","secondary-fixed-dim":"#bbd06c","on-tertiary-container":"#80bbe0","surface-container-low":"#e1f8f3","surface-container-lowest":"#ffffff","primary-container":"#164e43","on-surface-variant":"#404946","error-container":"#ffdad6","tertiary-fixed-dim":"#93cef4","inverse-on-surface":"#dff6f0","on-primary-fixed-variant":"#184f44"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"margin":"1rem","margin-lg":"2rem","gutter-lg":"1.5rem","margin-md":"1.5rem","space-lg":"1rem","gutter":"1rem","space-sm":"0.5rem","space-xs":"0.25rem","space-md":"0.75rem","space-xl":"1.5rem"},fontFamily:{"display-lg-mobile":["Manrope"],"headline-lg-mobile":["Manrope"],"body-sm":["Inter"],"label-md":["Inter"],"body-lg":["Inter"],"display-lg":["Manrope"],"headline-sm":["Manrope"],"body-md":["Inter"],"label-lg":["Inter"],"headline-md":["Manrope"],"headline-lg":["Manrope"],"label-sm":["Inter"]},fontSize:{"display-lg-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-lg-mobile":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"700"}],"body-sm":["13px",{lineHeight:"18px",fontWeight:"400"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"500"}],"body-lg":["16px",{lineHeight:"24px",fontWeight:"400"}],"display-lg":["36px",{lineHeight:"44px",letterSpacing:"-0.03em",fontWeight:"700"}],"headline-sm":["18px",{lineHeight:"26px",letterSpacing:"-0.01em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",fontWeight:"400"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.01em",fontWeight:"600"}],"headline-md":["22px",{lineHeight:"30px",letterSpacing:"-0.015em",fontWeight:"600"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col flex-1 overflow-y-auto"><div class="p-4 flex items-center justify-between gap-3"><div class="flex items-center gap-3"><img alt="Brand logo. - Primary color: #164e43
+- Font: manrope
+- Mode: light
+- Roundness: rounded-md
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V05QJ6ogqjQWFOy45hIopE1L8L12GtzKAoL03rnuk3QGgmKM9MOsMR-7O6ORIaIetfBElhHecaaykH_SmmLkmGC4aIeHNldsLlMhk8SHwIijcyDicoWG9fmHPRmeoWXyFl39oUTfA58hv5tXT4hTdwOsQc5PlbL9MCt5N6AgkeNV7Ls4coD3Gt8P6fge98PhalilHSUXAqPpnxnQNjoD2bIfUoH01Vn1r4Cv13MEMT1umMgSSBUpyi7M4"/></div><span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-surface-container text-on-surface-variant">v2.4</span></div><div class="px-3 py-2"><div class="bg-surface-container-low rounded-xl p-2.5 flex items-center justify-between cursor-pointer hover:bg-surface-container transition-colors"><div class="flex items-center gap-2.5 min-w-0"><div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs shrink-0">FG</div><div class="min-w-0"><p class="font-label-md text-label-md text-on-surface font-semibold truncate">Fjord Gulvservice</p><p class="font-label-sm text-label-sm text-on-surface-variant truncate">Dansk Afdeling • Aktiv</p></div></div><span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0">unfold_more</span></div></div><div class="px-3 pt-3 pb-1"><p class="px-3 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Hovedmenu</p></div><nav class="px-3 space-y-1" data-active-classes="bg-primary-container text-on-primary font-semibold"><a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="overblik" href="#"><span class="material-symbols-outlined text-[20px]">space_dashboard</span><span class="font-label-lg text-label-lg">Overblik</span></a><a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="indbakke" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">inbox</span><span class="font-label-lg text-label-lg">Indbakke</span></div><span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">5</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="henvendelser" href="#"><span class="material-symbols-outlined text-[20px]">ring_volume</span><span class="font-label-lg text-label-lg">Henvendelser</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="opgaver" href="#"><span class="material-symbols-outlined text-[20px]">task_alt</span><span class="font-label-lg text-label-lg">Opgaver</span></a><a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="reception" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">support_agent</span><span class="font-label-lg text-label-lg">Reception</span></div><span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span></a><a class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container-high text-on-surface font-semibold hover:bg-surface-container-highest transition-colors" data-path="kampagner" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px] text-primary">campaign</span><span class="font-label-lg text-label-lg text-primary">Kampagner</span></div><span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold tracking-tight">Aktiv</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="virksomhedsviden" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-label-lg text-label-lg">Virksomhedsviden</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="rapporter" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span class="font-label-lg text-label-lg">Rapporter</span></a></nav></div><div class="p-3 bg-surface-container-lowest"><nav class="space-y-1 mb-3" data-active-classes="bg-primary-container text-on-primary font-semibold"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="fakturering" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span class="font-label-lg text-label-lg">Fakturering</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="indstillinger" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-label-lg text-label-lg">Indstillinger</span></a></nav><div class="pt-3 bg-surface-container-low rounded-xl p-2.5 flex items-center justify-between"><div class="flex items-center gap-2.5 min-w-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="min-w-0"><p class="font-label-md text-label-md text-on-surface font-semibold truncate">Mads Fjord</p><p class="font-label-sm text-label-sm text-on-surface-variant truncate">mads@fjordgulv.dk</p></div></div><a class="text-on-surface-variant hover:text-error transition-colors p-1" data-path="login" href="#" title="Log ud"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-8"><div class="flex items-center gap-4 flex-1 max-w-lg"><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span><input class="w-full pl-10 pr-4 py-2 bg-surface-container-low rounded-lg text-body-md font-body-md text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-1 focus:ring-primary-container transition-all" placeholder="Søg i henvendelser, transskriptioner, kontakter..." type="text"/></div></div><div class="flex items-center gap-4"><div class="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-full"><span class="w-2 h-2 rounded-full bg-secondary inline-block animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface font-medium">AI Linje: Åben &amp; Parat</span></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary-container rounded-full"></span></button><button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">help_outline</span></button><div class="flex items-center gap-3 pl-3"><div class="text-right hidden sm:block"><p class="font-label-md text-label-md font-semibold text-on-surface leading-tight">Mads Fjord</p><p class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Administrator</p></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 bg-surface min-h-screen w-full px-8 py-6"><div class="flex flex-col w-full space-y-6">
+<!-- Header & Context Banner -->
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-1">
+<span>Bookinger</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span>Indstillinger</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-semibold">Beskeder &amp; Notifikationer (/app/bookings/notifications)</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-primary tracking-tight">Aftalemeddelelser &amp; E07 Beskedskabeloner</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+        Regulering, hændelsesflow og forhåndsvisning af 7 automatiserede kontaktpunkter for Fjord Gulvservice.
+      </p>
+</div>
+<!-- Metadata Badges -->
+<div class="flex flex-wrap items-center gap-2 shrink-0">
+<div class="bg-surface-container-lowest px-3 py-2 rounded-xl shadow-sm flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px]">send_time_extension</span>
+<div class="text-left">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Afsenderprofil</p>
+<p class="font-label-md text-label-md text-on-surface font-bold">Fjord Gulv (SMS &amp; E-mail)</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest px-3 py-2 rounded-xl shadow-sm flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[20px]">hub</span>
+<div class="text-left">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Gateway Dispatch</p>
+<p class="font-label-md text-label-md text-on-surface font-bold">Dialogbot Gateway / G-Workspace</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Operational Alert: Buffer & Internal Privacy Rule -->
+<div class="bg-primary-container text-on-primary p-4 rounded-xl shadow-sm flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary-fixed text-[24px] mt-0.5">verified_user</span>
+<div class="space-y-0.5">
+<p class="font-label-lg text-label-lg font-bold">Forretningsregel for dataintegritet (Skærmet kundevisning)</p>
+<p class="font-body-sm text-body-sm text-on-primary-container leading-relaxed">
+        Interne kørselstidsbuffere (f.eks. 15 min før / 30 min efter) samt interne montørnoter udelades altid automatisk fra kundevendte beskeder. Slutkunden ser udelukkende den aftalte mødetid.
+      </p>
+</div>
+</div>
+<!-- 7 E07 Variant Selector (Tabs) -->
+<div class="bg-surface-container-lowest p-2 rounded-xl shadow-sm">
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1" id="variant-tabs">
+<button class="tab-btn px-3 py-2 rounded-lg font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap bg-primary-container text-on-primary font-semibold shadow-sm" data-idx="0" onclick="selectVariant(0)">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+<span>1. Anmodning modtaget</span>
+</button>
+<button class="tab-btn px-3 py-2 rounded-lg font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap text-on-surface-variant hover:bg-surface-container hover:text-on-surface" data-idx="1" onclick="selectVariant(1)">
+<span class="w-2 h-2 rounded-full bg-surface-tint"></span>
+<span>2. Aftale bekræftet</span>
+</button>
+<button class="tab-btn px-3 py-2 rounded-lg font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap text-on-surface-variant hover:bg-surface-container hover:text-on-surface" data-idx="2" onclick="selectVariant(2)">
+<span class="w-2 h-2 rounded-full bg-surface-tint"></span>
+<span>3. Påmindelse (24t/2t)</span>
+</button>
+<button class="tab-btn px-3 py-2 rounded-lg font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap text-on-surface-variant hover:bg-surface-container hover:text-on-surface" data-idx="3" onclick="selectVariant(3)">
+<span class="w-2 h-2 rounded-full bg-surface-tint"></span>
+<span>4. Foreslået ændring</span>
+</button>
+<button class="tab-btn px-3 py-2 rounded-lg font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap text-on-surface-variant hover:bg-surface-container hover:text-on-surface" data-idx="4" onclick="selectVariant(4)">
+<span class="w-2 h-2 rounded-full bg-surface-tint"></span>
+<span>5. Aftale flyttet</span>
+</button>
+<button class="tab-btn px-3 py-2 rounded-lg font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap text-on-surface-variant hover:bg-surface-container hover:text-on-surface" data-idx="5" onclick="selectVariant(5)">
+<span class="w-2 h-2 rounded-full bg-surface-tint"></span>
+<span>6. Aftale aflyst</span>
+</button>
+<button class="tab-btn px-3 py-2 rounded-lg font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap text-on-surface-variant hover:bg-surface-container hover:text-on-surface" data-idx="6" onclick="selectVariant(6)">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span>7. Kræver handling (Ejer)</span>
+</button>
+</div>
+</div>
+<!-- Interactive Configuration & Preview Split Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- LEFT PANEL: Editor & Triggers (7 cols) -->
+<div class="xl:col-span-7 space-y-5">
+<!-- Variant Info & Event Trigger Settings Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm space-y-4">
+<div class="flex items-center justify-between pb-3 bg-surface-container-low -mx-6 -mt-6 p-6 rounded-t-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[28px]" id="variant-icon">inbox_customize</span>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface" id="variant-title">1. Anmodning modtaget</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant" id="variant-desc">Sendes prompte til kunden når online forespørgsel registreres i Dialogbot kalendersystemet.</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider" id="variant-target">Slutkunde</span>
+</div>
+<!-- Triggers, Channel & Delivery Specs -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="bg-surface-container-low p-3 rounded-lg">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Udløsende hændelse</p>
+<p class="font-label-md text-label-md text-on-surface font-semibold mt-0.5" id="trigger-event">booking.request.created</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Automatisk ved kunderequest</p>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Kanaler &amp; Protokol</p>
+<p class="font-label-md text-label-md text-on-surface font-semibold mt-0.5">E-mail (HTML) + SMS (GSM)</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Tovejs bekræftelse aktiv</p>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Sprog &amp; Tidszone</p>
+<p class="font-label-md text-label-md text-on-surface font-semibold mt-0.5">Dansk (DK)</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Europe/Copenhagen</p>
+</div>
+</div>
+<!-- Channel Selector for Editor -->
+<div class="flex items-center gap-3 pt-2">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Redigér beskedlag:</span>
+<div class="inline-flex p-1 bg-surface-container rounded-lg">
+<button class="px-3 py-1 rounded font-label-sm text-label-sm font-semibold bg-surface-container-lowest text-primary shadow-sm transition-all flex items-center gap-1.5" id="channel-email-btn" onclick="toggleChannel('email')">
+<span class="material-symbols-outlined text-[16px]">mail</span> E-mail skabelon
+            </button>
+<button class="px-3 py-1 rounded font-label-sm text-label-sm font-semibold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1.5" id="channel-sms-btn" onclick="toggleChannel('sms')">
+<span class="material-symbols-outlined text-[16px]">sms</span> SMS (160 tegn)
+            </button>
+</div>
+</div>
+<!-- Email Subject Field -->
+<div class="space-y-1" id="email-subject-wrap">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase">E-mail Emnelinje</label>
+<input class="w-full px-3.5 py-2.5 rounded-lg bg-surface-container-low text-body-md font-body-md text-on-surface focus:outline-none focus:bg-surface-container-lowest transition-all" id="email-subject" type="text" value="Vi har modtaget din forespørgsel – Fjord Gulvservice [Ref: {BOOKING_REF}]"/>
+</div>
+<!-- Content Editor -->
+<div class="space-y-1">
+<div class="flex items-center justify-between">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase" id="editor-label">E-mail Brødtekst (Markdown / HTML stubs tilladt)</label>
+<span class="font-label-sm text-label-sm text-on-surface-variant" id="char-counter">384 tegn</span>
+</div>
+<textarea class="w-full p-3.5 rounded-lg bg-surface-container-low text-body-sm font-body-sm text-on-surface focus:outline-none focus:bg-surface-container-lowest transition-all font-mono leading-relaxed" id="template-editor" oninput="updatePreview()" rows="6">Hej {KUNDE_NAVN},
+
+Mange tak for din henvendelse. Vi har registreret din anmodning om {YDELSES_NAVN} den {DATO_TID} på adressen {STED_ADRESSE}.
+
+Vores montør {MONTØR_NAVN} gennemgår køreplanen nu. Du modtager endelig bekræftelse inden for 2 timer i almindelig åbningstid.
+
+Du kan følge status eller redigere dine ønsker direkte her:
+{STYRINGS_LINK}
+
+Venlig hilsen,
+Fjord Gulvservice</textarea>
+</div>
+<!-- Available Placeholders / Variables -->
+<div class="space-y-2 pt-1">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Tilgængelige systemvariabler (Klik for at indsætte)</p>
+<div class="flex flex-wrap gap-1.5">
+<button class="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-primary font-mono text-[11px] font-medium transition-colors" onclick="insertTag('{KUNDE_NAVN}')">
+              {KUNDE_NAVN}
+            </button>
+<button class="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-primary font-mono text-[11px] font-medium transition-colors" onclick="insertTag('{YDELSES_NAVN}')">
+              {YDELSES_NAVN}
+            </button>
+<button class="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-primary font-mono text-[11px] font-medium transition-colors" onclick="insertTag('{DATO_TID}')">
+              {DATO_TID}
+            </button>
+<button class="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-primary font-mono text-[11px] font-medium transition-colors" onclick="insertTag('{STED_ADRESSE}')">
+              {STED_ADRESSE}
+            </button>
+<button class="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-primary font-mono text-[11px] font-medium transition-colors" onclick="insertTag('{MONTØR_NAVN}')">
+              {MONTØR_NAVN}
+            </button>
+<button class="px-2.5 py-1 rounded bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container font-mono text-[11px] font-bold transition-colors" onclick="insertTag('{BOOKING_REF}')">
+              {BOOKING_REF}*
+            </button>
+<button class="px-2.5 py-1 rounded bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container font-mono text-[11px] font-bold transition-colors" onclick="insertTag('{STYRINGS_LINK}')">
+              {STYRINGS_LINK}*
+            </button>
+</div>
+</div>
+<!-- Strict Validation Checker -->
+<div class="p-3.5 bg-surface-container rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[20px]" id="validation-icon">check_circle</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold" id="validation-text">Skabelon opfylder E07 valideringsregler</p>
+<p class="font-body-sm text-[12px] text-on-surface-variant">Obligatoriske tags ({BOOKING_REF} &amp; {STYRINGS_LINK}) er korrekt flettet.</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded font-label-sm text-[11px] font-bold bg-secondary-container text-on-secondary-container uppercase">Godkendt</span>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-wrap items-center justify-between gap-3 pt-3">
+<div class="flex items-center gap-2">
+<button class="px-4 py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md font-semibold transition-colors flex items-center gap-2" onclick="simulateSend()">
+<span class="material-symbols-outlined text-[18px]">cell_tower</span>
+<span>Send testbesked (simuleret)</span>
+</button>
+<button class="px-4 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-md text-label-md font-medium transition-colors" onclick="resetTemplate()">
+              Nulstil
+            </button>
+</div>
+<button class="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm transition-colors flex items-center gap-2" onclick="saveTemplate()">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Gem skabelon</span>
+</button>
+</div>
+</div>
+</div>
+<!-- RIGHT PANEL: Readable Live Previews (5 cols) -->
+<div class="xl:col-span-5 space-y-5">
+<!-- Visual Header for Preview Column -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">visibility</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Læsbare Forhåndsvisninger</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Testdata: Henrik Villumsen</span>
+</div>
+<!-- Preview 1: E-mail Envelope & Body Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<!-- Mail Client Header Bar -->
+<div class="bg-surface-container p-3.5 space-y-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-error inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-secondary-container inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-secondary inline-block"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-2 font-medium">E-mail Klient Preview (HTML)</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface font-mono text-[10px] font-bold">DK-MAIL-v2</span>
+</div>
+<div class="bg-surface-container-lowest p-2.5 rounded-lg space-y-1">
+<div class="flex items-center text-[12px] text-on-surface-variant">
+<span class="w-16 font-semibold uppercase">Fra:</span>
+<span class="text-on-surface font-medium">Fjord Gulvservice &lt;booking@fjordgulv.dk&gt;</span>
+</div>
+<div class="flex items-center text-[12px] text-on-surface-variant">
+<span class="w-16 font-semibold uppercase">Til:</span>
+<span class="text-on-surface font-medium">Henrik Villumsen &lt;henrik.v@privat.dk&gt;</span>
+</div>
+<div class="flex items-center text-[12px] text-on-surface-variant">
+<span class="w-16 font-semibold uppercase">Emne:</span>
+<span class="text-primary font-semibold truncate" id="preview-email-subject">Vi har modtaget din forespørgsel – Fjord Gulvservice [Ref: #FG-8942]</span>
+</div>
+</div>
+</div>
+<!-- Rendered Email Document Body -->
+<div class="p-6 space-y-5">
+<!-- Branded Email Header -->
+<div class="flex items-center justify-between pb-4 bg-surface-container-low -mx-6 -mt-6 p-6">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs">FG</div>
+<div>
+<p class="font-headline-sm text-[16px] text-primary leading-tight">Fjord Gulvservice ApS</p>
+<p class="font-label-sm text-[11px] text-on-surface-variant">Kvalitetsarbejde &amp; rådgivning</p>
+</div>
+</div>
+<span class="font-mono text-label-sm text-[12px] font-bold text-on-surface-variant">REF: #FG-8942</span>
+</div>
+<!-- Parsed Body Content -->
+<div class="space-y-3 font-body-sm text-body-sm text-on-surface leading-relaxed" id="preview-email-body">
+<p>Hej Henrik Villumsen,</p>
+<p>Mange tak for din henvendelse. Vi har registreret din anmodning om <strong>Rådgivningsmøde om gulve</strong> den <strong>onsdag 28. okt 2026 kl. 10.30–11.15</strong> på adressen <strong>Strandvejen 42, 2900 Hellerup</strong>.</p>
+<p>Vores montør <strong>Mads Møller</strong> gennemgår køreplanen nu. Du modtager endelig bekræftelse inden for 2 timer i almindelig åbningstid.</p>
+</div>
+<!-- Call to Action Box in Email -->
+<div class="p-4 bg-surface-container-low rounded-xl space-y-2.5">
+<p class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Aftalestyring &amp; Selvbetjening (W13)</p>
+<p class="font-body-sm text-[12px] text-on-surface">Her kan du til enhver tid ændre tidspunkt, indsætte billeder eller tilføje adgangskoder til opgangen:</p>
+<a class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md font-semibold hover:bg-primary-container transition-colors" href="#">
+<span>Gå til Mit Fjord Gulv</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+<p class="font-mono text-[10px] text-on-surface-variant break-all">Link: https://dialogbot.example/b/FG-8942?auth=tok_991823ab</p>
+</div>
+<!-- Email Footer -->
+<div class="pt-3 text-[11px] text-on-surface-variant space-y-1">
+<p>Fjord Gulvservice ApS • CVR: 39821044 • Tlf: +45 70 20 12 34</p>
+<p>Denne meddelelse er afsendt automatisk via Dialogbot Booking Gateway.</p>
+</div>
+</div>
+</div>
+<!-- Preview 2: Mobile SMS Screen Simulation -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-4 space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">sms</span>
+<span class="font-label-md text-label-md font-semibold text-on-surface">Forhåndsvisning: SMS (Kundemobil)</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[11px]" id="sms-counter">154/160 tegn (1 SMS)</span>
+</div>
+<!-- Phone Mockup Container -->
+<div class="bg-surface-container-low p-4 rounded-xl space-y-3">
+<div class="flex items-center justify-between text-on-surface-variant text-[11px]">
+<span>Afsender: <strong class="text-on-surface font-semibold">Fjord Gulv</strong></span>
+<span>I dag 09:41</span>
+</div>
+<!-- SMS Speech Bubble -->
+<div class="bg-surface-container-lowest p-3.5 rounded-2xl rounded-tl-sm shadow-sm space-y-2 max-w-sm">
+<p class="font-body-sm text-[13px] text-on-surface leading-snug" id="preview-sms-text">
+              Hej Henrik, din aftale med Fjord Gulvservice er bekræftet til ons 28/10 kl. 10:30. Se aftale og vilkår her: dialogbot.example/b/FG-8942
+            </p>
+<div class="flex items-center justify-end gap-1 text-on-surface-variant text-[10px]">
+<span>Leveret</span>
+<span class="material-symbols-outlined text-[13px] text-secondary">done_all</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Operational Section: Delivery Status & Lifecycle Resilience -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm space-y-5">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Håndtering af Forsendelsesstatus &amp; Fejlresiliens</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Klar adskillelse mellem forretningsmæssig bookingstatus og teknisk beskedtransmission.</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="flex h-2.5 w-2.5 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span>
+</span>
+<span class="font-label-sm text-label-sm font-semibold text-on-surface">Beskedtjeneste 99.98% oppetid</span>
+</div>
+</div>
+<!-- Status Flow Pipeline Cards -->
+<div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+<!-- 1: Planlagt -->
+<div class="bg-surface-container-low p-3.5 rounded-lg space-y-1.5 relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-mono text-label-sm text-[11px] font-bold text-on-surface-variant">TRIN 1</span>
+<span class="material-symbols-outlined text-primary text-[18px]">schedule</span>
+</div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Planlagt</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Genereret i hændelseskøen jf. timerelative regler.</p>
+</div>
+<!-- 2: Afventer afsendelse -->
+<div class="bg-surface-container-low p-3.5 rounded-lg space-y-1.5 relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-mono text-label-sm text-[11px] font-bold text-on-surface-variant">TRIN 2</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">hourglass_top</span>
+</div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Afventer afsendelse</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Klar i gateway-bufferen til dispatch.</p>
+</div>
+<!-- 3: Sendt -->
+<div class="bg-surface-container-low p-3.5 rounded-lg space-y-1.5 relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-mono text-label-sm text-[11px] font-bold text-on-surface-variant">TRIN 3</span>
+<span class="material-symbols-outlined text-primary text-[18px]">outgoing_mail</span>
+</div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Sendt</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Overdraget til teleselskab eller SMTP-relæ.</p>
+</div>
+<!-- 4: Leveret -->
+<div class="bg-surface-container-low p-3.5 rounded-lg space-y-1.5 relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-mono text-label-sm text-[11px] font-bold text-secondary">TRIN 4</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">check_circle</span>
+</div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Leveret</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">DLR-kvittering modtaget fra kundens enhed.</p>
+</div>
+<!-- 5: Fejlet / Ukendt -->
+<div class="bg-surface-container-low p-3.5 rounded-lg space-y-1.5 relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-mono text-label-sm text-[11px] font-bold text-error">FALLBACK</span>
+<span class="material-symbols-outlined text-error text-[18px]">report_problem</span>
+</div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Fejlet / Ukendt</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Hard bounce, forkert nummer el. netfejl.</p>
+</div>
+</div>
+<!-- Critical Decoupling Principles -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+<div class="p-4 bg-surface-container rounded-xl flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[22px] mt-0.5">lock_clock</span>
+<div class="space-y-1">
+<p class="font-label-md text-label-md font-bold text-on-surface">Uafhængighed: Bookingstatus vs. Beskedstatus</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            En beskedfejl (f.eks. ugyldigt mobilnummer eller spamfilter) gør <strong>IKKE</strong> en bekræftet kalenderaftale ugyldig. Genforsøg på afsendelse genskriver ikke kalenderposten i montørens app.
+          </p>
+</div>
+</div>
+<div class="p-4 bg-surface-container rounded-xl flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-[22px] mt-0.5">update</span>
+<div class="space-y-1">
+<p class="font-label-md text-label-md font-bold text-on-surface">Tidsmæssige Kanttilfælde &amp; Genberegning</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Bookinger oprettet under 24 timer før mødestart afsendes ikke med bagudrettet 24-timers påmindelse. Ved gennemført flytning af en aftale annulleres gamle påmindelser og nye genberegnes automatisk.
+          </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Client-side Interactive State Controller -->
+<script>
+  const variants = [
+    {
+      id: 0,
+      name: "1. Anmodning modtaget",
+      desc: "Sendes prompte til kunden når online forespørgsel registreres i Dialogbot kalendersystemet.",
+      target: "Slutkunde",
+      icon: "inbox_customize",
+      trigger: "booking.request.created",
+      emailSubject: "Vi har modtaget din forespørgsel – Fjord Gulvservice [Ref: {BOOKING_REF}]",
+      emailBody: `Hej {KUNDE_NAVN},
+
+Mange tak for din henvendelse. Vi har registreret din anmodning om {YDELSES_NAVN} den {DATO_TID} på adressen {STED_ADRESSE}.
+
+Vores montør {MONTØR_NAVN} gennemgår køreplanen nu. Du modtager endelig bekræftelse inden for 2 timer i almindelig åbningstid.
+
+Du kan følge status eller redigere dine ønsker direkte her:
+{STYRINGS_LINK}
+
+Venlig hilsen,
+Fjord Gulvservice`,
+      smsBody: "Hej {KUNDE_NAVN}, vi har modtaget din anmodning om {YDELSES_NAVN} den {DATO_TID}. Vi bekræfter snarest. Se status: {STYRINGS_LINK}"
+    },
+    {
+      id: 1,
+      name: "2. Aftale bekræftet",
+      desc: "Gennemført booking med endeligt tildelt montør, tidsrum og direkte adgang til selvbetjening.",
+      target: "Slutkunde",
+      icon: "task_alt",
+      trigger: "booking.confirmed",
+      emailSubject: "Din aftale er bekræftet – Fjord Gulvservice [Ref: {BOOKING_REF}]",
+      emailBody: `Hej {KUNDE_NAVN},
+
+Din booking er nu endeligt godkendt og lagt i køreplanen.
+
+Aftaledetaljer:
+- Ydelse: {YDELSES_NAVN}
+- Tidspunkt: {DATO_TID}
+- Adresse: {STED_ADRESSE}
+- Din gulvspecialist: {MONTØR_NAVN}
+
+Hvis du skal give særlige nøgle- eller parkeringsinstruktioner, kan du tilføje dem via selvbetjeningen:
+{STYRINGS_LINK}
+
+Vi glæder os til at hjælpe dig!
+Fjord Gulvservice`,
+      smsBody: "Hej {KUNDE_NAVN}, din aftale med Fjord Gulvservice er bekræftet til {DATO_TID}. Se aftale og vilkår her: {STYRINGS_LINK}"
+    },
+    {
+      id: 2,
+      name: "3. Påmindelse (24t / 2t før)",
+      desc: "Afsendes tidsstyret med forberedelsesguide (rydning af gulve, kæledyr, parkering).",
+      target: "Slutkunde",
+      icon: "alarm",
+      trigger: "booking.reminder.t_minus_24h",
+      emailSubject: "Påmindelse: Vi ses i morgen til {YDELSES_NAVN} [Ref: {BOOKING_REF}]",
+      emailBody: `Hej {KUNDE_NAVN},
+
+Dette er en venlig påmindelse om dit besøg af {MONTØR_NAVN} fra Fjord Gulvservice i morgen, {DATO_TID}.
+
+Forberedelse før ankomst:
+1. Sørg for fri adgang til det pågældende arbejdsområde på {STED_ADRESSE}.
+2. Evt. løse tæpper og mindre genstande bedes fjernet.
+
+Har du brug for at ombooke eller efterlade en besked til montøren?
+{STYRINGS_LINK}
+
+Bedste hilsner,
+Fjord Gulvservice`,
+      smsBody: "Påmindelse: Fjord Gulvservice ankommer {DATO_TID} på {STED_ADRESSE}. Husk fri passage. Se guide: {STYRINGS_LINK}"
+    },
+    {
+      id: 3,
+      name: "4. Foreslået ændring",
+      desc: "Virksomheden foreslår en alternativ tid pga. logistik eller udvidet tidsforbrug på forrige sag.",
+      target: "Slutkunde",
+      icon: "edit_calendar",
+      trigger: "booking.reschedule.proposed",
+      emailSubject: "Forslag til nyt tidspunkt for din gulvaftale [Ref: {BOOKING_REF}]",
+      emailBody: `Hej {KUNDE_NAVN},
+
+Grundet optimering af montørens rute vil vi gerne høre, om vi kan flytte din aftale om {YDELSES_NAVN}.
+
+Foreslået ny tid: {DATO_TID}
+Adresse: {STED_ADRESSE}
+Montør: {MONTØR_NAVN}
+
+Klik her for at godkende det nye tidspunkt med ét klik eller vælge et andet:
+{STYRINGS_LINK}
+
+På forhånd tak for din fleksibilitet!`,
+      smsBody: "Hej {KUNDE_NAVN}. Kan vi rykke din aftale til {DATO_TID}? Klik her for straks at godkende eller vælge anden tid: {STYRINGS_LINK}"
+    },
+    {
+      id: 4,
+      name: "5. Aftale flyttet",
+      desc: "Bekræftelse på gennemført ombooking med klar visualisering af ny aftale.",
+      target: "Slutkunde",
+      icon: "published_with_changes",
+      trigger: "booking.reschedule.applied",
+      emailSubject: "Din aftale er flyttet – Fjord Gulvservice [Ref: {BOOKING_REF}]",
+      emailBody: `Hej {KUNDE_NAVN},
+
+Vi bekræfter hermed, at din aftale er blevet flyttet.
+
+Ny aftaletid:
+- Nyt tidspunkt: {DATO_TID}
+- Opgave: {YDELSES_NAVN}
+- Montør: {MONTØR_NAVN}
+- Reference: {BOOKING_REF}
+
+Se din opdaterede bookingbekræftelse og kalenderfil her:
+{STYRINGS_LINK}`,
+      smsBody: "Din aftale med Fjord Gulvservice er nu flyttet til {DATO_TID}. Se opdateret aftale: {STYRINGS_LINK}"
+    },
+    {
+      id: 5,
+      name: "6. Aftale aflyst",
+      desc: "Gennemført aflysning med årsag, kvittering samt direkte link til at genbestille.",
+      target: "Slutkunde",
+      icon: "cancel",
+      trigger: "booking.cancelled",
+      emailSubject: "Aftale aflyst – Fjord Gulvservice [Ref: {BOOKING_REF}]",
+      emailBody: `Hej {KUNDE_NAVN},
+
+Vi bekræfter, at aftalen om {YDELSES_NAVN} planlagt til {DATO_TID} nu er aflyst i vores system.
+
+Bookingreference: {BOOKING_REF}
+
+Hvis du ønsker at bestille en ny tid på et senere tidspunkt, er du altid velkommen via vores online booking:
+{STYRINGS_LINK}
+
+Tak for din interesse for Fjord Gulvservice.`,
+      smsBody: "Bekræftelse: Din aftale den {DATO_TID} hos Fjord Gulvservice er aflyst. Genbestil her når det passer: {STYRINGS_LINK}"
+    },
+    {
+      id: 6,
+      name: "7. Kræver handling (Ejer)",
+      desc: "Intern advarsel til bookingansvarlig/disponent ved kapacitetskonflikt eller overlap.",
+      target: "Intern Ejer / Drift",
+      icon: "warning",
+      trigger: "system.booking.conflict_detected",
+      emailSubject: "INTERN ALARM: Kapacitetsmangel ved booking [Ref: {BOOKING_REF}]",
+      emailBody: `BEMÆRK: Intern driftsbesked til disponent
+
+Der er registreret en bookingkonflikt eller manglende montørkapacitet.
+
+Detaljer:
+- Kunde: {KUNDE_NAVN}
+- Ydelse: {YDELSES_NAVN}
+- Ønsket tid: {DATO_TID}
+- Adresse: {STED_ADRESSE}
+- Tilknyttet: {MONTØR_NAVN}
+
+Åbn kontrolpanelet straks for manuel omfordeling:
+{STYRINGS_LINK}`,
+      smsBody: "INTERN ALARM: Bookingkonflikt på #{BOOKING_REF} ({KUNDE_NAVN}, {DATO_TID}). Kræver disponent-handling: {STYRINGS_LINK}"
+    }
+  ];
+
+  let currentVariantIdx = 0;
+  let activeChannel = 'email'; // 'email' or 'sms'
+
+  function selectVariant(idx) {
+    currentVariantIdx = idx;
+    const v = variants[idx];
+
+    // Update Tab Styles
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.className = "tab-btn px-3 py-2 rounded-lg font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap text-on-surface-variant hover:bg-surface-container hover:text-on-surface";
+    });
+    const activeBtn = document.querySelector(`.tab-btn[data-idx="${idx}"]`);
+    if(activeBtn) {
+      activeBtn.className = "tab-btn px-3 py-2 rounded-lg font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap bg-primary-container text-on-primary font-semibold shadow-sm";
+    }
+
+    // Populate Left Editor
+    document.getElementById('variant-icon').innerText = v.icon;
+    document.getElementById('variant-title').innerText = v.name;
+    document.getElementById('variant-desc').innerText = v.desc;
+    document.getElementById('variant-target').innerText = v.target;
+    document.getElementById('trigger-event').innerText = v.trigger;
+    document.getElementById('email-subject').value = v.emailSubject;
+
+    if (activeChannel === 'email') {
+      document.getElementById('template-editor').value = v.emailBody;
+    } else {
+      document.getElementById('template-editor').value = v.smsBody;
+    }
+
+    updatePreview();
+  }
+
+  function toggleChannel(channel) {
+    activeChannel = channel;
+    const emailBtn = document.getElementById('channel-email-btn');
+    const smsBtn = document.getElementById('channel-sms-btn');
+    const subjectWrap = document.getElementById('email-subject-wrap');
+    const editorLabel = document.getElementById('editor-label');
+    const v = variants[currentVariantIdx];
+
+    if (channel === 'email') {
+      emailBtn.className = "px-3 py-1 rounded font-label-sm text-label-sm font-semibold bg-surface-container-lowest text-primary shadow-sm transition-all flex items-center gap-1.5";
+      smsBtn.className = "px-3 py-1 rounded font-label-sm text-label-sm font-semibold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1.5";
+      subjectWrap.classList.remove('hidden');
+      editorLabel.innerText = "E-mail Brødtekst (Markdown / HTML)";
+      document.getElementById('template-editor').value = v.emailBody;
+    } else {
+      smsBtn.className = "px-3 py-1 rounded font-label-sm text-label-sm font-semibold bg-surface-container-lowest text-primary shadow-sm transition-all flex items-center gap-1.5";
+      emailBtn.className = "px-3 py-1 rounded font-label-sm text-label-sm font-semibold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1.5";
+      subjectWrap.classList.add('hidden');
+      editorLabel.innerText = "SMS Tekst (GSM standard)";
+      document.getElementById('template-editor').value = v.smsBody;
+    }
+
+    updatePreview();
+  }
+
+  function insertTag(tag) {
+    const editor = document.getElementById('template-editor');
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const text = editor.value;
+    editor.value = text.substring(0, start) + tag + text.substring(end);
+    editor.focus();
+    editor.selectionStart = editor.selectionEnd = start + tag.length;
+    updatePreview();
+  }
+
+  function replaceTags(template) {
+    const mock = {
+      '{KUNDE_NAVN}': 'Henrik Villumsen',
+      '{YDELSES_NAVN}': 'Rådgivningsmøde om gulve',
+      '{DATO_TID}': 'onsdag 28. okt 2026 kl. 10.30–11.15',
+      '{STED_ADRESSE}': 'Strandvejen 42, 2900 Hellerup',
+      '{BOOKING_REF}': '#FG-8942',
+      '{MONTØR_NAVN}': 'Mads Møller',
+      '{STYRINGS_LINK}': 'dialogbot.example/b/FG-8942'
+    };
+
+    let res = template;
+    for (const [key, val] of Object.entries(mock)) {
+      res = res.split(key).join(val);
+    }
+    return res;
+  }
+
+  function updatePreview() {
+    const editorVal = document.getElementById('template-editor').value;
+    const subjectVal = document.getElementById('email-subject').value;
+    
+    // Character Counter
+    document.getElementById('char-counter').innerText = editorVal.length + " tegn";
+
+    // Validation Check for Tags
+    const hasRef = editorVal.includes('{BOOKING_REF}') || subjectVal.includes('{BOOKING_REF}');
+    const hasLink = editorVal.includes('{STYRINGS_LINK}');
+    const valText = document.getElementById('validation-text');
+    const valIcon = document.getElementById('validation-icon');
+
+    if (hasRef && hasLink) {
+      valText.innerText = "Skabelon opfylder E07 valideringsregler";
+      valIcon.innerText = "check_circle";
+      valIcon.className = "material-symbols-outlined text-secondary text-[20px]";
+    } else {
+      valText.innerText = "Advarsel: {BOOKING_REF} eller {STYRINGS_LINK} mangler i skabelonen";
+      valIcon.innerText = "warning";
+      valIcon.className = "material-symbols-outlined text-error text-[20px]";
+    }
+
+    // Render Preview
+    const currentVar = variants[currentVariantIdx];
+    
+    // Email preview subject & body
+    document.getElementById('preview-email-subject').innerText = replaceTags(subjectVal);
+
+    let rawEmail = activeChannel === 'email' ? editorVal : currentVar.emailBody;
+    let parsedEmail = replaceTags(rawEmail).replace(/\n/g, '<br/>');
+    document.getElementById('preview-email-body').innerHTML = parsedEmail;
+
+    // SMS Preview
+    let rawSms = activeChannel === 'sms' ? editorVal : currentVar.smsBody;
+    let parsedSms = replaceTags(rawSms);
+    document.getElementById('preview-sms-text').innerText = parsedSms;
+    
+    const smsLen = parsedSms.length;
+    const smsCount = Math.ceil(smsLen / 160) || 1;
+    document.getElementById('sms-counter').innerText = `${smsLen}/160 tegn (${smsCount} SMS)`;
+  }
+
+  function simulateSend() {
+    alert("Testbesked afsendt via Dialogbot Gateway simuleringsmotor til Henrik Villumsen (+45 28 ** ** 12). Se preview-panelet for faktisk visning.");
+  }
+
+  function saveTemplate() {
+    const v = variants[currentVariantIdx];
+    if (activeChannel === 'email') {
+      v.emailBody = document.getElementById('template-editor').value;
+      v.emailSubject = document.getElementById('email-subject').value;
+    } else {
+      v.smsBody = document.getElementById('template-editor').value;
+    }
+    alert("Beskedskabelon for '" + v.name + "' er gemt i systemet.");
+  }
+
+  function resetTemplate() {
+    selectVariant(currentVariantIdx);
+  }
+
+  // Initial trigger
+  document.addEventListener('DOMContentLoaded', () => {
+    selectVariant(0);
+  });
+</script></main></div>
+</body></html>

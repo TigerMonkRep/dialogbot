@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-primary-fixed": "#00201a", "outline-variant": "#bfc9c4", "tertiary": "#00334a", "secondary-container": "#d4ea82", "surface-container-low": "#e1f8f3", "error-container": "#ffdad6", "surface-container": "#dcf3ee", "on-tertiary-fixed": "#001e2d", "primary": "#00362d", "on-tertiary-fixed-variant": "#004c6b", "surface-variant": "#d0e7e2", "on-error": "#ffffff", "on-secondary-fixed": "#171e00", "surface-container-lowest": "#ffffff", "on-tertiary-container": "#80bbe0", "tertiary-fixed": "#c6e7ff", "inverse-surface": "#203431", "on-surface-variant": "#404946", "primary-fixed-dim": "#9bd1c3", "on-primary": "#ffffff", "surface-container-highest": "#d0e7e2", "background": "#e7fef9", "on-surface": "#0a1f1c", "inverse-primary": "#9bd1c3", "tertiary-fixed-dim": "#93cef4", "error": "#ba1a1a", "on-secondary-container": "#586a0e", "surface-dim": "#c8dfda", "secondary-fixed-dim": "#bbd06c", "surface-tint": "#33675c", "surface-container-high": "#d6ede8", "tertiary-container": "#004b6a", "on-primary-container": "#88beb0", "secondary-fixed": "#d6ec85", "outline": "#707976", "on-error-container": "#93000a", "secondary": "#546508", "primary-container": "#164e43", "on-primary-fixed-variant": "#184f44", "on-secondary": "#ffffff", "surface": "#e7fef9", "on-secondary-fixed-variant": "#3e4c00", "surface-bright": "#e7fef9", "inverse-on-surface": "#dff6f0", "primary-fixed": "#b6eede", "on-background": "#0a1f1c", "on-tertiary": "#ffffff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-sm": "0.5rem", "margin-lg": "2rem", "gutter": "1rem", "gutter-lg": "1.5rem", "margin": "1rem", "space-md": "0.75rem", "space-xl": "1.5rem", "space-xs": "0.25rem", "margin-md": "1.5rem", "space-lg": "1rem" }, fontFamily: { "headline-lg-mobile": ["Manrope"], "label-lg": ["Inter"], "headline-md": ["Manrope"], "label-sm": ["Inter"], "body-sm": ["Inter"], "label-md": ["Inter"], "headline-sm": ["Manrope"], "display-lg": ["Manrope"], "display-lg-mobile": ["Manrope"], "headline-lg": ["Manrope"], "body-md": ["Inter"], "body-lg": ["Inter"] }, fontSize: { "headline-lg-mobile": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "display-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style></head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm min-w-0"><img alt="Brand logo. - Primary color: #164e43
+- Font: manrope
+- Mode: light
+- Roundness: rounded-md
+" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1V05QJ6ogqjQWFOy45hIopE1L8L12GtzKAoL03rnuk3QGgmKM9MOsMR-7O6ORIaIetfBElhHecaaykH_SmmLkmGC4aIeHNldsLlMhk8SHwIijcyDicoWG9fmHPRmeoWXyFl39oUTfA58hv5tXT4hTdwOsQc5PlbL9MCt5N6AgkeNV7Ls4coD3Gt8P6fge98PhalilHSUXAqPpnxnQNjoD2bIfUoH01Vn1r4Cv13MEMT1umMgSSBUpyi7M4"/><div class="flex flex-col truncate"><span class="font-headline-sm text-headline-sm text-primary-container truncate leading-tight">Dialogbot</span><span class="font-label-sm text-label-sm text-on-surface-variant truncate">Fjord Gulvservice ApS (Demo)</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="Notifikationer" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-margin pb-space-xl">
+<!-- Top Title Area -->
+<div class="flex items-center justify-between mt-space-md mb-space-md">
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">Styring &amp; Konfiguration</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Videnscenter &amp; Manuskript</h1>
+</div>
+<div class="flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-secondary-container text-on-secondary-container shadow-sm">
+<span class="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm">Synkroniseret</span>
+</div>
+</div>
+<!-- Segmented Tab Navigation -->
+<div class="relative w-full overflow-hidden mb-space-lg">
+<div class="flex gap-space-xs overflow-x-auto pb-1 no-scrollbar scroll-smooth" id="segment-scroll">
+<button class="tab-button whitespace-nowrap px-space-md py-2 rounded-full font-label-md text-label-md transition-all flex items-center gap-1.5 bg-primary-container text-on-primary shadow-sm" id="tab-btn-viden" onclick="switchTab('viden')">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span>Viden &amp; Fakta</span>
+</button>
+<button class="tab-button whitespace-nowrap px-space-md py-2 rounded-full font-label-md text-label-md transition-all flex items-center gap-1.5 bg-surface-container text-on-surface-variant hover:text-on-surface" id="tab-btn-katalog" onclick="switchTab('katalog')">
+<span class="material-symbols-outlined text-[16px]">sell</span>
+<span>Katalog &amp; Tilbud</span>
+</button>
+<button class="tab-button whitespace-nowrap px-space-md py-2 rounded-full font-label-md text-label-md transition-all flex items-center gap-1.5 bg-surface-container text-on-surface-variant hover:text-on-surface relative" id="tab-btn-konflikter" onclick="switchTab('konflikter')">
+<span class="material-symbols-outlined text-[16px] text-error">warning</span>
+<span>Konflikter</span>
+<span class="w-4 h-4 rounded-full bg-error text-on-error font-label-sm text-[10px] flex items-center justify-center font-bold">1</span>
+</button>
+<button class="tab-button whitespace-nowrap px-space-md py-2 rounded-full font-label-md text-label-md transition-all flex items-center gap-1.5 bg-surface-container text-on-surface-variant hover:text-on-surface" id="tab-btn-manuskript" onclick="switchTab('manuskript')">
+<span class="material-symbols-outlined text-[16px]">record_voice_over</span>
+<span>Manuskript (R05)</span>
+</button>
+<button class="tab-button whitespace-nowrap px-space-md py-2 rounded-full font-label-md text-label-md transition-all flex items-center gap-1.5 bg-surface-container text-on-surface-variant hover:text-on-surface" id="tab-btn-test" onclick="switchTab('test')">
+<span class="material-symbols-outlined text-[16px]">play_circle</span>
+<span>Test (R06)</span>
+</button>
+</div>
+</div>
+<!-- TAB 1: VIDEN & FAKTA -->
+<section class="tab-panel flex flex-col gap-space-md" id="panel-viden">
+<!-- Active Sources Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">database</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Aktive videnskilder</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2 aktive</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-space-md">
+        Disse kilder fodrer Clara med autoritativ information om Fjord Gulvservice ApS.
+      </p>
+<div class="space-y-space-sm">
+<!-- Source 1 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">language</span>
+</div>
+<div class="min-w-0">
+<p class="font-label-lg text-label-lg text-on-surface truncate">fjordgulv.dk</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Webcrawler</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Synket i dag 06:15</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-on-surface text-[20px] cursor-pointer">sync</span>
+</div>
+<!-- Source 2 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-9 h-9 rounded-lg bg-primary text-on-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+</div>
+<div class="min-w-0">
+<p class="font-label-lg text-label-lg text-on-surface truncate">prisliste_2026.pdf</p>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant">PDF Import</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-primary font-medium">Manuelt bekræftet</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]">verified</span>
+</div>
+</div>
+</div>
+<!-- Add Source Action Card -->
+<div class="bg-surface-container-high rounded-xl p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">add_link</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Udvend kendskabet</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Upload PDF, forbind website eller opret svarmanuelt.</span>
+</div>
+</div>
+<button class="w-full mt-space-xs py-2.5 px-space-md rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 active:scale-[0.99] transition-transform shadow-sm">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span>+ Tilføj kilde / Manuel indtastning</span>
+</button>
+</div>
+</section>
+<!-- TAB 2: KATALOG & TILBUD -->
+<section class="tab-panel hidden flex flex-col gap-space-md" id="panel-katalog">
+<!-- Verified Badge Notice -->
+<div class="p-space-sm rounded-xl bg-secondary-container text-on-secondary-container flex items-center gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-[20px] text-primary">security</span>
+<span class="font-label-md text-label-md">Bekræftet af dig – beskyttet mod overskrivning</span>
+</div>
+<!-- Product Item Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-label-sm text-label-sm uppercase text-secondary font-semibold">Kerneydelse (Sjælland)</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-0.5">Gulvafslibning m. 2x lak</h3>
+</div>
+<div class="text-right">
+<div class="font-headline-md text-headline-md text-primary-container font-bold tabular-nums">145,-</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">kr. pr. m²</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-sm flex flex-wrap items-center gap-2">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">check_circle</span>
+          Godkendt pris
+        </span>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+          Inkl. mellemslibning
+        </span>
+</div>
+</div>
+<!-- Active Discount Rule -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">percent</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Arealrabat v. &gt;40 m²</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold">15% Rabat</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Fratrækkes automatisk i telefoniske overslag når kunden angiver samlet boligareal på mindst 40 kvadratmeter.
+      </p>
+<div class="mt-space-sm p-space-xs rounded-lg bg-surface-container-low flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Regelstatus</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+          Aktiv tilbudsregel
+        </span>
+</div>
+</div>
+<!-- Add Service CTA -->
+<button class="w-full py-2.5 px-space-md rounded-lg bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add_box</span>
+<span>Opret ny ydelse eller rabatkode</span>
+</button>
+</section>
+<!-- TAB 3: KONFLIKTER (1) -->
+<section class="tab-panel hidden flex flex-col gap-space-md" id="panel-konflikter">
+<!-- Conflict Card (Primary Warning) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">sync_problem</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Prisdivergens opdaget</h3>
+<span class="font-label-sm text-label-sm text-error font-medium">1 uafklaret modstrid</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm">Høj prioritet</span>
+</div>
+<div class="mt-space-md p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-surface-variant">Nyt fund (fjordgulv.dk):</span>
+<span class="font-headline-sm text-headline-sm text-error font-bold tabular-nums">140,- kr/m²</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-surface-variant">Eksisterende godkendt:</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold tabular-nums">145,- kr/m²</span>
+</div>
+</div>
+<p class="mt-space-sm font-body-sm text-body-sm text-on-surface-variant">
+        Webcrawleren fandt et kampagnetilbud på forsiden, som afviger fra din manuelt låste grundprisliste for standardlakering.
+      </p>
+<!-- Note about rerun tests -->
+<div class="mt-space-sm p-space-xs rounded-lg bg-surface-container-high flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-container text-[18px]">info</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Bemærk: Godkendelse genåbner berørte tests</span>
+</div>
+<!-- Action Buttons -->
+<div class="mt-space-md grid grid-cols-2 gap-space-xs">
+<button class="py-2.5 px-space-sm rounded-lg bg-primary-container text-on-primary font-label-md text-label-md font-semibold text-center shadow-sm active:scale-[0.98]">
+          Behold 145,-
+        </button>
+<button class="py-2.5 px-space-sm rounded-lg bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md font-semibold text-center active:scale-[0.98]">
+          Godkend 140,-
+        </button>
+</div>
+<button class="w-full mt-space-xs py-2 px-space-sm rounded-lg bg-surface-container text-on-surface font-label-md text-label-md text-center">
+        Redigér manuelt
+      </button>
+</div>
+</section>
+<!-- TAB 4: MANUSKRIPT (R05) -->
+<section class="tab-panel hidden flex flex-col gap-space-md" id="panel-manuskript">
+<!-- Active Version Meta -->
+<div class="bg-primary-container text-on-primary rounded-xl p-space-md shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">smart_toy</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-primary">Clara Stemmemodel</h3>
+<span class="px-2 py-0.5 rounded-full bg-secondary text-on-secondary font-label-sm text-label-sm font-semibold">v2.4 Live</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-primary-container">Dansk stemme • Venlig &amp; Faglig</p>
+</div>
+</div>
+</div>
+<!-- Preview Box: Velkomstreplik -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm uppercase text-secondary font-semibold">Åbningsreplik</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">volume_up</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low font-body-md text-body-md text-on-surface italic">
+        "Hej, du taler med Clara hos Fjord Gulvservice. Jeg kan hjælpe med prisoverslag, tidsbestilling til besigtigelse eller svare på spørgsmål om gulvbehandling. Hvad drejer din henvendelse sig om?"
+      </div>
+</div>
+<!-- Preview Box: Vidensbegrænsninger -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm uppercase text-primary font-semibold">Vidensbegrænsninger &amp; Sikkerhed</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">lock</span>
+</div>
+<ul class="space-y-space-xs font-body-sm text-body-sm text-on-surface">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px] mt-0.5">check_circle</span>
+<span>Må <strong>ikke</strong> give tilbud på asbestholdige limlag (henvis straks til mester).</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px] mt-0.5">check_circle</span>
+<span>Maksimal rabatloft er fastsat til 15% v. over 40 m².</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px] mt-0.5">check_circle</span>
+<span>Skift straks til engelsk hvis kunden taler engelsk.</span>
+</li>
+</ul>
+</div>
+<!-- CTA Draft -->
+<button class="w-full py-3 px-space-md rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 active:scale-[0.99] transition-transform shadow-sm">
+<span class="material-symbols-outlined text-[20px]">edit_note</span>
+<span>Opret redigerbar kladde (v2.5)</span>
+</button>
+</section>
+<!-- TAB 5: TEST (R06) -->
+<section class="tab-panel hidden flex flex-col gap-space-md" id="panel-test">
+<!-- Test List Card -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between mb-space-sm">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Automatiske regressionskald</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">3 ud af 3 scenarier bestået</p>
+</div>
+<span class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold font-label-sm text-label-sm">
+          100%
+        </span>
+</div>
+<div class="space-y-space-sm mt-space-sm">
+<!-- Test 1 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Kendt pris forespørgsel</p>
+<span class="font-body-sm text-body-sm text-on-surface-variant">50 m² lakeret svarer 6.162,50 kr.</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant tabular-nums">0.8s</span>
+</div>
+<!-- Test 2 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Asbest-afvisning &amp; viderestilling</p>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Afslår korrekt og ringer til mester</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant tabular-nums">1.1s</span>
+</div>
+<!-- Test 3 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Engelsk sprogskift</p>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Automatisk switch til UK English</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant tabular-nums">0.9s</span>
+</div>
+</div>
+</div>
+<!-- Trigger Call Simulation -->
+<div class="bg-surface-container-high rounded-xl p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">phone_in_talk</span>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface">Valider Clara før udgivelse</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Test hvordan botten håndterer vanskelige kunder og modstridende spørgsmål.</p>
+</div>
+</div>
+<button class="w-full mt-space-xs py-3 px-space-md rounded-lg bg-secondary-fixed text-on-secondary-fixed font-headline-sm text-headline-sm flex items-center justify-center gap-2 active:scale-[0.99] transition-all shadow-sm" id="sim-call-btn" onclick="startSimulatedCall()">
+<span class="material-symbols-outlined text-[22px]">play_arrow</span>
+<span>Kør simuleret prøvekald</span>
+</button>
+<div class="hidden p-space-sm rounded-lg bg-primary-container text-on-primary text-center font-body-sm text-body-sm animate-pulse" id="sim-status">
+        Forbinder virtuelt testopkald til Clara v2.4...
+      </div>
+</div>
+</section>
+</div>
+<script>
+  function switchTab(tabKey) {
+    const panels = document.querySelectorAll('.tab-panel');
+    panels.forEach(p => p.classList.add('hidden'));
+
+    const targetPanel = document.getElementById('panel-' + tabKey);
+    if (targetPanel) {
+      targetPanel.classList.remove('hidden');
+    }
+
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(btn => {
+      btn.classList.remove('bg-primary-container', 'text-on-primary', 'shadow-sm');
+      btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+    });
+
+    const activeBtn = document.getElementById('tab-btn-' + tabKey);
+    if (activeBtn) {
+      activeBtn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+      activeBtn.classList.add('bg-primary-container', 'text-on-primary', 'shadow-sm');
+      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+
+  function startSimulatedCall() {
+    const statusDiv = document.getElementById('sim-status');
+    const callBtn = document.getElementById('sim-call-btn');
+    if (!statusDiv || !callBtn) return;
+    
+    statusDiv.classList.remove('hidden');
+    callBtn.classList.add('opacity-75');
+    callBtn.setAttribute('disabled', 'true');
+
+    setTimeout(() => {
+      statusDiv.textContent = 'Simuleret prøvekald gennemført: 100% overensstemmelse!';
+      statusDiv.classList.remove('animate-pulse', 'bg-primary-container');
+      statusDiv.classList.add('bg-secondary-container', 'text-on-secondary-container');
+      callBtn.removeAttribute('disabled');
+      callBtn.classList.remove('opacity-75');
+    }, 2400);
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(22,78,67,0.06)]" data-active-classes="text-primary-container font-semibold"><div class="flex items-center justify-around h-16 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="overblik" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-label-sm text-label-sm mt-0.5">Overblik</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="indbakke" href="#"><span class="material-symbols-outlined text-[22px]">inbox</span><span class="font-label-sm text-label-sm mt-0.5">Indbakke</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] h-12 transition-colors text-primary-container font-semibold" data-path="viden" href="#"><span class="material-symbols-outlined text-[22px]">auto_stories</span><span class="font-label-sm text-label-sm mt-0.5">Viden</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="kampagner" href="#"><span class="material-symbols-outlined text-[22px]">campaign</span><span class="font-label-sm text-label-sm mt-0.5">Kampagner</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="mere" href="#"><span class="material-symbols-outlined text-[22px]">more_horiz</span><span class="font-label-sm text-label-sm mt-0.5">Mere</span></a></div></nav></body></html>

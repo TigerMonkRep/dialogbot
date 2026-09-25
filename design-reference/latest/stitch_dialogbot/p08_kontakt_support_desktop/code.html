@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-highest": "#d0e7e2", "surface-container": "#dcf3ee", "on-tertiary": "#ffffff", "on-secondary-container": "#586a0e", "inverse-on-surface": "#dff6f0", "secondary-fixed": "#d6ec85", "on-primary-fixed-variant": "#184f44", "surface-tint": "#33675c", "primary-fixed": "#b6eede", "surface-container-low": "#e1f8f3", "on-primary-fixed": "#00201a", "on-surface": "#0a1f1c", "on-primary-container": "#88beb0", "surface": "#e7fef9", "surface-variant": "#d0e7e2", "secondary": "#546508", "on-surface-variant": "#404946", "primary": "#00362d", "on-error-container": "#93000a", "surface-container-high": "#d6ede8", "surface-container-lowest": "#ffffff", "surface-dim": "#c8dfda", "on-primary": "#ffffff", "tertiary-fixed": "#c6e7ff", "primary-fixed-dim": "#9bd1c3", "on-tertiary-fixed-variant": "#004c6b", "tertiary-container": "#004b6a", "error-container": "#ffdad6", "on-tertiary-fixed": "#001e2d", "error": "#ba1a1a", "tertiary-fixed-dim": "#93cef4", "surface-bright": "#e7fef9", "outline": "#707976", "on-error": "#ffffff", "on-secondary": "#ffffff", "tertiary": "#00334a", "on-secondary-fixed": "#171e00", "secondary-fixed-dim": "#bbd06c", "on-background": "#0a1f1c", "background": "#e7fef9", "outline-variant": "#bfc9c4", "inverse-primary": "#9bd1c3", "on-tertiary-container": "#80bbe0", "inverse-surface": "#203431", "on-secondary-fixed-variant": "#3e4c00", "secondary-container": "#d4ea82", "primary-container": "#164e43" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-md": "1.5rem", "space-xl": "1.5rem", "space-xs": "0.25rem", "margin-lg": "2rem", "margin": "1rem", "gutter": "1rem", "space-lg": "1rem", "space-sm": "0.5rem", "gutter-lg": "1.5rem", "space-md": "0.75rem" }, "fontFamily": { "headline-lg": [ "Manrope" ], "display-lg": [ "Manrope" ], "display-lg-mobile": [ "Manrope" ], "body-lg": [ "Inter" ], "label-sm": [ "Inter" ], "body-md": [ "Inter" ], "headline-sm": [ "Manrope" ], "headline-md": [ "Manrope" ], "label-md": [ "Inter" ], "body-sm": [ "Inter" ], "label-lg": [ "Inter" ], "headline-lg-mobile": [ "Manrope" ] }, "fontSize": { "headline-lg": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "display-lg": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "display-lg-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "label-sm": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" } ], "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "headline-sm": [ "18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "headline-md": [ "22px", { "lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "label-md": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" } ], "body-sm": [ "13px", { "lineHeight": "18px", "fontWeight": "400" } ], "label-lg": [ "14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" } ], "headline-lg-mobile": [ "22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700" } ] } } } };</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(23,43,40,0.04)]"><div class="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-md"><div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[20px]">support_agent</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold leading-none">Dialogbot</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mt-0.5">Dansk AI Telefoni</span></div></div><nav class="hidden xl:flex items-center gap-space-md" data-active-classes="bg-surface-container-highest text-primary font-semibold rounded-lg"><a class="px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg" data-path="sadan-fungerer-det" href="#">Sådan fungerer det</a><a class="px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg" data-path="priser-beregner" href="#">Priser &amp; Beregner</a><a class="px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg" data-path="interaktiv-demo" href="#">Interaktiv Demo</a><a class="px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg" data-path="hjalpecer-faq" href="#">Hjælp</a><a class="px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg" data-path="kontakt" href="#">Kontakt</a></nav><div class="flex items-center gap-space-md"><a class="px-4 py-2 text-on-surface font-label-lg text-label-lg hover:text-primary transition-colors" data-path="log-ind" href="#">Log ind</a><a class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg hover:bg-primary transition-colors shadow-sm" data-path="start-gratis-opsatning" href="#">Start gratis opsætning</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-surface"><div class="flex flex-col w-full">
+<!-- Subtle Ambient Top Glow -->
+<div class="relative w-full overflow-hidden">
+<div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-br from-primary-container/10 via-secondary-container/20 to-transparent blur-3xl pointer-events-none -z-10 rounded-full"></div>
+<div class="absolute -top-24 -left-20 w-[420px] h-[380px] bg-gradient-to-tr from-surface-container-high/60 to-transparent blur-2xl pointer-events-none -z-10 rounded-full"></div>
+<div class="max-w-7xl mx-auto px-6 lg:px-12 pt-8 pb-20">
+<!-- Breadcrumb Navigation -->
+<nav aria-label="Brødkrumme" class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-8">
+<a class="hover:text-primary transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[16px]">home</span>
+<span>Forside</span>
+</a>
+<span class="material-symbols-outlined text-[14px] text-outline-variant">chevron_right</span>
+<span aria-current="page" class="text-on-surface font-medium">Kontakt Dialogbot</span>
+</nav>
+<!-- Hero Header Section -->
+<div class="max-w-3xl mb-12">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm uppercase tracking-wider mb-4 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span>KONTAKT DIALOGBOT</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-primary tracking-tight mb-4">
+          Vi er her for at hjælpe med din intelligente telefoni
+        </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+          Vælg om din henvendelse drejer sig om salg og rådgivning eller teknisk support til en aktiv løsning.
+        </p>
+</div>
+<!-- Main 2-Column Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left Column: Interactive Contact Form (7 cols) -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<!-- Main Card Container -->
+<div class="bg-surface-container-lowest rounded-2xl p-8 lg:p-10 shadow-sm relative overflow-hidden">
+<!-- Existing Customer Alert Banner -->
+<div class="mb-8 p-4 rounded-xl bg-surface-container-low flex items-start gap-3.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+<div class="flex flex-col text-on-surface">
+<span class="font-label-lg text-label-lg font-semibold text-primary">Er du allerede kunde?</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                  Opret en direkte sag i <a class="text-primary font-semibold underline underline-offset-2 hover:text-on-secondary-container transition-colors" href="#">H01 Kundesupport</a> for hurtigere sporing, SIP-fejlsøgning og loganalyse.
+                </p>
+</div>
+</div>
+<!-- Segmented Mode Selector -->
+<div class="mb-8">
+<label class="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-3">
+                Henvendelsestype
+              </label>
+<div class="grid grid-cols-2 p-1 bg-surface-container rounded-xl gap-1" id="inquiry-segmented-control">
+<button class="py-3 px-4 rounded-lg font-label-lg text-label-lg text-on-primary bg-primary shadow-sm flex items-center justify-center gap-2 transition-all" id="tab-sales" onclick="switchTab('sales')" type="button">
+<span class="material-symbols-outlined text-[18px]">handshake</span>
+<span>Salg &amp; Rådgivning</span>
+</button>
+<button class="py-3 px-4 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-2 transition-all" id="tab-support" onclick="switchTab('support')" type="button">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>Teknisk Support</span>
+</button>
+</div>
+</div>
+<!-- Simulated Form -->
+<form class="flex flex-col gap-5" id="contact-form" novalidate="" onsubmit="handleFormSubmit(event)">
+<!-- Row: Name & Company -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between" for="full-name">
+<span>Fulde navn <span class="text-error">*</span></span>
+</label>
+<div class="relative">
+<input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-outline shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" id="full-name" name="fullName" oninput="validateField('full-name')" placeholder="fx Christian Møller" required="" type="text"/>
+<div class="absolute right-3 top-3 hidden" id="full-name-status">
+<span class="material-symbols-outlined text-error text-[18px]">error</span>
+</div>
+</div>
+<span class="hidden font-label-sm text-label-sm text-error mt-0.5" id="full-name-error">Angiv venligst dit fulde navn.</span>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="company-name">
+                    Virksomhedsnavn <span class="text-on-surface-variant font-normal">(valgfrit)</span>
+</label>
+<input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-outline shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" id="company-name" name="companyName" placeholder="fx Nordic Health A/S" type="text"/>
+</div>
+</div>
+<!-- Row: Email & Phone -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between" for="work-email">
+<span>Arbejds-e-mail <span class="text-error">*</span></span>
+</label>
+<div class="relative">
+<input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-outline shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" id="work-email" name="workEmail" oninput="validateEmailField()" placeholder="navn@virksomhed.dk" required="" type="email"/>
+<div class="absolute right-3 top-3 hidden" id="work-email-status">
+<span class="material-symbols-outlined text-error text-[18px]">error</span>
+</div>
+</div>
+<span class="hidden font-label-sm text-label-sm text-error mt-0.5" id="work-email-error">Ugyldig e-mailadresse (skal indeholde @ og et domæne).</span>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="phone-number">
+                    Telefonnummer
+                  </label>
+<input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-outline shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" id="phone-number" name="phoneNumber" placeholder="+45 00 00 00 00" type="tel"/>
+</div>
+</div>
+<!-- Topic Dropdown -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="inquiry-topic">
+                  Hvad drejer din henvendelse sig om? <span class="text-error">*</span>
+</label>
+<div class="relative">
+<select class="w-full h-11 px-3.5 pr-10 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer transition-all" id="inquiry-topic" name="inquiryTopic" required="">
+<option disabled="" selected="" value="">Vælg venligst et emne...</option>
+<option value="ny-opsatning">Ny opsætning (AI Receptionist)</option>
+<option value="priser-pakker">Priser &amp; Enterprise-pakker</option>
+<option value="teknisk-integration">Teknisk integration (SIP Trunk, Asterisk, Teams)</option>
+<option value="sla-drift">Driftsaftale &amp; Dedikeret SLA</option>
+<option value="andet">Andet</option>
+</select>
+<div class="absolute right-3.5 top-3.5 pointer-events-none text-on-surface-variant flex items-center">
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Message Textarea -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="message-content">
+                    Besked <span class="text-error">*</span>
+</label>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Gemmes automatisk lokalt</span>
+</div>
+<textarea class="w-full p-3.5 rounded-lg bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-outline shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none transition-all" id="message-content" name="messageContent" oninput="saveDraft()" placeholder="Beskriv kort din virksomheds opkaldsflow, nuværende telefoniopsætning eller dit konkrete tekniske spørgsmål..." required="" rows="4"></textarea>
+<span class="hidden font-label-sm text-label-sm text-error mt-0.5" id="message-error">Skriv venligst en kort besked.</span>
+</div>
+<!-- Checkbox Consent -->
+<div class="flex flex-col gap-1 pt-1">
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="pt-0.5">
+<input class="w-4 h-4 rounded text-primary-container focus:ring-primary/30 cursor-pointer" id="privacy-consent" name="privacyConsent" onchange="validateCheckbox()" required="" type="checkbox"/>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors select-none">
+                    Jeg bekræfter at have læst <a class="text-primary font-semibold underline underline-offset-2 hover:text-on-secondary-container" href="#">privatlivspolitikken (P09)</a> og accepterer behandling af fremsendte kontaktoplysninger.
+                  </span>
+</label>
+<span class="hidden font-label-sm text-label-sm text-error ml-7" id="privacy-error">Du skal acceptere privatlivspolitikken for at indsende formularen.</span>
+</div>
+<!-- CTA & Feedback Area -->
+<div class="pt-3 flex flex-col gap-3">
+<button class="w-full h-12 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm transition-all" id="submit-btn" type="submit">
+<span class="material-symbols-outlined text-[20px]" id="submit-icon">send</span>
+<span id="submit-text">Send henvendelse</span>
+</button>
+<!-- Form Submission Status Alert Area (Hidden initially) -->
+<div class="hidden p-4 rounded-xl bg-secondary-container text-on-secondary-container shadow-sm flex items-start gap-3" id="form-feedback-success">
+<span class="material-symbols-outlined text-secondary text-[22px] shrink-0">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-bold">Mange tak for din henvendelse!</span>
+<span class="font-body-sm text-body-sm mt-0.5">Vi har modtaget dine oplysninger (simuleret prototype) og vender tilbage inden for normal åbningstid.</span>
+</div>
+</div>
+<div class="hidden p-4 rounded-xl bg-error-container text-on-error-container shadow-sm flex items-start gap-3" id="form-feedback-error">
+<span class="material-symbols-outlined text-error text-[22px] shrink-0">warning</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg font-bold">Der opstod en valideringsfejl</span>
+<span class="font-body-sm text-body-sm mt-0.5">Kontrollér de markerede felter ovenfor. Ved simuleret netværksfejl bevares din indtastede tekst intakt.</span>
+</div>
+</div>
+</div>
+</form>
+<!-- State Notes & Transparency Guide -->
+<div class="mt-8 pt-6 border-t border-surface-container-high/40 flex flex-col gap-2.5">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span><strong>Formularvalidering:</strong> Ugyldig e-mailadresse eller manglende obligatoriske felter fremhæves i rød ramme.</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span><strong>Dataintegritet:</strong> Ved simuleret netværksfejl bevares din indtastede tekst i browserens midlertidige lager.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Contact Details, Office, Response Time & FAQ (5 cols) -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Office & Presence Visual Card -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm overflow-hidden relative group">
+<div class="relative h-44 rounded-xl overflow-hidden mb-5">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Lyst og minimalistisk skandinavisk kontormiljø i København med store vinduer, varme træborde og diskret Dialogbot telefoniudstyr i afdæmpede grønne og neutrale toner. Blødt naturligt dagslys strømmer ind over et ryddeligt skrivebord." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChvq7HVdJP2kHMQuyFxbwf_vBCCo2yxx-bk4aEHmHe58o5aZWQszxzKRFkYbppCyusId8yOsMh3rC-6Y_xEsDVm87TlSGvlUNObpY67ZzVXX5jiF7g5C66WACyFDfv-UzTnao0BJyOiWI_kaW-1gkwbTzXoun3z9DSFTW_HVloHsypwnKU5wrzxrDqf2Dh--oxlVoXGckHC_MdyYl-BF_21ur5cioy48HkEVV2xORq651hG07ADvB5fw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+<div class="absolute bottom-3 left-4 right-4 flex items-center justify-between text-on-primary">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider opacity-80 block">Hovedkontor</span>
+<span class="font-headline-sm text-headline-sm font-bold">København, Danmark</span>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-surface-container-lowest/20 backdrop-blur-md text-on-primary font-label-sm text-label-sm flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+<span>Aktiv hub</span>
+</div>
+</div>
+</div>
+<!-- Direct Contact Channels -->
+<div class="flex flex-col gap-4">
+<h2 class="font-headline-sm text-headline-sm text-primary font-bold">Direkte kontaktmuligheder</h2>
+<!-- Sales Box -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-primary font-label-lg text-label-lg font-bold">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+<span>Salg &amp; Rådgivning</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-lowest text-on-surface-variant font-medium">B2B &amp; Enterprise</span>
+</div>
+<div class="flex flex-col gap-1 text-on-surface font-body-sm text-body-sm pt-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">mail</span>
+<a class="hover:text-primary font-medium underline underline-offset-2" href="mailto:salg@dialogbot.example">salg@dialogbot.example</a>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">call</span>
+<a class="hover:text-primary font-semibold" href="tel:+4570200000">+45 70 20 00 00</a>
+</div>
+</div>
+</div>
+<!-- Tech Support Box -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-primary font-label-lg text-label-lg font-bold">
+<span class="material-symbols-outlined text-[18px]">headset_mic</span>
+<span>Teknisk Support</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-semibold">Online</span>
+</div>
+<div class="flex flex-col gap-1 text-on-surface font-body-sm text-body-sm pt-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">mail</span>
+<a class="hover:text-primary font-medium underline underline-offset-2" href="mailto:support@dialogbot.example">support@dialogbot.example</a>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">schedule</span>
+<span>Man-fre kl. 08:00 - 17:00</span>
+</div>
+</div>
+</div>
+<!-- Legal Entity info -->
+<div class="pt-2 px-1 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Dialogbot ApS (Demomiljø)</span>
+<span>CVR: DK-41928374</span>
+</div>
+</div>
+</div>
+<!-- Svartid & SLA Information Card -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-col gap-3">
+<div class="flex items-center gap-2.5 text-primary">
+<div class="w-7 h-7 rounded-lg bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm font-bold">Svartid &amp; SLA</h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Henvendelser besvares løbende i åbningstiden. Vi tilstræber gennemsigtighed uden urealistiske automatiske SLA-garantier uden særskilt SLA-aftale.
+            </p>
+<div class="p-3.5 rounded-xl bg-surface-container flex flex-col gap-2 text-on-surface">
+<div class="flex items-center justify-between font-label-md text-label-md">
+<span class="text-on-surface-variant">Standard supportticket</span>
+<span class="font-semibold text-primary">Inden for 4 timer</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full w-4/5 rounded-full"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Kritiske telekø-hændelser prioriteres øverst for kunder med dedikeret driftssikring.</span>
+</div>
+</div>
+<!-- Quick FAQ Accordion Container -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<h2 class="font-headline-sm text-headline-sm font-bold">Ofte stillede kontaktspørgsmål</h2>
+</div>
+<div class="flex flex-col gap-2.5">
+<!-- FAQ Item 1 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low transition-all">
+<button class="w-full flex items-center justify-between text-left font-label-lg text-label-lg text-primary font-semibold" onclick="toggleFaq('faq-1')" type="button">
+<span>Hvor hurtigt kan en AI-receptionist gå live?</span>
+<span class="material-symbols-outlined text-[18px] transition-transform duration-200" id="faq-1-icon">expand_more</span>
+</button>
+<div class="hidden mt-2 pt-2 text-on-surface-variant font-body-sm text-body-sm" id="faq-1">
+                  De fleste pilotprojekter kan integreres via SIP trunk eller virtuelt nummer inden for 2-3 arbejdsdage efter godkendt samtalescript og stemmetilpasning.
+                </div>
+</div>
+<!-- FAQ Item 2 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low transition-all">
+<button class="w-full flex items-center justify-between text-left font-label-lg text-label-lg text-primary font-semibold" onclick="toggleFaq('faq-2')" type="button">
+<span>Tilbyder I test af egne stemmeflows?</span>
+<span class="material-symbols-outlined text-[18px] transition-transform duration-200" id="faq-2-icon">expand_more</span>
+</button>
+<div class="hidden mt-2 pt-2 text-on-surface-variant font-body-sm text-body-sm" id="faq-2">
+                  Ja, i vores interaktive stemmedemo kan du afprøve standarddialoger eller anmode vores team om en lukket sandbox med dit firmas virksomhedsdata.
+                </div>
+</div>
+<!-- FAQ Item 3 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low transition-all">
+<button class="w-full flex items-center justify-between text-left font-label-lg text-label-lg text-primary font-semibold" onclick="toggleFaq('faq-3')" type="button">
+<span>Er telefondata og opkald optaget i EU?</span>
+<span class="material-symbols-outlined text-[18px] transition-transform duration-200" id="faq-3-icon">expand_more</span>
+</button>
+<div class="hidden mt-2 pt-2 text-on-surface-variant font-body-sm text-body-sm" id="faq-3">
+                  Ja, 100%. Både SIP-forbindelser, transskriberingsmotor og databaser kører på danske og nordeuropæiske datacentre under strenge GDPR-krav.
+                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Inline Logic for Prototype Validation, Tabs & Local Draft Preservation -->
+<script>
+  // Tab Switching logic
+  function switchTab(mode) {
+    const btnSales = document.getElementById('tab-sales');
+    const btnSupport = document.getElementById('tab-support');
+    const topicSelect = document.getElementById('inquiry-topic');
+
+    if (mode === 'sales') {
+      btnSales.className = 'py-3 px-4 rounded-lg font-label-lg text-label-lg text-on-primary bg-primary shadow-sm flex items-center justify-center gap-2 transition-all';
+      btnSupport.className = 'py-3 px-4 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-2 transition-all';
+      if (topicSelect && topicSelect.value === 'teknisk-integration') {
+        topicSelect.value = 'ny-opsatning';
+      }
+    } else {
+      btnSupport.className = 'py-3 px-4 rounded-lg font-label-lg text-label-lg text-on-primary bg-primary shadow-sm flex items-center justify-center gap-2 transition-all';
+      btnSales.className = 'py-3 px-4 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-2 transition-all';
+      if (topicSelect) {
+        topicSelect.value = 'teknisk-integration';
+      }
+    }
+  }
+
+  // Field Validations
+  function validateField(id) {
+    const el = document.getElementById(id);
+    const errEl = document.getElementById(id + '-error');
+    const statEl = document.getElementById(id + '-status');
+    if (!el.value.trim()) {
+      el.classList.add('ring-2', 'ring-error');
+      if (errEl) errEl.classList.remove('hidden');
+      if (statEl) statEl.classList.remove('hidden');
+      return false;
+    } else {
+      el.classList.remove('ring-2', 'ring-error');
+      if (errEl) errEl.classList.add('hidden');
+      if (statEl) statEl.classList.add('hidden');
+      return true;
+    }
+  }
+
+  function validateEmailField() {
+    const el = document.getElementById('work-email');
+    const errEl = document.getElementById('work-email-error');
+    const statEl = document.getElementById('work-email-status');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValid = emailRegex.test(el.value.trim());
+
+    if (!isValid) {
+      el.classList.add('ring-2', 'ring-error');
+      if (errEl) errEl.classList.remove('hidden');
+      if (statEl) statEl.classList.remove('hidden');
+      return false;
+    } else {
+      el.classList.remove('ring-2', 'ring-error');
+      if (errEl) errEl.classList.add('hidden');
+      if (statEl) statEl.classList.add('hidden');
+      return true;
+    }
+  }
+
+  function validateCheckbox() {
+    const cb = document.getElementById('privacy-consent');
+    const err = document.getElementById('privacy-error');
+    if (!cb.checked) {
+      err.classList.remove('hidden');
+      return false;
+    } else {
+      err.classList.add('hidden');
+      return true;
+    }
+  }
+
+  // Draft text preservation (simuleret mod netværksfejl)
+  function saveDraft() {
+    const msg = document.getElementById('message-content').value;
+    try {
+      localStorage.setItem('dialogbot_contact_draft', msg);
+    } catch(e) {}
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const saved = localStorage.getItem('dialogbot_contact_draft');
+      if (saved) {
+        const textarea = document.getElementById('message-content');
+        if (textarea && !textarea.value) textarea.value = saved;
+      }
+    } catch(e) {}
+  });
+
+  // Simulated Submission
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    const isNameOk = validateField('full-name');
+    const isEmailOk = validateEmailField();
+    const isTopicOk = document.getElementById('inquiry-topic').value !== '';
+    const isMsgOk = validateField('message-content');
+    const isConsentOk = validateCheckbox();
+
+    const successBox = document.getElementById('form-feedback-success');
+    const errorBox = document.getElementById('form-feedback-error');
+    const submitBtn = document.getElementById('submit-btn');
+    const submitText = document.getElementById('submit-text');
+
+    if (!isNameOk || !isEmailOk || !isTopicOk || !isMsgOk || !isConsentOk) {
+      errorBox.classList.remove('hidden');
+      successBox.classList.add('hidden');
+      return;
+    }
+
+    // Success State in prototype
+    errorBox.classList.add('hidden');
+    submitBtn.disabled = true;
+    submitText.innerText = 'Sender henvendelse...';
+
+    setTimeout(() => {
+      submitBtn.disabled = false;
+      submitText.innerText = 'Sendt';
+      successBox.classList.remove('hidden');
+      // Clear draft on successful mock submit
+      try {
+        localStorage.removeItem('dialogbot_contact_draft');
+      } catch(err) {}
+    }, 600);
+  }
+
+  // FAQ Toggle Logic
+  function toggleFaq(id) {
+    const content = document.getElementById(id);
+    const icon = document.getElementById(id + '-icon');
+    if (!content) return;
+    const isHidden = content.classList.contains('hidden');
+    if (isHidden) {
+      content.classList.remove('hidden');
+      if (icon) icon.style.transform = 'rotate(180deg)';
+    } else {
+      content.classList.add('hidden');
+      if (icon) icon.style.transform = 'rotate(0deg)';
+    }
+  }
+</script></main><footer class="w-full bg-surface-container-low shadow-[0_-1px_6px_rgba(23,43,40,0.03)] py-16"><div class="max-w-7xl mx-auto px-6 lg:px-12"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-margin-lg pb-12"><div class="lg:col-span-2 flex flex-col gap-space-sm"><div class="flex items-center gap-space-md mb-2"><div class="w-8 h-8 rounded-xl bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">support_agent</span></div><span class="font-headline-sm text-headline-sm text-primary font-bold">Dialogbot</span></div><p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm">Enterprise-klar dansk AI-receptionist og intelligent samtalerouting til skandinaviske virksomheder med høje krav til sikkerhed, præcision og GDPR.</p><div class="flex items-center gap-2 mt-4 px-3 py-1.5 rounded-full bg-surface-container-lowest w-fit"><span class="w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-sm text-label-sm text-on-surface">Driftsstatus: Alle telefonsystemer 100% online</span></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Produkt</span><div class="flex flex-col gap-2 font-body-sm text-body-sm"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="sadan-fungerer-det" href="#">Sådan fungerer det</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="priser-beregner" href="#">Priser &amp; ROI-beregner</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="interaktiv-demo" href="#">Interaktiv stemmedemo</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="hjalpecer-faq" href="#">Integrationer &amp; SIP Trunk</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Support &amp; Drift</span><div class="flex flex-col gap-2 font-body-sm text-body-sm"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="hjalpecer-faq" href="#">Hjælpecenter</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="kontakt" href="#">Kontakt teknisk support</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="driftsstatus-og-overvagning" href="#">Status og oppetid</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="hjalpecer-faq" href="#">API Dokumentation</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Juridisk &amp; GDPR</span><div class="flex flex-col gap-2 font-body-sm text-body-sm"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="privatlivspolitik" href="#">Privatlivspolitik</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="forretningsbetingelser" href="#">Forretningsbetingelser</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="databehandleraftale-dpa" href="#">Databehandleraftale (DPA)</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="cookie-indstillinger" href="#">Cookie-indstillinger</a></div></div></div><div class="pt-8 mt-4 flex flex-col md:flex-row items-center justify-between gap-space-md text-on-surface-variant font-body-sm text-body-sm"><p>© 2025 Dialogbot ApS. CVR: DK-41928374. Udviklet og hostet i Danmark under EU GDPR-krav.</p><div class="flex items-center gap-space-md font-label-md text-label-md"><a class="hover:text-on-surface transition-colors" data-path="databehandleraftale-dpa" href="#">ISO 27001 Kompatibel</a><span class="text-outline-variant">•</span><a class="hover:text-on-surface transition-colors" data-path="privatlivspolitik" href="#">Dansk Datacentral</a></div></div></div></footer></body></html>

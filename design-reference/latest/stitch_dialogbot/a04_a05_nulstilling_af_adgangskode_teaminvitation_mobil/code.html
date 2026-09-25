@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;min-height:100%;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed": "#171e00", "on-primary": "#ffffff", "surface-container-high": "#d6ede8", "inverse-on-surface": "#dff6f0", "outline": "#707976", "on-surface": "#0a1f1c", "tertiary-fixed": "#c6e7ff", "tertiary-fixed-dim": "#93cef4", "surface": "#e7fef9", "secondary-fixed": "#d6ec85", "on-tertiary-fixed-variant": "#004c6b", "primary-fixed": "#b6eede", "error-container": "#ffdad6", "on-error": "#ffffff", "primary-fixed-dim": "#9bd1c3", "on-secondary-container": "#586a0e", "error": "#ba1a1a", "surface-container-lowest": "#ffffff", "on-error-container": "#93000a", "on-tertiary": "#ffffff", "on-secondary": "#ffffff", "on-primary-fixed-variant": "#184f44", "inverse-surface": "#203431", "secondary": "#546508", "on-primary-container": "#88beb0", "on-surface-variant": "#404946", "on-tertiary-container": "#80bbe0", "primary-container": "#164e43", "on-background": "#0a1f1c", "surface-container": "#dcf3ee", "outline-variant": "#bfc9c4", "surface-container-low": "#e1f8f3", "secondary-container": "#d4ea82", "tertiary-container": "#004b6a", "tertiary": "#00334a", "surface-dim": "#c8dfda", "surface-bright": "#e7fef9", "surface-container-highest": "#d0e7e2", "inverse-primary": "#9bd1c3", "on-tertiary-fixed": "#001e2d", "surface-variant": "#d0e7e2", "on-primary-fixed": "#00201a", "surface-tint": "#33675c", "secondary-fixed-dim": "#bbd06c", "primary": "#00362d", "background": "#e7fef9", "on-secondary-fixed-variant": "#3e4c00" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-lg": "2rem", "space-xl": "1.5rem", "gutter-lg": "1.5rem", "space-lg": "1rem", "margin-md": "1.5rem", "space-md": "0.75rem", "margin": "1rem", "space-xs": "0.25rem", "gutter": "1rem", "space-sm": "0.5rem" }, "fontFamily": { "display-lg-mobile": ["Manrope"], "label-lg": ["Inter"], "body-sm": ["Inter"], "headline-sm": ["Manrope"], "headline-lg": ["Manrope"], "body-lg": ["Inter"], "headline-lg-mobile": ["Manrope"], "display-lg": ["Manrope"], "body-md": ["Inter"], "label-md": ["Inter"], "label-sm": ["Inter"], "headline-md": ["Manrope"] }, "fontSize": { "display-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-lg-mobile": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600" }] } } } }</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 px-margin flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Gå tilbage" class="w-11 h-11 flex items-center justify-center text-on-surface hover:text-primary transition-colors focus:outline-none" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[22px]">arrow_back</span></button><div class="flex items-center gap-space-xs"><div class="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-secondary-container text-[16px]">smart_toy</span></div><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">Dialogbot</span></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-space-xs px-space-sm py-0.5 rounded-full bg-surface-container-high"><span class="material-symbols-outlined text-secondary text-[14px]">lock</span><span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Sikker</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full bg-surface pt-14 pb-safe"><div class="flex flex-col w-full px-margin pb-margin-lg">
+<!-- Segmented Control Bar -->
+<div class="my-space-md p-space-xs bg-surface-container rounded-xl flex items-center justify-between shadow-sm">
+<button class="w-1/2 py-2.5 rounded-lg font-label-lg text-label-lg transition-all text-on-surface bg-surface-container-lowest shadow-sm flex items-center justify-center gap-space-xs" id="tab-a04" onclick="switchView('a04')" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">lock_reset</span>
+<span>Nulstil kode</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">A04</span>
+</button>
+<button class="w-1/2 py-2.5 rounded-lg font-label-lg text-label-lg transition-all text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-space-xs" id="tab-a05" onclick="switchView('a05')" type="button">
+<span class="material-symbols-outlined text-[18px]">group_add</span>
+<span>Acceptér invitation</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container">A05</span>
+</button>
+</div>
+<!-- A04: Nulstil Adgangskode Section -->
+<div class="flex flex-col gap-space-md transition-opacity duration-200" id="section-a04">
+<!-- Header Card -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-container text-[22px]">key</span>
+</div>
+<span class="px-space-sm py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+          Aktiv session
+        </span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold tracking-tight mt-1">Opret ny adgangskode</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Vælg en stærk kode til din Dialogbot-arbejdsplads for at beskytte kundeopkald og logs.</p>
+</div>
+<!-- Password Form Box -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-lg text-label-lg text-on-surface font-medium flex items-center justify-between" for="password-input">
+<span>Ny adgangskode</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-normal" id="strength-label">Indtast kodeord</span>
+</label>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/70 font-body-md text-body-md rounded-lg py-3 pl-3.5 pr-11 focus:outline-none focus:bg-surface-container-lowest transition-colors shadow-inner" id="password-input" oninput="handlePasswordStrength(this.value)" placeholder="Mindst 12 tegn" type="password"/>
+<button aria-label="Vis adgangskode" class="absolute right-3 text-on-surface-variant hover:text-on-surface flex items-center justify-center p-1" id="toggle-visibility" onclick="togglePasswordVisibility()" type="button">
+<span class="material-symbols-outlined text-[20px]" id="visibility-icon">visibility</span>
+</button>
+</div>
+<!-- Dynamic Strength Gauge -->
+<div class="w-full bg-surface-container rounded-full h-1.5 mt-1 overflow-hidden flex gap-1 p-0.5">
+<div class="h-full w-1/3 rounded-full bg-surface-dim transition-all duration-300" id="bar-1"></div>
+<div class="h-full w-1/3 rounded-full bg-surface-dim transition-all duration-300" id="bar-2"></div>
+<div class="h-full w-1/3 rounded-full bg-surface-dim transition-all duration-300" id="bar-3"></div>
+</div>
+</div>
+<!-- Realtime Validation Criteria Grid -->
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider mb-0.5">Sikkerhedskrav</span>
+<div class="flex items-center gap-space-xs text-on-surface-variant transition-colors" id="rule-length">
+<span class="material-symbols-outlined text-[17px] text-outline">radio_button_unchecked</span>
+<span class="font-body-sm text-body-sm">Mindst 12 tegn lang</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant transition-colors" id="rule-case">
+<span class="material-symbols-outlined text-[17px] text-outline">radio_button_unchecked</span>
+<span class="font-body-sm text-body-sm">Både store og små bogstaver (A-z, Æ, Ø, Å)</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant transition-colors" id="rule-special">
+<span class="material-symbols-outlined text-[17px] text-outline">radio_button_unchecked</span>
+<span class="font-body-sm text-body-sm">Mindst 1 tal eller specialtegn (!@#$%&amp;)</span>
+</div>
+</div>
+<!-- Re-enter password -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-lg text-label-lg text-on-surface font-medium" for="password-confirm">Bekræft ny adgangskode</label>
+<input class="w-full bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/70 font-body-md text-body-md rounded-lg py-3 px-3.5 focus:outline-none focus:bg-surface-container-lowest transition-colors shadow-inner" id="password-confirm" placeholder="Gentag din valgte kode" type="password"/>
+</div>
+<!-- Primary Action Button -->
+<button class="w-full py-3.5 px-space-md rounded-lg bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-space-xs active:scale-[0.99] transition-transform shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+<span>Gem ny adgangskode og fortsæt</span>
+</button>
+</div>
+<!-- Expired Link State Callout -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-start gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-error-container flex-shrink-0 flex items-center justify-center mt-0.5">
+<span class="material-symbols-outlined text-error text-[18px]">history_toggle_off</span>
+</div>
+<div class="flex flex-col flex-1">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Har du problemer med linket?</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Sikkerhedslinks udløber efter 30 minutter for at beskytte virksomhedens telefonsvarerdata.
+          </p>
+<div class="mt-space-sm p-space-sm rounded-lg bg-surface-container-highest flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-error font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">error</span>
+              Linket er udløbet
+            </span>
+<button class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-primary font-label-sm text-label-sm font-semibold active:opacity-80" type="button">
+              Send nyt nulstillingslink
+            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- A05: Acceptér Invitation Section -->
+<div class="hidden flex-col gap-space-md transition-opacity duration-200" id="section-a05">
+<!-- Invitation Banner Card with Company Visual Header -->
+<div class="rounded-xl overflow-hidden bg-surface-container-lowest shadow-sm flex flex-col">
+<div class="relative h-28 w-full bg-primary-container p-space-md flex flex-col justify-between">
+<div class="flex items-center justify-between relative z-10">
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">mark_email_unread</span>
+            Ny invitation modtaget
+          </span>
+<span class="font-label-sm text-label-sm text-on-primary-container">Udløber om 48 timer</span>
+</div>
+<div class="relative z-10 flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-primary text-[28px]">home_repair_service</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-primary font-bold leading-tight">Fjord Gulvservice ApS</span>
+<span class="font-label-sm text-label-sm text-on-primary-container font-mono">CVR: 38291044</span>
+</div>
+</div>
+<!-- Stylized subtle backdrop ornament -->
+<div class="absolute -right-4 -bottom-6 w-28 h-28 rounded-full bg-on-primary-container/10 pointer-events-none"></div>
+</div>
+<!-- Inviter & Workplace Metadata -->
+<div class="p-space-lg flex flex-col gap-space-md">
+<!-- Inviter Details -->
+<div class="flex items-center justify-between pb-space-sm bg-surface-container-low p-space-sm rounded-lg">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center font-label-md text-label-md font-bold text-on-surface">
+              MM
+            </div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Mads Møller</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Indehaver &amp; Administrator</span>
+</div>
+</div>
+<span class="px-space-xs py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">Afsendt i dag</span>
+</div>
+<!-- Assigned Role & Access Scope -->
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold uppercase tracking-wider">Tildelt Rolle &amp; Adgange</span>
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px]">engineering</span>
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Montør / Felttekniker</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm">Standard</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Giver dig adgang til at håndtere modtagne opkaldsnoter, tidsregistrering og opgavestyring i marken.
+            </p>
+<div class="flex flex-wrap gap-1.5 mt-1">
+<span class="px-2 py-1 rounded-md bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-primary">assignment</span>
+                Opgaver I05
+              </span>
+<span class="px-2 py-1 rounded-md bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-primary">calendar_month</span>
+                Kalender BK01
+              </span>
+<span class="px-2 py-1 rounded-md bg-surface-container-highest text-on-surface font-label-sm text-label-sm font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-primary">phone_in_talk</span>
+                Opkaldslyt
+              </span>
+</div>
+</div>
+</div>
+<!-- Security & Billing Guarantee Note -->
+<div class="p-space-md rounded-lg bg-surface-container flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[20px] flex-shrink-0 mt-0.5">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">100% omkostningsfrit for dig</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Dette medfører ingen ekstra omkostninger for dig. Fakturering håndteres automatisk af Fjord Gulvservice ApS via erhvervsaftalen.
+            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Onboarding Flow Choice -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-md">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Vælg hvordan du vil tilslutte</span>
+<!-- Option 1: Create New Password (New Colleague) -->
+<button class="w-full p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container flex items-start justify-between text-left transition-colors group" type="button">
+<div class="flex items-start gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-secondary-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-on-secondary-fixed text-[22px]">badge</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Ny medarbejder</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Opret personlig adgangskode og opsæt din montørprofil</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary group-hover:translate-x-0.5 transition-all text-[22px] mt-2">arrow_forward</span>
+</button>
+<!-- Option 2: Log in with existing Dialogbot ID -->
+<button class="w-full p-space-md rounded-xl bg-surface-container-low hover:bg-surface-container flex items-start justify-between text-left transition-colors group" type="button">
+<div class="flex items-start gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-primary text-[22px]">passkey</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Eksisterende bruger</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Log ind med din nuværende Dialogbot-konto</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary group-hover:translate-x-0.5 transition-all text-[22px] mt-2">arrow_forward</span>
+</button>
+<!-- Primary Action CTA -->
+<button class="w-full mt-1 py-3.5 px-space-md rounded-lg bg-secondary-container text-on-secondary-fixed font-label-lg text-label-lg font-bold flex items-center justify-center gap-space-xs active:scale-[0.99] transition-transform shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px]">how_to_reg</span>
+<span>Acceptér og gå videre</span>
+</button>
+</div>
+<!-- Expired / Revoked Invite Fallback Notification -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs text-on-surface">
+<span class="material-symbols-outlined text-error text-[20px]">cancel</span>
+<span class="font-label-md text-label-md font-bold">Er invitationen annulleret?</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-error-container text-on-error-container font-medium">Ugyldig status</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Hvis denne invitation er blevet tilbagetrukket af Mads Møller, eller hvis arbejdspladsen har nået sit brugermaksimum, kan du rekvirere en ny invitation direkte.
+      </p>
+<div class="flex gap-space-xs mt-0.5">
+<button class="flex-1 py-2 px-space-sm rounded-lg bg-surface-container-lowest text-primary font-label-sm text-label-sm font-semibold flex items-center justify-center gap-1 active:opacity-80" type="button">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+<span>Kontakt Mads Møller</span>
+</button>
+<button class="py-2 px-space-md rounded-lg bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm font-medium hover:text-on-surface" type="button">
+          Afvis
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function switchView(tab) {
+    const tabA04 = document.getElementById('tab-a04');
+    const tabA05 = document.getElementById('tab-a05');
+    const secA04 = document.getElementById('section-a04');
+    const secA05 = document.getElementById('section-a05');
+
+    if (tab === 'a04') {
+      secA04.classList.remove('hidden');
+      secA05.classList.add('hidden');
+      tabA04.className = 'w-1/2 py-2.5 rounded-lg font-label-lg text-label-lg transition-all text-on-surface bg-surface-container-lowest shadow-sm flex items-center justify-center gap-space-xs';
+      tabA05.className = 'w-1/2 py-2.5 rounded-lg font-label-lg text-label-lg transition-all text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-space-xs';
+    } else {
+      secA04.classList.add('hidden');
+      secA05.classList.remove('hidden');
+      tabA05.className = 'w-1/2 py-2.5 rounded-lg font-label-lg text-label-lg transition-all text-on-surface bg-surface-container-lowest shadow-sm flex items-center justify-center gap-space-xs';
+      tabA04.className = 'w-1/2 py-2.5 rounded-lg font-label-lg text-label-lg transition-all text-on-surface-variant hover:text-on-surface flex items-center justify-center gap-space-xs';
+    }
+  }
+
+  function togglePasswordVisibility() {
+    const input = document.getElementById('password-input');
+    const icon = document.getElementById('visibility-icon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.textContent = 'visibility_off';
+    } else {
+      input.type = 'password';
+      icon.textContent = 'visibility';
+    }
+  }
+
+  function handlePasswordStrength(val) {
+    const lenValid = val.length >= 12;
+    const caseValid = /[A-ZÆØÅ]/.test(val) && /[a-zæøå]/.test(val);
+    const specValid = /[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(val);
+
+    updateCriterion('rule-length', lenValid);
+    updateCriterion('rule-case', caseValid);
+    updateCriterion('rule-special', specValid);
+
+    const validCount = [lenValid, caseValid, specValid].filter(Boolean).length;
+    const b1 = document.getElementById('bar-1');
+    const b2 = document.getElementById('bar-2');
+    const b3 = document.getElementById('bar-3');
+    const label = document.getElementById('strength-label');
+
+    // Reset bar classes
+    b1.className = 'h-full w-1/3 rounded-full transition-all duration-300 ' + (validCount >= 1 ? 'bg-secondary' : 'bg-surface-dim');
+    b2.className = 'h-full w-1/3 rounded-full transition-all duration-300 ' + (validCount >= 2 ? 'bg-secondary' : 'bg-surface-dim');
+    b3.className = 'h-full w-1/3 rounded-full transition-all duration-300 ' + (validCount === 3 ? 'bg-secondary-container' : 'bg-surface-dim');
+
+    if (val.length === 0) {
+      label.textContent = 'Indtast kodeord';
+      label.className = 'font-label-sm text-label-sm text-on-surface-variant font-normal';
+    } else if (validCount === 1) {
+      label.textContent = 'Svag adgangskode';
+      label.className = 'font-label-sm text-label-sm text-error font-medium';
+    } else if (validCount === 2) {
+      label.textContent = 'Middelmådig styrke';
+      label.className = 'font-label-sm text-label-sm text-secondary font-medium';
+    } else if (validCount === 3) {
+      label.textContent = 'Meget stærk og sikker';
+      label.className = 'font-label-sm text-label-sm text-primary font-bold';
+    }
+  }
+
+  function updateCriterion(elemId, isValid) {
+    const el = document.getElementById(elemId);
+    if (!el) return;
+    const icon = el.querySelector('.material-symbols-outlined');
+    if (isValid) {
+      icon.textContent = 'check_circle';
+      icon.className = 'material-symbols-outlined text-[17px] text-secondary';
+      el.className = 'flex items-center gap-space-xs text-on-surface font-medium transition-colors';
+    } else {
+      icon.textContent = 'radio_button_unchecked';
+      icon.className = 'material-symbols-outlined text-[17px] text-outline';
+      el.className = 'flex items-center gap-space-xs text-on-surface-variant transition-colors';
+    }
+  }
+</script></main></body></html>

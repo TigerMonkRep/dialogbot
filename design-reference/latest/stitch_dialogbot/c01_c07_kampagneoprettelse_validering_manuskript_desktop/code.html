@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary-fixed": "#00201a", "outline-variant": "#bfc9c4", "tertiary": "#00334a", "secondary-container": "#d4ea82", "surface-container-low": "#e1f8f3", "error-container": "#ffdad6", "surface-container": "#dcf3ee", "on-tertiary-fixed": "#001e2d", "primary": "#00362d", "on-tertiary-fixed-variant": "#004c6b", "surface-variant": "#d0e7e2", "on-error": "#ffffff", "on-secondary-fixed": "#171e00", "surface-container-lowest": "#ffffff", "on-tertiary-container": "#80bbe0", "tertiary-fixed": "#c6e7ff", "inverse-surface": "#203431", "on-surface-variant": "#404946", "primary-fixed-dim": "#9bd1c3", "on-primary": "#ffffff", "surface-container-highest": "#d0e7e2", "background": "#e7fef9", "on-surface": "#0a1f1c", "inverse-primary": "#9bd1c3", "tertiary-fixed-dim": "#93cef4", "error": "#ba1a1a", "on-secondary-container": "#586a0e", "surface-dim": "#c8dfda", "secondary-fixed-dim": "#bbd06c", "surface-tint": "#33675c", "surface-container-high": "#d6ede8", "tertiary-container": "#004b6a", "on-primary-container": "#88beb0", "secondary-fixed": "#d6ec85", "outline": "#707976", "on-error-container": "#93000a", "secondary": "#546508", "primary-container": "#164e43", "on-primary-fixed-variant": "#184f44", "on-secondary": "#ffffff", "surface": "#e7fef9", "on-secondary-fixed-variant": "#3e4c00", "surface-bright": "#e7fef9", "inverse-on-surface": "#dff6f0", "primary-fixed": "#b6eede", "on-background": "#0a1f1c", "on-tertiary": "#ffffff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "margin-lg": "2rem", "gutter": "1rem", "gutter-lg": "1.5rem", "margin": "1rem", "space-md": "0.75rem", "space-xl": "1.5rem", "space-xs": "0.25rem", "margin-md": "1.5rem", "space-lg": "1rem" }, "fontFamily": { "headline-lg-mobile": [ "Manrope" ], "label-lg": [ "Inter" ], "headline-md": [ "Manrope" ], "label-sm": [ "Inter" ], "body-sm": [ "Inter" ], "label-md": [ "Inter" ], "headline-sm": [ "Manrope" ], "display-lg": [ "Manrope" ], "display-lg-mobile": [ "Manrope" ], "headline-lg": [ "Manrope" ], "body-md": [ "Inter" ], "body-lg": [ "Inter" ] }, "fontSize": { "headline-lg-mobile": [ "22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700" } ], "label-lg": [ "14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" } ], "headline-md": [ "22px", { "lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "label-sm": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" } ], "body-sm": [ "13px", { "lineHeight": "18px", "fontWeight": "400" } ], "label-md": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" } ], "headline-sm": [ "18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "display-lg": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "display-lg-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "headline-lg": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ] } } } };</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col justify-between py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col gap-space-lg"><div class="px-gutter flex items-center gap-space-sm"><img alt="Brand logo. - Primary color: #164e43
+- Font: manrope
+- Mode: light
+- Roundness: rounded-md
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V05QJ6ogqjQWFOy45hIopE1L8L12GtzKAoL03rnuk3QGgmKM9MOsMR-7O6ORIaIetfBElhHecaaykH_SmmLkmGC4aIeHNldsLlMhk8SHwIijcyDicoWG9fmHPRmeoWXyFl39oUTfA58hv5tXT4hTdwOsQc5PlbL9MCt5N6AgkeNV7Ls4coD3Gt8P6fge98PhalilHSUXAqPpnxnQNjoD2bIfUoH01Vn1r4Cv13MEMT1umMgSSBUpyi7M4"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">Dialogbot</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Admin Portal</span></div></div><nav class="flex flex-col gap-space-xs px-space-sm" data-active-classes="bg-primary-container text-on-primary font-label-lg rounded-xl"><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="overblik" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Overblik</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="indbakke" href="#"><span class="material-symbols-outlined text-[20px]">inbox</span><span>Indbakke</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="henvendelser" href="#"><span class="material-symbols-outlined text-[20px]">contact_support</span><span>Henvendelser</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="reception" href="#"><span class="material-symbols-outlined text-[20px]">support_agent</span><span>Reception</span></a><a aria-current="page" class="flex items-center gap-space-md px-space-md py-space-sm transition-all bg-primary-container text-on-primary font-label-lg rounded-xl" data-path="kampagner" href="#"><span class="material-symbols-outlined text-[20px]">campaign</span><span>Kampagner</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="viden" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span>Viden</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="bookinger" href="#"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span>Bookinger</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="rapporter" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span>Rapporter</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="fakturering" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span>Fakturering</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="indstillinger" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Indstillinger</span></a></nav></div><div class="px-space-md"><div class="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex flex-col min-w-0 flex-1"><span class="font-label-md text-label-md text-on-surface truncate">Mads Fjord</span><span class="font-body-sm text-body-sm text-on-surface-variant truncate">Fjord Gulvservice</span></div></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-space-md"><img alt="Brand logo. - Primary color: #164e43
+- Font: manrope
+- Mode: light
+- Roundness: rounded-md
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V05QJ6ogqjQWFOy45hIopE1L8L12GtzKAoL03rnuk3QGgmKM9MOsMR-7O6ORIaIetfBElhHecaaykH_SmmLkmGC4aIeHNldsLlMhk8SHwIijcyDicoWG9fmHPRmeoWXyFl39oUTfA58hv5tXT4hTdwOsQc5PlbL9MCt5N6AgkeNV7Ls4coD3Gt8P6fge98PhalilHSUXAqPpnxnQNjoD2bIfUoH01Vn1r4Cv13MEMT1umMgSSBUpyi7M4"/><div class="flex items-center gap-space-sm"><span class="font-headline-sm text-headline-sm text-primary">Dialogbot</span><span class="text-outline-variant font-body-sm">/</span><span class="font-label-lg text-label-lg text-on-surface">Fjord Gulvservice ApS</span></div><span class="inline-flex items-center gap-space-xs px-space-sm py-0.5 rounded-full bg-secondary-container font-label-sm text-label-sm text-on-secondary-fixed"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>Demotilstand</span></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl bg-surface-container-low"><span class="material-symbols-outlined text-on-surface-variant text-[18px]">search</span><span class="font-body-sm text-body-sm text-on-surface-variant">Søg i henvendelser...</span></div><button class="w-9 h-9 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="font-label-md text-label-md text-on-surface hidden md:inline-block">Mads Fjord</span></div></div></header><main class="relative pt-16 bg-surface w-full px-gutter-lg py-gutter"><div class="flex flex-col w-full pb-16">
+<!-- Top Navigation & Breadcrumbs -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md mb-6">
+<div class="flex flex-col gap-1">
+<nav class="flex items-center gap-2 font-label-md text-label-md text-on-surface-variant">
+<a class="hover:text-primary transition-colors flex items-center gap-1.5" href="#">
+<span class="material-symbols-outlined text-[16px]">campaign</span>
+          Kampagner
+        </a>
+<span class="text-outline-variant font-light">/</span>
+<span class="text-on-surface font-semibold">Opfølgning på tilbud — september</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-mono ml-1">c-sep-2026</span>
+</nav>
+<div class="flex items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Konfigurer Udgående Kampagneflow</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+          C01–C07 Konfiguration
+        </span>
+</div>
+</div>
+<!-- Quick State & Actions -->
+<div class="flex items-center gap-3 self-start md:self-auto">
+<div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container-lowest shadow-sm text-on-surface-variant text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+<span>Reconciliation engine aktiv</span>
+</div>
+<button class="px-4 py-2 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container-high transition-all text-label-md font-label-md flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">save</span>
+        Gem kladde
+      </button>
+<button class="px-4 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary-container transition-all text-label-md font-label-md flex items-center gap-2 shadow-sm">
+<span>Gå til test-simulering</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Stage Stepper Component (C01 - C11) -->
+<div class="w-full bg-surface-container-lowest rounded-2xl p-4 md:p-6 mb-8 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">timeline</span>
+<span class="font-headline-sm text-headline-sm text-primary">Udrulningsproces</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Fase 4 af 8 (Validering &amp; Klargøring)</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 relative">
+<!-- Step 1 -->
+<div class="flex flex-col gap-1.5 p-2.5 rounded-xl bg-surface-container-low transition-all">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-semibold text-primary">C02</span>
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface leading-tight">Oplysninger</span>
+<span class="text-[11px] font-label-sm text-on-surface-variant">Gennemført</span>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col gap-1.5 p-2.5 rounded-xl bg-surface-container-low transition-all">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-semibold text-primary">C03</span>
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface leading-tight">Kontaktlister</span>
+<span class="text-[11px] font-label-sm text-on-surface-variant">Gennemført</span>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col gap-1.5 p-2.5 rounded-xl bg-surface-container-low transition-all">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-semibold text-primary">C04</span>
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface leading-tight">Felt-mapping</span>
+<span class="text-[11px] font-label-sm text-on-surface-variant">Gennemført</span>
+</div>
+<!-- Step 4 (Active) -->
+<div class="flex flex-col gap-1.5 p-2.5 rounded-xl bg-secondary-container text-on-secondary-fixed shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-bold text-on-secondary-fixed">C05</span>
+<span class="w-2.5 h-2.5 rounded-full bg-primary animate-ping"></span>
+</div>
+<span class="font-label-md text-label-md font-bold text-on-secondary-fixed leading-tight">Validering</span>
+<span class="text-[11px] font-label-sm font-semibold text-on-secondary-container">Aktiv nu</span>
+</div>
+<!-- Step 5 -->
+<div class="flex flex-col gap-1.5 p-2.5 rounded-xl bg-surface-container transition-all">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-semibold text-on-surface-variant">C06</span>
+<span class="material-symbols-outlined text-[18px] text-primary">edit_note</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface leading-tight">Manuskript</span>
+<span class="text-[11px] font-label-sm text-primary font-medium">Klar (v1.2)</span>
+</div>
+<!-- Step 6 -->
+<div class="flex flex-col gap-1.5 p-2.5 rounded-xl bg-surface-container transition-all">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs font-semibold text-on-surface-variant">C07</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">play_circle</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface leading-tight">Simulation</span>
+<span class="text-[11px] font-label-sm text-on-surface-variant">Afventer</span>
+</div>
+<!-- Step 7 -->
+<div class="flex flex-col gap-1.5 p-2.5 rounded-xl bg-surface-container opacity-60">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs text-on-surface-variant">C08/C09</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">shopping_bag</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface leading-tight">Pakkekøb</span>
+<span class="text-[11px] font-label-sm text-on-surface-variant">Låst</span>
+</div>
+<!-- Step 8 -->
+<div class="flex flex-col gap-1.5 p-2.5 rounded-xl bg-surface-container opacity-60">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs text-on-surface-variant">C10/C11</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">rocket_launch</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface leading-tight">Tidsplan</span>
+<span class="text-[11px] font-label-sm text-on-surface-variant">Låst</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Flow: 2-3 Summary (Left) & Key Validation C05 (Right) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+<!-- LEFT COLUMN: Step 2 & Step 3 Summaries (5 Cols) -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- C03: Source Summary Card -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-4 mb-4">
+<div class="flex items-center gap-2.5">
+<span class="p-2 rounded-xl bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-[20px]">dataset</span>
+</span>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Fase C03</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Forbundne Datakilder</h3>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold">2 Kilder</span>
+</div>
+<div class="space-y-3">
+<div class="p-3.5 rounded-xl bg-surface-container-low flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">description</span>
+<div class="min-w-0 flex-1">
+<div class="flex items-center justify-between">
+<p class="font-label-md text-label-md text-on-surface font-semibold truncate">tilbudsliste_q3.xlsx</p>
+<span class="font-label-sm text-label-sm text-primary font-medium">850 rækker</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Manuel regnearkssynkronisering</p>
+</div>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container-low flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">database</span>
+<div class="min-w-0 flex-1">
+<div class="flex items-center justify-between">
+<p class="font-label-md text-label-md text-on-surface font-semibold truncate">Ordrestyring v1</p>
+<span class="font-label-sm text-label-sm text-primary font-medium">150 rækker</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant font-mono text-xs">PostgreSQL (kun læsning)</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between text-on-surface-variant">
+<span class="text-body-sm font-body-sm">Samlet råvolumen</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">1.000 rækker</span>
+</div>
+</div>
+<!-- C04: Field Mapping Card -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-sm flex flex-col justify-between flex-1">
+<div>
+<div class="flex items-center justify-between pb-4 mb-4">
+<div class="flex items-center gap-2.5">
+<span class="p-2 rounded-xl bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-[20px]">alt_route</span>
+</span>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Fase C04</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Mappede Variabler</h3>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="grid grid-cols-2 gap-2 text-body-sm font-body-sm">
+<div class="p-2.5 rounded-lg bg-surface-container text-on-surface flex flex-col">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-mono text-[10px] uppercase">Kildeparameter</span>
+<span class="font-semibold text-primary truncate">+45 Telefonnr.</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container text-on-surface flex flex-col">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-mono text-[10px] uppercase">Kildeparameter</span>
+<span class="font-semibold text-primary truncate">Fulde Navn</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container text-on-surface flex flex-col">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-mono text-[10px] uppercase">Kildeparameter</span>
+<span class="font-semibold text-primary truncate">Virksomhed</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container text-on-surface flex flex-col">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-mono text-[10px] uppercase">Kildeparameter</span>
+<span class="font-semibold text-primary truncate">Tilbudsdato</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container text-on-surface flex flex-col">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-mono text-[10px] uppercase">Kildeparameter</span>
+<span class="font-semibold text-primary truncate">Kvadratmeter</span>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container text-on-surface flex flex-col">
+<span class="text-label-sm font-label-sm text-on-surface-variant font-mono text-[10px] uppercase">Kildeparameter</span>
+<span class="font-semibold text-primary truncate">Estimeret Tilbudssum</span>
+</div>
+</div>
+</div>
+<div class="mt-4 p-3 rounded-xl bg-surface-container-high flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">shield</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+<strong class="text-on-surface font-semibold">Arkitektonisk separation:</strong> Kontaktliste og kampagnemanuskript er strengt adskilte input for absolut databeskyttelse.
+          </p>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Step 4 (C05) Detailed Reconciliation Breakdown (8 Cols) -->
+<div class="lg:col-span-8 bg-surface-container-lowest p-6 md:p-8 rounded-2xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 gap-4">
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-md bg-secondary-container text-on-secondary-fixed text-label-sm font-label-sm font-bold font-mono">C05 VALIDERINGSGITTER</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant font-mono">Status: 80% Validitetsgrad</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">Reconciliation &amp; Berettigelsesanalyse</h2>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-sm text-label-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+              Eksportér ekskluderede (CSV)
+            </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors font-label-sm text-label-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+              Genvalider liste
+            </button>
+</div>
+</div>
+<!-- Big Metric Callout -->
+<div class="p-6 rounded-2xl bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+<div>
+<span class="font-label-md text-label-md text-on-surface-variant block uppercase tracking-wider">Netto berettigede modtagere</span>
+<div class="flex items-baseline gap-3 mt-1">
+<span class="font-display-lg text-display-lg text-primary font-extrabold tracking-tight">800</span>
+<span class="font-headline-sm text-headline-sm text-secondary font-bold">kontakter</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">100% klar</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Fuldstændigt berettigede med gyldigt telefonnummer og dokumenteret samtykkegrundlag.</p>
+</div>
+<!-- Inline Visual Bar Chart Representation -->
+<div class="w-full md:w-64 flex flex-col gap-2">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant font-mono">Udnyttelse</span>
+<span class="font-bold text-primary">800 / 1.000</span>
+</div>
+<div class="w-full h-3 bg-surface-container rounded-full overflow-hidden flex">
+<div class="bg-primary h-full" style="width: 80%"></div>
+<div class="bg-error h-full" style="width: 20%"></div>
+</div>
+<span class="font-label-sm text-label-sm text-error self-end font-mono">200 rækker frafiltreret</span>
+</div>
+</div>
+<!-- Reconciliation Breakdown Table & Step-Down -->
+<div class="space-y-3">
+<!-- Raw Volume -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary font-mono font-bold text-xs">1</span>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface font-semibold">Importerede rå-rækker</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Initialt indlæst via Excel og PostgreSQL Ordrestyring</p>
+</div>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-mono font-bold">1.000</span>
+</div>
+<!-- Deduction 1 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest transition-all hover:bg-surface-container">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-error-container flex items-center justify-center text-on-error-container font-mono font-bold text-xs">-</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Ugyldige telefonnumre</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Fejl i landekode/format (mangler +45 eller er fastnetnummer uden SMS-evne)</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-label-lg text-label-lg text-error font-mono font-bold">-40</span>
+<button class="px-2 py-1 rounded bg-surface-container-high text-xs text-on-surface hover:bg-surface-variant transition-colors">Ret</button>
+</div>
+</div>
+<!-- Deduction 2 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest transition-all hover:bg-surface-container">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-error-container flex items-center justify-center text-on-error-container font-mono font-bold text-xs">-</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Dubletter i listen</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Samme telefonnummer eller registrerede adresse optræder flere gange</p>
+</div>
+</div>
+<span class="font-label-lg text-label-lg text-error font-mono font-bold">-60</span>
+</div>
+<!-- Deduction 3 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest transition-all hover:bg-surface-container">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-error-container flex items-center justify-center text-on-error-container font-mono font-bold text-xs">-</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Mangler påkrævet evidens</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Intet verificerbart samtykke eller historisk tilbudsnummer fundet i databasen</p>
+</div>
+</div>
+<span class="font-label-lg text-label-lg text-error font-mono font-bold">-80</span>
+</div>
+<!-- Deduction 4 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest transition-all hover:bg-surface-container">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-error-container flex items-center justify-center text-on-error-container font-mono font-bold text-xs">-</span>
+<div>
+<div class="flex items-center gap-2">
+<p class="font-label-md text-label-md text-on-surface font-semibold">Interne fravalg (S10 Spærreliste)</p>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant text-[10px] font-mono">Lokal spærring</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Kunder der tidligere har anmodet om 'Ring ikke igen' i Fjord Gulvservice</p>
+</div>
+</div>
+<span class="font-label-lg text-label-lg text-error font-mono font-bold">-20</span>
+</div>
+</div>
+</div>
+<!-- Compliance Notice -->
+<div class="mt-6 p-4 rounded-xl bg-surface-container flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px] text-primary shrink-0">info</span>
+<p class="font-body-sm text-body-sm leading-normal">
+<strong class="font-semibold text-on-surface">Juridisk bemærkning:</strong> Interne fravalg (S10) er lokale spærringer baseret på interne kundeinteraktioner og foregiver ikke ekstern Robinson-integration.
+        </p>
+</div>
+</div>
+</div>
+<!-- Step 5 (C06 - Eget Kampagnemanuskript) -->
+<div class="w-full bg-surface-container-lowest p-6 md:p-8 rounded-2xl shadow-sm mb-8">
+<div class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-6 gap-4">
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-md bg-primary-container text-on-primary-container text-label-sm font-label-sm font-bold font-mono">C06 KAMPAGNEMANUSKRIPT</span>
+<span class="text-label-sm font-label-sm text-primary font-medium">Dedikeret agent: Clara (Opkaldsudgående)</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">Opfølgning på afgivet tilbud v1.2</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Dette manuskript er isoleret fra receptionens standard-assistent og styrer udelukkende denne specifikke tilbudskampagne.</p>
+</div>
+<div class="flex items-center gap-2 self-start md:self-auto">
+<span class="px-3 py-1.5 rounded-xl bg-secondary-container text-on-secondary-fixed text-label-sm font-label-sm font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+          AI-tone: Høflig, håndværksnær &amp; lyttende
+        </span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Script Visual Prompt -->
+<div class="lg:col-span-7 flex flex-col gap-4">
+<div class="p-5 rounded-2xl bg-surface-container-low flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-mono text-primary font-bold uppercase tracking-wider">Indledende åbningsreplik</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Lydfil syntetisering: ElevenLabs Danish Pro</span>
+</div>
+<!-- Dynamic Script Box -->
+<div class="p-4 rounded-xl bg-surface-container-lowest font-body-lg text-body-lg text-on-surface leading-relaxed shadow-sm">
+            "Goddag <span class="bg-secondary-container text-on-secondary-fixed font-mono px-1.5 py-0.5 rounded font-semibold text-xs">{KUNDE_NAVN}</span>, du taler med Clara fra Fjord Gulvservice. Jeg ringer blot kort for at høre, om du har haft lejlighed til at kigge på tilbuddet på <span class="bg-secondary-container text-on-secondary-fixed font-mono px-1.5 py-0.5 rounded font-semibold text-xs">{KVADRATMETER}</span> m² gulvafslibning, vi sendte d. <span class="bg-secondary-container text-on-secondary-fixed font-mono px-1.5 py-0.5 rounded font-semibold text-xs">{TILBUDSDATO}</span>?"
+          </div>
+<!-- Fallback logic disclosure -->
+<div class="p-3.5 rounded-xl bg-surface-container flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">swap_horiz</span>
+<div class="text-body-sm font-body-sm text-on-surface">
+<strong class="font-semibold">Robust variabel-fallback:</strong> Hvis feltet <code class="font-mono text-primary font-semibold text-xs">{KVADRATMETER}</code> mangler i kildedata, erstattes det automatisk af den neutrale formulering: <em>"dit gulvprojekt"</em>.
+            </div>
+</div>
+</div>
+<!-- Intent Routing Logic Tiles -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="p-4 rounded-xl bg-surface-container flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md font-bold text-primary">1. Interesseret</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Kunden ønsker tilbud uddybet eller aftale.</p>
+</div>
+<div class="mt-3 pt-2 text-[12px] font-label-sm text-on-surface font-medium flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              Tilbyder besigtigelse eller tidsafklaring
+            </div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md font-bold text-on-surface">2. Ikke interesseret</span>
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Kunden har valgt anden leverandør eller udskudt.</p>
+</div>
+<div class="mt-3 pt-2 text-[12px] font-label-sm text-on-surface font-medium flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              Høflig afslutning &amp; arkivering i system
+            </div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md font-bold text-on-surface">3. Indvending / Ukendt</span>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tekniske spørgsmål vedrørende lak, lud eller olie.</p>
+</div>
+<div class="mt-3 pt-2 text-[12px] font-label-sm text-on-surface font-medium flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              Opretter opkaldsnotat til mester Mads
+            </div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-md text-label-md font-bold text-error">4. Fravalg ('Ring ikke')</span>
+<span class="w-2 h-2 rounded-full bg-error"></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Kunden frabeder sig fremtidig kontakt.</p>
+</div>
+<div class="mt-3 pt-2 text-[12px] font-label-sm text-on-surface font-medium flex items-center gap-1 text-error">
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              Auto-tilføjes omgående til S10 spærreliste
+            </div>
+</div>
+</div>
+</div>
+<!-- Right Column: Visual Persona Context -->
+<div class="lg:col-span-5 flex flex-col justify-between p-6 rounded-2xl bg-surface-container">
+<div>
+<span class="font-label-sm text-label-sm font-mono text-on-surface-variant uppercase tracking-wider block mb-3">Tilknyttet Talemodel</span>
+<div class="flex items-center gap-4 mb-5">
+<img class="w-16 h-16 rounded-2xl object-cover shadow-sm" data-alt="A professional Danish female AI voice avatar named Clara, dressed in modern business casual attire against a clean Scandinavian office setting with natural lighting and soft spruce green plants." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYHhE4Suv-BoRFwDagVqTM_kXHgDZmqVx82QStqumA_-zmHLbUqBLJ1D9BFFAURRSGy8caAgxOXGhQsKliynoFSklircwMXwCQ1zPxvMxJOZCBWuxfX2beZH8GGgFCPuc9KVedAGIHgawo73tm8opMTDSG8I_UNcif0XBfSj8lLWdLhh9PKkRIopf8fiP5VxPWz-GaSez-xKSeUFci54S3hrcONnNB89jAg1ceF9jFUVwJJGxzSdi5nQ"/>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Clara — Stemmeassistent</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Københavnsk accent • 135 ord/minut</p>
+</div>
+</div>
+<div class="space-y-3 font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex justify-between py-2 bg-surface-container-low px-3 rounded-lg">
+<span>Svartid latency:</span>
+<strong class="text-on-surface font-mono">420 ms (Real-time duplex)</strong>
+</div>
+<div class="flex justify-between py-2 bg-surface-container-low px-3 rounded-lg">
+<span>Afbrydelsestolerance:</span>
+<strong class="text-on-surface">Høj (Barge-in aktiveret)</strong>
+</div>
+<div class="flex justify-between py-2 bg-surface-container-low px-3 rounded-lg">
+<span>Henvendelse til:</span>
+<strong class="text-on-surface">Mads Fjord (Fjord Gulvservice)</strong>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span>Valideret i overensstemmelse med Fjord Gulvservices toneguide.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Step 6 (C07 - Scenarietest for kampagne) -->
+<div class="w-full bg-surface-container-lowest p-6 md:p-8 rounded-2xl shadow-sm mb-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-6 gap-4">
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-md bg-secondary-container text-on-secondary-fixed text-label-sm font-label-sm font-bold font-mono">C07 SCENARIETEST</span>
+<span class="inline-flex items-center gap-1 text-label-sm font-label-sm text-secondary font-bold">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            Alle 7 scenarier godkendt i v1.2
+          </span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">Simuleringsmatrix &amp; Kvalitetssikring</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Automatiserede syntetiske dialogtests udført forud for kampagnestart for at garantere driftssikkerhed.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-xl bg-surface-container text-on-surface hover:bg-surface-container-high transition-all text-label-md font-label-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+          Kør fornyet testkørsel
+        </button>
+</div>
+</div>
+<!-- 7 Outcome Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 mb-8">
+<!-- Scenario 1 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs text-primary font-bold">#01</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Interesseret</p>
+<p class="text-[12px] font-body-sm text-on-surface-variant mt-1">Booker kalenderbesigtigelse uden friktion.</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-[11px] font-bold self-start">Bestået</span>
+</div>
+<!-- Scenario 2 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs text-primary font-bold">#02</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Ikke interesseret</p>
+<p class="text-[12px] font-body-sm text-on-surface-variant mt-1">Høflig lukning og opdatering i CRM.</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-[11px] font-bold self-start">Bestået</span>
+</div>
+<!-- Scenario 3 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs text-primary font-bold">#03</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Ukendt spørgsmål</p>
+<p class="text-[12px] font-body-sm text-on-surface-variant mt-1">Eskalerer til menneskelig opfølgning.</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-[11px] font-bold self-start">Bestået</span>
+</div>
+<!-- Scenario 4 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs text-primary font-bold">#04</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Sprogskift</p>
+<p class="text-[12px] font-body-sm text-on-surface-variant mt-1">Skifter smidigt til engelsk ved anmodning.</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-[11px] font-bold self-start">Bestået</span>
+</div>
+<!-- Scenario 5 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs text-primary font-bold">#05</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Manglende variabel</p>
+<p class="text-[12px] font-body-sm text-on-surface-variant mt-1">Fallback 'dit gulvprojekt' aktiveret korrekt.</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-[11px] font-bold self-start">Bestået</span>
+</div>
+<!-- Scenario 6 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs text-primary font-bold">#06</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Intet svar</p>
+<p class="text-[12px] font-body-sm text-on-surface-variant mt-1">Lægger på efter 20s uden talebesked.</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-[11px] font-bold self-start">Bestået</span>
+</div>
+<!-- Scenario 7 -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="font-mono text-xs text-primary font-bold">#07</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Fravalg registreret</p>
+<p class="text-[12px] font-body-sm text-on-surface-variant mt-1">Kunden skrives straks på S10 blokeringsliste.</p>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-[11px] font-bold self-start">Bestået</span>
+</div>
+</div>
+<!-- Final Flow Call to Action Footer -->
+<div class="flex flex-col sm:flex-row items-center justify-between p-6 rounded-2xl bg-primary text-on-primary gap-4 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary-fixed text-[24px]">task_alt</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm">Klar til næste trin: Alloker ringeminutter</h3>
+<p class="font-body-sm text-body-sm text-on-primary-container">800 validerede kontakter er synkroniseret med 'Opfølgning på afgivet tilbud v1.2'.</p>
+</div>
+</div>
+<button class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-secondary text-on-secondary hover:brightness-110 transition-all font-label-lg text-label-lg font-bold flex items-center justify-center gap-3 shrink-0 shadow-md">
+<span>Fortsæt til Pakkekøb &amp; Budget (C08)</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div></main></div></body></html>

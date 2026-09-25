@@ -10,5 +10,5 @@ export function AcceptButton({ token }: { token: string }) {
     await fetch("/api/auth/workspace", { method: "POST", headers: { "content-type": "application/json", "x-requested-with": "dialogbot" }, body: JSON.stringify({ workspace_id: ws.id }) });
     router.push("/app/setup"); router.refresh();
   });
-  return <div className="space-y-3"><ErrorBox error={error} /><Button disabled={pending} onClick={run}>Acceptér invitation</Button></div>;
+  return <div className="space-y-3"><ErrorBox error={error} /><Button icon="check_circle" disabled={pending} onClick={run} className="w-full h-12 rounded-lg">{pending ? "Accepterer…" : "Acceptér invitation"}</Button></div>;
 }

@@ -43,21 +43,21 @@ export function Card({ title, label, subtitle, children, actions, className = ""
   );
 }
 
-export const inputCls = "w-full rounded-lg bg-surface-container-low border border-transparent px-space-md py-2.5 text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:bg-surface-container-lowest focus:border-primary disabled:opacity-60";
+export const inputCls = "w-full px-3 py-2 rounded-lg bg-surface text-on-surface font-body-md text-body-md placeholder:text-on-surface-variant/60 focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary shadow-inner disabled:opacity-60";
 
 export function Field({ label, error, hint, children }: { label: string; error?: string; hint?: string; children: React.ReactNode }) {
   return (
     <label className="block space-y-1.5">
-      <span className="text-label-md text-on-surface font-semibold">{label}</span>
+      <span className="block font-label-md text-label-md text-on-surface font-semibold">{label}</span>
       {children}
-      {hint && !error && <span className="block text-body-sm text-on-surface-variant">{hint}</span>}
+      {hint && !error && <span className="block font-body-sm text-body-sm text-on-surface-variant">{hint}</span>}
       {error && <span role="alert" className="block text-label-md text-error">{error}</span>}
     </label>
   );
 }
-export function Input(p: React.InputHTMLAttributes<HTMLInputElement>) { return <input className={inputCls} {...p} />; }
-export function Textarea(p: React.TextareaHTMLAttributes<HTMLTextAreaElement>) { return <textarea className={`${inputCls} min-h-24`} {...p} />; }
-export function Select(p: React.SelectHTMLAttributes<HTMLSelectElement>) { return <select className={inputCls} {...p} />; }
+export function Input({ className = "", ...p }: React.InputHTMLAttributes<HTMLInputElement>) { return <input className={`${inputCls} ${className}`} {...p} />; }
+export function Textarea({ className = "", ...p }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) { return <textarea className={`${inputCls} min-h-24 ${className}`} {...p} />; }
+export function Select({ className = "", ...p }: React.SelectHTMLAttributes<HTMLSelectElement>) { return <select className={`${inputCls} ${className}`} {...p} />; }
 
 export function Alert({ kind = "error", children, icon }: { kind?: "error" | "ok" | "info" | "warn"; children: React.ReactNode; icon?: string }) {
   const c = {
@@ -108,18 +108,6 @@ export function Breadcrumb({ items }: { items: [string, string?][] }) {
         </span>
       ))}
     </div>
-  );
-}
-
-/** Onboarding phase strip (A06 → O01 → O03 → O04 → Viden → G01). */
-export function Steps({ current }: { current: string }) {
-  const steps: [string, string][] = [["/onboarding/workspace", "A06 Arbejdsrum"], ["/onboarding/business", "O01 Virksomhed"], ["/onboarding/goals", "O03 Mål"], ["/onboarding/languages", "O04 Sprog"], ["/app/knowledge", "K01 Viden"], ["/app/setup", "G01 Plan"]];
-  return (
-    <nav aria-label="Onboarding-faser" className="mb-space-lg flex flex-wrap gap-space-xs">
-      {steps.map(([href, label]) => (
-        <a key={href} href={href} className={`rounded-lg px-space-md py-1.5 text-label-md transition-colors ${href === current ? "bg-primary text-on-primary shadow-sm font-semibold" : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"}`}>{label}</a>
-      ))}
-    </nav>
   );
 }
 

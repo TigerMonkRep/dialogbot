@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-highest":"#d0e7e2","surface-container":"#dcf3ee","on-tertiary":"#ffffff","on-secondary-container":"#586a0e","inverse-on-surface":"#dff6f0","secondary-fixed":"#d6ec85","on-primary-fixed-variant":"#184f44","surface-tint":"#33675c","primary-fixed":"#b6eede","surface-container-low":"#e1f8f3","on-primary-fixed":"#00201a","on-surface":"#0a1f1c","on-primary-container":"#88beb0","surface":"#e7fef9","surface-variant":"#d0e7e2","secondary":"#546508","on-surface-variant":"#404946","primary":"#00362d","on-error-container":"#93000a","surface-container-high":"#d6ede8","surface-container-lowest":"#ffffff","surface-dim":"#c8dfda","on-primary":"#ffffff","tertiary-fixed":"#c6e7ff","primary-fixed-dim":"#9bd1c3","on-tertiary-fixed-variant":"#004c6b","tertiary-container":"#004b6a","error-container":"#ffdad6","on-tertiary-fixed":"#001e2d","error":"#ba1a1a","tertiary-fixed-dim":"#93cef4","surface-bright":"#e7fef9","outline":"#707976","on-error":"#ffffff","on-secondary":"#ffffff","tertiary":"#00334a","on-secondary-fixed":"#171e00","secondary-fixed-dim":"#bbd06c","on-background":"#0a1f1c","background":"#e7fef9","outline-variant":"#bfc9c4","inverse-primary":"#9bd1c3","on-tertiary-container":"#80bbe0","inverse-surface":"#203431","on-secondary-fixed-variant":"#3e4c00","secondary-container":"#d4ea82","primary-container":"#164e43"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"margin-md":"1.5rem","space-xl":"1.5rem","space-xs":"0.25rem","margin-lg":"2rem","margin":"1rem","gutter":"1rem","space-lg":"1rem","space-sm":"0.5rem","gutter-lg":"1.5rem","space-md":"0.75rem"},fontFamily:{"headline-lg":["Manrope"],"display-lg":["Manrope"],"display-lg-mobile":["Manrope"],"body-lg":["Inter"],"label-sm":["Inter"],"body-md":["Inter"],"headline-sm":["Manrope"],"headline-md":["Manrope"],"label-md":["Inter"],"body-sm":["Inter"],"label-lg":["Inter"],"headline-lg-mobile":["Manrope"]},fontSize:{"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"display-lg":["36px",{lineHeight:"44px",letterSpacing:"-0.03em",fontWeight:"700"}],"display-lg-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-lg":["16px",{lineHeight:"24px",fontWeight:"400"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",fontWeight:"400"}],"headline-sm":["18px",{lineHeight:"26px",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-md":["22px",{lineHeight:"30px",letterSpacing:"-0.015em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"500"}],"body-sm":["13px",{lineHeight:"18px",fontWeight:"400"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.01em",fontWeight:"600"}],"headline-lg-mobile":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"700"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="h-16 px-space-xl flex items-center justify-between bg-surface-container-low"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">record_voice_over</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">Dialogbot</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">AI Telefoni</span></div></div></div><nav class="flex flex-col gap-space-xs px-space-md py-space-md overflow-y-auto max-h-[calc(100vh-140px)]" data-active-classes="bg-primary-container text-on-primary font-headline-sm rounded-lg shadow-sm"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="overblik" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-label-lg text-label-lg">Overblik</span></div><span class="font-label-sm text-label-sm text-outline">D01</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="indbakke" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">inbox</span><span class="font-label-lg text-label-lg">Indbakke</span></div><span class="font-label-sm text-label-sm text-outline">I01</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="henvendelser" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">contact_phone</span><span class="font-label-lg text-label-lg">Henvendelser</span></div><span class="font-label-sm text-label-sm text-outline">I03</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="opgaver" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">task_alt</span><span class="font-label-lg text-label-lg">Opgaver</span></div><span class="font-label-sm text-label-sm text-outline">I05</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="reception" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">support_agent</span><span class="font-label-lg text-label-lg">Reception</span></div><span class="font-label-sm text-label-sm text-outline">R01</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="kampagner" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">campaign</span><span class="font-label-lg text-label-lg">Kampagner</span></div><span class="font-label-sm text-label-sm text-outline">C01</span></a><a aria-current="page" class="flex items-center justify-between px-space-md py-space-sm transition-colors bg-primary-container text-on-primary font-headline-sm rounded-lg shadow-sm" data-path="virksomhedsviden" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-label-lg text-label-lg">Virksomhedsviden</span></div><span class="font-label-sm text-label-sm text-outline">K01</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="bookinger" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">calendar_today</span><span class="font-label-lg text-label-lg">Bookinger</span></div><span class="font-label-sm text-label-sm text-outline">BK01</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="rapporter" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">query_stats</span><span class="font-label-lg text-label-lg">Rapporter</span></div><span class="font-label-sm text-label-sm text-outline">T01</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="fakturering" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span class="font-label-lg text-label-lg">Fakturering</span></div><span class="font-label-sm text-label-sm text-outline">B01</span></a></nav></div><div class="p-space-md bg-surface-container-low flex flex-col gap-space-xs"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="indstillinger" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-label-lg text-label-lg">Indstillinger</span></div><span class="font-label-sm text-label-sm text-outline">S01</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="hjaelp-support" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">help_outline</span><span class="font-label-lg text-label-lg">Hjælp &amp; Support</span></div><span class="font-label-sm text-label-sm text-outline">H01</span></a></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-space-lg"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-md text-on-surface-variant text-[20px]">search</span><input class="w-80 h-10 pl-10 pr-space-md rounded-lg bg-surface-container-lowest text-on-surface placeholder:text-outline text-body-sm focus:outline-none focus:ring-1 focus:ring-primary shadow-sm" placeholder="Søg i viden, tilbud, opkald..." type="text"/></div><div class="flex items-center gap-space-xs bg-secondary-container px-space-md py-1 rounded-full"><span class="w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-sm text-label-sm text-on-secondary-container uppercase tracking-wider font-semibold">Sandbox Miljø</span></div></div><div class="flex items-center gap-space-lg"><button class="relative p-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><div class="flex items-center gap-space-md pl-space-md"><div class="flex flex-col text-right hidden sm:flex"><span class="font-label-lg text-label-lg text-on-surface">Clara Lind</span><span class="font-label-sm text-label-sm text-on-surface-variant">Mads Fjord ApS</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface px-gutter-lg pb-margin-lg"><div class="flex flex-col w-full">
+<!-- Top Navigation & Contextual Summary Header -->
+<div class="flex flex-col gap-space-md mb-margin-md">
+<!-- Breadcrumb & Environment Status -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-md text-label-md">
+<span class="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span>Virksomhedsviden</span>
+</span>
+<span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+<span class="font-label-lg text-label-lg text-primary">Tilbud &amp; Kampagner</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-1.5 px-space-md py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed shadow-sm">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-label-sm font-semibold tracking-wide uppercase">Demomiljø (Fjord Gulvservice ApS)</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm px-space-sm py-1 bg-surface-container rounded-lg">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>Europe/Copenhagen (CET)</span>
+</div>
+</div>
+</div>
+<!-- Main Title & Action Row -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Tidsbegrænsede Tilbud &amp; Kampagnerabatter</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-0.5">
+          Styr aktive prisnedslag, gyldighedsperioder og betingelser. Ændringer synkroniseres direkte til AI-receptionisten Claras taleregler.
+        </p>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<button class="flex items-center gap-space-xs px-space-md py-2.5 rounded-lg bg-surface-container-lowest text-primary shadow-sm hover:bg-surface-container transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span class="font-label-lg text-label-lg">Eksporter tilbudsoversigt</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-2.5 rounded-lg bg-primary text-on-primary shadow-md hover:bg-primary-container transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+<span class="font-label-lg text-label-lg font-semibold">Nyt Tilbud</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Filter, Search, and Status Bar -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm mb-margin-md flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<!-- Filter Tabs -->
+<div class="flex items-center gap-1 overflow-x-auto pb-1 lg:pb-0" id="filter-tabs">
+<button class="px-space-md py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md shrink-0 shadow-sm flex items-center gap-1.5" type="button">
+<span>Alle</span>
+<span class="bg-surface-container-highest/30 text-on-primary px-1.5 py-0.2 rounded-full text-label-sm">4</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md shrink-0 transition-colors flex items-center gap-1.5" type="button">
+<span>Aktive</span>
+<span class="bg-secondary-container text-on-secondary-container px-1.5 py-0.2 rounded-full text-label-sm font-semibold">2</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md shrink-0 transition-colors flex items-center gap-1.5" type="button">
+<span>Planlagte</span>
+<span class="bg-surface-container-high text-on-surface px-1.5 py-0.2 rounded-full text-label-sm">1</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md shrink-0 transition-colors flex items-center gap-1.5" type="button">
+<span>Kladde</span>
+<span class="bg-surface-container-high text-on-surface px-1.5 py-0.2 rounded-full text-label-sm">1</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-md text-label-md shrink-0 transition-colors flex items-center gap-1.5" type="button">
+<span>Udløbne</span>
+<span class="bg-surface-container text-outline px-1.5 py-0.2 rounded-full text-label-sm">1</span>
+</button>
+<button class="px-space-md py-1.5 rounded-lg text-outline hover:bg-surface-container hover:text-on-surface font-label-md text-label-md shrink-0 transition-colors flex items-center gap-1.5" type="button">
+<span>Arkiverede</span>
+<span class="bg-surface-container text-outline px-1.5 py-0.2 rounded-full text-label-sm">0</span>
+</button>
+</div>
+<!-- Search & Service Filter Select -->
+<div class="flex items-center gap-space-sm shrink-0">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">search</span>
+<input class="w-64 h-9 pl-9 pr-3 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Filtrér efter rabat eller ydelse..." type="text"/>
+</div>
+<div class="relative">
+<button class="h-9 px-space-md rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-md text-label-md flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>Tags &amp; Ydelser</span>
+<span class="material-symbols-outlined text-[16px] text-outline">expand_more</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Main Split Layout (40% List / 60% Editor & Preview) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-margin-md items-start">
+<!-- LEFT COLUMN: Offer List (5 Cols = approx 41.6%) -->
+<div class="xl:col-span-5 flex flex-col gap-space-md">
+<div class="flex items-center justify-between px-space-xs">
+<span class="font-headline-sm text-headline-sm text-primary">Kampagnekatalog (4)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Sorteret efter: Senest opdateret</span>
+</div>
+<!-- Offer Card 1: ACTIVE (Selected State) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-md cursor-pointer transition-all hover:shadow-lg relative overflow-hidden bg-gradient-to-r from-surface-container-low/40 to-surface-container-lowest">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<div class="flex items-start justify-between gap-space-sm pl-2">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                Aktiv
+              </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">ID: KAMP-0926</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary mt-1">Efterårsrabat på Gulvafslibning</h2>
+</div>
+<span class="material-symbols-outlined text-primary text-[22px]">check_circle</span>
+</div>
+<div class="mt-space-md pl-2 flex flex-col gap-2">
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-display-lg text-primary font-bold">15%</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">rabat på gulvafslibning (min. 40 m²)</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">date_range</span>
+<span>01. okt 2026 – 30. nov 2026 (CET)</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm bg-surface-container-low p-2 rounded-lg mt-1">
+<span class="material-symbols-outlined text-[18px] text-secondary">location_on</span>
+<span class="line-clamp-1">Målgruppe: Private boligejere i Storkøbenhavn &amp; Nordsjælland</span>
+</div>
+</div>
+<!-- Assistant Sync Status Indicator -->
+<div class="mt-space-md pt-space-sm pl-2 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-[16px] text-secondary">smart_toy</span>
+            Clara tilbyder aktivt denne rabat
+          </span>
+<span class="text-outline">Redigerer nu</span>
+</div>
+</div>
+<!-- Offer Card 2: PLANNED -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md cursor-pointer transition-all">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm font-medium">
+                Planlagt
+              </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">ID: KAMP-1226</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-1">Ferie-klargøring &amp; Oliebehandling</h2>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px]">more_vert</span>
+</div>
+<div class="mt-space-md flex flex-col gap-2">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">Fast pris 2.495 kr.</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">for op til 30 m²</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span>01. dec 2026 – 15. jan 2027</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm bg-surface-container-low p-2 rounded-lg mt-1">
+<span class="material-symbols-outlined text-[18px] text-outline">home_repair_service</span>
+<span class="line-clamp-1">Inkluderer 2x naturolie samt polering</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between text-label-sm font-label-sm text-outline">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">lock_clock</span>
+            Aktiveres automatisk d. 01. dec
+          </span>
+<span class="hover:text-primary font-medium">Åbn kampagne</span>
+</div>
+</div>
+<!-- Offer Card 3: DRAFT (With Warning Badge) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md cursor-pointer transition-all">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium">
+                Kladde
+              </span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                Ugemte ændringer
+              </span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-1">Erhvervsrabat - Kontorlokaler</h2>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px]">more_vert</span>
+</div>
+<div class="mt-space-md flex flex-col gap-2">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">10% rabat</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ved flerårig servicekontrakt</span>
+</div>
+<div class="flex items-center gap-space-xs text-error font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span>Ufuldstændige vilkår: Mangler slutdato og arealbetingelse</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between text-label-sm font-label-sm text-outline">
+<span class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">pause_circle</span>
+            Ikke tilgængelig for AI assistent
+          </span>
+<span class="hover:text-primary font-medium">Udfyld data</span>
+</div>
+</div>
+<!-- Offer Card 4: EXPIRED (Clear Warning) -->
+<div class="bg-surface-container-high/40 rounded-xl p-space-md shadow-sm transition-all opacity-85">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium">
+                Udløbet
+              </span>
+<span class="font-label-sm text-label-sm text-outline">ID: KAMP-0726</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface-variant line-through mt-1">Sensommer-kampagne 2026</h2>
+</div>
+<span class="material-symbols-outlined text-outline text-[20px]">archive</span>
+</div>
+<div class="mt-space-md flex flex-col gap-2">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md text-outline">Gratis lakforsegling</span>
+<span class="font-body-sm text-body-sm text-outline">Udløbet 30. sep 2026</span>
+</div>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-body-sm text-body-sm bg-surface-container p-2.5 rounded-lg mt-1">
+<span class="material-symbols-outlined text-[20px] text-error">block</span>
+<span class="font-label-sm text-label-sm font-semibold text-error">Udløbet — Assistenten må IKKE tilbyde denne rabat</span>
+</div>
+</div>
+<div class="mt-space-md pt-space-sm flex items-center justify-between text-label-sm font-label-sm text-outline">
+<span>Gemt i historik</span>
+<span class="hover:text-primary cursor-pointer font-medium">Genaktivér til 2027</span>
+</div>
+</div>
+<!-- Information Callout -->
+<div class="bg-surface-container rounded-xl p-space-md flex gap-space-sm text-on-surface-variant mt-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5">tips_and_updates</span>
+<div class="flex flex-col gap-1">
+<span class="font-label-lg text-label-lg text-primary font-semibold">Sådan tolker Clara rabatter</span>
+<p class="font-body-sm text-body-sm">
+            AI-receptionisten bruger udelukkende oplysninger fra <strong>Aktive</strong> kampagner med valideret gyldighedsperiode. Hvis en opgave falder uden for postnummer eller minimumskrav, forklarer Clara betingelserne venligt og direkte.
+          </p>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Offer Editor & Live Assistant Preview (7 Cols = approx 58.3%) -->
+<div class="xl:col-span-7 flex flex-col gap-margin-md">
+<!-- Offer Editor Form Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md p-space-xl flex flex-col gap-space-lg">
+<!-- Form Header -->
+<div class="flex items-center justify-between pb-space-md bg-surface-container-lowest">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">Redigerer aktivt tilbud</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary mt-1">Efterårsrabat på Gulvafslibning</h2>
+</div>
+<span class="px-space-md py-1 rounded-full bg-surface-container-low text-primary font-label-sm text-label-sm">
+            Sidst synkroniseret: I dag kl. 09:42
+          </span>
+</div>
+<!-- Inputs: Title & Description -->
+<div class="grid grid-cols-1 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-lg text-label-lg text-primary">Kampagnetitel (Internt &amp; eksternt)</label>
+<input class="w-full h-11 px-3.5 rounded-lg bg-surface text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary shadow-sm" type="text" value="Efterårsrabat på Gulvafslibning"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-lg text-label-lg text-primary">Beskrivelse &amp; Betingelser</label>
+<span class="font-label-sm text-label-sm text-outline">164 / 300 tegn</span>
+</div>
+<textarea class="w-full p-3 rounded-lg bg-surface text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary shadow-sm resize-none" rows="3">Gælder alle massive trægulve og lamelparket. Forudsætter min. 40 m² samlet gulvareal og udførelse inden 30. nov 2026. Kan ikke kombineres med andre rabatter.</textarea>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Denne tekst danner grundlag for assistentens forklaring, når kunden beder om detaljerede vilkår.</span>
+</div>
+</div>
+<!-- Inputs: Associated Services (Checkboxes) -->
+<div class="flex flex-col gap-2">
+<label class="font-label-lg text-label-lg text-primary">Tilknyttede ydelser</label>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
+<label class="flex items-center gap-space-sm p-space-sm rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary bg-surface-container-lowest" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Gulvafslibning</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Standard &amp; grov</span>
+</div>
+</label>
+<label class="flex items-center gap-space-sm p-space-sm rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary bg-surface-container-lowest" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Oliebehandling</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Natur &amp; hvidpigment</span>
+</div>
+</label>
+<label class="flex items-center gap-space-sm p-space-sm rounded-lg bg-surface-container-low cursor-pointer hover:bg-surface-container transition-colors">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary bg-surface-container-lowest" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Lakering</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Mat, halvblank, 2K</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Inputs: Validity & Dates -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg text-primary font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+              Gyldighedsperiode &amp; Tidsstyring
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">Europe/Copenhagen</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Startdato (Kl. 00:00:01)</label>
+<div class="relative flex items-center">
+<input class="w-full h-10 px-3 rounded-lg bg-surface-container-lowest text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" type="date" value="2026-10-01"/>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Slutdato (Kl. 23:59:59)</label>
+<div class="relative flex items-center">
+<input class="w-full h-10 px-3 rounded-lg bg-surface-container-lowest text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" type="date" value="2026-11-30"/>
+</div>
+</div>
+</div>
+<!-- Form validation hint -->
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm pt-0.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
+<span>Datointerval valideret: Slutdato ligger 60 dage efter startdato. Kampagnen udløber automatisk.</span>
+</div>
+</div>
+<!-- Inputs: Terms & Geography -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-lg text-label-lg text-primary">Rabattype &amp; Størrelse</label>
+<div class="grid grid-cols-2 gap-2">
+<select class="h-10 px-3 rounded-lg bg-surface text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary">
+<option selected="">Procent (%)</option>
+<option>Fast beløb (DKK)</option>
+<option>Gratis tillægsydelse</option>
+</select>
+<input class="h-10 px-3 rounded-lg bg-surface text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary font-semibold" type="text" value="15%"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-lg text-label-lg text-primary">Minimumsareal / Omfang</label>
+<div class="relative flex items-center">
+<input class="w-full h-10 px-3 rounded-lg bg-surface text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" type="text" value="40 m²"/>
+<span class="absolute right-3 font-label-sm text-label-sm text-outline">Krav til kunden</span>
+</div>
+</div>
+<div class="sm:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-lg text-label-lg text-primary">Målgruppe, Geografi &amp; Undtagelser</label>
+<input class="w-full h-10 px-3.5 rounded-lg bg-surface text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary shadow-sm" type="text" value="Postnumre 1000-3490 (Sjælland/Storkøbenhavn). Private boligejere. Erhvervsbygninger undtaget."/>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Clara kontrollerer automatisk kundens adresse under opkaldet for at bekræfte berettigelse.</span>
+</div>
+</div>
+</div>
+<!-- Assistant Live Voice Preview Box (AI Taleprøve) -->
+<div class="bg-primary text-on-primary rounded-xl p-space-xl shadow-lg relative overflow-hidden">
+<!-- Subtle Ambient Background Wave -->
+<div class="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-primary-container/30 blur-3xl pointer-events-none"></div>
+<div class="absolute -left-12 -bottom-12 w-48 h-48 rounded-full bg-secondary/15 blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col gap-space-md">
+<!-- Voice Box Header -->
+<div class="flex items-center justify-between flex-wrap gap-2">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[24px]">record_voice_over</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-primary">Live Taleprøve: AI-Receptionist</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">Aktiv Dialog</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-primary-container">Stemmemodel: Clara (Dansk Natural N-7)</span>
+</div>
+</div>
+<!-- Preview Toggle Buttons (Active vs. Expired scenario) -->
+<div class="flex items-center bg-primary-container/60 p-1 rounded-lg" id="voice-preview-toggle">
+<button class="px-space-md py-1 rounded bg-secondary text-primary font-label-sm text-label-sm font-semibold transition-all" id="btn-scenario-active" type="button">
+                Aktiv Kampagne
+              </button>
+<button class="px-space-md py-1 rounded text-on-primary-container hover:text-on-primary font-label-sm text-label-sm font-medium transition-all" id="btn-scenario-expired" type="button">
+                Hvis Udløbet
+              </button>
+</div>
+</div>
+<!-- Voice Simulation Audio Player & Visualizer -->
+<div class="bg-primary-container/80 rounded-xl p-space-md flex flex-col gap-space-sm backdrop-blur-md">
+<div class="flex items-center justify-between text-on-primary font-label-sm text-label-sm">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+<span>Hvad Clara siger ved direkte kundespørgsmål:</span>
+</span>
+<span class="text-on-primary-container font-mono">00:08 / 00:14</span>
+</div>
+<!-- Speech Bubble 1: Current Active Script -->
+<div class="p-space-md bg-surface-container-lowest/10 rounded-lg text-on-primary font-body-lg text-body-lg leading-relaxed flex items-start gap-space-sm" id="speech-active-view">
+<span class="material-symbols-outlined text-secondary shrink-0 text-[20px] mt-0.5">format_quote</span>
+<p>
+                “Vi har netop nu vores efterårsrabat, som giver <strong>15% rabat på gulvafslibning</strong>, hvis dit samlede areal er mindst 40 m² og opgaven udføres inden 30. november. Ønsker du, at jeg booker en gratis besigtigelse, så vi kan måle det op for dig?”
+              </p>
+</div>
+<!-- Speech Bubble 2: Expired Fallback Script (Initially Hidden) -->
+<div class="hidden p-space-md bg-surface-container-lowest/10 rounded-lg text-on-primary font-body-lg text-body-lg leading-relaxed flex items-start gap-space-sm" id="speech-expired-view">
+<span class="material-symbols-outlined text-secondary-fixed shrink-0 text-[20px] mt-0.5">history_toggle_off</span>
+<p>
+                “Vores efterårskampagne udløb desværre den 30. november, så den rabat kan jeg ikke tilbyde i dag. Men jeg kan give dig et uforpligtende estimat ud fra vores faste standardpriser eller undersøge en mængderabat for dig.”
+              </p>
+</div>
+<!-- Audio Bar Simulator -->
+<div class="flex items-center gap-3 pt-1">
+<button class="w-8 h-8 rounded-full bg-secondary text-primary flex items-center justify-center shrink-0 hover:scale-105 transition-transform" type="button">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+</button>
+<!-- Mini Waveform SVG -->
+<div class="flex-1 flex items-center gap-1 h-6">
+<span class="w-1 bg-secondary rounded-full h-2 animate-pulse"></span>
+<span class="w-1 bg-secondary rounded-full h-4"></span>
+<span class="w-1 bg-secondary rounded-full h-5 animate-pulse"></span>
+<span class="w-1 bg-secondary rounded-full h-3"></span>
+<span class="w-1 bg-secondary rounded-full h-6"></span>
+<span class="w-1 bg-secondary rounded-full h-4"></span>
+<span class="w-1 bg-secondary rounded-full h-2"></span>
+<span class="w-1 bg-secondary/50 rounded-full h-5"></span>
+<span class="w-1 bg-secondary/50 rounded-full h-3"></span>
+<span class="w-1 bg-secondary/40 rounded-full h-2"></span>
+<span class="w-1 bg-secondary/30 rounded-full h-4"></span>
+<span class="w-1 bg-secondary/30 rounded-full h-1"></span>
+<span class="w-1 bg-secondary/30 rounded-full h-3"></span>
+<span class="w-1 bg-secondary/20 rounded-full h-2"></span>
+<span class="w-1 bg-secondary/20 rounded-full h-1"></span>
+</div>
+<span class="font-label-sm text-label-sm text-on-primary-container shrink-0">Syntetiseret stemmeprøve</span>
+</div>
+</div>
+<!-- Micro Rules checklist -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm text-on-primary-container font-label-sm text-label-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">check</span>
+<span>Spørger aktivt ind til areal ved forespørgsler</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">check</span>
+<span>Afviser høfligt ved forespørgsel efter 30. nov</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Footer & Commit Buttons -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm">
+<button class="px-space-md py-2.5 rounded-lg text-error hover:bg-error-container hover:text-on-error-container font-label-lg text-label-lg transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[18px]">archive</span>
+<span>Arkivér tilbud</span>
+</button>
+<button class="px-space-md py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-lg text-label-lg transition-colors" type="button">
+            Annullér
+          </button>
+</div>
+<div class="flex items-center gap-space-sm w-full sm:w-auto justify-end">
+<button class="px-space-md py-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-lg text-label-lg transition-colors" type="button">
+            Gem som kladde
+          </button>
+<button class="px-space-xl py-2.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-lg text-label-lg font-semibold shadow-md flex items-center gap-2 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Gem ændringer</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Simple interactive preview switcher between active dialog & expired scenario
+  const btnActive = document.getElementById('btn-scenario-active');
+  const btnExpired = document.getElementById('btn-scenario-expired');
+  const speechActive = document.getElementById('speech-active-view');
+  const speechExpired = document.getElementById('speech-expired-view');
+
+  if (btnActive && btnExpired && speechActive && speechExpired) {
+    btnActive.addEventListener('click', () => {
+      btnActive.className = 'px-space-md py-1 rounded bg-secondary text-primary font-label-sm text-label-sm font-semibold transition-all';
+      btnExpired.className = 'px-space-md py-1 rounded text-on-primary-container hover:text-on-primary font-label-sm text-label-sm font-medium transition-all';
+      speechActive.classList.remove('hidden');
+      speechExpired.classList.add('hidden');
+    });
+
+    btnExpired.addEventListener('click', () => {
+      btnExpired.className = 'px-space-md py-1 rounded bg-secondary text-primary font-label-sm text-label-sm font-semibold transition-all';
+      btnActive.className = 'px-space-md py-1 rounded text-on-primary-container hover:text-on-primary font-label-sm text-label-sm font-medium transition-all';
+      speechExpired.classList.remove('hidden');
+      speechActive.classList.add('hidden');
+    });
+  }
+</script></main></div></body></html>

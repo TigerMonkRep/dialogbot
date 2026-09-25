@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Manrope:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary":"#ffffff","secondary-fixed-dim":"#bbd06c","surface":"#e7fef9","secondary-fixed":"#d6ec85","on-primary":"#ffffff","on-secondary-fixed-variant":"#3e4c00","surface-container-highest":"#d0e7e2","primary-fixed-dim":"#9bd1c3","on-tertiary-fixed":"#001e2d","on-tertiary-container":"#80bbe0","inverse-on-surface":"#dff6f0","surface-container-high":"#d6ede8","background":"#e7fef9","secondary-container":"#d4ea82","primary-container":"#164e43","on-background":"#0a1f1c","surface-variant":"#d0e7e2","tertiary":"#00334a","on-secondary":"#ffffff","on-error":"#ffffff","on-primary-fixed-variant":"#184f44","tertiary-fixed":"#c6e7ff","error-container":"#ffdad6","error":"#ba1a1a","surface-dim":"#c8dfda","surface-bright":"#e7fef9","surface-container":"#dcf3ee","on-primary-container":"#88beb0","on-tertiary-fixed-variant":"#004c6b","outline-variant":"#bfc9c4","tertiary-container":"#004b6a","on-surface":"#0a1f1c","inverse-primary":"#9bd1c3","surface-container-lowest":"#ffffff","on-surface-variant":"#404946","on-primary-fixed":"#00201a","on-secondary-container":"#586a0e","inverse-surface":"#203431","on-error-container":"#93000a","outline":"#707976","surface-container-low":"#e1f8f3","primary-fixed":"#b6eede","surface-tint":"#33675c","on-secondary-fixed":"#171e00","tertiary-fixed-dim":"#93cef4","secondary":"#546508","primary":"#00362d"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-xs":"0.25rem","margin-lg":"2rem","margin-md":"1.5rem","space-xl":"1.5rem","space-md":"0.75rem","gutter-lg":"1.5rem","space-sm":"0.5rem","gutter":"1rem","space-lg":"1rem","margin":"1rem"},fontFamily:{"body-lg":["Inter"],"headline-sm":["Manrope"],"body-md":["Inter"],"headline-md":["Manrope"],"label-sm":["Inter"],"display-lg":["Manrope"],"headline-lg-mobile":["Manrope"],"label-md":["Inter"],"headline-lg":["Manrope"],"display-lg-mobile":["Manrope"],"body-sm":["Inter"],"label-lg":["Inter"]},fontSize:{"body-lg":["16px",{lineHeight:"24px",fontWeight:"400"}],"headline-sm":["18px",{lineHeight:"26px",letterSpacing:"-0.01em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",fontWeight:"400"}],"headline-md":["22px",{lineHeight:"30px",letterSpacing:"-0.015em",fontWeight:"600"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}],"display-lg":["36px",{lineHeight:"44px",letterSpacing:"-0.03em",fontWeight:"700"}],"headline-lg-mobile":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"700"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"500"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"display-lg-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-sm":["13px",{lineHeight:"18px",fontWeight:"400"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.01em",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)] select-none"><div class="p-space-lg flex flex-col gap-space-xs"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-secondary-fixed text-[20px]">terminal</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">Dialogbot</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Operator Console</span></div></div><div class="mt-space-md p-space-sm rounded-lg bg-surface-container flex items-center justify-between"><span class="font-label-sm text-label-sm text-on-surface-variant">Sikkerhedsniveau</span><span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded bg-primary text-secondary-fixed font-bold">P9 Restricted</span></div></div><div class="px-space-md py-space-xs"><span class="font-label-sm text-label-sm text-outline uppercase tracking-wider px-space-sm">Operatørmoduler</span></div><nav class="flex-1 px-space-md space-y-1 overflow-y-auto" data-active-classes="bg-primary text-on-primary font-bold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="driftsoverblik" href="#"><span class="material-symbols-outlined text-[18px]">monitoring</span><span class="flex-1 truncate">M01 Driftsoverblik</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="arbejdsrum-support" href="#"><span class="material-symbols-outlined text-[18px]">headset_mic</span><span class="flex-1 truncate">M02 Arbejdsrum & Support</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="haendelser-genkoersel" href="#"><span class="material-symbols-outlined text-[18px]">replay</span><span class="flex-1 truncate">M03 Hændelser & Genkørsel</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="priser-ordrer-tvister" href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span class="flex-1 truncate">M04 Priser, Ordrer & Tvister</span></a><a aria-current="page" class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg transition-all bg-primary text-on-primary font-bold shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-path="platformsskabeloner" href="#"><span class="material-symbols-outlined text-[18px]">schema</span><span class="flex-1 truncate">M05 Platformsskabeloner</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="supportkoe-tickets" href="#"><span class="material-symbols-outlined text-[18px]">confirmation_number</span><span class="flex-1 truncate">M06 Supportkø & Tickets</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="revisorlog-audit" href="#"><span class="material-symbols-outlined text-[18px]">security</span><span class="flex-1 truncate">M07 Revisorlog & Audit</span></a></nav><div class="p-space-md mx-space-md mb-space-md rounded-xl bg-surface-container-high text-on-surface-variant text-center flex flex-col items-center gap-space-xs"><span class="font-label-sm text-label-sm text-outline uppercase">Sikkerhedsstatus</span><div class="flex items-center gap-space-xs font-label-md text-label-md text-primary font-bold"><span class="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse"></span>Kryptografisk Logning Aktiv</div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 px-gutter-lg flex items-center justify-between"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-error-container text-on-error-container shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><span class="material-symbols-outlined text-error text-[18px]">verified_user</span><span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-error">OPERATØRADGANG - LOGFØRT AUDIT</span></div><div class="hidden xl:flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-surface-container-high"><span class="material-symbols-outlined text-on-surface-variant text-[16px]">badge</span><span class="font-label-md text-label-md text-on-surface">Revisor / Lead Tech: <strong class="text-primary">C. Lind</strong></span></div></div><div class="flex items-center gap-space-md"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-sm text-on-surface-variant text-[18px]">search</span><input class="w-64 pl-8 pr-space-md py-1.5 rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary shadow-[0_1px_8px_rgba(0,0,0,0.04)]" placeholder="Hurtigsøgning (telefoni, log, tlf...)" type="text"/></div><div class="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container text-on-surface font-body-sm text-body-sm"><span class="material-symbols-outlined text-secondary text-[18px]">timer</span><span class="font-label-md text-label-md text-on-surface-variant">Session:</span><span class="font-label-md text-label-md font-bold text-primary">14:52</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 min-h-screen bg-surface px-gutter-lg py-margin-md"><div class="flex flex-col w-full">
+<!-- Top Command & Status Bar -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md pb-space-lg mb-space-lg">
+<div class="flex flex-col gap-space-xs max-w-4xl">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="px-space-sm py-0.5 rounded bg-primary text-secondary-fixed font-label-sm text-label-sm uppercase tracking-wider font-bold">
+          M05
+        </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">
+          Platformsskabeloner · Branchetaksonomi · Globale Manuskripter
+        </span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<div class="flex items-center gap-1 font-label-sm text-label-sm text-primary font-bold">
+<span class="material-symbols-outlined text-[16px] text-primary">admin_panel_settings</span>
+<span>Revisionsstatus: Operatøradgang P9 (Lead Tech: C. Lind)</span>
+</div>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">
+        GLOBALE PLATFORMSSKABELONER & BRANCHETAKSONOMI (M05)
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl leading-relaxed">
+        Central administration af globale spørgsmåls- og samtaleskabeloner, svargrene og brancheklassificering. Ændringer versionsstyres og påvirker <strong class="text-primary font-semibold">IKKE</strong> automatisk kunders godkendte manuskripter uden godkendt gennemgang.
+      </p>
+</div>
+<!-- Right Header Metric Badges -->
+<div class="flex items-center gap-space-md shrink-0">
+<div class="p-space-md rounded-xl bg-surface-container flex items-center gap-space-md shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">account_tree</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Aktive Skabeloner</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">18 Grene / 4 Sprog</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-high flex items-center gap-space-md shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-[22px]">corporate_fare</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Abonnenter i Drift</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">142 Virksomheder</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Layout Grid: 30% / 70% split -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-gutter-lg items-start">
+<!-- LEFT COLUMN (30% approx -> 4 cols on desktop) -->
+<div class="xl:col-span-4 flex flex-col gap-space-lg">
+<!-- Filter & Search Toolbar -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg text-primary font-bold flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px]">folder_managed</span>
+            Skabelonbibliotek
+          </span>
+<button class="flex items-center gap-1 font-label-sm text-label-sm text-primary font-bold px-space-sm py-1 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span> Ny Skabelon
+          </button>
+</div>
+<!-- Search Input -->
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-[18px]">search</span>
+<input class="w-full pl-9 pr-space-md py-2 rounded-lg bg-surface-container-low font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary transition-all" placeholder="Søg i skabeloner, triggere, tags..." type="text" value="Gulvservice"/>
+</div>
+<!-- Category & Language Dropdown Chips -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Branchekategori</span>
+<span class="font-label-sm text-label-sm text-primary cursor-pointer hover:underline">Ryd filtre</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<button class="px-space-sm py-1.5 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-semibold flex items-center justify-between text-left shadow-sm" type="button">
+<span class="truncate">Håndværk & Byg</span>
+<span class="text-[10px] px-1 rounded bg-surface-container-lowest/20">7</span>
+</button>
+<button class="px-space-sm py-1.5 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-medium hover:bg-surface-container flex items-center justify-between text-left" type="button">
+<span class="truncate">Prof. Service</span>
+<span class="text-[10px] px-1 rounded bg-surface-container text-on-surface-variant">4</span>
+</button>
+<button class="px-space-sm py-1.5 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-medium hover:bg-surface-container flex items-center justify-between text-left" type="button">
+<span class="truncate">Horeca</span>
+<span class="text-[10px] px-1 rounded bg-surface-container text-on-surface-variant">3</span>
+</button>
+<button class="px-space-sm py-1.5 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm font-medium hover:bg-surface-container flex items-center justify-between text-left" type="button">
+<span class="truncate">Sundhed & Klinik</span>
+<span class="text-[10px] px-1 rounded bg-surface-container text-on-surface-variant">4</span>
+</button>
+</div>
+</div>
+<!-- Language Sub-filter -->
+<div class="flex items-center gap-space-xs pt-space-xs">
+<span class="font-label-sm text-label-sm text-outline">Sprog:</span>
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Dansk v4.2 Nordic
+          </span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface cursor-pointer">
+            Engelsk (Intl.)
+          </span>
+</div>
+</div>
+<!-- Template Cards Stack -->
+<div class="flex flex-col gap-space-sm" id="skabelon-liste">
+<!-- CARD 1 (VALGT / ACTIVE) -->
+<div class="relative bg-surface-container-lowest rounded-xl p-space-md shadow-md bg-gradient-to-r from-primary-fixed/20 via-transparent to-transparent cursor-pointer transition-all">
+<div class="absolute left-0 top-3 bottom-3 w-1 bg-primary rounded-r"></div>
+<div class="pl-space-sm flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="px-space-xs py-0.5 rounded bg-primary text-secondary-fixed font-label-sm text-label-sm font-bold uppercase tracking-wider">
+                Valgt Modul
+              </span>
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-secondary font-bold">v2.4 Publiceret</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold pt-space-xs leading-snug">
+              Gulvservice & Tømrer: Standard Reception & Opmåling
+            </h3>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-body-sm text-body-sm pt-0.5">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-outline">category</span> Bygge & anlæg
+              </span>
+<span class="text-outline">•</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-outline">translate</span> Dansk
+              </span>
+</div>
+<div class="mt-space-sm p-space-xs px-space-sm rounded-lg bg-surface-container flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">groups</span>
+                Kunder i drift:
+              </span>
+<span class="font-label-md text-label-md text-primary font-bold">
+                42 virksomheder
+              </span>
+</div>
+<div class="flex items-center justify-between text-[11px] text-outline pt-1">
+<span class="truncate">Herunder: Fjord Gulvservice ApS, m.fl.</span>
+<span class="shrink-0">Opdateret 14/10</span>
+</div>
+</div>
+</div>
+<!-- CARD 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-all cursor-pointer group">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold uppercase tracking-wider">
+                Håndværk & Byg
+              </span>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">v1.8 Publiceret</span>
+</div>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold group-hover:text-primary transition-colors leading-snug">
+              Akut VVS & Døgnvagt: Skadesopklaring & Rørbrud
+            </h3>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-outline">bolt</span> Akut prioritering
+              </span>
+<span class="text-outline">•</span>
+<span>Dansk</span>
+</div>
+<div class="mt-space-xs p-space-xs px-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">groups</span>
+                Kunder i drift:
+              </span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">
+                28 virksomheder
+              </span>
+</div>
+</div>
+</div>
+<!-- CARD 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-all cursor-pointer group opacity-90">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold uppercase tracking-wider">
+                Horeca & Restaurant
+              </span>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">v3.0-rc1 (Kladde)</span>
+</div>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold group-hover:text-primary transition-colors leading-snug">
+              Bordreservation & Allergi: Horeca Dining
+            </h3>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-outline">restaurant</span> Bordbooking & Menutjek
+              </span>
+<span class="text-outline">•</span>
+<span>Dansk / Eng</span>
+</div>
+<div class="mt-space-xs p-space-xs px-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">groups</span>
+                Kunder i drift:
+              </span>
+<span class="font-label-md text-label-md text-outline font-semibold">
+                0 virksomheder (Uudgivet)
+              </span>
+</div>
+</div>
+</div>
+<!-- Telephony Runtime Health Micro-Card -->
+<div class="mt-space-xs p-space-md rounded-xl bg-surface-container-high/60 flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">sync</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary font-bold">Synkroniseringsagent</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Seneste schema-check OK</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-primary-fixed-dim text-on-primary-fixed font-bold">v4.2-sync</span>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN (70% approx -> 8 cols on desktop) -->
+<div class="xl:col-span-8 flex flex-col gap-space-lg">
+<!-- Template Editor Card Header & Controls -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-space-md pb-space-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex flex-wrap items-center gap-space-xs">
+<span class="px-space-xs py-0.5 rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">
+                ID: TPL-GLV-0824
+              </span>
+<span class="px-space-xs py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm font-bold">
+                v2.4 Publiceret
+              </span>
+<span class="font-label-sm text-label-sm text-outline">|</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">
+                Sidst redigeret: <strong class="text-primary font-semibold">14. okt 2026</strong> af <strong class="text-primary font-semibold">C. Lind (Lead Tech)</strong>
+</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">
+              Gulvservice & Tømrer: Standard Reception & Opmåling
+            </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Standard branching model for håndværksvirksomheder med automatisk besigtigelsesafklaring, arealberegning og SMS-bekræftelser.
+            </p>
+</div>
+<!-- Quick Actions on Template -->
+<div class="flex items-center gap-space-xs shrink-0">
+<button class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary transition-colors" title="Eksporter JSON Spec" type="button">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary transition-colors" title="Klon til ny branche" type="button">
+<span class="material-symbols-outlined text-[20px]">content_copy</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-error transition-colors" title="Arkiver skabelon" type="button">
+<span class="material-symbols-outlined text-[20px]">archive</span>
+</button>
+</div>
+</div>
+<!-- Metadata Pills Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-sm p-space-md rounded-xl bg-surface-container-low">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Hovedbranche</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Håndværk & Byg</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Underklassifikation</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Bygge & anlæg (SN08)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Primært Sprog</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Dansk (Københavnsk/Neutral)</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Tilknyttede Kunder</span>
+<span class="font-label-md text-label-md text-primary font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span> 42 Aktive arbejdsrum
+            </span>
+</div>
+</div>
+</div>
+<!-- Interactive Flow Tree Builder Container -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">alt_route</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary font-bold">Skabelonindhold & Samtaletræ (Dialog Decision Engine)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Konfigurer globale noder, faste variabler og fallback parametre</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="px-space-xs py-1 rounded bg-surface-container font-label-sm text-label-sm text-on-surface-variant font-mono">
+              Schema: v4.2-NL-Spec
+            </span>
+</div>
+</div>
+<!-- Node 1: Velkomsthilsen & Identifikation -->
+<div class="relative pl-6 before:content-[''] before:absolute before:left-3 before:top-8 before:bottom-0 before:w-0.5 before:bg-surface-container-highest">
+<div class="absolute left-1.5 top-2 w-3.5 h-3.5 rounded-full bg-primary flex items-center justify-center text-[10px] text-on-primary font-bold">
+            1
+          </div>
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="px-space-xs py-0.5 rounded bg-primary text-secondary-fixed font-label-sm text-label-sm font-bold uppercase tracking-wider">
+                  Trin 1: Åbning
+                </span>
+<span class="font-label-lg text-label-lg text-primary font-bold">
+                  Velkomsthilsen & Identifikation
+                </span>
+</div>
+<span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">lock</span> Global Systemlås
+              </span>
+</div>
+<!-- Dialogue script prompt box -->
+<div class="p-space-sm rounded-lg bg-surface-container-lowest shadow-inner flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold">Standard Syntese Prompt (Tale-til-tekst)</span>
+<p class="font-body-md text-body-md text-on-surface font-mono bg-surface-container-low/50 p-space-sm rounded">
+                “<span class="text-secondary font-bold font-sans bg-secondary-fixed/40 px-1 py-0.5 rounded">{Virksomhedsnavn}</span>, du taler med <span class="text-secondary font-bold font-sans bg-secondary-fixed/40 px-1 py-0.5 rounded">{Assistentnavn}</span>. Hvad kan vi hjælpe med i dag?”
+              </p>
+<div class="flex flex-wrap items-center gap-space-xs pt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Autoudfyldte variabler:</span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">{Virksomhedsnavn}</span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">{Assistentnavn}</span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">{Lokation}</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Node 2: Behovsafklaring (Forgrening) -->
+<div class="relative pl-6 before:content-[''] before:absolute before:left-3 before:top-8 before:bottom-0 before:w-0.5 before:bg-surface-container-highest">
+<div class="absolute left-1.5 top-2 w-3.5 h-3.5 rounded-full bg-primary flex items-center justify-center text-[10px] text-on-primary font-bold">
+            2
+          </div>
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="px-space-xs py-0.5 rounded bg-primary text-secondary-fixed font-label-sm text-label-sm font-bold uppercase tracking-wider">
+                  Trin 2: Forgrening
+                </span>
+<span class="font-label-lg text-label-lg text-primary font-bold">
+                  Behovsafklaring & Semantisk Intent Routing
+                </span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span> Intent Match Engine
+              </span>
+</div>
+<!-- Branches Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Gren A -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-bold text-primary px-space-xs py-0.5 rounded bg-primary-fixed">
+                      Gren A: Tilbud & Besigtigelse
+                    </span>
+</div>
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold pt-1">Triggere (NL Intent)</span>
+<div class="flex flex-wrap gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">slibning</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">parket</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">lak</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">m²</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">pris</span>
+</div>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-primary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">arrow_forward</span> Handling
+                  </span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    Spørg om gulvtype (f.eks. massiv, lamel) og omtrentligt areal. Klargør besigtigelseskalender.
+                  </p>
+</div>
+</div>
+<!-- Gren B -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-bold text-tertiary px-space-xs py-0.5 rounded bg-tertiary-fixed">
+                      Gren B: Eksisterende Aftale
+                    </span>
+</div>
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold pt-1">Triggere (NL Intent)</span>
+<div class="flex flex-wrap gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">montør</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">aftale</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">forsinket</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">faktura</span>
+</div>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-tertiary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">phone_forwarded</span> Handling
+                  </span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    Viderestil til intern montørvagt eller optag struktureret hastemeddelelse med sagsnummer.
+                  </p>
+</div>
+</div>
+<!-- Gren C -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm font-bold text-on-surface-variant px-space-xs py-0.5 rounded bg-surface-container-high">
+                      Gren C: Uden for Vidensbase
+                    </span>
+</div>
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold pt-1">Fallback Logik</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    Ingen entydig match på fagtermer eller ukendte forespørgsler (f.eks. sponsorsøgning).
+                  </p>
+</div>
+<div class="p-space-xs rounded bg-surface-container-low flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-primary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">contact_support</span> Handling
+                  </span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    Henvis høfligt til kontortid eller bestil et verificeret genopkald (callback-ticket).
+                  </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Node 3: Kvalificeringsregel (No-cure-no-pay default) -->
+<div class="relative pl-6">
+<div class="absolute left-1.5 top-2 w-3.5 h-3.5 rounded-full bg-primary flex items-center justify-center text-[10px] text-on-primary font-bold">
+            3
+          </div>
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="px-space-xs py-0.5 rounded bg-primary text-secondary-fixed font-label-sm text-label-sm font-bold uppercase tracking-wider">
+                  Trin 3: Kvalificering
+                </span>
+<span class="font-label-lg text-label-lg text-primary font-bold">
+                  Kvalificeringsregel (No-cure-no-pay standardkriterie)
+                </span>
+</div>
+<span class="px-space-xs py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">
+                Obligatorisk Validering
+              </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-space-xs">
+<div class="bg-surface-container-lowest p-space-sm rounded-lg flex items-start gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[22px] shrink-0">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary font-bold">Aktivt Telefonnummer & HLR Validering</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+                    Skal bestå realtime dansk mobil/fastnet syntaks-tjek før aflevering til kundens dispatch.
+                  </span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded-lg flex items-start gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[22px] shrink-0">pin_drop</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary font-bold">Geografisk Dækningszone</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+                    Kræv angivelse af opgaveadresse eller gyldigt postnummer verificeret mod kundens dækningsprofil.
+                  </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Versions- & Konsekvenspanel (Audit & Safety Banner) -->
+<div class="rounded-xl p-space-lg bg-surface-container-high flex flex-col gap-space-md shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-secondary-fixed">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary font-bold">
+                Versionsstyring & Udrulningskonsekvens
+              </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">
+                Forbereder: <strong class="text-primary font-semibold">Opret v2.5 Kladde</strong> (Branch: main-nordic-craft)
+              </span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-space-sm py-1 rounded bg-surface-container-lowest font-mono text-primary font-bold shadow-sm self-start sm:self-auto">
+            SHA256: 4fa89...e901
+          </span>
+</div>
+<!-- Strict Warning Message Block -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest flex items-start gap-space-md shadow-sm">
+<div class="w-9 h-9 rounded-lg bg-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-error text-[20px]">flip_camera_ios</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-error font-bold">
+              SIKKERHEDSADVARSEL VED PUBLICERING
+            </span>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+<strong class="text-error font-bold">EN NY SKABELONVERSION OVERSKRIVER IKKE KUNDENS EKSISTERENDE MANUSKRIPT.</strong> 
+              42 tilknyttede arbejdsrum vil modtage en notifikation om opdatering i Videnscentret (K05/K01) med mulighed for struktureret gennemgang og individuel godkendelse. Ingen produktionstelefoni afbrydes.
+            </p>
+</div>
+</div>
+<!-- Action Control Buttons Bar -->
+<div class="flex flex-wrap items-center justify-between gap-space-md pt-space-xs">
+<div class="flex items-center gap-space-xs">
+<button class="px-space-md py-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label-md text-label-md font-semibold transition-all shadow-sm flex items-center gap-space-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+              Gem som kladde (v2.5-draft)
+            </button>
+<button class="px-space-md py-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container text-primary font-label-md text-label-md font-semibold transition-all shadow-sm flex items-center gap-space-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">science</span>
+              Simulér i sandkasse
+            </button>
+</div>
+<button class="px-space-lg py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-bold transition-all shadow-md flex items-center gap-space-xs group" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed group-hover:rotate-12 transition-transform">publish</span>
+            Publicér ny version (Logføres i M07)
+          </button>
+</div>
+</div>
+<!-- Live Inspection Sub-Card: Impacted Workspaces Sample -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">
+            Tilknyttede Kundereferencer (Uddrag af 42 abonnenter)
+          </span>
+<span class="font-label-sm text-label-sm text-primary font-bold cursor-pointer hover:underline">
+            Se alle i M02 →
+          </span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm pt-1">
+<div class="p-space-xs px-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface font-semibold truncate">Fjord Gulvservice ApS</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container text-primary font-mono">v2.4 OK</span>
+</div>
+<div class="p-space-xs px-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface font-semibold truncate">Dansk Parket Kompagni</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container text-primary font-mono">v2.4 OK</span>
+</div>
+<div class="p-space-xs px-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface font-semibold truncate">Nordic Woodcraft A/S</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container text-primary font-mono">v2.3 (Afventer)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

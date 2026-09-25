@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-highest": "#d0e7e2", "surface-container": "#dcf3ee", "on-tertiary": "#ffffff", "on-secondary-container": "#586a0e", "inverse-on-surface": "#dff6f0", "secondary-fixed": "#d6ec85", "on-primary-fixed-variant": "#184f44", "surface-tint": "#33675c", "primary-fixed": "#b6eede", "surface-container-low": "#e1f8f3", "on-primary-fixed": "#00201a", "on-surface": "#0a1f1c", "on-primary-container": "#88beb0", "surface": "#e7fef9", "surface-variant": "#d0e7e2", "secondary": "#546508", "on-surface-variant": "#404946", "primary": "#00362d", "on-error-container": "#93000a", "surface-container-high": "#d6ede8", "surface-container-lowest": "#ffffff", "surface-dim": "#c8dfda", "on-primary": "#ffffff", "tertiary-fixed": "#c6e7ff", "primary-fixed-dim": "#9bd1c3", "on-tertiary-fixed-variant": "#004c6b", "tertiary-container": "#004b6a", "error-container": "#ffdad6", "on-tertiary-fixed": "#001e2d", "error": "#ba1a1a", "tertiary-fixed-dim": "#93cef4", "surface-bright": "#e7fef9", "outline": "#707976", "on-error": "#ffffff", "on-secondary": "#ffffff", "tertiary": "#00334a", "on-secondary-fixed": "#171e00", "secondary-fixed-dim": "#bbd06c", "on-background": "#0a1f1c", "background": "#e7fef9", "outline-variant": "#bfc9c4", "inverse-primary": "#9bd1c3", "on-tertiary-container": "#80bbe0", "inverse-surface": "#203431", "on-secondary-fixed-variant": "#3e4c00", "secondary-container": "#d4ea82", "primary-container": "#164e43" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-md": "1.5rem", "space-xl": "1.5rem", "space-xs": "0.25rem", "margin-lg": "2rem", "margin": "1rem", "gutter": "1rem", "space-lg": "1rem", "space-sm": "0.5rem", "gutter-lg": "1.5rem", "space-md": "0.75rem" }, "fontFamily": { "headline-lg": [ "Manrope" ], "display-lg": [ "Manrope" ], "display-lg-mobile": [ "Manrope" ], "body-lg": [ "Inter" ], "label-sm": [ "Inter" ], "body-md": [ "Inter" ], "headline-sm": [ "Manrope" ], "headline-md": [ "Manrope" ], "label-md": [ "Inter" ], "body-sm": [ "Inter" ], "label-lg": [ "Inter" ], "headline-lg-mobile": [ "Manrope" ] }, "fontSize": { "headline-lg": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "display-lg": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" } ], "display-lg-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "label-sm": [ "11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" } ], "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "headline-sm": [ "18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "headline-md": [ "22px", { "lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "label-md": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" } ], "body-sm": [ "13px", { "lineHeight": "18px", "fontWeight": "400" } ], "label-lg": [ "14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" } ], "headline-lg-mobile": [ "22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700" } ] } } } };</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(23,43,40,0.04)]"><div class="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-md"><div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[20px]">support_agent</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold leading-none">Dialogbot</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mt-0.5">Dansk AI Telefoni</span></div></div><nav class="hidden xl:flex items-center gap-space-md" data-active-classes="bg-surface-container-highest text-primary font-semibold rounded-lg"><a class="px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg" data-path="sadan-fungerer-det" href="#">Sådan fungerer det</a><a class="px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg" data-path="priser-beregner" href="#">Priser &amp; Beregner</a><a class="px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg" data-path="interaktiv-demo" href="#">Interaktiv Demo</a><a class="px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg" data-path="hjalpecer-faq" href="#">Hjælp</a><a class="px-3 py-2 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors font-label-lg text-label-lg" data-path="kontakt" href="#">Kontakt</a></nav><div class="flex items-center gap-space-md"><a class="px-4 py-2 text-on-surface font-label-lg text-label-lg hover:text-primary transition-colors" data-path="log-ind" href="#">Log ind</a><a class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg hover:bg-primary transition-colors shadow-sm" data-path="start-gratis-opsatning" href="#">Start gratis opsætning</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-surface"><div class="flex flex-col w-full">
+<!-- Top Ambient Glow & Spatial Header Section -->
+<section class="relative w-full overflow-hidden px-6 lg:px-12 pt-8 pb-10">
+<div class="absolute -top-32 right-1/4 w-96 h-96 rounded-full bg-secondary-container/30 blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-20 -left-20 w-80 h-80 rounded-full bg-primary-fixed/25 blur-3xl pointer-events-none -z-10"></div>
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="flex flex-col gap-3 max-w-3xl">
+<div class="flex items-center gap-2.5">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold uppercase tracking-wider shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Sandkasse simulation — ingen konto påkrævet
+          </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-primary">verified</span>
+            Realtidstale &amp; NLU v3.4
+          </span>
+</div>
+<h1 class="font-display-lg text-display-lg text-primary tracking-tight">
+          Oplev Dialogbot live i tre simulerede scenarier
+        </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          Test hvordan AI-receptionisten håndterer kundedialoger i realtid. Vælg et scenarie herunder for at opleve Clara navigere prissætning, tidsbestilling og intelligent lead-kvalificering.
+        </p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-highest hover:bg-surface-container-high text-primary font-label-lg text-label-lg transition-all shadow-sm active:scale-95" id="resetDemoBtn" onclick="resetScenario()">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+          Nulstil simulation
+        </button>
+</div>
+</div>
+</section>
+<!-- Interactive Scenario Selector Tabs (3 Scenarios) -->
+<section class="w-full px-6 lg:px-12 mb-8">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-1.5 bg-surface-container-high/60 rounded-2xl shadow-inner">
+<!-- Scenario 1 -->
+<button class="scenario-tab flex flex-col text-left p-4 rounded-xl bg-surface-container-lowest text-primary shadow-sm transition-all duration-200" id="tab-1" onclick="switchScenario(1)">
+<div class="flex items-center justify-between w-full mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+              Scenarie 1 • Aktiv
+            </span>
+<span class="material-symbols-outlined text-[18px] text-primary">chat_bubble</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">1. Kundevendt Webchat (Reception)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-1">Kunde spørger om priser på gulvafslibning og åbningstider</span>
+</button>
+<!-- Scenario 2 -->
+<button class="scenario-tab flex flex-col text-left p-4 rounded-xl hover:bg-surface-container-lowest/70 text-on-surface-variant transition-all duration-200" id="tab-2" onclick="switchScenario(2)">
+<div class="flex items-center justify-between w-full mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-medium">
+              Scenarie 2 • Telefoni
+            </span>
+<span class="material-symbols-outlined text-[18px] text-outline">phone_callback</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary font-semibold">2. Bestilt Callback (Telefoni)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-1">Kunde anmoder om opringning kl. 14:15 med OTP-bekræftelse</span>
+</button>
+<!-- Scenario 3 -->
+<button class="scenario-tab flex flex-col text-left p-4 rounded-xl hover:bg-surface-container-lowest/70 text-on-surface-variant transition-all duration-200" id="tab-3" onclick="switchScenario(3)">
+<div class="flex items-center justify-between w-full mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-medium">
+              Scenarie 3 • Outbound
+            </span>
+<span class="material-symbols-outlined text-[18px] text-outline">campaign</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary font-semibold">3. Udgående Kampagne (Opfølgning)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-1">Simuleret opkald til tidligere kunde med tilbud om eftersyn</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Main Workspace: Split Interface -->
+<section class="w-full px-6 lg:px-12 mb-16">
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN: Simulated Client Interface (Phone Frame) -->
+<div class="lg:col-span-6 flex flex-col items-center w-full">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-[32px] p-4 shadow-xl shadow-primary-container/10 flex flex-col">
+<!-- Mock Phone Speaker & Camera Notch -->
+<div class="flex items-center justify-between px-3 py-1 mb-2">
+<span class="font-label-md text-label-md font-semibold text-on-surface-variant">09:41</span>
+<div class="w-20 h-4 bg-surface-container-highest rounded-full mx-auto flex items-center justify-center">
+<span class="w-2 h-2 rounded-full bg-primary-container/40"></span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">signal_cellular_4_bar</span>
+<span class="material-symbols-outlined text-[14px]">wifi</span>
+<span class="material-symbols-outlined text-[16px]">battery_full</span>
+</div>
+</div>
+<!-- Phone Header / Customer View Header -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-2xl mb-3 shadow-sm">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-sm">
+                  C
+                </div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-secondary border-2 border-surface-container-lowest"></span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-primary font-bold" id="agentName">Clara</span>
+<span class="px-1.5 py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">AI Assistant</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1" id="agentSubtitle">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary inline-block"></span>
+                  Nordic Byg &amp; Service • Aktiv nu
+                </span>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant" title="Lyd til/fra">
+<span class="material-symbols-outlined text-[19px]">volume_up</span>
+</button>
+<button class="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant" title="Valgmuligheder">
+<span class="material-symbols-outlined text-[19px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Chat Conversation Scroll Area -->
+<div class="flex flex-col gap-3 min-h-[360px] max-h-[420px] overflow-y-auto p-2 bg-surface rounded-2xl" id="chatHistory">
+<!-- Dynamic Message bubbles injected via script -->
+</div>
+<!-- Suggested Quick Prompts -->
+<div class="mt-3 flex flex-col gap-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider px-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">tips_and_updates</span>
+              Foreslåede kundespørgsmål (klik for at teste):
+            </span>
+<div class="flex flex-wrap gap-1.5" id="quickPromptContainer">
+<!-- Rendered via JS -->
+</div>
+</div>
+<!-- Message Input Bar -->
+<div class="mt-3 pt-2">
+<form class="flex items-center gap-2 bg-surface-container-low p-1.5 rounded-2xl" onsubmit="handleUserSubmit(event)">
+<input class="flex-1 bg-transparent px-3 py-2 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant outline-none" id="userChatInput" placeholder="Skriv en besked til Clara..." type="text"/>
+<button class="w-10 h-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center hover:bg-primary transition-all shadow-sm active:scale-95" type="submit">
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</form>
+</div>
+<div class="mt-2 text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant/80">Simuleret samtalesession • Forsinkelse: ~240ms</span>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Under Motorhjelmen (AI Diagnostics & Engine View) -->
+<div class="lg:col-span-6 flex flex-col gap-5">
+<!-- Inspector Card Top Banner -->
+<div class="bg-surface-container-lowest p-6 rounded-3xl shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between pb-3 bg-surface-container-low/50 -mx-6 -mt-6 p-6 rounded-t-3xl">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[16px]">psychology</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">Under motorhjelmen</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Live telemetri &amp; AI-raciocination</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                Inference Aktiv
+              </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">RTT: 184ms</span>
+</div>
+</div>
+<!-- Diagnostic Metric Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+<!-- Box 1: Intent Genkendelse -->
+<div class="bg-surface-container-low p-4 rounded-2xl flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Intent-genkendelse</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary text-on-secondary font-bold" id="intentScore">98.4% match</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary font-bold" id="intentValue">
+                Forespørgsel på pris &amp; besigtigelse
+              </p>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="intentSub">
+                Kategori: Håndværk &amp; Byg • Høj købshensigt
+              </span>
+</div>
+<!-- Box 2: Videnskilde Aktiveret -->
+<div class="bg-surface-container-low p-4 rounded-2xl flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Videnskilde Aktiveret</span>
+<span class="material-symbols-outlined text-[16px] text-primary">menu_book</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary font-bold" id="sourceValue">
+                Prisliste_VVS_Gulv_2026.pdf
+              </p>
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1" id="sourceSub">
+<span class="material-symbols-outlined text-[14px] text-secondary">verified_user</span>
+                Opslag: Side 4 • Kvadratmeterpriser (lak/olie)
+              </span>
+</div>
+<!-- Box 3: Forretningsregel -->
+<div class="bg-surface-container-low p-4 rounded-2xl flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Forretningsregel</span>
+<span class="material-symbols-outlined text-[16px] text-primary">rule</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary font-bold" id="ruleValue">
+                Efterårsrabat 15% (K04)
+              </p>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="ruleSub">
+                Regel: Arealer &gt; 50 m² modtager gratis eftersyn
+              </span>
+</div>
+<!-- Box 4: Kvalificeringsstatus -->
+<div class="bg-surface-container-low p-4 rounded-2xl flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Kvalificeringsstatus</span>
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+</div>
+<p class="font-headline-sm text-headline-sm text-primary font-bold" id="qualStatusValue">
+                Kvalificeret lead
+              </p>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="qualStatusSub">
+                Jf. aftalevilkår • Klargjort til CRM-synkronisering
+              </span>
+</div>
+</div>
+<!-- Registreret Kundeinfo (Structured Extraction) -->
+<div class="bg-surface-container p-4 rounded-2xl flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-primary font-bold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">contact_page</span>
+                Strukturerede Data Uddraget fra Samtalen:
+              </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Schema: LeadContact_v2</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-left">
+<div class="bg-surface-container-lowest p-2.5 rounded-xl">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Kundenavn</span>
+<span class="font-body-md text-body-md text-primary font-bold" id="crmName">Henrik Villumsen</span>
+</div>
+<div class="bg-surface-container-lowest p-2.5 rounded-xl">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Areal / Enhed</span>
+<span class="font-body-md text-body-md text-primary font-bold" id="crmArea">65 m²</span>
+</div>
+<div class="bg-surface-container-lowest p-2.5 rounded-xl">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Postnummer</span>
+<span class="font-body-md text-body-md text-primary font-bold" id="crmPostal">2100 Kbh Ø</span>
+</div>
+<div class="bg-surface-container-lowest p-2.5 rounded-xl">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Estimeret værdi</span>
+<span class="font-body-md text-body-md text-secondary font-bold" id="crmValue">11.850 DKK</span>
+</div>
+</div>
+</div>
+<!-- Audio Stream & Danish Voice Waveform Component -->
+<div class="bg-primary-container text-on-primary p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">graphic_eq</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm font-bold block leading-snug">Dansk talesyntese &amp; ASR</span>
+<span class="font-body-sm text-body-sm text-on-primary-container">Københavnsk dialekt • 99.2% ordpræcision</span>
+</div>
+</div>
+<!-- Waveform SVG Visualization -->
+<div class="flex items-center gap-1 h-8 px-3 py-1 bg-primary/40 rounded-xl">
+<span class="w-1 bg-secondary rounded-full h-3 animate-pulse"></span>
+<span class="w-1 bg-secondary rounded-full h-6 animate-pulse delay-75"></span>
+<span class="w-1 bg-secondary rounded-full h-4 animate-pulse delay-100"></span>
+<span class="w-1 bg-secondary rounded-full h-7 animate-pulse delay-150"></span>
+<span class="w-1 bg-secondary rounded-full h-5 animate-pulse delay-200"></span>
+<span class="w-1 bg-secondary rounded-full h-3 animate-pulse delay-300"></span>
+<span class="w-1 bg-secondary rounded-full h-6 animate-pulse delay-75"></span>
+<span class="w-1 bg-secondary rounded-full h-2 animate-pulse"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Feature Callouts Grid (Visual Proof) -->
+<section class="w-full px-6 lg:px-12 mb-16">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow">
+<div class="w-10 h-10 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">record_voice_over</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">100% Naturligt Dansk</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Uden robot-pauser. Clara forstår slang, postnumre, forkortelser og regionale vendinger direkte uden behov for forsinkede oversættelser.
+          </p>
+<div class="mt-auto pt-2 flex items-center gap-1 font-label-md text-label-md text-primary font-semibold">
+<span>Afprøvet på +10.000 opkald</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow">
+<div class="w-10 h-10 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">dataset</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Dine Egne PDF-Dokumenter</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Upload jeres prisliste, åbningstider eller håndbøger. Dialogbot svarer kun ud fra jeres godkendte kilder og gætter aldrig vilde tal.
+          </p>
+<div class="mt-auto pt-2 flex items-center gap-1 font-label-md text-label-md text-primary font-semibold">
+<span>Nul hallucinationer</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow">
+<div class="w-10 h-10 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">sync_alt</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Direkte Kalender &amp; CRM</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Booker automatisk tider i jeres Google Calendar, Outlook eller sender SMS med direkte bekræftelse til kunden inden samtalen er slut.
+          </p>
+<div class="mt-auto pt-2 flex items-center gap-1 font-label-md text-label-md text-primary font-semibold">
+<span>Webhook &amp; REST API klar</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sticky Bottom Conversion Action Bar -->
+<section class="sticky bottom-4 z-40 w-full px-6 lg:px-12 my-6">
+<div class="max-w-7xl mx-auto bg-primary-container text-on-primary p-6 md:p-8 rounded-3xl shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-6">
+<div class="flex flex-col gap-1.5 text-center lg:text-left">
+<div class="flex items-center justify-center lg:justify-start gap-2">
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase">
+            Klar til næste skridt?
+          </span>
+<span class="font-label-sm text-label-sm text-on-primary-container">Ingen binding • 14 dages test</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold tracking-tight" id="bottomCtaHeading">
+          Imponeret over demonstrationen? Start gratis opsætning med Webchat &amp; Reception forvalgt.
+        </h3>
+<p class="font-body-sm text-body-sm text-on-primary-container max-w-2xl">
+          Alle data i denne demo er 100% simulerede. Ingen reelle opkald eller SMS-udsendelser finder sted før I selv godkender.
+        </p>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container font-label-lg text-label-lg font-bold shadow-lg transition-transform active:scale-95" data-path="start-gratis-opsatning" href="#" id="primarySignupCta">
+<span>Opret konto med dette produkt</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-surface-container-lowest/15 hover:bg-surface-container-lowest/25 text-on-primary font-label-lg text-label-lg transition-colors" data-path="priser-beregner" href="#">
+<span class="material-symbols-outlined text-[18px]">calculate</span>
+          Beregn månedlig pris
+        </a>
+</div>
+</div>
+</section>
+</div>
+<!-- Client-side Interactive Logic -->
+<script>
+  const scenarioData = {
+    1: {
+      name: "Clara (AI Receptionist)",
+      subtitle: "Nordic Byg & Service • Aktiv nu",
+      intent: "Forespørgsel på pris & besigtigelse",
+      intentSub: "Kategori: Håndværk & Byg • Høj købshensigt",
+      intentScore: "98.4% match",
+      source: "Prisliste_VVS_Gulv_2026.pdf",
+      sourceSub: "Opslag: Side 4 • Kvadratmeterpriser (lak/olie)",
+      rule: "Efterårsrabat 15% (K04)",
+      ruleSub: "Regel: Arealer > 50 m² modtager gratis eftersyn",
+      qualStatus: "Kvalificeret lead",
+      qualSub: "Jf. aftalevilkår • Klargjort til CRM-synkronisering",
+      crm: { name: "Henrik Villumsen", area: "65 m²", postal: "2100 Kbh Ø", value: "11.850 DKK" },
+      heading: "Imponeret over demonstrationen? Start gratis opsætning med Webchat & Reception forvalgt.",
+      productKey: "reception",
+      prompts: [
+        "Hvad koster gulvafslibning af 65 m²?",
+        "Hvornår har I ledige montører?",
+        "Kan I give et uforpligtende tilbud?"
+      ],
+      messages: [
+        { sender: "ai", text: "Goddag! Velkommen til Nordic Byg & Service. Jeg hedder Clara. Hvad kan jeg hjælpe dig med i dag?" },
+        { sender: "user", text: "Hej Clara, jeg vil gerne høre hvad det koster at få slebet et trægulv på ca. 65 kvadratmeter i København Ø?" },
+        { sender: "ai", text: "Det kan jeg sagtens svare på! Vores standardafslibning med 2 x slidstærk matlak ligger på ca. 195 kr./m² inkl. moms. For 65 m² er basisprisen 12.675 kr. Da dit areal er over 50 m², udløser du automatisk vores 15% efterårsrabat, så den samlede pris lander på ca. 10.770 kr. Må jeg notere dit navn og telefonnummer, så en mester kan bekræfte datoen?" }
+      ]
+    },
+    2: {
+      name: "Clara (Telefoni Callback Agent)",
+      subtitle: "Autoværksted City • Opkaldskø router",
+      intent: "Anmodning om akut tid & callback",
+      intentSub: "Kategori: Værksted & Service • Tidskritisk",
+      intentScore: "99.1% match",
+      source: "Mekaniker_Vagtkalender_Uge42.xlsx",
+      sourceSub: "Opslag: Ledigt tidsrum kl. 14:15 & 15:30",
+      rule: "SMS-bekræftelse med 4-cifret OTP",
+      ruleSub: "Sikkerhedskrav: Bekræft telefonnummer før reservation",
+      qualStatus: "Valideret reservation",
+      qualSub: "Tid blokeret i autokalender i 30 minutter",
+      crm: { name: "Mette Sommer", area: "Serviceeftersyn", postal: "8000 Aarhus C", value: "3.450 DKK" },
+      heading: "Vil du automatisere indgående telefonopkald? Vælg Bestilt Callback & Telefoni.",
+      productKey: "telefoni-callback",
+      prompts: [
+        "Ring mig op kl. 14:15 vedr. bremseskift",
+        "Send venligst en bekræftelseskode på SMS",
+        "Hvad koster et stort serviceeftersyn?"
+      ],
+      messages: [
+        { sender: "ai", text: "Hej, du har ringet til Autoværksted City. Alle vores rådgivere er optagede på liften. Vil du have at vi ringer dig op?" },
+        { sender: "user", text: "Ja tak, kan I ringe mig op kl. 14:15 i dag? Det drejer sig om bremseskift." },
+        { sender: "ai", text: "Modtaget! Jeg har reserveret en opringning til dig i dag kl. 14:15. For at sikre nummeret sender jeg en 4-cifret SMS-kode til 28 XX XX 19 med det samme." }
+      ]
+    },
+    3: {
+      name: "Clara (Udgående Kampagnebot)",
+      subtitle: "Dansk Tag & Facade • Lead-opfølgning",
+      intent: "Kampagnetilbud & Fornyelse af årligt eftersyn",
+      intentSub: "Kategori: Genaktivering • Høj konvertering",
+      intentScore: "96.8% match",
+      source: "Kundeportefølje_2023_Eftersyn.csv",
+      sourceSub: "Opslag: Sidste eftersyn udført 14 mdr. siden",
+      rule: "Gratis fugttjek inkluderet ved forhåndsaftale",
+      ruleSub: "Kampagne ID: KAMPAGNE_EFTERAAR_2025",
+      qualStatus: "Accepteret tilbud",
+      qualSub: "Overført til montør Dennis i Hubspot",
+      crm: { name: "Søren Lind", area: "180 m² Tegltag", postal: "5000 Odense C", value: "1.890 DKK" },
+      heading: "Skal Dialogbot ringe ud til jeres koldere leads? Start med Udgående Kampagne.",
+      productKey: "outbound-campaign",
+      prompts: [
+        "Hvad indeholder det gratis eftersyn?",
+        "Passer det på torsdag formiddag kl. 10?",
+        "Send venligst tilbuddet pr. e-mail først"
+      ],
+      messages: [
+        { sender: "ai", text: "Hej Søren, det er Clara fra Dansk Tag & Facade. Vi udførte et tagtjek hos dig sidste år. Vores montør er i Odense C på torsdag. Passer det dig at han kigger forbi til et gratis eftersyn?" },
+        { sender: "user", text: "Hej Clara. Ja, det kunne egentlig være fint. Hvad kigger I efter?" },
+        { sender: "ai", text: "Han undersøger tagryg, skotrender og laver en fugtmåling på loftet. Det tager 20 minutter og er helt kvit og frit for dig som eksisterende kunde. Kan du kl. 10:00 på torsdag?" }
+      ]
+    }
+  };
+
+  let currentScenario = 1;
+
+  function renderScenario(scId) {
+    const data = scenarioData[scId];
+    if (!data) return;
+
+    // Agent Header
+    document.getElementById("agentName").textContent = data.name;
+    document.getElementById("agentSubtitle").innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-secondary inline-block"></span> ${data.subtitle}`;
+
+    // Chat History
+    const chatContainer = document.getElementById("chatHistory");
+    chatContainer.innerHTML = "";
+    data.messages.forEach(msg => {
+      appendMessageToChat(msg.sender, msg.text, false);
+    });
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    // Quick Prompts
+    const promptContainer = document.getElementById("quickPromptContainer");
+    promptContainer.innerHTML = "";
+    data.prompts.forEach(p => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "text-left px-3 py-1.5 rounded-xl bg-surface-container-highest hover:bg-secondary-container hover:text-on-secondary-container text-on-surface font-body-sm text-body-sm transition-all shadow-xs";
+      btn.textContent = p;
+      btn.onclick = () => {
+        document.getElementById("userChatInput").value = p;
+        handleUserSubmit(new Event('submit'));
+      };
+      promptContainer.appendChild(btn);
+    });
+
+    // Inspector Metrics
+    document.getElementById("intentValue").textContent = data.intent;
+    document.getElementById("intentSub").textContent = data.intentSub;
+    document.getElementById("intentScore").textContent = data.intentScore;
+
+    document.getElementById("sourceValue").textContent = data.source;
+    document.getElementById("sourceSub").innerHTML = `<span class="material-symbols-outlined text-[14px] text-secondary">verified_user</span> ${data.sourceSub}`;
+
+    document.getElementById("ruleValue").textContent = data.rule;
+    document.getElementById("ruleSub").textContent = data.ruleSub;
+
+    document.getElementById("qualStatusValue").textContent = data.qualStatus;
+    document.getElementById("qualStatusSub").textContent = data.qualSub;
+
+    // CRM fields
+    document.getElementById("crmName").textContent = data.crm.name;
+    document.getElementById("crmArea").textContent = data.crm.area;
+    document.getElementById("crmPostal").textContent = data.crm.postal;
+    document.getElementById("crmValue").textContent = data.crm.value;
+
+    // Bottom CTA
+    document.getElementById("bottomCtaHeading").textContent = data.heading;
+    const ctaBtn = document.getElementById("primarySignupCta");
+    ctaBtn.setAttribute("href", "#");
+    ctaBtn.setAttribute("data-path", "start-gratis-opsatning");
+  }
+
+  function appendMessageToChat(sender, text, animate = true) {
+    const container = document.getElementById("chatHistory");
+    const msgDiv = document.createElement("div");
+    msgDiv.className = `flex flex-col ${sender === 'user' ? 'items-end' : 'items-start'} ${animate ? 'transition-all duration-300 transform translate-y-1' : ''}`;
+
+    if (sender === 'user') {
+      msgDiv.innerHTML = `
+        <span class="font-label-sm text-label-sm text-on-surface-variant mb-0.5 mr-1">Dig</span>
+        <div class="px-4 py-2.5 rounded-2xl rounded-tr-xs bg-primary-container text-on-primary font-body-md text-body-md max-w-[85%] shadow-sm">
+          ${text}
+        </div>
+      `;
+    } else {
+      msgDiv.innerHTML = `
+        <span class="font-label-sm text-label-sm text-primary font-semibold mb-0.5 ml-1 flex items-center gap-1">
+          <span class="material-symbols-outlined text-[13px] text-secondary">smart_toy</span>
+          Clara (AI)
+        </span>
+        <div class="px-4 py-2.5 rounded-2xl rounded-tl-xs bg-surface-container-lowest text-on-surface font-body-md text-body-md max-w-[88%] shadow-sm leading-relaxed">
+          ${text}
+        </div>
+      `;
+    }
+    container.appendChild(msgDiv);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function handleUserSubmit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const input = document.getElementById("userChatInput");
+    const val = input.value.trim();
+    if (!val) return;
+
+    // Add user message
+    appendMessageToChat('user', val);
+    input.value = "";
+
+    // Show simulated typing indicator
+    const container = document.getElementById("chatHistory");
+    const typingIndicator = document.createElement("div");
+    typingIndicator.id = "typingIndicator";
+    typingIndicator.className = "flex items-center gap-1.5 px-3 py-2 bg-surface-container-lowest rounded-2xl w-fit text-primary";
+    typingIndicator.innerHTML = `
+      <span class="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-primary animate-bounce delay-100"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-primary animate-bounce delay-200"></span>
+      <span class="font-label-sm text-label-sm text-on-surface-variant ml-1 font-medium">Clara analyserer forespørgsel...</span>
+    `;
+    container.appendChild(typingIndicator);
+    container.scrollTop = container.scrollHeight;
+
+    // Dynamic response simulation
+    setTimeout(() => {
+      const ind = document.getElementById("typingIndicator");
+      if (ind) ind.remove();
+
+      let reply = "Det har jeg noteret med det samme. Jeg har opdateret sagen med dine oplysninger, så jeres rådgiver kan behandle den prompte!";
+      if (val.toLowerCase().includes("m²") || val.toLowerCase().includes("pris") || val.toLowerCase().includes("koster")) {
+        reply = "Tak for præciseringen! Jeg har genberegnet estimatet jf. jeres gældende rabatsatser og indføjet noten direkte i sagen.";
+      } else if (val.toLowerCase().includes("sms") || val.toLowerCase().includes("kode") || val.toLowerCase().includes("bekræft")) {
+        reply = "Koden [8492] er hermed afsendt. Din anmodning er verificeret og booket i kalenderen!";
+      }
+
+      appendMessageToChat('ai', reply);
+    }, 700);
+  }
+
+  function switchScenario(id) {
+    currentScenario = id;
+    for (let i = 1; i <= 3; i++) {
+      const tab = document.getElementById(`tab-${i}`);
+      if (i === id) {
+        tab.className = "scenario-tab flex flex-col text-left p-4 rounded-xl bg-surface-container-lowest text-primary shadow-sm transition-all duration-200";
+        tab.querySelector("span:first-child").className = "font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold flex items-center gap-1.5";
+        tab.querySelector("span:first-child").innerHTML = `<span class="w-2 h-2 rounded-full bg-secondary"></span> Scenarie ${i} &bull; Aktiv`;
+      } else {
+        tab.className = "scenario-tab flex flex-col text-left p-4 rounded-xl hover:bg-surface-container-lowest/70 text-on-surface-variant transition-all duration-200";
+        tab.querySelector("span:first-child").className = "font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-medium";
+        tab.querySelector("span:first-child").textContent = `Scenarie ${i} &bull; ${i === 2 ? 'Telefoni' : 'Outbound'}`;
+      }
+    }
+    renderScenario(id);
+  }
+
+  function resetScenario() {
+    renderScenario(currentScenario);
+  }
+
+  // Initial load
+  document.addEventListener("DOMContentLoaded", () => {
+    renderScenario(1);
+  });
+</script></main><footer class="w-full bg-surface-container-low shadow-[0_-1px_6px_rgba(23,43,40,0.03)] py-16"><div class="max-w-7xl mx-auto px-6 lg:px-12"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-margin-lg pb-12"><div class="lg:col-span-2 flex flex-col gap-space-sm"><div class="flex items-center gap-space-md mb-2"><div class="w-8 h-8 rounded-xl bg-primary-container flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[18px]">support_agent</span></div><span class="font-headline-sm text-headline-sm text-primary font-bold">Dialogbot</span></div><p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm">Enterprise-klar dansk AI-receptionist og intelligent samtalerouting til skandinaviske virksomheder med høje krav til sikkerhed, præcision og GDPR.</p><div class="flex items-center gap-2 mt-4 px-3 py-1.5 rounded-full bg-surface-container-lowest w-fit"><span class="w-2 h-2 rounded-full bg-secondary"></span><span class="font-label-sm text-label-sm text-on-surface">Driftsstatus: Alle telefonsystemer 100% online</span></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Produkt</span><div class="flex flex-col gap-2 font-body-sm text-body-sm"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="sadan-fungerer-det" href="#">Sådan fungerer det</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="priser-beregner" href="#">Priser &amp; ROI-beregner</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="interaktiv-demo" href="#">Interaktiv stemmedemo</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="hjalpecer-faq" href="#">Integrationer &amp; SIP Trunk</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Support &amp; Drift</span><div class="flex flex-col gap-2 font-body-sm text-body-sm"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="hjalpecer-faq" href="#">Hjælpecenter</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="kontakt" href="#">Kontakt teknisk support</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="driftsstatus-og-overvagning" href="#">Status og oppetid</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="hjalpecer-faq" href="#">API Dokumentation</a></div></div><div class="flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Juridisk &amp; GDPR</span><div class="flex flex-col gap-2 font-body-sm text-body-sm"><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="privatlivspolitik" href="#">Privatlivspolitik</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="forretningsbetingelser" href="#">Forretningsbetingelser</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="databehandleraftale-dpa" href="#">Databehandleraftale (DPA)</a><a class="text-on-surface-variant hover:text-on-surface transition-colors" data-path="cookie-indstillinger" href="#">Cookie-indstillinger</a></div></div></div><div class="pt-8 mt-4 flex flex-col md:flex-row items-center justify-between gap-space-md text-on-surface-variant font-body-sm text-body-sm"><p>© 2025 Dialogbot ApS. CVR: DK-41928374. Udviklet og hostet i Danmark under EU GDPR-krav.</p><div class="flex items-center gap-space-md font-label-md text-label-md"><a class="hover:text-on-surface transition-colors" data-path="databehandleraftale-dpa" href="#">ISO 27001 Kompatibel</a><span class="text-outline-variant">•</span><a class="hover:text-on-surface transition-colors" data-path="privatlivspolitik" href="#">Dansk Datacentral</a></div></div></div></footer></body></html>

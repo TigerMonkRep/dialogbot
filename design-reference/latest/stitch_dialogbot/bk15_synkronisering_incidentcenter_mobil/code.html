@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Manrope:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#e7fef9;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary-container": "#88beb0", "inverse-surface": "#203431", "surface-container-highest": "#d0e7e2", "primary-fixed-dim": "#9bd1c3", "primary-container": "#164e43", "secondary": "#546508", "inverse-on-surface": "#dff6f0", "surface-dim": "#c8dfda", "on-primary-fixed-variant": "#184f44", "on-secondary-fixed-variant": "#3e4c00", "inverse-primary": "#9bd1c3", "surface-bright": "#e7fef9", "primary-fixed": "#b6eede", "error": "#ba1a1a", "on-surface-variant": "#404946", "on-tertiary-container": "#80bbe0", "primary": "#00362d", "on-primary": "#ffffff", "on-error": "#ffffff", "on-tertiary-fixed-variant": "#004c6b", "surface-variant": "#d0e7e2", "tertiary-fixed": "#c6e7ff", "on-primary-fixed": "#00201a", "on-background": "#0a1f1c", "background": "#e7fef9", "secondary-fixed-dim": "#bbd06c", "on-error-container": "#93000a", "outline": "#707976", "on-tertiary-fixed": "#001e2d", "secondary-container": "#d4ea82", "tertiary-container": "#004b6a", "error-container": "#ffdad6", "on-surface": "#0a1f1c", "surface-container-high": "#d6ede8", "on-secondary": "#ffffff", "surface-tint": "#33675c", "tertiary": "#00334a", "secondary-fixed": "#d6ec85", "on-secondary-container": "#586a0e", "outline-variant": "#bfc9c4", "surface-container": "#dcf3ee", "surface-container-lowest": "#ffffff", "on-tertiary": "#ffffff", "surface-container-low": "#e1f8f3", "tertiary-fixed-dim": "#93cef4", "surface": "#e7fef9", "on-secondary-fixed": "#171e00" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-md": "1.5rem", "space-md": "0.75rem", "margin": "1rem", "gutter-lg": "1.5rem", "gutter": "1rem", "space-lg": "1rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "space-xl": "1.5rem", "margin-lg": "2rem" }, "fontFamily": { "headline-lg": ["Manrope"], "headline-md": ["Manrope"], "label-md": ["Inter"], "headline-lg-mobile": ["Manrope"], "label-sm": ["Inter"], "headline-sm": ["Manrope"], "display-lg": ["Manrope"], "display-lg-mobile": ["Manrope"], "body-md": ["Inter"], "body-sm": ["Inter"], "label-lg": ["Inter"], "body-lg": ["Inter"] }, "fontSize": { "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-lg-mobile": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "display-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen relative"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><button class="w-11 h-11 rounded-xl flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" id="drawer-toggle" onclick="document.getElementById('mobile-drawer').classList.toggle('-translate-x-full');document.getElementById('drawer-backdrop').classList.toggle('hidden')"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">Dialogbot</span><span class="px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">Demo</span></div><div class="flex items-center gap-1"><span class="font-label-sm text-label-sm text-on-surface-variant max-w-[120px] truncate">Fjord Gulvservice</span><span class="material-symbols-outlined text-[14px] text-on-surface-variant">expand_more</span></div></div></div><div class="flex items-center gap-space-xs"><button class="relative w-11 h-11 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2 right-2 w-4 h-4 bg-error text-on-error rounded-full font-label-sm text-label-sm flex items-center justify-center">3</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><div class="fixed inset-0 bg-primary/40 backdrop-blur-sm z-50 hidden transition-opacity" id="drawer-backdrop" onclick="document.getElementById('mobile-drawer').classList.add('-translate-x-full');this.classList.add('hidden')"></div><aside class="fixed top-0 left-0 h-full w-[84%] max-w-[320px] bg-surface-container-lowest z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col pt-safe pb-safe shadow-[0_12px_32px_rgba(23,43,40,0.12)]" id="mobile-drawer"><div class="p-space-lg bg-surface-container-low"><div class="flex items-center justify-between mb-space-sm"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Virksomhed</span><button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant" onclick="document.getElementById('mobile-drawer').classList.add('-translate-x-full');document.getElementById('drawer-backdrop').classList.add('hidden')"><span class="material-symbols-outlined text-[20px]">close</span></button></div><div class="flex items-center justify-between bg-surface-container-lowest p-space-sm rounded-xl"><div class="flex flex-col"><span class="font-label-lg text-label-lg text-on-surface">Fjord Gulvservice</span><span class="font-label-sm text-label-sm text-on-surface-variant">CVR: DK-38291024</span></div><span class="material-symbols-outlined text-on-surface-variant text-[20px]">unfold_more</span></div></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md flex flex-col gap-1"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="overview" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-lg text-label-lg">Overblik</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="inbox" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">inbox</span><span class="font-label-lg text-label-lg">Indbakke</span></div><span class="px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">2 nye</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="leads" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">contact_phone</span><span class="font-label-lg text-label-lg">Henvendelser</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="tasks" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">checklist</span><span class="font-label-lg text-label-lg">Opgaver</span></div><span class="px-space-xs py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm">1 forfalden</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="reception" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">support_agent</span><span class="font-label-lg text-label-lg">Reception</span></div><span class="px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">Aktiv</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="campaigns" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">campaign</span><span class="font-label-lg text-label-lg">Kampagner</span></div><span class="px-space-xs py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">Aktiv batch</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="knowledge" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-label-lg text-label-lg">Virksomhedsviden</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="reports" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">analytics</span><span class="font-label-lg text-label-lg">Rapporter</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="billing" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">credit_card</span><span class="font-label-lg text-label-lg">Fakturering</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="settings" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-label-lg text-label-lg">Indstillinger</span></div></a></div><div class="p-space-md bg-surface-container-low flex flex-col gap-space-sm"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">person</span></div><div class="flex flex-col flex-1 min-w-0"><span class="font-label-lg text-label-lg text-on-surface truncate">Mads Fjord</span><span class="font-label-sm text-label-sm text-on-surface-variant">Ejer</span></div><button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high"><span class="material-symbols-outlined text-[20px]">logout</span></button></div><div class="text-center"><span class="font-label-sm text-label-sm text-on-surface-variant/70">Dialogbot OS v2.4.1 (Danmark)</span></div></div></aside><main class="flex-1 flex flex-col relative w-full px-margin pt-16 pb-24 bg-surface"><div class="flex flex-col w-full pb-6 space-y-space-md">
+<!-- Top Title & Demo Disclaimers -->
+<div class="flex flex-col gap-space-xs pt-1">
+<div class="flex items-center justify-between gap-space-sm">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">
+        Synkronisering &amp; Incidents
+      </h1>
+<span class="px-space-sm py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm shrink-0">
+        BK15
+      </span>
+</div>
+<!-- Health / Connection Pill -->
+<div class="inline-flex items-center gap-2 px-space-md py-1.5 rounded-full bg-secondary-container text-on-secondary-container w-fit shadow-sm">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="font-label-md text-label-md font-semibold">
+        Google Workspace Synk (99.8% · vejledende demo)
+      </span>
+</div>
+<!-- Simulation Notice Note -->
+<div class="flex items-center gap-space-xs text-on-surface-variant/80 px-0.5">
+<span class="material-symbols-outlined text-[16px] text-primary">info</span>
+<p class="font-label-sm text-label-sm">
+        Alle data og handlinger er simulerede for Fjord Gulvservice.
+      </p>
+</div>
+</div>
+<!-- Connected Calendars Status Section -->
+<section class="flex flex-col bg-surface-container-lowest rounded-xl shadow-sm p-space-md space-y-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] text-primary">calendar_month</span>
+<h2 class="font-headline-sm text-headline-sm text-primary">Forbundne kalendere</h2>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">3 kilder aktive</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<!-- Kalender 1: Mads Møller -->
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md text-label-md">
+            MM
+          </div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface leading-tight">Mads Møller</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Synk for 2 min siden</span>
+</div>
+</div>
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> OK
+        </span>
+</div>
+<!-- Kalender 2: Christian Lind -->
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-label-md text-label-md font-semibold">
+            CL
+          </div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface leading-tight">Christian Lind</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Direkte to-vejs synk</span>
+</div>
+</div>
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> OK
+        </span>
+</div>
+<!-- Kalender 3: Maskiner & Værktøj (ICS) -->
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">precision_manufacturing</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface leading-tight">Maskiner &amp; Biler</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">ICS feed (Abonnement)</span>
+</div>
+</div>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm font-semibold">
+          Read-only
+        </span>
+</div>
+</div>
+</section>
+<!-- Incident List Header -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] text-primary">warning</span>
+<h2 class="font-headline-sm text-headline-sm text-primary">Aktive timeout-incidents</h2>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-semibold">
+      3 hændelser
+    </span>
+</div>
+<!-- Incident Cases -->
+<div class="flex flex-col gap-space-md">
+<!-- UDFALD 1: Sag FG-8942 -->
+<article class="flex flex-col bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">#FG-8942</span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container text-primary font-label-sm text-label-sm">Udfald 1</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary mt-0.5">Henrik Villumsen</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">28. okt · Kl. 10:30 (Gulvafslibning)</span>
+</div>
+<span class="px-space-sm py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1 shrink-0">
+<span class="material-symbols-outlined text-[15px]">verified</span> Findes i Google
+        </span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-secondary">sync_saved_locally</span>
+<span class="font-label-md text-label-md font-semibold">Timeout løst automatisk</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          API-kald timed ud, men aftalen blev fundet intakt via sekundært ID-opslag. Ingen manuel handling påkrævet.
+        </p>
+</div>
+<div class="pt-1 flex items-center justify-between gap-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant/70">ID: ev_8942_gcal_ok</span>
+<button class="px-space-md py-2 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg hover:bg-primary transition-all flex items-center gap-1 shadow-sm" onclick="this.textContent = 'Åbner Google Kalender...'; setTimeout(() =&gt; this.textContent = 'Aftale synlig ✓', 800)">
+<span>Se aftale</span>
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</article>
+<!-- UDFALD 2: Sag FG-9014 -->
+<article class="flex flex-col bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">#FG-9014</span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-label-sm">Udfald 2</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary mt-0.5">Søren Kirk</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">29. okt · Kl. 13:00 (Lakering)</span>
+</div>
+<span class="px-space-sm py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold flex items-center gap-1 shrink-0">
+<span class="material-symbols-outlined text-[15px]">cancel</span> Ikke oprettet
+        </span>
+</div>
+<div class="p-space-sm rounded-lg bg-error-container/40 flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-on-error-container">
+<span class="material-symbols-outlined text-[18px]">error</span>
+<span class="font-label-md text-label-md font-semibold">401 Tokenudløb under push</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Ingen post oprettet i kalenderen. Kunden venter fortsat på bekræftet booking.
+        </p>
+</div>
+<div class="pt-1 flex flex-col gap-space-xs">
+<button class="w-full py-2.5 px-space-md rounded-lg bg-secondary-container text-on-secondary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-sm hover:opacity-95 transition-all" id="retry-btn-9014" onclick="const b = this; b.disabled = true; b.textContent = 'Validerer tidslomme...'; setTimeout(() =&gt; { b.textContent = 'Oprettet i Mads Møllers kalender ✓'; b.classList.remove('bg-secondary-container','text-on-secondary-container'); b.classList.add('bg-primary-container','text-on-primary'); }, 1100)">
+<span class="material-symbols-outlined text-[18px]">autorenew</span>
+<span>Tjek kapacitet &amp; genforsøg</span>
+</button>
+</div>
+</article>
+<!-- UDFALD 3: Sag FG-9055 -->
+<article class="flex flex-col bg-surface-container-lowest rounded-xl p-space-md shadow-sm space-y-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-semibold">#FG-9055</span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm">Udfald 3</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary mt-0.5">Camilla Hald</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">30. okt (Genbesøg &amp; Opmåling)</span>
+</div>
+<span class="px-space-sm py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-bold flex items-center gap-1 shrink-0">
+<span class="material-symbols-outlined text-[15px]">hourglass_top</span> Afventer afklaring
+        </span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-1.5">
+<div class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-[18px]">sync_problem</span>
+<span class="font-label-md text-label-md font-semibold">Tovejs-synkronisering i limbo</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+          Vi afklarer, om din aftale blev opdateret. Du behøver ikke indsende igen. Hidtidig tidspunkt fastholdt.
+        </p>
+</div>
+<div class="pt-1 grid grid-cols-2 gap-space-sm">
+<button class="py-2 px-space-sm rounded-lg bg-surface-container-high text-primary font-label-md text-label-md font-semibold flex items-center justify-center gap-1 hover:bg-surface-container-highest transition-colors" onclick="this.innerHTML = 'Forespørger API...'; setTimeout(() =&gt; this.innerHTML = 'Status: OK i kø', 900)">
+<span class="material-symbols-outlined text-[17px]">manage_search</span>
+<span>Afklar status</span>
+</button>
+<button class="py-2 px-space-sm rounded-lg bg-surface-container text-primary font-label-md text-label-md font-semibold flex items-center justify-center gap-1 hover:bg-surface-container-high transition-colors" onclick="alert('Opretter haste-ticket til H01 Telephony Dispatch...')">
+<span class="material-symbols-outlined text-[17px]">support_agent</span>
+<span>Kontakt H01</span>
+</button>
+</div>
+</article>
+</div>
+<!-- Bottom Action Bar Section -->
+<div class="flex flex-col gap-space-sm pt-2">
+<button class="w-full py-3 px-space-lg rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-2 shadow-sm hover:bg-primary transition-colors" onclick="const self = this; self.innerHTML = '&lt;span class=\'material-symbols-outlined text-[18px] animate-spin\'&gt;sync&lt;/span&gt; Genautoriserer OAuth2...'; setTimeout(() =&gt; self.innerHTML = '&lt;span class=\'material-symbols-outlined text-[18px]\'&gt;check&lt;/span&gt; Forbindelse genoprettet', 1200)">
+<span class="material-symbols-outlined text-[20px]">sync_lock</span>
+<span>Genforbind Google Workspace</span>
+</button>
+<a class="w-full py-2.5 px-space-lg rounded-xl bg-surface-container-highest text-primary font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-surface-container-high transition-colors" href="#" onclick="alert('Omdirigerer til H01 Drift &amp; Telefoni Support Desk'); return false;">
+<span class="material-symbols-outlined text-[18px]">headset_mic</span>
+<span>Gå til H01 Support</span>
+</a>
+</div>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.05)]" data-active-classes="text-primary bg-primary-container/10 font-label-lg"><div class="h-16 px-space-sm flex items-center justify-around"><a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 rounded-xl text-on-surface-variant hover:text-primary transition-all" data-path="overview" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-label-sm text-label-sm">Overblik</span></a><a class="relative flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 rounded-xl text-on-surface-variant hover:text-primary transition-all" data-path="inbox" href="#"><div class="relative"><span class="material-symbols-outlined text-[22px]">inbox</span><span class="absolute -top-1 -right-2 w-4 h-4 bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm flex items-center justify-center">2</span></div><span class="font-label-sm text-label-sm">Indbakke</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 rounded-xl text-on-surface-variant hover:text-primary transition-all" data-path="campaigns" href="#"><span class="material-symbols-outlined text-[22px]">campaign</span><span class="font-label-sm text-label-sm">Kampagner</span></a><button class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 rounded-xl text-on-surface-variant hover:text-primary transition-all" onclick="document.getElementById('mobile-drawer').classList.remove('-translate-x-full');document.getElementById('drawer-backdrop').classList.remove('hidden')"><span class="material-symbols-outlined text-[22px]">apps</span><span class="font-label-sm text-label-sm">Mere</span></button></div></nav></body></html>

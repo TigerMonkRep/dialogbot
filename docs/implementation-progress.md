@@ -2,6 +2,32 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 4 — 25. september 2026 (milepæl A: design-fidelitet mod Stitch)
+
+**Gren/PR:** `claude/cool-wozniak-ho00tr` → https://github.com/TigerMonkRep/dialogbot/pull/2 (draft). CI (backend + web) grøn på `d2edbb7`.
+**Referencer:** Stitch-eksporten (44 skærme, desktop + mobil) ligger i `design-reference/latest/stitch_dialogbot/`; skærmoversigt og DESIGN.md også hentet via Stitch MCP (`design-reference/stitch/`).
+**Metode:** `design-reference/tools/stitch-render.mjs` renderer hver Stitch-`code.html` offline (Tailwind v3 kompileret fra skærmens egen config, lokale fonte, faner via `STITCH_EVAL`). `compare.mjs` logger ind i appen og laver side-om-side-billeder ved 1440 px (desktop-reference) og 390 px (mobil-reference). Kørt mod lokal API + PostgreSQL med seed-data.
+
+| Skærm | Rute | Desktop 1440 | Mobil 390 | Bemærkninger |
+|---|---|---|---|---|
+| App-skal (guide) | /app/setup, /onboarding/* | matchet (G01-header, footer) | matchet (header, bundnav, Mere-ark) | "Aktiv AI" kun når `ai.conversation` er `available` |
+| App-skal (admin) | /app/knowledge, /app/settings/*, /app/not-yet | matchet (K01-sidebjælke + topheader) | matchet (header, 5-punkts bundnav) | Stitch bruger topnav i opsætning og sidebjælke i drift – fulgt pr. skærm |
+| G01–G05 | /app/setup | matchet | matchet | Persona (O05), AI-forslag og H01-support vist som ikke tilgængelige |
+| A06/O01/O02 | /onboarding/business, /onboarding/workspace | matchet | matchet | O02 viser rigtig manuel viden; ingen "konfidens"-tal eller udtræk |
+| O03/O04 | /onboarding/goals, /onboarding/languages | kortdesign fra G01 | kortdesign fra G01 | Ingen selvstændig Stitch-skærm |
+| K01–K05, R05/R06 | /app/knowledge?tab=… | matchet (alle faner) | matchet (K01) | Strukturerede formularer i stedet for JSON; K05 sammenligning; K01/R05/R06 ærlige tomtilstande |
+| A01–A05 | /signup, /login, /verify-email, /password/*, /invite/[token] | centreret kolonne | matchet (A04) | Kun mobilreference findes i Stitch |
+| S02, S08, S09 | /app/settings/team, /profile, /activity | designsystem (admin-skal) | designsystem | Ingen Stitch-skærm; S08 skrivebeskyttet (intet API til navn/sprog) |
+| P01 | / | P04–P08-stil | P04–P08-stil | Ingen egen Stitch-skærm; kun sande påstande |
+
+**E2E (Playwright, `web/e2e`, workflow `.github/workflows/e2e.yml`):** otte rejser + tastatur/fokus, hver ved 1440 og 390 px, mod Next production build → FastAPI + outbox-worker → PostgreSQL (seed). 18/18 grønne lokalt. Screenshots, HTML-rapport og logs uploades som artefakt `e2e-<sha>`. Rejserne er defineret ud fra de flows, der findes (blueprint §9.1 findes ikke i repoet): (1) A01→A03→A06 med bevaret hensigt, (2) A02 fejl/husket destination/log ud, (3) A04 nulstilling, (4) O01→O03→O04 med gem-før-navigation, (5) K03→K05 kladde→godkend, (6) G01/G05 med ærlige ikke-tilgængelige trin, (7) S02→A05 invitation, (8) roller (læser/medarbejder/admin).
+
+**Fejl fundet og rettet undervejs:** åbent redirect via `?next=//host` og `/\host` (proxy, login, signup); død session-cookie efter nulstilling; manglende "ingen næste handling"-tilstand på mobil; O01 viste "ugemte ændringer" efter gem.
+
+**Ikke gjort endnu:** G03-wrapper (guidet side pr. opgave); staging-screenshots (netværkspolitikken blokerer stadig `*.vercel.app`/`*.onrender.com` i denne container).
+
+**Præcis næste handling:** grøn CI på PR #2 (inkl. E2E) → merge → kontrollér staging visuelt (bruger, eller Claude i en session med åbne værter) → milepæl B (Resend-webhook).
+
 ## Checkpoint 3 — 25. september 2026 (overtagelse, milepæl A-design)
 
 **Baseline genkontrolleret:** `main` = `cb79a99` (Stitch-commit er på main). 26/26 pytest mod lokal PostgreSQL 16, `npm run build` grøn (22 ruter). Render `dialogbot-api-staging` live på `cb79a99` (deploy `dep-dar7koe7bikc73auval0`, via Render-API). `/health/ready` og Vercel-URL kunne **ikke** kaldes direkte: sessionens netværkspolitik blokerer `*.onrender.com` og `*.vercel.app`, og Vercel-forbindelsen har ikke adgang til projektet.

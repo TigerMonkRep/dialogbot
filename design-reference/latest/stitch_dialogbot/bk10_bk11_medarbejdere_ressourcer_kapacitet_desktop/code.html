@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-fixed-variant":"#3e4c00","on-background":"#0a1f1c","inverse-primary":"#9bd1c3","surface":"#e7fef9","surface-dim":"#c8dfda","secondary-fixed":"#d6ec85","surface-container":"#dcf3ee","tertiary-fixed":"#c6e7ff","on-primary-fixed":"#00201a","on-secondary-container":"#586a0e","on-secondary":"#ffffff","tertiary-container":"#004b6a","inverse-surface":"#203431","on-surface":"#0a1f1c","error":"#ba1a1a","surface-bright":"#e7fef9","on-secondary-fixed":"#171e00","on-primary-container":"#88beb0","on-error":"#ffffff","on-tertiary":"#ffffff","surface-tint":"#33675c","outline-variant":"#bfc9c4","surface-container-high":"#d6ede8","on-primary":"#ffffff","tertiary":"#00334a","outline":"#707976","secondary":"#546508","on-tertiary-fixed":"#001e2d","on-error-container":"#93000a","background":"#e7fef9","secondary-container":"#d4ea82","surface-container-highest":"#d0e7e2","primary":"#00362d","primary-fixed":"#b6eede","on-tertiary-fixed-variant":"#004c6b","surface-variant":"#d0e7e2","primary-fixed-dim":"#9bd1c3","secondary-fixed-dim":"#bbd06c","on-tertiary-container":"#80bbe0","surface-container-low":"#e1f8f3","surface-container-lowest":"#ffffff","primary-container":"#164e43","on-surface-variant":"#404946","error-container":"#ffdad6","tertiary-fixed-dim":"#93cef4","inverse-on-surface":"#dff6f0","on-primary-fixed-variant":"#184f44"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"margin":"1rem","margin-lg":"2rem","gutter-lg":"1.5rem","margin-md":"1.5rem","space-lg":"1rem","gutter":"1rem","space-sm":"0.5rem","space-xs":"0.25rem","space-md":"0.75rem","space-xl":"1.5rem"},fontFamily:{"display-lg-mobile":["Manrope"],"headline-lg-mobile":["Manrope"],"body-sm":["Inter"],"label-md":["Inter"],"body-lg":["Inter"],"display-lg":["Manrope"],"headline-sm":["Manrope"],"body-md":["Inter"],"label-lg":["Inter"],"headline-md":["Manrope"],"headline-lg":["Manrope"],"label-sm":["Inter"]},fontSize:{"display-lg-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"headline-lg-mobile":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"700"}],"body-sm":["13px",{lineHeight:"18px",fontWeight:"400"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"500"}],"body-lg":["16px",{lineHeight:"24px",fontWeight:"400"}],"display-lg":["36px",{lineHeight:"44px",letterSpacing:"-0.03em",fontWeight:"700"}],"headline-sm":["18px",{lineHeight:"26px",letterSpacing:"-0.01em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",fontWeight:"400"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.01em",fontWeight:"600"}],"headline-md":["22px",{lineHeight:"30px",letterSpacing:"-0.015em",fontWeight:"600"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col flex-1 overflow-y-auto"><div class="p-4 flex items-center justify-between gap-3"><div class="flex items-center gap-3"><img alt="Brand logo. - Primary color: #164e43
+- Font: manrope
+- Mode: light
+- Roundness: rounded-md
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1V05QJ6ogqjQWFOy45hIopE1L8L12GtzKAoL03rnuk3QGgmKM9MOsMR-7O6ORIaIetfBElhHecaaykH_SmmLkmGC4aIeHNldsLlMhk8SHwIijcyDicoWG9fmHPRmeoWXyFl39oUTfA58hv5tXT4hTdwOsQc5PlbL9MCt5N6AgkeNV7Ls4coD3Gt8P6fge98PhalilHSUXAqPpnxnQNjoD2bIfUoH01Vn1r4Cv13MEMT1umMgSSBUpyi7M4"/></div><span class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-surface-container text-on-surface-variant">v2.4</span></div><div class="px-3 py-2"><div class="bg-surface-container-low rounded-xl p-2.5 flex items-center justify-between cursor-pointer hover:bg-surface-container transition-colors"><div class="flex items-center gap-2.5 min-w-0"><div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs shrink-0">FG</div><div class="min-w-0"><p class="font-label-md text-label-md text-on-surface font-semibold truncate">Fjord Gulvservice</p><p class="font-label-sm text-label-sm text-on-surface-variant truncate">Dansk Afdeling • Aktiv</p></div></div><span class="material-symbols-outlined text-on-surface-variant text-[18px] shrink-0">unfold_more</span></div></div><div class="px-3 pt-3 pb-1"><p class="px-3 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Hovedmenu</p></div><nav class="px-3 space-y-1" data-active-classes="bg-primary-container text-on-primary font-semibold"><a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="overblik" href="#"><span class="material-symbols-outlined text-[20px]">space_dashboard</span><span class="font-label-lg text-label-lg">Overblik</span></a><a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="indbakke" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">inbox</span><span class="font-label-lg text-label-lg">Indbakke</span></div><span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">5</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="henvendelser" href="#"><span class="material-symbols-outlined text-[20px]">ring_volume</span><span class="font-label-lg text-label-lg">Henvendelser</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="opgaver" href="#"><span class="material-symbols-outlined text-[20px]">task_alt</span><span class="font-label-lg text-label-lg">Opgaver</span></a><a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="reception" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px]">support_agent</span><span class="font-label-lg text-label-lg">Reception</span></div><span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span></span></a><a class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container-high text-on-surface font-semibold hover:bg-surface-container-highest transition-colors" data-path="kampagner" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-[20px] text-primary">campaign</span><span class="font-label-lg text-label-lg text-primary">Kampagner</span></div><span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold tracking-tight">Aktiv</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="virksomhedsviden" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-label-lg text-label-lg">Virksomhedsviden</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="rapporter" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span class="font-label-lg text-label-lg">Rapporter</span></a></nav></div><div class="p-3 bg-surface-container-lowest"><nav class="space-y-1 mb-3" data-active-classes="bg-primary-container text-on-primary font-semibold"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="fakturering" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span class="font-label-lg text-label-lg">Fakturering</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="indstillinger" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-label-lg text-label-lg">Indstillinger</span></a></nav><div class="pt-3 bg-surface-container-low rounded-xl p-2.5 flex items-center justify-between"><div class="flex items-center gap-2.5 min-w-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="min-w-0"><p class="font-label-md text-label-md text-on-surface font-semibold truncate">Mads Fjord</p><p class="font-label-sm text-label-sm text-on-surface-variant truncate">mads@fjordgulv.dk</p></div></div><a class="text-on-surface-variant hover:text-error transition-colors p-1" data-path="login" href="#" title="Log ud"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-8"><div class="flex items-center gap-4 flex-1 max-w-lg"><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span><input class="w-full pl-10 pr-4 py-2 bg-surface-container-low rounded-lg text-body-md font-body-md text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-1 focus:ring-primary-container transition-all" placeholder="Søg i henvendelser, transskriptioner, kontakter..." type="text"/></div></div><div class="flex items-center gap-4"><div class="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-full"><span class="w-2 h-2 rounded-full bg-secondary inline-block animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface font-medium">AI Linje: Åben &amp; Parat</span></div><button class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary-container rounded-full"></span></button><button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">help_outline</span></button><div class="flex items-center gap-3 pl-3"><div class="text-right hidden sm:block"><p class="font-label-md text-label-md font-semibold text-on-surface leading-tight">Mads Fjord</p><p class="font-label-sm text-label-sm text-on-surface-variant leading-tight">Administrator</p></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 bg-surface min-h-screen w-full px-8 py-6"><div class="flex flex-col w-full space-y-8">
+<!-- Top Breadcrumb & Executive Title Banner -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2">
+<div>
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">
+<span>Bookinger</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">BK10 &amp; BK11 Planlægning</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight">Medarbejdere, Ressourcer &amp; Kapacitet</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Styr kalendersynkronisering, maskintilgængelighed og automatiske allokeringsregler for Fjord Gulvservice ApS.</p>
+</div>
+<!-- Global CTA Buttons -->
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">build_circle</span>
+<span>Opret ressource</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span>Tilføj medarbejder</span>
+</button>
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg transition-all shadow-md" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Gem kapacitetsregler</span>
+</button>
+</div>
+</div>
+<!-- Interactive Filter Tabs & Live Engine Indicators -->
+<div class="flex flex-wrap items-center justify-between gap-4 bg-surface-container-lowest p-2 rounded-2xl shadow-sm">
+<div class="flex items-center gap-1.5" role="tablist">
+<button class="tab-pill flex items-center gap-2.5 px-4 py-2 rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm transition-all" id="tab-btn-bk10" onclick="switchTab('bk10')" type="button">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+<span>Medarbejdermapping (BK10)</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">3 montører</span>
+</button>
+<button class="tab-pill flex items-center gap-2.5 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-lg text-label-lg transition-all" id="tab-btn-bk11" onclick="switchTab('bk11')" type="button">
+<span class="material-symbols-outlined text-[18px]">precision_manufacturing</span>
+<span>Ressourcer &amp; Lokationer (BK11)</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-bold">3 enheder</span>
+</button>
+<button class="tab-pill flex items-center gap-2.5 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-lg text-label-lg transition-all" id="tab-btn-all" onclick="switchTab('all')" type="button">
+<span class="material-symbols-outlined text-[18px]">view_agenda</span>
+<span>Kombineret overblik</span>
+</button>
+</div>
+<!-- Live Sync Health Badge -->
+<div class="flex items-center gap-3 px-3 py-1.5 bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-2">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface font-medium">Kalender-API: 2/3 aktive linjer</span>
+</div>
+<div class="w-px h-4 bg-outline-variant"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Realtidstjek: Aktiv</span>
+</div>
+</div>
+<!-- Operational Conflict Banner (BK04 Integration) -->
+<div class="bg-surface-container-low rounded-2xl p-5 shadow-sm relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-secondary-fixed/30 blur-2xl pointer-events-none"></div>
+<div class="flex items-start gap-4 relative z-10">
+<div class="w-10 h-10 rounded-xl bg-primary-container text-secondary-fixed flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[24px]">troubleshoot</span>
+</div>
+<div class="space-y-1 flex-1">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Håndtering af ressourceflaskehals &amp; krydsafhængighed</h2>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">Auto-sikring</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-5xl leading-relaxed">
+          Når en ydelse kræver både en <strong class="text-on-surface font-semibold">autoriseret montør</strong> og en <strong class="text-on-surface font-semibold">specifik maskine eller servicevogn</strong>, krydsvaliderer AI-receptionen både medarbejderens kalenderslots og maskinens kapacitetsloft. Hvis en af delene er opbrugt, blokeres direkte booking – kunden omdirigeres i stedet automatisk til <span class="text-primary font-semibold underline decoration-secondary decoration-2 underline-offset-2">manuel godkendelsesflow (BK04)</span>.
+        </p>
+</div>
+<div class="hidden lg:flex flex-col items-end shrink-0 pl-4 border-l border-outline-variant/30">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Gældende regel</span>
+<span class="font-label-lg text-label-lg font-bold text-primary">Dobbelt-Slot Validering</span>
+</div>
+</div>
+</div>
+<!-- SECTION 1: BK10 - Medarbejder-til-kalender-mapping -->
+<div class="space-y-4" id="section-bk10">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">contacts</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Medarbejder-til-kalender-mapping (BK10)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Forbind montørers eksterne kalendere med specifikke fagområder, kørselszoner og prioriteringsregler.</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Sortering: Prioritet</span>
+</div>
+</div>
+<!-- Montør Grid / Responsive Cards Table -->
+<div class="grid grid-cols-1 gap-4">
+<!-- Card 1: Mads Møller -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+<!-- Profile & Core Identity -->
+<div class="flex items-start gap-4 min-w-[320px]">
+<div class="relative">
+<div class="w-14 h-14 rounded-2xl bg-primary-container text-on-primary font-headline-sm text-headline-sm flex items-center justify-center font-bold shadow-sm">
+                MM
+              </div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary border-2 border-surface-container-lowest" title="Aktiv"></span>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Mads Møller</h4>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">Aktiv &amp; bookbar</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">Senior Gulvmontør • Ansvarlig for Storkøbenhavn</p>
+<div class="flex items-center gap-2 pt-1 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">mail</span>
+<span>mads@fjordgulve.dk</span>
+<span class="mx-1">•</span>
+<span class="material-symbols-outlined text-[16px] text-primary">pin_drop</span>
+<span>Zone 1 (Storkøbenhavn)</span>
+</div>
+</div>
+</div>
+<!-- Calendar Connection Status -->
+<div class="bg-surface-container-low/60 rounded-xl p-3.5 flex items-center gap-3.5 min-w-[260px]">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary shadow-xs">
+<span class="material-symbols-outlined text-[22px]">calendar_today</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Synkroniseret kalender</p>
+<p class="font-label-lg text-label-lg font-bold text-on-surface">Google Workspace</p>
+<p class="font-body-sm text-body-sm text-secondary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                Tovejs realtidssynk aktiv
+              </p>
+</div>
+</div>
+<!-- Skill Set Tags -->
+<div class="space-y-1.5 max-w-sm">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Tilknyttede ydelser</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2.5 py-1 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm font-medium">Gulvafslibning</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm font-medium">Oliebehandling</span>
+<span class="px-2.5 py-1 rounded-lg bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-bold">Besigtigelse</span>
+</div>
+</div>
+<!-- Rule & Action -->
+<div class="flex flex-col sm:flex-row xl:flex-col items-start xl:items-end justify-between gap-3 min-w-[200px]">
+<div class="text-left xl:text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Allokeringsregel</span>
+<p class="font-label-md text-label-md font-bold text-primary flex items-center xl:justify-end gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">star</span>
+                Primær montør ved besigtigelse
+              </p>
+</div>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold transition-colors" type="button">
+              Rediger regler
+            </button>
+</div>
+</div>
+</div>
+<!-- Card 2: Christian Lind -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+<!-- Profile & Core Identity -->
+<div class="flex items-start gap-4 min-w-[320px]">
+<div class="relative">
+<div class="w-14 h-14 rounded-2xl bg-surface-container-highest text-on-surface-variant font-headline-sm text-headline-sm flex items-center justify-center font-bold shadow-sm">
+                CL
+              </div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-secondary border-2 border-surface-container-lowest" title="Aktiv"></span>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Christian Lind</h4>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">Aktiv</span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">Montør &amp; Teknik • Kørende tekniker</p>
+<div class="flex items-center gap-2 pt-1 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">mail</span>
+<span>cl@fjordgulve.dk</span>
+<span class="mx-1">•</span>
+<span class="material-symbols-outlined text-[16px] text-primary">pin_drop</span>
+<span>Nordsjælland</span>
+</div>
+</div>
+</div>
+<!-- Calendar Connection Status -->
+<div class="bg-surface-container-low/60 rounded-xl p-3.5 flex items-center gap-3.5 min-w-[260px]">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center text-tertiary shadow-xs">
+<span class="material-symbols-outlined text-[22px]">calendar_month</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Synkroniseret kalender</p>
+<p class="font-label-lg text-label-lg font-bold text-on-surface">Outlook 365</p>
+<p class="font-body-sm text-body-sm text-secondary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                Tovejs realtidssynk aktiv
+              </p>
+</div>
+</div>
+<!-- Skill Set Tags -->
+<div class="space-y-1.5 max-w-sm">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Tilknyttede ydelser</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2.5 py-1 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm font-medium">Lakering</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm font-medium">Reparation</span>
+<span class="px-2.5 py-1 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm font-medium">Trappeslibning</span>
+</div>
+</div>
+<!-- Rule & Action -->
+<div class="flex flex-col sm:flex-row xl:flex-col items-start xl:items-end justify-between gap-3 min-w-[200px]">
+<div class="text-left xl:text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Allokeringsregel</span>
+<p class="font-label-md text-label-md font-bold text-on-surface flex items-center xl:justify-end gap-1">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">sync_alt</span>
+                Rundsend ved ledighed
+              </p>
+</div>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold transition-colors" type="button">
+              Rediger regler
+            </button>
+</div>
+</div>
+</div>
+<!-- Card 3: Henrik Bach (Advarsel / Auth mangler) -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-error"></div>
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-6 pl-2">
+<!-- Profile & Core Identity -->
+<div class="flex items-start gap-4 min-w-[320px]">
+<div class="relative">
+<div class="w-14 h-14 rounded-2xl bg-error-container text-on-error-container font-headline-sm text-headline-sm flex items-center justify-center font-bold shadow-sm">
+                HB
+              </div>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-error border-2 border-surface-container-lowest" title="Afbrudt"></span>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Henrik Bach</h4>
+<span class="px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                  Mangler autorisation
+                </span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">Lærling • Assisterende montør</p>
+<div class="flex items-center gap-2 pt-1 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">mail</span>
+<span>henrik@fjordgulve.dk</span>
+<span class="mx-1">•</span>
+<span class="material-symbols-outlined text-[16px] text-primary">pin_drop</span>
+<span>Assistance alle zoner</span>
+</div>
+</div>
+</div>
+<!-- Warning Box & Call to Action -->
+<div class="bg-error-container/40 rounded-xl p-3.5 flex items-center gap-3.5 flex-1 max-w-lg">
+<span class="material-symbols-outlined text-[24px] text-error shrink-0">sync_problem</span>
+<div class="space-y-0.5">
+<p class="font-label-md text-label-md font-bold text-on-error-container">Kalender er afbrudt</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Kan ikke modtage automatiske bookinger før Google-tilladelser godkendes via medarbejderens OAuth-login.
+              </p>
+</div>
+</div>
+<!-- Action -->
+<div class="flex items-center justify-end shrink-0">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-container text-on-primary font-label-md text-label-md font-bold hover:bg-primary transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">forward_to_inbox</span>
+<span>Send invitationslink til synk</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 2: BK11 - Ressourcer, Maskiner, Lokationer & Kapacitet -->
+<div class="space-y-4 pt-4" id="section-bk11">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">layers</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Ressourcer, Maskiner &amp; Lokationer (BK11)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Overvåg fysiske begrænsninger, maskinlagre og faste mødelokaler for at forhindre overbooking.</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">
+          3 aktive flaskehalse defineret
+        </span>
+</div>
+</div>
+<!-- 3-Column Resource Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Resource 1: Servicevogn 1 -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-5 hover:shadow-md transition-all">
+<div class="space-y-4">
+<div class="flex items-start justify-between gap-3">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[26px]">directions_car</span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+              Aktiv på tur
+            </span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Køretøj • ID #V-01</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Servicevogn 1 (VW Transporter)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Udstyret med fuld besigtigelses- og værktøjspakke for Zone 1.</p>
+</div>
+<!-- Capacity Bar Graphic -->
+<div class="space-y-2 bg-surface-container-low/50 p-3.5 rounded-xl">
+<div class="flex justify-between items-center font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Kapacitetsudnyttelse</span>
+<span class="font-bold text-on-surface">1 / 1 opgave</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 100%;"></div>
+</div>
+<div class="flex items-center gap-2 pt-1 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">person</span>
+<span>Fast tilknyttet: <strong class="text-on-surface">Mads Møller</strong></span>
+</div>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container-high/60 flex items-center justify-between">
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">lock_clock</span>
+<span>Låst under besigtigelser</span>
+</div>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Resource 2: Bona Bæltesliber Pro 200 -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-5 hover:shadow-md transition-all">
+<div class="space-y-4">
+<div class="flex items-start justify-between gap-3">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[26px]">hardware</span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+              Delvist ledig
+            </span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Maskine • 2 stk. på lager</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Bona Bæltesliber Pro 200</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Obligatorisk for alle afslibninger med areal over 40 m².</p>
+</div>
+<!-- Capacity Bar Graphic -->
+<div class="space-y-2 bg-surface-container-low/50 p-3.5 rounded-xl">
+<div class="flex justify-between items-center font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Lagerbeholdning i brug</span>
+<span class="font-bold text-on-surface">1 ledig / 1 optaget</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 50%;"></div>
+</div>
+<div class="flex items-center gap-2 pt-1 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">rule</span>
+<span>Udløser: <strong class="text-on-surface">Afslibning &gt; 40 m²</strong></span>
+</div>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container-high/60 flex items-center justify-between">
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">inventory_2</span>
+<span>Værksted Vesterbro</span>
+</div>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Resource 3: Mødelokale Vesterbrogade -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-5 hover:shadow-md transition-all">
+<div class="space-y-4">
+<div class="flex items-start justify-between gap-3">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[26px]">meeting_room</span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+              Optaget nu
+            </span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lokation • Hovedkontor</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Mødelokale Vesterbrogade</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Fysiske bygherremøder, arkitektrådgivning og prøvefremvisning.</p>
+</div>
+<!-- Capacity Bar Graphic -->
+<div class="space-y-2 bg-surface-container-low/50 p-3.5 rounded-xl">
+<div class="flex justify-between items-center font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Aktuel status</span>
+<span class="font-bold text-error">Optaget 10:00 - 11:00</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 100%;"></div>
+</div>
+<div class="flex items-center gap-2 pt-1 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">groups</span>
+<span>Kapacitet: <strong class="text-on-surface">Maks. 6 personer</strong></span>
+</div>
+</div>
+</div>
+<div class="pt-2 border-t border-surface-container-high/60 flex items-center justify-between">
+<div class="flex items-center gap-1 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+<span>Ledig fra kl. 11:00</span>
+</div>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Real-time Capacity Simulator & Rule Config Widget -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-sm space-y-5">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Regelsæt for automatisk kapacitetsvalidering</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Justér hvordan AI-receptionisten besvarer henvendelser ved spidsbelastning.</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold px-3 py-1 bg-surface-container rounded-lg">Fjord RuleSet v3.1</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+<!-- Rule Switch 1 -->
+<label class="flex items-start gap-3.5 p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer">
+<input checked="" class="mt-1 w-4 h-4 rounded text-primary focus:ring-primary-container accent-primary" type="checkbox"/>
+<div class="space-y-0.5">
+<p class="font-label-md text-label-md font-bold text-on-surface">Auto-reserve køretøj ved Zone 1</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Låser automatisk Servicevogn 1 i 30 min. før og efter besigtigelse.</p>
+</div>
+</label>
+<!-- Rule Switch 2 -->
+<label class="flex items-start gap-3.5 p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer">
+<input checked="" class="mt-1 w-4 h-4 rounded text-primary focus:ring-primary-container accent-primary" type="checkbox"/>
+<div class="space-y-0.5">
+<p class="font-label-md text-label-md font-bold text-on-surface">Buffer-tid mellem slibeopgaver</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Indsætter 45 minutters maskinrens og transport mellem to adskilte adresser.</p>
+</div>
+</label>
+<!-- Rule Switch 3 -->
+<label class="flex items-start gap-3.5 p-4 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer">
+<input checked="" class="mt-1 w-4 h-4 rounded text-primary focus:ring-primary-container accent-primary" type="checkbox"/>
+<div class="space-y-0.5">
+<p class="font-label-md text-label-md font-bold text-on-surface">Eskaler til BK04 ved mangel</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Opretter en godkendelsesopgave i indbakken i stedet for at afvise kunden.</p>
+</div>
+</label>
+</div>
+</div>
+</div>
+<script>
+  function switchTab(tabId) {
+    const secBK10 = document.getElementById('section-bk10');
+    const secBK11 = document.getElementById('section-bk11');
+    const btnBK10 = document.getElementById('tab-btn-bk10');
+    const btnBK11 = document.getElementById('tab-btn-bk11');
+    const btnAll = document.getElementById('tab-btn-all');
+
+    // Reset buttons
+    [btnBK10, btnBK11, btnAll].forEach(btn => {
+      btn.className = "tab-pill flex items-center gap-2.5 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-label-lg text-label-lg transition-all";
+    });
+
+    const activeClasses = "tab-pill flex items-center gap-2.5 px-4 py-2 rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm transition-all";
+
+    if (tabId === 'bk10') {
+      secBK10.classList.remove('hidden');
+      secBK11.classList.add('hidden');
+      btnBK10.className = activeClasses;
+    } else if (tabId === 'bk11') {
+      secBK10.classList.add('hidden');
+      secBK11.classList.remove('hidden');
+      btnBK11.className = activeClasses;
+    } else {
+      secBK10.classList.remove('hidden');
+      secBK11.classList.remove('hidden');
+      btnAll.className = activeClasses;
+    }
+  }
+</script></main></div>
+</body></html>

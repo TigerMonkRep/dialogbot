@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Manrope:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#e7fef9;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary-container": "#88beb0", "inverse-surface": "#203431", "surface-container-highest": "#d0e7e2", "primary-fixed-dim": "#9bd1c3", "primary-container": "#164e43", "secondary": "#546508", "inverse-on-surface": "#dff6f0", "surface-dim": "#c8dfda", "on-primary-fixed-variant": "#184f44", "on-secondary-fixed-variant": "#3e4c00", "inverse-primary": "#9bd1c3", "surface-bright": "#e7fef9", "primary-fixed": "#b6eede", "error": "#ba1a1a", "on-surface-variant": "#404946", "on-tertiary-container": "#80bbe0", "primary": "#00362d", "on-primary": "#ffffff", "on-error": "#ffffff", "on-tertiary-fixed-variant": "#004c6b", "surface-variant": "#d0e7e2", "tertiary-fixed": "#c6e7ff", "on-primary-fixed": "#00201a", "on-background": "#0a1f1c", "background": "#e7fef9", "secondary-fixed-dim": "#bbd06c", "on-error-container": "#93000a", "outline": "#707976", "on-tertiary-fixed": "#001e2d", "secondary-container": "#d4ea82", "tertiary-container": "#004b6a", "error-container": "#ffdad6", "on-surface": "#0a1f1c", "surface-container-high": "#d6ede8", "on-secondary": "#ffffff", "surface-tint": "#33675c", "tertiary": "#00334a", "secondary-fixed": "#d6ec85", "on-secondary-container": "#586a0e", "outline-variant": "#bfc9c4", "surface-container": "#dcf3ee", "surface-container-lowest": "#ffffff", "on-tertiary": "#ffffff", "surface-container-low": "#e1f8f3", "tertiary-fixed-dim": "#93cef4", "surface": "#e7fef9", "on-secondary-fixed": "#171e00" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin-md": "1.5rem", "space-md": "0.75rem", "margin": "1rem", "gutter-lg": "1.5rem", "gutter": "1rem", "space-lg": "1rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "space-xl": "1.5rem", "margin-lg": "2rem" }, "fontFamily": { "headline-lg": ["Manrope"], "headline-md": ["Manrope"], "label-md": ["Inter"], "headline-lg-mobile": ["Manrope"], "label-sm": ["Inter"], "headline-sm": ["Manrope"], "display-lg": ["Manrope"], "display-lg-mobile": ["Manrope"], "body-md": ["Inter"], "body-sm": ["Inter"], "label-lg": ["Inter"], "body-lg": ["Inter"] }, "fontSize": { "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-lg-mobile": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600" }], "headline-sm": ["18px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "display-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen relative"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><button class="w-11 h-11 rounded-xl flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" id="drawer-toggle" onclick="document.getElementById('mobile-drawer').classList.toggle('-translate-x-full');document.getElementById('drawer-backdrop').classList.toggle('hidden')"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">Dialogbot</span><span class="px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">Demo</span></div><div class="flex items-center gap-1"><span class="font-label-sm text-label-sm text-on-surface-variant max-w-[120px] truncate">Fjord Gulvservice</span><span class="material-symbols-outlined text-[14px] text-on-surface-variant">expand_more</span></div></div></div><div class="flex items-center gap-space-xs"><button class="relative w-11 h-11 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2 right-2 w-4 h-4 bg-error text-on-error rounded-full font-label-sm text-label-sm flex items-center justify-center">3</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><div class="fixed inset-0 bg-primary/40 backdrop-blur-sm z-50 hidden transition-opacity" id="drawer-backdrop" onclick="document.getElementById('mobile-drawer').classList.add('-translate-x-full');this.classList.add('hidden')"></div><aside class="fixed top-0 left-0 h-full w-[84%] max-w-[320px] bg-surface-container-lowest z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col pt-safe pb-safe shadow-[0_12px_32px_rgba(23,43,40,0.12)]" id="mobile-drawer"><div class="p-space-lg bg-surface-container-low"><div class="flex items-center justify-between mb-space-sm"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Virksomhed</span><button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant" onclick="document.getElementById('mobile-drawer').classList.add('-translate-x-full');document.getElementById('drawer-backdrop').classList.add('hidden')"><span class="material-symbols-outlined text-[20px]">close</span></button></div><div class="flex items-center justify-between bg-surface-container-lowest p-space-sm rounded-xl"><div class="flex flex-col"><span class="font-label-lg text-label-lg text-on-surface">Fjord Gulvservice</span><span class="font-label-sm text-label-sm text-on-surface-variant">CVR: DK-38291024</span></div><span class="material-symbols-outlined text-on-surface-variant text-[20px]">unfold_more</span></div></div><div class="flex-1 overflow-y-auto px-space-sm py-space-md flex flex-col gap-1"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="overview" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-lg text-label-lg">Overblik</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="inbox" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">inbox</span><span class="font-label-lg text-label-lg">Indbakke</span></div><span class="px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">2 nye</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="leads" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">contact_phone</span><span class="font-label-lg text-label-lg">Henvendelser</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="tasks" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">checklist</span><span class="font-label-lg text-label-lg">Opgaver</span></div><span class="px-space-xs py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm">1 forfalden</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="reception" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">support_agent</span><span class="font-label-lg text-label-lg">Reception</span></div><span class="px-space-xs py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">Aktiv</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="campaigns" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">campaign</span><span class="font-label-lg text-label-lg">Kampagner</span></div><span class="px-space-xs py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">Aktiv batch</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="knowledge" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">menu_book</span><span class="font-label-lg text-label-lg">Virksomhedsviden</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="reports" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">analytics</span><span class="font-label-lg text-label-lg">Rapporter</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="billing" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">credit_card</span><span class="font-label-lg text-label-lg">Fakturering</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" data-path="settings" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-label-lg text-label-lg">Indstillinger</span></div></a></div><div class="p-space-md bg-surface-container-low flex flex-col gap-space-sm"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">person</span></div><div class="flex flex-col flex-1 min-w-0"><span class="font-label-lg text-label-lg text-on-surface truncate">Mads Fjord</span><span class="font-label-sm text-label-sm text-on-surface-variant">Ejer</span></div><button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high"><span class="material-symbols-outlined text-[20px]">logout</span></button></div><div class="text-center"><span class="font-label-sm text-label-sm text-on-surface-variant/70">Dialogbot OS v2.4.1 (Danmark)</span></div></div></aside><main class="flex-1 flex flex-col relative w-full px-margin pt-16 pb-24 bg-surface"><div class="flex flex-col w-full pb-8">
+<!-- Top Bar / Context Header -->
+<div class="flex flex-col gap-1 mb-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary-container text-on-primary">
+<span class="material-symbols-outlined text-[14px]">sms</span>
+</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-semibold">Skabelonmodul E07</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+        Simulering aktiv
+      </span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">Aftalebeskeder &amp; Previews</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Fjord Gulv — simuleret afsender for automatiserede flows</p>
+</div>
+<!-- Carousel / Chip Picker for the 7 Templates -->
+<div class="flex flex-col gap-2 mb-5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Vælg hændelse (7 triggers):</span>
+<span class="font-label-sm text-label-sm text-primary font-bold" id="active-variant-indicator">2/7: Bekræftet</span>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-1 -mx-margin px-margin scrollbar-none snap-x" id="template-pill-list">
+<button class="template-pill snap-start whitespace-nowrap px-3 py-1.5 rounded-xl font-label-md text-label-md bg-surface-container text-on-surface-variant transition-all flex items-center gap-1.5" onclick="switchTemplate(1, 'Anmodet', this)">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>1. Anmodet
+      </button>
+<button class="template-pill snap-start whitespace-nowrap px-3 py-1.5 rounded-xl font-label-md text-label-md bg-primary text-on-primary font-semibold shadow-sm transition-all flex items-center gap-1.5" onclick="switchTemplate(2, 'Bekræftet', this)">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>2. Bekræftet
+      </button>
+<button class="template-pill snap-start whitespace-nowrap px-3 py-1.5 rounded-xl font-label-md text-label-md bg-surface-container text-on-surface-variant transition-all flex items-center gap-1.5" onclick="switchTemplate(3, 'Påmindelse', this)">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>3. Påmindelse
+      </button>
+<button class="template-pill snap-start whitespace-nowrap px-3 py-1.5 rounded-xl font-label-md text-label-md bg-surface-container text-on-surface-variant transition-all flex items-center gap-1.5" onclick="switchTemplate(4, 'Ændringsforslag', this)">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>4. Ændringsforslag
+      </button>
+<button class="template-pill snap-start whitespace-nowrap px-3 py-1.5 rounded-xl font-label-md text-label-md bg-surface-container text-on-surface-variant transition-all flex items-center gap-1.5" onclick="switchTemplate(5, 'Flyttet', this)">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>5. Flyttet
+      </button>
+<button class="template-pill snap-start whitespace-nowrap px-3 py-1.5 rounded-xl font-label-md text-label-md bg-surface-container text-on-surface-variant transition-all flex items-center gap-1.5" onclick="switchTemplate(6, 'Aflyst', this)">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>6. Aflyst
+      </button>
+<button class="template-pill snap-start whitespace-nowrap px-3 py-1.5 rounded-xl font-label-md text-label-md bg-surface-container text-on-surface-variant transition-all flex items-center gap-1.5" onclick="switchTemplate(7, 'Intern alarm', this)">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>7. Intern alarm
+      </button>
+</div>
+</div>
+<!-- Channel Preview Tabs (SMS vs Email) -->
+<div class="flex items-center justify-between mb-3 bg-surface-container-high p-1 rounded-xl">
+<button class="flex-1 py-1.5 rounded-lg font-label-md text-label-md text-primary bg-surface-container-lowest font-semibold shadow-sm flex items-center justify-center gap-1.5 transition-all" id="tab-sms-btn" onclick="toggleChannel('sms')">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+      SMS Visning
+    </button>
+<button class="flex-1 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-primary flex items-center justify-center gap-1.5 transition-all" id="tab-email-btn" onclick="toggleChannel('email')">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+      E-mail Visning
+    </button>
+</div>
+<!-- 1. SMS Preview Container -->
+<div class="flex flex-col bg-surface-container-lowest rounded-2xl p-4 shadow-sm mb-4" id="sms-preview-card">
+<!-- Simulated Phone Header -->
+<div class="flex items-center justify-between pb-3 mb-3 border-none bg-surface-container-low p-2.5 rounded-xl">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">handyman</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1">
+<span class="font-label-lg text-label-lg text-primary leading-none">Fjord Gulv</span>
+<span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">SMS Afsender-ID</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-md bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">Nu</span>
+</div>
+<!-- Live Chat Speech Bubble -->
+<div class="flex flex-col gap-1 items-start max-w-[94%]">
+<div class="bg-surface-container-low text-on-surface rounded-2xl rounded-tl-sm p-3.5 shadow-sm text-body-sm font-body-sm leading-relaxed" id="sms-bubble-text">
+        Hej Henrik. Bekræftelse på gulvbesigtigelse: <span class="font-semibold text-primary">Ons 28. okt kl. 10:30</span> på <span class="font-semibold text-primary">Strandvejen 42</span>. Montør: <span class="font-semibold">Mads Møller</span>. Aftalestyring: <span class="text-tertiary font-medium underline">dialogbot.example/b/FG-8942</span>
+</div>
+<div class="flex items-center justify-between w-full px-1 text-on-surface-variant font-label-sm text-label-sm">
+<span>Leveret via Gateway DK</span>
+<span class="flex items-center gap-0.5 text-primary"><span class="material-symbols-outlined text-[12px]">done_all</span> Modtaget</span>
+</div>
+</div>
+<!-- Quick Micro-edit Bar for Testing -->
+<div class="mt-4 pt-3 flex items-center justify-between bg-surface-container-high/60 rounded-xl px-3 py-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">edit_note</span>
+<span class="font-label-sm text-label-sm text-on-surface font-medium">160/160 tegn (1 SMS segment)</span>
+</div>
+<button class="text-primary font-label-sm text-label-sm font-semibold flex items-center gap-0.5 hover:underline">
+        Flettefelter
+        <span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+</div>
+</div>
+<!-- 2. Email Preview Container (Initially Hidden or Accessible via Tab) -->
+<div class="hidden flex flex-col bg-surface-container-lowest rounded-2xl p-4 shadow-sm mb-4" id="email-preview-card">
+<!-- Email Simulated Client Chrome -->
+<div class="bg-surface-container-low rounded-xl p-3 mb-3 flex flex-col gap-1">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="truncate">Fra: <strong>booking@fjordgulvservice.dk</strong></span>
+<span>28. okt</span>
+</div>
+<div class="font-label-lg text-label-lg text-primary font-semibold truncate" id="email-subject-line">
+        Bekræftelse: Besigtigelse af trægulv på Strandvejen 42
+      </div>
+</div>
+<!-- Embedded Email Content Card -->
+<div class="bg-surface-container-lowest rounded-xl p-4 flex flex-col gap-3 shadow-[0_2px_8px_rgba(23,43,40,0.06)]">
+<!-- Logo Header -->
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-headline-sm font-bold">
+            F
+          </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary tracking-tight">Fjord Gulvservice</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Professionel gulvafslibning &amp; pleje</span>
+</div>
+</div>
+</div>
+<!-- Hero Visual Accent Inside Email -->
+<div class="relative w-full h-28 rounded-xl overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Close up of freshly sanded natural oak wood floor planks in bright Danish interior morning light, warm Nordic aesthetic, high craftmanship, clean architectural interior with serene vibe" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoFc0cgvrvvSbWZBFa1jgKaU0FeXbRVdIJGobgYg6gClWYM6MXVDK6Z1eKZDT0H6ZO0U3GUwdH-4bBkdGXFHtnrPetxIhyAsRhJfdd6ItxQ1V692GjlqliPlGXmRCSEjIQrJsCyQ5RkNVWs2K6kxra1ov2GjzWQU9BQFGsX0b_N9NhAFBAVHmmhC-8S3DTKkdRCePLclwBoPpONnUHKqv90OlkKpE8fEI9OgPpnfnMbcq6cfEAdl0Avw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent flex items-end p-2.5">
+<span class="font-label-lg text-label-lg text-on-primary font-semibold">Vi glæder os til at besigtige dit gulv</span>
+</div>
+</div>
+<!-- Booking Specs Grid -->
+<div class="grid grid-cols-2 gap-2 bg-surface-container-low p-3 rounded-xl">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tidspunkt:</span>
+<span class="font-label-lg text-label-lg text-primary font-bold">Ons 28. okt 10:30</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tildelt montør:</span>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Mads Møller</span>
+</div>
+<div class="col-span-2 pt-1 flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Adresse:</span>
+<span class="font-body-sm text-body-sm text-on-surface">Strandvejen 42, 2900 Hellerup</span>
+</div>
+</div>
+<!-- Checklist Section -->
+<div class="flex flex-col gap-1.5 bg-surface-container-high/40 p-3 rounded-xl">
+<span class="font-label-md text-label-md text-primary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">checklist</span>
+          Klargøring inden montøren ankommer:
+        </span>
+<div class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
+<span>Sørg for fri adgang til de berørte rum</span>
+</div>
+<div class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
+<span>Hav evt. oprindelig overfladebehandling klar (lak/olie)</span>
+</div>
+</div>
+<!-- Primary Action CTA Button inside email -->
+<button class="w-full py-2.5 px-4 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+        Administrér eller flyt aftale (W13)
+      </button>
+</div>
+</div>
+<!-- Operational Guardrails & Delivery Rules -->
+<div class="flex flex-col gap-3 mb-4">
+<!-- Notice Badge / Info Callout -->
+<div class="bg-surface-container-low rounded-2xl p-3.5 flex items-start gap-3 shadow-sm">
+<div class="w-8 h-8 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">security_update_good</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-primary font-bold">Beskedfejl påvirker ikke bookingen</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+          En eventuel SMS-leveringsfejl eller blokeret modtager annullerer ikke montørbesøget i kalenderen. Mads møder op som planlagt.
+        </span>
+</div>
+</div>
+<!-- Notification Delay Configs -->
+<div class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
+<span class="font-label-lg text-label-lg text-primary font-bold">Automatiske varslingstider</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">Aktiv regel</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="flex flex-col p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">1. Varsling</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">check</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">24 timer</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">før fremmøde via SMS</span>
+</div>
+<div class="flex flex-col p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">2. Varsling</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">check</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">2 timer</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">før montørens ankomst</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Test & Publish Action Bar -->
+<div class="flex flex-col gap-2.5">
+<button class="w-full h-12 rounded-xl bg-secondary-container text-on-secondary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.99] shadow-sm" onclick="simulateSendTest(this)">
+<span class="material-symbols-outlined text-[20px]">send_to_mobile</span>
+<span id="test-btn-text">Send test-SMS til mit nummer (Simuleret)</span>
+</button>
+<div class="flex gap-2">
+<button class="flex-1 h-11 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-semibold flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.99] transition-all" onclick="handleSave(this)">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span id="save-btn-text">Gem skabelon</span>
+</button>
+<button class="px-3.5 h-11 rounded-xl bg-surface-container text-on-surface font-label-lg text-label-lg font-medium flex items-center justify-center gap-1 hover:bg-surface-container-high transition-colors" onclick="showHistory()">
+<span class="material-symbols-outlined text-[18px]">history</span>
+        Log
+      </button>
+</div>
+</div>
+<!-- Interactive Toast Notification Element (Hidden by default) -->
+<div class="fixed bottom-20 left-4 right-4 bg-inverse-surface text-inverse-on-surface p-3 rounded-xl shadow-lg flex items-center justify-between opacity-0 pointer-events-none transition-all duration-300 z-50" id="sim-toast">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]">check_circle</span>
+<span class="font-label-md text-label-md" id="toast-message">Test-SMS sendt til Mads Fjord (+45 22 ** ** 12)</span>
+</div>
+<button class="text-inverse-on-surface/80" onclick="hideToast()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<script>
+  const templateVariants = {
+    1: {
+      title: "1. Anmodet",
+      sms: "Hej Henrik. Tak for din henvendelse! Vi har modtaget din forespørgsel på gulvbesigtigelse på Strandvejen 42. Vi gennemgår kalenderen og bekræfter snarest.",
+      subject: "Vi behandler din bookingforespørgsel – Fjord Gulvservice"
+    },
+    2: {
+      title: "2. Bekræftet",
+      sms: "Hej Henrik. Bekræftelse på gulvbesigtigelse: Ons 28. okt kl. 10:30 på Strandvejen 42. Montør: Mads Møller. Aftalestyring: dialogbot.example/b/FG-8942",
+      subject: "Bekræftelse: Besigtigelse af trægulv på Strandvejen 42"
+    },
+    3: {
+      title: "3. Påmindelse",
+      sms: "Husk din aftale i morgen ons 28. okt kl. 10:30 med Fjord Gulvservice på Strandvejen 42. Skal aftalen ændres? Se dialogbot.example/b/FG-8942",
+      subject: "Påmindelse om montørbesøg i morgen kl. 10:30"
+    },
+    4: {
+      title: "4. Ændringsforslag",
+      sms: "Hej Henrik. Mads Møller er forsinket grundet trafik. Kan vi rykke besigtigelsen på Strandvejen 42 til kl. 11:15? Svar 'JA' her eller se dialogbot.example/b/FG-8942",
+      subject: "Forslag til nyt tidspunkt i dag for besigtigelse"
+    },
+    5: {
+      title: "5. Flyttet",
+      sms: "Aftalen er flyttet efter ønske: Ny tid er Fredag d. 30. okt kl. 09:00 på Strandvejen 42. Montør: Mads Møller. Se detaljer: dialogbot.example/b/FG-8942",
+      subject: "Bekræftelse på ændret tidspunkt – Fjord Gulvservice"
+    },
+    6: {
+      title: "6. Aflyst",
+      sms: "Aftalen Ons 28. okt på Strandvejen 42 er nu aflyst. Hvis du ønsker en ny vurdering senere, kan du booke direkte på fjordgulv.dk eller ringe på 70 20 10 30.",
+      subject: "Aflysning af aftale – Fjord Gulvservice"
+    },
+    7: {
+      title: "7. Intern alarm",
+      sms: "[INTERN ALARM] Kunde Henrik Andersen (Strandvejen 42) har afvist 2 varslinger i træk. Ring manuelt op før kørsel på +45 21 44 98 10.",
+      subject: "INTERN ALARM: Manglende bekræftelse på Strandvejen 42"
+    }
+  };
+
+  function switchTemplate(index, name, btnElement) {
+    // Update Active Pill Styles
+    document.querySelectorAll('.template-pill').forEach(pill => {
+      pill.className = "template-pill snap-start whitespace-nowrap px-3 py-1.5 rounded-xl font-label-md text-label-md bg-surface-container text-on-surface-variant transition-all flex items-center gap-1.5";
+      const dot = pill.querySelector('span');
+      if (dot) dot.className = "w-1.5 h-1.5 rounded-full bg-outline";
+    });
+
+    btnElement.className = "template-pill snap-start whitespace-nowrap px-3 py-1.5 rounded-xl font-label-md text-label-md bg-primary text-on-primary font-semibold shadow-sm transition-all flex items-center gap-1.5";
+    const dot = btnElement.querySelector('span');
+    if (dot) dot.className = index === 7 ? "w-1.5 h-1.5 rounded-full bg-error" : "w-1.5 h-1.5 rounded-full bg-secondary-fixed";
+
+    // Update Counter & Content
+    document.getElementById('active-variant-indicator').innerText = `${index}/7: ${name}`;
+    
+    const data = templateVariants[index];
+    if (data) {
+      document.getElementById('sms-bubble-text').innerText = data.sms;
+      document.getElementById('email-subject-line').innerText = data.subject;
+    }
+  }
+
+  function toggleChannel(channel) {
+    const smsCard = document.getElementById('sms-preview-card');
+    const emailCard = document.getElementById('email-preview-card');
+    const smsBtn = document.getElementById('tab-sms-btn');
+    const emailBtn = document.getElementById('tab-email-btn');
+
+    if (channel === 'sms') {
+      smsCard.classList.remove('hidden');
+      emailCard.classList.add('hidden');
+      smsBtn.className = "flex-1 py-1.5 rounded-lg font-label-md text-label-md text-primary bg-surface-container-lowest font-semibold shadow-sm flex items-center justify-center gap-1.5 transition-all";
+      emailBtn.className = "flex-1 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-primary flex items-center justify-center gap-1.5 transition-all";
+    } else {
+      smsCard.classList.add('hidden');
+      emailCard.classList.remove('hidden');
+      emailBtn.className = "flex-1 py-1.5 rounded-lg font-label-md text-label-md text-primary bg-surface-container-lowest font-semibold shadow-sm flex items-center justify-center gap-1.5 transition-all";
+      smsBtn.className = "flex-1 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-primary flex items-center justify-center gap-1.5 transition-all";
+    }
+  }
+
+  function simulateSendTest(btn) {
+    const originalText = document.getElementById('test-btn-text').innerText;
+    document.getElementById('test-btn-text').innerText = 'Afsender test...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      document.getElementById('test-btn-text').innerText = originalText;
+      btn.disabled = false;
+      showToast('Simuleret SMS modtaget: "Fjord Gulv: Bekræftelse..."');
+    }, 600);
+  }
+
+  function handleSave(btn) {
+    const textSpan = document.getElementById('save-btn-text');
+    textSpan.innerText = 'Gemmer...';
+    setTimeout(() => {
+      textSpan.innerText = 'Skabelon opdateret!';
+      setTimeout(() => {
+        textSpan.innerText = 'Gem skabelon';
+      }, 1500);
+      showToast('Skabelonindstillinger og timing er gemt i OS');
+    }, 450);
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('sim-toast');
+    document.getElementById('toast-message').innerText = msg;
+    toast.classList.remove('opacity-0', 'pointer-events-none');
+    toast.classList.add('opacity-100', 'pointer-events-auto');
+
+    setTimeout(() => {
+      hideToast();
+    }, 3200);
+  }
+
+  function hideToast() {
+    const toast = document.getElementById('sim-toast');
+    toast.classList.add('opacity-0', 'pointer-events-none');
+    toast.classList.remove('opacity-100', 'pointer-events-auto');
+  }
+
+  function showHistory() {
+    showToast('Sidst ændret: I dag kl. 09:12 af Mads Fjord');
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.05)]" data-active-classes="text-primary bg-primary-container/10 font-label-lg"><div class="h-16 px-space-sm flex items-center justify-around"><a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 rounded-xl text-on-surface-variant hover:text-primary transition-all" data-path="overview" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-label-sm text-label-sm">Overblik</span></a><a class="relative flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 rounded-xl text-on-surface-variant hover:text-primary transition-all" data-path="inbox" href="#"><div class="relative"><span class="material-symbols-outlined text-[22px]">inbox</span><span class="absolute -top-1 -right-2 w-4 h-4 bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm flex items-center justify-center">2</span></div><span class="font-label-sm text-label-sm">Indbakke</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 rounded-xl text-on-surface-variant hover:text-primary transition-all" data-path="campaigns" href="#"><span class="material-symbols-outlined text-[22px]">campaign</span><span class="font-label-sm text-label-sm">Kampagner</span></a><button class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 rounded-xl text-on-surface-variant hover:text-primary transition-all" onclick="document.getElementById('mobile-drawer').classList.remove('-translate-x-full');document.getElementById('drawer-backdrop').classList.remove('hidden')"><span class="material-symbols-outlined text-[22px]">apps</span><span class="font-label-sm text-label-sm">Mere</span></button></div></nav></body></html>

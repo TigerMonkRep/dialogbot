@@ -12,6 +12,19 @@
   --font-display: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Stitch pairs every text-* size with a font-* family of the same name. */
+  --font-display-lg: var(--font-display);
+  --font-display-lg-mobile: var(--font-display);
+  --font-headline-lg: var(--font-display);
+  --font-headline-lg-mobile: var(--font-display);
+  --font-headline-md: var(--font-display);
+  --font-headline-sm: var(--font-display);
+  --font-body-lg: var(--font-body);
+  --font-body-md: var(--font-body);
+  --font-body-sm: var(--font-body);
+  --font-label-lg: var(--font-body);
+  --font-label-md: var(--font-body);
+  --font-label-sm: var(--font-body);
 
   --color-background: #e7fef9;
   --color-on-background: #0a1f1c;
@@ -84,6 +97,14 @@
   --text-display-lg--line-height: 44px;
   --text-display-lg--letter-spacing: -0.03em;
   --text-display-lg--font-weight: 700;
+  --text-display-lg-mobile: 28px;
+  --text-display-lg-mobile--line-height: 36px;
+  --text-display-lg-mobile--letter-spacing: -0.02em;
+  --text-display-lg-mobile--font-weight: 700;
+  --text-headline-lg-mobile: 22px;
+  --text-headline-lg-mobile--line-height: 30px;
+  --text-headline-lg-mobile--letter-spacing: -0.01em;
+  --text-headline-lg-mobile--font-weight: 700;
   --text-headline-lg: 28px;
   --text-headline-lg--line-height: 36px;
   --text-headline-lg--letter-spacing: -0.02em;
@@ -118,7 +139,7 @@
 
 html { background: var(--color-surface); color: var(--color-on-surface); }
 body { font-family: var(--font-body); min-height: 100dvh; }
-h1, h2, h3, .font-display { font-family: var(--font-display); }
+@layer base { h1, h2, h3 { font-family: var(--font-display); } }
 :focus-visible { outline: 3px solid var(--color-secondary-container); outline-offset: 2px; }
 
 .material-symbols-outlined {
@@ -129,3 +150,9 @@ h1, h2, h3, .font-display { font-family: var(--font-display); }
   -webkit-font-smoothing: antialiased;
 }
 .material-symbols-outlined.filled { font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24; }
+
+/* Stitch base helpers */
+body { overscroll-behavior: none; }
+@utility pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+@utility pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+@utility no-scrollbar { scrollbar-width: none; &::-webkit-scrollbar { display: none; } }

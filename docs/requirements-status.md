@@ -23,7 +23,7 @@ Kun krav, der er berørt af denne etape, er opført. Statusniveauer: **implement
 | K05 Gennemgangskø | /app/knowledge/review | Delvist | `review-queue`, `submit/approve/reject` | `test_staff_cannot_approve_*`, `test_next_action_and_permission_*` | Konflikt-/kildeændringsdetektion kræver kilder (ikke implementeret). |
 | S01 Virksomhedsprofil | /app/settings/business | Implementeret | som O01 | `test_manual_setup_*` | Åbningstider ligger i viden (`opening_hours`), ikke i profil. |
 | S02 Team, invitationer, roller, fjern | /app/settings/team | Implementeret | `workspaces/router` members + invitations | `test_staff_cannot_*`, `test_admin_cannot_escalate_*`, invitationstests | Bekræftelsesdialog er frontend. |
-| S08 Profil, sprog, sessioner, log ud | /app/settings/profile | Delvist | `/auth/me`, `/auth/sessions`, logout, reset | `test_register_login_*`, `test_password_reset_flow` | Redigering af navn/brugerfladesprog via API mangler (kun ved oprettelse). |
+| S08 Profil, sprog, sessioner, log ud | /app/settings/profile | Delvist (UI bygget, skrivebeskyttet) | `/auth/me`, `/auth/sessions`, logout, reset | `test_register_login_*`, `test_password_reset_flow` | Redigering af navn/brugerfladesprog via API mangler (kun ved oprettelse). |
 | S09 Aktivitetslog | /app/settings/activity | Implementeret | `audit_log`, `GET …/audit` | `test_admin_cannot_escalate_*`, `test_config_change_*` | Kun admin+ kan læse. |
 | G01 Opsætningshjem, én næste handling, ærlig fremdrift, gem/genoptag | /app/setup | Implementeret | `setup/plan.compute_plan` | `test_resume_after_new_session`, `test_required_task_cannot_be_skipped_*` | Reparationstilstande begrænset til `stale`-tjek. |
 | G02 Mål/vejledningsvalg, redigérbar plan | /app/setup/plan | Delvist | `guidance_mode`, opgaver afledt af mål | `test_manual_setup_*`, `test_campaign_only_plan_*` | "Eksisterende værktøjer" som input findes ikke. |
@@ -45,3 +45,7 @@ Kun krav, der er berørt af denne etape, er opført. Statusniveauer: **implement
 | DB-017 Fælles fixtures og testur | Delvist: seed og tests bruger `canonical-demo-data.json`-værdier; K04 evalueres med eksplicit `on_date` (intet dagsdato-afhængigt). |
 | DB-018 Ægte kapabilitet kan ikke udledes af demo | Implementeret via kapabilitetsregistret; alle adaptere ud over simuleret mail er `not_implemented`. |
 | DB-001, DB-002, DB-005 | Reglerne er kodet og testet i backend; eksportens HTML er ikke rettet (ikke en del af etapen). |
+
+## Design-verifikation mod Stitch (checkpoint 4)
+
+Browserkontrolleret lokalt ved 1440 px (desktop-reference) og 390 px (mobil-reference) med `design-reference/tools/compare.mjs`: G01–G05, A06/O01/O02, K01–K05 (alle faner), A01–A05 (mobilreference), begge app-skaller. O03/O04 følger G01-kortdesignet (ingen egen Stitch-skærm). S02/S08/S09 og P01 er bygget i designsystemet (ingen egne Stitch-skærme). G03-wrapper mangler. E2E-rejser i `web/e2e` dækker A01–A06, O01–O04, K03–K05, G01/G05, S02/S08/S09 ved 1440 og 390 px. Se `docs/implementation-progress.md`, checkpoint 4.

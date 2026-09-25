@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+
+<html lang="da"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Manrope:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary":"#ffffff","secondary-fixed-dim":"#bbd06c","surface":"#e7fef9","secondary-fixed":"#d6ec85","on-primary":"#ffffff","on-secondary-fixed-variant":"#3e4c00","surface-container-highest":"#d0e7e2","primary-fixed-dim":"#9bd1c3","on-tertiary-fixed":"#001e2d","on-tertiary-container":"#80bbe0","inverse-on-surface":"#dff6f0","surface-container-high":"#d6ede8","background":"#e7fef9","secondary-container":"#d4ea82","primary-container":"#164e43","on-background":"#0a1f1c","surface-variant":"#d0e7e2","tertiary":"#00334a","on-secondary":"#ffffff","on-error":"#ffffff","on-primary-fixed-variant":"#184f44","tertiary-fixed":"#c6e7ff","error-container":"#ffdad6","error":"#ba1a1a","surface-dim":"#c8dfda","surface-bright":"#e7fef9","surface-container":"#dcf3ee","on-primary-container":"#88beb0","on-tertiary-fixed-variant":"#004c6b","outline-variant":"#bfc9c4","tertiary-container":"#004b6a","on-surface":"#0a1f1c","inverse-primary":"#9bd1c3","surface-container-lowest":"#ffffff","on-surface-variant":"#404946","on-primary-fixed":"#00201a","on-secondary-container":"#586a0e","inverse-surface":"#203431","on-error-container":"#93000a","outline":"#707976","surface-container-low":"#e1f8f3","primary-fixed":"#b6eede","surface-tint":"#33675c","on-secondary-fixed":"#171e00","tertiary-fixed-dim":"#93cef4","secondary":"#546508","primary":"#00362d"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-xs":"0.25rem","margin-lg":"2rem","margin-md":"1.5rem","space-xl":"1.5rem","space-md":"0.75rem","gutter-lg":"1.5rem","space-sm":"0.5rem","gutter":"1rem","space-lg":"1rem","margin":"1rem"},fontFamily:{"body-lg":["Inter"],"headline-sm":["Manrope"],"body-md":["Inter"],"headline-md":["Manrope"],"label-sm":["Inter"],"display-lg":["Manrope"],"headline-lg-mobile":["Manrope"],"label-md":["Inter"],"headline-lg":["Manrope"],"display-lg-mobile":["Manrope"],"body-sm":["Inter"],"label-lg":["Inter"]},fontSize:{"body-lg":["16px",{lineHeight:"24px",fontWeight:"400"}],"headline-sm":["18px",{lineHeight:"26px",letterSpacing:"-0.01em",fontWeight:"600"}],"body-md":["14px",{lineHeight:"20px",fontWeight:"400"}],"headline-md":["22px",{lineHeight:"30px",letterSpacing:"-0.015em",fontWeight:"600"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}],"display-lg":["36px",{lineHeight:"44px",letterSpacing:"-0.03em",fontWeight:"700"}],"headline-lg-mobile":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"700"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"500"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"display-lg-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-sm":["13px",{lineHeight:"18px",fontWeight:"400"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.01em",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)] select-none"><div class="p-space-lg flex flex-col gap-space-xs"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-secondary-fixed text-[20px]">terminal</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">Dialogbot</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Operator Console</span></div></div><div class="mt-space-md p-space-sm rounded-lg bg-surface-container flex items-center justify-between"><span class="font-label-sm text-label-sm text-on-surface-variant">Sikkerhedsniveau</span><span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded bg-primary text-secondary-fixed font-bold">P9 Restricted</span></div></div><div class="px-space-md py-space-xs"><span class="font-label-sm text-label-sm text-outline uppercase tracking-wider px-space-sm">Operatørmoduler</span></div><nav class="flex-1 px-space-md space-y-1 overflow-y-auto" data-active-classes="bg-primary text-on-primary font-bold shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="driftsoverblik" href="#"><span class="material-symbols-outlined text-[18px]">monitoring</span><span class="flex-1 truncate">M01 Driftsoverblik</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="arbejdsrum-support" href="#"><span class="material-symbols-outlined text-[18px]">headset_mic</span><span class="flex-1 truncate">M02 Arbejdsrum & Support</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="haendelser-genkoersel" href="#"><span class="material-symbols-outlined text-[18px]">replay</span><span class="flex-1 truncate">M03 Hændelser & Genkørsel</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="priser-ordrer-tvister" href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span class="flex-1 truncate">M04 Priser, Ordrer & Tvister</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="platformsskabeloner" href="#"><span class="material-symbols-outlined text-[18px]">schema</span><span class="flex-1 truncate">M05 Platformsskabeloner</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="supportkoe-tickets" href="#"><span class="material-symbols-outlined text-[18px]">confirmation_number</span><span class="flex-1 truncate">M06 Supportkø & Tickets</span></a><a class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all" data-path="revisorlog-audit" href="#"><span class="material-symbols-outlined text-[18px]">security</span><span class="flex-1 truncate">M07 Revisorlog & Audit</span></a></nav><div class="p-space-md mx-space-md mb-space-md rounded-xl bg-surface-container-high text-on-surface-variant text-center flex flex-col items-center gap-space-xs"><span class="font-label-sm text-label-sm text-outline uppercase">Sikkerhedsstatus</span><div class="flex items-center gap-space-xs font-label-md text-label-md text-primary font-bold"><span class="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse"></span>Kryptografisk Logning Aktiv</div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 px-gutter-lg flex items-center justify-between"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-error-container text-on-error-container shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><span class="material-symbols-outlined text-error text-[18px]">verified_user</span><span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-error">OPERATØRADGANG - LOGFØRT AUDIT</span></div><div class="hidden xl:flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-surface-container-high"><span class="material-symbols-outlined text-on-surface-variant text-[16px]">badge</span><span class="font-label-md text-label-md text-on-surface">Revisor / Lead Tech: <strong class="text-primary">C. Lind</strong></span></div></div><div class="flex items-center gap-space-md"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-space-sm text-on-surface-variant text-[18px]">search</span><input class="w-64 pl-8 pr-space-md py-1.5 rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary shadow-[0_1px_8px_rgba(0,0,0,0.04)]" placeholder="Hurtigsøgning (telefoni, log, tlf...)" type="text"/></div><div class="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container text-on-surface font-body-sm text-body-sm"><span class="material-symbols-outlined text-secondary text-[18px]">timer</span><span class="font-label-md text-label-md text-on-surface-variant">Session:</span><span class="font-label-md text-label-md font-bold text-primary">14:52</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 min-h-screen bg-surface px-gutter-lg py-margin-md"><div class="flex flex-col w-full gap-space-lg pb-margin-lg">
+<!-- Sub-header / Context Ribbon -->
+<div class="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-space-md bg-surface-container-low p-space-lg rounded-xl shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-headline-sm text-headline-sm text-primary">REVISORLOG & OPERATØRAUDIT (M07)</span>
+<span class="px-space-sm py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm font-semibold tracking-wide">P9 RESTRICTED</span>
+<span class="px-space-sm py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">Operatør: Clara Lind (C. Lind)</span>
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+          Simuleret intern revisionslog
+        </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-4xl">
+        Komplet filtrerbar operatørhistorik over samtlige administrative opslag, supportsessioner, skabelonpubliceringer og finansielle tvistafgørelser. Hver handling er knyttet til obligatorisk begrundelse, kryptografisk hash og tidsstempel.
+      </p>
+</div>
+<!-- Export Action Cluster -->
+<div class="flex items-center gap-space-sm w-full xl:w-auto shrink-0 justify-start xl:justify-end">
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container-lowest text-primary hover:bg-surface-container-highest transition-all shadow-sm font-label-md text-label-md" onclick="triggerExportNotice('CSV/JSON')">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Eksportér revisionsudtræk (CSV / JSON)</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all shadow-sm font-label-md text-label-md font-semibold" onclick="triggerExportNotice('Certifikat')">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Udskriv revisionscertifikat</span>
+</button>
+</div>
+</div>
+<!-- Operational Telemetry Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-space-md">
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Logførte hændelser (24h)</span>
+<span class="material-symbols-outlined text-[20px] text-primary">history_toggle_off</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display-lg text-display-lg text-primary">128</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold">+12% vs. snit</span>
+</div>
+<div class="mt-space-xs font-body-sm text-body-sm text-on-surface-variant">100% begrundelsesdækning</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">P9 Elevitationssessioner</span>
+<span class="material-symbols-outlined text-[20px] text-tertiary">key</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display-lg text-display-lg text-tertiary">3</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Max varighed: 30m</span>
+</div>
+<div class="mt-space-xs font-body-sm text-body-sm text-on-surface-variant">1 aktiv session i workspace</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Tvistafgørelser (M04)</span>
+<span class="material-symbols-outlined text-[20px] text-secondary">balance</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display-lg text-display-lg text-secondary">5</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Heraf 1 delvist afvist</span>
+</div>
+<div class="mt-space-xs font-body-sm text-body-sm text-on-surface-variant">Værdi suspenderet: 149,00 kr.</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Audit Integritet</span>
+<span class="material-symbols-outlined text-[20px] text-primary">security</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-sm">
+<span class="font-display-lg text-display-lg text-primary">SHA-256</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Verificeret</span>
+</div>
+<div class="mt-space-xs font-body-sm text-body-sm text-on-surface-variant">Nul huller i logkæde</div>
+</div>
+</div>
+<!-- Filter & Query Control Center -->
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col lg:flex-row gap-space-md items-stretch lg:items-center justify-between">
+<!-- Fast search -->
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">manage_search</span>
+<input class="w-full pl-10 pr-space-md py-2.5 rounded-lg bg-surface-container-low font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary shadow-sm" id="auditFilterSearch" onkeyup="filterAuditEntries()" placeholder="Søg på arbejdsrum (f.eks. Fjord), sag-ID (#DISP-1049, #SUP-R2) eller specifik hændelse..." type="text"/>
+</div>
+<!-- Quick filters -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<div class="flex items-center gap-1 bg-surface-container-low px-space-sm py-1 rounded-lg">
+<span class="material-symbols-outlined text-[16px] text-outline">person</span>
+<select class="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none cursor-pointer py-1" id="filterActor" onchange="filterAuditEntries()">
+<option value="alle">Aktør: Alle</option>
+<option selected="" value="C. Lind">Aktør: C. Lind</option>
+<option value="System">Aktør: System</option>
+</select>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-space-sm py-1 rounded-lg">
+<span class="material-symbols-outlined text-[16px] text-outline">date_range</span>
+<select class="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none cursor-pointer py-1" id="filterTime">
+<option selected="" value="24h">Periode: Seneste 24 timer</option>
+<option value="7d">Periode: Seneste 7 dage</option>
+<option value="30d">Periode: Seneste 30 dage</option>
+</select>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-space-sm py-1 rounded-lg">
+<span class="material-symbols-outlined text-[16px] text-outline">category</span>
+<select class="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none cursor-pointer py-1" id="filterType" onchange="filterAuditEntries()">
+<option selected="" value="alle">Handlingstype: Alle handlinger</option>
+<option value="M04 Finans">Finansiel tvist (B04/M04)</option>
+<option value="M02 Adgang">Supportadgang (M02)</option>
+<option value="M06 Support">Supportbesked (M06)</option>
+<option value="M05 Skabelon">Skabelon (M05)</option>
+<option value="M03 Drift">Genkørsel & Drift (M03)</option>
+</select>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-space-sm py-1 rounded-lg">
+<span class="material-symbols-outlined text-[16px] text-outline">task_alt</span>
+<select class="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none cursor-pointer py-1" id="filterOutcome" onchange="filterAuditEntries()">
+<option selected="" value="alle">Udfald: Alle</option>
+<option value="gennemfoert">Gennemført / Succes</option>
+<option value="afvist">Afvist / Suspenderet</option>
+<option value="fejl">Fejl / Afbrudt</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<!-- Workspace Grid: Audit Log Table (8 Cols) & Deep Audit Inspection Panel (4 Cols) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Left Table Block (Cols 8) -->
+<div class="lg:col-span-8 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="p-space-md bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">receipt_long</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Kronologisk revisionsspor</span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm text-on-surface-variant font-mono" id="matchCounter">5 hændelser</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Klik på en række for diff-inspektion</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-2.5 px-space-md">Tidspunkt</th>
+<th class="py-2.5 px-space-sm">Aktør</th>
+<th class="py-2.5 px-space-sm">Arbejdsrum / Modul</th>
+<th class="py-2.5 px-space-md">Handling & Formål</th>
+<th class="py-2.5 px-space-md text-right">Udfald</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-transparent" id="auditTableBody">
+<!-- Row 1: M06 Support -->
+<tr class="audit-row cursor-pointer hover:bg-surface-container-low transition-colors group" data-actor="C. Lind" data-module="M06 Support" data-outcome="gennemfoert" data-term="fjord gulvservice sup-r2-001 google oauth" onclick="selectAuditRow('SUP-R2-001', this)">
+<td class="py-3 px-space-md align-top whitespace-nowrap">
+<div class="font-mono text-label-md text-on-surface font-semibold">28. okt 2026</div>
+<div class="font-mono text-label-sm text-on-surface-variant">10:05:14 UTC+2</div>
+</td>
+<td class="py-3 px-space-sm align-top whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-[10px]">CL</span>
+<span class="font-label-md text-label-md text-primary font-bold">C. Lind</span>
+</div>
+<span class="text-label-sm text-outline">Lead Tech</span>
+</td>
+<td class="py-3 px-space-sm align-top">
+<div class="font-label-md text-label-md text-on-surface font-medium">Fjord Gulvservice ApS</div>
+<span class="inline-block px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant text-[11px] font-mono">M06 Support</span>
+</td>
+<td class="py-3 px-space-md align-top">
+<div class="font-label-md text-label-md text-on-surface font-semibold">Sendt kundesvar i sag #SUP-R2-001</div>
+<p class="text-on-surface-variant text-label-sm italic mt-0.5">Begrundelse: 'Fejlfinding af Google OAuth timeout'</p>
+</td>
+<td class="py-3 px-space-md align-top text-right whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                    Gennemført
+                  </span>
+</td>
+</tr>
+<!-- Row 2: DISP-1049 (Selected by default) -->
+<tr class="audit-row cursor-pointer bg-surface-container-high transition-colors group ring-1 ring-inset ring-primary" data-actor="C. Lind" data-module="M04 Finans" data-outcome="afvist" data-term="fjord gulvservice disp-1049 rønne fjs-8821 kreditnota" onclick="selectAuditRow('DISP-1049', this)">
+<td class="py-3 px-space-md align-top whitespace-nowrap">
+<div class="font-mono text-label-md text-on-surface font-semibold">28. okt 2026</div>
+<div class="font-mono text-label-sm text-on-surface-variant">09:42:02 UTC+2</div>
+</td>
+<td class="py-3 px-space-sm align-top whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-[10px]">CL</span>
+<span class="font-label-md text-label-md text-primary font-bold">C. Lind</span>
+</div>
+<span class="text-label-sm text-outline">Lead Tech</span>
+</td>
+<td class="py-3 px-space-sm align-top">
+<div class="font-label-md text-label-md text-on-surface font-medium">Fjord Gulvservice ApS</div>
+<span class="inline-block px-1.5 py-0.5 rounded bg-primary text-on-primary text-[11px] font-mono font-bold">M04 Finans</span>
+</td>
+<td class="py-3 px-space-md align-top">
+<div class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1">
+<span>Afgørelse i tvist #DISP-1049</span>
+<span class="material-symbols-outlined text-primary text-[16px]">visibility</span>
+</div>
+<p class="text-on-surface-variant text-label-sm italic mt-0.5">Begrundelse: 'Medhold: Opgave i Rønne uden for dækningsområde jf. FJS-8821 §4. Ufaktureret post afvist. Ingen kreditnota.'</p>
+</td>
+<td class="py-3 px-space-md align-top text-right whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-surface-container-highest text-primary font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[14px]">do_not_disturb_on</span>
+                    Afvist fra fakt. (-149 kr.)
+                  </span>
+</td>
+</tr>
+<!-- Row 3: M02 Adgang -->
+<tr class="audit-row cursor-pointer hover:bg-surface-container-low transition-colors group" data-actor="C. Lind" data-module="M02 Adgang" data-outcome="gennemfoert" data-term="fjord gulvservice session oauth p9 disp-1049" onclick="selectAuditRow('ACC-M02', this)">
+<td class="py-3 px-space-md align-top whitespace-nowrap">
+<div class="font-mono text-label-md text-on-surface font-semibold">28. okt 2026</div>
+<div class="font-mono text-label-sm text-on-surface-variant">09:18:40 UTC+2</div>
+</td>
+<td class="py-3 px-space-sm align-top whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-[10px]">CL</span>
+<span class="font-label-md text-label-md text-primary font-bold">C. Lind</span>
+</div>
+<span class="text-label-sm text-outline">Lead Tech</span>
+</td>
+<td class="py-3 px-space-sm align-top">
+<div class="font-label-md text-label-md text-on-surface font-medium">Fjord Gulvservice ApS</div>
+<span class="inline-block px-1.5 py-0.5 rounded bg-tertiary-container text-on-tertiary-container text-[11px] font-mono">M02 Adgang</span>
+</td>
+<td class="py-3 px-space-md align-top">
+<div class="font-label-md text-label-md text-on-surface font-semibold">Aktiveret tidsbegrænset supportsession (30 min)</div>
+<p class="text-on-surface-variant text-label-sm italic mt-0.5">Begrundelse: 'Undersøgelse af tvist DISP-1049 og OAuth-fejl'</p>
+</td>
+<td class="py-3 px-space-md align-top text-right whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">lock_open</span>
+                    Godkendt P9
+                  </span>
+</td>
+</tr>
+<!-- Row 4: M03 Drift / Idempotent runner -->
+<tr class="audit-row cursor-pointer hover:bg-surface-container-low transition-colors group" data-actor="System" data-module="M03 Drift" data-outcome="gennemfoert" data-term="system idempotent afstemning netværk op-88219" onclick="selectAuditRow('OP-88219', this)">
+<td class="py-3 px-space-md align-top whitespace-nowrap">
+<div class="font-mono text-label-md text-on-surface font-semibold">28. okt 2026</div>
+<div class="font-mono text-label-sm text-on-surface-variant">08:30:19 UTC+2</div>
+</td>
+<td class="py-3 px-space-sm align-top whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-sm text-[10px]">SYS</span>
+<span class="font-label-md text-label-md text-secondary font-bold">System</span>
+</div>
+<span class="text-label-sm text-outline font-mono text-[10px]">Idempotent runner</span>
+</td>
+<td class="py-3 px-space-sm align-top">
+<div class="font-label-md text-label-md text-on-surface font-medium">Fjord Gulvservice ApS</div>
+<span class="inline-block px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant text-[11px] font-mono">M03 Drift</span>
+</td>
+<td class="py-3 px-space-md align-top">
+<div class="font-label-md text-label-md text-on-surface font-semibold">Kontrolleret afstemning for job #OP-88219</div>
+<p class="text-on-surface-variant text-label-sm italic mt-0.5">Begrundelse: 'Netværkstimeout ved skrivekald - afstemt uden dublet'</p>
+</td>
+<td class="py-3 px-space-md align-top text-right whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+                    Afstemt
+                  </span>
+</td>
+</tr>
+<!-- Row 5: M05 Skabelon -->
+<tr class="audit-row cursor-pointer hover:bg-surface-container-low transition-colors group" data-actor="C. Lind" data-module="M05 Skabelon" data-outcome="gennemfoert" data-term="globalt skabelon m05 gulvservice tømrer parket lak v2.4" onclick="selectAuditRow('TPL-240', this)">
+<td class="py-3 px-space-md align-top whitespace-nowrap">
+<div class="font-mono text-label-md text-on-surface font-semibold">27. okt 2026</div>
+<div class="font-mono text-label-sm text-on-surface-variant">14:15:55 UTC+2</div>
+</td>
+<td class="py-3 px-space-sm align-top whitespace-nowrap">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-[10px]">CL</span>
+<span class="font-label-md text-label-md text-primary font-bold">C. Lind</span>
+</div>
+<span class="text-label-sm text-outline">Lead Tech</span>
+</td>
+<td class="py-3 px-space-sm align-top">
+<div class="font-label-md text-label-md text-on-surface font-medium">Globalt (M05)</div>
+<span class="inline-block px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant text-[11px] font-mono">M05 Skabelon</span>
+</td>
+<td class="py-3 px-space-md align-top">
+<div class="font-label-md text-label-md text-on-surface font-semibold">Publiceret v2.4 af 'Gulvservice & Tømrer'</div>
+<p class="text-on-surface-variant text-label-sm italic mt-0.5">Begrundelse: 'Opdateret standardspørgsmål om parket og lak'</p>
+</td>
+<td class="py-3 px-space-md align-top text-right whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-space-sm py-1 rounded bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">campaign</span>
+                    Publiceret (42 notif.)
+                  </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-space-md bg-surface-container-low flex items-center justify-between text-label-sm text-label-sm text-on-surface-variant">
+<span>Viser 5 af 128 registrerede revisionstransaktioner</span>
+<div class="flex items-center gap-space-xs font-mono">
+<span>Kædehash:</span>
+<span class="px-space-xs py-0.5 bg-surface-container rounded font-bold text-primary">8f3a...d91c</span>
+</div>
+</div>
+</div>
+<!-- Regulatory Audit Banner -->
+<div class="p-space-md rounded-xl bg-surface-container flex items-start gap-space-md">
+<span class="material-symbols-outlined text-primary text-[22px] mt-0.5">verified_user</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md font-bold text-primary">Revisionsintegritet & Ansvarsfraskrivelse</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Simuleret revisionsspor i sandkassemiljø. Opfylder interne revisionsretningslinjer uden eksterne uafviselighedspåstande. Logposter lagres i uforanderlig append-only datalager med SHA-256 forankring.
+          </p>
+</div>
+</div>
+</div>
+<!-- Right Side: Deep Inspection Panel (Cols 4) -->
+<div class="lg:col-span-4 flex flex-col gap-space-md sticky top-20">
+<!-- Detail Card Header -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-headline-sm text-headline-sm text-primary">Hændelsesdiff</span>
+</div>
+<span class="font-mono text-label-sm text-label-sm px-space-sm py-0.5 rounded bg-surface-container-high text-primary font-bold" id="detailBadge">#DISP-1049</span>
+</div>
+<!-- Meta Grid -->
+<div class="grid grid-cols-2 gap-space-xs bg-surface-container-low p-space-sm rounded-lg font-mono text-label-sm">
+<div>
+<span class="text-on-surface-variant block">Kategori</span>
+<span class="text-on-surface font-semibold" id="detailCategory">Finans / Tvist B04</span>
+</div>
+<div>
+<span class="text-on-surface-variant block">Operatør</span>
+<span class="text-primary font-bold" id="detailActor">C. Lind (Lead Tech)</span>
+</div>
+<div class="mt-1">
+<span class="text-on-surface-variant block">Autorisation</span>
+<span class="text-secondary font-bold">P9 Supervisor Pass</span>
+</div>
+<div class="mt-1">
+<span class="text-on-surface-variant block">Log Hash</span>
+<span class="text-on-surface">sha256:7b41...</span>
+</div>
+</div>
+<!-- Core Before/After Values (State Mutation) -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Tilstandsforskel (Før / Efter)</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Atomisk opdatering</span>
+</div>
+<!-- Diff Table -->
+<div class="rounded-lg bg-surface-container-low p-space-sm flex flex-col gap-space-sm">
+<!-- Row 1: Godkendt subtotal -->
+<div class="flex flex-col gap-0.5 pb-2 border-b border-surface-container">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Godkendt subtotal</span>
+<div class="flex items-center justify-between font-mono text-body-sm">
+<span class="text-on-surface-variant line-through">2.086,00 kr.</span>
+<span class="material-symbols-outlined text-outline text-[14px]">arrow_forward</span>
+<span class="text-primary font-bold">2.086,00 kr.</span>
+</div>
+<span class="text-[11px] text-outline italic">Uændret (ufaktureret post afvist uden debitorkorrigering)</span>
+</div>
+<!-- Row 2: Suspenderet beløb -->
+<div class="flex flex-col gap-0.5 pb-2 border-b border-surface-container">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Suspenderet tvistbeløb</span>
+<div class="flex items-center justify-between font-mono text-body-sm">
+<span class="text-error font-semibold">298,00 kr.</span>
+<span class="material-symbols-outlined text-outline text-[14px]">arrow_forward</span>
+<span class="text-secondary font-bold">149,00 kr.</span>
+</div>
+<span class="text-[11px] text-on-secondary-container font-medium">-149,00 kr. frigivet/annulleret</span>
+</div>
+<!-- Row 3: Fakturerbare poster -->
+<div class="flex flex-col gap-0.5 pb-2 border-b border-surface-container">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Fakturerbare poster</span>
+<div class="flex items-center justify-between font-mono text-body-sm">
+<span class="text-on-surface-variant">15 poster</span>
+<span class="material-symbols-outlined text-outline text-[14px]">arrow_forward</span>
+<span class="text-primary font-bold">14 poster</span>
+</div>
+</div>
+<!-- Row 4: Status B04 -->
+<div class="flex flex-col gap-0.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Afstemningsstatus (B04)</span>
+<div class="flex flex-col gap-1 text-label-sm">
+<div class="px-2 py-1 rounded bg-error-container text-on-error-container font-medium flex items-center justify-between">
+<span>Før: Under indsigelse</span>
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+</div>
+<div class="px-2 py-1 rounded bg-secondary-fixed text-on-secondary-fixed font-bold flex items-center justify-between">
+<span>Efter: Godkendt tvist (Afvist fra fakturering)</span>
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Operator Justification Memo -->
+<div class="p-space-sm rounded-lg bg-surface-container flex flex-col gap-1">
+<div class="flex items-center gap-1 text-primary font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">notes</span>
+<span>Operatørens Lovpligtige Notat</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface bg-surface-container-lowest p-space-sm rounded">
+            "Medhold: Opgave i Rønne uden for dækningsområde jf. FJS-8821 §4. Ufaktureret post afvist. Ingen kreditnota påkrævet da faktura endnu ikke var bogført."
+          </p>
+<span class="font-label-sm text-[11px] text-on-surface-variant">Signeret digitalt af: Clara Lind (Lead Tech / Supervisor)</span>
+</div>
+<!-- Quick Verification Checksum SVG -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<svg class="w-8 h-8 text-secondary" fill="none" viewbox="0 0 36 36">
+<path d="M18 3L4 9V17C4 24.5 10 31.4 18 33C26 31.4 32 24.5 32 17V9L18 3Z" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M12 18L16 22L24 14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold text-on-surface">Kædeintegritet Valid</span>
+<span class="text-[11px] text-on-surface-variant font-mono">Blok-højde: #1.402.991</span>
+</div>
+</div>
+<button class="px-space-sm py-1 rounded bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold hover:bg-surface-container" onclick="alert('Kryptografisk kontrolsum for DISP-1049 bekræftet gyldig via intern ledger.')">
+            Verificér
+          </button>
+</div>
+</div>
+<!-- Quick Context Reference Box -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-space-xs text-on-surface-variant">
+<span class="font-label-sm text-label-sm font-bold text-primary uppercase">Tilknyttede Entiteter</span>
+<div class="flex flex-col gap-1 font-mono text-label-sm">
+<a class="hover:text-primary underline flex items-center justify-between py-0.5" href="#">
+<span>Kunde-ID: #CUST-8821 (Fjord)</span>
+<span class="material-symbols-outlined text-[14px]">north_east</span>
+</a>
+<a class="hover:text-primary underline flex items-center justify-between py-0.5" href="#">
+<span>Sag: #DISP-1049 (Tvist B04)</span>
+<span class="material-symbols-outlined text-[14px]">north_east</span>
+</a>
+<a class="hover:text-primary underline flex items-center justify-between py-0.5" href="#">
+<span>Supportkø: #SUP-R2-001</span>
+<span class="material-symbols-outlined text-[14px]">north_east</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Notification Toast Container -->
+<div class="fixed bottom-6 right-6 bg-primary text-on-primary px-space-lg py-space-md rounded-xl shadow-xl transition-all duration-300 transform translate-y-24 opacity-0 flex items-center gap-space-md z-50" id="exportToast">
+<span class="material-symbols-outlined text-secondary-fixed text-[24px]">task_alt</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-secondary-fixed" id="exportToastTitle">Udtræk forberedt</span>
+<span class="font-body-sm text-body-sm text-inverse-on-surface" id="exportToastMsg">Eksportfilen er genereret med kryptografisk P9-signatur.</span>
+</div>
+</div>
+</div>
+<script>
+  function filterAuditEntries() {
+    const searchVal = document.getElementById('auditFilterSearch').value.toLowerCase().trim();
+    const actorVal = document.getElementById('filterActor').value;
+    const typeVal = document.getElementById('filterType').value;
+    const outcomeVal = document.getElementById('filterOutcome').value;
+    const rows = document.querySelectorAll('.audit-row');
+
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+      const rowActor = row.getAttribute('data-actor');
+      const rowModule = row.getAttribute('data-module');
+      const rowOutcome = row.getAttribute('data-outcome');
+      const rowTerm = row.getAttribute('data-term') || '';
+      const textContent = row.textContent.toLowerCase();
+
+      let matchSearch = !searchVal || textContent.includes(searchVal) || rowTerm.includes(searchVal);
+      let matchActor = (actorVal === 'alle') || (rowActor === actorVal);
+      let matchType = (typeVal === 'alle') || (rowModule.includes(typeVal.split(' ')[0]));
+      let matchOutcome = (outcomeVal === 'alle') || (rowOutcome === outcomeVal);
+
+      if (matchSearch && matchActor && matchType && matchOutcome) {
+        row.style.display = '';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    const matchCounter = document.getElementById('matchCounter');
+    if (matchCounter) {
+      matchCounter.textContent = visibleCount + ' hændelser';
+    }
+  }
+
+  function selectAuditRow(id, element) {
+    // Visual row highlight
+    document.querySelectorAll('.audit-row').forEach(r => {
+      r.classList.remove('bg-surface-container-high', 'ring-1', 'ring-inset', 'ring-primary');
+    });
+    element.classList.add('bg-surface-container-high', 'ring-1', 'ring-inset', 'ring-primary');
+
+    // Update Detail Panel based on selection
+    const badge = document.getElementById('detailBadge');
+    const cat = document.getElementById('detailCategory');
+    const actor = document.getElementById('detailActor');
+
+    if (id === 'DISP-1049') {
+      badge.textContent = '#DISP-1049';
+      cat.textContent = 'Finans / Tvist B04';
+      actor.textContent = 'C. Lind (Lead Tech)';
+    } else if (id === 'SUP-R2-001') {
+      badge.textContent = '#SUP-R2-001';
+      cat.textContent = 'Support / M06';
+      actor.textContent = 'C. Lind (Lead Tech)';
+    } else if (id === 'ACC-M02') {
+      badge.textContent = '#SESS-M02-99';
+      cat.textContent = 'Sikkerhed / M02 Adgang';
+      actor.textContent = 'C. Lind (Lead Tech)';
+    } else if (id === 'OP-88219') {
+      badge.textContent = '#OP-88219';
+      cat.textContent = 'Drift / M03 Idempotens';
+      actor.textContent = 'System (Runner)';
+    } else if (id === 'TPL-240') {
+      badge.textContent = '#TPL-V24';
+      cat.textContent = 'Skabelon / M05 Global';
+      actor.textContent = 'C. Lind (Lead Tech)';
+    }
+  }
+
+  function triggerExportNotice(type) {
+    const toast = document.getElementById('exportToast');
+    const title = document.getElementById('exportToastTitle');
+    const msg = document.getElementById('exportToastMsg');
+
+    if (type === 'Certifikat') {
+      title.textContent = 'Revisionscertifikat Genereret';
+      msg.textContent = 'Digitalt revisionsbevis klar til udskrivning / PDF-arkivering.';
+    } else {
+      title.textContent = 'Eksport Download Klar';
+      msg.textContent = 'Uddrag af M07 revisorlog downloadet i CSV/JSON-format.';
+    }
+
+    toast.classList.remove('translate-y-24', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+      toast.classList.remove('translate-y-0', 'opacity-100');
+      toast.classList.add('translate-y-24', 'opacity-0');
+    }, 3800);
+  }
+</script></main></div></body></html>

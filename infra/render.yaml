@@ -26,8 +26,10 @@ services:
         sync: false
       - key: SECRET_KEY
         generateValue: true
+      - key: DB_SCHEMA
+        value: dialogbot
       - key: EMAIL_ADAPTER
-        value: resend          # NOTE: adapter to be implemented in Milestone B; until then the process refuses to start in APP_ENV=prod by design
+        value: simulated       # switch to "resend" once the Resend domain + key are verified (Milestone B)
       - key: RESEND_API_KEY
         sync: false
       - key: EMAIL_FROM
@@ -58,9 +60,11 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: SECRET_KEY
-        sync: false            # same value as the API service
+        sync: false            # any >=32-char value; sessions are opaque DB tokens so it need not match the API
+      - key: DB_SCHEMA
+        value: dialogbot
       - key: EMAIL_ADAPTER
-        value: resend
+        value: simulated
       - key: RESEND_API_KEY
         sync: false
       - key: EMAIL_FROM

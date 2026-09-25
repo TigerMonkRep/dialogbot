@@ -431,6 +431,20 @@ test("15 · Medarbejder overtager en webchat, svarer kunden, og assistenten hold
   await expect(page.getByText("Venter på svar")).toBeVisible();
 });
 
+test("16 · Afregning: godkendt henvendelse under model B vises som 149,00 kr. + moms, tydeligt som forhåndsvisning", async ({ page }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  const CSRF = { "x-requested-with": "dialogbot" };
+  await page.request.post(`/api/backend/workspaces/${wsId}/agreement`, { headers: CSRF, data: { model: "B" } });
+  const lead = await (await page.request.post(`/api/backend/workspaces/${wsId}/leads`, { headers: CSRF, data: { contact_name: "Birgitte Bruun" } })).json();
+  await page.request.patch(`/api/backend/workspaces/${wsId}/leads/${lead.id}`, { headers: CSRF, data: { expected_version: lead.version, qualification_status: "qualified" } });
+  expect((await page.request.post(`/api/backend/workspaces/${wsId}/leads/${lead.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
+  await page.goto("/app/billing");
+  await expect(page.getByText("Dette er en forhåndsvisning – ikke en faktura.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Godkendt henvendelse: Birgitte Bruun" })).toBeVisible();
+  await expect(page.getByText("186,25 kr.")).toBeVisible();
+  await shot(page, info, "afregning");
+});
+
 test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation uden mus", async ({ page }, info) => {
   await login(page, SEEDED.owner);
   await page.goto("/app/setup");

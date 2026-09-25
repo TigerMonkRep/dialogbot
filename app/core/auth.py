@@ -56,6 +56,7 @@ PERMISSIONS: dict[str, str] = {
     "tasks.read": "staff",
     "tasks.edit": "staff",
     "agreements.read": "admin",
+    "billing.read": "admin",
     "reports.read": "staff",
     "telephony.read": "staff",
     "telephony.manage": "admin",

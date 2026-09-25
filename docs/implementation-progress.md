@@ -2,6 +2,16 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 13 — 25. september 2026 (månedlig afregningsoversigt)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `GET /workspaces/{id}/billing/statement?month=ÅÅÅÅ-MM` (ejer/admin): model A = abonnement fra aftalen gældende ved månedens udgang (godkendte henvendelser ændrer ikke totalen); model B = sum af godkendte henvendelsers pris-snapshots; kalendermåned i arbejdsrummets tidszone; `Money`-totaler (25 % moms, half-up, hele øre) | testet | `tests/test_billing_statement.py` (3): 14 leads under B = 208.600 / 52.150 / 260.750 øre |
+| Status altid `preview`, `invoicing: not_implemented` – ingen faktura, ingen betaling | testet | samme |
+| UI `/app/billing` (månedsskift, poster, netto/moms/i alt, "ikke en faktura"); menupunktet "Fakturering" aktiveret | implementeret, E2E | rejse 16 |
+
+**Ikke implementeret:** fakturaer, kreditnotaer, tvister (reglerne ligger i `billing/money.py`), kampagnepakker (9 kr., max 2 forsøg, 180 s) og betaling — kræver Stripe og kampagnemodulet.
+
 ## Checkpoint 12 — 25. september 2026 (medarbejdersvar i webchat)
 
 | Del | Status | Bevis |

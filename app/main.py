@@ -6,6 +6,7 @@ from app.config import get_settings
 from app.core.errors import install_error_handlers
 from app.core.logging import RequestIdMiddleware, configure_logging
 from app.modules.ai.router import router as ai_router
+from app.modules.billing.router import router as billing_router
 from app.modules.business.router import router as business_router
 from app.modules.health.router import router as health_router
 from app.modules.identity.router import router as identity_router
@@ -44,7 +45,7 @@ def create_app() -> FastAPI:
     for r in (identity_router, workspaces_router, business_router, knowledge_router, setup_router, integrations_router,
               webhooks_router, ai_router, waitlist_router,
               webchat_router, webchat_public_router, leads_router,
-              reports_router, telephony_router, vapi_webhook_router):
+              reports_router, telephony_router, vapi_webhook_router, billing_router):
         app.include_router(r, prefix=API_PREFIX)
     if settings.dev_tools_enabled:
         from app.modules.devtools.router import router as dev_router

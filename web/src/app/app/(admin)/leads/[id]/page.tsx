@@ -2,7 +2,7 @@ import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
-import { SOURCE, type Lead, when } from "../format";
+import { SOURCE, callbackWindow, type Lead, when } from "../format";
 import { BillingPanel, LeadEditor, TaskList } from "../client";
 
 type Agreement = { current: { version: number; model: string; lead_fee: { net_minor: number } } | null };
@@ -22,6 +22,7 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
         <div>
           <h1 className="font-headline-md text-headline-md text-primary">{lead.contact_name || "(uden navn)"}</h1>
           <p className="font-body-sm text-body-sm text-on-surface-variant">{SOURCE[lead.source] ?? lead.source} · oprettet {when(lead.created_at)}</p>
+          {lead.callback_from && lead.callback_to && <p className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-label-md"><Icon name="phone_callback" size={16} />Ønsker opkald {callbackWindow(lead.callback_from, lead.callback_to)}</p>}
         </div>
         {lead.conversation_id && <Link href={`/app/inbox/${lead.conversation_id}`} className="font-label-lg text-label-lg text-primary flex items-center gap-1"><Icon name="forum" size={18} />Se samtalen</Link>}
       </div>

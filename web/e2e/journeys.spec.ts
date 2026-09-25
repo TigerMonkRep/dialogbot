@@ -302,6 +302,9 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, v�
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();
   await chat.getByLabel("Navn").fill("Henrik Villumsen");
   await chat.getByLabel("E-mail").fill("henrik@example.com");
+  await chat.getByLabel("Telefon").fill("+45 20 30 40 50");
+  const windowLabel = await chat.getByLabel("Hvornår må vi ringe?").locator("option").last().textContent();
+  await chat.getByLabel("Hvornår må vi ringe?").selectOption({ label: windowLabel ?? "" });
   await chat.locator("form.contact").getByRole("button", { name: "Send" }).click();
   await expect(chat.getByText("Sæt flueben, så virksomheden må kontakte dig.")).toBeVisible(); // consent is required
   await chat.getByLabel("Virksomheden må kontakte mig", { exact: false }).check();
@@ -313,7 +316,8 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, v�
   await page.goto("/app/leads");
   await page.getByRole("link", { name: /Henrik Villumsen/ }).click();
   await expect(page.getByRole("heading", { name: "Henrik Villumsen" })).toBeVisible();
-  await expect(page.getByText("Kontakt Henrik Villumsen fra webchat")).toBeVisible();
+  await expect(page.getByText(`Ring Henrik Villumsen op – ${windowLabel}`)).toBeVisible();
+  await expect(page.getByText(/Ønsker opkald/)).toBeVisible();
   await expect(page.getByText("Der er ingen prisaftale endnu", { exact: false })).toBeVisible();
   await page.getByLabel("Kvalificering").selectOption("qualified");
   await page.getByLabel("Forløb").selectOption("contacted");
@@ -330,8 +334,8 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, v�
   await page.getByRole("button", { name: "Godkend henvendelse" }).click();
   await expect(page.getByText("149,00 kr.", { exact: false })).toBeVisible();
   await expect(page.getByLabel("Kvalificering")).toBeDisabled();
-  await page.getByRole("checkbox", { name: "Færdig: Kontakt Henrik Villumsen fra webchat" }).check();
-  await expect(page.getByRole("checkbox", { name: "Færdig: Kontakt Henrik Villumsen fra webchat" })).toBeChecked();
+  await page.getByRole("checkbox", { name: /Færdig: Ring Henrik Villumsen op/ }).check();
+  await expect(page.getByRole("checkbox", { name: /Færdig: Ring Henrik Villumsen op/ })).toBeChecked();
   await shot(page, info, "henvendelse-godkendt");
   await page.getByRole("link", { name: "Se samtalen" }).click();
   await expect(page.getByText("Kan I slibe 65 m² plankegulv?").first()).toBeVisible();

@@ -31,6 +31,8 @@ def lead_out(lead: Lead, tasks: list[Task] | None = None) -> dict:
         "version", "source", "contact_name", "contact_email", "contact_phone", "need_summary", "qualification_status",
         "qualification_reason", "pipeline_status", "billing_status", "billing_reason", "fee_snapshot")}
     d |= {"id": str(lead.id), "conversation_id": str(lead.conversation_id) if lead.conversation_id else None,
+          "callback_from": lead.callback_from.isoformat() if lead.callback_from else None,
+          "callback_to": lead.callback_to.isoformat() if lead.callback_to else None,
           "agreement_id": str(lead.agreement_id) if lead.agreement_id else None,
           "billing_decided_at": lead.billing_decided_at.isoformat() if lead.billing_decided_at else None,
           "billing_decided_by": str(lead.billing_decided_by) if lead.billing_decided_by else None,
@@ -155,7 +157,7 @@ def decide_billing(db: OrmSession, lead: Lead, *, actor: uuid.UUID, decision: st
 
 
 def visitor_contact(db: OrmSession, conv: Conversation, *, name: str, email: str | None, phone: str | None,
-                    note: str) -> Lead:
+                    note: str, window: tuple[datetime, datetime, str] | None = None) -> Lead:
     """The visitor's "Bliv kontaktet" form: create (or update) the conversation's lead, and on
     first contact a follow-up task plus an e-mail to owners and admins."""
     lead = lead_for_conversation(db, conv.id)
@@ -166,8 +168,12 @@ def visitor_contact(db: OrmSession, conv: Conversation, *, name: str, email: str
         summary = note.strip() or first
         lead = create_lead(db, conv.workspace_id, source="webchat", created_by=None, conversation=conv,
                            contact_name=name, contact_email=email, contact_phone=phone, need_summary=summary)
-        create_task(db, conv.workspace_id, title=f"Kontakt {name.strip() or 'kunden'} fra webchat", created_by=None,
-                    lead=lead, due_at=_now() + timedelta(hours=24))
+        title = f"Kontakt {name.strip() or 'kunden'} fra webchat"
+        due = _now() + timedelta(hours=24)
+        if window is not None:
+            lead.callback_from, lead.callback_to = window[0], window[1]
+            title, due = f"Ring {name.strip() or 'kunden'} op – {window[2]}", window[0]
+        create_task(db, conv.workspace_id, title=title, created_by=None, lead=lead, due_at=due)
         _notify_new_lead(db, lead)
     else:
         lead.contact_name = name.strip() or lead.contact_name
@@ -175,6 +181,8 @@ def visitor_contact(db: OrmSession, conv: Conversation, *, name: str, email: str
         lead.contact_phone = (phone or "").strip() or lead.contact_phone
         if note.strip():
             lead.need_summary = note.strip()
+        if window is not None:
+            lead.callback_from, lead.callback_to = window[0], window[1]
         lead.version += 1
     return lead
 

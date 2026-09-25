@@ -23,7 +23,7 @@ form button:disabled,textarea:disabled{opacity:.5;cursor:not-allowed}
 .contact-bar button{width:100%;border:1px solid #bfc9c4;background:#fff;color:#00362d;border-radius:10px;padding:8px;font:inherit;font-weight:600;cursor:pointer}
 form.contact{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-top:1px solid #dce3dc;background:#fff}
 form.contact label{display:flex;flex-direction:column;gap:2px;font-size:13px;font-weight:600;color:#404946}
-form.contact input:not([type=checkbox]){border:1px solid #bfc9c4;border-radius:8px;padding:7px 9px;font:inherit;font-weight:400}
+form.contact input:not([type=checkbox]),form.contact select{border:1px solid #bfc9c4;border-radius:8px;padding:7px 9px;font:inherit;font-weight:400}
 form.contact .check{flex-direction:row;align-items:flex-start;gap:6px;font-weight:400}
 form.contact .row{display:flex;justify-content:flex-end;gap:8px}
 form.contact .row button{padding:8px 14px}

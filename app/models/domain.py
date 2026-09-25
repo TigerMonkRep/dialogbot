@@ -499,6 +499,9 @@ class Lead(Base):
     contact_email: Mapped[str | None] = mapped_column(String(320))
     contact_phone: Mapped[str | None] = mapped_column(String(40))
     need_summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    # Callback window the customer asked for (W03–W06), in UTC; NULL = no preference.
+    callback_from: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    callback_to: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     qualification_status: Mapped[str] = mapped_column(String(16), nullable=False, default="unqualified")
     qualification_reason: Mapped[str | None] = mapped_column(String(500))
     pipeline_status: Mapped[str] = mapped_column(String(16), nullable=False, default="new")

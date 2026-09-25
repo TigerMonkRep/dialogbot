@@ -141,6 +141,7 @@ class ContactIn(BaseModel):
     email: EmailStr | None = None
     phone: str | None = Field(default=None, max_length=40, pattern=r"^[0-9+ ()-]{6,40}$")
     note: str = Field(default="", max_length=1000)
+    window: str | None = Field(default=None, max_length=20)  # key from /callback-windows
     consent: bool
 
 
@@ -155,9 +156,29 @@ def contact(key: str, conversation_id: uuid.UUID, body: ContactIn, origin: str |
         raise ValidationFailed("Sæt flueben for at give os lov til at kontakte dig", field_errors=[{"field": "consent"}])
     if not body.email and not body.phone:
         raise ValidationFailed("Angiv e-mail eller telefonnummer", field_errors=[{"field": "email"}, {"field": "phone"}])
+    from app.modules.leads import callback
     from app.modules.leads.service import visitor_contact
+    from app.modules.reports.service import tz_of
 
+    window = None
+    if body.window:
+        if not body.phone:
+            raise ValidationFailed("Angiv et telefonnummer, hvis du vil ringes op", field_errors=[{"field": "phone"}])
+        try:
+            window = callback.resolve(body.window, tz_of(db, s.workspace_id))
+        except ValueError as e:
+            raise ValidationFailed("Tidsrummet er ikke længere muligt – vælg et andet", field_errors=[{"field": "window"}]) from e
     visitor_contact(db, conv, name=body.name, email=str(body.email) if body.email else None, phone=body.phone,
-                    note=body.note)
+                    note=body.note, window=window)
     db.commit()
     return {"received": True}
+
+
+@router.get("/{key}/callback-windows")
+def callback_windows(key: str, db: OrmSession = Depends(get_db)):
+    """Time windows the visitor can choose for a call back, in the business's local time."""
+    from app.modules.leads import callback
+    from app.modules.reports.service import tz_of
+
+    s = service.by_key(db, key)
+    return {"timezone": tz_of(db, s.workspace_id), "options": callback.options(tz_of(db, s.workspace_id))}

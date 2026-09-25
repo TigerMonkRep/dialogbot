@@ -228,7 +228,7 @@ export default function Home() {
       <footer className="bg-surface-container-low shadow-[0_-1px_0_rgba(220,227,220,0.6)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-margin-md lg:px-margin-lg py-space-xl flex flex-col md:flex-row items-center justify-between gap-space-md font-body-sm text-body-sm text-on-surface-variant">
           <span className="flex items-center gap-space-sm"><span className="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-primary">Dialogbot</span>•<span>AI-reception og kundeopfølgning</span></span>
-          <nav className="flex items-center gap-space-md" aria-label="Konto"><Link href="/login" className="hover:text-on-surface">Log ind</Link><Link href="/signup" className="hover:text-on-surface">Opret konto</Link></nav>
+          <nav className="flex items-center gap-space-md" aria-label="Konto"><Link href="/privatliv" className="hover:text-on-surface">Privatliv</Link><Link href="/login" className="hover:text-on-surface">Log ind</Link><Link href="/signup" className="hover:text-on-surface">Opret konto</Link></nav>
         </div>
       </footer>
     </div>

@@ -41,3 +41,19 @@ def test_honeypot_is_accepted_but_not_stored(client, db):
     r = _join(client, website="http://spam.example")
     assert r.status_code == 202 and r.json() == {"status": "received"}
     assert db.scalars(select(WaitlistSignup)).all() == []
+
+
+def test_admin_script_exports_and_erases(client, db):
+    import io
+
+    from scripts import waitlist
+
+    _join(client)
+    _join(client, email="anden@example.com", industry=None, interests=[])
+    buf = io.StringIO()
+    assert waitlist.export(buf) == 2
+    lines = buf.getvalue().splitlines()
+    assert lines[0].startswith("email,industry,interests") and "mads@virksomhed.dk,craft,missed_calls" in lines[1]
+    assert waitlist.erase(" MADS@virksomhed.dk ") == 1
+    assert waitlist.erase("mads@virksomhed.dk") == 0
+    assert [r.email for r in db.scalars(select(WaitlistSignup))] == ["anden@example.com"]

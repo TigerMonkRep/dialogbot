@@ -15,7 +15,7 @@ Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI
 
 **Ærlighed – bevidste afvigelser fra Stitch:** ingen offentlig demokode ("DGB-PREVIEW" ville gøre beskyttelsen virkningsløs), ingen "Latency < 280 ms", "100 % dansk hosting", "148 virksomheder", CVR/ApS-oplysninger, "Q2 åbning" eller stemmeprøve, der ikke findes. P01 har et "Privat preview"-banner; samtaler er mærket som eksempler; FAQ siger, hvad der virker i dag, og hvad der er planlagt. "Prøv en samtale" er erstattet af "Start opsætning"/"Sådan fungerer det". Links til sider, der ikke findes (priser, privatliv, vilkår), er udeladt.
 
-**Mangler før siden deles bredt:** en kort privatlivstekst med kontaktadresse for ventelisten; en måde at eksportere/slette tilmeldinger (i dag via databasen).
+**Tilføjet efter merge (PR #7):** `/privatliv` (ikke bag gaten) med dataansvarlig Dialogbot, Abildgade 18, 8200 Aarhus, Danmark; formål, retsgrundlag (samtykke), opbevaring (højst 24 mdr.), databehandlere og rettigheder. Linket fra samtykketeksten og sidefødderne. `python -m scripts.waitlist export|delete <e-mail>` (køres i Render-shell) eksporterer CSV og sletter på anmodning; testet i `tests/test_waitlist.py`.
 
 **Ikke deployet/eksternt verificeret:** kræver `PREVIEW_GATE`, `PREVIEW_ACCESS_CODES`, `PREVIEW_COOKIE_SECRET` i Vercel (Production).
 

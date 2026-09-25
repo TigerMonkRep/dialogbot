@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api, fieldError, type ApiError } from "@/lib/client";
@@ -120,7 +121,7 @@ export function WaitlistForm() {
       </div>
       <label className="flex items-start gap-2 font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
         <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 rounded text-primary focus:ring-primary" />
-        <span>Ja, I må skrive til mig, når Dialogbot åbner. Vi gemmer kun e-mail og svarene ovenfor til det formål, og du kan altid bede om at blive slettet.</span>
+        <span>Ja, I må skrive til mig, når Dialogbot åbner. Vi gemmer kun e-mail og svarene ovenfor til det formål, og du kan altid bede om at blive slettet. <Link href="/privatliv" className="text-primary underline">Læs hvordan</Link>.</span>
       </label>
       {error && <Feedback tone="error">{error.status === 422 ? "Tjek e-mailadressen og at du har sat flueben." : error.message}</Feedback>}
       <button type="submit" disabled={pending} className="w-full bg-secondary-fixed hover:bg-secondary-fixed-dim text-on-secondary-fixed py-3.5 px-6 rounded-lg font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-60">

@@ -45,3 +45,7 @@ Kun krav, der er berørt af denne etape, er opført. Statusniveauer: **implement
 | DB-017 Fælles fixtures og testur | Delvist: seed og tests bruger `canonical-demo-data.json`-værdier; K04 evalueres med eksplicit `on_date` (intet dagsdato-afhængigt). |
 | DB-018 Ægte kapabilitet kan ikke udledes af demo | Implementeret via kapabilitetsregistret; alle adaptere ud over simuleret mail er `not_implemented`. |
 | DB-001, DB-002, DB-005 | Reglerne er kodet og testet i backend; eksportens HTML er ikke rettet (ikke en del af etapen). |
+
+## Design-verifikation mod Stitch (checkpoint 4)
+
+Browserkontrolleret lokalt ved 1440 px (desktop-reference) og 390 px (mobil-reference) med `design-reference/tools/compare.mjs`: G01–G05, A06/O01/O02, K01–K05 (alle faner), A01–A05 (mobilreference), begge app-skaller. O03/O04 følger G01-kortdesignet (ingen egen Stitch-skærm). Ikke design-verificeret endnu: S02, S08, S09, G03, P01. Se `docs/implementation-progress.md`, checkpoint 4.

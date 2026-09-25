@@ -2,6 +2,28 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 4 — 25. september 2026 (milepæl A: design-fidelitet mod Stitch)
+
+**Gren/PR:** `claude/cool-wozniak-ho00tr` → https://github.com/TigerMonkRep/dialogbot/pull/2 (draft). CI (backend + web) grøn på `d2edbb7`.
+**Referencer:** Stitch-eksporten (44 skærme, desktop + mobil) ligger i `design-reference/latest/stitch_dialogbot/`; skærmoversigt og DESIGN.md også hentet via Stitch MCP (`design-reference/stitch/`).
+**Metode:** `design-reference/tools/stitch-render.mjs` renderer hver Stitch-`code.html` offline (Tailwind v3 kompileret fra skærmens egen config, lokale fonte, faner via `STITCH_EVAL`). `compare.mjs` logger ind i appen og laver side-om-side-billeder ved 1440 px (desktop-reference) og 390 px (mobil-reference). Kørt mod lokal API + PostgreSQL med seed-data.
+
+| Skærm | Rute | Desktop 1440 | Mobil 390 | Bemærkninger |
+|---|---|---|---|---|
+| App-skal (guide) | /app/setup, /onboarding/* | matchet (G01-header, footer) | matchet (header, bundnav, Mere-ark) | "Aktiv AI" kun når `ai.conversation` er `available` |
+| App-skal (admin) | /app/knowledge, /app/settings/*, /app/not-yet | matchet (K01-sidebjælke + topheader) | matchet (header, 5-punkts bundnav) | Stitch bruger topnav i opsætning og sidebjælke i drift – fulgt pr. skærm |
+| G01–G05 | /app/setup | matchet | matchet | Persona (O05), AI-forslag og H01-support vist som ikke tilgængelige |
+| A06/O01/O02 | /onboarding/business, /onboarding/workspace | matchet | matchet | O02 viser rigtig manuel viden; ingen "konfidens"-tal eller udtræk |
+| O03/O04 | /onboarding/goals, /onboarding/languages | kortdesign fra G01 | kortdesign fra G01 | Ingen selvstændig Stitch-skærm |
+| K01–K05, R05/R06 | /app/knowledge?tab=… | matchet (alle faner) | matchet (K01) | Strukturerede formularer i stedet for JSON; K05 sammenligning; K01/R05/R06 ærlige tomtilstande |
+| A01–A05 | /signup, /login, /verify-email, /password/*, /invite/[token] | centreret kolonne | matchet (A04) | Kun mobilreference findes i Stitch |
+
+**Funktionelt verificeret i browser (lokalt):** login; O01 "Gem" og "Gem og fortsæt" (gemmer før navigation); K03 prisændring → kladde → K05-sammenligning → godkend → ny aktiv pris.
+
+**Ikke gjort endnu:** S08 profil, S09 aktivitetslog, G03-wrapper, P01 forside, S02 team i nyt design; Playwright-rejser i CI (blueprint §9.1 findes ikke i repoet); staging-screenshots (netværkspolitik blokerer stadig `*.vercel.app`/`*.onrender.com` i denne container).
+
+**Præcis næste handling:** S08/S09/S02 i admin-skal → Playwright-suite i CI (lokal API + PostgreSQL, 390/1440-screenshots som artefakter, tastatur/fokus) → merge PR #2 → kontrollér staging.
+
 ## Checkpoint 3 — 25. september 2026 (overtagelse, milepæl A-design)
 
 **Baseline genkontrolleret:** `main` = `cb79a99` (Stitch-commit er på main). 26/26 pytest mod lokal PostgreSQL 16, `npm run build` grøn (22 ruter). Render `dialogbot-api-staging` live på `cb79a99` (deploy `dep-dar7koe7bikc73auval0`, via Render-API). `/health/ready` og Vercel-URL kunne **ikke** kaldes direkte: sessionens netværkspolitik blokerer `*.onrender.com` og `*.vercel.app`, og Vercel-forbindelsen har ikke adgang til projektet.

@@ -179,6 +179,27 @@ test("8 · Roller: læser kan ikke redigere, medarbejder kan ikke se aktivitetsl
   await shot(page, info, "s09-log");
 });
 
+test("9 · R06: medarbejder tester assistenten mod godkendt viden; læser kan ikke", async ({ page }, info) => {
+  await login(page, SEEDED.staff);
+  await page.goto("/app/knowledge?tab=r06");
+  await expect(page.getByRole("heading", { name: "Test assistenten" })).toBeVisible();
+  await expect(page.getByText(/simuleret model, ikke en rigtig AI/)).toBeVisible();
+  await page.getByLabel("Spørgsmål fra en kunde").fill("Hvad koster afslibning?");
+  await page.getByRole("button", { name: "Spørg assistenten" }).click();
+  const answers = page.getByRole("list", { name: "Testsvar" });
+  await expect(answers.getByText("[fake] svar på: Hvad koster afslibning?")).toBeVisible();
+  await expect(answers.getByText(/assistant-v1 · viden rev\. \d+/)).toBeVisible();
+  await shot(page, info, "r06-test-assistenten");
+  await page.getByLabel("Spørgsmål fra en kunde").fill("AFVIS dette");
+  await page.getByRole("button", { name: "Spørg assistenten" }).click();
+  await expect(answers.getByText("Afvist af modellen")).toBeVisible();
+  await page.context().clearCookies();
+  await login(page, SEEDED.reader);
+  await page.goto("/app/knowledge?tab=r06");
+  await expect(page.getByText("Test af assistenten kræver rollen medarbejder eller højere.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Spørg assistenten" })).toHaveCount(0);
+});
+
 test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation uden mus", async ({ page }, info) => {
   await login(page, SEEDED.owner);
   await page.goto("/app/setup");

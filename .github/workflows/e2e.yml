@@ -27,6 +27,7 @@ jobs:
       APP_ENV: test
       ENABLE_DEV_TOOLS: "true"
       EMAIL_ADAPTER: simulated
+      AI_PROVIDER: fake        # deterministic test double; the R06 journey never calls a real model
       DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/dialogbot_e2e
       FRONTEND_BASE_URL: http://localhost:3000
       SEED_DEMO_PASSWORD: E2e-Demo-Password-2026

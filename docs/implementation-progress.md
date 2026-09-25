@@ -16,6 +16,8 @@ Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI
 | `POST /workspaces/{id}/assistant/preview` (staff+), `GET /workspaces/{id}/ai/usage` (admin+); fremmed arbejdsrum → 404; uden udbyder → 501 `ai_not_configured` | testet | `test_usage_summary_is_per_workspace_and_admin_only`, `test_not_configured_is_501_…` |
 | Kapabilitet `ai.assistant_preview` (available/simulated/not_implemented efter udbyder). `ai.conversation` forbliver `not_implemented` → UI viser ikke "Aktiv AI" | implementeret, testet | — |
 
+| R06 "Test assistenten" i videnscentret (medarbejder+): ét spørgsmål ad gangen mod `/assistant/preview`, viser svar, model, promptversion, vidensrevision, tokens og prisestimat; admin ser 30-dages forbrug. Markeret som intern test; "simuleret model" vises ved `fake`. Uden udbyder vises den ærlige pladsholder | implementeret, E2E-testet (1440 + 390) | `web/e2e/journeys.spec.ts` rejse 9; E2E-workflow kører `AI_PROVIDER=fake` |
+
 **Ikke eksternt verificeret:** ingen Anthropic-nøgle endnu; model-ID `claude-opus-5` er ikke kaldt mod API'et fra dette miljø. Staging kører `AI_PROVIDER=none`.
 
 **Præcis næste handling:** Bruger: `docs/services-setup.md` §5 (nøgle + forbrugsloft, to variabler i Render). Claude: preview-kald på staging → `ai_usage`-række med `served_model` og tokens. Derefter webchat-widget på ekstern origin.

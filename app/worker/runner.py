@@ -74,6 +74,10 @@ def handle_new_lead(db: OrmSession, ev: OutboxEvent) -> None:
                f"Behov: {p['need_summary'] or '(ikke angivet)'}\n\nSe henvendelsen: {p['link']}")
 
 
+def handle_daily_report(db: OrmSession, ev: OutboxEvent) -> None:
+    _send_mail(db, ev, ev.payload["subject"], ev.payload["body"])
+
+
 def handle_knowledge_approved(db: OrmSession, ev: OutboxEvent) -> None:
     # Downstream consumers (script regeneration, embeddings) belong to later
     # stages. The event is acknowledged so the audit/outbox trail is complete.
@@ -86,6 +90,7 @@ HANDLERS = {
     "email.password_reset": handle_reset,
     "knowledge.version_approved": handle_knowledge_approved,
     "email.new_lead": handle_new_lead,
+    "email.daily_report": handle_daily_report,
 }
 
 # Test hook: event types listed here raise, to exercise retry paths.
@@ -177,6 +182,23 @@ def drain(max_events: int = 1000) -> int:
     return n
 
 
+SCHEDULE_EVERY_SECONDS = 60
+
+
+def run_schedules() -> None:
+    """Periodic jobs. Each is idempotent (unique snapshots + outbox dedupe), so several workers are safe."""
+    from app.modules.reports.service import run_due
+
+    with get_session_factory()() as db:
+        try:
+            n = run_due(db)
+            if n:
+                log.info("reports.generated", count=n)
+        except Exception as exc:  # noqa: BLE001 - a failing job must not stop event delivery
+            db.rollback()
+            log.warning("reports.failed", error=f"{type(exc).__name__}: {exc}")
+
+
 def main() -> None:
     s = get_settings()
     configure_logging(s.log_level)
@@ -184,7 +206,11 @@ def main() -> None:
     log.info("worker.start", worker_id=wid, env=s.app_env)
     with get_session_factory()() as db:
         db.execute(text("select 1"))
+    next_schedule = 0.0
     while True:
+        if time.monotonic() >= next_schedule:
+            run_schedules()
+            next_schedule = time.monotonic() + SCHEDULE_EVERY_SECONDS
         ev = process_once(wid)
         if ev is None:
             time.sleep(s.worker_poll_seconds)

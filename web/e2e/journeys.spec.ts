@@ -337,6 +337,22 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, v�
   await expect(page.getByText("Kan I slibe 65 m² plankegulv?").first()).toBeVisible();
 });
 
+test("13 · Rapporter: dagens tal er foreløbige og viser nye henvendelser; e-mailindstilling gemmes", async ({ page }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  const CSRF = { "x-requested-with": "dialogbot" };
+  expect((await page.request.post(`/api/backend/workspaces/${wsId}/leads`, { headers: CSRF, data: { contact_name: "Rapport Rasmussen", need_summary: "Vil have tilbud på lak" } })).ok()).toBeTruthy();
+  await page.goto("/app/reports");
+  await expect(page.getByText("Foreløbig – dagen er ikke slut")).toBeVisible();
+  await expect(page.getByRole("link", { name: /Rapport Rasmussen/ })).toBeVisible();
+  await expect(page.getByText("Godkendte henvendelser (pris ekskl. moms)")).toBeVisible();
+  await page.getByLabel("Kl.").selectOption("6");
+  await page.getByRole("button", { name: "Gem" }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Gemt" })).toBeVisible();
+  await shot(page, info, "rapporter");
+  await page.reload();
+  await expect(page.getByLabel("Kl.")).toHaveValue("6");
+});
+
 test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation uden mus", async ({ page }, info) => {
   await login(page, SEEDED.owner);
   await page.goto("/app/setup");

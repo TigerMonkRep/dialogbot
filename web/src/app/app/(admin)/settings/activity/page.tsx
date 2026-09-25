@@ -20,7 +20,7 @@ const ACTION: Record<string, [string, string]> = {
   "lead.created": ["Henvendelse oprettet", "person_add"], "lead.updated": ["Henvendelse ændret", "edit"],
   "lead.approved": ["Henvendelse godkendt", "verified"], "lead.rejected": ["Henvendelse afvist", "block"],
   "task.created": ["Opgave oprettet", "add_task"], "task.updated": ["Opgave ændret", "task_alt"],
-  "agreement.created": ["Prisaftale valgt", "handshake"],
+  "reports.settings_updated": ["Rapportindstillinger ændret", "bar_chart"], "agreement.created": ["Prisaftale valgt", "handshake"],
   "webchat.updated": ["Webchat ændret", "chat"], "webchat.key_rotated": ["Ny widgetnøgle", "autorenew"],
   "setup.check_run": ["Tjek kørt", "fact_check"], "setup.checks_run_all": ["Alle tjek kørt", "fact_check"],
 };

@@ -2,6 +2,18 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 10 — 25. september 2026 (milepæl B: daglige rapporter)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `daily_reports` (unik pr. arbejdsrum og lokal dato, uforanderligt snapshot) og `report_settings` (e-mail til/fra, afsendelsestime) | implementeret, migreret | Alembic `5a2d1bff4ed7`; op/ned + `alembic check` |
+| Døgn i arbejdsrummets tidszone (`zoneinfo`, også 23/25-timers døgn ved sommertid); tal: samtaler, kundebeskeder, AI-svar (ok/afvist/fejl, tokens, estimeret pris), nye/godkendte/afviste henvendelser + godkendt beløb i hele øre, opgaver oprettet/løst/over frist | testet | `tests/test_reports.py` (5) |
+| Workeren kører planlægning hvert minut: efter den lokale afsendelsestime gemmes gårsdagens rapport én gang, og ejere/administratorer får én e-mail (outbox-dedupe) | testet | `test_scheduler_snapshots_once_and_emails_owner_once` |
+| API: liste, dag (endelig / foreløbig for i dag), indstillinger (admin+); pris- og beløbsfelter kun for ejer/admin | testet | `test_api_today_is_preliminary_roles_and_isolation` |
+| UI `/app/reports` (dagsliste, nøgletal, nye henvendelser, e-mailindstilling); menupunktet "Rapporter" peger nu på siden | implementeret, E2E | rejse 13 (1440 + 390) |
+
+**Ikke eksternt verificeret:** e-mail kræver Resend (se §4); staging kører simuleret e-mail.
+
 ## Checkpoint 9 — 25. september 2026 (milepæl B: henvendelser, opgaver og prisaftale)
 
 | Del | Status | Bevis |

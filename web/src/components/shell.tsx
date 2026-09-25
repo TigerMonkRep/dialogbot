@@ -158,7 +158,7 @@ export const SIDE: NavItem[] = [
   { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
   { href: notYet("Bookinger"), match: "/app/bookings", label: "Bookinger", icon: "calendar_today" },
-  { href: notYet("Rapporter"), match: "/app/reports", label: "Rapporter", icon: "bar_chart" },
+  { href: "/app/reports", match: "/app/reports", label: "Rapporter", icon: "bar_chart" },
   { href: notYet("Fakturering"), match: "/app/billing", label: "Fakturering", icon: "receipt_long" },
   { href: "/app/settings/team", match: "/app/settings", label: "Indstillinger", icon: "settings" },
 ];

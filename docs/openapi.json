@@ -1326,38 +1326,6 @@
         "title": "SessionOut",
         "type": "object"
       },
-      "SettingsIn": {
-        "properties": {
-          "allowed_origins": {
-            "items": {
-              "type": "string"
-            },
-            "maxItems": 10,
-            "title": "Allowed Origins",
-            "type": "array"
-          },
-          "enabled": {
-            "title": "Enabled",
-            "type": "boolean"
-          },
-          "expected_version": {
-            "title": "Expected Version",
-            "type": "integer"
-          },
-          "greeting": {
-            "default": "",
-            "maxLength": 300,
-            "title": "Greeting",
-            "type": "string"
-          }
-        },
-        "required": [
-          "expected_version",
-          "enabled"
-        ],
-        "title": "SettingsIn",
-        "type": "object"
-      },
       "SignupIn": {
         "properties": {
           "consent": {
@@ -1866,6 +1834,58 @@
           "created_at"
         ],
         "title": "WorkspaceOut",
+        "type": "object"
+      },
+      "app__modules__reports__router__SettingsIn": {
+        "properties": {
+          "email_enabled": {
+            "title": "Email Enabled",
+            "type": "boolean"
+          },
+          "send_hour_local": {
+            "maximum": 23.0,
+            "minimum": 0.0,
+            "title": "Send Hour Local",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "email_enabled",
+          "send_hour_local"
+        ],
+        "title": "SettingsIn",
+        "type": "object"
+      },
+      "app__modules__webchat__router__SettingsIn": {
+        "properties": {
+          "allowed_origins": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Allowed Origins",
+            "type": "array"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "expected_version": {
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "greeting": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Greeting",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expected_version",
+          "enabled"
+        ],
+        "title": "SettingsIn",
         "type": "object"
       }
     }
@@ -6231,6 +6251,265 @@
         ]
       }
     },
+    "/api/v1/workspaces/{workspace_id}/reports": {
+      "get": {
+        "operationId": "list_reports_api_v1_workspaces__workspace_id__reports_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 366,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Reports",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/reports/settings": {
+      "get": {
+        "operationId": "get_settings__api_v1_workspaces__workspace_id__reports_settings_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Settings ",
+        "tags": [
+          "reports"
+        ]
+      },
+      "put": {
+        "operationId": "put_settings_api_v1_workspaces__workspace_id__reports_settings_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__reports__router__SettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Settings",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/reports/{day}": {
+      "get": {
+        "description": "A stored snapshot for a finished day, or live numbers (marked preliminary) for today.",
+        "operationId": "get_report_api_v1_workspaces__workspace_id__reports__day__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "day",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Day",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Report",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
     "/api/v1/workspaces/{workspace_id}/setup/activate/campaigns": {
       "post": {
         "operationId": "activate_campaigns_api_v1_workspaces__workspace_id__setup_activate_campaigns_post",
@@ -7202,7 +7481,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SettingsIn"
+                "$ref": "#/components/schemas/app__modules__webchat__router__SettingsIn"
               }
             }
           },

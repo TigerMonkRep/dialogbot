@@ -17,15 +17,15 @@ export default async function TeamPage() {
   ]);
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="mb-4 text-2xl font-extrabold text-primary-dark">Team</h1>
+      <h1 className="mb-4 font-display text-headline-lg text-primary">Team</h1>
       <Card title="Medlemmer" className="mb-4">
-        <ul className="divide-y divide-line text-sm">{members.map((m) => <MemberRow key={m.id} wsId={ws.id} m={m} myRole={ws.role} isMe={m.user_id === me.id} />)}</ul>
+        <ul className="divide-y divide-outline-variant/40 text-body-sm">{members.map((m) => <MemberRow key={m.id} wsId={ws.id} m={m} myRole={ws.role} isMe={m.user_id === me.id} />)}</ul>
       </Card>
       {admin && (
         <>
           <Card title="Invitationer" className="mb-4">
-            {invitations.length === 0 ? <p className="text-sm text-muted">Ingen invitationer.</p> : (
-              <ul className="divide-y divide-line text-sm">{invitations.map((i) => <li key={i.id} className="flex flex-wrap justify-between gap-2 py-2"><span>{i.email} · {i.role}</span><span className="flex items-center gap-2"><Badge status={i.status} /><span className="text-xs text-muted">udløber {new Date(i.expires_at).toLocaleDateString("da-DK")}</span></span></li>)}</ul>
+            {invitations.length === 0 ? <p className="text-body-sm text-on-surface-variant">Ingen invitationer.</p> : (
+              <ul className="divide-y divide-outline-variant/40 text-body-sm">{invitations.map((i) => <li key={i.id} className="flex flex-wrap justify-between gap-2 py-2"><span>{i.email} · {i.role}</span><span className="flex items-center gap-2"><Badge status={i.status} /><span className="text-label-sm text-on-surface-variant">udløber {new Date(i.expires_at).toLocaleDateString("da-DK")}</span></span></li>)}</ul>
             )}
           </Card>
           <Card title="Invitér kollega"><InviteForm wsId={ws.id} myRole={ws.role} /></Card>

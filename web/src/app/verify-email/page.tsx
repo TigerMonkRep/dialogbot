@@ -4,7 +4,8 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { api } from "@/lib/client";
 import type { ApiError } from "@/lib/client";
-import { Alert, Button, Card, ErrorBox } from "@/components/ui";
+import { Alert, Button,  ErrorBox } from "@/components/ui";
+import { AuthFrame } from "@/components/auth-frame";
 
 /** A03: pending, resend, verified and expired-link states. */
 function Verify() {
@@ -27,20 +28,17 @@ function Verify() {
     <div className="space-y-4">
       {state === "error" && <ErrorBox error={error} />}
       {state === "error" && error?.code === "token_expired" && <Alert kind="info">Linket er udløbet. Bestil et nyt nedenfor.</Alert>}
-      {state === "idle" && <p className="text-sm text-muted">Vi har sendt et bekræftelseslink til din e-mail. Åbn linket for at fortsætte. I udviklingsmiljøet findes mailen i den simulerede postkasse.</p>}
+      {state === "idle" && <p className="text-body-sm text-on-surface-variant">Vi har sendt et bekræftelseslink til din e-mail. Åbn linket for at fortsætte. I udviklingsmiljøet findes mailen i den simulerede postkasse.</p>}
       {resent ? <Alert kind="ok">Et nyt link er sendt.</Alert> : (
         <Button variant="secondary" onClick={async () => { await api("/auth/verify-email/resend", { method: "POST" }); setResent(true); }}>Send nyt link</Button>
       )}
-      <p className="text-sm text-muted"><Link className="underline" href="/login">Tilbage til login</Link></p>
+      <p className="text-body-sm text-on-surface-variant"><Link className="underline" href="/login">Tilbage til login</Link></p>
     </div>
   );
 }
 
 export default function VerifyPage() {
   return (
-    <main className="mx-auto max-w-md px-4 py-12">
-      <h1 className="mb-6 text-2xl font-extrabold text-primary-dark">Bekræft e-mail</h1>
-      <Card><Suspense><Verify /></Suspense></Card>
-    </main>
+    <AuthFrame code="A03" title="Bekræft e-mail"><Suspense><Verify /></Suspense></AuthFrame>
   );
 }

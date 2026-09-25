@@ -1,46 +1,40 @@
 "use client";
-import Link from "next/link";
 import { useState } from "react";
 import type { ApiError } from "@/lib/client";
 
-export function Button({ variant = "primary", className = "", ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "ghost" | "danger" }) {
-  const base = "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed";
-  const v = {
-    primary: "bg-primary text-white hover:bg-primary-dark",
-    secondary: "bg-accent text-primary-dark hover:brightness-95",
-    ghost: "text-primary hover:bg-white/60",
-    danger: "bg-danger text-white hover:brightness-90",
-  }[variant];
-  return <button className={`${base} ${v} ${className}`} {...p} />;
+/** Material Symbol icon */
+export function Icon({ name, size = 20, className = "", filled = false }: { name: string; size?: number; className?: string; filled?: boolean }) {
+  return <span aria-hidden className={`material-symbols-outlined ${filled ? "filled" : ""} ${className}`} style={{ fontSize: size }}>{name}</span>;
 }
 
-export function Field({ label, error, hint, children }: { label: string; error?: string; hint?: string; children: React.ReactNode }) {
+type BtnVariant = "primary" | "secondary" | "tonal" | "ghost" | "danger" | "outline";
+export function Button({ variant = "primary", icon, className = "", children, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: BtnVariant; icon?: string }) {
+  const base = "inline-flex items-center justify-center gap-space-xs rounded-xl px-space-lg py-2.5 text-label-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm";
+  const v: Record<BtnVariant, string> = {
+    primary: "bg-primary text-on-primary hover:bg-primary-container",
+    secondary: "bg-secondary-fixed text-on-secondary-fixed hover:brightness-105 font-bold",
+    tonal: "bg-surface-container-low text-primary hover:bg-surface-container shadow-none",
+    ghost: "text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface shadow-none",
+    outline: "bg-surface-container-lowest text-primary border border-outline-variant hover:bg-surface-container-low shadow-none",
+    danger: "bg-error text-on-error hover:brightness-95",
+  };
+  return <button className={`${base} ${v[variant]} ${className}`} {...p}>{icon && <Icon name={icon} size={18} />}{children}</button>;
+}
+
+export function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <span className="text-secondary text-label-sm font-bold uppercase tracking-wider">{children}</span>;
+}
+
+export function Card({ title, label, subtitle, children, actions, className = "" }: { title?: string; label?: string; subtitle?: string; children: React.ReactNode; actions?: React.ReactNode; className?: string }) {
   return (
-    <label className="block space-y-1.5">
-      <span className="text-sm font-semibold text-primary-dark">{label}</span>
-      {children}
-      {hint && !error && <span className="block text-xs text-muted">{hint}</span>}
-      {error && <span role="alert" className="block text-xs font-medium text-danger">{error}</span>}
-    </label>
-  );
-}
-
-export const inputCls = "w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/70 focus:border-primary";
-
-export function Input(p: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={inputCls} {...p} />;
-}
-
-export function Textarea(p: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea className={`${inputCls} min-h-24`} {...p} />;
-}
-
-export function Card({ title, children, actions, className = "" }: { title?: string; children: React.ReactNode; actions?: React.ReactNode; className?: string }) {
-  return (
-    <section className={`rounded-2xl border border-line bg-white/90 p-5 shadow-sm ${className}`}>
-      {(title || actions) && (
-        <header className="mb-4 flex items-center justify-between gap-3">
-          {title && <h2 className="text-base font-bold text-primary-dark">{title}</h2>}
+    <section className={`rounded-xl bg-surface-container-lowest p-space-xl shadow-sm space-y-space-lg ${className}`}>
+      {(title || label || actions) && (
+        <header className="flex items-start justify-between gap-space-md">
+          <div>
+            {label && <SectionLabel>{label}</SectionLabel>}
+            {title && <h3 className="font-display text-headline-sm text-primary font-bold mt-1">{title}</h3>}
+            {subtitle && <p className="text-body-sm text-on-surface-variant">{subtitle}</p>}
+          </div>
           {actions}
         </header>
       )}
@@ -49,60 +43,95 @@ export function Card({ title, children, actions, className = "" }: { title?: str
   );
 }
 
-export function Alert({ kind = "error", children }: { kind?: "error" | "ok" | "info"; children: React.ReactNode }) {
-  const c = { error: "border-danger/40 bg-red-50 text-danger", ok: "border-ok/40 bg-green-50 text-ok", info: "border-line bg-white text-primary-dark" }[kind];
-  return <div role={kind === "error" ? "alert" : "status"} className={`rounded-xl border px-4 py-3 text-sm ${c}`}>{children}</div>;
+export const inputCls = "w-full rounded-lg bg-surface-container-low border border-transparent px-space-md py-2.5 text-body-md text-on-surface placeholder:text-on-surface-variant/60 focus:bg-surface-container-lowest focus:border-primary disabled:opacity-60";
+
+export function Field({ label, error, hint, children }: { label: string; error?: string; hint?: string; children: React.ReactNode }) {
+  return (
+    <label className="block space-y-1.5">
+      <span className="text-label-md text-on-surface font-semibold">{label}</span>
+      {children}
+      {hint && !error && <span className="block text-body-sm text-on-surface-variant">{hint}</span>}
+      {error && <span role="alert" className="block text-label-md text-error">{error}</span>}
+    </label>
+  );
+}
+export function Input(p: React.InputHTMLAttributes<HTMLInputElement>) { return <input className={inputCls} {...p} />; }
+export function Textarea(p: React.TextareaHTMLAttributes<HTMLTextAreaElement>) { return <textarea className={`${inputCls} min-h-24`} {...p} />; }
+export function Select(p: React.SelectHTMLAttributes<HTMLSelectElement>) { return <select className={inputCls} {...p} />; }
+
+export function Alert({ kind = "error", children, icon }: { kind?: "error" | "ok" | "info" | "warn"; children: React.ReactNode; icon?: string }) {
+  const c = {
+    error: "bg-error-container/40 text-on-error-container", ok: "bg-secondary-container text-on-secondary-container",
+    info: "bg-surface-container-high text-on-surface", warn: "bg-tertiary-fixed text-on-tertiary-fixed",
+  }[kind];
+  const ic = icon ?? { error: "error", ok: "check_circle", info: "info", warn: "warning" }[kind];
+  return <div role={kind === "error" ? "alert" : "status"} className={`flex items-start gap-space-sm rounded-lg p-space-md text-body-sm ${c}`}><Icon name={ic} size={20} className="shrink-0" /><div>{children}</div></div>;
 }
 
 export function ErrorBox({ error }: { error: ApiError | null }) {
   if (!error) return null;
-  return (
-    <Alert>
-      {error.message}
-      {error.request_id && <span className="mt-1 block text-xs opacity-70">Reference: {error.request_id}</span>}
-    </Alert>
-  );
+  return <Alert>{error.message}{error.request_id && <span className="mt-1 block text-label-sm opacity-70">Reference: {error.request_id}</span>}</Alert>;
 }
 
+const STATUS: Record<string, [string, string]> = {
+  complete: ["Gennemført", "bg-secondary-container text-on-secondary-container"], passed: ["Bestået", "bg-secondary-container text-on-secondary-container"], approved: ["Godkendt", "bg-secondary-container text-on-secondary-container"],
+  in_progress: ["I gang", "bg-tertiary-fixed text-on-tertiary-fixed"], in_review: ["Til gennemgang", "bg-tertiary-fixed text-on-tertiary-fixed"], pending: ["Afventer", "bg-tertiary-fixed text-on-tertiary-fixed"],
+  stale: ["Forældet", "bg-error-container text-on-error-container"], failed: ["Fejlet", "bg-error text-on-error"], rejected: ["Afvist", "bg-error-container text-on-error-container"],
+  blocked: ["Blokeret", "bg-error-container/60 text-on-error-container"], not_available: ["Ikke tilgængelig", "bg-surface-container-highest text-on-surface-variant"],
+  not_started: ["Ikke startet", "bg-surface-container-high text-on-surface-variant"], untested: ["Ikke testet", "bg-surface-container-high text-on-surface-variant"],
+  draft: ["Kladde", "bg-surface-container-high text-on-surface"], superseded: ["Erstattet", "bg-surface-container-highest text-on-surface-variant"], skipped: ["Sprunget over", "bg-surface-container-highest text-on-surface-variant"],
+  revoked: ["Tilbagekaldt", "bg-surface-container-highest text-on-surface-variant"], expired: ["Udløbet", "bg-error-container text-on-error-container"], accepted: ["Accepteret", "bg-secondary-container text-on-secondary-container"],
+};
 export function Badge({ status }: { status: string }) {
-  const map: Record<string, string> = {
-    complete: "bg-green-100 text-ok", passed: "bg-green-100 text-ok", approved: "bg-green-100 text-ok",
-    in_progress: "bg-accent text-primary-dark", in_review: "bg-accent text-primary-dark", stale: "bg-yellow-100 text-yellow-900",
-    not_started: "bg-white text-muted border border-line", untested: "bg-white text-muted border border-line", draft: "bg-white text-muted border border-line",
-    blocked: "bg-orange-100 text-orange-900", not_available: "bg-gray-200 text-gray-700", skipped: "bg-gray-100 text-muted",
-    failed: "bg-red-100 text-danger", rejected: "bg-red-100 text-danger", superseded: "bg-gray-100 text-muted",
-  };
-  const label: Record<string, string> = {
-    complete: "Gennemført", in_progress: "I gang", not_started: "Ikke startet", blocked: "Blokeret", not_available: "Ikke tilgængelig",
-    skipped: "Sprunget over", passed: "Bestået", failed: "Fejlet", stale: "Forældet", untested: "Ikke testet",
-    draft: "Kladde", in_review: "Til gennemgang", approved: "Godkendt", superseded: "Erstattet", rejected: "Afvist", pending: "Afventer",
-  };
-  return <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${map[status] ?? "bg-white text-muted"}`}>{label[status] ?? status}</span>;
+  const [label, cls] = STATUS[status] ?? [status, "bg-surface-container-high text-on-surface"];
+  return <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-label-sm font-semibold ${cls}`}>{label}</span>;
+}
+export function Tag({ children, tone = "neutral" }: { children: React.ReactNode; tone?: "neutral" | "secondary" | "tertiary" }) {
+  const c = { neutral: "bg-surface-container-highest text-on-surface", secondary: "bg-secondary-fixed text-on-secondary-fixed font-semibold", tertiary: "bg-tertiary-fixed text-on-tertiary-fixed font-semibold" }[tone];
+  return <span className={`rounded px-1.5 py-0.5 text-label-sm ${c}`}>{children}</span>;
 }
 
-/** Simple submit helper: tracks pending/error for a form action. */
 export function useSubmit<T>(fn: () => Promise<T>) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
-  const run = async () => {
-    setPending(true); setError(null);
-    try { return await fn(); } catch (e) { setError(e as ApiError); return undefined; } finally { setPending(false); }
-  };
+  const run = async () => { setPending(true); setError(null); try { return await fn(); } catch (e) { setError(e as ApiError); return undefined; } finally { setPending(false); } };
   return { run, pending, error, setError };
 }
 
-export function Steps({ current }: { current: string }) {
-  const steps = [
-    ["/onboarding/workspace", "Arbejdsrum"], ["/onboarding/business", "Virksomhed"], ["/onboarding/goals", "Mål"],
-    ["/onboarding/languages", "Sprog"], ["/app/knowledge", "Viden"], ["/app/setup", "Plan"],
-  ];
+export function Breadcrumb({ items }: { items: [string, string?][] }) {
   return (
-    <nav aria-label="Opsætningstrin" className="mb-6 flex flex-wrap gap-2 text-xs">
-      {steps.map(([href, label], i) => (
-        <Link key={href} href={href} className={`rounded-full px-3 py-1 font-semibold ${href === current ? "bg-primary text-white" : "bg-white text-primary-dark border border-line"}`}>
-          {i + 1}. {label}
-        </Link>
+    <div className="flex items-center gap-space-xs text-label-md text-on-surface-variant">
+      {items.map(([label, href], i) => (
+        <span key={i} className="flex items-center gap-space-xs">
+          {i > 0 && <Icon name="chevron_right" size={14} />}
+          {href ? <a href={href} className={i === items.length - 1 ? "text-primary font-semibold" : "hover:text-primary"}>{label}</a> : <span className={i === items.length - 1 ? "text-primary font-semibold" : ""}>{label}</span>}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/** Onboarding phase strip (A06 → O01 → O03 → O04 → Viden → G01). */
+export function Steps({ current }: { current: string }) {
+  const steps: [string, string][] = [["/onboarding/workspace", "A06 Arbejdsrum"], ["/onboarding/business", "O01 Virksomhed"], ["/onboarding/goals", "O03 Mål"], ["/onboarding/languages", "O04 Sprog"], ["/app/knowledge", "K01 Viden"], ["/app/setup", "G01 Plan"]];
+  return (
+    <nav aria-label="Onboarding-faser" className="mb-space-lg flex flex-wrap gap-space-xs">
+      {steps.map(([href, label]) => (
+        <a key={href} href={href} className={`rounded-lg px-space-md py-1.5 text-label-md transition-colors ${href === current ? "bg-primary text-on-primary shadow-sm font-semibold" : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"}`}>{label}</a>
       ))}
     </nav>
+  );
+}
+
+/** Progress ring from the G01 banner */
+export function ProgressRing({ percent }: { percent: number }) {
+  return (
+    <div className="relative w-14 h-14 flex items-center justify-center">
+      <svg className="w-14 h-14 -rotate-90" viewBox="0 0 36 36">
+        <path className="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3.5" />
+        <path className="text-secondary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray={`${percent}, 100`} strokeLinecap="round" strokeWidth="3.5" />
+      </svg>
+      <span className="absolute font-display text-headline-sm font-bold text-primary">{percent}%</span>
+    </div>
   );
 }

@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/lib/client";
-import { Alert, Button, ErrorBox, Field, Textarea, useSubmit } from "@/components/ui";
+import { Alert, Button, ErrorBox, Field, Select, Textarea, useSubmit } from "@/components/ui";
 
 /** O03/G02: product intent, guidance preference and reception capabilities. Callback belongs to reception; booking is optional. */
 export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Record<string, unknown>; canEdit: boolean }) {
@@ -16,9 +16,9 @@ export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Recor
     setSaved(true); router.refresh();
   });
   const cb = (k: string, label: string, hint?: string) => (
-    <label className="flex items-start gap-3 rounded-xl border border-line bg-white p-3 text-sm">
+    <label className="flex items-start gap-3 rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-3 text-body-sm">
       <input type="checkbox" className="mt-1" checked={Boolean(f[k])} onChange={(e) => { setSaved(false); setF({ ...f, [k]: e.target.checked }); }} disabled={!canEdit} />
-      <span><strong>{label}</strong>{hint && <span className="block text-xs text-muted">{hint}</span>}</span>
+      <span><strong>{label}</strong>{hint && <span className="block text-label-sm text-on-surface-variant">{hint}</span>}</span>
     </label>
   );
   return (
@@ -26,14 +26,14 @@ export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Recor
       <ErrorBox error={error} />
       {saved && <Alert kind="ok">Gemt. Planen er opdateret ud fra dine mål.</Alert>}
       <Field label="Produkt">
-        <select className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm" value={String(f.product_intent)} onChange={(e) => { setSaved(false); setF({ ...f, product_intent: e.target.value }); }} disabled={!canEdit}>
+        <Select value={String(f.product_intent)} onChange={(e) => { setSaved(false); setF({ ...f, product_intent: e.target.value }); }} disabled={!canEdit}>
           <option value="reception">Reception</option><option value="campaigns">Kampagner</option><option value="both">Begge dele</option>
-        </select>
+        </Select>
       </Field>
       <Field label="Vejledning">
-        <select className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm" value={String(f.guidance_mode)} onChange={(e) => { setSaved(false); setF({ ...f, guidance_mode: e.target.value }); }} disabled={!canEdit}>
+        <Select value={String(f.guidance_mode)} onChange={(e) => { setSaved(false); setF({ ...f, guidance_mode: e.target.value }); }} disabled={!canEdit}>
           <option value="guided">Guid mig trin for trin</option><option value="self_managed">Jeg vil selv sætte op</option>
-        </select>
+        </Select>
       </Field>
       {reception ? (
         <div className="grid gap-2 sm:grid-cols-2">

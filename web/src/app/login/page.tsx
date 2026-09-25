@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
-import { Alert, Button, Card, ErrorBox, Field, Input, useSubmit } from "@/components/ui";
+import { Alert, Button,  ErrorBox, Field, Input, useSubmit } from "@/components/ui";
+import { AuthFrame } from "@/components/auth-frame";
 import type { ApiError } from "@/lib/client";
 
 function LoginForm() {
@@ -24,7 +25,7 @@ function LoginForm() {
       <Field label="E-mail"><Input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="email" /></Field>
       <Field label="Adgangskode"><Input type="password" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} autoComplete="current-password" /></Field>
       <Button type="submit" disabled={pending} className="w-full">{pending ? "Logger ind…" : "Log ind"}</Button>
-      <p className="flex justify-between text-sm text-muted">
+      <p className="flex justify-between text-body-sm text-on-surface-variant">
         <Link className="font-semibold text-primary underline" href="/password/forgot">Glemt adgangskode?</Link>
         <Link className="font-semibold text-primary underline" href="/signup">Opret konto</Link>
       </p>
@@ -34,9 +35,6 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <main className="mx-auto max-w-md px-4 py-12">
-      <h1 className="mb-6 text-2xl font-extrabold text-primary-dark">Log ind</h1>
-      <Card><Suspense><LoginForm /></Suspense></Card>
-    </main>
+    <AuthFrame code="A02" title="Log ind" subtitle="Fortsæt til dit arbejdsrum."><Suspense><LoginForm /></Suspense></AuthFrame>
   );
 }

@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api, fieldError } from "@/lib/client";
-import { Alert, Badge, Button, ErrorBox, Field, Input, Textarea, useSubmit } from "@/components/ui";
+import { Alert, Badge, Button, ErrorBox, Field, Icon, Input, Select, Textarea, useSubmit } from "@/components/ui";
 
 type Profile = Record<string, unknown>;
 
@@ -24,7 +24,7 @@ export function BusinessForm({ wsId, profile, canEdit }: { wsId: string; profile
       {saved && <Alert kind="ok">Gemt.</Alert>}
       <Field label="Officielt navn" error={fieldError(error, "legal_name")}><Input required value={String(f.legal_name ?? "")} onChange={s("legal_name")} disabled={!canEdit} /></Field>
       <Field label="Kort beskrivelse og speciale" hint="Bruges som grundkontekst for assistenten" error={fieldError(error, "description")}><Textarea value={String(f.description ?? "")} onChange={s("description")} disabled={!canEdit} /></Field>
-      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={Boolean(f.manual_setup)} onChange={(e) => setF({ ...f, manual_setup: e.target.checked })} disabled={!canEdit} /> Manuel opsætning uden hjemmeside</label>
+      <label className="flex items-center gap-2 text-body-sm"><input type="checkbox" checked={Boolean(f.manual_setup)} onChange={(e) => setF({ ...f, manual_setup: e.target.checked })} disabled={!canEdit} /> Manuel opsætning uden hjemmeside</label>
       <Field label="Hjemmeside (valgfri)" hint="Automatisk indlæsning af hjemmesider er ikke implementeret endnu" error={fieldError(error, "website_url")}><Input placeholder="https://" value={String(f.website_url ?? "")} onChange={s("website_url")} disabled={!canEdit} /></Field>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="CVR (valgfri)"><Input value={String(f.cvr ?? "")} onChange={s("cvr")} disabled={!canEdit} /></Field>
@@ -35,7 +35,7 @@ export function BusinessForm({ wsId, profile, canEdit }: { wsId: string; profile
       </div>
       <div className="flex items-center gap-3">
         <Button type="submit" disabled={pending || !canEdit || !dirty}>{pending ? "Gemmer…" : "Gem"}</Button>
-        {dirty && <span className="text-xs text-muted">Ugemte ændringer</span>}
+        {dirty && <span className="text-label-sm text-on-surface-variant">Ugemte ændringer</span>}
         <Button type="button" variant="ghost" onClick={() => { if (!dirty || confirm("Du har ugemte ændringer. Fortsæt alligevel?")) router.push("/onboarding/goals"); }}>Fortsæt til mål →</Button>
       </div>
     </form>
@@ -50,22 +50,22 @@ export function Categories({ wsId, categories, suggested, canEdit }: { wsId: str
   const remove = async (id: string) => { await api(`/workspaces/${wsId}/categories/${id}`, { method: "DELETE" }); router.refresh(); };
   const has = new Set(categories.map((c) => c.slug));
   return (
-    <div className="space-y-4 text-sm">
+    <div className="space-y-4 text-body-sm">
       <ErrorBox error={error} />
       <ul className="flex flex-wrap gap-2">
-        {categories.length === 0 && <li className="text-muted">Ingen kategorier endnu – vælg mindst én.</li>}
+        {categories.length === 0 && <li className="text-on-surface-variant">Ingen kategorier endnu – vælg mindst én.</li>}
         {categories.map((c) => (
-          <li key={c.id} className="flex items-center gap-2 rounded-full bg-accent px-3 py-1 font-semibold text-primary-dark">
-            {c.label}{c.is_primary && <Badge status="approved" />}{c.is_custom && <span className="text-xs">(egen)</span>}
-            {canEdit && <button aria-label={`Fjern ${c.label}`} onClick={() => remove(c.id)} className="ml-1 text-primary-dark/70 hover:text-danger">×</button>}
+          <li key={c.id} className="flex items-center gap-2 rounded-full bg-secondary-container px-3 py-1 text-label-md font-semibold text-on-secondary-container">
+            {c.label}{c.is_primary && <Badge status="approved" />}{c.is_custom && <span className="text-label-sm">(egen)</span>}
+            {canEdit && <button aria-label={`Fjern ${c.label}`} onClick={() => remove(c.id)} className="ml-1 opacity-70 hover:text-error">×</button>}
           </li>
         ))}
       </ul>
       {canEdit && (
         <>
-          <p className="text-muted">Forslag:</p>
+          <p className="text-on-surface-variant">Forslag:</p>
           <div className="flex flex-wrap gap-2">
-            {suggested.filter((s) => !has.has(s.slug)).map((s) => <Button key={s.slug} variant="ghost" className="border border-line" onClick={() => add(s.slug, s.label)}>+ {s.label}</Button>)}
+            {suggested.filter((s) => !has.has(s.slug)).map((s) => <Button key={s.slug} variant="tonal" className="text-label-md px-space-md py-2" onClick={() => add(s.slug, s.label)}>+ {s.label}</Button>)}
           </div>
           <form onSubmit={(e) => { e.preventDefault(); run(); }} className="flex gap-2">
             <Input placeholder="Egen kategori, fx Poolservice" value={custom} onChange={(e) => setCustom(e.target.value)} />

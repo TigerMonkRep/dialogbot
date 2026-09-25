@@ -9,7 +9,7 @@ export default async function GoalsPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <Steps current="/onboarding/goals" />
-      <h1 className="mb-4 text-2xl font-extrabold text-primary-dark">Mål og kapabiliteter</h1>
+      <h1 className="mb-4 font-display text-headline-lg text-primary">Mål og kapabiliteter</h1>
       <Card><GoalsForm wsId={ws.id} goals={goals} canEdit={ws.role !== "reader"} /></Card>
     </div>
   );

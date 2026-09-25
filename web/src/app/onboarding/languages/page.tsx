@@ -9,7 +9,7 @@ export default async function LanguagesPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <Steps current="/onboarding/languages" />
-      <h1 className="mb-4 text-2xl font-extrabold text-primary-dark">Sprog</h1>
+      <h1 className="mb-4 font-display text-headline-lg text-primary">Sprog</h1>
       <Card><LanguagesForm wsId={ws.id} settings={ls} canEdit={ws.role !== "reader"} /></Card>
     </div>
   );

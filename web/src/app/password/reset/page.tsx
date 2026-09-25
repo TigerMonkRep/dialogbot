@@ -3,7 +3,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { api, fieldError } from "@/lib/client";
-import { Alert, Button, Card, ErrorBox, Field, Input, useSubmit } from "@/components/ui";
+import { Alert, Button,  ErrorBox, Field, Input, useSubmit } from "@/components/ui";
+import { AuthFrame } from "@/components/auth-frame";
 
 function ResetForm() {
   const token = useSearchParams().get("token") ?? "";
@@ -17,7 +18,7 @@ function ResetForm() {
   return (
     <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-4">
       <ErrorBox error={error} />
-      {error?.code === "token_expired" && <Link className="text-sm underline" href="/password/forgot">Bestil nyt link</Link>}
+      {error?.code === "token_expired" && <Link className="text-body-sm underline" href="/password/forgot">Bestil nyt link</Link>}
       <Field label="Ny adgangskode" hint="Mindst 10 tegn" error={fieldError(error, "password")}><Input type="password" required minLength={10} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" /></Field>
       <Button type="submit" disabled={pending} className="w-full">Gem ny adgangskode</Button>
     </form>
@@ -26,9 +27,6 @@ function ResetForm() {
 
 export default function ResetPage() {
   return (
-    <main className="mx-auto max-w-md px-4 py-12">
-      <h1 className="mb-6 text-2xl font-extrabold text-primary-dark">Vælg ny adgangskode</h1>
-      <Card><Suspense><ResetForm /></Suspense></Card>
-    </main>
+    <AuthFrame code="A04" title="Vælg ny adgangskode"><Suspense><ResetForm /></Suspense></AuthFrame>
   );
 }

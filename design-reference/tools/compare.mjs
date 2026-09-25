@@ -15,7 +15,8 @@ if (process.env.APP_EMAIL) {
 }
 const state = await ctx0.storageState(); await ctx0.close();
 for (const [w, suffix] of [[1440, 'desktop'], [390, 'mobil']]) {
-  const ref = fs.readdirSync(OUT).find((f) => f.startsWith(slug) && f.includes(`_${suffix}-${w}`));
+  const RS = process.env.REF_SUFFIX ? `-${process.env.REF_SUFFIX}` : '';
+  const ref = fs.readdirSync(OUT).find((f) => f.startsWith(slug) && f.endsWith(`_${suffix}-${w}${RS}.png`)) ?? (RS ? fs.readdirSync(OUT).find((f) => f.startsWith(slug) && f.endsWith(`_${suffix}-${w}.png`)) : undefined);
   const ctx = await b.newContext({ viewport: { width: w, height: w === 390 ? 844 : 900 }, storageState: state });
   const p = await ctx.newPage(); await p.goto(`${APP}${route}`, { waitUntil: 'networkidle' });
   await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(300);

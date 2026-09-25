@@ -43,14 +43,18 @@ export function DesktopNav({ items }: { items: NavItem[] }) {
   );
 }
 
-export function WorkspaceChip({ workspaces, current, compact = false }: { workspaces: Ws[]; current: Ws | null; compact?: boolean }) {
+export function WorkspaceChip({ workspaces, current, compact = false, plain = false }: { workspaces: Ws[]; current: Ws | null; compact?: boolean; plain?: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
   if (!current) return null;
   return (
     <div className="relative" ref={ref}>
-      {compact ? (
+      {plain ? (
+        <button onClick={() => setOpen(!open)} className="flex items-center gap-1 font-label-lg text-label-lg text-on-surface hover:text-primary" aria-haspopup="listbox" aria-expanded={open}>
+          <span className="max-w-[260px] truncate">{current.name}</span><Icon name="expand_more" size={16} className="text-on-surface-variant" />
+        </button>
+      ) : compact ? (
         <button onClick={() => setOpen(!open)} className="flex items-center gap-1 mt-0.5" aria-haspopup="listbox" aria-expanded={open} aria-label={`Arbejdsrum: ${current.name}`}>
           <span className="font-label-sm text-[11px] text-on-surface-variant font-medium truncate max-w-[130px]">{current.name}</span>
           <Icon name="expand_more" size={14} className="text-outline" />
@@ -131,11 +135,11 @@ export function MoreMenu({ items, variant }: { items: NavItem[]; variant: "hambu
   );
 }
 
-export function BottomNav({ items, more }: { items: NavItem[]; more: NavItem[] }) {
+export function BottomNav({ items, more, breakpoint = "md" }: { items: NavItem[]; more: NavItem[]; breakpoint?: "md" | "lg" }) {
   const path = usePathname();
   return (
-    <nav className="md:hidden fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.03)]" aria-label="Genveje">
-      <div className="h-16 px-space-sm grid grid-cols-4 items-center">
+    <nav className={`${breakpoint === "lg" ? "lg:hidden" : "md:hidden"} fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.03)]`} aria-label="Genveje">
+      <div className={`h-16 px-space-sm grid ${items.length === 4 ? "grid-cols-5" : "grid-cols-4"} items-center`}>
         {items.map((it) => {
           const active = isActive(path, it);
           return (
@@ -147,6 +151,24 @@ export function BottomNav({ items, more }: { items: NavItem[]; more: NavItem[] }
         })}
         <MoreMenu items={more} variant="bottom" />
       </div>
+    </nav>
+  );
+}
+
+/** Admin sidebar navigation (Stitch K01 aside). */
+export function SideNav({ items }: { items: NavItem[] }) {
+  const path = usePathname();
+  return (
+    <nav className="flex flex-col gap-space-xs px-space-sm" aria-label="Hovedmenu">
+      {items.map((it) => {
+        const active = isActive(path, it);
+        return (
+          <Link key={it.label} href={it.href} aria-current={active ? "page" : undefined}
+            className={`flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg transition-all ${active ? "bg-primary-container text-on-primary" : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"}`}>
+            <Icon name={it.icon} size={20} /><span>{it.label}</span>
+          </Link>
+        );
+      })}
     </nav>
   );
 }

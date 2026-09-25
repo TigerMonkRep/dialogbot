@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { backend, currentWorkspaceId, isLoggedIn } from "@/lib/api.server";
 import { Icon } from "./ui";
-import { AccountButton, BottomNav, DesktopNav, MoreMenu, WorkspaceChip, type NavItem } from "./shell.client";
+import { AccountButton, BottomNav, DesktopNav, MoreMenu, SideNav, WorkspaceChip, type NavItem } from "./shell.client";
 
 type Ws = { id: string; name: string; role: string; product_intent: string };
 type Me = { display_name: string; email: string; email_verified: boolean };
@@ -43,7 +43,7 @@ function AiPill({ live, compact = false }: { live: boolean; compact?: boolean })
   );
 }
 
-export async function AppShell({ children }: { children: React.ReactNode }) {
+async function shellData() {
   const loggedIn = await isLoggedIn();
   let workspaces: Ws[] = [];
   let me: Me | null = null;
@@ -58,15 +58,28 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
   const current = workspaces.find((w) => w.id === wsId) ?? workspaces[0] ?? null;
   const aiLive = caps.find((c) => c.key === "ai.conversation")?.status === "available";
   const env = caps[0]?.environment;
-  const verifyBanner = me && !me.email_verified && (
+  return { workspaces, me, current, aiLive, env };
+}
+
+function VerifyBanner({ me }: { me: Me | null }) {
+  if (!me || me.email_verified) return null;
+  return (
     <div className="bg-tertiary-fixed text-on-tertiary-fixed px-margin py-2 text-center font-label-md text-label-md">
       Din e-mail er ikke bekræftet. <Link className="underline font-semibold" href="/verify-email">Bekræft nu</Link> for at oprette arbejdsrum.
     </div>
   );
+}
+
+const SkipLink = () => <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-space-md focus:py-2 focus:rounded-lg focus:bg-primary focus:text-on-primary">Spring til indhold</a>;
+
+/** Guide shell (Stitch G01/A06): top navigation on desktop, compact header + bottom nav on mobile. */
+export async function AppShell({ children }: { children: React.ReactNode }) {
+  const { workspaces, me, current, aiLive, env } = await shellData();
+  const verifyBanner = <VerifyBanner me={me} />;
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col">
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-space-md focus:py-2 focus:rounded-lg focus:bg-primary focus:text-on-primary">Spring til indhold</a>
+      <SkipLink />
 
       {/* Desktop header */}
       <header className="hidden md:block fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-md shadow-[0_1px_8px_rgba(22,78,67,0.06)]">
@@ -132,6 +145,94 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
       </footer>
 
       <BottomNav items={BOTTOM} more={NAV} />
+    </div>
+  );
+}
+
+/** Admin sidebar (Stitch K01/C01/BK/M screens). Unbuilt areas lead to the honest placeholder. */
+export const SIDE: NavItem[] = [
+  { href: "/app/setup", match: "/app/setup", label: "Overblik", icon: "grid_view" },
+  { href: notYet("Indbakke"), match: "/app/inbox", label: "Indbakke", icon: "inbox" },
+  { href: notYet("Henvendelser"), match: "/app/conversations", label: "Henvendelser", icon: "contact_support" },
+  { href: notYet("Reception"), match: "/app/reception", label: "Reception", icon: "support_agent" },
+  { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
+  { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
+  { href: notYet("Bookinger"), match: "/app/bookings", label: "Bookinger", icon: "calendar_today" },
+  { href: notYet("Rapporter"), match: "/app/reports", label: "Rapporter", icon: "bar_chart" },
+  { href: notYet("Fakturering"), match: "/app/billing", label: "Fakturering", icon: "receipt_long" },
+  { href: "/app/settings/team", match: "/app/settings", label: "Indstillinger", icon: "settings" },
+];
+const SIDE_BOTTOM: NavItem[] = [SIDE[0], SIDE[1], SIDE[5], SIDE[4]];
+
+export async function AdminShell({ children }: { children: React.ReactNode }) {
+  const { workspaces, me, current, env } = await shellData();
+  const envPill = env && (
+    <span className="inline-flex items-center gap-space-xs px-space-sm py-0.5 rounded-full bg-secondary-container font-label-sm text-label-sm text-on-secondary-fixed">
+      <span className="w-1.5 h-1.5 rounded-full bg-primary" />{env === "prod" ? "Produktion" : env === "staging" ? "Staging" : "Udvikling"}
+    </span>
+  );
+  return (
+    <div className="min-h-dvh bg-surface">
+      <SkipLink />
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex-col justify-between py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <div className="flex flex-col gap-space-lg">
+          <Link href="/app" className="px-gutter flex items-center gap-space-sm">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center"><Icon name="support_agent" size={20} className="text-secondary-fixed" /></div>
+            <div className="flex flex-col"><span className="font-headline-sm text-headline-sm text-primary tracking-tight">Dialogbot</span><span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Admin portal</span></div>
+          </Link>
+          <SideNav items={SIDE} />
+        </div>
+        {me && (
+          <div className="px-space-md">
+            <div className="bg-surface-container-lowest p-space-md rounded-xl flex items-center gap-space-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><Icon name="person" size={18} className="text-on-primary" /></div>
+              <div className="flex flex-col min-w-0 flex-1"><span className="font-label-md text-label-md text-on-surface truncate">{me.display_name}</span><span className="font-body-sm text-body-sm text-on-surface-variant truncate">{current?.name}</span></div>
+            </div>
+          </div>
+        )}
+      </aside>
+
+      {/* Desktop header */}
+      <header className="hidden lg:flex fixed top-0 left-64 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 items-center justify-between px-gutter-lg">
+        <div className="flex items-center gap-space-md">
+          <span className="font-headline-sm text-headline-sm text-primary">Dialogbot</span>
+          <span className="text-outline-variant font-body-sm" aria-hidden>/</span>
+          <WorkspaceChip workspaces={workspaces} current={current} plain />
+          {envPill}
+        </div>
+        <div className="flex items-center gap-space-md">
+          <Link href={notYet("Notifikationer")} aria-label="Notifikationer" className="w-9 h-9 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><Icon name="notifications" size={20} /></Link>
+          <div className="flex items-center gap-space-sm pl-space-xs"><AccountButton me={me} />{me && <span className="font-label-md text-label-md text-on-surface">{me.display_name}</span>}</div>
+        </div>
+      </header>
+
+      {/* Mobile / tablet header */}
+      <header className="lg:hidden fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
+        <div className="h-16 px-margin flex items-center justify-between gap-space-sm">
+          <div className="flex items-center gap-space-sm min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0"><Icon name="support_agent" size={20} className="text-secondary-fixed" /></div>
+            <div className="flex flex-col min-w-0">
+              <span className="font-headline-sm text-headline-sm text-primary leading-tight">Dialogbot</span>
+              <WorkspaceChip workspaces={workspaces} current={current} compact />
+            </div>
+          </div>
+          <div className="flex items-center gap-space-xs flex-shrink-0">
+            <Link href={notYet("Notifikationer")} aria-label="Notifikationer" className="w-11 h-11 flex items-center justify-center rounded-lg text-primary hover:bg-surface-container transition-colors"><Icon name="notifications" size={22} /></Link>
+            <AccountButton me={me} />
+          </div>
+        </div>
+        <VerifyBanner me={me} />
+      </header>
+
+      <div className="lg:pl-64">
+        <div className="hidden lg:block pt-16"><VerifyBanner me={me} /></div>
+        <main id="main" className="relative pt-16 lg:pt-0 pb-24 lg:pb-0 w-full px-margin lg:px-gutter-lg py-gutter">
+          <div className="flex flex-col w-full pt-space-md lg:pt-gutter pb-margin-lg">{children}</div>
+        </main>
+      </div>
+
+      <BottomNav items={SIDE_BOTTOM} more={SIDE} breakpoint="lg" />
     </div>
   );
 }

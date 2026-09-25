@@ -20,6 +20,7 @@ const ACTION: Record<string, [string, string]> = {
   "lead.created": ["Henvendelse oprettet", "person_add"], "lead.updated": ["Henvendelse ændret", "edit"],
   "lead.approved": ["Henvendelse godkendt", "verified"], "lead.rejected": ["Henvendelse afvist", "block"],
   "task.created": ["Opgave oprettet", "add_task"], "task.updated": ["Opgave ændret", "task_alt"],
+  "conversation.mode_changed": ["Samtale overtaget/givet tilbage", "swap_horiz"],
   "telephony.number_added": ["Telefonnummer tilknyttet", "add_call"], "telephony.number_updated": ["Telefonnummer ændret", "call"],
   "reports.settings_updated": ["Rapportindstillinger ændret", "bar_chart"], "agreement.created": ["Prisaftale valgt", "handshake"],
   "webchat.updated": ["Webchat ændret", "chat"], "webchat.key_rotated": ["Ny widgetnøgle", "autorenew"],

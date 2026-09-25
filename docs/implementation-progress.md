@@ -2,6 +2,15 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 12 — 25. september 2026 (medarbejdersvar i webchat)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `conversations.mode` (ai/staff) og `conversation_messages.author_user_id` | implementeret, migreret | Alembic `19a35ecb7df3`; op/ned + `alembic check` |
+| Medarbejder (staff+) svarer i indbakken → samtalen skifter til `staff`, assistenten svarer ikke (intet modelkald), kundens beskeder gemmes; "Giv tilbage til assistenten" (auditlogget) – modellen ser herefter medarbejdersvar som tidligere assistentsvar | testet | `test_staff_takeover_silences_assistant_and_reaches_visitor` |
+| Telefonopkald kan ikke besvares i chatten (409) | testet | `test_phone_conversations_cannot_be_answered_in_chat` |
+| Widgetten henter nye svar hvert 5. sekund (højst 30 min uden aktivitet) og viser dem som "Medarbejder"; indbakken opdaterer sig selv og markerer "Venter på svar" | implementeret, E2E | rejse 15 (1440 + 390) |
+
 ## Checkpoint 11 — 25. september 2026 (milepæl B: indgående telefoni via Vapi)
 
 | Del | Status | Bevis |

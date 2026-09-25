@@ -17,12 +17,16 @@ Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI
 | O03/O04 | /onboarding/goals, /onboarding/languages | kortdesign fra G01 | kortdesign fra G01 | Ingen selvstændig Stitch-skærm |
 | K01–K05, R05/R06 | /app/knowledge?tab=… | matchet (alle faner) | matchet (K01) | Strukturerede formularer i stedet for JSON; K05 sammenligning; K01/R05/R06 ærlige tomtilstande |
 | A01–A05 | /signup, /login, /verify-email, /password/*, /invite/[token] | centreret kolonne | matchet (A04) | Kun mobilreference findes i Stitch |
+| S02, S08, S09 | /app/settings/team, /profile, /activity | designsystem (admin-skal) | designsystem | Ingen Stitch-skærm; S08 skrivebeskyttet (intet API til navn/sprog) |
+| P01 | / | P04–P08-stil | P04–P08-stil | Ingen egen Stitch-skærm; kun sande påstande |
 
-**Funktionelt verificeret i browser (lokalt):** login; O01 "Gem" og "Gem og fortsæt" (gemmer før navigation); K03 prisændring → kladde → K05-sammenligning → godkend → ny aktiv pris.
+**E2E (Playwright, `web/e2e`, workflow `.github/workflows/e2e.yml`):** otte rejser + tastatur/fokus, hver ved 1440 og 390 px, mod Next production build → FastAPI + outbox-worker → PostgreSQL (seed). 18/18 grønne lokalt. Screenshots, HTML-rapport og logs uploades som artefakt `e2e-<sha>`. Rejserne er defineret ud fra de flows, der findes (blueprint §9.1 findes ikke i repoet): (1) A01→A03→A06 med bevaret hensigt, (2) A02 fejl/husket destination/log ud, (3) A04 nulstilling, (4) O01→O03→O04 med gem-før-navigation, (5) K03→K05 kladde→godkend, (6) G01/G05 med ærlige ikke-tilgængelige trin, (7) S02→A05 invitation, (8) roller (læser/medarbejder/admin).
 
-**Ikke gjort endnu:** S08 profil, S09 aktivitetslog, G03-wrapper, P01 forside, S02 team i nyt design; Playwright-rejser i CI (blueprint §9.1 findes ikke i repoet); staging-screenshots (netværkspolitik blokerer stadig `*.vercel.app`/`*.onrender.com` i denne container).
+**Fejl fundet og rettet undervejs:** åbent redirect via `?next=//host` og `/\host` (proxy, login, signup); død session-cookie efter nulstilling; manglende "ingen næste handling"-tilstand på mobil; O01 viste "ugemte ændringer" efter gem.
 
-**Præcis næste handling:** S08/S09/S02 i admin-skal → Playwright-suite i CI (lokal API + PostgreSQL, 390/1440-screenshots som artefakter, tastatur/fokus) → merge PR #2 → kontrollér staging.
+**Ikke gjort endnu:** G03-wrapper (guidet side pr. opgave); staging-screenshots (netværkspolitikken blokerer stadig `*.vercel.app`/`*.onrender.com` i denne container).
+
+**Præcis næste handling:** grøn CI på PR #2 (inkl. E2E) → merge → kontrollér staging visuelt (bruger, eller Claude i en session med åbne værter) → milepæl B (Resend-webhook).
 
 ## Checkpoint 3 — 25. september 2026 (overtagelse, milepæl A-design)
 

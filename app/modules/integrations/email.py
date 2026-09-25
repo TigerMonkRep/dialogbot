@@ -1,4 +1,4 @@
-"""Email adapters. Only the simulated adapter exists in this stage."""
+"""Email adapters: simulated (dev/test/staging) and Resend."""
 from __future__ import annotations
 
 import uuid
@@ -39,9 +39,9 @@ class SimulatedEmailAdapter:
 class ResendEmailAdapter:
     """Sends through Resend's HTTP API. Records the provider message id.
 
-    Status semantics: "sent" means Resend accepted the message; delivery is a
-    separate provider event (webhooks arrive in Milestone B). NOT externally
-    verified yet: no Resend account/key existed when this adapter was written.
+    Status semantics: "sent" means Resend accepted the message. Delivery, bounce and
+    complaint arrive later as signed webhooks (app/modules/webhooks) and are stored in
+    `provider_status`. NOT externally verified yet: no Resend account/key exists.
     """
 
     name = "resend"
@@ -57,8 +57,8 @@ class ResendEmailAdapter:
         if r.status_code >= 400:
             raise RuntimeError(f"resend {r.status_code}: {r.text[:300]}")
         rec = EmailDelivery(outbox_event_id=outbox_event_id, workspace_id=mail.workspace_id, adapter=self.name,
-                            to_email=mail.to_email, subject=mail.subject, body_text=f"[provider_id={r.json().get('id')}]",
-                            status="sent")
+                            to_email=mail.to_email, subject=mail.subject, body_text=mail.body_text,
+                            status="sent", provider_message_id=r.json().get("id"))
         db.add(rec)
         return rec
 

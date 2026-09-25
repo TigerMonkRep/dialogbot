@@ -319,3 +319,27 @@ class EmailDelivery(Base):
     body_text: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[str] = mapped_column(String(16), nullable=False)
     created_at: Mapped[datetime] = ts_now()
+    # Provider tracking (Resend). `status` stays the send outcome ("sent" = accepted by the provider);
+    # `provider_status` is the latest delivery event from the provider webhook. It never moves backwards.
+    provider_message_id: Mapped[str | None] = mapped_column(String(100), unique=True)
+    provider_status: Mapped[str | None] = mapped_column(String(32))
+    provider_status_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class WebhookEvent(Base):
+    """Inbound provider webhook, stored once per provider event id (idempotency and audit trail).
+
+    Only events whose signature verified are stored; the raw payload is kept for support.
+    """
+
+    __tablename__ = "webhook_events"
+    __table_args__ = (UniqueConstraint("provider", "event_id", name="uq_webhook_events_provider_event"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    provider: Mapped[str] = mapped_column(String(32), nullable=False)
+    event_id: Mapped[str] = mapped_column(String(200), nullable=False)
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    payload: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    # applied | ignored | unmatched — what the event did to our records.
+    outcome: Mapped[str] = mapped_column(String(16), nullable=False)
+    received_at: Mapped[datetime] = ts_now()

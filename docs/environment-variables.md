@@ -17,6 +17,7 @@
 | `SESSION_TTL_HOURS`, `INVITATION_TTL_HOURS`, `RESET_TTL_MINUTES`, `VERIFICATION_TTL_HOURS` | nej | API | — | Standard 336 / 72 / 60 / 48. |
 | `EMAIL_ADAPTER` | ja | API, worker | — | `simulated` (dev/test/staging) eller `resend`. |
 | `RESEND_API_KEY` | ved resend | worker (API kun hvis den sender synkront – det gør den ikke) | Resend → API Keys | Staging- og prod-nøgle adskilt. |
+| `RESEND_WEBHOOK_SECRET` | ved resend | API | Resend → Webhooks → endpoint → *Signing secret* (`whsec_…`) | Uden den svarer `POST /api/v1/webhooks/resend` 503. Én pr. miljø. |
 | `EMAIL_FROM` | ved resend | worker | Verificeret afsenderdomæne i Resend | `Dialogbot <noreply@mail.<domæne>>` |
 | `PUBLIC_BASE_URL` | ja | API | Render-URL | Bruges i OpenAPI/links. |
 | `FRONTEND_BASE_URL` | ja | API, worker | Vercel-URL | Links i mails (verificering, reset, invitation). |
@@ -35,4 +36,4 @@ Der findes ingen `NEXT_PUBLIC_*` hemmeligheder. Browseren kender kun sit eget or
 
 ## Senere milepæle (navne reserveret, ikke læst af koden endnu)
 
-`AI_PROVIDER`, `AI_MODEL_ID`, `ANTHROPIC_API_KEY`, `VAPI_API_KEY`, `VAPI_WEBHOOK_SECRET`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID`, `RESEND_WEBHOOK_SECRET`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PUBLISHABLE_KEY` (eneste offentlige), `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, `MS_CLIENT_ID`/`MS_CLIENT_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (kun backend, kun til Storage-adapteren), `STORAGE_BUCKET_SOURCES`, `STORAGE_BUCKET_EXPORTS`.
+`AI_PROVIDER`, `AI_MODEL_ID`, `ANTHROPIC_API_KEY`, `VAPI_API_KEY`, `VAPI_WEBHOOK_SECRET`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PUBLISHABLE_KEY` (eneste offentlige), `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, `MS_CLIENT_ID`/`MS_CLIENT_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (kun backend, kun til Storage-adapteren), `STORAGE_BUCKET_SOURCES`, `STORAGE_BUCKET_EXPORTS`.

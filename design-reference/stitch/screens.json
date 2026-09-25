@@ -1,0 +1,322 @@
+{
+ "project": "projects/17878422545746691557",
+ "title": "DIALOGBOT",
+ "updateTime": "2026-09-24T21:47:06.566674Z",
+ "screens": [
+  {
+   "id": "dd7bbaf9d9444b2a80deeb7468ee2287",
+   "title": "A04 & A05 - Nulstilling af Adgangskode & Teaminvitation (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "1768"
+  },
+  {
+   "id": "382edfe060254f6e980cf89112fc9a5b",
+   "title": "A06, O01 & O02 - Virksomhed, Arbejdsrum & Viden (Desktop)",
+   "device": "DESKTOP",
+   "width": "2778",
+   "height": "3124"
+  },
+  {
+   "id": "7b1ac4e936c847ff84fec6f51945709f",
+   "title": "A06, O01 & O02 - Virksomhed, Arbejdsrum & Viden (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "3360"
+  },
+  {
+   "id": "a2c4ee3840d34a9584e06402d1820e19",
+   "title": "BK06 & BK05/BK07 - Kalenderforbindelse & Skrivedestination (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "3714"
+  },
+  {
+   "id": "84ce79fe74044037a761daddd75bef36",
+   "title": "BK06 & BK05/BK07 - Kalenderforbindelse & Skrivedestination (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "4632"
+  },
+  {
+   "id": "3f6027aecbe44883b916807e8e052c79",
+   "title": "BK10 & BK11 - Medarbejdere, Ressourcer & Kapacitet (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "3952"
+  },
+  {
+   "id": "842f22c9a36544838b1f6b75cdc2325c",
+   "title": "BK10 & BK11 - Medarbejdere, Ressourcer & Kapacitet (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "4508"
+  },
+  {
+   "id": "8b374e96f2f544ae887d9ad643f3cb43",
+   "title": "BK15 - Synkronisering & Incidentcenter (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2746"
+  },
+  {
+   "id": "57ef5767fdc048c894e9abf748ce4b4d",
+   "title": "BK15 - Synkronisering & Incidenthåndtering (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "4686"
+  },
+  {
+   "id": "877313002e9f4b3899ae1d28a57dbee6",
+   "title": "C01-C07 - Kampagneoprettelse, Validering & Manuskript (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "5566"
+  },
+  {
+   "id": "6b1fe4914a5c4d6f8655dc0d6e1be375",
+   "title": "C01-C07 - Kampagneoprettelse, Validering & Manuskript (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2690"
+  },
+  {
+   "id": "08c4e63f615042b997472be58e35854d",
+   "title": "C10-C15 - Kampagnedrift, Tidsplan, Historik & Afstemning (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "2048"
+  },
+  {
+   "id": "b10eeb3c13fe49f1a2a99b0c3c7512b3",
+   "title": "C10-C15 - Kampagnedrift, Tidsplan, Historik & Afstemning (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2032"
+  },
+  {
+   "id": "11409104281744085553",
+   "title": "Dialogbot-Stitch-Evidence-and-Export-Prompt.md",
+   "device": null,
+   "width": "780",
+   "height": "1768"
+  },
+  {
+   "id": "11c468d145fb40e19d5fe07086c4d8e8",
+   "title": "E07 - Booking Beskedskabeloner & Previews (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "4292"
+  },
+  {
+   "id": "4b54e4be6dbf47179f32bb50454d1581",
+   "title": "E07 - Booking Beskedskabeloner & Previews (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2232"
+  },
+  {
+   "id": "6ae77d4ba9784816848cc6b33262e3c8",
+   "title": "G01-G04 & O03-O05 - Personlig Opsætningsguide (Desktop)",
+   "device": "DESKTOP",
+   "width": "2778",
+   "height": "5370"
+  },
+  {
+   "id": "fed63bac78c74290803acce6e2b122d6",
+   "title": "G01-G04 & O03-O05 - Personlig Opsætningsguide (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2978"
+  },
+  {
+   "id": "5fbaa65ba75e4a87a78321d8405dab70",
+   "title": "H01 - Kundesupport & Hjælpecenter (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "3040"
+  },
+  {
+   "id": "eed8dbfc38984b51b9085f5a6cc2158e",
+   "title": "H01 - Kundesupport & Hjælpecenter (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "3090"
+  },
+  {
+   "id": "01f9c61cff0a42b8a44d8bf2062df94d",
+   "title": "K01-K05 & R05/R06 - Viden, Katalog & Receptionsmanuskript (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "2102"
+  },
+  {
+   "id": "b2208718cec2480eb59bf4182e81e773",
+   "title": "K01-K05 & R05/R06 - Viden, Katalog & Receptionsmanuskript (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "1768"
+  },
+  {
+   "id": "d563ad5d93794a0c9013eb96dc63f0b1",
+   "title": "K04 - Tilbudseditor & Kampagnerabatter (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "3448"
+  },
+  {
+   "id": "647eb54bc3bf4d4da7a74dfb8b8b9c77",
+   "title": "K04 - Tilbudseditor & Kampagnerabatter (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2068"
+  },
+  {
+   "id": "47c5836ed42e4e11abbbfe0a0fb20234",
+   "title": "M01 - Driftsoverblik & Operatørkonsol (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2800"
+  },
+  {
+   "id": "ac4c50f688e547d2a50ec827c372512f",
+   "title": "M02 - Arbejdsrum & Supportadgang (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2504"
+  },
+  {
+   "id": "305cf249ac524fb28ebc4813fcd1895d",
+   "title": "M03 - Hændelser & Genkørsel (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2324"
+  },
+  {
+   "id": "fcb43a8923d74ad6b86eaef64cdca7fa",
+   "title": "M04 - Priser, Ordrer & Tvistadministration (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "2812"
+  },
+  {
+   "id": "384845b6a72b4ee383aeee279bf3fd97",
+   "title": "M04 - Priser, Ordrer & Tvister (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2564"
+  },
+  {
+   "id": "b6a516585c744f29878eeb67e8a925f7",
+   "title": "M05 - Platformsskabeloner & Branchemodeller (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "3812"
+  },
+  {
+   "id": "f031c1cd20d54f1898f5e782b0093c6c",
+   "title": "M05 - Platformsskabeloner & Branchemodeller (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "2838"
+  },
+  {
+   "id": "d0f455c8b4ea484885ed061ab8cae836",
+   "title": "M06 - Operatør Supportkø & Ticketbehandling (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "2816"
+  },
+  {
+   "id": "43d0d61b34344402864b6c2d557d4a40",
+   "title": "M06 - Operatør Supportkø & Ticketbehandling (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "3596"
+  },
+  {
+   "id": "c962a0b7533d48efacdd075bb4fd903a",
+   "title": "M07 - Revisorlog & Operatøraudit (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "3032"
+  },
+  {
+   "id": "e340766cc12c4509b4b375c3af458fdc",
+   "title": "M07 - Revisorlog & Operatøraudit (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "3914"
+  },
+  {
+   "id": "d75c34f0edb84d0583741655a3afe343",
+   "title": "P04 - Sådan fungerer det (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "10704"
+  },
+  {
+   "id": "cb23fb73159344839d3659083a4d8659",
+   "title": "P04 - Sådan fungerer det (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "5256"
+  },
+  {
+   "id": "fefe7d3ce8f74b52a8cf54ff8c5bcec2",
+   "title": "P05 - Priser & Beregner (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "8052"
+  },
+  {
+   "id": "31e3d44adcd74c79b130bcdf403c7713",
+   "title": "P05 - Priser & Beregner (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "5012"
+  },
+  {
+   "id": "8bf53f02431d4b308b7a5aac7d66427c",
+   "title": "P06 - Interaktiv Demo (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "4600"
+  },
+  {
+   "id": "3be3e88d4bbd44ff84d67933d6087645",
+   "title": "P06 - Interaktiv Demo (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "3150"
+  },
+  {
+   "id": "d4bbdbf9fbab4fd7bf32021e4ad676d4",
+   "title": "P07 - Hjælpecenter & Artikeldetalje (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "6868"
+  },
+  {
+   "id": "b5b0b9ff4e4f4f3bab2723ea06b24855",
+   "title": "P07 - Hjælpecenter & Artikeldetalje (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "4814"
+  },
+  {
+   "id": "06f3ef45c23f41729b581cbc550a4deb",
+   "title": "P08 - Kontakt & Support (Desktop)",
+   "device": "DESKTOP",
+   "width": "2560",
+   "height": "3894"
+  },
+  {
+   "id": "c8082489b4a0459ba549ffe8b2161fb0",
+   "title": "P08 - Kontakt & Support (Mobil)",
+   "device": "MOBILE",
+   "width": "780",
+   "height": "4168"
+  }
+ ]
+}

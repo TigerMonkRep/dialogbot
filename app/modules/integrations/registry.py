@@ -26,10 +26,11 @@ class Capability:
 
 def capabilities() -> list[Capability]:
     s = get_settings()
-    email_status: CapabilityStatus = "simulated" if s.email_adapter == "simulated" else "not_implemented"
+    email_status: CapabilityStatus = "simulated" if s.email_adapter == "simulated" else "available"
     return [
         Capability("email", "E-mail (konto, invitationer)", email_status, s.app_env,
-                   "Simuleret adapter gemmer beskeder i databasen. Ingen produktionslevering er implementeret."),
+                   ("Simuleret adapter gemmer beskeder i databasen." if s.email_adapter == "simulated"
+                    else "Resend-adapter: 'sent' = accepteret af udbyder; leveringshændelser følger i milepæl B.")),
         Capability("telephony.inbound", "Indgående telefoni / viderestilling", "not_implemented", s.app_env,
                    "Planlagt til etape 2. Ingen udbyder er valgt eller forbundet."),
         Capability("telephony.outbound", "Udgående kampagneopkald", "not_implemented", s.app_env,

@@ -1,0 +1,73 @@
+# Render Blueprint – staging. Apply via Render Dashboard → Blueprints → New from repo.
+# Secrets marked sync:false are entered in the dashboard, never committed.
+services:
+  - type: web
+    name: dialogbot-api-staging
+    runtime: python
+    region: frankfurt
+    plan: starter
+    rootDir: .
+    buildCommand: pip install -r requirements.lock
+    # Migrations run as an explicit pre-deploy step with the migration role, not at app startup.
+    preDeployCommand: DATABASE_URL="$MIGRATION_DATABASE_URL" alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 2
+    healthCheckPath: /health/ready
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: APP_ENV
+        value: staging         # same hardening as prod; simulated mail still allowed until Resend is verified
+      - key: ENABLE_DEV_TOOLS
+        value: "false"
+      - key: DATABASE_URL       # runtime role (limited), Supabase session pooler or direct
+        sync: false
+      - key: MIGRATION_DATABASE_URL  # migration role, direct connection
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: EMAIL_ADAPTER
+        value: resend          # NOTE: adapter to be implemented in Milestone B; until then the process refuses to start in APP_ENV=prod by design
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: FRONTEND_BASE_URL
+        sync: false
+      - key: LOG_LEVEL
+        value: INFO
+
+  - type: worker
+    name: dialogbot-worker-staging
+    runtime: python
+    region: frankfurt
+    plan: starter
+    rootDir: .
+    buildCommand: pip install -r requirements.lock
+    startCommand: python -m app.worker.runner
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: APP_ENV
+        value: staging
+      - key: ENABLE_DEV_TOOLS
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false            # same value as the API service
+      - key: EMAIL_ADAPTER
+        value: resend
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: FRONTEND_BASE_URL
+        sync: false
+      - key: WORKER_LEASE_SECONDS
+        value: "60"
+      - key: WORKER_MAX_ATTEMPTS
+        value: "5"

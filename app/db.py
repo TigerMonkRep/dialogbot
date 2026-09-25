@@ -19,7 +19,12 @@ _session_factory: sessionmaker[Session] | None = None
 def get_engine():
     global _engine
     if _engine is None:
-        _engine = create_engine(get_settings().database_url, pool_pre_ping=True, future=True)
+        s = get_settings()
+        connect_args = {}
+        if s.db_schema != "public":
+            connect_args["options"] = f"-csearch_path={s.db_schema},public"
+        _engine = create_engine(s.database_url, pool_pre_ping=True, future=True, pool_size=s.db_pool_size,
+                                max_overflow=s.db_max_overflow, connect_args=connect_args)
     return _engine
 
 

@@ -117,8 +117,8 @@ def test_prod_settings_fail_closed(monkeypatch):
         monkeypatch.setenv(k, v)
     with pytest.raises(ValueError, match="EMAIL_ADAPTER=simulated is not allowed in prod"):
         Settings(_env_file=None)
-    monkeypatch.setenv("EMAIL_ADAPTER", "smtp")
-    with pytest.raises(ValueError, match="smtp is not implemented"):
+    monkeypatch.setenv("EMAIL_ADAPTER", "resend")
+    with pytest.raises(ValueError, match="RESEND_API_KEY"):
         Settings(_env_file=None)
     monkeypatch.setenv("SECRET_KEY", "short")
     with pytest.raises(ValueError, match="SECRET_KEY"):

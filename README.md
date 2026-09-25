@@ -1,6 +1,6 @@
 # Dialogbot backend — etape 1: fundament og personlig opsætning
 
-Status: **implementeret og testet lokalt/CI**. Ikke browserafprøvet (der findes ingen frontend endnu), ikke sandbox- eller udbyderintegreret. Reception, booking, kampagner, betaling og AI-samtale er **ikke implementeret** og rapporteres af API'et som `not_implemented`.
+Status: **etape 1 implementeret og testet lokalt/CI; milepæl A (frontend + driftskonfiguration) i gang** — se `docs/implementation-progress.md`. Ikke deployet, ikke browserafprøvet.
 
 Omfang i denne etape: konto → e-mailbekræftelse → arbejdsrum → virksomhedsprofil/kategorier → mål/sprog → manuel viden → godkendelse → personlig opsætningsplan med tjek → invitation af kolleger → gem/genoptag. To arbejdsrum kan ikke se hinandens data.
 
@@ -84,3 +84,13 @@ Fuld kontrakt: [`docs/api-contract.md`](docs/api-contract.md) og [`docs/openapi.
 - `docs/api-contract.md` — endpoints, tilstande, fejlkoder
 - `docs/requirements-status.md` — kravstatus (kun faktisk implementeret omfang)
 - `docs/final-report.md` — slutrapport for etapen
+
+## Frontend (`web/`)
+
+Next.js 16 + TypeScript + Tailwind 4. Kører mod API'et via same-origin BFF (`/api/backend/*`) med session i httpOnly-cookie.
+
+```bash
+cd web && npm ci && API_BASE_URL=http://localhost:8000 npm run dev   # http://localhost:3000
+```
+
+Drift: `infra/render.yaml` (API + worker), `infra/supabase-roles.sql`, `web/vercel.json`. Vejledning: `docs/services-setup.md`, `docs/environment-variables.md`, `docs/ADR-002-hosting-and-services.md`.

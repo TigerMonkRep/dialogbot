@@ -13,7 +13,7 @@ from typing import Literal
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-AppEnv = Literal["dev", "test", "prod"]
+AppEnv = Literal["dev", "test", "staging", "prod"]
 
 
 class Settings(BaseSettings):
@@ -21,6 +21,10 @@ class Settings(BaseSettings):
 
     app_env: AppEnv = Field(default="dev", alias="APP_ENV")
     database_url: str = Field(alias="DATABASE_URL")
+    # Application schema. On Supabase the app lives in its own schema, kept out of the Data API.
+    db_schema: str = Field(default="public", alias="DB_SCHEMA")
+    db_pool_size: int = Field(default=5, alias="DB_POOL_SIZE")
+    db_max_overflow: int = Field(default=5, alias="DB_MAX_OVERFLOW")
     secret_key: str | None = Field(default=None, alias="SECRET_KEY")
     public_base_url: str = Field(default="http://localhost:8000", alias="PUBLIC_BASE_URL")
     frontend_base_url: str = Field(default="http://localhost:5173", alias="FRONTEND_BASE_URL")
@@ -36,8 +40,9 @@ class Settings(BaseSettings):
 
     # Email adapter. "simulated" stores messages in the database and exposes them
     # through the dev-only mailbox endpoint. It never claims real delivery.
-    email_adapter: Literal["simulated", "smtp"] = Field(default="simulated", alias="EMAIL_ADAPTER")
+    email_adapter: Literal["simulated", "resend"] = Field(default="simulated", alias="EMAIL_ADAPTER")
     email_from: str = Field(default="Dialogbot <noreply@dialogbot.local>", alias="EMAIL_FROM")
+    resend_api_key: str | None = Field(default=None, alias="RESEND_API_KEY")
 
     # Dev tooling: the simulated mailbox and test identities are gated on this.
     enable_dev_tools: bool = Field(default=False, alias="ENABLE_DEV_TOOLS")
@@ -50,23 +55,20 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _fail_closed(self) -> Settings:
-        if self.app_env == "prod":
+        if self.app_env in ("staging", "prod"):
             if not self.secret_key or len(self.secret_key) < 32:
-                raise ValueError("SECRET_KEY (>=32 chars) is required when APP_ENV=prod")
+                raise ValueError(f"SECRET_KEY (>=32 chars) is required when APP_ENV={self.app_env}")
             if self.enable_dev_tools:
-                raise ValueError("ENABLE_DEV_TOOLS must be false when APP_ENV=prod")
-            if self.email_adapter == "simulated":
-                raise ValueError(
-                    "EMAIL_ADAPTER=simulated is not allowed in prod; no production mail "
-                    "integration is implemented in this stage, so prod cannot claim delivery"
-                )
+                raise ValueError(f"ENABLE_DEV_TOOLS must be false when APP_ENV={self.app_env}")
+        if self.app_env == "prod" and self.email_adapter == "simulated":
+            raise ValueError("EMAIL_ADAPTER=simulated is not allowed in prod; prod cannot claim mail delivery")
+        if self.email_adapter == "resend" and not self.resend_api_key:
+            raise ValueError("EMAIL_ADAPTER=resend requires RESEND_API_KEY")
         if self.auth_provider == "external":
             raise ValueError(
                 "AUTH_PROVIDER=external is reserved for a future OIDC integration and is not "
                 "implemented; the process refuses to start rather than run unauthenticated"
             )
-        if self.email_adapter == "smtp":
-            raise ValueError("EMAIL_ADAPTER=smtp is not implemented in this stage")
         if not self.secret_key:
             # Dev/test only: a per-process random secret. Sessions are opaque DB
             # tokens, so this secret is only used for defence in depth.
@@ -77,7 +79,7 @@ class Settings(BaseSettings):
 
     @property
     def dev_tools_enabled(self) -> bool:
-        return self.enable_dev_tools and self.app_env != "prod"
+        return self.enable_dev_tools and self.app_env in ("dev", "test")
 
 
 @lru_cache

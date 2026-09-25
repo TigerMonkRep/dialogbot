@@ -1,0 +1,9 @@
+{
+  "framework": "nextjs",
+  "regions": ["fra1"],
+  "headers": [
+    { "source": "/app/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store, private" }] },
+    { "source": "/onboarding/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store, private" }] },
+    { "source": "/api/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store, private" }] }
+  ]
+}

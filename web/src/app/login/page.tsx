@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { Alert, Button,  ErrorBox, Field, Input, useSubmit } from "@/components/ui";
 import { AuthFrame } from "@/components/auth-frame";
+import { PasswordField } from "@/components/password-field";
 import type { ApiError } from "@/lib/client";
 
 function LoginForm() {
@@ -14,18 +15,18 @@ function LoginForm() {
     const r = await fetch("/api/auth/login", { method: "POST", headers: { "content-type": "application/json", "x-requested-with": "dialogbot" }, body: JSON.stringify(form) });
     if (!r.ok) throw (await r.json()) as ApiError;
     const next = params.get("next");
-    router.push(next && next.startsWith("/") ? next : "/app");
+    router.push(next && next.startsWith("/") && !next.startsWith("//") ? next : "/app");
     router.refresh();
   });
   return (
-    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-4">
+    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-space-md">
       {params.get("expired") && <Alert kind="info">Din session er udløbet. Log ind igen for at fortsætte.</Alert>}
       {params.get("reset") && <Alert kind="ok">Adgangskoden er ændret. Log ind med den nye.</Alert>}
       <ErrorBox error={error} />
       <Field label="E-mail"><Input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="email" /></Field>
-      <Field label="Adgangskode"><Input type="password" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} autoComplete="current-password" /></Field>
-      <Button type="submit" disabled={pending} className="w-full">{pending ? "Logger ind…" : "Log ind"}</Button>
-      <p className="flex justify-between text-body-sm text-on-surface-variant">
+      <PasswordField label="Adgangskode" value={form.password} onChange={(v) => setForm({ ...form, password: v })} autoComplete="current-password" withRules={false} />
+      <Button type="submit" icon="login" disabled={pending} className="w-full h-12 rounded-lg">{pending ? "Logger ind…" : "Log ind"}</Button>
+      <p className="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
         <Link className="font-semibold text-primary underline" href="/password/forgot">Glemt adgangskode?</Link>
         <Link className="font-semibold text-primary underline" href="/signup">Opret konto</Link>
       </p>
@@ -35,6 +36,6 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <AuthFrame code="A02" title="Log ind" subtitle="Fortsæt til dit arbejdsrum."><Suspense><LoginForm /></Suspense></AuthFrame>
+    <AuthFrame code="A02" icon="key" title="Log ind" subtitle="Fortsæt til dit arbejdsrum."><Suspense><LoginForm /></Suspense></AuthFrame>
   );
 }

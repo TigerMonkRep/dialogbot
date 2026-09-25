@@ -13,6 +13,8 @@ from app.modules.integrations.router import router as integrations_router
 from app.modules.knowledge.router import router as knowledge_router
 from app.modules.setup.router import router as setup_router
 from app.modules.waitlist.router import router as waitlist_router
+from app.modules.webchat.public import router as webchat_public_router
+from app.modules.webchat.router import router as webchat_router
 from app.modules.webhooks.router import router as webhooks_router
 from app.modules.workspaces.router import router as workspaces_router
 
@@ -36,7 +38,8 @@ def create_app() -> FastAPI:
     install_error_handlers(app)
     app.include_router(health_router)
     for r in (identity_router, workspaces_router, business_router, knowledge_router, setup_router, integrations_router,
-              webhooks_router, ai_router, waitlist_router):
+              webhooks_router, ai_router, waitlist_router,
+              webchat_router, webchat_public_router):
         app.include_router(r, prefix=API_PREFIX)
     if settings.dev_tools_enabled:
         from app.modules.devtools.router import router as dev_router

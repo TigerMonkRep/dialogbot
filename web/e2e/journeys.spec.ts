@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { DEMO_PASSWORD, PREVIEW_CODE, SEEDED, freshOwner, latestMailLink, login, shot, uniqueEmail } from "./helpers";
+import { CUSTOMER_SITE, DEMO_PASSWORD, PREVIEW_CODE, SEEDED, serve, freshOwner, latestMailLink, login, shot, uniqueEmail } from "./helpers";
 
 /* The eight core journeys of milestone A. Blueprint §9.1 is not in the repository; these cover the flows that
  * exist today (A01–A06, O01–O04, K03–K05, G01/G05, S02/S08/S09) and assert the honesty rules along the way. */
@@ -227,6 +227,58 @@ test("10 · P00: forsiden er skjult bag forhåndskode; venteliste; invitationsli
   await page.goto("/signup?next=/invite/abc");
   await expect(page).toHaveURL(/\/signup\?next=/);
   await expect(page.getByRole("button", { name: "Opret konto" })).toBeVisible();
+});
+
+const servers: import("node:http").Server[] = [];
+test.afterEach(() => { servers.splice(0).forEach((s) => s.close()); });
+
+test("11 · W01: ejer slår webchat til, kunde chatter på eget domæne, samtalen lander i indbakken", async ({ page, browser }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  const CSRF = { "x-requested-with": "dialogbot" };
+  const item = await (await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/items`, { headers: CSRF, data: { kind: "service", title: "Gulvafslibning", content: { price_net_minor: 14500 } } })).json();
+  await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`, { headers: CSRF });
+  expect((await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
+
+  await page.goto("/app/settings/webchat");
+  await expect(page.getByText("Testmiljø: svarene kommer fra en simuleret model")).toBeVisible();
+  await page.getByRole("switch", { name: "Vis widgetten på hjemmesiden" }).check();
+  await page.getByLabel("Godkendte domæner").fill(CUSTOMER_SITE);
+  await page.getByRole("button", { name: "Gem indstillinger" }).click();
+  await expect(page.getByText("Aktiv på jeres domæner")).toBeVisible();
+  const embed = await page.getByLabel("Indlejringskode").textContent();
+  expect(embed).toContain("data-dialogbot-key=");
+  await shot(page, info, "w01-webchat");
+
+  // The customer's own website on another origin, with the embed code pasted in.
+  // Served by a real local server (not page.route): Chromium's private-network rules treat routed pages as "unknown".
+  const html = (body: string) => `<!doctype html><html lang="da"><head><title>Kundeside</title></head><body>${body}${embed}</body></html>`;
+  servers.push(await serve(4000, html("<h1>Fjord Gulv</h1>")), await serve(4001, html("<h1>Anden side</h1>")));
+  const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined });
+  const site = await ctx.newPage();
+  await site.goto(`${CUSTOMER_SITE}/`);
+  await site.getByRole("button", { name: "Åbn chat" }).click();
+  const chat = site.frameLocator('iframe[title^="Chat med"]');
+  await expect(chat.getByText(/digitale assistent/).first()).toBeVisible();
+  await expect(chat.getByText("Du skriver med en AI-assistent.", { exact: false })).toBeVisible();
+  await chat.getByLabel("Din besked").fill("Hvad koster gulvafslibning?");
+  await chat.getByRole("button", { name: "Send" }).click();
+  await expect(chat.getByText("[fake] svar på: Hvad koster gulvafslibning?")).toBeVisible();
+  await shot(site, info, "w01-kundeside-chat");
+  await ctx.close();
+
+  // Another website may not embed the widget: no launcher appears.
+  const other = await browser.newContext();
+  const evil = await other.newPage();
+  await evil.goto("http://localhost:4001/");
+  await expect(evil.getByRole("heading", { name: "Anden side" })).toBeVisible();
+  await evil.waitForTimeout(1500);
+  await expect(evil.getByRole("button", { name: "Åbn chat" })).toHaveCount(0);
+  await other.close();
+
+  await page.goto("/app/inbox");
+  await page.getByRole("link", { name: /Hvad koster gulvafslibning\?/ }).click();
+  await expect(page.getByText("[fake] svar på: Hvad koster gulvafslibning?")).toBeVisible();
+  await shot(page, info, "indbakke-samtale");
 });
 
 test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation uden mus", async ({ page }, info) => {

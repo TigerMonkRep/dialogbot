@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui";
 const TABS: [string, string, string, string][] = [
   ["/onboarding/business", "Virksomhed (S01)", "Virksomhed", "domain"],
   ["/app/settings/team", "Team & roller (S02)", "Team", "group"],
+  ["/app/settings/webchat", "Webchat (W01)", "Webchat", "chat"],
   ["/app/settings/profile", "Min profil (S08)", "Profil", "person"],
   ["/app/settings/activity", "Aktivitetslog (S09)", "Log", "history"],
 ];

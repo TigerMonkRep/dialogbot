@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session as OrmSession
@@ -23,6 +23,7 @@ from app.models import (
     KnowledgeItem,
     KnowledgeVersion,
     LanguageSettings,
+    WebchatSettings,
     Workspace,
     WorkspaceCategory,
 )
@@ -60,8 +61,10 @@ CHECKS: dict[str, CheckDefinition] = {
         CheckDefinition("calendar.connection", "Kalenderforbindelse verificeret", ("goals", "integrations"),
                         capability="calendar", required_when=("booking",),
                         description="Kræver en implementeret kalenderadapter; en simuleret test åbner ikke produktion."),
-        CheckDefinition("webchat.widget", "Web-widget installeret", ("goals", "integrations"), capability="webchat",
-                        required_when=("webchat",), description="Kræver widget-udrulning (etape 2)."),
+        CheckDefinition("webchat.widget", "Web-widget installeret", ("goals", "integrations", "knowledge"),
+                        capability="webchat", required_when=("webchat",),
+                        description="Widgetten er slået til, har godkendte domæner, og chatvinduet er åbnet på et af dem "
+                                    "inden for de seneste 30 dage."),
         CheckDefinition("campaign.test_call", "Kampagnetest-opkald", ("goals", "knowledge", "integrations"),
                         capability="telephony.outbound", required_when=("campaigns",),
                         description="Kræver udgående telefoni (etape 4)."),
@@ -145,6 +148,20 @@ def _evaluate(db: OrmSession, workspace_id: uuid.UUID, key: str) -> tuple[bool, 
         items = active_knowledge(db, workspace_id)
         leaked = [i["id"] for i in items if i["status"] != "approved"]
         return not leaked, {"active_items": len(items), "non_approved_leaked": leaked}
+    if key == "webchat.widget":
+        from app.modules.webchat import service as webchat
+
+        ws = db.get(WebchatSettings, workspace_id)
+        if ws is None:
+            return False, {"configured": False}
+        reasons = webchat.unavailable_reasons(db, ws)
+        recent = ws.last_seen_at is not None and _now() - ws.last_seen_at <= timedelta(days=30)
+        seen_ok = recent and ws.last_seen_origin in ws.allowed_origins
+        return not reasons and seen_ok, {
+            "enabled": ws.enabled, "allowed_origins": ws.allowed_origins, "unavailable_reasons": reasons,
+            "last_seen_at": ws.last_seen_at.isoformat() if ws.last_seen_at else None,
+            "last_seen_origin": ws.last_seen_origin, "seen_on_allowed_origin_within_30_days": seen_ok,
+        }
     raise KeyError(key)
 
 

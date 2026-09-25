@@ -24,6 +24,7 @@
 | `AI_EFFORT` | nej | API | — | `low` / `medium` (standard) / `high`. |
 | `AI_MAX_OUTPUT_TOKENS` | nej | API | — | Standard 2048 (inkl. tænkning). |
 | `AI_SERVER_FALLBACKS` | nej | API | — | `true` (standard): Anthropics server-side fallback ved politik-afvisning (`fallbacks: "default"`). Sæt `false`, hvis `AI_MODEL_ID` ikke har en standard-fallback. |
+| `WEBCHAT_DAILY_REPLY_LIMIT` | nej | API | — | Standard 300. Højeste antal AI-svar pr. arbejdsrum pr. døgn i web-widgetten (udgiftsværn). Derudover: 20 beskeder pr. samtale, 60 nye samtaler i timen pr. widget. |
 | `EMAIL_FROM` | ved resend | worker | Verificeret afsenderdomæne i Resend | `Dialogbot <noreply@mail.<domæne>>` |
 | `PUBLIC_BASE_URL` | ja | API | Render-URL | Bruges i OpenAPI/links. |
 | `FRONTEND_BASE_URL` | ja | API, worker | Vercel-URL | Links i mails (verificering, reset, invitation). |

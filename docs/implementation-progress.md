@@ -2,6 +2,21 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 8 — 25. september 2026 (milepæl B: webchat-widget på ekstern origin + indbakke)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `webchat_settings`, `conversations`, `conversation_messages` | implementeret, migreret | Alembic `501a6eb0eaeb`; op/ned + `alembic check` |
+| Indlejring: `<script src=".../api/v1/public/webchat/loader.js" data-dialogbot-key="wk_…">`. Loaderen viser kun en knap, når `/status` svarer `available` med CORS for netop dette domæne. Chatten kører i en iframe på API-origin; CSP `frame-ancestors` = godkendte domæner; besøgstoken bliver i iframen (sessionStorage), kun dets SHA-256 gemmes | implementeret, testet (API + E2E) | `tests/test_webchat.py` (10), E2E rejse 11: kundeside på `localhost:4000` chatter, fremmed side på `:4001` får ingen knap |
+| Skrivninger kun fra chatvinduet (Origin = API-origin), token pr. samtale, samme 401 for ukendt samtale/forkert token, anden widgetnøgle kan ikke læse samtalen | testet | `test_conversation_multi_turn…`, `test_other_widget_key…` |
+| Flerturs-svar via `ai.service.complete_logged` (kun godkendt viden, `ai_usage.purpose=webchat`), afvisninger maskeres, AI-oplysning i vinduet | testet | — |
+| Udgiftsværn: 1.000 tegn/besked, 20 beskeder/samtale, 60 nye samtaler/time/widget, `WEBCHAT_DAILY_REPLY_LIMIT` (300) svar/døgn/arbejdsrum | testet | `test_limits` |
+| Admin (W01) `/app/settings/webchat`: slå til/fra (kun når AI, godkendt viden og domæner er på plads), domæner (https; http kun localhost i dev/test), hilsen, indlejringskode, ny nøgle; auditlog | implementeret, E2E | rejse 11 |
+| Indbakke `/app/inbox` + samtalevisning (medarbejder+); navigationens "Indbakke" peger nu på den | implementeret, E2E | rejse 11 |
+| Opsætning: `reception.webchat` fuldføres af tjekket `webchat.widget`, som kræver en rigtig AI-udbyder (ikke simuleret) og at chatvinduet er åbnet i en iframe på et godkendt domæne inden for 30 dage; ændringer gør tjekket forældet | testet | `test_setup_check_needs_real_provider_and_evidence` |
+
+**Ikke eksternt verificeret:** kræver `AI_PROVIDER=anthropic` på Render (sat af brugeren) og en rigtig hjemmeside med koden. Svar fra medarbejdere og overdragelse til leads/opgaver kommer i næste trin.
+
 ## Checkpoint 7 — 25. september 2026 (ny forside P01 + midlertidig adgangsside P00)
 
 **Grundlag:** Stitch-eksporterne `stitch_dialogbot_2` (P01 forside) og `stitch_dialogbot_3` (P00 midlertidig landingsside med adgangskontrol), desktop + mobil. Kildefiler i `design-reference/landing/` (screen.png i eksporten var ødelagte; siderne er renderet lokalt med `design-reference/tools/stitch-render.mjs`).

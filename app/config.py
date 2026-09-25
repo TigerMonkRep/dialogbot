@@ -57,6 +57,8 @@ class Settings(BaseSettings):
     # (required if AI_MODEL_ID names a model without a server-defined default fallback).
     ai_server_fallbacks: bool = Field(default=True, alias="AI_SERVER_FALLBACKS")
     anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
+    # Spend guard: max AI replies per workspace per 24 h in the public web widget.
+    webchat_daily_reply_limit: int = Field(default=300, alias="WEBCHAT_DAILY_REPLY_LIMIT")
 
     # Dev tooling: the simulated mailbox and test identities are gated on this.
     enable_dev_tools: bool = Field(default=False, alias="ENABLE_DEV_TOOLS")

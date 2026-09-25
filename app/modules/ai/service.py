@@ -77,24 +77,26 @@ def build_system_prompt(db: OrmSession, workspace: Workspace) -> tuple[str, int]
         workspace.knowledge_revision
 
 
-def preview_reply(db: OrmSession, workspace: Workspace, user_id: uuid.UUID, message: str) -> dict:
-    """One-turn answer for staff testing the assistant against the approved knowledge."""
+def complete_logged(db: OrmSession, workspace: Workspace, *, user_id: uuid.UUID | None, purpose: str,
+                    messages: list[dict]) -> tuple[Completion, AiUsage]:
+    """Call the provider with the approved-knowledge prompt and log one `ai_usage` row.
+
+    Commits the usage row (also on failure, then re-raises). `messages` is the conversation so far,
+    alternating user/assistant and ending with the user's turn."""
     provider = get_provider()  # 501 before anything else when AI is not configured
     system, revision = build_system_prompt(db, workspace)
     settings = get_settings()
-    row = AiUsage(workspace_id=workspace.id, user_id=user_id, purpose="assistant_preview", provider=provider.name,
+    row = AiUsage(workspace_id=workspace.id, user_id=user_id, purpose=purpose, provider=provider.name,
                   requested_model=provider.model, prompt_version=PROMPT_VERSION, knowledge_revision=revision)
     try:
-        c = provider.complete(system=system, messages=[{"role": "user", "content": message}],
-                              max_tokens=settings.ai_max_output_tokens)
+        c = provider.complete(system=system, messages=messages, max_tokens=settings.ai_max_output_tokens)
     except ApiError as e:
         row.outcome, row.error_code = "error", e.code
         row.provider_request_id = (e.extra or {}).get("provider_request_id")
         db.add(row)
         db.commit()
         raise
-    refused = c.stop_reason == "refusal"
-    row.outcome = "refused" if refused else "truncated" if c.stop_reason == "max_tokens" else "ok"
+    row.outcome = "refused" if c.stop_reason == "refusal" else "truncated" if c.stop_reason == "max_tokens" else "ok"
     row.served_model, row.stop_reason = c.served_model, c.stop_reason[:32]
     row.input_tokens, row.output_tokens = c.usage.input_tokens, c.usage.output_tokens
     row.cache_creation_input_tokens = c.usage.cache_creation_input_tokens
@@ -102,15 +104,30 @@ def preview_reply(db: OrmSession, workspace: Workspace, user_id: uuid.UUID, mess
     row.est_cost_usd_micros = estimate_cost_usd_micros(c)
     row.latency_ms, row.provider_request_id = c.latency_ms, c.request_id
     db.add(row)
+    db.flush()
+    return c, row
+
+
+def visible_reply(c: Completion) -> str:
+    """What a person may see: never a refusal's partial text, never an empty bubble."""
+    if c.stop_reason == "refusal" or not c.text:
+        return REFUSAL_TEXT
+    return c.text
+
+
+def preview_reply(db: OrmSession, workspace: Workspace, user_id: uuid.UUID, message: str) -> dict:
+    """One-turn answer for staff testing the assistant against the approved knowledge."""
+    c, row = complete_logged(db, workspace, user_id=user_id, purpose="assistant_preview",
+                             messages=[{"role": "user", "content": message}])
     db.commit()
     return {
-        "reply": REFUSAL_TEXT if refused else c.text,
-        "refused": refused,
+        "reply": visible_reply(c),
+        "refused": row.outcome == "refused",
         "truncated": row.outcome == "truncated",
         "stop_reason": c.stop_reason,
         "model": c.served_model,
         "prompt_version": PROMPT_VERSION,
-        "knowledge_revision": revision,
+        "knowledge_revision": row.knowledge_revision,
         "usage": {"input_tokens": row.input_tokens, "output_tokens": row.output_tokens,
                   "cache_creation_input_tokens": row.cache_creation_input_tokens,
                   "cache_read_input_tokens": row.cache_read_input_tokens,

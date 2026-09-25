@@ -49,7 +49,9 @@ def capabilities() -> list[Capability]:
                    "Planlagt til etape 2. Assistenten læser kun godkendt viden via API'et."),
         Capability("knowledge.source_import", "Kildeimport / udtræk / embeddings", "not_implemented", s.app_env,
                    "Planlagt senere. Der vises ingen fiktive udtræk."),
-        Capability("webchat", "Web-widget", "not_implemented", s.app_env, "Planlagt til etape 2."),
+        Capability("webchat", "Web-widget", ai_status, s.app_env,
+                   "Chat-widget til jeres hjemmeside; svarer kun ud fra godkendt viden og kun på godkendte domæner."
+                   if ai_status != "not_implemented" else "Kræver en AI-udbyder (AI_PROVIDER)."),
     ]
 
 

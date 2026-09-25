@@ -396,3 +396,55 @@ class WaitlistSignup(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
     )
+
+
+class WebchatSettings(Base):
+    """Per-workspace web widget (W01). The widget key is public (it sits in the embed code);
+    what protects the widget is the origin allowlist (CSP frame-ancestors) and rate limits."""
+
+    __tablename__ = "webchat_settings"
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    widget_key: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    # Exact origins ("https://www.example.dk") allowed to embed the widget.
+    allowed_origins: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    greeting: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    # Evidence for the "widget installed" check: last time the chat frame was opened on an allowed origin.
+    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_seen_origin: Mapped[str | None] = mapped_column(String(200))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+
+class Conversation(Base):
+    """A customer conversation on one channel. Visitors are anonymous; they hold an opaque token
+    (only its digest is stored) that lets them continue the same conversation."""
+
+    __tablename__ = "conversations"
+    __table_args__ = (Index("ix_conversations_workspace_last", "workspace_id", "last_message_at"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    channel: Mapped[str] = mapped_column(String(16), nullable=False)  # webchat
+    visitor_token_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    origin: Mapped[str | None] = mapped_column(String(200))
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="open")
+    visitor_message_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_at: Mapped[datetime] = ts_now()
+    last_message_at: Mapped[datetime] = ts_now()
+
+
+class ConversationMessage(Base):
+    __tablename__ = "conversation_messages"
+    __table_args__ = (Index("ix_conversation_messages_conv_created", "conversation_id", "created_at"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    conversation_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("conversations.id", ondelete="CASCADE"), nullable=False)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    role: Mapped[str] = mapped_column(String(16), nullable=False)  # visitor | assistant
+    text: Mapped[str] = mapped_column(Text, nullable=False)
+    ai_usage_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("ai_usage.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()

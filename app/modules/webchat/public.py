@@ -19,10 +19,10 @@ from urllib.parse import urlsplit
 
 from fastapi import APIRouter, Depends, Header, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session as OrmSession
 
-from app.core.errors import Forbidden, NotFound
+from app.core.errors import Forbidden, NotFound, ValidationFailed
 from app.db import get_db
 from app.modules.webchat import service
 
@@ -134,3 +134,30 @@ def send(key: str, conversation_id: uuid.UUID, body: MessageIn, origin: str | No
     s = service.by_key(db, key)
     conv = service.visitor_conversation(db, s, conversation_id, x_visitor_token)
     return service.post_visitor_message(db, s, conv, body.text)
+
+
+class ContactIn(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    email: EmailStr | None = None
+    phone: str | None = Field(default=None, max_length=40, pattern=r"^[0-9+ ()-]{6,40}$")
+    note: str = Field(default="", max_length=1000)
+    consent: bool
+
+
+@router.post("/{key}/conversations/{conversation_id}/contact")
+def contact(key: str, conversation_id: uuid.UUID, body: ContactIn, origin: str | None = Header(default=None),
+            x_visitor_token: str | None = Header(default=None), db: OrmSession = Depends(get_db)):
+    """"Bliv kontaktet": the visitor leaves contact details; creates the conversation's lead and a follow-up task."""
+    _require_frame_origin(origin)
+    s = service.by_key(db, key)
+    conv = service.visitor_conversation(db, s, conversation_id, x_visitor_token)
+    if not body.consent:
+        raise ValidationFailed("Sæt flueben for at give os lov til at kontakte dig", field_errors=[{"field": "consent"}])
+    if not body.email and not body.phone:
+        raise ValidationFailed("Angiv e-mail eller telefonnummer", field_errors=[{"field": "email"}, {"field": "phone"}])
+    from app.modules.leads.service import visitor_contact
+
+    visitor_contact(db, conv, name=body.name, email=str(body.email) if body.email else None, phone=body.phone,
+                    note=body.note)
+    db.commit()
+    return {"received": True}

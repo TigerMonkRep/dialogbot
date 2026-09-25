@@ -17,6 +17,10 @@ const ACTION: Record<string, [string, string]> = {
   "membership.role_changed": ["Rolle ændret", "manage_accounts"], "membership.removed": ["Medlem fjernet", "person_remove"],
   "invitation.created": ["Invitation sendt", "mail"], "invitation.accepted": ["Invitation accepteret", "how_to_reg"], "invitation.revoked": ["Invitation tilbagekaldt", "cancel_schedule_send"],
   "setup.task_skipped": ["Trin sprunget over", "skip_next"], "setup.task_unskipped": ["Spring fortrudt", "undo"], "setup.task_assigned": ["Trin tildelt", "assignment_ind"],
+  "lead.created": ["Henvendelse oprettet", "person_add"], "lead.updated": ["Henvendelse ændret", "edit"],
+  "lead.approved": ["Henvendelse godkendt", "verified"], "lead.rejected": ["Henvendelse afvist", "block"],
+  "task.created": ["Opgave oprettet", "add_task"], "task.updated": ["Opgave ændret", "task_alt"],
+  "agreement.created": ["Prisaftale valgt", "handshake"],
   "webchat.updated": ["Webchat ændret", "chat"], "webchat.key_rotated": ["Ny widgetnøgle", "autorenew"],
   "setup.check_run": ["Tjek kørt", "fact_check"], "setup.checks_run_all": ["Alle tjek kørt", "fact_check"],
 };

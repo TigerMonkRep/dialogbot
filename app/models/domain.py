@@ -448,3 +448,85 @@ class ConversationMessage(Base):
     text: Mapped[str] = mapped_column(Text, nullable=False)
     ai_usage_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("ai_usage.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
+
+
+class ReceptionAgreement(Base):
+    """Versioned reception price agreement (append-only; the newest version applies).
+
+    Model A: fixed monthly subscription, no lead fee. Model B: fee per approved lead.
+    Prices are the product's list prices, snapshotted per version in whole øre."""
+
+    __tablename__ = "reception_agreements"
+    __table_args__ = (UniqueConstraint("workspace_id", "version", name="uq_reception_agreements_ws_version"),
+                      CheckConstraint("model in ('A','B')", name="ck_reception_agreements_model"))
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    model: Mapped[str] = mapped_column(String(1), nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="DKK")
+    monthly_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    lead_fee_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    tax_basis_points: Mapped[int] = mapped_column(Integer, nullable=False, default=2500)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class Lead(Base):
+    """A person who wants something from the business. Three independent axes:
+    qualification (is it a real, relevant enquiry?), pipeline (what happened next?) and
+    billing (was it approved as a billable lead under an agreement version?)."""
+
+    __tablename__ = "leads"
+    __table_args__ = (
+        Index("ix_leads_workspace_created", "workspace_id", "created_at"),
+        UniqueConstraint("conversation_id", name="uq_leads_conversation"),
+        CheckConstraint("qualification_status in ('unqualified','qualified','disqualified')", name="ck_leads_qualification"),
+        CheckConstraint("pipeline_status in ('new','contacted','won','lost')", name="ck_leads_pipeline"),
+        CheckConstraint("billing_status in ('pending','approved','rejected')", name="ck_leads_billing"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    source: Mapped[str] = mapped_column(String(16), nullable=False)  # webchat | manual
+    conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="SET NULL"))
+    contact_name: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    contact_email: Mapped[str | None] = mapped_column(String(320))
+    contact_phone: Mapped[str | None] = mapped_column(String(40))
+    need_summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    qualification_status: Mapped[str] = mapped_column(String(16), nullable=False, default="unqualified")
+    qualification_reason: Mapped[str | None] = mapped_column(String(500))
+    pipeline_status: Mapped[str] = mapped_column(String(16), nullable=False, default="new")
+    billing_status: Mapped[str] = mapped_column(String(16), nullable=False, default="pending")
+    # Set once by the approve/reject decision; never edited afterwards.
+    billing_decided_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    billing_decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    billing_reason: Mapped[str | None] = mapped_column(String(500))
+    agreement_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("reception_agreements.id", ondelete="RESTRICT"))
+    fee_snapshot: Mapped[dict | None] = mapped_column(JSONB)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+
+class Task(Base):
+    __tablename__ = "tasks"
+    __table_args__ = (
+        Index("ix_tasks_workspace_status_due", "workspace_id", "status", "due_at"),
+        CheckConstraint("status in ('open','done')", name="ck_tasks_status"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    lead_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("leads.id", ondelete="CASCADE"))
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    status: Mapped[str] = mapped_column(String(8), nullable=False, default="open")
+    due_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    assignee_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))  # NULL = system
+    created_at: Mapped[datetime] = ts_now()
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    completed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))

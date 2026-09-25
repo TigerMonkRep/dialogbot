@@ -2,6 +2,7 @@ import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
+import { CreateLeadButton } from "./client";
 
 type Detail = { id: string; channel: string; origin: string | null; status: string; created_at: string; messages: { id: string; role: string; text: string; created_at: string }[] };
 
@@ -9,13 +10,22 @@ type Detail = { id: string; channel: string; origin: string | null; status: stri
 export default async function ConversationPage({ params }: { params: Promise<{ id: string }> }) {
   const ws = await requireWorkspace();
   const { id } = await params;
-  const c = await backend<Detail>(`/workspaces/${ws.id}/conversations/${encodeURIComponent(id)}`);
+  const [c, owned] = await Promise.all([
+    backend<Detail>(`/workspaces/${ws.id}/conversations/${encodeURIComponent(id)}`),
+    backend<{ lead: { id: string; contact_name: string } | null }>(`/workspaces/${ws.id}/conversations/${encodeURIComponent(id)}/lead`),
+  ]);
+  const firstVisitor = c.messages.find((m) => m.role === "visitor")?.text ?? "";
   return (
     <div className="flex flex-col gap-space-lg max-w-3xl">
       <Link href="/app/inbox" className="self-start font-label-md text-label-md text-primary flex items-center gap-1"><Icon name="arrow_back" size={18} />Indbakke</Link>
+      <div className="flex flex-wrap items-start justify-between gap-space-md">
       <div>
         <h1 className="font-headline-md text-headline-md text-primary">Webchat-samtale</h1>
         <p className="font-body-sm text-body-sm text-on-surface-variant">Startet {new Date(c.created_at).toLocaleString("da-DK")}{c.origin ? ` på ${c.origin}` : ""}. Assistenten svarer kun ud fra godkendt viden.</p>
+      </div>
+      {owned.lead
+        ? <Link href={`/app/leads/${owned.lead.id}`} className="font-label-lg text-label-lg text-primary flex items-center gap-1"><Icon name="contact_support" size={18} />Henvendelse: {owned.lead.contact_name || "uden navn"}</Link>
+        : <CreateLeadButton wsId={ws.id} conversationId={c.id} need={firstVisitor} />}
       </div>
       <ol className="flex flex-col gap-space-sm bg-surface-container-low rounded-xl p-space-md" aria-label="Beskeder">
         {c.messages.map((m) => (
@@ -25,7 +35,7 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
           </li>
         ))}
       </ol>
-      <p className="font-body-sm text-body-sm text-on-surface-variant">Svar fra medarbejdere og overdragelse til en opgave kommer sammen med leads og opgaver.</p>
+      <p className="font-body-sm text-body-sm text-on-surface-variant">Svar fra medarbejdere direkte i chatten er ikke bygget endnu – følg op via henvendelsen og dens opgaver.</p>
     </div>
   );
 }

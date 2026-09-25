@@ -91,10 +91,10 @@ export function Tag({ children, tone = "neutral" }: { children: React.ReactNode;
   return <span className={`rounded px-1.5 py-0.5 text-label-sm ${c}`}>{children}</span>;
 }
 
-export function useSubmit<T>(fn: () => Promise<T>) {
+export function useSubmit<A extends unknown[], T>(fn: (...args: A) => Promise<T>) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
-  const run = async () => { setPending(true); setError(null); try { return await fn(); } catch (e) { setError(e as ApiError); return undefined; } finally { setPending(false); } };
+  const run = async (...args: A) => { setPending(true); setError(null); try { return await fn(...args); } catch (e) { setError(e as ApiError); return undefined; } finally { setPending(false); } };
   return { run, pending, error, setError };
 }
 

@@ -36,8 +36,8 @@ services:
         sync: false
       - key: EMAIL_FROM
         sync: false
-      - key: AI_PROVIDER
-        value: none            # set to "anthropic" after ANTHROPIC_API_KEY is added (with a monthly spend limit in Anthropic Console)
+      - key: AI_PROVIDER       # set in the dashboard: "anthropic" once ANTHROPIC_API_KEY is added; unset = none (AI endpoints answer 501)
+        sync: false
       - key: AI_MODEL_ID
         value: claude-opus-5
       - key: ANTHROPIC_API_KEY

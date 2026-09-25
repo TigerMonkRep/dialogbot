@@ -433,6 +433,8 @@ class Conversation(Base):
     visitor_token_digest: Mapped[str] = mapped_column(String(64), nullable=False)
     origin: Mapped[str | None] = mapped_column(String(200))
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="open")
+    # ai = the assistant answers; staff = a colleague has taken over and the assistant stays silent.
+    mode: Mapped[str] = mapped_column(String(8), nullable=False, default="ai", server_default="ai")
     visitor_message_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     created_at: Mapped[datetime] = ts_now()
     last_message_at: Mapped[datetime] = ts_now()
@@ -445,8 +447,9 @@ class ConversationMessage(Base):
     id: Mapped[uuid.UUID] = uuid_pk()
     conversation_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("conversations.id", ondelete="CASCADE"), nullable=False)
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
-    role: Mapped[str] = mapped_column(String(16), nullable=False)  # visitor | assistant
+    role: Mapped[str] = mapped_column(String(16), nullable=False)  # visitor | assistant | staff
     text: Mapped[str] = mapped_column(Text, nullable=False)
+    author_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     ai_usage_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("ai_usage.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
 

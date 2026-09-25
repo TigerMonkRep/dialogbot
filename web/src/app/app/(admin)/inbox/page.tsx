@@ -3,7 +3,7 @@ import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
 
-type Conv = { id: string; channel: string; origin: string | null; status: string; visitor_message_count: number; created_at: string; last_message_at: string; preview: string | null };
+type Conv = { id: string; channel: string; origin: string | null; status: string; mode: string; awaiting_staff: boolean; visitor_message_count: number; created_at: string; last_message_at: string; preview: string | null };
 const PER_PAGE = 25;
 const CHANNEL: Record<string, [string, string]> = { webchat: ["Webchat", "chat"], phone: ["Telefon", "call"] };
 
@@ -38,7 +38,7 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
                   <Link href={`/app/inbox/${c.id}`} className="flex items-start gap-space-md p-space-md hover:bg-surface-container-low transition-colors">
                     <span className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0"><Icon name={icon} size={20} /></span>
                     <span className="flex-1 min-w-0">
-                      <span className="flex flex-wrap items-center gap-space-xs font-label-md text-label-md text-on-surface-variant"><span className="font-semibold text-primary">{label}</span>{c.origin && <span>· {c.origin.replace(/^https?:\/\//, "")}</span>}<span>· {c.visitor_message_count} {c.visitor_message_count === 1 ? "besked" : "beskeder"}</span></span>
+                      <span className="flex flex-wrap items-center gap-space-xs font-label-md text-label-md text-on-surface-variant"><span className="font-semibold text-primary">{label}</span>{c.origin && <span>· {c.origin.replace(/^https?:\/\//, "")}</span>}<span>· {c.visitor_message_count} {c.visitor_message_count === 1 ? "besked" : "beskeder"}</span>{c.awaiting_staff && <span className="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">Venter på svar</span>}{c.mode === "staff" && !c.awaiting_staff && <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">Medarbejder</span>}</span>
                       <span className="block font-body-md text-body-md text-on-surface truncate">{c.preview ?? "(ingen besked endnu)"}</span>
                     </span>
                     <time dateTime={c.last_message_at} className="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">{new Date(c.last_message_at).toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" })}</time>

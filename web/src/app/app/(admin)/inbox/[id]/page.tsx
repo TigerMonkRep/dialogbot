@@ -2,9 +2,9 @@ import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
-import { CreateLeadButton } from "./client";
+import { AutoRefresh, CreateLeadButton, ReplyBox } from "./client";
 
-type Detail = { id: string; channel: string; origin: string | null; status: string; created_at: string; messages: { id: string; role: string; text: string; created_at: string }[] };
+type Detail = { id: string; channel: string; origin: string | null; status: string; mode: string; created_at: string; messages: { id: string; role: string; text: string; created_at: string }[] };
 
 /** One conversation, read-only. Replies from staff and hand-over arrive with the lead/task model. */
 export default async function ConversationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -30,12 +30,18 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
       <ol className="flex flex-col gap-space-sm bg-surface-container-low rounded-xl p-space-md" aria-label="Beskeder">
         {c.messages.map((m) => (
           <li key={m.id} className={`flex flex-col gap-0.5 max-w-[85%] ${m.role === "visitor" ? "self-end items-end" : "self-start"}`}>
-            <span className="font-label-sm text-label-sm text-on-surface-variant">{m.role === "visitor" ? "Kunde" : "Assistent"} · {new Date(m.created_at).toLocaleTimeString("da-DK", { timeStyle: "short" })}</span>
-            <span className={`px-space-md py-space-sm rounded-xl whitespace-pre-wrap font-body-md text-body-md ${m.role === "visitor" ? "bg-primary text-on-primary rounded-tr-none" : "bg-surface-container-lowest text-on-surface rounded-tl-none shadow-sm"}`}>{m.text}</span>
+            <span className="font-label-sm text-label-sm text-on-surface-variant">{m.role === "visitor" ? "Kunde" : m.role === "staff" ? "Medarbejder" : "Assistent"} · {new Date(m.created_at).toLocaleTimeString("da-DK", { timeStyle: "short" })}</span>
+            <span className={`px-space-md py-space-sm rounded-xl whitespace-pre-wrap font-body-md text-body-md ${m.role === "visitor" ? "bg-primary text-on-primary rounded-tr-none" : m.role === "staff" ? "bg-secondary-fixed text-on-secondary-fixed rounded-tl-none" : "bg-surface-container-lowest text-on-surface rounded-tl-none shadow-sm"}`}>{m.text}</span>
           </li>
         ))}
       </ol>
-      <p className="font-body-sm text-body-sm text-on-surface-variant">Svar fra medarbejdere direkte i chatten er ikke bygget endnu – følg op via henvendelsen og dens opgaver.</p>
+      {c.channel === "webchat" ? (
+        <>
+          {c.mode === "staff" && <p className="p-space-sm rounded-lg bg-tertiary-fixed text-on-tertiary-fixed font-body-sm text-body-sm">En medarbejder har overtaget samtalen – assistenten svarer ikke, før den gives tilbage.</p>}
+          <ReplyBox wsId={ws.id} conversationId={c.id} mode={c.mode} />
+          <AutoRefresh />
+        </>
+      ) : <p className="font-body-sm text-body-sm text-on-surface-variant">Telefonopkald kan ikke besvares her – følg op via henvendelsen og dens opgaver.</p>}
     </div>
   );
 }

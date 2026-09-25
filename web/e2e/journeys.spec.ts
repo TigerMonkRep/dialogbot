@@ -391,6 +391,46 @@ test("14 · S03: ejer tilknytter nummer, et opkald rapporteres af Vapi og bliver
   await shot(page, info, "telefon-henvendelse");
 });
 
+test("15 · Medarbejder overtager en webchat, svarer kunden, og assistenten holder pause", async ({ page, browser }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  const CSRF = { "x-requested-with": "dialogbot" };
+  const item = await (await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/items`, { headers: CSRF, data: { kind: "service", title: "Gulvafslibning", content: {} } })).json();
+  await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`, { headers: CSRF });
+  await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`, { headers: CSRF });
+  const s = await (await page.request.get(`/api/backend/workspaces/${wsId}/webchat`)).json();
+  const w = await (await page.request.put(`/api/backend/workspaces/${wsId}/webchat`, { headers: CSRF, data: { expected_version: s.version, enabled: true, allowed_origins: [CUSTOMER_SITE], greeting: "" } })).json();
+  servers.push(await serve(4000, `<!doctype html><html lang="da"><head><title>Kundeside</title></head><body><h1>Fjord Gulv</h1>${w.embed_code}</body></html>`));
+
+  const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined });
+  const site = await ctx.newPage();
+  await site.goto(`${CUSTOMER_SITE}/`);
+  await site.getByRole("button", { name: "Åbn chat" }).click();
+  const chat = site.frameLocator('iframe[title^="Chat med"]');
+  const send = chat.locator("form:not(.contact)").getByRole("button", { name: "Send" });
+  await chat.getByLabel("Din besked").fill("Må jeg tale med en person?");
+  await send.click();
+  await expect(chat.getByText("[fake] svar på: Må jeg tale med en person?")).toBeVisible();
+
+  await page.goto("/app/inbox");
+  await page.getByRole("link", { name: /Må jeg tale med en person\?/ }).click();
+  await page.getByLabel("Svar kunden i chatten").fill("Hej, det er Mads fra Fjord. Hvad drejer det sig om?");
+  await page.getByRole("button", { name: "Send svar" }).click();
+  await expect(page.getByText("En medarbejder har overtaget samtalen", { exact: false })).toBeVisible();
+
+  await expect(chat.getByText("Hej, det er Mads fra Fjord.", { exact: false })).toBeVisible({ timeout: 15_000 }); // widget polls
+  await chat.getByLabel("Din besked").fill("Kan I komme onsdag?");
+  await send.click();
+  await expect(chat.getByText("En medarbejder svarer dig her i chatten.")).toBeVisible();
+  await expect(chat.getByText("[fake] svar på: Kan I komme onsdag?")).toHaveCount(0);
+  await shot(site, info, "webchat-medarbejder");
+  await ctx.close();
+
+  await expect(page.getByText("Kan I komme onsdag?")).toBeVisible({ timeout: 15_000 }); // inbox auto-refresh
+  await shot(page, info, "indbakke-overtaget");
+  await page.goto("/app/inbox");
+  await expect(page.getByText("Venter på svar")).toBeVisible();
+});
+
 test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation uden mus", async ({ page }, info) => {
   await login(page, SEEDED.owner);
   await page.goto("/app/setup");

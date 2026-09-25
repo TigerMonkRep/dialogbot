@@ -32,6 +32,25 @@
     if (window.parent !== window) window.parent.postMessage({ type: "dialogbot:close" }, "*");
   });
 
+  var seen = {}; // ids of assistant/staff messages already on screen (visitor lines are drawn locally)
+  var waitingNoted = false;
+  var polling = null, pollUntil = 0;
+  function label(role) { return role === "staff" ? "Medarbejder" : ""; }
+  function show(m) {
+    if (m.role === "visitor" || seen[m.id]) return;
+    seen[m.id] = true;
+    var li = bubble(m.role === "staff" ? "staff" : "assistant", m.text);
+    if (m.role === "staff") li.setAttribute("data-label", label(m.role));
+  }
+  function poll() {
+    if (!state || Date.now() > pollUntil) { clearInterval(polling); polling = null; return; }
+    api("GET", "/conversations/" + state.id + "/messages").then(function (j) { j.messages.forEach(show); }).catch(function () {});
+  }
+  function keepPolling() {
+    pollUntil = Date.now() + 30 * 60 * 1000; // stop after 30 minutes without activity
+    if (!polling) polling = setInterval(poll, 5000);
+  }
+
   function bubble(role, text, extra) {
     var li = document.createElement("li");
     li.className = "msg " + role + (extra ? " " + extra : "");
@@ -85,7 +104,10 @@
   bubble("assistant", cfg.greeting);
   if (state) {
     api("GET", "/conversations/" + state.id + "/messages").then(function (j) {
-      j.messages.forEach(function (m) { bubble(m.role, m.text); });
+      j.messages.forEach(function (m) {
+        if (m.role === "visitor") bubble("visitor", m.text); else show(m);
+      });
+      keepPolling();
     }).catch(function () { state = null; sessionStorage.removeItem(store); });
   }
 
@@ -108,7 +130,12 @@
     send.disabled = true;
     ensureConversation()
       .then(function (s) { return api("POST", "/conversations/" + s.id + "/messages", { text: text }); })
-      .then(function (j) { typing.remove(); bubble("assistant", j.reply.text); })
+      .then(function (j) {
+        typing.remove();
+        keepPolling();
+        if (j.reply) { seen[j.reply.id] = true; bubble("assistant", j.reply.text); }
+        else if (j.waiting_for_staff && !waitingNoted) { waitingNoted = true; bubble("system-ok", "En medarbejder svarer dig her i chatten."); }
+      })
       .catch(function (err) {
         typing.remove();
         if (err.status === 401) { state = null; sessionStorage.removeItem(store); }

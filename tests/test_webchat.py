@@ -2,6 +2,8 @@
 visitor tokens, multi-turn AI replies from approved knowledge, spend limits, tenant isolation, setup check."""
 from __future__ import annotations
 
+import uuid
+
 import pytest
 from sqlalchemy import select
 
@@ -214,3 +216,37 @@ def test_setup_check_needs_real_provider_and_evidence(client, api, live, monkeyp
     latest = next(c for c in api.get(tok, f"/workspaces/{ws}/setup/checks/history").json()["items"]
                   if c["check_key"] == "webchat.widget")
     assert latest["status"] == "stale" and latest["stale_reason"] == "webchat.updated"
+
+
+def test_staff_takeover_silences_assistant_and_reaches_visitor(client, api, live, fake, db):
+    conv = _start(client, live["key"]).json()
+    _say(client, live["key"], conv, "Hej")
+    cid, base = conv["conversation_id"], f"/workspaces/{live['ws_a']}/conversations"
+    staff = api.add_member(live["tok_a"], live["ws_a"], "staff@testmail.dk", "staff")
+    reader = api.add_member(live["tok_a"], live["ws_a"], "reader@testmail.dk", "reader")
+    assert api.post(reader, f"{base}/{cid}/reply", {"text": "Hej"}).status_code == 403
+    r = api.post(staff, f"{base}/{cid}/reply", {"text": "Hej, det er Mads. Hvad kan jeg gøre?"})
+    assert r.status_code == 201 and r.json()["role"] == "staff"
+    calls_before = len(db.scalars(select(AiUsage)).all())
+    body = _say(client, live["key"], conv, "Kan I komme onsdag?").json()
+    assert body["reply"] is None and body["waiting_for_staff"] is True
+    assert len(db.scalars(select(AiUsage)).all()) == calls_before  # no model call in staff mode
+    hist = client.get(f"{PUB}/{live['key']}/conversations/{cid}/messages",
+                      headers={"x-visitor-token": conv["visitor_token"]}).json()["messages"]
+    assert [m["role"] for m in hist] == ["visitor", "assistant", "staff", "visitor"]
+    lst = api.get(staff, f"/workspaces/{live['ws_a']}/conversations").json()["items"][0]
+    assert lst["mode"] == "staff" and lst["awaiting_staff"] is True
+    # hand back: the assistant answers again and sees the staff line as an earlier assistant turn
+    assert api.post(staff, f"{base}/{cid}/mode", {"mode": "ai"}).json()["mode"] == "ai"
+    _say(client, live["key"], conv, "Tak")
+    assert [t["role"] for t in fake.last_messages][-1] == "user"
+    assert any("det er Mads" in t["content"] for t in fake.last_messages if t["role"] == "assistant")
+    assert api.post(live["tok_b"], f"/workspaces/{live['ws_b']}/conversations/{cid}/reply", {"text": "x"}).status_code == 404
+
+
+def test_phone_conversations_cannot_be_answered_in_chat(api, live, db):
+    c = Conversation(workspace_id=uuid.UUID(live["ws_a"]), channel="phone", visitor_token_digest="-" * 64)
+    db.add(c)
+    db.commit()
+    r = api.post(live["tok_a"], f"/workspaces/{live['ws_a']}/conversations/{c.id}/reply", {"text": "Hej"})
+    assert r.status_code == 409 and r.json()["code"] == "channel_not_replyable"

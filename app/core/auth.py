@@ -49,6 +49,7 @@ PERMISSIONS: dict[str, str] = {
     "webchat.read": "staff",
     "webchat.manage": "admin",
     "conversations.read": "staff",
+    "conversations.reply": "staff",
     "leads.read": "staff",
     "leads.edit": "staff",
     "leads.approve": "admin",

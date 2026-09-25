@@ -169,6 +169,14 @@ def post_visitor_message(db: OrmSession, s: WebchatSettings, conv: Conversation,
     _require_available(db, s)
     if conv.status != "open":
         raise WebchatUnavailable("Samtalen er afsluttet. Start en ny.")
+    if conv.mode == "staff":
+        # A colleague has taken over: store the message, the assistant stays silent.
+        db.add(ConversationMessage(conversation_id=conv.id, workspace_id=s.workspace_id, role="visitor", text=text))
+        conv.visitor_message_count += 1
+        conv.last_message_at = _now()
+        db.commit()
+        return {"reply": None, "waiting_for_staff": True, "refused": False,
+                "remaining_messages": max(0, MAX_VISITOR_MESSAGES - conv.visitor_message_count)}
     if conv.visitor_message_count >= MAX_VISITOR_MESSAGES:
         raise RateLimited("Samtalen er blevet lang. Kontakt virksomheden direkte, så hjælper en medarbejder dig videre.",
                           code="conversation_limit")
@@ -182,6 +190,7 @@ def post_visitor_message(db: OrmSession, s: WebchatSettings, conv: Conversation,
     conv.last_message_at = _now()
     db.commit()
 
+    # Staff replies are part of what the customer has been told; the model sees them as assistant turns.
     turns = [{"role": "user" if m.role == "visitor" else "assistant", "content": m.text} for m in history]
     turns.append({"role": "user", "content": text})
     # The model requires alternating turns starting with the user; drop a leading assistant turn.
@@ -194,7 +203,7 @@ def post_visitor_message(db: OrmSession, s: WebchatSettings, conv: Conversation,
     db.add(reply)
     conv.last_message_at = _now()
     db.commit()
-    return {"reply": message_out(reply), "refused": usage.outcome == "refused",
+    return {"reply": message_out(reply), "refused": usage.outcome == "refused", "waiting_for_staff": False,
             "remaining_messages": MAX_VISITOR_MESSAGES - conv.visitor_message_count}
 
 
@@ -211,3 +220,21 @@ def _alternate(turns: list[dict]) -> list[dict]:
 
 def message_out(m: ConversationMessage) -> dict:
     return {"id": str(m.id), "role": m.role, "text": m.text, "created_at": m.created_at.isoformat()}
+
+
+def staff_reply(db: OrmSession, conv: Conversation, author_id: uuid.UUID, text: str) -> ConversationMessage:
+    """A colleague answers in the chat; the conversation switches to staff mode (assistant silent)."""
+    if conv.channel != "webchat":
+        from app.core.errors import Conflict
+
+        raise Conflict("Der kan kun svares direkte i webchat-samtaler", code="channel_not_replyable")
+    text = text.strip()
+    if not text:
+        raise ValidationFailed("Svaret må ikke være tomt", field_errors=[{"field": "text"}])
+    m = ConversationMessage(conversation_id=conv.id, workspace_id=conv.workspace_id, role="staff", text=text,
+                            author_user_id=author_id)
+    db.add(m)
+    conv.mode = "staff"
+    conv.last_message_at = _now()
+    db.flush()
+    return m

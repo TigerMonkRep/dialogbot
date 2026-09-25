@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+from typing import Literal
 
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
@@ -103,6 +104,8 @@ class ConversationOut(BaseModel):
     channel: str
     origin: str | None
     status: str
+    mode: str
+    awaiting_staff: bool
     visitor_message_count: int
     created_at: datetime
     last_message_at: datetime
@@ -116,14 +119,22 @@ def list_conversations(p: PageParams = Depends(), ctx: WorkspaceContext = Depend
     total = db.scalar(select(func.count()).select_from(q.subquery())) or 0
     rows = db.scalars(q.order_by(Conversation.last_message_at.desc()).limit(p.limit).offset(p.offset)).all()
     first = {}
+    last_role: dict = {}
     if rows:
+        for cid, role in db.execute(
+            select(ConversationMessage.conversation_id, ConversationMessage.role)
+            .where(ConversationMessage.conversation_id.in_([c.id for c in rows]))
+            .order_by(ConversationMessage.conversation_id, ConversationMessage.created_at.desc())
+        ):
+            last_role.setdefault(cid, role)
         for cid, text in db.execute(
             select(ConversationMessage.conversation_id, ConversationMessage.text)
             .where(ConversationMessage.conversation_id.in_([c.id for c in rows]), ConversationMessage.role == "visitor")
             .order_by(ConversationMessage.conversation_id, ConversationMessage.created_at)
         ):
             first.setdefault(cid, text)
-    items = [ConversationOut(id=c.id, channel=c.channel, origin=c.origin, status=c.status,
+    items = [ConversationOut(id=c.id, channel=c.channel, origin=c.origin, status=c.status, mode=c.mode,
+                             awaiting_staff=c.mode == "staff" and last_role.get(c.id) == "visitor",
                              visitor_message_count=c.visitor_message_count, created_at=c.created_at,
                              last_message_at=c.last_message_at, preview=(first.get(c.id) or "")[:160] or None)
              .model_dump(mode="json") for c in rows]
@@ -134,6 +145,41 @@ def list_conversations(p: PageParams = Depends(), ctx: WorkspaceContext = Depend
 def get_conversation(conversation_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_capability("conversations.read")),
                      db: OrmSession = Depends(get_db)):
     conv = get_scoped(db, Conversation, conversation_id, ctx.workspace.id)
-    return {"id": str(conv.id), "channel": conv.channel, "origin": conv.origin, "status": conv.status,
+    return {"id": str(conv.id), "channel": conv.channel, "origin": conv.origin, "status": conv.status, "mode": conv.mode,
             "created_at": conv.created_at.isoformat(),
             "messages": [service.message_out(m) for m in service.messages_of(db, conv)]}
+
+
+class ReplyIn(BaseModel):
+    text: str = Field(min_length=1, max_length=2000)
+
+
+class ModeIn(BaseModel):
+    mode: Literal["ai", "staff"]
+
+
+@router.post("/conversations/{conversation_id}/reply", status_code=201)
+def reply(conversation_id: uuid.UUID, body: ReplyIn, ctx: WorkspaceContext = Depends(require_capability("conversations.reply")),
+          db: OrmSession = Depends(get_db)):
+    """A colleague answers the visitor in the chat. Takes the conversation over from the assistant."""
+    conv = db.scalar(select(Conversation).where(Conversation.id == conversation_id,
+                                                Conversation.workspace_id == ctx.workspace.id).with_for_update())
+    if conv is None:
+        get_scoped(db, Conversation, conversation_id, ctx.workspace.id)
+    m = service.staff_reply(db, conv, ctx.user_id, body.text)
+    db.commit()
+    return service.message_out(m)
+
+
+@router.post("/conversations/{conversation_id}/mode")
+def set_mode(conversation_id: uuid.UUID, body: ModeIn, request: Request,
+             ctx: WorkspaceContext = Depends(require_capability("conversations.reply")), db: OrmSession = Depends(get_db)):
+    """Hand the conversation back to the assistant (ai) or take it over without writing yet (staff)."""
+    conv = get_scoped(db, Conversation, conversation_id, ctx.workspace.id)
+    before = conv.mode
+    conv.mode = body.mode
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="conversation.mode_changed",
+                 object_type="conversation", object_id=conv.id, before={"mode": before}, after={"mode": conv.mode},
+                 request_id=request.state.request_id)
+    db.commit()
+    return {"id": str(conv.id), "mode": conv.mode}

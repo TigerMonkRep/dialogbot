@@ -30,3 +30,5 @@ form.contact .row button{padding:8px 14px}
 form.contact .contact-cancel{background:transparent;color:#404946;border:0}
 .err{margin:0;color:#ba1a1a;font-size:13px}
 [hidden]{display:none!important}
+.staff{align-self:flex-start;background:#d6ec85;color:#171e00;border-top-left-radius:4px}
+.staff::before{content:attr(data-label);display:block;font-size:11px;font-weight:700;opacity:.75}

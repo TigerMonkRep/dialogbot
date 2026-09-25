@@ -122,7 +122,7 @@ export default async function PreviewPage({ searchParams }: { searchParams: Prom
       <footer className="w-full bg-surface-container-low">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-6 flex flex-col md:flex-row items-center justify-between gap-3 font-body-sm text-body-sm text-on-surface-variant">
           <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary" />© {new Date().getFullYear()} Dialogbot. Under udvikling i Danmark.</span>
-          <Link href="/login" className="font-label-md text-label-md text-primary hover:underline">Log ind for teamet</Link>
+          <nav className="flex items-center gap-space-md" aria-label="Sidefod"><Link href="/privatliv" className="font-label-md text-label-md text-primary hover:underline">Privatliv</Link><Link href="/login" className="font-label-md text-label-md text-primary hover:underline">Log ind for teamet</Link></nav>
         </div>
       </footer>
     </div>

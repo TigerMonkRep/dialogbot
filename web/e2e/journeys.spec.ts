@@ -221,6 +221,8 @@ test("10 · P00: forsiden er skjult bag forhåndskode; venteliste; invitationsli
   await page.getByRole("button", { name: "Skriv mig på ventelisten" }).click();
   await expect(page.getByText("Tak – du står på ventelisten.")).toBeVisible();
   await shot(page, info, "p00-venteliste-tak");
+  await page.goto("/privatliv");
+  await expect(page.getByText("Abildgade 18, 8200 Aarhus, Danmark").first()).toBeVisible();
   // Colleagues invited by e-mail must reach signup without a preview code.
   await page.goto("/signup?next=/invite/abc");
   await expect(page).toHaveURL(/\/signup\?next=/);

@@ -9,7 +9,7 @@ Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI
 | Del | Status | Bevis |
 |---|---|---|
 | P00 `/preview`: forhåndskode (tjekkes på serveren i `/api/preview/unlock`, konstanttids-sammenligning, 0,8 s forsinkelse ved forkert kode) → signeret httpOnly-cookie `db_preview` | implementeret, E2E-testet | rejse 1 (forkert + rigtig kode) og 10 |
-| Gate i `proxy.ts` når `PREVIEW_GATE=on`: `/` og `/signup` → `/preview?next=…`; undtaget: indloggede, invitationslinks (`/signup?next=/invite/…`); fejler lukket uden hemmelighed/koder | implementeret, E2E-testet | rejse 10 |
+| Gate i `proxy.ts` (slået til som standard; `PREVIEW_GATE=off` åbner): `/` og `/signup` → `/preview?next=…`; undtaget: indloggede, invitationslinks (`/signup?next=/invite/…`); fejler lukket uden hemmelighed/koder | implementeret, E2E-testet | rejse 10 |
 | Venteliste `POST /api/v1/waitlist` (offentlig): samtykke påkrævet, e-mail normaliseres, gentagen tilmelding opdaterer svar, samme svar for ny/eksisterende e-mail (ingen enumeration), honeypot | implementeret, testet | `tests/test_waitlist.py` (4), Alembic `c432350c7efd` op/ned + `alembic check` |
 | P01 `/`: hero med eksempelsamtale, to spor (fører hensigt videre til signup), brancheskifter, tre trin + kontrol, overblik, FAQ (`<details>`), afsluttende CTA med prismodellerne A/B | implementeret, E2E-screenshot 1440 + 390 | rejse 1 |
 
@@ -17,7 +17,7 @@ Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI
 
 **Tilføjet efter merge (PR #7):** `/privatliv` (ikke bag gaten) med dataansvarlig Dialogbot, Abildgade 18, 8200 Aarhus, Danmark; formål, retsgrundlag (samtykke), opbevaring (højst 24 mdr.), databehandlere og rettigheder. Linket fra samtykketeksten og sidefødderne. `python -m scripts.waitlist export|delete <e-mail>` (køres i Render-shell) eksporterer CSV og sletter på anmodning; testet i `tests/test_waitlist.py`.
 
-**Ikke deployet/eksternt verificeret:** kræver `PREVIEW_GATE`, `PREVIEW_ACCESS_CODES`, `PREVIEW_COOKIE_SECRET` i Vercel (Production).
+**Deploy:** beskyttelsen er aktiv uden opsætning (P00 er første side). For at kunne låse op med en kode kræves `PREVIEW_ACCESS_CODES` og `PREVIEW_COOKIE_SECRET` i Vercel; uden dem virker ingen kode, men ventelisten og login gør.
 
 ## Checkpoint 6 — 25. september 2026 (milepæl B: Anthropic-adapter bag interface)
 

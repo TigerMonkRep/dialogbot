@@ -49,6 +49,12 @@ PERMISSIONS: dict[str, str] = {
     "webchat.read": "staff",
     "webchat.manage": "admin",
     "conversations.read": "staff",
+    "leads.read": "staff",
+    "leads.edit": "staff",
+    "leads.approve": "admin",
+    "tasks.read": "staff",
+    "tasks.edit": "staff",
+    "agreements.read": "admin",
     "agreements.edit": "owner",  # reserved for the billing stage
 }
 

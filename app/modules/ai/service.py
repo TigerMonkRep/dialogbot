@@ -77,17 +77,30 @@ def build_system_prompt(db: OrmSession, workspace: Workspace) -> tuple[str, int]
         workspace.knowledge_revision
 
 
+# Channel-specific additions to the system prompt; the logged prompt version includes the suffix.
+CHANNEL_INSTRUCTIONS: dict[str, tuple[str, str]] = {
+    "webchat": ("webchat-v1", "Kanal: webchat på virksomhedens hjemmeside. Hvis kunden vil kontaktes, have et tilbud, "
+                              "booke eller tale med en medarbejder, så bed dem trykke på knappen \"Bliv kontaktet\" "
+                              "under chatten og efterlade navn og e-mail eller telefon. Bed ikke om CPR-nummer eller "
+                              "betalingsoplysninger."),
+}
+
+
 def complete_logged(db: OrmSession, workspace: Workspace, *, user_id: uuid.UUID | None, purpose: str,
-                    messages: list[dict]) -> tuple[Completion, AiUsage]:
+                    messages: list[dict], channel: str | None = None) -> tuple[Completion, AiUsage]:
     """Call the provider with the approved-knowledge prompt and log one `ai_usage` row.
 
     Commits the usage row (also on failure, then re-raises). `messages` is the conversation so far,
     alternating user/assistant and ending with the user's turn."""
     provider = get_provider()  # 501 before anything else when AI is not configured
     system, revision = build_system_prompt(db, workspace)
+    prompt_version = PROMPT_VERSION
+    if channel in CHANNEL_INSTRUCTIONS:
+        suffix, text = CHANNEL_INSTRUCTIONS[channel]
+        system, prompt_version = f"{system}\n\n{text}", f"{PROMPT_VERSION}+{suffix}"
     settings = get_settings()
     row = AiUsage(workspace_id=workspace.id, user_id=user_id, purpose=purpose, provider=provider.name,
-                  requested_model=provider.model, prompt_version=PROMPT_VERSION, knowledge_revision=revision)
+                  requested_model=provider.model, prompt_version=prompt_version, knowledge_revision=revision)
     try:
         c = provider.complete(system=system, messages=messages, max_tokens=settings.ai_max_output_tokens)
     except ApiError as e:

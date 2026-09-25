@@ -12,7 +12,7 @@ const notYet = (area: string) => `/app/not-yet?area=${encodeURIComponent(area)}`
 /** Desktop top navigation (Stitch g01 desktop header). Unbuilt areas go to the honest placeholder. */
 export const NAV: NavItem[] = [
   { href: "/app/setup", match: "/app/overview", label: "Oversigt", icon: "dashboard" },
-  { href: "/app/inbox", match: "/app/inbox", label: "Henvendelser", icon: "inbox" },
+  { href: "/app/leads", match: "/app/leads", label: "Henvendelser", icon: "contact_support" },
   { href: "/app/setup", match: "/app/setup", label: "Opsætningsguide (G01)", icon: "tune" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
   { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
@@ -153,7 +153,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
 export const SIDE: NavItem[] = [
   { href: "/app/setup", match: "/app/setup", label: "Overblik", icon: "grid_view" },
   { href: "/app/inbox", match: "/app/inbox", label: "Indbakke", icon: "inbox" },
-  { href: notYet("Henvendelser"), match: "/app/conversations", label: "Henvendelser", icon: "contact_support" },
+  { href: "/app/leads", match: "/app/leads", label: "Henvendelser", icon: "contact_support" },
   { href: notYet("Reception"), match: "/app/reception", label: "Reception", icon: "support_agent" },
   { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },

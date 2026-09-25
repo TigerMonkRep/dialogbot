@@ -67,6 +67,13 @@ def handle_reset(db: OrmSession, ev: OutboxEvent) -> None:
                f"Nulstil her: {ev.payload['link']}\n\n(Simuleret udviklingsmail)")
 
 
+def handle_new_lead(db: OrmSession, ev: OutboxEvent) -> None:
+    p = ev.payload
+    _send_mail(db, ev, f"Ny henvendelse til {p['workspace_name']}: {p['contact_name']}",
+               f"{p['contact_name']} vil gerne kontaktes via jeres webchat.\n\n"
+               f"Behov: {p['need_summary'] or '(ikke angivet)'}\n\nSe henvendelsen: {p['link']}")
+
+
 def handle_knowledge_approved(db: OrmSession, ev: OutboxEvent) -> None:
     # Downstream consumers (script regeneration, embeddings) belong to later
     # stages. The event is acknowledged so the audit/outbox trail is complete.
@@ -78,6 +85,7 @@ HANDLERS = {
     "email.verify_address": handle_verify,
     "email.password_reset": handle_reset,
     "knowledge.version_approved": handle_knowledge_approved,
+    "email.new_lead": handle_new_lead,
 }
 
 # Test hook: event types listed here raise, to exercise retry paths.

@@ -2,6 +2,21 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 9 — 25. september 2026 (milepæl B: henvendelser, opgaver og prisaftale)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `leads`, `tasks`, `reception_agreements` (versioneret, kun tilføjelser) | implementeret, migreret | Alembic `477adf47202c`; op/ned + `alembic check` |
+| Tre adskilte akser på en henvendelse: kvalificering (ikke vurderet/kvalificeret/ikke relevant), forløb (ny/kontaktet/vundet/tabt), afregning (afventer/godkendt/afvist). Én henvendelse pr. samtale | testet | `tests/test_leads.py` (7) |
+| "Bliv kontaktet" i webchatten (navn + e-mail eller telefon + samtykke) → henvendelse, opgave "Kontakt …" med frist +24 t, og e-mail (`email.new_lead`) til ejere/administratorer. Gentagen indsendelse opdaterer i stedet for at duplikere | testet (API + E2E) | `test_webchat_contact_creates_lead_task_and_notification`, E2E rejse 12 |
+| Webchat-prompten beder kunden bruge knappen ved ønske om kontakt/tilbud/booking (promptversion `assistant-v1+webchat-v1`) | testet | — |
+| Prisaftale: ejeren vælger model A (1.495 kr./md., intet leadgebyr) eller B (149 kr. pr. godkendt henvendelse); listepriser fra produktreglerne, hver ændring er en ny version; "der faktureres ikke endnu" | testet | `test_model_b_approval…`, `test_model_a_approval…` |
+| Godkendelse (ejer/admin) er en idempotent domænehandling (`Idempotency-Key`), kræver kvalificeret henvendelse og en aftale, og gemmer aftaleversion + pris i hele øre (B: 14.900 netto / 3.725 moms / 18.625 brutto; A: 0). Afgjort én gang; derefter er kvalificeringen låst, og senere aftaleskift ændrer ikke snapshot. Afvisning kræver begrundelse | testet | samme |
+| Opgaver: opret, tildel (kun medlemmer), afslut/genåbn, filtre (åbne/færdige/mine) | testet | `test_tasks_crud…` |
+| UI: `/app/leads` (filtre), henvendelsesside (redigering, afregning, opgaver, link til samtale), `/app/tasks`, Indstillinger → Prisaftale, "Opret henvendelse" fra en samtale; menupunktet "Henvendelser" peger nu på siden | implementeret, E2E | rejse 12 (1440 + 390) |
+
+**Ikke implementeret endnu:** fakturering/betaling, tvister på godkendte henvendelser (reglerne ligger i `billing/money.py`), medarbejdersvar direkte i chatten.
+
 ## Checkpoint 8 — 25. september 2026 (milepæl B: webchat-widget på ekstern origin + indbakke)
 
 | Del | Status | Bevis |

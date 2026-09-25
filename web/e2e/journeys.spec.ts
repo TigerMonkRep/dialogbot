@@ -281,6 +281,62 @@ test("11 · W01: ejer slår webchat til, kunde chatter på eget domæne, samtale
   await shot(page, info, "indbakke-samtale");
 });
 
+test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, vælger model B, godkender og løser opgaven", async ({ page, browser }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  const CSRF = { "x-requested-with": "dialogbot" };
+  const item = await (await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/items`, { headers: CSRF, data: { kind: "service", title: "Gulvafslibning", content: { price_net_minor: 14500 } } })).json();
+  await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`, { headers: CSRF });
+  await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`, { headers: CSRF });
+  const s = await (await page.request.get(`/api/backend/workspaces/${wsId}/webchat`)).json();
+  const w = await (await page.request.put(`/api/backend/workspaces/${wsId}/webchat`, { headers: CSRF, data: { expected_version: s.version, enabled: true, allowed_origins: [CUSTOMER_SITE], greeting: "" } })).json();
+  servers.push(await serve(4000, `<!doctype html><html lang="da"><head><title>Kundeside</title></head><body><h1>Fjord Gulv</h1>${w.embed_code}</body></html>`));
+
+  const ctx = await browser.newContext({ viewport: page.viewportSize() ?? undefined });
+  const site = await ctx.newPage();
+  await site.goto(`${CUSTOMER_SITE}/`);
+  await site.getByRole("button", { name: "Åbn chat" }).click();
+  const chat = site.frameLocator('iframe[title^="Chat med"]');
+  await chat.getByLabel("Din besked").fill("Kan I slibe 65 m² plankegulv?");
+  await chat.locator("form:not(.contact)").getByRole("button", { name: "Send" }).click();
+  await expect(chat.getByText("[fake] svar på: Kan I slibe 65 m² plankegulv?")).toBeVisible();
+  await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();
+  await chat.getByLabel("Navn").fill("Henrik Villumsen");
+  await chat.getByLabel("E-mail").fill("henrik@example.com");
+  await chat.locator("form.contact").getByRole("button", { name: "Send" }).click();
+  await expect(chat.getByText("Sæt flueben, så virksomheden må kontakte dig.")).toBeVisible(); // consent is required
+  await chat.getByLabel("Virksomheden må kontakte mig", { exact: false }).check();
+  await chat.locator("form.contact").getByRole("button", { name: "Send" }).click();
+  await expect(chat.getByText("Tak, Henrik Villumsen!", { exact: false })).toBeVisible();
+  await shot(site, info, "kontakt-i-webchat");
+  await ctx.close();
+
+  await page.goto("/app/leads");
+  await page.getByRole("link", { name: /Henrik Villumsen/ }).click();
+  await expect(page.getByRole("heading", { name: "Henrik Villumsen" })).toBeVisible();
+  await expect(page.getByText("Kontakt Henrik Villumsen fra webchat")).toBeVisible();
+  await expect(page.getByText("Der er ingen prisaftale endnu", { exact: false })).toBeVisible();
+  await page.getByLabel("Kvalificering").selectOption("qualified");
+  await page.getByLabel("Forløb").selectOption("contacted");
+  await page.getByRole("button", { name: "Gem", exact: true }).click();
+  await expect(page.getByLabel("Kvalificering")).toHaveValue("qualified");
+
+  await page.goto("/app/settings/agreement");
+  await page.getByRole("button", { name: "Vælg model B" }).click();
+  await expect(page.getByText("Gældende: model B", { exact: false })).toBeVisible();
+  await shot(page, info, "prisaftale");
+
+  await page.goBack();
+  await page.reload();
+  await page.getByRole("button", { name: "Godkend henvendelse" }).click();
+  await expect(page.getByText("149,00 kr.", { exact: false })).toBeVisible();
+  await expect(page.getByLabel("Kvalificering")).toBeDisabled();
+  await page.getByRole("checkbox", { name: "Færdig: Kontakt Henrik Villumsen fra webchat" }).check();
+  await expect(page.getByRole("checkbox", { name: "Færdig: Kontakt Henrik Villumsen fra webchat" })).toBeChecked();
+  await shot(page, info, "henvendelse-godkendt");
+  await page.getByRole("link", { name: "Se samtalen" }).click();
+  await expect(page.getByText("Kan I slibe 65 m² plankegulv?").first()).toBeVisible();
+});
+
 test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation uden mus", async ({ page }, info) => {
   await login(page, SEEDED.owner);
   await page.goto("/app/setup");

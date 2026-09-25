@@ -188,7 +188,7 @@ def post_visitor_message(db: OrmSession, s: WebchatSettings, conv: Conversation,
     while turns and turns[0]["role"] != "user":
         turns.pop(0)
     ws = db.get(Workspace, s.workspace_id)
-    c, usage = complete_logged(db, ws, user_id=None, purpose="webchat", messages=_alternate(turns))
+    c, usage = complete_logged(db, ws, user_id=None, purpose="webchat", messages=_alternate(turns), channel="webchat")
     reply = ConversationMessage(conversation_id=conv.id, workspace_id=s.workspace_id, role="assistant",
                                 text=visible_reply(c), ai_usage_id=usage.id)
     db.add(reply)

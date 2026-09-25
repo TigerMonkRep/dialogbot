@@ -2,6 +2,8 @@ import { expect, type APIRequestContext, type Page, type TestInfo } from "@playw
 
 export const DEMO_PASSWORD = process.env.SEED_DEMO_PASSWORD ?? "DemoPass-2026x";
 export const PREVIEW_CODE = process.env.PREVIEW_ACCESS_CODES?.split(",")[0] ?? "E2E-PREVIEW-2026";
+/** A stand-in for a customer's own website on another origin (see serve()). */
+export const CUSTOMER_SITE = "http://localhost:4000";
 export const SEEDED = { owner: "owner@fjordgulv.example", admin: "admin@fjordgulv.example", staff: "staff@fjordgulv.example", reader: "reader@fjordgulv.example" };
 const CSRF = { "x-requested-with": "dialogbot" };
 
@@ -47,4 +49,12 @@ export async function freshOwner(page: Page, info: TestInfo, intent = "reception
   const ws = await (await page.request.post("/api/backend/workspaces", { headers: CSRF, data: { name: `E2E ${info.project.name} ${Date.now()}`, product_intent: intent } })).json();
   await page.request.post("/api/auth/workspace", { headers: CSRF, data: { workspace_id: ws.id } });
   return { email, wsId: ws.id as string };
+}
+
+/** Minimal static web server for a fake customer website on another origin. */
+export async function serve(port: number, body: string): Promise<import("node:http").Server> {
+  const { createServer } = await import("node:http");
+  const server = createServer((_req, res) => { res.writeHead(200, { "content-type": "text/html; charset=utf-8" }); res.end(body); });
+  await new Promise<void>((resolve) => server.listen(port, "127.0.0.1", resolve));
+  return server;
 }

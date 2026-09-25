@@ -12,7 +12,7 @@ const notYet = (area: string) => `/app/not-yet?area=${encodeURIComponent(area)}`
 /** Desktop top navigation (Stitch g01 desktop header). Unbuilt areas go to the honest placeholder. */
 export const NAV: NavItem[] = [
   { href: "/app/setup", match: "/app/overview", label: "Oversigt", icon: "dashboard" },
-  { href: notYet("Henvendelser"), match: "/app/inbox", label: "Henvendelser", icon: "inbox" },
+  { href: "/app/inbox", match: "/app/inbox", label: "Henvendelser", icon: "inbox" },
   { href: "/app/setup", match: "/app/setup", label: "Opsætningsguide (G01)", icon: "tune" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
   { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
@@ -23,7 +23,7 @@ export const NAV: NavItem[] = [
 /** Mobile bottom navigation (Stitch g01 mobil): four slots, the last opens the full menu. */
 const BOTTOM: NavItem[] = [
   { href: "/app/setup", match: "/app/overview", label: "Oversigt", icon: "dashboard" },
-  { href: notYet("Henvendelser"), match: "/app/inbox", label: "Indbakke", icon: "inbox" },
+  { href: "/app/inbox", match: "/app/inbox", label: "Indbakke", icon: "inbox" },
   { href: "/app/setup", match: "/app/setup", label: "Opsætning", icon: "tune" },
 ];
 
@@ -152,7 +152,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
 /** Admin sidebar (Stitch K01/C01/BK/M screens). Unbuilt areas lead to the honest placeholder. */
 export const SIDE: NavItem[] = [
   { href: "/app/setup", match: "/app/setup", label: "Overblik", icon: "grid_view" },
-  { href: notYet("Indbakke"), match: "/app/inbox", label: "Indbakke", icon: "inbox" },
+  { href: "/app/inbox", match: "/app/inbox", label: "Indbakke", icon: "inbox" },
   { href: notYet("Henvendelser"), match: "/app/conversations", label: "Henvendelser", icon: "contact_support" },
   { href: notYet("Reception"), match: "/app/reception", label: "Reception", icon: "support_agent" },
   { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },

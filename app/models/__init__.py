@@ -4,6 +4,8 @@ from app.models.domain import (  # noqa: F401
     AiUsage,
     BusinessProfile,
     CheckResult,
+    Conversation,
+    ConversationMessage,
     EmailDelivery,
     GoalSelection,
     IdempotencyKey,
@@ -13,6 +15,7 @@ from app.models.domain import (  # noqa: F401
     OutboxEvent,
     SetupTaskState,
     WaitlistSignup,
+    WebchatSettings,
     WebhookEvent,
     WorkspaceCategory,
 )

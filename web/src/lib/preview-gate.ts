@@ -1,6 +1,7 @@
 /** Temporary preview gate (P00). Server-only: read from process.env, never NEXT_PUBLIC_.
  *
- * PREVIEW_GATE=on            → "/" and "/signup" require the preview cookie (or a session).
+ * PREVIEW_GATE               → ON BY DEFAULT: "/" and "/signup" require the preview cookie (or a session),
+ *                              so P00 is the first page while the platform is being built. "off" opens them.
  * PREVIEW_ACCESS_CODES       → comma-separated invitation codes (case-insensitive).
  * PREVIEW_COOKIE_SECRET      → ≥ 32 chars; signs the cookie. Rotating it locks everyone out again.
  *
@@ -10,7 +11,7 @@ export const PREVIEW_COOKIE = "db_preview";
 export const PREVIEW_MAX_AGE = 60 * 60 * 24 * 30;
 const PAYLOAD = "dialogbot-preview-v1";
 
-export const gateEnabled = () => process.env.PREVIEW_GATE === "on";
+export const gateEnabled = () => process.env.PREVIEW_GATE !== "off";
 const secret = () => {
   const s = process.env.PREVIEW_COOKIE_SECRET ?? "";
   return s.length >= 32 ? s : null;

@@ -2,6 +2,25 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 3 — 25. september 2026 (overtagelse, milepæl A-design)
+
+**Baseline genkontrolleret:** `main` = `cb79a99` (Stitch-commit er på main). 26/26 pytest mod lokal PostgreSQL 16, `npm run build` grøn (22 ruter). Render `dialogbot-api-staging` live på `cb79a99` (deploy `dep-dar7koe7bikc73auval0`, via Render-API). `/health/ready` og Vercel-URL kunne **ikke** kaldes direkte: sessionens netværkspolitik blokerer `*.onrender.com` og `*.vercel.app`, og Vercel-forbindelsen har ikke adgang til projektet.
+
+**Fundet og rettet (browserkontrolleret lokalt, Chromium 1440/390 px):**
+
+| Fejl | Årsag | Rettelse |
+|---|---|---|
+| Hele designsystemet virkede ikke på staging: ingen farver, spacing, typografi eller `lg:`-layout | Kommentaren i `globals.css` indeholdt `stitch_dialogbot/*/code.html`; `*/` lukkede kommentaren, så `@theme`-blokken blev en ugyldig regel og droppet af Next' CSS-pipeline (CSS 22 KB → 36 KB efter rettelse) | Kommentar rettet |
+| Ikoner vist som tekst (`check_circle`, `schedule`) og systemfont i stedet for Inter/Manrope | Fonte hentet fra Google Fonts ved runtime | Self-hostet via `material-symbols`, `@fontsource-variable/inter`, `@fontsource-variable/manrope` i `@layer base`; ingen runtime-kald til Google (også GDPR-venligere) |
+
+**Ikke gjort / blokeringer:**
+- **Designreferencerne findes ikke i repoet eller containeren:** `design-reference/latest/stitch_dialogbot/` (44 HTML), `legacy-html/` (128 HTML), `Dialogbot-Backend-Blueprint.md`, `canonical-requirements.json`, `canonical-demo-data.json`, `implementation-backlog.csv`, `Dialogbot-Claude-Full-Platform-Prompt.md`. Uden dem kan side-for-side-sammenligning (§3) og de otte brugerrejser (blueprint §9.1) ikke udføres.
+- Kendt afvigelse set lokalt: mobilheaderen (390 px) klipper ikonerne til højre.
+
+**Præcis næste handling:**
+1. **Bruger:** læg afleveringspakken i repoet (fx `design-reference/` og `docs/handoff/`) og tillad `dialogbot-api-staging.onrender.com` og `dialogbot-sepia.vercel.app` i miljøets netværksindstillinger.
+2. **Claude:** efter merge — screenshot staging mod Stitch-referencer ved 1440/390 px, ret afvigelser, byg S08/S09/G03/G04, tilføj Playwright-CI.
+
 ## Checkpoint 2 — 25. september 2026 (milepæl A, delvist)
 
 **Commits:** `f24c75f` (etape 1) → `60726df` (milepæl A: frontend, infra, docs).

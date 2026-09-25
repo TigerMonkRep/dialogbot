@@ -1,12 +1,17 @@
 @import "tailwindcss";
+/* Fonts are self-hosted (no request to Google at runtime). Layered as base so
+   Tailwind utilities (text-*, font-*) still win over the packages' defaults. */
+@import "@fontsource-variable/inter" layer(base);
+@import "@fontsource-variable/manrope" layer(base);
+@import "material-symbols/outlined.css" layer(base);
 
 /* Dialogbot design system — ported 1:1 from the Stitch export (Material 3 tokens).
    Colors, spacing, typography and radii below are the exact values from
-   design-reference/latest/stitch_dialogbot/*/code.html (tailwind.config). */
+   design-reference/latest/stitch_dialogbot/<screen>/code.html (tailwind.config). */
 @theme {
-  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --color-background: #e7fef9;
   --color-on-background: #0a1f1c;

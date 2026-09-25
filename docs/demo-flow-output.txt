@@ -1,0 +1,76 @@
+ready: {'status': 'ok', 'database': 'ok', 'migration': '94af55693109', 'expected_migration': '94af55693109'}
+
+== A01/A02/A03 – konto, login, e-mailbekræftelse via simuleret postkasse
+verified before: False
+verified after: True
+
+== A06 – arbejdsrum med bevaret produktintention
+workspace: d4fe7212-e2e3-46f9-a3fa-2a47143493a5 intent: both
+
+== O01/S01 – virksomhedsprofil uden hjemmeside, flere kategorier inkl. egen
+categories: ['Håndværk & Gulvservice', 'Poolservice og vedligeholdelse']
+
+== O03/O04 – mål, kapabiliteter og fire sprogniveauer
+
+== K03/K01 – manuel viden: ydelse, åbningstider, K04-tilbud (>= 40 m²)
+assistant sees before approval: 0 items
+
+== K05 – godkendelse (kladde → gennemgang → godkendt), idempotent
+assistant sees after approval: 3 items, revision 3
+  offer eligibility 39 m² on 2026-10-28: False
+  offer eligibility 40 m² on 2026-10-28: True
+  offer eligibility 41 m² on 2026-10-28: True
+  offer eligibility 65 m² on 2026-12-01: False
+
+== G05 – kør servertjek; ikke-implementerede tjek springes ærligt over
+results: {'profile.completeness': 'passed', 'languages.consistency': 'passed', 'knowledge.approved_coverage': 'passed', 'knowledge.assistant_endpoint': 'passed'}
+skipped: ['telephony.test_call', 'telephony.forwarding', 'calendar.connection', 'webchat.widget', 'campaign.test_call']
+calendar check: 501 not_implemented - Checket 'Kalenderforbindelse verificeret' kan ikke køres: integrationen 'Kalenderforbindelse (Google/Microsoft/CalDAV)' er ikke implementeret. Der registreres intet resultat.
+
+== G01/G02 – personlig plan
+progress: 7/13 (54 %)
+  ! business.profile                 complete      
+  ! business.categories              complete      
+  ! goals.select                     complete      
+  ! languages.settings               complete      
+  ! knowledge.services               complete      
+  ! knowledge.opening_hours          complete      
+    knowledge.coverage_area          not_started   
+    knowledge.answers                not_started   
+    knowledge.review                 complete      
+  ! checks.server                    complete      
+  ! reception.telephony_forwarding   not_available  ← Indgående telefoni / viderestilling: ikke implementeret i denne etape.
+  ! reception.test_call              not_available  ← Indgående telefoni / viderestilling: ikke implementeret i denne etape.
+  ! booking.calendar                 not_available  ← Kalenderforbindelse (Google/Microsoft/CalDAV): ikke implementeret i de
+  ! campaign.first                   not_available  ← Udgående kampagneopkald: ikke implementeret i denne etape. Planlagt ti
+  ! activation.reception             not_available  ← Indgående telefoni / viderestilling: ikke implementeret i denne etape.
+  ! activation.campaigns             not_available  ← Udgående kampagneopkald: ikke implementeret i denne etape. Planlagt ti
+next: knowledge.coverage_area | Blokerede nødvendige trin: Viderestil dit telefonnummer (Indgående telefoni / viderestilling: ikke implementeret i denne etape. Planlagt til etape 2. Ingen udbyder er valgt eller forbundet.); Gennemfør prøveopkald (Indgående telefoni / viderestilling: ikke implementeret i denne etape. Planlagt til etape 2. Ingen udbyder er valgt eller forbundet.); Forbind kalender (Kalenderforbindelse (Google/Microsoft/CalDAV): ikke implementeret i denne etape. Planlagt til etape 3. Ingen simuleret test kan aktivere produktion.); Opret din første kampagne (Udgående kampagneopkald: ikke implementeret i denne etape. Planlagt til etape 4. Betaling starter aldrig opkald.); Aktivér reception (Indgående telefoni / viderestilling: ikke implementeret i denne etape. Planlagt til etape 2. Ingen udbyder er valgt eller forbundet.); Aktivér kampagner (Udgående kampagneopkald: ikke implementeret i denne etape. Planlagt til etape 4. Betaling starter aldrig opkald.)
+
+== S02/A05 – invitér kollega (staff) og acceptér via simuleret mail
+preview: {'workspace_name': 'Fjord Gulvservice ApS (781f80)', 'email': 'kollega-781f80@demo-dialogbot.dk', 'role': 'staff', 'status': 'pending', 'expires_at': '2026-09-28T07:42:04.385611Z'}
+accepted: staff
+second acceptance: 409 invitation_used
+staff approve: 403 insufficient_role
+staff sees review task as: blocked
+
+== G01 – gem/genoptag: ny session åbner samme næste trin
+next before: knowledge.review | after: knowledge.review | open drafts/in review: {'open_drafts': 0, 'in_review': 1, 'last_activity_at': '2026-09-25T07:42:05.939565+00:00', 'last_action': 'knowledge.submitted'}
+after approval, review task: complete
+
+== G06 – aktivering er en særskilt kommando og afvises ærligt
+activate reception: 501 not_implemented - Aktivering af reception kræver en implementeret telefoniudbyder og et bestået prøveopkald.
+activate campaigns: 501 not_implemented - Kampagneaktivering, betaling og lancering er særskilte kommandoer i etape 4. Ingen integra
+
+== S09 – seneste audit
+  07:42:06 knowledge.approved           knowledge_version
+  07:42:05 knowledge.submitted          knowledge_version
+  07:42:05 knowledge.draft_created      knowledge_version
+  07:42:05 invitation.accepted          invitation
+  07:42:04 invitation.created           invitation
+  07:42:04 setup.checks_run_all         check_result
+  07:42:04 knowledge.approved           knowledge_version
+  07:42:04 knowledge.submitted          knowledge_version
+
+Done. Workspace id: d4fe7212-e2e3-46f9-a3fa-2a47143493a5
+exit=0

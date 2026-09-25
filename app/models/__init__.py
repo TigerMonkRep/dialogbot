@@ -11,6 +11,7 @@ from app.models.domain import (  # noqa: F401
     LanguageSettings,
     OutboxEvent,
     SetupTaskState,
+    WebhookEvent,
     WorkspaceCategory,
 )
 from app.models.identity import (  # noqa: F401

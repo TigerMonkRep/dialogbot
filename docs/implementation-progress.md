@@ -2,6 +2,23 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 5 — 25. september 2026 (milepæl B: Resend-leveringswebhook)
+
+**Grundlag:** milepæl A merget som `85e15b2` (PR #2).
+
+| Del | Status | Bevis |
+|---|---|---|
+| `POST /api/v1/webhooks/resend` (Svix-signatur, 5-min replay-vindue, idempotent på `svix-id`) | implementeret, testet | `tests/test_resend_webhook.py` (10 tests), heraf én fast testvektor genereret med det officielle `svix`-bibliotek |
+| `email_deliveries.provider_message_id`/`provider_status`/`provider_status_at`, tabel `webhook_events` | implementeret, migreret | Alembic `773ead23336e`; op/ned testet; `alembic check` ren |
+| Status kun fremad (sent → delivery_delayed → delivered → failed/bounced/complained); `status` (afsendelsesresultat) røres aldrig | testet | `test_status_only_moves_forward` |
+| Ukendte beskeder og ikke-sporede hændelser (fx `email.opened`) gemmes som `unmatched`/`ignored` | testet | `test_unknown_message_and_untracked_event_types_…` |
+| `ResendEmailAdapter` gemmer nu mailteksten og udbyder-id i eget felt (overskrev før `body_text`) | implementeret | — |
+| Uden `RESEND_WEBHOOK_SECRET` svarer endpointet 503 (aldrig "accepteret" uden signaturkontrol) | testet | `test_not_configured_answers_503` |
+
+**Ikke eksternt verificeret:** ingen Resend-konto, domæne eller nøgle endnu. Staging kører fortsat `EMAIL_ADAPTER=simulated`.
+
+**Præcis næste handling:** Bruger: opsætning pr. `docs/services-setup.md` §4 (domæne + DNS, API-nøgle, webhook-endpoint, tre variabler i Render). Claude: derefter "Send test event" fra Resend og en rigtig verificeringsmail → `provider_status=delivered` på staging. Parallelt: Anthropic-adapter bag interface (AI_PROVIDER/AI_MODEL_ID).
+
 ## Checkpoint 4 — 25. september 2026 (milepæl A: design-fidelitet mod Stitch)
 
 **Gren/PR:** `claude/cool-wozniak-ho00tr` → https://github.com/TigerMonkRep/dialogbot/pull/2 (draft). CI (backend + web) grøn på `d2edbb7`.

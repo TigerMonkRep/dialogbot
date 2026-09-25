@@ -65,9 +65,9 @@ Alternativ uden lokal git: åbn Codespaces på det tomme repo, upload bundlen, k
 |---|---|
 | Hvorfor | Verificering, reset, invitationer skal faktisk leveres i staging/produktion. |
 | Dashboard | <https://resend.com/> · [Domæner](https://resend.com/docs/dashboard/domains/introduction) |
-| Klar i repo | `ResendEmailAdapter` (`app/modules/integrations/email.py`) med `Idempotency-Key = outbox_event_id`; status `sent` ≠ leveret. **Ikke verificeret eksternt** (ingen nøgle fandtes). |
-| Din handling | Vælg afsenderdomæne (fx `mail.<dit-domæne>`); tilføj DNS-poster (SPF/DKIM/DMARC), som Resend viser for præcis dette domæne; opret API-nøgle med *sending access*. Sæt `RESEND_API_KEY`, `EMAIL_FROM` i Render (API + worker) og `EMAIL_ADAPTER=resend`. Oplys en testmodtageradresse. |
-| Test / bevis | Verificeringsmail til testadressen; `email_deliveries.status=sent` med provider-id; leveringswebhook kobles i milepæl B. |
+| Klar i repo | `ResendEmailAdapter` (`app/modules/integrations/email.py`) med `Idempotency-Key = outbox_event_id`; gemmer Resends id i `email_deliveries.provider_message_id`; status `sent` ≠ leveret. Leveringswebhook `POST /api/v1/webhooks/resend` (`app/modules/webhooks/`): Svix-signatur (verificeret mod officiel `svix`-testvektor), 5-minutters replay-vindue, idempotent på `svix-id`, `provider_status` bevæger sig kun fremad (sent → delivery_delayed → delivered → failed/bounced/complained). **Ikke verificeret eksternt** (ingen Resend-konto endnu). |
+| Din handling | 1) Vælg afsenderdomæne (fx `mail.<dit-domæne>`); tilføj DNS-poster (SPF/DKIM/DMARC), som Resend viser for præcis dette domæne; opret API-nøgle med *sending access*. 2) Resend → Webhooks → *Add endpoint*: URL `https://dialogbot-api-staging.onrender.com/api/v1/webhooks/resend`, hændelser `email.sent`, `email.delivered`, `email.delivery_delayed`, `email.bounced`, `email.complained`, `email.failed`. 3) I Render (dialogbot-api-staging): `RESEND_WEBHOOK_SECRET` = endpointets *Signing secret*; i API **og** worker: `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_ADAPTER=resend`. Oplys en testmodtageradresse. Del aldrig nøglerne i chat. |
+| Test / bevis | Verificeringsmail til testadressen → `email_deliveries.status=sent` med `provider_message_id` → webhook sætter `provider_status=delivered`; `webhook_events` har én række pr. `svix-id`. Resend-dashboardets "Send test event" skal give 200. |
 | Udgift | Free: 3.000 mails/md. (listepris; verificér). |
 
 ## Senere (bed om input, når integrationen er konkret)

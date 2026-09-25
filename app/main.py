@@ -11,6 +11,7 @@ from app.modules.identity.router import router as identity_router
 from app.modules.integrations.router import router as integrations_router
 from app.modules.knowledge.router import router as knowledge_router
 from app.modules.setup.router import router as setup_router
+from app.modules.webhooks.router import router as webhooks_router
 from app.modules.workspaces.router import router as workspaces_router
 
 API_PREFIX = "/api/v1"
@@ -32,7 +33,8 @@ def create_app() -> FastAPI:
     app.add_middleware(RequestIdMiddleware)
     install_error_handlers(app)
     app.include_router(health_router)
-    for r in (identity_router, workspaces_router, business_router, knowledge_router, setup_router, integrations_router):
+    for r in (identity_router, workspaces_router, business_router, knowledge_router, setup_router, integrations_router,
+              webhooks_router):
         app.include_router(r, prefix=API_PREFIX)
     if settings.dev_tools_enabled:
         from app.modules.devtools.router import router as dev_router

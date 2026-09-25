@@ -43,6 +43,8 @@ class Settings(BaseSettings):
     email_adapter: Literal["simulated", "resend"] = Field(default="simulated", alias="EMAIL_ADAPTER")
     email_from: str = Field(default="Dialogbot <noreply@dialogbot.local>", alias="EMAIL_FROM")
     resend_api_key: str | None = Field(default=None, alias="RESEND_API_KEY")
+    # Signing secret of the Resend webhook endpoint ("whsec_..."). Without it the webhook answers 503.
+    resend_webhook_secret: str | None = Field(default=None, alias="RESEND_WEBHOOK_SECRET")
 
     # Dev tooling: the simulated mailbox and test identities are gated on this.
     enable_dev_tools: bool = Field(default=False, alias="ENABLE_DEV_TOOLS")

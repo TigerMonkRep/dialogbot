@@ -42,6 +42,8 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
             return vapi.assistant_config(db, number)
         except ApiError as e:  # e.g. no approved knowledge: the provider plays its error handling
             return {"error": e.message}
+    if kind == "tool-calls":
+        return vapi.tool_calls(db, message)
     if kind == "end-of-call-report":
         call_id = str((message.get("call") or {}).get("id") or "")
         if db.scalar(select(Call.id).where(Call.provider_call_id == call_id)) if call_id else None:

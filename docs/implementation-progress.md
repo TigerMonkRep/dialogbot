@@ -2,6 +2,19 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 22 — 26. september 2026 (Bookinger og kalender)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `booking_settings`, `booking_types`, `bookings` (Alembic `06fa18c2fcfa`). Ledige tider beregnes KUN ud fra godkendt viden af typen `opening_hours` (samme kilde som assistenten), minus bekræftede bookinger (+ pause), optaget tid fra kalenderen, "tidligst"/"højst" frem. Samtidige bookinger serialiseres med rækkelås; en taget tid giver 409 `slot_taken` | testet | `tests/test_bookings.py` |
+| Booking (manuel, webchat, telefon) opretter en henvendelse og en opgave med frist på tidspunktet; aflysning frigiver tiden | testet, E2E | samme, rejse 21 |
+| Kalender uden OAuth-app: ejerens hemmelige iCal-adresse (Google/Outlook) læses hvert 15. min i workeren (kun start/slut gemmes, gennemsigtige/aflyste begivenheder ignoreres, gentagelser udfoldes, SSRF-sikret); bookingerne udgives som et hemmeligt iCal-feed `/api/v1/public/calendar/{token}.ics`, som ejeren abonnerer på | testet med stub | `test_calendar_busy_time_blocks_slots`, `test_webchat_booking_and_feed` |
+| Webchat-widget: "Book en tid" (type → ledig tid → navn/telefon → bekræftelse) | testet | `test_webchat_booking_and_feed` |
+| Telefon: Vapi-værktøjerne `ledige_tider` og `book_tid` (webhook `tool-calls`), kun når booking er slået til; end-of-call knyttes til bookingens henvendelse i stedet for at lave en ny | testet | `test_phone_booking_tools` |
+| `/app/bookings`: kommende aftaler, book for en kunde, bookingtyper, indstillinger, kalenderforbindelse og feed-adresse; guidens kalendertrin tjekkes for alvor | implementeret, E2E | rejse 21 |
+
+**Ikke eksternt verificeret:** Google/Outlooks opdateringsinterval for abonnerede kalendere (typisk 8–24 timer hos Google) og Vapis værktøjskald mod en rigtig samtale.
+
 ## Checkpoint 21 — 26. september 2026 (Reception, Overblik, Notifikationer, Hjælp)
 
 | Del | Status | Bevis |

@@ -185,15 +185,18 @@ def test_campaign_only_plan_has_no_phone_or_calendar_tasks(api, two_workspaces):
                                                            "inbound_phone": True, "booking": True})
     plan_a = api.plan(t["tok_a"], t["ws_a"])
     cal = _task(plan_a, "booking.calendar")
-    assert cal["required"] and cal["status"] == "not_available" and cal["capability_status"] == "not_implemented"
+    assert cal["required"] and cal["status"] != "not_available" and cal["capability_status"] == "available"
     act = _task(plan_a, "activation.reception")
     assert act["status"] == "not_available"
     assert {b["type"] for b in act["blocked_by"]} == {"capability", "dependency"}
-    assert _check(plan_a, "calendar.connection")["runnable"] is False
-    # running an unimplemented check records nothing
+    assert _check(plan_a, "calendar.connection")["runnable"] is True
+    # the calendar check fails honestly until booking, opening hours, a type and a readable calendar exist
     r = api.post(t["tok_a"], f"/workspaces/{t['ws_a']}/setup/checks/calendar.connection/run")
+    assert r.status_code == 200 and r.json()["status"] == "failed"
+    assert r.json()["evidence"]["booking_enabled"] is False
+    # running an unimplemented check records nothing
+    r = api.post(t["tok_a"], f"/workspaces/{t['ws_a']}/setup/checks/telephony.test_call/run")
     assert r.status_code == 501 and r.json()["code"] == "not_implemented"
-    assert _check(api.plan(t["tok_a"], t["ws_a"]), "calendar.connection")["status"] == "untested"
     # activation commands remain separate and fail honestly
     assert api.post(t["tok_a"], f"/workspaces/{t['ws_a']}/setup/activate/reception").status_code == 501
     assert api.post(t["tok_b"], f"/workspaces/{t['ws_b']}/setup/activate/campaigns").status_code == 501

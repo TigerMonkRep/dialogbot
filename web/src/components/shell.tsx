@@ -16,7 +16,7 @@ export const NAV: NavItem[] = [
   { href: "/app/setup", match: "/app/setup", label: "Opsætningsguide", icon: "tune" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
   { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
-  { href: notYet("Bookinger"), match: "/app/bookings", label: "Bookinger", icon: "calendar_month" },
+  { href: "/app/bookings", match: "/app/bookings", label: "Bookinger", icon: "calendar_month" },
   { href: "/app/settings/team", match: "/app/settings", label: "Indstillinger", icon: "settings" },
 ];
 
@@ -171,7 +171,7 @@ export const SIDE: NavItem[] = [
   { href: "/app/reception", match: "/app/reception", label: "Reception", icon: "support_agent" },
   { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
-  { href: notYet("Bookinger"), match: "/app/bookings", label: "Bookinger", icon: "calendar_today" },
+  { href: "/app/bookings", match: "/app/bookings", label: "Bookinger", icon: "calendar_today" },
   { href: "/app/reports", match: "/app/reports", label: "Rapporter", icon: "bar_chart" },
   { href: "/app/billing", match: "/app/billing", label: "Fakturering", icon: "receipt_long" },
   { href: "/app/settings/team", match: "/app/settings", label: "Indstillinger", icon: "settings" },

@@ -12,7 +12,7 @@ type Goals = Record<string, unknown> & { product_intent: string; inbound_phone: 
 type Languages = { interface_language: string; default_conversation_language: string; enabled_conversation_languages: string[]; report_language: string };
 type Capability = { key: string; label: string; status: string; environment: string; note: string };
 
-const ROUTE: Record<string, string> = { "/onboarding/business#categories": "/onboarding/business", "/app/knowledge/catalogue": "/app/knowledge?tab=k03", "/app/knowledge/review": "/app/knowledge?tab=k05", "/app/setup/readiness": "/app/setup#checks", "/app/setup/launch": "/app/setup#checks", "/app/settings/integrations": "/app/not-yet?area=Integrationer", "/onboarding/test": "/app/not-yet?area=Pr%C3%B8veopkald", "/app/campaigns/new": "/app/not-yet?area=Kampagner" };
+const ROUTE: Record<string, string> = { "/onboarding/business#categories": "/onboarding/business", "/app/knowledge/catalogue": "/app/knowledge?tab=k03", "/app/knowledge/review": "/app/knowledge?tab=k05", "/app/setup/readiness": "/app/setup#checks", "/app/setup/launch": "/app/setup#checks", "/app/settings/integrations": "/app/bookings", "/onboarding/test": "/app/not-yet?area=Pr%C3%B8veopkald", "/app/campaigns/new": "/app/not-yet?area=Kampagner" };
 export const href = (d: string) => ROUTE[d] ?? d;
 
 const LANG: Record<string, string> = { da: "Dansk (DK)", en: "Engelsk (EN)", de: "Tysk (DE)", sv: "Svensk (SV)", no: "Norsk (NO)" };

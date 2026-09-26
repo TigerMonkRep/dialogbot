@@ -130,8 +130,16 @@ def run_all_checks(request: Request, ctx: WorkspaceContext = Depends(require_cap
                    db: OrmSession = Depends(get_db)):
     """Runs every server-side check. Checks needing an unimplemented capability
     are reported as skipped with the reason; they are never recorded."""
+    from app.models import GoalSelection
+
+    g = db.get(GoalSelection, ctx.workspace.id)
+    campaigns = bool(g and g.product_intent in ("campaigns", "both"))
     results, skipped = [], []
     for key, d in checks_svc.CHECKS.items():
+        if d.required_when and not any((f == "campaigns" and campaigns) or (f != "campaigns" and getattr(g, f, False))
+                                       for f in d.required_when):
+            skipped.append({"check_key": key, "reason": "not_selected"})
+            continue
         if d.capability and capability(d.capability).status != "available":
             skipped.append({"check_key": key, "reason": "not_implemented", "capability": d.capability})
             continue

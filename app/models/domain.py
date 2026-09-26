@@ -670,3 +670,68 @@ class NotificationRead(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
     seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+
+class BookingSettings(Base):
+    """Online booking for a workspace. Times come from approved opening hours minus existing bookings
+    and busy time in the connected calendar (iCal)."""
+
+    __tablename__ = "booking_settings"
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    lead_time_hours: Mapped[int] = mapped_column(Integer, nullable=False, default=24)
+    horizon_days: Mapped[int] = mapped_column(Integer, nullable=False, default=14)
+    buffer_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=15)
+    # Secret iCal address of the owner's calendar (Google "secret address in iCal format" / Outlook
+    # published calendar). Only busy time is read; titles are never stored or shown.
+    busy_ics_url: Mapped[str | None] = mapped_column(Text)
+    busy_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    busy_error: Mapped[str | None] = mapped_column(String(300))
+    busy_blocks: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    # Token for the read-only feed of our bookings that the owner subscribes to in their calendar.
+    feed_token: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
+                                                 onupdate=func.now())
+
+
+class BookingType(Base):
+    __tablename__ = "booking_types"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    duration_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=60)
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[datetime] = ts_now()
+
+
+class Booking(Base):
+    __tablename__ = "bookings"
+    __table_args__ = (
+        CheckConstraint("status in ('confirmed','cancelled')", name="ck_bookings_status"),
+        CheckConstraint("ends_at > starts_at", name="ck_bookings_range"),
+        Index("ix_bookings_workspace_starts", "workspace_id", "starts_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    type_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("booking_types.id", ondelete="SET NULL"))
+    title: Mapped[str] = mapped_column(String(160), nullable=False)
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    ends_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="confirmed")
+    source: Mapped[str] = mapped_column(String(16), nullable=False)  # webchat | phone | manual
+    contact_name: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    contact_phone: Mapped[str | None] = mapped_column(String(40))
+    contact_email: Mapped[str | None] = mapped_column(String(320))
+    note: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    lead_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("leads.id", ondelete="SET NULL"))
+    conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="SET NULL"))
+    provider_call_id: Mapped[str | None] = mapped_column(String(100))  # phone bookings: the call they were made in
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+

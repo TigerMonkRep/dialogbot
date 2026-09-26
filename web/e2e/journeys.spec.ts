@@ -303,14 +303,14 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, v�
   await chat.locator("form:not(.contact)").getByRole("button", { name: "Send" }).click();
   await expect(chat.getByText("[fake] svar på: Kan I slibe 65 m² plankegulv?")).toBeVisible();
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();
-  await chat.getByLabel("Navn").fill("Henrik Villumsen");
-  await chat.getByLabel("E-mail").fill("henrik@example.com");
-  await chat.getByLabel("Telefon").fill("+45 20 30 40 50");
-  const windowLabel = await chat.getByLabel("Hvornår må vi ringe?").locator("option").last().textContent();
-  await chat.getByLabel("Hvornår må vi ringe?").selectOption({ label: windowLabel ?? "" });
+  await chat.locator("form.contact").getByLabel("Navn").fill("Henrik Villumsen");
+  await chat.locator("form.contact").getByLabel("E-mail").fill("henrik@example.com");
+  await chat.locator("form.contact").getByLabel("Telefon").fill("+45 20 30 40 50");
+  const windowLabel = await chat.locator("form.contact").getByLabel("Hvornår må vi ringe?").locator("option").last().textContent();
+  await chat.locator("form.contact").getByLabel("Hvornår må vi ringe?").selectOption({ label: windowLabel ?? "" });
   await chat.locator("form.contact").getByRole("button", { name: "Send" }).click();
   await expect(chat.getByText("Sæt flueben, så virksomheden må kontakte dig.")).toBeVisible(); // consent is required
-  await chat.getByLabel("Virksomheden må kontakte mig", { exact: false }).check();
+  await chat.locator("form.contact").getByLabel("Virksomheden må kontakte mig", { exact: false }).check();
   await chat.locator("form.contact").getByRole("button", { name: "Send" }).click();
   await expect(chat.getByText("Tak, Henrik Villumsen!", { exact: false })).toBeVisible();
   await shot(site, info, "kontakt-i-webchat");
@@ -565,4 +565,33 @@ test("20 · Overblik og notifikationer: en ny henvendelse vises med ulæst-tæll
   await expect(page.getByRole("link", { name: /ulæste/ })).toHaveCount(0);
   await page.goto("/app/help");
   await expect(page.getByRole("heading", { name: "Sådan bruger I Dialogbot" })).toBeVisible();
+});
+
+test("21 · Bookinger: tider følger godkendte åbningstider; en manuel booking bliver til aftale, henvendelse og kalenderfeed", async ({ page }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  const CSRF = { "x-requested-with": "dialogbot" };
+  const week = [{ days: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"], open: "08:00", close: "16:00" }];
+  const item = await (await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/items`, { headers: CSRF, data: { kind: "opening_hours", title: "Åbningstider", content: { weekly: week } } })).json();
+  await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`, { headers: CSRF });
+  expect((await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
+  await page.goto("/app/bookings");
+  await expect(page.getByRole("heading", { name: "Aftaler", exact: true })).toBeVisible();
+  await expect(page.getByText("Online booking er slået fra")).toBeVisible();
+  await page.getByLabel("Navn", { exact: true }).fill("Besigtigelse");
+  await page.getByRole("button", { name: "Tilføj type" }).click();
+  await expect(page.getByText("Besigtigelse", { exact: true })).toBeVisible();
+  await page.getByLabel("Kunder må booke i chatten og i telefonen").check();
+  await page.getByRole("button", { name: "Gem", exact: true }).click();
+  await expect(page.getByText("Online booking er slået til")).toBeVisible();
+  await expect(page.getByLabel("Kalenderabonnement")).toHaveValue(/\/api\/v1\/public\/calendar\/[\w-]+\.ics$/);
+  await expect(page.getByLabel("Tidspunkt")).not.toHaveValue("");
+  await expect(page.getByLabel("Tidspunkt").locator("option").first()).toHaveText(/kl\. (0[89]|1[0-5])\.\d\d$/);
+  await page.getByLabel("Kundens navn").fill("Mette Jensen");
+  await page.getByLabel("Telefon", { exact: true }).fill("+4520304050");
+  await page.getByRole("button", { name: "Book", exact: true }).click();
+  await expect(page.getByText(/Booket .+ kl\. .+ Henvendelse og opgave er oprettet\./)).toBeVisible();
+  await expect(page.getByText("Besigtigelse: Mette Jensen")).toBeVisible();
+  await shot(page, info, "bookinger");
+  await page.getByRole("link", { name: "Henvendelse" }).first().click();
+  await expect(page.getByText(/Booket besigtigelse/)).toBeVisible();
 });

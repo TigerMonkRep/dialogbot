@@ -62,6 +62,9 @@ PERMISSIONS: dict[str, str] = {
     "telephony.manage": "admin",
     "reception.read": "staff",
     "reception.manage": "admin",
+    "bookings.read": "staff",
+    "bookings.create": "staff",
+    "bookings.manage": "admin",
     "reports.costs": "admin",
     "reports.manage": "admin",
     "agreements.edit": "owner",  # reserved for the billing stage

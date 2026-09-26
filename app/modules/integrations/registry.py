@@ -42,8 +42,9 @@ def capabilities() -> list[Capability]:
                    if s.vapi_server_secret else "Kræver en Vapi-konto og VAPI_SERVER_SECRET; intet nummer er forbundet."),
         Capability("telephony.outbound", "Udgående kampagneopkald", "not_implemented", s.app_env,
                    "Planlagt til etape 4. Betaling starter aldrig opkald."),
-        Capability("calendar", "Kalenderforbindelse (Google/Microsoft/CalDAV)", "not_implemented", s.app_env,
-                   "Planlagt til etape 3. Ingen simuleret test kan aktivere produktion."),
+        Capability("calendar", "Kalender og online booking", "available", s.app_env,
+                   "Ledige tider ud fra godkendte åbningstider. Jeres Google/Outlook-kalender kobles på med dens hemmelige "
+                   "iCal-adresse (optaget tid blokerer), og bookinger vises i kalenderen via et iCal-abonnement."),
         Capability("payment", "Kortbetaling", "not_implemented", s.app_env, "Planlagt til etape 4."),
         Capability("ai.assistant_preview", "AI-assistent: intern forhåndsvisning", ai_status, s.app_env,
                    ai_note),

@@ -2,6 +2,14 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 19 — 26. september 2026 (AI-forslag i guiden)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `POST /workspaces/{id}/goals/suggestions` (medarbejder+): samtalemål og kanaler foreslået ud fra profil, brancher og viden (også kladder – det er opsætningshjælp til ejeren, ikke kundesvar). Gemmer intet; logges i `ai_usage` som `setup_suggestion` (`setup-suggest-v1`). Webchat foreslås kun med hjemmeside | testet | `tests/test_setup_suggestions.py` |
+| Mål-siden udfylder forslaget automatisk, når samtalemålene er tomme; "Foreslå igen"; intet gemmes før "Gem mål". Forældet telefonitekst rettet | implementeret, E2E | rejse 4 |
+| Virksomhedssiden læser hjemmesiden automatisk første gang (hjemmeside angivet, ingen beskrivelse, ingen tidligere import) | implementeret | — |
+
 ## Checkpoint 18 — 26. september 2026 (virksomhedsoplysninger fra hjemmeside og CVR)
 
 | Del | Status | Bevis |

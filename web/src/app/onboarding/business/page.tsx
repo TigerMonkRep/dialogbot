@@ -22,7 +22,7 @@ const UNIT: Record<string, string> = { m2: "pr. m²", hour: "pr. time", item: "p
 /** A06 + O01 + O02 — Stitch "a06_o01_o02_virksomhed_arbejdsrum_viden" (desktop and mobil). */
 export default async function BusinessPage() {
   const ws = await requireWorkspace();
-  const [profile, cats, suggested, workspaces, me, items, goals, currentId, caps] = await Promise.all([
+  const [profile, cats, suggested, workspaces, me, items, goals, currentId, caps, latestImport] = await Promise.all([
     backend<Record<string, unknown>>(`/workspaces/${ws.id}/profile`),
     backend<{ id: string; label: string; slug: string; is_custom: boolean; is_primary: boolean }[]>(`/workspaces/${ws.id}/categories`),
     backend<{ items: { slug: string; label: string }[] }>(`/workspaces/${ws.id}/categories/suggested`),
@@ -32,6 +32,7 @@ export default async function BusinessPage() {
     backend<Record<string, unknown>>(`/workspaces/${ws.id}/goals`),
     currentWorkspaceId(),
     backend<{ items: { key: string; status: string }[] }>("/integrations/capabilities"),
+    backend<{ import: unknown }>(`/workspaces/${ws.id}/knowledge/imports/latest`),
   ]);
   const capOn = (k: string) => caps.items.some((c) => c.key === k && c.status !== "not_implemented");
   const canEdit = ws.role !== "reader";
@@ -93,7 +94,7 @@ export default async function BusinessPage() {
               </div>
               <span className="font-label-sm text-label-sm text-secondary font-bold flex items-center gap-1"><Icon name="tune" size={14} />Basale parametre</span>
             </div>
-            <BusinessForm wsId={ws.id} profile={profile} canEdit={canEdit} aiReady={capOn("knowledge.source_import")} cvrReady={capOn("cvr.lookup")} />
+            <BusinessForm wsId={ws.id} profile={profile} canEdit={canEdit} aiReady={capOn("knowledge.source_import")} cvrReady={capOn("cvr.lookup")} autoFetch={!latestImport.import && !profile.manual_setup && Boolean(profile.website_url) && !String(profile.description ?? "").trim()} />
             <div className="space-y-space-md pt-2">
               <div className="flex items-center justify-between">
                 <span className="block font-label-md text-label-md text-on-surface font-semibold">Branchekategorier &amp; servicescope</span>

@@ -2,6 +2,18 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 15 — 26. september 2026 (dansk stemme i telefonen)
+
+| Del | Status | Bevis |
+|---|---|---|
+| Transskribering på dansk som standard: `transcriber = {deepgram, nova-3, language: da}`; `VAPI_TRANSCRIBER_JSON` overstyrer | testet | `test_danish_transcriber_voice_and_speaking_style` |
+| Stemme pr. nummer: `phone_numbers.voice_id`/`voice_model`/`speaking_style` (Alembic `24414f5bd46b`); ElevenLabs (`11labs`) med Multilingual v2 / Flash v2.5 (sprog låst til `da`) / Turbo v2.5; nummerets stemme går forud for `VAPI_VOICE_JSON`; valideret id og model; kun ejer/admin | testet | samme |
+| Telefonprompt `phone-v2`: naturligt dansk talesprog, korte sætninger, du-form, danske vendinger, tal/beløb/klokkeslæt som de siges, ét spørgsmål ad gangen; virksomhedens talestil tilføjes uden at kunne ændre fakta eller regler | testet | samme |
+| UI: "Stemme og talestil" under Indstillinger → Telefoni med advarsel, når ingen dansk stemme er valgt | implementeret, E2E | rejse 14 udvidet |
+| `ai.conversation` følger nu AI-udbyderen (webchat og telefon er rigtige kundekanaler) → "Aktiv AI" vises, når Anthropic er sat op | testet | `test_ai_assistant` |
+
+**Ikke eksternt verificeret:** lydkvalitet, latenstid og at Vapi accepterer `nova-3`+`da` og den valgte ElevenLabs-model — kræver et rigtigt prøveopkald. Dialekt kommer fra stemmevalget (ElevenLabs-bibliotek eller klonet stemme med samtykke); talestil styrer kun ordvalg.
+
 ## Checkpoint 14 — 26. september 2026 (callback-tidsvinduer i webchat)
 
 | Del | Status | Bevis |

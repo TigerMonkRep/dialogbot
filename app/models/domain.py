@@ -579,6 +579,12 @@ class PhoneNumber(Base):
     label: Mapped[str] = mapped_column(String(100), nullable=False, default="")
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     greeting: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    # Voice: an ElevenLabs voice id (empty = VAPI_VOICE_JSON or the provider's default voice) and model.
+    voice_id: Mapped[str] = mapped_column(String(64), nullable=False, default="", server_default="")
+    voice_model: Mapped[str] = mapped_column(String(40), nullable=False, default="eleven_multilingual_v2",
+                                             server_default="eleven_multilingual_v2")
+    # Free-text speaking style from the business (tone, "du"/"De", regional words). Never overrides facts.
+    speaking_style: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
     created_at: Mapped[datetime] = ts_now()
 
 

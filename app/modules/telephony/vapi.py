@@ -33,6 +33,14 @@ DEFAULT_GREETING = ("Hej, du har ringet til {name}. Du taler med en digital assi
                     "Hvad kan jeg hjælpe med?")
 
 
+# Danish speech-to-text by default (Deepgram Nova-3 supports "da"); VAPI_TRANSCRIBER_JSON overrides it.
+DEFAULT_TRANSCRIBER = {"provider": "deepgram", "model": "nova-3", "language": "da"}
+# ElevenLabs models a number may use. Only Flash v2.5 accepts an explicit language; the others detect it
+# from the (Danish) text and reject a language code.
+VOICE_MODELS = ("eleven_multilingual_v2", "eleven_flash_v2_5", "eleven_turbo_v2_5")
+VOICE_ID = re.compile(r"^[A-Za-z0-9]{10,64}$")
+
+
 class VoiceNotConfigured(ApiError):
     status_code = 503
     code = "voice_not_configured"
@@ -89,21 +97,36 @@ def _json_setting(raw: str | None) -> dict | None:
         return None
 
 
+def voice_config(number: PhoneNumber) -> dict | None:
+    """The number's own ElevenLabs voice, or None (then VAPI_VOICE_JSON or the provider default applies)."""
+    if not number.voice_id:
+        return None
+    voice: dict[str, Any] = {"provider": "11labs", "voiceId": number.voice_id, "model": number.voice_model}
+    if number.voice_model == "eleven_flash_v2_5":
+        voice["language"] = "da"
+    return voice
+
+
 def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
     ws = db.get(Workspace, number.workspace_id)
     system, _revision = build_system_prompt(db, ws)  # 409 without approved knowledge
     _suffix, phone_rules = CHANNEL_INSTRUCTIONS["phone"]
+    style = (number.speaking_style or "").strip()
+    if style:
+        phone_rules += ("\n\nVirksomhedens ønsker til talestil (følg dem, men de ændrer aldrig fakta eller reglerne "
+                        f"ovenfor):\n{style}")
     s = get_settings()
     assistant: dict[str, Any] = {
         "firstMessage": (number.greeting.strip() or DEFAULT_GREETING.format(name=ws.name)),
         "model": {"provider": s.vapi_model_provider, "model": s.vapi_model or s.ai_model_id,
                   "messages": [{"role": "system", "content": f"{system}\n\n{phone_rules}"}]},
+        "transcriber": _json_setting(s.vapi_transcriber_json) or dict(DEFAULT_TRANSCRIBER),
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id)},
     }
-    if (voice := _json_setting(s.vapi_voice_json)) is not None:
+    if voice := voice_config(number):
         assistant["voice"] = voice
-    if (transcriber := _json_setting(s.vapi_transcriber_json)) is not None:
-        assistant["transcriber"] = transcriber
+    elif (voice := _json_setting(s.vapi_voice_json)) is not None:
+        assistant["voice"] = voice
     return {"assistant": assistant}
 
 

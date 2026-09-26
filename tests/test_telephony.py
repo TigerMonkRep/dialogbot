@@ -100,6 +100,40 @@ def test_assistant_request_uses_only_approved_knowledge(client, api, two_workspa
     assert "error" in _post(client, {"type": "assistant-request", "phoneNumber": {"number": "+4511111111"}}).json()
 
 
+def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces, configured, monkeypatch):
+    t = two_workspaces
+    n = _setup(api, t)
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["transcriber"] == {"provider": "deepgram", "model": "nova-3", "language": "da"}
+    assert "voice" not in a  # no voice chosen and no VAPI_VOICE_JSON: provider default
+    assert "dansk" in a["model"]["messages"][0]["content"] and n["voice"] is None
+    url = f"/api/v1/workspaces/{t['ws_a']}/phone-numbers/{n['id']}"
+    bad = api.c.patch(url, json={"voice_id": "not an id!"}, headers=api.h(t["tok_a"]))
+    assert bad.status_code == 422 and bad.json()["field_errors"][0]["field"] == "voice_id"
+    assert api.c.patch(url, json={"voice_model": "gpt-voice"}, headers=api.h(t["tok_a"])).status_code == 422
+    r = api.c.patch(url, json={"voice_id": "AbCdEf1234567890", "speaking_style": "Brug gerne jyske vendinger."},
+                    headers=api.h(t["tok_a"]))
+    assert r.status_code == 200 and r.json()["voice"]["voiceId"] == "AbCdEf1234567890"
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["voice"] == {"provider": "11labs", "voiceId": "AbCdEf1234567890", "model": "eleven_multilingual_v2"}
+    assert "Brug gerne jyske vendinger." in a["model"]["messages"][0]["content"]
+    api.c.patch(url, json={"voice_model": "eleven_flash_v2_5"}, headers=api.h(t["tok_a"]))
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["voice"]["language"] == "da"  # only Flash v2.5 takes an explicit language
+    # environment overrides: transcriber JSON replaces the default; a number's own voice beats VAPI_VOICE_JSON
+    monkeypatch.setenv("VAPI_TRANSCRIBER_JSON", '{"provider": "azure", "language": "da-DK"}')
+    monkeypatch.setenv("VAPI_VOICE_JSON", '{"provider": "azure", "voiceId": "da-DK-ChristelNeural"}')
+    get_settings.cache_clear()
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["transcriber"]["provider"] == "azure" and a["voice"]["provider"] == "11labs"
+    api.c.patch(url, json={"voice_id": ""}, headers=api.h(t["tok_a"]))
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["voice"]["voiceId"] == "da-DK-ChristelNeural"
+    # a staff member cannot change the voice
+    staff = api.add_member(t["tok_a"], t["ws_a"], "staff2@testmail.dk", "staff")
+    assert api.c.patch(url, json={"voice_id": "AbCdEf1234567890"}, headers=api.h(staff)).status_code == 403
+
+
 def test_assistant_request_without_knowledge_or_inactive_number(client, api, two_workspaces, configured):
     t = two_workspaces
     n = _setup(api, t, approve=False)

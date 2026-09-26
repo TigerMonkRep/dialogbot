@@ -536,3 +536,33 @@ test("18 · O01: hjemmesiden udfylder beskrivelse, CVR, telefon og adresse; åbn
   await page.getByRole("button", { name: "Gem", exact: true }).click();
   await expect(page.getByText("Gemt.")).toBeVisible();
 });
+
+test("19 · Reception: manuskriptet foreslås af AI, rettes og gemmes; kanalerne vises", async ({ page }, info) => {
+  await freshOwner(page, info);
+  await page.goto("/app/reception");
+  await expect(page.getByRole("heading", { name: "Jeres digitale reception" })).toBeVisible();
+  await expect(page.getByText(/Forslag fra AI er sat ind/)).toBeVisible();
+  await expect(page.getByLabel(/Det skal assistenten spørge om/)).toHaveValue(/navn/);
+  await page.getByLabel("Navn på assistenten (valgfri)").fill("Sofie");
+  await page.getByRole("button", { name: "Gem manuskript" }).click();
+  await expect(page.getByText(/Gemt\. Assistenten bruger manuskriptet/)).toBeVisible();
+  await expect(page.getByText("Aktiv version 1")).toBeVisible();
+  await shot(page, info, "r05-reception");
+});
+
+test("20 · Overblik og notifikationer: en ny henvendelse vises med ulæst-tæller, som nulstilles; hjælpen findes", async ({ page }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  const CSRF = { "x-requested-with": "dialogbot" };
+  await page.request.post(`/api/backend/workspaces/${wsId}/leads`, { headers: CSRF, data: { contact_name: "Mette", contact_phone: "+4520304050", need_summary: "Tilbud på afslibning" } });
+  await page.goto("/app/overview");
+  await expect(page.getByText("Nye henvendelser (24 t)")).toBeVisible();
+  await expect(page.getByRole("link", { name: /Ny henvendelse: Mette/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Notifikationer, \d+ ulæste/ }).first()).toBeVisible();
+  await shot(page, info, "overblik");
+  await page.goto("/app/notifications");
+  await expect(page.getByText(/Ny henvendelse: Mette/)).toBeVisible();
+  await page.goto("/app/overview");
+  await expect(page.getByRole("link", { name: /ulæste/ })).toHaveCount(0);
+  await page.goto("/app/help");
+  await expect(page.getByRole("heading", { name: "Sådan bruger I Dialogbot" })).toBeVisible();
+});

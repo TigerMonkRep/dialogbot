@@ -26,6 +26,7 @@ from app.config import get_settings
 from app.core.errors import ApiError, Unauthenticated
 from app.models import Call, Conversation, ConversationMessage, PhoneNumber, WebhookEvent, Workspace
 from app.modules.ai.service import CHANNEL_INSTRUCTIONS, build_system_prompt
+from app.modules.reception import service as reception
 
 PROVIDER = "vapi"
 E164 = re.compile(r"^\+[1-9]\d{6,14}$")
@@ -141,7 +142,8 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
                         f"ovenfor):\n{style}")
     s = get_settings()
     assistant: dict[str, Any] = {
-        "firstMessage": (number.greeting.strip() or DEFAULT_GREETING.format(name=ws.name)),
+        "firstMessage": (number.greeting.strip() or reception.spoken_greeting(db.get(reception.ReceptionScript, ws.id), ws)
+                         or DEFAULT_GREETING.format(name=ws.name)),
         "model": {"provider": s.vapi_model_provider, "model": s.vapi_model or s.ai_model_id,
                   "messages": [{"role": "system", "content": f"{system}\n\n{phone_rules}"}]},
         "transcriber": _json_setting(s.vapi_transcriber_json) or dict(DEFAULT_TRANSCRIBER),

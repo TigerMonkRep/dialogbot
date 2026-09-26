@@ -73,8 +73,11 @@ def build_system_prompt(db: OrmSession, workspace: Workspace) -> tuple[str, int]
                        code="no_approved_knowledge")
     body = "\n".join(json.dumps({"type": i["kind"], "titel": i["title"], "indhold": i["content"]}, ensure_ascii=False)
                      for i in items)
-    return INSTRUCTIONS.format(name=workspace.name, revision=workspace.knowledge_revision, knowledge=body), \
-        workspace.knowledge_revision
+    from app.modules.reception import service as reception
+
+    prompt = INSTRUCTIONS.format(name=workspace.name, revision=workspace.knowledge_revision, knowledge=body)
+    script = reception.prompt_section(db.get(reception.ReceptionScript, workspace.id))
+    return (f"{prompt}\n\n{script}" if script else prompt), workspace.knowledge_revision
 
 
 # Channel-specific additions to the system prompt; the logged prompt version includes the suffix.

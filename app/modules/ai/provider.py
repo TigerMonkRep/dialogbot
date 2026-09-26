@@ -131,6 +131,15 @@ class FakeProvider:
         question = messages[-1]["content"] if messages else ""
         if system.startswith("WEBSITE_EXTRACTION"):
             return self._extract(question)
+        if system.startswith("SUGGEST_SCRIPT"):
+            import json
+
+            out = json.dumps({"greeting": "Hej, du har ringet til {virksomhed}. Du taler med en digital assistent.",
+                              "collect": ["navn", "adresse", "antal kvadratmeter"], "escalation": "vandskade",
+                              "avoid": "endelige priser uden besigtigelse", "closing": "Tak for opkaldet."},
+                             ensure_ascii=False)
+            return Completion(text=out, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
+                              usage=Usage(input_tokens=len(question) // 4, output_tokens=len(out) // 4))
         if system.startswith("SUGGEST_GOALS"):
             import json
 

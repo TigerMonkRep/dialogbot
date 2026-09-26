@@ -637,3 +637,36 @@ class SourceImport(Base):
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class ReceptionScript(Base):
+    """The receptionist's manuscript (R05), edited by owner/admin and used in every channel's prompt.
+
+    It shapes how the assistant talks and what it asks for; it never adds facts – those come only
+    from approved knowledge."""
+
+    __tablename__ = "reception_scripts"
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    persona_name: Mapped[str] = mapped_column(String(60), nullable=False, default="")
+    address_form: Mapped[str] = mapped_column(String(8), nullable=False, default="du")
+    greeting: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    collect: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    escalation: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    avoid: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    closing: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    updated_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
+                                                 onupdate=func.now())
+
+
+class NotificationRead(Base):
+    """When a user last opened the notification list in a workspace. Notifications themselves are
+    derived from real events (leads, calls, tasks, conversations, drafts), never stored copies."""
+
+    __tablename__ = "notification_reads"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())

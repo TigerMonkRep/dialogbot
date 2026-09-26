@@ -11,7 +11,7 @@ const notYet = (area: string) => `/app/not-yet?area=${encodeURIComponent(area)}`
 
 /** Desktop top navigation (Stitch g01 desktop header). Unbuilt areas go to the honest placeholder. */
 export const NAV: NavItem[] = [
-  { href: "/app/setup", match: "/app/overview", label: "Oversigt", icon: "dashboard" },
+  { href: "/app/overview", match: "/app/overview", label: "Oversigt", icon: "dashboard" },
   { href: "/app/leads", match: "/app/leads", label: "Henvendelser", icon: "contact_support" },
   { href: "/app/setup", match: "/app/setup", label: "Opsætningsguide", icon: "tune" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
@@ -58,7 +58,21 @@ async function shellData() {
   const current = workspaces.find((w) => w.id === wsId) ?? workspaces[0] ?? null;
   const aiLive = caps.find((c) => c.key === "ai.conversation")?.status === "available";
   const env = caps[0]?.environment;
-  return { workspaces, me, current, aiLive, env };
+  let unread = 0;
+  if (loggedIn && current) {
+    try { unread = (await backend<{ unread: number }>(`/workspaces/${current.id}/notifications`)).unread; } catch { /* badge is optional */ }
+  }
+  return { workspaces, me, current, aiLive, env, unread };
+}
+
+/** Notification bell with unread count; the list lives at /app/notifications. */
+function Bell({ unread, className, size = 20 }: { unread: number; className: string; size?: number }) {
+  return (
+    <Link href="/app/notifications" aria-label={unread ? `Notifikationer, ${unread} ulæste` : "Notifikationer"} className={`relative ${className}`}>
+      <Icon name="notifications" size={size} />
+      {unread > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-error text-on-error font-label-sm text-[10px] leading-4 text-center font-bold">{unread > 9 ? "9+" : unread}</span>}
+    </Link>
+  );
 }
 
 function VerifyBanner({ me }: { me: Me | null }) {
@@ -74,7 +88,7 @@ const SkipLink = () => <a href="#main" className="sr-only focus:not-sr-only focu
 
 /** Guide shell (Stitch G01/A06): top navigation on desktop, compact header + bottom nav on mobile. */
 export async function AppShell({ children }: { children: React.ReactNode }) {
-  const { workspaces, me, current, aiLive, env } = await shellData();
+  const { workspaces, me, current, aiLive, env, unread } = await shellData();
   const verifyBanner = <VerifyBanner me={me} />;
 
   return (
@@ -95,8 +109,8 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           <DesktopNav items={NAV} />
           <div className="flex items-center gap-space-md flex-shrink-0">
             <AiPill live={aiLive} />
-            <Link href={notYet("Notifikationer")} className="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" aria-label="Notifikationer"><Icon name="notifications" size={20} /></Link>
-            <Link href={notYet("Hjælp")} className="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" aria-label="Hjælp"><Icon name="help_outline" size={20} /></Link>
+            <Bell unread={unread} className="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" />
+            <Link href="/app/help" className="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors" aria-label="Hjælp"><Icon name="help_outline" size={20} /></Link>
             <AccountButton me={me} />
             <div className="xl:hidden"><MoreMenu items={NAV} variant="icon" /></div>
           </div>
@@ -121,7 +135,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div className="flex items-center gap-space-xs flex-shrink-0">
-            <Link href={notYet("Notifikationer")} aria-label="Notifikationer" className="w-11 h-11 flex items-center justify-center rounded-lg text-primary hover:bg-surface-container transition-colors"><Icon name="notifications" size={22} /></Link>
+            <Bell unread={unread} className="w-11 h-11 flex items-center justify-center rounded-lg text-primary hover:bg-surface-container transition-colors" size={22} />
             <AccountButton me={me} />
           </div>
         </div>
@@ -151,10 +165,10 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
 
 /** Admin sidebar (Stitch K01/C01/BK/M screens). Unbuilt areas lead to the honest placeholder. */
 export const SIDE: NavItem[] = [
-  { href: "/app/setup", match: "/app/setup", label: "Overblik", icon: "grid_view" },
+  { href: "/app/overview", match: "/app/overview", label: "Overblik", icon: "grid_view" },
   { href: "/app/inbox", match: "/app/inbox", label: "Indbakke", icon: "inbox" },
   { href: "/app/leads", match: "/app/leads", label: "Henvendelser", icon: "contact_support" },
-  { href: notYet("Reception"), match: "/app/reception", label: "Reception", icon: "support_agent" },
+  { href: "/app/reception", match: "/app/reception", label: "Reception", icon: "support_agent" },
   { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
   { href: notYet("Bookinger"), match: "/app/bookings", label: "Bookinger", icon: "calendar_today" },
@@ -165,7 +179,7 @@ export const SIDE: NavItem[] = [
 const SIDE_BOTTOM: NavItem[] = [SIDE[0], SIDE[1], SIDE[5], SIDE[4]];
 
 export async function AdminShell({ children }: { children: React.ReactNode }) {
-  const { workspaces, me, current, env } = await shellData();
+  const { workspaces, me, current, env, unread } = await shellData();
   const envPill = env && (
     <span className="inline-flex items-center gap-space-xs px-space-sm py-0.5 rounded-full bg-secondary-container font-label-sm text-label-sm text-on-secondary-fixed">
       <span className="w-1.5 h-1.5 rounded-full bg-primary" />{env === "prod" ? "Produktion" : env === "staging" ? "Staging" : "Udvikling"}
@@ -202,7 +216,7 @@ export async function AdminShell({ children }: { children: React.ReactNode }) {
           {envPill}
         </div>
         <div className="flex items-center gap-space-md">
-          <Link href={notYet("Notifikationer")} aria-label="Notifikationer" className="w-9 h-9 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"><Icon name="notifications" size={20} /></Link>
+          <Bell unread={unread} className="w-9 h-9 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" size={20} />
           <div className="flex items-center gap-space-sm pl-space-xs"><AccountButton me={me} />{me && <span className="font-label-md text-label-md text-on-surface">{me.display_name}</span>}</div>
         </div>
       </header>
@@ -218,7 +232,7 @@ export async function AdminShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div className="flex items-center gap-space-xs flex-shrink-0">
-            <Link href={notYet("Notifikationer")} aria-label="Notifikationer" className="w-11 h-11 flex items-center justify-center rounded-lg text-primary hover:bg-surface-container transition-colors"><Icon name="notifications" size={22} /></Link>
+            <Bell unread={unread} className="w-11 h-11 flex items-center justify-center rounded-lg text-primary hover:bg-surface-container transition-colors" size={22} />
             <AccountButton me={me} />
           </div>
         </div>

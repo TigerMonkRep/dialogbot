@@ -2,6 +2,17 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 21 — 26. september 2026 (Reception, Overblik, Notifikationer, Hjælp)
+
+| Del | Status | Bevis |
+|---|---|---|
+| Receptionsmanuskript (`reception_scripts`, Alembic `299f641c5b3f`): navn, du/De, telefonhilsen, hvad der spørges om, eskalering, hvad der ikke må loves, afslutning. Ejer/admin redigerer (versioneret, auditlogget); indgår i systemprompten for chat og telefon uden at kunne ændre fakta; telefonhilsenen får altid AI-oplysning | testet | `tests/test_reception_script.py` |
+| AI-forslag til manuskriptet (`POST …/reception/script/suggestions`); udfyldes automatisk, når manuskriptet er tomt | testet, E2E | rejse 19 |
+| `/app/reception`: kanalstatus (telefon/stemme, webchat), 7-dages tal, manuskript, link til test | implementeret, E2E | rejse 19 |
+| `GET …/overview` og `/app/overview`: KPI'er (nye/åbne henvendelser, opgaver/overskredne, ventende chats, opkald, kladder), opsætningsfremdrift og seneste aktivitet | testet, E2E | `tests/test_overview_notifications.py`, rejse 20 |
+| Notifikationer udledt af rigtige hændelser (henvendelser, opkald, opgaver, ventende chats, kladder til godkendelse, hjemmesideimport), rollefiltreret; ulæst-tæller på klokken; `notification_reads` (Alembic `5c59c508ecf8`) | testet, E2E | samme |
+| `/app/help`: svar på de typiske spørgsmål med links til, hvor det gøres | implementeret, E2E | rejse 20 |
+
 ## Checkpoint 20 — 26. september 2026 (slet viden, guide videre fra Viden)
 
 | Del | Status | Bevis |

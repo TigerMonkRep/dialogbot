@@ -266,10 +266,10 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
             </div>
             <div className="p-space-md rounded-lg bg-surface-container space-y-space-xs">
               <div className="flex items-center gap-space-xs font-label-md text-label-md font-bold text-primary"><Icon name="support_agent" size={18} /><span>Sidder du fast i opsætningen?</span></div>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">Kundesupport er ikke bygget endnu. Indtil da kan du springe valgfrie trin over og vende tilbage senere.</p>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">Hjælpen forklarer hvert trin og viser, hvor det gøres. Valgfrie trin kan springes over og tages senere.</p>
               <div className="pt-space-xs">
-                <Link href="/app/not-yet?area=Kundesupport" className="w-full py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm">
-                  <Icon name="phone_in_talk" size={18} className="text-secondary" /><span>Kundesupport</span>
+                <Link href="/app/help" className="w-full py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm">
+                  <Icon name="help" size={18} className="text-secondary" /><span>Åbn hjælpen</span>
                 </Link>
               </div>
             </div>

@@ -2,6 +2,18 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 17 — 26. september 2026 (forslag fra hjemmesiden)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `POST /workspaces/{id}/knowledge/import` (medarbejder+; URL eller profilens hjemmeside) kører i baggrunden; `GET …/knowledge/imports/latest`; tabel `source_imports` (Alembic `f4681fd5e00d`) | testet | `tests/test_website_import.py` |
+| Hentning: kun http(s), ingen private/loopback/link-local adresser (tjekkes ved hvert redirect; tilladt lokalt kun i dev/test), højst 12 sider, 1,5 MB pr. side, 60.000 tegn i alt; samme domæne; ydelses-/pris-/kontaktsider prioriteres; navigation, scripts og formularer fjernes | testet | samme |
+| AI-udtræk (`website-extract-v1`, logges i `ai_usage` som `source_import`): ydelser, fakta og faste svar som JSON – kun hvad siderne siger | testet med testdobbelt | samme |
+| Forslag gemmes som **kladder** (`source_type = extraction`, `source_ref` = siden); priser gemmes aldrig som tal – en pris fra siden citeres i beskrivelsen til bekræftelse ekskl. moms; eksisterende emner springes over | testet | samme |
+| UI: "Hent forslag fra hjemmesiden" på Kilder og Katalog, status mens den kører, resultat med links til Katalog/Gennemgang; `knowledge.source_import` følger AI-udbyderen | implementeret, E2E | rejse 17 |
+
+**Ikke eksternt verificeret:** udtræk med den rigtige model på en rigtig hjemmeside. Sider, der kun renderes med JavaScript, giver få eller ingen forslag. Upload af dokumenter er ikke bygget.
+
 ## Checkpoint 16 — 26. september 2026 (stemmeprøve og ryddet brugerflade)
 
 | Del | Status | Bevis |

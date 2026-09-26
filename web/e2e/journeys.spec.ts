@@ -488,3 +488,23 @@ test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/tab=k04/);
 });
+
+test("17 · Viden: forslag fra hjemmesiden bliver til kladder med tekst og uden gættede priser", async ({ page }, info) => {
+  await freshOwner(page, info);
+  servers.push(await serve(4000, `<!doctype html><html lang="da"><head><title>Fjord Gulv</title></head><body>
+    <h1>Fjord Gulv</h1><p>Vi sliber og behandler trægulve i hele Østjylland.</p>
+    <h2>Gulvafslibning</h2><p>Afslibning med støvfrit anlæg. Fra 145 kr. pr. m² inkl. moms.</p>
+    <h2>Lakering</h2><p>Tre lag slidstærk lak.</p></body></html>`));
+  await page.goto("/app/knowledge?tab=k03");
+  await expect(page.getByRole("heading", { name: "Hent forslag fra hjemmesiden" })).toBeVisible();
+  await page.getByLabel("Hjemmesidens adresse").fill("http://127.0.0.1:4000/");
+  await page.getByRole("button", { name: "Hent forslag" }).click();
+  await expect(page.getByText("3 forslag oprettet som kladder")).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText("Ydelse: Gulvafslibning")).toBeVisible();
+  await page.goto("/app/knowledge?tab=k03");
+  await expect(page.getByText(/Hjemmesiden nævner prisen/).first()).toBeVisible();
+  await shot(page, info, "k03-forslag-fra-hjemmeside");
+  // Nothing is live before approval.
+  await page.goto("/app/knowledge?tab=r06");
+  await expect(page.getByText(/Der er ingen godkendt viden endnu/)).toBeVisible();
+});

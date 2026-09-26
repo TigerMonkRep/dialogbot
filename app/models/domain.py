@@ -610,3 +610,28 @@ class Call(Base):
     # Provider-reported total cost, millionths of a USD (NULL if not reported).
     cost_usd_micros: Mapped[int | None] = mapped_column(BigInteger)
     created_at: Mapped[datetime] = ts_now()
+
+
+class SourceImport(Base):
+    """One run of "suggest knowledge from our website": pages fetched, suggestions created as drafts.
+
+    Suggestions are ordinary knowledge drafts (source_type 'extraction'); nothing reaches the
+    assistant before a person approves it."""
+
+    __tablename__ = "source_imports"
+    __table_args__ = (
+        CheckConstraint("status in ('running','done','failed')", name="ck_source_imports_status"),
+        Index("ix_source_imports_workspace_created", "workspace_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    url: Mapped[str] = mapped_column(String(500), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="running")
+    pages: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    created_items: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    skipped: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    error: Mapped[str | None] = mapped_column(Text)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

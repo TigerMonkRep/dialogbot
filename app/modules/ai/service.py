@@ -110,11 +110,17 @@ def complete_logged(db: OrmSession, workspace: Workspace, *, user_id: uuid.UUID 
     if channel in CHANNEL_INSTRUCTIONS:
         suffix, text = CHANNEL_INSTRUCTIONS[channel]
         system, prompt_version = f"{system}\n\n{text}", f"{PROMPT_VERSION}+{suffix}"
-    settings = get_settings()
+    return log_call(db, workspace, provider, user_id=user_id, purpose=purpose, system=system, messages=messages,
+                    prompt_version=prompt_version, revision=revision, max_tokens=get_settings().ai_max_output_tokens)
+
+
+def log_call(db: OrmSession, workspace: Workspace, provider, *, user_id: uuid.UUID | None, purpose: str, system: str,
+             messages: list[dict], prompt_version: str, revision: int, max_tokens: int) -> tuple[Completion, AiUsage]:
+    """Run one provider call and write its `ai_usage` row (committed on failure, flushed on success)."""
     row = AiUsage(workspace_id=workspace.id, user_id=user_id, purpose=purpose, provider=provider.name,
                   requested_model=provider.model, prompt_version=prompt_version, knowledge_revision=revision)
     try:
-        c = provider.complete(system=system, messages=messages, max_tokens=settings.ai_max_output_tokens)
+        c = provider.complete(system=system, messages=messages, max_tokens=max_tokens)
     except ApiError as e:
         row.outcome, row.error_code = "error", e.code
         row.provider_request_id = (e.extra or {}).get("provider_request_id")

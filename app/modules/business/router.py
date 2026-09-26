@@ -251,6 +251,14 @@ def update_goals(body: GoalsIn, request: Request, ctx: WorkspaceContext = Depend
     return GoalsOut.model_validate(g, from_attributes=True)
 
 
+@router.post("/goals/suggestions")
+def suggest_goals(ctx: WorkspaceContext = Depends(require_capability("goals.edit")), db: OrmSession = Depends(get_db)):
+    """AI proposal for conversation goals and channels. Nothing is saved; the owner edits and saves."""
+    from app.modules.ai import suggest
+
+    return suggest.goals(db, ctx.workspace, ctx.user_id)
+
+
 # --- Languages (O04) ----------------------------------------------------------
 
 

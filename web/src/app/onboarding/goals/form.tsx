@@ -1,15 +1,29 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/client";
 import { Alert, Button, ErrorBox, Field, Icon, Select, Textarea, useSubmit } from "@/components/ui";
 
 /** O03/G02: product intent, guidance preference and reception capabilities. Callback belongs to reception; booking is optional. */
-export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Record<string, unknown>; canEdit: boolean }) {
+type GoalSuggestion = { conversation_goals: string[]; channels: Record<string, boolean>; reason: string };
+
+export function GoalsForm({ wsId, goals, canEdit, aiReady = false }: { wsId: string; goals: Record<string, unknown>; canEdit: boolean; aiReady?: boolean }) {
   const router = useRouter();
   const [f, setF] = useState(goals);
   const [saved, setSaved] = useState(false);
   const reception = f.product_intent !== "campaigns";
+  const [suggested, setSuggested] = useState<GoalSuggestion | null>(null);
+  const suggest = useSubmit(async () => {
+    const r = await api<GoalSuggestion>(`/workspaces/${wsId}/goals/suggestions`, { method: "POST", body: "{}" });
+    setSaved(false); setSuggested(r);
+    setF((cur) => ({ ...cur, ...(cur.product_intent !== "campaigns" ? r.channels : {}), conversation_goals: r.conversation_goals.length ? r.conversation_goals : cur.conversation_goals }));
+  });
+  // Empty goals: propose a starting point right away. The owner edits and saves; nothing is stored before that.
+  const auto = useRef(false);
+  useEffect(() => {
+    if (auto.current || !aiReady || !canEdit || ((goals.conversation_goals as string[] | undefined) ?? []).length) return;
+    auto.current = true; suggest.run();
+  }, [aiReady, canEdit, goals.conversation_goals, suggest]);
   const { run, pending, error } = useSubmit(async () => {
     const body = { ...f, expected_version: goals.version, inbound_phone: reception && f.inbound_phone, callback: reception && f.callback, webchat: reception && f.webchat };
     await api(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify(body) });
@@ -25,6 +39,9 @@ export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Recor
     <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-space-lg">
       <ErrorBox error={error} />
       {saved && <Alert kind="ok">Gemt. Planen er opdateret ud fra dine mål.</Alert>}
+      {suggest.pending && <p role="status" className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-space-xs"><Icon name="auto_awesome" size={18} />Laver forslag ud fra jeres virksomhed og viden…</p>}
+      {suggested && !saved && <Alert kind="info">Forslag fra AI er sat ind nedenfor{suggested.reason ? ` – ${suggested.reason}` : ""}. Ret til, og tryk &quot;Gem mål&quot;.</Alert>}
+      <ErrorBox error={suggest.error} />
       <Field label="Produkt">
         <Select value={String(f.product_intent)} onChange={(e) => { setSaved(false); setF({ ...f, product_intent: e.target.value }); }} disabled={!canEdit}>
           <option value="reception">Reception</option><option value="campaigns">Kampagner</option><option value="both">Begge dele</option>
@@ -37,7 +54,7 @@ export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Recor
       </Field>
       {reception ? (
         <div className="grid gap-space-md md:grid-cols-2">
-          {cb("inbound_phone", "Indgående telefoni", "Besvarer hovednummer. Kræver telefoniudbyder (kommer senere).")}
+          {cb("inbound_phone", "Indgående telefoni", "Assistenten tager telefonen på jeres nummer (via Vapi).")}
           {cb("webchat", "Hjemmeside-webchat", "Widget på jeres hjemmeside.")}
           {cb("callback", "Bestilt callback", "Hører under reception – ikke en separat prisplan.")}
           {cb("booking", "Aftalebooking", "Valgfri. Kræver kalenderforbindelse.")}
@@ -47,6 +64,7 @@ export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Recor
         <Textarea value={(f.conversation_goals as string[] ?? []).join("\n")} onChange={(e) => { setSaved(false); setF({ ...f, conversation_goals: e.target.value.split("\n").filter(Boolean) }); }} disabled={!canEdit} />
       </Field>
       <div className="flex flex-wrap items-center justify-end gap-space-md pt-space-sm">
+        {aiReady && canEdit && <Button type="button" variant="ghost" icon="auto_awesome" disabled={suggest.pending} onClick={() => suggest.run()}>Foreslå igen</Button>}
         <Button type="submit" variant="tonal" icon="save" disabled={pending || !canEdit}>{pending ? "Gemmer…" : "Gem mål"}</Button>
         <Button type="button" onClick={() => router.push("/onboarding/languages")}>Fortsæt til sprog <Icon name="arrow_forward" size={18} className="text-secondary-fixed" /></Button>
       </div>

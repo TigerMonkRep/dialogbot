@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, fieldError } from "@/lib/client";
 import { Alert, Button, ErrorBox, Field, Icon, Input, Textarea, inputCls, useSubmit } from "@/components/ui";
 
@@ -11,7 +11,7 @@ type Suggestion = Partial<Record<"description" | "cvr" | "phone" | "address_line
 type ImportState = { status: "running" | "done" | "failed"; error: string | null; created_items: { kind: string; title: string }[]; profile_suggestion: Suggestion };
 const FIELD_LABEL: Record<string, string> = { description: "beskrivelse", cvr: "CVR", phone: "telefon", address_line: "adresse", postal_code: "postnummer", city: "by", legal_name: "navn" };
 
-export function BusinessForm({ wsId, profile, canEdit, aiReady = false, cvrReady = false }: { wsId: string; profile: Profile; canEdit: boolean; aiReady?: boolean; cvrReady?: boolean }) {
+export function BusinessForm({ wsId, profile, canEdit, aiReady = false, cvrReady = false, autoFetch = false }: { wsId: string; profile: Profile; canEdit: boolean; aiReady?: boolean; cvrReady?: boolean; autoFetch?: boolean }) {
   const router = useRouter();
   const [f, setF] = useState<Profile>(profile);
   const [saved, setSaved] = useState(false);
@@ -36,6 +36,12 @@ export function BusinessForm({ wsId, profile, canEdit, aiReady = false, cvrReady
     fillEmpty("hjemmesiden", imp.profile_suggestion ?? {}, imp.created_items.length);
     router.refresh();
   });
+  // First visit with a website but no details yet: read the site right away (never re-runs by itself).
+  const auto = useRef(false);
+  useEffect(() => {
+    if (auto.current || !autoFetch || !aiReady || !canEdit) return;
+    auto.current = true; fromSite.run();
+  }, [autoFetch, aiReady, canEdit, fromSite]);
   const fromCvr = useSubmit(async () => {
     const r = await api<{ legal_name: string; address_line: string | null; postal_code: string | null; city: string | null; industry: string | null; status: string | null }>(`/workspaces/${wsId}/cvr/${encodeURIComponent(String(f.cvr ?? ""))}`);
     fillEmpty("CVR-registret", { address_line: r.address_line, postal_code: r.postal_code, city: r.city }, 0,

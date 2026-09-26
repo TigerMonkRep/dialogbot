@@ -4836,6 +4836,64 @@
         ]
       }
     },
+    "/api/v1/workspaces/{workspace_id}/goals/suggestions": {
+      "post": {
+        "description": "AI proposal for conversation goals and channels. Nothing is saved; the owner edits and saves.",
+        "operationId": "suggest_goals_api_v1_workspaces__workspace_id__goals_suggestions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suggest Goals",
+        "tags": [
+          "business"
+        ]
+      }
+    },
     "/api/v1/workspaces/{workspace_id}/invitations": {
       "get": {
         "operationId": "list_invitations_api_v1_workspaces__workspace_id__invitations_get",

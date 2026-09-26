@@ -88,6 +88,9 @@ test("4 · O01→O03→O04: virksomhed gemmes før navigation, mål og sprog", a
   await page.goto("/onboarding/business");
   await expect(page.getByLabel("By")).toHaveValue("Hellerup");
   await page.goto("/onboarding/goals");
+  // Empty goals: the AI proposal is filled in first (not saved); the owner adjusts it and saves.
+  await expect(page.getByText(/Forslag fra AI er sat ind/)).toBeVisible();
+  await expect(page.getByLabel(/Samtalemål/)).toHaveValue(/\S/);
   await page.getByLabel("Aftalebooking").check();
   await page.getByRole("button", { name: "Gem mål" }).click();
   await expect(page.getByText(/Planen er opdateret/)).toBeVisible();

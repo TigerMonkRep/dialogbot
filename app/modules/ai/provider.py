@@ -131,6 +131,16 @@ class FakeProvider:
         question = messages[-1]["content"] if messages else ""
         if system.startswith("WEBSITE_EXTRACTION"):
             return self._extract(question)
+        if system.startswith("SUGGEST_GOALS"):
+            import json
+
+            titles = [ln.split(": ", 1)[1].split(" – ")[0] for ln in question.split("\n") if ln.startswith("- service: ")]
+            out = json.dumps({"conversation_goals": [f"Uforpligtende tilbud på {t.lower()}" for t in titles] or
+                              ["Besvar spørgsmål om virksomheden"],
+                              "channels": {"inbound_phone": True, "webchat": True, "callback": True, "booking": False},
+                              "reason": "Testdobbelt."}, ensure_ascii=False)
+            return Completion(text=out, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
+                              usage=Usage(input_tokens=len(question) // 4, output_tokens=len(out) // 4))
         refused = "AFVIS" in question
         return Completion(
             text="" if refused else f"[fake] svar på: {question}",

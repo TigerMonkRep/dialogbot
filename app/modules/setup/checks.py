@@ -67,7 +67,7 @@ CHECKS: dict[str, CheckDefinition] = {
                                     "inden for de seneste 30 dage."),
         CheckDefinition("campaign.test_call", "Kampagnetest-opkald", ("goals", "knowledge", "integrations"),
                         capability="telephony.outbound", required_when=("campaigns",),
-                        description="Kræver udgående telefoni (etape 4)."),
+                        description="Består, når en kampagne har haft mindst én besvaret samtale inden for de seneste 30 dage."),
     ]
 }
 
@@ -189,6 +189,14 @@ def _evaluate(db: OrmSession, workspace_id: uuid.UUID, key: str) -> tuple[bool, 
             "calendar_connected": bool(bs and bs.busy_ics_url), "calendar_error": bs.busy_error if bs else None,
             "calendar_synced_at": bs.busy_synced_at.isoformat() if bs and bs.busy_synced_at else None,
         }
+    if key == "campaign.test_call":
+        from app.models import CampaignContact
+
+        last = db.scalar(select(CampaignContact).where(
+            CampaignContact.workspace_id == workspace_id, CampaignContact.status.in_(("done", "opted_out")),
+            CampaignContact.last_attempt_at >= _now() - timedelta(days=30)).order_by(CampaignContact.last_attempt_at.desc()).limit(1))
+        return last is not None, {"answered_campaign_call_within_30_days": last is not None,
+                                  "last_answered_at": last.last_attempt_at.isoformat() if last else None}
     raise KeyError(key)
 
 

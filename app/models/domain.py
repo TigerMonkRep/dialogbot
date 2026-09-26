@@ -735,3 +735,88 @@ class Booking(Base):
     created_at: Mapped[datetime] = ts_now()
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
+
+class Campaign(Base):
+    """An outbound calling campaign: script, caller number, calling window, contacts.
+
+    One package per contact (fixed price, max attempts, max connected AI seconds in total). Payment
+    never starts calls: a campaign only calls after an admin's explicit start command."""
+
+    __tablename__ = "campaigns"
+    __table_args__ = (
+        CheckConstraint("status in ('draft','running','paused','completed')", name="ck_campaigns_status"),
+        Index("ix_campaigns_workspace", "workspace_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    name: Mapped[str] = mapped_column(String(160), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="draft")
+    purpose: Mapped[str] = mapped_column(Text, nullable=False, default="")  # what the call is about / offers
+    opening: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    questions: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    success: Mapped[str] = mapped_column(Text, nullable=False, default="")  # what counts as an interested contact
+    phone_number_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("phone_numbers.id", ondelete="SET NULL"))
+    call_days: Mapped[list] = mapped_column(JSONB, nullable=False, default=lambda: ["mon", "tue", "wed", "thu", "fri"])
+    call_from: Mapped[str] = mapped_column(String(5), nullable=False, default="09:00")
+    call_to: Mapped[str] = mapped_column(String(5), nullable=False, default="17:00")
+    # Package terms snapshotted when the campaign is created (whole øre, seconds).
+    package_net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
+    max_attempts: Mapped[int] = mapped_column(Integer, nullable=False)
+    max_connected_seconds: Mapped[int] = mapped_column(Integer, nullable=False)
+    legal_confirmation: Mapped[dict | None] = mapped_column(JSONB)  # who confirmed the checklist, when, which text
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CampaignContact(Base):
+    __tablename__ = "campaign_contacts"
+    __table_args__ = (
+        UniqueConstraint("campaign_id", "phone", name="uq_campaign_contacts_phone"),
+        CheckConstraint("kind in ('business','consumer')", name="ck_campaign_contacts_kind"),
+        CheckConstraint("status in ('pending','calling','done','no_answer','failed','opted_out','skipped')",
+                        name="ck_campaign_contacts_status"),
+        Index("ix_campaign_contacts_due", "campaign_id", "status", "next_attempt_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    campaign_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("campaigns.id", ondelete="CASCADE"), nullable=False)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    name: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    company: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    phone: Mapped[str] = mapped_column(String(20), nullable=False)
+    email: Mapped[str | None] = mapped_column(String(320))
+    kind: Mapped[str] = mapped_column(String(16), nullable=False)  # business | consumer
+    consent_source: Mapped[str] = mapped_column(Text, nullable=False, default="")  # required for consumers
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="pending")
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    connected_seconds: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    provider_call_id: Mapped[str | None] = mapped_column(String(100), index=True)  # the attempt in progress / last
+    outcome: Mapped[str | None] = mapped_column(String(24))  # interested | callback | not_interested | opt_out | no_answer
+    summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    error: Mapped[str | None] = mapped_column(String(300))
+    lead_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("leads.id", ondelete="SET NULL"))
+    conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="SET NULL"))
+    # The package is used (and billable) when the first attempt is dialled; price snapshotted then.
+    charged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    charged_net_minor: Mapped[int | None] = mapped_column(Integer)
+    created_at: Mapped[datetime] = ts_now()
+
+
+class DoNotCall(Base):
+    """Numbers the workspace must never call in a campaign (opt-outs from calls, or added by hand)."""
+
+    __tablename__ = "do_not_call"
+    __table_args__ = (UniqueConstraint("workspace_id", "phone", name="uq_do_not_call_phone"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    phone: Mapped[str] = mapped_column(String(20), nullable=False)
+    reason: Mapped[str] = mapped_column(String(300), nullable=False, default="")
+    source: Mapped[str] = mapped_column(String(16), nullable=False, default="manual")  # manual | call
+    created_at: Mapped[datetime] = ts_now()

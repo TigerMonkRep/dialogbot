@@ -595,3 +595,40 @@ test("21 · Bookinger: tider følger godkendte åbningstider; en manuel booking 
   await page.getByRole("link", { name: "Henvendelse" }).first().click();
   await expect(page.getByText(/Booket besigtigelse/)).toBeVisible();
 });
+
+test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovkrav, og start er ærlig om manglende opsætning", async ({ page }, info) => {
+  await freshOwner(page, info);
+  await page.goto("/app/campaigns");
+  await expect(page.getByRole("heading", { name: "Udgående opkald" })).toBeVisible();
+  await expect(page.getByText(/9,00 kr\. \+ moms pr\. kontakt/)).toBeVisible();
+  await page.getByLabel("Navn på kampagnen").fill("Forårstilbud");
+  await page.getByLabel("Hvad skal opkaldet handle om?").fill("Tilbyde gulvafslibning til tidligere kunder");
+  await page.getByRole("button", { name: "Opret kampagne" }).click();
+  await expect(page.getByRole("heading", { name: "Forårstilbud" })).toBeVisible();
+  await expect(page.getByText(/Forslag fra AI er sat ind/)).toBeVisible();
+  await expect(page.getByLabel(/^Første replik/)).toHaveValue(/digitale assistent/);
+  await page.getByRole("button", { name: "Gem kampagne" }).click();
+  await expect(page.getByText("Gemt.")).toBeVisible();
+  // consumers without documented consent are refused
+  await page.getByLabel("Eller indsæt listen").fill("Navn;Telefon;Firma\nMette Hansen;20 30 40 50;Hansen Byg ApS\nForkert;123;X");
+  await page.getByLabel(/Privatpersoner, der har givet samtykke/).check();
+  await page.getByRole("button", { name: "Tilføj kontakter" }).click();
+  await expect(page.getByText(/kun ringes op med forudgående samtykke/).first()).toBeVisible();
+  await page.getByLabel("Virksomheder (erhvervsnumre)").check();
+  await page.getByRole("button", { name: "Tilføj kontakter" }).click();
+  await expect(page.getByText(/1 kontakter tilføjet, 1 ugyldige numre \(fx række 2\)/)).toBeVisible();
+  await expect(page.getByText("+4520304050")).toBeVisible();
+  await expect(page.getByText(/Højst 9,00 kr\. \+ moms/)).toBeVisible();
+  // the start is explicit and honest: no Vapi key in this environment
+  await expect(page.getByText(/Udgående opkald kræver en Vapi-konto/)).toBeVisible();
+  const start = page.getByRole("button", { name: "Start kampagne" });
+  await expect(start).toBeDisabled();
+  for (const box of await page.getByRole("group", { name: "Bekræft reglerne for opkald" }).getByRole("checkbox").all()) await box.check();
+  await expect(start).toBeDisabled(); // stays disabled while outbound calling is not configured
+  await expect(page.getByText("Kladde", { exact: true })).toBeVisible();
+  await shot(page, info, "c02-kampagne");
+  await page.goto("/app/campaigns");
+  await page.getByLabel("Telefonnummer").fill("21 22 23 24");
+  await page.getByRole("button", { name: "Spær nummer" }).click();
+  await expect(page.getByText("+4521222324")).toBeVisible();
+});

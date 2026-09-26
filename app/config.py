@@ -60,6 +60,9 @@ class Settings(BaseSettings):
     # Voice (Vapi). The server secret authenticates Vapi → us (Bearer credential or legacy X-Vapi-Secret).
     # Without it the voice webhook answers 503 and inbound telephony is reported as not implemented.
     vapi_server_secret: str | None = Field(default=None, alias="VAPI_SERVER_SECRET")
+    # Outbound campaign calls: Vapi private API key (server-only). Without it campaigns cannot be started.
+    vapi_api_key: str | None = Field(default=None, alias="VAPI_API_KEY")
+    vapi_api_url: str = Field(default="https://api.vapi.ai", alias="VAPI_API_URL")
     vapi_model_provider: str = Field(default="anthropic", alias="VAPI_MODEL_PROVIDER")
     vapi_model: str | None = Field(default=None, alias="VAPI_MODEL")  # default: AI_MODEL_ID
     # Optional JSON objects passed through to Vapi's assistant config (e.g. a Danish voice/transcriber).

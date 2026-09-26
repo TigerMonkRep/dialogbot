@@ -140,6 +140,21 @@ class FakeProvider:
                              ensure_ascii=False)
             return Completion(text=out, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
                               usage=Usage(input_tokens=len(question) // 4, output_tokens=len(out) // 4))
+        if system.startswith(("SUGGEST_CAMPAIGN", "CAMPAIGN_OUTCOME")):
+            import json
+
+            if system.startswith("SUGGEST_CAMPAIGN"):
+                data = {"opening": "Hej {navn}, det er den digitale assistent fra {virksomhed}. Har du et øjeblik?",
+                        "questions": ["Hvornår har I sidst fået slebet gulvene?", "Hvor mange kvadratmeter drejer det sig om?"],
+                        "success": "Kunden vil gerne have et uforpligtende tilbud."}
+            else:
+                low = question.lower()
+                outcome = ("opt_out" if "ring ikke" in low else "not_interested" if "nej tak" in low
+                           else "interested" if "interesseret" in low or "gerne" in low else "callback")
+                data = {"outcome": outcome, "summary": f"Testdobbelt: {outcome}."}
+            out = json.dumps(data, ensure_ascii=False)
+            return Completion(text=out, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
+                              usage=Usage(input_tokens=len(question) // 4, output_tokens=len(out) // 4))
         if system.startswith("SUGGEST_GOALS"):
             import json
 

@@ -271,12 +271,14 @@ def end_of_call(db: OrmSession, message: dict) -> str:
     db.add(conv)
     db.flush()
     visitor_lines = 0
+    lines: list[str] = []
     for m in (_dig(message, "artifact", "messages") or message.get("messages") or []):
         role = ROLE.get(str(m.get("role", "")).lower()) if isinstance(m, dict) else None
         text = (m.get("message") or m.get("content") or "") if role else ""
         if not role or not str(text).strip():
             continue  # system prompts, tool calls and empty turns are not part of the transcript
         visitor_lines += role == "visitor"
+        lines.append(("Kontakt" if role == "visitor" else "Assistent") + ": " + str(text).strip())
         db.add(ConversationMessage(conversation_id=conv.id, workspace_id=ws_id, role=role, text=str(text)[:4000]))
     conv.visitor_message_count = visitor_lines
     call = Call(workspace_id=ws_id, phone_number_id=number.id, conversation_id=conv.id, provider=PROVIDER,
@@ -290,6 +292,11 @@ def end_of_call(db: OrmSession, message: dict) -> str:
     except IntegrityError:
         db.rollback()
         return "duplicate"
+    from app.modules.campaigns import service as campaigns
+
+    if campaigns.on_report(db, message, call_id=call_id, conv=conv, duration=duration, visitor_lines=visitor_lines,
+                           transcript="\n".join(lines), summary=summary):
+        return "applied"  # an outbound campaign call: its contact gets the outcome, not a generic callback lead
     booked = db.scalar(select(Booking).where(Booking.workspace_id == ws_id, Booking.source == "phone",
                                              Booking.provider_call_id == call_id)) if call_id else None
     if booked is not None:  # the caller booked during the call: that booking's lead is the lead

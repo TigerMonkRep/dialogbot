@@ -171,6 +171,9 @@ class Api:
     def put(self, token: str, path: str, json: dict):
         return self.c.put(f"{self.base}{path}", json=json, headers=self.h(token))
 
+    def delete(self, token: str, path: str):
+        return self.c.delete(f"{self.base}{path}", headers=self.h(token))
+
     def post(self, token: str, path: str, json: dict | None = None, **headers):
         return self.c.post(f"{self.base}{path}", json=json, headers=self.h(token, **headers))
 

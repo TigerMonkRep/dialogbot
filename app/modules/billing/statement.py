@@ -5,6 +5,8 @@ Rules (product rules; money in whole øre, 25 % VAT, half-up on the total):
   Approved leads never change a model-A total.
 - Model B: the sum of the fee snapshots of leads approved in the month (each keeps the price that
   applied when it was approved, even if the agreement changed later).
+- Campaign packages: one per contact whose first attempt was dialled in the month, at the price
+  snapshotted then.
 - Months are calendar months in the workspace's time zone. No proration in this stage.
 """
 from __future__ import annotations
@@ -13,10 +15,10 @@ import uuid
 from datetime import date, datetime, time
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
-from app.models import Lead, ReceptionAgreement
+from app.models import Campaign, CampaignContact, Lead, ReceptionAgreement
 from app.modules.billing.agreements import TAX_BASIS_POINTS
 from app.modules.billing.money import Money
 
@@ -46,6 +48,14 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
         lines.append({"kind": "lead", "lead_id": str(x.id), "description": f"Godkendt henvendelse: {x.contact_name or '(uden navn)'}",
                       "approved_at": x.billing_decided_at.isoformat(), "model": snap.get("model"),
                       "agreement_version": snap.get("agreement_version"), "net_minor": net})
+    packages = db.execute(
+        select(Campaign.id, Campaign.name, func.count(CampaignContact.id), func.sum(CampaignContact.charged_net_minor))
+        .join(CampaignContact, CampaignContact.campaign_id == Campaign.id)
+        .where(Campaign.workspace_id == workspace_id, CampaignContact.charged_at >= start, CampaignContact.charged_at < end)
+        .group_by(Campaign.id, Campaign.name).order_by(Campaign.name)).all()
+    for cid, name, n, net in packages:
+        lines.append({"kind": "campaign", "campaign_id": str(cid), "packages": int(n),
+                      "description": f"Kampagne \"{name}\": {n} kontaktpakke{'r' if n != 1 else ''}", "net_minor": int(net or 0)})
     total = Money("DKK", sum(line["net_minor"] for line in lines), TAX_BASIS_POINTS)
     return {
         "month": month.strftime("%Y-%m"), "timezone": tz, "status": "preview", "invoicing": "not_implemented",

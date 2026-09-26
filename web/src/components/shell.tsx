@@ -7,7 +7,6 @@ type Ws = { id: string; name: string; role: string; product_intent: string };
 type Me = { display_name: string; email: string; email_verified: boolean };
 type Capability = { key: string; status: "available" | "simulated" | "not_implemented"; environment: string };
 
-const notYet = (area: string) => `/app/not-yet?area=${encodeURIComponent(area)}`;
 
 /** Desktop top navigation (Stitch g01 desktop header). Unbuilt areas go to the honest placeholder. */
 export const NAV: NavItem[] = [
@@ -15,7 +14,7 @@ export const NAV: NavItem[] = [
   { href: "/app/leads", match: "/app/leads", label: "Henvendelser", icon: "contact_support" },
   { href: "/app/setup", match: "/app/setup", label: "Opsætningsguide", icon: "tune" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
-  { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
+  { href: "/app/campaigns", match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
   { href: "/app/bookings", match: "/app/bookings", label: "Bookinger", icon: "calendar_month" },
   { href: "/app/settings/team", match: "/app/settings", label: "Indstillinger", icon: "settings" },
 ];
@@ -169,7 +168,7 @@ export const SIDE: NavItem[] = [
   { href: "/app/inbox", match: "/app/inbox", label: "Indbakke", icon: "inbox" },
   { href: "/app/leads", match: "/app/leads", label: "Henvendelser", icon: "contact_support" },
   { href: "/app/reception", match: "/app/reception", label: "Reception", icon: "support_agent" },
-  { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
+  { href: "/app/campaigns", match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
   { href: "/app/bookings", match: "/app/bookings", label: "Bookinger", icon: "calendar_today" },
   { href: "/app/reports", match: "/app/reports", label: "Rapporter", icon: "bar_chart" },

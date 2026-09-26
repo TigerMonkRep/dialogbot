@@ -205,6 +205,16 @@ def run_schedules() -> None:
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("calendars.failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:
+            from app.modules.campaigns.service import dispatch
+
+            n = dispatch(db)
+            if n:
+                log.info("campaigns.dialled", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("campaigns.failed", error=f"{type(exc).__name__}: {exc}")
 
 
 def sync_calendars(db, max_age_minutes: int = 15) -> int:

@@ -54,6 +54,155 @@
         "title": "AssignIn",
         "type": "object"
       },
+      "CampaignIn": {
+        "properties": {
+          "call_days": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Call Days",
+            "type": "array"
+          },
+          "call_from": {
+            "default": "09:00",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "title": "Call From",
+            "type": "string"
+          },
+          "call_to": {
+            "default": "17:00",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "title": "Call To",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "opening": {
+            "default": "",
+            "maxLength": 400,
+            "title": "Opening",
+            "type": "string"
+          },
+          "phone_number_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Number Id"
+          },
+          "purpose": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Purpose",
+            "type": "string"
+          },
+          "questions": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Questions",
+            "type": "array"
+          },
+          "success": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Success",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "CampaignIn",
+        "type": "object"
+      },
+      "CampaignUpdate": {
+        "properties": {
+          "call_days": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Call Days",
+            "type": "array"
+          },
+          "call_from": {
+            "default": "09:00",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "title": "Call From",
+            "type": "string"
+          },
+          "call_to": {
+            "default": "17:00",
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "title": "Call To",
+            "type": "string"
+          },
+          "expected_version": {
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "opening": {
+            "default": "",
+            "maxLength": 400,
+            "title": "Opening",
+            "type": "string"
+          },
+          "phone_number_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Number Id"
+          },
+          "purpose": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Purpose",
+            "type": "string"
+          },
+          "questions": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Questions",
+            "type": "array"
+          },
+          "success": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Success",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "expected_version"
+        ],
+        "title": "CampaignUpdate",
+        "type": "object"
+      },
       "CategoryIn": {
         "properties": {
           "is_primary": {
@@ -204,6 +353,27 @@
           }
         },
         "title": "DecisionIn",
+        "type": "object"
+      },
+      "DncIn": {
+        "properties": {
+          "phone": {
+            "maxLength": 40,
+            "minLength": 6,
+            "title": "Phone",
+            "type": "string"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone"
+        ],
+        "title": "DncIn",
         "type": "object"
       },
       "DraftEditIn": {
@@ -392,24 +562,6 @@
           }
         },
         "title": "HTTPValidationError",
-        "type": "object"
-      },
-      "ImportIn": {
-        "properties": {
-          "url": {
-            "anyOf": [
-              {
-                "maxLength": 500,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Url"
-          }
-        },
-        "title": "ImportIn",
         "type": "object"
       },
       "InvitationCreateIn": {
@@ -1683,22 +1835,16 @@
         "title": "SignupIn",
         "type": "object"
       },
-      "StartIn": {
+      "SuggestIn": {
         "properties": {
-          "host_origin": {
-            "anyOf": [
-              {
-                "maxLength": 200,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Host Origin"
+          "purpose": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Purpose",
+            "type": "string"
           }
         },
-        "title": "StartIn",
+        "title": "SuggestIn",
         "type": "object"
       },
       "TaskIn": {
@@ -2289,6 +2435,74 @@
         "title": "SettingsIn",
         "type": "object"
       },
+      "app__modules__campaigns__router__ImportIn": {
+        "properties": {
+          "consent_source": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Consent Source",
+            "type": "string"
+          },
+          "csv": {
+            "maxLength": 2000000,
+            "minLength": 1,
+            "title": "Csv",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "csv",
+          "kind"
+        ],
+        "title": "ImportIn",
+        "type": "object"
+      },
+      "app__modules__campaigns__router__StartIn": {
+        "properties": {
+          "accept_max_net_minor": {
+            "minimum": 0.0,
+            "title": "Accept Max Net Minor",
+            "type": "integer"
+          },
+          "expected_version": {
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "legal_confirmed": {
+            "title": "Legal Confirmed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "expected_version",
+          "legal_confirmed",
+          "accept_max_net_minor"
+        ],
+        "title": "StartIn",
+        "type": "object"
+      },
+      "app__modules__knowledge__router__ImportIn": {
+        "properties": {
+          "url": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "title": "ImportIn",
+        "type": "object"
+      },
       "app__modules__reports__router__SettingsIn": {
         "properties": {
           "email_enabled": {
@@ -2349,6 +2563,24 @@
           }
         },
         "title": "PreviewIn",
+        "type": "object"
+      },
+      "app__modules__webchat__public__StartIn": {
+        "properties": {
+          "host_origin": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Host Origin"
+          }
+        },
+        "title": "StartIn",
         "type": "object"
       },
       "app__modules__webchat__router__SettingsIn": {
@@ -3186,7 +3418,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/StartIn"
+                "$ref": "#/components/schemas/app__modules__webchat__public__StartIn"
               }
             }
           },
@@ -5074,6 +5306,731 @@
         ]
       }
     },
+    "/api/v1/workspaces/{workspace_id}/campaigns": {
+      "get": {
+        "operationId": "list_campaigns_api_v1_workspaces__workspace_id__campaigns_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Campaigns",
+        "tags": [
+          "campaigns"
+        ]
+      },
+      "post": {
+        "operationId": "create_campaign_api_v1_workspaces__workspace_id__campaigns_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Campaign",
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/campaigns/script-suggestions": {
+      "post": {
+        "operationId": "suggest_script_api_v1_workspaces__workspace_id__campaigns_script_suggestions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suggest Script",
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}": {
+      "get": {
+        "operationId": "get_campaign_api_v1_workspaces__workspace_id__campaigns__campaign_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Campaign",
+        "tags": [
+          "campaigns"
+        ]
+      },
+      "put": {
+        "operationId": "update_campaign_api_v1_workspaces__workspace_id__campaigns__campaign_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Campaign",
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}/contacts": {
+      "get": {
+        "operationId": "list_contacts_api_v1_workspaces__workspace_id__campaigns__campaign_id__contacts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "maximum": 1000,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Contacts",
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}/contacts/import": {
+      "post": {
+        "operationId": "import_contacts_api_v1_workspaces__workspace_id__campaigns__campaign_id__contacts_import_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__campaigns__router__ImportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Import Contacts",
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}/contacts/{contact_id}": {
+      "delete": {
+        "operationId": "delete_contact_api_v1_workspaces__workspace_id__campaigns__campaign_id__contacts__contact_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "contact_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Contact Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Contact",
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}/pause": {
+      "post": {
+        "operationId": "pause_campaign_api_v1_workspaces__workspace_id__campaigns__campaign_id__pause_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pause Campaign",
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}/start": {
+      "post": {
+        "description": "The only way a campaign starts calling. Payment never starts calls.",
+        "operationId": "start_campaign_api_v1_workspaces__workspace_id__campaigns__campaign_id__start_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__campaigns__router__StartIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start Campaign",
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
     "/api/v1/workspaces/{workspace_id}/categories": {
       "get": {
         "operationId": "list_categories_api_v1_workspaces__workspace_id__categories_get",
@@ -5760,6 +6717,196 @@
         ]
       }
     },
+    "/api/v1/workspaces/{workspace_id}/do-not-call": {
+      "get": {
+        "operationId": "list_dnc_api_v1_workspaces__workspace_id__do_not_call_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Dnc",
+        "tags": [
+          "campaigns"
+        ]
+      },
+      "post": {
+        "description": "Any staff member can block a number (someone asked not to be called); only admins can unblock.",
+        "operationId": "add_dnc_api_v1_workspaces__workspace_id__do_not_call_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DncIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Dnc",
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/do-not-call/{entry_id}": {
+      "delete": {
+        "operationId": "delete_dnc_api_v1_workspaces__workspace_id__do_not_call__entry_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Entry Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Dnc",
+        "tags": [
+          "campaigns"
+        ]
+      }
+    },
     "/api/v1/workspaces/{workspace_id}/goals": {
       "get": {
         "operationId": "get_goals_api_v1_workspaces__workspace_id__goals_get",
@@ -6264,7 +7411,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ImportIn"
+                "$ref": "#/components/schemas/app__modules__knowledge__router__ImportIn"
               }
             }
           },

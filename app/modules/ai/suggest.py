@@ -119,3 +119,31 @@ def script(db: OrmSession, ws: Workspace, user_id) -> dict:
             "collect": [one(x, 80) for x in (data.get("collect") or [])[:8] if one(x, 80)],
             "escalation": one(data.get("escalation"), 500), "avoid": one(data.get("avoid"), 500),
             "closing": one(data.get("closing"), 200)}
+
+
+CAMPAIGN_SYSTEM = """SUGGEST_CAMPAIGN
+Du hjælper en dansk virksomhed med at skrive manuskriptet til et kort udgående opkald, som deres digitale assistent foretager (højst 3 minutter). Ud fra oplysningerne om virksomheden og formålet skal du foreslå:
+- opening: første replik på 1-2 korte sætninger. Brug {navn} for kontaktens fornavn og {virksomhed} for firmanavnet. Sig at det er virksomhedens digitale assistent, og spørg om de har et øjeblik.
+- questions: 2-4 korte spørgsmål, der afklarer om kontakten er interesseret.
+- success: én sætning om hvornår kontakten tæller som interesseret.
+Skriv naturligt, venligt dansk uden at love priser eller rabatter. Svar med ét JSON-objekt og intet andet:
+{"opening": "...", "questions": ["..."], "success": "..."}"""
+
+
+def campaign(db: OrmSession, ws: Workspace, user_id, purpose: str) -> dict:
+    provider = get_provider()
+    ctx = context(db, ws) + f"\n\nFormål med kampagnen: {purpose.strip() or '(ikke angivet – foreslå et ud fra ydelserne)'}"
+    c, row = log_call(db, ws, provider, user_id=user_id, purpose="setup_suggestion", system=CAMPAIGN_SYSTEM,
+                      messages=[{"role": "user", "content": ctx}], prompt_version=PROMPT_VERSION,
+                      revision=ws.knowledge_revision, max_tokens=1200)
+    db.commit()
+    if row.outcome == "refused":
+        raise SuggestionFailed("AI-udbyderen afviste at lave forslag.")
+    data = _json(c.text)
+
+    def one(v, n: int) -> str:
+        return re.sub(r"\s+", " ", str(v or "")).strip()[:n]
+
+    return {"opening": one(data.get("opening"), 400),
+            "questions": [one(x, 200) for x in (data.get("questions") or [])[:6] if one(x, 200)],
+            "success": one(data.get("success"), 500)}

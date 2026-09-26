@@ -40,12 +40,15 @@ def capabilities() -> list[Capability]:
                    "available" if s.vapi_server_secret else "not_implemented", s.app_env,
                    "Vapi-stemmeassistent på jeres egne numre; svarer kun ud fra godkendt viden."
                    if s.vapi_server_secret else "Kræver en Vapi-konto og VAPI_SERVER_SECRET; intet nummer er forbundet."),
-        Capability("telephony.outbound", "Udgående kampagneopkald", "not_implemented", s.app_env,
-                   "Planlagt til etape 4. Betaling starter aldrig opkald."),
+        Capability("telephony.outbound", "Udgående kampagneopkald",
+                   "available" if (s.vapi_api_key and s.vapi_server_secret) else "not_implemented", s.app_env,
+                   "Vapi ringer op fra jeres eget nummer inden for kampagnens tidsrum. Betaling starter aldrig opkald – "
+                   "kun en administrator kan starte en kampagne." if (s.vapi_api_key and s.vapi_server_secret)
+                   else "Kræver VAPI_API_KEY og VAPI_SERVER_SECRET på serveren. Kampagner kan forberedes, men ikke startes."),
         Capability("calendar", "Kalender og online booking", "available", s.app_env,
                    "Ledige tider ud fra godkendte åbningstider. Jeres Google/Outlook-kalender kobles på med dens hemmelige "
                    "iCal-adresse (optaget tid blokerer), og bookinger vises i kalenderen via et iCal-abonnement."),
-        Capability("payment", "Kortbetaling", "not_implemented", s.app_env, "Planlagt til etape 4."),
+        Capability("payment", "Kortbetaling", "not_implemented", s.app_env, "Kommer med Stripe. Betaling starter aldrig opkald."),
         Capability("ai.assistant_preview", "AI-assistent: intern forhåndsvisning", ai_status, s.app_env,
                    ai_note),
         Capability("ai.conversation", "AI-samtale med kunder", ai_status, s.app_env,

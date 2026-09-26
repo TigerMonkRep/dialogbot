@@ -2,6 +2,22 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 23 — 26. september 2026 (Kampagner: udgående opkald)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `campaigns`, `campaign_contacts`, `do_not_call` (Alembic `f8c8153ccbb0`). Pakke pr. kontakt: 9,00 kr. ekskl. moms, højst 2 forsøg og 180 s samtale i alt (snapshot pr. kampagne); pakken bruges (faktureres) først ved første opkald | testet | `tests/test_campaigns.py` |
+| CSV-import (`;` `,` eller tab, med/uden overskrift, danske numre uden +45), dubletter og spærreliste springes over, ugyldige numre rapporteres pr. række. Markedsføringsloven § 10: privatpersoner kræver dokumenteret forudgående samtykke (kilde gemmes pr. kontakt); erhvervsnumre tilladt | testet, E2E | samme, rejse 22 |
+| AI-forslag til manuskript (første replik, spørgsmål, hvornår interesseret); udfyldes automatisk på en ny kampagne. Første replik får altid AI-oplysning | testet, E2E | rejse 22 |
+| Start er en særskilt administratorhandling: tjekliste over lovkrav + accept af maksimal pris (409 hvis prisen er ændret) + godkendt viden + udgående telefoni konfigureret; ellers 501 og deaktiveret knap. Betaling starter aldrig opkald | testet, E2E | `test_start_is_explicit_and_honest`, rejse 22 |
+| Worker ringer op via Vapi `POST /call` (transient assistent med godkendt viden, kampagnens manuskript, `maxDurationSeconds` = resterende sekunder): kun i kampagnens tidsrum i arbejdsrummets tidszone, ét opkald ad gangen pr. kampagne, nyt forsøg efter 3 timer, opkald uden rapport regnes som mislykket efter 15 min | testet med stub | `test_dialler_outcomes_and_billing`, `test_window_and_stale_calls` |
+| Opkaldsrapport → udfald (AI-vurderet: interesseret/ring tilbage/ikke interesseret/frabeder sig opkald). Interesseret/ring tilbage bliver henvendelse (kilde "Kampagne") + opgave; "ring ikke igen" sætter nummeret på spærrelisten (kan ikke fjernes igen) | testet | samme |
+| Kampagnepakker på månedsoversigten (Fakturering) | testet | samme |
+| `/app/campaigns` (liste, ny kampagne, spærreliste) og `/app/campaigns/{id}` (nøgletal, start/pause, manuskript, tidsrum, nummer, import, kontakter med udfald) | implementeret, E2E | rejse 22 |
+| Guidens trin "Opret din første kampagne", "Aktivér kampagner" og checket "Kampagnetest-opkald" vurderes nu for alvor | testet | `test_dialler_outcomes_and_billing` |
+
+**Kræver opsætning:** `VAPI_API_KEY` (privat nøgle) på API og worker, og et nummer i Vapi, der må ringe ud (dansk nummer via Twilio – pris vises før køb). **Ikke eksternt verificeret:** et rigtigt udgående opkald.
+
 ## Checkpoint 22 — 26. september 2026 (Bookinger og kalender)
 
 | Del | Status | Bevis |

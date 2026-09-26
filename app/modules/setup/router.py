@@ -179,5 +179,6 @@ def activate_reception(ctx: WorkspaceContext = Depends(get_workspace_context)):
 @router.post("/activate/campaigns")
 def activate_campaigns(ctx: WorkspaceContext = Depends(get_workspace_context)):
     ctx.require("knowledge.approve")
-    raise NotImplementedYet("Kampagneaktivering, betaling og lancering er særskilte kommandoer i etape 4. "
-                            "Ingen integration er aktiveret.", extra={"capability": "telephony.outbound"})
+    raise NotImplementedYet("Kampagner aktiveres én ad gangen: åbn kampagnen under Kampagner, bekræft reglerne for "
+                            "opkald og prisen, og tryk Start. Betaling starter aldrig opkald.",
+                            extra={"capability": "telephony.outbound", "href": "/app/campaigns"})

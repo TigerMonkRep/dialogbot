@@ -20,6 +20,8 @@ from app.models import (
     ROLE_RANK,
     AuditLog,
     BusinessProfile,
+    Campaign,
+    CampaignContact,
     GoalSelection,
     KnowledgeItem,
     KnowledgeVersion,
@@ -43,6 +45,8 @@ class Snapshot:
     open_drafts: int
     checks: dict
     states: dict[str, SetupTaskState]
+    campaigns_with_contacts: int = 0
+    campaigns_started: int = 0
 
 
 @dataclass(frozen=True)
@@ -138,8 +142,9 @@ TASKS: list[TaskDef] = [
             lambda s: s.checks.get("calendar.connection") is not None and s.checks["calendar.connection"].status == "passed",
             capability="calendar", estimated_minutes=10),
     TaskDef("campaign.first", "Opret din første kampagne", "Kampagner",
-            "Kampagneoprettelse, manuskript og betaling kommer i etape 4. Betaling starter aldrig opkald.",
-            "/app/campaigns/new", ("C01", "O07"), lambda s: True if _campaigns(s) else None, lambda s: False,
+            "Skriv formål og manuskript (AI foreslår), og importér kontakter som CSV. Betaling starter aldrig opkald.",
+            "/app/campaigns", ("C01", "O07"), lambda s: True if _campaigns(s) else None,
+            lambda s: s.campaigns_with_contacts > 0,
             capability="telephony.outbound", depends_on=("knowledge.services", "checks.server"), estimated_minutes=15),
     TaskDef("activation.reception", "Aktivér reception", "Aktivering",
             "Særskilt handling. Kræver bestået prøveopkald og en implementeret telefoniudbyder.",
@@ -147,8 +152,9 @@ TASKS: list[TaskDef] = [
             capability="telephony.inbound", min_role="admin",
             depends_on=("checks.server", "reception.test_call"), estimated_minutes=1),
     TaskDef("activation.campaigns", "Aktivér kampagner", "Aktivering",
-            "Særskilt handling; adskilt fra betaling og lancering.", "/app/setup/launch", ("G06",),
-            lambda s: True if _campaigns(s) else None, lambda s: False, capability="telephony.outbound",
+            "Særskilt handling på kampagnen: bekræft reglerne for opkald og prisen, og tryk Start. Adskilt fra betaling.",
+            "/app/campaigns", ("G06",),
+            lambda s: True if _campaigns(s) else None, lambda s: s.campaigns_started > 0, capability="telephony.outbound",
             min_role="admin", depends_on=("campaign.first",), estimated_minutes=1),
 ]
 TASK_INDEX = {t.key: t for t in TASKS}
@@ -173,6 +179,10 @@ def snapshot(db: OrmSession, ctx: WorkspaceContext) -> Snapshot:
                              .where(WorkspaceCategory.workspace_id == ws_id)) or 0,
         approved_kinds={k: n for k, n in approved_rows}, in_review=in_review, open_drafts=open_drafts,
         checks=latest_results(db, ws_id), states=states,
+        campaigns_with_contacts=db.scalar(select(func.count(func.distinct(CampaignContact.campaign_id)))
+                                          .where(CampaignContact.workspace_id == ws_id)) or 0,
+        campaigns_started=db.scalar(select(func.count()).select_from(Campaign).where(
+            Campaign.workspace_id == ws_id, Campaign.started_at.is_not(None))) or 0,
     )
 
 

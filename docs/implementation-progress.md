@@ -2,6 +2,13 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 20 — 26. september 2026 (slet viden, guide videre fra Viden)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `DELETE /workspaces/{id}/knowledge/items/{item_id}`: emnet arkiveres (bevares i auditloggen), åbne kladder afvises, titlen kan genbruges; godkendt viden kræver ejer/admin og øger vidensrevisionen, så assistenten straks holder op med at bruge den; kladde-emner kan slettes af medarbejdere | testet | `tests/test_knowledge_delete.py` |
+| "Slet" på hvert vidensemne (med bekræftelse); Videnscenteret viser "Trin 3 af 3: Personlig plan" med knap videre i guiden | implementeret, E2E | rejse 17 |
+
 ## Checkpoint 19 — 26. september 2026 (AI-forslag i guiden)
 
 | Del | Status | Bevis |

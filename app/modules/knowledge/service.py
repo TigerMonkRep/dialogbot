@@ -203,6 +203,35 @@ def approve(db: OrmSession, ctx: WorkspaceContext, version_id: uuid.UUID, reques
     return v
 
 
+def archive_item(db: OrmSession, ctx: WorkspaceContext, item_id: uuid.UUID, request_id: str | None) -> KnowledgeItem:
+    """Delete an item from the knowledge base (soft: archived, kept for audit). Removing approved
+    knowledge changes what the assistant says, so it needs the approver role and bumps the revision;
+    a draft-only item can be removed by whoever may draft. The key is freed for a new item."""
+    ctx.require("knowledge.draft")
+    item = get_scoped(db, KnowledgeItem, item_id, ctx.workspace.id)
+    if item.archived_at is not None:
+        return item
+    live = approved_version(db, item.id)
+    if live is not None:
+        ctx.require("knowledge.approve")
+    for v in db.scalars(select(KnowledgeVersion).where(KnowledgeVersion.item_id == item.id,
+                                                       KnowledgeVersion.status.in_(("draft", "in_review")))):
+        v.status = "rejected"
+    item.archived_at = _now()
+    item.key = f"{item.key[:100]}~{str(item.id)[:8]}"
+    after: dict = {"kind": item.kind, "had_approved_version": live is not None}
+    if live is not None:
+        ws = db.scalar(select(Workspace).where(Workspace.id == ctx.workspace.id).with_for_update())
+        ws.knowledge_revision += 1
+        after["knowledge_revision"] = ws.knowledge_revision
+    db.flush()
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="knowledge.item_deleted",
+                 object_type="knowledge_item", object_id=item.id,
+                 before={"title": live.title if live else None}, after=after, request_id=request_id)
+    invalidate_checks(db, ctx.workspace.id, changed_area="knowledge", reason="Et vidensemne blev slettet")
+    return item
+
+
 def reject(db: OrmSession, ctx: WorkspaceContext, version_id: uuid.UUID, reason: str, request_id: str | None):
     ctx.require("knowledge.approve")
     v = db.scalar(select(KnowledgeVersion).where(KnowledgeVersion.id == version_id,

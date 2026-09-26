@@ -507,6 +507,12 @@ test("17 · Viden: forslag fra hjemmesiden bliver til kladder med tekst og uden 
   await page.goto("/app/knowledge?tab=k03");
   await expect(page.getByText(/Hjemmesiden nævner prisen/).first()).toBeVisible();
   await shot(page, info, "k03-forslag-fra-hjemmeside");
+  // A wrong suggestion can be deleted; the guide leads on to the personal plan.
+  page.once("dialog", (d) => d.accept());
+  await page.locator("form").filter({ hasText: "Lakering" }).getByRole("button", { name: "Slet" }).click();
+  await expect(page.getByRole("heading", { name: "Lakering" })).toHaveCount(0);
+  await page.getByRole("link", { name: /Fortsæt til personlig plan/ }).click();
+  await expect(page).toHaveURL(/\/app\/setup/);
   // Nothing is live before approval.
   const live = await (await page.request.get(`/api/backend/workspaces/${wsId}/assistant/knowledge`)).json();
   expect(live.items).toEqual([]);

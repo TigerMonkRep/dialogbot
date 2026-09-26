@@ -169,6 +169,13 @@ export function ItemCard({ wsId, item, canDraft, canApprove }: { wsId: string; i
   const approved = item.approved_version;
   const sum = approved ? summarize(item.kind, approved.content) : null;
   const isService = item.kind === "service";
+  // Approved knowledge may only be removed by an approver; a draft-only item by anyone who drafts.
+  const canDelete = canDraft && (!approved || canApprove);
+  const del = useSubmit(async () => {
+    if (!window.confirm(`Slet "${approved?.title ?? title}"?${approved ? " Assistenten holder straks op med at bruge det." : ""}`)) return;
+    await api(`/workspaces/${wsId}/knowledge/items/${item.id}`, { method: "DELETE" });
+    router.refresh();
+  });
   return (
     <form onSubmit={(e) => { e.preventDefault(); run(); }} className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
       <div className="flex items-start justify-between gap-space-sm">
@@ -194,8 +201,12 @@ export function ItemCard({ wsId, item, canDraft, canApprove }: { wsId: string; i
       )}
       <div className="flex flex-wrap items-center justify-between gap-space-sm pt-space-xs">
         {item.open_draft ? <VersionActions wsId={wsId} v={item.open_draft} canApprove={canApprove} /> : <span className="font-label-sm text-label-sm text-on-surface-variant">{approved?.submitted_at ? `Godkendt version sendt ${new Date(approved.submitted_at).toLocaleDateString("da-DK")}` : "Manuelt indtastet"}</span>}
+        <div className="flex items-center gap-space-xs ml-auto">
+        {canDelete && <button type="button" onClick={() => del.run()} disabled={del.pending} className="px-3 py-1.5 rounded-lg text-error font-label-md text-label-md font-semibold hover:bg-error-container disabled:opacity-50 inline-flex items-center gap-1"><Icon name="delete" size={16} />{del.pending ? "Sletter…" : "Slet"}</button>}
         {canDraft && <button type="submit" disabled={!dirty || pending} className="px-3 py-1.5 rounded-lg bg-surface-container text-primary font-label-md text-label-md font-semibold hover:bg-surface-container-high disabled:opacity-50">{pending ? "Gemmer…" : item.open_draft ? "Gem kladde" : "Gem som ny kladde"}</button>}
+        </div>
       </div>
+      <ErrorBox error={del.error} />
     </form>
   );
 }

@@ -73,6 +73,17 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
         </div>
       </div>
 
+      {/* Guide: the knowledge step leads on to the personal plan (step 3 of the setup flow). */}
+      <div className="rounded-xl bg-primary-container text-on-primary p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+        <div className="flex items-center gap-space-sm">
+          <Icon name="flag" size={22} className="text-secondary-fixed" />
+          <div>
+            <p className="font-label-lg text-label-lg font-bold">Opsætningsguide · Trin 3 af 3: Personlig plan</p>
+            <p className="font-body-sm text-body-sm text-primary-fixed-dim">Godkend det vigtigste – ydelser, priser og åbningstider. Resten kan I rette når som helst.</p>
+          </div>
+        </div>
+        <Link href="/app/setup" className="px-4 py-2 rounded-xl bg-secondary-fixed text-on-secondary-fixed font-label-lg text-label-lg font-bold inline-flex items-center justify-center gap-space-xs hover:brightness-105 shrink-0">Fortsæt til personlig plan <Icon name="arrow_forward" size={18} /></Link>
+      </div>
       {/* K05 banner */}
       {queue.length + drafts.filter((d) => d.open_draft?.status === "draft").length > 0 && tab !== "k05" && (
         <div className="bg-error-container/40 p-space-md rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md shadow-sm">

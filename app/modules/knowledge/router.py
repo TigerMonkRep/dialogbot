@@ -97,6 +97,15 @@ def create_item(body: ItemCreateIn, request: Request, ctx: WorkspaceContext = De
     return item_out(db, item)
 
 
+@router.delete("/knowledge/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_item(item_id: uuid.UUID, request: Request, ctx: WorkspaceContext = Depends(get_workspace_context),
+                db: OrmSession = Depends(get_db)):
+    """Remove an item (archived, kept in the audit trail). Approved items need owner/admin."""
+    service.archive_item(db, ctx, item_id, request.state.request_id)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 @router.get("/knowledge/items/{item_id}", response_model=ItemOut)
 def get_item(item_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_capability("knowledge.read")),
              db: OrmSession = Depends(get_db)):

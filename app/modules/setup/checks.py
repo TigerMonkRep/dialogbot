@@ -60,7 +60,7 @@ CHECKS: dict[str, CheckDefinition] = {
                         description="Består, når et opkald er nået frem via jeres viderestilling inden for 30 dage."),
         CheckDefinition("calendar.connection", "Kalenderforbindelse verificeret", ("goals", "integrations"),
                         capability="calendar", required_when=("booking",),
-                        description="Kræver en implementeret kalenderadapter; en simuleret test åbner ikke produktion."),
+                        description="Består, når online booking er slået til med godkendte åbningstider, mindst én bookingtype og en kalender, der er læst uden fejl."),
         CheckDefinition("webchat.widget", "Web-widget installeret", ("goals", "integrations", "knowledge"),
                         capability="webchat", required_when=("webchat",),
                         description="Widgetten er slået til, har godkendte domæner, og chatvinduet er åbnet på et af dem "
@@ -175,6 +175,19 @@ def _evaluate(db: OrmSession, workspace_id: uuid.UUID, key: str) -> tuple[bool, 
             "enabled": ws.enabled, "allowed_origins": ws.allowed_origins, "unavailable_reasons": reasons,
             "last_seen_at": ws.last_seen_at.isoformat() if ws.last_seen_at else None,
             "last_seen_origin": ws.last_seen_origin, "seen_on_allowed_origin_within_30_days": seen_ok,
+        }
+    if key == "calendar.connection":
+        from app.models import BookingSettings
+        from app.modules.bookings.service import active_types, weekly_hours
+
+        bs = db.get(BookingSettings, workspace_id)
+        hours = any(weekly_hours(db, workspace_id).values())
+        types = bool(active_types(db, workspace_id))
+        cal_ok = bool(bs and bs.busy_ics_url and bs.busy_synced_at and not bs.busy_error)
+        return bool(bs and bs.enabled and hours and types and cal_ok), {
+            "booking_enabled": bool(bs and bs.enabled), "approved_opening_hours": hours, "booking_types": types,
+            "calendar_connected": bool(bs and bs.busy_ics_url), "calendar_error": bs.busy_error if bs else None,
+            "calendar_synced_at": bs.busy_synced_at.isoformat() if bs and bs.busy_synced_at else None,
         }
     raise KeyError(key)
 

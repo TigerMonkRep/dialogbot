@@ -89,3 +89,33 @@ def goals(db: OrmSession, ws: Workspace, user_id) -> dict:
         channels["webchat"] = False  # a chat widget needs a website
     return {"conversation_goals": goals_out, "channels": channels,
             "reason": re.sub(r"\s+", " ", str(data.get("reason") or "")).strip()[:300]}
+
+
+SCRIPT_SYSTEM = """SUGGEST_SCRIPT
+Du hjælper en dansk virksomhed med at skrive manuskriptet til deres digitale receptionist (telefon og chat). Ud fra oplysningerne om virksomheden skal du foreslå:
+- greeting: telefonhilsen på 1-2 korte sætninger. Brug {virksomhed} for firmanavnet, og sig at kunden taler med en digital assistent.
+- collect: 3-6 korte punkter med det, receptionisten skal spørge om, før en medarbejder kan give tilbud eller ringe tilbage (fx "navn", "adresse", "antal kvadratmeter").
+- escalation: én sætning om hvornår en medarbejder straks skal overtage (akutte eller følsomme henvendelser for netop denne branche).
+- avoid: én sætning om hvad receptionisten ikke skal love eller udtale sig om (fx endelige priser uden besigtigelse).
+- closing: én kort, venlig afslutning.
+Skriv naturligt dansk i du-form. Svar med ét JSON-objekt og intet andet:
+{"greeting": "...", "collect": ["..."], "escalation": "...", "avoid": "...", "closing": "..."}"""
+
+
+def script(db: OrmSession, ws: Workspace, user_id) -> dict:
+    provider = get_provider()
+    c, row = log_call(db, ws, provider, user_id=user_id, purpose="setup_suggestion", system=SCRIPT_SYSTEM,
+                      messages=[{"role": "user", "content": context(db, ws)}], prompt_version=PROMPT_VERSION,
+                      revision=ws.knowledge_revision, max_tokens=1500)
+    db.commit()
+    if row.outcome == "refused":
+        raise SuggestionFailed("AI-udbyderen afviste at lave forslag.")
+    data = _json(c.text)
+
+    def one(v, n: int) -> str:
+        return re.sub(r"\s+", " ", str(v or "")).strip()[:n]
+
+    return {"greeting": one(data.get("greeting"), 300),
+            "collect": [one(x, 80) for x in (data.get("collect") or [])[:8] if one(x, 80)],
+            "escalation": one(data.get("escalation"), 500), "avoid": one(data.get("avoid"), 500),
+            "closing": one(data.get("closing"), 200)}

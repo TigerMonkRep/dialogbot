@@ -197,6 +197,34 @@ def run_schedules() -> None:
         except Exception as exc:  # noqa: BLE001 - a failing job must not stop event delivery
             db.rollback()
             log.warning("reports.failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:
+            n = sync_calendars(db)
+            if n:
+                log.info("calendars.synced", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("calendars.failed", error=f"{type(exc).__name__}: {exc}")
+
+
+def sync_calendars(db, max_age_minutes: int = 15) -> int:
+    """Refresh busy time from connected iCal calendars that are older than `max_age_minutes`."""
+    from datetime import UTC, datetime, timedelta
+
+    from sqlalchemy import or_, select
+
+    from app.models import BookingSettings
+    from app.modules.bookings.service import sync_busy
+
+    cutoff = datetime.now(UTC) - timedelta(minutes=max_age_minutes)
+    rows = db.scalars(select(BookingSettings).where(BookingSettings.busy_ics_url.is_not(None),
+                                                    or_(BookingSettings.busy_synced_at.is_(None),
+                                                        BookingSettings.busy_synced_at < cutoff))
+                      .with_for_update(skip_locked=True).limit(50)).all()
+    for s in rows:
+        sync_busy(db, s)
+    db.commit()
+    return len(rows)
 
 
 def main() -> None:

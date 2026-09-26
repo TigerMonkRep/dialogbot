@@ -12,7 +12,7 @@ type Goals = Record<string, unknown> & { product_intent: string; inbound_phone: 
 type Languages = { interface_language: string; default_conversation_language: string; enabled_conversation_languages: string[]; report_language: string };
 type Capability = { key: string; label: string; status: string; environment: string; note: string };
 
-const ROUTE: Record<string, string> = { "/onboarding/business#categories": "/onboarding/business", "/app/knowledge/catalogue": "/app/knowledge?tab=k03", "/app/knowledge/review": "/app/knowledge?tab=k05", "/app/setup/readiness": "/app/setup#checks", "/app/setup/launch": "/app/setup#checks", "/app/settings/integrations": "/app/not-yet?area=Integrationer", "/onboarding/test": "/app/not-yet?area=Pr%C3%B8veopkald", "/app/campaigns/new": "/app/not-yet?area=Kampagner" };
+const ROUTE: Record<string, string> = { "/onboarding/business#categories": "/onboarding/business", "/app/knowledge/catalogue": "/app/knowledge?tab=k03", "/app/knowledge/review": "/app/knowledge?tab=k05", "/app/setup/readiness": "/app/setup#checks", "/app/setup/launch": "/app/setup#checks", "/app/settings/integrations": "/app/bookings", "/onboarding/test": "/app/not-yet?area=Pr%C3%B8veopkald", "/app/campaigns/new": "/app/not-yet?area=Kampagner" };
 export const href = (d: string) => ROUTE[d] ?? d;
 
 const LANG: Record<string, string> = { da: "Dansk (DK)", en: "Engelsk (EN)", de: "Tysk (DE)", sv: "Svensk (SV)", no: "Norsk (NO)" };
@@ -266,10 +266,10 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
             </div>
             <div className="p-space-md rounded-lg bg-surface-container space-y-space-xs">
               <div className="flex items-center gap-space-xs font-label-md text-label-md font-bold text-primary"><Icon name="support_agent" size={18} /><span>Sidder du fast i opsætningen?</span></div>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">Kundesupport er ikke bygget endnu. Indtil da kan du springe valgfrie trin over og vende tilbage senere.</p>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">Hjælpen forklarer hvert trin og viser, hvor det gøres. Valgfrie trin kan springes over og tages senere.</p>
               <div className="pt-space-xs">
-                <Link href="/app/not-yet?area=Kundesupport" className="w-full py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm">
-                  <Icon name="phone_in_talk" size={18} className="text-secondary" /><span>Kundesupport</span>
+                <Link href="/app/help" className="w-full py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm">
+                  <Icon name="help" size={18} className="text-secondary" /><span>Åbn hjælpen</span>
                 </Link>
               </div>
             </div>

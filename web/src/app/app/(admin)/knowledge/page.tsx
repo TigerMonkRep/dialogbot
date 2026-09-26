@@ -294,17 +294,27 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
         </div>
       )}
 
-      {(tab === "r05" || (tab === "r06" && aiStatus === "not_implemented")) && (
+      {tab === "r05" && (
+        <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+          <div>
+            <h2 className="font-headline-md text-headline-md text-primary">Receptionsmanuskript</h2>
+            <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Hilsen, hvad assistenten spørger om, og hvornår en medarbejder overtager, redigeres på Reception-siden.</p>
+          </div>
+          <Link href="/app/reception" className="px-4 py-2 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg inline-flex items-center gap-space-xs self-start">Åbn manuskriptet <Icon name="arrow_forward" size={18} /></Link>
+        </div>
+      )}
+
+      {(tab === "r06" && aiStatus === "not_implemented") && (
         <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
           <div>
-            <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{tab === "r05" ? "Manuskript" : "Test"}</span>
-            <h2 className="font-headline-md text-headline-md text-primary">{tab === "r05" ? "Receptionsmanuskript & persona" : "Manuskripttest & simulation"}</h2>
+            <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Test</span>
+            <h2 className="font-headline-md text-headline-md text-primary">Manuskripttest &amp; simulation</h2>
           </div>
           <div className="p-space-lg rounded-xl bg-surface-container-low flex flex-col md:flex-row items-start gap-space-md">
             <Icon name="construction" size={28} className="text-secondary flex-shrink-0" />
             <div className="space-y-1">
               <p className="font-label-lg text-label-lg text-primary">Ikke tilgængelig endnu</p>
-              <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">{tab === "r05" ? "Manuskriptet (velkomst, introduktion, behovsafdækning, vidensgrænser og menneskelig overtagelse) kræver AI-/stemmeadapteren, som ikke er tilkoblet. Indtil da vises der intet udkast, der kunne forveksles med et aktivt manuskript." : "Testsamtaler mod assistenten kræver AI-adapteren. Når den er tilkoblet, køres testene mod den godkendte viden, og resultaterne logges pr. version."}</p>
+              <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Testsamtaler mod assistenten kræver AI-adapteren. Når den er tilkoblet, køres testene mod den godkendte viden, og resultaterne logges pr. version.</p>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Det du kan gøre nu: hold ydelser, åbningstider og faste svar godkendte under Katalog – det er det, assistenten skal bygge på.</p>
             </div>
           </div>

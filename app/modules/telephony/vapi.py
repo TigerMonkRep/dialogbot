@@ -24,8 +24,9 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
 from app.core.errors import ApiError, Unauthenticated
-from app.models import Call, Conversation, ConversationMessage, PhoneNumber, WebhookEvent, Workspace
+from app.models import Booking, Call, Conversation, ConversationMessage, Lead, PhoneNumber, WebhookEvent, Workspace
 from app.modules.ai.service import CHANNEL_INSTRUCTIONS, build_system_prompt
+from app.modules.reception import service as reception
 
 PROVIDER = "vapi"
 E164 = re.compile(r"^\+[1-9]\d{6,14}$")
@@ -121,6 +122,76 @@ def voice_preview(voice_id: str, voice_model: str, text: str) -> bytes:
     return r.content
 
 
+def booking_tools(db: OrmSession, ws: Workspace) -> list[dict]:
+    """Function tools for booking during the call – only when online booking is on and has a type."""
+    from app.modules.bookings import service as bookings
+
+    s = db.get(bookings.BookingSettings, ws.id)
+    types = bookings.active_types(db, ws.id) if s and s.enabled else []
+    if not types:
+        return []
+    names = [t.name for t in types]
+    return [
+        {"type": "function", "function": {
+            "name": "ledige_tider", "description": "Find ledige tider til en aftale. Returnerer de næste ledige tider.",
+            "parameters": {"type": "object", "properties": {
+                "type": {"type": "string", "enum": names, "description": "Hvilken slags aftale"}}}}},
+        {"type": "function", "function": {
+            "name": "book_tid", "description": "Book en af de ledige tider til kunden, når kunden har valgt tid og sagt sit navn.",
+            "parameters": {"type": "object", "required": ["start", "navn"], "properties": {
+                "start": {"type": "string", "description": "Starttidspunktet præcis som det kom fra ledige_tider"},
+                "navn": {"type": "string", "description": "Kundens navn"},
+                "type": {"type": "string", "enum": names},
+                "note": {"type": "string", "description": "Kort om hvad kunden har brug for"}}}}},
+    ]
+
+
+def tool_calls(db: OrmSession, message: dict) -> dict:
+    """Answer Vapi `tool-calls` for booking. Always returns a result per call (errors as plain text)."""
+    import json as _json
+
+    from app.modules.bookings import service as bookings
+    from app.modules.reports.service import tz_of
+
+    number = find_number(db, message)
+    calls = message.get("toolCallList") or [x.get("toolCall") for x in message.get("toolWithToolCallList") or []] or []
+    results = []
+    for tc in calls:
+        tc = tc or {}
+        fn = tc.get("function") or {}
+        name, args = fn.get("name"), fn.get("arguments") or {}
+        if isinstance(args, str):
+            try:
+                args = _json.loads(args)
+            except ValueError:
+                args = {}
+        result = "Booking er ikke tilgængelig på dette nummer. Tilbyd i stedet, at en medarbejder ringer tilbage."
+        if number is not None and number.active:
+            ws = db.get(Workspace, number.workspace_id)
+            tz = tz_of(db, ws.id)
+            types = bookings.active_types(db, ws.id)
+            bt = next((t for t in types if t.name == args.get("type")), types[0] if types else None)
+            s = db.get(bookings.BookingSettings, ws.id)
+            if bt is not None and s is not None and s.enabled:
+                if name == "ledige_tider":
+                    free = bookings.slots(db, ws, bt, tz, limit=6)
+                    result = ("Ledige tider til " + bt.name.lower() + ": " + "; ".join(f"{x['label']} (start {x['start']})" for x in free)
+                              if free else "Der er ingen ledige tider de næste dage. Tilbyd at en medarbejder ringer tilbage.")
+                elif name == "book_tid":
+                    try:
+                        b = bookings.book(db, ws, type_id=bt.id, start=str(args.get("start") or ""),
+                                          name=str(args.get("navn") or ""), phone=_dig(message, "call", "customer", "number"),
+                                          email=None, note=str(args.get("note") or ""), source="phone", tz=tz)
+                        b.provider_call_id = str(_dig(message, "call", "id") or "") or None
+                        db.commit()
+                        result = f"Booket: {bt.name} {bookings.label(b.starts_at, tz)}. Bekræft tiden over for kunden."
+                    except ApiError as e:
+                        db.rollback()
+                        result = f"Kunne ikke booke: {e.message}"
+        results.append({"toolCallId": tc.get("id"), "result": result})
+    return {"results": results}
+
+
 def voice_config(number: PhoneNumber) -> dict | None:
     """The number's own ElevenLabs voice, or None (then VAPI_VOICE_JSON or the provider default applies)."""
     if not number.voice_id:
@@ -141,12 +212,19 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
                         f"ovenfor):\n{style}")
     s = get_settings()
     assistant: dict[str, Any] = {
-        "firstMessage": (number.greeting.strip() or DEFAULT_GREETING.format(name=ws.name)),
+        "firstMessage": (number.greeting.strip() or reception.spoken_greeting(db.get(reception.ReceptionScript, ws.id), ws)
+                         or DEFAULT_GREETING.format(name=ws.name)),
         "model": {"provider": s.vapi_model_provider, "model": s.vapi_model or s.ai_model_id,
                   "messages": [{"role": "system", "content": f"{system}\n\n{phone_rules}"}]},
         "transcriber": _json_setting(s.vapi_transcriber_json) or dict(DEFAULT_TRANSCRIBER),
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id)},
     }
+    tools = booking_tools(db, ws)
+    if tools:
+        assistant["model"]["tools"] = tools
+        assistant["model"]["messages"][0]["content"] += (
+            "\n\nBooking: Du kan booke en tid til kunden. Brug værktøjet ledige_tider for at finde tider, læs højst tre "
+            "tider op ad gangen, og brug book_tid først når kunden har valgt en tid og sagt sit navn. Bekræft tiden bagefter.")
     if voice := voice_config(number):
         assistant["voice"] = voice
     elif (voice := _json_setting(s.vapi_voice_json)) is not None:
@@ -212,6 +290,14 @@ def end_of_call(db: OrmSession, message: dict) -> str:
     except IntegrityError:
         db.rollback()
         return "duplicate"
+    booked = db.scalar(select(Booking).where(Booking.workspace_id == ws_id, Booking.source == "phone",
+                                             Booking.provider_call_id == call_id)) if call_id else None
+    if booked is not None:  # the caller booked during the call: that booking's lead is the lead
+        booked.conversation_id = conv.id
+        lead = db.get(Lead, booked.lead_id) if booked.lead_id else None
+        if lead is not None and lead.conversation_id is None:
+            lead.conversation_id = conv.id
+        return "applied"
     if caller and visitor_lines:
         from app.modules.leads.service import create_lead, create_task
 

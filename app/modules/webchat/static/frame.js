@@ -12,7 +12,17 @@
     '<button type="button" class="close" aria-label="Luk chat">×</button></header>' +
     '<ol class="log" aria-live="polite" aria-label="Samtale"></ol>' +
     '<p class="notice">Du skriver med en AI-assistent. Svar kan være ufuldstændige – del ikke følsomme oplysninger.</p>' +
-    '<div class="contact-bar"><button type="button" class="contact-open">Bliv kontaktet af en medarbejder</button></div>' +
+    '<div class="contact-bar"><button type="button" class="contact-open">Bliv kontaktet af en medarbejder</button>' +
+    '<button type="button" class="book-open" hidden>Book en tid</button></div>' +
+    '<form class="book" hidden novalidate><strong>Book en tid</strong>' +
+    '<label>Hvad drejer det sig om?<select name="type"></select></label>' +
+    '<label>Tidspunkt<select name="start" required></select></label>' +
+    '<label>Navn<input name="name" autocomplete="name" maxlength="200" required></label>' +
+    '<label>Telefon<input name="phone" type="tel" autocomplete="tel" maxlength="40"></label>' +
+    '<label>E-mail<input name="email" type="email" autocomplete="email" maxlength="320"></label>' +
+    '<label class="check"><input name="consent" type="checkbox" required> Virksomheden må kontakte mig om aftalen.</label>' +
+    '<p class="err" role="alert" hidden></p>' +
+    '<div class="row"><button type="button" class="book-cancel">Annullér</button><button type="submit">Book</button></div></form>' +
     '<form class="contact" hidden novalidate><strong>Bliv kontaktet</strong>' +
     '<label>Navn<input name="name" autocomplete="name" maxlength="200" required></label>' +
     '<label>E-mail<input name="email" type="email" autocomplete="email" maxlength="320"></label>' +
@@ -24,9 +34,11 @@
     '<form><label for="msg" class="sr">Din besked</label><textarea id="msg" rows="2" maxlength="' + cfg.maxChars +
     '" placeholder="Skriv din besked…"></textarea><button type="submit">Send</button></form>';
   var log = app.querySelector(".log");
-  var form = app.querySelector("form:not(.contact)");
+  var form = app.querySelector("form:not(.contact):not(.book)");
   var contactForm = app.querySelector("form.contact");
   var contactBar = app.querySelector(".contact-bar");
+  var bookForm = app.querySelector("form.book");
+  var bookOpen = app.querySelector(".book-open");
   var input = app.querySelector("textarea");
   var send = form.querySelector("button");
   app.querySelector(".close").addEventListener("click", function () {
@@ -105,6 +117,41 @@
         bubble("system-ok", "Tak, " + body.name + "! Virksomheden kontakter dig hurtigst muligt.");
       })
       .catch(function (x) { err.textContent = x.status === 422 ? "Tjek e-mail og telefonnummer." : (x.message || "Det lykkedes ikke. Prøv igen."); err.hidden = false; });
+  });
+
+  // Online booking: shown only when the business has it switched on.
+  function fillSlots(j) {
+    var types = bookForm.elements.type, starts = bookForm.elements.start;
+    if (!types.options.length) j.types.forEach(function (t) { var o = document.createElement("option"); o.value = t.id; o.textContent = t.name; types.appendChild(o); });
+    types.value = j.type_id; starts.innerHTML = "";
+    if (!j.slots.length) { var o = document.createElement("option"); o.value = ""; o.textContent = "Ingen ledige tider lige nu"; starts.appendChild(o); }
+    j.slots.forEach(function (x) { var o = document.createElement("option"); o.value = x.start; o.textContent = x.label; starts.appendChild(o); });
+  }
+  api("GET", "/booking").then(function (j) { if (j.enabled) { bookOpen.hidden = false; fillSlots(j); } }).catch(function () {});
+  bookOpen.addEventListener("click", function () {
+    bookForm.hidden = false; contactBar.hidden = true; bookForm.elements.type.focus();
+  });
+  bookForm.elements.type.addEventListener("change", function () {
+    api("GET", "/booking?type_id=" + encodeURIComponent(bookForm.elements.type.value)).then(fillSlots).catch(function () {});
+  });
+  bookForm.querySelector(".book-cancel").addEventListener("click", function () { bookForm.hidden = true; contactBar.hidden = false; });
+  bookForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var f = bookForm.elements, err = bookForm.querySelector(".err");
+    var body = { type_id: f.type.value, start: f.start.value, name: f.name.value.trim(), email: f.email.value.trim() || null,
+                 phone: f.phone.value.trim() || null, note: "", consent: f.consent.checked };
+    var problem = !body.start ? "Vælg et tidspunkt." : !body.name ? "Skriv dit navn." : (!body.email && !body.phone) ? "Skriv telefon eller e-mail."
+      : !body.consent ? "Sæt flueben, så virksomheden må kontakte dig om aftalen." : "";
+    if (problem) { err.textContent = problem; err.hidden = false; return; }
+    err.hidden = true;
+    ensureConversation()
+      .then(function (s) { return api("POST", "/conversations/" + s.id + "/booking", body); })
+      .then(function (j) { bookForm.hidden = true; bubble("system-ok", "Tak, " + body.name + "! Du er booket " + j.label + "."); })
+      .catch(function (x) {
+        err.textContent = x.code === "slot_taken" ? "Tiden blev lige taget – vælg en anden." : x.status === 422 ? "Tjek telefon og e-mail." : (x.message || "Det lykkedes ikke. Prøv igen.");
+        err.hidden = false;
+        if (x.code === "slot_taken") bookForm.elements.type.dispatchEvent(new Event("change"));
+      });
   });
 
   function disable(text) {

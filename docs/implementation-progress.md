@@ -2,6 +2,30 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 22 — 26. september 2026 (Bookinger og kalender)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `booking_settings`, `booking_types`, `bookings` (Alembic `06fa18c2fcfa`). Ledige tider beregnes KUN ud fra godkendt viden af typen `opening_hours` (samme kilde som assistenten), minus bekræftede bookinger (+ pause), optaget tid fra kalenderen, "tidligst"/"højst" frem. Samtidige bookinger serialiseres med rækkelås; en taget tid giver 409 `slot_taken` | testet | `tests/test_bookings.py` |
+| Booking (manuel, webchat, telefon) opretter en henvendelse og en opgave med frist på tidspunktet; aflysning frigiver tiden | testet, E2E | samme, rejse 21 |
+| Kalender uden OAuth-app: ejerens hemmelige iCal-adresse (Google/Outlook) læses hvert 15. min i workeren (kun start/slut gemmes, gennemsigtige/aflyste begivenheder ignoreres, gentagelser udfoldes, SSRF-sikret); bookingerne udgives som et hemmeligt iCal-feed `/api/v1/public/calendar/{token}.ics`, som ejeren abonnerer på | testet med stub | `test_calendar_busy_time_blocks_slots`, `test_webchat_booking_and_feed` |
+| Webchat-widget: "Book en tid" (type → ledig tid → navn/telefon → bekræftelse) | testet | `test_webchat_booking_and_feed` |
+| Telefon: Vapi-værktøjerne `ledige_tider` og `book_tid` (webhook `tool-calls`), kun når booking er slået til; end-of-call knyttes til bookingens henvendelse i stedet for at lave en ny | testet | `test_phone_booking_tools` |
+| `/app/bookings`: kommende aftaler, book for en kunde, bookingtyper, indstillinger, kalenderforbindelse og feed-adresse; guidens kalendertrin tjekkes for alvor | implementeret, E2E | rejse 21 |
+
+**Ikke eksternt verificeret:** Google/Outlooks opdateringsinterval for abonnerede kalendere (typisk 8–24 timer hos Google) og Vapis værktøjskald mod en rigtig samtale.
+
+## Checkpoint 21 — 26. september 2026 (Reception, Overblik, Notifikationer, Hjælp)
+
+| Del | Status | Bevis |
+|---|---|---|
+| Receptionsmanuskript (`reception_scripts`, Alembic `299f641c5b3f`): navn, du/De, telefonhilsen, hvad der spørges om, eskalering, hvad der ikke må loves, afslutning. Ejer/admin redigerer (versioneret, auditlogget); indgår i systemprompten for chat og telefon uden at kunne ændre fakta; telefonhilsenen får altid AI-oplysning | testet | `tests/test_reception_script.py` |
+| AI-forslag til manuskriptet (`POST …/reception/script/suggestions`); udfyldes automatisk, når manuskriptet er tomt | testet, E2E | rejse 19 |
+| `/app/reception`: kanalstatus (telefon/stemme, webchat), 7-dages tal, manuskript, link til test | implementeret, E2E | rejse 19 |
+| `GET …/overview` og `/app/overview`: KPI'er (nye/åbne henvendelser, opgaver/overskredne, ventende chats, opkald, kladder), opsætningsfremdrift og seneste aktivitet | testet, E2E | `tests/test_overview_notifications.py`, rejse 20 |
+| Notifikationer udledt af rigtige hændelser (henvendelser, opkald, opgaver, ventende chats, kladder til godkendelse, hjemmesideimport), rollefiltreret; ulæst-tæller på klokken; `notification_reads` (Alembic `5c59c508ecf8`) | testet, E2E | samme |
+| `/app/help`: svar på de typiske spørgsmål med links til, hvor det gøres | implementeret, E2E | rejse 20 |
+
 ## Checkpoint 20 — 26. september 2026 (slet viden, guide videre fra Viden)
 
 | Del | Status | Bevis |

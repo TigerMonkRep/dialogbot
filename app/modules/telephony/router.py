@@ -64,17 +64,33 @@ class NumberIn(BaseModel):
     provider_number_id: str | None = Field(default=None, max_length=100)
     label: str = Field(default="", max_length=100)
     greeting: str = Field(default="", max_length=500)
+    voice_id: str = Field(default="", max_length=64)
+    voice_model: str = Field(default=vapi.VOICE_MODELS[0], max_length=40)
+    speaking_style: str = Field(default="", max_length=1000)
 
 
 class NumberPatch(BaseModel):
     active: bool | None = None
     label: str | None = Field(default=None, max_length=100)
     greeting: str | None = Field(default=None, max_length=500)
+    voice_id: str | None = Field(default=None, max_length=64)
+    voice_model: str | None = Field(default=None, max_length=40)
+    speaking_style: str | None = Field(default=None, max_length=1000)
+
+
+def _check_voice(voice_id: str | None, voice_model: str | None) -> None:
+    if voice_id and not vapi.VOICE_ID.match(voice_id.strip()):
+        raise ValidationFailed("Stemme-id'et skal være ElevenLabs' id (kun bogstaver og tal), fx fra stemmebiblioteket",
+                               field_errors=[{"field": "voice_id"}])
+    if voice_model is not None and voice_model not in vapi.VOICE_MODELS:
+        raise ValidationFailed("Ukendt stemmemodel", field_errors=[{"field": "voice_model"}])
 
 
 def number_out(n: PhoneNumber) -> dict:
     return {"id": str(n.id), "e164": n.e164, "provider": n.provider, "provider_number_id": n.provider_number_id,
-            "label": n.label, "active": n.active, "greeting": n.greeting, "created_at": n.created_at.isoformat()}
+            "label": n.label, "active": n.active, "greeting": n.greeting, "voice_id": n.voice_id,
+            "voice_model": n.voice_model, "speaking_style": n.speaking_style, "voice": vapi.voice_config(n),
+            "created_at": n.created_at.isoformat()}
 
 
 @router.get("/phone-numbers")
@@ -91,12 +107,14 @@ def list_numbers(ctx: WorkspaceContext = Depends(require_capability("telephony.r
 def add_number(body: NumberIn, request: Request, ctx: WorkspaceContext = Depends(require_capability("telephony.manage")),
                db: OrmSession = Depends(get_db)):
     e164 = vapi.normalize_e164(body.e164)
+    _check_voice(body.voice_id, body.voice_model)
     if not vapi.E164.match(e164):
         raise ValidationFailed("Nummeret skal være i internationalt format, fx +4570123456",
                                field_errors=[{"field": "e164"}])
     n = PhoneNumber(workspace_id=ctx.workspace.id, e164=e164, provider="vapi",
                     provider_number_id=(body.provider_number_id or "").strip() or None, label=body.label.strip(),
-                    greeting=body.greeting.strip())
+                    greeting=body.greeting.strip(), voice_id=body.voice_id.strip(), voice_model=body.voice_model,
+                    speaking_style=body.speaking_style.strip())
     db.add(n)
     try:
         db.flush()
@@ -114,6 +132,7 @@ def add_number(body: NumberIn, request: Request, ctx: WorkspaceContext = Depends
 def update_number(number_id: uuid.UUID, body: NumberPatch, request: Request,
                   ctx: WorkspaceContext = Depends(require_capability("telephony.manage")), db: OrmSession = Depends(get_db)):
     n = get_scoped(db, PhoneNumber, number_id, ctx.workspace.id)
+    _check_voice(body.voice_id, body.voice_model)
     before = number_out(n)
     for k, v in body.model_dump(exclude_unset=True).items():
         if v is not None:

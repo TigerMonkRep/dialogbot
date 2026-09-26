@@ -29,7 +29,7 @@ def capabilities() -> list[Capability]:
     email_status: CapabilityStatus = "simulated" if s.email_adapter == "simulated" else "available"
     ai_status: CapabilityStatus = {"anthropic": "available", "fake": "simulated"}.get(s.ai_provider, "not_implemented")
     ai_note = {
-        "anthropic": f"Anthropic ({s.ai_model_id}). Svarer kun ud fra godkendt viden; kun til intern test – ingen kundekanal er koblet på.",
+        "anthropic": f"Anthropic ({s.ai_model_id}). Svarer kun ud fra godkendt viden.",
         "fake": "Testdobbelt uden rigtig model.",
     }.get(s.ai_provider, "Ingen AI-udbyder er konfigureret (AI_PROVIDER=none).")
     return [
@@ -47,8 +47,11 @@ def capabilities() -> list[Capability]:
         Capability("payment", "Kortbetaling", "not_implemented", s.app_env, "Planlagt til etape 4."),
         Capability("ai.assistant_preview", "AI-assistent: intern forhåndsvisning", ai_status, s.app_env,
                    ai_note),
-        Capability("ai.conversation", "AI-samtale / stemmemodel", "not_implemented", s.app_env,
-                   "Planlagt til etape 2. Assistenten læser kun godkendt viden via API'et."),
+        Capability("ai.conversation", "AI-samtale med kunder", ai_status, s.app_env,
+                   ("Kunderne taler med assistenten i web-widgetten"
+                    + (" og i telefonen (Vapi, dansk transskribering)" if s.vapi_server_secret else "")
+                    + ". Svarer kun ud fra godkendt viden.")
+                   if ai_status != "not_implemented" else "Kræver en AI-udbyder (AI_PROVIDER)."),
         Capability("knowledge.source_import", "Kildeimport / udtræk / embeddings", "not_implemented", s.app_env,
                    "Planlagt senere. Der vises ingen fiktive udtræk."),
         Capability("webchat", "Web-widget", ai_status, s.app_env,

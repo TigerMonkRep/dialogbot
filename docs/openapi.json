@@ -974,6 +974,24 @@
               }
             ],
             "title": "Provider Number Id"
+          },
+          "speaking_style": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Speaking Style",
+            "type": "string"
+          },
+          "voice_id": {
+            "default": "",
+            "maxLength": 64,
+            "title": "Voice Id",
+            "type": "string"
+          },
+          "voice_model": {
+            "default": "eleven_multilingual_v2",
+            "maxLength": 40,
+            "title": "Voice Model",
+            "type": "string"
           }
         },
         "required": [
@@ -1018,6 +1036,42 @@
               }
             ],
             "title": "Label"
+          },
+          "speaking_style": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speaking Style"
+          },
+          "voice_id": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Id"
+          },
+          "voice_model": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Model"
           }
         },
         "title": "NumberPatch",

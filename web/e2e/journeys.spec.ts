@@ -373,12 +373,22 @@ test("14 · S03: ejer tilknytter nummer, et opkald rapporteres af Vapi og bliver
   await page.getByLabel("Navn", { exact: true }).fill("Hovednummer");
   await page.getByRole("button", { name: "Tilknyt nummer" }).click();
   await expect(page.getByText(number)).toBeVisible();
+  await expect(page.getByText("Ingen stemme valgt")).toBeVisible();
+  await page.getByRole("button", { name: "Stemme og talestil" }).click();
+  await page.getByLabel("ElevenLabs Voice ID").fill("DaNskStemme12345678");
+  await page.getByLabel("Talestil (valgfri)").fill("Lun og jordnær, gerne et par jyske vendinger.");
+  await page.getByRole("button", { name: "Gem stemme" }).click();
+  await expect(page.getByText("Dansk stemme valgt")).toBeVisible();
   await shot(page, info, "s03-telefoni");
 
   const api = process.env.API_BASE_URL ?? "http://localhost:8000";
   const auth = { authorization: `Bearer ${process.env.VAPI_SERVER_SECRET ?? "e2e-only-vapi-secret-0123456789"}` };
   const req = await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: { type: "assistant-request", call: { id: "x", phoneNumberId: vapiId } } } });
-  expect((await req.json()).assistant.model.messages[0].content).toContain("Gulvafslibning");
+  const assistant = (await req.json()).assistant;
+  expect(assistant.model.messages[0].content).toContain("Gulvafslibning");
+  expect(assistant.model.messages[0].content).toContain("jyske vendinger");
+  expect(assistant.voice).toEqual({ provider: "11labs", voiceId: "DaNskStemme12345678", model: "eleven_multilingual_v2" });
+  expect(assistant.transcriber.language).toBe("da");
   const report = await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: {
     type: "end-of-call-report", endedReason: "customer-ended-call", analysis: { summary: "Vil have tilbud på afslibning." },
     call: { id: `call_${vapiId}`, phoneNumberId: vapiId, customer: { number: "+4520304050" }, startedAt: "2026-09-24T08:00:00Z", endedAt: "2026-09-24T08:01:05Z" },

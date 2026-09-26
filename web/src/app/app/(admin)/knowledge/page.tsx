@@ -3,21 +3,22 @@ import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
 import { AssistantPreview, usd } from "./assistant";
+import { WebsiteImport, type SourceImport } from "./import";
 import { AddPanel, ApproveNewButton, ItemCard, KeepButton, NewItemForm, VersionActions } from "./client";
 import { KIND_LABEL, dateDa, kr, summarize } from "./format";
 
-export type Version = { id: string; item_id: string; version_no: number; status: string; title: string; content: Record<string, unknown>; edit_version: number; submitted_at: string | null };
+export type Version = { id: string; item_id: string; version_no: number; status: string; title: string; content: Record<string, unknown>; edit_version: number; submitted_at: string | null; source_type?: string };
 type Capability = { key: string; status: "available" | "simulated" | "not_implemented" };
 type Usage = { days: number; totals: { calls: number; input_tokens: number; output_tokens: number; cache_creation_input_tokens: number; cache_read_input_tokens: number; est_cost_usd_micros: number } };
 export type Item = { id: string; kind: string; key: string; approved_version: Version | null; open_draft: Version | null };
 
 const TABS: [string, string, string, string][] = [
-  ["k01", "Kilder & URL-crawler (K01–K02)", "Kilder", "cloud_sync"],
-  ["k03", "Ydelseskatalog & priser (K03)", "Katalog", "sell"],
-  ["k04", "Aktive tilbud (K04)", "Tilbud", "percent"],
-  ["k05", "Gennemgang & godkendelse (K05)", "Gennemgang", "rule"],
-  ["r05", "Receptionsmanuskript (R05)", "Manuskript", "support_agent"],
-  ["r06", "Manuskripttest (R06)", "Test", "play_circle"],
+  ["k01", "Kilder & URL-crawler", "Kilder", "cloud_sync"],
+  ["k03", "Ydelseskatalog & priser", "Katalog", "sell"],
+  ["k04", "Aktive tilbud", "Tilbud", "percent"],
+  ["k05", "Gennemgang & godkendelse", "Gennemgang", "rule"],
+  ["r05", "Receptionsmanuskript", "Manuskript", "support_agent"],
+  ["r06", "Manuskripttest", "Test", "play_circle"],
 ];
 const OTHER_KINDS = ["opening_hours", "coverage_area", "fact", "known_answer", "unknown_answer"];
 
@@ -26,13 +27,16 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
   const { tab = "k03" } = await searchParams;
   const ws = await requireWorkspace();
   const canApprove = ws.role === "owner" || ws.role === "admin";
-  const [items, queue, active, caps, usage] = await Promise.all([
+  const [items, queue, active, caps, usage, profile, latest] = await Promise.all([
     backend<{ items: Item[]; total: number }>(`/workspaces/${ws.id}/knowledge/items?limit=200`),
     backend<Version[]>(`/workspaces/${ws.id}/knowledge/review-queue`),
     backend<{ knowledge_revision: number; items: unknown[] }>(`/workspaces/${ws.id}/assistant/knowledge`),
-    tab === "r06" ? backend<{ items: Capability[] }>("/integrations/capabilities") : Promise.resolve({ items: [] as Capability[] }),
+    backend<{ items: Capability[] }>("/integrations/capabilities"),
     tab === "r06" && canApprove ? backend<Usage>(`/workspaces/${ws.id}/ai/usage?days=30`) : Promise.resolve(null),
+    backend<{ website_url: string | null }>(`/workspaces/${ws.id}/profile`).catch(() => ({ website_url: null })),
+    backend<{ import: SourceImport | null }>(`/workspaces/${ws.id}/knowledge/imports/latest`),
   ]);
+  const importReady = caps.items.find((c) => c.key === "knowledge.source_import")?.status !== "not_implemented";
   const aiStatus = caps.items.find((c) => c.key === "ai.assistant_preview")?.status ?? "not_implemented";
   const canDraft = ws.role !== "reader";
   const all = items.items;
@@ -76,7 +80,7 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
             <div className="w-10 h-10 rounded-xl bg-error text-on-error flex items-center justify-center shrink-0"><Icon name="pending_actions" size={22} /></div>
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-space-sm">
-                <span className="font-label-lg text-label-lg text-on-error-container font-bold">Ændringer afventer godkendelse (K05)</span>
+                <span className="font-label-lg text-label-lg text-on-error-container font-bold">Ændringer afventer godkendelse</span>
                 <span className="px-space-xs py-0.5 rounded-md bg-error text-on-error font-label-sm text-[10px] uppercase font-bold tracking-wider">{drafts.length} handling påkrævet</span>
               </div>
               <p className="font-body-sm text-body-sm text-on-surface mt-0.5">Kladder bliver først aktiv viden, når en ejer eller administrator har godkendt dem. Den aktive version bruges uændret indtil da.</p>
@@ -104,27 +108,28 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
 
       {tab === "k01" && (
         <div className="flex flex-col gap-space-lg">
+          {canDraft && <WebsiteImport wsId={ws.id} defaultUrl={profile.website_url ?? ""} initial={latest.import} aiReady={importReady} />}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-space-lg">
             <div className="lg:col-span-2 bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
               <div className="flex items-start justify-between gap-space-md">
                 <div>
                   <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Godkendt vidensbase</span>
                   <h2 className="font-headline-sm text-headline-sm md:font-headline-md md:text-headline-md text-primary">Aktive forretningskilder<span className="hidden md:inline"> for {ws.name}</span></h2>
-                  <p className="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-xl">Assistenten bruger udelukkende godkendt viden. I dag indtastes al viden manuelt; automatisk udtræk fra hjemmeside og dokumenter er ikke bygget endnu.</p>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-xl">Assistenten bruger udelukkende godkendt viden. Hent forslag fra jeres hjemmeside herunder, eller indtast viden manuelt. Upload af dokumenter er ikke bygget endnu.</p>
                 </div>
-                <span className="px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold flex-shrink-0">Kun manuel</span>
+                <span className="px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold flex-shrink-0">{latest.import?.status === "done" ? "Hjemmeside + manuel" : "Manuel"}</span>
               </div>
               <div className="grid grid-cols-3 gap-space-xs md:gap-space-sm p-space-sm md:p-space-md rounded-xl bg-surface-container-low">
                 <Stat label="Godkendte emner" value={String(active.items.length)} sub={`Revision ${active.knowledge_revision}`} />
                 <Stat label="Åbne kladder" value={String(drafts.length)} sub="Påvirker ikke aktiv viden" />
-                <Stat label="Eksterne kilder" value="0" sub="Kildeimport ikke bygget" />
+                <Stat label="Sider læst" value={String(latest.import?.pages.length ?? 0)} sub={latest.import?.finished_at ? `Seneste import ${dateDa(latest.import.finished_at.slice(0, 10))}` : "Ingen import endnu"} />
               </div>
             </div>
             <div className="bg-gradient-to-br from-primary-container to-primary text-on-primary rounded-xl p-space-md md:p-space-lg shadow-md flex flex-col justify-between gap-space-md">
               <div>
                 <div className="w-10 h-10 rounded-lg bg-surface-container-lowest/15 flex items-center justify-center mb-space-sm"><Icon name="note_add" size={22} className="text-secondary-fixed" /></div>
                 <h3 className="font-headline-sm text-headline-sm">Udvid assistentens viden</h3>
-                <p className="font-body-sm text-body-sm text-primary-fixed-dim mt-1">Tilføj ydelser, priser, åbningstider og faste svar manuelt. Upload af PDF og URL-crawler kommer senere.</p>
+                <p className="font-body-sm text-body-sm text-primary-fixed-dim mt-1">Tilføj ydelser, priser, åbningstider og faste svar manuelt. Upload af PDF kommer senere.</p>
               </div>
               <Link href="/app/knowledge?tab=k03" className="w-full py-2.5 rounded-xl bg-secondary-fixed text-on-secondary-fixed font-label-lg text-label-lg font-bold flex items-center justify-center gap-space-xs hover:brightness-105"><Icon name="add_circle" size={20} />Tilføj viden manuelt</Link>
             </div>
@@ -156,7 +161,8 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
             </div>
             {canDraft && <AddPanel wsId={ws.id} kinds={["service", ...OTHER_KINDS]} label="Tilføj viden" />}
           </div>
-          {services.length === 0 && <Empty text="Ingen ydelser endnu. Tilføj mindst én – assistenten kan ikke svare på priser uden." />}
+          {canDraft && (services.length === 0 || all.some((i) => i.open_draft?.source_type === "extraction")) && <WebsiteImport wsId={ws.id} defaultUrl={profile.website_url ?? ""} initial={latest.import} aiReady={importReady} compact={services.length > 0} />}
+          {services.length === 0 && <Empty text="Ingen ydelser endnu. Hent forslag fra hjemmesiden ovenfor, eller tilføj dem manuelt – assistenten kan ikke svare på priser uden." />}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-space-lg">
             {services.map((i) => <ItemCard key={`${i.id}-${i.open_draft?.edit_version ?? i.approved_version?.version_no}`} wsId={ws.id} item={i} canDraft={canDraft} canApprove={canApprove} />)}
           </div>
@@ -174,7 +180,7 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-space-md">
             <div>
               <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kampagne- &amp; tilbudseditor</span>
-              <h2 className="font-headline-md text-headline-md text-primary">Automatiserede tilbudsregler (K04)</h2>
+              <h2 className="font-headline-md text-headline-md text-primary">Automatiserede tilbudsregler</h2>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Et tilbud gælder ved mindst (≥) tærsklen og inden for datoerne – slutdatoen er inklusive. Kun den godkendte version evalueres.</p>
             </div>
             {canDraft && <AddPanel wsId={ws.id} kinds={["offer"]} label="Opret ny tilbudsregel" />}
@@ -257,7 +263,7 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
               </div>
             );
           })}
-          {drafts.length === 0 && <Empty text="Alt er godkendt. Nye kladder fra K03 og K04 vises her." />}
+          {drafts.length === 0 && <Empty text="Alt er godkendt. Nye kladder fra Katalog og Tilbud vises her." />}
           {queue.filter((q) => !byId.get(q.item_id)?.open_draft).length > 0 && <p className="font-body-sm text-body-sm text-on-surface-variant">Enkelte versioner i køen hører til emner, du ikke kan se.</p>}
         </div>
       )}
@@ -266,12 +272,12 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
         <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm">
             <div>
-              <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">R06</span>
+              <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Test</span>
               <h2 className="font-headline-md text-headline-md text-primary">Test assistenten</h2>
             </div>
             {usage && <p className="font-body-sm text-body-sm text-on-surface-variant">Seneste {usage.days} dage: {usage.totals.calls} kald · {usage.totals.input_tokens + usage.totals.cache_creation_input_tokens + usage.totals.cache_read_input_tokens} ind / {usage.totals.output_tokens} ud tokens · {usd(usage.totals.est_cost_usd_micros)}</p>}
           </div>
-          {active.items.length === 0 ? <Empty text="Der er ingen godkendt viden endnu. Godkend mindst ét emne under K03/K05, før assistenten kan testes." />
+          {active.items.length === 0 ? <Empty text="Der er ingen godkendt viden endnu. Godkend mindst ét emne under Katalog og Gennemgang, før assistenten kan testes." />
             : !canDraft ? <Empty text="Test af assistenten kræver rollen medarbejder eller højere." />
             : <AssistantPreview wsId={ws.id} simulated={aiStatus === "simulated"} />}
         </div>
@@ -280,7 +286,7 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
       {(tab === "r05" || (tab === "r06" && aiStatus === "not_implemented")) && (
         <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
           <div>
-            <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{tab === "r05" ? "R05" : "R06"}</span>
+            <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{tab === "r05" ? "Manuskript" : "Test"}</span>
             <h2 className="font-headline-md text-headline-md text-primary">{tab === "r05" ? "Receptionsmanuskript & persona" : "Manuskripttest & simulation"}</h2>
           </div>
           <div className="p-space-lg rounded-xl bg-surface-container-low flex flex-col md:flex-row items-start gap-space-md">
@@ -288,7 +294,7 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
             <div className="space-y-1">
               <p className="font-label-lg text-label-lg text-primary">Ikke tilgængelig endnu</p>
               <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">{tab === "r05" ? "Manuskriptet (velkomst, introduktion, behovsafdækning, vidensgrænser og menneskelig overtagelse) kræver AI-/stemmeadapteren, som ikke er tilkoblet. Indtil da vises der intet udkast, der kunne forveksles med et aktivt manuskript." : "Testsamtaler mod assistenten kræver AI-adapteren. Når den er tilkoblet, køres testene mod den godkendte viden, og resultaterne logges pr. version."}</p>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">Det du kan gøre nu: hold ydelser, åbningstider og faste svar godkendte under K03 – det er det, assistenten skal bygge på.</p>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">Det du kan gøre nu: hold ydelser, åbningstider og faste svar godkendte under Katalog – det er det, assistenten skal bygge på.</p>
             </div>
           </div>
         </div>

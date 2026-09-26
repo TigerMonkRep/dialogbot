@@ -183,3 +183,34 @@ def test_setup_checks_need_a_real_call(client, api, two_workspaces, configured):
     _post(client, _report())
     r = api.post(t["tok_a"], f"{base}/telephony.forwarding/run").json()
     assert r["status"] == "passed" and r["evidence"]["active_numbers"] == [NUMBER]
+
+
+def test_voice_preview(api, two_workspaces, configured, monkeypatch):
+    import httpx
+
+    t = two_workspaces
+    n = _setup(api, t)
+    url = f"/workspaces/{t['ws_a']}/phone-numbers/{n['id']}/voice-preview"
+    monkeypatch.delenv("ELEVENLABS_API_KEY", raising=False)
+    get_settings.cache_clear()
+    assert api.post(t["tok_a"], url, {"voice_id": "AbCdEf1234567890"}).json()["code"] == "voice_preview_not_configured"
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "el-test-key")
+    get_settings.cache_clear()
+    seen = {}
+
+    def fake_post(u, **kw):
+        seen.update(url=u, **kw)
+        return httpx.Response(200, content=b"ID3-mp3", request=httpx.Request("POST", u))
+
+    monkeypatch.setattr(httpx, "post", fake_post)
+    assert api.post(t["tok_a"], url, {}).status_code == 422  # no voice chosen yet
+    assert api.post(t["tok_a"], url, {"voice_id": "bad id"}).status_code == 422
+    r = api.post(t["tok_a"], url, {"voice_id": "AbCdEf1234567890", "voice_model": "eleven_flash_v2_5"})
+    assert r.status_code == 200 and r.headers["content-type"] == "audio/mpeg" and r.content == b"ID3-mp3"
+    assert seen["url"].endswith("/v1/text-to-speech/AbCdEf1234567890") and seen["headers"]["xi-api-key"] == "el-test-key"
+    assert seen["json"]["model_id"] == "eleven_flash_v2_5" and "Fjord Gulvservice" in seen["json"]["text"]
+    staff = api.add_member(t["tok_a"], t["ws_a"], "staff3@testmail.dk", "staff")
+    assert api.post(staff, url, {"voice_id": "AbCdEf1234567890"}).status_code == 403
+    monkeypatch.setattr(httpx, "post", lambda u, **kw: httpx.Response(401, request=httpx.Request("POST", u)))
+    assert api.post(t["tok_a"], url, {"voice_id": "AbCdEf1234567890"}).json()["code"] == "voice_preview_failed"
+    get_settings.cache_clear()

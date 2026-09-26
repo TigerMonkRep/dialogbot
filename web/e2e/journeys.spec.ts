@@ -377,6 +377,8 @@ test("14 · S03: ejer tilknytter nummer, et opkald rapporteres af Vapi og bliver
   await page.getByRole("button", { name: "Stemme og talestil" }).click();
   await page.getByLabel("ElevenLabs Voice ID").fill("DaNskStemme12345678");
   await page.getByLabel("Talestil (valgfri)").fill("Lun og jordnær, gerne et par jyske vendinger.");
+  await page.getByRole("button", { name: "Hør stemmen" }).click();  // no ELEVENLABS_API_KEY in CI: honest notice, no fake audio
+  await expect(page.getByText(/kræver en ElevenLabs-nøgle/)).toBeVisible();
   await page.getByRole("button", { name: "Gem stemme" }).click();
   await expect(page.getByText("Dansk stemme valgt")).toBeVisible();
   await shot(page, info, "s03-telefoni");
@@ -485,4 +487,24 @@ test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation
   await page.getByRole("link", { name: /Aktive tilbud|Tilbud/ }).focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/tab=k04/);
+});
+
+test("17 · Viden: forslag fra hjemmesiden bliver til kladder med tekst og uden gættede priser", async ({ page }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  servers.push(await serve(4000, `<!doctype html><html lang="da"><head><title>Fjord Gulv</title></head><body>
+    <h1>Fjord Gulv</h1><p>Vi sliber og behandler trægulve i hele Østjylland.</p>
+    <h2>Gulvafslibning</h2><p>Afslibning med støvfrit anlæg. Fra 145 kr. pr. m² inkl. moms.</p>
+    <h2>Lakering</h2><p>Tre lag slidstærk lak.</p></body></html>`));
+  await page.goto("/app/knowledge?tab=k03");
+  await expect(page.getByRole("heading", { name: "Hent forslag fra hjemmesiden" })).toBeVisible();
+  await page.getByLabel("Hjemmesidens adresse").fill("http://127.0.0.1:4000/");
+  await page.getByRole("button", { name: "Hent forslag" }).click();
+  await expect(page.getByText("3 forslag oprettet som kladder")).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText("Ydelse: Gulvafslibning")).toBeVisible();
+  await page.goto("/app/knowledge?tab=k03");
+  await expect(page.getByText(/Hjemmesiden nævner prisen/).first()).toBeVisible();
+  await shot(page, info, "k03-forslag-fra-hjemmeside");
+  // Nothing is live before approval.
+  const live = await (await page.request.get(`/api/backend/workspaces/${wsId}/assistant/knowledge`)).json();
+  expect(live.items).toEqual([]);
 });

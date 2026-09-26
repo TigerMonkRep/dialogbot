@@ -4,7 +4,7 @@ import { IndustrySwitcher } from "./industries";
 
 /** P01 — front page (Stitch "p01_dialogbot_forside", desktop + mobile).
  *  Honesty: a preview banner says what is not built yet; conversations are labelled as examples; no invented
- *  company facts, metrics or links to pages that do not exist. Product intent is carried into signup (A01). */
+ *  company facts, metrics or links to pages that do not exist. Product intent is carried into signup. */
 export default function Home() {
   const transcript: [boolean, string][] = [
     [true, "Jeg vil gerne have et tilbud på gulvafslibning."],

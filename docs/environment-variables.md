@@ -28,6 +28,7 @@
 | `VAPI_SERVER_SECRET` | ved telefoni | API | Vælges af jer; samme værdi som Bearer-legitimationen på nummerets Server URL i Vapi | Uden den svarer `POST /api/v1/webhooks/vapi` 503, og `telephony.inbound` er `not_implemented`. |
 | `VAPI_MODEL_PROVIDER` | nej | API | — | Standard `anthropic`. Verificér, at Vapi understøtter den valgte model. |
 | `VAPI_VOICE_JSON` / `VAPI_TRANSCRIBER_JSON` | nej | API | Vapi-dashboardet | Valgfri JSON-objekter, der sendes uændret som `voice`/`transcriber`. Transskribering er som standard dansk (Deepgram Nova-3, `da`). Stemmen vælges normalt pr. nummer under Indstillinger → Telefoni; `VAPI_VOICE_JSON` bruges kun for numre uden egen stemme. |
+| `ELEVENLABS_API_KEY` | nej | API | ElevenLabs → Developers → API Keys (begræns til Text to Speech) | Kun til knappen "Hør stemmen" under Indstillinger → Telefoni. Uden den svarer stemmeprøven 501; opkald virker stadig (Vapi bruger sin egen ElevenLabs-forbindelse). **Server-only.** |
 | `VAPI_MODEL` | nej | API | — | Sprogmodellen i telefonsamtaler (standard `AI_MODEL_ID`). Telefoni kræver hurtige svar; vælg en model, som Vapi understøtter, og mål latenstiden ved prøveopkald. |
 | `EMAIL_FROM` | ved resend | worker | Verificeret afsenderdomæne i Resend | `Dialogbot <noreply@mail.<domæne>>` |
 | `PUBLIC_BASE_URL` | ja | API | Render-URL | Bruges i OpenAPI/links. |

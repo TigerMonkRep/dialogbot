@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { api, fieldError } from "@/lib/client";
+import { api, apiBlob, fieldError } from "@/lib/client";
 import { Alert, Button, ErrorBox, inputCls, useSubmit } from "@/components/ui";
 
 export type PhoneNumber = {
@@ -67,6 +67,13 @@ function VoiceEditor({ wsId, n, onSaved }: { wsId: string; n: PhoneNumber; onSav
     await api(`/workspaces/${wsId}/phone-numbers/${n.id}`, { method: "PATCH", body: JSON.stringify(f) });
     onSaved();
   });
+  const preview = useSubmit(async () => {
+    const blob = await apiBlob(`/workspaces/${wsId}/phone-numbers/${n.id}/voice-preview`, { voice_id: f.voice_id, voice_model: f.voice_model, text: f.greeting || undefined });
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.onended = () => URL.revokeObjectURL(url);
+    await audio.play();
+  });
   const id = (k: string) => `v-${n.id}-${k}`;
   return (
     <form className="flex flex-col gap-space-sm p-space-sm rounded-lg bg-surface-container-lowest" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
@@ -86,7 +93,13 @@ function VoiceEditor({ wsId, n, onSaved }: { wsId: string; n: PhoneNumber; onSav
       <div><label htmlFor={id("greeting")} className="block font-label-md text-label-md font-semibold mb-1">Hilsen (valgfri)</label>
         <input id={id("greeting")} className={inputCls} maxLength={500} placeholder={"Standard: \"Hej, du har ringet til … Du taler med en digital assistent …\""} value={f.greeting} onChange={(e) => setF({ ...f, greeting: e.target.value })} /></div>
       {fieldError(save.error, "voice_id") ? <p role="alert" className="text-label-md text-error">Voice ID skal være ElevenLabs&apos; id – kun bogstaver og tal.</p> : <ErrorBox error={save.error} />}
-      <div><Button type="submit" icon="save" disabled={save.pending}>Gem stemme</Button></div>
+      {preview.error && (preview.error.code === "voice_preview_not_configured"
+        ? <Alert kind="info">Stemmeprøven kræver en ElevenLabs-nøgle på serveren (<code>ELEVENLABS_API_KEY</code> i Render). Opkald virker uden den.</Alert>
+        : <ErrorBox error={preview.error} />)}
+      <div className="flex flex-wrap gap-space-sm">
+        <Button type="button" variant="tonal" icon="play_circle" disabled={preview.pending || !f.voice_id} onClick={() => preview.run()}>{preview.pending ? "Henter prøve…" : "Hør stemmen"}</Button>
+        <Button type="submit" icon="save" disabled={save.pending}>Gem stemme</Button>
+      </div>
     </form>
   );
 }

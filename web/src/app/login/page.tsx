@@ -37,6 +37,6 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <AuthFrame code="A02" icon="key" title="Log ind" subtitle="Fortsæt til dit arbejdsrum."><Suspense><LoginForm /></Suspense></AuthFrame>
+    <AuthFrame icon="key" title="Log ind" subtitle="Fortsæt til dit arbejdsrum."><Suspense><LoginForm /></Suspense></AuthFrame>
   );
 }

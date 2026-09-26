@@ -3,7 +3,7 @@ import { SESSION_COOKIE } from "@/lib/config";
 import { PREVIEW_COOKIE, cookieValid, gateEnabled } from "@/lib/preview-gate";
 import { safeNext } from "@/lib/safe-next";
 
-// Public pages hidden behind the temporary preview page (P00) while PREVIEW_GATE=on.
+// Public pages hidden behind the temporary preview page while PREVIEW_GATE=on.
 const GATED = new Set(["/", "/signup"]);
 
 /** Optimistic auth gate. Real authorisation happens in the backend on every request. */

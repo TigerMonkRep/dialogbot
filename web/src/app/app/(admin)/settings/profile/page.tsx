@@ -29,12 +29,12 @@ export default async function ProfilePage() {
       <section className="xl:col-span-7 bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
         <div className="flex items-center gap-space-md">
           <div className="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold">{me.display_name.split(/\s+/).map((s) => s[0]).join("").slice(0, 2).toUpperCase()}</div>
-          <div><span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">S08</span><h2 className="font-headline-sm text-headline-sm text-primary font-bold">Min profil</h2></div>
+          <div><span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Indstillinger</span><h2 className="font-headline-sm text-headline-sm text-primary font-bold">Min profil</h2></div>
         </div>
         <dl className="rounded-xl bg-surface-container-low divide-y divide-surface-container">
           {rows.map(([k, v]) => <div key={k} className="grid grid-cols-1 sm:grid-cols-[180px,1fr] gap-1 p-space-md"><dt className="font-label-md text-label-md text-on-surface-variant">{k}</dt><dd className="font-body-md text-body-md text-on-surface">{v}</dd></div>)}
         </dl>
-        <p className="font-body-sm text-body-sm text-on-surface-variant flex items-start gap-space-xs"><Icon name="info" size={18} className="flex-shrink-0" />Navn og brugerfladesprog kan endnu ikke ændres her – der findes ikke et API til det. Samtale- og rapportsprog for arbejdsrummet styres under O04.</p>
+        <p className="font-body-sm text-body-sm text-on-surface-variant flex items-start gap-space-xs"><Icon name="info" size={18} className="flex-shrink-0" />Navn og brugerfladesprog kan endnu ikke ændres her – der findes ikke et API til det. Samtale- og rapportsprog for arbejdsrummet styres under Sprog i opsætningen.</p>
         <div className="flex flex-wrap gap-space-md">
           <Link href="/password/forgot" className="px-space-md py-2.5 rounded-lg bg-surface-container text-primary font-label-md text-label-md font-semibold hover:bg-surface-container-high flex items-center gap-1.5"><Icon name="key" size={18} />Skift adgangskode</Link>
           <LogoutButton />

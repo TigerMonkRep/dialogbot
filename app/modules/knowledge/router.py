@@ -3,17 +3,18 @@ from __future__ import annotations
 import uuid
 from datetime import date, datetime
 
-from fastapi import APIRouter, Depends, Header, Query, Request, Response, status
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, Query, Request, Response, status
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.auth import WorkspaceContext, get_scoped, get_workspace_context, require_capability
+from app.core.errors import ValidationFailed
 from app.core.idempotency import IdempotencyGuard, scope_for
 from app.core.pagination import PageParams, page
 from app.db import get_db
 from app.models import KnowledgeItem, KnowledgeVersion
-from app.modules.knowledge import service
+from app.modules.knowledge import importer, service
 
 router = APIRouter(prefix="/workspaces/{workspace_id}", tags=["knowledge"])
 
@@ -190,3 +191,33 @@ def offer_eligibility(item_id: uuid.UUID, area_m2: float | None = Query(default=
         raise NotFound("Der findes ikke et godkendt tilbud med dette id")
     return {"item_id": str(item.id), "version_id": str(v.id), "area_m2": area_m2, "on_date": on_date.isoformat(),
             "eligible": service.offer_is_eligible(v.content, area_m2=area_m2, on_date=on_date)}
+
+
+class ImportIn(BaseModel):
+    url: str | None = Field(default=None, max_length=500)
+
+
+@router.post("/knowledge/import", status_code=status.HTTP_202_ACCEPTED)
+def start_import(body: ImportIn, background: BackgroundTasks,
+                 ctx: WorkspaceContext = Depends(require_capability("knowledge.draft")),
+                 db: OrmSession = Depends(get_db)):
+    """Suggest services, facts and FAQs from the company's website as drafts (runs in the background)."""
+    from app.models import BusinessProfile
+
+    raw = body.url or (db.get(BusinessProfile, ctx.workspace.id) or BusinessProfile()).website_url or ""
+    if not raw.strip():
+        raise ValidationFailed("Angiv jeres hjemmesides adresse", field_errors=[{"field": "url"}])
+    imp, is_new = importer.start(db, ctx.workspace, ctx.user_id, importer.normalize_url(raw))
+    if is_new:
+        background.add_task(importer.run, imp.id)
+    return importer.import_out(imp)
+
+
+@router.get("/knowledge/imports/latest")
+def latest_import(ctx: WorkspaceContext = Depends(require_capability("knowledge.read")),
+                  db: OrmSession = Depends(get_db)):
+    from app.models import SourceImport
+
+    imp = db.scalar(select(SourceImport).where(SourceImport.workspace_id == ctx.workspace.id)
+                    .order_by(SourceImport.created_at.desc()).limit(1))
+    return {"import": importer.import_out(imp)}

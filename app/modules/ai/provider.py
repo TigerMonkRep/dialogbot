@@ -129,6 +129,8 @@ class FakeProvider:
     def complete(self, *, system: str, messages: list[dict], max_tokens: int) -> Completion:
         self.last_system, self.last_messages = system, messages
         question = messages[-1]["content"] if messages else ""
+        if system.startswith("WEBSITE_EXTRACTION"):
+            return self._extract(question)
         refused = "AFVIS" in question
         return Completion(
             text="" if refused else f"[fake] svar på: {question}",
@@ -139,6 +141,31 @@ class FakeProvider:
             request_id="fake-req",
             refusal_category="general_harms" if refused else None,
         )
+
+
+    def _extract(self, text: str) -> Completion:
+        """Deterministic 'extraction': every '## ' heading after a page's first becomes a service
+        (description = the next line); the first page's first paragraph becomes a fact."""
+        import json
+        import re
+
+        services, facts, url = [], [], ""
+        for page in re.findall(r'<side url="([^"]*)"[^>]*>\n(.*?)\n</side>', text, re.S):
+            url, body = page
+            lines = body.split("\n")
+            heads = [i for i, ln in enumerate(lines) if ln.startswith("## ")]
+            for i in heads[1:]:
+                nxt = next((ln for ln in lines[i + 1:] if ln and not ln.startswith("## ")), "")
+                price = re.search(r"\d[\d.]*\s*kr[^\n]*", nxt)
+                services.append({"title": lines[i][3:], "description": nxt, "unit": "m2" if "m²" in nxt else None,
+                                 "price_text": price.group(0) if price else None, "source_url": url})
+            if not facts:
+                para = next((ln for ln in lines if ln and not ln.startswith(("## ", "- "))), "")
+                if para:
+                    facts.append({"title": "Om virksomheden", "text": para, "source_url": url})
+        out = json.dumps({"services": services, "facts": facts, "faq": []}, ensure_ascii=False)
+        return Completion(text=out, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
+                          usage=Usage(input_tokens=len(text) // 4, output_tokens=len(out) // 4), request_id="fake-req")
 
 
 _override: AIProvider | None = None

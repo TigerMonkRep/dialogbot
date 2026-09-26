@@ -13,7 +13,7 @@ const notYet = (area: string) => `/app/not-yet?area=${encodeURIComponent(area)}`
 export const NAV: NavItem[] = [
   { href: "/app/setup", match: "/app/overview", label: "Oversigt", icon: "dashboard" },
   { href: "/app/leads", match: "/app/leads", label: "Henvendelser", icon: "contact_support" },
-  { href: "/app/setup", match: "/app/setup", label: "Opsætningsguide (G01)", icon: "tune" },
+  { href: "/app/setup", match: "/app/setup", label: "Opsætningsguide", icon: "tune" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
   { href: notYet("Kampagner"), match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
   { href: notYet("Bookinger"), match: "/app/bookings", label: "Bookinger", icon: "calendar_month" },

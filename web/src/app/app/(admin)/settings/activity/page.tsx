@@ -43,7 +43,7 @@ export default async function ActivityPage({ searchParams }: { searchParams: Pro
   return (
     <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
       <div className="flex flex-wrap items-start justify-between gap-space-md">
-        <div><span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">S09</span><h2 className="font-headline-sm text-headline-sm text-primary font-bold">Aktivitetslog</h2><p className="font-body-sm text-body-sm text-on-surface-variant">Alle ændringer i {ws.name}, nyeste først. Loggen kan ikke redigeres.</p></div>
+        <div><span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Indstillinger</span><h2 className="font-headline-sm text-headline-sm text-primary font-bold">Aktivitetslog</h2><p className="font-body-sm text-body-sm text-on-surface-variant">Alle ændringer i {ws.name}, nyeste først. Loggen kan ikke redigeres.</p></div>
         <span className="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium">{log.total} hændelser</span>
       </div>
       {log.items.length === 0 ? <p className="p-space-md rounded-xl bg-surface-container-low font-body-sm text-body-sm text-on-surface-variant">Ingen aktivitet endnu.</p> : (

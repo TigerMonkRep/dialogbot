@@ -20,7 +20,7 @@ export default async function TelephonyPage() {
       <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
         <div className="flex flex-wrap items-start justify-between gap-space-md">
           <div>
-            <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">S03</span>
+            <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Indstillinger</span>
             <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Telefoni</h2>
             <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Assistenten tager telefonen på jeres nummer via Vapi og svarer kun ud fra godkendt viden. Opkald lander i <Link href="/app/inbox" className="text-primary underline">indbakken</Link>, og kunder, der vil ringes op, bliver til <Link href="/app/leads" className="text-primary underline">henvendelser</Link>.</p>
           </div>

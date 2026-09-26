@@ -25,7 +25,7 @@ export default async function TeamPage() {
         <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
           <div className="flex items-start justify-between gap-space-md">
             <div>
-              <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">S02</span>
+              <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Indstillinger</span>
               <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Medlemmer i {ws.name}</h2>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Roller styrer, hvem der må redigere, godkende viden og se aktivitetsloggen.</p>
             </div>

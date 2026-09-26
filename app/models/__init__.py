@@ -20,6 +20,7 @@ from app.models.domain import (  # noqa: F401
     ReceptionAgreement,
     ReportSettings,
     SetupTaskState,
+    SourceImport,
     Task,
     WaitlistSignup,
     WebchatSettings,

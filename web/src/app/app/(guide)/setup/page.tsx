@@ -99,7 +99,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg relative z-10">
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-space-sm">
-                <span className="px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold uppercase tracking-wider">Aktiv opsætningshub (G01)</span>
+                <span className="px-2 py-0.5 rounded-md bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold uppercase tracking-wider">Aktiv opsætningshub</span>
                 <span className="text-on-surface-variant font-label-sm text-label-sm">Beregnet ud fra dine {activeGoals} valgte driftsmål · {intentText(plan.product_intent)}</span>
               </div>
               <h1 className="font-headline-lg text-headline-lg text-primary font-bold tracking-tight">Din personlige køreplan: {p.required_complete} af {p.required_total} nødvendige trin er klar</h1>
@@ -168,7 +168,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
           <div className="rounded-xl bg-surface-container-lowest p-space-xl shadow-sm space-y-space-lg">
             <div className="flex items-start justify-between">
               <div>
-                <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Mål og kanalarkitektur (G02 &amp; O03)</span>
+                <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Mål og kanalarkitektur</span>
                 <h3 className="font-headline-sm text-headline-sm text-primary font-bold mt-1">Valgte driftsmål &amp; automatiseringer</h3>
               </div>
               <span className="font-label-sm text-label-sm text-on-surface-variant">{activeGoals} af 5 aktive</span>
@@ -186,7 +186,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
           {/* O04 & O05 languages and persona */}
           <div className="rounded-xl bg-surface-container-lowest p-space-xl shadow-sm space-y-space-lg">
             <div>
-              <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Sprog &amp; assistent (O04 &amp; O05)</span>
+              <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Sprog &amp; assistent</span>
               <h3 className="font-headline-sm text-headline-sm text-primary font-bold mt-1">Eksplicit adskillelse af 4 sprogniveauer</h3>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Kontrollér sprogparametre separat for drift, AI-forståelse og ledelsesrapportering.</p>
             </div>
@@ -205,14 +205,14 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
               </div>
               <LangTile label="d) Daglig rapportsprog" value={LANG[languages.report_language] ?? languages.report_language} text="Daglige resuméer og ledelsesrapporter." />
             </div>
-            {/* Persona (O05) — honest state until the AI/voice adapter exists */}
+            {/* Persona — honest state until the AI/voice adapter exists */}
             <div className="rounded-xl bg-surface-container-low p-space-lg space-y-space-md">
               <div className="flex flex-wrap items-center justify-between gap-space-sm">
                 <div className="flex items-center gap-space-sm">
                   <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-secondary-fixed"><Icon name="smart_toy" size={22} /></div>
                   <div>
                     <div className="flex flex-wrap items-center gap-space-xs">
-                      <span className="font-label-lg text-label-lg font-bold text-primary">Assistent-persona (O05)</span>
+                      <span className="font-label-lg text-label-lg font-bold text-primary">Assistent-persona</span>
                       <span className="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm font-bold">{aiCap?.status === "available" ? "Klar til opsætning" : "Ikke tilgængelig endnu"}</span>
                     </div>
                     <span className="font-body-sm text-body-sm text-on-surface-variant">{aiCap?.status === "available" ? aiCap.note : "Stemmemodel, velkomstreplik og prøvehør kræver AI-/stemmeadapteren, som ikke er tilkoblet."}</span>
@@ -222,7 +222,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
               <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm font-body-sm text-body-sm">
                 <div className="p-space-sm rounded-lg bg-surface-container-lowest flex items-start gap-space-xs">
                   <Icon name="rule" size={18} className="text-secondary mt-0.5" />
-                  <div><strong className="text-primary font-semibold">Vidensbegrænsning:</strong><p className="text-on-surface-variant">Assistenten må kun bruge godkendt viden (K05). Kladder og afviste svar bruges aldrig.</p></div>
+                  <div><strong className="text-primary font-semibold">Vidensbegrænsning:</strong><p className="text-on-surface-variant">Assistenten må kun bruge godkendt viden. Kladder og afviste svar bruges aldrig.</p></div>
                 </div>
                 <div className="p-space-sm rounded-lg bg-surface-container-lowest flex items-start gap-space-xs">
                   <Icon name="phone_forwarded" size={18} className="text-on-surface-variant mt-0.5" />
@@ -252,7 +252,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
           <div id="g04" className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-md relative overflow-hidden scroll-mt-24">
             <div className="flex items-center justify-between pb-space-xs">
               <div className="flex items-center gap-space-xs"><Icon name="assistant" size={22} className="text-secondary" /><h3 className="font-headline-sm text-headline-sm text-primary font-bold">Hjælp mig videre</h3></div>
-              <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">G04 Vejledning</span>
+              <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">Vejledning</span>
             </div>
             {next && (
               <div className="p-space-md rounded-lg bg-surface-container-low space-y-space-xs">
@@ -266,24 +266,24 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
             </div>
             <div className="p-space-md rounded-lg bg-surface-container space-y-space-xs">
               <div className="flex items-center gap-space-xs font-label-md text-label-md font-bold text-primary"><Icon name="support_agent" size={18} /><span>Sidder du fast i opsætningen?</span></div>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">Kundesupport (H01) er ikke bygget endnu. Indtil da kan du springe valgfrie trin over og vende tilbage senere.</p>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">Kundesupport er ikke bygget endnu. Indtil da kan du springe valgfrie trin over og vende tilbage senere.</p>
               <div className="pt-space-xs">
-                <Link href="/app/not-yet?area=Kundesupport%20(H01)" className="w-full py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm">
-                  <Icon name="phone_in_talk" size={18} className="text-secondary" /><span>Kundesupport (H01)</span>
+                <Link href="/app/not-yet?area=Kundesupport" className="w-full py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm">
+                  <Icon name="phone_in_talk" size={18} className="text-secondary" /><span>Kundesupport</span>
                 </Link>
               </div>
             </div>
             <div className="border-t border-surface-container pt-space-sm space-y-1">
               <div className="font-label-sm text-label-sm uppercase text-on-surface-variant">Relevante sider</div>
-              <Link className="flex items-center justify-between text-on-surface hover:text-primary font-body-sm text-body-sm py-1" href="/app/knowledge?tab=k05"><span>Gennemgå og godkend viden (K05)</span><Icon name="arrow_forward" size={16} /></Link>
-              <Link className="flex items-center justify-between text-on-surface hover:text-primary font-body-sm text-body-sm py-1" href="/onboarding/languages"><span>Sprogniveauer (O04)</span><Icon name="arrow_forward" size={16} /></Link>
+              <Link className="flex items-center justify-between text-on-surface hover:text-primary font-body-sm text-body-sm py-1" href="/app/knowledge?tab=k05"><span>Gennemgå og godkend viden</span><Icon name="arrow_forward" size={16} /></Link>
+              <Link className="flex items-center justify-between text-on-surface hover:text-primary font-body-sm text-body-sm py-1" href="/onboarding/languages"><span>Sprogniveauer</span><Icon name="arrow_forward" size={16} /></Link>
             </div>
           </div>
 
           <div id="checks" className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-md scroll-mt-24">
             <div className="flex items-start justify-between gap-space-sm">
               <div>
-                <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Klarhedstjek (G05)</span>
+                <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Klarhedstjek</span>
                 <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">{passed} af {plan.checks.length} bestået</p>
               </div>
               {canEdit && <RunChecks wsId={ws.id} />}
@@ -406,8 +406,6 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
         <div className="flex items-center justify-between gap-space-xs">
           <div className="flex items-center gap-space-xs min-w-0">
             <span className="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm truncate">{ws.name}</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0" />
-            <span className="font-label-sm text-label-sm text-on-surface-variant flex-shrink-0">G01</span>
           </div>
           <div className="flex items-center gap-1 bg-surface-container-lowest px-2 py-1 rounded-full shadow-sm flex-shrink-0">
             <Icon name="verified" size={15} className="text-primary" />
@@ -469,7 +467,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
 
       <section className="pt-space-md flex flex-col gap-space-xs">
         <div className="flex items-center justify-between">
-          <span className="font-label-lg text-label-lg text-primary font-semibold">Aktiverede mål (G02)</span>
+          <span className="font-label-lg text-label-lg text-primary font-semibold">Aktiverede mål</span>
           <span className="font-label-sm text-label-sm text-on-surface-variant">{chips.filter(([, on]) => on).length} af {chips.length} aktive</span>
         </div>
         <div className="flex gap-space-xs overflow-x-auto pb-1 no-scrollbar -mx-margin px-margin">
@@ -485,7 +483,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
       <section className="pt-space-md">
         <div className="bg-surface-container rounded-xl p-space-md flex flex-col gap-space-sm shadow-sm">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5"><Icon name="translate" size={18} className="text-primary" /><span className="font-label-lg text-label-lg text-primary font-semibold">Sprogindstillinger (O04)</span></div>
+            <div className="flex items-center gap-1.5"><Icon name="translate" size={18} className="text-primary" /><span className="font-label-lg text-label-lg text-primary font-semibold">Sprogindstillinger</span></div>
             <Link href="/onboarding/languages" className="font-label-sm text-label-sm text-primary font-bold hover:underline flex items-center gap-0.5"><span>Rediger</span><Icon name="chevron_right" size={14} /></Link>
           </div>
           <div className="grid grid-cols-3 gap-2">
@@ -513,7 +511,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
       <section id="checks" className="pt-space-md scroll-mt-20">
         <div className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex items-center justify-between gap-space-sm">
           <div className="flex flex-col">
-            <span className="font-label-lg text-label-lg text-primary font-semibold">Klarhedstjek (G05)</span>
+            <span className="font-label-lg text-label-lg text-primary font-semibold">Klarhedstjek</span>
             <span className="font-body-sm text-body-sm text-on-surface-variant">{passed} af {plan.checks.length} bestået · {plan.checks.filter((c) => !c.runnable).length} kræver integration</span>
           </div>
           {canEdit && <RunChecks wsId={ws.id} compact />}
@@ -525,7 +523,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-lg bg-surface-container-lowest/15 flex items-center justify-center"><Icon name="support_agent" size={20} className="text-secondary-container" /></div>
             <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm text-secondary-fixed uppercase tracking-wider font-semibold">Support &amp; vejledning (G04)</span>
+              <span className="font-label-sm text-label-sm text-secondary-fixed uppercase tracking-wider font-semibold">Support &amp; vejledning</span>
               <span className="font-headline-sm text-headline-sm text-on-primary">Brug for hjælp?</span>
             </div>
           </div>

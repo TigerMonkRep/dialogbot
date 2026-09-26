@@ -52,8 +52,9 @@ def capabilities() -> list[Capability]:
                     + (" og i telefonen (Vapi, dansk transskribering)" if s.vapi_server_secret else "")
                     + ". Svarer kun ud fra godkendt viden.")
                    if ai_status != "not_implemented" else "Kræver en AI-udbyder (AI_PROVIDER)."),
-        Capability("knowledge.source_import", "Kildeimport / udtræk / embeddings", "not_implemented", s.app_env,
-                   "Planlagt senere. Der vises ingen fiktive udtræk."),
+        Capability("knowledge.source_import", "Forslag fra hjemmesiden", ai_status, s.app_env,
+                   "Henter jeres egne sider og foreslår ydelser, fakta og spørgsmål som kladder, der skal godkendes. "
+                   "Priser gættes aldrig." if ai_status != "not_implemented" else "Kræver en AI-udbyder (AI_PROVIDER)."),
         Capability("webchat", "Web-widget", ai_status, s.app_env,
                    "Chat-widget til jeres hjemmeside; svarer kun ud fra godkendt viden og kun på godkendte domæner."
                    if ai_status != "not_implemented" else "Kræver en AI-udbyder (AI_PROVIDER)."),

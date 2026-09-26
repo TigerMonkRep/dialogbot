@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api, fieldError } from "@/lib/client";
@@ -45,10 +46,10 @@ export function LanguagesForm({ wsId, settings, canEdit }: { wsId: string; setti
         </fieldset>
         {sel("report_language", "d) Daglig rapportsprog", "Daglige resuméer og ledelsesrapporter.")}
       </div>
-      <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-space-xs"><Icon name="graphic_eq" size={16} />Stemmeprøve kræver stemmeadapteren, som ikke er tilkoblet endnu.</p>
+      <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-space-xs"><Icon name="graphic_eq" size={16} />Stemmen til telefonen vælges og afprøves under <Link href="/app/settings/telephony" className="text-primary underline">Indstillinger → Telefoni</Link>.</p>
       <div className="flex flex-wrap items-center justify-end gap-space-md pt-space-sm">
         <Button type="submit" variant="tonal" icon="save" disabled={pending || !canEdit}>{pending ? "Gemmer…" : "Gem sprog"}</Button>
-        <Button type="button" onClick={() => router.push("/app/knowledge")}>Fortsæt til viden (K01) <Icon name="arrow_forward" size={18} className="text-secondary-fixed" /></Button>
+        <Button type="button" onClick={() => router.push("/app/knowledge")}>Fortsæt til viden <Icon name="arrow_forward" size={18} className="text-secondary-fixed" /></Button>
       </div>
     </form>
   );

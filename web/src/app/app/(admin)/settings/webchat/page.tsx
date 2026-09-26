@@ -22,7 +22,7 @@ export default async function WebchatPage() {
       <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
         <div className="flex flex-wrap items-start justify-between gap-space-md">
           <div>
-            <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">W01</span>
+            <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Indstillinger</span>
             <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Webchat på jeres hjemmeside</h2>
             <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Assistenten svarer kun ud fra godkendt viden og vises kun på de domæner, I angiver. Samtalerne lander i <Link href="/app/inbox" className="text-primary underline">indbakken</Link>.</p>
           </div>

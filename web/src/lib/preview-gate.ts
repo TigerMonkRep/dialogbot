@@ -1,4 +1,4 @@
-/** Temporary preview gate (P00). Server-only: read from process.env, never NEXT_PUBLIC_.
+/** Temporary preview gate. Server-only: read from process.env, never NEXT_PUBLIC_.
  *
  * PREVIEW_GATE               → ON BY DEFAULT: "/" and "/signup" require the preview cookie (or a session),
  *                              so P00 is the first page while the platform is being built. "off" opens them.

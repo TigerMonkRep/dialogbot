@@ -4,13 +4,13 @@ import { usePathname } from "next/navigation";
 import { Icon } from "@/components/ui";
 
 const TABS: [string, string, string, string][] = [
-  ["/onboarding/business", "Virksomhed (S01)", "Virksomhed", "domain"],
-  ["/app/settings/team", "Team & roller (S02)", "Team", "group"],
-  ["/app/settings/webchat", "Webchat (W01)", "Webchat", "chat"],
-  ["/app/settings/telephony", "Telefoni (S03)", "Telefoni", "call"],
+  ["/onboarding/business", "Virksomhed", "Virksomhed", "domain"],
+  ["/app/settings/team", "Team & roller", "Team", "group"],
+  ["/app/settings/webchat", "Webchat", "Webchat", "chat"],
+  ["/app/settings/telephony", "Telefoni", "Telefoni", "call"],
   ["/app/settings/agreement", "Prisaftale", "Aftale", "handshake"],
-  ["/app/settings/profile", "Min profil (S08)", "Profil", "person"],
-  ["/app/settings/activity", "Aktivitetslog (S09)", "Log", "history"],
+  ["/app/settings/profile", "Min profil", "Profil", "person"],
+  ["/app/settings/activity", "Aktivitetslog", "Log", "history"],
 ];
 
 /** Settings tab bar in the same style as the K01 tab switcher. */

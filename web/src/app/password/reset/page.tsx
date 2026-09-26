@@ -32,6 +32,6 @@ function ResetForm() {
 
 export default function ResetPage() {
   return (
-    <AuthFrame code="A04" icon="key" title="Opret ny adgangskode" subtitle="Vælg en stærk kode til din Dialogbot-konto." aside={<AuthAside icon="history" title="Har du problemer med linket?">Nulstillingslinks udløber efter kort tid og kan kun bruges én gang. <Link className="font-semibold text-primary underline" href="/password/forgot">Send nyt nulstillingslink</Link></AuthAside>}><Suspense><ResetForm /></Suspense></AuthFrame>
+    <AuthFrame icon="key" title="Opret ny adgangskode" subtitle="Vælg en stærk kode til din Dialogbot-konto." aside={<AuthAside icon="history" title="Har du problemer med linket?">Nulstillingslinks udløber efter kort tid og kan kun bruges én gang. <Link className="font-semibold text-primary underline" href="/password/forgot">Send nyt nulstillingslink</Link></AuthAside>}><Suspense><ResetForm /></Suspense></AuthFrame>
   );
 }

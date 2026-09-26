@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Icon } from "./ui";
 
-/** Auth layout (A01–A05) after Stitch "a04_a05_nulstilling_af_adgangskode_teaminvitation": header with back link
+/** Auth layout after Stitch "a04_a05_nulstilling_af_adgangskode_teaminvitation": header with back link
  *  and "Sikker" pill, an intro card (icon, code, title) and the form card. Centered column on desktop. */
 export function AuthFrame({ title, subtitle, children, code, icon = "lock", aside, back = "/" }: {
   title: string; subtitle?: string; children: React.ReactNode; code?: string; icon?: string; aside?: React.ReactNode; back?: string;

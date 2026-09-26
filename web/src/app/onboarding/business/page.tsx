@@ -67,7 +67,7 @@ export default async function BusinessPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between md:pb-space-md gap-4">
           <div>
             <div className="flex items-center gap-space-sm">
-              <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">A06 Modul</span>
+              <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">Arbejdsrum</span>
               <span className="font-label-sm text-label-sm text-on-surface-variant">Arbejdsrumsoversigt</span>
             </div>
             <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight mt-0.5">Vælg eller opret arbejdsrum</h1>
@@ -86,7 +86,7 @@ export default async function BusinessPage() {
           <div className="bg-surface-container-lowest p-space-md md:p-space-xl rounded-xl shadow-sm space-y-space-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-space-sm">
-                <span className="w-7 h-6 rounded-md bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-[10px] font-bold">O01</span>
+                <span className="w-7 h-6 rounded-md bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-[10px] font-bold">1</span>
                 <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Virksomhedsopsætning</h2>
               </div>
               <span className="font-label-sm text-label-sm text-secondary font-bold flex items-center gap-1"><Icon name="tune" size={14} />Basale parametre</span>
@@ -104,7 +104,7 @@ export default async function BusinessPage() {
               {zones.length > 0 ? (
                 <div className="flex flex-wrap gap-1.5">{zones.map((z, i) => <span key={z} className="px-2.5 py-1 rounded bg-surface-container-lowest shadow-sm text-primary font-label-sm text-label-sm font-semibold">Zone {i + 1}: {z}</span>)}</div>
               ) : <p className="font-body-sm text-body-sm text-on-surface-variant">Intet dækningsområde endnu.</p>}
-              <Link href="/app/knowledge?tab=k03" className="font-label-sm text-label-sm text-secondary font-semibold hover:underline flex items-center gap-1">Redigér i Videnscenter (K03)<Icon name="arrow_forward" size={14} /></Link>
+              <Link href="/app/knowledge?tab=k03" className="font-label-sm text-label-sm text-secondary font-semibold hover:underline flex items-center gap-1">Redigér i Videnscenter<Icon name="arrow_forward" size={14} /></Link>
             </div>
           </div>
         </div>
@@ -114,7 +114,7 @@ export default async function BusinessPage() {
           <div className="bg-surface-container-lowest p-space-md md:p-space-xl rounded-xl shadow-sm space-y-space-lg">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 gap-2">
               <div className="flex items-center gap-space-sm">
-                <span className="w-7 h-6 rounded-md bg-secondary text-on-secondary flex items-center justify-center font-label-sm text-[10px] font-bold flex-shrink-0">O02</span>
+                <span className="w-7 h-6 rounded-md bg-secondary text-on-secondary flex items-center justify-center font-label-sm text-[10px] font-bold flex-shrink-0">2</span>
                 <div>
                   <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Fakta og redigerbar viden</h2>
                   <p className="font-body-sm text-body-sm text-on-surface-variant">Valider hvad assistenten må gengive til kunder.</p>
@@ -217,7 +217,7 @@ export default async function BusinessPage() {
         <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-space-md w-full md:w-auto md:justify-end">
           <button form="business-form" type="submit" name="intent" value="save" disabled={!canEdit} className="px-space-md py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"><Icon name="save" size={18} />Gem</button>
           <button form="business-form" type="submit" name="intent" value="next" className="justify-center px-space-xl py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-bold transition-all shadow-md flex items-center gap-2">
-            <span>Gem og fortsæt til mål &amp; sprog (O03/O04)</span><Icon name="arrow_forward" size={18} className="text-secondary-fixed" />
+            <span>Gem og fortsæt til mål &amp; sprog</span><Icon name="arrow_forward" size={18} className="text-secondary-fixed" />
           </button>
         </div>
       </div>

@@ -39,6 +39,6 @@ function Verify() {
 
 export default function VerifyPage() {
   return (
-    <AuthFrame code="A03" icon="mark_email_read" title="Bekræft din e-mail" subtitle="Bekræftelsen beskytter arbejdsrummet og er nødvendig, før du kan oprette virksomheder."><Suspense><Verify /></Suspense></AuthFrame>
+    <AuthFrame icon="mark_email_read" title="Bekræft din e-mail" subtitle="Bekræftelsen beskytter arbejdsrummet og er nødvendig, før du kan oprette virksomheder."><Suspense><Verify /></Suspense></AuthFrame>
   );
 }

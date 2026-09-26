@@ -200,7 +200,7 @@ export function ItemCard({ wsId, item, canDraft, canApprove }: { wsId: string; i
   );
 }
 
-/** New knowledge item (K03/K04) with structured fields; saved as a draft. */
+/** New knowledge item with structured fields; saved as a draft. */
 export function NewItemForm({ wsId, kinds, onDone }: { wsId: string; kinds: string[]; onDone?: () => void }) {
   const router = useRouter();
   const [kind, setKind] = useState(kinds[0]);

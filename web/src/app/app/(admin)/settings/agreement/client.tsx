@@ -22,7 +22,7 @@ export function AgreementForm({ wsId, current, canEdit }: { wsId: string; curren
         <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Prisaftale for reception</h2>
         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Aftalen bestemmer, hvad en godkendt henvendelse koster. Hver ændring gemmes som en ny version, og allerede godkendte henvendelser beholder den pris, der gjaldt, da de blev godkendt.</p>
       </div>
-      <p className="p-space-sm rounded-lg bg-tertiary-fixed text-on-tertiary-fixed font-body-sm text-body-sm flex items-start gap-space-xs"><Icon name="info" size={18} />Der faktureres ikke endnu – betaling kobles på i en senere milepæl.</p>
+      <p className="p-space-sm rounded-lg bg-tertiary-fixed text-on-tertiary-fixed font-body-sm text-body-sm flex items-start gap-space-xs"><Icon name="info" size={18} />Der faktureres ikke endnu – betaling kobles på senere.</p>
       {current ? <p className="font-body-md text-body-md">Gældende: <strong>model {current.model}</strong> (version {current.version}, {new Date(current.created_at).toLocaleDateString("da-DK")}). {current.model === "B" ? `Pr. godkendt henvendelse: ${kr(current.lead_fee.net_minor)} ekskl. moms (${kr(current.lead_fee.gross_minor)} inkl. moms).` : `Månedspris: ${kr(current.monthly.net_minor)} ekskl. moms.`}</p>
         : <p className="font-body-md text-body-md">Ingen aftale valgt endnu. Henvendelser kan ikke godkendes, før der er valgt en model.</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">

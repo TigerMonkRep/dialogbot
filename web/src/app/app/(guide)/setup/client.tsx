@@ -148,7 +148,7 @@ export function HelpSheet({ next }: { next: { label: string; why: string; href: 
             <div className="flex flex-col gap-2 pb-space-md">
               {next && shortcut(next.href, "bolt", `Gå til: ${next.label}`, "Det anbefalede næste trin")}
               {shortcut("/app/knowledge?tab=k05", "fact_check", "Gennemgå og godkend viden", "Kun godkendt viden bruges af assistenten")}
-              {shortcut("/app/not-yet?area=Kundesupport%20(H01)", "support_agent", "Kundesupport (H01)", "Ikke bygget endnu")}
+              {shortcut("/app/not-yet?area=Kundesupport", "support_agent", "Kundesupport", "Ikke bygget endnu")}
             </div>
           </div>
         </div>

@@ -3,15 +3,15 @@ import { Icon } from "./ui";
 
 export const INTENT_LABEL: Record<string, string> = { reception: "Reception", campaigns: "Kampagner", both: "Reception + kampagner" };
 
-const STEPS: [string, string, string][] = [
-  ["/onboarding/business", "Virksomhed & viden", "A06 → O01–O02"],
-  ["/onboarding/goals", "Mål & sprog", "O03–O04"],
-  ["/app/setup", "Personlig plan", "G01"],
+const STEPS: [string, string][] = [
+  ["/onboarding/business", "Virksomhed & viden"],
+  ["/onboarding/goals", "Mål & sprog"],
+  ["/app/setup", "Personlig plan"],
 ];
 
 /** Onboarding flow rail (Stitch a06_o01_o02): phase label, preserved signup intent and a 3-step indicator. */
 export function FlowBar({ step, intent }: { step: 1 | 2 | 3; intent?: string | null }) {
-  const [, label, phase] = STEPS[step - 1];
+  const [, label] = STEPS[step - 1];
   const next = STEPS[step];
   return (
     <>
@@ -23,7 +23,7 @@ export function FlowBar({ step, intent }: { step: 1 | 2 | 3; intent?: string | n
             <div className="flex items-center gap-2">
               <span className="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Onboarding</span>
               <span className="w-1 h-1 rounded-full bg-outline-variant" />
-              <span className="font-label-sm text-label-sm text-on-surface-variant">Fase {phase}</span>
+              <span className="font-label-sm text-label-sm text-on-surface-variant">Trin {step} af {STEPS.length}: {label}</span>
             </div>
             <p className="font-headline-sm text-headline-sm text-primary font-bold">Konfiguration af virksomhedens assistent</p>
           </div>

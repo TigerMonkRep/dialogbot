@@ -12,12 +12,12 @@ type Usage = { days: number; totals: { calls: number; input_tokens: number; outp
 export type Item = { id: string; kind: string; key: string; approved_version: Version | null; open_draft: Version | null };
 
 const TABS: [string, string, string, string][] = [
-  ["k01", "Kilder & URL-crawler (K01–K02)", "Kilder", "cloud_sync"],
-  ["k03", "Ydelseskatalog & priser (K03)", "Katalog", "sell"],
-  ["k04", "Aktive tilbud (K04)", "Tilbud", "percent"],
-  ["k05", "Gennemgang & godkendelse (K05)", "Gennemgang", "rule"],
-  ["r05", "Receptionsmanuskript (R05)", "Manuskript", "support_agent"],
-  ["r06", "Manuskripttest (R06)", "Test", "play_circle"],
+  ["k01", "Kilder & URL-crawler", "Kilder", "cloud_sync"],
+  ["k03", "Ydelseskatalog & priser", "Katalog", "sell"],
+  ["k04", "Aktive tilbud", "Tilbud", "percent"],
+  ["k05", "Gennemgang & godkendelse", "Gennemgang", "rule"],
+  ["r05", "Receptionsmanuskript", "Manuskript", "support_agent"],
+  ["r06", "Manuskripttest", "Test", "play_circle"],
 ];
 const OTHER_KINDS = ["opening_hours", "coverage_area", "fact", "known_answer", "unknown_answer"];
 
@@ -76,7 +76,7 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
             <div className="w-10 h-10 rounded-xl bg-error text-on-error flex items-center justify-center shrink-0"><Icon name="pending_actions" size={22} /></div>
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-space-sm">
-                <span className="font-label-lg text-label-lg text-on-error-container font-bold">Ændringer afventer godkendelse (K05)</span>
+                <span className="font-label-lg text-label-lg text-on-error-container font-bold">Ændringer afventer godkendelse</span>
                 <span className="px-space-xs py-0.5 rounded-md bg-error text-on-error font-label-sm text-[10px] uppercase font-bold tracking-wider">{drafts.length} handling påkrævet</span>
               </div>
               <p className="font-body-sm text-body-sm text-on-surface mt-0.5">Kladder bliver først aktiv viden, når en ejer eller administrator har godkendt dem. Den aktive version bruges uændret indtil da.</p>
@@ -174,7 +174,7 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-space-md">
             <div>
               <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kampagne- &amp; tilbudseditor</span>
-              <h2 className="font-headline-md text-headline-md text-primary">Automatiserede tilbudsregler (K04)</h2>
+              <h2 className="font-headline-md text-headline-md text-primary">Automatiserede tilbudsregler</h2>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Et tilbud gælder ved mindst (≥) tærsklen og inden for datoerne – slutdatoen er inklusive. Kun den godkendte version evalueres.</p>
             </div>
             {canDraft && <AddPanel wsId={ws.id} kinds={["offer"]} label="Opret ny tilbudsregel" />}
@@ -257,7 +257,7 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
               </div>
             );
           })}
-          {drafts.length === 0 && <Empty text="Alt er godkendt. Nye kladder fra K03 og K04 vises her." />}
+          {drafts.length === 0 && <Empty text="Alt er godkendt. Nye kladder fra Katalog og Tilbud vises her." />}
           {queue.filter((q) => !byId.get(q.item_id)?.open_draft).length > 0 && <p className="font-body-sm text-body-sm text-on-surface-variant">Enkelte versioner i køen hører til emner, du ikke kan se.</p>}
         </div>
       )}
@@ -266,12 +266,12 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
         <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm">
             <div>
-              <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">R06</span>
+              <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Test</span>
               <h2 className="font-headline-md text-headline-md text-primary">Test assistenten</h2>
             </div>
             {usage && <p className="font-body-sm text-body-sm text-on-surface-variant">Seneste {usage.days} dage: {usage.totals.calls} kald · {usage.totals.input_tokens + usage.totals.cache_creation_input_tokens + usage.totals.cache_read_input_tokens} ind / {usage.totals.output_tokens} ud tokens · {usd(usage.totals.est_cost_usd_micros)}</p>}
           </div>
-          {active.items.length === 0 ? <Empty text="Der er ingen godkendt viden endnu. Godkend mindst ét emne under K03/K05, før assistenten kan testes." />
+          {active.items.length === 0 ? <Empty text="Der er ingen godkendt viden endnu. Godkend mindst ét emne under Katalog og Gennemgang, før assistenten kan testes." />
             : !canDraft ? <Empty text="Test af assistenten kræver rollen medarbejder eller højere." />
             : <AssistantPreview wsId={ws.id} simulated={aiStatus === "simulated"} />}
         </div>
@@ -280,7 +280,7 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
       {(tab === "r05" || (tab === "r06" && aiStatus === "not_implemented")) && (
         <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
           <div>
-            <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{tab === "r05" ? "R05" : "R06"}</span>
+            <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{tab === "r05" ? "Manuskript" : "Test"}</span>
             <h2 className="font-headline-md text-headline-md text-primary">{tab === "r05" ? "Receptionsmanuskript & persona" : "Manuskripttest & simulation"}</h2>
           </div>
           <div className="p-space-lg rounded-xl bg-surface-container-low flex flex-col md:flex-row items-start gap-space-md">
@@ -288,7 +288,7 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
             <div className="space-y-1">
               <p className="font-label-lg text-label-lg text-primary">Ikke tilgængelig endnu</p>
               <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">{tab === "r05" ? "Manuskriptet (velkomst, introduktion, behovsafdækning, vidensgrænser og menneskelig overtagelse) kræver AI-/stemmeadapteren, som ikke er tilkoblet. Indtil da vises der intet udkast, der kunne forveksles med et aktivt manuskript." : "Testsamtaler mod assistenten kræver AI-adapteren. Når den er tilkoblet, køres testene mod den godkendte viden, og resultaterne logges pr. version."}</p>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">Det du kan gøre nu: hold ydelser, åbningstider og faste svar godkendte under K03 – det er det, assistenten skal bygge på.</p>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">Det du kan gøre nu: hold ydelser, åbningstider og faste svar godkendte under Katalog – det er det, assistenten skal bygge på.</p>
             </div>
           </div>
         </div>

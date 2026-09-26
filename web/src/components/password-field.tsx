@@ -4,7 +4,7 @@ import { Icon, inputCls } from "./ui";
 
 export const PASSWORD_MIN = 10; // mirrors app/modules/identity/service.py
 
-/** Password input with show/hide and a requirement list (A04). Only the length rule is enforced by the backend;
+/** Password input with show/hide and a requirement list. Only the length rule is enforced by the backend;
  *  the others are shown as recommendations so the UI never claims a check the server does not make. */
 export function PasswordField({ label, value, onChange, error, autoComplete = "new-password", withRules = true, placeholder }: {
   label: string; value: string; onChange: (v: string) => void; error?: string; autoComplete?: string; withRules?: boolean; placeholder?: string;

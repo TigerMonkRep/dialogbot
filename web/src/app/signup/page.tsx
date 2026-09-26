@@ -39,6 +39,6 @@ function SignupForm() {
 
 export default function SignupPage() {
   return (
-    <AuthFrame code="A01" icon="person_add" title="Opret konto" subtitle="Dit produktvalg følger med til opsætningen, så planen passer til det, du vil bruge Dialogbot til."><Suspense><SignupForm /></Suspense></AuthFrame>
+    <AuthFrame icon="person_add" title="Opret konto" subtitle="Dit produktvalg følger med til opsætningen, så planen passer til det, du vil bruge Dialogbot til."><Suspense><SignupForm /></Suspense></AuthFrame>
   );
 }

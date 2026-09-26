@@ -37,7 +37,7 @@ export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Recor
       </Field>
       {reception ? (
         <div className="grid gap-space-md md:grid-cols-2">
-          {cb("inbound_phone", "Indgående telefoni", "Besvarer hovednummer. Kræver telefoniudbyder (senere milepæl).")}
+          {cb("inbound_phone", "Indgående telefoni", "Besvarer hovednummer. Kræver telefoniudbyder (kommer senere).")}
           {cb("webchat", "Hjemmeside-webchat", "Widget på jeres hjemmeside.")}
           {cb("callback", "Bestilt callback", "Hører under reception – ikke en separat prisplan.")}
           {cb("booking", "Aftalebooking", "Valgfri. Kræver kalenderforbindelse.")}
@@ -48,7 +48,7 @@ export function GoalsForm({ wsId, goals, canEdit }: { wsId: string; goals: Recor
       </Field>
       <div className="flex flex-wrap items-center justify-end gap-space-md pt-space-sm">
         <Button type="submit" variant="tonal" icon="save" disabled={pending || !canEdit}>{pending ? "Gemmer…" : "Gem mål"}</Button>
-        <Button type="button" onClick={() => router.push("/onboarding/languages")}>Fortsæt til sprog (O04) <Icon name="arrow_forward" size={18} className="text-secondary-fixed" /></Button>
+        <Button type="button" onClick={() => router.push("/onboarding/languages")}>Fortsæt til sprog <Icon name="arrow_forward" size={18} className="text-secondary-fixed" /></Button>
       </div>
     </form>
   );

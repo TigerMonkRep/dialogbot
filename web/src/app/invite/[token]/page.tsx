@@ -19,7 +19,7 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   const inv = r.ok ? await r.json() : null;
   const [statusLabel, statusCls] = STATUS[inv?.status] ?? [inv?.status, "bg-surface-container-high text-on-surface"];
   return (
-    <AuthFrame code="A05" icon="group_add" title={inv ? `Invitation til ${inv.workspace_name}` : "Invitation"} subtitle={inv ? "Du er inviteret til et arbejdsrum i Dialogbot." : undefined}>
+    <AuthFrame icon="group_add" title={inv ? `Invitation til ${inv.workspace_name}` : "Invitation"} subtitle={inv ? "Du er inviteret til et arbejdsrum i Dialogbot." : undefined}>
       {!inv ? <p role="alert" className="font-body-md text-body-md text-error">Invitationen findes ikke. Bed en administrator om et nyt link.</p> : (
         <div className="space-y-space-md">
           <dl className="rounded-lg bg-surface-container-low p-space-md grid grid-cols-[auto,1fr] gap-x-space-md gap-y-2 font-body-md text-body-md">

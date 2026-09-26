@@ -48,7 +48,7 @@ export function LanguagesForm({ wsId, settings, canEdit }: { wsId: string; setti
       <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-space-xs"><Icon name="graphic_eq" size={16} />Stemmeprøve kræver stemmeadapteren, som ikke er tilkoblet endnu.</p>
       <div className="flex flex-wrap items-center justify-end gap-space-md pt-space-sm">
         <Button type="submit" variant="tonal" icon="save" disabled={pending || !canEdit}>{pending ? "Gemmer…" : "Gem sprog"}</Button>
-        <Button type="button" onClick={() => router.push("/app/knowledge")}>Fortsæt til viden (K01) <Icon name="arrow_forward" size={18} className="text-secondary-fixed" /></Button>
+        <Button type="button" onClick={() => router.push("/app/knowledge")}>Fortsæt til viden <Icon name="arrow_forward" size={18} className="text-secondary-fixed" /></Button>
       </div>
     </form>
   );

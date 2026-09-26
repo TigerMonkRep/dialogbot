@@ -14,7 +14,7 @@ export default async function WorkspacePage() {
         <div className="xl:col-span-8 bg-surface-container-lowest p-space-md md:p-space-xl rounded-xl shadow-sm space-y-space-lg">
           <div>
             <div className="flex items-center gap-space-sm">
-              <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">A06 Modul</span>
+              <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">Arbejdsrum</span>
               <span className="font-label-sm text-label-sm text-on-surface-variant">Arbejdsrumsoversigt</span>
             </div>
             <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight mt-0.5">Vælg eller opret arbejdsrum</h1>

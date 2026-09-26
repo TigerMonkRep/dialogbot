@@ -10,7 +10,7 @@ export default function ForgotPage() {
   const [sent, setSent] = useState(false);
   const { run, pending, error } = useSubmit(async () => { await api("/auth/password/forgot", { method: "POST", body: JSON.stringify({ email }) }); setSent(true); });
   return (
-    <AuthFrame code="A04" icon="key" title="Nulstil adgangskode" subtitle="Vi sender et link til din e-mail. Af hensyn til sikkerheden fortæller vi ikke, om adressen findes.">
+    <AuthFrame icon="key" title="Nulstil adgangskode" subtitle="Vi sender et link til din e-mail. Af hensyn til sikkerheden fortæller vi ikke, om adressen findes.">
         {sent ? <Alert kind="ok">Hvis adressen findes, har vi sendt et link til nulstilling. Linket gælder i en begrænset periode.</Alert> : (
           <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-space-md">
             <ErrorBox error={error} />

@@ -6,7 +6,7 @@ import { FlowBar, INTENT_LABEL } from "@/components/onboarding";
 import { WorkspaceCards } from "../workspace/form";
 import { ApproveButton, BusinessForm, Categories, SelfManagedButton } from "./form";
 
-type Version = { id: string; status: string; title: string; content: Record<string, unknown> };
+type Version = { id: string; status: string; title: string; content: Record<string, unknown>; source_type?: string };
 type Item = { id: string; kind: string; approved_version: Version | null; open_draft: Version | null };
 
 const DAY: Record<string, string> = { mon: "man", tue: "tir", wed: "ons", thu: "tor", fri: "fre", sat: "lør", sun: "søn" };
@@ -22,7 +22,7 @@ const UNIT: Record<string, string> = { m2: "pr. m²", hour: "pr. time", item: "p
 /** A06 + O01 + O02 — Stitch "a06_o01_o02_virksomhed_arbejdsrum_viden" (desktop and mobil). */
 export default async function BusinessPage() {
   const ws = await requireWorkspace();
-  const [profile, cats, suggested, workspaces, me, items, goals, currentId] = await Promise.all([
+  const [profile, cats, suggested, workspaces, me, items, goals, currentId, caps] = await Promise.all([
     backend<Record<string, unknown>>(`/workspaces/${ws.id}/profile`),
     backend<{ id: string; label: string; slug: string; is_custom: boolean; is_primary: boolean }[]>(`/workspaces/${ws.id}/categories`),
     backend<{ items: { slug: string; label: string }[] }>(`/workspaces/${ws.id}/categories/suggested`),
@@ -31,7 +31,9 @@ export default async function BusinessPage() {
     backend<{ items: Item[] }>(`/workspaces/${ws.id}/knowledge/items?limit=200`),
     backend<Record<string, unknown>>(`/workspaces/${ws.id}/goals`),
     currentWorkspaceId(),
+    backend<{ items: { key: string; status: string }[] }>("/integrations/capabilities"),
   ]);
+  const capOn = (k: string) => caps.items.some((c) => c.key === k && c.status !== "not_implemented");
   const canEdit = ws.role !== "reader";
   const canApprove = ws.role === "owner" || ws.role === "admin";
   const byKind = (k: string) => items.items.filter((i) => i.kind === k);
@@ -91,7 +93,7 @@ export default async function BusinessPage() {
               </div>
               <span className="font-label-sm text-label-sm text-secondary font-bold flex items-center gap-1"><Icon name="tune" size={14} />Basale parametre</span>
             </div>
-            <BusinessForm wsId={ws.id} profile={profile} canEdit={canEdit} />
+            <BusinessForm wsId={ws.id} profile={profile} canEdit={canEdit} aiReady={capOn("knowledge.source_import")} cvrReady={capOn("cvr.lookup")} />
             <div className="space-y-space-md pt-2">
               <div className="flex items-center justify-between">
                 <span className="block font-label-md text-label-md text-on-surface font-semibold">Branchekategorier &amp; servicescope</span>
@@ -126,7 +128,7 @@ export default async function BusinessPage() {
               <Icon name="lock_reset" size={22} className="text-secondary mt-0.5" />
               <div className="flex-1">
                 <p className="font-label-md text-label-md text-primary font-bold">Kun godkendte versioner bruges</p>
-                <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">En ny kladde ændrer aldrig den aktive viden, før en ejer eller administrator har godkendt den. Automatisk udtræk fra hjemmeside og dokumenter er ikke bygget endnu, så alt her er indtastet manuelt.</p>
+                <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">En ny kladde ændrer aldrig den aktive viden, før en ejer eller administrator har godkendt den. Forslag fra hjemmesiden lægges også som kladder her.</p>
               </div>
             </div>
 
@@ -168,7 +170,7 @@ export default async function BusinessPage() {
                     {services.some((s) => s.open_draft) && <span className="font-label-sm text-label-sm text-on-error-container block font-bold">Ugodkendte ændringer – kræver godkendelse</span>}
                   </div>
                 </div>
-                <span className="font-label-sm text-label-sm text-on-surface-variant bg-surface-container-lowest px-2 py-0.5 rounded self-start sm:self-auto">Kilde: indtastet manuelt</span>
+                <span className="font-label-sm text-label-sm text-on-surface-variant bg-surface-container-lowest px-2 py-0.5 rounded self-start sm:self-auto">{services.some((s) => (s.open_draft ?? s.approved_version)?.source_type === "extraction") ? "Kilde: hjemmeside + manuel" : "Kilde: indtastet manuelt"}</span>
               </div>
               <div className="space-y-2">
                 {services.length === 0 && <EmptyFact text="Ingen ydelser endnu – tilføj mindst én i Videnscenter." />}

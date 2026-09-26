@@ -296,3 +296,11 @@ def update_languages(body: LanguagesIn, request: Request,
     invalidate_checks(db, ctx.workspace.id, changed_area="languages", reason="Sprogindstillinger blev ændret")
     db.commit()
     return LanguagesOut.model_validate(ls, from_attributes=True)
+
+
+@router.get("/cvr/{cvr}")
+def cvr_lookup(cvr: str, ctx: WorkspaceContext = Depends(require_capability("profile.edit"))):
+    """Name and address from the CVR register, for the owner to accept into the profile. Nothing is saved."""
+    from app.modules.business import cvr as cvr_register
+
+    return cvr_register.lookup(cvr)

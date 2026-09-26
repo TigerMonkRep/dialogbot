@@ -163,7 +163,20 @@ class FakeProvider:
                 para = next((ln for ln in lines if ln and not ln.startswith(("## ", "- "))), "")
                 if para:
                     facts.append({"title": "Om virksomheden", "text": para, "source_url": url})
-        out = json.dumps({"services": services, "facts": facts, "faq": []}, ensure_ascii=False)
+        def find(pattern: str, group: int = 1) -> str | None:
+            m = re.search(pattern, text)
+            return m.group(group).strip() if m else None
+
+        place = re.search(r"\b(\d{4}) ([A-ZÆØÅ][a-zæøå]+)", text)
+        profile = {"description": facts[0]["text"] if facts else None, "cvr": find(r"CVR\D{0,5}(\d{8})"),
+                   "phone": find(r"(?:Tlf\.?|Telefon|Ring på)[:\s]*(\+?\d[\d ]{6,14}\d)"),
+                   "address_line": find(r"([A-ZÆØÅ][a-zæøå]+(?:vej|gade|allé|stræde|plads) \d+\w?)"),
+                   "postal_code": place.group(1) if place else None, "city": place.group(2) if place else None}
+        h = re.search(r"hverdage (\d{1,2})-(\d{1,2})", text)
+        hours = {"weekly": [{"days": ["mon", "tue", "wed", "thu", "fri"], "open": f"{int(h.group(1)):02d}:00",
+                             "close": f"{int(h.group(2)):02d}:00"}], "note": None} if h else None
+        out = json.dumps({"services": services, "facts": facts, "faq": [], "profile": profile, "opening_hours": hours},
+                         ensure_ascii=False)
         return Completion(text=out, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
                           usage=Usage(input_tokens=len(text) // 4, output_tokens=len(out) // 4), request_id="fake-req")
 

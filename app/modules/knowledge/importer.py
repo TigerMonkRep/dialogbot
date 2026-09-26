@@ -111,7 +111,7 @@ def fetch(url: str) -> tuple[str, str] | None:
 class _Text(HTMLParser):
     """HTML → readable text: headings as '## ', list items as '- ', no scripts/styles/navigation."""
 
-    SKIP = {"script", "style", "noscript", "svg", "template", "nav", "footer", "form"}
+    SKIP = {"script", "style", "noscript", "svg", "template", "nav", "form"}  # footers keep CVR/address
     BLOCK = {"p", "div", "section", "article", "br", "tr", "li", "h1", "h2", "h3", "h4", "header", "main", "td"}
 
     def __init__(self):
@@ -218,8 +218,11 @@ Udtræk KUN det, der faktisk står på siderne. Opfind intet, og gæt aldrig på
 Svar med ét JSON-objekt og intet andet:
 {"services": [{"title": "kort navn på ydelsen", "description": "2-4 sætninger til assistenten om hvad ydelsen er, hvem den er til og hvad den omfatter", "unit": "m2|hour|item|job|null", "price_text": "prisen præcis som den står på siden, eller null", "source_url": "siden den stammer fra"}],
  "facts": [{"title": "fx Om virksomheden, Åbningstider, Område vi dækker, Kontakt", "text": "faktuel tekst til assistenten", "source_url": "..."}],
- "faq": [{"question": "spørgsmål en kunde typisk stiller", "answer": "svar der står på siden", "source_url": "..."}]}
+ "faq": [{"question": "spørgsmål en kunde typisk stiller", "answer": "svar der står på siden", "source_url": "..."}],
+ "profile": {"description": "2-3 sætninger om hvad virksomheden laver, for hvem og hvor", "cvr": "CVR-nummer præcis som det står, eller null", "phone": "hovedtelefonnummer præcis som det står, eller null", "email": "kontakt-e-mail eller null", "address_line": "gade og nummer eller null", "postal_code": "postnummer eller null", "city": "by eller null"},
+ "opening_hours": {"weekly": [{"days": ["mon","tue","wed","thu","fri"], "open": "08:00", "close": "16:00"}], "note": "fx 'Lukket i weekender og på helligdage' eller null"}}
 
+Brug null for opening_hours, hvis siderne ikke angiver åbnings- eller telefontider. Dage skrives som mon, tue, wed, thu, fri, sat, sun og tider som TT:MM.
 Regler: højst 15 ydelser, 8 fakta og 8 spørgsmål. Skriv på naturligt dansk. Beskrivelser skal være skrevet til assistenten (tredje person om virksomheden). Hvis noget ikke står på siderne, så udelad det."""
 
 
@@ -262,12 +265,75 @@ def suggestions(data: dict, pages: list[dict]) -> list[tuple[str, str, dict, str
         title, text = _s(f.get("title"), 120), _s(f.get("text"), 2000)
         if title and text:
             out.append(("fact", title, {"text": text}, src(f.get("source_url"))))
+    hours = opening_hours(data)
+    if hours:
+        out.append(("opening_hours", "Åbningstider", hours, pages[0]["url"]))
     for q in (data.get("faq") or [])[:8]:
         question, answer = _s(q.get("question"), 300), _s(q.get("answer"), 2000)
         if question and answer:
             out.append(("known_answer", question[:120], {"question": question, "answer": answer},
                         src(q.get("source_url"))))
     return out
+
+
+DAYS = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
+TIME = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
+
+
+def _digits(v) -> str:
+    return re.sub(r"\D", "", str(v or ""))
+
+
+def cvr_valid(cvr: str) -> bool:
+    """Danish CVR: 8 digits, modulus-11 with weights 2,7,6,5,4,3,2,1."""
+    if not re.fullmatch(r"[1-9]\d{7}", cvr):
+        return False
+    return sum(int(d) * w for d, w in zip(cvr, (2, 7, 6, 5, 4, 3, 2, 1), strict=True)) % 11 == 0
+
+
+def profile_suggestion(data: dict, pages: list[dict]) -> dict:
+    """Company details the owner can accept into the profile. A value is kept only when it can be found
+    in the fetched pages (numbers compared digit-for-digit) – the model may not invent contact data."""
+    p = data.get("profile") if isinstance(data.get("profile"), dict) else {}
+    text = "\n".join(pg["text"] for pg in pages)
+    low, digits = text.lower(), _digits(text)
+    out: dict[str, str] = {}
+    desc = _s(p.get("description"), 600)
+    if len(desc) >= 20:
+        out["description"] = desc
+    cvr = _digits(p.get("cvr"))
+    if cvr_valid(cvr) and cvr in digits:
+        out["cvr"] = cvr
+    phone = _s(p.get("phone"), 40)
+    pd = _digits(phone)
+    if len(pd) >= 8 and pd[-8:] in digits:
+        out["phone"] = phone
+    for key, n in (("address_line", 300), ("city", 120)):
+        v = _s(p.get(key), n)
+        if v and v.lower() in low:
+            out[key] = v
+    postal = _digits(p.get("postal_code"))
+    if re.fullmatch(r"\d{4}", postal) and postal in digits:
+        out["postal_code"] = postal
+    return out
+
+
+def opening_hours(data: dict) -> dict | None:
+    oh = data.get("opening_hours")
+    if not isinstance(oh, dict):
+        return None
+    weekly = []
+    for row in (oh.get("weekly") or [])[:7]:
+        if not isinstance(row, dict):
+            continue
+        days = [d for d in (row.get("days") or []) if d in DAYS]
+        o, c = _s(row.get("open"), 5), _s(row.get("close"), 5)
+        if days and TIME.match(o) and TIME.match(c) and o < c:
+            weekly.append({"days": days, "open": o, "close": c})
+    if not weekly:
+        return None
+    note = _s(oh.get("note"), 300)
+    return {"weekly": weekly, "closed_note": "" if note.lower() == "null" else note}
 
 
 def extract(db: OrmSession, ws: Workspace, user_id: uuid.UUID | None, pages: list[dict]) -> dict:
@@ -329,6 +395,7 @@ def run(import_id: uuid.UUID, fetcher=None) -> None:
                 db.flush()
                 created.append({"kind": kind, "title": title, "item_id": str(item.id), "version_id": str(v.id)})
             imp.created_items, imp.skipped, imp.status = created, skipped, "done"
+            imp.profile_suggestion = profile_suggestion(data, pages)
             record_audit(db, workspace_id=ws.id, actor_user_id=imp.created_by, action="knowledge.import_suggested",
                          object_type="source_import", object_id=imp.id,
                          after={"url": imp.url, "pages": len(pages), "created": len(created), "skipped": skipped})
@@ -352,5 +419,5 @@ def import_out(imp: SourceImport | None) -> dict | None:
     if imp is None:
         return None
     return {"id": str(imp.id), "url": imp.url, "status": imp.status, "pages": imp.pages,
-            "created_items": imp.created_items, "skipped": imp.skipped, "error": imp.error,
+            "created_items": imp.created_items, "skipped": imp.skipped, "profile_suggestion": imp.profile_suggestion, "error": imp.error,
             "created_at": imp.created_at.isoformat(), "finished_at": imp.finished_at.isoformat() if imp.finished_at else None}

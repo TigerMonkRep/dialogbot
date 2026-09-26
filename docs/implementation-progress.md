@@ -2,6 +2,17 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 18 — 26. september 2026 (virksomhedsoplysninger fra hjemmeside og CVR)
+
+| Del | Status | Bevis |
+|---|---|---|
+| Importen foreslår også profil (beskrivelse, CVR, telefon, adresse, postnummer, by) i `source_imports.profile_suggestion` (Alembic `c9febc48ca3b`). En værdi beholdes kun, hvis den står på siderne (tal sammenlignes ciffer for ciffer); CVR kræver gyldigt modulus-11-kontrolciffer. Sidefødder læses nu med (CVR/adresse står ofte der) | testet | `test_profile_suggestion_keeps_only_what_the_pages_say`, `test_import_creates_drafts_only` |
+| Åbningstider fra siden bliver en kladde (`opening_hours`) med validerede dage og tider | testet | samme |
+| Virksomhedssiden: "Hent oplysninger fra hjemmesiden" udfylder kun tomme felter (intet gemmes før "Gem"), nyt adressefelt, forældede "ikke bygget"-tekster fjernet | implementeret, E2E | rejse 18 |
+| `GET /workspaces/{id}/cvr/{cvr}` (medarbejder+): navn, adresse, branche og status fra CVR-registret (Erhvervsstyrelsens system-til-system-adgang, basic auth); knappen "Slå op" vises kun, når `cvr.lookup` er tilgængelig | testet med stub | `tests/test_cvr_lookup.py` |
+
+**Ikke eksternt verificeret:** CVR-registret (kræver gratis adgang fra Erhvervsstyrelsen; feltstierne følger offentlig klientkode) og udtræk med den rigtige model.
+
 ## Checkpoint 17 — 26. september 2026 (forslag fra hjemmesiden)
 
 | Del | Status | Bevis |

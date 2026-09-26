@@ -16,7 +16,8 @@ SITE = {
     "https://fjordgulv.dk/": """<html><head><title>Fjord Gulvservice</title><script>var x=1</script></head><body>
         <nav><a href="/ydelser">Ydelser</a><a href="/kontakt">Kontakt</a><a href="/billede.jpg">Billede</a>
         <a href="https://andetfirma.dk/ydelser">Partner</a></nav>
-        <h1>Fjord Gulvservice</h1><p>Vi sliber og behandler trægulve i hele Storkøbenhavn siden 1998.</p></body></html>""",
+        <h1>Fjord Gulvservice</h1><p>Vi sliber og behandler trægulve i hele Storkøbenhavn siden 1998.</p>
+        <footer>Fjord Gulvservice ApS · Havnevej 12 · 8000 Aarhus · CVR 12345674</footer></body></html>""",
     "https://fjordgulv.dk/ydelser": """<html><body><h1>Vores ydelser</h1>
         <h2>Gulvafslibning</h2><p>Afslibning af trægulve med støvsuger-anlæg. Fra 145 kr. pr. m² inkl. moms.</p>
         <h2>Lakering</h2><p>Tre lag slidstærk lak på nyslebne gulve.</p></body></html>""",
@@ -78,7 +79,11 @@ def test_import_creates_drafts_only(api, two_workspaces, fake_ai, db):
     latest = api.get(tok, f"/workspaces/{ws}/knowledge/imports/latest").json()["import"]
     assert latest["status"] == "done", latest
     titles = {i["title"]: i["kind"] for i in latest["created_items"]}
-    assert titles == {"Gulvafslibning": "service", "Lakering": "service", "Om virksomheden": "fact"}
+    assert titles == {"Gulvafslibning": "service", "Lakering": "service", "Om virksomheden": "fact",
+                      "Åbningstider": "opening_hours"}
+    assert latest["profile_suggestion"] == {
+        "description": "Vi sliber og behandler trægulve i hele Storkøbenhavn siden 1998.", "cvr": "12345674",
+        "phone": "70 12 34 56", "address_line": "Havnevej 12", "postal_code": "8000", "city": "Aarhus"}
     versions = db.scalars(select(KnowledgeVersion).where(KnowledgeVersion.source_type == "extraction")).all()
     assert {v.status for v in versions} == {"draft"}
     slib = next(v for v in versions if v.title == "Gulvafslibning")
@@ -91,7 +96,7 @@ def test_import_creates_drafts_only(api, two_workspaces, fake_ai, db):
     # a second run skips what already exists; other workspaces see nothing
     api.post(tok, f"/workspaces/{ws}/knowledge/import", {"url": "https://fjordgulv.dk/"})
     again = api.get(tok, f"/workspaces/{ws}/knowledge/imports/latest").json()["import"]
-    assert again["created_items"] == [] and again["skipped"] == 3
+    assert again["created_items"] == [] and again["skipped"] == 4
     assert api.get(t["tok_b"], f"/workspaces/{t['ws_b']}/knowledge/imports/latest").json()["import"] is None
 
 
@@ -108,3 +113,18 @@ def test_import_roles_failures_and_not_configured(api, two_workspaces, fake_ai, 
     r = api.post(t["tok_a"], f"/workspaces/{t['ws_a']}/knowledge/import", {"url": "https://fjordgulv.dk/"})
     assert r.status_code == 501 and r.json()["code"] == "ai_not_configured"
     assert db.scalar(select(SourceImport).where(SourceImport.status == "running")) is None
+
+
+def test_profile_suggestion_keeps_only_what_the_pages_say():
+    pages = [{"url": "https://x.dk/", "title": "", "text": "Ring 70 12 34 56. CVR 12345674. Havnevej 12, 8000 Aarhus."}]
+    invented = {"profile": {"cvr": "12345682", "phone": "+45 99 88 77 66", "postal_code": "9000", "city": "Aalborg",
+                            "address_line": "Strandvejen 1", "description": "kort"}}
+    assert importer.profile_suggestion(invented, pages) == {}
+    assert importer.cvr_valid("12345674") and not importer.cvr_valid("12345675") and not importer.cvr_valid("02345674")
+    ok = {"profile": {"cvr": "DK-12 34 56 74", "phone": "+45 70 12 34 56"}}
+    assert importer.profile_suggestion(ok, pages) == {"cvr": "12345674", "phone": "+45 70 12 34 56"}
+    hours = importer.opening_hours({"opening_hours": {"weekly": [
+        {"days": ["mon", "fri", "xyz"], "open": "08:00", "close": "16:00"},
+        {"days": ["sat"], "open": "18:00", "close": "10:00"}], "note": "null"}})
+    assert hours == {"weekly": [{"days": ["mon", "fri"], "open": "08:00", "close": "16:00"}], "closed_note": ""}
+    assert importer.opening_hours({"opening_hours": None}) is None

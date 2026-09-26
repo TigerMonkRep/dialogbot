@@ -44,6 +44,10 @@ services:
         sync: false
       - key: VAPI_SERVER_SECRET   # voice webhook credential (Bearer); without it telephony is off
         sync: false
+      - key: CVR_USERNAME         # optional: CVR register lookup (free access from Erhvervsstyrelsen)
+        sync: false
+      - key: CVR_PASSWORD
+        sync: false
       - key: ELEVENLABS_API_KEY   # optional: "Hør stemmen" voice sample in Settings → Telephony
         sync: false
       - key: PUBLIC_BASE_URL

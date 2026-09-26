@@ -55,6 +55,10 @@ def capabilities() -> list[Capability]:
         Capability("knowledge.source_import", "Forslag fra hjemmesiden", ai_status, s.app_env,
                    "Henter jeres egne sider og foreslår ydelser, fakta og spørgsmål som kladder, der skal godkendes. "
                    "Priser gættes aldrig." if ai_status != "not_implemented" else "Kræver en AI-udbyder (AI_PROVIDER)."),
+        Capability("cvr.lookup", "Opslag i CVR-registret", "available" if s.cvr_username and s.cvr_password
+                   else "not_implemented", s.app_env,
+                   "Navn og adresse hentes fra CVR-registret, når I beder om det." if s.cvr_username and s.cvr_password
+                   else "Kræver gratis adgang fra Erhvervsstyrelsen (CVR_USERNAME/CVR_PASSWORD)."),
         Capability("webchat", "Web-widget", ai_status, s.app_env,
                    "Chat-widget til jeres hjemmeside; svarer kun ud fra godkendt viden og kun på godkendte domæner."
                    if ai_status != "not_implemented" else "Kræver en AI-udbyder (AI_PROVIDER)."),

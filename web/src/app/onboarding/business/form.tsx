@@ -7,13 +7,40 @@ import { Alert, Button, ErrorBox, Field, Icon, Input, Textarea, inputCls, useSub
 type Profile = Record<string, unknown>;
 
 /** O01 basic parameters. Submitted by the sticky action bar via form="business-form". */
-export function BusinessForm({ wsId, profile, canEdit }: { wsId: string; profile: Profile; canEdit: boolean }) {
+type Suggestion = Partial<Record<"description" | "cvr" | "phone" | "address_line" | "postal_code" | "city", string>>;
+type ImportState = { status: "running" | "done" | "failed"; error: string | null; created_items: { kind: string; title: string }[]; profile_suggestion: Suggestion };
+const FIELD_LABEL: Record<string, string> = { description: "beskrivelse", cvr: "CVR", phone: "telefon", address_line: "adresse", postal_code: "postnummer", city: "by", legal_name: "navn" };
+
+export function BusinessForm({ wsId, profile, canEdit, aiReady = false, cvrReady = false }: { wsId: string; profile: Profile; canEdit: boolean; aiReady?: boolean; cvrReady?: boolean }) {
   const router = useRouter();
   const [f, setF] = useState<Profile>(profile);
   const [saved, setSaved] = useState(false);
   // Adopt the server copy after a save/refresh (new version) without losing the "Gemt" notice.
   useEffect(() => { setF(profile); }, [profile.version]); // eslint-disable-line react-hooks/exhaustive-deps
-  const FIELDS = ["legal_name", "description", "manual_setup", "website_url", "cvr", "phone", "postal_code", "city", "timezone"];
+  const FIELDS = ["legal_name", "description", "manual_setup", "website_url", "cvr", "phone", "address_line", "postal_code", "city", "timezone"];
+  const [filled, setFilled] = useState<{ source: string; fields: string[]; drafts: number; note?: string } | null>(null);
+  // Fill only empty fields: the owner's own input is never overwritten, and nothing is saved until "Gem".
+  const fillEmpty = (source: string, values: Record<string, string | null | undefined>, drafts = 0, note?: string) => {
+    const fields = Object.keys(FIELD_LABEL).filter((k) => values[k] && !String(f[k] ?? "").trim());
+    setF((cur) => ({ ...cur, ...Object.fromEntries(fields.map((k) => [k, values[k]])) }));
+    setSaved(false); setFilled({ source, fields, drafts, note });
+  };
+  const fromSite = useSubmit(async () => {
+    let imp = await api<ImportState>(`/workspaces/${wsId}/knowledge/import`, { method: "POST", body: JSON.stringify({ url: f.website_url }) });
+    for (let i = 0; i < 60 && imp.status === "running"; i++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      imp = (await api<{ import: ImportState }>(`/workspaces/${wsId}/knowledge/imports/latest`)).import;
+    }
+    if (imp.status === "failed") throw { status: 422, code: "import_failed", message: imp.error ?? "Importen fejlede" };
+    if (imp.status === "running") throw { status: 504, code: "import_slow", message: "Hjemmesiden tager lang tid at læse. Prøv igen om lidt." };
+    fillEmpty("hjemmesiden", imp.profile_suggestion ?? {}, imp.created_items.length);
+    router.refresh();
+  });
+  const fromCvr = useSubmit(async () => {
+    const r = await api<{ legal_name: string; address_line: string | null; postal_code: string | null; city: string | null; industry: string | null; status: string | null }>(`/workspaces/${wsId}/cvr/${encodeURIComponent(String(f.cvr ?? ""))}`);
+    fillEmpty("CVR-registret", { address_line: r.address_line, postal_code: r.postal_code, city: r.city }, 0,
+      [r.legal_name, r.industry, r.status && `status: ${r.status}`].filter(Boolean).join(" · "));
+  });
   const dirty = FIELDS.some((k) => (f[k] ?? "") !== (profile[k] ?? ""));
   const { run, pending, error } = useSubmit(async () => {
     await api(`/workspaces/${wsId}/profile`, { method: "PUT", body: JSON.stringify({ ...f, expected_version: profile.version, website_url: f.website_url || null }) });
@@ -34,6 +61,13 @@ export function BusinessForm({ wsId, profile, canEdit }: { wsId: string; profile
       <ErrorBox error={error} />
       {error?.code === "version_conflict" && <Button variant="secondary" type="button" onClick={() => router.refresh()}>Genindlæs</Button>}
       {saved && !dirty && <Alert kind="ok">Gemt.</Alert>}
+      {filled && (
+        <Alert kind="ok">
+          {filled.fields.length ? `Udfyldt fra ${filled.source}: ${filled.fields.map((k) => FIELD_LABEL[k] ?? k).join(", ")}. Tjek felterne og tryk Gem.` : `Intet nyt at udfylde fra ${filled.source} – felterne var allerede udfyldt, eller oplysningerne stod ikke der.`}
+          {filled.note ? ` Registreret som: ${filled.note}.` : ""}
+          {filled.drafts > 0 ? ` ${filled.drafts} forslag til ydelser, åbningstider og faste svar er lagt som kladder til godkendelse.` : ""}
+        </Alert>
+      )}
       {dirty && <p role="status" className="font-label-sm text-label-sm text-on-surface-variant">Ugemte ændringer{pending ? " – gemmer…" : ""}</p>}
       <Field label="Virksomhedens officielle navn" hint="Dette navn bruges af assistenten over for kunderne." error={fieldError(error, "legal_name")}>
         <div className="relative">
@@ -55,17 +89,30 @@ export function BusinessForm({ wsId, profile, canEdit }: { wsId: string; profile
               <span className="absolute top-0.5 left-0.5 bg-on-primary w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5" />
             </span>
           </label>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Der hentes intet automatisk fra en hjemmeside. Alle oplysninger, priser og svar kommer udelukkende fra den godkendte viden.</p>
-          {!manual && (
-            <Field label="Hjemmeside" hint="Automatisk indlæsning af hjemmesider er ikke bygget endnu – adressen gemmes kun." error={fieldError(error, "website_url")}>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">{manual ? "Der hentes intet fra en hjemmeside. Alle oplysninger, priser og svar kommer udelukkende fra den godkendte viden." : "Slå til, hvis I ikke har en hjemmeside eller vil indtaste alt selv."}</p>
+          {!manual && (<>
+            <Field label="Hjemmeside" hint={aiReady ? "Vi læser jeres sider og foreslår beskrivelse, kontaktoplysninger, åbningstider og ydelser. Intet bliver brugt, før I har tjekket og godkendt det." : "Adressen gemmes. Forslag fra hjemmesiden kræver, at AI er slået til."} error={fieldError(error, "website_url")}>
               <Input placeholder="https://" value={String(f.website_url ?? "")} onChange={s("website_url")} disabled={!canEdit} />
             </Field>
-          )}
+            {aiReady && canEdit && (
+              <div className="flex flex-col gap-1">
+                <Button type="button" variant="tonal" icon="auto_awesome" disabled={fromSite.pending || !String(f.website_url ?? "").trim()} onClick={() => fromSite.run()}>{fromSite.pending ? "Læser hjemmesiden… (op til et minut)" : "Hent oplysninger fra hjemmesiden"}</Button>
+                <ErrorBox error={fromSite.error} />
+              </div>
+            )}
+          </>)}
         </div>
       </div>
       <div className="grid gap-space-md grid-cols-2">
-        <Field label="CVR"><Input inputMode="numeric" value={String(f.cvr ?? "")} onChange={s("cvr")} disabled={!canEdit} /></Field>
+        <Field label="CVR">
+          <div className="flex gap-2">
+            <Input inputMode="numeric" value={String(f.cvr ?? "")} onChange={s("cvr")} disabled={!canEdit} />
+            {cvrReady && canEdit && <Button type="button" variant="tonal" disabled={fromCvr.pending || String(f.cvr ?? "").replace(/\D/g, "").length !== 8} onClick={() => fromCvr.run()} className="shrink-0">{fromCvr.pending ? "Slår op…" : "Slå op"}</Button>}
+          </div>
+          {fieldError(fromCvr.error, "cvr") ? <p role="alert" className="mt-1 text-label-md text-error">Ugyldigt CVR-nummer.</p> : <ErrorBox error={fromCvr.error} />}
+        </Field>
         <Field label="Telefon"><Input type="tel" value={String(f.phone ?? "")} onChange={s("phone")} disabled={!canEdit} /></Field>
+        <div className="col-span-2"><Field label="Adresse"><Input autoComplete="street-address" value={String(f.address_line ?? "")} onChange={s("address_line")} disabled={!canEdit} /></Field></div>
         <Field label="Postnummer"><Input inputMode="numeric" value={String(f.postal_code ?? "")} onChange={s("postal_code")} disabled={!canEdit} /></Field>
         <Field label="By"><Input value={String(f.city ?? "")} onChange={s("city")} disabled={!canEdit} /></Field>
         <div className="col-span-2"><Field label="Tidszone" error={fieldError(error, "timezone")}><Input value={String(f.timezone ?? "Europe/Copenhagen")} onChange={s("timezone")} disabled={!canEdit} /></Field></div>

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import uuid
 
-from fastapi import APIRouter, Depends, Header, Request
+from fastapi import APIRouter, Depends, Header, Request, Response
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -143,6 +143,29 @@ def update_number(number_id: uuid.UUID, body: NumberPatch, request: Request,
                  request_id=request.state.request_id)
     db.commit()
     return number_out(n)
+
+
+class PreviewIn(BaseModel):
+    voice_id: str | None = Field(default=None, max_length=64)
+    voice_model: str | None = Field(default=None, max_length=40)
+    text: str | None = Field(default=None, max_length=vapi.PREVIEW_TEXT_MAX)
+
+
+@router.post("/phone-numbers/{number_id}/voice-preview", response_class=Response,
+             responses={200: {"content": {"audio/mpeg": {}}}})
+def voice_preview(number_id: uuid.UUID, body: PreviewIn,
+                  ctx: WorkspaceContext = Depends(require_capability("telephony.manage")),
+                  db: OrmSession = Depends(get_db)):
+    """Play the (possibly unsaved) voice choice with the number's greeting. Nothing is stored."""
+    n = get_scoped(db, PhoneNumber, number_id, ctx.workspace.id)
+    voice_id = (body.voice_id if body.voice_id is not None else n.voice_id).strip()
+    voice_model = body.voice_model or n.voice_model
+    _check_voice(voice_id, voice_model)
+    if not voice_id:
+        raise ValidationFailed("Vælg en stemme først", field_errors=[{"field": "voice_id"}])
+    text = (body.text or "").strip() or n.greeting.strip() or vapi.DEFAULT_GREETING.format(name=ctx.workspace.name)
+    audio = vapi.voice_preview(voice_id, voice_model, text)
+    return Response(content=audio, media_type="audio/mpeg", headers={"cache-control": "no-store"})
 
 
 @router.get("/calls")

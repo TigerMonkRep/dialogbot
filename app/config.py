@@ -65,6 +65,8 @@ class Settings(BaseSettings):
     # Optional JSON objects passed through to Vapi's assistant config (e.g. a Danish voice/transcriber).
     vapi_voice_json: str | None = Field(default=None, alias="VAPI_VOICE_JSON")
     vapi_transcriber_json: str | None = Field(default=None, alias="VAPI_TRANSCRIBER_JSON")
+    # Server-side only: lets owners hear a chosen ElevenLabs voice before calls go live.
+    elevenlabs_api_key: str | None = Field(default=None, alias="ELEVENLABS_API_KEY")
     # Spend guard: max AI replies per workspace per 24 h in the public web widget.
     webchat_daily_reply_limit: int = Field(default=300, alias="WEBCHAT_DAILY_REPLY_LIMIT")
 

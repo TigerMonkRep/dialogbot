@@ -377,6 +377,8 @@ test("14 · S03: ejer tilknytter nummer, et opkald rapporteres af Vapi og bliver
   await page.getByRole("button", { name: "Stemme og talestil" }).click();
   await page.getByLabel("ElevenLabs Voice ID").fill("DaNskStemme12345678");
   await page.getByLabel("Talestil (valgfri)").fill("Lun og jordnær, gerne et par jyske vendinger.");
+  await page.getByRole("button", { name: "Hør stemmen" }).click();  // no ELEVENLABS_API_KEY in CI: honest notice, no fake audio
+  await expect(page.getByText(/kræver en ElevenLabs-nøgle/)).toBeVisible();
   await page.getByRole("button", { name: "Gem stemme" }).click();
   await expect(page.getByText("Dansk stemme valgt")).toBeVisible();
   await shot(page, info, "s03-telefoni");

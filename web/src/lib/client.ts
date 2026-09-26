@@ -17,6 +17,16 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   return body as T;
 }
 
+/** POST that returns binary data (e.g. an audio sample) as a Blob; errors are thrown as ApiError. */
+export async function apiBlob(path: string, body: unknown): Promise<Blob> {
+  const r = await fetch(`/api/backend${path}`, {
+    method: "POST", credentials: "same-origin", body: JSON.stringify(body),
+    headers: { "x-requested-with": "dialogbot", "content-type": "application/json" },
+  });
+  if (!r.ok) throw { ...(await r.json().catch(() => ({ code: "http_error", message: r.statusText }))), status: r.status } as ApiError;
+  return r.blob();
+}
+
 export function fieldError(err: ApiError | null, field: string): string | undefined {
   return err?.field_errors?.find((f) => f.field === field)?.message;
 }

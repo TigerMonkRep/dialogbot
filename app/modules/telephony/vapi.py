@@ -97,6 +97,30 @@ def _json_setting(raw: str | None) -> dict | None:
         return None
 
 
+PREVIEW_TEXT_MAX = 300
+ELEVENLABS_TTS = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+
+
+def voice_preview(voice_id: str, voice_model: str, text: str) -> bytes:
+    """Render a short sample with ElevenLabs (mp3). The key never leaves the server."""
+    import httpx
+
+    from app.core.errors import NotImplementedYet
+
+    key = get_settings().elevenlabs_api_key
+    if not key:
+        raise NotImplementedYet("Stemmeprøve kræver ELEVENLABS_API_KEY på serveren", code="voice_preview_not_configured")
+    try:
+        r = httpx.post(ELEVENLABS_TTS.format(voice_id=voice_id), params={"output_format": "mp3_44100_128"},
+                       headers={"xi-api-key": key}, json={"text": text, "model_id": voice_model}, timeout=30.0)
+    except httpx.HTTPError as e:
+        raise ApiError("ElevenLabs svarede ikke", code="voice_preview_failed", status_code=502) from e
+    if r.status_code >= 400:
+        raise ApiError(f"ElevenLabs afviste stemmeprøven ({r.status_code}). Tjek stemme-id og model.",
+                       code="voice_preview_failed", status_code=502)
+    return r.content
+
+
 def voice_config(number: PhoneNumber) -> dict | None:
     """The number's own ElevenLabs voice, or None (then VAPI_VOICE_JSON or the provider default applies)."""
     if not number.voice_id:

@@ -1077,21 +1077,6 @@
         "title": "NumberPatch",
         "type": "object"
       },
-      "PreviewIn": {
-        "properties": {
-          "message": {
-            "maxLength": 2000,
-            "minLength": 1,
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "message"
-        ],
-        "title": "PreviewIn",
-        "type": "object"
-      },
       "ProfileIn": {
         "properties": {
           "address_line": {
@@ -2013,6 +1998,21 @@
         "title": "WorkspaceOut",
         "type": "object"
       },
+      "app__modules__ai__router__PreviewIn": {
+        "properties": {
+          "message": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "PreviewIn",
+        "type": "object"
+      },
       "app__modules__reports__router__SettingsIn": {
         "properties": {
           "email_enabled": {
@@ -2031,6 +2031,48 @@
           "send_hour_local"
         ],
         "title": "SettingsIn",
+        "type": "object"
+      },
+      "app__modules__telephony__router__PreviewIn": {
+        "properties": {
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "voice_id": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Id"
+          },
+          "voice_model": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Model"
+          }
+        },
+        "title": "PreviewIn",
         "type": "object"
       },
       "app__modules__webchat__router__SettingsIn": {
@@ -3709,7 +3751,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PreviewIn"
+                "$ref": "#/components/schemas/app__modules__ai__router__PreviewIn"
               }
             }
           },
@@ -6899,6 +6941,82 @@
           }
         },
         "summary": "Update Number",
+        "tags": [
+          "telephony"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/phone-numbers/{number_id}/voice-preview": {
+      "post": {
+        "description": "Play the (possibly unsaved) voice choice with the number's greeting. Nothing is stored.",
+        "operationId": "voice_preview_api_v1_workspaces__workspace_id__phone_numbers__number_id__voice_preview_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Number Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__telephony__router__PreviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "audio/mpeg": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Voice Preview",
         "tags": [
           "telephony"
         ]

@@ -2,6 +2,16 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 16 — 26. september 2026 (stemmeprøve og ryddet brugerflade)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `POST /workspaces/{id}/phone-numbers/{nid}/voice-preview` (ejer/admin): ElevenLabs text-to-speech med den valgte (også ikke-gemte) stemme og hilsenen → `audio/mpeg`; intet gemmes; uden `ELEVENLABS_API_KEY` 501 `voice_preview_not_configured` | testet | `test_voice_preview` |
+| Knappen "Hør stemmen" under Telefoni → Stemme og talestil; sprog-siden henviser dertil i stedet for "ikke tilkoblet" | implementeret, E2E | rejse 14 |
+| Interne Stitch-koder (A06, G01, S03 …) og "milepæl"-jargon fjernet fra brugerfladen | implementeret | build + E2E |
+
+**Ikke eksternt verificeret:** et rigtigt kald til ElevenLabs (kræver nøglen i Render).
+
 ## Checkpoint 15 — 26. september 2026 (dansk stemme i telefonen)
 
 | Del | Status | Bevis |

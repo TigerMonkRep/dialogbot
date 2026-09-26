@@ -215,6 +215,16 @@ def run_schedules() -> None:
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("campaigns.failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:
+            from app.modules.billing.stripe import invoice_due
+
+            n = invoice_due(db)
+            if n:
+                log.info("invoices.created", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("invoices.failed", error=f"{type(exc).__name__}: {exc}")
 
 
 def sync_calendars(db, max_age_minutes: int = 15) -> int:

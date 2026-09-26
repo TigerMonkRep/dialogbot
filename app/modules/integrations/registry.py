@@ -48,7 +48,10 @@ def capabilities() -> list[Capability]:
         Capability("calendar", "Kalender og online booking", "available", s.app_env,
                    "Ledige tider ud fra godkendte åbningstider. Jeres Google/Outlook-kalender kobles på med dens hemmelige "
                    "iCal-adresse (optaget tid blokerer), og bookinger vises i kalenderen via et iCal-abonnement."),
-        Capability("payment", "Kortbetaling", "not_implemented", s.app_env, "Kommer med Stripe. Betaling starter aldrig opkald."),
+        Capability("payment", "Kortbetaling og fakturaer", "available" if s.stripe_secret_key else "not_implemented", s.app_env,
+                   ("Stripe" + (" (testtilstand)" if (s.stripe_secret_key or "").startswith("sk_test_") else "") +
+                    ": kort gemmes hos Stripe, og hver måned faktureres bagud automatisk. Betaling starter aldrig opkald.")
+                   if s.stripe_secret_key else "Kræver STRIPE_SECRET_KEY og STRIPE_WEBHOOK_SECRET på serveren."),
         Capability("ai.assistant_preview", "AI-assistent: intern forhåndsvisning", ai_status, s.app_env,
                    ai_note),
         Capability("ai.conversation", "AI-samtale med kunder", ai_status, s.app_env,

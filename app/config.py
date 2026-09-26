@@ -60,6 +60,9 @@ class Settings(BaseSettings):
     # Voice (Vapi). The server secret authenticates Vapi → us (Bearer credential or legacy X-Vapi-Secret).
     # Without it the voice webhook answers 503 and inbound telephony is reported as not implemented.
     vapi_server_secret: str | None = Field(default=None, alias="VAPI_SERVER_SECRET")
+    # Stripe (card payment and monthly invoices). Test-mode keys (sk_test_…) until the owner goes live.
+    stripe_secret_key: str | None = Field(default=None, alias="STRIPE_SECRET_KEY")
+    stripe_webhook_secret: str | None = Field(default=None, alias="STRIPE_WEBHOOK_SECRET")
     # Outbound campaign calls: Vapi private API key (server-only). Without it campaigns cannot be started.
     vapi_api_key: str | None = Field(default=None, alias="VAPI_API_KEY")
     vapi_api_url: str = Field(default="https://api.vapi.ai", alias="VAPI_API_URL")

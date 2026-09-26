@@ -508,3 +508,22 @@ test("17 · Viden: forslag fra hjemmesiden bliver til kladder med tekst og uden 
   const live = await (await page.request.get(`/api/backend/workspaces/${wsId}/assistant/knowledge`)).json();
   expect(live.items).toEqual([]);
 });
+
+test("18 · O01: hjemmesiden udfylder beskrivelse, CVR, telefon og adresse; åbningstider bliver en kladde", async ({ page }, info) => {
+  await freshOwner(page, info);
+  servers.push(await serve(4000, `<!doctype html><html lang="da"><head><title>Fjord Gulv</title></head><body>
+    <h1>Fjord Gulv</h1><p>Vi sliber og behandler trægulve i hele Østjylland.</p>
+    <h2>Gulvafslibning</h2><p>Afslibning med støvfrit anlæg.</p>
+    <footer>Fjord Gulv ApS · Havnevej 12 · 8000 Aarhus · CVR 12345674 · Ring på 70 12 34 56 hverdage 8-16</footer></body></html>`));
+  await page.goto("/onboarding/business");
+  await page.getByRole("switch").uncheck({ force: true }); // visually hidden input behind a styled toggle
+  await page.getByRole("textbox", { name: /^Hjemmeside/ }).fill("http://127.0.0.1:4000/");
+  await page.getByRole("button", { name: "Hent oplysninger fra hjemmesiden" }).click();
+  await expect(page.getByText(/Udfyldt fra hjemmesiden: beskrivelse, CVR, telefon, adresse, postnummer, by/)).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByRole("textbox", { name: /^CVR/ })).toHaveValue("12345674");
+  await expect(page.getByRole("textbox", { name: /^Adresse/ })).toHaveValue("Havnevej 12");
+  await expect(page.getByText("08:00 – 16:00")).toBeVisible();
+  await shot(page, info, "o01-fra-hjemmeside");
+  await page.getByRole("button", { name: "Gem", exact: true }).click();
+  await expect(page.getByText("Gemt.")).toBeVisible();
+});

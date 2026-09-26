@@ -631,6 +631,8 @@ class SourceImport(Base):
     pages: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     created_items: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     skipped: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # Verified company details (description, cvr, phone, address) the owner can accept into the profile.
+    profile_suggestion: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict, server_default="{}")
     error: Mapped[str | None] = mapped_column(Text)
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()

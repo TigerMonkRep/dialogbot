@@ -820,3 +820,46 @@ class DoNotCall(Base):
     reason: Mapped[str] = mapped_column(String(300), nullable=False, default="")
     source: Mapped[str] = mapped_column(String(16), nullable=False, default="manual")  # manual | call
     created_at: Mapped[datetime] = ts_now()
+
+
+class BillingAccount(Base):
+    """The workspace's Stripe customer and saved card (card data itself stays at Stripe)."""
+
+    __tablename__ = "billing_accounts"
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    stripe_customer_id: Mapped[str | None] = mapped_column(String(64), unique=True)
+    payment_method_id: Mapped[str | None] = mapped_column(String(64))
+    card_brand: Mapped[str | None] = mapped_column(String(20))
+    card_last4: Mapped[str | None] = mapped_column(String(4))
+    card_exp: Mapped[str | None] = mapped_column(String(5))
+    billing_email: Mapped[str | None] = mapped_column(String(320))
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = ts_now()
+
+
+class Invoice(Base):
+    """One monthly invoice (in arrears) created at Stripe from the statement. Unique per workspace+month."""
+
+    __tablename__ = "invoices"
+    __table_args__ = (
+        UniqueConstraint("workspace_id", "month", name="uq_invoices_month"),
+        CheckConstraint("status in ('creating','open','paid','payment_failed','failed','void')", name="ck_invoices_status"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    month: Mapped[date] = mapped_column(Date, nullable=False)  # first day of the invoiced month
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="creating")
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="DKK")
+    net_minor: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    tax_minor: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    gross_minor: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    lines: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)  # statement lines snapshot
+    stripe_invoice_id: Mapped[str | None] = mapped_column(String(64), unique=True)
+    number: Mapped[str | None] = mapped_column(String(64))
+    hosted_invoice_url: Mapped[str | None] = mapped_column(Text)
+    invoice_pdf: Mapped[str | None] = mapped_column(Text)
+    note: Mapped[str | None] = mapped_column(String(300))
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = ts_now()

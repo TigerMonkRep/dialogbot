@@ -458,7 +458,8 @@ test("16 · Afregning: godkendt henvendelse under model B vises som 149,00 kr. +
   await page.request.patch(`/api/backend/workspaces/${wsId}/leads/${lead.id}`, { headers: CSRF, data: { expected_version: lead.version, qualification_status: "qualified" } });
   expect((await page.request.post(`/api/backend/workspaces/${wsId}/leads/${lead.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
   await page.goto("/app/billing");
-  await expect(page.getByText("Dette er en forhåndsvisning – ikke en faktura.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Kortbetaling er ikke sat op endnu.", { exact: false })).toBeVisible(); // no Stripe keys in E2E
+  await expect(page.getByText("Den faktureres først, når måneden er slut og kortbetaling er sat op.", { exact: false })).toBeVisible();
   await expect(page.getByRole("link", { name: "Godkendt henvendelse: Birgitte Bruun" })).toBeVisible();
   await expect(page.getByText("186,25 kr.")).toBeVisible();
   await shot(page, info, "afregning");

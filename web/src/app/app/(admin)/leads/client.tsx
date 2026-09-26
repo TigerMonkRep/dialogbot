@@ -78,7 +78,7 @@ export function BillingPanel({ wsId, lead, canApprove, agreement }: { wsId: stri
       {lead.billing_status === "rejected" && <p className="font-body-sm text-body-sm text-on-surface-variant">Begrundelse: {lead.billing_reason}</p>}
       {lead.billing_status === "pending" && (canApprove ? (
         <>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">{agreement ? `Aftale v${agreement.version} (model ${agreement.model}): en godkendt henvendelse koster ${kr(agreement.model === "B" ? agreement.lead_fee.net_minor : 0)} ekskl. moms.` : "Der er ingen prisaftale endnu – ejeren vælger model A eller B under Indstillinger → Aftale."} Der faktureres ikke endnu.</p>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">{agreement ? `Aftale v${agreement.version} (model ${agreement.model}): en godkendt henvendelse koster ${kr(agreement.model === "B" ? agreement.lead_fee.net_minor : 0)} ekskl. moms.` : "Der er ingen prisaftale endnu – ejeren vælger model A eller B under Indstillinger → Aftale."} Godkendte henvendelser faktureres samlet, når måneden er slut (se Fakturering).</p>
           <label htmlFor="b-reason" className="font-label-md text-label-md font-semibold">Begrundelse (kræves ved afvisning)</label>
           <input id="b-reason" className={inputCls} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={500} />
           <ErrorBox error={decide.error} />

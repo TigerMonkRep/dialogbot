@@ -32,3 +32,24 @@ async def resend_webhook(request: Request, db: OrmSession = Depends(get_db)):
     result = resend.process_event(db, msg_id, payload)
     db.commit()
     return {"received": True, **result}
+
+
+@router.post("/stripe")
+async def stripe_webhook(request: Request, db: OrmSession = Depends(get_db)):
+    """Stripe events (card saved, invoice finalized/paid/failed). Every request must be signed."""
+    from app.modules.billing import stripe
+
+    secret = get_settings().stripe_webhook_secret
+    if not secret:
+        raise stripe.PaymentNotConfigured("Stripe-webhook er ikke konfigureret (STRIPE_WEBHOOK_SECRET mangler)")
+    body = await request.body()
+    stripe.verify_signature(secret, request.headers.get("stripe-signature"), body)
+    try:
+        event = json.loads(body)
+    except ValueError as e:
+        raise ValidationFailed("Ugyldig JSON") from e
+    if not isinstance(event, dict):
+        raise ValidationFailed("Ugyldig hændelse")
+    outcome = stripe.process_event(db, event)
+    db.commit()
+    return {"received": True, "outcome": outcome}

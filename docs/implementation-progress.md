@@ -2,6 +2,19 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 24 — 26. september 2026 (Betaling: Stripe-kort og månedsfakturaer)
+
+| Del | Status | Bevis |
+|---|---|---|
+| `billing_accounts` og `invoices` (Alembic `7769c9d94fe1`). Ejeren gemmer et kort via Stripe Checkout i *setup*-tilstand – kortdata rører aldrig vores servere; kun brand, sidste 4 cifre og udløb gemmes | testet med stub | `tests/test_stripe_billing.py` |
+| Én faktura pr. arbejdsrum og afsluttet måned, bygget af månedsoversigten (model A-abonnement, model B-godkendte henvendelser, kampagnepakker) med 25 % moms (Stripe-momssats oprettes én gang), trukket automatisk. Unik række + Stripe-idempotensnøgler; afvigende Stripe-total noteres | testet med stub | samme |
+| Workeren fakturerer forrige måned automatisk for arbejdsrum med kort; ejeren kan fakturere en afsluttet måned manuelt (indeværende måned afvises) | testet | samme |
+| `POST /api/v1/webhooks/stripe` med signaturtjek (HMAC-SHA256, 5 min tolerance): kort gemt, faktura betalt/fejlet/annulleret | testet | samme |
+| Uden `STRIPE_SECRET_KEY`: 501 `payment_not_configured`, kapabiliteten "Kortbetaling" er ikke implementeret, og siden siger, at intet trækkes | testet, E2E | `test_not_configured`, rejse 16 |
+| Fakturering-siden: betalingskort, fakturaer (Stripe-link og PDF), løbende måned. Betaling starter aldrig opkald | implementeret, E2E | rejse 16 |
+
+**Kræver opsætning:** Stripe-konto (gratis; gebyr pr. transaktion), testnøgle `sk_test_…` som `STRIPE_SECRET_KEY` på API og worker, og en webhook i Stripe til `…/api/v1/webhooks/stripe` med hændelserne `checkout.session.completed` og `invoice.*` → `STRIPE_WEBHOOK_SECRET`. **Ikke eksternt verificeret:** rigtige Stripe-kald.
+
 ## Checkpoint 23 — 26. september 2026 (Kampagner: udgående opkald)
 
 | Del | Status | Bevis |

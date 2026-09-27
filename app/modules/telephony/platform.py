@@ -416,6 +416,7 @@ def start_test(db: OrmSession, ws_id: uuid.UUID, user_id: uuid.UUID, *, called_b
     dest = destination(db, s)
     if dest is None or dest.status != "active":
         raise Conflict("Jeres Dialogbot-nummer er ikke klar endnu", code="telephony_not_ready")
+    simulated = simulated or get_settings().telephony_provider == "fake"  # recorded apart from real tests
     t = TelephonyTest(workspace_id=ws_id, destination_number_id=dest.id, called_business_number=called_business_number,
                       simulated=simulated, started_by=user_id, expires_at=_now() + timedelta(minutes=TEST_MINUTES),
                       result={})

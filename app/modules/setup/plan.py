@@ -120,8 +120,8 @@ TASKS: list[TaskDef] = [
             depends_on=("business.profile", "business.categories", "languages.settings", "knowledge.services"),
             started=lambda s: any(k in s.checks for k in CHECKS), estimated_minutes=1),
     TaskDef("reception.telephony_forwarding", "Viderestil dit telefonnummer", "Kanaler",
-            "Tilknyt jeres Vapi-nummer og viderestil jeres eksisterende nummer til det hos teleselskabet. "
-            "Trinnet er fuldført, når et opkald er nået frem.",
+            "Angiv jeres nummer, lad Dialogbot forbinde telefonen, og viderestil nummeret hos jeres teleselskab. "
+            "Trinnet er fuldført, når et prøveopkald til jeres eget nummer har ramt assistenten.",
             "/app/settings/telephony", ("S03", "O07"), lambda s: True if (_reception(s) and s.goals.inbound_phone) else None,
             lambda s: s.checks.get("telephony.forwarding") is not None and s.checks["telephony.forwarding"].status == "passed",
             capability="telephony.inbound", depends_on=("knowledge.services",), estimated_minutes=10),

@@ -193,7 +193,7 @@ export async function AdminShell({ children }: { children: React.ReactNode }) {
         <div className="flex flex-col gap-space-lg">
           <Link href="/app" className="px-gutter flex items-center gap-space-sm">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center"><Icon name="support_agent" size={20} className="text-secondary-fixed" /></div>
-            <div className="flex flex-col"><span className="font-headline-sm text-headline-sm text-primary tracking-tight">Dialogbot</span><span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Admin portal</span></div>
+            <div className="flex flex-col"><span className="font-headline-sm text-headline-sm text-primary tracking-tight">Dialogbot</span><span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Virksomhedskonto</span></div>
           </Link>
           <SideNav items={SIDE} />
         </div>

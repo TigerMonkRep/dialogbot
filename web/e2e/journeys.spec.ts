@@ -360,48 +360,78 @@ test("13 · Rapporter: dagens tal er foreløbige og viser nye henvendelser; e-ma
   await expect(page.getByLabel("Kl.")).toHaveValue("6");
 });
 
-test("14 · S03: ejer tilknytter nummer, et opkald rapporteres af Vapi og bliver til samtale, henvendelse og opgave", async ({ page }, info) => {
+test("14 · S03: ny kunde sætter telefonen op uden leverandørkonti – nummer, kontrolkode, dokumentation, Dialogbot-nummer, prøveopkald, aktivering; opkald bliver til samtale, henvendelse og opgave", async ({ page }, info) => {
   const { wsId } = await freshOwner(page, info);
   const CSRF = { "x-requested-with": "dialogbot" };
-  const item = await (await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/items`, { headers: CSRF, data: { kind: "service", title: "Gulvafslibning", content: { price_net_minor: 14500 } } })).json();
-  await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`, { headers: CSRF });
-  await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`, { headers: CSRF });
-  const number = `+4570${String(Date.now()).slice(-6)}`;
-  const vapiId = `pn_${info.project.name}_${Date.now()}`;
+  const post = async (path: string, data: unknown = {}) => {
+    const r = await page.request.post(`/api/backend${path}`, { headers: CSRF, data });
+    expect(r.ok(), `${path}: ${await r.text()}`).toBeTruthy();
+    return r.json();
+  };
+  const item = await post(`/workspaces/${wsId}/knowledge/items`, { kind: "service", title: "Gulvafslibning", content: { price_net_minor: 14500 } });
+  await post(`/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`);
+  await post(`/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`);
+  await post(`/workspaces/${wsId}/agreement`, { model: "A" });
+  const own = `+4520${String(Date.now()).slice(-6)}`;
 
   await page.goto("/app/settings/telephony");
-  await expect(page.getByText("Stemmeforbindelse konfigureret")).toBeVisible();
-  await page.getByLabel("Nummer", { exact: true }).fill(number);
-  await page.getByLabel("Vapi nummer-id").fill(vapiId);
-  await page.getByLabel("Navn", { exact: true }).fill("Hovednummer");
-  await page.getByRole("button", { name: "Tilknyt nummer" }).click();
-  await expect(page.getByText(number)).toBeVisible();
-  await expect(page.getByText("Ingen stemme valgt")).toBeVisible();
-  await page.getByRole("button", { name: "Stemme og talestil" }).click();
-  await page.getByLabel("ElevenLabs Voice ID").fill("DaNskStemme12345678");
-  await page.getByLabel("Talestil (valgfri)").fill("Lun og jordnær, gerne et par jyske vendinger.");
-  await page.getByRole("button", { name: "Hør stemmen" }).click();  // no ELEVENLABS_API_KEY in CI: honest notice, no fake audio
-  await expect(page.getByText(/kræver en ElevenLabs-nøgle/)).toBeVisible();
-  await page.getByRole("button", { name: "Gem stemme" }).click();
-  await expect(page.getByText("Dansk stemme valgt")).toBeVisible();
-  await shot(page, info, "s03-telefoni");
+  await expect(page.getByText("Ikke sat op", { exact: true })).toBeVisible();
+  const text = await page.locator("main").innerText();
+  for (const word of ["Vapi", "Twilio", "webhook", "Server URL", "Bearer", "API-nøgle", "nummer-id"]) expect(text).not.toContain(word);
+  await page.getByLabel("Virksomhedens telefonnummer").fill(own);
+  await page.getByLabel("Hvilken type abonnement er det?").selectOption("mobile");
+  await page.getByRole("button", { name: "Gem nummer" }).click();
+  await expect(page.getByText("Afventer oplysninger", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Ring mig op med en kode" }).click();
+  await expect(page.getByText(/Opkaldet er på vej/)).toBeVisible();
+  const code = (await (await page.request.get(`/api/backend/dev/telephony/verification-code?workspace_id=${wsId}`, { headers: CSRF })).json()).code;
+  await page.getByLabel("Kode", { exact: true }).fill(code);
+  await page.getByRole("button", { name: "Bekræft", exact: true }).click();
+  await expect(page.getByText(`${own} er bekræftet.`)).toBeVisible();
+  await page.getByLabel("CVR-nummer").fill("12345678");
+  await page.getByLabel("Adresse i Danmark").fill("Østergade 1, 8000 Aarhus C");
+  await page.locator("input[type=file]").setInputFiles({ name: "cvr.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 cvr-udskrift") });
+  await page.getByRole("button", { name: "Gem virksomhedsoplysninger" }).click();
+  await expect(page.getByText(/Sendt – Dialogbot gennemgår/)).toBeVisible();
+  await page.getByRole("button", { name: "Forbind telefonen" }).click();
+  await expect(page.getByText("Forbindelse klargøres", { exact: true })).toBeVisible();
+  await expect(page.getByText(/gennemgår jeres virksomhedsdokumentation/).first()).toBeVisible();
+  // Dialogbot's operator reviews the documentation and the job buys and connects the number (simulated provider)
+  await post("/dev/operator/self");
+  await post(`/operator/telephony/workspaces/${wsId}/documents/review`, { status: "approved", note: "CVR-udskrift kontrolleret i E2E", regulatory_bundle_sid: "BU" + "e".repeat(32) });
+  await post(`/operator/telephony/workspaces/${wsId}/jobs/run`);
+  await page.reload();
+  await expect(page.getByText("Klar til prøveopkald", { exact: true })).toBeVisible();
+  const dest = (await (await page.request.get(`/api/backend/workspaces/${wsId}/telephony`)).json()).destination.e164 as string;
+  await expect(page.getByText(`**61*${dest}#`)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Aktivér telefonen" })).toBeDisabled();
+  await shot(page, info, "s03-telefoni-guide");
+  await page.getByRole("button", { name: "Start prøveopkald" }).click();
+  await expect(page.getByText(/Venter på opkaldet/)).toBeVisible();
 
   const api = process.env.API_BASE_URL ?? "http://localhost:8000";
   const auth = { authorization: `Bearer ${process.env.VAPI_SERVER_SECRET ?? "e2e-only-vapi-secret-0123456789"}` };
-  const req = await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: { type: "assistant-request", call: { id: "x", phoneNumberId: vapiId } } } });
+  const callId = `call_${info.project.name}_${Date.now()}`;
+  const req = await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: { type: "assistant-request", call: { id: callId, customer: { number: "+4540404040" } }, phoneNumber: { number: dest } } } });
   const assistant = (await req.json()).assistant;
+  expect(assistant.firstMessage).toContain("Dette er et prøveopkald");
   expect(assistant.model.messages[0].content).toContain("Gulvafslibning");
-  expect(assistant.model.messages[0].content).toContain("jyske vendinger");
-  expect(assistant.voice).toEqual({ provider: "11labs", voiceId: "DaNskStemme12345678", model: "eleven_multilingual_v2" });
   expect(assistant.transcriber.language).toBe("da");
   const report = await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: {
     type: "end-of-call-report", endedReason: "customer-ended-call", analysis: { summary: "Vil have tilbud på afslibning." },
-    call: { id: `call_${vapiId}`, phoneNumberId: vapiId, customer: { number: "+4520304050" }, startedAt: "2026-09-24T08:00:00Z", endedAt: "2026-09-24T08:01:05Z" },
+    phoneNumber: { number: dest },
+    call: { id: callId, customer: { number: "+4520304050" }, startedAt: "2026-09-24T08:00:00Z", endedAt: "2026-09-24T08:01:05Z" },
     artifact: { messages: [{ role: "bot", message: "Hej, du har ringet til os." }, { role: "user", message: "Hvad koster afslibning?" }] } } } });
   expect((await report.json()).outcome).toBe("applied");
-
   await page.reload();
+  await expect(page.getByText(/Prøveopkaldet ramte jeres assistent.*\(Simuleret\)/)).toBeVisible();
+  await page.getByRole("button", { name: "Aktivér telefonen" }).click();
+  await expect(page.getByText("Aktiv", { exact: true })).toBeVisible();
   await expect(page.getByText("Vil have tilbud på afslibning.")).toBeVisible();
+  await shot(page, info, "s03-telefoni-aktiv");
+  await page.goto("/app/operator/telephony");
+  await expect(page.getByRole("heading", { name: "Telefoni: leverandører, klargøring og numre" })).toBeVisible();
+  await shot(page, info, "operator-telefoni");
   await page.goto("/app/inbox");
   await page.getByRole("link", { name: /Hvad koster afslibning\?/ }).click();
   await expect(page.getByRole("heading", { name: "Telefonopkald" })).toBeVisible();
@@ -694,7 +724,7 @@ test("23 · Stemmer: operatør udgiver en kontrolleret stemme; ejer lytter, væl
   await expect(p2.getByText("Standard", { exact: true })).toBeVisible();
   await ctx.close();
   // test call (simulated telephony + simulated engine): the call's assistant uses the chosen voice, pinned per call
-  await post(`/workspaces/${wsId}/phone-numbers`, { e164: `+4570${String(Date.now()).slice(-6)}`, provider_number_id: `pn_${slug}` });
+  await post(`/operator/telephony/workspaces/${wsId}/numbers`, { e164: `+4570${String(Date.now()).slice(-6)}`, provider_number_id: `pn_${slug}`, activate: true, note: "E2E: nummer tilknyttet af operatør" });
   const item = await post(`/workspaces/${wsId}/knowledge/items`, { kind: "service", title: "Gulvafslibning", content: { description: "Vi sliber gulve." } });
   await post(`/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`);
   await post(`/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`);

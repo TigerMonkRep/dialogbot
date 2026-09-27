@@ -173,6 +173,8 @@ def create_app(cfg: Config | None = None) -> FastAPI:
             if body.request_id in state.cancelled:
                 raise HTTPException(409, "cancelled")
             audio = state.engine.generate(vs, body.text)
+        if not state.engine.simulated:
+            audio = engines.clean(audio, state.engine.sample_rate)
         seconds = len(audio) / state.engine.sample_rate
         audio = engines.resample(audio, state.engine.sample_rate, body.sample_rate)
         return engines.to_pcm16(audio), int((time.monotonic() - t0) * 1000), seconds

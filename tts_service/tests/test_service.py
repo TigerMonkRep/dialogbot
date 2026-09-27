@@ -116,3 +116,30 @@ def test_interleaved_voices_do_not_leak(monkeypatch, ref):
         b1 = c.post("/v1/synthesize", json=_body(ref, version="voice-b", request_id="req-00000011"), headers=H).content
         a2 = c.post("/v1/synthesize", json=_body(ref, version="voice-a", request_id="req-00000012"), headers=H).content
         assert a1 == a2 and a1 != b1
+
+
+def test_clean_trims_model_hiss_and_shortens_pauses_without_touching_speech(monkeypatch):
+    import numpy as np
+
+    from tts_service import engines
+    from tts_service.engines import clean
+
+    monkeypatch.setattr(engines, "speech_segments", lambda x, sr: None)  # level fallback: deterministic, no VAD model
+
+    sr = 24000
+    rng = np.random.default_rng(3)
+
+    def hiss(sec):
+        return (0.006 * rng.standard_normal(int(sr * sec))).astype(np.float32)  # ~ -44 dBFS, like the model's tails
+
+    def speech(sec):
+        t = np.arange(int(sr * sec)) / sr
+        return (0.2 * np.sin(2 * np.pi * 180 * t) * (1 + 0.3 * np.sin(2 * np.pi * 4 * t))).astype(np.float32)
+
+    x = np.concatenate([hiss(0.8), speech(1.0), hiss(1.3), speech(1.2), hiss(0.9)])
+    y = clean(x, sr)
+    assert 2.2 * sr < len(y) < 2.9 * sr  # tails cut, the 1.3 s gap shortened to <= 0.45 s
+    loud = np.abs(y) > 0.1
+    assert loud.sum() > 0.9 * (np.abs(x) > 0.1).sum()  # the speech itself survives
+    first = int(np.argmax(loud))
+    assert first < 0.1 * sr  # no long lead-in of hiss before the first word

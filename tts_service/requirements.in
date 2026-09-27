@@ -6,3 +6,5 @@ fastapi==0.141.1
 uvicorn==0.54.0
 httpx==0.28.1
 huggingface_hub
+# Voice activity detection for trimming model hiss around speech (MIT; model files ship in the wheel).
+silero-vad==5.1.2

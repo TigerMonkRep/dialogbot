@@ -33,14 +33,21 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", required=True, type=Path)
     ap.add_argument("--sample-rate", type=int, default=24000)
     ap.add_argument("--limit", type=int)
+    ap.add_argument("--resume", action="store_true", help="keep clips already in --out and synthesize the rest")
     args = ap.parse_args(argv)
     voice = json.loads(args.voice.read_text())
     rows = [json.loads(x) for x in TESTSET.read_text(encoding="utf-8").splitlines() if x.strip()][: args.limit]
     args.out.mkdir(parents=True, exist_ok=True)
     h = {"authorization": f"Bearer {args.token}"}
-    with httpx.Client(timeout=120) as c, (args.out / "results.jsonl").open("w", encoding="utf-8") as res:
+    done = set()
+    if args.resume and (args.out / "results.jsonl").exists():
+        done = {json.loads(x)["id"] for x in (args.out / "results.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()}
+    mode = "a" if args.resume else "w"
+    with httpx.Client(timeout=900) as c, (args.out / "results.jsonl").open(mode, encoding="utf-8") as res:
         info = c.get(f"{args.tts_url}/ready", headers=h).json()
         for r in rows:
+            if r["id"] in done:
+                continue
             spoken = danish.normalize(r["text"])
             pcm, unit_ms = b"", []
             t0 = time.monotonic()
@@ -66,6 +73,7 @@ def main(argv: list[str] | None = None) -> int:
                                       "rtf": round(total_ms / 1000 / seconds, 3) if seconds else None,
                                       "model_revision": info.get("model_revision"), "engine": info.get("engine"),
                                       "simulated": info.get("simulated")}, ensure_ascii=False) + "\n")
+            res.flush()
     print(f"wrote {len(rows)} clips to {args.out}")
     return 0
 

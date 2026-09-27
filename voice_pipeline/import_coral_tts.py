@@ -157,7 +157,9 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit(f"not enough disk: need ~{need / 1e9:.1f} GB, have {free / 1e9:.1f} GB")
         chosen = [f["path"] for f in parquets]
     else:
-        chosen = [f["path"] for f in parquets[:2]]
+        # The shards are ordered by speaker (at 3dd0718: shards 0-11 "mic", 12 both, 13-24 "nic"), so a sample
+        # takes the first and the last shard to cover both speakers without downloading everything.
+        chosen = [f["path"] for f in ([parquets[0], parquets[-1]] if len(parquets) > 1 else parquets)]
     local = download(lock, args.out, chosen)
     seen: dict = {}
     total = 0

@@ -125,8 +125,9 @@ def health() -> dict:
 
 def _fake(version, text: str, sample_rate: int) -> Synthesis:
     """A tone (not speech): 60 ms per word, pitch from the version id. Clearly simulated."""
-    h = int(hashlib.sha256(str(version.id).encode()).hexdigest()[:4], 16)
-    freq = 180 + h % 220
+    # continuous pitch from 32 hash bits: two versions sharing a tone (and identical PCM) is ~2^-32, not 1/220
+    h = int(hashlib.sha256(str(version.id).encode()).hexdigest()[:8], 16)
+    freq = 180 + 220 * h / 2**32
     n = int(sample_rate * max(0.3, 0.06 * len(text.split())))
     pcm = b"".join(struct.pack("<h", int(3000 * math.sin(2 * math.pi * freq * i / sample_rate))) for i in range(n))
     return Synthesis(pcm=pcm, sample_rate=sample_rate, simulated=True, synth_ms=1, model_revision="fake")

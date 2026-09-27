@@ -57,3 +57,13 @@ def test_build_and_score(tmp_path):
     result = listening_test.score(out, [csv_file])
     assert result["coral-a"]["raters"] == 3 and result["coral-a"]["danish_native_raters"] == 2
     assert result["coral-a"]["meets_goal"] is False  # only two native Danish raters
+
+
+def test_asr_compare_normalises_numbers():
+    from voice_pipeline.eval.asr_check import compare
+
+    r = compare("Det koster 1.495 kroner.", "Det koster et tusind fire hundrede og femoghalvfems kroner",
+                ["et tusind fire hundrede og femoghalvfems kroner"])
+    assert r["wer"] == 0 and r["must_say_missing"] == []
+    r = compare("Tiden er ikke bekræftet.", "Tiden er bekræftet", ["ikke"])
+    assert r["wer"] > 0 and r["must_say_missing"] == ["ikke"]

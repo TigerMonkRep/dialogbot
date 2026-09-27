@@ -1,0 +1,7 @@
+# TTS runtime (CUDA image). Resolve into requirements.lock with:
+#   pip install --dry-run --ignore-installed --report report.json -r requirements.in  (python 3.11, linux x86_64)
+chatterbox-tts==0.1.7
+fastapi==0.141.1
+uvicorn==0.54.0
+httpx==0.28.1
+huggingface_hub

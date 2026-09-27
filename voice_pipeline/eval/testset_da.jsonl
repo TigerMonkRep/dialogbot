@@ -1,0 +1,110 @@
+{"id": "da-001", "category": "kort_spørgsmål", "text": "Hej, du taler med Dialogbots AI-assistent hos Fjord Gulvservice. Hvad kan jeg hjælpe med?", "meaning": "Hilsen med AI-oplysning og åbent spørgsmål", "must_say": []}
+{"id": "da-002", "category": "kort_spørgsmål", "text": "Hvad hedder du?", "meaning": "Spørger om navn", "must_say": []}
+{"id": "da-003", "category": "kort_spørgsmål", "text": "Må jeg få dit telefonnummer?", "meaning": "Beder om telefonnummer", "must_say": []}
+{"id": "da-004", "category": "kort_spørgsmål", "text": "Hvilken adresse drejer det sig om?", "meaning": "Beder om adresse", "must_say": []}
+{"id": "da-005", "category": "kort_spørgsmål", "text": "Passer det dig bedst om formiddagen eller eftermiddagen?", "meaning": "Valg mellem to tidsrum", "must_say": []}
+{"id": "da-006", "category": "kort_spørgsmål", "text": "Er det et trægulv eller et laminatgulv?", "meaning": "Spørger om gulvtype", "must_say": []}
+{"id": "da-007", "category": "kort_spørgsmål", "text": "Vil du have, at en medarbejder ringer dig op?", "meaning": "Tilbyder opringning", "must_say": []}
+{"id": "da-008", "category": "kort_spørgsmål", "text": "Har du et øjeblik?", "meaning": "Spørger om tid", "must_say": []}
+{"id": "da-009", "category": "kort_spørgsmål", "text": "Skal jeg gentage det?", "meaning": "Tilbyder gentagelse", "must_say": []}
+{"id": "da-010", "category": "kort_spørgsmål", "text": "Hvordan stavede du efternavnet?", "meaning": "Beder om stavning", "must_say": []}
+{"id": "da-011", "category": "kort_spørgsmål", "text": "Er der andet, jeg kan hjælpe med?", "meaning": "Afsluttende spørgsmål", "must_say": []}
+{"id": "da-012", "category": "kort_spørgsmål", "text": "Må jeg sende en bekræftelse på sms?", "meaning": "Beder om samtykke til sms", "must_say": []}
+{"id": "da-013", "category": "langt_svar", "text": "Vi sliber og behandler trægulve i hele Østjylland, og vi bruger et støvfrit anlæg, så du kan blive boende i huset, mens vi arbejder.", "meaning": "Beskrivelse af ydelse", "must_say": []}
+{"id": "da-014", "category": "langt_svar", "text": "En medarbejder kigger på din forespørgsel i løbet af i dag og ringer dig op, så I kan aftale det praktiske og få et konkret tilbud.", "meaning": "Opfølgning fra medarbejder", "must_say": []}
+{"id": "da-015", "category": "langt_svar", "text": "Før vi kan give en endelig pris, skal vi se gulvet, fordi prisen afhænger af træsorten, slidlaget og hvor mange kvadratmeter det drejer sig om.", "meaning": "Pris kræver besigtigelse", "must_say": []}
+{"id": "da-016", "category": "langt_svar", "text": "Jeg har noteret dit navn, dit telefonnummer og adressen, og du får en bekræftelse, når en medarbejder har set på det.", "meaning": "Opsummering af registrering", "must_say": []}
+{"id": "da-017", "category": "langt_svar", "text": "Hvis du vil aflyse eller flytte tiden, er du velkommen til at ringe igen, så hjælper jeg dig med det.", "meaning": "Aflysning eller flytning", "must_say": []}
+{"id": "da-018", "category": "langt_svar", "text": "Vores åbningstid er mandag til fredag fra klokken otte til seksten, og om lørdagen har vi lukket.", "meaning": "Åbningstider", "must_say": []}
+{"id": "da-019", "category": "langt_svar", "text": "Jeg kan desværre ikke svare på spørgsmål om garanti, men jeg kan bede en medarbejder om at ringe dig op med det samme.", "meaning": "Afgrænsning og viderestilling", "must_say": ["ikke svare"]}
+{"id": "da-020", "category": "langt_svar", "text": "Samtalen bliver skrevet ned, så medarbejderen kan se, hvad vi har talt om, og du skal ikke gentage det hele igen.", "meaning": "Oplysning om transskribering", "must_say": []}
+{"id": "da-021", "category": "langt_svar", "text": "Når gulvet er slebet, lakerer vi det to gange, og det skal have et døgn til at hærde, før der må sættes møbler på.", "meaning": "Arbejdsgang", "must_say": []}
+{"id": "da-022", "category": "langt_svar", "text": "Jeg forstod ikke helt, hvad du sagde. Vil du sige det igen, lidt langsommere?", "meaning": "Beder om gentagelse", "must_say": []}
+{"id": "da-023", "category": "langt_svar", "text": "Tak fordi du ringede til Fjord Gulvservice. Du hører fra os senest i morgen, og hav en rigtig god dag.", "meaning": "Afslutning", "must_say": []}
+{"id": "da-024", "category": "langt_svar", "text": "Hvis det er akut, for eksempel en vandskade, stiller jeg dig direkte om til vagttelefonen.", "meaning": "Akut eskalering", "must_say": []}
+{"id": "da-025", "category": "navne_steder", "text": "Er adressen i Aarhus, Rødovre eller Sønderborg?", "meaning": "Tre stednavne", "must_say": []}
+{"id": "da-026", "category": "navne_steder", "text": "Du har fået en tid hos Søren Kjærgaard i Viborg.", "meaning": "Navn og by", "must_say": []}
+{"id": "da-027", "category": "navne_steder", "text": "Vi kører til Herning, Ikast, Brande og Silkeborg.", "meaning": "Liste af byer", "must_say": []}
+{"id": "da-028", "category": "navne_steder", "text": "Adressen er Abildgade 18 i Aarhus N.", "meaning": "Adresse med husnummer", "must_say": ["Abildgade atten"]}
+{"id": "da-029", "category": "navne_steder", "text": "Kontaktpersonen er Mette Ørskov Jørgensen.", "meaning": "Navn med æøå", "must_say": []}
+{"id": "da-030", "category": "navne_steder", "text": "Er det Nørresundby eller Nørre Aaby?", "meaning": "Forvekslelige stednavne", "must_say": []}
+{"id": "da-031", "category": "navne_steder", "text": "Vi dækker hele Midt- og Østjylland samt Djursland.", "meaning": "Område", "must_say": []}
+{"id": "da-032", "category": "navne_steder", "text": "Min kollega Frederikke fra kontoret i Randers ringer dig op.", "meaning": "Navn og by", "must_say": []}
+{"id": "da-033", "category": "navne_steder", "text": "Gården ligger mellem Skjern og Tarm.", "meaning": "Stednavne", "must_say": []}
+{"id": "da-034", "category": "navne_steder", "text": "Hvordan skriver man Hjørring og Brønderslev?", "meaning": "Stednavne", "must_say": []}
+{"id": "da-035", "category": "navne_steder", "text": "Butikken ligger på Østerbrogade i København Ø.", "meaning": "Adresse", "must_say": []}
+{"id": "da-036", "category": "navne_steder", "text": "Du har talt med Anne-Sofie Bækgaard fra Kolding.", "meaning": "Navn med bindestreg", "must_say": []}
+{"id": "da-037", "category": "tal_beløb", "text": "Det koster 1.495 kroner om måneden eksklusive moms.", "meaning": "Pris 1495 kr/md ekskl. moms", "must_say": ["et tusind fire hundrede og femoghalvfems kroner", "eksklusive"]}
+{"id": "da-038", "category": "tal_beløb", "text": "Tilbuddet gælder ved mindst 40 kvadratmeter.", "meaning": "Minimum 40 m²", "must_say": ["mindst fyrre kvadratmeter"]}
+{"id": "da-039", "category": "tal_beløb", "text": "Prisen er 149 kr. pr. godkendt henvendelse.", "meaning": "149 kr pr. henvendelse", "must_say": ["et hundrede og niogfyrre kroner"]}
+{"id": "da-040", "category": "tal_beløb", "text": "En pakke koster 9 kroner og giver op til 2 forsøg.", "meaning": "9 kr, 2 forsøg", "must_say": ["ni kroner", "to forsøg"]}
+{"id": "da-041", "category": "tal_beløb", "text": "Afslibning koster 145 kr. pr. kvadratmeter.", "meaning": "145 kr/m²", "must_say": ["et hundrede og femogfyrre kroner"]}
+{"id": "da-042", "category": "tal_beløb", "text": "Med moms bliver det 186,25 kr.", "meaning": "186,25 kr inkl. moms", "must_say": ["et hundrede og seksogfirs kroner og femogtyve øre"]}
+{"id": "da-043", "category": "tal_beløb", "text": "Rabatten er 10 % ved over 100 m2.", "meaning": "10 % ved over 100 m²", "must_say": ["ti procent", "et hundrede kvadratmeter"]}
+{"id": "da-044", "category": "tal_beløb", "text": "Et gulv på 65 m² koster cirka 9.425 kr.", "meaning": "65 m², ca. 9.425 kr", "must_say": ["femogtres kvadratmeter", "ni tusind fire hundrede og femogtyve kroner"]}
+{"id": "da-045", "category": "tal_beløb", "text": "Depositum er 2.500 kroner, som du får tilbage.", "meaning": "Depositum 2.500 kr", "must_say": ["to tusind fem hundrede kroner"]}
+{"id": "da-046", "category": "tal_beløb", "text": "Vi har 3 ledige montører i næste uge.", "meaning": "3 montører", "must_say": ["tre ledige"]}
+{"id": "da-047", "category": "tal_beløb", "text": "Ordrenummeret er 1001.", "meaning": "Ordre 1001", "must_say": ["et tusind og en"]}
+{"id": "da-048", "category": "tal_beløb", "text": "Beløbet er 12.000 kr. inkl. moms.", "meaning": "12.000 kr inkl. moms", "must_say": ["tolv tusind kroner", "inklusive"]}
+{"id": "da-049", "category": "tal_beløb", "text": "Totalprisen er 1.000.000 kroner.", "meaning": "1 mio. kr", "must_say": ["en million kroner"]}
+{"id": "da-050", "category": "tid_dato", "text": "Jeg har en ledig tid onsdag den 28. oktober klokken halv elleve.", "meaning": "Onsdag 28/10 kl. 10.30", "must_say": ["den otteogtyvende oktober", "halv elleve"]}
+{"id": "da-051", "category": "tid_dato", "text": "Vi kommer den 1. december kl. 8.00.", "meaning": "1/12 kl. 8", "must_say": ["den første december", "klokken otte"]}
+{"id": "da-052", "category": "tid_dato", "text": "Tiden er flyttet til 14:15.", "meaning": "14.15", "must_say": ["klokken fjorten femten"]}
+{"id": "da-053", "category": "tid_dato", "text": "Vores åbningstid er kl. 8.00-16.30 på hverdage.", "meaning": "8–16.30", "must_say": ["klokken otte til seksten tredive"]}
+{"id": "da-054", "category": "tid_dato", "text": "Fakturaen forfalder 01.12.2026.", "meaning": "Forfald 1/12 2026", "must_say": ["den første december to tusind og seksogtyve"]}
+{"id": "da-055", "category": "tid_dato", "text": "Vi ringer dig op mellem kl. 10 og kl. 12.", "meaning": "10–12", "must_say": ["klokken ti", "klokken tolv"]}
+{"id": "da-056", "category": "tid_dato", "text": "Kan du den 3. november om eftermiddagen?", "meaning": "3/11 eftermiddag", "must_say": ["den tredje november"]}
+{"id": "da-057", "category": "tid_dato", "text": "Montøren er hos dig mandag den 2. marts klokken 7.30.", "meaning": "Mandag 2/3 kl. 7.30", "must_say": ["den anden marts", "klokken syv tredive"]}
+{"id": "da-058", "category": "tid_dato", "text": "Svarfristen er 14 dage.", "meaning": "14 dage", "must_say": ["fjorten dage"]}
+{"id": "da-059", "category": "tid_dato", "text": "Vi holder lukket fra 24/12 til 1/1.", "meaning": "24/12–1/1", "must_say": ["den fireogtyvende december", "den første januar"]}
+{"id": "da-060", "category": "tid_dato", "text": "Tilbuddet gælder til og med den 31. januar 2027.", "meaning": "31/1 2027", "must_say": ["den enogtredivte januar to tusind og syvogtyve"]}
+{"id": "da-061", "category": "tid_dato", "text": "Besigtigelsen tager cirka 45 minutter.", "meaning": "45 minutter", "must_say": ["femogfyrre minutter"]}
+{"id": "da-062", "category": "tid_dato", "text": "Kl. 9.05 er der stadig en tid.", "meaning": "kl. 9.05", "must_say": ["Klokken ni nul fem"]}
+{"id": "da-063", "category": "email_telefon", "text": "Jeg gentager telefonnummeret i grupper på to cifre: 20 30 40 50.", "meaning": "20 30 40 50 i par", "must_say": ["tyve tredive fyrre halvtreds"]}
+{"id": "da-064", "category": "email_telefon", "text": "Du kan skrive til info@fyrster.dk.", "meaning": "E-mail", "must_say": ["info snabel-a fyrster punktum d k"]}
+{"id": "da-065", "category": "email_telefon", "text": "Ring til os på +45 70 12 34 56.", "meaning": "+45 70 12 34 56", "must_say": ["plus femogfyrre", "halvfjerds tolv fireogtredive seksoghalvtreds"]}
+{"id": "da-066", "category": "email_telefon", "text": "Dit nummer er 22334455, er det korrekt?", "meaning": "22 33 44 55", "must_say": ["toogtyve treogtredive fireogfyrre femoghalvtreds"]}
+{"id": "da-067", "category": "email_telefon", "text": "Mailen er mette.hansen@hansenbyg.dk.", "meaning": "E-mail med punktum", "must_say": ["mette punktum hansen snabel-a hansenbyg punktum d k"]}
+{"id": "da-068", "category": "email_telefon", "text": "Vagttelefonen har nummer 70 20 10 05.", "meaning": "70 20 10 05", "must_say": ["halvfjerds tyve ti nul fem"]}
+{"id": "da-069", "category": "email_telefon", "text": "Send billederne til kontakt@fjord-gulv.dk.", "meaning": "E-mail med bindestreg", "must_say": ["kontakt snabel-a fjord bindestreg gulv punktum d k"]}
+{"id": "da-070", "category": "email_telefon", "text": "Er dit nummer 40 00 12 34?", "meaning": "40 00 12 34", "must_say": ["fyrre nul nul tolv fireogtredive"]}
+{"id": "da-071", "category": "email_telefon", "text": "Jeg har skrevet 51 62 73 84 ned.", "meaning": "51 62 73 84", "must_say": ["enoghalvtreds toogtres treoghalvfjerds fireogfirs"]}
+{"id": "da-072", "category": "email_telefon", "text": "Svar gerne på ordre@firma.dk eller ring 33 12 45 67.", "meaning": "E-mail og telefon", "must_say": ["ordre snabel-a firma punktum d k", "treogtredive tolv femogfyrre syvogtres"]}
+{"id": "da-073", "category": "email_telefon", "text": "Du kan også ringe på +45 20 30 40 50 efter klokken fire.", "meaning": "+45 20 30 40 50", "must_say": ["plus femogfyrre", "tyve tredive fyrre halvtreds"]}
+{"id": "da-074", "category": "email_telefon", "text": "Nummeret er 12 34 56 78.", "meaning": "12 34 56 78", "must_say": ["tolv fireogtredive seksoghalvtreds otteoghalvfjerds"]}
+{"id": "da-075", "category": "afbrydelse", "text": "Undskyld, jeg afbrød dig. Fortsæt bare.", "meaning": "Giver ordet tilbage", "must_say": []}
+{"id": "da-076", "category": "afbrydelse", "text": "Ja, selvfølgelig. Hvad ville du sige?", "meaning": "Lytter efter afbrydelse", "must_say": []}
+{"id": "da-077", "category": "afbrydelse", "text": "Okay, jeg stopper her. Hvad har du brug for?", "meaning": "Stopper ved afbrydelse", "must_say": []}
+{"id": "da-078", "category": "afbrydelse", "text": "Det forstår jeg. Lad os tage det med det samme.", "meaning": "Skifter emne", "must_say": []}
+{"id": "da-079", "category": "afbrydelse", "text": "Jeg hørte, at du sagde noget. Kan du gentage det?", "meaning": "Beder om gentagelse", "must_say": []}
+{"id": "da-080", "category": "afbrydelse", "text": "Fint, så springer vi det over.", "meaning": "Springer over", "must_say": []}
+{"id": "da-081", "category": "afbrydelse", "text": "Et øjeblik, jeg tjekker kalenderen.", "meaning": "Venter på system", "must_say": []}
+{"id": "da-082", "category": "afbrydelse", "text": "Mm, ja. Og hvad mere?", "meaning": "Kort bekræftelse", "must_say": []}
+{"id": "da-083", "category": "afbrydelse", "text": "Vent lige, sagde du onsdag eller torsdag?", "meaning": "Afklaring af dag", "must_say": []}
+{"id": "da-084", "category": "afbrydelse", "text": "Undskyld, forbindelsen var dårlig. Hvad sagde du?", "meaning": "Dårlig forbindelse", "must_say": []}
+{"id": "da-085", "category": "afbrydelse", "text": "Nej, det var ikke det, jeg mente. Jeg mente lørdag.", "meaning": "Retter misforståelse", "must_say": ["ikke det"]}
+{"id": "da-086", "category": "afbrydelse", "text": "Helt i orden, jeg venter.", "meaning": "Venter", "must_say": []}
+{"id": "da-087", "category": "bookingfejl", "text": "Tiden er endnu ikke bekræftet. Jeg undersøger, om den blev oprettet.", "meaning": "Uafklaret booking", "must_say": ["ikke bekræftet"]}
+{"id": "da-088", "category": "bookingfejl", "text": "Jeg kunne ikke nå kalenderen lige nu, så tiden er ikke booket. En medarbejder ringer dig op.", "meaning": "Kalenderfejl, intet booket", "must_say": ["ikke booket"]}
+{"id": "da-089", "category": "bookingfejl", "text": "Den tid er desværre lige blevet taget. Skal jeg finde en anden?", "meaning": "Tid taget", "must_say": []}
+{"id": "da-090", "category": "bookingfejl", "text": "Din tid onsdag den 28. oktober klokken 10.30 er nu bekræftet.", "meaning": "Bekræftet efter systemsvar", "must_say": ["den otteogtyvende oktober", "klokken ti tredive"]}
+{"id": "da-091", "category": "bookingfejl", "text": "Jeg fik ikke svar fra systemet, så jeg ved ikke, om tiden er oprettet. Du får besked i dag.", "meaning": "Timeout, uafklaret", "must_say": ["ved ikke"]}
+{"id": "da-092", "category": "bookingfejl", "text": "Der er ingen ledige tider de næste fjorten dage.", "meaning": "Ingen tider", "must_say": ["ingen ledige tider"]}
+{"id": "da-093", "category": "bookingfejl", "text": "Bookingen blev ikke gennemført, og du er ikke blevet opkrævet noget.", "meaning": "Fejl uden betaling", "must_say": ["ikke gennemført", "ikke blevet opkrævet"]}
+{"id": "da-094", "category": "bookingfejl", "text": "Jeg har ikke booket noget endnu. Vil du have tiden klokken 13.00?", "meaning": "Intet booket, tilbud", "must_say": ["ikke booket", "klokken tretten"]}
+{"id": "da-095", "category": "bookingfejl", "text": "Aflysningen er registreret, men du får først en bekræftelse, når medarbejderen har set den.", "meaning": "Aflysning uafklaret", "must_say": []}
+{"id": "da-096", "category": "bookingfejl", "text": "Systemet svarer ikke. Jeg noterer dit ønske, så en medarbejder kan bekræfte tiden.", "meaning": "Systemfejl", "must_say": ["svarer ikke"]}
+{"id": "da-097", "category": "bookingfejl", "text": "Tiden kunne ikke flyttes, så din oprindelige tid den 3. november gælder stadig.", "meaning": "Flytning fejlede", "must_say": ["den tredje november", "ikke flyttes"]}
+{"id": "da-098", "category": "bookingfejl", "text": "Det lykkedes ikke at sende sms'en, men din tid er bekræftet i kalenderen.", "meaning": "Sms fejlede, tid bekræftet", "must_say": ["ikke at sende"]}
+{"id": "da-099", "category": "negation", "text": "Vi sliber ikke gulve om søndagen.", "meaning": "Ikke søndag", "must_say": ["sliber ikke"]}
+{"id": "da-100", "category": "negation", "text": "Det er ikke muligt at få en pris i telefonen.", "meaning": "Ingen pris i telefon", "must_say": ["ikke muligt"]}
+{"id": "da-101", "category": "negation", "text": "Du skal ikke betale noget for besigtigelsen.", "meaning": "Gratis besigtigelse", "must_say": ["ikke betale"]}
+{"id": "da-102", "category": "negation", "text": "Vi har aldrig lukket i juli.", "meaning": "Aldrig lukket", "must_say": ["aldrig"]}
+{"id": "da-103", "category": "negation", "text": "Der er ingen ekstra gebyrer.", "meaning": "Ingen gebyrer", "must_say": ["ingen ekstra"]}
+{"id": "da-104", "category": "negation", "text": "Tilbuddet gælder ikke for erhvervskunder.", "meaning": "Undtagelse", "must_say": ["gælder ikke"]}
+{"id": "da-105", "category": "negation", "text": "Jeg kan hverken love en pris eller en dato.", "meaning": "Hverken-eller", "must_say": ["hverken"]}
+{"id": "da-106", "category": "negation", "text": "Nej, vi kommer ikke før klokken 9.", "meaning": "Ikke før kl. 9", "must_say": ["ikke før klokken ni"]}
+{"id": "da-107", "category": "negation", "text": "Det er ikke nødvendigt at flytte møblerne.", "meaning": "Ikke nødvendigt", "must_say": ["ikke nødvendigt"]}
+{"id": "da-108", "category": "negation", "text": "Vi arbejder ikke med vinylgulve.", "meaning": "Ingen vinyl", "must_say": ["arbejder ikke"]}
+{"id": "da-109", "category": "negation", "text": "Du bliver ikke ringet op igen.", "meaning": "Opt-out bekræftet", "must_say": ["ikke ringet op igen"]}
+{"id": "da-110", "category": "negation", "text": "Ingen af vores montører er ledige i dag.", "meaning": "Ingen ledige", "must_say": ["Ingen af"]}

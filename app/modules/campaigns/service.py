@@ -243,10 +243,16 @@ def assistant_for(db: OrmSession, c: Campaign, contact: CampaignContact) -> dict
         "endCallPhrases": ["Tak for snakken, hav en god dag", "Undskyld forstyrrelsen, hav en god dag"],
         "metadata": {"workspace_id": str(ws.id), "campaign_id": str(c.id), "campaign_contact_id": str(contact.id)},
     }
-    if voice := vapi.voice_config(number):
-        assistant["voice"] = voice
-    elif (voice := vapi._json_setting(s.vapi_voice_json)) is not None:
-        assistant["voice"] = voice
+    from app.modules.voices import service as voices
+
+    provider_voice = vapi.voice_config(number) or vapi._json_setting(s.vapi_voice_json)
+    dialogbot_voice, session = voices.vapi_voice(db, c.workspace_id, channel="outbound_campaign",
+                                                 provider_voice=provider_voice, number=number, campaign=c)
+    if dialogbot_voice is not None:
+        assistant["voice"] = dialogbot_voice
+        assistant["metadata"]["voice_session_id"] = str(session.id)
+    elif provider_voice is not None:
+        assistant["voice"] = provider_voice
     return assistant
 
 
@@ -292,6 +298,12 @@ def dial(db: OrmSession, c: Campaign, contact: CampaignContact, now: datetime) -
     contact.attempts += 1
     contact.status, contact.error = "calling", None
     contact.provider_call_id = str(out.get("id") or "")[:100] or None
+    if (sid := payload["assistant"]["metadata"].get("voice_session_id")) and contact.provider_call_id:
+        from app.models import VoiceSession
+
+        vs = db.get(VoiceSession, uuid.UUID(sid))
+        if vs is not None:
+            vs.provider_call_id = contact.provider_call_id
     if contact.charged_at is None:
         contact.charged_at, contact.charged_net_minor = now, c.package_net_minor
 

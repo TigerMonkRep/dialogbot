@@ -2,6 +2,15 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 25 — 27. september 2026 (Dansk stemmebibliotek – første leverance, simuleret)
+
+Se `docs/voice/README.md` for status pr. del. Kort fortalt:
+- **Implementeret og testet (simuleret motor):** register, versioner, rettigheder, kontroller, kunde- og
+  operatør-API, Vapi custom-voice med pinning pr. opkald, separat TTS-tjeneste, CoRal-TTS-import, QC,
+  evaluering, `/app/voices` og `/app/operator/voices`, E2E-rejse 23.
+- **Ikke kørt:** rigtig dansk syntese, import af CoRal-TTS, lyttetest og rigtig testsamtale. huggingface.co
+  er blokeret i udviklingsmiljøet, og der er ingen GPU. Der er ikke opfundet resultater eller godkendelser.
+
 ## Checkpoint 24 — 26. september 2026 (Betaling: Stripe-kort og månedsfakturaer)
 
 | Del | Status | Bevis |

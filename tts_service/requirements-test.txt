@@ -1,0 +1,5 @@
+numpy==1.26.4
+fastapi==0.141.1
+httpx==0.28.1
+anyio==4.15.1
+pytest==9.1.1

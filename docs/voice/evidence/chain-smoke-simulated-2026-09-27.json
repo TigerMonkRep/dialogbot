@@ -1,0 +1,22 @@
+{
+  "api": "http://localhost:8001",
+  "checks": {
+    "rights": "passed",
+    "normalization": "passed",
+    "synthesis_smoke": "simulated"
+  },
+  "preview": {
+    "ms": 75,
+    "bytes": 31722,
+    "content_type": "audio/wav",
+    "simulated": "1"
+  },
+  "assistant_voice_provider": "custom-voice",
+  "voice_request": {
+    "status": 200,
+    "first_byte_ms": 72,
+    "bytes": 26880,
+    "audio_seconds": 0.84,
+    "simulated": "1"
+  }
+}

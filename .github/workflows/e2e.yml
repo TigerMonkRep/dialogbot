@@ -29,6 +29,7 @@ jobs:
       EMAIL_ADAPTER: simulated
       VAPI_SERVER_SECRET: e2e-only-vapi-secret-0123456789  # test value; journey 14 posts a signed end-of-call report
       AI_PROVIDER: fake        # deterministic test double; the R06 journey never calls a real model
+      TTS_ENGINE: fake         # voice library: labelled test tone, never shown as real speech
       DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/dialogbot_e2e
       FRONTEND_BASE_URL: http://localhost:3000
       SEED_DEMO_PASSWORD: E2e-Demo-Password-2026

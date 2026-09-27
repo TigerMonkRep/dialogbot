@@ -45,6 +45,12 @@ def capabilities() -> list[Capability]:
                    "Vapi ringer op fra jeres eget nummer inden for kampagnens tidsrum. Betaling starter aldrig opkald – "
                    "kun en administrator kan starte en kampagne." if (s.vapi_api_key and s.vapi_server_secret)
                    else "Kræver VAPI_API_KEY og VAPI_SERVER_SECRET på serveren. Kampagner kan forberedes, men ikke startes."),
+        Capability("voice.dialogbot", "Dialogbots danske stemmer (egen talesyntese)",
+                   {"http": "available", "fake": "simulated"}.get(s.tts_engine, "not_implemented"), s.app_env,
+                   {"http": "Separat taletjeneste (Chatterbox Multilingual, dansk). Kun godkendte, aktive stemmer kan vælges.",
+                    "fake": "Testdobbelt: afspiller en tone, ikke tale. Alle prøver er mærket som simulerede."}.get(
+                       s.tts_engine, "Kræver en separat taletjeneste (TTS_ENGINE=http, TTS_SERVICE_URL, TTS_SERVICE_TOKEN). "
+                                     "Indtil da bruger telefonen den eksisterende ElevenLabs-stemme.")),
         Capability("calendar", "Kalender og online booking", "available", s.app_env,
                    "Ledige tider ud fra godkendte åbningstider. Jeres Google/Outlook-kalender kobles på med dens hemmelige "
                    "iCal-adresse (optaget tid blokerer), og bookinger vises i kalenderen via et iCal-abonnement."),

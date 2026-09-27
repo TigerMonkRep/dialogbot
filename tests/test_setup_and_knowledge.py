@@ -175,7 +175,7 @@ def test_campaign_only_plan_has_no_phone_or_calendar_tasks(api, two_workspaces):
     assert camp["status"] == "not_available" and camp["blocked_by"][0]["type"] == "capability"
     assert {c["key"] for c in plan_b["checks"]} == {"profile.completeness", "languages.consistency",
                                                     "knowledge.approved_coverage", "knowledge.assistant_endpoint",
-                                                    "campaign.test_call"}
+                                                    "campaign.test_call", "voice.heard"}
     # reception workspace: phone tasks present; booking only after opting in
     plan_a = api.plan(t["tok_a"], t["ws_a"])
     keys_a = {x["key"] for x in plan_a["tasks"]}

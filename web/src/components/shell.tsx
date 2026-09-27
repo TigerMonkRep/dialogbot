@@ -168,6 +168,7 @@ export const SIDE: NavItem[] = [
   { href: "/app/inbox", match: "/app/inbox", label: "Indbakke", icon: "inbox" },
   { href: "/app/leads", match: "/app/leads", label: "Henvendelser", icon: "contact_support" },
   { href: "/app/reception", match: "/app/reception", label: "Reception", icon: "support_agent" },
+  { href: "/app/voices", match: "/app/voices", label: "Stemmer", icon: "record_voice_over" },
   { href: "/app/campaigns", match: "/app/campaigns", label: "Kampagner", icon: "campaign" },
   { href: "/app/knowledge", match: "/app/knowledge", label: "Viden", icon: "menu_book" },
   { href: "/app/bookings", match: "/app/bookings", label: "Bookinger", icon: "calendar_today" },
@@ -175,7 +176,7 @@ export const SIDE: NavItem[] = [
   { href: "/app/billing", match: "/app/billing", label: "Fakturering", icon: "receipt_long" },
   { href: "/app/settings/team", match: "/app/settings", label: "Indstillinger", icon: "settings" },
 ];
-const SIDE_BOTTOM: NavItem[] = [SIDE[0], SIDE[1], SIDE[5], SIDE[4]];
+const SIDE_BOTTOM: NavItem[] = [SIDE[0], SIDE[1], SIDE[6], SIDE[5]];
 
 export async function AdminShell({ children }: { children: React.ReactNode }) {
   const { workspaces, me, current, env, unread } = await shellData();

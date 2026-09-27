@@ -51,6 +51,39 @@ telefontest.
 
 Kontrolklippene, der efterlignede én person, blev slettet efter målingen og er ikke udleveret.
 
+## Katalog v1 (27/9 2026, CPU, Røst-v3)
+
+- 21 af 22 stemmer bestod lighedskontrollen.
+- `designet-kvinde-oerne-55-90` fejlede og er ikke skrevet. Den lå på 0,917–0,921 mod grænsen 0,90 ved 8, 10 og 12 oplæsere.
+- Beskrivelserne står i hver stemmes `voice.json`.
+- Dialekten er ikke lyttevurderet.
+
+| Stemme | Klang | Leje | Tempo (tegn/s) | Nærmeste oplæser / grænse |
+|---|---|---|---|---|
+| Mand · Fyn · 35–54 år | mellemdyb stemme, jævnt tempo | 108 Hz | 13.4 | 0.826 / 0.9 |
+| Mand · Jylland · 55+ år | dyb stemme, jævnt tempo | 96 Hz | 13.6 | 0.856 / 0.9 |
+| Mand · Nordjylland · 18–34 år | mellemdyb stemme, hurtigt tempo | 125 Hz | 15.7 | 0.855 / 0.9 |
+| Mand · Storkøbenhavn · 18–34 år | mellemdyb stemme, hurtigt tempo | 115 Hz | 18.1 | 0.858 / 0.9 |
+| Mand · Storkøbenhavn · 35–54 år | lys stemme, hurtigt tempo | 135 Hz | 15.2 | 0.877 / 0.881 |
+| Mand · Sønderjylland · 18–34 år | mellemdyb stemme, hurtigt tempo | 123 Hz | 16.0 | 0.795 / 0.9 |
+| Mand · Vest- og Sydsjælland · 35–54 år | mellemdyb stemme, jævnt tempo | 108 Hz | 13.9 | 0.869 / 0.887 |
+| Mand · Vestjylland · 35–54 år | dyb stemme, jævnt tempo | 97 Hz | 14.3 | 0.883 / 0.9 |
+| Mand · Øerne · 55+ år | lys stemme, hurtigt tempo | 130 Hz | 16.8 | 0.835 / 0.876 |
+| Mand · Østjylland · 18–34 år | mellemdyb stemme, hurtigt tempo | 111 Hz | 17.4 | 0.848 / 0.896 |
+| Mand · Østjylland · 35–54 år | lys stemme, hurtigt tempo | 136 Hz | 16.3 | 0.87 / 0.87 |
+| Kvinde · Fyn · 35–54 år | mellemlys stemme, jævnt tempo | 208 Hz | 14.2 | 0.867 / 0.9 |
+| Kvinde · Jylland · 55+ år | mellemlys stemme, jævnt tempo | 214 Hz | 13.8 | 0.872 / 0.9 |
+| Kvinde · Nordjylland · 18–34 år | lys stemme, hurtigt tempo | 227 Hz | 17.3 | 0.831 / 0.9 |
+| Kvinde · Storkøbenhavn · 18–34 år | mellemlys stemme, hurtigt tempo | 205 Hz | 16.2 | 0.89 / 0.9 |
+| Kvinde · Storkøbenhavn · 35–54 år | lys stemme, hurtigt tempo | 219 Hz | 15.9 | 0.874 / 0.9 |
+| Kvinde · Sønderjylland · 18–34 år | lys stemme, hurtigt tempo | 223 Hz | 15.0 | 0.881 / 0.9 |
+| Kvinde · Vest- og Sydsjælland · 35–54 år | lys stemme, jævnt tempo | 226 Hz | 14.0 | 0.884 / 0.9 |
+| Kvinde · Vestjylland · 35–54 år | mellemlys stemme, hurtigt tempo | 194 Hz | 15.7 | 0.862 / 0.891 |
+| Kvinde · Østjylland · 18–34 år | lys stemme, hurtigt tempo | 220 Hz | 16.4 | 0.884 / 0.9 |
+| Kvinde · Østjylland · 35–54 år | mellemlys stemme, hurtigt tempo | 213 Hz | 16.4 | 0.881 / 0.9 |
+
+Lyd, `conds.pt` og `voice.json` ligger uden for Git. Stemmerne registreres som kladder med `scripts.voices_register_designed`, når taletjenesten og det private lager er i drift.
+
 ## Forbehold
 
 - Om en blandet stemme er uden for Røst-licensens forbud i punkt 4(b), skal en jurist bekræfte.

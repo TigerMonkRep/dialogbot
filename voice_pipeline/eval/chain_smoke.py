@@ -46,7 +46,7 @@ def main(argv: list[str] | None = None) -> int:
         if a.dev_grant:
             post("/dev/operator/self")
         rights = []
-        for kind, subject in (("code", "chatterbox-tts 0.1.7 (smoke)"), ("model", "ResembleAI/chatterbox (smoke)"),
+        for kind, subject in (("code", "chatterbox-tts 0.1.7 (smoke)"), ("model", "CoRal-project/roest-v3-chatterbox-500m (smoke)"),
                               ("dataset", "CoRal-project/coral-tts (smoke)")):
             r = post("/operator/voice-rights", {"kind": kind, "subject": f"{subject} {uuid.uuid4().hex[:6]}"}).json()
             post(f"/operator/voice-rights/{r['id']}/review", {"status": "verified", "notes": "Smoke-test i udviklingsmiljø"})
@@ -54,7 +54,7 @@ def main(argv: list[str] | None = None) -> int:
         slug = f"smoke-{uuid.uuid4().hex[:8]}"
         p = post("/operator/voices", {"slug": slug, "display_name": "Smoke", "visibility": "workspace", "workspace_id": ws}).json()
         ref = c.post(f"{base}/operator/voices/{p['id']}/references?source_id=smoke", headers=h, content=a.reference.read_bytes()).json()
-        v = post(f"/operator/voices/{p['id']}/versions", {"model_repo": "ResembleAI/chatterbox", "model_revision": a.model_revision,
+        v = post(f"/operator/voices/{p['id']}/versions", {"model_repo": "CoRal-project/roest-v3-chatterbox-500m", "model_revision": a.model_revision,
                                                           "references": [ref], "rights_record_ids": rights}).json()["versions"][0]
         checks = post(f"/operator/voice-versions/{v['id']}/checks/run").json()["versions"][0]["checks"]
         report["checks"] = {k: x.get("status") for k, x in checks.items()}

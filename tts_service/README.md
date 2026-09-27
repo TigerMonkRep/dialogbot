@@ -7,7 +7,7 @@ med en hemmelig bearer-token. Se `docs/voice/` for arkitektur, drift og omkostni
 |---|---|
 | `TTS_SERVICE_TOKEN` | ≥ 32 tegn, samme værdi som API'ets `TTS_SERVICE_TOKEN` |
 | `TTS_ENGINE` | `chatterbox` (produktion) · `fake` (kun test af mekanikken) |
-| `MODEL_REPO` / `MODEL_REVISION` | `ResembleAI/chatterbox` og et fuldt 40-tegns commit-hash (aldrig `main`) |
+| `MODEL_REPO` / `MODEL_REVISION` / `MODEL_T3` | Standard er Røst-v3: `CoRal-project/roest-v3-chatterbox-500m`, `7ce205cea6b3b36d9f60f18abb88ff21fa04ea0d`, `t3_mtl23ls_v2.safetensors`. Revisionen skal altid være et fuldt 40-tegns commit-hash (aldrig `main`) |
 | `TTS_DEVICE` | `cuda` (GPU) eller `cpu` (kun til måling/udvikling – for langsom til telefoni) |
 | `HF_HOME` | modelcache (volumen), fx `/models/hf` |
 | `HF_TOKEN` | kun hvis Hugging Face kræver login for vægtene |

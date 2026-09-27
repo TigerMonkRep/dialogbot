@@ -1,8 +1,10 @@
 """Speech engines for the TTS service.
 
-ChatterboxEngine – Chatterbox Multilingual V3 (Resemble AI, MIT code and weights; T3 checkpoint
-`t3_mtl23ls_v3.safetensors`) with Danish (`language_id="da"`), voice given by reference-clip conditioning. The code is
-installed from GitHub at a pinned commit (PyPI 0.1.7 only loads V2). Weights are downloaded from Hugging Face at a pinned commit (MODEL_REVISION) –
+ChatterboxEngine – the Chatterbox Multilingual architecture (Resemble AI, MIT code) with Danish weights: by default
+Røst-v3 (CoRal-project/roest-v3-chatterbox-500m, the Alexandra Institute's Chatterbox finetuned on 2,000+ hours of
+Danish; OpenRAIL-S licence with use restrictions, see docs/voice/rights.md). Voice given by reference-clip
+conditioning, `language_id="da"`. MODEL_REPO/MODEL_T3 can point at another compatible checkpoint (e.g.
+ResembleAI/chatterbox with t3_mtl23ls_v3.safetensors). The code is installed from GitHub at a pinned commit. Weights are downloaded from Hugging Face at a pinned commit (MODEL_REVISION) –
 never "main". The model applies its built-in Perth watermark to all audio; we keep it.
 
 Chatterbox keeps the active voice in `model.conds` (shared, mutable). The service therefore runs one
@@ -21,7 +23,11 @@ from dataclasses import dataclass
 
 import numpy as np
 
-DEFAULT_T3 = "t3_mtl23ls_v3.safetensors"
+DEFAULT_REPO = "CoRal-project/roest-v3-chatterbox-500m"
+DEFAULT_T3 = "t3_mtl23ls_v2.safetensors"  # Røst-v3 ships its Danish T3 under the v2 file name
+# Sampling defaults from the Røst-v3 model card's MOS evaluation (20 Danish raters).
+DEFAULT_SETTINGS = {"temperature": 0.7, "cfg_weight": 0.5, "exaggeration": 0.5, "top_p": 0.95, "min_p": 0.05,
+                    "repetition_penalty": 2.0}
 BASE_FILES = ["ve.pt", "s3gen.pt", "grapheme_mtl_merged_expanded_v1.json", "conds.pt", "Cangjie5_TC.json"]
 
 
@@ -94,10 +100,9 @@ class ChatterboxEngine:
         return VoiceState(key=key, conds=conds, settings=settings)
 
     def generate(self, voice: VoiceState, text: str) -> np.ndarray:
-        s = voice.settings
+        s = DEFAULT_SETTINGS | {k: float(v) for k, v in voice.settings.items() if k in DEFAULT_SETTINGS}
         self.model.conds = voice.conds  # caller holds self.lock
-        wav = self.model.generate(text, language_id="da", exaggeration=float(s.get("exaggeration", 0.5)),
-                                  cfg_weight=float(s.get("cfg_weight", 0.5)), temperature=float(s.get("temperature", 0.8)))
+        wav = self.model.generate(text, language_id="da", **s)
         return wav.squeeze(0).detach().cpu().numpy().astype(np.float32)
 
 

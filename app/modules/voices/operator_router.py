@@ -209,7 +209,8 @@ class VersionIn(BaseModel):
     notes: str = ""
 
 
-ALLOWED_SETTINGS = {"exaggeration": (0.25, 1.0), "cfg_weight": (0.0, 1.0), "temperature": (0.3, 1.2)}
+ALLOWED_SETTINGS = {"exaggeration": (0.25, 1.0), "cfg_weight": (0.0, 1.0), "temperature": (0.3, 1.2), "top_p": (0.5, 1.0),
+                    "min_p": (0.0, 0.3), "repetition_penalty": (1.0, 3.0)}
 
 
 @router.post("/voices/{profile_id}/versions", status_code=201)

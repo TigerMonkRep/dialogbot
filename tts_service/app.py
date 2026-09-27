@@ -39,7 +39,7 @@ class Config:
     def __init__(self) -> None:
         self.token = os.environ.get("TTS_SERVICE_TOKEN", "")
         self.engine = os.environ.get("TTS_ENGINE", "chatterbox")
-        self.model_repo = os.environ.get("MODEL_REPO", "ResembleAI/chatterbox")
+        self.model_repo = os.environ.get("MODEL_REPO", engines.DEFAULT_REPO)
         self.model_revision = os.environ.get("MODEL_REVISION", "")
         self.model_t3 = os.environ.get("MODEL_T3", engines.DEFAULT_T3)
         self.device = os.environ.get("TTS_DEVICE", "cuda")

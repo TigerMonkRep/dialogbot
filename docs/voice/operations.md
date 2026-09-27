@@ -51,8 +51,8 @@ Taletjenesten er `tts_service/Dockerfile`: CUDA 12.4, én model pr. GPU, varm he
   og sæt antal replikaer efter p95 < 1,5 s for hele svaret.
 - **Miljøvariabler på TTS-hosten:**
   - `TTS_SERVICE_TOKEN` (≥ 32 tegn, tilfældig)
-  - `MODEL_REPO=ResembleAI/chatterbox`
-  - `MODEL_REVISION=<40-tegns commit, efter licensgennemgang>`
+  - `MODEL_REPO=CoRal-project/roest-v3-chatterbox-500m` og `MODEL_T3=t3_mtl23ls_v2.safetensors` (Røst-v3)
+  - `MODEL_REVISION=7ce205cea6b3b36d9f60f18abb88ff21fa04ea0d`
   - `TTS_DEVICE=cuda`
   - `HF_HOME=/models/hf` (volumen)
   - `HF_TOKEN` (kun hvis påkrævet)

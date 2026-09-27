@@ -42,7 +42,7 @@ def ref(tmp_path, monkeypatch):
 
 
 def _body(ref, version="v1", **kw):
-    b = {"voice": {"version_id": version, "engine": "chatterbox-multilingual", "model_repo": "ResembleAI/chatterbox",
+    b = {"voice": {"version_id": version, "engine": "chatterbox-multilingual", "model_repo": "CoRal-project/roest-v3-chatterbox-500m",
                    "model_revision": REV, "references": [ref], "settings": {"exaggeration": 0.5}},
          "text": "Hej, du taler med en digital assistent.", "language": "da", "format": "pcm_s16le",
          "sample_rate": 24000, "request_id": "req-00000001"}

@@ -17,7 +17,7 @@ COPY tts_service /srv/tts_service
 
 # Model weights are NOT baked into the image: they are fetched at the pinned MODEL_REVISION on first start into the
 # /models volume (reproducible, cached across restarts). The service refuses to start without a 40-hex revision.
-ENV TTS_ENGINE=chatterbox MODEL_REPO=ResembleAI/chatterbox MODEL_T3=t3_mtl23ls_v3.safetensors TTS_DEVICE=cuda TTS_QUEUE_LIMIT=8
+ENV TTS_ENGINE=chatterbox MODEL_REPO=CoRal-project/roest-v3-chatterbox-500m MODEL_T3=t3_mtl23ls_v2.safetensors TTS_DEVICE=cuda TTS_QUEUE_LIMIT=8
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=300s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"
 # One worker = one model instance on the GPU. Scale by adding replicas, not workers.

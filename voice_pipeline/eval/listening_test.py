@@ -3,13 +3,15 @@
     # 1) build: pick N sentences per candidate, shuffle, anonymise
     python -m voice_pipeline.eval.listening_test build --run coral-a=eval-runs/a --run coral-b=eval-runs/b \
         --per-candidate 20 --out listening/2026-10
-    # → listening/2026-10/index.html (self-contained page: audio + 1–5 scales + CSV download)
+    #   add --human <import-dir>:4 to mix original recordings in as a blind anchor
+    # → listening/2026-10/index.html (page: audio, 1–5 ACR scales, answers copied as CSV text)
     #   listening/2026-10/key.json   (which clip is which candidate – keep away from raters)
     # 2) score: after ≥3 raters have sent their CSV files
     python -m voice_pipeline.eval.listening_test score --dir listening/2026-10 answers/*.csv
 
-Scales 1–5: forståelighed, naturlighed, stemmestabilitet, dialekt (only rated by raters who speak that dialect;
-leave empty otherwise). Critical error = a wrong date, number, amount, negation or booking status. The score
+Scales 1–5 (ACR, ITU-T P.800): forståelighed, naturlighed, stemmestabilitet. Every clip is resampled to 24 kHz and
+loudness-matched, and each rater gets their own random order. Raters state whether Danish is their first language;
+only those count towards the ≥3 Danish raters goal. Critical error = a wrong date, number, amount, negation or booking status. The score
 command prints per-candidate means and the evidence JSON for the operator check `listening_test`. It never
 invents ratings; missing raters stay missing.
 """
@@ -20,7 +22,6 @@ import csv
 import html
 import json
 import random
-import shutil
 import statistics
 from pathlib import Path
 
@@ -29,70 +30,116 @@ LABELS = {"forstaaelighed": "Forståelighed", "naturlighed": "Naturlighed", "sta
           "dialekt": "Dialekt (kun hvis du selv taler den)"}
 
 
-def build(runs: list[str], per: int, out: Path, seed: int) -> None:
+PAGE = Path(__file__).with_name("listening_page.html")
+TARGET_SR = 24000
+TARGET_DBFS = -23.0
+
+
+def _prepare(src: Path, dst: Path) -> None:
+    """Same sample rate and loudness for every clip, so neither gives a candidate away."""
+    import numpy as np
+    import soundfile as sf
+
+    x, sr = sf.read(str(src), dtype="float32", always_2d=True)
+    x = x.mean(axis=1)
+    if sr != TARGET_SR:
+        n = int(round(len(x) * TARGET_SR / sr))
+        try:
+            import librosa
+
+            x = librosa.resample(x, orig_sr=sr, target_sr=TARGET_SR)
+        except ImportError:  # linear fallback (tests)
+            x = np.interp(np.linspace(0, len(x) - 1, n), np.arange(len(x)), x).astype("float32")
+    rms = float(np.sqrt(np.mean(x.astype("float64") ** 2)) + 1e-12)
+    x = x * (10 ** (TARGET_DBFS / 20) / rms)
+    peak = float(np.max(np.abs(x)) + 1e-12)
+    if peak > 0.97:
+        x = x * (0.97 / peak)
+    sf.write(str(dst), x.astype("float32"), TARGET_SR, subtype="PCM_16")
+
+
+def _human_clips(import_dir: Path, per_speaker: int, rng: random.Random) -> list[dict]:
+    """Original recordings as a blind anchor: QC-clean, 3–12 s, never a clip used as a voice reference."""
+    manifest = [json.loads(x) for x in (import_dir / "manifest.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()]
+    flags = {}
+    if (import_dir / "qc.jsonl").exists():
+        flags = {q["id"]: q["flags"] for q in map(json.loads, (import_dir / "qc.jsonl").read_text().splitlines()) if q}
+    refs = Path(__file__).resolve().parents[1] / "references" / "coral-tts.json"
+    used = {c["id"] for s in json.loads(refs.read_text())["speakers"].values() for c in s} if refs.exists() else set()
+    out = []
+    for spk in sorted({r["speaker"] for r in manifest if "wav" in r}):
+        pool = [r for r in manifest if r.get("speaker") == spk and "wav" in r and not flags.get(r["id"])
+                and 3 <= r["duration"] <= 12 and r["id"] not in used and len(r["text"].split()) >= 4]
+        out += [{"path": import_dir / r["wav"], "text": r["text"], "sentence": r["id"], "speaker": spk}
+                for r in rng.sample(pool, min(per_speaker, len(pool)))]
+    return out
+
+
+def build(runs: list[str], per: int, out: Path, seed: int, human: str | None = None, test_id: str | None = None) -> None:
     rng = random.Random(seed)
     out.mkdir(parents=True, exist_ok=True)
     (out / "audio").mkdir(exist_ok=True)
     items, key = [], {}
+
+    def add(src: Path, text: str, meta: dict) -> None:
+        clip = f"k{rng.randrange(16**8):08x}"
+        _prepare(src, out / "audio" / f"{clip}.wav")
+        key[clip] = meta
+        items.append({"clip": clip, "text": text, "src": f"audio/{clip}.wav"})
+
     for spec in runs:
         name, path = spec.split("=", 1)
         rows = [json.loads(x) for x in (Path(path) / "results.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()]
+        rows = [r for r in rows if (Path(path) / f"{r['id']}.wav").exists()]
         for r in rng.sample(rows, min(per, len(rows))):
-            clip = f"k{rng.randrange(16**8):08x}"
-            shutil.copy(Path(path) / f"{r['id']}.wav", out / "audio" / f"{clip}.wav")
-            key[clip] = {"candidate": name, "sentence": r["id"], "simulated": r.get("simulated")}
-            items.append((clip, r["text"], r["meaning"]))
-    rng.shuffle(items)
-    (out / "key.json").write_text(json.dumps(key, indent=2, ensure_ascii=False))
-    rows_html = []
-    for clip, text, meaning in items:
-        scales = "".join(
-            f'<label>{LABELS[s]} <select name="{clip}:{s}"><option value="">–</option>'
-            + "".join(f"<option>{i}</option>" for i in range(1, 6)) + "</select></label>" for s in SCALES)
-        rows_html.append(f'<section><p><b>Tekst:</b> {html.escape(text)}<br><small>Betydning: {html.escape(meaning)}</small></p>'
-                         f'<audio controls preload="none" src="audio/{clip}.wav"></audio><div>{scales}'
-                         f'<label><input type="checkbox" name="{clip}:kritisk"> Kritisk fejl (dato, tal, beløb, nægtelse, bookingstatus)</label>'
-                         f'<label>Kommentar <input name="{clip}:kommentar"></label></div></section>')
-    page = f"""<!doctype html><html lang="da"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Lyttetest</title><style>body{{font-family:Manrope,system-ui,sans-serif;background:#e7fef9;color:#164e43;max-width:760px;margin:auto;padding:16px}}
-section{{background:#fff;border-radius:12px;padding:12px;margin:12px 0}}label{{display:inline-block;margin:4px 8px 4px 0}}
-button{{background:#164e43;color:#fff;border:0;border-radius:8px;padding:10px 16px}}</style>
-<h1>Lyttetest – danske stemmer</h1><p>Lyt til hvert klip og giv 1 (dårligst) til 5 (bedst). Du ved ikke, hvilken stemme der er hvilken.
-Dit navn: <input id="rater"></p>{''.join(rows_html)}
-<button onclick="dl()">Hent mine svar (CSV)</button>
-<script>function dl(){{const r=document.getElementById('rater').value||'anonym';const rows=[['rater','clip','field','value']];
-document.querySelectorAll('select,input[name]').forEach(e=>{{const [c,f]=e.name.split(':');const v=e.type==='checkbox'?(e.checked?'1':''):e.value;if(v)rows.push([r,c,f,v]);}});
-const csv=rows.map(x=>x.map(y=>'"'+String(y).replaceAll('"','""')+'"').join(',')).join('\\n');
-const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{{type:'text/csv'}}));a.download='lyttetest-'+r+'.csv';a.click();}}</script></html>"""
+            add(Path(path) / f"{r['id']}.wav", r["text"], {"candidate": name, "sentence": r["id"],
+                                                          "simulated": r.get("simulated")})
+    if human:
+        import_dir, n = human.rsplit(":", 1)
+        for h in _human_clips(Path(import_dir), int(n), rng):
+            add(h["path"], h["text"], {"candidate": "human-reference", "sentence": h["sentence"],
+                                       "speaker": h["speaker"], "simulated": False})
+    rng.shuffle(items)  # each rater's page shuffles again; this only hides build order
+    test_id = test_id or out.name
+    (out / "key.json").write_text(json.dumps({"test_id": test_id, "clips": key}, indent=2, ensure_ascii=False))
+    page = PAGE.read_text(encoding="utf-8")
+    page = page.replace("/*ITEMS*/[]", json.dumps(items, ensure_ascii=False)).replace("/*TEST_ID*/", html.escape(test_id))
     (out / "index.html").write_text(page, encoding="utf-8")
-    print(f"{len(items)} clips → {out / 'index.html'}")
+    print(f"{len(items)} clips → {out / 'index.html'} (key: {out / 'key.json'} – keep it away from raters)")
 
 
 def score(directory: Path, files: list[Path]) -> dict:
     key = json.loads((directory / "key.json").read_text())
+    key = key.get("clips", key)
     per: dict = {}
-    raters = set()
+    native: dict[str, str] = {}
+    rows = []
     for f in files:
         with f.open(encoding="utf-8") as fh:
-            for row in csv.DictReader(fh):
-                meta = key.get(row["clip"])
-                if meta is None:
-                    continue
-                raters.add(row["rater"])
-                c = per.setdefault(meta["candidate"], {s: [] for s in SCALES} | {"kritisk": 0, "raters": set(),
-                                                                                  "simulated": bool(meta.get("simulated"))})
-                c["raters"].add(row["rater"])
-                if row["field"] in SCALES and row["value"]:
-                    c[row["field"]].append(int(row["value"]))
-                elif row["field"] == "kritisk":
-                    c["kritisk"] += 1
+            rows += list(csv.DictReader(fh))
+    for row in rows:
+        if row["clip"] == "_rater" and row["field"] == "native":
+            native[row["rater"]] = row["value"]
+    for row in rows:
+        meta = key.get(row["clip"])
+        if meta is None:
+            continue
+        c = per.setdefault(meta["candidate"], {s: [] for s in SCALES} | {"kritisk": 0, "raters": set(),
+                                                                          "simulated": bool(meta.get("simulated"))})
+        c["raters"].add(row["rater"])
+        if row["field"] in SCALES and row["value"]:
+            c[row["field"]].append(int(row["value"]))
+        elif row["field"] == "kritisk":
+            c["kritisk"] += 1
     out = {}
     for name, c in per.items():
+        danish = sum(1 for r in c["raters"] if native.get(r) == "ja")
         means = {s: round(statistics.mean(c[s]), 2) if c[s] else None for s in SCALES}
         out[name] = {"raters": len(c["raters"]), "intelligibility": means["forstaaelighed"],
                      "naturalness": means["naturlighed"], "stability": means["stabilitet"], "dialect": means["dialekt"],
+                     "danish_native_raters": danish,
                      "critical_errors": c["kritisk"], "simulated_audio": c["simulated"],
-                     "meets_goal": (len(c["raters"]) >= 3 and (means["forstaaelighed"] or 0) >= 4
+                     "meets_goal": (danish >= 3 and (means["forstaaelighed"] or 0) >= 4
                                     and (means["naturlighed"] or 0) >= 4 and c["kritisk"] == 0 and not c["simulated"])}
     return out
 
@@ -105,12 +152,14 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--per-candidate", type=int, default=20)
     b.add_argument("--out", required=True, type=Path)
     b.add_argument("--seed", type=int, default=2026)
+    b.add_argument("--human", help="<import-dir>:<clips per speaker> – original recordings as a blind anchor")
+    b.add_argument("--test-id")
     s = sub.add_parser("score")
     s.add_argument("--dir", required=True, type=Path)
     s.add_argument("files", nargs="+", type=Path)
     args = ap.parse_args(argv)
     if args.cmd == "build":
-        build(args.run, args.per_candidate, args.out, args.seed)
+        build(args.run, args.per_candidate, args.out, args.seed, args.human, args.test_id)
     else:
         print(json.dumps(score(args.dir, args.files), indent=2, ensure_ascii=False))
     return 0

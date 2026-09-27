@@ -41,6 +41,7 @@ class Config:
         self.engine = os.environ.get("TTS_ENGINE", "chatterbox")
         self.model_repo = os.environ.get("MODEL_REPO", "ResembleAI/chatterbox")
         self.model_revision = os.environ.get("MODEL_REVISION", "")
+        self.model_t3 = os.environ.get("MODEL_T3", engines.DEFAULT_T3)
         self.device = os.environ.get("TTS_DEVICE", "cuda")
         self.queue_limit = int(os.environ.get("TTS_QUEUE_LIMIT", "8"))
         self.queue_timeout = float(os.environ.get("TTS_QUEUE_TIMEOUT", "10"))
@@ -78,7 +79,7 @@ class State:
             self.engine = engines.FakeEngine(cfg.model_repo, cfg.model_revision or "f" * 40)
         else:
             self.engine = engines.ChatterboxEngine(cfg.model_repo, cfg.model_revision, cfg.device,
-                                                   os.environ.get("HF_HOME"))
+                                                   os.environ.get("HF_HOME"), t3_file=cfg.model_t3)
         self.ready = False
         self.waiting = 0
         self.slot = asyncio.Semaphore(1)
@@ -125,8 +126,8 @@ def create_app(cfg: Config | None = None) -> FastAPI:
     def ready(authorization: str | None = Header(default=None)):
         auth(authorization)
         body = {"ready": state.ready, "engine": state.engine.name, "model_repo": cfg.model_repo,
-                "model_revision": state.engine.model_revision, "watermark": state.engine.watermark,
-                "simulated": state.engine.simulated, "queue": state.waiting}
+                "model_revision": state.engine.model_revision, "model_t3": getattr(state.engine, "t3_file", None),
+                "watermark": state.engine.watermark, "simulated": state.engine.simulated, "queue": state.waiting}
         return JSONResponse(body, status_code=200 if state.ready else 503)
 
     @app.get("/metrics")

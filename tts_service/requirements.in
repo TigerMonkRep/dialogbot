@@ -1,6 +1,7 @@
 # TTS runtime (CUDA image). Resolve into requirements.lock with:
 #   pip install --dry-run --ignore-installed --report report.json -r requirements.in  (python 3.11, linux x86_64)
-chatterbox-tts==0.1.7
+# V3 multilingual (t3_mtl23ls_v3) is only on GitHub; PyPI 0.1.7 loads V2. Pinned commit, MIT.
+chatterbox-tts @ git+https://github.com/resemble-ai/chatterbox.git@5de7a54aa4e5e2baadb0182dde554908b48b85c2
 fastapi==0.141.1
 uvicorn==0.54.0
 httpx==0.28.1

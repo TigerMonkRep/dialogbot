@@ -1,7 +1,8 @@
 """Speech engines for the TTS service.
 
-ChatterboxEngine – Chatterbox Multilingual (Resemble AI, MIT code) with Danish (`language_id="da"`), voice given by
-reference-clip conditioning. Weights are downloaded from Hugging Face at a pinned commit (MODEL_REVISION) –
+ChatterboxEngine – Chatterbox Multilingual V3 (Resemble AI, MIT code and weights; T3 checkpoint
+`t3_mtl23ls_v3.safetensors`) with Danish (`language_id="da"`), voice given by reference-clip conditioning. The code is
+installed from GitHub at a pinned commit (PyPI 0.1.7 only loads V2). Weights are downloaded from Hugging Face at a pinned commit (MODEL_REVISION) –
 never "main". The model applies its built-in Perth watermark to all audio; we keep it.
 
 Chatterbox keeps the active voice in `model.conds` (shared, mutable). The service therefore runs one
@@ -14,13 +15,14 @@ from __future__ import annotations
 
 import hashlib
 import math
+import re
 import threading
 from dataclasses import dataclass
 
 import numpy as np
 
-CHATTERBOX_FILES = ["ve.pt", "t3_mtl23ls_v2.safetensors", "s3gen.pt", "grapheme_mtl_merged_expanded_v1.json",
-                    "conds.pt", "Cangjie5_TC.json"]
+DEFAULT_T3 = "t3_mtl23ls_v3.safetensors"
+BASE_FILES = ["ve.pt", "s3gen.pt", "grapheme_mtl_merged_expanded_v1.json", "conds.pt", "Cangjie5_TC.json"]
 
 
 @dataclass
@@ -61,10 +63,14 @@ class ChatterboxEngine:
     simulated = False
     watermark = "perth"
 
-    def __init__(self, model_repo: str, model_revision: str, device: str, cache_dir: str | None = None):
+    def __init__(self, model_repo: str, model_revision: str, device: str, cache_dir: str | None = None,
+                 t3_file: str = DEFAULT_T3):
         if len(model_revision) != 40:
             raise ValueError("MODEL_REVISION must be a full 40-character commit hash")
+        if not re.fullmatch(r"t3_mtl23ls_v\d+\.safetensors", t3_file):
+            raise ValueError("MODEL_T3 must be a multilingual T3 checkpoint such as t3_mtl23ls_v3.safetensors")
         self.model_repo, self.model_revision, self.device, self.cache_dir = model_repo, model_revision, device, cache_dir
+        self.t3_file = t3_file
         self.lock = threading.Lock()
         self.model = None
         self.sample_rate = 24000
@@ -74,8 +80,8 @@ class ChatterboxEngine:
         from huggingface_hub import snapshot_download
 
         path = snapshot_download(repo_id=self.model_repo, repo_type="model", revision=self.model_revision,
-                                 allow_patterns=CHATTERBOX_FILES, cache_dir=self.cache_dir)
-        self.model = ChatterboxMultilingualTTS.from_local(path, self.device)
+                                 allow_patterns=[*BASE_FILES, self.t3_file], cache_dir=self.cache_dir)
+        self.model = ChatterboxMultilingualTTS.from_local(path, self.device, t3_model=self.t3_file)
         self.sample_rate = int(self.model.sr)
 
     def prepare_voice(self, key: str, ref_path: str | None, settings: dict) -> VoiceState:

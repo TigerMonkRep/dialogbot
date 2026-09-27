@@ -3,11 +3,15 @@
   "repo_type": "dataset",
   "url": "https://huggingface.co/datasets/CoRal-project/coral-tts",
   "use": "Referenceklip til stemmekonditionering (og evt. senere finetuning) af to danske professionelle indtalere.",
-  "license_reference": "CC0-1.0 ifølge datasætkortet (angivet i opgavebeskrivelsen). Ikke læst i udviklingsmiljøet: huggingface.co er blokeret af miljøets netværkspolitik.",
-  "revision": null,
-  "revision_note": "Fastlåses ved første import (voice_pipeline/import_coral_tts.py) i coral_tts.lock.json.",
+  "license_reference": "CC0-1.0. Datasætkortet (README.md) er læst ved revision 3dd07186e806fdc3931a3d17b4a16373b2a81e8a den 27/9 2026: license: cc0-1.0, task_categories: text-to-speech.",
+  "revision": "3dd07186e806fdc3931a3d17b4a16373b2a81e8a",
+  "revision_note": "Fastlåst i coral_tts.lock.json med størrelse og LFS-sha256 for alle 25 Parquet-filer.",
   "not_to_use": {
     "CoRal-project/coral": "ASR-datasættet – datasætkortet forbyder talesyntese. Må ikke bruges som TTS-materiale.",
     "other CoRal versions": "Vurderes hver for sig; navnet giver ingen brugsret."
+  },
+  "speakers": {
+    "mic": "Filerne 0–12 (12 er delt). Kortet angiver ikke køn pr. speaker_id. Målt median-F0 105 Hz på 40 klip (indikation, ikke vurdering).",
+    "nic": "Filerne 12–24. Målt median-F0 142 Hz på 40 klip (indikation, ikke vurdering)."
   }
 }

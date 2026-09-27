@@ -191,7 +191,7 @@ function Studio({ wsId, project, manuscript }: { wsId: string; project: Project;
                   <p className="font-body-lg text-body-lg">{s.text}</p>
                   {s.spoken_hint !== s.text && <p className="font-body-sm text-body-sm text-on-surface-variant">Fx: {s.spoken_hint}</p>}
                 </div>
-                {r && <span className={`shrink-0 px-2 py-0.5 rounded-full font-label-sm text-label-sm ${r.qc.ok ? "bg-secondary-container text-on-secondary-container" : "bg-error-container text-on-error-container"}`}>{r.qc.ok ? "Godkendt" : "Optag igen"}</span>}
+                {r && <span className={`shrink-0 px-2 py-0.5 rounded-full font-label-sm text-label-sm ${r.qc.ok ? "bg-secondary-container text-on-secondary-container" : "bg-error-container text-on-error-container"}`}>{r.qc.ok ? "Godkendt" : "Ikke godkendt"}</span>}
               </div>
               {r && !r.qc.ok && <Alert kind="warn">{r.qc.flags.map((f) => FLAG[f] ?? f).join(" ")}</Alert>}
               {isActive && <div className="h-2 rounded-full bg-surface-container-high overflow-hidden" aria-label="Lydniveau"><div className="h-full bg-primary" style={{ width: `${Math.min(100, rec.level * 140)}%` }} /></div>}

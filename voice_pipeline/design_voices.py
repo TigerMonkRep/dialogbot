@@ -87,9 +87,13 @@ def fetch_clips(nst: Path, speaker_ids: list[str], speakers: dict) -> dict[str, 
     have = json.loads(cache.read_text()) if cache.exists() else {}
     need = [k for k in speaker_ids if len(have.get(k, [])) < CLIPS_PER_SPEAKER]
     shards = sorted({f for k in need for f in speakers[k]["files"]})
-    for f in shards:
-        p = hf_hub_download(REPO, f, repo_type="dataset", revision=REVISION)
+    tmp = nst / "shard-tmp"
+    for i, f in enumerate(shards, 1):
+        # one shard at a time, deleted after extraction: the whole corpus (~55 GB) never sits on disk
+        p = Path(hf_hub_download(REPO, f, repo_type="dataset", revision=REVISION, local_dir=tmp))
         table = pq.read_table(p, columns=["audio", "speaker_id"])
+        p.unlink()
+        print(f"  shard {i}/{len(shards)}", flush=True)
         for row, (audio, sid) in enumerate(zip(table["audio"].to_pylist(), table["speaker_id"].to_pylist(), strict=True)):
             k = str(sid)
             if k not in need or len(have.get(k, [])) >= CLIPS_PER_SPEAKER:
@@ -104,6 +108,7 @@ def fetch_clips(nst: Path, speaker_ids: list[str], speakers: dict) -> dict[str, 
             sf.write(wav, x, sr, subtype="PCM_16")
             have.setdefault(k, []).append({"wav": str(wav.relative_to(nst)), "shard": f, "row": row,
                                            "sha256": hashlib.sha256(audio["bytes"]).hexdigest()})
+        cache.write_text(json.dumps(have, ensure_ascii=False, indent=1))  # resumable after each shard
     cache.write_text(json.dumps(have, ensure_ascii=False, indent=1))
     return have
 
@@ -235,6 +240,13 @@ def build_catalog(catalog: Path, nst: Path, out: Path, only: list[str] | None = 
 
     cat = json.loads(catalog.read_text(encoding="utf-8"))
     speakers = json.loads((nst / "speakers.json").read_text())["speakers"]
+    for k, v in speakers.items():
+        v["speaker_id"] = k  # ids are compared as strings everywhere
+    specs = [s for s in cat["voices"] if not only or s["slug"] in only]
+    first = sorted({s["speaker_id"] for spec in specs
+                    for s in pick_speakers(speakers, spec, spec.get("speakers", 8), random.Random(spec["slug"]))})
+    print(f"fetching clips for {len(first)} speakers", flush=True)
+    fetch_clips(nst, first, speakers)  # one pass over the corpus for the whole catalogue
     designer = Designer()
     results = []
     for spec in cat["voices"]:

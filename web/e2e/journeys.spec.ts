@@ -731,8 +731,8 @@ test("24 · Egen stemme: samtykke i eget navn, personligt manuskript, optagelse 
     await item.getByRole("button", { name: "Optag", exact: true }).click();
     await page.waitForTimeout(1600);
     await item.getByRole("button", { name: "Stop og gem" }).click();
-    await expect(item.getByText(/Godkendt|Optag igen/)).toBeVisible();
-    if (await item.getByText("Optag igen").first().isVisible() && !(await item.getByText("Godkendt").isVisible())) {
+    await expect(item.getByText(/^(Godkendt|Ikke godkendt)$/)).toBeVisible();
+    if (await item.getByText("Ikke godkendt", { exact: true }).isVisible()) {
       throw new Error(`sætning ${i + 1} blev ikke godkendt: ${await item.innerText()}`);
     }
   }

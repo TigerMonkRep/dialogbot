@@ -17,7 +17,8 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     // Own voice (journey 24) records from the microphone: Chromium's fake device supplies audio, no prompt.
-    launchOptions: { args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"] },
+    launchOptions: { args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream",
+      `--use-file-for-fake-audio-capture=${__dirname}/e2e/fixtures/speech-like.wav`] },
     permissions: ["microphone"],
   },
   projects: [

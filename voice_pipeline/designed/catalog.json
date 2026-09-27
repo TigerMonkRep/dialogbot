@@ -1,0 +1,326 @@
+{
+ "version": 1,
+ "dataset": "alexandrainst/nst-da",
+ "dataset_revision": "0f14ad2005e0aab8f56cf3213b7689da1faf23c2",
+ "note": "Navnet beskriver kildepersonernes køn, region og alder (NST's registrering), ikke en vurderet dialekt.",
+ "voices": [
+  {
+   "slug": "designet-mand-kbh-18-34",
+   "display_name": "Mand · Storkøbenhavn · 18–34 år",
+   "sex": "Male",
+   "age": [
+    18,
+    34
+   ],
+   "regions": [
+    "Storkøbenhavn"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-mand-kbh-35-54",
+   "display_name": "Mand · Storkøbenhavn · 35–54 år",
+   "sex": "Male",
+   "age": [
+    35,
+    54
+   ],
+   "regions": [
+    "Storkøbenhavn"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-mand-oestjylland-18-34",
+   "display_name": "Mand · Østjylland · 18–34 år",
+   "sex": "Male",
+   "age": [
+    18,
+    34
+   ],
+   "regions": [
+    "Østjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-mand-oestjylland-35-54",
+   "display_name": "Mand · Østjylland · 35–54 år",
+   "sex": "Male",
+   "age": [
+    35,
+    54
+   ],
+   "regions": [
+    "Østjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-mand-nordjylland-18-34",
+   "display_name": "Mand · Nordjylland · 18–34 år",
+   "sex": "Male",
+   "age": [
+    18,
+    34
+   ],
+   "regions": [
+    "Nordjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-mand-vestjylland-35-54",
+   "display_name": "Mand · Vestjylland · 35–54 år",
+   "sex": "Male",
+   "age": [
+    35,
+    54
+   ],
+   "regions": [
+    "Vestjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-mand-soenderjylland-18-34",
+   "display_name": "Mand · Sønderjylland · 18–34 år",
+   "sex": "Male",
+   "age": [
+    18,
+    34
+   ],
+   "regions": [
+    "Sønderjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-mand-fyn-35-54",
+   "display_name": "Mand · Fyn · 35–54 år",
+   "sex": "Male",
+   "age": [
+    35,
+    54
+   ],
+   "regions": [
+    "Fyn"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-mand-sjaelland-35-54",
+   "display_name": "Mand · Vest- og Sydsjælland · 35–54 år",
+   "sex": "Male",
+   "age": [
+    35,
+    54
+   ],
+   "regions": [
+    "Vest- og Sydsjælland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-mand-jylland-55-90",
+   "display_name": "Mand · Jylland · 55+ år",
+   "sex": "Male",
+   "age": [
+    55,
+    90
+   ],
+   "regions": [
+    "Nordjylland",
+    "Vestjylland",
+    "Østjylland",
+    "Sønderjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-mand-oerne-55-90",
+   "display_name": "Mand · Øerne · 55+ år",
+   "sex": "Male",
+   "age": [
+    55,
+    90
+   ],
+   "regions": [
+    "Fyn",
+    "Storkøbenhavn",
+    "Vest- og Sydsjælland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-kbh-18-34",
+   "display_name": "Kvinde · Storkøbenhavn · 18–34 år",
+   "sex": "Female",
+   "age": [
+    18,
+    34
+   ],
+   "regions": [
+    "Storkøbenhavn"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-kbh-35-54",
+   "display_name": "Kvinde · Storkøbenhavn · 35–54 år",
+   "sex": "Female",
+   "age": [
+    35,
+    54
+   ],
+   "regions": [
+    "Storkøbenhavn"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-oestjylland-18-34",
+   "display_name": "Kvinde · Østjylland · 18–34 år",
+   "sex": "Female",
+   "age": [
+    18,
+    34
+   ],
+   "regions": [
+    "Østjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-oestjylland-35-54",
+   "display_name": "Kvinde · Østjylland · 35–54 år",
+   "sex": "Female",
+   "age": [
+    35,
+    54
+   ],
+   "regions": [
+    "Østjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-nordjylland-18-34",
+   "display_name": "Kvinde · Nordjylland · 18–34 år",
+   "sex": "Female",
+   "age": [
+    18,
+    34
+   ],
+   "regions": [
+    "Nordjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-vestjylland-35-54",
+   "display_name": "Kvinde · Vestjylland · 35–54 år",
+   "sex": "Female",
+   "age": [
+    35,
+    54
+   ],
+   "regions": [
+    "Vestjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-soenderjylland-18-34",
+   "display_name": "Kvinde · Sønderjylland · 18–34 år",
+   "sex": "Female",
+   "age": [
+    18,
+    34
+   ],
+   "regions": [
+    "Sønderjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-fyn-35-54",
+   "display_name": "Kvinde · Fyn · 35–54 år",
+   "sex": "Female",
+   "age": [
+    35,
+    54
+   ],
+   "regions": [
+    "Fyn"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-sjaelland-35-54",
+   "display_name": "Kvinde · Vest- og Sydsjælland · 35–54 år",
+   "sex": "Female",
+   "age": [
+    35,
+    54
+   ],
+   "regions": [
+    "Vest- og Sydsjælland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-jylland-55-90",
+   "display_name": "Kvinde · Jylland · 55+ år",
+   "sex": "Female",
+   "age": [
+    55,
+    90
+   ],
+   "regions": [
+    "Nordjylland",
+    "Vestjylland",
+    "Østjylland",
+    "Sønderjylland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  },
+  {
+   "slug": "designet-kvinde-oerne-55-90",
+   "display_name": "Kvinde · Øerne · 55+ år",
+   "sex": "Female",
+   "age": [
+    55,
+    90
+   ],
+   "regions": [
+    "Fyn",
+    "Storkøbenhavn",
+    "Vest- og Sydsjælland"
+   ],
+   "speakers": 8,
+   "max_speakers": 12
+  }
+ ]
+}

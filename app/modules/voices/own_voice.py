@@ -37,7 +37,7 @@ from app.models import (
     VoiceRightsRecord,
     VoiceVersion,
 )
-from app.modules.voices import service, storage
+from app.modules.voices import danish, service, storage
 
 router = APIRouter(prefix="/workspaces/{workspace_id}/own-voices", tags=["voices"])
 MANUSCRIPTS = Path(__file__).resolve().parents[3] / "voice_pipeline" / "manuscripts"
@@ -69,7 +69,10 @@ def _clean(v: str | None, default: str) -> str:
 
 def _fill(m: dict, firma: str, ydelse: str, by: str) -> dict:
     out = dict(m)
-    out["sentences"] = [s | {"text": s["text"].format(firma=firma, ydelse=ydelse, by=by)} for s in m["sentences"]]
+    out["sentences"] = []
+    for s in m["sentences"]:
+        text = s["text"].format(firma=firma, ydelse=ydelse, by=by)
+        out["sentences"].append(s | {"text": text, "spoken_hint": danish.normalize(text)})
     return out
 
 

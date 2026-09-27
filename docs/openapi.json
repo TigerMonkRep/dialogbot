@@ -2140,6 +2140,11 @@
             "title": "Interface Language",
             "type": "string"
           },
+          "is_platform_operator": {
+            "default": false,
+            "title": "Is Platform Operator",
+            "type": "boolean"
+          },
           "signup_intent": {
             "anyOf": [
               {

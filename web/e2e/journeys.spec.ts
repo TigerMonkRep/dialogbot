@@ -650,8 +650,8 @@ test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovk
   await expect(page.getByText(/1 kontakter tilføjet, 1 ugyldige numre \(fx række 2\)/)).toBeVisible();
   await expect(page.getByText("+4520304050")).toBeVisible();
   await expect(page.getByText(/Højst 9,00 kr\. \+ moms/)).toBeVisible();
-  // the start is explicit and honest: no Vapi key in this environment
-  await expect(page.getByText(/Udgående opkald kræver en Vapi-konto/)).toBeVisible();
+  // the start is explicit and honest: outbound calling is not set up by Dialogbot in this environment
+  await expect(page.getByText(/Udgående opkald er ikke sat op hos Dialogbot endnu/)).toBeVisible();
   const start = page.getByRole("button", { name: "Start kampagne" });
   await expect(start).toBeDisabled();
   for (const box of await page.getByRole("group", { name: "Bekræft reglerne for opkald" }).getByRole("checkbox").all()) await box.check();

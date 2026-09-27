@@ -9,6 +9,7 @@ from sqlalchemy import (
     CheckConstraint,
     Date,
     DateTime,
+    Float,
     ForeignKey,
     Index,
     Integer,
@@ -916,6 +917,8 @@ class VoiceProfile(Base):
         CheckConstraint("visibility in ('platform','workspace')", name="ck_voice_profiles_visibility"),
         CheckConstraint("(visibility = 'workspace') = (workspace_id is not null)", name="ck_voice_profiles_scope"),
         CheckConstraint("gender in ('female','male','unknown')", name="ck_voice_profiles_gender"),
+        CheckConstraint("origin in ('dataset_speaker','designed','customer_recorded','hired_speaker')",
+                        name="ck_voice_profiles_origin"),
     )
 
     id: Mapped[uuid.UUID] = uuid_pk()
@@ -927,6 +930,11 @@ class VoiceProfile(Base):
     dialect_basis: Mapped[str] = mapped_column(Text, nullable=False, default="")  # why the category was chosen
     age_description: Mapped[str | None] = mapped_column(String(80))
     timbre: Mapped[str | None] = mapped_column(String(120))
+    # dataset_speaker: one real speaker from an open dataset · designed: blended from several speakers, belongs to no
+    # one · customer_recorded: recorded by (or for) a customer with the speaker's consent · hired_speaker: under contract
+    origin: Mapped[str] = mapped_column(String(24), nullable=False, default="dataset_speaker",
+                                        server_default="dataset_speaker")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")  # shown to customers
     source: Mapped[str] = mapped_column(Text, nullable=False, default="")
     visibility: Mapped[str] = mapped_column(String(12), nullable=False, default="platform")
     workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"))
@@ -945,7 +953,7 @@ class VoiceVersion(Base):
     __table_args__ = (
         UniqueConstraint("profile_id", "version", name="uq_voice_versions_number"),
         CheckConstraint(f"status in {VOICE_VERSION_STATUSES}", name="ck_voice_versions_status"),
-        CheckConstraint("method in ('reference_conditioning','finetuned_checkpoint','trained_from_scratch')",
+        CheckConstraint("method in ('reference_conditioning','designed_blend','finetuned_checkpoint','trained_from_scratch')",
                         name="ck_voice_versions_method"),
     )
 
@@ -959,6 +967,8 @@ class VoiceVersion(Base):
     model_revision: Mapped[str] = mapped_column(String(80), nullable=False)
     checkpoint_key: Mapped[str | None] = mapped_column(String(300))  # only for a real fine-tuned checkpoint
     references: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)  # [{key, sha256, seconds, source_id}]
+    # designed_blend: source speakers, dataset revision, checkpoint sha256 and the distinctness measurement
+    provenance: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb"))
     settings: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     rights_record_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     checks: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)  # {name: {status, at, by, evidence}}
@@ -1018,3 +1028,45 @@ class VoiceUsage(Base):
     kind: Mapped[str] = mapped_column(String(16), nullable=False)  # preview | call
     requests: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     characters: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+
+class OwnVoiceProject(Base):
+    """A customer recording their own voice from a Dialogbot manuscript. The speaker's consent is captured in the
+    app (typed name + accepted text, stored verbatim) and registered as a speaker_agreement rights record that a
+    platform operator reviews before the voice can be used. Recordings live in private storage under the
+    workspace prefix; withdrawing deletes them."""
+
+    __tablename__ = "own_voice_projects"
+    __table_args__ = (
+        CheckConstraint("manuscript in ('kort','standard')", name="ck_own_voice_projects_manuscript"),
+        CheckConstraint("status in ('recording','submitted','withdrawn')", name="ck_own_voice_projects_status"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    speaker_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    manuscript: Mapped[str] = mapped_column(String(16), nullable=False, default="kort")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="recording")
+    consent: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)  # text, version, typed name, time, user
+    rights_record_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("voice_rights_records.id", ondelete="SET NULL"))
+    profile_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("voice_profiles.id", ondelete="SET NULL"))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    withdrawn_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class OwnVoiceRecording(Base):
+    """One recorded manuscript sentence (WAV in private storage) with its automatic quality check."""
+
+    __tablename__ = "own_voice_recordings"
+    __table_args__ = (UniqueConstraint("project_id", "sentence_id", name="uq_own_voice_recordings_sentence"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    project_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("own_voice_projects.id", ondelete="CASCADE"), nullable=False)
+    sentence_id: Mapped[str] = mapped_column(String(40), nullable=False)
+    key: Mapped[str] = mapped_column(String(300), nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    seconds: Mapped[float] = mapped_column(Float, nullable=False)
+    qc: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    created_at: Mapped[datetime] = ts_now()

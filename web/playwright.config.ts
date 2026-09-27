@@ -16,6 +16,9 @@ export default defineConfig({
     timezoneId: "Europe/Copenhagen",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    // Own voice (journey 24) records from the microphone: Chromium's fake device supplies audio, no prompt.
+    launchOptions: { args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"] },
+    permissions: ["microphone"],
   },
   projects: [
     { name: "desktop-1440", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } } },

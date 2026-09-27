@@ -143,3 +143,24 @@ def test_clean_trims_model_hiss_and_shortens_pauses_without_touching_speech(monk
     assert loud.sum() > 0.9 * (np.abs(x) > 0.1).sum()  # the speech itself survives
     first = int(np.argmax(loud))
     assert first < 0.1 * sr  # no long lead-in of hiss before the first word
+
+
+def test_designed_voice_loads_verified_conditioning_file(monkeypatch, tmp_path):
+    data = b"designed-conditioning-bytes"
+    key = "platform/voices/designet-jysk-mand/conds-abc.pt"
+    (tmp_path / "platform/voices/designet-jysk-mand").mkdir(parents=True)
+    (tmp_path / key).write_bytes(data)
+    monkeypatch.setenv("VOICE_STORAGE_DIR", str(tmp_path))
+    good = hashlib.sha256(data).hexdigest()
+    with TestClient(create_app(_cfg(monkeypatch))) as c:
+        b = _body({"key": "unused", "sha256": "0" * 64})
+        b["voice"].update(method="designed_blend", checkpoint_key=key, checkpoint_sha256=good, references=[])
+        r = c.post("/v1/synthesize", headers=H, json=b)
+        assert r.status_code == 200 and len(r.content) > 1000
+        b["voice"].update(version_id="v2", checkpoint_sha256="1" * 64)  # tampered file / wrong checksum
+        b["request_id"] = "req-00000002"
+        with pytest.raises(ValueError, match="checksum"):
+            c.post("/v1/synthesize", headers=H, json=b)
+        b["voice"].update(version_id="v3", checkpoint_key=None)
+        b["request_id"] = "req-00000003"
+        assert c.post("/v1/synthesize", headers=H, json=b).status_code == 422

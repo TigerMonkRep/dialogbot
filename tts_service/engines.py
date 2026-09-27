@@ -55,6 +55,11 @@ class FakeEngine:
         return VoiceState(key=key, conds={"freq": 180 + int(hashlib.sha256(key.encode()).hexdigest()[:4], 16) % 220},
                           settings=settings)
 
+    def load_voice(self, key: str, conds_path: str, settings: dict) -> VoiceState:
+        with open(conds_path, "rb") as f:
+            digest = hashlib.sha256(f.read()).hexdigest()
+        return VoiceState(key=key, conds={"freq": 180 + int(digest[:4], 16) % 220}, settings=settings)
+
     def generate(self, voice: VoiceState, text: str) -> np.ndarray:
         self.current = voice.key
         freq = voice.conds["freq"]
@@ -97,6 +102,14 @@ class ChatterboxEngine:
             self.model.prepare_conditionals(ref_path, exaggeration=float(settings.get("exaggeration", 0.5)))
             conds = self.model.conds
             self.model.conds = None
+        return VoiceState(key=key, conds=conds, settings=settings)
+
+    def load_voice(self, key: str, conds_path: str, settings: dict) -> VoiceState:
+        """Precomputed conditioning (designed voices). torch.load runs with weights_only=True, so the file cannot
+        execute code; the caller has already verified its sha256 against the voice version."""
+        from chatterbox.mtl_tts import Conditionals
+
+        conds = Conditionals.load(conds_path, map_location="cpu").to(self.device)
         return VoiceState(key=key, conds=conds, settings=settings)
 
     def generate(self, voice: VoiceState, text: str) -> np.ndarray:

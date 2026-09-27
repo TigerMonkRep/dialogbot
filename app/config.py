@@ -81,6 +81,9 @@ class Settings(BaseSettings):
     # TTS_ENGINE: none | http (the real service at TTS_SERVICE_URL) | fake (dev/test double; audio is a tone
     # and every result is labelled simulated).
     tts_engine: Literal["none", "http", "fake"] = Field(default="none", alias="TTS_ENGINE")
+    # Model new voices (own voices) are created for; must match the TTS host's MODEL_REPO/MODEL_REVISION.
+    voice_model_repo: str = Field(default="CoRal-project/roest-v3-chatterbox-500m", alias="VOICE_MODEL_REPO")
+    voice_model_revision: str = Field(default="7ce205cea6b3b36d9f60f18abb88ff21fa04ea0d", alias="VOICE_MODEL_REVISION")
     tts_service_url: str | None = Field(default=None, alias="TTS_SERVICE_URL")
     tts_service_token: str | None = Field(default=None, alias="TTS_SERVICE_TOKEN")
     tts_timeout_seconds: float = Field(default=20.0, alias="TTS_TIMEOUT_SECONDS")

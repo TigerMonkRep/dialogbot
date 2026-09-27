@@ -710,3 +710,37 @@ test("23 · Stemmer: operatør udgiver en kontrolleret stemme; ejer lytter, væl
   expect(speech.headers()["x-simulated"]).toBe("1");
   expect((await speech.body()).length).toBeGreaterThan(1000);
 });
+
+test("24 · Egen stemme: samtykke i eget navn, personligt manuskript, optagelse sætning for sætning, indsendelse til gennemgang og tilbagetrækning", async ({ page }, info) => {
+  test.setTimeout(180_000);
+  await freshOwner(page, info);
+  await page.goto("/app/voices");
+  await page.getByRole("link", { name: "Indtal jeres egen stemme" }).click();
+  await expect(page.getByRole("heading", { name: "Indtal jeres egen stemme" })).toBeVisible();
+  await expect(page.getByText(/Ligheden med indtaleren kan variere/)).toBeVisible();
+  await page.getByLabel("Indtalerens fulde navn").fill("Mette Hansen");
+  await page.getByLabel("By eller område").fill("Aarhus");
+  await expect(page.getByText(/Jeg, Mette Hansen, er den person/)).toBeVisible();
+  await page.getByLabel("Indtaleren skriver sit fulde navn").fill("Mette Hansen");
+  await page.getByLabel("Jeg er indtaleren og giver samtykke som beskrevet ovenfor.").check();
+  await page.getByRole("button", { name: "Start indtaling" }).click();
+  await expect(page.getByRole("heading", { name: "Indtaling: Mette Hansen" })).toBeVisible();
+  await expect(page.getByText("0 af 15 godkendt")).toBeVisible();
+  for (let i = 0; i < 15; i++) {
+    const item = page.locator("ol > li").nth(i);
+    await item.getByRole("button", { name: "Optag", exact: true }).click();
+    await page.waitForTimeout(1600);
+    await item.getByRole("button", { name: "Stop og gem" }).click();
+    await expect(item.getByText(/Godkendt|Optag igen/)).toBeVisible();
+    if (await item.getByText("Optag igen").first().isVisible() && !(await item.getByText("Godkendt").isVisible())) {
+      throw new Error(`sætning ${i + 1} blev ikke godkendt: ${await item.innerText()}`);
+    }
+  }
+  await expect(page.getByText("15 af 15 godkendt")).toBeVisible();
+  await shot(page, info, "v02-egen-stemme");
+  await page.getByRole("button", { name: "Send til gennemgang" }).click();
+  await expect(page.getByText("Afventer Dialogbots gennemgang af samtykket og en prøve af stemmen.")).toBeVisible();
+  await page.getByRole("button", { name: "Træk samtykket tilbage" }).click();
+  await page.getByRole("button", { name: "Træk samtykket tilbage" }).last().click();
+  await expect(page.getByText(/Samtykket er trukket tilbage\. Optagelserne er slettet/)).toBeVisible();
+});

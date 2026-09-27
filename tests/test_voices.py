@@ -302,3 +302,45 @@ def test_cache_keys_are_scoped_and_invalidated(two_workspaces, db, voice_env):
     assert storage.get(k1) is None
     with pytest.raises(ValidationFailed):
         storage.check_key("platform/../../etc/passwd")
+
+
+def _checks(api, op, vid):
+    r = api.post(op, f"/operator/voice-versions/{vid}/checks/run")
+    assert r.status_code == 200, r.text
+    return next(v for v in r.json()["versions"] if v["id"] == vid)["checks"]
+
+
+def test_designed_voice_needs_sources_and_passes_distinctness_before_approval(api, db, voice_env):
+    from app.modules.voices import storage
+
+    op = _operator(api, db)
+    rights = _rights(api, op)
+    p = api.post(op, "/operator/voices", {"slug": "designet-jysk-mand", "display_name": "Designet: jysk mand",
+                                          "gender": "male", "origin": "designed",
+                                          "description": "Mandestemme designet ud fra 8 jyske oplæsere."})
+    assert p.status_code == 201, p.text
+    pid = p.json()["id"]
+    key = "platform/voices/designet-jysk-mand/conds-1.pt"
+    storage.put(key, b"conditioning", "application/octet-stream")
+    base = {"method": "designed_blend", "model_repo": "CoRal-project/roest-v3-chatterbox-500m", "model_revision": REV,
+            "checkpoint_key": key, "rights_record_ids": rights}
+    # no sources -> refused
+    r = api.post(op, f"/operator/voices/{pid}/versions", base | {"provenance": {}})
+    assert r.status_code == 422
+    sources = [{"speaker_id": str(i), "age": 30 + i, "region": "Vestjylland"} for i in range(8)]
+    too_close = {"max_similarity_to_source": 0.93, "nearest_source": "3", "real_speaker_pairs_max": 0.84}
+    r = api.post(op, f"/operator/voices/{pid}/versions", base | {"provenance": {"sources": sources, "distinctness": too_close}})
+    assert r.status_code == 201, r.text
+    v1 = r.json()["versions"][0]
+    assert v1["provenance"]["checkpoint_sha256"]  # computed by the server from the stored file, not trusted input
+    checks = _checks(api, op, v1["id"])
+    assert checks["distinctness"]["status"] == "failed" and checks["distinctness"]["limit"] == 0.87
+    assert api.post(op, f"/operator/voice-versions/{v1['id']}/submit").status_code == 200
+    assert api.post(op, f"/operator/voice-versions/{v1['id']}/approve").status_code == 409  # resembles one person
+    ok = {"max_similarity_to_source": 0.858, "nearest_source": "3", "real_speaker_pairs_max": 0.84}
+    r = api.post(op, f"/operator/voices/{pid}/versions", base | {"provenance": {"sources": sources, "distinctness": ok}})
+    v2 = [v for v in r.json()["versions"] if v["version"] == 2][0]
+    checks = _checks(api, op, v2["id"])
+    assert checks["distinctness"]["status"] == "passed"
+    detail = api.get(op, "/operator/voices").json()
+    assert any(x.get("origin") == "designed" and x.get("description") for x in detail.get("items", detail))

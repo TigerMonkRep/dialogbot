@@ -23,6 +23,7 @@ from app.modules.setup.router import router as setup_router
 from app.modules.telephony.router import router as telephony_router
 from app.modules.telephony.router import webhook_router as vapi_webhook_router
 from app.modules.voices.operator_router import router as voice_operator_router
+from app.modules.voices.own_voice import router as own_voice_router
 from app.modules.voices.router import router as voices_router
 from app.modules.voices.vapi_tts import router as voice_tts_router
 from app.modules.waitlist.router import router as waitlist_router
@@ -54,7 +55,7 @@ def create_app() -> FastAPI:
               webhooks_router, ai_router, waitlist_router,
               webchat_router, webchat_public_router, leads_router,
               reports_router, telephony_router, vapi_webhook_router, billing_router, reception_router, overview_router,
-              bookings_router, bookings_public_router, campaigns_router, voices_router, voice_operator_router,
+              bookings_router, bookings_public_router, campaigns_router, voices_router, voice_operator_router, own_voice_router,
               voice_tts_router):
         app.include_router(r, prefix=API_PREFIX)
     if settings.dev_tools_enabled:

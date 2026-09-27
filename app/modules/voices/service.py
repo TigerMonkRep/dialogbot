@@ -38,6 +38,10 @@ from app.modules.voices import danish, engine
 CHECKS_PLATFORM = ("rights", "normalization", "synthesis_smoke", "listening_test", "telephony_test")
 CHECKS_PILOT = ("rights", "normalization", "synthesis_smoke")
 HUMAN_CHECKS = ("listening_test", "telephony_test")
+# A designed voice may not resemble any source speaker more than two different real speakers of the same group
+# resemble each other, plus a small margin, and never above an absolute ceiling (speaker-encoder cosine similarity).
+DISTINCT_MARGIN = 0.03
+DISTINCT_CEILING = 0.90
 SMOKE_SENTENCES = (
     "Hej, du taler med Dialogbots AI-assistent hos Fjord Gulvservice. Hvad kan jeg hjælpe med?",
     "Jeg har en ledig tid onsdag den 28. oktober klokken halv elleve.",
@@ -153,9 +157,25 @@ def _check_smoke(v: VoiceVersion) -> dict:
     return {"status": "simulated" if simulated else "passed", "results": results}
 
 
+def _check_distinct(v: VoiceVersion) -> dict:
+    d = (v.provenance or {}).get("distinctness") or {}
+    try:
+        nearest, real_max = float(d["max_similarity_to_source"]), float(d["real_speaker_pairs_max"])
+    except (KeyError, TypeError, ValueError):
+        return {"status": "failed", "reason": "Mangler måling af lighed med kildepersonerne"}
+    limit = round(min(DISTINCT_CEILING, real_max + DISTINCT_MARGIN), 3)
+    sources = (v.provenance or {}).get("sources") or []
+    if len(sources) < 4:
+        return {"status": "failed", "reason": "En designet stemme skal bygges af mindst 4 personer", "sources": len(sources)}
+    return {"status": "passed" if nearest <= limit else "failed", "nearest": nearest, "limit": limit,
+            "nearest_source": d.get("nearest_source"), "sources": len(sources)}
+
+
 def run_auto_checks(db: OrmSession, v: VoiceVersion) -> dict:
     checks = dict(v.checks or {})
     stamp = {"at": _now().isoformat(), "by": "system"}
+    if v.method == "designed_blend":
+        checks["distinctness"] = _check_distinct(v) | stamp
     checks["rights"] = _check_rights(db, v) | stamp
     checks["normalization"] = _check_normalization() | stamp
     checks["synthesis_smoke"] = _check_smoke(v) | stamp
@@ -182,6 +202,8 @@ def record_human_check(v: VoiceVersion, name: str, *, passed: bool, evidence: di
 
 def missing_checks(v: VoiceVersion, visibility: str) -> list[str]:
     required = CHECKS_PLATFORM if visibility == "platform" else CHECKS_PILOT
+    if v.method == "designed_blend":
+        required = (*required, "distinctness")
     ok_sim = get_settings().app_env in ("dev", "test")
     missing = []
     for name in required:
@@ -307,7 +329,8 @@ def profile_out(db: OrmSession, p: VoiceProfile, *, detail: bool = False) -> dic
     v = active_version(db, p)
     out = {"id": str(p.id), "slug": p.slug, "display_name": p.display_name, "language": p.language, "gender": p.gender,
            "dialect": p.dialect, "dialect_basis": p.dialect_basis, "age_description": p.age_description,
-           "timbre": p.timbre, "source": p.source, "visibility": p.visibility, "sample_text": p.sample_text or DEFAULT_SAMPLE,
+           "timbre": p.timbre, "origin": p.origin, "description": p.description, "source": p.source,
+           "visibility": p.visibility, "sample_text": p.sample_text or DEFAULT_SAMPLE,
            "active_version": None}
     if v is not None:
         out["active_version"] = {"id": str(v.id), "version": v.version, "engine": v.engine, "method": v.method,
@@ -322,6 +345,7 @@ def version_out(v: VoiceVersion) -> dict:
     return {"id": str(v.id), "version": v.version, "status": v.status, "engine": v.engine, "method": v.method,
             "model_repo": v.model_repo, "model_revision": v.model_revision, "checkpoint_key": v.checkpoint_key,
             "references": v.references, "settings": v.settings, "rights_record_ids": v.rights_record_ids,
+            "provenance": v.provenance,
             "checks": v.checks, "notes": v.notes, "created_at": v.created_at.isoformat(),
             "approved_at": v.approved_at.isoformat() if v.approved_at else None,
             "activated_at": v.activated_at.isoformat() if v.activated_at else None}

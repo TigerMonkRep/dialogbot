@@ -14,12 +14,12 @@ from pathlib import Path
 KEY = re.compile(r"^(platform|ws/[0-9a-f-]{36})/[a-z0-9][a-z0-9/_.-]{0,240}$")
 
 
-def fetch(key: str, sha256: str, dest_dir: Path) -> Path:
+def fetch(key: str, sha256: str, dest_dir: Path, suffix: str = ".wav") -> Path:
     if not KEY.match(key) or ".." in key:
         raise ValueError("invalid reference key")
     if not re.fullmatch(r"[0-9a-f]{64}", sha256 or ""):
         raise ValueError("invalid checksum")
-    out = dest_dir / f"{sha256}.wav"
+    out = dest_dir / f"{sha256}{suffix}"
     if out.exists():
         return out
     backend = os.environ.get("VOICE_STORAGE", "local")

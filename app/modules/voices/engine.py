@@ -53,8 +53,10 @@ def status() -> str:
 
 
 def voice_payload(version) -> dict:
-    return {"version_id": str(version.id), "engine": version.engine, "model_repo": version.model_repo,
-            "model_revision": version.model_revision, "checkpoint_key": version.checkpoint_key,
+    return {"version_id": str(version.id), "engine": version.engine, "method": version.method,
+            "model_repo": version.model_repo, "model_revision": version.model_revision,
+            "checkpoint_key": version.checkpoint_key,
+            "checkpoint_sha256": (version.provenance or {}).get("checkpoint_sha256"),
             "references": [{"key": r["key"], "sha256": r["sha256"]} for r in version.references or []],
             "settings": version.settings or {}}
 

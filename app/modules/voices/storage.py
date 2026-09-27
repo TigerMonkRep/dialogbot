@@ -85,6 +85,29 @@ def get(key: str) -> bytes | None:
     return r.content
 
 
+def delete(keys: list[str]) -> int:
+    """Permanently delete objects (e.g. recordings after consent is withdrawn). Returns how many were removed."""
+    keys = [check_key(k) for k in keys]
+    if not keys:
+        return 0
+    s = get_settings()
+    if s.voice_storage == "local":
+        n = 0
+        for k in keys:
+            p = _local_path(k)
+            if p.exists():
+                p.unlink()
+                n += 1
+        return n
+    import httpx
+
+    url, h = _sb(s.voice_bucket)
+    r = httpx.request("DELETE", url, json={"prefixes": keys}, headers=h, timeout=60.0)
+    if r.status_code >= 400:
+        raise StorageFailed(f"Sletning fejlede ({r.status_code})")
+    return len(r.json()) if r.headers.get("content-type", "").startswith("application/json") else len(keys)
+
+
 def delete_prefix(prefix: str) -> int:
     """Remove cached objects under a prefix (used for cache invalidation). Local backend only walks files."""
     s = get_settings()

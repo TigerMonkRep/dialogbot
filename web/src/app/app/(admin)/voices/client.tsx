@@ -7,7 +7,8 @@ import { Alert, Button, ErrorBox, Field, Icon, Input, Select, Textarea, useSubmi
 
 export type Voice = {
   id: string; slug: string; display_name: string; gender: "female" | "male" | "unknown"; dialect: string | null; dialect_basis: string;
-  age_description: string | null; timbre: string | null; source: string; visibility: "platform" | "workspace"; sample_text: string;
+  age_description: string | null; timbre: string | null; origin: "dataset_speaker" | "designed" | "customer_recorded" | "hired_speaker";
+  description: string; source: string; visibility: "platform" | "workspace"; sample_text: string;
   active_version: { id: string; version: number; engine: string; method: string; model_revision: string; pilot: boolean;
     listening_test: string; telephony_test: string; simulated: boolean } | null;
 };
@@ -82,6 +83,11 @@ function Steps({ hasDefault, heard, testCall }: { hasDefault: boolean; heard: st
   );
 }
 
+const ORIGIN: Record<Voice["origin"], string> = {
+  designed: "Designet stemme", dataset_speaker: "Professionel oplæser", customer_recorded: "Jeres egen stemme",
+  hired_speaker: "Indtaler med aftale",
+};
+
 function Meta({ v }: { v: Voice }) {
   const bits = [GENDER[v.gender], v.dialect ?? "Dialekt ikke vurderet", v.age_description ?? "Alder ukendt"];
   if (v.timbre) bits.push(v.timbre);
@@ -133,7 +139,9 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
                     {isDefault && <span className="ml-auto px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm">Standard</span>}
                   </div>
                   <Meta v={v} />
+                  {v.description && <p className="font-body-sm text-body-sm">{v.description}</p>}
                   <div className="flex flex-wrap gap-1">
+                    <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">{ORIGIN[v.origin]}</span>
                     {v.active_version?.pilot && <span className="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">Pilot i jeres arbejdsrum</span>}
                     {v.active_version && v.active_version.listening_test !== "passed" && <span className="px-2 py-0.5 rounded-full bg-surface-container-high font-label-sm text-label-sm">Lyttetest afventer</span>}
                     {v.active_version?.simulated && <span className="px-2 py-0.5 rounded-full bg-surface-container-high font-label-sm text-label-sm">Simuleret</span>}

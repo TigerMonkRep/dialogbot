@@ -27,7 +27,10 @@ export default async function VoicesPage() {
           <h1 className="font-headline-md text-headline-md text-primary font-bold">Dansk stemme til jeres assistent</h1>
           <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Vælg den stemme, kunderne hører i telefonen. Webchatten bruger ikke tale. Kun stemmer, der har bestået Dialogbots kontroller, kan vælges.</p>
         </div>
-        {me.is_platform_operator && <Link href="/app/operator/voices" className="flex items-center gap-1 font-label-lg text-label-lg text-primary underline"><Icon name="admin_panel_settings" size={18} />Operatørvisning</Link>}
+        <div className="flex flex-wrap gap-space-md">
+          {canManage && <Link href="/app/voices/own" className="flex items-center gap-1 font-label-lg text-label-lg text-primary underline"><Icon name="mic" size={18} />Indtal jeres egen stemme</Link>}
+          {me.is_platform_operator && <Link href="/app/operator/voices" className="flex items-center gap-1 font-label-lg text-label-lg text-primary underline"><Icon name="admin_panel_settings" size={18} />Operatørvisning</Link>}
+        </div>
       </div>
       <VoiceLibrary wsId={ws.id} data={data} canManage={canManage} greeting={script.greeting}
         steps={{ heard: check("voice.heard"), testCall: check("telephony.test_call") }} />

@@ -25,6 +25,8 @@ from app.models.domain import (  # noqa: F401
     Lead,
     NotificationRead,
     OutboxEvent,
+    OwnVoiceProject,
+    OwnVoiceRecording,
     PhoneNumber,
     ReceptionAgreement,
     ReceptionScript,

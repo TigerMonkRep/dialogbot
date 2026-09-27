@@ -1,0 +1,23 @@
+{
+  "mode": "vapi",
+  "hardware": "dev-container 4 vCPU, TTS_ENGINE=fake (SIMULERET \u2013 ingen model)",
+  "at": "2026-09-27T12:10:52Z",
+  "runs": [
+    {
+      "concurrency": 1,
+      "ttfa_ms_p50": 61.5,
+      "ttfa_ms_p95": 72.2,
+      "total_ms_p50": 113.6,
+      "total_ms_p95": 152.6,
+      "mean_audio_s": 0.75
+    },
+    {
+      "concurrency": 4,
+      "ttfa_ms_p50": 282.3,
+      "ttfa_ms_p95": 378.6,
+      "total_ms_p50": 387.4,
+      "total_ms_p95": 629.5,
+      "mean_audio_s": 0.75
+    }
+  ]
+}

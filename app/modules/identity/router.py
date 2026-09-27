@@ -29,12 +29,14 @@ class UserOut(BaseModel):
     email_verified: bool
     signup_intent: str | None
     interface_language: str
+    is_platform_operator: bool = False
     created_at: datetime
 
 
 def user_out(u) -> UserOut:
     return UserOut(id=u.id, email=u.email, display_name=u.display_name, email_verified=u.email_verified_at is not None,
-                   signup_intent=u.signup_intent, interface_language=u.interface_language, created_at=u.created_at)
+                   signup_intent=u.signup_intent, interface_language=u.interface_language,
+                   is_platform_operator=bool(u.is_platform_operator), created_at=u.created_at)
 
 
 class LoginIn(BaseModel):

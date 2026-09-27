@@ -34,3 +34,12 @@ def outbox(principal: Principal = Depends(get_current_principal), db: OrmSession
                        "next_attempt_at": r.next_attempt_at.isoformat(), "last_error": r.last_error,
                        "created_at": r.created_at.isoformat(),
                        "processed_at": r.processed_at.isoformat() if r.processed_at else None} for r in rows]}
+
+
+@router.post("/operator/self")
+def make_me_operator(principal: Principal = Depends(get_current_principal), db: OrmSession = Depends(get_db)):
+    """Dev/test only (this router is not mounted in staging/prod): grant the current user the operator role so
+    end-to-end tests can walk the voice publication flow. Production uses scripts/grant_operator.py."""
+    principal.user.is_platform_operator = True
+    db.commit()
+    return {"is_platform_operator": True, "warning": "Kun udviklingsmiljø."}

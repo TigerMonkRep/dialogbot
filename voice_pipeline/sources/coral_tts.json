@@ -1,0 +1,13 @@
+{
+  "repo": "CoRal-project/coral-tts",
+  "repo_type": "dataset",
+  "url": "https://huggingface.co/datasets/CoRal-project/coral-tts",
+  "use": "Referenceklip til stemmekonditionering (og evt. senere finetuning) af to danske professionelle indtalere.",
+  "license_reference": "CC0-1.0 ifølge datasætkortet (angivet i opgavebeskrivelsen). Ikke læst i udviklingsmiljøet: huggingface.co er blokeret af miljøets netværkspolitik.",
+  "revision": null,
+  "revision_note": "Fastlåses ved første import (voice_pipeline/import_coral_tts.py) i coral_tts.lock.json.",
+  "not_to_use": {
+    "CoRal-project/coral": "ASR-datasættet – datasætkortet forbyder talesyntese. Må ikke bruges som TTS-materiale.",
+    "other CoRal versions": "Vurderes hver for sig; navnet giver ingen brugsret."
+  }
+}

@@ -633,3 +633,80 @@ test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovk
   await page.getByRole("button", { name: "Spær nummer" }).click();
   await expect(page.getByText("+4521222324")).toBeVisible();
 });
+
+function wavBytes(seconds = 6, rate = 24000): Buffer {
+  const n = rate * seconds, data = Buffer.alloc(n * 2);
+  for (let i = 0; i < n; i++) data.writeInt16LE(Math.round(3000 * Math.sin((2 * Math.PI * 220 * i) / rate)), i * 2);
+  const h = Buffer.alloc(44);
+  h.write("RIFF", 0); h.writeUInt32LE(36 + data.length, 4); h.write("WAVE", 8); h.write("fmt ", 12); h.writeUInt32LE(16, 16);
+  h.writeUInt16LE(1, 20); h.writeUInt16LE(1, 22); h.writeUInt32LE(rate, 24); h.writeUInt32LE(rate * 2, 28); h.writeUInt16LE(2, 32);
+  h.writeUInt16LE(16, 34); h.write("data", 36); h.writeUInt32LE(data.length, 40);
+  return Buffer.concat([h, data]);
+}
+
+test("23 · Stemmer: operatør udgiver en kontrolleret stemme; ejer lytter, vælger, gemmer udtale; valget følger ny session og testsamtale (simuleret motor)", async ({ page, browser }, info) => {
+  const { wsId, email } = await freshOwner(page, info);
+  const CSRF = { "x-requested-with": "dialogbot" };
+  const post = async (path: string, data: unknown = {}) => {
+    const r = await page.request.post(`/api/backend${path}`, { headers: CSRF, data });
+    expect(r.ok(), `${path}: ${await r.text()}`).toBeTruthy();
+    return r.json();
+  };
+  await post("/dev/operator/self");
+  const rights: string[] = [];
+  for (const [kind, subject] of [["code", `chatterbox ${info.project.name}`], ["model", `weights ${info.project.name}`], ["dataset", `coral-tts ${info.project.name}`]]) {
+    const r = await post("/operator/voice-rights", { kind, subject, license: "E2E" });
+    await post(`/operator/voice-rights/${r.id}/review`, { status: "verified", notes: "E2E: gennemgået i testmiljø" });
+    rights.push(r.id);
+  }
+  const slug = `e2e-${info.project.name.replace(/\W/g, "")}-${Date.now()}`.toLowerCase();
+  const profile = await post("/operator/voices", { slug, display_name: "E2E Testrøst", visibility: "workspace", workspace_id: wsId });
+  const ref = await (await page.request.post(`/api/backend/operator/voices/${profile.id}/references?source_id=e2e`, { headers: { ...CSRF, "content-type": "audio/wav" }, data: wavBytes() })).json();
+  const withVersion = await post(`/operator/voices/${profile.id}/versions`, { model_repo: "ResembleAI/chatterbox", model_revision: "e".repeat(40), references: [ref], rights_record_ids: rights });
+  const vid = withVersion.versions[0].id;
+  await post(`/operator/voice-versions/${vid}/checks/run`);
+  await post(`/operator/voice-versions/${vid}/submit`);
+  await post(`/operator/voice-versions/${vid}/approve`);
+  await post(`/operator/voice-versions/${vid}/activate`);
+
+  await page.goto("/app/voices");
+  await expect(page.getByRole("heading", { name: "Dansk stemme til jeres assistent" })).toBeVisible();
+  await expect(page.getByText(/talemotoren er simuleret/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "E2E Testrøst" })).toBeVisible();
+  await expect(page.getByText("Pilot i jeres arbejdsrum")).toBeVisible();
+  await page.getByRole("button", { name: "Afspil prøve med E2E Testrøst" }).click();
+  await expect(page.getByText("Afspiller simuleret lyd (testmotor).")).toBeVisible();
+  await page.getByRole("button", { name: "Vælg som standard" }).click();
+  await expect(page.getByText("Standard", { exact: true })).toBeVisible();
+  await page.getByLabel(/^Tekst \(højst/).fill("Det koster 1.495 kroner om måneden.");
+  await page.getByRole("button", { name: "Generér og afspil" }).click();
+  await expect(page.getByText("Afspiller simuleret lyd (testmotor).")).toBeVisible();
+  await page.getByLabel("Ord 1").fill("ApS");
+  await page.getByLabel("Udtale 1").fill("a p s");
+  await page.getByRole("button", { name: "Gem udtaleordbog" }).click();
+  await expect(page.getByText(/Version 2\./)).toBeVisible();
+  await shot(page, info, "v01-stemmer");
+  // a new browser session sees the same saved choice
+  const ctx = await browser.newContext({ baseURL: info.project.use.baseURL });
+  const p2 = await ctx.newPage();
+  await login(p2, email);
+  await p2.goto("/app/voices");
+  await expect(p2.getByText("Standard", { exact: true })).toBeVisible();
+  await ctx.close();
+  // test call (simulated telephony + simulated engine): the call's assistant uses the chosen voice, pinned per call
+  await post(`/workspaces/${wsId}/phone-numbers`, { e164: `+4570${String(Date.now()).slice(-6)}`, provider_number_id: `pn_${slug}` });
+  const item = await post(`/workspaces/${wsId}/knowledge/items`, { kind: "service", title: "Gulvafslibning", content: { description: "Vi sliber gulve." } });
+  await post(`/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`);
+  await post(`/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`);
+  const vapi = await page.request.post(`${process.env.API_BASE_URL ?? "http://localhost:8000"}/api/v1/webhooks/vapi`, {
+    headers: { authorization: "Bearer e2e-only-vapi-secret-0123456789" },
+    data: { message: { type: "assistant-request", call: { id: `call_${slug}`, phoneNumberId: `pn_${slug}` } } } });
+  const assistant = (await vapi.json()).assistant;
+  expect(assistant.voice.provider).toBe("custom-voice");
+  const speech = await page.request.post(assistant.voice.server.url.replace(/^https?:\/\/[^/]+/, process.env.API_BASE_URL ?? "http://localhost:8000"), {
+    headers: { "x-vapi-secret": "e2e-only-vapi-secret-0123456789" },
+    data: { message: { type: "voice-request", text: "Din tid er den 28. oktober kl. 10.30.", sampleRate: 16000 } } });
+  expect(speech.status()).toBe(200);
+  expect(speech.headers()["x-simulated"]).toBe("1");
+  expect((await speech.body()).length).toBeGreaterThan(1000);
+});

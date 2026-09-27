@@ -19,13 +19,15 @@ async function proxy(req: NextRequest, ctx: { params: Promise<{ path: string[] }
     const v = req.headers.get(h);
     if (v) headers.set(h, v);
   }
-  const body = req.method === "GET" || req.method === "HEAD" ? undefined : await req.text();
+  const body = req.method === "GET" || req.method === "HEAD" ? undefined : await req.arrayBuffer(); // binary-safe (WAV uploads)
   const upstream = await fetch(url, { method: req.method, headers, body, cache: "no-store", redirect: "manual" });
   const out = new NextResponse(upstream.status === 204 ? null : upstream.body, { status: upstream.status });
   out.headers.set("content-type", upstream.headers.get("content-type") ?? "application/json");
   out.headers.set("cache-control", "no-store, private");
-  const rid = upstream.headers.get("x-request-id");
-  if (rid) out.headers.set("x-request-id", rid);
+  for (const h of ["x-request-id", "x-simulated", "x-voice-version"]) {
+    const v = upstream.headers.get(h);
+    if (v) out.headers.set(h, v);
+  }
   return out;
 }
 

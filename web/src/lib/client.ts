@@ -27,6 +27,16 @@ export async function apiBlob(path: string, body: unknown): Promise<Blob> {
   return r.blob();
 }
 
+/** POST that returns audio. Supports cancellation (Stop) and reports whether the audio is simulated (test engine). */
+export async function apiAudio(path: string, body: unknown, signal?: AbortSignal): Promise<{ blob: Blob; simulated: boolean }> {
+  const r = await fetch(`/api/backend${path}`, {
+    method: "POST", credentials: "same-origin", body: JSON.stringify(body), signal,
+    headers: { "x-requested-with": "dialogbot", "content-type": "application/json" },
+  });
+  if (!r.ok) throw { ...(await r.json().catch(() => ({ code: "http_error", message: r.statusText }))), status: r.status } as ApiError;
+  return { blob: await r.blob(), simulated: r.headers.get("x-simulated") === "1" };
+}
+
 export function fieldError(err: ApiError | null, field: string): string | undefined {
   return err?.field_errors?.find((f) => f.field === field)?.message;
 }

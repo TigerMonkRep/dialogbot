@@ -86,7 +86,8 @@ def synthesize(version, text: str, *, sample_rate: int = 24000, request_id: str 
         raise EngineBusy("Talemotoren er optaget. Prøv igen om lidt.")
     if r.status_code >= 400:
         raise EngineUnavailable(f"Talemotoren afviste forespørgslen ({r.status_code})")
-    return Synthesis(pcm=r.content, sample_rate=int(r.headers.get("x-sample-rate", sample_rate)), simulated=False,
+    return Synthesis(pcm=r.content, sample_rate=int(r.headers.get("x-sample-rate", sample_rate)),
+                     simulated=r.headers.get("x-simulated") == "1",  # a test engine behind HTTP stays labelled
                      synth_ms=int(r.headers.get("x-synthesis-ms") or (time.monotonic() - t0) * 1000),
                      model_revision=r.headers.get("x-model-revision", version.model_revision))
 

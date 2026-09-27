@@ -1,0 +1,6 @@
+# Import, QC, reference selection and evaluation tools (run outside the API image).
+huggingface_hub==1.33.0
+pyarrow==25.0.1
+soundfile==0.14.0
+numpy==1.26.4
+httpx==0.28.1

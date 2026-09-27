@@ -37,10 +37,8 @@ def _setup(api, t, *, approve=True):
         api.submit(tok, ws, it["open_draft"]["id"])
         api.approve(tok, ws, it["open_draft"]["id"])
     api.knowledge(tok, ws, "fact", "HEMMELIG-KLADDE", {"text": "x"})
-    r = api.post(tok, f"/workspaces/{ws}/phone-numbers", {"e164": "+45 70 12 34 56", "provider_number_id": "pn_123",
-                                                          "label": "Hovednummer"})
-    assert r.status_code == 201, r.text
-    return r.json()
+    n = api.map_number(ws, "+45 70 12 34 56", "pn_123")
+    return next(x for x in api.get(tok, f"/workspaces/{ws}/phone-numbers").json()["items"] if x["id"] == n["id"])
 
 
 def _report(call_id="call_1", *, caller="+4520304050", messages=None, number_id="pn_123"):
@@ -72,17 +70,27 @@ def test_not_configured_and_auth(client, api, two_workspaces, monkeypatch):
     get_settings.cache_clear()
 
 
-def test_number_management_roles_and_validation(api, two_workspaces, configured):
+def test_number_management_is_operator_only_and_customers_see_no_provider_details(api, two_workspaces, configured):
     t = two_workspaces
     n = _setup(api, t)
-    assert n["e164"] == NUMBER and n["provider_number_id"] == "pn_123"
-    assert api.post(t["tok_a"], f"/workspaces/{t['ws_a']}/phone-numbers", {"e164": "70123456"}).status_code == 422
-    assert api.post(t["tok_b"], f"/workspaces/{t['ws_b']}/phone-numbers", {"e164": NUMBER}).json()["code"] == "number_taken"
+    assert n["e164"] == NUMBER and "provider_number_id" not in n and "provider" not in n
+    # customers can no longer attach provider numbers or ids
+    assert api.post(t["tok_a"], f"/workspaces/{t['ws_a']}/phone-numbers",
+                    {"e164": "+4570999999", "provider_number_id": "pn_x"}).status_code == 405
+    assert api.post(t["tok_a"], f"/operator/telephony/workspaces/{t['ws_a']}/numbers",
+                    {"e164": "+4570999999", "provider_number_id": "pn_x", "note": "forsøg fra kunde"}).status_code == 403
+    # the same number or provider id can never be mapped to a second workspace
+    op = api.operator()
+    r = api.post(op, f"/operator/telephony/workspaces/{t['ws_b']}/numbers",
+                 {"e164": NUMBER, "provider_number_id": "pn_other", "note": "dublet i test af operatør"})
+    assert r.json()["code"] == "number_taken"
+    r = api.post(op, f"/operator/telephony/workspaces/{t['ws_b']}/numbers",
+                 {"e164": "+4570888888", "provider_number_id": "pn_123", "note": "dublet i test af operatør"})
+    assert r.json()["code"] == "number_taken"
     staff = api.add_member(t["tok_a"], t["ws_a"], "staff@testmail.dk", "staff")
     assert api.get(staff, f"/workspaces/{t['ws_a']}/phone-numbers").status_code == 200
-    assert api.post(staff, f"/workspaces/{t['ws_a']}/phone-numbers", {"e164": "+4570999999"}).status_code == 403
     lst = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/phone-numbers").json()
-    assert lst["configured"] is True and lst["webhook_url"].endswith("/api/v1/webhooks/vapi")
+    assert set(lst) == {"items"}  # no webhook URL, no "configured" flag
     assert api.get(t["tok_b"], f"/workspaces/{t['ws_b']}/phone-numbers").json()["items"] == []
 
 
@@ -98,6 +106,11 @@ def test_assistant_request_uses_only_approved_knowledge(client, api, two_workspa
     by_number = _post(client, {"type": "assistant-request", "phoneNumber": {"number": NUMBER}, "call": {"id": "c2"}})
     assert "assistant" in by_number.json()
     assert "error" in _post(client, {"type": "assistant-request", "phoneNumber": {"number": "+4511111111"}}).json()
+    # strict: an unknown provider id is never matched by number, and id/number disagreement is rejected
+    assert "error" in _post(client, {"type": "assistant-request", "call": {"id": "c3", "phoneNumberId": "pn_unknown"},
+                                     "phoneNumber": {"number": NUMBER}}).json()
+    assert "error" in _post(client, {"type": "assistant-request", "call": {"id": "c4", "phoneNumberId": "pn_123"},
+                                     "phoneNumber": {"number": "+4511111111"}}).json()
 
 
 def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces, configured, monkeypatch):
@@ -175,14 +188,17 @@ def test_silent_or_anonymous_calls_make_no_lead_and_unknown_numbers_are_unmatche
     assert len(db.scalars(select(Call)).all()) == 2
 
 
-def test_setup_checks_need_a_real_call(client, api, two_workspaces, configured):
+def test_setup_checks_need_a_passed_test_call(client, api, two_workspaces, configured):
     t = two_workspaces
     _setup(api, t)
     base = f"/workspaces/{t['ws_a']}/setup/checks"
     assert api.post(t["tok_a"], f"{base}/telephony.test_call/run").json()["status"] == "failed"
-    _post(client, _report())
+    _post(client, _report())  # an ordinary call is not a test
+    assert api.post(t["tok_a"], f"{base}/telephony.forwarding/run").json()["status"] == "failed"
+    assert api.post(t["tok_a"], f"/workspaces/{t['ws_a']}/telephony/tests", {"called_business_number": True}).status_code == 200
+    _post(client, _report("call_test_1"))
     r = api.post(t["tok_a"], f"{base}/telephony.forwarding/run").json()
-    assert r["status"] == "passed" and r["evidence"]["active_numbers"] == [NUMBER]
+    assert r["status"] == "passed" and r["evidence"]["last_test"] == "passed" and r["evidence"]["destination_ready"]
 
 
 def test_voice_preview(api, two_workspaces, configured, monkeypatch):

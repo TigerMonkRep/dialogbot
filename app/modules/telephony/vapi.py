@@ -76,16 +76,11 @@ def _dig(d: Any, *path: str) -> Any:
 
 
 def find_number(db: OrmSession, message: dict) -> PhoneNumber | None:
-    """Map the dialled number to a workspace: by the provider's number id, else by E.164."""
-    pid = _dig(message, "call", "phoneNumberId") or _dig(message, "phoneNumber", "id")
-    if pid:
-        n = db.scalar(select(PhoneNumber).where(PhoneNumber.provider_number_id == str(pid)))
-        if n is not None:
-            return n
-    num = _dig(message, "phoneNumber", "number") or _dig(message, "call", "phoneNumber", "number")
-    if num:
-        return db.scalar(select(PhoneNumber).where(PhoneNumber.e164 == normalize_e164(str(num))))
-    return None
+    """Map the dialled number to exactly one workspace – strictly (see platform.route): an unknown provider id,
+    an id/number mismatch, a foreign Vapi org or an inactive number is never routed to anyone."""
+    from app.modules.telephony.platform import route
+
+    return route(db, message)
 
 
 def _json_setting(raw: str | None) -> dict | None:
@@ -300,6 +295,10 @@ def end_of_call(db: OrmSession, message: dict) -> str:
     except IntegrityError:
         db.rollback()
         return "duplicate"
+    from app.modules.telephony import platform
+
+    platform.record_call_cost(db, call, message)
+    platform.evaluate_test(db, call, message)
     from app.modules.campaigns import service as campaigns
 
     if campaigns.on_report(db, message, call_id=call_id, conv=conv, duration=duration, visitor_lines=visitor_lines,
@@ -326,3 +325,18 @@ def end_of_call(db: OrmSession, message: dict) -> str:
 def record_event(db: OrmSession, event_id: str, event_type: str, payload: dict, outcome: str) -> None:
     db.add(WebhookEvent(provider=PROVIDER, event_id=event_id[:200], event_type=event_type[:64] or "unknown",
                         payload=payload, outcome=outcome if outcome in ("applied", "ignored", "unmatched") else "ignored"))
+
+
+def not_active_assistant(db: OrmSession, number: PhoneNumber) -> dict:
+    """A call reached the destination before the customer activated (or while paused): say so briefly and end.
+    No knowledge is used and nothing is promised."""
+    ws = db.get(Workspace, number.workspace_id)
+    s = get_settings()
+    text = (f"Tak for dit opkald til {ws.name}. Telefonsvareren er ikke aktiveret endnu. "
+            "Prøv venligst igen senere. Farvel.")
+    return {"assistant": {
+        "firstMessage": text, "endCallMessage": "Farvel.", "maxDurationSeconds": 20,
+        "model": {"provider": s.vapi_model_provider, "model": s.vapi_model or s.ai_model_id,
+                  "messages": [{"role": "system", "content": "Sig kun farvel. Svar ikke på spørgsmål."}]},
+        "transcriber": _json_setting(s.vapi_transcriber_json) or dict(DEFAULT_TRANSCRIBER),
+        "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id), "not_active": True}}}

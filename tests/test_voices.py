@@ -167,10 +167,11 @@ def test_library_preview_selection_and_isolation(api, two_workspaces, db, voice_
 
 
 def _number(api, t, voice_id=""):
-    r = api.post(t["tok_a"], f"/workspaces/{t['ws_a']}/phone-numbers",
-                 {"e164": "+4570123456", "provider_number_id": "pn_voice", "voice_id": voice_id})
-    assert r.status_code == 201, r.text
-    return r.json()["id"]
+    n = api.map_number(t["ws_a"], "+4570123456", "pn_voice")
+    if voice_id:
+        api.c.patch(f"{api.base}/workspaces/{t['ws_a']}/phone-numbers/{n['id']}", json={"voice_id": voice_id},
+                    headers=api.h(t["tok_a"]))
+    return n["id"]
 
 
 def _knowledge(api, t):

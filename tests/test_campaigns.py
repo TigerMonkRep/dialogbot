@@ -78,7 +78,7 @@ def _ready(api, t, monkeypatch, *, key=True):
     it = api.knowledge(tok, ws, "service", "Gulvafslibning", {"description": "Vi sliber trægulve."})
     api.submit(tok, ws, it["open_draft"]["id"])
     api.approve(tok, ws, it["open_draft"]["id"])
-    api.post(tok, f"/workspaces/{ws}/phone-numbers", {"e164": "+4570123456", "provider_number_id": "pn_out"})
+    api.map_number(ws, "+4570123456", "pn_out", outbound=True)
 
 
 def test_start_is_explicit_and_honest(api, two_workspaces, monkeypatch):

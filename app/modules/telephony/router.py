@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.core.audit import record_audit
 from app.core.auth import WorkspaceContext, get_scoped, require_capability
-from app.core.errors import ApiError, Conflict, ValidationFailed
+from app.core.errors import ApiError, ValidationFailed
 from app.db import get_db
 from app.models import Call, PhoneNumber
 from app.modules.setup.checks import invalidate_checks
@@ -35,11 +35,26 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
         raise ValidationFailed("Mangler 'message'")
     kind = str(message.get("type", ""))
     if kind == "assistant-request":
+        from app.modules.telephony import platform
+
         number = vapi.find_number(db, message)
-        if number is None or not number.active:
+        if number is None:
             return {"error": "Nummeret er ikke tilknyttet et aktivt arbejdsrum."}
+        mode = platform.call_mode(db, number, message)
+        if mode == "loop":
+            vapi.record_event(db, f"{(message.get('call') or {}).get('id')}:loop", "assistant-request",
+                              {"number_id": str(number.id)}, "loop_rejected")
+            db.commit()
+            return {"error": "Opkaldet blev afvist for at undgå en viderestillingsløkke."}
+        if mode == "not_active":
+            return vapi.not_active_assistant(db, number)
         try:
             out = vapi.assistant_config(db, number)
+            if mode == "test":
+                out["assistant"]["firstMessage"] = "Dette er et prøveopkald. " + out["assistant"].get("firstMessage", "")
+                out["assistant"]["metadata"]["telephony_test"] = True
+                platform.mark_test_call(db, number, str((message.get("call") or {}).get("id") or "") or None)
+                db.commit()
             if (sid := out["assistant"]["metadata"].get("voice_session_id")) and (call_id := (message.get("call") or {}).get("id")):
                 from app.models import VoiceSession
 
@@ -68,16 +83,6 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
     return {"received": True, "outcome": "ignored"}
 
 
-class NumberIn(BaseModel):
-    e164: str = Field(max_length=20)
-    provider_number_id: str | None = Field(default=None, max_length=100)
-    label: str = Field(default="", max_length=100)
-    greeting: str = Field(default="", max_length=500)
-    voice_id: str = Field(default="", max_length=64)
-    voice_model: str = Field(default=vapi.VOICE_MODELS[0], max_length=40)
-    speaking_style: str = Field(default="", max_length=1000)
-
-
 class NumberPatch(BaseModel):
     active: bool | None = None
     label: str | None = Field(default=None, max_length=100)
@@ -96,7 +101,8 @@ def _check_voice(voice_id: str | None, voice_model: str | None) -> None:
 
 
 def number_out(n: PhoneNumber) -> dict:
-    return {"id": str(n.id), "e164": n.e164, "provider": n.provider, "provider_number_id": n.provider_number_id,
+    """Customer view of a Dialogbot number: no provider ids, accounts or webhook details."""
+    return {"id": str(n.id), "e164": n.e164, "status": n.status, "outbound_allowed": n.outbound_allowed,
             "label": n.label, "active": n.active, "greeting": n.greeting, "voice_id": n.voice_id,
             "voice_model": n.voice_model, "speaking_style": n.speaking_style, "voice": vapi.voice_config(n),
             "created_at": n.created_at.isoformat()}
@@ -104,37 +110,10 @@ def number_out(n: PhoneNumber) -> dict:
 
 @router.get("/phone-numbers")
 def list_numbers(ctx: WorkspaceContext = Depends(require_capability("telephony.read")), db: OrmSession = Depends(get_db)):
-    from app.config import get_settings
-
-    rows = db.scalars(select(PhoneNumber).where(PhoneNumber.workspace_id == ctx.workspace.id).order_by(PhoneNumber.created_at))
-    return {"items": [number_out(n) for n in rows],
-            "webhook_url": f"{get_settings().public_base_url}/api/v1/webhooks/vapi",
-            "configured": bool(get_settings().vapi_server_secret)}
-
-
-@router.post("/phone-numbers", status_code=201)
-def add_number(body: NumberIn, request: Request, ctx: WorkspaceContext = Depends(require_capability("telephony.manage")),
-               db: OrmSession = Depends(get_db)):
-    e164 = vapi.normalize_e164(body.e164)
-    _check_voice(body.voice_id, body.voice_model)
-    if not vapi.E164.match(e164):
-        raise ValidationFailed("Nummeret skal være i internationalt format, fx +4570123456",
-                               field_errors=[{"field": "e164"}])
-    n = PhoneNumber(workspace_id=ctx.workspace.id, e164=e164, provider="vapi",
-                    provider_number_id=(body.provider_number_id or "").strip() or None, label=body.label.strip(),
-                    greeting=body.greeting.strip(), voice_id=body.voice_id.strip(), voice_model=body.voice_model,
-                    speaking_style=body.speaking_style.strip())
-    db.add(n)
-    try:
-        db.flush()
-    except IntegrityError as e:
-        db.rollback()
-        raise Conflict("Nummeret er allerede tilknyttet", code="number_taken") from e
-    invalidate_checks(db, ctx.workspace.id, changed_area="integrations", reason="telephony.number_added")
-    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="telephony.number_added",
-                 object_type="phone_number", object_id=n.id, after=number_out(n), request_id=request.state.request_id)
-    db.commit()
-    return number_out(n)
+    """The workspace's Dialogbot numbers (provisioned by Dialogbot; customers never add provider numbers)."""
+    rows = db.scalars(select(PhoneNumber).where(PhoneNumber.workspace_id == ctx.workspace.id,
+                                                PhoneNumber.status != "released").order_by(PhoneNumber.created_at))
+    return {"items": [number_out(n) for n in rows]}
 
 
 @router.patch("/phone-numbers/{number_id}")

@@ -165,6 +165,34 @@ class Api:
         assert r.status_code == 200, r.text
         return r.json()
 
+    def operator(self) -> str:
+        """A platform operator (Dialogbot staff) session, created once per test."""
+        if getattr(self, "_op", None) is None:
+            from app.db import get_session_factory
+            from app.models import User
+
+            self._op = self.user("operator@testmail.dk")
+            with get_session_factory()() as db:
+                u = db.query(User).filter_by(email_normalized="operator@testmail.dk").one()
+                u.is_platform_operator = True
+                db.commit()
+        return self._op
+
+    def map_number(self, ws: str, e164: str, provider_number_id: str, *, activate: bool = True,
+                   outbound: bool = False) -> dict:
+        """Operator maps a number in Dialogbot's Vapi org to a workspace (customers never do this)."""
+        op = self.operator()
+        r = self.post(op, f"/operator/telephony/workspaces/{ws}/numbers",
+                      {"e164": e164, "provider_number_id": provider_number_id, "activate": activate,
+                       "note": "Tilknyttet i test af operatør"})
+        assert r.status_code == 201, r.text
+        n = next(x for x in r.json()["numbers"] if x["provider_number_id"] == provider_number_id)
+        if outbound:
+            p = self.c.patch(f"{self.base}/operator/telephony/numbers/{n['id']}",
+                             json={"outbound_allowed": True, "note": "Afsender godkendt i test"}, headers=self.h(op))
+            assert p.status_code == 200, p.text
+        return n
+
     def get(self, token: str, path: str):
         return self.c.get(f"{self.base}{path}", headers=self.h(token))
 

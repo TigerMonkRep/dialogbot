@@ -33,6 +33,43 @@
         "title": "AgreementIn",
         "type": "object"
       },
+      "BusinessNumberIn": {
+        "properties": {
+          "carrier": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Carrier",
+            "type": "string"
+          },
+          "e164": {
+            "maxLength": 24,
+            "title": "E164",
+            "type": "string"
+          },
+          "forwarding_mode": {
+            "default": "busy_or_no_answer",
+            "pattern": "^(always|no_answer|busy_or_no_answer)$",
+            "title": "Forwarding Mode",
+            "type": "string"
+          },
+          "subscription_type": {
+            "pattern": "^(mobile|landline|ip_pbx|unknown)$",
+            "title": "Subscription Type",
+            "type": "string"
+          },
+          "wants_new_number": {
+            "default": false,
+            "title": "Wants New Number",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "e164",
+          "subscription_type"
+        ],
+        "title": "BusinessNumberIn",
+        "type": "object"
+      },
       "CampaignIn": {
         "properties": {
           "call_days": {
@@ -251,6 +288,49 @@
           "position"
         ],
         "title": "CategoryOut",
+        "type": "object"
+      },
+      "CodeIn": {
+        "properties": {
+          "code": {
+            "maxLength": 10,
+            "minLength": 4,
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "CodeIn",
+        "type": "object"
+      },
+      "CompanyIn": {
+        "properties": {
+          "address": {
+            "maxLength": 300,
+            "minLength": 5,
+            "title": "Address",
+            "type": "string"
+          },
+          "company_name": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Company Name",
+            "type": "string"
+          },
+          "cvr": {
+            "pattern": "^\\d{8}$",
+            "title": "Cvr",
+            "type": "string"
+          }
+        },
+        "required": [
+          "company_name",
+          "cvr",
+          "address"
+        ],
+        "title": "CompanyIn",
         "type": "object"
       },
       "ContactIn": {
@@ -1107,6 +1187,39 @@
         "title": "ManualIn",
         "type": "object"
       },
+      "MapIn": {
+        "properties": {
+          "activate": {
+            "default": false,
+            "title": "Activate",
+            "type": "boolean"
+          },
+          "e164": {
+            "maxLength": 24,
+            "title": "E164",
+            "type": "string"
+          },
+          "note": {
+            "maxLength": 1000,
+            "minLength": 10,
+            "title": "Note",
+            "type": "string"
+          },
+          "provider_number_id": {
+            "maxLength": 100,
+            "minLength": 3,
+            "title": "Provider Number Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "e164",
+          "provider_number_id",
+          "note"
+        ],
+        "title": "MapIn",
+        "type": "object"
+      },
       "MemberOut": {
         "properties": {
           "created_at": {
@@ -1180,137 +1293,19 @@
         "title": "ModeIn",
         "type": "object"
       },
-      "NumberIn": {
+      "NoteIn": {
         "properties": {
-          "e164": {
-            "maxLength": 20,
-            "title": "E164",
-            "type": "string"
-          },
-          "greeting": {
-            "default": "",
-            "maxLength": 500,
-            "title": "Greeting",
-            "type": "string"
-          },
-          "label": {
-            "default": "",
-            "maxLength": 100,
-            "title": "Label",
-            "type": "string"
-          },
-          "provider_number_id": {
-            "anyOf": [
-              {
-                "maxLength": 100,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Provider Number Id"
-          },
-          "speaking_style": {
-            "default": "",
+          "note": {
             "maxLength": 1000,
-            "title": "Speaking Style",
-            "type": "string"
-          },
-          "voice_id": {
-            "default": "",
-            "maxLength": 64,
-            "title": "Voice Id",
-            "type": "string"
-          },
-          "voice_model": {
-            "default": "eleven_multilingual_v2",
-            "maxLength": 40,
-            "title": "Voice Model",
+            "minLength": 10,
+            "title": "Note",
             "type": "string"
           }
         },
         "required": [
-          "e164"
+          "note"
         ],
-        "title": "NumberIn",
-        "type": "object"
-      },
-      "NumberPatch": {
-        "properties": {
-          "active": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Active"
-          },
-          "greeting": {
-            "anyOf": [
-              {
-                "maxLength": 500,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Greeting"
-          },
-          "label": {
-            "anyOf": [
-              {
-                "maxLength": 100,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Label"
-          },
-          "speaking_style": {
-            "anyOf": [
-              {
-                "maxLength": 1000,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Speaking Style"
-          },
-          "voice_id": {
-            "anyOf": [
-              {
-                "maxLength": 64,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Voice Id"
-          },
-          "voice_model": {
-            "anyOf": [
-              {
-                "maxLength": 40,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Voice Model"
-          }
-        },
-        "title": "NumberPatch",
+        "title": "NoteIn",
         "type": "object"
       },
       "ProfileOut": {
@@ -1718,27 +1713,6 @@
           "email"
         ],
         "title": "ResetRequestIn",
-        "type": "object"
-      },
-      "ReviewIn": {
-        "properties": {
-          "notes": {
-            "maxLength": 4000,
-            "minLength": 10,
-            "title": "Notes",
-            "type": "string"
-          },
-          "status": {
-            "pattern": "^(verified|blocked|unreviewed)$",
-            "title": "Status",
-            "type": "string"
-          }
-        },
-        "required": [
-          "status",
-          "notes"
-        ],
-        "title": "ReviewIn",
         "type": "object"
       },
       "RightsIn": {
@@ -2149,6 +2123,17 @@
           }
         },
         "title": "TaskPatch",
+        "type": "object"
+      },
+      "TestIn": {
+        "properties": {
+          "called_business_number": {
+            "default": true,
+            "title": "Called Business Number",
+            "type": "boolean"
+          }
+        },
+        "title": "TestIn",
         "type": "object"
       },
       "TokenIn": {
@@ -2936,6 +2921,166 @@
         "title": "AssignIn",
         "type": "object"
       },
+      "app__modules__telephony__operator_router__NumberPatch": {
+        "properties": {
+          "note": {
+            "maxLength": 1000,
+            "minLength": 10,
+            "title": "Note",
+            "type": "string"
+          },
+          "outbound_allowed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outbound Allowed"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "pattern": "^(active|suspended)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "required": [
+          "note"
+        ],
+        "title": "NumberPatch",
+        "type": "object"
+      },
+      "app__modules__telephony__operator_router__ReviewIn": {
+        "properties": {
+          "note": {
+            "maxLength": 1000,
+            "minLength": 10,
+            "title": "Note",
+            "type": "string"
+          },
+          "regulatory_address_sid": {
+            "anyOf": [
+              {
+                "pattern": "^AD[0-9a-f]{32}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Regulatory Address Sid"
+          },
+          "regulatory_bundle_sid": {
+            "anyOf": [
+              {
+                "pattern": "^BU[0-9a-f]{32}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Regulatory Bundle Sid"
+          },
+          "status": {
+            "pattern": "^(approved|rejected)$",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "note"
+        ],
+        "title": "ReviewIn",
+        "type": "object"
+      },
+      "app__modules__telephony__router__NumberPatch": {
+        "properties": {
+          "active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active"
+          },
+          "greeting": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Greeting"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "speaking_style": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speaking Style"
+          },
+          "voice_id": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Id"
+          },
+          "voice_model": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Voice Model"
+          }
+        },
+        "title": "NumberPatch",
+        "type": "object"
+      },
       "app__modules__telephony__router__PreviewIn": {
         "properties": {
           "text": {
@@ -3085,6 +3230,27 @@
           "display_name"
         ],
         "title": "ProfileIn",
+        "type": "object"
+      },
+      "app__modules__voices__operator_router__ReviewIn": {
+        "properties": {
+          "notes": {
+            "maxLength": 4000,
+            "minLength": 10,
+            "title": "Notes",
+            "type": "string"
+          },
+          "status": {
+            "pattern": "^(verified|blocked|unreviewed)$",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "notes"
+        ],
+        "title": "ReviewIn",
         "type": "object"
       },
       "app__modules__voices__router__AssignIn": {
@@ -3783,6 +3949,587 @@
         ]
       }
     },
+    "/api/v1/operator/telephony": {
+      "get": {
+        "operationId": "overview_api_v1_operator_telephony_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Overview",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/jobs": {
+      "get": {
+        "operationId": "jobs_api_v1_operator_telephony_jobs_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Jobs",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/numbers/{number_id}": {
+      "patch": {
+        "operationId": "patch_number_api_v1_operator_telephony_numbers__number_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Number Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__telephony__operator_router__NumberPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Number",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/tests/expire": {
+      "post": {
+        "operationId": "expire_api_v1_operator_telephony_tests_expire_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Expire",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/workspaces/{ws_id}": {
+      "get": {
+        "operationId": "detail_api_v1_operator_telephony_workspaces__ws_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ws_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ws Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Detail",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/workspaces/{ws_id}/documents": {
+      "get": {
+        "operationId": "get_document_api_v1_operator_telephony_workspaces__ws_id__documents_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ws_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ws Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Document",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/workspaces/{ws_id}/documents/review": {
+      "post": {
+        "operationId": "review_documents_api_v1_operator_telephony_workspaces__ws_id__documents_review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ws_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ws Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__telephony__operator_router__ReviewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review Documents",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/workspaces/{ws_id}/jobs/run": {
+      "post": {
+        "operationId": "run_job_api_v1_operator_telephony_workspaces__ws_id__jobs_run_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ws_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ws Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run Job",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/workspaces/{ws_id}/numbers": {
+      "post": {
+        "description": "Map a number that already exists in Dialogbot's Vapi org (e.g. migrating a hand-set-up customer).",
+        "operationId": "map_number_api_v1_operator_telephony_workspaces__ws_id__numbers_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ws_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ws Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MapIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Map Number",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/workspaces/{ws_id}/verify-manually": {
+      "post": {
+        "operationId": "verify_manually_api_v1_operator_telephony_workspaces__ws_id__verify_manually_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ws_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ws Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify Manually",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
     "/api/v1/operator/voice-rights": {
       "get": {
         "operationId": "list_rights_api_v1_operator_voice_rights_get",
@@ -3921,7 +4668,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReviewIn"
+                "$ref": "#/components/schemas/app__modules__voices__operator_router__ReviewIn"
               }
             }
           },
@@ -11692,6 +12439,7 @@
     },
     "/api/v1/workspaces/{workspace_id}/phone-numbers": {
       "get": {
+        "description": "The workspace's Dialogbot numbers (provisioned by Dialogbot; customers never add provider numbers).",
         "operationId": "list_numbers_api_v1_workspaces__workspace_id__phone_numbers_get",
         "parameters": [
           {
@@ -11745,71 +12493,6 @@
         "tags": [
           "telephony"
         ]
-      },
-      "post": {
-        "operationId": "add_number_api_v1_workspaces__workspace_id__phone_numbers_post",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "workspace_id",
-            "required": true,
-            "schema": {
-              "format": "uuid",
-              "title": "Workspace Id",
-              "type": "string"
-            }
-          },
-          {
-            "in": "header",
-            "name": "authorization",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NumberIn"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Add Number",
-        "tags": [
-          "telephony"
-        ]
       }
     },
     "/api/v1/workspaces/{workspace_id}/phone-numbers/{number_id}": {
@@ -11857,7 +12540,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NumberPatch"
+                "$ref": "#/components/schemas/app__modules__telephony__router__NumberPatch"
               }
             }
           },
@@ -13466,6 +14149,616 @@
         "summary": "Update Task",
         "tags": [
           "leads"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/telephony": {
+      "get": {
+        "operationId": "get_telephony_api_v1_workspaces__workspace_id__telephony_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Telephony",
+        "tags": [
+          "telephony"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/telephony/activate": {
+      "post": {
+        "operationId": "activate_api_v1_workspaces__workspace_id__telephony_activate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Activate",
+        "tags": [
+          "telephony"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/telephony/business-number": {
+      "put": {
+        "operationId": "put_business_number_api_v1_workspaces__workspace_id__telephony_business_number_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BusinessNumberIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Business Number",
+        "tags": [
+          "telephony"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/telephony/company": {
+      "put": {
+        "operationId": "put_company_api_v1_workspaces__workspace_id__telephony_company_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Company",
+        "tags": [
+          "telephony"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/telephony/connect": {
+      "post": {
+        "operationId": "connect_api_v1_workspaces__workspace_id__telephony_connect_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Connect",
+        "tags": [
+          "telephony"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/telephony/documents": {
+      "put": {
+        "operationId": "put_documents_api_v1_workspaces__workspace_id__telephony_documents_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Documents",
+        "tags": [
+          "telephony"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/telephony/pause": {
+      "post": {
+        "operationId": "pause_api_v1_workspaces__workspace_id__telephony_pause_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pause",
+        "tags": [
+          "telephony"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/telephony/tests": {
+      "post": {
+        "operationId": "start_test_api_v1_workspaces__workspace_id__telephony_tests_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start Test",
+        "tags": [
+          "telephony"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/telephony/verify": {
+      "post": {
+        "operationId": "verify_api_v1_workspaces__workspace_id__telephony_verify_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify",
+        "tags": [
+          "telephony"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/telephony/verify/confirm": {
+      "post": {
+        "operationId": "verify_confirm_api_v1_workspaces__workspace_id__telephony_verify_confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify Confirm",
+        "tags": [
+          "telephony"
         ]
       }
     },

@@ -43,3 +43,28 @@ def make_me_operator(principal: Principal = Depends(get_current_principal), db: 
     principal.user.is_platform_operator = True
     db.commit()
     return {"is_platform_operator": True, "warning": "Kun udviklingsmiljø."}
+
+
+@router.get("/telephony/verification-code")
+def telephony_code(workspace_id: str, principal: Principal = Depends(get_current_principal),
+                   db: OrmSession = Depends(get_db)):
+    """Dev/test only, fake provider only: the code the simulated verification call read aloud, so the flow can be
+    walked without a phone. The caller must be a member of the workspace."""
+    import re
+    import uuid
+
+    from app.config import get_settings
+    from app.core.errors import Forbidden, NotFound
+    from app.models import Membership
+    from app.modules.telephony.providers import WORLD
+
+    if get_settings().telephony_provider != "fake":
+        raise NotFound("Kun med simuleret telefoni")
+    if db.scalar(select(Membership.id).where(Membership.user_id == principal.user.id,
+                                             Membership.workspace_id == uuid.UUID(workspace_id))) is None:
+        raise Forbidden("Ikke medlem af arbejdsrummet")
+    for call in reversed(WORLD.calls):
+        if (call.get("metadata") or {}).get("workspace_id") == workspace_id:
+            digits = re.findall(r"\d", call["assistant"]["firstMessage"])[:6]
+            return {"code": "".join(digits), "warning": "Simuleret kontrolopkald. Intet opkald er foretaget."}
+    raise NotFound("Intet kontrolopkald")

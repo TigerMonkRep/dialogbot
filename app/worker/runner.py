@@ -217,6 +217,18 @@ def run_schedules() -> None:
             log.warning("campaigns.failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
         try:
+            from app.modules.telephony import platform
+
+            n = platform.run_due_jobs(db)
+            platform.expire_tests(db)
+            db.commit()
+            if n:
+                log.info("telephony.jobs_run", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("telephony.jobs_failed", error=f"{type(exc).__name__}")  # details stay on the job row
+    with get_session_factory()() as db:
+        try:
             from app.modules.billing.stripe import invoice_due
 
             n = invoice_due(db)

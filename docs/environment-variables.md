@@ -25,7 +25,13 @@
 | `AI_MAX_OUTPUT_TOKENS` | nej | API | — | Standard 2048 (inkl. tænkning). |
 | `AI_SERVER_FALLBACKS` | nej | API | — | `true` (standard): Anthropics server-side fallback ved politik-afvisning (`fallbacks: "default"`). Sæt `false`, hvis `AI_MODEL_ID` ikke har en standard-fallback. |
 | `WEBCHAT_DAILY_REPLY_LIMIT` | nej | API | — | Standard 300. Højeste antal AI-svar pr. arbejdsrum pr. døgn i web-widgetten (udgiftsværn). Derudover: 20 beskeder pr. samtale, 60 nye samtaler i timen pr. widget. |
-| `VAPI_SERVER_SECRET` | ved telefoni | API | Vælges af jer; samme værdi som Bearer-legitimationen på nummerets Server URL i Vapi | Uden den svarer `POST /api/v1/webhooks/vapi` 503, og `telephony.inbound` er `not_implemented`. |
+| `VAPI_SERVER_SECRET` | ved telefoni | API | Vælges af jer (≥ 32 tegn) | Dialogbot sætter den selv som Bearer-header, når numre importeres i Vapi. Uden den svarer `POST /api/v1/webhooks/vapi` 503. |
+| `VAPI_ORG_ID` | anbefalet | API | Vapi → Organization → Settings | Webhooks fra andre Vapi-organisationer afvises. |
+| `TELEPHONY_PROVIDER` | nej | API + worker | — | `none` (standard: intet købes, kunder står i "Forbindelse klargøres"), `live` (Twilio + Vapi) eller `fake` (kun dev/test). Se `docs/telephony/owner-setup.md`. |
+| `TWILIO_ACCOUNT_SID` | ved live | API + worker | Twilio Console (hovedkonto `AC…`) | Underkonti pr. arbejdsrum oprettes under denne. |
+| `TWILIO_API_KEY_SID` / `TWILIO_API_KEY_SECRET` (el. `TWILIO_AUTH_TOKEN`) | ved live | API + worker | Twilio → API keys & tokens | **Server-only.** Returneres og logges aldrig. |
+| `TELEPHONY_NUMBER_COUNTRY` / `TELEPHONY_NUMBER_TYPE` | nej | API + worker | — | Standard `DK` / `local` (kræver virksomhedsdokumentation). `mobile` kræver ingen dokumenter. |
+| `TELEPHONY_VERIFY_NUMBER_ID` | ved live | API | Vapi-id for Dialogbots kontrolnummer | Bruges til kontrolopkaldet, der læser en 6-cifret kode op for kundens nummer. |
 | `VAPI_MODEL_PROVIDER` | nej | API | — | Standard `anthropic`. Verificér, at Vapi understøtter den valgte model. |
 | `VAPI_VOICE_JSON` / `VAPI_TRANSCRIBER_JSON` | nej | API | Vapi-dashboardet | Valgfri JSON-objekter, der sendes uændret som `voice`/`transcriber`. Transskribering er som standard dansk (Deepgram Nova-3, `da`). Stemmen vælges normalt pr. nummer under Indstillinger → Telefoni; `VAPI_VOICE_JSON` bruges kun for numre uden egen stemme. |
 | `VAPI_API_KEY` | nej | API + worker | Vapi → Organization → API Keys → **Private** key | Udgående kampagneopkald (`POST /call`). Uden den kan kampagner forberedes, men ikke startes (501). `VAPI_API_URL` kan overstyre `https://api.vapi.ai`. **Server-only.** |
@@ -61,4 +67,4 @@ Der findes ingen `NEXT_PUBLIC_*` hemmeligheder. Browseren kender kun sit eget or
 
 ## Senere milepæle (navne reserveret, ikke læst af koden endnu)
 
-`AI_PROVIDER`, `AI_MODEL_ID`, `ANTHROPIC_API_KEY`, `VAPI_API_KEY`, `VAPI_WEBHOOK_SECRET`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PUBLISHABLE_KEY` (eneste offentlige), `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, `MS_CLIENT_ID`/`MS_CLIENT_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (kun backend, kun til Storage-adapteren), `STORAGE_BUCKET_SOURCES`, `STORAGE_BUCKET_EXPORTS`.
+`AI_PROVIDER`, `AI_MODEL_ID`, `ANTHROPIC_API_KEY`, `VAPI_WEBHOOK_SECRET`, `TWILIO_MESSAGING_SERVICE_SID`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PUBLISHABLE_KEY` (eneste offentlige), `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, `MS_CLIENT_ID`/`MS_CLIENT_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (kun backend, kun til Storage-adapteren), `STORAGE_BUCKET_SOURCES`, `STORAGE_BUCKET_EXPORTS`.

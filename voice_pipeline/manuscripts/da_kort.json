@@ -1,0 +1,111 @@
+{
+ "id": "da_kort",
+ "language": "da-DK",
+ "version": 1,
+ "instructions": [
+  "Optag i et stille rum med bløde flader, fx gardiner, tæpper eller et klædeskab. Undgå køkken og badeværelse.",
+  "Hold telefonen eller mikrofonen 15–20 cm fra munden og samme afstand hele vejen.",
+  "Læs i dit eget tempo med din normale telefonstemme: venlig og rolig. Du skal ikke lyde som en oplæser.",
+  "Tag en ny optagelse af sætningen, hvis du siger forkert, griner eller bliver forstyrret.",
+  "Tal og datoer læser du, som du selv ville sige dem i telefonen. Forslaget under teksten viser én måde.",
+  "Hold en kort pause efter hver sætning."
+ ],
+ "placeholders": [
+  "firma",
+  "ydelse",
+  "by"
+ ],
+ "sentences": [
+  {
+   "id": "kort-001",
+   "category": "hilsen",
+   "text": "Hej, og tak fordi du ringer til {firma}. Du taler med en digital assistent, og jeg hjælper gerne.",
+   "spoken_hint": "Hej, og tak fordi du ringer til Firma. Du taler med en digital assistent, og jeg hjælper gerne."
+  },
+  {
+   "id": "kort-002",
+   "category": "hilsen",
+   "text": "Godmorgen. Hvad kan jeg gøre for dig i dag?",
+   "spoken_hint": "Godmorgen. Hvad kan jeg gøre for dig i dag?"
+  },
+  {
+   "id": "kort-003",
+   "category": "fortælling",
+   "text": "I weekenden var vi en tur ved stranden. Det regnede lidt om formiddagen, men om eftermiddagen kom solen frem, og så blev det en rigtig dejlig dag.",
+   "spoken_hint": "I weekenden var vi en tur ved stranden. Det regnede lidt om formiddagen, men om eftermiddagen kom solen frem, og så blev det en rigtig dejlig dag."
+  },
+  {
+   "id": "kort-004",
+   "category": "fortælling",
+   "text": "Vi har haft travlt i denne uge, men det går fint. De fleste opgaver bliver klaret samme dag, og resten tager vi fat på i morgen tidlig.",
+   "spoken_hint": "Vi har haft travlt i denne uge, men det går fint. De fleste opgaver bliver klaret samme dag, og resten tager vi fat på i morgen tidlig."
+  },
+  {
+   "id": "kort-005",
+   "category": "spørgsmål",
+   "text": "Passer det dig bedst om formiddagen eller om eftermiddagen?",
+   "spoken_hint": "Passer det dig bedst om formiddagen eller om eftermiddagen?"
+  },
+  {
+   "id": "kort-006",
+   "category": "spørgsmål",
+   "text": "Må jeg spørge, hvad det drejer sig om?",
+   "spoken_hint": "Må jeg spørge, hvad det drejer sig om?"
+  },
+  {
+   "id": "kort-007",
+   "category": "spørgsmål",
+   "text": "Kan du give mig et nummer, jeg kan ringe tilbage på?",
+   "spoken_hint": "Kan du give mig et nummer, jeg kan ringe tilbage på?"
+  },
+  {
+   "id": "kort-008",
+   "category": "tal",
+   "text": "Vi kan komme tirsdag den fjerde november klokken kvart over ni.",
+   "spoken_hint": "Vi kan komme tirsdag den fjerde november klokken kvart over ni."
+  },
+  {
+   "id": "kort-009",
+   "category": "tal",
+   "text": "Prisen er 2.350 kroner, og det er inklusive moms.",
+   "spoken_hint": "Prisen er to tusind tre hundrede og halvtreds kroner, og det er inklusive moms."
+  },
+  {
+   "id": "kort-010",
+   "category": "tal",
+   "text": "Mit nummer er 42 36 18 29.",
+   "spoken_hint": "Mit nummer er toogfyrre seksogtredive atten niogtyve."
+  },
+  {
+   "id": "kort-011",
+   "category": "steder",
+   "text": "Vi har kunder i Esbjerg, Randers, Næstved, Svendborg og Frederikshavn.",
+   "spoken_hint": "Vi har kunder i Esbjerg, Randers, Næstved, Svendborg og Frederikshavn."
+  },
+  {
+   "id": "kort-012",
+   "category": "forbehold",
+   "text": "Det kan jeg desværre ikke love dig i dag, men jeg skal nok undersøge det.",
+   "spoken_hint": "Det kan jeg desværre ikke love dig i dag, men jeg skal nok undersøge det."
+  },
+  {
+   "id": "kort-013",
+   "category": "forbehold",
+   "text": "Nej, der er ingen ekstra gebyrer, og det er helt uforpligtende.",
+   "spoken_hint": "Nej, der er ingen ekstra gebyrer, og det er helt uforpligtende."
+  },
+  {
+   "id": "kort-014",
+   "category": "forbehold",
+   "text": "Aftalen er ikke bekræftet endnu. Du får en besked, så snart den er på plads.",
+   "spoken_hint": "Aftalen er ikke bekræftet endnu. Du får en besked, så snart den er på plads."
+  },
+  {
+   "id": "kort-015",
+   "category": "afslutning",
+   "text": "Tusind tak for snakken. Hav en rigtig god dag, og på gensyn.",
+   "spoken_hint": "Tusind tak for snakken. Hav en rigtig god dag, og på gensyn."
+  }
+ ],
+ "estimated_minutes": 1.2
+}

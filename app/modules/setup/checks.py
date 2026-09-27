@@ -153,23 +153,24 @@ def _evaluate(db: OrmSession, workspace_id: uuid.UUID, key: str) -> tuple[bool, 
         leaked = [i["id"] for i in items if i["status"] != "approved"]
         return not leaked, {"active_items": len(items), "non_approved_leaked": leaked}
     if key in ("telephony.test_call", "telephony.forwarding"):
-        from app.models import Call, PhoneNumber
-
-        numbers = db.scalars(select(PhoneNumber).where(PhoneNumber.workspace_id == workspace_id,
-                                                       PhoneNumber.active.is_(True))).all()
         from app.models import WorkspaceVoiceSettings
+        from app.modules.telephony import platform
 
-        since = _now() - timedelta(days=30)
+        tsetup = platform.setup_for(db, workspace_id)
+        test = platform.last_test(db, tsetup)
+        dest = platform.destination(db, tsetup)
         voice = db.get(WorkspaceVoiceSettings, workspace_id)
-        if key == "telephony.test_call" and voice is not None and voice.updated_at > since:
-            since = voice.updated_at  # a test call only counts if it was made with the current voice setup
-        last = db.scalar(select(Call).where(Call.workspace_id == workspace_id, Call.created_at >= since)
-                         .order_by(Call.created_at.desc()).limit(1))
-        return bool(numbers) and last is not None, {
-            "active_numbers": [n.e164 for n in numbers],
-            "last_call_at": last.created_at.isoformat() if last else None,
-            "last_call_to": last.to_number if last else None,
-            "call_received_within_30_days": last is not None,
+        passed = test is not None and test.status == "passed"
+        if key == "telephony.test_call" and passed and voice is not None and test.finished_at and voice.updated_at > test.finished_at:
+            passed = False  # the voice changed after the test: a new test call is needed
+        if key == "telephony.forwarding":
+            passed = passed and test.called_business_number
+        return passed and dest is not None, {
+            "status": platform.status(db, workspace_id)["code"],
+            "destination_ready": dest is not None,
+            "last_test": test.status if test else None,
+            "last_test_at": test.finished_at.isoformat() if test and test.finished_at else None,
+            "simulated": bool(test and test.simulated),
         }
     if key == "webchat.widget":
         from app.modules.webchat import service as webchat

@@ -2,6 +2,23 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 26 — 27. september 2026 (Telefoni: platformadministreret drift)
+
+Se `docs/telephony/README.md`, `owner-setup.md` og `migration.md`.
+- **Implementeret og testet (simuleret leverandør):**
+  - fem-trins kundeforløb uden leverandørbegreber;
+  - kontrolopkald til bekræftelse af nummer;
+  - idempotent provisionering: Twilio-underkonto og nummer pr. arbejdsrum, import i Vapi;
+  - streng webhook-routing;
+  - prøveopkald før aktivering;
+  - operatørvisning `/app/operator/telephony`;
+  - afsendertilladelse til kampagner;
+  - interne omkostningsposter.
+
+  Bevis: `tests/test_telephony_platform.py` og E2E-rejse 14.
+- **Ikke eksternt verificeret:** rigtige Twilio- og Vapi-kald, viderestilling og et indgående opkald. Det kræver
+  Dialogbots Twilio- og Vapi-opsætning samt `TELEPHONY_PROVIDER=live` (se ejerguiden).
+
 ## Checkpoint 25 — 27. september 2026 (Dansk stemmebibliotek – første leverance, simuleret)
 
 Se `docs/voice/README.md` for status pr. del. Kort fortalt:

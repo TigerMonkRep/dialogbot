@@ -66,6 +66,18 @@ class Settings(BaseSettings):
     # Outbound campaign calls: Vapi private API key (server-only). Without it campaigns cannot be started.
     vapi_api_key: str | None = Field(default=None, alias="VAPI_API_KEY")
     vapi_api_url: str = Field(default="https://api.vapi.ai", alias="VAPI_API_URL")
+    # Webhooks must come from Dialogbot's own Vapi org when set (call.orgId); unknown orgs are rejected.
+    vapi_org_id: str | None = Field(default=None, alias="VAPI_ORG_ID")
+    # Platform-managed telephony: Dialogbot's own Twilio main account (sub-accounts per workspace) + Vapi.
+    telephony_provider: Literal["none", "fake", "live"] = Field(default="none", alias="TELEPHONY_PROVIDER")
+    twilio_account_sid: str | None = Field(default=None, alias="TWILIO_ACCOUNT_SID")
+    twilio_auth_token: str | None = Field(default=None, alias="TWILIO_AUTH_TOKEN")
+    twilio_api_key_sid: str | None = Field(default=None, alias="TWILIO_API_KEY_SID")
+    twilio_api_key_secret: str | None = Field(default=None, alias="TWILIO_API_KEY_SECRET")
+    telephony_number_country: str = Field(default="DK", alias="TELEPHONY_NUMBER_COUNTRY")
+    telephony_number_type: Literal["local", "mobile"] = Field(default="local", alias="TELEPHONY_NUMBER_TYPE")
+    # Vapi phone-number id of a platform number used only to place verification calls (reads a code aloud).
+    telephony_verify_number_id: str | None = Field(default=None, alias="TELEPHONY_VERIFY_NUMBER_ID")
     vapi_model_provider: str = Field(default="anthropic", alias="VAPI_MODEL_PROVIDER")
     vapi_model: str | None = Field(default=None, alias="VAPI_MODEL")  # default: AI_MODEL_ID
     # Optional JSON objects passed through to Vapi's assistant config (e.g. a Danish voice/transcriber).
@@ -81,6 +93,9 @@ class Settings(BaseSettings):
     # TTS_ENGINE: none | http (the real service at TTS_SERVICE_URL) | fake (dev/test double; audio is a tone
     # and every result is labelled simulated).
     tts_engine: Literal["none", "http", "fake"] = Field(default="none", alias="TTS_ENGINE")
+    # Model new voices (own voices) are created for; must match the TTS host's MODEL_REPO/MODEL_REVISION.
+    voice_model_repo: str = Field(default="CoRal-project/roest-v3-chatterbox-500m", alias="VOICE_MODEL_REPO")
+    voice_model_revision: str = Field(default="7ce205cea6b3b36d9f60f18abb88ff21fa04ea0d", alias="VOICE_MODEL_REVISION")
     tts_service_url: str | None = Field(default=None, alias="TTS_SERVICE_URL")
     tts_service_token: str | None = Field(default=None, alias="TTS_SERVICE_TOKEN")
     tts_timeout_seconds: float = Field(default=20.0, alias="TTS_TIMEOUT_SECONDS")
@@ -122,6 +137,8 @@ class Settings(BaseSettings):
             raise ValueError(f"AI_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
         if self.tts_engine == "fake" and self.app_env not in ("dev", "test"):
             raise ValueError(f"TTS_ENGINE=fake is a test double and is not allowed when APP_ENV={self.app_env}")
+        if self.telephony_provider == "fake" and self.app_env not in ("dev", "test"):
+            raise ValueError(f"TELEPHONY_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
         if self.tts_engine == "http" and not (self.tts_service_url and self.tts_service_token):
             raise ValueError("TTS_ENGINE=http requires TTS_SERVICE_URL and TTS_SERVICE_TOKEN")
         if self.voice_storage == "supabase" and not (self.supabase_url and self.supabase_service_role_key):

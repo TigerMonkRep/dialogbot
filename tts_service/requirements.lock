@@ -1,5 +1,6 @@
 # Resolved 2026-09-27 from tts_service/requirements.in with pip --dry-run --report (python 3.11, linux x86_64, PyPI).
-# torch 2.6.0 from PyPI bundles CUDA 12.4 libraries (nvidia-* wheels). Do not edit by hand.
+# 27/9: silero-vad 5.1.2 added with its new dependencies onnxruntime 1.30.0 and flatbuffers 25.12.19
+# (installed and tested in the same environment). torch 2.6.0 from PyPI bundles CUDA 12.4 libraries (nvidia-* wheels). Do not edit by hand.
 aiofiles==24.1.0
 annotated-doc==0.0.5
 annotated-types==0.8.0
@@ -12,7 +13,7 @@ certifi==2026.7.22
 cffi==2.1.1
 cfgv==3.5.0
 charset-normalizer==3.5.1
-chatterbox-tts==0.1.7
+chatterbox-tts @ git+https://github.com/resemble-ai/chatterbox.git@5de7a54aa4e5e2baadb0182dde554908b48b85c2
 click==8.5.0
 cloudpickle==3.1.2
 conformer==0.3.2
@@ -24,6 +25,7 @@ einops==0.8.2
 fastapi==0.141.1
 ffmpy==1.0.0
 filelock==4.0.4
+flatbuffers==25.12.19
 fsspec==2026.9.0
 gradio==6.8.0
 gradio_client==2.2.0
@@ -68,6 +70,7 @@ nvidia-nvjitlink-cu12==12.4.127
 nvidia-nvtx-cu12==12.4.127
 omegaconf==2.3.1
 onnx==1.23.0
+onnxruntime==1.30.0
 orjson==3.12.0
 packaging==26.3
 pandas==3.0.6
@@ -99,6 +102,7 @@ scikit-learn==1.9.1
 scipy==1.17.1
 semantic-version==2.10.0
 shellingham==1.5.4
+silero-vad==5.1.2
 six==1.17.0
 soundfile==0.14.0
 soxr==1.1.0

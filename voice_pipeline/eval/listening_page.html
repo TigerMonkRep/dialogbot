@@ -1,0 +1,246 @@
+<title>Lyttetest danske stemmer</title>
+<style>
+:root{
+  --ground:#e7fef9;--surface:#ffffff;--ink:#164e43;--muted:#4b6f66;--line:#c3e4dc;--accent:#d8ee86;--accent-ink:#164e43;
+  --chip:#f1fbf8;--focus:#0f7a64;--warn:#8a3b12;--warn-bg:#fdebe2;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0d231f;--surface:#12302a;--ink:#e7fef9;--muted:#9cc3b9;--line:#24504a;--accent:#d8ee86;--accent-ink:#12302a;
+  --chip:#173a33;--focus:#8fe0c9;--warn:#ffb694;--warn-bg:#3a2016;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#0d231f;--surface:#12302a;--ink:#e7fef9;--muted:#9cc3b9;--line:#24504a;--accent:#d8ee86;--accent-ink:#12302a;
+  --chip:#173a33;--focus:#8fe0c9;--warn:#ffb694;--warn-bg:#3a2016;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.55 Manrope,"Segoe UI",system-ui,-apple-system,sans-serif;
+  padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:720px;margin:0 auto;display:grid;gap:20px}
+h1,h2{text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:clamp(1.7rem,4vw,2.3rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.15rem;font-weight:700}
+p{margin:0;max-width:65ch}
+.muted{color:var(--muted)}
+.eyebrow{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ground);padding-block:12px;
+  border-bottom:1px solid var(--line);margin-inline:-16px;padding-inline:16px}
+header.top .row{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:10px;border-radius:999px;background:var(--chip);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.count{font-variant-numeric:tabular-nums;font-weight:700;font-size:.9rem;white-space:nowrap}
+.intro{display:grid;gap:12px;padding-block:28px 4px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:14px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+label.f{display:grid;gap:4px;font-size:.9rem;font-weight:600}
+input[type=text],select,textarea{font:inherit;color:var(--ink);background:var(--ground);border:1px solid var(--line);
+  border-radius:10px;padding:9px 11px;width:100%}
+textarea{font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;min-height:140px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+ol.scale-key{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;font-size:.8rem}
+ol.scale-key li{background:var(--chip);border-radius:8px;padding:6px;text-align:center}
+ol.scale-key b{display:block;font-size:1rem}
+.clip{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px}
+.clip.done{border-color:var(--ink)}
+.clip-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.clip-head .n{font-weight:800;font-size:1.05rem}
+.tag{font-size:.75rem;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--chip);color:var(--muted)}
+.clip.done .tag{background:var(--accent);color:var(--accent-ink)}
+audio{width:100%;max-width:100%}
+.reveal{justify-self:start}
+.text{background:var(--chip);border-radius:10px;padding:10px 12px}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:6px}
+legend{font-weight:700;font-size:.92rem;padding:0;margin-bottom:6px}
+.seg{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{display:grid;place-items:center;min-height:44px;border:1px solid var(--line);border-radius:10px;cursor:pointer;
+  font-weight:700;font-variant-numeric:tabular-nums;background:var(--ground)}
+.seg input:checked+label{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.seg input:focus-visible+label{outline:3px solid var(--focus);outline-offset:2px}
+.ends{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+.crit{display:flex;gap:8px;align-items:flex-start;font-size:.92rem}
+.crit input{width:20px;height:20px;margin-top:2px;accent-color:var(--warn)}
+.crit:has(input:checked){color:var(--warn);background:var(--warn-bg);border-radius:10px;padding:8px}
+button{font:inherit;font-weight:700;border-radius:10px;padding:10px 16px;cursor:pointer;border:1px solid var(--ink);
+  background:var(--ink);color:var(--ground)}
+button.ghost{background:transparent;color:var(--ink)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.note{font-size:.85rem;color:var(--muted)}
+.confirm{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--warn-bg);color:var(--warn);border-radius:10px;padding:10px}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+
+<header class="top"><div class="row">
+  <span class="count" id="count">0 af 0 bedømt</span>
+  <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+</div></header>
+
+<main class="wrap">
+  <section class="intro">
+    <span class="eyebrow">Blind lyttetest · dansk</span>
+    <h1>Hvor godt lyder stemmerne?</h1>
+    <p>Du hører korte danske sætninger, som en telefonassistent kunne sige. Nogle er lavet af en computer, andre er
+      optaget af et menneske. Du får ikke at vide, hvilken stemme der er hvilken. Det tager cirka 15–20 minutter.
+      Brug gerne hovedtelefoner.</p>
+    <p class="muted">Dine svar gemmes kun i din egen browser, indtil du kopierer dem nederst og sender dem til den, der
+      bad dig lytte.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="om-dig">
+    <h2 id="om-dig">Om dig</h2>
+    <div class="fields">
+      <label class="f">Navn eller initialer<input type="text" id="rater" autocomplete="name" maxlength="40"></label>
+      <label class="f">Er dansk dit modersmål?
+        <select id="native"><option value="">Vælg</option><option value="ja">Ja</option><option value="nej">Nej</option></select></label>
+      <label class="f">Hvor i Danmark er du vokset op?<input type="text" id="region" maxlength="60" placeholder="Fx Aarhus, Vendsyssel, København"></label>
+      <label class="f">Hvad lytter du med?
+        <select id="device"><option value="">Vælg</option><option value="hovedtelefoner">Hovedtelefoner</option>
+          <option value="telefon">Telefonens højttaler</option><option value="hoejttaler">Computer­højttaler</option></select></label>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="skala">
+    <h2 id="skala">Sådan bedømmer du</h2>
+    <p>Lyt til klippet først. Tryk derefter på "Vis teksten" og tjek, om stemmen sagde det, der står. Giv hvert klip
+      1 til 5 på tre skalaer. Skalaen er den samme, som bruges i telefonitests (ACR-skalaen fra ITU-T P.800).</p>
+    <ol class="scale-key"><li><b>1</b>Meget dårlig</li><li><b>2</b>Dårlig</li><li><b>3</b>Acceptabel</li><li><b>4</b>God</li><li><b>5</b>Fremragende</li></ol>
+    <p class="note"><b>Forståelighed:</b> kan du forstå hvert ord uden besvær? <b>Naturlighed:</b> lyder det som et menneske,
+      der taler roligt i telefonen? <b>Stabilitet:</b> holder stemmen samme lyd, tempo og tonefald hele vejen?
+      <b>Kritisk fejl:</b> sætningen siger noget forkert, fx en forkert dato, et forkert tal eller beløb, et manglende "ikke"
+      eller en forkert status på en booking.</p>
+  </section>
+
+  <div id="clips" class="wrap"></div>
+
+  <section class="panel" aria-labelledby="send">
+    <h2 id="send">Send dine svar</h2>
+    <p id="status" class="muted"></p>
+    <textarea id="csv" readonly aria-label="Dine svar som tekst"></textarea>
+    <div class="actions">
+      <button id="copy" type="button">Kopiér svar</button>
+      <button id="reset" type="button" class="ghost">Start forfra</button>
+      <span id="copied" class="note" role="status"></span>
+    </div>
+    <div id="confirm" class="confirm" hidden>
+      <span>Alle dine bedømmelser på denne side slettes.</span>
+      <button id="reset-yes" type="button">Slet og start forfra</button>
+      <button id="reset-no" type="button" class="ghost">Behold</button>
+    </div>
+    <p class="note">Indsæt teksten i en mail eller besked til den, der bad dig lytte. Teksten indeholder dit navn, dine
+      bedømmelser og det, du har skrevet om dig selv.</p>
+  </section>
+</main>
+
+<script>
+const ITEMS = /*ITEMS*/[];
+const TEST_ID = "/*TEST_ID*/";
+const SCALES = [["forstaaelighed","Forståelighed"],["naturlighed","Naturlighed"],["stabilitet","Stabilitet"]];
+const KEY = "lyttetest:" + TEST_ID;
+let state = {order: null, meta: {}, answers: {}};
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && s.answers) state = s; } catch (e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+function shuffle(){
+  const ids = ITEMS.map(i => i.clip);
+  for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; }
+  state.order = ids; save();
+}
+if (!state.order || state.order.length !== ITEMS.length) shuffle();
+const byId = Object.fromEntries(ITEMS.map(i => [i.clip, i]));
+const el = id => document.getElementById(id);
+
+function clipCard(item, n){
+  const a = state.answers[item.clip] || {};
+  const sec = document.createElement("section");
+  sec.className = "clip"; sec.id = "c-" + item.clip;
+  const head = document.createElement("div"); head.className = "clip-head";
+  const t = document.createElement("span"); t.className = "n"; t.textContent = "Klip " + n;
+  const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = "Mangler";
+  head.append(t, tag);
+  const audio = document.createElement("audio"); audio.controls = true; audio.preload = "none"; audio.src = item.src;
+  const reveal = document.createElement("button"); reveal.type = "button"; reveal.className = "ghost reveal"; reveal.textContent = "Vis teksten";
+  const text = document.createElement("p"); text.className = "text"; text.textContent = item.text; text.hidden = !a.shown;
+  if (a.shown) reveal.hidden = true;
+  reveal.onclick = () => { text.hidden = false; reveal.hidden = true; set(item.clip, "shown", true); };
+  sec.append(head, audio, reveal, text);
+  for (const [k, label] of SCALES) {
+    const fs = document.createElement("fieldset");
+    const lg = document.createElement("legend"); lg.textContent = label; fs.append(lg);
+    const seg = document.createElement("div"); seg.className = "seg";
+    for (let v = 1; v <= 5; v++) {
+      const id = `${item.clip}-${k}-${v}`;
+      const r = document.createElement("input"); r.type = "radio"; r.name = `${item.clip}-${k}`; r.id = id; r.value = v;
+      if (a[k] == v) r.checked = true;
+      r.onchange = () => set(item.clip, k, v);
+      const l = document.createElement("label"); l.htmlFor = id; l.textContent = v;
+      seg.append(r, l);
+    }
+    const ends = document.createElement("div"); ends.className = "ends";
+    ends.innerHTML = "<span>Meget dårlig</span><span>Fremragende</span>";
+    fs.append(seg, ends); sec.append(fs);
+  }
+  const crit = document.createElement("label"); crit.className = "crit";
+  const cb = document.createElement("input"); cb.type = "checkbox"; cb.id = item.clip + "-kritisk"; cb.checked = !!a.kritisk;
+  cb.onchange = () => set(item.clip, "kritisk", cb.checked);
+  crit.append(cb, document.createTextNode("Kritisk fejl: stemmen sagde noget forkert (dato, tal, beløb, nægtelse, bookingstatus)"));
+  const cl = document.createElement("label"); cl.className = "f";
+  cl.textContent = "Kommentar (valgfri)";
+  const ci = document.createElement("input"); ci.type = "text"; ci.id = item.clip + "-kommentar"; ci.maxLength = 200; ci.value = a.kommentar || "";
+  ci.onchange = () => set(item.clip, "kommentar", ci.value.trim());
+  cl.append(ci);
+  sec.append(crit, cl);
+  return sec;
+}
+function isDone(a){ return a && SCALES.every(([k]) => a[k]); }
+function set(clip, field, value){
+  state.answers[clip] = Object.assign({}, state.answers[clip], {[field]: value});
+  save(); refresh();
+}
+function csvCell(v){ return '"' + String(v).replaceAll('"', '""') + '"'; }
+function refresh(){
+  const done = ITEMS.filter(i => isDone(state.answers[i.clip])).length;
+  el("count").textContent = `${done} af ${ITEMS.length} bedømt`;
+  el("bar").style.width = (ITEMS.length ? 100 * done / ITEMS.length : 0) + "%";
+  for (const i of ITEMS) {
+    const s = el("c-" + i.clip); if (!s) continue;
+    const d = isDone(state.answers[i.clip]);
+    s.classList.toggle("done", d); s.querySelector(".tag").textContent = d ? "Bedømt" : "Mangler";
+  }
+  const rater = (state.meta.rater || "").trim() || "anonym";
+  const rows = [["rater","clip","field","value"]];
+  for (const f of ["native","region","device"]) if (state.meta[f]) rows.push([rater, "_rater", f, state.meta[f]]);
+  rows.push([rater, "_rater", "test", TEST_ID]);
+  for (const clip of state.order) {
+    const a = state.answers[clip]; if (!a) continue;
+    for (const [k] of SCALES) if (a[k]) rows.push([rater, clip, k, a[k]]);
+    if (a.kritisk) rows.push([rater, clip, "kritisk", 1]);
+    if (a.kommentar) rows.push([rater, clip, "kommentar", a.kommentar]);
+  }
+  el("csv").value = rows.map(r => r.map(csvCell).join(",")).join("\n");
+  const missing = [];
+  if (!state.meta.rater) missing.push("dit navn");
+  if (!state.meta.native) missing.push("om dansk er dit modersmål");
+  el("status").textContent = done === ITEMS.length
+    ? (missing.length ? "Alle klip er bedømt. Udfyld også " + missing.join(" og ") + " øverst." : "Alle klip er bedømt. Tak! Kopiér teksten og send den.")
+    : `Du har bedømt ${done} af ${ITEMS.length} klip. Du kan sende et delvist svar, men et fuldt svar tæller mest.`;
+}
+const META = ["rater","native","region","device"];
+for (const f of META) el(f).addEventListener("change", () => { state.meta[f] = el(f).value.trim(); save(); refresh(); });
+function render(){
+  for (const f of META) el(f).value = state.meta[f] || "";
+  const list = el("clips"); list.replaceChildren();
+  state.order.forEach((clip, n) => { if (byId[clip]) list.append(clipCard(byId[clip], n + 1)); });
+  refresh();
+}
+el("copy").onclick = () => {
+  const t = el("csv").value;
+  const ok = () => el("copied").textContent = "Kopieret. Indsæt den i en mail eller besked.";
+  const fallback = () => { el("csv").focus(); el("csv").select(); el("copied").textContent = "Teksten er markeret. Kopiér den med Ctrl+C eller Cmd+C."; };
+  try { navigator.clipboard.writeText(t).then(ok, fallback); } catch (e) { fallback(); }
+};
+el("reset").onclick = () => { el("confirm").hidden = false; };
+el("reset-no").onclick = () => { el("confirm").hidden = true; };
+el("reset-yes").onclick = () => {
+  state = {order: null, meta: {}, answers: {}};
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  shuffle(); el("confirm").hidden = true; el("copied").textContent = ""; render(); window.scrollTo(0, 0);
+};
+render();
+</script>

@@ -1,0 +1,2421 @@
+{
+ "id": "da_standard",
+ "language": "da-DK",
+ "version": 1,
+ "instructions": [
+  "Optag i et stille rum med bløde flader, fx gardiner, tæpper eller et klædeskab. Undgå køkken og badeværelse.",
+  "Hold telefonen eller mikrofonen 15–20 cm fra munden og samme afstand hele vejen.",
+  "Læs i dit eget tempo med din normale telefonstemme: venlig og rolig. Du skal ikke lyde som en oplæser.",
+  "Tag en ny optagelse af sætningen, hvis du siger forkert, griner eller bliver forstyrret.",
+  "Tal og datoer læser du, som du selv ville sige dem i telefonen. Forslaget under teksten viser én måde.",
+  "Hold en kort pause efter hver sætning."
+ ],
+ "placeholders": [
+  "firma",
+  "ydelse",
+  "by"
+ ],
+ "sentences": [
+  {
+   "id": "standard-001",
+   "category": "hilsen",
+   "text": "Hej, du har ringet til {firma}. Hvad kan jeg hjælpe dig med?",
+   "spoken_hint": "Hej, du har ringet til Firma. Hvad kan jeg hjælpe dig med?"
+  },
+  {
+   "id": "standard-002",
+   "category": "hilsen",
+   "text": "Goddag, og velkommen til {firma}.",
+   "spoken_hint": "Goddag, og velkommen til Firma."
+  },
+  {
+   "id": "standard-003",
+   "category": "hilsen",
+   "text": "Godeftermiddag, du taler med {firma}s assistent.",
+   "spoken_hint": "Godeftermiddag, du taler med Firmas assistent."
+  },
+  {
+   "id": "standard-004",
+   "category": "hilsen",
+   "text": "Hej igen, dejligt at høre fra dig.",
+   "spoken_hint": "Hej igen, dejligt at høre fra dig."
+  },
+  {
+   "id": "standard-005",
+   "category": "hilsen",
+   "text": "Tak fordi du ventede. Nu er jeg her.",
+   "spoken_hint": "Tak fordi du ventede. Nu er jeg her."
+  },
+  {
+   "id": "standard-006",
+   "category": "hilsen",
+   "text": "Hej, det er {firma}. Jeg er en digital assistent, men jeg kan godt hjælpe dig videre.",
+   "spoken_hint": "Hej, det er Firma. Jeg er en digital assistent, men jeg kan godt hjælpe dig videre."
+  },
+  {
+   "id": "standard-007",
+   "category": "hilsen",
+   "text": "Godaften. Vi har lukket for i dag, men du kan lægge en besked hos mig.",
+   "spoken_hint": "Godaften. Vi har lukket for i dag, men du kan lægge en besked hos mig."
+  },
+  {
+   "id": "standard-008",
+   "category": "hilsen",
+   "text": "Velkommen til. Du er kommet til den rigtige, hvis det handler om {ydelse}.",
+   "spoken_hint": "Velkommen til. Du er kommet til den rigtige, hvis det handler om ydelsen."
+  },
+  {
+   "id": "standard-009",
+   "category": "hilsen",
+   "text": "Hej, hvad kan jeg gøre for dig?",
+   "spoken_hint": "Hej, hvad kan jeg gøre for dig?"
+  },
+  {
+   "id": "standard-010",
+   "category": "hilsen",
+   "text": "Tak for din henvendelse til {firma}.",
+   "spoken_hint": "Tak for din henvendelse til Firma."
+  },
+  {
+   "id": "standard-011",
+   "category": "hilsen",
+   "text": "Farvel, og hav en god weekend.",
+   "spoken_hint": "Farvel, og hav en god weekend."
+  },
+  {
+   "id": "standard-012",
+   "category": "hilsen",
+   "text": "Tak for i dag. Vi ses snart.",
+   "spoken_hint": "Tak for i dag. Vi ses snart."
+  },
+  {
+   "id": "standard-013",
+   "category": "hilsen",
+   "text": "Du må have en rigtig god dag.",
+   "spoken_hint": "Du må have en rigtig god dag."
+  },
+  {
+   "id": "standard-014",
+   "category": "hilsen",
+   "text": "Tak for opringningen, og god aften.",
+   "spoken_hint": "Tak for opringningen, og god aften."
+  },
+  {
+   "id": "standard-015",
+   "category": "hilsen",
+   "text": "Det var så lidt. Ring endelig igen, hvis der er mere.",
+   "spoken_hint": "Det var så lidt. Ring endelig igen, hvis der er mere."
+  },
+  {
+   "id": "standard-016",
+   "category": "hilsen",
+   "text": "Så har jeg alt, hvad jeg skal bruge. Tak for det.",
+   "spoken_hint": "Så har jeg alt, hvad jeg skal bruge. Tak for det."
+  },
+  {
+   "id": "standard-017",
+   "category": "hilsen",
+   "text": "Fint, så siger vi det. Hej hej.",
+   "spoken_hint": "Fint, så siger vi det. Hej hej."
+  },
+  {
+   "id": "standard-018",
+   "category": "hilsen",
+   "text": "God tur hjem, og pas godt på dig selv.",
+   "spoken_hint": "God tur hjem, og pas godt på dig selv."
+  },
+  {
+   "id": "standard-019",
+   "category": "hilsen",
+   "text": "Tak skal du have. Du hører fra os.",
+   "spoken_hint": "Tak skal du have. Du hører fra os."
+  },
+  {
+   "id": "standard-020",
+   "category": "hilsen",
+   "text": "Jeg ønsker dig en rigtig god dag.",
+   "spoken_hint": "Jeg ønsker dig en rigtig god dag."
+  },
+  {
+   "id": "standard-021",
+   "category": "spørgsmål",
+   "text": "Hvad hedder du til fornavn?",
+   "spoken_hint": "Hvad hedder du til fornavn?"
+  },
+  {
+   "id": "standard-022",
+   "category": "spørgsmål",
+   "text": "Og hvad er dit efternavn?",
+   "spoken_hint": "Og hvad er dit efternavn?"
+  },
+  {
+   "id": "standard-023",
+   "category": "spørgsmål",
+   "text": "Hvor bor du henne?",
+   "spoken_hint": "Hvor bor du henne?"
+  },
+  {
+   "id": "standard-024",
+   "category": "spørgsmål",
+   "text": "Hvornår passer det dig?",
+   "spoken_hint": "Hvornår passer det dig?"
+  },
+  {
+   "id": "standard-025",
+   "category": "spørgsmål",
+   "text": "Er det en privat bolig eller en virksomhed?",
+   "spoken_hint": "Er det en privat bolig eller en virksomhed?"
+  },
+  {
+   "id": "standard-026",
+   "category": "spørgsmål",
+   "text": "Hvor mange kvadratmeter drejer det sig om?",
+   "spoken_hint": "Hvor mange kvadratmeter drejer det sig om?"
+  },
+  {
+   "id": "standard-027",
+   "category": "spørgsmål",
+   "text": "Har du været kunde hos os før?",
+   "spoken_hint": "Har du været kunde hos os før?"
+  },
+  {
+   "id": "standard-028",
+   "category": "spørgsmål",
+   "text": "Hvordan har du hørt om {firma}?",
+   "spoken_hint": "Hvordan har du hørt om Firma?"
+  },
+  {
+   "id": "standard-029",
+   "category": "spørgsmål",
+   "text": "Må jeg sende dig en bekræftelse på sms?",
+   "spoken_hint": "Må jeg sende dig en bekræftelse på sms?"
+  },
+  {
+   "id": "standard-030",
+   "category": "spørgsmål",
+   "text": "Skal jeg stave det tilbage til dig?",
+   "spoken_hint": "Skal jeg stave det tilbage til dig?"
+  },
+  {
+   "id": "standard-031",
+   "category": "spørgsmål",
+   "text": "Er det i orden, at en medarbejder ringer dig op?",
+   "spoken_hint": "Er det i orden, at en medarbejder ringer dig op?"
+  },
+  {
+   "id": "standard-032",
+   "category": "spørgsmål",
+   "text": "Har du et ordrenummer ved hånden?",
+   "spoken_hint": "Har du et ordrenummer ved hånden?"
+  },
+  {
+   "id": "standard-033",
+   "category": "spørgsmål",
+   "text": "Hvilken dag i næste uge kunne passe?",
+   "spoken_hint": "Hvilken dag i næste uge kunne passe?"
+  },
+  {
+   "id": "standard-034",
+   "category": "spørgsmål",
+   "text": "Er der noget, vi skal være særligt opmærksomme på?",
+   "spoken_hint": "Er der noget, vi skal være særligt opmærksomme på?"
+  },
+  {
+   "id": "standard-035",
+   "category": "spørgsmål",
+   "text": "Kan du beskrive problemet lidt nærmere?",
+   "spoken_hint": "Kan du beskrive problemet lidt nærmere?"
+  },
+  {
+   "id": "standard-036",
+   "category": "spørgsmål",
+   "text": "Hvor længe har det stået på?",
+   "spoken_hint": "Hvor længe har det stået på?"
+  },
+  {
+   "id": "standard-037",
+   "category": "spørgsmål",
+   "text": "Er der adgang for en varebil?",
+   "spoken_hint": "Er der adgang for en varebil?"
+  },
+  {
+   "id": "standard-038",
+   "category": "spørgsmål",
+   "text": "Skal vi ringe på, eller er der en nøgleboks?",
+   "spoken_hint": "Skal vi ringe på, eller er der en nøgleboks?"
+  },
+  {
+   "id": "standard-039",
+   "category": "spørgsmål",
+   "text": "Vil du hellere have et tilbud på mail?",
+   "spoken_hint": "Vil du hellere have et tilbud på mail?"
+  },
+  {
+   "id": "standard-040",
+   "category": "spørgsmål",
+   "text": "Er der mere, du gerne vil vide i dag?",
+   "spoken_hint": "Er der mere, du gerne vil vide i dag?"
+  },
+  {
+   "id": "standard-041",
+   "category": "spørgsmål",
+   "text": "Hvad er den bedste måde at fange dig på?",
+   "spoken_hint": "Hvad er den bedste måde at fange dig på?"
+  },
+  {
+   "id": "standard-042",
+   "category": "spørgsmål",
+   "text": "Må jeg bede om din mailadresse?",
+   "spoken_hint": "Må jeg bede om din mailadresse?"
+  },
+  {
+   "id": "standard-043",
+   "category": "spørgsmål",
+   "text": "Er det akut, eller kan det vente til i morgen?",
+   "spoken_hint": "Er det akut, eller kan det vente til i morgen?"
+  },
+  {
+   "id": "standard-044",
+   "category": "spørgsmål",
+   "text": "Passer torsdag bedre end fredag?",
+   "spoken_hint": "Passer torsdag bedre end fredag?"
+  },
+  {
+   "id": "standard-045",
+   "category": "spørgsmål",
+   "text": "Kan du høre mig tydeligt nu?",
+   "spoken_hint": "Kan du høre mig tydeligt nu?"
+  },
+  {
+   "id": "standard-046",
+   "category": "spørgsmål",
+   "text": "Er det dig, der skal være hjemme, når vi kommer?",
+   "spoken_hint": "Er det dig, der skal være hjemme, når vi kommer?"
+  },
+  {
+   "id": "standard-047",
+   "category": "spørgsmål",
+   "text": "Hvilket postnummer er det?",
+   "spoken_hint": "Hvilket postnummer er det?"
+  },
+  {
+   "id": "standard-048",
+   "category": "spørgsmål",
+   "text": "Har du billeder af det, du kan sende os?",
+   "spoken_hint": "Har du billeder af det, du kan sende os?"
+  },
+  {
+   "id": "standard-049",
+   "category": "spørgsmål",
+   "text": "Ønsker du at blive ringet op i dag?",
+   "spoken_hint": "Ønsker du at blive ringet op i dag?"
+  },
+  {
+   "id": "standard-050",
+   "category": "spørgsmål",
+   "text": "Må jeg notere det i din sag?",
+   "spoken_hint": "Må jeg notere det i din sag?"
+  },
+  {
+   "id": "standard-051",
+   "category": "spørgsmål",
+   "text": "Hvor mange personer er I?",
+   "spoken_hint": "Hvor mange personer er I?"
+  },
+  {
+   "id": "standard-052",
+   "category": "spørgsmål",
+   "text": "Hvornår er du selv hjemme?",
+   "spoken_hint": "Hvornår er du selv hjemme?"
+  },
+  {
+   "id": "standard-053",
+   "category": "spørgsmål",
+   "text": "Skal jeg reservere tiden til dig?",
+   "spoken_hint": "Skal jeg reservere tiden til dig?"
+  },
+  {
+   "id": "standard-054",
+   "category": "spørgsmål",
+   "text": "Vil du have en påmindelse dagen før?",
+   "spoken_hint": "Vil du have en påmindelse dagen før?"
+  },
+  {
+   "id": "standard-055",
+   "category": "spørgsmål",
+   "text": "Er det første gang, du bestiller {ydelse}?",
+   "spoken_hint": "Er det første gang, du bestiller ydelsen?"
+  },
+  {
+   "id": "standard-056",
+   "category": "spørgsmål",
+   "text": "Har du spørgsmål til prisen?",
+   "spoken_hint": "Har du spørgsmål til prisen?"
+  },
+  {
+   "id": "standard-057",
+   "category": "spørgsmål",
+   "text": "Er der parkering i nærheden?",
+   "spoken_hint": "Er der parkering i nærheden?"
+  },
+  {
+   "id": "standard-058",
+   "category": "spørgsmål",
+   "text": "Hvad er dit telefonnummer?",
+   "spoken_hint": "Hvad er dit telefonnummer?"
+  },
+  {
+   "id": "standard-059",
+   "category": "spørgsmål",
+   "text": "Kan du vente et øjeblik, mens jeg tjekker?",
+   "spoken_hint": "Kan du vente et øjeblik, mens jeg tjekker?"
+  },
+  {
+   "id": "standard-060",
+   "category": "spørgsmål",
+   "text": "Er det dit eget nummer, du ringer fra?",
+   "spoken_hint": "Er det dit eget nummer, du ringer fra?"
+  },
+  {
+   "id": "standard-061",
+   "category": "spørgsmål",
+   "text": "Passer klokken otte for tidligt?",
+   "spoken_hint": "Passer klokken otte for tidligt?"
+  },
+  {
+   "id": "standard-062",
+   "category": "spørgsmål",
+   "text": "Hvad synes du om det forslag?",
+   "spoken_hint": "Hvad synes du om det forslag?"
+  },
+  {
+   "id": "standard-063",
+   "category": "spørgsmål",
+   "text": "Vil du have, at vi tager det gamle med?",
+   "spoken_hint": "Vil du have, at vi tager det gamle med?"
+  },
+  {
+   "id": "standard-064",
+   "category": "spørgsmål",
+   "text": "Kender du din kundekode?",
+   "spoken_hint": "Kender du din kundekode?"
+  },
+  {
+   "id": "standard-065",
+   "category": "spørgsmål",
+   "text": "Må jeg spørge, hvad budgettet er?",
+   "spoken_hint": "Må jeg spørge, hvad budgettet er?"
+  },
+  {
+   "id": "standard-066",
+   "category": "spørgsmål",
+   "text": "Er det i orden, at jeg gentager det?",
+   "spoken_hint": "Er det i orden, at jeg gentager det?"
+  },
+  {
+   "id": "standard-067",
+   "category": "spørgsmål",
+   "text": "Skal fakturaen sendes til en anden adresse?",
+   "spoken_hint": "Skal fakturaen sendes til en anden adresse?"
+  },
+  {
+   "id": "standard-068",
+   "category": "spørgsmål",
+   "text": "Hvilken ydelse er du interesseret i?",
+   "spoken_hint": "Hvilken ydelse er du interesseret i?"
+  },
+  {
+   "id": "standard-069",
+   "category": "spørgsmål",
+   "text": "Har du set vores åbningstider?",
+   "spoken_hint": "Har du set vores åbningstider?"
+  },
+  {
+   "id": "standard-070",
+   "category": "spørgsmål",
+   "text": "Hvor hurtigt skal det være klar?",
+   "spoken_hint": "Hvor hurtigt skal det være klar?"
+  },
+  {
+   "id": "standard-071",
+   "category": "spørgsmål",
+   "text": "Hvem skal vi spørge efter?",
+   "spoken_hint": "Hvem skal vi spørge efter?"
+  },
+  {
+   "id": "standard-072",
+   "category": "spørgsmål",
+   "text": "Er det en hel dag eller kun et par timer?",
+   "spoken_hint": "Er det en hel dag eller kun et par timer?"
+  },
+  {
+   "id": "standard-073",
+   "category": "spørgsmål",
+   "text": "Kan vi ringe tilbage i løbet af eftermiddagen?",
+   "spoken_hint": "Kan vi ringe tilbage i løbet af eftermiddagen?"
+  },
+  {
+   "id": "standard-074",
+   "category": "spørgsmål",
+   "text": "Er du stadig der?",
+   "spoken_hint": "Er du stadig der?"
+  },
+  {
+   "id": "standard-075",
+   "category": "spørgsmål",
+   "text": "Vil du have et fast tidspunkt hver uge?",
+   "spoken_hint": "Vil du have et fast tidspunkt hver uge?"
+  },
+  {
+   "id": "standard-076",
+   "category": "spørgsmål",
+   "text": "Er det en gave?",
+   "spoken_hint": "Er det en gave?"
+  },
+  {
+   "id": "standard-077",
+   "category": "spørgsmål",
+   "text": "Hvilken farve foretrækker du?",
+   "spoken_hint": "Hvilken farve foretrækker du?"
+  },
+  {
+   "id": "standard-078",
+   "category": "spørgsmål",
+   "text": "Har du nogen allergier, vi skal kende til?",
+   "spoken_hint": "Har du nogen allergier, vi skal kende til?"
+  },
+  {
+   "id": "standard-079",
+   "category": "spørgsmål",
+   "text": "Skal vi tage skoene af, når vi kommer ind?",
+   "spoken_hint": "Skal vi tage skoene af, når vi kommer ind?"
+  },
+  {
+   "id": "standard-080",
+   "category": "spørgsmål",
+   "text": "Hvad er vigtigst for dig?",
+   "spoken_hint": "Hvad er vigtigst for dig?"
+  },
+  {
+   "id": "standard-081",
+   "category": "forklaring",
+   "text": "Når du har booket en tid, får du en bekræftelse på sms. Dagen før sender vi en påmindelse, så du ikke glemmer det.",
+   "spoken_hint": "Når du har booket en tid, får du en bekræftelse på sms. Dagen før sender vi en påmindelse, så du ikke glemmer det."
+  },
+  {
+   "id": "standard-082",
+   "category": "forklaring",
+   "text": "Vi starter altid med en kort gennemgang, så vi er sikre på, at vi har forstået opgaven rigtigt, inden vi går i gang.",
+   "spoken_hint": "Vi starter altid med en kort gennemgang, så vi er sikre på, at vi har forstået opgaven rigtigt, inden vi går i gang."
+  },
+  {
+   "id": "standard-083",
+   "category": "forklaring",
+   "text": "Hvis du bliver forhindret, kan du flytte tiden gratis frem til dagen før. Derefter beder vi dig ringe til os.",
+   "spoken_hint": "Hvis du bliver forhindret, kan du flytte tiden gratis frem til dagen før. Derefter beder vi dig ringe til os."
+  },
+  {
+   "id": "standard-084",
+   "category": "forklaring",
+   "text": "Prisen afhænger af, hvor stort området er, og hvilken stand det er i. Derfor giver vi et fast tilbud, når vi har set det.",
+   "spoken_hint": "Prisen afhænger af, hvor stort området er, og hvilken stand det er i. Derfor giver vi et fast tilbud, når vi har set det."
+  },
+  {
+   "id": "standard-085",
+   "category": "forklaring",
+   "text": "{firma} har arbejdet med {ydelse} i mange år, og vi dækker hele området omkring {by}.",
+   "spoken_hint": "Firma har arbejdet med ydelsen i mange år, og vi dækker hele området omkring byen."
+  },
+  {
+   "id": "standard-086",
+   "category": "forklaring",
+   "text": "Vores medarbejdere har alle den nødvendige uddannelse, og vi rydder altid op efter os, når vi er færdige.",
+   "spoken_hint": "Vores medarbejdere har alle den nødvendige uddannelse, og vi rydder altid op efter os, når vi er færdige."
+  },
+  {
+   "id": "standard-087",
+   "category": "forklaring",
+   "text": "Hvis du ikke er tilfreds med resultatet, så ring til os inden for fjorten dage, så finder vi en løsning sammen.",
+   "spoken_hint": "Hvis du ikke er tilfreds med resultatet, så ring til os inden for fjorten dage, så finder vi en løsning sammen."
+  },
+  {
+   "id": "standard-088",
+   "category": "forklaring",
+   "text": "Jeg er en digital assistent, så jeg kan ikke træffe aftaler om pris, men jeg kan give din besked videre til en kollega.",
+   "spoken_hint": "Jeg er en digital assistent, så jeg kan ikke træffe aftaler om pris, men jeg kan give din besked videre til en kollega."
+  },
+  {
+   "id": "standard-089",
+   "category": "forklaring",
+   "text": "Du kan betale med kort, MobilePay eller bankoverførsel, og fakturaen kommer på mail, når opgaven er udført.",
+   "spoken_hint": "Du kan betale med kort, MobilePay eller bankoverførsel, og fakturaen kommer på mail, når opgaven er udført."
+  },
+  {
+   "id": "standard-090",
+   "category": "forklaring",
+   "text": "I højsæsonen kan der være lidt længere ventetid, men vi gør altid vores bedste for at finde en tid, der passer.",
+   "spoken_hint": "I højsæsonen kan der være lidt længere ventetid, men vi gør altid vores bedste for at finde en tid, der passer."
+  },
+  {
+   "id": "standard-091",
+   "category": "forklaring",
+   "text": "Det er en god idé at fjerne møbler og løse ting, inden vi kommer, så vi kan komme til med det samme.",
+   "spoken_hint": "Det er en god idé at fjerne møbler og løse ting, inden vi kommer, så vi kan komme til med det samme."
+  },
+  {
+   "id": "standard-092",
+   "category": "forklaring",
+   "text": "Vi bruger miljøvenlige produkter, og de er godkendt til brug i hjem med børn og dyr.",
+   "spoken_hint": "Vi bruger miljøvenlige produkter, og de er godkendt til brug i hjem med børn og dyr."
+  },
+  {
+   "id": "standard-093",
+   "category": "forklaring",
+   "text": "Hvis det haster, kan vi i nogle tilfælde komme samme dag. Det koster et lille tillæg, som jeg fortæller dig om først.",
+   "spoken_hint": "Hvis det haster, kan vi i nogle tilfælde komme samme dag. Det koster et lille tillæg, som jeg fortæller dig om først."
+  },
+  {
+   "id": "standard-094",
+   "category": "forklaring",
+   "text": "Når opgaven er færdig, gennemgår vi den sammen med dig, så du kan se, at alt er i orden.",
+   "spoken_hint": "Når opgaven er færdig, gennemgår vi den sammen med dig, så du kan se, at alt er i orden."
+  },
+  {
+   "id": "standard-095",
+   "category": "forklaring",
+   "text": "Tilbuddet er gyldigt i tredive dage, og det er helt uforpligtende for dig at sige ja eller nej.",
+   "spoken_hint": "Tilbuddet er gyldigt i tredive dage, og det er helt uforpligtende for dig at sige ja eller nej."
+  },
+  {
+   "id": "standard-096",
+   "category": "forklaring",
+   "text": "Vi kører ud i hele regionen, men uden for vores normale område lægger vi et kørselstillæg på.",
+   "spoken_hint": "Vi kører ud i hele regionen, men uden for vores normale område lægger vi et kørselstillæg på."
+  },
+  {
+   "id": "standard-097",
+   "category": "forklaring",
+   "text": "Hvis du har en forsikringssag, kan vi hjælpe med dokumentation og billeder til dit forsikringsselskab.",
+   "spoken_hint": "Hvis du har en forsikringssag, kan vi hjælpe med dokumentation og billeder til dit forsikringsselskab."
+  },
+  {
+   "id": "standard-098",
+   "category": "forklaring",
+   "text": "Du er altid velkommen til at ringe, hvis du er i tvivl om noget. Vi vil hellere svare én gang for meget.",
+   "spoken_hint": "Du er altid velkommen til at ringe, hvis du er i tvivl om noget. Vi vil hellere svare én gang for meget."
+  },
+  {
+   "id": "standard-099",
+   "category": "forklaring",
+   "text": "Vores åbningstid er på hverdage, men assistenten tager imod beskeder hele døgnet.",
+   "spoken_hint": "Vores åbningstid er på hverdage, men assistenten tager imod beskeder hele døgnet."
+  },
+  {
+   "id": "standard-100",
+   "category": "forklaring",
+   "text": "Der kan gå et par dage, før vi har alle materialer hjemme, og så ringer vi dig op med en endelig dato.",
+   "spoken_hint": "Der kan gå et par dage, før vi har alle materialer hjemme, og så ringer vi dig op med en endelig dato."
+  },
+  {
+   "id": "standard-101",
+   "category": "forklaring",
+   "text": "Hvis vejret er dårligt, kan vi blive nødt til at flytte udendørs opgaver. Så kontakter vi dig så hurtigt som muligt.",
+   "spoken_hint": "Hvis vejret er dårligt, kan vi blive nødt til at flytte udendørs opgaver. Så kontakter vi dig så hurtigt som muligt."
+  },
+  {
+   "id": "standard-102",
+   "category": "forklaring",
+   "text": "Til første besøg afsætter vi omkring en time, så der er god tid til spørgsmål.",
+   "spoken_hint": "Til første besøg afsætter vi omkring en time, så der er god tid til spørgsmål."
+  },
+  {
+   "id": "standard-103",
+   "category": "forklaring",
+   "text": "Vi har en fast kontaktperson til hver kunde, så du ikke skal forklare det hele forfra, hver gang du ringer.",
+   "spoken_hint": "Vi har en fast kontaktperson til hver kunde, så du ikke skal forklare det hele forfra, hver gang du ringer."
+  },
+  {
+   "id": "standard-104",
+   "category": "forklaring",
+   "text": "Det tager typisk to til tre arbejdsdage, men det afhænger af, hvor meget der skal laves.",
+   "spoken_hint": "Det tager typisk to til tre arbejdsdage, men det afhænger af, hvor meget der skal laves."
+  },
+  {
+   "id": "standard-105",
+   "category": "forklaring",
+   "text": "Hvis du vil se eksempler på vores arbejde, kan du finde billeder på vores hjemmeside.",
+   "spoken_hint": "Hvis du vil se eksempler på vores arbejde, kan du finde billeder på vores hjemmeside."
+  },
+  {
+   "id": "standard-106",
+   "category": "forklaring",
+   "text": "Vi har lukket i uge 29 og 30, men beskeder bliver besvaret, så snart vi er tilbage.",
+   "spoken_hint": "Vi har lukket i uge niogtyve og tredive, men beskeder bliver besvaret, så snart vi er tilbage."
+  },
+  {
+   "id": "standard-107",
+   "category": "forklaring",
+   "text": "Materialerne har fem års garanti, og selve arbejdet har vi to års garanti på.",
+   "spoken_hint": "Materialerne har fem års garanti, og selve arbejdet har vi to års garanti på."
+  },
+  {
+   "id": "standard-108",
+   "category": "forklaring",
+   "text": "Vi kan desværre ikke give en pris over telefonen, før vi har set opgaven, men besigtigelsen er gratis.",
+   "spoken_hint": "Vi kan desværre ikke give en pris over telefonen, før vi har set opgaven, men besigtigelsen er gratis."
+  },
+  {
+   "id": "standard-109",
+   "category": "forklaring",
+   "text": "Du får en skriftlig ordrebekræftelse, hvor alle aftaler står, så der ikke opstår misforståelser.",
+   "spoken_hint": "Du får en skriftlig ordrebekræftelse, hvor alle aftaler står, så der ikke opstår misforståelser."
+  },
+  {
+   "id": "standard-110",
+   "category": "forklaring",
+   "text": "Hvis du har kæledyr, er det rart, hvis de er i et andet rum, mens vi arbejder.",
+   "spoken_hint": "Hvis du har kæledyr, er det rart, hvis de er i et andet rum, mens vi arbejder."
+  },
+  {
+   "id": "standard-111",
+   "category": "forklaring",
+   "text": "Når vi har modtaget din betaling, sender vi en kvittering med det samme.",
+   "spoken_hint": "Når vi har modtaget din betaling, sender vi en kvittering med det samme."
+  },
+  {
+   "id": "standard-112",
+   "category": "forklaring",
+   "text": "Vi arbejder normalt mellem syv og femten, men efter aftale kan vi også komme om aftenen.",
+   "spoken_hint": "Vi arbejder normalt mellem syv og femten, men efter aftale kan vi også komme om aftenen."
+  },
+  {
+   "id": "standard-113",
+   "category": "forklaring",
+   "text": "Det er gratis at få et tilbud, og du binder dig ikke til noget ved at sige ja til et besøg.",
+   "spoken_hint": "Det er gratis at få et tilbud, og du binder dig ikke til noget ved at sige ja til et besøg."
+  },
+  {
+   "id": "standard-114",
+   "category": "forklaring",
+   "text": "Hvis du fortryder, kan du afbestille uden omkostninger indtil otteogfyrre timer før.",
+   "spoken_hint": "Hvis du fortryder, kan du afbestille uden omkostninger indtil otteogfyrre timer før."
+  },
+  {
+   "id": "standard-115",
+   "category": "forklaring",
+   "text": "Vi ringer altid en halv time før, vi er fremme, så du ved, hvornår du kan forvente os.",
+   "spoken_hint": "Vi ringer altid en halv time før, vi er fremme, så du ved, hvornår du kan forvente os."
+  },
+  {
+   "id": "standard-116",
+   "category": "forklaring",
+   "text": "Opgaven kræver strøm og vand, så det er fint, hvis der er adgang til begge dele.",
+   "spoken_hint": "Opgaven kræver strøm og vand, så det er fint, hvis der er adgang til begge dele."
+  },
+  {
+   "id": "standard-117",
+   "category": "forklaring",
+   "text": "Hvis du ønsker det, kan vi også bortskaffe det gamle, og det står så som en særskilt linje på fakturaen.",
+   "spoken_hint": "Hvis du ønsker det, kan vi også bortskaffe det gamle, og det står så som en særskilt linje på fakturaen."
+  },
+  {
+   "id": "standard-118",
+   "category": "forklaring",
+   "text": "Vores kunder giver os i gennemsnit en høj bedømmelse, og det er vi rigtig glade for.",
+   "spoken_hint": "Vores kunder giver os i gennemsnit en høj bedømmelse, og det er vi rigtig glade for."
+  },
+  {
+   "id": "standard-119",
+   "category": "forklaring",
+   "text": "Jeg har skrevet alt ned, og en medarbejder vender tilbage til dig i løbet af i morgen.",
+   "spoken_hint": "Jeg har skrevet alt ned, og en medarbejder vender tilbage til dig i løbet af i morgen."
+  },
+  {
+   "id": "standard-120",
+   "category": "forklaring",
+   "text": "Det er helt normalt at have spørgsmål, så tag dig bare god tid.",
+   "spoken_hint": "Det er helt normalt at have spørgsmål, så tag dig bare god tid."
+  },
+  {
+   "id": "standard-121",
+   "category": "forklaring",
+   "text": "Vi har mange års erfaring med netop den slags opgaver, så du er i gode hænder.",
+   "spoken_hint": "Vi har mange års erfaring med netop den slags opgaver, så du er i gode hænder."
+  },
+  {
+   "id": "standard-122",
+   "category": "forklaring",
+   "text": "Hvis du vil ændre noget i ordren, er det nemmest at gøre det, inden vi bestiller materialerne.",
+   "spoken_hint": "Hvis du vil ændre noget i ordren, er det nemmest at gøre det, inden vi bestiller materialerne."
+  },
+  {
+   "id": "standard-123",
+   "category": "forklaring",
+   "text": "Ved større opgaver deler vi betalingen op i to rater, én ved start og én ved aflevering.",
+   "spoken_hint": "Ved større opgaver deler vi betalingen op i to rater, én ved start og én ved aflevering."
+  },
+  {
+   "id": "standard-124",
+   "category": "forklaring",
+   "text": "Vi overholder alle gældende regler, og vi har selvfølgelig en erhvervsforsikring.",
+   "spoken_hint": "Vi overholder alle gældende regler, og vi har selvfølgelig en erhvervsforsikring."
+  },
+  {
+   "id": "standard-125",
+   "category": "forklaring",
+   "text": "Du kan også skrive til os, hvis det er nemmere for dig end at ringe.",
+   "spoken_hint": "Du kan også skrive til os, hvis det er nemmere for dig end at ringe."
+  },
+  {
+   "id": "standard-126",
+   "category": "forklaring",
+   "text": "Hvis der opstår noget uforudset undervejs, stopper vi og aftaler det med dig, før vi fortsætter.",
+   "spoken_hint": "Hvis der opstår noget uforudset undervejs, stopper vi og aftaler det med dig, før vi fortsætter."
+  },
+  {
+   "id": "standard-127",
+   "category": "forklaring",
+   "text": "Vi er et lille firma, og det betyder, at du taler med dem, der rent faktisk udfører arbejdet.",
+   "spoken_hint": "Vi er et lille firma, og det betyder, at du taler med dem, der rent faktisk udfører arbejdet."
+  },
+  {
+   "id": "standard-128",
+   "category": "forklaring",
+   "text": "Til sidst får du et par gode råd om vedligeholdelse, så resultatet holder længst muligt.",
+   "spoken_hint": "Til sidst får du et par gode råd om vedligeholdelse, så resultatet holder længst muligt."
+  },
+  {
+   "id": "standard-129",
+   "category": "forklaring",
+   "text": "Vi kan tilbyde en fast aftale, hvor vi kommer igen hver sjette måned.",
+   "spoken_hint": "Vi kan tilbyde en fast aftale, hvor vi kommer igen hver sjette måned."
+  },
+  {
+   "id": "standard-130",
+   "category": "forklaring",
+   "text": "Tak for din tålmodighed. Jeg har fundet en løsning, som jeg tror, du bliver glad for.",
+   "spoken_hint": "Tak for din tålmodighed. Jeg har fundet en løsning, som jeg tror, du bliver glad for."
+  },
+  {
+   "id": "standard-131",
+   "category": "forklaring",
+   "text": "Hvis linjen er optaget, kan du trygt lægge en besked, så ringer vi tilbage samme dag.",
+   "spoken_hint": "Hvis linjen er optaget, kan du trygt lægge en besked, så ringer vi tilbage samme dag."
+  },
+  {
+   "id": "standard-132",
+   "category": "forklaring",
+   "text": "Vi har åbent for nye kunder i hele {by} og omegn.",
+   "spoken_hint": "Vi har åbent for nye kunder i hele byen og omegn."
+  },
+  {
+   "id": "standard-133",
+   "category": "forklaring",
+   "text": "Hos {firma} lægger vi vægt på, at du får en ordentlig og ærlig pris.",
+   "spoken_hint": "Hos Firma lægger vi vægt på, at du får en ordentlig og ærlig pris."
+  },
+  {
+   "id": "standard-134",
+   "category": "forklaring",
+   "text": "Mange af vores kunder kommer igen år efter år, og det er den bedste anerkendelse, vi kan få.",
+   "spoken_hint": "Mange af vores kunder kommer igen år efter år, og det er den bedste anerkendelse, vi kan få."
+  },
+  {
+   "id": "standard-135",
+   "category": "forklaring",
+   "text": "Jeg kan se i kalenderen, at der er et par ledige tider i starten af næste uge.",
+   "spoken_hint": "Jeg kan se i kalenderen, at der er et par ledige tider i starten af næste uge."
+  },
+  {
+   "id": "standard-136",
+   "category": "forklaring",
+   "text": "Vi sender en faktura efter endt arbejde med fjorten dages betalingsfrist.",
+   "spoken_hint": "Vi sender en faktura efter endt arbejde med fjorten dages betalingsfrist."
+  },
+  {
+   "id": "standard-137",
+   "category": "forklaring",
+   "text": "Hvis du har en gammel aftale, kan jeg finde den frem, når du giver mig dit navn.",
+   "spoken_hint": "Hvis du har en gammel aftale, kan jeg finde den frem, når du giver mig dit navn."
+  },
+  {
+   "id": "standard-138",
+   "category": "forklaring",
+   "text": "Det er en god idé at læse vejledningen, inden du tager det i brug første gang.",
+   "spoken_hint": "Det er en god idé at læse vejledningen, inden du tager det i brug første gang."
+  },
+  {
+   "id": "standard-139",
+   "category": "forklaring",
+   "text": "Vi kan ikke garantere et bestemt tidspunkt på dagen, men vi kan love et tidsrum på to timer.",
+   "spoken_hint": "Vi kan ikke garantere et bestemt tidspunkt på dagen, men vi kan love et tidsrum på to timer."
+  },
+  {
+   "id": "standard-140",
+   "category": "forklaring",
+   "text": "Hvis du ønsker det, sender vi en kopi af tilbuddet til din samlever eller din udlejer.",
+   "spoken_hint": "Hvis du ønsker det, sender vi en kopi af tilbuddet til din samlever eller din udlejer."
+  },
+  {
+   "id": "standard-141",
+   "category": "forklaring",
+   "text": "Når vi er færdige, får du en mail med billeder af det udførte arbejde.",
+   "spoken_hint": "Når vi er færdige, får du en mail med billeder af det udførte arbejde."
+  },
+  {
+   "id": "standard-142",
+   "category": "forklaring",
+   "text": "Vores medarbejdere bærer altid tøj med logo, så du kan se, hvem vi er.",
+   "spoken_hint": "Vores medarbejdere bærer altid tøj med logo, så du kan se, hvem vi er."
+  },
+  {
+   "id": "standard-143",
+   "category": "forklaring",
+   "text": "Hvis der er noget, du er i tvivl om i tilbuddet, gennemgår jeg det gerne punkt for punkt.",
+   "spoken_hint": "Hvis der er noget, du er i tvivl om i tilbuddet, gennemgår jeg det gerne punkt for punkt."
+  },
+  {
+   "id": "standard-144",
+   "category": "forklaring",
+   "text": "Vi bruger kun materialer, som vi selv ville bruge i vores egne hjem.",
+   "spoken_hint": "Vi bruger kun materialer, som vi selv ville bruge i vores egne hjem."
+  },
+  {
+   "id": "standard-145",
+   "category": "forklaring",
+   "text": "Det er lidt svært at sige præcist, men de fleste opgaver af den type tager en halv dag.",
+   "spoken_hint": "Det er lidt svært at sige præcist, men de fleste opgaver af den type tager en halv dag."
+  },
+  {
+   "id": "standard-146",
+   "category": "forklaring",
+   "text": "Vi kan starte allerede i næste uge, hvis du bekræfter i dag.",
+   "spoken_hint": "Vi kan starte allerede i næste uge, hvis du bekræfter i dag."
+  },
+  {
+   "id": "standard-147",
+   "category": "forklaring",
+   "text": "Du skal ikke gøre noget særligt, inden vi kommer, andet end at være hjemme.",
+   "spoken_hint": "Du skal ikke gøre noget særligt, inden vi kommer, andet end at være hjemme."
+  },
+  {
+   "id": "standard-148",
+   "category": "forklaring",
+   "text": "Vi har desværre ikke mulighed for at tage imod kontanter.",
+   "spoken_hint": "Vi har desværre ikke mulighed for at tage imod kontanter."
+  },
+  {
+   "id": "standard-149",
+   "category": "forklaring",
+   "text": "Hvis du har brug for hjælp uden for åbningstiden, kan du ringe til vores vagttelefon.",
+   "spoken_hint": "Hvis du har brug for hjælp uden for åbningstiden, kan du ringe til vores vagttelefon."
+  },
+  {
+   "id": "standard-150",
+   "category": "forklaring",
+   "text": "Vi afslutter altid med at spørge, om du er tilfreds, og om der er noget, vi kan gøre bedre.",
+   "spoken_hint": "Vi afslutter altid med at spørge, om du er tilfreds, og om der er noget, vi kan gøre bedre."
+  },
+  {
+   "id": "standard-151",
+   "category": "forklaring",
+   "text": "Vores assistent kan booke tider, svare på spørgsmål og tage imod beskeder, men ikke ændre i betalinger.",
+   "spoken_hint": "Vores assistent kan booke tider, svare på spørgsmål og tage imod beskeder, men ikke ændre i betalinger."
+  },
+  {
+   "id": "standard-152",
+   "category": "forklaring",
+   "text": "Jeg har fundet din sag. Den er modtaget, og en tekniker kigger på den i dag.",
+   "spoken_hint": "Jeg har fundet din sag. Den er modtaget, og en tekniker kigger på den i dag."
+  },
+  {
+   "id": "standard-153",
+   "category": "forklaring",
+   "text": "Du kan altid bede om at tale med et menneske, så sørger jeg for, at en medarbejder ringer dig op.",
+   "spoken_hint": "Du kan altid bede om at tale med et menneske, så sørger jeg for, at en medarbejder ringer dig op."
+  },
+  {
+   "id": "standard-154",
+   "category": "forklaring",
+   "text": "Det er vigtigt for os, at du føler dig godt behandlet, fra du ringer, til opgaven er færdig.",
+   "spoken_hint": "Det er vigtigt for os, at du føler dig godt behandlet, fra du ringer, til opgaven er færdig."
+  },
+  {
+   "id": "standard-155",
+   "category": "forklaring",
+   "text": "Tidspunktet er foreløbigt, indtil du har fået en bekræftelse fra os.",
+   "spoken_hint": "Tidspunktet er foreløbigt, indtil du har fået en bekræftelse fra os."
+  },
+  {
+   "id": "standard-156",
+   "category": "forklaring",
+   "text": "Vi har ingen binding, så du kan stoppe aftalen med en måneds varsel.",
+   "spoken_hint": "Vi har ingen binding, så du kan stoppe aftalen med en måneds varsel."
+  },
+  {
+   "id": "standard-157",
+   "category": "forklaring",
+   "text": "Hvis du vil høre mere om {ydelse}, kan jeg sende dig en kort beskrivelse på mail.",
+   "spoken_hint": "Hvis du vil høre mere om ydelsen, kan jeg sende dig en kort beskrivelse på mail."
+  },
+  {
+   "id": "standard-158",
+   "category": "forklaring",
+   "text": "Mange spørger om det samme, så du er langt fra den eneste.",
+   "spoken_hint": "Mange spørger om det samme, så du er langt fra den eneste."
+  },
+  {
+   "id": "standard-159",
+   "category": "forklaring",
+   "text": "Vi vender tilbage senest på fredag med et endeligt svar.",
+   "spoken_hint": "Vi vender tilbage senest på fredag med et endeligt svar."
+  },
+  {
+   "id": "standard-160",
+   "category": "forbehold",
+   "text": "Det har jeg desværre ikke adgang til.",
+   "spoken_hint": "Det har jeg desværre ikke adgang til."
+  },
+  {
+   "id": "standard-161",
+   "category": "forbehold",
+   "text": "Nej, den tid er ikke ledig længere.",
+   "spoken_hint": "Nej, den tid er ikke ledig længere."
+  },
+  {
+   "id": "standard-162",
+   "category": "forbehold",
+   "text": "Vi kan ikke komme i weekenden.",
+   "spoken_hint": "Vi kan ikke komme i weekenden."
+  },
+  {
+   "id": "standard-163",
+   "category": "forbehold",
+   "text": "Prisen er ikke endelig, før vi har set opgaven.",
+   "spoken_hint": "Prisen er ikke endelig, før vi har set opgaven."
+  },
+  {
+   "id": "standard-164",
+   "category": "forbehold",
+   "text": "Jeg kan ikke bekræfte tiden, før en medarbejder har godkendt den.",
+   "spoken_hint": "Jeg kan ikke bekræfte tiden, før en medarbejder har godkendt den."
+  },
+  {
+   "id": "standard-165",
+   "category": "forbehold",
+   "text": "Nej, vi tager ikke opgaver uden for landets grænser.",
+   "spoken_hint": "Nej, vi tager ikke opgaver uden for landets grænser."
+  },
+  {
+   "id": "standard-166",
+   "category": "forbehold",
+   "text": "Det er desværre ikke noget, vi tilbyder.",
+   "spoken_hint": "Det er desværre ikke noget, vi tilbyder."
+  },
+  {
+   "id": "standard-167",
+   "category": "forbehold",
+   "text": "Du er ikke blevet opkrævet noget endnu.",
+   "spoken_hint": "Du er ikke blevet opkrævet noget endnu."
+  },
+  {
+   "id": "standard-168",
+   "category": "forbehold",
+   "text": "Nej, du skal ikke betale for besigtigelsen.",
+   "spoken_hint": "Nej, du skal ikke betale for besigtigelsen."
+  },
+  {
+   "id": "standard-169",
+   "category": "forbehold",
+   "text": "Jeg er ikke sikker, så jeg spørger lige en kollega.",
+   "spoken_hint": "Jeg er ikke sikker, så jeg spørger lige en kollega."
+  },
+  {
+   "id": "standard-170",
+   "category": "forbehold",
+   "text": "Aftalen er ikke gennemført, før du har fået en bekræftelse.",
+   "spoken_hint": "Aftalen er ikke gennemført, før du har fået en bekræftelse."
+  },
+  {
+   "id": "standard-171",
+   "category": "forbehold",
+   "text": "Det må vi desværre ikke udlevere over telefonen.",
+   "spoken_hint": "Det må vi desværre ikke udlevere over telefonen."
+  },
+  {
+   "id": "standard-172",
+   "category": "forbehold",
+   "text": "Nej, der er ingen binding.",
+   "spoken_hint": "Nej, der er ingen binding."
+  },
+  {
+   "id": "standard-173",
+   "category": "forbehold",
+   "text": "Jeg kan ikke se nogen ordre i dit navn.",
+   "spoken_hint": "Jeg kan ikke se nogen ordre i dit navn."
+  },
+  {
+   "id": "standard-174",
+   "category": "forbehold",
+   "text": "Tilbuddet gælder ikke sammen med andre rabatter.",
+   "spoken_hint": "Tilbuddet gælder ikke sammen med andre rabatter."
+  },
+  {
+   "id": "standard-175",
+   "category": "forbehold",
+   "text": "Vi har ikke modtaget din betaling endnu.",
+   "spoken_hint": "Vi har ikke modtaget din betaling endnu."
+  },
+  {
+   "id": "standard-176",
+   "category": "forbehold",
+   "text": "Det er ikke sikkert, at vi kan nå det i denne uge.",
+   "spoken_hint": "Det er ikke sikkert, at vi kan nå det i denne uge."
+  },
+  {
+   "id": "standard-177",
+   "category": "forbehold",
+   "text": "Nej, det er ikke for sent at ændre det.",
+   "spoken_hint": "Nej, det er ikke for sent at ændre det."
+  },
+  {
+   "id": "standard-178",
+   "category": "forbehold",
+   "text": "Jeg kan ikke love noget, men jeg giver beskeden videre.",
+   "spoken_hint": "Jeg kan ikke love noget, men jeg giver beskeden videre."
+  },
+  {
+   "id": "standard-179",
+   "category": "forbehold",
+   "text": "Nej, du behøver ikke at være hjemme hele dagen.",
+   "spoken_hint": "Nej, du behøver ikke at være hjemme hele dagen."
+  },
+  {
+   "id": "standard-180",
+   "category": "forbehold",
+   "text": "Det er ikke muligt at booke mere end tre måneder frem.",
+   "spoken_hint": "Det er ikke muligt at booke mere end tre måneder frem."
+  },
+  {
+   "id": "standard-181",
+   "category": "forbehold",
+   "text": "Der er ikke nogen skjulte omkostninger.",
+   "spoken_hint": "Der er ikke nogen skjulte omkostninger."
+  },
+  {
+   "id": "standard-182",
+   "category": "forbehold",
+   "text": "Nej, vi har ikke lukket. Vi har bare travlt lige nu.",
+   "spoken_hint": "Nej, vi har ikke lukket. Vi har bare travlt lige nu."
+  },
+  {
+   "id": "standard-183",
+   "category": "forbehold",
+   "text": "Jeg kan desværre ikke give rabat.",
+   "spoken_hint": "Jeg kan desværre ikke give rabat."
+  },
+  {
+   "id": "standard-184",
+   "category": "forbehold",
+   "text": "Vi kan ikke garantere, at farven bliver helt den samme.",
+   "spoken_hint": "Vi kan ikke garantere, at farven bliver helt den samme."
+  },
+  {
+   "id": "standard-185",
+   "category": "forbehold",
+   "text": "Nej, tiden er ikke flyttet. Den står stadig på tirsdag.",
+   "spoken_hint": "Nej, tiden er ikke flyttet. Den står stadig på tirsdag."
+  },
+  {
+   "id": "standard-186",
+   "category": "forbehold",
+   "text": "Det er ikke dig, der skal betale for fejlen.",
+   "spoken_hint": "Det er ikke dig, der skal betale for fejlen."
+  },
+  {
+   "id": "standard-187",
+   "category": "forbehold",
+   "text": "Jeg har ikke fået et svar fra leverandøren endnu.",
+   "spoken_hint": "Jeg har ikke fået et svar fra leverandøren endnu."
+  },
+  {
+   "id": "standard-188",
+   "category": "forbehold",
+   "text": "Nej, vi kommer ikke uden at ringe først.",
+   "spoken_hint": "Nej, vi kommer ikke uden at ringe først."
+  },
+  {
+   "id": "standard-189",
+   "category": "forbehold",
+   "text": "Den ydelse har vi desværre stoppet med.",
+   "spoken_hint": "Den ydelse har vi desværre stoppet med."
+  },
+  {
+   "id": "standard-190",
+   "category": "forbehold",
+   "text": "Det kan jeg ikke svare på, men en medarbejder ringer dig op.",
+   "spoken_hint": "Det kan jeg ikke svare på, men en medarbejder ringer dig op."
+  },
+  {
+   "id": "standard-191",
+   "category": "forbehold",
+   "text": "Nej, du har ikke misset noget.",
+   "spoken_hint": "Nej, du har ikke misset noget."
+  },
+  {
+   "id": "standard-192",
+   "category": "forbehold",
+   "text": "Vi arbejder ikke med den type materiale.",
+   "spoken_hint": "Vi arbejder ikke med den type materiale."
+  },
+  {
+   "id": "standard-193",
+   "category": "forbehold",
+   "text": "Det er ikke nødvendigt at sende billeder.",
+   "spoken_hint": "Det er ikke nødvendigt at sende billeder."
+  },
+  {
+   "id": "standard-194",
+   "category": "forbehold",
+   "text": "Jeg beklager, men vi er fuldt booket i dag.",
+   "spoken_hint": "Jeg beklager, men vi er fuldt booket i dag."
+  },
+  {
+   "id": "standard-195",
+   "category": "forbehold",
+   "text": "Nej, prisen stiger ikke, hvis det tager længere tid.",
+   "spoken_hint": "Nej, prisen stiger ikke, hvis det tager længere tid."
+  },
+  {
+   "id": "standard-196",
+   "category": "forbehold",
+   "text": "Vi har desværre ikke plads til flere kunder i den uge.",
+   "spoken_hint": "Vi har desværre ikke plads til flere kunder i den uge."
+  },
+  {
+   "id": "standard-197",
+   "category": "forbehold",
+   "text": "Den oplysning har jeg ikke.",
+   "spoken_hint": "Den oplysning har jeg ikke."
+  },
+  {
+   "id": "standard-198",
+   "category": "forbehold",
+   "text": "Nej, det er ikke et abonnement.",
+   "spoken_hint": "Nej, det er ikke et abonnement."
+  },
+  {
+   "id": "standard-199",
+   "category": "forbehold",
+   "text": "Du bliver ikke trukket noget, før opgaven er udført.",
+   "spoken_hint": "Du bliver ikke trukket noget, før opgaven er udført."
+  },
+  {
+   "id": "standard-200",
+   "category": "tal",
+   "text": "Der er 9 ledige tider i næste uge.",
+   "spoken_hint": "Der er ni ledige tider i næste uge."
+  },
+  {
+   "id": "standard-201",
+   "category": "tal",
+   "text": "Det koster 240.500 kroner inklusive moms.",
+   "spoken_hint": "Det koster to hundrede og fyrre tusind fem hundrede kroner inklusive moms."
+  },
+  {
+   "id": "standard-202",
+   "category": "tal",
+   "text": "Ordrenummeret er 90807.",
+   "spoken_hint": "Ordrenummeret er halvfems tusind otte hundrede og syv."
+  },
+  {
+   "id": "standard-203",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 9.025 kroner.",
+   "spoken_hint": "Prisen ligger på omkring ni tusind og femogtyve kroner."
+  },
+  {
+   "id": "standard-204",
+   "category": "tal",
+   "text": "Du har 20 dage til at betale.",
+   "spoken_hint": "Du har tyve dage til at betale."
+  },
+  {
+   "id": "standard-205",
+   "category": "tal",
+   "text": "Der er 15 ledige tider i næste uge.",
+   "spoken_hint": "Der er femten ledige tider i næste uge."
+  },
+  {
+   "id": "standard-206",
+   "category": "tal",
+   "text": "Du har 29 dage til at betale.",
+   "spoken_hint": "Du har niogtyve dage til at betale."
+  },
+  {
+   "id": "standard-207",
+   "category": "tal",
+   "text": "Tilbuddet lyder på 147.500 kroner i alt.",
+   "spoken_hint": "Tilbuddet lyder på et hundrede og syvogfyrre tusind fem hundrede kroner i alt."
+  },
+  {
+   "id": "standard-208",
+   "category": "tal",
+   "text": "Der er 5 ledige tider i næste uge.",
+   "spoken_hint": "Der er fem ledige tider i næste uge."
+  },
+  {
+   "id": "standard-209",
+   "category": "tal",
+   "text": "Ordrenummeret er 89382.",
+   "spoken_hint": "Ordrenummeret er niogfirs tusind tre hundrede og toogfirs."
+  },
+  {
+   "id": "standard-210",
+   "category": "tal",
+   "text": "Ordrenummeret er 92530.",
+   "spoken_hint": "Ordrenummeret er tooghalvfems tusind fem hundrede og tredive."
+  },
+  {
+   "id": "standard-211",
+   "category": "tal",
+   "text": "Ordrenummeret er 20640.",
+   "spoken_hint": "Ordrenummeret er tyve tusind seks hundrede og fyrre."
+  },
+  {
+   "id": "standard-212",
+   "category": "tal",
+   "text": "Ordrenummeret er 62165.",
+   "spoken_hint": "Ordrenummeret er toogtres tusind et hundrede og femogtres."
+  },
+  {
+   "id": "standard-213",
+   "category": "tal",
+   "text": "Ordrenummeret er 13894.",
+   "spoken_hint": "Ordrenummeret er tretten tusind otte hundrede og fireoghalvfems."
+  },
+  {
+   "id": "standard-214",
+   "category": "tal",
+   "text": "Ordrenummeret er 56807.",
+   "spoken_hint": "Ordrenummeret er seksoghalvtreds tusind otte hundrede og syv."
+  },
+  {
+   "id": "standard-215",
+   "category": "tal",
+   "text": "Der er 8 ledige tider i næste uge.",
+   "spoken_hint": "Der er otte ledige tider i næste uge."
+  },
+  {
+   "id": "standard-216",
+   "category": "tal",
+   "text": "Tilbuddet lyder på 280 kroner i alt.",
+   "spoken_hint": "Tilbuddet lyder på to hundrede og firs kroner i alt."
+  },
+  {
+   "id": "standard-217",
+   "category": "tal",
+   "text": "Det koster 410 kroner inklusive moms.",
+   "spoken_hint": "Det koster fire hundrede og ti kroner inklusive moms."
+  },
+  {
+   "id": "standard-218",
+   "category": "tal",
+   "text": "Tilbuddet lyder på 174.000 kroner i alt.",
+   "spoken_hint": "Tilbuddet lyder på et hundrede og fireoghalvfjerds tusind kroner i alt."
+  },
+  {
+   "id": "standard-219",
+   "category": "tal",
+   "text": "Beløbet er 58.500 kr.. og det skal betales inden fjorten dage.",
+   "spoken_hint": "Beløbet er otteoghalvtreds tusind fem hundrede kroner. og det skal betales inden fjorten dage."
+  },
+  {
+   "id": "standard-220",
+   "category": "tal",
+   "text": "Beløbet er 225.000 kr.. og det skal betales inden fjorten dage.",
+   "spoken_hint": "Beløbet er to hundrede og femogtyve tusind kroner. og det skal betales inden fjorten dage."
+  },
+  {
+   "id": "standard-221",
+   "category": "tal",
+   "text": "Det koster 21.650 kroner inklusive moms.",
+   "spoken_hint": "Det koster enogtyve tusind seks hundrede og halvtreds kroner inklusive moms."
+  },
+  {
+   "id": "standard-222",
+   "category": "tal",
+   "text": "Du har 3 dage til at betale.",
+   "spoken_hint": "Du har tre dage til at betale."
+  },
+  {
+   "id": "standard-223",
+   "category": "tal",
+   "text": "Tilbuddet lyder på 9.325 kroner i alt.",
+   "spoken_hint": "Tilbuddet lyder på ni tusind tre hundrede og femogtyve kroner i alt."
+  },
+  {
+   "id": "standard-224",
+   "category": "tal",
+   "text": "Der er 4 ledige tider i næste uge.",
+   "spoken_hint": "Der er fire ledige tider i næste uge."
+  },
+  {
+   "id": "standard-225",
+   "category": "tal",
+   "text": "Tilbuddet lyder på 135 kroner i alt.",
+   "spoken_hint": "Tilbuddet lyder på et hundrede og femogtredive kroner i alt."
+  },
+  {
+   "id": "standard-226",
+   "category": "tal",
+   "text": "Beløbet er 710 kr.. og det skal betales inden fjorten dage.",
+   "spoken_hint": "Beløbet er syv hundrede og ti kroner. og det skal betales inden fjorten dage."
+  },
+  {
+   "id": "standard-227",
+   "category": "tal",
+   "text": "Ordrenummeret er 61806.",
+   "spoken_hint": "Ordrenummeret er enogtres tusind otte hundrede og seks."
+  },
+  {
+   "id": "standard-228",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 625 kroner.",
+   "spoken_hint": "Prisen ligger på omkring seks hundrede og femogtyve kroner."
+  },
+  {
+   "id": "standard-229",
+   "category": "tal",
+   "text": "Det koster 21.375 kroner inklusive moms.",
+   "spoken_hint": "Det koster enogtyve tusind tre hundrede og femoghalvfjerds kroner inklusive moms."
+  },
+  {
+   "id": "standard-230",
+   "category": "tal",
+   "text": "Vi skal bruge 54 kvadratmeter materiale.",
+   "spoken_hint": "Vi skal bruge fireoghalvtreds kvadratmeter materiale."
+  },
+  {
+   "id": "standard-231",
+   "category": "tal",
+   "text": "Du har 38 dage til at betale.",
+   "spoken_hint": "Du har otteogtredive dage til at betale."
+  },
+  {
+   "id": "standard-232",
+   "category": "tal",
+   "text": "Du har 15 dage til at betale.",
+   "spoken_hint": "Du har femten dage til at betale."
+  },
+  {
+   "id": "standard-233",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 950 kroner.",
+   "spoken_hint": "Prisen ligger på omkring ni hundrede og halvtreds kroner."
+  },
+  {
+   "id": "standard-234",
+   "category": "tal",
+   "text": "Vi skal bruge 84 kvadratmeter materiale.",
+   "spoken_hint": "Vi skal bruge fireogfirs kvadratmeter materiale."
+  },
+  {
+   "id": "standard-235",
+   "category": "tal",
+   "text": "Tilbuddet lyder på 1.350 kroner i alt.",
+   "spoken_hint": "Tilbuddet lyder på et tusind tre hundrede og halvtreds kroner i alt."
+  },
+  {
+   "id": "standard-236",
+   "category": "tal",
+   "text": "Ordrenummeret er 42284.",
+   "spoken_hint": "Ordrenummeret er toogfyrre tusind to hundrede og fireogfirs."
+  },
+  {
+   "id": "standard-237",
+   "category": "tal",
+   "text": "Tilbuddet lyder på 192.500 kroner i alt.",
+   "spoken_hint": "Tilbuddet lyder på et hundrede og tooghalvfems tusind fem hundrede kroner i alt."
+  },
+  {
+   "id": "standard-238",
+   "category": "tid_dato",
+   "text": "Fakturaen forfalder den 20. august.",
+   "spoken_hint": "Fakturaen forfalder den tyvende august."
+  },
+  {
+   "id": "standard-239",
+   "category": "tid_dato",
+   "text": "Din aftale er flyttet til onsdag kl. 7.45.",
+   "spoken_hint": "Din aftale er flyttet til onsdag klokken syv femogfyrre."
+  },
+  {
+   "id": "standard-240",
+   "category": "tid_dato",
+   "text": "Vi har lukket fra den 24. til den 28. februar.",
+   "spoken_hint": "Vi har lukket fra den fireogtyve. til den otteogtyvende februar."
+  },
+  {
+   "id": "standard-241",
+   "category": "tid_dato",
+   "text": "Vi har en tid mandag den 11. april klokken 15.00.",
+   "spoken_hint": "Vi har en tid mandag den ellevte april klokken femten."
+  },
+  {
+   "id": "standard-242",
+   "category": "tid_dato",
+   "text": "Fakturaen forfalder den 4. januar.",
+   "spoken_hint": "Fakturaen forfalder den fjerde januar."
+  },
+  {
+   "id": "standard-243",
+   "category": "tid_dato",
+   "text": "Vi åbner kl. 12.45 i morgen.",
+   "spoken_hint": "Vi åbner klokken tolv femogfyrre i morgen."
+  },
+  {
+   "id": "standard-244",
+   "category": "tid_dato",
+   "text": "Kan du mandag klokken 10?",
+   "spoken_hint": "Kan du mandag klokken ti?"
+  },
+  {
+   "id": "standard-245",
+   "category": "tid_dato",
+   "text": "Vi har en tid onsdag den 23. september klokken 17.45.",
+   "spoken_hint": "Vi har en tid onsdag den treogtyvende september klokken sytten femogfyrre."
+  },
+  {
+   "id": "standard-246",
+   "category": "tid_dato",
+   "text": "Montøren kommer den 1. maj mellem kl. 15 og kl. 17.",
+   "spoken_hint": "Montøren kommer den første maj mellem klokken femten og klokken sytten."
+  },
+  {
+   "id": "standard-247",
+   "category": "tid_dato",
+   "text": "Vi åbner kl. 8.15 i morgen.",
+   "spoken_hint": "Vi åbner klokken otte femten i morgen."
+  },
+  {
+   "id": "standard-248",
+   "category": "tid_dato",
+   "text": "Fakturaen forfalder den 9. juni.",
+   "spoken_hint": "Fakturaen forfalder den niende juni."
+  },
+  {
+   "id": "standard-249",
+   "category": "tid_dato",
+   "text": "Vi har lukket fra den 2. til den 9. april.",
+   "spoken_hint": "Vi har lukket fra den to. til den niende april."
+  },
+  {
+   "id": "standard-250",
+   "category": "tid_dato",
+   "text": "Kan du torsdag klokken 12?",
+   "spoken_hint": "Kan du torsdag klokken tolv?"
+  },
+  {
+   "id": "standard-251",
+   "category": "tid_dato",
+   "text": "Montøren kommer den 15. september mellem kl. 14 og kl. 16.",
+   "spoken_hint": "Montøren kommer den femtende september mellem klokken fjorten og klokken seksten."
+  },
+  {
+   "id": "standard-252",
+   "category": "tid_dato",
+   "text": "Din aftale er flyttet til tirsdag kl. 12.45.",
+   "spoken_hint": "Din aftale er flyttet til tirsdag klokken tolv femogfyrre."
+  },
+  {
+   "id": "standard-253",
+   "category": "tid_dato",
+   "text": "Montøren kommer den 12. september mellem kl. 11 og kl. 13.",
+   "spoken_hint": "Montøren kommer den tolvte september mellem klokken elleve og klokken tretten."
+  },
+  {
+   "id": "standard-254",
+   "category": "tid_dato",
+   "text": "Fakturaen forfalder den 28. december.",
+   "spoken_hint": "Fakturaen forfalder den otteogtyvende december."
+  },
+  {
+   "id": "standard-255",
+   "category": "tid_dato",
+   "text": "Montøren kommer den 18. september mellem kl. 17 og kl. 19.",
+   "spoken_hint": "Montøren kommer den attende september mellem klokken sytten og klokken nitten."
+  },
+  {
+   "id": "standard-256",
+   "category": "tid_dato",
+   "text": "Kan du fredag klokken 12?",
+   "spoken_hint": "Kan du fredag klokken tolv?"
+  },
+  {
+   "id": "standard-257",
+   "category": "tid_dato",
+   "text": "Din aftale er flyttet til fredag kl. 9.30.",
+   "spoken_hint": "Din aftale er flyttet til fredag klokken ni tredive."
+  },
+  {
+   "id": "standard-258",
+   "category": "tid_dato",
+   "text": "Din aftale er flyttet til torsdag kl. 10.00.",
+   "spoken_hint": "Din aftale er flyttet til torsdag klokken ti."
+  },
+  {
+   "id": "standard-259",
+   "category": "tid_dato",
+   "text": "Montøren kommer den 26. september mellem kl. 9 og kl. 11.",
+   "spoken_hint": "Montøren kommer den seksogtyvende september mellem klokken ni og klokken elleve."
+  },
+  {
+   "id": "standard-260",
+   "category": "tid_dato",
+   "text": "Din aftale er flyttet til mandag kl. 8.00.",
+   "spoken_hint": "Din aftale er flyttet til mandag klokken otte."
+  },
+  {
+   "id": "standard-261",
+   "category": "tid_dato",
+   "text": "Fakturaen forfalder den 7. september.",
+   "spoken_hint": "Fakturaen forfalder den syvende september."
+  },
+  {
+   "id": "standard-262",
+   "category": "tid_dato",
+   "text": "Kan du onsdag klokken 8?",
+   "spoken_hint": "Kan du onsdag klokken otte?"
+  },
+  {
+   "id": "standard-263",
+   "category": "tid_dato",
+   "text": "Montøren kommer den 4. juni mellem kl. 14 og kl. 16.",
+   "spoken_hint": "Montøren kommer den fjerde juni mellem klokken fjorten og klokken seksten."
+  },
+  {
+   "id": "standard-264",
+   "category": "tid_dato",
+   "text": "Vi har en tid fredag den 27. juni klokken 17.45.",
+   "spoken_hint": "Vi har en tid fredag den syvogtyvende juni klokken sytten femogfyrre."
+  },
+  {
+   "id": "standard-265",
+   "category": "tid_dato",
+   "text": "Din aftale er flyttet til tirsdag kl. 14.30.",
+   "spoken_hint": "Din aftale er flyttet til tirsdag klokken fjorten tredive."
+  },
+  {
+   "id": "standard-266",
+   "category": "tid_dato",
+   "text": "Din aftale er flyttet til torsdag kl. 15.30.",
+   "spoken_hint": "Din aftale er flyttet til torsdag klokken femten tredive."
+  },
+  {
+   "id": "standard-267",
+   "category": "tid_dato",
+   "text": "Vi åbner kl. 14.15 i morgen.",
+   "spoken_hint": "Vi åbner klokken fjorten femten i morgen."
+  },
+  {
+   "id": "standard-268",
+   "category": "tid_dato",
+   "text": "Kan du fredag klokken 13?",
+   "spoken_hint": "Kan du fredag klokken tretten?"
+  },
+  {
+   "id": "standard-269",
+   "category": "tid_dato",
+   "text": "Din aftale er flyttet til mandag kl. 13.30.",
+   "spoken_hint": "Din aftale er flyttet til mandag klokken tretten tredive."
+  },
+  {
+   "id": "standard-270",
+   "category": "tid_dato",
+   "text": "Din aftale er flyttet til onsdag kl. 11.15.",
+   "spoken_hint": "Din aftale er flyttet til onsdag klokken elleve femten."
+  },
+  {
+   "id": "standard-271",
+   "category": "tid_dato",
+   "text": "Kan du torsdag klokken 8?",
+   "spoken_hint": "Kan du torsdag klokken otte?"
+  },
+  {
+   "id": "standard-272",
+   "category": "tid_dato",
+   "text": "Kan du mandag klokken 7?",
+   "spoken_hint": "Kan du mandag klokken syv?"
+  },
+  {
+   "id": "standard-273",
+   "category": "tid_dato",
+   "text": "Vi har en tid torsdag den 25. august klokken 17.15.",
+   "spoken_hint": "Vi har en tid torsdag den femogtyvende august klokken sytten femten."
+  },
+  {
+   "id": "standard-274",
+   "category": "tid_dato",
+   "text": "Montøren kommer den 13. december mellem kl. 9 og kl. 11.",
+   "spoken_hint": "Montøren kommer den trettende december mellem klokken ni og klokken elleve."
+  },
+  {
+   "id": "standard-275",
+   "category": "tid_dato",
+   "text": "Vi har en tid torsdag den 11. oktober klokken 17.45.",
+   "spoken_hint": "Vi har en tid torsdag den ellevte oktober klokken sytten femogfyrre."
+  },
+  {
+   "id": "standard-276",
+   "category": "tid_dato",
+   "text": "Vi åbner kl. 17.00 i morgen.",
+   "spoken_hint": "Vi åbner klokken sytten i morgen."
+  },
+  {
+   "id": "standard-277",
+   "category": "tid_dato",
+   "text": "Vi har lukket fra den 7. til den 14. august.",
+   "spoken_hint": "Vi har lukket fra den syv. til den fjortende august."
+  },
+  {
+   "id": "standard-278",
+   "category": "telefon_email",
+   "text": "Jeg gentager lige nummeret: 98 34 78 11.",
+   "spoken_hint": "Jeg gentager lige nummeret: otteoghalvfems fireogtredive otteoghalvfjerds elleve."
+  },
+  {
+   "id": "standard-279",
+   "category": "telefon_email",
+   "text": "Jeg gentager lige nummeret: 38 69 36 87.",
+   "spoken_hint": "Jeg gentager lige nummeret: otteogtredive niogtres seksogtredive syvogfirs."
+  },
+  {
+   "id": "standard-280",
+   "category": "telefon_email",
+   "text": "Du kan ringe til os på 20 82 63 76.",
+   "spoken_hint": "Du kan ringe til os på tyve toogfirs treogtres seksoghalvfjerds."
+  },
+  {
+   "id": "standard-281",
+   "category": "telefon_email",
+   "text": "Mailen er søren.christensen@mail.dk.",
+   "spoken_hint": "Mailen er søren punktum christensen snabel-a mail punktum d k."
+  },
+  {
+   "id": "standard-282",
+   "category": "telefon_email",
+   "text": "Jeg gentager lige nummeret: 75 39 70 94.",
+   "spoken_hint": "Jeg gentager lige nummeret: femoghalvfjerds niogtredive halvfjerds fireoghalvfems."
+  },
+  {
+   "id": "standard-283",
+   "category": "telefon_email",
+   "text": "Jeg gentager lige nummeret: 54 50 87 71.",
+   "spoken_hint": "Jeg gentager lige nummeret: fireoghalvtreds halvtreds syvogfirs enoghalvfjerds."
+  },
+  {
+   "id": "standard-284",
+   "category": "telefon_email",
+   "text": "Du kan skrive til lone@nielsen.dk.",
+   "spoken_hint": "Du kan skrive til lone snabel-a nielsen punktum d k."
+  },
+  {
+   "id": "standard-285",
+   "category": "telefon_email",
+   "text": "Mailen er kasper.rasmussen@mail.dk.",
+   "spoken_hint": "Mailen er kasper punktum rasmussen snabel-a mail punktum d k."
+  },
+  {
+   "id": "standard-286",
+   "category": "telefon_email",
+   "text": "Mit nummer er 61 48 37 84.",
+   "spoken_hint": "Mit nummer er enogtres otteogfyrre syvogtredive fireogfirs."
+  },
+  {
+   "id": "standard-287",
+   "category": "telefon_email",
+   "text": "Du kan skrive til thomas@joergensen.dk.",
+   "spoken_hint": "Du kan skrive til thomas snabel-a joergensen punktum d k."
+  },
+  {
+   "id": "standard-288",
+   "category": "telefon_email",
+   "text": "Du kan skrive til mikkel@madsen.dk.",
+   "spoken_hint": "Du kan skrive til mikkel snabel-a madsen punktum d k."
+  },
+  {
+   "id": "standard-289",
+   "category": "telefon_email",
+   "text": "Mailen er niels.hansen@mail.dk.",
+   "spoken_hint": "Mailen er niels punktum hansen snabel-a mail punktum d k."
+  },
+  {
+   "id": "standard-290",
+   "category": "telefon_email",
+   "text": "Mailen er pia.pedersen@mail.dk.",
+   "spoken_hint": "Mailen er p i a punktum pedersen snabel-a mail punktum d k."
+  },
+  {
+   "id": "standard-291",
+   "category": "telefon_email",
+   "text": "Mailen er hanne.thomsen@mail.dk.",
+   "spoken_hint": "Mailen er hanne punktum thomsen snabel-a mail punktum d k."
+  },
+  {
+   "id": "standard-292",
+   "category": "telefon_email",
+   "text": "Du kan ringe til os på 77 26 75 37.",
+   "spoken_hint": "Du kan ringe til os på syvoghalvfjerds seksogtyve femoghalvfjerds syvogtredive."
+  },
+  {
+   "id": "standard-293",
+   "category": "telefon_email",
+   "text": "Mailen er tove.olsen@mail.dk.",
+   "spoken_hint": "Mailen er tove punktum olsen snabel-a mail punktum d k."
+  },
+  {
+   "id": "standard-294",
+   "category": "telefon_email",
+   "text": "Du kan ringe til os på 88 79 34 29.",
+   "spoken_hint": "Du kan ringe til os på otteogfirs nioghalvfjerds fireogtredive niogtyve."
+  },
+  {
+   "id": "standard-295",
+   "category": "telefon_email",
+   "text": "Jeg gentager lige nummeret: 28 26 94 83.",
+   "spoken_hint": "Jeg gentager lige nummeret: otteogtyve seksogtyve fireoghalvfems treogfirs."
+  },
+  {
+   "id": "standard-296",
+   "category": "telefon_email",
+   "text": "Du kan ringe til os på 48 32 27 44.",
+   "spoken_hint": "Du kan ringe til os på otteogfyrre toogtredive syvogtyve fireogfyrre."
+  },
+  {
+   "id": "standard-297",
+   "category": "telefon_email",
+   "text": "Du kan ringe til os på 68 31 33 98.",
+   "spoken_hint": "Du kan ringe til os på otteogtres enogtredive treogtredive otteoghalvfems."
+  },
+  {
+   "id": "standard-298",
+   "category": "telefon_email",
+   "text": "Jeg gentager lige nummeret: 62 92 89 72.",
+   "spoken_hint": "Jeg gentager lige nummeret: toogtres tooghalvfems niogfirs tooghalvfjerds."
+  },
+  {
+   "id": "standard-299",
+   "category": "telefon_email",
+   "text": "Du kan skrive til anne@poulsen.dk.",
+   "spoken_hint": "Du kan skrive til anne snabel-a poulsen punktum d k."
+  },
+  {
+   "id": "standard-300",
+   "category": "telefon_email",
+   "text": "Mit nummer er 29 51 28 75.",
+   "spoken_hint": "Mit nummer er niogtyve enoghalvtreds otteogtyve femoghalvfjerds."
+  },
+  {
+   "id": "standard-301",
+   "category": "telefon_email",
+   "text": "Jeg gentager lige nummeret: 17 22 55 85.",
+   "spoken_hint": "Jeg gentager lige nummeret: sytten toogtyve femoghalvtreds femogfirs."
+  },
+  {
+   "id": "standard-302",
+   "category": "telefon_email",
+   "text": "Du kan skrive til anne@thomsen.dk.",
+   "spoken_hint": "Du kan skrive til anne snabel-a thomsen punktum d k."
+  },
+  {
+   "id": "standard-303",
+   "category": "navne_steder",
+   "text": "Kunden hedder Niels Sørensen.",
+   "spoken_hint": "Kunden hedder Niels Sørensen."
+  },
+  {
+   "id": "standard-304",
+   "category": "navne_steder",
+   "text": "Jeg sætter Tove Poulsen på sagen.",
+   "spoken_hint": "Jeg sætter Tove Poulsen på sagen."
+  },
+  {
+   "id": "standard-305",
+   "category": "navne_steder",
+   "text": "Adressen er Algade 12 i Varde.",
+   "spoken_hint": "Adressen er Algade tolv i Varde."
+  },
+  {
+   "id": "standard-306",
+   "category": "navne_steder",
+   "text": "Vi har en opgave i Nyborg og en i Ringkøbing i dag.",
+   "spoken_hint": "Vi har en opgave i Nyborg og en i Ringkøbing i dag."
+  },
+  {
+   "id": "standard-307",
+   "category": "navne_steder",
+   "text": "Adressen er Havnegade 51 i Aabenraa.",
+   "spoken_hint": "Adressen er Havnegade enoghalvtreds i Aabenraa."
+  },
+  {
+   "id": "standard-308",
+   "category": "navne_steder",
+   "text": "Jeg sætter Susanne Jensen på sagen.",
+   "spoken_hint": "Jeg sætter Susanne Jensen på sagen."
+  },
+  {
+   "id": "standard-309",
+   "category": "navne_steder",
+   "text": "Jeg sætter Thomas Møller på sagen.",
+   "spoken_hint": "Jeg sætter Thomas Møller på sagen."
+  },
+  {
+   "id": "standard-310",
+   "category": "navne_steder",
+   "text": "Spørg efter Søren, når du kommer.",
+   "spoken_hint": "Spørg efter Søren, når du kommer."
+  },
+  {
+   "id": "standard-311",
+   "category": "navne_steder",
+   "text": "Vi har en opgave i Holbæk og en i Rudkøbing i dag.",
+   "spoken_hint": "Vi har en opgave i Holbæk og en i Rudkøbing i dag."
+  },
+  {
+   "id": "standard-312",
+   "category": "navne_steder",
+   "text": "Adressen er Kirkevej 4 i Horsens.",
+   "spoken_hint": "Adressen er Kirkevej fire i Horsens."
+  },
+  {
+   "id": "standard-313",
+   "category": "navne_steder",
+   "text": "Kunden hedder Birgitte Andersen.",
+   "spoken_hint": "Kunden hedder Birgitte Andersen."
+  },
+  {
+   "id": "standard-314",
+   "category": "navne_steder",
+   "text": "Spørg efter Mads, når du kommer.",
+   "spoken_hint": "Spørg efter Mads, når du kommer."
+  },
+  {
+   "id": "standard-315",
+   "category": "navne_steder",
+   "text": "Spørg efter Anders, når du kommer.",
+   "spoken_hint": "Spørg efter Anders, når du kommer."
+  },
+  {
+   "id": "standard-316",
+   "category": "navne_steder",
+   "text": "Jeg sætter Rasmus Sørensen på sagen.",
+   "spoken_hint": "Jeg sætter Rasmus Sørensen på sagen."
+  },
+  {
+   "id": "standard-317",
+   "category": "navne_steder",
+   "text": "Adressen er Strandvejen 35 i Nørrebro.",
+   "spoken_hint": "Adressen er Strandvejen femogtredive i Nørrebro."
+  },
+  {
+   "id": "standard-318",
+   "category": "navne_steder",
+   "text": "Adressen er Havnegade 104 i Varde.",
+   "spoken_hint": "Adressen er Havnegade et hundrede og fire i Varde."
+  },
+  {
+   "id": "standard-319",
+   "category": "navne_steder",
+   "text": "Vi har en opgave i Holstebro og en i Hjørring i dag.",
+   "spoken_hint": "Vi har en opgave i Holstebro og en i Hjørring i dag."
+  },
+  {
+   "id": "standard-320",
+   "category": "navne_steder",
+   "text": "Adressen er Nørregade 33 i Sønderborg.",
+   "spoken_hint": "Adressen er Nørregade treogtredive i Sønderborg."
+  },
+  {
+   "id": "standard-321",
+   "category": "navne_steder",
+   "text": "Kunden hedder Søren Kristensen.",
+   "spoken_hint": "Kunden hedder Søren Kristensen."
+  },
+  {
+   "id": "standard-322",
+   "category": "navne_steder",
+   "text": "Vi har en opgave i Køge og en i Viborg i dag.",
+   "spoken_hint": "Vi har en opgave i Køge og en i Viborg i dag."
+  },
+  {
+   "id": "standard-323",
+   "category": "navne_steder",
+   "text": "Kunden hedder Anne Mortensen.",
+   "spoken_hint": "Kunden hedder Anne Mortensen."
+  },
+  {
+   "id": "standard-324",
+   "category": "navne_steder",
+   "text": "Kunden hedder Thomas Kristensen.",
+   "spoken_hint": "Kunden hedder Thomas Kristensen."
+  },
+  {
+   "id": "standard-325",
+   "category": "navne_steder",
+   "text": "Kunden hedder Pia Mortensen.",
+   "spoken_hint": "Kunden hedder Pia Mortensen."
+  },
+  {
+   "id": "standard-326",
+   "category": "navne_steder",
+   "text": "Spørg efter Pia, når du kommer.",
+   "spoken_hint": "Spørg efter Pia, når du kommer."
+  },
+  {
+   "id": "standard-327",
+   "category": "navne_steder",
+   "text": "Kunden hedder Anne Andersen.",
+   "spoken_hint": "Kunden hedder Anne Andersen."
+  },
+  {
+   "id": "standard-328",
+   "category": "navne_steder",
+   "text": "Kunden hedder Anne Nielsen.",
+   "spoken_hint": "Kunden hedder Anne Nielsen."
+  },
+  {
+   "id": "standard-329",
+   "category": "navne_steder",
+   "text": "Vi har en opgave i Hobro og en i Hvidovre i dag.",
+   "spoken_hint": "Vi har en opgave i Hobro og en i Hvidovre i dag."
+  },
+  {
+   "id": "standard-330",
+   "category": "navne_steder",
+   "text": "Spørg efter Morten, når du kommer.",
+   "spoken_hint": "Spørg efter Morten, når du kommer."
+  },
+  {
+   "id": "standard-331",
+   "category": "navne_steder",
+   "text": "Vi har en opgave i Faaborg og en i Korsør i dag.",
+   "spoken_hint": "Vi har en opgave i Faaborg og en i Korsør i dag."
+  },
+  {
+   "id": "standard-332",
+   "category": "navne_steder",
+   "text": "Vi har en opgave i Faaborg og en i Nørrebro i dag.",
+   "spoken_hint": "Vi har en opgave i Faaborg og en i Nørrebro i dag."
+  },
+  {
+   "id": "standard-333",
+   "category": "navne_steder",
+   "text": "Jeg sætter Niels Pedersen på sagen.",
+   "spoken_hint": "Jeg sætter Niels Pedersen på sagen."
+  },
+  {
+   "id": "standard-334",
+   "category": "navne_steder",
+   "text": "Kunden hedder Inger Jørgensen.",
+   "spoken_hint": "Kunden hedder Inger Jørgensen."
+  },
+  {
+   "id": "standard-335",
+   "category": "navne_steder",
+   "text": "Vi har en opgave i Køge og en i Vordingborg i dag.",
+   "spoken_hint": "Vi har en opgave i Køge og en i Vordingborg i dag."
+  },
+  {
+   "id": "standard-336",
+   "category": "navne_steder",
+   "text": "Jeg sætter Rasmus Jensen på sagen.",
+   "spoken_hint": "Jeg sætter Rasmus Jensen på sagen."
+  },
+  {
+   "id": "standard-337",
+   "category": "navne_steder",
+   "text": "Jeg sætter Anders Jensen på sagen.",
+   "spoken_hint": "Jeg sætter Anders Jensen på sagen."
+  },
+  {
+   "id": "standard-338",
+   "category": "navne_steder",
+   "text": "Jeg sætter Morten Sørensen på sagen.",
+   "spoken_hint": "Jeg sætter Morten Sørensen på sagen."
+  },
+  {
+   "id": "standard-339",
+   "category": "navne_steder",
+   "text": "Kunden hedder Mikkel Møller.",
+   "spoken_hint": "Kunden hedder Mikkel Møller."
+  },
+  {
+   "id": "standard-340",
+   "category": "navne_steder",
+   "text": "Vi har en opgave i Holbæk og en i Skanderborg i dag.",
+   "spoken_hint": "Vi har en opgave i Holbæk og en i Skanderborg i dag."
+  },
+  {
+   "id": "standard-341",
+   "category": "hilsen",
+   "text": "Hej, og tak fordi du ringer til {firma}. Du taler med en digital assistent, og jeg hjælper gerne.",
+   "spoken_hint": "Hej, og tak fordi du ringer til Firma. Du taler med en digital assistent, og jeg hjælper gerne."
+  },
+  {
+   "id": "standard-342",
+   "category": "hilsen",
+   "text": "Godmorgen. Hvad kan jeg gøre for dig i dag?",
+   "spoken_hint": "Godmorgen. Hvad kan jeg gøre for dig i dag?"
+  },
+  {
+   "id": "standard-343",
+   "category": "fortælling",
+   "text": "I weekenden var vi en tur ved stranden. Det regnede lidt om formiddagen, men om eftermiddagen kom solen frem, og så blev det en rigtig dejlig dag.",
+   "spoken_hint": "I weekenden var vi en tur ved stranden. Det regnede lidt om formiddagen, men om eftermiddagen kom solen frem, og så blev det en rigtig dejlig dag."
+  },
+  {
+   "id": "standard-344",
+   "category": "fortælling",
+   "text": "Vi har haft travlt i denne uge, men det går fint. De fleste opgaver bliver klaret samme dag, og resten tager vi fat på i morgen tidlig.",
+   "spoken_hint": "Vi har haft travlt i denne uge, men det går fint. De fleste opgaver bliver klaret samme dag, og resten tager vi fat på i morgen tidlig."
+  },
+  {
+   "id": "standard-345",
+   "category": "spørgsmål",
+   "text": "Passer det dig bedst om formiddagen eller om eftermiddagen?",
+   "spoken_hint": "Passer det dig bedst om formiddagen eller om eftermiddagen?"
+  },
+  {
+   "id": "standard-346",
+   "category": "spørgsmål",
+   "text": "Må jeg spørge, hvad det drejer sig om?",
+   "spoken_hint": "Må jeg spørge, hvad det drejer sig om?"
+  },
+  {
+   "id": "standard-347",
+   "category": "spørgsmål",
+   "text": "Kan du give mig et nummer, jeg kan ringe tilbage på?",
+   "spoken_hint": "Kan du give mig et nummer, jeg kan ringe tilbage på?"
+  },
+  {
+   "id": "standard-348",
+   "category": "tal",
+   "text": "Vi kan komme tirsdag den fjerde november klokken kvart over ni.",
+   "spoken_hint": "Vi kan komme tirsdag den fjerde november klokken kvart over ni."
+  },
+  {
+   "id": "standard-349",
+   "category": "tal",
+   "text": "Prisen er 2.350 kroner, og det er inklusive moms.",
+   "spoken_hint": "Prisen er to tusind tre hundrede og halvtreds kroner, og det er inklusive moms."
+  },
+  {
+   "id": "standard-350",
+   "category": "tal",
+   "text": "Mit nummer er 42 36 18 29.",
+   "spoken_hint": "Mit nummer er toogfyrre seksogtredive atten niogtyve."
+  },
+  {
+   "id": "standard-351",
+   "category": "steder",
+   "text": "Vi har kunder i Esbjerg, Randers, Næstved, Svendborg og Frederikshavn.",
+   "spoken_hint": "Vi har kunder i Esbjerg, Randers, Næstved, Svendborg og Frederikshavn."
+  },
+  {
+   "id": "standard-352",
+   "category": "forbehold",
+   "text": "Det kan jeg desværre ikke love dig i dag, men jeg skal nok undersøge det.",
+   "spoken_hint": "Det kan jeg desværre ikke love dig i dag, men jeg skal nok undersøge det."
+  },
+  {
+   "id": "standard-353",
+   "category": "forbehold",
+   "text": "Nej, der er ingen ekstra gebyrer, og det er helt uforpligtende.",
+   "spoken_hint": "Nej, der er ingen ekstra gebyrer, og det er helt uforpligtende."
+  },
+  {
+   "id": "standard-354",
+   "category": "forbehold",
+   "text": "Aftalen er ikke bekræftet endnu. Du får en besked, så snart den er på plads.",
+   "spoken_hint": "Aftalen er ikke bekræftet endnu. Du får en besked, så snart den er på plads."
+  },
+  {
+   "id": "standard-355",
+   "category": "afslutning",
+   "text": "Tusind tak for snakken. Hav en rigtig god dag, og på gensyn.",
+   "spoken_hint": "Tusind tak for snakken. Hav en rigtig god dag, og på gensyn."
+  },
+  {
+   "id": "standard-356",
+   "category": "tal",
+   "text": "Beløbet er 130 kr.. og det skal betales inden fjorten dage.",
+   "spoken_hint": "Beløbet er et hundrede og tredive kroner. og det skal betales inden fjorten dage."
+  },
+  {
+   "id": "standard-357",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 14.125 kroner.",
+   "spoken_hint": "Prisen ligger på omkring fjorten tusind et hundrede og femogtyve kroner."
+  },
+  {
+   "id": "standard-358",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 11.175 kroner.",
+   "spoken_hint": "Prisen ligger på omkring elleve tusind et hundrede og femoghalvfjerds kroner."
+  },
+  {
+   "id": "standard-359",
+   "category": "tal",
+   "text": "Beløbet er 7.000 kr.. og det skal betales inden fjorten dage.",
+   "spoken_hint": "Beløbet er syv tusind kroner. og det skal betales inden fjorten dage."
+  },
+  {
+   "id": "standard-360",
+   "category": "tal",
+   "text": "Ordrenummeret er 73673.",
+   "spoken_hint": "Ordrenummeret er treoghalvfjerds tusind seks hundrede og treoghalvfjerds."
+  },
+  {
+   "id": "standard-361",
+   "category": "tal",
+   "text": "Ordrenummeret er 20581.",
+   "spoken_hint": "Ordrenummeret er tyve tusind fem hundrede og enogfirs."
+  },
+  {
+   "id": "standard-362",
+   "category": "tal",
+   "text": "Det koster 50.000 kroner inklusive moms.",
+   "spoken_hint": "Det koster halvtreds tusind kroner inklusive moms."
+  },
+  {
+   "id": "standard-363",
+   "category": "tal",
+   "text": "Ordrenummeret er 59827.",
+   "spoken_hint": "Ordrenummeret er nioghalvtreds tusind otte hundrede og syvogtyve."
+  },
+  {
+   "id": "standard-364",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 540 kroner.",
+   "spoken_hint": "Prisen ligger på omkring fem hundrede og fyrre kroner."
+  },
+  {
+   "id": "standard-365",
+   "category": "tal",
+   "text": "Beløbet er 164.500 kr.. og det skal betales inden fjorten dage.",
+   "spoken_hint": "Beløbet er et hundrede og fireogtres tusind fem hundrede kroner. og det skal betales inden fjorten dage."
+  },
+  {
+   "id": "standard-366",
+   "category": "tal",
+   "text": "Tilbuddet lyder på 61.000 kroner i alt.",
+   "spoken_hint": "Tilbuddet lyder på enogtres tusind kroner i alt."
+  },
+  {
+   "id": "standard-367",
+   "category": "tal",
+   "text": "Du har 28 dage til at betale.",
+   "spoken_hint": "Du har otteogtyve dage til at betale."
+  },
+  {
+   "id": "standard-368",
+   "category": "tal",
+   "text": "Beløbet er 244.500 kr.. og det skal betales inden fjorten dage.",
+   "spoken_hint": "Beløbet er to hundrede og fireogfyrre tusind fem hundrede kroner. og det skal betales inden fjorten dage."
+  },
+  {
+   "id": "standard-369",
+   "category": "tal",
+   "text": "Ordrenummeret er 70119.",
+   "spoken_hint": "Ordrenummeret er halvfjerds tusind et hundrede og nitten."
+  },
+  {
+   "id": "standard-370",
+   "category": "tal",
+   "text": "Vi skal bruge 92 kvadratmeter materiale.",
+   "spoken_hint": "Vi skal bruge tooghalvfems kvadratmeter materiale."
+  },
+  {
+   "id": "standard-371",
+   "category": "tal",
+   "text": "Tilbuddet lyder på 8.900 kroner i alt.",
+   "spoken_hint": "Tilbuddet lyder på otte tusind ni hundrede kroner i alt."
+  },
+  {
+   "id": "standard-372",
+   "category": "tal",
+   "text": "Vi skal bruge 95 kvadratmeter materiale.",
+   "spoken_hint": "Vi skal bruge femoghalvfems kvadratmeter materiale."
+  },
+  {
+   "id": "standard-373",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 133.500 kroner.",
+   "spoken_hint": "Prisen ligger på omkring et hundrede og treogtredive tusind fem hundrede kroner."
+  },
+  {
+   "id": "standard-374",
+   "category": "tal",
+   "text": "Der er 12 ledige tider i næste uge.",
+   "spoken_hint": "Der er tolv ledige tider i næste uge."
+  },
+  {
+   "id": "standard-375",
+   "category": "tal",
+   "text": "Ordrenummeret er 33910.",
+   "spoken_hint": "Ordrenummeret er treogtredive tusind ni hundrede og ti."
+  },
+  {
+   "id": "standard-376",
+   "category": "tal",
+   "text": "Du har 4 dage til at betale.",
+   "spoken_hint": "Du har fire dage til at betale."
+  },
+  {
+   "id": "standard-377",
+   "category": "tal",
+   "text": "Du har 9 dage til at betale.",
+   "spoken_hint": "Du har ni dage til at betale."
+  },
+  {
+   "id": "standard-378",
+   "category": "tal",
+   "text": "Det koster 246.000 kroner inklusive moms.",
+   "spoken_hint": "Det koster to hundrede og seksogfyrre tusind kroner inklusive moms."
+  },
+  {
+   "id": "standard-379",
+   "category": "tal",
+   "text": "Det koster 190 kroner inklusive moms.",
+   "spoken_hint": "Det koster et hundrede og halvfems kroner inklusive moms."
+  },
+  {
+   "id": "standard-380",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 4.225 kroner.",
+   "spoken_hint": "Prisen ligger på omkring fire tusind to hundrede og femogtyve kroner."
+  },
+  {
+   "id": "standard-381",
+   "category": "tal",
+   "text": "Det koster 213.000 kroner inklusive moms.",
+   "spoken_hint": "Det koster to hundrede og tretten tusind kroner inklusive moms."
+  },
+  {
+   "id": "standard-382",
+   "category": "tal",
+   "text": "Du har 30 dage til at betale.",
+   "spoken_hint": "Du har tredive dage til at betale."
+  },
+  {
+   "id": "standard-383",
+   "category": "tal",
+   "text": "Det koster 188.500 kroner inklusive moms.",
+   "spoken_hint": "Det koster et hundrede og otteogfirs tusind fem hundrede kroner inklusive moms."
+  },
+  {
+   "id": "standard-384",
+   "category": "tal",
+   "text": "Du har 32 dage til at betale.",
+   "spoken_hint": "Du har toogtredive dage til at betale."
+  },
+  {
+   "id": "standard-385",
+   "category": "tal",
+   "text": "Beløbet er 21.375 kr.. og det skal betales inden fjorten dage.",
+   "spoken_hint": "Beløbet er enogtyve tusind tre hundrede og femoghalvfjerds kroner. og det skal betales inden fjorten dage."
+  },
+  {
+   "id": "standard-386",
+   "category": "tal",
+   "text": "Ordrenummeret er 26339.",
+   "spoken_hint": "Ordrenummeret er seksogtyve tusind tre hundrede og niogtredive."
+  },
+  {
+   "id": "standard-387",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 2.950 kroner.",
+   "spoken_hint": "Prisen ligger på omkring to tusind ni hundrede og halvtreds kroner."
+  },
+  {
+   "id": "standard-388",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 445 kroner.",
+   "spoken_hint": "Prisen ligger på omkring fire hundrede og femogfyrre kroner."
+  },
+  {
+   "id": "standard-389",
+   "category": "tal",
+   "text": "Beløbet er 790 kr.. og det skal betales inden fjorten dage.",
+   "spoken_hint": "Beløbet er syv hundrede og halvfems kroner. og det skal betales inden fjorten dage."
+  },
+  {
+   "id": "standard-390",
+   "category": "tal",
+   "text": "Ordrenummeret er 78068.",
+   "spoken_hint": "Ordrenummeret er otteoghalvfjerds tusind og otteogtres."
+  },
+  {
+   "id": "standard-391",
+   "category": "tal",
+   "text": "Beløbet er 555 kr.. og det skal betales inden fjorten dage.",
+   "spoken_hint": "Beløbet er fem hundrede og femoghalvtreds kroner. og det skal betales inden fjorten dage."
+  },
+  {
+   "id": "standard-392",
+   "category": "tal",
+   "text": "Du har 5 dage til at betale.",
+   "spoken_hint": "Du har fem dage til at betale."
+  },
+  {
+   "id": "standard-393",
+   "category": "tal",
+   "text": "Prisen ligger på omkring 17.250 kroner.",
+   "spoken_hint": "Prisen ligger på omkring sytten tusind to hundrede og halvtreds kroner."
+  },
+  {
+   "id": "standard-394",
+   "category": "tal",
+   "text": "Tilbuddet lyder på 475 kroner i alt.",
+   "spoken_hint": "Tilbuddet lyder på fire hundrede og femoghalvfjerds kroner i alt."
+  },
+  {
+   "id": "standard-395",
+   "category": "tid_dato",
+   "text": "Vi har en tid mandag den 21. april klokken 15.00.",
+   "spoken_hint": "Vi har en tid mandag den enogtyvende april klokken femten."
+  },
+  {
+   "id": "standard-396",
+   "category": "tid_dato",
+   "text": "Kan du fredag klokken 16?",
+   "spoken_hint": "Kan du fredag klokken seksten?"
+  },
+  {
+   "id": "standard-397",
+   "category": "tid_dato",
+   "text": "Montøren kommer den 16. november mellem kl. 14 og kl. 16.",
+   "spoken_hint": "Montøren kommer den sekstende november mellem klokken fjorten og klokken seksten."
+  },
+  {
+   "id": "standard-398",
+   "category": "tid_dato",
+   "text": "Kan du mandag klokken 15?",
+   "spoken_hint": "Kan du mandag klokken femten?"
+  },
+  {
+   "id": "standard-399",
+   "category": "tid_dato",
+   "text": "Fakturaen forfalder den 21. januar.",
+   "spoken_hint": "Fakturaen forfalder den enogtyvende januar."
+  },
+  {
+   "id": "standard-400",
+   "category": "tid_dato",
+   "text": "Din aftale er flyttet til onsdag kl. 14.45.",
+   "spoken_hint": "Din aftale er flyttet til onsdag klokken fjorten femogfyrre."
+  }
+ ],
+ "estimated_minutes": 23.3
+}

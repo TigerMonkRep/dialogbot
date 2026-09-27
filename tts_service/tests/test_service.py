@@ -42,7 +42,7 @@ def ref(tmp_path, monkeypatch):
 
 
 def _body(ref, version="v1", **kw):
-    b = {"voice": {"version_id": version, "engine": "chatterbox-multilingual", "model_repo": "ResembleAI/chatterbox",
+    b = {"voice": {"version_id": version, "engine": "chatterbox-multilingual", "model_repo": "CoRal-project/roest-v3-chatterbox-500m",
                    "model_revision": REV, "references": [ref], "settings": {"exaggeration": 0.5}},
          "text": "Hej, du taler med en digital assistent.", "language": "da", "format": "pcm_s16le",
          "sample_rate": 24000, "request_id": "req-00000001"}
@@ -116,3 +116,51 @@ def test_interleaved_voices_do_not_leak(monkeypatch, ref):
         b1 = c.post("/v1/synthesize", json=_body(ref, version="voice-b", request_id="req-00000011"), headers=H).content
         a2 = c.post("/v1/synthesize", json=_body(ref, version="voice-a", request_id="req-00000012"), headers=H).content
         assert a1 == a2 and a1 != b1
+
+
+def test_clean_trims_model_hiss_and_shortens_pauses_without_touching_speech(monkeypatch):
+    import numpy as np
+
+    from tts_service import engines
+    from tts_service.engines import clean
+
+    monkeypatch.setattr(engines, "speech_segments", lambda x, sr: None)  # level fallback: deterministic, no VAD model
+
+    sr = 24000
+    rng = np.random.default_rng(3)
+
+    def hiss(sec):
+        return (0.006 * rng.standard_normal(int(sr * sec))).astype(np.float32)  # ~ -44 dBFS, like the model's tails
+
+    def speech(sec):
+        t = np.arange(int(sr * sec)) / sr
+        return (0.2 * np.sin(2 * np.pi * 180 * t) * (1 + 0.3 * np.sin(2 * np.pi * 4 * t))).astype(np.float32)
+
+    x = np.concatenate([hiss(0.8), speech(1.0), hiss(1.3), speech(1.2), hiss(0.9)])
+    y = clean(x, sr)
+    assert 2.2 * sr < len(y) < 2.9 * sr  # tails cut, the 1.3 s gap shortened to <= 0.45 s
+    loud = np.abs(y) > 0.1
+    assert loud.sum() > 0.9 * (np.abs(x) > 0.1).sum()  # the speech itself survives
+    first = int(np.argmax(loud))
+    assert first < 0.1 * sr  # no long lead-in of hiss before the first word
+
+
+def test_designed_voice_loads_verified_conditioning_file(monkeypatch, tmp_path):
+    data = b"designed-conditioning-bytes"
+    key = "platform/voices/designet-jysk-mand/conds-abc.pt"
+    (tmp_path / "platform/voices/designet-jysk-mand").mkdir(parents=True)
+    (tmp_path / key).write_bytes(data)
+    monkeypatch.setenv("VOICE_STORAGE_DIR", str(tmp_path))
+    good = hashlib.sha256(data).hexdigest()
+    with TestClient(create_app(_cfg(monkeypatch))) as c:
+        b = _body({"key": "unused", "sha256": "0" * 64})
+        b["voice"].update(method="designed_blend", checkpoint_key=key, checkpoint_sha256=good, references=[])
+        r = c.post("/v1/synthesize", headers=H, json=b)
+        assert r.status_code == 200 and len(r.content) > 1000
+        b["voice"].update(version_id="v2", checkpoint_sha256="1" * 64)  # tampered file / wrong checksum
+        b["request_id"] = "req-00000002"
+        with pytest.raises(ValueError, match="checksum"):
+            c.post("/v1/synthesize", headers=H, json=b)
+        b["voice"].update(version_id="v3", checkpoint_key=None)
+        b["request_id"] = "req-00000003"
+        assert c.post("/v1/synthesize", headers=H, json=b).status_code == 422

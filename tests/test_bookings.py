@@ -163,7 +163,7 @@ def test_phone_booking_tools(api, client, two_workspaces, db, monkeypatch):
     monkeypatch.setenv("VAPI_SERVER_SECRET", secret)
     get_settings.cache_clear()
     _setup(api, t)
-    api.post(tok, f"/workspaces/{ws}/phone-numbers", {"e164": "+4570123456", "provider_number_id": "pn_book"})
+    api.map_number(ws, "+4570123456", "pn_book")
     h = {"authorization": f"Bearer {secret}"}
     a = client.post("/api/v1/webhooks/vapi", json={"message": {"type": "assistant-request", "call": {"phoneNumberId": "pn_book"}}},
                     headers=h).json()["assistant"]

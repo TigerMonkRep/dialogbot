@@ -54,7 +54,7 @@ export function GoalsForm({ wsId, goals, canEdit, aiReady = false }: { wsId: str
       </Field>
       {reception ? (
         <div className="grid gap-space-md md:grid-cols-2">
-          {cb("inbound_phone", "Indgående telefoni", "Assistenten tager telefonen på jeres nummer (via Vapi).")}
+          {cb("inbound_phone", "Indgående telefoni", "Assistenten tager telefonen på jeres nummer. I beholder nummeret og viderestiller.")}
           {cb("webchat", "Hjemmeside-webchat", "Widget på jeres hjemmeside.")}
           {cb("callback", "Bestilt callback", "Hører under reception – ikke en separat prisplan.")}
           {cb("booking", "Aftalebooking", "Valgfri. Kræver kalenderforbindelse.")}

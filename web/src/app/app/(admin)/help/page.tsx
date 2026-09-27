@@ -13,7 +13,7 @@ const SECTIONS: { icon: string; title: string; items: [string, string, string?][
   ] },
   { icon: "support_agent", title: "Reception, telefon og chat", items: [
     ["Receptionsmanuskript", "Bestem hilsen, hvad assistenten spørger om, og hvornår en medarbejder overtager. Gælder både telefon og chat.", "/app/reception"],
-    ["Telefon og dansk stemme", "Tilknyt jeres Vapi-nummer, vælg en dansk stemme og hør den, før I går live. Opkald lander i indbakken med transskription.", "/app/settings/telephony"],
+    ["Telefon og dansk stemme", "Behold jeres nummer og viderestil det til jeres Dialogbot-nummer. Vælg en dansk stemme, test forbindelsen og aktivér. Opkald lander i indbakken med transskription.", "/app/settings/telephony"],
     ["Webchat", "Slå widgetten til, godkend jeres domæner og indsæt koden på hjemmesiden. I kan overtage en samtale fra indbakken.", "/app/settings/webchat"],
   ] },
   { icon: "contact_support", title: "Henvendelser og afregning", items: [

@@ -80,8 +80,9 @@ def create_campaign(body: CampaignIn, request: Request, ctx: WorkspaceContext = 
     c = Campaign(workspace_id=ctx.workspace.id, name=body.name, created_by=ctx.user_id,
                  package_net_minor=service.PACKAGE_NET_MINOR, max_attempts=service.MAX_ATTEMPTS,
                  max_connected_seconds=service.MAX_CONNECTED_SECONDS)
-    if body.phone_number_id is None:  # default: the workspace's first active number
-        n = db.scalar(select(PhoneNumber).where(PhoneNumber.workspace_id == ctx.workspace.id, PhoneNumber.active)
+    if body.phone_number_id is None:  # default: the workspace's first number approved as caller ID
+        n = db.scalar(select(PhoneNumber).where(PhoneNumber.workspace_id == ctx.workspace.id, PhoneNumber.active,
+                                                PhoneNumber.status == "active", PhoneNumber.outbound_allowed)
                       .order_by(PhoneNumber.created_at))
         body.phone_number_id = n.id if n else None
     _apply(db, c, body, ctx.workspace.id)

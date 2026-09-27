@@ -1,6 +1,111 @@
 {
   "dataset": "CoRal-project/coral-tts",
-  "revision": null,
-  "status": "Ikke valgt endnu – kræver import (huggingface.co blokeret i udviklingsmiljøet).",
-  "speakers": {}
+  "revision": "3dd07186e806fdc3931a3d17b4a16373b2a81e8a",
+  "rule": "6–12 s, no QC flags, lowest noise floor, distinct sentences, not in test split",
+  "speakers": {
+    "mic": [
+      {
+        "id": "mic-train-00000-of-00025-000182",
+        "wav": "wav/mic/mic-train-00000-of-00025-000182.wav",
+        "wav_sha256": "3672c29785922031d9d9e3fe74fce97ef4f2037cbfa2258c266dc13fddec7079",
+        "duration": 7.575,
+        "noise_floor_db": -66.1,
+        "source_file": "train-00000-of-00025.parquet",
+        "row": 182,
+        "sample_rate": 44100
+      },
+      {
+        "id": "mic-train-00000-of-00025-000013",
+        "wav": "wav/mic/mic-train-00000-of-00025-000013.wav",
+        "wav_sha256": "7d85ddcd67d252c4b4d0ab148d86eb62d2bf5d9ef144e5e239f1b0c23fc02bd8",
+        "duration": 8.95,
+        "noise_floor_db": -65.9,
+        "source_file": "train-00000-of-00025.parquet",
+        "row": 13,
+        "sample_rate": 44100
+      },
+      {
+        "id": "mic-train-00000-of-00025-000028",
+        "wav": "wav/mic/mic-train-00000-of-00025-000028.wav",
+        "wav_sha256": "7bd0cca8784117383a553610876da2f9325db039e98e5ad4dc1e0ae855e42df2",
+        "duration": 9.046,
+        "noise_floor_db": -65.7,
+        "source_file": "train-00000-of-00025.parquet",
+        "row": 28,
+        "sample_rate": 44100
+      },
+      {
+        "id": "mic-train-00000-of-00025-000019",
+        "wav": "wav/mic/mic-train-00000-of-00025-000019.wav",
+        "wav_sha256": "9de0b33bb4a818c3efbc72598af0fabe641183119720737d8cbd29dd4a7151f5",
+        "duration": 11.879,
+        "noise_floor_db": -65.2,
+        "source_file": "train-00000-of-00025.parquet",
+        "row": 19,
+        "sample_rate": 44100
+      },
+      {
+        "id": "mic-train-00000-of-00025-000190",
+        "wav": "wav/mic/mic-train-00000-of-00025-000190.wav",
+        "wav_sha256": "6a41fb20017efae8c0df33cf4c6c05c846ac652b8d35ed659d3bed6a23b31bbb",
+        "duration": 9.372,
+        "noise_floor_db": -64.2,
+        "source_file": "train-00000-of-00025.parquet",
+        "row": 190,
+        "sample_rate": 44100
+      }
+    ],
+    "nic": [
+      {
+        "id": "nic-train-00024-of-00025-000027",
+        "wav": "wav/nic/nic-train-00024-of-00025-000027.wav",
+        "wav_sha256": "b098dee1121bb2b2d40303e97d5975d60d1879d08517bc2bc344578b640e9117",
+        "duration": 6.725,
+        "noise_floor_db": -73.8,
+        "source_file": "train-00024-of-00025.parquet",
+        "row": 27,
+        "sample_rate": 44100
+      },
+      {
+        "id": "nic-train-00024-of-00025-000064",
+        "wav": "wav/nic/nic-train-00024-of-00025-000064.wav",
+        "wav_sha256": "9201741220f1a5fa7e9aa06fbcd3540919bb75d541a2f3227ad40cf178a39cc9",
+        "duration": 6.758,
+        "noise_floor_db": -73.2,
+        "source_file": "train-00024-of-00025.parquet",
+        "row": 64,
+        "sample_rate": 44100
+      },
+      {
+        "id": "nic-train-00024-of-00025-000025",
+        "wav": "wav/nic/nic-train-00024-of-00025-000025.wav",
+        "wav_sha256": "de7e40774b101c83183fcc23dab3d93f27e33f44e5903aa95039d61e9c952662",
+        "duration": 8.876,
+        "noise_floor_db": -72.9,
+        "source_file": "train-00024-of-00025.parquet",
+        "row": 25,
+        "sample_rate": 44100
+      },
+      {
+        "id": "nic-train-00024-of-00025-000099",
+        "wav": "wav/nic/nic-train-00024-of-00025-000099.wav",
+        "wav_sha256": "1f9a0744aa9bf641836726916aacf4bacef8b4b43275234a782616aa8ab1965d",
+        "duration": 11.847,
+        "noise_floor_db": -72.9,
+        "source_file": "train-00024-of-00025.parquet",
+        "row": 99,
+        "sample_rate": 44100
+      },
+      {
+        "id": "nic-train-00024-of-00025-000033",
+        "wav": "wav/nic/nic-train-00024-of-00025-000033.wav",
+        "wav_sha256": "d5a1fe1a03e1dcb4eb3957c0373e5ee032f4088a0ef0527c51a70520c2271eb3",
+        "duration": 9.166,
+        "noise_floor_db": -72.7,
+        "source_file": "train-00024-of-00025.parquet",
+        "row": 33,
+        "sample_rate": 44100
+      }
+    ]
+  }
 }

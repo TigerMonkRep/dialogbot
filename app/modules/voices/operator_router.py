@@ -100,6 +100,8 @@ class ProfileIn(BaseModel):
     dialect_basis: str = ""
     age_description: str | None = Field(default=None, max_length=80)
     timbre: str | None = Field(default=None, max_length=120)
+    origin: str = Field(default="dataset_speaker", pattern="^(dataset_speaker|designed|customer_recorded|hired_speaker)$")
+    description: str = Field(default="", max_length=600)
     source: str = ""
     sample_text: str = Field(default="", max_length=300)
     visibility: str = Field(default="platform", pattern="^(platform|workspace)$")
@@ -113,6 +115,7 @@ class ProfilePatch(BaseModel):
     dialect_basis: str | None = None
     age_description: str | None = None
     timbre: str | None = None
+    description: str | None = Field(default=None, max_length=600)
     sample_text: str | None = Field(default=None, max_length=300)
 
 
@@ -199,17 +202,19 @@ async def upload_reference(profile_id: uuid.UUID, request: Request, source_id: s
 class VersionIn(BaseModel):
     engine: str = Field(default="chatterbox-multilingual", pattern="^[a-z0-9-]{3,40}$")
     method: str = Field(default="reference_conditioning",
-                        pattern="^(reference_conditioning|finetuned_checkpoint|trained_from_scratch)$")
+                        pattern="^(reference_conditioning|designed_blend|finetuned_checkpoint|trained_from_scratch)$")
     model_repo: str = Field(min_length=3, max_length=200)
     model_revision: str = Field(pattern="^[0-9a-f]{40}$")  # a pinned commit, never "main"
     checkpoint_key: str | None = None
     references: list[dict] = Field(default_factory=list, max_length=20)
     settings: dict = Field(default_factory=dict)
+    provenance: dict = Field(default_factory=dict)
     rights_record_ids: list[uuid.UUID] = Field(default_factory=list)
     notes: str = ""
 
 
-ALLOWED_SETTINGS = {"exaggeration": (0.25, 1.0), "cfg_weight": (0.0, 1.0), "temperature": (0.3, 1.2)}
+ALLOWED_SETTINGS = {"exaggeration": (0.25, 1.0), "cfg_weight": (0.0, 1.0), "temperature": (0.3, 1.2), "top_p": (0.5, 1.0),
+                    "min_p": (0.0, 0.3), "repetition_penalty": (1.0, 3.0)}
 
 
 @router.post("/voices/{profile_id}/versions", status_code=201)
@@ -226,9 +231,20 @@ def create_version(profile_id: uuid.UUID, body: VersionIn, request: Request, pri
         if data is None or hashlib.sha256(data).hexdigest() != r.get("sha256"):
             raise ValidationFailed("Referenceklip mangler eller har forkert checksum", field_errors=[{"field": "references"}])
         refs.append({k: r[k] for k in ("key", "sha256", "seconds", "source_id") if k in r})
+    provenance: dict = {}
     if body.method != "reference_conditioning":
         if not body.checkpoint_key or not body.checkpoint_key.startswith(prefix):
             raise ValidationFailed("Et checkpoint skal ligge under stemmens eget lager", field_errors=[{"field": "checkpoint_key"}])
+        data = storage.get(storage.check_key(body.checkpoint_key))
+        if data is None:
+            raise ValidationFailed("Checkpointet findes ikke i lageret", field_errors=[{"field": "checkpoint_key"}])
+        provenance = {"checkpoint_sha256": hashlib.sha256(data).hexdigest()}
+    if body.method == "designed_blend":
+        src = body.provenance.get("sources")
+        if not isinstance(src, list) or not all(isinstance(s, dict) and s.get("speaker_id") for s in src):
+            raise ValidationFailed("En designet stemme skal angive sine kildepersoner", field_errors=[{"field": "provenance"}])
+        allowed = ("dataset", "dataset_revision", "group", "sources", "distinctness", "measurements", "tool")
+        provenance |= {k: body.provenance[k] for k in allowed if k in body.provenance}
     settings = {}
     for k, val in body.settings.items():
         if k not in ALLOWED_SETTINGS or not isinstance(val, int | float):
@@ -242,6 +258,7 @@ def create_version(profile_id: uuid.UUID, body: VersionIn, request: Request, pri
     v = VoiceVersion(profile_id=p.id, version=n, engine=body.engine, method=body.method, model_repo=body.model_repo,
                      model_revision=body.model_revision, checkpoint_key=body.checkpoint_key, references=refs,
                      settings=settings, rights_record_ids=[str(x) for x in body.rights_record_ids], checks={},
+                     provenance=provenance,
                      notes=body.notes, created_by=principal.user.id)
     db.add(v)
     db.flush()

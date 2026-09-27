@@ -9,6 +9,7 @@ from sqlalchemy import (
     CheckConstraint,
     Date,
     DateTime,
+    Float,
     ForeignKey,
     Index,
     Integer,
@@ -566,10 +567,18 @@ class DailyReport(Base):
 
 
 class PhoneNumber(Base):
-    """A phone number routed to a workspace. The number is bought/imported at the provider by the
-    customer; this row only maps it (by E.164 and the provider's number id) to a workspace."""
+    """A provider number routed to exactly one workspace.
+
+    `platform`: bought and imported by Dialogbot under the workspace's technical sub-account; the customer only
+    sees the number to forward to. `legacy_customer`: mapped by hand before platform-managed telephony (kept
+    working, never used as a caller ID unless an operator allows it). The customer's own business number is not
+    a row here: it lives on TelephonySetup and only forwards to the destination."""
 
     __tablename__ = "phone_numbers"
+    __table_args__ = (
+        CheckConstraint("source in ('platform','legacy_customer')", name="ck_phone_numbers_source"),
+        CheckConstraint("status in ('provisioning','active','suspended','released')", name="ck_phone_numbers_status"),
+    )
 
     id: Mapped[uuid.UUID] = uuid_pk()
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
@@ -588,6 +597,13 @@ class PhoneNumber(Base):
     # Dialogbot voice for this assistant (overrides the workspace standard); NULL = workspace standard
     voice_profile_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("voice_profiles.id", ondelete="SET NULL", name="fk_phone_numbers_voice_profile"))
+    source: Mapped[str] = mapped_column(String(24), nullable=False, default="platform", server_default="legacy_customer")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="active", server_default="active")
+    telephony_account_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("telephony_accounts.id", ondelete="RESTRICT"))
+    provider_sid: Mapped[str | None] = mapped_column(String(64), unique=True)  # Twilio IncomingPhoneNumber SID
+    # May this number be used as caller ID for callbacks/campaigns? Only when the provider allows it for this
+    # customer; set by an operator. Inbound forwarding never implies it.
+    outbound_allowed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
     created_at: Mapped[datetime] = ts_now()
 
 
@@ -916,6 +932,8 @@ class VoiceProfile(Base):
         CheckConstraint("visibility in ('platform','workspace')", name="ck_voice_profiles_visibility"),
         CheckConstraint("(visibility = 'workspace') = (workspace_id is not null)", name="ck_voice_profiles_scope"),
         CheckConstraint("gender in ('female','male','unknown')", name="ck_voice_profiles_gender"),
+        CheckConstraint("origin in ('dataset_speaker','designed','customer_recorded','hired_speaker')",
+                        name="ck_voice_profiles_origin"),
     )
 
     id: Mapped[uuid.UUID] = uuid_pk()
@@ -927,6 +945,11 @@ class VoiceProfile(Base):
     dialect_basis: Mapped[str] = mapped_column(Text, nullable=False, default="")  # why the category was chosen
     age_description: Mapped[str | None] = mapped_column(String(80))
     timbre: Mapped[str | None] = mapped_column(String(120))
+    # dataset_speaker: one real speaker from an open dataset · designed: blended from several speakers, belongs to no
+    # one · customer_recorded: recorded by (or for) a customer with the speaker's consent · hired_speaker: under contract
+    origin: Mapped[str] = mapped_column(String(24), nullable=False, default="dataset_speaker",
+                                        server_default="dataset_speaker")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")  # shown to customers
     source: Mapped[str] = mapped_column(Text, nullable=False, default="")
     visibility: Mapped[str] = mapped_column(String(12), nullable=False, default="platform")
     workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"))
@@ -945,7 +968,7 @@ class VoiceVersion(Base):
     __table_args__ = (
         UniqueConstraint("profile_id", "version", name="uq_voice_versions_number"),
         CheckConstraint(f"status in {VOICE_VERSION_STATUSES}", name="ck_voice_versions_status"),
-        CheckConstraint("method in ('reference_conditioning','finetuned_checkpoint','trained_from_scratch')",
+        CheckConstraint("method in ('reference_conditioning','designed_blend','finetuned_checkpoint','trained_from_scratch')",
                         name="ck_voice_versions_method"),
     )
 
@@ -959,6 +982,8 @@ class VoiceVersion(Base):
     model_revision: Mapped[str] = mapped_column(String(80), nullable=False)
     checkpoint_key: Mapped[str | None] = mapped_column(String(300))  # only for a real fine-tuned checkpoint
     references: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)  # [{key, sha256, seconds, source_id}]
+    # designed_blend: source speakers, dataset revision, checkpoint sha256 and the distinctness measurement
+    provenance: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb"))
     settings: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     rights_record_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     checks: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)  # {name: {status, at, by, evidence}}
@@ -1018,3 +1043,188 @@ class VoiceUsage(Base):
     kind: Mapped[str] = mapped_column(String(16), nullable=False)  # preview | call
     requests: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     characters: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+
+class OwnVoiceProject(Base):
+    """A customer recording their own voice from a Dialogbot manuscript. The speaker's consent is captured in the
+    app (typed name + accepted text, stored verbatim) and registered as a speaker_agreement rights record that a
+    platform operator reviews before the voice can be used. Recordings live in private storage under the
+    workspace prefix; withdrawing deletes them."""
+
+    __tablename__ = "own_voice_projects"
+    __table_args__ = (
+        CheckConstraint("manuscript in ('kort','standard')", name="ck_own_voice_projects_manuscript"),
+        CheckConstraint("status in ('recording','submitted','withdrawn')", name="ck_own_voice_projects_status"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    speaker_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    manuscript: Mapped[str] = mapped_column(String(16), nullable=False, default="kort")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="recording")
+    consent: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)  # text, version, typed name, time, user
+    rights_record_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("voice_rights_records.id", ondelete="SET NULL"))
+    profile_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("voice_profiles.id", ondelete="SET NULL"))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    withdrawn_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class OwnVoiceRecording(Base):
+    """One recorded manuscript sentence (WAV in private storage) with its automatic quality check."""
+
+    __tablename__ = "own_voice_recordings"
+    __table_args__ = (UniqueConstraint("project_id", "sentence_id", name="uq_own_voice_recordings_sentence"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    project_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("own_voice_projects.id", ondelete="CASCADE"), nullable=False)
+    sentence_id: Mapped[str] = mapped_column(String(40), nullable=False)
+    key: Mapped[str] = mapped_column(String(300), nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    seconds: Mapped[float] = mapped_column(Float, nullable=False)
+    qc: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    created_at: Mapped[datetime] = ts_now()
+
+
+
+class TelephonyAccount(Base):
+    """A provider account Dialogbot controls: the platform's main Twilio account/Vapi org, or a technical Twilio
+    sub-account per workspace (usage billed to the main account). Credentials are never stored here: the main
+    account's credentials live in the server's secret management and manage sub-accounts by SID."""
+
+    __tablename__ = "telephony_accounts"
+    __table_args__ = (
+        CheckConstraint("provider in ('twilio','vapi')", name="ck_telephony_accounts_provider"),
+        CheckConstraint("kind in ('main','subaccount')", name="ck_telephony_accounts_kind"),
+        CheckConstraint("status in ('active','suspended','closed')", name="ck_telephony_accounts_status"),
+        UniqueConstraint("provider", "external_id", name="uq_telephony_accounts_external"),
+        Index("uq_telephony_accounts_workspace_sub", "workspace_id", "provider", unique=True,
+              postgresql_where=text("kind = 'subaccount'")),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    provider: Mapped[str] = mapped_column(String(16), nullable=False)
+    kind: Mapped[str] = mapped_column(String(16), nullable=False)
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="RESTRICT"))
+    external_id: Mapped[str] = mapped_column(String(64), nullable=False)  # Twilio AC… SID / Vapi org id
+    friendly_name: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="active")
+    created_at: Mapped[datetime] = ts_now()
+
+
+class TelephonySetup(Base):
+    """The customer's telephony setup for one workspace: their existing business number (kept at their own
+    carrier), its verification, required company documentation, the assigned Dialogbot destination, tests and
+    activation. The customer-facing status is derived from this row (see telephony/platform.py)."""
+
+    __tablename__ = "telephony_setups"
+    __table_args__ = (
+        CheckConstraint("subscription_type in ('mobile','landline','ip_pbx','unknown')", name="ck_telephony_setups_subscription"),
+        CheckConstraint("forwarding_mode in ('always','no_answer','busy_or_no_answer')", name="ck_telephony_setups_forwarding"),
+        CheckConstraint("documents_status in ('not_required','missing','submitted','approved','rejected')",
+                        name="ck_telephony_setups_documents"),
+        CheckConstraint("state in ('draft','provisioning','provisioned','active','paused')", name="ck_telephony_setups_state"),
+    )
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    business_number: Mapped[str | None] = mapped_column(String(20))
+    business_number_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    business_number_verified_by: Mapped[str | None] = mapped_column(String(60))  # code_call | operator:<user id>
+    verify_code_hash: Mapped[str | None] = mapped_column(String(128))
+    verify_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    verify_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    verify_sent: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)  # timestamps (rate limit)
+    subscription_type: Mapped[str] = mapped_column(String(16), nullable=False, default="unknown")
+    carrier: Mapped[str] = mapped_column(String(80), nullable=False, default="")
+    forwarding_mode: Mapped[str] = mapped_column(String(20), nullable=False, default="busy_or_no_answer")
+    wants_new_number: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    # Company documentation for a Danish local destination number (Twilio regulatory bundle)
+    company_name: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    cvr: Mapped[str | None] = mapped_column(String(16))
+    company_address: Mapped[str] = mapped_column(String(300), nullable=False, default="")
+    document_key: Mapped[str | None] = mapped_column(String(300))  # private storage, never public
+    documents_status: Mapped[str] = mapped_column(String(16), nullable=False, default="missing")
+    regulatory_bundle_sid: Mapped[str | None] = mapped_column(String(64))
+    regulatory_address_sid: Mapped[str | None] = mapped_column(String(64))
+    regulatory_note: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    state: Mapped[str] = mapped_column(String(16), nullable=False, default="draft")
+    destination_number_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("phone_numbers.id", ondelete="SET NULL"))
+    agreement_version: Mapped[int | None] = mapped_column(Integer)  # the accepted price agreement it rests on
+    last_test_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("telephony_tests.id", ondelete="SET NULL",
+                                                                      use_alter=True, name="fk_telephony_setups_last_test"))
+    activated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    activated_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
+                                                 onupdate=func.now())
+
+
+class TelephonyTest(Base):
+    """A test call window: a call to the workspace's destination while it is open is the test. It passes only
+    when the call reached this workspace's number, was stored in this workspace and did not loop."""
+
+    __tablename__ = "telephony_tests"
+    __table_args__ = (CheckConstraint("status in ('waiting','passed','failed','expired')", name="ck_telephony_tests_status"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="waiting")
+    simulated: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    destination_number_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("phone_numbers.id", ondelete="SET NULL"))
+    called_business_number: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)  # stated by customer
+    provider_call_id: Mapped[str | None] = mapped_column(String(100))
+    call_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("calls.id", ondelete="SET NULL"))
+    result: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    started_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    started_at: Mapped[datetime] = ts_now()
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class TelephonyJob(Base):
+    """Re-runnable provisioning step with an idempotency key. External calls are made only after checking the
+    provider for a resource carrying the same key, so a timeout and retry never buys or creates twice."""
+
+    __tablename__ = "telephony_jobs"
+    __table_args__ = (
+        CheckConstraint("status in ('pending','running','waiting','succeeded','failed')", name="ck_telephony_jobs_status"),
+        UniqueConstraint("idempotency_key", name="uq_telephony_jobs_key"),
+        Index("ix_telephony_jobs_due", "status", "next_attempt_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    kind: Mapped[str] = mapped_column(String(32), nullable=False)  # provision_destination
+    idempotency_key: Mapped[str] = mapped_column(String(120), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="pending")
+    step: Mapped[str] = mapped_column(String(32), nullable=False, default="start")
+    state: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)  # progress (SIDs/ids), never secrets
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_error: Mapped[str] = mapped_column(Text, nullable=False, default="")  # operator-only
+    waiting_for: Mapped[str] = mapped_column(String(40), nullable=False, default="")
+    next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
+                                                 onupdate=func.now())
+
+
+class TelephonyCost(Base):
+    """Internal provider cost per workspace (Vapi call cost, number rental). Operational bookkeeping only: it is
+    never added to the customer's invoice, which follows the customer's Dialogbot agreement."""
+
+    __tablename__ = "telephony_costs"
+    __table_args__ = (UniqueConstraint("provider", "reference", "kind", name="uq_telephony_costs_ref"),
+                      Index("ix_telephony_costs_ws", "workspace_id", "occurred_at"))
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    provider: Mapped[str] = mapped_column(String(16), nullable=False)
+    kind: Mapped[str] = mapped_column(String(32), nullable=False)  # call | number_purchase | verification_call
+    reference: Mapped[str] = mapped_column(String(120), nullable=False)
+    amount_micros: Mapped[int | None] = mapped_column(BigInteger)  # 1/1,000,000 of the currency unit; None = unknown
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="USD")
+    details: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    occurred_at: Mapped[datetime] = ts_now()

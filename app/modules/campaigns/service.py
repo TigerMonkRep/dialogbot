@@ -175,12 +175,15 @@ def outbound_problem(db: OrmSession, c: Campaign) -> str | None:
     """Why the campaign cannot call now (None = ready). Honest about missing configuration."""
     s = get_settings()
     if not s.vapi_api_key or not s.vapi_server_secret:
-        return "Udgående opkald kræver en Vapi-konto på serveren (VAPI_API_KEY og VAPI_SERVER_SECRET)."
+        return "Udgående opkald er ikke sat op hos Dialogbot endnu. Vi kontakter jer, når det er klar."
     n = db.get(PhoneNumber, c.phone_number_id) if c.phone_number_id else None
     if n is None or n.workspace_id != c.workspace_id or not n.active:
         return "Vælg hvilket af jeres telefonnumre, der skal ringe ud."
-    if not n.provider_number_id:
-        return "Nummeret mangler Vapis nummer-id (Indstillinger → Telefoni)."
+    if not n.provider_number_id or n.status != "active":
+        return "Jeres Dialogbot-nummer er ikke klar endnu (Indstillinger → Telefoni)."
+    if not n.outbound_allowed:
+        return ("Nummeret er ikke godkendt til udgående opkald endnu. Dialogbot godkender afsendernumre, når "
+                "teleleverandøren tillader det for jer.")
     return None
 
 

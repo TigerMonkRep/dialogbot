@@ -128,20 +128,21 @@ function References({ profileId }: { profileId: string }) {
 
 function NewVersion({ p, rights }: { p: Profile; rights: Rights[] }) {
   const router = useRouter();
-  const [f, setF] = useState({ model_revision: "", references: "", exaggeration: "0.5", cfg_weight: "0.5", rights: rights.map((r) => r.id) });
+  const [f, setF] = useState({ model_repo: "CoRal-project/roest-v3-chatterbox-500m", model_revision: "", references: "", temperature: "0.7", cfg_weight: "0.5", rights: rights.map((r) => r.id) });
   const save = useSubmit(async () => {
     const refs = f.references.trim() ? f.references.trim().split("\n").map((l) => JSON.parse(l)) : [];
-    await api(`/operator/voices/${p.id}/versions`, { method: "POST", body: JSON.stringify({ model_repo: "ResembleAI/chatterbox", model_revision: f.model_revision.trim(),
-      references: refs, settings: { exaggeration: Number(f.exaggeration), cfg_weight: Number(f.cfg_weight) }, rights_record_ids: f.rights }) });
+    await api(`/operator/voices/${p.id}/versions`, { method: "POST", body: JSON.stringify({ model_repo: f.model_repo.trim(), model_revision: f.model_revision.trim(),
+      references: refs, settings: { temperature: Number(f.temperature), cfg_weight: Number(f.cfg_weight) }, rights_record_ids: f.rights }) });
     router.refresh();
   });
   return (
     <details className="rounded-lg bg-surface-container-low p-space-sm"><summary className="font-label-md text-label-md cursor-pointer">Ny uforanderlig version</summary>
       <div className="flex flex-col gap-space-sm mt-space-sm">
+        <Field label="Model (Hugging Face-repo)"><Input value={f.model_repo} onChange={(e) => setF({ ...f, model_repo: e.target.value })} /></Field>
         <Field label="Modelrevision (40 tegn commit-hash)"><Input value={f.model_revision} onChange={(e) => setF({ ...f, model_revision: e.target.value })} /></Field>
         <Field label="Referenceklip (én JSON pr. linje fra upload)"><Textarea value={f.references} onChange={(e) => setF({ ...f, references: e.target.value })} /></Field>
         <div className="grid grid-cols-2 gap-space-sm">
-          <Field label="exaggeration"><Input type="number" step="0.05" value={f.exaggeration} onChange={(e) => setF({ ...f, exaggeration: e.target.value })} /></Field>
+          <Field label="temperature"><Input type="number" step="0.05" value={f.temperature} onChange={(e) => setF({ ...f, temperature: e.target.value })} /></Field>
           <Field label="cfg_weight"><Input type="number" step="0.05" value={f.cfg_weight} onChange={(e) => setF({ ...f, cfg_weight: e.target.value })} /></Field>
         </div>
         <fieldset><legend className="font-label-md text-label-md">Rettighedsposter</legend>{rights.map((r) => (

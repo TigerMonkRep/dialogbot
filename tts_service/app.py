@@ -39,8 +39,9 @@ class Config:
     def __init__(self) -> None:
         self.token = os.environ.get("TTS_SERVICE_TOKEN", "")
         self.engine = os.environ.get("TTS_ENGINE", "chatterbox")
-        self.model_repo = os.environ.get("MODEL_REPO", "ResembleAI/chatterbox")
+        self.model_repo = os.environ.get("MODEL_REPO", engines.DEFAULT_REPO)
         self.model_revision = os.environ.get("MODEL_REVISION", "")
+        self.model_t3 = os.environ.get("MODEL_T3", engines.DEFAULT_T3)
         self.device = os.environ.get("TTS_DEVICE", "cuda")
         self.queue_limit = int(os.environ.get("TTS_QUEUE_LIMIT", "8"))
         self.queue_timeout = float(os.environ.get("TTS_QUEUE_TIMEOUT", "10"))
@@ -54,9 +55,11 @@ class Config:
 class VoiceIn(BaseModel):
     version_id: str
     engine: str
+    method: str = "reference_conditioning"
     model_repo: str
     model_revision: str
     checkpoint_key: str | None = None
+    checkpoint_sha256: str | None = None
     references: list[dict] = Field(default_factory=list)
     settings: dict = Field(default_factory=dict)
 
@@ -78,7 +81,7 @@ class State:
             self.engine = engines.FakeEngine(cfg.model_repo, cfg.model_revision or "f" * 40)
         else:
             self.engine = engines.ChatterboxEngine(cfg.model_repo, cfg.model_revision, cfg.device,
-                                                   os.environ.get("HF_HOME"))
+                                                   os.environ.get("HF_HOME"), t3_file=cfg.model_t3)
         self.ready = False
         self.waiting = 0
         self.slot = asyncio.Semaphore(1)
@@ -125,8 +128,8 @@ def create_app(cfg: Config | None = None) -> FastAPI:
     def ready(authorization: str | None = Header(default=None)):
         auth(authorization)
         body = {"ready": state.ready, "engine": state.engine.name, "model_repo": cfg.model_repo,
-                "model_revision": state.engine.model_revision, "watermark": state.engine.watermark,
-                "simulated": state.engine.simulated, "queue": state.waiting}
+                "model_revision": state.engine.model_revision, "model_t3": getattr(state.engine, "t3_file", None),
+                "watermark": state.engine.watermark, "simulated": state.engine.simulated, "queue": state.waiting}
         return JSONResponse(body, status_code=200 if state.ready else 503)
 
     @app.get("/metrics")
@@ -151,15 +154,22 @@ def create_app(cfg: Config | None = None) -> FastAPI:
         return {"cancelled": request_id}
 
     def voice_state(v: VoiceIn) -> engines.VoiceState:
-        key = hashlib.sha256((v.version_id + "|" + "|".join(r.get("sha256", "") for r in v.references) + "|" +
+        key = hashlib.sha256((v.version_id + "|" + (v.checkpoint_sha256 or "") + "|" +
+                              "|".join(r.get("sha256", "") for r in v.references) + "|" +
                               repr(sorted(v.settings.items()))).encode()).hexdigest()
         if key in state.voices:
             state.voices.move_to_end(key)
             return state.voices[key]
-        ref_path = None
-        if v.references:
-            ref_path = str(refs.fetch(v.references[0]["key"], v.references[0]["sha256"], state.refdir))
-        vs = state.engine.prepare_voice(key, ref_path, v.settings)
+        if v.method == "designed_blend":  # precomputed conditioning (a voice that belongs to no one person)
+            if not v.checkpoint_key or not v.checkpoint_sha256:
+                raise HTTPException(422, "designed voice without checkpoint")
+            path = refs.fetch(v.checkpoint_key, v.checkpoint_sha256, state.refdir, suffix=".pt")
+            vs = state.engine.load_voice(key, str(path), v.settings)
+        else:
+            ref_path = None
+            if v.references:
+                ref_path = str(refs.fetch(v.references[0]["key"], v.references[0]["sha256"], state.refdir))
+            vs = state.engine.prepare_voice(key, ref_path, v.settings)
         state.voices[key] = vs
         while len(state.voices) > cfg.voice_cache:
             state.voices.popitem(last=False)
@@ -172,6 +182,8 @@ def create_app(cfg: Config | None = None) -> FastAPI:
             if body.request_id in state.cancelled:
                 raise HTTPException(409, "cancelled")
             audio = state.engine.generate(vs, body.text)
+        if not state.engine.simulated:
+            audio = engines.clean(audio, state.engine.sample_rate)
         seconds = len(audio) / state.engine.sample_rate
         audio = engines.resample(audio, state.engine.sample_rate, body.sample_rate)
         return engines.to_pcm16(audio), int((time.monotonic() - t0) * 1000), seconds
@@ -189,8 +201,10 @@ def create_app(cfg: Config | None = None) -> FastAPI:
             raise HTTPException(413, "text too long for one unit")
         if body.voice.model_repo != cfg.model_repo or body.voice.model_revision != state.engine.model_revision:
             raise HTTPException(409, "voice version was approved for another model revision")
-        if body.voice.checkpoint_key:
+        if body.voice.checkpoint_key and body.voice.method != "designed_blend":
             raise HTTPException(501, "fine-tuned checkpoints are not loaded by this service build")
+        if body.voice.method == "designed_blend" and not (body.voice.checkpoint_key and body.voice.checkpoint_sha256):
+            raise HTTPException(422, "designed voice without checkpoint")
         if state.waiting >= cfg.queue_limit:
             return JSONResponse({"detail": "busy"}, status_code=503, headers={"retry-after": "1"})
         state.waiting += 1

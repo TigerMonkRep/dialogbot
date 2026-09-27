@@ -38,13 +38,15 @@ def capabilities() -> list[Capability]:
                     else "Resend-adapter: 'sent' = accepteret af udbyder; levering/bounce/klage kommer via signeret webhook.")),
         Capability("telephony.inbound", "Indgående telefoni / viderestilling",
                    "available" if s.vapi_server_secret else "not_implemented", s.app_env,
-                   "Vapi-stemmeassistent på jeres egne numre; svarer kun ud fra godkendt viden."
-                   if s.vapi_server_secret else "Kræver en Vapi-konto og VAPI_SERVER_SECRET; intet nummer er forbundet."),
+                   "Dialogbot står for telefonforbindelsen. I viderestiller jeres eget nummer; assistenten svarer kun ud "
+                   "fra godkendt viden. Om jeres telefon er aktiv, står under Indstillinger → Telefoni."
+                   if s.vapi_server_secret else "Telefoni er ikke sat op hos Dialogbot endnu. Intet nummer er forbundet."),
         Capability("telephony.outbound", "Udgående kampagneopkald",
                    "available" if (s.vapi_api_key and s.vapi_server_secret) else "not_implemented", s.app_env,
-                   "Vapi ringer op fra jeres eget nummer inden for kampagnens tidsrum. Betaling starter aldrig opkald – "
-                   "kun en administrator kan starte en kampagne." if (s.vapi_api_key and s.vapi_server_secret)
-                   else "Kræver VAPI_API_KEY og VAPI_SERVER_SECRET på serveren. Kampagner kan forberedes, men ikke startes."),
+                   "Assistenten ringer op fra et afsendernummer, som Dialogbot har godkendt for jer, inden for kampagnens "
+                   "tidsrum. Betaling starter aldrig opkald – kun en administrator kan starte en kampagne."
+                   if (s.vapi_api_key and s.vapi_server_secret)
+                   else "Udgående opkald er ikke sat op hos Dialogbot endnu. Kampagner kan forberedes, men ikke startes."),
         Capability("voice.dialogbot", "Dialogbots danske stemmer (egen talesyntese)",
                    {"http": "available", "fake": "simulated"}.get(s.tts_engine, "not_implemented"), s.app_env,
                    {"http": "Separat taletjeneste (Chatterbox Multilingual, dansk). Kun godkendte, aktive stemmer kan vælges.",
@@ -62,7 +64,7 @@ def capabilities() -> list[Capability]:
                    ai_note),
         Capability("ai.conversation", "AI-samtale med kunder", ai_status, s.app_env,
                    ("Kunderne taler med assistenten i web-widgetten"
-                    + (" og i telefonen (Vapi, dansk transskribering)" if s.vapi_server_secret else "")
+                    + (" og i telefonen (dansk transskribering)" if s.vapi_server_secret else "")
                     + ". Svarer kun ud fra godkendt viden.")
                    if ai_status != "not_implemented" else "Kræver en AI-udbyder (AI_PROVIDER)."),
         Capability("knowledge.source_import", "Forslag fra hjemmesiden", ai_status, s.app_env,

@@ -43,7 +43,7 @@ def test_script_roles_versioning_and_prompt(api, client, two_workspaces, fake_ai
     api.post(tok, f"/workspaces/{ws}/assistant/preview", {"message": "Hej"})
     assert "Sofie" in fake_ai.last_system and "De/Dem" in fake_ai.last_system and "vandskade" in fake_ai.last_system
     # … and the phone greeting, which always discloses that the caller talks to a machine.
-    api.post(tok, f"/workspaces/{ws}/phone-numbers", {"e164": "+4570123456", "provider_number_id": "pn_script"})
+    api.map_number(ws, "+4570123456", "pn_script")
     a = client.post("/api/v1/webhooks/vapi", json={"message": {"type": "assistant-request", "call": {"phoneNumberId": "pn_script"}}},
                     headers={"authorization": f"Bearer {SECRET}"}).json()["assistant"]
     assert a["firstMessage"] == "Goddag, Fjord Gulvservice ApS. Du taler med en digital assistent."

@@ -77,6 +77,22 @@ class Settings(BaseSettings):
     cvr_username: str | None = Field(default=None, alias="CVR_USERNAME")
     cvr_password: str | None = Field(default=None, alias="CVR_PASSWORD")
     cvr_url: str = Field(default="http://distribution.virk.dk/cvr-permanent/virksomhed/_search", alias="CVR_URL")
+    # Danish voice library. The speech engine is a separate service (tts_service/), never the API process.
+    # TTS_ENGINE: none | http (the real service at TTS_SERVICE_URL) | fake (dev/test double; audio is a tone
+    # and every result is labelled simulated).
+    tts_engine: Literal["none", "http", "fake"] = Field(default="none", alias="TTS_ENGINE")
+    tts_service_url: str | None = Field(default=None, alias="TTS_SERVICE_URL")
+    tts_service_token: str | None = Field(default=None, alias="TTS_SERVICE_TOKEN")
+    tts_timeout_seconds: float = Field(default=20.0, alias="TTS_TIMEOUT_SECONDS")
+    # Private object storage for reference clips, agreements and preview cache: local (dev/test) | supabase
+    voice_storage: Literal["local", "supabase"] = Field(default="local", alias="VOICE_STORAGE")
+    voice_storage_dir: str = Field(default="var/voice-store", alias="VOICE_STORAGE_DIR")
+    voice_bucket: str = Field(default="voice-private", alias="VOICE_BUCKET")
+    supabase_url: str | None = Field(default=None, alias="SUPABASE_URL")
+    supabase_service_role_key: str | None = Field(default=None, alias="SUPABASE_SERVICE_ROLE_KEY")
+    voice_preview_daily_limit: int = Field(default=40, alias="VOICE_PREVIEW_DAILY_LIMIT")
+    voice_preview_max_chars: int = Field(default=200, alias="VOICE_PREVIEW_MAX_CHARS")
+    voice_call_daily_char_limit: int = Field(default=400_000, alias="VOICE_CALL_DAILY_CHAR_LIMIT")
     # Spend guard: max AI replies per workspace per 24 h in the public web widget.
     webchat_daily_reply_limit: int = Field(default=300, alias="WEBCHAT_DAILY_REPLY_LIMIT")
 
@@ -104,6 +120,12 @@ class Settings(BaseSettings):
             raise ValueError("AI_PROVIDER=anthropic requires ANTHROPIC_API_KEY")
         if self.ai_provider == "fake" and self.app_env not in ("dev", "test"):
             raise ValueError(f"AI_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
+        if self.tts_engine == "fake" and self.app_env not in ("dev", "test"):
+            raise ValueError(f"TTS_ENGINE=fake is a test double and is not allowed when APP_ENV={self.app_env}")
+        if self.tts_engine == "http" and not (self.tts_service_url and self.tts_service_token):
+            raise ValueError("TTS_ENGINE=http requires TTS_SERVICE_URL and TTS_SERVICE_TOKEN")
+        if self.voice_storage == "supabase" and not (self.supabase_url and self.supabase_service_role_key):
+            raise ValueError("VOICE_STORAGE=supabase requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
         if self.auth_provider == "external":
             raise ValueError(
                 "AUTH_PROVIDER=external is reserved for a future OIDC integration and is not "

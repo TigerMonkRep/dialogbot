@@ -52,7 +52,11 @@ CHECKS: dict[str, CheckDefinition] = {
                         description="Mindst én godkendt ydelse og godkendte åbningstider findes."),
         CheckDefinition("knowledge.assistant_endpoint", "Assistentens vidensendpoint leverer kun godkendt viden",
                         ("knowledge",), description="Server-selvtest af det aktive vidensudtræk."),
-        CheckDefinition("telephony.test_call", "Prøveopkald til din mobil", ("goals", "knowledge", "integrations"),
+        CheckDefinition("voice.heard", "Valgt stemme er afprøvet", ("voice",), capability="voice.dialogbot",
+                        required_when=("inbound_phone", "campaigns"),
+                        description="Arbejdsrummets standardstemme er aktiv, og dens standardprøve er afspillet efter "
+                                    "seneste ændring af stemme eller udtaleordbog. Erstatter ikke et prøveopkald."),
+        CheckDefinition("telephony.test_call", "Prøveopkald til din mobil", ("goals", "knowledge", "integrations", "voice"),
                         capability="telephony.inbound", required_when=("inbound_phone",),
                         description="Består, når et aktivt nummer har modtaget et opkald inden for 30 dage."),
         CheckDefinition("telephony.forwarding", "Viderestilling fra eksisterende nummer",
@@ -65,7 +69,7 @@ CHECKS: dict[str, CheckDefinition] = {
                         capability="webchat", required_when=("webchat",),
                         description="Widgetten er slået til, har godkendte domæner, og chatvinduet er åbnet på et af dem "
                                     "inden for de seneste 30 dage."),
-        CheckDefinition("campaign.test_call", "Kampagnetest-opkald", ("goals", "knowledge", "integrations"),
+        CheckDefinition("campaign.test_call", "Kampagnetest-opkald", ("goals", "knowledge", "integrations", "voice"),
                         capability="telephony.outbound", required_when=("campaigns",),
                         description="Består, når en kampagne har haft mindst én besvaret samtale inden for de seneste 30 dage."),
     ]
@@ -153,7 +157,12 @@ def _evaluate(db: OrmSession, workspace_id: uuid.UUID, key: str) -> tuple[bool, 
 
         numbers = db.scalars(select(PhoneNumber).where(PhoneNumber.workspace_id == workspace_id,
                                                        PhoneNumber.active.is_(True))).all()
+        from app.models import WorkspaceVoiceSettings
+
         since = _now() - timedelta(days=30)
+        voice = db.get(WorkspaceVoiceSettings, workspace_id)
+        if key == "telephony.test_call" and voice is not None and voice.updated_at > since:
+            since = voice.updated_at  # a test call only counts if it was made with the current voice setup
         last = db.scalar(select(Call).where(Call.workspace_id == workspace_id, Call.created_at >= since)
                          .order_by(Call.created_at.desc()).limit(1))
         return bool(numbers) and last is not None, {
@@ -189,6 +198,18 @@ def _evaluate(db: OrmSession, workspace_id: uuid.UUID, key: str) -> tuple[bool, 
             "calendar_connected": bool(bs and bs.busy_ics_url), "calendar_error": bs.busy_error if bs else None,
             "calendar_synced_at": bs.busy_synced_at.isoformat() if bs and bs.busy_synced_at else None,
         }
+    if key == "voice.heard":
+        from app.models import WorkspaceVoiceSettings
+        from app.modules.voices import service as voices
+
+        vs = db.get(WorkspaceVoiceSettings, workspace_id)
+        if vs is None or vs.default_profile_id is None:
+            return False, {"default_voice": None}
+        p, v, why = voices.resolve(db, workspace_id)
+        heard = vs.last_preview or {}
+        ok = v is not None and heard.get("version_id") == str(v.id)
+        return ok, {"default_voice": str(vs.default_profile_id), "active_version": str(v.id) if v else None,
+                    "resolution": why, "last_preview_at": heard.get("at"), "simulated": bool(heard.get("simulated"))}
     if key == "campaign.test_call":
         from app.models import CampaignContact
 

@@ -225,10 +225,18 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
         assistant["model"]["messages"][0]["content"] += (
             "\n\nBooking: Du kan booke en tid til kunden. Brug værktøjet ledige_tider for at finde tider, læs højst tre "
             "tider op ad gangen, og brug book_tid først når kunden har valgt en tid og sagt sit navn. Bekræft tiden bagefter.")
-    if voice := voice_config(number):
-        assistant["voice"] = voice
-    elif (voice := _json_setting(s.vapi_voice_json)) is not None:
-        assistant["voice"] = voice
+    provider_voice = voice_config(number) or _json_setting(s.vapi_voice_json)
+    from app.modules.voices import service as voices
+
+    dialogbot_voice, session = voices.vapi_voice(db, ws.id, channel="inbound_phone", provider_voice=provider_voice,
+                                                 number=number)
+    if dialogbot_voice is not None:
+        assistant["voice"] = dialogbot_voice
+        assistant["metadata"]["voice_session_id"] = str(session.id)
+    elif provider_voice is not None:
+        assistant["voice"] = provider_voice
+    if session is not None:
+        db.commit()
     return {"assistant": assistant}
 
 

@@ -32,10 +32,16 @@ from app.models.domain import (  # noqa: F401
     SetupTaskState,
     SourceImport,
     Task,
+    VoiceProfile,
+    VoiceRightsRecord,
+    VoiceSession,
+    VoiceUsage,
+    VoiceVersion,
     WaitlistSignup,
     WebchatSettings,
     WebhookEvent,
     WorkspaceCategory,
+    WorkspaceVoiceSettings,
 )
 from app.models.identity import (  # noqa: F401
     ROLE_RANK,

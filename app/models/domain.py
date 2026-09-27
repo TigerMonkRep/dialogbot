@@ -585,6 +585,9 @@ class PhoneNumber(Base):
                                              server_default="eleven_multilingual_v2")
     # Free-text speaking style from the business (tone, "du"/"De", regional words). Never overrides facts.
     speaking_style: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
+    # Dialogbot voice for this assistant (overrides the workspace standard); NULL = workspace standard
+    voice_profile_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("voice_profiles.id", ondelete="SET NULL", name="fk_phone_numbers_voice_profile"))
     created_at: Mapped[datetime] = ts_now()
 
 
@@ -757,6 +760,8 @@ class Campaign(Base):
     questions: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     success: Mapped[str] = mapped_column(Text, nullable=False, default="")  # what counts as an interested contact
     phone_number_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("phone_numbers.id", ondelete="SET NULL"))
+    voice_profile_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("voice_profiles.id", ondelete="SET NULL", name="fk_campaigns_voice_profile"))
     call_days: Mapped[list] = mapped_column(JSONB, nullable=False, default=lambda: ["mon", "tue", "wed", "thu", "fri"])
     call_from: Mapped[str] = mapped_column(String(5), nullable=False, default="09:00")
     call_to: Mapped[str] = mapped_column(String(5), nullable=False, default="17:00")
@@ -863,3 +868,153 @@ class Invoice(Base):
     note: Mapped[str | None] = mapped_column(String(300))
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = ts_now()
+
+
+# --------------------------------------------------------------------------- Danish voice library
+
+VOICE_VERSION_STATUSES = ("draft", "pending_review", "approved", "active", "suspended", "retired")
+
+
+class VoiceRightsRecord(Base):
+    """Documented rights for one thing a voice depends on: code, model weights, a dataset or a speaker agreement.
+
+    `status` is set by a person after an actual review ('verified'), never by code. Documents themselves
+    (e.g. a signed speaker agreement) live in private storage; only the object key is stored here."""
+
+    __tablename__ = "voice_rights_records"
+    __table_args__ = (
+        CheckConstraint("kind in ('code','model','dataset','speaker_agreement')", name="ck_voice_rights_kind"),
+        CheckConstraint("status in ('unreviewed','verified','blocked')", name="ck_voice_rights_status"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    kind: Mapped[str] = mapped_column(String(24), nullable=False)
+    subject: Mapped[str] = mapped_column(String(200), nullable=False)  # e.g. "CoRal-project/coral-tts"
+    license: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    source_url: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    revision: Mapped[str | None] = mapped_column(String(80))
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="unreviewed")
+    allowed_uses: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    restrictions: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    commercial_use: Mapped[bool | None] = mapped_column(Boolean)
+    subprocessors: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    term: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    termination: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    basis: Mapped[str] = mapped_column(Text, nullable=False, default="")  # agreement vs. consent, and what it rests on
+    document_key: Mapped[str | None] = mapped_column(String(300))
+    notes: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class VoiceProfile(Base):
+    """A selectable Danish voice. Metadata that is not documented stays NULL ("ukendt")."""
+
+    __tablename__ = "voice_profiles"
+    __table_args__ = (
+        CheckConstraint("visibility in ('platform','workspace')", name="ck_voice_profiles_visibility"),
+        CheckConstraint("(visibility = 'workspace') = (workspace_id is not null)", name="ck_voice_profiles_scope"),
+        CheckConstraint("gender in ('female','male','unknown')", name="ck_voice_profiles_gender"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    slug: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)  # stable ID
+    display_name: Mapped[str] = mapped_column(String(80), nullable=False)
+    language: Mapped[str] = mapped_column(String(10), nullable=False, default="da-DK")
+    gender: Mapped[str] = mapped_column(String(10), nullable=False, default="unknown")
+    dialect: Mapped[str | None] = mapped_column(String(80))  # NULL = ukendt
+    dialect_basis: Mapped[str] = mapped_column(Text, nullable=False, default="")  # why the category was chosen
+    age_description: Mapped[str | None] = mapped_column(String(80))
+    timbre: Mapped[str | None] = mapped_column(String(120))
+    source: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    visibility: Mapped[str] = mapped_column(String(12), nullable=False, default="platform")
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"))
+    active_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("voice_versions.id", ondelete="SET NULL", use_alter=True, name="fk_voice_profiles_active_version"))
+    sample_text: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class VoiceVersion(Base):
+    """An immutable version of a voice: model revision, conditioning references, synthesis settings, rights and
+    test results. Only `status`, `checks` and approval/activation stamps change after creation."""
+
+    __tablename__ = "voice_versions"
+    __table_args__ = (
+        UniqueConstraint("profile_id", "version", name="uq_voice_versions_number"),
+        CheckConstraint(f"status in {VOICE_VERSION_STATUSES}", name="ck_voice_versions_status"),
+        CheckConstraint("method in ('reference_conditioning','finetuned_checkpoint','trained_from_scratch')",
+                        name="ck_voice_versions_method"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("voice_profiles.id", ondelete="CASCADE"), nullable=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="draft")
+    engine: Mapped[str] = mapped_column(String(40), nullable=False)  # e.g. chatterbox-multilingual
+    method: Mapped[str] = mapped_column(String(32), nullable=False, default="reference_conditioning")
+    model_repo: Mapped[str] = mapped_column(String(200), nullable=False)
+    model_revision: Mapped[str] = mapped_column(String(80), nullable=False)
+    checkpoint_key: Mapped[str | None] = mapped_column(String(300))  # only for a real fine-tuned checkpoint
+    references: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)  # [{key, sha256, seconds, source_id}]
+    settings: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    rights_record_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    checks: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)  # {name: {status, at, by, evidence}}
+    notes: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    approved_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    activated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class WorkspaceVoiceSettings(Base):
+    """The workspace's standard voice, fallback policy and versioned pronunciation dictionary."""
+
+    __tablename__ = "workspace_voice_settings"
+    __table_args__ = (CheckConstraint("fallback in ('provider_voice','transfer')", name="ck_workspace_voice_fallback"),)
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    default_profile_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("voice_profiles.id", ondelete="SET NULL"))
+    fallback: Mapped[str] = mapped_column(String(16), nullable=False, default="provider_voice")
+    pronunciations: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)  # [{term, say}]
+    pronunciation_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    # The standard sample of the current default voice was played (version + time); cleared on any change.
+    last_preview: Mapped[dict | None] = mapped_column(JSONB)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    updated_at: Mapped[datetime] = ts_now()
+
+
+class VoiceSession(Base):
+    """Voice pinned for one conversation: version and settings cannot change mid-call."""
+
+    __tablename__ = "voice_sessions"
+    __table_args__ = (Index("ix_voice_sessions_call", "provider_call_id"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    channel: Mapped[str] = mapped_column(String(24), nullable=False)  # inbound_phone | outbound_campaign
+    provider_call_id: Mapped[str | None] = mapped_column(String(100))
+    profile_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("voice_profiles.id", ondelete="SET NULL"))
+    version_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("voice_versions.id", ondelete="SET NULL"))
+    settings: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    pronunciations: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    fallback: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    stats: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)  # counts and timings only, never text
+    created_at: Mapped[datetime] = ts_now()
+
+
+class VoiceUsage(Base):
+    """Per workspace and day: previews and synthesized characters (spend guard). No text is stored."""
+
+    __tablename__ = "voice_usage"
+    __table_args__ = (UniqueConstraint("workspace_id", "day", "kind", name="uq_voice_usage_day"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    day: Mapped[date] = mapped_column(Date, nullable=False)
+    kind: Mapped[str] = mapped_column(String(16), nullable=False)  # preview | call
+    requests: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    characters: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

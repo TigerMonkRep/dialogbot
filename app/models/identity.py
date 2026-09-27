@@ -46,6 +46,8 @@ class User(Base):
     # Product intent chosen on signup (A01): reception | campaigns | both
     signup_intent: Mapped[str | None] = mapped_column(String(32))
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    # Dialogbot staff who may review rights and publish platform voices. Set only via scripts/grant_operator.py.
+    is_platform_operator: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()

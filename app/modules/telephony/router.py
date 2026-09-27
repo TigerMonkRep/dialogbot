@@ -39,7 +39,14 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
         if number is None or not number.active:
             return {"error": "Nummeret er ikke tilknyttet et aktivt arbejdsrum."}
         try:
-            return vapi.assistant_config(db, number)
+            out = vapi.assistant_config(db, number)
+            if (sid := out["assistant"]["metadata"].get("voice_session_id")) and (call_id := (message.get("call") or {}).get("id")):
+                from app.models import VoiceSession
+
+                vs = db.get(VoiceSession, uuid.UUID(sid))
+                vs.provider_call_id = str(call_id)[:100]
+                db.commit()
+            return out
         except ApiError as e:  # e.g. no approved knowledge: the provider plays its error handling
             return {"error": e.message}
     if kind == "tool-calls":

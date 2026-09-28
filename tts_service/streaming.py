@@ -12,7 +12,7 @@ at every seam. The flow's noise is fixed per utterance so repeated decodes agree
 
 `DecodeStitcher` (pure numpy) does the bookkeeping and is unit-tested without a model. `T3Stepper` is the token
 loop: the stock loop's sampling (CFG, repetition penalty, temperature, min-p, top-p) and positional embeddings,
-with an optional static KV cache + CUDA graph (torch.compile "reduce-overhead") on GPU, where the stock loop is
+with a static KV cache and the one-token step replayed as a CUDA graph on GPU, where the stock loop is
 bound by Python/kernel-launch overhead (~30 ms per token on an L4) rather than by the GPU.
 """
 from __future__ import annotations
@@ -106,13 +106,19 @@ class StreamResampler:
 class T3Stepper:
     """Samples speech tokens one at a time (a generator), equivalent to chatterbox T3.inference."""
 
-    def __init__(self, t3, device: str, compile_step: bool | None = None, max_cache_len: int = 2048):
+    def __init__(self, t3, device: str, compile_step: bool | None = None, max_cache_len: int = 2048,
+                 graph: str | None = None):
+        """graph: "cuda" (default on GPU) captures the one-token step once as a CUDA graph and replays it – no
+        compiler needed; "compile" uses torch.compile(mode="reduce-overhead") (needs a C compiler for Triton);
+        "off" keeps the static cache in eager mode. Any failure falls back to eager, never to an error."""
         self.t3, self.device, self.max_cache_len = t3, device, max_cache_len
         want = os.environ.get("TTS_T3_COMPILE", "1") != "0" if compile_step is None else compile_step
         self.static = want and str(device).startswith("cuda")
+        self.graph_mode = graph or os.environ.get("TTS_T3_GRAPH", "cuda")
         self.cache = None
         self._step = None
-        self.compiled = False
+        self._graph = None
+        self.compiled = False  # a graph (captured or compiled) is in use
 
     def _setup_static(self):
         import torch
@@ -125,24 +131,53 @@ class T3Stepper:
                                use_cache=True)
             return out.last_hidden_state
 
-        self._eager = step
+        self._eager = self._step = step
+        if self.graph_mode == "compile":
+            try:
+                self._step = torch.compile(step, mode="reduce-overhead", fullgraph=False)
+                self.compiled = True
+            except Exception:  # noqa: BLE001 - fall back to the eager static cache
+                log.exception("torch.compile unavailable; eager static cache")
+
+    def _capture(self, like):
+        """Record the one-token step as a CUDA graph. Runs before a request's prefill: the warm-up writes into cache
+        slot 0, and the cache is reset right after, so no request ever sees those values."""
+        import torch
+
         try:
-            self._step = torch.compile(step, mode="reduce-overhead", fullgraph=False)
-            self.compiled = True
-        except Exception:  # noqa: BLE001 - fall back to the eager static cache
-            log.exception("torch.compile unavailable; eager static cache")
-            self._step = step
+            self._s_emb = torch.zeros_like(like)
+            self._s_pos = torch.zeros(1, dtype=torch.long, device=self.device)
+            side = torch.cuda.Stream()
+            side.wait_stream(torch.cuda.current_stream())
+            with torch.cuda.stream(side):
+                for _ in range(3):
+                    self._eager(self._s_emb, self._s_pos)
+            torch.cuda.current_stream().wait_stream(side)
+            g = torch.cuda.CUDAGraph()
+            with torch.cuda.graph(g):
+                self._s_out = self._eager(self._s_emb, self._s_pos)
+            self._graph, self.compiled = g, True
+            log.info("token step captured as a CUDA graph")
+        except Exception:  # noqa: BLE001 - capture is an optimisation; eager static cache still works
+            log.exception("CUDA graph capture failed; eager static cache")
+            self._graph, self.compiled, self.graph_mode = None, False, "off"
+            torch.cuda.synchronize()
 
     def _run_step(self, emb, pos):
+        if self._graph is not None:
+            self._s_emb.copy_(emb)
+            self._s_pos.copy_(pos)
+            self._graph.replay()
+            return self._s_out.clone()  # the graph's output buffer is reused by the next replay
         try:
             hidden = self._step(emb, pos)
-        except Exception:  # noqa: BLE001 - a failed graph capture must not take the voice down
+        except Exception:  # noqa: BLE001 - a failed compiled step must not take the voice down
             if not self.compiled:
                 raise
             log.exception("compiled token step failed; continuing with the eager static cache")
             self.compiled, self._step = False, self._eager
             return self._eager(emb, pos)  # rewrites the same cache position, so the state stays consistent
-        return hidden.clone() if self.compiled else hidden  # CUDA-graph outputs are reused by the next replay
+        return hidden.clone() if self.compiled else hidden
 
     def tokens(self, t3_cond, text_tokens, *, temperature: float, cfg_weight: float, repetition_penalty: float,
                min_p: float, top_p: float, max_new_tokens: int = 1000) -> Iterator[int]:
@@ -166,6 +201,8 @@ class T3Stepper:
         if self.static:
             if self._step is None:
                 self._setup_static()
+            if self.graph_mode == "cuda" and self._graph is None:
+                self._capture(inputs[:, :1])
             self.cache.reset()
             pos = torch.arange(inputs.size(1), device=self.device)
             hidden = t3.tfmr(inputs_embeds=inputs, past_key_values=self.cache, cache_position=pos,

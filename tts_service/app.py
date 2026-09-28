@@ -53,6 +53,11 @@ class Config:
         self.replicas = max(1, int(os.environ.get("TTS_REPLICAS", "1")))
         self.first_tokens = int(os.environ.get("TTS_STREAM_FIRST_TOKENS", "12"))
         self.step_tokens = int(os.environ.get("TTS_STREAM_STEP_TOKENS", "20"))
+        w = os.environ.get("TTS_STREAM_WINDOW_TOKENS", "")
+        self.window_tokens = int(w) if w else None
+        pt = os.environ.get("TTS_STREAM_PROMPT_TOKENS", "")
+        self.prompt_tokens = int(pt) if pt else None
+        self.cfm_steps = int(os.environ.get("TTS_STREAM_CFM_STEPS", "10"))
         if len(self.token) < 32:
             raise RuntimeError("TTS_SERVICE_TOKEN (>=32 chars) is required")
 
@@ -77,6 +82,7 @@ class SynthIn(BaseModel):
     sample_rate: int = 24000
     request_id: str = Field(min_length=8, max_length=64)
     session_id: str | None = None
+    stream: dict | None = None  # streaming overrides for measurements: first, step, window, prompt_tokens, cfm_steps
 
 
 class State:
@@ -99,6 +105,7 @@ class State:
         self.voices: OrderedDict[str, engines.VoiceState] = OrderedDict()
         self.timings: deque[tuple[float, float]] = deque(maxlen=200)  # (synth_ms, audio_seconds)
         self.first_audio: deque[int] = deque(maxlen=200)  # streaming: ms until the first chunk was ready
+        self.last_profile: dict | None = None  # where the time of the last streamed utterance went (no text)
         self.refdir = Path(tempfile.mkdtemp(prefix="tts-refs-"))
 
     def load(self) -> None:
@@ -161,6 +168,7 @@ def create_app(cfg: Config | None = None) -> FastAPI:
                 "rtf_p50": pct(rtf, 0.5), "rtf_p95": pct(rtf, 0.95), "queue": state.waiting,
                 "first_audio_ms_p50": pct(sorted(state.first_audio), 0.5),
                 "first_audio_ms_p95": pct(sorted(state.first_audio), 0.95), "replicas": len(state.engines),
+                "last_stream_profile": state.last_profile,
                 "voices_cached": len(state.voices)}
 
     @app.delete("/v1/requests/{request_id}")
@@ -309,7 +317,13 @@ def create_app(cfg: Config | None = None) -> FastAPI:
 
         try:
             vs = await anyio.to_thread.run_sync(voice_state, body.voice, eng)
-            gen = eng.stream(vs, body.text, first=cfg.first_tokens, step=cfg.step_tokens)
+            opts = {"first": cfg.first_tokens, "step": cfg.step_tokens, "window": cfg.window_tokens,
+                    "prompt_tokens": cfg.prompt_tokens, "cfm_steps": cfg.cfm_steps}
+            for k, v in (body.stream or {}).items():
+                if k not in opts or not (v is None or (isinstance(v, int) and 1 <= v <= 1000)):
+                    raise HTTPException(422, f"invalid stream option {k}")
+                opts[k] = v
+            gen = eng.stream(vs, body.text, **opts)
             rs = streaming.StreamResampler(eng.sample_rate, body.sample_rate)
 
             async def pull():
@@ -357,6 +371,7 @@ def create_app(cfg: Config | None = None) -> FastAPI:
                 seconds = n / 2 / body.sample_rate
                 state.timings.append((int((time.monotonic() - t0) * 1000), seconds))
                 state.first_audio.append(first_ms)
+                state.last_profile = getattr(eng, "last_profile", None)
 
         h = headers(body) | {"x-first-audio-ms": str(first_ms)}
         return StreamingResponse(body_iter(), media_type="application/octet-stream", headers=h)

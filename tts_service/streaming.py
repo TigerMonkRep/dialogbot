@@ -49,20 +49,24 @@ class DecodeStitcher:
         ramp = np.linspace(0.0, 1.0, xfade, dtype=np.float32)
         self.fade_in, self.fade_out = ramp, 1.0 - ramp
 
-    def feed(self, wav: np.ndarray, final: bool = False) -> np.ndarray:
+    def feed(self, wav: np.ndarray, final: bool = False, offset: int = 0) -> np.ndarray:
+        """`offset`: where `wav` starts in the utterance (a windowed decode covers only its last part). The window
+        must start before everything not yet sent."""
         if self.done:
             return np.zeros(0, dtype=np.float32)
-        end = len(wav) if final else len(wav) - self.holdback
+        if offset > self.emitted:
+            raise ValueError("decode window starts after unsent audio")
+        end = offset + len(wav) if final else offset + len(wav) - self.holdback
         if not final and end - self.emitted < 2 * self.xfade:
             return np.zeros(0, dtype=np.float32)  # not enough new audio yet
-        seg = wav[self.emitted:max(end, self.emitted)].astype(np.float32, copy=True)
+        seg = wav[self.emitted - offset:max(end, self.emitted) - offset].astype(np.float32, copy=True)
         if self.tail is not None:
             n = min(self.xfade, len(seg), len(self.tail))
             seg[:n] = self.tail[:n] * self.fade_out[:n] + seg[:n] * self.fade_in[:n]
         if final:
             self.done = True
             return seg
-        self.tail = wav[end - self.xfade:end].astype(np.float32, copy=True)
+        self.tail = wav[end - offset - self.xfade:end - offset].astype(np.float32, copy=True)
         self.emitted = end - self.xfade
         return seg[:-self.xfade]
 
@@ -250,13 +254,19 @@ def utterance_noise(model, max_tokens: int, seed: int):
     return torch.randn(1, 80, n, generator=g).to(device=s3.device, dtype=s3.dtype)
 
 
-def decode(model, tokens: list[int], noise, finalize: bool) -> np.ndarray:
-    """S3Gen on the speech tokens so far → float32 waveform at 24 kHz (watermark applied by the caller).
+def decode(model, tokens: list[int], noise, finalize: bool, *, window: int | None = None,
+           prompt_tokens: int | None = None, cfm_steps: int = 10) -> tuple[np.ndarray, int]:
+    """S3Gen on the speech tokens so far → (float32 waveform at 24 kHz, sample offset of its start).
 
-    `noise` fixes the flow's starting noise for the utterance's own frames, so a frame gets the same noise at
-    every decode and what was already sent stays consistent with what comes next. The flow is always run in its
-    finalize mode (its own streaming mode mis-sizes the mask in this Chatterbox version); the newest
-    LOOKAHEAD_TOKENS of an unfinished utterance are covered by the stitcher's holdback instead."""
+    `noise` fixes the flow's starting noise per frame, so a frame gets the same noise at every decode and what was
+    already sent stays consistent with what comes next. The flow is always run in its finalize mode (its own
+    streaming mode mis-sizes the mask in this Chatterbox version); the newest LOOKAHEAD_TOKENS of an unfinished
+    utterance are covered by the stitcher's holdback instead.
+
+    Cost: the flow runs over the voice prompt (157 tokens for the model's own voice) plus the tokens decoded, ten
+    times (cfm_steps) with classifier-free guidance. `window` decodes only the newest tokens (the stitcher's
+    overlap hides the seam) and `prompt_tokens` keeps only the end of the voice prompt, so a decode costs the
+    same at the end of a long sentence as at its start."""
     import torch
     from chatterbox.models.s3tokenizer import SPEECH_VOCAB_SIZE
 
@@ -265,13 +275,21 @@ def decode(model, tokens: list[int], noise, finalize: bool) -> np.ndarray:
     if finalize and len(ids) > 1:
         ids = ids[:-1]  # the last token before EOS decodes to ~40 ms of noise (as in the stock generate)
     if not ids:
-        return np.zeros(0, dtype=np.float32)
-    tok = torch.tensor([ids], dtype=torch.long, device=s3.device)
+        return np.zeros(0, dtype=np.float32), 0
+    start = max(0, len(ids) - window) if window else 0
+    ids = ids[start:]
+    ratio = s3.flow.token_mel_ratio
     ref = {k: (v.to(device=s3.device, dtype=s3.dtype) if torch.is_tensor(v) else v)
            for k, v in model.conds.gen.items()}
-    n_frames = len(ids) * s3.flow.token_mel_ratio
+    if prompt_tokens and ref["prompt_token"].size(1) > prompt_tokens:
+        ref["prompt_token"] = ref["prompt_token"][:, -prompt_tokens:]
+        ref["prompt_token_len"] = torch.tensor([prompt_tokens], device=s3.device)
+        ref["prompt_feat"] = ref["prompt_feat"][:, -prompt_tokens * ratio:, :]
+    tok = torch.tensor([ids], dtype=torch.long, device=s3.device)
     mels, _ = s3.flow.inference(token=tok, token_len=torch.tensor([len(ids)], device=s3.device), finalize=True,
-                                n_timesteps=10, noised_mels=noise[:, :, :n_frames], meanflow=False, **ref)
+                                n_timesteps=cfm_steps, noised_mels=noise[:, :, start * ratio:(start + len(ids)) * ratio],
+                                meanflow=False, **ref)
     wav, _ = s3.hift_inference(mels.to(dtype=s3.dtype), None)
-    wav[:, :len(s3.trim_fade)] *= s3.trim_fade
-    return wav.squeeze(0).float().cpu().numpy()
+    if start == 0:
+        wav[:, :len(s3.trim_fade)] *= s3.trim_fade  # only the utterance's own beginning is faded in
+    return wav.squeeze(0).float().cpu().numpy(), start * SAMPLES_PER_TOKEN

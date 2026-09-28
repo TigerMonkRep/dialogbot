@@ -69,7 +69,8 @@ class FakeEngine:
         assert self.current == voice.key  # the shared state belongs to this request for the whole generation
         return (0.1 * np.sin(2 * math.pi * freq * t)).astype(np.float32)
 
-    def stream(self, voice: VoiceState, text: str, first: int = 12, step: int = 20, seed: int | None = None):
+    def stream(self, voice: VoiceState, text: str, first: int = 12, step: int = 20, seed: int | None = None,
+               **_tuning):
         wav = self.generate(voice, text)
         cut = [0, min(len(wav), first * self.sample_rate // 25)]
         while cut[-1] < len(wav):
@@ -95,6 +96,7 @@ class ChatterboxEngine:
         self.lock = threading.Lock()
         self.model = None
         self.stepper = None
+        self.last_profile: dict | None = None
         self.sample_rate = 24000
 
     def load(self) -> None:
@@ -129,11 +131,16 @@ class ChatterboxEngine:
         wav = self.model.generate(text, language_id="da", **s)
         return wav.squeeze(0).detach().cpu().numpy().astype(np.float32)
 
-    def stream(self, voice: VoiceState, text: str, first: int = 12, step: int = 20, seed: int | None = None):
+    def stream(self, voice: VoiceState, text: str, first: int = 12, step: int = 20, seed: int | None = None,
+               window: int | None = None, prompt_tokens: int | None = None, cfm_steps: int = 10):
         """Yield float32 audio at 24 kHz while the utterance is being generated (see tts_service.streaming).
 
-        The first chunk is decoded after `first` speech tokens (~0.5 s of speech), then every `step` tokens.
-        Caller holds self.lock for the whole generator (the model's voice state is shared)."""
+        The first chunk is decoded after `first` speech tokens (~0.5 s of speech), then every `step` tokens. With
+        `window`, each decode covers only the newest `window` tokens (must exceed step by the stitcher's holdback
+        plus a margin; step + 16 is safe). Caller holds self.lock for the whole generator (shared voice state).
+        Timings of the last utterance are kept in `last_profile`."""
+        import time as _t
+
         import torch
         import torch.nn.functional as F
         from chatterbox.models.t3.modules.cond_enc import T3Cond
@@ -141,6 +148,8 @@ class ChatterboxEngine:
 
         from tts_service import streaming
 
+        if window is not None and window < step + 12:
+            raise ValueError("window must exceed step by at least 12 tokens")
         m = self.model
         s = DEFAULT_SETTINGS | {k: float(v) for k, v in voice.settings.items() if k in DEFAULT_SETTINGS}
         m.conds = voice.conds
@@ -157,17 +166,39 @@ class ChatterboxEngine:
         noise = streaming.utterance_noise(m, 1000, seed if seed is not None else int.from_bytes(os.urandom(4), "big"))
         tokens: list[int] = []
         next_at = first
+        prof = {"t3_ms": 0.0, "decode_ms": 0.0, "post_ms": 0.0, "decodes": 0, "tokens": 0,
+                "graph": bool(self.stepper.compiled)}
+        opts = {"window": window, "prompt_tokens": prompt_tokens, "cfm_steps": cfm_steps}
+
+        def emit(final: bool):
+            t0 = _t.perf_counter()
+            wav, off = streaming.decode(m, tokens, noise, finalize=final, **opts)
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            t1 = _t.perf_counter()
+            out = stitch.feed(self._post(wav), final=final, offset=off)
+            prof["decode_ms"] += (t1 - t0) * 1000
+            prof["post_ms"] += (_t.perf_counter() - t1) * 1000
+            prof["decodes"] += 1
+            return out
+
         with torch.inference_mode():
+            t = _t.perf_counter()
             for tok in self.stepper.tokens(m.conds.t3, tt, temperature=s["temperature"], cfg_weight=s["cfg_weight"],
                                            repetition_penalty=s["repetition_penalty"], min_p=s["min_p"],
                                            top_p=s["top_p"]):
+                prof["t3_ms"] += (_t.perf_counter() - t) * 1000
                 tokens.append(tok)
                 if len(tokens) >= next_at:
                     next_at += step
-                    out = stitch.feed(self._post(streaming.decode(m, tokens, noise, finalize=False)))
+                    out = emit(False)
                     if len(out):
                         yield out
-            yield stitch.feed(self._post(streaming.decode(m, tokens, noise, finalize=True)), final=True)
+                t = _t.perf_counter()
+            prof["tokens"], prof["graph"] = len(tokens), bool(self.stepper.compiled)
+            out = emit(True)
+            self.last_profile = {k: round(v, 1) if isinstance(v, float) else v for k, v in prof.items()}
+            yield out
 
     def _post(self, wav: np.ndarray) -> np.ndarray:
         """What the stock generate does after S3Gen, on the audio so far: the model's Perth watermark, then rumble

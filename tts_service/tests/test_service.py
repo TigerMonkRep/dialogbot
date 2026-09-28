@@ -232,3 +232,25 @@ def test_stream_resampler_matches_whole_file():
     assert abs(len(y) - len(ref_)) <= 2
     n = min(len(y), len(ref_))
     assert np.max(np.abs(y[100:n - 100] - ref_[100:n - 100])) < 0.01
+
+
+def test_decode_stitcher_with_windowed_decodes():
+    import numpy as np
+    import pytest as _pytest
+
+    from tts_service.streaming import SAMPLES_PER_TOKEN as T  # noqa: N811
+    from tts_service.streaming import DecodeStitcher
+
+    rng = np.random.default_rng(2)
+    full = rng.standard_normal(T * 120).astype(np.float32)
+    st = DecodeStitcher()
+    out, window, step = [], 36, 20
+    for n in range(12, 120, step):  # each decode covers only the newest `window` tokens
+        start = max(0, n - window)
+        out.append(st.feed(full[start * T:n * T], offset=start * T))
+    start = 120 - window
+    out.append(st.feed(full[start * T:], final=True, offset=start * T))
+    y = np.concatenate(out)
+    assert len(y) == len(full) and np.allclose(y, full, atol=1e-6)
+    with _pytest.raises(ValueError):  # a window that starts after unsent audio would leave a gap
+        DecodeStitcher().feed(full[T * 50:], offset=T * 50)

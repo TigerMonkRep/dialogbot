@@ -82,6 +82,8 @@ Kontrolklippene, der efterlignede én person, blev slettet efter målingen og er
 | Kvinde · Østjylland · 18–34 år | lys stemme, hurtigt tempo | 220 Hz | 16.4 | 0.884 / 0.9 |
 | Kvinde · Østjylland · 35–54 år | mellemlys stemme, hurtigt tempo | 213 Hz | 16.4 | 0.881 / 0.9 |
 
+**Ejerens gennemlytning (28/9 2026):** Dialogbots ejer har lyttet til alle 21 prøver og godkendt dem alle ("allesammen er gode"). Det tæller som én lytter. Platformgodkendelse kræver stadig lyttetesten med mindst 3 danske lyttere og en rigtig telefontest.
+
 Lyd, `conds.pt` og `voice.json` ligger uden for Git. Stemmerne registreres som kladder med `scripts.voices_register_designed`, når taletjenesten og det private lager er i drift.
 
 ## Forbehold

@@ -6,7 +6,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 export DEBIAN_FRONTEND=noninteractive PIP_NO_CACHE_DIR=1 HF_HOME=${HF_HOME:-/models/hf}
-apt-get update -q && apt-get install -y -q --no-install-recommends python3.11 python3.11-venv python3-pip git \
+apt-get update -q && apt-get install -y -q --no-install-recommends python3.11 python3.11-venv python3.11-dev python3-pip git gcc libc6-dev \
   libsndfile1 ffmpeg >/dev/null
 python3.11 -m venv /opt/venv && . /opt/venv/bin/activate
 pip install -q --upgrade pip && pip install -q --no-deps -r tts_service/requirements.lock

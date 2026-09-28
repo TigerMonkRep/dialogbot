@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import hashlib
 import math
+import os
 import re
 import threading
 from dataclasses import dataclass
@@ -68,6 +69,15 @@ class FakeEngine:
         assert self.current == voice.key  # the shared state belongs to this request for the whole generation
         return (0.1 * np.sin(2 * math.pi * freq * t)).astype(np.float32)
 
+    def stream(self, voice: VoiceState, text: str, first: int = 12, step: int = 20, seed: int | None = None):
+        wav = self.generate(voice, text)
+        cut = [0, min(len(wav), first * self.sample_rate // 25)]
+        while cut[-1] < len(wav):
+            cut.append(min(len(wav), cut[-1] + step * self.sample_rate // 25))
+        for a, b in zip(cut, cut[1:], strict=False):
+            assert self.current == voice.key
+            yield wav[a:b]
+
 
 class ChatterboxEngine:
     name = "chatterbox-multilingual"
@@ -84,6 +94,7 @@ class ChatterboxEngine:
         self.t3_file = t3_file
         self.lock = threading.Lock()
         self.model = None
+        self.stepper = None
         self.sample_rate = 24000
 
     def load(self) -> None:
@@ -117,6 +128,54 @@ class ChatterboxEngine:
         self.model.conds = voice.conds  # caller holds self.lock
         wav = self.model.generate(text, language_id="da", **s)
         return wav.squeeze(0).detach().cpu().numpy().astype(np.float32)
+
+    def stream(self, voice: VoiceState, text: str, first: int = 12, step: int = 20, seed: int | None = None):
+        """Yield float32 audio at 24 kHz while the utterance is being generated (see tts_service.streaming).
+
+        The first chunk is decoded after `first` speech tokens (~0.5 s of speech), then every `step` tokens.
+        Caller holds self.lock for the whole generator (the model's voice state is shared)."""
+        import torch
+        import torch.nn.functional as F
+        from chatterbox.models.t3.modules.cond_enc import T3Cond
+        from chatterbox.mtl_tts import punc_norm
+
+        from tts_service import streaming
+
+        m = self.model
+        s = DEFAULT_SETTINGS | {k: float(v) for k, v in voice.settings.items() if k in DEFAULT_SETTINGS}
+        m.conds = voice.conds
+        if float(s["exaggeration"]) != float(m.conds.t3.emotion_adv[0, 0, 0].item()):
+            c = m.conds.t3
+            m.conds.t3 = T3Cond(speaker_emb=c.speaker_emb, cond_prompt_speech_tokens=c.cond_prompt_speech_tokens,
+                                emotion_adv=s["exaggeration"] * torch.ones(1, 1, 1)).to(device=m.device)
+        if self.stepper is None:
+            self.stepper = streaming.T3Stepper(m.t3, m.device)
+        tt = m.tokenizer.text_to_tokens(punc_norm(text), language_id="da").to(m.device)
+        tt = torch.cat([tt, tt], dim=0)  # two rows for classifier-free guidance
+        tt = F.pad(F.pad(tt, (1, 0), value=m.t3.hp.start_text_token), (0, 1), value=m.t3.hp.stop_text_token)
+        stitch = streaming.DecodeStitcher()
+        noise = streaming.utterance_noise(m, 1000, seed if seed is not None else int.from_bytes(os.urandom(4), "big"))
+        tokens: list[int] = []
+        next_at = first
+        with torch.inference_mode():
+            for tok in self.stepper.tokens(m.conds.t3, tt, temperature=s["temperature"], cfg_weight=s["cfg_weight"],
+                                           repetition_penalty=s["repetition_penalty"], min_p=s["min_p"],
+                                           top_p=s["top_p"]):
+                tokens.append(tok)
+                if len(tokens) >= next_at:
+                    next_at += step
+                    out = stitch.feed(self._post(streaming.decode(m, tokens, noise, finalize=False)))
+                    if len(out):
+                        yield out
+            yield stitch.feed(self._post(streaming.decode(m, tokens, noise, finalize=True)), final=True)
+
+    def _post(self, wav: np.ndarray) -> np.ndarray:
+        """What the stock generate does after S3Gen, on the audio so far: the model's Perth watermark, then rumble
+        removal. (Pause shortening from clean() changes timing and cannot be applied to a stream.)"""
+        if not len(wav):
+            return wav
+        wav = self.model.watermarker.apply_watermark(wav, sample_rate=self.sample_rate).astype(np.float32)
+        return _highpass(wav, self.sample_rate, 60.0)
 
 
 def _highpass(x: np.ndarray, sr: int, cutoff: float) -> np.ndarray:
@@ -232,9 +291,9 @@ def resample(x: np.ndarray, sr_in: int, sr_out: int) -> np.ndarray:
         import torchaudio.functional as taf
 
         return taf.resample(torch.from_numpy(x), sr_in, sr_out).numpy()
-    except ImportError:  # test environment without torch: linear interpolation
+    except ImportError:  # test environment without torch: linear interpolation on the output sample grid
         n = int(round(len(x) * sr_out / sr_in))
-        return np.interp(np.linspace(0, len(x) - 1, n), np.arange(len(x)), x).astype(np.float32)
+        return np.interp(np.arange(n) * (sr_in / sr_out), np.arange(len(x)), x).astype(np.float32)
 
 
 def to_pcm16(x: np.ndarray) -> bytes:

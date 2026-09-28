@@ -6,9 +6,11 @@ raw mono 16-bit little-endian PCM at the requested sample rate (application/octe
 
 - The voice version, settings and pronunciation dictionary were pinned in a VoiceSession when the call's
   assistant was built; the session ID is in the URL, so an update or rollback never changes voice mid-call.
-- Chatterbox does not stream natively: we synthesise one speech unit (sentence) at a time and send each as
-  soon as it is ready. The first unit is synthesised before the response starts, so an engine failure
-  becomes a 503 and Vapi switches to the configured fallback voice instead of playing silence.
+- Streaming (TTS_STREAMING, default on): each speech unit (sentence) is streamed from the TTS service while it
+  is generated, so the caller hears the first words after about half a second of speech has been generated
+  instead of after the whole sentence. Off: one unit at a time, each sent when complete.
+- Either way the first audio is ready before the response starts, so an engine failure becomes a 503 and Vapi
+  switches to the configured fallback voice instead of playing silence.
 - Barge-in: when the caller interrupts, Vapi drops the request and clears its playback buffer; we stop at the
   next unit and cancel the in-flight synthesis. Nothing from an old turn is sent afterwards.
 - This endpoint only turns text into sound. It never books, bills or registers anything, so a retried
@@ -97,6 +99,10 @@ async def vapi_voice(session_id: uuid.UUID, request: Request, authorization: str
     if not units:
         return Response(b"", media_type="application/octet-stream")
     request_ids = [uuid.uuid4().hex for _ in units]
+    from app.config import get_settings
+
+    if get_settings().tts_streaming:
+        return await _streamed(request, session_id, vs, v, units, request_ids, rate, t0)
     try:
         first = await anyio.to_thread.run_sync(
             lambda: engine.synthesize(v, units[0], sample_rate=rate, request_id=request_ids[0], session_id=str(vs.id)))
@@ -138,3 +144,59 @@ async def vapi_voice(session_id: uuid.UUID, request: Request, authorization: str
     return StreamingResponse(stream(), media_type="application/octet-stream",
                              headers={"x-sample-rate": str(rate), "x-first-audio-ms": str(ttfa_ms),
                                       "x-simulated": "1" if first.simulated else "0"})
+
+
+_END = object()
+
+
+async def _streamed(request: Request, session_id: uuid.UUID, vs: VoiceSession, v: VoiceVersion, units: list[str],
+                    request_ids: list[str], rate: int, t0: float) -> StreamingResponse:
+    """Units in order, each streamed chunk by chunk; the first chunk is pulled before the response starts."""
+
+    def open_unit(i: int):
+        return engine.synthesize_stream(v, units[i], sample_rate=rate, request_id=request_ids[i], session_id=str(vs.id))
+
+    async def pull(gen):
+        return await anyio.to_thread.run_sync(next, gen, _END)
+
+    gen = open_unit(0)
+    try:
+        first = await pull(gen)
+    except ApiError:
+        await anyio.to_thread.run_sync(lambda: _record(session_id, errors=1))
+        raise
+    ttfa_ms = int((time.monotonic() - t0) * 1000)
+
+    async def stream():
+        nonlocal gen
+        sent, cancelled, chunk = 0, 0, first
+        try:
+            for i in range(len(units)):
+                if i:
+                    gen = open_unit(i)
+                    try:
+                        chunk = await pull(gen)
+                    except ApiError:
+                        break  # stop speaking rather than play a wrong or partial sentence
+                while chunk is not _END:
+                    yield chunk
+                    if await request.is_disconnected():
+                        cancelled = 1
+                        return
+                    chunk = await pull(gen)
+                sent += 1
+                if await request.is_disconnected():
+                    cancelled = 1
+                    return
+        except anyio.get_cancelled_exc_class():
+            cancelled = 1
+            raise
+        finally:
+            with anyio.CancelScope(shield=True):
+                await anyio.to_thread.run_sync(gen.close)
+                await anyio.to_thread.run_sync(lambda: _record(session_id, units=sent, cancelled=cancelled,
+                                                                ttfa_ms_list=ttfa_ms, streamed=1))
+
+    return StreamingResponse(stream(), media_type="application/octet-stream",
+                             headers={"x-sample-rate": str(rate), "x-first-audio-ms": str(ttfa_ms),
+                                      "x-simulated": "1" if engine.status() == "simulated" else "0"})

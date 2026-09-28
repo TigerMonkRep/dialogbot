@@ -213,6 +213,15 @@ def test_call_pins_voice_version_and_falls_back_honestly(api, client, two_worksp
     first = _speak(client, voice["server"]["url"])
     assert first.status_code == 200 and first.headers["x-sample-rate"] == "16000" and len(first.content) > 1000
     assert first.content[:4] != b"RIFF"  # raw PCM, no WAV header
+    assert first.headers["x-simulated"] == "1" and int(first.headers["x-first-audio-ms"]) >= 0
+    # streamed (default) and sentence-by-sentence delivery give the same audio
+    from app.config import get_settings
+
+    get_settings().tts_streaming = False
+    try:
+        assert _speak(client, voice["server"]["url"]).content == first.content
+    finally:
+        get_settings().tts_streaming = True
     # a new version is activated mid-call: the running call keeps v1, a new call gets v2
     pid_obj = api.c.post(f"{api.base}/operator/voices/{pid}/references", content=_wav(4.0), headers=api.h(op)).json()
     v2 = api.post(op, f"/operator/voices/{pid}/versions", {"model_repo": "ResembleAI/chatterbox", "model_revision": "b" * 40,

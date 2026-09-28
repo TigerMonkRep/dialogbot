@@ -176,7 +176,7 @@ class ChatterboxEngine:
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
             t1 = _t.perf_counter()
-            out = stitch.feed(self._post(wav), final=final, offset=off)
+            out = self._post_stream(stitch.feed(wav, final=final, offset=off))
             prof["decode_ms"] += (t1 - t0) * 1000
             prof["post_ms"] += (_t.perf_counter() - t1) * 1000
             prof["decodes"] += 1
@@ -200,13 +200,13 @@ class ChatterboxEngine:
             self.last_profile = {k: round(v, 1) if isinstance(v, float) else v for k, v in prof.items()}
             yield out
 
-    def _post(self, wav: np.ndarray) -> np.ndarray:
-        """What the stock generate does after S3Gen, on the audio so far: the model's Perth watermark, then rumble
-        removal. (Pause shortening from clean() changes timing and cannot be applied to a stream.)"""
-        if not len(wav):
-            return wav
-        wav = self.model.watermarker.apply_watermark(wav, sample_rate=self.sample_rate).astype(np.float32)
-        return _highpass(wav, self.sample_rate, 60.0)
+    def _post_stream(self, chunk: np.ndarray) -> np.ndarray:
+        """Streaming post-processing on the audio actually sent: the model's Perth watermark. (Rumble removal is left
+        out: phone audio is band-limited to ~300–3400 Hz, and a per-chunk filter would click at the seams.)"""
+        if not len(chunk):
+            return chunk
+        return self.model.watermarker.apply_watermark(chunk, sample_rate=self.sample_rate).astype(np.float32)
+
 
 
 def _highpass(x: np.ndarray, sr: int, cutoff: float) -> np.ndarray:

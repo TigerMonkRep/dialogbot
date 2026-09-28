@@ -47,8 +47,19 @@ Taletjenesten er `tts_service/Dockerfile`: CUDA 12.4, én model pr. GPU, varm he
   - RunPod Secure Cloud L4 pr. time.
 
   Se `costs.md`. Render har ingen GPU'er.
-- **Samtidighed:** ikke målt endnu. Kør `python -m voice_pipeline.eval.bench tts --concurrency 1,2,4 --hardware "<navn>"`,
-  og sæt antal replikaer efter p95 < 1,5 s for hele svaret.
+- **Samtidighed:** målt på en RTX 4090 med streaming: 1 samtale uden huller, 2 samtidige med små huller (se
+  `testing.md`). `TTS_REPLICAS=2` giver to modelinstanser på samme GPU. Flere samtidige samtaler kræver flere GPU'er.
+- **Streaming** (`/v1/synthesize/stream`, API: `TTS_STREAMING=true`) har standarder fra 4090-målingen:
+  - `TTS_STREAM_FIRST_TOKENS=30`
+  - `TTS_STREAM_STEP_TOKENS=40`
+  - `TTS_STREAM_WINDOW_TOKENS=56`
+  - `TTS_STREAM_PROMPT_TOKENS=75`
+  - `TTS_STREAM_CFM_STEPS=5`
+
+  Token-trinnet kører som CUDA-graf (`TTS_T3_GRAPH=cuda`; `off` slår det fra). `/metrics` viser
+  `first_audio_ms_p50/p95` og `last_stream_profile`.
+- **Hurtig måling på en lejet GPU:** `tts_service/pod_bootstrap.sh`. Den installerer, henter modellen og starter
+  tjenesten fra et git-checkout.
 - **Miljøvariabler på TTS-hosten:**
   - `TTS_SERVICE_TOKEN` (≥ 32 tegn, tilfældig)
   - `MODEL_REPO=CoRal-project/roest-v3-chatterbox-500m` og `MODEL_T3=t3_mtl23ls_v2.safetensors` (Røst-v3)

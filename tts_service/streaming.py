@@ -125,12 +125,24 @@ class T3Stepper:
                                use_cache=True)
             return out.last_hidden_state
 
+        self._eager = step
         try:
             self._step = torch.compile(step, mode="reduce-overhead", fullgraph=False)
             self.compiled = True
         except Exception:  # noqa: BLE001 - fall back to the eager static cache
             log.exception("torch.compile unavailable; eager static cache")
             self._step = step
+
+    def _run_step(self, emb, pos):
+        try:
+            hidden = self._step(emb, pos)
+        except Exception:  # noqa: BLE001 - a failed graph capture must not take the voice down
+            if not self.compiled:
+                raise
+            log.exception("compiled token step failed; continuing with the eager static cache")
+            self.compiled, self._step = False, self._eager
+            return self._eager(emb, pos)  # rewrites the same cache position, so the state stays consistent
+        return hidden.clone() if self.compiled else hidden  # CUDA-graph outputs are reused by the next replay
 
     def tokens(self, t3_cond, text_tokens, *, temperature: float, cfg_weight: float, repetition_penalty: float,
                min_p: float, top_p: float, max_new_tokens: int = 1000) -> Iterator[int]:
@@ -185,9 +197,7 @@ class T3Stepper:
             emb = t3.speech_emb(nxt) + t3.speech_pos_emb.get_fixed_embedding(i + 1)
             emb = torch.cat([emb, emb])
             if self.static:
-                hidden = self._step(emb, torch.tensor([n_ctx + i], device=self.device))
-                if self.compiled:
-                    hidden = hidden.clone()  # CUDA-graph outputs are overwritten by the next replay
+                hidden = self._run_step(emb, torch.tensor([n_ctx + i], device=self.device))
             else:
                 out = t3.tfmr(inputs_embeds=emb, past_key_values=past, use_cache=True)
                 hidden, past = out.last_hidden_state, out.past_key_values

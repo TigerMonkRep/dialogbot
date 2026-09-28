@@ -1,9 +1,10 @@
 """Outbound calling campaigns.
 
 Rules (product and Danish law, markedsføringsloven § 10):
-- A contact is either a business number (B2B calls are allowed unless the business has said no) or a
-  consumer who has given prior consent – the consent source is required and stored per contact.
-  We cannot check the CPR Robinson list, so consumers without documented consent are refused.
+- Every contact – business or consumer – must have given prior consent, and the consent source is required and
+  stored per contact. The AI places the call without a person on the line, which makes it an "automatiseret
+  opkaldssystem" in § 10 stk. 1; that rule protects businesses too (it says "nogen", not "forbrugere"), so
+  neither the Robinson list nor CVR's advertising protection is enough to call someone who has not asked for it.
 - Numbers on the workspace's do-not-call list are never called; "ring ikke igen" in a call adds the
   number to it.
 - One package per contact: fixed price, at most `max_attempts` dial attempts and `max_connected_seconds`
@@ -40,10 +41,11 @@ E164 = re.compile(r"^\+[1-9]\d{7,14}$")
 AI_DISCLOSURE = re.compile(r"digital assistent|ai-assistent|kunstig intelligens|\bAI\b", re.I)
 NO_ANSWER_REASONS = ("customer-did-not-answer", "customer-busy", "voicemail", "twilio-failed-to-connect-call",
                      "vonage-failed-to-connect-call", "customer-did-not-give-microphone-permission")
-LEGAL_TEXT_VERSION = "campaign-legal-v1"
+LEGAL_TEXT_VERSION = "campaign-legal-v2"
 LEGAL_CHECKLIST = (
-    "Erhvervsnumre: Kontakterne er virksomheder, der ikke har frabedt sig opkald.",
-    "Privatpersoner: Hver privatperson har på forhånd givet samtykke til at blive ringet op af os, og vi kan dokumentere det.",
+    "Alle kontakter – både virksomheder og privatpersoner – har på forhånd sagt ja til at blive ringet op af os, "
+    "og vi kan dokumentere hvor og hvornår.",
+    "Vi ringer ikke kolde opkald med assistenten. Det gælder også virksomheder, der ikke er reklamebeskyttede.",
     "Vi ringer ikke til numre på vores spærreliste, og vi respekterer et nej med det samme.",
     "Assistenten siger, at den er en digital assistent, hvem den ringer fra, og hvorfor.",
 )
@@ -117,9 +119,10 @@ def import_contacts(db: OrmSession, c: Campaign, text: str, *, kind: str, consen
     if kind not in ("business", "consumer"):
         raise ValidationFailed("Vælg erhverv eller privat", field_errors=[{"field": "kind"}])
     consent_source = consent_source.strip()
-    if kind == "consumer" and len(consent_source) < 5:
-        raise ValidationFailed("Privatpersoner må kun ringes op med forudgående samtykke. Skriv hvor samtykket er givet "
-                               "(fx \"tilmelding på hjemmesiden, marts 2026\").", field_errors=[{"field": "consent_source"}])
+    if len(consent_source) < 5:
+        raise ValidationFailed("Assistenten må kun ringe til kontakter, der på forhånd har sagt ja til det – også "
+                               "virksomheder. Skriv hvor og hvornår samtykket er givet (fx \"tilmelding på "
+                               "hjemmesiden, marts 2026\").", field_errors=[{"field": "consent_source"}])
     rows = parse_csv(text)
     if not rows:
         raise ValidationFailed("Filen indeholder ingen rækker", field_errors=[{"field": "csv"}])
@@ -143,7 +146,7 @@ def import_contacts(db: OrmSession, c: Campaign, text: str, *, kind: str, consen
         email = r["email"].lower() if "@" in r["email"] else None
         db.add(CampaignContact(campaign_id=c.id, workspace_id=c.workspace_id, name=r["name"][:200],
                                company=r["company"][:200], phone=phone, email=email, kind=kind,
-                               consent_source=consent_source[:500] if kind == "consumer" else ""))
+                               consent_source=consent_source[:500]))
         added += 1
     db.flush()
     return {"added": added, "duplicates": duplicates, "blocked": on_block_list, "invalid": invalid[:50],
@@ -340,6 +343,9 @@ def dispatch(db: OrmSession, now: datetime | None = None, max_calls: int = 20) -
                                                      CampaignContact.created_at).limit(10)):
             if contact.phone in blocked:
                 contact.status = "skipped"
+                continue
+            if not contact.consent_source.strip():  # imported before consent was required for businesses
+                contact.status, contact.error = "skipped", "Mangler dokumenteret samtykke"
                 continue
             dial(db, c, contact, now)
             dialled += 1

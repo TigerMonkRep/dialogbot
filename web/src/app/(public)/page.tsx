@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { DemoCall } from "./demo-call";
 import { IndustrySwitcher } from "./industries";
 
 /** P01 — front page (Stitch "p01_dialogbot_forside", desktop + mobile).
@@ -38,7 +39,7 @@ export default function Home() {
               <span className="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Dialogbot</span>
             </Link>
             <nav className="hidden lg:flex items-center gap-space-lg ml-space-md" aria-label="Sektioner">
-              {[["#spor", "Løsninger"], ["#trin", "Sådan fungerer det"], ["#faq", "Spørgsmål"]].map(([h, l]) => <a key={h} href={h} className="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors">{l}</a>)}
+              {[["#demo", "Hør den selv"], ["#spor", "Løsninger"], ["#trin", "Sådan fungerer det"], ["#faq", "Spørgsmål"]].map(([h, l]) => <a key={h} href={h} className="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors">{l}</a>)}
             </nav>
           </div>
           <div className="flex items-center gap-space-sm sm:gap-space-md">
@@ -102,6 +103,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* 1b. Hear it yourself: demo call on request + demo number */}
+        <DemoCall />
 
         {/* 2. Two tracks */}
         <section id="spor" className="py-14 lg:py-28 scroll-mt-28">

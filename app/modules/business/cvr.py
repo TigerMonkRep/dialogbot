@@ -1,8 +1,9 @@
 """Look up a company in the Danish CVR register (Erhvervsstyrelsen's system-to-system Elasticsearch).
 
-Only fields whose paths are documented in public client code are read: name, address, main industry and
-status. Credentials are free but must be requested from Erhvervsstyrelsen (cvrselvbetjening@erst.dk);
-without them the lookup answers 501. NOT externally verified from this repository.
+Only fields whose paths are documented in public client code are read: name, address, main industry,
+status and "reklamebeskyttet" (the company has asked not to be contacted for marketing; sellers must respect
+it). Credentials are free but must be requested from Erhvervsstyrelsen (cvrselvbetjening@erst.dk); without them
+the lookup answers 501. NOT externally verified from this repository.
 """
 from __future__ import annotations
 
@@ -16,6 +17,7 @@ SOURCE = [
     "Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse",
     "Vrvirksomhed.virksomhedMetadata.nyesteHovedbranche",
     "Vrvirksomhed.virksomhedMetadata.sammensatStatus",
+    "Vrvirksomhed.reklamebeskyttet",
 ]
 
 
@@ -43,6 +45,8 @@ def parse(hit: dict) -> dict:
         "city": addr.get("postdistrikt") or None,
         "industry": branch.get("branchetekst") or None,
         "status": meta.get("sammensatStatus") or None,
+        # None = the register did not say; treat as unknown, never as "may be contacted"
+        "advertising_protected": v["reklamebeskyttet"] if isinstance(v.get("reklamebeskyttet"), bool) else None,
     }
 
 

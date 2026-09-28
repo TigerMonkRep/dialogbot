@@ -2,6 +2,24 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 27 — 28. september 2026 (Salg: demo-opkald og samtykke til alle AI-opkald)
+
+Se `docs/sales/demo-calls.md`.
+- **Implementeret og testet (simuleret Vapi):**
+  - "Ring mig op nu" på forsiden med samtykke, danske numre, tidsvindue, grænse pr. nummer og pr. time samt
+    honeypot;
+  - demonummer;
+  - sælgerflow for operatører med tjek af reklamebeskyttelse i CVR;
+  - opkaldsrapport → henvendelse og opgave eller spærreliste i salgsarbejdsrummet;
+  - `demo_calls` (Alembic `94e8251b64e2`).
+
+  Bevis: `tests/test_sales_demo_calls.py` og E2E-rejse 1.
+- **Ændret regel:** Kampagner kræver nu dokumenteret samtykke for alle kontakter, også virksomheder. Grundlaget er
+  markedsføringsloven § 10, stk. 1, om automatiserede opkaldssystemer. Kontakter importeret uden samtykke springes
+  over. Bevis: `tests/test_campaigns.py` og E2E-rejse 22.
+- **Ikke eksternt verificeret:** rigtigt opkald og CVR-feltet `reklamebeskyttet`. Den juridiske vurdering er ikke
+  gennemgået af en advokat.
+
 ## Checkpoint 26 — 27. september 2026 (Telefoni: platformadministreret drift)
 
 Se `docs/telephony/README.md`, `owner-setup.md` og `migration.md`.
@@ -46,7 +64,7 @@ Se `docs/voice/README.md` for status pr. del. Kort fortalt:
 | Del | Status | Bevis |
 |---|---|---|
 | `campaigns`, `campaign_contacts`, `do_not_call` (Alembic `f8c8153ccbb0`). Pakke pr. kontakt: 9,00 kr. ekskl. moms, højst 2 forsøg og 180 s samtale i alt (snapshot pr. kampagne); pakken bruges (faktureres) først ved første opkald | testet | `tests/test_campaigns.py` |
-| CSV-import (`;` `,` eller tab, med/uden overskrift, danske numre uden +45), dubletter og spærreliste springes over, ugyldige numre rapporteres pr. række. Markedsføringsloven § 10: privatpersoner kræver dokumenteret forudgående samtykke (kilde gemmes pr. kontakt); erhvervsnumre tilladt | testet, E2E | samme, rejse 22 |
+| CSV-import (`;` `,` eller tab, med/uden overskrift, danske numre uden +45), dubletter og spærreliste springes over, ugyldige numre rapporteres pr. række. Markedsføringsloven § 10: privatpersoner kræver dokumenteret forudgående samtykke (kilde gemmes pr. kontakt); erhvervsnumre tilladt *(ændret i checkpoint 27: samtykke kræves for alle)* | testet, E2E | samme, rejse 22 |
 | AI-forslag til manuskript (første replik, spørgsmål, hvornår interesseret); udfyldes automatisk på en ny kampagne. Første replik får altid AI-oplysning | testet, E2E | rejse 22 |
 | Start er en særskilt administratorhandling: tjekliste over lovkrav + accept af maksimal pris (409 hvis prisen er ændret) + godkendt viden + udgående telefoni konfigureret; ellers 501 og deaktiveret knap. Betaling starter aldrig opkald | testet, E2E | `test_start_is_explicit_and_honest`, rejse 22 |
 | Worker ringer op via Vapi `POST /call` (transient assistent med godkendt viden, kampagnens manuskript, `maxDurationSeconds` = resterende sekunder): kun i kampagnens tidsrum i arbejdsrummets tidszone, ét opkald ad gangen pr. kampagne, nyt forsøg efter 3 timer, opkald uden rapport regnes som mislykket efter 15 min | testet med stub | `test_dialler_outcomes_and_billing`, `test_window_and_stale_calls` |

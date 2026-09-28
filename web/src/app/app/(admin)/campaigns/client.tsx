@@ -113,16 +113,14 @@ export function ImportContacts({ wsId, id }: { wsId: string; id: string }) {
       <Field label="Eller indsæt listen" error={fieldError(run.error, "csv")}><Textarea value={f.csv} onChange={(e) => setF({ ...f, csv: e.target.value })} placeholder={"Navn;Telefon;Firma\nMette Hansen;20 30 40 50;Hansen Byg ApS"} /></Field>
       <fieldset className="flex flex-col gap-space-xs">
         <legend className="font-label-md text-label-md font-semibold mb-1">Hvem er kontakterne?</legend>
-        <label className="flex items-start gap-space-xs font-body-md text-body-md"><input type="radio" name="kind" className="mt-1 accent-primary" checked={f.kind === "business"} onChange={() => setF({ ...f, kind: "business" })} />Virksomheder (erhvervsnumre)</label>
-        <label className="flex items-start gap-space-xs font-body-md text-body-md"><input type="radio" name="kind" className="mt-1 accent-primary" checked={f.kind === "consumer"} onChange={() => setF({ ...f, kind: "consumer" })} />Privatpersoner, der har givet samtykke til at blive ringet op</label>
+        <label className="flex items-start gap-space-xs font-body-md text-body-md"><input type="radio" name="kind" className="mt-1 accent-primary" checked={f.kind === "business"} onChange={() => setF({ ...f, kind: "business" })} />Virksomheder</label>
+        <label className="flex items-start gap-space-xs font-body-md text-body-md"><input type="radio" name="kind" className="mt-1 accent-primary" checked={f.kind === "consumer"} onChange={() => setF({ ...f, kind: "consumer" })} />Privatpersoner</label>
       </fieldset>
-      {f.kind === "consumer" && (
-        <Field label="Hvor og hvornår har de givet samtykke?" error={fieldError(run.error, "consent_source")} hint="Markedsføringsloven § 10: Privatpersoner må kun ringes op med reklame, hvis de på forhånd har bedt om det. Uden samtykke må I ikke ringe.">
-          <Input value={f.consent_source} onChange={(e) => setF({ ...f, consent_source: e.target.value })} placeholder="Tilmelding på hjemmesiden, marts 2026" />
-        </Field>
-      )}
+      <Field label="Hvor og hvornår har de sagt ja til at blive ringet op?" error={fieldError(run.error, "consent_source")} hint="Assistenten ringer uden et menneske i røret. Efter markedsføringsloven § 10 kræver det, at kontakten på forhånd har bedt om det – også når det er en virksomhed. Det er ikke nok, at de ikke står på Robinsonlisten eller er reklamebeskyttet i CVR.">
+        <Input value={f.consent_source} onChange={(e) => setF({ ...f, consent_source: e.target.value })} placeholder="Tilmelding på hjemmesiden, marts 2026" />
+      </Field>
       <ErrorBox error={run.error} />
-      <div><Button type="submit" icon="upload" disabled={run.pending || !f.csv.trim()}>{run.pending ? "Importerer…" : "Tilføj kontakter"}</Button></div>
+      <div><Button type="submit" icon="upload" disabled={run.pending || !f.csv.trim() || f.consent_source.trim().length < 5}>{run.pending ? "Importerer…" : "Tilføj kontakter"}</Button></div>
     </form>
   );
 }

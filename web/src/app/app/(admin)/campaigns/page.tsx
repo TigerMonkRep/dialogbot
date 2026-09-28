@@ -13,9 +13,10 @@ export default async function CampaignsPage() {
   const ws = await requireWorkspace();
   if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Kampagner kan ses af medarbejdere, administratorer og ejere.</p>;
   const canManage = ws.role === "owner" || ws.role === "admin";
-  const [list, dnc] = await Promise.all([
+  const [list, dnc, me] = await Promise.all([
     backend<List>(`/workspaces/${ws.id}/campaigns`),
     backend<{ items: Dnc[] }>(`/workspaces/${ws.id}/do-not-call`),
+    backend<{ is_platform_operator?: boolean }>(`/auth/me`).catch(() => ({ is_platform_operator: false })),
   ]);
   const p = list.package;
   return (
@@ -27,6 +28,7 @@ export default async function CampaignsPage() {
           Jeres digitale assistent ringer til en liste af kontakter med jeres budskab og sender de interesserede videre som henvendelser.
           Pris: {kr(p.net_minor)} + moms pr. kontakt – op til {p.max_attempts} forsøg og i alt {p.max_connected_seconds / 60} minutters samtale. Der ringes først, når en administrator trykker Start.
         </p>
+        {me.is_platform_operator && <Link href="/app/operator/sales" className="mt-space-xs flex items-center gap-1 font-label-lg text-label-lg text-primary underline w-fit"><Icon name="admin_panel_settings" size={18} />Salgsopkald: lad AI&apos;en ringe op (kun Dialogbot)</Link>}
       </div>
       <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
         <h2 className="font-headline-sm text-headline-sm text-primary">Jeres kampagner</h2>

@@ -14,6 +14,7 @@ from app.models.domain import (  # noqa: F401
     Conversation,
     ConversationMessage,
     DailyReport,
+    DemoCall,
     DoNotCall,
     EmailDelivery,
     GoalSelection,

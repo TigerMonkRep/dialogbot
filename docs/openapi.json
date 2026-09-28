@@ -1875,6 +1875,57 @@
         "title": "ScriptIn",
         "type": "object"
       },
+      "SellerIn": {
+        "properties": {
+          "company": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Company",
+            "type": "string"
+          },
+          "consent_confirmed": {
+            "title": "Consent Confirmed",
+            "type": "boolean"
+          },
+          "cvr": {
+            "anyOf": [
+              {
+                "maxLength": 12,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cvr"
+          },
+          "name": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Note",
+            "type": "string"
+          },
+          "phone": {
+            "maxLength": 30,
+            "minLength": 8,
+            "title": "Phone",
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone",
+          "company",
+          "consent_confirmed"
+        ],
+        "title": "SellerIn",
+        "type": "object"
+      },
       "SessionOut": {
         "properties": {
           "created_at": {
@@ -2551,6 +2602,50 @@
           "consent"
         ],
         "title": "VisitorBookingIn",
+        "type": "object"
+      },
+      "WebIn": {
+        "properties": {
+          "company": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Company",
+            "type": "string"
+          },
+          "consent": {
+            "title": "Consent",
+            "type": "boolean"
+          },
+          "consent_version": {
+            "default": "demo-call-web-v1",
+            "maxLength": 40,
+            "title": "Consent Version",
+            "type": "string"
+          },
+          "name": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "maxLength": 30,
+            "minLength": 8,
+            "title": "Phone",
+            "type": "string"
+          },
+          "website": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Website",
+            "type": "string"
+          }
+        },
+        "required": [
+          "phone",
+          "consent"
+        ],
+        "title": "WebIn",
         "type": "object"
       },
       "WorkspaceCreateIn": {
@@ -3800,6 +3895,63 @@
         ]
       }
     },
+    "/api/v1/demo-call": {
+      "get": {
+        "description": "Whether the website may offer \"Ring mig op nu\", the calling hours and the public demo number.",
+        "operationId": "demo_info_api_v1_demo_call_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Demo Info",
+        "tags": [
+          "sales"
+        ]
+      },
+      "post": {
+        "operationId": "request_demo_call_api_v1_demo_call_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Request Demo Call",
+        "tags": [
+          "sales"
+        ]
+      }
+    },
     "/api/v1/integrations/capabilities": {
       "get": {
         "operationId": "list_capabilities_api_v1_integrations_capabilities_get",
@@ -3946,6 +4098,224 @@
         "summary": "Preview Invitation",
         "tags": [
           "workspaces"
+        ]
+      }
+    },
+    "/api/v1/operator/sales": {
+      "get": {
+        "operationId": "sales_status_api_v1_operator_sales_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sales Status",
+        "tags": [
+          "sales-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/sales/cvr/{cvr}": {
+      "get": {
+        "description": "CVR lookup incl. advertising protection, so the seller checks a company before ringing it.",
+        "operationId": "cvr_check_api_v1_operator_sales_cvr__cvr__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cvr",
+            "required": true,
+            "schema": {
+              "title": "Cvr",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cvr Check",
+        "tags": [
+          "sales-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/sales/demo-calls": {
+      "get": {
+        "operationId": "list_demo_calls_api_v1_operator_sales_demo_calls_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Demo Calls",
+        "tags": [
+          "sales-operator"
+        ]
+      },
+      "post": {
+        "operationId": "seller_demo_call_api_v1_operator_sales_demo_calls_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SellerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Seller Demo Call",
+        "tags": [
+          "sales-operator"
         ]
       }
     },

@@ -51,13 +51,15 @@ class Config:
         self.max_chars = int(os.environ.get("TTS_MAX_CHARS", "600"))
         self.voice_cache = int(os.environ.get("TTS_VOICE_CACHE", "32"))
         self.replicas = max(1, int(os.environ.get("TTS_REPLICAS", "1")))
-        self.first_tokens = int(os.environ.get("TTS_STREAM_FIRST_TOKENS", "12"))
-        self.step_tokens = int(os.environ.get("TTS_STREAM_STEP_TOKENS", "20"))
-        w = os.environ.get("TTS_STREAM_WINDOW_TOKENS", "")
+        # Streaming defaults measured 28/9 on an RTX 4090 (docs/voice/testing.md): first audio ~0.65 s, no playback
+        # gaps. "" for window/prompt disables that bound.
+        self.first_tokens = int(os.environ.get("TTS_STREAM_FIRST_TOKENS", "30"))
+        self.step_tokens = int(os.environ.get("TTS_STREAM_STEP_TOKENS", "40"))
+        w = os.environ.get("TTS_STREAM_WINDOW_TOKENS", "56")
         self.window_tokens = int(w) if w else None
-        pt = os.environ.get("TTS_STREAM_PROMPT_TOKENS", "")
+        pt = os.environ.get("TTS_STREAM_PROMPT_TOKENS", "75")
         self.prompt_tokens = int(pt) if pt else None
-        self.cfm_steps = int(os.environ.get("TTS_STREAM_CFM_STEPS", "10"))
+        self.cfm_steps = int(os.environ.get("TTS_STREAM_CFM_STEPS", "5"))
         if len(self.token) < 32:
             raise RuntimeError("TTS_SERVICE_TOKEN (>=32 chars) is required")
 

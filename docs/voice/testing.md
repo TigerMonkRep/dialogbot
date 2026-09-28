@@ -56,6 +56,67 @@ model**) måler kun rørføringens overhead:
 Stigningen ved 4 samtidige skyldes, at tjenesten kører én generering ad gangen pr. model. Det er designet
 sådan: stemmetilstanden er delt, og der skaleres med replikaer.
 
+## GPU-måling på RunPod L4 (28/9 2026)
+
+Rigtig syntese med Røst-v3 (revision `7ce205ce…`, ikke simuleret) på RunPod Secure Cloud L4 24 GB i EUR-IS-1.
+Koden var commit `abdaf72`, og stemmen var modellens egen indbyggede `conds.pt`, ikke en CoRal-TTS-kandidat. Poden
+kørte 19,5 min og kostede ca. $0,16 (0,33 t × $0,49). Klar til brug 4 min efter oprettelse, inkl. installation og
+download af vægte. Resultater: `evidence/bench-tts-runpod-l4-2026-09-28.json` og
+`evidence/testset-runpod-l4-2026-09-28.jsonl`.
+
+| Måling | p50 | p95 |
+|---|---|---|
+| Syntese pr. enhed på serveren (`/metrics`, 122 kald) | 2.932 ms | 3.952 ms |
+| RTF på serveren | 0,83 | 0,94 |
+| `bench tts`, 1 samtidig (inkl. ca. 1 s RunPod-proxy) | 3.601 ms | 4.688 ms |
+| `bench tts`, 2 samtidige | 5.957 ms | 7.246 ms |
+| `bench tts`, 4 samtidige | 12.492 ms | 13.567 ms |
+| Testsæt, første enhed (110 sætninger) | 3.054 ms | 4.839 ms |
+
+**Konklusion:** L4 opfylder **ikke** målet om p95 < 1,5 s. Kun 1 af 110 sætninger havde første lyd under 1,5 s,
+og selv uden proxy tager en enhed ca. 2,9 s på serveren. RTF ≈ 0,8 betyder, at hele svaret skal genereres, før
+første byte sendes. Det kræver streaming-syntese, kortere første enhed eller hurtigere GPU, før L4 er brugbar til
+telefoni. Ved 2 og 4 samtidige står kaldene i kø, fordi der er én model pr. GPU.
+
+## Streaming-måling på RunPod RTX 4090 (28/9 2026)
+
+Samme model, revision og stemme som L4-målingen. Koden er streaming-versionen (`tts_service/streaming.py`, commit
+`835da35`):
+- tokens bliver til lyd undervejs;
+- token-trinnet afspilles som CUDA-graf;
+- lyd laves i vinduer;
+- 2 modelinstanser deles om én GPU.
+
+Stream-indstillingerne var første bid efter 30 tokens, derefter hver 40., et vindue på 56 tokens, 75 tokens af
+stemmeprøven og 5 CFM-trin. Den gamle endpoint (`/v1/synthesize`, hele sætningen) blev målt på samme GPU til
+sammenligning. Resultater ligger i `evidence/bench-tts-stream-rtx4090-2026-09-28.json` og
+`evidence/testset-stream-rtx4090-2026-09-28.jsonl`.
+
+L4 og A5000 var udsolgt, så målingen er lavet på en RTX 4090 (Secure Cloud, $0,74/t). Den første pod, en Community
+4090, havde en defekt GPU-vært ("CUDA unknown error") og blev slettet. Poderne kostede ca. $1,05 i alt.
+
+| Testsæt, 110 sætninger, 1 ad gangen | p50 | p95 |
+|---|---|---|
+| **Streaming: første lyd på serveren** | **652 ms** | **661 ms** |
+| Streaming: første lyd hos klienten (inkl. RunPod-proxy fra udviklingscontaineren) | 821 ms | 2.138 ms |
+| Gammel: hel enhed på serveren | 2.509 ms | 3.900 ms |
+| Streaming: RTF | 0,60 | 0,90 |
+| Streaming: afspilningshul (ville opkalderen høre en pause?) | 0 s | 0 s |
+
+- **110 af 110 sætninger** havde første lyd under 1,5 s på serveren. På L4 med den gamle version var det 1 af 110.
+- **Samtidige opkald (streaming, 2 instanser):**
+  - Ved 2 samtidige er første lyd p50 1,17 s og p95 1,34 s, med huller på op til 0,43 s.
+  - Ved 4 samtidige står 2 i kø, og klientens første lyd er p95 8,6 s.
+  - Én RTX 4090 klarer altså 1 samtale uden huller og 2 med små huller. Flere samtidige samtaler kræver flere GPU'er.
+- **Hvor tiden går (en sætning på 130 tokens):** T3 bruger 13–14 ms pr. token med CUDA-graf mod 21 ms uden. En
+  S3Gen-afkodning tager ca. 0,23 s med 5 CFM-trin og ca. 0,42 s med 10. Afkodningen er bundet af overhead, ikke af
+  længden.
+- **Ikke vurderet:** lydkvaliteten med 5 CFM-trin og den afkortede stemmeprøve. 10 sætninger ligger klar som
+  gammel/ny-par til lytning. L4 er ikke målt med streaming, fordi den var udsolgt. L4 er langsommere end 4090, så
+  tallene skal måles igen på den GPU, der vælges til drift.
+- **Mislykket optimering:** `torch.compile` (inductor) crashede på poden. Derfor bruges en manuelt optaget CUDA-graf
+  (`TTS_T3_GRAPH=cuda`), som ikke kræver compiler.
+
 ## Ikke bestået / ikke kørt (præcise blokeringer)
 
 | Del | Status | Blokering |
@@ -64,6 +125,6 @@ sådan: stemmetilstanden er delt, og der skaleres med replikaer.
 | Rigtig dansk syntese med Chatterbox Multilingual | **Ikke kørt** | Samme blokering for `ResembleAI/chatterbox`. Desuden ingen GPU i containeren (CPU er muligt, men for langsomt til telefoni) |
 | Lydfiler for 110 testsætninger pr. kandidat | **Ikke genereret** | Afhænger af de to ovenstående. Værktøjet (`synthesize_testset`) er klar |
 | Blind lyttetest (≥ 3 danske lyttere) | **Afventer** | Kræver rigtig lyd. Værktøjet (`listening_test build/score`) er klar. Ingen vurderinger er opfundet |
-| Latens p50/p95 på GPU, koldstart, RTF | **Ikke målt** | Kræver GPU-host (budget skal aftales) |
+| Latens p50/p95 på GPU, koldstart, RTF | **Streaming bestået på RTX 4090; L4 kun målt uden streaming** | Streaming på 4090: første lyd p95 0,66 s, ingen huller ved 1 samtale. L4 uden streaming: p95 ≈ 4–5 s. Se de to afsnit ovenfor. Lydkvalitet ved 5 CFM-trin er ikke lyttevurderet |
 | Rigtig testsamtale via Vapi med Dialogbot-stemme | **Ikke bestået** | Kræver TTS-host med rigtig model og en aktiv, godkendt stemme. Vapi-nummer og webhook findes allerede |
 | Kategorisering (køn, dialekt, alder) af CoRal-TTS-indtalerne | **Ukendt** | Kræver gennemlytning. Registreret som ukendt |

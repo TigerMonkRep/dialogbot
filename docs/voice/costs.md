@@ -18,10 +18,12 @@ køb. Ingen ressourcer er bestilt. Gratis modelvægte betyder ikke gratis drift.
 ## Antagelser (skal erstattes af målinger)
 
 - Assistenten taler ca. 40 % af samtaletiden. 1 samtaleminut giver ca. 0,4 genererede lydminutter.
-- Syntesehastighed (realtidsfaktor, RTF) er ikke målt. En offentlig måling af en streaming-variant viser
-  RTF ≈ 0,5 på RTX 4090 ([chatterbox-streaming](https://github.com/davidbrowne17/chatterbox-streaming)).
-  Vi antager konservativt RTF ≈ 1 på L4 eller RTX 4000 Ada. Det svarer til 1–2 samtidige samtaler pr. GPU
-  inden for 1,5 s p95. **Mål det med `voice_pipeline.eval.bench` før køb af mere end én GPU.**
+- **Syntesehastighed (målt 28/9, `testing.md`):**
+  - **RTX 4090 med streaming:** første lyd 0,65 s og RTF p95 0,9. Én 4090 klarer 1 samtale uden huller og 2 samtidige
+    med små huller (op til 0,43 s).
+  - **L4 uden streaming:** 2,9–4,0 s pr. sætning.
+  - **L4 med streaming er ikke målt**, fordi den var udsolgt. Regn med færre samtidige samtaler end på 4090.
+  - Mål den GPU, der vælges til drift, med `tts_service/pod_bootstrap.sh` og den samme bench, før der købes mere end én.
 - Én model pr. GPU (modellens stemmetilstand er delt). Flere samtidige samtaler kræver flere replikaer.
 
 ## A. Lille pilot (anbefalet start)

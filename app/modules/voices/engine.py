@@ -14,6 +14,7 @@ import math
 import struct
 import time
 import uuid
+from collections.abc import Iterator
 from dataclasses import dataclass
 
 from app.config import get_settings
@@ -92,6 +93,55 @@ def synthesize(version, text: str, *, sample_rate: int = 24000, request_id: str 
                      simulated=r.headers.get("x-simulated") == "1",  # a test engine behind HTTP stays labelled
                      synth_ms=int(r.headers.get("x-synthesis-ms") or (time.monotonic() - t0) * 1000),
                      model_revision=r.headers.get("x-model-revision", version.model_revision))
+
+
+def synthesize_stream(version, text: str, *, sample_rate: int = 24000, request_id: str | None = None,
+                      session_id: str | None = None) -> Iterator[bytes]:
+    """Raw PCM chunks while the speech is generated (tts_service /v1/synthesize/stream).
+
+    A generator: nothing is requested until the first next(). Errors before the first chunk raise the same
+    EngineBusy/EngineUnavailable as synthesize(), so the caller can still fall back; a failure later ends the
+    stream early (whole chunks only). Closing the generator closes the connection, which stops generation."""
+    if sample_rate not in SAMPLE_RATES:
+        raise ApiError("Ikke-understøttet samplerate", code="unsupported_sample_rate", status_code=422)
+    s = get_settings()
+    request_id = request_id or uuid.uuid4().hex
+    if s.tts_engine == "fake":
+        pcm = _fake(version, text, sample_rate).pcm
+        step = sample_rate // 5 * 2  # 200 ms of 16-bit audio
+        for i in range(0, len(pcm), step):
+            yield pcm[i:i + step]
+        return
+    if s.tts_engine != "http":
+        raise NotImplementedYet("Talemotoren er ikke sat op (TTS_ENGINE)", code="tts_not_configured")
+    import httpx
+
+    body = {"voice": voice_payload(version), "text": text, "language": LANGUAGE, "format": "pcm_s16le",
+            "sample_rate": sample_rate, "request_id": request_id, "session_id": session_id}
+    started = False
+    try:
+        with httpx.stream("POST", f"{s.tts_service_url.rstrip('/')}/v1/synthesize/stream", json=body,
+                          timeout=httpx.Timeout(s.tts_timeout_seconds, connect=5.0),
+                          headers={"authorization": f"Bearer {s.tts_service_token}", "x-request-id": request_id}) as r:
+            if r.status_code in (429, 503):
+                raise EngineBusy("Talemotoren er optaget. Prøv igen om lidt.")
+            if r.status_code >= 400:
+                raise EngineUnavailable(f"Talemotoren afviste forespørgslen ({r.status_code})")
+            carry = b""
+            for chunk in r.iter_bytes():
+                data = carry + chunk
+                cut = len(data) - len(data) % 2  # never split a 16-bit sample
+                carry = data[cut:]
+                if cut:
+                    started = True
+                    yield data[:cut]
+    except httpx.TimeoutException as e:
+        cancel(request_id)
+        if not started:
+            raise EngineUnavailable("Talemotoren svarede ikke i tide") from e
+    except httpx.HTTPError as e:
+        if not started:
+            raise EngineUnavailable("Talemotoren kan ikke nås") from e
 
 
 def cancel(request_id: str) -> None:

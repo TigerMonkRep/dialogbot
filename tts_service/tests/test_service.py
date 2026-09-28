@@ -2,7 +2,6 @@
 resampling, pinned model revision, backpressure, cancellation, voice isolation between interleaved sessions."""
 from __future__ import annotations
 
-import asyncio
 import hashlib
 import io
 import wave
@@ -101,13 +100,12 @@ def test_backpressure(monkeypatch, ref):
         assert r.status_code == 503 and r.headers["retry-after"] == "1"
         state.waiting = 0
 
-        async def hold():
-            await state.slot.acquire()
-
-        asyncio.run(hold())  # the only generation slot is taken → queue wait times out
+        eng = state.pool.get_nowait()  # the only model instance is busy → queue wait times out
         r = c.post("/v1/synthesize", json=_body(ref, request_id="req-00000009"), headers=H)
         assert r.status_code == 503
-        state.slot.release()
+        r = c.post("/v1/synthesize/stream", json=_body(ref, request_id="req-00000010"), headers=H)
+        assert r.status_code == 503
+        state.pool.put_nowait(eng)
 
 
 def test_interleaved_voices_do_not_leak(monkeypatch, ref):
@@ -164,3 +162,95 @@ def test_designed_voice_loads_verified_conditioning_file(monkeypatch, tmp_path):
         b["voice"].update(version_id="v3", checkpoint_key=None)
         b["request_id"] = "req-00000003"
         assert c.post("/v1/synthesize", headers=H, json=b).status_code == 422
+
+
+def test_stream_sends_the_same_audio_in_chunks(monkeypatch, ref):
+    app = create_app(_cfg(monkeypatch, TTS_STREAM_FIRST_TOKENS="5", TTS_STREAM_STEP_TOKENS="5"))
+    with TestClient(app) as c:
+        whole = c.post("/v1/synthesize", json=_body(ref), headers=H).content
+        with c.stream("POST", "/v1/synthesize/stream", json=_body(ref, request_id="req-00000020"), headers=H) as r:
+            assert r.status_code == 200 and r.headers["x-simulated"] == "1"
+            assert int(r.headers["x-first-audio-ms"]) >= 0
+            chunks = list(r.iter_raw())
+        assert b"".join(chunks) == whole
+        m = c.get("/metrics", headers=H).json()
+        assert m["first_audio_ms_p50"] is not None and m["replicas"] == 1
+        # 16 kHz: chunk-wise resampling matches resampling the whole utterance (no seams, same length)
+        import numpy as np
+
+        w16 = np.frombuffer(c.post("/v1/synthesize", json=_body(ref, sample_rate=16000, request_id="req-00000021"),
+                                   headers=H).content, dtype="<i2").astype(float)
+        s16 = np.frombuffer(c.post("/v1/synthesize/stream", json=_body(ref, sample_rate=16000, request_id="req-00000022"),
+                                   headers=H).content, dtype="<i2").astype(float)
+        assert abs(len(s16) - len(w16)) <= 2
+        n = min(len(s16), len(w16))
+        assert np.max(np.abs(s16[:n] - w16[:n])) < 0.02 * 32767
+
+
+def test_stream_validation_and_pool_release(monkeypatch, ref):
+    app = create_app(_cfg(monkeypatch, TTS_REPLICAS="2"))
+    with TestClient(app) as c:
+        assert c.post("/v1/synthesize/stream", json=_body(ref, format="wav"), headers=H).status_code == 422
+        assert c.post("/v1/synthesize/stream", json=_body(ref, language="sv"), headers=H).status_code == 422
+        c.delete("/v1/requests/req-cancel-2", headers=H)
+        assert c.post("/v1/synthesize/stream", json=_body(ref, request_id="req-cancel-2"), headers=H).status_code == 409
+        for i in range(3):  # every request hands its model instance back, also after a refusal
+            assert c.post("/v1/synthesize/stream", json=_body(ref, request_id=f"req-0000003{i}"), headers=H).status_code == 200
+        assert app.state.tts.pool.qsize() == 2
+        assert c.get("/metrics", headers=H).json()["replicas"] == 2
+
+
+def test_decode_stitcher_is_seamless():
+    import numpy as np
+
+    from tts_service.streaming import DecodeStitcher
+
+    rng = np.random.default_rng(1)
+    full = rng.standard_normal(24000 * 3).astype(np.float32)
+    st = DecodeStitcher()
+    out = [st.feed(full[:n]) for n in (6000, 9000, 20000, 40000, 60000)]
+    out.append(st.feed(full, final=True))
+    y = np.concatenate(out)
+    assert len(y) == len(full) and np.allclose(y, full, atol=1e-6)  # identical decodes → identical audio
+    # decodes that disagree a little at the seam: nothing lost, nothing doubled
+    st = DecodeStitcher()
+    parts = [st.feed(full[:20000] * 1.01), st.feed(full[:50000] * 0.99), st.feed(full, final=True)]
+    assert sum(len(p) for p in parts) == len(full)
+
+
+def test_stream_resampler_matches_whole_file():
+    import numpy as np
+
+    from tts_service.engines import resample
+    from tts_service.streaming import StreamResampler
+
+    t = np.arange(24000 * 2) / 24000
+    x = (0.3 * np.sin(2 * np.pi * 440 * t)).astype(np.float32)
+    rs = StreamResampler(24000, 16000)
+    y = np.concatenate([rs.feed(x[a:a + 5003]) for a in range(0, len(x), 5003)] + [rs.feed(np.zeros(0, np.float32), final=True)])
+    ref_ = resample(x, 24000, 16000)
+    assert abs(len(y) - len(ref_)) <= 2
+    n = min(len(y), len(ref_))
+    assert np.max(np.abs(y[100:n - 100] - ref_[100:n - 100])) < 0.01
+
+
+def test_decode_stitcher_with_windowed_decodes():
+    import numpy as np
+    import pytest as _pytest
+
+    from tts_service.streaming import SAMPLES_PER_TOKEN as T  # noqa: N811
+    from tts_service.streaming import DecodeStitcher
+
+    rng = np.random.default_rng(2)
+    full = rng.standard_normal(T * 120).astype(np.float32)
+    st = DecodeStitcher()
+    out, window, step = [], 36, 20
+    for n in range(12, 120, step):  # each decode covers only the newest `window` tokens
+        start = max(0, n - window)
+        out.append(st.feed(full[start * T:n * T], offset=start * T))
+    start = 120 - window
+    out.append(st.feed(full[start * T:], final=True, offset=start * T))
+    y = np.concatenate(out)
+    assert len(y) == len(full) and np.allclose(y, full, atol=1e-6)
+    with _pytest.raises(ValueError):  # a window that starts after unsent audio would leave a gap
+        DecodeStitcher().feed(full[T * 50:], offset=T * 50)

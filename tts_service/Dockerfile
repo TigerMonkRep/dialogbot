@@ -3,10 +3,12 @@
 # Run:    docker run --gpus all -p 8080:8080 -e TTS_SERVICE_TOKEN=... -e MODEL_REVISION=<40-hex commit> \
 #                    -v tts-models:/models dialogbot-tts
 FROM nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+# gcc + Python headers: torch.compile (Triton) builds its CUDA-graph helpers at start-up; without them the token loop
+# falls back to eager mode (~21 ms/token on an RTX 4090 instead of a few ms).
 
 ENV DEBIAN_FRONTEND=noninteractive PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
     HF_HOME=/models/hf PIP_NO_CACHE_DIR=1
-RUN apt-get update && apt-get install -y --no-install-recommends python3.11 python3.11-venv python3-pip git libsndfile1 ffmpeg \
+RUN apt-get update && apt-get install -y --no-install-recommends python3.11 python3.11-venv python3.11-dev python3-pip git gcc libc6-dev libsndfile1 ffmpeg \
     && rm -rf /var/lib/apt/lists/* && python3.11 -m venv /opt/venv
 ENV PATH=/opt/venv/bin:$PATH
 

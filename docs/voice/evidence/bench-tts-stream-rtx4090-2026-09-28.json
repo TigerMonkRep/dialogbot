@@ -1,0 +1,94 @@
+{
+ "hardware": "RunPod Secure RTX 4090 24GB, 2 model replicas",
+ "at": "2026-09-28T16:13:19Z",
+ "runs": {
+  "stream_c2": {
+   "server_p50": 1168,
+   "server_p95": 1340,
+   "client_first_p95": 1873.1,
+   "underrun_max_s": 0.43
+  },
+  "stock_c2": {
+   "server_p50": 4768,
+   "server_p95": 8103,
+   "client_first_p95": 8797.3,
+   "underrun_max_s": 0
+  },
+  "stream_c4": {
+   "server_p50": 1269,
+   "server_p95": 1341,
+   "client_first_p95": 8628.2,
+   "underrun_max_s": 0.46
+  },
+  "stock_c4": {
+   "server_p50": 4819,
+   "server_p95": 8825,
+   "client_first_p95": 16600.6,
+   "underrun_max_s": 0
+  }
+ },
+ "stream_opts": {
+  "first": 30,
+  "step": 40,
+  "window": 56,
+  "prompt_tokens": 75,
+  "cfm_steps": 5
+ },
+ "stream_server_first_ms": {
+  "p50": 652,
+  "p95": 661
+ },
+ "stream_client_first_ms": {
+  "p50": 821.1,
+  "p95": 2138.4
+ },
+ "stock_server_ms": {
+  "p50": 2509,
+  "p95": 3900
+ },
+ "stock_client_ms": {
+  "p50": 2883.7,
+  "p95": 4506.5
+ },
+ "stream_rtf": {
+  "p50": 0.6,
+  "p95": 0.9
+ },
+ "stream_underrun_s": {
+  "p50": 0.0,
+  "p95": 0.0
+ },
+ "stream_first_under_1500ms": "110/110",
+ "server_metrics": {
+  "requests": 200,
+  "synth_ms_p50": 2827,
+  "synth_ms_p95": 7743,
+  "rtf_p50": 0.969,
+  "rtf_p95": 2.245,
+  "queue": 0,
+  "first_audio_ms_p50": 655,
+  "first_audio_ms_p95": 1282,
+  "replicas": 2,
+  "last_stream_profile": {
+   "t3_ms": 2292.4,
+   "decode_ms": 1262.8,
+   "post_ms": 71.2,
+   "decodes": 4,
+   "tokens": 130,
+   "graph": true
+  },
+  "voices_cached": 1
+ },
+ "setup": {
+  "provider": "RunPod Secure Cloud",
+  "gpu": "NVIDIA GeForce RTX 4090 24GB (host CUDA 12.8)",
+  "replicas": 2,
+  "image": "nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04 + tts_service/requirements.lock (tts_service/pod_bootstrap.sh)",
+  "code": "claude/cool-wozniak-ho00tr @ 835da35 (streaming, CUDA-graph token step, windowed decodes)",
+  "model_repo": "CoRal-project/roest-v3-chatterbox-500m",
+  "model_revision": "7ce205cea6b3b36d9f60f18abb88ff21fa04ea0d",
+  "voice": "model's built-in conds.pt (designed_blend, sha256 6552d705...f4e)",
+  "client": "cloud dev container via RunPod HTTP proxy; server_* excludes the proxy, client_* includes it",
+  "pods": "jva9jy2mdl29pk (Community 4090, defective host: CUDA unknown error, deleted, ~$0.14); 9fwhrj2gn8wmbh (Secure 4090, 15:19–16:32 UTC, ~$0.90)"
+ }
+}

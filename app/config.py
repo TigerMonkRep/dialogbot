@@ -99,6 +99,8 @@ class Settings(BaseSettings):
     tts_service_url: str | None = Field(default=None, alias="TTS_SERVICE_URL")
     tts_service_token: str | None = Field(default=None, alias="TTS_SERVICE_TOKEN")
     tts_timeout_seconds: float = Field(default=20.0, alias="TTS_TIMEOUT_SECONDS")
+    # Calls: send audio to Vapi while it is generated (tts_service /v1/synthesize/stream) instead of per sentence
+    tts_streaming: bool = Field(default=True, alias="TTS_STREAMING")
     # Private object storage for reference clips, agreements and preview cache: local (dev/test) | supabase
     voice_storage: Literal["local", "supabase"] = Field(default="local", alias="VOICE_STORAGE")
     voice_storage_dir: str = Field(default="var/voice-store", alias="VOICE_STORAGE_DIR")

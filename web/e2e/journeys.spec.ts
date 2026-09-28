@@ -15,6 +15,9 @@ test("1 · A01→A03→A06: tilmelding med bevaret hensigt, bekræftelse og før
   await page.getByRole("button", { name: "Lås op og se forsiden" }).click();
   await expect(page.getByRole("heading", { name: /Du driver forretningen/ })).toBeVisible();
   await expect(page.getByText("Privat preview.", { exact: false })).toBeVisible();
+  // "Ring mig op nu" is honest: no sales workspace is configured in CI, so no call can be requested
+  await expect(page.getByRole("heading", { name: /Lad vores assistent ringe dig op/ })).toBeVisible();
+  await expect(page.getByText(/Demo-opkald åbner ved lanceringen/)).toBeVisible();
   await shot(page, info, "p01-forside");
   await page.getByRole("link", { name: "Start med kundeopfølgning" }).click();
   await expect(page).toHaveURL(/\/signup\?intent=campaigns/);
@@ -640,12 +643,11 @@ test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovk
   await expect(page.getByLabel(/^Første replik/)).toHaveValue(/digitale assistent/);
   await page.getByRole("button", { name: "Gem kampagne" }).click();
   await expect(page.getByText("Gemt.")).toBeVisible();
-  // consumers without documented consent are refused
+  // the assistant is an automated caller: every contact needs documented consent – businesses too (§ 10)
   await page.getByLabel("Eller indsæt listen").fill("Navn;Telefon;Firma\nMette Hansen;20 30 40 50;Hansen Byg ApS\nForkert;123;X");
-  await page.getByLabel(/Privatpersoner, der har givet samtykke/).check();
-  await page.getByRole("button", { name: "Tilføj kontakter" }).click();
-  await expect(page.getByText(/kun ringes op med forudgående samtykke/).first()).toBeVisible();
-  await page.getByLabel("Virksomheder (erhvervsnumre)").check();
+  await page.getByLabel("Virksomheder", { exact: true }).check();
+  await expect(page.getByRole("button", { name: "Tilføj kontakter" })).toBeDisabled();
+  await page.getByLabel("Hvor og hvornår har de sagt ja til at blive ringet op?").fill("Bad om opkald på messen, marts 2026");
   await page.getByRole("button", { name: "Tilføj kontakter" }).click();
   await expect(page.getByText(/1 kontakter tilføjet, 1 ugyldige numre \(fx række 2\)/)).toBeVisible();
   await expect(page.getByText("+4520304050")).toBeVisible();

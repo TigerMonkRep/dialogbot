@@ -45,7 +45,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
               {x.company && x.name && <span className="text-on-surface-variant">{x.company}</span>}
               <span className="text-on-surface-variant">{x.phone}</span>
               <span className="px-2 py-0.5 rounded-full bg-surface-container-high font-label-sm text-label-sm">{x.outcome ? OUTCOME[x.outcome] ?? x.outcome : CONTACT_STATUS[x.status] ?? x.status}</span>
-              {x.kind === "consumer" && <span className="font-label-sm text-label-sm text-on-surface-variant" title={x.consent_source}>Privat (samtykke)</span>}
+              {x.consent_source ? <span className="font-label-sm text-label-sm text-on-surface-variant" title={x.consent_source}>{x.kind === "consumer" ? "Privat" : "Erhverv"} (samtykke)</span> : <span className="font-label-sm text-label-sm text-error">Mangler samtykke – ringes ikke op</span>}
               {x.attempts > 0 && <span className="font-label-sm text-label-sm text-on-surface-variant">{x.attempts} forsøg</span>}
               <span className="ml-auto flex items-center gap-space-sm">
                 {x.lead_id && <Link href={`/app/leads/${x.lead_id}`} className="font-label-md text-label-md text-primary underline">Henvendelse</Link>}

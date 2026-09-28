@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
 
-export const metadata: Metadata = { title: "Privatliv – venteliste | Dialogbot", description: "Sådan behandler Dialogbot oplysninger fra ventelisten." };
+export const metadata: Metadata = { title: "Privatliv | Dialogbot", description: "Sådan behandler Dialogbot oplysninger fra ventelisten og demo-opkald." };
 
 const CONTROLLER_ADDRESS = "Abildgade 18, 8200 Aarhus, Danmark";
 
-/** Privacy notice for the P00 waitlist. Deliberately limited to what the waitlist actually does. */
+/** Privacy notice for the P00 waitlist and demo calls. Deliberately limited to what they actually do. */
 export default function PrivacyPage() {
   const sections: [string, React.ReactNode][] = [
     ["Hvem er ansvarlig?", <>Dialogbot, {CONTROLLER_ADDRESS}. Henvendelser om dine oplysninger sendes til denne adresse.</>],
@@ -15,6 +15,7 @@ export default function PrivacyPage() {
     ["Retsgrundlag", <>Dit samtykke (databeskyttelsesforordningens art. 6, stk. 1, litra a), som du giver ved at sætte flueben i formularen. Du kan til enhver tid trække det tilbage.</>],
     ["Hvor længe?", <>Indtil vi har givet besked om åbningen, eller indtil du beder os slette dig – dog højst 24 måneder efter tilmelding.</>],
     ["Hvem behandler data for os?", <>Oplysningerne ligger i vores database hos Supabase og behandles af vores server hos Render (Frankfurt, EU). Websiden leveres via Vercel. De fungerer som databehandlere.</>],
+    ["Demo-opkald (\"Ring mig op nu\")", <>Beder du vores assistent ringe dig op, gemmer vi dit telefonnummer, det navn og den virksomhed, du skriver, tidspunktet og teksten for dit samtykke samt en udskrift af samtalen. Vi bruger det kun til at foretage opkaldet og til, at en medarbejder fra Dialogbot kan følge op på det, I talte om. Retsgrundlaget er dit samtykke. Opkaldet går gennem vores telefoni- og taleleverandører Vapi, Twilio, Deepgram og ElevenLabs samt AI-modellen hos Anthropic. De er databehandlere og kan behandle data i USA. Siger du i opkaldet, at du ikke vil ringes op igen, kommer nummeret på vores spærreliste. Vi gemmer oplysningerne, så længe vi følger op, og sletter dem, når du beder om det.</>],
     ["Dine rettigheder", <>Du har ret til indsigt, berigtigelse og sletning, til at trække dit samtykke tilbage og til dataportabilitet. Skriv til {CONTROLLER_ADDRESS}. Du kan klage til Datatilsynet (<a className="underline" href="https://www.datatilsynet.dk" rel="noreferrer">datatilsynet.dk</a>).</>],
   ];
   return (
@@ -28,7 +29,7 @@ export default function PrivacyPage() {
       <main id="main" className="max-w-3xl mx-auto px-4 sm:px-6 py-space-xl flex flex-col gap-space-lg">
         <div>
           <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">Privatliv</span>
-          <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary">Sådan behandler vi oplysninger fra ventelisten</h1>
+          <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary">Sådan behandler vi oplysninger fra ventelisten og demo-opkald</h1>
           <p className="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">Gælder tilmelding til tidlig adgang. Opdateret 25. september 2026.</p>
         </div>
         {sections.map(([h, body]) => (

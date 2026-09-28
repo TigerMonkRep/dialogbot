@@ -89,6 +89,12 @@ class Settings(BaseSettings):
     cvr_username: str | None = Field(default=None, alias="CVR_USERNAME")
     cvr_password: str | None = Field(default=None, alias="CVR_PASSWORD")
     cvr_url: str = Field(default="http://distribution.virk.dk/cvr-permanent/virksomhed/_search", alias="CVR_URL")
+    # Sales demo calls ("Ring mig op nu" on the website and the seller flow): Dialogbot's own workspace, whose
+    # approved knowledge describes Dialogbot and whose outbound-approved number places the calls. Unset = off.
+    sales_workspace_id: str | None = Field(default=None, alias="SALES_WORKSPACE_ID")
+    sales_call_from: str = Field(default="08:00", alias="SALES_CALL_FROM")  # website requests, Copenhagen time
+    sales_call_to: str = Field(default="20:00", alias="SALES_CALL_TO")
+    sales_max_calls_per_hour: int = Field(default=20, alias="SALES_MAX_CALLS_PER_HOUR")
     # Danish voice library. The speech engine is a separate service (tts_service/), never the API process.
     # TTS_ENGINE: none | http (the real service at TTS_SERVICE_URL) | fake (dev/test double; audio is a tone
     # and every result is labelled simulated).

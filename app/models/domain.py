@@ -811,7 +811,7 @@ class CampaignContact(Base):
     phone: Mapped[str] = mapped_column(String(20), nullable=False)
     email: Mapped[str | None] = mapped_column(String(320))
     kind: Mapped[str] = mapped_column(String(16), nullable=False)  # business | consumer
-    consent_source: Mapped[str] = mapped_column(Text, nullable=False, default="")  # required for consumers
+    consent_source: Mapped[str] = mapped_column(Text, nullable=False, default="")  # where they said yes (all new rows)
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="pending")
     attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     connected_seconds: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
@@ -840,6 +840,42 @@ class DoNotCall(Base):
     phone: Mapped[str] = mapped_column(String(20), nullable=False)
     reason: Mapped[str] = mapped_column(String(300), nullable=False, default="")
     source: Mapped[str] = mapped_column(String(16), nullable=False, default="manual")  # manual | call
+    created_at: Mapped[datetime] = ts_now()
+
+
+class DemoCall(Base):
+    """A demo call from Dialogbot's own sales workspace to a prospect who asked for it.
+
+    Two sources, both with documented prior consent (markedsføringsloven § 10 – an AI call is an automated
+    calling system): `web` = the prospect ticked the consent box on dialogbot.dk; `seller` = a Dialogbot seller
+    had the prospect on the phone, got a yes, and pressed "ring op" (the seller is recorded)."""
+
+    __tablename__ = "demo_calls"
+    __table_args__ = (
+        CheckConstraint("source in ('web','seller')", name="ck_demo_calls_source"),
+        CheckConstraint("status in ('calling','done','no_answer','failed','skipped')", name="ck_demo_calls_status"),
+        Index("ix_demo_calls_phone_created", "phone", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    source: Mapped[str] = mapped_column(String(8), nullable=False)
+    phone: Mapped[str] = mapped_column(String(20), nullable=False)
+    name: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    company: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    cvr: Mapped[str | None] = mapped_column(String(8))
+    consent_version: Mapped[str] = mapped_column(String(40), nullable=False)
+    consent_text: Mapped[str] = mapped_column(Text, nullable=False)
+    consented_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    seller_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    note: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="calling")
+    provider_call_id: Mapped[str | None] = mapped_column(String(100), index=True)
+    outcome: Mapped[str | None] = mapped_column(String(24))  # interested | callback | not_interested | opt_out
+    summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    error: Mapped[str | None] = mapped_column(String(300))
+    lead_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("leads.id", ondelete="SET NULL"))
+    conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
 
 

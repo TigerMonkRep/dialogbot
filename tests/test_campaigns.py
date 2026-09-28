@@ -45,9 +45,12 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     c = _campaign(api, t)
     assert c["package"] == {"net_minor": 900, "max_attempts": 2, "max_connected_seconds": 180}
     assert api.post(tok, f"/workspaces/{ws}/do-not-call", {"phone": "21222324", "reason": "Bad os lade være"}).status_code == 201
-    r = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": CSV, "kind": "business"}).json()
+    r = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": CSV, "kind": "business", "consent_source": "Bad om opkald på messen, marts 2026"}).json()
     assert (r["added"], r["duplicates"], r["blocked"], r["invalid_count"]) == (1, 1, 1, 1)
     assert r["invalid"][0]["row"] == 3
+    # the AI is an automated calling system (markedsføringsloven § 10 stk. 1): businesses need consent too
+    no_consent = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": "Hansen Byg;22334466", "kind": "business"})
+    assert no_consent.status_code == 422 and no_consent.json()["field_errors"][0]["field"] == "consent_source"
     # consumers need documented prior consent (markedsføringsloven § 10)
     bad = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": "Bo;22334455", "kind": "consumer"})
     assert bad.status_code == 422
@@ -87,7 +90,7 @@ def test_start_is_explicit_and_honest(api, two_workspaces, monkeypatch):
     _ready(api, t, monkeypatch, key=False)
     c = _campaign(api, t)
     assert c["phone_number_id"] is not None and c["status"] == "draft"
-    api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": "Mette;20304050\nOle;21222324", "kind": "business"})
+    api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": "Mette;20304050\nOle;21222324", "kind": "business", "consent_source": "Tilmelding på hjemmesiden"})
     start = f"/workspaces/{ws}/campaigns/{c['id']}/start"
     body = {"expected_version": c["version"], "legal_confirmed": False, "accept_max_net_minor": 1800}
     assert api.post(tok, start, body).status_code == 422
@@ -113,7 +116,8 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
     _ready(api, t, monkeypatch)
     c = _campaign(api, t, questions=["Hvor mange m²?"])
     api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import",
-             {"csv": "Mette Hansen;20304050\nOle Berg;21222324", "kind": "business"})
+             {"csv": "Mette Hansen;20304050\nOle Berg;21222324", "kind": "business",
+              "consent_source": "Tilmelding på hjemmesiden"})
     r = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/start",
                  {"expected_version": c["version"], "legal_confirmed": True, "accept_max_net_minor": 1800})
     assert r.status_code == 200, r.text

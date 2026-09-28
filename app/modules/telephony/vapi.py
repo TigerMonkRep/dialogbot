@@ -304,6 +304,11 @@ def end_of_call(db: OrmSession, message: dict) -> str:
     if campaigns.on_report(db, message, call_id=call_id, conv=conv, duration=duration, visitor_lines=visitor_lines,
                            transcript="\n".join(lines), summary=summary):
         return "applied"  # an outbound campaign call: its contact gets the outcome, not a generic callback lead
+    from app.modules.sales import service as sales
+
+    if sales.on_report(db, message, call_id=call_id, conv=conv, visitor_lines=visitor_lines,
+                       transcript="\n".join(lines), summary=summary):
+        return "applied"  # a demo call from the sales workspace: outcome on the demo call, lead only when relevant
     booked = db.scalar(select(Booking).where(Booking.workspace_id == ws_id, Booking.source == "phone",
                                              Booking.provider_call_id == call_id)) if call_id else None
     if booked is not None:  # the caller booked during the call: that booking's lead is the lead

@@ -6,7 +6,7 @@ import pytest
 
 from app.config import get_settings
 
-HIT = {"_source": {"Vrvirksomhed": {"cvrNummer": 12345674, "virksomhedMetadata": {
+HIT = {"_source": {"Vrvirksomhed": {"cvrNummer": 12345674, "reklamebeskyttet": True, "virksomhedMetadata": {
     "nyesteNavn": {"navn": "FJORD GULVSERVICE ApS"},
     "nyesteBeliggenhedsadresse": {"vejnavn": "Havnevej", "husnummerFra": 12, "bogstavFra": "B", "postnummer": 8000,
                                   "postdistrikt": "Aarhus C"},
@@ -47,7 +47,7 @@ def test_lookup_parses_register_fields(api, two_workspaces, cvr_creds, monkeypat
     assert r.status_code == 200, r.text
     assert r.json() == {"cvr": "12345674", "legal_name": "FJORD GULVSERVICE ApS", "address_line": "Havnevej 12B",
                         "postal_code": "8000", "city": "Aarhus C", "industry": "Gulvbelægning og tapetsering",
-                        "status": "Normal"}
+                        "status": "Normal", "advertising_protected": True}
     assert seen["auth"] == ("test-user", "test-pass")
     assert seen["json"]["query"] == {"term": {"Vrvirksomhed.cvrNummer": 12345674}}
     monkeypatch.setattr(httpx, "post", lambda url, **kw: httpx.Response(200, json={"hits": {"hits": []}},

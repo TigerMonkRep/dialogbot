@@ -56,6 +56,28 @@ model**) måler kun rørføringens overhead:
 Stigningen ved 4 samtidige skyldes, at tjenesten kører én generering ad gangen pr. model. Det er designet
 sådan: stemmetilstanden er delt, og der skaleres med replikaer.
 
+## GPU-måling på RunPod L4 (28/9 2026)
+
+Rigtig syntese med Røst-v3 (revision `7ce205ce…`, ikke simuleret) på RunPod Secure Cloud L4 24 GB i EUR-IS-1.
+Koden var commit `abdaf72`, og stemmen var modellens egen indbyggede `conds.pt`, ikke en CoRal-TTS-kandidat. Poden
+kørte 19,5 min og kostede ca. $0,16 (0,33 t × $0,49). Klar til brug 4 min efter oprettelse, inkl. installation og
+download af vægte. Resultater: `evidence/bench-tts-runpod-l4-2026-09-28.json` og
+`evidence/testset-runpod-l4-2026-09-28.jsonl`.
+
+| Måling | p50 | p95 |
+|---|---|---|
+| Syntese pr. enhed på serveren (`/metrics`, 122 kald) | 2.932 ms | 3.952 ms |
+| RTF på serveren | 0,83 | 0,94 |
+| `bench tts`, 1 samtidig (inkl. ca. 1 s RunPod-proxy) | 3.601 ms | 4.688 ms |
+| `bench tts`, 2 samtidige | 5.957 ms | 7.246 ms |
+| `bench tts`, 4 samtidige | 12.492 ms | 13.567 ms |
+| Testsæt, første enhed (110 sætninger) | 3.054 ms | 4.839 ms |
+
+**Konklusion:** L4 opfylder **ikke** målet om p95 < 1,5 s. Kun 1 af 110 sætninger havde første lyd under 1,5 s,
+og selv uden proxy tager en enhed ca. 2,9 s på serveren. RTF ≈ 0,8 betyder, at hele svaret skal genereres, før
+første byte sendes. Det kræver streaming-syntese, kortere første enhed eller hurtigere GPU, før L4 er brugbar til
+telefoni. Ved 2 og 4 samtidige står kaldene i kø, fordi der er én model pr. GPU.
+
 ## Ikke bestået / ikke kørt (præcise blokeringer)
 
 | Del | Status | Blokering |
@@ -64,6 +86,6 @@ sådan: stemmetilstanden er delt, og der skaleres med replikaer.
 | Rigtig dansk syntese med Chatterbox Multilingual | **Ikke kørt** | Samme blokering for `ResembleAI/chatterbox`. Desuden ingen GPU i containeren (CPU er muligt, men for langsomt til telefoni) |
 | Lydfiler for 110 testsætninger pr. kandidat | **Ikke genereret** | Afhænger af de to ovenstående. Værktøjet (`synthesize_testset`) er klar |
 | Blind lyttetest (≥ 3 danske lyttere) | **Afventer** | Kræver rigtig lyd. Værktøjet (`listening_test build/score`) er klar. Ingen vurderinger er opfundet |
-| Latens p50/p95 på GPU, koldstart, RTF | **Ikke målt** | Kræver GPU-host (budget skal aftales) |
+| Latens p50/p95 på GPU, koldstart, RTF | **Målt på L4, ikke bestået** | Se "GPU-måling på RunPod L4". p95 ≈ 4–5 s mod mål 1,5 s. Andre GPU'er er ikke målt |
 | Rigtig testsamtale via Vapi med Dialogbot-stemme | **Ikke bestået** | Kræver TTS-host med rigtig model og en aktiv, godkendt stemme. Vapi-nummer og webhook findes allerede |
 | Kategorisering (køn, dialekt, alder) af CoRal-TTS-indtalerne | **Ukendt** | Kræver gennemlytning. Registreret som ukendt |

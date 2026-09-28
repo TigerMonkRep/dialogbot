@@ -1,0 +1,67 @@
+{
+  "mode": "tts",
+  "hardware": "RunPod Secure L4 24GB (EUR-IS-1), client via RunPod HTTP proxy",
+  "at": "2026-09-28T13:57:01Z",
+  "runs": [
+    {
+      "concurrency": 1,
+      "unit_ms_p50": 3601.2,
+      "unit_ms_p95": 4687.9,
+      "rtf_p50": 1.0,
+      "rtf_p95": 1.3
+    },
+    {
+      "concurrency": 2,
+      "unit_ms_p50": 5957.0,
+      "unit_ms_p95": 7245.5,
+      "rtf_p50": 1.7,
+      "rtf_p95": 2.1
+    },
+    {
+      "concurrency": 4,
+      "unit_ms_p50": 12491.7,
+      "unit_ms_p95": 13567.3,
+      "rtf_p50": 3.3,
+      "rtf_p95": 4.3
+    }
+  ],
+  "server_metrics_after_bench": {
+    "requests": 122,
+    "synth_ms_p50": 2932,
+    "synth_ms_p95": 3952,
+    "rtf_p50": 0.825,
+    "rtf_p95": 0.942
+  },
+  "setup": {
+    "provider": "RunPod Secure Cloud",
+    "gpu": "NVIDIA L4 24GB",
+    "data_center": "EUR-IS-1",
+    "host_cuda": "13.0",
+    "image": "nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04 + tts_service/requirements.lock",
+    "code_commit": "abdaf727ea25e5ace0d8cd57bd02112fa72f09d2",
+    "model_repo": "CoRal-project/roest-v3-chatterbox-500m",
+    "model_revision": "7ce205cea6b3b36d9f60f18abb88ff21fa04ea0d",
+    "model_t3": "t3_mtl23ls_v2.safetensors",
+    "voice": "model's built-in conds.pt (designed_blend, sha256 6552d705...f4e), not a CoRal-TTS candidate",
+    "client": "cloud dev container via RunPod HTTP proxy (unit_ms includes ~1 s proxy/network overhead; server_metrics exclude it)",
+    "pod_started": "2026-09-28T13:51:40Z",
+    "ready": "2026-09-28T13:55:40Z",
+    "pod_terminated": "2026-09-28T14:11:09Z",
+    "cost_usd_estimate": 0.16
+  },
+  "testset": {
+    "clips": 110,
+    "units": 127,
+    "audio_seconds": 343.9,
+    "first_unit_ms_p50": 3054,
+    "first_unit_ms_p95": 4839,
+    "unit_ms_p50": 2891,
+    "unit_ms_p95": 4800,
+    "total_ms_p50": 3406,
+    "total_ms_p95": 5877,
+    "rtf_p50": 1.166,
+    "rtf_p95": 1.783,
+    "first_unit_under_1500ms": "1/110",
+    "simulated": false
+  }
+}

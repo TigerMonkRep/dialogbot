@@ -776,3 +776,35 @@ test("24 · Egen stemme: samtykke i eget navn, personligt manuskript, optagelse 
   await page.getByRole("button", { name: "Træk samtykket tilbage" }).last().click();
   await expect(page.getByText(/Samtykket er trukket tilbage\. Optagelserne er slettet/)).toBeVisible();
 });
+
+test("25 · Integrationer: ærligt katalog, Zapier med signeret webhook, Google Kalender via OAuth (simuleret) og afbryd", async ({ page }, info) => {
+  await freshOwner(page, info);
+  await page.goto("/app/settings/integrationer");
+  await expect(page.getByRole("heading", { name: "Handlinger i jeres egne systemer" })).toBeVisible();
+  await expect(page.getByText(/Testmiljø: forbindelser og handlinger er simulerede/)).toBeVisible();
+  for (const h of ["Klar", "Via Zapier eller Make", "På vej"]) await expect(page.getByRole("heading", { name: h, exact: true })).toBeVisible();
+  // Dialogbots own calendar is honest: not connected until online booking is on
+  const own = page.locator('[data-connector="bookings"]');
+  await expect(own.getByText("Ikke forbundet")).toBeVisible();
+  // Zapier: paste the Catch Hook address, get the signing secret exactly once, test the connection
+  const zap = page.locator('[data-connector="zapier"]');
+  await zap.getByLabel(/Catch Hook/).fill("http://localhost:9/hook");
+  await zap.getByRole("button", { name: "Forbind" }).click();
+  await expect(zap.getByText("Vises kun én gang", { exact: false })).toBeVisible();
+  await expect(zap.getByText(/^whsec_/)).toBeVisible();
+  await expect(zap.getByText("Forbundet (simuleret)")).toBeVisible();
+  await zap.getByRole("button", { name: "Test forbindelse" }).click();
+  await expect(zap.getByText("Forbindelsen virker (simuleret).")).toBeVisible();
+  // Google Calendar: OAuth round-trip through the (simulated) provider and back
+  const g = page.locator('[data-connector="google_calendar"]');
+  await g.getByRole("button", { name: "Forbind" }).click();
+  await expect(page.getByText("Google Kalender er forbundet.")).toBeVisible();
+  await expect(page.locator('[data-connector="google_calendar"]').getByText("Forbundet (simuleret)")).toBeVisible();
+  await shot(page, info, "c03-integrationer");
+  // disconnect Zapier with an in-page confirmation
+  const zap2 = page.locator('[data-connector="zapier"]');
+  await zap2.getByRole("button", { name: "Afbryd" }).click();
+  await zap2.getByRole("button", { name: "Ja, afbryd Zapier" }).click();
+  await expect(page.locator('[data-connector="zapier"]').getByText("Ikke forbundet")).toBeVisible();
+  await expect(page.getByText("Seneste handlinger")).toBeVisible();
+});

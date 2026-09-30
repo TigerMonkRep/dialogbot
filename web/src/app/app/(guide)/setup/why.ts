@@ -3,6 +3,7 @@ import type { Task } from "./page";
 const WHY: Record<string, string> = {
   "knowledge.services": "Assistenten må kun love det, som virksomheden har godkendt. Uden mindst én godkendt ydelse findes der intet, den kan svare korrekt på.",
   "knowledge.review": "Kun ejere og administratorer kan gøre viden aktiv. Det sikrer, at ingen medarbejder ved en fejl publicerer priser eller løfter.",
+  "integrations.connect": "Valgfrit. Når jeres kalender, SMS eller Zapier/Make er forbundet, kan assistenten udføre handlinger for kunderne i stedet for kun at love, at nogen vender tilbage. Aktivering kræver det ikke.",
   "checks.server": "Tjekkene beviser, at profil, sprog og godkendt viden hænger sammen. De bliver forældede, når du ændrer noget, så et gammelt bestået tjek ikke dækker en ny konfiguration.",
 };
 

@@ -8,6 +8,7 @@ const TABS: [string, string, string, string][] = [
   ["/app/settings/team", "Team & roller", "Team", "group"],
   ["/app/settings/webchat", "Webchat", "Webchat", "chat"],
   ["/app/settings/telephony", "Telefoni", "Telefoni", "call"],
+  ["/app/settings/integrationer", "Integrationer", "Systemer", "extension"],
   ["/app/settings/agreement", "Prisaftale", "Aftale", "handshake"],
   ["/app/settings/profile", "Min profil", "Profil", "person"],
   ["/app/settings/activity", "Aktivitetslog", "Log", "history"],

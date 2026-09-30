@@ -4,7 +4,14 @@ import { requireWorkspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
 import { AutoRefresh, CreateLeadButton, ReplyBox } from "./client";
 
-type Detail = { id: string; channel: string; origin: string | null; status: string; mode: string; created_at: string; messages: { id: string; role: string; text: string; created_at: string }[] };
+type Msg = { id: string; role: string; text: string; created_at: string };
+type Run = { id: string; label: string; status: "ok" | "failed" | "refused"; error: string | null; simulated: boolean; created_at: string };
+type Detail = { id: string; channel: string; origin: string | null; status: string; mode: string; created_at: string; messages: Msg[]; actions?: Run[] };
+const RUN: Record<Run["status"], [string, string]> = {
+  ok: ["Udført", "bg-secondary-container text-on-secondary-container"],
+  failed: ["Fejlede", "bg-error-container text-on-error-container"],
+  refused: ["Ikke udført", "bg-tertiary-fixed text-on-tertiary-fixed"],
+};
 
 /** One conversation, read-only. Replies from staff and hand-over arrive with the lead/task model. */
 export default async function ConversationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -28,12 +35,18 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
         : <CreateLeadButton wsId={ws.id} conversationId={c.id} need={firstVisitor} />}
       </div>
       <ol className="flex flex-col gap-space-sm bg-surface-container-low rounded-xl p-space-md" aria-label="Beskeder">
-        {c.messages.map((m) => (
+        {[...c.messages.map((m) => ({ kind: "msg" as const, at: m.created_at, m })), ...(c.actions ?? []).map((r) => ({ kind: "run" as const, at: r.created_at, r }))]
+          .sort((a, b) => a.at.localeCompare(b.at)).map((x) => x.kind === "run" ? (
+          <li key={x.r.id} className={`self-center w-full max-w-[85%] flex items-start gap-space-sm rounded-lg px-space-md py-space-sm font-body-sm text-body-sm ${RUN[x.r.status][1]}`} data-action-run>
+            <Icon name="bolt" size={18} className="shrink-0 mt-0.5" />
+            <span><strong>{RUN[x.r.status][0]}:</strong> {x.r.label}{x.r.simulated ? " (simuleret)" : ""} · {new Date(x.r.created_at).toLocaleTimeString("da-DK", { timeStyle: "short" })}{x.r.error ? <><br />{x.r.error}</> : null}</span>
+          </li>
+        ) : (() => { const m = x.m; return (
           <li key={m.id} className={`flex flex-col gap-0.5 max-w-[85%] ${m.role === "visitor" ? "self-end items-end" : "self-start"}`}>
             <span className="font-label-sm text-label-sm text-on-surface-variant">{m.role === "visitor" ? "Kunde" : m.role === "staff" ? "Medarbejder" : "Assistent"} · {new Date(m.created_at).toLocaleTimeString("da-DK", { timeStyle: "short" })}</span>
             <span className={`px-space-md py-space-sm rounded-xl whitespace-pre-wrap font-body-md text-body-md ${m.role === "visitor" ? "bg-primary text-on-primary rounded-tr-none" : m.role === "staff" ? "bg-secondary-fixed text-on-secondary-fixed rounded-tl-none" : "bg-surface-container-lowest text-on-surface rounded-tl-none shadow-sm"}`}>{m.text}</span>
           </li>
-        ))}
+        ); })())}
       </ol>
       {c.channel === "webchat" ? (
         <>

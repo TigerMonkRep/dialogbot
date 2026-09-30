@@ -31,6 +31,8 @@ jobs:
       AI_PROVIDER: fake        # deterministic test double; the R06 journey never calls a real model
       TTS_ENGINE: fake         # voice library: labelled test tone, never shown as real speech
       TELEPHONY_PROVIDER: fake # platform telephony: simulated Twilio/Vapi, nothing is bought (journey 14)
+      CONNECTORS_PROVIDER: fake # actions: simulated calendar/SMS/webhook, every result marked simulated
+      CREDENTIALS_KEY: "0123456789abcdefghijklmnopqrstuvwxyzABCDEF0"  # test-only key so API and worker decrypt alike
       TELEPHONY_VERIFY_NUMBER_ID: vapi-verify-e2e
       DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/dialogbot_e2e
       FRONTEND_BASE_URL: http://localhost:3000

@@ -197,7 +197,7 @@ def post_visitor_message(db: OrmSession, s: WebchatSettings, conv: Conversation,
     while turns and turns[0]["role"] != "user":
         turns.pop(0)
     ws = db.get(Workspace, s.workspace_id)
-    c, usage = complete_logged(db, ws, user_id=None, purpose="webchat", messages=_alternate(turns), channel="webchat")
+    c, usage = _reply_with_actions(db, ws, conv, _alternate(turns))
     reply = ConversationMessage(conversation_id=conv.id, workspace_id=s.workspace_id, role="assistant",
                                 text=visible_reply(c), ai_usage_id=usage.id)
     db.add(reply)
@@ -205,6 +205,36 @@ def post_visitor_message(db: OrmSession, s: WebchatSettings, conv: Conversation,
     db.commit()
     return {"reply": message_out(reply), "refused": usage.outcome == "refused", "waiting_for_staff": False,
             "remaining_messages": MAX_VISITOR_MESSAGES - conv.visitor_message_count}
+
+
+MAX_TOOL_ROUNDS = 3
+
+
+def _reply_with_actions(db: OrmSession, ws: Workspace, conv: Conversation, turns: list[dict]):
+    """One assistant reply, running the actions the model asks for (connected connectors only, each logged).
+    Falls back to a plain reply when no connector is connected."""
+    from app.modules.ai.provider import tool_result_message
+    from app.modules.integrations import actions
+    from app.modules.integrations.connectors.base import RunContext
+    from app.modules.reports.service import tz_of
+
+    tools = actions.tools_for(db, ws, "webchat")
+    extra = actions.prompt_section(tools) if tools else None
+    c, usage = complete_logged(db, ws, user_id=None, purpose="webchat", messages=turns, channel="webchat",
+                               tools=actions.to_anthropic(tools) if tools else None, extra_instructions=extra)
+    rounds = 0
+    while c.tool_calls and rounds < MAX_TOOL_ROUNDS:
+        rounds += 1
+        ctx = RunContext(workspace_id=ws.id, channel="webchat", conversation_id=conv.id, tz=tz_of(db, ws.id))
+        results = []
+        for call in c.tool_calls:
+            text, _run = actions.execute(db, ws, call.name, call.input, ctx)
+            results.append((call.id, text))
+        db.commit()
+        turns = turns + [{"role": "assistant", "content": c.assistant_content}, tool_result_message(results)]
+        c, usage = complete_logged(db, ws, user_id=None, purpose="webchat", messages=turns, channel="webchat",
+                                   tools=actions.to_anthropic(tools), extra_instructions=extra)
+    return c, usage
 
 
 def _alternate(turns: list[dict]) -> list[dict]:

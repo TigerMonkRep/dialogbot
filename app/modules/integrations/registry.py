@@ -74,6 +74,12 @@ def capabilities() -> list[Capability]:
                    else "not_implemented", s.app_env,
                    "Navn og adresse hentes fra CVR-registret, når I beder om det." if s.cvr_username and s.cvr_password
                    else "Kræver gratis adgang fra Erhvervsstyrelsen (CVR_USERNAME/CVR_PASSWORD)."),
+        Capability("actions", "Handlinger i jeres egne systemer",
+                   "simulated" if s.connectors_provider == "fake" else "available", s.app_env,
+                   "Assistenten kan booke i jeres kalender (Google/Microsoft eller Dialogbots egen), sende SMS-bekræftelser "
+                   "og sende hændelser til Zapier, Make eller jeres eget system. Kun forbundne systemer bruges; hver "
+                   "handling logges og vises i samtalen." if s.connectors_provider != "fake"
+                   else "Testdobbelt: forbindelser og handlinger er simulerede og mærket som sådan."),
         Capability("webchat", "Web-widget", ai_status, s.app_env,
                    "Chat-widget til jeres hjemmeside; svarer kun ud fra godkendt viden og kun på godkendte domæner."
                    if ai_status != "not_implemented" else "Kræver en AI-udbyder (AI_PROVIDER)."),

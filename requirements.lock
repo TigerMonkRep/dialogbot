@@ -6,9 +6,11 @@ anthropic==1.8.0
 anyio==4.15.1
 argon2-cffi-bindings==26.1.0
 argon2-cffi==25.1.0
+attrs==26.1.0
 certifi==2026.7.22
 cffi==2.1.1
 click==8.5.0
+cryptography==46.0.5
 detect-installer==0.2.1
 dnspython==2.8.0
 docstring_parser==0.18.0
@@ -28,6 +30,8 @@ idna==3.20
 iniconfig==2.3.0
 Jinja2==3.1.6
 jiter==0.17.0
+jsonschema-specifications==2025.9.1
+jsonschema==4.26.0
 Mako==1.4.3
 markdown-it-py==4.2.0
 MarkupSafe==3.0.3
@@ -51,9 +55,11 @@ python-dotenv==1.2.3
 python-multipart==0.0.32
 PyYAML==6.0.3
 recurring-ical-events==3.8.2
+referencing==0.37.0
 rich-toolkit==0.20.5
 rich==15.0.0
 rignore==0.8.1
+rpds-py==2026.6.3
 ruff==0.16.9
 sentry-sdk==2.70.0
 shellingham==1.5.4

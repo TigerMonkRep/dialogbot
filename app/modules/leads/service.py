@@ -75,6 +75,12 @@ def create_lead(db: OrmSession, workspace_id: uuid.UUID, *, source: str, created
     db.flush()
     record_audit(db, workspace_id=workspace_id, actor_user_id=created_by, action="lead.created", object_type="lead",
                  object_id=lead.id, after=_audit_view(lead) | {"source": source}, request_id=request_id)
+    from app.modules.integrations import events
+
+    events.emit(db, workspace_id, "lead.created",
+                {"lead_id": str(lead.id), "source": source, "contact_name": lead.contact_name,
+                 "contact_email": lead.contact_email, "contact_phone": lead.contact_phone, "need_summary": lead.need_summary,
+                 "conversation_id": str(lead.conversation_id) if lead.conversation_id else None}, key=str(lead.id))
     return lead
 
 

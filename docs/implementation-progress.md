@@ -2,6 +2,24 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 28 — 30. september 2026 (Handlinger etape 1: assistenten udfører opgaver i kundens systemer)
+
+Plan: `docs/strategy/etapeplan-handlinger.md` (etape 1–5, verificeret API-adgang).
+
+| Del | Status | Bevis |
+|---|---|---|
+| Connector-register med status pr. arbejdsrum (`not_connected / connected / error / not_implemented`) og deklarerede handlinger (dansk beskrivelse, JSON-schema, `confirm`). CRM, økonomi og fagsystemer vises ærligt som "på vej" eller "via Zapier/Make" | testet | `tests/test_integrations_actions.py` |
+| Krypterede legitimationer: AES-256-GCM pr. række med indpakket datanøgle (`CREDENTIALS_KEY`, rotation via `CREDENTIALS_KEY_PREVIOUS`), bundet til arbejdsrum+connector. Aldrig i API-svar, idempotens-genafspilning eller logs. `integration_connections`, `oauth_states`, `action_runs` (Alembic `6abbbb75fde5`) | testet | samme |
+| OAuth 2.0 (authorization code + PKCE S256 + engangs-state, 10 min) for Google og Microsoft; automatisk fornyelse af tokens; tilbagekaldelse ved afbryd (Google) | testet med stubbet leverandør | samme |
+| Fælles tool-builder i telefonen (Vapi) og webchatten (tool use i AI-udbyderen, højst 3 runder). Kun forbundne connectors; input valideres; `book_tid`/`flyt_tid`/`aflys_tid` kræver kundens ja (`bekraeftet`) | testet | samme + `tests/test_bookings.py` |
+| `action_runs` for hvert kald (også afviste/fejlede); vises i samtalen i indbakken og under Integrationer | testet, E2E | samme, rejse 25 |
+| Kalender: Google/Microsoft erstatter iCal som kilde til optaget tid, når de er forbundet; bookinger spejles som begivenheder (opret, flyt, aflys) | testet (fake + stubbet HTTP) | samme |
+| Udgående webhook/Zapier/Make: signeret JSON (HMAC-SHA256) via outbox med retry; fejl vises på connectoren | testet | samme |
+| SMS-bekræftelse via Twilio (platformens konto/underkonto): kun faste skabeloner med godkendt viden og samtaleoplysninger | testet (fake) | samme |
+| Frontend `/app/settings/integrationer`, handlingskort i samtalen, valgfrit guide-trin "Forbind jeres systemer" (blokerer aldrig aktivering) | E2E | rejse 25 (1440 + 390 px) |
+
+**Ikke eksternt verificeret:** Der er ikke foretaget ét eneste rigtigt kald mod Google, Microsoft, Twilio SMS, Zapier eller Make. Alt ovenfor er testet med fakes eller stubbede HTTP-svar ud fra leverandørernes dokumentation (læst 29.–30/9 2026). Det kræver Dialogbots egne OAuth-klienter, `CREDENTIALS_KEY` og en Zapier-konto på betalt plan.
+
 ## Checkpoint 27 — 28. september 2026 (Salg: demo-opkald og samtykke til alle AI-opkald)
 
 Se `docs/sales/demo-calls.md`.

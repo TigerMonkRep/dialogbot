@@ -96,5 +96,16 @@ Tjek (`checks.py::CHECKS`): `profile.completeness`, `languages.consistency`, `kn
 | Metode og sti | Beskrivelse |
 |---|---|
 | `GET /integrations/capabilities` | Ærlig status pr. adapter: `available | simulated | not_implemented`. |
+| `GET /workspaces/{ws}/integrations` | Katalog over connectors med status pr. arbejdsrum (`not_connected | connected | error | not_implemented`), begrundelse, deklarerede handlinger (navn, dansk beskrivelse, JSON-schema, `confirm`), hændelser, `simulated` og de seneste 20 `action_runs`. Hemmeligheder returneres aldrig. Staff+. |
+| `POST /workspaces/{ws}/integrations/{key}/connect` | Admin+. `Idempotency-Key`. Body `{config, secrets}`. OAuth (`google_calendar`, `microsoft_calendar`): `{status:"authorize", authorize_url}` (PKCE S256 + engangs-`state`, 10 min). Webhook/Zapier/Make: tester adressen og svarer `{status:"connected", signing_secret}` – hemmeligheden vises kun her, også ikke ved genafspilning af samme nøgle. `bookings` → `409 connector_builtin`; ikke tilgængelig → `501 connector_not_available`; testkald fejler → `502 connection_test_failed`. |
+| `GET /integrations/oauth/{key}/callback` | Leverandørens redirect (ingen login). Bytter koden med PKCE, tester forbindelsen og sender browseren til frontend med `?connected={key}` eller `?error={code}&connector={key}` (`oauth_state_unknown`, `oauth_state_expired`, `oauth_denied`, `oauth_failed`). |
+| `PUT /workspaces/{ws}/integrations/{key}` | Admin+. Ikke-hemmelig opsætning `{config, expected_version}` → `409 version_conflict`. |
+| `POST /workspaces/{ws}/integrations/{key}/test` | Admin+. `Idempotency-Key`. Rigtigt testkald; `{ok, facts | error, simulated}`. En fejl sætter connectoren til `error`. |
+| `POST /workspaces/{ws}/integrations/{key}/run` | Admin+. Afprøv en handling (`{action, input}`); kører gennem samme validering og logges med kanal `test`. |
+| `DELETE /workspaces/{ws}/integrations/{key}` | Admin+. Tilbagekalder OAuth-token (Google; best effort), sletter den krypterede hemmelighed. 204. |
+| `GET /workspaces/{ws}/integrations/actions` | Staff+. `action_runs` (`?connector=`, `?limit=`). |
+| `GET /workspaces/{ws}/conversations/{id}` | Har nu også `actions`: handlingerne i samtalen i tidsorden. |
+
+**Handlinger i samtaler.** Telefonens `assistant-request` og webchatten får de samme funktionsværktøjer: alle handlinger fra connectors med status `connected` (et forbundet Google/Microsoft-kalender overtager bookinghandlingerne fra Dialogbots kalender). Input valideres mod schemaet (`additionalProperties:false`); handlinger med `confirm` kræver `bekraeftet:true`. Hvert kald giver én `action_runs`-række – også når det afvises eller fejler – og et resultat i tekst, modellen kan give videre. **Udgående hændelser** (`lead.created`, `booking.created`, `booking.cancelled`, `action.completed`, `conversation.ended`, `test.ping`) sendes via outboxen til forbundne webhook/Zapier/Make med `X-Dialogbot-Signature: t=<unix>,v1=<hex HMAC-SHA256 af "<t>.<body>">`; retry med backoff, og efter sidste forsøg vises fejlen på connectoren.
 | `GET /health/live`, `GET /health/ready` | Ready tjekker database og at Alembic-head er anvendt. |
 | `GET /dev/mailbox`, `GET /dev/outbox` | Kun med `ENABLE_DEV_TOOLS=true`; mailbox viser kun egne mails. Ikke en del af den committede kontrakt. |

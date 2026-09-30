@@ -62,6 +62,6 @@ jobs:
       - name: Install test dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r tts_service/requirements-test.txt pyarrow==25.0.1 soundfile==0.14.0 uvicorn==0.54.0
+          pip install -r tts_service/requirements-test.txt pyarrow==25.0.1 soundfile==0.14.0 scipy==1.17.1 uvicorn==0.54.0
       - name: TTS service and voice pipeline tests
         run: pytest -p no:cacheprovider -c /dev/null --rootdir . tts_service/tests voice_pipeline/tests

@@ -117,7 +117,10 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     t = two_workspaces
     n = _setup(api, t)
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
-    assert a["transcriber"] == {"provider": "deepgram", "model": "nova-3", "language": "da"}
+    # Deepgram Nova-3 Danish, with key terms from approved knowledge only (never from the unapproved draft)
+    assert a["transcriber"] == {"provider": "deepgram", "model": "nova-3", "language": "da",
+                                "keyterm": ["Fjord Gulvservice", "Afslibning"]}
+    assert "HEMMELIG-KLADDE" not in a["transcriber"]["keyterm"]
     assert "voice" not in a  # no voice chosen and no VAPI_VOICE_JSON: provider default
     assert "dansk" in a["model"]["messages"][0]["content"] and n["voice"] is None
     url = f"/api/v1/workspaces/{t['ws_a']}/phone-numbers/{n['id']}"
@@ -138,7 +141,8 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     monkeypatch.setenv("VAPI_VOICE_JSON", '{"provider": "azure", "voiceId": "da-DK-ChristelNeural"}')
     get_settings.cache_clear()
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
-    assert a["transcriber"]["provider"] == "azure" and a["voice"]["provider"] == "11labs"
+    assert a["transcriber"] == {"provider": "azure", "language": "da-DK"}  # key terms only for Deepgram Nova-3/Flux
+    assert a["voice"]["provider"] == "11labs"
     api.c.patch(url, json={"voice_id": ""}, headers=api.h(t["tok_a"]))
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
     assert a["voice"]["voiceId"] == "da-DK-ChristelNeural"

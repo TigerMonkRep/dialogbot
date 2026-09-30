@@ -4,3 +4,4 @@ pyarrow==25.0.1
 soundfile==0.14.0
 numpy==1.26.4
 httpx==0.28.1
+scipy==1.17.1

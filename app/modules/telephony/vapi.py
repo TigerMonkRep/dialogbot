@@ -117,6 +117,53 @@ def voice_preview(voice_id: str, voice_model: str, text: str) -> bytes:
     return r.content
 
 
+MAX_KEYTERMS = 50  # Deepgram: 500 tokens per request; recommends focusing on the 20-50 most important terms
+KEYTERM_MODELS = ("nova-3", "flux")
+
+
+def keyterms(db: OrmSession, ws: Workspace) -> list[str]:
+    """Words the caller is likely to say that a generic Danish model mishears: the business's own name, its
+    services and booking types, and place names from its profile and approved coverage area. Only approved knowledge
+    and the profile are used, so nothing unapproved leaks into the call."""
+    from app.models import BookingType, BusinessProfile
+    from app.modules.knowledge.service import active_knowledge
+
+    terms: list[str] = [ws.name]
+    p = db.get(BusinessProfile, ws.id)
+    if p is not None:
+        terms += [p.legal_name, p.city or "", (p.address_line or "").rsplit(" ", 1)[0]]
+    for item in active_knowledge(db, ws.id):
+        if item["kind"] in ("service", "offer"):
+            terms.append(item["title"])
+        elif item["kind"] == "coverage_area":
+            c = item["content"] or {}
+            terms.append(item["title"])
+            for key in ("areas", "cities", "postal_areas", "municipalities"):
+                terms += [str(x) for x in c.get(key) or [] if isinstance(x, str)]
+    terms += list(db.scalars(select(BookingType.name).where(BookingType.workspace_id == ws.id, BookingType.active)))
+    out: list[str] = []
+    seen: set[str] = set()
+    for t in terms:
+        t = re.sub(r"\s+", " ", str(t or "")).strip(" .,:;-")
+        t = re.sub(r"\b(ApS|A/S|I/S|IVS|P/S)\b", "", t).strip()
+        if 2 < len(t) <= 50 and t.lower() not in seen:
+            seen.add(t.lower())
+            out.append(t)
+    return out[:MAX_KEYTERMS]
+
+
+def transcriber_for(db: OrmSession, ws: Workspace | None) -> dict:
+    """The transcriber config (VAPI_TRANSCRIBER_JSON or Deepgram Nova-3 Danish), with the business's key terms
+    added when the model supports Deepgram keyterm prompting and none were configured by hand."""
+    t = _json_setting(get_settings().vapi_transcriber_json) or dict(DEFAULT_TRANSCRIBER)
+    if (ws is not None and t.get("provider") == "deepgram" and str(t.get("model", "")).startswith(KEYTERM_MODELS)
+            and "keyterm" not in t):
+        terms = keyterms(db, ws)
+        if terms:
+            t["keyterm"] = terms
+    return t
+
+
 def booking_tools(db: OrmSession, ws: Workspace) -> list[dict]:
     """Function tools for the call: every action of a connected connector (Dialogbot's calendar when online booking
     is on, a connected Google/Microsoft calendar, SMS confirmations …), built by app/modules/integrations/actions."""
@@ -182,7 +229,7 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
                          or DEFAULT_GREETING.format(name=ws.name)),
         "model": {"provider": s.vapi_model_provider, "model": s.vapi_model or s.ai_model_id,
                   "messages": [{"role": "system", "content": f"{system}\n\n{phone_rules}"}]},
-        "transcriber": _json_setting(s.vapi_transcriber_json) or dict(DEFAULT_TRANSCRIBER),
+        "transcriber": transcriber_for(db, ws),
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id)},
     }
     from app.modules.integrations import actions as _actions

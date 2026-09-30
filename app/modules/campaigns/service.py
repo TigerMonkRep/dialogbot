@@ -243,7 +243,7 @@ def assistant_for(db: OrmSession, c: Campaign, contact: CampaignContact) -> dict
         "firstMessage": opening_line(c, ws, contact),
         "model": {"provider": s.vapi_model_provider, "model": s.vapi_model or s.ai_model_id,
                   "messages": [{"role": "system", "content": system_prompt(db, c, ws, contact)}]},
-        "transcriber": vapi._json_setting(s.vapi_transcriber_json) or dict(vapi.DEFAULT_TRANSCRIBER),
+        "transcriber": vapi.transcriber_for(db, ws),
         "maxDurationSeconds": remaining,
         "voicemailDetection": {"provider": "vapi"},
         "endCallPhrases": ["Tak for snakken, hav en god dag", "Undskyld forstyrrelsen, hav en god dag"],

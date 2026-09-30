@@ -33,6 +33,159 @@
         "title": "AgreementIn",
         "type": "object"
       },
+      "ApplyIn": {
+        "properties": {
+          "bank_account": {
+            "anyOf": [
+              {
+                "maxLength": 14,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Account"
+          },
+          "bank_reg": {
+            "anyOf": [
+              {
+                "maxLength": 6,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Reg"
+          },
+          "birth_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Birth Date"
+          },
+          "company_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Name"
+          },
+          "cpr": {
+            "anyOf": [
+              {
+                "maxLength": 12,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cpr"
+          },
+          "cvr": {
+            "anyOf": [
+              {
+                "maxLength": 12,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cvr"
+          },
+          "full_name": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Full Name",
+            "type": "string"
+          },
+          "headline": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Headline",
+            "type": "string"
+          },
+          "kind": {
+            "pattern": "^(private|company)$",
+            "title": "Kind",
+            "type": "string"
+          },
+          "motivation": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Motivation",
+            "type": "string"
+          },
+          "parent_email": {
+            "anyOf": [
+              {
+                "maxLength": 320,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Email"
+          },
+          "parent_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Name"
+          },
+          "phone": {
+            "default": "",
+            "maxLength": 20,
+            "title": "Phone",
+            "type": "string"
+          },
+          "quiz": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Quiz",
+            "type": "object"
+          },
+          "rules_version": {
+            "title": "Rules Version",
+            "type": "string"
+          },
+          "vat_registered": {
+            "default": false,
+            "title": "Vat Registered",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "kind",
+          "full_name",
+          "rules_version",
+          "quiz"
+        ],
+        "title": "ApplyIn",
+        "type": "object"
+      },
       "BusinessNumberIn": {
         "properties": {
           "carrier": {
@@ -290,21 +443,6 @@
         "title": "CategoryOut",
         "type": "object"
       },
-      "CodeIn": {
-        "properties": {
-          "code": {
-            "maxLength": 10,
-            "minLength": 4,
-            "title": "Code",
-            "type": "string"
-          }
-        },
-        "required": [
-          "code"
-        ],
-        "title": "CodeIn",
-        "type": "object"
-      },
       "CompanyIn": {
         "properties": {
           "address": {
@@ -414,6 +552,18 @@
         "title": "ContactIn",
         "type": "object"
       },
+      "DecideIn": {
+        "properties": {
+          "note": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "title": "DecideIn",
+        "type": "object"
+      },
       "DecisionIn": {
         "properties": {
           "reason": {
@@ -430,6 +580,94 @@
           }
         },
         "title": "DecisionIn",
+        "type": "object"
+      },
+      "DetailsIn": {
+        "properties": {
+          "bank_account": {
+            "anyOf": [
+              {
+                "maxLength": 14,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Account"
+          },
+          "bank_reg": {
+            "anyOf": [
+              {
+                "maxLength": 6,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Reg"
+          },
+          "cpr": {
+            "anyOf": [
+              {
+                "maxLength": 12,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cpr"
+          },
+          "expected_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Version"
+          },
+          "headline": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headline"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "vat_registered": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat Registered"
+          }
+        },
+        "title": "DetailsIn",
         "type": "object"
       },
       "DncIn": {
@@ -1311,6 +1549,33 @@
         "title": "ModeIn",
         "type": "object"
       },
+      "MoveIn": {
+        "properties": {
+          "ambassador_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ambassador Id"
+          },
+          "reason": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "MoveIn",
+        "type": "object"
+      },
       "NoteIn": {
         "properties": {
           "note": {
@@ -1324,6 +1589,68 @@
           "note"
         ],
         "title": "NoteIn",
+        "type": "object"
+      },
+      "PaidIn": {
+        "properties": {
+          "reference": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reference"
+        ],
+        "title": "PaidIn",
+        "type": "object"
+      },
+      "ParentIn": {
+        "properties": {
+          "confirm": {
+            "title": "Confirm",
+            "type": "boolean"
+          },
+          "parent_name": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Parent Name",
+            "type": "string"
+          },
+          "token": {
+            "maxLength": 200,
+            "minLength": 10,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "confirm"
+        ],
+        "title": "ParentIn",
+        "type": "object"
+      },
+      "PayoutsIn": {
+        "properties": {
+          "ambassador_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ambassador Ids"
+          }
+        },
+        "title": "PayoutsIn",
         "type": "object"
       },
       "ProfileOut": {
@@ -2214,6 +2541,40 @@
         "title": "TaskPatch",
         "type": "object"
       },
+      "TermsIn": {
+        "properties": {
+          "bonus_minor": {
+            "maximum": 10000000.0,
+            "minimum": 0.0,
+            "title": "Bonus Minor",
+            "type": "integer"
+          },
+          "expected_version": {
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "months": {
+            "maximum": 120.0,
+            "minimum": 1.0,
+            "title": "Months",
+            "type": "integer"
+          },
+          "rate_bp": {
+            "maximum": 5000.0,
+            "minimum": 0.0,
+            "title": "Rate Bp",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "bonus_minor",
+          "rate_bp",
+          "months",
+          "expected_version"
+        ],
+        "title": "TermsIn",
+        "type": "object"
+      },
       "TestIn": {
         "properties": {
           "called_business_number": {
@@ -2705,6 +3066,32 @@
             ],
             "description": "reception | campaigns | both; defaults to signup intent",
             "title": "Product Intent"
+          },
+          "referral_code": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Ambassador code typed by the customer",
+            "title": "Referral Code"
+          },
+          "referral_link": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Ambassador ref from the /a/{slug} cookie",
+            "title": "Referral Link"
           }
         },
         "required": [
@@ -2776,6 +3163,21 @@
           "message"
         ],
         "title": "PreviewIn",
+        "type": "object"
+      },
+      "app__modules__ambassadors__router__CodeIn": {
+        "properties": {
+          "code": {
+            "maxLength": 60,
+            "minLength": 3,
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "CodeIn",
         "type": "object"
       },
       "app__modules__bookings__router__SettingsIn": {
@@ -3274,6 +3676,21 @@
         "title": "PreviewIn",
         "type": "object"
       },
+      "app__modules__telephony__setup_router__CodeIn": {
+        "properties": {
+          "code": {
+            "maxLength": 10,
+            "minLength": 4,
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "CodeIn",
+        "type": "object"
+      },
       "app__modules__voices__operator_router__ProfileIn": {
         "properties": {
           "age_description": {
@@ -3539,6 +3956,422 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/ambassador/apply": {
+      "post": {
+        "operationId": "apply_api_v1_ambassador_apply_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Apply",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
+    "/api/v1/ambassador/me": {
+      "get": {
+        "operationId": "me_api_v1_ambassador_me_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Me",
+        "tags": [
+          "ambassadors"
+        ]
+      },
+      "put": {
+        "operationId": "update_me_api_v1_ambassador_me_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DetailsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Me",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
+    "/api/v1/ambassador/me/customers": {
+      "get": {
+        "operationId": "my_customers_api_v1_ambassador_me_customers_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Customers",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
+    "/api/v1/ambassador/me/ledger": {
+      "get": {
+        "operationId": "my_ledger_api_v1_ambassador_me_ledger_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "maximum": 1000,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Ledger",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
+    "/api/v1/ambassador/me/parent-consent/resend": {
+      "post": {
+        "operationId": "resend_parent_api_v1_ambassador_me_parent_consent_resend_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resend Parent",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
+    "/api/v1/ambassador/me/payouts": {
+      "get": {
+        "operationId": "my_payouts_api_v1_ambassador_me_payouts_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Payouts",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
+    "/api/v1/ambassador/me/payouts/{payout_id}": {
+      "get": {
+        "operationId": "my_payout_api_v1_ambassador_me_payouts__payout_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payout_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Payout Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Payout",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
     "/api/v1/auth/login": {
       "post": {
         "operationId": "login_api_v1_auth_login_post",
@@ -4225,6 +5058,946 @@
         "summary": "Preview Invitation",
         "tags": [
           "workspaces"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors": {
+      "get": {
+        "operationId": "op_list_api_v1_operator_ambassadors_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op List",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/b-income.csv": {
+      "get": {
+        "description": "Paid B-income per private ambassador for the year – the basis for reporting to eIndkomst. Contains CPR.",
+        "operationId": "op_b_income_api_v1_operator_ambassadors_b_income_csv_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "required": true,
+            "schema": {
+              "maximum": 2100,
+              "minimum": 2025,
+              "title": "Year",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op B Income",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/payouts": {
+      "get": {
+        "operationId": "op_payouts_api_v1_operator_ambassadors_payouts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Payouts",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      },
+      "post": {
+        "operationId": "op_create_payouts_api_v1_operator_ambassadors_payouts_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayoutsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Create Payouts",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/payouts/{payout_id}": {
+      "get": {
+        "operationId": "op_payout_api_v1_operator_ambassadors_payouts__payout_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payout_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Payout Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Payout",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/payouts/{payout_id}/cancel": {
+      "post": {
+        "operationId": "op_cancel_payout_api_v1_operator_ambassadors_payouts__payout_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payout_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Payout Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Cancel Payout",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/payouts/{payout_id}/paid": {
+      "post": {
+        "operationId": "op_mark_paid_api_v1_operator_ambassadors_payouts__payout_id__paid_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "payout_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Payout Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaidIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Mark Paid",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/referrals/{workspace_id}": {
+      "put": {
+        "description": "Move a customer to another ambassador, or remove the attribution. Earned entries stay where they are.",
+        "operationId": "op_move_referral_api_v1_operator_ambassadors_referrals__workspace_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Move Referral",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/{ambassador_id}": {
+      "get": {
+        "operationId": "op_get_api_v1_operator_ambassadors__ambassador_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ambassador_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ambassador Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Get",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/{ambassador_id}/approve": {
+      "post": {
+        "operationId": "op_approve_api_v1_operator_ambassadors__ambassador_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ambassador_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ambassador Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Approve",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/{ambassador_id}/reactivate": {
+      "post": {
+        "operationId": "op_reactivate_api_v1_operator_ambassadors__ambassador_id__reactivate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ambassador_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ambassador Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Reactivate",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/{ambassador_id}/reject": {
+      "post": {
+        "operationId": "op_reject_api_v1_operator_ambassadors__ambassador_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ambassador_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ambassador Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Reject",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/{ambassador_id}/reveal": {
+      "post": {
+        "description": "CPR and bank details in clear text, for making a transfer or reporting. Every reveal is audited.",
+        "operationId": "op_reveal_api_v1_operator_ambassadors__ambassador_id__reveal_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ambassador_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ambassador Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Reveal",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/{ambassador_id}/suspend": {
+      "post": {
+        "operationId": "op_suspend_api_v1_operator_ambassadors__ambassador_id__suspend_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ambassador_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ambassador Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Suspend",
+        "tags": [
+          "ambassadors-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/ambassadors/{ambassador_id}/terms": {
+      "put": {
+        "description": "Change bonus, share and period. Applies to invoices paid from now on; earned entries are not touched.",
+        "operationId": "op_terms_api_v1_operator_ambassadors__ambassador_id__terms_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ambassador_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Ambassador Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TermsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Op Terms",
+        "tags": [
+          "ambassadors-operator"
         ]
       }
     },
@@ -5823,6 +7596,182 @@
         "summary": "Create Version",
         "tags": [
           "voice-operator"
+        ]
+      }
+    },
+    "/api/v1/public/ambassadors/parent-consent": {
+      "post": {
+        "operationId": "parent_confirm_api_v1_public_ambassadors_parent_consent_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Parent Confirm",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
+    "/api/v1/public/ambassadors/parent-consent/{token}": {
+      "get": {
+        "operationId": "parent_preview_api_v1_public_ambassadors_parent_consent__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Parent Preview",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
+    "/api/v1/public/ambassadors/program": {
+      "get": {
+        "description": "Terms and rules shown on the sign-up page (the quiz without the answers).",
+        "operationId": "program_api_v1_public_ambassadors_program_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Program",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
+    "/api/v1/public/ambassadors/{ref}": {
+      "get": {
+        "description": "What an ambassador's personal page shows. Only active ambassadors; first name only.",
+        "operationId": "public_page_api_v1_public_ambassadors__ref__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ref",
+            "required": true,
+            "schema": {
+              "title": "Ref",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Page",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
+    "/api/v1/public/ambassadors/{ref}/visit": {
+      "post": {
+        "description": "Count one visit (per day, aggregated). Unknown refs are ignored silently.",
+        "operationId": "public_visit_api_v1_public_ambassadors__ref__visit_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ref",
+            "required": true,
+            "schema": {
+              "title": "Ref",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Public Visit",
+        "tags": [
+          "ambassadors"
         ]
       }
     },
@@ -14037,6 +15986,129 @@
         ]
       }
     },
+    "/api/v1/workspaces/{workspace_id}/referral": {
+      "get": {
+        "operationId": "get_referral_api_v1_workspaces__workspace_id__referral_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Referral",
+        "tags": [
+          "ambassadors"
+        ]
+      },
+      "put": {
+        "description": "The customer types an ambassador's code after signing up (within 30 days, before the first invoice).",
+        "operationId": "add_code_api_v1_workspaces__workspace_id__referral_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__ambassadors__router__CodeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Code",
+        "tags": [
+          "ambassadors"
+        ]
+      }
+    },
     "/api/v1/workspaces/{workspace_id}/reports": {
       "get": {
         "operationId": "list_reports_api_v1_workspaces__workspace_id__reports_get",
@@ -15755,7 +17827,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CodeIn"
+                "$ref": "#/components/schemas/app__modules__telephony__setup_router__CodeIn"
               }
             }
           },

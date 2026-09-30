@@ -11,8 +11,9 @@ export async function proxy(req: NextRequest) {
   const hasSession = Boolean(req.cookies.get(SESSION_COOKIE)?.value);
   const { pathname, search } = req.nextUrl;
   if (gateEnabled() && GATED.has(pathname) && !hasSession) {
-    // Invited colleagues must be able to create an account from their invitation link.
-    const invited = pathname === "/signup" && (req.nextUrl.searchParams.get("next") ?? "").startsWith("/invite/");
+    // Invited colleagues and new ambassadors must be able to create an account from their link.
+    const next = req.nextUrl.searchParams.get("next") ?? "";
+    const invited = pathname === "/signup" && (next.startsWith("/invite/") || next.startsWith("/ambassador"));
     if (!invited && !(await cookieValid(req.cookies.get(PREVIEW_COOKIE)?.value))) {
       const url = new URL("/preview", req.url);
       if (pathname !== "/") url.searchParams.set("next", pathname + search);
@@ -21,7 +22,9 @@ export async function proxy(req: NextRequest) {
       return res;
     }
   }
-  const protectedPath = pathname.startsWith("/app") || pathname.startsWith("/onboarding");
+  // The ambassador portal needs a login; the programme page (/ambassador/bliv) and the parent's page do not.
+  const ambassadorPortal = pathname === "/ambassador" || pathname.startsWith("/ambassador/udbetalinger");
+  const protectedPath = pathname.startsWith("/app") || pathname.startsWith("/onboarding") || ambassadorPortal;
   if (protectedPath && !hasSession) {
     const url = new URL("/login", req.url);
     url.searchParams.set("next", pathname + search);
@@ -39,4 +42,4 @@ export async function proxy(req: NextRequest) {
   return res;
 }
 
-export const config = { matcher: ["/", "/app/:path*", "/onboarding/:path*", "/login", "/signup"] };
+export const config = { matcher: ["/", "/app/:path*", "/onboarding/:path*", "/login", "/signup", "/ambassador", "/ambassador/:path*"] };

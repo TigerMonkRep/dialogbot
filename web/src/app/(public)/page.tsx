@@ -1,12 +1,27 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { Icon } from "@/components/ui";
+import { API_BASE_URL, REFERRAL_COOKIE } from "@/lib/config";
 import { DemoCall } from "./demo-call";
 import { IndustrySwitcher } from "./industries";
 
 /** P01 — front page (Stitch "p01_dialogbot_forside", desktop + mobile).
  *  Honesty: a preview banner says what is not built yet; conversations are labelled as examples; no invented
  *  company facts, metrics or links to pages that do not exist. Product intent is carried into signup. */
-export default function Home() {
+type Recommender = { first_name: string; headline: string; code: string; customer_discount_bp: number };
+
+/** The ambassador who sent this visitor (cookie set by /a/{slug}); null when none or no longer active. */
+async function recommender(): Promise<Recommender | null> {
+  const ref = (await cookies()).get(REFERRAL_COOKIE)?.value;
+  if (!ref) return null;
+  try {
+    const r = await fetch(`${API_BASE_URL}/api/v1/public/ambassadors/${encodeURIComponent(ref)}`, { cache: "no-store" });
+    return r.ok ? ((await r.json()) as Recommender) : null;
+  } catch { return null; }
+}
+
+export default async function Home() {
+  const rec = await recommender();
   const transcript: [boolean, string][] = [
     [true, "Jeg vil gerne have et tilbud på gulvafslibning."],
     [false, "Selvfølgelig. Hvor stort er arealet?"],
@@ -54,6 +69,19 @@ export default function Home() {
       </header>
 
       <main id="main" className="flex-1">
+        {rec && (
+          <section aria-label="Anbefaling" className="bg-secondary-container text-on-secondary-container">
+            <div className="max-w-7xl mx-auto px-4 sm:px-margin-md lg:px-margin-lg py-space-md flex flex-col sm:flex-row sm:items-center gap-space-sm sm:gap-space-lg">
+              <span className="w-10 h-10 rounded-full bg-primary text-secondary-fixed flex items-center justify-center font-headline-sm text-headline-sm font-bold flex-shrink-0" aria-hidden>{rec.first_name.slice(0, 1)}</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-label-lg text-label-lg font-bold">{rec.first_name} har anbefalet Dialogbot til dig – du får {rec.customer_discount_bp / 100} % rabat på din første måned.</p>
+                {rec.headline && <p className="font-body-sm text-body-sm">&ldquo;{rec.headline}&rdquo;</p>}
+                <p className="font-label-sm text-label-sm opacity-80">{rec.first_name} er Dialogbot-ambassadør og får en bonus, hvis du bliver kunde. Rabatten kommer automatisk, når du opretter dig herfra.</p>
+              </div>
+              <Link href="/signup" className="inline-flex items-center justify-center gap-space-xs bg-primary text-on-primary font-label-lg text-label-lg px-gutter-lg py-space-sm rounded-lg">Kom i gang<Icon name="arrow_forward" size={18} /></Link>
+            </div>
+          </section>
+        )}
         {/* 1. Hero */}
         <section className="relative bg-primary text-on-primary overflow-hidden pt-8 pb-12 lg:pt-16 lg:pb-28">
           <div aria-hidden className="absolute inset-0 pointer-events-none opacity-25">

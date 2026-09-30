@@ -17,6 +17,7 @@ function SignupForm() {
     const r = await fetch("/api/auth/login", { method: "POST", headers: { "content-type": "application/json", "x-requested-with": "dialogbot" }, body: JSON.stringify({ email: form.email, password: form.password }) });
     if (!r.ok) throw await r.json();
     const next = params.get("next");
+    if (next?.startsWith("/ambassador")) { try { localStorage.setItem("db_after_verify", next); } catch { /* optional */ } }
     router.push(safeNext(next, "/verify-email"));
   });
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });

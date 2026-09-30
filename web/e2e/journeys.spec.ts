@@ -808,3 +808,107 @@ test("25 · Integrationer: ærligt katalog, Zapier med signeret webhook, Google 
   await expect(page.locator('[data-connector="zapier"]').getByText("Ikke forbundet")).toBeVisible();
   await expect(page.getByText("Seneste handlinger")).toBeVisible();
 });
+
+test("26 · Ambassadør: ung tilmelder sig via regelquiz, forælder godkender, operatør godkender, kunde kommer via link og får rabat", async ({ page, browser }, info) => {
+  const CSRF = { "x-requested-with": "dialogbot" };
+  const tag = `${info.project.name}-${Date.now()}`;
+  const parentEmail = `e2e-parent-${tag}@example.com`;
+  // 1. The programme page is public; sign-up works past the preview gate when it leads to /ambassador.
+  await page.goto("/ambassador/bliv");
+  await expect(page.getByRole("heading", { name: /Anbefal Dialogbot/ })).toBeVisible();
+  await shot(page, info, "amb-program");
+  await page.getByRole("link", { name: "Opret konto" }).click();
+  await expect(page).toHaveURL(/\/signup\?next=%2Fambassador%2Fbliv|\/signup\?next=\/ambassador\/bliv/);
+  const email = uniqueEmail("amb", info);
+  await page.getByLabel("Dit navn").fill("Mads Jensen");
+  await page.getByLabel("E-mail").fill(email);
+  await page.getByLabel("Adgangskode", { exact: true }).fill(DEMO_PASSWORD);
+  await page.getByRole("button", { name: "Opret konto" }).click();
+  await expect(page).toHaveURL(/\/ambassador\/bliv/);
+  await expect(page.getByText(/Bekræft din e-mail først/)).toBeVisible();
+  const token = (await latestMailLink(page.request, /token=[\w-]+/)).split("=")[1];
+  expect((await page.request.post("/api/backend/auth/verify-email", { headers: CSRF, data: { token } })).ok()).toBeTruthy();
+  await page.reload();
+
+  // 2. Sign-up form: 17 years old → a parent must confirm; one wrong quiz answer is refused and explained.
+  const born = new Date(); born.setFullYear(born.getFullYear() - 17); born.setDate(born.getDate() - 20);
+  await page.getByLabel("Fødselsdato").fill(born.toISOString().slice(0, 10));
+  await expect(page.getByText("Du er under 18 – en forælder skal godkende")).toBeVisible();
+  await page.getByLabel("Forælders navn").fill("Lone Jensen");
+  await page.getByLabel("Forælders e-mail").fill(parentEmail);
+  await page.getByLabel("Din hilsen på din side (valgfri)").fill("Min onkel bruger den i sit VVS-firma");
+  await page.getByLabel("Ja, bare det er en firmamail").check();
+  await page.getByLabel("At det er reklame, fx #reklame, og at jeg får bonus").check();
+  await page.getByLabel("Nej, AI-opkald kræver, at de har sagt ja først").check();
+  await page.getByLabel("Nej, dem ringer jeg ikke til med reklame").check();
+  await page.getByRole("button", { name: "Tilmeld mig som ambassadør" }).click();
+  await expect(page.getByText("Forkert – læs reglerne til venstre og prøv igen.")).toBeVisible();
+  await page.getByLabel("Nej, ikke uden at de har sagt ja til det først").check();
+  await shot(page, info, "amb-tilmelding");
+  await page.getByRole("button", { name: "Tilmeld mig som ambassadør" }).click();
+  await expect(page).toHaveURL(/\/ambassador$/);
+  await expect(page.getByText("Afventer godkendelse")).toBeVisible();
+  await expect(page.getByText(/Vi venter på, at din forælder/)).toBeVisible();
+
+  // 3. An operator approves.
+  const opCtx = await browser.newContext({ viewport: page.viewportSize() ?? undefined });
+  const op = await opCtx.newPage();
+  await freshOwner(op, info);
+  expect((await op.request.post("/api/backend/dev/operator/self", { headers: CSRF, data: {} })).ok()).toBeTruthy();
+  await op.goto("/app/operator/ambassadors");
+  await expect(op.getByRole("heading", { name: "Ambassadører", exact: true })).toBeVisible();
+  await op.getByRole("link", { name: "Mads Jensen" }).first().click();
+  await expect(op.getByText("ikke godkendt endnu")).toBeVisible();
+  await op.getByRole("button", { name: "Godkend" }).click();
+  await expect(op.getByText("Aktiv", { exact: true })).toBeVisible();
+  await shot(op, info, "amb-operator-detalje");
+
+  // 4. The ambassador now has a link and a code, and ready-made texts marked as advertising.
+  await page.reload();
+  await expect(page.getByText("Personligt link")).toBeVisible();
+  const link = (await page.locator("p.select-all").first().textContent())!.trim();
+  expect(link).toMatch(/\/a\/mads-jensen(-\d+)?$/);
+  await shot(page, info, "amb-portal");
+  await page.getByRole("button", { name: /Del og tekster/ }).click();
+  await expect(page.getByText(/#reklame/).first()).toBeVisible();
+
+  // 5. The parent confirms from the e-mail link.
+  const parentCtx = await browser.newContext({ viewport: page.viewportSize() ?? undefined });
+  const parent = await parentCtx.newPage();
+  await parent.request.post("/api/backend/auth/register", { headers: CSRF, data: { email: parentEmail, password: DEMO_PASSWORD, display_name: "Lone Jensen" } });
+  await parent.request.post("/api/auth/login", { headers: CSRF, data: { email: parentEmail, password: DEMO_PASSWORD } });
+  const consent = await latestMailLink(parent.request, /\/ambassador\/foraelder\?token=[\w-]+/);
+  await parent.goto(consent.replace(/^https?:\/\/[^/]+/, ""));
+  await expect(parent.getByRole("heading", { name: "Godkend ambassadøraftale" })).toBeVisible();
+  await parent.getByLabel(/Jeg er forælder\/værge/).check();
+  await shot(parent, info, "amb-foraelder");
+  await parent.getByRole("button", { name: "Godkend aftalen" }).click();
+  await expect(parent.getByText(/Aftalen er godkendt/)).toBeVisible();
+
+  // 6. A customer follows the link: the front page opens without a preview code and shows the welcome discount.
+  const custCtx = await browser.newContext({ viewport: page.viewportSize() ?? undefined });
+  const cust = await custCtx.newPage();
+  await cust.goto(new URL(link).pathname);
+  await expect(cust).toHaveURL(/\/\?anbefalet=mads-jensen(-\d+)?$/);
+  await expect(cust.getByText(/Mads har anbefalet Dialogbot til dig/)).toBeVisible();
+  await shot(cust, info, "amb-kunde-forside");
+  const cEmail = uniqueEmail("ambkunde", info);
+  expect((await cust.request.post("/api/backend/auth/register", { headers: CSRF, data: { email: cEmail, password: DEMO_PASSWORD, display_name: "Kunde" } })).status()).toBe(201);
+  await cust.request.post("/api/auth/login", { headers: CSRF, data: { email: cEmail, password: DEMO_PASSWORD } });
+  const ct = (await latestMailLink(cust.request, /token=[\w-]+/)).split("=")[1];
+  await cust.request.post("/api/backend/auth/verify-email", { headers: CSRF, data: { token: ct } });
+  await cust.goto("/onboarding/workspace");
+  await expect(cust.getByText("Du kom via en ambassadørs link")).toBeVisible();
+  await cust.getByLabel("Virksomhedens officielle navn").fill(`Hansen VVS ${tag}`);
+  await cust.getByRole("button", { name: "Opret og fortsæt" }).click();
+  await expect(cust).toHaveURL(/\/onboarding\/business/);
+  await cust.goto("/app/billing");
+  await expect(cust.getByText(/I er anbefalet af Mads/)).toBeVisible();
+
+  // 7. The ambassador sees the customer (company name and status only).
+  await page.reload();
+  await page.getByRole("button", { name: /Kunder/ }).click();
+  await expect(page.getByText(`Hansen VVS ${tag}`)).toBeVisible();
+  await expect(page.getByText("i gang med opstart")).toBeVisible();
+  await Promise.all([opCtx.close(), parentCtx.close(), custCtx.close()]);
+});

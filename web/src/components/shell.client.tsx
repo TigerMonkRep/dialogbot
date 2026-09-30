@@ -83,7 +83,7 @@ export function WorkspaceChip({ workspaces, current, compact = false, plain = fa
   );
 }
 
-export function AccountButton({ me }: { me: { display_name: string; email: string } | null }) {
+export function AccountButton({ me }: { me: { display_name: string; email: string; is_platform_operator?: boolean } | null }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
@@ -94,6 +94,8 @@ export function AccountButton({ me }: { me: { display_name: string; email: strin
         <div role="menu" className="absolute right-0 mt-1 w-60 rounded-xl bg-surface-container-lowest shadow-md p-space-sm z-50">
           {me && <div className="px-space-sm py-1"><p className="font-label-md text-label-md font-semibold">{me.display_name}</p><p className="font-label-sm text-label-sm text-on-surface-variant truncate">{me.email}</p></div>}
           <Link role="menuitem" href="/app/settings/team" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Team og roller</Link>
+          <Link role="menuitem" href="/ambassador" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Ambassadør: anbefal og tjen</Link>
+          {me?.is_platform_operator && <Link role="menuitem" href="/app/operator/ambassadors" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Operatør: ambassadører</Link>}
           <button role="menuitem" className="w-full text-left px-space-sm py-2 rounded-lg font-label-md text-label-md text-error hover:bg-surface-container-low" onClick={async () => { await fetch("/api/auth/logout", { method: "POST", headers: { "x-requested-with": "dialogbot" } }); router.push("/login"); router.refresh(); }}>Log ud</button>
         </div>
       )}

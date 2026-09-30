@@ -2,6 +2,21 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 29 — 30. september 2026 (Ambassadørprogrammet)
+
+Se `docs/ambassadors/program.md`.
+
+| Del | Status | Bevis |
+|---|---|---|
+| Ambassadør (privat/virksomhed), regelquiz, forældregodkendelse under 18 via mail, krypteret CPR og bank. `ambassadors`, `referrals`, `referral_clicks`, `commission_entries`, `ambassador_payouts` (Alembic `3c1d29602dcc`) | testet | `tests/test_ambassadors.py` |
+| Sporing: `/a/{slug}` (besøgstæller, cookie 90 dage, adgang forbi preview-låsen), kode ved oprettelse eller senere under Fakturering; koden vinder, ingen selvhenvisning | testet, E2E | samme + rejse 26 |
+| 50 % velkomstrabat på første fakturerede måned som linje i afregningen | testet | samme |
+| Bonus kun af betalte fakturaer (Stripe `invoice.paid`): 500 kr. + 10 % i 12 mdr., 30 dages hold, tilbageførsel ved refusion/kreditnota/annullering | testet | samme |
+| Udbetalinger ≥ 500 kr. med blokeringer (bank, CPR, forælder), afregningsbilag, mail, B-indkomst-CSV | testet | samme |
+| Frontend: `/ambassador/bliv`, `/ambassador`, `/ambassador/foraelder`, afregningsbilag, velkomst på forsiden, kode ved oprettelse og i Fakturering, operatørsider `/app/operator/ambassadors` | E2E | rejse 26 (1440 + 390 px) |
+
+**Ikke eksternt verificeret:** ingen rigtig Stripe-betaling, bankoverførsel eller indberetning til eIndkomst. Skattebehandlingen (B-indkomst som honorar) bør bekræftes af en revisor.
+
 ## Checkpoint 28 — 30. september 2026 (Handlinger etape 1: assistenten udfører opgaver i kundens systemer)
 
 Plan: `docs/strategy/etapeplan-handlinger.md` (etape 1–5, verificeret API-adgang).

@@ -66,6 +66,8 @@ PERMISSIONS: dict[str, str] = {
     "bookings.read": "staff",
     "bookings.create": "staff",
     "bookings.manage": "admin",
+    "integrations.read": "staff",
+    "integrations.manage": "admin",
     "voices.read": "staff",
     "voices.preview": "staff",
     "voices.manage": "admin",

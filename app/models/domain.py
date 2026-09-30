@@ -13,6 +13,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    LargeBinary,
     String,
     Text,
     UniqueConstraint,
@@ -750,9 +751,96 @@ class Booking(Base):
     lead_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("leads.id", ondelete="SET NULL"))
     conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="SET NULL"))
     provider_call_id: Mapped[str | None] = mapped_column(String(100))  # phone bookings: the call they were made in
+    # When the workspace's calendar is connected (OAuth), the booking is mirrored as an event there.
+    calendar_connector: Mapped[str | None] = mapped_column(String(40))
+    calendar_event_id: Mapped[str | None] = mapped_column(String(200))
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class IntegrationConnection(Base):
+    """One row per (workspace, connector): the customer's connection to one of their own systems.
+
+    The secret (OAuth tokens, an API key, a webhook signing secret) is envelope-encrypted (app/core/crypto);
+    `config` holds only non-secret settings (calendar id, sender name, webhook URL). `status` is `connected` only
+    after a real test call succeeded; `error` explains the last failure in plain Danish."""
+
+    __tablename__ = "integration_connections"
+    __table_args__ = (
+        UniqueConstraint("workspace_id", "connector", name="uq_integration_connections_connector"),
+        CheckConstraint("status in ('connected','error')", name="ck_integration_connections_status"),
+        CheckConstraint("auth_kind in ('oauth','api_key','secret','builtin')", name="ck_integration_connections_auth"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    connector: Mapped[str] = mapped_column(String(40), nullable=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="connected")
+    auth_kind: Mapped[str] = mapped_column(String(16), nullable=False)
+    key_version: Mapped[str | None] = mapped_column(String(32))
+    secret_blob: Mapped[bytes | None] = mapped_column(LargeBinary)
+    config: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    account_label: Mapped[str] = mapped_column(String(200), nullable=False, default="")  # e.g. the calendar's e-mail
+    scopes: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))  # access token expiry (OAuth)
+    error: Mapped[str | None] = mapped_column(String(300))
+    simulated: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    connected_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    connected_at: Mapped[datetime] = ts_now()
+    last_ok_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
+                                                 onupdate=func.now())
+
+    def __repr__(self) -> str:  # never expose the blob
+        return f"IntegrationConnection({self.connector}, {self.status})"
+
+
+class OAuthState(Base):
+    """One OAuth authorization attempt: the `state` the provider echoes back and the PKCE verifier (encrypted).
+    Single use, short-lived, bound to the workspace and user who started it."""
+
+    __tablename__ = "oauth_states"
+
+    state: Mapped[str] = mapped_column(String(64), primary_key=True)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    connector: Mapped[str] = mapped_column(String(40), nullable=False)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    key_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    verifier_blob: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class ActionRun(Base):
+    """One action the assistant (or a person testing) executed in a connected system: the trail shown in the inbox.
+    Input and output are the validated JSON the adapter saw and returned – never credentials."""
+
+    __tablename__ = "action_runs"
+    __table_args__ = (
+        CheckConstraint("status in ('ok','failed','refused')", name="ck_action_runs_status"),
+        Index("ix_action_runs_workspace_created", "workspace_id", "created_at"),
+        Index("ix_action_runs_conversation", "conversation_id"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="SET NULL"))
+    channel: Mapped[str] = mapped_column(String(16), nullable=False)  # phone | webchat | test | system
+    connector: Mapped[str] = mapped_column(String(40), nullable=False)
+    action: Mapped[str] = mapped_column(String(60), nullable=False)
+    label: Mapped[str] = mapped_column(String(200), nullable=False, default="")  # Danish one-liner for the inbox
+    input: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    output: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    status: Mapped[str] = mapped_column(String(16), nullable=False)
+    error: Mapped[str | None] = mapped_column(String(500))
+    duration_ms: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    simulated: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    provider_ref: Mapped[str | None] = mapped_column(String(200))  # e.g. the calendar event id or message sid
+    provider_call_id: Mapped[str | None] = mapped_column(String(100))  # phone: the call it happened in
+    created_at: Mapped[datetime] = ts_now()
 
 
 class Campaign(Base):

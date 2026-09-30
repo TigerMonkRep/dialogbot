@@ -63,10 +63,16 @@ def label(start: datetime, tz: str) -> str:
 
 
 def _busy(db: OrmSession, s: BookingSettings, ws_id: uuid.UUID, frm: datetime, to: datetime) -> list[tuple[datetime, datetime]]:
+    from app.modules.integrations.connectors.calendar import connected_busy
+
     pad = timedelta(minutes=s.buffer_minutes)
     out = [(b.starts_at - pad, b.ends_at + pad) for b in db.scalars(
         select(Booking).where(Booking.workspace_id == ws_id, Booking.status == "confirmed",
                               Booking.ends_at > frm, Booking.starts_at < to))]
+    # A calendar connected via OAuth (Google/Microsoft) replaces the iCal feed as the source of busy time.
+    external = connected_busy(db, ws_id, frm, to)
+    if external is not None:
+        return out + [(b0, b1) for b0, b1 in external]
     for blk in s.busy_blocks or []:
         try:
             out.append((datetime.fromisoformat(blk[0]), datetime.fromisoformat(blk[1])))
@@ -142,13 +148,72 @@ def book(db: OrmSession, ws: Workspace, *, type_id: uuid.UUID, start: str, name:
     b.lead_id = lead.id
     leads.create_task(db, ws.id, title=f"{bt.name} med {who} – {label(st, tz)}", created_by=created_by, lead=lead,
                       due_at=st)
+    _emit(db, ws.id, "booking.created", b, tz)
+    return b
+
+
+def move(db: OrmSession, ws: Workspace, b: Booking, *, start: str, tz: str) -> Booking:
+    """Move a confirmed booking to a new free slot of the same type (validated like a new booking)."""
+    if b.status != "confirmed":
+        raise Conflict("Aftalen er aflyst", code="booking_cancelled")
+    bt = db.get(BookingType, b.type_id) if b.type_id else None
+    if bt is None:
+        raise NotFound("Bookingtypen findes ikke længere")
+    settings(db, ws.id, lock=True)
+    try:
+        st = datetime.fromisoformat(start).astimezone(UTC)
+    except ValueError as e:
+        raise ValidationFailed("Ugyldigt tidspunkt", field_errors=[{"field": "start"}]) from e
+    en = st + timedelta(minutes=bt.duration_minutes)
+    if st == b.starts_at:
+        return b
+    # The booking's own slot must not block the move; everything else must be free.
+    old_status = b.status
+    b.status = "cancelled"
+    db.flush()
+    try:
+        free = st.isoformat() in {x["start"] for x in slots(db, ws, bt, tz, limit=500)}
+    finally:
+        b.status = old_status
+        db.flush()
+    if not free:
+        raise Conflict("Den nye tid er ikke ledig – vælg en anden", code="slot_taken")
+    b.starts_at, b.ends_at = st, en
+    db.flush()
     return b
 
 
 def cancel(db: OrmSession, b: Booking) -> Booking:
     if b.status != "cancelled":
         b.status, b.cancelled_at = "cancelled", _now()
+        _mirror_cancel(db, b)
+        _emit(db, b.workspace_id, "booking.cancelled", b, "Europe/Copenhagen")
     return b
+
+
+def _mirror_cancel(db: OrmSession, b: Booking) -> None:
+    """A booking cancelled from the UI also leaves the connected calendar (best effort)."""
+    if not (b.calendar_connector and b.calendar_event_id):
+        return
+    from app.modules.integrations import connectors, credentials
+    from app.modules.integrations.connectors.base import ActionError
+
+    try:
+        connectors.calendar_client(db, b.workspace_id, b.calendar_connector).delete_event(b.calendar_event_id)
+    except ActionError as e:
+        conn = credentials.connection(db, b.workspace_id, b.calendar_connector)
+        if conn is not None:
+            credentials.mark_error(conn, f"Aflysningen kunne ikke skrives til kalenderen: {e.message}")
+
+
+def _emit(db: OrmSession, ws_id: uuid.UUID, event: str, b: Booking, tz: str) -> None:
+    from app.modules.integrations import events
+
+    events.emit(db, ws_id, event, {"booking_id": str(b.id), "title": b.title, "starts_at": b.starts_at.isoformat(),
+                                   "ends_at": b.ends_at.isoformat(), "label": label(b.starts_at, tz), "status": b.status,
+                                   "source": b.source, "contact_name": b.contact_name, "contact_phone": b.contact_phone,
+                                   "contact_email": b.contact_email, "note": b.note,
+                                   "lead_id": str(b.lead_id) if b.lead_id else None}, key=f"{b.id}:{b.status}")
 
 
 # --------------------------------------------------------------------------- calendar (iCal)
@@ -221,4 +286,5 @@ def booking_out(b: Booking, tz: str) -> dict:
             "starts_at": b.starts_at.isoformat(), "ends_at": b.ends_at.isoformat(), "label": label(b.starts_at, tz),
             "status": b.status, "source": b.source, "contact_name": b.contact_name, "contact_phone": b.contact_phone,
             "contact_email": b.contact_email, "note": b.note, "lead_id": str(b.lead_id) if b.lead_id else None,
-            "conversation_id": str(b.conversation_id) if b.conversation_id else None}
+            "conversation_id": str(b.conversation_id) if b.conversation_id else None,
+            "calendar_connector": b.calendar_connector, "calendar_event_id": b.calendar_event_id}

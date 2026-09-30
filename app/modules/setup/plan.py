@@ -23,6 +23,7 @@ from app.models import (
     Campaign,
     CampaignContact,
     GoalSelection,
+    IntegrationConnection,
     KnowledgeItem,
     KnowledgeVersion,
     LanguageSettings,
@@ -47,6 +48,7 @@ class Snapshot:
     states: dict[str, SetupTaskState]
     campaigns_with_contacts: int = 0
     campaigns_started: int = 0
+    integrations_connected: int = 0
 
 
 @dataclass(frozen=True)
@@ -146,6 +148,11 @@ TASKS: list[TaskDef] = [
             "/app/bookings", ("BK06", "O07"), lambda s: True if s.goals.booking else None,
             lambda s: s.checks.get("calendar.connection") is not None and s.checks["calendar.connection"].status == "passed",
             capability="calendar", estimated_minutes=10),
+    TaskDef("integrations.connect", "Forbind jeres systemer", "Kanaler",
+            "Valgfrit: forbind jeres kalender (Google/Microsoft), SMS-bekræftelser eller Zapier/Make, så assistenten kan "
+            "udføre handlinger for kunderne. Aktivering kræver det ikke.",
+            "/app/settings/integrationer", ("I01",), lambda s: False if _reception(s) else None,
+            lambda s: s.integrations_connected > 0, min_role="admin", estimated_minutes=5),
     TaskDef("campaign.first", "Opret din første kampagne", "Kampagner",
             "Skriv formål og manuskript (AI foreslår), og importér kontakter som CSV. Betaling starter aldrig opkald.",
             "/app/campaigns", ("C01", "O07"), lambda s: True if _campaigns(s) else None,
@@ -188,6 +195,8 @@ def snapshot(db: OrmSession, ctx: WorkspaceContext) -> Snapshot:
                                           .where(CampaignContact.workspace_id == ws_id)) or 0,
         campaigns_started=db.scalar(select(func.count()).select_from(Campaign).where(
             Campaign.workspace_id == ws_id, Campaign.started_at.is_not(None))) or 0,
+        integrations_connected=db.scalar(select(func.count()).select_from(IntegrationConnection).where(
+            IntegrationConnection.workspace_id == ws_id, IntegrationConnection.status == "connected")) or 0,
     )
 
 

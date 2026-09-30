@@ -84,7 +84,14 @@ def handle_knowledge_approved(db: OrmSession, ev: OutboxEvent) -> None:
     log.info("knowledge.version_approved", version_id=ev.payload.get("version_id"))
 
 
+def handle_webhook_deliver(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.integrations.events import handle_deliver
+
+    handle_deliver(db, ev)
+
+
 HANDLERS = {
+    "webhook.deliver": handle_webhook_deliver,
     "email.invitation": handle_invitation,
     "email.verify_address": handle_verify,
     "email.password_reset": handle_reset,

@@ -16,6 +16,7 @@ from app.core.errors import Conflict
 from app.core.pagination import PageParams, page
 from app.db import get_db
 from app.models import Conversation, ConversationMessage, WebchatSettings
+from app.modules.integrations import actions
 from app.modules.setup.checks import invalidate_checks
 from app.modules.webchat import service
 
@@ -147,7 +148,8 @@ def get_conversation(conversation_id: uuid.UUID, ctx: WorkspaceContext = Depends
     conv = get_scoped(db, Conversation, conversation_id, ctx.workspace.id)
     return {"id": str(conv.id), "channel": conv.channel, "origin": conv.origin, "status": conv.status, "mode": conv.mode,
             "created_at": conv.created_at.isoformat(),
-            "messages": [service.message_out(m) for m in service.messages_of(db, conv)]}
+            "messages": [service.message_out(m) for m in service.messages_of(db, conv)],
+            "actions": [actions.run_out(r) for r in actions.runs_for_conversation(db, conv.id)]}
 
 
 class ReplyIn(BaseModel):

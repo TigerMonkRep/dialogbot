@@ -167,16 +167,22 @@ def test_phone_booking_tools(api, client, two_workspaces, db, monkeypatch):
     h = {"authorization": f"Bearer {secret}"}
     a = client.post("/api/v1/webhooks/vapi", json={"message": {"type": "assistant-request", "call": {"phoneNumberId": "pn_book"}}},
                     headers=h).json()["assistant"]
-    assert [x["function"]["name"] for x in a["model"]["tools"]] == ["ledige_tider", "book_tid"]
+    assert [x["function"]["name"] for x in a["model"]["tools"]] == ["ledige_tider", "book_tid", "flyt_tid", "aflys_tid"]
     call = {"id": "call_book_1", "phoneNumberId": "pn_book", "customer": {"number": "+4520304050"}}
     free = client.post("/api/v1/webhooks/vapi", json={"message": {"type": "tool-calls", "call": call, "toolCallList": [
         {"id": "t1", "type": "function", "function": {"name": "ledige_tider", "arguments": {}}}]}}, headers=h).json()
     text = free["results"][0]["result"]
     assert free["results"][0]["toolCallId"] == "t1" and "Ledige tider til besigtigelse" in text
     start = text.split("(start ")[1].split(")")[0]
-    booked = client.post("/api/v1/webhooks/vapi", json={"message": {"type": "tool-calls", "call": call, "toolCallList": [
-        {"id": "t2", "type": "function", "function": {"name": "book_tid", "arguments": f'{{"start": "{start}", "navn": "Bo"}}'}}]}},
-                         headers=h).json()["results"][0]["result"]
+    def book(args: str) -> str:
+        return client.post("/api/v1/webhooks/vapi", json={"message": {"type": "tool-calls", "call": call, "toolCallList": [
+            {"id": "t2", "type": "function", "function": {"name": "book_tid", "arguments": args}}]}},
+                           headers=h).json()["results"][0]["result"]
+
+    # booking needs the caller's explicit yes (bekraeftet=true); without it nothing is booked
+    assert "kræver, at kunden først siger ja" in book(f'{{"start": "{start}", "navn": "Bo"}}')
+    assert api.get(tok, f"/workspaces/{ws}/bookings").json()["items"] == []
+    booked = book(f'{{"start": "{start}", "navn": "Bo", "bekraeftet": true}}')
     assert booked.startswith("Booket: Besigtigelse")
     items = api.get(tok, f"/workspaces/{ws}/bookings").json()["items"]
     assert items[0]["source"] == "phone" and items[0]["contact_phone"] == "+4520304050"

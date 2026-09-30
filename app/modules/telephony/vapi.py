@@ -118,34 +118,20 @@ def voice_preview(voice_id: str, voice_model: str, text: str) -> bytes:
 
 
 def booking_tools(db: OrmSession, ws: Workspace) -> list[dict]:
-    """Function tools for booking during the call – only when online booking is on and has a type."""
-    from app.modules.bookings import service as bookings
+    """Function tools for the call: every action of a connected connector (Dialogbot's calendar when online booking
+    is on, a connected Google/Microsoft calendar, SMS confirmations …), built by app/modules/integrations/actions."""
+    from app.modules.integrations import actions
 
-    s = db.get(bookings.BookingSettings, ws.id)
-    types = bookings.active_types(db, ws.id) if s and s.enabled else []
-    if not types:
-        return []
-    names = [t.name for t in types]
-    return [
-        {"type": "function", "function": {
-            "name": "ledige_tider", "description": "Find ledige tider til en aftale. Returnerer de næste ledige tider.",
-            "parameters": {"type": "object", "properties": {
-                "type": {"type": "string", "enum": names, "description": "Hvilken slags aftale"}}}}},
-        {"type": "function", "function": {
-            "name": "book_tid", "description": "Book en af de ledige tider til kunden, når kunden har valgt tid og sagt sit navn.",
-            "parameters": {"type": "object", "required": ["start", "navn"], "properties": {
-                "start": {"type": "string", "description": "Starttidspunktet præcis som det kom fra ledige_tider"},
-                "navn": {"type": "string", "description": "Kundens navn"},
-                "type": {"type": "string", "enum": names},
-                "note": {"type": "string", "description": "Kort om hvad kunden har brug for"}}}}},
-    ]
+    return actions.to_vapi(actions.tools_for(db, ws, "phone"))
 
 
 def tool_calls(db: OrmSession, message: dict) -> dict:
-    """Answer Vapi `tool-calls` for booking. Always returns a result per call (errors as plain text)."""
+    """Answer Vapi `tool-calls`: run each call through the action runner (validation, connected connectors only,
+    one action_runs row each). Always returns a result per call (errors as plain text the assistant can relay)."""
     import json as _json
 
-    from app.modules.bookings import service as bookings
+    from app.modules.integrations import actions
+    from app.modules.integrations.connectors.base import RunContext
     from app.modules.reports.service import tz_of
 
     number = find_number(db, message)
@@ -160,29 +146,14 @@ def tool_calls(db: OrmSession, message: dict) -> dict:
                 args = _json.loads(args)
             except ValueError:
                 args = {}
-        result = "Booking er ikke tilgængelig på dette nummer. Tilbyd i stedet, at en medarbejder ringer tilbage."
-        if number is not None and number.active:
+        result = "Handlingen er ikke tilgængelig på dette nummer. Tilbyd i stedet, at en medarbejder ringer tilbage."
+        if number is not None and number.active and name:
             ws = db.get(Workspace, number.workspace_id)
-            tz = tz_of(db, ws.id)
-            types = bookings.active_types(db, ws.id)
-            bt = next((t for t in types if t.name == args.get("type")), types[0] if types else None)
-            s = db.get(bookings.BookingSettings, ws.id)
-            if bt is not None and s is not None and s.enabled:
-                if name == "ledige_tider":
-                    free = bookings.slots(db, ws, bt, tz, limit=6)
-                    result = ("Ledige tider til " + bt.name.lower() + ": " + "; ".join(f"{x['label']} (start {x['start']})" for x in free)
-                              if free else "Der er ingen ledige tider de næste dage. Tilbyd at en medarbejder ringer tilbage.")
-                elif name == "book_tid":
-                    try:
-                        b = bookings.book(db, ws, type_id=bt.id, start=str(args.get("start") or ""),
-                                          name=str(args.get("navn") or ""), phone=_dig(message, "call", "customer", "number"),
-                                          email=None, note=str(args.get("note") or ""), source="phone", tz=tz)
-                        b.provider_call_id = str(_dig(message, "call", "id") or "") or None
-                        db.commit()
-                        result = f"Booket: {bt.name} {bookings.label(b.starts_at, tz)}. Bekræft tiden over for kunden."
-                    except ApiError as e:
-                        db.rollback()
-                        result = f"Kunne ikke booke: {e.message}"
+            caller = _dig(message, "call", "customer", "number")
+            ctx = RunContext(workspace_id=ws.id, channel="phone", caller_phone=normalize_e164(str(caller)) if caller else None,
+                             provider_call_id=str(_dig(message, "call", "id") or "") or None, tz=tz_of(db, ws.id))
+            result, _run = actions.execute(db, ws, str(name), args if isinstance(args, dict) else {}, ctx)
+            db.commit()
         results.append({"toolCallId": tc.get("id"), "result": result})
     return {"results": results}
 
@@ -214,12 +185,12 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
         "transcriber": _json_setting(s.vapi_transcriber_json) or dict(DEFAULT_TRANSCRIBER),
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id)},
     }
-    tools = booking_tools(db, ws)
-    if tools:
-        assistant["model"]["tools"] = tools
-        assistant["model"]["messages"][0]["content"] += (
-            "\n\nBooking: Du kan booke en tid til kunden. Brug værktøjet ledige_tider for at finde tider, læs højst tre "
-            "tider op ad gangen, og brug book_tid først når kunden har valgt en tid og sagt sit navn. Bekræft tiden bagefter.")
+    from app.modules.integrations import actions as _actions
+
+    action_tools = _actions.tools_for(db, ws, "phone")
+    if action_tools:
+        assistant["model"]["tools"] = _actions.to_vapi(action_tools)
+        assistant["model"]["messages"][0]["content"] += "\n\n" + _actions.prompt_section(action_tools)
     provider_voice = voice_config(number) or _json_setting(s.vapi_voice_json)
     from app.modules.voices import service as voices
 
@@ -299,6 +270,15 @@ def end_of_call(db: OrmSession, message: dict) -> str:
 
     platform.record_call_cost(db, call, message)
     platform.evaluate_test(db, call, message)
+    from app.models import ActionRun
+    from app.modules.integrations import events
+
+    for run in db.scalars(select(ActionRun).where(ActionRun.provider_call_id == call_id, ActionRun.conversation_id.is_(None))):
+        run.conversation_id = conv.id  # actions taken during the call now show in its conversation
+    events.emit(db, ws_id, "conversation.ended",
+                {"conversation_id": str(conv.id), "channel": "phone", "from": caller, "to": number.e164,
+                 "duration_seconds": int(duration) if duration is not None else None, "summary": summary,
+                 "ended_reason": call.ended_reason}, key=call_id)
     from app.modules.campaigns import service as campaigns
 
     if campaigns.on_report(db, message, call_id=call_id, conv=conv, duration=duration, visitor_lines=visitor_lines,

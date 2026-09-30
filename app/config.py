@@ -95,6 +95,25 @@ class Settings(BaseSettings):
     sales_call_from: str = Field(default="08:00", alias="SALES_CALL_FROM")  # website requests, Copenhagen time
     sales_call_to: str = Field(default="20:00", alias="SALES_CALL_TO")
     sales_max_calls_per_hour: int = Field(default=20, alias="SALES_MAX_CALLS_PER_HOUR")
+    # Actions in the customer's own systems (app/modules/integrations/connectors). Stored credentials are envelope-
+    # encrypted with CREDENTIALS_KEY (base64url, 32 random bytes; `python -m scripts.credentials_key` prints one).
+    # Without it in staging/prod, connectors that store secrets are reported as not available; dev/test derive a
+    # process key from SECRET_KEY. CREDENTIALS_KEY_PREVIOUS keeps old
+    # rows readable during rotation.
+    credentials_key: str | None = Field(default=None, alias="CREDENTIALS_KEY")
+    credentials_key_previous: str | None = Field(default=None, alias="CREDENTIALS_KEY_PREVIOUS")
+    # OAuth clients Dialogbot registers with the providers (customers never see these). Without a client id the
+    # connector is reported as not implemented. Redirect URI: {PUBLIC_BASE_URL}/api/v1/integrations/oauth/{key}/callback
+    google_oauth_client_id: str | None = Field(default=None, alias="GOOGLE_OAUTH_CLIENT_ID")
+    google_oauth_client_secret: str | None = Field(default=None, alias="GOOGLE_OAUTH_CLIENT_SECRET")
+    microsoft_oauth_client_id: str | None = Field(default=None, alias="MICROSOFT_OAUTH_CLIENT_ID")
+    microsoft_oauth_client_secret: str | None = Field(default=None, alias="MICROSOFT_OAUTH_CLIENT_SECRET")
+    microsoft_oauth_tenant: str = Field(default="common", alias="MICROSOFT_OAUTH_TENANT")
+    # live = real provider calls; fake = deterministic in-memory doubles (dev/test only, every result is simulated)
+    connectors_provider: Literal["live", "fake"] = Field(default="live", alias="CONNECTORS_PROVIDER")
+    # Twilio SMS: alphanumeric sender used when a workspace has no SMS-capable number (max 11 chars, Denmark
+    # allows it without pre-registration). Empty = SMS actions are not offered.
+    sms_default_sender: str = Field(default="", alias="SMS_DEFAULT_SENDER")
     # Danish voice library. The speech engine is a separate service (tts_service/), never the API process.
     # TTS_ENGINE: none | http (the real service at TTS_SERVICE_URL) | fake (dev/test double; audio is a tone
     # and every result is labelled simulated).
@@ -147,6 +166,8 @@ class Settings(BaseSettings):
             raise ValueError(f"TTS_ENGINE=fake is a test double and is not allowed when APP_ENV={self.app_env}")
         if self.telephony_provider == "fake" and self.app_env not in ("dev", "test"):
             raise ValueError(f"TELEPHONY_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
+        if self.connectors_provider == "fake" and self.app_env not in ("dev", "test"):
+            raise ValueError(f"CONNECTORS_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
         if self.tts_engine == "http" and not (self.tts_service_url and self.tts_service_token):
             raise ValueError("TTS_ENGINE=http requires TTS_SERVICE_URL and TTS_SERVICE_TOKEN")
         if self.voice_storage == "supabase" and not (self.supabase_url and self.supabase_service_role_key):

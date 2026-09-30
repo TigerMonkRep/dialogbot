@@ -249,11 +249,32 @@ def process_event(db: OrmSession, event: dict) -> str:
         inv = db.scalar(select(Invoice).where(Invoice.stripe_invoice_id == obj["id"]))
         if inv is None:
             return "unmatched"
+        was = inv.status
         apply_stripe_invoice(inv, obj)
         if kind == "invoice.payment_failed":
             inv.status = "payment_failed"
+        _commission(db, inv, was, kind, obj)
+        return "applied"
+    if kind in ("charge.refunded", "credit_note.created") and obj.get("invoice"):
+        # Refunds and credit notes reduce what an ambassador earned from the invoice (see ambassadors.service).
+        inv = db.scalar(select(Invoice).where(Invoice.stripe_invoice_id == obj["invoice"]))
+        if inv is None or not inv.gross_minor:
+            return "unmatched"
+        from app.modules.ambassadors.service import reverse_for_invoice
+
+        taken = obj.get("amount_refunded") if kind == "charge.refunded" else obj.get("total")
+        reverse_for_invoice(db, inv, source_ref=str(obj.get("id") or kind), fraction=int(taken or 0) / inv.gross_minor)
         return "applied"
     return "ignored"
+
+
+def _commission(db: OrmSession, inv: Invoice, was: str, kind: str, obj: dict) -> None:
+    from app.modules.ambassadors.service import accrue_for_invoice, reverse_for_invoice
+
+    if inv.status == "paid" and was != "paid":
+        accrue_for_invoice(db, inv)
+    elif inv.status == "void" and was == "paid":
+        reverse_for_invoice(db, inv, source_ref=f"void:{obj.get('id')}")
 
 
 def invoice_out(i: Invoice) -> dict:

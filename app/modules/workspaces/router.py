@@ -21,6 +21,8 @@ router = APIRouter(tags=["workspaces"])
 class WorkspaceCreateIn(BaseModel):
     name: str = Field(min_length=2, max_length=200)
     product_intent: str | None = Field(default=None, description="reception | campaigns | both; defaults to signup intent")
+    referral_code: str | None = Field(default=None, max_length=60, description="Ambassador code typed by the customer")
+    referral_link: str | None = Field(default=None, max_length=60, description="Ambassador ref from the /a/{slug} cookie")
 
 
 class WorkspaceOut(BaseModel):
@@ -101,6 +103,11 @@ def create_workspace(body: WorkspaceCreateIn, request: Request, principal: Princ
                      db: OrmSession = Depends(get_db)):
     ws = service.create_workspace(db, user=principal.user, name=body.name, product_intent=body.product_intent,
                                   request_id=request.state.request_id)
+    if body.referral_code or body.referral_link:
+        from app.modules.ambassadors.service import attribute
+
+        attribute(db, ws, principal.user, code=body.referral_code, link=body.referral_link,
+                  request_id=request.state.request_id)
     db.commit()
     return ws_out(ws, "owner")
 

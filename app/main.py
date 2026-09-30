@@ -6,6 +6,10 @@ from app.config import get_settings
 from app.core.errors import install_error_handlers
 from app.core.logging import RequestIdMiddleware, configure_logging
 from app.modules.ai.router import router as ai_router
+from app.modules.ambassadors.router import operator_router as ambassadors_operator_router
+from app.modules.ambassadors.router import public_router as ambassadors_public_router
+from app.modules.ambassadors.router import router as ambassadors_router
+from app.modules.ambassadors.router import workspace_router as ambassadors_workspace_router
 from app.modules.billing.router import router as billing_router
 from app.modules.bookings.router import public_router as bookings_public_router
 from app.modules.bookings.router import router as bookings_router
@@ -63,7 +67,8 @@ def create_app() -> FastAPI:
               reports_router, telephony_router, vapi_webhook_router, billing_router, reception_router, overview_router,
               bookings_router, bookings_public_router, campaigns_router, voices_router, voice_operator_router, own_voice_router, telephony_setup_router,
               telephony_operator_router, sales_public_router, sales_operator_router, connections_router,
-              integrations_oauth_router,
+              integrations_oauth_router, ambassadors_public_router, ambassadors_router, ambassadors_workspace_router,
+              ambassadors_operator_router,
               voice_tts_router):
         app.include_router(r, prefix=API_PREFIX)
     if settings.dev_tools_enabled:

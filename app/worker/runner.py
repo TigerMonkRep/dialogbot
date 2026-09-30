@@ -98,6 +98,7 @@ HANDLERS = {
     "knowledge.version_approved": handle_knowledge_approved,
     "email.new_lead": handle_new_lead,
     "email.daily_report": handle_daily_report,
+    "email.ambassador": handle_daily_report,  # same shape: payload carries to_email, subject and body
 }
 
 # Test hook: event types listed here raise, to exercise retry paths.
@@ -244,6 +245,17 @@ def run_schedules() -> None:
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("invoices.failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:
+            from app.modules.ambassadors.service import release_held
+
+            n = release_held(db)
+            db.commit()
+            if n:
+                log.info("commission.released", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("commission.release_failed", error=f"{type(exc).__name__}: {exc}")
 
 
 def sync_calendars(db, max_age_minutes: int = 15) -> int:

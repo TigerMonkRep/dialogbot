@@ -4,7 +4,7 @@ import { Icon } from "./ui";
 import { AccountButton, BottomNav, DesktopNav, MoreMenu, SideNav, WorkspaceChip, type NavItem } from "./shell.client";
 
 type Ws = { id: string; name: string; role: string; product_intent: string };
-type Me = { display_name: string; email: string; email_verified: boolean };
+type Me = { display_name: string; email: string; email_verified: boolean; is_platform_operator?: boolean };
 type Capability = { key: string; status: "available" | "simulated" | "not_implemented"; environment: string };
 
 

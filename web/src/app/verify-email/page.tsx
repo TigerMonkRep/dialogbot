@@ -13,6 +13,8 @@ function Verify() {
   const [state, setState] = useState<"idle" | "verifying" | "verified" | "error">(token ? "verifying" : "idle");
   const [error, setError] = useState<ApiError | null>(null);
   const [resent, setResent] = useState(false);
+  const [after, setAfter] = useState<string | null>(null);
+  useEffect(() => { try { const v = localStorage.getItem("db_after_verify"); if (v?.startsWith("/ambassador")) setAfter(v); } catch { /* optional */ } }, []);
   useEffect(() => {
     if (!token) return;
     api("/auth/verify-email", { method: "POST", body: JSON.stringify({ token }) }).then(() => setState("verified")).catch((e) => { setError(e); setState("error"); });
@@ -21,7 +23,7 @@ function Verify() {
   if (state === "verified") return (
     <div className="space-y-space-md">
       <Alert kind="ok">Din e-mail er bekræftet.</Alert>
-      <Link href="/onboarding/workspace" className="w-full h-12 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs hover:bg-primary-container">Fortsæt til arbejdsrum<span aria-hidden className="material-symbols-outlined text-[18px]">arrow_forward</span></Link>
+      <Link href={after ?? "/onboarding/workspace"} onClick={() => { try { localStorage.removeItem("db_after_verify"); } catch { /* optional */ } }} className="w-full h-12 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs hover:bg-primary-container">{after ? "Fortsæt til ambassadørtilmelding" : "Fortsæt til arbejdsrum"}<span aria-hidden className="material-symbols-outlined text-[18px]">arrow_forward</span></Link>
     </div>
   );
   return (

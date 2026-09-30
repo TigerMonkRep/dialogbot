@@ -56,6 +56,11 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
     for cid, name, n, net in packages:
         lines.append({"kind": "campaign", "campaign_id": str(cid), "packages": int(n),
                       "description": f"Kampagne \"{name}\": {n} kontaktpakke{'r' if n != 1 else ''}", "net_minor": int(net or 0)})
+    from app.modules.ambassadors.service import discount_line
+
+    discount = discount_line(db, workspace_id, month, lines)
+    if discount is not None:
+        lines.append(discount)
     total = Money("DKK", sum(line["net_minor"] for line in lines), TAX_BASIS_POINTS)
     return {
         "month": month.strftime("%Y-%m"), "timezone": tz, "status": "preview", "invoicing": "not_implemented",

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { api } from "@/lib/client";
+import { api, fieldError } from "@/lib/client";
 import { Alert, Button, ErrorBox, Field, Icon, Input, Select, useSubmit } from "@/components/ui";
 
 async function select(id: string) {
@@ -55,12 +55,19 @@ export function WorkspaceCards({ workspaces, currentId }: { workspaces: Ws[]; cu
   );
 }
 
-export function WorkspaceForm({ defaultIntent, verified }: { defaultIntent: string; verified: boolean }) {
+export function WorkspaceForm({ defaultIntent, verified, referralLink = null }: { defaultIntent: string; verified: boolean; referralLink?: string | null }) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [intent, setIntent] = useState(defaultIntent);
+  const [code, setCode] = useState("");
+  const [showCode, setShowCode] = useState(false);
   const { run, pending, error } = useSubmit(async () => {
-    const ws = await api<{ id: string }>("/workspaces", { method: "POST", body: JSON.stringify({ name, product_intent: intent }) });
+    if (code.trim()) {
+      await api(`/public/ambassadors/${encodeURIComponent(code.trim())}`).catch(() => {
+        throw { status: 422, code: "unknown_code", message: "Ambassadørkoden findes ikke. Tjek stavningen, eller fjern den.", field_errors: [{ field: "referral_code", message: "Findes ikke" }] };
+      });
+    }
+    const ws = await api<{ id: string }>("/workspaces", { method: "POST", body: JSON.stringify({ name, product_intent: intent, referral_code: code.trim() || null, referral_link: referralLink }) });
     await select(ws.id); router.push("/onboarding/business"); router.refresh();
   });
   return (
@@ -69,6 +76,12 @@ export function WorkspaceForm({ defaultIntent, verified }: { defaultIntent: stri
       <ErrorBox error={error} />
       <Field label="Virksomhedens officielle navn" hint="Dette navn bruges af assistenten over for kunderne."><Input required minLength={2} value={name} onChange={(e) => setName(e.target.value)} placeholder="Fx Fjord Gulvservice ApS" /></Field>
       <Field label="Produktintention"><Select value={intent} onChange={(e) => setIntent(e.target.value)}><option value="reception">Reception</option><option value="campaigns">Kampagner</option><option value="both">Reception + kampagner</option></Select></Field>
+      {referralLink && !showCode && <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1"><Icon name="loyalty" size={16} className="text-secondary" />Du kom via en ambassadørs link – velkomstrabatten følger med.</p>}
+      {showCode ? (
+        <Field label="Ambassadørkode" error={fieldError(error, "referral_code")} hint="Fra den, der anbefalede Dialogbot til dig. En kode gælder frem for et link."><Input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Fx MADS42" autoCapitalize="characters" /></Field>
+      ) : (
+        <button type="button" onClick={() => setShowCode(true)} className="font-label-md text-label-md text-primary underline">Har du en ambassadørkode?</button>
+      )}
       <Button type="submit" icon="add_circle" disabled={pending || !verified} className="w-full">{pending ? "Opretter…" : "Opret og fortsæt"}</Button>
     </form>
   );

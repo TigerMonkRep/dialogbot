@@ -1,4 +1,6 @@
+import { cookies } from "next/headers";
 import { backend, currentWorkspaceId } from "@/lib/api.server";
+import { REFERRAL_COOKIE } from "@/lib/config";
 import type { Workspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
 import { FlowBar } from "@/components/onboarding";
@@ -6,6 +8,7 @@ import { WorkspaceCards, WorkspaceForm } from "./form";
 
 /** A06 — choose or create a workspace (Stitch a06 module + creation panel). */
 export default async function WorkspacePage() {
+  const referralLink = (await cookies()).get(REFERRAL_COOKIE)?.value ?? null;
   const [list, me, currentId] = await Promise.all([backend<Workspace[]>("/workspaces"), backend<{ signup_intent: string | null; email_verified: boolean }>("/auth/me"), currentWorkspaceId()]);
   return (
     <div className="space-y-space-xl">
@@ -29,7 +32,7 @@ export default async function WorkspacePage() {
               <p className="font-body-sm text-body-sm text-on-surface-variant">Hvert arbejdsrum har egen viden, eget team og egne indstillinger. Data deles aldrig på tværs.</p>
             </div>
           </div>
-          <WorkspaceForm defaultIntent={me.signup_intent ?? "reception"} verified={me.email_verified} />
+          <WorkspaceForm defaultIntent={me.signup_intent ?? "reception"} verified={me.email_verified} referralLink={referralLink} />
         </div>
       </div>
     </div>

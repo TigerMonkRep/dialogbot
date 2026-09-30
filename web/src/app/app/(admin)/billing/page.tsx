@@ -3,7 +3,7 @@ import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
 import { kr } from "../leads/format";
-import { AddCard, InvoiceMonth } from "./client";
+import { AddCard, InvoiceMonth, ReferralCode } from "./client";
 
 type Statement = {
   month: string; timezone: string; agreement: { version: number; model: string } | null; approved_leads: number; billable_leads: number;
@@ -24,10 +24,11 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   if (ws.role !== "owner" && ws.role !== "admin") return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Afregning kan ses af ejere og administratorer.</p>;
   const sp = await searchParams;
   const want = sp.month;
-  const [s, acc, invoices] = await Promise.all([
+  const [s, acc, invoices, referral] = await Promise.all([
     backend<Statement>(`/workspaces/${ws.id}/billing/statement${want && /^\d{4}-\d{2}$/.test(want) ? `?month=${want}` : ""}`),
     backend<Account>(`/workspaces/${ws.id}/billing/account`),
     backend<{ items: Inv[] }>(`/workspaces/${ws.id}/billing/invoices`),
+    backend<{ referred: boolean; ambassador_first_name?: string | null; customer_discount_bp?: number; can_add_code: boolean }>(`/workspaces/${ws.id}/referral`),
   ]);
   const current = new Date().toISOString().slice(0, 7);
   const previous = shift(current, -1);
@@ -52,6 +53,9 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         )}
         <p className="font-body-sm text-body-sm text-on-surface-variant">Betaling starter aldrig opkald. Kampagner startes kun af en administrator.</p>
       </section>
+      {referral.referred ? (
+        <p className="p-space-sm rounded-lg bg-secondary-container text-on-secondary-container font-body-sm text-body-sm flex items-start gap-space-xs"><Icon name="loyalty" size={18} />I er anbefalet af {referral.ambassador_first_name} (Dialogbot-ambassadør) og får {(referral.customer_discount_bp ?? 5000) / 100} % rabat på jeres første fakturerede måned. Rabatten står som en linje i oversigten.</p>
+      ) : referral.can_add_code && <ReferralCode wsId={ws.id} />}
       {invoices.items.length > 0 && (
         <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
           <h2 className="font-headline-sm text-headline-sm text-primary">Fakturaer</h2>

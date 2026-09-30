@@ -1352,3 +1352,139 @@ class TelephonyCost(Base):
     currency: Mapped[str] = mapped_column(String(3), nullable=False, default="USD")
     details: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     occurred_at: Mapped[datetime] = ts_now()
+
+
+# --------------------------------------------------------------------------- ambassador programme
+
+AMBASSADOR_STATUSES = ("pending", "active", "suspended", "rejected")
+COMMISSION_STATUSES = ("held", "payable", "paid", "reversed")
+
+
+class Ambassador(Base):
+    """A person or company that recommends Dialogbot and earns a bonus from the customers they bring.
+
+    Private ambassadors (no CVR) receive B-income: we report it to eIndkomst with their CPR number, so CPR and
+    bank details are stored encrypted (app.core.crypto) and shown only to operators on purpose (audited).
+    Under 18: a parent confirms by e-mail before anything is paid out; earning is allowed meanwhile."""
+
+    __tablename__ = "ambassadors"
+    __table_args__ = (
+        CheckConstraint("status in ('pending','active','suspended','rejected')", name="ck_ambassadors_status"),
+        CheckConstraint("kind in ('private','company')", name="ck_ambassadors_kind"),
+        CheckConstraint("rate_bp between 0 and 5000", name="ck_ambassadors_rate"),
+        CheckConstraint("bonus_minor >= 0", name="ck_ambassadors_bonus"),
+        CheckConstraint("months between 1 and 120", name="ck_ambassadors_months"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
+    status: Mapped[str] = mapped_column(String(12), nullable=False, default="pending")
+    kind: Mapped[str] = mapped_column(String(8), nullable=False)
+    slug: Mapped[str] = mapped_column(String(60), nullable=False, unique=True)
+    code: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
+    full_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    phone: Mapped[str] = mapped_column(String(20), nullable=False, default="")
+    birth_date: Mapped[date | None] = mapped_column(Date)
+    company_name: Mapped[str | None] = mapped_column(String(200))
+    cvr: Mapped[str | None] = mapped_column(String(8))
+    vat_registered: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    headline: Mapped[str] = mapped_column(String(300), nullable=False, default="")
+    motivation: Mapped[str] = mapped_column(String(1000), nullable=False, default="")
+    # Encrypted envelopes (app.core.crypto): CPR for B-income reporting, bank reg./account for payouts.
+    cpr_enc: Mapped[bytes | None] = mapped_column(LargeBinary)
+    bank_enc: Mapped[bytes | None] = mapped_column(LargeBinary)
+    secrets_key_version: Mapped[str | None] = mapped_column(String(32))
+    bank_last4: Mapped[str | None] = mapped_column(String(4))
+    parent_name: Mapped[str | None] = mapped_column(String(200))
+    parent_email: Mapped[str | None] = mapped_column(String(320))
+    parent_token_hash: Mapped[str | None] = mapped_column(String(64), unique=True)
+    parent_consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    rules_version: Mapped[str] = mapped_column(String(40), nullable=False)
+    rules_accepted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    # Terms: one-off bonus when a referred customer pays the first invoice + a share of paid invoices for N months.
+    bonus_minor: Mapped[int] = mapped_column(BigInteger, nullable=False, default=50000)
+    rate_bp: Mapped[int] = mapped_column(Integer, nullable=False, default=1000)
+    months: Mapped[int] = mapped_column(Integer, nullable=False, default=12)
+    decided_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    decision_note: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = ts_now()
+
+
+class Referral(Base):
+    """Which ambassador brought this workspace (one per workspace). Set at creation from the link cookie or a code."""
+
+    __tablename__ = "referrals"
+    __table_args__ = (CheckConstraint("via in ('link','code','operator')", name="ck_referrals_via"),)
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    ambassador_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("ambassadors.id", ondelete="CASCADE"), nullable=False,
+                                                     index=True)
+    via: Mapped[str] = mapped_column(String(8), nullable=False)
+    first_paid_month: Mapped[date | None] = mapped_column(Date)
+    attributed_at: Mapped[datetime] = ts_now()
+
+
+class ReferralClick(Base):
+    """Visits to an ambassador's page, counted per day (no IP addresses, no cookies stored here)."""
+
+    __tablename__ = "referral_clicks"
+    __table_args__ = (UniqueConstraint("ambassador_id", "day", name="uq_referral_clicks_day"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    ambassador_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("ambassadors.id", ondelete="CASCADE"), nullable=False)
+    day: Mapped[date] = mapped_column(Date, nullable=False)
+    count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+
+class AmbassadorPayout(Base):
+    """One transfer to an ambassador, grouping payable commission entries. Marked paid by an operator."""
+
+    __tablename__ = "ambassador_payouts"
+    __table_args__ = (CheckConstraint("status in ('pending','paid','cancelled')", name="ck_ambassador_payouts_status"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    ambassador_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("ambassadors.id", ondelete="CASCADE"), nullable=False,
+                                                     index=True)
+    number: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
+    status: Mapped[str] = mapped_column(String(10), nullable=False, default="pending")
+    amount_minor: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    income_type: Mapped[str] = mapped_column(String(12), nullable=False)  # b_income | invoice
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    paid_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    reference: Mapped[str] = mapped_column(String(100), nullable=False, default="")
+    created_at: Mapped[datetime] = ts_now()
+
+
+class CommissionEntry(Base):
+    """One line in an ambassador's ledger: a bonus or share earned from a paid invoice, or a reversal of one.
+
+    held (30 days after payment) → payable → paid (via a payout); reversed if the invoice is refunded before
+    payout. A refund after payout adds a negative `reversal` entry that the next payout deducts."""
+
+    __tablename__ = "commission_entries"
+    __table_args__ = (
+        CheckConstraint("kind in ('bonus','share','reversal')", name="ck_commission_entries_kind"),
+        CheckConstraint("status in ('held','payable','paid','reversed')", name="ck_commission_entries_status"),
+        UniqueConstraint("invoice_id", "kind", "source_ref", name="uq_commission_entries_invoice_kind"),
+        Index("ix_commission_entries_ambassador_status", "ambassador_id", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    ambassador_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("ambassadors.id", ondelete="CASCADE"), nullable=False)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    invoice_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("invoices.id", ondelete="CASCADE"), nullable=False)
+    kind: Mapped[str] = mapped_column(String(10), nullable=False)
+    # For reversals: the Stripe object that caused it (credit note / refund / void), so repeats are no-ops.
+    source_ref: Mapped[str] = mapped_column(String(64), nullable=False, default="")
+    month: Mapped[date] = mapped_column(Date, nullable=False)  # the invoiced month
+    base_minor: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)  # invoice net the share is of
+    amount_minor: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    status: Mapped[str] = mapped_column(String(10), nullable=False, default="held")
+    hold_until: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    payout_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("ambassador_payouts.id", ondelete="SET NULL"),
+                                                        index=True)
+    created_at: Mapped[datetime] = ts_now()

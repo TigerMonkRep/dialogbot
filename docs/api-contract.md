@@ -91,6 +91,32 @@ Opgavekatalog (`app/modules/setup/plan.py::TASKS`): `business.profile`, `busines
 
 Tjek (`checks.py::CHECKS`): `profile.completeness`, `languages.consistency`, `knowledge.approved_coverage`, `knowledge.assistant_endpoint` (kørbare); `telephony.test_call`, `telephony.forwarding`, `calendar.connection`, `webchat.widget`, `campaign.test_call` (kræver ikke-implementerede adaptere).
 
+## Ambassadører
+
+Se `docs/ambassadors/program.md` for regler.
+
+| Metode og sti | Beskrivelse |
+|---|---|
+| `GET /public/ambassadors/program` | Vilkår, regeltekst og quiz (uden svar). Offentlig. |
+| `GET /public/ambassadors/{slug_or_code}` | Offentlige data for en aktiv ambassadør (fornavn, hilsen, kode, kunderabat). Ellers 404. |
+| `POST /public/ambassadors/{slug_or_code}/visit` | Tæller et besøg pr. dag (aggregeret, uden IP). 204, også ved ukendt ref. |
+| `GET /public/ambassadors/parent-consent/{token}`, `POST /public/ambassadors/parent-consent` | Forældregodkendelse fra mail-linket (`{token, parent_name, confirm:true}`). |
+| `GET /ambassador/me` | `{enrolled:false}` eller profil: status, link, kode, vilkår, saldi (`held/payable/in_payout/paid`), statistik, `payout_blockers`. CPR og bank vises kun som `has_cpr`/`bank_last4`. |
+| `POST /ambassador/apply` | Tilmelding: `kind` (`private` → `birth_date`, evt. `cpr`, forælder under 18; `company` → `cvr`), evt. bank, `rules_version`, `quiz`. `422 rules_quiz_failed` (+`wrong`), `too_young`, `rules_outdated`; `409 already_ambassador`. |
+| `PUT /ambassador/me` | CPR, bank, hilsen, telefon; `expected_version` → `409 version_conflict`. |
+| `POST /ambassador/me/parent-consent/resend` | Send forældremail igen. |
+| `GET /ambassador/me/customers`, `/ledger`, `/payouts`, `/payouts/{id}` | Kunder (firmanavn, status, periode, bonus), posteringer, udbetalinger og afregningsbilag. |
+| `GET/PUT /workspaces/{ws}/referral` | Kundens ambassadør (billing.read); tilføj kode (billing.manage) inden for 30 dage og før første faktura: `unknown_code`, `self_referral`, `already_referred`, `code_window_closed`. |
+| `POST /workspaces` | Har nu også `referral_code` og `referral_link`. Ugyldige refs ignoreres. |
+| `GET /operator/ambassadors` | Operatør. Liste med saldi og totaler (`?status=`). |
+| `GET /operator/ambassadors/{id}` | Detaljer inkl. kunder, posteringer, udbetalinger. |
+| `POST /operator/ambassadors/{id}/approve \| reject \| suspend \| reactivate` | `{note}`; mail ved godkend/afvis. `409 invalid_transition`. |
+| `PUT /operator/ambassadors/{id}/terms` | `{bonus_minor, rate_bp, months, expected_version}`. |
+| `POST /operator/ambassadors/{id}/reveal` | CPR og bank i klartekst (logges). |
+| `PUT /operator/ambassadors/referrals/{workspace_id}` | Flyt/fjern kundens ambassadør `{ambassador_id\|null, reason}` (logges). |
+| `GET/POST /operator/ambassadors/payouts`, `GET /operator/ambassadors/payouts/{id}`, `POST …/{id}/paid` `{reference}`, `POST …/{id}/cancel` | Udbetalingskørsler (≥ 500 kr., kun uden blokeringer). |
+| `GET /operator/ambassadors/b-income.csv?year=` | Udbetalt B-indkomst pr. privat ambassadør (navn, CPR, beløb) til eIndkomst. Logges. |
+
 ## Integrationer, drift, dev
 
 | Metode og sti | Beskrivelse |

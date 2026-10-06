@@ -121,8 +121,19 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     assert a["transcriber"] == {"provider": "deepgram", "model": "nova-3", "language": "da",
                                 "keyterm": ["Fjord Gulvservice", "Afslibning"]}
     assert "HEMMELIG-KLADDE" not in a["transcriber"]["keyterm"]
-    assert "voice" not in a  # no voice chosen and no VAPI_VOICE_JSON: provider default
+    # nothing chosen and no VAPI_VOICE_JSON: the default Danish standard voice, never the provider's (English) default
+    assert a["voice"] == {"provider": "azure", "voiceId": "da-DK-ChristelNeural"}
     assert "dansk" in a["model"]["messages"][0]["content"] and n["voice"] is None
+    # the workspace picks another ready-made Danish voice; unknown keys are rejected
+    vs = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/voices").json()
+    assert [v["key"] for v in vs["standard_voices"]] == ["christel", "jeppe"] and vs["settings"]["standard_voice"] is None
+    put = f"/api/v1/workspaces/{t['ws_a']}/voices/settings"
+    bad_std = api.c.put(put, json={"expected_version": vs["settings"]["version"], "standard_voice": "bob"}, headers=api.h(t["tok_a"]))
+    assert bad_std.status_code == 422
+    ok = api.c.put(put, json={"expected_version": vs["settings"]["version"], "standard_voice": "jeppe"}, headers=api.h(t["tok_a"]))
+    assert ok.status_code == 200 and ok.json()["standard_voice"] == "jeppe"
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["voice"] == {"provider": "azure", "voiceId": "da-DK-JeppeNeural"}
     url = f"/api/v1/workspaces/{t['ws_a']}/phone-numbers/{n['id']}"
     bad = api.c.patch(url, json={"voice_id": "not an id!"}, headers=api.h(t["tok_a"]))
     assert bad.status_code == 422 and bad.json()["field_errors"][0]["field"] == "voice_id"
@@ -145,7 +156,7 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     assert a["voice"]["provider"] == "11labs"
     api.c.patch(url, json={"voice_id": ""}, headers=api.h(t["tok_a"]))
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
-    assert a["voice"]["voiceId"] == "da-DK-ChristelNeural"
+    assert a["voice"]["voiceId"] == "da-DK-JeppeNeural"  # the workspace's own choice beats VAPI_VOICE_JSON
     # a staff member cannot change the voice
     staff = api.add_member(t["tok_a"], t["ws_a"], "staff2@testmail.dk", "staff")
     assert api.c.patch(url, json={"voice_id": "AbCdEf1234567890"}, headers=api.h(staff)).status_code == 403

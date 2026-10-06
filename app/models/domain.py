@@ -1127,6 +1127,8 @@ class WorkspaceVoiceSettings(Base):
 
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
     default_profile_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("voice_profiles.id", ondelete="SET NULL"))
+    # Ready-made Danish voice (voices.standard key) used when no Dialogbot voice is active; NULL = the default one
+    standard_voice: Mapped[str | None] = mapped_column(String(20))
     fallback: Mapped[str] = mapped_column(String(16), nullable=False, default="provider_voice")
     pronunciations: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)  # [{term, say}]
     pronunciation_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)

@@ -12,11 +12,12 @@ export type Voice = {
   active_version: { id: string; version: number; engine: string; method: string; model_revision: string; pilot: boolean;
     listening_test: string; telephony_test: string; simulated: boolean } | null;
 };
+export type StandardVoice = { key: string; name: string; gender: "female" | "male"; image: string; description: string };
 export type VoicesData = {
-  items: Voice[]; engine: "available" | "simulated" | "not_configured"; preview_max_chars: number;
+  items: Voice[]; standard_voices: StandardVoice[]; engine: "available" | "simulated" | "not_configured"; preview_max_chars: number;
   assignments: { workspace_default: string | null; phone_numbers: { id: string; e164: string; label: string; voice_profile_id: string | null }[];
     campaigns: { id: string; name: string; status: string; voice_profile_id: string | null }[] };
-  settings: { version: number; default_profile_id: string | null; fallback: "provider_voice" | "transfer"; pronunciations: { term: string; say: string }[]; pronunciation_version: number };
+  settings: { version: number; default_profile_id: string | null; standard_voice: string | null; standard_default: string; fallback: "provider_voice" | "transfer"; pronunciations: { term: string; say: string }[]; pronunciation_version: number };
 };
 
 const GENDER: Record<string, string> = { female: "Kvinde", male: "Mand", unknown: "Køn ikke angivet" };
@@ -60,7 +61,7 @@ function EngineNotice({ engine }: { engine: VoicesData["engine"] }) {
   if (engine === "available") return null;
   return engine === "simulated"
     ? <Alert kind="warn" icon="science">Testmiljø: talemotoren er simuleret. Prøverne er en tone, ikke tale, og tæller ikke som afprøvet stemme.</Alert>
-    : <Alert kind="info" icon="info">Telefonen taler med Dialogbots danske standardstemme. Flere stemmer at vælge imellem kommer snart – I behøver ikke gøre noget.</Alert>;
+    : <Alert kind="info" icon="info">Vælg den danske stemme, jeres kunder skal høre i telefonen. Flere stemmer kommer løbende.</Alert>;
 }
 
 function Steps({ hasDefault, heard, testCall }: { hasDefault: boolean; heard: string; testCall: string }) {
@@ -80,6 +81,45 @@ function Steps({ hasDefault, heard, testCall }: { hasDefault: boolean; heard: st
         </li>
       ))}
     </ol>
+  );
+}
+
+/** Ready-made Danish voices (Azure via Vapi). Work today without Dialogbot's own speech engine. */
+function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesData; canManage: boolean }) {
+  const router = useRouter();
+  const current = data.settings.standard_voice ?? data.settings.standard_default;
+  const pick = useSubmit(async (key: string) => {
+    await api(`/workspaces/${wsId}/voices/settings`, { method: "PUT", body: JSON.stringify({ ...data.settings, expected_version: data.settings.version, standard_voice: key }) });
+    router.refresh();
+  });
+  return (
+    <section aria-labelledby="std-h" className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+      <div>
+        <h2 id="std-h" className="font-headline-sm text-headline-sm text-primary">Vælg telefonstemme</h2>
+        <p className="font-body-sm text-body-sm text-on-surface-variant max-w-3xl">Danske stemmer, der virker med det samme. Valget gælder alle jeres telefonnumre og kampagner, og I kan altid skifte. I hører stemmen, når I ringer til jeres nummer.</p>
+      </div>
+      <ErrorBox error={pick.error} />
+      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+        {data.standard_voices.map((v) => {
+          const active = current === v.key;
+          return (
+            <li key={v.key} className={`rounded-2xl p-space-md flex items-center gap-space-md border-2 transition-colors ${active ? "border-primary bg-surface-container-low" : "border-surface-container-high"}`}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={v.image} alt="" width={96} height={96} className="w-24 h-24 shrink-0 rounded-[1.25rem]" />
+              <div className="flex flex-col gap-space-xs min-w-0">
+                <div className="flex flex-wrap items-center gap-space-sm">
+                  <h3 className="font-headline-sm text-headline-sm text-primary">{v.name}</h3>
+                  <span className="font-label-sm text-label-sm text-on-surface-variant">{GENDER[v.gender]} · Dansk</span>
+                  {active && <span className="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center gap-1"><Icon name="check" size={14} />Bruges nu</span>}
+                </div>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">{v.description}</p>
+                {canManage && !active && <div><Button type="button" variant="tonal" disabled={pick.pending} onClick={() => pick.run(v.key)}>Vælg {v.name}</Button></div>}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 
@@ -111,13 +151,14 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
   return (
     <div className="flex flex-col gap-space-lg">
       <EngineNotice engine={data.engine} />
-      <Steps hasDefault={!!data.settings.default_profile_id} heard={steps.heard} testCall={steps.testCall} />
+      <Steps hasDefault={!!(data.settings.default_profile_id || data.settings.standard_voice)} heard={steps.heard} testCall={steps.testCall} />
+      <StandardVoices wsId={wsId} data={data} canManage={canManage} />
       {player.state?.simulated && <p role="status" className="font-body-sm text-body-sm text-on-surface-variant">Afspiller simuleret lyd (testmotor).</p>}
       <ErrorBox error={player.error ?? choose.error} />
 
       <section aria-labelledby="lib-h" className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
         <div className="flex flex-wrap items-end justify-between gap-space-sm">
-          <h2 id="lib-h" className="font-headline-sm text-headline-sm text-primary">Stemmebibliotek</h2>
+          <h2 id="lib-h" className="font-headline-sm text-headline-sm text-primary">Dialogbot-stemmer</h2>
           {data.items.length > 0 && (
             <div className="flex flex-wrap gap-space-sm">
               <Field label="Køn"><Select value={filter.gender} onChange={(e) => setFilter({ ...filter, gender: e.target.value })}><option value="">Alle</option><option value="female">Kvinde</option><option value="male">Mand</option><option value="unknown">Ikke angivet</option></Select></Field>
@@ -126,7 +167,7 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
           )}
         </div>
         {data.items.length === 0 ? (
-          <p className="font-body-md text-body-md text-on-surface-variant">Flere danske stemmer er på vej. De bliver først vist her, når de har bestået vores kontrol af rettigheder, lydkvalitet og telefonlyd. Indtil da bruger telefonen standardstemmen.</p>
+          <p className="font-body-md text-body-md text-on-surface-variant">Flere danske stemmer – også med dialekt – er på vej. De bliver vist her, når de har bestået vores kontrol af rettigheder, lydkvalitet og telefonlyd. Indtil da bruger telefonen den stemme, I har valgt ovenfor.</p>
         ) : (
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
             {shown.map((v) => {

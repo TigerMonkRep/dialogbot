@@ -152,7 +152,8 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           </div>
           <div className="flex items-center gap-space-lg">
             {current && <span>{current.name}</span>}
-            {env && <span>Miljø: {env}</span>}
+            {env && env !== "prod" && <span>Miljø: {env}</span>}
+            <span title={process.env.APP_COMMIT ? `Build ${process.env.APP_COMMIT}` : undefined} className="tabular-nums">{process.env.APP_VERSION}</span>
           </div>
         </div>
       </footer>
@@ -180,7 +181,7 @@ const SIDE_BOTTOM: NavItem[] = [SIDE[0], SIDE[1], SIDE[6], SIDE[5]];
 
 export async function AdminShell({ children }: { children: React.ReactNode }) {
   const { workspaces, me, current, env, unread } = await shellData();
-  const envPill = env && (
+  const envPill = env && env !== "prod" && (
     <span className="inline-flex items-center gap-space-xs px-space-sm py-0.5 rounded-full bg-secondary-container font-label-sm text-label-sm text-on-secondary-fixed">
       <span className="w-1.5 h-1.5 rounded-full bg-primary" />{env === "prod" ? "Produktion" : env === "staging" ? "Staging" : "Udvikling"}
     </span>

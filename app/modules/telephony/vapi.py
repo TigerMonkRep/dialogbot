@@ -102,6 +102,23 @@ def find_number(db: OrmSession, message: dict) -> PhoneNumber | None:
     return route(db, message)
 
 
+# Vapi validates assistant.model against its own enum per provider; an unknown id makes Vapi reject the whole
+# assistant-request answer and the caller hears a server error. Keep this in step with Vapi's AnthropicModel enum.
+VAPI_ANTHROPIC_MODELS = frozenset({
+    "claude-sonnet-5", "claude-sonnet-4-6", "claude-opus-4-6", "claude-sonnet-4-5-20250929", "claude-opus-4-5-20251101",
+    "claude-haiku-4-5-20251001", "claude-sonnet-4-20250514", "claude-opus-4-20250514"})
+VAPI_DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6"
+
+
+def phone_model(s) -> str:
+    """The model id sent to Vapi: VAPI_MODEL, else AI_MODEL_ID – replaced by a supported default when Vapi
+    would refuse it (only checked for the anthropic provider, whose list we know)."""
+    m = s.vapi_model or s.ai_model_id
+    if s.vapi_model_provider == "anthropic" and m not in VAPI_ANTHROPIC_MODELS:
+        return VAPI_DEFAULT_ANTHROPIC_MODEL
+    return m
+
+
 def _json_setting(raw: str | None) -> dict | None:
     if not raw:
         return None
@@ -246,7 +263,7 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
     assistant: dict[str, Any] = {
         "firstMessage": (number.greeting.strip() or reception.spoken_greeting(db.get(reception.ReceptionScript, ws.id), ws)
                          or DEFAULT_GREETING.format(name=ws.name)),
-        "model": {"provider": s.vapi_model_provider, "model": s.vapi_model or s.ai_model_id,
+        "model": {"provider": s.vapi_model_provider, "model": phone_model(s),
                   "messages": [{"role": "system", "content": f"{system}\n\n{phone_rules}"}]},
         "transcriber": transcriber_for(db, ws),
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id)},
@@ -389,7 +406,7 @@ def not_active_assistant(db: OrmSession, number: PhoneNumber) -> dict:
             "Prøv venligst igen senere. Farvel.")
     return {"assistant": {
         "firstMessage": text, "endCallMessage": "Farvel.", "maxDurationSeconds": 20,
-        "model": {"provider": s.vapi_model_provider, "model": s.vapi_model or s.ai_model_id,
+        "model": {"provider": s.vapi_model_provider, "model": phone_model(s),
                   "messages": [{"role": "system", "content": "Sig kun farvel. Svar ikke på spørgsmål."}]},
         "transcriber": _json_setting(s.vapi_transcriber_json) or dict(DEFAULT_TRANSCRIBER),
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id), "not_active": True}}}

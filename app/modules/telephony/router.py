@@ -9,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session as OrmSession
 
+from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.auth import WorkspaceContext, get_scoped, require_capability
 from app.core.errors import ApiError, ValidationFailed
@@ -35,12 +36,17 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
         raise ValidationFailed("Mangler 'message'")
     kind = str(message.get("type", ""))
     if kind == "assistant-request":
+        from app.core.logging import log
         from app.modules.telephony import platform
 
+        call = message.get("call") or {}
         number = vapi.find_number(db, message)
         if number is None:
+            log.warning("vapi.assistant_request", outcome="unrouted", phone_number_id=call.get("phoneNumberId"),
+                        org_matches=(str(call.get("orgId") or "") == (get_settings().vapi_org_id or "")) or None)
             return {"error": "Nummeret er ikke tilknyttet et aktivt arbejdsrum."}
         mode = platform.call_mode(db, number, message)
+        log.info("vapi.assistant_request", outcome=mode, call_id=call.get("id"), number_source=number.source)
         if mode == "loop":
             vapi.record_event(db, f"{(message.get('call') or {}).get('id')}:loop", "assistant-request",
                               {"number_id": str(number.id)}, "loop_rejected")
@@ -63,6 +69,7 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
                 db.commit()
             return out
         except ApiError as e:  # e.g. no approved knowledge: the provider plays its error handling
+            log.warning("vapi.assistant_request", outcome="config_error", code=e.code, detail=e.message)
             return {"error": e.message}
     if kind == "tool-calls":
         return vapi.tool_calls(db, message)

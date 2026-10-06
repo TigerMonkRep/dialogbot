@@ -7,6 +7,7 @@ from sqlalchemy import select
 
 from app.config import get_settings
 from app.models import Call, Conversation, ConversationMessage, Lead, Task, WebhookEvent
+from app.modules.telephony.vapi import phone_model
 
 URL = "/api/v1/webhooks/vapi"
 SECRET = "vapi-test-secret-0123456789abcdef"
@@ -104,7 +105,7 @@ def test_assistant_request_uses_only_approved_knowledge(client, api, two_workspa
     system = a["model"]["messages"][0]["content"]
     assert "Afslibning" in system and "HEMMELIG-KLADDE" not in system and "telefonopkald" in system
     assert a["firstMessage"].startswith("Hej, du har ringet til Fjord Gulvservice ApS") and "digital assistent" in a["firstMessage"]
-    assert a["model"]["provider"] == "anthropic" and a["model"]["model"] == get_settings().ai_model_id
+    assert a["model"]["provider"] == "anthropic" and a["model"]["model"] == phone_model(get_settings())
     # mapping by E.164 works too; unknown numbers get an error the provider can speak/handle
     by_number = _post(client, {"type": "assistant-request", "phoneNumber": {"number": NUMBER}, "call": {"id": "c2"}})
     assert "assistant" in by_number.json()
@@ -248,3 +249,16 @@ def test_voice_preview(api, two_workspaces, configured, monkeypatch):
     monkeypatch.setattr(httpx, "post", lambda u, **kw: httpx.Response(401, request=httpx.Request("POST", u)))
     assert api.post(t["tok_a"], url, {"voice_id": "AbCdEf1234567890"}).json()["code"] == "voice_preview_failed"
     get_settings.cache_clear()
+
+
+def test_phone_model_is_one_vapi_accepts():
+    from types import SimpleNamespace
+
+    from app.modules.telephony.vapi import VAPI_ANTHROPIC_MODELS, VAPI_DEFAULT_ANTHROPIC_MODEL, phone_model
+
+    s = SimpleNamespace(vapi_model=None, ai_model_id="claude-opus-5", vapi_model_provider="anthropic")
+    assert phone_model(s) == VAPI_DEFAULT_ANTHROPIC_MODEL in VAPI_ANTHROPIC_MODELS
+    s.vapi_model = "claude-sonnet-5"
+    assert phone_model(s) == "claude-sonnet-5"
+    s.vapi_model_provider, s.vapi_model = "openai", "gpt-4o"
+    assert phone_model(s) == "gpt-4o"

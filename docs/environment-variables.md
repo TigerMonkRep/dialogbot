@@ -52,7 +52,7 @@
 | `MICROSOFT_OAUTH_CLIENT_ID` / `MICROSOFT_OAUTH_CLIENT_SECRET` / `MICROSOFT_OAUTH_TENANT` | nej | API + worker | Microsoft Entra → App registrations (multitenant). Redirect-URI: `{PUBLIC_BASE_URL}/api/v1/integrations/oauth/microsoft_calendar/callback`. Delegerede rettigheder `Calendars.ReadWrite`, `User.Read`, `offline_access`. Tenant standard `common` | Microsoft 365-kalender-connectoren. Publisher verification anbefales. **Server-only.** |
 | `CONNECTORS_PROVIDER` | nej | API + worker | `live` (standard) eller `fake` (kun dev/test) | `fake` = simulerede kalender/SMS/webhooks; alt mærkes simuleret. Nægtes uden for dev/test. |
 | `SMS_DEFAULT_SENDER` | nej | API | Fx `Dialogbot` (≤ 11 tegn) | Afsender for SMS, når et arbejdsrums navn ikke kan bruges som alfanumerisk afsender. |
-| `VAPI_MODEL` | nej | API | — | Sprogmodellen i telefonsamtaler (standard `AI_MODEL_ID`). Telefoni kræver hurtige svar; vælg en model, som Vapi understøtter, og mål latenstiden ved prøveopkald. |
+| `VAPI_MODEL` | nej | API | — | Sprogmodellen i telefonsamtaler (standard `AI_MODEL_ID`; en Anthropic-model, Vapi ikke kender, erstattes af `claude-sonnet-4-6`). Telefoni kræver hurtige svar; vælg en model, som Vapi understøtter, og mål latenstiden ved prøveopkald. |
 | `EMAIL_FROM` | ved resend | worker | Verificeret afsenderdomæne i Resend | `Dialogbot <noreply@mail.<domæne>>` |
 | `PUBLIC_BASE_URL` | ja | API | Render-URL | Bruges i OpenAPI/links. |
 | `FRONTEND_BASE_URL` | ja | API, worker | Vercel-URL | Links i mails (verificering, reset, invitation). |

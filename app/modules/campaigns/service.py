@@ -241,7 +241,7 @@ def assistant_for(db: OrmSession, c: Campaign, contact: CampaignContact) -> dict
     remaining = max(30, c.max_connected_seconds - contact.connected_seconds)
     assistant: dict = {
         "firstMessage": opening_line(c, ws, contact),
-        "model": {"provider": s.vapi_model_provider, "model": s.vapi_model or s.ai_model_id,
+        "model": {"provider": s.vapi_model_provider, "model": vapi.phone_model(s),
                   "messages": [{"role": "system", "content": system_prompt(db, c, ws, contact)}]},
         "transcriber": vapi.transcriber_for(db, ws),
         "maxDurationSeconds": remaining,

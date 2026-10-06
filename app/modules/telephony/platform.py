@@ -200,12 +200,13 @@ def start_verification(db: OrmSession, ws: Workspace) -> dict:
     code = f"{secrets.randbelow(10**6):06d}"
     spoken = " ".join(code)
     _twilio, vapi = p
+    from app.modules.telephony.vapi import phone_model as _phone_model
     call_id = vapi.call({
         "phoneNumberId": settings.telephony_verify_number_id,
         "customer": {"number": s.business_number},
         "assistant": {"firstMessage": f"Hej. Dette er Dialogbot. Din kode er {spoken}. Jeg gentager: {spoken}. Farvel.",
                       "endCallMessage": "Farvel.", "maxDurationSeconds": 45,
-                      "model": {"provider": settings.vapi_model_provider, "model": settings.vapi_model or settings.ai_model_id,
+                      "model": {"provider": settings.vapi_model_provider, "model": _phone_model(settings),
                                 "messages": [{"role": "system", "content": "Sig kun koden og farvel. Svar ikke på spørgsmål."}]},
                       "metadata": {"purpose": "verification", "workspace_id": str(ws.id)}},
         "metadata": {"purpose": "verification", "workspace_id": str(ws.id)}})

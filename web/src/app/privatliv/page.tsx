@@ -1,44 +1,45 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Icon } from "@/components/ui";
+import { COMPANY, LegalPage } from "@/components/legal-page";
 
-export const metadata: Metadata = { title: "Privatliv | Dialogbot", description: "Sådan behandler Dialogbot oplysninger fra ventelisten og demo-opkald." };
+export const metadata: Metadata = { title: "Privatliv | Dialogbot", description: "Sådan behandler Dialogbot personoplysninger om kunder, deres kunder, ambassadører og besøgende." };
 
-const CONTROLLER_ADDRESS = "Abildgade 18, 8200 Aarhus, Danmark";
-
-/** Privacy notice for the P00 waitlist and demo calls. Deliberately limited to what they actually do. */
+/** Privacy policy. Keep it limited to what the product actually does (see docs and the code). */
 export default function PrivacyPage() {
-  const sections: [string, React.ReactNode][] = [
-    ["Hvem er ansvarlig?", <>Dialogbot, {CONTROLLER_ADDRESS}. Henvendelser om dine oplysninger sendes til denne adresse.</>],
-    ["Hvad gemmer vi?", <>Din e-mailadresse, den branche og de interesser, du eventuelt vælger, hvilken side du tilmeldte dig fra, samt tidspunktet for tilmelding og samtykke. Vi opretter ingen konto og gemmer ikke andet om dig fra ventelisten.</>],
-    ["Hvorfor?", <>Kun for at give dig besked, når Dialogbot åbner for nye virksomheder, og for at prioritere, hvilke funktioner vi bygger først. Vi sender ikke nyhedsbreve eller reklame, og vi sælger eller deler ikke listen.</>],
-    ["Retsgrundlag", <>Dit samtykke (databeskyttelsesforordningens art. 6, stk. 1, litra a), som du giver ved at sætte flueben i formularen. Du kan til enhver tid trække det tilbage.</>],
-    ["Hvor længe?", <>Indtil vi har givet besked om åbningen, eller indtil du beder os slette dig – dog højst 24 måneder efter tilmelding.</>],
-    ["Hvem behandler data for os?", <>Oplysningerne ligger i vores database hos Supabase og behandles af vores server hos Render (Frankfurt, EU). Websiden leveres via Vercel. De fungerer som databehandlere.</>],
-    ["Demo-opkald (\"Ring mig op nu\")", <>Beder du vores assistent ringe dig op, gemmer vi dit telefonnummer, det navn og den virksomhed, du skriver, tidspunktet og teksten for dit samtykke samt en udskrift af samtalen. Vi bruger det kun til at foretage opkaldet og til, at en medarbejder fra Dialogbot kan følge op på det, I talte om. Retsgrundlaget er dit samtykke. Opkaldet går gennem vores telefoni- og taleleverandører Vapi, Twilio, Deepgram og ElevenLabs samt AI-modellen hos Anthropic. De er databehandlere og kan behandle data i USA. Siger du i opkaldet, at du ikke vil ringes op igen, kommer nummeret på vores spærreliste. Vi gemmer oplysningerne, så længe vi følger op, og sletter dem, når du beder om det.</>],
-    ["Dine rettigheder", <>Du har ret til indsigt, berigtigelse og sletning, til at trække dit samtykke tilbage og til dataportabilitet. Skriv til {CONTROLLER_ADDRESS}. Du kan klage til Datatilsynet (<a className="underline" href="https://www.datatilsynet.dk" rel="noreferrer">datatilsynet.dk</a>).</>],
-  ];
   return (
-    <div className="min-h-dvh bg-surface">
-      <header className="bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/preview" className="flex items-center gap-2.5"><span className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-secondary-fixed"><Icon name="support_agent" size={22} /></span><span className="font-headline-sm text-headline-sm text-primary font-bold">Dialogbot</span></Link>
-          <Link href="/preview#venteliste" className="font-label-md text-label-md text-primary font-semibold flex items-center gap-1"><Icon name="arrow_back" size={18} />Til ventelisten</Link>
-        </div>
-      </header>
-      <main id="main" className="max-w-3xl mx-auto px-4 sm:px-6 py-space-xl flex flex-col gap-space-lg">
-        <div>
-          <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">Privatliv</span>
-          <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary">Sådan behandler vi oplysninger fra ventelisten og demo-opkald</h1>
-          <p className="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">Gælder tilmelding til tidlig adgang. Opdateret 25. september 2026.</p>
-        </div>
-        {sections.map(([h, body]) => (
-          <section key={h} className="bg-surface-container-lowest rounded-xl p-space-md sm:p-space-lg shadow-sm">
-            <h2 className="font-headline-sm text-headline-sm text-primary mb-space-xs">{h}</h2>
-            <p className="font-body-md text-body-md text-on-surface-variant">{body}</p>
-          </section>
-        ))}
-      </main>
-    </div>
+    <LegalPage label="Privatliv" title="Sådan behandler vi personoplysninger" updated="Opdateret 6. oktober 2026."
+      intro="Her kan du se, hvilke oplysninger Dialogbot behandler, hvorfor, hvor længe og hvem der hjælper os med det. Siden dækker kunder, kundernes egne kunder, ambassadører og besøgende."
+      sections={[
+        ["Hvem er ansvarlig?", <p key="a">{COMPANY.name}, {COMPANY.address}. Skriv til <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> om alt, der handler om dine oplysninger.</p>],
+        ["Kunder (virksomheder med en konto)", <>
+          <p>Vi behandler navn, e-mail og adgangskode (gemt krypteret) for brugerne, virksomhedens oplysninger (navn, CVR, adresse, telefon, åbningstider, ydelser og priser) og den viden, I lægger ind til assistenten. Vi logger vigtige handlinger, fx godkendelser og ændringer af roller, af hensyn til sikkerhed.</p>
+          <p>Formålet er at levere tjenesten og fakturere den. Retsgrundlaget er aftalen med jer (databeskyttelsesforordningens art. 6, stk. 1, litra b) og vores legitime interesse i sikkerhed og drift (litra f).</p></>],
+        ["Betaling", <p key="b">Betalingskort håndteres af Stripe. Vi ser kun kortets type, de sidste fire cifre og udløbsdato. Fakturaer gemmes i 5 år efter bogføringsloven.</p>],
+        ["Jeres kunder (samtaler, opkald og henvendelser)", <>
+          <p>Når assistenten taler med jeres kunder i telefonen eller på hjemmesiden, behandler vi telefonnummer, navn, beskedens indhold, udskrift af samtalen, bookinger og de henvendelser, der opstår. Det gør vi som <strong>databehandler</strong> på vegne af den virksomhed, kunden har kontaktet – virksomheden er dataansvarlig. Se <Link href="/vilkaar">vilkårene</Link>.</p>
+          <p>Opkald kan blive transskriberet til tekst. Assistenten oplyser i starten af samtalen, at den er en AI.</p></>],
+        ["Ambassadører", <>
+          <p>Er du ambassadør, behandler vi navn, e-mail, telefon, fødselsdato, din hilsen, de kunder du har henvist (kun firmanavn og status), din bonus og dine udbetalinger.</p>
+          <p>Uden CVR behandler vi også dit <strong>CPR-nummer</strong> og dit <strong>bankkontonummer</strong>. CPR-nummeret bruges kun til at indberette din bonus som B-indkomst til Skattestyrelsen, som vi har pligt til; kontonummeret kun til udbetaling. Begge gemmes krypteret og kan kun ses af Dialogbots administratorer, og hver visning logges. Er du under 18, behandler vi også din forælders navn, e-mail og godkendelse.</p>
+          <p>Retsgrundlaget er aftalen med dig (art. 6, stk. 1, litra b), vores retlige forpligtelse til at indberette (litra c og databeskyttelseslovens § 11 om CPR). Oplysningerne gemmes, så længe du er ambassadør, og derefter i 5 år af hensyn til bogføring og skat.</p></>],
+        ["Venteliste og demo-opkald", <>
+          <p><strong>Venteliste:</strong> e-mail, valgt branche og interesser samt tidspunkt for samtykke – kun for at give dig besked, når vi åbner. Gemmes højst 24 måneder.</p>
+          <p><strong>"Ring mig op nu":</strong> telefonnummer, navn, virksomhed, tidspunkt og tekst for dit samtykke samt udskrift af samtalen, så vi kan ringe op og følge op. Siger du nej tak i opkaldet, kommer nummeret på vores spærreliste. Retsgrundlaget er dit samtykke, som du altid kan trække tilbage.</p></>],
+        ["Cookies", <p key="c">Vi bruger kun nødvendige cookies: til at holde dig logget ind, huske dit valgte arbejdsrum, adgangskoden til forsiden og – hvis du kom via en ambassadørs link – hvilken ambassadør der anbefalede os (90 dage). Vi bruger ingen reklame- eller sporingscookies.</p>],
+        ["Hvem hjælper os? (underdatabehandlere)", <>
+          <p>Vi bruger disse leverandører, som behandler data på vores vegne under databehandleraftaler:</p>
+          <ul className="list-disc pl-5 flex flex-col gap-1">
+            <li>Supabase – database (EU, Irland)</li>
+            <li>Render – server (EU, Frankfurt)</li>
+            <li>Vercel – hjemmeside og app</li>
+            <li>Resend – afsendelse af e-mails (EU, Irland)</li>
+            <li>Stripe – betaling</li>
+            <li>Anthropic – AI-model, der formulerer svarene</li>
+            <li>Vapi og Twilio – telefoni</li>
+            <li>Deepgram og ElevenLabs – tale til tekst og tekst til tale</li>
+          </ul>
+          <p>Nogle af dem kan behandle data i USA. Overførsel sker på grundlag af EU-U.S. Data Privacy Framework eller EU-Kommissionens standardkontrakter.</p></>],
+        ["Dine rettigheder", <p key="r">Du har ret til indsigt, berigtigelse, sletning, begrænsning, dataportabilitet og til at gøre indsigelse – og til at trække et samtykke tilbage. Skriv til <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>. Gælder det en samtale med en af vores kunder, hjælper vi den virksomhed med at svare dig. Du kan klage til Datatilsynet (<a href="https://www.datatilsynet.dk" rel="noreferrer">datatilsynet.dk</a>).</p>],
+      ]} />
   );
 }

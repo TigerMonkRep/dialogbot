@@ -64,11 +64,13 @@ function EngineNotice({ engine }: { engine: VoicesData["engine"] }) {
     : <Alert kind="info" icon="info">Vælg den danske stemme, jeres kunder skal høre i telefonen. Flere stemmer kommer løbende.</Alert>;
 }
 
-function Steps({ hasDefault, heard, testCall }: { hasDefault: boolean; heard: string; testCall: string }) {
+function Steps({ standardVoice, heard, testCall }: { standardVoice: boolean; heard: string; testCall: string }) {
+  // A ready-made standard voice has no sample to play: steps 2–3 are covered by the test call.
+  const viaCall = "Ikke nødvendigt for standardstemmer – I hører stemmen og velkomsten i prøveopkaldet.";
   const items: [string, boolean, string, string?][] = [
-    ["Vælg stemme", hasDefault, "Vælg en standardstemme nedenfor."],
-    ["Lyt til prøven", STEP_OK(heard), "Afspil standardprøven for den valgte stemme."],
-    ["Afprøv jeres velkomst", STEP_OK(heard), "Hør velkomsten fra Reception med stemmen."],
+    ["Vælg stemme", true, "Vælg en stemme nedenfor."],
+    ["Lyt til prøven", standardVoice || STEP_OK(heard), standardVoice ? viaCall : "Afspil standardprøven for den valgte stemme."],
+    ["Afprøv jeres velkomst", standardVoice || STEP_OK(heard), standardVoice ? viaCall : "Hør velkomsten fra Reception med stemmen."],
     ["Gennemfør et prøveopkald", STEP_OK(testCall), "Ring til jeres nummer. Et gemt valg er ikke en bestået telefontest.", "/app/setup#checks"],
   ];
   return (
@@ -77,11 +79,18 @@ function Steps({ hasDefault, heard, testCall }: { hasDefault: boolean; heard: st
         <li key={label} className={`rounded-xl p-space-sm flex flex-col gap-1 ${done ? "bg-secondary-container text-on-secondary-container" : "bg-surface-container-lowest shadow-sm"}`}>
           <span className="font-label-sm text-label-sm uppercase tracking-wider flex items-center gap-1"><Icon name={done ? "check_circle" : "radio_button_unchecked"} size={16} />Trin {i + 1}</span>
           <span className="font-label-lg text-label-lg">{label}</span>
-          {!done && <span className="font-body-sm text-body-sm">{href ? <Link className="underline" href={href}>{hint}</Link> : hint}</span>}
+          {(!done || hint === viaCall) && <span className="font-body-sm text-body-sm">{href ? <Link className="underline" href={href}>{hint}</Link> : hint}</span>}
         </li>
       ))}
     </ol>
   );
+}
+
+/** Saves one change to the voice settings on top of the latest saved version, so an earlier save on the page
+ *  (or a double click) never turns into a "changed by someone else" conflict. */
+async function saveSettings(wsId: string, patch: Partial<VoicesData["settings"]>) {
+  const fresh = (await api<VoicesData>(`/workspaces/${wsId}/voices`)).settings;
+  await api(`/workspaces/${wsId}/voices/settings`, { method: "PUT", body: JSON.stringify({ ...fresh, expected_version: fresh.version, ...patch }) });
 }
 
 /** Ready-made Danish voices (Azure via Vapi). Work today without Dialogbot's own speech engine. */
@@ -89,7 +98,7 @@ function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesD
   const router = useRouter();
   const current = data.settings.standard_voice ?? data.settings.standard_default;
   const pick = useSubmit(async (key: string) => {
-    await api(`/workspaces/${wsId}/voices/settings`, { method: "PUT", body: JSON.stringify({ ...data.settings, expected_version: data.settings.version, standard_voice: key }) });
+    await saveSettings(wsId, { standard_voice: key });
     router.refresh();
   });
   return (
@@ -144,14 +153,14 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
   const dialects = Array.from(new Set(data.items.map((v) => v.dialect ?? "Ikke vurderet")));
   const shown = data.items.filter((v) => (!filter.gender || v.gender === filter.gender) && (!filter.dialect || (v.dialect ?? "Ikke vurderet") === filter.dialect));
   const choose = useSubmit(async (profileId: string) => {
-    await api(`/workspaces/${wsId}/voices/settings`, { method: "PUT", body: JSON.stringify({ ...data.settings, expected_version: data.settings.version, default_profile_id: profileId }) });
+    await saveSettings(wsId, { default_profile_id: profileId });
     router.refresh();
   });
   const playing = (key: string) => player.state?.key === key;
   return (
     <div className="flex flex-col gap-space-lg">
       <EngineNotice engine={data.engine} />
-      <Steps hasDefault={!!(data.settings.default_profile_id || data.settings.standard_voice)} heard={steps.heard} testCall={steps.testCall} />
+      <Steps standardVoice={!data.settings.default_profile_id} heard={steps.heard} testCall={steps.testCall} />
       <StandardVoices wsId={wsId} data={data} canManage={canManage} />
       {player.state?.simulated && <p role="status" className="font-body-sm text-body-sm text-on-surface-variant">Afspiller simuleret lyd (testmotor).</p>}
       <ErrorBox error={player.error ?? choose.error} />
@@ -238,7 +247,7 @@ function Assignments({ wsId, data }: { wsId: string; data: VoicesData }) {
     router.refresh();
   });
   const fallback = useSubmit(async (value: string) => {
-    await api(`/workspaces/${wsId}/voices/settings`, { method: "PUT", body: JSON.stringify({ ...data.settings, expected_version: data.settings.version, fallback: value }) });
+    await saveSettings(wsId, { fallback: value as VoicesData["settings"]["fallback"] });
     router.refresh();
   });
   const opts = [<option key="" value="">Arbejdsrummets standard</option>, ...data.items.map((v) => <option key={v.id} value={v.id}>{v.display_name}</option>)];
@@ -273,7 +282,7 @@ function Pronunciations({ wsId, data }: { wsId: string; data: VoicesData }) {
   const [rows, setRows] = useState(data.settings.pronunciations.length ? data.settings.pronunciations : [{ term: "", say: "" }]);
   const [saved, setSaved] = useState(false);
   const save = useSubmit(async () => {
-    await api(`/workspaces/${wsId}/voices/settings`, { method: "PUT", body: JSON.stringify({ ...data.settings, expected_version: data.settings.version, pronunciations: rows.filter((r) => r.term.trim() && r.say.trim()) }) });
+    await saveSettings(wsId, { pronunciations: rows.filter((r) => r.term.trim() && r.say.trim()) });
     setSaved(true);
     router.refresh();
   });

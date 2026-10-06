@@ -205,7 +205,11 @@ def _evaluate(db: OrmSession, workspace_id: uuid.UUID, key: str) -> tuple[bool, 
 
         vs = db.get(WorkspaceVoiceSettings, workspace_id)
         if vs is None or vs.default_profile_id is None:
-            return False, {"default_voice": None}
+            # A ready-made standard voice (voices.standard) has no sample to play; it is heard in the test call.
+            from app.modules.voices import standard
+
+            return True, {"default_voice": None, "standard_voice": standard.chosen(db, workspace_id) or standard.DEFAULT,
+                          "sample": "not_available_heard_in_test_call"}
         p, v, why = voices.resolve(db, workspace_id)
         heard = vs.last_preview or {}
         ok = v is not None and heard.get("version_id") == str(v.id)

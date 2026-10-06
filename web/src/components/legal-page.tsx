@@ -5,7 +5,7 @@ import { Icon } from "./ui";
 export const COMPANY = {
   name: "Dialogbot",
   address: "Abildgade 18, 8200 Aarhus, Danmark",
-  email: "info@fyrster.dk",
+  email: "info@dialogbot.dk",
 };
 
 export function LegalPage({ label, title, intro, updated, sections }: {

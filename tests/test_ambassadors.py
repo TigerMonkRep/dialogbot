@@ -96,7 +96,7 @@ def test_signup_rules_and_validation(api):
     assert prog["terms"]["min_age"] == 15 and "correct" not in prog["quiz"][0]
 
 
-def test_full_flow_attribution_commission_and_payout(api, db):
+def test_full_flow_attribution_commission_and_payout(api, db, monkeypatch):
     amb_tok, a = _approved_ambassador(api)
     slug, code = a["slug"], a["code"]
     # Public page + visit counter.
@@ -197,6 +197,22 @@ def test_full_flow_attribution_commission_and_payout(api, db):
     stripe.process_event(db, {"type": "charge.refunded", "data": {"object": {
         "id": "ch_1", "invoice": "in_amb_1", "amount_refunded": inv1.gross_minor}}})
     db.commit()
+    assert len(db.scalars(select(CommissionEntry).where(CommissionEntry.kind == "reversal")).all()) == 1
+
+    # Newer Stripe API versions leave `invoice` off the charge: the invoice is found via its payment intent.
+    calls = []
+
+    def fake_request(method, path, data=None, **_):
+        calls.append((method, path, data))
+        return {"data": [{"invoice": "in_amb_1"}]}
+
+    monkeypatch.setattr(stripe, "request", fake_request)
+    outcome = stripe.process_event(db, {"type": "charge.refunded", "data": {"object": {
+        "id": "ch_1", "payment_intent": "pi_1", "amount_refunded": inv1.gross_minor}}})
+    db.commit()
+    assert outcome == "applied"
+    assert calls == [("GET", "/invoice_payments",
+                      {"payment": {"type": "payment_intent", "payment_intent": "pi_1"}, "limit": 1})]
     assert len(db.scalars(select(CommissionEntry).where(CommissionEntry.kind == "reversal")).all()) == 1
 
 

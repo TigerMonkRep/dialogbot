@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import logging
 import time
 import uuid
 from datetime import UTC, date, datetime
@@ -26,6 +27,7 @@ from app.core.errors import ApiError, NotImplementedYet, Unauthenticated
 from app.models import BillingAccount, BusinessProfile, Invoice, Workspace
 from app.modules.billing.statement import statement
 
+log = logging.getLogger(__name__)
 API = "https://api.stripe.com/v1"
 SIGNATURE_TOLERANCE_SECONDS = 300
 _tax_rate_id: str | None = None
@@ -255,9 +257,10 @@ def process_event(db: OrmSession, event: dict) -> str:
             inv.status = "payment_failed"
         _commission(db, inv, was, kind, obj)
         return "applied"
-    if kind in ("charge.refunded", "credit_note.created") and obj.get("invoice"):
+    invoice_id = _refunded_invoice_id(kind, obj) if kind in ("charge.refunded", "credit_note.created") else None
+    if invoice_id:
         # Refunds and credit notes reduce what an ambassador earned from the invoice (see ambassadors.service).
-        inv = db.scalar(select(Invoice).where(Invoice.stripe_invoice_id == obj["invoice"]))
+        inv = db.scalar(select(Invoice).where(Invoice.stripe_invoice_id == invoice_id))
         if inv is None or not inv.gross_minor:
             return "unmatched"
         from app.modules.ambassadors.service import reverse_for_invoice
@@ -266,6 +269,22 @@ def process_event(db: OrmSession, event: dict) -> str:
         reverse_for_invoice(db, inv, source_ref=str(obj.get("id") or kind), fraction=int(taken or 0) / inv.gross_minor)
         return "applied"
     return "ignored"
+
+
+def _refunded_invoice_id(kind: str, obj: dict) -> str | None:
+    """The Stripe invoice behind a refund or credit note. Since API version 2025-03-31 a charge no longer carries
+    `invoice`; it is found through the invoice payment for the charge's payment intent instead."""
+    if obj.get("invoice"):
+        return str(obj["invoice"])
+    if kind != "charge.refunded" or not obj.get("payment_intent"):
+        return None
+    try:
+        rows = request("GET", "/invoice_payments", {
+            "payment": {"type": "payment_intent", "payment_intent": str(obj["payment_intent"])}, "limit": 1}).get("data") or []
+    except Exception:
+        log.warning("stripe: could not look up the invoice for refunded charge %s", obj.get("id"), exc_info=True)
+        return None
+    return str(rows[0]["invoice"]) if rows and rows[0].get("invoice") else None
 
 
 def _commission(db: OrmSession, inv: Invoice, was: str, kind: str, obj: dict) -> None:

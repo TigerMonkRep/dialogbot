@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Vilkår | Dialogbot", description: "
 export default function TermsPage() {
   return (
     <LegalPage label="Vilkår" title="Abonnements- og handelsbetingelser" updated="Version 1 · gældende fra 6. oktober 2026."
-      intro={`Disse vilkår gælder, når en virksomhed opretter en konto og bruger Dialogbot. Dialogbot sælges kun til erhvervsdrivende. "Vi" er ${COMPANY.name}, ${COMPANY.address}. "I" er den virksomhed, der har oprettet arbejdsrummet.`}
+      intro={`Disse vilkår gælder, når en virksomhed opretter en konto og bruger Dialogbot. Dialogbot sælges kun til erhvervsdrivende. "Vi" er ${COMPANY.name} (CVR-nr. ${COMPANY.cvr}), ${COMPANY.address}. "I" er den virksomhed, der har oprettet arbejdsrummet.`}
       sections={[
         ["1. Ydelsen", <>
           <p>Dialogbot er en AI-receptionist, der kan besvare opkald og beskeder på jeres hjemmeside, tage imod henvendelser, booke tider og – hvis I vælger det – ringe op til kontakter, der har givet samtykke. Assistenten svarer ud fra den viden, I selv har godkendt i jeres arbejdsrum.</p>
@@ -41,7 +41,7 @@ export default function TermsPage() {
           <p>Ved opsigelse kan I inden for 30 dage bede om en kopi af jeres data. Derefter sletter vi dem, medmindre loven kræver, at vi gemmer dem (fx fakturaer i 5 år).</p></>],
         ["8. Ændringer af vilkårene", <p key="c">Vi kan ændre vilkårene med 30 dages varsel på e-mail. Væsentlige ændringer til jeres ugunst giver jer ret til at opsige med virkning fra ændringsdatoen.</p>],
         ["9. Lovvalg og tvister", <p key="l">Aftalen er underlagt dansk ret. Uenigheder forsøges løst i dialog; ellers afgøres de ved Retten i Aarhus.</p>],
-        ["Kontakt", <p key="k">{COMPANY.name}, {COMPANY.address} · <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> · <Link href="/kontakt">Kontakt og support</Link></p>],
+        ["Kontakt", <p key="k">{COMPANY.name}, CVR-nr. {COMPANY.cvr}, {COMPANY.address} · <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> · <Link href="/kontakt">Kontakt og support</Link></p>],
       ]} />
   );
 }

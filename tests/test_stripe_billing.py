@@ -125,6 +125,7 @@ def test_card_invoice_and_webhooks(api, client, two_workspaces, db, monkeypatch)
     items = [c for c in fake.calls if c[1] == "/invoiceitems"]
     assert len(items) == 1 and items[0][2]["amount"] == 14900
     created = next(c for c in fake.calls if c[1] == "/invoices")
+    assert "CVR-nr. 25632710" in created[2]["footer"]
     assert created[2]["default_tax_rates"] == ["txr_1"] and created[3] == f"dialogbot-invoice-{ws}-{month}"
     # idempotent: the same month again returns the same invoice and calls Stripe no more
     before = len(fake.calls)

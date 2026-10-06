@@ -10,7 +10,7 @@ export default function PrivacyPage() {
     <LegalPage label="Privatliv" title="Sådan behandler vi personoplysninger" updated="Opdateret 6. oktober 2026."
       intro="Her kan du se, hvilke oplysninger Dialogbot behandler, hvorfor, hvor længe og hvem der hjælper os med det. Siden dækker kunder, kundernes egne kunder, ambassadører og besøgende."
       sections={[
-        ["Hvem er ansvarlig?", <p key="a">{COMPANY.name}, {COMPANY.address}. Skriv til <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> om alt, der handler om dine oplysninger.</p>],
+        ["Hvem er ansvarlig?", <p key="a">{COMPANY.name} (CVR-nr. {COMPANY.cvr}), {COMPANY.address}. Skriv til <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> om alt, der handler om dine oplysninger.</p>],
         ["Kunder (virksomheder med en konto)", <>
           <p>Vi behandler navn, e-mail og adgangskode (gemt krypteret) for brugerne, virksomhedens oplysninger (navn, CVR, adresse, telefon, åbningstider, ydelser og priser) og den viden, I lægger ind til assistenten. Vi logger vigtige handlinger, fx godkendelser og ændringer af roller, af hensyn til sikkerhed.</p>
           <p>Formålet er at levere tjenesten og fakturere den. Retsgrundlaget er aftalen med jer (databeskyttelsesforordningens art. 6, stk. 1, litra b) og vores legitime interesse i sikkerhed og drift (litra f).</p></>],

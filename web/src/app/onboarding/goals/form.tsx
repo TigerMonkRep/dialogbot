@@ -49,7 +49,7 @@ export function GoalsForm({ wsId, goals, canEdit, aiReady = false }: { wsId: str
       </Field>
       <Field label="Vejledning">
         <Select value={String(f.guidance_mode)} onChange={(e) => { setSaved(false); setF({ ...f, guidance_mode: e.target.value }); }} disabled={!canEdit}>
-          <option value="guided">Guid mig trin for trin</option><option value="self_managed">Jeg vil selv sætte op</option>
+          <option value="guided">Guide mig trin for trin</option><option value="self_managed">Jeg vil selv sætte op</option>
         </Select>
       </Field>
       {reception ? (

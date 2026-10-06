@@ -120,6 +120,11 @@ test("5 · K03→K05: ny ydelse er kladde, indtil ejeren godkender den", async (
   await expect(page.getByText("145,- kr").first()).toBeVisible();
   await shot(page, info, "k05-gennemgang");
   await page.getByRole("button", { name: "Godkend ny version" }).click();
+  // The card stays and is stamped "Godkendt" until the user moves on.
+  await expect(page.getByRole("status").getByText("Godkendt")).toBeVisible();
+  await page.waitForTimeout(500); // let the stamp land before the screenshot
+  await shot(page, info, "k05-godkendt-stempel");
+  await page.getByRole("button", { name: "Færdig – fjern fra listen" }).click();
   await expect(page.getByText("Ingen ændringer afventer")).toBeVisible();
   await page.goto("/app/knowledge?tab=k03");
   await expect(page.getByText("Aktiv & godkendt")).toBeVisible();

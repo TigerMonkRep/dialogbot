@@ -60,7 +60,7 @@ function EngineNotice({ engine }: { engine: VoicesData["engine"] }) {
   if (engine === "available") return null;
   return engine === "simulated"
     ? <Alert kind="warn" icon="science">Testmiljø: talemotoren er simuleret. Prøverne er en tone, ikke tale, og tæller ikke som afprøvet stemme.</Alert>
-    : <Alert kind="info" icon="info">Dialogbots egen talemotor er ikke sat op endnu. Indtil da bruger telefonen den eksisterende stemme fra Indstillinger → Telefoni.</Alert>;
+    : <Alert kind="info" icon="info">Telefonen taler med Dialogbots danske standardstemme. Flere stemmer at vælge imellem kommer snart – I behøver ikke gøre noget.</Alert>;
 }
 
 function Steps({ hasDefault, heard, testCall }: { hasDefault: boolean; heard: string; testCall: string }) {
@@ -126,7 +126,7 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
           )}
         </div>
         {data.items.length === 0 ? (
-          <p className="font-body-md text-body-md text-on-surface-variant">Der er endnu ingen godkendte Dialogbot-stemmer. De første danske stemmer er under kontrol (rettigheder, lydkvalitet og telefontest). Telefonen bruger den eksisterende stemme i mellemtiden.</p>
+          <p className="font-body-md text-body-md text-on-surface-variant">Flere danske stemmer er på vej. De bliver først vist her, når de har bestået vores kontrol af rettigheder, lydkvalitet og telefonlyd. Indtil da bruger telefonen standardstemmen.</p>
         ) : (
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
             {shown.map((v) => {

@@ -175,7 +175,10 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
               return (
                 <li key={v.id} className={`rounded-xl p-space-md flex flex-col gap-space-xs border ${isDefault ? "border-primary bg-surface-container-low" : "border-surface-container-high"}`}>
                   <div className="flex items-center gap-space-sm">
-                    <Icon name="record_voice_over" className="text-primary" />
+                    {v.origin === "designed"
+                      // eslint-disable-next-line @next/next/no-img-element
+                      ? <img src={`/voices/designed/${v.slug}.svg`} alt="" width={56} height={56} className="w-14 h-14 rounded-xl shrink-0" />
+                      : <Icon name="record_voice_over" className="text-primary" />}
                     <h3 className="font-label-lg text-label-lg text-primary">{v.display_name}</h3>
                     {isDefault && <span className="ml-auto px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm">Standard</span>}
                   </div>

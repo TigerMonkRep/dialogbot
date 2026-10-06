@@ -12,6 +12,7 @@ def test_layout_escapes_and_has_text_twin():
     assert "icons/icon-192.png" in h and "Se henvendelsen" in h and "Ny radiator &amp; rør" in h
     t = mail.text()
     assert "Se henvendelsen: https://www.dialogbot.dk/app/leads/1" in t and "Venlig hilsen" in t
+    assert "CVR-nr. 25632710" in t and "CVR-nr. 25632710" in mail.html()
     assert "Simuleret" not in t
 
 

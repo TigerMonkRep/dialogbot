@@ -31,6 +31,8 @@ log = logging.getLogger(__name__)
 API = "https://api.stripe.com/v1"
 SIGNATURE_TOLERANCE_SECONDS = 300
 _tax_rate_id: str | None = None
+# Seller identity printed on every invoice (bogføringsloven/momsloven: name, CVR, address).
+INVOICE_FOOTER = "Dialogbot · CVR-nr. 25632710 · Abildgade 18, 8200 Aarhus, Danmark · info@dialogbot.dk"
 
 
 class PaymentNotConfigured(NotImplementedYet):
@@ -177,7 +179,7 @@ def create_invoice(db: OrmSession, ws: Workspace, month: date, tz: str) -> Invoi
     si = request("POST", "/invoices", {
         "customer": a.stripe_customer_id, "collection_method": "charge_automatically", "auto_advance": True,
         "currency": "dkk", "pending_invoice_items_behavior": "exclude", "default_tax_rates": [tax_rate_id()],
-        "description": f"Dialogbot {label}", "metadata": {"workspace_id": str(ws.id), "month": label}},
+        "description": f"Dialogbot {label}", "footer": INVOICE_FOOTER, "metadata": {"workspace_id": str(ws.id), "month": label}},
         idempotency_key=key)
     for i, line in enumerate(st["lines"]):
         request("POST", "/invoiceitems", {"customer": a.stripe_customer_id, "invoice": si["id"], "currency": "dkk",

@@ -4,6 +4,7 @@ import { Icon } from "./ui";
 /** Shared frame for the public legal and contact pages (privatliv, vilkår, kontakt). Server component. */
 export const COMPANY = {
   name: "Dialogbot",
+  cvr: "25632710",
   address: "Abildgade 18, 8200 Aarhus, Danmark",
   email: "info@dialogbot.dk",
 };
@@ -36,7 +37,7 @@ export function LegalPage({ label, title, intro, updated, sections }: {
             <div className="font-body-md text-body-md text-on-surface-variant flex flex-col gap-space-xs [&_a]:underline [&_a]:text-primary">{body}</div>
           </section>
         ))}
-        <p className="font-body-sm text-body-sm text-on-surface-variant">{COMPANY.name} · {COMPANY.address} · <a className="underline text-primary" href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></p>
+        <p className="font-body-sm text-body-sm text-on-surface-variant">{COMPANY.name} · CVR-nr. {COMPANY.cvr} · {COMPANY.address} · <a className="underline text-primary" href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a></p>
       </main>
     </div>
   );

@@ -22,6 +22,9 @@ MUTED = "#4f6862"
 LINE = "#d5e4df"
 FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
 
+# Sender identity in every footer (e-handelsloven § 7: name, CVR and address).
+COMPANY_LINE = "Dialogbot · CVR-nr. 25632710 · Abildgade 18, 8200 Aarhus"
+
 ROLE_DA = {"owner": "ejer", "admin": "administrator", "staff": "medarbejder", "reader": "læser"}
 
 
@@ -42,7 +45,7 @@ class Email:
             parts += [f"{self.button_label or 'Åbn'}: {self.button_url}", ""]
         if self.note:
             parts += [self.note, ""]
-        parts += ["Venlig hilsen", "Dialogbot", "", "—", self.footer_reason, "Dialogbot · dialogbot.dk"]
+        parts += ["Venlig hilsen", "Dialogbot", "", "—", self.footer_reason, f"{COMPANY_LINE} · dialogbot.dk"]
         return "\n".join(parts).strip() + "\n"
 
     def html(self) -> str:
@@ -87,7 +90,7 @@ class Email:
 <p style="margin:8px 0 16px;font:16px/1.6 {FONT};color:{INK};">Venlig hilsen<br><strong>Dialogbot</strong></p>
 </div></td></tr>
 <tr><td style="padding:20px 8px 0;font:12px/1.6 {FONT};color:{MUTED};text-align:center;">
-{e(self.footer_reason)}<br>Dialogbot · <a href="{e(base, quote=True)}" style="color:{MUTED};">dialogbot.dk</a>
+{e(self.footer_reason)}<br>{e(COMPANY_LINE)} · <a href="{e(base, quote=True)}" style="color:{MUTED};">dialogbot.dk</a>
 </td></tr>
 </table></td></tr></table></body></html>"""
 

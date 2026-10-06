@@ -12,6 +12,7 @@ legacy `X-Vapi-Secret` header, compared in constant time. Reports are idempotent
 """
 from __future__ import annotations
 
+import hashlib
 import hmac
 import json
 import re
@@ -48,7 +49,7 @@ class VoiceNotConfigured(ApiError):
 
 
 def verify(authorization: str | None, x_vapi_secret: str | None) -> None:
-    secret = get_settings().vapi_server_secret
+    secret = (get_settings().vapi_server_secret or "").strip()
     if not secret:
         raise VoiceNotConfigured("Stemmewebhook er ikke konfigureret (VAPI_SERVER_SECRET mangler)")
     presented = None
@@ -57,6 +58,16 @@ def verify(authorization: str | None, x_vapi_secret: str | None) -> None:
     elif x_vapi_secret:
         presented = x_vapi_secret.strip()
     if not presented or not hmac.compare_digest(presented.encode(), secret.encode()):
+        # Diagnose without revealing anything usable: which header arrived, lengths and 6-hex fingerprints.
+        from app.core.logging import log
+
+        def fp(v: str | None) -> str | None:
+            return hashlib.sha256(v.encode()).hexdigest()[:6] if v else None
+
+        log.warning("vapi.auth_failed", authorization_header=authorization is not None,
+                    authorization_scheme=(authorization or "").split(" ", 1)[0][:12] or None,
+                    x_vapi_secret_header=x_vapi_secret is not None, presented_len=len(presented or ""),
+                    expected_len=len(secret), presented_fp=fp(presented), expected_fp=fp(secret))
         raise Unauthenticated("Ugyldig webhook-legitimation", code="invalid_signature")
 
 

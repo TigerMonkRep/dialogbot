@@ -67,6 +67,9 @@ def test_not_configured_and_auth(client, api, two_workspaces, monkeypatch):
     assert _post(client, {"type": "status-update"}, auth="Bearer wrong").status_code == 401
     assert _post(client, {"type": "status-update"}).json()["outcome"] == "ignored"
     assert _post(client, {"type": "status-update"}, auth=None, header=SECRET).status_code == 200  # legacy header
+    assert _post(client, {"type": "status-update"}, auth=SECRET).status_code == 200  # raw token, no scheme
+    assert _post(client, {"type": "status-update"}, auth=SECRET, header="").status_code == 200  # empty legacy header
+    assert _post(client, {"type": "status-update"}, auth="wrong", header="").status_code == 401
     get_settings.cache_clear()
 
 

@@ -16,7 +16,7 @@ export function ModeToggle({ wsId, mode, goals, canEdit }: { wsId: string; mode:
       <Icon name={icon} size={16} /><span>{label}</span>
     </button>
   );
-  return <div className="inline-flex p-1 rounded-xl bg-surface-container-lowest shadow-sm" role="group" aria-label="Vejledningstilstand">{btn("guided", "navigation", "Guid mig trin for trin")}{btn("self_managed", "tune", "Jeg vil selv sætte op")}</div>;
+  return <div className="inline-flex p-1 rounded-xl bg-surface-container-lowest shadow-sm" role="group" aria-label="Vejledningstilstand">{btn("guided", "navigation", "Guide mig trin for trin")}{btn("self_managed", "tune", "Jeg vil selv sætte op")}</div>;
 }
 
 export function WhyBlock({ task }: { task: Task }) {

@@ -50,7 +50,7 @@ def _parent_link(api, email="lone@testmail.dk") -> str:
     """The parent's consent link, read from the parent's own (simulated) mailbox."""
     tok = api._parent if getattr(api, "_parent", None) else api.user(email)
     api._parent = tok
-    return api.mailbox_link(tok, "din godkendelse", r"foraelder\?token=([A-Za-z0-9_\-]+)")
+    return api.mailbox_link(tok, "vil du godkende", r"foraelder\?token=([A-Za-z0-9_\-]+)")
 
 
 def _approved_ambassador(api, email="mads@testmail.dk", **over) -> tuple[str, dict]:

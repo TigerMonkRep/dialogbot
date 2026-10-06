@@ -165,13 +165,13 @@ def run_due(db: OrmSession, now: datetime | None = None) -> int:
         made += 1
         if s.email_enabled:
             link = f"{get_settings().frontend_base_url}/app/reports?date={day.isoformat()}"
-            body = _summary_text(ws.name, r.data) + f"\n\nSe rapporten: {link}"
+            body = _summary_text(ws.name, r.data)
             for user_id, email in db.execute(select(User.id, User.email).join(Membership, Membership.user_id == User.id)
                                              .where(Membership.workspace_id == ws.id,
                                                     Membership.role.in_(("owner", "admin")))):
                 enqueue(db, event_type="email.daily_report", dedupe_key=f"daily_report:{ws.id}:{day}:{user_id}",
                         workspace_id=ws.id, payload={"to_email": email, "subject": f"Dagsrapport {day.isoformat()} – {ws.name}",
-                                                     "body": body})
+                                                     "body": body, "link": link})
         db.commit()
     db.commit()
     return made

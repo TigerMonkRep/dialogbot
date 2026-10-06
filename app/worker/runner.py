@@ -26,6 +26,7 @@ from app.config import get_settings
 from app.core.logging import configure_logging
 from app.db import get_session_factory
 from app.models import EmailDelivery, OutboxEvent
+from app.modules.integrations import email_templates as tpl
 from app.modules.integrations.email import OutgoingEmail, get_email_adapter
 
 log = structlog.get_logger("dialogbot.worker")
@@ -42,40 +43,42 @@ def _now() -> datetime:
 # --- handlers ---------------------------------------------------------------
 
 
-def _send_mail(db: OrmSession, ev: OutboxEvent, subject: str, body: str) -> None:
+def _send_mail(db: OrmSession, ev: OutboxEvent, mail) -> None:
+    """Send one branded email (app.modules.integrations.email_templates.Email) for this outbox event."""
     if db.scalar(select(EmailDelivery).where(EmailDelivery.outbox_event_id == ev.id)) is not None:
         return  # already delivered for this event: redelivery is a no-op
     adapter = get_email_adapter()
-    adapter.deliver(db, ev.id, OutgoingEmail(to_email=ev.payload["to_email"], subject=subject, body_text=body,
+    adapter.deliver(db, ev.id, OutgoingEmail(to_email=ev.payload["to_email"], subject=mail.subject,
+                                             body_text=mail.text(), body_html=mail.html(),
                                              workspace_id=ev.workspace_id))
 
 
 def handle_invitation(db: OrmSession, ev: OutboxEvent) -> None:
     p = ev.payload
-    _send_mail(db, ev, f"Du er inviteret til {p['workspace_name']} på Dialogbot",
-               f"{p['invited_by']} har inviteret dig som {p['role']} i arbejdsrummet {p['workspace_name']}.\n"
-               f"Acceptér her: {p['link']}\n\n(Simuleret udviklingsmail)")
+    _send_mail(db, ev, tpl.invitation(p["workspace_name"], p["invited_by"], p["role"], p["link"]))
 
 
 def handle_verify(db: OrmSession, ev: OutboxEvent) -> None:
-    _send_mail(db, ev, "Bekræft din e-mail hos Dialogbot",
-               f"Bekræft din adresse: {ev.payload['link']}\n\n(Simuleret udviklingsmail)")
+    _send_mail(db, ev, tpl.verify(ev.payload["link"]))
 
 
 def handle_reset(db: OrmSession, ev: OutboxEvent) -> None:
-    _send_mail(db, ev, "Nulstil din adgangskode hos Dialogbot",
-               f"Nulstil her: {ev.payload['link']}\n\n(Simuleret udviklingsmail)")
+    _send_mail(db, ev, tpl.reset(ev.payload["link"]))
 
 
 def handle_new_lead(db: OrmSession, ev: OutboxEvent) -> None:
     p = ev.payload
-    _send_mail(db, ev, f"Ny henvendelse til {p['workspace_name']}: {p['contact_name']}",
-               f"{p['contact_name']} vil gerne kontaktes via jeres webchat.\n\n"
-               f"Behov: {p['need_summary'] or '(ikke angivet)'}\n\nSe henvendelsen: {p['link']}")
+    _send_mail(db, ev, tpl.new_lead(p["workspace_name"], p["contact_name"], p.get("need_summary") or "", p["link"]))
 
 
 def handle_daily_report(db: OrmSession, ev: OutboxEvent) -> None:
-    _send_mail(db, ev, ev.payload["subject"], ev.payload["body"])
+    p = ev.payload
+    _send_mail(db, ev, tpl.daily_report(p["subject"], p["body"], p.get("link")))
+
+
+def handle_branded(db: OrmSession, ev: OutboxEvent) -> None:
+    """Emails whose content is built where they are queued (ambassador programme)."""
+    _send_mail(db, ev, tpl.from_payload(ev.payload))
 
 
 def handle_knowledge_approved(db: OrmSession, ev: OutboxEvent) -> None:
@@ -98,7 +101,7 @@ HANDLERS = {
     "knowledge.version_approved": handle_knowledge_approved,
     "email.new_lead": handle_new_lead,
     "email.daily_report": handle_daily_report,
-    "email.ambassador": handle_daily_report,  # same shape: payload carries to_email, subject and body
+    "email.ambassador": handle_branded,
 }
 
 # Test hook: event types listed here raise, to exercise retry paths.

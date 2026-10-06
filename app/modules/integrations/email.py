@@ -17,6 +17,7 @@ class OutgoingEmail:
     subject: str
     body_text: str
     workspace_id: uuid.UUID | None = None
+    body_html: str | None = None
 
 
 class SimulatedEmailAdapter:
@@ -53,7 +54,8 @@ class ResendEmailAdapter:
         s = get_settings()
         r = httpx.post(self.endpoint, timeout=15.0,
                        headers={"Authorization": f"Bearer {s.resend_api_key}", "Idempotency-Key": str(outbox_event_id)},
-                       json={"from": s.email_from, "to": [mail.to_email], "subject": mail.subject, "text": mail.body_text})
+                       json={"from": s.email_from, "to": [mail.to_email], "subject": mail.subject, "text": mail.body_text,
+                             **({"html": mail.body_html} if mail.body_html else {})})
         if r.status_code >= 400:
             raise RuntimeError(f"resend {r.status_code}: {r.text[:300]}")
         rec = EmailDelivery(outbox_event_id=outbox_event_id, workspace_id=mail.workspace_id, adapter=self.name,

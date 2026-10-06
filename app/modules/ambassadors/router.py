@@ -411,17 +411,14 @@ def _decide(db, request, principal, a: Ambassador, new: str, note: str, allowed_
     if new in ("active", "rejected") and before == "pending":
         from app.config import get_settings
         from app.core.outbox import enqueue
+        from app.modules.integrations import email_templates as tpl
 
         u = db.get(User, a.user_id)
         first = a.full_name.split()[0]
-        body = (f"Hej {first}\n\nDu er godkendt som ambassadør for Dialogbot. Dit personlige link er "
-                f"{service.link_for(a)} og din kode er {a.code}.\n\nSe dine kunder og din bonus på "
-                f"{get_settings().frontend_base_url}/ambassador.\n\nVenlig hilsen\nDialogbot") if new == "active" else (
-                f"Hej {first}\n\nTak for din interesse. Vi kan desværre ikke godkende dig som ambassadør lige nu."
-                + (f"\n\n{a.decision_note}" if a.decision_note else "") + "\n\nVenlig hilsen\nDialogbot")
+        mail = (tpl.ambassador_approved(first, service.link_for(a), a.code, f"{get_settings().frontend_base_url}/ambassador")
+                if new == "active" else tpl.ambassador_rejected(first, a.decision_note))
         enqueue(db, event_type="email.ambassador", dedupe_key=f"ambassador-decided:{a.id}:{new}",
-                payload={"to_email": u.email, "subject": "Du er godkendt som Dialogbot-ambassadør" if new == "active"
-                         else "Din ansøgning som Dialogbot-ambassadør", "body": body})
+                payload={"to_email": u.email, "email": tpl.to_payload(mail)})
     db.commit()
     return service.profile_out(db, a, db.get(User, a.user_id))
 

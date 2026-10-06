@@ -79,6 +79,13 @@ RULES_TEXT = (
 )
 
 
+def _kr(minor: int) -> str:
+    """1234567 → "12.345,67 kr." (whole kroner without decimals)."""
+    whole, ore = divmod(minor, 100)
+    txt = f"{whole:,}".replace(",", ".")
+    return f"{txt},{ore:02d} kr." if ore else f"{txt} kr."
+
+
 def now() -> datetime:
     return datetime.now(UTC)
 
@@ -276,16 +283,12 @@ def send_parent_request(db: OrmSession, a: Ambassador, user: User) -> None:
     raw = new_token()
     a.parent_token_hash = token_digest(raw)
     link = f"{get_settings().frontend_base_url}/ambassador/foraelder?token={raw}"
-    first = a.full_name.split()[0]
+    from app.modules.integrations import email_templates as tpl
+
+    mail = tpl.ambassador_parent(a.parent_name or "", a.full_name, user.email, link, RULES_TEXT,
+                                 _kr(a.bonus_minor), f"{a.rate_bp / 100:g} %".replace(".", ","), a.months)
     enqueue(db, event_type="email.ambassador", dedupe_key=f"ambassador-parent:{a.id}:{a.parent_token_hash[:16]}",
-            payload={"to_email": a.parent_email, "subject": f"{first} vil være ambassadør for Dialogbot – din godkendelse",
-                     "body": (f"Hej {a.parent_name}\n\n{a.full_name} ({user.email}) har meldt sig som ambassadør for "
-                              "Dialogbot. Som ambassadør anbefaler man Dialogbot til virksomheder og får en bonus, når "
-                              "de bliver betalende kunder. Bonussen udbetales som B-indkomst, som vi indberetter til "
-                              "Skattestyrelsen.\n\nFordi "
-                              f"{first} er under 18, udbetaler vi først, når du har godkendt aftalen:\n{link}\n\n"
-                              f"Reglerne {first} har sagt ja til:\n{RULES_TEXT}\n\n"
-                              "Har du spørgsmål, så svar på denne mail.\n\nVenlig hilsen\nDialogbot")})
+            payload={"to_email": a.parent_email, "email": tpl.to_payload(mail)})
 
 
 def parent_preview(db: OrmSession, raw: str) -> Ambassador:
@@ -526,15 +529,12 @@ def mark_paid(db: OrmSession, p: AmbassadorPayout, operator_id: uuid.UUID, refer
     a = db.get(Ambassador, p.ambassador_id)
     u = db.get(User, a.user_id) if a else None
     if a and u:
-        kr = f"{p.amount_minor / 100:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        from app.modules.integrations import email_templates as tpl
+
+        mail = tpl.ambassador_paid(a.full_name.split()[0], _kr(p.amount_minor), a.bank_last4, p.number,
+                                   p.income_type == "b_income", f"{get_settings().frontend_base_url}/ambassador")
         enqueue(db, event_type="email.ambassador", dedupe_key=f"ambassador-paid:{p.id}",
-                payload={"to_email": u.email, "subject": f"Din ambassadørbonus på {kr} kr er på vej",
-                         "body": (f"Hej {a.full_name.split()[0]}\n\nVi har overført {kr} kr til din konto "
-                                  f"(slutter på {a.bank_last4}). Afregningsbilag nr. {p.number} ligger på "
-                                  f"{get_settings().frontend_base_url}/ambassador.\n\n"
-                                  + ("Beløbet er B-indkomst og bliver indberettet til Skattestyrelsen. Husk at "
-                                     "tjekke din forskudsopgørelse.\n\n" if p.income_type == "b_income" else "")
-                                  + "Tak fordi du anbefaler Dialogbot!\n\nVenlig hilsen\nDialogbot")})
+                payload={"to_email": u.email, "email": tpl.to_payload(mail)})
     return p
 
 

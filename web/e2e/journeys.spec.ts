@@ -709,6 +709,11 @@ test("23 · Stemmer: operatør udgiver en kontrolleret stemme; ejer lytter, væl
   await page.goto("/app/voices");
   await expect(page.getByRole("heading", { name: "Dansk stemme til jeres assistent" })).toBeVisible();
   await expect(page.getByText(/talemotoren er simuleret/)).toBeVisible();
+  // ready-made Danish voices with portraits: Christel is used until another is chosen
+  await expect(page.getByRole("heading", { name: "Vælg telefonstemme" })).toBeVisible();
+  await expect(page.getByRole("listitem").filter({ hasText: "Christel" }).getByText("Bruges nu")).toBeVisible();
+  await page.getByRole("button", { name: "Vælg Jeppe" }).click();
+  await expect(page.getByRole("listitem").filter({ hasText: "Jeppe" }).getByText("Bruges nu")).toBeVisible();
   await expect(page.getByRole("heading", { name: "E2E Testrøst" })).toBeVisible();
   await expect(page.getByText("Pilot i jeres arbejdsrum")).toBeVisible();
   await page.getByRole("button", { name: "Afspil prøve med E2E Testrøst" }).click();

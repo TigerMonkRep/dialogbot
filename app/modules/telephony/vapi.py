@@ -238,8 +238,10 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
     if action_tools:
         assistant["model"]["tools"] = _actions.to_vapi(action_tools)
         assistant["model"]["messages"][0]["content"] += "\n\n" + _actions.prompt_section(action_tools)
-    provider_voice = voice_config(number) or _json_setting(s.vapi_voice_json)
     from app.modules.voices import service as voices
+    from app.modules.voices import standard
+
+    provider_voice = standard.provider_voice(db, ws.id, number)
 
     dialogbot_voice, session = voices.vapi_voice(db, ws.id, channel="inbound_phone", provider_voice=provider_voice,
                                                  number=number)

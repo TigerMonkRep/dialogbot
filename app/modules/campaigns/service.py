@@ -250,8 +250,9 @@ def assistant_for(db: OrmSession, c: Campaign, contact: CampaignContact) -> dict
         "metadata": {"workspace_id": str(ws.id), "campaign_id": str(c.id), "campaign_contact_id": str(contact.id)},
     }
     from app.modules.voices import service as voices
+    from app.modules.voices import standard
 
-    provider_voice = vapi.voice_config(number) or vapi._json_setting(s.vapi_voice_json)
+    provider_voice = standard.provider_voice(db, c.workspace_id, number)
     dialogbot_voice, session = voices.vapi_voice(db, c.workspace_id, channel="outbound_campaign",
                                                  provider_voice=provider_voice, number=number, campaign=c)
     if dialogbot_voice is not None:

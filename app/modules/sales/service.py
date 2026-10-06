@@ -184,9 +184,9 @@ def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -
         "endCallPhrases": ["Tak for snakken, hav en god dag", "Undskyld forstyrrelsen, hav en god dag"],
         "metadata": {"workspace_id": str(ws.id), "demo_call_id": str(d.id)},
     }
-    voice = vapi.voice_config(number) or vapi._json_setting(s.vapi_voice_json)
-    if voice is not None:
-        out["voice"] = voice
+    from app.modules.voices import standard
+
+    out["voice"] = standard.provider_voice(db, ws.id, number)
     return out
 
 

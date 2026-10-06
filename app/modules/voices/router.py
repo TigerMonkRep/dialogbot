@@ -17,7 +17,7 @@ from app.core.errors import ApiError, Conflict, ValidationFailed
 from app.db import get_db
 from app.models import Campaign, PhoneNumber
 from app.modules.setup.checks import invalidate_checks
-from app.modules.voices import danish, engine, service, storage
+from app.modules.voices import danish, engine, service, standard, storage
 
 router = APIRouter(prefix="/workspaces/{workspace_id}/voices", tags=["voices"])
 _preview_slots = threading.BoundedSemaphore(4)  # per API process: previews never starve call audio
@@ -41,13 +41,14 @@ def _assignments(db: OrmSession, ws_id: uuid.UUID) -> dict:
 def settings_out(db: OrmSession, ws_id: uuid.UUID) -> dict:
     s = service.settings(db, ws_id)
     return {"version": s.version, "default_profile_id": str(s.default_profile_id) if s.default_profile_id else None,
+            "standard_voice": standard.chosen(db, ws_id), "standard_default": standard.DEFAULT,
             "fallback": s.fallback, "pronunciations": s.pronunciations, "pronunciation_version": s.pronunciation_version}
 
 
 @router.get("")
 def list_voices(ctx: WorkspaceContext = Depends(require_capability("voices.read")), db: OrmSession = Depends(get_db)):
     items = [service.profile_out(db, p) for p, _v in service.selectable(db, ctx.workspace.id)]
-    out = {"items": items, "engine": engine.status(), "assignments": _assignments(db, ctx.workspace.id),
+    out = {"items": items, "standard_voices": standard.catalog(), "engine": engine.status(), "assignments": _assignments(db, ctx.workspace.id),
            "settings": settings_out(db, ctx.workspace.id), "preview_max_chars": get_settings().voice_preview_max_chars}
     db.commit()
     return out
@@ -113,6 +114,7 @@ def preview(profile_id: uuid.UUID, body: PreviewIn, ctx: WorkspaceContext = Depe
 class SettingsIn(BaseModel):
     expected_version: int
     default_profile_id: uuid.UUID | None = None
+    standard_voice: str | None = Field(default=None, max_length=20)
     fallback: str = Field(default="provider_voice", pattern="^(provider_voice|transfer)$")
     pronunciations: list[dict] = Field(default_factory=list, max_length=200)
 
@@ -130,7 +132,10 @@ def put_settings(body: SettingsIn, request: Request, ctx: WorkspaceContext = Dep
         term, say = str(e.get("term", "")).strip()[:80], str(e.get("say", "")).strip()[:120]
         if term and say:
             clean.append({"term": term, "say": say})
-    changed_voice = s.default_profile_id != body.default_profile_id
+    if body.standard_voice is not None and body.standard_voice not in standard.STANDARD_VOICES:
+        raise ValidationFailed("Ukendt standardstemme", field_errors=[{"field": "standard_voice"}])
+    changed_voice = s.default_profile_id != body.default_profile_id or s.standard_voice != body.standard_voice
+    s.standard_voice = body.standard_voice
     changed_pron = clean != (s.pronunciations or [])
     s.default_profile_id, s.fallback = body.default_profile_id, body.fallback
     if changed_pron:
@@ -143,6 +148,7 @@ def put_settings(body: SettingsIn, request: Request, ctx: WorkspaceContext = Dep
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="voices.settings_updated",
                  object_type="workspace_voice_settings", object_id=ctx.workspace.id,
                  after={"default_profile_id": str(body.default_profile_id) if body.default_profile_id else None,
+                        "standard_voice": body.standard_voice,
                         "fallback": body.fallback, "pronunciation_version": s.pronunciation_version},
                  request_id=request.state.request_id)
     db.commit()

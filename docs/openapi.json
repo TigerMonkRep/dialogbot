@@ -3889,6 +3889,18 @@
             "maxItems": 200,
             "title": "Pronunciations",
             "type": "array"
+          },
+          "standard_voice": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Standard Voice"
           }
         },
         "required": [

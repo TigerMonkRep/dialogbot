@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { api, fieldError, type ApiError } from "@/lib/client";
 import { ErrorBox, Icon, inputCls, useSubmit } from "@/components/ui";
 import type { Item, Version } from "./page";
@@ -112,12 +112,19 @@ export function ContentFields({ kind, value, onChange, idPrefix, error }: { kind
   }
 }
 
+/** Set by ReviewCard: an approval inside it stamps the card instead of removing it from the page at once. */
+const StampContext = createContext<(() => void) | null>(null);
+
 function useVersionAction(wsId: string) {
   const router = useRouter();
+  const stamp = useContext(StampContext);
   const [pending, setPending] = useState<string | null>(null);
   const act = async (v: Version, path: "submit" | "approve" | "reject", body?: unknown) => {
     setPending(path);
-    try { await api(`/workspaces/${wsId}/knowledge/versions/${v.id}/${path}`, { method: "POST", body: body ? JSON.stringify(body) : undefined, headers: path === "approve" ? { "idempotency-key": `approve-${v.id}` } : undefined }); router.refresh(); }
+    try {
+      await api(`/workspaces/${wsId}/knowledge/versions/${v.id}/${path}`, { method: "POST", body: body ? JSON.stringify(body) : undefined, headers: path === "approve" ? { "idempotency-key": `approve-${v.id}` } : undefined });
+      if (path === "approve" && stamp) stamp(); else router.refresh();
+    }
     catch (e) { alert((e as ApiError).message); } finally { setPending(null); }
   };
   return { act, pending };
@@ -134,6 +141,33 @@ export function VersionActions({ wsId, v, canApprove, compact = false }: { wsId:
       {v.status === "in_review" && canApprove && <button disabled={!!pending} className={`${btn} bg-surface-container-lowest text-error hover:bg-error-container`} onClick={() => { const reason = prompt("Begrundelse for afvisning"); if (reason) act(v, "reject", { reason }); }}>Afvis</button>}
       {!canApprove && v.status === "in_review" && <span className="font-label-sm text-label-sm text-on-surface-variant">Afventer godkendelse af ejer/administrator</span>}
     </span>
+  );
+}
+
+/** K05 review card. After approval it stays on the page with a "Godkendt" stamp over it until the user moves on,
+ *  so the decision is visibly confirmed instead of the card silently disappearing. */
+export function ReviewCard({ className, children }: { className: string; children: React.ReactNode }) {
+  const router = useRouter();
+  const [approvedAt, setApprovedAt] = useState<Date | null>(null);
+  return (
+    <StampContext.Provider value={() => setApprovedAt(new Date())}>
+      <div className={`${className} relative`}>
+        <div className={approvedAt ? "opacity-40 saturate-50 pointer-events-none select-none transition-all duration-500" : undefined} inert={approvedAt ? true : undefined}>{children}</div>
+        {approvedAt && (
+          <>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none" role="status">
+              <div className="stamp-in rounded-2xl border-[5px] border-primary px-space-xl py-space-md text-center text-primary bg-surface-container-lowest/70 shadow-[inset_0_0_0_3px_var(--color-surface-container-lowest),inset_0_0_0_5px_var(--color-primary)]">
+                <span className="flex items-center justify-center gap-space-sm font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-black uppercase tracking-[0.2em]"><Icon name="verified" size={40} />Godkendt</span>
+                <span className="block font-label-md text-label-md font-bold uppercase tracking-widest">{approvedAt.toLocaleString("da-DK", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })} · Assistenten bruger den nu</span>
+              </div>
+            </div>
+            <div className="relative flex justify-end">
+              <button type="button" onClick={() => router.refresh()} className="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary-container transition-colors">Færdig – fjern fra listen</button>
+            </div>
+          </>
+        )}
+      </div>
+    </StampContext.Provider>
   );
 }
 

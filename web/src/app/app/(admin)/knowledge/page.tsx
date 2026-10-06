@@ -4,7 +4,7 @@ import { requireWorkspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
 import { AssistantPreview, usd } from "./assistant";
 import { WebsiteImport, type SourceImport } from "./import";
-import { AddPanel, ApproveNewButton, ItemCard, KeepButton, NewItemForm, VersionActions } from "./client";
+import { AddPanel, ApproveNewButton, ItemCard, KeepButton, NewItemForm, ReviewCard, VersionActions } from "./client";
 import { KIND_LABEL, dateDa, kr, summarize } from "./format";
 
 export type Version = { id: string; item_id: string; version_no: number; status: string; title: string; content: Record<string, unknown>; edit_version: number; submitted_at: string | null; source_type?: string };
@@ -249,7 +249,8 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
             const was = cur ? summarize(i.kind, cur.content) : null;
             const inQueue = queue.some((q) => q.id === v.id);
             return (
-              <div key={v.id} className="rounded-xl bg-surface-container-low p-space-md md:p-space-lg flex flex-col gap-space-md">
+              <ReviewCard key={v.id} className="rounded-xl bg-surface-container-low p-space-md md:p-space-lg">
+                <div className="flex flex-col gap-space-md">
                 <div className="flex flex-wrap items-center justify-between gap-space-sm">
                   <div className="flex items-center gap-space-sm"><Icon name="difference" size={22} className="text-error" /><h3 className="font-headline-sm text-headline-sm text-primary">{v.title}</h3><span className="px-2 py-0.5 rounded bg-surface-container-high font-label-sm text-label-sm">{KIND_LABEL[i.kind]}</span></div>
                   <span className="font-label-sm text-label-sm text-on-surface-variant">{inQueue ? "Sendt til gennemgang" : "Kladde – ikke sendt endnu"} · v{v.version_no}</span>
@@ -271,7 +272,8 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
                   <span className="flex items-center gap-1"><Icon name="info" size={18} />En godkendelse gør tidligere beståede tjek forældede.</span>
                   <Link href={`/app/knowledge?tab=${i.kind === "offer" ? "k04" : "k03"}`} className="font-label-md text-label-md text-primary font-semibold hover:underline">Redigér manuelt i stedet →</Link>
                 </div>
-              </div>
+                </div>
+              </ReviewCard>
             );
           })}
           {drafts.length === 0 && <Empty text="Alt er godkendt. Nye kladder fra Katalog og Tilbud vises her." />}

@@ -18150,6 +18150,73 @@
         ]
       }
     },
+    "/api/v1/workspaces/{workspace_id}/voices/standard/{key}/sample": {
+      "post": {
+        "description": "A short sample of a ready-made phone voice, so a customer can hear it before choosing it.",
+        "operationId": "standard_sample_api_v1_workspaces__workspace_id__voices_standard__key__sample_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Standard Sample",
+        "tags": [
+          "voices"
+        ]
+      }
+    },
     "/api/v1/workspaces/{workspace_id}/voices/{profile_id}": {
       "get": {
         "operationId": "get_voice_api_v1_workspaces__workspace_id__voices__profile_id__get",

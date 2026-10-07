@@ -124,17 +124,22 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     t = two_workspaces
     n = _setup(api, t)
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
-    # Deepgram Nova-3 Danish, with key terms from approved knowledge only (never from the unapproved draft)
-    assert a["transcriber"] == {"provider": "deepgram", "model": "nova-3", "language": "da",
-                                "keyterm": ["Fjord Gulvservice", "Afslibning"]}
-    assert "HEMMELIG-KLADDE" not in a["transcriber"]["keyterm"]
+    # ElevenLabs Scribe Danish; Deepgram Nova-3 as fallback with key terms from approved knowledge only
+    fallback = a["transcriber"].pop("fallbackPlan")["transcribers"]
+    assert a["transcriber"] == {"provider": "11labs", "model": "scribe_v2_realtime", "language": "da"}
+    assert fallback == [{"provider": "deepgram", "model": "nova-3", "language": "da",
+                         "keyterm": ["Fjord Gulvservice", "Afslibning"]}]
+    assert "HEMMELIG-KLADDE" not in fallback[0]["keyterm"]
+    # human turn-taking: Danish backchannels never interrupt
+    assert "mm" in a["stopSpeakingPlan"]["acknowledgementPhrases"] and a["startSpeakingPlan"]["waitSeconds"] > 0
     # nothing chosen and no VAPI_VOICE_JSON: the default Danish standard voice, never the provider's (English) default
-    assert {k: v for k, v in a["voice"].items() if k != "chunkPlan"} == {"provider": "azure", "voiceId": "da-DK-ChristelNeural"}
+    assert a["voice"]["provider"] == "11labs" and a["voice"]["voiceId"] == "4RklGmuxoAskAbGXplXN"  # Camilla
+    assert a["voice"]["model"] == "eleven_v4_turbo" and a["voice"]["stability"] < 0.5
     assert "number" not in a["voice"]["chunkPlan"]["formatPlan"]["formattersEnabled"]  # Vapi's English formatter
     assert "dansk" in a["model"]["messages"][0]["content"] and n["voice"] is None
     # the workspace picks another ready-made Danish voice; unknown keys are rejected
     vs = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/voices").json()
-    assert [v["key"] for v in vs["standard_voices"]] == ["christel", "jeppe", "camilla", "peter"] and vs["settings"]["standard_voice"] is None
+    assert [v["key"] for v in vs["standard_voices"]] == ["camilla", "peter"] and vs["settings"]["standard_voice"] is None
     assert not any(w in str(vs["standard_voices"]).lower() for w in ("elevenlabs", "azure", "vapi", "11labs"))
     # a short sample before choosing: rendered once, then served from voice storage; 501 until the key is set
     sample = f"/api/v1/workspaces/{t['ws_a']}/voices/standard/camilla/sample"
@@ -154,10 +159,10 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     put = f"/api/v1/workspaces/{t['ws_a']}/voices/settings"
     bad_std = api.c.put(put, json={"expected_version": vs["settings"]["version"], "standard_voice": "bob"}, headers=api.h(t["tok_a"]))
     assert bad_std.status_code == 422
-    ok = api.c.put(put, json={"expected_version": vs["settings"]["version"], "standard_voice": "jeppe"}, headers=api.h(t["tok_a"]))
-    assert ok.status_code == 200 and ok.json()["standard_voice"] == "jeppe"
+    ok = api.c.put(put, json={"expected_version": vs["settings"]["version"], "standard_voice": "peter"}, headers=api.h(t["tok_a"]))
+    assert ok.status_code == 200 and ok.json()["standard_voice"] == "peter"
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
-    assert {k: v for k, v in a["voice"].items() if k != "chunkPlan"} == {"provider": "azure", "voiceId": "da-DK-JeppeNeural"}
+    assert a["voice"]["voiceId"] == "qhEux886xDKbOdF7jkFP"  # Peter
     url = f"/api/v1/workspaces/{t['ws_a']}/phone-numbers/{n['id']}"
     bad = api.c.patch(url, json={"voice_id": "not an id!"}, headers=api.h(t["tok_a"]))
     assert bad.status_code == 422 and bad.json()["field_errors"][0]["field"] == "voice_id"
@@ -183,7 +188,7 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     assert a["voice"]["provider"] == "11labs"
     api.c.patch(url, json={"voice_id": ""}, headers=api.h(t["tok_a"]))
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
-    assert a["voice"]["voiceId"] == "da-DK-JeppeNeural"  # the workspace's own choice beats VAPI_VOICE_JSON
+    assert a["voice"]["voiceId"] == "qhEux886xDKbOdF7jkFP"  # the workspace's own choice beats VAPI_VOICE_JSON
     # a staff member cannot change the voice
     staff = api.add_member(t["tok_a"], t["ws_a"], "staff2@testmail.dk", "staff")
     assert api.c.patch(url, json={"voice_id": "AbCdEf1234567890"}, headers=api.h(staff)).status_code == 403
@@ -311,7 +316,7 @@ def test_phone_voice_skips_vapis_english_number_formatting():
     assert fmt["replacements"] == [{"type": "regex", "regex": "Dialogbot", "value": "Dialog-bot", "options": opts},
                                    {"type": "regex", "regex": "AI", "value": "ej aj", "options": opts}]
     voice = standard.provider_voice(FakeDb(), None)
-    assert voice["provider"] == "azure" and voice["chunkPlan"] == plan
+    assert voice["provider"] == "11labs" and voice["chunkPlan"] == plan
 
 
 def test_elevenlabs_standard_voices_use_v4_turbo_in_danish():

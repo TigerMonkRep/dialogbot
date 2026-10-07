@@ -1,7 +1,6 @@
 """Ready-made Danish phone voices that work without Dialogbot's own speech engine.
 
-Christel and Jeppe are native Danish neural voices from Azure, spoken through Vapi (billed via Vapi credits, no extra
-key). Camilla and Peter are ElevenLabs voices and need the platform's ElevenLabs key connected in Vapi. A workspace
+Camilla and Peter are ElevenLabs Voice Library voices; they need the platform's ElevenLabs key connected in Vapi. A workspace
 picks one as its standard; until then the phone uses DEFAULT. A number's own ElevenLabs voice or a chosen Dialogbot
 voice (voices.service.vapi_voice) still wins over this.
 """
@@ -13,24 +12,20 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
 
+# Spoken naturally rather than evenly: a little lower stability gives livelier intonation on the phone.
+_HUMAN = {"stability": 0.4, "similarityBoost": 0.8, "style": 0.0, "useSpeakerBoost": True, "speed": 1.0}
 STANDARD_VOICES: dict[str, dict] = {
-    "christel": {"name": "Christel", "gender": "female", "image": "/voices/christel.svg",
-                 "description": "Rolig, venlig og tydelig. Passer til reception, klinikker og bookinger.",
-                 "voice": {"provider": "azure", "voiceId": "da-DK-ChristelNeural"}},
-    "jeppe": {"name": "Jeppe", "gender": "male", "image": "/voices/jeppe.svg",
-              "description": "Klar og imødekommende. Passer til håndværk, service og kundeopfølgning.",
-              "voice": {"provider": "azure", "voiceId": "da-DK-JeppeNeural"}},
-    # ElevenLabs Voice Library voices, spoken through Vapi with the platform's ElevenLabs key (Vapi → Integrations).
+    # Voice Library voices, spoken through Vapi with the platform's speech-provider key (Vapi → Integrations).
     "camilla": {"name": "Camilla", "gender": "female", "image": "/voices/camilla.svg",
                 "description": "Klar, rolig og professionel på rigsdansk med en meget naturlig betoning.",
                 "voice": {"provider": "11labs", "voiceId": "4RklGmuxoAskAbGXplXN", "model": "eleven_v4_turbo",
-                          "language": "da"}},
+                          "language": "da", **_HUMAN}},
     "peter": {"name": "Peter", "gender": "male", "image": "/voices/peter.svg",
               "description": "Naturlig og klar med en let jysk klang. Lyder som en rigtig medarbejder.",
               "voice": {"provider": "11labs", "voiceId": "qhEux886xDKbOdF7jkFP", "model": "eleven_v4_turbo",
-                        "language": "da"}},
+                        "language": "da", **_HUMAN}},
 }
-DEFAULT = "christel"
+DEFAULT = "camilla"
 # Vapi formatters that only strip markup; number/date/time/amount/phone/acronym formatters speak English.
 LANGUAGE_NEUTRAL_FORMATTERS = ("markdown", "asterisk", "stripAsterisk", "quote", "newline")
 # Said the way Danes say them; a workspace's own entry for the same term wins.
@@ -48,9 +43,7 @@ SAMPLE_TEXT = ("Hej, du har ringet til Hansens VVS. Jeg hedder {name}, og jeg ta
 
 
 def sample_available(key: str) -> bool:
-    s = get_settings()
-    provider = STANDARD_VOICES[key]["voice"]["provider"]
-    return bool(s.elevenlabs_api_key) if provider == "11labs" else bool(s.azure_speech_key)
+    return bool(get_settings().elevenlabs_api_key)
 
 
 def _sample_key(key: str) -> str:
@@ -73,36 +66,11 @@ def sample_audio(key: str) -> bytes:
         return cached
     v = STANDARD_VOICES[key]
     text = SAMPLE_TEXT.format(name=v["name"])
-    voice = v["voice"]
-    if voice["provider"] == "11labs":
-        from app.modules.telephony import vapi
+    from app.modules.telephony import vapi
 
-        audio = vapi.voice_preview(voice["voiceId"], voice["model"], text)
-    else:
-        audio = _azure_tts(voice["voiceId"], text)
+    audio = vapi.voice_preview(v["voice"]["voiceId"], v["voice"]["model"], text)
     storage.put(skey, audio, "audio/mpeg")
     return audio
-
-
-def _azure_tts(voice_name: str, text: str) -> bytes:
-    from xml.sax.saxutils import escape
-
-    import httpx
-
-    from app.core.errors import ApiError
-
-    s = get_settings()
-    ssml = (f"<speak version='1.0' xml:lang='da-DK'><voice name='{escape(voice_name)}'>{escape(text)}</voice></speak>")
-    try:
-        r = httpx.post(f"https://{s.azure_speech_region}.tts.speech.microsoft.com/cognitiveservices/v1",
-                       headers={"Ocp-Apim-Subscription-Key": s.azure_speech_key or "", "Content-Type": "application/ssml+xml",
-                                "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3", "User-Agent": "dialogbot"},
-                       content=ssml.encode(), timeout=30.0)
-    except httpx.HTTPError as e:
-        raise ApiError("Lydprøven kunne ikke hentes", code="voice_sample_failed", status_code=502) from e
-    if r.status_code >= 400:
-        raise ApiError(f"Lydprøven kunne ikke laves ({r.status_code})", code="voice_sample_failed", status_code=502)
-    return r.content
 
 
 def chosen(db: OrmSession, ws_id: uuid.UUID) -> str | None:

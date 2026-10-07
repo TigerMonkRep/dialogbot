@@ -183,6 +183,7 @@ def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -
         "voicemailDetection": {"provider": "vapi"},
         "endCallPhrases": ["Tak for snakken, hav en god dag", "Undskyld forstyrrelsen, hav en god dag"],
         "analysisPlan": vapi.ANALYSIS_PLAN,
+        "stopSpeakingPlan": vapi.STOP_SPEAKING_PLAN, "startSpeakingPlan": vapi.START_SPEAKING_PLAN,
         "metadata": {"workspace_id": str(ws.id), "demo_call_id": str(d.id)},
     }
     from app.modules.voices import standard

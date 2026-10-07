@@ -151,14 +151,14 @@ def voice_preview(voice_id: str, voice_model: str, text: str) -> bytes:
 
     key = get_settings().elevenlabs_api_key
     if not key:
-        raise NotImplementedYet("Stemmeprøve kræver ELEVENLABS_API_KEY på serveren", code="voice_preview_not_configured")
+        raise NotImplementedYet("Stemmeprøven er ikke sat op endnu", code="voice_preview_not_configured")
     try:
         r = httpx.post(ELEVENLABS_TTS.format(voice_id=voice_id), params={"output_format": "mp3_44100_128"},
                        headers={"xi-api-key": key}, json={"text": text, "model_id": voice_model}, timeout=30.0)
     except httpx.HTTPError as e:
-        raise ApiError("ElevenLabs svarede ikke", code="voice_preview_failed", status_code=502) from e
+        raise ApiError("Stemmetjenesten svarede ikke", code="voice_preview_failed", status_code=502) from e
     if r.status_code >= 400:
-        raise ApiError(f"ElevenLabs afviste stemmeprøven ({r.status_code}). Tjek stemme-id og model.",
+        raise ApiError(f"Stemmeprøven kunne ikke laves ({r.status_code}). Tjek stemme-id og model.",
                        code="voice_preview_failed", status_code=502)
     return r.content
 

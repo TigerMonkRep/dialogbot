@@ -280,9 +280,12 @@ def create_call(payload: dict) -> dict:
         r = httpx.post(f"{s.vapi_api_url.rstrip('/')}/call", json=payload, timeout=20.0,
                        headers={"authorization": f"Bearer {s.vapi_api_key}"})
     except httpx.HTTPError as e:
-        raise OutboundFailed("Vapi svarede ikke") from e
+        raise OutboundFailed("Telefontjenesten svarede ikke") from e
     if r.status_code >= 400:
-        raise OutboundFailed(f"Vapi afviste opkaldet ({r.status_code}): {r.text[:200]}",
+        from app.core.logging import log
+
+        log.warning("vapi.outbound_rejected", status=r.status_code, body=r.text[:300])
+        raise OutboundFailed(f"Telefontjenesten afviste opkaldet ({r.status_code})",
                              extra={"permanent": 400 <= r.status_code < 500 and r.status_code not in (408, 429)})
     return r.json()
 

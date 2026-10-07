@@ -101,7 +101,7 @@ class NumberPatch(BaseModel):
 
 def _check_voice(voice_id: str | None, voice_model: str | None) -> None:
     if voice_id and not vapi.VOICE_ID.match(voice_id.strip()):
-        raise ValidationFailed("Stemme-id'et skal være ElevenLabs' id (kun bogstaver og tal), fx fra stemmebiblioteket",
+        raise ValidationFailed("Stemme-id'et må kun indeholde bogstaver og tal",
                                field_errors=[{"field": "voice_id"}])
     if voice_model is not None and voice_model not in vapi.VOICE_MODELS:
         raise ValidationFailed("Ukendt stemmemodel", field_errors=[{"field": "voice_model"}])

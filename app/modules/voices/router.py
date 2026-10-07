@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.auth import WorkspaceContext, get_scoped, require_capability
-from app.core.errors import ApiError, Conflict, ValidationFailed
+from app.core.errors import ApiError, Conflict, NotFound, ValidationFailed
 from app.db import get_db
 from app.models import Campaign, PhoneNumber
 from app.modules.setup.checks import invalidate_checks
@@ -63,6 +63,14 @@ def get_voice(profile_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_cap
 
 class PreviewIn(BaseModel):
     text: str | None = Field(default=None, max_length=1000)
+
+
+@router.post("/standard/{key}/sample")
+def standard_sample(key: str, ctx: WorkspaceContext = Depends(require_capability("voices.read"))):
+    """A short sample of a ready-made phone voice, so a customer can hear it before choosing it."""
+    if key not in standard.STANDARD_VOICES:
+        raise NotFound("Stemmen findes ikke")
+    return Response(standard.sample_audio(key), media_type="audio/mpeg", headers={"cache-control": "private, max-age=86400"})
 
 
 @router.post("/{profile_id}/preview")

@@ -22,11 +22,11 @@ STANDARD_VOICES: dict[str, dict] = {
               "voice": {"provider": "azure", "voiceId": "da-DK-JeppeNeural"}},
     # ElevenLabs Voice Library voices, spoken through Vapi with the platform's ElevenLabs key (Vapi → Integrations).
     "camilla": {"name": "Camilla", "gender": "female", "image": "/voices/camilla.svg",
-                "description": "Klar, rolig og professionel på rigsdansk. ElevenLabs – mere naturlig betoning.",
+                "description": "Klar, rolig og professionel på rigsdansk med en meget naturlig betoning.",
                 "voice": {"provider": "11labs", "voiceId": "4RklGmuxoAskAbGXplXN", "model": "eleven_v4_turbo",
                           "language": "da"}},
     "peter": {"name": "Peter", "gender": "male", "image": "/voices/peter.svg",
-              "description": "Naturlig og klar med let jysk klang. ElevenLabs – mere naturlig betoning.",
+              "description": "Naturlig og klar med en let jysk klang. Lyder som en rigtig medarbejder.",
               "voice": {"provider": "11labs", "voiceId": "qhEux886xDKbOdF7jkFP", "model": "eleven_v4_turbo",
                         "language": "da"}},
 }
@@ -38,7 +38,71 @@ DEFAULT_PRONUNCIATIONS = ({"term": "AI", "say": "ej aj"},)
 
 
 def catalog() -> list[dict]:
-    return [{"key": k, **{f: v[f] for f in ("name", "gender", "image", "description")}} for k, v in STANDARD_VOICES.items()]
+    """What customers see. Never names the speech provider."""
+    return [{"key": k, **{f: v[f] for f in ("name", "gender", "image", "description")}, "sample": sample_available(k)}
+            for k, v in STANDARD_VOICES.items()]
+
+
+SAMPLE_TEXT = ("Hej, du har ringet til Hansens VVS. Jeg hedder {name}, og jeg tager telefonen for firmaet. "
+               "Hvad kan jeg hjælpe dig med i dag?")
+
+
+def sample_available(key: str) -> bool:
+    s = get_settings()
+    provider = STANDARD_VOICES[key]["voice"]["provider"]
+    return bool(s.elevenlabs_api_key) if provider == "11labs" else bool(s.azure_speech_key)
+
+
+def _sample_key(key: str) -> str:
+    import hashlib
+
+    v = STANDARD_VOICES[key]
+    h = hashlib.sha256(f"{v['voice']}|{SAMPLE_TEXT.format(name=v['name'])}".encode()).hexdigest()[:12]
+    return f"cache/platform/standard-samples/{key}-{h}.mp3"
+
+
+def sample_audio(key: str) -> bytes:
+    """A short MP3 of a standard voice, rendered once by the provider and then served from voice storage."""
+    from app.core.errors import NotImplementedYet
+    from app.modules.voices import storage
+
+    if not sample_available(key):
+        raise NotImplementedYet("Lydprøven er ikke klar endnu", code="voice_sample_not_configured")
+    skey = _sample_key(key)
+    if (cached := storage.get(skey)) is not None:
+        return cached
+    v = STANDARD_VOICES[key]
+    text = SAMPLE_TEXT.format(name=v["name"])
+    voice = v["voice"]
+    if voice["provider"] == "11labs":
+        from app.modules.telephony import vapi
+
+        audio = vapi.voice_preview(voice["voiceId"], voice["model"], text)
+    else:
+        audio = _azure_tts(voice["voiceId"], text)
+    storage.put(skey, audio, "audio/mpeg")
+    return audio
+
+
+def _azure_tts(voice_name: str, text: str) -> bytes:
+    from xml.sax.saxutils import escape
+
+    import httpx
+
+    from app.core.errors import ApiError
+
+    s = get_settings()
+    ssml = (f"<speak version='1.0' xml:lang='da-DK'><voice name='{escape(voice_name)}'>{escape(text)}</voice></speak>")
+    try:
+        r = httpx.post(f"https://{s.azure_speech_region}.tts.speech.microsoft.com/cognitiveservices/v1",
+                       headers={"Ocp-Apim-Subscription-Key": s.azure_speech_key or "", "Content-Type": "application/ssml+xml",
+                                "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3", "User-Agent": "dialogbot"},
+                       content=ssml.encode(), timeout=30.0)
+    except httpx.HTTPError as e:
+        raise ApiError("Lydprøven kunne ikke hentes", code="voice_sample_failed", status_code=502) from e
+    if r.status_code >= 400:
+        raise ApiError(f"Lydprøven kunne ikke laves ({r.status_code})", code="voice_sample_failed", status_code=502)
+    return r.content
 
 
 def chosen(db: OrmSession, ws_id: uuid.UUID) -> str | None:

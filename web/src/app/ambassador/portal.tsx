@@ -224,6 +224,15 @@ function Materials({ me }: { me: Profile }) {
   return (
     <div className="space-y-space-md">
       <Alert kind="info">Husk reglerne: Skriv altid, at det er reklame, og at du får bonus. Send kun beskeder til folk, du kender eller har talt med. Ingen masse-mails eller -sms'er, og brug aldrig AI til at ringe folk op.</Alert>
+      <section className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-sm">
+        <h2 className="font-label-lg text-label-lg text-primary font-bold">Salgsmateriale til kunder</h2>
+        <p className="font-body-sm text-body-sm text-on-surface">Brochuren fortæller om Dialogbot, funktioner og priser. Din personlige udgave har dit navn, dit link og din kode på forsiden – åbn den, og vælg &quot;Gem som PDF&quot; i browserens udskriftsmenu. Opsætningsmanualen viser kunden alle trin fra konto til første opkald.</p>
+        <ul className="font-body-sm text-body-sm space-y-1">
+          <li><a className="underline text-primary" target="_blank" rel="noopener" href={`/materiale/salgsmateriale.html?${new URLSearchParams({ navn: first, link: me.link, kode: me.code, rabat: String((me.terms.customer_discount_bp ?? 5000) / 100) })}`}>Din personlige brochure</a></li>
+          <li><a className="underline text-primary" target="_blank" rel="noopener" href="/materiale/dialogbot-salgsmateriale.pdf">Brochure (PDF uden navn)</a></li>
+          <li><a className="underline text-primary" target="_blank" rel="noopener" href="/materiale/dialogbot-opsaetningsmanual.pdf">Opsætningsmanual (PDF)</a></li>
+        </ul>
+      </section>
       {texts.map(([title, text]) => (
         <section key={title} className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-sm">
           <div className="flex items-center justify-between gap-space-sm flex-wrap"><h2 className="font-label-lg text-label-lg text-primary font-bold">{title}</h2><Copy text={text} label="Kopiér tekst" /></div>

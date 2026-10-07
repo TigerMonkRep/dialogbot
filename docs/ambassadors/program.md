@@ -48,6 +48,18 @@ Ambassadøren skal svare rigtigt på fire spørgsmål, før tilmeldingen accepte
 
 De færdige tekster på ambassadørens side er markeret som reklame.
 
+## Salgsmateriale
+
+Ligger i `web/public/materiale/` og er offentligt på `/materiale/…` (uden for preview-låsen). Ambassadøren finder links under **Del og tekster**.
+
+| Fil | Indhold |
+|---|---|
+| `salgsmateriale.html` | Brochure, 6 A4-sider: funktioner, priser, kom i gang. Markeret som reklame. Personlig udgave med `?navn=…&link=…&kode=…&rabat=50` (navn, link og kode på forsiden og i oplysningen om bonus). |
+| `dialogbot-salgsmateriale.pdf` | Samme brochure uden navn. |
+| `opsaetningsmanual.html` / `dialogbot-opsaetningsmanual.pdf` | Byggevejledning i Lego-stil, 12 sider A4 på langs: 18 trin i 5 "poser", der følger opsætningsguidens faser. |
+
+Ændrer I priser, trin eller vilkår, så ret HTML-filerne og lav PDF'erne igen (Chromium/Playwright: `page.pdf({ format: "A4", printBackground: true, preferCSSPageSize: true })`, manualen med en viewport på mindst 1200 px).
+
 ## Administration (for Dialogbot)
 
 Siden findes under **Kontomenuen → "Operatør: ambassadører"** (`/app/operator/ambassadors`). Den kræver `is_platform_operator`, som gives med `python -m scripts.grant_operator <email>`.

@@ -228,6 +228,16 @@ def transcriber_for(db: OrmSession, ws: Workspace | None) -> dict:
     return t
 
 
+def server_block() -> dict | None:
+    """Where Vapi sends a call's status updates and end-of-call report. Outbound calls carry it on the assistant so
+    their reports reach us whatever is configured on the number or the Vapi org."""
+    s = get_settings()
+    if not s.vapi_server_secret:
+        return None
+    return {"url": f"{s.public_base_url.rstrip('/')}/api/v1/webhooks/vapi",
+            "headers": {"Authorization": f"Bearer {s.vapi_server_secret}"}}
+
+
 def booking_tools(db: OrmSession, ws: Workspace) -> list[dict]:
     """Function tools for the call: every action of a connected connector (Dialogbot's calendar when online booking
     is on, a connected Google/Microsoft calendar, SMS confirmations …), built by app/modules/integrations/actions."""

@@ -122,6 +122,13 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
             return {"error": e.message}
     if kind == "tool-calls":
         return vapi.tool_calls(db, message)
+    if kind == "status-update":
+        from app.core.logging import log
+
+        call = message.get("call") or {}
+        log.info("vapi.status_update", call_id=call.get("id"), call_type=call.get("type"), status=message.get("status"),
+                 ended_reason=message.get("endedReason"))
+        return {"received": True, "outcome": "ignored"}
     if kind == "end-of-call-report":
         call_id = str((message.get("call") or {}).get("id") or "")
         if db.scalar(select(Call.id).where(Call.provider_call_id == call_id)) if call_id else None:

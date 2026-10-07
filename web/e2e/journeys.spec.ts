@@ -14,7 +14,7 @@ test("1 · A01→A03→A06: tilmelding med bevaret hensigt, bekræftelse og før
   await page.getByLabel("Invitationskode").fill(PREVIEW_CODE.toLowerCase());
   await page.getByRole("button", { name: "Lås op og se forsiden" }).click();
   await expect(page.getByRole("heading", { name: /Du driver forretningen/ })).toBeVisible();
-  await expect(page.getByRole("link", { name: /Bliv ringet op – hør det selv/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Bliv ringet op – hør det selv/ }).first()).toBeVisible();
   // "Ring mig op nu" is honest: no sales workspace is configured in CI, so no call can be requested, but the voices
   // and industries can be chosen and heard
   await expect(page.getByRole("heading", { name: /Hvem tager telefonen, når du er optaget/ })).toBeVisible();

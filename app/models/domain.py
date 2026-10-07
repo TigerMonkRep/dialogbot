@@ -1493,3 +1493,84 @@ class CommissionEntry(Base):
     payout_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("ambassador_payouts.id", ondelete="SET NULL"),
                                                         index=True)
     created_at: Mapped[datetime] = ts_now()
+
+
+# ---------------------------------------------------------------------------
+# Social media autoposting for Dialogbot's own profiles (app/modules/social)
+# ---------------------------------------------------------------------------
+
+
+class SocialPost(Base):
+    """One post for one platform. Each platform gets its own copy and its own images; posts planned for the same
+    day share a topic (`group_key`) so the three channels tell the same story in three different ways.
+
+    draft → scheduled → publishing → published | failed. `publishing` is committed BEFORE the platform is called, so
+    a crash in between leaves a row that is reported as uncertain instead of being posted twice."""
+
+    __tablename__ = "social_posts"
+    __table_args__ = (
+        CheckConstraint("platform in ('facebook','instagram','tiktok')", name="ck_social_posts_platform"),
+        CheckConstraint("status in ('draft','scheduled','publishing','published','failed','skipped','cancelled')",
+                        name="ck_social_posts_status"),
+        # One live post per platform and day; a cancelled or skipped slot may be planned again.
+        Index("uq_social_posts_platform_slot", "platform", "slot_date", unique=True,
+              postgresql_where=text("status not in ('cancelled','skipped')")),
+        Index("ix_social_posts_status_due", "status", "scheduled_for"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    platform: Mapped[str] = mapped_column(String(12), nullable=False)
+    slot_date: Mapped[date] = mapped_column(Date, nullable=False)  # the Copenhagen day the post is planned for
+    scheduled_for: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    status: Mapped[str] = mapped_column(String(12), nullable=False, default="scheduled")
+    topic: Mapped[str] = mapped_column(String(40), nullable=False)
+    group_key: Mapped[str] = mapped_column(String(60), nullable=False)
+    caption: Mapped[str] = mapped_column(Text, nullable=False)  # the complete text as posted, hashtags and link included
+    hashtags: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    slides: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)  # what is written on the images
+    link: Mapped[str | None] = mapped_column(String(500))
+    generator: Mapped[str] = mapped_column(String(16), nullable=False, default="template")  # ai | template
+    generator_model: Mapped[str | None] = mapped_column(String(80))
+    external_id: Mapped[str | None] = mapped_column(String(120))
+    external_url: Mapped[str | None] = mapped_column(String(500))
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_error: Mapped[str | None] = mapped_column(String(500))
+    approved_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )
+
+
+class SocialMedia(Base):
+    """A rendered image of a post. The platforms fetch it from /api/v1/social/media/{id}.jpg, so the id is an
+    unguessable UUID; nothing but the post's own slide text is on the image."""
+
+    __tablename__ = "social_media"
+    __table_args__ = (UniqueConstraint("post_id", "position", name="uq_social_media_post_position"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    post_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("social_posts.id", ondelete="CASCADE"), nullable=False,
+                                               index=True)
+    position: Mapped[int] = mapped_column(Integer, nullable=False)
+    width: Mapped[int] = mapped_column(Integer, nullable=False)
+    height: Mapped[int] = mapped_column(Integer, nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    data: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+    created_at: Mapped[datetime] = ts_now()
+
+
+class SocialCredential(Base):
+    """Rotating platform credentials (TikTok's refresh token changes on use), envelope-encrypted like the
+    integration secrets. Long-lived Meta tokens stay in the environment."""
+
+    __tablename__ = "social_credentials"
+
+    platform: Mapped[str] = mapped_column(String(12), primary_key=True)
+    key_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    secret_blob: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
+    )

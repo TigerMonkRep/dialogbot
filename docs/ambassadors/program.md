@@ -57,6 +57,7 @@ Ligger i `web/public/materiale/` og er offentligt på `/materiale/…` (uden for
 | `salgsmateriale.html` | Brochure, 6 A4-sider: funktioner, priser, kom i gang. Markeret som reklame. Personlig udgave med `?navn=…&link=…&kode=…&rabat=50` (navn, link og kode på forsiden og i oplysningen om bonus). |
 | `dialogbot-salgsmateriale.pdf` | Samme brochure uden navn. |
 | `opsaetningsmanual.html` / `dialogbot-opsaetningsmanual.pdf` | Byggevejledning i Lego-stil, 12 sider A4 på langs: 18 trin i 5 "poser", der følger opsætningsguidens faser. |
+| `ambassadoerhaandbog.html` / `dialogbot-ambassadoerhaandbog.pdf` | Til ambassadørerne selv, 8 A4-sider: forløb, bonus og regneeksempel, regler (gør/gør ikke), samtaleguide, dashboardets faner og statusser, udbetaling og skat, hvem de kontakter. |
 
 Ændrer I priser, trin eller vilkår, så ret HTML-filerne og lav PDF'erne igen (Chromium/Playwright: `page.pdf({ format: "A4", printBackground: true, preferCSSPageSize: true })`, manualen med en viewport på mindst 1200 px).
 

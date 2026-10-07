@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dialogbot Ambassadørhåndbog</title>
+<meta name="description" content="Håndbog til Dialogbot-ambassadører: din rolle, reglerne, samtaleguide, bonus, dashboard, udbetaling og hvem du kontakter.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=block">
+<style>
+/* Layout: A4-ark i en stak som salgsbrochuren. Forside og kontaktside i skovgrøn, resten på lys mint.
+   Gør/gør ikke i grøn og rød er håndbogens eneste ekstra farve. Bevidst ét udtryk (papir) i begge temaer. */
+:root {
+  --forest: #00362d;
+  --forest-2: #164e43;
+  --mint: #e7fef9;
+  --mint-2: #dcf3ee;
+  --mint-3: #b6eede;
+  --lime: #d4ea82;
+  --olive: #546508;
+  --sky: #80bbe0;
+  --sky-2: #e3f1fa;
+  --ink: #0f1f1c;
+  --muted: #3f4946;
+  --line: #c3d6d1;
+  --paper: #ffffff;
+  --no: #93000a;
+  --no-bg: #ffdad6;
+  --warn: #fff4c2;
+  --backdrop: #c8dfda;
+  --display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--backdrop); color: var(--ink); font-family: var(--body); font-size: 10pt; line-height: 1.5;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 24px 16px; }
+.ms { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal;
+  text-transform: none; white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased; font-size: 20px;
+  font-variation-settings: "FILL" 0, "wght" 400, "opsz" 24; display: inline-block; vertical-align: middle; }
+.ms.fill { font-variation-settings: "FILL" 1, "wght" 400, "opsz" 24; }
+h1, h2, h3, h4 { font-family: var(--display); margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+.stack { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.sheet { position: relative; width: 210mm; height: 297mm; overflow: hidden; background: var(--mint); box-shadow: 0 10px 40px rgba(0,32,26,.18);
+  padding: 17mm 17mm 16mm; display: flex; flex-direction: column; gap: 7mm; }
+.sheet.dark { background: var(--forest); color: #fff; }
+.eyebrow { font-size: 8pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--olive); }
+.dark .eyebrow { color: var(--lime); }
+.h2 { font-size: 23pt; line-height: 1.12; font-weight: 800; color: var(--forest); }
+.dark .h2 { color: #fff; }
+.lede { font-size: 10.8pt; color: var(--muted); max-width: 155mm; }
+.dark .lede { color: var(--mint-3); }
+.hd { display: flex; flex-direction: column; gap: 2.5mm; }
+.folio { position: absolute; left: 17mm; right: 17mm; bottom: 8mm; display: flex; justify-content: space-between; font-size: 7.5pt; color: var(--muted); letter-spacing: .04em; }
+.dark .folio { color: var(--mint-3); }
+.card { background: var(--paper); border-radius: 14px; padding: 5mm; display: flex; flex-direction: column; gap: 2mm; }
+.card h3 { font-size: 11.5pt; color: var(--forest); }
+.card p { font-size: 9pt; color: var(--muted); }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+.tip { display: grid; grid-template-columns: auto 1fr; gap: 2.5mm; background: var(--warn); border-radius: 12px; padding: 3mm 4mm; font-size: 9pt; align-items: start; }
+.tip .ms { color: #7a5b00; font-size: 19px; }
+.mono { font-variant-numeric: tabular-nums; }
+
+/* Forside */
+.cover { gap: 0; }
+.brand { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 800; font-size: 14pt; }
+.brand .mark { width: 30px; height: 30px; border-radius: 9px; background: var(--lime); color: var(--forest); display: grid; place-items: center; }
+.top { display: flex; justify-content: space-between; align-items: center; }
+.tag { font-size: 7.5pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; border: 1px solid rgba(212,234,130,.55); color: var(--lime); padding: 4px 9px; border-radius: 99px; }
+.cover h1 { margin-top: 22mm; font-size: 46pt; line-height: 1; font-weight: 800; letter-spacing: -0.03em; }
+.cover h1 em { font-style: normal; color: var(--lime); display: block; }
+.cover .sub { margin-top: 7mm; font-size: 12.5pt; color: var(--mint-3); max-width: 140mm; }
+.badge { margin-top: 14mm; display: grid; grid-template-columns: auto 1fr; gap: 6mm; align-items: center; background: var(--forest-2); border-radius: 20px; padding: 6mm; border: 1px solid rgba(182,238,222,.18); }
+.badge .card-amb { width: 52mm; aspect-ratio: 1.586; max-width: 100%; border-radius: 12px; background: var(--lime); color: var(--forest); padding: 4mm; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 8px 24px rgba(0,0,0,.25); transform: rotate(-4deg); }
+.card-amb .b { display: flex; align-items: center; gap: 5px; font-family: var(--display); font-weight: 800; font-size: 9pt; }
+.card-amb .nm { font-family: var(--display); font-weight: 800; font-size: 13pt; line-height: 1.1; }
+.card-amb .cd { font-size: 7pt; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+.card-amb .cd b { display: block; font-family: var(--display); font-size: 12pt; letter-spacing: .06em; }
+.badge ul { display: flex; flex-direction: column; gap: 2.5mm; font-size: 10pt; color: #e8f7f2; }
+.badge li { display: flex; gap: 2.5mm; align-items: center; }
+.badge li .ms { color: var(--lime); }
+.nums { margin-top: auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+.num { border: 1.5px solid rgba(212,234,130,.45); border-radius: 14px; padding: 4mm; display: flex; flex-direction: column; gap: 1mm; }
+.num b { font-family: var(--display); font-weight: 800; font-size: 20pt; color: var(--lime); line-height: 1; }
+.num span { font-size: 8pt; color: var(--mint-3); }
+.toc { margin-top: 6mm; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5mm 4mm; font-size: 8.3pt; color: var(--mint-3); }
+.toc span b { color: var(--lime); font-family: var(--display); margin-right: 1.5mm; }
+
+/* Sådan fungerer det: forløb */
+.flow { display: flex; flex-direction: column; gap: 0; position: relative; }
+.fs { display: grid; grid-template-columns: 14mm 1fr auto; gap: 4mm; align-items: start; padding-bottom: 4.5mm; position: relative; }
+.fs:not(:last-child)::before { content: ""; position: absolute; left: 7mm; top: 13mm; bottom: 0; width: 2px; background: repeating-linear-gradient(var(--forest) 0 5px, transparent 5px 9px); transform: translateX(-1px); }
+.fs .dot { width: 14mm; height: 14mm; border-radius: 50%; background: var(--forest); color: var(--lime); display: grid; place-items: center; }
+.fs .dot .ms { font-size: 24px; }
+.fs h3 { font-size: 12pt; color: var(--forest); padding-top: 1mm; }
+.fs p { font-size: 9.2pt; color: var(--muted); margin-top: .8mm; max-width: 115mm; }
+.fs .who { font-size: 7.5pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; background: var(--mint-2); color: var(--forest); margin-top: 1.5mm; white-space: nowrap; }
+.fs .who.you { background: var(--lime); }
+.fs .who.cust { background: var(--sky-2); }
+
+/* Indtjening */
+.terms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+.term { background: var(--forest); color: #fff; border-radius: 16px; padding: 5mm; display: flex; flex-direction: column; gap: 1.5mm; }
+.term b { font-family: var(--display); font-weight: 800; font-size: 24pt; color: var(--lime); line-height: 1; }
+.term span { font-size: 8.8pt; color: var(--mint-3); }
+.term.light { background: var(--paper); color: var(--ink); }
+.term.light b { color: var(--forest); }
+.term.light span { color: var(--muted); }
+.calc { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4mm; }
+table.ex { width: 100%; border-collapse: collapse; font-size: 9pt; }
+table.ex td { padding: 1.6mm 0; border-bottom: 1px solid var(--mint-2); }
+table.ex td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.ex tr.sum td { border-bottom: 0; border-top: 2px solid var(--forest); font-family: var(--display); font-weight: 800; font-size: 12pt; color: var(--forest); padding-top: 2.5mm; }
+.life { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+.ls { position: relative; padding: 3mm 3mm 3mm 0; display: flex; flex-direction: column; gap: 1.2mm; }
+.ls .pill { align-self: flex-start; font-size: 7.6pt; font-weight: 700; padding: 3px 9px; border-radius: 99px; }
+.ls p { font-size: 8.5pt; color: var(--muted); }
+.ls .bar { height: 3mm; border-radius: 99px; margin-bottom: 1.5mm; }
+.p1 { background: var(--sky-2); color: #00334a; } .b1 { background: var(--sky); }
+.p2 { background: var(--lime); color: var(--forest); } .b2 { background: #b9d265; }
+.p3 { background: var(--mint-3); color: var(--forest); } .b3 { background: #88beb0; }
+.p4 { background: var(--forest); color: var(--lime); } .b4 { background: var(--forest); }
+.ls:first-child .bar { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.ls:nth-child(2) .bar, .ls:nth-child(3) .bar { border-radius: 0; }
+.ls:last-child .bar { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+
+/* Gør / gør ikke */
+.dd { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.dd .col { border-radius: 16px; padding: 5mm; display: flex; flex-direction: column; gap: 2.6mm; }
+.dd .yes { background: var(--paper); border: 2px solid var(--forest); }
+.dd .nope { background: var(--no-bg); }
+.dd h3 { font-size: 13pt; display: flex; align-items: center; gap: 2mm; }
+.dd .yes h3 { color: var(--forest); }
+.dd .nope h3 { color: var(--no); }
+.dd li { display: grid; grid-template-columns: auto 1fr; gap: 2.5mm; font-size: 9pt; align-items: start; }
+.dd li .ms { font-size: 18px; }
+.dd .yes li .ms { color: var(--olive); }
+.dd .nope li .ms { color: var(--no); }
+.dd li b { display: block; color: var(--ink); }
+.law { display: grid; grid-template-columns: auto 1fr; gap: 4mm; align-items: center; background: var(--forest); color: #fff; border-radius: 16px; padding: 5mm; }
+.law .ms { color: var(--lime); font-size: 32px; }
+.law b { font-family: var(--display); font-size: 11.5pt; display: block; }
+.law span { font-size: 8.8pt; color: var(--mint-3); }
+
+/* Samtaleguide */
+.pitch { background: var(--forest); color: #fff; border-radius: 18px; padding: 6mm; display: flex; flex-direction: column; gap: 2.5mm; position: relative; }
+.pitch .q { font-family: var(--display); font-size: 13.5pt; line-height: 1.35; font-weight: 700; }
+.pitch .q mark { background: none; color: var(--lime); }
+.pitch small { color: var(--mint-3); font-size: 8.3pt; }
+.steps4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+.s4 { border-top: 3px solid var(--forest); padding-top: 2.5mm; display: flex; flex-direction: column; gap: 1.2mm; }
+.s4 .n { font-family: var(--display); font-weight: 800; font-size: 18pt; color: var(--forest); line-height: 1; }
+.s4 h3 { font-size: 10.5pt; color: var(--forest); }
+.s4 p { font-size: 8.4pt; color: var(--muted); }
+.qa { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+.qa div { background: var(--paper); border-radius: 12px; padding: 3.5mm 4mm; }
+.qa h4 { font-size: 9.6pt; color: var(--forest); margin-bottom: 1mm; }
+.qa p { font-size: 8.5pt; color: var(--muted); }
+
+/* Dashboard */
+.mock { background: var(--paper); border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 6px 20px rgba(0,54,45,.08); overflow: hidden; }
+.mock .bar { display: flex; gap: 1.3mm; align-items: center; padding: 2mm 3.5mm; border-bottom: 1px solid var(--mint-2); }
+.mock .bar i { width: 2.2mm; height: 2.2mm; border-radius: 50%; background: var(--line); }
+.mock .bar span { margin-left: 2mm; font-size: 7.5pt; color: var(--muted); background: var(--mint); border-radius: 99px; padding: .5mm 3mm; }
+.mock .in { padding: 4mm 4.5mm; display: flex; flex-direction: column; gap: 3mm; }
+.mock .hello { display: flex; align-items: center; justify-content: space-between; }
+.mock .hello h4 { font-size: 13pt; color: var(--forest); }
+.mock .hello .st { font-size: 7.5pt; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--lime); color: var(--forest); }
+.mock .terms-line { font-size: 8pt; color: var(--muted); }
+.tabs { display: flex; gap: 1.5mm; flex-wrap: wrap; }
+.tabs span { font-size: 7.8pt; padding: 1.2mm 2.6mm; border-radius: 6px; display: inline-flex; align-items: center; gap: 1mm; color: var(--muted); }
+.tabs span.on { background: var(--forest); color: #fff; }
+.tabs .ms { font-size: 14px; }
+.tabs .k { width: 4.2mm; height: 4.2mm; border-radius: 50%; background: var(--lime); color: var(--forest); font-size: 6.8pt; font-weight: 800; display: grid; place-items: center; margin-left: .5mm; }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2mm; }
+.tile { border-radius: 9px; padding: 2.4mm; background: var(--mint); }
+.tile.s { background: var(--forest); color: #fff; }
+.tile small { display: block; font-size: 6.3pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.tile.s small { color: var(--lime); }
+.tile b { font-family: var(--display); font-size: 12pt; font-variant-numeric: tabular-nums; }
+.linkrow { display: grid; grid-template-columns: 1.6fr 1fr 1.4fr; gap: 2mm; align-items: stretch; }
+.linkrow > div { background: var(--mint); border-radius: 9px; padding: 2.4mm; font-size: 8pt; }
+.linkrow small { display: block; font-size: 6.3pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.linkrow b { font-family: var(--display); color: var(--forest); }
+.linkrow .st3 { display: flex; justify-content: space-around; text-align: center; }
+.linkrow .st3 b { display: block; font-size: 11pt; }
+.linkrow .st3 span { font-size: 6.5pt; color: var(--muted); }
+.tabguide { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm 5mm; }
+.tg { display: grid; grid-template-columns: 7mm 1fr; gap: 2.5mm; align-items: start; }
+.tg .k { width: 7mm; height: 7mm; border-radius: 50%; background: var(--lime); color: var(--forest); font-family: var(--display); font-weight: 800; display: grid; place-items: center; font-size: 9pt; }
+.tg h3 { font-size: 10.5pt; color: var(--forest); }
+.tg p { font-size: 8.5pt; color: var(--muted); margin-top: .5mm; }
+.statuses { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5mm; }
+.stt { background: var(--paper); border-radius: 12px; padding: 3mm; display: flex; flex-direction: column; gap: 1.2mm; }
+.stt .pill { align-self: flex-start; font-size: 7.4pt; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+.stt p { font-size: 8.2pt; color: var(--muted); }
+
+/* Udbetaling og skat */
+.who2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.who2 .card { border: 1.5px solid var(--line); }
+.who2 .card .ic { width: 10mm; height: 10mm; border-radius: 10px; background: var(--mint-2); color: var(--forest); display: grid; place-items: center; }
+.who2 .card ul { display: flex; flex-direction: column; gap: 1.6mm; font-size: 8.8pt; color: var(--muted); }
+.who2 .card li { display: grid; grid-template-columns: auto 1fr; gap: 2mm; }
+.who2 .card li .ms { font-size: 16px; color: var(--olive); }
+.payflow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+.pf { background: var(--paper); border-radius: 12px; padding: 3.5mm; display: flex; flex-direction: column; gap: 1.2mm; }
+.pf .ms { color: var(--forest); font-size: 22px; }
+.pf h3 { font-size: 10pt; color: var(--forest); }
+.pf p { font-size: 8.3pt; color: var(--muted); }
+.check { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 5mm; background: var(--paper); border-radius: 14px; padding: 4.5mm 5mm; }
+.check h3 { grid-column: 1 / -1; font-size: 11pt; color: var(--forest); margin-bottom: 1mm; }
+.check li { display: grid; grid-template-columns: auto 1fr; gap: 2mm; font-size: 8.8pt; }
+.check li .box { width: 4mm; height: 4mm; border: 1.5px solid var(--forest); border-radius: 1mm; margin-top: .6mm; }
+
+/* Kontakt */
+.route { display: flex; flex-direction: column; gap: 3mm; }
+.rt { display: grid; grid-template-columns: 1fr auto; gap: 5mm; align-items: center; background: var(--forest-2); border: 1px solid rgba(182,238,222,.16); border-radius: 14px; padding: 4mm 5mm; }
+.rt h3 { font-size: 11pt; color: #fff; }
+.rt p { font-size: 8.6pt; color: var(--mint-3); margin-top: .6mm; }
+.rt .to { text-align: right; font-size: 8.6pt; color: var(--lime); font-weight: 600; max-width: 62mm; }
+.rt .to b { display: block; font-family: var(--display); font-size: 10.5pt; }
+.contact { margin-top: auto; display: grid; grid-template-columns: auto 1fr; gap: 5mm; align-items: center; background: var(--lime); color: var(--forest); border-radius: 18px; padding: 5.5mm 6mm; }
+.contact .ms { font-size: 34px; }
+.contact .big { font-family: var(--display); font-weight: 800; font-size: 17pt; line-height: 1.1; }
+.contact p { font-size: 9pt; margin-top: 1mm; }
+.week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2.5mm; }
+.wd { border-top: 3px solid var(--lime); padding-top: 2mm; }
+.wd b { font-family: var(--display); color: var(--lime); font-size: 9pt; display: block; }
+.wd span { font-size: 8.3pt; color: var(--mint-3); }
+
+@media screen and (max-width: 860px) {
+  body { padding-inline: 12px; }
+  .sheet { width: 100%; height: auto; padding: 22px 18px 44px; gap: 20px; }
+  .cover h1 { font-size: 36px; margin-top: 28px; }
+  .h2 { font-size: 26px; }
+  .g2, .g3, .dd, .calc, .qa, .tabguide, .who2, .check, .badge { grid-template-columns: 1fr; }
+  .nums, .terms, .steps4, .statuses, .payflow, .life, .toc, .week { grid-template-columns: 1fr 1fr; }
+  .tiles { grid-template-columns: 1fr 1fr; }
+  .linkrow { grid-template-columns: 1fr; }
+  .rt { grid-template-columns: 1fr; }
+  .rt .to { text-align: left; max-width: none; }
+  .fs { grid-template-columns: 14mm 1fr; }
+  .fs .who { grid-column: 2; justify-self: start; }
+}
+@media screen and (max-width: 480px) {
+  .nums, .terms, .steps4, .statuses, .payflow, .life, .week { grid-template-columns: 1fr; }
+}
+@page { size: A4; margin: 0; }
+@media print {
+  body { background: none; padding: 0; }
+  .stack { display: block; }
+  .sheet { box-shadow: none; break-after: page; page-break-after: always; }
+  .sheet:last-child { break-after: auto; page-break-after: auto; }
+}
+</style>
+</head>
+<body>
+<main class="stack">
+
+<!-- ============ 1. FORSIDE ============ -->
+<section class="sheet dark cover" aria-label="Forside">
+  <div class="top">
+    <div class="brand"><span class="mark"><span class="ms fill">support_agent</span></span>Dialogbot</div>
+    <span class="tag">Til ambassadører</span>
+  </div>
+  <h1>Ambassadør&shy;håndbogen<em>Anbefal. Hjælp. Tjen.</em></h1>
+  <p class="sub">Alt det, du skal vide som Dialogbot-ambassadør: hvad du gør, hvad du ikke må, hvordan du tjener penge, hvordan dit dashboard virker, og hvem du spørger, når du er i tvivl.</p>
+
+  <div class="badge">
+    <div class="card-amb" aria-hidden="true">
+      <span class="b"><span class="ms fill" style="font-size:16px">support_agent</span>Dialogbot</span>
+      <span class="nm">Ambassadør</span>
+      <span class="cd">Din kode<b>DIT-NAVN</b></span>
+    </div>
+    <ul>
+      <li><span class="ms">link</span>Et personligt link og en kode</li>
+      <li><span class="ms">redeem</span>Kunderne får 50 % rabat på første måned</li>
+      <li><span class="ms">payments</span>Du får bonus og en andel af det, de betaler</li>
+      <li><span class="ms">dashboard</span>Du følger det hele på dit dashboard</li>
+    </ul>
+  </div>
+
+  <div class="toc">
+    <span><b>2</b>Sådan fungerer det</span>
+    <span><b>3</b>Det tjener du</span>
+    <span><b>4</b>Reglerne</span>
+    <span><b>5</b>Samtaleguide</span>
+    <span><b>6</b>Dit dashboard</span>
+    <span><b>7</b>Udbetaling og skat</span>
+    <span><b>8</b>Hvem spørger du?</span>
+  </div>
+
+  <div class="nums">
+    <div class="num"><b>500 kr.</b><span>startbonus pr. kunde</span></div>
+    <div class="num"><b>10 %</b><span>af kundens betaling i 12 mdr.</span></div>
+    <div class="num"><b>50 %</b><span>rabat til kunden første måned</span></div>
+    <div class="num"><b>500 kr.</b><span>udbetales fra</span></div>
+  </div>
+  <div class="folio"><span>Dialogbot · Ambassadørprogrammet · Version 1, oktober 2026</span><span>1</span></div>
+</section>
+
+<!-- ============ 2. SÅDAN FUNGERER DET ============ -->
+<section class="sheet" aria-label="Sådan fungerer det">
+  <div class="hd">
+    <span class="eyebrow">Sådan fungerer det</span>
+    <h2 class="h2">Fra tilmelding til penge på kontoen.</h2>
+    <p class="lede">Du er ikke sælger. Du er en, der kender nogen. Du viser Dialogbot til virksomheder, du kender eller møder, og resten klarer de selv eller sammen med os.</p>
+  </div>
+  <ol class="flow">
+    <li class="fs"><span class="dot"><span class="ms">how_to_reg</span></span><div><h3>Tilmeld dig</h3><p>Opret en konto, og gå til <b>dialogbot.dk/ambassador/bliv</b>. Svar rigtigt på fire spørgsmål om reglerne. Er du under 18, skal en forælder godkende aftalen via en mail.</p></div><span class="who you">Dig</span></li>
+    <li class="fs"><span class="dot"><span class="ms">verified</span></span><div><h3>Vi godkender dig</h3><p>Vi godkender alle ambassadører manuelt, normalt inden for et par dage. Du får en mail. Først derefter virker dit link.</p></div><span class="who">Dialogbot</span></li>
+    <li class="fs"><span class="dot"><span class="ms">share</span></span><div><h3>Del dit link eller din kode</h3><p>Fortæl om Dialogbot til en virksomhed, du kender. Send dit link, brochuren eller giv dem din kode. Linket husker dig i 90 dage.</p></div><span class="who you">Dig</span></li>
+    <li class="fs"><span class="dot"><span class="ms">storefront</span></span><div><h3>Virksomheden opretter sig</h3><p>De opretter sig via dit link eller skriver din kode. Så er de koblet til dig og får rabatten automatisk. Koden vinder, hvis de bruger begge.</p></div><span class="who cust">Kunden</span></li>
+    <li class="fs"><span class="dot"><span class="ms">receipt_long</span></span><div><h3>Kunden betaler sin første faktura</h3><p>Nu tjener du startbonussen. Derefter får du en andel, hver gang kunden betaler, i 12 måneder.</p></div><span class="who cust">Kunden</span></li>
+    <li class="fs"><span class="dot"><span class="ms">hourglass_top</span></span><div><h3>Beløbet frigives efter 30 dage</h3><p>Bonus står som "optjent" i 30 dage efter kundens betaling og bliver derefter "klar til udbetaling".</p></div><span class="who">Automatisk</span></li>
+    <li class="fs"><span class="dot"><span class="ms">payments</span></span><div><h3>Vi udbetaler til din bankkonto</h3><p>Når du har mindst 500 kr. klar, kommer du med i næste udbetaling. Du får en mail og et afregningsbilag.</p></div><span class="who">Dialogbot</span></li>
+  </ol>
+  <div class="tip"><span class="ms fill">lightbulb</span><span><b>Glemte kunden din kode?</b> Ejeren af kundens konto kan selv tilføje den under <b>Fakturering</b> i de første 30 dage og før første faktura. Er det for sent, så skriv til os.</span></div>
+  <div class="folio"><span>Dialogbot · Ambassadørhåndbogen</span><span>2</span></div>
+</section>
+
+<!-- ============ 3. DET TJENER DU ============ -->
+<section class="sheet" aria-label="Det tjener du">
+  <div class="hd">
+    <span class="eyebrow">Det tjener du</span>
+    <h2 class="h2">Bonus, når de starter. Andel, så længe de betaler.</h2>
+    <p class="lede">Standardaftalen står herunder. Din egen aftale kan være anderledes, og den står altid øverst på dit dashboard.</p>
+  </div>
+  <div class="terms">
+    <div class="term"><b>500 kr.</b><span>Startbonus, når en kunde har betalt sin første faktura. Én gang pr. kunde.</span></div>
+    <div class="term"><b>10 %</b><span>Af kundens betalte fakturaer ekskl. moms i 12 måneder fra første betalte måned.</span></div>
+    <div class="term light"><b>50 %</b><span>Rabat til kunden på første fakturerede måned. Det gør det lettere at sige ja.</span></div>
+  </div>
+
+  <div class="calc">
+    <div class="card">
+      <h3>Regneeksempel: én kunde på abonnement</h3>
+      <p>Kunden vælger Model A til 1.495 kr./md. Første måned koster 747,50 kr. med rabatten.</p>
+      <table class="ex">
+        <tr><td>Startbonus</td><td>500,00 kr.</td></tr>
+        <tr><td>Første måned: 10 % af 747,50 kr.</td><td>74,75 kr.</td></tr>
+        <tr><td>11 måneder à 10 % af 1.495 kr.</td><td>1.644,50 kr.</td></tr>
+        <tr class="sum"><td>I alt det første år</td><td>2.219,25 kr.</td></tr>
+      </table>
+      <p style="font-size:8.3pt">Med 10 kunder er det over 22.000 kr. Beløbene er før skat. Vælger kunden Model B (149 kr. pr. lead), afhænger din andel af, hvor mange leads de betaler for.</p>
+    </div>
+    <div class="card">
+      <h3>Du tjener kun på betalte fakturaer</h3>
+      <p>Betaler kunden ikke, får du heller ikke noget. Bliver en faktura refunderet eller annulleret, trækkes din andel tilbage:</p>
+      <ul style="display:flex;flex-direction:column;gap:1.6mm;font-size:8.8pt;color:var(--muted)">
+        <li><b style="color:var(--ink)">Ikke udbetalt endnu:</b> beløbet bliver nedskrevet eller annulleret.</li>
+        <li><b style="color:var(--ink)">Allerede udbetalt:</b> der kommer en "modregning", som trækkes fra din næste udbetaling.</li>
+        <li><b style="color:var(--ink)">Startbonus</b> trækkes kun tilbage ved fuld refusion.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Et beløbs vej gennem dit kontoudtog</h3>
+    <div class="life">
+      <div class="ls"><div class="bar b1"></div><span class="pill p1">Optjent</span><p>Kunden har betalt. Beløbet holdes i 30 dage, hvis betalingen bliver trukket tilbage.</p></div>
+      <div class="ls"><div class="bar b2"></div><span class="pill p2">Klar til udbetaling</span><p>Frigivet. Udbetales, når du har mindst 500 kr. klar.</p></div>
+      <div class="ls"><div class="bar b3"></div><span class="pill p3">Under udbetaling</span><p>Vi har oprettet udbetalingen og overfører til din konto.</p></div>
+      <div class="ls"><div class="bar b4"></div><span class="pill p4">Udbetalt</span><p>Pengene er sendt. Afregningsbilaget ligger under Udbetalinger.</p></div>
+    </div>
+  </div>
+  <div class="folio"><span>Dialogbot · Ambassadørhåndbogen</span><span>3</span></div>
+</section>
+
+<!-- ============ 4. REGLERNE ============ -->
+<section class="sheet" aria-label="Reglerne">
+  <div class="hd">
+    <span class="eyebrow">Reglerne</span>
+    <h2 class="h2">Sådan agerer du som ambassadør.</h2>
+    <p class="lede">Reglerne følger markedsføringsloven og beskytter både dig, kunderne og Dialogbot. Det er de samme regler, som du svarede på, da du tilmeldte dig.</p>
+  </div>
+  <div class="dd">
+    <div class="col yes">
+      <h3><span class="ms fill">check_circle</span>Det gør du</h3>
+      <ul>
+        <li><span class="ms">check</span><span><b>Anbefal til folk, du kender eller møder</b>Familie, venner, din frisør, en håndværker du har brugt, butikken på hjørnet.</span></li>
+        <li><span class="ms">check</span><span><b>Sig altid, at du får bonus</b>Fx "Jeg er ambassadør og får en lille bonus, hvis I bliver kunde."</span></li>
+        <li><span class="ms">check</span><span><b>Markér opslag som reklame</b>Skriv #reklame eller "Reklame:" øverst på Instagram, TikTok, Facebook og LinkedIn.</span></li>
+        <li><span class="ms">check</span><span><b>Lad dem selv høre Dialogbot</b>De skriver selv deres nummer på dialogbot.dk og bliver ringet op.</span></li>
+        <li><span class="ms">check</span><span><b>Brug vores materiale og priser</b>Brochuren, opsætningsmanualen og teksterne under "Del og tekster".</span></li>
+        <li><span class="ms">check</span><span><b>Tjek reklamebeskyttelse</b>Før du selv ringer til en virksomhed, så tjek på datacvr.virk.dk.</span></li>
+      </ul>
+    </div>
+    <div class="col nope">
+      <h3><span class="ms fill">cancel</span>Det gør du ikke</h3>
+      <ul>
+        <li><span class="ms">close</span><span><b>Ingen uopfordrede mails eller sms'er</b>Heller ikke til virksomheder. Kun til nogen, du kender eller har talt med.</span></li>
+        <li><span class="ms">close</span><span><b>Ingen masseudsendelser</b>Ingen lister, ingen kopierede beskeder til mange på én gang.</span></li>
+        <li><span class="ms">close</span><span><b>Brug aldrig AI til at ringe folk op</b>Heller ikke Dialogbots demo-opkald for andre. Kunden skal selv bede om det.</span></li>
+        <li><span class="ms">close</span><span><b>Kontakt ikke reklamebeskyttede virksomheder</b>Står de som reklamebeskyttet i CVR, må du ikke reklamere over for dem.</span></li>
+        <li><span class="ms">close</span><span><b>Lov ikke noget, vi ikke tilbyder</b>Ingen egne rabatter, priser eller funktioner. Er du i tvivl, så spørg os.</span></li>
+        <li><span class="ms">close</span><span><b>Henvis ikke dig selv</b>Din egen virksomhed tæller ikke som en henvist kunde.</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="law"><span class="ms">gavel</span><div><b>Bryder du reglerne, kan aftalen sættes på pause eller stoppes.</b><span>Dit link holder op med at virke, og bonus for kunder, der er skaffet i strid med reglerne, bortfalder. Bonus, du har optjent på lovlig vis, beholder du.</span></div></div>
+  <div class="tip"><span class="ms fill">help</span><span><b>I tvivl, om noget er i orden?</b> Så lad være, og skriv til os først på info@dialogbot.dk. Vi svarer hellere på et spørgsmål end retter op på en fejl.</span></div>
+  <div class="folio"><span>Dialogbot · Ambassadørhåndbogen</span><span>4</span></div>
+</section>
+
+<!-- ============ 5. SAMTALEGUIDE ============ -->
+<section class="sheet" aria-label="Samtaleguide">
+  <div class="hd">
+    <span class="eyebrow">Samtaleguide</span>
+    <h2 class="h2">Sådan fortæller du om Dialogbot.</h2>
+  </div>
+  <div class="pitch">
+    <span class="eyebrow">Sig det på 20 sekunder</span>
+    <p class="q">"Mister I nogensinde opkald, fordi I har travlt? <mark>Dialogbot er en dansk AI-receptionist.</mark> Den tager telefonen, når I ikke kan, svarer ud fra jeres egne priser og booker tider. Vil du høre den? Du kan selv blive ringet op på dialogbot.dk."</p>
+    <small>Afslut med: "Jeg er ambassadør og får en lille bonus, hvis I bliver kunde. Med min kode får I 50 % rabat på første måned."</small>
+  </div>
+
+  <div class="steps4">
+    <div class="s4"><span class="n">1</span><h3>Spørg ind</h3><p>Hvem tager telefonen, når I står med en kunde? Hvad sker der efter lukketid?</p></div>
+    <div class="s4"><span class="n">2</span><h3>Lad dem høre den</h3><p>De skriver selv deres nummer under "Bliv ringet op" på dialogbot.dk. Det tager et minut.</p></div>
+    <div class="s4"><span class="n">3</span><h3>Send materialet</h3><p>Din personlige brochure og dit link. Kun til dem, du har talt med.</p></div>
+    <div class="s4"><span class="n">4</span><h3>Hjælp i gang</h3><p>Send opsætningsmanualen. Spørg efter en uge, om de kom i gang.</p></div>
+  </div>
+
+  <div class="hd" style="gap:1.5mm">
+    <span class="eyebrow">Typiske spørgsmål</span>
+  </div>
+  <div class="qa">
+    <div><h4>Hvad koster det?</h4><p>Model A: 1.495 kr./md. Model B: 149 kr. pr. godkendt henvendelse. Ekskl. moms, ingen binding, intet opstartsgebyr. 50 % rabat på første måned med din kode.</p></div>
+    <div><h4>Kan kunderne høre, at det er en AI?</h4><p>Ja. Den siger altid, at den er en digital assistent. Den taler naturligt dansk med stemmerne Camilla eller Peter.</p></div>
+    <div><h4>Skal vi have et nyt nummer?</h4><p>Nej. De beholder deres nummer og viderestiller kun de opkald, de ikke når.</p></div>
+    <div><h4>Hvad hvis den svarer forkert?</h4><p>Den svarer kun ud fra viden, ejeren har godkendt. Kender den ikke svaret, siger den det og laver en opgave til dem.</p></div>
+    <div><h4>Er det svært at sætte op?</h4><p>Nej. Der er en opsætningsguide i appen og en manual med alle trin. Det tager cirka en time.</p></div>
+    <div><h4>Hvad med data og GDPR?</h4><p>Data tilhører kunden. Dialogbot er databehandler. Henvis til dialogbot.dk/privatliv for detaljer.</p></div>
+  </div>
+  <div class="tip"><span class="ms fill">sentiment_satisfied</span><span><b>Siger de nej tak?</b> Så er det fint. Tak for snakken, og lad være med at følge op med flere beskeder. Et godt indtryk giver ofte en anbefaling videre.</span></div>
+  <div class="folio"><span>Dialogbot · Ambassadørhåndbogen</span><span>5</span></div>
+</section>
+
+<!-- ============ 6. DASHBOARD ============ -->
+<section class="sheet" aria-label="Dit dashboard">
+  <div class="hd">
+    <span class="eyebrow">Dit dashboard</span>
+    <h2 class="h2">Alt om dine kunder og din bonus ét sted.</h2>
+    <p class="lede">Log ind på dialogbot.dk, og vælg <b>Ambassadør: anbefal og tjen</b> i kontomenuen, eller gå direkte til <b>dialogbot.dk/ambassador</b>.</p>
+  </div>
+  <div class="mock" aria-label="Eksempel på dashboardet">
+    <div class="bar"><i></i><i></i><i></i><span>dialogbot.dk/ambassador</span></div>
+    <div class="in">
+      <div class="hello"><h4>Hej Emma</h4><span class="st">Aktiv</span></div>
+      <p class="terms-line">Din aftale: 500 kr. i startbonus pr. kunde + 10 % af det, de betaler, i 12 måneder.</p>
+      <div class="tabs">
+        <span class="on"><span class="ms">dashboard</span>Overblik<i class="k">1</i></span>
+        <span><span class="ms">storefront</span>Kunder<i class="k">2</i></span>
+        <span><span class="ms">receipt_long</span>Kontoudtog<i class="k">3</i></span>
+        <span><span class="ms">payments</span>Udbetalinger<i class="k">4</i></span>
+        <span><span class="ms">badge</span>Oplysninger<i class="k">5</i></span>
+        <span><span class="ms">share</span>Del og tekster<i class="k">6</i></span>
+      </div>
+      <div class="tiles">
+        <div class="tile s"><small>Klar til udbetaling</small><b>649 kr.</b></div>
+        <div class="tile"><small>Optjent – frigives</small><b>149 kr.</b></div>
+        <div class="tile"><small>Under udbetaling</small><b>0 kr.</b></div>
+        <div class="tile"><small>Udbetalt i alt</small><b>1.074 kr.</b></div>
+      </div>
+      <div class="linkrow">
+        <div><small>Personligt link</small><b>dialogbot.dk/a/emma</b></div>
+        <div><small>Kode</small><b>EMMA42</b></div>
+        <div class="st3"><span><b>23</b>Besøg (30 dage)</span><span><b>3</b>Kunder</span><span><b>2</b>Betalende</span></div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:7.5pt;color:var(--muted);margin-top:-4mm">Eksempel med opdigtede tal.</p>
+
+  <div class="tabguide">
+    <div class="tg"><span class="k">1</span><div><h3>Overblik</h3><p>Dine fire saldi, dit link og din kode med kopiér-knapper, og hvor mange der har besøgt dit link, oprettet sig og betaler.</p></div></div>
+    <div class="tg"><span class="k">2</span><div><h3>Kunder</h3><p>Firmanavn, status, om de kom via link eller kode, hvor længe du får andel, og din bonus pr. kunde.</p></div></div>
+    <div class="tg"><span class="k">3</span><div><h3>Kontoudtog</h3><p>Hver eneste post: startbonus, andel og eventuelle modregninger med status og dato for frigivelse.</p></div></div>
+    <div class="tg"><span class="k">4</span><div><h3>Udbetalinger</h3><p>Alle udbetalinger med beløb og status. Åbn en udbetaling for at se og gemme afregningsbilaget.</p></div></div>
+    <div class="tg"><span class="k">5</span><div><h3>Oplysninger</h3><p>CPR, bankkonto, mobilnummer og din hilsen på din side. En prik på fanen betyder, at der mangler noget før udbetaling.</p></div></div>
+    <div class="tg"><span class="k">6</span><div><h3>Del og tekster</h3><p>Færdige tekster til sms, sociale medier og LinkedIn, din personlige brochure og opsætningsmanualen.</p></div></div>
+  </div>
+
+  <div class="statuses">
+    <div class="stt"><span class="pill" style="background:var(--sky-2);color:#00334a">Afventer godkendelse</span><p>Vi kigger på din tilmelding. Linket virker, når du er godkendt.</p></div>
+    <div class="stt"><span class="pill" style="background:var(--lime);color:var(--forest)">Aktiv</span><p>Alt kører. Del løs, inden for reglerne.</p></div>
+    <div class="stt"><span class="pill" style="background:var(--no-bg);color:var(--no)">Sat på pause</span><p>Linket virker ikke lige nu. Begrundelsen står på siden. Optjent bonus bliver stående.</p></div>
+    <div class="stt"><span class="pill" style="background:var(--mint-2);color:var(--muted)">Ikke godkendt</span><p>Vi kunne ikke godkende dig. Eventuel begrundelse står på siden.</p></div>
+  </div>
+  <div class="folio"><span>Dialogbot · Ambassadørhåndbogen</span><span>6</span></div>
+</section>
+
+<!-- ============ 7. UDBETALING OG SKAT ============ -->
+<section class="sheet" aria-label="Udbetaling og skat">
+  <div class="hd">
+    <span class="eyebrow">Udbetaling og skat</span>
+    <h2 class="h2">Sådan får du dine penge.</h2>
+    <p class="lede">Vi udbetaler typisk én gang om måneden til alle, der har mindst 500 kr. klar, og hvor oplysningerne er i orden.</p>
+  </div>
+  <div class="payflow">
+    <div class="pf"><span class="ms">fact_check</span><h3>1. Oplysninger i orden</h3><p>Bankkonto og CPR (eller CVR) er udfyldt. Er du under 18, har en forælder godkendt.</p></div>
+    <div class="pf"><span class="ms">savings</span><h3>2. Mindst 500 kr. klar</h3><p>Under 500 kr. venter beløbet til næste gang. Det forsvinder ikke.</p></div>
+    <div class="pf"><span class="ms">account_balance</span><h3>3. Vi overfører</h3><p>Pengene sendes til din bankkonto. Status skifter til "Under udbetaling".</p></div>
+    <div class="pf"><span class="ms">mark_email_read</span><h3>4. Mail og bilag</h3><p>Du får en mail, og afregningsbilaget ligger under Udbetalinger.</p></div>
+  </div>
+
+  <div class="who2">
+    <div class="card">
+      <span class="ic"><span class="ms">person</span></span>
+      <h3>Privatperson uden CVR</h3>
+      <ul>
+        <li><span class="ms">check</span><span>Din bonus er <b>B-indkomst</b>.</span></li>
+        <li><span class="ms">check</span><span>Vi trækker <b>ikke</b> skat. Vi indberetter beløbet til Skattestyrelsen med dit CPR-nummer.</span></li>
+        <li><span class="ms">check</span><span>Du betaler selv skatten. Ret gerne din forskudsopgørelse på skat.dk, så du ikke får restskat.</span></li>
+        <li><span class="ms">check</span><span>Du bestemmer selv, hvornår og hvordan du anbefaler. Det er ikke et job med løn.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="ic"><span class="ms">business_center</span></span>
+      <h3>Virksomhed med CVR</h3>
+      <ul>
+        <li><span class="ms">check</span><span>Du får et <b>afregningsbilag</b> med hver udbetaling.</span></li>
+        <li><span class="ms">check</span><span>Er virksomheden momsregistreret, lægger vi 25 % moms oven i.</span></li>
+        <li><span class="ms">check</span><span>Beløbet bogføres som indtægt i din virksomhed.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="flex-direction:row;gap:4mm;align-items:flex-start">
+    <span class="ms" style="font-size:30px;color:var(--forest)">family_restroom</span>
+    <div><h3>Er du under 18?</h3><p>Du skal være mindst 15 år. En forælder får en mail med aftalen og reglerne og godkender den via et link, uden at skulle oprette en konto. Du kan godt dele dit link og skaffe kunder imens. Vi udbetaler først, når aftalen er godkendt. Er mailen ikke kommet, kan du sende den igen fra dit dashboard.</p></div>
+  </div>
+
+  <div class="card" style="flex-direction:row;gap:4mm;align-items:flex-start">
+    <span class="ms" style="font-size:30px;color:var(--forest)">lock</span>
+    <div><h3>Dine oplysninger er beskyttede</h3><p>CPR og bankoplysninger gemmes krypteret og bruges kun til udbetaling og indberetning. Du ser kun dine kunders firmanavn, status og din bonus. Du ser aldrig deres samtaler, henvendelser eller kontaktdata.</p></div>
+  </div>
+  <div class="folio"><span>Dialogbot · Ambassadørhåndbogen · Ikke skatterådgivning. Spørg Skattestyrelsen eller en revisor ved tvivl.</span><span>7</span></div>
+</section>
+
+<!-- ============ 8. HVEM SPØRGER DU ============ -->
+<section class="sheet dark" aria-label="Hvem spørger du">
+  <div class="hd">
+    <span class="eyebrow">Hjælp og kontakt</span>
+    <h2 class="h2">Hvem spørger du?</h2>
+    <p class="lede">Du står ikke alene. Her er, hvor du går hen med de spørgsmål, der typisk opstår.</p>
+  </div>
+  <div class="route">
+    <div class="rt"><div><h3>Bonus, udbetaling, kontoudtog eller skat</h3><p>Fx et beløb, du ikke kan genkende, eller en udbetaling, der mangler.</p></div><div class="to"><b>info@dialogbot.dk</b>Emne: Ambassadør + din kode</div></div>
+    <div class="rt"><div><h3>Er det her tilladt?</h3><p>Tvivl om en besked, et opslag eller en virksomhed, du vil kontakte.</p></div><div class="to"><b>info@dialogbot.dk</b>Spørg før du sender</div></div>
+    <div class="rt"><div><h3>En kunde er ikke koblet til dig</h3><p>Kunden glemte koden eller oprettede sig uden dit link.</p></div><div class="to"><b>Kunden: Fakturering</b>inden 30 dage. Ellers info@dialogbot.dk</div></div>
+    <div class="rt"><div><h3>Kunden har brug for hjælp til opsætning</h3><p>Send opsætningsmanualen. Kunden kan også bruge Hjælp i appen eller skrive til os.</p></div><div class="to"><b>Hjælp i appen</b>eller info@dialogbot.dk</div></div>
+    <div class="rt"><div><h3>Teknisk fejl hos kunden</h3><p>Du kan ikke se kundens data, så kunden skal selv skrive til os med sit firmanavn.</p></div><div class="to"><b>Kunden skriver selv</b>info@dialogbot.dk</div></div>
+    <div class="rt"><div><h3>Ret dine oplysninger</h3><p>Bankkonto, CPR, mobilnummer og din hilsen.</p></div><div class="to"><b>Dashboard</b>fanen Oplysninger</div></div>
+  </div>
+
+  <div class="hd" style="gap:2mm">
+    <span class="eyebrow">Din første uge</span>
+  </div>
+  <div class="week">
+    <div class="wd"><b>Dag 1</b><span>Udfyld bank og CPR under Oplysninger.</span></div>
+    <div class="wd"><b>Dag 2</b><span>Bliv selv ringet op på dialogbot.dk, så du ved, hvordan den lyder.</span></div>
+    <div class="wd"><b>Dag 3</b><span>Skriv en liste med fem virksomheder, du kender.</span></div>
+    <div class="wd"><b>Dag 4–6</b><span>Tal med dem. Send brochuren til dem, der er interesserede.</span></div>
+    <div class="wd"><b>Dag 7</b><span>Tjek dit dashboard. Hvem har klikket?</span></div>
+  </div>
+
+  <div class="contact">
+    <span class="ms">support_agent</span>
+    <div>
+      <div class="big">info@dialogbot.dk</div>
+      <p>Skriv "Ambassadør" og din kode i emnefeltet, så finder vi dig hurtigt. Dialogbot · CVR-nr. 25632710 · Abildgade 18, 8200 Aarhus</p>
+    </div>
+  </div>
+  <div class="folio"><span>Dialogbot · Ambassadørhåndbogen</span><span>8</span></div>
+</section>
+</main>
+</body>
+</html>

@@ -231,6 +231,7 @@ function Materials({ me }: { me: Profile }) {
           <li><a className="underline text-primary" target="_blank" rel="noopener" href={`/materiale/salgsmateriale.html?${new URLSearchParams({ navn: first, link: me.link, kode: me.code, rabat: String((me.terms.customer_discount_bp ?? 5000) / 100) })}`}>Din personlige brochure</a></li>
           <li><a className="underline text-primary" target="_blank" rel="noopener" href="/materiale/dialogbot-salgsmateriale.pdf">Brochure (PDF uden navn)</a></li>
           <li><a className="underline text-primary" target="_blank" rel="noopener" href="/materiale/dialogbot-opsaetningsmanual.pdf">Opsætningsmanual (PDF)</a></li>
+          <li><a className="underline text-primary" target="_blank" rel="noopener" href="/materiale/dialogbot-ambassadoerhaandbog.pdf">Ambassadørhåndbogen (PDF) – til dig selv</a></li>
         </ul>
       </section>
       {texts.map(([title, text]) => (

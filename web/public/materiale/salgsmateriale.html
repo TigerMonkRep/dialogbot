@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dialogbot Salgsbrochure</title>
+<meta name="description" content="Dialogbot – dansk AI-receptionist, AI-telefonsvarer og chatbot. Funktioner, priser og sådan kommer I i gang.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=block">
+<style>
+/* Layout: A4-ark i en stak. Forside og bagside i skovgrøn, indersiderne på lys mint, lime som eneste accent.
+   Bevidst ét udtryk (trykt papir) – samme farver i lyst og mørkt tema. */
+:root {
+  --forest: #00362d;       /* Dialogbot primary */
+  --forest-2: #164e43;     /* primary container */
+  --mint: #e7fef9;         /* surface */
+  --mint-2: #dcf3ee;       /* surface container */
+  --mint-3: #b6eede;       /* primary fixed */
+  --lime: #d4ea82;         /* secondary container – accent */
+  --olive: #546508;        /* secondary */
+  --ink: #0f1f1c;
+  --muted: #3f4946;
+  --line: #c3d6d1;
+  --paper: #ffffff;
+  --backdrop: #c8dfda;
+  --display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--backdrop); color: var(--ink); font-family: var(--body); font-size: 10.5pt; line-height: 1.5;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 24px 16px; }
+.ms { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal;
+  text-transform: none; white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased; font-size: 22px;
+  font-variation-settings: "FILL" 0, "wght" 400, "opsz" 24; display: inline-block; vertical-align: middle; }
+.ms.fill { font-variation-settings: "FILL" 1, "wght" 400, "opsz" 24; }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+p { margin: 0; }
+.stack { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.sheet { position: relative; width: 210mm; height: 297mm; overflow: hidden; background: var(--mint); box-shadow: 0 10px 40px rgba(0,32,26,.18);
+  padding: 18mm 17mm 16mm; display: flex; flex-direction: column; gap: 9mm; }
+.sheet.dark { background: var(--forest); color: #fff; }
+.eyebrow { font-family: var(--body); font-size: 8pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--olive); }
+.dark .eyebrow { color: var(--lime); }
+.folio { position: absolute; left: 17mm; right: 17mm; bottom: 8mm; display: flex; justify-content: space-between; font-size: 7.5pt; color: var(--muted); letter-spacing: .04em; }
+.dark .folio { color: var(--mint-3); }
+.brand { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 800; font-size: 14pt; }
+.brand .mark { width: 30px; height: 30px; border-radius: 9px; background: var(--lime); color: var(--forest); display: grid; place-items: center; }
+.h2 { font-size: 24pt; line-height: 1.12; font-weight: 800; color: var(--forest); }
+.lede { font-size: 11.5pt; color: var(--muted); max-width: 150mm; }
+
+/* ---------- 1. Forside ---------- */
+.cover { gap: 0; padding-bottom: 14mm; }
+.cover .top { display: flex; justify-content: space-between; align-items: center; }
+.tag { font-size: 7.5pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; border: 1px solid rgba(212,234,130,.55); color: var(--lime); padding: 4px 9px; border-radius: 99px; }
+.cover h1 { margin-top: 14mm; font-size: 44pt; line-height: 1.02; font-weight: 800; letter-spacing: -0.025em; }
+.cover h1 em { font-style: normal; color: var(--lime); display: block; }
+.cover .sub { margin-top: 7mm; font-size: 13pt; line-height: 1.45; color: var(--mint-3); max-width: 135mm; }
+.call { margin-top: 12mm; display: grid; grid-template-columns: 1.25fr 1fr; gap: 6mm; align-items: start; }
+.phone { background: var(--forest-2); border-radius: 22px; padding: 6mm; border: 1px solid rgba(182,238,222,.18); }
+.phone .bar { display: flex; align-items: center; justify-content: space-between; font-size: 8pt; color: var(--mint-3); margin-bottom: 4mm; }
+.live { display: inline-flex; align-items: center; gap: 6px; color: var(--lime); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 4px rgba(212,234,130,.2); }
+.bubbles { display: flex; flex-direction: column; gap: 2.4mm; }
+.b { max-width: 88%; padding: 2.2mm 3.4mm; border-radius: 14px; font-size: 9.5pt; line-height: 1.4; }
+.b small { display: block; font-size: 6.8pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .7; margin-bottom: 1px; }
+.b.c { align-self: flex-end; background: var(--lime); color: var(--forest); border-top-right-radius: 4px; }
+.b.a { align-self: flex-start; background: rgba(255,255,255,.1); color: #fff; border-top-left-radius: 4px; }
+.result { background: var(--paper); color: var(--ink); border-radius: 18px; padding: 5mm; display: flex; flex-direction: column; gap: 3mm; }
+.result .ok { display: flex; gap: 6px; align-items: center; color: var(--olive); font-weight: 700; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .08em; }
+.result .when { font-family: var(--display); font-weight: 800; color: var(--forest); font-size: 15pt; line-height: 1.15; }
+.result dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 1.2mm 3mm; font-size: 8.8pt; }
+.result dt { color: var(--muted); }
+.result dd { margin: 0; font-weight: 600; }
+.result .sms { display: flex; gap: 6px; align-items: center; font-size: 8.5pt; background: var(--mint-2); border-radius: 10px; padding: 2mm 3mm; color: var(--forest); }
+.cover .note { margin-top: 2.5mm; font-size: 7.5pt; color: var(--mint-3); opacity: .8; }
+.amb { margin-top: auto; display: grid; grid-template-columns: auto 1fr auto; gap: 5mm; align-items: center; background: var(--lime); color: var(--forest); border-radius: 18px; padding: 5mm 6mm; }
+.amb .avatar { width: 14mm; height: 14mm; border-radius: 50%; background: var(--forest); color: var(--lime); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 16pt; }
+.amb .who { font-family: var(--display); font-weight: 800; font-size: 13pt; line-height: 1.2; }
+.amb .how { font-size: 9pt; margin-top: 1mm; }
+.amb .how b { font-weight: 700; }
+.amb .pct { text-align: right; font-family: var(--display); font-weight: 800; font-size: 26pt; line-height: 1; }
+.amb .pct small { display: block; font-family: var(--body); font-size: 7.5pt; font-weight: 600; letter-spacing: .04em; }
+.disclose { margin-top: 3mm; font-size: 7.3pt; color: var(--mint-3); }
+
+/* ---------- 2. Problem / to spor ---------- */
+.quote { font-family: var(--display); font-size: 28pt; line-height: 1.1; font-weight: 800; color: var(--forest); letter-spacing: -0.02em; }
+.quote span { background: linear-gradient(transparent 62%, var(--lime) 62%); }
+.moments { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+.moment { background: var(--paper); border-radius: 14px; padding: 4.5mm; display: flex; flex-direction: column; gap: 1.5mm; }
+.moment .t { font-family: var(--display); font-weight: 800; color: var(--forest); font-size: 15pt; font-variant-numeric: tabular-nums; }
+.moment p { font-size: 9pt; color: var(--muted); }
+.tracks { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.track { border-radius: 18px; padding: 6mm; display: flex; flex-direction: column; gap: 3mm; }
+.track.in { background: var(--forest); color: #fff; }
+.track.out { background: var(--paper); border: 1.5px solid var(--forest); }
+.chip { align-self: flex-start; font-size: 7.5pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; }
+.in .chip { background: var(--lime); color: var(--forest); }
+.out .chip { background: var(--mint-2); color: var(--forest); }
+.track h3 { font-size: 15pt; line-height: 1.2; }
+.out h3 { color: var(--forest); }
+.track p { font-size: 9.5pt; }
+.in p { color: var(--mint-3); }
+.out p { color: var(--muted); }
+.track ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 2mm; font-size: 9.3pt; }
+.track li { display: flex; gap: 2.5mm; align-items: flex-start; }
+.track li .ms { font-size: 17px; margin-top: 1px; }
+.in li .ms { color: var(--lime); }
+.out li .ms { color: var(--olive); }
+.channels { display: flex; gap: 2mm; margin-top: auto; }
+.channels span { flex: 1; text-align: center; background: rgba(255,255,255,.08); border-radius: 10px; padding: 2.5mm 1mm; font-size: 8pt; display: flex; flex-direction: column; align-items: center; gap: 1mm; }
+.channels .ms { color: var(--lime); }
+.flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5mm; margin-top: auto; counter-reset: f; }
+.flow span { background: var(--mint-2); border-radius: 10px; padding: 2.5mm 2mm; font-size: 8pt; font-weight: 600; color: var(--forest); }
+.flow span::before { counter-increment: f; content: "0" counter(f); display: block; font-family: var(--display); font-weight: 800; color: var(--olive); font-size: 10pt; }
+
+/* ---------- 3. Funktioner ---------- */
+.feat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+.f { background: var(--paper); border-radius: 14px; padding: 4.5mm; display: flex; flex-direction: column; gap: 1.8mm; }
+.f .ic { width: 9.5mm; height: 9.5mm; border-radius: 10px; background: var(--mint-2); color: var(--forest); display: grid; place-items: center; }
+.f .ic .ms { font-size: 20px; }
+.f h3 { font-size: 11pt; color: var(--forest); line-height: 1.25; }
+.f p { font-size: 8.6pt; color: var(--muted); line-height: 1.45; }
+.f.hero { grid-column: span 2; background: var(--forest); color: #fff; flex-direction: row; gap: 5mm; align-items: center; }
+.f.hero .ic { background: var(--lime); width: 13mm; height: 13mm; flex: none; }
+.f.hero .ic .ms { font-size: 28px; }
+.f.hero h3 { color: #fff; font-size: 13pt; }
+.f.hero p { color: var(--mint-3); font-size: 9pt; }
+.voices { display: flex; gap: 2mm; margin-top: 1.5mm; }
+.voices span { display: inline-flex; align-items: center; gap: 4px; background: rgba(255,255,255,.1); border-radius: 99px; padding: 2px 9px 2px 3px; font-size: 8.3pt; font-weight: 600; }
+.voices span i { font-style: normal; width: 18px; height: 18px; border-radius: 50%; background: var(--lime); color: var(--forest); display: grid; place-items: center; font-size: 8pt; font-weight: 800; }
+.integr { display: flex; flex-wrap: wrap; gap: 2mm; align-items: center; background: var(--mint-2); border-radius: 14px; padding: 4mm 5mm; }
+.integr b { font-family: var(--display); color: var(--forest); font-size: 10pt; margin-right: 2mm; }
+.integr span { background: var(--paper); border-radius: 99px; padding: 3px 10px; font-size: 8.5pt; font-weight: 600; color: var(--forest); }
+
+/* ---------- 4. Kontrol ---------- */
+.journey { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+.journey::before { content: ""; position: absolute; top: 7mm; left: 12.5%; right: 12.5%; height: 2px; background: repeating-linear-gradient(90deg, var(--forest) 0 6px, transparent 6px 11px); }
+.j { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2mm; padding: 0 2mm; position: relative; }
+.j .dot { width: 14mm; height: 14mm; border-radius: 50%; background: var(--forest); color: var(--lime); display: grid; place-items: center; box-shadow: 0 0 0 5px var(--mint); }
+.j h3 { font-size: 10.5pt; color: var(--forest); }
+.j p { font-size: 8.5pt; color: var(--muted); }
+.trust { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.panel { background: var(--paper); border-radius: 18px; padding: 6mm; display: flex; flex-direction: column; gap: 3mm; }
+.panel h3 { font-size: 13pt; color: var(--forest); }
+.panel ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2.6mm; }
+.panel li { display: grid; grid-template-columns: auto 1fr; gap: 2.5mm; font-size: 9pt; color: var(--muted); }
+.panel li b { color: var(--ink); display: block; font-size: 9.5pt; }
+.panel li .ms { color: var(--olive); font-size: 19px; }
+.summary { background: var(--forest); color: #fff; }
+.summary h3 { color: #fff; }
+.summary .row { display: flex; justify-content: space-between; align-items: center; }
+.pill { font-size: 7.5pt; font-weight: 700; padding: 3px 9px; border-radius: 99px; background: var(--lime); color: var(--forest); letter-spacing: .04em; }
+.summary .person { display: flex; gap: 3mm; align-items: center; }
+.summary .person i { font-style: normal; width: 10mm; height: 10mm; border-radius: 50%; background: var(--forest-2); display: grid; place-items: center; font-weight: 800; font-family: var(--display); color: var(--lime); }
+.summary .person small { display: block; color: var(--mint-3); font-size: 8pt; }
+.summary .box { background: rgba(255,255,255,.07); border-radius: 12px; padding: 3mm 3.5mm; font-size: 9pt; color: #e8f7f2; }
+.summary .box b { display: block; font-size: 7pt; letter-spacing: .1em; text-transform: uppercase; color: var(--lime); margin-bottom: 1mm; }
+.summary .ill { font-size: 7.3pt; color: var(--mint-3); }
+
+/* ---------- 5. Priser ---------- */
+.sheet.tight { gap: 6mm; }
+.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.plan { border-radius: 20px; padding: 6mm 6mm 5mm; display: flex; flex-direction: column; gap: 3mm; background: var(--paper); border: 1.5px solid var(--line); }
+.plan.pop { background: var(--forest); color: #fff; border-color: var(--forest); }
+.plan .name { display: flex; justify-content: space-between; align-items: center; font-size: 8pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--olive); }
+.plan.pop .name { color: var(--lime); }
+.plan h3 { font-size: 15pt; color: var(--forest); }
+.plan.pop h3 { color: #fff; }
+.price { font-family: var(--display); font-weight: 800; font-size: 36pt; line-height: 1; letter-spacing: -0.03em; color: var(--forest); font-variant-numeric: tabular-nums; }
+.plan.pop .price { color: var(--lime); }
+.price small { font-family: var(--body); font-size: 10pt; font-weight: 600; letter-spacing: 0; color: var(--muted); margin-left: 1.5mm; }
+.plan.pop .price small { color: var(--mint-3); }
+.plan p { font-size: 9.3pt; color: var(--muted); }
+.plan.pop p { color: var(--mint-3); }
+.plan ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 2mm; font-size: 9.2pt; }
+.plan li { display: flex; gap: 2.5mm; }
+.plan li .ms { font-size: 17px; color: var(--olive); }
+.plan.pop li .ms { color: var(--lime); }
+.plan .best { margin-top: auto; font-size: 8.5pt; border-top: 1px dashed var(--line); padding-top: 3mm; color: var(--forest); font-weight: 600; }
+.plan.pop .best { border-color: rgba(182,238,222,.3); color: var(--lime); }
+.addon { display: grid; grid-template-columns: auto 1fr auto; gap: 5mm; align-items: center; background: var(--paper); border-radius: 18px; padding: 5mm 6mm; }
+.addon .ic { width: 12mm; height: 12mm; border-radius: 12px; background: var(--mint-2); color: var(--forest); display: grid; place-items: center; }
+.addon h3 { font-size: 12pt; color: var(--forest); }
+.addon p { font-size: 8.8pt; color: var(--muted); }
+.addon .p { font-family: var(--display); font-weight: 800; font-size: 20pt; color: var(--forest); text-align: right; line-height: 1; }
+.addon .p small { display: block; font-family: var(--body); font-size: 7.8pt; font-weight: 600; color: var(--muted); }
+.calc { display: grid; grid-template-columns: 1.3fr 1fr; gap: 5mm; align-items: stretch; }
+.chart { background: var(--paper); border-radius: 18px; padding: 5mm 6mm; display: flex; flex-direction: column; gap: 2mm; }
+.chart h3 { font-size: 11pt; color: var(--forest); }
+.chart svg { width: 100%; height: auto; max-height: 36mm; display: block; }
+.chart .legend { display: flex; gap: 5mm; font-size: 8pt; color: var(--muted); }
+.chart .legend i { display: inline-block; width: 12px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 4px; }
+.incl { background: var(--lime); border-radius: 18px; padding: 5mm 6mm; display: flex; flex-direction: column; gap: 2.2mm; color: var(--forest); }
+.incl h3 { font-size: 12pt; }
+.incl ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.6mm; font-size: 9pt; font-weight: 500; }
+.incl li { display: flex; gap: 2mm; }
+.incl li .ms { font-size: 17px; }
+.fine { font-size: 7.6pt; color: var(--muted); }
+
+/* ---------- 6. Kom i gang ---------- */
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; }
+.st { border-top: 3px solid var(--lime); padding-top: 3mm; display: flex; flex-direction: column; gap: 1.5mm; }
+.st .n { font-family: var(--display); font-weight: 800; font-size: 22pt; color: var(--lime); line-height: 1; }
+.st h3 { font-size: 11pt; }
+.st p { font-size: 8.6pt; color: var(--mint-3); }
+.hear { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.hcard { background: var(--forest-2); border-radius: 18px; padding: 5.5mm; display: flex; flex-direction: column; gap: 2mm; border: 1px solid rgba(182,238,222,.16); }
+.hcard .ms { color: var(--lime); font-size: 26px; }
+.hcard h3 { font-size: 12.5pt; }
+.hcard p { font-size: 9pt; color: var(--mint-3); }
+.hcard .url { font-family: var(--display); font-weight: 800; color: var(--lime); font-size: 10pt; margin-top: auto; word-break: break-all; }
+.faq { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm 6mm; }
+.faq div h3 { font-size: 9.8pt; color: #fff; margin-bottom: .8mm; }
+.faq div p { font-size: 8.5pt; color: var(--mint-3); }
+.contact { margin-top: auto; display: grid; grid-template-columns: 1fr auto; gap: 6mm; align-items: center; background: var(--lime); color: var(--forest); border-radius: 18px; padding: 5.5mm 6mm; }
+.contact .big { font-family: var(--display); font-weight: 800; font-size: 17pt; line-height: 1.15; }
+.contact .lines { font-size: 9pt; margin-top: 1.5mm; display: flex; flex-wrap: wrap; gap: 1mm 5mm; }
+.contact .lines span { display: inline-flex; align-items: center; gap: 4px; }
+.contact .lines .ms { font-size: 16px; }
+.contact .code { text-align: center; background: var(--forest); color: var(--lime); border-radius: 14px; padding: 3mm 5mm; }
+.contact .code small { display: block; font-size: 7pt; letter-spacing: .12em; text-transform: uppercase; color: var(--mint-3); }
+.contact .code b { font-family: var(--display); font-weight: 800; font-size: 16pt; letter-spacing: .04em; }
+
+/* Skærm: smalle vinduer får ark, der følger bredden */
+@media screen and (max-width: 860px) {
+  body { padding-inline: 12px; }
+  .sheet { width: 100%; height: auto; padding: 22px 18px 44px; gap: 22px; }
+  .cover h1 { font-size: 34px; margin-top: 28px; }
+  .h2, .quote { font-size: 26px; }
+  .call, .tracks, .trust, .plans, .calc, .hear, .faq, .contact { grid-template-columns: 1fr; }
+  .moments, .feat, .steps, .journey { grid-template-columns: 1fr 1fr; }
+  .journey::before { display: none; }
+  .journey { row-gap: 16px; }
+  .f.hero { grid-column: span 2; }
+  .amb { grid-template-columns: auto 1fr; }
+  .amb .pct { grid-column: span 2; text-align: left; }
+  .addon { grid-template-columns: auto 1fr; }
+  .addon .p { grid-column: span 2; text-align: left; }
+}
+@media screen and (max-width: 480px) {
+  .moments, .feat, .steps, .journey, .flow { grid-template-columns: 1fr; }
+  .f.hero { grid-column: auto; flex-direction: column; align-items: flex-start; }
+}
+@page { size: A4; margin: 0; }
+@media print {
+  body { background: none; padding: 0; }
+  .stack { gap: 0; display: block; }
+  .sheet { box-shadow: none; break-after: page; page-break-after: always; }
+  .sheet:last-child { break-after: auto; page-break-after: auto; }
+}
+</style>
+</head>
+<body>
+<main class="stack">
+
+<!-- ============ 1. FORSIDE ============ -->
+<section class="sheet dark cover" aria-label="Forside">
+  <div class="top">
+    <div class="brand"><span class="mark"><span class="ms fill">support_agent</span></span>Dialogbot</div>
+    <span class="tag">Reklame</span>
+  </div>
+  <h1>Du driver forretningen.<em>Dialogbot tager samtalen.</em></h1>
+  <p class="sub">En dansk AI-receptionist, der svarer telefonen og chatten, når I ikke selv kan. Den hjælper kunderne med at booke en tid og giver jer et klart overblik bagefter. Den svarer kun ud fra jeres egen, godkendte viden.</p>
+
+  <div class="call">
+    <div class="phone">
+      <div class="bar"><span class="live">Opkald</span><span>Fjord Gulvservice · 14:32</span></div>
+      <div class="bubbles">
+        <div class="b a"><small>Dialogbot</small>Fjord Gulvservice, du taler med Camilla, den digitale assistent. Hvad kan jeg hjælpe med?</div>
+        <div class="b c"><small>Kunde</small>Jeg vil gerne have et tilbud på gulvafslibning.</div>
+        <div class="b a"><small>Dialogbot</small>Selvfølgelig. Hvor stort er arealet?</div>
+        <div class="b c"><small>Kunde</small>Cirka 65 m². Kan I komme på onsdag?</div>
+        <div class="b a"><small>Dialogbot</small>Der er en tid onsdag kl. 10.30. Skal jeg booke den?</div>
+      </div>
+    </div>
+    <div>
+      <div class="result">
+        <span class="ok"><span class="ms fill" style="font-size:16px">check_circle</span>Besigtigelse booket</span>
+        <div class="when">Onsdag kl. 10.30–11.15</div>
+        <dl>
+          <dt>Opgave</dt><dd>Afslibning, 65 m²</dd>
+          <dt>Vejl. pris</dt><dd>145 kr./m²</dd>
+          <dt>Næste skridt</dt><dd>Tjek parkering</dd>
+        </dl>
+        <div class="sms"><span class="ms" style="font-size:16px">sms</span>SMS-bekræftelse sendt til kunden</div>
+      </div>
+      <p class="note">Eksempel. Navne og priser er illustration.</p>
+    </div>
+  </div>
+
+  <div class="amb" id="amb">
+    <span class="avatar" data-amb="initial">D</span>
+    <div>
+      <div class="who" data-amb="who">Anbefalet af en Dialogbot-ambassadør</div>
+      <div class="how" data-amb="how">Opret jer via din ambassadørs link eller med ambassadørkoden, så får I rabatten automatisk.</div>
+    </div>
+    <div class="pct"><span data-amb="pct">50 %</span><small>rabat på første måned</small></div>
+  </div>
+  <p class="disclose" data-amb="disclose">Reklame. Du har fået materialet af en Dialogbot-ambassadør, som får en bonus, hvis I bliver kunde.</p>
+</section>
+
+<!-- ============ 2. PROBLEM OG TO SPOR ============ -->
+<section class="sheet" aria-label="Hvorfor Dialogbot">
+  <span class="eyebrow">Hvorfor Dialogbot</span>
+  <p class="quote">Kunden, der ringer, mens I har hænderne fulde, <span>ringer ofte bare til den næste.</span></p>
+  <p class="lede">Dialogbot tager telefonen og chatten i de øjeblikke, hvor I ikke selv kan. Assistenten stiller de rigtige spørgsmål, booker en tid eller lover, at I ringer tilbage. Bagefter står det hele i jeres indbakke.</p>
+
+  <div class="moments">
+    <div class="moment"><span class="t">07.15</span><p>Håndværkeren står på stigen. Telefonen ringer i lommen.</p></div>
+    <div class="moment"><span class="t">12.30</span><p>Frisøren har en kunde i stolen og tre i kalenderen.</p></div>
+    <div class="moment"><span class="t">21.40</span><p>Kunden kigger på hjemmesiden, efter I har lukket.</p></div>
+  </div>
+
+  <div class="tracks">
+    <div class="track in">
+      <span class="chip">Spor 1 · Indgående</span>
+      <h3>Når kunden ringer eller skriver, og I er optaget.</h3>
+      <p>Assistenten tager imod henvendelsen og hjælper kunden videre. I får behov, kontaktoplysninger og næste handling samlet ét sted.</p>
+      <ul>
+        <li><span class="ms">check</span>Svarer, når I ikke tager den eller linjen er optaget</li>
+        <li><span class="ms">check</span>Booker tider direkte i kalenderen</li>
+        <li><span class="ms">check</span>Lover callback og opretter en opgave til jer</li>
+      </ul>
+      <div class="channels">
+        <span><span class="ms">call</span>Telefon</span>
+        <span><span class="ms">chat</span>Webchat</span>
+        <span><span class="ms">ring_volume</span>Callback</span>
+      </div>
+    </div>
+    <div class="track out">
+      <span class="chip">Spor 2 · Udgående</span>
+      <h3>Tilbud sendt. Samtalen behøver ikke stoppe der.</h3>
+      <p>Vælg de kontakter, der har sagt ja til at blive ringet op. Godkend manuskriptet, så følger Dialogbot op og samler svarene.</p>
+      <ul>
+        <li><span class="ms">check</span>AI foreslår manuskriptet, I godkender det</li>
+        <li><span class="ms">check</span>Kun kontakter med dokumenteret samtykke</li>
+        <li><span class="ms">check</span>Klart resultat pr. kontakt</li>
+      </ul>
+      <div class="flow"><span>Udvalgte kontakter</span><span>Godkendt manus</span><span>Høflig samtale</span><span>Klart resultat</span></div>
+    </div>
+  </div>
+  <div class="folio"><span>Dialogbot · Dansk AI-receptionist</span><span>2</span></div>
+</section>
+
+<!-- ============ 3. FUNKTIONER ============ -->
+<section class="sheet" aria-label="Funktioner">
+  <div style="display:flex;flex-direction:column;gap:3mm">
+    <span class="eyebrow">Funktioner</span>
+    <h2 class="h2">Alt, hvad en god receptionist gør. Hele døgnet.</h2>
+  </div>
+  <div class="feat">
+    <div class="f hero">
+      <span class="ic"><span class="ms">support_agent</span></span>
+      <div>
+        <h3>AI-receptionist i telefonen</h3>
+        <p>Jeres eget nummer viderestilles til assistenten, når I ikke tager den. Et dansk nummer er inkluderet i prisen. Den taler naturligt dansk og fortæller altid, at den er en AI.</p>
+        <div class="voices"><span><i>C</i>Camilla</span><span><i>P</i>Peter</span></div>
+      </div>
+    </div>
+    <div class="f"><span class="ic"><span class="ms">chat</span></span><h3>Webchat på hjemmesiden</h3><p>Samme assistent i en chat-boble på jeres side. Indsæt én linje kode.</p></div>
+    <div class="f"><span class="ic"><span class="ms">calendar_month</span></span><h3>Online booking</h3><p>Booker i ledige tider og blokerer det, der allerede er optaget i jeres kalender.</p></div>
+    <div class="f"><span class="ic"><span class="ms">sms</span></span><h3>SMS-bekræftelse</h3><p>Kunden får en SMS med tid og sted. Kunden bekræfter altid selv først.</p></div>
+    <div class="f"><span class="ic"><span class="ms">inbox</span></span><h3>Samlet indbakke</h3><p>Telefon, chat og callback i én liste med en kort sammenfatning af hver samtale.</p></div>
+    <div class="f"><span class="ic"><span class="ms">task_alt</span></span><h3>Opgaver og notifikationer</h3><p>Lover assistenten et opkald, får I en opgave med frist og en besked.</p></div>
+    <div class="f"><span class="ic"><span class="ms">travel_explore</span></span><h3>Henter viden fra jeres hjemmeside</h3><p>Ydelser og priser bliver til forslag. I retter og godkender dem selv.</p></div>
+    <div class="f"><span class="ic"><span class="ms">verified_user</span></span><h3>Kun godkendt viden</h3><p>Assistenten svarer kun ud fra det, en ejer har godkendt. Den gætter ikke.</p></div>
+    <div class="f"><span class="ic"><span class="ms">campaign</span></span><h3>Kampagner og opfølgning</h3><p>Ring tilbud op hos kontakter, der har givet samtykke, og få svarene samlet.</p></div>
+    <div class="f"><span class="ic"><span class="ms">monitoring</span></span><h3>Rapporter</h3><p>Se hvor mange der ringede, hvad de ville, og hvad der blev aftalt.</p></div>
+    <div class="f"><span class="ic"><span class="ms">group</span></span><h3>Team og roller</h3><p>Inviter kolleger som ejer, administrator, medarbejder eller læser.</p></div>
+  </div>
+  <div class="integr">
+    <b>Spiller sammen med</b>
+    <span>Google Kalender</span><span>Microsoft 365-kalender</span><span>iCal</span><span>SMS</span><span>Zapier</span><span>Make</span><span>Jeres hjemmeside</span>
+  </div>
+  <div class="folio"><span>Dialogbot · Dansk AI-receptionist</span><span>3</span></div>
+</section>
+
+<!-- ============ 4. SÅDAN VIRKER DET / KONTROL ============ -->
+<section class="sheet" aria-label="Sådan virker det">
+  <div style="display:flex;flex-direction:column;gap:3mm">
+    <span class="eyebrow">Sådan virker det</span>
+    <h2 class="h2">Fra jeres viden til den første samtale.</h2>
+  </div>
+  <div class="journey">
+    <div class="j"><span class="dot"><span class="ms">edit_note</span></span><h3>Fortæl om jer</h3><p>Ydelser, priser og åbningstider. Det virker også uden hjemmeside.</p></div>
+    <div class="j"><span class="dot"><span class="ms">rule</span></span><h3>Godkend</h3><p>Al viden er kladde, indtil en ejer eller administrator godkender den.</p></div>
+    <div class="j"><span class="dot"><span class="ms">play_circle</span></span><h3>Test den</h3><p>Stil spørgsmål og ring et prøveopkald, før den taler med kunder.</p></div>
+    <div class="j"><span class="dot"><span class="ms">rocket_launch</span></span><h3>Aktivér</h3><p>Viderestil telefonen og tryk Aktivér. Viderestillingen kan slås fra, når I vil.</p></div>
+  </div>
+
+  <div class="trust">
+    <div class="panel">
+      <span class="eyebrow">Tryghed</span>
+      <h3>I bestemmer, hvad Dialogbot må sige og gøre.</h3>
+      <ul>
+        <li><span class="ms fill">check_circle</span><span><b>Godkendt virksomhedsviden</b>Assistenten svarer kun ud fra oplysninger, som en ejer eller administrator har godkendt.</span></li>
+        <li><span class="ms fill">check_circle</span><span><b>Jeres regler</b>Åbningstider, priser og tilbud gælder præcis som godkendt. Kladder bruges aldrig.</span></li>
+        <li><span class="ms fill">check_circle</span><span><b>Ærlig om det ukendte</b>Står svaret ikke i jeres viden, siger den det og giver sagen videre til jer.</span></li>
+        <li><span class="ms fill">check_circle</span><span><b>Jeres data er jeres</b>Vi behandler data som databehandler efter dansk ret og GDPR.</span></li>
+      </ul>
+    </div>
+    <div class="panel summary">
+      <span class="eyebrow">Overblik efter samtalen</span>
+      <div class="row">
+        <div class="person"><i>HV</i><div><b>Henrik</b><small>Hellerup · telefon · 3 min.</small></div></div>
+        <span class="pill">Klar til overdragelse</span>
+      </div>
+      <div class="box"><b>Behov</b>Afslibning af 65 m² fyrretræsgulv med hvidpigmenteret lak. Kender den vejledende pris på 145 kr./m².</div>
+      <div class="box"><b>Aftalt</b>Besigtigelse onsdag kl. 10.30–11.15.</div>
+      <div class="box"><b>Næste opgave</b>Tjek parkeringsforhold før ankomst.</div>
+      <p class="ill">Eksempel på en sammenfatning. I skal ikke lytte optagelser igennem.</p>
+    </div>
+  </div>
+
+  <div class="panel" style="flex-direction:row;align-items:center;gap:5mm">
+    <span class="ms" style="font-size:34px;color:var(--olive)">storefront</span>
+    <div><h3 style="font-size:11.5pt">Til alle, der har en telefon, der ringer</h3>
+      <p style="font-size:9pt;color:var(--muted);margin-top:1mm">Håndværkere, frisører og klinikker, caféer og catering, rengøring, værksteder, advokater og revisorer. Assistenten bruger jeres fagsprog og jeres egne regler.</p></div>
+  </div>
+  <div class="folio"><span>Dialogbot · Dansk AI-receptionist</span><span>4</span></div>
+</section>
+
+<!-- ============ 5. PRISER ============ -->
+<section class="sheet tight" aria-label="Priser">
+  <div style="display:flex;flex-direction:column;gap:3mm">
+    <span class="eyebrow">Priser</span>
+    <h2 class="h2">To enkle prismodeller. Ingen binding.</h2>
+    <p class="lede">Vælg den model, der passer til jeres antal henvendelser. I kan skifte, når I vil. Alle priser er ekskl. moms.</p>
+  </div>
+  <div class="plans">
+    <div class="plan pop">
+      <span class="name">Model A <span>Abonnement</span></span>
+      <h3>Fast månedspris</h3>
+      <div class="price">1.495<small>kr./md.</small></div>
+      <p>Én fast pris for receptionen. Ingen betaling pr. henvendelse, uanset hvor mange der ringer.</p>
+      <ul>
+        <li><span class="ms">check</span>Telefon, webchat og callback</li>
+        <li><span class="ms">check</span>Booking og SMS-bekræftelser</li>
+        <li><span class="ms">check</span>Dansk telefonnummer inkluderet</li>
+        <li><span class="ms">check</span>Ubegrænset antal henvendelser (fair use)</li>
+      </ul>
+      <span class="best">Bedst, når I får mere end 10 relevante henvendelser om måneden.</span>
+    </div>
+    <div class="plan">
+      <span class="name">Model B <span>Pr. lead</span></span>
+      <h3>Betal pr. henvendelse</h3>
+      <div class="price">149<small>kr. pr. lead</small></div>
+      <p>Ingen månedspris. I betaler kun for de henvendelser, I selv har godkendt som relevante.</p>
+      <ul>
+        <li><span class="ms">check</span>Samme funktioner som Model A</li>
+        <li><span class="ms">check</span>Afviste henvendelser er gratis</li>
+        <li><span class="ms">check</span>Dansk telefonnummer inkluderet</li>
+        <li><span class="ms">check</span>Ingen udgift i stille måneder</li>
+      </ul>
+      <span class="best">Bedst til at komme i gang eller ved få, men vigtige henvendelser.</span>
+    </div>
+  </div>
+
+  <div class="addon">
+    <span class="ic"><span class="ms">campaign</span></span>
+    <div><h3>Tilvalg: Kampagner</h3><p>Opfølgning på tilbud og kundeopkald til kontakter med samtykke. Højst 2 forsøg pr. kontakt. I godkender liste, manuskript og pris, før der ringes.</p></div>
+    <div class="p">9 kr.<small>pr. kontakt</small></div>
+  </div>
+
+  <div class="calc">
+    <div class="chart">
+      <h3>Hvilken model er billigst for jer?</h3>
+      <svg viewBox="0 0 340 150" role="img" aria-label="Månedspris efter antal godkendte henvendelser. Model A er 1.495 kr. fast. Model B koster 149 kr. pr. henvendelse og bliver dyrere end Model A ved 11 henvendelser.">
+        <g font-family="Inter, sans-serif" font-size="8" fill="#3f4946">
+          <line x1="40" y1="120" x2="330" y2="120" stroke="#c3d6d1"/>
+          <line x1="40" y1="12" x2="40" y2="120" stroke="#c3d6d1"/>
+          <line x1="40" y1="55.2" x2="330" y2="55.2" stroke="#e1f8f3"/>
+          <line x1="40" y1="12" x2="330" y2="12" stroke="#e1f8f3"/>
+          <text x="35" y="123" text-anchor="end">0</text>
+          <text x="35" y="59" text-anchor="end">1.500</text>
+          <text x="35" y="15" text-anchor="end">2.500</text>
+          <text x="40" y="133" text-anchor="middle">0</text>
+          <text x="112.5" y="133" text-anchor="middle">5</text>
+          <text x="185" y="133" text-anchor="middle">10</text>
+          <text x="257.5" y="133" text-anchor="middle">15</text>
+          <text x="330" y="133" text-anchor="middle">20</text>
+          <text x="185" y="146" text-anchor="middle" font-size="7.5">Godkendte henvendelser pr. måned</text>
+        </g>
+        <!-- skala: x = 40 + n*14.5 ; y = 120 - kr*0.0432 -->
+        <line x1="40" y1="55.4" x2="330" y2="55.4" stroke="#00362d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="40" y1="120" x2="227.45" y2="36.55" stroke="#9ab04a" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="185.4" cy="55.4" r="4.5" fill="#d4ea82" stroke="#00362d" stroke-width="2"/>
+        <text x="190" y="72" font-family="Inter, sans-serif" font-size="8" font-weight="700" fill="#00362d">ca. 10 leads = samme pris</text>
+      </svg>
+      <div class="legend"><span><i style="background:#00362d"></i>Model A · 1.495 kr.</span><span><i style="background:#9ab04a"></i>Model B · 149 kr. × antal</span></div>
+    </div>
+    <div class="incl">
+      <h3>Altid med</h3>
+      <ul>
+        <li><span class="ms">check</span>Intet opstartsgebyr</li>
+        <li><span class="ms">check</span>Ingen binding. Opsig til udgangen af måneden</li>
+        <li><span class="ms">check</span>Dansk telefonnummer</li>
+        <li><span class="ms">check</span>Personlig opsætningsguide</li>
+        <li><span class="ms">check</span>Faktura én gang om måneden</li>
+        <li><span class="ms fill">redeem</span><b data-amb="pct-incl">50 % rabat på første måned via ambassadør</b></li>
+      </ul>
+    </div>
+  </div>
+  <p class="fine">Alle priser er i danske kroner ekskl. 25 % moms. Betaling med kort via Stripe, bagud én gang om måneden. Fuldstændige vilkår: www.dialogbot.dk/vilkaar</p>
+  <div class="folio"><span>Dialogbot · Dansk AI-receptionist</span><span>5</span></div>
+</section>
+
+<!-- ============ 6. KOM I GANG ============ -->
+<section class="sheet dark" aria-label="Kom i gang">
+  <div style="display:flex;flex-direction:column;gap:3mm">
+    <span class="eyebrow">Kom i gang</span>
+    <h2 class="h2" style="color:#fff">I gang på en eftermiddag.</h2>
+    <p class="lede" style="color:var(--mint-3)">En personlig opsætningsguide tager jer trin for trin. Der følger også en opsætningsmanual med, som viser hvert trin.</p>
+  </div>
+  <div class="steps">
+    <div class="st"><span class="n">1</span><h3>Opret konto</h3><p>På www.dialogbot.dk. Brug din ambassadørs link eller kode.</p></div>
+    <div class="st"><span class="n">2</span><h3>Læg viden ind</h3><p>Ydelser, priser og åbningstider. Eller hent dem fra hjemmesiden.</p></div>
+    <div class="st"><span class="n">3</span><h3>Prøv den</h3><p>Vælg stemme, og ring et prøveopkald til jeres eget nummer.</p></div>
+    <div class="st"><span class="n">4</span><h3>Aktivér</h3><p>Viderestil telefonen. Nu tager Dialogbot de opkald, I ikke når.</p></div>
+  </div>
+
+  <div class="hear">
+    <div class="hcard"><span class="ms">phone_in_talk</span><h3>Hør den selv på 1 minut</h3><p>Skriv jeres nummer på forsiden, så ringer Dialogbot jer op. Prøv den som receptionist for jeres egen virksomhed.</p><span class="url">www.dialogbot.dk/#demo</span></div>
+    <div class="hcard"><span class="ms">menu_book</span><h3>Se hvordan opsætningen foregår</h3><p>Opsætningsmanualen viser alle trin fra konto til første opkald, med billeder.</p><span class="url">dialogbot.dk/materiale/opsaetningsmanual.html</span></div>
+  </div>
+
+  <div class="faq">
+    <div><h3>Kan kunderne høre, at det er en AI?</h3><p>Assistenten siger altid, at den er en digital assistent. Den taler naturligt dansk.</p></div>
+    <div><h3>Skal vi have nyt telefonnummer?</h3><p>Nej. I beholder jeres nummer og viderestiller kun de opkald, I ikke når.</p></div>
+    <div><h3>Hvad hvis den ikke kender svaret?</h3><p>Den gætter ikke. Den siger det ærligt og opretter en opgave, så I kan ringe tilbage.</p></div>
+    <div><h3>Kan vi stoppe igen?</h3><p>Ja. Ingen binding. Slå viderestillingen fra, og opsig til udgangen af måneden.</p></div>
+  </div>
+
+  <div class="contact">
+    <div>
+      <div class="big" data-amb="cta">Klar? Opret jer på www.dialogbot.dk</div>
+      <div class="lines">
+        <span><span class="ms">language</span><span data-amb="link">www.dialogbot.dk/signup</span></span>
+        <span><span class="ms">mail</span>info@dialogbot.dk</span>
+        <span><span class="ms">location_on</span>Abildgade 18, 8200 Aarhus</span>
+      </div>
+    </div>
+    <div class="code"><small>Ambassadørkode</small><b data-amb="code">Spørg din ambassadør</b></div>
+  </div>
+  <div class="folio"><span>Dialogbot · CVR-nr. 25632710 · Reklame</span><span>6</span></div>
+</section>
+</main>
+
+<script>
+/* Personlig udgave: ?navn=Emma&link=https://www.dialogbot.dk/a/emma&kode=EMMA&rabat=50 */
+(function () {
+  var q = new URLSearchParams(location.search);
+  var clean = function (v, max) { return (v || "").replace(/[<>]/g, "").trim().slice(0, max); };
+  var navn = clean(q.get("navn"), 40), link = clean(q.get("link"), 120), kode = clean(q.get("kode"), 24);
+  var rabat = parseInt(q.get("rabat"), 10);
+  if (!(rabat > 0 && rabat <= 100)) rabat = 50;
+  var set = function (k, t) { document.querySelectorAll('[data-amb="' + k + '"]').forEach(function (el) { el.textContent = t; }); };
+  set("pct", rabat + " %");
+  set("pct-incl", rabat + " % rabat på første måned via ambassadør");
+  if (navn) {
+    set("initial", navn.charAt(0).toUpperCase());
+    set("who", navn + " anbefaler Dialogbot til jer");
+    set("disclose", "Reklame. " + navn + " er Dialogbot-ambassadør og får en bonus, hvis I bliver kunde.");
+    set("cta", "Klar? Opret jer via " + navn + "s link");
+  }
+  if (link || kode) {
+    var how = "Opret jer";
+    if (link) how += " via " + link.replace(/^https?:\/\//, "");
+    if (kode) how += (link ? " eller" : "") + " med koden " + kode;
+    set("how", how + ", så får I rabatten automatisk.");
+  }
+  if (link) set("link", link.replace(/^https?:\/\//, ""));
+  if (kode) set("code", kode);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dialogbot Byggevejledning</title>
+<meta name="description" content="Opsætningsmanual til Dialogbot: byg din AI-receptionist i 18 trin, fra konto til første opkald.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=block">
+<style>
+/* Layout: byggevejledning på A4 på langs. Store trinnumre, en "dele"-boks pr. trin, skærmbilleder med pile,
+   og fem poser, der svarer til opsætningsguidens faser. Bevidst ét udtryk (papir) i både lyst og mørkt tema. */
+:root {
+  --forest: #00362d;
+  --forest-2: #164e43;
+  --page: #f3fbf9;
+  --mint: #dcf3ee;
+  --mint-line: #9bd1c3;
+  --lime: #d4ea82;
+  --olive: #546508;
+  --sky: #80bbe0;
+  --ink: #0f1f1c;
+  --muted: #3f4946;
+  --paper: #ffffff;
+  --warn: #fff4c2;
+  --backdrop: #c8dfda;
+  --display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--backdrop); color: var(--ink); font-family: var(--body); font-size: 10pt; line-height: 1.45;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 24px 16px; }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; }
+p { margin: 0; }
+.ms { font-family: "Material Symbols Outlined"; font-weight: normal; font-style: normal; line-height: 1; letter-spacing: normal;
+  text-transform: none; white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased; font-size: 20px;
+  font-variation-settings: "FILL" 0, "wght" 400, "opsz" 24; display: inline-block; vertical-align: middle; }
+.ms.fill { font-variation-settings: "FILL" 1, "wght" 400, "opsz" 24; }
+.stack { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.pg { position: relative; width: 297mm; height: 210mm; overflow: hidden; background: var(--page); box-shadow: 0 10px 40px rgba(0,32,26,.18);
+  padding: 13mm 14mm 14mm; display: flex; flex-direction: column; gap: 6mm; }
+
+/* Sidehoved og -fod */
+.bagline { display: flex; justify-content: space-between; align-items: center; }
+.bag { display: inline-flex; align-items: center; gap: 2.5mm; font-family: var(--display); font-weight: 800; font-size: 10.5pt; color: var(--forest); }
+.bag .no { width: 9mm; height: 10mm; background: var(--forest); color: var(--lime); border-radius: 2mm 2mm 3mm 3mm; display: grid; place-items: center; font-size: 13pt; position: relative; }
+.bag .no::before { content: ""; position: absolute; top: -1.4mm; left: 2mm; right: 2mm; height: 1.6mm; border-radius: 1mm 1mm 0 0; background: var(--forest); }
+.bag small { display: block; font-family: var(--body); font-size: 7.5pt; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--olive); }
+.progress { display: flex; gap: 1.2mm; }
+.progress i { width: 5mm; height: 1.6mm; border-radius: 1mm; background: var(--mint); }
+.progress i.on { background: var(--forest); }
+.pno { position: absolute; bottom: 6mm; right: 14mm; font-family: var(--display); font-weight: 800; font-size: 10pt; color: var(--paper); background: var(--forest); border-radius: 2mm; min-width: 9mm; height: 7mm; display: grid; place-items: center; padding: 0 2mm; }
+.pfoot { position: absolute; bottom: 7.5mm; left: 14mm; font-size: 7pt; color: var(--muted); letter-spacing: .04em; }
+
+/* Trin */
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 9mm; flex: 1; min-height: 0; }
+.two > .step + .step { border-left: 1.5px dashed var(--mint-line); padding-left: 9mm; }
+.step { display: flex; flex-direction: column; gap: 3.5mm; min-width: 0; }
+.head { display: flex; align-items: flex-start; gap: 4mm; }
+.num { font-family: var(--display); font-weight: 800; font-size: 50pt; line-height: .85; color: var(--forest); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; min-width: 15mm; }
+.ttl { display: flex; flex-direction: column; gap: 1.5mm; padding-top: 1mm; flex: 1; min-width: 0; }
+.ttl h2 { font-size: 15pt; line-height: 1.15; color: var(--forest); }
+.chips { display: flex; flex-wrap: wrap; gap: 1.5mm; }
+.chip { display: inline-flex; align-items: center; gap: 1mm; font-size: 7.5pt; font-weight: 600; padding: .6mm 2.2mm; border-radius: 99px; background: var(--mint); color: var(--forest); }
+.chip .ms { font-size: 13px; }
+.chip.opt { background: var(--paper); border: 1px dashed var(--mint-line); }
+.chip.who { background: var(--forest); color: var(--lime); }
+
+/* Dele-boks med klodser */
+.parts { display: flex; gap: 3mm; flex-wrap: wrap; align-items: flex-end; background: var(--paper); border: 1.5px solid var(--mint-line); border-radius: 3mm; padding: 2.2mm 3mm 2mm; align-self: flex-start; }
+.part { display: flex; flex-direction: column; align-items: center; gap: .6mm; font-size: 7pt; color: var(--muted); text-align: center; max-width: 20mm; line-height: 1.2; }
+.part b { font-family: var(--display); font-size: 9pt; color: var(--ink); }
+.brick { position: relative; width: 13mm; height: 9.5mm; }
+.brick svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.brick .ms { position: absolute; left: 0; right: 0; bottom: .9mm; text-align: center; font-size: 15px; color: var(--forest); }
+.brick.dark .ms { color: var(--lime); }
+
+/* Skærm-mockups */
+.scr { position: relative; background: var(--paper); border-radius: 3mm; box-shadow: 0 1px 0 var(--mint-line), 0 6px 18px rgba(0,54,45,.1); border: 1px solid var(--mint-line); overflow: visible; }
+.scr .bar { display: flex; align-items: center; gap: 1.2mm; padding: 1.8mm 3mm; border-bottom: 1px solid var(--mint); }
+.scr .bar i { width: 2mm; height: 2mm; border-radius: 50%; background: var(--mint-line); }
+.scr .bar span { margin-left: 2mm; flex: 1; font-size: 7pt; color: var(--muted); background: var(--page); border-radius: 99px; padding: .5mm 3mm; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scr .body { padding: 3.5mm 4mm 4mm; display: flex; flex-direction: column; gap: 2.4mm; }
+.scr h4 { margin: 0; font-family: var(--display); font-size: 10.5pt; color: var(--forest); }
+.fld { display: flex; flex-direction: column; gap: .6mm; }
+.fld label { font-size: 6.8pt; font-weight: 600; color: var(--muted); }
+.in { border: 1px solid var(--mint-line); border-radius: 1.6mm; padding: 1.3mm 2.4mm; font-size: 8.3pt; background: var(--paper); color: var(--ink); min-height: 6.4mm; }
+.in.empty { color: #8a9a96; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm; }
+.row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6mm; }
+.opt { border: 1px solid var(--mint-line); border-radius: 1.8mm; padding: 1.6mm 2mm; font-size: 7.8pt; display: flex; align-items: center; gap: 1.5mm; background: var(--paper); }
+.opt.sel { border: 2px solid var(--forest); background: var(--mint); font-weight: 600; color: var(--forest); }
+.opt .ms { font-size: 15px; color: var(--forest); }
+.btn { align-self: flex-start; background: var(--forest); color: #fff; font-weight: 600; font-size: 8.3pt; border-radius: 99px; padding: 1.6mm 4.5mm; display: inline-flex; align-items: center; gap: 1.5mm; }
+.btn .ms { font-size: 15px; }
+.btn.lime { background: var(--lime); color: var(--forest); }
+.btn.ghost { background: var(--paper); color: var(--forest); border: 1px solid var(--forest); }
+.tags { display: flex; flex-wrap: wrap; gap: 1.2mm; }
+.tags span { font-size: 7.5pt; padding: .6mm 2.2mm; border-radius: 99px; border: 1px solid var(--mint-line); }
+.tags span.on { background: var(--forest); color: #fff; border-color: var(--forest); }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 1.2mm 3mm; font-size: 8pt; align-items: center; }
+.kv .ok { color: var(--olive); font-weight: 700; display: inline-flex; gap: 1mm; align-items: center; }
+.kv .ok .ms { font-size: 15px; }
+.mono { font-family: var(--mono); }
+
+/* Pil og klik */
+.arrow { position: absolute; width: 17mm; height: 11mm; z-index: 2; filter: drop-shadow(0 1px 0 rgba(0,0,0,.12)); }
+.tap { position: absolute; width: 9mm; height: 9mm; border-radius: 50%; border: 2px solid var(--forest); background: transparent; z-index: 2; }
+.tap::after { content: ""; position: absolute; inset: -2.2mm; border-radius: 50%; border: 1.5px dashed var(--forest); opacity: .55; }
+
+/* Instruktioner */
+.do { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.6mm; counter-reset: d; }
+.do li { display: grid; grid-template-columns: 5.5mm 1fr; gap: 2mm; font-size: 9pt; align-items: start; }
+.do li::before { counter-increment: d; content: counter(d); width: 5.5mm; height: 5.5mm; border-radius: 50%; background: var(--lime); color: var(--forest); font-family: var(--display); font-weight: 800; font-size: 8pt; display: grid; place-items: center; }
+.do b { color: var(--forest); }
+.tip { display: grid; grid-template-columns: auto 1fr; gap: 2mm; background: var(--warn); border-radius: 2.5mm; padding: 2mm 3mm; font-size: 8.3pt; align-items: start; }
+.tip .ms { font-size: 18px; color: #7a5b00; }
+.ok-seal { display: inline-flex; align-items: center; gap: 1.5mm; font-family: var(--display); font-weight: 800; font-size: 9pt; color: var(--olive); }
+.ok-seal .ms { font-size: 19px; }
+
+/* Sub-assembly (Lego-stil: indrammet delmontage) */
+.sub { border: 2px solid var(--forest); border-radius: 3mm; background: var(--paper); padding: 3mm; display: flex; flex-direction: column; gap: 2.5mm; position: relative; }
+.sub > .lbl { position: absolute; top: -3mm; left: 3mm; background: var(--forest); color: var(--lime); font-size: 7pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: .6mm 2.5mm; border-radius: 99px; }
+.subrow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; align-items: stretch; }
+.mini { display: flex; flex-direction: column; gap: 1.4mm; font-size: 8pt; position: relative; }
+.mini .n { font-family: var(--display); font-weight: 800; color: var(--forest); font-size: 12pt; }
+.mini .card { background: var(--page); border: 1px solid var(--mint-line); border-radius: 2mm; padding: 2mm; display: flex; flex-direction: column; gap: 1.2mm; flex: 1; }
+
+/* Viderestillingskoder */
+.codes { display: grid; grid-template-columns: 1fr; gap: 1.6mm; }
+.code { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 3mm; background: var(--paper); border: 1px solid var(--mint-line); border-radius: 2mm; padding: 1.6mm 3mm; font-size: 8.5pt; }
+.code .mono { font-weight: 700; font-size: 11pt; color: var(--forest); background: var(--mint); padding: .6mm 2.4mm; border-radius: 1.4mm; }
+.code.rec { border: 2px solid var(--forest); }
+.code.off .mono { background: var(--warn); color: #5a4300; }
+
+/* Telefon (prøveopkald) */
+.phones { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 2mm; }
+.ph { background: var(--forest); color: #fff; border-radius: 4mm; padding: 3mm 2mm; text-align: center; display: flex; flex-direction: column; gap: 1mm; align-items: center; font-size: 7.5pt; }
+.ph .ms { color: var(--lime); font-size: 22px; }
+.ph b { font-family: var(--display); font-size: 9pt; }
+.ph.bot { background: var(--lime); color: var(--forest); }
+.ph.bot .ms { color: var(--forest); }
+.ph.muted { background: var(--paper); color: var(--forest); border: 1.5px dashed var(--forest); }
+.ph.muted .ms { color: var(--forest); }
+.to { color: var(--forest); font-size: 22px; }
+
+/* ---------- Forside (æskebillede) ---------- */
+.cover { background: var(--forest); color: #fff; padding: 0; display: grid; grid-template-columns: 1.08fr 1fr; gap: 0; }
+.cover .l { padding: 14mm 6mm 14mm 16mm; display: flex; flex-direction: column; gap: 6mm; position: relative; z-index: 1; }
+.cover .r { position: relative; background: radial-gradient(circle at 55% 48%, #2a6b5d 0, var(--forest-2) 45%, var(--forest) 75%); display: grid; place-items: center; }
+.logo { display: inline-flex; align-items: center; gap: 2.5mm; font-family: var(--display); font-weight: 800; font-size: 15pt; }
+.logo .m { width: 11mm; height: 11mm; border-radius: 2.5mm; background: var(--lime); color: var(--forest); display: grid; place-items: center; }
+.logo .m .ms { font-size: 26px; }
+.cover .kicker { font-size: 8pt; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--lime); }
+.cover h1 { font-size: 46pt; line-height: .98; font-weight: 800; letter-spacing: -0.03em; }
+.cover h1 span { color: var(--lime); }
+.cover .lede { font-size: 11.5pt; color: #b6eede; max-width: 115mm; }
+.coverbags { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2mm; }
+.coverbags li { display: flex; align-items: center; gap: 3mm; font-family: var(--display); font-weight: 700; font-size: 10.5pt; color: #e7fef9; }
+.coverbags .no { width: 7mm; height: 8mm; border-radius: 1.5mm 1.5mm 2.5mm 2.5mm; background: var(--lime); color: var(--forest); display: grid; place-items: center; font-weight: 800; font-size: 10pt; position: relative; }
+.coverbags .no::before { content: ""; position: absolute; top: -1.1mm; left: 1.6mm; right: 1.6mm; height: 1.3mm; border-radius: 1mm 1mm 0 0; background: var(--lime); }
+.facts { display: flex; gap: 3mm; margin-top: auto; }
+.fact { border: 1.5px solid rgba(212,234,130,.5); border-radius: 3mm; padding: 2.5mm 4mm; display: flex; flex-direction: column; }
+.fact b { font-family: var(--display); font-size: 19pt; line-height: 1; color: var(--lime); font-variant-numeric: tabular-nums; }
+.fact span { font-size: 7.5pt; color: #b6eede; letter-spacing: .04em; margin-top: 1mm; }
+.setno { position: absolute; top: 12mm; right: 12mm; text-align: right; font-family: var(--display); }
+.setno small { display: block; font-family: var(--body); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase; color: #b6eede; }
+.setno b { font-size: 22pt; color: var(--lime); letter-spacing: .02em; }
+.model { width: 88%; max-width: 125mm; height: auto; }
+.cover .note { position: absolute; bottom: 8mm; left: 0; right: 0; text-align: center; font-size: 7.5pt; color: #b6eede; }
+
+/* ---------- Indhold i æsken ---------- */
+.inv { display: grid; grid-template-columns: 1.15fr 1fr; gap: 9mm; flex: 1; min-height: 0; }
+.inv h2 { font-size: 20pt; color: var(--forest); letter-spacing: -0.02em; }
+.inv .lead { font-size: 9.5pt; color: var(--muted); margin-top: 1.5mm; }
+.tray { background: var(--paper); border: 1.5px solid var(--mint-line); border-radius: 4mm; padding: 5mm; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4mm 3mm; }
+.tray .part { max-width: none; font-size: 7.6pt; }
+.tray .brick { width: 17mm; height: 12mm; }
+.tray .brick .ms { font-size: 19px; bottom: 1.2mm; }
+.tray .part.optional { opacity: .9; }
+
+.bags { display: flex; flex-direction: column; gap: 2.4mm; }
+.bagrow { display: grid; grid-template-columns: 11mm 1fr auto; gap: 3mm; align-items: center; background: var(--paper); border-radius: 3mm; padding: 2.4mm 3mm; border: 1px solid var(--mint-line); }
+.bagrow .bag .no { width: 10mm; }
+.bagrow h3 { font-size: 10.5pt; color: var(--forest); }
+.bagrow p { font-size: 8pt; color: var(--muted); }
+.bagrow .tm { font-family: var(--display); font-weight: 800; font-size: 10pt; color: var(--forest); text-align: right; white-space: nowrap; }
+.bagrow .tm small { display: block; font-family: var(--body); font-weight: 500; font-size: 7pt; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 2mm 4mm; font-size: 8pt; color: var(--muted); align-items: center; }
+
+/* ---------- Færdig ---------- */
+.done { display: grid; grid-template-columns: 1fr 1.1fr; gap: 9mm; flex: 1; min-height: 0; }
+.trophy { background: var(--forest); border-radius: 5mm; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3mm; padding: 6mm; text-align: center; }
+.trophy h2 { font-size: 26pt; color: var(--lime); letter-spacing: -0.02em; }
+.trophy p { color: #b6eede; font-size: 10pt; max-width: 90mm; }
+.trophy svg { width: 60%; max-width: 70mm; height: auto; }
+.next { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+.nx { background: var(--paper); border: 1px solid var(--mint-line); border-radius: 3mm; padding: 3mm; display: flex; flex-direction: column; gap: 1mm; }
+.nx .ms { color: var(--forest); font-size: 22px; }
+.nx h3 { font-size: 10pt; color: var(--forest); }
+.nx p { font-size: 8.2pt; color: var(--muted); }
+.help { display: grid; grid-template-columns: auto 1fr; gap: 4mm; align-items: center; background: var(--lime); border-radius: 3mm; padding: 3.5mm 4.5mm; color: var(--forest); }
+.help .ms { font-size: 30px; }
+.help b { font-family: var(--display); font-size: 11pt; display: block; }
+.help span { font-size: 8.5pt; }
+
+@media screen and (max-width: 1180px) {
+  body { padding-inline: 12px; }
+  .pg { width: 100%; height: auto; padding: 22px 18px 52px; }
+  .two, .inv, .done, .cover { grid-template-columns: 1fr; }
+  .two > .step + .step { border-left: 0; padding-left: 0; border-top: 1.5px dashed var(--mint-line); padding-top: 22px; }
+  .cover .l { padding: 22px 18px; }
+  .cover .r { padding: 24px 0 40px; }
+  .cover h1 { font-size: 38px; }
+  .tray { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+  .subrow, .row3 { grid-template-columns: 1fr; }
+  .phones { grid-template-columns: 1fr; justify-items: stretch; }
+  .phones .to { transform: rotate(90deg); justify-self: center; }
+  .next { grid-template-columns: 1fr; }
+  .setno { position: static; text-align: left; }
+  .arrow, .tap { display: none; }
+}
+@page { size: A4 landscape; margin: 0; }
+@media print {
+  body { background: none; padding: 0; }
+  .stack { display: block; }
+  .pg { box-shadow: none; break-after: page; page-break-after: always; }
+  .pg:last-child { break-after: auto; page-break-after: auto; }
+}
+</style>
+</head>
+<body>
+<!-- Klodser: symbol for en 2-knops klods. Farve via color. Pil: tyk byggevejlednings-pil. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="brick" viewBox="0 0 60 44">
+      <rect x="8" y="1" width="16" height="9" rx="2.5" fill="currentColor"/>
+      <rect x="36" y="1" width="16" height="9" rx="2.5" fill="currentColor"/>
+      <rect x="8" y="1" width="16" height="9" rx="2.5" fill="#000" fill-opacity=".1"/>
+      <rect x="36" y="1" width="16" height="9" rx="2.5" fill="#000" fill-opacity=".1"/>
+      <rect x="9.5" y="1.5" width="13" height="2.2" rx="1" fill="#fff" fill-opacity=".45"/>
+      <rect x="37.5" y="1.5" width="13" height="2.2" rx="1" fill="#fff" fill-opacity=".45"/>
+      <rect x="1" y="8" width="58" height="35" rx="3.5" fill="currentColor" stroke="#00362d" stroke-opacity=".35" stroke-width="1.2"/>
+      <rect x="2" y="37" width="56" height="5" rx="2" fill="#000" fill-opacity=".14"/>
+      <rect x="3" y="9.5" width="54" height="2" rx="1" fill="#fff" fill-opacity=".4"/>
+    </symbol>
+    <symbol id="arr" viewBox="0 0 64 40">
+      <path d="M3 13h34V3l24 17-24 17V27H3z" fill="#d4ea82" stroke="#00362d" stroke-width="3" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="b2" viewBox="0 0 40 30">
+      <rect x="4" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="24" y="0" width="12" height="7" rx="2" fill="currentColor"/>
+      <rect x="4" y="0" width="12" height="7" rx="2" fill="#000" fill-opacity=".12"/><rect x="24" y="0" width="12" height="7" rx="2" fill="#000" fill-opacity=".12"/>
+      <rect x="0" y="6" width="40" height="24" rx="2" fill="currentColor"/>
+      <rect x="0" y="26" width="40" height="4" rx="1.5" fill="#000" fill-opacity=".16"/><rect x="1" y="6.5" width="38" height="1.6" fill="#fff" fill-opacity=".35"/>
+    </symbol>
+    <symbol id="b4" viewBox="0 0 80 30">
+      <rect x="4" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="24" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="44" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="64" y="0" width="12" height="7" rx="2" fill="currentColor"/>
+      <rect x="4" y="0" width="72" height="7" fill="#000" fill-opacity="0"/>
+      <rect x="0" y="6" width="80" height="24" rx="2" fill="currentColor"/>
+      <rect x="0" y="26" width="80" height="4" rx="1.5" fill="#000" fill-opacity=".16"/><rect x="1" y="6.5" width="78" height="1.6" fill="#fff" fill-opacity=".35"/>
+    </symbol>
+    <symbol id="b6" viewBox="0 0 120 30">
+      <rect x="4" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="24" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="44" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="64" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="84" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="104" y="0" width="12" height="7" rx="2" fill="currentColor"/>
+      <rect x="0" y="6" width="120" height="24" rx="2" fill="currentColor"/>
+      <rect x="0" y="26" width="120" height="4" rx="1.5" fill="#000" fill-opacity=".16"/><rect x="1" y="6.5" width="118" height="1.6" fill="#fff" fill-opacity=".35"/>
+    </symbol>
+    <symbol id="plate" viewBox="0 0 200 20">
+      <rect x="4" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="24" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="164" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="184" y="0" width="12" height="7" rx="2" fill="currentColor"/>
+      <rect x="0" y="6" width="200" height="14" rx="2" fill="currentColor"/>
+      <rect x="0" y="16" width="200" height="4" rx="1.5" fill="#000" fill-opacity=".2"/>
+    </symbol>
+    <!-- Den færdige model: en receptionist bygget af klodser -->
+    <symbol id="model" viewBox="0 0 260 300">
+      <use href="#plate" x="30" y="270" width="200" height="20" style="color:#9bd1c3"/>
+      <use href="#b2" x="80" y="240" width="40" height="30" style="color:#80bbe0"/>
+      <use href="#b2" x="140" y="240" width="40" height="30" style="color:#80bbe0"/>
+      <use href="#b6" x="70" y="216" width="120" height="30" style="color:#d4ea82"/>
+      <use href="#b6" x="70" y="192" width="120" height="30" style="color:#d4ea82"/>
+      <use href="#b6" x="70" y="168" width="120" height="30" style="color:#d4ea82"/>
+      <use href="#b2" x="30" y="168" width="40" height="30" style="color:#80bbe0"/>
+      <use href="#b2" x="190" y="168" width="40" height="30" style="color:#80bbe0"/>
+      <use href="#b2" x="30" y="192" width="40" height="30" style="color:#80bbe0"/>
+      <use href="#b2" x="190" y="192" width="40" height="30" style="color:#80bbe0"/>
+      <rect x="104" y="183" width="52" height="26" rx="3" fill="#00362d"/>
+      <path d="M113 196h6m4 0h14m4 0h6" stroke="#d4ea82" stroke-width="3" stroke-linecap="round"/>
+      <use href="#b2" x="110" y="144" width="40" height="30" style="color:#164e43"/>
+      <use href="#b4" x="90" y="120" width="80" height="30" style="color:#e7fef9"/>
+      <use href="#b4" x="90" y="96" width="80" height="30" style="color:#e7fef9"/>
+      <use href="#b4" x="90" y="72" width="80" height="30" style="color:#e7fef9"/>
+      <circle cx="116" cy="112" r="6" fill="#00362d"/><circle cx="144" cy="112" r="6" fill="#00362d"/>
+      <circle cx="118" cy="110" r="2" fill="#fff"/><circle cx="146" cy="110" r="2" fill="#fff"/>
+      <path d="M118 134q12 9 24 0" stroke="#00362d" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M84 110C84 46 176 46 176 110" stroke="#00362d" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <rect x="76" y="98" width="15" height="32" rx="5" fill="#00362d"/>
+      <rect x="169" y="98" width="15" height="32" rx="5" fill="#00362d"/>
+      <path d="M84 128q0 18 26 20" stroke="#00362d" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="112" cy="148" r="5" fill="#d4ea82" stroke="#00362d" stroke-width="2.5"/>
+      <g transform="translate(176 14)">
+        <path d="M6 0h66a6 6 0 0 1 6 6v30a6 6 0 0 1-6 6H26l-12 12V42H6a6 6 0 0 1-6-6V6a6 6 0 0 1 6-6z" fill="#ffffff" stroke="#00362d" stroke-width="2.5"/>
+        <text x="39" y="27" text-anchor="middle" font-family="Manrope, sans-serif" font-weight="800" font-size="17" fill="#00362d">Hej!</text>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="stack">
+
+<!-- =================== FORSIDE =================== -->
+<section class="pg cover" aria-label="Forside">
+  <div class="l">
+    <span class="logo"><span class="m"><span class="ms fill">support_agent</span></span>Dialogbot</span>
+    <span class="kicker">Byggevejledning · Opsætning</span>
+    <h1>Byg din egen <span>AI-receptionist.</span></h1>
+    <p class="lede">Fra konto til første rigtige opkald i 18 trin. Følg tallene, find delene i æsken, og sæt hak undervejs. Opsætningsguiden i Dialogbot viser de samme trin, og I kan altid gemme og fortsætte senere.</p>
+    <ol class="coverbags">
+      <li><span class="no">1</span>Din virksomhed</li>
+      <li><span class="no">2</span>Mål og sprog</li>
+      <li><span class="no">3</span>Viden og svar</li>
+      <li><span class="no">4</span>Kanaler</li>
+      <li><span class="no">5</span>Aktivering</li>
+    </ol>
+    <div class="facts">
+      <div class="fact"><b>18</b><span>trin</span></div>
+      <div class="fact"><b>5</b><span>poser</span></div>
+      <div class="fact"><b>~60</b><span>minutter</span></div>
+      <div class="fact"><b>0</b><span>kodning</span></div>
+    </div>
+  </div>
+  <div class="r">
+    <div class="setno"><small>Sæt nr.</small><b>DB-0018</b></div>
+    <svg class="model" viewBox="0 0 260 300" role="img" aria-label="Den færdige model: en receptionist bygget af klodser med headset, der siger hej"><use href="#model"/></svg>
+    <p class="note">Model vist færdigbygget. Version 1 · oktober 2026</p>
+  </div>
+</section>
+
+<!-- =================== INDHOLD I ÆSKEN =================== -->
+<section class="pg" aria-label="Indhold i æsken">
+  <div class="inv">
+    <div style="display:flex;flex-direction:column;gap:5mm;min-width:0">
+      <div><h2>Indhold i æsken</h2><p class="lead">Find delene frem, før I går i gang. Delene med stiplet kant er valgfrie.</p></div>
+      <div class="tray">
+        <div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">mail</span></span><b>1x</b>E-mail</div>
+        <div class="part"><span class="brick dark"><svg style="color:#164e43"><use href="#brick"/></svg><span class="ms">redeem</span></span><b>1x</b>Ambassadørkode</div>
+        <div class="part"><span class="brick"><svg style="color:#80bbe0"><use href="#brick"/></svg><span class="ms">badge</span></span><b>1x</b>CVR-nummer</div>
+        <div class="part"><span class="brick"><svg style="color:#ffffff"><use href="#brick"/></svg><span class="ms">description</span></span><b>1x</b>CVR-udskrift (PDF)</div>
+        <div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">sell</span></span><b>1x</b>Ydelser og priser</div>
+        <div class="part"><span class="brick"><svg style="color:#9bd1c3"><use href="#brick"/></svg><span class="ms">schedule</span></span><b>1x</b>Åbningstider</div>
+        <div class="part"><span class="brick dark"><svg style="color:#164e43"><use href="#brick"/></svg><span class="ms">call</span></span><b>1x</b>Firmaets telefon</div>
+        <div class="part"><span class="brick"><svg style="color:#80bbe0"><use href="#brick"/></svg><span class="ms">smartphone</span></span><b>1x</b>Ekstra telefon til test</div>
+        <div class="part"><span class="brick"><svg style="color:#ffffff"><use href="#brick"/></svg><span class="ms">credit_card</span></span><b>1x</b>Betalingskort</div>
+        <div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">person</span></span><b>1x</b>Ejer af kontoen</div>
+        <div class="part optional"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">language</span></span><b>1x</b>Hjemmeside</div>
+        <div class="part optional"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">calendar_month</span></span><b>1x</b>Kalender (iCal)</div>
+        <div class="part optional"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">code</span></span><b>1x</b>Adgang til hjemmesidens kode</div>
+        <div class="part optional"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">group_add</span></span><b>1+</b>Kolleger</div>
+        <div class="part optional"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">hub</span></span><b>1x</b>Zapier eller Make</div>
+      </div>
+      <div class="legend">
+        <span class="chip"><span class="ms">timer</span>Tid pr. trin</span>
+        <span class="chip who"><span class="ms">shield_person</span>Kun ejer/administrator</span>
+        <span class="chip opt"><span class="ms">add_circle</span>Valgfrit trin</span>
+        <span>Grønne pile viser, hvor I skal trykke.</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4mm;min-width:0">
+      <div><h2>Fem poser</h2><p class="lead">Byg posene i rækkefølge. Hver pose svarer til en fase i opsætningsguiden.</p></div>
+      <div class="bags">
+        <div class="bagrow"><span class="bag"><span class="no">1</span></span><div><h3>Din virksomhed</h3><p>Konto, arbejdsrum, virksomhedsoplysninger og kategorier</p></div><div class="tm">Trin 1–4<small>ca. 10 min</small></div></div>
+        <div class="bagrow"><span class="bag"><span class="no">2</span></span><div><h3>Mål og sprog</h3><p>Hvad assistenten skal kunne, og hvilke sprog den taler</p></div><div class="tm">Trin 5–6<small>ca. 5 min</small></div></div>
+        <div class="bagrow"><span class="bag"><span class="no">3</span></span><div><h3>Viden og svar</h3><p>Ydelser, priser og åbningstider. Godkend og test</p></div><div class="tm">Trin 7–10<small>ca. 20 min</small></div></div>
+        <div class="bagrow"><span class="bag"><span class="no">4</span></span><div><h3>Kanaler</h3><p>Stemme, telefon og prøveopkald. Webchat og booking er valgfrie</p></div><div class="tm">Trin 11–16<small>ca. 20–45 min</small></div></div>
+        <div class="bagrow"><span class="bag"><span class="no">5</span></span><div><h3>Aktivering</h3><p>Vælg prisaftale, og tænd for receptionen</p></div><div class="tm">Trin 17–18<small>ca. 5 min</small></div></div>
+      </div>
+      <div class="tip"><span class="ms fill">lightbulb</span><span><b>Gem og fortsæt.</b> I behøver ikke bygge det hele på én gang. Dialogbot husker, hvor I nåede til, og opsætningsguiden viser næste trin.</span></div>
+    </div>
+  </div>
+  <span class="pfoot">Dialogbot byggevejledning</span><span class="pno">2</span>
+</section>
+
+<!-- =================== POSE 1: TRIN 1–2 =================== -->
+<section class="pg" aria-label="Trin 1 og 2">
+  <div class="bagline"><span class="bag"><span class="no">1</span><span><small>Pose 1</small>Din virksomhed</span></span><span class="progress"><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+  <div class="two">
+    <div class="step">
+      <div class="head"><span class="num">1</span><div class="ttl"><h2>Opret en konto</h2><div class="chips"><span class="chip"><span class="ms">timer</span>2 min</span></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">mail</span></span><b>1x</b>E-mail</div><div class="part"><span class="brick dark"><svg style="color:#164e43"><use href="#brick"/></svg><span class="ms">redeem</span></span><b>1x</b>Ambassadørlink</div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>www.dialogbot.dk/signup</span></div>
+        <div class="body">
+          <h4>Opret konto</h4>
+          <div class="row2"><div class="fld"><label>Dit navn</label><div class="in">Mette Hansen</div></div><div class="fld"><label>E-mail</label><div class="in">mette@fjordgulv.dk</div></div></div>
+          <div class="fld"><label>Adgangskode</label><div class="in">••••••••••••</div></div>
+          <div class="fld"><label>Jeg vil starte med</label><div class="row3"><span class="opt sel"><span class="ms">call</span>Reception</span><span class="opt">Kampagner</span><span class="opt">Begge</span></div></div>
+          <span class="btn">Opret konto<span class="ms">arrow_forward</span></span>
+        </div>
+        <svg class="arrow" style="left:-15mm;bottom:3mm"><use href="#arr"/></svg>
+      </div>
+      <ol class="do">
+        <li><span>Åbn <b>ambassadørens link</b>. Så følger rabatten med automatisk. Ellers gå til www.dialogbot.dk og tryk <b>Start opsætning</b>.</span></li>
+        <li><span>Udfyld navn, e-mail og adgangskode, og vælg hvad I vil starte med.</span></li>
+        <li><span>Tryk <b>Opret konto</b>.</span></li>
+      </ol>
+    </div>
+    <div class="step">
+      <div class="head"><span class="num">2</span><div class="ttl"><h2>Bekræft din e-mail</h2><div class="chips"><span class="chip"><span class="ms">timer</span>1 min</span></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">mark_email_unread</span></span><b>1x</b>Indbakke</div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Indbakke</span></div>
+        <div class="body">
+          <div class="kv"><span><b>Dialogbot</b> · Bekræft din e-mail</span><span style="font-size:7pt;color:var(--muted)">nu</span></div>
+          <p style="font-size:8.3pt;color:var(--muted)">Hej Mette. Tryk på knappen for at bekræfte din e-mailadresse og fortsætte opsætningen.</p>
+          <span class="btn lime">Bekræft e-mail</span>
+        </div>
+        <span class="tap" style="left:30mm;bottom:3mm"></span>
+      </div>
+      <ol class="do">
+        <li><span>Åbn mailen fra Dialogbot.</span></li>
+        <li><span>Tryk <b>Bekræft e-mail</b>. Så kommer I videre til arbejdsrummet.</span></li>
+      </ol>
+      <div class="tip"><span class="ms fill">priority_high</span><span><b>Ingen mail?</b> Kig i spam eller "Andre". Linket virker kun én gang, så brug den nyeste mail.</span></div>
+      <span class="ok-seal"><span class="ms fill">check_circle</span>Kontoen er klar</span>
+    </div>
+  </div>
+  <span class="pfoot">Dialogbot byggevejledning</span><span class="pno">3</span>
+</section>
+
+<!-- =================== POSE 1: TRIN 3–4 =================== -->
+<section class="pg" aria-label="Trin 3 og 4">
+  <div class="bagline"><span class="bag"><span class="no">1</span><span><small>Pose 1</small>Din virksomhed</span></span><span class="progress"><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+  <div class="two">
+    <div class="step">
+      <div class="head"><span class="num">3</span><div class="ttl"><h2>Opret arbejdsrummet</h2><div class="chips"><span class="chip"><span class="ms">timer</span>2 min</span></div></div>
+        <div class="parts"><div class="part"><span class="brick dark"><svg style="color:#164e43"><use href="#brick"/></svg><span class="ms">redeem</span></span><b>1x</b>Ambassadørkode</div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Opret arbejdsrum</span></div>
+        <div class="body">
+          <div class="fld"><label>Virksomhedens officielle navn</label><div class="in">Fjord Gulvservice ApS</div></div>
+          <div class="fld"><label>Produktintention</label><div class="row3"><span class="opt sel">Reception</span><span class="opt">Kampagner</span><span class="opt">Reception + kampagner</span></div></div>
+          <div class="fld"><label>Har du en ambassadørkode?</label><div class="in mono">MADS42</div></div>
+          <span class="btn">Opret arbejdsrum</span>
+        </div>
+        <svg class="arrow" style="right:-6mm;top:31mm;transform:scaleX(-1)"><use href="#arr"/></svg>
+      </div>
+      <ol class="do">
+        <li><span>Skriv virksomhedens officielle navn.</span></li>
+        <li><span>Vælg <b>Reception</b>, <b>Kampagner</b> eller begge. Det kan ændres senere.</span></li>
+        <li><span>Skriv <b>ambassadørkoden</b>, hvis I ikke kom via et link.</span></li>
+      </ol>
+      <div class="tip"><span class="ms fill">redeem</span><span>Kom I via ambassadørens link, står der "velkomstrabatten følger med". Så skal I ikke skrive koden.</span></div>
+    </div>
+    <div class="step">
+      <div class="head"><span class="num">4</span><div class="ttl"><h2>Virksomhed og kategorier</h2><div class="chips"><span class="chip"><span class="ms">timer</span>5–7 min</span></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#80bbe0"><use href="#brick"/></svg><span class="ms">badge</span></span><b>1x</b>CVR-nummer</div><div class="part"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">language</span></span><b>1x</b>Hjemmeside</div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Virksomhed</span></div>
+        <div class="body">
+          <div class="fld"><label>Kort virksomhedsbeskrivelse &amp; speciale</label><div class="in">Afslibning, lakering og olie af trægulve i Aarhus og omegn.</div></div>
+          <div class="row3"><div class="fld"><label>CVR</label><div class="in mono">12345678</div></div><div class="fld"><label>Telefon</label><div class="in mono">86 12 34 56</div></div><div class="fld"><label>Tidszone</label><div class="in">Europe/Copenhagen</div></div></div>
+          <div class="fld"><label>Branchekategorier</label><div class="tags"><span class="on">Gulvservice</span><span class="on">Håndværker</span><span>+ Opret kategori</span></div></div>
+          <span class="btn">Gem og fortsæt</span>
+        </div>
+      </div>
+      <ol class="do">
+        <li><span>Skriv en kort beskrivelse. Assistenten bruger den i alle samtaler.</span></li>
+        <li><span>Udfyld CVR, telefon, adresse og hjemmeside.</span></li>
+        <li><span>Vælg <b>mindst én branchekategori</b>, eller opret jeres egen.</span></li>
+      </ol>
+      <span class="ok-seal"><span class="ms fill">check_circle</span>Pose 1 færdig</span>
+    </div>
+  </div>
+  <span class="pfoot">Dialogbot byggevejledning</span><span class="pno">4</span>
+</section>
+
+<!-- =================== POSE 2: TRIN 5–6 =================== -->
+<section class="pg" aria-label="Trin 5 og 6">
+  <div class="bagline"><span class="bag"><span class="no">2</span><span><small>Pose 2</small>Mål og sprog</span></span><span class="progress"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></div>
+  <div class="two">
+    <div class="step">
+      <div class="head"><span class="num">5</span><div class="ttl"><h2>Vælg, hvad den skal kunne</h2><div class="chips"><span class="chip"><span class="ms">timer</span>3 min</span></div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Mål</span></div>
+        <div class="body">
+          <div class="fld"><label>Reception</label><div class="row3"><span class="opt sel"><span class="ms">call</span>Telefon</span><span class="opt sel"><span class="ms">chat</span>Webchat</span><span class="opt sel"><span class="ms">ring_volume</span>Callback</span></div></div>
+          <div class="fld"><label>Ekstra</label><div class="row3"><span class="opt sel"><span class="ms">calendar_month</span>Booking</span><span class="opt"><span class="ms">campaign</span>Kampagner</span><span class="opt" style="visibility:hidden"></span></div></div>
+          <div class="fld"><label>Hvordan vil I sætte op?</label><div class="row2"><span class="opt sel"><span class="ms">explore</span>Guide mig trin for trin</span><span class="opt">Jeg vil selv sætte op</span></div></div>
+          <span class="btn">Gem</span>
+        </div>
+        <svg class="arrow" style="left:-15mm;top:30mm"><use href="#arr"/></svg>
+      </div>
+      <ol class="do">
+        <li><span>Vælg kanalerne: <b>telefon</b>, <b>webchat</b> og <b>callback</b>.</span></li>
+        <li><span>Slå <b>booking</b> til, hvis kunderne skal kunne få en tid.</span></li>
+        <li><span>Vælg <b>Guide mig trin for trin</b>. Så laver Dialogbot jeres personlige plan.</span></li>
+      </ol>
+      <div class="tip"><span class="ms fill">lightbulb</span><span>Planen tilpasser sig valgene. Vælger I fx ikke webchat, forsvinder trin 15.</span></div>
+    </div>
+    <div class="step">
+      <div class="head"><span class="num">6</span><div class="ttl"><h2>Fastlæg sprog</h2><div class="chips"><span class="chip"><span class="ms">timer</span>2 min</span></div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Sprog</span></div>
+        <div class="body">
+          <div class="row2">
+            <div class="fld"><label>a) Brugerflade</label><div class="in">Dansk</div></div>
+            <div class="fld"><label>b) Standardsprog i samtaler</label><div class="in">Dansk</div></div>
+          </div>
+          <div class="fld"><label>c) Tilladte samtalesprog</label><div class="tags"><span class="on">Dansk</span><span class="on">Engelsk</span><span>Tysk</span><span>Svensk</span></div></div>
+          <div class="fld"><label>d) Rapportsprog</label><div class="in">Dansk</div></div>
+          <span class="btn">Fortsæt til viden<span class="ms">arrow_forward</span></span>
+        </div>
+      </div>
+      <ol class="do">
+        <li><span>Lad <b>dansk</b> være standard.</span></li>
+        <li><span>Tilføj de sprog, assistenten må skifte til, når kunden taler dem.</span></li>
+        <li><span>Tryk <b>Fortsæt til viden</b>.</span></li>
+      </ol>
+      <div class="tip"><span class="ms fill">priority_high</span><span>Standardsproget skal også være blandt de tilladte sprog.</span></div>
+      <span class="ok-seal"><span class="ms fill">check_circle</span>Pose 2 færdig</span>
+    </div>
+  </div>
+  <span class="pfoot">Dialogbot byggevejledning</span><span class="pno">5</span>
+</section>
+
+<!-- =================== POSE 3: TRIN 7 =================== -->
+<section class="pg" aria-label="Trin 7">
+  <div class="bagline"><span class="bag"><span class="no">3</span><span><small>Pose 3</small>Viden og svar</span></span><span class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
+  <div class="step" style="flex:1">
+    <div class="head"><span class="num">7</span><div class="ttl"><h2>Beskriv jeres ydelser og priser</h2><div class="chips"><span class="chip"><span class="ms">timer</span>10 min</span><span class="chip">Viden → Katalog</span></div></div>
+      <div class="parts"><div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">sell</span></span><b>1x</b>Ydelser og priser</div><div class="part"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">language</span></span><b>1x</b>Hjemmeside</div></div></div>
+    <p style="font-size:9.5pt;color:var(--muted);max-width:230mm">Assistenten må kun love det, I har godkendt. Uden mindst én godkendt ydelse kan den ikke svare kunderne. Vælg vej A eller vej B. I kan også bruge begge.</p>
+    <div class="sub" style="margin-top:2mm">
+      <span class="lbl">Vej A · Hent fra hjemmesiden</span>
+      <div class="subrow">
+        <div class="mini"><span class="n">A1</span><div class="card"><div class="fld"><label>Hjemmesidens adresse</label><div class="in">https://www.fjordgulv.dk</div></div><span class="btn">Hent forslag fra hjemmesiden</span></div></div>
+        <div class="mini"><span class="n">A2</span><div class="card" style="align-items:center;justify-content:center;text-align:center"><span class="ms" style="font-size:30px;color:var(--forest)">travel_explore</span><span>Dialogbot læser siderne og skriver forslag.<br><b>Typisk under et minut.</b></span></div></div>
+        <div class="mini"><span class="n">A3</span><div class="card"><div class="kv"><span>Gulvafslibning</span><span class="mono">145 kr./m²</span><span>Lakering</span><span class="mono">95 kr./m²</span><span>Olie og pleje</span><span class="mono">80 kr./m²</span></div><span style="font-size:7.3pt;color:var(--muted)">Forslag gemmes som kladder. Ret dem.</span></div></div>
+      </div>
+    </div>
+    <div class="sub" style="margin-top:3mm">
+      <span class="lbl">Vej B · Skriv selv</span>
+      <div class="subrow">
+        <div class="mini"><span class="n">B1</span><div class="card"><span class="btn ghost"><span class="ms">add</span>Ny ydelse</span><span>Én ydelse ad gangen. Det virker fint uden hjemmeside.</span></div></div>
+        <div class="mini"><span class="n">B2</span><div class="card"><div class="fld"><label>Navn</label><div class="in">Gulvafslibning</div></div><div class="fld"><label>Pris og vilkår</label><div class="in">145 kr./m², min. 20 m². Besigtigelse er gratis.</div></div></div></div>
+        <div class="mini"><span class="n">B3</span><div class="card"><span class="btn">Send til gennemgang</span><span>Kladden venter nu på godkendelse i trin 9.</span></div></div>
+      </div>
+    </div>
+    <div class="tip" style="margin-top:auto"><span class="ms fill">lightbulb</span><span><b>Skriv som I taler til kunderne.</b> Tag pris, minimum og hvad der er inkluderet med. Så kan assistenten svare præcist på "hvad koster det?".</span></div>
+  </div>
+  <span class="pfoot">Dialogbot byggevejledning</span><span class="pno">6</span>
+</section>
+
+<!-- =================== POSE 3: TRIN 8–9 =================== -->
+<section class="pg" aria-label="Trin 8 og 9">
+  <div class="bagline"><span class="bag"><span class="no">3</span><span><small>Pose 3</small>Viden og svar</span></span><span class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
+  <div class="two">
+    <div class="step">
+      <div class="head"><span class="num">8</span><div class="ttl"><h2>Åbningstider og faste svar</h2><div class="chips"><span class="chip"><span class="ms">timer</span>3–8 min</span></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#9bd1c3"><use href="#brick"/></svg><span class="ms">schedule</span></span><b>1x</b>Åbningstider</div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Viden → Åbningstider</span></div>
+        <div class="body">
+          <div class="kv"><span>Mandag–torsdag</span><span class="mono">07.00–16.00</span><span>Fredag</span><span class="mono">07.00–14.00</span><span>Lørdag–søndag</span><span class="mono">Lukket</span></div>
+          <div class="fld"><label>Dækningsområde (valgfrit)</label><div class="in">Aarhus, Silkeborg, Skanderborg og Randers</div></div>
+          <div class="fld"><label>Emne den ikke må udtale sig om (valgfrit)</label><div class="in">Reklamationer. Sig, at en medarbejder ringer tilbage.</div></div>
+        </div>
+      </div>
+      <ol class="do">
+        <li><span>Læg <b>åbningstider</b> ind. De styrer, hvad assistenten lover om tider.</span></li>
+        <li><span>Valgfrit: <b>dækningsområde</b> og <b>faste svar</b>.</span></li>
+        <li><span>Skriv også, hvad den <b>ikke</b> må svare på. Så sender den sagen videre til jer.</span></li>
+      </ol>
+    </div>
+    <div class="step">
+      <div class="head"><span class="num">9</span><div class="ttl"><h2>Godkend jeres viden</h2><div class="chips"><span class="chip"><span class="ms">timer</span>5 min</span><span class="chip who"><span class="ms">shield_person</span>Ejer/admin</span></div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Viden → Til gennemgang</span></div>
+        <div class="body">
+          <div class="kv">
+            <span>Gulvafslibning · 145 kr./m²</span><span class="btn" style="padding:1mm 3mm">Godkend</span>
+            <span>Lakering · 95 kr./m²</span><span class="btn" style="padding:1mm 3mm">Godkend</span>
+            <span>Åbningstider</span><span class="ok"><span class="ms fill">check_circle</span>Godkendt</span>
+          </div>
+        </div>
+        <span class="tap" style="right:1.5mm;top:8.5mm"></span>
+      </div>
+      <ol class="do">
+        <li><span>Gå til <b>Viden → Til gennemgang</b>.</span></li>
+        <li><span>Læs hver kladde. Ret pris og tekst, hvis noget er forkert.</span></li>
+        <li><span>Tryk <b>Godkend</b>. Kun godkendt viden bruges i samtaler.</span></li>
+      </ol>
+      <div class="tip"><span class="ms fill">shield</span><span>Kun ejere og administratorer kan godkende. Så kan ingen ved en fejl offentliggøre en forkert pris.</span></div>
+    </div>
+  </div>
+  <span class="pfoot">Dialogbot byggevejledning</span><span class="pno">7</span>
+</section>
+
+<!-- =================== POSE 3: TRIN 10 · POSE 4: TRIN 11 =================== -->
+<section class="pg" aria-label="Trin 10 og 11">
+  <div class="bagline"><span class="bag"><span class="no">3</span><span><small>Pose 3 → 4</small>Test · Stemme</span></span><span class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+  <div class="two">
+    <div class="step">
+      <div class="head"><span class="num">10</span><div class="ttl"><h2>Test assistenten og kør tjek</h2><div class="chips"><span class="chip"><span class="ms">timer</span>3 min</span></div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Opsætning → Klar-tjek</span></div>
+        <div class="body">
+          <div class="kv">
+            <span>Virksomhedsprofil udfyldt</span><span class="ok"><span class="ms fill">check_circle</span>Bestået</span>
+            <span>Sprog hænger sammen</span><span class="ok"><span class="ms fill">check_circle</span>Bestået</span>
+            <span>Godkendt viden dækker ydelser</span><span class="ok"><span class="ms fill">check_circle</span>Bestået</span>
+            <span>Assistenten svarer</span><span class="ok"><span class="ms fill">check_circle</span>Bestået</span>
+          </div>
+          <span class="btn"><span class="ms">play_arrow</span>Kør konfigurationstjek</span>
+        </div>
+        <svg class="arrow" style="left:-15mm;bottom:2mm"><use href="#arr"/></svg>
+      </div>
+      <ol class="do">
+        <li><span>Stil assistenten et par spørgsmål i <b>Viden</b>, fx "Hvad koster en afslibning af 40 m²?".</span></li>
+        <li><span>Åbn <b>Opsætning</b>, og tryk <b>Kør konfigurationstjek</b>.</span></li>
+        <li><span>Alt grønt? Så er hjernen klar.</span></li>
+      </ol>
+      <div class="tip"><span class="ms fill">refresh</span><span>Ændrer I noget senere, bliver tjekket forældet. Kør det bare igen.</span></div>
+    </div>
+    <div class="step">
+      <div class="head"><span class="num">11</span><div class="ttl"><h2>Vælg og afprøv stemme</h2><div class="chips"><span class="chip"><span class="ms">timer</span>5 min</span><span class="chip">Stemmer</span></div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Stemmer</span></div>
+        <div class="body">
+          <div class="row2">
+            <span class="opt sel" style="padding:2.4mm"><span class="ms fill">play_circle</span><span><b>Camilla</b><br><span style="font-weight:400;font-size:7pt">Klar, rolig og professionel</span></span></span>
+            <span class="opt" style="padding:2.4mm"><span class="ms">play_circle</span><span><b>Peter</b><br><span style="font-size:7pt">Naturlig, let jysk klang</span></span></span>
+          </div>
+          <div class="fld"><label>Velkomst</label><div class="in">Fjord Gulvservice, du taler med Camilla, den digitale assistent. Hvad kan jeg hjælpe med?</div></div>
+          <span class="btn"><span class="ms">volume_up</span>Lyt til velkomsten</span>
+        </div>
+        <span class="tap" style="left:3mm;top:11mm"></span>
+      </div>
+      <ol class="do">
+        <li><span>Tryk afspil på <b>Camilla</b> og <b>Peter</b>, og vælg den, der passer til jer.</span></li>
+        <li><span>Lyt til jeres egen velkomst. Det er sådan, kunderne bliver mødt.</span></li>
+      </ol>
+      <div class="tip"><span class="ms fill">priority_high</span><span>Trinnet tæller først som færdigt, når I har lyttet. Et gemt valg alene er ikke nok.</span></div>
+    </div>
+  </div>
+  <span class="pfoot">Dialogbot byggevejledning</span><span class="pno">8</span>
+</section>
+
+<!-- =================== POSE 4: TRIN 12–13 =================== -->
+<section class="pg" aria-label="Trin 12 og 13">
+  <div class="bagline"><span class="bag"><span class="no">4</span><span><small>Pose 4</small>Kanaler · Telefon</span></span><span class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+  <div class="two">
+    <div class="step">
+      <div class="head"><span class="num">12</span><div class="ttl"><h2>Forbind telefonen</h2><div class="chips"><span class="chip"><span class="ms">timer</span>10 min</span><span class="chip">Indstillinger → Telefoni</span></div></div>
+        <div class="parts"><div class="part"><span class="brick dark"><svg style="color:#164e43"><use href="#brick"/></svg><span class="ms">call</span></span><b>1x</b>Firmaets telefon</div><div class="part"><span class="brick"><svg style="color:#ffffff"><use href="#brick"/></svg><span class="ms">description</span></span><b>1x</b>CVR-udskrift</div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Telefoni · Trin 1 af 5</span></div>
+        <div class="body">
+          <div class="fld"><label>Virksomhedens telefonnummer</label><div class="in mono">+45 86 12 34 56</div></div>
+          <div class="fld"><label>Hvilken type abonnement er det?</label><div class="row3"><span class="opt sel">Mobil</span><span class="opt">Fastnet</span><span class="opt">Omstilling eller IP-telefoni</span></div></div>
+          <div class="fld"><label>Udskrift fra CVR-registeret med dansk adresse (PDF, PNG eller JPG)</label><div class="in"><span class="ms" style="font-size:14px">upload_file</span> cvr-udskrift.pdf</div></div>
+          <span class="btn"><span class="ms">link</span>Forbind telefonen</span>
+        </div>
+        <svg class="arrow" style="left:-15mm;bottom:2mm"><use href="#arr"/></svg>
+      </div>
+      <ol class="do">
+        <li><span>Skriv jeres nuværende nummer, og vælg typen af abonnement.</span></li>
+        <li><span>Upload en <b>CVR-udskrift</b>. Hent den gratis på datacvr.virk.dk.</span></li>
+        <li><span>Tryk <b>Forbind telefonen</b>. Dialogbot klargør et dansk nummer til jer.</span></li>
+      </ol>
+      <div class="tip"><span class="ms fill">hourglass_top</span><span>Klargøringen kan tage lidt tid, fordi dokumentationen skal godkendes. Siden viser altid næste skridt. I kan fortsætte med andre trin imens.</span></div>
+    </div>
+    <div class="step">
+      <div class="head"><span class="num">13</span><div class="ttl"><h2>Sådan skal den svare. Viderestil.</h2><div class="chips"><span class="chip"><span class="ms">timer</span>5 min</span></div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Telefoni · Trin 3 af 5</span></div>
+        <div class="body">
+          <div class="fld"><label>Hvornår skal assistenten tage telefonen?</label>
+            <span class="opt sel">Når vi ikke tager den, eller linjen er optaget (anbefalet)</span>
+            <span class="opt">Kun når vi ikke tager den</span></div>
+          <div class="row2"><div class="fld"><label>Hilsen i telefonen</label><div class="in empty">Tom = receptionens velkomst</div></div><div class="fld"><label>Talestil</label><div class="in">Vi siger du til kunderne</div></div></div>
+        </div>
+      </div>
+      <p style="font-size:8.6pt;color:var(--muted)">Tast koderne på <b style="color:var(--forest)">firmaets telefon</b>, og tryk ring op. Dialogbot viser dem med jeres nummer udfyldt.</p>
+      <div class="codes">
+        <div class="code rec"><span>Ved ubesvaret opkald</span><span class="mono">**61*[nr]#</span></div>
+        <div class="code rec"><span>Ved optaget</span><span class="mono">**67*[nr]#</span></div>
+        <div class="code"><span>Alle opkald (fx ferie)</span><span class="mono">**21*[nr]#</span></div>
+        <div class="code off"><span>Fjern al viderestilling igen</span><span class="mono">##002#</span></div>
+      </div>
+      <div class="tip"><span class="ms fill">info</span><span><b>Omstilling eller IP-telefoni?</b> Viderestillingen sættes op i telefonsystemet. Dialogbot viser, hvilket nummer der skal bruges.</span></div>
+    </div>
+  </div>
+  <span class="pfoot">Dialogbot byggevejledning · [nr] = jeres Dialogbot-nummer</span><span class="pno">9</span>
+</section>
+
+<!-- =================== POSE 4: TRIN 14 + 15 =================== -->
+<section class="pg" aria-label="Trin 14 og 15">
+  <div class="bagline"><span class="bag"><span class="no">4</span><span><small>Pose 4</small>Kanaler · Test og chat</span></span><span class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+  <div class="two">
+    <div class="step">
+      <div class="head"><span class="num">14</span><div class="ttl"><h2>Ring et prøveopkald</h2><div class="chips"><span class="chip"><span class="ms">timer</span>5 min</span></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#80bbe0"><use href="#brick"/></svg><span class="ms">smartphone</span></span><b>1x</b>Ekstra telefon</div></div></div>
+      <div class="sub" style="margin-top:2mm">
+        <span class="lbl">Sådan går opkaldet</span>
+        <div class="phones">
+          <div class="ph muted"><span class="ms">smartphone</span><b>Ekstra telefon</b>ringer til jer</div>
+          <span class="ms to">arrow_forward</span>
+          <div class="ph"><span class="ms">phone_missed</span><b>Firmaets telefon</b>tag den ikke</div>
+          <span class="ms to">arrow_forward</span>
+          <div class="ph bot"><span class="ms">support_agent</span><b>Dialogbot</b>svarer</div>
+        </div>
+      </div>
+      <ol class="do">
+        <li><span>Tryk <b>Start prøveopkald</b> under Telefoni, trin 4.</span></li>
+        <li><span>Ring inden for <b>15 minutter</b> fra en anden telefon til <b>jeres eget nummer</b>.</span></li>
+        <li><span>Lad være med at tage den. Efter nogle ring svarer assistenten.</span></li>
+        <li><span>Tal lidt med den, og læg på. Tjekket bliver grønt.</span></li>
+      </ol>
+      <span class="ok-seal"><span class="ms fill">check_circle</span>Telefonen virker</span>
+      <div class="tip"><span class="ms fill">priority_high</span><span>Et prøveopkald skal være rigtigt. Et simuleret opkald tæller ikke. Skifter I stemme bagefter, så ring igen.</span></div>
+    </div>
+    <div class="step">
+      <div class="head"><span class="num">15</span><div class="ttl"><h2>Webchat på hjemmesiden</h2><div class="chips"><span class="chip"><span class="ms">timer</span>10 min</span><span class="chip opt"><span class="ms">add_circle</span>Valgfrit</span><span class="chip who"><span class="ms">shield_person</span>Ejer/admin</span></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">code</span></span><b>1x</b>Kodeadgang</div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Indstillinger → Webchat</span></div>
+        <div class="body">
+          <span class="opt sel"><span class="ms fill">toggle_on</span>Vis widgetten på hjemmesiden</span>
+          <div class="fld"><label>Domæner (ét pr. linje, med https:// og uden sti)</label><div class="in mono" style="font-size:7.6pt">https://www.fjordgulv.dk</div></div>
+          <div class="fld"><label>Indsæt koden lige før &lt;/body&gt;</label><div class="in mono" style="font-size:7pt;background:var(--forest);color:var(--lime);border-color:var(--forest)">&lt;script src="…/widget.js" data-id="…"&gt;&lt;/script&gt;</div></div>
+          <span class="btn ghost"><span class="ms">content_copy</span>Kopiér kode</span>
+        </div>
+        <svg class="arrow" style="right:-7mm;bottom:2mm;transform:scaleX(-1)"><use href="#arr"/></svg>
+      </div>
+      <ol class="do">
+        <li><span>Slå widgetten til, og skriv jeres domæne.</span></li>
+        <li><span>Kopiér koden, og indsæt den lige før <span class="mono">&lt;/body&gt;</span> på hjemmesiden. Bruger I et webbureau, så send koden til dem.</span></li>
+        <li><span>Åbn chatten på hjemmesiden én gang, og kør tjekket i opsætningsguiden.</span></li>
+      </ol>
+    </div>
+  </div>
+  <span class="pfoot">Dialogbot byggevejledning</span><span class="pno">10</span>
+</section>
+
+<!-- =================== POSE 4: TRIN 16 · POSE 5: TRIN 17 =================== -->
+<section class="pg" aria-label="Trin 16 og 17">
+  <div class="bagline"><span class="bag"><span class="no">5</span><span><small>Pose 4 → 5</small>Booking · Prisaftale</span></span><span class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+  <div class="two">
+    <div class="step">
+      <div class="head"><span class="num">16</span><div class="ttl"><h2>Booking og jeres systemer</h2><div class="chips"><span class="chip"><span class="ms">timer</span>10 min</span><span class="chip opt"><span class="ms">add_circle</span>Valgfrit</span></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">calendar_month</span></span><b>1x</b>Kalender</div><div class="part"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">hub</span></span><b>1x</b>Zapier/Make</div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Bookinger → Online booking og kalender</span></div>
+        <div class="body">
+          <div class="row2"><div class="fld"><label>Bookingtype</label><div class="in">Besigtigelse</div></div><div class="fld"><label>Varighed (min)</label><div class="in mono">45</div></div></div>
+          <div class="row3"><div class="fld"><label>Tidligst (timer frem)</label><div class="in mono">24</div></div><div class="fld"><label>Højst (dage frem)</label><div class="in mono">30</div></div><div class="fld"><label>Pause (min)</label><div class="in mono">15</div></div></div>
+          <div class="fld"><label>Kalenderens hemmelige iCal-adresse</label><div class="in mono" style="font-size:7.2pt">https://calendar.google.com/…/basic.ics</div></div>
+        </div>
+      </div>
+      <ol class="do">
+        <li><span>Slå online booking til, og opret en <b>bookingtype</b>, fx "Besigtigelse, 45 min".</span></li>
+        <li><span>Indsæt kalenderens <b>hemmelige iCal-adresse</b>, så optagne tider blokeres.</span></li>
+        <li><span>Under <b>Indstillinger → Integrationer</b>: forbind Google eller Microsoft 365-kalender, SMS-bekræftelse eller Zapier/Make.</span></li>
+      </ol>
+    </div>
+    <div class="step">
+      <div class="head"><span class="num">17</span><div class="ttl"><h2>Vælg prisaftale</h2><div class="chips"><span class="chip"><span class="ms">timer</span>3 min</span><span class="chip who"><span class="ms">shield_person</span>Kun ejer</span></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#ffffff"><use href="#brick"/></svg><span class="ms">credit_card</span></span><b>1x</b>Betalingskort</div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Indstillinger → Aftale</span></div>
+        <div class="body">
+          <h4>Prisaftale for reception</h4>
+          <span class="opt sel" style="justify-content:space-between"><span><b>Model A · Abonnement</b><br><span style="font-weight:400;font-size:7.2pt">Fast månedspris. Ingen betaling pr. henvendelse.</span></span><span class="mono" style="font-weight:700">1.495 kr./md.</span></span>
+          <span class="opt" style="justify-content:space-between"><span><b>Model B · Pr. godkendt lead</b><br><span style="font-size:7.2pt">Ingen månedspris.</span></span><span class="mono" style="font-weight:700">149 kr./lead</span></span>
+          <span class="btn">Vælg model</span>
+        </div>
+        <span class="tap" style="left:2mm;bottom:1mm"></span>
+      </div>
+      <ol class="do">
+        <li><span>Vælg <b>Model A</b> (fast pris) eller <b>Model B</b> (pr. lead). I kan skifte senere.</span></li>
+        <li><span>Gem et betalingskort under <b>Fakturering</b>. Betalingen går gennem Stripe.</span></li>
+      </ol>
+      <div class="tip"><span class="ms fill">redeem</span><span><b>Glemt ambassadørkoden?</b> Ejeren kan tilføje den under Fakturering i de første 30 dage og før første faktura. Priser er ekskl. moms.</span></div>
+    </div>
+  </div>
+  <span class="pfoot">Dialogbot byggevejledning</span><span class="pno">11</span>
+</section>
+
+<!-- =================== POSE 5: TRIN 18 + FÆRDIG =================== -->
+<section class="pg" aria-label="Trin 18 og færdig">
+  <div class="bagline"><span class="bag"><span class="no">5</span><span><small>Pose 5</small>Aktivering</span></span><span class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+  <div class="done">
+    <div class="step">
+      <div class="head"><span class="num">18</span><div class="ttl"><h2>Aktivér receptionen</h2><div class="chips"><span class="chip"><span class="ms">timer</span>1 min</span><span class="chip who"><span class="ms">shield_person</span>Ejer/admin</span></div></div></div>
+      <div class="scr">
+        <div class="bar"><i></i><i></i><i></i><span>Opsætning → Aktivér</span></div>
+        <div class="body">
+          <div class="kv">
+            <span>Konfigurationstjek</span><span class="ok"><span class="ms fill">check_circle</span>Bestået</span>
+            <span>Prøveopkald</span><span class="ok"><span class="ms fill">check_circle</span>Bestået</span>
+            <span>Prisaftale</span><span class="ok"><span class="ms fill">check_circle</span>Model A</span>
+          </div>
+          <p style="font-size:8pt;color:var(--muted)">Alt er klar. Når I aktiverer, besvarer assistenten de opkald, I viderestiller.</p>
+          <span class="btn lime" style="font-size:9.5pt;padding:2mm 6mm"><span class="ms fill">rocket_launch</span>Aktivér reception</span>
+        </div>
+        <svg class="arrow" style="right:-8mm;bottom:2mm;transform:scaleX(-1)"><use href="#arr"/></svg>
+      </div>
+      <ol class="do">
+        <li><span>Åbn <b>Opsætning</b>. Alle krævede trin har et grønt hak.</span></li>
+        <li><span>Tryk <b>Aktivér reception</b>.</span></li>
+      </ol>
+      <div class="sub" style="margin-top:3mm"><span class="lbl">Hvad nu?</span>
+        <div class="next">
+          <div class="nx"><span class="ms">inbox</span><h3>Indbakke</h3><p>Alle samtaler med en kort sammenfatning.</p></div>
+          <div class="nx"><span class="ms">task_alt</span><h3>Opgaver</h3><p>Callbacks med frist, så intet bliver glemt.</p></div>
+          <div class="nx"><span class="ms">monitoring</span><h3>Rapporter</h3><p>Hvem ringede, hvad ville de, hvad blev aftalt.</p></div>
+          <div class="nx"><span class="ms">group_add</span><h3>Team</h3><p>Inviter kolleger under Indstillinger → Team.</p></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4mm;min-width:0">
+      <div class="trophy">
+        <svg viewBox="0 0 260 300" role="img" aria-label="Den færdige model"><use href="#model"/></svg>
+        <h2>Færdig!</h2>
+        <p>Jeres AI-receptionist er bygget. Den tager de opkald, I ikke når, og svarer kun ud fra jeres godkendte viden.</p>
+      </div>
+      <div class="tip"><span class="ms fill">build</span><span><b>Vedligehold:</b> Ændrer I priser eller åbningstider, så ret dem i Viden og godkend igen. Assistenten bruger altid den nyeste godkendte udgave.</span></div>
+      <div class="help"><span class="ms">support_agent</span><div><b>Mangler I en klods?</b><span>Skriv til info@dialogbot.dk, eller åbn Hjælp i Dialogbot. Jeres ambassadør kan også hjælpe.</span></div></div>
+    </div>
+  </div>
+  <span class="pfoot">Dialogbot · CVR-nr. 25632710 · Abildgade 18, 8200 Aarhus</span><span class="pno">12</span>
+</section>
+</main>
+</body>
+</html>

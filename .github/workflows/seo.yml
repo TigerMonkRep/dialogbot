@@ -1,0 +1,53 @@
+name: SEO-overvågning
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"   # hver mandag morgen
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Site der scannes"
+        default: "https://www.dialogbot.dk"
+  push:
+    paths: ["seo_agent/**", ".github/workflows/seo.yml"]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tests af SEO-agenten
+        run: python -m unittest discover -s seo_agent/tests -t .
+      - name: Hent forrige rapport (til sammenligning)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p previous
+          id=$(gh run list --workflow seo.yml --status success --limit 1 --json databaseId -q '.[0].databaseId' || true)
+          if [ -n "$id" ]; then gh run download "$id" -n seo-report -D previous || true; fi
+          ls -R previous || true
+      - name: Scan
+        env:
+          PSI_API_KEY: ${{ secrets.PSI_API_KEY }}
+          SITE_URL: ${{ inputs.url || 'https://www.dialogbot.dk' }}
+        run: |
+          baseline=""
+          prev=$(find previous -name latest.json 2>/dev/null | head -1)
+          if [ -n "$prev" ]; then baseline="--baseline $prev"; fi
+          python -m seo_agent "$SITE_URL" --psi $baseline --out report --fail-under 80 | tee report.md
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seo-report
+          path: |
+            report/**/latest.json
+            report/**/latest.md
+          retention-days: 90

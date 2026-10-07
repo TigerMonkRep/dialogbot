@@ -118,7 +118,9 @@ def find_number(db: OrmSession, message: dict) -> PhoneNumber | None:
 VAPI_ANTHROPIC_MODELS = frozenset({
     "claude-sonnet-5", "claude-sonnet-4-6", "claude-opus-4-6", "claude-sonnet-4-5-20250929", "claude-opus-4-5-20251101",
     "claude-haiku-4-5-20251001", "claude-sonnet-4-20250514", "claude-opus-4-20250514"})
-VAPI_DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6"
+# Phone answers must start fast; a pause before every reply is what makes a call feel robotic. Haiku 4.5 answers far
+# quicker than Sonnet; set VAPI_MODEL (e.g. claude-sonnet-4-6) to trade speed for depth.
+VAPI_DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
 
 
 # Vapi writes call.analysis.summary with an English default prompt; our inbox, leads and daily reports are Danish.
@@ -130,9 +132,9 @@ ANALYSIS_PLAN = {"summaryPlan": {"messages": [
 
 
 def phone_model(s) -> str:
-    """The model id sent to Vapi: VAPI_MODEL, else AI_MODEL_ID – replaced by a supported default when Vapi
-    would refuse it (only checked for the anthropic provider, whose list we know)."""
-    m = s.vapi_model or s.ai_model_id
+    """The model id sent to Vapi: VAPI_MODEL, else the fast phone default – replaced by that default when Vapi would
+    refuse it (only checked for the anthropic provider, whose list we know)."""
+    m = s.vapi_model or (VAPI_DEFAULT_ANTHROPIC_MODEL if s.vapi_model_provider == "anthropic" else s.ai_model_id)
     if s.vapi_model_provider == "anthropic" and m not in VAPI_ANTHROPIC_MODELS:
         return VAPI_DEFAULT_ANTHROPIC_MODEL
     return m

@@ -8587,6 +8587,102 @@
         ]
       }
     },
+    "/api/v1/webhooks/elevenlabs/init": {
+      "post": {
+        "description": "ElevenLabs Agents conversation-initiation webhook (trial engine): the call's prompt, greeting and voice.",
+        "operationId": "elevenlabs_init_api_v1_webhooks_elevenlabs_init_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-dialogbot-secret",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dialogbot-Secret"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elevenlabs Init",
+        "tags": [
+          "webhooks"
+        ]
+      }
+    },
+    "/api/v1/webhooks/elevenlabs/post-call": {
+      "post": {
+        "description": "ElevenLabs Agents post-call webhook: store the call like a Vapi end-of-call report.",
+        "operationId": "elevenlabs_post_call_api_v1_webhooks_elevenlabs_post_call_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "elevenlabs-signature",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Elevenlabs-Signature"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elevenlabs Post Call",
+        "tags": [
+          "webhooks"
+        ]
+      }
+    },
     "/api/v1/webhooks/resend": {
       "post": {
         "description": "Resend delivery events. Public, but every request must carry a valid Svix signature.",

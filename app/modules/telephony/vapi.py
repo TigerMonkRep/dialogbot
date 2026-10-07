@@ -36,7 +36,16 @@ DEFAULT_GREETING = ("Hej, du har ringet til {name}. Du taler med en digital assi
 
 
 # Danish speech-to-text by default (Deepgram Nova-3 supports "da"); VAPI_TRANSCRIBER_JSON overrides it.
-DEFAULT_TRANSCRIBER = {"provider": "deepgram", "model": "nova-3", "language": "da"}
+# ElevenLabs Scribe hears Danish names and places far better than Deepgram on phone audio; Deepgram Nova-3 (with the
+# business's key terms) takes over if Scribe fails during a call.
+DEFAULT_TRANSCRIBER = {"provider": "11labs", "model": "scribe_v2_realtime", "language": "da"}
+FALLBACK_TRANSCRIBER = {"provider": "deepgram", "model": "nova-3", "language": "da"}
+# Turn-taking that feels like a person: short Danish backchannels ("ja", "mm") never cut the assistant off, and it
+# waits a moment after an interruption before speaking again.
+STOP_SPEAKING_PLAN = {"numWords": 2, "backoffSeconds": 1.0,
+                      "acknowledgementPhrases": ["ja", "jo", "jah", "mm", "mhm", "okay", "ok", "nå", "nåh", "præcis",
+                                                 "netop", "fint", "godt", "javel", "jaja", "yes", "klart"]}
+START_SPEAKING_PLAN = {"waitSeconds": 0.5}
 # ElevenLabs models a number may use. Only Flash v2.5 accepts an explicit language; the others detect it
 # from the (Danish) text and reject a language code.
 VOICE_MODELS = ("eleven_multilingual_v2", "eleven_flash_v2_5", "eleven_turbo_v2_5", "eleven_v4_turbo")
@@ -199,14 +208,18 @@ def keyterms(db: OrmSession, ws: Workspace) -> list[str]:
 
 
 def transcriber_for(db: OrmSession, ws: Workspace | None) -> dict:
-    """The transcriber config (VAPI_TRANSCRIBER_JSON or Deepgram Nova-3 Danish), with the business's key terms
-    added when the model supports Deepgram keyterm prompting and none were configured by hand."""
-    t = _json_setting(get_settings().vapi_transcriber_json) or dict(DEFAULT_TRANSCRIBER)
-    if (ws is not None and t.get("provider") == "deepgram" and str(t.get("model", "")).startswith(KEYTERM_MODELS)
-            and "keyterm" not in t):
-        terms = keyterms(db, ws)
-        if terms:
-            t["keyterm"] = terms
+    """The transcriber config (VAPI_TRANSCRIBER_JSON, or ElevenLabs Scribe Danish with Deepgram Nova-3 as fallback),
+    with the business's key terms added to any Deepgram model that supports keyterm prompting."""
+    configured = _json_setting(get_settings().vapi_transcriber_json)
+    t = configured or dict(DEFAULT_TRANSCRIBER)
+    if configured is None:
+        t["fallbackPlan"] = {"transcribers": [dict(FALLBACK_TRANSCRIBER)]}
+    for d in [t, *t.get("fallbackPlan", {}).get("transcribers", [])]:
+        if (ws is not None and d.get("provider") == "deepgram" and str(d.get("model", "")).startswith(KEYTERM_MODELS)
+                and "keyterm" not in d):
+            terms = keyterms(db, ws)
+            if terms:
+                d["keyterm"] = terms
     return t
 
 
@@ -277,6 +290,7 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
                   "messages": [{"role": "system", "content": f"{system}\n\n{phone_rules}"}]},
         "transcriber": transcriber_for(db, ws),
         "analysisPlan": ANALYSIS_PLAN,
+        "stopSpeakingPlan": STOP_SPEAKING_PLAN, "startSpeakingPlan": START_SPEAKING_PLAN,
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id)},
     }
     from app.modules.integrations import actions as _actions
@@ -411,6 +425,8 @@ def record_event(db: OrmSession, event_id: str, event_type: str, payload: dict, 
 def not_active_assistant(db: OrmSession, number: PhoneNumber) -> dict:
     """A call reached the destination before the customer activated (or while paused): say so briefly and end.
     No knowledge is used and nothing is promised."""
+    from app.modules.voices import standard
+
     ws = db.get(Workspace, number.workspace_id)
     s = get_settings()
     text = (f"Tak for dit opkald til {ws.name}. Telefonsvareren er ikke aktiveret endnu. "
@@ -419,5 +435,6 @@ def not_active_assistant(db: OrmSession, number: PhoneNumber) -> dict:
         "firstMessage": text, "endCallMessage": "Farvel.", "maxDurationSeconds": 20,
         "model": {"provider": s.vapi_model_provider, "model": phone_model(s),
                   "messages": [{"role": "system", "content": "Sig kun farvel. Svar ikke på spørgsmål."}]},
-        "transcriber": _json_setting(s.vapi_transcriber_json) or dict(DEFAULT_TRANSCRIBER),
+        "transcriber": transcriber_for(db, None), "analysisPlan": ANALYSIS_PLAN,
+        "voice": standard.provider_voice(db, ws.id, number),
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id), "not_active": True}}}

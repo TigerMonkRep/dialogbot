@@ -85,9 +85,6 @@ class Settings(BaseSettings):
     vapi_transcriber_json: str | None = Field(default=None, alias="VAPI_TRANSCRIBER_JSON")
     # Server-side only: lets owners hear a chosen ElevenLabs voice before calls go live.
     elevenlabs_api_key: str | None = Field(default=None, alias="ELEVENLABS_API_KEY")
-    # Server-side only: renders the short sample of the Azure standard voices (Christel, Jeppe). Free tier F0 is enough.
-    azure_speech_key: str | None = Field(default=None, alias="AZURE_SPEECH_KEY")
-    azure_speech_region: str = Field(default="northeurope", alias="AZURE_SPEECH_REGION")
     # CVR register (Erhvervsstyrelsen "system-til-system"): free credentials via cvrselvbetjening@erst.dk.
     cvr_username: str | None = Field(default=None, alias="CVR_USERNAME")
     cvr_password: str | None = Field(default=None, alias="CVR_PASSWORD")

@@ -29,6 +29,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.errors import ApiError, Conflict, ValidationFailed
 from app.models import DemoCall, DoNotCall, PhoneNumber, Workspace
+from app.modules.sales import script
 
 TZ = ZoneInfo("Europe/Copenhagen")
 MAX_SECONDS = 300
@@ -114,7 +115,17 @@ def info(db: OrmSession) -> dict:
     start, end = hours()
     return {"available": problem(db) is None, "demo_number": demo_number(db), "open_now": in_hours(_now()),
             "hours": {"from": start.strftime("%H:%M"), "to": end.strftime("%H:%M")},
-            "consent_text": CONSENT_TEXT_WEB, "consent_version": CONSENT_VERSION_WEB}
+            "consent_text": CONSENT_TEXT_WEB, "consent_version": CONSENT_VERSION_WEB,
+            "voices": [{k: v[k] for k in ("key", "name", "gender", "image", "description", "sample")}
+                       for v in _voices()],
+            "industries": [{"key": k, "label": v["label"], "icon": v["icon"], "examples": v["examples"]}
+                           for k, v in script.INDUSTRIES.items()]}
+
+
+def _voices() -> list[dict]:
+    from app.modules.voices import standard
+
+    return standard.catalog()
 
 
 def danish_number(raw: str) -> str:
@@ -140,34 +151,15 @@ def _global_cap(db: OrmSession, ws: Workspace, now: datetime) -> None:
 # --------------------------------------------------------------------------- the call
 
 def first_message(d: DemoCall) -> str:
-    who = d.name.split(" ")[0] if d.name else ""
-    hello = f"Hej {who}" if who else "Hej"
-    if d.company:
-        return (f"{hello}, det er Dialogbots digitale assistent, som du bad om at blive ringet op af. Lad os lade som om, "
-                f"jeg er receptionist hos {d.company}. Du kan ringe ind som en af jeres kunder, eller spørge mig om "
-                "Dialogbot. Hvad vil du helst?")
-    return (f"{hello}, det er Dialogbots digitale assistent, som du bad om at blive ringet op af. Jeg kan vise, hvordan "
-            "jeg ville tage telefonen for jeres virksomhed. Hvad hedder virksomheden, og hvad laver I?")
+    return script.first_message(d.name, d.company, d.industry)
 
 
 def system_prompt(db: OrmSession, ws: Workspace, d: DemoCall) -> str:
     from app.modules.ai.service import CHANNEL_INSTRUCTIONS, build_system_prompt
 
     base, _rev = build_system_prompt(db, ws)  # approved knowledge about Dialogbot only
-    return f"""{base}
-
-{CHANNEL_INSTRUCTIONS["phone"][1]}
-
-Dette er et DEMO-opkald. Du ringer UD fra {ws.name}, fordi kontakten selv har bedt om det. Kontakt: {d.name or "ukendt navn"}{f", {d.company}" if d.company else ""}.
-Formål: kontakten skal høre, hvordan du ville tage telefonen for deres egen virksomhed, og få svar på spørgsmål om Dialogbot.
-
-Sådan gør du:
-- Hvis kontakten vil prøve rollespillet, så vær receptionist for deres virksomhed. Spørg kort, hvad virksomheden laver, hvis du ikke ved det. Vis det, du kan: tage imod en henvendelse, spørge ind til behovet, notere navn og nummer, og love at en medarbejder ringer tilbage. Opfind aldrig priser, åbningstider eller ydelser for deres virksomhed – sig at det står i den viden, virksomheden selv godkender.
-- Svar på spørgsmål om Dialogbot kun ud fra den godkendte viden ovenfor. Lov aldrig rabatter eller aftaler.
-- Hvis kontakten vil i gang eller vil tale med en person, så sig at en medarbejder fra Dialogbot ringer tilbage, og spørg hvornår det passer.
-- Du er en digital assistent. Lyv aldrig om at være et menneske.
-- Hvis kontakten ikke vil tale mere eller ikke vil ringes op igen, så undskyld, bekræft det og afslut straks.
-- Opkaldet varer højst fem minutter. Afslut med at takke for snakken."""
+    return (f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n"
+            + script.manuscript(name=d.name, company=d.company, industry=d.industry))
 
 
 def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -> dict:
@@ -188,7 +180,11 @@ def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -
     }
     from app.modules.voices import standard
 
-    out["voice"] = standard.provider_voice(db, ws.id, number)
+    if d.voice_key in standard.STANDARD_VOICES:  # the visitor picked the voice they want to hear
+        out["voice"] = dict(standard.STANDARD_VOICES[d.voice_key]["voice"])
+        out["voice"].setdefault("chunkPlan", standard.danish_chunk_plan(db, ws.id))
+    else:
+        out["voice"] = standard.provider_voice(db, ws.id, number)
     return out
 
 
@@ -208,7 +204,8 @@ def place(db: OrmSession, ws: Workspace, d: DemoCall) -> None:
     d.provider_call_id = str(out.get("id") or "")[:100] or None
 
 
-def request_web(db: OrmSession, *, phone: str, name: str, company: str) -> DemoCall | None:
+def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: str | None = None,
+                industry: str | None = None) -> DemoCall | None:
     """The public door. Returns None when the number must not be called (do-not-call): the answer to the visitor
     is the same, so the endpoint does not reveal who has opted out."""
     now = _now()
@@ -225,7 +222,8 @@ def request_web(db: OrmSession, *, phone: str, name: str, company: str) -> DemoC
                               "prøve igen.", code="demo_already_called")
     _global_cap(db, ws, now)
     d = DemoCall(workspace_id=ws.id, source="web", phone=phone, name=name.strip()[:200], company=company.strip()[:200],
-                 consent_version=CONSENT_VERSION_WEB, consent_text=CONSENT_TEXT_WEB, consented_at=now)
+                 consent_version=CONSENT_VERSION_WEB, consent_text=CONSENT_TEXT_WEB, consented_at=now,
+                 voice_key=voice, industry=industry if industry in script.INDUSTRIES else None)
     db.add(d)
     if _blocked(db, ws, phone):
         d.status, d.error = "skipped", "Nummeret står på spærrelisten"
@@ -289,7 +287,9 @@ def on_report(db: OrmSession, message: dict, *, call_id: str, conv, visitor_line
     who = " – ".join(x for x in (d.name, d.company) if x) or d.phone
     lead = leads.create_lead(db, ws.id, source="demo_call", created_by=None, conversation=conv, contact_name=d.name,
                              contact_phone=d.phone,
-                             need_summary=f"Demo-opkald{f' ({d.company})' if d.company else ''}: {text or 'se samtalen'}")
+                             need_summary=f"Demo-opkald{f' ({d.company})' if d.company else ''}"
+                                          f"{f' – {script.industry_label(d.industry)}' if d.industry else ''}: "
+                                          f"{text or 'se samtalen'}")
     d.lead_id = lead.id
     if outcome in ("interested", "callback"):
         leads._notify_new_lead(db, lead)
@@ -304,4 +304,4 @@ def out(d: DemoCall) -> dict:
             "status": d.status, "outcome": d.outcome, "summary": d.summary, "error": d.error,
             "consent_version": d.consent_version, "consented_at": d.consented_at.isoformat(),
             "seller_user_id": str(d.seller_user_id) if d.seller_user_id else None, "note": d.note,
-            "lead_id": str(d.lead_id) if d.lead_id else None, "created_at": d.created_at.isoformat() if d.created_at else None}
+            "lead_id": str(d.lead_id) if d.lead_id else None, "voice": d.voice_key, "industry": d.industry, "created_at": d.created_at.isoformat() if d.created_at else None}

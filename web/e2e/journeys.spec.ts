@@ -14,10 +14,15 @@ test("1 · A01→A03→A06: tilmelding med bevaret hensigt, bekræftelse og før
   await page.getByLabel("Invitationskode").fill(PREVIEW_CODE.toLowerCase());
   await page.getByRole("button", { name: "Lås op og se forsiden" }).click();
   await expect(page.getByRole("heading", { name: /Du driver forretningen/ })).toBeVisible();
-  await expect(page.getByText("Privat preview.", { exact: false })).toBeVisible();
-  // "Ring mig op nu" is honest: no sales workspace is configured in CI, so no call can be requested
-  await expect(page.getByRole("heading", { name: /Lad vores assistent ringe dig op/ })).toBeVisible();
-  await expect(page.getByText(/Demo-opkald åbner ved lanceringen/)).toBeVisible();
+  await expect(page.getByRole("link", { name: /Bliv ringet op – hør det selv/ })).toBeVisible();
+  // "Ring mig op nu" is honest: no sales workspace is configured in CI, so no call can be requested, but the voices
+  // and industries can be chosen and heard
+  await expect(page.getByRole("heading", { name: /Hvem tager telefonen, når du er optaget/ })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "Camilla" })).toBeChecked();
+  await page.getByRole("radio", { name: /Håndværk & byg/ }).check({ force: true });
+  await expect(page.getByRole("radio", { name: /Håndværk & byg/ })).toBeChecked();
+  await expect(page.getByText(/Demo-opkald åbner om lidt/)).toBeVisible();
+  await expect(page.getByRole("button", { name: /Ring mig op nu med Camilla/ })).toBeDisabled();
   await shot(page, info, "p01-forside");
   await page.getByRole("link", { name: "Start med kundeopfølgning" }).click();
   await expect(page).toHaveURL(/\/signup\?intent=campaigns/);

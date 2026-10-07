@@ -5,6 +5,7 @@ import { Icon } from "@/components/ui";
 import { API_BASE_URL, REFERRAL_COOKIE } from "@/lib/config";
 import type { Metadata } from "next";
 import { LANDING_PAGES, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { INDUSTRIES } from "@/lib/industries";
 import { DemoCall } from "./demo-call";
 import { IndustrySwitcher } from "./industries";
 
@@ -270,6 +271,9 @@ export default async function Home() {
           <span className="flex items-center gap-space-sm"><span className="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-primary">Dialogbot</span>•<span>Dansk AI-receptionist</span>•<span>CVR-nr. {COMPANY.cvr}</span></span>
           <nav className="flex flex-wrap items-center justify-center gap-x-space-md gap-y-1" aria-label="Konto">{LANDING_PAGES.map((p) => <Link key={p.href} href={p.href} className="hover:text-on-surface">{p.label}</Link>)}<Link href="/privatliv" className="hover:text-on-surface">Privatliv</Link><Link href="/vilkaar" className="hover:text-on-surface">Vilkår</Link><Link href="/kontakt" className="hover:text-on-surface">Kontakt</Link><Link href="/login" className="hover:text-on-surface">Log ind</Link><Link href="/signup" className="hover:text-on-surface">Opret konto</Link></nav>
         </div>
+        <nav className="max-w-7xl mx-auto px-4 sm:px-margin-md lg:px-margin-lg pb-space-xl flex flex-wrap justify-center gap-x-space-md gap-y-1 font-body-sm text-body-sm text-on-surface-variant" aria-label="Brancher">
+          {INDUSTRIES.map((i) => <Link key={i.slug} href={`/ai-receptionist/${i.slug}`} className="hover:text-on-surface">AI-receptionist til {i.name}</Link>)}
+        </nav>
       </footer>
     </div>
   );

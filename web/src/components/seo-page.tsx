@@ -2,14 +2,17 @@ import Link from "next/link";
 import { COMPANY } from "./legal-page";
 import { Icon } from "./ui";
 import { LANDING_PAGES, SITE_URL } from "@/lib/site";
+import { INDUSTRIES } from "@/lib/industries";
 
 export type SeoSection = { title: string; body: React.ReactNode };
 export type SeoFaq = [string, string];
 
 /** Shared frame for the keyword landing pages (AI-receptionist, AI-telefonsvarer, chatbot). Server component.
  *  Every claim is something Dialogbot does today; the page ends with the call-me demo and sign-up. */
-export function SeoPage({ path, kicker, title, lead, points, sections, faq }: {
+export function SeoPage({ path, kicker, title, lead, points, sections, faq, article }: {
   path: string; kicker: string; title: string; lead: string; points: string[]; sections: SeoSection[]; faq: SeoFaq[];
+  /** A guide under /viden: adds Article structured data and puts "Viden" in the breadcrumb. */
+  article?: { published: string };
 }) {
   const jsonLd = [
     {
@@ -20,9 +23,17 @@ export function SeoPage({ path, kicker, title, lead, points, sections, faq }: {
       "@context": "https://schema.org", "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Dialogbot", item: SITE_URL },
-        { "@type": "ListItem", position: 2, name: kicker, item: `${SITE_URL}${path}` },
+        ...(article ? [{ "@type": "ListItem", position: 2, name: "Viden", item: `${SITE_URL}/viden` }] : []),
+        { "@type": "ListItem", position: article ? 3 : 2, name: kicker, item: `${SITE_URL}${path}` },
       ],
     },
+    ...(article ? [{
+      "@context": "https://schema.org", "@type": "Article", headline: title, description: lead, inLanguage: "da-DK",
+      datePublished: article.published, dateModified: article.published, mainEntityOfPage: `${SITE_URL}${path}`,
+      image: `${SITE_URL}/opengraph-image.png`,
+      author: { "@type": "Organization", name: "Dialogbot", url: SITE_URL },
+      publisher: { "@type": "Organization", name: "Dialogbot", logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.png` } },
+    }] : []),
   ];
   return (
     <div className="min-h-dvh bg-surface flex flex-col">
@@ -33,7 +44,7 @@ export function SeoPage({ path, kicker, title, lead, points, sections, faq }: {
             <span className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary"><Icon name="support_agent" size={20} /></span>
             <span className="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">Dialogbot</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-space-lg font-label-lg text-label-lg" aria-label="Løsninger">
+          <nav className="hidden lg:flex items-center gap-space-lg font-label-lg text-label-lg" aria-label="Løsninger">
             {LANDING_PAGES.map((p) => (
               <Link key={p.href} href={p.href} aria-current={p.href === path ? "page" : undefined}
                 className={p.href === path ? "text-primary font-bold" : "text-on-surface-variant hover:text-on-surface"}>{p.label}</Link>
@@ -102,6 +113,9 @@ export function SeoPage({ path, kicker, title, lead, points, sections, faq }: {
             <Link href="/vilkaar" className="hover:text-on-surface">Vilkår</Link>
           </nav>
         </div>
+        <nav className="max-w-6xl mx-auto px-4 sm:px-6 pb-space-xl flex flex-wrap gap-x-space-md gap-y-1 font-body-sm text-body-sm text-on-surface-variant" aria-label="Brancher">
+          {INDUSTRIES.map((i) => <Link key={i.slug} href={`/ai-receptionist/${i.slug}`} className="hover:text-on-surface">AI-receptionist til {i.name}</Link>)}
+        </nav>
       </footer>
     </div>
   );

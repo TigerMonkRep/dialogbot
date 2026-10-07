@@ -48,6 +48,7 @@ def test_initiation_gives_the_workspace_prompt_and_greeting(client, api, two_wor
     agent = r["conversation_config_override"]["agent"]
     assert agent["language"] == "da" and "Afslibning" in agent["prompt"]["prompt"]
     assert "HEMMELIG-KLADDE" not in agent["prompt"]["prompt"] and agent["first_message"]
+    assert "Kunden ringer fra +4520304050" in agent["prompt"]["prompt"]  # the agent knows the caller's number
     assert "tts" not in r["conversation_config_override"]  # the agent's own voice
     unknown = client.post(INIT, json=body | {"called_number": "+4511111111"}, headers={"x-dialogbot-secret": AGENT_SECRET})
     assert "ikke i brug" in unknown.json()["conversation_config_override"]["agent"]["first_message"]

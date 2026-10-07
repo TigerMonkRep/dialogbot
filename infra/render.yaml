@@ -54,6 +54,24 @@ services:
         sync: false
       - key: FRONTEND_BASE_URL
         sync: false
+      - key: SOCIAL_PROVIDER      # none until the platform keys are in (docs/social-media.md); then "live"
+        value: none
+      - key: SOCIAL_REQUIRE_APPROVAL
+        value: "false"
+      - key: META_PAGE_ID
+        sync: false
+      - key: META_PAGE_ACCESS_TOKEN
+        sync: false
+      - key: META_INSTAGRAM_USER_ID
+        sync: false
+      - key: TIKTOK_CLIENT_KEY
+        sync: false
+      - key: TIKTOK_CLIENT_SECRET
+        sync: false
+      - key: TIKTOK_REFRESH_TOKEN
+        sync: false
+      - key: CREDENTIALS_KEY      # also encrypts TikTok's rotating refresh token (same value in API and worker)
+        sync: false
       - key: LOG_LEVEL
         value: INFO
 
@@ -86,6 +104,26 @@ services:
       - key: EMAIL_FROM
         sync: false
       - key: FRONTEND_BASE_URL
+        sync: false
+      - key: SOCIAL_PROVIDER      # none until the platform keys are in (docs/social-media.md); then "live"
+        value: none
+      - key: SOCIAL_REQUIRE_APPROVAL
+        value: "false"
+      - key: META_PAGE_ID
+        sync: false
+      - key: META_PAGE_ACCESS_TOKEN
+        sync: false
+      - key: META_INSTAGRAM_USER_ID
+        sync: false
+      - key: TIKTOK_CLIENT_KEY
+        sync: false
+      - key: TIKTOK_CLIENT_SECRET
+        sync: false
+      - key: TIKTOK_REFRESH_TOKEN
+        sync: false
+      - key: CREDENTIALS_KEY      # also encrypts TikTok's rotating refresh token (same value in API and worker)
+        sync: false
+      - key: PUBLIC_BASE_URL      # the platforms download the post images from here, so it must be public https
         sync: false
       - key: WORKER_LEASE_SECONDS
         value: "60"

@@ -84,6 +84,7 @@ Fuld kontrakt: [`docs/api-contract.md`](docs/api-contract.md) og [`docs/openapi.
 - `docs/api-contract.md` — endpoints, tilstande, fejlkoder
 - `docs/requirements-status.md` — kravstatus (kun faktisk implementeret omfang)
 - `docs/final-report.md` — slutrapport for etapen
+- `docs/social-media.md` — automatiske opslag på Dialogbots Facebook, Instagram og TikTok (indhold, opsætning, styring)
 
 ## Frontend (`web/`)
 

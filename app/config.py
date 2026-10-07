@@ -142,6 +142,28 @@ class Settings(BaseSettings):
     # Spend guard: max AI replies per workspace per 24 h in the public web widget.
     webchat_daily_reply_limit: int = Field(default=300, alias="WEBCHAT_DAILY_REPLY_LIMIT")
 
+    # Social media autoposting (app/modules/social): Dialogbot's own Facebook page, Instagram business account and TikTok.
+    # none = nothing is generated or posted; fake = deterministic double (dev/test only); live = real Graph/TikTok calls.
+    social_provider: Literal["none", "fake", "live"] = Field(default="none", alias="SOCIAL_PROVIDER")
+    # false = posts publish by themselves at their slot; true = they wait as drafts until an operator approves them.
+    social_require_approval: bool = Field(default=False, alias="SOCIAL_REQUIRE_APPROVAL")
+    social_weekdays: str = Field(default="0,2,4", alias="SOCIAL_WEEKDAYS")  # Monday=0 ... Sunday=6, Copenhagen time
+    social_plan_days_ahead: int = Field(default=3, alias="SOCIAL_PLAN_DAYS_AHEAD")  # drafts exist this long before posting
+    social_platforms: str = Field(default="facebook,instagram,tiktok", alias="SOCIAL_PLATFORMS")
+    # A slot older than this when the worker finds it is skipped instead of posted at a strange hour.
+    social_max_late_minutes: int = Field(default=360, alias="SOCIAL_MAX_LATE_MINUTES")
+    meta_graph_version: str = Field(default="v23.0", alias="META_GRAPH_VERSION")
+    meta_page_id: str | None = Field(default=None, alias="META_PAGE_ID")
+    meta_page_access_token: str | None = Field(default=None, alias="META_PAGE_ACCESS_TOKEN")  # long-lived Page token
+    meta_instagram_user_id: str | None = Field(default=None, alias="META_INSTAGRAM_USER_ID")
+    tiktok_client_key: str | None = Field(default=None, alias="TIKTOK_CLIENT_KEY")
+    tiktok_client_secret: str | None = Field(default=None, alias="TIKTOK_CLIENT_SECRET")
+    # First refresh token, from the one-off authorisation (scripts/social_connect.py); afterwards the rotated
+    # token lives encrypted in the database and this value is no longer used.
+    tiktok_refresh_token: str | None = Field(default=None, alias="TIKTOK_REFRESH_TOKEN")
+    # Public site used in captions and as link target.
+    social_site_url: str = Field(default="https://www.dialogbot.dk", alias="SOCIAL_SITE_URL")
+
     # Dev tooling: the simulated mailbox and test identities are gated on this.
     enable_dev_tools: bool = Field(default=False, alias="ENABLE_DEV_TOOLS")
 
@@ -172,6 +194,10 @@ class Settings(BaseSettings):
             raise ValueError(f"TELEPHONY_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
         if self.connectors_provider == "fake" and self.app_env not in ("dev", "test"):
             raise ValueError(f"CONNECTORS_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
+        if self.social_provider == "fake" and self.app_env not in ("dev", "test"):
+            raise ValueError(f"SOCIAL_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
+        if self.social_provider == "live" and not (self.meta_page_access_token or self.tiktok_client_key):
+            raise ValueError("SOCIAL_PROVIDER=live requires META_PAGE_ACCESS_TOKEN and/or TIKTOK_CLIENT_KEY")
         if self.tts_engine == "http" and not (self.tts_service_url and self.tts_service_token):
             raise ValueError("TTS_ENGINE=http requires TTS_SERVICE_URL and TTS_SERVICE_TOKEN")
         if self.voice_storage == "supabase" and not (self.supabase_url and self.supabase_service_role_key):

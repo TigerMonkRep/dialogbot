@@ -259,6 +259,16 @@ def run_schedules() -> None:
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("commission.release_failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:
+            from app.modules.social.service import run_due as run_social
+
+            n = run_social(db)
+            if n:
+                log.info("social.posts_attempted", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("social.failed", error=f"{type(exc).__name__}: {exc}")
 
 
 def sync_calendars(db, max_age_minutes: int = 15) -> int:

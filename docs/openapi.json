@@ -8683,6 +8683,63 @@
         ]
       }
     },
+    "/api/v1/webhooks/elevenlabs/tools/{name}": {
+      "post": {
+        "description": "ElevenLabs Agents server tool: run one action (free times, booking, SMS …) for the number's workspace.",
+        "operationId": "elevenlabs_tool_api_v1_webhooks_elevenlabs_tools__name__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-dialogbot-secret",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Dialogbot-Secret"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Elevenlabs Tool",
+        "tags": [
+          "webhooks"
+        ]
+      }
+    },
     "/api/v1/webhooks/resend": {
       "post": {
         "description": "Resend delivery events. Public, but every request must carry a valid Svix signature.",

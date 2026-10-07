@@ -81,3 +81,27 @@ def test_post_call_is_signed_and_stored_like_a_vapi_report(client, api, two_work
     assert db.scalar(select(Lead).where(Lead.conversation_id == call.conversation_id)) is not None
     again = client.post(POST, content=raw, headers={"elevenlabs-signature": sig, "content-type": "application/json"})
     assert again.json()["outcome"] == "duplicate"
+
+
+def test_server_tools_run_the_workspace_actions(client, api, two_workspaces, el):
+    from .test_bookings import _setup as booking_setup
+
+    t = two_workspaces
+    booking_setup(api, t)
+    api.map_number(t["ws_a"], "+4570123456", "pn_el_tools")
+    url = "/api/v1/webhooks/elevenlabs/tools"
+    sysvars = {"called_number": "+4570123456", "caller_id": "+4520304050", "conversation_id": "conv_t1"}
+    h = {"x-dialogbot-secret": AGENT_SECRET}
+    assert client.post(f"{url}/ledige_tider", json=sysvars).status_code == 401
+    text = client.post(f"{url}/ledige_tider", json=sysvars | {"type": "", "fra_dato": ""}, headers=h).json()["result"]
+    assert "Ledige tider til besigtigelse" in text
+    start = text.split("(start ")[1].split(")")[0]
+    no = client.post(f"{url}/book_tid", json=sysvars | {"start": start, "navn": "Bo", "bekraeftet": False}, headers=h)
+    assert "kræver, at kunden først siger ja" in no.json()["result"]
+    yes = client.post(f"{url}/book_tid", json=sysvars | {"start": start, "navn": "Bo", "note": "", "bekraeftet": True},
+                      headers=h).json()["result"]
+    assert yes.startswith("Booket: Besigtigelse")
+    items = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/bookings").json()["items"]
+    assert items[0]["source"] == "phone" and items[0]["contact_phone"] == "+4520304050"
+    other = client.post(f"{url}/ledige_tider", json=sysvars | {"called_number": "+4511111111"}, headers=h).json()["result"]
+    assert "ikke tilgængelig" in other

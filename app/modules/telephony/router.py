@@ -36,6 +36,20 @@ async def elevenlabs_init(request: Request, db: OrmSession = Depends(get_db),
     return elevenlabs_agent.initiation(db, body if isinstance(body, dict) else {})
 
 
+@webhook_router.post("/elevenlabs/tools/{name}")
+async def elevenlabs_tool(name: str, request: Request, db: OrmSession = Depends(get_db),
+                          x_dialogbot_secret: str | None = Header(default=None)):
+    """ElevenLabs Agents server tool: run one action (free times, booking, SMS …) for the number's workspace."""
+    from app.modules.telephony import elevenlabs_agent
+
+    elevenlabs_agent.verify_init(x_dialogbot_secret)
+    try:
+        body = json.loads(await request.body() or b"{}")
+    except ValueError as e:
+        raise ValidationFailed("Ugyldig JSON") from e
+    return elevenlabs_agent.run_tool(db, name, body if isinstance(body, dict) else {})
+
+
 @webhook_router.post("/elevenlabs/post-call")
 async def elevenlabs_post_call(request: Request, db: OrmSession = Depends(get_db),
                                elevenlabs_signature: str | None = Header(default=None)):

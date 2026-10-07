@@ -32,7 +32,7 @@ from app.models import DemoCall, DoNotCall, PhoneNumber, Workspace
 from app.modules.sales import script
 
 TZ = ZoneInfo("Europe/Copenhagen")
-MAX_SECONDS = 300
+MAX_SECONDS = 420  # the script aims for 3-4 minutes; the hard stop leaves room to say goodbye
 WEB_REPEAT_AFTER = timedelta(hours=24)
 DK_NUMBER = re.compile(r"^\+45[2-9]\d{7}$")
 PREMIUM = re.compile(r"^\+4590")  # 90xx xxxx: overtakseret

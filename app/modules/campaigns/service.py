@@ -247,6 +247,7 @@ def assistant_for(db: OrmSession, c: Campaign, contact: CampaignContact) -> dict
         "maxDurationSeconds": remaining,
         "voicemailDetection": {"provider": "vapi"},
         "endCallPhrases": ["Tak for snakken, hav en god dag", "Undskyld forstyrrelsen, hav en god dag"],
+        "analysisPlan": vapi.ANALYSIS_PLAN,
         "metadata": {"workspace_id": str(ws.id), "campaign_id": str(c.id), "campaign_contact_id": str(contact.id)},
     }
     from app.modules.voices import service as voices

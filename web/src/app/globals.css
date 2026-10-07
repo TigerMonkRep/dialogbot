@@ -3,7 +3,14 @@
    Tailwind utilities (text-*, font-*) still win over the packages' defaults. */
 @import "@fontsource-variable/inter" layer(base);
 @import "@fontsource-variable/manrope" layer(base);
-@import "material-symbols/outlined.css" layer(base);
+/* Only the icons the app uses (~30 KB instead of the full 4 MB font). Rebuild with web/scripts/subset-icons.py. */
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("/fonts/material-symbols-subset.woff2") format("woff2");
+}
 
 /* Dialogbot design system — ported 1:1 from the Stitch export (Material 3 tokens).
    Colors, spacing, typography and radii below are the exact values from

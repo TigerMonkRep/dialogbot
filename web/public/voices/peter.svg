@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Peter">
+  <defs><clipPath id="c"><rect width="240" height="240" rx="48"/></clipPath></defs>
+  <g clip-path="url(#c)">
+    <rect width="240" height="240" fill="#f3dcc0"/>
+    <circle cx="44" cy="44" r="70" fill="#e7fef9" opacity=".55"/>
+    <!-- shoulders / top -->
+    <path d="M34 240c4-44 40-64 86-64s82 20 86 64z" fill="#00362d"/>
+    <path d="M102 176h36l-18 22z" fill="#d6ec85"/>
+    <!-- neck -->
+    <rect x="104" y="148" width="32" height="34" rx="12" fill="#d9a07a"/>
+    <!-- face -->
+    <ellipse cx="120" cy="114" rx="40" ry="46" fill="#ebb994"/>
+    <!-- beard -->
+    <path d="M82 120c2 30 18 46 38 46s36-16 38-46c-8 12-22 18-38 18s-30-6-38-18z" fill="#5b4636" opacity=".85"/>
+    <!-- short hair -->
+    <path d="M80 104c-4-36 16-56 42-56 28 0 44 20 40 54-8-16-22-24-40-24-18 0-32 8-42 26z" fill="#6b5242"/>
+    <!-- eyes, smile -->
+    <circle cx="104" cy="114" r="4.5" fill="#00362d"/><circle cx="136" cy="114" r="4.5" fill="#00362d"/>
+    <path d="M108 134c7 6 17 6 24 0" stroke="#00362d" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- headset -->
+    <path d="M74 114c0-34 20-58 46-58s46 24 46 58" stroke="#00362d" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <rect x="64" y="104" width="18" height="30" rx="8" fill="#00362d"/><rect x="158" y="104" width="18" height="30" rx="8" fill="#00362d"/>
+    <path d="M166 132c0 18-14 26-30 26" stroke="#00362d" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="134" cy="158" r="6" fill="#00362d"/>
+  </g>
+</svg>

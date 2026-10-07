@@ -131,7 +131,7 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     assert "dansk" in a["model"]["messages"][0]["content"] and n["voice"] is None
     # the workspace picks another ready-made Danish voice; unknown keys are rejected
     vs = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/voices").json()
-    assert [v["key"] for v in vs["standard_voices"]] == ["christel", "jeppe"] and vs["settings"]["standard_voice"] is None
+    assert [v["key"] for v in vs["standard_voices"]] == ["christel", "jeppe", "camilla", "peter"] and vs["settings"]["standard_voice"] is None
     put = f"/api/v1/workspaces/{t['ws_a']}/voices/settings"
     bad_std = api.c.put(put, json={"expected_version": vs["settings"]["version"], "standard_voice": "bob"}, headers=api.h(t["tok_a"]))
     assert bad_std.status_code == 422
@@ -151,7 +151,10 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     assert "Brug gerne jyske vendinger." in a["model"]["messages"][0]["content"]
     api.c.patch(url, json={"voice_model": "eleven_flash_v2_5"}, headers=api.h(t["tok_a"]))
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
-    assert a["voice"]["language"] == "da"  # only Flash v2.5 takes an explicit language
+    assert a["voice"]["language"] == "da"  # Flash/Turbo/v4 take an explicit language; multilingual_v2 detects it
+    api.c.patch(url, json={"voice_model": "eleven_v4_turbo"}, headers=api.h(t["tok_a"]))
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["voice"]["model"] == "eleven_v4_turbo" and a["voice"]["language"] == "da"
     # environment overrides: transcriber JSON replaces the default; a number's own voice beats VAPI_VOICE_JSON
     monkeypatch.setenv("VAPI_TRANSCRIBER_JSON", '{"provider": "azure", "language": "da-DK"}')
     monkeypatch.setenv("VAPI_VOICE_JSON", '{"provider": "azure", "voiceId": "da-DK-ChristelNeural"}')
@@ -290,3 +293,11 @@ def test_phone_voice_skips_vapis_english_number_formatting():
                                    {"type": "regex", "regex": "AI", "value": "ej aj", "options": opts}]
     voice = standard.provider_voice(FakeDb(), None)
     assert voice["provider"] == "azure" and voice["chunkPlan"] == plan
+
+
+def test_elevenlabs_standard_voices_use_v4_turbo_in_danish():
+    from app.modules.voices.standard import STANDARD_VOICES
+
+    for key in ("camilla", "peter"):
+        v = STANDARD_VOICES[key]["voice"]
+        assert v["provider"] == "11labs" and v["model"] == "eleven_v4_turbo" and v["language"] == "da"

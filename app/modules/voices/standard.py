@@ -1,6 +1,7 @@
 """Ready-made Danish phone voices that work without Dialogbot's own speech engine.
 
-They are native Danish neural voices from Azure, spoken through Vapi (billed via Vapi credits, no extra key). A workspace
+Christel and Jeppe are native Danish neural voices from Azure, spoken through Vapi (billed via Vapi credits, no extra
+key). Camilla and Peter are ElevenLabs voices and need the platform's ElevenLabs key connected in Vapi. A workspace
 picks one as its standard; until then the phone uses DEFAULT. A number's own ElevenLabs voice or a chosen Dialogbot
 voice (voices.service.vapi_voice) still wins over this.
 """
@@ -19,6 +20,15 @@ STANDARD_VOICES: dict[str, dict] = {
     "jeppe": {"name": "Jeppe", "gender": "male", "image": "/voices/jeppe.svg",
               "description": "Klar og imødekommende. Passer til håndværk, service og kundeopfølgning.",
               "voice": {"provider": "azure", "voiceId": "da-DK-JeppeNeural"}},
+    # ElevenLabs Voice Library voices, spoken through Vapi with the platform's ElevenLabs key (Vapi → Integrations).
+    "camilla": {"name": "Camilla", "gender": "female", "image": "/voices/camilla.svg",
+                "description": "Klar, rolig og professionel på rigsdansk. ElevenLabs – mere naturlig betoning.",
+                "voice": {"provider": "11labs", "voiceId": "4RklGmuxoAskAbGXplXN", "model": "eleven_v4_turbo",
+                          "language": "da"}},
+    "peter": {"name": "Peter", "gender": "male", "image": "/voices/peter.svg",
+              "description": "Naturlig og klar med let jysk klang. ElevenLabs – mere naturlig betoning.",
+              "voice": {"provider": "11labs", "voiceId": "qhEux886xDKbOdF7jkFP", "model": "eleven_v4_turbo",
+                        "language": "da"}},
 }
 DEFAULT = "christel"
 # Vapi formatters that only strip markup; number/date/time/amount/phone/acronym formatters speak English.

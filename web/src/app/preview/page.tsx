@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { COMPANY } from "@/components/legal-page";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
+import { redirect } from "next/navigation";
+import { gateEnabled } from "@/lib/preview-gate";
 import { safeNext } from "@/lib/safe-next";
 import { UnlockForm, WaitlistForm } from "./forms";
 
@@ -15,6 +17,8 @@ export const metadata: Metadata = {
 export default async function PreviewPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const { next } = await searchParams;
   const target = safeNext(next, "/");
+  // Gate switched off: the real landing page is public, so old /preview links go straight there.
+  if (!gateEnabled()) redirect(target);
   const highlights: [string, string, string, string][] = [
     ["call_log", "01 / Telefoni", "Intelligent reception", "Tager telefonen, når I er optaget, stiller de rigtige spørgsmål og samler behov og kontaktoplysninger til jer."],
     ["cycle", "02 / Opfølgning", "Aktiv opfølgning", "Følger op på sendte tilbud med jeres godkendte manuskript, så varme henvendelser ikke bliver glemt."],

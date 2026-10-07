@@ -80,6 +80,11 @@ def initiation(db: OrmSession, body: dict) -> dict:
             cfg["firstMessage"] = "Dette er et prøveopkald. " + cfg.get("firstMessage", "")
             platform.mark_test_call(db, number, f"el_{body.get('conversation_id') or call_sid}")
             db.commit()
+    caller = vapi.normalize_e164(str(body.get("caller_id"))) if body.get("caller_id") else None
+    if caller and mode not in ("loop", "not_active"):
+        system += (f"\n\nKunden ringer fra {caller}. Du kender altså allerede deres nummer: spørg ikke efter det, "
+                   "men bekræft gerne, at en medarbejder kan ringe tilbage på det nummer, de ringer fra. Læs aldrig "
+                   "nummeret op, medmindre kunden beder om det.")
     agent: dict[str, Any] = {"first_message": cfg.get("firstMessage", ""), "language": "da",
                              "prompt": {"prompt": system}}
     # The voice is the agent's own (chosen in the ElevenLabs dashboard): a Voice Library voice is only usable there

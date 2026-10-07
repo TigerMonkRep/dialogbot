@@ -23,6 +23,8 @@ STANDARD_VOICES: dict[str, dict] = {
 DEFAULT = "christel"
 # Vapi formatters that only strip markup; number/date/time/amount/phone/acronym formatters speak English.
 LANGUAGE_NEUTRAL_FORMATTERS = ("markdown", "asterisk", "stripAsterisk", "quote", "newline")
+# Said the way Danes say them; a workspace's own entry for the same term wins.
+DEFAULT_PRONUNCIATIONS = ({"term": "AI", "say": "ej aj"},)
 
 
 def catalog() -> list[dict]:
@@ -63,7 +65,10 @@ def danish_chunk_plan(db: OrmSession, ws_id: uuid.UUID) -> dict:
     from app.models import WorkspaceVoiceSettings
 
     vs = db.get(WorkspaceVoiceSettings, ws_id)
-    entries = sorted(vs.pronunciations if vs else [], key=lambda x: -len(str(x.get("term", ""))))
+    own = list(vs.pronunciations if vs else [])
+    taken = {str(e.get("term", "")).strip().lower() for e in own}
+    own += [e for e in DEFAULT_PRONUNCIATIONS if e["term"].lower() not in taken]
+    entries = sorted(own, key=lambda x: -len(str(x.get("term", ""))))
     replacements = []
     for e in entries:
         term, say = str(e.get("term", "")).strip(), str(e.get("say", "")).strip()

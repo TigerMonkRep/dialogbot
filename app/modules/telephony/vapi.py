@@ -39,7 +39,9 @@ DEFAULT_GREETING = ("Hej, du har ringet til {name}. Du taler med en digital assi
 DEFAULT_TRANSCRIBER = {"provider": "deepgram", "model": "nova-3", "language": "da"}
 # ElevenLabs models a number may use. Only Flash v2.5 accepts an explicit language; the others detect it
 # from the (Danish) text and reject a language code.
-VOICE_MODELS = ("eleven_multilingual_v2", "eleven_flash_v2_5", "eleven_turbo_v2_5")
+VOICE_MODELS = ("eleven_multilingual_v2", "eleven_flash_v2_5", "eleven_turbo_v2_5", "eleven_v4_turbo")
+# Models that take an explicit language code (multilingual_v2 detects the language itself).
+LANGUAGE_CODE_MODELS = ("eleven_flash_v2_5", "eleven_turbo_v2_5", "eleven_v4_turbo")
 VOICE_ID = re.compile(r"^[A-Za-z0-9]{10,64}$")
 
 
@@ -254,7 +256,7 @@ def voice_config(number: PhoneNumber) -> dict | None:
     if not number.voice_id:
         return None
     voice: dict[str, Any] = {"provider": "11labs", "voiceId": number.voice_id, "model": number.voice_model}
-    if number.voice_model == "eleven_flash_v2_5":
+    if number.voice_model in LANGUAGE_CODE_MODELS:
         voice["language"] = "da"
     return voice
 

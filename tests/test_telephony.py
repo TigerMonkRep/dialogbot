@@ -151,7 +151,10 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     assert "Brug gerne jyske vendinger." in a["model"]["messages"][0]["content"]
     api.c.patch(url, json={"voice_model": "eleven_flash_v2_5"}, headers=api.h(t["tok_a"]))
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
-    assert a["voice"]["language"] == "da"  # only Flash v2.5 takes an explicit language
+    assert a["voice"]["language"] == "da"  # Flash/Turbo/v4 take an explicit language; multilingual_v2 detects it
+    api.c.patch(url, json={"voice_model": "eleven_v4_turbo"}, headers=api.h(t["tok_a"]))
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["voice"]["model"] == "eleven_v4_turbo" and a["voice"]["language"] == "da"
     # environment overrides: transcriber JSON replaces the default; a number's own voice beats VAPI_VOICE_JSON
     monkeypatch.setenv("VAPI_TRANSCRIBER_JSON", '{"provider": "azure", "language": "da-DK"}')
     monkeypatch.setenv("VAPI_VOICE_JSON", '{"provider": "azure", "voiceId": "da-DK-ChristelNeural"}')

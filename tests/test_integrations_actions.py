@@ -348,7 +348,7 @@ def test_phone_tool_calls_and_webchat_tool_use_show_in_inbox(api, client, two_wo
     h = {"authorization": f"Bearer {SECRET}"}
     a = client.post("/api/v1/webhooks/vapi", json={"message": {"type": "assistant-request", "call": {"phoneNumberId": "pn_act"}}},
                     headers=h).json()["assistant"]
-    assert "send_sms_bekraeftelse" in [x["function"]["name"] for x in a["model"]["tools"]]
+    assert "send_sms_bekraeftelse" in [x["function"]["name"] for x in a["model"]["tools"] if x["type"] == "function"]
     assert "Handlinger:" in a["model"]["messages"][0]["content"]
     call = {"id": "call_act_1", "phoneNumberId": "pn_act", "customer": {"number": "+4520304050"}}
     sms = client.post("/api/v1/webhooks/vapi", json={"message": {"type": "tool-calls", "call": call, "toolCallList": [

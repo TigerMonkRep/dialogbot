@@ -21,7 +21,7 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
 from app.core.errors import Unauthenticated
-from app.models import PhoneNumber
+from app.models import PhoneNumber, Workspace
 from app.modules.telephony import vapi
 
 SIGNATURE_TOLERANCE_SECONDS = 30 * 60
@@ -127,3 +127,30 @@ def post_call(db: OrmSession, payload: dict) -> str:
         "artifact": {"messages": turns},
     }
     return vapi.end_of_call(db, message)
+
+
+# Fields ElevenLabs fills from system dynamic variables on every tool call; everything else is the action's input.
+TOOL_SYSTEM_FIELDS = ("called_number", "caller_id", "conversation_id")
+
+
+def run_tool(db: OrmSession, name: str, body: dict) -> dict:
+    """A server tool of the agent (`POST …/elevenlabs/tools/{name}`): the same action runner as Vapi tool-calls, so
+    only actions of the number's workspace that are connected right now can run. Always answers with text the agent
+    can say; a refused or failed action is a result, not an error."""
+    from app.modules.integrations import actions
+    from app.modules.integrations.connectors.base import RunContext
+    from app.modules.reports.service import tz_of
+
+    number = _number(db, body.get("called_number"))
+    if number is None:
+        return {"result": "Handlingen er ikke tilgængelig på dette nummer. Tilbyd i stedet, at en medarbejder ringer tilbage."}
+    # The model leaves optional fields empty rather than out; drop them so the action's schema sees them as absent.
+    args = {k: v for k, v in body.items() if k not in TOOL_SYSTEM_FIELDS and v not in (None, "")}
+    ws = db.get(Workspace, number.workspace_id)
+    caller = body.get("caller_id")
+    conv = str(body.get("conversation_id") or "")
+    ctx = RunContext(workspace_id=ws.id, channel="phone", caller_phone=vapi.normalize_e164(str(caller)) if caller else None,
+                     provider_call_id=f"el_{conv}" if conv else None, tz=tz_of(db, ws.id))
+    result, _run = actions.execute(db, ws, name, args, ctx)
+    db.commit()
+    return {"result": result}

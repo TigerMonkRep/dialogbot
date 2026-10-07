@@ -3,7 +3,8 @@
 ElevenLabs runs speech-to-text, the language model and the voice in one place. A Twilio number imported into
 ElevenLabs calls two of our webhooks:
 - conversation initiation: ElevenLabs posts {caller_id, called_number, call_sid, agent_id, conversation_id};
-  we answer with the workspace's prompt, greeting and voice as overrides (the same content Vapi gets).
+  we answer with the workspace's prompt and greeting as overrides (the same content Vapi gets); the voice is
+  the agent's own.
 - post-call transcription: the transcript and summary, HMAC-signed (`ElevenLabs-Signature: t=…,v0=…`); we store
   it exactly like a Vapi end-of-call report (conversation, call, lead and call-back task).
 """
@@ -56,7 +57,7 @@ def _number(db: OrmSession, e164: str | None) -> PhoneNumber | None:
 
 
 def initiation(db: OrmSession, body: dict) -> dict:
-    """Overrides for one inbound call: prompt, first message, Danish, and the workspace's voice."""
+    """Overrides for one inbound call: prompt, first message and Danish."""
     from app.modules.telephony import platform
 
     number = _number(db, body.get("called_number"))
@@ -81,11 +82,9 @@ def initiation(db: OrmSession, body: dict) -> dict:
             db.commit()
     agent: dict[str, Any] = {"first_message": cfg.get("firstMessage", ""), "language": "da",
                              "prompt": {"prompt": system}}
-    override: dict[str, Any] = {"agent": agent}
-    voice = cfg.get("voice") or {}
-    if voice.get("provider") == "11labs" and voice.get("voiceId"):
-        override["tts"] = {"voice_id": voice["voiceId"]}
-    out["conversation_config_override"] = override
+    # The voice is the agent's own (chosen in the ElevenLabs dashboard): a Voice Library voice is only usable there
+    # once it is added to that account, so overriding it per call could make the call fail.
+    out["conversation_config_override"] = {"agent": agent}
     out["dynamic_variables"] = {"workspace_id": str(number.workspace_id), "caller": str(body.get("caller_id") or "")}
     return out
 

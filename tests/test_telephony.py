@@ -285,8 +285,8 @@ def test_phone_voice_skips_vapis_english_number_formatting():
     plan = standard.danish_chunk_plan(FakeDb(), None)
     fmt = plan["formatPlan"]
     assert plan["enabled"] and "number" not in fmt["formattersEnabled"] and "date" not in fmt["formattersEnabled"]
-    assert fmt["replacements"] == [{"type": "regex", "regex": "Dialogbot", "value": "Dialog-bot",
-                                    "options": [{"type": "ignore-case", "enabled": True},
-                                                {"type": "whole-word", "enabled": True}]}]
+    opts = [{"type": "ignore-case", "enabled": True}, {"type": "whole-word", "enabled": True}]
+    assert fmt["replacements"] == [{"type": "regex", "regex": "Dialogbot", "value": "Dialog-bot", "options": opts},
+                                   {"type": "regex", "regex": "AI", "value": "ej aj", "options": opts}]
     voice = standard.provider_voice(FakeDb(), None)
     assert voice["provider"] == "azure" and voice["chunkPlan"] == plan

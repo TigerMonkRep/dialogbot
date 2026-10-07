@@ -262,3 +262,10 @@ def test_phone_model_is_one_vapi_accepts():
     assert phone_model(s) == "claude-sonnet-5"
     s.vapi_model_provider, s.vapi_model = "openai", "gpt-4o"
     assert phone_model(s) == "gpt-4o"
+
+
+def test_call_summaries_are_requested_in_danish():
+    from app.modules.telephony.vapi import ANALYSIS_PLAN
+
+    system = ANALYSIS_PLAN["summaryPlan"]["messages"][0]["content"]
+    assert "på dansk" in system and "{{transcript}}" in ANALYSIS_PLAN["summaryPlan"]["messages"][1]["content"]

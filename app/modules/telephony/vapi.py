@@ -110,6 +110,14 @@ VAPI_ANTHROPIC_MODELS = frozenset({
 VAPI_DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6"
 
 
+# Vapi writes call.analysis.summary with an English default prompt; our inbox, leads and daily reports are Danish.
+ANALYSIS_PLAN = {"summaryPlan": {"messages": [
+    {"role": "system", "content": "Du er en erfaren referent. Du får udskriften af et telefonopkald til en dansk virksomhed. "
+                                  "Opsummér opkaldet på dansk i 2-3 sætninger: hvem ringede, hvad de ville, og hvad der "
+                                  "blev aftalt. Returnér kun resuméet."},
+    {"role": "user", "content": "Udskrift:\n\n{{transcript}}\n\nÅrsag til at opkaldet sluttede: {{endedReason}}"}]}}
+
+
 def phone_model(s) -> str:
     """The model id sent to Vapi: VAPI_MODEL, else AI_MODEL_ID – replaced by a supported default when Vapi
     would refuse it (only checked for the anthropic provider, whose list we know)."""
@@ -266,6 +274,7 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
         "model": {"provider": s.vapi_model_provider, "model": phone_model(s),
                   "messages": [{"role": "system", "content": f"{system}\n\n{phone_rules}"}]},
         "transcriber": transcriber_for(db, ws),
+        "analysisPlan": ANALYSIS_PLAN,
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id)},
     }
     from app.modules.integrations import actions as _actions

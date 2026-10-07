@@ -37,7 +37,7 @@ def _signed(body: dict, *, secret=HOOK_SECRET, ts=None) -> tuple[bytes, str]:
     return raw, f"t={ts},v0=" + hmac.new(secret.encode(), f"{ts}.".encode() + raw, hashlib.sha256).hexdigest()
 
 
-def test_initiation_gives_the_workspace_prompt_greeting_and_voice(client, api, two_workspaces, el):
+def test_initiation_gives_the_workspace_prompt_and_greeting(client, api, two_workspaces, el):
     _setup(api, two_workspaces)
     body = {"caller_id": "+4520304050", "called_number": "+4570123456", "call_sid": "CA1", "agent_id": "ag",
             "conversation_id": "conv_1"}
@@ -48,7 +48,7 @@ def test_initiation_gives_the_workspace_prompt_greeting_and_voice(client, api, t
     agent = r["conversation_config_override"]["agent"]
     assert agent["language"] == "da" and "Afslibning" in agent["prompt"]["prompt"]
     assert "HEMMELIG-KLADDE" not in agent["prompt"]["prompt"] and agent["first_message"]
-    assert r["conversation_config_override"]["tts"]["voice_id"] == "4RklGmuxoAskAbGXplXN"  # Camilla
+    assert "tts" not in r["conversation_config_override"]  # the agent's own voice
     unknown = client.post(INIT, json=body | {"called_number": "+4511111111"}, headers={"x-dialogbot-secret": AGENT_SECRET})
     assert "ikke i brug" in unknown.json()["conversation_config_override"]["agent"]["first_message"]
 

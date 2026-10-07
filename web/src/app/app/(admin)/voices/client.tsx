@@ -12,7 +12,7 @@ export type Voice = {
   active_version: { id: string; version: number; engine: string; method: string; model_revision: string; pilot: boolean;
     listening_test: string; telephony_test: string; simulated: boolean } | null;
 };
-export type StandardVoice = { key: string; name: string; gender: "female" | "male"; image: string; description: string };
+export type StandardVoice = { key: string; name: string; gender: "female" | "male"; image: string; description: string; sample: boolean };
 export type VoicesData = {
   items: Voice[]; standard_voices: StandardVoice[]; engine: "available" | "simulated" | "not_configured"; preview_max_chars: number;
   assignments: { workspace_default: string | null; phone_numbers: { id: string; e164: string; label: string; voice_profile_id: string | null }[];
@@ -93,9 +93,10 @@ async function saveSettings(wsId: string, patch: Partial<VoicesData["settings"]>
   await api(`/workspaces/${wsId}/voices/settings`, { method: "PUT", body: JSON.stringify({ ...fresh, expected_version: fresh.version, ...patch }) });
 }
 
-/** Ready-made Danish voices (Azure and ElevenLabs via Vapi). Work today without Dialogbot's own speech engine. */
+/** Ready-made Danish voices. Work today without Dialogbot's own speech engine. The provider is never shown. */
 function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesData; canManage: boolean }) {
   const router = useRouter();
+  const player = usePlayer();
   const current = data.settings.standard_voice ?? data.settings.standard_default;
   const pick = useSubmit(async (key: string) => {
     await saveSettings(wsId, { standard_voice: key });
@@ -107,10 +108,11 @@ function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesD
         <h2 id="std-h" className="font-headline-sm text-headline-sm text-primary">Vælg telefonstemme</h2>
         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-3xl">Danske stemmer, der virker med det samme. Valget gælder alle jeres telefonnumre og kampagner, og I kan altid skifte. I hører stemmen, når I ringer til jeres nummer.</p>
       </div>
-      <ErrorBox error={pick.error} />
+      <ErrorBox error={pick.error ?? player.error} />
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
         {data.standard_voices.map((v) => {
           const active = current === v.key;
+          const playing = player.state?.key === `std-${v.key}`;
           return (
             <li key={v.key} className={`rounded-2xl p-space-md flex items-center gap-space-md border-2 transition-colors ${active ? "border-primary bg-surface-container-low" : "border-surface-container-high"}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -122,7 +124,12 @@ function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesD
                   {active && <span className="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center gap-1"><Icon name="check" size={14} />Bruges nu</span>}
                 </div>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">{v.description}</p>
-                {canManage && !active && <div><Button type="button" variant="tonal" disabled={pick.pending} onClick={() => pick.run(v.key)}>Vælg {v.name}</Button></div>}
+                <div className="flex flex-wrap gap-space-sm">
+                  {v.sample && (playing
+                    ? <Button type="button" variant="tonal" icon={player.state?.phase === "loading" ? "hourglass_top" : "stop"} onClick={player.stop} aria-label={`Stop prøven med ${v.name}`}>{player.state?.phase === "loading" ? "Henter …" : "Stop"}</Button>
+                    : <Button type="button" variant="tonal" icon="play_arrow" onClick={() => player.play(`std-${v.key}`, `/workspaces/${wsId}/voices/standard/${v.key}/sample`, {})} aria-label={`Hør ${v.name}`}>Hør {v.name}</Button>)}
+                  {canManage && !active && <Button type="button" variant="tonal" disabled={pick.pending} onClick={() => pick.run(v.key)}>Vælg {v.name}</Button>}
+                </div>
               </div>
             </li>
           );

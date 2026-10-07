@@ -2,11 +2,14 @@
 approved knowledge, idempotent end-of-call reports into phone conversations, leads and tasks."""
 from __future__ import annotations
 
+import uuid
+
 import pytest
 from sqlalchemy import select
 
 from app.config import get_settings
 from app.models import Call, Conversation, ConversationMessage, Lead, Task, WebhookEvent
+from app.modules.telephony import vapi as vapi_mod
 from app.modules.telephony.vapi import phone_model
 
 URL = "/api/v1/webhooks/vapi"
@@ -132,6 +135,22 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     # the workspace picks another ready-made Danish voice; unknown keys are rejected
     vs = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/voices").json()
     assert [v["key"] for v in vs["standard_voices"]] == ["christel", "jeppe", "camilla", "peter"] and vs["settings"]["standard_voice"] is None
+    assert not any(w in str(vs["standard_voices"]).lower() for w in ("elevenlabs", "azure", "vapi", "11labs"))
+    # a short sample before choosing: rendered once, then served from voice storage; 501 until the key is set
+    sample = f"/api/v1/workspaces/{t['ws_a']}/voices/standard/camilla/sample"
+    assert api.c.post(sample, json={}, headers=api.h(t["tok_a"])).status_code == 501
+    rendered = []
+    from app.modules.voices import standard as standard_mod
+
+    monkeypatch.setattr(standard_mod, "SAMPLE_TEXT", f"Hej, jeg hedder {{name}}. {uuid.uuid4()}")  # fresh cache key
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "test-key")
+    get_settings.cache_clear()
+    monkeypatch.setattr(vapi_mod, "voice_preview", lambda vid, model, text: rendered.append((vid, model, text)) or b"ID3mp3")
+    for _ in range(2):
+        r = api.c.post(sample, json={}, headers=api.h(t["tok_a"]))
+        assert r.status_code == 200 and r.headers["content-type"] == "audio/mpeg" and r.content == b"ID3mp3"
+    assert len(rendered) == 1 and rendered[0][1] == "eleven_v4_turbo" and "Camilla" in rendered[0][2]
+    assert api.c.post(sample.replace("camilla", "bob"), json={}, headers=api.h(t["tok_a"])).status_code == 404
     put = f"/api/v1/workspaces/{t['ws_a']}/voices/settings"
     bad_std = api.c.put(put, json={"expected_version": vs["settings"]["version"], "standard_voice": "bob"}, headers=api.h(t["tok_a"]))
     assert bad_std.status_code == 422

@@ -22,6 +22,41 @@ webhook_router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 router = APIRouter(prefix="/workspaces/{workspace_id}", tags=["telephony"])
 
 
+@webhook_router.post("/elevenlabs/init")
+async def elevenlabs_init(request: Request, db: OrmSession = Depends(get_db),
+                          x_dialogbot_secret: str | None = Header(default=None)):
+    """ElevenLabs Agents conversation-initiation webhook (trial engine): the call's prompt, greeting and voice."""
+    from app.modules.telephony import elevenlabs_agent
+
+    elevenlabs_agent.verify_init(x_dialogbot_secret)
+    try:
+        body = json.loads(await request.body() or b"{}")
+    except ValueError as e:
+        raise ValidationFailed("Ugyldig JSON") from e
+    return elevenlabs_agent.initiation(db, body if isinstance(body, dict) else {})
+
+
+@webhook_router.post("/elevenlabs/post-call")
+async def elevenlabs_post_call(request: Request, db: OrmSession = Depends(get_db),
+                               elevenlabs_signature: str | None = Header(default=None)):
+    """ElevenLabs Agents post-call webhook: store the call like a Vapi end-of-call report."""
+    from app.modules.telephony import elevenlabs_agent
+
+    raw = await request.body()
+    elevenlabs_agent.verify_post_call(raw, elevenlabs_signature)
+    try:
+        payload = json.loads(raw)
+    except ValueError as e:
+        raise ValidationFailed("Ugyldig JSON") from e
+    outcome = elevenlabs_agent.post_call(db, payload if isinstance(payload, dict) else {})
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        return {"received": True, "duplicate": True}
+    return {"received": True, "outcome": outcome}
+
+
 @webhook_router.post("/vapi")
 async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
                        authorization: str | None = Header(default=None),

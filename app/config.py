@@ -85,6 +85,10 @@ class Settings(BaseSettings):
     vapi_transcriber_json: str | None = Field(default=None, alias="VAPI_TRANSCRIBER_JSON")
     # Server-side only: lets owners hear a chosen ElevenLabs voice before calls go live.
     elevenlabs_api_key: str | None = Field(default=None, alias="ELEVENLABS_API_KEY")
+    # ElevenLabs Agents trial (an alternative call engine to Vapi): a shared secret ElevenLabs sends as the
+    # X-Dialogbot-Secret header on the conversation-initiation webhook, and the HMAC secret of its post-call webhook.
+    elevenlabs_agent_secret: str | None = Field(default=None, alias="ELEVENLABS_AGENT_SECRET")
+    elevenlabs_webhook_secret: str | None = Field(default=None, alias="ELEVENLABS_WEBHOOK_SECRET")
     # CVR register (Erhvervsstyrelsen "system-til-system"): free credentials via cvrselvbetjening@erst.dk.
     cvr_username: str | None = Field(default=None, alias="CVR_USERNAME")
     cvr_password: str | None = Field(default=None, alias="CVR_PASSWORD")

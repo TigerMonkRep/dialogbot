@@ -190,6 +190,9 @@ def test_visitor_picks_voice_and_industry_and_the_script_adapts(client, sales, d
     assert "Klinik & sundhed" not in system  # only the chosen playbook
     assert "vi guider jer igennem hele opsætningen" in system.lower() and "1.495 kr." in system
     assert "Hansen VVS" in payload["firstMessage"]
+    # the call's status updates and report come back to us, whatever is configured on the number in Vapi
+    assert payload["server"]["url"].endswith("/api/v1/webhooks/vapi")
+    assert payload["server"]["headers"]["Authorization"] == f"Bearer {SECRET}"
     d = db.query(DemoCall).filter(DemoCall.provider_call_id == f"demo_{len(sales['calls'])}").one()
     assert d.voice_key == "peter" and d.industry == "haandvaerk"
 

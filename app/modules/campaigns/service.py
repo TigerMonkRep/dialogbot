@@ -251,6 +251,8 @@ def assistant_for(db: OrmSession, c: Campaign, contact: CampaignContact) -> dict
         "stopSpeakingPlan": vapi.STOP_SPEAKING_PLAN, "startSpeakingPlan": vapi.START_SPEAKING_PLAN,
         "metadata": {"workspace_id": str(ws.id), "campaign_id": str(c.id), "campaign_contact_id": str(contact.id)},
     }
+    if (server := vapi.server_block()) is not None:
+        assistant["server"] = server
     from app.modules.voices import service as voices
     from app.modules.voices import standard
 

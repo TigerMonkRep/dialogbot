@@ -178,6 +178,8 @@ def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -
         "stopSpeakingPlan": vapi.STOP_SPEAKING_PLAN, "startSpeakingPlan": vapi.START_SPEAKING_PLAN,
         "metadata": {"workspace_id": str(ws.id), "demo_call_id": str(d.id)},
     }
+    if (server := vapi.server_block()) is not None:
+        out["server"] = server
     from app.modules.voices import standard
 
     if d.voice_key in standard.STANDARD_VOICES:  # the visitor picked the voice they want to hear
@@ -276,7 +278,7 @@ def on_report(db: OrmSession, message: dict, *, call_id: str, conv, visitor_line
     reason = str(message.get("endedReason") or "")
     d.conversation_id = conv.id
     if visitor_lines == 0 or any(reason.startswith(r) for r in NO_ANSWER_REASONS):
-        d.status = "no_answer"
+        d.status, d.error = "no_answer", (reason[:300] or None)
         return True
     outcome, text = classify(db, ws, transcript, summary)
     d.status, d.outcome, d.summary = "done", outcome, text

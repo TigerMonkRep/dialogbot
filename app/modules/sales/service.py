@@ -159,7 +159,7 @@ def system_prompt(db: OrmSession, ws: Workspace, d: DemoCall) -> str:
 
     base, _rev = build_system_prompt(db, ws)  # approved knowledge about Dialogbot only
     return (f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n"
-            + script.manuscript(name=d.name, company=d.company, industry=d.industry))
+            + script.manuscript(name=d.name, company=d.company, industry=d.industry, industry_other=d.industry_other))
 
 
 def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -> dict:
@@ -207,7 +207,7 @@ def place(db: OrmSession, ws: Workspace, d: DemoCall) -> None:
 
 
 def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: str | None = None,
-                industry: str | None = None) -> DemoCall | None:
+                industry: str | None = None, industry_other: str | None = None) -> DemoCall | None:
     """The public door. Returns None when the number must not be called (do-not-call): the answer to the visitor
     is the same, so the endpoint does not reveal who has opted out."""
     now = _now()
@@ -225,7 +225,8 @@ def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: s
     _global_cap(db, ws, now)
     d = DemoCall(workspace_id=ws.id, source="web", phone=phone, name=name.strip()[:200], company=company.strip()[:200],
                  consent_version=CONSENT_VERSION_WEB, consent_text=CONSENT_TEXT_WEB, consented_at=now,
-                 voice_key=voice, industry=industry if industry in script.INDUSTRIES else None)
+                 voice_key=voice, industry=industry if industry in script.INDUSTRIES else None,
+                 industry_other=(script.clean_other(industry_other) or None) if industry not in script.INDUSTRIES else None)
     db.add(d)
     if _blocked(db, ws, phone):
         d.status, d.error = "skipped", "Nummeret står på spærrelisten"
@@ -290,7 +291,7 @@ def on_report(db: OrmSession, message: dict, *, call_id: str, conv, visitor_line
     lead = leads.create_lead(db, ws.id, source="demo_call", created_by=None, conversation=conv, contact_name=d.name,
                              contact_phone=d.phone,
                              need_summary=f"Demo-opkald{f' ({d.company})' if d.company else ''}"
-                                          f"{f' – {script.industry_label(d.industry)}' if d.industry else ''}: "
+                                          f"{f' – {script.industry_label(d.industry) or d.industry_other}' if d.industry or d.industry_other else ''}: "
                                           f"{text or 'se samtalen'}")
     d.lead_id = lead.id
     if outcome in ("interested", "callback"):
@@ -306,4 +307,4 @@ def out(d: DemoCall) -> dict:
             "status": d.status, "outcome": d.outcome, "summary": d.summary, "error": d.error,
             "consent_version": d.consent_version, "consented_at": d.consented_at.isoformat(),
             "seller_user_id": str(d.seller_user_id) if d.seller_user_id else None, "note": d.note,
-            "lead_id": str(d.lead_id) if d.lead_id else None, "voice": d.voice_key, "industry": d.industry, "created_at": d.created_at.isoformat() if d.created_at else None}
+            "lead_id": str(d.lead_id) if d.lead_id else None, "voice": d.voice_key, "industry": d.industry, "industry_other": d.industry_other, "created_at": d.created_at.isoformat() if d.created_at else None}

@@ -36,7 +36,7 @@ export function VoiceDots({ light = false, className = "" }: { light?: boolean; 
  *  § 10. Nothing is called without it. */
 export function DemoCall() {
   const [info, setInfo] = useState<Info | null>(null);
-  const [f, setF] = useState({ phone: "", name: "", company: "", consent: false, website: "", voice: "", industry: "" });
+  const [f, setF] = useState({ phone: "", name: "", company: "", consent: false, website: "", voice: "", industry: "", industryOther: "" });
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
   const [done, setDone] = useState(false);
@@ -71,7 +71,8 @@ export function DemoCall() {
     try {
       await api("/demo-call", { method: "POST", body: JSON.stringify({
         phone: f.phone, name: f.name, company: f.company, consent: f.consent, website: f.website,
-        voice: f.voice || null, industry: f.industry || null, consent_version: info.consent_version }) });
+        voice: f.voice || null, industry: f.industry || null,
+        industry_other: f.industry === "andet" ? f.industryOther.trim() || null : null, consent_version: info.consent_version }) });
       audio.current?.pause();
       setDone(true);
     } catch (err) { setError(err as ApiError); } finally { setPending(false); }
@@ -181,6 +182,14 @@ export function DemoCall() {
                       );
                     })}
                   </div>
+                  {f.industry === "andet" && (
+                    <div className="mt-space-xs">
+                      <label htmlFor="demo-industry-other" className="block font-label-md text-label-md text-on-surface-variant mb-1">Hvilken branche er I i?</label>
+                      <input id="demo-industry-other" autoFocus maxLength={80} value={f.industryOther} onChange={(e) => setF({ ...f, industryOther: e.target.value })}
+                        placeholder="Fx fitnesscenter, dyrlæge eller vognmand" className={field} />
+                      <p className="mt-1 font-label-sm text-label-sm text-on-surface-variant">Så ved assistenten det på forhånd og tilpasser samtalen til jer.</p>
+                    </div>
+                  )}
                 </fieldset>
 
                 <fieldset className="flex flex-col gap-space-sm">

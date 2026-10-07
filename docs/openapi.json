@@ -3034,6 +3034,19 @@
             "description": "Line of business; adapts the sales script",
             "title": "Industry"
           },
+          "industry_other": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The visitor's own words when industry is 'andet'",
+            "title": "Industry Other"
+          },
           "name": {
             "default": "",
             "maxLength": 200,

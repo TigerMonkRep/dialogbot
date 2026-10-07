@@ -33,6 +33,7 @@ class WebIn(BaseModel):
     website: str = Field(default="", max_length=200)  # honeypot: hidden in the form
     voice: str | None = Field(default=None, max_length=40, description="Standard voice to call with (camilla | peter)")
     industry: str | None = Field(default=None, max_length=40, description="Line of business; adapts the sales script")
+    industry_other: str | None = Field(default=None, max_length=120, description="The visitor's own words when industry is 'andet'")
 
 
 @public_router.post("", status_code=status.HTTP_202_ACCEPTED)
@@ -49,7 +50,7 @@ def request_demo_call(body: WebIn, db: OrmSession = Depends(get_db)):
     if body.voice is not None and body.voice not in standard.STANDARD_VOICES:
         raise ValidationFailed("Vælg en af stemmerne", field_errors=[{"field": "voice", "message": "Ukendt stemme"}])
     d = service.request_web(db, phone=body.phone, name=body.name, company=body.company, voice=body.voice,
-                            industry=body.industry)
+                            industry=body.industry, industry_other=body.industry_other)
     db.commit()
     if d is not None and d.status == "failed":
         raise ApiError("Vi kunne ikke ringe op lige nu. Prøv igen om lidt, eller ring selv til vores demonummer.",

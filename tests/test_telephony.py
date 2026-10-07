@@ -124,12 +124,14 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     t = two_workspaces
     n = _setup(api, t)
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
-    # ElevenLabs Scribe Danish; Deepgram Nova-3 as fallback with key terms from approved knowledge only
+    # Deepgram Nova-3 Danish with key terms from approved knowledge only; Nova-2 as fallback
     fallback = a["transcriber"].pop("fallbackPlan")["transcribers"]
-    assert a["transcriber"] == {"provider": "11labs", "model": "scribe_v2_realtime", "language": "da"}
-    assert fallback == [{"provider": "deepgram", "model": "nova-3", "language": "da",
-                         "keyterm": ["Fjord Gulvservice", "Afslibning"]}]
-    assert "HEMMELIG-KLADDE" not in fallback[0]["keyterm"]
+    assert a["transcriber"] == {"provider": "deepgram", "model": "nova-3", "language": "da",
+                                "keyterm": ["Fjord Gulvservice", "Afslibning"]}
+    assert "HEMMELIG-KLADDE" not in a["transcriber"]["keyterm"]
+    assert [f["model"] for f in fallback] == ["nova-2"]
+    # it waits longer while the caller is mid-sentence or reading out digits
+    assert a["startSpeakingPlan"]["transcriptionEndpointingPlan"]["onNumberSeconds"] >= 1
     # human turn-taking: Danish backchannels never interrupt
     assert "mm" in a["stopSpeakingPlan"]["acknowledgementPhrases"] and a["startSpeakingPlan"]["waitSeconds"] > 0
     # nothing chosen and no VAPI_VOICE_JSON: the default Danish standard voice, never the provider's (English) default

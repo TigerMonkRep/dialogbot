@@ -36,7 +36,7 @@ export function VoiceDots({ light = false, className = "" }: { light?: boolean; 
  *  § 10. Nothing is called without it. */
 export function DemoCall() {
   const [info, setInfo] = useState<Info | null>(null);
-  const [f, setF] = useState({ phone: "", name: "", company: "", consent: false, website: "", voice: "", industry: "" });
+  const [f, setF] = useState({ phone: "", name: "", company: "", consent: false, website: "", voice: "", industry: "", industryOther: "" });
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
   const [done, setDone] = useState(false);
@@ -71,7 +71,8 @@ export function DemoCall() {
     try {
       await api("/demo-call", { method: "POST", body: JSON.stringify({
         phone: f.phone, name: f.name, company: f.company, consent: f.consent, website: f.website,
-        voice: f.voice || null, industry: f.industry || null, consent_version: info.consent_version }) });
+        voice: f.voice || null, industry: f.industry || null,
+        industry_other: f.industry === "andet" ? f.industryOther.trim() || null : null, consent_version: info.consent_version }) });
       audio.current?.pause();
       setDone(true);
     } catch (err) { setError(err as ApiError); } finally { setPending(false); }
@@ -105,7 +106,7 @@ export function DemoCall() {
               <span className="flex items-center gap-2 font-label-md text-label-md text-on-primary-container"><span className="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse" />Dialogbot taler</span>
             </div>
             <ul className="relative flex flex-col gap-space-sm font-body-md text-body-md">
-              {["Ringer op på under et minut", "Rollespil tilpasset din branche", "Hør hvordan vi guider jer gennem opsætningen", "Gratis · højst 5 minutter · læg på når som helst"].map((t) => (
+              {["Ringer op på under et minut", "Rollespil tilpasset din branche", "Hør hvordan vi guider jer gennem opsætningen", "Gratis · tager 3-4 minutter · læg på når som helst"].map((t) => (
                 <li key={t} className="flex items-start gap-space-sm"><Icon name="check_circle" size={20} filled className="text-secondary-fixed mt-0.5 shrink-0" />{t}</li>
               ))}
             </ul>
@@ -132,7 +133,7 @@ export function DemoCall() {
                 </span>
                 <p className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg font-bold text-primary">Vi ringer til dig nu</p>
                 <p className="font-body-lg text-body-lg text-on-surface-variant max-w-md">
-                  Tag telefonen, når den ringer{number ? ` fra ${pretty(number)}` : ""}. {voice ? `${voice.name} tager samtalen.` : ""} Samtalen varer højst fem minutter, og du kan lægge på når som helst.
+                  Tag telefonen, når den ringer{number ? ` fra ${pretty(number)}` : ""}. {voice ? `${voice.name} tager samtalen.` : ""} Samtalen tager 3-4 minutter, og du kan lægge på når som helst.
                 </p>
                 <VoiceDots />
               </div>
@@ -181,6 +182,14 @@ export function DemoCall() {
                       );
                     })}
                   </div>
+                  {f.industry === "andet" && (
+                    <div className="mt-space-xs">
+                      <label htmlFor="demo-industry-other" className="block font-label-md text-label-md text-on-surface-variant mb-1">Hvilken branche er I i?</label>
+                      <input id="demo-industry-other" autoFocus maxLength={80} value={f.industryOther} onChange={(e) => setF({ ...f, industryOther: e.target.value })}
+                        placeholder="Fx fitnesscenter, dyrlæge eller vognmand" className={field} />
+                      <p className="mt-1 font-label-sm text-label-sm text-on-surface-variant">Så ved assistenten det på forhånd og tilpasser samtalen til jer.</p>
+                    </div>
+                  )}
                 </fieldset>
 
                 <fieldset className="flex flex-col gap-space-sm">

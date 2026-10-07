@@ -38,14 +38,19 @@ DEFAULT_GREETING = ("Hej, du har ringet til {name}. Du taler med en digital assi
 # Danish speech-to-text by default (Deepgram Nova-3 supports "da"); VAPI_TRANSCRIBER_JSON overrides it.
 # ElevenLabs Scribe hears Danish names and places far better than Deepgram on phone audio; Deepgram Nova-3 (with the
 # business's key terms) takes over if Scribe fails during a call.
-DEFAULT_TRANSCRIBER = {"provider": "11labs", "model": "scribe_v2_realtime", "language": "da"}
-FALLBACK_TRANSCRIBER = {"provider": "deepgram", "model": "nova-3", "language": "da"}
+# Deepgram Nova-3 with the business's key terms. ElevenLabs Scribe realtime was tried on Vapi but never closed a turn:
+# the whole call became one utterance, so the assistant could not tell when the caller had finished and cut in.
+DEFAULT_TRANSCRIBER = {"provider": "deepgram", "model": "nova-3", "language": "da"}
+FALLBACK_TRANSCRIBER = {"provider": "deepgram", "model": "nova-2", "language": "da"}
 # Turn-taking that feels like a person: short Danish backchannels ("ja", "mm") never cut the assistant off, and it
 # waits a moment after an interruption before speaking again.
 STOP_SPEAKING_PLAN = {"numWords": 2, "backoffSeconds": 1.0,
                       "acknowledgementPhrases": ["ja", "jo", "jah", "mm", "mhm", "okay", "ok", "nå", "nåh", "præcis",
                                                  "netop", "fint", "godt", "javel", "jaja", "yes", "klart"]}
-START_SPEAKING_PLAN = {"waitSeconds": 0.5}
+# Wait for the caller to finish: longer after an unfinished sentence ("øh …") and while they read out digits.
+START_SPEAKING_PLAN = {"waitSeconds": 0.6,
+                       "transcriptionEndpointingPlan": {"onPunctuationSeconds": 0.4, "onNoPunctuationSeconds": 1.4,
+                                                        "onNumberSeconds": 1.2}}
 # The assistant hangs up itself: Vapi's endCall tool, plus the closing line the phone prompt ends every call with.
 END_CALL_TOOL = {"type": "endCall"}
 END_CALL_PHRASES = ["hav en rigtig god dag", "hav en god dag"]
@@ -213,7 +218,7 @@ def keyterms(db: OrmSession, ws: Workspace) -> list[str]:
 
 
 def transcriber_for(db: OrmSession, ws: Workspace | None) -> dict:
-    """The transcriber config (VAPI_TRANSCRIBER_JSON, or ElevenLabs Scribe Danish with Deepgram Nova-3 as fallback),
+    """The transcriber config (VAPI_TRANSCRIBER_JSON, or Deepgram Nova-3 Danish with Nova-2 as fallback),
     with the business's key terms added to any Deepgram model that supports keyterm prompting."""
     configured = _json_setting(get_settings().vapi_transcriber_json)
     t = configured or dict(DEFAULT_TRANSCRIBER)
@@ -380,7 +385,9 @@ def end_of_call(db: OrmSession, message: dict) -> str:
             continue  # system prompts, tool calls and empty turns are not part of the transcript
         visitor_lines += role == "visitor"
         lines.append(("Kontakt" if role == "visitor" else "Assistent") + ": " + str(text).strip())
-        db.add(ConversationMessage(conversation_id=conv.id, workspace_id=ws_id, role=role, text=str(text)[:4000]))
+        # one timestamp per turn, in call order: the inbox sorts by created_at
+        db.add(ConversationMessage(conversation_id=conv.id, workspace_id=ws_id, role=role, text=str(text)[:4000],
+                                   created_at=(started or now) + timedelta(milliseconds=len(lines))))
     conv.visitor_message_count = visitor_lines
     call = Call(workspace_id=ws_id, phone_number_id=number.id, conversation_id=conv.id, provider=PROVIDER,
                 provider_call_id=call_id, from_number=caller, to_number=number.e164, started_at=started, ended_at=ended,

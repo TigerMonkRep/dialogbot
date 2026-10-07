@@ -3,6 +3,8 @@ import { COMPANY } from "@/components/legal-page";
 import { cookies } from "next/headers";
 import { Icon } from "@/components/ui";
 import { API_BASE_URL, REFERRAL_COOKIE } from "@/lib/config";
+import type { Metadata } from "next";
+import { LANDING_PAGES, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import { DemoCall } from "./demo-call";
 import { IndustrySwitcher } from "./industries";
 
@@ -20,6 +22,8 @@ async function recommender(): Promise<Recommender | null> {
     return r.ok ? ((await r.json()) as Recommender) : null;
   } catch { return null; }
 }
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default async function Home() {
   const rec = await recommender();
@@ -46,6 +50,7 @@ export default async function Home() {
   );
   return (
     <div className="min-h-dvh bg-surface flex flex-col">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(faq)) }} />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-space-md focus:py-2 focus:rounded-lg focus:bg-primary focus:text-on-primary">Spring til indhold</a>
       <header className="sticky top-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(22,78,67,0.06)]">
         <div className="h-16 lg:h-20 max-w-7xl mx-auto px-4 sm:px-margin-md lg:px-margin-lg flex items-center justify-between gap-space-lg">
@@ -91,9 +96,11 @@ export default async function Home() {
           </div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-margin-md lg:px-margin-lg grid grid-cols-1 lg:grid-cols-12 gap-space-xl lg:gap-gutter-lg items-center">
             <div className="lg:col-span-6 flex flex-col gap-space-lg">
-              <span className="inline-flex items-center gap-space-xs self-start px-space-md py-space-xs rounded-full bg-secondary/20 text-secondary-fixed font-label-sm text-label-sm"><span className="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse" />AI-reception og kundeopfølgning</span>
               <div className="flex flex-col gap-space-sm">
-                <h1 className="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-bold text-on-primary tracking-tight">Du driver forretningen.<br /><span className="text-secondary-fixed">Dialogbot tager samtalen.</span></h1>
+                <h1 className="flex flex-col gap-space-md font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-bold text-on-primary tracking-tight">
+                  <span className="inline-flex items-center gap-space-xs self-start px-space-md py-space-xs rounded-full bg-secondary/20 text-secondary-fixed font-label-sm text-label-sm font-semibold tracking-normal"><span aria-hidden className="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse" />Dialogbot · AI-receptionist, AI-telefonsvarer og chatbot</span>
+                  <span>Du driver forretningen.<br /><span className="text-secondary-fixed">Dialogbot tager samtalen.</span></span>
+                </h1>
                 <p className="font-body-md text-body-md md:font-body-lg md:text-body-lg text-on-primary-container max-w-xl">Besvar opkald og chat, hjælp kunder med at booke, og følg op på tilbud — med en AI-assistent, der bruger din virksomheds viden og følger dine regler.</p>
               </div>
               <div className="flex flex-col sm:flex-row sm:flex-wrap gap-space-md">{cta}</div>
@@ -260,8 +267,8 @@ export default async function Home() {
 
       <footer className="bg-surface-container-low shadow-[0_-1px_0_rgba(220,227,220,0.6)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-margin-md lg:px-margin-lg py-space-xl flex flex-col md:flex-row items-center justify-between gap-space-md font-body-sm text-body-sm text-on-surface-variant">
-          <span className="flex items-center gap-space-sm"><span className="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-primary">Dialogbot</span>•<span>AI-reception og kundeopfølgning</span>•<span>CVR-nr. {COMPANY.cvr}</span></span>
-          <nav className="flex items-center gap-space-md" aria-label="Konto"><Link href="/privatliv" className="hover:text-on-surface">Privatliv</Link><Link href="/vilkaar" className="hover:text-on-surface">Vilkår</Link><Link href="/kontakt" className="hover:text-on-surface">Kontakt</Link><Link href="/login" className="hover:text-on-surface">Log ind</Link><Link href="/signup" className="hover:text-on-surface">Opret konto</Link></nav>
+          <span className="flex items-center gap-space-sm"><span className="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-primary">Dialogbot</span>•<span>Dansk AI-receptionist</span>•<span>CVR-nr. {COMPANY.cvr}</span></span>
+          <nav className="flex flex-wrap items-center justify-center gap-x-space-md gap-y-1" aria-label="Konto">{LANDING_PAGES.map((p) => <Link key={p.href} href={p.href} className="hover:text-on-surface">{p.label}</Link>)}<Link href="/privatliv" className="hover:text-on-surface">Privatliv</Link><Link href="/vilkaar" className="hover:text-on-surface">Vilkår</Link><Link href="/kontakt" className="hover:text-on-surface">Kontakt</Link><Link href="/login" className="hover:text-on-surface">Log ind</Link><Link href="/signup" className="hover:text-on-surface">Opret konto</Link></nav>
         </div>
       </footer>
     </div>
@@ -290,4 +297,25 @@ function Track({ chip, chipCls, icon, title, text, href, link, children }: { chi
       <Link href={href} className="self-start inline-flex items-center gap-space-xs text-primary font-label-lg text-label-lg font-bold hover:text-primary-container group">{link}<Icon name="arrow_forward" size={18} className="group-hover:translate-x-1 transition-transform" /></Link>
     </div>
   );
+}
+
+/** schema.org data for Google: the company, the site and the product with its two list prices, plus the FAQ. */
+function structuredData(faq: [string, string][]) {
+  const org = { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL,
+    logo: `${SITE_URL}/icon.png`, email: COMPANY.email, vatID: `DK${COMPANY.cvr}`,
+    address: { "@type": "PostalAddress", streetAddress: "Abildgade 18", postalCode: "8200", addressLocality: "Aarhus", addressCountry: "DK" } };
+  return [
+    { "@context": "https://schema.org", ...org },
+    { "@context": "https://schema.org", "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: SITE_URL, name: SITE_NAME,
+      inLanguage: "da-DK", publisher: { "@id": `${SITE_URL}/#organization` } },
+    { "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Dialogbot", applicationCategory: "BusinessApplication",
+      operatingSystem: "Web", description: SITE_DESCRIPTION, inLanguage: "da", url: SITE_URL,
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      offers: [
+        { "@type": "Offer", name: "Model A – fast abonnement", price: "1495", priceCurrency: "DKK", description: "Pr. måned ekskl. moms" },
+        { "@type": "Offer", name: "Model B – pr. henvendelse", price: "149", priceCurrency: "DKK", description: "Pr. godkendt henvendelse ekskl. moms" },
+      ] },
+    { "@context": "https://schema.org", "@type": "FAQPage",
+      mainEntity: faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
+  ];
 }

@@ -167,7 +167,7 @@ def test_phone_booking_tools(api, client, two_workspaces, db, monkeypatch):
     h = {"authorization": f"Bearer {secret}"}
     a = client.post("/api/v1/webhooks/vapi", json={"message": {"type": "assistant-request", "call": {"phoneNumberId": "pn_book"}}},
                     headers=h).json()["assistant"]
-    assert [x["function"]["name"] for x in a["model"]["tools"]] == ["ledige_tider", "book_tid", "flyt_tid", "aflys_tid"]
+    assert [x["function"]["name"] for x in a["model"]["tools"] if x["type"] == "function"] == ["ledige_tider", "book_tid", "flyt_tid", "aflys_tid"]
     call = {"id": "call_book_1", "phoneNumberId": "pn_book", "customer": {"number": "+4520304050"}}
     free = client.post("/api/v1/webhooks/vapi", json={"message": {"type": "tool-calls", "call": call, "toolCallList": [
         {"id": "t1", "type": "function", "function": {"name": "ledige_tider", "arguments": {}}}]}}, headers=h).json()

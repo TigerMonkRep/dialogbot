@@ -46,6 +46,9 @@ STOP_SPEAKING_PLAN = {"numWords": 2, "backoffSeconds": 1.0,
                       "acknowledgementPhrases": ["ja", "jo", "jah", "mm", "mhm", "okay", "ok", "nå", "nåh", "præcis",
                                                  "netop", "fint", "godt", "javel", "jaja", "yes", "klart"]}
 START_SPEAKING_PLAN = {"waitSeconds": 0.5}
+# The assistant hangs up itself: Vapi's endCall tool, plus the closing line the phone prompt ends every call with.
+END_CALL_TOOL = {"type": "endCall"}
+END_CALL_PHRASES = ["hav en rigtig god dag", "hav en god dag"]
 # ElevenLabs models a number may use. Only Flash v2.5 accepts an explicit language; the others detect it
 # from the (Danish) text and reject a language code.
 VOICE_MODELS = ("eleven_multilingual_v2", "eleven_flash_v2_5", "eleven_turbo_v2_5", "eleven_v4_turbo")
@@ -293,13 +296,15 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
         "transcriber": transcriber_for(db, ws),
         "analysisPlan": ANALYSIS_PLAN,
         "stopSpeakingPlan": STOP_SPEAKING_PLAN, "startSpeakingPlan": START_SPEAKING_PLAN,
+        "endCallPhrases": END_CALL_PHRASES,
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id)},
     }
     from app.modules.integrations import actions as _actions
 
     action_tools = _actions.tools_for(db, ws, "phone")
+    assistant["model"]["tools"] = [END_CALL_TOOL]
     if action_tools:
-        assistant["model"]["tools"] = _actions.to_vapi(action_tools)
+        assistant["model"]["tools"] = _actions.to_vapi(action_tools) + [END_CALL_TOOL]
         assistant["model"]["messages"][0]["content"] += "\n\n" + _actions.prompt_section(action_tools)
     from app.modules.voices import service as voices
     from app.modules.voices import standard

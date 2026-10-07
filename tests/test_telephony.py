@@ -325,3 +325,10 @@ def test_elevenlabs_standard_voices_use_v4_turbo_in_danish():
     for key in ("camilla", "peter"):
         v = STANDARD_VOICES[key]["voice"]
         assert v["provider"] == "11labs" and v["model"] == "eleven_v4_turbo" and v["language"] == "da"
+
+
+def test_inbound_assistant_hangs_up_itself(client, api, two_workspaces, configured):
+    _setup(api, two_workspaces)
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert {"type": "endCall"} in a["model"]["tools"] and "hav en god dag" in a["endCallPhrases"]
+    assert "endCall" in a["model"]["messages"][0]["content"]

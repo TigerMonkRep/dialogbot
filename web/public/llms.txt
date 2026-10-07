@@ -1,0 +1,28 @@
+# Dialogbot
+
+> Dialogbot er en dansk AI-receptionist, AI-telefonsvarer og chatbot til små og mellemstore virksomheder. Den tager telefonen og chatten døgnet rundt, svarer kun ud fra den viden, virksomheden selv har godkendt, booker, flytter og aflyser tider, sender SMS-bekræftelser og giver en kort opsummering af hver henvendelse. Dialogbot drives af Dialogbot, CVR 25632710, Abildgade 18, 8200 Aarhus, Danmark.
+
+Priser (ekskl. moms): fast abonnement 1.495 kr. om måneden, eller 149 kr. pr. godkendt henvendelse. Ingen binding, intet opstartsgebyr, gratis personlig opsætning på cirka en halv time. Virksomheder kan beholde deres nummer og viderestille til Dialogbot.
+
+## Produkt
+- [AI-receptionist](https://www.dialogbot.dk/ai-receptionist): tager telefonen og chatten, svarer ud fra godkendt viden, booker tider
+- [AI-telefonsvarer](https://www.dialogbot.dk/ai-telefonsvarer): taler med kunden i stedet for at bede om en besked
+- [Chatbot til hjemmesiden](https://www.dialogbot.dk/chatbot): dansk chatbot med samme viden som telefonen
+- [Priser](https://www.dialogbot.dk/priser)
+
+## Brancher
+- [Håndværkere](https://www.dialogbot.dk/ai-receptionist/haandvaerkere)
+- [Klinikker](https://www.dialogbot.dk/ai-receptionist/klinikker)
+- [Frisører og saloner](https://www.dialogbot.dk/ai-receptionist/frisoerer)
+- [Autoværksteder](https://www.dialogbot.dk/ai-receptionist/autovaerksteder)
+- [Rådgivere og kontorer](https://www.dialogbot.dk/ai-receptionist/raadgivere)
+- [Restauranter, hoteller og caféer](https://www.dialogbot.dk/ai-receptionist/restauranter)
+
+## Viden
+- [Hvad er en AI-receptionist?](https://www.dialogbot.dk/viden/hvad-er-en-ai-receptionist)
+- [AI-telefonsvarer eller telefonpasning?](https://www.dialogbot.dk/viden/ai-telefonsvarer-eller-telefonpasning)
+- [Sådan viderestiller du telefonen](https://www.dialogbot.dk/viden/viderestil-telefonen)
+
+## Kontakt
+- [Kontakt](https://www.dialogbot.dk/kontakt): info@dialogbot.dk
+- Telefon: +45 93 70 34 33

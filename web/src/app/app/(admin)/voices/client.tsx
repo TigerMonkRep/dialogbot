@@ -93,7 +93,7 @@ async function saveSettings(wsId: string, patch: Partial<VoicesData["settings"]>
   await api(`/workspaces/${wsId}/voices/settings`, { method: "PUT", body: JSON.stringify({ ...fresh, expected_version: fresh.version, ...patch }) });
 }
 
-/** Ready-made Danish voices (Azure via Vapi). Work today without Dialogbot's own speech engine. */
+/** Ready-made Danish voices (Azure and ElevenLabs via Vapi). Work today without Dialogbot's own speech engine. */
 function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesData; canManage: boolean }) {
   const router = useRouter();
   const current = data.settings.standard_voice ?? data.settings.standard_default;

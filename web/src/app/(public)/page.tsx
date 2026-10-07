@@ -31,17 +31,17 @@ export default async function Home() {
     [true, "Ja tak."],
   ];
   const faq: [string, string][] = [
-    ["Kan jeg beholde mit eksisterende telefonnummer?", "Det er planen: I viderestiller jeres nuværende nummer til Dialogbot, når I er optaget eller har lukket, og beholder jeres teleudbyder. Telefoni er under udvikling og kan ikke tilkobles endnu."],
-    ["Kan Dialogbot bruge min kalender?", "Kalenderforbindelse til Google og Microsoft er planlagt. Indtil den findes, vises den som ikke tilgængelig i opsætningen, og der bookes intet automatisk."],
+    ["Kan jeg beholde mit eksisterende telefonnummer?", "Ja. I viderestiller jeres nuværende nummer til jeres Dialogbot-nummer, når I er optaget eller har lukket, og beholder jeres teleudbyder. I kan også bare bruge Dialogbot-nummeret direkte."],
+    ["Kan Dialogbot booke tider?", "Ja. Assistenten finder ledige tider ud fra jeres åbningstider og bookingregler, booker, flytter og aflyser aftaler – og kan sende kunden en bekræftelse på SMS. Den spørger altid kunden om lov, før den booker."],
     ["Kan jeg godkende svar og manuskript først?", "Ja. Al viden starter som kladde og bliver først brugt, når en ejer eller administrator har godkendt den. Det virker allerede i dag i videnscentret."],
     ["Hvad sker der, hvis assistenten ikke kender svaret?", "Den gætter ikke. Assistenten svarer kun ud fra godkendt viden og siger ærligt, når noget ikke fremgår, så en medarbejder kan følge op."],
-    ["Kan den følge op på mine eksisterende tilbud?", "Kundeopfølgning i forudbetalte kontaktpakker er planlagt. Betaling starter aldrig opkald – I godkender altid listen og manuskriptet først."],
-    ["Hvordan kommer jeg i gang?", "Opret en konto, beskriv virksomheden og læg ydelser, priser og åbningstider ind. En personlig plan viser én næste handling ad gangen – også uden hjemmeside."],
+    ["Kan den følge op på mine eksisterende tilbud?", "Ja, med forudbetalte kontaktpakker. Betaling starter aldrig opkald – I godkender altid listen og manuskriptet først."],
+    ["Hvordan kommer jeg i gang?", "Vi guider jer igennem hele opsætningen. Opret en konto, så hjælper vi med ydelser, priser og åbningstider – har I en hjemmeside, henter Dialogbot det meste automatisk. I kan prøve assistenten af, før den tager et rigtigt opkald."],
   ];
   const cta = (
     <>
-      <Link href="/signup" className="inline-flex items-center justify-center gap-space-xs bg-secondary-fixed hover:bg-secondary-fixed-dim text-on-secondary-fixed font-label-lg text-label-lg px-gutter-lg py-space-md rounded-xl shadow-md transition-all"><Icon name="bolt" size={20} />Start opsætning</Link>
-      <a href="#trin" className="inline-flex items-center justify-center gap-space-xs bg-surface-container-highest/20 hover:bg-surface-container-highest/30 text-on-primary font-label-lg text-label-lg px-gutter-lg py-space-md rounded-xl transition-all">Sådan fungerer det<Icon name="arrow_forward" size={18} /></a>
+      <a href="#demo" className="inline-flex items-center justify-center gap-space-xs bg-secondary-fixed hover:bg-secondary-fixed-dim text-on-secondary-fixed font-label-lg text-label-lg font-bold px-gutter-lg py-space-md rounded-full shadow-md transition-all hover:-translate-y-0.5"><Icon name="call" size={20} />Bliv ringet op – hør det selv</a>
+      <Link href="/signup" className="inline-flex items-center justify-center gap-space-xs bg-surface-container-highest/20 hover:bg-surface-container-highest/30 text-on-primary font-label-lg text-label-lg px-gutter-lg py-space-md rounded-full transition-all">Start opsætning<Icon name="arrow_forward" size={18} /></Link>
     </>
   );
   return (
@@ -64,9 +64,9 @@ export default async function Home() {
             <Link href="/login" aria-label="Log ind" className="sm:hidden w-9 h-9 rounded-full bg-primary flex items-center justify-center text-on-primary"><Icon name="person" size={20} /></Link>
           </div>
         </div>
-        <p className="bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm text-center px-4 py-1.5">
-          <strong>Privat preview.</strong> Telefoni, webchat, kalender og kampagner er under udvikling – eksemplerne viser, hvad Dialogbot bygges til.
-        </p>
+        <a href="#demo" className="block bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm text-center px-4 py-1.5 hover:bg-secondary-fixed-dim transition-colors">
+          <strong>Nyt:</strong> Bliv ringet op af Dialogbot og hør den selv <span aria-hidden>→</span>
+        </a>
       </header>
 
       <main id="main" className="flex-1">

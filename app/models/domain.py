@@ -962,6 +962,8 @@ class DemoCall(Base):
     outcome: Mapped[str | None] = mapped_column(String(24))  # interested | callback | not_interested | opt_out
     summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
     error: Mapped[str | None] = mapped_column(String(300))
+    voice_key: Mapped[str | None] = mapped_column(String(40))  # standard voice the visitor chose (camilla | peter)
+    industry: Mapped[str | None] = mapped_column(String(40))  # sales.script.INDUSTRIES key, chosen or found in the call
     lead_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("leads.id", ondelete="SET NULL"))
     conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()

@@ -1,14 +1,14 @@
 """Demo calls: the public "Ring mig op nu" door on dialogbot.dk and the operator (seller) door. See service.py."""
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query, Request, status
+from fastapi import APIRouter, Depends, Query, Request, Response, status
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.audit import record_audit
 from app.core.auth import Principal
-from app.core.errors import ApiError, ValidationFailed
+from app.core.errors import ApiError, NotFound, ValidationFailed
 from app.db import get_db
 from app.models import DemoCall
 from app.modules.sales import service
@@ -31,6 +31,8 @@ class WebIn(BaseModel):
     consent: bool
     consent_version: str = Field(default=service.CONSENT_VERSION_WEB, max_length=40)
     website: str = Field(default="", max_length=200)  # honeypot: hidden in the form
+    voice: str | None = Field(default=None, max_length=40, description="Standard voice to call with (camilla | peter)")
+    industry: str | None = Field(default=None, max_length=40, description="Line of business; adapts the sales script")
 
 
 @public_router.post("", status_code=status.HTTP_202_ACCEPTED)
@@ -42,12 +44,28 @@ def request_demo_call(body: WebIn, db: OrmSession = Depends(get_db)):
         raise ValidationFailed("Genindlæs siden og prøv igen", code="consent_outdated")
     if body.website:  # a bot filled the hidden field: same answer, nothing stored, nobody called
         return {"status": "calling"}
-    d = service.request_web(db, phone=body.phone, name=body.name, company=body.company)
+    from app.modules.voices import standard
+
+    if body.voice is not None and body.voice not in standard.STANDARD_VOICES:
+        raise ValidationFailed("Vælg en af stemmerne", field_errors=[{"field": "voice", "message": "Ukendt stemme"}])
+    d = service.request_web(db, phone=body.phone, name=body.name, company=body.company, voice=body.voice,
+                            industry=body.industry)
     db.commit()
     if d is not None and d.status == "failed":
         raise ApiError("Vi kunne ikke ringe op lige nu. Prøv igen om lidt, eller ring selv til vores demonummer.",
                        code="demo_call_failed", status_code=502)
     return {"status": "calling"}
+
+
+@public_router.get("/voices/{key}/sample")
+def demo_voice_sample(key: str):
+    """A short sample of a voice the visitor can choose before being called. Rendered once, then served from cache."""
+    from app.modules.voices import standard
+
+    if key not in standard.STANDARD_VOICES:
+        raise NotFound("Stemmen findes ikke")
+    return Response(standard.sample_audio(key), media_type="audio/mpeg",
+                    headers={"cache-control": "public, max-age=86400"})
 
 
 class SellerIn(BaseModel):

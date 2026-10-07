@@ -170,3 +170,40 @@ def test_seller_door(api, client, sales, db, monkeypatch):
     assert dnc.status_code == 409 and dnc.json()["code"] == "do_not_call"
     items = api.get(op, "/operator/sales/demo-calls").json()["items"]
     assert len(items) == 2 and api.get(op, "/operator/sales").json()["problem"] is None
+
+
+def test_visitor_picks_voice_and_industry_and_the_script_adapts(client, sales, db):
+    from app.modules.sales import script
+    from app.modules.voices import standard
+
+    info = client.get("/api/v1/demo-call").json()
+    assert [v["key"] for v in info["voices"]] == list(standard.STANDARD_VOICES)
+    assert {i["key"] for i in info["industries"]} == set(script.INDUSTRIES)
+    assert _web(client, voice="christel").status_code == 422
+    r = _web(client, name="Mette Hansen", company="Hansen VVS", voice="peter", industry="haandvaerk")
+    assert r.status_code == 202
+    payload = sales["calls"][-1]["assistant"]
+    assert payload["voice"]["voiceId"] == standard.STANDARD_VOICES["peter"]["voice"]["voiceId"]
+    assert payload["voice"]["chunkPlan"]["formatPlan"]  # Danish pronunciation rules ride along
+    system = payload["model"]["messages"][0]["content"]
+    assert "Håndværk & byg" in system and "Mester står på stigen" in system
+    assert "Klinik & sundhed" not in system  # only the chosen playbook
+    assert "vi guider jer igennem hele opsætningen" in system.lower() and "1.495 kr." in system
+    assert "Hansen VVS" in payload["firstMessage"]
+    d = db.query(DemoCall).filter(DemoCall.provider_call_id == f"demo_{len(sales['calls'])}").one()
+    assert d.voice_key == "peter" and d.industry == "haandvaerk"
+
+
+def test_unknown_industry_gets_every_playbook_to_choose_from(client, sales):
+    assert _web(client, phone="21 30 40 50", industry="noget-andet").status_code == 202
+    system = sales["calls"][-1]["assistant"]["model"]["messages"][0]["content"]
+    assert "Du kender ikke branchen endnu" in system and "Klinik & sundhed" in system and "Auto & værksted" in system
+
+
+def test_public_voice_sample(client, monkeypatch):
+    from app.modules.voices import standard
+
+    monkeypatch.setattr(standard, "sample_audio", lambda key: b"ID3fake")
+    assert client.get("/api/v1/demo-call/voices/nobody/sample").status_code == 404
+    r = client.get("/api/v1/demo-call/voices/camilla/sample")
+    assert r.status_code == 200 and r.content == b"ID3fake" and r.headers["content-type"] == "audio/mpeg"

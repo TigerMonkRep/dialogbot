@@ -400,6 +400,7 @@ def live(monkeypatch):
     monkeypatch.setenv("PUBLIC_BASE_URL", "https://api.dialogbot.test")
     get_settings.cache_clear()
     monkeypatch.setattr(publishers, "_sleep", lambda s: None)
+    publishers._page_token_cache.clear()
     calls: list[httpx.Request] = []
     handlers: list = []
 
@@ -446,9 +447,27 @@ def test_facebook_photo_post(live, db):
     live.on(lambda r: r.url.path.endswith("/111/photos"), httpx.Response(200, json={"id": "9", "post_id": "111_9"}))
     res = publishers.FacebookPublisher().publish(db, _post("facebook", "Hej"), ["https://img/1.jpg"])
     assert (res.external_id, res.url) == ("111_9", "https://www.facebook.com/111_9")
-    f = _form(live.calls[0])
+    photos = next(c for c in live.calls if c.url.path.endswith("/111/photos"))
+    f = _form(photos)
     assert (f["url"], f["caption"], f["published"], f["access_token"]) == ("https://img/1.jpg", "Hej", "true", "SECRET-META-TOKEN")
-    assert live.calls[0].url.path.startswith("/v23.0/")
+    assert photos.url.path.startswith("/v23.0/")
+
+
+def test_a_system_user_token_is_exchanged_for_the_pages_own_token_once(live, db):
+    """A System User token manages the Page but cannot post with it ("(#200) publish_actions"); the Page's own token
+    (GET /{page}?fields=access_token) can. It is fetched once per process and used for every Meta call afterwards."""
+    live.on(lambda r: r.method == "GET" and r.url.path.endswith("/111") and r.url.params.get("fields") == "access_token",
+            httpx.Response(200, json={"access_token": "PAGE-TOKEN", "id": "111"}))
+    live.on(lambda r: r.url.path.endswith("/111/photos"), httpx.Response(200, json={"id": "9", "post_id": "111_9"}))
+    live.on(lambda r: r.method == "POST" and r.url.path.endswith("/222/media"), httpx.Response(200, json={"id": "c1"}))
+    live.on(lambda r: r.method == "GET" and "status_code" in str(r.url), httpx.Response(200, json={"status_code": "FINISHED"}))
+    live.on(lambda r: r.url.path.endswith("/222/media_publish"), httpx.Response(200, json={"id": "m1"}))
+    publishers.FacebookPublisher().publish(db, _post("facebook", "Hej"), ["https://img/1.jpg"])
+    publishers.InstagramPublisher().publish(db, _post("instagram", "Hej"), ["https://img/1.jpg"])
+    lookups = [c for c in live.calls if c.url.path.endswith("/111") and c.url.params.get("fields") == "access_token"]
+    assert len(lookups) == 1 and lookups[0].url.params["access_token"] == "SECRET-META-TOKEN"
+    assert _form(next(c for c in live.calls if c.url.path.endswith("/111/photos")))["access_token"] == "PAGE-TOKEN"
+    assert _form(next(c for c in live.calls if c.url.path.endswith("/222/media")))["access_token"] == "PAGE-TOKEN"
 
 
 def test_instagram_carousel_creates_children_waits_then_publishes(live, db):
@@ -518,7 +537,7 @@ def test_tiktok_photo_post_and_rotating_refresh_token(live, db):
     assert init["source_info"] == {"source": "PULL_FROM_URL", "photo_cover_index": 0,
                                    "photo_images": ["https://img/1.jpg", "https://img/2.jpg"]}
     assert init["post_info"]["privacy_level"] == "PUBLIC_TO_EVERYONE" and len(init["post_info"]["title"]) <= 90
-    assert _form(live.calls[0])["refresh_token"] == "rt-env"            # first use: from the environment
+    assert _form(next(c for c in live.calls if c.url.path.endswith("/oauth/token/")))["refresh_token"] == "rt-env"  # first use: env
     cred = db.get(SocialCredential, "tiktok")                           # the rotated token is stored encrypted
     assert b"rt-rotated" not in cred.secret_blob
     assert crypto.decrypt(crypto.Envelope(cred.key_version, cred.secret_blob), aad=b"social:tiktok") == b"rt-rotated"

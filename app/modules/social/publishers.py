@@ -83,11 +83,34 @@ def _send(method: str, url: str, *, final: bool = False, **kw) -> httpx.Response
 # --- Meta (Facebook page + Instagram business account) --------------------------------------------------------------
 
 META_RETRYABLE_CODES = {1, 2, 4, 17, 32, 341, 613}
+_page_token_cache: dict[str, str] = {}  # configured token -> the Page's own token
+
+
+def _page_token() -> str:
+    """The Page access token to post with. META_PAGE_ACCESS_TOKEN may be a System User (or user) token that merely
+    *manages* the Page: Graph API then answers "(#200) publish_actions" on /{page}/photos. Asking the Page for its
+    own token with that token gives one that works (and, for a System User token, never expires). Cached per process;
+    a token that already is a Page token answers with itself, and any failure falls back to the configured value."""
+    s = get_settings()
+    configured = s.meta_page_access_token
+    if configured in _page_token_cache:
+        return _page_token_cache[configured]
+    token = configured
+    try:
+        r = _send("GET", f"https://graph.facebook.com/{s.meta_graph_version}/{s.meta_page_id}",
+                  params={"fields": "access_token", "access_token": configured})
+        got = _json(r).get("access_token") if r.status_code < 400 else None
+        if isinstance(got, str) and got:
+            token = got
+    except PublishError:
+        pass
+    _page_token_cache[configured] = token
+    return token
 
 
 def _graph(method: str, path: str, *, final: bool = False, **params) -> dict:
     s = get_settings()
-    params["access_token"] = s.meta_page_access_token
+    params["access_token"] = _page_token()
     kw = {"data": params} if method == "POST" else {"params": params}
     r = _send(method, f"https://graph.facebook.com/{s.meta_graph_version}/{path}", final=final, **kw)
     body = _json(r)

@@ -41,6 +41,7 @@ from app.models.domain import (  # noqa: F401
     ReferralClick,
     ReportSettings,
     SetupTaskState,
+    SocialAccountSnapshot,
     SocialCredential,
     SocialMedia,
     SocialPost,

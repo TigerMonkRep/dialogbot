@@ -1538,6 +1538,10 @@ class SocialPost(Base):
     last_error: Mapped[str | None] = mapped_column(String(500))
     approved_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Engagement as last read from the platform: {"likes", "comments", "shares", "views", "reach"} (only the keys the
+    # platform offers) — see app/modules/social/insights.py.
+    metrics: Mapped[dict | None] = mapped_column(JSONB)
+    metrics_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
@@ -1574,3 +1578,24 @@ class SocialCredential(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
     )
+
+
+class SocialAccountSnapshot(Base):
+    """One row per platform and day with the profile numbers (followers, posts, total likes …) read from the platform.
+    The operator dashboard draws the follower curve from these; the worker writes at most one row per day."""
+
+    __tablename__ = "social_account_snapshots"
+    __table_args__ = (
+        CheckConstraint("platform in ('facebook','instagram','tiktok')", name="ck_social_account_snapshots_platform"),
+        UniqueConstraint("platform", "captured_on", name="uq_social_account_snapshots_platform_day"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    platform: Mapped[str] = mapped_column(String(12), nullable=False)
+    captured_on: Mapped[date] = mapped_column(Date, nullable=False)  # Copenhagen day
+    followers: Mapped[int | None] = mapped_column(Integer)
+    following: Mapped[int | None] = mapped_column(Integer)
+    posts: Mapped[int | None] = mapped_column(Integer)
+    likes: Mapped[int | None] = mapped_column(Integer)  # profile-wide total where the platform offers it (TikTok)
+    raw: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    created_at: Mapped[datetime] = ts_now()

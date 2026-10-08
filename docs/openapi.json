@@ -6424,6 +6424,114 @@
         ]
       }
     },
+    "/api/v1/operator/social/dashboard": {
+      "get": {
+        "description": "One call for the operator page: followers per platform (today + curve + 7/30-day change), posts waiting for\napproval, scheduled, recently published with engagement, and failed.",
+        "operationId": "dashboard_api_v1_operator_social_dashboard_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 365,
+              "minimum": 7,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dashboard",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/social/metrics/refresh": {
+      "post": {
+        "description": "Read today's profile numbers and the engagement of recent posts from the platforms right now.",
+        "operationId": "refresh_metrics_api_v1_operator_social_metrics_refresh_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Refresh Metrics",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
     "/api/v1/operator/social/plan": {
       "post": {
         "description": "Create the missing posts now (for one day and topic, or for the whole planning window).",

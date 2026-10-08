@@ -178,9 +178,9 @@ TIKTOK_API = "https://open.tiktokapis.com"
 TIKTOK_RETRYABLE = {"rate_limit_exceeded", "internal_error", "service_unavailable"}
 
 
-def _tiktok(path: str, *, token: str | None = None, final: bool = False, **kw) -> dict:
+def _tiktok(path: str, *, token: str | None = None, final: bool = False, method: str = "POST", **kw) -> dict:
     headers = {"Authorization": f"Bearer {token}"} if token else {}
-    r = _send("POST", f"{TIKTOK_API}{path}", final=final, headers=headers, **kw)
+    r = _send(method, f"{TIKTOK_API}{path}", final=final, headers=headers, **kw)
     body = _json(r)
     err = body.get("error")
     code = err.get("code") if isinstance(err, dict) else body.get("error")

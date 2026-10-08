@@ -161,6 +161,9 @@ class Settings(BaseSettings):
     # First refresh token, from the one-off authorisation (scripts/social_connect.py); afterwards the rotated
     # token lives encrypted in the database and this value is no longer used.
     tiktok_refresh_token: str | None = Field(default=None, alias="TIKTOK_REFRESH_TOKEN")
+    # Scopes asked for when connecting TikTok. user.info.stats and video.list give the operator dashboard the
+    # follower and engagement numbers; the TikTok app must have those scopes (sandbox or an approved revision).
+    tiktok_scopes: str = Field(default="user.info.basic,video.publish,user.info.stats,video.list", alias="TIKTOK_SCOPES")
     # Public site used in captions and as link target.
     social_site_url: str = Field(default="https://www.dialogbot.dk", alias="SOCIAL_SITE_URL")
 

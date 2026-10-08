@@ -25,7 +25,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.errors import Conflict, NotFound, ValidationFailed
-from app.models import SocialMedia, SocialPost
+from app.models import SocialAccountSnapshot, SocialMedia, SocialPost
 from app.modules.social import content, publishers, render
 from app.modules.social.publishers import PublishError
 from app.modules.social.topics import TOPICS, TOPICS_BY_KEY, Topic
@@ -256,8 +256,13 @@ def run_due(db: OrmSession) -> int:
         db.rollback()
         log.warning("social.plan_error", error=f"{type(e).__name__}: {e}")
     n = publish_due(db)
-    if _now().minute == 0:  # housekeeping once an hour is plenty
+    now = _now()
+    if now.minute == 0:  # housekeeping once an hour is plenty
         prune_media(db)
+    if now.minute == 7:  # dashboard numbers: today's follower snapshot + stale engagement, once an hour
+        from app.modules.social import insights
+
+        insights.refresh_all(db, now=now)
     return n
 
 
@@ -332,3 +337,67 @@ def status_overview(db: OrmSession) -> dict:
         "counts": [{"platform": p, "status": st, "count": n} for p, st, n in counts],
         "topics": [t.key for t in TOPICS],
     }
+
+
+# --- operator dashboard ---------------------------------------------------------------------------------------------------
+
+def dashboard(db: OrmSession, *, days: int = 30, now: datetime | None = None) -> dict:
+    """Everything the operator page shows in one call: follower curve and deltas per platform, the posts waiting for
+    approval, what is scheduled, what went out lately (with engagement) and what failed."""
+    now = now or _now()
+    today = now.astimezone(TZ).date()
+    since = today - timedelta(days=days)
+    # load a month more than the curve shows, so the 30-day change can be computed at the start of the window
+    snaps = db.scalars(select(SocialAccountSnapshot).where(SocialAccountSnapshot.captured_on >= since - timedelta(days=31))
+                       .order_by(SocialAccountSnapshot.platform, SocialAccountSnapshot.captured_on)).all()
+    by_platform: dict[str, list[SocialAccountSnapshot]] = {}
+    for sn in snaps:
+        by_platform.setdefault(sn.platform, []).append(sn)
+
+    def _delta(rows: list[SocialAccountSnapshot], back: int) -> int | None:
+        with_numbers = [r for r in rows if r.followers is not None]
+        if not with_numbers:
+            return None
+        latest = with_numbers[-1]
+        target = latest.captured_on - timedelta(days=back)
+        older = [r for r in with_numbers if r.captured_on <= target]
+        if not older:
+            return None
+        return latest.followers - older[-1].followers
+
+    overview = status_overview(db)
+    platforms = []
+    for pl in overview["platforms"]:
+        rows = by_platform.get(pl["platform"], [])
+        latest = next((r for r in reversed(rows) if r.followers is not None), None)
+        last_row = rows[-1] if rows else None
+        platforms.append({**pl,
+                          "followers": latest.followers if latest else None,
+                          "following": latest.following if latest else None,
+                          "posts": latest.posts if latest else None,
+                          "likes": latest.likes if latest else None,
+                          "captured_on": latest.captured_on.isoformat() if latest else None,
+                          "delta_7d": _delta(rows, 7), "delta_30d": _delta(rows, 30),
+                          "series": [{"date": r.captured_on.isoformat(), "followers": r.followers}
+                                     for r in rows if r.captured_on >= since],
+                          "error": (last_row.raw or {}).get("error") if last_row and last_row.followers is None else None})
+
+    def _posts(where, order, limit):
+        return db.scalars(select(SocialPost).where(*where).order_by(order).limit(limit)).all()
+
+    pending = _posts([SocialPost.status == "draft"], SocialPost.scheduled_for.asc(), 60)
+    scheduled = _posts([SocialPost.status.in_(("scheduled", "publishing"))], SocialPost.scheduled_for.asc(), 60)
+    recent = _posts([SocialPost.status == "published", SocialPost.published_at >= now - timedelta(days=days)],
+                    SocialPost.published_at.desc(), 90)
+    failed = _posts([SocialPost.status == "failed"], SocialPost.scheduled_for.desc(), 30)
+    totals: dict[str, dict[str, int]] = {}
+    for p in recent:
+        m = p.metrics or {}
+        t = totals.setdefault(p.platform, {"posts": 0, "likes": 0, "comments": 0, "shares": 0, "views": 0})
+        t["posts"] += 1
+        for k in ("likes", "comments", "shares", "views"):
+            if isinstance(m.get(k), int):
+                t[k] += m[k]
+    return {"overview": overview, "platforms": platforms, "pending": pending, "scheduled": scheduled,
+            "recent": recent, "failed": failed, "engagement_totals": totals, "days": days,
+            "generated_at": now.isoformat()}

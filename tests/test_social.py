@@ -610,3 +610,70 @@ def test_images_of_old_finished_posts_are_pruned_but_not_pending_ones(social, db
     assert removed == 11                                                # Monday's published posts: 1 + 5 + 5
     left = {m.post_id for m in db.scalars(select(SocialMedia))}
     assert left == {p.id for p in db.scalars(select(SocialPost).where(SocialPost.status == "scheduled"))}
+
+
+# --- insights: follower snapshots and engagement for the operator dashboard ------------------------------------------
+
+def test_follower_snapshots_once_a_day_and_post_engagement(live, db):
+    from app.models import SocialAccountSnapshot
+    from app.modules.social import insights
+
+    live.on(lambda r: r.method == "GET" and r.url.path.endswith("/111") and "followers_count" in str(r.url),
+            httpx.Response(200, json={"followers_count": 120, "fan_count": 118, "name": "Dialogbot"}))
+    live.on(lambda r: r.method == "GET" and r.url.path.endswith("/222") and "followers_count" in str(r.url),
+            httpx.Response(200, json={"followers_count": 45, "follows_count": 3, "media_count": 7}))
+    live.on(lambda r: r.url.path == "/v2/oauth/token/", httpx.Response(200, json={"access_token": "AT", "refresh_token": "rt-env"}))
+    live.on(lambda r: r.url.path == "/v2/user/info/", httpx.Response(200, json={"data": {"user": {
+        "follower_count": 9, "following_count": 1, "likes_count": 30, "video_count": 2}}}))
+    now = datetime(2026, 10, 8, 10, 0, tzinfo=UTC)
+    assert insights.snapshot_accounts(db, now=now) == 3
+    assert insights.snapshot_accounts(db, now=now) == 0  # one row per day
+    rows = {r.platform: r for r in db.scalars(select(SocialAccountSnapshot))}
+    assert rows["facebook"].followers == 120 and rows["facebook"].likes == 118
+    assert rows["instagram"].followers == 45 and rows["instagram"].posts == 7
+    assert rows["tiktok"].followers == 9 and rows["tiktok"].likes == 30
+    assert rows["tiktok"].captured_on == date(2026, 10, 8)
+    # the TikTok call asked for the stats fields with the access token
+    info = next(c for c in live.calls if c.url.path == "/v2/user/info/")
+    assert info.method == "GET" and "follower_count" in str(info.url) and info.headers["Authorization"] == "Bearer AT"
+
+    # engagement of published posts; a missing permission on one platform leaves an explanation, not a crash
+    fb = SocialPost(platform="facebook", slot_date=date(2026, 10, 7), scheduled_for=now, status="published",
+                    topic="pricing", group_key="g", caption="x", external_id="111_9", published_at=now)
+    ig = SocialPost(platform="instagram", slot_date=date(2026, 10, 7), scheduled_for=now, status="published",
+                    topic="pricing", group_key="g", caption="x", external_id="m1", published_at=now)
+    db.add_all([fb, ig])
+    db.commit()
+    live.on(lambda r: r.url.path.endswith("/111_9"), httpx.Response(200, json={
+        "likes": {"summary": {"total_count": 4}}, "comments": {"summary": {"total_count": 1}}, "shares": {"count": 2}}))
+    live.on(lambda r: r.url.path.endswith("/m1"), httpx.Response(400, json={"error": {"code": 10, "message": "no permission"}}))
+    assert insights.refresh_post_metrics(db, now=now) == 1
+    db.refresh(fb), db.refresh(ig)
+    assert fb.metrics == {"likes": 4, "comments": 1, "shares": 2} and fb.metrics_at == now
+    assert "no permission" in ig.metrics["error"] and ig.metrics_at == now
+    assert insights.refresh_post_metrics(db, now=now + timedelta(hours=1)) == 0  # fresh enough, not re-read
+
+
+def test_dashboard_combines_followers_deltas_and_posts(social, monkeypatch, api, db):
+    from app.models import SocialAccountSnapshot
+
+    monkeypatch.setenv("SOCIAL_REQUIRE_APPROVAL", "true")
+    get_settings.cache_clear()
+    op = api.operator()
+    today = datetime.now(CPH).date()
+    for back, n in ((31, 100), (8, 110), (1, 118), (0, 120)):
+        db.add(SocialAccountSnapshot(platform="facebook", captured_on=today - timedelta(days=back), followers=n, raw={}))
+    db.add(SocialAccountSnapshot(platform="tiktok", captured_on=today, followers=None, raw={"error": "scope missing"}))
+    db.commit()
+    api.post(op, "/operator/social/plan", {"day": "2099-01-01", "topic": "pricing"})
+    r = api.c.get("/api/v1/operator/social/dashboard?days=30", headers=api.h(op))
+    assert r.status_code == 200, r.text
+    d = r.json()
+    fb = next(p for p in d["platforms"] if p["platform"] == "facebook")
+    assert fb["followers"] == 120 and fb["delta_7d"] == 10 and fb["delta_30d"] == 20 and len(fb["series"]) == 3
+    tt = next(p for p in d["platforms"] if p["platform"] == "tiktok")
+    assert tt["followers"] is None and tt["error"] == "scope missing"
+    assert {p["platform"] for p in d["pending"]} == set(PLATFORMS) and d["scheduled"] == [] and d["recent"] == []
+    assert d["overview"]["require_approval"] is True
+    assert api.c.get("/api/v1/operator/social/dashboard", headers=api.h(api.user("x@testmail.dk"))).status_code == 403
+    assert api.post(op, "/operator/social/metrics/refresh", {}).status_code == 200  # fake provider: nothing to read

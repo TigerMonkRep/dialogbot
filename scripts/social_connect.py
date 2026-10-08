@@ -17,8 +17,6 @@ from app.config import get_settings
 from app.db import get_session_factory
 from app.modules.social import publishers
 
-SCOPES = "user.info.basic,video.publish"
-
 
 def main(argv: list[str]) -> int:
     s = get_settings()
@@ -33,7 +31,7 @@ def main(argv: list[str]) -> int:
         return 1
     if cmd == "tiktok-url" and len(argv) == 3:
         print("https://www.tiktok.com/v2/auth/authorize/?" + urlencode(
-            {"client_key": s.tiktok_client_key, "scope": SCOPES, "response_type": "code", "redirect_uri": argv[2],
+            {"client_key": s.tiktok_client_key, "scope": s.tiktok_scopes, "response_type": "code", "redirect_uri": argv[2],
              "state": "dialogbot"}))
         return 0
     if cmd == "tiktok-code" and len(argv) == 4:

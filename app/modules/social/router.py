@@ -19,7 +19,7 @@ from app.core.auth import Principal
 from app.core.errors import NotFound, ValidationFailed
 from app.db import get_db
 from app.models import SocialMedia, SocialPost
-from app.modules.social import publishers, service
+from app.modules.social import insights, publishers, service
 from app.modules.voices.operator_router import operator
 
 router = APIRouter(prefix="/operator/social", tags=["social-operator"])
@@ -36,7 +36,24 @@ def _out(db: OrmSession, p: SocialPost) -> dict:
             "generator_model": p.generator_model, "external_id": p.external_id, "external_url": p.external_url,
             "attempts": p.attempts, "last_error": p.last_error, "approved_by": str(p.approved_by_user_id) if p.approved_by_user_id else None,
             "published_at": p.published_at.isoformat() if p.published_at else None,
+            "metrics": p.metrics, "metrics_at": p.metrics_at.isoformat() if p.metrics_at else None,
             "images": [publishers.media_url(i) for i in ids]}
+
+
+@router.get("/dashboard")
+def dashboard(days: int = Query(default=30, ge=7, le=365), _: Principal = Depends(operator),
+              db: OrmSession = Depends(get_db)):
+    """One call for the operator page: followers per platform (today + curve + 7/30-day change), posts waiting for
+    approval, scheduled, recently published with engagement, and failed."""
+    d = service.dashboard(db, days=days)
+    return {**d, "pending": [_out(db, p) for p in d["pending"]], "scheduled": [_out(db, p) for p in d["scheduled"]],
+            "recent": [_out(db, p) for p in d["recent"]], "failed": [_out(db, p) for p in d["failed"]]}
+
+
+@router.post("/metrics/refresh")
+def refresh_metrics(_: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+    """Read today's profile numbers and the engagement of recent posts from the platforms right now."""
+    return insights.refresh_all(db, force=True)
 
 
 @router.get("")

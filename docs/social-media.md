@@ -83,6 +83,8 @@ Kræver operatørrollen (`python -m scripts.grant_operator grant <e-mail>`). All
 | `POST /operator/social/metrics/refresh` | Hent følgertal og engagement fra platformene nu |
 | `GET /operator/social/prospects?status=new` · `POST …/prospects/discover` `{industry?, limit?}` · `POST …/prospects/{id}/done` `{platforms}` · `POST …/prospects/{id}/skip` | Profiler at følge (se ovenfor) |
 
+**Vigtigt om Render Blueprint:** `SOCIAL_PROVIDER`, `SOCIAL_REQUIRE_APPROVAL` og `SOCIAL_WEEKDAYS` er `sync: false` i `infra/render.yaml` og styres i Render-dashboardet. Står der en `value:` i yaml'en, bliver den lagt ind igen ved hver blueprint-synkronisering (det skete 8/10 og slog opslag fra i et par minutter).
+
 **Nødbremse:** sæt `SOCIAL_PROVIDER=none` — intet planlægges eller postes. Planlagte opslag bliver liggende.
 
 ## Hvordan fejl håndteres

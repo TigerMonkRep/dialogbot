@@ -56,10 +56,12 @@ services:
         sync: false
       - key: FRONTEND_BASE_URL
         sync: false
-      - key: SOCIAL_PROVIDER      # none until the platform keys are in (docs/social-media.md); then "live"
-        value: none
-      - key: SOCIAL_REQUIRE_APPROVAL
-        value: "false"
+      - key: SOCIAL_PROVIDER      # set in the dashboard ("live" since 8 Oct 2026; "none" is the emergency brake). A value
+        sync: false               # here would be re-applied on every blueprint sync and silently switch posting off/on.
+      - key: SOCIAL_REQUIRE_APPROVAL  # "true": the operator approves every post in the dashboard (dashboard-managed)
+        sync: false
+      - key: SOCIAL_WEEKDAYS      # "0,1,2,3,4,5,6" = every day (dashboard-managed)
+        sync: false
       - key: META_PAGE_ID
         sync: false
       - key: META_PAGE_ACCESS_TOKEN
@@ -107,10 +109,12 @@ services:
         sync: false
       - key: FRONTEND_BASE_URL
         sync: false
-      - key: SOCIAL_PROVIDER      # none until the platform keys are in (docs/social-media.md); then "live"
-        value: none
-      - key: SOCIAL_REQUIRE_APPROVAL
-        value: "false"
+      - key: SOCIAL_PROVIDER      # set in the dashboard ("live" since 8 Oct 2026; "none" is the emergency brake). A value
+        sync: false               # here would be re-applied on every blueprint sync and silently switch posting off/on.
+      - key: SOCIAL_REQUIRE_APPROVAL  # "true": the operator approves every post in the dashboard (dashboard-managed)
+        sync: false
+      - key: SOCIAL_WEEKDAYS      # "0,1,2,3,4,5,6" = every day (dashboard-managed)
+        sync: false
       - key: META_PAGE_ID
         sync: false
       - key: META_PAGE_ACCESS_TOKEN

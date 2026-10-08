@@ -21,7 +21,8 @@ def _clean(url: str) -> str:
     return urldefrag(url)[0].split("?")[0]
 
 
-def scan(start_url: str, fetcher: Fetcher | None = None, max_pages: int = 60, psi: bool = False, psi_key: str | None = None) -> Report:
+def scan(start_url: str, fetcher: Fetcher | None = None, max_pages: int = 60, psi: bool = False, psi_key: str | None = None,
+         psi_strategy: str = "mobile") -> Report:
     fetcher = fetcher or Fetcher()
     if "://" not in start_url:
         start_url = "https://" + start_url
@@ -109,10 +110,9 @@ def scan(start_url: str, fetcher: Fetcher | None = None, max_pages: int = 60, ps
 
     metrics: dict = {}
     if psi:
-        psi_results, metrics, err = run_psi(fetcher, root + "/", psi_key)
+        psi_results, metrics, psi_notes = run_psi(fetcher, root + "/", psi_key, strategy=psi_strategy)
         results += psi_results
-        if err:
-            notes.append(err)
+        notes += psi_notes
 
     return Report(site=root, scanned_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
                   pages_scanned=len(pages), results=results, notes=notes, metrics=metrics,

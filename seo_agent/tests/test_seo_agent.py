@@ -7,7 +7,7 @@ import unittest
 from seo_agent import checks as C
 from seo_agent.fetch import Fetcher, Response
 from seo_agent.parse import parse_html
-from seo_agent.psi import parse_lighthouse
+from seo_agent.psi import explain_error, parse_field_data, parse_lighthouse, run_psi
 from seo_agent.report import Report, diff
 from seo_agent.scan import scan
 
@@ -162,6 +162,55 @@ class PsiTests(unittest.TestCase):
         self.assertEqual((by["psi_perf"], by["psi_lcp"], by["psi_cls"], by["psi_tbt"], by["psi_a11y"]),
                          (C.WARN, C.WARN, C.PASS, C.PASS, C.PASS))
         self.assertEqual(metrics["performance"], 62)
+
+    def test_desktop_ids_get_suffix(self):
+        rs, _, _ = parse_lighthouse({"categories": {"performance": {"score": 0.95}}, "audits": {}}, "https://x.dk/", "desktop")
+        self.assertEqual({r.check for r in rs}, {"psi_perf_desktop", "psi_a11y_desktop"})
+
+    def test_field_data_parsing_and_missing(self):
+        loading = {"overall_category": "AVERAGE", "origin_fallback": True, "metrics": {
+            "LARGEST_CONTENTFUL_PAINT_MS": {"percentile": 3200}, "INTERACTION_TO_NEXT_PAINT": {"percentile": 150},
+            "CUMULATIVE_LAYOUT_SHIFT_SCORE": {"percentile": 5}}}
+        rs, summary = parse_field_data(loading, "https://x.dk/")
+        by = {r.check: r.status for r in rs}
+        self.assertEqual((by["crux_lcp"], by["crux_inp"], by["crux_cls"]), (C.WARN, C.PASS, C.PASS))
+        self.assertEqual(summary["cls"], 0.05)
+        self.assertTrue(summary["origin_fallback"])
+        self.assertIsNone(parse_field_data({}, "https://x.dk/"))
+        self.assertIsNone(parse_field_data({"metrics": {}}, "https://x.dk/"))
+
+    def test_quota_and_auth_errors_are_explained(self):
+        self.assertIn("PSI_API_KEY", explain_error(429, None, has_key=False))
+        self.assertIn("daglig", explain_error(429, None, has_key=True))
+        self.assertIn("PageSpeed Insights API", explain_error(403, None, has_key=True))
+        self.assertIn("timeout", explain_error(None, "timeout", has_key=True))
+
+    def test_run_psi_both_strategies_with_canned_responses(self):
+        body = json.dumps({"lighthouseResult": {"categories": {"performance": {"score": 0.91}, "accessibility": {"score": 1}}, "audits": {}},
+                           "loadingExperience": {"overall_category": "FAST", "metrics": {"LARGEST_CONTENTFUL_PAINT_MS": {"percentile": 1800}}}})
+
+        class Psi(Fetcher):
+            calls: list[str] = []
+
+            def get(self, url, **kw):
+                self.calls.append(url)
+                if "strategy=desktop" in url:
+                    return Response(url=url, final_url=url, status=429, headers={}, body=b"{}")
+                return Response(url=url, final_url=url, status=200, headers={"content-type": "application/json"}, body=body.encode())
+
+        f = Psi(timeout=120)
+        rs, metrics, notes = run_psi(f, "https://x.dk/", key="k", strategy="both")
+        self.assertEqual(len(f.calls), 2)
+        self.assertIn("key=k", f.calls[0])
+        self.assertEqual(metrics["mobile"]["performance"], 91)
+        self.assertEqual(metrics["mobile"]["field"]["lcp"], 1800)
+        self.assertNotIn("desktop", metrics)
+        self.assertEqual(len(notes), 1)
+        self.assertIn("(desktop)", notes[0])
+        self.assertIn("crux_lcp", {r.check for r in rs})
+        md = Report("https://x.dk", "t", 1, rs, notes=notes, metrics=metrics).to_markdown()
+        self.assertIn("Feltdata/CrUX (mobil", md)
+        self.assertIn("429", md)
 
 
 if __name__ == "__main__":

@@ -19,6 +19,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("url", nargs="?", default=DEFAULT_URL)
     ap.add_argument("--max-pages", type=int, default=60, help="maks. antal sider der crawles (standard 60)")
     ap.add_argument("--psi", action="store_true", help="hent også Core Web Vitals fra Google PageSpeed Insights (env PSI_API_KEY anbefales)")
+    ap.add_argument("--psi-strategy", choices=["mobile", "desktop", "both"], default="mobile", help="mål mobil, desktop eller begge (standard mobil)")
     ap.add_argument("--out", default="var/seo", help="mappe til rapporter og historik (standard var/seo)")
     ap.add_argument("--baseline", help="sammenlign med denne tidligere JSON-rapport i stedet for seneste lokale scanning")
     ap.add_argument("--json", action="store_true", help="skriv JSON til stdout i stedet for markdown")
@@ -27,7 +28,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--fail-on-regression", action="store_true", help="exit-kode 1 hvis noget er blevet dårligere siden sidst")
     args = ap.parse_args(argv)
 
-    report = scan(args.url, max_pages=args.max_pages, psi=args.psi, psi_key=os.environ.get("PSI_API_KEY"))
+    report = scan(args.url, max_pages=args.max_pages, psi=args.psi, psi_key=os.environ.get("PSI_API_KEY"), psi_strategy=args.psi_strategy)
     host = urlparse(report.site).netloc.replace(":", "_")
     folder = Path(args.out) / host
     latest = folder / "latest.json"

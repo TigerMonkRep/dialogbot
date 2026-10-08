@@ -85,10 +85,7 @@ class Report:
             L += _diff_lines(previous, self.to_dict())
         for n in self.notes:
             L.append(f"> ⚠️ {n}")
-        if self.metrics:
-            m = self.metrics
-            L += ["", f"Lighthouse (mobil): ydeevne **{m.get('performance')}**, tilgængelighed **{m.get('accessibility')}**"
-                  f" · LCP {_n(m.get('lcp_ms'), 0)} ms · CLS {_n(m.get('cls'), 3)} · TBT {_n(m.get('tbt_ms'), 0)} ms"]
+        L += _metrics_lines(self.metrics)
         L += ["", "## Score pr. kategori", "", "| Kategori | Score |", "|---|---|"]
         L += [f"| {c} | {s} {_bar(s)} |" for c, s in self.category_scores().items()]
         issues = self.issues()
@@ -110,6 +107,26 @@ class Report:
         passed = sorted(CATALOG[c].title for c, v in agg.items() if v["status"] == PASS)
         L += [f"## Bestået ({len(passed)})", ""] + [f"- ✅ {t}" for t in passed]
         return "\n".join(L) + "\n"
+
+
+def _metrics_lines(metrics: dict) -> list[str]:
+    """PageSpeed-linjer pr. strategi: Lighthouse (lab) og CrUX (felt), når Google leverer det."""
+    out: list[str] = []
+    for strat in ("mobile", "desktop"):
+        m = metrics.get(strat)
+        if not m:
+            continue
+        label = "mobil" if strat == "mobile" else "desktop"
+        out.append(f"Lighthouse ({label}): ydeevne **{m.get('performance')}**, tilgængelighed **{m.get('accessibility')}**"
+                   f" · LCP {_n(m.get('lcp_ms'), 0)} ms · CLS {_n(m.get('cls'), 3)} · TBT {_n(m.get('tbt_ms'), 0)} ms")
+        f = m.get("field")
+        if f:
+            scope = "hele domænet" if f.get("origin_fallback") else "denne side"
+            out.append(f"Feltdata/CrUX ({label}, {scope}, 28 dage): {str(f.get('overall') or '?').lower()} · LCP {_n(f.get('lcp'), 0)} ms"
+                       f" · INP {_n(f.get('inp'), 0)} ms · CLS {_n(f.get('cls'), 2)}")
+        else:
+            out.append(f"Feltdata/CrUX ({label}): ingen – Google har endnu ikke nok rigtige besøg til at vise Core Web Vitals.")
+    return [""] + out if out else []
 
 
 def _bar(score: int) -> str:

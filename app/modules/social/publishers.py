@@ -186,6 +186,9 @@ def _tiktok(path: str, *, token: str | None = None, final: bool = False, **kw) -
     code = err.get("code") if isinstance(err, dict) else body.get("error")
     if r.status_code >= 400 or (code and code != "ok"):
         msg = (err.get("message") if isinstance(err, dict) else body.get("error_description")) or "ukendt fejl"
+        if code == "unaudited_client_can_only_post_to_private_accounts":
+            msg = ("appen er ikke auditeret af TikTok endnu, og så må den kun poste til en PRIVAT konto – sæt "
+                   "TikTok-kontoen til privat (Indstillinger → Privatliv → Privat konto), indtil audit er godkendt")
         raise PublishError(f"TikTok {r.status_code}/{code}: {str(msg)[:200]}",
                            retryable=r.status_code >= 500 or code in TIKTOK_RETRYABLE)
     return body

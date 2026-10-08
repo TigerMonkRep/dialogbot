@@ -45,6 +45,7 @@ class Page:
     stylesheets: list[str] = field(default_factory=list)
     icons: list[str] = field(default_factory=list)
     text: str = ""
+    main_text: str = ""  # tekst uden <header>, <nav> og <footer> – det, siden faktisk handler om
     has_doctype: bool = False
     iframes: int = 0
 
@@ -52,6 +53,11 @@ class Page:
     @property
     def words(self) -> list[str]:
         return _WORD.findall(self.text)
+
+    @property
+    def main_words(self) -> list[str]:
+        """Ord i selve indholdet (uden menu og footer). Falder tilbage til alle ord, hvis siden ingen landmarks har."""
+        return _WORD.findall(self.main_text) or self.words
 
     @property
     def h1(self) -> list[str]:
@@ -112,7 +118,9 @@ class _Extractor(HTMLParser):
         self._link: tuple[dict[str, str], list[str]] | None = None
         self._jsonld: list[str] | None = None
         self._skip = 0
+        self._chrome = 0  # dybde inde i header/nav/footer
         self._text: list[str] = []
+        self._main: list[str] = []
         self._img_index = 0
 
     def handle_decl(self, decl: str) -> None:
@@ -166,9 +174,13 @@ class _Extractor(HTMLParser):
                                   loading=a.get("loading"), in_head_of_page=self._img_index <= 2))
         elif tag == "iframe":
             p.iframes += 1
+        if tag in ("header", "nav", "footer"):
+            self._chrome += 1
 
     def handle_endtag(self, tag: str) -> None:
         p = self.page
+        if tag in ("header", "nav", "footer"):
+            self._chrome = max(0, self._chrome - 1)
         if tag == "head":
             self._in_head = False
         elif tag == "title" and self._title is not None:
@@ -205,6 +217,8 @@ class _Extractor(HTMLParser):
             self._link[1].append(data)
         if not self._skip and not self._in_head:
             self._text.append(data)
+            if not self._chrome:
+                self._main.append(data)
 
 
 def parse_html(html: str, url: str) -> Page:
@@ -215,4 +229,5 @@ def parse_html(html: str, url: str) -> Page:
     except Exception:  # defekt HTML må aldrig vælte en scanning
         pass
     ex.page.text = " ".join(" ".join(ex._text).split())
+    ex.page.main_text = " ".join(" ".join(ex._main).split())
     return ex.page

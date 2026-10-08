@@ -53,15 +53,30 @@ def _ok(cond: bool, check: str, url: str, detail_fail: str = "", detail_pass: st
 # ---------------------------------------------------------------------------------------------------
 # Side-tjek
 # ---------------------------------------------------------------------------------------------------
-def page_checks(page: Page, resp: Response) -> list[Result]:
+def is_noindex(page: Page, resp: Response) -> bool:
+    directives = page.robots_directives | {d.strip().lower() for d in resp.headers.get("x-robots-tag", "").split(",") if d.strip()}
+    return "noindex" in directives or "none" in directives
+
+
+def page_checks(page: Page, resp: Response, in_sitemap: bool = True) -> list[Result]:
+    """Alle tjek for én side. En side med noindex, som ikke står i sitemap, regnes som bevidst holdt ude af Google
+    (login, app, onboarding): den får kun de tekniske tjek, ikke title/canonical/schema-kravene til indekserbare sider."""
     u = page.url
     r: list[Result] = []
     # status / redirect
     r.append(_ok(resp.ok, "page_status", u, f"HTTP {resp.status or resp.error}"))
     r.append(_ok(len(resp.redirects) <= 1, "redirect_chain", u, f"{len(resp.redirects)} redirects: " + " → ".join(f"{s} {x}" for x, s in resp.redirects), warn=True))
     # noindex
-    directives = page.robots_directives | {d.strip().lower() for d in resp.headers.get("x-robots-tag", "").split(",") if d.strip()}
-    r.append(_ok("noindex" not in directives and "none" not in directives, "noindex", u, "siden har noindex"))
+    noindex = is_noindex(page, resp)
+    if noindex and not in_sitemap:
+        r.append(Result("noindex", INFO, u, "noindex – bevidst (siden står ikke i sitemap)"))
+        r.append(_ok(bool(page.lang), "lang_attr", u, "mangler lang på <html>"))
+        r.append(_ok("viewport" in page.meta, "viewport", u, "mangler viewport"))
+        if u.startswith("https://"):
+            mixed = [x for x in [*page.stylesheets, *[s["src"] for s in page.scripts], *[i.src for i in page.images]] if x.startswith("http://")]
+            r.append(_ok(not mixed, "mixed_content", u, f"{len(mixed)} http-ressourcer: {', '.join(mixed[:2])}"))
+        return r
+    r.append(_ok(not noindex, "noindex", u, "siden har noindex, men står i sitemap" if in_sitemap else "siden har noindex"))
     # title
     t = page.title or ""
     r.append(_ok(bool(t), "title_present", u, "mangler <title>"))
@@ -149,7 +164,7 @@ def page_checks(page: Page, resp: Response) -> list[Result]:
 
 def top_keyword(page: Page) -> str | None:
     brand = _norm_host(page.url).split(".")[0]
-    words = [w.lower() for w in page.words if len(w) > 3 and w.lower() not in STOPWORDS and not w.isdigit() and brand not in w.lower()]
+    words = [w.lower() for w in page.main_words if len(w) > 3 and w.lower() not in STOPWORDS and not w.isdigit() and brand not in w.lower()]
     if not words:
         return None
     word, count = Counter(words).most_common(1)[0]
@@ -159,7 +174,9 @@ def top_keyword(page: Page) -> str | None:
 # ---------------------------------------------------------------------------------------------------
 # Tværgående tjek over alle sider
 # ---------------------------------------------------------------------------------------------------
-def cross_page_checks(pages: dict[str, Page]) -> list[Result]:
+def cross_page_checks(pages: dict[str, Page], skip: set[str] | None = None) -> list[Result]:
+    """Unikke titler/beskrivelser på tværs af sider. `skip` er sider (fx noindex), der ikke konkurrerer i Google."""
+    pages = {u: p for u, p in pages.items() if u not in (skip or set())}
     r: list[Result] = []
     for check, getter in (("title_unique", lambda p: (p.title or "").strip().lower()),
                           ("desc_unique", lambda p: p.meta.get("description", "").strip().lower())):
@@ -292,7 +309,9 @@ def transport_checks(root: str, http_resp: Response | None, www_resp: Response |
     r.append(_ok("nosniff" in h.get("x-content-type-options", "").lower(), "sec_nosniff", root, "mangler header", warn=True))
     r.append(_ok("x-frame-options" in h or "frame-ancestors" in h.get("content-security-policy", ""), "sec_frame", root, "mangler header", warn=True))
     r.append(_ok("referrer-policy" in h, "sec_referrer", root, "mangler header", warn=True))
-    r.append(_ok("content-security-policy" in h, "sec_csp", root, "mangler header", warn=True))
+    csp_ro = "content-security-policy-report-only" in h
+    r.append(_ok("content-security-policy" in h or csp_ro, "sec_csp", root, "mangler header", warn=True,
+                 detail_pass="kun Content-Security-Policy-Report-Only – håndhæves ikke endnu" if csp_ro and "content-security-policy" not in h else ""))
     r.append(_ok("permissions-policy" in h, "sec_permissions", root, "mangler header", warn=True))
     enc = h.get("content-encoding", "").lower()
     r.append(_ok(enc in ("gzip", "br", "zstd", "deflate"), "compression", root, "HTML leveres ukomprimeret"))

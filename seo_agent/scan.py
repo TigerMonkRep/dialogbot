@@ -81,12 +81,14 @@ def scan(start_url: str, fetcher: Fetcher | None = None, max_pages: int = 60, ps
     status_of.update({u.rstrip("/"): r.status for u, r in responses.items()})
 
     # --- tjek -----------------------------------------------------------------------------------
+    sitemap_keys = {u.rstrip("/") for u in sitemap_urls}
+    noindex_pages = {u for u, p in pages.items() if C.is_noindex(p, responses[u]) and u.rstrip("/") not in sitemap_keys}
     for url, page in pages.items():
-        results += C.page_checks(page, responses[url])
+        results += C.page_checks(page, responses[url], in_sitemap=url.rstrip("/") in sitemap_keys)
     for url, resp in responses.items():
         if url not in pages:
             results.append(C.Result("page_status", C.PASS if resp.ok else C.FAIL, url, f"HTTP {resp.status or resp.error}"))
-    results += C.cross_page_checks(pages)
+    results += C.cross_page_checks(pages, skip=noindex_pages)
     results += C.link_checks(pages, status_of, set(sitemap_urls))
     results += C.sitemap_checks(root, sm, sm_items, sm_err, fetched_sitemap)
 

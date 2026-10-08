@@ -29,8 +29,9 @@ def _build() -> dict[str, CheckInfo]:
          "Sider der giver 4xx/5xx kan ikke indekseres og spilder crawl-budget og linkværdi.",
          "Ret eller fjern interne links til fejlsider; sæt 301 fra flyttede sider til den nye adresse."),
         ("noindex", IDX, "Ingen utilsigtet noindex", 10,
-         "En side med noindex (meta eller X-Robots-Tag) forsvinder fra Google, selv om den står i sitemap.",
-         "Fjern noindex fra sider, der skal kunne findes. Behold det kun på login-, app- og takkesider."),
+         "En side med noindex (meta eller X-Robots-Tag) forsvinder fra Google, selv om den står i sitemap. "
+         "Noindex på sider uden for sitemap (login, app, onboarding) regnes som bevidst og tæller ikke.",
+         "Fjern noindex fra sider, der skal kunne findes – eller tag siden ud af sitemap, hvis den bevidst holdes ude."),
         ("robots_present", IDX, "robots.txt findes", 8,
          "robots.txt fortæller søgemaskiner, hvad de må crawle, og peger på sitemap.", "Opret /robots.txt (Next.js: src/app/robots.ts)."),
         ("robots_open", IDX, "robots.txt blokerer ikke hele sitet", 10,
@@ -71,7 +72,7 @@ def _build() -> dict[str, CheckInfo]:
         ("url_quality", ONP, "Pæne URL'er", 2, "Korte, små bogstaver og bindestreger er lettere at forstå og dele.", "Brug små bogstaver, bindestreger og undgå parametre."),
         ("anchor_text", ONP, "Beskrivende linktekster", 3, "'Klik her' siger intet om målsiden – ankertekst er et rankingsignal.", "Brug linktekst, der beskriver målet."),
         ("internal_links", ONP, "Siden har interne links", 3, "Interne links fordeler linkværdi og hjælper brugeren videre.", "Link til relevante guides, brancher og prissiden."),
-        ("keyword_focus", ONP, "Hovednøgleord står i title og H1", 3, "Det mest brugte emneord på siden bør også stå i title og H1.", "Flet sidens hovedord ind i title og H1."),
+        ("keyword_focus", ONP, "Hovednøgleord står i title og H1", 3, "Det mest brugte emneord i selve indholdet (uden menu og footer) bør også stå i title og H1.", "Flet sidens hovedord ind i title og H1 – uden nøgleordsfyld."),
         # --- Indhold -----------------------------------------------------------------------------
         ("thin_content", CON, "Nok tekst på siden (≥ 300 ord)", 5, "Tynde sider rangerer sjældent på konkurrenceprægede søgeord.", "Uddyb med konkrete svar, eksempler og FAQ."),
         ("img_alt", CON, "Billeder har alt-tekst", 6, "Alt-tekst giver billedsøgning, tilgængelighed og kontekst.", "Tilføj beskrivende alt (tom alt=\"\" kun til ren dekoration)."),
@@ -102,7 +103,7 @@ def _build() -> dict[str, CheckInfo]:
         ("sec_nosniff", SEC, "X-Content-Type-Options: nosniff", 2, "Forhindrer MIME-sniffing.", "Send headeren X-Content-Type-Options: nosniff."),
         ("sec_frame", SEC, "Beskyttelse mod clickjacking", 2, "Forhindrer at siden indlejres på fremmede sites.", "Send X-Frame-Options: DENY eller CSP frame-ancestors."),
         ("sec_referrer", SEC, "Referrer-Policy er sat", 2, "Begrænser data sendt til andre sites.", "Send Referrer-Policy: strict-origin-when-cross-origin."),
-        ("sec_csp", SEC, "Content-Security-Policy er sat", 2, "Reducerer risikoen for XSS.", "Indfør en CSP (start i report-only)."),
+        ("sec_csp", SEC, "Content-Security-Policy er sat", 2, "Reducerer risikoen for XSS.", "Indfør en CSP (start i report-only, og håndhæv den, når konsollen er stille)."),
         ("sec_permissions", SEC, "Permissions-Policy er sat", 1, "Slår ubrugte browser-API'er fra.", "Send Permissions-Policy: camera=(), geolocation=()."),
         ("security_txt", SEC, "security.txt findes", 1, "Gør det nemt at rapportere sårbarheder.", "Opret /.well-known/security.txt."),
         # --- Mobil -------------------------------------------------------------------------------

@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 
 from .catalog import CATALOG, CATEGORIES
 from .checks import FAIL, INFO, PASS, WARN, Result
+from .gsc import markdown_section
 
 POINTS = {PASS: 1.0, WARN: 0.5, FAIL: 0.0}
 RANK = {PASS: 0, INFO: 0, WARN: 1, FAIL: 2}
@@ -28,6 +29,8 @@ class Report:
     notes: list[str] = field(default_factory=list)
     metrics: dict = field(default_factory=dict)
     page_list: list[str] = field(default_factory=list)
+    sitemap: list[str] = field(default_factory=list)  # absolutte URL'er fra sitemap.xml
+    gsc: dict | None = None  # Search Console-sektionen (se gsc.py), inkl. 'history' når den er gemt
 
     # --- aggregering --------------------------------------------------------------------------
     def checks(self) -> dict[str, dict]:
@@ -71,7 +74,7 @@ class Report:
     def to_dict(self) -> dict:
         return {"site": self.site, "scanned_at": self.scanned_at, "pages_scanned": self.pages_scanned, "score": self.score(),
                 "categories": self.category_scores(), "checks": self.checks(), "notes": self.notes,
-                "metrics": self.metrics, "pages": self.page_list}
+                "metrics": self.metrics, "pages": self.page_list, "sitemap": self.sitemap, "gsc": self.gsc}
 
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), ensure_ascii=False, indent=2)
@@ -104,8 +107,9 @@ class Report:
             if len(v["affected"]) > 5:
                 L.append(f"  - … og {len(v['affected']) - 5} flere")
             L.append("")
+        L += markdown_section(self.gsc, (self.gsc or {}).get("history"))
         passed = sorted(CATALOG[c].title for c, v in agg.items() if v["status"] == PASS)
-        L += [f"## Bestået ({len(passed)})", ""] + [f"- ✅ {t}" for t in passed]
+        L += ["", f"## Bestået ({len(passed)})", ""] + [f"- ✅ {t}" for t in passed]
         return "\n".join(L) + "\n"
 
 

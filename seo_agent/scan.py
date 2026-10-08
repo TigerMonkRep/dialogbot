@@ -116,7 +116,7 @@ def scan(start_url: str, fetcher: Fetcher | None = None, max_pages: int = 60, ps
 
     return Report(site=root, scanned_at=datetime.now(timezone.utc).isoformat(timespec="seconds"),
                   pages_scanned=len(pages), results=results, notes=notes, metrics=metrics,
-                  page_list=sorted(_p(u) for u in pages))
+                  page_list=sorted(_p(u) for u in pages), sitemap=sitemap_urls)
 
 
 def _p(url: str) -> str:

@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
+from . import gsc
 from .report import diff
 from .scan import scan
 
@@ -20,6 +21,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--max-pages", type=int, default=60, help="maks. antal sider der crawles (standard 60)")
     ap.add_argument("--psi", action="store_true", help="hent også Core Web Vitals fra Google PageSpeed Insights (env PSI_API_KEY anbefales)")
     ap.add_argument("--psi-strategy", choices=["mobile", "desktop", "both"], default="mobile", help="mål mobil, desktop eller begge (standard mobil)")
+    ap.add_argument("--no-gsc", action="store_true", help="spring Google Search Console over, selv om GSC_SERVICE_ACCOUNT_JSON/GSC_SITE_URL er sat")
+    ap.add_argument("--gsc-inspect", type=int, default=20, help="maks. antal sitemap-sider der slås op i URL Inspection API (standard 20)")
     ap.add_argument("--out", default="var/seo", help="mappe til rapporter og historik (standard var/seo)")
     ap.add_argument("--baseline", help="sammenlign med denne tidligere JSON-rapport i stedet for seneste lokale scanning")
     ap.add_argument("--json", action="store_true", help="skriv JSON til stdout i stedet for markdown")
@@ -31,6 +34,16 @@ def main(argv: list[str] | None = None) -> int:
     report = scan(args.url, max_pages=args.max_pages, psi=args.psi, psi_key=os.environ.get("PSI_API_KEY"), psi_strategy=args.psi_strategy)
     host = urlparse(report.site).netloc.replace(":", "_")
     folder = Path(args.out) / host
+    if not args.no_gsc:
+        try:
+            cfg = gsc.load_config()
+        except gsc.GscError as exc:
+            cfg = None
+            report.notes.append(f"Search Console sprunget over: {exc}")
+        if cfg:
+            report.gsc = gsc.collect(cfg[0], cfg[1], report.sitemap, max_inspect=args.gsc_inspect)
+            if not args.no_save:
+                report.gsc["history"] = gsc.update_history(folder / "gsc-history.json", report.gsc, report.scanned_at)
     latest = folder / "latest.json"
     previous = None
     src = Path(args.baseline) if args.baseline else latest

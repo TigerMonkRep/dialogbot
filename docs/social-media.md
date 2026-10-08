@@ -2,7 +2,7 @@
 
 Dialogbot kan selv lave og poste indhold på sine egne profiler. Koden ligger i `app/modules/social/` og kører i den eksisterende worker (`python -m app.worker.runner`); der er ingen ny tjeneste.
 
-**Status:** bygget og testet (103 tests, alle platformskald mod en mock). **Ikke afprøvet mod rigtige konti** — det kræver nøgler, som kun du kan oprette (se "Det skal du gøre"). Første rigtige opslag bør derfor køre med `SOCIAL_REQUIRE_APPROVAL=true`.
+**Status (8. oktober 2026):** i drift på staging. Første rigtige opslag er gået ud på alle tre platforme (Facebook-siden *Dialogbot*, Instagram *@dialogbotdenmark*, TikTok *@dialogbotdenmark* — TikTok endnu kun privat, se audit nedenfor). `SOCIAL_REQUIRE_APPROVAL=true`, alle ugens dage (`SOCIAL_WEEKDAYS=0,1,2,3,4,5,6`). API'et svarer på `https://api.dialogbot.dk` (eget domæne, krævet af TikToks URL-verifikation).
 
 ## Hvad der sker, helt automatisk
 
@@ -36,7 +36,7 @@ Platformene henter billederne selv fra `PUBLIC_BASE_URL/api/v1/social/media/<id>
 ### 2. Facebook + Instagram (Meta)
 1. Instagram-kontoen skal være en *Business*- eller *Creator*-konto og knyttet til Dialogbots Facebook-side.
 2. Opret en app (type *Business*) på developers.facebook.com. Tilføj tilladelserne `pages_manage_posts`, `pages_read_engagement`, `pages_show_list`, `instagram_basic`, `instagram_content_publish`. Så længe appen er i udviklingstilstand og du er administrator af den, virker de på dine egne aktiver uden app-review.
-3. Lav en **langlivet sidetoken** (sidetokens udledt af en langlivet brugertoken udløber ikke) — eller en System User-token i Business Manager med siden og Instagram-kontoen tildelt.
+3. Lav en **langlivet sidetoken** — eller (det vi bruger) en **System User-token** i Business Manager/Meta Business Suite: appen knyttes til business-porteføljen, systembrugeren (Admin) får *fuld adgang* til siden og Instagram-kontoen og *Udvikl app* på appen, og tokenet genereres med udløb *Aldrig* og de fem tilladelser. Koden udveksler selv et systembruger-/brugertoken til sidens eget token (`GET /{page-id}?fields=access_token`), fordi Graph API ellers svarer `(#200) publish_actions` på `/{page-id}/photos`. Bemærk: er siden ejet af en business-portefølje, viser Facebooks login-dialog den ikke, før appen er knyttet til porteføljen.
 4. Find Instagram-id'et: `GET /{page-id}?fields=instagram_business_account`.
 5. Sæt `META_PAGE_ID`, `META_PAGE_ACCESS_TOKEN`, `META_INSTAGRAM_USER_ID` (API + worker).
 
@@ -51,7 +51,7 @@ Platformene henter billederne selv fra `PUBLIC_BASE_URL/api/v1/social/media/<id>
    python -m scripts.social_connect status
    ```
    Refresh-tokenet gemmes krypteret i databasen og skifter af sig selv ved hver brug.
-4. **Vigtigt forbehold fra TikTok:** indtil TikTok har *auditeret* appen, kan en app kun poste **private** opslag (`SELF_ONLY`). Systemet opdager det, poster privat og skriver det i opslagets `last_error` ("… kun synligt for dig"). Ansøg om audit i TikTok-portalen, når det første opslag har virket.
+4. **Vigtigt forbehold fra TikTok:** indtil TikTok har *auditeret* appen, må den kun poste til en konto, der er sat til **privat** (fejlen `unaudited_client_can_only_post_to_private_accounts`), og opslagene bliver `SELF_ONLY`. Systemet poster privat og skriver det i opslagets `last_error` ("… kun synligt for dig"). Produktions-appen kan ikke engang *gemmes* uden en demovideo af integrationen, så den første forbindelse laves i en **Sandbox** (egne nøgler, target user = Dialogbots konto, domænet skal verificeres *separat* for sandboxen). Når audit er godkendt: sæt production-nøglerne i `TIKTOK_CLIENT_KEY/SECRET`, kør `social_connect tiktok-url/tiktok-code` igen, og sæt kontoen tilbage til offentlig.
 
 ### 4. Slå det til
 Sæt `SOCIAL_PROVIDER=live` på API og worker. Anbefalet start: `SOCIAL_REQUIRE_APPROVAL=true`, læs de første kladder (se nedenfor), godkend dem, og skift derefter til `false`.

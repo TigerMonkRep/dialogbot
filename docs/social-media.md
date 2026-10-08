@@ -2,11 +2,11 @@
 
 Dialogbot kan selv lave og poste indhold på sine egne profiler. Koden ligger i `app/modules/social/` og kører i den eksisterende worker (`python -m app.worker.runner`); der er ingen ny tjeneste.
 
-**Status (8. oktober 2026):** i drift på staging. Første rigtige opslag er gået ud på alle tre platforme (Facebook-siden *Dialogbot*, Instagram *@dialogbotdenmark*, TikTok *@dialogbotdenmark* — TikTok endnu kun privat, se audit nedenfor). `SOCIAL_REQUIRE_APPROVAL=true`, alle ugens dage (`SOCIAL_WEEKDAYS=0,1,2,3,4,5,6`). API'et svarer på `https://api.dialogbot.dk` (eget domæne, krævet af TikToks URL-verifikation).
+**Status (8. oktober 2026):** i drift på staging; operatør-dashboard på `/app/operator/social` (profilmenuen → *Operatør: sociale medier*). Første rigtige opslag er gået ud på alle tre platforme (Facebook-siden *Dialogbot*, Instagram *@dialogbotdenmark*, TikTok *@dialogbotdenmark* — TikTok endnu kun privat, se audit nedenfor). `SOCIAL_REQUIRE_APPROVAL=true`, alle ugens dage (`SOCIAL_WEEKDAYS=0,1,2,3,4,5,6`). API'et svarer på `https://api.dialogbot.dk` (eget domæne, krævet af TikToks URL-verifikation).
 
 ## Hvad der sker, helt automatisk
 
-Hver mandag, onsdag og fredag (`SOCIAL_WEEKDAYS`) får hver forbundet platform ét opslag. Kladderne laves 3 dage forud (`SOCIAL_PLAN_DAYS_AHEAD`), så der er tid til at kigge på dem. Dagens opslag handler om **ét emne** — det, der er brugt længst tid siden — men de tre platforme får **hver sit opslag**:
+Hver dag (`SOCIAL_WEEKDAYS`, i drift sat til alle ugens dage) får hver forbundet platform ét opslag. Kladderne laves 3 dage forud (`SOCIAL_PLAN_DAYS_AHEAD`), så der er tid til at kigge på dem. Dagens opslag handler om **ét emne** — det, der er brugt længst tid siden — men de tre platforme får **hver sit opslag**:
 
 | | Facebook (kl. 09.30) | Instagram (kl. 12.15) | TikTok (kl. 19.00) |
 |---|---|---|---|
@@ -41,7 +41,7 @@ Platformene henter billederne selv fra `PUBLIC_BASE_URL/api/v1/social/media/<id>
 5. Sæt `META_PAGE_ID`, `META_PAGE_ACCESS_TOKEN`, `META_INSTAGRAM_USER_ID` (API + worker).
 
 ### 3. TikTok
-1. På developers.tiktok.com: opret en app, tilføj produkterne *Login Kit* og *Content Posting API*, scopes `user.info.basic` og `video.publish`.
+1. På developers.tiktok.com: opret en app, tilføj produkterne *Login Kit* og *Content Posting API*, scopes `user.info.basic` og `video.publish` — plus `user.info.stats` og `video.list`, hvis dashboardet skal vise følgere og engagement (`TIKTOK_SCOPES`).
 2. Verificér ejerskab af URL-præfikset med billederne (`PUBLIC_BASE_URL/api/v1/social/media/`) i appens indstillinger — TikTok henter kun fra verificerede adresser (typisk via en DNS-TXT-post på domænet).
 3. Sæt `TIKTOK_CLIENT_KEY` og `TIKTOK_CLIENT_SECRET`, sæt `CREDENTIALS_KEY` (`python -m scripts.credentials_key`), og kør i Render-shellen:
    ```bash
@@ -56,6 +56,12 @@ Platformene henter billederne selv fra `PUBLIC_BASE_URL/api/v1/social/media/<id>
 ### 4. Slå det til
 Sæt `SOCIAL_PROVIDER=live` på API og worker. Anbefalet start: `SOCIAL_REQUIRE_APPROVAL=true`, læs de første kladder (se nedenfor), godkend dem, og skift derefter til `false`.
 
+## Operatør-dashboard
+
+`/app/operator/social` (kun brugere med operatørrollen; linket ligger i profilmenuen ved avataren) viser pr. platform: følgere i dag, ændring på 7 og 30 dage, en kurve over perioden, antal opslag/følger/likes og engagement (likes, kommentarer, delinger, visninger) på de opslag, der er gået ud i perioden. Derunder: opslag der venter på godkendelse (teksten kan rettes, derefter *Godkend*, *Post nu* eller *Annullér*, med billederne vist), planlagte, fejlede og udsendte opslag med deres tal, samt en knap til at bestille ekstra kladder for en dag/et emne.
+
+Tallene kommer fra `social_account_snapshots` (én række pr. platform pr. dag) og `social_posts.metrics`. Worker'en henter dem én gang i timen (`insights.refresh_all`, kun læsning); *Opdater tal* henter dem med det samme. En platform, der fejler (manglende scope, nede), får `followers=NULL` og fejlen i `raw.error` — de andre påvirkes ikke. TikTok kræver scopes `user.info.stats` + `video.list` (`TIKTOK_SCOPES`); opslag, TikTok kun gav et `publish_id` for, kan ikke måles.
+
 ## Styring (operatør-API)
 
 Kræver operatørrollen (`python -m scripts.grant_operator grant <e-mail>`). Alle ændringer skrives i revisionsloggen.
@@ -69,6 +75,8 @@ Kræver operatørrollen (`python -m scripts.grant_operator grant <e-mail>`). All
 | `POST /operator/social/posts/{id}/cancel` | Annullér (pladsen kan planlægges igen) |
 | `POST /operator/social/posts/{id}/publish-now` | Post med det samme (kan tage op til ét minut på Instagram) |
 | `POST /operator/social/plan` `{day, topic?, platforms?}` | Lav opslag til en bestemt dag/emne |
+| `GET /operator/social/dashboard?days=30` | Alt det, dashboardet viser, i ét kald |
+| `POST /operator/social/metrics/refresh` | Hent følgertal og engagement fra platformene nu |
 
 **Nødbremse:** sæt `SOCIAL_PROVIDER=none` — intet planlægges eller postes. Planlagte opslag bliver liggende.
 
@@ -83,6 +91,6 @@ Kræver operatørrollen (`python -m scripts.grant_operator grant <e-mail>`). All
 ## Begrænsninger (ærligt)
 
 - **Kun fotos/karruseller — ingen video.** TikTok-opslagene er fotokarruseller (TikTok kalder det "photo mode"), ikke videoer. Video kræver en anden pipeline.
-- **Ingen opfølgning på kommentarer, beskeder eller statistik.** Systemet poster; det besvarer og måler ikke. Kommentarer skal stadig læses af et menneske.
+- **Ingen opfølgning på kommentarer eller beskeder.** Systemet poster og måler (følgere, likes, kommentarer, delinger, visninger); det besvarer ikke. Kommentarer skal stadig læses af et menneske.
 - Meta- og TikTok-kaldene er skrevet efter leverandørernes dokumentation og testet mod en mock; formater og fejlkoder kan afvige i praksis. Følg det første rigtige opslag på hver platform.
 - Dialogbot skriver kun om sig selv. Indholdet er markedsføring af egen virksomhed på egne profiler; det er ikke kundeindhold.

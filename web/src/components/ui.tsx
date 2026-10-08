@@ -80,6 +80,7 @@ const STATUS: Record<string, [string, string]> = {
   blocked: ["Blokeret", "bg-error-container/60 text-on-error-container"], not_available: ["Ikke tilgængelig", "bg-surface-container-highest text-on-surface-variant"],
   not_started: ["Ikke startet", "bg-surface-container-high text-on-surface-variant"], untested: ["Ikke testet", "bg-surface-container-high text-on-surface-variant"],
   draft: ["Kladde", "bg-surface-container-high text-on-surface"], superseded: ["Erstattet", "bg-surface-container-highest text-on-surface-variant"], skipped: ["Sprunget over", "bg-surface-container-highest text-on-surface-variant"],
+  scheduled: ["Planlagt", "bg-tertiary-fixed text-on-tertiary-fixed"], publishing: ["Poster nu", "bg-tertiary-fixed text-on-tertiary-fixed"], published: ["Gået ud", "bg-secondary-container text-on-secondary-container"], cancelled: ["Annulleret", "bg-surface-container-highest text-on-surface-variant"],
   revoked: ["Tilbagekaldt", "bg-surface-container-highest text-on-surface-variant"], expired: ["Udløbet", "bg-error-container text-on-error-container"], accepted: ["Accepteret", "bg-secondary-container text-on-secondary-container"],
 };
 export function Badge({ status }: { status: string }) {

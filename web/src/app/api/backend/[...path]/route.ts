@@ -2,6 +2,9 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { API_BASE_URL, CSRF_HEADER, CSRF_VALUE, SESSION_COOKIE } from "@/lib/config";
 
+/** Some upstream calls are slow by nature (Instagram takes up to a minute to process a carousel on publish-now). */
+export const maxDuration = 120;
+
 /** Same-origin BFF proxy. Attaches the Bearer token from the httpOnly cookie,
  * requires a custom header on mutating requests (CSRF defence on top of SameSite=Lax),
  * and never caches responses. Only /api/v1/* of the backend is reachable. */

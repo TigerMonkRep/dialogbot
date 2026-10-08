@@ -96,6 +96,7 @@ export function AccountButton({ me }: { me: { display_name: string; email: strin
           <Link role="menuitem" href="/app/settings/team" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Team og roller</Link>
           <Link role="menuitem" href="/ambassador" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Ambassadør: anbefal og tjen</Link>
           {me?.is_platform_operator && <Link role="menuitem" href="/app/operator/ambassadors" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Operatør: ambassadører</Link>}
+          {me?.is_platform_operator && <Link role="menuitem" href="/app/operator/social" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Operatør: sociale medier</Link>}
           <button role="menuitem" className="w-full text-left px-space-sm py-2 rounded-lg font-label-md text-label-md text-error hover:bg-surface-container-low" onClick={async () => { await fetch("/api/auth/logout", { method: "POST", headers: { "x-requested-with": "dialogbot" } }); router.push("/login"); router.refresh(); }}>Log ud</button>
         </div>
       )}

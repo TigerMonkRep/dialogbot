@@ -1,0 +1,6 @@
+# Sikkerhedskontakt for dialogbot.dk (RFC 9116). Tak fordi du melder sårbarheder ansvarligt.
+Contact: mailto:info@dialogbot.dk
+Preferred-Languages: da, en
+Canonical: https://www.dialogbot.dk/.well-known/security.txt
+Policy: https://www.dialogbot.dk/privatliv
+Expires: 2027-10-08T00:00:00.000Z

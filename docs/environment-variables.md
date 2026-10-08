@@ -72,7 +72,19 @@
 | `PREVIEW_ACCESS_CODES` | ved gate | samme | Vælges af jer | Kommaseparerede invitationskoder, mindst 8 tegn hver (kortere ignoreres). Store/små bogstaver er ligegyldige. **Server-only.** |
 | `PREVIEW_COOKIE_SECRET` | ved gate | samme | Tilfældig streng ≥ 32 tegn | Signerer adgangscookien `db_preview` (httpOnly, 30 dage). Udskiftes den, skal alle indtaste en kode igen. Mangler den, låser ingen kode op (fejler lukket). |
 
+| `GOOGLE_SITE_VERIFICATION` | nej | Production | Search Console → Tilføj property (URL-præfiks) → HTML-tag → `content`-værdien | Skrives som `<meta name="google-site-verification">`. Ikke nødvendig ved domæne-verificering via DNS. |
+
 Der findes ingen `NEXT_PUBLIC_*` hemmeligheder. Browseren kender kun sit eget origin; sessionen ligger i cookien `db_session` (httpOnly, Secure, SameSite=Lax), det valgte arbejdsrum i `db_ws`.
+
+## SEO-agent (GitHub Actions → Settings → Secrets and variables → Actions; lokalt i miljøet)
+
+| Variabel | Type | Hentes fra | Bemærkning |
+|---|---|---|---|
+| `PSI_API_KEY` | secret | Google Cloud Console → Credentials → API key (PageSpeed Insights API aktiveret) | Stabile Core Web Vitals i `python -m seo_agent --psi`. Uden den deles kvoten med alle (ofte 429). |
+| `GSC_SERVICE_ACCOUNT_JSON` | secret | Google Cloud → Service Accounts → Keys → JSON; mailen tilføjes som bruger i Search Console | Hele filens indhold. Search Console-sektionen springes over, hvis den mangler. |
+| `GSC_SITE_URL` | variable | Search Console → property-navnet | `sc-domain:dialogbot.dk` eller `https://www.dialogbot.dk/` – præcis som i Search Console. |
+
+Trin-for-trin i `docs/seo-agent.md`.
 
 ## Senere milepæle (navne reserveret, ikke læst af koden endnu)
 

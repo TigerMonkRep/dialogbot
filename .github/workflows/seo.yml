@@ -2,47 +2,78 @@ name: SEO-overvågning
 
 on:
   schedule:
-    - cron: "17 5 * * 1"   # hver mandag morgen
+    - cron: "17 5 * * 1"   # hver mandag morgen: fuld scanning af det deployede site
   workflow_dispatch:
     inputs:
       url:
         description: "Site der scannes"
         default: "https://www.dialogbot.dk"
+      psi_strategy:
+        description: "PageSpeed: mobile, desktop eller both"
+        default: "both"
   push:
-    paths: ["seo_agent/**", ".github/workflows/seo.yml"]
+    branches: [main]
+    paths: ["seo_agent/**", ".github/workflows/seo.yml", "web/**"]
+  pull_request:
+    paths: ["web/**", "seo_agent/**", ".github/workflows/seo.yml"]
 
 permissions:
   contents: read
   actions: read
 
 jobs:
-  scan:
+  tests:
+    name: Tests af SEO-agenten
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Tests af SEO-agenten
-        run: python -m unittest discover -s seo_agent/tests -t .
-      - name: Hent forrige rapport (til sammenligning)
+      - run: python -m unittest discover -s seo_agent/tests -t .
+      - run: pip install ruff && python -m ruff check seo_agent
+
+  # Fuld scanning af det deployede site (PageSpeed + Search Console). Secrets/variables sættes af ejeren – se docs/seo-agent.md.
+  scan:
+    name: Scan det deployede site
+    if: github.event_name != 'pull_request'
+    needs: tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Hent forrige rapport og Search Console-historik (til sammenligning)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p previous
-          id=$(gh run list --workflow seo.yml --status success --limit 1 --json databaseId -q '.[0].databaseId' || true)
-          if [ -n "$id" ]; then gh run download "$id" -n seo-report -D previous || true; fi
-          ls -R previous || true
+          id=$(gh api "repos/${{ github.repository }}/actions/artifacts?name=seo-report&per_page=5" \
+               -q '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .workflow_run.id' 2>/dev/null || true)
+          if [ -n "$id" ] && [ "$id" != "null" ]; then gh run download "$id" -n seo-report -D previous || true; fi
+          # Historikfilen skal ligge i den mappe, agenten skriver til, så den bliver forlænget i stedet for startet forfra.
+          for f in $(find previous -name gsc-history.json 2>/dev/null); do
+            host=$(basename "$(dirname "$f")"); mkdir -p "report/$host"; cp "$f" "report/$host/"; done
+          ls -R previous report 2>/dev/null || true
       - name: Scan
         env:
           PSI_API_KEY: ${{ secrets.PSI_API_KEY }}
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+          GSC_SITE_URL: ${{ vars.GSC_SITE_URL }}
           SITE_URL: ${{ inputs.url || 'https://www.dialogbot.dk' }}
+          PSI_STRATEGY: ${{ inputs.psi_strategy || 'both' }}
         run: |
           baseline=""
           prev=$(find previous -name latest.json 2>/dev/null | head -1)
           if [ -n "$prev" ]; then baseline="--baseline $prev"; fi
-          python -m seo_agent "$SITE_URL" --psi $baseline --out report --fail-under 80 | tee report.md
+          set +e
+          python -m seo_agent "$SITE_URL" --psi --psi-strategy "$PSI_STRATEGY" $baseline --out report --fail-under 80 > report.md
+          code=$?
+          set -e
+          cat report.md
           cat report.md >> "$GITHUB_STEP_SUMMARY"
+          exit $code
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -50,4 +81,65 @@ jobs:
           path: |
             report/**/latest.json
             report/**/latest.md
+            report/**/gsc-history.json
+          retention-days: 90
+
+  # Hurtig scanning af en pull request: web/ bygges og køres lokalt i jobbet (uden backend og uden preview-gate), så
+  # metadata, sitemap, robots, headers og struktureret data kan måles, FØR noget deployes. Sammenlignes med den
+  # seneste lokale scanning af main og fejler ved regression. Hastighed/HTTPS/www måles ikke her – det kræver det rigtige site.
+  pr:
+    name: Scan pull request (lokal build)
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Byg web/
+        working-directory: web
+        run: npm ci --no-audit --no-fund && npm run build
+      - name: Start web/ lokalt
+        working-directory: web
+        env:
+          PREVIEW_GATE: "off"
+          API_BASE_URL: http://127.0.0.1:9
+        run: |
+          (npx next start -p 3000 > ../next.log 2>&1 &)
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3000/ && break; sleep 1; done
+          curl -sI http://localhost:3000/ | head -20
+      - name: Hent seneste lokale scanning af main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p previous
+          id=$(gh api "repos/${{ github.repository }}/actions/artifacts?name=seo-report-local&per_page=5" \
+               -q '[.artifacts[] | select(.expired == false)] | sort_by(.created_at) | last | .workflow_run.id' 2>/dev/null || true)
+          if [ -n "$id" ] && [ "$id" != "null" ]; then gh run download "$id" -n seo-report-local -D previous || true; fi
+      - name: Scan lokal build
+        env:
+          no_proxy: "*"
+        run: |
+          baseline=""
+          prev=$(find previous -name latest.json 2>/dev/null | head -1)
+          if [ -n "$prev" ]; then baseline="--baseline $prev --fail-on-regression"; fi
+          set +e
+          python -m seo_agent http://localhost:3000 --max-pages 80 --no-gsc $baseline --out report-local > report.md
+          code=$?
+          set -e
+          cat report.md
+          { echo "## Lokal scanning af denne build (ikke det deployede site)"; echo; cat report.md; } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$code" != "0" ]; then echo "::error::SEO-regression i forhold til seneste scanning af main – se job-summary"; fi
+          exit $code
+      - uses: actions/upload-artifact@v4
+        if: always() && github.event_name == 'push'
+        with:
+          name: seo-report-local
+          path: report-local/**/latest.json
           retention-days: 90

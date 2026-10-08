@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { COMPANY } from "./legal-page";
 import { Icon } from "./ui";
+import { breadcrumbList } from "./json-ld";
 import { LANDING_PAGES, SITE_URL } from "@/lib/site";
 import { INDUSTRIES } from "@/lib/industries";
 
@@ -19,14 +20,7 @@ export function SeoPage({ path, kicker, title, lead, points, sections, faq, arti
       "@context": "https://schema.org", "@type": "FAQPage",
       mainEntity: faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
     },
-    {
-      "@context": "https://schema.org", "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Dialogbot", item: SITE_URL },
-        ...(article ? [{ "@type": "ListItem", position: 2, name: "Viden", item: `${SITE_URL}/viden` }] : []),
-        { "@type": "ListItem", position: article ? 3 : 2, name: kicker, item: `${SITE_URL}${path}` },
-      ],
-    },
+    breadcrumbList(article ? [["Viden", "/viden"], [kicker, path]] : [[kicker, path]]),
     ...(article ? [{
       "@context": "https://schema.org", "@type": "Article", headline: title, description: lead, inLanguage: "da-DK",
       datePublished: article.published, dateModified: article.published, mainEntityOfPage: `${SITE_URL}${path}`,

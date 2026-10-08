@@ -3,8 +3,8 @@ import Link from "next/link";
 import { SeoPage } from "@/components/seo-page";
 
 export const metadata: Metadata = {
-  title: "AI-receptionist til danske virksomheder – tager telefonen døgnet rundt",
-  description: "Dialogbot er en dansk AI-receptionist, der tager telefonen, når I er optaget eller har lukket. Den svarer ud fra jeres egen viden, booker tider og sender jer hver henvendelse. Fra 1.495 kr./md.",
+  title: "AI-receptionist til danske virksomheder",
+  description: "Dansk AI-receptionist, der tager telefonen, når I er optaget eller har lukket – svarer ud fra jeres egen viden, booker tider og sender jer hver henvendelse.",
   alternates: { canonical: "/ai-receptionist" },
   openGraph: { url: "/ai-receptionist", title: "AI-receptionist til danske virksomheder | Dialogbot", images: ["/opengraph-image.png"] },
 };

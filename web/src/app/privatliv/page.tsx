@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { COMPANY, LegalPage } from "@/components/legal-page";
 
-export const metadata: Metadata = { title: "Privatliv | Dialogbot", description: "Sådan behandler Dialogbot personoplysninger om kunder, deres kunder, ambassadører og besøgende." };
+export const metadata: Metadata = {
+  title: "Privatlivspolitik – behandling af personoplysninger",
+  description: "Hvilke personoplysninger Dialogbot behandler om kunder, deres kunder, ambassadører og besøgende – hvorfor, hvor længe og hvem der hjælper os med det.",
+  alternates: { canonical: "/privatliv" },
+};
 
 /** Privacy policy. Keep it limited to what the product actually does (see docs and the code). */
 export default function PrivacyPage() {
   return (
-    <LegalPage label="Privatliv" title="Sådan behandler vi personoplysninger" updated="Opdateret 6. oktober 2026."
+    <LegalPage path="/privatliv" label="Privatliv" title="Sådan behandler vi personoplysninger" updated="Opdateret 6. oktober 2026."
       intro="Her kan du se, hvilke oplysninger Dialogbot behandler, hvorfor, hvor længe og hvem der hjælper os med det. Siden dækker kunder, kundernes egne kunder, ambassadører og besøgende."
       sections={[
         ["Hvem er ansvarlig?", <p key="a">{COMPANY.name} (CVR-nr. {COMPANY.cvr}), {COMPANY.address}. Skriv til <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> om alt, der handler om dine oplysninger.</p>],

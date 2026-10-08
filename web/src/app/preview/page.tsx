@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { NOINDEX } from "@/lib/site";
 import { COMPANY } from "@/components/legal-page";
 import Link from "next/link";
 import { Icon } from "@/components/ui";
@@ -8,8 +9,9 @@ import { safeNext } from "@/lib/safe-next";
 import { UnlockForm, WaitlistForm } from "./forms";
 
 export const metadata: Metadata = {
-  title: "Dialogbot – privat preview",
+  title: "Privat preview",
   description: "Dialogbot er en dansk AI-assistent til telefon, webchat og opfølgning. Skriv dig op til tidlig adgang.",
+  robots: NOINDEX,
 };
 
 /** P00 — temporary landing page with access control (Stitch "p00_midlertidig_landing_page_adgangskontrol").

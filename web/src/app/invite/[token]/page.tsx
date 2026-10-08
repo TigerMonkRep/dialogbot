@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { NOINDEX } from "@/lib/site";
 import { API_BASE_URL } from "@/lib/config";
 import { isLoggedIn } from "@/lib/api.server";
 import { Icon } from "@/components/ui";
@@ -10,6 +12,8 @@ const STATUS: Record<string, [string, string]> = {
   pending: ["Afventer svar", "bg-secondary-container text-on-secondary-container"], accepted: ["Accepteret", "bg-surface-container-high text-primary"],
   revoked: ["Tilbagekaldt", "bg-surface-container-highest text-on-surface-variant"], expired: ["Udløbet", "bg-error-container text-on-error-container"],
 };
+
+export const metadata: Metadata = { title: "Invitation", robots: NOINDEX };
 
 /** A05: public preview of an invitation; acceptance requires login with the invited address. */
 export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {

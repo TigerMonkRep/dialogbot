@@ -4,7 +4,7 @@ import { SeoPage } from "@/components/seo-page";
 
 const path = "/viden/ai-telefonsvarer-eller-telefonpasning";
 export const metadata: Metadata = {
-  title: "AI-telefonsvarer eller telefonpasning – hvad passer til jer?",
+  title: "AI-telefonsvarer eller telefonpasning?",
   description: "Telefonsvarer, telefonpasningsservice eller AI-telefonsvarer? Se forskellene på pris, tilgængelighed og kvalitet, så du kan vælge den rigtige løsning.",
   alternates: { canonical: path },
   openGraph: { url: path, type: "article", title: "AI-telefonsvarer eller telefonpasning? | Dialogbot", images: ["/opengraph-image.png"] },

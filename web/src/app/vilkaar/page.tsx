@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { COMPANY, LegalPage } from "@/components/legal-page";
 
-export const metadata: Metadata = { title: "Vilkår | Dialogbot", description: "Abonnements- og handelsbetingelser for Dialogbot." };
+export const metadata: Metadata = {
+  title: "Abonnements- og handelsbetingelser",
+  description: "Vilkår for virksomheder, der opretter en konto og bruger Dialogbot: abonnement, betaling, opsigelse, data og ansvar. Dialogbot sælges kun til erhvervsdrivende.",
+  alternates: { canonical: "/vilkaar" },
+};
 
 /** Terms of service for business customers (B2B). Prices match the billing code (app/modules/billing). */
 export default function TermsPage() {
   return (
-    <LegalPage label="Vilkår" title="Abonnements- og handelsbetingelser" updated="Version 1 · gældende fra 6. oktober 2026."
+    <LegalPage path="/vilkaar" label="Vilkår" title="Abonnements- og handelsbetingelser" updated="Version 1 · gældende fra 6. oktober 2026."
       intro={`Disse vilkår gælder, når en virksomhed opretter en konto og bruger Dialogbot. Dialogbot sælges kun til erhvervsdrivende. "Vi" er ${COMPANY.name} (CVR-nr. ${COMPANY.cvr}), ${COMPANY.address}. "I" er den virksomhed, der har oprettet arbejdsrummet.`}
       sections={[
         ["1. Ydelsen", <>

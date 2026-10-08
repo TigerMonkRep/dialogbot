@@ -1,7 +1,13 @@
 /** Industry landing pages (/ai-receptionist/[branche]). Copy mirrors the sales playbooks in app/modules/sales/script.py;
  *  every claim is something Dialogbot does today. */
 export type Industry = {
-  slug: string; name: string; plural: string; examples: string; title: string; description: string;
+  slug: string; name: string; plural: string; examples: string;
+  /** H1 on the page. */
+  title: string;
+  /** <title> (≤ 54 characters, " | Dialogbot" is appended) and meta description (120–160 characters). */
+  seoTitle: string; description: string;
+  /** Last content change: sitemap lastmod. */
+  updated: string;
   pain: string; scenario: [string, string][]; benefits: string[]; objection: [string, string]; faq: [string, string][];
 };
 
@@ -9,7 +15,8 @@ export const INDUSTRIES: Industry[] = [
   {
     slug: "haandvaerkere", name: "håndværkere", plural: "Håndværkere", examples: "VVS, el, tømrer, maler, murer, gulv og tag",
     title: "AI-receptionist til håndværkere – tag telefonen fra stigen",
-    description: "Dialogbot tager telefonen for VVS'eren, elektrikeren, tømreren og maleren, når I står med hænderne fulde. Den samler opgave og adresse og booker besigtigelser.",
+    seoTitle: "AI-receptionist til håndværkere – VVS, el og tømrer", updated: "2026-10-08",
+    description: "Dialogbot tager telefonen for VVS'eren, elektrikeren, tømreren og maleren, når I står med hænderne fulde – samler opgave og adresse og booker besigtigelser.",
     pain: "Mester står på stigen eller under en vask og kan ikke tage telefonen. Hvert ubesvaret opkald er typisk en kunde, der ringer videre til den næste håndværker på Google.",
     scenario: [["Kunde", "Hej, jeg har et utæt toilet, kan I komme og kigge på det?"], ["Dialogbot", "Det kan vi godt. Hvilken adresse drejer det sig om, og haster det?"], ["Kunde", "Vesterbrogade 12 i Aarhus – helst i denne uge."], ["Dialogbot", "Tak. Jeg har noteret det, og mester ringer dig op i dag og aftaler tidspunktet."]],
     benefits: ["Tager telefonen, når I står med hænderne fulde", "Samler opgave, adresse og hvor meget det haster i én besked til mester", "Booker besigtigelser direkte i kalenderen", "Følger op på de tilbud, I har sendt"],
@@ -19,7 +26,8 @@ export const INDUSTRIES: Industry[] = [
   {
     slug: "klinikker", name: "klinikker", plural: "Klinikker", examples: "tandlæge, fysioterapeut, kiropraktor, psykolog og dyrlæge",
     title: "AI-receptionist til klinikker – book tider døgnet rundt",
-    description: "Dialogbot booker, flytter og aflyser tider for tandlægen, fysioterapeuten og kiropraktoren – også uden for åbningstid – og aflaster receptionen i morgentimerne.",
+    seoTitle: "AI-receptionist til klinikker – booking døgnet rundt", updated: "2026-10-08",
+    description: "Dialogbot booker, flytter og aflyser tider for tandlægen, fysioterapeuten og kiropraktoren – også uden for åbningstid – og aflaster receptionen.",
     pain: "Telefonen ringer midt i behandlinger, og receptionen er presset om morgenen. Patienter, der ikke kommer igennem, finder en anden klinik.",
     scenario: [["Patient", "Jeg skal flytte min tid på torsdag."], ["Dialogbot", "Det kan jeg hjælpe med. Den næste ledige tid er fredag kl. 9.30 eller mandag kl. 14. Hvad passer bedst?"], ["Patient", "Fredag."], ["Dialogbot", "Så er din tid flyttet til fredag kl. 9.30. Vil du have en bekræftelse på SMS?"]],
     benefits: ["Booker, flytter og aflyser tider døgnet rundt", "Sender bekræftelse på SMS", "Aflaster receptionen i morgentimerne", "Giver aldrig behandlingsråd – den henviser til klinikken"],
@@ -29,7 +37,8 @@ export const INDUSTRIES: Industry[] = [
   {
     slug: "frisoerer", name: "frisører og saloner", plural: "Frisører og saloner", examples: "frisør, barber, kosmetolog, negle og massage",
     title: "AI-receptionist til frisører og saloner – book uden at slippe saksen",
-    description: "Dialogbot tager telefonen for frisøren, barberen og skønhedsklinikken og booker tider – også om aftenen – så I aldrig skal afbryde en kunde i stolen.",
+    seoTitle: "AI-receptionist til frisører og saloner", updated: "2026-10-08",
+    description: "Dialogbot tager telefonen for frisøren, barberen og skønhedsklinikken og booker tider – også om aftenen – så I aldrig afbryder en kunde i stolen.",
     pain: "Man kan ikke tage telefonen med saksen i hånden, og mange kunder ringer om aftenen, når salonen er lukket.",
     scenario: [["Kunde", "Har I en tid til herreklip i morgen efter kl. 16?"], ["Dialogbot", "Der er en ledig tid i morgen kl. 16.30. Skal jeg reservere den i dit navn?"], ["Kunde", "Ja tak, det er Mads."], ["Dialogbot", "Så er du booket i morgen kl. 16.30, Mads. Du får en bekræftelse på SMS."]],
     benefits: ["Booker tider, også om aftenen og i weekenden", "Sender SMS-bekræftelse", "Svarer på priser og åbningstider ud fra jeres egen prisliste", "I skal aldrig afbryde en kunde i stolen"],
@@ -39,6 +48,7 @@ export const INDUSTRIES: Industry[] = [
   {
     slug: "autovaerksteder", name: "autoværksteder", plural: "Autoværksteder", examples: "autoværksted, dækcenter, pladeværksted og bilforhandler",
     title: "AI-receptionist til autoværksteder – service, syn og dækskift",
+    seoTitle: "AI-receptionist til autoværksteder og dækcentre", updated: "2026-10-08",
     description: "Dialogbot tager imod bestillinger på service, syn og dækskift, noterer bil og nummerplade og booker tider, mens mekanikerne arbejder.",
     pain: "Mekanikerne er ude i værkstedet, og telefonen ringer konstant om syn, service og dækskift.",
     scenario: [["Kunde", "Jeg skal have skiftet til vinterdæk."], ["Dialogbot", "Det klarer vi. Hvilken bil drejer det sig om, og har du nummerpladen?"], ["Kunde", "En Golf, AB 12 345."], ["Dialogbot", "Tak. Der er en ledig tid onsdag kl. 8. Skal jeg booke den?"]],
@@ -49,6 +59,7 @@ export const INDUSTRIES: Industry[] = [
   {
     slug: "raadgivere", name: "rådgivere og kontorer", plural: "Rådgivere og kontorer", examples: "advokat, revisor, ejendomsmægler, forsikring og IT-konsulent",
     title: "AI-receptionist til advokater, revisorer og rådgivere",
+    seoTitle: "AI-receptionist til advokater, revisorer og rådgivere", updated: "2026-10-08",
     description: "Dialogbot kvalificerer nye henvendelser med jeres egne spørgsmål, booker indledende møder og sender en klar opsummering til den rette rådgiver.",
     pain: "Rådgiverne sidder i møder, og nye kunder, der ringer, møder en telefonsvarer og vælger en anden.",
     scenario: [["Kunde", "Jeg skal have hjælp til en bolighandel."], ["Dialogbot", "Det hjælper vi gerne med. Er det et køb eller et salg, og hvornår skal handlen være på plads?"], ["Kunde", "Et køb – inden for en måned."], ["Dialogbot", "Tak. Skal jeg booke et kort indledende møde, eller vil du ringes op af en rådgiver?"]],
@@ -59,7 +70,8 @@ export const INDUSTRIES: Industry[] = [
   {
     slug: "restauranter", name: "restauranter, hoteller og caféer", plural: "Restauranter, hoteller og caféer", examples: "restaurant, café, hotel, kro, bed & breakfast og catering",
     title: "AI-receptionist til restauranter, hoteller og caféer",
-    description: "Dialogbot tager imod bordbestillinger og forespørgsler i myldretiden og efter lukketid og svarer på menu, åbningstider og parkering ud fra jeres egen viden.",
+    seoTitle: "AI-receptionist til restauranter, hoteller og caféer", updated: "2026-10-08",
+    description: "Dialogbot tager imod bordbestillinger og forespørgsler i myldretiden og efter lukketid og svarer på menu, åbningstider og parkering.",
     pain: "Telefonen ringer midt i frokost- og aftenrush. Bordbestillinger, værelsesforespørgsler og selskaber går tabt, eller gæsterne booker et andet sted.",
     scenario: [["Gæst", "Kan vi få et bord til fire på lørdag kl. 19?"], ["Dialogbot", "Det noterer jeg gerne. Hvilket navn må jeg skrive, og er der allergier, vi skal kende til?"], ["Gæst", "Hansen – én er glutenallergiker."], ["Dialogbot", "Tak. Jeg har noteret bord til fire lørdag kl. 19 i navnet Hansen med glutenallergi."]],
     benefits: ["Tager imod bordbestillinger og forespørgsler, også i myldretiden og efter lukketid", "Svarer på åbningstider, menu, priser, parkering og indtjekning", "Samler selskabs- og cateringforespørgsler med antal, dato og ønsker", "Personalet kan blive ved gæsterne"],

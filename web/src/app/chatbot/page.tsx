@@ -3,8 +3,8 @@ import Link from "next/link";
 import { SeoPage } from "@/components/seo-page";
 
 export const metadata: Metadata = {
-  title: "Chatbot til hjemmesiden – dansk AI-chatbot med jeres egen viden",
-  description: "Få en dansk AI-chatbot på jeres hjemmeside, der svarer ud fra jeres egne ydelser, priser og åbningstider, samler henvendelser og kan booke tider. Samme viden som jeres AI-receptionist.",
+  title: "Chatbot til hjemmesiden – dansk AI-chatbot",
+  description: "Dansk AI-chatbot til jeres hjemmeside, der svarer ud fra jeres egne ydelser, priser og åbningstider, samler henvendelser og kan booke tider.",
   alternates: { canonical: "/chatbot" },
   openGraph: { url: "/chatbot", title: "Chatbot til hjemmesiden på dansk | Dialogbot", images: ["/opengraph-image.png"] },
 };

@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { Icon } from "@/components/ui";
 import { API_BASE_URL, REFERRAL_COOKIE } from "@/lib/config";
 import type { Metadata } from "next";
-import { LANDING_PAGES, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { LANDING_PAGES, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
 import { INDUSTRIES } from "@/lib/industries";
 import { DemoCall } from "./demo-call";
 import { IndustrySwitcher } from "./industries";
@@ -24,7 +24,12 @@ async function recommender(): Promise<Recommender | null> {
   } catch { return null; }
 }
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = {
+  title: { absolute: SITE_TITLE },
+  description: SITE_DESCRIPTION,
+  alternates: { canonical: "/" },
+  openGraph: { url: "/", title: SITE_TITLE, description: SITE_DESCRIPTION, images: ["/opengraph-image.png"] },
+};
 
 export default async function Home() {
   const rec = await recommender();

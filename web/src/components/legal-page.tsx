@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Icon } from "./ui";
+import { JsonLd, breadcrumbList } from "./json-ld";
 
 /** Shared frame for the public legal and contact pages (privatliv, vilkår, kontakt). Server component. */
 export const COMPANY = {
@@ -9,11 +10,12 @@ export const COMPANY = {
   email: "info@dialogbot.dk",
 };
 
-export function LegalPage({ label, title, intro, updated, sections }: {
-  label: string; title: string; intro?: React.ReactNode; updated: string; sections: [string, React.ReactNode][];
+export function LegalPage({ path, label, title, intro, updated, sections }: {
+  path: string; label: string; title: string; intro?: React.ReactNode; updated: string; sections: [string, React.ReactNode][];
 }) {
   return (
     <div className="min-h-dvh bg-surface">
+      <JsonLd data={breadcrumbList([[label, path]])} />
       <header className="bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-space-md">
           <Link href="/" className="flex items-center gap-2.5"><span className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-secondary-fixed"><Icon name="support_agent" size={22} /></span><span className="font-headline-sm text-headline-sm text-primary font-bold">Dialogbot</span></Link>

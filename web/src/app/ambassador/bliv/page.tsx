@@ -1,9 +1,18 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Icon } from "@/components/ui";
 import { backend, isLoggedIn } from "@/lib/api.server";
 import { kr, pct, type Program } from "../shared";
 import { ApplyForm } from "./form";
+import { JsonLd, breadcrumbList } from "@/components/json-ld";
+
+export const metadata: Metadata = {
+  title: "Bliv ambassadør – anbefal Dialogbot og tjen penge",
+  description: "Anbefal Dialogbot til virksomheder, du kender, og få en startbonus og en løbende andel, når de bliver kunder. Se reglerne, og tilmeld dig på et par minutter.",
+  alternates: { canonical: "/ambassador/bliv" },
+  openGraph: { url: "/ambassador/bliv", title: "Bliv Dialogbot-ambassadør", images: ["/opengraph-image.png"] },
+};
 
 /** The programme page: what an ambassador earns, the rules, and the sign-up form (after login). */
 export default async function JoinPage() {
@@ -29,6 +38,7 @@ export default async function JoinPage() {
   ];
   return (
     <div className="space-y-space-xl">
+      <JsonLd data={breadcrumbList([["Ambassadør", "/ambassador/bliv"]])} />
       <section className="rounded-2xl bg-primary text-on-primary p-space-lg md:p-space-xl grid md:grid-cols-5 gap-space-lg items-center">
         <div className="md:col-span-3 space-y-space-sm">
           <span className="font-label-sm text-label-sm font-bold uppercase tracking-wider text-secondary-fixed">Dialogbot Ambassadør</span>

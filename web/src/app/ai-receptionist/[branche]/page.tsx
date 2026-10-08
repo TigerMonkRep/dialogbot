@@ -14,8 +14,8 @@ export async function generateMetadata({ params }: { params: Promise<{ branche: 
   const i = industryBySlug((await params).branche);
   if (!i) return {};
   const path = `/ai-receptionist/${i.slug}`;
-  return { title: i.title, description: i.description, alternates: { canonical: path },
-    openGraph: { url: path, title: `${i.title} | Dialogbot`, images: ["/opengraph-image.png"] } };
+  return { title: i.seoTitle, description: i.description, alternates: { canonical: path },
+    openGraph: { url: path, title: `${i.seoTitle} | Dialogbot`, description: i.description, images: ["/opengraph-image.png"] } };
 }
 
 export default async function Page({ params }: { params: Promise<{ branche: string }> }) {

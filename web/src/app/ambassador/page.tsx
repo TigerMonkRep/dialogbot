@@ -1,7 +1,11 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { NOINDEX } from "@/lib/site";
 import { backend } from "@/lib/api.server";
 import type { Customer, Entry, Payout, Profile } from "./shared";
 import { Portal } from "./portal";
+
+export const metadata: Metadata = { title: "Min ambassadørside", robots: NOINDEX };
 
 /** The ambassador's own page: link and code, customers, ledger, payouts, payout details and marketing texts. */
 export default async function AmbassadorPage() {

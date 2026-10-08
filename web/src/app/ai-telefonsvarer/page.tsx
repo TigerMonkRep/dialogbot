@@ -3,8 +3,8 @@ import Link from "next/link";
 import { SeoPage } from "@/components/seo-page";
 
 export const metadata: Metadata = {
-  title: "AI-telefonsvarer og AI-telefon til virksomheder – på dansk",
-  description: "En AI-telefonsvarer, der taler med kunden i stedet for at bede dem lægge en besked. Dialogbot tager telefonen på dansk, afklarer behovet, booker tider og sender jer henvendelsen.",
+  title: "AI-telefonsvarer til virksomheder – på dansk",
+  description: "AI-telefonsvarer, der taler med kunden i stedet for at bede om en besked: tager telefonen på dansk, afklarer behovet, booker tider og sender jer henvendelsen.",
   alternates: { canonical: "/ai-telefonsvarer" },
   openGraph: { url: "/ai-telefonsvarer", title: "AI-telefonsvarer og AI-telefon på dansk | Dialogbot", images: ["/opengraph-image.png"] },
 };

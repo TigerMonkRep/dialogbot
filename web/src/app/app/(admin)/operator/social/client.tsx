@@ -207,7 +207,6 @@ function PostCard({ p, editable = false, compact = false }: { p: Post; editable?
       ) : (
         <p className={`font-body-md text-body-md whitespace-pre-wrap ${compact ? "line-clamp-3" : ""}`}>{caption}</p>
       )}
-      {!compact && p.hashtags.length > 0 && <p className="font-label-sm text-label-sm text-on-surface-variant">{p.hashtags.map((h) => `#${h}`).join(" ")}{p.link ? ` · ${p.link}` : ""}</p>}
       {p.status === "published" && <p className="font-label-sm text-label-sm flex items-center gap-1"><Icon name="bar_chart" size={14} /><Metrics m={p.metrics} /></p>}
       {p.last_error && <p className="font-label-sm text-label-sm text-error">{p.last_error}</p>}
       <ErrorBox error={save.error ?? approve.error ?? cancel.error ?? publish.error} />

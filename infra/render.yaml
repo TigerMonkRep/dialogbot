@@ -13,6 +13,8 @@ services:
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 2
     healthCheckPath: /health/ready
     autoDeployTrigger: checksPass
+    domains:                   # own domain: TikTok only pulls post images from a verified URL prefix (docs/social-media.md)
+      - api.dialogbot.dk
     envVars:
       - key: PYTHON_VERSION
         value: "3.12"

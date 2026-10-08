@@ -1599,3 +1599,35 @@ class SocialAccountSnapshot(Base):
     likes: Mapped[int | None] = mapped_column(Integer)  # profile-wide total where the platform offers it (TikTok)
     raw: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     created_at: Mapped[datetime] = ts_now()
+
+
+class SocialProspect(Base):
+    """A Danish company in one of Dialogbot's industries whose social profiles the system found (CVR register →
+    its website → the profile links on it), suggested to the operator to follow and comment on from Dialogbot's
+    own profiles. The system only *finds*; following and commenting is done by a person, which keeps the platforms'
+    rules. One row per CVR number, ever — a company is never suggested twice."""
+
+    __tablename__ = "social_prospects"
+    __table_args__ = (
+        CheckConstraint("status in ('new','done','skipped')", name="ck_social_prospects_status"),
+        Index("ix_social_prospects_status_found", "status", "found_on"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    cvr: Mapped[str] = mapped_column(String(8), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    industry: Mapped[str] = mapped_column(String(40), nullable=False)   # Dialogbot industry key, e.g. haandvaerkere
+    industry_text: Mapped[str | None] = mapped_column(String(200))        # CVR's own branch text
+    city: Mapped[str | None] = mapped_column(String(80))
+    website: Mapped[str | None] = mapped_column(String(300))
+    facebook_url: Mapped[str | None] = mapped_column(String(300))
+    instagram_url: Mapped[str | None] = mapped_column(String(300))
+    tiktok_url: Mapped[str | None] = mapped_column(String(300))
+    suggested_comment: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(12), nullable=False, default="new")
+    found_on: Mapped[date] = mapped_column(Date, nullable=False)          # Copenhagen day the batch was made
+    acted_platforms: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)  # where the operator followed
+    note: Mapped[str | None] = mapped_column(Text)
+    acted_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    acted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = ts_now()

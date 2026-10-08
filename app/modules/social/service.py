@@ -25,7 +25,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.errors import Conflict, NotFound, ValidationFailed
-from app.models import SocialAccountSnapshot, SocialMedia, SocialPost
+from app.models import SocialAccountSnapshot, SocialMedia, SocialPost, SocialProspect
 from app.modules.social import content, publishers, render
 from app.modules.social.publishers import PublishError
 from app.modules.social.topics import TOPICS, TOPICS_BY_KEY, Topic
@@ -263,6 +263,14 @@ def run_due(db: OrmSession) -> int:
         from app.modules.social import insights
 
         insights.refresh_all(db, now=now)
+    if now.minute == 13:  # the day's "profiles to follow" batch (prospects.discover_if_due makes at most one a day)
+        from app.modules.social import prospects
+
+        try:
+            prospects.discover_if_due(db, now=now)
+        except Exception as e:  # noqa: BLE001 - CVR or a website misbehaving must not stop publishing
+            db.rollback()
+            log.warning("social.prospects_error", error=f"{type(e).__name__}: {e}")
     return n
 
 
@@ -398,6 +406,14 @@ def dashboard(db: OrmSession, *, days: int = 30, now: datetime | None = None) ->
         for k in ("likes", "comments", "shares", "views"):
             if isinstance(m.get(k), int):
                 t[k] += m[k]
+    from app.modules.social import prospects as _prospects
+
+    open_prospects = db.scalars(select(SocialProspect).where(SocialProspect.status == "new")
+                                .order_by(SocialProspect.found_on.desc(), SocialProspect.name).limit(60)).all()
+    prospect_counts = dict(db.execute(select(SocialProspect.status, func.count()).group_by(SocialProspect.status)).all())
     return {"overview": overview, "platforms": platforms, "pending": pending, "scheduled": scheduled,
             "recent": recent, "failed": failed, "engagement_totals": totals, "days": days,
+            "prospects": [_prospects.to_dict(p) for p in open_prospects],
+            "prospects_enabled": _prospects.configured(),
+            "prospect_counts": {k: prospect_counts.get(k, 0) for k in ("new", "done", "skipped")},
             "generated_at": now.isoformat()}

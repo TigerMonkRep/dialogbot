@@ -16,10 +16,16 @@ export type PlatformStats = {
   followers: number | null; following: number | null; posts: number | null; likes: number | null; captured_on: string | null;
   delta_7d: number | null; delta_30d: number | null; series: { date: string; followers: number | null }[]; error: string | null;
 };
+export type Prospect = {
+  id: string; cvr: string; name: string; industry: string; industry_label: string; industry_text: string | null; city: string | null;
+  website: string | null; facebook_url: string | null; instagram_url: string | null; tiktok_url: string | null;
+  suggested_comment: string; status: "new" | "done" | "skipped"; found_on: string; acted_platforms: Platform[]; note: string | null; acted_at: string | null;
+};
 export type Dashboard = {
   overview: { provider: string; require_approval: boolean; weekdays: number[]; plan_days_ahead: number; slot_times: Record<string, string>; topics: string[] };
   platforms: PlatformStats[]; pending: Post[]; scheduled: Post[]; recent: Post[]; failed: Post[];
   engagement_totals: Record<string, { posts: number; likes: number; comments: number; shares: number; views: number }>;
+  prospects: Prospect[]; prospects_enabled: boolean; prospect_counts: { new: number; done: number; skipped: number };
   days: number; generated_at: string;
 };
 
@@ -81,6 +87,8 @@ export function SocialDashboard({ data }: { data: Dashboard }) {
       <Section title={`Gået ud de seneste ${data.days} dage (${data.recent.length})`} hint={data.recent.length ? undefined : "Ingen opslag er gået ud i perioden."}>
         {data.recent.map((p) => <PostCard key={p.id} p={p} compact />)}
       </Section>
+
+      <ProspectsBox prospects={data.prospects} enabled={data.prospects_enabled} counts={data.prospect_counts} />
 
       <PlanBox topics={o.topics} />
     </div>
@@ -247,5 +255,71 @@ function PlanBox({ topics }: { topics: string[] }) {
       <ErrorBox error={plan.error} />
       {made != null && <Alert kind={made ? "ok" : "info"}>{made ? `${made} kladde(r) lavet.` : "Ingen nye kladder – dagen har allerede opslag på alle platforme."}</Alert>}
     </section>
+  );
+}
+
+const INDUSTRIES: [string, string][] = [["haandvaerkere", "Håndværkere"], ["klinikker", "Klinikker"], ["frisoerer", "Frisører og saloner"], ["autovaerksteder", "Autoværksteder"], ["raadgivere", "Rådgivere og kontorer"], ["restauranter", "Restauranter og hoteller"]];
+
+/** Companies the system found; the operator follows and comments by hand (the platforms forbid doing it automatically). */
+function ProspectsBox({ prospects, enabled, counts }: { prospects: Prospect[]; enabled: boolean; counts: Dashboard["prospect_counts"] }) {
+  const router = useRouter();
+  const [industry, setIndustry] = useState("");
+  const [made, setMade] = useState<number | null>(null);
+  const discover = useSubmit(async () => {
+    const r = await api<{ created: unknown[] }>("/operator/social/prospects/discover", { method: "POST", body: JSON.stringify({ industry: industry || null }) });
+    setMade(r.created.length); router.refresh();
+  });
+  return (
+    <section className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md space-y-space-md">
+      <div className="flex flex-wrap items-start justify-between gap-space-sm">
+        <div>
+          <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Profiler at følge ({prospects.length})</h2>
+          <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Hver morgen finder systemet ca. 20 danske virksomheder i Dialogbots brancher (CVR-registret → deres hjemmeside → deres profiler). Åbn profilen, følg den fra Dialogbots konto og læg evt. kommentaren – og markér så, hvad du gjorde. Platformene forbyder, at det sker automatisk, så det sidste klik er dit. {counts.done} fulgt · {counts.skipped} sprunget over.</p>
+        </div>
+        <div className="flex flex-wrap items-end gap-space-xs">
+          <Select value={industry} onChange={(e) => setIndustry(e.target.value)} aria-label="Branche" className="w-auto"><option value="">Næste branche i rækken</option>{INDUSTRIES.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</Select>
+          <Button variant="outline" icon="search" disabled={discover.pending || !enabled} onClick={() => discover.run()}>{discover.pending ? "Finder…" : "Find flere nu"}</Button>
+        </div>
+      </div>
+      {!enabled && <Alert kind="warn">Kræver adgang til CVR-registret (CVR_USERNAME/CVR_PASSWORD i Render). Adgangen er gratis og søges hos Erhvervsstyrelsen (cvrselvbetjening@erst.dk).</Alert>}
+      <ErrorBox error={discover.error} />
+      {made != null && <Alert kind={made ? "ok" : "info"}>{made ? `${made} virksomhed(er) fundet.` : "Ingen nye virksomheder med profiler fundet i denne omgang – prøv en anden branche."}</Alert>}
+      {prospects.length === 0 && enabled && <p className="font-body-sm text-body-sm text-on-surface-variant">Listen er tom – den næste portion kommer i morgen tidlig, eller tryk <em>Find flere nu</em>.</p>}
+      {prospects.length > 0 && <ul className="divide-y divide-outline-variant/40">{prospects.map((p) => <ProspectRow key={p.id} p={p} />)}</ul>}
+    </section>
+  );
+}
+
+function ProspectRow({ p }: { p: Prospect }) {
+  const router = useRouter();
+  const [chosen, setChosen] = useState<Platform[]>([]);
+  const [copied, setCopied] = useState(false);
+  const links: [Platform, string | null][] = [["facebook", p.facebook_url], ["instagram", p.instagram_url], ["tiktok", p.tiktok_url]];
+  const done = useSubmit(async () => { await api(`/operator/social/prospects/${p.id}/done`, { method: "POST", body: JSON.stringify({ platforms: chosen }) }); router.refresh(); });
+  const skip = useSubmit(async () => { await api(`/operator/social/prospects/${p.id}/skip`, { method: "POST", body: "{}" }); router.refresh(); });
+  const toggle = (pl: Platform) => setChosen((c) => (c.includes(pl) ? c.filter((x) => x !== pl) : [...c, pl]));
+  const copy = async () => { try { await navigator.clipboard.writeText(p.suggested_comment); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch { /* clipboard blocked: the text is visible to copy by hand */ } };
+  const busy = done.pending || skip.pending;
+  return (
+    <li className="py-space-sm flex flex-col gap-space-xs md:flex-row md:items-start">
+      <div className="flex-1 min-w-0">
+        <p className="font-label-lg text-label-lg font-semibold">{p.name} <span className="font-label-sm text-label-sm text-on-surface-variant font-normal">· {p.industry_label}{p.city ? ` · ${p.city}` : ""}{p.industry_text ? ` · ${p.industry_text}` : ""}</span></p>
+        <p className="font-label-sm text-label-sm flex flex-wrap gap-space-sm mt-0.5">
+          {links.map(([pl, url]) => url && (
+            <a key={pl} href={url} target="_blank" rel="noreferrer" onClick={() => { if (!chosen.includes(pl)) toggle(pl); }} className="underline text-primary flex items-center gap-0.5"><Icon name={PLATFORM[pl].icon} size={14} />{PLATFORM[pl].label}</a>
+          ))}
+          {p.website && <a href={p.website} target="_blank" rel="noreferrer" className="underline text-on-surface-variant flex items-center gap-0.5"><Icon name="link" size={14} />hjemmeside</a>}
+        </p>
+        <p className="font-body-sm text-body-sm text-on-surface-variant mt-1 flex items-start gap-space-xs"><span className="flex-1">„{p.suggested_comment}“</span><button type="button" onClick={copy} className="shrink-0 underline text-primary font-label-sm text-label-sm">{copied ? "Kopieret" : "Kopiér"}</button></p>
+        <ErrorBox error={done.error ?? skip.error} />
+      </div>
+      <div className="flex flex-wrap items-center gap-space-xs md:w-80 md:justify-end">
+        {links.map(([pl, url]) => url && (
+          <label key={pl} className="flex items-center gap-1 font-label-sm text-label-sm"><input type="checkbox" checked={chosen.includes(pl)} onChange={() => toggle(pl)} />{PLATFORM[pl].label}</label>
+        ))}
+        <Button icon="check" disabled={busy || chosen.length === 0} onClick={() => done.run()}>Fulgt</Button>
+        <Button variant="ghost" icon="close" disabled={busy} onClick={() => skip.run()}>Spring over</Button>
+      </div>
+    </li>
   );
 }

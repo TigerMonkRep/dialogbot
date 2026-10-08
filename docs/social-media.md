@@ -62,6 +62,10 @@ Sæt `SOCIAL_PROVIDER=live` på API og worker. Anbefalet start: `SOCIAL_REQUIRE_
 
 Tallene kommer fra `social_account_snapshots` (én række pr. platform pr. dag) og `social_posts.metrics`. Worker'en henter dem én gang i timen (`insights.refresh_all`, kun læsning); *Opdater tal* henter dem med det samme. En platform, der fejler (manglende scope, nede), får `followers=NULL` og fejlen i `raw.error` — de andre påvirkes ikke. TikTok kræver scopes `user.info.stats` + `video.list` (`TIKTOK_SCOPES`); opslag, TikTok kun gav et `publish_id` for, kan ikke måles.
 
+### Profiler at følge (nederst i dashboardet)
+
+Følgere kommer ikke af sig selv, og Meta og TikTok forbyder automatiseret følg/like/beskeder (og tilbyder det ikke i deres API'er). Derfor gør systemet kun den lovlige halvdel: **det finder**. Hver morgen (worker, første gang efter kl. 6) finder `prospects.discover` ca. 20 aktive danske virksomheder i én af Dialogbots seks brancher (DB07-branchekoder i `prospects.INDUSTRIES`) via CVR-registret — aldrig virksomheder med reklamebeskyttelse — åbner deres hjemmeside og gemmer deres Facebook-/Instagram-/TikTok-profiler i `social_prospects` (én række pr. CVR-nummer nogensinde). Operatøren åbner profilen, følger/kommenterer fra Dialogbots konto (foreslået kommentar vises) og markerer *Fulgt* eller *Spring over*; begge logges. *Find flere nu* laver en portion med det samme, evt. for en bestemt branche. Kræver `CVR_USERNAME`/`CVR_PASSWORD` (gratis adgang fra Erhvervsstyrelsen); uden dem viser dashboardet det, og intet sker.
+
 ## Styring (operatør-API)
 
 Kræver operatørrollen (`python -m scripts.grant_operator grant <e-mail>`). Alle ændringer skrives i revisionsloggen.
@@ -77,6 +81,7 @@ Kræver operatørrollen (`python -m scripts.grant_operator grant <e-mail>`). All
 | `POST /operator/social/plan` `{day, topic?, platforms?}` | Lav opslag til en bestemt dag/emne |
 | `GET /operator/social/dashboard?days=30` | Alt det, dashboardet viser, i ét kald |
 | `POST /operator/social/metrics/refresh` | Hent følgertal og engagement fra platformene nu |
+| `GET /operator/social/prospects?status=new` · `POST …/prospects/discover` `{industry?, limit?}` · `POST …/prospects/{id}/done` `{platforms}` · `POST …/prospects/{id}/skip` | Profiler at følge (se ovenfor) |
 
 **Nødbremse:** sæt `SOCIAL_PROVIDER=none` — intet planlægges eller postes. Planlagte opslag bliver liggende.
 

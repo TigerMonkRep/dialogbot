@@ -677,3 +677,81 @@ def test_dashboard_combines_followers_deltas_and_posts(social, monkeypatch, api,
     assert d["overview"]["require_approval"] is True
     assert api.c.get("/api/v1/operator/social/dashboard", headers=api.h(api.user("x@testmail.dk"))).status_code == 403
     assert api.post(op, "/operator/social/metrics/refresh", {}).status_code == 200  # fake provider: nothing to read
+
+
+# --- profiles to follow ----------------------------------------------------------------------------------------------------
+
+def test_social_links_keeps_profiles_and_drops_share_buttons():
+    from app.modules.social.prospects import social_links
+
+    html = """<a href="https://www.facebook.com/sharer/sharer.php?u=x">del</a>
+    <a href='https://www.facebook.com/MalerfirmaetHansen'>fb</a>
+    <a href="https://instagram.com/malerhansen/?hl=da">ig</a>
+    <a href="https://www.tiktok.com/@malerhansen">tt</a>
+    <a href="https://www.instagram.com/p/abc123/">et opslag</a>"""
+    assert social_links(html) == {"facebook": "https://www.facebook.com/MalerfirmaetHansen",
+                                  "instagram": "https://www.instagram.com/malerhansen",
+                                  "tiktok": "https://www.tiktok.com/@malerhansen"}
+    assert social_links("<p>ingen links</p>") == {}
+
+
+def _cvr_hit(cvr, name, site, status="NORMAL", protected=False, code="433410"):
+    return {"_source": {"Vrvirksomhed": {
+        "cvrNummer": int(cvr), "reklamebeskyttet": protected,
+        "virksomhedMetadata": {"nyesteNavn": {"navn": name}, "sammensatStatus": status,
+                               "nyesteBeliggenhedsadresse": {"postnummer": 8000, "postdistrikt": "Aarhus C"},
+                               "nyesteHovedbranche": {"branchekode": code, "branchetekst": "Malerforretninger"},
+                               "nyesteKontaktoplysninger": ["+45 12345678", "mail@x.dk", site]}}}}
+
+
+def test_prospects_batch_comes_from_cvr_and_the_websites_and_is_acted_on_once(social, monkeypatch, api, db):
+    from app.modules.social import prospects
+
+    monkeypatch.setenv("CVR_USERNAME", "u")
+    monkeypatch.setenv("CVR_PASSWORD", "p")
+    get_settings.cache_clear()
+    hits = [_cvr_hit("10150817", "Maler Hansen ApS", "malerhansen.dk"),
+            _cvr_hit("25313763", "Ophørt Maler", "gammel.dk", status="OPHØRT"),
+            _cvr_hit("36214229", "Beskyttet Maler", "beskyttet.dk", protected=True),
+            _cvr_hit("10103940", "Uden hjemmeside", ""),
+            _cvr_hit("29910251", "Uden profiler", "ingenprofiler.dk")]
+    posted = {}
+
+    def fake_post(url, json, auth, timeout):
+        posted["query"] = json
+        return SimpleNamespace(status_code=200, json=lambda: {"hits": {"hits": hits}})
+
+    sites = {"https://malerhansen.dk": {"facebook": "https://www.facebook.com/malerhansen",
+                                        "instagram": "https://www.instagram.com/malerhansen"},
+             "https://ingenprofiler.dk": {}}
+    monkeypatch.setattr(prospects.httpx, "post", fake_post)
+    added = prospects.discover(db, industry="haandvaerkere", fetch=lambda site: sites.get(site, {}))
+    assert [p.cvr for p in added] == ["10150817"]
+    assert added[0].facebook_url.endswith("/malerhansen") and added[0].tiktok_url is None
+    assert added[0].city == "Aarhus C" and "håndværkere" in added[0].suggested_comment
+    assert {"term": {"Vrvirksomhed.reklamebeskyttet": True}} in posted["query"]["query"]["function_score"]["query"]["bool"]["must_not"]
+    # the same day never makes a second batch by itself, and a company is never suggested twice
+    assert prospects.discover_if_due(db, now=datetime.now(CPH).replace(hour=9)) == 0
+    assert prospects.discover(db, industry="haandvaerkere", fetch=lambda site: sites.get(site, {})) == []
+
+    op = api.operator()
+    d = api.c.get("/api/v1/operator/social/dashboard", headers=api.h(op)).json()
+    assert d["prospects_enabled"] is True and [p["name"] for p in d["prospects"]] == ["Maler Hansen ApS"]
+    pid = d["prospects"][0]["id"]
+    r = api.post(op, f"/operator/social/prospects/{pid}/done", {"platforms": ["facebook", "facebook", "instagram"]})
+    assert r.status_code == 200 and r.json()["acted_platforms"] == ["facebook", "instagram"]
+    assert api.post(op, f"/operator/social/prospects/{pid}/skip", {}).status_code == 409
+    assert api.c.get("/api/v1/operator/social/prospects?status=done", headers=api.h(op)).json()["items"][0]["cvr"] == "10150817"
+    assert api.c.get("/api/v1/operator/social/dashboard", headers=api.h(op)).json()["prospect_counts"] == {"new": 0, "done": 1, "skipped": 0}
+    assert api.c.get("/api/v1/operator/social/prospects", headers=api.h(api.user("y@testmail.dk"))).status_code == 403
+
+
+def test_prospects_need_cvr_access(social, monkeypatch, api, db):
+    from app.modules.social import prospects
+
+    monkeypatch.delenv("CVR_USERNAME", raising=False)
+    get_settings.cache_clear()
+    assert prospects.discover(db) == []
+    op = api.operator()
+    assert api.post(op, "/operator/social/prospects/discover", {}).status_code == 501
+    assert api.c.get("/api/v1/operator/social/dashboard", headers=api.h(op)).json()["prospects_enabled"] is False

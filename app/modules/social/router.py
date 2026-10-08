@@ -7,7 +7,7 @@ pictures contain nothing but the post's own slide text.
 from __future__ import annotations
 
 import uuid
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import Literal
 
 from fastapi import APIRouter, Depends, Query, Request, Response
@@ -15,11 +15,12 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session as OrmSession
 
+from app.core.audit import record_audit
 from app.core.auth import Principal
-from app.core.errors import NotFound, ValidationFailed
+from app.core.errors import Conflict, NotFound, NotImplementedYet, ValidationFailed
 from app.db import get_db
-from app.models import SocialMedia, SocialPost
-from app.modules.social import insights, publishers, service
+from app.models import SocialMedia, SocialPost, SocialProspect
+from app.modules.social import insights, prospects, publishers, service
 from app.modules.voices.operator_router import operator
 
 router = APIRouter(prefix="/operator/social", tags=["social-operator"])
@@ -54,6 +55,75 @@ def dashboard(days: int = Query(default=30, ge=7, le=365), _: Principal = Depend
 def refresh_metrics(_: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
     """Read today's profile numbers and the engagement of recent posts from the platforms right now."""
     return insights.refresh_all(db, force=True)
+
+
+# --- profiles to follow (found by the system, acted on by a person) ---------------------------------------------------
+
+@router.get("/prospects")
+def list_prospects(status: Literal["new", "done", "skipped"] | None = None, limit: int = Query(default=60, ge=1, le=200),
+                   _: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+    """Companies in Dialogbot's industries with their Facebook/Instagram/TikTok links, newest batch first."""
+    q = select(SocialProspect).order_by(SocialProspect.found_on.desc(), SocialProspect.name).limit(limit)
+    if status:
+        q = q.where(SocialProspect.status == status)
+    return {"items": [prospects.to_dict(p) for p in db.scalars(q).all()], "enabled": prospects.configured(),
+            "industries": {k: v["label"] for k, v in prospects.INDUSTRIES.items()}}
+
+
+class DiscoverIn(BaseModel):
+    industry: Literal["haandvaerkere", "klinikker", "frisoerer", "autovaerksteder", "raadgivere", "restauranter"] | None = None
+    limit: int = Field(default=prospects.BATCH_SIZE, ge=1, le=50)
+
+
+@router.post("/prospects/discover")
+def discover_prospects(body: DiscoverIn, _: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+    """Make a batch now (the worker makes one every morning by itself). Needs CVR access; answers 501 without it."""
+    if not prospects.configured():
+        raise NotImplementedYet("Kræver adgang til CVR-registret (CVR_USERNAME/CVR_PASSWORD)", code="cvr_not_configured")
+    added = prospects.discover(db, industry=body.industry, limit=body.limit)
+    return {"created": [prospects.to_dict(p) for p in added]}
+
+
+class ProspectActIn(BaseModel):
+    platforms: list[Platform] = Field(default_factory=list, description="Where the operator followed/commented")
+    note: str | None = Field(default=None, max_length=500)
+
+
+def _prospect(db: OrmSession, prospect_id: uuid.UUID) -> SocialProspect:
+    p = db.get(SocialProspect, prospect_id)
+    if p is None:
+        raise NotFound("Virksomheden findes ikke på listen")
+    return p
+
+
+@router.post("/prospects/{prospect_id}/done")
+def prospect_done(prospect_id: uuid.UUID, body: ProspectActIn, request: Request, principal: Principal = Depends(operator),
+                  db: OrmSession = Depends(get_db)):
+    """The operator followed/commented from Dialogbot's profiles — record it so the company is never suggested again."""
+    p = _prospect(db, prospect_id)
+    if p.status != "new":
+        raise Conflict("Virksomheden er allerede behandlet", code="prospect_not_new")
+    p.status, p.acted_platforms, p.note = "done", list(dict.fromkeys(body.platforms)), body.note
+    p.acted_by_user_id, p.acted_at = principal.user.id, datetime.now(timezone.utc)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="social.prospect_done",
+                 object_type="social_prospect", object_id=p.id, request_id=request.state.request_id,
+                 after={"platforms": p.acted_platforms})
+    db.commit()
+    return prospects.to_dict(p)
+
+
+@router.post("/prospects/{prospect_id}/skip")
+def prospect_skip(prospect_id: uuid.UUID, body: ProspectActIn, request: Request, principal: Principal = Depends(operator),
+                  db: OrmSession = Depends(get_db)):
+    p = _prospect(db, prospect_id)
+    if p.status != "new":
+        raise Conflict("Virksomheden er allerede behandlet", code="prospect_not_new")
+    p.status, p.note = "skipped", body.note
+    p.acted_by_user_id, p.acted_at = principal.user.id, datetime.now(timezone.utc)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="social.prospect_skip",
+                 object_type="social_prospect", object_id=p.id, request_id=request.state.request_id)
+    db.commit()
+    return prospects.to_dict(p)
 
 
 @router.get("")

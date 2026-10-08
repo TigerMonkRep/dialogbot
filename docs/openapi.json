@@ -685,6 +685,38 @@
         "title": "DetailsIn",
         "type": "object"
       },
+      "DiscoverIn": {
+        "properties": {
+          "industry": {
+            "anyOf": [
+              {
+                "enum": [
+                  "haandvaerkere",
+                  "klinikker",
+                  "frisoerer",
+                  "autovaerksteder",
+                  "raadgivere",
+                  "restauranter"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry"
+          },
+          "limit": {
+            "default": 20,
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "DiscoverIn",
+        "type": "object"
+      },
       "DncIn": {
         "properties": {
           "phone": {
@@ -2012,6 +2044,37 @@
           "consent_accepted"
         ],
         "title": "ProjectIn",
+        "type": "object"
+      },
+      "ProspectActIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "platforms": {
+            "description": "Where the operator followed/commented",
+            "items": {
+              "enum": [
+                "facebook",
+                "instagram",
+                "tiktok"
+              ],
+              "type": "string"
+            },
+            "title": "Platforms",
+            "type": "array"
+          }
+        },
+        "title": "ProspectActIn",
         "type": "object"
       },
       "RegisterIn": {
@@ -6976,6 +7039,280 @@
           }
         },
         "summary": "Publish Post Now",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/social/prospects": {
+      "get": {
+        "description": "Companies in Dialogbot's industries with their Facebook/Instagram/TikTok links, newest batch first.",
+        "operationId": "list_prospects_api_v1_operator_social_prospects_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "new",
+                    "done",
+                    "skipped"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 60,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Prospects",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/social/prospects/discover": {
+      "post": {
+        "description": "Make a batch now (the worker makes one every morning by itself). Needs CVR access; answers 501 without it.",
+        "operationId": "discover_prospects_api_v1_operator_social_prospects_discover_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscoverIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Discover Prospects",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/social/prospects/{prospect_id}/done": {
+      "post": {
+        "description": "The operator followed/commented from Dialogbot's profiles — record it so the company is never suggested again.",
+        "operationId": "prospect_done_api_v1_operator_social_prospects__prospect_id__done_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prospect_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Prospect Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProspectActIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Prospect Done",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/social/prospects/{prospect_id}/skip": {
+      "post": {
+        "operationId": "prospect_skip_api_v1_operator_social_prospects__prospect_id__skip_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "prospect_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Prospect Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProspectActIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Prospect Skip",
         "tags": [
           "social-operator"
         ]

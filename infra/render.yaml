@@ -127,6 +127,10 @@ services:
         sync: false
       - key: PUBLIC_BASE_URL      # the platforms download the post images from here, so it must be public https
         sync: false
+      - key: CVR_USERNAME         # "Profiler at følge": the worker's daily batch comes from the CVR register
+        sync: false
+      - key: CVR_PASSWORD
+        sync: false
       - key: WORKER_LEASE_SECONDS
         value: "60"
       - key: WORKER_MAX_ATTEMPTS

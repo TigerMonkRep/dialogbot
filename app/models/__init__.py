@@ -45,6 +45,7 @@ from app.models.domain import (  # noqa: F401
     SocialCredential,
     SocialMedia,
     SocialPost,
+    SocialProspect,
     SourceImport,
     Task,
     TelephonyAccount,

@@ -807,6 +807,71 @@
         "title": "DraftIn",
         "type": "object"
       },
+      "ExtraIn": {
+        "properties": {
+          "at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When to post once approved; default in ten minutes",
+            "title": "At"
+          },
+          "day": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Today when omitted",
+            "title": "Day"
+          },
+          "platforms": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "facebook",
+                    "instagram",
+                    "tiktok"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "All connected platforms when omitted",
+            "title": "Platforms"
+          },
+          "topic": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The topic used longest ago when omitted",
+            "title": "Topic"
+          }
+        },
+        "title": "ExtraIn",
+        "type": "object"
+      },
       "GoalsIn": {
         "properties": {
           "booking": {
@@ -6542,6 +6607,64 @@
           }
         },
         "summary": "Dashboard",
+        "tags": [
+          "social-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/social/extra": {
+      "post": {
+        "description": "\"Generér nye opslag\": fresh drafts on top of the daily plan, for any day/topic/platforms, even when the day\nalready has posts. They wait for approval like every other draft.",
+        "operationId": "create_extra_api_v1_operator_social_extra_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtraIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Extra",
         "tags": [
           "social-operator"
         ]

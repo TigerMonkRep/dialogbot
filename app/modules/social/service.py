@@ -77,11 +77,13 @@ def _store_media(db: OrmSession, post: SocialPost) -> None:
                            sha256=hashlib.sha256(data).hexdigest()))
 
 
-def create_post(db: OrmSession, day: date, topic: Topic, draft: content.Draft) -> SocialPost:
+def create_post(db: OrmSession, day: date, topic: Topic, draft: content.Draft, *, extra: bool = False,
+                scheduled_for: datetime | None = None, status: str | None = None) -> SocialPost:
     s = get_settings()
-    post = SocialPost(platform=draft.platform, slot_date=day, scheduled_for=slot_time(day, draft.platform),
-                      status="draft" if s.social_require_approval else "scheduled", topic=topic.key,
-                      group_key=f"{day.isoformat()}:{topic.key}", caption=draft.caption, hashtags=draft.hashtags,
+    post = SocialPost(platform=draft.platform, slot_date=day, scheduled_for=scheduled_for or slot_time(day, draft.platform),
+                      status=status or ("draft" if s.social_require_approval else "scheduled"), topic=topic.key,
+                      extra=extra, group_key=f"{day.isoformat()}:{topic.key}{':extra' if extra else ''}",
+                      caption=draft.caption, hashtags=draft.hashtags,
                       slides=draft.slides, link=draft.link, generator=draft.generator, generator_model=draft.model)
     db.add(post)
     db.flush()
@@ -101,7 +103,8 @@ def plan_day(db: OrmSession, day: date, *, topic_key: str | None = None, platfor
     wanted = [p for p in (platforms or publishers.active_platforms(db)) if publishers.get_publisher(db, p)]
     statuses = (*ACTIVE, "cancelled") if respect_cancelled else ACTIVE
     taken = {p.platform: p for p in db.scalars(select(SocialPost).where(SocialPost.slot_date == day,
-                                                                         SocialPost.status.in_(statuses)))}
+                                                                         SocialPost.status.in_(statuses),
+                                                                         SocialPost.extra.is_(False)))}
     missing = [p for p in wanted if p not in taken and (past_ok or slot_time(day, p) > now)]
     if not missing:
         db.rollback()
@@ -126,6 +129,41 @@ def plan_day(db: OrmSession, day: date, *, topic_key: str | None = None, platfor
     for p in out:
         log.info("social.planned", platform=p.platform, day=day.isoformat(), topic=topic.key, generator=p.generator,
                  status=p.status)
+    return out
+
+
+def create_extra(db: OrmSession, *, day: date | None = None, topic_key: str | None = None,
+                 platforms: list[str] | None = None, at: datetime | None = None,
+                 now: datetime | None = None) -> list[SocialPost]:
+    """Operator button "Generér nye opslag": fresh drafts on top of the daily plan — for today or any later day, on
+    any topic, for the chosen platforms — regardless of what the day already has. Always drafts: the operator
+    reads them and presses Godkend or Post nu. `at` is when they should go out once approved (default: in ten
+    minutes, so "approve → out" is the normal path); a time more than SOCIAL_MAX_LATE_MINUTES in the past would be
+    skipped by the worker, so it is clamped to now."""
+    now = now or _now()
+    day = day or now.astimezone(TZ).date()
+    if day < now.astimezone(TZ).date():
+        raise ValidationFailed("Dagen er allerede gået", field_errors=[{"field": "day"}])
+    wanted = [p for p in (platforms or publishers.active_platforms(db)) if publishers.get_publisher(db, p)]
+    if not wanted:
+        raise ValidationFailed("Ingen af de valgte platforme er forbundet", field_errors=[{"field": "platforms"}])
+    topic = TOPICS_BY_KEY.get(topic_key) if topic_key else next_topic(db)
+    if topic is None:
+        raise ValidationFailed(f"Ukendt emne: {topic_key}", field_errors=[{"field": "topic"}])
+    when = max(at, now) if at else now + timedelta(minutes=10)
+    if when.astimezone(TZ).date() != day:
+        when = max(slot_time(day, wanted[0]), now)
+    drafts = content.generate(db, topic, tuple(wanted), _recent_hooks(db))
+    out = []
+    for d in drafts:
+        try:
+            with db.begin_nested():
+                out.append(create_post(db, day, topic, d, extra=True, scheduled_for=when, status="draft"))
+        except Exception as e:  # noqa: BLE001 - one broken platform must not block the others
+            log.warning("social.extra_failed", platform=d.platform, day=day.isoformat(), error=f"{type(e).__name__}: {e}")
+    db.commit()
+    for p in out:
+        log.info("social.extra_planned", platform=p.platform, day=day.isoformat(), topic=topic.key, generator=p.generator)
     return out
 
 

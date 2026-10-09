@@ -6,7 +6,7 @@ import { Alert, Badge, Button, ErrorBox, Field, Icon, Select, Textarea, useSubmi
 
 export type Platform = "facebook" | "instagram" | "tiktok";
 export type Post = {
-  id: string; platform: Platform; status: string; topic: string; slot_date: string; scheduled_for: string; caption: string;
+  id: string; platform: Platform; status: string; topic: string; extra?: boolean; slot_date: string; scheduled_for: string; caption: string;
   hashtags: string[]; slides: { role: string; kicker: string; title: string; body: string; bullets?: string[] }[]; link: string | null;
   generator: string; external_id: string | null; external_url: string | null; attempts: number; last_error: string | null;
   published_at: string | null; metrics: Record<string, number | string> | null; metrics_at: string | null; images: string[];
@@ -202,6 +202,7 @@ function PostCard({ p, editable = false, compact = false }: { p: Post; editable?
       <div className="flex flex-wrap items-center gap-space-xs font-label-sm text-label-sm">
         <span className="font-label-lg text-label-lg font-semibold flex items-center gap-1 text-primary"><Icon name={meta.icon} size={18} />{meta.label}</span>
         <Badge status={p.status} />
+        {p.extra && <span className="inline-flex items-center rounded-full px-2 py-0.5 text-label-sm font-semibold bg-tertiary-fixed text-on-tertiary-fixed">Ekstra</span>}
         <span className="text-on-surface-variant">{topicLabel(p.topic)} · {p.status === "published" ? `gik ud ${when(p.published_at)}` : `planlagt ${when(p.scheduled_for)}`}{p.generator === "ai" ? " · AI-tekst" : ""}</span>
         {p.external_url && <a href={p.external_url} target="_blank" rel="noreferrer" className="underline text-primary flex items-center gap-0.5"><Icon name="link" size={14} />Se opslaget</a>}
       </div>
@@ -235,25 +236,36 @@ function PostCard({ p, editable = false, compact = false }: { p: Post; editable?
 
 function PlanBox({ topics }: { topics: string[] }) {
   const router = useRouter();
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
-  const [day, setDay] = useState(tomorrow);
+  const today = new Date().toISOString().slice(0, 10);
+  const [day, setDay] = useState(today);
   const [topic, setTopic] = useState("");
+  const [platforms, setPlatforms] = useState<Platform[]>(["facebook", "instagram", "tiktok"]);
+  const [at, setAt] = useState("");
   const [made, setMade] = useState<number | null>(null);
-  const plan = useSubmit(async () => {
-    const r = await api<{ created?: unknown[]; posts?: unknown[] }>("/operator/social/plan", { method: "POST", body: JSON.stringify({ day, topic: topic || null }) });
-    setMade((r.created ?? r.posts ?? []).length); router.refresh();
+  const toggle = (pl: Platform) => setPlatforms((c) => (c.includes(pl) ? c.filter((x) => x !== pl) : [...c, pl]));
+  const make = useSubmit(async () => {
+    const body = { day, topic: topic || null, platforms, at: at ? new Date(`${day}T${at}`).toISOString() : null };
+    const r = await api<{ created: unknown[] }>("/operator/social/extra", { method: "POST", body: JSON.stringify(body) });
+    setMade(r.created.length); router.refresh();
+    if (r.created.length) window.scrollTo({ top: 0, behavior: "smooth" });
   });
   return (
     <section className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md space-y-space-sm">
-      <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Lav ekstra kladder</h2>
-      <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Kladderne laves automatisk. Vil du have et opslag om et bestemt emne på en bestemt dag, kan du bestille det her – det lander ovenfor til godkendelse.</p>
+      <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Generér nye opslag</h2>
+      <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Laver nye kladder med det samme – også på en dag, der allerede har opslag. De lander øverst under <em>Venter på godkendelse</em>; tryk <em>Godkend</em> (går ud på det valgte tidspunkt, som standard om ti minutter) eller <em>Post nu</em>.</p>
       <div className="flex flex-wrap items-end gap-space-sm">
-        <Field label="Dag"><input type="date" value={day} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDay(e.target.value)} className="px-3 py-2 rounded-lg bg-surface font-body-md text-body-md shadow-inner" /></Field>
+        <Field label="Dag"><input type="date" value={day} min={today} onChange={(e) => setDay(e.target.value)} className="px-3 py-2 rounded-lg bg-surface font-body-md text-body-md shadow-inner" /></Field>
         <Field label="Emne"><Select value={topic} onChange={(e) => setTopic(e.target.value)}><option value="">Automatisk (det der er længst siden)</option>{topics.map((t) => <option key={t} value={t}>{topicLabel(t)}</option>)}</Select></Field>
-        <Button icon="add" disabled={plan.pending} onClick={() => plan.run()}>{plan.pending ? "Laver…" : "Lav kladder"}</Button>
+        <Field label="Klokken" hint="Tom = om ti minutter"><input type="time" value={at} onChange={(e) => setAt(e.target.value)} className="px-3 py-2 rounded-lg bg-surface font-body-md text-body-md shadow-inner" /></Field>
+        <div className="flex items-center gap-space-sm pb-2">
+          {(Object.keys(PLATFORM) as Platform[]).map((pl) => (
+            <label key={pl} className="flex items-center gap-1 font-label-sm text-label-sm"><input type="checkbox" checked={platforms.includes(pl)} onChange={() => toggle(pl)} />{PLATFORM[pl].label}</label>
+          ))}
+        </div>
+        <Button icon="auto_awesome" disabled={make.pending || platforms.length === 0} onClick={() => make.run()}>{make.pending ? "Genererer… (op til et minut)" : "Generér nye opslag"}</Button>
       </div>
-      <ErrorBox error={plan.error} />
-      {made != null && <Alert kind={made ? "ok" : "info"}>{made ? `${made} kladde(r) lavet.` : "Ingen nye kladder – dagen har allerede opslag på alle platforme."}</Alert>}
+      <ErrorBox error={make.error} />
+      {made != null && <Alert kind={made ? "ok" : "info"}>{made ? `${made} nye kladde(r) lavet – de venter på din godkendelse øverst.` : "Ingen kladder lavet – er platformene forbundet?"}</Alert>}
     </section>
   );
 }

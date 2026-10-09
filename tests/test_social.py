@@ -15,6 +15,7 @@ from sqlalchemy import select
 
 from app.config import get_settings
 from app.core import crypto
+from app.core.errors import ValidationFailed
 from app.models import SocialCredential, SocialMedia, SocialPost
 from app.modules.social import content, publishers, render, service
 from app.modules.social.publishers import PublishError
@@ -755,3 +756,34 @@ def test_prospects_need_cvr_access(social, monkeypatch, api, db):
     op = api.operator()
     assert api.post(op, "/operator/social/prospects/discover", {}).status_code == 501
     assert api.c.get("/api/v1/operator/social/dashboard", headers=api.h(op)).json()["prospects_enabled"] is False
+
+
+# --- extra posts on demand -------------------------------------------------------------------------------------------------
+
+def test_extra_posts_can_be_ordered_on_a_day_that_already_has_posts(social, api, db):
+    service.plan(db, MONDAY)                                            # Monday is fully planned (and even published)
+    for p in db.scalars(select(SocialPost).where(SocialPost.slot_date == date(2026, 10, 5))).all():
+        p.status = "published"
+    db.commit()
+    created = service.create_extra(db, day=date(2026, 10, 5), topic_key="demo_call", platforms=["facebook", "instagram"],
+                                   now=MONDAY)
+    assert [p.platform for p in created] == ["facebook", "instagram"]
+    assert all(p.extra and p.status == "draft" and p.topic == "demo_call" and p.slot_date == date(2026, 10, 5) for p in created)
+    assert created[0].scheduled_for == MONDAY + timedelta(minutes=10)
+    assert created[0].group_key.endswith(":extra")
+    # the planner neither counts them nor replaces them
+    assert service.plan(db, MONDAY) == []
+    assert service.plan_day(db, date(2026, 10, 5), now=MONDAY, past_ok=True) == []
+    # a later day: out at the normal slot time; a day in the past is refused
+    later = service.create_extra(db, day=date(2026, 10, 6), platforms=["tiktok"], now=MONDAY)
+    assert later[0].scheduled_for == service.slot_time(date(2026, 10, 6), "tiktok")
+    with pytest.raises(ValidationFailed):
+        service.create_extra(db, day=date(2026, 10, 4), now=MONDAY)
+    # and the operator gets the same through the API, approving and publishing like any other draft
+    op = api.operator()
+    r = api.post(op, "/operator/social/extra", {"day": "2099-01-01", "topic": "chatbot", "platforms": ["tiktok"]})
+    assert r.status_code == 200, r.text
+    post = r.json()["created"][0]
+    assert post["extra"] is True and post["status"] == "draft"
+    assert api.post(op, f"/operator/social/posts/{post['id']}/approve", {}).json()["status"] == "scheduled"
+    assert api.post(op, "/operator/social/extra", {"topic": "nope"}).status_code == 422

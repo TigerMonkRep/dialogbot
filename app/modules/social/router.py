@@ -31,7 +31,7 @@ Platform = Literal["facebook", "instagram", "tiktok"]
 
 def _out(db: OrmSession, p: SocialPost) -> dict:
     ids = db.scalars(select(SocialMedia.id).where(SocialMedia.post_id == p.id).order_by(SocialMedia.position)).all()
-    return {"id": str(p.id), "platform": p.platform, "status": p.status, "topic": p.topic,
+    return {"id": str(p.id), "platform": p.platform, "status": p.status, "topic": p.topic, "extra": p.extra,
             "slot_date": p.slot_date.isoformat(), "scheduled_for": p.scheduled_for.isoformat(), "caption": p.caption,
             "hashtags": p.hashtags, "slides": p.slides, "link": p.link, "generator": p.generator,
             "generator_model": p.generator_model, "external_id": p.external_id, "external_url": p.external_url,
@@ -164,6 +164,21 @@ def plan_now(body: PlanIn, _: Principal = Depends(operator), db: OrmSession = De
         raise ValidationFailed("Angiv en dag sammen med emne eller platforme")
     else:
         created = service.plan(db)
+    return {"created": [_out(db, p) for p in created]}
+
+
+class ExtraIn(BaseModel):
+    day: date | None = Field(default=None, description="Today when omitted")
+    topic: str | None = Field(default=None, max_length=40, description="The topic used longest ago when omitted")
+    platforms: list[Platform] | None = Field(default=None, description="All connected platforms when omitted")
+    at: datetime | None = Field(default=None, description="When to post once approved; default in ten minutes")
+
+
+@router.post("/extra")
+def create_extra(body: ExtraIn, _: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+    """"Generér nye opslag": fresh drafts on top of the daily plan, for any day/topic/platforms, even when the day
+    already has posts. They wait for approval like every other draft."""
+    created = service.create_extra(db, day=body.day, topic_key=body.topic, platforms=body.platforms, at=body.at)
     return {"created": [_out(db, p) for p in created]}
 
 

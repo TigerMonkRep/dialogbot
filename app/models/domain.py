@@ -1512,9 +1512,10 @@ class SocialPost(Base):
         CheckConstraint("platform in ('facebook','instagram','tiktok')", name="ck_social_posts_platform"),
         CheckConstraint("status in ('draft','scheduled','publishing','published','failed','skipped','cancelled')",
                         name="ck_social_posts_status"),
-        # One live post per platform and day; a cancelled or skipped slot may be planned again.
+        # One live *planned* post per platform and day; a cancelled or skipped slot may be planned again. Extra posts
+        # the operator orders by hand (`extra`) sit outside the rule, so a day can get a second one on demand.
         Index("uq_social_posts_platform_slot", "platform", "slot_date", unique=True,
-              postgresql_where=text("status not in ('cancelled','skipped')")),
+              postgresql_where=text("status not in ('cancelled','skipped') and not extra")),
         Index("ix_social_posts_status_due", "status", "scheduled_for"),
     )
 
@@ -1523,6 +1524,8 @@ class SocialPost(Base):
     slot_date: Mapped[date] = mapped_column(Date, nullable=False)  # the Copenhagen day the post is planned for
     scheduled_for: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     status: Mapped[str] = mapped_column(String(12), nullable=False, default="scheduled")
+    # True for posts the operator ordered on top of the daily plan ("Generér nye opslag"); the planner ignores them.
+    extra: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default=text("false"))
     topic: Mapped[str] = mapped_column(String(40), nullable=False)
     group_key: Mapped[str] = mapped_column(String(60), nullable=False)
     caption: Mapped[str] = mapped_column(Text, nullable=False)  # the complete text as posted, hashtags and link included

@@ -13,7 +13,7 @@ export type Post = {
 };
 export type PlatformStats = {
   platform: Platform; enabled: boolean; connected: boolean; configured: boolean | null;
-  followers: number | null; following: number | null; posts: number | null; posts_source?: "platform" | "dialogbot"; likes: number | null; captured_on: string | null;
+  followers: number | null; following: number | null; posts: number; posts_platform: number | null; likes: number | null; captured_on: string | null;
   delta_7d: number | null; delta_30d: number | null; series: { date: string; followers: number | null }[]; error: string | null;
 };
 export type Prospect = {
@@ -145,10 +145,11 @@ function PlatformCard({ p, totals, days }: { p: PlatformStats; totals?: Dashboar
         <p className="font-label-sm text-label-sm flex gap-space-sm"><Delta n={p.delta_7d} label="7 d" /><Delta n={p.delta_30d} label="30 d" /></p>
       </div>
       <Sparkline series={p.series} />
-      <dl className="grid grid-cols-3 gap-space-xs font-label-sm text-label-sm">
-        <div><dt className="text-on-surface-variant" title={p.posts_source === "dialogbot" ? "Platformen oplyser ikke antallet; dette er opslag sendt fra Dialogbot" : undefined}>Opslag{p.posts_source === "dialogbot" ? "*" : ""}</dt><dd className="tabular-nums font-semibold">{num(p.posts)}</dd></div>
-        <div><dt className="text-on-surface-variant">Følger</dt><dd className="tabular-nums font-semibold">{num(p.following)}</dd></div>
-        <div><dt className="text-on-surface-variant">{p.platform === "facebook" ? "Synes godt om" : "Likes i alt"}</dt><dd className="tabular-nums font-semibold">{num(p.likes)}</dd></div>
+      <dl className="flex flex-wrap gap-x-space-md gap-y-space-xs font-label-sm text-label-sm">
+        <div><dt className="text-on-surface-variant">Opslag fra Dialogbot</dt><dd className="tabular-nums font-semibold">{num(p.posts)}</dd></div>
+        {p.posts_platform != null && p.posts_platform !== p.posts && <div><dt className="text-on-surface-variant">{p.platform === "tiktok" ? "Offentlige opslag" : "Opslag på profilen"}</dt><dd className="tabular-nums font-semibold">{num(p.posts_platform)}</dd></div>}
+        {p.following != null && <div><dt className="text-on-surface-variant">Følger</dt><dd className="tabular-nums font-semibold">{num(p.following)}</dd></div>}
+        {p.likes != null && <div><dt className="text-on-surface-variant">{p.platform === "facebook" ? "Synes godt om siden" : "Likes i alt"}</dt><dd className="tabular-nums font-semibold">{num(p.likes)}</dd></div>}
       </dl>
       <div className="rounded-lg bg-surface-container-low p-space-sm font-label-sm text-label-sm">
         <p className="text-on-surface-variant font-bold uppercase tracking-wider flex items-center gap-1"><Icon name="bar_chart" size={14} />Engagement, {days} dage</p>

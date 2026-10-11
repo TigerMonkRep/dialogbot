@@ -423,9 +423,8 @@ def dashboard(db: OrmSession, *, days: int = 30, now: datetime | None = None) ->
         platforms.append({**pl,
                           "followers": latest.followers if latest else None,
                           "following": latest.following if latest else None,
-                          "posts": (latest.posts if latest and latest.posts is not None
-                                    else own_posts.get(pl["platform"], 0)),
-                          "posts_source": "platform" if latest and latest.posts is not None else "dialogbot",
+                          "posts": own_posts.get(pl["platform"], 0),            # sent from Dialogbot (all time)
+                          "posts_platform": latest.posts if latest else None,  # the platform's own count, where offered
                           "likes": latest.likes if latest else None,
                           "captured_on": latest.captured_on.isoformat() if latest else None,
                           "delta_7d": _delta(rows, 7), "delta_30d": _delta(rows, 30),

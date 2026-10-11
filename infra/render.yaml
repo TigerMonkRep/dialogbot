@@ -30,8 +30,8 @@ services:
         generateValue: true
       - key: DB_SCHEMA
         value: dialogbot
-      - key: EMAIL_ADAPTER
-        value: simulated       # switch to "resend" once the Resend domain + key are verified (Milestone B)
+      - key: EMAIL_ADAPTER   # dashboard-managed ("resend" since 6 Oct 2026); sync: false so a blueprint sync cannot
+        sync: false            # silently flip mail back to "simulated" (it did on 7 Oct 2026 and no mail left the system)
       - key: RESEND_API_KEY
         sync: false
       - key: RESEND_WEBHOOK_SECRET   # Resend → Webhooks → signing secret (whsec_…); without it the webhook answers 503
@@ -101,8 +101,8 @@ services:
         sync: false            # any >=32-char value; sessions are opaque DB tokens so it need not match the API
       - key: DB_SCHEMA
         value: dialogbot
-      - key: EMAIL_ADAPTER
-        value: simulated
+      - key: EMAIL_ADAPTER   # dashboard-managed ("resend"); sync: false — see the API service above
+        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: EMAIL_FROM

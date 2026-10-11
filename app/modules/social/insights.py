@@ -51,7 +51,7 @@ def fetch_account(db: OrmSession, platform: str) -> dict:
     s = get_settings()
     if platform == "facebook":
         body = _graph("GET", s.meta_page_id, fields="followers_count,fan_count,name")
-        return {"followers": _int(body.get("followers_count")), "following": None, "posts": None,
+        return {"followers": _int(body.get("followers_count")), "following": None, "posts": _facebook_post_count(),
                 "likes": _int(body.get("fan_count")), "raw": body}
     if platform == "instagram":
         body = _graph("GET", s.meta_instagram_user_id, fields="followers_count,follows_count,media_count,username")
@@ -65,6 +65,24 @@ def fetch_account(db: OrmSession, platform: str) -> dict:
         return {"followers": _int(user.get("follower_count")), "following": _int(user.get("following_count")),
                 "posts": _int(user.get("video_count")), "likes": _int(user.get("likes_count")), "raw": user}
     raise PublishError(f"Ukendt platform {platform}")
+
+
+def _facebook_post_count(limit: int = 500) -> int | None:
+    """The Page's own count of published posts. The Graph API has no total field, so we page through the ids
+    (pages_read_user_content); None when that permission is missing."""
+    try:
+        n, after = 0, None
+        while n < limit:
+            body = _graph("GET", f"{get_settings().meta_page_id}/published_posts", fields="id", limit=100,
+                          **({"after": after} if after else {}))
+            n += len(body.get("data") or [])
+            after = ((body.get("paging") or {}).get("cursors") or {}).get("after")
+            if not after or not (body.get("paging") or {}).get("next"):
+                break
+        return n
+    except PublishError as e:
+        log.info("social.insights.facebook_post_count_failed", error=str(e)[:120])
+        return None
 
 
 def snapshot_accounts(db: OrmSession, *, now: dt.datetime | None = None, force: bool = False) -> int:

@@ -625,6 +625,11 @@ def test_follower_snapshots_once_a_day_and_post_engagement(live, db):
             httpx.Response(200, json={"followers_count": 120, "fan_count": 118, "name": "Dialogbot"}))
     live.on(lambda r: r.method == "GET" and r.url.path.endswith("/222") and "followers_count" in str(r.url),
             httpx.Response(200, json={"followers_count": 45, "follows_count": 3, "media_count": 7}))
+    live.on(lambda r: r.url.path.endswith("/111/published_posts") and "after" not in str(r.url),
+            httpx.Response(200, json={"data": [{"id": "111_1"}, {"id": "111_2"}],
+                                      "paging": {"cursors": {"after": "c2"}, "next": "https://graph.facebook.com/next"}}))
+    live.on(lambda r: r.url.path.endswith("/111/published_posts") and "after=c2" in str(r.url),
+            httpx.Response(200, json={"data": [{"id": "111_3"}], "paging": {"cursors": {"after": "c3"}}}))
     live.on(lambda r: r.url.path == "/v2/oauth/token/", httpx.Response(200, json={"access_token": "AT", "refresh_token": "rt-env"}))
     live.on(lambda r: r.url.path == "/v2/user/info/", httpx.Response(200, json={"data": {"user": {
         "follower_count": 9, "following_count": 1, "likes_count": 30, "video_count": 2}}}))
@@ -632,7 +637,7 @@ def test_follower_snapshots_once_a_day_and_post_engagement(live, db):
     assert insights.snapshot_accounts(db, now=now) == 3
     assert insights.snapshot_accounts(db, now=now) == 0  # one row per day
     rows = {r.platform: r for r in db.scalars(select(SocialAccountSnapshot))}
-    assert rows["facebook"].followers == 120 and rows["facebook"].likes == 118
+    assert rows["facebook"].followers == 120 and rows["facebook"].likes == 118 and rows["facebook"].posts == 3
     assert rows["instagram"].followers == 45 and rows["instagram"].posts == 7
     assert rows["tiktok"].followers == 9 and rows["tiktok"].likes == 30
     assert rows["tiktok"].captured_on == date(2026, 10, 8)

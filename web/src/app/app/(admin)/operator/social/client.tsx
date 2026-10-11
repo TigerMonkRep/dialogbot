@@ -147,7 +147,7 @@ function PlatformCard({ p, totals, days }: { p: PlatformStats; totals?: Dashboar
       <Sparkline series={p.series} />
       <dl className="flex flex-wrap gap-x-space-md gap-y-space-xs font-label-sm text-label-sm">
         <div><dt className="text-on-surface-variant">Opslag fra Dialogbot</dt><dd className="tabular-nums font-semibold">{num(p.posts)}</dd></div>
-        {p.posts_platform != null && p.posts_platform !== p.posts && <div><dt className="text-on-surface-variant">{p.platform === "tiktok" ? "Offentlige opslag" : "Opslag på profilen"}</dt><dd className="tabular-nums font-semibold">{num(p.posts_platform)}</dd></div>}
+        {p.posts_platform != null && p.posts_platform !== p.posts && <div><dt className="text-on-surface-variant">{p.platform === "tiktok" ? "Offentlige opslag" : p.platform === "facebook" ? "Opslag på siden" : "Opslag på profilen"}</dt><dd className="tabular-nums font-semibold">{num(p.posts_platform)}</dd></div>}
         {p.following != null && <div><dt className="text-on-surface-variant">Følger</dt><dd className="tabular-nums font-semibold">{num(p.following)}</dd></div>}
         {p.likes != null && <div><dt className="text-on-surface-variant">{p.platform === "facebook" ? "Synes godt om siden" : "Likes i alt"}</dt><dd className="tabular-nums font-semibold">{num(p.likes)}</dd></div>}
       </dl>

@@ -98,7 +98,7 @@ def _page_token() -> str:
     token = configured
     try:
         r = _send("GET", f"https://graph.facebook.com/{s.meta_graph_version}/{s.meta_page_id}",
-                  params={"fields": "access_token", "access_token": configured})
+                  params={"fields": "access_token"}, headers={"Authorization": f"Bearer {configured}"})
         got = _json(r).get("access_token") if r.status_code < 400 else None
         if isinstance(got, str) and got:
             token = got
@@ -110,8 +110,9 @@ def _page_token() -> str:
 
 def _graph(method: str, path: str, *, final: bool = False, **params) -> dict:
     s = get_settings()
-    params["access_token"] = _page_token()
+    # the token travels in the Authorization header, never in the URL: URLs end up in logs, the header is redacted
     kw = {"data": params} if method == "POST" else {"params": params}
+    kw["headers"] = {"Authorization": f"Bearer {_page_token()}"}
     r = _send(method, f"https://graph.facebook.com/{s.meta_graph_version}/{path}", final=final, **kw)
     body = _json(r)
     err = body.get("error")

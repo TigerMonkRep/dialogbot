@@ -14,6 +14,10 @@ _REDACT_HEADERS = {"authorization", "cookie", "x-api-key"}
 
 def configure_logging(level: str = "INFO") -> None:
     logging.basicConfig(format="%(message)s", stream=sys.stdout, level=level.upper())
+    # httpx logs every request URL at INFO — including query strings, which for Meta's Graph API carry the access
+    # token. Nothing we need; warnings and errors still come through.
+    for name in ("httpx", "httpcore"):
+        logging.getLogger(name).setLevel(logging.WARNING)
     structlog.configure(
         processors=[
             structlog.contextvars.merge_contextvars,

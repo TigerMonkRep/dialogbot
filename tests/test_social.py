@@ -450,8 +450,10 @@ def test_facebook_photo_post(live, db):
     assert (res.external_id, res.url) == ("111_9", "https://www.facebook.com/111_9")
     photos = next(c for c in live.calls if c.url.path.endswith("/111/photos"))
     f = _form(photos)
-    assert (f["url"], f["caption"], f["published"], f["access_token"]) == ("https://img/1.jpg", "Hej", "true", "SECRET-META-TOKEN")
-    assert photos.url.path.startswith("/v23.0/")
+    assert (f["url"], f["caption"], f["published"]) == ("https://img/1.jpg", "Hej", "true")
+    # the token travels in the header only: URLs and form bodies may end up in logs
+    assert photos.headers["authorization"] == "Bearer SECRET-META-TOKEN" and "access_token" not in f
+    assert "access_token" not in str(photos.url) and photos.url.path.startswith("/v23.0/")
 
 
 def test_a_system_user_token_is_exchanged_for_the_pages_own_token_once(live, db):
@@ -466,9 +468,9 @@ def test_a_system_user_token_is_exchanged_for_the_pages_own_token_once(live, db)
     publishers.FacebookPublisher().publish(db, _post("facebook", "Hej"), ["https://img/1.jpg"])
     publishers.InstagramPublisher().publish(db, _post("instagram", "Hej"), ["https://img/1.jpg"])
     lookups = [c for c in live.calls if c.url.path.endswith("/111") and c.url.params.get("fields") == "access_token"]
-    assert len(lookups) == 1 and lookups[0].url.params["access_token"] == "SECRET-META-TOKEN"
-    assert _form(next(c for c in live.calls if c.url.path.endswith("/111/photos")))["access_token"] == "PAGE-TOKEN"
-    assert _form(next(c for c in live.calls if c.url.path.endswith("/222/media")))["access_token"] == "PAGE-TOKEN"
+    assert len(lookups) == 1 and lookups[0].headers["authorization"] == "Bearer SECRET-META-TOKEN"
+    assert next(c for c in live.calls if c.url.path.endswith("/111/photos")).headers["authorization"] == "Bearer PAGE-TOKEN"
+    assert next(c for c in live.calls if c.url.path.endswith("/222/media")).headers["authorization"] == "Bearer PAGE-TOKEN"
 
 
 def test_instagram_carousel_creates_children_waits_then_publishes(live, db):
@@ -481,7 +483,7 @@ def test_instagram_carousel_creates_children_waits_then_publishes(live, db):
     assert (res.external_id, res.url) == ("m1", "https://instagram.com/p/x")
     creates = [_form(c) for c in live.calls if c.method == "POST" and c.url.path.endswith("/media")]
     assert creates[0]["is_carousel_item"] == "true" and creates[1]["is_carousel_item"] == "true"
-    assert creates[2] == {"media_type": "CAROUSEL", "children": "c1,c2", "caption": "Billedtekst", "access_token": "SECRET-META-TOKEN"}
+    assert creates[2] == {"media_type": "CAROUSEL", "children": "c1,c2", "caption": "Billedtekst"}
     assert _form(next(c for c in live.calls if c.url.path.endswith("media_publish")))["creation_id"] == "carousel"
 
 

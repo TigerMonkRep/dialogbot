@@ -412,6 +412,9 @@ def dashboard(db: OrmSession, *, days: int = 30, now: datetime | None = None) ->
         return latest.followers - older[-1].followers
 
     overview = status_overview(db)
+    # Facebook's Graph API has no post count for a Page, so fall back to what we published ourselves
+    own_posts = dict(db.execute(select(SocialPost.platform, func.count()).where(SocialPost.status == "published")
+                                .group_by(SocialPost.platform)).all())
     platforms = []
     for pl in overview["platforms"]:
         rows = by_platform.get(pl["platform"], [])
@@ -420,7 +423,9 @@ def dashboard(db: OrmSession, *, days: int = 30, now: datetime | None = None) ->
         platforms.append({**pl,
                           "followers": latest.followers if latest else None,
                           "following": latest.following if latest else None,
-                          "posts": latest.posts if latest else None,
+                          "posts": (latest.posts if latest and latest.posts is not None
+                                    else own_posts.get(pl["platform"], 0)),
+                          "posts_source": "platform" if latest and latest.posts is not None else "dialogbot",
                           "likes": latest.likes if latest else None,
                           "captured_on": latest.captured_on.isoformat() if latest else None,
                           "delta_7d": _delta(rows, 7), "delta_30d": _delta(rows, 30),

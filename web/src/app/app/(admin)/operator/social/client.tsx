@@ -13,7 +13,7 @@ export type Post = {
 };
 export type PlatformStats = {
   platform: Platform; enabled: boolean; connected: boolean; configured: boolean | null;
-  followers: number | null; following: number | null; posts: number | null; likes: number | null; captured_on: string | null;
+  followers: number | null; following: number | null; posts: number | null; posts_source?: "platform" | "dialogbot"; likes: number | null; captured_on: string | null;
   delta_7d: number | null; delta_30d: number | null; series: { date: string; followers: number | null }[]; error: string | null;
 };
 export type Prospect = {
@@ -146,7 +146,7 @@ function PlatformCard({ p, totals, days }: { p: PlatformStats; totals?: Dashboar
       </div>
       <Sparkline series={p.series} />
       <dl className="grid grid-cols-3 gap-space-xs font-label-sm text-label-sm">
-        <div><dt className="text-on-surface-variant">Opslag</dt><dd className="tabular-nums font-semibold">{num(p.posts)}</dd></div>
+        <div><dt className="text-on-surface-variant" title={p.posts_source === "dialogbot" ? "Platformen oplyser ikke antallet; dette er opslag sendt fra Dialogbot" : undefined}>Opslag{p.posts_source === "dialogbot" ? "*" : ""}</dt><dd className="tabular-nums font-semibold">{num(p.posts)}</dd></div>
         <div><dt className="text-on-surface-variant">Følger</dt><dd className="tabular-nums font-semibold">{num(p.following)}</dd></div>
         <div><dt className="text-on-surface-variant">{p.platform === "facebook" ? "Synes godt om" : "Likes i alt"}</dt><dd className="tabular-nums font-semibold">{num(p.likes)}</dd></div>
       </dl>

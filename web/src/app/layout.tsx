@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -20,7 +21,10 @@ export const viewport: Viewport = { themeColor: "#00362d" };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="da">
-      <body className="bg-surface text-on-surface text-body-md antialiased">{children}</body>
+      <body className="bg-surface text-on-surface text-body-md antialiased">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

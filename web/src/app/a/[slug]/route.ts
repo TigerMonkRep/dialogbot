@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { API_BASE_URL, REFERRAL_COOKIE, REFERRAL_MAX_AGE } from "@/lib/config";
+import { API_BASE_URL, KNOWN_ACCOUNT_COOKIE, REFERRAL_COOKIE, REFERRAL_MAX_AGE, SESSION_COOKIE } from "@/lib/config";
 import { PREVIEW_COOKIE, PREVIEW_MAX_AGE, cookieValue, gateEnabled } from "@/lib/preview-gate";
 
 /** An ambassador's personal link: dialogbot.dk/a/{slug}.
@@ -10,6 +10,12 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ slug: strin
   const { slug } = await ctx.params;
   const ref = slug.toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 60);
   const home = new URL("/", req.url);
+  // Someone who already has an account is not a new customer: no visit, no referral cookie, no welcome.
+  if (req.cookies.get(SESSION_COOKIE)?.value || req.cookies.get(KNOWN_ACCOUNT_COOKIE)?.value) {
+    const res = NextResponse.redirect(home);
+    res.headers.set("cache-control", "no-store");
+    return res;
+  }
   let active = false;
   try {
     const r = await fetch(`${API_BASE_URL}/api/v1/public/ambassadors/${encodeURIComponent(ref)}`, { cache: "no-store" });

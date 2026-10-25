@@ -14,3 +14,7 @@ export const COOKIE_OPTS = {
 /** Ambassador reference from an /a/{slug} visit, read when the customer creates a workspace. Not a secret. */
 export const REFERRAL_COOKIE = "db_ref";
 export const REFERRAL_MAX_AGE = 60 * 60 * 24 * 90;
+/** Set on every login and kept after logout: this browser belongs to someone who already has an account, so
+ *  ambassador welcomes ("X har anbefalet Dialogbot til dig") are not shown to them. Not a secret. */
+export const KNOWN_ACCOUNT_COOKIE = "db_known";
+export const KNOWN_ACCOUNT_MAX_AGE = 60 * 60 * 24 * 365 * 2;

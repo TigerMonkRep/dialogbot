@@ -2,7 +2,7 @@ import Link from "next/link";
 import { COMPANY } from "@/components/legal-page";
 import { cookies } from "next/headers";
 import { Icon } from "@/components/ui";
-import { API_BASE_URL, REFERRAL_COOKIE } from "@/lib/config";
+import { API_BASE_URL, KNOWN_ACCOUNT_COOKIE, REFERRAL_COOKIE, SESSION_COOKIE } from "@/lib/config";
 import type { Metadata } from "next";
 import { LANDING_PAGES, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import { INDUSTRIES } from "@/lib/industries";
@@ -14,9 +14,12 @@ import { IndustrySwitcher } from "./industries";
  *  company facts, metrics or links to pages that do not exist. Product intent is carried into signup. */
 type Recommender = { first_name: string; headline: string; code: string; customer_discount_bp: number };
 
-/** The ambassador who sent this visitor (cookie set by /a/{slug}); null when none or no longer active. */
+/** The ambassador who sent this visitor (cookie set by /a/{slug}); null when none or no longer active, and
+ *  never for someone who already has an account (logged in now, or has logged in from this browser before). */
 async function recommender(): Promise<Recommender | null> {
-  const ref = (await cookies()).get(REFERRAL_COOKIE)?.value;
+  const store = await cookies();
+  if (store.get(SESSION_COOKIE)?.value || store.get(KNOWN_ACCOUNT_COOKIE)?.value) return null;
+  const ref = store.get(REFERRAL_COOKIE)?.value;
   if (!ref) return null;
   try {
     const r = await fetch(`${API_BASE_URL}/api/v1/public/ambassadors/${encodeURIComponent(ref)}`, { cache: "no-store" });

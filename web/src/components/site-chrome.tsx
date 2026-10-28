@@ -77,6 +77,7 @@ export function SiteHeader({ current, nav, phone = true }: {
 
 export function SiteFooter({ compact = false }: { compact?: boolean }) {
   const link = "text-ink no-underline hover:text-accent inline-flex items-center min-h-11 sm:min-h-0";
+  const quiet = "text-muted no-underline hover:text-ink inline-flex items-center min-h-8";
   return (
     <footer className="border-t-2 border-ink bg-white mt-auto">
       <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-8 flex flex-wrap items-center justify-between gap-x-10 gap-y-4 text-sm text-muted">
@@ -95,17 +96,24 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
       </div>
       {!compact && (
         <div className="border-t border-line">
-          <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-5 flex flex-col gap-3 text-sm text-muted">
-            <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Sider">
-              <Link href="/proev" className={link}>Prøv den</Link>
-              <Link href="/byggevejledning" className={link}>Byggevejledning</Link>
-              {LANDING_PAGES.map((p) => <Link key={p.href} href={p.href} className={link}>{p.label}</Link>)}
-              <Link href="/kontakt" className={link}>Kontakt</Link>
-              <Link href="/login" className={link}>Log ind</Link>
-              <Link href="/signup" className={link}>Opret konto</Link>
+          {/* SEO link index: kept in the HTML for crawlers, visually quiet (small, muted, grouped). */}
+          <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-6 grid gap-x-10 gap-y-5 text-[13px] leading-6 text-muted sm:grid-cols-3">
+            <nav aria-label="Sider" className="flex flex-col gap-1">
+              <span className="eyebrow mb-1">Sider</span>
+              <Link href="/proev" className={quiet}>Prøv den</Link>
+              <Link href="/byggevejledning" className={quiet}>Byggevejledning</Link>
+              <Link href="/priser" className={quiet}>Priser</Link>
+              <Link href="/kontakt" className={quiet}>Kontakt</Link>
+              <Link href="/login" className={quiet}>Log ind</Link>
+              <Link href="/signup" className={quiet}>Opret konto</Link>
             </nav>
-            <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Brancher">
-              {INDUSTRIES.map((i) => <Link key={i.slug} href={`/ai-receptionist/${i.slug}`} className={link}>AI-receptionist til {i.name}</Link>)}
+            <nav aria-label="Viden" className="flex flex-col gap-1">
+              <span className="eyebrow mb-1">Viden</span>
+              {LANDING_PAGES.filter((p) => p.href !== "/priser").map((p) => <Link key={p.href} href={p.href} className={quiet}>{p.label}</Link>)}
+            </nav>
+            <nav aria-label="AI-receptionist til din branche" className="flex flex-col gap-1">
+              <span className="eyebrow mb-1">AI-receptionist til din branche</span>
+              {INDUSTRIES.map((i) => <Link key={i.slug} href={`/ai-receptionist/${i.slug}`} className={quiet}>{i.plural}</Link>)}
             </nav>
           </div>
         </div>

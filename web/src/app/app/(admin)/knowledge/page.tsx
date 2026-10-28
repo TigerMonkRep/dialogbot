@@ -69,6 +69,8 @@ export default async function KnowledgePage({ searchParams }: { searchParams: Pr
             <p className="text-[15px] leading-relaxed text-ink-soft max-w-[600px]">Står det ikke her, siger den det ikke – så tager den en besked til dig i stedet. Kun godkendt viden bruges: <b className="text-ink">{active.items.length} godkendte emner · revision {active.knowledge_revision}</b>.</p>
           </div>
           <div className="flex flex-wrap gap-2">
+            {/* The knowledge step leads on to the personal plan (step 3 of the setup guide). */}
+            <Link href="/app/setup" className={PILL_BTN}><Icon name="flag" size={18} />Fortsæt til personlig plan</Link>
             {canDraft && <Link href="/app/knowledge?tab=k01" className={PILL_BTN}><Icon name="download" size={18} />Hent fra hjemmesiden</Link>}
             {canDraft && <Link href="/app/knowledge?tab=k03#tilfoej" className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-xl bg-accent text-white text-[14px] font-semibold hover:bg-accent-deep"><Icon name="add" size={18} />Tilføj viden</Link>}
           </div>

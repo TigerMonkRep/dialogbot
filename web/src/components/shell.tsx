@@ -36,10 +36,10 @@ export const NAV: NavItem[] = [...MAIN, ...MORE];
 export const SIDE: NavItem[] = NAV;
 
 /** AI status pill. Shows "Aktiv AI" only when the conversation adapter is actually available. */
-function AiPill({ live }: { live: boolean }) {
+function AiPill({ live, className = "hidden lg:inline-flex" }: { live: boolean; className?: string }) {
   const cls = live ? "bg-success-soft text-success border-success-soft" : "bg-paper text-muted border-ink border-dashed";
   return (
-    <span className={`hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border-[1.5px] text-[11px] font-semibold uppercase tracking-[0.08em] ${cls}`} title={live ? undefined : "AI-samtale er ikke tilkoblet endnu"}>
+    <span className={`${className} items-center gap-1.5 px-2.5 py-1 rounded-full border-[1.5px] text-[11px] font-semibold uppercase tracking-[0.08em] whitespace-nowrap ${cls}`} title={live ? undefined : "AI-samtale er ikke tilkoblet endnu"}>
       <span className={`w-1.5 h-1.5 rounded-full ${live ? "bg-success" : "bg-muted"}`} />{live ? "Aktiv AI" : "AI ikke aktiv"}
     </span>
   );
@@ -115,8 +115,11 @@ async function Shell({ children }: { children: React.ReactNode }) {
             <AccountButton me={me} />
           </div>
         </div>
-        {/* Mobile: the same three tabs, under the header line */}
-        <div className="md:hidden px-4 pb-3 flex justify-center"><PillNav items={MAIN} className="max-w-full overflow-x-auto no-scrollbar" /></div>
+        {/* Mobile: the same three tabs under the header line, with the AI status pill (hidden in the header row at this width). */}
+        <div className="md:hidden px-4 pb-3 flex flex-wrap items-center justify-center gap-2">
+          <PillNav items={MAIN} className="max-w-full overflow-x-auto no-scrollbar" />
+          <AiPill live={aiLive} className="inline-flex shrink-0" />
+        </div>
         <VerifyBanner me={me} />
       </header>
 

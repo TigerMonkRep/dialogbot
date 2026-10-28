@@ -13,17 +13,29 @@ test("1 · A01→A03→A06: tilmelding med bevaret hensigt, bekræftelse og før
   await expect(page.getByText("Koden er ikke gyldig.", { exact: false })).toBeVisible();
   await page.getByLabel("Invitationskode").fill(PREVIEW_CODE.toLowerCase());
   await page.getByRole("button", { name: "Lås op og se forsiden" }).click();
-  await expect(page.getByRole("heading", { name: /Du driver forretningen/ })).toBeVisible();
-  await expect(page.getByRole("link", { name: /Bliv ringet op – hør det selv/ }).first()).toBeVisible();
-  // "Ring mig op nu" is honest: no sales workspace is configured in CI, so no call can be requested, but the voices
-  // and industries can be chosen and heard
-  await expect(page.getByRole("heading", { name: /Hvem tager telefonen, når du er optaget/ })).toBeVisible();
-  await expect(page.getByRole("radio", { name: "Camilla" })).toBeChecked();
-  await page.getByRole("radio", { name: /Håndværk & byg/ }).check({ force: true });
-  await expect(page.getByRole("radio", { name: /Håndværk & byg/ })).toBeChecked();
-  await expect(page.getByText(/Demo-opkald åbner om lidt/)).toBeVisible();
-  await expect(page.getByRole("button", { name: /Ring mig op nu med Camilla/ })).toBeDisabled();
-  await shot(page, info, "p01-forside");
+  // Indgang: two doors – hear it (/proev) or read how it is built (/byggevejledning).
+  await expect(page.getByRole("heading", { name: "Hvor vil du starte?" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Hør den først/ })).toHaveAttribute("href", "/proev");
+  await expect(page.getByRole("link", { name: /Se, hvordan den bygges/ })).toHaveAttribute("href", "/byggevejledning");
+  await shot(page, info, "p01-indgang");
+  // Vej A: the chat on /proev asks the backend first and is honest – no sales workspace is configured in CI, so it
+  // cannot ring anyone and says so instead of pretending a call was placed.
+  const demoInfo = page.waitForResponse((r) => r.url().includes("/demo-call") && r.request().method() === "GET");
+  await page.getByRole("link", { name: /Hør den først/ }).click();
+  await expect(page).toHaveURL(/\/proev$/);
+  await demoInfo;
+  const log = page.getByRole("log");
+  await expect(log.getByText(/Hej! Jeg er Dialogbot – en digital receptionist/)).toBeVisible();
+  await page.getByRole("button", { name: "Ja, ring til mig" }).click();
+  await expect(log.getByText(/Prøveopkaldet aktiveres snart – indtil da ringer vi til dig manuelt/)).toBeVisible();
+  await expect(page.getByText("Ikke lige nu")).toBeVisible(); // step label
+  await expect(page.getByRole("button", { name: "Ring mig op" })).toHaveCount(0); // no number is ever asked for
+  await expect(page.getByRole("link", { name: "Ring til os" })).toBeVisible();
+  await shot(page, info, "p06-proev-chat");
+  // Vej B: the byggevejledning offers the bricks; the campaigns brick starts signup with the intent preserved.
+  await page.getByRole("link", { name: "Se byggevejledningen" }).click();
+  await expect(page).toHaveURL(/\/byggevejledning$/);
+  await expect(page.getByRole("heading", { name: "Vælg de klodser, du har brug for" })).toBeVisible();
   await page.getByRole("link", { name: "Start med kundeopfølgning" }).click();
   await expect(page).toHaveURL(/\/signup\?intent=campaigns/);
   await page.getByLabel("Dit navn").fill("E2E Tilmelding");
@@ -118,13 +130,13 @@ test("5 · K03→K05: ny ydelse er kladde, indtil ejeren godkender den", async (
   await page.getByLabel(/Beskrivelse til assistenten/).fill("Afslibning og 2x lak");
   await page.getByLabel("Basispris (ekskl. moms)").fill("145");
   await page.getByRole("button", { name: "Gem som kladde" }).click();
-  await expect(page.getByText(/Ændringer afventer godkendelse/)).toBeVisible();
+  await expect(page.getByText(/1 ændring venter\./)).toBeVisible();
   await shot(page, info, "k03-kladde");
   await page.goto("/app/knowledge?tab=k05");
-  await expect(page.getByText("Foreslået ny version")).toBeVisible();
+  await expect(page.getByText("Efter · forslag")).toBeVisible();
   await expect(page.getByText("145,- kr").first()).toBeVisible();
   await shot(page, info, "k05-gennemgang");
-  await page.getByRole("button", { name: "Godkend ny version" }).click();
+  await page.getByRole("button", { name: "Godkend", exact: true }).click();
   // The card stays and is stamped "Godkendt" until the user moves on.
   await expect(page.getByRole("status").getByText("Godkendt")).toBeVisible();
   await page.waitForTimeout(500); // let the stamp land before the screenshot
@@ -206,7 +218,7 @@ test("8 · Roller: læser kan ikke redigere, medarbejder kan ikke se aktivitetsl
 test("9 · R06: medarbejder tester assistenten mod godkendt viden; læser kan ikke", async ({ page }, info) => {
   await login(page, SEEDED.staff);
   await page.goto("/app/knowledge?tab=r06");
-  await expect(page.getByRole("heading", { name: "Test assistenten" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Test den – spørg som en kunde" })).toBeVisible();
   await expect(page.getByText(/simuleret model, ikke en rigtig AI/)).toBeVisible();
   await page.getByLabel("Spørgsmål fra en kunde").fill("Hvad koster afslibning?");
   await page.getByRole("button", { name: "Spørg assistenten" }).click();
@@ -220,7 +232,7 @@ test("9 · R06: medarbejder tester assistenten mod godkendt viden; læser kan ik
   await page.context().clearCookies();
   await login(page, SEEDED.reader);
   await page.goto("/app/knowledge?tab=r06");
-  await expect(page.getByText("Test af assistenten kræver rollen medarbejder eller højere.")).toBeVisible();
+  await expect(page.getByText("Test kræver rollen medarbejder eller højere.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Spørg assistenten" })).toHaveCount(0);
 });
 
@@ -599,8 +611,8 @@ test("20 · Overblik og notifikationer: en ny henvendelse vises med ulæst-tæll
   const CSRF = { "x-requested-with": "dialogbot" };
   await page.request.post(`/api/backend/workspaces/${wsId}/leads`, { headers: CSRF, data: { contact_name: "Mette", contact_phone: "+4520304050", need_summary: "Tilbud på afslibning" } });
   await page.goto("/app/overview");
-  await expect(page.getByText("Nye henvendelser (24 t)")).toBeVisible();
-  await expect(page.getByRole("link", { name: /Ny henvendelse: Mette/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /1 nye henvendelser/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Åbn: Ny henvendelse: Mette/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /Notifikationer, \d+ ulæste/ }).first()).toBeVisible();
   await shot(page, info, "overblik");
   await page.goto("/app/notifications");

@@ -109,7 +109,7 @@ export default async function OverviewPage() {
                       <span className="text-[15px] font-semibold text-ink">{a.title}</span>
                       {a.body && <span className="text-[13px] text-ink-soft truncate">{a.body}</span>}
                     </div>
-                    <Link href={a.href} className="inline-flex items-center min-h-[44px] px-4 rounded-xl bg-accent text-white text-[14px] font-semibold hover:bg-accent-deep">{t.cta}</Link>
+                    <Link href={a.href} aria-label={`${t.cta}: ${a.title}`} className="inline-flex items-center min-h-[44px] px-4 rounded-xl bg-accent text-white text-[14px] font-semibold hover:bg-accent-deep">{t.cta}</Link>
                   </li>
                 );
               })}

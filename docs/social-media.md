@@ -20,7 +20,7 @@ Emnerne (16 stk., `app/modules/social/topics.py`): ubesvarede opkald, sådan kom
 ### Hvem skriver teksten — og hvad forhindrer, at den finder på noget?
 
 1. Er `AI_PROVIDER` slået til (`anthropic`), skriver AI'en de tre opslag ud fra en fast liste af **verificerede fakta** (`topics.FACTS`) og en vinkel for emnet. Den får de seneste overskrifter at undgå, så opslagene ikke ligner hinanden.
-2. Hvert svar kontrolleres i kode (`content.check`): kun priserne 2.495 kr. og 4 kr. må nævnes (`topics.ALLOWED_AMOUNTS`); ingen procenter, garantier, "bedst"/"nr. 1", besparelser eller "gratis" uden for "gratis opsætning"; ingen links eller hashtags i selve teksten (dem sætter koden på); længdegrænser og antal slides pr. platform.
+2. Hvert svar kontrolleres i kode (`content.check`): kun priserne 2.495 kr., 4 kr. og 5.000 kr. (specialist-opsætning) må nævnes (`topics.ALLOWED_AMOUNTS`); ingen procenter, garantier, "bedst"/"nr. 1", besparelser eller "gratis"; ingen links eller hashtags i selve teksten (dem sætter koden på); længdegrænser og antal slides pr. platform.
 3. Fejler en platforms tekst kontrollen — eller er AI'en slået fra, utilgængelig eller svarer ugyldigt — bruges den **håndskrevne tekst** for den platform. Et opslag blokeres altså aldrig af AI'en, og det indeholder aldrig et tal eller løfte, der ikke står i fakta-listen. AI-kald logges i `ai_usage` på salgsarbejdsrummet (`SALES_WORKSPACE_ID`), hvis det findes.
 4. Billederne er rene grafikker i brandets farver og skrifttype (Manrope) — ingen genererede fotos, ingen opdigtede kundecitater.
 

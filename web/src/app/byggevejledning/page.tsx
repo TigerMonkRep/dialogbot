@@ -273,9 +273,9 @@ export default function Page() {
           <div className="flex flex-col gap-3 max-w-[640px]">
             <span className={eyebrow}>Pris</span>
             <h2 className={h2}>Ét sæt. Én pris, ingen overraskelser.</h2>
-            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Alle priser er ekskl. moms. Opsætningen gør vi sammen på ca. 30 minutter – den koster 0 kr.</p>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Alle priser er ekskl. moms. Opsætningen kan I gøre selv på ca. 30 minutter – den er med. Vil I have den skræddersyet af vores specialister, koster det 5.000 kr. én gang.</p>
           </div>
-          <div className="grid gap-6 max-w-[860px] [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))]">
+          <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))]">
             <article className="flex flex-col gap-5 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block">
               <div className="flex items-center gap-3">
                 <span className="inline-flex w-11 h-11 rounded-xl bg-highlight items-center justify-center font-display font-extrabold text-[22px]">1</span>
@@ -306,6 +306,21 @@ export default function Page() {
                 <li className="flex gap-2.5 items-start"><Check />Kun hvis I vil have Dialogbot til at ringe ud</li>
                 <li className="flex gap-2.5 items-start"><Check />Kontakterne har selv sagt ja til at blive ringet op</li>
                 <li className="flex gap-2.5 items-start"><Check />Højst 2 forsøg pr. kontakt – I ser den højeste pris, før I starter</li>
+              </ul>
+            </article>
+            <article className="flex flex-col gap-5 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex w-11 h-11 rounded-xl bg-panel border-2 border-ink items-center justify-center font-display font-extrabold text-[22px]">+</span>
+                <span className="font-display font-bold text-xl">Opsætning fra vores specialister</span>
+              </div>
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">5.000</span>
+                <span className="text-lg font-semibold text-ink-soft">kr. én gang</span>
+              </div>
+              <ul className="m-0 p-0 list-none flex flex-col gap-2.5 text-[15px]">
+                <li className="flex gap-2.5 items-start"><Check />Kun hvis I ikke vil gøre det selv – de tre trin er med i abonnementet</li>
+                <li className="flex gap-2.5 items-start"><Check />Skræddersyet opsætning og integration til jeres egne systemer og behov</li>
+                <li className="flex gap-2.5 items-start"><Check />Kalender, CRM eller bookingsystem kobles på, viden og priser lægges ind, stemmen trænes – og vi tester sammen, før den tændes</li>
               </ul>
             </article>
           </div>

@@ -21,8 +21,9 @@ FACTS: tuple[str, ...] = (
     "Den giver en kort opsummering af hver henvendelse.",
     "Pris ekskl. moms: ét abonnement fra 2.495 kr. om måneden. Der er ingen pris pr. henvendelse.",
     "Udgående opkald i en kampagne koster 4 kr. pr. opkald ekskl. moms.",
-    "Ingen binding og intet opstartsgebyr.",
-    "Personlig opsætning sammen med en fra Dialogbot, cirka en halv time.",
+    "Ingen binding.",
+    "Opsætning: virksomheden kan selv sætte Dialogbot op efter byggevejledningens tre trin (med i abonnementet, cirka en halv time).",
+    "Opsætning fra Dialogbots egne specialister koster 5.000 kr. ekskl. moms én gang og giver en skræddersyet opsætning og integration til virksomhedens egne systemer og behov.",
     "Virksomheder kan beholde deres eget telefonnummer og viderestille til Dialogbot.",
     "En AI-telefonsvarer taler med kunden i stedet for at bede om en besked.",
     "Chatbot til hjemmesiden med samme godkendte viden som telefonen.",
@@ -31,7 +32,7 @@ FACTS: tuple[str, ...] = (
 )
 
 # The only kroner amounts a post may mention (as written on the website).
-ALLOWED_AMOUNTS: frozenset[str] = frozenset({"2.495", "4"})
+ALLOWED_AMOUNTS: frozenset[str] = frozenset({"2.495", "4", "5.000"})
 
 PLATFORMS = ("facebook", "instagram", "tiktok")
 
@@ -59,7 +60,7 @@ TOPICS: tuple[Topic, ...] = (
         points=("Dialogbot tager telefonen og chatten døgnet rundt",
                 "Svarer kun ud fra den viden, du selv har godkendt",
                 "Du får en kort opsummering af hver henvendelse"),
-        proof="Ingen binding og intet opstartsgebyr.", tags=("ubesvaredeopkald", "telefonpasning")),
+        proof="Ingen binding – sæt den op selv, eller lad vores specialister gøre det.", tags=("ubesvaredeopkald", "telefonpasning")),
     Topic(
         key="how_it_works", path="/viden/viderestil-telefonen", kicker="Kom i gang",
         angle="Tre enkle trin fra opsætning til en telefon, der passer sig selv.",
@@ -79,7 +80,7 @@ TOPICS: tuple[Topic, ...] = (
                "tiktok": "Hvad koster en AI-receptionist? Se her."},
         points=("Ét abonnement – ingen pris pr. henvendelse",
                 "Udgående kampagneopkald har deres egen lille pris",
-                "Ingen binding og intet opstartsgebyr"),
+                "Ingen binding – gør-det-selv-opsætning er med"),
         proof="Se prisen på dialogbot.dk.", tags=("pris", "ingenbinding"),
         caption_note="Fra 2.495 kr./md. ekskl. moms. Udgående kampagneopkald: 4 kr. pr. opkald ekskl. moms."),
     Topic(

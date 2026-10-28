@@ -210,7 +210,7 @@ class Component extends DCLogic {
       quick = [
         { label: 'Ja, ring til mig', pick: go('Ja, ring til mig', 'Super. Hvad hedder din virksomhed?', 'firma') },
         { label: 'Hvad kan du?', pick: go('Hvad kan du?', 'Jeg tager telefonen døgnet rundt, svarer på det, kunderne oftest spørger om, booker tider i din kalender og sender dig en besked, hvis der er noget, jeg ikke kan klare.\n\nVil du høre det selv?', 'start') },
-        { label: 'Hvad koster det?', pick: go('Hvad koster det?', 'Ét abonnement fra 2.495 kr. om måneden, ekskl. moms – og opsætningen koster 0 kr.\n\nSkal jeg ringe og vise dig, hvad du får?', 'start') }
+        { label: 'Hvad koster det?', pick: go('Hvad koster det?', 'Ét abonnement fra 2.495 kr. om måneden, ekskl. moms. Opsætningen kan I gøre selv – det er med. Vil I have vores specialister til at skræddersy den til jeres systemer, koster det 5.000 kr. én gang.\n\nSkal jeg ringe og vise dig, hvad du får?', 'start') }
       ];
     } else if (s.step === 'branche') {
       const b = (label) => go(label, 'Så er jeg receptionist for ' + s.firma + ' fra nu af. Hvilket nummer skal jeg ringe til?', 'tlf', { branche: label });

@@ -26,7 +26,7 @@ export default function TermsPage() {
           <p>Kan betalingen ikke gennemføres, får I besked. Er en faktura ikke betalt 14 dage efter forfald, kan vi sætte assistenten på pause, indtil betalingen er på plads.</p>
           <p>Har I spørgsmål til en faktura, så <Link href="/kontakt">kontakt os</Link>, før I gør indsigelse hos jeres bank.</p></>],
         ["4. Opstart, løbetid og opsigelse", <>
-          <p>Aftalen løber, indtil den opsiges. I kan opsige til udgangen af den løbende måned ved at skrive til os. Vi kan opsige med 30 dages varsel. Der er ingen binding og intet opstartsgebyr.</p>
+          <p>Aftalen løber, indtil den opsiges. I kan opsige til udgangen af den løbende måned ved at skrive til os. Vi kan opsige med 30 dages varsel. Der er ingen binding. Opsætning er med, når I gør den selv; opsætning fra Dialogbots specialister koster 5.000 kr. ekskl. moms og betales én gang, før arbejdet går i gang.</p>
           <p>Ved væsentlig misligholdelse – fx misbrug af tjenesten eller manglende betaling – kan vi lukke adgangen uden varsel.</p></>],
         ["5. Jeres ansvar", <>
           <p>I er ansvarlige for, at den viden, de priser, åbningstider og svar, I godkender, er korrekte, og for at følge op på de henvendelser, assistenten tager imod.</p>

@@ -14,7 +14,7 @@ export default function Page() {
     <SeoPage path="/priser" kicker="Priser"
       title="Ét abonnement – fra 2.495 kr. om måneden"
       lead="Én pris, den fulde Dialogbot: AI-receptionist på telefonen, chatbot på hjemmesiden, booking og en opsummering af hver henvendelse. Alle priser er ekskl. moms."
-      points={["Fra 2.495 kr. om måneden – ét abonnement", "Ingen pris pr. henvendelse", "Udgående kampagneopkald: 4 kr. pr. opkald", "Ingen binding og intet opstartsgebyr", "Personlig opsætning er gratis"]}
+      points={["Fra 2.495 kr. om måneden – ét abonnement", "Ingen pris pr. henvendelse", "Udgående kampagneopkald: 4 kr. pr. opkald", "Ingen binding", "Gør-det-selv-opsætning er med – specialist-opsætning 5.000 kr."]}
       sections={[
         { title: "Abonnementet", body: <>
           <p><strong>Fra 2.495 kr. om måneden</strong> ekskl. moms. Der er ingen pris pr. henvendelse eller pr. opkald, I selv modtager – I ved præcis, hvad det koster hver måned.</p>
@@ -25,19 +25,23 @@ export default function Page() {
           <li>Chatbot til hjemmesiden med samme viden</li>
           <li>Booking, flytning og aflysning af tider samt SMS-bekræftelse</li>
           <li>Opsummering af hver henvendelse, opgaver og daglig rapport</li>
-          <li>Personlig opsætning på cirka en halv time – vi guider jer hele vejen</li>
+          <li>Gør-det-selv-opsætning: byggevejledningens tre trin, cirka en halv time, med assistenten ved hånden</li>
         </ul> },
+        { title: "Opsætning fra vores specialister – 5.000 kr.", body: <>
+          <p>I kan sætte Dialogbot op selv – byggevejledningens tre trin er med i abonnementet. Vil I hellere have det gjort, sætter vores egne specialister den op for <strong>5.000 kr.</strong> ekskl. moms, betalt én gang.</p>
+          <p>Så får I en skræddersyet opsætning og integration til jeres egne systemer og behov: vi kobler kalender, CRM eller bookingsystem på, lægger jeres viden og priser ind, træner stemmen på jeres navne og tester det hele sammen med jer, før den tændes.</p>
+        </> },
         { title: "Udgående kampagneopkald", body: <>
           <p>Vil I have assistenten til at ringe ud til kontakter, der selv har sagt ja til at blive ringet op, koster det <strong>4 kr. pr. udgående opkald</strong> ekskl. moms.</p>
           <p>Hvert opkald, der ringes, tæller – også et nyt forsøg. En kontakt ringes højst 2 gange, og I ser den højeste pris, før I trykker Start.</p>
         </> },
-        { title: "Kom i gang", body: <p>Hør først, hvordan det lyder: <Link href="/proev">bliv ringet op af Dialogbot</Link>. Når I er klar, <Link href="/signup">opretter I en konto</Link>, og vi sætter det op sammen. Læs mere om <Link href="/ai-receptionist">AI-receptionisten</Link>.</p> },
+        { title: "Kom i gang", body: <p>Hør først, hvordan det lyder: <Link href="/proev">bliv ringet op af Dialogbot</Link>. Når I er klar, <Link href="/signup">opretter I en konto</Link> og følger byggevejledningen – eller bestiller opsætning fra vores specialister. Læs mere om <Link href="/ai-receptionist">AI-receptionisten</Link>.</p> },
       ]}
       faq={[
-        ["Er der binding?", "Nej. Der er ingen binding og intet opstartsgebyr. I kan opsige til udgangen af den løbende måned."],
+        ["Er der binding?", "Nej. Der er ingen binding. I kan opsige til udgangen af den løbende måned."],
         ["Hvad betyder \"fra\" 2.495 kr.?", "Det er prisen for abonnementet, ekskl. moms. Der er ingen ekstra pris pr. henvendelse."],
         ["Hvad koster udgående kampagneopkald?", "4 kr. pr. udgående opkald ekskl. moms. Kontakterne skal på forhånd have sagt ja til at blive ringet op, og en kampagne ringer først, når I selv trykker Start."],
-        ["Koster opsætningen noget?", "Nej, den personlige opsætning er gratis og tager cirka en halv time."],
+        ["Koster opsætningen noget?", "Ikke hvis I gør det selv: byggevejledningens tre trin er med i abonnementet og tager cirka en halv time. Opsætning fra vores specialister koster 5.000 kr. ekskl. moms én gang og giver jer en skræddersyet opsætning og integration til jeres egne systemer og behov."],
       ]} />
   );
 }

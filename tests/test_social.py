@@ -50,7 +50,7 @@ def test_prices_in_the_facts_match_the_website():
     from app.modules.billing import prices
 
     assert any("fra 2.495 kr. om måneden" in f for f in FACTS) and any("4 kr. pr. opkald" in f for f in FACTS)
-    assert ALLOWED_AMOUNTS == {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR), prices.kr(prices.CAMPAIGN_CALL_NET_MINOR)}
+    assert ALLOWED_AMOUNTS == {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR), prices.kr(prices.CAMPAIGN_CALL_NET_MINOR), prices.kr(prices.SPECIALIST_SETUP_NET_MINOR)}
     assert not any("149" in f or "1.495" in f for f in FACTS)                          # the old prices are gone
 
 

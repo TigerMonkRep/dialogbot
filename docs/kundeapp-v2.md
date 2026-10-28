@@ -149,7 +149,7 @@ Alle felter/endpoints herunder findes allerede, medmindre andet er nævnt. Board
 
 ## 8. Regler, der ikke må brydes
 
-- Priser kun som: «abonnement fra 2.495 kr./md.» og «4 kr. pr. udgående kampagneopkald», altid «ekskl. moms». Ingen påstande om ISO, hosting, SLA eller «gratis» (undtagen «gratis opsætning»).
+- Priser kun som: «abonnement fra 2.495 kr./md.» og «4 kr. pr. udgående kampagneopkald», altid «ekskl. moms». Opsætning: gør-det-selv er med i abonnementet; «opsætning fra vores specialister 5.000 kr. ekskl. moms, én gang» (skræddersyet opsætning og integration til egne systemer/behov). Ingen påstande om ISO, hosting, SLA eller «gratis».
 - Ingen gradienter, bløde skygger eller emoji. Eneste skygge: `shadow-block` (8px 8px 0 blæk), én pr. sektion.
 - Rigtige `<a>`/`<button>`/`<label>`; knapper ≥ 44 px; kontrast 4,5:1; alt virker ved 390 px.
 - Intet gemmes uden «Godkend», når det går gennem assistenten. Direkte formularer (fx trin 1) autosaver, men viser «Gemt».

@@ -21,7 +21,7 @@ ALLOWED = {
 }
 SCANNED = ["app", "web/src", "web/public/materiale", "web/public/llms.txt", "design-reference/byggevejledning",
            "docs/social-media.md", "docs/sales", "docs/ambassadors", "docs/telephony"]
-OLD = re.compile(r"1\.495|\b149 kr|\b149,00|pr\. godkendt henvendelse|[Mm]odel [AB]\b|kontaktpakke|9 kr\. pr\. kontakt|9,00 kr")
+OLD = re.compile(r"1\.495|\b149 kr|\b149,00|pr\. godkendt henvendelse|[Mm]odel [AB]\b|kontaktpakke|9 kr\. pr\. kontakt|9,00 kr|[Gg]ratis (personlig )?opsætning|opsætning(en)? (koster )?0 kr|intet opstartsgebyr")
 SUFFIXES = {".py", ".ts", ".tsx", ".html", ".txt", ".md"}
 
 
@@ -36,7 +36,8 @@ def _files():
 
 def test_list_prices():
     assert prices.SUBSCRIPTION_MONTHLY_NET_MINOR == 249_500 and prices.CAMPAIGN_CALL_NET_MINOR == 400
-    assert (prices.kr(249_500), prices.kr(400), prices.kr(450)) == ("2.495", "4", "4,50")
+    assert prices.SPECIALIST_SETUP_NET_MINOR == 500_000
+    assert (prices.kr(249_500), prices.kr(400), prices.kr(450), prices.kr(500_000)) == ("2.495", "4", "4,50", "5.000")
     assert agreements.TAX_BASIS_POINTS == 2500
 
 
@@ -56,6 +57,6 @@ def test_the_public_pages_state_both_prices():
     pricing = (ROOT / "web/src/app/priser/page.tsx").read_text(encoding="utf-8")
     llms = (ROOT / "web/public/llms.txt").read_text(encoding="utf-8")
     for text in (pricing, llms):
-        assert "2.495 kr." in text and "4 kr. pr." in text and "ekskl. moms" in text
+        assert "2.495 kr." in text and "4 kr. pr." in text and "5.000 kr." in text and "ekskl. moms" in text
     assert "Fra 2.495 kr./md." in (ROOT / "web/src/app/byggevejledning/page.tsx").read_text(encoding="utf-8")
     assert "Fra 2.495 kr./md." in (ROOT / "web/src/app/(public)/page.tsx").read_text(encoding="utf-8")

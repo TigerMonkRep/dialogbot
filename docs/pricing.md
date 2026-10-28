@@ -6,7 +6,8 @@ Gældende fra 28. oktober 2026. Alle priser er ekskl. moms (25 % lægges på fak
 |---|---|
 | **Abonnement** | **Fra 2.495 kr./md.** – telefon, chat, booking, opsummering af hver henvendelse. Ingen pris pr. henvendelse. |
 | **Udgående kampagneopkald** | **4 kr. pr. udgående opkald** – hvert opkald, der ringes, tæller, også et nyt forsøg. |
-| Opsætning | Gratis, cirka en halv time. |
+| Opsætning – gør det selv | Med i abonnementet: byggevejledningens tre trin, cirka en halv time. |
+| **Opsætning fra vores specialister** | **5.000 kr.** én gang – skræddersyet opsætning og integration til kundens egne systemer og behov (kalender, CRM, bookingsystem, viden og priser, stemmetræning, test før tænd). Faktureres indtil videre manuelt; `SPECIALIST_SETUP_NET_MINOR` i `prices.py` er tallet. |
 | Binding | Ingen. Opsigelse til udgangen af måneden. |
 
 Tidligere fandtes to modeller (1.495 kr./md. eller 149 kr. pr. godkendt henvendelse) og kampagnepakker à 9 kr. pr.
@@ -15,7 +16,7 @@ kontakt. De findes ikke mere.
 ## Hvor tallene bor
 
 - **Kode:** `app/modules/billing/prices.py` – `SUBSCRIPTION_MONTHLY_NET_MINOR` (249.500 øre) og
-  `CAMPAIGN_CALL_NET_MINOR` (400 øre). Prisaftalen, kampagner, Peters salgsmanuskript og testene læser dem derfra.
+  `CAMPAIGN_CALL_NET_MINOR` (400 øre) og `SPECIALIST_SETUP_NET_MINOR` (500.000 øre). Prisaftalen, kampagner, Peters salgsmanuskript og testene læser dem derfra.
 - **Tekster** (skal rettes i hånden, når prisen ændres): `web/src/app/priser`, `byggevejledning`, forsiden
   (`(public)/page.tsx`, inkl. strukturerede data), `ai-receptionist`, `chatbot`, `ai-telefonsvarer`, `vilkaar`,
   `proev-chat.tsx`, `web/public/llms.txt`, `web/public/materiale/*.html`, `app/modules/social/topics.py`

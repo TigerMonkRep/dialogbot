@@ -113,7 +113,7 @@ def cover_generic(size, bg, ink, sub_ink, pad, head_size, kit_name=None, safe=No
     steps_123(d, x0, y0, side=int(head_size * 0.9), ink=ink)
     y = y0 + int(head_size * 0.9) + int(head_size * 0.5)
     y = headline(d, (x0, y), HEAD, head_size, x1 - x0, fill=ink, spacing=1.02)
-    d.text((x0, y + int(head_size * 0.25)), "Tager telefonen, booker tider og svarer på hjemmesiden – fra 1.495 kr. om måneden.",
+    d.text((x0, y + int(head_size * 0.25)), "Tager telefonen, booker tider og svarer på hjemmesiden – vi sætter den op sammen med dig.",
            font=font("Inter-Regular", int(head_size * 0.36)), fill=sub_ink)
     brand_row(img, d, x0, y1 - logo_size, logo_size, ink=ink)
     d.text((x1, y1 - logo_size // 2), CONTACT, font=font("Inter-SemiBold", int(logo_size * 0.42)), fill=sub_ink,
@@ -183,12 +183,12 @@ def fotos() -> None:
     save(img, BRAND / "foto-funktioner-1200x900.png")
     # priser: ink background, two cards (paper / yellow)
     img, d = new((1200, 900), INK)
-    eyebrow(d, (m, m + 14), "Enkle priser", size=16, fill=ACCENT_LIGHT)
-    y = headline(d, (m, m + 40), "To måder at betale på", 60, 1040, fill=WHITE, spacing=1.02)
+    eyebrow(d, (m, m + 14), "To måder at betale på", size=16, fill=ACCENT_LIGHT)
+    y = headline(d, (m, m + 40), "Vælg det, der passer jer", 60, 1040, fill=WHITE, spacing=1.02)
     top = y + 40
     for i, (title, price, sub, fill) in enumerate([
-            ("Fast abonnement", "1.495 kr.", "pr. måned ekskl. moms", PAPER),
-            ("Pr. henvendelse", "149 kr.", "pr. godkendt henvendelse ekskl. moms", HIGHLIGHT)]):
+            ("Fast abonnement", "Fast pris", "pr. måned – alt inkluderet, ekskl. moms", PAPER),
+            ("Kampagner", "Pr. opkald", "betal kun for udgående kampagneopkald", HIGHLIGHT)]):
         cx = m + i * (505 + 30)
         card(d, (cx, top, cx + 505, top + 300), radius=20, fill=fill, border=2, block_shadow=(i == 1))
         step_square(d, (cx + 32, top + 32), 48, "AB"[i], fill=INK if i == 1 else HIGHLIGHT, ink=HIGHLIGHT if i == 1 else INK)

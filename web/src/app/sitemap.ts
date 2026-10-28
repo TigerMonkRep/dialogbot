@@ -8,6 +8,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ({ url: `${SITE_URL}${path}`, lastModified: now, changeFrequency, priority });
   return [
     page("", 1, "weekly"),
+    page("/proev", 0.9, "monthly"),
+    page("/byggevejledning", 0.9, "monthly"),
     ...LANDING_PAGES.map((p) => page(p.href, 0.9, "monthly")),
     ...INDUSTRIES.map((i) => page(`/ai-receptionist/${i.slug}`, 0.8, "monthly")),
     ...ARTICLES.map((a) => page(`/viden/${a.slug}`, 0.7, "monthly")),

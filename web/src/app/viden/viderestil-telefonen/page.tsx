@@ -31,7 +31,7 @@ export default function Page() {
           <p>Virker en kode ikke, eller har du et fastnet- eller IP-telefonianlæg, så slå viderestilling til i teleselskabets app eller selvbetjening, eller spørg dit teleselskab.</p>
         </> },
         { title: "Den smarte opsætning", body: <p>De fleste virksomheder bruger <strong>optaget + ingen svar + slukket</strong>. Så tager du selv telefonen, når du kan, og alle andre opkald går til din AI-receptionist i stedet for telefonsvareren.</p> },
-        { title: "Viderestil til Dialogbot", body: <p>Når du opretter dig hos Dialogbot, får du et Dialogbot-nummer, som du viderestiller til – og vi hjælper dig med det under opsætningen. Læs mere om <Link href="/ai-telefonsvarer">AI-telefonsvareren</Link> eller <Link href="/#demo">hør den selv</Link>.</p> },
+        { title: "Viderestil til Dialogbot", body: <p>Når du opretter dig hos Dialogbot, får du et Dialogbot-nummer, som du viderestiller til – og vi hjælper dig med det under opsætningen. Læs mere om <Link href="/ai-telefonsvarer">AI-telefonsvareren</Link> eller <Link href="/proev">hør den selv</Link>.</p> },
       ]}
       faq={[
         ["Koster viderestilling noget?", "Det afhænger af dit abonnement hos teleselskabet. Tjek prisen på viderestillede opkald hos dit selskab."],

@@ -39,7 +39,7 @@ export default function Page() {
           <li><strong>Opsætning</strong> – får du hjælp, eller skal du selv finde ud af det?</li>
           <li><strong>Pris</strong> – fast pris eller pr. henvendelse, og er der binding?</li>
         </ul> },
-        { title: "Prøv det selv", body: <p>Den bedste test er at høre den. <Link href="/#demo">Bliv ringet op af Dialogbot</Link>, vælg din branche, og hør hvordan den ville tage telefonen for dig. Læs mere om <Link href="/ai-receptionist">Dialogbots AI-receptionist</Link> eller se <Link href="/priser">priserne</Link>.</p> },
+        { title: "Prøv det selv", body: <p>Den bedste test er at høre den. <Link href="/proev">Bliv ringet op af Dialogbot</Link>, vælg din branche, og hør hvordan den ville tage telefonen for dig. Læs mere om <Link href="/ai-receptionist">Dialogbots AI-receptionist</Link> eller se <Link href="/priser">priserne</Link>.</p> },
       ]}
       faq={[
         ["Er en AI-receptionist det samme som en chatbot?", "Ikke helt. En chatbot skriver, en AI-receptionist taler i telefonen. Dialogbot gør begge dele med den samme viden."],

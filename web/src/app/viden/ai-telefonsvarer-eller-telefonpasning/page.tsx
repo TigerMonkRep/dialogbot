@@ -28,7 +28,7 @@ export default function Page() {
           <li><strong>Vigtigt med et menneske i røret?</strong> Telefonpasning – men tjek åbningstiden.</li>
           <li><strong>Mange opkald, også om aftenen, og ønske om booking?</strong> En AI-telefonsvarer giver mest for pengene.</li>
         </ul> },
-        { title: "Hør forskellen", body: <p><Link href="/#demo">Bliv ringet op af Dialogbot</Link> og hør, hvordan en AI-telefonsvarer lyder. Se også <Link href="/priser">priserne</Link>.</p> },
+        { title: "Hør forskellen", body: <p><Link href="/proev">Bliv ringet op af Dialogbot</Link> og hør, hvordan en AI-telefonsvarer lyder. Se også <Link href="/priser">priserne</Link>.</p> },
       ]}
       faq={[
         ["Kan en AI-telefonsvarer erstatte telefonpasning?", "For de fleste faste henvendelser ja: den svarer, afklarer behovet og booker. Komplekse sager sendes videre til jer."],

@@ -10,7 +10,9 @@ import { PowerToggle, type TelephonyCode } from "./client";
 type Activity = { id: string; kind: string; title: string; body: string; href: string; at: string };
 type Overview = { kpis: Record<string, number>; activity: Activity[] };
 type Telephony = { status: { code: TelephonyCode; label: string; next_step: string }; business_number: string | null; destination: { e164: string } | null };
-type Call = { id: string; from_number: string | null; started_at: string | null; duration_seconds: number | null; ended_reason: string | null; summary: string | null; conversation_id: string | null };
+type Row = { id: string; channel: string; outcome: "booked" | "to_you" | "done"; name: string; origin: string | null; summary: string; question: string; started_at: string };
+type Appt = { id: string; title: string; label: string; starts_at: string; contact_name: string };
+const TAG: Record<Row["outcome"], [string, string]> = { booked: ["Aftale booket", "bg-success-soft text-success"], to_you: ["Til dig", "bg-highlight text-ink"], done: ["Klaret", "bg-accent-soft text-accent-deep"] };
 
 /** What each "to you" item is and what the one button does. */
 const TODO: Record<string, { tag: string; cta: string }> = {
@@ -47,11 +49,14 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
   if (!taendt && !st.done && !(await cookies()).get("db_setup_later")) redirect(`/opsaetning/${st.next}`);
   const staff = ws.role !== "reader";
   const canManage = ws.role === "owner" || ws.role === "admin";
-  const [ov, tel, calls] = await Promise.all([
+  const [ov, tel, calls, appts, goals] = await Promise.all([
     backend<Overview>(`/workspaces/${ws.id}/overview`),
     staff ? backend<Telephony>(`/workspaces/${ws.id}/telephony`).catch(() => null) : Promise.resolve(null),
-    staff ? backend<{ items: Call[] }>(`/workspaces/${ws.id}/telephony/calls?limit=5`).catch(() => null) : Promise.resolve(null),
+    staff ? backend<{ items: Row[] }>(`/workspaces/${ws.id}/conversations/feed?limit=5`).catch(() => null) : Promise.resolve(null),
+    staff ? backend<{ items: Appt[]; timezone: string }>(`/workspaces/${ws.id}/bookings?days=30`).catch(() => null) : Promise.resolve(null),
+    backend<{ callback: boolean }>(`/workspaces/${ws.id}/goals`).catch(() => null),
   ]);
+  const nextAppts = appts?.items.filter((a) => new Date(a.starts_at) >= new Date()).slice(0, 3) ?? [];
   const k = ov.kpis;
   const code: TelephonyCode = tel?.status.code ?? "not_started";
   const on = code === "active";
@@ -140,15 +145,35 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
               {calls.items.map((c) => (
                 <li key={c.id} className="flex flex-wrap items-center gap-2 md:gap-4 py-3 border-b-[1.5px] border-ink text-[14px]">
                   <span className="font-display font-bold min-w-[48px] text-ink">{hhmm(c.started_at)}<span className="block text-[11px] font-body font-medium text-muted">{dayLabel(c.started_at)}</span></span>
-                  <span className="flex-[1_1_220px] min-w-0 text-ink"><b>{c.from_number || "Skjult nummer"}</b>{c.summary ? ` · ${c.summary}` : ""}</span>
-                  <span className={`inline-flex px-2.5 py-1 rounded-full text-[12px] font-semibold ${c.conversation_id ? "bg-panel border-[1.5px] border-ink text-ink" : "bg-highlight text-ink"}`}>{c.conversation_id ? "Besvaret af Dialogbot" : "Ingen samtale"}</span>
-                  {c.conversation_id ? <Link href={`/app/opkald/${c.conversation_id}`} className="font-semibold text-ink underline underline-offset-2">Læs</Link> : <span className="text-muted">{c.duration_seconds ? `${Math.round(c.duration_seconds / 60)} min` : ""}</span>}
+                  <span className="flex-[1_1_220px] min-w-0 text-ink"><b>{c.channel === "webchat" ? `Webchat${c.name !== "Webchat" ? ` · ${c.name}` : ""}` : c.name}</b>{c.summary || c.question ? ` · ${c.summary || c.question}` : ""}</span>
+                  <span className={`inline-flex px-2.5 py-1 rounded-full text-[12px] font-semibold ${TAG[c.outcome][1]}`}>{TAG[c.outcome][0]}</span>
+                  <Link href={`/app/opkald/${c.id}`} className="font-semibold text-ink underline underline-offset-2">Læs</Link>
                 </li>
               ))}
             </ul>
           )}
           <Link href="/app/opkald" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">Se alle opkald</Link>
         </div>
+
+        {/* Aftaler (and Kampagner when outbound calls are chosen) */}
+        {staff && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="flex flex-col gap-2.5 px-6 py-5 rounded-2xl bg-paper border-2 border-ink">
+              <h2 className="font-display font-extrabold text-[20px] text-ink">Aftaler</h2>
+              {nextAppts.length === 0 ? <p className="text-[14px] text-ink-soft">Ingen kommende aftaler.</p> : (
+                <ul className="flex flex-col">{nextAppts.map((a) => <li key={a.id} className="py-2 border-t-[1.5px] border-line text-[14px] text-ink"><b>{a.label}</b> · {a.contact_name || a.title}</li>)}</ul>
+              )}
+              <Link href="/app/aftaler" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">Se ugens aftaler</Link>
+            </div>
+            {goals?.callback && (
+              <div className="flex flex-col gap-2.5 px-6 py-5 rounded-2xl bg-paper border-2 border-ink">
+                <h2 className="font-display font-extrabold text-[20px] text-ink">Kampagner</h2>
+                <p className="text-[14px] text-ink-soft">Ring til jeres egne kunder – 4 kr. pr. opkald ekskl. moms.</p>
+                <Link href="/app/kampagner" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">Åbn kampagner</Link>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Everything else that happened, for completeness */}
         {ov.activity.length > 0 && (

@@ -25,24 +25,24 @@ export type Telephony = {
 };
 
 const TONE: Record<Telephony["status"]["code"], string> = {
-  not_started: "bg-surface-container-high text-on-surface-variant", awaiting_info: "bg-tertiary-fixed text-on-tertiary-fixed",
-  provisioning: "bg-tertiary-fixed text-on-tertiary-fixed", ready_for_test: "bg-primary-fixed text-on-primary-fixed",
-  test_failed: "bg-error-container text-on-error-container", active: "bg-secondary-container text-on-secondary-container",
-  paused: "bg-surface-container-high text-on-surface-variant",
+  not_started: "bg-line text-ink-soft", awaiting_info: "bg-accent-soft text-accent-deep",
+  provisioning: "bg-accent-soft text-accent-deep", ready_for_test: "bg-panel text-ink",
+  test_failed: "bg-danger-soft text-danger", active: "bg-success-soft text-success",
+  paused: "bg-line text-ink-soft",
 };
 const SUBSCRIPTION = { mobile: "Mobilabonnement", landline: "Fastnet", ip_pbx: "Omstilling eller IP-telefoni", unknown: "Ved ikke" };
 const MODE = { busy_or_no_answer: "Når vi ikke tager den, eller linjen er optaget (anbefalet)", no_answer: "Kun når vi ikke tager den", always: "Alle opkald" };
 
 function Step({ n, title, state, children }: { n: number; title: string; state: "done" | "current" | "later"; children: React.ReactNode }) {
   return (
-    <section className={`bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm ${state === "current" ? "ring-2 ring-accent" : ""}`}>
-      <div className="flex items-center gap-space-sm">
-        <span className={`w-8 h-8 shrink-0 rounded-full grid place-items-center font-label-lg text-label-lg ${state === "done" ? "bg-secondary-container text-on-secondary-container" : state === "current" ? "bg-primary text-on-primary" : "bg-surface-container-high text-on-surface-variant"}`}>
+    <section className={`bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2 ${state === "current" ? "ring-2 ring-accent" : ""}`}>
+      <div className="flex items-center gap-2">
+        <span className={`w-8 h-8 shrink-0 rounded-full grid place-items-center text-label-lg ${state ==="done"?"bg-success-soft text-success": state ==="current"?"bg-ink text-paper":"bg-line text-ink-soft"}`}>
           {state === "done" ? <Icon name="check" size={18} /> : n}
         </span>
-        <h3 className="font-title-md text-title-md text-primary font-bold">{title}</h3>
+        <h3 className="font-title-md text-title-md text-ink font-bold">{title}</h3>
       </div>
-      <div className={`flex flex-col gap-space-sm ${state === "later" ? "opacity-70" : ""}`}>{children}</div>
+      <div className={`flex flex-col gap-2 ${state === "later" ? "opacity-70" : ""}`}>{children}</div>
     </section>
   );
 }
@@ -58,8 +58,8 @@ function BusinessNumber({ wsId, t, canManage }: { wsId: string; t: Telephony; ca
   const confirm = useSubmit(async () => { await api(`/workspaces/${wsId}/telephony/verify/confirm`, { method: "POST", body: JSON.stringify({ code }) }); router.refresh(); });
   return (
     <>
-      <p className="font-body-md text-body-md">Jeres nummer bliver hos jeres nuværende teleselskab. I viderestiller bare opkald til et nummer, som Dialogbot tildeler jer.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+      <p className="text-body-md">Jeres nummer bliver hos jeres nuværende teleselskab. I viderestiller bare opkald til et nummer, som Dialogbot tildeler jer.</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <Field label="Virksomhedens telefonnummer"><Input value={f.e164} onChange={(e) => setF({ ...f, e164: e.target.value })} placeholder="+45 12 34 56 78" inputMode="tel" disabled={!canManage} /></Field>
         <Field label="Hvilken type abonnement er det?">
           <Select value={f.subscription_type} onChange={(e) => setF({ ...f, subscription_type: e.target.value })} disabled={!canManage}>
@@ -73,21 +73,21 @@ function BusinessNumber({ wsId, t, canManage }: { wsId: string; t: Telephony; ca
           </Select>
         </Field>
       </div>
-      <label className="flex items-start gap-2 font-body-sm text-body-sm">
+      <label className="flex items-start gap-2 text-body-sm">
         <input type="checkbox" className="mt-0.5 w-5 h-5" checked={f.wants_new_number} onChange={(e) => setF({ ...f, wants_new_number: e.target.checked })} disabled={!canManage} />
         Vi vil hellere have et helt nyt nummer eller flytte vores nummer til Dialogbot. Det tilbyder vi ikke med det samme. Vi kontakter jer, og I kan bruge viderestilling imens.
       </label>
       {canManage && <div><Button type="button" onClick={() => save.run()} disabled={save.pending || !f.e164}>Gem nummer</Button></div>}
       <ErrorBox error={save.error} />
       {t.business_number && !t.verified && canManage && (
-        <div className="rounded-lg bg-surface-container-low p-space-md flex flex-col gap-space-sm">
-          <p className="font-body-md text-body-md"><strong>Bekræft nummeret.</strong> Vi ringer til {t.business_number} og læser en kode på 6 cifre op. Tast koden herunder.</p>
-          <div className="flex flex-wrap gap-space-sm items-end">
+        <div className="rounded-lg bg-panel p-3 flex flex-col gap-2">
+          <p className="text-body-md"><strong>Bekræft nummeret.</strong> Vi ringer til {t.business_number} og læser en kode på 6 cifre op. Tast koden herunder.</p>
+          <div className="flex flex-wrap gap-2 items-end">
             <Button type="button" variant="tonal" icon="phone_callback" onClick={() => call.run()} disabled={call.pending}>{sent ? "Ring igen" : "Ring mig op med en kode"}</Button>
             <Field label="Kode"><Input value={code} onChange={(e) => setCode(e.target.value)} inputMode="numeric" maxLength={6} className="w-32" /></Field>
             <Button type="button" onClick={() => confirm.run()} disabled={confirm.pending || code.length < 6}>Bekræft</Button>
           </div>
-          {sent && <p className="font-body-sm text-body-sm text-on-surface-variant">Opkaldet er på vej. Koden gælder i 10 minutter.</p>}
+          {sent && <p className="text-body-sm text-ink-soft">Opkaldet er på vej. Koden gælder i 10 minutter.</p>}
           <ErrorBox error={call.error} /><ErrorBox error={confirm.error} />
         </div>
       )}
@@ -112,16 +112,16 @@ function Documents({ wsId, t, canManage }: { wsId: string; t: Telephony; canMana
   });
   const text = { missing: "Mangler", submitted: "Sendt – Dialogbot gennemgår", approved: "Godkendt", rejected: "Afvist", not_required: "Ikke nødvendig" }[d.status] ?? d.status;
   return (
-    <div className="rounded-lg bg-surface-container-low p-space-md flex flex-col gap-space-sm">
-      <p className="font-body-md text-body-md"><strong>Virksomhedsoplysninger.</strong> For at tildele jer et dansk nummer skal teleleverandøren kende virksomheden. Dialogbot sender oplysningerne videre. I skal ikke oprette nogen konto. Status: <strong>{text}</strong></p>
+    <div className="rounded-lg bg-panel p-3 flex flex-col gap-2">
+      <p className="text-body-md"><strong>Virksomhedsoplysninger.</strong> For at tildele jer et dansk nummer skal teleleverandøren kende virksomheden. Dialogbot sender oplysningerne videre. I skal ikke oprette nogen konto. Status: <strong>{text}</strong></p>
       {d.status === "rejected" && d.note && <Alert kind="warn">{d.note}</Alert>}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
         <Field label="Virksomhedens navn"><Input value={f.company_name} onChange={(e) => setF({ ...f, company_name: e.target.value })} disabled={!canManage} /></Field>
         <Field label="CVR-nummer"><Input value={f.cvr} onChange={(e) => setF({ ...f, cvr: e.target.value })} inputMode="numeric" maxLength={8} disabled={!canManage} /></Field>
         <Field label="Adresse i Danmark"><Input value={f.address} onChange={(e) => setF({ ...f, address: e.target.value })} disabled={!canManage} /></Field>
       </div>
       <Field label={d.uploaded ? "Dokumentation (uploadet – vælg en ny fil for at erstatte)" : "Udskrift fra CVR-registeret med dansk adresse (PDF, PNG eller JPG)"}>
-        <input type="file" accept="application/pdf,image/png,image/jpeg" onChange={(e) => setFile(e.target.files?.[0] ?? null)} disabled={!canManage} className="font-body-sm text-body-sm" />
+        <input type="file" accept="application/pdf,image/png,image/jpeg" onChange={(e) => setFile(e.target.files?.[0] ?? null)} disabled={!canManage} className="text-body-sm" />
       </Field>
       {canManage && <div><Button type="button" variant="tonal" onClick={() => save.run()} disabled={save.pending}>Gem virksomhedsoplysninger</Button></div>}
       <ErrorBox error={save.error} />
@@ -133,21 +133,21 @@ function Guide({ t }: { t: Telephony }) {
   const g = t.guide;
   if (!g.available) return null;
   return (
-    <div className="flex flex-col gap-space-sm">
-      <p className="font-body-md text-body-md">Jeres Dialogbot-nummer er</p>
-      <p className="font-headline-sm text-headline-sm text-primary font-bold tabular-nums">{g.destination}</p>
+    <div className="flex flex-col gap-2">
+      <p className="text-body-md">Jeres Dialogbot-nummer er</p>
+      <p className="font-display text-headline-sm text-ink font-bold tabular-nums">{g.destination}</p>
       {g.kind === "mobile_codes" ? (
         <>
-          <p className="font-body-md text-body-md">Tast koden på telefonen med jeres nummer, og tryk ring op:</p>
+          <p className="text-body-md">Tast koden på telefonen med jeres nummer, og tryk ring op:</p>
           <ul className="flex flex-col gap-1">{g.codes.map((c) => (
-            <li key={c.code} className="flex flex-wrap gap-space-sm items-baseline"><span className="font-body-sm text-body-sm w-56">{c.label}</span><code className="px-2 py-1 rounded bg-surface-container-low font-label-lg text-label-lg select-all">{c.code}</code></li>
+            <li key={c.code} className="flex flex-wrap gap-2 items-baseline"><span className="text-body-sm w-56">{c.label}</span><code className="px-2 py-1 rounded bg-panel text-label-lg select-all">{c.code}</code></li>
           ))}</ul>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Slå al viderestilling fra igen med <code className="select-all">{g.cancel_code}</code>. {g.note}</p>
+          <p className="text-body-sm text-ink-soft">Slå al viderestilling fra igen med <code className="select-all">{g.cancel_code}</code>. {g.note}</p>
         </>
       ) : (
         <>
-          <ol className="list-decimal pl-5 font-body-md text-body-md">{g.steps.map((s) => <li key={s}>{s}</li>)}</ol>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">{g.note}</p>
+          <ol className="list-decimal pl-5 text-body-md">{g.steps.map((s) => <li key={s}>{s}</li>)}</ol>
+          <p className="text-body-sm text-ink-soft">{g.note}</p>
         </>
       )}
     </div>
@@ -163,10 +163,10 @@ function Connect({ wsId, t, canManage }: { wsId: string; t: Telephony; canManage
     <>
       {t.status.code === "provisioning"
         ? <Alert kind="info" icon="hourglass_top">{t.status.next_step}</Alert>
-        : <p className="font-body-md text-body-md">Når nummeret er bekræftet, klargør Dialogbot et nummer til jer, som I viderestiller til. Det sker hos Dialogbot. I skal ikke oprette konti eller indtaste tekniske oplysninger.</p>}
+        : <p className="text-body-md">Når nummeret er bekræftet, klargør Dialogbot et nummer til jer, som I viderestiller til. Det sker hos Dialogbot. I skal ikke oprette konti eller indtaste tekniske oplysninger.</p>}
       {missing.length > 0 && (
-        <ul className="list-disc pl-5 font-body-sm text-body-sm">{missing.map((m) => (
-          <li key={m.key}>{m.key === "agreement" ? <Link href="/app/settings/agreement" className="text-primary underline">{m.text}</Link> : m.text}</li>
+        <ul className="list-disc pl-5 text-body-sm">{missing.map((m) => (
+          <li key={m.key}>{m.key === "agreement" ? <Link href="/app/settings/agreement" className="text-ink underline">{m.text}</Link> : m.text}</li>
         ))}</ul>
       )}
       {canManage && t.status.code !== "provisioning" && <div><Button type="button" icon="link" onClick={() => go.run()} disabled={go.pending || missing.length > 0}>Forbind telefonen</Button></div>}
@@ -188,16 +188,16 @@ function Answering({ t, number, wsId, canManage }: { t: Telephony; number: Phone
   return (
     <>
       <ul className="flex flex-col gap-1">{rows.map(([k, label, hint]) => (
-        <li key={k} className="flex flex-wrap items-center gap-space-sm">
-          <Icon name={a[k].done ? "check_circle" : "radio_button_unchecked"} size={20} className={a[k].done ? "text-secondary" : "text-on-surface-variant"} />
-          <span className="font-label-lg text-label-lg w-40">{label}</span>
-          <Link href={a[k].href} className="font-body-sm text-body-sm text-primary underline">{hint}</Link>
+        <li key={k} className="flex flex-wrap items-center gap-2">
+          <Icon name={a[k].done ? "check_circle" : "radio_button_unchecked"} size={20} className={a[k].done ? "text-muted" : "text-ink-soft"} />
+          <span className="text-label-lg w-40">{label}</span>
+          <Link href={a[k].href} className="text-body-sm text-ink underline">{hint}</Link>
         </li>
       ))}</ul>
       {number && canManage && (
-        <details className="rounded-lg bg-surface-container-low p-space-sm">
-          <summary className="font-label-lg text-label-lg cursor-pointer">Særlig hilsen og talestil for telefonen</summary>
-          <div className="flex flex-col gap-space-sm mt-space-sm">
+        <details className="rounded-lg bg-panel p-2">
+          <summary className="text-label-lg cursor-pointer">Særlig hilsen og talestil for telefonen</summary>
+          <div className="flex flex-col gap-2 mt-2">
             <Field label="Hilsen i telefonen (tom = receptionens velkomst)"><Textarea value={f.greeting} maxLength={500} onChange={(e) => setF({ ...f, greeting: e.target.value })} /></Field>
             <Field label="Talestil (fx 'Vi siger du til kunderne')"><Textarea value={f.speaking_style} maxLength={1000} onChange={(e) => setF({ ...f, speaking_style: e.target.value })} /></Field>
             <div><Button type="button" variant="tonal" onClick={() => save.run()} disabled={save.pending}>Gem</Button></div>
@@ -219,16 +219,16 @@ function TestCall({ wsId, t, canManage }: { wsId: string; t: Telephony; canManag
     const id = setInterval(() => router.refresh(), 5000);
     return () => clearInterval(id);
   }, [waiting, router]);
-  if (!t.destination) return <p className="font-body-sm text-body-sm text-on-surface-variant">Kan startes, når telefonen er forbundet.</p>;
+  if (!t.destination) return <p className="text-body-sm text-ink-soft">Kan startes, når telefonen er forbundet.</p>;
   return (
     <>
-      <p className="font-body-md text-body-md">Når viderestillingen er slået til: start prøveopkaldet, og ring inden for 15 minutter fra en anden telefon til <strong>jeres eget nummer</strong> {t.business_number}. Hvis I kun viderestiller ubesvarede opkald, så lad være med at tage telefonen. Assistenten siger "Dette er et prøveopkald", og samtalen lander i indbakken.</p>
+      <p className="text-body-md">Når viderestillingen er slået til: start prøveopkaldet, og ring inden for 15 minutter fra en anden telefon til <strong>jeres eget nummer</strong> {t.business_number}. Hvis I kun viderestiller ubesvarede opkald, så lad være med at tage telefonen. Assistenten siger "Dette er et prøveopkald", og samtalen lander i indbakken.</p>
       {t.test?.status === "passed" && <Alert kind="ok">Prøveopkaldet ramte jeres assistent og blev gemt i indbakken.{t.test.simulated ? " (Simuleret)" : ""}</Alert>}
       {(t.test?.status === "failed" || t.test?.status === "expired") && <Alert kind="warn">{t.test.reason ?? "Prøveopkaldet fejlede."}</Alert>}
       {waiting && <Alert kind="info" icon="phone_in_talk">Venter på opkaldet … (gælder til {new Date(t.test!.expires_at).toLocaleTimeString("da-DK", { hour: "2-digit", minute: "2-digit" })})</Alert>}
       {canManage && !waiting && (
         <>
-          <label className="flex items-start gap-2 font-body-sm text-body-sm">
+          <label className="flex items-start gap-2 text-body-sm">
             <input type="checkbox" className="mt-0.5 w-5 h-5" checked={own} onChange={(e) => setOwn(e.target.checked)} />
             Jeg ringer til vores eget nummer, så viderestillingen bliver testet.
           </label>
@@ -254,7 +254,7 @@ function Activate({ wsId, t, canManage }: { wsId: string; t: Telephony; canManag
   );
   return (
     <>
-      <p className="font-body-md text-body-md">{ready ? "Alt er klar. Når I aktiverer, besvarer assistenten de opkald, I viderestiller." : "Kan aktiveres efter et bestået prøveopkald og et bekræftet abonnement."}</p>
+      <p className="text-body-md">{ready ? "Alt er klar. Når I aktiverer, besvarer assistenten de opkald, I viderestiller." : "Kan aktiveres efter et bestået prøveopkald og et bekræftet abonnement."}</p>
       {canManage && <div><Button type="button" icon="power_settings_new" onClick={() => on.run()} disabled={!ready || on.pending}>Aktivér telefonen</Button></div>}
       <ErrorBox error={on.error} />
     </>
@@ -270,15 +270,15 @@ export function TelephonySetup({ wsId, t, numbers, canManage }: { wsId: string; 
   const s5 = t.active ? "done" : t.test?.status === "passed" ? "current" : "later";
   const dest = numbers.find((n) => n.e164 === t.destination?.e164) ?? null;
   return (
-    <div className="flex flex-col gap-space-md">
-      <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-wrap items-start justify-between gap-space-md">
+    <div className="flex flex-col gap-3">
+      <div className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-wrap items-start justify-between gap-3">
         <div className="flex flex-col gap-1 max-w-2xl">
           <span className="eyebrow">Indstillinger</span>
-          <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Telefoni</h2>
-          <p className="font-body-md text-body-md"><strong>Næste skridt:</strong> {t.status.next_step}</p>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Dialogbot står for telefonforbindelsen. I skal ikke oprette konti hos teleleverandører eller indtaste tekniske nøgler. Opkald lander i <Link href="/app/inbox" className="text-primary underline">indbakken</Link>.</p>
+          <h2 className="font-display text-headline-sm text-ink font-bold">Telefoni</h2>
+          <p className="text-body-md"><strong>Næste skridt:</strong> {t.status.next_step}</p>
+          <p className="text-body-sm text-ink-soft">Dialogbot står for telefonforbindelsen. I skal ikke oprette konti hos teleleverandører eller indtaste tekniske nøgler. Opkald lander i <Link href="/app/inbox" className="text-ink underline">indbakken</Link>.</p>
         </div>
-        <span className={`px-3 py-1 rounded-full font-label-lg text-label-lg font-semibold ${TONE[c]}`}>{t.status.label}</span>
+        <span className={`px-3 py-1 rounded-full text-label-lg font-semibold ${TONE[c]}`}>{t.status.label}</span>
       </div>
       <Step n={1} title="Dit nuværende nummer" state={s1}>
         <BusinessNumber wsId={wsId} t={t} canManage={canManage} />

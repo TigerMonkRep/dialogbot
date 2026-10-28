@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 from fastapi import APIRouter, Depends, Header, Query, Request, Response
 from pydantic import BaseModel, EmailStr, Field
@@ -34,6 +34,8 @@ def settings_out(db: OrmSession, s: BookingSettings, ws_id) -> dict:
             "busy_blocks": len(s.busy_blocks or []),
             "feed_url": f"{get_settings().public_base_url}/api/v1/public/calendar/{s.feed_token}.ics",
             "has_opening_hours": any(service.weekly_hours(db, ws_id).values()),
+            "open_weekdays": [i for i, d in enumerate(service.DAYS) if service.weekly_hours(db, ws_id).get(d)],
+            "opening_hours": {d: [f"{o:%H:%M}–{c:%H:%M}" for o, c in rows] for d, rows in service.weekly_hours(db, ws_id).items() if rows},
             "types": [{"id": str(t.id), "name": t.name, "duration_minutes": t.duration_minutes,
                        "description": t.description, "active": t.active}
                       for t in db.scalars(select(BookingType).where(BookingType.workspace_id == ws_id)
@@ -132,13 +134,22 @@ def list_slots(type_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_capab
 
 @router.get("")
 def list_bookings(days: int = Query(default=30, ge=1, le=120), include_cancelled: bool = False,
+                  start: date | None = None, end: date | None = None,
                   ctx: WorkspaceContext = Depends(require_capability("bookings.read")), db: OrmSession = Depends(get_db)):
+    """Default: from yesterday to `days` ahead. With `start` (and `end`, inclusive) the local calendar days in between instead."""
     now = datetime.now(UTC)
-    q = select(Booking).where(Booking.workspace_id == ctx.workspace.id, Booking.ends_at >= now - timedelta(days=1),
-                              Booking.starts_at <= now + timedelta(days=days)).order_by(Booking.starts_at)
+    tz = _tz(db, ctx.workspace.id)
+    if start is not None:
+        from app.modules.reports.service import day_bounds
+
+        a = day_bounds(start, tz)[0]
+        b = day_bounds(max(end or start, start), tz)[1]
+        q = select(Booking).where(Booking.workspace_id == ctx.workspace.id, Booking.starts_at >= a, Booking.starts_at < b).order_by(Booking.starts_at)
+    else:
+        q = select(Booking).where(Booking.workspace_id == ctx.workspace.id, Booking.ends_at >= now - timedelta(days=1),
+                                  Booking.starts_at <= now + timedelta(days=days)).order_by(Booking.starts_at)
     if not include_cancelled:
         q = q.where(Booking.status == "confirmed")
-    tz = _tz(db, ctx.workspace.id)
     return {"items": [service.booking_out(b, tz) for b in db.scalars(q)], "timezone": tz}
 
 

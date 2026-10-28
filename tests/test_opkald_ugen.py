@@ -92,3 +92,23 @@ def test_week_numbers_and_topics(api, two_workspaces, db):
     assert topics[0]["count"] == 3 and topics[0]["could_answer"] is True
     assert any(x["count"] == 1 and x["could_answer"] is False for x in topics)
     assert api.get(t["tok_b"], f"/workspaces/{t['ws_b']}/reports/week").json()["answered"] == 0
+
+
+def test_bookings_by_week_and_open_weekdays(api, two_workspaces, db):
+    t = two_workspaces
+    ws = uuid.UUID(t["ws_a"])
+    monday = reports.week_start_of(reports.local_today("Europe/Copenhagen"))
+    inside = datetime.combine(monday + timedelta(days=2), datetime.min.time(), tzinfo=UTC) + timedelta(hours=9)
+    outside = inside + timedelta(days=7)
+    for at in (inside, outside):
+        db.add(Booking(workspace_id=ws, title="Besigtigelse", starts_at=at, ends_at=at + timedelta(hours=1), source="manual", contact_name="Mette"))
+    db.commit()
+    r = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/bookings?start={monday}&end={monday + timedelta(days=6)}").json()
+    assert [b["starts_at"][:10] for b in r["items"]] == [inside.date().isoformat()]
+    s = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/bookings/settings").json()
+    assert s["open_weekdays"] == [] and s["opening_hours"] == {}                # no approved opening hours yet
+    it = api.knowledge(t["tok_a"], t["ws_a"], "opening_hours", "Åbningstider", {"weekly": [{"days": ["mon", "tue", "fri"], "open": "08:00", "close": "16:00"}]})
+    api.submit(t["tok_a"], t["ws_a"], it["open_draft"]["id"])
+    assert api.approve(t["tok_a"], t["ws_a"], it["open_draft"]["id"]).status_code == 200
+    s = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/bookings/settings").json()
+    assert s["open_weekdays"] == [0, 1, 4] and s["opening_hours"]["fri"] == ["08:00–16:00"]

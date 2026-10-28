@@ -31,47 +31,47 @@ export function WebchatForm({ wsId, initial, canManage }: { wsId: string; initia
   const copy = async () => { await navigator.clipboard.writeText(s.embed_code).catch(() => undefined); setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const notReady = save.error?.code === "webchat_not_ready";
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
-      <form className="lg:col-span-7 bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md"
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <form className="lg:col-span-7 bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-3"
         onSubmit={(e) => { e.preventDefault(); save.run(); }}>
-        <h3 className="font-headline-sm text-headline-sm text-primary">Indstillinger</h3>
-        <label className="flex items-center justify-between gap-space-md p-space-md rounded-lg bg-surface-container-low cursor-pointer">
-          <span><span className="block font-label-lg text-label-lg text-on-surface">Vis widgetten på hjemmesiden</span><span className="block font-body-sm text-body-sm text-on-surface-variant">Kunder kan skrive med assistenten på de domæner, I angiver nedenfor.</span></span>
-          <input type="checkbox" role="switch" aria-label="Vis widgetten på hjemmesiden" checked={enabled} disabled={!canManage} onChange={(e) => setEnabled(e.target.checked)} className="w-5 h-5 rounded text-primary focus:ring-primary" />
+        <h3 className="font-display text-headline-sm text-ink">Indstillinger</h3>
+        <label className="flex items-center justify-between gap-3 p-3 rounded-lg bg-panel cursor-pointer">
+          <span><span className="block text-label-lg text-ink">Vis widgetten på hjemmesiden</span><span className="block text-body-sm text-ink-soft">Kunder kan skrive med assistenten på de domæner, I angiver nedenfor.</span></span>
+          <input type="checkbox" role="switch" aria-label="Vis widgetten på hjemmesiden" checked={enabled} disabled={!canManage} onChange={(e) => setEnabled(e.target.checked)} className="w-5 h-5 rounded text-ink focus:ring-ink" />
         </label>
         <div>
-          <label htmlFor="origins" className="block font-label-md text-label-md text-on-surface font-semibold mb-1">Godkendte domæner</label>
+          <label htmlFor="origins" className="block text-label-md text-ink font-semibold mb-1">Godkendte domæner</label>
           <textarea id="origins" rows={3} disabled={!canManage} className={`${inputCls} font-mono`} placeholder={"https://www.dinvirksomhed.dk"} value={origins} onChange={(e) => setOrigins(e.target.value)} aria-describedby="origins-hint" />
-          <p id="origins-hint" className="font-body-sm text-body-sm text-on-surface-variant mt-1">Ét pr. linje, med https:// og uden sti. Widgetten kan ikke indlejres andre steder.</p>
-          {fieldError(save.error, "allowed_origins") && <p role="alert" className="text-label-md text-error mt-1">Ugyldigt domæne: {fieldError(save.error, "allowed_origins")}</p>}
+          <p id="origins-hint" className="text-body-sm text-ink-soft mt-1">Ét pr. linje, med https:// og uden sti. Widgetten kan ikke indlejres andre steder.</p>
+          {fieldError(save.error, "allowed_origins") && <p role="alert" className="text-label-md text-danger mt-1">Ugyldigt domæne: {fieldError(save.error, "allowed_origins")}</p>}
         </div>
         <div>
-          <label htmlFor="greeting" className="block font-label-md text-label-md text-on-surface font-semibold mb-1">Velkomsthilsen</label>
+          <label htmlFor="greeting" className="block text-label-md text-ink font-semibold mb-1">Velkomsthilsen</label>
           <input id="greeting" maxLength={300} disabled={!canManage} className={inputCls} placeholder={s.effective_greeting} value={greeting} onChange={(e) => setGreeting(e.target.value)} />
-          <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">Tom = standardhilsen.</p>
+          <p className="text-body-sm text-ink-soft mt-1">Tom = standardhilsen.</p>
         </div>
-        {notReady ? <p role="alert" className="p-space-sm rounded-lg bg-error-container text-on-error-container font-body-sm text-body-sm">Widgetten kan ikke slås til endnu – se punkterne ovenfor.</p> : <ErrorBox error={save.error} />}
+        {notReady ? <p role="alert" className="p-2 rounded-lg bg-danger-soft text-danger text-body-sm">Widgetten kan ikke slås til endnu – se punkterne ovenfor.</p> : <ErrorBox error={save.error} />}
         {canManage ? <div><Button type="submit" icon="save" disabled={save.pending}>{save.pending ? "Gemmer…" : "Gem indstillinger"}</Button></div>
-          : <p className="font-body-sm text-body-sm text-on-surface-variant">Kun ejere og administratorer kan ændre webchat.</p>}
+          : <p className="text-body-sm text-ink-soft">Kun ejere og administratorer kan ændre webchat.</p>}
       </form>
 
-      <div className="lg:col-span-5 flex flex-col gap-space-lg">
-        <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
-          <h3 className="font-headline-sm text-headline-sm text-primary">Indlejringskode</h3>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Indsæt koden lige før <code>&lt;/body&gt;</code> på alle sider, hvor chatten skal vises.</p>
-          <pre className="p-space-sm rounded-lg bg-surface-container-low font-mono text-[12px] whitespace-pre-wrap break-all" aria-label="Indlejringskode">{s.embed_code}</pre>
-          <div className="flex flex-wrap gap-space-sm">
+      <div className="lg:col-span-5 flex flex-col gap-4">
+        <section className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">
+          <h3 className="font-display text-headline-sm text-ink">Indlejringskode</h3>
+          <p className="text-body-sm text-ink-soft">Indsæt koden lige før <code>&lt;/body&gt;</code> på alle sider, hvor chatten skal vises.</p>
+          <pre className="p-2 rounded-lg bg-panel font-mono text-[12px] whitespace-pre-wrap break-all" aria-label="Indlejringskode">{s.embed_code}</pre>
+          <div className="flex flex-wrap gap-2">
             <Button type="button" variant="tonal" icon={copied ? "check" : "content_copy"} onClick={copy}>{copied ? "Kopieret" : "Kopiér kode"}</Button>
             {canManage && <Button type="button" variant="ghost" icon="autorenew" onClick={() => rotate.run()} disabled={rotate.pending}>Ny nøgle</Button>}
           </div>
           <ErrorBox error={rotate.error} />
         </section>
-        <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-xs">
-          <h3 className="font-headline-sm text-headline-sm text-primary">Installation</h3>
+        <section className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-1">
+          <h3 className="font-display text-headline-sm text-ink">Installation</h3>
           {s.last_seen_at
-            ? <p className="font-body-sm text-body-sm text-on-surface flex items-center gap-space-xs"><Icon name="check_circle" size={18} className="text-secondary" />Chatten blev sidst åbnet på {s.last_seen_origin} {new Date(s.last_seen_at).toLocaleString("da-DK")}.</p>
-            : <p className="font-body-sm text-body-sm text-on-surface-variant">Chatten er endnu ikke åbnet på et af jeres domæner. Åbn den på hjemmesiden og kør tjekket i opsætningsguiden.</p>}
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Grænser: {s.limits.max_visitor_messages} beskeder pr. samtale, {s.limits.max_new_conversations_per_hour} nye samtaler i timen, {s.limits.max_message_chars} tegn pr. besked.</p>
+            ? <p className="text-body-sm text-ink flex items-center gap-1"><Icon name="check_circle" size={18} className="text-muted" />Chatten blev sidst åbnet på {s.last_seen_origin} {new Date(s.last_seen_at).toLocaleString("da-DK")}.</p>
+            : <p className="text-body-sm text-ink-soft">Chatten er endnu ikke åbnet på et af jeres domæner. Åbn den på hjemmesiden og kør tjekket i opsætningsguiden.</p>}
+          <p className="text-body-sm text-ink-soft">Grænser: {s.limits.max_visitor_messages} beskeder pr. samtale, {s.limits.max_new_conversations_per_hour} nye samtaler i timen, {s.limits.max_message_chars} tegn pr. besked.</p>
         </section>
       </div>
     </div>

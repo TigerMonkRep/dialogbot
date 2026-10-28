@@ -200,9 +200,9 @@ test("7 · S02→A05: ejer inviterer, kollega accepterer og lander i arbejdsrumm
   const { wsId } = await freshOwner(page, info);
   const invitee = uniqueEmail("invitee", info);
   await page.goto("/app/konto");
-  await page.getByLabel("E-mail").fill(invitee);
-  await page.getByLabel("Rolle").selectOption("staff");
-  await page.getByRole("button", { name: "Send invitation" }).click();
+  await page.getByLabel("Invitér med e-mail").fill(invitee);
+  await page.getByLabel("Må", { exact: true }).selectOption("staff");
+  await page.getByRole("button", { name: "Invitér", exact: true }).click();
   await expect(page.getByText(invitee)).toBeVisible();
   await shot(page, info, "s02-team");
 
@@ -381,9 +381,10 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, be
   await page.getByRole("button", { name: "Gem", exact: true }).click();
   await expect(page.getByLabel("Kvalificering")).toHaveValue("qualified");
 
-  await page.goto("/app/konto/abonnement");
+  await page.goto("/app/konto");
   await page.getByRole("button", { name: "Bekræft abonnement" }).click();
-  await expect(page.getByText("Månedspris: 2.495,00 kr.", { exact: false })).toBeVisible(); // one offer: from 2.495 kr./md.
+  await expect(page.getByText(/Bekræftet · aftale v1/)).toBeVisible();
+  await expect(page.getByText("2.495,00 kr.").first()).toBeVisible(); // one offer: from 2.495 kr./md. ekskl. moms
   await shot(page, info, "prisaftale");
 
   await page.goBack();
@@ -553,11 +554,11 @@ test("16 · Afregning: abonnementet (2.495 kr. + moms) og den godkendte henvende
   const lead = await (await page.request.post(`/api/backend/workspaces/${wsId}/leads`, { headers: CSRF, data: { contact_name: "Birgitte Bruun" } })).json();
   await page.request.patch(`/api/backend/workspaces/${wsId}/leads/${lead.id}`, { headers: CSRF, data: { expected_version: lead.version, qualification_status: "qualified" } });
   expect((await page.request.post(`/api/backend/workspaces/${wsId}/leads/${lead.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
-  await page.goto("/app/konto/fakturering");
+  await page.goto("/app/konto");
   await expect(page.getByText("Kortbetaling er ikke sat op endnu.", { exact: false })).toBeVisible(); // no Stripe keys in E2E
-  await expect(page.getByText("Den faktureres først, når måneden er slut og kortbetaling er sat op.", { exact: false })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Godkendt henvendelse: Birgitte Bruun" })).toBeVisible();
-  await expect(page.getByText("3.118,75 kr.")).toBeVisible(); // 2.495 kr. + 25 % moms
+  await expect(page.getByText("Faktureres, når måneden er slut og kortbetaling er sat op.", { exact: false })).toBeVisible();
+  await expect(page.getByText(/i alt 3\.118,75 kr\./)).toBeVisible(); // 2.495 kr. + 25 % moms
+  await expect(page.getByText("4,00 kr.").first()).toBeVisible(); // 4 kr. pr. udgående opkald
   await shot(page, info, "afregning");
 });
 
@@ -676,23 +677,31 @@ test("21 · Bookinger: tider følger godkendte åbningstider; en manuel booking 
   await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`, { headers: CSRF });
   expect((await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
   await page.goto("/app/aftaler");
-  await expect(page.getByRole("heading", { name: "Aftaler", exact: true })).toBeVisible();
-  await expect(page.getByText("Online booking er slået fra")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Aftaler, Dialogbot har booket" })).toBeVisible();
+  await expect(page.getByText(/Der er ingen bookingtyper endnu/)).toBeVisible();
+  // Types and rules live in Alle indstillinger → Booking (a sheet).
+  await page.goto("/app/indstillinger?ark=booking");
+  await expect(page.getByRole("dialog", { name: "Booking" })).toBeVisible();
   await page.getByLabel("Navn", { exact: true }).fill("Besigtigelse");
   await page.getByRole("button", { name: "Tilføj type" }).click();
   await expect(page.getByText("Besigtigelse", { exact: true })).toBeVisible();
   await page.getByLabel("Kunder må booke i chatten og i telefonen").check();
   await page.getByRole("button", { name: "Gem", exact: true }).click();
-  await expect(page.getByText("Online booking er slået til")).toBeVisible();
+  await expect(page.getByText("Gemt.")).toBeVisible();
   await expect(page.getByLabel("Kalenderabonnement")).toHaveValue(/\/api\/v1\/public\/calendar\/[\w-]+\.ics$/);
-  await expect(page.getByLabel("Tidspunkt")).not.toHaveValue("");
-  await expect(page.getByLabel("Tidspunkt").locator("option").first()).toHaveText(/kl\. (0[89]|1[0-5])\.\d\d$/);
-  await page.getByLabel("Kundens navn").fill("Mette Jensen");
+  await page.goto("/app/aftaler");
+  await expect(page.getByText("Slået til", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Hvornår").locator("option").first()).toHaveText(/Først ledige – .*kl\. (0[89]|1[0-5])\.\d\d$/);
+  await page.getByLabel("Navn", { exact: true }).fill("Mette Jensen");
   await page.getByLabel("Telefon", { exact: true }).fill("+4520304050");
   await page.getByRole("button", { name: "Book", exact: true }).click();
-  await expect(page.getByText(/Booket .+ kl\. .+ Henvendelse og opgave er oprettet\./)).toBeVisible();
-  await expect(page.getByText("Besigtigelse: Mette Jensen")).toBeVisible();
-  await shot(page, info, "bookinger");
+  await expect(page.getByText(/^Booket .+ kl\. .+\.$/)).toBeVisible();
+  // The week with the appointment: the card opens, and the lead made from it is one click away.
+  const list = await (await page.request.get(`/api/backend/workspaces/${wsId}/bookings?days=14`)).json();
+  const day = new Date(list.items[0].starts_at).toLocaleDateString("sv-SE", { timeZone: "Europe/Copenhagen" });
+  await page.goto(`/app/aftaler?uge=${day}`);
+  await page.getByRole("button", { name: /Mette Jensen/ }).click();
+  await shot(page, info, "aftaler-uge");
   await page.getByRole("link", { name: "Henvendelse" }).first().click();
   await expect(page.getByText(/Booket besigtigelse/)).toBeVisible();
 });
@@ -700,7 +709,9 @@ test("21 · Bookinger: tider følger godkendte åbningstider; en manuel booking 
 test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovkrav, og start er ærlig om manglende opsætning", async ({ page }, info) => {
   await freshOwner(page, info);
   await page.goto("/app/kampagner");
-  await expect(page.getByRole("heading", { name: "Udgående opkald" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Vil I også ringe ud?" })).toBeVisible();
+  await page.getByRole("button", { name: "Ja, slå udgående opkald til" }).click();
+  await expect(page.getByRole("heading", { name: "Ring til jeres kunder – én kampagne ad gangen" })).toBeVisible();
   await expect(page.getByText(/4,00 kr\. \+ moms pr\. udgående opkald/)).toBeVisible();
   await page.getByLabel("Navn på kampagnen").fill("Forårstilbud");
   await page.getByLabel("Hvad skal opkaldet handle om?").fill("Tilbyde gulvafslibning til tidligere kunder");
@@ -974,7 +985,7 @@ test("26 · Ambassadør: ung tilmelder sig via regelquiz, forælder godkender, o
   await cust.getByLabel("Navn (som den siger det)").fill(`Hansen VVS ${tag}`);
   await cust.getByRole("button", { name: "Videre" }).click();
   await expect(cust.getByLabel("Navn (som den siger det)")).toHaveValue(`Hansen VVS ${tag}`);
-  await cust.goto("/app/konto/fakturering");
+  await cust.goto("/app/konto");
   await expect(cust.getByText(/I er anbefalet af Mads/)).toBeVisible();
 
   // 7. The ambassador sees the customer (company name and status only).
@@ -1015,9 +1026,9 @@ test("Skal v2: fire faner, avatar til Konto, bundfaner på telefon, assistent, o
   const OLD: [string, RegExp][] = [
     ["/app/overview", /\/app$/], ["/app/knowledge?tab=k03", /\/app\/viden\?tab=k03/], ["/app/inbox", /\/app\/opkald$/], ["/app/leads", /\/app\/opkald\?f=to_you$/],
     ["/app/tasks", /\/app\/opkald\?f=to_you$/], ["/app/notifications", /\/app\/opkald\?f=to_you$/], ["/app/reports", /\/app\/ugen$/], ["/app/bookings", /\/app\/aftaler$/],
-    ["/app/campaigns", /\/app\/kampagner$/], ["/app/settings/team", /\/app\/konto$/], ["/app/settings/profile", /\/app\/konto\/profil$/], ["/app/billing", /\/app\/konto\/fakturering$/],
-    ["/app/settings/agreement", /\/app\/konto\/abonnement$/], ["/app/settings/telephony", /\/app\/indstillinger\/telefoni$/], ["/app/settings", /\/app\/indstillinger$/],
-    ["/app/reception", /\/app\/indstillinger\/hilsen$/], ["/app/voices", /\/app\/indstillinger\/stemmer$/], ["/app/help", /\/app\/hjaelp$/], ["/app/not-yet", /\/app\/hjaelp$/],
+    ["/app/campaigns", /\/app\/kampagner$/], ["/app/settings/team", /\/app\/konto$/], ["/app/settings/profile", /\/app\/konto$/], ["/app/billing", /\/app\/konto$/],
+    ["/app/settings/agreement", /\/app\/konto$/], ["/app/settings/telephony", /\/app\/indstillinger\?ark=telefoni$/], ["/app/settings", /\/app\/indstillinger$/],
+    ["/app/reception", /\/app\/indstillinger\?ark=hilsen$/], ["/app/voices", /\/app\/indstillinger\?ark=stemmer$/], ["/app/help", /\/app\/hjaelp$/], ["/app/not-yet", /\/app\/hjaelp$/],
   ];
   for (const [from, to] of OLD) {
     const r = await page.request.get(from, { maxRedirects: 0 });

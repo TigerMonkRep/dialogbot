@@ -43,7 +43,7 @@ export default async function Trin1({ searchParams }: { searchParams: Promise<{ 
   const capOn = (k: string) => caps.items.some((c) => c.key === k && c.status !== "not_implemented");
   const facts = items.items.filter((i) => i.kind === "opening_hours" || i.kind === "coverage_area");
   return (
-    <SetupShell step={1} steps={st.steps} workspaceName={ws.name} wide later>
+    <SetupShell step={1} steps={st.steps} workspaceName={ws.name} wide later assistant={{ wsId: ws.id, canChange: canEdit }}>
       {head}
       <Step1 wsId={ws.id} canEdit={canEdit} canApprove={canApprove} aiReady={capOn("knowledge.source_import")} cvrReady={capOn("cvr.lookup")} profile={profile} goals={goals} languages={languages} facts={facts} />
     </SetupShell>

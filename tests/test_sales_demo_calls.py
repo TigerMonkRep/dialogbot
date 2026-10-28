@@ -191,7 +191,8 @@ def test_peter_rings_whatever_voice_is_asked_for_and_the_script_adapts(client, s
     assert "Camilla" not in system.replace("Kunden kan selv vælge stemme, fx Camilla eller Peter.", "")
     assert "Håndværk & byg" in system and "Mester står på stigen" in system
     assert "Klinik & sundhed" not in system  # only the chosen playbook
-    assert "vi guider jer igennem hele opsætningen" in system.lower() and "2.495 kr." in system and "4 kr. pr. udgående opkald" in system
+    assert "byggevejledningens tre trin" in system and "specialister" in system.lower() and "5.000 kr." in system  # self-setup included, specialist setup priced
+    assert "2.495 kr." in system and "4 kr. pr. udgående opkald" in system
     assert "1.495" not in system and "149 kr" not in system and "model B" not in system.lower()
     assert payload["firstMessage"].startswith("Hej Mette, det er Peter fra Dialogbot.")
     assert "Hansen VVS" in payload["firstMessage"]

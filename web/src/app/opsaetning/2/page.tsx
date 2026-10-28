@@ -23,7 +23,7 @@ export default async function Trin2({ searchParams }: { searchParams: Promise<{ 
   const steps = [...st.steps] as typeof st.steps;
   steps[1] = connected ? "done" : "todo";
   return (
-    <SetupShell step={2} steps={steps} workspaceName={ws.name} wide later>
+    <SetupShell step={2} steps={steps} workspaceName={ws.name} wide later assistant={{ wsId: ws.id, canChange: ws.role !== "reader" }}>
       <div className="flex flex-col gap-3 mb-6">
         <div className="flex items-center gap-4">
           <span className="w-14 h-14 rounded-[14px] bg-highlight text-ink font-display font-extrabold text-[30px] inline-flex items-center justify-center" aria-hidden>2</span>

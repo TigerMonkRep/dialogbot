@@ -1658,3 +1658,33 @@ class SocialProspect(Base):
     acted_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     acted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = ts_now()
+
+
+# ---------------------------------------------------------------------------
+# Assistant «Ændr noget»: a proposed change waits here until the person says «Godkend»
+# ---------------------------------------------------------------------------
+
+
+class AssistantProposal(Base):
+    """One change the assistant proposed in the customer's words. Nothing is changed until it is applied; `before` and
+    `after` are what the person saw on the card. A proposal is for one workspace and one person, and expires."""
+
+    __tablename__ = "assistant_proposals"
+    __table_args__ = (
+        CheckConstraint("status in ('proposed','applied','declined','expired')", name="ck_assistant_proposals_status"),
+        Index("ix_assistant_proposals_ws_created", "workspace_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    kind: Mapped[str] = mapped_column(String(40), nullable=False)
+    params: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    request_text: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    before: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    after: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="proposed")
+    created_at: Mapped[datetime] = ts_now()
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

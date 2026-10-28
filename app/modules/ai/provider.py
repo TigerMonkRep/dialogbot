@@ -171,6 +171,8 @@ class FakeProvider:
                               usage=Usage(input_tokens=len(out) // 4, output_tokens=12), request_id="fake-req")
         if system.startswith("WEBSITE_EXTRACTION"):
             return self._extract(question)
+        if system.startswith("ASSISTANT_CHANGE"):
+            return self._change(question)
         if system.startswith("SUGGEST_SCRIPT"):
             import json
 
@@ -216,6 +218,50 @@ class FakeProvider:
             refusal_category="general_harms" if refused else None,
         )
 
+
+    def _change(self, text: str) -> Completion:
+        """Deterministic stand-in for «Ændr noget»: a few Danish phrasings map to a change kind; anything else is null."""
+        import json
+        import re
+
+        low = text.lower().strip()
+        out: dict = {"kind": None, "params": {}, "reply": "", "question": ""}
+        days = {"man": "mon", "tir": "tue", "ons": "wed", "tor": "thu", "fre": "fri", "lør": "sat", "søn": "sun"}
+        order = list(days)
+        if m := re.search(r"åbningstider\D*?(man|tir|ons|tor|fre|lør|søn)\w*\s*[-–]\s*(man|tir|ons|tor|fre|lør|søn)\w*\s+(\d{1,2})\s*[-–]\s*(\d{1,2})", low):
+            a, b = order.index(m.group(1)), order.index(m.group(2))
+            out.update(kind="opening_hours", params={"weekly": [{"days": [days[d] for d in order[a:b + 1]], "open": f"{int(m.group(3)):02d}:00", "close": f"{int(m.group(4)):02d}:00"}]})
+        elif m := re.match(r"^spørgsmål:\s*(.+?)\s+svar:\s*(.+)$", text.strip(), re.I | re.S):
+            out.update(kind="known_answer", params={"question": m.group(1).strip(), "answer": m.group(2).strip()})
+        elif m := re.search(r"(?:må ikke|aldrig)\s+(?:tale om|svare på|udtale sig om)\s+(.+)", low):
+            out.update(kind="forbidden_topic", params={"rule": m.group(1).strip().capitalize()})
+        elif m := re.search(r"(.+?)\s+(?:koster|skal koste)\s+(\d[\d.]*)(?:,(\d{1,2}))?\s*kr", text.strip(), re.I):
+            title = re.sub(r"^(?:prisen på|vi tager|ændr prisen på)\s+", "", m.group(1).strip(), flags=re.I).strip()
+            minor = int(m.group(2).replace(".", "")) * 100 + (int((m.group(3) or "0").ljust(2, "0")) if m.group(3) else 0)
+            out.update(kind="service_price", params={"title": title, "price_net_minor": minor, "unit": "m2" if "m²" in low or "pr. m2" in low else None})
+        elif re.search(r"pause|tidligst|dage frem", low):
+            p: dict = {}
+            if m := re.search(r"pause\D{0,30}(\d+)", low):
+                p["buffer_minutes"] = int(m.group(1))
+            if m := re.search(r"tidligst\D{0,30}(\d+)", low):
+                p["lead_time_hours"] = int(m.group(1))
+            if m := re.search(r"(\d+)\s*dage frem", low):
+                p["horizon_days"] = int(m.group(1))
+            out.update(kind="booking_rule", params=p)
+        elif "rapport" in low:
+            p = {}
+            if m := re.search(r"kl\.?\s*(\d{1,2})", low):
+                p["send_hour_local"] = int(m.group(1))
+            if re.search(r"(slå|slukke?).{0,20}fra|ikke have", low):
+                p["email_enabled"] = False
+            elif re.search(r"slå.{0,20}til", low):
+                p["email_enabled"] = True
+            out.update(kind="report_settings", params=p)
+        elif "lukket" in low:
+            out["question"] = "Hvilke åbningstider skal gælde? Skriv fx «åbningstider man-fre 8-16»."
+        s = json.dumps(out, ensure_ascii=False)
+        return Completion(text=s, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
+                          usage=Usage(input_tokens=len(text) // 4, output_tokens=len(s) // 4), request_id="fake-req")
 
     def _tool_turn(self, question, tools: list[dict]) -> Completion | None:
         """Deterministic tool use for tests: a user message "!<tool> {json}" calls that tool (if offered)."""

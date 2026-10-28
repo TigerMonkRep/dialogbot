@@ -76,7 +76,7 @@ async function Shell({ children }: { children: React.ReactNode }) {
       <main id="main" className="flex-grow w-full pb-[92px] sm:pb-0">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-7 flex gap-6 items-start">
           <div className="flex-1 min-w-0 flex flex-col">{children}</div>
-          <AssistantDock />
+          {current && <AssistantDock wsId={current.id} canChange={current.role !== "reader"} name={(me?.display_name ?? "").split(" ")[0] || undefined} />}
         </div>
       </main>
 

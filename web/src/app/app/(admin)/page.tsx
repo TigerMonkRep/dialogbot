@@ -5,13 +5,12 @@ import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { setupStatus } from "@/lib/setup.server";
 import { Icon } from "@/components/ui";
-import { ChangePanel, PowerToggle, type TelephonyCode } from "./client";
+import { PowerToggle, type TelephonyCode } from "./client";
 
 type Activity = { id: string; kind: string; title: string; body: string; href: string; at: string };
 type Overview = { kpis: Record<string, number>; activity: Activity[] };
 type Telephony = { status: { code: TelephonyCode; label: string; next_step: string }; business_number: string | null; destination: { e164: string } | null };
 type Call = { id: string; from_number: string | null; started_at: string | null; duration_seconds: number | null; ended_reason: string | null; summary: string | null; conversation_id: string | null };
-type Me = { display_name: string };
 
 /** What each "to you" item is and what the one button does. */
 const TODO: Record<string, { tag: string; cta: string }> = {
@@ -48,18 +47,15 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
   if (!taendt && !st.done && !(await cookies()).get("db_setup_later")) redirect(`/opsaetning/${st.next}`);
   const staff = ws.role !== "reader";
   const canManage = ws.role === "owner" || ws.role === "admin";
-  const [ov, tel, calls, me] = await Promise.all([
+  const [ov, tel, calls] = await Promise.all([
     backend<Overview>(`/workspaces/${ws.id}/overview`),
     staff ? backend<Telephony>(`/workspaces/${ws.id}/telephony`).catch(() => null) : Promise.resolve(null),
     staff ? backend<{ items: Call[] }>(`/workspaces/${ws.id}/telephony/calls?limit=5`).catch(() => null) : Promise.resolve(null),
-    backend<Me>("/auth/me").catch(() => null),
   ]);
   const k = ov.kpis;
   const code: TelephonyCode = tel?.status.code ?? "not_started";
   const on = code === "active";
   const todo = ov.activity.filter((a) => a.kind in TODO && (a.kind !== "task" || a.title.startsWith("Overskredet")));
-  const firstName = (me?.display_name ?? "").split(" ")[0] || "du";
-  const summary = `${k.calls_24h ?? 0} opkald og ${k.new_leads_24h ?? 0} nye henvendelser det seneste døgn, ${todo.length === 0 ? "intet" : todo.length} venter på dig.`;
 
   return (
     <div className="flex flex-wrap gap-6 items-start">
@@ -169,11 +165,6 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
           </details>
         )}
       </section>
-
-      {/* RIGHT: the ONE thing you change with */}
-      <div className="flex-[1_1_340px] min-w-0 max-w-[440px] w-full xl:sticky xl:top-[88px]">
-        <ChangePanel firstName={firstName} summary={summary} />
-      </div>
     </div>
   );
 }

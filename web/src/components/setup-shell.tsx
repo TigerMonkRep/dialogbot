@@ -4,13 +4,14 @@ import { backend } from "@/lib/api.server";
 import { VIEWAS_COOKIE } from "@/lib/config";
 import type { StepState } from "@/lib/setup.server";
 import { Avatar, ViewAsBanner } from "./shell.client";
+import { AssistantDock } from "./assistant";
 import { SetupLater } from "./setup-later";
 import { Icon, LogoMark } from "./ui";
 
 export const STEP_LABEL = ["Virksomhed", "Kalender & systemer", "Test & tænd"] as const;
 
 /** The header of the three setup steps: logo, workspace name and the stepper in place of the four pages. No bottom tabs. */
-export async function SetupShell({ step, steps, workspaceName, children, wide = false, later = false }: { step: 1 | 2 | 3; steps: [StepState, StepState, StepState]; workspaceName?: string | null; children: React.ReactNode; wide?: boolean; later?: boolean }) {
+export async function SetupShell({ step, steps, workspaceName, children, wide = false, later = false, assistant }: { step: 1 | 2 | 3; steps: [StepState, StepState, StepState]; workspaceName?: string | null; children: React.ReactNode; wide?: boolean; later?: boolean; assistant?: { wsId: string; canChange: boolean } }) {
   const me = await backend<{ display_name: string; email: string }>("/auth/me").catch(() => null);
   let viewAs: { name: string; email: string } | null = null;
   try { const raw = (await cookies()).get(VIEWAS_COOKIE)?.value; if (raw) viewAs = JSON.parse(raw); } catch { /* ignore a broken cookie */ }
@@ -50,6 +51,7 @@ export async function SetupShell({ step, steps, workspaceName, children, wide = 
       <main id="main" className="flex-grow w-full pb-28 sm:pb-10">
         <div className={`${wide ? "max-w-[1100px]" : "max-w-[1280px]"} mx-auto px-4 md:px-6 py-6 md:py-8`}>{children}{later && <p className="text-[13px] text-muted mt-6 hidden sm:block"><SetupLater /> – du finder alt igen under profil-ikonet → Alle indstillinger.</p>}</div>
       </main>
+      {assistant && <AssistantDock wsId={assistant.wsId} canChange={assistant.canChange} step={step} column={false} />}
     </div>
   );
 }

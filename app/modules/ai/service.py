@@ -21,7 +21,7 @@ from app.modules.ai.provider import Completion, get_provider
 from app.modules.knowledge import service as knowledge
 
 # Bump whenever the instructions below change, so usage and quality can be compared per version.
-PROMPT_VERSION = "assistant-v1"
+PROMPT_VERSION = "assistant-v2"
 
 INSTRUCTIONS = """Du er den digitale receptionist for virksomheden "{name}". Du svarer kunder på vegne af virksomheden.
 
@@ -30,6 +30,7 @@ Regler:
 - Hvis svaret ikke fremgår af den godkendte viden, så sig det ærligt og tilbyd, at en medarbejder vender tilbage. Gæt aldrig på priser, tider, tilbud eller vilkår.
 - Priser i den godkendte viden er angivet i hele øre ekskl. moms (fx price_net_minor 14500 = 145,00 kr. ekskl. moms), medmindre andet står.
 - Du kan ikke booke, ringe op, tage imod betaling eller love noget på virksomhedens vegne. Sig det, hvis kunden beder om det.
+- Ydelser med "promote": false nævner du kun, hvis kunden selv spørger om dem. Ydelser uden feltet eller med "promote": true må du gerne nævne, når det passer til samtalen.
 - Svar kort, venligt og på kundens sprog (standard dansk).
 
 <godkendt_viden revision="{revision}">

@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from typing import Literal
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
@@ -18,7 +18,7 @@ from app.db import get_db
 from app.models import Conversation, ConversationMessage, WebchatSettings
 from app.modules.integrations import actions
 from app.modules.setup.checks import invalidate_checks
-from app.modules.webchat import service
+from app.modules.webchat import feed, service
 
 router = APIRouter(prefix="/workspaces/{workspace_id}", tags=["webchat"])
 
@@ -111,6 +111,45 @@ class ConversationOut(BaseModel):
     created_at: datetime
     last_message_at: datetime
     preview: str | None
+
+
+@router.get("/conversations/feed")
+def conversation_feed(f: str = "all", q: str = "", days: int = Query(default=30, ge=1, le=366), limit: int = Query(default=100, ge=1, le=300),
+                      ctx: WorkspaceContext = Depends(require_capability("conversations.read")), db: OrmSession = Depends(get_db)):
+    """«Opkald og beskeder»: phone and webchat in one list with a derived outcome. f = all | to_you | booked | done | webchat."""
+    since = datetime.now(UTC) - timedelta(days=days)
+    rows = db.scalars(select(Conversation).where(Conversation.workspace_id == ctx.workspace.id, Conversation.last_message_at >= since)
+                      .order_by(Conversation.last_message_at.desc()).limit(1000)).all()
+    items = feed.enrich(db, list(rows))
+    chips = feed.counts(items)
+    needle = q.strip().lower()
+    if needle:
+        items = [i for i in items if needle in f"{i['name']} {i['summary']} {i['question']} {i['phone'] or ''} {i['origin'] or ''}".lower()]
+    if f == "webchat":
+        items = [i for i in items if i["channel"] == "webchat"]
+    elif f in feed.OUTCOMES:
+        items = [i for i in items if i["outcome"] == f]
+    return {"counts": chips, "items": items[:limit], "total": len(items)}
+
+
+@router.get("/conversations/{conversation_id}/summary")
+def conversation_summary(conversation_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_capability("conversations.read")),
+                         db: OrmSession = Depends(get_db)):
+    conv = get_scoped(db, Conversation, conversation_id, ctx.workspace.id)
+    return feed.enrich(db, [conv])[0]
+
+
+@router.post("/conversations/{conversation_id}/resolve")
+def resolve_conversation(conversation_id: uuid.UUID, request: Request,
+                         ctx: WorkspaceContext = Depends(require_capability("conversations.reply")), db: OrmSession = Depends(get_db)):
+    """«Marker som klaret»: closes the open tasks of the conversation's lead and gives a taken-over chat back to the assistant."""
+    conv = get_scoped(db, Conversation, conversation_id, ctx.workspace.id)
+    r = feed.resolve(db, conv, ctx.user_id)
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="conversation.resolved",
+                 object_type="conversation", object_id=conv.id, before=r["before"], after=r["after"],
+                 request_id=request.state.request_id)
+    db.commit()
+    return {"id": str(conv.id), "outcome": feed.enrich(db, [conv])[0]["outcome"], "tasks_closed": r["tasks_closed"]}
 
 
 @router.get("/conversations")

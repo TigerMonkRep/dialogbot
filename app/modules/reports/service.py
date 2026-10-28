@@ -8,6 +8,7 @@ Money is summed in whole øre from the fee snapshots of leads approved that day.
 """
 from __future__ import annotations
 
+import re
 import uuid
 from datetime import UTC, date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
@@ -20,7 +21,9 @@ from app.config import get_settings
 from app.core.outbox import enqueue
 from app.models import (
     AiUsage,
+    Booking,
     BusinessProfile,
+    CampaignCall,
     Conversation,
     ConversationMessage,
     DailyReport,
@@ -164,7 +167,7 @@ def run_due(db: OrmSession, now: datetime | None = None) -> int:
             continue
         made += 1
         if s.email_enabled:
-            link = f"{get_settings().frontend_base_url}/app/reports?date={day.isoformat()}"
+            link = f"{get_settings().frontend_base_url}/app/ugen?date={day.isoformat()}"
             body = _summary_text(ws.name, r.data)
             for user_id, email in db.execute(select(User.id, User.email).join(Membership, Membership.user_id == User.id)
                                              .where(Membership.workspace_id == ws.id,
@@ -175,3 +178,110 @@ def run_due(db: OrmSession, now: datetime | None = None) -> int:
         db.commit()
     db.commit()
     return made
+
+
+# --- Ugen (weekly view) ---------------------------------------------------------------------------------------------
+
+def week_start_of(day: date) -> date:
+    return day - timedelta(days=day.weekday())
+
+
+def _median(xs: list[float]) -> float | None:
+    xs = sorted(xs)
+    if not xs:
+        return None
+    m = len(xs) // 2
+    return xs[m] if len(xs) % 2 else (xs[m - 1] + xs[m]) / 2
+
+
+def week(db: OrmSession, workspace_id: uuid.UUID, start: date, tz: str) -> dict:
+    """The week Monday..Sunday in the workspace's time zone: counts per day and the four headline numbers.
+
+    «answered» = conversations (phone + webchat) started that day; «to_you» = those that still need a person or ended as
+    a message for the owner. Response time is measured on webchat only (first assistant reply after the first visitor
+    message); calls are answered at once and we have no measurement, so phone does not enter it.
+    """
+    from app.modules.webchat import feed  # local import: webchat.router imports reports-free modules only
+
+    a, b = day_bounds(start, tz)[0], day_bounds(start + timedelta(days=7), tz)[0]
+    convs = feed.conversations_between(db, workspace_id, a, b)
+    items = {i["id"]: i for i in feed.enrich(db, convs)}
+    days = [{"date": (start + timedelta(days=i)).isoformat(), "answered": 0, "to_you": 0} for i in range(7)]
+    z = ZoneInfo(tz)
+    for c in convs:
+        d = (c.created_at.astimezone(z).date() - start).days
+        if 0 <= d < 7:
+            days[d]["to_you" if items[str(c.id)]["outcome"] == "to_you" else "answered"] += 1
+    bookings = _count(db, Booking, Booking.workspace_id == workspace_id, Booking.status == "confirmed",
+                      Booking.created_at >= a, Booking.created_at < b)
+    pa, pb = day_bounds(start - timedelta(days=7), tz)[0], a
+    prev_bookings = _count(db, Booking, Booking.workspace_id == workspace_id, Booking.status == "confirmed",
+                           Booking.created_at >= pa, Booking.created_at < pb)
+    web_ids = [c.id for c in convs if c.channel == "webchat"]
+    gaps: list[float] = []
+    if web_ids:
+        first: dict = {}
+        for cid, role, at in db.execute(select(ConversationMessage.conversation_id, ConversationMessage.role,
+                                               ConversationMessage.created_at)
+                                        .where(ConversationMessage.conversation_id.in_(web_ids))
+                                        .order_by(ConversationMessage.conversation_id, ConversationMessage.created_at)):
+            slot = first.setdefault(cid, {})
+            if role == "visitor":
+                slot.setdefault("v", at)
+            elif role == "assistant" and "v" in slot:
+                slot.setdefault("a", at)
+        gaps = [(s["a"] - s["v"]).total_seconds() for s in first.values() if "a" in s and "v" in s]
+    cc = db.execute(select(func.count(), func.coalesce(func.sum(CampaignCall.net_minor), 0))
+                    .where(CampaignCall.workspace_id == workspace_id, CampaignCall.dialled_at >= a,
+                           CampaignCall.dialled_at < b)).one()
+    summary = feed.counts(list(items.values()))
+    med = _median(gaps)
+    return {
+        "start": start.isoformat(), "end": (start + timedelta(days=6)).isoformat(), "timezone": tz,
+        "answered": sum(d["answered"] + d["to_you"] for d in days), "phone": sum(1 for c in convs if c.channel == "phone"),
+        "to_you": summary["to_you"], "bookings": bookings, "bookings_prev_week": prev_bookings,
+        "response_seconds": round(med, 1) if med is not None else None, "days": days,
+        "campaign_calls": cc[0], "campaign_net_minor": int(cc[1]),
+    }
+
+
+_STOP = {"og", "i", "på", "at", "en", "et", "det", "der", "er", "jeg", "vi", "kan", "har", "til", "med", "om", "for",
+         "som", "de", "den", "du", "I", "jer", "min", "mit", "mig", "hvad", "hvor", "hvordan", "hvornår", "også", "af",
+         "så", "vil", "gerne", "lave", "laver", "have", "ikke", "bare", "lidt"}
+
+
+def _tokens(text: str) -> frozenset[str]:
+    words = re.findall(r"[a-zæøå0-9]+", text.lower())
+    return frozenset(w for w in words if w not in _STOP and len(w) > 1)
+
+
+def topics(db: OrmSession, workspace_id: uuid.UUID, start: date, tz: str) -> list[dict]:
+    """What customers asked about this week: the first thing each customer said, grouped by shared words.
+
+    A heuristic, not a classifier: two questions land in one topic when they share at least 60 % of their words.
+    «could_answer» is False when the conversation ended as a message for the owner (a person had to follow up).
+    """
+    from app.modules.webchat import feed
+
+    a, b = day_bounds(start, tz)[0], day_bounds(start + timedelta(days=7), tz)[0]
+    convs = feed.conversations_between(db, workspace_id, a, b)
+    out = {i["id"]: i for i in feed.enrich(db, convs)}
+    groups: list[dict] = []
+    for c in sorted(convs, key=lambda c: c.created_at):
+        it = out[str(c.id)]
+        text = (it["question"] or it["summary"]).strip()
+        tok = _tokens(text)
+        if not tok:
+            continue
+        g = next((g for g in groups if len(tok & g["tok"]) / max(1, min(len(tok), len(g["tok"]))) >= 0.6), None)
+        if g is None:
+            g = {"tok": tok, "labels": {}, "count": 0, "answered": 0, "booked": 0}
+            groups.append(g)
+        g["labels"][text] = g["labels"].get(text, 0) + 1
+        g["count"] += 1
+        g["answered"] += it["outcome"] != "to_you"
+        g["booked"] += it["outcome"] == "booked"
+    rows = [{"topic": max(g["labels"], key=g["labels"].get)[:90], "count": g["count"], "booked": g["booked"],
+             "could_answer": g["answered"] == g["count"], "to_you": g["count"] - g["answered"]} for g in groups]
+    rows.sort(key=lambda r: (-r["count"], r["topic"]))
+    return rows[:12]

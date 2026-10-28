@@ -64,6 +64,15 @@ Opslag (genereres af `app/modules/social/render.py`): tre looks – `hook` (blæ
 
 Transaktionelle mails (`app/modules/integrations/email_templates.py`): hvid kort med 2 px blæk-kontur på `panel`-baggrund, blå knap, gul trin-nummer når mailen er et trin i opsætningen. Signatur: `docs/email-signature.html`.
 
+- **Én knap pr. mail** (det ene næste trin) og få, korte afsnit. Tal vises i et lille panel (`Email.rows`), ikke som tekstmur.
+- **Mørk visning og telefon** ligger i layoutet (`prefers-color-scheme: dark`, `max-width: 480px`): mørk side `#0D1630`, kort i blæk, hvid overskrift, blå knap og gult trin-nummer uændret. Apple Mail, iOS Mail, Outlook og Samsung Mail følger det; Gmail på Android kan lægge sin egen inversion ovenpå.
+- **Ny mail = ny funktion**, der returnerer en `Email`, og en linje i `samples()`. Layout, mørk visning og telefon arves; en test fejler, indtil den er på listen.
+- **Se dem alle:** `python -m scripts.preview_emails` (åbn `var/email-preview/index.html`: lys, mørk, telefon) og `node web/scripts/shoot-emails.mjs` (skærmbilleder i `docs/email-previews/`).
+
+## SMS
+
+Faste tekster i `app/modules/integrations/sms_templates.py`: ét segment (≤ 160 tegn), ingen emoji eller udråbstegn, afsender = virksomhedens navn (højst 11 tegn), alle slutter «Vh {virksomhed}». De tilhører kundens virksomhed og bærer ikke Dialogbots brand.
+
 ## Hvor det ligger
 
 - Tokens: `web/src/app/globals.css` (@theme). Semantiske Material-navne er beholdt og peger på de nye farver; ny kode bruger brand-tokens (`bg-accent`, `text-ink`, `border-ink`, `bg-panel`, `bg-highlight`, `shadow-block`).

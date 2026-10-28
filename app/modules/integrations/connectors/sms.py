@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
 from app.models import Booking, BusinessProfile, TelephonyAccount, Workspace
+from app.modules.integrations import sms_templates as texts
 from app.modules.integrations.connectors.base import (
     ActionError,
     ActionRefused,
@@ -75,26 +76,26 @@ def render(db: OrmSession, ws: Workspace, template: str, ctx: RunContext) -> str
             raise ActionRefused("Der er ingen booking i denne samtale at bekræfte", code="no_booking")
         from app.modules.bookings.service import label
 
-        return f"Hej {b.contact_name or ''}".strip() + f". Din tid hos {ws.name}: {b.title.split(':')[0]} {label(b.starts_at, ctx.tz)}. Vh {ws.name}"
+        return texts.booking(ws.name, b.contact_name or "", b.title.split(":")[0], label(b.starts_at, ctx.tz))
     if template == "ring_tilbage":
-        return f"Tak for din henvendelse til {ws.name}. En medarbejder ringer tilbage på dette nummer. Vh {ws.name}"
+        return texts.call_back(ws.name)
     if template == "aabningstider":
         hours = _opening_hours_text(db, ws.id)
         if not hours:
             raise ActionRefused("Virksomheden har ingen godkendte åbningstider", code="no_opening_hours")
-        return f"Åbningstider hos {ws.name}: {hours}. Vh {ws.name}"
+        return texts.opening_hours(ws.name, hours)
     if template == "adresse":
         addr = " ".join(x for x in ((profile.address_line, profile.postal_code, profile.city) if profile else ()) if x)
         if not addr.strip():
             raise ActionRefused("Virksomhedens adresse er ikke udfyldt", code="no_address")
-        return f"{ws.name} ligger på {addr}. Vh {ws.name}"
+        return texts.address(ws.name, addr)
     if template == "kontakt":
         phone = (profile.phone if profile else "") or ""
         site = (profile.website_url if profile else "") or ""
         bits = ", ".join(x for x in (f"tlf. {phone}" if phone else "", site) if x)
         if not bits:
             raise ActionRefused("Virksomhedens kontaktoplysninger er ikke udfyldt", code="no_contact")
-        return f"Kontakt {ws.name}: {bits}. Vh {ws.name}"
+        return texts.contact(ws.name, bits)
     raise ActionRefused("Ukendt skabelon", code="unknown_template")
 
 

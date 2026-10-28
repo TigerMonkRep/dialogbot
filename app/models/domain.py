@@ -1545,6 +1545,11 @@ class SocialPost(Base):
     status: Mapped[str] = mapped_column(String(12), nullable=False, default="scheduled")
     # True for posts the operator ordered on top of the daily plan ("Generér nye opslag"); the planner ignores them.
     extra: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default=text("false"))
+    # Which generation of images and copy the post was made with (service.DESIGN_VERSION). A draft made with an older
+    # one is regenerated in place by the worker before it can be approved.
+    design_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default=text("1"))
+    # When the operator was reminded (e-mail) that this draft still waits for approval.
+    unapproved_notified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     topic: Mapped[str] = mapped_column(String(40), nullable=False)
     group_key: Mapped[str] = mapped_column(String(60), nullable=False)
     caption: Mapped[str] = mapped_column(Text, nullable=False)  # the complete text as posted, hashtags and link included

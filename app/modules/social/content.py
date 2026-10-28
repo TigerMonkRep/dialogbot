@@ -24,7 +24,7 @@ from app.modules.social.topics import ALLOWED_AMOUNTS, FACTS, PLATFORMS, Topic
 
 log = structlog.get_logger("dialogbot.social")
 
-PROMPT_VERSION = "social-v1"
+PROMPT_VERSION = "social-v2"
 MAX_TOKENS = 4000
 
 # The number of slides each platform gets from the fallback copy, and the range the AI may use.
@@ -32,8 +32,9 @@ SLIDES = {"facebook": (1, 1), "instagram": (4, 7), "tiktok": (4, 6)}
 CAPTION_MAX = {"facebook": 900, "instagram": 1500, "tiktok": 280}
 TITLE_MAX, BODY_MAX = 90, 170
 
+_AMOUNT = r"(\d[\d.,]*)\s*(?:kr\b|kr\.|kroner|dkk)"
 FORBIDDEN = ("garanti", "garanter", "nr. 1", "nummer 1", "nummer ét", "bedst", "markedets", "spar ", "sparer", "omsætning",
-             "procent", "%", "risikofri", "gratis prøve", "gratis demo")
+             "procent", "%", "risikofri", "gratis", "iso 27001", "iso-certific", "sla ", "hosting", "hostet")
 
 
 @dataclass
@@ -106,6 +107,8 @@ def template_draft(platform: str, topic: Topic) -> Draft:
         slides += [{"role": "point", "kicker": f"{i} / 3", "title": p, "body": ""} for i, p in enumerate(pts, 1)]
         slides.append({"role": "cta", "kicker": "Dialogbot", "title": "Prøv Dialogbot", "body": "dialogbot.dk"})
         body = hook
+    if topic.caption_note:  # e.g. the price: in the text, never on an image
+        body = f"{body}\n\n{topic.caption_note}" if platform != "tiktok" else f"{body} {topic.caption_note}"
     tags = hashtags_for(platform, topic)
     link = link_for(topic, platform) if platform == "facebook" else None
     return Draft(platform, slides, finish(platform, body, tags, link), tags, link, body=body)
@@ -137,7 +140,11 @@ De tre platforme skal føles forskellige, ikke som tre kopier af samme tekst:
 - tiktok: 5 slides i et hurtigt, direkte talesprog: slide 1 er et spørgsmål eller en provokation, der får folk til at
   blive (title højst 60 tegn), slide 2-4 hvert ét punkt, slide 5 er en opfordring. caption: højst 150 tegn. 3-4 hashtags.
 
-Hashtags skrives uden # og uden mellemrum."""
+Hashtags skrives uden # og uden mellemrum.
+
+Billederne (slides) må ALDRIG indeholde kronebeløb, priser eller ordet "gratis"; priser må kun stå i caption. Skriv ingen
+påstande om ISO, hosting, SLA eller certificeringer. Ét budskab pr. opslag, få og korte ord. Når emnet er prøve-opkaldet,
+hedder den, der ringer, Peter og er Dialogbots digitale assistent."""
 
 USER = """Emne: {key}
 Vinkel: {angle}
@@ -231,12 +238,14 @@ def check(d: Draft) -> list[str]:
     for word in FORBIDDEN:
         if word in everything:
             errors.append(f"forbidden phrase: {word.strip()}")
-    for m in re.finditer(r"(\d[\d.,]*)\s*(?:kr\b|kr\.|kroner|dkk)", everything):
+    allowed = {a.replace(".", "") for a in ALLOWED_AMOUNTS}
+    for m in re.finditer(_AMOUNT, everything):
         amount = m.group(1).rstrip(".,")
-        if amount.replace(".", "") not in {a.replace(".", "") for a in ALLOWED_AMOUNTS}:
+        if amount.replace(".", "") not in allowed:
             errors.append(f"amount not in the facts: {amount}")
-    if "gratis" in everything and "opsætning" not in everything:
-        errors.append("'gratis' without the setup context")
+    on_images = " ".join(f"{s['title']} {s.get('body', '')} {' '.join(s.get('bullets', []))}" for s in d.slides).lower()
+    if re.search(_AMOUNT, on_images) or re.search(r"\bkr\b|\bkroner\b|\bdkk\b", on_images):
+        errors.append("price on an image (prices belong in the text only)")
     return errors
 
 

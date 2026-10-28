@@ -328,6 +328,22 @@ def ambassador_paid(first_name: str, amount: str, bank_last4: str | None, number
                  footer_reason="Du får denne e-mail, fordi du er ambassadør for Dialogbot.")
 
 
+def social_drafts_waiting(items: list[tuple[str, str]], link: str, skip_after_hours: int = 6) -> Email:
+    """Operator reminder: drafts of Dialogbot's own social posts that are not approved shortly before their slot.
+    `items` = (platform and time, topic) per draft. Nothing is posted without the approval."""
+    n = len(items)
+    return Email(
+        subject=f"{n} opslag venter på din godkendelse" if n != 1 else "1 opslag venter på din godkendelse",
+        preheader="Godkend dem i operatør-oversigten, før tidspunktet.",
+        heading="Opslag venter på dig",
+        paragraphs=["Disse kladder er ikke godkendt endnu. Kig på billede og tekst, ret om nødvendigt, og tryk Godkend."],
+        rows=list(items),
+        button_label="Gennemse og godkend", button_url=link,
+        note=f"Intet bliver postet uden din godkendelse. Er et opslag ikke godkendt {skip_after_hours} timer efter "
+             "tidspunktet, springes det over.",
+        footer_reason="Du får denne e-mail, fordi du er operatør hos Dialogbot.")
+
+
 def to_payload(mail: Email) -> dict:
     """Serialize for the outbox (the worker renders it with `from_payload`)."""
     return {"subject": mail.subject, "heading": mail.heading, "paragraphs": mail.paragraphs,
@@ -373,6 +389,9 @@ def samples() -> dict[str, Email]:
         "ambassador_rejected": ambassador_rejected("Mads", ""),
         "ambassador_paid": ambassador_paid("Mads", "724,25 kr.", "5678", 1001, True,
                                            "https://www.dialogbot.dk/ambassador"),
+        "social_drafts_waiting": social_drafts_waiting(
+            [("Facebook · i dag kl. 15.30", "Booking"), ("Instagram · i dag kl. 16.15", "Booking"),
+             ("TikTok · i dag kl. 19.00", "Booking")], "https://www.dialogbot.dk/app/operator/social"),
         "from_plain": from_plain("Gammel besked", "Hej Mads\n\nTekst her.\n\nSe det her: https://www.dialogbot.dk/x\n\n"
                                                   "Venlig hilsen\nDialogbot"),
     }

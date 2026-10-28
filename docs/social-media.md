@@ -56,6 +56,21 @@ Platformene henter billederne selv fra `PUBLIC_BASE_URL/api/v1/social/media/<id>
 ### 4. Slå det til
 Sæt `SOCIAL_PROVIDER=live` på API og worker. Anbefalet start: `SOCIAL_REQUIRE_APPROVAL=true`, læs de første kladder (se nedenfor), godkend dem, og skift derefter til `false`.
 
+## Designversion, genopbygning og påmindelse
+
+* Hvert opslag har en `design_version` (nu 2 = Byggevejledning-designet, `service.DESIGN_VERSION`). Når den hæves, bygger workeren
+  automatisk kommende kladder om **på stedet** (`refresh_stale_drafts`: samme række og unikke `platform + slot_date`, ny tekst,
+  nye hashtags, nye slides og billeder). Den gamle tekst gemmes i audit-loggen (`social.refreshed`, før/efter). Kørsel er idempotent.
+* Rækker går tilbage til `draft` og skal godkendes igen. Et tidspunkt der er passeret (eller er ved at passere) rykkes til 90 min.
+  frem **samme dag**, så der er tid til at godkende. Gamle kladder kan ikke godkendes eller udgives, før de er genopbygget
+  (`409 social_stale_design`).
+* Manuelt: `python -m scripts.social_refresh` (tørkørsel) og `--apply` (`--force`, `--from`, `--to`, `--platform`).
+* Intet udgives uden godkendelse (`SOCIAL_REQUIRE_APPROVAL`). Er en kladde ikke godkendt 3 timer før tidspunktet, får alle
+  platformsoperatører **én** e-mail (`social_drafts_waiting`); springes den over, står årsagen i klartekst i dashboardet.
+* Priser står kun i opslagsteksten, aldrig på billeder. Ingen "gratis", ISO, hosting eller SLA (`content.check`).
+* TikTok-statistik: en publish-id (`p_pub…`) slås op til video-id via status-endpointet, så snart TikTok har et offentligt id; indtil da er
+  statistikken tom for opslaget (ikke-kritisk, kladden/opslaget påvirkes ikke).
+
 ## Operatør-dashboard
 
 `/app/operator/social` (kun brugere med operatørrollen; linket ligger i profilmenuen ved avataren) viser pr. platform: følgere i dag, ændring på 7 og 30 dage, en kurve over perioden, antal opslag/følger/likes og engagement (likes, kommentarer, delinger, visninger) på de opslag, der er gået ud i perioden. Derunder: opslag der venter på godkendelse (teksten kan rettes, derefter *Godkend*, *Post nu* eller *Annullér*, med billederne vist), planlagte, fejlede og udsendte opslag med deres tal, samt en knap til at bestille ekstra kladder for en dag/et emne.

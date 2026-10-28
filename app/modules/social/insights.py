@@ -114,6 +114,19 @@ def snapshot_accounts(db: OrmSession, *, now: dt.datetime | None = None, force: 
 
 # --- per-post engagement ---------------------------------------------------------------------------------------------------
 
+def resolve_tiktok_post_id(db: OrmSession, post: SocialPost) -> str:
+    """TikTok answers a post with a publish id first; the public post id comes from the status endpoint once the post
+    has gone through. Stores it as the post's external_id (so metrics can be read) and returns it."""
+    token = publishers.tiktok_access_token(db)
+    st = (_tiktok("/v2/post/publish/status/fetch/", token=token, json={"publish_id": post.external_id}).get("data")
+          or {})
+    ids = st.get("publicaly_available_post_id") or st.get("publicly_available_post_id") or []
+    if st.get("status") == "PUBLISH_COMPLETE" and ids:
+        post.external_id = str(ids[0])
+        return post.external_id
+    raise PublishError(f"TikTok har endnu intet opslags-id (status: {st.get('status') or 'ukendt'})")
+
+
 def fetch_post_metrics(db: OrmSession, post: SocialPost) -> dict:
     """Engagement for one published post: only the keys the platform offers."""
     if not post.external_id:
@@ -127,8 +140,8 @@ def fetch_post_metrics(db: OrmSession, post: SocialPost) -> dict:
         body = _graph("GET", post.external_id, fields="like_count,comments_count")
         return {"likes": _int(body.get("like_count")), "comments": _int(body.get("comments_count"))}
     if post.platform == "tiktok":
-        if post.external_id.startswith("p_pub"):
-            raise PublishError("TikTok gav kun et publish-id for opslaget; statistik kræver opslagets video-id")
+        if post.external_id.startswith(("p_pub", "v_pub")):
+            resolve_tiktok_post_id(db, post)  # raises (not critical) while TikTok has no public id for it
         token = publishers.tiktok_access_token(db)
         body = _tiktok("/v2/video/query/?fields=id,like_count,comment_count,share_count,view_count", token=token,
                        json={"filters": {"video_ids": [post.external_id]}})

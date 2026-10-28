@@ -797,3 +797,141 @@ def test_extra_posts_can_be_ordered_on_a_day_that_already_has_posts(social, api,
     assert post["extra"] is True and post["status"] == "draft"
     assert api.post(op, f"/operator/social/posts/{post['id']}/approve", {}).json()["status"] == "scheduled"
     assert api.post(op, "/operator/social/extra", {"topic": "nope"}).status_code == 422
+
+
+# --- new design: refresh of old drafts, reminder, approval guard -----------------------------------------------------------
+
+@pytest.fixture
+def approval(social, monkeypatch):
+    monkeypatch.setenv("SOCIAL_REQUIRE_APPROVAL", "true")
+    monkeypatch.setenv("SOCIAL_MAX_LATE_MINUTES", "360")
+    get_settings.cache_clear()
+
+
+def _make_old(db, design_version=1):
+    """Plan a day, then make every row look like an old-design draft with the old text."""
+    service.plan(db, MONDAY)
+    for p in db.scalars(select(SocialPost)):
+        p.design_version, p.caption, p.status = design_version, "Gammel tekst · Gratis", "draft"
+    db.commit()
+
+
+def test_new_posts_are_created_in_the_current_design(approval, db):
+    service.plan(db, MONDAY)
+    assert {p.design_version for p in db.scalars(select(SocialPost))} == {service.DESIGN_VERSION}
+
+
+def test_prices_are_text_only_never_on_an_image_and_no_gratis_or_certificate_claims():
+    t = TOPICS_BY_KEY["pricing"]
+    for platform in PLATFORMS:
+        d = content.template_draft(platform, t)
+        assert "2.495" in d.caption and "4 kr." in d.caption
+        for s in d.slides:
+            assert not any(ch.isdigit() for ch in f"{s.get('title', '')} {s.get('body', '')}")
+    bad = content.template_draft("facebook", TOPICS_BY_KEY["pricing"])
+    bad.slides[0] = {**bad.slides[0], "title": "Fra 2.495 kr."}
+    assert any("price on an image" in e for e in content.check(bad))
+    for word in ("Gratis", "ISO 27001", "SLA ", "hosting"):
+        d = content.template_draft("facebook", TOPICS_BY_KEY["pricing"])
+        d.body += f" {word}"
+        assert content.check(d), word
+
+
+def test_refresh_replaces_old_drafts_in_place_and_is_idempotent(approval, db):
+    _make_old(db)
+    ids = {(p.platform, p.slot_date): p.id for p in db.scalars(select(SocialPost))}
+    first = service.refresh_stale_drafts(db, MONDAY)
+    assert len(first) == len(ids) == 6
+    rows = db.scalars(select(SocialPost)).all()
+    assert {(p.platform, p.slot_date): p.id for p in rows} == ids                 # same rows, no new ones
+    assert all(p.design_version == service.DESIGN_VERSION and p.status == "draft" for p in rows)
+    assert all("Gratis" not in p.caption for p in rows)
+    assert db.query(SocialMedia).count() == 2 * (1 + 5 + 5)                      # images re-rendered, none left over
+    audit = [a for a in db.execute(select(__import__("app.models", fromlist=["AuditLog"]).AuditLog)).scalars()
+             if a.action == "social.refreshed"]
+    assert len(audit) == 6 and audit[0].before["caption"] == "Gammel tekst · Gratis"   # the old text is kept
+    assert service.refresh_stale_drafts(db, MONDAY) == []                         # second run does nothing
+
+
+def test_refresh_with_a_scheduled_row_goes_back_to_draft_and_needs_new_approval(approval, db):
+    _make_old(db)
+    p = db.scalars(select(SocialPost)).first()
+    p.status, p.approved_by_user_id = "scheduled", None
+    db.commit()
+    service.refresh_stale_drafts(db, MONDAY)
+    db.refresh(p)
+    assert p.status == "draft" and p.approved_by_user_id is None
+
+
+def test_refresh_moves_a_passed_slot_to_later_the_same_day_but_not_across_midnight(approval, db):
+    _make_old(db)
+    noon = MONDAY.replace(hour=13)                                                # FB 09:30 and IG 12:15 have passed
+    done = service.refresh_stale_drafts(db, noon, platforms=["facebook", "instagram"], days=(date(2026, 10, 5),) * 2)
+    assert len(done) == 2
+    for p in db.scalars(select(SocialPost).where(SocialPost.slot_date == date(2026, 10, 5),
+                                                 SocialPost.platform.in_(("facebook", "instagram")))):
+        assert p.scheduled_for.astimezone(CPH) >= noon + service.REFRESH_GRACE - timedelta(seconds=1)
+        assert p.scheduled_for.astimezone(CPH).date() == date(2026, 10, 5)
+    late = MONDAY.replace(hour=23, minute=0)                                      # 90 min later is tomorrow: stay put
+    tt = db.scalars(select(SocialPost).where(SocialPost.platform == "tiktok", SocialPost.slot_date == date(2026, 10, 7))).one()
+    before = tt.scheduled_for
+    service.refresh_stale_drafts(db, late, platforms=["tiktok"], days=(date(2026, 10, 5), date(2026, 10, 7)))
+    db.refresh(tt)
+    assert tt.scheduled_for == before
+
+
+def test_dry_run_changes_nothing_and_force_redoes_current_rows(approval, db):
+    _make_old(db)
+    assert len(service.refresh_stale_drafts(db, MONDAY, dry_run=True)) == 6
+    assert {p.caption for p in db.scalars(select(SocialPost))} == {"Gammel tekst · Gratis"}
+    service.refresh_stale_drafts(db, MONDAY)
+    assert service.refresh_stale_drafts(db, MONDAY, force=True)[0]["from_version"] == service.DESIGN_VERSION
+
+
+def test_old_design_posts_cannot_be_approved_or_published_now(approval, db, api):
+    _make_old(db)
+    p = db.scalars(select(SocialPost)).first()
+    op = api.operator()
+    r = api.post(op, f"/operator/social/posts/{p.id}/approve")
+    assert r.status_code == 409 and r.json()["code"] == "social_stale_design"
+    r = api.post(op, f"/operator/social/posts/{p.id}/publish-now")
+    assert r.status_code == 409 and r.json()["code"] == "social_stale_design"
+    service.refresh_stale_drafts(db, MONDAY)
+    assert api.post(op, f"/operator/social/posts/{p.id}/approve").status_code == 200
+
+
+def test_run_due_refreshes_before_it_plans(approval, db, monkeypatch):
+    _make_old(db)
+    monkeypatch.setattr(service, "_now", lambda: MONDAY)
+    service.run_due(db)
+    assert {p.design_version for p in db.scalars(select(SocialPost))} == {service.DESIGN_VERSION}
+
+
+def test_unapproved_drafts_get_one_reminder_mail_to_every_operator(approval, db, api):
+    from app.models import OutboxEvent
+
+    api.operator()
+    service.plan(db, MONDAY)
+    # 8.45: Facebook 09.30 is within 3 h, Instagram 12.15 is just outside, TikTok is far away
+    now = MONDAY.replace(hour=8, minute=45)
+    assert service.remind_unapproved(db, now) == 1
+    ev = db.scalars(select(OutboxEvent).where(OutboxEvent.event_type == "email.branded")).all()
+    assert len(ev) == 1 and ev[0].payload["to_email"] == "operator@testmail.dk"
+    assert "Facebook" in json.dumps(ev[0].payload["email"]) and "Instagram" not in json.dumps(ev[0].payload["email"])
+    assert service.remind_unapproved(db, now) == 0                                 # once per draft
+    assert service.remind_unapproved(db, MONDAY.replace(hour=10)) == 1             # Instagram now qualifies, own mail
+
+
+def test_no_operator_means_no_mark_so_the_next_pass_tries_again(approval, db):
+    service.plan(db, MONDAY)
+    assert service.remind_unapproved(db, MONDAY.replace(hour=8, minute=45)) == 0
+    assert all(p.unapproved_notified_at is None for p in db.scalars(select(SocialPost)))
+
+
+def test_the_skipped_reason_names_the_slot_and_whether_a_reminder_went(approval, db):
+    service.plan(db, MONDAY)
+    service.publish_due(db, (MONDAY + timedelta(days=1)).astimezone(UTC))
+    p = db.scalars(select(SocialPost).where(SocialPost.slot_date == date(2026, 10, 5),
+                                            SocialPost.platform == "facebook")).one()
+    assert p.status == "skipped"
+    assert "09.30" in p.last_error and "6 timer" in p.last_error and "ingen påmindelse" in p.last_error

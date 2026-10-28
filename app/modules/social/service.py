@@ -40,6 +40,13 @@ MAX_ATTEMPTS = 3
 RETRY_AFTER = (timedelta(minutes=5), timedelta(minutes=30))
 STALE_PUBLISHING = timedelta(minutes=30)
 ACTIVE = ("draft", "scheduled", "publishing", "published", "failed")
+# Bump whenever render.py or the copy in topics.py/content.py changes in a way posts should pick up: drafts and
+# scheduled posts made with an older number are regenerated in place by `refresh_stale_drafts` (back to draft).
+#   1 = the first (green) design; 2 = the Byggevejledningen design, no prices on images, Peter in the demo post.
+DESIGN_VERSION = 2
+REFRESH_GRACE = timedelta(minutes=90)  # a refreshed draft whose slot has passed goes out no earlier than this from now
+REMIND_BEFORE = timedelta(hours=3)     # the operator is e-mailed when a draft is still unapproved this close to its slot
+PLATFORM_LABEL = {"facebook": "Facebook", "instagram": "Instagram", "tiktok": "TikTok"}
 
 
 def _now() -> datetime:
@@ -82,7 +89,8 @@ def create_post(db: OrmSession, day: date, topic: Topic, draft: content.Draft, *
     s = get_settings()
     post = SocialPost(platform=draft.platform, slot_date=day, scheduled_for=scheduled_for or slot_time(day, draft.platform),
                       status=status or ("draft" if s.social_require_approval else "scheduled"), topic=topic.key,
-                      extra=extra, group_key=f"{day.isoformat()}:{topic.key}{':extra' if extra else ''}",
+                      extra=extra, design_version=DESIGN_VERSION,
+                      group_key=f"{day.isoformat()}:{topic.key}{':extra' if extra else ''}",
                       caption=draft.caption, hashtags=draft.hashtags,
                       slides=draft.slides, link=draft.link, generator=draft.generator, generator_model=draft.model)
     db.add(post)
@@ -239,6 +247,112 @@ def publish_one(db: OrmSession, post: SocialPost, now: datetime | None = None) -
     return post
 
 
+def _skipped_reason(p: SocialPost, max_late: timedelta) -> str:
+    """Why a draft was skipped, in the operator's words: which slot, how long it waited, and whether a reminder went."""
+    slot = p.scheduled_for.astimezone(TZ).strftime("%d.%m. kl. %H.%M")
+    ready = p.created_at.astimezone(TZ).strftime("%d.%m. kl. %H.%M") if p.created_at else "?"
+    reminded = "påmindelse sendt" if p.unapproved_notified_at else "ingen påmindelse nåede at gå"
+    return (f"Ikke godkendt i tide: kladden lå klar siden {ready}, tidspunktet var {slot}, og den blev sprunget over "
+            f"{int(max_late.total_seconds() // 3600)} timer efter ({reminded}).")[:500]
+
+
+def refresh_stale_drafts(db: OrmSession, now: datetime | None = None, *, force: bool = False,
+                         platforms: list[str] | None = None, days: tuple[date, date] | None = None,
+                         dry_run: bool = False) -> list[dict]:
+    """Regenerate drafts (and scheduled, not yet published posts) made with an older DESIGN_VERSION, IN PLACE: the row
+    and its unique (platform, slot_date) stay, caption/slides/images are replaced, and the post goes back to `draft`
+    so the operator has to approve the new version. A slot that has passed (or is about to) moves to REFRESH_GRACE
+    from now – still the same Copenhagen day – so there is time to approve before the post could be skipped.
+    The old text goes into the audit log (`social.refreshed`, before/after). Idempotent: a refreshed row is current.
+    `force` regenerates rows that are already current (for a template change inside the same DESIGN_VERSION)."""
+    now = now or _now()
+    today = now.astimezone(TZ).date()
+    q = select(SocialPost).where(SocialPost.status.in_(("draft", "scheduled")), SocialPost.slot_date >= today)
+    if days:
+        q = q.where(SocialPost.slot_date >= days[0], SocialPost.slot_date <= days[1])
+    if platforms:
+        q = q.where(SocialPost.platform.in_(platforms))
+    if not force:
+        q = q.where(SocialPost.design_version < DESIGN_VERSION)
+    done: list[dict] = []
+    for post in db.scalars(q.order_by(SocialPost.slot_date, SocialPost.platform).with_for_update(skip_locked=True)).all():
+        topic = TOPICS_BY_KEY.get(post.topic)
+        if topic is None:
+            continue
+        info = {"id": str(post.id), "platform": post.platform, "slot_date": post.slot_date.isoformat(), "topic": post.topic,
+                "from_version": post.design_version, "old_status": post.status}
+        earliest = now + REFRESH_GRACE
+        moved = post.scheduled_for <= now + timedelta(minutes=30) and earliest.astimezone(TZ).date() == post.slot_date
+        info["new_slot"] = (earliest if moved else post.scheduled_for).astimezone(TZ).strftime("%Y-%m-%d %H:%M")
+        if dry_run:
+            done.append(info)
+            continue
+        draft = content.generate(db, topic, (post.platform,), _recent_hooks(db))[0]
+        before = {"caption": post.caption, "hashtags": post.hashtags, "slides": post.slides, "status": post.status,
+                  "design_version": post.design_version, "scheduled_for": post.scheduled_for.isoformat()}
+        post.caption, post.hashtags, post.slides, post.link = draft.caption, draft.hashtags, draft.slides, draft.link
+        post.generator, post.generator_model, post.design_version = draft.generator, draft.model, DESIGN_VERSION
+        db.query(SocialMedia).filter(SocialMedia.post_id == post.id).delete(synchronize_session=False)
+        db.flush()
+        _store_media(db, post)
+        if post.status == "scheduled" and get_settings().social_require_approval:
+            post.status, post.approved_by_user_id = "draft", None
+        if moved:
+            post.scheduled_for = earliest
+        post.unapproved_notified_at, post.last_error = None, None
+        record_audit(db, workspace_id=None, actor_user_id=None, action="social.refreshed", object_type="social_post",
+                     object_id=post.id, before=before, after={"design_version": DESIGN_VERSION,
+                                                              "scheduled_for": post.scheduled_for.isoformat(),
+                                                              "status": post.status, "generator": post.generator})
+        db.commit()
+        log.info("social.refreshed", platform=post.platform, post_id=str(post.id), slot=info["new_slot"])
+        done.append(info)
+    return done
+
+
+def remind_unapproved(db: OrmSession, now: datetime | None = None) -> int:
+    """E-mail every platform operator once when drafts are still unapproved REMIND_BEFORE ahead of their slot (or the
+    slot has passed but the draft has not yet been skipped). One mail lists all such drafts; each draft is
+    reminded once. No operator, no mail and no mark: the next pass tries again."""
+    from app.core.outbox import enqueue
+    from app.models import User
+    from app.modules.integrations import email_templates as tpl
+
+    now = now or _now()
+    max_late = timedelta(minutes=get_settings().social_max_late_minutes)
+    rows = db.scalars(select(SocialPost).where(
+        SocialPost.status == "draft", SocialPost.design_version >= DESIGN_VERSION,
+        SocialPost.unapproved_notified_at.is_(None), SocialPost.scheduled_for <= now + REMIND_BEFORE,
+        SocialPost.scheduled_for > now - max_late).order_by(SocialPost.scheduled_for)).all()
+    if not rows:
+        return 0
+    operators = db.execute(select(User.id, User.email).where(User.is_platform_operator.is_(True))).all()
+    if not operators:
+        log.warning("social.remind_no_operator", drafts=len(rows))
+        return 0
+    today = now.astimezone(TZ).date()
+
+    def when(p: SocialPost) -> str:
+        local = p.scheduled_for.astimezone(TZ)
+        day = "i dag" if local.date() == today else "i morgen" if local.date() == today + timedelta(days=1) \
+            else local.strftime("%d.%m.")
+        return f"{day} kl. {local:%H.%M}"
+
+    items = [(f"{PLATFORM_LABEL[p.platform]} · {when(p)}", TOPICS_BY_KEY[p.topic].kicker if p.topic in TOPICS_BY_KEY else p.topic)
+             for p in rows]
+    link = f"{get_settings().frontend_base_url.rstrip('/')}/app/operator/social"
+    mail = tpl.social_drafts_waiting(items, link, int(max_late.total_seconds() // 3600))
+    key = hashlib.sha1(",".join(sorted(str(p.id) for p in rows)).encode()).hexdigest()[:16]
+    for uid, email in operators:
+        enqueue(db, event_type="email.branded", dedupe_key=f"social_unapproved:{uid}:{key}",
+                payload={"to_email": email, "email": tpl.to_payload(mail)})
+    for p in rows:
+        p.unapproved_notified_at = now
+    db.commit()
+    log.info("social.reminded", drafts=len(rows), operators=len(operators))
+    return len(rows)
+
+
 def publish_due(db: OrmSession, now: datetime | None = None, limit: int = 10) -> int:
     now = now or _now()
     stale = db.scalars(select(SocialPost).where(SocialPost.status == "publishing",
@@ -253,7 +367,7 @@ def publish_due(db: OrmSession, now: datetime | None = None, limit: int = 10) ->
     expired = db.scalars(select(SocialPost).where(SocialPost.status == "draft",
                                                   SocialPost.scheduled_for < now - max_late)).all()
     for p in expired:
-        p.status, p.last_error = "skipped", "Ikke godkendt, før tidspunktet var overskredet"
+        p.status, p.last_error = "skipped", _skipped_reason(p, max_late)
     if expired:
         db.commit()
     done = 0
@@ -289,11 +403,21 @@ def run_due(db: OrmSession) -> int:
     if get_settings().social_provider == "none":
         return 0
     try:
+        refresh_stale_drafts(db)  # drafts from an older design are rebuilt (and must be approved again) before anything else
+    except Exception as e:  # noqa: BLE001
+        db.rollback()
+        log.warning("social.refresh_error", error=f"{type(e).__name__}: {e}")
+    try:
         plan(db)
     except Exception as e:  # noqa: BLE001 - planning trouble must not stop publishing
         db.rollback()
         log.warning("social.plan_error", error=f"{type(e).__name__}: {e}")
     n = publish_due(db)
+    try:
+        remind_unapproved(db)
+    except Exception as e:  # noqa: BLE001 - mail trouble must not stop publishing
+        db.rollback()
+        log.warning("social.remind_error", error=f"{type(e).__name__}: {e}")
     now = _now()
     if now.minute == 0:  # housekeeping once an hour is plenty
         prune_media(db)
@@ -324,6 +448,9 @@ def get_post(db: OrmSession, post_id: uuid.UUID) -> SocialPost:
 def approve(db: OrmSession, post: SocialPost, user_id: uuid.UUID, request_id: str | None = None) -> SocialPost:
     if post.status != "draft":
         raise Conflict("Kun kladder kan godkendes", code="social_not_draft")
+    if post.status in ("draft", "scheduled") and post.design_version < DESIGN_VERSION:
+        raise Conflict("Kladden bruger det gamle design og bliver bygget om i det nye. Prøv igen om et øjeblik.",
+                       code="social_stale_design")
     post.status, post.approved_by_user_id = "scheduled", user_id
     record_audit(db, workspace_id=None, actor_user_id=user_id, action="social.approve", object_type="social_post",
                  object_id=post.id, request_id=request_id)
@@ -359,6 +486,9 @@ def publish_now(db: OrmSession, post: SocialPost, user_id: uuid.UUID, request_id
     """Post immediately. A failed post may be retried this way once the operator has checked the profile."""
     if post.status not in ("draft", "scheduled", "failed"):
         raise Conflict("Opslaget kan ikke sendes i den tilstand", code="social_not_postable")
+    if post.status in ("draft", "scheduled") and post.design_version < DESIGN_VERSION:
+        raise Conflict("Kladden bruger det gamle design og bliver bygget om i det nye. Prøv igen om et øjeblik.",
+                       code="social_stale_design")
     if post.status == "draft":
         post.approved_by_user_id = user_id
     post.status, post.attempts = "scheduled", 0

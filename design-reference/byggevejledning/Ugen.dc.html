@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Dialogbot – Ugen</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+input:focus,button:focus-visible,textarea:focus{outline:3px solid #2456F6;outline-offset:2px}
+.d{font-family:Outfit,sans-serif;font-weight:800;letter-spacing:-0.4px}
+.card{background:#FFFFFF;border:2px solid #14213D;border-radius:20px;padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.card.hi{box-shadow:8px 8px 0 #14213D}
+.inner{border:1.5px solid #14213D;border-radius:14px;padding:14px 16px;background:#FFFFFF}
+.num{display:inline-flex;flex:none;width:48px;height:48px;border-radius:12px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:24px}
+.num.s{width:40px;height:40px;font-size:20px;border-radius:10px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5B6475}
+.h1{font-family:Outfit,sans-serif;font-weight:800;font-size:40px;line-height:1.05;letter-spacing:-1px;margin:0}
+.h2{font-family:Outfit,sans-serif;font-weight:800;font-size:22px;line-height:1.15;letter-spacing:-0.3px;margin:0}
+.p{font-size:15px;line-height:1.5;color:#3C4659;margin:0}
+.help{font-size:13px;color:#5B6475}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:2px solid #14213D;background:#FFFFFF;color:#14213D;font-weight:600;font-size:15px;text-decoration:none;cursor:pointer;font-family:Inter,sans-serif}
+.btn.pri{background:#2456F6;border-color:#2456F6;color:#fff;min-height:52px;padding:0 22px;font-size:17px}
+.btn.ink{background:#14213D;color:#fff}
+.btn.yel{background:#FFCF3F;border-color:#14213D}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #14213D;background:#FFFFFF;font-size:14px;font-weight:600}
+.chip.on{background:#14213D;color:#fff}
+.chip.panel{background:#EEF4FB;border-color:#EEF4FB}
+.tag{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600}
+.tag.yel{background:#FFCF3F}.tag.blue{background:#DCE6FF;color:#1A3FC0}.tag.ok{background:#DDF5E4;color:#1B6B3A}.tag.ink{background:#14213D;color:#fff}.tag.line{border:1.5px solid #14213D}
+.field{display:flex;flex-direction:column;gap:6px}
+.label{font-size:13px;font-weight:600}
+.input{min-height:48px;padding:0 14px;border-radius:12px;border:2px solid #14213D;background:#FFFFFF;font-size:16px;color:#14213D;font-family:Inter,sans-serif;box-sizing:border-box;width:100%}
+textarea.input{min-height:96px;padding:12px 14px;resize:vertical}
+.row{display:flex;align-items:center;gap:12px}
+.need{border:1.5px solid #14213D;border-radius:14px;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.need .k{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#EEF4FB;font-size:13px;font-weight:600}
+.need .k b{font-family:Outfit,sans-serif;font-weight:800}
+.bubble{padding:10px 14px;border:2px solid #14213D;border-radius:14px 14px 14px 4px;background:#FFFFFF;font-size:14px;line-height:1.45;max-width:420px}
+.bubble.me{border-radius:14px 14px 4px 14px;background:#14213D;color:#fff;margin-left:auto}
+.av{display:inline-flex;flex:none;width:28px;height:28px;border-radius:999px;background:#2456F6;color:#fff;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:12px}
+.arrow{font-family:Outfit,sans-serif;font-weight:800;font-size:22px;line-height:1}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#5B6475;padding:6px 8px;border-bottom:1.5px solid #14213D}
+.tbl td{padding:12px 8px;border-bottom:1px solid #D6DEEA;vertical-align:top}
+.toggle{display:inline-flex;align-items:center;width:56px;height:30px;padding:3px;border-radius:999px;background:#2456F6;justify-content:flex-end;flex:none}
+.toggle span{width:24px;height:24px;border-radius:999px;background:#fff}
+.toggle.off{background:#5B6475;justify-content:flex-start}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#EEF4FB;color:#14213D">
+<header style="border-bottom:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;min-height:64px">
+    <span style="display:flex;align-items:center;gap:10px">
+  <span style="display:inline-flex;width:32px;height:32px;border-radius:9px;background:#2456F6;align-items:center;justify-content:center">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+  </span>
+  <span class="d" style="font-size:20px;letter-spacing:-0.3px">Dialogbot</span>
+</span>
+    <span style="font-size:14px;color:#5B6475">Nørgaard Tømrer</span>
+    <nav aria-label="Sider" style="margin-left:auto;display:inline-flex;padding:4px;border-radius:999px;border:2px solid #14213D;background:#FFFFFF"><a href="Dashboard.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">I dag</a><a href="Viden.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">Det ved den</a><a href="Opkald.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">Opkald</a><a href="Ugen.dc.html" aria-current="page" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;background:#14213D;color:#fff">Ugen</a></nav>
+    <a href="Konto.dc.html" style="display:inline-flex;width:40px;height:40px;border-radius:999px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:15px;color:#14213D;text-decoration:none" aria-label="Konto: Rene">R</a>
+  </div>
+</header>
+<main style="max-width:1280px;width:100%;box-sizing:border-box;margin:0 auto;padding:28px 24px 48px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+  <section style="flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:18px">
+    <div class="row" style="justify-content:space-between;flex-wrap:wrap">
+      <div><span class="eyebrow">Uge 44 · 27. okt – 2. nov</span><h1 class="h1" style="margin-top:6px">Sådan gik ugen</h1></div>
+      <div class="row"><span class="chip">‹ Uge 43</span><span class="chip on">Denne uge</span><span class="chip" style="opacity:.5">Uge 45 ›</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px">
+      <div class="card" style="gap:4px;padding:18px 20px"><span class="d" style="font-size:40px;line-height:1">50</span><span style="font-size:14px;font-weight:600">opkald besvaret</span><span class="help">4 mistet uden for tid</span></div>
+      <div class="card" style="gap:4px;padding:18px 20px"><span class="d" style="font-size:40px;line-height:1">14</span><span style="font-size:14px;font-weight:600">aftaler booket</span><span class="help">+3 mod sidste uge</span></div>
+      <div class="card" style="gap:4px;padding:18px 20px"><span class="d" style="font-size:40px;line-height:1">9</span><span style="font-size:14px;font-weight:600">beskeder til dig</span><span class="help">alle besvaret</span></div>
+      <div class="card" style="gap:4px;padding:18px 20px"><span class="d" style="font-size:40px;line-height:1">2 s</span><span style="font-size:14px;font-weight:600">før den tager den</span><span class="help">døgnet rundt</span></div>
+    </div>
+    <div class="card">
+      <div class="row"><span class="num">1</span><div><h2 class="h2">Opkald pr. dag</h2><span class="help"><span style="display:inline-block;width:10px;height:10px;background:#2456F6;border-radius:2px"></span> besvaret &nbsp; <span style="display:inline-block;width:10px;height:10px;background:#FFCF3F;border-radius:2px"></span> besked til dig</span></div></div>
+      <div class="row" style="align-items:flex-end;gap:10px;padding:8px 4px 0"><div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1"><span class="help">9</span><div style="width:100%;max-width:48px;height:140px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px"><div style="height:9px;background:#FFCF3F;border-radius:4px 4px 0 0"></div><div style="height:81px;background:#2456F6;border-radius:0"></div></div><span style="font-size:13px;font-weight:600">Man</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1"><span class="help">12</span><div style="width:100%;max-width:48px;height:140px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px"><div style="height:0px;background:#FFCF3F;border-radius:4px 4px 0 0"></div><div style="height:108px;background:#2456F6;border-radius:4px 4px 0 0"></div></div><span style="font-size:13px;font-weight:600">Tir</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1"><span class="help">7</span><div style="width:100%;max-width:48px;height:140px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px"><div style="height:18px;background:#FFCF3F;border-radius:4px 4px 0 0"></div><div style="height:63px;background:#2456F6;border-radius:0"></div></div><span style="font-size:13px;font-weight:600">Ons</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1"><span class="help">11</span><div style="width:100%;max-width:48px;height:140px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px"><div style="height:0px;background:#FFCF3F;border-radius:4px 4px 0 0"></div><div style="height:99px;background:#2456F6;border-radius:4px 4px 0 0"></div></div><span style="font-size:13px;font-weight:600">Tor</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1"><span class="help">8</span><div style="width:100%;max-width:48px;height:140px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px"><div style="height:9px;background:#FFCF3F;border-radius:4px 4px 0 0"></div><div style="height:72px;background:#2456F6;border-radius:0"></div></div><span style="font-size:13px;font-weight:600">Fre</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1"><span class="help">2</span><div style="width:100%;max-width:48px;height:140px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px"><div style="height:0px;background:#FFCF3F;border-radius:4px 4px 0 0"></div><div style="height:18px;background:#2456F6;border-radius:4px 4px 0 0"></div></div><span style="font-size:13px;font-weight:600">Lør</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1"><span class="help">1</span><div style="width:100%;max-width:48px;height:140px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px"><div style="height:0px;background:#FFCF3F;border-radius:4px 4px 0 0"></div><div style="height:9px;background:#2456F6;border-radius:4px 4px 0 0"></div></div><span style="font-size:13px;font-weight:600">Søn</span></div></div>
+    </div>
+    <div class="card">
+      <div class="row"><span class="num">2</span><div><h2 class="h2">Det spurgte kunderne om</h2><span class="help">Mangler der et svar, lægger du det ind under «Det ved den».</span></div></div>
+      <table class="tbl"><tr><th>Emne</th><th>Gange</th><th>Dialogbot kunne svare</th><th></th></tr>
+        <tr><td>Pris på vinduer</td><td>17</td><td><span class="tag ok">Ja</span></td><td></td></tr>
+        <tr><td>Hvornår kan I komme?</td><td>12</td><td><span class="tag ok">Ja · bookede 9</span></td><td></td></tr>
+        <tr><td>Vinduer i plast</td><td>5</td><td><span class="tag yel">Nej · tog besked</span></td><td><a href="Viden.dc.html" style="font-weight:600;font-size:14px">Tilføj svar →</a></td></tr>
+        <tr><td>Forsikringsskade</td><td>3</td><td><span class="tag blue">Må den ikke · gav besked</span></td><td></td></tr>
+      </table>
+    </div>
+  </section>
+  <aside style="flex:1 1 340px;min-width:0;display:flex;flex-direction:column;gap:18px">
+    <div class="card hi">
+      <div class="row"><span class="num s">3</span><h2 class="h2">Dagsrapport</h2></div>
+      <p class="p">Hver hverdag kl. 17 får <b>rene@fyrster.dk</b> dagens opkald og aftaler som én mail. Ugen samles mandag morgen.</p>
+      <div class="row" style="flex-wrap:wrap;gap:8px"><span class="chip">Send til en kollega også</span><span class="chip">Skift til kl. 18</span><span class="chip">Slå ugemailen fra</span></div>
+      <span class="help">Klik på et forslag – assistenten viser ændringen, før den gælder.</span>
+    </div>
+    <div class="card">
+      <span class="eyebrow">Det kostede ugen</span>
+      <span class="d" style="font-size:28px">0 kr. ekstra</span>
+      <span class="help">Indgående opkald er med i abonnementet. Kampagneopkald: 0 i denne uge.</span>
+      <a href="Konto.dc.html" style="font-weight:600;font-size:14px">Se abonnement og fakturaer →</a>
+    </div>
+  </aside>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

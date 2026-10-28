@@ -77,4 +77,4 @@ Faste tekster i `app/modules/integrations/sms_templates.py`: ét segment (≤ 16
 
 - Tokens: `web/src/app/globals.css` (@theme). Semantiske Material-navne er beholdt og peger på de nye farver; ny kode bruger brand-tokens (`bg-accent`, `text-ink`, `border-ink`, `bg-panel`, `bg-highlight`, `shadow-block`).
 - Komponenter: `web/src/components/ui.tsx`, `lego.tsx` (trin-nummer, dele-boks, klods, pil), `shell.tsx`.
-- Referencedesign: `design-reference/byggevejledning/*.dc.html` (Indgang, Main = byggevejledning, Proev, Onboarding, Taend, Dashboard, Viden, Avanceret, Stilark).
+- Referencedesign: `design-reference/byggevejledning/*.dc.html` (Indgang, Main = byggevejledning, Proev, Onboarding, Taend, Dashboard, Viden, Avanceret, Stilark – plus kundeappen: Trin1, Opkald, Ugen, Aftaler, Kampagner, Konto, Mobil; spec i `docs/kundeapp-v2.md`).

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Dialogbot – Konto: team, abonnement, fakturaer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+input:focus,button:focus-visible,textarea:focus{outline:3px solid #2456F6;outline-offset:2px}
+.d{font-family:Outfit,sans-serif;font-weight:800;letter-spacing:-0.4px}
+.card{background:#FFFFFF;border:2px solid #14213D;border-radius:20px;padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.card.hi{box-shadow:8px 8px 0 #14213D}
+.inner{border:1.5px solid #14213D;border-radius:14px;padding:14px 16px;background:#FFFFFF}
+.num{display:inline-flex;flex:none;width:48px;height:48px;border-radius:12px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:24px}
+.num.s{width:40px;height:40px;font-size:20px;border-radius:10px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5B6475}
+.h1{font-family:Outfit,sans-serif;font-weight:800;font-size:40px;line-height:1.05;letter-spacing:-1px;margin:0}
+.h2{font-family:Outfit,sans-serif;font-weight:800;font-size:22px;line-height:1.15;letter-spacing:-0.3px;margin:0}
+.p{font-size:15px;line-height:1.5;color:#3C4659;margin:0}
+.help{font-size:13px;color:#5B6475}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:2px solid #14213D;background:#FFFFFF;color:#14213D;font-weight:600;font-size:15px;text-decoration:none;cursor:pointer;font-family:Inter,sans-serif}
+.btn.pri{background:#2456F6;border-color:#2456F6;color:#fff;min-height:52px;padding:0 22px;font-size:17px}
+.btn.ink{background:#14213D;color:#fff}
+.btn.yel{background:#FFCF3F;border-color:#14213D}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #14213D;background:#FFFFFF;font-size:14px;font-weight:600}
+.chip.on{background:#14213D;color:#fff}
+.chip.panel{background:#EEF4FB;border-color:#EEF4FB}
+.tag{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600}
+.tag.yel{background:#FFCF3F}.tag.blue{background:#DCE6FF;color:#1A3FC0}.tag.ok{background:#DDF5E4;color:#1B6B3A}.tag.ink{background:#14213D;color:#fff}.tag.line{border:1.5px solid #14213D}
+.field{display:flex;flex-direction:column;gap:6px}
+.label{font-size:13px;font-weight:600}
+.input{min-height:48px;padding:0 14px;border-radius:12px;border:2px solid #14213D;background:#FFFFFF;font-size:16px;color:#14213D;font-family:Inter,sans-serif;box-sizing:border-box;width:100%}
+textarea.input{min-height:96px;padding:12px 14px;resize:vertical}
+.row{display:flex;align-items:center;gap:12px}
+.need{border:1.5px solid #14213D;border-radius:14px;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.need .k{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#EEF4FB;font-size:13px;font-weight:600}
+.need .k b{font-family:Outfit,sans-serif;font-weight:800}
+.bubble{padding:10px 14px;border:2px solid #14213D;border-radius:14px 14px 14px 4px;background:#FFFFFF;font-size:14px;line-height:1.45;max-width:420px}
+.bubble.me{border-radius:14px 14px 4px 14px;background:#14213D;color:#fff;margin-left:auto}
+.av{display:inline-flex;flex:none;width:28px;height:28px;border-radius:999px;background:#2456F6;color:#fff;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:12px}
+.arrow{font-family:Outfit,sans-serif;font-weight:800;font-size:22px;line-height:1}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#5B6475;padding:6px 8px;border-bottom:1.5px solid #14213D}
+.tbl td{padding:12px 8px;border-bottom:1px solid #D6DEEA;vertical-align:top}
+.toggle{display:inline-flex;align-items:center;width:56px;height:30px;padding:3px;border-radius:999px;background:#2456F6;justify-content:flex-end;flex:none}
+.toggle span{width:24px;height:24px;border-radius:999px;background:#fff}
+.toggle.off{background:#5B6475;justify-content:flex-start}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#EEF4FB;color:#14213D">
+<header style="border-bottom:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;min-height:64px">
+    <span style="display:flex;align-items:center;gap:10px">
+  <span style="display:inline-flex;width:32px;height:32px;border-radius:9px;background:#2456F6;align-items:center;justify-content:center">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+  </span>
+  <span class="d" style="font-size:20px;letter-spacing:-0.3px">Dialogbot</span>
+</span>
+    <span style="font-size:14px;color:#5B6475">Nørgaard Tømrer</span>
+    <nav aria-label="Sider" style="margin-left:auto;display:inline-flex;padding:4px;border-radius:999px;border:2px solid #14213D;background:#FFFFFF"><a href="Dashboard.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">I dag</a><a href="Viden.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">Det ved den</a><a href="Opkald.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">Opkald</a><a href="Ugen.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">Ugen</a></nav>
+    <a href="Konto.dc.html" style="display:inline-flex;width:40px;height:40px;border-radius:999px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:15px;color:#14213D;text-decoration:none" aria-label="Konto: Rene">R</a>
+  </div>
+</header>
+<main style="max-width:1280px;width:100%;box-sizing:border-box;margin:0 auto;padding:28px 24px 48px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+  <section style="flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:18px">
+    <div><span class="eyebrow">Bagerst i hæftet · konto</span><h1 class="h1" style="margin-top:6px">Team, abonnement og fakturaer</h1></div>
+    <div class="card">
+      <div class="row"><span class="num">1</span><div><h2 class="h2">Hvem må se og ændre</h2><span class="help">Ejeren kan alt. «Kan ændre» retter viden og regler. «Kan se» læser opkald og rapporter.</span></div></div>
+      <table class="tbl">
+        <tr><th>Navn</th><th>E-mail</th><th>Rolle</th><th></th></tr>
+        <tr><td><b>Rene Fürster</b> <span class="tag yel" style="margin-left:6px">dig</span></td><td>rene@fyrster.dk</td><td><span class="tag ink">Ejer</span></td><td></td></tr>
+        <tr><td>Mikkel Nørgaard</td><td>mikkel@norgaard-tomrer.dk</td><td><span class="chip" style="min-height:30px;font-size:13px">Kan ændre ▾</span></td><td><a href="#" style="font-size:13px">Fjern</a></td></tr>
+        <tr><td>Louise Berg</td><td>louise@norgaard-tomrer.dk</td><td><span class="chip" style="min-height:30px;font-size:13px">Kan se ▾</span></td><td><a href="#" style="font-size:13px">Fjern</a></td></tr>
+        <tr><td colspan="2"><span class="help">Inviteret – ikke svaret endnu:</span> kasper@…</td><td></td><td><a href="#" style="font-size:13px">Send igen</a></td></tr>
+      </table>
+      <div class="row"><input class="input" placeholder="E-mail på en kollega" style="max-width:320px"><span class="chip">Kan se ▾</span><button class="btn ink" style="min-height:48px">Invitér</button></div>
+    </div>
+    <div class="card">
+      <div class="row"><span class="num">2</span><div><h2 class="h2">Abonnement</h2></div></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <div class="inner" style="background:#EEF4FB"><span class="eyebrow">Fast abonnement</span><br><span class="d" style="font-size:26px">2.495 kr.<span style="font-size:14px;font-weight:600;color:#5B6475"> /md. ekskl. moms</span></span><br><span class="help">Alt inkluderet · opsætning 0 kr. · næste faktura 1. nov</span></div>
+        <div class="inner"><span class="eyebrow">Kampagneopkald</span><br><span class="d" style="font-size:26px">4 kr.<span style="font-size:14px;font-weight:600;color:#5B6475"> pr. opkald</span></span><br><span class="help">Denne måned: 72 opkald · 288 kr.</span></div>
+        <div class="inner"><span class="eyebrow">Betaling</span><br><span style="font-size:15px;font-weight:600">Kort •••• 4242 · udløber 08/28</span><br><a href="#" style="font-size:14px;font-weight:600">Skift kort</a> · <a href="#" style="font-size:14px;font-weight:600">Skift til faktura (EAN)</a></div>
+      </div>
+      <span class="help">Ingen binding. Opsig med en måneds varsel – sig det til assistenten eller skriv til info@dialogbot.dk.</span>
+    </div>
+    <div class="card">
+      <div class="row"><span class="num">3</span><div><h2 class="h2">Fakturaer</h2></div></div>
+      <table class="tbl">
+        <tr><th>Måned</th><th>Abonnement</th><th>Kampagner</th><th>I alt ekskl. moms</th><th></th></tr>
+        <tr><td>Oktober 2026</td><td>2.495 kr.</td><td>288 kr. (72)</td><td><b>2.783 kr.</b></td><td><span class="tag blue">Åben</span></td></tr>
+        <tr><td>September 2026</td><td>2.495 kr.</td><td>244 kr. (61)</td><td><b>2.739 kr.</b></td><td><a href="#" style="font-weight:600;font-size:14px">Hent PDF</a></td></tr>
+        <tr><td>August 2026</td><td>2.495 kr.</td><td>0 kr.</td><td><b>2.495 kr.</b></td><td><a href="#" style="font-weight:600;font-size:14px">Hent PDF</a></td></tr>
+      </table>
+    </div>
+  </section>
+  <aside style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:18px">
+    <div class="card">
+      <div class="row"><span style="display:inline-flex;width:48px;height:48px;border-radius:999px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">R</span><div><b>Rene Fürster</b><br><span class="help">rene@fyrster.dk · ejer</span></div></div>
+      <div class="row" style="flex-wrap:wrap;gap:8px"><a href="#" class="btn" style="min-height:40px;font-size:14px">Skift adgangskode</a><a href="#" class="btn" style="min-height:40px;font-size:14px">Log ud</a></div>
+      <span class="help">Logget ind på 2 enheder · <a href="#">log de andre ud</a></span>
+    </div>
+    <div class="card">
+      <span class="eyebrow">Andre arbejdsrum</span>
+      <span style="font-size:15px"><b>Nørgaard Tømrer</b> · dette</span>
+      <span style="font-size:15px;color:#5B6475">Fyrster Consult · ejer</span>
+      <a href="Trin1.dc.html" style="font-weight:600;font-size:14px">+ Byg en Dialogbot til en anden virksomhed</a>
+    </div>
+    <div class="card">
+      <span class="eyebrow">Data og samtykke</span>
+      <span class="help" style="color:#3C4659">Opkald gemmes 90 dage. Kunden hører «samtalen optages». Al historik: <a href="Avanceret.dc.html">Alle indstillinger → Log og eksport</a>.</span>
+    </div>
+  </aside>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

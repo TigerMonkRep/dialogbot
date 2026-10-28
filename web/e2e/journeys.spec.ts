@@ -1105,3 +1105,58 @@ test("Opsætning trin 2: kalender forbindes (simuleret), eller springes over –
   const g = await (await page.request.get(`/api/backend/workspaces/${wsId}/goals`)).json();
   expect(g.booking).toBe(false);
 });
+
+
+test("Ændr noget: åbningstider med egne ord → før → efter → Godkend; intet gælder før; «Nej» ændrer intet; test som kunde", async ({ page }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  await page.goto("/app");
+  const narrow = (page.viewportSize()?.width ?? 1440) < 1280;
+  if (narrow) await page.getByRole("button", { name: "Ændr noget" }).click();
+  const ask = page.getByLabel("Skriv, hvad du vil ændre").filter({ visible: true });
+  const live = async () => JSON.stringify((await (await page.request.get(`/api/backend/workspaces/${wsId}/assistant/knowledge`)).json()).items);
+
+  await ask.fill("Ret åbningstider: åbningstider man-fre 8-16");
+  await ask.press("Enter");
+  const card = page.getByRole("group", { name: /Ændring: Åbningstider/ }).filter({ visible: true });
+  await expect(card.getByText("Ikke angivet", { exact: true })).toBeVisible();
+  await expect(card.getByText("Man–fre 08–16", { exact: true })).toBeVisible();
+  await shot(page, info, "assistent-foer-efter");
+  expect(await live()).not.toContain("08:00");                                   // nothing gælder før «Godkend»
+  await card.getByRole("button", { name: "Godkend" }).click();
+  await expect(card.getByText(/Godkendt og gemt/)).toBeVisible();
+  expect(await live()).toContain("08:00");
+
+  // «Nej, lad være» changes nothing.
+  await ask.fill("åbningstider man-fre 9-17");
+  await ask.press("Enter");
+  const second = page.getByRole("group", { name: /Ændring: Åbningstider/ }).filter({ visible: true }).last();
+  await expect(second.getByText("Man–fre 09–17", { exact: true })).toBeVisible();
+  await second.getByRole("button", { name: "Nej, lad være" }).click();
+  await expect(second.getByText("Intet ændret.")).toBeVisible();
+  expect(await live()).toContain("08:00");
+  expect(await live()).not.toContain("09:00");
+
+  // Not understood → a link, never an error.
+  await ask.fill("bla bla");
+  await ask.press("Enter");
+  await expect(page.getByRole("link", { name: "Alle indstillinger" }).filter({ visible: true }).first()).toBeVisible();
+
+  // The second state: ask as a customer (answers only from approved knowledge).
+  if (narrow) await page.keyboard.press("Escape");
+  await page.goto("/app/viden");
+  if (narrow) await page.getByRole("button", { name: "Ændr noget" }).click();
+  await page.getByRole("button", { name: "Test mig som kunde" }).filter({ visible: true }).click();
+  await page.getByLabel("Skriv et spørgsmål, som en kunde ville stille").filter({ visible: true }).fill("Hvornår har I åbent?");
+  await page.keyboard.press("Enter");
+  await expect(page.getByText(/\[fake\] svar på/).filter({ visible: true }).first()).toBeVisible();
+  await shot(page, info, "assistent-test-som-kunde");
+});
+
+test("Opsætningen har assistenten «Jeg hjælper med trin N»", async ({ page }, info) => {
+  await freshOwner(page, info);
+  await page.goto("/opsaetning/1");
+  await page.getByRole("button", { name: "Hjælp" }).click();
+  await expect(page.getByRole("dialog", { name: "Jeg hjælper med trin 1" })).toBeVisible();
+  await page.getByRole("button", { name: "Hvad sker der i trin 2?" }).click();
+  await expect(page.getByText(/forbinder du din kalender/)).toBeVisible();
+});

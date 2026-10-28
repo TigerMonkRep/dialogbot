@@ -45,6 +45,7 @@ PERMISSIONS: dict[str, str] = {
     "members.assign_owner": "owner",
     "audit.read": "admin",
     "assistant.preview": "staff",
+    "assistant.change": "staff",  # propose a change in words; the change itself needs the role its area needs
     "ai_usage.read": "admin",
     "webchat.read": "staff",
     "webchat.manage": "admin",

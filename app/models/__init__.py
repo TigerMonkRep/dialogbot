@@ -5,6 +5,7 @@ from app.models.domain import (  # noqa: F401
     AiUsage,
     Ambassador,
     AmbassadorPayout,
+    AssistantProposal,
     BillingAccount,
     Booking,
     BookingSettings,

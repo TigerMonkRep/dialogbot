@@ -19,7 +19,7 @@ export default async function Trin3() {
   ]);
   const address = [profile.address_line, [profile.postal_code, profile.city].filter(Boolean).join(" ")].filter(Boolean).join(", ");
   return (
-    <SetupShell step={3} steps={st.steps} workspaceName={ws.name} wide>
+    <SetupShell step={3} steps={st.steps} workspaceName={ws.name} wide assistant={{ wsId: ws.id, canChange: ws.role !== "reader" }}>
       <div className="flex flex-col gap-3 mb-6">
         <div className="flex items-center gap-4">
           <span className="w-14 h-14 rounded-[14px] bg-highlight text-ink font-display font-extrabold text-[30px] inline-flex items-center justify-center" aria-hidden>3</span>

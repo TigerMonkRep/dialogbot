@@ -62,10 +62,10 @@ def _answering(db: OrmSession, ws_id) -> dict:
     hours = db.scalar(select(KnowledgeItem.id).where(KnowledgeItem.workspace_id == ws_id,
                                                      KnowledgeItem.kind == "opening_hours",
                                                      KnowledgeItem.archived_at.is_(None)))
-    return {"voice": {"done": True, "href": "/app/voices"},
-            "greeting": {"done": bool(script and (script.greeting or "").strip()), "href": "/app/reception"},
-            "opening_hours": {"done": hours is not None, "href": "/app/knowledge"},
-            "no_answer": {"done": bool(vs), "value": (vs.fallback if vs else "provider_voice"), "href": "/app/voices"}}
+    return {"voice": {"done": True, "href": "/app/indstillinger?ark=stemmer"},
+            "greeting": {"done": bool(script and (script.greeting or "").strip()), "href": "/app/indstillinger?ark=hilsen"},
+            "opening_hours": {"done": hours is not None, "href": "/app/viden"},
+            "no_answer": {"done": bool(vs), "value": (vs.fallback if vs else "provider_voice"), "href": "/app/indstillinger?ark=stemmer"}}
 
 
 def _test_out(t: TelephonyTest | None) -> dict | None:

@@ -52,13 +52,13 @@ def notifications(db: OrmSession, ctx: WorkspaceContext) -> list[dict]:
                                .order_by(Lead.created_at.desc()).limit(20)):
             items.append({"id": f"lead:{lead.id}", "kind": "lead", "at": lead.created_at,
                           "title": f"Ny henvendelse: {lead.contact_name or lead.contact_phone or lead.contact_email or 'ukendt'}",
-                          "body": lead.need_summary[:140], "href": f"/app/leads/{lead.id}"})
+                          "body": lead.need_summary[:140], "href": f"/app/opkald/henvendelser/{lead.id}"})
     if ctx.can("telephony.read"):
         for c in db.scalars(select(Call).where(Call.workspace_id == ws_id, Call.created_at >= since)
                             .order_by(Call.created_at.desc()).limit(20)):
             items.append({"id": f"call:{c.id}", "kind": "call", "at": c.created_at,
                           "title": f"Opkald fra {c.from_number or 'skjult nummer'}", "body": (c.summary or "")[:140],
-                          "href": f"/app/inbox/{c.conversation_id}" if c.conversation_id else "/app/settings/telephony"})
+                          "href": f"/app/opkald/{c.conversation_id}" if c.conversation_id else "/app/indstillinger?ark=telefoni"})
     if ctx.can("tasks.read"):
         for t in db.scalars(select(Task).where(Task.workspace_id == ws_id, Task.status == "open",
                                                Task.due_at.is_not(None), Task.due_at <= now + timedelta(hours=2))
@@ -69,7 +69,7 @@ def notifications(db: OrmSession, ctx: WorkspaceContext) -> list[dict]:
     if ctx.can("conversations.read"):
         for c, at in _awaiting_staff(db, ws_id):
             items.append({"id": f"conv:{c.id}:{at.isoformat()}", "kind": "conversation", "at": at,
-                          "title": "En kunde venter på svar i chatten", "body": "", "href": f"/app/inbox/{c.id}"})
+                          "title": "En kunde venter på svar i chatten", "body": "", "href": f"/app/opkald/{c.id}"})
     if ctx.can("knowledge.approve"):
         n = db.scalar(select(func.count(KnowledgeVersion.id)).where(
             KnowledgeVersion.workspace_id == ws_id, KnowledgeVersion.status.in_(("draft", "in_review")))) or 0
@@ -78,7 +78,7 @@ def notifications(db: OrmSession, ctx: WorkspaceContext) -> list[dict]:
         if n:
             items.append({"id": f"drafts:{n}:{latest.isoformat()}", "kind": "knowledge", "at": latest,
                           "title": f"{n} vidensemne{'r' if n != 1 else ''} venter på godkendelse", "body": "",
-                          "href": "/app/knowledge?tab=k05"})
+                          "href": "/app/viden"})
     if ctx.can("knowledge.read"):
         imp = db.scalar(select(SourceImport).where(SourceImport.workspace_id == ws_id, SourceImport.finished_at >= since)
                         .order_by(SourceImport.created_at.desc()).limit(1))
@@ -86,7 +86,7 @@ def notifications(db: OrmSession, ctx: WorkspaceContext) -> list[dict]:
             ok = imp.status == "done"
             items.append({"id": f"import:{imp.id}", "kind": "import", "at": imp.finished_at,
                           "title": f"Hjemmesiden er læst: {len(imp.created_items)} forslag" if ok else "Importen fra hjemmesiden fejlede",
-                          "body": "" if ok else (imp.error or ""), "href": "/app/knowledge?tab=k03"})
+                          "body": "" if ok else (imp.error or ""), "href": "/app/viden"})
     items.sort(key=lambda i: i["at"], reverse=True)
     return items[:40]
 

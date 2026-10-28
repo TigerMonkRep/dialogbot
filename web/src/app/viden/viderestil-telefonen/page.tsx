@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   openGraph: { url: path, type: "article", title: "Sådan viderestiller du telefonen | Dialogbot", images: ["/opengraph-image.png"] },
 };
 
-const code = "rounded-md bg-surface-container px-2 py-0.5 font-mono text-on-surface whitespace-nowrap";
+const code = "rounded-md bg-panel-deep px-2 py-0.5 font-mono text-ink whitespace-nowrap";
 
 export default function Page() {
   return (

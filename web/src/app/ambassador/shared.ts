@@ -26,6 +26,6 @@ export const monthLabel = (ym: string | null) => {
 export const STATUS: Record<Profile["status"], { label: string; tone: string }> = {
   pending: { label: "Afventer godkendelse", tone: "bg-highlight text-ink border-highlight" },
   active: { label: "Aktiv", tone: "bg-success-soft text-success border-success-soft" },
-  suspended: { label: "Sat på pause", tone: "bg-danger-soft text-on-error-container border-danger-soft" },
+  suspended: { label: "Sat på pause", tone: "bg-danger-soft text-danger border-danger-soft" },
   rejected: { label: "Ikke godkendt", tone: "bg-panel text-ink border-ink" },
 };

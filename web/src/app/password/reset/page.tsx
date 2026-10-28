@@ -20,7 +20,7 @@ function ResetForm() {
   });
   if (!token) return <Alert>Linket mangler en token. Bestil et nyt link.</Alert>;
   return (
-    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-space-md">
+    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-3">
       <ErrorBox error={error} />
       {error?.code === "token_expired" && <Link className="text-body-sm underline" href="/password/forgot">Bestil nyt link</Link>}
       <PasswordField label="Ny adgangskode" value={password} onChange={setPassword} error={fieldError(error, "password")} />
@@ -32,6 +32,6 @@ function ResetForm() {
 
 export default function ResetPage() {
   return (
-    <AuthFrame icon="key" title="Opret ny adgangskode" subtitle="Vælg en stærk kode til din Dialogbot-konto." aside={<AuthAside icon="history" title="Har du problemer med linket?">Nulstillingslinks udløber efter kort tid og kan kun bruges én gang. <Link className="font-semibold text-primary underline" href="/password/forgot">Send nyt nulstillingslink</Link></AuthAside>}><Suspense><ResetForm /></Suspense></AuthFrame>
+    <AuthFrame icon="key" title="Opret ny adgangskode" subtitle="Vælg en stærk kode til din Dialogbot-konto." aside={<AuthAside icon="history" title="Har du problemer med linket?">Nulstillingslinks udløber efter kort tid og kan kun bruges én gang. <Link className="font-semibold text-ink underline" href="/password/forgot">Send nyt nulstillingslink</Link></AuthAside>}><Suspense><ResetForm /></Suspense></AuthFrame>
   );
 }

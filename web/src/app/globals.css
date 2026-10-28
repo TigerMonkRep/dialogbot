@@ -19,22 +19,17 @@
    ink on paper. No gradients, no soft shadows; the only shadow is the solid
    8 px "block shadow" (.shadow-block).
 
-   The semantic Material-style names below are KEPT so the existing screens
-   restyle automatically; new code should prefer the plain brand tokens
-   (accent, highlight, ink, paper, panel, line, muted, success).
+   Use the plain brand tokens: ink, ink-soft, paper, panel, line, muted, accent,
+   highlight, success, danger. The few Material-style names further down exist
+   only for the operator pages under /app/operator and go when those are converted.
    Reference: Design canvas "Dialogbot — Byg-det-selv landing page".
    ────────────────────────────────────────────────────────────────────────── */
 @theme {
   --font-display: "Outfit Variable", "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display-lg: var(--font-display);
-  --font-display-lg-mobile: var(--font-display);
-  --font-headline-lg: var(--font-display);
-  --font-headline-lg-mobile: var(--font-display);
   --font-headline-md: var(--font-display);
   --font-headline-sm: var(--font-display);
-  --font-body-lg: var(--font-body);
   --font-body-md: var(--font-body);
   --font-body-sm: var(--font-body);
   --font-label-lg: var(--font-body);
@@ -61,59 +56,30 @@
   --color-danger: #B3261E;
   --color-danger-soft: #FFDAD6;
 
-  /* Semantic (Material-style) names, remapped to the brand tokens */
-  --color-background: #FFFFFF;
-  --color-on-background: #14213D;
+  /* Legacy Material-style names, remapped to the brand tokens. Used ONLY by /app/operator
+     (out of scope for kundeapp v2). Do not use in new code. */
+  --color-surface-variant: #EEF4FB;
+  --color-outline-variant: #D6DEEA;
   --color-surface: #FFFFFF;
-  --color-surface-dim: #D6DEEA;
-  --color-surface-bright: #FFFFFF;
   --color-surface-container-lowest: #FFFFFF;
   --color-surface-container-low: #EEF4FB;
-  --color-surface-container: #E4ECF7;
   --color-surface-container-high: #D6DEEA;
   --color-surface-container-highest: #C9D3E3;
-  --color-surface-variant: #EEF4FB;
-  --color-surface-tint: #2456F6;
-  --color-on-surface: #14213D;
   --color-on-surface-variant: #3C4659;
-  --color-inverse-surface: #14213D;
-  --color-inverse-on-surface: #EEF4FB;
-  --color-inverse-primary: #FFCF3F;
-  --color-outline: #14213D;
-  --color-outline-variant: #D6DEEA;
 
   /* primary = ink (text, dark buttons, selected tabs) */
   --color-primary: #14213D;
-  --color-on-primary: #FFFFFF;
-  --color-primary-container: #2B3A5C;
-  --color-on-primary-container: #FFFFFF;
-  --color-primary-fixed: #EEF4FB;
-  --color-primary-fixed-dim: #D6DEEA;
-  --color-on-primary-fixed: #14213D;
-  --color-on-primary-fixed-variant: #3C4659;
 
   /* secondary = muted labels; secondary-container = success; secondary-fixed = Trin-gul */
   --color-secondary: #5B6475;
-  --color-on-secondary: #FFFFFF;
   --color-secondary-container: #DDF5E4;
   --color-on-secondary-container: #1B6B3A;
-  --color-secondary-fixed: #FFCF3F;
-  --color-secondary-fixed-dim: #F2BD1F;
-  --color-on-secondary-fixed: #14213D;
-  --color-on-secondary-fixed-variant: #14213D;
 
   /* tertiary = Klods-blå (action, in-progress) */
-  --color-tertiary: #1A3FC0;
-  --color-on-tertiary: #FFFFFF;
-  --color-tertiary-container: #2456F6;
-  --color-on-tertiary-container: #FFFFFF;
   --color-tertiary-fixed: #DCE6FF;
-  --color-tertiary-fixed-dim: #B9CBFF;
   --color-on-tertiary-fixed: #1A3FC0;
-  --color-on-tertiary-fixed-variant: #1A3FC0;
 
   --color-error: #B3261E;
-  --color-on-error: #FFFFFF;
   --color-error-container: #FFDAD6;
   --color-on-error-container: #8C1D18;
 
@@ -121,12 +87,6 @@
   --spacing-space-sm: 0.5rem;
   --spacing-space-md: 0.75rem;
   --spacing-space-lg: 1rem;
-  --spacing-space-xl: 1.5rem;
-  --spacing-gutter: 1rem;
-  --spacing-gutter-lg: 1.5rem;
-  --spacing-margin: 1rem;
-  --spacing-margin-md: 1.5rem;
-  --spacing-margin-lg: 2rem;
 
   --radius-DEFAULT: 10px;
   --radius-lg: 12px;
@@ -185,7 +145,7 @@
 @utility border-ink { border-color: var(--color-ink); }
 @utility eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
 
-html { background: var(--color-surface); color: var(--color-on-surface); }
+html { background: var(--color-paper); color: var(--color-ink); }
 body { font-family: var(--font-body); min-height: 100dvh; }
 @layer base { h1, h2, h3 { font-family: var(--font-display); font-weight: 800; } }
 :focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }

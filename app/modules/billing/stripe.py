@@ -119,7 +119,7 @@ def card_checkout(db: OrmSession, ws: Workspace, email: str | None) -> str:
     base = get_settings().frontend_base_url
     s = request("POST", "/checkout/sessions", {
         "mode": "setup", "customer": a.stripe_customer_id, "currency": "dkk", "payment_method_types": ["card"],
-        "locale": "da", "success_url": f"{base}/app/billing?card=saved", "cancel_url": f"{base}/app/billing?card=cancelled",
+        "locale": "da", "success_url": f"{base}/app/konto?card=saved", "cancel_url": f"{base}/app/konto?card=cancelled",
         "metadata": {"workspace_id": str(ws.id)}, "setup_intent_data": {"metadata": {"workspace_id": str(ws.id)}}})
     return s["url"]
 

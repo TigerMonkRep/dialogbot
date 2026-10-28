@@ -20,16 +20,16 @@ function LoginForm() {
     router.refresh();
   });
   return (
-    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-space-md">
+    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-3">
       {params.get("expired") && <Alert kind="info">Din session er udløbet. Log ind igen for at fortsætte.</Alert>}
       {params.get("reset") && <Alert kind="ok">Adgangskoden er ændret. Log ind med den nye.</Alert>}
       <ErrorBox error={error} />
       <Field label="E-mail"><Input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="email" /></Field>
       <PasswordField label="Adgangskode" value={form.password} onChange={(v) => setForm({ ...form, password: v })} autoComplete="current-password" withRules={false} />
       <Button type="submit" icon="login" disabled={pending} className="w-full h-12 rounded-lg">{pending ? "Logger ind…" : "Log ind"}</Button>
-      <p className="flex justify-between font-body-sm text-body-sm text-on-surface-variant">
-        <Link className="font-semibold text-primary underline" href="/password/forgot">Glemt adgangskode?</Link>
-        <Link className="font-semibold text-primary underline" href="/signup">Opret konto</Link>
+      <p className="flex justify-between text-body-sm text-ink-soft">
+        <Link className="font-semibold text-ink underline" href="/password/forgot">Glemt adgangskode?</Link>
+        <Link className="font-semibold text-ink underline" href="/signup">Opret konto</Link>
       </p>
     </form>
   );

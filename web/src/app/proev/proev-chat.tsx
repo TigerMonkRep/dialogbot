@@ -159,8 +159,8 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
   const stage = (
       <section aria-label="Chat med Dialogbot"
         className={`min-w-0 bg-white flex flex-col overflow-hidden ${embedded
-          ? "h-full w-full"
-          : "flex-[1_1_460px] max-w-[640px] border-2 border-ink rounded-[22px] shadow-block"}`}>
+ ?"h-full w-full"
+ :"flex-[1_1_460px] max-w-[640px] border-2 border-ink rounded-[22px] shadow-block"}`}>
         <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-4 border-b-2 border-ink">
           <span className="inline-flex w-10 h-10 rounded-xl bg-accent items-center justify-center font-display font-extrabold text-white text-lg">D</span>
           <div className="flex flex-col min-w-0">

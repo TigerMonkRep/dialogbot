@@ -181,4 +181,4 @@ def activate_campaigns(ctx: WorkspaceContext = Depends(get_workspace_context)):
     ctx.require("knowledge.approve")
     raise NotImplementedYet("Kampagner aktiveres én ad gangen: åbn kampagnen under Kampagner, bekræft reglerne for "
                             "opkald og prisen, og tryk Start. Betaling starter aldrig opkald.",
-                            extra={"capability": "telephony.outbound", "href": "/app/campaigns"})
+                            extra={"capability": "telephony.outbound", "href": "/app/kampagner"})

@@ -52,17 +52,17 @@ export default async function AftalerPage({ searchParams }: { searchParams: Prom
           <Link href={`/app/aftaler?uge=${addDays(start, 7)}`} aria-label="Næste uge" className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-full border-[1.5px] border-ink text-ink hover:bg-panel">›</Link>
         </div>
         {!s.has_opening_hours && <p className="rounded-xl border-[1.5px] border-dashed border-ink bg-paper px-4 py-3 text-[14px] text-ink">Der er ingen godkendte åbningstider, så der er ingen ledige tider. <Link href="/app/viden" className="font-semibold text-accent underline">Tilføj åbningstider under «Det ved den»</Link>.</p>}
-        <ol className="grid grid-cols-1 md:grid-cols-5 gap-3" aria-label="Ugens aftaler">
+        <ol className="flex flex-col gap-3" aria-label="Ugens aftaler">
           {days.map(({ i, date }) => {
             const rows = byDay.get(date) ?? [];
             const closed = !s.open_weekdays.includes(i) && rows.length === 0;
             const isToday = date === today;
             return (
-              <li key={date} className="flex flex-col gap-2 min-w-0">
-                <span className={`inline-flex self-start px-3 py-1.5 rounded-full text-[13px] font-semibold border-[1.5px] border-ink ${isToday ? "bg-highlight text-ink" : "bg-paper text-ink"}`}>{WD[i]} {at(date).getUTCDate()}.</span>
-                {closed ? <p className="rounded-xl border-[1.5px] border-dashed border-ink px-3 py-3 text-[13px] text-muted">Lukket · Dialogbot booker ikke</p>
-                  : rows.length === 0 ? <p className="rounded-xl border-[1.5px] border-dashed border-line px-3 py-3 text-[13px] text-muted">Ingen aftaler</p>
-                  : <ul className="flex flex-col gap-2">{rows.map((b) => <BookingCard key={b.id} wsId={ws.id} b={b} tz={tz} canChange={canChange} />)}</ul>}
+              <li key={date} className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4 min-w-0">
+                <span className={`inline-flex self-start shrink-0 sm:w-[92px] justify-center px-3 py-1.5 rounded-full text-[13px] font-semibold border-[1.5px] border-ink ${isToday ? "bg-highlight text-ink" : "bg-paper text-ink"}`}>{WD[i]} {at(date).getUTCDate()}.</span>
+                {closed ? <p className="flex-1 rounded-xl border-[1.5px] border-dashed border-ink px-3 py-2.5 text-[13px] text-muted">Lukket · Dialogbot booker ikke</p>
+                  : rows.length === 0 ? <p className="flex-1 rounded-xl border-[1.5px] border-dashed border-line px-3 py-2.5 text-[13px] text-muted">Ingen aftaler</p>
+                  : <ul className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-2 items-start">{rows.map((b) => <BookingCard key={b.id} wsId={ws.id} b={b} tz={tz} canChange={canChange} />)}</ul>}
               </li>
             );
           })}

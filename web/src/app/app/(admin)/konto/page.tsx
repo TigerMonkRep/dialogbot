@@ -78,7 +78,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
 
         {admin && agr && st && acc && invoices && referral && (
           <>
-            <section id="abonnement" className={`${BOX} ${!confirmed && owner ? "bg-highlight" : ""}`} aria-labelledby="konto-2">
+            <section id="abonnement" className={`${BOX.replace("bg-paper", !confirmed && owner ? "bg-highlight" : "bg-paper")}`} aria-labelledby="konto-2">
               <Head n={2} id="konto-2" title="Abonnement" />
               {card === "saved" && <p role="status" className="rounded-xl bg-success-soft px-4 py-3 text-[14px] font-semibold text-success">Tak – kortet er gemt hos Stripe. Det kan tage et øjeblik, før det vises her.</p>}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -115,7 +115,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
             <section id="fakturaer" className={BOX} aria-labelledby="konto-3">
               <Head n={3} id="konto-3" title="Fakturaer" />
               <div className="rounded-xl border-[1.5px] border-line px-4 py-3 text-[14px] text-ink-soft">
-                <b className="text-ink">{monthLabel(st.month)} indtil videre:</b> {kr(st.totals.net_minor)} ekskl. moms · moms {kr(st.totals.tax_minor)} · i alt {kr(st.totals.gross_minor)}. Faktureres, når måneden er slut{acc.configured ? "" : " og kortbetaling er sat op"}.
+                <b className="text-ink">{monthLabel(st.month)} indtil videre:</b> {kr(st.totals.net_minor)} ekskl. moms · moms {kr(st.totals.tax_minor)} · i alt {kr(st.totals.gross_minor)} Faktureres, når måneden er slut{acc.configured ? "" : " og kortbetaling er sat op"}.
               </div>
               {invoices.items.length === 0 ? <p className="text-[14px] text-ink-soft">Ingen fakturaer endnu.</p> : (
                 <div className="overflow-x-auto">

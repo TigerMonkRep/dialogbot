@@ -42,13 +42,17 @@ export function SettingsTiles({ chapters, canChange }: { chapters: Chapter[]; ca
             </div>
             <ul className="flex flex-col">
               {c.rows.map((r) => (
-                <li key={r.label} className="flex flex-wrap items-center gap-x-3 gap-y-1.5 py-3 border-t-[1.5px] border-line">
-                  <span className="flex-[1_1_120px] text-[15px] font-semibold text-ink">{r.label}</span>
-                  <span className="flex-[2_1_160px] min-w-0 text-[14px] text-ink-soft break-words">{r.value}</span>
-                  <span className={`inline-flex px-2.5 py-0.5 rounded-full text-[12px] font-semibold ${STATUS[r.status][1]}`}>{STATUS[r.status][0]}</span>
-                  {r.ark ? <Link href={`/app/indstillinger?ark=${r.ark}`} aria-label={`Ændr ${r.label}`} className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-lg border-[1.5px] border-ink text-[13px] font-semibold text-ink hover:bg-panel">Ændr</Link>
-                    : r.href ? <Link href={r.href} aria-label={`Åbn ${r.label}`} className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-lg border-[1.5px] border-ink text-[13px] font-semibold text-ink hover:bg-panel">Åbn</Link>
-                    : r.say && canChange ? <button type="button" aria-label={`Ændr ${r.label}`} className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-lg border-[1.5px] border-ink text-[13px] font-semibold text-ink hover:bg-panel" onClick={() => askAssistant(r.say!)}>Ændr</button> : null}
+                <li key={r.label} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 border-t-[1.5px] border-line">
+                  <span className="flex-[1_1_180px] min-w-0 flex flex-col">
+                    <span className="text-[15px] font-semibold text-ink">{r.label}</span>
+                    <span className="text-[14px] text-ink-soft break-words">{r.value}</span>
+                  </span>
+                  <span className="flex items-center gap-2.5">
+                    <span className={`inline-flex px-2.5 py-0.5 rounded-full text-[12px] font-semibold ${STATUS[r.status][1]}`}>{STATUS[r.status][0]}</span>
+                    {r.ark ? <Link href={`/app/indstillinger?ark=${r.ark}`} aria-label={`Ændr ${r.label}`} className="inline-flex items-center justify-center min-h-[44px] min-w-[64px] px-4 rounded-lg border-[1.5px] border-ink text-[13px] font-semibold text-ink hover:bg-panel">Ændr</Link>
+                      : r.href ? <Link href={r.href} aria-label={`Åbn ${r.label}`} className="inline-flex items-center justify-center min-h-[44px] min-w-[64px] px-4 rounded-lg border-[1.5px] border-ink text-[13px] font-semibold text-ink hover:bg-panel">Åbn</Link>
+                      : r.say && canChange ? <button type="button" aria-label={`Ændr ${r.label}`} className="inline-flex items-center justify-center min-h-[44px] min-w-[64px] px-4 rounded-lg border-[1.5px] border-ink text-[13px] font-semibold text-ink hover:bg-panel" onClick={() => askAssistant(r.say!)}>Ændr</button> : null}
+                  </span>
                 </li>
               ))}
             </ul>

@@ -434,8 +434,9 @@ test("14 · S03: ny kunde sætter telefonen op uden leverandørkonti – nummer,
   const own = `+4520${String(Date.now()).slice(-6)}`;
 
   await page.goto("/app/indstillinger/telefoni");
-  await expect(page.getByText("Ikke sat op", { exact: true })).toBeVisible();
-  const text = await page.locator("main").innerText();
+  const sheet = page.getByRole("dialog", { name: "Telefon" });
+  await expect(sheet.getByText("Ikke sat op", { exact: true })).toBeVisible();
+  const text = await sheet.innerText();
   for (const word of ["Vapi", "Twilio", "webhook", "Server URL", "Bearer", "API-nøgle", "nummer-id"]) expect(text).not.toContain(word);
   await page.getByLabel("Virksomhedens telefonnummer").fill(own);
   await page.getByLabel("Hvilken type abonnement er det?").selectOption("mobile");

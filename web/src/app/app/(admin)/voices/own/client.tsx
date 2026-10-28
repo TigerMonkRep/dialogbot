@@ -90,9 +90,9 @@ function Consent({ wsId, defaults }: { wsId: string; defaults: Manuscript }) {
     router.refresh();
   });
   return (
-    <div className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink flex flex-col gap-space-md">
-      <h2 className="font-title-md text-title-md text-primary font-bold">1. Hvem skal indtale?</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+    <div className="bg-paper rounded-2xl p-4 border-2 border-ink flex flex-col gap-3">
+      <h2 className="font-title-md text-title-md text-ink font-bold">1. Hvem skal indtale?</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <Field label="Indtalerens fulde navn"><Input value={f.speaker_name} onChange={(e) => setF({ ...f, speaker_name: e.target.value })} autoComplete="name" /></Field>
         <Field label="Stemme" hint="Oplyses af indtaleren selv">
           <Select value={f.speaker_gender} onChange={(e) => setF({ ...f, speaker_gender: e.target.value })}>
@@ -105,18 +105,18 @@ function Consent({ wsId, defaults }: { wsId: string; defaults: Manuscript }) {
           </Select>
         </Field>
       </div>
-      <p className="font-body-sm text-body-sm text-on-surface-variant">Manuskriptet bruger jeres egne oplysninger, så indtaleren læser sætninger om jeres forretning.</p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+      <p className="text-body-sm text-ink-soft">Manuskriptet bruger jeres egne oplysninger, så indtaleren læser sætninger om jeres forretning.</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
         <Field label="Firmanavn"><Input value={f.firma} onChange={(e) => setF({ ...f, firma: e.target.value })} maxLength={60} /></Field>
         <Field label="Ydelse, fx gulvslibning"><Input value={f.ydelse} onChange={(e) => setF({ ...f, ydelse: e.target.value })} maxLength={60} /></Field>
         <Field label="By eller område"><Input value={f.by} onChange={(e) => setF({ ...f, by: e.target.value })} maxLength={60} /></Field>
       </div>
-      <h2 className="font-title-md text-title-md text-primary font-bold">2. Samtykke fra indtaleren</h2>
-      <blockquote className="rounded-lg bg-surface-container-low p-space-md font-body-md text-body-md">{text}</blockquote>
+      <h2 className="font-title-md text-title-md text-ink font-bold">2. Samtykke fra indtaleren</h2>
+      <blockquote className="rounded-lg bg-panel p-3 text-body-md">{text}</blockquote>
       <Field label="Indtaleren skriver sit fulde navn" hint="Skal være den person, der indtaler. Samtykket gennemgås af Dialogbot, før stemmen kan bruges.">
         <Input value={f.typed} onChange={(e) => setF({ ...f, typed: e.target.value })} />
       </Field>
-      <label className="flex items-start gap-2 font-body-md text-body-md">
+      <label className="flex items-start gap-2 text-body-md">
         <input type="checkbox" className="mt-1 w-5 h-5" checked={f.ok} onChange={(e) => setF({ ...f, ok: e.target.checked })} />
         Jeg er indtaleren og giver samtykke som beskrevet ovenfor.
       </label>
@@ -165,49 +165,49 @@ function Studio({ wsId, project, manuscript }: { wsId: string; project: Project;
   const done = p.approved_recordings;
 
   return (
-    <div className="flex flex-col gap-space-md">
-      <div className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink flex flex-col gap-space-sm">
-        <div className="flex flex-wrap items-center justify-between gap-space-sm">
-          <h2 className="font-title-md text-title-md text-primary font-bold">Indtaling: {p.speaker_name}</h2>
-          <span className="font-label-lg text-label-lg tabular-nums">{done} af {p.total} godkendt</span>
+    <div className="flex flex-col gap-3">
+      <div className="bg-paper rounded-2xl p-4 border-2 border-ink flex flex-col gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-title-md text-title-md text-ink font-bold">Indtaling: {p.speaker_name}</h2>
+          <span className="text-label-lg tabular-nums">{done} af {p.total} godkendt</span>
         </div>
-        <div className="h-2 rounded-full bg-surface-container-high overflow-hidden" aria-hidden="true">
-          <div className="h-full bg-secondary-container transition-all" style={{ width: `${(100 * done) / p.total}%` }} />
+        <div className="h-2 rounded-full bg-line overflow-hidden" aria-hidden="true">
+          <div className="h-full bg-success-soft transition-all" style={{ width: `${(100 * done) / p.total}%` }} />
         </div>
-        <details><summary className="font-label-lg text-label-lg cursor-pointer">Sådan optager du</summary>
-          <ul className="list-disc pl-5 mt-space-xs font-body-sm text-body-sm">{manuscript.instructions.map((i) => <li key={i}>{i}</li>)}</ul>
+        <details><summary className="text-label-lg cursor-pointer">Sådan optager du</summary>
+          <ul className="list-disc pl-5 mt-1 text-body-sm">{manuscript.instructions.map((i) => <li key={i}>{i}</li>)}</ul>
         </details>
         <ErrorBox error={error} />
       </div>
-      <ol className="flex flex-col gap-space-sm">
+      <ol className="flex flex-col gap-2">
         {manuscript.sentences.map((s, i) => {
           const r = p.recordings[s.id];
           const isActive = active === s.id;
           return (
-            <li key={s.id} className={`rounded-2xl p-space-md bg-surface-container-lowest border-2 border-ink flex flex-col gap-space-xs border ${s.id === next ? "border-primary" : "border-transparent"}`}>
-              <div className="flex items-start gap-space-sm">
-                <span className="font-label-sm text-label-sm text-on-surface-variant tabular-nums w-10 shrink-0">{i + 1}.</span>
+            <li key={s.id} className={`rounded-2xl p-3 bg-paper border-2 border-ink flex flex-col gap-1 border ${s.id === next ? "border-ink" : "border-transparent"}`}>
+              <div className="flex items-start gap-2">
+                <span className="text-label-sm text-ink-soft tabular-nums w-10 shrink-0">{i + 1}.</span>
                 <div className="flex-1">
-                  <p className="font-body-lg text-body-lg">{s.text}</p>
-                  {s.spoken_hint !== s.text && <p className="font-body-sm text-body-sm text-on-surface-variant">Fx: {s.spoken_hint}</p>}
+                  <p className="text-body-lg">{s.text}</p>
+                  {s.spoken_hint !== s.text && <p className="text-body-sm text-ink-soft">Fx: {s.spoken_hint}</p>}
                 </div>
-                {r && <span className={`shrink-0 px-2 py-0.5 rounded-full font-label-sm text-label-sm ${r.qc.ok ? "bg-secondary-container text-on-secondary-container" : "bg-error-container text-on-error-container"}`}>{r.qc.ok ? "Godkendt" : "Ikke godkendt"}</span>}
+                {r && <span className={`shrink-0 px-2 py-0.5 rounded-full text-label-sm ${r.qc.ok ?"bg-success-soft text-success":"bg-danger-soft text-danger"}`}>{r.qc.ok ? "Godkendt" : "Ikke godkendt"}</span>}
               </div>
               {r && !r.qc.ok && <Alert kind="warn">{r.qc.flags.map((f) => FLAG[f] ?? f).join(" ")}</Alert>}
-              {isActive && <div className="h-2 rounded-full bg-surface-container-high overflow-hidden" aria-label="Lydniveau"><div className="h-full bg-primary" style={{ width: `${Math.min(100, rec.level * 140)}%` }} /></div>}
-              <div className="flex flex-wrap gap-space-sm pl-12">
+              {isActive && <div className="h-2 rounded-full bg-line overflow-hidden" aria-label="Lydniveau"><div className="h-full bg-ink" style={{ width: `${Math.min(100, rec.level * 140)}%` }} /></div>}
+              <div className="flex flex-wrap gap-2 pl-12">
                 {isActive
                   ? <Button type="button" icon="stop" onClick={() => stop(s.id)}>Stop og gem</Button>
                   : <Button type="button" variant={r ? "tonal" : "primary"} icon="mic" disabled={rec.recording || busy !== null || p.status !== "recording"} onClick={() => record(s.id)}>{r ? "Optag igen" : "Optag"}</Button>}
                 {r && !isActive && <Button type="button" variant="tonal" icon="play_arrow" onClick={() => listen(s.id)}>Lyt</Button>}
-                {busy === s.id && <span className="font-body-sm text-body-sm text-on-surface-variant self-center">Tjekker optagelsen …</span>}
+                {busy === s.id && <span className="text-body-sm text-ink-soft self-center">Tjekker optagelsen …</span>}
               </div>
             </li>
           );
         })}
       </ol>
-      <div className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink flex flex-col gap-space-sm">
-        <p className="font-body-md text-body-md">Når alle sætninger er godkendt, sender du indtalingen. Dialogbot laver stemmen og gennemgår samtykket, før den kan bruges.</p>
+      <div className="bg-paper rounded-2xl p-4 border-2 border-ink flex flex-col gap-2">
+        <p className="text-body-md">Når alle sætninger er godkendt, sender du indtalingen. Dialogbot laver stemmen og gennemgår samtykket, før den kan bruges.</p>
         <div><Button type="button" icon="send" disabled={done < p.total || submit.pending} onClick={() => submit.run()}>Send til gennemgang</Button></div>
         <ErrorBox error={submit.error} />
       </div>
@@ -225,16 +225,16 @@ function Status({ wsId, p }: { wsId: string; p: Project }) {
     : v?.consent_review === "blocked" ? "Samtykket er afvist. Kontakt Dialogbot."
     : "Afventer Dialogbots gennemgang af samtykket og en prøve af stemmen.";
   return (
-    <li className="rounded-2xl p-space-md bg-surface-container-lowest border-2 border-ink flex flex-col gap-space-xs">
-      <div className="flex flex-wrap items-center gap-space-sm">
-        <Icon name="record_voice_over" className="text-primary" />
-        <h3 className="font-label-lg text-label-lg text-primary">{p.speaker_name}</h3>
-        <span className="ml-auto font-body-sm text-body-sm text-on-surface-variant">{MANUS[p.manuscript].split(":")[0]} · {p.approved_recordings}/{p.total} optagelser</span>
+    <li className="rounded-2xl p-3 bg-paper border-2 border-ink flex flex-col gap-1">
+      <div className="flex flex-wrap items-center gap-2">
+        <Icon name="record_voice_over" className="text-ink" />
+        <h3 className="text-label-lg text-ink">{p.speaker_name}</h3>
+        <span className="ml-auto text-body-sm text-ink-soft">{MANUS[p.manuscript].split(":")[0]} · {p.approved_recordings}/{p.total} optagelser</span>
       </div>
-      <p className="font-body-sm text-body-sm">{state}</p>
+      <p className="text-body-sm">{state}</p>
       {p.status !== "withdrawn" && (confirm
-        ? <div className="flex flex-wrap gap-space-sm items-center rounded-lg bg-error-container text-on-error-container p-space-sm">
-            <span className="font-body-sm text-body-sm">Optagelserne slettes, og stemmen stopper med det samme.</span>
+        ? <div className="flex flex-wrap gap-2 items-center rounded-lg bg-danger-soft text-danger p-2">
+            <span className="text-body-sm">Optagelserne slettes, og stemmen stopper med det samme.</span>
             <Button type="button" icon="delete" onClick={() => withdraw.run()} disabled={withdraw.pending}>Træk samtykket tilbage</Button>
             <Button type="button" variant="tonal" onClick={() => setConfirm(false)}>Behold</Button>
           </div>
@@ -250,14 +250,14 @@ export function OwnVoice({ wsId, projects, defaults, manuscript }: {
   const current = projects.find((p) => p.status === "recording");
   const others = projects.filter((p) => p !== current);
   return (
-    <div className="flex flex-col gap-space-lg">
-      <Link href="/app/voices" className="flex items-center gap-1 font-label-lg text-label-lg text-primary underline w-fit"><Icon name="arrow_back" size={18} />Tilbage til stemmer</Link>
+    <div className="flex flex-col gap-4">
+      <Link href="/app/voices" className="flex items-center gap-1 text-label-lg text-ink underline w-fit"><Icon name="arrow_back" size={18} />Tilbage til stemmer</Link>
       <Alert kind="info">Egen stemme laves ud fra en kort optagelse. Ligheden med indtaleren kan variere, især for stemmer, der ligger langt fra modellens træningsstemmer. Fuld lighed kræver træning på standardmanuskriptet, som Dialogbot tilbyder senere.</Alert>
       {current && manuscript ? <Studio wsId={wsId} project={current} manuscript={manuscript} /> : <Consent wsId={wsId} defaults={defaults} />}
       {others.length > 0 && (
-        <section className="flex flex-col gap-space-sm">
-          <h2 className="font-title-md text-title-md text-primary font-bold">Tidligere indtalinger</h2>
-          <ul className="flex flex-col gap-space-sm">{others.map((p) => <Status key={p.id} wsId={wsId} p={p} />)}</ul>
+        <section className="flex flex-col gap-2">
+          <h2 className="font-title-md text-title-md text-ink font-bold">Tidligere indtalinger</h2>
+          <ul className="flex flex-col gap-2">{others.map((p) => <Status key={p.id} wsId={wsId} p={p} />)}</ul>
         </section>
       )}
     </div>

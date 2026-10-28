@@ -11636,6 +11636,7 @@
     },
     "/api/v1/workspaces/{workspace_id}/bookings": {
       "get": {
+        "description": "Default: from yesterday to `days` ahead. With `start` (and `end`, inclusive) the local calendar days in between instead.",
         "operationId": "list_bookings_api_v1_workspaces__workspace_id__bookings_get",
         "parameters": [
           {
@@ -11668,6 +11669,40 @@
               "default": false,
               "title": "Include Cancelled",
               "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End"
             }
           },
           {

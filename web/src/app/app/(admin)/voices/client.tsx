@@ -74,12 +74,12 @@ function Steps({ standardVoice, heard, testCall }: { standardVoice: boolean; hea
     ["Gennemfør et prøveopkald", STEP_OK(testCall), "Ring til jeres nummer. Et gemt valg er ikke en bestået telefontest.", "/app/setup#checks"],
   ];
   return (
-    <ol className="grid grid-cols-1 md:grid-cols-4 gap-space-sm" aria-label="Opsætning af stemme">
+    <ol className="grid grid-cols-1 md:grid-cols-4 gap-2" aria-label="Opsætning af stemme">
       {items.map(([label, done, hint, href], i) => (
-        <li key={label} className={`rounded-2xl p-space-sm flex flex-col gap-1 ${done ? "bg-secondary-container text-on-secondary-container" : "bg-surface-container-lowest border-2 border-ink"}`}>
+        <li key={label} className={`rounded-2xl p-2 flex flex-col gap-1 ${done ? "bg-success-soft text-success" : "bg-paper border-2 border-ink"}`}>
           <span className="flex items-center gap-1 eyebrow"><Icon name={done ? "check_circle" : "radio_button_unchecked"} size={16} />Trin {i + 1}</span>
-          <span className="font-label-lg text-label-lg">{label}</span>
-          {(!done || hint === viaCall) && <span className="font-body-sm text-body-sm">{href ? <Link className="underline" href={href}>{hint}</Link> : hint}</span>}
+          <span className="text-label-lg">{label}</span>
+          {(!done || hint === viaCall) && <span className="text-body-sm">{href ? <Link className="underline" href={href}>{hint}</Link> : hint}</span>}
         </li>
       ))}
     </ol>
@@ -103,28 +103,28 @@ function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesD
     router.refresh();
   });
   return (
-    <section aria-labelledby="std-h" className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
+    <section aria-labelledby="std-h" className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-3">
       <div>
-        <h2 id="std-h" className="font-headline-sm text-headline-sm text-primary">Vælg telefonstemme</h2>
-        <p className="font-body-sm text-body-sm text-on-surface-variant max-w-3xl">Danske stemmer, der virker med det samme. Valget gælder alle jeres telefonnumre og kampagner, og I kan altid skifte. I hører stemmen, når I ringer til jeres nummer.</p>
+        <h2 id="std-h" className="font-display text-headline-sm text-ink">Vælg telefonstemme</h2>
+        <p className="text-body-sm text-ink-soft max-w-3xl">Danske stemmer, der virker med det samme. Valget gælder alle jeres telefonnumre og kampagner, og I kan altid skifte. I hører stemmen, når I ringer til jeres nummer.</p>
       </div>
       <ErrorBox error={pick.error ?? player.error} />
-      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {data.standard_voices.map((v) => {
           const active = current === v.key;
           const playing = player.state?.key === `std-${v.key}`;
           return (
-            <li key={v.key} className={`rounded-2xl p-space-md flex items-center gap-space-md border-2 transition-colors ${active ? "border-primary bg-surface-container-low" : "border-surface-container-high"}`}>
+            <li key={v.key} className={`rounded-2xl p-3 flex items-center gap-3 border-2 transition-colors ${active ? "border-ink bg-panel" : "border-line"}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={v.image} alt="" width={96} height={96} className="w-24 h-24 shrink-0 rounded-[1.25rem]" />
-              <div className="flex flex-col gap-space-xs min-w-0">
-                <div className="flex flex-wrap items-center gap-space-sm">
-                  <h3 className="font-headline-sm text-headline-sm text-primary">{v.name}</h3>
-                  <span className="font-label-sm text-label-sm text-on-surface-variant">{GENDER[v.gender]} · Dansk</span>
-                  {active && <span className="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center gap-1"><Icon name="check" size={14} />Bruges nu</span>}
+              <div className="flex flex-col gap-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="font-display text-headline-sm text-ink">{v.name}</h3>
+                  <span className="text-label-sm text-ink-soft">{GENDER[v.gender]} · Dansk</span>
+                  {active && <span className="px-2 py-0.5 rounded-full bg-ink text-paper text-label-sm flex items-center gap-1"><Icon name="check" size={14} />Bruges nu</span>}
                 </div>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">{v.description}</p>
-                <div className="flex flex-wrap gap-space-sm">
+                <p className="text-body-sm text-ink-soft">{v.description}</p>
+                <div className="flex flex-wrap gap-2">
                   {v.sample && (playing
                     ? <Button type="button" variant="tonal" icon={player.state?.phase === "loading" ? "hourglass_top" : "stop"} onClick={player.stop} aria-label={`Stop prøven med ${v.name}`}>{player.state?.phase === "loading" ? "Henter …" : "Stop"}</Button>
                     : <Button type="button" variant="tonal" icon="play_arrow" onClick={() => player.play(`std-${v.key}`, `/workspaces/${wsId}/voices/standard/${v.key}/sample`, {})} aria-label={`Hør ${v.name}`}>Hør {v.name}</Button>)}
@@ -147,7 +147,7 @@ const ORIGIN: Record<Voice["origin"], string> = {
 function Meta({ v }: { v: Voice }) {
   const bits = [GENDER[v.gender], v.dialect ?? "Dialekt ikke vurderet", v.age_description ?? "Alder ukendt"];
   if (v.timbre) bits.push(v.timbre);
-  return <p className="font-body-sm text-body-sm text-on-surface-variant">{bits.join(" · ")}</p>;
+  return <p className="text-body-sm text-ink-soft">{bits.join(" · ")}</p>;
 }
 
 export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
@@ -165,48 +165,48 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
   });
   const playing = (key: string) => player.state?.key === key;
   return (
-    <div className="flex flex-col gap-space-lg">
+    <div className="flex flex-col gap-4">
       <EngineNotice engine={data.engine} />
       <Steps standardVoice={!data.settings.default_profile_id} heard={steps.heard} testCall={steps.testCall} />
       <StandardVoices wsId={wsId} data={data} canManage={canManage} />
-      {player.state?.simulated && <p role="status" className="font-body-sm text-body-sm text-on-surface-variant">Afspiller simuleret lyd (testmotor).</p>}
+      {player.state?.simulated && <p role="status" className="text-body-sm text-ink-soft">Afspiller simuleret lyd (testmotor).</p>}
       <ErrorBox error={player.error ?? choose.error} />
 
-      <section aria-labelledby="lib-h" className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
-        <div className="flex flex-wrap items-end justify-between gap-space-sm">
-          <h2 id="lib-h" className="font-headline-sm text-headline-sm text-primary">Dialogbot-stemmer</h2>
+      <section aria-labelledby="lib-h" className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-3">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <h2 id="lib-h" className="font-display text-headline-sm text-ink">Dialogbot-stemmer</h2>
           {data.items.length > 0 && (
-            <div className="flex flex-wrap gap-space-sm">
+            <div className="flex flex-wrap gap-2">
               <Field label="Køn"><Select value={filter.gender} onChange={(e) => setFilter({ ...filter, gender: e.target.value })}><option value="">Alle</option><option value="female">Kvinde</option><option value="male">Mand</option><option value="unknown">Ikke angivet</option></Select></Field>
               <Field label="Dialekt"><Select value={filter.dialect} onChange={(e) => setFilter({ ...filter, dialect: e.target.value })}><option value="">Alle</option>{dialects.map((d) => <option key={d}>{d}</option>)}</Select></Field>
             </div>
           )}
         </div>
         {data.items.length === 0 ? (
-          <p className="font-body-md text-body-md text-on-surface-variant">Flere danske stemmer – også med dialekt – er på vej. De bliver vist her, når de har bestået vores kontrol af rettigheder, lydkvalitet og telefonlyd. Indtil da bruger telefonen den stemme, I har valgt ovenfor.</p>
+          <p className="text-body-md text-ink-soft">Flere danske stemmer – også med dialekt – er på vej. De bliver vist her, når de har bestået vores kontrol af rettigheder, lydkvalitet og telefonlyd. Indtil da bruger telefonen den stemme, I har valgt ovenfor.</p>
         ) : (
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {shown.map((v) => {
               const isDefault = data.settings.default_profile_id === v.id;
               return (
-                <li key={v.id} className={`rounded-xl p-space-md flex flex-col gap-space-xs border ${isDefault ? "border-primary bg-surface-container-low" : "border-surface-container-high"}`}>
-                  <div className="flex items-center gap-space-sm">
+                <li key={v.id} className={`rounded-xl p-3 flex flex-col gap-1 border ${isDefault ? "border-ink bg-panel" : "border-line"}`}>
+                  <div className="flex items-center gap-2">
                     {v.origin === "designed"
                       // eslint-disable-next-line @next/next/no-img-element
                       ? <img src={`/voices/designed/${v.slug}.svg`} alt="" width={56} height={56} className="w-14 h-14 rounded-xl shrink-0" />
-                      : <Icon name="record_voice_over" className="text-primary" />}
-                    <h3 className="font-label-lg text-label-lg text-primary">{v.display_name}</h3>
-                    {isDefault && <span className="ml-auto px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm">Standard</span>}
+                      : <Icon name="record_voice_over" className="text-ink" />}
+                    <h3 className="text-label-lg text-ink">{v.display_name}</h3>
+                    {isDefault && <span className="ml-auto px-2 py-0.5 rounded-full bg-ink text-paper text-label-sm">Standard</span>}
                   </div>
                   <Meta v={v} />
-                  {v.description && <p className="font-body-sm text-body-sm">{v.description}</p>}
+                  {v.description && <p className="text-body-sm">{v.description}</p>}
                   <div className="flex flex-wrap gap-1">
-                    <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">{ORIGIN[v.origin]}</span>
-                    {v.active_version?.pilot && <span className="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">Pilot i jeres arbejdsrum</span>}
-                    {v.active_version && v.active_version.listening_test !== "passed" && <span className="px-2 py-0.5 rounded-full bg-surface-container-high font-label-sm text-label-sm">Lyttetest afventer</span>}
-                    {v.active_version?.simulated && <span className="px-2 py-0.5 rounded-full bg-surface-container-high font-label-sm text-label-sm">Simuleret</span>}
+                    <span className="px-2 py-0.5 rounded-full bg-success-soft text-success text-label-sm">{ORIGIN[v.origin]}</span>
+                    {v.active_version?.pilot && <span className="px-2 py-0.5 rounded-full bg-accent-soft text-accent-deep text-label-sm">Pilot i jeres arbejdsrum</span>}
+                    {v.active_version && v.active_version.listening_test !== "passed" && <span className="px-2 py-0.5 rounded-full bg-line text-label-sm">Lyttetest afventer</span>}
+                    {v.active_version?.simulated && <span className="px-2 py-0.5 rounded-full bg-line text-label-sm">Simuleret</span>}
                   </div>
-                  <div className="flex flex-wrap gap-space-sm mt-space-xs">
+                  <div className="flex flex-wrap gap-2 mt-1">
                     {playing(`s-${v.id}`)
                       ? <Button type="button" variant="tonal" icon="stop" onClick={player.stop}>{player.state?.phase === "loading" ? "Genererer … stop" : "Stop"}</Button>
                       : <Button type="button" variant="tonal" icon="play_arrow" onClick={() => player.play(`s-${v.id}`, `/workspaces/${wsId}/voices/${v.id}/preview`, {})} aria-label={`Afspil prøve med ${v.display_name}`}>Lyt</Button>}
@@ -220,15 +220,15 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
       </section>
 
       {data.items.length > 0 && (
-        <section aria-labelledby="try-h" className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
-          <h2 id="try-h" className="font-headline-sm text-headline-sm text-primary">Afprøv med jeres egen tekst</h2>
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-space-sm">
+        <section aria-labelledby="try-h" className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">
+          <h2 id="try-h" className="font-display text-headline-sm text-ink">Afprøv med jeres egen tekst</h2>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-2">
             <Field label="Stemme"><Select value={own.voice} onChange={(e) => setOwn({ ...own, voice: e.target.value })}>{data.items.map((v) => <option key={v.id} value={v.id}>{v.display_name}</option>)}</Select></Field>
             <Field label={`Tekst (højst ${data.preview_max_chars} tegn)`} hint={`${own.text.length}/${data.preview_max_chars}`}>
               <Textarea value={own.text} maxLength={data.preview_max_chars} onChange={(e) => setOwn({ ...own, text: e.target.value })} placeholder="Fx: Vi har en ledig tid onsdag den 28. oktober klokken 10.30." />
             </Field>
           </div>
-          <div className="flex flex-wrap gap-space-sm">
+          <div className="flex flex-wrap gap-2">
             {playing("own")
               ? <Button type="button" variant="tonal" icon="stop" onClick={player.stop}>{player.state?.phase === "loading" ? "Genererer … stop" : "Stop"}</Button>
               : <Button type="button" icon="graphic_eq" disabled={!own.voice || !own.text.trim()} onClick={() => player.play("own", `/workspaces/${wsId}/voices/${own.voice}/preview`, { text: own.text })}>Generér og afspil</Button>}
@@ -259,10 +259,10 @@ function Assignments({ wsId, data }: { wsId: string; data: VoicesData }) {
   });
   const opts = [<option key="" value="">Arbejdsrummets standard</option>, ...data.items.map((v) => <option key={v.id} value={v.id}>{v.display_name}</option>)];
   return (
-    <section aria-labelledby="asg-h" className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
-      <h2 id="asg-h" className="font-headline-sm text-headline-sm text-primary">Assistenter og kampagner</h2>
+    <section aria-labelledby="asg-h" className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">
+      <h2 id="asg-h" className="font-display text-headline-sm text-ink">Assistenter og kampagner</h2>
       {msg && <Alert kind="ok">{msg}</Alert>}
-      {data.assignments.phone_numbers.length === 0 && data.assignments.campaigns.length === 0 && <p className="font-body-md text-body-md text-on-surface-variant">Ingen telefonnumre eller kampagner endnu. De bruger standardstemmen, når de oprettes.</p>}
+      {data.assignments.phone_numbers.length === 0 && data.assignments.campaigns.length === 0 && <p className="text-body-md text-ink-soft">Ingen telefonnumre eller kampagner endnu. De bruger standardstemmen, når de oprettes.</p>}
       {data.assignments.phone_numbers.map((n) => (
         <Field key={n.id} label={`Telefonassistent ${n.e164}${n.label ? ` (${n.label})` : ""}`}>
           <Select defaultValue={n.voice_profile_id ?? ""} onChange={(e) => save.run("phone-numbers", n.id, e.target.value)}>{opts}</Select>
@@ -295,18 +295,18 @@ function Pronunciations({ wsId, data }: { wsId: string; data: VoicesData }) {
   });
   const set = (i: number, k: "term" | "say", v: string) => { setSaved(false); setRows(rows.map((r, j) => (j === i ? { ...r, [k]: v } : r))); };
   return (
-    <section aria-labelledby="pron-h" className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
-      <h2 id="pron-h" className="font-headline-sm text-headline-sm text-primary">Udtaleordbog</h2>
-      <p className="font-body-sm text-body-sm text-on-surface-variant">Skriv hvordan navne skal udtales, fx firmanavne eller stednavne. Gælder hele ord. Version {data.settings.pronunciation_version}. En ændring kræver et nyt prøveopkald.</p>
+    <section aria-labelledby="pron-h" className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">
+      <h2 id="pron-h" className="font-display text-headline-sm text-ink">Udtaleordbog</h2>
+      <p className="text-body-sm text-ink-soft">Skriv hvordan navne skal udtales, fx firmanavne eller stednavne. Gælder hele ord. Version {data.settings.pronunciation_version}. En ændring kræver et nyt prøveopkald.</p>
       {saved && <Alert kind="ok">Gemt.</Alert>}
       {rows.map((r, i) => (
-        <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-space-sm items-end">
+        <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-end">
           <Field label={i === 0 ? "Skrives" : ""}><Input aria-label={`Ord ${i + 1}`} value={r.term} onChange={(e) => set(i, "term", e.target.value)} placeholder="ApS" /></Field>
           <Field label={i === 0 ? "Udtales" : ""}><Input aria-label={`Udtale ${i + 1}`} value={r.say} onChange={(e) => set(i, "say", e.target.value)} placeholder="a p s" /></Field>
           <Button type="button" variant="ghost" icon="delete" aria-label={`Fjern række ${i + 1}`} onClick={() => setRows(rows.filter((_, j) => j !== i))} />
         </div>
       ))}
-      <div className="flex gap-space-sm">
+      <div className="flex gap-2">
         <Button type="button" variant="tonal" icon="add" onClick={() => setRows([...rows, { term: "", say: "" }])}>Tilføj ord</Button>
         <Button type="button" icon="save" onClick={() => save.run()} disabled={save.pending}>Gem udtaleordbog</Button>
       </div>

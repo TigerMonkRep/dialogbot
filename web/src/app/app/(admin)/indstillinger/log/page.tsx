@@ -1,2 +1,4 @@
-// Phase 1 of kundeapp v2: the new route renders the current page; the old route redirects here (next.config.ts).
-export { default } from "../../settings/activity/page";
+import { redirect } from "next/navigation";
+
+/** The old page now opens as a sheet over «Alle indstillinger». */
+export default function Page() { redirect("/app/indstillinger?ark=log"); }

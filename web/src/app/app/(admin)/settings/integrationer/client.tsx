@@ -21,15 +21,15 @@ export type ActionRun = {
 export type Catalogue = { items: Connector[]; recent_actions: ActionRun[]; simulated: boolean };
 
 const STATUS: Record<Connector["status"], [string, string]> = {
-  connected: ["Forbundet", "bg-secondary-container text-on-secondary-container"],
-  not_connected: ["Ikke forbundet", "bg-surface-container-high text-on-surface-variant"],
-  error: ["Fejl", "bg-error-container text-on-error-container"],
-  not_implemented: ["Ikke tilgængelig", "bg-surface-container-highest text-on-surface-variant"],
+  connected: ["Forbundet", "bg-success-soft text-success"],
+  not_connected: ["Ikke forbundet", "bg-line text-ink-soft"],
+  error: ["Fejl", "bg-danger-soft text-danger"],
+  not_implemented: ["Ikke tilgængelig", "bg-panel-deep text-ink-soft"],
 };
 const RUN: Record<ActionRun["status"], [string, string]> = {
-  ok: ["Udført", "bg-secondary-container text-on-secondary-container"],
-  failed: ["Fejlede", "bg-error-container text-on-error-container"],
-  refused: ["Afvist", "bg-tertiary-fixed text-on-tertiary-fixed"],
+  ok: ["Udført", "bg-success-soft text-success"],
+  failed: ["Fejlede", "bg-danger-soft text-danger"],
+  refused: ["Afvist", "bg-accent-soft text-accent-deep"],
 };
 const CHANNEL: Record<string, string> = { phone: "Telefon", webchat: "Webchat", test: "Test", system: "System" };
 const ICON: Record<string, string> = { calendar: "calendar_month", messaging: "sms", automation: "webhook", crm: "contacts",
@@ -54,27 +54,27 @@ export function Integrations({ wsId, data, canManage }: { wsId: string; data: Ca
   const zapier = data.items.filter((c) => c.availability !== "ready" && c.zapier_note);
   const coming = data.items.filter((c) => c.availability !== "ready" && !c.zapier_note);
   return (
-    <section className="flex flex-col gap-space-lg">
+    <section className="flex flex-col gap-4">
       <div>
         <span className="eyebrow">Integrationer</span>
         <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Handlinger i jeres egne systemer</h1>
-        <p className="font-body-sm text-body-sm text-on-surface-variant max-w-3xl">Når et system er forbundet, kan assistenten udføre handlinger dér under et opkald eller i webchatten – fx booke en tid i jeres kalender eller sende en SMS-bekræftelse. Kunden bekræfter altid først, og hver handling vises i samtalen i indbakken. Kun forbundne systemer bruges.</p>
+        <p className="text-body-sm text-ink-soft max-w-3xl">Når et system er forbundet, kan assistenten udføre handlinger dér under et opkald eller i webchatten – fx booke en tid i jeres kalender eller sende en SMS-bekræftelse. Kunden bekræfter altid først, og hver handling vises i samtalen i indbakken. Kun forbundne systemer bruges.</p>
       </div>
       {data.simulated && <Alert kind="warn">Testmiljø: forbindelser og handlinger er simulerede. Intet sendes til rigtige kalendere, telefoner eller webhooks.</Alert>}
       {notice && <Alert kind={notice.kind}>{notice.text}</Alert>}
       {!canManage && <Alert kind="info">Kun administratorer kan forbinde systemer.</Alert>}
 
-      <h2 className="font-headline-sm text-headline-sm text-primary">Klar</h2>
-      <ul className="grid gap-space-md lg:grid-cols-2">{ready.map((c) => <ConnectorCard key={c.key} wsId={wsId} c={c} canManage={canManage} />)}</ul>
+      <h2 className="font-display text-headline-sm text-ink">Klar</h2>
+      <ul className="grid gap-3 lg:grid-cols-2">{ready.map((c) => <ConnectorCard key={c.key} wsId={wsId} c={c} canManage={canManage} />)}</ul>
 
       {zapier.length > 0 && <>
-        <h2 className="font-headline-sm text-headline-sm text-primary">Via Zapier eller Make</h2>
-        <p className="font-body-sm text-body-sm text-on-surface-variant max-w-3xl">Disse systemer har ingen direkte forbindelse endnu. Forbind Zapier eller Make ovenfor, så kan hændelser fra Dialogbot (ny henvendelse, booking, udført handling) starte jeres egne automatiseringer dér.</p>
-        <ul className="grid gap-space-sm md:grid-cols-2 lg:grid-cols-3">{zapier.map((c) => <Coming key={c.key} c={c} />)}</ul>
+        <h2 className="font-display text-headline-sm text-ink">Via Zapier eller Make</h2>
+        <p className="text-body-sm text-ink-soft max-w-3xl">Disse systemer har ingen direkte forbindelse endnu. Forbind Zapier eller Make ovenfor, så kan hændelser fra Dialogbot (ny henvendelse, booking, udført handling) starte jeres egne automatiseringer dér.</p>
+        <ul className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">{zapier.map((c) => <Coming key={c.key} c={c} />)}</ul>
       </>}
       {coming.length > 0 && <>
-        <h2 className="font-headline-sm text-headline-sm text-primary">På vej</h2>
-        <ul className="grid gap-space-sm md:grid-cols-2 lg:grid-cols-3">{coming.map((c) => <Coming key={c.key} c={c} />)}</ul>
+        <h2 className="font-display text-headline-sm text-ink">På vej</h2>
+        <ul className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">{coming.map((c) => <Coming key={c.key} c={c} />)}</ul>
       </>}
 
       <Runs runs={data.recent_actions} items={data.items} />
@@ -84,10 +84,10 @@ export function Integrations({ wsId, data, canManage }: { wsId: string; data: Ca
 
 function Coming({ c }: { c: Connector }) {
   return (
-    <li className="rounded-xl bg-surface-container-low p-space-md flex flex-col gap-1">
-      <span className="flex items-center gap-space-xs font-label-lg text-label-lg text-on-surface"><Icon name={ICON[c.category] ?? "extension"} size={18} />{c.label}</span>
-      <span className="font-body-sm text-body-sm text-on-surface-variant">{c.description}</span>
-      <span className="font-label-sm text-label-sm text-on-surface-variant">{c.zapier_note || "På vej – ikke tilgængelig endnu."}</span>
+    <li className="rounded-xl bg-panel p-3 flex flex-col gap-1">
+      <span className="flex items-center gap-1 text-label-lg text-ink"><Icon name={ICON[c.category] ?? "extension"} size={18} />{c.label}</span>
+      <span className="text-body-sm text-ink-soft">{c.description}</span>
+      <span className="text-label-sm text-ink-soft">{c.zapier_note || "På vej – ikke tilgængelig endnu."}</span>
     </li>
   );
 }
@@ -125,34 +125,34 @@ function ConnectorCard({ wsId, c, canManage }: { wsId: string; c: Connector; can
   const err = connect.error ?? runTest.error ?? save.error ?? off.error;
 
   return (
-    <li className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm" data-connector={c.key}>
-      <div className="flex flex-wrap items-center gap-space-sm">
-        <Icon name={ICON[c.category] ?? "extension"} size={22} className="text-primary" />
-        <h3 className="font-title-md text-title-md text-primary font-bold">{c.label}</h3>
-        <span className={`px-2 py-0.5 rounded-full font-label-sm text-label-sm ${cls}`}>{label}{connected && c.simulated ? " (simuleret)" : ""}</span>
+    <li className="rounded-2xl bg-paper border-2 border-ink p-3 flex flex-col gap-2" data-connector={c.key}>
+      <div className="flex flex-wrap items-center gap-2">
+        <Icon name={ICON[c.category] ?? "extension"} size={22} className="text-ink" />
+        <h3 className="font-title-md text-title-md text-ink font-bold">{c.label}</h3>
+        <span className={`px-2 py-0.5 rounded-full text-label-sm ${cls}`}>{label}{connected && c.simulated ? " (simuleret)" : ""}</span>
       </div>
-      <p className="font-body-sm text-body-sm text-on-surface-variant">{c.description}</p>
-      {c.account_label && connected && <p className="font-body-sm text-body-sm">Forbundet som <strong>{c.account_label}</strong>{c.last_ok_at ? ` · sidst bekræftet ${new Date(c.last_ok_at).toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" })}` : ""}</p>}
-      {c.reason && <p className="font-body-sm text-body-sm text-on-surface-variant">{c.reason}{c.key === "bookings" && <> <Link href="/app/bookings" className="text-primary underline">Gå til Bookinger</Link></>}</p>}
+      <p className="text-body-sm text-ink-soft">{c.description}</p>
+      {c.account_label && connected && <p className="text-body-sm">Forbundet som <strong>{c.account_label}</strong>{c.last_ok_at ? ` · sidst bekræftet ${new Date(c.last_ok_at).toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" })}` : ""}</p>}
+      {c.reason && <p className="text-body-sm text-ink-soft">{c.reason}{c.key === "bookings" && <> <Link href="/app/bookings" className="text-ink underline">Gå til Bookinger</Link></>}</p>}
       {c.error && <Alert kind="error">{c.error}</Alert>}
       {c.actions.length > 0 && (
-        <ul className="flex flex-wrap gap-space-xs" aria-label="Handlinger">
-          {c.actions.map((a) => <li key={a.name} title={a.description} className="px-2 py-0.5 rounded-lg bg-surface-container-low font-label-sm text-label-sm">{a.label}{a.confirm ? " · kræver kundens ja" : ""}</li>)}
+        <ul className="flex flex-wrap gap-1" aria-label="Handlinger">
+          {c.actions.map((a) => <li key={a.name} title={a.description} className="px-2 py-0.5 rounded-lg bg-panel text-label-sm">{a.label}{a.confirm ? " · kræver kundens ja" : ""}</li>)}
         </ul>
       )}
-      {c.events.length > 0 && <p className="font-label-sm text-label-sm text-on-surface-variant">Hændelser: ny henvendelse, booking oprettet/aflyst, udført handling, afsluttet samtale.</p>}
+      {c.events.length > 0 && <p className="text-label-sm text-ink-soft">Hændelser: ny henvendelse, booking oprettet/aflyst, udført handling, afsluttet samtale.</p>}
 
       {secret && (
-        <div className="rounded-lg bg-tertiary-fixed text-on-tertiary-fixed p-space-sm flex flex-col gap-1" role="status">
-          <span className="font-label-md text-label-md font-semibold">Hemmelighed til signaturen</span>
+        <div className="rounded-lg bg-accent-soft text-accent-deep p-2 flex flex-col gap-1" role="status">
+          <span className="text-label-md font-semibold">Hemmelighed til signaturen</span>
           <code className="break-all select-all font-mono text-body-sm">{secret}</code>
-          <span className="font-body-sm text-body-sm">Vises kun én gang – gem den, hvis I vil verificere signaturen (X-Dialogbot-Signature).</span>
+          <span className="text-body-sm">Vises kun én gang – gem den, hvis I vil verificere signaturen (X-Dialogbot-Signature).</span>
           <Button variant="tonal" className="self-start" onClick={() => navigator.clipboard?.writeText(secret).catch(() => undefined)}>Kopiér</Button>
         </div>
       )}
 
       {canManage && c.status !== "not_implemented" && c.key !== "bookings" && (
-        <div className="flex flex-col gap-space-sm">
+        <div className="flex flex-col gap-2">
           {isSink && (
             <Field label={c.key === "zapier" ? "Adresse fra Zapiers \"Catch Hook\"" : c.key === "make" ? "Adresse fra Makes \"Custom webhook\"" : "Webhook-adresse (https)"}>
               <Input type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder={c.key === "make" ? "https://hook.eu1.make.com/…" : c.key === "zapier" ? "https://hooks.zapier.com/hooks/catch/…" : "https://jeres-system.dk/dialogbot"} />
@@ -163,7 +163,7 @@ function ConnectorCard({ wsId, c, canManage }: { wsId: string; c: Connector; can
               <Input value={sender} maxLength={16} onChange={(e) => setSender(e.target.value)} />
             </Field>
           )}
-          <div className="flex flex-wrap gap-space-sm">
+          <div className="flex flex-wrap gap-2">
             {!connected && <Button icon="link" disabled={connect.pending || (isSink && !url.trim())} onClick={() => connect.run()}>{connect.pending ? "Forbinder…" : "Forbind"}</Button>}
             {connected && <Button variant="tonal" icon="network_check" disabled={runTest.pending} onClick={() => runTest.run()}>{runTest.pending ? "Tester…" : "Test forbindelse"}</Button>}
             {connected && (isSink || c.key === "twilio_sms") && <Button variant="outline" icon="save" disabled={save.pending} onClick={() => save.run()}>Gem opsætning</Button>}
@@ -184,19 +184,19 @@ function ConnectorCard({ wsId, c, canManage }: { wsId: string; c: Connector; can
 function Runs({ runs, items }: { runs: ActionRun[]; items: Connector[] }) {
   const name = (k: string) => items.find((c) => c.key === k)?.label ?? k;
   return (
-    <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
-      <h2 className="font-headline-sm text-headline-sm text-primary">Seneste handlinger</h2>
-      {runs.length === 0 ? <p className="font-body-sm text-body-sm text-on-surface-variant">Ingen handlinger endnu.</p> : (
+    <div className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">
+      <h2 className="font-display text-headline-sm text-ink">Seneste handlinger</h2>
+      {runs.length === 0 ? <p className="text-body-sm text-ink-soft">Ingen handlinger endnu.</p> : (
         <div className="overflow-x-auto">
-          <table className="w-full font-body-sm text-body-sm">
-            <thead><tr className="text-left text-on-surface-variant"><th className="pr-3">Tid</th><th className="pr-3">Kanal</th><th className="pr-3">System</th><th className="pr-3">Handling</th><th>Status</th></tr></thead>
+          <table className="w-full text-body-sm">
+            <thead><tr className="text-left text-ink-soft"><th className="pr-3">Tid</th><th className="pr-3">Kanal</th><th className="pr-3">System</th><th className="pr-3">Handling</th><th>Status</th></tr></thead>
             <tbody>{runs.map((r) => (
-              <tr key={r.id} className="align-top border-t border-outline-variant/40">
+              <tr key={r.id} className="align-top border-t border-line/40">
                 <td className="pr-3 py-1 tabular-nums whitespace-nowrap">{new Date(r.created_at).toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" })}</td>
                 <td className="pr-3 py-1">{CHANNEL[r.channel] ?? r.channel}</td>
                 <td className="pr-3 py-1">{name(r.connector)}</td>
-                <td className="pr-3 py-1">{r.conversation_id ? <Link className="text-primary underline" href={`/app/inbox/${r.conversation_id}`}>{r.label}</Link> : r.label}{r.simulated ? " (simuleret)" : ""}{r.error ? <><br /><span className="text-on-surface-variant">{r.error}</span></> : null}</td>
-                <td className="py-1"><span className={`px-2 py-0.5 rounded-full font-label-sm text-label-sm ${RUN[r.status][1]}`}>{RUN[r.status][0]}</span></td>
+                <td className="pr-3 py-1">{r.conversation_id ? <Link className="text-ink underline" href={`/app/inbox/${r.conversation_id}`}>{r.label}</Link> : r.label}{r.simulated ? " (simuleret)" : ""}{r.error ? <><br /><span className="text-ink-soft">{r.error}</span></> : null}</td>
+                <td className="py-1"><span className={`px-2 py-0.5 rounded-full text-label-sm ${RUN[r.status][1]}`}>{RUN[r.status][0]}</span></td>
               </tr>
             ))}</tbody>
           </table>

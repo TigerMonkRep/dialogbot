@@ -136,6 +136,17 @@ export function AssistantDock({ wsId, canChange, step, column = true, name }: { 
   }, [open]);
 
   const add = (m: Omit<Extract<Msg, { from: "bot" | "user" }>, "id"> | Omit<Extract<Msg, { from: "card" }>, "id">) => setMsgs((l) => [...l.slice(-30), { ...m, id: next.current++ } as Msg]);
+  // «Ændr» on a tile in Alle indstillinger: open the assistant and ask what the new value should be.
+  useEffect(() => {
+    const on = (e: Event) => {
+      const say = (e as CustomEvent<{ say?: string }>).detail?.say;
+      if (!say) return;
+      setTest(false); if (window.innerWidth < 1280) setOpen(true);
+      setMsgs((l) => [...l.slice(-30), { id: next.current++, from: "bot", text: say } as Msg]);
+    };
+    window.addEventListener("dialogbot:assistant", on);
+    return () => window.removeEventListener("dialogbot:assistant", on);
+  }, []);
   const patch = (id: number, p: Partial<Extract<Msg, { from: "card" }>>) => setMsgs((l) => l.map((m) => (m.id === id && m.from === "card" ? { ...m, ...p } : m)));
 
   const send = async (text: string) => {

@@ -9,16 +9,31 @@ import type { Campaign, Dnc, PhoneNumber } from "./format";
 
 const DAYS: [string, string][] = [["mon", "Man"], ["tue", "Tir"], ["wed", "Ons"], ["thu", "Tor"], ["fri", "Fre"], ["sat", "Lør"], ["sun", "Søn"]];
 
+export function Num({ n, dark = false }: { n: number; dark?: boolean }) {
+  return <span className={`inline-flex w-10 h-10 shrink-0 rounded-[10px] items-center justify-center font-display font-extrabold text-[20px] ${dark ? "bg-ink text-paper" : "bg-highlight text-ink"}`} aria-hidden>{n}</span>;
+}
+
+/** The page only shows campaigns when «ringe kunder op» is chosen; this switches it on (the same setting as in trin 1). */
+export function EnableOutbound({ wsId, goals }: { wsId: string; goals: Record<string, unknown> & { version: number } }) {
+  const router = useRouter();
+  const on = useSubmit(async () => {
+    const { version, ...g } = goals;
+    await api(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify({ ...g, callback: true, expected_version: version }) });
+    router.refresh();
+  });
+  return <div className="flex flex-col gap-1"><Button type="button" onClick={() => on.run()} disabled={on.pending}>{on.pending ? "Slår til…" : "Ja, slå udgående opkald til"}</Button><ErrorBox error={on.error} /></div>;
+}
+
 export function NewCampaign({ wsId }: { wsId: string }) {
   const router = useRouter();
   const [f, setF] = useState({ name: "", purpose: "" });
   const save = useSubmit(async () => {
     const c = await api<Campaign>(`/workspaces/${wsId}/campaigns`, { method: "POST", body: JSON.stringify(f) });
-    router.push(`/app/campaigns/${c.id}`);
+    router.push(`/app/kampagner/${c.id}`);
   });
   return (
-    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
-      <h2 className="font-headline-sm text-headline-sm text-primary">Ny kampagne</h2>
+    <form className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
+      <h2 className="font-display text-headline-sm text-ink">Ny kampagne</h2>
       <Field label="Navn på kampagnen" error={fieldError(save.error, "name")}><Input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder="Forårstilbud 2027" /></Field>
       <Field label="Hvad skal opkaldet handle om?" hint="Fx &quot;Tilbyde gulvafslibning til tidligere kunder inden sommerferien&quot;. AI'en foreslår manuskriptet ud fra det og jeres viden.">
         <Textarea value={f.purpose} onChange={(e) => setF({ ...f, purpose: e.target.value })} />
@@ -52,14 +67,14 @@ export function CampaignEditor({ wsId, c, numbers, canManage }: { wsId: string; 
   const set = (k: "name" | "purpose" | "opening" | "questions" | "success" | "call_from" | "call_to" | "phone_number_id") =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => { setNote(null); setF({ ...f, [k]: e.target.value }); };
   return (
-    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
-      <div className="flex flex-wrap items-center justify-between gap-space-sm">
-        <h2 className="font-headline-sm text-headline-sm text-primary">Manuskript og tidsrum</h2>
+    <form className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="flex items-center gap-3 font-display font-extrabold text-[20px] text-ink"><Num n={2} />Hvad skal den sige?</h2>
         {!locked && <Button type="button" variant="tonal" icon="auto_awesome" onClick={() => suggest.run()} disabled={suggest.pending}>{suggest.pending ? "Foreslår…" : "Foreslå med AI"}</Button>}
       </div>
       {c.status === "running" && <Alert kind="info">Kampagnen kører. Sæt den på pause for at ændre manuskriptet.</Alert>}
       {note && <Alert kind="ok">{note}</Alert>}
-      <fieldset disabled={locked} className="flex flex-col gap-space-sm">
+      <fieldset disabled={locked} className="flex flex-col gap-2">
         <Field label="Navn"><Input value={f.name} onChange={set("name")} /></Field>
         <Field label="Formål med opkaldet" error={fieldError(save.error, "purpose")}><Textarea value={f.purpose} onChange={set("purpose")} /></Field>
         <Field label="Første replik" hint="{navn} bliver kontaktens fornavn og {virksomhed} jeres navn. Assistenten siger altid, at den er en digital assistent.">
@@ -73,15 +88,17 @@ export function CampaignEditor({ wsId, c, numbers, canManage }: { wsId: string; 
             {numbers.map((n) => <option key={n.id} value={n.id}>{n.e164}{n.label ? ` (${n.label})` : ""}</option>)}
           </Select>
         </Field>
-        <div className="flex flex-col gap-space-xs">
-          <span className="font-label-md text-label-md font-semibold">Der ringes kun</span>
-          <div className="flex flex-wrap gap-space-sm">{DAYS.map(([k, l]) => (
-            <label key={k} className="flex items-center gap-1 font-body-md text-body-md">
-              <input type="checkbox" className="w-4 h-4 accent-primary" checked={f.call_days.includes(k)}
+        <h2 className="flex items-center gap-3 font-display font-extrabold text-[20px] text-ink mt-2"><Num n={3} />Hvornår – og hvad gør den ved svar?</h2>
+        <p className="text-body-sm text-ink-soft">Siger kunden ja, sendes de videre som en henvendelse til jer. Siger de nej, kommer de på spærrelisten.</p>
+        <div className="flex flex-col gap-1">
+          <span className="text-label-md font-semibold">Der ringes kun</span>
+          <div className="flex flex-wrap gap-2">{DAYS.map(([k, l]) => (
+            <label key={k} className="flex items-center gap-1 text-body-md">
+              <input type="checkbox" className="w-4 h-4 accent-ink" checked={f.call_days.includes(k)}
                 onChange={(e) => setF({ ...f, call_days: e.target.checked ? [...f.call_days, k] : f.call_days.filter((d) => d !== k) })} />{l}
             </label>
           ))}</div>
-          <div className="grid grid-cols-2 gap-space-sm max-w-xs">
+          <div className="grid grid-cols-2 gap-2 max-w-xs">
             <Field label="Fra kl."><Input type="time" value={f.call_from} onChange={set("call_from")} /></Field>
             <Field label="Til kl." error={fieldError(save.error, "call_to")}><Input type="time" value={f.call_to} onChange={set("call_to")} /></Field>
           </div>
@@ -105,16 +122,16 @@ export function ImportContacts({ wsId, id }: { wsId: string; id: string }) {
   });
   const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (file) setF({ ...f, csv: await file.text() }); };
   return (
-    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); run.run(); }}>
-      <h2 className="font-headline-sm text-headline-sm text-primary">Tilføj kontakter</h2>
-      <p className="font-body-sm text-body-sm text-on-surface-variant">Upload en CSV-fil (fx gemt fra Excel) eller indsæt listen. Kolonner: navn, telefon og evt. firma og e-mail. Danske numre må skrives uden +45. Numre på spærrelisten springes over.</p>
+    <form className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); run.run(); }}>
+      <h2 className="font-display text-headline-sm text-ink">Tilføj kontakter</h2>
+      <p className="text-body-sm text-ink-soft">Upload en CSV-fil (fx gemt fra Excel) eller indsæt listen. Kolonner: navn, telefon og evt. firma og e-mail. Danske numre må skrives uden +45. Numre på spærrelisten springes over.</p>
       {res && <Alert kind="ok">{res.added} kontakter tilføjet{res.duplicates ? `, ${res.duplicates} fandtes allerede` : ""}{res.blocked ? `, ${res.blocked} står på spærrelisten` : ""}{res.invalid_count ? `, ${res.invalid_count} ugyldige numre (fx række ${res.invalid.map((x) => x.row).slice(0, 5).join(", ")})` : ""}.</Alert>}
-      <Field label="CSV-fil"><input type="file" accept=".csv,text/csv,text/plain" onChange={onFile} className="font-body-md text-body-md" /></Field>
+      <Field label="CSV-fil"><input type="file" accept=".csv,text/csv,text/plain" onChange={onFile} className="text-body-md" /></Field>
       <Field label="Eller indsæt listen" error={fieldError(run.error, "csv")}><Textarea value={f.csv} onChange={(e) => setF({ ...f, csv: e.target.value })} placeholder={"Navn;Telefon;Firma\nMette Hansen;20 30 40 50;Hansen Byg ApS"} /></Field>
-      <fieldset className="flex flex-col gap-space-xs">
-        <legend className="font-label-md text-label-md font-semibold mb-1">Hvem er kontakterne?</legend>
-        <label className="flex items-start gap-space-xs font-body-md text-body-md"><input type="radio" name="kind" className="mt-1 accent-primary" checked={f.kind === "business"} onChange={() => setF({ ...f, kind: "business" })} />Virksomheder</label>
-        <label className="flex items-start gap-space-xs font-body-md text-body-md"><input type="radio" name="kind" className="mt-1 accent-primary" checked={f.kind === "consumer"} onChange={() => setF({ ...f, kind: "consumer" })} />Privatpersoner</label>
+      <fieldset className="flex flex-col gap-1">
+        <legend className="text-label-md font-semibold mb-1">Hvem er kontakterne?</legend>
+        <label className="flex items-start gap-1 text-body-md"><input type="radio" name="kind" className="mt-1 accent-ink" checked={f.kind === "business"} onChange={() => setF({ ...f, kind: "business" })} />Virksomheder</label>
+        <label className="flex items-start gap-1 text-body-md"><input type="radio" name="kind" className="mt-1 accent-ink" checked={f.kind === "consumer"} onChange={() => setF({ ...f, kind: "consumer" })} />Privatpersoner</label>
       </fieldset>
       <Field label="Hvor og hvornår har de sagt ja til at blive ringet op?" error={fieldError(run.error, "consent_source")} hint="Assistenten ringer uden et menneske i røret. Efter markedsføringsloven § 10 kræver det, at kontakten på forhånd har bedt om det – også når det er en virksomhed. Det er ikke nok, at de ikke står på Robinsonlisten eller er reklamebeskyttet i CVR.">
         <Input value={f.consent_source} onChange={(e) => setF({ ...f, consent_source: e.target.value })} placeholder="Tilmelding på hjemmesiden, marts 2026" />
@@ -135,23 +152,24 @@ export function StartCampaign({ wsId, c, checklist }: { wsId: string; c: Campaig
   const pause = useSubmit(async () => { await api(`/workspaces/${wsId}/campaigns/${c.id}/pause`, { method: "POST", body: "{}" }); router.refresh(); });
   if (c.status === "completed") return <Alert kind="ok">Kampagnen er afsluttet: alle kontakter er ringet op.</Alert>;
   if (c.status === "running") return (
-    <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-wrap items-center gap-space-sm">
-      <p className="font-body-md text-body-md grow">Kampagnen kører. Der ringes til én kontakt ad gangen i det valgte tidsrum.</p>
+    <div className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-wrap items-center gap-2">
+      <p className="text-body-md grow">Kampagnen kører. Der ringes til én kontakt ad gangen i det valgte tidsrum.</p>
       <Button type="button" variant="tonal" icon="pause" onClick={() => pause.run()} disabled={pause.pending}>Sæt på pause</Button>
       <ErrorBox error={pause.error} />
     </div>
   );
   const pending = c.counts.by_status.pending ?? 0;
   return (
-    <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
-      <h2 className="font-headline-sm text-headline-sm text-primary">{c.status === "paused" ? "Genoptag kampagnen" : "Start kampagnen"}</h2>
+    <div className="bg-highlight rounded-2xl p-4 md:p-5 border-2 border-ink flex flex-col gap-2">
+      <span className="eyebrow !text-ink">Før den starter</span>
+      <h2 className="font-display font-extrabold text-[20px] text-ink">{c.status === "paused" ? "Genoptag kampagnen" : `${pending} opkald · højst ${kr(c.max_cost.net_minor)} ekskl. moms`}</h2>
       {c.outbound_problem && <Alert kind="warn">{c.outbound_problem}</Alert>}
-      <p className="font-body-md text-body-md">{pending} kontakter venter. Højst {kr(c.max_cost.net_minor)} + moms ({kr(c.max_cost.gross_minor)} inkl. moms) – {kr(c.pricing.call_net_minor)} + moms pr. udgående opkald, højst {c.pricing.max_attempts} forsøg pr. kontakt. Betaling starter aldrig opkald.</p>
-      <fieldset className="flex flex-col gap-space-xs">
-        <legend className="font-label-md text-label-md font-semibold mb-1">Bekræft reglerne for opkald</legend>
+      <p className="text-body-md">{pending} kontakter venter. Højst {kr(c.max_cost.net_minor)} + moms ({kr(c.max_cost.gross_minor)} inkl. moms) – {kr(c.pricing.call_net_minor)} + moms pr. udgående opkald, højst {c.pricing.max_attempts} forsøg pr. kontakt. Betaling starter aldrig opkald.</p>
+      <fieldset className="flex flex-col gap-1">
+        <legend className="text-label-md font-semibold mb-1">Bekræft reglerne for opkald</legend>
         {checklist.map((t, i) => (
-          <label key={i} className="flex items-start gap-space-xs font-body-md text-body-md">
-            <input type="checkbox" className="mt-1 w-4 h-4 accent-primary" checked={checked[i]} onChange={(e) => setChecked(checked.map((v, j) => (j === i ? e.target.checked : v)))} />{t}
+          <label key={i} className="flex items-start gap-1 text-body-md">
+            <input type="checkbox" className="mt-1 w-4 h-4 accent-ink" checked={checked[i]} onChange={(e) => setChecked(checked.map((v, j) => (j === i ? e.target.checked : v)))} />{t}
           </label>
         ))}
       </fieldset>
@@ -164,7 +182,7 @@ export function StartCampaign({ wsId, c, checklist }: { wsId: string; c: Campaig
 export function RemoveContact({ wsId, campaignId, id }: { wsId: string; campaignId: string; id: string }) {
   const router = useRouter();
   const r = useSubmit(async () => { await api(`/workspaces/${wsId}/campaigns/${campaignId}/contacts/${id}`, { method: "DELETE" }); router.refresh(); });
-  return <button type="button" onClick={() => r.run()} disabled={r.pending} className="font-label-md text-label-md text-error hover:underline disabled:opacity-50">Fjern</button>;
+  return <button type="button" onClick={() => r.run()} disabled={r.pending} className="text-label-md text-danger hover:underline disabled:opacity-50">Fjern</button>;
 }
 
 export function DoNotCallList({ wsId, items, canManage }: { wsId: string; items: Dnc[]; canManage: boolean }) {
@@ -173,17 +191,17 @@ export function DoNotCallList({ wsId, items, canManage }: { wsId: string; items:
   const add = useSubmit(async () => { await api(`/workspaces/${wsId}/do-not-call`, { method: "POST", body: JSON.stringify(f) }); setF({ phone: "", reason: "" }); router.refresh(); });
   const del = useSubmit(async (id: string) => { await api(`/workspaces/${wsId}/do-not-call/${id}`, { method: "DELETE" }); router.refresh(); });
   return (
-    <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
-      <h2 className="font-headline-sm text-headline-sm text-primary">Spærreliste</h2>
-      <p className="font-body-sm text-body-sm text-on-surface-variant">Numre her bliver aldrig ringet op i en kampagne. Siger nogen i et opkald, at de ikke vil ringes op igen, kommer de automatisk på listen.</p>
-      {items.length > 0 && <ul className="flex flex-col gap-space-xs">{items.map((d) => (
-        <li key={d.id} className="flex flex-wrap items-center gap-space-sm p-space-sm rounded-lg bg-surface-container-low font-body-md text-body-md">
-          <span className="font-label-lg text-label-lg">{d.phone}</span>
-          <span className="text-on-surface-variant">{d.reason || (d.source === "call" ? "Frabad sig opkald" : "")}</span>
-          {canManage && d.source !== "call" && <button type="button" className="ml-auto font-label-md text-label-md text-error hover:underline" onClick={() => del.run(d.id)}>Fjern</button>}
+    <div className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">
+      <h2 className="font-display text-headline-sm text-ink">Spærreliste</h2>
+      <p className="text-body-sm text-ink-soft">Numre her bliver aldrig ringet op i en kampagne. Siger nogen i et opkald, at de ikke vil ringes op igen, kommer de automatisk på listen.</p>
+      {items.length > 0 && <ul className="flex flex-col gap-1">{items.map((d) => (
+        <li key={d.id} className="flex flex-wrap items-center gap-2 p-2 rounded-lg bg-panel text-body-md">
+          <span className="text-label-lg">{d.phone}</span>
+          <span className="text-ink-soft">{d.reason || (d.source === "call" ? "Frabad sig opkald" : "")}</span>
+          {canManage && d.source !== "call" && <button type="button" className="ml-auto text-label-md text-danger hover:underline" onClick={() => del.run(d.id)}>Fjern</button>}
         </li>
       ))}</ul>}
-      <form className="grid grid-cols-1 md:grid-cols-[1fr_2fr_auto] gap-space-sm items-end" onSubmit={(e) => { e.preventDefault(); add.run(); }}>
+      <form className="grid grid-cols-1 md:grid-cols-[1fr_2fr_auto] gap-2 items-end" onSubmit={(e) => { e.preventDefault(); add.run(); }}>
         <Field label="Telefonnummer" error={fieldError(add.error, "phone")}><Input value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} /></Field>
         <Field label="Årsag (valgfri)"><Input value={f.reason} onChange={(e) => setF({ ...f, reason: e.target.value })} /></Field>
         <Button type="submit" variant="tonal" icon="block" disabled={add.pending || !f.phone.trim()}>Spær nummer</Button>

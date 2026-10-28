@@ -4,6 +4,8 @@ Spec for at bringe kundens backend (`/app/*`) og opsætningen (`/onboarding/*`, 
 Gælder sammen med `docs/brand.md` (princip, farver, typografi) og boards i `design-reference/byggevejledning/`.
 Operatør-siderne (`/app/operator/*`) er IKKE omfattet – de må gerne vente.
 
+**Status:** fase 1–6 er leveret (PR #75, #76, #78, #79, #80 og oprydningen). Gamle adresser lever som 308-redirects i `web/next.config.ts` (`MOVED`). Alle filer under `web/src` bortset fra `/app/operator` bruger kun v2-tokens; de få gamle Material-navne i `globals.css` findes kun, fordi operatørsiderne stadig bruger dem – de slettes, når operatørsiderne konverteres. Bevidst ikke bygget (mangler endpoints): flyt aftale og SMS til kunden, «Læs min prisliste ind», lyd på opkald, test-opkald til ejeren før en kampagne.
+
 Designcanvas (samme boards, til at klikke rundt i): «Dialogbot — Kundeapp og opsætning».
 
 ## 1. Hvad der er galt i dag (kort)

@@ -33,7 +33,7 @@ export function PasswordField({ label, value, onChange, error, autoComplete = "n
           <div id={`${id}-rules`} className="rounded-xl bg-panel border-[1.5px] border-ink p-3 space-y-1.5">
             <p className="eyebrow">Sikkerhedskrav</p>
             {rules.map(([text, ok, required]) => (
-              <p key={text} className={`flex items-center gap-2 font-body-sm text-body-sm ${ok ? "text-ink" : "text-muted"}`}>
+              <p key={text} className={`flex items-center gap-2 text-body-sm ${ok ?"text-ink":"text-muted"}`}>
                 <Icon name={ok ? "check_circle" : "radio_button_unchecked"} size={18} className={ok ? "text-success" : ""} filled={ok} />
                 <span>{text}{required && !ok ? <span className="sr-only"> (påkrævet, ikke opfyldt)</span> : null}</span>
               </p>

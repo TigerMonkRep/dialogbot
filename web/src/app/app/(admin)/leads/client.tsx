@@ -5,28 +5,6 @@ import { api } from "@/lib/client";
 import { Button, ErrorBox, inputCls, useSubmit } from "@/components/ui";
 import { BILL, PIPE, QUAL, kr, type Lead } from "./format";
 
-export function NewLeadButton({ wsId }: { wsId: string }) {
-  const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [need, setNeed] = useState("");
-  const create = useSubmit(async () => {
-    const l = await api<Lead>(`/workspaces/${wsId}/leads`, { method: "POST", body: JSON.stringify({ contact_name: name, need_summary: need }) });
-    router.push(`/app/leads/${l.id}`);
-  });
-  if (!open) return <Button icon="add" variant="tonal" onClick={() => setOpen(true)}>Ny henvendelse</Button>;
-  return (
-    <form className="w-full md:w-96 bg-paper rounded-2xl p-3 border-2 border-ink flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); create.run(); }}>
-      <label className="text-label-md font-semibold" htmlFor="nl-name">Navn</label>
-      <input id="nl-name" className={inputCls} value={name} onChange={(e) => setName(e.target.value)} required maxLength={200} />
-      <label className="text-label-md font-semibold" htmlFor="nl-need">Behov</label>
-      <textarea id="nl-need" className={inputCls} rows={2} value={need} onChange={(e) => setNeed(e.target.value)} maxLength={4000} />
-      <ErrorBox error={create.error} />
-      <div className="flex gap-2"><Button type="submit" disabled={create.pending}>Opret</Button><Button type="button" variant="ghost" onClick={() => setOpen(false)}>Annullér</Button></div>
-    </form>
-  );
-}
-
 export function LeadEditor({ wsId, lead }: { wsId: string; lead: Lead }) {
   const router = useRouter();
   const [l, setL] = useState(lead);

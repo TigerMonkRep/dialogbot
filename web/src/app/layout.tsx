@@ -20,7 +20,7 @@ export const viewport: Viewport = { themeColor: "#2456F6" };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="da">
-      <body className="bg-surface text-on-surface text-body-md antialiased">{children}</body>
+      <body className="bg-paper text-ink text-body-md antialiased">{children}</body>
     </html>
   );
 }

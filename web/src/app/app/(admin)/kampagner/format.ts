@@ -15,10 +15,10 @@ export type Dnc = { id: string; phone: string; reason: string; source: string; c
 export type PhoneNumber = { id: string; e164: string; label: string; active: boolean };
 
 export const STATUS: Record<Campaign["status"], [string, string]> = {
-  draft: ["Kladde", "bg-surface-container-high text-on-surface-variant"],
-  running: ["Kører", "bg-secondary-container text-on-secondary-container"],
-  paused: ["På pause", "bg-tertiary-fixed text-on-tertiary-fixed"],
-  completed: ["Afsluttet", "bg-primary-fixed text-on-primary-fixed"],
+  draft: ["Kladde", "bg-line text-ink-soft"],
+  running: ["Kører", "bg-success-soft text-success"],
+  paused: ["På pause", "bg-accent-soft text-accent-deep"],
+  completed: ["Afsluttet", "bg-panel text-ink"],
 };
 export const CONTACT_STATUS: Record<string, string> = {
   pending: "Venter", calling: "Ringer nu", done: "Talt med", no_answer: "Intet svar", failed: "Fejlede", opted_out: "Frabedt sig opkald", skipped: "Spærret",

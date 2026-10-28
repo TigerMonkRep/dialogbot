@@ -34,7 +34,7 @@ function Stat({ label, value, hint, strong = false }: { label: string; value: st
 
 const ENTRY_TONE: Record<string, string> = {
   held: "bg-highlight text-ink border-highlight", payable: "bg-success-soft text-success border-success-soft",
-  paid: "bg-panel text-ink border-ink", reversed: "bg-danger-soft text-on-error-container border-danger-soft",
+  paid: "bg-panel text-ink border-ink", reversed: "bg-danger-soft text-danger border-danger-soft",
 };
 
 export function Portal({ me, customers, ledger, payouts }: { me: Profile; customers: Customer[]; ledger: Entry[]; payouts: Payout[] }) {

@@ -22,7 +22,7 @@ function SignupForm() {
   });
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
   return (
-    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-space-md">
+    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-3">
       <ErrorBox error={error} />
       <Field label="Dit navn" error={fieldError(error, "display_name")}><Input required value={form.display_name} onChange={set("display_name")} autoComplete="name" /></Field>
       <Field label="E-mail" error={fieldError(error, "email")}><Input type="email" required value={form.email} onChange={set("email")} autoComplete="email" /></Field>
@@ -33,7 +33,7 @@ function SignupForm() {
         </Select>
       </Field>
       <Button type="submit" icon="person_add" disabled={pending} className="w-full h-12 rounded-lg">{pending ? "Opretter…" : "Opret konto"}</Button>
-      <p className="text-center font-body-sm text-body-sm text-on-surface-variant">Har du en konto? <Link className="text-label-md font-semibold text-secondary underline" href="/login">Log ind</Link></p>
+      <p className="text-center text-body-sm text-ink-soft">Har du en konto? <Link className="text-label-md font-semibold text-muted underline" href="/login">Log ind</Link></p>
     </form>
   );
 }

@@ -22,7 +22,7 @@ const INTERESTS: [string, string, string][] = [
 ];
 
 function Feedback({ tone, children }: { tone: "ok" | "error"; children: React.ReactNode }) {
-  return <div role={tone === "error" ? "alert" : "status"} className={`rounded-xl border-[1.5px] p-3.5 text-[15px] leading-normal ${tone === "ok" ? "bg-success-soft text-success border-success" : "bg-danger-soft text-on-error-container border-danger"}`}>{children}</div>;
+  return <div role={tone === "error" ? "alert" : "status"} className={`rounded-xl border-[1.5px] p-3.5 text-[15px] leading-normal ${tone === "ok" ? "bg-success-soft text-success border-success" : "bg-danger-soft text-danger border-danger"}`}>{children}</div>;
 }
 
 /** Card A: invitation code, checked on the server (/api/preview/unlock). */

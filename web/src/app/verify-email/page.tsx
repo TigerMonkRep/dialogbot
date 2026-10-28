@@ -21,20 +21,20 @@ function Verify() {
   }, [token]);
   if (state === "verifying") return <Alert kind="info">Bekræfter din e-mail…</Alert>;
   if (state === "verified") return (
-    <div className="space-y-space-md">
+    <div className="space-y-3">
       <Alert kind="ok">Din e-mail er bekræftet.</Alert>
-      <Link href={after ?? "/onboarding/workspace"} onClick={() => { try { localStorage.removeItem("db_after_verify"); } catch { /* optional */ } }} className="w-full h-12 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs hover:bg-primary-container">{after ? "Fortsæt til ambassadørtilmelding" : "Fortsæt til arbejdsrum"}<span aria-hidden className="material-symbols-outlined text-[18px]">arrow_forward</span></Link>
+      <Link href={after ?? "/onboarding/workspace"} onClick={() => { try { localStorage.removeItem("db_after_verify"); } catch { /* optional */ } }} className="w-full h-12 rounded-lg bg-ink text-paper text-label-lg flex items-center justify-center gap-1 hover:bg-ink">{after ? "Fortsæt til ambassadørtilmelding" : "Fortsæt til arbejdsrum"}<span aria-hidden className="material-symbols-outlined text-[18px]">arrow_forward</span></Link>
     </div>
   );
   return (
-    <div className="space-y-space-md">
+    <div className="space-y-3">
       {state === "error" && <ErrorBox error={error} />}
       {state === "error" && error?.code === "token_expired" && <Alert kind="info">Linket er udløbet. Bestil et nyt nedenfor.</Alert>}
-      {state === "idle" && <p className="font-body-md text-body-md text-on-surface-variant">Vi har sendt et bekræftelseslink til din e-mail. Åbn linket for at fortsætte. I udviklingsmiljøet findes mailen i den simulerede postkasse.</p>}
+      {state === "idle" && <p className="text-body-md text-ink-soft">Vi har sendt et bekræftelseslink til din e-mail. Åbn linket for at fortsætte. I udviklingsmiljøet findes mailen i den simulerede postkasse.</p>}
       {resent ? <Alert kind="ok">Et nyt link er sendt.</Alert> : (
         <Button variant="secondary" icon="forward_to_inbox" className="w-full h-12 rounded-lg" onClick={async () => { await api("/auth/verify-email/resend", { method: "POST" }); setResent(true); }}>Send nyt link</Button>
       )}
-      <p className="font-body-sm text-body-sm text-on-surface-variant"><Link className="font-semibold text-primary underline" href="/login">Tilbage til login</Link></p>
+      <p className="text-body-sm text-ink-soft"><Link className="font-semibold text-ink underline" href="/login">Tilbage til login</Link></p>
     </div>
   );
 }

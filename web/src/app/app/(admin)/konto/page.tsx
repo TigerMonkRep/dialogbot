@@ -94,7 +94,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
                 </div>
               </div>
               {!confirmed && (owner ? <ConfirmSubscription wsId={ws.id} label="Bekræft abonnement" /> : <p className="text-[14px] text-ink">Ejeren skal bekræfte abonnementet.</p>)}
-              {agr.current?.model === "B" && <p className="text-[14px] text-ink">Ældre aftale med pris pr. godkendt henvendelse – bekræft abonnementet for at skifte.</p>}
+              {agr.current?.model === "B" && <p className="text-[14px] text-ink">Ældre aftale – bekræft abonnementet for at skifte til det nuværende abonnement.</p>}
               <div className="flex flex-col gap-2 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5">
                 <span className="eyebrow">Betaling</span>
                 {!acc.configured ? <p className="text-[14px] text-ink-soft">Kortbetaling er ikke sat op endnu. Indtil da er oversigten kun en forhåndsvisning, og der trækkes ingen betaling.</p> : (

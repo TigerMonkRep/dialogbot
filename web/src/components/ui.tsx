@@ -75,7 +75,7 @@ export function Select({ className = "", ...p }: React.SelectHTMLAttributes<HTML
 
 export function Alert({ kind = "error", children, icon }: { kind?: "error" | "ok" | "info" | "warn"; children: React.ReactNode; icon?: string }) {
   const c = {
-    error: "bg-danger-soft text-on-error-container border-danger", ok: "bg-success-soft text-success border-success",
+    error: "bg-danger-soft text-danger border-danger", ok: "bg-success-soft text-success border-success",
     info: "bg-panel text-ink border-ink", warn: "bg-highlight text-ink border-ink",
   }[kind];
   const ic = icon ?? { error: "error", ok: "check_circle", info: "info", warn: "warning" }[kind];
@@ -93,7 +93,7 @@ const PILL = {
   ok: "bg-success-soft text-success border-success-soft",
   progress: "bg-accent-soft text-accent-deep border-accent-soft",
   pending: "bg-highlight text-ink border-highlight",
-  error: "bg-danger-soft text-on-error-container border-danger-soft",
+  error: "bg-danger-soft text-danger border-danger-soft",
   failed: "bg-danger text-white border-danger",
   neutral: "bg-panel text-ink border-ink",
   off: "bg-paper text-muted border-ink border-dashed",

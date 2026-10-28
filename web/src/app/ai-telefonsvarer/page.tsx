@@ -28,7 +28,7 @@ export default function Page() {
         </ul> },
         { title: "Lyder den som et menneske?", body: <>
           <p>Dialogbot taler naturligt dansk og lytter, til kunden er færdig med at tale. I vælger selv stemmen, og I kan høre den, før I bestemmer jer. Den siger altid ærligt, at den er en digital assistent – den lyver aldrig om at være et menneske.</p>
-          <p>Den bedste måde at finde ud af det på er at prøve: <Link href="/#demo">bliv ringet op af Dialogbot</Link>, og hør selv, hvordan den ville tage telefonen for jer.</p>
+          <p>Den bedste måde at finde ud af det på er at prøve: <Link href="/proev">bliv ringet op af Dialogbot</Link>, og hør selv, hvordan den ville tage telefonen for jer.</p>
         </> },
         { title: "Pris", body: <p>Fast abonnement på <strong>1.495 kr. om måneden</strong>, eller <strong>149 kr. pr. godkendt henvendelse</strong> uden fast pris – alle priser ekskl. moms. Vi guider jer gennem hele opsætningen. Se også <Link href="/ai-receptionist">AI-receptionist</Link> og <Link href="/chatbot">chatbot til hjemmesiden</Link>.</p> },
       ]}

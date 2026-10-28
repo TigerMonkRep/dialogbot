@@ -1,0 +1,17 @@
+/* Public site ("Byggevejledning") motion: the ringing phone waves, the typing dots, the FAQ chevron.
+   Imported by site-chrome.tsx. Everything is off under prefers-reduced-motion. */
+@keyframes ringwave { 0% { transform: scale(1); opacity: .8; } 100% { transform: scale(1.9); opacity: 0; } }
+.ringwave { animation: ringwave 1.5s ease-out infinite; }
+.ringwave2 { animation: ringwave 1.5s ease-out .75s infinite; }
+@keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+.dot1 { animation: blink 1.2s infinite; }
+.dot2 { animation: blink 1.2s .2s infinite; }
+.dot3 { animation: blink 1.2s .4s infinite; }
+details.faq summary { list-style: none; cursor: pointer; }
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq .chev { transition: transform .2s; }
+details.faq[open] .chev { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .ringwave, .ringwave2, .dot1, .dot2, .dot3 { animation: none; }
+  .ringwave, .ringwave2 { opacity: .5; }
+}

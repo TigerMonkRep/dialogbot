@@ -32,7 +32,7 @@ export function ReplyBox({ wsId, conversationId, mode }: { wsId: string; convers
     router.refresh();
   });
   return (
-    <form className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); if (text.trim()) send.run(); }}>
+    <form className="bg-surface-container-lowest rounded-2xl p-space-md border-2 border-ink flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); if (text.trim()) send.run(); }}>
       <label htmlFor="reply" className="font-label-md text-label-md font-semibold">Svar kunden i chatten</label>
       <textarea id="reply" rows={3} maxLength={2000} className={inputCls} value={text} onChange={(e) => setText(e.target.value)}
         placeholder={mode === "staff" ? "Skriv dit svar…" : "Når du svarer, overtager du samtalen, og assistenten holder pause."} />

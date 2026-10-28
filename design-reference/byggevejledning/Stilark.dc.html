@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Stilark – Dialogbot byggesystem</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#FFFFFF;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+</style>
+</helmet>
+
+<div style="width:1366px;height:1180px;box-sizing:border-box;padding:56px 64px;background:#FFFFFF;color:#14213D;font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column;gap:36px">
+
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-bottom:2px solid #14213D;padding-bottom:20px">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Stilark · v1</span>
+      <h1 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:40px;letter-spacing:-1px;line-height:1">Dialogbot byggesystem</h1>
+    </div>
+    <p style="margin:0;max-width:520px;font-size:15px;line-height:1.5;color:#3C4659">Princip: en byggevejledning. Hvert skærmbillede er ét trin med ét nummer, én handling og en boks med det, du skal bruge. Flade farver, sorte konturer, ingen gradienter, ingen skygger ud over den faste «blok-skygge».</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:32px">
+
+    <!-- Colors -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:700;font-size:20px">1. Farver</h2>
+      <div style="display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:10px">
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:64px;border-radius:12px;background:#2456F6;border:2px solid #14213D"></div><span style="font-size:13px;font-weight:600">Klods-blå</span><span style="font-size:12px;color:#5B6475">#2456F6 · knapper, ikoner</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:64px;border-radius:12px;background:#FFCF3F;border:2px solid #14213D"></div><span style="font-size:13px;font-weight:600">Trin-gul</span><span style="font-size:12px;color:#5B6475">#FFCF3F · trin-numre, fremhævning</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:64px;border-radius:12px;background:#14213D;border:2px solid #14213D"></div><span style="font-size:13px;font-weight:600">Blæk</span><span style="font-size:12px;color:#5B6475">#14213D · tekst, konturer</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:64px;border-radius:12px;background:#EEF4FB;border:2px solid #14213D"></div><span style="font-size:13px;font-weight:600">Trin-flade</span><span style="font-size:12px;color:#5B6475">#EEF4FB · sektionsbaggrund</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:64px;border-radius:12px;background:#FFFFFF;border:2px solid #14213D"></div><span style="font-size:13px;font-weight:600">Papir</span><span style="font-size:12px;color:#5B6475">#FFFFFF · grund</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:64px;border-radius:12px;background:#5B6475;border:2px solid #14213D"></div><span style="font-size:13px;font-weight:600">Dæmpet</span><span style="font-size:12px;color:#5B6475">#5B6475 · hjælpetekst</span></div>
+      </div>
+      <p style="margin:0;font-size:13px;line-height:1.5;color:#3C4659">Kun to kulører. Blå = handling. Gul = «her er du». Alt andet er sort/hvid.</p>
+    </section>
+
+    <!-- Type -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:700;font-size:20px">2. Typografi</h2>
+      <div style="display:flex;flex-direction:column;gap:14px;padding:20px;border:2px solid #14213D;border-radius:16px">
+        <div style="font-family:Outfit,sans-serif;font-weight:800;font-size:44px;letter-spacing:-1.2px;line-height:1">Overskrift</div>
+        <div style="font-size:12px;color:#5B6475">Outfit 800 · 68/46/32 px · letter-spacing −1 px</div>
+        <div style="font-family:Outfit,sans-serif;font-weight:700;font-size:22px;line-height:1.15">Trin-titel og kort-titel</div>
+        <div style="font-size:12px;color:#5B6475">Outfit 700 · 22/20 px</div>
+        <div style="font-size:17px;line-height:1.55;color:#3C4659">Brødtekst, der forklarer ét trin ad gangen – korte sætninger, aldrig mere end tre linjer.</div>
+        <div style="font-size:12px;color:#5B6475">Inter 400 · 17/15 px · linjehøjde 1.55</div>
+        <div style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Etiket / sektion</div>
+        <div style="font-size:12px;color:#5B6475">Inter 600 · 13 px · versaler · +1.5 px</div>
+      </div>
+    </section>
+
+    <!-- Numerals -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:700;font-size:20px">3. Trin-numre og tælling</h2>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <span style="display:inline-flex;width:56px;height:56px;border-radius:14px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:30px">1</span>
+        <span style="display:inline-flex;width:56px;height:56px;border-radius:14px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:30px">2</span>
+        <span style="display:inline-flex;width:56px;height:56px;border-radius:14px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:30px">3</span>
+        <span style="display:inline-flex;width:40px;height:40px;border-radius:10px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">A</span>
+        <span style="display:inline-flex;width:28px;height:28px;border-radius:999px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:15px">3</span>
+      </div>
+      <p style="margin:0;font-size:13px;line-height:1.5;color:#3C4659">Store trin = tal 1–3 (56 px). Del-trin = bogstaver A–D (40 px). Numre står altid øverst til venstre i et kort.</p>
+      <div style="border:1.5px solid #14213D;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:#FFFFFF">
+        <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Du skal bruge</span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:#EEF4FB;font-size:14px;font-weight:500"><b style="font-family:Outfit,sans-serif;font-weight:800">1×</b> telefonnummer</span>
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:#EEF4FB;font-size:14px;font-weight:500"><b style="font-family:Outfit,sans-serif;font-weight:800">2×</b> åbningstider</span>
+        </div>
+      </div>
+      <p style="margin:0;font-size:13px;line-height:1.5;color:#3C4659">«Dele-boksen» viser altid, hvad brugeren skal have klar, med antal (1×, 2×) – før handlingen.</p>
+    </section>
+
+    <!-- Buttons -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:700;font-size:20px">4. Knapper</h2>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+        <button type="button" style="display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 22px;border-radius:14px;background:#2456F6;color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:17px;cursor:pointer">Primær handling
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </button>
+        <button type="button" style="display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 22px;border-radius:14px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:17px;cursor:pointer">Sekundær</button>
+        <button type="button" style="display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 24px;border-radius:14px;background:#FFCF3F;color:#14213D;border:0;font-family:Outfit,sans-serif;font-weight:700;font-size:18px;cursor:pointer">Ring: 93 70 34 33</button>
+      </div>
+      <p style="margin:0;font-size:13px;line-height:1.5;color:#3C4659">Én primær knap pr. skærm. Radius 14 px. Min. højde 52 px. Gul kun på mørk baggrund.</p>
+    </section>
+
+    <!-- Cards -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:700;font-size:20px">5. Kort og konturer</h2>
+      <div style="display:flex;gap:16px">
+        <div style="flex:1;padding:16px;border-radius:16px;border:2px solid #14213D;background:#FFFFFF;display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:16px">Standardkort</span>
+          <span style="font-size:13px;color:#3C4659">2 px blæk-kontur, radius 16–20 px.</span>
+        </div>
+        <div style="flex:1;padding:16px;border-radius:16px;border:2px solid #14213D;background:#FFFFFF;box-shadow:8px 8px 0 #14213D;display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:16px">Fremhævet</span>
+          <span style="font-size:13px;color:#3C4659">Fast blok-skygge 8 px. Kun ét pr. sektion.</span>
+        </div>
+      </div>
+      <p style="margin:0;font-size:13px;line-height:1.5;color:#3C4659">Sektioner adskilles af en 2 px streg og skiftevis papir/trin-flade – som sider i et hæfte.</p>
+    </section>
+
+    <!-- Illustration -->
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:700;font-size:20px">6. Illustrationer og ikoner</h2>
+      <div style="height:120px;border-radius:14px;background:#EEF4FB;position:relative;overflow:hidden">
+        <div style="position:absolute;left:24px;top:38px;width:80px;height:44px;border-radius:12px;background:#2456F6"></div>
+        <div style="position:absolute;left:104px;top:38px;width:14px;height:44px;background:#2456F6;border-radius:0 8px 8px 0"></div>
+        <svg aria-hidden="true" style="position:absolute;left:128px;top:48px" width="40" height="26" viewBox="0 0 40 26" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M36 13H4M12 5 4 13l8 8"></path></svg>
+        <div style="position:absolute;left:178px;top:38px;width:80px;height:44px;border-radius:12px;background:#FFCF3F"></div>
+        <div style="position:absolute;right:24px;top:30px;display:flex;gap:10px">
+          <span style="display:inline-flex;width:44px;height:44px;border-radius:12px;background:#2456F6;align-items:center;justify-content:center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg></span>
+          <span style="display:inline-flex;width:44px;height:44px;border-radius:12px;background:#2456F6;align-items:center;justify-content:center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span>
+        </div>
+      </div>
+      <p style="margin:0;font-size:13px;line-height:1.5;color:#3C4659">Flade blokke i de to kulører, sorte pile (3 px) viser «hvad går hvorhen». Ikoner: 2,2 px streg, hvide på blå flise. Ingen fotos i vejledningen – kun i demo-sektionen.</p>
+    </section>
+
+  </div>
+
+  <div style="margin-top:auto;display:flex;flex-wrap:wrap;gap:12px 32px;border-top:2px solid #14213D;padding-top:16px;font-size:13px;color:#5B6475">
+    <span><b style="color:#14213D">Regel 1:</b> Én handling pr. trin.</span>
+    <span><b style="color:#14213D">Regel 2:</b> Vis «du skal bruge» før «gør sådan».</span>
+    <span><b style="color:#14213D">Regel 3:</b> Nummer, overskrift, billede, tekst – altid i den rækkefølge.</span>
+    <span><b style="color:#14213D">Regel 4:</b> Hvis det kræver forklaring, er det for kompliceret.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

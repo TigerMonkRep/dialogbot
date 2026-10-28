@@ -1,0 +1,29 @@
+<!-- Dialogbot e-mailsignatur (docs/brand.md). Tabel + inline CSS, så den overlever Gmail/Outlook/Apple Mail.
+     Udskift {{NAVN}} og {{TITEL}}. Mærket hentes fra hjemmesiden (40 px), så signaturen ikke skal have vedhæftede billeder. -->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#14213D;">
+  <tr>
+    <td style="padding:0 0 10px;font:600 16px/1.3 Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#14213D;">
+      {{NAVN}}<br>
+      <span style="font:400 13px/1.4 Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#5B6475;">{{TITEL}}</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:10px 0 0;border-top:2px solid #14213D;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+        <tr>
+          <td style="vertical-align:middle;padding-right:12px;">
+            <a href="https://www.dialogbot.dk" style="text-decoration:none;">
+              <img src="https://www.dialogbot.dk/icons/icon-192.png" width="40" height="40" alt="Dialogbot" style="display:block;border:0;width:40px;height:40px;border-radius:11px;">
+            </a>
+          </td>
+          <td style="vertical-align:middle;font:400 13px/1.5 Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#3C4659;">
+            <strong style="font:800 15px/1.3 Outfit,Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#14213D;letter-spacing:-0.3px;">Dialogbot</strong> · Aarhus<br>
+            <a href="tel:+4593703433" style="color:#3C4659;text-decoration:none;">+45 93 70 34 33</a> ·
+            <a href="mailto:info@dialogbot.dk" style="color:#2456F6;text-decoration:none;">info@dialogbot.dk</a><br>
+            <a href="https://www.dialogbot.dk" style="color:#2456F6;text-decoration:none;font-weight:600;">www.dialogbot.dk</a>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

@@ -2,7 +2,7 @@
 /* Fonts are self-hosted (no request to Google at runtime). Layered as base so
    Tailwind utilities (text-*, font-*) still win over the packages' defaults. */
 @import "@fontsource-variable/inter" layer(base);
-@import "@fontsource-variable/manrope" layer(base);
+@import "@fontsource-variable/outfit" layer(base);
 /* Only the icons the app uses (~30 KB instead of the full 4 MB font). Rebuild with web/scripts/subset-icons.py. */
 @font-face {
   font-family: "Material Symbols Outlined";
@@ -12,14 +12,22 @@
   src: url("/fonts/material-symbols-subset.woff2") format("woff2");
 }
 
-/* Dialogbot design system — ported 1:1 from the Stitch export (Material 3 tokens).
-   Colors, spacing, typography and radii below are the exact values from
-   design-reference/latest/stitch_dialogbot/<screen>/code.html (tailwind.config). */
+/* ──────────────────────────────────────────────────────────────────────────
+   Dialogbot design system v2 — "Byggevejledningen" (Oct 2026).
+   Principle: a building manual. Flat colours, 2 px ink outlines, one action
+   colour (Klods-blå), one "you are here" colour (Trin-gul), everything else
+   ink on paper. No gradients, no soft shadows; the only shadow is the solid
+   8 px "block shadow" (.shadow-block).
+
+   The semantic Material-style names below are KEPT so the existing screens
+   restyle automatically; new code should prefer the plain brand tokens
+   (accent, highlight, ink, paper, panel, line, muted, success).
+   Reference: Design canvas "Dialogbot — Byg-det-selv landing page".
+   ────────────────────────────────────────────────────────────────────────── */
 @theme {
-  --font-display: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit Variable", "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
-  /* Stitch pairs every text-* size with a font-* family of the same name. */
   --font-display-lg: var(--font-display);
   --font-display-lg-mobile: var(--font-display);
   --font-headline-lg: var(--font-display);
@@ -33,57 +41,81 @@
   --font-label-md: var(--font-body);
   --font-label-sm: var(--font-body);
 
-  --color-background: #e7fef9;
-  --color-on-background: #0a1f1c;
-  --color-surface: #e7fef9;
-  --color-surface-dim: #c8dfda;
-  --color-surface-bright: #e7fef9;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #e1f8f3;
-  --color-surface-container: #dcf3ee;
-  --color-surface-container-high: #d6ede8;
-  --color-surface-container-highest: #d0e7e2;
-  --color-surface-variant: #d0e7e2;
-  --color-surface-tint: #33675c;
-  --color-on-surface: #0a1f1c;
-  --color-on-surface-variant: #404946;
-  --color-inverse-surface: #203431;
-  --color-inverse-on-surface: #dff6f0;
-  --color-inverse-primary: #9bd1c3;
-  --color-outline: #707976;
-  --color-outline-variant: #bfc9c4;
+  /* Brand tokens (use these in new code) */
+  --color-ink: #14213D;        /* text, outlines, dark surfaces */
+  --color-ink-soft: #3C4659;   /* body copy on paper */
+  --color-paper: #FFFFFF;      /* ground */
+  --color-panel: #EEF4FB;      /* "trin-flade": alternating section background */
+  --color-panel-deep: #E4ECF7;
+  --color-line: #D6DEEA;       /* hairlines, disabled */
+  --color-muted: #5B6475;      /* labels, help text (4.5:1 on paper) */
+  --color-accent: #2456F6;     /* Klods-blå: the ONE action colour */
+  --color-accent-deep: #1A3FC0;
+  --color-accent-soft: #DCE6FF;
+  --color-on-accent: #FFFFFF;
+  --color-highlight: #FFCF3F;  /* Trin-gul: step numbers, "you are here" */
+  --color-highlight-deep: #F2BD1F;
+  --color-on-highlight: #14213D;
+  --color-success: #1B6B3A;
+  --color-success-soft: #DDF5E4;
+  --color-danger: #B3261E;
+  --color-danger-soft: #FFDAD6;
 
-  --color-primary: #00362d;
-  --color-on-primary: #ffffff;
-  --color-primary-container: #164e43;
-  --color-on-primary-container: #88beb0;
-  --color-primary-fixed: #b6eede;
-  --color-primary-fixed-dim: #9bd1c3;
-  --color-on-primary-fixed: #00201a;
-  --color-on-primary-fixed-variant: #184f44;
+  /* Semantic (Material-style) names, remapped to the brand tokens */
+  --color-background: #FFFFFF;
+  --color-on-background: #14213D;
+  --color-surface: #FFFFFF;
+  --color-surface-dim: #D6DEEA;
+  --color-surface-bright: #FFFFFF;
+  --color-surface-container-lowest: #FFFFFF;
+  --color-surface-container-low: #EEF4FB;
+  --color-surface-container: #E4ECF7;
+  --color-surface-container-high: #D6DEEA;
+  --color-surface-container-highest: #C9D3E3;
+  --color-surface-variant: #EEF4FB;
+  --color-surface-tint: #2456F6;
+  --color-on-surface: #14213D;
+  --color-on-surface-variant: #3C4659;
+  --color-inverse-surface: #14213D;
+  --color-inverse-on-surface: #EEF4FB;
+  --color-inverse-primary: #FFCF3F;
+  --color-outline: #14213D;
+  --color-outline-variant: #D6DEEA;
 
-  --color-secondary: #546508;
-  --color-on-secondary: #ffffff;
-  --color-secondary-container: #d4ea82;
-  --color-on-secondary-container: #586a0e;
-  --color-secondary-fixed: #d6ec85;
-  --color-secondary-fixed-dim: #bbd06c;
-  --color-on-secondary-fixed: #171e00;
-  --color-on-secondary-fixed-variant: #3e4c00;
+  /* primary = ink (text, dark buttons, selected tabs) */
+  --color-primary: #14213D;
+  --color-on-primary: #FFFFFF;
+  --color-primary-container: #2B3A5C;
+  --color-on-primary-container: #FFFFFF;
+  --color-primary-fixed: #EEF4FB;
+  --color-primary-fixed-dim: #D6DEEA;
+  --color-on-primary-fixed: #14213D;
+  --color-on-primary-fixed-variant: #3C4659;
 
-  --color-tertiary: #00334a;
-  --color-on-tertiary: #ffffff;
-  --color-tertiary-container: #004b6a;
-  --color-on-tertiary-container: #80bbe0;
-  --color-tertiary-fixed: #c6e7ff;
-  --color-tertiary-fixed-dim: #93cef4;
-  --color-on-tertiary-fixed: #001e2d;
-  --color-on-tertiary-fixed-variant: #004c6b;
+  /* secondary = muted labels; secondary-container = success; secondary-fixed = Trin-gul */
+  --color-secondary: #5B6475;
+  --color-on-secondary: #FFFFFF;
+  --color-secondary-container: #DDF5E4;
+  --color-on-secondary-container: #1B6B3A;
+  --color-secondary-fixed: #FFCF3F;
+  --color-secondary-fixed-dim: #F2BD1F;
+  --color-on-secondary-fixed: #14213D;
+  --color-on-secondary-fixed-variant: #14213D;
 
-  --color-error: #ba1a1a;
-  --color-on-error: #ffffff;
-  --color-error-container: #ffdad6;
-  --color-on-error-container: #93000a;
+  /* tertiary = Klods-blå (action, in-progress) */
+  --color-tertiary: #1A3FC0;
+  --color-on-tertiary: #FFFFFF;
+  --color-tertiary-container: #2456F6;
+  --color-on-tertiary-container: #FFFFFF;
+  --color-tertiary-fixed: #DCE6FF;
+  --color-tertiary-fixed-dim: #B9CBFF;
+  --color-on-tertiary-fixed: #1A3FC0;
+  --color-on-tertiary-fixed-variant: #1A3FC0;
+
+  --color-error: #B3261E;
+  --color-on-error: #FFFFFF;
+  --color-error-container: #FFDAD6;
+  --color-on-error-container: #8C1D18;
 
   --spacing-space-xs: 0.25rem;
   --spacing-space-sm: 0.5rem;
@@ -96,58 +128,67 @@
   --spacing-margin-md: 1.5rem;
   --spacing-margin-lg: 2rem;
 
-  --radius-DEFAULT: 0.25rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
+  --radius-DEFAULT: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
 
-  --text-display-lg: 36px;
-  --text-display-lg--line-height: 44px;
-  --text-display-lg--letter-spacing: -0.03em;
-  --text-display-lg--font-weight: 700;
-  --text-display-lg-mobile: 28px;
-  --text-display-lg-mobile--line-height: 36px;
+  --text-display-lg: 56px;
+  --text-display-lg--line-height: 1.02;
+  --text-display-lg--letter-spacing: -0.025em;
+  --text-display-lg--font-weight: 800;
+  --text-display-lg-mobile: 40px;
+  --text-display-lg-mobile--line-height: 1.02;
   --text-display-lg-mobile--letter-spacing: -0.02em;
-  --text-display-lg-mobile--font-weight: 700;
-  --text-headline-lg-mobile: 22px;
-  --text-headline-lg-mobile--line-height: 30px;
-  --text-headline-lg-mobile--letter-spacing: -0.01em;
-  --text-headline-lg-mobile--font-weight: 700;
-  --text-headline-lg: 28px;
-  --text-headline-lg--line-height: 36px;
-  --text-headline-lg--letter-spacing: -0.02em;
-  --text-headline-lg--font-weight: 700;
-  --text-headline-md: 22px;
-  --text-headline-md--line-height: 30px;
+  --text-display-lg-mobile--font-weight: 800;
+  --text-headline-lg-mobile: 28px;
+  --text-headline-lg-mobile--line-height: 1.05;
+  --text-headline-lg-mobile--letter-spacing: -0.02em;
+  --text-headline-lg-mobile--font-weight: 800;
+  --text-headline-lg: 40px;
+  --text-headline-lg--line-height: 1.05;
+  --text-headline-lg--letter-spacing: -0.022em;
+  --text-headline-lg--font-weight: 800;
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 1.1;
   --text-headline-md--letter-spacing: -0.015em;
-  --text-headline-md--font-weight: 600;
-  --text-headline-sm: 18px;
-  --text-headline-sm--line-height: 26px;
+  --text-headline-md--font-weight: 800;
+  --text-headline-sm: 20px;
+  --text-headline-sm--line-height: 1.15;
   --text-headline-sm--letter-spacing: -0.01em;
-  --text-headline-sm--font-weight: 600;
-  --text-body-lg: 16px;
-  --text-body-lg--line-height: 24px;
-  --text-body-md: 14px;
-  --text-body-md--line-height: 20px;
+  --text-headline-sm--font-weight: 700;
+  --text-body-lg: 17px;
+  --text-body-lg--line-height: 1.55;
+  --text-body-md: 15px;
+  --text-body-md--line-height: 1.5;
   --text-body-sm: 13px;
-  --text-body-sm--line-height: 18px;
-  --text-label-lg: 14px;
+  --text-body-sm--line-height: 1.5;
+  --text-label-lg: 15px;
   --text-label-lg--line-height: 20px;
-  --text-label-lg--letter-spacing: 0.01em;
+  --text-label-lg--letter-spacing: 0;
   --text-label-lg--font-weight: 600;
-  --text-label-md: 12px;
+  --text-label-md: 13px;
   --text-label-md--line-height: 16px;
-  --text-label-md--letter-spacing: 0.02em;
-  --text-label-md--font-weight: 500;
-  --text-label-sm: 11px;
+  --text-label-md--letter-spacing: 0.01em;
+  --text-label-md--font-weight: 600;
+  --text-label-sm: 12px;
   --text-label-sm--line-height: 14px;
-  --text-label-sm--letter-spacing: 0.04em;
+  --text-label-sm--letter-spacing: 0.1em;
   --text-label-sm--font-weight: 600;
 }
 
+/* Byggevejledning primitives */
+@utility shadow-block { box-shadow: 8px 8px 0 var(--color-ink); }
+@utility shadow-block-sm { box-shadow: 4px 4px 0 var(--color-ink); }
+@utility shadow-block-highlight { box-shadow: 4px 4px 0 var(--color-highlight); }
+@utility border-ink { border-color: var(--color-ink); }
+@utility eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
+
 html { background: var(--color-surface); color: var(--color-on-surface); }
 body { font-family: var(--font-body); min-height: 100dvh; }
-@layer base { h1, h2, h3 { font-family: var(--font-display); } }
-:focus-visible { outline: 3px solid var(--color-secondary-container); outline-offset: 2px; }
+@layer base { h1, h2, h3 { font-family: var(--font-display); font-weight: 800; } }
+:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
 
 .material-symbols-outlined {
   font-family: "Material Symbols Outlined";

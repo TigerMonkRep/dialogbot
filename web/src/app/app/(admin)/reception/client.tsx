@@ -37,7 +37,7 @@ export function ScriptEditor({ wsId, script, canManage, aiReady }: { wsId: strin
     </div>
   );
   return (
-    <form className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
+    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
       <div className="flex flex-wrap items-start justify-between gap-space-sm">
         <div>
           <h2 className="font-headline-sm text-headline-sm text-primary">Receptionsmanuskript</h2>

@@ -33,7 +33,7 @@ export function WebsiteImport({ wsId, defaultUrl, initial, aiReady, compact = fa
   }, [running, wsId, router]);
 
   return (
-    <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+    <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
       <div className="flex items-start gap-space-md">
         <div className="w-10 h-10 rounded-xl bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0"><Icon name="auto_awesome" size={22} /></div>
         <div>

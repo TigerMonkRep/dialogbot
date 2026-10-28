@@ -44,7 +44,7 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
         ) : (() => { const m = x.m; return (
           <li key={m.id} className={`flex flex-col gap-0.5 max-w-[85%] ${m.role === "visitor" ? "self-end items-end" : "self-start"}`}>
             <span className="font-label-sm text-label-sm text-on-surface-variant">{m.role === "visitor" ? "Kunde" : m.role === "staff" ? "Medarbejder" : "Assistent"} · {new Date(m.created_at).toLocaleTimeString("da-DK", { timeStyle: "short" })}</span>
-            <span className={`px-space-md py-space-sm rounded-xl whitespace-pre-wrap font-body-md text-body-md ${m.role === "visitor" ? "bg-primary text-on-primary rounded-tr-none" : m.role === "staff" ? "bg-secondary-fixed text-on-secondary-fixed rounded-tl-none" : "bg-surface-container-lowest text-on-surface rounded-tl-none shadow-sm"}`}>{m.text}</span>
+            <span className={`px-space-md py-space-sm rounded-2xl whitespace-pre-wrap font-body-md text-body-md ${m.role === "visitor" ? "bg-primary text-on-primary rounded-tr-none" : m.role === "staff" ? "bg-secondary-fixed text-on-secondary-fixed rounded-tl-none" : "bg-surface-container-lowest text-on-surface rounded-tl-none border-2 border-ink"}`}>{m.text}</span>
           </li>
         ); })())}
       </ol>

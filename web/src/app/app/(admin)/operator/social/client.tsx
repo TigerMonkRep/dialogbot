@@ -97,7 +97,7 @@ export function SocialDashboard({ data }: { data: Dashboard }) {
 
 function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md space-y-space-md">
+    <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md space-y-space-md">
       <div>
         <h2 className="font-headline-sm text-headline-sm text-primary font-bold">{title}</h2>
         {hint && <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">{hint}</p>}
@@ -131,7 +131,7 @@ function PlatformCard({ p, totals, days }: { p: PlatformStats; totals?: Dashboar
   const meta = PLATFORM[p.platform];
   const state = !p.enabled ? ["Slået fra", "bg-surface-container-highest text-on-surface-variant"] : p.connected ? ["Forbundet", "bg-secondary-container text-on-secondary-container"] : ["Ikke forbundet", "bg-error-container text-on-error-container"];
   return (
-    <div className="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-space-sm">
+    <div className="rounded-2xl bg-surface-container-lowest p-space-md border-2 border-ink flex flex-col gap-space-sm">
       <div className="flex items-start justify-between gap-space-xs">
         <div>
           <p className="font-label-lg text-label-lg font-semibold flex items-center gap-1"><Icon name={meta.icon} size={18} />{meta.label}</p>
@@ -140,7 +140,7 @@ function PlatformCard({ p, totals, days }: { p: PlatformStats; totals?: Dashboar
         <span className={`inline-flex rounded-full px-2 py-0.5 font-label-sm text-label-sm font-semibold ${state[1]}`}>{state[0]}</span>
       </div>
       <div>
-        <p className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold flex items-center gap-1"><Icon name="group" size={16} />Følgere</p>
+        <p className="flex items-center gap-1 eyebrow"><Icon name="group" size={16} />Følgere</p>
         <p className="font-headline-md text-headline-md text-primary font-bold tabular-nums">{num(p.followers)}</p>
         <p className="font-label-sm text-label-sm flex gap-space-sm"><Delta n={p.delta_7d} label="7 d" /><Delta n={p.delta_30d} label="30 d" /></p>
       </div>
@@ -209,7 +209,7 @@ function PostCard({ p, editable = false, compact = false }: { p: Post; editable?
       </div>
       {!compact && p.images.length > 0 && (
         <div className="flex gap-space-xs overflow-x-auto">
-          {p.images.map((src, i) => <img key={src} src={src} alt={`Slide ${i + 1}`} loading="lazy" className="h-28 w-auto rounded-md shadow-sm" />)}
+          {p.images.map((src, i) => <img key={src} src={src} alt={`Slide ${i + 1}`} loading="lazy" className="h-28 w-auto rounded-md" />)}
         </div>
       )}
       {editing ? (
@@ -251,7 +251,7 @@ function PlanBox({ topics }: { topics: string[] }) {
     if (r.created.length) window.scrollTo({ top: 0, behavior: "smooth" });
   });
   return (
-    <section className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md space-y-space-sm">
+    <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md space-y-space-sm">
       <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Generér nye opslag</h2>
       <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Laver nye kladder med det samme – også på en dag, der allerede har opslag. De lander øverst under <em>Venter på godkendelse</em>; tryk <em>Godkend</em> (går ud på det valgte tidspunkt, som standard om ti minutter) eller <em>Post nu</em>.</p>
       <div className="flex flex-wrap items-end gap-space-sm">
@@ -283,7 +283,7 @@ function ProspectsBox({ prospects, enabled, counts }: { prospects: Prospect[]; e
     setMade(r.created.length); router.refresh();
   });
   return (
-    <section className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md space-y-space-md">
+    <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md space-y-space-md">
       <div className="flex flex-wrap items-start justify-between gap-space-sm">
         <div>
           <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Profiler at følge ({prospects.length})</h2>

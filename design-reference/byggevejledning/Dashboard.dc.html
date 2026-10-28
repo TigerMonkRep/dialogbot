@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Dialogbot – I dag (kundens dashboard)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+input:focus,button:focus-visible{outline:3px solid #2456F6;outline-offset:2px}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif">
+
+<header style="border-bottom:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;min-height:64px">
+    <span style="display:flex;align-items:center;gap:10px">
+      <span style="display:inline-flex;width:32px;height:32px;border-radius:9px;background:#2456F6;align-items:center;justify-content:center">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+      </span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Dialogbot</span>
+    </span>
+    <span style="font-size:14px;color:#5B6475">Nørgaard Tømrer</span>
+    <!-- the ONLY nav: three tabs -->
+    <nav aria-label="Sider" style="margin-left:auto;display:inline-flex;padding:4px;border-radius:999px;border:2px solid #14213D;background:#FFFFFF">
+      <a href="#" aria-current="page" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;background:#14213D;color:#FFFFFF;font-weight:600;font-size:14px">I dag</a>
+      <a href="Viden.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">Det ved den</a>
+      <a href="#" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">Opkald</a>
+      <a href="#" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">Ugen</a>
+    </nav>
+    <span style="display:inline-flex;width:40px;height:40px;border-radius:999px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:15px" aria-label="Profil: Rene">R</span>
+  </div>
+</header>
+
+<main style="max-width:1280px;width:100%;box-sizing:border-box;margin:0 auto;padding:28px 24px 40px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+  <!-- LEFT: three things you can SEE -->
+  <section style="flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:20px">
+
+    <!-- 1. Status -->
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px;padding:20px 24px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+      <span style="display:inline-flex;width:48px;height:48px;border-radius:12px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:24px">1</span>
+      <div style="display:flex;flex-direction:column;gap:2px;flex:1 1 200px">
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:24px;letter-spacing:-0.4px">Dialogbot er {{onWord}}</span>
+        <span style="font-size:14px;color:#5B6475">{{statusLine}}</span>
+      </div>
+      <button type="button" onClick="{{toggleOn}}" aria-label="Tænd eller sluk Dialogbot" style="display:inline-flex;align-items:center;width:84px;height:44px;padding:4px;border-radius:999px;border:0;background:{{toggleBg}};justify-content:{{toggleJustify}};cursor:pointer">
+        <span style="width:36px;height:36px;border-radius:999px;background:#FFFFFF"></span>
+      </button>
+    </div>
+
+    <!-- today's numbers -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px">
+      <div style="display:flex;flex-direction:column;gap:4px;padding:18px 20px;border-radius:16px;background:#FFFFFF;border:2px solid #14213D">
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:40px;line-height:1">7</span>
+        <span style="font-size:14px;font-weight:600">opkald besvaret</span>
+        <span style="font-size:12px;color:#5B6475">i dag · 0 mistet</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;padding:18px 20px;border-radius:16px;background:#FFFFFF;border:2px solid #14213D">
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:40px;line-height:1">3</span>
+        <span style="font-size:14px;font-weight:600">aftaler booket</span>
+        <span style="font-size:12px;color:#5B6475">i din Google Kalender</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;padding:18px 20px;border-radius:16px;background:#FFFFFF;border:2px solid #14213D">
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:40px;line-height:1">{{toYouCount}}</span>
+        <span style="font-size:14px;font-weight:600">til dig</span>
+        <span style="font-size:12px;color:#5B6475">venter på dit svar</span>
+      </div>
+    </div>
+
+    <!-- 2. To you -->
+    <div style="display:flex;flex-direction:column;gap:14px;padding:20px 24px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="display:inline-flex;width:48px;height:48px;border-radius:12px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:24px">2</span>
+        <div style="display:flex;flex-direction:column">
+          <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.3px">Til dig</span>
+          <span style="font-size:14px;color:#5B6475">Det eneste, du skal gøre i dag.</span>
+        </div>
+      </div>
+      <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{inbox}}" as="it" hint-placeholder-count="2">
+          <li style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:14px 16px;border-radius:14px;border:2px solid #14213D;background:{{it.bg}}">
+            <span style="display:inline-flex;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:{{it.tagBg}};color:{{it.tagColor}}">{{it.tag}}</span>
+            <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:2px">
+              <span style="font-weight:600;font-size:15px">{{it.title}}</span>
+              <span style="font-size:13px;color:#3C4659">{{it.sub}}</span>
+            </div>
+            <sc-if value="{{it.open}}" hint-placeholder-val="{{true}}">
+              <div style="display:flex;gap:8px">
+                <button type="button" onClick="{{it.approve}}" style="min-height:44px;padding:0 16px;border-radius:12px;background:#2456F6;color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">{{it.cta}}</button>
+                <button type="button" onClick="{{it.dismiss}}" style="min-height:44px;padding:0 14px;border-radius:12px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Afvis</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{it.closed}}" hint-placeholder-val="{{false}}">
+              <span style="display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#1B6B3A"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L19 7"></path></svg>{{it.done}}</span>
+            </sc-if>
+          </li>
+        </sc-for>
+      </ul>
+    </div>
+
+    <!-- 3. Latest calls -->
+    <div style="display:flex;flex-direction:column;gap:14px;padding:20px 24px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="display:inline-flex;width:48px;height:48px;border-radius:12px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:24px">3</span>
+        <div style="display:flex;flex-direction:column">
+          <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.3px">Seneste opkald</span>
+          <span style="font-size:14px;color:#5B6475">Klik på et for at læse eller høre det.</span>
+        </div>
+      </div>
+      <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;border-top:1.5px solid #14213D">
+        <li style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:12px 0;border-bottom:1.5px solid #14213D;font-size:14px">
+          <span style="font-family:Outfit,sans-serif;font-weight:700;min-width:48px">14:52</span>
+          <span style="flex:1 1 220px"><b>Mette Kjær</b> · Vindue skal skiftes, Risskov</span>
+          <span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#EEF4FB;border:1.5px solid #14213D;font-size:12px;font-weight:600">Aftale booket · tirs 9:00</span>
+          <a href="#" style="font-weight:600;font-size:14px;color:#14213D">Hør</a>
+        </li>
+        <li style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:12px 0;border-bottom:1.5px solid #14213D;font-size:14px">
+          <span style="font-family:Outfit,sans-serif;font-weight:700;min-width:48px">13:10</span>
+          <span style="flex:1 1 220px"><b>Ukendt nummer</b> · Spurgte om pris på terrasse</span>
+          <span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#FFCF3F;font-size:12px;font-weight:600">Besked til dig</span>
+          <a href="#" style="font-weight:600;font-size:14px;color:#14213D">Hør</a>
+        </li>
+        <li style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:12px 0;border-bottom:1.5px solid #14213D;font-size:14px">
+          <span style="font-family:Outfit,sans-serif;font-weight:700;min-width:48px">11:34</span>
+          <span style="flex:1 1 220px"><b>Jens Holm</b> · Flyttede sin aftale til torsdag</span>
+          <span style="display:inline-flex;padding:4px 10px;border-radius:999px;background:#EEF4FB;border:1.5px solid #14213D;font-size:12px;font-weight:600">Klaret af Dialogbot</span>
+          <a href="#" style="font-weight:600;font-size:14px;color:#14213D">Hør</a>
+        </li>
+      </ul>
+      <a href="#" style="align-self:flex-start;font-size:14px;font-weight:600;color:#14213D">Se alle opkald</a>
+    </div>
+  </section>
+
+  <!-- RIGHT: the ONE thing you can CHANGE WITH — the assistant -->
+  <aside aria-label="Din assistent" style="flex:1 1 360px;min-width:0;max-width:440px;background:#FFFFFF;border:2px solid #14213D;border-radius:20px;box-shadow:8px 8px 0 #14213D;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:2px solid #14213D">
+      <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#2456F6;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;color:#FFFFFF">D</span>
+      <div style="display:flex;flex-direction:column">
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:16px">Ændr noget</span>
+        <span style="font-size:12px;color:#5B6475">Sig det – jeg viser dig ændringen, før den gælder</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;padding:18px;min-height:280px">
+      <sc-for list="{{msgs}}" as="m" hint-placeholder-count="2">
+        <div style="display:flex;gap:8px;align-items:flex-end;justify-content:{{m.justify}}">
+          <p style="margin:0;padding:11px 14px;font-size:14px;line-height:1.5;max-width:320px;white-space:pre-line;border-radius:{{m.radius}};background:{{m.bg}};color:{{m.color}};border:2px solid #14213D">{{m.text}}</p>
+        </div>
+      </sc-for>
+
+      <!-- change preview card: the heavy function, reduced to one approve -->
+      <sc-if value="{{hasProposal}}" hint-placeholder-val="{{false}}">
+        <div style="display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:14px;border:2px dashed #14213D;background:#EEF4FB">
+          <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Forhåndsvisning · {{proposal.area}}</span>
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:16px">{{proposal.title}}</span>
+          <span style="font-size:14px;line-height:1.5;color:#3C4659;white-space:pre-line">{{proposal.body}}</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" onClick="{{acceptProposal}}" style="min-height:44px;padding:0 16px;border-radius:12px;background:#2456F6;color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Godkend</button>
+            <button type="button" onClick="{{rejectProposal}}" style="min-height:44px;padding:0 14px;border-radius:12px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Nej, lad være</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;padding:14px 18px 18px;border-top:2px solid #14213D;background:#EEF4FB">
+      <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Det, folk oftest beder om</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{chips}}" as="c" hint-placeholder-count="4">
+          <button type="button" onClick="{{c.pick}}" style="min-height:44px;padding:0 14px;border-radius:999px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">{{c.label}}</button>
+        </sc-for>
+      </div>
+      <form onSubmit="{{sendFree}}" style="display:flex;gap:8px">
+        <label for="ask" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Skriv, hvad du vil ændre</label>
+        <input id="ask" type="text" value="{{draft}}" onChange="{{editDraft}}" placeholder="Eller skriv det selv …" autocomplete="off" style="flex:1;min-width:0;min-height:46px;padding:0 14px;border-radius:12px;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-size:15px;color:#14213D;background:#FFFFFF">
+        <button type="submit" aria-label="Send" style="width:46px;height:46px;border-radius:12px;background:#2456F6;color:#FFFFFF;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </button>
+      </form>
+      <a href="Avanceret.dc.html" style="font-size:12px;color:#5B6475;text-decoration:none;align-self:flex-end">Avanceret: alle indstillinger</a>
+    </div>
+  </aside>
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1040}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      on: true,
+      draft: '',
+      proposal: null,
+      items: [
+        { id: 'a', tag: 'Godkend', title: 'Henvendelse fra Mette Kjær – vindue, Risskov', sub: 'Tæller som 1 godkendt henvendelse (149 kr.) hvis du godkender.', cta: 'Godkend', done: 'Godkendt', state: 'open' },
+        { id: 'b', tag: 'Ring tilbage', title: 'Ukendt nummer spurgte om pris på terrasse', sub: 'Dialogbot tog besked kl. 13:10. Nummer: 21 xx xx xx.', cta: 'Ring nu', done: 'Ringet', state: 'open' }
+      ],
+      history: [
+        { from: 'bot', text: 'Hej Rene. Alt kører – 7 opkald, 3 aftaler, 2 ting venter på dig til venstre. Vil du ændre noget?' }
+      ]
+    };
+  }
+  say(from, text) { this.setState({ history: this.state.history.concat([{ from, text }]) }); }
+  propose(label, area, title, body, reply) {
+    this.say('user', label);
+    setTimeout(() => {
+      this.setState({ history: this.state.history.concat([{ from: 'bot', text: reply }]), proposal: { area, title, body } });
+    }, 500);
+  }
+  renderVals() {
+    const s = this.state;
+    const bubble = (m) => ({
+      text: m.text,
+      justify: m.from === 'bot' ? 'flex-start' : 'flex-end',
+      radius: m.from === 'bot' ? '14px 14px 14px 4px' : '14px 14px 4px 14px',
+      bg: m.from === 'bot' ? '#FFFFFF' : '#14213D',
+      color: m.from === 'bot' ? '#14213D' : '#FFFFFF'
+    });
+    const chips = [
+      { label: 'Hold lukket fredag', pick: () => this.propose('Hold lukket fredag', 'Åbningstider', 'Lukket fredag 31. oktober', 'Jeg siger: «Vi har lukket i dag og åbner igen mandag kl. 8. Vil du lægge en besked, eller skal jeg booke en tid i næste uge?»\nAftaler kan stadig bookes fra mandag.', 'Fint. Sådan vil jeg sige det på fredag – godkend, så gælder det:') },
+      { label: 'Tilføj en pris', pick: () => this.propose('Tilføj en pris', 'Vidensbase', 'Ny pris: Vinduesudskiftning', 'Spørger en kunde om pris på at skifte et vindue, svarer jeg: «Det koster typisk fra 3.500 kr. pr. vindue inkl. montering – vi giver en fast pris efter et besøg.»', 'Hvad skal prisen være? Jeg har udfyldt et eksempel – ret det i forhåndsvisningen:') },
+      { label: 'Send SMS til alle kunder', pick: () => this.propose('Send SMS til alle kunder', 'Kampagne', 'SMS til 84 kunder', '«Hej {navn}. Nørgaard Tømrer har ledige tider i november til vinduer og døre. Svar JA, så ringer vi. Mvh Rene»\nSendes tirsdag kl. 10. Du godkender listen først.', 'Det bliver en kampagne. Jeg har skrevet et udkast og fundet 84 kunder fra de sidste 12 måneder:') },
+      { label: 'Vis mig ugens tal', pick: () => { this.say('user', 'Vis mig ugens tal'); setTimeout(() => this.say('bot', 'Uge 44: 31 opkald besvaret (0 mistet), 12 aftaler booket, 6 beskeder til dig, 9 godkendte henvendelser. Bedste dag: tirsdag. Vil du have det som PDF?'), 500); } },
+      { label: 'Koble et system på', pick: () => this.propose('Koble et system på', 'Integration', 'Forbind Dinero', 'Jeg sender nye kunder til Dinero som kontakter, når du godkender en henvendelse. Jeg rører ikke fakturaer.', 'Hvilket system? Dinero, e-conomic, HubSpot … Jeg har sat Dinero som eksempel:') }
+    ];
+    const items = s.items.map((it) => {
+      const open = it.state === 'open';
+      return Object.assign({}, it, {
+        open, closed: !open,
+        bg: open ? '#FFFFFF' : '#EEF4FB',
+        tagBg: open ? '#FFCF3F' : '#FFFFFF',
+        tagColor: '#14213D',
+        approve: () => this.setState({ items: s.items.map((x) => x.id === it.id ? Object.assign({}, x, { state: 'done' }) : x) }),
+        dismiss: () => this.setState({ items: s.items.map((x) => x.id === it.id ? Object.assign({}, x, { state: 'done', done: 'Afvist' }) : x) })
+      });
+    });
+    const toYouCount = s.items.filter((x) => x.state === 'open').length;
+    return {
+      onWord: s.on ? 'tændt' : 'slukket',
+      statusLine: s.on ? 'Tager telefonen for Nørgaard Tømrer · viderestilling aktiv' : 'Opkald går direkte til din mobil',
+      toggleOn: () => this.setState({ on: !s.on }),
+      toggleBg: s.on ? '#2456F6' : '#5B6475',
+      toggleJustify: s.on ? 'flex-end' : 'flex-start',
+      inbox: items, toYouCount,
+      msgs: s.history.map(bubble),
+      chips,
+      hasProposal: !!s.proposal,
+      proposal: s.proposal || { area: '', title: '', body: '' },
+      acceptProposal: () => { const p = s.proposal; this.setState({ proposal: null }); this.say('bot', 'Gjort: «' + p.title + '» gælder nu. Du kan altid sige «fortryd».'); },
+      rejectProposal: () => { this.setState({ proposal: null }); this.say('bot', 'Okay, intet ændret.'); },
+      draft: s.draft,
+      editDraft: (e) => this.setState({ draft: e.target.value }),
+      sendFree: (e) => { if (e && e.preventDefault) e.preventDefault(); const v = (s.draft || '').trim(); if (!v) return; this.setState({ draft: '' }); this.say('user', v); setTimeout(() => this.say('bot', 'Forstået. Jeg laver en forhåndsvisning, så du kan godkende den, før den gælder.'), 500); }
+    };
+  }
+}
+</script>
+</body>
+</html>

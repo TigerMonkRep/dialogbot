@@ -32,7 +32,7 @@ export function WebchatForm({ wsId, initial, canManage }: { wsId: string; initia
   const notReady = save.error?.code === "webchat_not_ready";
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
-      <form className="lg:col-span-7 bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md"
+      <form className="lg:col-span-7 bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md"
         onSubmit={(e) => { e.preventDefault(); save.run(); }}>
         <h3 className="font-headline-sm text-headline-sm text-primary">Indstillinger</h3>
         <label className="flex items-center justify-between gap-space-md p-space-md rounded-lg bg-surface-container-low cursor-pointer">
@@ -56,7 +56,7 @@ export function WebchatForm({ wsId, initial, canManage }: { wsId: string; initia
       </form>
 
       <div className="lg:col-span-5 flex flex-col gap-space-lg">
-        <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+        <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
           <h3 className="font-headline-sm text-headline-sm text-primary">Indlejringskode</h3>
           <p className="font-body-sm text-body-sm text-on-surface-variant">Indsæt koden lige før <code>&lt;/body&gt;</code> på alle sider, hvor chatten skal vises.</p>
           <pre className="p-space-sm rounded-lg bg-surface-container-low font-mono text-[12px] whitespace-pre-wrap break-all" aria-label="Indlejringskode">{s.embed_code}</pre>
@@ -66,7 +66,7 @@ export function WebchatForm({ wsId, initial, canManage }: { wsId: string; initia
           </div>
           <ErrorBox error={rotate.error} />
         </section>
-        <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-xs">
+        <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-xs">
           <h3 className="font-headline-sm text-headline-sm text-primary">Installation</h3>
           {s.last_seen_at
             ? <p className="font-body-sm text-body-sm text-on-surface flex items-center gap-space-xs"><Icon name="check_circle" size={18} className="text-secondary" />Chatten blev sidst åbnet på {s.last_seen_origin} {new Date(s.last_seen_at).toLocaleString("da-DK")}.</p>

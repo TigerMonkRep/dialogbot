@@ -31,7 +31,7 @@ export default function Page() {
           <li>Opsummering af hver henvendelse, opgaver og daglig rapport</li>
           <li>Personlig opsætning på cirka en halv time – vi guider jer hele vejen</li>
         </ul> },
-        { title: "Kom i gang", body: <p>Hør først, hvordan det lyder: <Link href="/#demo">bliv ringet op af Dialogbot</Link>. Når I er klar, <Link href="/signup">opretter I en konto</Link>, og vi sætter det op sammen. Læs mere om <Link href="/ai-receptionist">AI-receptionisten</Link>.</p> },
+        { title: "Kom i gang", body: <p>Hør først, hvordan det lyder: <Link href="/proev">bliv ringet op af Dialogbot</Link>. Når I er klar, <Link href="/signup">opretter I en konto</Link>, og vi sætter det op sammen. Læs mere om <Link href="/ai-receptionist">AI-receptionisten</Link>.</p> },
       ]}
       faq={[
         ["Er der binding?", "Nej. Der er ingen binding og intet opstartsgebyr. I kan opsige til udgangen af den løbende måned."],

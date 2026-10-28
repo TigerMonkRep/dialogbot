@@ -21,6 +21,6 @@ export default function Page() {
         { title: "Guides", body: <ul>{ARTICLES.map((a) => <li key={a.slug}><Link href={`/viden/${a.slug}`}><strong>{a.title}</strong></Link> – {a.teaser}</li>)}</ul> },
         { title: "AI-receptionist til din branche", body: <ul>{INDUSTRIES.map((i) => <li key={i.slug}><Link href={`/ai-receptionist/${i.slug}`}>AI-receptionist til {i.name}</Link> – {i.examples}</li>)}</ul> },
       ]}
-      faq={[["Hvad er Dialogbot?", "En dansk AI-receptionist, der tager telefonen og chatten for din virksomhed, svarer ud fra jeres egen godkendte viden og booker tider."], ["Kan jeg høre den?", "Ja. Skriv dit nummer på forsiden, så ringer Dialogbot dig op og viser det."]]} />
+      faq={[["Hvad er Dialogbot?", "En dansk AI-receptionist, der tager telefonen og chatten for din virksomhed, svarer ud fra jeres egen godkendte viden og booker tider."], ["Kan jeg høre den?", "Ja. Gå til Prøv den, fortæl chatten hvad I laver, så ringer Dialogbot dig op og viser det."]]} />
   );
 }

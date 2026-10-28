@@ -26,15 +26,19 @@ async function selectWs(id: string) {
   await fetch("/api/auth/workspace", { method: "POST", headers: { "content-type": "application/json", "x-requested-with": "dialogbot" }, body: JSON.stringify({ workspace_id: id }) });
 }
 
-export function DesktopNav({ items }: { items: NavItem[] }) {
+const MENU_ITEM = "flex items-center gap-2.5 min-h-[44px] px-3 rounded-xl text-[15px] font-semibold text-ink hover:bg-panel";
+const POPOVER = "absolute mt-2 rounded-2xl bg-paper border-2 border-ink shadow-block-sm p-2 z-50";
+
+/** The ONLY main nav: a pill-shaped segmented control. Selected = ink with white text. */
+export function PillNav({ items, className = "" }: { items: NavItem[]; className?: string }) {
   const path = usePathname();
   return (
-    <nav className="hidden xl:flex items-center gap-1 flex-1 justify-center" aria-label="Hovedmenu">
+    <nav className={`inline-flex p-1 rounded-full border-2 border-ink bg-paper ${className}`} aria-label="Sider">
       {items.map((it) => {
         const active = isActive(path, it);
         return (
           <Link key={it.label} href={it.href} aria-current={active ? "page" : undefined}
-            className={`px-space-md py-2 rounded-lg font-label-md text-label-md transition-colors ${active ? "bg-primary text-on-primary font-semibold shadow-sm" : "text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface"}`}>
+            className={`inline-flex items-center min-h-[40px] px-4 rounded-full text-[14px] font-semibold whitespace-nowrap transition-colors ${active ? "bg-ink text-paper" : "text-ink hover:bg-panel"}`}>
             {it.label}
           </Link>
         );
@@ -48,130 +52,98 @@ export function WorkspaceChip({ workspaces, current, compact = false, plain = fa
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
   if (!current) return null;
+  const single = workspaces.length <= 1;
   return (
-    <div className="relative" ref={ref}>
-      {plain ? (
-        <button onClick={() => setOpen(!open)} className="flex items-center gap-1 font-label-lg text-label-lg text-on-surface hover:text-primary" aria-haspopup="listbox" aria-expanded={open}>
-          <span className="max-w-[260px] truncate">{current.name}</span><Icon name="expand_more" size={16} className="text-on-surface-variant" />
-        </button>
-      ) : compact ? (
-        <button onClick={() => setOpen(!open)} className="flex items-center gap-1 mt-0.5" aria-haspopup="listbox" aria-expanded={open} aria-label={`Arbejdsrum: ${current.name}`}>
-          <span className="font-label-sm text-[11px] text-on-surface-variant font-medium truncate max-w-[130px]">{current.name}</span>
-          <Icon name="expand_more" size={14} className="text-outline" />
-        </button>
-      ) : (
-        <button onClick={() => setOpen(!open)} className="flex items-center gap-space-xs px-space-md py-1.5 rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container transition-colors" aria-haspopup="listbox" aria-expanded={open}>
-          <Icon name="domain" size={18} className="text-secondary" />
-          <span className="font-label-md text-label-md font-medium text-on-surface max-w-[220px] truncate">{current.name}</span>
-          <Icon name="expand_more" size={16} className="text-on-surface-variant" />
-        </button>
-      )}
+    <div className="relative min-w-0" ref={ref}>
+      <button onClick={() => setOpen(!open)} aria-haspopup="listbox" aria-expanded={open} aria-label={`Arbejdsrum: ${current.name}`}
+        className={`flex items-center gap-1 min-h-[44px] rounded-xl text-muted hover:text-ink ${plain || compact ? "" : "px-2"} ${compact ? "text-[12px]" : "text-[14px]"}`}>
+        <span className={`truncate ${compact ? "max-w-[140px]" : "max-w-[220px]"}`}>{current.name}</span>
+        {!single && <Icon name="expand_more" size={16} />}
+        {single && <Icon name="expand_more" size={16} className="opacity-60" />}
+      </button>
       {open && (
-        <ul role="listbox" aria-label="Vælg arbejdsrum" className="absolute left-0 mt-1 w-72 rounded-xl bg-surface-container-lowest shadow-md p-1 z-50">
+        <ul role="listbox" aria-label="Vælg arbejdsrum" className={`${POPOVER} left-0 w-72`}>
           {workspaces.map((w) => (
             <li key={w.id} role="option" aria-selected={w.id === current.id}>
-              <button onClick={async () => { await selectWs(w.id); setOpen(false); router.refresh(); }} className={`w-full text-left flex items-center gap-space-sm px-space-md py-2 rounded-lg hover:bg-surface-container-low ${w.id === current.id ? "bg-surface-container-low" : ""}`}>
-                <span className="w-7 h-7 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-bold flex items-center justify-center">{w.name.slice(0, 2).toUpperCase()}</span>
-                <span className="flex flex-col"><span className="font-label-md text-label-md font-semibold">{w.name}</span><span className="font-label-sm text-label-sm text-on-surface-variant">{w.role} · {w.product_intent}</span></span>
+              <button onClick={async () => { await selectWs(w.id); setOpen(false); router.refresh(); }} className={`w-full text-left ${MENU_ITEM} ${w.id === current.id ? "bg-panel" : ""}`}>
+                <span className="w-8 h-8 rounded-lg bg-accent text-white font-display text-[13px] font-extrabold flex items-center justify-center shrink-0">{w.name.slice(0, 2).toUpperCase()}</span>
+                <span className="flex flex-col min-w-0"><span className="truncate">{w.name}</span><span className="text-label-sm tracking-normal font-medium text-muted">{w.role} · {w.product_intent}</span></span>
               </button>
             </li>
           ))}
-          <li className="border-t border-outline-variant/40 mt-1 pt-1"><Link href="/onboarding/workspace" onClick={() => setOpen(false)} className="flex items-center gap-space-sm px-space-md py-2 rounded-lg font-label-md text-label-md text-primary hover:bg-surface-container-low"><Icon name="add_circle" size={18} />Nyt arbejdsrum</Link></li>
+          <li className="border-t-[1.5px] border-ink mt-1 pt-1"><Link href="/onboarding/workspace" onClick={() => setOpen(false)} className={`${MENU_ITEM} text-accent`}><Icon name="add_circle" size={18} />Nyt arbejdsrum</Link></li>
         </ul>
       )}
     </div>
   );
 }
 
-export function AccountButton({ me }: { me: { display_name: string; email: string; is_platform_operator?: boolean } | null }) {
+/** Profile menu: yellow round avatar with the user's initial. Operator-only items live here. */
+export function AccountButton({ me, extra = [] }: { me: { display_name: string; email: string; is_platform_operator?: boolean } | null; extra?: NavItem[] }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
+  const initial = (me?.display_name || me?.email || "?").trim().charAt(0).toUpperCase();
   return (
     <div className="relative flex-shrink-0" ref={ref}>
-      <button onClick={() => setOpen(!open)} className="w-8 h-8 rounded-full bg-primary flex items-center justify-center" aria-label="Konto" aria-haspopup="menu" aria-expanded={open}><Icon name="person" size={18} className="text-on-primary" /></button>
+      <button onClick={() => setOpen(!open)} className="w-11 h-11 rounded-full flex items-center justify-center" aria-label={me ? `Profil: ${me.display_name}` : "Konto"} aria-haspopup="menu" aria-expanded={open}>
+        <span className="w-10 h-10 rounded-full bg-highlight text-ink font-display font-extrabold text-[15px] flex items-center justify-center">{initial}</span>
+      </button>
       {open && (
-        <div role="menu" className="absolute right-0 mt-1 w-60 rounded-xl bg-surface-container-lowest shadow-md p-space-sm z-50">
-          {me && <div className="px-space-sm py-1"><p className="font-label-md text-label-md font-semibold">{me.display_name}</p><p className="font-label-sm text-label-sm text-on-surface-variant truncate">{me.email}</p></div>}
-          <Link role="menuitem" href="/app/settings/team" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Team og roller</Link>
-          <Link role="menuitem" href="/ambassador" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Ambassadør: anbefal og tjen</Link>
-          {me?.is_platform_operator && <Link role="menuitem" href="/app/operator/ambassadors" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Operatør: ambassadører</Link>}
-          {me?.is_platform_operator && <Link role="menuitem" href="/app/operator/social" onClick={() => setOpen(false)} className="block px-space-sm py-2 rounded-lg font-label-md text-label-md hover:bg-surface-container-low">Operatør: sociale medier</Link>}
-          <button role="menuitem" className="w-full text-left px-space-sm py-2 rounded-lg font-label-md text-label-md text-error hover:bg-surface-container-low" onClick={async () => { await fetch("/api/auth/logout", { method: "POST", headers: { "x-requested-with": "dialogbot" } }); router.push("/login"); router.refresh(); }}>Log ud</button>
+        <div role="menu" className={`${POPOVER} right-0 w-72`}>
+          {me && <div className="px-3 py-2"><p className="text-[15px] font-semibold text-ink">{me.display_name}</p><p className="text-[13px] text-muted truncate">{me.email}</p></div>}
+          <Link role="menuitem" href="/app/settings/profile" onClick={() => setOpen(false)} className={MENU_ITEM}><Icon name="person" size={18} className="text-accent" />Min profil</Link>
+          <Link role="menuitem" href="/app/settings/team" onClick={() => setOpen(false)} className={MENU_ITEM}><Icon name="group" size={18} className="text-accent" />Team og roller</Link>
+          <Link role="menuitem" href="/ambassador" onClick={() => setOpen(false)} className={MENU_ITEM}><Icon name="handshake" size={18} className="text-accent" />Ambassadør: anbefal og tjen</Link>
+          {extra.map((it) => <Link key={it.href} role="menuitem" href={it.href} onClick={() => setOpen(false)} className={MENU_ITEM}><Icon name={it.icon} size={18} className="text-accent" />{it.label}</Link>)}
+          {me?.is_platform_operator && (
+            <div className="border-t-[1.5px] border-ink mt-1 pt-1">
+              <span className="eyebrow block px-3 pt-2 pb-1">Operatør</span>
+              <Link role="menuitem" href="/app/operator/ambassadors" onClick={() => setOpen(false)} className={MENU_ITEM}>Ambassadører</Link>
+              <Link role="menuitem" href="/app/operator/social" onClick={() => setOpen(false)} className={MENU_ITEM}>Sociale medier</Link>
+              <Link role="menuitem" href="/app/operator/sales" onClick={() => setOpen(false)} className={MENU_ITEM}>Salg</Link>
+              <Link role="menuitem" href="/app/operator/telephony" onClick={() => setOpen(false)} className={MENU_ITEM}>Telefoni</Link>
+              <Link role="menuitem" href="/app/operator/voices" onClick={() => setOpen(false)} className={MENU_ITEM}>Stemmer</Link>
+            </div>
+          )}
+          <div className="border-t-[1.5px] border-ink mt-1 pt-1">
+            <button role="menuitem" className={`w-full text-left ${MENU_ITEM} text-danger hover:bg-danger-soft`} onClick={async () => { await fetch("/api/auth/logout", { method: "POST", headers: { "x-requested-with": "dialogbot" } }); router.push("/login"); router.refresh(); }}>Log ud</button>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-/** Full navigation as a sheet: hamburger (mobile header), icon (desktop < xl) or bottom-nav "Mere". */
-export function MoreMenu({ items, variant }: { items: NavItem[]; variant: "hamburger" | "icon" | "bottom" }) {
+/** Everything that is not one of the three main pages: a compact "Mere" menu (outline button on desktop, hamburger on mobile). */
+export function MoreMenu({ items, variant }: { items: NavItem[]; variant: "hamburger" | "icon" | "bottom" | "button" }) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
   useEffect(() => setOpen(false), [path]);
-  const trigger = {
-    hamburger: <button onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open} className="w-11 h-11 flex items-center justify-center rounded-lg text-primary hover:bg-surface-container transition-colors active:scale-95"><Icon name={open ? "close" : "menu"} size={24} /></button>,
-    icon: <button onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open} className="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low"><Icon name={open ? "close" : "menu"} size={20} /></button>,
-    bottom: <button onClick={() => setOpen(!open)} aria-expanded={open} className={`flex flex-col items-center justify-center gap-0.5 h-12 w-full transition-colors ${open ? "text-primary-container font-semibold" : "text-on-surface-variant hover:text-on-surface"}`}><Icon name="more_horiz" size={24} /><span className="font-label-sm text-label-sm">Mere</span></button>,
-  }[variant];
-  const sheet = variant === "bottom"
-    ? "fixed left-0 right-0 bottom-16 rounded-t-2xl bg-surface-container-lowest shadow-2xl p-space-md grid gap-1"
-    : variant === "hamburger" ? "fixed left-0 right-0 top-16 bg-surface-container-lowest shadow-md p-space-sm grid gap-1" : "absolute right-0 top-12 w-72 rounded-xl bg-surface-container-lowest shadow-md p-space-sm grid gap-1";
+  const anyActive = items.some((it) => isActive(path, it));
+  const trigger = variant === "hamburger" || variant === "icon"
+    ? <button onClick={() => setOpen(!open)} aria-label="Mere" aria-expanded={open} className="w-11 h-11 flex items-center justify-center rounded-xl text-ink hover:bg-panel"><Icon name={open ? "close" : "menu"} size={24} /></button>
+    : <button onClick={() => setOpen(!open)} aria-expanded={open} className={`inline-flex items-center gap-1 min-h-[44px] px-3.5 rounded-xl border-2 border-ink text-[14px] font-semibold ${anyActive ? "bg-ink text-paper" : "bg-paper text-ink hover:bg-panel"}`}>Mere<Icon name={open ? "expand_less" : "expand_more"} size={18} /></button>;
+  const sheet = variant === "hamburger"
+    ? "fixed left-0 right-0 top-[64px] bg-paper border-b-2 border-ink p-3 grid gap-1 max-h-[calc(100dvh-64px)] overflow-y-auto"
+    : `${POPOVER} right-0 w-72 grid gap-0.5 max-h-[70dvh] overflow-y-auto`;
   return (
-    <div ref={ref} className={variant === "bottom" ? "w-full" : "relative"}>
+    <div ref={ref} className="relative">
       {trigger}
       {open && (
-        <nav className={`${sheet} z-50`} aria-label="Menu">
+        <nav className={`${sheet} z-50`} aria-label="Mere">
           {items.map((it) => {
             const active = isActive(path, it);
             return (
               <Link key={it.label} href={it.href} aria-current={active ? "page" : undefined} onClick={() => setOpen(false)}
-                className={`flex items-center gap-space-sm px-space-md py-2.5 rounded-lg font-label-lg text-label-lg ${active ? "bg-primary text-on-primary" : "text-on-surface hover:bg-surface-container-low"}`}>
-                <Icon name={it.icon} size={20} className={active ? "" : "text-secondary"} />{it.label}
+                className={`${MENU_ITEM} ${active ? "bg-ink text-paper hover:bg-ink" : ""}`}>
+                <Icon name={it.icon} size={20} className={active ? "text-highlight" : "text-accent"} />{it.label}
               </Link>
             );
           })}
         </nav>
       )}
     </div>
-  );
-}
-
-export function BottomNav({ items, more, breakpoint = "md" }: { items: NavItem[]; more: NavItem[]; breakpoint?: "md" | "lg" }) {
-  const path = usePathname();
-  return (
-    <nav className={`${breakpoint === "lg" ? "lg:hidden" : "md:hidden"} fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.03)]`} aria-label="Genveje">
-      <div className={`h-16 px-space-sm grid ${items.length === 4 ? "grid-cols-5" : "grid-cols-4"} items-center`}>
-        {items.map((it) => {
-          const active = isActive(path, it);
-          return (
-            <Link key={it.label} href={it.href} aria-current={active ? "page" : undefined}
-              className={`flex flex-col items-center justify-center gap-0.5 h-12 w-full transition-colors ${active ? "text-primary-container font-semibold" : "text-on-surface-variant hover:text-on-surface"}`}>
-              <Icon name={it.icon} size={24} filled={active} /><span className="font-label-sm text-label-sm">{it.label}</span>
-            </Link>
-          );
-        })}
-        <MoreMenu items={more} variant="bottom" />
-      </div>
-    </nav>
-  );
-}
-
-/** Admin sidebar navigation (Stitch K01 aside). */
-export function SideNav({ items }: { items: NavItem[] }) {
-  const path = usePathname();
-  return (
-    <nav className="flex flex-col gap-space-xs px-space-sm" aria-label="Hovedmenu">
-      {items.map((it) => {
-        const active = isActive(path, it);
-        return (
-          <Link key={it.label} href={it.href} aria-current={active ? "page" : undefined}
-            className={`flex items-center gap-space-md px-space-md py-space-sm rounded-xl font-label-lg text-label-lg transition-all ${active ? "bg-primary-container text-on-primary" : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"}`}>
-            <Icon name={it.icon} size={20} /><span>{it.label}</span>
-          </Link>
-        );
-      })}
-    </nav>
   );
 }

@@ -26,10 +26,10 @@ export default async function ProfilePage() {
   ];
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
-      <section className="xl:col-span-7 bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+      <section className="xl:col-span-7 bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
         <div className="flex items-center gap-space-md">
           <div className="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center font-headline-sm text-headline-sm font-bold">{me.display_name.split(/\s+/).map((s) => s[0]).join("").slice(0, 2).toUpperCase()}</div>
-          <div><span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Indstillinger</span><h2 className="font-headline-sm text-headline-sm text-primary font-bold">Min profil</h2></div>
+          <div><span className="eyebrow">Indstillinger</span><h2 className="font-headline-sm text-headline-sm text-primary font-bold">Min profil</h2></div>
         </div>
         <dl className="rounded-xl bg-surface-container-low divide-y divide-surface-container">
           {rows.map(([k, v]) => <div key={k} className="grid grid-cols-1 sm:grid-cols-[180px,1fr] gap-1 p-space-md"><dt className="font-label-md text-label-md text-on-surface-variant">{k}</dt><dd className="font-body-md text-body-md text-on-surface">{v}</dd></div>)}
@@ -40,7 +40,7 @@ export default async function ProfilePage() {
           <LogoutButton />
         </div>
       </section>
-      <section className="xl:col-span-5 bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+      <section className="xl:col-span-5 bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
         <div><h2 className="font-headline-sm text-headline-sm text-primary font-bold">Aktive sessioner</h2><p className="font-body-sm text-body-sm text-on-surface-variant">Alle sessioner tilbagekaldes, når du nulstiller adgangskoden.</p></div>
         <ul className="flex flex-col gap-2">
           {sessions.map((s) => (

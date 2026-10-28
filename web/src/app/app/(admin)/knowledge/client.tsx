@@ -211,7 +211,7 @@ export function ItemCard({ wsId, item, canDraft, canApprove }: { wsId: string; i
     router.refresh();
   });
   return (
-    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
       <div className="flex items-start justify-between gap-space-sm">
         <div className="min-w-0 space-y-1">
           <div className="flex flex-wrap items-center gap-space-sm">
@@ -276,8 +276,8 @@ export function AddPanel({ wsId, kinds, label }: { wsId: string; kinds: string[]
   const [open, setOpen] = useState(false);
   return (
     <div className="space-y-space-md">
-      <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} className="flex items-center gap-space-sm bg-primary hover:bg-primary-container text-on-primary px-space-lg py-space-sm rounded-xl font-label-lg text-label-lg shadow-sm transition-all"><Icon name={open ? "close" : "add"} size={20} />{open ? "Luk" : label}</button>
-      {open && <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-md max-w-xl"><NewItemForm wsId={wsId} kinds={kinds} onDone={() => setOpen(false)} /></div>}
+      <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} className="flex items-center gap-space-sm bg-primary hover:bg-primary-container text-on-primary px-space-lg py-space-sm rounded-xl font-label-lg text-label-lg transition-all"><Icon name={open ? "close" : "add"} size={20} />{open ? "Luk" : label}</button>
+      {open && <div className="bg-surface-container-lowest rounded-xl p-space-lg border-2 border-ink shadow-block-sm max-w-xl"><NewItemForm wsId={wsId} kinds={kinds} onDone={() => setOpen(false)} /></div>}
     </div>
   );
 }

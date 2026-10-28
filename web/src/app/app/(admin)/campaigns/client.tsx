@@ -17,7 +17,7 @@ export function NewCampaign({ wsId }: { wsId: string }) {
     router.push(`/app/campaigns/${c.id}`);
   });
   return (
-    <form className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
+    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
       <h2 className="font-headline-sm text-headline-sm text-primary">Ny kampagne</h2>
       <Field label="Navn på kampagnen" error={fieldError(save.error, "name")}><Input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder="Forårstilbud 2027" /></Field>
       <Field label="Hvad skal opkaldet handle om?" hint="Fx &quot;Tilbyde gulvafslibning til tidligere kunder inden sommerferien&quot;. AI'en foreslår manuskriptet ud fra det og jeres viden.">
@@ -52,7 +52,7 @@ export function CampaignEditor({ wsId, c, numbers, canManage }: { wsId: string; 
   const set = (k: "name" | "purpose" | "opening" | "questions" | "success" | "call_from" | "call_to" | "phone_number_id") =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => { setNote(null); setF({ ...f, [k]: e.target.value }); };
   return (
-    <form className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
+    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
       <div className="flex flex-wrap items-center justify-between gap-space-sm">
         <h2 className="font-headline-sm text-headline-sm text-primary">Manuskript og tidsrum</h2>
         {!locked && <Button type="button" variant="tonal" icon="auto_awesome" onClick={() => suggest.run()} disabled={suggest.pending}>{suggest.pending ? "Foreslår…" : "Foreslå med AI"}</Button>}
@@ -105,7 +105,7 @@ export function ImportContacts({ wsId, id }: { wsId: string; id: string }) {
   });
   const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (file) setF({ ...f, csv: await file.text() }); };
   return (
-    <form className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); run.run(); }}>
+    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); run.run(); }}>
       <h2 className="font-headline-sm text-headline-sm text-primary">Tilføj kontakter</h2>
       <p className="font-body-sm text-body-sm text-on-surface-variant">Upload en CSV-fil (fx gemt fra Excel) eller indsæt listen. Kolonner: navn, telefon og evt. firma og e-mail. Danske numre må skrives uden +45. Numre på spærrelisten springes over.</p>
       {res && <Alert kind="ok">{res.added} kontakter tilføjet{res.duplicates ? `, ${res.duplicates} fandtes allerede` : ""}{res.blocked ? `, ${res.blocked} står på spærrelisten` : ""}{res.invalid_count ? `, ${res.invalid_count} ugyldige numre (fx række ${res.invalid.map((x) => x.row).slice(0, 5).join(", ")})` : ""}.</Alert>}
@@ -135,7 +135,7 @@ export function StartCampaign({ wsId, c, checklist }: { wsId: string; c: Campaig
   const pause = useSubmit(async () => { await api(`/workspaces/${wsId}/campaigns/${c.id}/pause`, { method: "POST", body: "{}" }); router.refresh(); });
   if (c.status === "completed") return <Alert kind="ok">Kampagnen er afsluttet: alle kontakter er ringet op.</Alert>;
   if (c.status === "running") return (
-    <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-wrap items-center gap-space-sm">
+    <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-wrap items-center gap-space-sm">
       <p className="font-body-md text-body-md grow">Kampagnen kører. Der ringes til én kontakt ad gangen i det valgte tidsrum.</p>
       <Button type="button" variant="tonal" icon="pause" onClick={() => pause.run()} disabled={pause.pending}>Sæt på pause</Button>
       <ErrorBox error={pause.error} />
@@ -143,7 +143,7 @@ export function StartCampaign({ wsId, c, checklist }: { wsId: string; c: Campaig
   );
   const pending = c.counts.by_status.pending ?? 0;
   return (
-    <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+    <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
       <h2 className="font-headline-sm text-headline-sm text-primary">{c.status === "paused" ? "Genoptag kampagnen" : "Start kampagnen"}</h2>
       {c.outbound_problem && <Alert kind="warn">{c.outbound_problem}</Alert>}
       <p className="font-body-md text-body-md">{pending} kontakter venter. Højst {kr(c.max_cost.net_minor)} + moms ({kr(c.max_cost.gross_minor)} inkl. moms) – {kr(c.package.net_minor)} pr. kontakt, som først bruges, når kontakten ringes op første gang. Betaling starter aldrig opkald.</p>
@@ -173,7 +173,7 @@ export function DoNotCallList({ wsId, items, canManage }: { wsId: string; items:
   const add = useSubmit(async () => { await api(`/workspaces/${wsId}/do-not-call`, { method: "POST", body: JSON.stringify(f) }); setF({ phone: "", reason: "" }); router.refresh(); });
   const del = useSubmit(async (id: string) => { await api(`/workspaces/${wsId}/do-not-call/${id}`, { method: "DELETE" }); router.refresh(); });
   return (
-    <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+    <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
       <h2 className="font-headline-sm text-headline-sm text-primary">Spærreliste</h2>
       <p className="font-body-sm text-body-sm text-on-surface-variant">Numre her bliver aldrig ringet op i en kampagne. Siger nogen i et opkald, at de ikke vil ringes op igen, kommer de automatisk på listen.</p>
       {items.length > 0 && <ul className="flex flex-col gap-space-xs">{items.map((d) => (

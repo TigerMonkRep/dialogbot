@@ -7,7 +7,7 @@ import { TaskList } from "../leads/client";
 
 export default async function TasksPage({ searchParams }: { searchParams: Promise<{ status?: string; mine?: string }> }) {
   const ws = await requireWorkspace();
-  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Opgaver kan ses af medarbejdere, administratorer og ejere.</p>;
+  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Opgaver kan ses af medarbejdere, administratorer og ejere.</p>;
   const sp = await searchParams;
   const status = sp.status === "done" ? "done" : "open";
   const mine = sp.mine === "1";
@@ -21,7 +21,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
         {chip(link("open", mine), status === "open", "Åbne")}{chip(link("done", mine), status === "done", "Færdige")}
         {chip(link(status, !mine), mine, mine ? "Kun mine ✓" : "Kun mine")}
       </div>
-      <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm">
+      <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink">
         <TaskList wsId={ws.id} tasks={list.items} />
       </section>
     </div>

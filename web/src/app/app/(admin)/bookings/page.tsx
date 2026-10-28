@@ -10,7 +10,7 @@ const SOURCE: Record<string, string> = { webchat: "Webchat", phone: "Telefon", m
 /** Bookings: upcoming appointments, manual booking, and (owner/admin) online booking + calendar settings. */
 export default async function BookingsPage() {
   const ws = await requireWorkspace();
-  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Bookinger kan ses af medarbejdere, administratorer og ejere.</p>;
+  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Bookinger kan ses af medarbejdere, administratorer og ejere.</p>;
   const canManage = ws.role === "owner" || ws.role === "admin";
   const [s, list] = await Promise.all([
     backend<Settings>(`/workspaces/${ws.id}/bookings/settings`),
@@ -26,14 +26,14 @@ export default async function BookingsPage() {
     <section className="flex flex-col gap-space-lg">
       <div className="flex flex-wrap items-start justify-between gap-space-sm">
         <div>
-          <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Bookinger</span>
-          <h1 className="font-headline-md text-headline-md text-primary font-bold">Aftaler</h1>
+          <span className="eyebrow">Bookinger</span>
+          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Aftaler</h1>
           <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Kunder kan booke i chatten og i telefonen ud fra jeres godkendte åbningstider. Optaget tid i jeres kalender blokeres, og hver booking bliver en henvendelse med en opgave.</p>
         </div>
         <span className={`px-3 py-1 rounded-full font-label-sm text-label-sm font-semibold ${s.enabled ? "bg-secondary-container text-on-secondary-container" : "bg-surface-container-high text-on-surface-variant"}`}>{s.enabled ? "Online booking er slået til" : "Online booking er slået fra"}</span>
       </div>
       {!s.has_opening_hours && <p className="p-space-sm rounded-lg bg-tertiary-fixed text-on-tertiary-fixed font-body-sm text-body-sm">Der er ingen godkendte åbningstider, så der er ingen ledige tider. <Link href="/app/knowledge?tab=k03" className="underline">Godkend åbningstider i Viden</Link>.</p>}
-      <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+      <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
         <h2 className="font-headline-sm text-headline-sm text-primary">Kommende aftaler</h2>
         {list.items.length === 0 ? <p className="font-body-sm text-body-sm text-on-surface-variant">Ingen aftaler de næste 60 dage.</p> : (
           [...byDay.entries()].map(([day, items]) => (

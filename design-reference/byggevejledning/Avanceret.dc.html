@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Dialogbot – Alle indstillinger</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+input:focus,button:focus-visible{outline:3px solid #2456F6;outline-offset:2px}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif">
+
+<header style="border-bottom:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;min-height:64px">
+    <a href="Dashboard.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#14213D">
+      <span style="display:inline-flex;width:32px;height:32px;border-radius:9px;background:#2456F6;align-items:center;justify-content:center">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+      </span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Dialogbot</span>
+    </a>
+    <span style="font-size:14px;color:#5B6475">Nørgaard Tømrer</span>
+    <a href="Dashboard.dc.html" style="margin-left:auto;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:999px;border:2px solid #14213D;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>Tilbage til I dag
+    </a>
+  </div>
+</header>
+
+<main style="max-width:1280px;width:100%;box-sizing:border-box;margin:0 auto;padding:32px 24px 48px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+  <!-- LEFT: the parts list -->
+  <section style="flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:22px">
+
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px 24px">
+      <div style="display:flex;flex-direction:column;gap:6px;flex:1 1 300px">
+        <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Bagerst i hæftet</span>
+        <h1 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:34px;letter-spacing:-0.8px;line-height:1.05">Alle indstillinger</h1>
+        <p style="margin:0;font-size:15px;line-height:1.5;color:#3C4659;max-width:560px">Alt, Dialogbot ved og gør – ét sted, i almindeligt dansk. Du ændrer aldrig noget her direkte: «Ændr» sender det til assistenten, som viser dig ændringen, før den gælder.</p>
+      </div>
+      <form onSubmit="{{noop}}" style="flex:1 1 260px;display:flex;gap:8px">
+        <label for="find" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Find en indstilling</label>
+        <input id="find" type="search" value="{{q}}" onChange="{{editQ}}" placeholder="Find en indstilling … fx «hilsen»" style="flex:1;min-width:0;min-height:46px;padding:0 14px;border-radius:12px;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-size:15px;color:#14213D;background:#FFFFFF">
+      </form>
+    </div>
+
+    <!-- legend -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:#3C4659;align-items:center">
+      <span style="display:inline-flex;align-items:center;gap:6px"><span style="display:inline-flex;padding:3px 9px;border-radius:999px;background:#FFFFFF;border:1.5px solid #14213D;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#1B6B3A">Klar</span>virker nu</span>
+      <span style="display:inline-flex;align-items:center;gap:6px"><span style="display:inline-flex;padding:3px 9px;border-radius:999px;background:#FFCF3F;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase">På vej</span>vi kobler det på med dig</span>
+      <span style="display:inline-flex;align-items:center;gap:6px"><span style="display:inline-flex;padding:3px 9px;border-radius:999px;background:#FFFFFF;border:1.5px dashed #14213D;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475">Ikke sat op</span>bruges ikke endnu</span>
+      <label style="margin-left:auto;display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:600;cursor:pointer">
+        <input type="checkbox" onChange="{{toggleTech}}" style="width:20px;height:20px;accent-color:#2456F6">Vis teknik (API, webhooks, log)
+      </label>
+    </div>
+
+    <sc-for list="{{chapters}}" as="ch" hint-placeholder-count="3">
+      <sc-if value="{{ch.show}}" hint-placeholder-val="{{true}}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="display:inline-flex;width:40px;height:40px;border-radius:10px;background:{{ch.numBg}};border:2px solid #14213D;box-sizing:border-box;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">{{ch.n}}</span>
+            <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">{{ch.title}}</span>
+            <span style="font-size:13px;color:#5B6475">{{ch.sub}}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px">
+            <sc-for list="{{ch.tiles}}" as="t" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;border-radius:14px;background:#FFFFFF;border:{{t.border}}">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                  <span style="font-weight:600;font-size:15px">{{t.name}}</span>
+                  <span style="display:inline-flex;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:{{t.tagBg}};border:{{t.tagBorder}};color:{{t.tagColor}};white-space:nowrap">{{t.status}}</span>
+                </div>
+                <span style="font-size:14px;line-height:1.45;color:#3C4659">{{t.value}}</span>
+                <button type="button" onClick="{{t.change}}" style="align-self:flex-start;min-height:40px;padding:0 14px;border-radius:10px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">{{t.cta}}</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </sc-for>
+
+  </section>
+
+  <!-- RIGHT: assistant, docked -->
+  <aside aria-label="Din assistent" style="flex:1 1 340px;min-width:0;max-width:420px;position:sticky;top:24px;background:#FFFFFF;border:2px solid #14213D;border-radius:20px;box-shadow:8px 8px 0 #14213D;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:2px solid #14213D">
+      <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#2456F6;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;color:#FFFFFF">D</span>
+      <div style="display:flex;flex-direction:column">
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:16px">Ændr noget</span>
+        <span style="font-size:12px;color:#5B6475">Klik «Ændr» på en brik – jeg viser dig resultatet først</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;padding:18px;min-height:260px">
+      <sc-for list="{{msgs}}" as="m" hint-placeholder-count="1">
+        <div style="display:flex;gap:8px;align-items:flex-end;justify-content:{{m.justify}}">
+          <p style="margin:0;padding:11px 14px;font-size:14px;line-height:1.5;max-width:320px;white-space:pre-line;border-radius:{{m.radius}};background:{{m.bg}};color:{{m.color}};border:2px solid #14213D">{{m.text}}</p>
+        </div>
+      </sc-for>
+      <sc-if value="{{hasProposal}}" hint-placeholder-val="{{false}}">
+        <div style="display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:14px;border:2px dashed #14213D;background:#EEF4FB">
+          <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Forhåndsvisning · {{proposal.area}}</span>
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:16px">{{proposal.title}}</span>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.5">
+            <span style="color:#5B6475;text-decoration:line-through">{{proposal.before}}</span>
+            <span style="font-weight:600">{{proposal.after}}</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" onClick="{{accept}}" style="min-height:44px;padding:0 16px;border-radius:12px;background:#2456F6;color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Godkend</button>
+            <button type="button" onClick="{{reject}}" style="min-height:44px;padding:0 14px;border-radius:12px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Nej, lad være</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;padding:14px 18px 18px;border-top:2px solid #14213D;background:#EEF4FB;font-size:13px;color:#3C4659">
+      <span><b>Historik:</b> {{historyLine}}</span>
+      <a href="#" style="font-weight:600;color:#14213D;text-decoration:none">Se alle ændringer (revisorlog)</a>
+    </div>
+  </aside>
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1560}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      q: '', tech: false, proposal: null, changes: 0,
+      history: [{ from: 'bot', text: 'Her er alt, jeg ved om Nørgaard Tømrer. Klik «Ændr» på en brik, så viser jeg dig før og efter.' }]
+    };
+  }
+  say(from, text) { this.setState({ history: this.state.history.concat([{ from, text }]) }); }
+  renderVals() {
+    const s = this.state;
+    const bubble = (m) => ({
+      text: m.text, justify: m.from === 'bot' ? 'flex-start' : 'flex-end',
+      radius: m.from === 'bot' ? '14px 14px 14px 4px' : '14px 14px 4px 14px',
+      bg: m.from === 'bot' ? '#FFFFFF' : '#14213D', color: m.from === 'bot' ? '#14213D' : '#FFFFFF'
+    });
+    const K = 'klar', V = 'vej', N = 'none';
+    const data = [
+      { n: 1, title: 'Telefon', sub: 'Sådan tager den telefonen', tiles: [
+        { name: 'Nummer og viderestilling', st: K, value: '+45 93 70 34 33 viderestilles altid til Dialogbot', area: 'Telefon', before: 'Viderestil altid', after: 'Viderestil kun, når du ikke tager den inden 20 sek.' },
+        { name: 'Hilsen', st: K, value: '«Du har ringet til Nørgaard Tømrer, det er Dialogbot. Hvad kan jeg hjælpe med?»', area: 'Telefon', before: '… det er Dialogbot. Hvad kan jeg hjælpe med?', after: '… det er Nørgaard Tømrers digitale receptionist. Hvad kan jeg hjælpe dig med i dag?' },
+        { name: 'Stemme', st: K, value: 'Dansk, kvinde, roligt tempo · udtale: «Nørgaard» trænet', area: 'Stemme', before: 'Kvinde, roligt tempo', after: 'Mand, roligt tempo' },
+        { name: 'Stil videre til et menneske', st: K, value: 'Ved «haster» eller «skade» → Rene (mobil) man–fre 8–17', area: 'Vagtplan', before: 'Kun Rene', after: 'Rene, ellers Mikkel efter kl. 15' },
+        { name: 'Tastemenu (IVR)', st: N, value: 'Ingen menu – Dialogbot spørger selv, hvad det drejer sig om', area: 'Telefon', before: 'Ingen menu', after: 'Tryk 1 for aftaler, 2 for akut skade, 3 for andet' },
+        { name: 'Uden for åbningstid', st: K, value: 'Tager besked og tilbyder tid næste hverdag', area: 'Vagtplan', before: 'Tager besked', after: 'Tager besked og sender SMS med link til selvbooking' }
+      ]},
+      { n: 2, title: 'Viden', sub: 'Det, den må sige', tiles: [
+        { name: 'Åbningstider', st: K, value: 'Man–fre 08–17 · lukket 31. okt (godkendt i dag)', area: 'Åbningstider', before: 'Man–fre 08–17', after: 'Man–tors 08–17, fre 08–14' },
+        { name: 'Priser', st: K, value: '6 priser · fx vindue fra 3.500 kr. · altid «fast pris efter besøg»', area: 'Vidensbase', before: '6 priser', after: '7 priser (+ terrasse fra 1.200 kr./m²)' },
+        { name: 'Spørgsmål og svar', st: K, value: '14 svar godkendt · 2 afventer dig', area: 'Vidensbase', before: '2 afventer', after: '0 afventer – begge godkendt' },
+        { name: 'Det må den ikke love', st: K, value: 'Ingen datoer uden kalender · ingen rabatter · ingen garantier', area: 'Dialogregler', before: 'Ingen rabatter', after: 'Må give 10 % til eksisterende kunder' },
+        { name: 'Hjemmeside som kilde', st: V, value: 'norgaard-tomrer.dk læses ind – godkendes i trin 3', area: 'Kilder', before: 'Ikke læst', after: 'Læses hver søndag nat, nye svar afventer dig' }
+      ]},
+      { n: 3, title: 'Kanaler', sub: 'Hvor den ellers svarer', tiles: [
+        { name: 'Webchat på hjemmesiden', st: V, value: 'Kodestump klar – ikke sat på siden endnu', area: 'Webchat', before: 'Ikke sat op', after: 'Vist nederst til højre, blå, «Spørg os»' },
+        { name: 'SMS', st: K, value: 'Bekræftelse + påmindelse 24 t før · afsender: NorgaardT', area: 'SMS-skabeloner', before: 'Påmindelse 24 t før', after: 'Påmindelse 24 t og 2 t før' },
+        { name: 'E-mail til dig', st: K, value: 'rene@fyrster.dk · hver besked straks + dagsrapport kl. 17', area: 'Notifikationer', before: 'Straks + kl. 17', after: 'Kun dagsrapport kl. 17' }
+      ]},
+      { n: 4, title: 'Booking', sub: 'Når den booker aftaler', tiles: [
+        { name: 'Kalender', st: K, value: 'Google Kalender «Nørgaard Tømrer – opgaver»', area: 'Kalender', before: 'Google Kalender', after: 'Google Kalender + Outlook (Mikkel)' },
+        { name: 'Varighed og pause', st: K, value: 'Besøg: 45 min · 15 min kørsel imellem', area: 'Booking', before: '45 + 15 min', after: '60 + 30 min' },
+        { name: 'Hvornår må der bookes', st: K, value: 'Man–fre 08–15, aldrig samme dag, max 3 besøg pr. dag', area: 'Booking', before: 'Max 3 pr. dag', after: 'Max 4 pr. dag' }
+      ]},
+      { n: 5, title: 'Kampagner', sub: 'Når den kontakter kunder', tiles: [
+        { name: 'Regler', st: K, value: 'Kun kunder fra sidste 12 md. · du godkender liste og tekst · aldrig søndag', area: 'Kampagner', before: 'Aldrig søndag', after: 'Aldrig lørdag–søndag' },
+        { name: 'Afsender', st: K, value: 'SMS: NorgaardT · opkald fra 93 70 34 33', area: 'Kampagner', before: 'NorgaardT', after: 'Nørgaard' },
+        { name: 'Aktive kampagner', st: N, value: 'Ingen · «SMS til 84 kunder» venter på din godkendelse', area: 'Kampagner', before: 'Afventer', after: 'Godkendt – sendes tirsdag kl. 10' }
+      ]},
+      { n: 6, title: 'Systemer', sub: 'Hvad den er koblet på', tiles: [
+        { name: 'Google Kalender', st: K, value: 'Forbundet · sidst synkroniseret for 2 min siden', area: 'Integration', before: 'Forbundet', after: 'Forbindelsen fjernes – aftaler sendes kun på SMS/e-mail' },
+        { name: 'Dinero', st: V, value: 'Noteret i trin 2 · kobles på i opsætningsmødet', area: 'Integration', before: 'På vej', after: 'Forbundet – nye kunder oprettes som kontakter' },
+        { name: 'Andet system', st: N, value: 'Fortæl assistenten, hvad I bruger', area: 'Integration', before: 'Ingen', after: 'SimplyBook noteret' }
+      ]},
+      { n: 7, title: 'Team og konto', sub: 'Hvem og hvad I betaler', tiles: [
+        { name: 'Medarbejdere', st: K, value: 'Rene (ejer) · Mikkel (kan se opkald)', area: 'Team', before: '2 personer', after: '3 personer (+ Sofie, kontor)' },
+        { name: 'Abonnement', st: K, value: 'Pr. henvendelse · 149 kr. pr. godkendt · 9 denne måned', area: 'Abonnement', before: 'Pr. henvendelse', after: 'Fast pris 1.495 kr./md. fra 1. november' },
+        { name: 'Data og samtykke', st: K, value: 'Opkald gemmes 90 dage · kunden hører «samtalen optages»', area: 'Data', before: '90 dage', after: '30 dage' }
+      ]},
+      { n: 8, title: 'Teknik', sub: 'Kun hvis du ved, hvad du leder efter', tech: true, tiles: [
+        { name: 'API-nøgle', st: K, value: 'db_live_•••• 4f2a · oprettet 25. sep', area: 'Teknik', before: 'Nøgle …4f2a', after: 'Ny nøgle – den gamle slukkes om 24 t' },
+        { name: 'Webhooks', st: N, value: 'Ingen · send «ny aftale» og «ny besked» til din URL', area: 'Teknik', before: 'Ingen', after: 'POST til https://… ved ny aftale' },
+        { name: 'Log og eksport', st: K, value: 'Alle ændringer logges · eksport som CSV', area: 'Teknik', before: '—', after: 'Eksport sendt til rene@fyrster.dk' }
+      ]}
+    ];
+    const q = (s.q || '').toLowerCase().trim();
+    const style = (st) => st === K
+      ? { status: 'Klar', tagBg: '#FFFFFF', tagBorder: '1.5px solid #14213D', tagColor: '#1B6B3A', border: '2px solid #14213D', cta: 'Ændr' }
+      : st === V
+      ? { status: 'På vej', tagBg: '#FFCF3F', tagBorder: '1.5px solid #FFCF3F', tagColor: '#14213D', border: '2px solid #14213D', cta: 'Se status' }
+      : { status: 'Ikke sat op', tagBg: '#FFFFFF', tagBorder: '1.5px dashed #14213D', tagColor: '#5B6475', border: '2px dashed #14213D', cta: 'Sæt op' };
+    const chapters = data.map((ch) => {
+      const tiles = ch.tiles
+        .filter((t) => !q || (t.name + ' ' + t.value).toLowerCase().indexOf(q) >= 0)
+        .map((t) => Object.assign({}, t, style(t.st), {
+          change: () => {
+            this.say('user', 'Ændr: ' + t.name);
+            setTimeout(() => this.setState({
+              history: this.state.history.concat([{ from: 'bot', text: 'Her er et eksempel på en ændring af «' + t.name + '». Ret teksten, eller godkend:' }]),
+              proposal: { area: t.area, title: t.name, before: t.before, after: t.after }
+            }), 400);
+          }
+        }));
+      return { n: ch.n, title: ch.title, sub: ch.sub, tiles, numBg: ch.tech ? '#FFFFFF' : '#FFCF3F', show: tiles.length > 0 && (!ch.tech || s.tech) };
+    });
+    return {
+      q: s.q, editQ: (e) => this.setState({ q: e.target.value }), noop: (e) => { if (e && e.preventDefault) e.preventDefault(); },
+      toggleTech: (e) => this.setState({ tech: !!e.target.checked }),
+      chapters,
+      msgs: s.history.map(bubble),
+      hasProposal: !!s.proposal, proposal: s.proposal || { area: '', title: '', before: '', after: '' },
+      accept: () => { const p = s.proposal; this.setState({ proposal: null, changes: s.changes + 1 }); this.say('bot', 'Gjort: «' + p.title + '» er ændret. Sig «fortryd», hvis du fortryder.'); },
+      reject: () => { this.setState({ proposal: null }); this.say('bot', 'Okay – intet ændret.'); },
+      historyLine: s.changes === 0 ? 'ingen ændringer i dag' : s.changes + ' ændring' + (s.changes > 1 ? 'er' : '') + ' i dag, alle godkendt af dig'
+    };
+  }
+}
+</script>
+</body>
+</html>

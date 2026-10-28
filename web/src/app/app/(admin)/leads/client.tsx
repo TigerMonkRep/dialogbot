@@ -16,7 +16,7 @@ export function NewLeadButton({ wsId }: { wsId: string }) {
   });
   if (!open) return <Button icon="add" variant="tonal" onClick={() => setOpen(true)}>Ny henvendelse</Button>;
   return (
-    <form className="w-full md:w-96 bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); create.run(); }}>
+    <form className="w-full md:w-96 bg-surface-container-lowest rounded-2xl p-space-md border-2 border-ink flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); create.run(); }}>
       <label className="font-label-md text-label-md font-semibold" htmlFor="nl-name">Navn</label>
       <input id="nl-name" className={inputCls} value={name} onChange={(e) => setName(e.target.value)} required maxLength={200} />
       <label className="font-label-md text-label-md font-semibold" htmlFor="nl-need">Behov</label>
@@ -44,7 +44,7 @@ export function LeadEditor({ wsId, lead }: { wsId: string; lead: Lead }) {
     <div><label htmlFor={`l-${id}`} className="block font-label-md text-label-md font-semibold mb-1">{label}</label><input id={`l-${id}`} type={type} className={inputCls} value={form[id]} onChange={set(id)} /></div>
   );
   return (
-    <form className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
+    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
       <h2 className="font-headline-sm text-headline-sm text-primary">Kunde og behov</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">{field("contact_name", "Navn")}{field("contact_email", "E-mail", "email")}{field("contact_phone", "Telefon", "tel")}</div>
       <div><label htmlFor="l-need" className="block font-label-md text-label-md font-semibold mb-1">Behov</label><textarea id="l-need" rows={3} className={inputCls} value={form.need_summary} onChange={set("need_summary")} /></div>
@@ -72,7 +72,7 @@ export function BillingPanel({ wsId, lead, canApprove, agreement }: { wsId: stri
   });
   const [label, cls] = BILL[lead.billing_status];
   return (
-    <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+    <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
       <div className="flex items-center justify-between gap-space-sm"><h2 className="font-headline-sm text-headline-sm text-primary">Afregning</h2><span className={`px-2 py-0.5 rounded-full font-label-sm text-label-sm font-semibold ${cls}`}>{label}</span></div>
       {lead.fee_snapshot && <p className="font-body-md text-body-md">Pris for denne henvendelse: <strong>{kr(lead.fee_snapshot.net_minor)}</strong> ekskl. moms (model {lead.fee_snapshot.model}, aftale v{lead.fee_snapshot.agreement_version}).</p>}
       {lead.billing_status === "rejected" && <p className="font-body-sm text-body-sm text-on-surface-variant">Begrundelse: {lead.billing_reason}</p>}

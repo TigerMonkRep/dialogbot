@@ -10,7 +10,7 @@ const FILTERS: [string, string, string][] = [["", "Alle", ""], ["new", "Nye", "p
 
 export default async function LeadsPage({ searchParams }: { searchParams: Promise<{ f?: string }> }) {
   const ws = await requireWorkspace();
-  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Henvendelser kan ses af medarbejdere, administratorer og ejere.</p>;
+  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Henvendelser kan ses af medarbejdere, administratorer og ejere.</p>;
   const f = (await searchParams).f ?? "";
   const q = FILTERS.find(([k]) => k === f)?.[2] ?? "";
   const list = await backend<{ items: Lead[]; total: number }>(`/workspaces/${ws.id}/leads?limit=100${q ? `&${q}` : ""}`);
@@ -23,7 +23,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
             className={`px-3 py-1.5 rounded-full font-label-md text-label-md ${f === k ? "bg-primary text-on-primary" : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container"}`}>{label}</Link>
         ))}
       </div>
-      <section className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+      <section className="bg-surface-container-lowest rounded-2xl border-2 border-ink overflow-hidden">
         {list.items.length === 0 ? <p className="p-space-lg font-body-md text-body-md text-on-surface-variant">Ingen henvendelser{f ? " i dette filter" : " endnu"}. Kunder kan bede om at blive kontaktet via webchatten.</p> : (
           <ul aria-label="Henvendelser">
             {list.items.map((l) => (

@@ -10,7 +10,7 @@ type Calls = { items: { id: string; from_number: string | null; started_at: stri
  *  destination Dialogbot provisions; no provider accounts, ids, keys or webhooks are shown here. */
 export default async function TelephonyPage() {
   const ws = await requireWorkspace();
-  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Telefoni kan ses af medarbejdere, administratorer og ejere.</p>;
+  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Telefoni kan ses af medarbejdere, administratorer og ejere.</p>;
   const canManage = ws.role === "owner" || ws.role === "admin";
   const [t, nums, calls, me] = await Promise.all([
     backend<Telephony>(`/workspaces/${ws.id}/telephony`),
@@ -22,7 +22,7 @@ export default async function TelephonyPage() {
     <section className="flex flex-col gap-space-lg">
       <TelephonySetup wsId={ws.id} t={t} numbers={nums.items} canManage={canManage} />
       {me.is_platform_operator && <Link href="/app/operator/telephony" className="flex items-center gap-1 font-label-lg text-label-lg text-primary underline w-fit"><Icon name="admin_panel_settings" size={18} />Operatørvisning (kun Dialogbot)</Link>}
-      <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+      <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
         <h3 className="font-headline-sm text-headline-sm text-primary">Seneste opkald</h3>
         {calls.items.length === 0 ? <p className="font-body-sm text-body-sm text-on-surface-variant">Ingen opkald endnu.</p> : (
           <ul className="flex flex-col gap-space-xs">{calls.items.map((c) => (

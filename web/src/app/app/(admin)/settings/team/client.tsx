@@ -49,7 +49,7 @@ export function MemberRow({ wsId, m, myRole, isMe }: { wsId: string; m: { id: st
       </div>
       <div className="flex items-center gap-space-sm">
         {canManage
-          ? <select aria-label={`Rolle for ${m.display_name}`} className="px-2 py-1.5 rounded-lg bg-surface-container-lowest font-label-md text-label-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary" value={m.role} onChange={(e) => change(e.target.value)}>{Object.keys(RANK).filter((r) => RANK[r] <= RANK[myRole]).map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}</select>
+          ? <select aria-label={`Rolle for ${m.display_name}`} className="px-2 py-1.5 rounded-lg bg-surface-container-lowest font-label-md text-label-md border-2 border-ink focus:outline-none focus:ring-2 focus:ring-primary" value={m.role} onChange={(e) => change(e.target.value)}>{Object.keys(RANK).filter((r) => RANK[r] <= RANK[myRole]).map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}</select>
           : <span className="px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold">{ROLE_LABEL[m.role]}</span>}
         {(canManage || isMe) && <button onClick={remove} aria-label={isMe ? "Forlad arbejdsrummet" : `Fjern ${m.display_name}`} className="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error-container/40"><Icon name={isMe ? "logout" : "person_remove"} size={18} /></button>}
       </div>

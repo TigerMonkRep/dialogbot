@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Dialogbot – Byg din AI-receptionist i 3 trin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#FFFFFF;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+details summary{list-style:none;cursor:pointer}
+details summary::-webkit-details-marker{display:none}
+details[open] .chev{transform:rotate(180deg)}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#FFFFFF;font-family:Inter,system-ui,sans-serif;color:#14213D">
+
+<!-- NAV -->
+<header style="border-bottom:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1180px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;min-height:72px">
+    <a href="Indgang.dc.html" aria-label="Dialogbot forside" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#14213D">
+      <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:{{accent}};align-items:center;justify-content:center">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+      </span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.3px">Dialogbot</span>
+    </a>
+    <nav aria-label="Hovedmenu" style="display:flex;flex-wrap:wrap;gap:4px 24px;font-size:15px;font-weight:500;margin-left:auto">
+      <a href="#trin" style="color:#14213D;text-decoration:none;padding:10px 0">Sådan bygger du</a>
+      <a href="#klodser" style="color:#14213D;text-decoration:none;padding:10px 0">Klodserne</a>
+      <a href="#systemer" style="color:#14213D;text-decoration:none;padding:10px 0">Passer til dit system</a>
+      <a href="#pris" style="color:#14213D;text-decoration:none;padding:10px 0">Pris</a>
+      <a href="#demo" style="color:#14213D;text-decoration:none;padding:10px 0">Hør en demo</a>
+    </nav>
+    <nav aria-label="Vælg vej" style="display:inline-flex;padding:4px;border-radius:999px;border:2px solid #14213D;background:#FFFFFF">
+      <a href="Proev.dc.html" style="display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z"></path></svg>Prøv den
+      </a>
+      <a href="Main.dc.html" aria-current="page" style="display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;background:#14213D;color:#FFFFFF;font-weight:600;font-size:14px">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h10"></path></svg>Byggevejledning
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="top" style="background:#EEF4FB;border-bottom:2px solid #14213D">
+  <div style="max-width:1180px;margin:0 auto;padding:64px 24px 72px;display:flex;flex-wrap:wrap;gap:48px;align-items:center">
+    <div style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:24px">
+      <div style="display:inline-flex;align-items:center;gap:10px;align-self:flex-start;background:#FFFFFF;border:2px solid #14213D;border-radius:999px;padding:6px 14px 6px 6px;font-size:14px;font-weight:600">
+        <span style="display:inline-flex;width:28px;height:28px;border-radius:999px;background:{{highlight}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:15px">3</span>
+        <span>trin · ca. 30 minutter · ingen teknik</span>
+      </div>
+      <h1 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(40px,5.2vw,68px);line-height:1.02;letter-spacing:-1.5px">Byg din egen AI-receptionist.<br>Trin for trin.</h1>
+      <p style="margin:0;font-size:19px;line-height:1.55;max-width:520px;color:#3C4659">Dialogbot tager telefonen, svarer på webchat og booker aftaler for din virksomhed – på dansk, døgnet rundt. Du følger vejledningen, vi sætter klodserne sammen med dig.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px">
+        <a href="Proev.dc.html" style="display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 22px;border-radius:14px;background:{{accent}};color:#FFFFFF;text-decoration:none;font-weight:600;font-size:17px">Prøv den nu – den ringer til dig
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+        <a href="#demo" style="display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 22px;border-radius:14px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;text-decoration:none;font-weight:600;font-size:17px">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z"></path></svg>
+          Hør Dialogbot tage telefonen
+        </a>
+      </div>
+      <p style="margin:0;font-size:14px;color:#5B6475">Fra 1.495 kr./md. eller 149 kr. pr. godkendt henvendelse · ekskl. moms</p>
+    </div>
+
+    <!-- Hero illustration: a manual step card -->
+    <div style="flex:1 1 380px;min-width:0;display:flex;justify-content:center">
+      <div style="width:100%;max-width:460px;background:#FFFFFF;border:2px solid #14213D;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:20px;box-shadow:8px 8px 0 #14213D">
+        <div style="display:flex;align-items:center;gap:14px">
+          <span style="display:inline-flex;width:56px;height:56px;border-radius:14px;background:{{highlight}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:30px">1</span>
+          <div style="display:flex;flex-direction:column">
+            <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Trin 1 af 3</span>
+            <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">Fortæl os om din virksomhed</span>
+          </div>
+        </div>
+        <!-- parts box -->
+        <div style="border:1.5px solid #14213D;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Du skal bruge</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:#EEF4FB;font-size:14px;font-weight:500"><b style="font-family:Outfit,sans-serif;font-weight:800">1×</b> telefonnummer</span>
+            <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:#EEF4FB;font-size:14px;font-weight:500"><b style="font-family:Outfit,sans-serif;font-weight:800">1×</b> åbningstider</span>
+            <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;background:#EEF4FB;font-size:14px;font-weight:500"><b style="font-family:Outfit,sans-serif;font-weight:800">1×</b> hvad I laver</span>
+          </div>
+        </div>
+        <!-- build illustration -->
+        <div style="position:relative;height:200px;border-radius:14px;background:#EEF4FB;overflow:hidden">
+          <div style="position:absolute;left:36px;bottom:0;width:120px;height:170px;border:3px solid #14213D;border-bottom:0;border-radius:22px 22px 0 0;background:#FFFFFF"></div>
+          <div style="position:absolute;left:66px;bottom:146px;width:60px;height:6px;border-radius:3px;background:#14213D"></div>
+          <div style="position:absolute;left:56px;bottom:92px;width:80px;height:40px;border-radius:10px;background:{{accent}}"></div>
+          <div style="position:absolute;left:56px;bottom:44px;width:80px;height:40px;border-radius:10px;background:{{highlight}}"></div>
+          <div style="position:absolute;left:56px;bottom:-4px;width:80px;height:40px;border-radius:10px 10px 0 0;background:#14213D"></div>
+          <div style="position:absolute;left:200px;top:34px;display:flex;align-items:center;gap:6px">
+            <svg aria-hidden="true" width="64" height="28" viewBox="0 0 64 28" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M60 14H6M14 4 4 14l10 10"></path></svg>
+          </div>
+          <div style="position:absolute;left:276px;top:22px;width:120px;height:52px;border:3px solid #14213D;border-radius:14px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:700;font-size:15px">Man–fre 8–17</div>
+          <div style="position:absolute;left:296px;top:74px;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:12px solid #14213D"></div>
+          <div style="position:absolute;left:276px;top:104px;width:120px;height:52px;border:3px solid #14213D;border-radius:14px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:700;font-size:15px">+45 …</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section id="trin" style="background:#FFFFFF">
+  <div style="max-width:1180px;margin:0 auto;padding:80px 24px;display:flex;flex-direction:column;gap:40px">
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:640px">
+      <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Byggevejledning</span>
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(32px,3.6vw,46px);line-height:1.05;letter-spacing:-1px">Sådan bygger du den – i 3 trin</h2>
+      <p style="margin:0;font-size:17px;line-height:1.55;color:#3C4659">Ingen apps at installere, ingen kode. Hvert trin viser præcis, hvad du skal bruge, og hvad der sker.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+      <!-- Step 1 -->
+      <article style="border:2px solid #14213D;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px;background:#FFFFFF">
+        <div style="display:flex;align-items:center;gap:14px">
+          <span style="display:inline-flex;width:56px;height:56px;border-radius:14px;background:{{highlight}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:30px">1</span>
+          <h3 style="margin:0;font-family:Outfit,sans-serif;font-weight:700;font-size:22px;line-height:1.15">Fortæl os om din virksomhed</h3>
+        </div>
+        <div style="height:150px;border-radius:14px;background:#EEF4FB;position:relative;overflow:hidden">
+          <div style="position:absolute;left:24px;top:22px;width:150px;height:106px;border:3px solid #14213D;border-radius:14px;background:#FFFFFF;display:flex;flex-direction:column;gap:10px;padding:14px;box-sizing:border-box">
+            <div style="height:10px;border-radius:5px;background:#14213D;width:70%"></div>
+            <div style="height:10px;border-radius:5px;background:#D6DEEA;width:90%"></div>
+            <div style="height:10px;border-radius:5px;background:#D6DEEA;width:55%"></div>
+          </div>
+          <svg aria-hidden="true" style="position:absolute;left:190px;top:62px" width="52" height="24" viewBox="0 0 52 24" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h42M38 4l8 8-8 8"></path></svg>
+          <div style="position:absolute;right:24px;top:40px;width:70px;height:70px;border-radius:16px;background:{{accent}};display:flex;align-items:center;justify-content:center">
+            <svg aria-hidden="true" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+          </div>
+        </div>
+        <div style="border:1.5px solid #14213D;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Du skal bruge</span>
+          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:15px">
+            <li style="display:flex;gap:10px"><b style="font-family:Outfit,sans-serif;font-weight:800;min-width:28px">1×</b> dit telefonnummer</li>
+            <li style="display:flex;gap:10px"><b style="font-family:Outfit,sans-serif;font-weight:800;min-width:28px">1×</b> åbningstider</li>
+            <li style="display:flex;gap:10px"><b style="font-family:Outfit,sans-serif;font-weight:800;min-width:28px">1×</b> det, I oftest bliver spurgt om</li>
+          </ul>
+        </div>
+        <p style="margin:0;font-size:15px;line-height:1.5;color:#3C4659">Udfyld en kort formular – eller fortæl det til os i telefonen. Det tager 5 minutter.</p>
+      </article>
+
+      <!-- Step 2 -->
+      <article style="border:2px solid #14213D;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px;background:#FFFFFF">
+        <div style="display:flex;align-items:center;gap:14px">
+          <span style="display:inline-flex;width:56px;height:56px;border-radius:14px;background:{{highlight}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:30px">2</span>
+          <h3 style="margin:0;font-family:Outfit,sans-serif;font-weight:700;font-size:22px;line-height:1.15">Vi bygger og tester sammen</h3>
+        </div>
+        <div style="height:150px;border-radius:14px;background:#EEF4FB;position:relative;overflow:hidden">
+          <div style="position:absolute;left:34px;top:50px;width:90px;height:50px;border-radius:12px;background:{{accent}}"></div>
+          <div style="position:absolute;left:124px;top:50px;width:16px;height:50px;background:{{accent}};border-radius:0 8px 8px 0"></div>
+          <svg aria-hidden="true" style="position:absolute;left:150px;top:62px" width="40" height="26" viewBox="0 0 40 26" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M36 13H4M12 5 4 13l8 8"></path></svg>
+          <div style="position:absolute;left:200px;top:50px;width:90px;height:50px;border-radius:12px;background:{{highlight}}"></div>
+          <div style="position:absolute;left:200px;top:62px;width:14px;height:26px;background:#EEF4FB;border-radius:0 6px 6px 0"></div>
+          <div style="position:absolute;right:20px;bottom:14px;padding:6px 10px;border-radius:999px;background:#FFFFFF;border:2px solid #14213D;font-family:Outfit,sans-serif;font-weight:700;font-size:13px">ca. 30 min</div>
+        </div>
+        <div style="border:1.5px solid #14213D;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Du skal bruge</span>
+          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:15px">
+            <li style="display:flex;gap:10px"><b style="font-family:Outfit,sans-serif;font-weight:800;min-width:28px">1×</b> videomøde med os</li>
+            <li style="display:flex;gap:10px"><b style="font-family:Outfit,sans-serif;font-weight:800;min-width:28px">1×</b> prøveopkald til din nye receptionist</li>
+          </ul>
+        </div>
+        <p style="margin:0;font-size:15px;line-height:1.5;color:#3C4659">Vi sætter stemme, svar og booking op, mens du ser på. Du ringer selv og hører, at det virker.</p>
+      </article>
+
+      <!-- Step 3 -->
+      <article style="border:2px solid #14213D;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:18px;background:#FFFFFF">
+        <div style="display:flex;align-items:center;gap:14px">
+          <span style="display:inline-flex;width:56px;height:56px;border-radius:14px;background:{{highlight}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:30px">3</span>
+          <h3 style="margin:0;font-family:Outfit,sans-serif;font-weight:700;font-size:22px;line-height:1.15">Tænd – og gå tilbage til arbejdet</h3>
+        </div>
+        <div style="height:150px;border-radius:14px;background:#EEF4FB;position:relative;overflow:hidden">
+          <div style="position:absolute;left:30px;top:30px;width:120px;height:56px;border-radius:999px;background:{{accent}};display:flex;align-items:center;padding:6px;box-sizing:border-box;justify-content:flex-end">
+            <div style="width:44px;height:44px;border-radius:999px;background:#FFFFFF"></div>
+          </div>
+          <div style="position:absolute;left:36px;top:96px;font-family:Outfit,sans-serif;font-weight:700;font-size:14px">Dialogbot: TIL</div>
+          <div style="position:absolute;right:28px;top:30px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:#FFFFFF;border:2px solid #14213D;font-size:13px;font-weight:600">
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14213D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>
+              Opkald besvaret
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:#FFFFFF;border:2px solid #14213D;font-size:13px;font-weight:600">
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14213D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+              Aftale booket
+            </div>
+          </div>
+        </div>
+        <div style="border:1.5px solid #14213D;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Du skal bruge</span>
+          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:15px">
+            <li style="display:flex;gap:10px"><b style="font-family:Outfit,sans-serif;font-weight:800;min-width:28px">1×</b> viderestilling af dit nummer (vi viser hvordan)</li>
+          </ul>
+        </div>
+        <p style="margin:0;font-size:15px;line-height:1.5;color:#3C4659">Fra nu af får du en SMS eller e-mail, hver gang der er en aftale eller en besked til dig.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section style="background:#EEF4FB;border-top:2px solid #14213D;border-bottom:2px solid #14213D">
+  <div style="max-width:1180px;margin:0 auto;padding:72px 24px;display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px 40px">
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:560px;flex:1 1 360px">
+        <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Færdigt resultat</span>
+        <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(32px,3.6vw,46px);line-height:1.05;letter-spacing:-1px">Sådan ser et opkald ud, når den er bygget</h2>
+      </div>
+      <p style="margin:0;font-size:16px;line-height:1.55;color:#3C4659;flex:1 1 320px;max-width:440px">Hvert opkald følger den samme simple linje. Du ser alle henvendelser i ét overblik og kan altid rette, hvad Dialogbot må sige.</p>
+    </div>
+    <ol style="margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:16px;align-items:stretch">
+      <li style="flex:1 1 220px;display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:16px;background:#FFFFFF;border:2px solid #14213D">
+        <span style="display:inline-flex;width:40px;height:40px;border-radius:10px;background:{{highlight}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">A</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:18px">Kunden ringer</span>
+        <span style="font-size:14px;line-height:1.5;color:#3C4659">Også uden for åbningstid, når du er på en opgave eller har kunder i butikken.</span>
+      </li>
+      <li style="flex:1 1 220px;display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:16px;background:#FFFFFF;border:2px solid #14213D">
+        <span style="display:inline-flex;width:40px;height:40px;border-radius:10px;background:{{highlight}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">B</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:18px">Dialogbot svarer</span>
+        <span style="font-size:14px;line-height:1.5;color:#3C4659">På dansk, med jeres navn, priser og åbningstider – og uden at lade kunden vente.</span>
+      </li>
+      <li style="flex:1 1 220px;display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:16px;background:#FFFFFF;border:2px solid #14213D">
+        <span style="display:inline-flex;width:40px;height:40px;border-radius:10px;background:{{highlight}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">C</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:18px">Booker eller tager besked</span>
+        <span style="font-size:14px;line-height:1.5;color:#3C4659">Ledige tider i din kalender, eller en besked med navn, nummer og ærinde.</span>
+      </li>
+      <li style="flex:1 1 220px;display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:16px;background:#14213D;color:#FFFFFF;border:2px solid #14213D">
+        <span style="display:inline-flex;width:40px;height:40px;border-radius:10px;background:{{highlight}};color:#14213D;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">D</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:18px">Du får besked</span>
+        <span style="font-size:14px;line-height:1.5;color:#D6DEEA">SMS eller e-mail med det samme. Du ringer tilbage, når det passer dig.</span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- PARTS -->
+<section id="klodser" style="background:#FFFFFF">
+  <div style="max-width:1180px;margin:0 auto;padding:80px 24px;display:flex;flex-direction:column;gap:40px">
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:640px">
+      <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Klodserne i sættet</span>
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(32px,3.6vw,46px);line-height:1.05;letter-spacing:-1px">Vælg de klodser, du har brug for</h2>
+      <p style="margin:0;font-size:17px;line-height:1.55;color:#3C4659">Start med telefonen. Klik flere på, efterhånden som du får brug for dem – de passer sammen.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px">
+
+      <div style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:16px;border:2px solid #14213D">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="display:inline-flex;width:48px;height:48px;border-radius:12px;background:{{accent}};align-items:center;justify-content:center">
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>
+          </span>
+          <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:{{highlight}}">Start her</span>
+        </div>
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">Telefon</span>
+        <span style="font-size:15px;line-height:1.5;color:#3C4659">Besvarer alle opkald på dansk med jeres navn. Stiller videre til dig, når det haster.</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:16px;border:2px solid #14213D">
+        <span style="display:inline-flex;width:48px;height:48px;border-radius:12px;background:{{accent}};align-items:center;justify-content:center">
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+        </span>
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">Webchat</span>
+        <span style="font-size:15px;line-height:1.5;color:#3C4659">En lille chat på din hjemmeside, der svarer med det samme og samler kontaktoplysninger.</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:16px;border:2px solid #14213D">
+        <span style="display:inline-flex;width:48px;height:48px;border-radius:12px;background:{{accent}};align-items:center;justify-content:center">
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+        </span>
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">Booking</span>
+        <span style="font-size:15px;line-height:1.5;color:#3C4659">Finder ledige tider i din kalender og bekræfter aftalen til kunden på SMS.</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:16px;border:2px solid #14213D">
+        <span style="display:inline-flex;width:48px;height:48px;border-radius:12px;background:{{accent}};align-items:center;justify-content:center">
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H8l-4 4z"></path><path d="M8 9h8M8 12h5"></path></svg>
+        </span>
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">SMS-svar</span>
+        <span style="font-size:15px;line-height:1.5;color:#3C4659">Ubesvarede opkald får en SMS med det samme, så kunden ved, I vender tilbage.</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:16px;border:2px solid #14213D">
+        <span style="display:inline-flex;width:48px;height:48px;border-radius:12px;background:{{accent}};align-items:center;justify-content:center">
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-7-7 18-2-8z"></path></svg>
+        </span>
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">Kampagner</span>
+        <span style="font-size:15px;line-height:1.5;color:#3C4659">Ring eller skriv til dine eksisterende kunder – fx om tid til service eller nyt tilbud. Du godkender altid først.</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:16px;border:2px solid #14213D">
+        <span style="display:inline-flex;width:48px;height:48px;border-radius:12px;background:{{accent}};align-items:center;justify-content:center">
+          <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>
+        </span>
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">Overblik</span>
+        <span style="font-size:15px;line-height:1.5;color:#3C4659">Alle opkald, chats og aftaler ét sted. Se hvad der blev sagt, og hvad der mangler svar.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section id="systemer" style="background:#FFFFFF;border-top:2px solid #14213D">
+  <div style="max-width:1180px;margin:0 auto;padding:72px 24px;display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start">
+    <div style="flex:1 1 320px;display:flex;flex-direction:column;gap:12px;max-width:460px">
+      <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Passer til dit system</span>
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(32px,3.6vw,46px);line-height:1.05;letter-spacing:-1px">Klodserne passer på det, I allerede bruger</h2>
+      <p style="margin:0;font-size:17px;line-height:1.55;color:#3C4659">Kalender, CRM eller bookingsystem – Dialogbot skriver aftaler og beskeder derhen, hvor I plejer at kigge. Bruger I noget, vi ikke har koblet på endnu, siger vi det ærligt og bygger det ind under opsætningen.</p>
+    </div>
+    <div style="flex:1 1 460px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid #14213D;background:#FFFFFF">
+          <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:{{accent}};align-items:center;justify-content:center;flex:none"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span>
+          <div style="display:flex;flex-direction:column"><span style="font-weight:600;font-size:15px">Google Kalender</span><span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#1B6B3A">Klar</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid #14213D;background:#FFFFFF">
+          <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:{{accent}};align-items:center;justify-content:center;flex:none"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span>
+          <div style="display:flex;flex-direction:column"><span style="font-weight:600;font-size:15px">Microsoft 365 / Outlook</span><span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#1B6B3A">Klar</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid #14213D;background:#FFFFFF">
+          <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#14213D;align-items:center;justify-content:center;flex:none"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg></span>
+          <div style="display:flex;flex-direction:column"><span style="font-weight:600;font-size:15px">Dit CRM</span><span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475">Kobles på i opsætningen</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid #14213D;background:#FFFFFF">
+          <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#14213D;align-items:center;justify-content:center;flex:none"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>
+          <div style="display:flex;flex-direction:column"><span style="font-weight:600;font-size:15px">Dit bookingsystem</span><span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475">Kobles på i opsætningen</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid #14213D;background:#FFFFFF">
+          <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#14213D;align-items:center;justify-content:center;flex:none"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H8l-4 4z"></path><path d="M8 9h8M8 12h5"></path></svg></span>
+          <div style="display:flex;flex-direction:column"><span style="font-weight:600;font-size:15px">SMS og e-mail</span><span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#1B6B3A">Klar · virker altid</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px dashed #14213D;background:#EEF4FB">
+          <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#FFFFFF;border:2px solid #14213D;box-sizing:border-box;align-items:center;justify-content:center;flex:none"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14213D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg></span>
+          <div style="display:flex;flex-direction:column"><span style="font-weight:600;font-size:15px">Noget andet?</span><span style="font-size:12px;color:#5B6475">Spørg chatten – den noterer det</span></div>
+        </div>
+      </div>
+      <p style="margin:0;font-size:13px;line-height:1.5;color:#5B6475">«Klar» betyder, at det virker i dag. Alt andet kobler vi på sammen med dig – og indtil det virker, får du altid aftaler og beskeder på SMS og e-mail.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pris" style="background:#EEF4FB;border-top:2px solid #14213D;border-bottom:2px solid #14213D">
+  <div style="max-width:1180px;margin:0 auto;padding:80px 24px;display:flex;flex-direction:column;gap:40px">
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:640px">
+      <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Pris</span>
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(32px,3.6vw,46px);line-height:1.05;letter-spacing:-1px">Vælg dit sæt. To priser, ingen overraskelser.</h2>
+      <p style="margin:0;font-size:17px;line-height:1.55;color:#3C4659">Alle priser er ekskl. moms. Opsætningen gør vi sammen på ca. 30 minutter – den koster 0 kr.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:860px">
+      <article style="display:flex;flex-direction:column;gap:20px;padding:28px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D;box-shadow:8px 8px 0 #14213D">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="display:inline-flex;width:44px;height:44px;border-radius:12px;background:{{highlight}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:22px">A</span>
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">Fast pris</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:52px;letter-spacing:-1.5px;line-height:1">1.495</span>
+          <span style="font-size:18px;font-weight:600;color:#3C4659">kr./md.</span>
+        </div>
+        <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px">
+          <li style="display:flex;gap:10px;align-items:flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2456F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L19 7"></path></svg>Ubegrænset antal opkald og chats</li>
+          <li style="display:flex;gap:10px;align-items:flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2456F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L19 7"></path></svg>Alle klodser inkluderet</li>
+          <li style="display:flex;gap:10px;align-items:flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2456F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L19 7"></path></svg>Opsigelse måned til måned</li>
+        </ul>
+        <a href="#kontakt" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;border-radius:14px;background:{{accent}};color:#FFFFFF;text-decoration:none;font-weight:600;font-size:16px">Vælg fast pris</a>
+        <span style="font-size:13px;color:#5B6475">Bedst, hvis I får mere end ca. 10 henvendelser om måneden.</span>
+      </article>
+
+      <article style="display:flex;flex-direction:column;gap:20px;padding:28px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="display:inline-flex;width:44px;height:44px;border-radius:12px;background:{{highlight}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:22px">B</span>
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">Pr. henvendelse</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:52px;letter-spacing:-1.5px;line-height:1">149</span>
+          <span style="font-size:18px;font-weight:600;color:#3C4659">kr. pr. godkendt henvendelse</span>
+        </div>
+        <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px">
+          <li style="display:flex;gap:10px;align-items:flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2456F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L19 7"></path></svg>Ingen fast månedspris</li>
+          <li style="display:flex;gap:10px;align-items:flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2456F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L19 7"></path></svg>Du godkender hver henvendelse, før den tæller</li>
+          <li style="display:flex;gap:10px;align-items:flex-start"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2456F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12l5 5L19 7"></path></svg>Skift til fast pris når som helst</li>
+        </ul>
+        <a href="#kontakt" style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;border-radius:14px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;text-decoration:none;font-weight:600;font-size:16px">Vælg pr. henvendelse</a>
+        <span style="font-size:13px;color:#5B6475">Bedst, hvis I vil prøve det af uden fast udgift.</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo" style="background:#FFFFFF">
+  <div style="max-width:1180px;margin:0 auto;padding:80px 24px;display:flex;flex-wrap:wrap;gap:48px;align-items:center">
+    <div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Demo</span>
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(32px,3.6vw,46px);line-height:1.05;letter-spacing:-1px">Hør Dialogbot tage telefonen</h2>
+      <p style="margin:0;font-size:17px;line-height:1.55;color:#3C4659">Et rigtigt opkald til en tømrer. 48 sekunder. Så ved du, hvordan dine kunder bliver mødt.</p>
+      <button type="button" style="display:inline-flex;align-items:center;gap:12px;align-self:flex-start;min-height:56px;padding:0 24px;border-radius:14px;background:{{accent}};color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:17px;cursor:pointer">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z"></path></svg>
+        Afspil demo (0:48)
+      </button>
+    </div>
+    <div style="flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:12px;padding:24px;border-radius:20px;background:#EEF4FB;border:2px solid #14213D">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;font-weight:600;color:#5B6475;letter-spacing:1px;text-transform:uppercase">
+        <span>Opkald · Tømrerfirma</span><span>0:48</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-end">
+        <span style="flex:none;width:32px;height:32px;border-radius:999px;background:{{accent}};display:inline-flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:13px;color:#FFFFFF">D</span>
+        <p style="margin:0;padding:12px 16px;border-radius:16px 16px 16px 4px;background:#FFFFFF;border:2px solid #14213D;font-size:15px;line-height:1.5;max-width:420px">Du har ringet til Nørgaard Tømrer, det er Dialogbot. Hvad kan jeg hjælpe med?</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-end;justify-content:flex-end">
+        <p style="margin:0;padding:12px 16px;border-radius:16px 16px 4px 16px;background:#14213D;color:#FFFFFF;font-size:15px;line-height:1.5;max-width:420px">Hej, jeg skal have skiftet et vindue. Kan I komme og kigge i næste uge?</p>
+        <span style="flex:none;width:32px;height:32px;border-radius:999px;background:{{highlight}};display:inline-flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:13px">K</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-end">
+        <span style="flex:none;width:32px;height:32px;border-radius:999px;background:{{accent}};display:inline-flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:13px;color:#FFFFFF">D</span>
+        <p style="margin:0;padding:12px 16px;border-radius:16px 16px 16px 4px;background:#FFFFFF;border:2px solid #14213D;font-size:15px;line-height:1.5;max-width:420px">Det kan vi godt. Der er ledigt tirsdag kl. 9 eller torsdag kl. 14. Hvad passer bedst?</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:6px;padding:10px 12px;border-radius:10px;background:#FFFFFF;border:1.5px solid #14213D;font-size:13px;font-weight:600">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2456F6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L19 7"></path></svg>
+        Aftale booket: tirsdag kl. 9 · SMS sendt til dig og kunden
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section style="background:#FFFFFF;border-top:2px solid #14213D">
+  <div style="max-width:1180px;margin:0 auto;padding:72px 24px;display:flex;flex-wrap:wrap;gap:40px">
+    <div style="flex:1 1 300px;display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Spørgsmål</span>
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(28px,3vw,38px);line-height:1.1;letter-spacing:-0.8px">Det, de fleste spørger om først</h2>
+    </div>
+    <div style="flex:2 1 460px;display:flex;flex-direction:column;border-top:2px solid #14213D">
+      <details style="border-bottom:2px solid #14213D">
+        <summary style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0;font-family:Outfit,sans-serif;font-weight:700;font-size:19px;min-height:44px">Lyder det som en robot?
+          <svg class="chev" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14213D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transition:transform .2s"><path d="M6 9l6 6 6-6"></path></svg>
+        </summary>
+        <p style="margin:0 0 20px;font-size:16px;line-height:1.55;color:#3C4659;max-width:620px">Nej. Dialogbot taler naturligt dansk og præsenterer sig altid som en digital receptionist, så kunden ved, hvem de taler med. Hør demoen ovenfor.</p>
+      </details>
+      <details style="border-bottom:2px solid #14213D">
+        <summary style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0;font-family:Outfit,sans-serif;font-weight:700;font-size:19px;min-height:44px">Skal jeg skifte telefonnummer?
+          <svg class="chev" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14213D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transition:transform .2s"><path d="M6 9l6 6 6-6"></path></svg>
+        </summary>
+        <p style="margin:0 0 20px;font-size:16px;line-height:1.55;color:#3C4659;max-width:620px">Nej. Du beholder dit nummer og viderestiller det – enten altid, eller kun når du ikke tager den. Vi viser dig hvordan i trin 3.</p>
+      </details>
+      <details style="border-bottom:2px solid #14213D">
+        <summary style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0;font-family:Outfit,sans-serif;font-weight:700;font-size:19px;min-height:44px">Hvad hvis den ikke kan svare?
+          <svg class="chev" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14213D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transition:transform .2s"><path d="M6 9l6 6 6-6"></path></svg>
+        </summary>
+        <p style="margin:0 0 20px;font-size:16px;line-height:1.55;color:#3C4659;max-width:620px">Så tager den en besked med navn, nummer og ærinde og sender den til dig med det samme. Den gætter aldrig på priser eller aftaler, I ikke har givet den.</p>
+      </details>
+      <details style="border-bottom:2px solid #14213D">
+        <summary style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0;font-family:Outfit,sans-serif;font-weight:700;font-size:19px;min-height:44px">Er jeg bundet?
+          <svg class="chev" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14213D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transition:transform .2s"><path d="M6 9l6 6 6-6"></path></svg>
+        </summary>
+        <p style="margin:0 0 20px;font-size:16px;line-height:1.55;color:#3C4659;max-width:620px">Nej. Fast pris kan opsiges måned til måned, og pr. henvendelse har ingen fast udgift.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="kontakt" style="background:#14213D;color:#FFFFFF">
+  <div style="max-width:1180px;margin:0 auto;padding:80px 24px;display:flex;flex-wrap:wrap;gap:40px;align-items:center;justify-content:space-between">
+    <div style="flex:1 1 420px;display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(32px,4vw,52px);line-height:1.03;letter-spacing:-1.2px">Klar til trin 1?</h2>
+      <p style="margin:0;font-size:18px;line-height:1.55;color:#D6DEEA;max-width:520px">Ring til os, så bygger vi den sammen. Eller skriv, så ringer vi tilbage inden for åbningstiden.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px">
+      <a href="tel:+4593703433" style="display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 24px;border-radius:14px;background:{{highlight}};color:#14213D;text-decoration:none;font-weight:700;font-size:18px;font-family:Outfit,sans-serif">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>
+        93 70 34 33
+      </a>
+      <a href="mailto:info@dialogbot.dk" style="display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 24px;border-radius:14px;background:transparent;border:2px solid #FFFFFF;color:#FFFFFF;text-decoration:none;font-weight:600;font-size:17px">Skriv til os</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:#FFFFFF;border-top:2px solid #14213D">
+  <div style="max-width:1180px;margin:0 auto;padding:32px 24px;display:flex;flex-wrap:wrap;gap:16px 40px;align-items:center;justify-content:space-between;font-size:14px;color:#5B6475">
+    <div style="display:flex;align-items:center;gap:10px;color:#14213D">
+      <span style="display:inline-flex;width:28px;height:28px;border-radius:8px;background:{{accent}};align-items:center;justify-content:center">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+      </span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:18px">Dialogbot</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px 24px">
+      <span>Aarhus · Danmark</span>
+      <span>Man–fre 08–17</span>
+      <a href="mailto:info@dialogbot.dk" style="color:#14213D;text-decoration:none">info@dialogbot.dk</a>
+      <a href="tel:+4593703433" style="color:#14213D;text-decoration:none">+45 93 70 34 33</a>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px 24px">
+      <a href="#" style="color:#14213D;text-decoration:none">Privatliv</a>
+      <a href="#" style="color:#14213D;text-decoration:none">Handelsbetingelser</a>
+      <span>CVR [CVR-NR]</span>
+    </div>
+  </div>
+</footer>
+
+<!-- CHAT WIDGET -->
+<div style="position:fixed;right:24px;bottom:24px;z-index:50;display:flex;flex-direction:column;align-items:flex-end;gap:12px;max-width:calc(100vw - 48px)">
+  <sc-if value="{{chatOpen}}" hint-placeholder-val="{{true}}">
+    <section aria-label="Chat med Dialogbot" style="width:380px;max-width:100%;background:#FFFFFF;border:2px solid #14213D;border-radius:20px;box-shadow:8px 8px 0 #14213D;display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:2px solid #14213D">
+        <span style="display:inline-flex;width:34px;height:34px;border-radius:10px;background:{{accent}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;color:#FFFFFF">D</span>
+        <div style="display:flex;flex-direction:column">
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:15px">Dialogbot</span>
+          <span style="font-size:12px;color:#5B6475;display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:999px;background:#1B9E5A"></span>Svarer med det samme</span>
+        </div>
+        <button type="button" onClick="{{toggleChat}}" aria-label="Luk chatten" style="margin-left:auto;width:44px;height:44px;border-radius:10px;background:#FFFFFF;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#14213D">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+        </button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:14px">
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <span style="flex:none;width:28px;height:28px;border-radius:999px;background:{{accent}};display:inline-flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:12px;color:#FFFFFF">D</span>
+          <p style="margin:0;padding:10px 14px;border-radius:14px 14px 14px 4px;background:#FFFFFF;border:2px solid #14213D;font-size:14px;line-height:1.5">Hej! Jeg er den receptionist, du læser om. Vil du høre, hvordan jeg lyder, når jeg tager telefonen for <b>din</b> virksomhed? Jeg kan ringe til dig om 10 sekunder.</p>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;padding:0 14px 14px">
+        <a href="Proev.dc.html" style="display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 16px;border-radius:12px;background:{{accent}};color:#FFFFFF;text-decoration:none;font-weight:600;font-size:15px">Ja, ring til mig</a>
+        <div style="display:flex;gap:8px">
+          <a href="Proev.dc.html" style="flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 12px;border-radius:999px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;text-decoration:none;font-weight:600;font-size:14px">Hvad kan du?</a>
+          <a href="#pris" style="flex:1;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 12px;border-radius:999px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;text-decoration:none;font-weight:600;font-size:14px">Hvad koster det?</a>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+  <button type="button" onClick="{{toggleChat}}" aria-label="{{chatButtonLabel}}" style="display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 20px 0 16px;border-radius:999px;background:#14213D;color:#FFFFFF;border:2px solid #14213D;box-shadow:4px 4px 0 {{highlight}};font-family:Outfit,sans-serif;font-weight:700;font-size:16px;cursor:pointer">
+    <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+    {{chatButtonText}}
+  </button>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2456F6","options":["#2456F6","#0E7C86","#D9480F","#14213D"],"section":"Farver"},"highlight":{"editor":"color","default":"#FFCF3F","options":["#FFCF3F","#FFB1C8","#B8F2C3","#C8DCFF"],"section":"Farver"},"$preview":{"width":1366,"height":5000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { chatOpen: true };
+  }
+  renderVals() {
+    const open = this.state.chatOpen;
+    return {
+      accent: this.props.accent ?? '#2456F6',
+      highlight: this.props.highlight ?? '#FFCF3F',
+      chatOpen: open,
+      toggleChat: () => this.setState({ chatOpen: !open }),
+      chatButtonText: open ? 'Luk' : 'Snak med Dialogbot',
+      chatButtonLabel: open ? 'Luk chatten' : 'Åbn chatten'
+    };
+  }
+}
+</script>
+</body>
+</html>

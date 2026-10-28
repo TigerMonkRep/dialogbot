@@ -35,7 +35,7 @@ const MODE = { busy_or_no_answer: "Når vi ikke tager den, eller linjen er optag
 
 function Step({ n, title, state, children }: { n: number; title: string; state: "done" | "current" | "later"; children: React.ReactNode }) {
   return (
-    <section className={`bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm ${state === "current" ? "ring-2 ring-primary" : ""}`}>
+    <section className={`bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm ${state === "current" ? "ring-2 ring-accent" : ""}`}>
       <div className="flex items-center gap-space-sm">
         <span className={`w-8 h-8 shrink-0 rounded-full grid place-items-center font-label-lg text-label-lg ${state === "done" ? "bg-secondary-container text-on-secondary-container" : state === "current" ? "bg-primary text-on-primary" : "bg-surface-container-high text-on-surface-variant"}`}>
           {state === "done" ? <Icon name="check" size={18} /> : n}
@@ -271,9 +271,9 @@ export function TelephonySetup({ wsId, t, numbers, canManage }: { wsId: string; 
   const dest = numbers.find((n) => n.e164 === t.destination?.e164) ?? null;
   return (
     <div className="flex flex-col gap-space-md">
-      <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-wrap items-start justify-between gap-space-md">
+      <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-wrap items-start justify-between gap-space-md">
         <div className="flex flex-col gap-1 max-w-2xl">
-          <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Indstillinger</span>
+          <span className="eyebrow">Indstillinger</span>
           <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Telefoni</h2>
           <p className="font-body-md text-body-md"><strong>Næste skridt:</strong> {t.status.next_step}</p>
           <p className="font-body-sm text-body-sm text-on-surface-variant">Dialogbot står for telefonforbindelsen. I skal ikke oprette konti hos teleleverandører eller indtaste tekniske nøgler. Opkald lander i <Link href="/app/inbox" className="text-primary underline">indbakken</Link>.</p>

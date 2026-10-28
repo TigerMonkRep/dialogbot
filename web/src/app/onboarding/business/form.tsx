@@ -144,7 +144,7 @@ export function Categories({ wsId, categories, suggested, canEdit }: { wsId: str
       <ul className="flex flex-wrap gap-2">
         {categories.length === 0 && <li className="font-body-sm text-body-sm text-on-surface-variant">Ingen kategorier endnu – vælg mindst én.</li>}
         {categories.map((c) => {
-          const cls = c.is_primary ? "bg-primary text-on-primary shadow-sm" : c.is_custom ? "bg-secondary-container text-on-secondary-container font-semibold" : "bg-surface-container text-primary";
+          const cls = c.is_primary ? "bg-primary text-on-primary" : c.is_custom ? "bg-secondary-container text-on-secondary-container font-semibold" : "bg-surface-container text-primary";
           return (
             <li key={c.id} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-label-md text-label-md ${cls}`}>
               <Icon name={c.is_primary ? "star" : c.is_custom ? "handyman" : "layers"} size={16} className={c.is_primary ? "text-secondary-fixed" : "text-secondary"} />

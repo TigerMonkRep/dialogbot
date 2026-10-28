@@ -4,7 +4,7 @@ import { PREVIEW_COOKIE, cookieValid, gateEnabled } from "@/lib/preview-gate";
 import { safeNext } from "@/lib/safe-next";
 
 // Public pages hidden behind the temporary preview page while PREVIEW_GATE=on.
-const GATED = new Set(["/", "/signup"]);
+const GATED = new Set(["/", "/proev", "/byggevejledning", "/signup"]);
 
 /** Optimistic auth gate. Real authorisation happens in the backend on every request. */
 export async function proxy(req: NextRequest) {

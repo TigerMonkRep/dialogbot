@@ -16,13 +16,13 @@ export function ModeToggle({ wsId, mode, goals, canEdit }: { wsId: string; mode:
       <Icon name={icon} size={16} /><span>{label}</span>
     </button>
   );
-  return <div className="inline-flex p-1 rounded-xl bg-surface-container-lowest shadow-sm" role="group" aria-label="Vejledningstilstand">{btn("guided", "navigation", "Guide mig trin for trin")}{btn("self_managed", "tune", "Jeg vil selv sætte op")}</div>;
+  return <div className="inline-flex p-1 rounded-2xl bg-surface-container-lowest border-2 border-ink" role="group" aria-label="Vejledningstilstand">{btn("guided", "navigation", "Guide mig trin for trin")}{btn("self_managed", "tune", "Jeg vil selv sætte op")}</div>;
 }
 
 export function WhyBlock({ task }: { task: Task }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="p-space-md rounded-lg bg-surface-container-lowest/10 backdrop-blur-sm text-on-primary space-y-2">
+    <div className="p-space-md rounded-lg bg-paper/10 border-[1.5px] border-paper/40 text-paper space-y-2">
       <button onClick={() => setOpen(!open)} aria-expanded={open} className="flex items-center justify-between w-full font-label-md text-label-md text-secondary-fixed hover:text-white transition-colors">
         <span className="flex items-center gap-1.5"><Icon name="lightbulb" size={18} />Hvorfor dette trin er forudsætning?</span>
         <Icon name="expand_more" size={18} className={`transition-transform ${open ? "rotate-180" : ""}`} />
@@ -91,7 +91,7 @@ export function RunChecks({ wsId, compact = false }: { wsId: string; compact?: b
   const [msg, setMsg] = useState<string | null>(null);
   return (
     <div className="flex flex-col items-end gap-1 flex-shrink-0">
-      <button disabled={pending} className={`rounded-lg bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md font-bold hover:brightness-105 transition-all shadow-sm flex items-center gap-1 disabled:opacity-60 ${compact ? "px-3 h-9" : "px-3 py-1.5"}`}
+      <button disabled={pending} className={`rounded-lg bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md font-bold hover:brightness-105 transition-all flex items-center gap-1 disabled:opacity-60 ${compact ? "px-3 h-9" : "px-3 py-1.5"}`}
         onClick={async () => {
           setPending(true);
           try { const r = await api<{ results: { status: string }[]; skipped: unknown[] }>(`/workspaces/${wsId}/setup/checks/run-all`, { method: "POST" }); setMsg(`${r.results.filter((x) => x.status === "passed").length}/${r.results.length} bestået`); router.refresh(); }
@@ -130,11 +130,11 @@ export function HelpSheet({ next }: { next: { label: string; why: string; href: 
   );
   return (
     <>
-      <button onClick={() => setOpen(true)} aria-haspopup="dialog" className="w-full h-10 rounded-lg bg-secondary-container text-on-secondary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] transition-transform">
+      <button onClick={() => setOpen(true)} aria-haspopup="dialog" className="w-full h-10 rounded-lg bg-secondary-container text-on-secondary-container font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
         <Icon name="lightbulb" size={18} /><span>Åbn Hjælp mig videre</span>
       </button>
       {open && (
-        <div className="fixed inset-0 z-[60] bg-inverse-surface/40 backdrop-blur-sm flex flex-col justify-end" onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
+        <div className="fixed inset-0 z-[60] bg-ink/50 flex flex-col justify-end" onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
           <div role="dialog" aria-modal="true" aria-labelledby="g04-title" className="w-full bg-surface-container-lowest rounded-t-2xl p-margin pb-safe flex flex-col gap-space-md shadow-2xl text-on-surface">
             <div className="w-12 h-1 bg-outline-variant rounded-full mx-auto" />
             <div className="flex items-center justify-between">

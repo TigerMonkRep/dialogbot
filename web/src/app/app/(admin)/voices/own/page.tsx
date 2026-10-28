@@ -6,7 +6,7 @@ import { OwnVoice, type Manuscript, type Project } from "./client";
 export default async function OwnVoicePage() {
   const ws = await requireWorkspace();
   if (ws.role !== "owner" && ws.role !== "admin") {
-    return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Egen stemme kan oprettes af administratorer og ejere.</p>;
+    return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Egen stemme kan oprettes af administratorer og ejere.</p>;
   }
   const [{ items }, defaults] = await Promise.all([
     backend<{ items: Project[] }>(`/workspaces/${ws.id}/own-voices`),
@@ -21,8 +21,8 @@ export default async function OwnVoicePage() {
   return (
     <section className="flex flex-col gap-space-lg">
       <div>
-        <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Stemmer</span>
-        <h1 className="font-headline-md text-headline-md text-primary font-bold">Indtal jeres egen stemme</h1>
+        <span className="eyebrow">Stemmer</span>
+        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Indtal jeres egen stemme</h1>
         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Læs et kort manuskript op direkte i browseren. Stemmen bruges kun i jeres eget arbejdsrum, og indtaleren kan altid trække samtykket tilbage.</p>
       </div>
       <OwnVoice wsId={ws.id} projects={items} defaults={defaults} manuscript={manuscript} />

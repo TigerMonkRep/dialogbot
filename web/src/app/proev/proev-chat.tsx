@@ -20,7 +20,7 @@ type Msg = { from: "bot" | "user"; text: string };
 const BRANCHES: [string, string | null][] = [
   ["Håndværker", "haandvaerk"], ["Klinik", "klinik"], ["Frisør / salon", "skoenhed"], ["Restaurant", "restaurant"], ["Rådgiver", "raadgivning"], ["Noget andet", null],
 ];
-const GREETING = "Hej! Jeg er Dialogbot – en digital receptionist. Vil du høre, hvordan jeg lyder, når jeg tager telefonen for din virksomhed?";
+const GREETING = "Hej! Jeg hedder Peter og er Dialogbots digitale receptionist. Vil du høre, hvordan jeg lyder, når jeg tager telefonen for din virksomhed?";
 const STEP_LABEL: Record<Step, string> = {
   start: "Start", firma: "Trin 1 · hvem er I", branche: "Trin 1 · hvad laver I", andet: "Trin 1 · hvad laver I",
   tlf: "Trin 2 · dit nummer", calling: "Trin 2 · ringer", done: "Trin 3 · byg din egen", unavailable: "Ikke lige nu",
@@ -129,7 +129,7 @@ export function ProevChat() {
         phone: v, company: firma, consent: true, consent_version: info.consent_version, website: "",
         industry: industry.key ?? "andet", industry_other: industry.key ? null : industry.other || null }) });
       setTyping(false);
-      push({ from: "bot", text: `Jeg ringer til ${v} nu – din telefon ringer inden for et minut. Tag den, og spørg mig om alt det, en kunde ville spørge ${firma} om.` });
+      push({ from: "bot", text: `Jeg ringer til ${v} nu – du får et opkald fra Peter fra Dialogbot inden for et minut. Tag den, og spørg mig om alt det, en kunde ville spørge ${firma} om.` });
       setStep("calling");
       later(() => botSays(`Opkaldet er sendt til din telefon. Ringede den ikke? Så ring til os på ${PHONE_DISPLAY}, så viser vi det live.\n\nVil du bygge din egen? Det tager 3 trin og ca. 30 minutter, og jeg guider dig hele vejen.`, "done"), CALL_WINDOW_MS);
     } catch (err) {
@@ -147,12 +147,12 @@ export function ProevChat() {
   const calling = step === "calling";
   const pastOne = step === "tlf" || calling || done;
   const consentText = info && info !== "error" ? info.consent_text
-    : "Ja tak, Dialogbots digitale assistent må ringe mig op på dette nummer nu og vise, hvordan den tager telefonen. Opkaldet bliver skrevet ned, og en medarbejder fra Dialogbot må kontakte mig bagefter om det, vi talte om.";
+    : "Ja tak, Peter fra Dialogbot, en digital assistent, må ringe mig op på dette nummer nu og vise, hvordan Dialogbot tager telefonen. Opkaldet bliver skrevet ned, og en medarbejder fra Dialogbot må kontakte mig bagefter om det, vi talte om.";
 
   const phone = calling ? null
     : done ? ["Opkaldet er sat i gang", "Var det noget? Så er din egen receptionist tre trin væk."]
     : step === "unavailable" ? ["Prøveopkaldet aktiveres snart", `Indtil da ringer vi til dig manuelt inden for åbningstiden (${HOURS.toLowerCase()}). Ring til ${PHONE_DISPLAY} eller skriv til ${EMAIL}.`]
-    : ["Din telefon ringer snart", "Når du har skrevet dit nummer i chatten, ringer jeg inden for et minut."];
+    : ["Din telefon ringer snart", "Når du har skrevet dit nummer i chatten, ringer Peter fra Dialogbot inden for et minut."];
 
   return (
     <div className="flex flex-wrap gap-8 items-start">

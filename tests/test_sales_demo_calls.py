@@ -81,7 +81,8 @@ def test_web_request_calls_with_consent_and_limits(client, sales, db):
     p = sales["calls"][0]
     assert p["phoneNumberId"] == "pn_sales" and p["customer"]["number"] == "+4520304050"
     first = p["assistant"]["firstMessage"]
-    assert "Mette" in first and "Hansen Byg ApS" in first and "digitale assistent" in first
+    assert "Mette" in first and "Hansen Byg ApS" in first and "digital assistent" in first
+    assert first.startswith("Hej Mette, det er Peter fra Dialogbot.")  # the name comes in the very first sentence
     assert "DEMO-opkald" in p["assistant"]["model"]["messages"][0]["content"]
     assert p["assistant"]["maxDurationSeconds"] == service.MAX_SECONDS
     d = db.query(DemoCall).one()
@@ -172,30 +173,57 @@ def test_seller_door(api, client, sales, db, monkeypatch):
     assert len(items) == 2 and api.get(op, "/operator/sales").json()["problem"] is None
 
 
-def test_visitor_picks_voice_and_industry_and_the_script_adapts(client, sales, db):
+def test_peter_rings_whatever_voice_is_asked_for_and_the_script_adapts(client, sales, db):
     from app.modules.sales import script
     from app.modules.voices import standard
 
     info = client.get("/api/v1/demo-call").json()
-    assert [v["key"] for v in info["voices"]] == list(standard.STANDARD_VOICES)
+    assert info["agent"] == "Peter" and [v["key"] for v in info["voices"]] == ["peter"]  # Camilla is not offered here
     assert {i["key"] for i in info["industries"]} == set(script.INDUSTRIES)
     assert _web(client, voice="christel").status_code == 422
-    r = _web(client, name="Mette Hansen", company="Hansen VVS", voice="peter", industry="haandvaerk")
+    r = _web(client, name="Mette Hansen", company="Hansen VVS", voice="camilla", industry="haandvaerk")
     assert r.status_code == 202
     payload = sales["calls"][-1]["assistant"]
-    assert payload["voice"]["voiceId"] == standard.STANDARD_VOICES["peter"]["voice"]["voiceId"]
+    assert payload["voice"]["voiceId"] == standard.STANDARD_VOICES["peter"]["voice"]["voiceId"]  # a male voice, not Camilla
     assert payload["voice"]["chunkPlan"]["formatPlan"]  # Danish pronunciation rules ride along
     system = payload["model"]["messages"][0]["content"]
+    assert "Du hedder Peter" in system and '"Peter fra Dialogbot"' in system
+    assert "Camilla" not in system.replace("Kunden kan selv vælge stemme, fx Camilla eller Peter.", "")
     assert "Håndværk & byg" in system and "Mester står på stigen" in system
     assert "Klinik & sundhed" not in system  # only the chosen playbook
     assert "vi guider jer igennem hele opsætningen" in system.lower() and "2.495 kr." in system and "4 kr. pr. udgående opkald" in system
     assert "1.495" not in system and "149 kr" not in system and "model B" not in system.lower()
+    assert payload["firstMessage"].startswith("Hej Mette, det er Peter fra Dialogbot.")
     assert "Hansen VVS" in payload["firstMessage"]
     # the call's status updates and report come back to us, whatever is configured on the number in Vapi
     assert payload["server"]["url"].endswith("/api/v1/webhooks/vapi")
     assert payload["server"]["headers"]["Authorization"] == f"Bearer {SECRET}"
     d = db.query(DemoCall).filter(DemoCall.provider_call_id == f"demo_{len(sales['calls'])}").one()
     assert d.voice_key == "peter" and d.industry == "haandvaerk"
+
+
+def test_peters_voice_id_is_configuration(client, sales, monkeypatch):
+    monkeypatch.setenv("SALES_AGENT_VOICE_ID", "custom-male-voice-123")
+    get_settings.cache_clear()
+    assert _web(client).status_code == 202
+    voice = sales["calls"][-1]["assistant"]["voice"]
+    assert voice["voiceId"] == "custom-male-voice-123" and voice["provider"] == "11labs" and voice["language"] == "da"
+
+
+def test_consent_text_names_peter_and_is_versioned():
+    assert "Peter fra Dialogbot" in service.CONSENT_TEXT_WEB and "Peter fra Dialogbot" in service.CONSENT_TEXT_SELLER
+    assert service.CONSENT_VERSION_WEB.endswith("-v2") and service.CONSENT_VERSION_SELLER.endswith("-v2")
+
+
+def test_no_other_assistant_name_in_the_demo_flow(client, sales):
+    from app.modules.sales import script
+
+    assert _web(client, name="Mette", company="Hansen VVS").status_code == 202
+    a = sales["calls"][-1]["assistant"]
+    flow = " ".join([a["firstMessage"], a["model"]["messages"][0]["content"], service.CONSENT_TEXT_WEB,
+                     service.CONSENT_TEXT_SELLER, script.first_message("", "", None)])
+    for old in ("Clara", "Astrid", "Camilla"):
+        assert old not in flow.replace("fx Camilla eller Peter", "")
 
 
 def test_unknown_industry_gets_every_playbook_to_choose_from(client, sales):
@@ -209,7 +237,8 @@ def test_public_voice_sample(client, monkeypatch):
 
     monkeypatch.setattr(standard, "sample_audio", lambda key: b"ID3fake")
     assert client.get("/api/v1/demo-call/voices/nobody/sample").status_code == 404
-    r = client.get("/api/v1/demo-call/voices/camilla/sample")
+    assert client.get("/api/v1/demo-call/voices/camilla/sample").status_code == 404  # only Peter rings
+    r = client.get("/api/v1/demo-call/voices/peter/sample")
     assert r.status_code == 200 and r.content == b"ID3fake" and r.headers["content-type"] == "audio/mpeg"
 
 

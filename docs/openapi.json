@@ -3207,7 +3207,7 @@
             "type": "boolean"
           },
           "consent_version": {
-            "default": "demo-call-web-v1",
+            "default": "demo-call-web-v2",
             "maxLength": 40,
             "title": "Consent Version",
             "type": "string"
@@ -3260,7 +3260,7 @@
                 "type": "null"
               }
             ],
-            "description": "Standard voice to call with (camilla | peter)",
+            "description": "Ignored: the assistant that rings is always Peter (kept so older clients keep working)",
             "title": "Voice"
           },
           "website": {
@@ -5085,7 +5085,7 @@
     },
     "/api/v1/demo-call/voices/{key}/sample": {
       "get": {
-        "description": "A short sample of a voice the visitor can choose before being called. Rendered once, then served from cache.",
+        "description": "A short sample of Peter's voice, so a visitor can hear who will ring. Rendered once, then served from cache.",
         "operationId": "demo_voice_sample_api_v1_demo_call_voices__key__sample_get",
         "parameters": [
           {

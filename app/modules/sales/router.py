@@ -31,7 +31,7 @@ class WebIn(BaseModel):
     consent: bool
     consent_version: str = Field(default=service.CONSENT_VERSION_WEB, max_length=40)
     website: str = Field(default="", max_length=200)  # honeypot: hidden in the form
-    voice: str | None = Field(default=None, max_length=40, description="Standard voice to call with (camilla | peter)")
+    voice: str | None = Field(default=None, max_length=40, description="Ignored: the assistant that rings is always Peter (kept so older clients keep working)")
     industry: str | None = Field(default=None, max_length=40, description="Line of business; adapts the sales script")
     industry_other: str | None = Field(default=None, max_length=120, description="The visitor's own words when industry is 'andet'")
 
@@ -60,10 +60,10 @@ def request_demo_call(body: WebIn, db: OrmSession = Depends(get_db)):
 
 @public_router.get("/voices/{key}/sample")
 def demo_voice_sample(key: str):
-    """A short sample of a voice the visitor can choose before being called. Rendered once, then served from cache."""
+    """A short sample of Peter's voice, so a visitor can hear who will ring. Rendered once, then served from cache."""
     from app.modules.voices import standard
 
-    if key not in standard.STANDARD_VOICES:
+    if key != service.AGENT_VOICE:
         raise NotFound("Stemmen findes ikke")
     return Response(standard.sample_audio(key), media_type="audio/mpeg",
                     headers={"cache-control": "public, max-age=86400"})

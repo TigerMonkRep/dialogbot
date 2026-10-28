@@ -25,7 +25,7 @@ test("1 · A01→A03→A06: tilmelding med bevaret hensigt, bekræftelse og før
   await expect(page).toHaveURL(/\/proev$/);
   await demoInfo;
   const log = page.getByRole("log");
-  await expect(log.getByText(/Hej! Jeg er Dialogbot – en digital receptionist/)).toBeVisible();
+  await expect(log.getByText(/Hej! Jeg hedder Peter og er Dialogbots digitale receptionist/)).toBeVisible();
   await page.getByRole("button", { name: "Ja, ring til mig" }).click();
   await expect(log.getByText(/Prøveopkaldet aktiveres snart – indtil da ringer vi til dig manuelt/)).toBeVisible();
   await expect(page.getByText("Ikke lige nu")).toBeVisible(); // step label

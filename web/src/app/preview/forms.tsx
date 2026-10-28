@@ -3,9 +3,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api, fieldError, type ApiError } from "@/lib/client";
-import { Icon } from "@/components/ui";
+import { Icon, inputCls } from "@/components/ui";
 
-const field = "w-full bg-surface-container-lowest rounded-lg px-4 py-3 text-primary text-body-md placeholder:text-outline/60 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm";
+const field = inputCls;
+const label = "block text-[13px] font-semibold text-ink mb-1.5";
 
 export const INDUSTRIES: [string, string, string][] = [
   ["craft", "Håndværk & Byggeri", "construction"],
@@ -21,7 +22,7 @@ const INTERESTS: [string, string, string][] = [
 ];
 
 function Feedback({ tone, children }: { tone: "ok" | "error"; children: React.ReactNode }) {
-  return <div role={tone === "error" ? "alert" : "status"} className={`rounded-lg p-3 font-body-sm text-body-sm ${tone === "ok" ? "bg-secondary-container text-on-secondary-container" : "bg-error-container text-on-error-container"}`}>{children}</div>;
+  return <div role={tone === "error" ? "alert" : "status"} className={`rounded-xl border-[1.5px] p-3.5 text-[15px] leading-normal ${tone === "ok" ? "bg-success-soft text-success border-success" : "bg-danger-soft text-on-error-container border-danger"}`}>{children}</div>;
 }
 
 /** Card A: invitation code, checked on the server (/api/preview/unlock). */
@@ -44,13 +45,13 @@ export function UnlockForm({ next }: { next: string }) {
   return (
     <form className="space-y-4" onSubmit={submit}>
       <div>
-        <label className="block font-label-md text-label-md text-on-surface mb-2 font-semibold" htmlFor="invite-code">Invitationskode</label>
+        <label className={label} htmlFor="invite-code">Invitationskode</label>
         <input id="invite-code" autoComplete="off" autoCapitalize="characters" spellCheck={false} maxLength={64} required value={code} onChange={(e) => setCode(e.target.value)} placeholder="F.eks. DGB-XXXX-XXXX"
-          className={`${field} font-mono font-semibold text-body-lg uppercase tracking-widest placeholder:font-sans placeholder:normal-case placeholder:tracking-normal`} />
+          className={`${field} font-mono font-semibold text-[17px] uppercase tracking-widest placeholder:font-sans placeholder:normal-case placeholder:tracking-normal`} />
       </div>
       {error && <Feedback tone="error">{error}</Feedback>}
-      <button type="submit" disabled={pending || !code.trim()} className="w-full bg-primary hover:bg-primary-container text-on-primary py-3.5 px-6 rounded-lg font-label-lg text-label-lg font-semibold flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-60">
-        {pending ? "Tjekker koden…" : "Lås op og se forsiden"}<Icon name="arrow_forward" size={20} className="text-secondary-fixed" />
+      <button type="submit" disabled={pending || !code.trim()} className="w-full min-h-[52px] bg-accent hover:bg-accent-deep text-white px-6 rounded-[14px] text-[17px] font-semibold flex items-center justify-center gap-2.5 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+        {pending ? "Tjekker koden…" : "Lås op og se forsiden"}<Icon name="arrow_forward" size={20} />
       </button>
     </form>
   );
@@ -86,29 +87,29 @@ export function WaitlistForm() {
     <form className="space-y-4" onSubmit={submit} noValidate={false}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block font-label-md text-label-md text-on-surface mb-2 font-semibold" htmlFor="work-email">Din arbejds-e-mail</label>
+          <label className={label} htmlFor="work-email">Din arbejds-e-mail</label>
           <input id="work-email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="navn@virksomhed.dk" className={field} aria-invalid={Boolean(fieldError(error, "email"))} />
         </div>
         <div>
-          <label className="block font-label-md text-label-md text-on-surface mb-2 font-semibold" htmlFor="business-type">Virksomhedstype</label>
+          <label className={label} htmlFor="business-type">Virksomhedstype</label>
           <div className="relative">
             <select id="business-type" value={industry} onChange={(e) => setIndustry(e.target.value)} className={`${field} appearance-none cursor-pointer`}>
               <option value="">Vælg din branche…</option>
               {INDUSTRIES.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
             </select>
-            <Icon name="expand_more" size={20} className="text-outline pointer-events-none absolute right-3.5 top-3.5" />
+            <Icon name="expand_more" size={20} className="text-ink pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2" />
           </div>
         </div>
       </div>
       <fieldset className="pt-1">
-        <legend className="block font-label-sm text-label-sm text-on-surface-variant mb-2">Hvad vil I primært løse først?</legend>
+        <legend className="block text-[13px] font-semibold text-ink mb-2">Hvad vil I primært løse først?</legend>
         <div className="flex flex-wrap gap-2">
           {INTERESTS.map(([k, l, icon]) => {
             const on = interests.includes(k);
             return (
               <button key={k} type="button" aria-pressed={on} onClick={() => toggle(k)}
-                className={`px-3 py-1.5 rounded-full font-label-sm text-label-sm transition-all flex items-center gap-1.5 ${on ? "bg-primary text-on-primary" : "bg-surface-container-low hover:bg-surface-container text-on-surface-variant"}`}>
-                <Icon name={on ? "check" : icon} size={16} className={on ? "" : "text-primary"} />{l}
+                className={`min-h-[44px] px-4 rounded-full border-2 border-ink text-[14px] font-semibold transition-colors flex items-center gap-1.5 ${on ? "bg-ink text-white" : "bg-white hover:bg-panel text-ink"}`}>
+                <Icon name={on ? "check" : icon} size={16} className={on ? "" : "text-accent"} />{l}
               </button>
             );
           })}
@@ -119,12 +120,12 @@ export function WaitlistForm() {
         <label htmlFor="website">Hjemmeside</label>
         <input id="website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
       </div>
-      <label className="flex items-start gap-2 font-body-sm text-body-sm text-on-surface-variant cursor-pointer">
-        <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 rounded text-primary focus:ring-primary" />
-        <span>Ja, I må skrive til mig, når Dialogbot åbner. Vi gemmer kun e-mail og svarene ovenfor til det formål, og du kan altid bede om at blive slettet. <Link href="/privatliv" className="text-primary underline">Læs hvordan</Link>.</span>
+      <label className="flex items-start gap-2.5 text-[14px] leading-normal text-ink-soft cursor-pointer">
+        <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 w-5 h-5 accent-accent flex-shrink-0" />
+        <span>Ja, I må skrive til mig, når Dialogbot åbner. Vi gemmer kun e-mail og svarene ovenfor til det formål, og du kan altid bede om at blive slettet. <Link href="/privatliv" className="text-accent font-semibold underline underline-offset-4">Læs hvordan</Link>.</span>
       </label>
       {error && <Feedback tone="error">{error.status === 422 ? "Tjek e-mailadressen og at du har sat flueben." : error.message}</Feedback>}
-      <button type="submit" disabled={pending} className="w-full bg-secondary-fixed hover:bg-secondary-fixed-dim text-on-secondary-fixed py-3.5 px-6 rounded-lg font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-sm transition-all disabled:opacity-60">
+      <button type="submit" disabled={pending} className="w-full min-h-[52px] bg-white hover:bg-panel text-ink border-2 border-ink px-6 rounded-[14px] text-[17px] font-semibold flex items-center justify-center gap-2.5 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
         {pending ? "Skriver dig op…" : "Skriv mig på ventelisten"}<Icon name="notifications_active" size={20} />
       </button>
     </form>

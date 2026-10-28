@@ -62,9 +62,11 @@ Profil-tekster (bio) kan bruge: «Din AI-receptionist – på dansk, døgnet run
 
 ## Print – `web/public/materiale/`
 
-`salgsmateriale.html`, `opsaetningsmanual.html`, `ambassadoerhaandbog.html` er farvelagt om til den nye palette
-(CSS-variabler, Outfit i stedet for Manrope, blok-skygge i stedet for bløde skygger). PDF'erne ved siden af
-genereres i browseren (Udskriv → Gem som PDF, A4, baggrundsgrafik til) – der findes intet script til det.
+`salgsmateriale.html` (brochure, 5 sider), `opsaetningsmanual.html` (trin 0–3 + viderestilling + «I dag»/«Det ved den»,
+8 sider) og `ambassadoerhaandbog.html` (5 sider) er skrevet om som byggevejledninger i v2-designet: selvstændige
+A4-dokumenter, én `<section class="page">` pr. ark, Outfit/Inter selvhostet i `materiale/fonts/` (ingen Google Fonts).
+PDF'erne `dialogbot-*.pdf` ved siden af genereres med `cd web && node scripts/materiale-pdf.js` (Playwright/Chromium,
+se `web/scripts/brand/README.md`). Brochuren kan personaliseres med `?navn=&link=&kode=&rabat=` (ambassadørportalen).
 
 ## Sådan genereres filerne igen
 

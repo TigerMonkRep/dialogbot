@@ -40,69 +40,69 @@ export function ApplyForm({ program, defaultName }: { program: Program; defaultN
   });
   const answered = program.quiz.every((q) => quiz[q.id]);
   return (
-    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-space-lg">
+    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="flex flex-col gap-6">
       <ErrorBox error={error} />
-      <fieldset className="space-y-space-sm">
-        <legend className="font-label-md text-label-md font-semibold mb-1">Jeg er</legend>
-        <div className="grid grid-cols-2 gap-space-sm">
+      <fieldset className="flex flex-col gap-2">
+        <legend className="text-[13px] font-semibold text-ink mb-2">Jeg er</legend>
+        <div className="grid grid-cols-2 gap-3">
           {[["private", "Privatperson", "Uden CVR – bonus er B-indkomst"], ["company", "Virksomhed", "Med CVR – afregning via bilag"]].map(([v, l, h]) => (
-            <label key={v} className={`rounded-lg p-space-sm cursor-pointer border ${f.kind === v ? "border-primary bg-surface-container-low" : "border-outline-variant"}`}>
+            <label key={v} className={`rounded-xl p-3.5 min-h-[44px] cursor-pointer border-2 border-ink has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-accent has-[:focus-visible]:ring-offset-2 ${f.kind === v ? "bg-ink text-white" : "bg-white text-ink hover:bg-panel"}`}>
               <input type="radio" name="kind" value={v} checked={f.kind === v} onChange={() => setF({ ...f, kind: v })} className="sr-only" />
-              <span className="font-label-lg text-label-lg text-primary font-semibold block">{l}</span><span className="font-label-sm text-label-sm text-on-surface-variant">{h}</span>
+              <span className="text-[15px] font-semibold block">{l}</span><span className={`text-[13px] ${f.kind === v ? "text-white/80" : "text-muted"}`}>{h}</span>
             </label>
           ))}
         </div>
       </fieldset>
-      <div className="grid sm:grid-cols-2 gap-space-md">
+      <div className="grid sm:grid-cols-2 gap-4">
         <Field label="Fulde navn" error={fieldError(error, "full_name")}><Input required value={f.full_name} onChange={set("full_name")} autoComplete="name" /></Field>
         <Field label="Mobilnummer" hint="Så vi kan ringe, hvis der er spørgsmål."><Input value={f.phone} onChange={set("phone")} autoComplete="tel" inputMode="tel" /></Field>
       </div>
       {f.kind === "private" ? (
-        <div className="grid sm:grid-cols-2 gap-space-md">
+        <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Fødselsdato" error={fieldError(error, "birth_date")}><Input type="date" required value={f.birth_date} onChange={set("birth_date")} /></Field>
           <Field label="CPR-nummer (kan vente)" hint="Skal bruges til at indberette B-indkomst. Gemmes krypteret." error={fieldError(error, "cpr")}><Input value={f.cpr} onChange={set("cpr")} inputMode="numeric" placeholder="DDMMÅÅ-XXXX" autoComplete="off" /></Field>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 gap-space-md">
+        <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Virksomhedsnavn"><Input required value={f.company_name} onChange={set("company_name")} /></Field>
           <Field label="CVR-nummer" error={fieldError(error, "cvr")}><Input required value={f.cvr} onChange={set("cvr")} inputMode="numeric" /></Field>
-          <label className="flex items-center gap-space-xs font-body-sm text-body-sm sm:col-span-2"><input type="checkbox" checked={f.vat_registered} onChange={(e) => setF({ ...f, vat_registered: e.target.checked })} />Virksomheden er momsregistreret</label>
+          <label className="flex items-center gap-2.5 min-h-[44px] text-[15px] text-ink sm:col-span-2"><input type="checkbox" className="w-5 h-5 accent-accent" checked={f.vat_registered} onChange={(e) => setF({ ...f, vat_registered: e.target.checked })} />Virksomheden er momsregistreret</label>
         </div>
       )}
       {minor && (
-        <div className="rounded-lg bg-surface-container-low p-space-md space-y-space-sm">
-          <p className="font-label-md text-label-md text-primary font-semibold flex items-center gap-1"><Icon name="family_restroom" size={18} />Du er under 18 – en forælder skal godkende</p>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Vi sender en mail med aftalen og reglerne. Du kan godt dele dit link og skaffe kunder imens; vi udbetaler først, når aftalen er godkendt.</p>
-          <div className="grid sm:grid-cols-2 gap-space-md">
+        <div className="rounded-xl border-[1.5px] border-ink bg-panel p-4 flex flex-col gap-3">
+          <p className="m-0 text-[15px] text-ink font-semibold flex items-center gap-1.5"><Icon name="family_restroom" size={18} className="text-accent" />Du er under 18 – en forælder skal godkende</p>
+          <p className="m-0 text-[15px] leading-normal text-ink-soft">Vi sender en mail med aftalen og reglerne. Du kan godt dele dit link og skaffe kunder imens; vi udbetaler først, når aftalen er godkendt.</p>
+          <div className="grid sm:grid-cols-2 gap-4">
             <Field label="Forælders navn" error={fieldError(error, "parent_name")}><Input required value={f.parent_name} onChange={set("parent_name")} /></Field>
             <Field label="Forælders e-mail" error={fieldError(error, "parent_email")}><Input type="email" required value={f.parent_email} onChange={set("parent_email")} /></Field>
           </div>
         </div>
       )}
-      <div className="grid sm:grid-cols-2 gap-space-md">
+      <div className="grid sm:grid-cols-2 gap-4">
         <Field label="Reg.nr. (kan vente)" error={fieldError(error, "bank_reg")}><Input value={f.bank_reg} onChange={set("bank_reg")} inputMode="numeric" maxLength={4} /></Field>
         <Field label="Kontonummer (kan vente)" hint="Hertil udbetaler vi. Gemmes krypteret." error={fieldError(error, "bank_account")}><Input value={f.bank_account} onChange={set("bank_account")} inputMode="numeric" /></Field>
       </div>
       <Field label="Din hilsen på din side (valgfri)" hint='Vises for dem, der bruger dit link. Fx "Min onkel bruger den i sit VVS-firma."'><Input maxLength={300} value={f.headline} onChange={set("headline")} /></Field>
       <Field label="Hvem vil du anbefale Dialogbot til? (valgfri)"><Textarea maxLength={1000} value={f.motivation} onChange={set("motivation")} /></Field>
 
-      <fieldset className="space-y-space-md">
-        <legend className="font-headline-sm text-headline-sm text-primary font-bold">Fire spørgsmål om reglerne</legend>
+      <fieldset className="flex flex-col gap-4">
+        <legend className="font-display font-extrabold text-[22px] leading-[1.15] text-ink mb-4">Fire spørgsmål om reglerne</legend>
         {program.quiz.map((q, i) => (
-          <div key={q.id} className={`rounded-lg p-space-md space-y-space-xs ${wrong.includes(q.id) ? "bg-error-container/40" : "bg-surface-container-low"}`}>
-            <p className="font-label-lg text-label-lg">{i + 1}. {q.question}</p>
+          <div key={q.id} className={`rounded-xl border-[1.5px] p-4 flex flex-col gap-1 ${wrong.includes(q.id) ? "bg-danger-soft border-danger" : "bg-panel border-ink"}`}>
+            <p className="m-0 text-[15px] font-semibold text-ink flex gap-2.5 mb-1"><b className="font-display font-extrabold min-w-6">{i + 1}</b>{q.question}</p>
             {q.options.map((o) => (
-              <label key={o.id} className="flex items-start gap-space-xs font-body-sm text-body-sm cursor-pointer">
-                <input type="radio" name={q.id} value={o.id} checked={quiz[q.id] === o.id} onChange={() => setQuiz({ ...quiz, [q.id]: o.id })} className="mt-1" />{o.label}
+              <label key={o.id} className="flex items-start gap-2.5 min-h-[44px] py-2 text-[15px] text-ink cursor-pointer">
+                <input type="radio" name={q.id} value={o.id} checked={quiz[q.id] === o.id} onChange={() => setQuiz({ ...quiz, [q.id]: o.id })} className="mt-0.5 w-5 h-5 accent-accent flex-shrink-0" />{o.label}
               </label>
             ))}
-            {wrong.includes(q.id) && <p className="font-label-sm text-label-sm text-error">Forkert – læs reglerne til venstre og prøv igen.</p>}
+            {wrong.includes(q.id) && <p className="m-0 text-[13px] font-semibold text-danger">Forkert – læs reglerne til venstre og prøv igen.</p>}
           </div>
         ))}
       </fieldset>
       {!answered && <Alert kind="info">Svar på alle fire spørgsmål for at tilmelde dig.</Alert>}
-      <Button type="submit" icon="how_to_reg" disabled={pending || !answered} className="w-full h-12">{pending ? "Tilmelder…" : "Tilmeld mig som ambassadør"}</Button>
-      <p className="font-label-sm text-label-sm text-on-surface-variant">Ved at tilmelde dig accepterer du reglerne. Vi godkender alle ambassadører manuelt – normalt inden for et par dage.</p>
+      <Button type="submit" icon="how_to_reg" disabled={pending || !answered} className="w-full min-h-[52px] text-[17px] rounded-[14px]">{pending ? "Tilmelder…" : "Tilmeld mig som ambassadør"}</Button>
+      <p className="m-0 text-[13px] text-muted">Ved at tilmelde dig accepterer du reglerne. Vi godkender alle ambassadører manuelt – normalt inden for et par dage.</p>
     </form>
   );
 }

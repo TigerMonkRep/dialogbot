@@ -78,14 +78,14 @@ export function BusinessForm({ wsId, profile, canEdit, aiReady = false, cvrReady
       <Field label="Virksomhedens officielle navn" hint="Dette navn bruges af assistenten over for kunderne." error={fieldError(error, "legal_name")}>
         <div className="relative">
           <Input required value={String(f.legal_name ?? "")} onChange={s("legal_name")} disabled={!canEdit} />
-          {profile.legal_name ? <Icon name="verified" size={18} className="absolute right-3 top-2.5 text-secondary" /> : null}
+          {profile.legal_name ? <Icon name="verified" size={18} className="absolute right-3 top-3 text-success" /> : null}
         </div>
       </Field>
       <Field label="Kort virksomhedsbeskrivelse & speciale" hint="Bruges som grundkontekst for assistenten." error={fieldError(error, "description")}>
         <Textarea rows={3} className="resize-none" value={String(f.description ?? "")} onChange={s("description")} disabled={!canEdit} />
       </Field>
       <div className="p-space-md rounded-xl bg-surface-container-low flex items-start gap-space-md">
-        <div className="p-2 rounded-lg bg-surface-container text-secondary mt-0.5"><Icon name={manual ? "public_off" : "public"} size={20} /></div>
+        <div className="p-2 rounded-[10px] bg-accent text-white mt-0.5"><Icon name={manual ? "public_off" : "public"} size={20} /></div>
         <div className="flex-1 space-y-2">
           <label className="flex items-center justify-between gap-space-sm cursor-pointer">
             <span className="font-label-md text-label-md text-primary font-bold">Manuel opsætning uden hjemmeside{manual ? " er aktiv" : ""}</span>
@@ -144,13 +144,13 @@ export function Categories({ wsId, categories, suggested, canEdit }: { wsId: str
       <ul className="flex flex-wrap gap-2">
         {categories.length === 0 && <li className="font-body-sm text-body-sm text-on-surface-variant">Ingen kategorier endnu – vælg mindst én.</li>}
         {categories.map((c) => {
-          const cls = c.is_primary ? "bg-primary text-on-primary" : c.is_custom ? "bg-secondary-container text-on-secondary-container font-semibold" : "bg-surface-container text-primary";
+          const cls = c.is_primary ? "bg-ink text-white" : c.is_custom ? "bg-highlight text-ink font-semibold" : "bg-panel text-ink border-[1.5px] border-ink";
           return (
             <li key={c.id} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-label-md text-label-md ${cls}`}>
-              <Icon name={c.is_primary ? "star" : c.is_custom ? "handyman" : "layers"} size={16} className={c.is_primary ? "text-secondary-fixed" : "text-secondary"} />
+              <Icon name={c.is_primary ? "star" : c.is_custom ? "handyman" : "layers"} size={16} className={c.is_primary ? "text-highlight" : "text-accent"} />
               <span>{c.label}</span>
-              {c.is_primary && <span className="text-[10px] bg-primary-container text-secondary-fixed px-1.5 rounded font-bold uppercase ml-1">Primær</span>}
-              {c.is_custom && !c.is_primary && <span className="text-[10px] bg-secondary text-on-secondary px-1.5 rounded-full font-bold uppercase ml-1">Egen</span>}
+              {c.is_primary && <span className="text-[10px] bg-highlight text-ink px-1.5 rounded-md font-bold uppercase ml-1">Primær</span>}
+              {c.is_custom && !c.is_primary && <span className="text-[10px] bg-ink text-white px-1.5 rounded-full font-bold uppercase ml-1">Egen</span>}
               {canEdit && !c.is_primary && <button type="button" aria-label={`Fjern ${c.label}`} onClick={() => remove(c.id)} className="ml-0.5 text-on-surface-variant hover:text-error"><Icon name="close" size={16} /></button>}
             </li>
           );
@@ -163,11 +163,11 @@ export function Categories({ wsId, categories, suggested, canEdit }: { wsId: str
               <Icon name="search" size={18} className="absolute left-3 top-2 text-on-surface-variant" />
               <input aria-label="Søg eller opret kategori" className={`${inputCls} pl-9 py-1.5 font-body-sm text-body-sm`} placeholder="Søg eller opret ny kategori…" value={custom} onChange={(e) => setCustom(e.target.value)} />
             </div>
-            <button type="submit" disabled={pending || !custom.trim()} className="px-3 py-1.5 rounded-lg bg-surface-container text-primary font-label-sm text-label-sm font-semibold hover:bg-surface-container-highest transition-colors flex items-center gap-1 disabled:opacity-50"><Icon name="add" size={16} />Tilføj</button>
+            <button type="submit" disabled={pending || !custom.trim()} className="min-h-[44px] px-3.5 rounded-xl border-2 border-ink bg-white hover:bg-panel text-ink font-label-sm text-label-sm font-semibold transition-colors flex items-center gap-1 disabled:opacity-50"><Icon name="add" size={16} />Tilføj</button>
           </form>
           {matches.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
-              {matches.slice(0, 8).map((s) => <button type="button" key={s.slug} onClick={() => add(s.slug, s.label)} className="px-2.5 py-1 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-sm text-label-sm">+ {s.label}</button>)}
+              {matches.slice(0, 8).map((s) => <button type="button" key={s.slug} onClick={() => add(s.slug, s.label)} className="min-h-[36px] px-2.5 py-1 rounded-lg border-[1.5px] border-ink bg-panel hover:bg-panel-deep text-ink font-label-sm text-label-sm">+ {s.label}</button>)}
             </div>
           )}
         </>
@@ -180,7 +180,7 @@ export function ApproveButton({ wsId, versionId, label }: { wsId: string; versio
   const router = useRouter();
   const [pending, setPending] = useState(false);
   return (
-    <button disabled={pending} className="px-3 py-1 rounded bg-secondary-container hover:bg-secondary text-on-secondary-container hover:text-on-secondary font-label-sm text-label-sm font-bold transition-colors disabled:opacity-60"
+    <button disabled={pending} className="min-h-[36px] px-3 py-1 rounded-lg bg-accent hover:bg-accent-deep text-white font-label-sm text-label-sm font-bold transition-colors disabled:opacity-60"
       onClick={async () => { setPending(true); try { await api(`/workspaces/${wsId}/knowledge/versions/${versionId}/approve`, { method: "POST", headers: { "idempotency-key": `approve-${versionId}` } }); router.refresh(); } catch (e) { alert((e as { message: string }).message); } finally { setPending(false); } }}>
       {pending ? "Godkender…" : label}
     </button>
@@ -191,7 +191,7 @@ export function SelfManagedButton({ wsId, goals }: { wsId: string; goals: Record
   const router = useRouter();
   const self = goals.guidance_mode === "self_managed";
   return (
-    <button type="button" className="px-space-md py-2.5 rounded-lg bg-surface hover:bg-surface-container text-primary font-label-md text-label-md font-semibold flex items-center gap-2 transition-colors"
+    <button type="button" className="min-h-[44px] px-4 rounded-xl border-2 border-ink bg-white hover:bg-panel text-ink font-label-md text-label-md font-semibold flex items-center gap-2 transition-colors"
       onClick={async () => { await api(`/workspaces/${wsId}/goals`, { method: "PUT", body: JSON.stringify({ ...goals, guidance_mode: self ? "guided" : "self_managed", expected_version: goals.version }) }); router.refresh(); }}>
       <Icon name="alt_route" size={18} />{self ? "Skift til guidet opsætning" : "Skift til selvstyret opsætning"}
     </button>

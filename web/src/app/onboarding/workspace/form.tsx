@@ -34,7 +34,7 @@ export function WorkspaceCards({ workspaces, currentId }: { workspaces: Ws[]; cu
             )}
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-headline-sm text-headline-sm font-bold flex-shrink-0 ${isActive ? "bg-primary-container text-secondary-fixed" : "bg-surface-container-highest text-on-surface-variant"}`}>{initials(w.name)}</div>
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-headline-sm text-headline-sm font-bold flex-shrink-0 ${isActive ? "bg-accent text-white" : "bg-panel text-ink border-[1.5px] border-ink"}`}>{initials(w.name)}</div>
                 <div className="min-w-0">
                   <p className={`font-headline-sm text-headline-sm truncate ${isActive ? "text-primary font-bold" : "text-on-surface font-semibold"}`}>{w.name}</p>
                   <p className="font-label-sm text-label-sm text-on-surface-variant">{ROLE[w.role] ?? w.role} • {INTENT[w.product_intent] ?? w.product_intent}</p>
@@ -44,7 +44,7 @@ export function WorkspaceCards({ workspaces, currentId }: { workspaces: Ws[]; cu
             </div>
             <div className="mt-4 pt-3 flex items-center justify-between">
               <span className={`font-label-sm text-label-sm flex items-center gap-1 ${ready ? "text-primary font-semibold" : "text-on-surface-variant"}`}>
-                <Icon name={ready ? "check_circle" : "pause_circle"} size={16} className={ready ? "text-secondary" : ""} />{ready ? "Viden klar" : "Afventer onboarding"}
+                <Icon name={ready ? "check_circle" : "pause_circle"} size={16} className={ready ? "text-success" : "text-muted"} />{ready ? "Viden klar" : "Afventer onboarding"}
               </span>
               {!isActive && <button onClick={async () => { await select(w.id); router.refresh(); }} className="font-label-sm text-label-sm text-primary hover:underline font-semibold">Skift hertil</button>}
             </div>
@@ -76,7 +76,7 @@ export function WorkspaceForm({ defaultIntent, verified, referralLink = null }: 
       <ErrorBox error={error} />
       <Field label="Virksomhedens officielle navn" hint="Dette navn bruges af assistenten over for kunderne."><Input required minLength={2} value={name} onChange={(e) => setName(e.target.value)} placeholder="Fx Fjord Gulvservice ApS" /></Field>
       <Field label="Produktintention"><Select value={intent} onChange={(e) => setIntent(e.target.value)}><option value="reception">Reception</option><option value="campaigns">Kampagner</option><option value="both">Reception + kampagner</option></Select></Field>
-      {referralLink && !showCode && <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1"><Icon name="loyalty" size={16} className="text-secondary" />Du kom via en ambassadørs link – velkomstrabatten følger med.</p>}
+      {referralLink && !showCode && <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1"><Icon name="loyalty" size={16} className="text-accent" />Du kom via en ambassadørs link – velkomstrabatten følger med.</p>}
       {showCode ? (
         <Field label="Ambassadørkode" error={fieldError(error, "referral_code")} hint="Fra den, der anbefalede Dialogbot til dig. En kode gælder frem for et link."><Input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Fx MADS42" autoCapitalize="characters" /></Field>
       ) : (

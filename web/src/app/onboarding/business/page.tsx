@@ -3,6 +3,7 @@ import { backend, currentWorkspaceId } from "@/lib/api.server";
 import { requireWorkspace, type Workspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
 import { FlowBar, INTENT_LABEL } from "@/components/onboarding";
+import { Bag } from "@/components/lego";
 import { WorkspaceCards } from "../workspace/form";
 import { ApproveButton, BusinessForm, Categories, SelfManagedButton } from "./form";
 
@@ -54,15 +55,15 @@ export default async function BusinessPage() {
       <div className="md:hidden bg-surface-container-lowest rounded-2xl p-space-md border-2 border-ink flex flex-col gap-space-sm relative overflow-hidden">
         <div className="flex items-start justify-between gap-space-sm">
           <div className="flex items-center gap-space-sm min-w-0">
-            <div className="w-10 h-10 rounded-lg bg-primary-container text-secondary-fixed flex items-center justify-center flex-shrink-0"><Icon name="domain" size={22} /></div>
+            <div className="w-10 h-10 rounded-[10px] bg-accent text-white flex items-center justify-center flex-shrink-0"><Icon name="domain" size={22} /></div>
             <div className="min-w-0">
               <p className="font-headline-sm text-headline-sm text-primary font-bold truncate">{ws.name}</p>
               <p className="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1"><Icon name="verified_user" size={14} className="text-secondary" />Rolle: {roleLabel}</p>
             </div>
           </div>
-          <Link href="/onboarding/workspace" aria-label="Skift eller opret arbejdsrum" className="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary flex-shrink-0"><Icon name="swap_horiz" size={20} /></Link>
+          <Link href="/onboarding/workspace" aria-label="Skift eller opret arbejdsrum" className="w-11 h-11 rounded-xl border-2 border-ink bg-white hover:bg-panel flex items-center justify-center text-ink flex-shrink-0"><Icon name="swap_horiz" size={20} /></Link>
         </div>
-        {me.signup_intent && <span className="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold"><Icon name="bookmark_added" size={16} />Beholdt hensigt: {INTENT_LABEL[me.signup_intent] ?? me.signup_intent}</span>}
+        {me.signup_intent && <span className="self-start flex items-center gap-1.5 px-3 py-1.5 rounded-full border-[1.5px] border-ink bg-panel text-ink font-label-sm text-label-sm font-semibold"><Icon name="bookmark_added" size={16} className="text-accent" />Beholdt hensigt: {INTENT_LABEL[me.signup_intent] ?? me.signup_intent}</span>}
       </div>
 
       {/* A06 workspace overview */}
@@ -70,14 +71,14 @@ export default async function BusinessPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between md:pb-space-md gap-4">
           <div>
             <div className="flex items-center gap-space-sm">
-              <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">Arbejdsrum</span>
+              <span className="px-2.5 py-0.5 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">Arbejdsrum</span>
               <span className="font-label-sm text-label-sm text-on-surface-variant">Arbejdsrumsoversigt</span>
             </div>
             <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink mt-0.5">Vælg eller opret arbejdsrum</h1>
           </div>
           <div className="flex items-center gap-space-md flex-wrap">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container text-primary"><Icon name="verified_user" size={18} /><span className="font-label-md text-label-md font-semibold">Rolle: {roleLabel}</span></div>
-            <Link href="/onboarding/workspace" className="px-space-md py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md flex items-center gap-1.5 transition-colors"><Icon name="add_circle" size={18} />Nyt arbejdsrum</Link>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border-[1.5px] border-ink bg-panel text-ink"><Icon name="verified_user" size={18} className="text-accent" /><span className="font-label-md text-label-md font-semibold">Rolle: {roleLabel}</span></div>
+            <Link href="/onboarding/workspace" className="min-h-[44px] px-4 rounded-xl border-2 border-ink bg-white hover:bg-panel text-ink font-label-md text-label-md font-semibold flex items-center gap-1.5 transition-colors no-underline"><Icon name="add_circle" size={18} />Nyt arbejdsrum</Link>
           </div>
         </div>
         <WorkspaceCards workspaces={workspaces} currentId={currentId ?? ws.id} />
@@ -89,10 +90,10 @@ export default async function BusinessPage() {
           <div className="bg-surface-container-lowest p-space-md md:p-space-xl rounded-2xl border-2 border-ink space-y-space-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-space-sm">
-                <span className="w-7 h-6 rounded-md bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-[10px] font-bold">1</span>
+                <Bag n={1} size={36} />
                 <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Virksomhedsopsætning</h2>
               </div>
-              <span className="font-label-sm text-label-sm text-secondary font-bold flex items-center gap-1"><Icon name="tune" size={14} />Basale parametre</span>
+              <span className="eyebrow flex items-center gap-1"><Icon name="tune" size={14} />Basale parametre</span>
             </div>
             <BusinessForm wsId={ws.id} profile={profile} canEdit={canEdit} aiReady={capOn("knowledge.source_import")} cvrReady={capOn("cvr.lookup")} autoFetch={!latestImport.import && !profile.manual_setup && Boolean(profile.website_url) && !String(profile.description ?? "").trim()} />
             <div className="space-y-space-md pt-2">
@@ -102,12 +103,12 @@ export default async function BusinessPage() {
               </div>
               <Categories wsId={ws.id} categories={cats} suggested={suggested.items} canEdit={canEdit} />
             </div>
-            <div className="p-space-md rounded-xl bg-surface space-y-2">
-              <span className="font-label-md text-label-md text-primary font-bold flex items-center gap-1"><Icon name="location_on" size={16} />Lokation og dækningsområde</span>
+            <div className="p-space-md rounded-xl border-[1.5px] border-ink bg-panel space-y-2">
+              <span className="font-label-md text-label-md text-ink font-bold flex items-center gap-1"><Icon name="location_on" size={16} className="text-accent" />Lokation og dækningsområde</span>
               {zones.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5">{zones.map((z, i) => <span key={z} className="px-2.5 py-1 rounded bg-surface-container-lowest border-2 border-ink text-primary font-label-sm text-label-sm font-semibold">Zone {i + 1}: {z}</span>)}</div>
+                <div className="flex flex-wrap gap-1.5">{zones.map((z, i) => <span key={z} className="px-2.5 py-1 rounded-lg bg-white border-[1.5px] border-ink text-primary font-label-sm text-label-sm font-semibold">Zone {i + 1}: {z}</span>)}</div>
               ) : <p className="font-body-sm text-body-sm text-on-surface-variant">Intet dækningsområde endnu.</p>}
-              <Link href="/app/knowledge?tab=k03" className="font-label-sm text-label-sm text-secondary font-semibold hover:underline flex items-center gap-1">Redigér i Videnscenter<Icon name="arrow_forward" size={14} /></Link>
+              <Link href="/app/knowledge?tab=k03" className="text-[14px] text-accent font-semibold underline underline-offset-4 inline-flex items-center gap-1 min-h-[44px]">Redigér i Videnscenter<Icon name="arrow_forward" size={14} /></Link>
             </div>
           </div>
         </div>
@@ -117,16 +118,16 @@ export default async function BusinessPage() {
           <div className="bg-surface-container-lowest p-space-md md:p-space-xl rounded-2xl border-2 border-ink space-y-space-lg">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 gap-2">
               <div className="flex items-center gap-space-sm">
-                <span className="w-7 h-6 rounded-md bg-secondary text-on-secondary flex items-center justify-center font-label-sm text-[10px] font-bold flex-shrink-0">2</span>
+                <Bag n={2} size={36} />
                 <div>
                   <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Fakta og redigerbar viden</h2>
                   <p className="font-body-sm text-body-sm text-on-surface-variant">Valider hvad assistenten må gengive til kunder.</p>
                 </div>
               </div>
-              <span className="px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium self-start sm:self-auto">{approvedCount} godkendt • {pendingCount} kræver handling</span>
+              <span className="px-2.5 py-1 rounded-full border-[1.5px] border-ink bg-panel text-ink font-label-sm text-label-sm font-semibold self-start sm:self-auto">{approvedCount} godkendt • {pendingCount} kræver handling</span>
             </div>
-            <div className="p-space-md rounded-xl bg-surface-container-low flex items-start gap-space-md">
-              <Icon name="lock_reset" size={22} className="text-secondary mt-0.5" />
+            <div className="p-space-md rounded-xl border-[1.5px] border-ink bg-panel flex items-start gap-space-md">
+              <Icon name="lock_reset" size={22} className="text-accent mt-0.5" />
               <div className="flex-1">
                 <p className="font-label-md text-label-md text-primary font-bold">Kun godkendte versioner bruges</p>
                 <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">En ny kladde ændrer aldrig den aktive viden, før en ejer eller administrator har godkendt den. Forslag fra hjemmesiden lægges også som kladder her.</p>
@@ -134,9 +135,9 @@ export default async function BusinessPage() {
             </div>
 
             {/* Opening hours */}
-            <div className="p-space-md rounded-xl bg-surface space-y-2">
+            <div className="p-space-md rounded-xl border-[1.5px] border-ink bg-white space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2"><Icon name="schedule" size={18} className="text-primary" /><span className="font-label-md text-label-md text-primary font-bold">Åbningstider &amp; telefontider</span></div>
+                <div className="flex items-center gap-2"><Icon name="schedule" size={18} className="text-accent" /><span className="font-label-md text-label-md text-primary font-bold">Åbningstider &amp; telefontider</span></div>
                 <FactStatus item={hours} />
               </div>
               {hours ? (() => {
@@ -144,13 +145,13 @@ export default async function BusinessPage() {
                 return (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     {(c.weekly ?? []).map((w, i) => (
-                      <div key={i} className="bg-surface-container-lowest p-2.5 rounded-lg">
+                      <div key={i} className="bg-panel p-2.5 rounded-lg">
                         <span className="font-label-sm text-label-sm text-on-surface-variant block capitalize">{daysLabel(w.days)}</span>
                         <span className="font-headline-sm text-headline-sm text-primary font-bold">{w.open} – {w.close}</span>
                       </div>
                     ))}
                     {c.closed_note && (
-                      <div className="bg-surface-container-lowest p-2.5 rounded-lg">
+                      <div className="bg-panel p-2.5 rounded-lg">
                         <span className="font-label-sm text-label-sm text-on-surface-variant block">Øvrig tid</span>
                         <span className="font-headline-sm text-headline-sm text-on-surface-variant font-medium">{c.closed_note}</span>
                       </div>
@@ -162,16 +163,16 @@ export default async function BusinessPage() {
             </div>
 
             {/* Services & prices */}
-            <div className="p-space-md rounded-xl bg-surface-container space-y-3">
+            <div className="p-space-md rounded-xl border-[1.5px] border-ink bg-panel space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <Icon name="payments" size={20} className="text-secondary" />
+                  <Icon name="payments" size={20} className="text-accent" />
                   <div>
                     <span className="font-label-md text-label-md text-primary font-bold">Ydelser og vejledende priser</span>
                     {services.some((s) => s.open_draft) && <span className="font-label-sm text-label-sm text-on-error-container block font-bold">Ugodkendte ændringer – kræver godkendelse</span>}
                   </div>
                 </div>
-                <span className="font-label-sm text-label-sm text-on-surface-variant bg-surface-container-lowest px-2 py-0.5 rounded self-start sm:self-auto">{services.some((s) => (s.open_draft ?? s.approved_version)?.source_type === "extraction") ? "Kilde: hjemmeside + manuel" : "Kilde: indtastet manuelt"}</span>
+                <span className="font-label-sm text-label-sm text-muted bg-white border-[1.5px] border-ink px-2 py-0.5 rounded-lg self-start sm:self-auto">{services.some((s) => (s.open_draft ?? s.approved_version)?.source_type === "extraction") ? "Kilde: hjemmeside + manuel" : "Kilde: indtastet manuelt"}</span>
               </div>
               <div className="space-y-2">
                 {services.length === 0 && <EmptyFact text="Ingen ydelser endnu – tilføj mindst én i Videnscenter." />}
@@ -179,7 +180,7 @@ export default async function BusinessPage() {
                   const v = s.open_draft ?? s.approved_version!;
                   const c = v.content as { description?: string; price_net_minor?: number; unit?: string };
                   return (
-                    <div key={s.id} className="p-3 rounded-lg bg-surface-container-lowest flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-2 border-ink">
+                    <div key={s.id} className="p-3 rounded-xl bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-[1.5px] border-ink">
                       <div className="min-w-0">
                         <p className="font-label-md text-label-md text-primary font-bold">{v.title}</p>
                         {c.description && <p className="font-body-sm text-body-sm text-on-surface-variant">{c.description}</p>}
@@ -187,40 +188,40 @@ export default async function BusinessPage() {
                       <div className="flex items-center gap-3 self-end sm:self-auto">
                         {kr(c.price_net_minor) && <div className="text-right"><span className="font-headline-sm text-headline-sm text-primary font-bold">{kr(c.price_net_minor)}</span><span className="font-label-sm text-label-sm text-on-surface-variant block">{UNIT[c.unit ?? ""] ?? ""} ekskl. moms</span></div>}
                         {s.open_draft
-                          ? canApprove ? <ApproveButton wsId={ws.id} versionId={s.open_draft.id} label="Godkend" /> : <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Afventer godkendelse</span>
-                          : <span className="px-2 py-0.5 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold">Godkendt</span>}
+                          ? canApprove ? <ApproveButton wsId={ws.id} versionId={s.open_draft.id} label="Godkend" /> : <span className="px-2.5 py-0.5 rounded-full bg-highlight text-ink text-[12px] font-semibold uppercase tracking-[0.06em]">Afventer godkendelse</span>
+                          : <span className="px-2.5 py-0.5 rounded-full bg-success-soft text-success text-[12px] font-semibold uppercase tracking-[0.06em]">Godkendt</span>}
                       </div>
                     </div>
                   );
                 })}
               </div>
               <div className="flex justify-end pt-1">
-                <Link href="/app/knowledge?tab=k03" className="text-primary hover:underline font-label-sm text-label-sm font-semibold flex items-center gap-1"><Icon name="edit_note" size={14} />Rediger priser i Videnscenter</Link>
+                <Link href="/app/knowledge?tab=k03" className="text-accent underline underline-offset-4 text-[14px] font-semibold inline-flex items-center gap-1 min-h-[44px]"><Icon name="edit_note" size={14} />Rediger priser i Videnscenter</Link>
               </div>
             </div>
 
             {/* Escalation — needs telephony */}
-            <div className="p-space-md rounded-xl bg-surface space-y-2">
+            <div className="p-space-md rounded-xl border-[1.5px] border-dashed border-ink bg-white space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2"><Icon name="support_agent" size={18} className="text-primary" /><span className="font-label-md text-label-md text-primary font-bold">Eskalering ved akutte henvendelser</span></div>
-                <span className="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm font-bold">Ikke tilgængelig endnu</span>
+                <div className="flex items-center gap-2"><Icon name="support_agent" size={18} className="text-muted" /><span className="font-label-md text-label-md text-primary font-bold">Eskalering ved akutte henvendelser</span></div>
+                <span className="px-2.5 py-0.5 rounded-full border-[1.5px] border-dashed border-ink bg-white text-muted text-[12px] font-semibold uppercase tracking-[0.06em]">Ikke tilgængelig endnu</span>
               </div>
-              <p className="p-2.5 rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface-variant">Viderestilling til vagttelefon kræver telefoni, som ikke er tilkoblet. Reglen kan oprettes, når telefoni-adapteren er bygget.</p>
+              <p className="p-2.5 rounded-lg bg-panel font-body-sm text-body-sm text-on-surface-variant">Viderestilling til vagttelefon kræver telefoni, som ikke er tilkoblet. Reglen kan oprettes, når telefoni-adapteren er bygget.</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Sticky action bar */}
-      <div className="md:sticky md:bottom-4 z-40 w-full bg-surface-container-lowest/95 backdrop-blur-md p-space-md rounded-xl shadow-xl flex flex-col-reverse md:flex-row items-center justify-between gap-space-md">
+      <div className="md:sticky md:bottom-4 z-40 w-full bg-white border-2 border-ink p-space-md rounded-2xl flex flex-col-reverse md:flex-row items-center justify-between gap-space-md">
         <div className="flex items-center gap-space-md w-full md:w-auto">
           {canEdit && <SelfManagedButton wsId={ws.id} goals={goals} />}
           <span className="hidden md:inline font-body-sm text-body-sm text-on-surface-variant">Dine indtastninger gemmes serverside uanset valg.</span>
         </div>
         <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-space-md w-full md:w-auto md:justify-end">
-          <button form="business-form" type="submit" name="intent" value="save" disabled={!canEdit} className="px-space-md py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"><Icon name="save" size={18} />Gem</button>
-          <button form="business-form" type="submit" name="intent" value="next" className="justify-center px-space-xl py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-bold transition-all border-2 border-ink shadow-block-sm flex items-center gap-2">
-            <span>Gem og fortsæt til mål &amp; sprog</span><Icon name="arrow_forward" size={18} className="text-secondary-fixed" />
+          <button form="business-form" type="submit" name="intent" value="save" disabled={!canEdit} className="min-h-[44px] px-4 rounded-xl border-2 border-ink bg-white hover:bg-panel text-ink font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"><Icon name="save" size={18} />Gem</button>
+          <button form="business-form" type="submit" name="intent" value="next" className="justify-center min-h-[52px] px-[22px] rounded-[14px] bg-accent hover:bg-accent-deep text-white text-[17px] font-semibold transition-colors flex items-center gap-2.5">
+            <span>Gem og fortsæt til mål &amp; sprog</span><Icon name="arrow_forward" size={20} />
           </button>
         </div>
       </div>
@@ -229,12 +230,12 @@ export default async function BusinessPage() {
 }
 
 function FactStatus({ item }: { item?: Item }) {
-  if (!item) return <span className="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm font-bold">Mangler</span>;
+  if (!item) return <span className="px-2.5 py-0.5 rounded-full border-[1.5px] border-dashed border-ink bg-white text-muted text-[12px] font-semibold uppercase tracking-[0.06em]">Mangler</span>;
   return item.open_draft
-    ? <span className="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">Ugodkendt ændring</span>
-    : <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold flex items-center gap-1"><Icon name="check_circle" size={12} />Godkendt</span>;
+    ? <span className="px-2.5 py-0.5 rounded-full bg-danger-soft text-on-error-container text-[12px] font-semibold uppercase tracking-[0.06em]">Ugodkendt ændring</span>
+    : <span className="px-2.5 py-0.5 rounded-full bg-success-soft text-success text-[12px] font-semibold uppercase tracking-[0.06em] flex items-center gap-1"><Icon name="check_circle" size={12} />Godkendt</span>;
 }
 
 function EmptyFact({ text }: { text: string }) {
-  return <p className="p-2.5 rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface-variant">{text}</p>;
+  return <p className="p-2.5 rounded-lg bg-panel font-body-sm text-body-sm text-on-surface-variant">{text}</p>;
 }

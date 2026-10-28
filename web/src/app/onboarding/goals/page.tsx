@@ -13,10 +13,10 @@ export default async function GoalsPage() {
   return (
     <div className="space-y-space-xl">
       <FlowBar step={2} />
-      <div className="max-w-4xl mx-auto rounded-2xl bg-surface-container-lowest p-space-md md:p-space-xl border-2 border-ink space-y-space-lg">
+      <div className="max-w-4xl mx-auto rounded-2xl bg-white p-space-md md:p-space-xl border-2 border-ink space-y-space-lg">
         <div>
           <span className="eyebrow">Mål og kanalarkitektur</span>
-          <h1 className="font-headline-sm text-headline-sm text-primary font-bold mt-1">Valgte driftsmål &amp; automatiseringer</h1>
+          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink mt-1">Valgte driftsmål &amp; automatiseringer</h1>
           <p className="font-body-sm text-body-sm text-on-surface-variant">Vælg produkt og kanaler. Vi foreslår mål ud fra jeres virksomhed og viden – ret dem til, og gem. Din personlige plan beregnes ud fra valgene.</p>
         </div>
         <GoalsForm wsId={ws.id} goals={goals} canEdit={ws.role !== "reader"} aiReady={aiReady} />

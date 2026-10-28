@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Dialogbot",
     description: "AI-reception, callback og kampagner for danske virksomheder",
     lang: "da",
-    start_url: "/app/setup",
+    start_url: "/app",
     scope: "/",
     display: "standalone",
     background_color: "#2456F6",

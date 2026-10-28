@@ -59,8 +59,8 @@ test("1 · A01→A03→A06: tilmelding med bevaret hensigt, bekræftelse og før
 });
 
 test("2 · A02: forkert adgangskode afvises, login husker destination, log ud", async ({ page }, info) => {
-  await page.goto("/app/knowledge");
-  await expect(page).toHaveURL(/\/login\?next=%2Fapp%2Fknowledge/);
+  await page.goto("/app/viden");
+  await expect(page).toHaveURL(/\/login\?next=%2Fapp%2Fviden/);
   await page.getByLabel("E-mail").fill(SEEDED.owner);
   await page.getByLabel("Adgangskode", { exact: true }).fill("forkert-kode-123");
   await page.getByRole("button", { name: "Log ind" }).click();
@@ -68,8 +68,8 @@ test("2 · A02: forkert adgangskode afvises, login husker destination, log ud", 
   await shot(page, info, "a02-fejl");
   await page.getByLabel("Adgangskode", { exact: true }).fill(DEMO_PASSWORD);
   await page.getByRole("button", { name: "Log ind" }).click();
-  await expect(page).toHaveURL(/\/app\/knowledge/);
-  await page.goto("/app/settings/profile");
+  await expect(page).toHaveURL(/\/app\/viden/);
+  await page.goto("/app/konto/profil");
   await expect(page.getByText("Denne enhed")).toBeVisible();
   await shot(page, info, "s08-profil");
   await page.getByRole("button", { name: "Log ud" }).first().click();
@@ -124,7 +124,7 @@ test("4 · O01→O03→O04: virksomhed gemmes før navigation, mål og sprog", a
 
 test("5 · K03→K05: ny ydelse er kladde, indtil ejeren godkender den", async ({ page }, info) => {
   await freshOwner(page, info);
-  await page.goto("/app/knowledge?tab=k03");
+  await page.goto("/app/viden?tab=k03");
   await expect(page.getByText(/^0 godkendt/).filter({ visible: true }).first()).toBeVisible();
   await page.getByLabel("Titel").fill("Standard gulvafslibning");
   await page.getByLabel(/Beskrivelse til assistenten/).fill("Afslibning og 2x lak");
@@ -132,7 +132,7 @@ test("5 · K03→K05: ny ydelse er kladde, indtil ejeren godkender den", async (
   await page.getByRole("button", { name: "Gem som kladde" }).click();
   await expect(page.getByText(/1 ændring venter\./)).toBeVisible();
   await shot(page, info, "k03-kladde");
-  await page.goto("/app/knowledge?tab=k05");
+  await page.goto("/app/viden?tab=k05");
   await expect(page.getByText("Efter · forslag")).toBeVisible();
   await expect(page.getByText("145,- kr").first()).toBeVisible();
   await shot(page, info, "k05-gennemgang");
@@ -143,14 +143,14 @@ test("5 · K03→K05: ny ydelse er kladde, indtil ejeren godkender den", async (
   await shot(page, info, "k05-godkendt-stempel");
   await page.getByRole("button", { name: "Færdig – fjern fra listen" }).click();
   await expect(page.getByText("Ingen ændringer afventer")).toBeVisible();
-  await page.goto("/app/knowledge?tab=k03");
+  await page.goto("/app/viden?tab=k03");
   await expect(page.getByText("Aktiv & godkendt")).toBeVisible();
 });
 
 test("6 · G01/G05: planen viser én næste handling, tjek kører, ikke-byggede trin er ikke tilgængelige", async ({ page }, info) => {
   await login(page, SEEDED.owner);
   await page.goto("/app/setup");
-  await expect(page.getByText(/AI ikke aktiv/i).filter({ visible: true }).first()).toBeVisible();
+  // The AI status pill left the header with kundeapp v2; the honest status now lives on I dag (checked below: no "Aktiv AI").
   const desktop = info.project.name.startsWith("desktop");
   if (desktop) {
     await expect(page.getByText(/Næste handling/).first()).toBeVisible();
@@ -166,14 +166,15 @@ test("6 · G01/G05: planen viser én næste handling, tjek kører, ikke-byggede 
   await expect(page.getByRole("status").filter({ hasText: /bestået/ }).first()).toBeVisible();
   // No fake capability: persona, support and calendar are never shown as working.
   await expect(page.getByText(/Aktiv AI|AI Live/)).toHaveCount(0);
+  // The placeholder page is gone: its old address now redirects to the help page.
   await page.goto("/app/not-yet?area=Kampagner");
-  await expect(page.getByText("Ikke implementeret endnu")).toBeVisible();
+  await expect(page).toHaveURL(/\/app\/hjaelp/);
 });
 
 test("7 · S02→A05: ejer inviterer, kollega accepterer og lander i arbejdsrummet", async ({ page, browser }, info) => {
   const { wsId } = await freshOwner(page, info);
   const invitee = uniqueEmail("invitee", info);
-  await page.goto("/app/settings/team");
+  await page.goto("/app/konto");
   await page.getByLabel("E-mail").fill(invitee);
   await page.getByLabel("Rolle").selectOption("staff");
   await page.getByRole("button", { name: "Send invitation" }).click();
@@ -201,23 +202,23 @@ test("8 · Roller: læser kan ikke redigere, medarbejder kan ikke se aktivitetsl
   await page.goto("/onboarding/business");
   await expect(page.getByText(/Din rolle \(læser\)/)).toBeVisible();
   await expect(page.getByLabel("By")).toBeDisabled();
-  await page.goto("/app/knowledge?tab=k03");
+  await page.goto("/app/viden?tab=k03");
   await expect(page.getByRole("button", { name: /Gem som ny kladde/ })).toHaveCount(0);
   await shot(page, info, "roller-laeser");
   await page.context().clearCookies();
   await login(page, SEEDED.staff);
-  await page.goto("/app/settings/activity");
+  await page.goto("/app/indstillinger/log");
   await expect(page.getByText(/kun ses af ejere og administratorer/)).toBeVisible();
   await page.context().clearCookies();
   await login(page, SEEDED.admin);
-  await page.goto("/app/settings/activity");
+  await page.goto("/app/indstillinger/log");
   await expect(page.getByRole("heading", { name: "Aktivitetslog" })).toBeVisible();
   await shot(page, info, "s09-log");
 });
 
 test("9 · R06: medarbejder tester assistenten mod godkendt viden; læser kan ikke", async ({ page }, info) => {
   await login(page, SEEDED.staff);
-  await page.goto("/app/knowledge?tab=r06");
+  await page.goto("/app/viden?tab=r06");
   await expect(page.getByRole("heading", { name: "Test den – spørg som en kunde" })).toBeVisible();
   await expect(page.getByText(/simuleret model, ikke en rigtig AI/)).toBeVisible();
   await page.getByLabel("Spørgsmål fra en kunde").fill("Hvad koster afslibning?");
@@ -231,7 +232,7 @@ test("9 · R06: medarbejder tester assistenten mod godkendt viden; læser kan ik
   await expect(answers.getByText("Afvist af modellen")).toBeVisible();
   await page.context().clearCookies();
   await login(page, SEEDED.reader);
-  await page.goto("/app/knowledge?tab=r06");
+  await page.goto("/app/viden?tab=r06");
   await expect(page.getByText("Test kræver rollen medarbejder eller højere.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Spørg assistenten" })).toHaveCount(0);
 });
@@ -267,7 +268,7 @@ test("11 · W01: ejer slår webchat til, kunde chatter på eget domæne, samtale
   await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`, { headers: CSRF });
   expect((await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
 
-  await page.goto("/app/settings/webchat");
+  await page.goto("/app/indstillinger/webchat");
   await expect(page.getByText("Testmiljø: svarene kommer fra en simuleret model")).toBeVisible();
   await page.getByRole("switch", { name: "Vis widgetten på hjemmesiden" }).check();
   await page.getByLabel("Godkendte domæner").fill(CUSTOMER_SITE);
@@ -303,7 +304,7 @@ test("11 · W01: ejer slår webchat til, kunde chatter på eget domæne, samtale
   await expect(evil.getByRole("button", { name: "Åbn chat" })).toHaveCount(0);
   await other.close();
 
-  await page.goto("/app/inbox");
+  await page.goto("/app/opkald");
   await page.getByRole("link", { name: /Hvad koster gulvafslibning\?/ }).click();
   await expect(page.getByText("[fake] svar på: Hvad koster gulvafslibning?")).toBeVisible();
   await shot(page, info, "indbakke-samtale");
@@ -341,7 +342,7 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, be
   await shot(site, info, "kontakt-i-webchat");
   await ctx.close();
 
-  await page.goto("/app/leads");
+  await page.goto("/app/opkald/henvendelser");
   await page.getByRole("link", { name: /Henrik Villumsen/ }).click();
   await expect(page.getByRole("heading", { name: "Henrik Villumsen" })).toBeVisible();
   await expect(page.getByText(`Ring Henrik Villumsen op – ${windowLabel}`)).toBeVisible();
@@ -352,7 +353,7 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, be
   await page.getByRole("button", { name: "Gem", exact: true }).click();
   await expect(page.getByLabel("Kvalificering")).toHaveValue("qualified");
 
-  await page.goto("/app/settings/agreement");
+  await page.goto("/app/konto/abonnement");
   await page.getByRole("button", { name: "Bekræft abonnement" }).click();
   await expect(page.getByText("Månedspris: 2.495,00 kr.", { exact: false })).toBeVisible(); // one offer: from 2.495 kr./md.
   await shot(page, info, "prisaftale");
@@ -373,7 +374,7 @@ test("13 · Rapporter: dagens tal er foreløbige og viser nye henvendelser; e-ma
   const { wsId } = await freshOwner(page, info);
   const CSRF = { "x-requested-with": "dialogbot" };
   expect((await page.request.post(`/api/backend/workspaces/${wsId}/leads`, { headers: CSRF, data: { contact_name: "Rapport Rasmussen", need_summary: "Vil have tilbud på lak" } })).ok()).toBeTruthy();
-  await page.goto("/app/reports");
+  await page.goto("/app/ugen");
   await expect(page.getByText("Foreløbig – dagen er ikke slut")).toBeVisible();
   await expect(page.getByRole("link", { name: /Rapport Rasmussen/ })).toBeVisible();
   await expect(page.getByText("Godkendte henvendelser (pris ekskl. moms)")).toBeVisible();
@@ -399,7 +400,7 @@ test("14 · S03: ny kunde sætter telefonen op uden leverandørkonti – nummer,
   await post(`/workspaces/${wsId}/agreement`, { model: "A" });
   const own = `+4520${String(Date.now()).slice(-6)}`;
 
-  await page.goto("/app/settings/telephony");
+  await page.goto("/app/indstillinger/telefoni");
   await expect(page.getByText("Ikke sat op", { exact: true })).toBeVisible();
   const text = await page.locator("main").innerText();
   for (const word of ["Vapi", "Twilio", "webhook", "Server URL", "Bearer", "API-nøgle", "nummer-id"]) expect(text).not.toContain(word);
@@ -457,7 +458,7 @@ test("14 · S03: ny kunde sætter telefonen op uden leverandørkonti – nummer,
   await page.goto("/app/operator/telephony");
   await expect(page.getByRole("heading", { name: "Telefoni: leverandører, klargøring og numre" })).toBeVisible();
   await shot(page, info, "operator-telefoni");
-  await page.goto("/app/inbox");
+  await page.goto("/app/opkald");
   await page.getByRole("link", { name: /Hvad koster afslibning\?/ }).click();
   await expect(page.getByRole("heading", { name: "Telefonopkald" })).toBeVisible();
   await page.getByRole("link", { name: /Henvendelse:/ }).click();
@@ -485,7 +486,7 @@ test("15 · Medarbejder overtager en webchat, svarer kunden, og assistenten hold
   await send.click();
   await expect(chat.getByText("[fake] svar på: Må jeg tale med en person?")).toBeVisible();
 
-  await page.goto("/app/inbox");
+  await page.goto("/app/opkald");
   await page.getByRole("link", { name: /Må jeg tale med en person\?/ }).click();
   await page.getByLabel("Svar kunden i chatten").fill("Hej, det er Mads fra Fjord. Hvad drejer det sig om?");
   await page.getByRole("button", { name: "Send svar" }).click();
@@ -501,7 +502,7 @@ test("15 · Medarbejder overtager en webchat, svarer kunden, og assistenten hold
 
   await expect(page.getByText("Kan I komme onsdag?")).toBeVisible({ timeout: 15_000 }); // inbox auto-refresh
   await shot(page, info, "indbakke-overtaget");
-  await page.goto("/app/inbox");
+  await page.goto("/app/opkald");
   await expect(page.getByText("Venter på svar")).toBeVisible();
 });
 
@@ -512,7 +513,7 @@ test("16 · Afregning: abonnementet (2.495 kr. + moms) og den godkendte henvende
   const lead = await (await page.request.post(`/api/backend/workspaces/${wsId}/leads`, { headers: CSRF, data: { contact_name: "Birgitte Bruun" } })).json();
   await page.request.patch(`/api/backend/workspaces/${wsId}/leads/${lead.id}`, { headers: CSRF, data: { expected_version: lead.version, qualification_status: "qualified" } });
   expect((await page.request.post(`/api/backend/workspaces/${wsId}/leads/${lead.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
-  await page.goto("/app/billing");
+  await page.goto("/app/konto/fakturering");
   await expect(page.getByText("Kortbetaling er ikke sat op endnu.", { exact: false })).toBeVisible(); // no Stripe keys in E2E
   await expect(page.getByText("Den faktureres først, når måneden er slut og kortbetaling er sat op.", { exact: false })).toBeVisible();
   await expect(page.getByRole("link", { name: "Godkendt henvendelse: Birgitte Bruun" })).toBeVisible();
@@ -542,7 +543,7 @@ test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation
     if (style) expect(style.outline || style.shadow, `fokus synlig på ${style.tag}`).toBeTruthy();
   }
   await shot(page, info, "fokus");
-  await page.goto("/app/knowledge?tab=k03");
+  await page.goto("/app/viden?tab=k03");
   await page.getByRole("link", { name: /Aktive tilbud|Tilbud/ }).focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/tab=k04/);
@@ -554,13 +555,13 @@ test("17 · Viden: forslag fra hjemmesiden bliver til kladder med tekst og uden 
     <h1>Fjord Gulv</h1><p>Vi sliber og behandler trægulve i hele Østjylland.</p>
     <h2>Gulvafslibning</h2><p>Afslibning med støvfrit anlæg. Fra 145 kr. pr. m² inkl. moms.</p>
     <h2>Lakering</h2><p>Tre lag slidstærk lak.</p></body></html>`));
-  await page.goto("/app/knowledge?tab=k03");
+  await page.goto("/app/viden?tab=k03");
   await expect(page.getByRole("heading", { name: "Hent forslag fra hjemmesiden" })).toBeVisible();
   await page.getByLabel("Hjemmesidens adresse").fill("http://127.0.0.1:4000/");
   await page.getByRole("button", { name: "Hent forslag" }).click();
   await expect(page.getByText("3 forslag oprettet som kladder")).toBeVisible({ timeout: 20_000 });
   await expect(page.getByText("Ydelse: Gulvafslibning")).toBeVisible();
-  await page.goto("/app/knowledge?tab=k03");
+  await page.goto("/app/viden?tab=k03");
   await expect(page.getByText(/Hjemmesiden nævner prisen/).first()).toBeVisible();
   await shot(page, info, "k03-forslag-fra-hjemmeside");
   // A wrong suggestion can be deleted; the guide leads on to the personal plan.
@@ -595,7 +596,7 @@ test("18 · O01: hjemmesiden udfylder beskrivelse, CVR, telefon og adresse; åbn
 
 test("19 · Reception: manuskriptet foreslås af AI, rettes og gemmes; kanalerne vises", async ({ page }, info) => {
   await freshOwner(page, info);
-  await page.goto("/app/reception");
+  await page.goto("/app/indstillinger/hilsen");
   await expect(page.getByRole("heading", { name: "Jeres digitale reception" })).toBeVisible();
   await expect(page.getByText(/Forslag fra AI er sat ind/)).toBeVisible();
   await expect(page.getByLabel(/Det skal assistenten spørge om/)).toHaveValue(/navn/);
@@ -606,20 +607,17 @@ test("19 · Reception: manuskriptet foreslås af AI, rettes og gemmes; kanalerne
   await shot(page, info, "r05-reception");
 });
 
-test("20 · Overblik og notifikationer: en ny henvendelse vises med ulæst-tæller, som nulstilles; hjælpen findes", async ({ page }, info) => {
+test("20 · I dag og beskeder: en ny henvendelse vises under «Til dig» og som besked; hjælpen findes", async ({ page }, info) => {
   const { wsId } = await freshOwner(page, info);
   const CSRF = { "x-requested-with": "dialogbot" };
   await page.request.post(`/api/backend/workspaces/${wsId}/leads`, { headers: CSRF, data: { contact_name: "Mette", contact_phone: "+4520304050", need_summary: "Tilbud på afslibning" } });
-  await page.goto("/app/overview");
+  await page.goto("/app");
   await expect(page.getByRole("link", { name: /1 nye henvendelser/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /Åbn: Ny henvendelse: Mette/ })).toBeVisible();
-  await expect(page.getByRole("link", { name: /Notifikationer, \d+ ulæste/ }).first()).toBeVisible();
   await shot(page, info, "overblik");
-  await page.goto("/app/notifications");
+  await page.goto("/app/opkald/beskeder");
   await expect(page.getByText(/Ny henvendelse: Mette/)).toBeVisible();
-  await page.goto("/app/overview");
-  await expect(page.getByRole("link", { name: /ulæste/ })).toHaveCount(0);
-  await page.goto("/app/help");
+  await page.goto("/app/hjaelp");
   await expect(page.getByRole("heading", { name: "Sådan bruger I Dialogbot" })).toBeVisible();
 });
 
@@ -630,7 +628,7 @@ test("21 · Bookinger: tider følger godkendte åbningstider; en manuel booking 
   const item = await (await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/items`, { headers: CSRF, data: { kind: "opening_hours", title: "Åbningstider", content: { weekly: week } } })).json();
   await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/submit`, { headers: CSRF });
   expect((await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${item.open_draft.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
-  await page.goto("/app/bookings");
+  await page.goto("/app/aftaler");
   await expect(page.getByRole("heading", { name: "Aftaler", exact: true })).toBeVisible();
   await expect(page.getByText("Online booking er slået fra")).toBeVisible();
   await page.getByLabel("Navn", { exact: true }).fill("Besigtigelse");
@@ -654,7 +652,7 @@ test("21 · Bookinger: tider følger godkendte åbningstider; en manuel booking 
 
 test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovkrav, og start er ærlig om manglende opsætning", async ({ page }, info) => {
   await freshOwner(page, info);
-  await page.goto("/app/campaigns");
+  await page.goto("/app/kampagner");
   await expect(page.getByRole("heading", { name: "Udgående opkald" })).toBeVisible();
   await expect(page.getByText(/4,00 kr\. \+ moms pr\. udgående opkald/)).toBeVisible();
   await page.getByLabel("Navn på kampagnen").fill("Forårstilbud");
@@ -682,7 +680,7 @@ test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovk
   await expect(start).toBeDisabled(); // stays disabled while outbound calling is not configured
   await expect(page.getByText("Kladde", { exact: true })).toBeVisible();
   await shot(page, info, "c02-kampagne");
-  await page.goto("/app/campaigns");
+  await page.goto("/app/kampagner");
   await page.getByLabel("Telefonnummer").fill("21 22 23 24");
   await page.getByRole("button", { name: "Spær nummer" }).click();
   await expect(page.getByText("+4521222324")).toBeVisible();
@@ -723,7 +721,7 @@ test("23 · Stemmer: operatør udgiver en kontrolleret stemme; ejer lytter, væl
   await post(`/operator/voice-versions/${vid}/approve`);
   await post(`/operator/voice-versions/${vid}/activate`);
 
-  await page.goto("/app/voices");
+  await page.goto("/app/indstillinger/stemmer");
   await expect(page.getByRole("heading", { name: "Dansk stemme til jeres assistent" })).toBeVisible();
   await expect(page.getByText(/talemotoren er simuleret/)).toBeVisible();
   // ready-made Danish voices with portraits: Camilla is used until another is chosen
@@ -749,7 +747,7 @@ test("23 · Stemmer: operatør udgiver en kontrolleret stemme; ejer lytter, væl
   const ctx = await browser.newContext({ baseURL: info.project.use.baseURL });
   const p2 = await ctx.newPage();
   await login(p2, email);
-  await p2.goto("/app/voices");
+  await p2.goto("/app/indstillinger/stemmer");
   await expect(p2.getByText("Standard", { exact: true })).toBeVisible();
   await ctx.close();
   // test call (simulated telephony + simulated engine): the call's assistant uses the chosen voice, pinned per call
@@ -773,7 +771,7 @@ test("23 · Stemmer: operatør udgiver en kontrolleret stemme; ejer lytter, væl
 test("24 · Egen stemme: samtykke i eget navn, personligt manuskript, optagelse sætning for sætning, indsendelse til gennemgang og tilbagetrækning", async ({ page }, info) => {
   test.setTimeout(180_000);
   await freshOwner(page, info);
-  await page.goto("/app/voices");
+  await page.goto("/app/indstillinger/stemmer");
   await page.getByRole("link", { name: "Indtal jeres egen stemme" }).click();
   await expect(page.getByRole("heading", { name: "Indtal jeres egen stemme" })).toBeVisible();
   await expect(page.getByText(/Ligheden med indtaleren kan variere/)).toBeVisible();
@@ -806,7 +804,7 @@ test("24 · Egen stemme: samtykke i eget navn, personligt manuskript, optagelse 
 
 test("25 · Integrationer: ærligt katalog, Zapier med signeret webhook, Google Kalender via OAuth (simuleret) og afbryd", async ({ page }, info) => {
   await freshOwner(page, info);
-  await page.goto("/app/settings/integrationer");
+  await page.goto("/app/indstillinger/integrationer");
   await expect(page.getByRole("heading", { name: "Handlinger i jeres egne systemer" })).toBeVisible();
   await expect(page.getByText(/Testmiljø: forbindelser og handlinger er simulerede/)).toBeVisible();
   for (const h of ["Klar", "Via Zapier eller Make", "På vej"]) await expect(page.getByRole("heading", { name: h, exact: true })).toBeVisible();
@@ -929,7 +927,7 @@ test("26 · Ambassadør: ung tilmelder sig via regelquiz, forælder godkender, o
   await cust.getByLabel("Virksomhedens officielle navn").fill(`Hansen VVS ${tag}`);
   await cust.getByRole("button", { name: "Opret og fortsæt" }).click();
   await expect(cust).toHaveURL(/\/onboarding\/business/);
-  await cust.goto("/app/billing");
+  await cust.goto("/app/konto/fakturering");
   await expect(cust.getByText(/I er anbefalet af Mads/)).toBeVisible();
 
   // 7. The ambassador sees the customer (company name and status only).
@@ -938,4 +936,46 @@ test("26 · Ambassadør: ung tilmelder sig via regelquiz, forælder godkender, o
   await expect(page.getByText(`Hansen VVS ${tag}`)).toBeVisible();
   await expect(page.getByText("i gang med opstart")).toBeVisible();
   await Promise.all([opCtx.close(), parentCtx.close(), custCtx.close()]);
+});
+
+
+test("Skal v2: fire faner, avatar til Konto, bundfaner på telefon, assistent, og alle gamle adresser redirecter", async ({ page }, info) => {
+  await login(page, SEEDED.owner);
+  await page.goto("/app");
+  const mobile = (page.viewportSize()?.width ?? 1440) < 640;
+  const tabs = mobile ? page.locator("nav[aria-label='Sider']").last() : page.locator("header nav[aria-label='Sider']");
+  for (const label of ["I dag", "Det ved den", "Opkald", "Ugen"]) await expect(tabs.getByRole("link", { name: label })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Mere/ })).toHaveCount(0);
+  await expect(tabs.getByRole("link", { name: "I dag" })).toHaveAttribute("aria-current", "page");
+  await tabs.getByRole("link", { name: "Opkald" }).click();
+  await expect(page).toHaveURL(/\/app\/opkald$/);
+  await expect(tabs.getByRole("link", { name: "Opkald" })).toHaveAttribute("aria-current", "page");
+  // The assistant: a column on a wide screen, a full-screen sheet behind «Ændr noget» elsewhere.
+  if (page.viewportSize()!.width < 1280) {
+    await page.getByRole("button", { name: "Ændr noget" }).click();
+    await expect(page.getByRole("dialog", { name: "Ændr noget" })).toBeVisible();
+    await shot(page, info, "skal-assistent-ark");
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+  } else {
+    await expect(page.getByRole("complementary", { name: "Ændr noget" })).toBeVisible();
+  }
+  await page.getByRole("link", { name: /^Konto:/ }).click();
+  await expect(page).toHaveURL(/\/app\/konto$/);
+  await shot(page, info, "skal-konto");
+  // No horizontal page scroll at either width.
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBeTruthy();
+  const OLD: [string, RegExp][] = [
+    ["/app/overview", /\/app$/], ["/app/knowledge?tab=k03", /\/app\/viden\?tab=k03/], ["/app/inbox", /\/app\/opkald$/], ["/app/leads", /\/app\/opkald\/henvendelser$/],
+    ["/app/tasks", /\/app\/opkald\/opgaver$/], ["/app/notifications", /\/app\/opkald\/beskeder$/], ["/app/reports", /\/app\/ugen$/], ["/app/bookings", /\/app\/aftaler$/],
+    ["/app/campaigns", /\/app\/kampagner$/], ["/app/settings/team", /\/app\/konto$/], ["/app/settings/profile", /\/app\/konto\/profil$/], ["/app/billing", /\/app\/konto\/fakturering$/],
+    ["/app/settings/agreement", /\/app\/konto\/abonnement$/], ["/app/settings/telephony", /\/app\/indstillinger\/telefoni$/], ["/app/settings", /\/app\/indstillinger$/],
+    ["/app/reception", /\/app\/indstillinger\/hilsen$/], ["/app/voices", /\/app\/indstillinger\/stemmer$/], ["/app/help", /\/app\/hjaelp$/], ["/app/not-yet", /\/app\/hjaelp$/],
+  ];
+  for (const [from, to] of OLD) {
+    const r = await page.request.get(from, { maxRedirects: 0 });
+    expect(r.status(), from).toBe(308);
+    await page.goto(from);
+    await expect(page, from).toHaveURL(to);
+  }
 });

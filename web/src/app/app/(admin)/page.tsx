@@ -75,15 +75,15 @@ export default async function OverviewPage() {
           <div className="flex flex-col gap-0.5 flex-[1_1_200px]">
             <h1 className="font-display font-extrabold text-[24px] leading-tight tracking-[-0.4px] text-ink">Dialogbot er {on ? "tændt" : code === "paused" ? "slukket" : "ikke tændt"}</h1>
             <span className="text-[14px] text-muted">{STATUS_LINE[code]}{tel?.business_number ? ` · ${tel.business_number}` : ""}</span>
-            {!on && code !== "paused" && staff && <Link href="/app/settings/telephony" className="text-[14px] font-semibold text-ink underline underline-offset-2 w-fit mt-1">Sæt telefonen op</Link>}
+            {!on && code !== "paused" && staff && <Link href="/app/indstillinger/telefoni" className="text-[14px] font-semibold text-ink underline underline-offset-2 w-fit mt-1">Sæt telefonen op</Link>}
           </div>
           {staff && <PowerToggle wsId={ws.id} code={code} canManage={canManage} />}
         </div>
 
         {/* today's numbers */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-          <Tile n={k.calls_24h ?? 0} label="opkald" sub="seneste 24 timer" href="/app/inbox" />
-          <Tile n={k.new_leads_24h ?? 0} label="nye henvendelser" sub={`${k.open_leads ?? 0} åbne i alt`} href="/app/leads" />
+          <Tile n={k.calls_24h ?? 0} label="opkald" sub="seneste 24 timer" href="/app/opkald" />
+          <Tile n={k.new_leads_24h ?? 0} label="nye henvendelser" sub={`${k.open_leads ?? 0} åbne i alt`} href="/app/opkald/henvendelser" />
           <Tile n={todo.length} label="til dig" sub="venter på dit svar" href="#til-dig" />
         </div>
 
@@ -135,12 +135,12 @@ export default async function OverviewPage() {
                   <span className="font-display font-bold min-w-[48px] text-ink">{hhmm(c.started_at)}<span className="block text-[11px] font-body font-medium text-muted">{dayLabel(c.started_at)}</span></span>
                   <span className="flex-[1_1_220px] min-w-0 text-ink"><b>{c.from_number || "Skjult nummer"}</b>{c.summary ? ` · ${c.summary}` : ""}</span>
                   <span className={`inline-flex px-2.5 py-1 rounded-full text-[12px] font-semibold ${c.conversation_id ? "bg-panel border-[1.5px] border-ink text-ink" : "bg-highlight text-ink"}`}>{c.conversation_id ? "Besvaret af Dialogbot" : "Ingen samtale"}</span>
-                  {c.conversation_id ? <Link href={`/app/inbox/${c.conversation_id}`} className="font-semibold text-ink underline underline-offset-2">Læs</Link> : <span className="text-muted">{c.duration_seconds ? `${Math.round(c.duration_seconds / 60)} min` : ""}</span>}
+                  {c.conversation_id ? <Link href={`/app/opkald/${c.conversation_id}`} className="font-semibold text-ink underline underline-offset-2">Læs</Link> : <span className="text-muted">{c.duration_seconds ? `${Math.round(c.duration_seconds / 60)} min` : ""}</span>}
                 </li>
               ))}
             </ul>
           )}
-          <Link href="/app/inbox" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">Se alle opkald</Link>
+          <Link href="/app/opkald" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">Se alle opkald</Link>
         </div>
 
         {/* Everything else that happened, for completeness */}

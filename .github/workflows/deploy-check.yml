@@ -1,0 +1,19 @@
+name: Deploy check
+
+# After every push to main (and on demand): the running API must report the same Alembic head as this commit.
+# A mismatch means the pre-deploy migration did not run or failed – the worker pauses its jobs in that state and
+# production would otherwise show errors like "column … does not exist". Retries because a rolling deploy takes minutes.
+# Set the repository variable API_HEALTH_URL to the production API origin; it defaults to the Render service URL.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  schema-head:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Live database is on this commit's Alembic head
+        run: python3 scripts/check_live_schema.py "${{ vars.API_HEALTH_URL || 'https://dialogbot-api-staging.onrender.com' }}" --wait-minutes 25

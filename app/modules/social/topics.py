@@ -22,11 +22,11 @@ FACTS: tuple[str, ...] = (
     "Pris ekskl. moms: ét abonnement fra 2.495 kr. om måneden. Der er ingen pris pr. henvendelse.",
     "Udgående opkald i en kampagne koster 4 kr. pr. opkald ekskl. moms.",
     "Ingen binding og intet opstartsgebyr.",
-    "Gratis personlig opsætning, cirka en halv time.",
+    "Personlig opsætning sammen med en fra Dialogbot, cirka en halv time.",
     "Virksomheder kan beholde deres eget telefonnummer og viderestille til Dialogbot.",
     "En AI-telefonsvarer taler med kunden i stedet for at bede om en besked.",
     "Chatbot til hjemmesiden med samme godkendte viden som telefonen.",
-    "På dialogbot.dk kan man bede om at blive ringet op af Dialogbot for at høre, hvordan den tager telefonen (kræver samtykke).",
+    "På dialogbot.dk kan man bede om at blive ringet op af Peter, Dialogbots digitale assistent, for at høre, hvordan Dialogbot tager telefonen (kræver samtykke).",
     "Dialogbot hører til i Aarhus, Danmark.",
 )
 
@@ -46,6 +46,7 @@ class Topic:
     proof: str  # one sentence that makes the call to action safer to click
     tags: tuple[str, ...]  # topic hashtags, without '#'
     kicker: str  # small label above the headline on the images
+    caption_note: str = ""  # a line that goes in the text only, never on an image (used for prices)
 
 
 TOPICS: tuple[Topic, ...] = (
@@ -65,20 +66,22 @@ TOPICS: tuple[Topic, ...] = (
         hooks={"facebook": "Sådan kommer du i gang med Dialogbot på cirka en halv time",
                "instagram": "Tre trin fra ringende telefon til rolig hverdag",
                "tiktok": "3 trin, og din telefon passer sig selv"},
-        points=("Gratis personlig opsætning sammen med dig",
+        points=("Personlig opsætning sammen med dig",
                 "Du godkender den viden, Dialogbot må svare ud fra",
                 "Du beholder dit nummer og viderestiller til Dialogbot"),
         proof="Opsætningen tager cirka en halv time.", tags=("opsætning", "digitalisering")),
     Topic(
         key="pricing", path="/priser", kicker="Priser",
-        angle="Åbenhed om prisen: ét abonnement fra 2.495 kr. om måneden, 4 kr. pr. udgående kampagneopkald, ingen binding.",
-        hooks={"facebook": "Priser uden overraskelser",
-               "instagram": "Fra 2.495 kr. om måneden. Ét abonnement.",
-               "tiktok": "Hvad koster en AI-receptionist? Det her."},
-        points=("Ét abonnement: fra 2.495 kr. om måneden ekskl. moms",
-                "Udgående kampagneopkald: 4 kr. pr. opkald ekskl. moms",
+        angle="Åbenhed om prisen: ét abonnement uden pris pr. henvendelse og uden binding. Priserne står kun i teksten, "
+              "aldrig på billederne.",
+        hooks={"facebook": "Én pris. Ingen overraskelser.",
+               "instagram": "Ét abonnement. Ingen pris pr. henvendelse.",
+               "tiktok": "Hvad koster en AI-receptionist? Se her."},
+        points=("Ét abonnement – ingen pris pr. henvendelse",
+                "Udgående kampagneopkald har deres egen lille pris",
                 "Ingen binding og intet opstartsgebyr"),
-        proof="Alle priser er ekskl. moms.", tags=("pris", "ingenbinding")),
+        proof="Se prisen på dialogbot.dk.", tags=("pris", "ingenbinding"),
+        caption_note="Fra 2.495 kr./md. ekskl. moms. Udgående kampagneopkald: 4 kr. pr. opkald ekskl. moms."),
     Topic(
         key="approved_knowledge", path="/ai-receptionist", kicker="Du bestemmer",
         angle="Dialogbot svarer kun ud fra det, ejeren har godkendt, og gætter aldrig.",
@@ -138,16 +141,17 @@ TOPICS: tuple[Topic, ...] = (
         points=("Behold dit nuværende nummer",
                 "Viderestil til Dialogbot",
                 "Vi hjælper dig med opsætningen"),
-        proof="Gratis personlig opsætning på cirka en halv time.", tags=("viderestilling", "telefon")),
+        proof="Personlig opsætning på cirka en halv time.", tags=("viderestilling", "telefon")),
     Topic(
         key="demo_call", path="/", kicker="Prøv selv",
-        angle="Man kan selv bede om at blive ringet op af Dialogbot og høre, hvordan den tager telefonen.",
-        hooks={"facebook": "Hør Dialogbot tage telefonen – live",
-               "instagram": "Hør det selv: Dialogbot ringer dig op",
-               "tiktok": "Lad en AI ringe dig op og hør, hvordan den svarer"},
+        angle="Man kan selv bede om at blive ringet op af Peter, Dialogbots digitale assistent, og høre, hvordan "
+              "Dialogbot tager telefonen. Peter er stemmen i prøve-opkaldet.",
+        hooks={"facebook": "Hør Peter tage telefonen – live",
+               "instagram": "Hør det selv: Peter ringer dig op",
+               "tiktok": "Lad Peter ringe dig op og hør, hvordan det lyder"},
         points=("Skriv dit nummer på dialogbot.dk",
                 "Sæt kryds ved samtykke",
-                "Dialogbot ringer og viser, hvordan den tager telefonen"),
+                "Peter, vores digitale assistent, ringer og viser, hvordan Dialogbot tager telefonen"),
         proof="Der ringes kun, hvis du selv beder om det.", tags=("prøvselv", "demo")),
     Topic(
         key="industry_haandvaerkere", path="/ai-receptionist/haandvaerkere", kicker="Håndværkere",

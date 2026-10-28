@@ -102,6 +102,7 @@ HANDLERS = {
     "email.new_lead": handle_new_lead,
     "email.daily_report": handle_daily_report,
     "email.ambassador": handle_branded,
+    "email.branded": handle_branded,  # any mail built where it is queued (tpl.to_payload)
 }
 
 # Test hook: event types listed here raise, to exercise retry paths.
@@ -196,8 +197,26 @@ def drain(max_events: int = 1000) -> int:
 SCHEDULE_EVERY_SECONDS = 60
 
 
+def schema_ready() -> bool:
+    """False (and an error in the log) while the database and this code are on different migrations."""
+    from app.migrations_head import schema_status
+
+    with get_session_factory()() as db:
+        st = schema_status(db)
+    if not st["ok"]:
+        log.error("worker.schema_mismatch", database=st["database"], code=st["code"],
+                  action="scheduled jobs are paused until the database and the code agree")
+    return st["ok"]
+
+
 def run_schedules() -> None:
-    """Periodic jobs. Each is idempotent (unique snapshots + outbox dedupe), so several workers are safe."""
+    """Periodic jobs. Each is idempotent (unique snapshots + outbox dedupe), so several workers are safe.
+
+    Paused while the schema differs from this code: during a rolling deploy the migration (run before the API
+    starts) and the new worker do not switch at the same instant, and a job against the wrong schema only fills the
+    log with errors (that is what `campaigns.package_net_minor does not exist` was, 28/10 10:19–10:21)."""
+    if not schema_ready():
+        return
     from app.modules.reports.service import run_due
 
     with get_session_factory()() as db:

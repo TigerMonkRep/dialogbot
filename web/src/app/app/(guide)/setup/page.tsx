@@ -88,7 +88,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
           </div>
           <ModeToggle wsId={ws.id} mode={plan.guidance_mode} goals={goals} canEdit={canEdit} />
         </div>
-        <div className="relative overflow-hidden rounded-xl bg-surface-container-lowest p-space-xl shadow-sm">
+        <div className="relative overflow-hidden rounded-2xl bg-surface-container-lowest p-space-xl border-2 border-ink">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg relative z-10">
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-space-sm">
@@ -120,8 +120,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
         <div className="lg:col-span-8 flex flex-col gap-space-xl">
           {/* Next action spotlight */}
-          <div className="relative rounded-xl bg-gradient-to-br from-primary-container to-primary text-on-primary p-space-xl shadow-md overflow-hidden">
-            <div className="absolute -right-8 -bottom-8 w-48 h-48 bg-secondary-container/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="relative rounded-xl bg-ink text-paper p-space-xl border-2 border-ink shadow-block-sm overflow-hidden">
             <div className="flex flex-col gap-space-md relative z-10">
               {next ? (
                 <>
@@ -137,7 +136,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
                   <div className="flex flex-wrap items-start gap-space-lg">
                     <span className="font-extrabold leading-[0.85] tracking-tighter text-secondary-fixed tabular-nums" style={{ fontFamily: "var(--font-display)", fontSize: 64 }}>{stepOf(plan.tasks, next).step}</span>
                     <div className="space-y-1 flex-1 min-w-[14rem]">
-                      <span className="font-label-sm text-label-sm font-bold uppercase tracking-wider text-primary-fixed">Pose {stepOf(plan.tasks, next).bag} · {BAGS[stepOf(plan.tasks, next).bag - 1].name}</span>
+                      <span className="text-primary-fixed eyebrow">Pose {stepOf(plan.tasks, next).bag} · {BAGS[stepOf(plan.tasks, next).bag - 1].name}</span>
                       <h2 className="font-headline-md text-headline-md text-on-primary font-bold">{next.label}</h2>
                       <p className="font-body-md text-body-md text-primary-fixed-dim leading-relaxed">{next.explanation}</p>
                     </div>
@@ -146,7 +145,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
                   <WhyBlock task={next} />
                   <div className="flex flex-wrap items-center gap-space-md pt-space-xs">
                     <BuildArrow size={44} />
-                    <Link href={href(next.destination)} className="px-space-xl py-2.5 rounded-xl bg-secondary-fixed text-on-secondary-fixed font-label-lg text-label-lg font-bold hover:brightness-105 transition-all shadow-sm flex items-center gap-space-xs">
+                    <Link href={href(next.destination)} className="px-space-xl py-2.5 rounded-xl bg-secondary-fixed text-on-secondary-fixed font-label-lg text-label-lg font-bold hover:brightness-105 transition-all flex items-center gap-space-xs">
                       <span>Start opgave</span><Icon name="arrow_forward" size={18} />
                     </Link>
                     <a href="#g04" className="px-space-lg py-2.5 rounded-xl bg-surface-container-lowest/15 hover:bg-surface-container-lowest/25 text-on-primary font-label-md text-label-md font-medium transition-colors flex items-center gap-space-xs">
@@ -165,10 +164,10 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
           </div>
 
           {/* Building instructions: the plan's tasks in the manual's bags and step numbers */}
-          <div id="build" className="rounded-xl bg-surface-container-low p-space-xl shadow-sm space-y-space-lg scroll-mt-24">
+          <div id="build" className="rounded-2xl bg-surface-container-low p-space-xl border-2 border-ink space-y-space-lg scroll-mt-24">
             <div className="flex flex-wrap items-start justify-between gap-space-sm">
               <div>
-                <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Byggevejledning</span>
+                <span className="eyebrow">Byggevejledning</span>
                 <h3 className="font-headline-sm text-headline-sm text-primary font-bold mt-1">Byg jeres AI-receptionist pose for pose</h3>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">Samme poser, trinnumre og dele som i den trykte opsætningsmanual.</p>
               </div>
@@ -183,10 +182,10 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
           </div>
 
           {/* G02 & O03 goals */}
-          <div className="rounded-xl bg-surface-container-lowest p-space-xl shadow-sm space-y-space-lg">
+          <div className="rounded-2xl bg-surface-container-lowest p-space-xl border-2 border-ink space-y-space-lg">
             <div className="flex items-start justify-between">
               <div>
-                <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Mål og kanalarkitektur</span>
+                <span className="eyebrow">Mål og kanalarkitektur</span>
                 <h3 className="font-headline-sm text-headline-sm text-primary font-bold mt-1">Valgte driftsmål &amp; automatiseringer</h3>
               </div>
               <span className="font-label-sm text-label-sm text-on-surface-variant">{activeGoals} af 5 aktive</span>
@@ -202,9 +201,9 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
           </div>
 
           {/* O04 & O05 languages and persona */}
-          <div className="rounded-xl bg-surface-container-lowest p-space-xl shadow-sm space-y-space-lg">
+          <div className="rounded-2xl bg-surface-container-lowest p-space-xl border-2 border-ink space-y-space-lg">
             <div>
-              <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Sprog &amp; assistent</span>
+              <span className="eyebrow">Sprog &amp; assistent</span>
               <h3 className="font-headline-sm text-headline-sm text-primary font-bold mt-1">Eksplicit adskillelse af 4 sprogniveauer</h3>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Kontrollér sprogparametre separat for drift, AI-forståelse og ledelsesrapportering.</p>
             </div>
@@ -254,7 +253,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
 
         {/* G04 contextual help + G05 checks */}
         <div className="lg:col-span-4 lg:sticky lg:top-20 flex flex-col gap-space-lg">
-          <div id="g04" className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-md relative overflow-hidden scroll-mt-24">
+          <div id="g04" className="rounded-2xl bg-surface-container-lowest p-space-lg border-2 border-ink space-y-space-md relative overflow-hidden scroll-mt-24">
             <div className="flex items-center justify-between pb-space-xs">
               <div className="flex items-center gap-space-xs"><Icon name="assistant" size={22} className="text-secondary" /><h3 className="font-headline-sm text-headline-sm text-primary font-bold">Hjælp mig videre</h3></div>
               <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">Vejledning</span>
@@ -273,7 +272,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
               <div className="flex items-center gap-space-xs font-label-md text-label-md font-bold text-primary"><Icon name="support_agent" size={18} /><span>Sidder du fast i opsætningen?</span></div>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Hjælpen forklarer hvert trin og viser, hvor det gøres. Valgfrie trin kan springes over og tages senere.</p>
               <div className="pt-space-xs">
-                <Link href="/app/help" className="w-full py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm">
+                <Link href="/app/help" className="w-full py-2 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 border-2 border-ink">
                   <Icon name="help" size={18} className="text-secondary" /><span>Åbn hjælpen</span>
                 </Link>
               </div>
@@ -285,10 +284,10 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
             </div>
           </div>
 
-          <div id="checks" className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-md scroll-mt-24">
+          <div id="checks" className="rounded-2xl bg-surface-container-lowest p-space-lg border-2 border-ink space-y-space-md scroll-mt-24">
             <div className="flex items-start justify-between gap-space-sm">
               <div>
-                <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Klarhedstjek</span>
+                <span className="eyebrow">Klarhedstjek</span>
                 <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">{passed} af {plan.checks.length} bestået</p>
               </div>
               {canEdit && <RunChecks wsId={ws.id} />}
@@ -306,7 +305,7 @@ function SetupDesktop({ ws, plan, goals, profile, languages, caps, canEdit }: Da
             </ul>
           </div>
 
-          <div className="rounded-xl bg-surface-container-lowest p-space-md shadow-sm flex items-center justify-between">
+          <div className="rounded-2xl bg-surface-container-lowest p-space-md border-2 border-ink flex items-center justify-between">
             <div className="flex items-center gap-space-sm">
               <span className={`w-2.5 h-2.5 rounded-full ${aiCap?.status === "available" ? "bg-secondary" : "bg-outline"}`} />
               <div>
@@ -345,12 +344,12 @@ const STATUS_TEXT: Record<string, string> = { complete: "Klar", skipped: "Sprung
 function BagSection({ b, all, nextKey, wsId, canEdit }: { b: BagState; all: Task[]; nextKey?: string; wsId: string; canEdit: boolean }) {
   const holdsNext = b.tasks.some((t) => t.key === nextKey);
   return (
-    <details open={holdsNext || b.tone === "active"} className="group rounded-xl bg-surface-container-lowest overflow-hidden shadow-sm">
+    <details open={holdsNext || b.tone === "active"} className="group rounded-2xl bg-surface-container-lowest overflow-hidden border-2 border-ink">
       <summary className="p-space-md flex items-center justify-between gap-space-md cursor-pointer hover:bg-surface-container-low transition-colors list-none [&::-webkit-details-marker]:hidden">
         <div className="flex items-center gap-space-md min-w-0">
           <Bag n={b.n} tone={b.tone} size={40} />
           <div className="min-w-0">
-            <span className="font-label-sm text-label-sm font-bold uppercase tracking-wider text-secondary">Pose {b.n}</span>
+            <span className="eyebrow">Pose {b.n}</span>
             <h4 className="font-headline-sm text-headline-sm text-primary font-bold leading-tight">{b.name}</h4>
             <p className="font-body-sm text-body-sm text-on-surface-variant">{b.text}</p>
           </div>
@@ -374,7 +373,7 @@ function BagSection({ b, all, nextKey, wsId, canEdit }: { b: BagState; all: Task
 function StepCard({ t, step, parts, isNext, wsId, canEdit }: { t: Task; step: string; parts: Part[]; isNext: boolean; wsId: string; canEdit: boolean }) {
   const finished = done(t);
   if (finished) return (
-    <div className="rounded-lg px-space-md py-2 flex items-center gap-space-md bg-surface">
+    <div className="rounded-xl px-space-md py-2 flex items-center gap-space-md bg-paper border-[1.5px] border-line">
       <span className="w-10 text-center font-extrabold tabular-nums tracking-tighter text-outline text-xl" style={{ fontFamily: "var(--font-display)" }}>{step}</span>
       <Icon name={t.status === "skipped" ? "skip_next" : "check_circle"} size={18} filled={t.status === "complete"} className={t.status === "skipped" ? "text-on-surface-variant" : "text-secondary"} />
       <span className="flex-1 min-w-0 font-body-sm text-body-sm text-on-surface-variant truncate">{t.label}</span>
@@ -384,7 +383,7 @@ function StepCard({ t, step, parts, isNext, wsId, canEdit }: { t: Task; step: st
   );
   const actionable = t.you_can_act && !finished && t.status !== "not_available";
   return (
-    <div className={`rounded-xl p-space-md flex gap-space-md border ${isNext ? "border-2 border-primary bg-secondary-container/25" : "border-surface-container-high bg-surface"} ${finished ? "opacity-75" : ""}`}>
+    <div className={`rounded-2xl p-space-md flex gap-space-md bg-paper ${isNext ? "border-2 border-ink shadow-block-sm" : "border-[1.5px] border-ink"} ${finished ? "opacity-75" : ""}`}>
       <div className="flex flex-col items-center gap-space-sm pt-1">
         <StepNumber value={step} muted={finished} />
         {finished && <Icon name="check_circle" size={22} filled className="text-secondary" />}
@@ -407,7 +406,7 @@ function StepCard({ t, step, parts, isNext, wsId, canEdit }: { t: Task; step: st
         {t.stale_checks.length > 0 && <p className="font-label-sm text-label-sm text-error">Forældede tjek: {t.stale_checks.join(", ")} – kør tjek igen.</p>}
         <div className="flex flex-wrap items-center gap-space-sm">
           {actionable
-            ? <span className="flex items-center gap-space-xs">{isNext && <BuildArrow size={36} />}<Link href={href(t.destination)} className={`px-space-md py-1.5 rounded-full font-label-md text-label-md font-bold ${isNext ? "bg-primary text-on-primary hover:bg-primary-container" : "bg-surface-container text-primary hover:bg-surface-container-high"}`}>{isNext ? "Byg dette trin" : "Åbn"}</Link></span>
+            ? <span className="flex items-center gap-space-xs">{isNext && <BuildArrow size={36} />}<Link href={href(t.destination)} className={`inline-flex items-center min-h-[44px] px-space-lg rounded-xl font-label-md text-label-md font-semibold ${isNext ? "bg-accent text-white hover:bg-accent-deep" : "bg-paper border-2 border-ink text-ink hover:bg-panel"}`}>{isNext ? "Byg dette trin" : "Åbn"}</Link></span>
             : <span className={`font-label-sm text-label-sm ${finished ? "text-secondary font-bold" : "text-on-surface-variant"}`}>{STATUS_TEXT[t.status] ?? t.status}</span>}
           {t.can_skip && canEdit && t.status !== "complete" && <SkipButton wsId={wsId} taskKey={t.key} unskip={t.status === "skipped"} />}
         </div>
@@ -450,7 +449,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
           <div className="flex items-center gap-space-xs min-w-0">
             <span className="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm truncate">{ws.name}</span>
           </div>
-          <div className="flex items-center gap-1 bg-surface-container-lowest px-2 py-1 rounded-full shadow-sm flex-shrink-0">
+          <div className="flex items-center gap-1 bg-surface-container-lowest px-2 py-1 rounded-full border-2 border-ink flex-shrink-0">
             <Icon name="verified" size={15} className="text-primary" />
             <span className="font-label-sm text-label-sm text-primary font-semibold">{p.required_complete} af {p.required_total} klar</span>
           </div>
@@ -466,10 +465,10 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
 
       {!next && (
         <section className="py-space-xs">
-          <div className="bg-surface-container-lowest rounded-xl p-space-md shadow-md flex items-start gap-space-xs">
+          <div className="bg-surface-container-lowest rounded-xl p-space-md border-2 border-ink shadow-block-sm flex items-start gap-space-xs">
             <div className="w-8 h-8 rounded-lg bg-surface-container-high text-on-surface-variant flex items-center justify-center flex-shrink-0"><Icon name="hourglass_empty" size={18} /></div>
             <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">Anbefalet næste handling</span>
+              <span className="eyebrow">Anbefalet næste handling</span>
               <span className="font-headline-sm text-headline-sm text-primary">Ingen åben handling for din rolle</span>
               <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">De resterende trin afventer integrationer, der ikke er bygget endnu, eller en anden rolle.</p>
             </div>
@@ -478,13 +477,13 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
       )}
       {next && (
         <section className="py-space-xs">
-          <div className="bg-surface-container-lowest rounded-xl p-space-md shadow-md flex flex-col gap-space-md relative overflow-hidden">
+          <div className="bg-surface-container-lowest rounded-xl p-space-md border-2 border-ink shadow-block-sm flex flex-col gap-space-md relative overflow-hidden">
             <div className="absolute -right-10 -bottom-10 w-32 h-32 rounded-full bg-secondary-container/30 pointer-events-none" />
             <div className="flex items-start justify-between gap-space-xs relative">
               <div className="flex items-center gap-space-xs">
                 <Bag n={stepOf(plan.tasks, next).bag} size={32} />
                 <div className="flex flex-col">
-                  <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">Anbefalet næste handling</span>
+                  <span className="eyebrow">Anbefalet næste handling</span>
                   <span className="font-headline-sm text-headline-sm text-primary">{next.label}</span>
                 </div>
               </div>
@@ -502,7 +501,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
               <span className="font-label-sm text-label-sm text-primary font-semibold flex-shrink-0">ca. {next.estimated_minutes} min</span>
             </div>
             <PartsBox parts={stepOf(plan.tasks, next).parts} compact />
-            <Link href={href(next.destination)} className="w-full min-h-11 px-space-sm rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs shadow-sm active:scale-[0.98] transition-transform relative">
+            <Link href={href(next.destination)} className="w-full min-h-11 px-space-sm rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-xs active:scale-[0.98] transition-transform relative">
               <span>Fortsæt opsætning: {next.label}</span><Icon name="arrow_forward" size={18} />
             </Link>
           </div>
@@ -516,7 +515,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
         </div>
         <div className="flex gap-space-xs overflow-x-auto pb-1 no-scrollbar -mx-margin px-margin">
           {chips.map(([label, on]) => (
-            <Link key={label} href="/onboarding/goals" aria-label={`${label}: ${on ? "aktiv" : "ikke aktiv"}`} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0 ${on ? "bg-surface-container-lowest shadow-sm" : "bg-surface-container text-outline"}`}>
+            <Link key={label} href="/onboarding/goals" aria-label={`${label}: ${on ? "aktiv" : "ikke aktiv"}`} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full flex-shrink-0 ${on ? "bg-surface-container-lowest border-2 border-ink" : "bg-surface-container text-outline"}`}>
               <Icon name={on ? "check_circle" : "radio_button_unchecked"} size={16} className={on ? "text-secondary" : ""} />
               <span className={`font-label-md text-label-md ${on ? "text-primary" : "text-on-surface-variant"}`}>{label}</span>
             </Link>
@@ -525,7 +524,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
       </section>
 
       <section className="pt-space-md">
-        <div className="bg-surface-container rounded-xl p-space-md flex flex-col gap-space-sm shadow-sm">
+        <div className="bg-surface-container rounded-2xl p-space-md flex flex-col gap-space-sm border-2 border-ink">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5"><Icon name="translate" size={18} className="text-primary" /><span className="font-label-lg text-label-lg text-primary font-semibold">Sprogindstillinger</span></div>
             <Link href="/onboarding/languages" className="font-label-sm text-label-sm text-primary font-bold hover:underline flex items-center gap-0.5"><span>Rediger</span><Icon name="chevron_right" size={14} /></Link>
@@ -552,7 +551,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
             <div className="flex items-center gap-space-sm">
               <Bag n={b.n} tone={b.tone} size={30} />
               <div className="flex flex-col leading-tight min-w-0">
-                <span className="font-label-sm text-label-sm font-bold uppercase tracking-wider text-secondary">Pose {b.n} · {b.complete}/{b.total}</span>
+                <span className="eyebrow">Pose {b.n} · {b.complete}/{b.total}</span>
                 <span className="font-label-lg text-label-lg font-bold text-primary">{b.name}</span>
               </div>
             </div>
@@ -564,7 +563,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
       </section>
 
       <section id="checks" className="pt-space-md scroll-mt-20">
-        <div className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex items-center justify-between gap-space-sm">
+        <div className="bg-surface-container-lowest rounded-2xl p-space-md border-2 border-ink flex items-center justify-between gap-space-sm">
           <div className="flex flex-col">
             <span className="font-label-lg text-label-lg text-primary font-semibold">Klarhedstjek</span>
             <span className="font-body-sm text-body-sm text-on-surface-variant">{passed} af {plan.checks.length} bestået · {plan.checks.filter((c) => !c.runnable).length} kræver integration</span>
@@ -574,7 +573,7 @@ function SetupMobile({ ws, plan, goals, languages, canEdit }: Data) {
       </section>
 
       <section className="pt-space-md">
-        <div className="rounded-xl bg-gradient-to-r from-primary-container to-primary text-on-primary p-space-md shadow-md flex flex-col gap-space-sm relative overflow-hidden">
+        <div className="rounded-xl bg-ink text-paper p-space-md border-2 border-ink shadow-block-sm flex flex-col gap-space-sm relative overflow-hidden">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-lg bg-surface-container-lowest/15 flex items-center justify-center"><Icon name="support_agent" size={20} className="text-secondary-container" /></div>
             <div className="flex flex-col">
@@ -603,7 +602,7 @@ function MobileTask({ t, step, isNext }: { t: Task; step: string; isNext: boolea
   const [circle, icon, pill, text] = look[t.status] ?? look.not_started;
   const sub = t.blocked_by[0]?.message ?? t.explanation;
   const body = (
-    <div className={`bg-surface-container-lowest rounded-xl p-3 shadow-sm flex items-center justify-between gap-space-xs ${t.status === "not_available" || !t.required ? "opacity-80" : ""}`}>
+    <div className={`bg-surface-container-lowest rounded-2xl p-3 border-2 border-ink flex items-center justify-between gap-space-xs ${t.status === "not_available" || !t.required ? "opacity-80" : ""}`}>
       <div className="flex items-center gap-space-sm min-w-0">
         <div className="flex-shrink-0 w-12 flex flex-col items-center gap-1">
           <span className={`font-extrabold tabular-nums tracking-tighter leading-none whitespace-nowrap ${done(t) ? "text-outline" : "text-primary"}`} style={{ fontFamily: "var(--font-display)", fontSize: step.length > 3 ? 15 : step.length > 2 ? 19 : 24 }}>{step}</span>

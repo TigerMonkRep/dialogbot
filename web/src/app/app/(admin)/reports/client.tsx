@@ -12,7 +12,7 @@ export function ReportSettingsForm({ wsId, initial, canEdit }: { wsId: string; i
     setSaved(true); setTimeout(() => setSaved(false), 2500);
   });
   return (
-    <form className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
+    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
       <h3 className="font-headline-sm text-headline-sm text-primary">Dagsrapport på e-mail</h3>
       <label className="flex items-center gap-space-sm font-body-md text-body-md">
         <input type="checkbox" checked={enabled} disabled={!canEdit} onChange={(e) => setEnabled(e.target.checked)} className="w-5 h-5 rounded text-primary focus:ring-primary" />

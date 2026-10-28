@@ -15,10 +15,10 @@ export default async function NotificationsPage() {
     <section className="flex flex-col gap-space-lg max-w-3xl">
       <MarkSeen wsId={ws.id} unread={n.unread} />
       <div>
-        <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Notifikationer</span>
-        <h1 className="font-headline-md text-headline-md text-primary font-bold">{n.unread ? `${n.unread} nye` : "Ingen nye"}</h1>
+        <span className="eyebrow">Notifikationer</span>
+        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{n.unread ? `${n.unread} nye` : "Ingen nye"}</h1>
       </div>
-      <div className="bg-surface-container-lowest rounded-xl p-space-sm md:p-space-md shadow-sm">
+      <div className="bg-surface-container-lowest rounded-2xl p-space-sm md:p-space-md border-2 border-ink">
         {n.items.length === 0 ? <p className="p-space-md font-body-sm text-body-sm text-on-surface-variant">Intet de seneste 14 dage.</p> : (
           <ul className="flex flex-col">{n.items.map((i) => (
             <li key={i.id}><Link href={i.href} className={`flex items-start gap-space-sm p-space-sm rounded-lg hover:bg-surface-container-low ${i.unread ? "bg-secondary-container/40" : ""}`}>

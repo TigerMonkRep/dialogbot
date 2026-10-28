@@ -17,7 +17,7 @@ export function AgreementForm({ wsId, current, canEdit }: { wsId: string; curren
     router.refresh();
   });
   return (
-    <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+    <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
       <div>
         <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Prisaftale for reception</h2>
         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Aftalen bestemmer, hvad en godkendt henvendelse koster. Hver ændring gemmes som en ny version, og allerede godkendte henvendelser beholder den pris, der gjaldt, da de blev godkendt.</p>

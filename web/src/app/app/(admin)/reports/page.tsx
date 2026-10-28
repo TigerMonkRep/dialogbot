@@ -22,7 +22,7 @@ const dayLabel = (iso: string) => {
 /** Daily report: finished days are immutable snapshots; today is live and marked preliminary. */
 export default async function ReportsPage({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
   const ws = await requireWorkspace();
-  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Rapporter kan ses af medarbejdere, administratorer og ejere.</p>;
+  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Rapporter kan ses af medarbejdere, administratorer og ejere.</p>;
   const isAdmin = ws.role === "owner" || ws.role === "admin";
   const list = await backend<List>(`/workspaces/${ws.id}/reports?limit=30`);
   const wanted = (await searchParams).date;
@@ -35,11 +35,12 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   return (
     <div className="flex flex-col gap-space-lg">
       <div className="flex flex-col gap-space-xs">
-        <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight">Rapporter</h1>
+        <span className="eyebrow">Tal fra jeres arbejdsrum</span>
+        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Rapporter</h1>
         <p className="font-body-sm text-body-sm text-on-surface-variant">Én rapport pr. dag i jeres tidszone ({list.timezone}). En afsluttet dag gemmes og ændres ikke; i dag er foreløbig.</p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
-        <nav className="lg:col-span-3 bg-surface-container-lowest rounded-xl shadow-sm p-space-sm flex lg:flex-col gap-space-xs overflow-x-auto no-scrollbar" aria-label="Dage">
+        <nav className="lg:col-span-3 bg-surface-container-lowest rounded-2xl border-2 border-ink p-space-sm flex lg:flex-col gap-space-xs overflow-x-auto no-scrollbar" aria-label="Dage">
           {days.map((d) => (
             <Link key={d} href={`/app/reports?date=${d}`} aria-current={d === day ? "page" : undefined}
               className={`shrink-0 px-space-md py-space-sm rounded-lg font-label-md text-label-md ${d === day ? "bg-primary-container text-on-primary" : "text-on-surface-variant hover:bg-surface-container-low"}`}>
@@ -61,12 +62,12 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
             <Stat icon="smart_toy" label="AI-svar" value={r.ai.ok} sub={`${r.ai.refused} afvist · ${r.ai.error} fejl`} />
           </div>
           {isAdmin && (
-            <div className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm grid grid-cols-1 md:grid-cols-2 gap-space-md">
+            <div className="bg-surface-container-lowest rounded-2xl p-space-md border-2 border-ink grid grid-cols-1 md:grid-cols-2 gap-space-md">
               <p className="font-body-md text-body-md"><span className="block font-label-md text-label-md text-on-surface-variant">Godkendte henvendelser (pris ekskl. moms)</span><strong className="font-headline-sm text-headline-sm text-primary">{kr(r.leads.approved_fee_net_minor ?? 0)}</strong></p>
               <p className="font-body-md text-body-md"><span className="block font-label-md text-label-md text-on-surface-variant">AI-forbrug</span><strong className="font-headline-sm text-headline-sm text-primary">≈ ${((r.ai.est_cost_usd_micros ?? 0) / 1_000_000).toFixed(2)}</strong> <span className="font-body-sm text-body-sm text-on-surface-variant">({r.ai.input_tokens} ind / {r.ai.output_tokens} ud tokens)</span></p>
             </div>
           )}
-          <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+          <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
             <h3 className="font-headline-sm text-headline-sm text-primary">Nye henvendelser</h3>
             {r.leads.new_items.length === 0 ? <p className="font-body-sm text-body-sm text-on-surface-variant">Ingen nye henvendelser denne dag.</p> : (
               <ul className="flex flex-col gap-space-xs">{r.leads.new_items.map((l) => (
@@ -83,7 +84,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
 
 function Stat({ icon, label, value, sub }: { icon: string; label: string; value: number; sub: string }) {
   return (
-    <div className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-1">
+    <div className="bg-surface-container-lowest rounded-2xl p-space-md border-2 border-ink flex flex-col gap-1">
       <span className="flex items-center gap-space-xs font-label-md text-label-md text-on-surface-variant"><Icon name={icon} size={18} className="text-primary" />{label}</span>
       <span className="font-headline-md text-headline-md text-primary font-bold">{value}</span>
       <span className="font-body-sm text-body-sm text-on-surface-variant">{sub}</span>

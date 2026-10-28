@@ -30,7 +30,7 @@ function Workspace({ r }: { r: Row }) {
     await api(path, { method, body: body === undefined ? undefined : JSON.stringify(body) }); router.refresh();
   });
   return (
-    <li className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md flex flex-col gap-space-sm">
+    <li className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm">
       <div className="flex flex-wrap items-center gap-space-sm">
         <h2 className="font-title-md text-title-md text-primary font-bold">{r.workspace}</h2>
         <span className="px-2 py-0.5 rounded-full bg-surface-container-high font-label-sm text-label-sm">{r.status.label}</span>
@@ -83,7 +83,7 @@ function Workspace({ r }: { r: Row }) {
 export function OperatorTelephony({ data }: { data: OpTelephony }) {
   return (
     <div className="flex flex-col gap-space-md">
-      <section className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md">
+      <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md">
         <h2 className="font-title-md text-title-md text-primary font-bold mb-space-sm">Platformkonfiguration</h2>
         <ul className="grid grid-cols-1 md:grid-cols-3 gap-1 font-body-sm text-body-sm">
           {Object.entries(data.configuration).map(([k, v]) => (

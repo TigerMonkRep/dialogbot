@@ -4,7 +4,8 @@ Each email is built from the same few parts – a heading, short paragraphs, an 
 note in small print – so the look and tone stay consistent. The HTML uses tables and inline styles only, because
 that is what email clients (Outlook, Gmail, Apple Mail) render reliably. Every value is escaped.
 
-Brand: dark green #164e43, lime #d8ee86, mint background #e7fef9, the headset logo from the website.
+Brand (docs/brand.md, "Byggevejledningen"): a white card with a 2 px ink outline on the panel background, a blue
+button, the blue mark with the chat bubble, and a yellow step square when the mail is a step in the set-up.
 """
 from __future__ import annotations
 
@@ -14,13 +15,18 @@ from dataclasses import dataclass, field
 
 from app.config import get_settings
 
-GREEN = "#164e43"
-LIME = "#d8ee86"
-MINT = "#e7fef9"
-INK = "#12302a"
-MUTED = "#4f6862"
-LINE = "#d5e4df"
-FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
+INK = "#14213D"
+INK_SOFT = "#3C4659"
+PAPER = "#FFFFFF"
+PANEL = "#EEF4FB"
+ACCENT = "#2456F6"
+HIGHLIGHT = "#FFCF3F"
+MUTED = "#5B6475"
+LINE = "#D6DEEA"
+FONT = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
+HEAD_FONT = "Outfit,Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
+# The mark served by the website (the icon is the brand mark: blue rounded square with the chat bubble).
+LOGO_PATH = "/icons/icon-192.png"
 
 # Sender identity in every footer (e-handelsloven § 7: name, CVR and address).
 COMPANY_LINE = "Dialogbot · CVR-nr. 25632710 · Abildgade 18, 8200 Aarhus"
@@ -38,6 +44,7 @@ class Email:
     note: str | None = None  # small print under the button, e.g. "Linket udløber om 1 time"
     footer_reason: str = "Du får denne e-mail, fordi du har en konto hos Dialogbot."
     preheader: str | None = None  # the preview line shown next to the subject in the inbox
+    step: int | None = None  # set when the mail is a step in the set-up: a yellow step square above the heading
 
     def text(self) -> str:
         parts = [self.heading, "", *[p for para in self.paragraphs for p in (para, "")]]
@@ -50,44 +57,50 @@ class Email:
 
     def html(self) -> str:
         base = get_settings().frontend_base_url.rstrip("/")
-        logo = f"{base}/icons/icon-192.png"
+        logo = f"{base}{LOGO_PATH}"
         e = html.escape
         paras = "".join(
-            f'<p style="margin:0 0 16px;font:16px/1.6 {FONT};color:{INK};">{e(p).replace(chr(10), "<br>")}</p>'
+            f'<p style="margin:0 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">{e(p).replace(chr(10), "<br>")}</p>'
             for p in self.paragraphs)
         button = ""
         if self.button_url:
             button = (
                 f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px;">'
-                f'<tr><td style="border-radius:10px;background:{GREEN};">'
-                f'<a href="{e(self.button_url, quote=True)}" style="display:inline-block;padding:14px 26px;'
-                f'font:600 16px/1 {FONT};color:#ffffff;text-decoration:none;border-radius:10px;">'
+                f'<tr><td style="border-radius:14px;background:{ACCENT};">'
+                f'<a href="{e(self.button_url, quote=True)}" style="display:inline-block;padding:16px 26px;'
+                f'font:600 16px/1 {FONT};color:#ffffff;text-decoration:none;border-radius:14px;">'
                 f'{e(self.button_label or "Åbn")}</a></td></tr></table>'
                 f'<p style="margin:0 0 16px;font:13px/1.5 {FONT};color:{MUTED};">Virker knappen ikke? Kopiér dette link '
-                f'ind i din browser:<br><a href="{e(self.button_url, quote=True)}" style="color:{GREEN};'
+                f'ind i din browser:<br><a href="{e(self.button_url, quote=True)}" style="color:{ACCENT};'
                 f'word-break:break-all;">{e(self.button_url)}</a></p>')
         note = (f'<p style="margin:0 0 16px;font:13px/1.5 {FONT};color:{MUTED};">{e(self.note)}</p>'
                 if self.note else "")
         pre = (f'<div style="display:none;max-height:0;overflow:hidden;opacity:0;">{e(self.preheader)}</div>'
                if self.preheader else "")
+        step = ""
+        if self.step:  # the yellow step square from the building guide
+            step = (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px;">'
+                    f'<tr><td width="48" height="48" align="center" valign="middle" style="width:48px;height:48px;'
+                    f'border-radius:12px;background:{HIGHLIGHT};font:800 24px/48px {HEAD_FONT};color:{INK};">'
+                    f'{self.step}</td><td style="padding-left:12px;font:600 12px/1 {FONT};letter-spacing:0.12em;'
+                    f'text-transform:uppercase;color:{MUTED};">Trin {self.step}</td></tr></table>')
         return f"""<!doctype html>
 <html lang="da"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light"><title>{e(self.subject)}</title></head>
-<body style="margin:0;padding:0;background:{MINT};">{pre}
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{MINT};">
+<body style="margin:0;padding:0;background:{PANEL};">{pre}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{PANEL};">
 <tr><td align="center" style="padding:32px 16px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
 <tr><td style="padding:0 4px 20px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
-<td style="vertical-align:middle;"><img src="{e(logo, quote=True)}" width="36" height="36" alt="" style="display:block;border:0;border-radius:9px;"></td>
-<td style="vertical-align:middle;padding-left:10px;font:800 20px/1 {FONT};color:{GREEN};letter-spacing:-0.01em;">Dialogbot</td>
+<td style="vertical-align:middle;"><img src="{e(logo, quote=True)}" width="36" height="36" alt="" style="display:block;border:0;border-radius:10px;"></td>
+<td style="vertical-align:middle;padding-left:10px;font:800 22px/1 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">Dialogbot</td>
 </tr></table></td></tr>
-<tr><td style="background:#ffffff;border:1px solid {LINE};border-radius:16px;overflow:hidden;">
-<div style="height:6px;background:{LIME};line-height:6px;font-size:0;">&nbsp;</div>
+<tr><td style="background:{PAPER};border:2px solid {INK};border-radius:20px;">
 <div style="padding:32px 32px 16px;">
-<h1 style="margin:0 0 20px;font:800 24px/1.3 {FONT};color:{GREEN};">{e(self.heading)}</h1>
+{step}<h1 style="margin:0 0 20px;font:800 26px/1.25 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">{e(self.heading)}</h1>
 {paras}{button}{note}
-<p style="margin:8px 0 16px;font:16px/1.6 {FONT};color:{INK};">Venlig hilsen<br><strong>Dialogbot</strong></p>
+<p style="margin:8px 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">Venlig hilsen<br><strong style="color:{INK};">Dialogbot</strong></p>
 </div></td></tr>
 <tr><td style="padding:20px 8px 0;font:12px/1.6 {FONT};color:{MUTED};text-align:center;">
 {e(self.footer_reason)}<br>{e(COMPANY_LINE)} · <a href="{e(base, quote=True)}" style="color:{MUTED};">dialogbot.dk</a>
@@ -134,6 +147,7 @@ def verify(link: str) -> Email:
         subject="Bekræft din e-mail hos Dialogbot",
         preheader="Ét klik, så er din konto klar.",
         heading="Velkommen til Dialogbot",
+        step=1,
         paragraphs=["Tak, fordi du har oprettet en konto. Bekræft din e-mailadresse, så kan du komme i gang med at "
                     "sætte din AI-receptionist op."],
         button_label="Bekræft min e-mail", button_url=link,
@@ -259,7 +273,7 @@ def to_payload(mail: Email) -> dict:
     """Serialize for the outbox (the worker renders it with `from_payload`)."""
     return {"subject": mail.subject, "heading": mail.heading, "paragraphs": mail.paragraphs,
             "button_label": mail.button_label, "button_url": mail.button_url, "note": mail.note,
-            "footer_reason": mail.footer_reason, "preheader": mail.preheader}
+            "footer_reason": mail.footer_reason, "preheader": mail.preheader, "step": mail.step}
 
 
 def from_payload(p: dict) -> Email:

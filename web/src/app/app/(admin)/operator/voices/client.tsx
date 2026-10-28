@@ -38,7 +38,7 @@ function RightsPanel({ rights }: { rights: Rights[] }) {
     router.refresh();
   });
   return (
-    <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm" aria-labelledby="rights-h">
+    <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm" aria-labelledby="rights-h">
       <h2 id="rights-h" className="font-headline-sm text-headline-sm text-primary">Rettigheder</h2>
       <p className="font-body-sm text-body-sm text-on-surface-variant">Kode, modelvægte, datasæt og indtaleraftaler dokumenteres hver for sig. Skriv i noten, hvad du faktisk har læst og hvor.</p>
       <ul className="flex flex-col gap-space-sm">{rights.map((r) => (
@@ -67,7 +67,7 @@ function ProfilePanel({ p, rights }: { p: Profile; rights: Rights[] }) {
     try { await api(path, { method: "POST", body: JSON.stringify(body ?? {}) }); router.refresh(); } catch (e) { setErr(e as ApiError); } finally { setBusy(false); }
   };
   return (
-    <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm" aria-label={p.display_name}>
+    <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm" aria-label={p.display_name}>
       <div className="flex flex-wrap items-center gap-space-sm">
         <Icon name="record_voice_over" className="text-primary" />
         <h2 className="font-headline-sm text-headline-sm text-primary">{p.display_name}</h2>
@@ -205,7 +205,7 @@ function NewProfile() {
     router.refresh();
   });
   return (
-    <details className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm"><summary className="font-label-lg text-label-lg cursor-pointer">Ny stemmeprofil</summary>
+    <details className="bg-surface-container-lowest rounded-2xl p-space-md border-2 border-ink"><summary className="font-label-lg text-label-lg cursor-pointer">Ny stemmeprofil</summary>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm mt-space-sm">
         <Field label="Stabilt ID"><Input value={f.slug} onChange={(e) => setF({ ...f, slug: e.target.value })} placeholder="jysk-kvinde-35-45-a" /></Field>
         <Field label="Visningsnavn"><Input value={f.display_name} onChange={(e) => setF({ ...f, display_name: e.target.value })} /></Field>

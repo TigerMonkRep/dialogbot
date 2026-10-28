@@ -31,11 +31,11 @@ export default function HelpPage() {
   return (
     <section className="flex flex-col gap-space-lg max-w-4xl">
       <div>
-        <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Hjælp</span>
-        <h1 className="font-headline-md text-headline-md text-primary font-bold">Sådan bruger I Dialogbot</h1>
+        <span className="eyebrow">Hjælp</span>
+        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Sådan bruger I Dialogbot</h1>
       </div>
       {SECTIONS.map((s) => (
-        <div key={s.title} className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+        <div key={s.title} className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
           <h2 className="font-headline-sm text-headline-sm text-primary flex items-center gap-space-xs"><Icon name={s.icon} size={22} className="text-secondary" />{s.title}</h2>
           <dl className="flex flex-col gap-space-sm">
             {s.items.map(([q, a, href]) => (

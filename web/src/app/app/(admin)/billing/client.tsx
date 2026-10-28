@@ -43,7 +43,7 @@ export function ReferralCode({ wsId }: { wsId: string }) {
   });
   if (!open) return <button type="button" onClick={() => setOpen(true)} className="self-start font-label-md text-label-md text-primary underline">Har I fået en ambassadørkode?</button>;
   return (
-    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col sm:flex-row sm:items-end gap-space-sm">
+    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="bg-surface-container-lowest rounded-2xl p-space-md border-2 border-ink flex flex-col sm:flex-row sm:items-end gap-space-sm">
       <div className="flex-1"><Field label="Ambassadørkode" hint="Fra den, der anbefalede Dialogbot. I får 50 % rabat på første fakturerede måned." error={fieldError(error, "code")}><Input required value={code} onChange={(e) => setCode(e.target.value)} placeholder="Fx MADS42" /></Field></div>
       <Button type="submit" icon="loyalty" disabled={pending}>{pending ? "Gemmer…" : "Tilføj kode"}</Button>
       <ErrorBox error={error} />

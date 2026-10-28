@@ -76,8 +76,8 @@ function Steps({ standardVoice, heard, testCall }: { standardVoice: boolean; hea
   return (
     <ol className="grid grid-cols-1 md:grid-cols-4 gap-space-sm" aria-label="Opsætning af stemme">
       {items.map(([label, done, hint, href], i) => (
-        <li key={label} className={`rounded-xl p-space-sm flex flex-col gap-1 ${done ? "bg-secondary-container text-on-secondary-container" : "bg-surface-container-lowest shadow-sm"}`}>
-          <span className="font-label-sm text-label-sm uppercase tracking-wider flex items-center gap-1"><Icon name={done ? "check_circle" : "radio_button_unchecked"} size={16} />Trin {i + 1}</span>
+        <li key={label} className={`rounded-2xl p-space-sm flex flex-col gap-1 ${done ? "bg-secondary-container text-on-secondary-container" : "bg-surface-container-lowest border-2 border-ink"}`}>
+          <span className="flex items-center gap-1 eyebrow"><Icon name={done ? "check_circle" : "radio_button_unchecked"} size={16} />Trin {i + 1}</span>
           <span className="font-label-lg text-label-lg">{label}</span>
           {(!done || hint === viaCall) && <span className="font-body-sm text-body-sm">{href ? <Link className="underline" href={href}>{hint}</Link> : hint}</span>}
         </li>
@@ -103,7 +103,7 @@ function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesD
     router.refresh();
   });
   return (
-    <section aria-labelledby="std-h" className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+    <section aria-labelledby="std-h" className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
       <div>
         <h2 id="std-h" className="font-headline-sm text-headline-sm text-primary">Vælg telefonstemme</h2>
         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-3xl">Danske stemmer, der virker med det samme. Valget gælder alle jeres telefonnumre og kampagner, og I kan altid skifte. I hører stemmen, når I ringer til jeres nummer.</p>
@@ -172,7 +172,7 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
       {player.state?.simulated && <p role="status" className="font-body-sm text-body-sm text-on-surface-variant">Afspiller simuleret lyd (testmotor).</p>}
       <ErrorBox error={player.error ?? choose.error} />
 
-      <section aria-labelledby="lib-h" className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+      <section aria-labelledby="lib-h" className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
         <div className="flex flex-wrap items-end justify-between gap-space-sm">
           <h2 id="lib-h" className="font-headline-sm text-headline-sm text-primary">Dialogbot-stemmer</h2>
           {data.items.length > 0 && (
@@ -220,7 +220,7 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
       </section>
 
       {data.items.length > 0 && (
-        <section aria-labelledby="try-h" className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+        <section aria-labelledby="try-h" className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
           <h2 id="try-h" className="font-headline-sm text-headline-sm text-primary">Afprøv med jeres egen tekst</h2>
           <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-space-sm">
             <Field label="Stemme"><Select value={own.voice} onChange={(e) => setOwn({ ...own, voice: e.target.value })}>{data.items.map((v) => <option key={v.id} value={v.id}>{v.display_name}</option>)}</Select></Field>
@@ -259,7 +259,7 @@ function Assignments({ wsId, data }: { wsId: string; data: VoicesData }) {
   });
   const opts = [<option key="" value="">Arbejdsrummets standard</option>, ...data.items.map((v) => <option key={v.id} value={v.id}>{v.display_name}</option>)];
   return (
-    <section aria-labelledby="asg-h" className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+    <section aria-labelledby="asg-h" className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
       <h2 id="asg-h" className="font-headline-sm text-headline-sm text-primary">Assistenter og kampagner</h2>
       {msg && <Alert kind="ok">{msg}</Alert>}
       {data.assignments.phone_numbers.length === 0 && data.assignments.campaigns.length === 0 && <p className="font-body-md text-body-md text-on-surface-variant">Ingen telefonnumre eller kampagner endnu. De bruger standardstemmen, når de oprettes.</p>}
@@ -295,7 +295,7 @@ function Pronunciations({ wsId, data }: { wsId: string; data: VoicesData }) {
   });
   const set = (i: number, k: "term" | "say", v: string) => { setSaved(false); setRows(rows.map((r, j) => (j === i ? { ...r, [k]: v } : r))); };
   return (
-    <section aria-labelledby="pron-h" className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+    <section aria-labelledby="pron-h" className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
       <h2 id="pron-h" className="font-headline-sm text-headline-sm text-primary">Udtaleordbog</h2>
       <p className="font-body-sm text-body-sm text-on-surface-variant">Skriv hvordan navne skal udtales, fx firmanavne eller stednavne. Gælder hele ord. Version {data.settings.pronunciation_version}. En ændring kræver et nyt prøveopkald.</p>
       {saved && <Alert kind="ok">Gemt.</Alert>}

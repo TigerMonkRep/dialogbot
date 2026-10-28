@@ -39,7 +39,7 @@ export function ManualBooking({ wsId, types }: { wsId: string; types: BType[] })
   });
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => { setDone(null); setF({ ...f, [k]: e.target.value }); };
   return (
-    <form className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
+    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
       <h2 className="font-headline-sm text-headline-sm text-primary">Book for en kunde</h2>
       {done && <Alert kind="ok">Booket {done}. Henvendelse og opgave er oprettet.</Alert>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
@@ -68,7 +68,7 @@ export function TypesEditor({ wsId, types }: { wsId: string; types: BType[] }) {
     router.refresh();
   });
   return (
-    <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+    <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
       <h2 className="font-headline-sm text-headline-sm text-primary">Bookingtyper</h2>
       <p className="font-body-sm text-body-sm text-on-surface-variant">Fx &quot;Besigtigelse&quot; eller &quot;Rådgivning i butikken&quot;. Varigheden bestemmer, hvor lange tider der tilbydes.</p>
       {types.length > 0 && <ul className="flex flex-col gap-space-xs">{types.map((t) => (
@@ -101,7 +101,7 @@ export function BookingSettingsForm({ wsId, s }: { wsId: string; s: Settings }) 
   const sync = useSubmit(async () => { await api(`/workspaces/${wsId}/bookings/calendar/sync`, { method: "POST", body: "{}" }); router.refresh(); });
   const num = (k: "lead_time_hours" | "horizon_days" | "buffer_minutes") => (e: React.ChangeEvent<HTMLInputElement>) => { setSaved(false); setF({ ...f, [k]: Number(e.target.value) }); };
   return (
-    <form className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
+    <form className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
       <h2 className="font-headline-sm text-headline-sm text-primary">Online booking og kalender</h2>
       {saved && <Alert kind="ok">Gemt.</Alert>}
       <label className="flex items-center gap-space-sm font-label-lg text-label-lg text-on-surface">

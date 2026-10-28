@@ -26,9 +26,9 @@ export function WorkspaceCards({ workspaces, currentId }: { workspaces: Ws[]; cu
         const isActive = w.id === active.id;
         const ready = w.knowledge_revision > 0;
         return (
-          <li key={w.id} className={`relative p-space-lg rounded-xl flex flex-col justify-between transition-all ${isActive ? "bg-surface-container-low shadow-sm" : "bg-surface hover:bg-surface-container"}`}>
+          <li key={w.id} className={`relative p-space-lg rounded-2xl flex flex-col justify-between transition-all ${isActive ? "bg-surface-container-low border-2 border-ink" : "bg-surface hover:bg-surface-container"}`}>
             {isActive && (
-              <span className="absolute -top-2.5 right-4 px-2.5 py-0.5 rounded-full bg-primary text-secondary-fixed font-label-sm text-label-sm font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm">
+              <span className="absolute -top-2.5 right-4 px-2.5 py-0.5 rounded-full bg-primary text-secondary-fixed font-label-sm text-label-sm font-bold uppercase tracking-wider flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse" />Aktivt valg
               </span>
             )}

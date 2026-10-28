@@ -10,7 +10,7 @@ type Capability = { key: string; status: "available" | "simulated" | "not_implem
 export default async function WebchatPage() {
   const ws = await requireWorkspace();
   if (ws.role === "reader") {
-    return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Webchat-indstillingerne kan ses af medarbejdere, administratorer og ejere.</p>;
+    return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Webchat-indstillingerne kan ses af medarbejdere, administratorer og ejere.</p>;
   }
   const [s, caps] = await Promise.all([
     backend<WebchatSettings>(`/workspaces/${ws.id}/webchat`),
@@ -19,10 +19,10 @@ export default async function WebchatPage() {
   const status = caps.items.find((c) => c.key === "webchat")?.status ?? "not_implemented";
   return (
     <section className="flex flex-col gap-space-lg">
-      <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+      <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
         <div className="flex flex-wrap items-start justify-between gap-space-md">
           <div>
-            <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Indstillinger</span>
+            <span className="eyebrow">Indstillinger</span>
             <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Webchat på jeres hjemmeside</h2>
             <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Assistenten svarer kun ud fra godkendt viden og vises kun på de domæner, I angiver. Samtalerne lander i <Link href="/app/inbox" className="text-primary underline">indbakken</Link>.</p>
           </div>

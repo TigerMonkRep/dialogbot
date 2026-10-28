@@ -56,8 +56,8 @@ export function Integrations({ wsId, data, canManage }: { wsId: string; data: Ca
   return (
     <section className="flex flex-col gap-space-lg">
       <div>
-        <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Integrationer</span>
-        <h1 className="font-headline-md text-headline-md text-primary font-bold">Handlinger i jeres egne systemer</h1>
+        <span className="eyebrow">Integrationer</span>
+        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Handlinger i jeres egne systemer</h1>
         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-3xl">Når et system er forbundet, kan assistenten udføre handlinger dér under et opkald eller i webchatten – fx booke en tid i jeres kalender eller sende en SMS-bekræftelse. Kunden bekræfter altid først, og hver handling vises i samtalen i indbakken. Kun forbundne systemer bruges.</p>
       </div>
       {data.simulated && <Alert kind="warn">Testmiljø: forbindelser og handlinger er simulerede. Intet sendes til rigtige kalendere, telefoner eller webhooks.</Alert>}
@@ -125,7 +125,7 @@ function ConnectorCard({ wsId, c, canManage }: { wsId: string; c: Connector; can
   const err = connect.error ?? runTest.error ?? save.error ?? off.error;
 
   return (
-    <li className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md flex flex-col gap-space-sm" data-connector={c.key}>
+    <li className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm" data-connector={c.key}>
       <div className="flex flex-wrap items-center gap-space-sm">
         <Icon name={ICON[c.category] ?? "extension"} size={22} className="text-primary" />
         <h3 className="font-title-md text-title-md text-primary font-bold">{c.label}</h3>
@@ -184,7 +184,7 @@ function ConnectorCard({ wsId, c, canManage }: { wsId: string; c: Connector; can
 function Runs({ runs, items }: { runs: ActionRun[]; items: Connector[] }) {
   const name = (k: string) => items.find((c) => c.key === k)?.label ?? k;
   return (
-    <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+    <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
       <h2 className="font-headline-sm text-headline-sm text-primary">Seneste handlinger</h2>
       {runs.length === 0 ? <p className="font-body-sm text-body-sm text-on-surface-variant">Ingen handlinger endnu.</p> : (
         <div className="overflow-x-auto">

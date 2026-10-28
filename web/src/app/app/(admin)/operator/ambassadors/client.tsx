@@ -29,11 +29,11 @@ export function AmbassadorAdmin({ list, payouts }: { list: OpList; payouts: OpPa
     <div className="flex flex-col gap-space-lg">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-space-md">
         {[["Venter på godkendelse", String(list.totals.pending), "how_to_reg"], ["Klar til udbetaling", kr(list.totals.payable_minor), "payments"], ["Optjent (30 dages hold)", kr(list.totals.held_minor), "hourglass_top"], ["Under udbetaling", kr(list.totals.in_payout_minor), "account_balance"]].map(([l, v, i]) => (
-          <div key={l} className="rounded-xl bg-surface-container-lowest p-space-md shadow-sm"><p className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold flex items-center gap-1"><Icon name={i} size={16} />{l}</p><p className="font-headline-md text-headline-md text-primary font-bold tabular-nums mt-1">{v}</p></div>
+          <div key={l} className="rounded-2xl bg-surface-container-lowest p-space-md border-2 border-ink"><p className="flex items-center gap-1 eyebrow"><Icon name={i} size={16} />{l}</p><p className="font-headline-md text-headline-md text-primary font-bold tabular-nums mt-1">{v}</p></div>
         ))}
       </div>
 
-      <section className="rounded-xl bg-surface-container-lowest shadow-sm">
+      <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink">
         <header className="flex flex-wrap items-center justify-between gap-space-sm p-space-md">
           <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Ambassadører ({list.items.length})</h2>
           <div className="w-full sm:w-60">
@@ -45,7 +45,7 @@ export function AmbassadorAdmin({ list, payouts }: { list: OpList; payouts: OpPa
         {rows.length === 0 ? <p className="px-space-md pb-space-md font-body-sm text-body-sm text-on-surface-variant">Ingen ambassadører {filter ? "med den status" : "endnu"}. Del tilmeldingssiden: /ambassador/bliv</p> : (
           <div className="overflow-x-auto">
             <table className="w-full text-left font-body-sm text-body-sm">
-              <thead className="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><tr><th className="p-space-sm">Navn</th><th className="p-space-sm">Status</th><th className="p-space-sm">Kunder</th><th className="p-space-sm text-right">Optjent</th><th className="p-space-sm text-right">Klar</th><th className="p-space-sm">Udbetaling</th></tr></thead>
+              <thead className="bg-surface-container-low eyebrow"><tr><th className="p-space-sm">Navn</th><th className="p-space-sm">Status</th><th className="p-space-sm">Kunder</th><th className="p-space-sm text-right">Optjent</th><th className="p-space-sm text-right">Klar</th><th className="p-space-sm">Udbetaling</th></tr></thead>
               <tbody>{rows.map((r) => (
                 <tr key={r.id} className="border-t border-outline-variant/40 hover:bg-surface-container-low">
                   <td className="p-space-sm"><Link href={`/app/operator/ambassadors/${r.id}`} className="font-semibold text-primary underline">{r.full_name}</Link><span className="block font-label-sm text-label-sm text-on-surface-variant">{r.email} · {r.kind === "company" ? "CVR" : r.minor ? "Privat, under 18" : "Privat"}</span></td>
@@ -61,7 +61,7 @@ export function AmbassadorAdmin({ list, payouts }: { list: OpList; payouts: OpPa
         )}
       </section>
 
-      <section className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md space-y-space-md">
+      <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md space-y-space-md">
         <div className="flex flex-wrap items-start justify-between gap-space-sm">
           <div>
             <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Udbetalinger</h2>
@@ -87,7 +87,7 @@ export function AmbassadorAdmin({ list, payouts }: { list: OpList; payouts: OpPa
         )}
       </section>
 
-      <section className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md space-y-space-sm">
+      <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md space-y-space-sm">
         <h2 className="font-headline-sm text-headline-sm text-primary font-bold">B-indkomst til Skattestyrelsen</h2>
         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">Udbetalt bonus til private ambassadører (uden CVR) skal indberettes som B-indkomst i eIndkomst senest 20. januar året efter. Filen indeholder navn, CPR og beløb. Hentningen logges.</p>
         <div className="flex flex-wrap items-end gap-space-sm">

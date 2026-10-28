@@ -8,26 +8,26 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=block">
 <style>
 /* Layout: byggevejledning på A4 på langs. Store trinnumre, en "dele"-boks pr. trin, skærmbilleder med pile,
    og fem poser, der svarer til opsætningsguidens faser. Bevidst ét udtryk (papir) i både lyst og mørkt tema. */
 :root {
-  --forest: #00362d;
-  --forest-2: #164e43;
-  --page: #f3fbf9;
-  --mint: #dcf3ee;
-  --mint-line: #9bd1c3;
-  --lime: #d4ea82;
-  --olive: #546508;
-  --sky: #80bbe0;
-  --ink: #0f1f1c;
-  --muted: #3f4946;
+  --forest: #14213D;
+  --forest-2: #2456F6;
+  --page: #FFFFFF;
+  --mint: #EEF4FB;
+  --mint-line: #D6DEEA;
+  --lime: #FFCF3F;
+  --olive: #2456F6;
+  --sky: #2456F6;
+  --ink: #14213D;
+  --muted: #5B6475;
   --paper: #ffffff;
-  --warn: #fff4c2;
-  --backdrop: #c8dfda;
-  --display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --warn: #FFF3C4;
+  --backdrop: #D6DEEA;
+  --display: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --body: "Inter", ui-sans-serif, system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   color-scheme: light;
@@ -43,7 +43,7 @@ p { margin: 0; }
   font-variation-settings: "FILL" 0, "wght" 400, "opsz" 24; display: inline-block; vertical-align: middle; }
 .ms.fill { font-variation-settings: "FILL" 1, "wght" 400, "opsz" 24; }
 .stack { display: flex; flex-direction: column; align-items: center; gap: 24px; }
-.pg { position: relative; width: 297mm; height: 210mm; overflow: hidden; background: var(--page); box-shadow: 0 10px 40px rgba(0,32,26,.18);
+.pg { position: relative; width: 297mm; height: 210mm; overflow: hidden; background: var(--page); box-shadow: 8px 8px 0 #14213D;
   padding: 13mm 14mm 14mm; display: flex; flex-direction: column; gap: 6mm; }
 
 /* Sidehoved og -fod */
@@ -82,7 +82,7 @@ p { margin: 0; }
 .brick.dark .ms { color: var(--lime); }
 
 /* Skærm-mockups */
-.scr { position: relative; background: var(--paper); border-radius: 3mm; box-shadow: 0 1px 0 var(--mint-line), 0 6px 18px rgba(0,54,45,.1); border: 1px solid var(--mint-line); overflow: visible; }
+.scr { position: relative; background: var(--paper); border-radius: 3mm; box-shadow: none; border: 2px solid var(--ink); border: 1px solid var(--mint-line); overflow: visible; }
 .scr .bar { display: flex; align-items: center; gap: 1.2mm; padding: 1.8mm 3mm; border-bottom: 1px solid var(--mint); }
 .scr .bar i { width: 2mm; height: 2mm; border-radius: 50%; background: var(--mint-line); }
 .scr .bar span { margin-left: 2mm; flex: 1; font-size: 7pt; color: var(--muted); background: var(--page); border-radius: 99px; padding: .5mm 3mm; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -91,7 +91,7 @@ p { margin: 0; }
 .fld { display: flex; flex-direction: column; gap: .6mm; }
 .fld label { font-size: 6.8pt; font-weight: 600; color: var(--muted); }
 .in { border: 1px solid var(--mint-line); border-radius: 1.6mm; padding: 1.3mm 2.4mm; font-size: 8.3pt; background: var(--paper); color: var(--ink); min-height: 6.4mm; }
-.in.empty { color: #8a9a96; }
+.in.empty { color: #5B6475; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm; }
 .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6mm; }
 .opt { border: 1px solid var(--mint-line); border-radius: 1.8mm; padding: 1.6mm 2mm; font-size: 7.8pt; display: flex; align-items: center; gap: 1.5mm; background: var(--paper); }
@@ -120,7 +120,7 @@ p { margin: 0; }
 .do li::before { counter-increment: d; content: counter(d); width: 5.5mm; height: 5.5mm; border-radius: 50%; background: var(--lime); color: var(--forest); font-family: var(--display); font-weight: 800; font-size: 8pt; display: grid; place-items: center; }
 .do b { color: var(--forest); }
 .tip { display: grid; grid-template-columns: auto 1fr; gap: 2mm; background: var(--warn); border-radius: 2.5mm; padding: 2mm 3mm; font-size: 8.3pt; align-items: start; }
-.tip .ms { font-size: 18px; color: #7a5b00; }
+.tip .ms { font-size: 18px; color: #14213D; }
 .ok-seal { display: inline-flex; align-items: center; gap: 1.5mm; font-family: var(--display); font-weight: 800; font-size: 9pt; color: var(--olive); }
 .ok-seal .ms { font-size: 19px; }
 
@@ -137,7 +137,7 @@ p { margin: 0; }
 .code { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 3mm; background: var(--paper); border: 1px solid var(--mint-line); border-radius: 2mm; padding: 1.6mm 3mm; font-size: 8.5pt; }
 .code .mono { font-weight: 700; font-size: 11pt; color: var(--forest); background: var(--mint); padding: .6mm 2.4mm; border-radius: 1.4mm; }
 .code.rec { border: 2px solid var(--forest); }
-.code.off .mono { background: var(--warn); color: #5a4300; }
+.code.off .mono { background: var(--warn); color: #14213D; }
 
 /* Telefon (prøveopkald) */
 .phones { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 2mm; }
@@ -153,27 +153,27 @@ p { margin: 0; }
 /* ---------- Forside (æskebillede) ---------- */
 .cover { background: var(--forest); color: #fff; padding: 0; display: grid; grid-template-columns: 1.08fr 1fr; gap: 0; }
 .cover .l { padding: 14mm 6mm 14mm 16mm; display: flex; flex-direction: column; gap: 6mm; position: relative; z-index: 1; }
-.cover .r { position: relative; background: radial-gradient(circle at 55% 48%, #2a6b5d 0, var(--forest-2) 45%, var(--forest) 75%); display: grid; place-items: center; }
+.cover .r { position: relative; background: var(--forest); display: grid; place-items: center; }
 .logo { display: inline-flex; align-items: center; gap: 2.5mm; font-family: var(--display); font-weight: 800; font-size: 15pt; }
 .logo .m { width: 11mm; height: 11mm; border-radius: 2.5mm; background: var(--lime); color: var(--forest); display: grid; place-items: center; }
 .logo .m .ms { font-size: 26px; }
 .cover .kicker { font-size: 8pt; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--lime); }
 .cover h1 { font-size: 46pt; line-height: .98; font-weight: 800; letter-spacing: -0.03em; }
 .cover h1 span { color: var(--lime); }
-.cover .lede { font-size: 11.5pt; color: #b6eede; max-width: 115mm; }
+.cover .lede { font-size: 11.5pt; color: #DCE6FF; max-width: 115mm; }
 .coverbags { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2mm; }
-.coverbags li { display: flex; align-items: center; gap: 3mm; font-family: var(--display); font-weight: 700; font-size: 10.5pt; color: #e7fef9; }
+.coverbags li { display: flex; align-items: center; gap: 3mm; font-family: var(--display); font-weight: 700; font-size: 10.5pt; color: #EEF4FB; }
 .coverbags .no { width: 7mm; height: 8mm; border-radius: 1.5mm 1.5mm 2.5mm 2.5mm; background: var(--lime); color: var(--forest); display: grid; place-items: center; font-weight: 800; font-size: 10pt; position: relative; }
 .coverbags .no::before { content: ""; position: absolute; top: -1.1mm; left: 1.6mm; right: 1.6mm; height: 1.3mm; border-radius: 1mm 1mm 0 0; background: var(--lime); }
 .facts { display: flex; gap: 3mm; margin-top: auto; }
-.fact { border: 1.5px solid rgba(212,234,130,.5); border-radius: 3mm; padding: 2.5mm 4mm; display: flex; flex-direction: column; }
+.fact { border: 1.5px solid rgba(255,207,63,.5); border-radius: 3mm; padding: 2.5mm 4mm; display: flex; flex-direction: column; }
 .fact b { font-family: var(--display); font-size: 19pt; line-height: 1; color: var(--lime); font-variant-numeric: tabular-nums; }
-.fact span { font-size: 7.5pt; color: #b6eede; letter-spacing: .04em; margin-top: 1mm; }
+.fact span { font-size: 7.5pt; color: #DCE6FF; letter-spacing: .04em; margin-top: 1mm; }
 .setno { position: absolute; top: 12mm; right: 12mm; text-align: right; font-family: var(--display); }
-.setno small { display: block; font-family: var(--body); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase; color: #b6eede; }
+.setno small { display: block; font-family: var(--body); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase; color: #DCE6FF; }
 .setno b { font-size: 22pt; color: var(--lime); letter-spacing: .02em; }
 .model { width: 88%; max-width: 125mm; height: auto; }
-.cover .note { position: absolute; bottom: 8mm; left: 0; right: 0; text-align: center; font-size: 7.5pt; color: #b6eede; }
+.cover .note { position: absolute; bottom: 8mm; left: 0; right: 0; text-align: center; font-size: 7.5pt; color: #DCE6FF; }
 
 /* ---------- Indhold i æsken ---------- */
 .inv { display: grid; grid-template-columns: 1.15fr 1fr; gap: 9mm; flex: 1; min-height: 0; }
@@ -198,7 +198,7 @@ p { margin: 0; }
 .done { display: grid; grid-template-columns: 1fr 1.1fr; gap: 9mm; flex: 1; min-height: 0; }
 .trophy { background: var(--forest); border-radius: 5mm; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3mm; padding: 6mm; text-align: center; }
 .trophy h2 { font-size: 26pt; color: var(--lime); letter-spacing: -0.02em; }
-.trophy p { color: #b6eede; font-size: 10pt; max-width: 90mm; }
+.trophy p { color: #DCE6FF; font-size: 10pt; max-width: 90mm; }
 .trophy svg { width: 60%; max-width: 70mm; height: auto; }
 .next { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
 .nx { background: var(--paper); border: 1px solid var(--mint-line); border-radius: 3mm; padding: 3mm; display: flex; flex-direction: column; gap: 1mm; }
@@ -246,12 +246,12 @@ p { margin: 0; }
       <rect x="36" y="1" width="16" height="9" rx="2.5" fill="#000" fill-opacity=".1"/>
       <rect x="9.5" y="1.5" width="13" height="2.2" rx="1" fill="#fff" fill-opacity=".45"/>
       <rect x="37.5" y="1.5" width="13" height="2.2" rx="1" fill="#fff" fill-opacity=".45"/>
-      <rect x="1" y="8" width="58" height="35" rx="3.5" fill="currentColor" stroke="#00362d" stroke-opacity=".35" stroke-width="1.2"/>
+      <rect x="1" y="8" width="58" height="35" rx="3.5" fill="currentColor" stroke="#14213D" stroke-opacity=".35" stroke-width="1.2"/>
       <rect x="2" y="37" width="56" height="5" rx="2" fill="#000" fill-opacity=".14"/>
       <rect x="3" y="9.5" width="54" height="2" rx="1" fill="#fff" fill-opacity=".4"/>
     </symbol>
     <symbol id="arr" viewBox="0 0 64 40">
-      <path d="M3 13h34V3l24 17-24 17V27H3z" fill="#d4ea82" stroke="#00362d" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M3 13h34V3l24 17-24 17V27H3z" fill="#FFCF3F" stroke="#14213D" stroke-width="3" stroke-linejoin="round"/>
     </symbol>
     <symbol id="b2" viewBox="0 0 40 30">
       <rect x="4" y="0" width="12" height="7" rx="2" fill="currentColor"/><rect x="24" y="0" width="12" height="7" rx="2" fill="currentColor"/>
@@ -277,33 +277,33 @@ p { margin: 0; }
     </symbol>
     <!-- Den færdige model: en receptionist bygget af klodser -->
     <symbol id="model" viewBox="0 0 260 300">
-      <use href="#plate" x="30" y="270" width="200" height="20" style="color:#9bd1c3"/>
-      <use href="#b2" x="80" y="240" width="40" height="30" style="color:#80bbe0"/>
-      <use href="#b2" x="140" y="240" width="40" height="30" style="color:#80bbe0"/>
-      <use href="#b6" x="70" y="216" width="120" height="30" style="color:#d4ea82"/>
-      <use href="#b6" x="70" y="192" width="120" height="30" style="color:#d4ea82"/>
-      <use href="#b6" x="70" y="168" width="120" height="30" style="color:#d4ea82"/>
-      <use href="#b2" x="30" y="168" width="40" height="30" style="color:#80bbe0"/>
-      <use href="#b2" x="190" y="168" width="40" height="30" style="color:#80bbe0"/>
-      <use href="#b2" x="30" y="192" width="40" height="30" style="color:#80bbe0"/>
-      <use href="#b2" x="190" y="192" width="40" height="30" style="color:#80bbe0"/>
-      <rect x="104" y="183" width="52" height="26" rx="3" fill="#00362d"/>
-      <path d="M113 196h6m4 0h14m4 0h6" stroke="#d4ea82" stroke-width="3" stroke-linecap="round"/>
-      <use href="#b2" x="110" y="144" width="40" height="30" style="color:#164e43"/>
-      <use href="#b4" x="90" y="120" width="80" height="30" style="color:#e7fef9"/>
-      <use href="#b4" x="90" y="96" width="80" height="30" style="color:#e7fef9"/>
-      <use href="#b4" x="90" y="72" width="80" height="30" style="color:#e7fef9"/>
-      <circle cx="116" cy="112" r="6" fill="#00362d"/><circle cx="144" cy="112" r="6" fill="#00362d"/>
+      <use href="#plate" x="30" y="270" width="200" height="20" style="color:#D6DEEA"/>
+      <use href="#b2" x="80" y="240" width="40" height="30" style="color:#2456F6"/>
+      <use href="#b2" x="140" y="240" width="40" height="30" style="color:#2456F6"/>
+      <use href="#b6" x="70" y="216" width="120" height="30" style="color:#FFCF3F"/>
+      <use href="#b6" x="70" y="192" width="120" height="30" style="color:#FFCF3F"/>
+      <use href="#b6" x="70" y="168" width="120" height="30" style="color:#FFCF3F"/>
+      <use href="#b2" x="30" y="168" width="40" height="30" style="color:#2456F6"/>
+      <use href="#b2" x="190" y="168" width="40" height="30" style="color:#2456F6"/>
+      <use href="#b2" x="30" y="192" width="40" height="30" style="color:#2456F6"/>
+      <use href="#b2" x="190" y="192" width="40" height="30" style="color:#2456F6"/>
+      <rect x="104" y="183" width="52" height="26" rx="3" fill="#14213D"/>
+      <path d="M113 196h6m4 0h14m4 0h6" stroke="#FFCF3F" stroke-width="3" stroke-linecap="round"/>
+      <use href="#b2" x="110" y="144" width="40" height="30" style="color:#2456F6"/>
+      <use href="#b4" x="90" y="120" width="80" height="30" style="color:#EEF4FB"/>
+      <use href="#b4" x="90" y="96" width="80" height="30" style="color:#EEF4FB"/>
+      <use href="#b4" x="90" y="72" width="80" height="30" style="color:#EEF4FB"/>
+      <circle cx="116" cy="112" r="6" fill="#14213D"/><circle cx="144" cy="112" r="6" fill="#14213D"/>
       <circle cx="118" cy="110" r="2" fill="#fff"/><circle cx="146" cy="110" r="2" fill="#fff"/>
-      <path d="M118 134q12 9 24 0" stroke="#00362d" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <path d="M84 110C84 46 176 46 176 110" stroke="#00362d" stroke-width="7" fill="none" stroke-linecap="round"/>
-      <rect x="76" y="98" width="15" height="32" rx="5" fill="#00362d"/>
-      <rect x="169" y="98" width="15" height="32" rx="5" fill="#00362d"/>
-      <path d="M84 128q0 18 26 20" stroke="#00362d" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <circle cx="112" cy="148" r="5" fill="#d4ea82" stroke="#00362d" stroke-width="2.5"/>
+      <path d="M118 134q12 9 24 0" stroke="#14213D" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M84 110C84 46 176 46 176 110" stroke="#14213D" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <rect x="76" y="98" width="15" height="32" rx="5" fill="#14213D"/>
+      <rect x="169" y="98" width="15" height="32" rx="5" fill="#14213D"/>
+      <path d="M84 128q0 18 26 20" stroke="#14213D" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="112" cy="148" r="5" fill="#FFCF3F" stroke="#14213D" stroke-width="2.5"/>
       <g transform="translate(176 14)">
-        <path d="M6 0h66a6 6 0 0 1 6 6v30a6 6 0 0 1-6 6H26l-12 12V42H6a6 6 0 0 1-6-6V6a6 6 0 0 1 6-6z" fill="#ffffff" stroke="#00362d" stroke-width="2.5"/>
-        <text x="39" y="27" text-anchor="middle" font-family="Manrope, sans-serif" font-weight="800" font-size="17" fill="#00362d">Hej!</text>
+        <path d="M6 0h66a6 6 0 0 1 6 6v30a6 6 0 0 1-6 6H26l-12 12V42H6a6 6 0 0 1-6-6V6a6 6 0 0 1 6-6z" fill="#ffffff" stroke="#14213D" stroke-width="2.5"/>
+        <text x="39" y="27" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="17" fill="#14213D">Hej!</text>
       </g>
     </symbol>
   </defs>
@@ -345,21 +345,21 @@ p { margin: 0; }
     <div style="display:flex;flex-direction:column;gap:5mm;min-width:0">
       <div><h2>Indhold i æsken</h2><p class="lead">Find delene frem, før I går i gang. Delene med stiplet kant er valgfrie.</p></div>
       <div class="tray">
-        <div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">mail</span></span><b>1x</b>E-mail</div>
-        <div class="part"><span class="brick dark"><svg style="color:#164e43"><use href="#brick"/></svg><span class="ms">redeem</span></span><b>1x</b>Ambassadørkode</div>
-        <div class="part"><span class="brick"><svg style="color:#80bbe0"><use href="#brick"/></svg><span class="ms">badge</span></span><b>1x</b>CVR-nummer</div>
+        <div class="part"><span class="brick"><svg style="color:#FFCF3F"><use href="#brick"/></svg><span class="ms">mail</span></span><b>1x</b>E-mail</div>
+        <div class="part"><span class="brick dark"><svg style="color:#2456F6"><use href="#brick"/></svg><span class="ms">redeem</span></span><b>1x</b>Ambassadørkode</div>
+        <div class="part"><span class="brick"><svg style="color:#2456F6"><use href="#brick"/></svg><span class="ms">badge</span></span><b>1x</b>CVR-nummer</div>
         <div class="part"><span class="brick"><svg style="color:#ffffff"><use href="#brick"/></svg><span class="ms">description</span></span><b>1x</b>CVR-udskrift (PDF)</div>
-        <div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">sell</span></span><b>1x</b>Ydelser og priser</div>
-        <div class="part"><span class="brick"><svg style="color:#9bd1c3"><use href="#brick"/></svg><span class="ms">schedule</span></span><b>1x</b>Åbningstider</div>
-        <div class="part"><span class="brick dark"><svg style="color:#164e43"><use href="#brick"/></svg><span class="ms">call</span></span><b>1x</b>Firmaets telefon</div>
-        <div class="part"><span class="brick"><svg style="color:#80bbe0"><use href="#brick"/></svg><span class="ms">smartphone</span></span><b>1x</b>Ekstra telefon til test</div>
+        <div class="part"><span class="brick"><svg style="color:#FFCF3F"><use href="#brick"/></svg><span class="ms">sell</span></span><b>1x</b>Ydelser og priser</div>
+        <div class="part"><span class="brick"><svg style="color:#D6DEEA"><use href="#brick"/></svg><span class="ms">schedule</span></span><b>1x</b>Åbningstider</div>
+        <div class="part"><span class="brick dark"><svg style="color:#2456F6"><use href="#brick"/></svg><span class="ms">call</span></span><b>1x</b>Firmaets telefon</div>
+        <div class="part"><span class="brick"><svg style="color:#2456F6"><use href="#brick"/></svg><span class="ms">smartphone</span></span><b>1x</b>Ekstra telefon til test</div>
         <div class="part"><span class="brick"><svg style="color:#ffffff"><use href="#brick"/></svg><span class="ms">credit_card</span></span><b>1x</b>Betalingskort</div>
-        <div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">person</span></span><b>1x</b>Ejer af kontoen</div>
-        <div class="part optional"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">language</span></span><b>1x</b>Hjemmeside</div>
-        <div class="part optional"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">calendar_month</span></span><b>1x</b>Kalender (iCal)</div>
-        <div class="part optional"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">code</span></span><b>1x</b>Adgang til hjemmesidens kode</div>
-        <div class="part optional"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">group_add</span></span><b>1+</b>Kolleger</div>
-        <div class="part optional"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">hub</span></span><b>1x</b>Zapier eller Make</div>
+        <div class="part"><span class="brick"><svg style="color:#FFCF3F"><use href="#brick"/></svg><span class="ms">person</span></span><b>1x</b>Ejer af kontoen</div>
+        <div class="part optional"><span class="brick"><svg style="color:#EEF4FB"><use href="#brick"/></svg><span class="ms">language</span></span><b>1x</b>Hjemmeside</div>
+        <div class="part optional"><span class="brick"><svg style="color:#EEF4FB"><use href="#brick"/></svg><span class="ms">calendar_month</span></span><b>1x</b>Kalender (iCal)</div>
+        <div class="part optional"><span class="brick"><svg style="color:#EEF4FB"><use href="#brick"/></svg><span class="ms">code</span></span><b>1x</b>Adgang til hjemmesidens kode</div>
+        <div class="part optional"><span class="brick"><svg style="color:#EEF4FB"><use href="#brick"/></svg><span class="ms">group_add</span></span><b>1+</b>Kolleger</div>
+        <div class="part optional"><span class="brick"><svg style="color:#EEF4FB"><use href="#brick"/></svg><span class="ms">hub</span></span><b>1x</b>Zapier eller Make</div>
       </div>
       <div class="legend">
         <span class="chip"><span class="ms">timer</span>Tid pr. trin</span>
@@ -389,7 +389,7 @@ p { margin: 0; }
   <div class="two">
     <div class="step">
       <div class="head"><span class="num">1</span><div class="ttl"><h2>Opret en konto</h2><div class="chips"><span class="chip"><span class="ms">timer</span>2 min</span></div></div>
-        <div class="parts"><div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">mail</span></span><b>1x</b>E-mail</div><div class="part"><span class="brick dark"><svg style="color:#164e43"><use href="#brick"/></svg><span class="ms">redeem</span></span><b>1x</b>Ambassadørlink</div></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#FFCF3F"><use href="#brick"/></svg><span class="ms">mail</span></span><b>1x</b>E-mail</div><div class="part"><span class="brick dark"><svg style="color:#2456F6"><use href="#brick"/></svg><span class="ms">redeem</span></span><b>1x</b>Ambassadørlink</div></div></div>
       <div class="scr">
         <div class="bar"><i></i><i></i><i></i><span>www.dialogbot.dk/signup</span></div>
         <div class="body">
@@ -409,7 +409,7 @@ p { margin: 0; }
     </div>
     <div class="step">
       <div class="head"><span class="num">2</span><div class="ttl"><h2>Bekræft din e-mail</h2><div class="chips"><span class="chip"><span class="ms">timer</span>1 min</span></div></div>
-        <div class="parts"><div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">mark_email_unread</span></span><b>1x</b>Indbakke</div></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#FFCF3F"><use href="#brick"/></svg><span class="ms">mark_email_unread</span></span><b>1x</b>Indbakke</div></div></div>
       <div class="scr">
         <div class="bar"><i></i><i></i><i></i><span>Indbakke</span></div>
         <div class="body">
@@ -436,7 +436,7 @@ p { margin: 0; }
   <div class="two">
     <div class="step">
       <div class="head"><span class="num">3</span><div class="ttl"><h2>Opret arbejdsrummet</h2><div class="chips"><span class="chip"><span class="ms">timer</span>2 min</span></div></div>
-        <div class="parts"><div class="part"><span class="brick dark"><svg style="color:#164e43"><use href="#brick"/></svg><span class="ms">redeem</span></span><b>1x</b>Ambassadørkode</div></div></div>
+        <div class="parts"><div class="part"><span class="brick dark"><svg style="color:#2456F6"><use href="#brick"/></svg><span class="ms">redeem</span></span><b>1x</b>Ambassadørkode</div></div></div>
       <div class="scr">
         <div class="bar"><i></i><i></i><i></i><span>Opret arbejdsrum</span></div>
         <div class="body">
@@ -456,7 +456,7 @@ p { margin: 0; }
     </div>
     <div class="step">
       <div class="head"><span class="num">4</span><div class="ttl"><h2>Virksomhed og kategorier</h2><div class="chips"><span class="chip"><span class="ms">timer</span>5–7 min</span></div></div>
-        <div class="parts"><div class="part"><span class="brick"><svg style="color:#80bbe0"><use href="#brick"/></svg><span class="ms">badge</span></span><b>1x</b>CVR-nummer</div><div class="part"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">language</span></span><b>1x</b>Hjemmeside</div></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#2456F6"><use href="#brick"/></svg><span class="ms">badge</span></span><b>1x</b>CVR-nummer</div><div class="part"><span class="brick"><svg style="color:#EEF4FB"><use href="#brick"/></svg><span class="ms">language</span></span><b>1x</b>Hjemmeside</div></div></div>
       <div class="scr">
         <div class="bar"><i></i><i></i><i></i><span>Virksomhed</span></div>
         <div class="body">
@@ -531,7 +531,7 @@ p { margin: 0; }
   <div class="bagline"><span class="bag"><span class="no">3</span><span><small>Pose 3</small>Viden og svar</span></span><span class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
   <div class="step" style="flex:1">
     <div class="head"><span class="num">7</span><div class="ttl"><h2>Beskriv jeres ydelser og priser</h2><div class="chips"><span class="chip"><span class="ms">timer</span>10 min</span><span class="chip">Viden → Katalog</span></div></div>
-      <div class="parts"><div class="part"><span class="brick"><svg style="color:#d4ea82"><use href="#brick"/></svg><span class="ms">sell</span></span><b>1x</b>Ydelser og priser</div><div class="part"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">language</span></span><b>1x</b>Hjemmeside</div></div></div>
+      <div class="parts"><div class="part"><span class="brick"><svg style="color:#FFCF3F"><use href="#brick"/></svg><span class="ms">sell</span></span><b>1x</b>Ydelser og priser</div><div class="part"><span class="brick"><svg style="color:#EEF4FB"><use href="#brick"/></svg><span class="ms">language</span></span><b>1x</b>Hjemmeside</div></div></div>
     <p style="font-size:9.5pt;color:var(--muted);max-width:230mm">Assistenten må kun love det, I har godkendt. Uden mindst én godkendt ydelse kan den ikke svare kunderne. Vælg vej A eller vej B. I kan også bruge begge.</p>
     <div class="sub" style="margin-top:2mm">
       <span class="lbl">Vej A · Hent fra hjemmesiden</span>
@@ -560,7 +560,7 @@ p { margin: 0; }
   <div class="two">
     <div class="step">
       <div class="head"><span class="num">8</span><div class="ttl"><h2>Åbningstider og faste svar</h2><div class="chips"><span class="chip"><span class="ms">timer</span>3–8 min</span></div></div>
-        <div class="parts"><div class="part"><span class="brick"><svg style="color:#9bd1c3"><use href="#brick"/></svg><span class="ms">schedule</span></span><b>1x</b>Åbningstider</div></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#D6DEEA"><use href="#brick"/></svg><span class="ms">schedule</span></span><b>1x</b>Åbningstider</div></div></div>
       <div class="scr">
         <div class="bar"><i></i><i></i><i></i><span>Viden → Åbningstider</span></div>
         <div class="body">
@@ -655,7 +655,7 @@ p { margin: 0; }
   <div class="two">
     <div class="step">
       <div class="head"><span class="num">12</span><div class="ttl"><h2>Forbind telefonen</h2><div class="chips"><span class="chip"><span class="ms">timer</span>10 min</span><span class="chip">Indstillinger → Telefoni</span></div></div>
-        <div class="parts"><div class="part"><span class="brick dark"><svg style="color:#164e43"><use href="#brick"/></svg><span class="ms">call</span></span><b>1x</b>Firmaets telefon</div><div class="part"><span class="brick"><svg style="color:#ffffff"><use href="#brick"/></svg><span class="ms">description</span></span><b>1x</b>CVR-udskrift</div></div></div>
+        <div class="parts"><div class="part"><span class="brick dark"><svg style="color:#2456F6"><use href="#brick"/></svg><span class="ms">call</span></span><b>1x</b>Firmaets telefon</div><div class="part"><span class="brick"><svg style="color:#ffffff"><use href="#brick"/></svg><span class="ms">description</span></span><b>1x</b>CVR-udskrift</div></div></div>
       <div class="scr">
         <div class="bar"><i></i><i></i><i></i><span>Telefoni · Trin 1 af 5</span></div>
         <div class="body">
@@ -703,7 +703,7 @@ p { margin: 0; }
   <div class="two">
     <div class="step">
       <div class="head"><span class="num">14</span><div class="ttl"><h2>Ring et prøveopkald</h2><div class="chips"><span class="chip"><span class="ms">timer</span>5 min</span></div></div>
-        <div class="parts"><div class="part"><span class="brick"><svg style="color:#80bbe0"><use href="#brick"/></svg><span class="ms">smartphone</span></span><b>1x</b>Ekstra telefon</div></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#2456F6"><use href="#brick"/></svg><span class="ms">smartphone</span></span><b>1x</b>Ekstra telefon</div></div></div>
       <div class="sub" style="margin-top:2mm">
         <span class="lbl">Sådan går opkaldet</span>
         <div class="phones">
@@ -725,7 +725,7 @@ p { margin: 0; }
     </div>
     <div class="step">
       <div class="head"><span class="num">15</span><div class="ttl"><h2>Webchat på hjemmesiden</h2><div class="chips"><span class="chip"><span class="ms">timer</span>10 min</span><span class="chip opt"><span class="ms">add_circle</span>Valgfrit</span><span class="chip who"><span class="ms">shield_person</span>Ejer/admin</span></div></div>
-        <div class="parts"><div class="part"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">code</span></span><b>1x</b>Kodeadgang</div></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#EEF4FB"><use href="#brick"/></svg><span class="ms">code</span></span><b>1x</b>Kodeadgang</div></div></div>
       <div class="scr">
         <div class="bar"><i></i><i></i><i></i><span>Indstillinger → Webchat</span></div>
         <div class="body">
@@ -752,7 +752,7 @@ p { margin: 0; }
   <div class="two">
     <div class="step">
       <div class="head"><span class="num">16</span><div class="ttl"><h2>Booking og jeres systemer</h2><div class="chips"><span class="chip"><span class="ms">timer</span>10 min</span><span class="chip opt"><span class="ms">add_circle</span>Valgfrit</span></div></div>
-        <div class="parts"><div class="part"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">calendar_month</span></span><b>1x</b>Kalender</div><div class="part"><span class="brick"><svg style="color:#e7fef9"><use href="#brick"/></svg><span class="ms">hub</span></span><b>1x</b>Zapier/Make</div></div></div>
+        <div class="parts"><div class="part"><span class="brick"><svg style="color:#EEF4FB"><use href="#brick"/></svg><span class="ms">calendar_month</span></span><b>1x</b>Kalender</div><div class="part"><span class="brick"><svg style="color:#EEF4FB"><use href="#brick"/></svg><span class="ms">hub</span></span><b>1x</b>Zapier/Make</div></div></div>
       <div class="scr">
         <div class="bar"><i></i><i></i><i></i><span>Bookinger → Online booking og kalender</span></div>
         <div class="body">

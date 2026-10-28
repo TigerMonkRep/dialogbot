@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   appleWebApp: { title: "Dialogbot", capable: true, statusBarStyle: "black-translucent" },
 };
 
-export const viewport: Viewport = { themeColor: "#00362d" };
+export const viewport: Viewport = { themeColor: "#2456F6" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

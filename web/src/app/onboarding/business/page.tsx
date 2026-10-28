@@ -51,7 +51,7 @@ export default async function BusinessPage() {
       <FlowBar step={1} intent={me.signup_intent} />
 
       {/* A06 — mobil: compact card for the active workspace */}
-      <div className="md:hidden bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm relative overflow-hidden">
+      <div className="md:hidden bg-surface-container-lowest rounded-2xl p-space-md border-2 border-ink flex flex-col gap-space-sm relative overflow-hidden">
         <div className="flex items-start justify-between gap-space-sm">
           <div className="flex items-center gap-space-sm min-w-0">
             <div className="w-10 h-10 rounded-lg bg-primary-container text-secondary-fixed flex items-center justify-center flex-shrink-0"><Icon name="domain" size={22} /></div>
@@ -66,14 +66,14 @@ export default async function BusinessPage() {
       </div>
 
       {/* A06 workspace overview */}
-      <div className="hidden md:block bg-surface-container-lowest p-space-xl rounded-xl shadow-sm space-y-space-lg">
+      <div className="hidden md:block bg-surface-container-lowest p-space-xl rounded-2xl border-2 border-ink space-y-space-lg">
         <div className="flex flex-col md:flex-row md:items-center justify-between md:pb-space-md gap-4">
           <div>
             <div className="flex items-center gap-space-sm">
               <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">Arbejdsrum</span>
               <span className="font-label-sm text-label-sm text-on-surface-variant">Arbejdsrumsoversigt</span>
             </div>
-            <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight mt-0.5">Vælg eller opret arbejdsrum</h1>
+            <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink mt-0.5">Vælg eller opret arbejdsrum</h1>
           </div>
           <div className="flex items-center gap-space-md flex-wrap">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container text-primary"><Icon name="verified_user" size={18} /><span className="font-label-md text-label-md font-semibold">Rolle: {roleLabel}</span></div>
@@ -86,7 +86,7 @@ export default async function BusinessPage() {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-space-xl">
         {/* O01 */}
         <div className="xl:col-span-5 flex flex-col gap-space-xl">
-          <div className="bg-surface-container-lowest p-space-md md:p-space-xl rounded-xl shadow-sm space-y-space-lg">
+          <div className="bg-surface-container-lowest p-space-md md:p-space-xl rounded-2xl border-2 border-ink space-y-space-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-space-sm">
                 <span className="w-7 h-6 rounded-md bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-[10px] font-bold">1</span>
@@ -105,7 +105,7 @@ export default async function BusinessPage() {
             <div className="p-space-md rounded-xl bg-surface space-y-2">
               <span className="font-label-md text-label-md text-primary font-bold flex items-center gap-1"><Icon name="location_on" size={16} />Lokation og dækningsområde</span>
               {zones.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5">{zones.map((z, i) => <span key={z} className="px-2.5 py-1 rounded bg-surface-container-lowest shadow-sm text-primary font-label-sm text-label-sm font-semibold">Zone {i + 1}: {z}</span>)}</div>
+                <div className="flex flex-wrap gap-1.5">{zones.map((z, i) => <span key={z} className="px-2.5 py-1 rounded bg-surface-container-lowest border-2 border-ink text-primary font-label-sm text-label-sm font-semibold">Zone {i + 1}: {z}</span>)}</div>
               ) : <p className="font-body-sm text-body-sm text-on-surface-variant">Intet dækningsområde endnu.</p>}
               <Link href="/app/knowledge?tab=k03" className="font-label-sm text-label-sm text-secondary font-semibold hover:underline flex items-center gap-1">Redigér i Videnscenter<Icon name="arrow_forward" size={14} /></Link>
             </div>
@@ -114,7 +114,7 @@ export default async function BusinessPage() {
 
         {/* O02 — knowledge the assistant may use (entered manually; no automatic extraction yet) */}
         <div className="xl:col-span-7 flex flex-col gap-space-xl">
-          <div className="bg-surface-container-lowest p-space-md md:p-space-xl rounded-xl shadow-sm space-y-space-lg">
+          <div className="bg-surface-container-lowest p-space-md md:p-space-xl rounded-2xl border-2 border-ink space-y-space-lg">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 gap-2">
               <div className="flex items-center gap-space-sm">
                 <span className="w-7 h-6 rounded-md bg-secondary text-on-secondary flex items-center justify-center font-label-sm text-[10px] font-bold flex-shrink-0">2</span>
@@ -179,7 +179,7 @@ export default async function BusinessPage() {
                   const v = s.open_draft ?? s.approved_version!;
                   const c = v.content as { description?: string; price_net_minor?: number; unit?: string };
                   return (
-                    <div key={s.id} className="p-3 rounded-lg bg-surface-container-lowest flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-sm">
+                    <div key={s.id} className="p-3 rounded-lg bg-surface-container-lowest flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-2 border-ink">
                       <div className="min-w-0">
                         <p className="font-label-md text-label-md text-primary font-bold">{v.title}</p>
                         {c.description && <p className="font-body-sm text-body-sm text-on-surface-variant">{c.description}</p>}
@@ -219,7 +219,7 @@ export default async function BusinessPage() {
         </div>
         <div className="flex flex-col-reverse md:flex-row items-stretch md:items-center gap-space-md w-full md:w-auto md:justify-end">
           <button form="business-form" type="submit" name="intent" value="save" disabled={!canEdit} className="px-space-md py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"><Icon name="save" size={18} />Gem</button>
-          <button form="business-form" type="submit" name="intent" value="next" className="justify-center px-space-xl py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-bold transition-all shadow-md flex items-center gap-2">
+          <button form="business-form" type="submit" name="intent" value="next" className="justify-center px-space-xl py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-bold transition-all border-2 border-ink shadow-block-sm flex items-center gap-2">
             <span>Gem og fortsæt til mål &amp; sprog</span><Icon name="arrow_forward" size={18} className="text-secondary-fixed" />
           </button>
         </div>

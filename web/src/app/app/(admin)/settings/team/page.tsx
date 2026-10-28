@@ -22,10 +22,10 @@ export default async function TeamPage() {
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
       <div className="xl:col-span-8 flex flex-col gap-space-lg">
-        <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+        <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
           <div className="flex items-start justify-between gap-space-md">
             <div>
-              <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Indstillinger</span>
+              <span className="eyebrow">Indstillinger</span>
               <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Medlemmer i {ws.name}</h2>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Roller styrer, hvem der må redigere, godkende viden og se aktivitetsloggen.</p>
             </div>
@@ -34,7 +34,7 @@ export default async function TeamPage() {
           <ul className="flex flex-col gap-2">{members.map((m) => <MemberRow key={m.id} wsId={ws.id} m={m} myRole={ws.role} isMe={m.user_id === me.id} />)}</ul>
         </section>
         {admin && (
-          <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+          <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
             <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Invitationer</h2>
             {invitations.length === 0 ? <p className="p-space-md rounded-xl bg-surface-container-low font-body-sm text-body-sm text-on-surface-variant">Ingen invitationer endnu.</p> : (
               <ul className="flex flex-col gap-2">
@@ -60,7 +60,7 @@ export default async function TeamPage() {
       </div>
       <div className="xl:col-span-4 xl:sticky xl:top-20 flex flex-col gap-space-lg">
         {admin ? (
-          <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+          <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
             <div className="flex items-center gap-space-sm"><div className="w-9 h-9 rounded-lg bg-primary-container text-secondary-fixed flex items-center justify-center"><Icon name="person_add" size={20} /></div><h2 className="font-headline-sm text-headline-sm text-primary font-bold">Invitér kollega</h2></div>
             <InviteForm wsId={ws.id} myRole={ws.role} />
           </section>

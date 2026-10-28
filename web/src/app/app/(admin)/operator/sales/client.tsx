@@ -36,7 +36,7 @@ export function SellerDemoCall({ info, calls }: { info: SalesInfo; calls: DemoRo
   const protectedCo = cvr?.advertising_protected === true;
   return (
     <div className="grid lg:grid-cols-[minmax(0,28rem)_1fr] gap-space-lg items-start">
-      <form className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); call.run(); }}>
+      <form className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm" onSubmit={(e) => { e.preventDefault(); call.run(); }}>
         {!info.available && <Alert kind="warn">Demo-opkald kan ikke foretages endnu: {info.problem}</Alert>}
         <Field label="CVR-nummer (tjek før du ringer)" hint="Viser om virksomheden er reklamebeskyttet.">
           <div className="flex gap-space-sm">
@@ -61,7 +61,7 @@ export function SellerDemoCall({ info, calls }: { info: SalesInfo; calls: DemoRo
         <Button type="submit" icon="call" disabled={!info.available || !f.consent_confirmed || protectedCo || call.pending || !f.company || !f.phone}>{call.pending ? "Ringer op…" : "Lad AI'en ringe op nu"}</Button>
       </form>
 
-      <div className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md flex flex-col gap-space-sm min-w-0">
+      <div className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm min-w-0">
         <h2 className="font-title-md text-title-md text-primary font-bold">Seneste demo-opkald</h2>
         {calls.length === 0 ? <p className="font-body-sm text-body-sm text-on-surface-variant">Ingen endnu.</p> : (
           <div className="overflow-x-auto">

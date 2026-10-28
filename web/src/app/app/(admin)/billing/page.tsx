@@ -21,7 +21,7 @@ const shift = (ym: string, d: number) => { const [y, m] = ym.split("-").map(Numb
 /** Card (Stripe), invoices and the running month's statement. Honest about what is and is not charged. */
 export default async function BillingPage({ searchParams }: { searchParams: Promise<{ month?: string; card?: string }> }) {
   const ws = await requireWorkspace();
-  if (ws.role !== "owner" && ws.role !== "admin") return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Afregning kan ses af ejere og administratorer.</p>;
+  if (ws.role !== "owner" && ws.role !== "admin") return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Afregning kan ses af ejere og administratorer.</p>;
   const sp = await searchParams;
   const want = sp.month;
   const [s, acc, invoices, referral] = await Promise.all([
@@ -36,11 +36,12 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   return (
     <div className="flex flex-col gap-space-lg max-w-4xl">
       <div className="flex flex-col gap-space-xs">
-        <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight">Afregning</h1>
+        <span className="eyebrow">Fakturering</span>
+        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Afregning</h1>
         <p className="font-body-sm text-body-sm text-on-surface-variant">Oversigt over, hvad måneden koster efter jeres prisaftale. Beløb i kr. med to decimaler, moms 25 %.</p>
       </div>
       {sp.card === "saved" && <p role="status" className="p-space-sm rounded-lg bg-secondary-container text-on-secondary-container font-body-sm text-body-sm">Tak – kortet er gemt hos Stripe. Det kan tage et øjeblik, før det vises her.</p>}
-      <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+      <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
         <h2 className="font-headline-sm text-headline-sm text-primary">Betaling</h2>
         {!acc.configured ? (
           <p className="font-body-md text-body-md text-on-surface-variant">Kortbetaling er ikke sat op endnu. Indtil da er oversigten nedenfor kun en forhåndsvisning, og der trækkes ingen betaling.</p>
@@ -57,7 +58,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         <p className="p-space-sm rounded-lg bg-secondary-container text-on-secondary-container font-body-sm text-body-sm flex items-start gap-space-xs"><Icon name="loyalty" size={18} />I er anbefalet af {referral.ambassador_first_name} (Dialogbot-ambassadør) og får {(referral.customer_discount_bp ?? 5000) / 100} % rabat på jeres første fakturerede måned. Rabatten står som en linje i oversigten.</p>
       ) : referral.can_add_code && <ReferralCode wsId={ws.id} />}
       {invoices.items.length > 0 && (
-        <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+        <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
           <h2 className="font-headline-sm text-headline-sm text-primary">Fakturaer</h2>
           <ul className="flex flex-col gap-space-xs">{invoices.items.map((i) => (
             <li key={i.id} className="flex flex-wrap items-center gap-space-sm p-space-sm rounded-lg bg-surface-container-low font-body-md text-body-md">
@@ -79,7 +80,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         <h2 className="font-headline-md text-headline-md text-primary">{monthLabel(s.month)}</h2>
         <Link href={`/app/billing?month=${shift(s.month, 1)}`} className="font-label-lg text-label-lg text-primary flex items-center gap-1">Næste<Icon name="chevron_right" size={20} /></Link>
       </div>
-      <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-md">
+      <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
         <p className="font-body-md text-body-md">{s.agreement ? <>Prisaftale: <strong>model {s.agreement.model}</strong> (version {s.agreement.version}). {s.approved_leads} godkendte henvendelser, heraf {s.billable_leads} med gebyr.</> : <>Ingen prisaftale i denne måned. <Link href="/app/settings/agreement" className="text-primary underline">Vælg model</Link>.</>}</p>
         {s.lines.length === 0 ? <p className="font-body-sm text-body-sm text-on-surface-variant">Ingen poster i denne måned.</p> : (
           <table className="w-full font-body-sm text-body-sm">

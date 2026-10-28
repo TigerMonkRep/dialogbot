@@ -14,7 +14,7 @@ export default async function OperatorAmbassadorPage({ params }: { params: Promi
   try {
     [a, all] = await Promise.all([backend<OpDetail>(`/operator/ambassadors/${id}`), backend<{ items: { id: string; full_name: string; status: string }[] }>("/operator/ambassadors")]);
   } catch {
-    return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Ambassadøren findes ikke, eller du er ikke operatør.</p>;
+    return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Ambassadøren findes ikke, eller du er ikke operatør.</p>;
   }
   return (
     <section className="flex flex-col gap-space-lg">

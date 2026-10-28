@@ -38,7 +38,7 @@ export function AssistantPreview({ wsId, simulated }: { wsId: string; simulated:
       </form>
       <ol className="flex flex-col gap-space-md" aria-label="Testsvar">
         {turns.map(({ q, a }, i) => (
-          <li key={turns.length - i} className="rounded-xl bg-surface-container-lowest shadow-sm p-space-md flex flex-col gap-space-sm">
+          <li key={turns.length - i} className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm">
             <p className="font-label-md text-label-md text-on-surface-variant">Spørgsmål</p>
             <p className="font-body-md text-body-md text-on-surface whitespace-pre-wrap">{q}</p>
             <p className="font-label-md text-label-md text-on-surface-variant flex items-center gap-space-xs">Svar

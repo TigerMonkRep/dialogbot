@@ -90,7 +90,7 @@ function Consent({ wsId, defaults }: { wsId: string; defaults: Manuscript }) {
     router.refresh();
   });
   return (
-    <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+    <div className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink flex flex-col gap-space-md">
       <h2 className="font-title-md text-title-md text-primary font-bold">1. Hvem skal indtale?</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
         <Field label="Indtalerens fulde navn"><Input value={f.speaker_name} onChange={(e) => setF({ ...f, speaker_name: e.target.value })} autoComplete="name" /></Field>
@@ -166,7 +166,7 @@ function Studio({ wsId, project, manuscript }: { wsId: string; project: Project;
 
   return (
     <div className="flex flex-col gap-space-md">
-      <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+      <div className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink flex flex-col gap-space-sm">
         <div className="flex flex-wrap items-center justify-between gap-space-sm">
           <h2 className="font-title-md text-title-md text-primary font-bold">Indtaling: {p.speaker_name}</h2>
           <span className="font-label-lg text-label-lg tabular-nums">{done} af {p.total} godkendt</span>
@@ -184,7 +184,7 @@ function Studio({ wsId, project, manuscript }: { wsId: string; project: Project;
           const r = p.recordings[s.id];
           const isActive = active === s.id;
           return (
-            <li key={s.id} className={`rounded-xl p-space-md bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs border ${s.id === next ? "border-primary" : "border-transparent"}`}>
+            <li key={s.id} className={`rounded-2xl p-space-md bg-surface-container-lowest border-2 border-ink flex flex-col gap-space-xs border ${s.id === next ? "border-primary" : "border-transparent"}`}>
               <div className="flex items-start gap-space-sm">
                 <span className="font-label-sm text-label-sm text-on-surface-variant tabular-nums w-10 shrink-0">{i + 1}.</span>
                 <div className="flex-1">
@@ -206,7 +206,7 @@ function Studio({ wsId, project, manuscript }: { wsId: string; project: Project;
           );
         })}
       </ol>
-      <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+      <div className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink flex flex-col gap-space-sm">
         <p className="font-body-md text-body-md">Når alle sætninger er godkendt, sender du indtalingen. Dialogbot laver stemmen og gennemgår samtykket, før den kan bruges.</p>
         <div><Button type="button" icon="send" disabled={done < p.total || submit.pending} onClick={() => submit.run()}>Send til gennemgang</Button></div>
         <ErrorBox error={submit.error} />
@@ -225,7 +225,7 @@ function Status({ wsId, p }: { wsId: string; p: Project }) {
     : v?.consent_review === "blocked" ? "Samtykket er afvist. Kontakt Dialogbot."
     : "Afventer Dialogbots gennemgang af samtykket og en prøve af stemmen.";
   return (
-    <li className="rounded-xl p-space-md bg-surface-container-lowest shadow-sm flex flex-col gap-space-xs">
+    <li className="rounded-2xl p-space-md bg-surface-container-lowest border-2 border-ink flex flex-col gap-space-xs">
       <div className="flex flex-wrap items-center gap-space-sm">
         <Icon name="record_voice_over" className="text-primary" />
         <h3 className="font-label-lg text-label-lg text-primary">{p.speaker_name}</h3>

@@ -24,11 +24,11 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
     <section className="flex flex-col gap-space-lg">
       <Breadcrumb items={[["Kampagner", "/app/campaigns"], [c.name]]} />
       <div className="flex flex-wrap items-center gap-space-sm">
-        <h1 className="font-headline-md text-headline-md text-primary font-bold">{c.name}</h1>
+        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{c.name}</h1>
         <span className={`px-3 py-1 rounded-full font-label-sm text-label-sm font-semibold ${STATUS[c.status][1]}`}>{STATUS[c.status][0]}</span>
       </div>
       <dl className="grid grid-cols-3 md:grid-cols-6 gap-space-sm">{stats.map(([k, v]) => (
-        <div key={k} className="bg-surface-container-lowest rounded-xl p-space-sm shadow-sm">
+        <div key={k} className="bg-surface-container-lowest rounded-2xl p-space-sm border-2 border-ink">
           <dt className="font-label-sm text-label-sm text-on-surface-variant">{k}</dt>
           <dd className="font-headline-sm text-headline-sm text-primary">{v}</dd>
         </div>
@@ -36,7 +36,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
       {canManage && <StartCampaign wsId={ws.id} c={c} checklist={list.legal_checklist} />}
       <CampaignEditor wsId={ws.id} c={c} numbers={numbers.items.filter((n) => n.active)} canManage={canManage} />
       {canManage && c.status !== "completed" && <ImportContacts wsId={ws.id} id={c.id} />}
-      <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+      <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
         <h2 className="font-headline-sm text-headline-sm text-primary">Kontakter</h2>
         {contacts.items.length === 0 ? <p className="font-body-md text-body-md text-on-surface-variant">Ingen kontakter endnu.</p> : (
           <ul className="flex flex-col gap-space-xs">{contacts.items.map((x) => (

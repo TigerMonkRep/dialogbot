@@ -11,7 +11,7 @@ const CHANNEL: Record<string, [string, string]> = { webchat: ["Webchat", "chat"]
 export default async function InboxPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const ws = await requireWorkspace();
   if (ws.role === "reader") {
-    return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Indbakken kan ses af medarbejdere, administratorer og ejere.</p>;
+    return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Indbakken kan ses af medarbejdere, administratorer og ejere.</p>;
   }
   const pageNo = Math.max(1, Number((await searchParams).page ?? 1) || 1);
   const list = await backend<{ items: Conv[]; total: number }>(`/workspaces/${ws.id}/conversations?limit=${PER_PAGE}&offset=${(pageNo - 1) * PER_PAGE}`);
@@ -19,11 +19,11 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
   return (
     <div className="flex flex-col gap-space-lg">
       <div className="flex flex-col gap-space-xs">
-        <div className="hidden md:flex items-center gap-space-xs font-label-md text-label-md text-on-surface-variant"><span>Henvendelser</span><Icon name="chevron_right" size={14} /><span className="text-primary font-semibold">Indbakke</span></div>
-        <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight">Indbakke</h1>
+        <span className="eyebrow">Opkald og samtaler</span>
+        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Opkald</h1>
         <p className="font-body-sm text-body-sm text-on-surface-variant">Samtaler fra webchat og telefon, nyeste først.</p>
       </div>
-      <section className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+      <section className="bg-surface-container-lowest rounded-2xl border-2 border-ink overflow-hidden">
         {list.items.length === 0 ? (
           <div className="p-space-lg flex flex-col items-start gap-space-sm">
             <p className="font-body-md text-body-md text-on-surface-variant">Ingen samtaler endnu.</p>
@@ -34,11 +34,11 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
             {list.items.map((c) => {
               const [label, icon] = CHANNEL[c.channel] ?? [c.channel, "forum"];
               return (
-                <li key={c.id} className="border-b border-surface-container last:border-0">
+                <li key={c.id} className="border-b-[1.5px] border-line last:border-0">
                   <Link href={`/app/inbox/${c.id}`} className="flex items-start gap-space-md p-space-md hover:bg-surface-container-low transition-colors">
-                    <span className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0"><Icon name={icon} size={20} /></span>
+                    <span className="w-10 h-10 rounded-[10px] bg-accent flex items-center justify-center text-white shrink-0"><Icon name={icon} size={20} /></span>
                     <span className="flex-1 min-w-0">
-                      <span className="flex flex-wrap items-center gap-space-xs font-label-md text-label-md text-on-surface-variant"><span className="font-semibold text-primary">{label}</span>{c.origin && <span>· {c.origin.replace(/^https?:\/\//, "")}</span>}<span>· {c.visitor_message_count} {c.visitor_message_count === 1 ? "besked" : "beskeder"}</span>{c.awaiting_staff && <span className="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">Venter på svar</span>}{c.mode === "staff" && !c.awaiting_staff && <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">Medarbejder</span>}</span>
+                      <span className="flex flex-wrap items-center gap-space-xs font-label-md text-label-md text-on-surface-variant"><span className="font-semibold text-primary">{label}</span>{c.origin && <span>· {c.origin.replace(/^https?:\/\//, "")}</span>}<span>· {c.visitor_message_count} {c.visitor_message_count === 1 ? "besked" : "beskeder"}</span>{c.awaiting_staff && <span className="px-2 py-0.5 rounded-full bg-highlight text-ink font-label-sm text-label-sm font-semibold">Venter på svar</span>}{c.mode === "staff" && !c.awaiting_staff && <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">Medarbejder</span>}</span>
                       <span className="block font-body-md text-body-md text-on-surface truncate">{c.preview ?? "(ingen besked endnu)"}</span>
                     </span>
                     <time dateTime={c.last_message_at} className="font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">{new Date(c.last_message_at).toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" })}</time>

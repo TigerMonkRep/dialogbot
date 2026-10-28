@@ -11,7 +11,7 @@ type List = { items: Campaign[]; package: { net_minor: number; max_attempts: num
 /** C01: campaigns (outbound calls), new campaign, and the do-not-call list. */
 export default async function CampaignsPage() {
   const ws = await requireWorkspace();
-  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant">Kampagner kan ses af medarbejdere, administratorer og ejere.</p>;
+  if (ws.role === "reader") return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Kampagner kan ses af medarbejdere, administratorer og ejere.</p>;
   const canManage = ws.role === "owner" || ws.role === "admin";
   const [list, dnc, me] = await Promise.all([
     backend<List>(`/workspaces/${ws.id}/campaigns`),
@@ -22,15 +22,15 @@ export default async function CampaignsPage() {
   return (
     <section className="flex flex-col gap-space-lg">
       <div>
-        <span className="text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider">Kampagner</span>
-        <h1 className="font-headline-md text-headline-md text-primary font-bold">Udgående opkald</h1>
+        <span className="eyebrow">Kampagner</span>
+        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Udgående opkald</h1>
         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">
           Jeres digitale assistent ringer til en liste af kontakter med jeres budskab og sender de interesserede videre som henvendelser.
           Pris: {kr(p.net_minor)} + moms pr. kontakt – op til {p.max_attempts} forsøg og i alt {p.max_connected_seconds / 60} minutters samtale. Der ringes først, når en administrator trykker Start.
         </p>
         {me.is_platform_operator && <Link href="/app/operator/sales" className="mt-space-xs flex items-center gap-1 font-label-lg text-label-lg text-primary underline w-fit"><Icon name="admin_panel_settings" size={18} />Salgsopkald: lad AI&apos;en ringe op (kun Dialogbot)</Link>}
       </div>
-      <div className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+      <div className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
         <h2 className="font-headline-sm text-headline-sm text-primary">Jeres kampagner</h2>
         {list.items.length === 0 ? <p className="font-body-md text-body-md text-on-surface-variant">Ingen kampagner endnu.</p> : (
           <ul className="flex flex-col gap-space-xs">{list.items.map((c) => (

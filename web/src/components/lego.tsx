@@ -1,79 +1,82 @@
 import { Icon } from "./ui";
 
-/** Building-instruction pieces shared by the setup guide and the printed manual (public/materiale/opsaetningsmanual.html):
- *  a 2-stud brick with an icon, a numbered bag and the fat "press here" arrow. */
+/** Building-instruction pieces (Byggevejledning v2) shared by the setup guide and the printed manual:
+ *  a flat rounded block with an icon, a numbered square ("bag"), the big step number, the "Du skal bruge"
+ *  parts box and the 3 px ink arrow. Flat colours only - no studs, no LEGO trade dress. */
 
-export type BrickColor = "lime" | "forest" | "sky" | "mint" | "white" | "ghost";
-const FILL: Record<BrickColor, string> = { lime: "#d4ea82", forest: "#164e43", sky: "#80bbe0", mint: "#9bd1c3", white: "#ffffff", ghost: "#e7fef9" };
+/** Old palette names are kept for callers; they map onto the brand tokens. */
+export type BrickColor = "lime" | "forest" | "sky" | "mint" | "white" | "ghost" | "accent" | "highlight" | "ink" | "panel";
+const FILL: Record<BrickColor, { bg: string; fg: string }> = {
+  lime: { bg: "var(--color-highlight)", fg: "var(--color-ink)" },
+  highlight: { bg: "var(--color-highlight)", fg: "var(--color-ink)" },
+  forest: { bg: "var(--color-ink)", fg: "var(--color-paper)" },
+  ink: { bg: "var(--color-ink)", fg: "var(--color-paper)" },
+  sky: { bg: "var(--color-accent-soft)", fg: "var(--color-accent-deep)" },
+  mint: { bg: "var(--color-accent-soft)", fg: "var(--color-accent-deep)" },
+  accent: { bg: "var(--color-accent)", fg: "var(--color-paper)" },
+  white: { bg: "var(--color-paper)", fg: "var(--color-ink)" },
+  ghost: { bg: "var(--color-panel)", fg: "var(--color-ink)" },
+  panel: { bg: "var(--color-panel)", fg: "var(--color-ink)" },
+};
 
+/** Flat rounded block with an icon on it. `optional` = dashed outline ("not set up yet"). */
 export function Brick({ icon, color = "lime", size = 44, optional = false }: { icon: string; color?: BrickColor; size?: number; optional?: boolean }) {
   const h = Math.round(size * 44 / 60);
+  const f = FILL[color];
   return (
-    <span className="relative inline-block flex-shrink-0" style={{ width: size, height: h }} aria-hidden>
-      <svg viewBox="0 0 60 44" width={size} height={h} className="absolute inset-0 overflow-visible" style={{ color: FILL[color] }}>
-        <rect x="8" y="1" width="16" height="9" rx="2.5" fill="currentColor" />
-        <rect x="36" y="1" width="16" height="9" rx="2.5" fill="currentColor" />
-        <rect x="8" y="1" width="16" height="9" rx="2.5" fill="#000" fillOpacity=".1" />
-        <rect x="36" y="1" width="16" height="9" rx="2.5" fill="#000" fillOpacity=".1" />
-        <rect x="9.5" y="1.5" width="13" height="2.2" rx="1" fill="#fff" fillOpacity=".45" />
-        <rect x="37.5" y="1.5" width="13" height="2.2" rx="1" fill="#fff" fillOpacity=".45" />
-        <rect x="1" y="8" width="58" height="35" rx="3.5" fill="currentColor" stroke="#00362d" strokeOpacity={optional ? 0.55 : 0.35}
-          strokeWidth="1.2" strokeDasharray={optional ? "3 2" : undefined} />
-        <rect x="2" y="37" width="56" height="5" rx="2" fill="#000" fillOpacity=".14" />
-        <rect x="3" y="9.5" width="54" height="2" rx="1" fill="#fff" fillOpacity=".4" />
-      </svg>
-      <span className={`absolute inset-x-0 flex justify-center ${color === "forest" ? "text-secondary-fixed" : "text-primary"}`} style={{ bottom: Math.round(h * 0.12) }}>
-        <Icon name={icon} size={Math.round(size * 0.36)} />
-      </span>
+    <span className="relative inline-flex items-center justify-center flex-shrink-0 box-border" aria-hidden
+      style={{ width: size, height: h, background: f.bg, color: f.fg, borderRadius: Math.max(8, Math.round(size * 0.2)), border: `${size >= 40 ? 2 : 1.5}px ${optional ? "dashed" : "solid"} var(--color-ink)` }}>
+      <Icon name={icon} size={Math.round(size * 0.4)} />
     </span>
   );
 }
 
 export type Part = { icon: string; label: string; color?: BrickColor; optional?: boolean; count?: string };
 
-/** The "parts needed" callout at the top of a step. */
+/** The "Du skal bruge" callout at the top of a step: 1.5 px outline, eyebrow, chips with Outfit "1×" counts. */
 export function PartsBox({ parts, compact = false }: { parts: Part[]; compact?: boolean }) {
   if (parts.length === 0) return null;
   return (
-    <div className="inline-flex flex-wrap items-end gap-space-md rounded-lg border-2 border-primary-fixed-dim bg-surface-container-lowest px-space-sm pt-space-sm pb-1.5" aria-label="Det skal du bruge">
-      {parts.map((p) => (
-        <span key={p.label} className="flex flex-col items-center gap-0.5 text-center" style={{ maxWidth: compact ? 64 : 80 }}>
-          <Brick icon={p.icon} color={p.color} optional={p.optional} size={compact ? 32 : 40} />
-          <span className="font-label-sm text-label-sm font-bold text-on-surface leading-none" style={{ fontFamily: "var(--font-display)" }}>{p.count ?? "1x"}</span>
-          <span className="text-[11px] leading-tight text-on-surface-variant">{p.label}</span>
-        </span>
-      ))}
+    <div className={`flex flex-col gap-2 rounded-xl border-[1.5px] border-ink bg-paper ${compact ? "px-3 py-2.5" : "px-3.5 py-3"}`} aria-label="Du skal bruge">
+      <span className="eyebrow">Du skal bruge</span>
+      <div className="flex flex-wrap gap-2">
+        {parts.map((p) => (
+          <span key={p.label} className={`inline-flex items-center gap-2 rounded-lg bg-panel font-medium text-ink ${compact ? "px-2 py-1 text-[13px]" : "px-2.5 py-1.5 text-[14px]"} ${p.optional ? "border-[1.5px] border-dashed border-ink" : ""}`}>
+            <b className="font-display font-extrabold">{(p.count ?? "1x").replace(/x$/i, "×")}</b>
+            <Icon name={p.icon} size={compact ? 15 : 17} className="text-accent" />
+            <span>{p.label}</span>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
 
-/** Numbered bag. tone: done = lime, active = forest, idle = muted. */
+/** Numbered square. active = Trin-gul with Outfit numeral, done = ink with a check, idle = panel with 1.5 px ink outline. */
 export function Bag({ n, tone = "active", size = 36 }: { n: number; tone?: "done" | "active" | "idle"; size?: number }) {
-  const cls = tone === "done" ? "bg-secondary-container text-primary" : tone === "active" ? "bg-primary text-secondary-fixed" : "bg-surface-container-highest text-on-surface-variant";
+  const cls = tone === "done" ? "bg-ink text-paper" : tone === "active" ? "bg-highlight text-ink" : "bg-panel text-ink border-[1.5px] border-ink";
   return (
-    <span className="relative inline-flex flex-shrink-0" style={{ width: size * 0.9, height: size }} aria-hidden>
-      <span className={`absolute rounded-t-md ${cls}`} style={{ top: 0, left: "22%", right: "22%", height: size * 0.18 }} />
-      <span className={`absolute inset-x-0 bottom-0 rounded-md rounded-b-lg grid place-items-center font-extrabold ${cls}`}
-        style={{ top: size * 0.12, fontFamily: "var(--font-display)", fontSize: size * 0.42 }}>
-        {tone === "done" ? <Icon name="check" size={Math.round(size * 0.5)} /> : n}
-      </span>
+    <span className={`inline-flex flex-shrink-0 items-center justify-center font-display font-extrabold ${cls}`} aria-hidden
+      style={{ width: size, height: size, borderRadius: Math.round(size * 0.25), fontSize: Math.round(size * 0.5) }}>
+      {tone === "done" ? <Icon name="check" size={Math.round(size * 0.55)} /> : n}
     </span>
   );
 }
 
-/** The big step number of a building instruction. */
+/** The big step number: 56 px Trin-gul rounded square, Outfit 800. `muted` (finished step) = ink with white numeral. */
 export function StepNumber({ value, muted = false }: { value: string; muted?: boolean }) {
+  const long = value.length > 2;
   return (
-    <span className={`font-extrabold leading-[0.85] tracking-tighter tabular-nums flex-shrink-0 ${muted ? "text-outline" : "text-primary"}`}
-      style={{ fontFamily: "var(--font-display)", fontSize: value.length > 3 ? 34 : 48, minWidth: 52 }}>{value}</span>
+    <span className={`inline-flex flex-shrink-0 items-center justify-center w-14 h-14 rounded-[14px] font-display font-extrabold tabular-nums tracking-tight ${muted ? "bg-ink text-paper" : "bg-highlight text-ink"}`}
+      style={{ fontSize: long ? 18 : 30 }}>{value}</span>
   );
 }
 
-/** The fat building-instruction arrow pointing right (flip with className="-scale-x-100"). */
+/** Building-instruction arrow pointing right, 3 px ink stroke (flip with className="-scale-x-100"). */
 export function BuildArrow({ size = 44, className = "" }: { size?: number; className?: string }) {
   return (
-    <svg viewBox="0 0 64 40" width={size} height={size * 40 / 64} className={`flex-shrink-0 ${className}`} aria-hidden>
-      <path d="M3 13h34V3l24 17-24 17V27H3z" fill="#d4ea82" stroke="#00362d" strokeWidth="3" strokeLinejoin="round" />
+    <svg viewBox="0 0 40 26" width={size} height={size * 26 / 40} className={`flex-shrink-0 text-ink ${className}`} aria-hidden fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 13h32M28 5l8 8-8 8" />
     </svg>
   );
 }

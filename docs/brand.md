@@ -51,7 +51,7 @@ Kun to kulører: blå = handling, gul = her er du. Alt andet er blæk på papir.
 ## Logo
 
 Mærke: en blå (`#2456F6`) rundet firkant (radius 28 % af siden) med en hvid talebobbel (streg 2,4/24). Wordmark «Dialogbot» i Outfit 800, −0,3 px.
-Filer: `web/public/brand/logo.svg` (mærke + wordmark), `logo-mark.svg`, `logo-mark-1024.png` (profilbillede), `logo-wordmark-dark.svg` (til mørk flade: hvid tekst, gul mærke-variant).
+Filer: `web/public/brand/logo.svg` (mærke + wordmark, blæk tekst), `logo-dark.svg` (hvid tekst til mørk flade), `logo-mark.svg`, `logo-wordmark.svg`, `logo-mark-1024.png` (profilbillede), `logo-720.png` (mærke på hvid til Google Business). Oversigt og upload-steder: `docs/brand-kit.md`; generator: `web/scripts/brand/`.
 Må ikke: gradienter, skygge, roteres, gammel grøn/lime-version.
 
 ## Sociale medier

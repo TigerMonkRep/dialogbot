@@ -23,7 +23,7 @@ export function AmbassadorDetail({ a, others }: { a: OpDetail; others: { id: str
   return (
     <div className="grid xl:grid-cols-3 gap-space-lg items-start">
       <div className="xl:col-span-2 flex flex-col gap-space-lg">
-        <section className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-md">
+        <section className="rounded-2xl bg-surface-container-lowest p-space-lg border-2 border-ink space-y-space-md">
           <div className="flex flex-wrap items-start justify-between gap-space-sm">
             <div>
               <span className={`inline-flex px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-bold ${st.tone}`}>{st.label}</span>
@@ -43,18 +43,18 @@ export function AmbassadorDetail({ a, others }: { a: OpDetail; others: { id: str
           {a.payout_blockers.length > 0 && <Alert kind="warn">Kan ikke udbetales: {a.payout_blockers.join(" · ")}</Alert>}
         </section>
 
-        <section className="rounded-xl bg-surface-container-lowest shadow-sm">
+        <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink">
           <h2 className="font-headline-sm text-headline-sm text-primary font-bold p-space-md">Kunder ({a.customers.length})</h2>
           {a.customers.length === 0 ? <p className="px-space-md pb-space-md font-body-sm text-body-sm text-on-surface-variant">Ingen kunder endnu.</p> : (
             <ul className="divide-y divide-outline-variant/40">{a.customers.map((c) => <CustomerRow key={c.workspace_id} c={c} others={others} />)}</ul>
           )}
         </section>
 
-        <section className="rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden">
+        <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink overflow-hidden">
           <h2 className="font-headline-sm text-headline-sm text-primary font-bold p-space-md">Kontoudtog</h2>
           {a.ledger.length === 0 ? <p className="px-space-md pb-space-md font-body-sm text-body-sm text-on-surface-variant">Ingen posteringer.</p> : (
             <div className="overflow-x-auto"><table className="w-full text-left font-body-sm text-body-sm">
-              <thead className="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><tr><th className="p-space-sm">Type</th><th className="p-space-sm">Kunde</th><th className="p-space-sm">Måned</th><th className="p-space-sm">Status</th><th className="p-space-sm text-right">Beløb</th></tr></thead>
+              <thead className="bg-surface-container-low eyebrow"><tr><th className="p-space-sm">Type</th><th className="p-space-sm">Kunde</th><th className="p-space-sm">Måned</th><th className="p-space-sm">Status</th><th className="p-space-sm text-right">Beløb</th></tr></thead>
               <tbody>{a.ledger.map((e) => <tr key={e.id} className="border-t border-outline-variant/40"><td className="p-space-sm">{e.label}</td><td className="p-space-sm">{e.company}</td><td className="p-space-sm">{monthLabel(e.month)}</td><td className="p-space-sm">{e.status_label}</td><td className="p-space-sm text-right tabular-nums">{kr(e.amount_minor)}</td></tr>)}</tbody>
             </table></div>
           )}
@@ -62,7 +62,7 @@ export function AmbassadorDetail({ a, others }: { a: OpDetail; others: { id: str
       </div>
 
       <aside className="flex flex-col gap-space-lg">
-        <section className="rounded-xl bg-surface-container-lowest p-space-md shadow-sm space-y-space-sm">
+        <section className="rounded-2xl bg-surface-container-lowest p-space-md border-2 border-ink space-y-space-sm">
           <h2 className="font-label-lg text-label-lg text-primary font-bold">Saldo</h2>
           <dl className="grid grid-cols-2 gap-y-1 font-body-sm text-body-sm tabular-nums">
             <dt>Optjent (hold)</dt><dd className="text-right">{kr(b.held_minor)}</dd><dt>Klar</dt><dd className="text-right font-semibold">{kr(b.payable_minor)}</dd>
@@ -71,7 +71,7 @@ export function AmbassadorDetail({ a, others }: { a: OpDetail; others: { id: str
           <p className="font-label-sm text-label-sm text-on-surface-variant">{a.stats.customers} kunder · {a.stats.paying} betalende · {a.stats.clicks_30d} besøg på 30 dage</p>
         </section>
 
-        <section className="rounded-xl bg-surface-container-lowest p-space-md shadow-sm space-y-space-sm">
+        <section className="rounded-2xl bg-surface-container-lowest p-space-md border-2 border-ink space-y-space-sm">
           <h2 className="font-label-lg text-label-lg text-primary font-bold">Beslutning</h2>
           <ErrorBox error={act.error} />
           <Field label="Note (sendes med ved afslag)"><Input value={note} onChange={(e) => setNote(e.target.value)} /></Field>
@@ -83,7 +83,7 @@ export function AmbassadorDetail({ a, others }: { a: OpDetail; others: { id: str
           {a.status === "active" && <p className="font-label-sm text-label-sm text-on-surface-variant">Pause kræver en begrundelse. Linket stopper, men optjent bonus bevares.</p>}
         </section>
 
-        <section className="rounded-xl bg-surface-container-lowest p-space-md shadow-sm space-y-space-sm">
+        <section className="rounded-2xl bg-surface-container-lowest p-space-md border-2 border-ink space-y-space-sm">
           <h2 className="font-label-lg text-label-lg text-primary font-bold">Aftale</h2>
           <p className="font-body-sm text-body-sm text-on-surface-variant">Nu: {kr(a.terms.bonus_minor)} + {pct(a.terms.rate_bp)} i {a.terms.months} mdr. Ændringer gælder fakturaer betalt fra nu af.</p>
           <ErrorBox error={save.error} />
@@ -95,7 +95,7 @@ export function AmbassadorDetail({ a, others }: { a: OpDetail; others: { id: str
           <Button variant="tonal" icon="save" disabled={save.pending} onClick={() => save.run()}>Gem aftale</Button>
         </section>
 
-        <section className="rounded-xl bg-surface-container-lowest p-space-md shadow-sm space-y-space-sm">
+        <section className="rounded-2xl bg-surface-container-lowest p-space-md border-2 border-ink space-y-space-sm">
           <h2 className="font-label-lg text-label-lg text-primary font-bold flex items-center gap-1"><Icon name="lock" size={18} />Bankoplysninger og CPR</h2>
           <p className="font-body-sm text-body-sm text-on-surface-variant">Vis kun, når du skal overføre eller indberette. Hver visning logges.</p>
           <ErrorBox error={reveal.error} />
@@ -108,7 +108,7 @@ export function AmbassadorDetail({ a, others }: { a: OpDetail; others: { id: str
         </section>
 
         {a.payouts.length > 0 && (
-          <section className="rounded-xl bg-surface-container-lowest p-space-md shadow-sm space-y-space-sm">
+          <section className="rounded-2xl bg-surface-container-lowest p-space-md border-2 border-ink space-y-space-sm">
             <h2 className="font-label-lg text-label-lg text-primary font-bold">Udbetalinger</h2>
             <ul className="font-body-sm text-body-sm divide-y divide-outline-variant/40">{a.payouts.map((p) => <li key={p.id} className="py-1.5 flex justify-between"><span>Nr. {p.number} · {p.status === "paid" ? `betalt ${date(p.paid_at)}` : p.status === "pending" ? "afventer" : "annulleret"}</span><span className="tabular-nums">{kr(p.amount_minor)}</span></li>)}</ul>
           </section>

@@ -29,7 +29,7 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
         <div className="lg:col-span-8 flex flex-col gap-space-lg">
           <LeadEditor key={lead.version} wsId={ws.id} lead={lead} />
-          <section className="bg-surface-container-lowest rounded-xl p-space-md md:p-space-lg shadow-sm flex flex-col gap-space-sm">
+          <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
             <h2 className="font-headline-sm text-headline-sm text-primary">Opgaver</h2>
             <TaskList wsId={ws.id} leadId={lead.id} tasks={lead.tasks ?? []} />
           </section>

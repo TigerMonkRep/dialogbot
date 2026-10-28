@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { api, type ApiError } from "@/lib/client";
 import { EMAIL, HOURS, PHONE_DISPLAY, PHONE_TEL } from "@/lib/contact";
-import { ArrowIcon, PhoneIcon } from "@/components/site-icons";
+import { ArrowIcon, CloseIcon, PhoneIcon } from "@/components/site-icons";
 
 /** The "Prøv den" conversation (Proev.dc.html): start → firma → branche (→ andet) → tlf → calling → done.
  *  The call is REAL: POST /demo-call (app/modules/sales) rings the number with our sales assistant. It needs the
@@ -37,7 +37,9 @@ function pretty(e164: string) {
 const chip = "min-h-11 px-4 rounded-full bg-white border-2 border-ink text-ink font-semibold text-[15px] cursor-pointer hover:bg-panel";
 const avatar = "flex-none w-[30px] h-[30px] rounded-full bg-accent inline-flex items-center justify-center font-display font-extrabold text-[13px] text-white";
 
-export function ProevChat() {
+/** `embedded`: the chat stage alone, filling its container (the floating widget on every other page) – no side
+ *  column, the log scrolls, and the header gets a close button. Default: the full /proev layout with the aside. */
+export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; onClose?: () => void } = {}) {
   const [info, setInfo] = useState<Info | null | "error">(null);
   const [step, setStep] = useState<Step>("start");
   const [history, setHistory] = useState<Msg[]>([{ from: "bot", text: GREETING }]);
@@ -154,20 +156,26 @@ export function ProevChat() {
     : step === "unavailable" ? ["Prøveopkaldet aktiveres snart", `Indtil da ringer vi til dig manuelt inden for åbningstiden (${HOURS.toLowerCase()}). Ring til ${PHONE_DISPLAY} eller skriv til ${EMAIL}.`]
     : ["Din telefon ringer snart", "Når du har skrevet dit nummer i chatten, ringer Peter fra Dialogbot inden for et minut."];
 
-  return (
-    <div className="flex flex-wrap gap-8 items-start">
-      {/* CHAT STAGE */}
-      <section aria-label="Chat med Dialogbot" className="flex-[1_1_460px] min-w-0 max-w-[640px] bg-white border-2 border-ink rounded-[22px] shadow-block flex flex-col overflow-hidden">
-        <div className="flex items-center gap-3 px-4 py-4 sm:px-5 border-b-2 border-ink">
+  const stage = (
+      <section aria-label="Chat med Dialogbot"
+        className={`min-w-0 bg-white flex flex-col overflow-hidden ${embedded
+          ? "h-full w-full"
+          : "flex-[1_1_460px] max-w-[640px] border-2 border-ink rounded-[22px] shadow-block"}`}>
+        <div className="flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-4 border-b-2 border-ink">
           <span className="inline-flex w-10 h-10 rounded-xl bg-accent items-center justify-center font-display font-extrabold text-white text-lg">D</span>
-          <div className="flex flex-col">
+          <div className="flex flex-col min-w-0">
             <span className="font-display font-bold text-[17px]">Dialogbot</span>
             <span className="text-[13px] text-muted flex items-center gap-1.5"><span aria-hidden className="w-2 h-2 rounded-full bg-[#1B9E5A]" />Svarer med det samme</span>
           </div>
-          <span className="ml-auto text-xs font-semibold tracking-[1.5px] uppercase px-2.5 py-1.5 rounded-full bg-highlight" aria-live="polite">{STEP_LABEL[step]}</span>
+          <span className={`ml-auto text-xs font-semibold tracking-[1.5px] uppercase px-2.5 py-1.5 rounded-full bg-highlight ${embedded ? "hidden sm:inline" : ""}`} aria-live="polite">{STEP_LABEL[step]}</span>
+          {onClose && (
+            <button type="button" onClick={onClose} aria-label="Luk chatten" className={`w-11 h-11 rounded-[10px] bg-white inline-flex items-center justify-center text-ink hover:bg-panel cursor-pointer ${embedded ? "ml-auto sm:ml-0" : "ml-2"}`}>
+              <CloseIcon size={18} />
+            </button>
+          )}
         </div>
 
-        <div className="flex flex-col gap-3 p-4 sm:p-5 min-h-[360px] bg-white" role="log" aria-live="polite">
+        <div className={`flex flex-col gap-3 p-4 sm:p-5 bg-white ${embedded ? "flex-1 min-h-0 overflow-y-auto" : "min-h-[360px]"}`} role="log" aria-live="polite">
           {history.map((m, i) => {
             const bot = m.from === "bot";
             return (
@@ -237,6 +245,13 @@ export function ProevChat() {
           <span className="text-xs text-muted">Vi ringer kun til det nummer, du selv skriver, og bruger det ikke til andet end dette opkald og en opfølgning, hvis du har sagt ja til det.</span>
         </div>
       </section>
+  );
+
+  if (embedded) return stage;
+
+  return (
+    <div className="flex flex-wrap gap-8 items-start">
+      {stage}
 
       {/* SIDE: what happens */}
       <aside className="flex-[1_1_320px] min-w-0 flex flex-col gap-5">

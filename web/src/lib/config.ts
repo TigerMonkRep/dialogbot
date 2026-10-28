@@ -18,3 +18,8 @@ export const REFERRAL_MAX_AGE = 60 * 60 * 24 * 90;
  *  ambassador welcomes ("X har anbefalet Dialogbot til dig") are not shown to them. Not a secret. */
 export const KNOWN_ACCOUNT_COOKIE = "db_known";
 export const KNOWN_ACCOUNT_MAX_AGE = 60 * 60 * 24 * 365 * 2;
+/** "Se som kunde": the operator's own session is parked here while a read-only customer session sits in SESSION_COOKIE.
+ *  VIEWAS_COOKIE only carries who is being viewed (shown in the banner); it grants nothing. */
+export const OPERATOR_SESSION_COOKIE = "db_operator_session";
+export const VIEWAS_COOKIE = "db_viewas";
+export const VIEWAS_MAX_AGE = 60 * 60;

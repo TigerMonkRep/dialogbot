@@ -15,7 +15,7 @@ from datetime import UTC, datetime
 from typing import Any, TypeVar
 
 from fastapi import Depends, Header, Request
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.errors import Forbidden, NotFound, Unauthenticated
@@ -136,8 +136,17 @@ def get_current_principal(
     user = db.get(User, sess.user_id)
     if user is None or not user.is_active:
         raise Unauthenticated("Brugeren er deaktiveret", code="user_inactive")
-    sess.last_seen_at = now
     request.state.user_id = str(user.id)
+    if sess.impersonator_user_id is not None:
+        # An operator looking at the account as this user: nothing may change. Two independent guards – the HTTP
+        # method (logout excepted, it only ends the viewing session) and a read-only database transaction.
+        if request.method not in ("GET", "HEAD", "OPTIONS") and not request.url.path.endswith("/auth/logout"):
+            raise Forbidden("Du ser kontoen som kunde (kun læsning) – ingen ændringer kan gemmes",
+                            code="view_as_read_only")
+        if request.method in ("GET", "HEAD", "OPTIONS"):
+            db.execute(text("SET TRANSACTION READ ONLY"))
+    else:
+        sess.last_seen_at = now
     return Principal(user=user, session=sess)
 
 

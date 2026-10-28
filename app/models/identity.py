@@ -67,6 +67,9 @@ class Session(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     user_agent: Mapped[str | None] = mapped_column(String(400))
+    # Set when a platform operator is looking at the account as this user ("se som kunde"): the session is
+    # read-only (no writes, enforced in app.core.auth) and short-lived. The value is the operator's user id.
+    impersonator_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
     last_seen_at: Mapped[datetime] = ts_now()
 

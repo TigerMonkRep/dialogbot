@@ -205,9 +205,11 @@ test("7 · S02→A05: ejer inviterer, kollega accepterer og lander i arbejdsrumm
 
 test("8 · Roller: læser kan ikke redigere, medarbejder kan ikke se aktivitetslog, admin kan", async ({ page }, info) => {
   await login(page, SEEDED.reader);
-  await page.goto("/onboarding/business");
+  await page.goto("/opsaetning/1");
   await expect(page.getByText(/Din rolle \(læser\)/)).toBeVisible();
+  await page.getByText("CVR og adresse (valgfrit)").click();
   await expect(page.getByLabel("By")).toBeDisabled();
+  await expect(page.getByLabel(/^Hvad I laver/)).toBeDisabled();
   await page.goto("/app/viden?tab=k03");
   await expect(page.getByRole("button", { name: /Gem som ny kladde/ })).toHaveCount(0);
   await shot(page, info, "roller-laeser");

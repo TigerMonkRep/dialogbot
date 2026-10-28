@@ -47,10 +47,11 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
   latest.current = { p, cards, langs, hours, zones };
   const timers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const pending = useRef(0);
+  const dirty = useRef(new Set<string>());
 
   const run = useCallback(async (fn: () => Promise<void>) => {
     pending.current += 1; setSave("saving"); setProblem(null);
-    try { await fn(); pending.current -= 1; if (pending.current === 0) setSave("saved"); }
+    try { await fn(); pending.current -= 1; if (pending.current === 0 && dirty.current.size === 0) setSave("saved"); }
     catch (e) {
       pending.current -= 1; setSave("error");
       const err = e as ApiError;
@@ -111,13 +112,16 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
     }
     if (group === "zones") { const z = parseZones(latest.current.zones); if (z.length) await saveFact("zones", "coverage_area", "Kørselsområde", { zones: z }); }
   }, [saveProfile, saveGoals, saveLangs, saveFact]);
-  const dirty = useRef(new Set<string>());
   /** Short pause after the last keystroke, then save that group. */
   const later = (group: "profile" | "goals" | "langs" | "hours" | "zones", ms = 900) => {
     clearTimeout(timers.current[group]);
     dirty.current.add(group);
     setSave("saving");
-    timers.current[group] = setTimeout(() => { dirty.current.delete(group); void exec(group); }, ms);
+    timers.current[group] = setTimeout(() => {
+      dirty.current.delete(group);
+      // If nothing could be saved (e.g. hours that cannot be read yet), the status must not stay on «Gemmer …».
+      void exec(group).then(() => { if (pending.current === 0 && dirty.current.size === 0) setSave((cur) => (cur === "saving" ? "idle" : cur)); });
+    }, ms);
   };
   const flush = async () => {
     for (const g of [...dirty.current]) { clearTimeout(timers.current[g]); dirty.current.delete(g); await exec(g); }
@@ -210,6 +214,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
 
   return (
     <div className="flex flex-col gap-6">
+      {!canEdit && <p role="status" className="rounded-xl bg-highlight px-4 py-3 text-[14px] text-ink">Din rolle (læser) kan se, men ikke redigere.</p>}
       <Part letter="A" title="Hent det fra hjemmesiden" hint={aiReady ? "Dialogbot læser siden og foreslår navn, hvad I laver, åbningstider og priser." : "Adressen gemmes. Forslag fra hjemmesiden kræver, at AI er slået til."}>
         <div className="flex flex-col sm:flex-row gap-2">
           <input aria-label="Hjemmesidens adresse" className={`${inputCls} flex-1`} placeholder="firma.dk" inputMode="url" autoCapitalize="none" value={p.website_url ?? ""} onChange={field("website_url")} disabled={!canEdit} />

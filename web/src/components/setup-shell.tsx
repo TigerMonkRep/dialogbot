@@ -33,7 +33,7 @@ export async function SetupShell({ step, steps, workspaceName, children, wide = 
                 const here = n === step;
                 return (
                   <li key={label}>
-                    <Link href={`/opsaetning/${n}`} aria-current={here ? "step" : undefined} className="inline-flex items-center gap-2 min-h-[44px] rounded-xl">
+                    <Link href={`/opsaetning/${n}`} aria-label={`Trin ${n}: ${label}${st === "skipped" ? " (sprunget over)" : ""}`} aria-current={here ? "step" : undefined} className="inline-flex items-center gap-2 min-h-[44px] rounded-xl">
                       <span className={`w-9 h-9 rounded-[10px] border-2 border-ink inline-flex items-center justify-center font-display font-extrabold text-[15px] ${here ? "bg-highlight text-ink" : st === "done" ? "bg-ink text-paper" : "bg-paper text-ink"}`}>
                         {st === "done" && !here ? <Icon name="check" size={18} /> : n}
                       </span>

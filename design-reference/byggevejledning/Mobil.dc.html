@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Dialogbot – mobil (I dag, assistenten, Opkald)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+input:focus,button:focus-visible,textarea:focus{outline:3px solid #2456F6;outline-offset:2px}
+.d{font-family:Outfit,sans-serif;font-weight:800;letter-spacing:-0.4px}
+.card{background:#FFFFFF;border:2px solid #14213D;border-radius:20px;padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.card.hi{box-shadow:8px 8px 0 #14213D}
+.inner{border:1.5px solid #14213D;border-radius:14px;padding:14px 16px;background:#FFFFFF}
+.num{display:inline-flex;flex:none;width:48px;height:48px;border-radius:12px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:24px}
+.num.s{width:40px;height:40px;font-size:20px;border-radius:10px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5B6475}
+.h1{font-family:Outfit,sans-serif;font-weight:800;font-size:40px;line-height:1.05;letter-spacing:-1px;margin:0}
+.h2{font-family:Outfit,sans-serif;font-weight:800;font-size:22px;line-height:1.15;letter-spacing:-0.3px;margin:0}
+.p{font-size:15px;line-height:1.5;color:#3C4659;margin:0}
+.help{font-size:13px;color:#5B6475}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:2px solid #14213D;background:#FFFFFF;color:#14213D;font-weight:600;font-size:15px;text-decoration:none;cursor:pointer;font-family:Inter,sans-serif}
+.btn.pri{background:#2456F6;border-color:#2456F6;color:#fff;min-height:52px;padding:0 22px;font-size:17px}
+.btn.ink{background:#14213D;color:#fff}
+.btn.yel{background:#FFCF3F;border-color:#14213D}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #14213D;background:#FFFFFF;font-size:14px;font-weight:600}
+.chip.on{background:#14213D;color:#fff}
+.chip.panel{background:#EEF4FB;border-color:#EEF4FB}
+.tag{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600}
+.tag.yel{background:#FFCF3F}.tag.blue{background:#DCE6FF;color:#1A3FC0}.tag.ok{background:#DDF5E4;color:#1B6B3A}.tag.ink{background:#14213D;color:#fff}.tag.line{border:1.5px solid #14213D}
+.field{display:flex;flex-direction:column;gap:6px}
+.label{font-size:13px;font-weight:600}
+.input{min-height:48px;padding:0 14px;border-radius:12px;border:2px solid #14213D;background:#FFFFFF;font-size:16px;color:#14213D;font-family:Inter,sans-serif;box-sizing:border-box;width:100%}
+textarea.input{min-height:96px;padding:12px 14px;resize:vertical}
+.row{display:flex;align-items:center;gap:12px}
+.need{border:1.5px solid #14213D;border-radius:14px;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.need .k{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#EEF4FB;font-size:13px;font-weight:600}
+.need .k b{font-family:Outfit,sans-serif;font-weight:800}
+.bubble{padding:10px 14px;border:2px solid #14213D;border-radius:14px 14px 14px 4px;background:#FFFFFF;font-size:14px;line-height:1.45;max-width:420px}
+.bubble.me{border-radius:14px 14px 4px 14px;background:#14213D;color:#fff;margin-left:auto}
+.av{display:inline-flex;flex:none;width:28px;height:28px;border-radius:999px;background:#2456F6;color:#fff;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:12px}
+.arrow{font-family:Outfit,sans-serif;font-weight:800;font-size:22px;line-height:1}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#5B6475;padding:6px 8px;border-bottom:1.5px solid #14213D}
+.tbl td{padding:12px 8px;border-bottom:1px solid #D6DEEA;vertical-align:top}
+.toggle{display:inline-flex;align-items:center;width:56px;height:30px;padding:3px;border-radius:999px;background:#2456F6;justify-content:flex-end;flex:none}
+.toggle span{width:24px;height:24px;border-radius:999px;background:#fff}
+.toggle.off{background:#5B6475;justify-content:flex-start}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#EEF4FB;padding:28px 24px;display:flex;flex-direction:column;gap:20px">
+  <div><span class="eyebrow">Mobil · 390 px · samme fire sider som desktop</span><h1 class="h1">Appen i lommen</h1><p class="p" style="max-width:720px">Fire faner i bunden (I dag · Det ved den · Opkald · Ugen). Alt andet ligger bag assistenten «Ændr noget», der åbner som et ark i fuld skærm. Ingen hamburger-menu, ingen «Mere».</p></div>
+  <div style="display:flex;flex-wrap:wrap;gap:40px;justify-content:center;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+  <span class="eyebrow">I dag</span>
+  <div style="width:390px;height:844px;border:3px solid #14213D;border-radius:40px;background:#EEF4FB;overflow:hidden;display:flex;flex-direction:column;box-shadow:8px 8px 0 #14213D">
+    <header style="background:#FFFFFF;border-bottom:2px solid #14213D;padding:14px 16px;display:flex;align-items:center;gap:10px"><span style="display:flex;align-items:center;gap:10px">
+  <span style="display:inline-flex;width:32px;height:32px;border-radius:9px;background:#2456F6;align-items:center;justify-content:center">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+  </span>
+  <span class="d" style="font-size:20px;letter-spacing:-0.3px">Dialogbot</span>
+</span><span style="margin-left:auto;display:inline-flex;width:36px;height:36px;border-radius:999px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:14px">R</span></header>
+<div style="flex:1;overflow:hidden;padding:16px;display:flex;flex-direction:column;gap:12px">
+  <div class="card" style="padding:14px 16px;flex-direction:row;align-items:center;gap:12px"><span class="num s">1</span><div style="flex:1"><span class="d" style="font-size:18px">Dialogbot er tændt</span><br><span class="help">tager telefonen, når du ikke gør</span></div><span class="toggle"><span></span></span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+    <div class="card" style="padding:12px;gap:2px"><span class="d" style="font-size:28px;line-height:1">7</span><span style="font-size:12px;font-weight:600">opkald</span></div>
+    <div class="card" style="padding:12px;gap:2px"><span class="d" style="font-size:28px;line-height:1">3</span><span style="font-size:12px;font-weight:600">aftaler</span></div>
+    <div class="card" style="padding:12px;gap:2px;background:#FFCF3F"><span class="d" style="font-size:28px;line-height:1">2</span><span style="font-size:12px;font-weight:600">til dig</span></div>
+  </div>
+  <div class="card" style="padding:14px 16px;gap:10px">
+    <div class="row"><span class="num s">2</span><span class="d" style="font-size:18px">Til dig</span></div>
+    <div class="inner" style="padding:10px 12px;font-size:14px"><b>Ukendt nummer</b> · pris på terrasse<br><span class="help">13:10 · tog besked</span><div class="row" style="margin-top:8px;gap:8px"><a href="#" class="btn pri" style="min-height:40px;font-size:14px;padding:0 14px">Ring tilbage</a><button class="btn" style="min-height:40px;font-size:14px;padding:0 12px">Klaret</button></div></div>
+    <div class="inner" style="padding:10px 12px;font-size:14px"><b>Webchat</b> · «Laver I også i plast?»<br><span class="help">09:05 · venter på svar</span></div>
+  </div>
+  <div class="card" style="padding:14px 16px;gap:8px">
+    <div class="row"><span class="num s">3</span><span class="d" style="font-size:18px">Seneste opkald</span></div>
+    <div style="font-size:14px"><b>14:52</b> Mette Kjær · <span class="tag ok">aftale</span></div>
+    <div style="font-size:14px"><b>11:34</b> Jens Holm · <span class="tag blue">klaret</span></div>
+  </div>
+</div>
+<div style="position:relative;height:0"><button class="btn ink" style="position:absolute;right:16px;bottom:16px;border-radius:999px;box-shadow:4px 4px 0 #FFCF3F;min-height:52px">✎ Ændr noget</button></div>
+<nav aria-label="Sider" style="margin-top:auto;background:#FFFFFF;border-top:2px solid #14213D;display:flex;padding-bottom:10px"><a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 10px;text-decoration:none;color:#14213D;font-size:11px;font-weight:700"><span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:999px;background:#FFCF3F;font-size:16px">☀</span>I dag</a><a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 10px;text-decoration:none;color:#14213D;font-size:11px;font-weight:500"><span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:999px;background:transparent;font-size:16px">✎</span>Det ved den</a><a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 10px;text-decoration:none;color:#14213D;font-size:11px;font-weight:500"><span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:999px;background:transparent;font-size:16px">☏</span>Opkald</a><a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 10px;text-decoration:none;color:#14213D;font-size:11px;font-weight:500"><span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:999px;background:transparent;font-size:16px">▮▮</span>Ugen</a></nav>
+  </div></div>
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+  <span class="eyebrow">«Ændr noget» · fuld skærm</span>
+  <div style="width:390px;height:844px;border:3px solid #14213D;border-radius:40px;background:#EEF4FB;overflow:hidden;display:flex;flex-direction:column;box-shadow:8px 8px 0 #14213D">
+    <header style="background:#FFFFFF;border-bottom:2px solid #14213D;padding:14px 16px;display:flex;align-items:center;gap:10px"><span style="display:flex;align-items:center;gap:10px">
+  <span style="display:inline-flex;width:32px;height:32px;border-radius:9px;background:#2456F6;align-items:center;justify-content:center">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+  </span>
+  <span class="d" style="font-size:20px;letter-spacing:-0.3px">Dialogbot</span>
+</span><span style="margin-left:auto;display:inline-flex;width:36px;height:36px;border-radius:999px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:14px">R</span></header>
+<div style="flex:1;background:#FFFFFF;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:2px solid #14213D"><span class="av" style="width:34px;height:34px;border-radius:10px;font-size:15px">D</span><div><span class="d" style="font-size:16px">Ændr noget</span><br><span class="help">Jeg viser det, før det gælder</span></div><span style="margin-left:auto;font-size:22px">✕</span></div>
+  <div style="flex:1;padding:14px 16px;display:flex;flex-direction:column;gap:10px;overflow:hidden">
+    <div class="row" style="align-items:flex-end;gap:8px"><span class="av">D</span><div class="bubble" style="font-size:14px">Hvad vil du ændre? Sig det, som du ville sige det til en ny medarbejder.</div></div>
+    <div class="bubble me" style="font-size:14px">Vi holder lukket 31. oktober</div>
+    <div class="row" style="align-items:flex-end;gap:8px"><span class="av">D</span><div class="bubble" style="font-size:14px">Forstået. Fredag den 31. tager jeg imod beskeder og tilbyder tid mandag. Sådan ser det ud:</div></div>
+    <div class="inner" style="border-width:2px;display:flex;flex-direction:column;gap:8px">
+      <span class="eyebrow">Åbningstider · før → efter</span>
+      <div class="row" style="flex-wrap:wrap;gap:6px"><span class="tag line">Man–fre 07–16</span><span class="arrow">→</span><span class="tag yel">Man–fre 07–16 · lukket 31. okt</span></div>
+      <div class="row" style="gap:8px"><button class="btn pri" style="min-height:44px;font-size:15px;flex:1">Godkend</button><button class="btn" style="min-height:44px">Nej</button></div>
+    </div>
+    <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:auto"><span class="chip" style="min-height:32px;font-size:13px">Ret åbningstider</span><span class="chip" style="min-height:32px;font-size:13px">Tilføj en pris</span><span class="chip" style="min-height:32px;font-size:13px">Vis ugens tal</span></div>
+  </div>
+  <div style="padding:10px 16px 14px;border-top:2px solid #14213D;display:flex;gap:8px"><input class="input" placeholder="Skriv her …" style="min-height:48px"><button class="btn ink" style="min-height:48px">Send</button></div>
+</div>
+
+  </div></div>
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+  <span class="eyebrow">Opkald</span>
+  <div style="width:390px;height:844px;border:3px solid #14213D;border-radius:40px;background:#EEF4FB;overflow:hidden;display:flex;flex-direction:column;box-shadow:8px 8px 0 #14213D">
+    <header style="background:#FFFFFF;border-bottom:2px solid #14213D;padding:14px 16px;display:flex;align-items:center;gap:10px"><span style="display:flex;align-items:center;gap:10px">
+  <span style="display:inline-flex;width:32px;height:32px;border-radius:9px;background:#2456F6;align-items:center;justify-content:center">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+  </span>
+  <span class="d" style="font-size:20px;letter-spacing:-0.3px">Dialogbot</span>
+</span><span style="margin-left:auto;display:inline-flex;width:36px;height:36px;border-radius:999px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:14px">R</span></header>
+<div style="flex:1;overflow:hidden;padding:16px;display:flex;flex-direction:column;gap:12px">
+  <h1 class="h1" style="font-size:28px">Opkald og beskeder</h1>
+  <div style="display:flex;gap:6px;overflow:hidden"><span class="chip on" style="min-height:32px;font-size:13px;white-space:nowrap">Alle</span><span class="chip" style="min-height:32px;font-size:13px;white-space:nowrap">Til dig · 3</span><span class="chip" style="min-height:32px;font-size:13px;white-space:nowrap">Aftaler</span><span class="chip" style="min-height:32px;font-size:13px;white-space:nowrap">Klaret</span></div>
+  <span class="eyebrow">I dag</span>
+  <div class="card" style="padding:12px 14px;gap:4px"><div class="row" style="justify-content:space-between"><b>14:52 Mette Kjær</b><span class="tag ok">Aftale</span></div><span class="help" style="color:#3C4659">Vindue skal skiftes, Risskov</span></div>
+  <div class="card" style="padding:12px 14px;gap:4px;border-color:#14213D;background:#FFCF3F"><div class="row" style="justify-content:space-between"><b>13:10 Ukendt nummer</b><span class="tag ink">Til dig</span></div><span class="help" style="color:#14213D">Spurgte om pris på terrasse</span></div>
+  <div class="card" style="padding:12px 14px;gap:4px"><div class="row" style="justify-content:space-between"><b>11:34 Jens Holm</b><span class="tag blue">Klaret</span></div><span class="help" style="color:#3C4659">Flyttede sin aftale til torsdag</span></div>
+  <div class="card" style="padding:12px 14px;gap:4px"><div class="row" style="justify-content:space-between"><b>09:05 Webchat</b><span class="tag ink">Til dig</span></div><span class="help" style="color:#3C4659">«Laver I også i plast?»</span></div>
+  <span class="help">Tryk på et opkald: udskrift, lyd og «Ring tilbage» åbner som et ark nedefra.</span>
+</div>
+<nav aria-label="Sider" style="margin-top:auto;background:#FFFFFF;border-top:2px solid #14213D;display:flex;padding-bottom:10px"><a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 10px;text-decoration:none;color:#14213D;font-size:11px;font-weight:500"><span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:999px;background:transparent;font-size:16px">☀</span>I dag</a><a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 10px;text-decoration:none;color:#14213D;font-size:11px;font-weight:500"><span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:999px;background:transparent;font-size:16px">✎</span>Det ved den</a><a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 10px;text-decoration:none;color:#14213D;font-size:11px;font-weight:700"><span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:999px;background:#FFCF3F;font-size:16px">☏</span>Opkald</a><a href="#" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 10px;text-decoration:none;color:#14213D;font-size:11px;font-weight:500"><span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:999px;background:transparent;font-size:16px">▮▮</span>Ugen</a></nav>
+  </div></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1140}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

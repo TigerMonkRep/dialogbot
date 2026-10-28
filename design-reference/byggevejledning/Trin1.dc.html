@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Byg din Dialogbot – trin 1 af 3: virksomhed</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+input:focus,button:focus-visible,textarea:focus{outline:3px solid #2456F6;outline-offset:2px}
+.d{font-family:Outfit,sans-serif;font-weight:800;letter-spacing:-0.4px}
+.card{background:#FFFFFF;border:2px solid #14213D;border-radius:20px;padding:20px 24px;display:flex;flex-direction:column;gap:14px}
+.card.hi{box-shadow:8px 8px 0 #14213D}
+.inner{border:1.5px solid #14213D;border-radius:14px;padding:14px 16px;background:#FFFFFF}
+.num{display:inline-flex;flex:none;width:48px;height:48px;border-radius:12px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:24px}
+.num.s{width:40px;height:40px;font-size:20px;border-radius:10px}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5B6475}
+.h1{font-family:Outfit,sans-serif;font-weight:800;font-size:40px;line-height:1.05;letter-spacing:-1px;margin:0}
+.h2{font-family:Outfit,sans-serif;font-weight:800;font-size:22px;line-height:1.15;letter-spacing:-0.3px;margin:0}
+.p{font-size:15px;line-height:1.5;color:#3C4659;margin:0}
+.help{font-size:13px;color:#5B6475}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:2px solid #14213D;background:#FFFFFF;color:#14213D;font-weight:600;font-size:15px;text-decoration:none;cursor:pointer;font-family:Inter,sans-serif}
+.btn.pri{background:#2456F6;border-color:#2456F6;color:#fff;min-height:52px;padding:0 22px;font-size:17px}
+.btn.ink{background:#14213D;color:#fff}
+.btn.yel{background:#FFCF3F;border-color:#14213D}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #14213D;background:#FFFFFF;font-size:14px;font-weight:600}
+.chip.on{background:#14213D;color:#fff}
+.chip.panel{background:#EEF4FB;border-color:#EEF4FB}
+.tag{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600}
+.tag.yel{background:#FFCF3F}.tag.blue{background:#DCE6FF;color:#1A3FC0}.tag.ok{background:#DDF5E4;color:#1B6B3A}.tag.ink{background:#14213D;color:#fff}.tag.line{border:1.5px solid #14213D}
+.field{display:flex;flex-direction:column;gap:6px}
+.label{font-size:13px;font-weight:600}
+.input{min-height:48px;padding:0 14px;border-radius:12px;border:2px solid #14213D;background:#FFFFFF;font-size:16px;color:#14213D;font-family:Inter,sans-serif;box-sizing:border-box;width:100%}
+textarea.input{min-height:96px;padding:12px 14px;resize:vertical}
+.row{display:flex;align-items:center;gap:12px}
+.need{border:1.5px solid #14213D;border-radius:14px;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.need .k{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#EEF4FB;font-size:13px;font-weight:600}
+.need .k b{font-family:Outfit,sans-serif;font-weight:800}
+.bubble{padding:10px 14px;border:2px solid #14213D;border-radius:14px 14px 14px 4px;background:#FFFFFF;font-size:14px;line-height:1.45;max-width:420px}
+.bubble.me{border-radius:14px 14px 4px 14px;background:#14213D;color:#fff;margin-left:auto}
+.av{display:inline-flex;flex:none;width:28px;height:28px;border-radius:999px;background:#2456F6;color:#fff;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:12px}
+.arrow{font-family:Outfit,sans-serif;font-weight:800;font-size:22px;line-height:1}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#5B6475;padding:6px 8px;border-bottom:1.5px solid #14213D}
+.tbl td{padding:12px 8px;border-bottom:1px solid #D6DEEA;vertical-align:top}
+.toggle{display:inline-flex;align-items:center;width:56px;height:30px;padding:3px;border-radius:999px;background:#2456F6;justify-content:flex-end;flex:none}
+.toggle span{width:24px;height:24px;border-radius:999px;background:#fff}
+.toggle.off{background:#5B6475;justify-content:flex-start}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#EEF4FB;color:#14213D">
+<header style="border-bottom:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;min-height:64px">
+    <span style="display:flex;align-items:center;gap:10px">
+  <span style="display:inline-flex;width:32px;height:32px;border-radius:9px;background:#2456F6;align-items:center;justify-content:center">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+  </span>
+  <span class="d" style="font-size:20px;letter-spacing:-0.3px">Dialogbot</span>
+</span>
+    <span style="font-size:14px;color:#5B6475">Nørgaard Tømrer</span>
+    <nav aria-label="Sider" style="margin-left:auto;display:inline-flex;padding:4px;border-radius:999px;border:2px solid #14213D;background:#FFFFFF"><a href="Dashboard.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">I dag</a><a href="Viden.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">Det ved den</a><a href="Opkald.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">Opkald</a><a href="Ugen.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;font-weight:600;font-size:14px;color:#14213D">Ugen</a></nav>
+    <a href="Konto.dc.html" style="display:inline-flex;width:40px;height:40px;border-radius:999px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:15px;color:#14213D;text-decoration:none" aria-label="Konto: Rene">R</a>
+  </div>
+</header>
+<main style="max-width:1280px;width:100%;box-sizing:border-box;margin:0 auto;padding:28px 24px 48px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+  <section style="flex:999 1 620px;min-width:0;display:flex;flex-direction:column;gap:20px">
+    <div class="row" style="flex-wrap:wrap;gap:12px 16px;margin-bottom:18px"><span class="row" style="gap:8px"><span class="num s" style="background:#FFCF3F;color:#14213D;border:2px solid #14213D">1</span><span style="font-weight:700;font-size:14px">Virksomhed</span></span><span class="arrow" aria-hidden="true">→</span><span class="row" style="gap:8px"><span class="num s" style="background:#FFFFFF;color:#14213D;border:2px solid #14213D">2</span><span style="font-weight:500;font-size:14px">Kalender & systemer</span></span><span class="arrow" aria-hidden="true">→</span><span class="row" style="gap:8px"><span class="num s" style="background:#FFFFFF;color:#14213D;border:2px solid #14213D">3</span><span style="font-weight:500;font-size:14px">Test & tænd</span></span></div>
+    <div>
+      <span class="eyebrow">Byg din Dialogbot · trin 1 af 3 · ca. 5 min</span>
+      <h1 class="h1" style="margin-top:6px">Hvem er I – og hvad skal den gøre?</h1>
+      <p class="p" style="margin-top:10px;max-width:620px">Ét trin. Vi henter det meste fra jeres hjemmeside – du retter kun det, der er forkert. Alt kan ændres senere ved at sige det til assistenten.</p>
+    </div>
+
+    <div class="need"><span class="eyebrow" style="margin-right:4px">Du skal bruge</span><span class="k"><b>1×</b> hjemmeside-adresse</span><span class="k"><b>1×</b> CVR-nummer <span class="help">(eller bare navnet)</span></span><span class="k"><b>1×</b> det nummer, kunderne ringer til</span></div>
+
+    <div class="card">
+      <div class="row"><span class="num">A</span><div><h2 class="h2">Hent det fra hjemmesiden</h2><span class="help">Dialogbot læser siden og foreslår navn, hvad I laver, åbningstider og priser.</span></div></div>
+      <div class="row"><input class="input" value="norgaard-tomrer.dk" aria-label="Hjemmeside"><button class="btn ink" style="min-height:48px;white-space:nowrap">Hent →</button></div>
+      <div class="inner" style="display:flex;flex-direction:column;gap:10px;background:#EEF4FB">
+        <span class="eyebrow">Fundet på norgaard-tomrer.dk · godkend eller ret</span>
+        <div class="row" style="flex-wrap:wrap;gap:8px 12px"><span class="tag ok">✓ Navn: Nørgaard Tømrer ApS</span><span class="tag ok">✓ CVR 38 12 45 67</span><span class="tag ok">✓ Man–fre 07–16</span><span class="tag yel">? Terrasse fra 1.200 kr./m² – stemmer det?</span></div>
+        <div class="row"><button class="btn" style="min-height:40px">Godkend alle 4</button><button class="btn" style="min-height:40px">Ret det gule</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row"><span class="num">B</span><div><h2 class="h2">Om jer</h2><span class="help">Det, Dialogbot siger først – og det, den bruger til at svare rigtigt.</span></div></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px">
+        <div class="field"><span class="label">Navn (som den siger det)</span><input class="input" value="Nørgaard Tømrer"></div>
+        <div class="field"><span class="label">Telefonnummer, kunderne ringer til</span><input class="input" value="86 12 34 56"></div>
+        <div class="field" style="grid-column:1/-1"><span class="label">Hvad I laver – én sætning</span><input class="input" value="Vinduer, døre, terrasser og mindre ombygninger i Aarhus og omegn"></div>
+        <div class="field"><span class="label">Åbningstider</span><input class="input" value="Man–fre 07–16"></div>
+        <div class="field"><span class="label">Hvor I kører</span><input class="input" value="Aarhus Kommune + 30 km"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row"><span class="num">C</span><div><h2 class="h2">Hvad skal den gøre for jer?</h2><span class="help">Vælg det, der passer. Det bestemmer, hvad trin 2 og 3 spørger om.</span></div></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <label class="inner row" style="gap:12px;background:#FFCF3F"><input type="checkbox" checked style="width:22px;height:22px;accent-color:#14213D"><span><b>Tage telefonen</b><br><span class="help">når I ikke kan – eller altid</span></span></label>
+        <label class="inner row" style="gap:12px;background:#FFCF3F"><input type="checkbox" checked style="width:22px;height:22px;accent-color:#14213D"><span><b>Booke aftaler</b><br><span class="help">direkte i jeres kalender</span></span></label>
+        <label class="inner row" style="gap:12px"><input type="checkbox" style="width:22px;height:22px;accent-color:#14213D"><span><b>Svare på hjemmesiden</b><br><span class="help">webchat – én kodelinje</span></span></label>
+        <label class="inner row" style="gap:12px"><input type="checkbox" style="width:22px;height:22px;accent-color:#14213D"><span><b>Ringe kunder op</b><br><span class="help">kampagner · 4 kr. pr. opkald</span></span></label>
+      </div>
+      <div class="row" style="flex-wrap:wrap;gap:8px"><span class="label" style="margin-right:4px">Den taler</span><span class="chip on">Dansk</span><span class="chip">+ Engelsk</span><span class="chip">+ Tysk</span><span class="help">Rapporter og denne side er altid på dansk.</span></div>
+    </div>
+
+    <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <span class="help">Gemmes løbende · du kan altid komme tilbage hertil</span>
+      <a href="Onboarding.dc.html" class="btn pri">Videre til trin 2: kalender & systemer →</a>
+    </div>
+  </section>
+
+  <aside style="flex:1 1 340px;min-width:0;position:sticky;top:24px" aria-label="Assistent">
+    <div class="card hi" style="gap:12px">
+      <div class="row"><span class="av" style="width:34px;height:34px;border-radius:10px;font-size:15px">D</span><div style="display:flex;flex-direction:column"><span class="d" style="font-size:16px">Jeg hjælper med trin 1</span><span class="help">Jeg viser altid ændringen, før den gælder</span></div></div>
+      <div style="display:flex;flex-direction:column;gap:10px"><div class="row" style="align-items:flex-end;gap:8px"><span class="av">D</span><div class="bubble">Jeg har læst norgaard-tomrer.dk. Fire ting fundet – tjek det gule. Mangler der noget, så skriv det her, som til en ny medarbejder.</div></div><div class="bubble me">Vi laver ikke terrasser længere</div><div class="row" style="align-items:flex-end;gap:8px"><span class="av">D</span><div class="bubble">Så fjerner jeg «terrasser» fra «hvad I laver» og prislisten. Sådan ser det ud:</div></div></div>
+      <div class="inner" style="border-width:2px;display:flex;flex-direction:column;gap:10px">
+        <span class="eyebrow">Ændring · før → efter</span>
+        <div class="row" style="flex-wrap:wrap;gap:8px"><span class="tag line">Vinduer, døre, terrasser …</span><span class="arrow">→</span><span class="tag yel">Vinduer, døre og mindre ombygninger</span></div>
+        <div class="row"><button class="btn pri" style="min-height:44px;font-size:15px">Godkend</button><button class="btn">Nej, lad være</button></div>
+      </div>
+      <div class="row" style="flex-wrap:wrap;gap:8px"><span class="chip">Vi har også lukket fredag</span><span class="chip">Vi hedder noget andet i telefonen</span><span class="chip">Hvad sker der i trin 2?</span></div>
+      <div class="row"><input class="input" placeholder="Skriv, hvad du vil ændre …" aria-label="Skriv til assistenten"><button class="btn ink" style="min-height:48px">Send</button></div>
+    </div>
+  </aside>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

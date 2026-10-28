@@ -207,7 +207,7 @@ function Details({ me }: { me: Profile }) {
       </div>
       <Field label="Mobilnummer"><Input value={f.phone} onChange={set("phone")} inputMode="tel" /></Field>
       <Field label="Din hilsen på din side" hint="Vises for dem, der åbner dit link."><Input maxLength={300} value={f.headline} onChange={set("headline")} /></Field>
-      <Button type="submit" icon="save" disabled={pending}>{pending ? "Gemmer…" : "Gem"}</Button>
+      <Button type="submit" icon="save" disabled={pending} className="self-start">{pending ? "Gemmer…" : "Gem"}</Button>
     </form>
   );
 }

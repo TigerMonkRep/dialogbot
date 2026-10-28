@@ -51,14 +51,14 @@ export default async function JoinPage() {
   return (
     <div className="flex flex-col gap-10 md:gap-14">
       {/* Hero: ink card with yellow eyebrow and the earnings example as a parts box */}
-      <section className="rounded-[20px] bg-ink text-white p-6 md:p-10 grid md:grid-cols-5 gap-8 items-center shadow-block">
-        <div className="md:col-span-3 flex flex-col gap-4">
+      <section className="rounded-[20px] bg-ink text-white p-6 md:p-10 grid md:grid-cols-5 gap-8 items-center shadow-block overflow-hidden">
+        <div className="md:col-span-3 min-w-0 flex flex-col gap-4">
           <span className="text-[13px] font-semibold uppercase tracking-[1.5px] text-highlight">Dialogbot Ambassadør</span>
           <h1 className="m-0 font-display font-extrabold text-[clamp(32px,4.4vw,52px)] leading-[1.02] tracking-[-1px] text-white">Anbefal Dialogbot – og tjen penge på hver kunde</h1>
           <p className="m-0 text-[17px] leading-normal text-white/85 max-w-xl">Kender du en håndværker, en frisør eller en klinik, der misser opkald? Vis dem Dialogbot. Bliver de kunde, får du en startbonus og en løbende andel – og de får {pct(t.customer_discount_bp ?? 5000)} rabat på første måned.</p>
-          <a href="#tilmeld" className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-highlight hover:bg-highlight-deep text-ink no-underline font-semibold text-[17px] self-start">Bliv ambassadør<Icon name="arrow_downward" size={20} /></a>
+          <a href="#tilmeld" className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-highlight hover:bg-highlight-deep text-ink no-underline font-semibold text-[17px] self-start">Bliv ambassadør<Icon name="arrow_forward" size={20} /></a>
         </div>
-        <div className="md:col-span-2 rounded-xl border-[1.5px] border-white/70 px-4 py-3.5 flex flex-col gap-2.5">
+        <div className="md:col-span-2 min-w-0 rounded-xl border-[1.5px] border-white/70 px-4 py-3.5 flex flex-col gap-2.5">
           <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-highlight">Sådan tjener du · én kunde på abonnement</span>
           <dl className="m-0 grid grid-cols-[1fr_auto] gap-y-1.5 gap-x-3 text-[15px] tabular-nums">
             <dt className="flex gap-2.5"><b className="font-display font-extrabold min-w-7">1×</b>Startbonus</dt><dd className="m-0 text-right">{kr(t.bonus_minor)}</dd>

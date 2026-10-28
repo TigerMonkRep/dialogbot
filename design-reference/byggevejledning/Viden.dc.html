@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Dialogbot – Det ved den (viden om virksomheden)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+input:focus,button:focus-visible,textarea:focus{outline:3px solid #2456F6;outline-offset:2px}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif">
+
+<header style="border-bottom:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;min-height:64px">
+    <a href="Dashboard.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#14213D">
+      <span style="display:inline-flex;width:32px;height:32px;border-radius:9px;background:#2456F6;align-items:center;justify-content:center">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+      </span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Dialogbot</span>
+    </a>
+    <span style="font-size:14px;color:#5B6475">Nørgaard Tømrer</span>
+    <nav aria-label="Sider" style="margin-left:auto;display:inline-flex;padding:4px;border-radius:999px;border:2px solid #14213D;background:#FFFFFF">
+      <a href="Dashboard.dc.html" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">I dag</a>
+      <a href="Viden.dc.html" aria-current="page" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;background:#14213D;color:#FFFFFF;font-weight:600;font-size:14px">Det ved den</a>
+      <a href="#" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">Opkald</a>
+      <a href="#" style="display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">Ugen</a>
+    </nav>
+    <span style="display:inline-flex;width:40px;height:40px;border-radius:999px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:15px" aria-label="Profil: Rene">R</span>
+  </div>
+</header>
+
+<main style="max-width:1280px;width:100%;box-sizing:border-box;margin:0 auto;padding:28px 24px 48px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+
+  <!-- LEFT: what it knows -->
+  <section style="flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:22px">
+
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 24px">
+      <div style="display:flex;flex-direction:column;gap:6px;flex:1 1 320px">
+        <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Det ved den om jer</span>
+        <h1 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:34px;letter-spacing:-0.8px;line-height:1.05">Alt, Dialogbot må sige til jeres kunder</h1>
+        <p style="margin:0;font-size:15px;line-height:1.5;color:#3C4659;max-width:600px">Står det ikke her, siger den det ikke – så tager den en besked til dig i stedet. Du kan rette alt direkte, og du kan altid teste svaret til højre.</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <button type="button" onClick="{{askImport}}" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"></path></svg>Læs min prisliste ind
+        </button>
+        <button type="button" onClick="{{askSite}}" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Hent fra hjemmesiden</button>
+      </div>
+    </div>
+
+    <!-- 1 Om jer -->
+    <div style="display:flex;flex-direction:column;gap:12px;padding:20px 24px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="display:inline-flex;width:40px;height:40px;border-radius:10px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">1</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Om jer</span>
+        <span style="font-size:13px;color:#5B6475">Det, den siger først</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+        <div style="display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:12px;border:1.5px solid #14213D"><span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475">Navn</span><span style="font-size:15px;font-weight:600">Nørgaard Tømrer</span><button type="button" onClick="{{editAbout}}" style="align-self:flex-start;margin-top:4px;min-height:32px;padding:0 10px;border-radius:8px;background:#FFFFFF;border:1.5px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px;cursor:pointer">Ret</button></div>
+        <div style="display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:12px;border:1.5px solid #14213D"><span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475">Hvad I laver</span><span style="font-size:15px">Vinduer, døre, terrasser og mindre ombygninger i Aarhus og omegn</span><button type="button" onClick="{{editAbout}}" style="align-self:flex-start;margin-top:4px;min-height:32px;padding:0 10px;border-radius:8px;background:#FFFFFF;border:1.5px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px;cursor:pointer">Ret</button></div>
+        <div style="display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:12px;border:1.5px solid #14213D"><span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475">Åbningstider</span><span style="font-size:15px">Man–fre 08–17 · lukket 31. okt</span><button type="button" onClick="{{editAbout}}" style="align-self:flex-start;margin-top:4px;min-height:32px;padding:0 10px;border-radius:8px;background:#FFFFFF;border:1.5px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px;cursor:pointer">Ret</button></div>
+        <div style="display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:12px;border:1.5px solid #14213D"><span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475">Hvor I kører</span><span style="font-size:15px">Aarhus Kommune + 30 km</span><button type="button" onClick="{{editAbout}}" style="align-self:flex-start;margin-top:4px;min-height:32px;padding:0 10px;border-radius:8px;background:#FFFFFF;border:1.5px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px;cursor:pointer">Ret</button></div>
+      </div>
+    </div>
+
+    <!-- 2 Det I sælger -->
+    <div style="display:flex;flex-direction:column;gap:12px;padding:20px 24px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+        <span style="display:inline-flex;width:40px;height:40px;border-radius:10px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">2</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Det I sælger</span>
+        <span style="font-size:13px;color:#5B6475">Ydelser og priser – det, den må tilbyde</span>
+        <button type="button" onClick="{{startAdd}}" style="margin-left:auto;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:10px;background:#2456F6;color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Tilføj en ydelse
+        </button>
+      </div>
+
+      <sc-if value="{{adding}}" hint-placeholder-val="{{false}}">
+        <form onSubmit="{{saveAdd}}" style="display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:14px;border:2px dashed #14213D;background:#EEF4FB">
+          <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Ny ydelse · 3 felter</span>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+            <div style="display:flex;flex-direction:column;gap:4px"><label for="n1" style="font-size:13px;font-weight:600">Hvad hedder den?</label><input id="n1" type="text" value="{{newName}}" onChange="{{editNewName}}" placeholder="Fx Terrasse" style="min-height:44px;padding:0 12px;border-radius:10px;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-size:15px;background:#FFFFFF"></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><label for="n2" style="font-size:13px;font-weight:600">Pris (som kunden skal høre den)</label><input id="n2" type="text" value="{{newPrice}}" onChange="{{editNewPrice}}" placeholder="Fx fra 1.200 kr. pr. m²" style="min-height:44px;padding:0 12px;border-radius:10px;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-size:15px;background:#FFFFFF"></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><label for="n3" style="font-size:13px;font-weight:600">Hvad skal den sige bagefter?</label><input id="n3" type="text" value="{{newNote}}" onChange="{{editNewNote}}" placeholder="Fx Vi giver fast pris efter et besøg" style="min-height:44px;padding:0 12px;border-radius:10px;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-size:15px;background:#FFFFFF"></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button type="submit" style="min-height:44px;padding:0 16px;border-radius:12px;background:#2456F6;color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Gem – og vis mig, hvordan den siger det</button>
+            <button type="button" onClick="{{cancelAdd}}" style="min-height:44px;padding:0 14px;border-radius:12px;background:#FFFFFF;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Annuller</button>
+          </div>
+        </form>
+      </sc-if>
+
+      <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;border-top:1.5px solid #14213D">
+        <sc-for list="{{services}}" as="sv" hint-placeholder-count="4">
+          <li style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:12px 0;border-bottom:1.5px solid #14213D;font-size:14px;opacity:{{sv.opacity}}">
+            <span style="flex:1 1 180px;font-weight:600;font-size:15px">{{sv.name}}</span>
+            <span style="flex:1 1 150px;font-family:Outfit,sans-serif;font-weight:700">{{sv.price}}</span>
+            <span style="flex:2 1 220px;color:#3C4659">{{sv.note}}</span>
+            <button type="button" onClick="{{sv.toggle}}" aria-label="Må den sælge denne ydelse" style="display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 10px;border-radius:999px;border:1.5px solid #14213D;background:{{sv.sellBg}};color:{{sv.sellColor}};font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:12px;cursor:pointer;white-space:nowrap">{{sv.sellLabel}}</button>
+            <button type="button" onClick="{{sv.test}}" style="min-height:36px;padding:0 10px;border-radius:8px;background:#FFFFFF;border:1.5px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px;cursor:pointer">Hør</button>
+            <button type="button" onClick="{{sv.remove}}" aria-label="Slet ydelse" style="width:36px;height:36px;border-radius:8px;background:#FFFFFF;border:1.5px solid #14213D;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#14213D">
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path></svg>
+            </button>
+          </li>
+        </sc-for>
+      </ul>
+      <span style="font-size:13px;color:#5B6475">«Sælger» betyder, at den selv nævner ydelsen, når det passer. «Kun hvis spurgt» betyder, at den kun svarer på prisen.</span>
+    </div>
+
+    <!-- 3 Spørgsmål -->
+    <div style="display:flex;flex-direction:column;gap:12px;padding:20px 24px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+        <span style="display:inline-flex;width:40px;height:40px;border-radius:10px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">3</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Spørgsmål kunderne stiller</span>
+        <span style="font-size:13px;color:#5B6475">14 svar godkendt</span>
+      </div>
+      <sc-if value="{{hasSuggest}}" hint-placeholder-val="{{true}}">
+        <div style="display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:14px;background:#EEF4FB;border:2px dashed #14213D">
+          <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Dialogbot foreslår · fra denne uges opkald</span>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-weight:600;font-size:15px">«Laver I også vinduer i plast?»</span>
+            <span style="font-size:14px;color:#3C4659">Spurgt 3 gange. Mit forslag til svar: «Nej, vi arbejder kun i træ og træ/alu – men vi hjælper gerne med at finde den rigtige løsning.»</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" onClick="{{approveSuggest}}" style="min-height:40px;padding:0 14px;border-radius:10px;background:#2456F6;color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Godkend svaret</button>
+            <button type="button" onClick="{{editSuggest}}" style="min-height:40px;padding:0 14px;border-radius:10px;background:#FFFFFF;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Ret svaret</button>
+            <button type="button" onClick="{{dropSuggest}}" style="min-height:40px;padding:0 14px;border-radius:10px;background:#FFFFFF;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Afvis</button>
+          </div>
+        </div>
+      </sc-if>
+      <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;border-top:1.5px solid #14213D">
+        <li style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:12px 0;border-bottom:1.5px solid #14213D;font-size:14px">
+          <span style="flex:1 1 220px;font-weight:600">Hvor hurtigt kan I komme?</span>
+          <span style="flex:2 1 300px;color:#3C4659">Normalt inden for 1–2 uger – akutte skader samme dag.</span>
+          <button type="button" style="min-height:36px;padding:0 10px;border-radius:8px;background:#FFFFFF;border:1.5px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px;cursor:pointer">Ret</button>
+        </li>
+        <li style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:12px 0;border-bottom:1.5px solid #14213D;font-size:14px">
+          <span style="flex:1 1 220px;font-weight:600">Giver I tilbud gratis?</span>
+          <span style="flex:2 1 300px;color:#3C4659">Ja, vi kommer forbi og giver en fast pris uden beregning.</span>
+          <button type="button" style="min-height:36px;padding:0 10px;border-radius:8px;background:#FFFFFF;border:1.5px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px;cursor:pointer">Ret</button>
+        </li>
+        <li style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:12px 0;border-bottom:1.5px solid #14213D;font-size:14px">
+          <span style="flex:1 1 220px;font-weight:600">Er I momsregistreret / har I garanti?</span>
+          <span style="flex:2 1 300px;color:#3C4659">Ja, alle priser er inkl. moms, og vi er medlem af Byg Garanti.</span>
+          <button type="button" style="min-height:36px;padding:0 10px;border-radius:8px;background:#FFFFFF;border:1.5px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px;cursor:pointer">Ret</button>
+        </li>
+      </ul>
+      <a href="#" style="align-self:flex-start;font-size:14px;font-weight:600;color:#14213D">Se alle 14</a>
+    </div>
+
+    <!-- 4 Det må den ikke -->
+    <div style="display:flex;flex-direction:column;gap:12px;padding:20px 24px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="display:inline-flex;width:40px;height:40px;border-radius:10px;background:#14213D;color:#FFFFFF;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:20px">4</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Det må den ikke</span>
+        <span style="font-size:13px;color:#5B6475">Her tager den en besked til dig i stedet</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1.5px solid #14213D;font-size:14px;font-weight:500">Love en dato uden kalenderen</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1.5px solid #14213D;font-size:14px;font-weight:500">Give rabat</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1.5px solid #14213D;font-size:14px;font-weight:500">Udtale sig om forsikringssager</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1.5px solid #14213D;font-size:14px;font-weight:500">Give en pris på noget, der ikke står under 2</span>
+        <button type="button" onClick="{{addRule}}" style="display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 12px;border-radius:999px;border:1.5px dashed #14213D;background:#FFFFFF;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">+ Tilføj en regel</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: assistant = add by talking + test as a customer -->
+  <aside aria-label="Din assistent" style="flex:1 1 340px;min-width:0;max-width:420px;position:sticky;top:24px;background:#FFFFFF;border:2px solid #14213D;border-radius:20px;box-shadow:8px 8px 0 #14213D;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:2px solid #14213D">
+      <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#2456F6;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;color:#FFFFFF">D</span>
+      <div style="display:flex;flex-direction:column">
+        <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:16px">Fortæl mig noget – eller test mig</span>
+        <span style="font-size:12px;color:#5B6475">Skriv som til en ny medarbejder</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;padding:18px;min-height:300px">
+      <sc-for list="{{msgs}}" as="m" hint-placeholder-count="1">
+        <div style="display:flex;gap:8px;align-items:flex-end;justify-content:{{m.justify}}">
+          <p style="margin:0;padding:11px 14px;font-size:14px;line-height:1.5;max-width:320px;white-space:pre-line;border-radius:{{m.radius}};background:{{m.bg}};color:{{m.color}};border:2px solid #14213D">{{m.text}}</p>
+        </div>
+      </sc-for>
+      <sc-if value="{{hasProposal}}" hint-placeholder-val="{{false}}">
+        <div style="display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:14px;border:2px dashed #14213D;background:#EEF4FB">
+          <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">{{proposal.kind}}</span>
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:16px">{{proposal.title}}</span>
+          <span style="font-size:14px;line-height:1.5;color:#3C4659;white-space:pre-line">{{proposal.body}}</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" onClick="{{accept}}" style="min-height:44px;padding:0 16px;border-radius:12px;background:#2456F6;color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">{{proposal.cta}}</button>
+            <button type="button" onClick="{{reject}}" style="min-height:44px;padding:0 14px;border-radius:12px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Nej</button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding:14px 18px 18px;border-top:2px solid #14213D;background:#EEF4FB">
+      <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Test den – spørg som en kunde</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{tests}}" as="t" hint-placeholder-count="3">
+          <button type="button" onClick="{{t.pick}}" style="min-height:40px;padding:0 12px;border-radius:999px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px;cursor:pointer">{{t.label}}</button>
+        </sc-for>
+      </div>
+      <form onSubmit="{{sendFree}}" style="display:flex;gap:8px">
+        <label for="free" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Skriv til assistenten</label>
+        <input id="free" type="text" value="{{draft}}" onChange="{{editDraft}}" placeholder="Fx «Vi laver også carporte fra 45.000 kr.»" autocomplete="off" style="flex:1;min-width:0;min-height:46px;padding:0 14px;border-radius:12px;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-size:14px;color:#14213D;background:#FFFFFF">
+        <button type="submit" aria-label="Send" style="width:46px;height:46px;border-radius:12px;background:#2456F6;color:#FFFFFF;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </button>
+      </form>
+    </div>
+  </aside>
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1560}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      services: [
+        { id: 1, name: 'Vinduesudskiftning', price: 'fra 3.500 kr. pr. vindue', note: 'Inkl. montering – fast pris efter besøg', sell: true },
+        { id: 2, name: 'Nye yderdøre', price: 'fra 9.800 kr.', note: 'Inkl. montering – fast pris efter besøg', sell: true },
+        { id: 3, name: 'Terrasse', price: 'fra 1.200 kr. pr. m²', note: 'Træ eller komposit – vi kommer og måler op', sell: true },
+        { id: 4, name: 'Mindre ombygning', price: 'efter aftale', note: 'Vi laver altid et besøg først', sell: false }
+      ],
+      adding: false, newName: '', newPrice: '', newNote: '',
+      suggest: true, proposal: null, draft: '',
+      history: [{ from: 'bot', text: 'Jeg ved 4 ydelser, 14 svar og 4 regler om Nørgaard Tømrer. Fortæl mig noget nyt – eller spørg mig som en kunde, så hører du, hvad jeg svarer.' }]
+    };
+  }
+  say(from, text) { this.setState({ history: this.state.history.concat([{ from, text }]) }); }
+  later(text, extra) { setTimeout(() => this.setState(Object.assign({ history: this.state.history.concat([{ from: 'bot', text }]) }, extra || {})), 450); }
+  renderVals() {
+    const s = this.state;
+    const bubble = (m) => ({
+      text: m.text, justify: m.from === 'bot' ? 'flex-start' : 'flex-end',
+      radius: m.from === 'bot' ? '14px 14px 14px 4px' : '14px 14px 4px 14px',
+      bg: m.from === 'bot' ? '#FFFFFF' : '#14213D', color: m.from === 'bot' ? '#14213D' : '#FFFFFF'
+    });
+    const services = s.services.map((sv) => Object.assign({}, sv, {
+      opacity: sv.sell ? '1' : '0.75',
+      sellLabel: sv.sell ? 'Sælger' : 'Kun hvis spurgt',
+      sellBg: sv.sell ? '#FFCF3F' : '#FFFFFF',
+      sellColor: '#14213D',
+      toggle: () => this.setState({ services: s.services.map((x) => x.id === sv.id ? Object.assign({}, x, { sell: !x.sell }) : x) }),
+      remove: () => { this.setState({ services: s.services.filter((x) => x.id !== sv.id) }); this.say('bot', '«' + sv.name + '» er slettet. Spørger en kunde om det nu, tager jeg en besked til dig. Sig «fortryd» for at få den tilbage.'); },
+      test: () => { this.say('user', 'Hvad koster ' + sv.name.toLowerCase() + '?'); this.later('Sådan svarer jeg: «' + sv.name + ' koster ' + sv.price + '. ' + sv.note + '. Skal jeg finde en tid til et besøg?»'); }
+    }));
+    const tests = [
+      { label: 'Hvad koster et vindue?', pick: () => { this.say('user', 'Hvad koster et vindue?'); this.later('«Vinduesudskiftning koster fra 3.500 kr. pr. vindue inkl. montering – vi giver en fast pris efter et besøg. Skal jeg finde en tid?»'); } },
+      { label: 'Kan I komme i morgen?', pick: () => { this.say('user', 'Kan I komme i morgen?'); this.later('«Jeg kan ikke love i morgen, men jeg kan se ledige tider fra torsdag. Skal jeg booke én, eller skal Rene ringe til dig?»\n\n(Regel 4: jeg lover aldrig en dato uden kalenderen.)'); } },
+      { label: 'Laver I plastvinduer?', pick: () => { this.say('user', 'Laver I plastvinduer?'); this.later(s.suggest ? 'Det ved jeg ikke endnu – så jeg siger: «Det er jeg ikke sikker på, men jeg tager en besked, så ringer Rene tilbage.»\n\nGodkend mit forslag under 3, så kan jeg svare selv.' : '«Nej, vi arbejder kun i træ og træ/alu – men vi hjælper gerne med at finde den rigtige løsning.»'); } }
+    ];
+    return {
+      services, adding: s.adding,
+      startAdd: () => this.setState({ adding: true }),
+      cancelAdd: () => this.setState({ adding: false, newName: '', newPrice: '', newNote: '' }),
+      newName: s.newName, newPrice: s.newPrice, newNote: s.newNote,
+      editNewName: (e) => this.setState({ newName: e.target.value }),
+      editNewPrice: (e) => this.setState({ newPrice: e.target.value }),
+      editNewNote: (e) => this.setState({ newNote: e.target.value }),
+      saveAdd: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const n = (s.newName || '').trim(); if (!n) return;
+        const item = { id: Date.now(), name: n, price: s.newPrice || 'efter aftale', note: s.newNote || 'Vi giver fast pris efter et besøg', sell: true };
+        this.setState({ services: s.services.concat([item]), adding: false, newName: '', newPrice: '', newNote: '' });
+        this.say('bot', 'Gemt. Sådan siger jeg det nu: «' + item.name + ' koster ' + item.price + '. ' + item.note + '.» Ret det under 2, hvis det ikke lyder som jer.');
+      },
+      hasSuggest: s.suggest,
+      approveSuggest: () => { this.setState({ suggest: false }); this.say('bot', 'Tak – svaret om plastvinduer er godkendt. Nu svarer jeg selv.'); },
+      editSuggest: () => { this.say('user', 'Ret svaret om plastvinduer'); this.later('Skriv, hvad jeg skal sige i stedet – så viser jeg dig det, før det gælder.'); },
+      dropSuggest: () => { this.setState({ suggest: false }); this.say('bot', 'Okay. Jeg tager stadig besked, hvis nogen spørger.'); },
+      editAbout: () => { this.say('user', 'Ret oplysninger om os'); this.later('Hvad skal ændres? Skriv det bare – fx «vi åbner kl. 7 fra 1. november».'); },
+      addRule: () => { this.say('user', 'Tilføj en regel'); this.later('Hvad må jeg ikke? Skriv det som til en ny medarbejder – fx «sig aldrig ja til søndagsarbejde».'); },
+      askImport: () => { this.say('user', 'Læs min prisliste ind'); this.later('Send mig prislisten (PDF, Excel eller et billede). Jeg laver et udkast til hver ydelse under 2 – du godkender dem én for én, inden jeg bruger dem.'); },
+      askSite: () => { this.say('user', 'Hent fra hjemmesiden'); this.later('Jeg har læst norgaard-tomrer.dk og fundet 3 ting, I ikke har her: carporte, tagvinduer, og at I har 10 års garanti.', { proposal: { kind: 'Fra hjemmesiden · 3 forslag', title: 'Tilføj carporte, tagvinduer og garanti?', body: '• Carporte – pris mangler, jeg siger «efter aftale»\n• Tagvinduer – pris mangler\n• «10 års garanti på eget arbejde» som svar under 3', cta: 'Tilføj alle 3 som udkast' } }); },
+      msgs: s.history.map(bubble),
+      hasProposal: !!s.proposal, proposal: s.proposal || { kind: '', title: '', body: '', cta: 'Gem' },
+      accept: () => { this.setState({ proposal: null }); this.say('bot', 'Gemt som udkast under 2 og 3 – de er markeret, indtil du har sat priser på.'); },
+      reject: () => { this.setState({ proposal: null }); this.say('bot', 'Okay – intet tilføjet.'); },
+      tests,
+      draft: s.draft, editDraft: (e) => this.setState({ draft: e.target.value }),
+      sendFree: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const v = (s.draft || '').trim(); if (!v) return;
+        this.setState({ draft: '' }); this.say('user', v);
+        const isQ = v.indexOf('?') >= 0;
+        if (isQ) { this.later('Det står ikke under 1–3, så jeg ville svare: «Det er jeg ikke sikker på – jeg tager en besked, så ringer Rene tilbage.» Vil du give mig svaret?'); }
+        else { this.later('Forstået. Jeg har lavet et udkast – gem det, så ved jeg det fra nu af:', { proposal: { kind: 'Ny viden · udkast', title: v, body: 'Jeg vil sige: «' + v + '» – og tilbyde at booke et besøg, hvis det er en ydelse.', cta: 'Gem' } }); }
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

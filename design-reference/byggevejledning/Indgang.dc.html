@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Dialogbot – Hvor vil du starte?</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#FFFFFF;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+.door{transition:transform .15s ease,box-shadow .15s ease}
+.door:hover{transform:translate(-3px,-3px);box-shadow:11px 11px 0 #14213D}
+.door:focus-visible{outline:4px solid #2456F6;outline-offset:4px}
+@keyframes ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+.ringwave{animation:ring 1.6s ease-out infinite}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#FFFFFF;color:#14213D;font-family:Inter,system-ui,sans-serif">
+
+<!-- HEADER with path switch -->
+<header style="border-bottom:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1180px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;min-height:72px">
+    <a href="Indgang.dc.html" aria-label="Dialogbot forside" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#14213D">
+      <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#2456F6;align-items:center;justify-content:center">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+      </span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.3px">Dialogbot</span>
+    </a>
+    <!-- segmented switch: the same two doors, always visible -->
+    <nav aria-label="Vælg vej" style="margin-left:auto;display:inline-flex;padding:4px;border-radius:999px;border:2px solid #14213D;background:#FFFFFF">
+      <a href="Proev.dc.html" style="display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z"></path></svg>Prøv den
+      </a>
+      <a href="Main.dc.html" style="display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h10"></path></svg>Byggevejledning
+      </a>
+    </nav>
+    <a href="tel:+4593703433" style="font-size:14px;font-weight:600;color:#14213D;text-decoration:none">93 70 34 33</a>
+  </div>
+</header>
+
+<main style="flex:1;max-width:1180px;width:100%;box-sizing:border-box;margin:0 auto;padding:56px 24px 64px;display:flex;flex-direction:column;gap:36px">
+
+  <div style="display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center">
+    <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Din AI-receptionist – på dansk, døgnet rundt</span>
+    <h1 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(40px,5.4vw,70px);line-height:1;letter-spacing:-1.8px">Hvor vil du starte?</h1>
+    <p style="margin:0;font-size:18px;line-height:1.5;color:#3C4659;max-width:560px">To veje, samme mål. Vælg den, der passer dig – du kan altid skifte med knappen øverst.</p>
+  </div>
+
+  <!-- THE TWO DOORS -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;align-items:stretch">
+
+    <!-- Door A: hear it -->
+    <a href="Proev.dc.html" class="door" style="display:flex;flex-direction:column;gap:22px;padding:32px;border-radius:24px;background:#FFFFFF;border:2px solid #14213D;box-shadow:8px 8px 0 #14213D;text-decoration:none;color:#14213D;min-height:420px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:#FFCF3F;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase">2 min · ingen tilmelding</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Vej A</span>
+      </div>
+      <div style="flex:1;position:relative;min-height:170px;border-radius:16px;background:#EEF4FB;display:flex;align-items:center;justify-content:center;overflow:hidden">
+        <div style="position:relative;width:110px;height:110px;display:flex;align-items:center;justify-content:center">
+          <span class="ringwave" style="position:absolute;inset:0;border-radius:999px;border:3px solid #2456F6"></span>
+          <span style="width:84px;height:84px;border-radius:999px;background:#2456F6;display:inline-flex;align-items:center;justify-content:center">
+            <svg aria-hidden="true" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>
+          </span>
+        </div>
+        <div style="position:absolute;left:20px;bottom:18px;display:flex;align-items:flex-end;gap:8px">
+          <span style="flex:none;width:26px;height:26px;border-radius:999px;background:#2456F6;display:inline-flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:12px;color:#FFFFFF">D</span>
+          <span style="padding:8px 12px;border-radius:12px 12px 12px 4px;background:#FFFFFF;border:2px solid #14213D;font-size:13px;font-weight:500">Skal jeg ringe til dig nu?</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:30px;line-height:1.05;letter-spacing:-0.6px">Hør den først</span>
+        <span style="font-size:16px;line-height:1.5;color:#3C4659">Snak med chatten – så ringer den til dig som din egen receptionist. Spørg som en kunde ville gøre.</span>
+      </div>
+      <span style="display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 22px;border-radius:14px;background:#2456F6;color:#FFFFFF;font-weight:600;font-size:17px">Prøv den nu
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </span>
+    </a>
+
+    <!-- Door B: see how it's built -->
+    <a href="Main.dc.html" class="door" style="display:flex;flex-direction:column;gap:22px;padding:32px;border-radius:24px;background:#FFFFFF;border:2px solid #14213D;box-shadow:8px 8px 0 #14213D;text-decoration:none;color:#14213D;min-height:420px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:#EEF4FB;border:1.5px solid #14213D;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase">3 trin · ca. 30 min</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Vej B</span>
+      </div>
+      <div style="flex:1;position:relative;min-height:170px;border-radius:16px;background:#EEF4FB;display:flex;align-items:center;justify-content:center;gap:14px;overflow:hidden">
+        <span style="display:inline-flex;width:64px;height:64px;border-radius:16px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:34px">1</span>
+        <svg aria-hidden="true" width="30" height="20" viewBox="0 0 30 20" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h22M19 3l7 7-7 7"></path></svg>
+        <span style="display:inline-flex;width:64px;height:64px;border-radius:16px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:34px">2</span>
+        <svg aria-hidden="true" width="30" height="20" viewBox="0 0 30 20" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h22M19 3l7 7-7 7"></path></svg>
+        <span style="display:inline-flex;width:64px;height:64px;border-radius:16px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:34px">3</span>
+        <div style="position:absolute;right:20px;bottom:18px;padding:6px 10px;border-radius:999px;background:#FFFFFF;border:2px solid #14213D;font-family:Outfit,sans-serif;font-weight:700;font-size:13px">Tændt</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:30px;line-height:1.05;letter-spacing:-0.6px">Se, hvordan den bygges</span>
+        <span style="font-size:16px;line-height:1.5;color:#3C4659">Byggevejledningen: hvad du skal bruge, hvad den kan, hvad den koster – og de 3 trin til din egen.</span>
+      </div>
+      <span style="display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 22px;border-radius:14px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-weight:600;font-size:17px">Åbn byggevejledningen
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </span>
+    </a>
+  </div>
+
+  <!-- both paths converge -->
+  <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px 20px;padding:18px 24px;border-radius:16px;border:1.5px solid #14213D;background:#FFFFFF">
+    <span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600"><span style="width:22px;height:12px;border-radius:4px;background:#2456F6"></span>Vej A</span>
+    <svg aria-hidden="true" width="34" height="20" viewBox="0 0 34 20" fill="none" stroke="#14213D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h26M23 4l6 6-6 6"></path></svg>
+    <span style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;background:#14213D;color:#FFFFFF;font-family:Outfit,sans-serif;font-weight:700;font-size:14px">Din egen receptionist – tændt</span>
+    <svg aria-hidden="true" width="34" height="20" viewBox="0 0 34 20" fill="none" stroke="#14213D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M31 10H5M11 4l-6 6 6 6"></path></svg>
+    <span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600"><span style="width:22px;height:12px;border-radius:4px;background:#FFCF3F"></span>Vej B</span>
+    <span style="flex-basis:100%;text-align:center;font-size:13px;color:#5B6475">Begge veje ender samme sted. Den, der ringer til dig i vej A, er den samme, der guider dig i vej B.</span>
+  </div>
+
+  <!-- undecided? ask the assistant -->
+  <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px">
+    <span style="display:inline-flex;width:32px;height:32px;border-radius:999px;background:#2456F6;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:13px;color:#FFFFFF">D</span>
+    <span style="font-size:15px;color:#3C4659">I tvivl?</span>
+    <a href="Proev.dc.html" style="font-size:15px;font-weight:600;color:#14213D">Spørg chatten – den anbefaler en vej på 10 sekunder</a>
+  </div>
+</main>
+
+<footer style="border-top:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1180px;margin:0 auto;padding:20px 24px;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:#5B6475;justify-content:space-between">
+    <span>Dialogbot · Aarhus · Man–fre 08–17</span>
+    <span>Fra 1.495 kr./md. eller 149 kr. pr. godkendt henvendelse · ekskl. moms</span>
+  </div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Prøv Dialogbot – snak med den, så ringer den til dig</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+@keyframes ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.9);opacity:0}}
+.ringwave{animation:ring 1.4s ease-out infinite}
+.ringwave2{animation:ring 1.4s ease-out .7s infinite}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.dot1{animation:blink 1.2s infinite}.dot2{animation:blink 1.2s .2s infinite}.dot3{animation:blink 1.2s .4s infinite}
+input:focus{outline:3px solid #2456F6;outline-offset:2px}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif">
+
+<header style="border-bottom:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1180px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;min-height:72px">
+    <a href="Indgang.dc.html" aria-label="Dialogbot forside" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#14213D">
+      <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#2456F6;align-items:center;justify-content:center">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+      </span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:22px;letter-spacing:-0.3px">Dialogbot</span>
+    </a>
+    <nav aria-label="Vælg vej" style="margin-left:auto;display:inline-flex;padding:4px;border-radius:999px;border:2px solid #14213D;background:#FFFFFF">
+      <a href="Proev.dc.html" aria-current="page" style="display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;background:#14213D;color:#FFFFFF;font-weight:600;font-size:14px">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z"></path></svg>Prøv den
+      </a>
+      <a href="Main.dc.html" style="display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px;border-radius:999px;text-decoration:none;color:#14213D;font-weight:600;font-size:14px">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h10"></path></svg>Byggevejledning
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main style="max-width:1180px;width:100%;box-sizing:border-box;margin:0 auto;padding:48px 24px 72px;display:flex;flex-direction:column;gap:40px">
+
+  <div style="display:flex;flex-direction:column;gap:14px;max-width:760px">
+    <span style="font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Trin 0 · før du bygger noget</span>
+    <h1 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:clamp(38px,5vw,64px);line-height:1.02;letter-spacing:-1.5px">Snak med den. Så ringer den til dig – som din egen receptionist.</h1>
+    <p style="margin:0;font-size:18px;line-height:1.55;color:#3C4659;max-width:620px">Ingen formular, ingen tilmelding. Fortæl chatten, hvad din virksomhed hedder, og hvad I laver. Om 10 sekunder ringer Dialogbot til dig og tager imod dig, som var du en kunde.</p>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+
+    <!-- CHAT STAGE -->
+    <section aria-label="Chat med Dialogbot" style="flex:1 1 460px;min-width:0;max-width:640px;background:#FFFFFF;border:2px solid #14213D;border-radius:22px;box-shadow:8px 8px 0 #14213D;display:flex;flex-direction:column;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:2px solid #14213D">
+        <span style="display:inline-flex;width:40px;height:40px;border-radius:12px;background:#2456F6;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;color:#FFFFFF;font-size:18px">D</span>
+        <div style="display:flex;flex-direction:column">
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:17px">Dialogbot</span>
+          <span style="font-size:13px;color:#5B6475;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:999px;background:#1B9E5A"></span>Svarer med det samme</span>
+        </div>
+        <span style="margin-left:auto;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:#FFCF3F">{{stepLabel}}</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;padding:20px;min-height:360px;background:#FFFFFF">
+        <sc-for list="{{msgs}}" as="m" hint-placeholder-count="2">
+          <div style="display:flex;gap:10px;align-items:flex-end;justify-content:{{m.justify}}">
+            <sc-if value="{{m.isBot}}" hint-placeholder-val="{{true}}">
+              <span style="flex:none;width:30px;height:30px;border-radius:999px;background:#2456F6;display:inline-flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:13px;color:#FFFFFF">D</span>
+            </sc-if>
+            <p style="margin:0;padding:12px 16px;font-size:15px;line-height:1.5;max-width:420px;white-space:pre-line;border-radius:{{m.radius}};background:{{m.bg}};color:{{m.color}};border:{{m.border}}">{{m.text}}</p>
+          </div>
+        </sc-for>
+        <sc-if value="{{typing}}" hint-placeholder-val="{{false}}">
+          <div style="display:flex;gap:10px;align-items:flex-end">
+            <span style="flex:none;width:30px;height:30px;border-radius:999px;background:#2456F6;display:inline-flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:13px;color:#FFFFFF">D</span>
+            <span style="display:inline-flex;gap:5px;padding:14px 16px;border-radius:16px 16px 16px 4px;background:#FFFFFF;border:2px solid #14213D"><span class="dot1" style="width:7px;height:7px;border-radius:999px;background:#14213D"></span><span class="dot2" style="width:7px;height:7px;border-radius:999px;background:#14213D"></span><span class="dot3" style="width:7px;height:7px;border-radius:999px;background:#14213D"></span></span>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;padding:16px 20px 20px;border-top:2px solid #14213D;background:#EEF4FB">
+        <sc-if value="{{hasQuick}}" hint-placeholder-val="{{true}}">
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{quick}}" as="q" hint-placeholder-count="3">
+              <button type="button" onClick="{{q.pick}}" style="min-height:44px;padding:0 16px;border-radius:999px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:15px;cursor:pointer">{{q.label}}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{hasInput}}" hint-placeholder-val="{{false}}">
+          <form onSubmit="{{send}}" style="display:flex;gap:10px">
+            <label for="chat-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{placeholder}}</label>
+            <input id="chat-input" type="{{inputType}}" value="{{draft}}" onChange="{{edit}}" placeholder="{{placeholder}}" autocomplete="off" style="flex:1;min-width:0;min-height:48px;padding:0 16px;border-radius:12px;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-size:16px;color:#14213D;background:#FFFFFF">
+            <button type="submit" style="display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 18px;border-radius:12px;background:#2456F6;color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:15px;cursor:pointer">Send
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </button>
+          </form>
+        </sc-if>
+        <sc-if value="{{hasBuild}}" hint-placeholder-val="{{false}}">
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <a href="Onboarding.dc.html" style="display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 20px;border-radius:12px;background:#2456F6;color:#FFFFFF;text-decoration:none;font-weight:600;font-size:15px">Ja – byg min nu (trin 1 af 3)</a>
+            <button type="button" onClick="{{reset}}" style="min-height:48px;padding:0 18px;border-radius:12px;background:#FFFFFF;border:2px solid #14213D;color:#14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:15px;cursor:pointer">Prøv igen</button>
+          </div>
+        </sc-if>
+        <span style="font-size:12px;color:#5B6475">Vi ringer kun til det nummer, du selv skriver, og gemmer det ikke bagefter.</span>
+      </div>
+    </section>
+
+    <!-- SIDE: what happens -->
+    <aside style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:20px">
+
+      <!-- phone card -->
+      <div style="background:#FFFFFF;border:2px solid #14213D;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center;min-height:250px;justify-content:center">
+        <sc-if value="{{calling}}" hint-placeholder-val="{{false}}">
+          <div style="position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center">
+            <span class="ringwave" style="position:absolute;inset:0;border-radius:999px;border:3px solid #2456F6"></span>
+            <span class="ringwave2" style="position:absolute;inset:0;border-radius:999px;border:3px solid #2456F6"></span>
+            <span style="width:72px;height:72px;border-radius:999px;background:#2456F6;display:inline-flex;align-items:center;justify-content:center">
+              <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>
+            </span>
+          </div>
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">Ringer til {{tlf}} …</span>
+          <span style="font-size:14px;color:#3C4659">Jeg præsenterer mig som receptionist for <b>{{firma}}</b>. Spørg mig om priser, tider eller en aftale.</span>
+        </sc-if>
+        <sc-if value="{{notCalling}}" hint-placeholder-val="{{true}}">
+          <span style="display:inline-flex;width:72px;height:72px;border-radius:999px;background:#EEF4FB;border:2px solid #14213D;align-items:center;justify-content:center">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#14213D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg>
+          </span>
+          <span style="font-family:Outfit,sans-serif;font-weight:700;font-size:20px">{{phoneTitle}}</span>
+          <span style="font-size:14px;color:#3C4659">{{phoneSub}}</span>
+        </sc-if>
+      </div>
+
+      <!-- mini manual -->
+      <ol style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px">
+        <li style="display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:#FFFFFF;border:2px solid #14213D">
+          <span style="flex:none;display:inline-flex;width:36px;height:36px;border-radius:10px;background:{{s1bg}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:18px">1</span>
+          <span style="font-size:15px;font-weight:600">Fortæl chatten, hvem I er</span>
+        </li>
+        <li style="display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:#FFFFFF;border:2px solid #14213D">
+          <span style="flex:none;display:inline-flex;width:36px;height:36px;border-radius:10px;background:{{s2bg}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:18px">2</span>
+          <span style="font-size:15px;font-weight:600">Tag telefonen – spørg som en kunde</span>
+        </li>
+        <li style="display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:#FFFFFF;border:2px solid #14213D">
+          <span style="flex:none;display:inline-flex;width:36px;height:36px;border-radius:10px;background:{{s3bg}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:18px">3</span>
+          <span style="font-size:15px;font-weight:600">Kan du lide det? Så bygger vi den rigtige</span>
+        </li>
+      </ol>
+
+      <p style="margin:0;font-size:13px;line-height:1.5;color:#5B6475">Den samme chat følger dig videre: Når du siger ja, guider den dig gennem opsætningen, kobler din kalender på og tester det hele sammen med dig.</p>
+    </aside>
+  </div>
+</main>
+
+<footer style="margin-top:auto;border-top:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1180px;margin:0 auto;padding:20px 24px;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:#5B6475;justify-content:space-between">
+    <span>Dialogbot · Aarhus · Man–fre 08–17</span>
+    <a href="Main.dc.html" style="color:#14213D;text-decoration:none">Tilbage til forsiden</a>
+  </div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1240}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.freshState();
+  }
+  freshState() {
+    return {
+      step: 'start',
+      firma: '', branche: '', tlf: '', draft: '',
+      typing: false,
+      history: [
+        { from: 'bot', text: 'Hej! Jeg er Dialogbot – en digital receptionist. Vil du høre, hvordan jeg lyder, når jeg tager telefonen for din virksomhed?' }
+      ]
+    };
+  }
+  push(from, text) {
+    this.setState({ history: this.state.history.concat([{ from, text }]) });
+  }
+  botSays(text, next, extra) {
+    this.setState({ typing: true });
+    setTimeout(() => {
+      this.setState(Object.assign({ typing: false, history: this.state.history.concat([{ from: 'bot', text }]) }, next ? { step: next } : {}, extra || {}));
+    }, 700);
+  }
+  renderVals() {
+    const s = this.state;
+    const bubble = (m) => ({
+      text: m.text,
+      isBot: m.from === 'bot',
+      justify: m.from === 'bot' ? 'flex-start' : 'flex-end',
+      radius: m.from === 'bot' ? '16px 16px 16px 4px' : '16px 16px 4px 16px',
+      bg: m.from === 'bot' ? '#FFFFFF' : '#14213D',
+      color: m.from === 'bot' ? '#14213D' : '#FFFFFF',
+      border: m.from === 'bot' ? '2px solid #14213D' : '2px solid #14213D'
+    });
+
+    const go = (label, reply, next, extra) => () => {
+      this.push('user', label);
+      this.botSays(reply, next, extra);
+    };
+
+    let quick = [];
+    if (s.step === 'start') {
+      quick = [
+        { label: 'Ja, ring til mig', pick: go('Ja, ring til mig', 'Super. Hvad hedder din virksomhed?', 'firma') },
+        { label: 'Hvad kan du?', pick: go('Hvad kan du?', 'Jeg tager telefonen døgnet rundt, svarer på det, kunderne oftest spørger om, booker tider i din kalender og sender dig en besked, hvis der er noget, jeg ikke kan klare.\n\nVil du høre det selv?', 'start') },
+        { label: 'Hvad koster det?', pick: go('Hvad koster det?', 'Enten 1.495 kr. om måneden – eller 149 kr. pr. henvendelse, du selv godkender. Begge ekskl. moms, og opsætningen koster 0 kr.\n\nSkal jeg ringe og vise dig, hvad du får?', 'start') }
+      ];
+    } else if (s.step === 'branche') {
+      const b = (label) => go(label, 'Så er jeg receptionist for ' + s.firma + ' fra nu af. Hvilket nummer skal jeg ringe til?', 'tlf', { branche: label });
+      quick = [
+        { label: 'Håndværker', pick: b('Håndværker') },
+        { label: 'Klinik', pick: b('Klinik') },
+        { label: 'Frisør / salon', pick: b('Frisør / salon') },
+        { label: 'Restaurant', pick: b('Restaurant') },
+        { label: 'Rådgiver', pick: b('Rådgiver') },
+        { label: 'Noget andet', pick: b('Noget andet') }
+      ];
+    }
+
+    const hasInput = s.step === 'firma' || s.step === 'tlf';
+    const placeholder = s.step === 'firma' ? 'Fx Nørgaard Tømrer' : 'Fx 93 70 34 33';
+
+    const send = (e) => {
+      if (e && e.preventDefault) e.preventDefault();
+      const v = (s.draft || '').trim();
+      if (!v) return;
+      this.push('user', v);
+      if (s.step === 'firma') {
+        this.setState({ firma: v, draft: '' });
+        this.botSays('Hej ' + v + '. Hvad laver I?', 'branche');
+      } else if (s.step === 'tlf') {
+        this.setState({ tlf: v, draft: '' });
+        this.botSays('Jeg ringer til ' + v + ' om 10 sekunder. Tag telefonen – og spørg mig om alt det, en kunde ville spørge ' + s.firma + ' om.', 'calling');
+        setTimeout(() => {
+          this.botSays('Sådan! Det var mig, der tog telefonen. Sådan bliver dine kunder mødt – hver gang.\n\nVil du bygge din egen? Det tager 3 trin og ca. 30 minutter, og jeg guider dig hele vejen.', 'done');
+        }, 9000);
+      }
+    };
+
+    const stepLabels = { start: 'Start', firma: 'Trin 1 · hvem er I', branche: 'Trin 1 · hvad laver I', tlf: 'Trin 2 · dit nummer', calling: 'Trin 2 · ringer', done: 'Trin 3 · byg din egen' };
+    const phoneTitle = s.step === 'done' ? 'Opkaldet er slut' : 'Din telefon ringer snart';
+    const phoneSub = s.step === 'done' ? 'Var det noget? Så er din egen receptionist tre trin væk.' : 'Når du har skrevet dit nummer i chatten, ringer jeg inden for 10 sekunder.';
+    const done = s.step === 'done';
+    const pastOne = s.step !== 'start' && s.step !== 'firma' && s.step !== 'branche';
+
+    return {
+      msgs: s.history.map(bubble),
+      typing: s.typing,
+      quick, hasQuick: quick.length > 0,
+      hasInput, placeholder,
+      inputType: s.step === 'tlf' ? 'tel' : 'text',
+      draft: s.draft,
+      edit: (e) => this.setState({ draft: e.target.value }),
+      send,
+      hasBuild: done,
+      reset: () => this.setState(this.freshState()),
+      calling: s.step === 'calling',
+      notCalling: s.step !== 'calling',
+      tlf: s.tlf, firma: s.firma,
+      stepLabel: stepLabels[s.step] || '',
+      phoneTitle, phoneSub,
+      s1bg: '#FFCF3F',
+      s2bg: pastOne ? '#FFCF3F' : '#EEF4FB',
+      s3bg: done ? '#FFCF3F' : '#EEF4FB'
+    };
+  }
+}
+</script>
+</body>
+</html>

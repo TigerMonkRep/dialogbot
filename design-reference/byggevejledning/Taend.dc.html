@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Byg din Dialogbot – trin 3 af 3: stemme, telefon, webchat – og tænd</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+button:focus-visible,input:focus{outline:3px solid #2456F6;outline-offset:2px}
+@keyframes ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+.ringwave{animation:ring 1.4s ease-out infinite}
+</style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;min-height:100vh;background:#EEF4FB;color:#14213D;font-family:Inter,system-ui,sans-serif">
+
+<header style="border-bottom:2px solid #14213D;background:#FFFFFF">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;min-height:64px">
+    <span style="display:flex;align-items:center;gap:10px">
+      <span style="display:inline-flex;width:32px;height:32px;border-radius:9px;background:#2456F6;align-items:center;justify-content:center">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>
+      </span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Dialogbot</span>
+    </span>
+    <span style="font-size:14px;color:#5B6475">Nørgaard Tømrer</span>
+    <ol style="margin:0 0 0 auto;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;font-weight:600">
+      <li style="display:flex;align-items:center;gap:8px;color:#5B6475"><span style="display:inline-flex;width:28px;height:28px;border-radius:8px;background:#14213D;color:#FFFFFF;align-items:center;justify-content:center"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L19 7"></path></svg></span>Virksomhed</li>
+      <li style="display:flex;align-items:center;gap:8px;color:#5B6475"><span style="display:inline-flex;width:28px;height:28px;border-radius:8px;background:#14213D;color:#FFFFFF;align-items:center;justify-content:center"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L19 7"></path></svg></span>Kalender</li>
+      <li style="display:flex;align-items:center;gap:8px"><span style="display:inline-flex;width:28px;height:28px;border-radius:8px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800">3</span>Test &amp; tænd</li>
+    </ol>
+  </div>
+</header>
+
+<main style="max-width:1100px;width:100%;box-sizing:border-box;margin:0 auto;padding:36px 24px 56px;display:flex;flex-direction:column;gap:24px">
+
+  <div style="display:flex;align-items:center;gap:16px">
+    <span style="display:inline-flex;width:56px;height:56px;border-radius:14px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:30px">3</span>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#5B6475">Trin 3 af 3 · sidste trin</span>
+      <h1 style="margin:0;font-family:Outfit,sans-serif;font-weight:800;font-size:30px;letter-spacing:-0.6px;line-height:1.05">Vælg stemme, forbind telefonen – og tænd</h1>
+    </div>
+  </div>
+
+  <!-- CARD 1: VOICE -->
+  <section style="display:flex;flex-direction:column;gap:14px;padding:22px 24px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+      <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:18px">A</span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Stemme</span>
+      <span style="font-size:13px;color:#5B6475">Vælg én. Du kan altid skifte.</span>
+      <span style="margin-left:auto;display:inline-flex;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:{{voiceTagBg}};border:1.5px solid #14213D">{{voiceTag}}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+      <sc-for list="{{voices}}" as="v" hint-placeholder-count="3">
+        <div style="display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:14px;background:#FFFFFF;border:{{v.border}}">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="display:inline-flex;width:40px;height:40px;border-radius:999px;background:{{v.dot}};align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:16px;color:#FFFFFF">{{v.initial}}</span>
+            <div style="display:flex;flex-direction:column"><span style="font-family:Outfit,sans-serif;font-weight:700;font-size:17px">{{v.name}}</span><span style="font-size:13px;color:#5B6475">{{v.desc}}</span></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button type="button" onClick="{{v.play}}" style="display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border-radius:10px;background:#FFFFFF;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z"></path></svg>Hør
+            </button>
+            <button type="button" onClick="{{v.pick}}" style="flex:1;min-height:40px;padding:0 12px;border-radius:10px;background:{{v.btnBg}};color:{{v.btnColor}};border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">{{v.btnLabel}}</button>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:14px;color:#3C4659">
+      <span>Den siger: <i>«{{sample}}»</i></span>
+      <button type="button" onClick="{{fixName}}" style="min-height:36px;padding:0 10px;border-radius:8px;background:#FFFFFF;border:1.5px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:13px;cursor:pointer">Udtaler den «Nørgaard» forkert? Ret det</button>
+    </div>
+  </section>
+
+  <!-- CARD 2: PHONE -->
+  <section style="display:flex;flex-direction:column;gap:14px;padding:22px 24px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+      <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:18px">B</span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Telefon</span>
+      <span style="font-size:13px;color:#5B6475">Du beholder dit nummer. Vi tager bare opkaldene.</span>
+      <span style="margin-left:auto;display:inline-flex;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:{{phoneTagBg}};border:1.5px solid #14213D;color:{{phoneTagColor}}">{{phoneTag}}</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:stretch">
+      <div style="flex:1 1 260px;display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:14px;border:1.5px solid #14213D">
+        <span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475">Dit nummer</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:26px">+45 93 70 34 33</span>
+        <span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475;margin-top:4px">Hvornår skal Dialogbot tage den?</span>
+        <div style="display:inline-flex;padding:4px;border-radius:999px;border:2px solid #14213D;align-self:flex-start">
+          <button type="button" onClick="{{modeAlways}}" style="min-height:36px;padding:0 14px;border-radius:999px;border:0;background:{{alwaysBg}};color:{{alwaysColor}};font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Altid</button>
+          <button type="button" onClick="{{modeMissed}}" style="min-height:36px;padding:0 14px;border-radius:999px;border:0;background:{{missedBg}};color:{{missedColor}};font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Kun når jeg ikke tager den</button>
+        </div>
+      </div>
+      <div style="flex:1 1 300px;display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:14px;background:#EEF4FB;border:1.5px solid #14213D">
+        <span style="font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475">Gør sådan – det tager 10 sekunder</span>
+        <span style="font-size:15px;line-height:1.5">Tast dette på din telefon og tryk ring:</span>
+        <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:24px;letter-spacing:1px;padding:10px 14px;border-radius:10px;background:#FFFFFF;border:2px solid #14213D;align-self:flex-start">{{code}}</span>
+        <span style="font-size:13px;color:#5B6475">Koden passer til dit teleselskab. Virker det ikke? <a href="tel:+4593703433" style="color:#14213D;font-weight:600">Ring, så gør vi det sammen.</a></span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px">
+          <button type="button" onClick="{{testCall}}" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;background:#2456F6;color:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">{{testLabel}}</button>
+          <sc-if value="{{testing}}" hint-placeholder-val="{{false}}">
+            <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#3C4659"><span style="position:relative;width:14px;height:14px;display:inline-flex"><span class="ringwave" style="position:absolute;inset:0;border-radius:999px;border:2px solid #2456F6"></span><span style="width:14px;height:14px;border-radius:999px;background:#2456F6"></span></span>Ringer til din telefon …</span>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARD 3: WEBCHAT -->
+  <section style="display:flex;flex-direction:column;gap:14px;padding:22px 24px;border-radius:20px;background:#FFFFFF;border:2px solid #14213D">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+      <span style="display:inline-flex;width:36px;height:36px;border-radius:10px;background:#FFCF3F;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:18px">C</span>
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:20px">Webchat på hjemmesiden</span>
+      <span style="font-size:13px;color:#5B6475">Valgfrit. Den samme assistent – bare som chat.</span>
+      <span style="margin-left:auto;display:inline-flex;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:{{webTagBg}};border:{{webTagBorder}};color:{{webTagColor}}">{{webTag}}</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:stretch">
+      <div style="flex:1 1 300px;display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:14px;border:1.5px solid #14213D">
+        <span style="font-size:15px;line-height:1.5">Én linje skal på jeres hjemmeside. Du behøver ikke forstå den – send den til den, der passer siden.</span>
+        <code style="display:block;padding:10px 12px;border-radius:10px;background:#EEF4FB;border:1.5px solid #14213D;font-size:13px;word-break:break-all">&lt;script src="https://dialogbot.dk/chat.js" data-id="norgaard-tomrer"&gt;&lt;/script&gt;</code>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <button type="button" onClick="{{copy}}" style="min-height:40px;padding:0 12px;border-radius:10px;background:#FFFFFF;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">{{copyLabel}}</button>
+          <button type="button" onClick="{{sendDev}}" style="min-height:40px;padding:0 12px;border-radius:10px;background:#FFFFFF;border:2px solid #14213D;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer">Send til min webmand</button>
+          <button type="button" onClick="{{skipWeb}}" style="min-height:40px;padding:0 12px;border-radius:10px;background:#FFFFFF;border:0;font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:14px;color:#5B6475;cursor:pointer">Spring over for nu</button>
+        </div>
+        <span style="font-size:13px;color:#5B6475">Når linjen er på siden, skifter status her til «Klar» af sig selv.</span>
+      </div>
+      <div style="flex:0 1 260px;position:relative;min-height:170px;border-radius:14px;background:#EEF4FB;border:1.5px solid #14213D;overflow:hidden">
+        <span style="position:absolute;left:14px;top:12px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#5B6475">Sådan ser det ud</span>
+        <div style="position:absolute;left:14px;top:38px;width:120px;height:8px;border-radius:4px;background:#D6DEEA"></div>
+        <div style="position:absolute;left:14px;top:54px;width:180px;height:8px;border-radius:4px;background:#D6DEEA"></div>
+        <div style="position:absolute;left:14px;top:70px;width:90px;height:8px;border-radius:4px;background:#D6DEEA"></div>
+        <div style="position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px 0 10px;border-radius:999px;background:#14213D;color:#FFFFFF;border:2px solid #14213D;box-shadow:3px 3px 0 #FFCF3F;font-family:Outfit,sans-serif;font-weight:700;font-size:13px">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z"></path></svg>Spørg os
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TÆND -->
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px;padding:22px 24px;border-radius:20px;background:#14213D;color:#FFFFFF;border:2px solid #14213D">
+    <div style="flex:1 1 320px;display:flex;flex-direction:column;gap:4px">
+      <span style="font-family:Outfit,sans-serif;font-weight:800;font-size:24px;letter-spacing:-0.4px">{{readyTitle}}</span>
+      <span style="font-size:14px;color:#D6DEEA">{{readySub}}</span>
+    </div>
+    <a href="Dashboard.dc.html" style="display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 26px;border-radius:14px;background:{{onBg}};color:{{onColor}};text-decoration:none;font-family:Outfit,sans-serif;font-weight:800;font-size:19px;border:2px solid {{onBorder}}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9M6.3 7.3a8 8 0 1 0 11.4 0"></path></svg>Tænd Dialogbot
+    </a>
+  </div>
+
+  <p style="margin:0;font-size:13px;color:#5B6475;text-align:center">Du finder de tre kort igen under dit profil-ikon → «Stemme, telefon og webchat». De ligger ikke på dashboardet, for du skal kun bruge dem én gang.</p>
+</main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":1340}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { voice: null, mode: 'always', phone: 'none', testing: false, web: 'none', copied: false };
+  }
+  renderVals() {
+    const s = this.state;
+    const list = [
+      { id: 'anna', name: 'Anna', desc: 'Rolig og tydelig', initial: 'A', dot: '#2456F6' },
+      { id: 'mads', name: 'Mads', desc: 'Venlig og afslappet', initial: 'M', dot: '#14213D' },
+      { id: 'sofie', name: 'Sofie', desc: 'Varm og energisk', initial: 'S', dot: '#5B6475' }
+    ];
+    const voices = list.map((v) => {
+      const sel = s.voice === v.id;
+      return Object.assign({}, v, {
+        border: sel ? '3px solid #2456F6' : '2px solid #14213D',
+        btnBg: sel ? '#2456F6' : '#FFFFFF', btnColor: sel ? '#FFFFFF' : '#14213D',
+        btnLabel: sel ? 'Valgt' : 'Vælg',
+        pick: () => this.setState({ voice: v.id }),
+        play: () => {}
+      });
+    });
+    const chosen = list.find((v) => v.id === s.voice);
+    const phoneOk = s.phone === 'ok';
+    const ready = !!chosen && phoneOk;
+    return {
+      voices,
+      voiceTag: chosen ? 'Valgt: ' + chosen.name : 'Vælg én',
+      voiceTagBg: chosen ? '#FFCF3F' : '#FFFFFF',
+      sample: 'Du har ringet til Nørgaard Tømrer, det er ' + (chosen ? chosen.name : 'Dialogbot') + '. Hvad kan jeg hjælpe med?',
+      fixName: () => {},
+      modeAlways: () => this.setState({ mode: 'always' }),
+      modeMissed: () => this.setState({ mode: 'missed' }),
+      alwaysBg: s.mode === 'always' ? '#14213D' : '#FFFFFF', alwaysColor: s.mode === 'always' ? '#FFFFFF' : '#14213D',
+      missedBg: s.mode === 'missed' ? '#14213D' : '#FFFFFF', missedColor: s.mode === 'missed' ? '#FFFFFF' : '#14213D',
+      code: s.mode === 'always' ? '*21*70 12 34 56#' : '**61*70 12 34 56#',
+      phoneTag: phoneOk ? 'Forbundet' : (s.testing ? 'Tester …' : 'Ikke forbundet'),
+      phoneTagBg: phoneOk ? '#FFFFFF' : '#FFCF3F', phoneTagColor: phoneOk ? '#1B6B3A' : '#14213D',
+      testing: s.testing,
+      testLabel: phoneOk ? 'Test igen' : 'Test: ring til mig nu',
+      testCall: () => { this.setState({ testing: true }); setTimeout(() => this.setState({ testing: false, phone: 'ok' }), 3500); },
+      webTag: s.web === 'ok' ? 'Klar' : (s.web === 'sent' ? 'Sendt til webmand' : (s.web === 'skip' ? 'Sprunget over' : 'Ikke sat op')),
+      webTagBg: s.web === 'sent' ? '#FFCF3F' : '#FFFFFF',
+      webTagBorder: s.web === 'none' || s.web === 'skip' ? '1.5px dashed #14213D' : '1.5px solid #14213D',
+      webTagColor: s.web === 'ok' ? '#1B6B3A' : (s.web === 'skip' ? '#5B6475' : '#14213D'),
+      copy: () => { this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1500); },
+      copyLabel: s.copied ? 'Kopieret' : 'Kopiér linjen',
+      sendDev: () => this.setState({ web: 'sent' }),
+      skipWeb: () => this.setState({ web: 'skip' }),
+      readyTitle: ready ? 'Alt er klar.' : 'To ting mangler, før du kan tænde',
+      readySub: ready ? 'Fra nu af tager ' + chosen.name + ' telefonen for Nørgaard Tømrer. Du kan slukke igen med ét klik på «I dag».' : (chosen ? 'Forbind telefonen (kort B) – tryk «Test: ring til mig nu».' : (phoneOk ? 'Vælg en stemme (kort A).' : 'Vælg en stemme (A) og forbind telefonen (B). Webchat kan vente.')),
+      onBg: ready ? '#FFCF3F' : '#14213D', onColor: ready ? '#14213D' : '#8A93A6', onBorder: ready ? '#FFCF3F' : '#8A93A6'
+    };
+  }
+}
+</script>
+</body>
+</html>

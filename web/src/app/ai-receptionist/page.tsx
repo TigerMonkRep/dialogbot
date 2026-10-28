@@ -33,7 +33,7 @@ export default function Page() {
         </> },
         { title: "Pris og opsætning", body: <>
           <p>Der er ét abonnement: fra <strong>2.495 kr. om måneden</strong>, uden pris pr. henvendelse. Udgående kampagneopkald koster 4 kr. pr. opkald. Alle priser er ekskl. moms.</p>
-          <p>I skal ikke kunne noget teknisk. En fra Dialogbot sætter assistenten op sammen med jer på cirka en halv time. Har I en hjemmeside, henter Dialogbot det meste automatisk, og I kan prøve assistenten af, før den tager et eneste rigtigt opkald. Læs også om <Link href="/ai-telefonsvarer">AI-telefonsvareren</Link> og <Link href="/chatbot">chatbotten til hjemmesiden</Link>.</p>
+          <p>I skal ikke kunne noget teknisk. I sætter selv assistenten op efter byggevejledningens tre trin på cirka en halv time – det er med i abonnementet. Har I en hjemmeside, henter Dialogbot det meste automatisk, og I kan prøve assistenten af, før den tager et eneste rigtigt opkald. Vil I hellere have det gjort, sætter vores egne specialister den op for 5.000 kr. ekskl. moms én gang – skræddersyet og integreret med jeres egne systemer og behov. Læs også om <Link href="/ai-telefonsvarer">AI-telefonsvareren</Link> og <Link href="/chatbot">chatbotten til hjemmesiden</Link>.</p>
         </> },
       ]}
       faq={[
@@ -41,7 +41,7 @@ export default function Page() {
         ["Lyder den som en robot?", "Dialogbot taler naturligt dansk med en stemme, I selv vælger, fx Camilla eller Peter. Den siger altid ærligt, at den er en digital assistent, hvis kunden spørger."],
         ["Kan jeg beholde mit telefonnummer?", "Ja. I viderestiller jeres nuværende nummer til Dialogbot, når I er optaget eller har lukket, og beholder jeres teleudbyder."],
         ["Hvad sker der, hvis assistenten ikke kender svaret?", "Den gætter ikke. Den svarer kun ud fra godkendt viden og lover, at en medarbejder vender tilbage, og I får henvendelsen med det samme."],
-        ["Hvor lang tid tager opsætningen?", "Typisk omkring en halv time sammen med en fra Dialogbot. Vi guider jer gennem det hele."],
+        ["Hvor lang tid tager opsætningen?", "Gør I det selv, tager byggevejledningens tre trin cirka en halv time, og assistenten guider jer undervejs. Vælger I opsætning fra vores specialister (5.000 kr. ekskl. moms), aftaler vi et møde og sætter den op skræddersyet til jeres systemer."],
       ]} />
   );
 }

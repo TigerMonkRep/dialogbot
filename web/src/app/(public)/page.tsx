@@ -159,6 +159,7 @@ function structuredData() {
       offers: [
         { "@type": "Offer", name: "Abonnement – fra", price: "2495", priceCurrency: "DKK", description: "Fra, pr. måned ekskl. moms" },
         { "@type": "Offer", name: "Udgående kampagneopkald", price: "4", priceCurrency: "DKK", description: "Pr. udgående opkald ekskl. moms" },
+        { "@type": "Offer", name: "Opsætning fra Dialogbots specialister", price: "5000", priceCurrency: "DKK", description: "Én gang, ekskl. moms – skræddersyet opsætning og integration til egne systemer. Gør-det-selv-opsætning er med i abonnementet." },
       ] },
   ];
 }

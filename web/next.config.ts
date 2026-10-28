@@ -27,20 +27,27 @@ const MOVED: [string, string][] = [
   ["/app/settings/agreement", "/app/konto/abonnement"],
   ["/app/billing", "/app/konto/fakturering"],
   ["/app/settings/activity", "/app/indstillinger/log"],
-  ["/app/settings/business", "/app/indstillinger/virksomhed"],
+  ["/app/settings/business", "/opsaetning/1"],
   ["/app/settings/telephony", "/app/indstillinger/telefoni"],
   ["/app/settings/webchat", "/app/indstillinger/webchat"],
   ["/app/settings/integrationer", "/app/indstillinger/integrationer"],
   ["/app/voices", "/app/indstillinger/stemmer"],
   ["/app/voices/own", "/app/indstillinger/stemmer/egen"],
   ["/app/help", "/app/hjaelp"],
+  ["/app/setup/readiness", "/app/setup"],
+  ["/app/setup/launch", "/app/setup"],
+  ["/onboarding/:path*", "/opsaetning/1"],
   ["/app/not-yet", "/app/hjaelp"],
 ];
 
 const nextConfig: NextConfig = {
   env: { APP_VERSION: `v${version}`, APP_COMMIT: commit },
   async redirects() {
-    return MOVED.map(([source, destination]) => ({ source, destination, permanent: true }));
+    return [
+      // Back from the calendar provider's consent screen: while the person is in trin 2, the integrations page hands them back to it.
+      { source: "/app/settings/integrationer", has: [{ type: "cookie" as const, key: "db_setup_return" }], destination: "/opsaetning/2", permanent: false },
+      ...MOVED.map(([source, destination]) => ({ source, destination, permanent: true })),
+    ];
   },
 };
 

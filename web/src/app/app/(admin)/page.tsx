@@ -1,12 +1,14 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
+import { setupStatus } from "@/lib/setup.server";
 import { Icon } from "@/components/ui";
 import { ChangePanel, PowerToggle, type TelephonyCode } from "./client";
 
 type Activity = { id: string; kind: string; title: string; body: string; href: string; at: string };
 type Overview = { kpis: Record<string, number>; activity: Activity[] };
-type Plan = { progress: { required_total: number; required_complete: number }; next_action: { title: string } | null };
 type Telephony = { status: { code: TelephonyCode; label: string; next_step: string }; business_number: string | null; destination: { e164: string } | null };
 type Call = { id: string; from_number: string | null; started_at: string | null; duration_seconds: number | null; ended_reason: string | null; summary: string | null; conversation_id: string | null };
 type Me = { display_name: string };
@@ -38,13 +40,16 @@ const dayLabel = (iso: string | null) => {
 };
 
 /** "I dag": status + today's numbers, the list of things that need you, the latest calls, and the one place to change things from. */
-export default async function OverviewPage() {
+export default async function OverviewPage({ searchParams }: { searchParams: Promise<{ taendt?: string }> }) {
   const ws = await requireWorkspace();
+  const { taendt } = await searchParams;
+  // The three setup steps come first. «Jeg gør resten senere» (cookie) lets people look around before they are done.
+  const st = await setupStatus(ws.id, ws.role);
+  if (!taendt && !st.done && !(await cookies()).get("db_setup_later")) redirect(`/opsaetning/${st.next}`);
   const staff = ws.role !== "reader";
   const canManage = ws.role === "owner" || ws.role === "admin";
-  const [ov, plan, tel, calls, me] = await Promise.all([
+  const [ov, tel, calls, me] = await Promise.all([
     backend<Overview>(`/workspaces/${ws.id}/overview`),
-    backend<Plan>(`/workspaces/${ws.id}/setup/plan`).catch(() => null),
     staff ? backend<Telephony>(`/workspaces/${ws.id}/telephony`).catch(() => null) : Promise.resolve(null),
     staff ? backend<{ items: Call[] }>(`/workspaces/${ws.id}/telephony/calls?limit=5`).catch(() => null) : Promise.resolve(null),
     backend<Me>("/auth/me").catch(() => null),
@@ -53,7 +58,6 @@ export default async function OverviewPage() {
   const code: TelephonyCode = tel?.status.code ?? "not_started";
   const on = code === "active";
   const todo = ov.activity.filter((a) => a.kind in TODO && (a.kind !== "task" || a.title.startsWith("Overskredet")));
-  const pct = plan ? Math.round((100 * plan.progress.required_complete) / Math.max(1, plan.progress.required_total)) : null;
   const firstName = (me?.display_name ?? "").split(" ")[0] || "du";
   const summary = `${k.calls_24h ?? 0} opkald og ${k.new_leads_24h ?? 0} nye henvendelser det seneste døgn, ${todo.length === 0 ? "intet" : todo.length} venter på dig.`;
 
@@ -61,10 +65,17 @@ export default async function OverviewPage() {
     <div className="flex flex-wrap gap-6 items-start">
       {/* LEFT: the three things you can SEE */}
       <section className="flex-[999_1_560px] min-w-0 flex flex-col gap-5">
-        {plan && pct !== null && pct < 100 && (
-          <Link href="/app/setup" className="flex flex-wrap items-center gap-3 px-5 py-4 rounded-2xl border-2 border-dashed border-ink bg-paper hover:bg-panel">
+        {taendt && st.done && (
+          <div role="status" className="stamp-in flex items-center gap-3 px-5 py-4 rounded-2xl border-2 border-ink bg-highlight shadow-block-sm">
+            <Icon name="power_settings_new" size={26} />
+            <span className="font-display font-extrabold text-[20px] text-ink">Dialogbot er tændt</span>
+            <span className="text-[14px] text-ink-soft">Den tager telefonen, næste gang kunderne ringer.</span>
+          </div>
+        )}
+        {!st.done && (
+          <Link href={`/opsaetning/${st.next}`} className="flex flex-wrap items-center gap-3 px-5 py-4 rounded-2xl border-2 border-dashed border-ink bg-paper hover:bg-panel">
             <span className="inline-flex px-2.5 py-1 rounded-full bg-highlight text-[11px] font-semibold uppercase tracking-[0.08em]">Ikke færdig</span>
-            <span className="flex-1 min-w-[200px] text-[15px] font-semibold text-ink">Opsætningen er {pct} % færdig{plan.next_action ? ` · Næste: ${plan.next_action.title}` : ""}</span>
+            <span className="flex-1 min-w-[200px] text-[15px] font-semibold text-ink">Opsætningen er ikke færdig · næste: trin {st.next} {st.next === 1 ? "– virksomhed" : st.next === 2 ? "– kalender & systemer" : "– test & tænd"}</span>
             <span className="inline-flex items-center gap-1 text-[14px] font-semibold text-ink">Fortsæt<Icon name="arrow_forward" size={18} /></span>
           </Link>
         )}

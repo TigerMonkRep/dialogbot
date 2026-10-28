@@ -1,2 +1,4 @@
-// Phase 1 of kundeapp v2: the new route renders the current page; the old route redirects here (next.config.ts).
-export { default } from "../../settings/business/page";
+import { redirect } from "next/navigation";
+
+/** Om virksomheden is trin 1 of the setup. */
+export default function Page() { redirect("/opsaetning/1"); }

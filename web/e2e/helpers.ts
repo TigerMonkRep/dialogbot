@@ -17,7 +17,13 @@ export async function shot(page: Page, info: TestInfo, name: string) {
   await info.attach(name, { path, contentType: "image/png" });
 }
 
+/** «Jeg gør resten senere»: journeys that are not about the setup steps look around I dag without being sent to them. */
+export async function skipSetupGate(page: Page) {
+  await page.context().addCookies([{ name: "db_setup_later", value: "1", url: process.env.BASE_URL ?? "http://localhost:3000" }]);
+}
+
 export async function login(page: Page, email: string, password = DEMO_PASSWORD) {
+  await skipSetupGate(page);
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(email);
   await page.getByLabel("Adgangskode", { exact: true }).fill(password);
@@ -48,6 +54,7 @@ export async function freshOwner(page: Page, info: TestInfo, intent = "reception
   expect((await page.request.post("/api/backend/auth/verify-email", { headers: CSRF, data: { token } })).ok()).toBeTruthy();
   const ws = await (await page.request.post("/api/backend/workspaces", { headers: CSRF, data: { name: `E2E ${info.project.name} ${Date.now()}`, product_intent: intent } })).json();
   await page.request.post("/api/auth/workspace", { headers: CSRF, data: { workspace_id: ws.id } });
+  await skipSetupGate(page);
   return { email, wsId: ws.id as string };
 }
 

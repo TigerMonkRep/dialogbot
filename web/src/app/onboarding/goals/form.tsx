@@ -30,8 +30,8 @@ export function GoalsForm({ wsId, goals, canEdit, aiReady = false }: { wsId: str
     setSaved(true); router.refresh();
   });
   const cb = (k: string, label: string, hint?: string) => (
-    <label className={`flex items-start gap-space-md p-space-md rounded-xl bg-surface-container-low transition-all hover:bg-surface-container ${canEdit ? "cursor-pointer" : ""}`}>
-      <input type="checkbox" className="mt-1 w-4 h-4 rounded accent-primary" checked={Boolean(f[k])} onChange={(e) => { setSaved(false); setF({ ...f, [k]: e.target.checked }); }} disabled={!canEdit} />
+    <label className={`flex items-start gap-space-md p-space-md rounded-xl border-[1.5px] border-ink bg-panel transition-colors hover:bg-panel-deep ${canEdit ? "cursor-pointer" : ""}`}>
+      <input type="checkbox" className="mt-1 w-5 h-5 accent-accent" checked={Boolean(f[k])} onChange={(e) => { setSaved(false); setF({ ...f, [k]: e.target.checked }); }} disabled={!canEdit} />
       <span className="space-y-0.5"><span className="block font-label-lg text-label-lg font-bold text-on-surface">{label}</span>{hint && <span className="block font-body-sm text-body-sm text-on-surface-variant">{hint}</span>}</span>
     </label>
   );
@@ -66,7 +66,7 @@ export function GoalsForm({ wsId, goals, canEdit, aiReady = false }: { wsId: str
       <div className="flex flex-wrap items-center justify-end gap-space-md pt-space-sm">
         {aiReady && canEdit && <Button type="button" variant="ghost" icon="auto_awesome" disabled={suggest.pending} onClick={() => suggest.run()}>Foreslå igen</Button>}
         <Button type="submit" variant="tonal" icon="save" disabled={pending || !canEdit}>{pending ? "Gemmer…" : "Gem mål"}</Button>
-        <Button type="button" onClick={() => router.push("/onboarding/languages")}>Fortsæt til sprog <Icon name="arrow_forward" size={18} className="text-secondary-fixed" /></Button>
+        <Button type="button" onClick={() => router.push("/onboarding/languages")}>Fortsæt til sprog <Icon name="arrow_forward" size={18} /></Button>
       </div>
     </form>
   );

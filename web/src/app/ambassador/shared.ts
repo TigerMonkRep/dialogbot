@@ -24,8 +24,8 @@ export const monthLabel = (ym: string | null) => {
   return new Date(y, m - 1, 1).toLocaleDateString("da-DK", { month: "long", year: "numeric" });
 };
 export const STATUS: Record<Profile["status"], { label: string; tone: string }> = {
-  pending: { label: "Afventer godkendelse", tone: "bg-tertiary-fixed text-on-tertiary-fixed" },
-  active: { label: "Aktiv", tone: "bg-secondary-container text-on-secondary-container" },
-  suspended: { label: "Sat på pause", tone: "bg-error-container text-on-error-container" },
-  rejected: { label: "Ikke godkendt", tone: "bg-surface-container-high text-on-surface-variant" },
+  pending: { label: "Afventer godkendelse", tone: "bg-highlight text-ink border-highlight" },
+  active: { label: "Aktiv", tone: "bg-success-soft text-success border-success-soft" },
+  suspended: { label: "Sat på pause", tone: "bg-danger-soft text-on-error-container border-danger-soft" },
+  rejected: { label: "Ikke godkendt", tone: "bg-panel text-ink border-ink" },
 };

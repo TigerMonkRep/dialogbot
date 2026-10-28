@@ -51,19 +51,26 @@ export function PathSwitch({ current }: { current?: Path }) {
   );
 }
 
-export function SiteHeader({ current, nav, phone = true }: {
+export function SiteHeader({ current, nav, phone = true, badge, navAlways = false }: {
   current?: Path;
-  /** In-page anchors (the byggevejledning has them). */
+  /** In-page anchors (the byggevejledning has them) or a few page links. */
   nav?: [string, string][];
   phone?: boolean;
+  /** Small Trin-gul pill next to the logo, e.g. "Ambassadør". */
+  badge?: string;
+  /** Show the nav on every width (default: only from lg, as on the landing pages). */
+  navAlways?: boolean;
 }) {
   return (
     <header className="border-b-2 border-ink bg-white">
       <div className="max-w-[1180px] mx-auto px-4 sm:px-6 min-h-[72px] py-3 flex flex-wrap items-center gap-x-6 gap-y-3 sm:gap-x-8">
-        <Logo />
+        <span className="inline-flex items-center gap-2.5">
+          <Logo />
+          {badge && <span className="inline-flex items-center min-h-6 px-2.5 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">{badge}</span>}
+        </span>
         {nav && (
-          <nav aria-label="Hovedmenu" className="hidden lg:flex flex-wrap gap-x-6 gap-y-1 text-[15px] font-medium ml-auto">
-            {nav.map(([h, l]) => <a key={h} href={h} className="text-ink no-underline py-2.5 hover:text-accent">{l}</a>)}
+          <nav aria-label="Hovedmenu" className={`${navAlways ? "flex" : "hidden lg:flex"} flex-wrap gap-x-5 gap-y-1 text-[15px] font-medium ml-auto`}>
+            {nav.map(([h, l]) => <Link key={h} href={h} className="text-ink no-underline inline-flex items-center min-h-11 hover:text-accent">{l}</Link>)}
           </nav>
         )}
         <div className={`flex items-center gap-4 sm:gap-6 ${nav ? "lg:ml-0 ml-auto" : "ml-auto"}`}>

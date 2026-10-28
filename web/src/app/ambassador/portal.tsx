@@ -16,7 +16,7 @@ function Copy({ text, label }: { text: string; label: string }) {
   const [done, setDone] = useState(false);
   return (
     <button type="button" onClick={async () => { try { await navigator.clipboard.writeText(text); setDone(true); setTimeout(() => setDone(false), 1500); } catch { /* select manually */ } }}
-      className="inline-flex items-center gap-1 px-space-sm py-1.5 rounded-lg bg-surface-container-low text-primary font-label-md text-label-md hover:bg-surface-container">
+      className="inline-flex items-center gap-1.5 min-h-[44px] px-3.5 rounded-xl border-2 border-ink bg-white text-ink text-[14px] font-semibold hover:bg-panel">
       <Icon name={done ? "check" : "content_copy"} size={16} />{done ? "Kopieret" : label}
     </button>
   );
@@ -24,17 +24,17 @@ function Copy({ text, label }: { text: string; label: string }) {
 
 function Stat({ label, value, hint, strong = false }: { label: string; value: string; hint?: string; strong?: boolean }) {
   return (
-    <div className={`rounded-xl p-space-md ${strong ? "bg-primary text-on-primary" : "bg-surface-container-lowest shadow-sm"}`}>
-      <p className={`font-label-sm text-label-sm uppercase tracking-wider font-bold ${strong ? "text-secondary-fixed" : "text-on-surface-variant"}`}>{label}</p>
-      <p className="font-headline-md text-headline-md font-bold tabular-nums mt-1">{value}</p>
-      {hint && <p className={`font-label-sm text-label-sm mt-0.5 ${strong ? "opacity-80" : "text-on-surface-variant"}`}>{hint}</p>}
+    <div className={`rounded-2xl border-2 border-ink p-4 ${strong ? "bg-ink text-white shadow-block" : "bg-white text-ink"}`}>
+      <p className={`m-0 text-[12px] font-semibold uppercase tracking-[0.12em] ${strong ? "text-highlight" : "text-muted"}`}>{label}</p>
+      <p className="m-0 font-display font-extrabold text-[26px] leading-[1.1] tracking-[-0.5px] tabular-nums mt-1.5">{value}</p>
+      {hint && <p className={`m-0 text-[13px] mt-1 ${strong ? "text-white/75" : "text-muted"}`}>{hint}</p>}
     </div>
   );
 }
 
 const ENTRY_TONE: Record<string, string> = {
-  held: "bg-tertiary-fixed text-on-tertiary-fixed", payable: "bg-secondary-container text-on-secondary-container",
-  paid: "bg-surface-container-high text-on-surface", reversed: "bg-error-container text-on-error-container",
+  held: "bg-highlight text-ink border-highlight", payable: "bg-success-soft text-success border-success-soft",
+  paid: "bg-panel text-ink border-ink", reversed: "bg-danger-soft text-on-error-container border-danger-soft",
 };
 
 export function Portal({ me, customers, ledger, payouts }: { me: Profile; customers: Customer[]; ledger: Entry[]; payouts: Payout[] }) {
@@ -42,12 +42,12 @@ export function Portal({ me, customers, ledger, payouts }: { me: Profile; custom
   const b = me.balances;
   const st = STATUS[me.status];
   return (
-    <div className="space-y-space-lg">
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-space-sm">
-        <div>
-          <span className={`inline-flex px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-bold ${st.tone}`}>{st.label}</span>
-          <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight mt-1">Hej {me.full_name.split(" ")[0]}</h1>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Din aftale: {kr(me.terms.bonus_minor)} i startbonus pr. kunde + {pct(me.terms.rate_bp)} af det, de betaler, i {me.terms.months} måneder.</p>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
+        <div className="flex flex-col gap-2">
+          <span className={`self-start inline-flex items-center min-h-6 px-2.5 rounded-full border-[1.5px] text-[12px] font-semibold uppercase tracking-[0.06em] ${st.tone}`}>{st.label}</span>
+          <h1 className="m-0 font-display font-extrabold text-[clamp(32px,4vw,46px)] leading-[1.05] tracking-[-1px] text-ink">Hej {me.full_name.split(" ")[0]}</h1>
+          <p className="m-0 text-[15px] leading-normal text-ink-soft">Din aftale: {kr(me.terms.bonus_minor)} i startbonus pr. kunde + {pct(me.terms.rate_bp)} af det, de betaler, i {me.terms.months} måneder.</p>
         </div>
       </div>
 
@@ -56,83 +56,83 @@ export function Portal({ me, customers, ledger, payouts }: { me: Profile; custom
       {me.status === "suspended" && <Alert kind="warn">Din aftale er sat på pause, og dit link virker ikke lige nu.{me.decision_note ? ` Begrundelse: ${me.decision_note}` : ""}</Alert>}
       {me.minor && !me.parent_consent_at && <ParentPending email={me.parent_email} />}
 
-      <nav className="flex gap-1 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" aria-label="Faner">
+      <nav className="flex gap-1.5 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 py-1" aria-label="Faner">
         {TABS.map(([k, l, i]) => (
           <button key={k} type="button" onClick={() => setTab(k)} aria-current={tab === k ? "page" : undefined}
-            className={`flex items-center gap-1 px-space-md py-2 rounded-lg whitespace-nowrap font-label-md text-label-md ${tab === k ? "bg-primary text-on-primary" : "text-on-surface-variant hover:bg-surface-container"}`}>
-            <Icon name={i} size={18} />{l}{k === "oplysninger" && me.payout_blockers.length > 0 && me.status === "active" && <span className="w-2 h-2 rounded-full bg-error" />}
+            className={`inline-flex items-center gap-1.5 min-h-[44px] px-4 rounded-full border-2 whitespace-nowrap text-[14px] font-semibold ${tab === k ? "bg-ink border-ink text-white" : "bg-white border-ink text-ink hover:bg-panel"}`}>
+            <Icon name={i} size={18} />{l}{k === "oplysninger" && me.payout_blockers.length > 0 && me.status === "active" && <span className="w-2.5 h-2.5 rounded-full bg-danger" aria-label="Mangler oplysninger" />}
           </button>
         ))}
       </nav>
 
       {tab === "overblik" && (
-        <div className="space-y-space-lg">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-space-md">
+        <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Stat strong label="Klar til udbetaling" value={kr(b.payable_minor)} hint={b.payable_minor >= b.min_payout_minor ? "Udbetales ved næste kørsel" : `Udbetales fra ${kr(b.min_payout_minor)}`} />
             <Stat label="Optjent – frigives" value={kr(b.held_minor)} hint={`Frigives ${me.terms.hold_days ?? 30} dage efter kundens betaling`} />
             <Stat label="Under udbetaling" value={kr(b.in_payout_minor)} />
             <Stat label="Udbetalt i alt" value={kr(b.paid_minor)} />
           </div>
-          <section className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-md">
-            <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Dit link og din kode</h2>
+          <section className="rounded-2xl bg-white border-2 border-ink p-5 md:p-6 flex flex-col gap-4">
+            <h2 className="m-0 font-display font-extrabold text-[22px] leading-[1.15] text-ink">Dit link og din kode</h2>
             {me.status === "active" ? (
-              <div className="grid md:grid-cols-2 gap-space-md">
-                <div className="rounded-lg bg-surface-container-low p-space-md space-y-space-xs min-w-0">
-                  <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Personligt link</p>
-                  <p className="font-body-md text-body-md text-primary font-semibold break-all select-all">{me.link}</p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="rounded-xl border-[1.5px] border-ink bg-panel p-4 flex flex-col items-start gap-2 min-w-0">
+                  <p className="m-0 eyebrow">Personligt link</p>
+                  <p className="m-0 text-[15px] text-ink font-semibold break-all select-all">{me.link}</p>
                   <Copy text={me.link} label="Kopiér link" />
                 </div>
-                <div className="rounded-lg bg-surface-container-low p-space-md space-y-space-xs">
-                  <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Kode</p>
-                  <p className="font-headline-md text-headline-md text-primary font-bold tracking-widest select-all">{me.code}</p>
+                <div className="rounded-xl border-[1.5px] border-ink bg-panel p-4 flex flex-col items-start gap-2">
+                  <p className="m-0 eyebrow">Kode</p>
+                  <p className="m-0 font-display font-extrabold text-[26px] text-ink tracking-[0.2em] select-all">{me.code}</p>
                   <Copy text={me.code} label="Kopiér kode" />
                 </div>
               </div>
-            ) : <p className="font-body-sm text-body-sm text-on-surface-variant">Dit link og din kode vises her, når du er godkendt.</p>}
-            <div className="grid grid-cols-3 gap-space-sm text-center">
+            ) : <p className="m-0 text-[15px] text-ink-soft">Dit link og din kode vises her, når du er godkendt.</p>}
+            <div className="grid grid-cols-3 gap-3 text-center">
               {[["Besøg (30 dage)", me.stats.clicks_30d], ["Kunder", me.stats.customers], ["Betalende", me.stats.paying]].map(([l, v]) => (
-                <div key={l} className="rounded-lg bg-surface p-space-sm"><p className="font-headline-sm text-headline-sm font-bold text-primary tabular-nums">{v}</p><p className="font-label-sm text-label-sm text-on-surface-variant">{l}</p></div>
+                <div key={l} className="rounded-xl border-[1.5px] border-ink bg-white p-3"><p className="m-0 font-display font-extrabold text-[22px] text-ink tabular-nums">{v}</p><p className="m-0 text-[13px] text-muted">{l}</p></div>
               ))}
             </div>
           </section>
           {me.payout_blockers.length > 0 && me.status === "active" && (
-            <Alert kind="warn">Før vi kan udbetale: {me.payout_blockers.join(" · ")}. <button type="button" className="underline" onClick={() => setTab("oplysninger")}>Udfyld oplysninger</button></Alert>
+            <Alert kind="warn">Før vi kan udbetale: {me.payout_blockers.join(" · ")}. <button type="button" className="underline underline-offset-4 font-semibold min-h-[44px]" onClick={() => setTab("oplysninger")}>Udfyld oplysninger</button></Alert>
           )}
         </div>
       )}
 
       {tab === "kunder" && (
-        <section className="rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden">
-          {customers.length === 0 ? <p className="p-space-lg font-body-md text-body-md text-on-surface-variant">Ingen kunder endnu. Del dit link med en virksomhed, du kender – når de opretter sig, kommer de frem her.</p> : (
+        <section className="rounded-2xl bg-white border-2 border-ink overflow-hidden">
+          {customers.length === 0 ? <p className="m-0 p-6 text-[15px] leading-normal text-ink-soft">Ingen kunder endnu. Del dit link med en virksomhed, du kender – når de opretter sig, kommer de frem her.</p> : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left font-body-sm text-body-sm">
-                <thead className="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><tr><th className="p-space-sm">Virksomhed</th><th className="p-space-sm">Status</th><th className="p-space-sm">Oprettet</th><th className="p-space-sm">Andel til</th><th className="p-space-sm text-right">Din bonus</th></tr></thead>
+              <table className="w-full text-left text-[15px] text-ink">
+                <thead className="bg-panel border-b-2 border-ink text-[12px] font-semibold text-muted uppercase tracking-[0.12em]"><tr><th className="px-4 py-3">Virksomhed</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Oprettet</th><th className="px-4 py-3">Andel til</th><th className="px-4 py-3 text-right">Din bonus</th></tr></thead>
                 <tbody>{customers.map((c) => (
-                  <tr key={c.workspace_id} className="border-t border-outline-variant/40">
-                    <td className="p-space-sm font-semibold text-on-surface">{c.company}<span className="block font-label-sm text-label-sm text-on-surface-variant font-normal">via {c.via === "code" ? "kode" : c.via === "link" ? "link" : "Dialogbot"}</span></td>
-                    <td className="p-space-sm">{c.status}</td><td className="p-space-sm">{date(c.signed_up)}</td><td className="p-space-sm">{monthLabel(c.share_until)}</td>
-                    <td className="p-space-sm text-right tabular-nums font-semibold">{kr(c.earned_minor)}</td>
+                  <tr key={c.workspace_id} className="border-t-[1.5px] border-line">
+                    <td className="px-4 py-3 font-semibold text-ink">{c.company}<span className="block text-[13px] text-muted font-normal">via {c.via === "code" ? "kode" : c.via === "link" ? "link" : "Dialogbot"}</span></td>
+                    <td className="px-4 py-3">{c.status}</td><td className="px-4 py-3">{date(c.signed_up)}</td><td className="px-4 py-3">{monthLabel(c.share_until)}</td>
+                    <td className="px-4 py-3 text-right tabular-nums font-semibold">{kr(c.earned_minor)}</td>
                   </tr>))}
                 </tbody>
               </table>
             </div>
           )}
-          <p className="px-space-md py-space-sm font-label-sm text-label-sm text-on-surface-variant bg-surface">Af hensyn til kunderne ser du kun firmanavn, status og din bonus.</p>
+          <p className="m-0 px-4 py-3 text-[13px] text-muted border-t-[1.5px] border-line">Af hensyn til kunderne ser du kun firmanavn, status og din bonus.</p>
         </section>
       )}
 
       {tab === "kontoudtog" && (
-        <section className="rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden">
-          {ledger.length === 0 ? <p className="p-space-lg font-body-md text-body-md text-on-surface-variant">Ingen posteringer endnu. Du tjener første gang, når en af dine kunder har betalt sin første faktura.</p> : (
+        <section className="rounded-2xl bg-white border-2 border-ink overflow-hidden">
+          {ledger.length === 0 ? <p className="m-0 p-6 text-[15px] leading-normal text-ink-soft">Ingen posteringer endnu. Du tjener første gang, når en af dine kunder har betalt sin første faktura.</p> : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left font-body-sm text-body-sm">
-                <thead className="bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"><tr><th className="p-space-sm">Type</th><th className="p-space-sm">Kunde</th><th className="p-space-sm">Måned</th><th className="p-space-sm">Status</th><th className="p-space-sm text-right">Beløb</th></tr></thead>
+              <table className="w-full text-left text-[15px] text-ink">
+                <thead className="bg-panel border-b-2 border-ink text-[12px] font-semibold text-muted uppercase tracking-[0.12em]"><tr><th className="px-4 py-3">Type</th><th className="px-4 py-3">Kunde</th><th className="px-4 py-3">Måned</th><th className="px-4 py-3">Status</th><th className="px-4 py-3 text-right">Beløb</th></tr></thead>
                 <tbody>{ledger.map((e) => (
-                  <tr key={e.id} className="border-t border-outline-variant/40">
-                    <td className="p-space-sm font-semibold">{e.label}{e.kind === "share" && <span className="block font-label-sm text-label-sm text-on-surface-variant font-normal">{pct(me.terms.rate_bp)} af {kr(e.base_minor)}</span>}</td>
-                    <td className="p-space-sm">{e.company}</td><td className="p-space-sm">{monthLabel(e.month)}</td>
-                    <td className="p-space-sm"><span className={`inline-flex px-2 py-0.5 rounded-full font-label-sm text-label-sm ${ENTRY_TONE[e.status]}`}>{e.status_label}</span>{e.status === "held" && <span className="block font-label-sm text-label-sm text-on-surface-variant">{date(e.hold_until)}</span>}</td>
-                    <td className={`p-space-sm text-right tabular-nums font-semibold ${e.amount_minor < 0 ? "text-error" : ""}`}>{kr(e.amount_minor)}</td>
+                  <tr key={e.id} className="border-t-[1.5px] border-line">
+                    <td className="px-4 py-3 font-semibold">{e.label}{e.kind === "share" && <span className="block text-[13px] text-muted font-normal">{pct(me.terms.rate_bp)} af {kr(e.base_minor)}</span>}</td>
+                    <td className="px-4 py-3">{e.company}</td><td className="px-4 py-3">{monthLabel(e.month)}</td>
+                    <td className="px-4 py-3"><span className={`inline-flex items-center rounded-full border-[1.5px] px-2.5 py-0.5 text-[12px] font-semibold uppercase tracking-[0.06em] whitespace-nowrap ${ENTRY_TONE[e.status]}`}>{e.status_label}</span>{e.status === "held" && <span className="block text-[13px] text-muted mt-1">{date(e.hold_until)}</span>}</td>
+                    <td className={`px-4 py-3 text-right tabular-nums font-semibold ${e.amount_minor < 0 ? "text-danger" : ""}`}>{kr(e.amount_minor)}</td>
                   </tr>))}
                 </tbody>
               </table>
@@ -142,13 +142,13 @@ export function Portal({ me, customers, ledger, payouts }: { me: Profile; custom
       )}
 
       {tab === "udbetalinger" && (
-        <section className="rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden">
-          {payouts.length === 0 ? <p className="p-space-lg font-body-md text-body-md text-on-surface-variant">Ingen udbetalinger endnu. Vi udbetaler, når du har mindst {kr(b.min_payout_minor)} klar.</p> : (
+        <section className="rounded-2xl bg-white border-2 border-ink overflow-hidden">
+          {payouts.length === 0 ? <p className="m-0 p-6 text-[15px] leading-normal text-ink-soft">Ingen udbetalinger endnu. Vi udbetaler, når du har mindst {kr(b.min_payout_minor)} klar.</p> : (
             <ul>{payouts.map((p) => (
-              <li key={p.id} className="border-t first:border-t-0 border-outline-variant/40">
-                <Link href={`/ambassador/udbetalinger/${p.id}`} className="flex items-center justify-between gap-space-md p-space-md hover:bg-surface-container-low">
-                  <div><p className="font-label-lg text-label-lg font-semibold">Afregning nr. {p.number}</p><p className="font-label-sm text-label-sm text-on-surface-variant">{p.status === "paid" ? `Udbetalt ${date(p.paid_at)}` : "Under udbetaling"} · {p.income_type === "b_income" ? "B-indkomst" : "Bilag til virksomhed"}</p></div>
-                  <span className="font-headline-sm text-headline-sm font-bold tabular-nums text-primary">{kr(p.amount_minor)}</span>
+              <li key={p.id} className="border-t-[1.5px] first:border-t-0 border-line">
+                <Link href={`/ambassador/udbetalinger/${p.id}`} className="flex items-center justify-between gap-4 p-4 min-h-[44px] text-ink no-underline hover:bg-panel">
+                  <div><p className="m-0 text-[15px] font-semibold">Afregning nr. {p.number}</p><p className="m-0 text-[13px] text-muted">{p.status === "paid" ? `Udbetalt ${date(p.paid_at)}` : "Under udbetaling"} · {p.income_type === "b_income" ? "B-indkomst" : "Bilag til virksomhed"}</p></div>
+                  <span className="font-display font-extrabold text-[20px] tabular-nums text-ink">{kr(p.amount_minor)}</span>
                 </Link>
               </li>))}
             </ul>
@@ -166,11 +166,11 @@ function ParentPending({ email }: { email: string | null }) {
   const [sent, setSent] = useState(false);
   const { run, pending, error } = useSubmit(async () => { await api("/ambassador/me/parent-consent/resend", { method: "POST" }); setSent(true); });
   return (
-    <div className="rounded-xl bg-tertiary-fixed text-on-tertiary-fixed p-space-md flex flex-col sm:flex-row sm:items-center gap-space-sm">
+    <div className="rounded-xl border-[1.5px] border-ink bg-highlight text-ink p-4 flex flex-col sm:flex-row sm:items-center gap-3">
       <Icon name="family_restroom" size={24} />
-      <p className="flex-1 font-body-sm text-body-sm">Vi venter på, at din forælder ({email}) godkender aftalen. Du kan godt skaffe kunder imens – vi udbetaler, når aftalen er godkendt.</p>
+      <p className="m-0 flex-1 text-[15px] leading-normal">Vi venter på, at din forælder ({email}) godkender aftalen. Du kan godt skaffe kunder imens – vi udbetaler, når aftalen er godkendt.</p>
       <ErrorBox error={error} />
-      {sent ? <span className="font-label-md text-label-md">Mail sendt igen</span> : <Button variant="outline" icon="forward_to_inbox" disabled={pending} onClick={() => run()}>Send mail igen</Button>}
+      {sent ? <span className="text-[14px] font-semibold">Mail sendt igen</span> : <Button variant="outline" icon="forward_to_inbox" disabled={pending} onClick={() => run()}>Send mail igen</Button>}
     </div>
   );
 }
@@ -188,20 +188,20 @@ function Details({ me }: { me: Profile }) {
   });
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) => setF({ ...f, [k]: e.target.value });
   return (
-    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-md max-w-2xl">
+    <form onSubmit={(e) => { e.preventDefault(); run(); }} className="rounded-2xl bg-white border-2 border-ink p-5 md:p-6 flex flex-col gap-4 max-w-2xl">
       <ErrorBox error={error} />
       {saved && <Alert kind="ok">Gemt.</Alert>}
-      <dl className="grid grid-cols-2 gap-y-1 font-body-sm text-body-sm">
-        <dt className="text-on-surface-variant">Navn</dt><dd>{me.full_name}</dd>
-        <dt className="text-on-surface-variant">E-mail</dt><dd className="break-all">{me.email}</dd>
-        {me.kind === "private" ? <><dt className="text-on-surface-variant">Fødselsdato</dt><dd>{date(me.birth_date)}</dd>
-          <dt className="text-on-surface-variant">CPR</dt><dd>{me.has_cpr ? "Gemt (krypteret)" : <span className="text-error">Mangler</span>}</dd></>
-          : <><dt className="text-on-surface-variant">Virksomhed</dt><dd>{me.company_name} · CVR {me.cvr}</dd></>}
-        <dt className="text-on-surface-variant">Bankkonto</dt><dd>{me.has_bank ? `Slutter på ${me.bank_last4}` : <span className="text-error">Mangler</span>}</dd>
-        {me.minor && <><dt className="text-on-surface-variant">Forælders godkendelse</dt><dd>{me.parent_consent_at ? `Godkendt ${date(me.parent_consent_at)}` : "Afventer"}</dd></>}
+      <dl className="m-0 grid grid-cols-2 gap-y-1.5 text-[15px] text-ink">
+        <dt className="text-muted">Navn</dt><dd>{me.full_name}</dd>
+        <dt className="text-muted">E-mail</dt><dd className="break-all">{me.email}</dd>
+        {me.kind === "private" ? <><dt className="text-muted">Fødselsdato</dt><dd>{date(me.birth_date)}</dd>
+          <dt className="text-muted">CPR</dt><dd>{me.has_cpr ? "Gemt (krypteret)" : <span className="text-danger font-semibold">Mangler</span>}</dd></>
+          : <><dt className="text-muted">Virksomhed</dt><dd>{me.company_name} · CVR {me.cvr}</dd></>}
+        <dt className="text-muted">Bankkonto</dt><dd>{me.has_bank ? `Slutter på ${me.bank_last4}` : <span className="text-danger font-semibold">Mangler</span>}</dd>
+        {me.minor && <><dt className="text-muted">Forælders godkendelse</dt><dd>{me.parent_consent_at ? `Godkendt ${date(me.parent_consent_at)}` : "Afventer"}</dd></>}
       </dl>
       {me.kind === "private" && <Field label={me.has_cpr ? "Nyt CPR-nummer" : "CPR-nummer"} hint="Bruges kun til at indberette din B-indkomst til Skattestyrelsen. Gemmes krypteret." error={fieldError(error, "cpr")}><Input value={f.cpr} onChange={set("cpr")} inputMode="numeric" autoComplete="off" placeholder="DDMMÅÅ-XXXX" /></Field>}
-      <div className="grid grid-cols-3 gap-space-md">
+      <div className="grid grid-cols-3 gap-4">
         <Field label="Reg.nr." error={fieldError(error, "bank_reg")}><Input value={f.bank_reg} onChange={set("bank_reg")} inputMode="numeric" maxLength={4} /></Field>
         <div className="col-span-2"><Field label={me.has_bank ? "Nyt kontonummer" : "Kontonummer"} error={fieldError(error, "bank_account")}><Input value={f.bank_account} onChange={set("bank_account")} inputMode="numeric" /></Field></div>
       </div>
@@ -222,25 +222,25 @@ function Materials({ me }: { me: Profile }) {
     ["Når du står i butikken eller værkstedet", `"Mister I opkald, mens I har travlt? Jeg er ambassadør for Dialogbot – den tager telefonen og booker tider. Vil du høre den? Du kan selv bede den ringe dig op på hjemmesiden. Brug koden ${me.code}, så får I ${d} rabat."`],
   ];
   return (
-    <div className="space-y-space-md">
+    <div className="flex flex-col gap-4">
       <Alert kind="info">Husk reglerne: Skriv altid, at det er reklame, og at du får bonus. Send kun beskeder til folk, du kender eller har talt med. Ingen masse-mails eller -sms'er, og brug aldrig AI til at ringe folk op.</Alert>
-      <section className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-sm">
-        <h2 className="font-label-lg text-label-lg text-primary font-bold">Salgsmateriale til kunder</h2>
-        <p className="font-body-sm text-body-sm text-on-surface">Brochuren fortæller om Dialogbot, funktioner og priser. Din personlige udgave har dit navn, dit link og din kode på forsiden – åbn den, og vælg &quot;Gem som PDF&quot; i browserens udskriftsmenu. Opsætningsmanualen viser kunden alle trin fra konto til første opkald.</p>
-        <ul className="font-body-sm text-body-sm space-y-1">
-          <li><a className="underline text-primary" target="_blank" rel="noopener" href={`/materiale/salgsmateriale.html?${new URLSearchParams({ navn: first, link: me.link, kode: me.code, rabat: String((me.terms.customer_discount_bp ?? 5000) / 100) })}`}>Din personlige brochure</a></li>
-          <li><a className="underline text-primary" target="_blank" rel="noopener" href="/materiale/dialogbot-salgsmateriale.pdf">Brochure (PDF uden navn)</a></li>
-          <li><a className="underline text-primary" target="_blank" rel="noopener" href="/materiale/dialogbot-opsaetningsmanual.pdf">Opsætningsmanual (PDF)</a></li>
-          <li><a className="underline text-primary" target="_blank" rel="noopener" href="/materiale/dialogbot-ambassadoerhaandbog.pdf">Ambassadørhåndbogen (PDF) – til dig selv</a></li>
+      <section className="rounded-2xl bg-white border-2 border-ink p-5 md:p-6 flex flex-col gap-3">
+        <h2 className="m-0 font-display font-extrabold text-[20px] leading-[1.15] text-ink">Salgsmateriale til kunder</h2>
+        <p className="m-0 text-[15px] leading-normal text-ink-soft">Brochuren fortæller om Dialogbot, funktioner og priser. Din personlige udgave har dit navn, dit link og din kode på forsiden – åbn den, og vælg &quot;Gem som PDF&quot; i browserens udskriftsmenu. Opsætningsmanualen viser kunden alle trin fra konto til første opkald.</p>
+        <ul className="m-0 p-0 list-none text-[15px] flex flex-col gap-1">
+          <li><a className="inline-flex items-center min-h-[44px] sm:min-h-0 sm:py-1 underline underline-offset-4 text-accent font-semibold" target="_blank" rel="noopener" href={`/materiale/salgsmateriale.html?${new URLSearchParams({ navn: first, link: me.link, kode: me.code, rabat: String((me.terms.customer_discount_bp ?? 5000) / 100) })}`}>Din personlige brochure</a></li>
+          <li><a className="inline-flex items-center min-h-[44px] sm:min-h-0 sm:py-1 underline underline-offset-4 text-accent font-semibold" target="_blank" rel="noopener" href="/materiale/dialogbot-salgsmateriale.pdf">Brochure (PDF uden navn)</a></li>
+          <li><a className="inline-flex items-center min-h-[44px] sm:min-h-0 sm:py-1 underline underline-offset-4 text-accent font-semibold" target="_blank" rel="noopener" href="/materiale/dialogbot-opsaetningsmanual.pdf">Opsætningsmanual (PDF)</a></li>
+          <li><a className="inline-flex items-center min-h-[44px] sm:min-h-0 sm:py-1 underline underline-offset-4 text-accent font-semibold" target="_blank" rel="noopener" href="/materiale/dialogbot-ambassadoerhaandbog.pdf">Ambassadørhåndbogen (PDF) – til dig selv</a></li>
         </ul>
       </section>
       {texts.map(([title, text]) => (
-        <section key={title} className="rounded-xl bg-surface-container-lowest p-space-lg shadow-sm space-y-space-sm">
-          <div className="flex items-center justify-between gap-space-sm flex-wrap"><h2 className="font-label-lg text-label-lg text-primary font-bold">{title}</h2><Copy text={text} label="Kopiér tekst" /></div>
-          <p className="font-body-sm text-body-sm text-on-surface whitespace-pre-line select-all">{text}</p>
+        <section key={title} className="rounded-2xl bg-white border-2 border-ink p-5 md:p-6 flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3 flex-wrap"><h2 className="m-0 font-display font-bold text-[18px] leading-[1.2] text-ink">{title}</h2><Copy text={text} label="Kopiér tekst" /></div>
+          <p className="m-0 text-[15px] leading-normal text-ink-soft whitespace-pre-line select-all">{text}</p>
         </section>
       ))}
-      <p className="font-label-sm text-label-sm text-on-surface-variant">QR-kode, ambassadørkort og din egen side med foto kommer i næste version.</p>
+      <p className="m-0 text-[13px] text-muted">QR-kode, ambassadørkort og din egen side med foto kommer i næste version.</p>
     </div>
   );
 }

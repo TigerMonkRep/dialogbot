@@ -37,7 +37,7 @@ export function LanguagesForm({ wsId, settings, canEdit }: { wsId: string; setti
           <legend className="sr-only">c) Tilladte samtalesprog</legend>
           <span aria-hidden className="font-label-sm text-label-sm uppercase text-on-surface-variant">c) Tilladte samtalesprog</span>
           <div className="flex flex-wrap gap-1.5">{LANGS.map(([c, l]) => (
-            <label key={c} className={`flex items-center gap-1.5 px-2 py-1 rounded font-label-sm text-label-sm font-semibold cursor-pointer ${enabled.includes(c) ? "bg-secondary-container text-on-secondary-container" : "bg-surface-container text-on-surface"}`}>
+            <label key={c} className={`flex items-center gap-1.5 px-2 py-1 rounded-lg min-h-[36px] border-[1.5px] font-label-sm text-label-sm font-semibold cursor-pointer ${enabled.includes(c) ? "bg-ink border-ink text-white" : "bg-white border-ink text-ink hover:bg-panel"}`}>
               <input type="checkbox" className="w-3.5 h-3.5 accent-primary" checked={enabled.includes(c)} disabled={!canEdit} onChange={(e) => { setSaved(false); setF({ ...f, enabled_conversation_languages: e.target.checked ? [...enabled, c] : enabled.filter((x) => x !== c) }); }} />{l}
             </label>
           ))}</div>
@@ -49,7 +49,7 @@ export function LanguagesForm({ wsId, settings, canEdit }: { wsId: string; setti
       <p className="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-space-xs"><Icon name="graphic_eq" size={16} />Stemmen til telefonen vælges og afprøves under <Link href="/app/settings/telephony" className="text-primary underline">Indstillinger → Telefoni</Link>.</p>
       <div className="flex flex-wrap items-center justify-end gap-space-md pt-space-sm">
         <Button type="submit" variant="tonal" icon="save" disabled={pending || !canEdit}>{pending ? "Gemmer…" : "Gem sprog"}</Button>
-        <Button type="button" onClick={() => router.push("/app/knowledge")}>Fortsæt til viden <Icon name="arrow_forward" size={18} className="text-secondary-fixed" /></Button>
+        <Button type="button" onClick={() => router.push("/app/knowledge")}>Fortsæt til viden <Icon name="arrow_forward" size={18} /></Button>
       </div>
     </form>
   );

@@ -17,7 +17,7 @@ export default async function WorkspacePage() {
         <div className="xl:col-span-8 bg-surface-container-lowest p-space-md md:p-space-xl rounded-2xl border-2 border-ink space-y-space-lg">
           <div>
             <div className="flex items-center gap-space-sm">
-              <span className="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">Arbejdsrum</span>
+              <span className="px-2.5 py-0.5 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">Arbejdsrum</span>
               <span className="font-label-sm text-label-sm text-on-surface-variant">Arbejdsrumsoversigt</span>
             </div>
             <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink mt-0.5">Vælg eller opret arbejdsrum</h1>
@@ -26,9 +26,9 @@ export default async function WorkspacePage() {
         </div>
         <div className="xl:col-span-4 bg-surface-container-lowest p-space-md md:p-space-xl rounded-2xl border-2 border-ink space-y-space-lg">
           <div className="flex items-center gap-space-sm">
-            <div className="w-9 h-9 rounded-lg bg-primary-container text-secondary-fixed flex items-center justify-center"><Icon name="add_business" size={20} /></div>
+            <div className="w-11 h-11 rounded-xl bg-accent text-white flex items-center justify-center flex-shrink-0"><Icon name="add_business" size={22} /></div>
             <div>
-              <h2 className="font-headline-sm text-headline-sm text-primary font-bold">Nyt arbejdsrum</h2>
+              <h2 className="font-display font-extrabold text-[22px] leading-[1.15] text-ink">Nyt arbejdsrum</h2>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Hvert arbejdsrum har egen viden, eget team og egne indstillinger. Data deles aldrig på tværs.</p>
             </div>
           </div>

@@ -2,7 +2,9 @@ import Link from "next/link";
 import { backend, currentWorkspaceId, isLoggedIn } from "@/lib/api.server";
 import { Icon, LogoMark } from "./ui";
 export { LogoMark } from "./ui";
-import { AccountButton, MoreMenu, PillNav, WorkspaceChip, type NavItem } from "./shell.client";
+import { cookies } from "next/headers";
+import { VIEWAS_COOKIE } from "@/lib/config";
+import { AccountButton, MoreMenu, PillNav, ViewAsBanner, WorkspaceChip, type NavItem } from "./shell.client";
 
 type Ws = { id: string; name: string; role: string; product_intent: string };
 type Me = { display_name: string; email: string; email_verified: boolean; is_platform_operator?: boolean };
@@ -91,9 +93,12 @@ const SkipLink = () => <a href="#main" className="sr-only focus:not-sr-only focu
 /** One shell for the whole logged-in app (Byggevejledning: Dashboard/Viden mockups). */
 async function Shell({ children }: { children: React.ReactNode }) {
   const { workspaces, me, current, aiLive, env, unread } = await shellData();
+  let viewAs: { name: string; email: string } | null = null;
+  try { const raw = (await cookies()).get(VIEWAS_COOKIE)?.value; if (raw) viewAs = JSON.parse(raw); } catch { /* ignore a broken cookie */ }
   return (
     <div className="min-h-dvh bg-panel text-ink flex flex-col">
       <SkipLink />
+      {viewAs && <ViewAsBanner who={viewAs} />}
       <header className="sticky top-0 z-50 bg-paper border-b-2 border-ink pt-safe">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6 min-h-16 flex items-center gap-3 md:gap-6">
           <div className="flex items-center gap-3 min-w-0">

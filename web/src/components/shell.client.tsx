@@ -99,6 +99,7 @@ export function AccountButton({ me, extra = [] }: { me: { display_name: string; 
           {me?.is_platform_operator && (
             <div className="border-t-[1.5px] border-ink mt-1 pt-1">
               <span className="eyebrow block px-3 pt-2 pb-1">Operatør</span>
+              <Link role="menuitem" href="/app/operator/admin" onClick={() => setOpen(false)} className={MENU_ITEM}>Admin: overblik</Link>
               <Link role="menuitem" href="/app/operator/ambassadors" onClick={() => setOpen(false)} className={MENU_ITEM}>Ambassadører</Link>
               <Link role="menuitem" href="/app/operator/social" onClick={() => setOpen(false)} className={MENU_ITEM}>Sociale medier</Link>
               <Link role="menuitem" href="/app/operator/sales" onClick={() => setOpen(false)} className={MENU_ITEM}>Salg</Link>
@@ -144,6 +145,22 @@ export function MoreMenu({ items, variant }: { items: NavItem[]; variant: "hambu
           })}
         </nav>
       )}
+    </div>
+  );
+}
+
+/** Shown on every page while an operator looks at a customer's account ("se som kunde"): read-only, ends with one click. */
+export function ViewAsBanner({ who }: { who: { name: string; email: string } }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  return (
+    <div role="status" className="bg-ink text-paper border-b-2 border-ink px-4 py-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[14px]">
+      <span className="flex items-center gap-2"><Icon name="visibility" size={18} />Du ser som <strong>{who.name}</strong> ({who.email}) – kun læsning, intet kan ændres.</span>
+      <button disabled={busy} className="underline font-semibold disabled:opacity-60" onClick={async () => {
+        setBusy(true);
+        await fetch("/api/admin/view-as/end", { method: "POST", headers: { "x-requested-with": "dialogbot" } });
+        router.push("/app/operator/admin/kunder"); router.refresh();
+      }}>Afslut og gå tilbage til admin</button>
     </div>
   );
 }

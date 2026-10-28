@@ -91,6 +91,11 @@ def login(body: LoginIn, db: OrmSession = Depends(get_db), user_agent: str | Non
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(principal: Principal = Depends(get_current_principal), db: OrmSession = Depends(get_db)):
     service.logout(db, principal.session)
+    if principal.session.impersonator_user_id is not None:  # an operator ends "se som kunde"
+        from app.core.audit import record_audit
+
+        record_audit(db, workspace_id=None, actor_user_id=principal.session.impersonator_user_id, action="admin.view_as.end",
+                     object_type="user", object_id=principal.user.id, after={"email": principal.user.email})
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 

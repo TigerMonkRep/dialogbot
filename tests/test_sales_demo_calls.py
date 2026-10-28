@@ -188,7 +188,8 @@ def test_visitor_picks_voice_and_industry_and_the_script_adapts(client, sales, d
     system = payload["model"]["messages"][0]["content"]
     assert "Håndværk & byg" in system and "Mester står på stigen" in system
     assert "Klinik & sundhed" not in system  # only the chosen playbook
-    assert "vi guider jer igennem hele opsætningen" in system.lower() and "1.495 kr." in system
+    assert "vi guider jer igennem hele opsætningen" in system.lower() and "2.495 kr." in system and "4 kr. pr. udgående opkald" in system
+    assert "1.495" not in system and "149 kr" not in system and "model B" not in system.lower()
     assert "Hansen VVS" in payload["firstMessage"]
     # the call's status updates and report come back to us, whatever is configured on the number in Vapi
     assert payload["server"]["url"].endswith("/api/v1/webhooks/vapi")

@@ -2,7 +2,7 @@
 
 > Dialogbot er en dansk AI-receptionist, AI-telefonsvarer og chatbot til små og mellemstore virksomheder. Den tager telefonen og chatten døgnet rundt, svarer kun ud fra den viden, virksomheden selv har godkendt, booker, flytter og aflyser tider, sender SMS-bekræftelser og giver en kort opsummering af hver henvendelse. Dialogbot drives af Dialogbot, CVR 25632710, Abildgade 18, 8200 Aarhus, Danmark.
 
-Priser (ekskl. moms): fast abonnement 1.495 kr. om måneden, eller 149 kr. pr. godkendt henvendelse. Ingen binding, intet opstartsgebyr, gratis personlig opsætning på cirka en halv time. Virksomheder kan beholde deres nummer og viderestille til Dialogbot.
+Pris (ekskl. moms): ét abonnement fra 2.495 kr. om måneden. Udgående kampagneopkald koster 4 kr. pr. opkald. Ingen binding, intet opstartsgebyr, gratis personlig opsætning på cirka en halv time. Virksomheder kan beholde deres nummer og viderestille til Dialogbot.
 
 ## Produkt
 - [AI-receptionist](https://www.dialogbot.dk/ai-receptionist): tager telefonen og chatten, svarer ud fra godkendt viden, booker tider

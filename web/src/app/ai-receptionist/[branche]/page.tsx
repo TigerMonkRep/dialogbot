@@ -35,9 +35,9 @@ export default async function Page({ params }: { params: Promise<{ branche: stri
           <p className="text-sm text-muted">Eksemplet er en illustration. Dialogbot svarer altid ud fra den viden, I selv har godkendt. <Link href="/proev">Hør den selv – bliv ringet op</Link>.</p>
         </div> },
         { title: `“${i.objection[0]}”`, body: <p>{i.objection[1]}</p> },
-        { title: "Pris og opsætning", body: <p>Fast abonnement på <strong>1.495 kr. om måneden</strong> eller <strong>149 kr. pr. godkendt henvendelse</strong> – ekskl. moms. En fra Dialogbot sætter det op sammen med jer på cirka en halv time. Se alle detaljer på <Link href="/priser">prissiden</Link>.</p> },
+        { title: "Pris og opsætning", body: <p>Ét abonnement fra <strong>2.495 kr. om måneden</strong> – ekskl. moms og uden pris pr. henvendelse. En fra Dialogbot sætter det op sammen med jer på cirka en halv time. Se alle detaljer på <Link href="/priser">prissiden</Link>.</p> },
         { title: "Dialogbot til andre brancher", body: <ul>{others.map((o) => <li key={o.slug}><Link href={`/ai-receptionist/${o.slug}`}>AI-receptionist til {o.name}</Link></li>)}</ul> },
       ]}
-      faq={[...i.faq, ["Hvad koster det?", "1.495 kr. om måneden i fast abonnement eller 149 kr. pr. godkendt henvendelse, ekskl. moms."], ["Kan vi beholde vores telefonnummer?", "Ja. I viderestiller jeres nummer til Dialogbot, når I er optaget eller har lukket."]]} />
+      faq={[...i.faq, ["Hvad koster det?", "Ét abonnement fra 2.495 kr. om måneden, ekskl. moms. Der er ingen pris pr. henvendelse."], ["Kan vi beholde vores telefonnummer?", "Ja. I viderestiller jeres nummer til Dialogbot, når I er optaget eller har lukket."]]} />
   );
 }

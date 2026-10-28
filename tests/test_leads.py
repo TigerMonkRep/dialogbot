@@ -109,21 +109,29 @@ def test_axes_are_independent_and_approval_needs_qualification_and_agreement(cli
     assert api.post(tok, f"{base}/leads/{lid}/approve").json()["code"] == "no_agreement"
 
 
-def test_model_b_approval_snapshots_fee_and_is_idempotent(client, api, chat, db):
+def test_approval_snapshots_the_agreement_and_is_idempotent(client, api, chat, db):
     _contact(client, chat)
     tok, base = chat["tok_a"], _base(chat)
     lead = api.get(tok, f"{base}/leads").json()["items"][0]
     api.c.patch(f"/api/v1{base}/leads/{lead['id']}", json={"expected_version": lead["version"], "qualification_status": "qualified"},
                 headers=api.h(tok))
-    assert api.post(tok, f"{base}/agreement", {"model": "A"}).json()["version"] == 1
-    agreement = api.post(tok, f"{base}/agreement", {"model": "B"}).json()
-    assert agreement["version"] == 2 and agreement["lead_fee"]["net_minor"] == 14900
-    assert agreement["lead_fee"]["gross_minor"] == 18625 and agreement["invoicing"] == "not_implemented"
+    first_agreement = api.post(tok, f"{base}/agreement", {"model": "A"}).json()
+    assert first_agreement["version"] == 1
+    assert first_agreement["monthly"]["net_minor"] == 249500 and first_agreement["monthly"]["gross_minor"] == 311875
+    assert first_agreement["lead_fee"]["net_minor"] == 0                                # no price per enquiry
+    assert first_agreement["campaign_call"]["net_minor"] == 400                         # 4 kr. per outbound call
+    # pay-per-enquiry no longer exists: there is one offer
+    gone = api.post(tok, f"{base}/agreement", {"model": "B"})
+    assert gone.status_code == 422 and gone.json()["code"] == "plan_discontinued"
+    assert api.get(tok, f"{base}/agreement").json()["plan"] == {"monthly_net_minor": 249500, "lead_fee_net_minor": 0,
+                                                                  "campaign_call_net_minor": 400}
+    agreement = api.post(tok, f"{base}/agreement", {}).json()                           # confirming again = version 2
+    assert agreement["version"] == 2
     key = str(uuid.uuid4())
     first = api.post(tok, f"{base}/leads/{lead['id']}/approve", None, **{"Idempotency-Key": key})
     assert first.status_code == 200, first.text
     snap = first.json()["fee_snapshot"]
-    assert (snap["net_minor"], snap["tax_minor"], snap["agreement_version"], snap["model"]) == (14900, 3725, 2, "B")
+    assert (snap["net_minor"], snap["tax_minor"], snap["agreement_version"], snap["model"]) == (0, 0, 2, "A")
     again = api.post(tok, f"{base}/leads/{lead['id']}/approve", None, **{"Idempotency-Key": key})
     assert again.status_code == 200 and again.json() == first.json()
     assert api.post(tok, f"{base}/leads/{lead['id']}/approve").json()["code"] == "lead_billing_decided"
@@ -137,7 +145,7 @@ def test_model_b_approval_snapshots_fee_and_is_idempotent(client, api, chat, db)
     assert moved.status_code == 200
     # a later agreement change never rewrites an approved lead's snapshot
     api.post(tok, f"{base}/agreement", {"model": "A"})
-    assert api.get(tok, f"{base}/leads/{lead['id']}").json()["fee_snapshot"]["net_minor"] == 14900
+    assert api.get(tok, f"{base}/leads/{lead['id']}").json()["fee_snapshot"]["agreement_version"] == 2
     assert db.scalar(select(AuditLog).where(AuditLog.action == "lead.approved")) is not None
 
 

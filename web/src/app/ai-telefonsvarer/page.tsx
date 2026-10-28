@@ -30,13 +30,13 @@ export default function Page() {
           <p>Dialogbot taler naturligt dansk og lytter, til kunden er færdig med at tale. I vælger selv stemmen, og I kan høre den, før I bestemmer jer. Den siger altid ærligt, at den er en digital assistent – den lyver aldrig om at være et menneske.</p>
           <p>Den bedste måde at finde ud af det på er at prøve: <Link href="/proev">bliv ringet op af Dialogbot</Link>, og hør selv, hvordan den ville tage telefonen for jer.</p>
         </> },
-        { title: "Pris", body: <p>Fast abonnement på <strong>1.495 kr. om måneden</strong>, eller <strong>149 kr. pr. godkendt henvendelse</strong> uden fast pris – alle priser ekskl. moms. Vi guider jer gennem hele opsætningen. Se også <Link href="/ai-receptionist">AI-receptionist</Link> og <Link href="/chatbot">chatbot til hjemmesiden</Link>.</p> },
+        { title: "Pris", body: <p>Ét abonnement fra <strong>2.495 kr. om måneden</strong> – ekskl. moms og uden pris pr. henvendelse. Vi guider jer gennem hele opsætningen. Se også <Link href="/ai-receptionist">AI-receptionist</Link> og <Link href="/chatbot">chatbot til hjemmesiden</Link>.</p> },
       ]}
       faq={[
         ["Hvad er forskellen på en AI-telefonsvarer og en almindelig telefonsvarer?", "En almindelig telefonsvarer optager en besked. En AI-telefonsvarer taler med kunden, svarer på spørgsmål ud fra jeres viden, afklarer behovet og kan booke en tid – og I får en skrevet opsummering."],
         ["Kan jeg bruge mit eget nummer?", "Ja. I viderestiller jeres nuværende nummer til Dialogbot, når I er optaget eller har lukket. I kan også få et nyt Dialogbot-nummer."],
         ["Forstår den dansk med dialekt?", "Dialogbot er bygget til dansk tale og bruger jeres egne fagord og navne fra den viden, I godkender, så den bedre genkender dem."],
-        ["Hvad koster det?", "1.495 kr. om måneden i fast abonnement eller 149 kr. pr. godkendt henvendelse. Priserne er ekskl. moms."],
+        ["Hvad koster det?", "Ét abonnement fra 2.495 kr. om måneden, ekskl. moms. Der er ingen pris pr. henvendelse."],
         ["Kan jeg høre den, før jeg køber?", "Ja. Skriv dit nummer på forsiden, vælg en stemme og din branche, så ringer Dialogbot dig op og viser det."],
       ]} />
   );

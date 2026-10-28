@@ -19,6 +19,7 @@
       "AgreementIn": {
         "properties": {
           "model": {
+            "default": "A",
             "enum": [
               "A",
               "B"
@@ -27,9 +28,6 @@
             "type": "string"
           }
         },
-        "required": [
-          "model"
-        ],
         "title": "AgreementIn",
         "type": "object"
       },

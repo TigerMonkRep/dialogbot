@@ -28,14 +28,14 @@ export default function Page() {
           <li><strong>Tilbyde et opkald tilbage</strong> i et tidsrum, der passer kunden.</li>
         </ul> },
         { title: "Chat og telefon med én og samme viden", body: <p>Chatbotten bruger den samme godkendte viden som Dialogbots <Link href="/ai-receptionist">AI-receptionist</Link> og <Link href="/ai-telefonsvarer">AI-telefonsvarer</Link>. Retter I en pris ét sted, er den rettet både i chatten og på telefonen. Chatten sættes på jeres hjemmeside med en lille indlejringskode, som vi hjælper jer med.</p> },
-        { title: "Pris", body: <p>Chatbotten er en del af Dialogbot: fast abonnement på <strong>1.495 kr. om måneden</strong>, eller <strong>149 kr. pr. godkendt henvendelse</strong> – ekskl. moms. Vi guider jer gennem hele opsætningen.</p> },
+        { title: "Pris", body: <p>Chatbotten er en del af Dialogbot: ét abonnement fra <strong>2.495 kr. om måneden</strong> – ekskl. moms og uden pris pr. henvendelse. Vi guider jer gennem hele opsætningen.</p> },
       ]}
       faq={[
         ["Hvordan kommer chatbotten på min hjemmeside?", "I indsætter en lille indlejringskode på hjemmesiden. Vi hjælper jer med det under opsætningen, og I bestemmer selv, på hvilke domæner chatten må vises."],
         ["Kan en medarbejder overtage samtalen?", "Ja. En medarbejder kan svare kunden direkte i samtalen, og assistenten holder pause imens."],
         ["Finder chatbotten selv på svar?", "Nej. Den svarer kun ud fra den viden, I har godkendt, og siger ærligt, når noget ikke fremgår."],
         ["Kan den både chatte og tage telefonen?", "Ja. Dialogbot bruger den samme viden i chatten og på telefonen."],
-        ["Hvad koster chatbotten?", "Den er en del af Dialogbot: 1.495 kr. om måneden eller 149 kr. pr. godkendt henvendelse, ekskl. moms."],
+        ["Hvad koster chatbotten?", "Den er en del af Dialogbot: ét abonnement fra 2.495 kr. om måneden, ekskl. moms."],
       ]} />
   );
 }

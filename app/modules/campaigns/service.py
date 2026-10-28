@@ -7,8 +7,9 @@ Rules (product and Danish law, markedsføringsloven § 10):
   neither the Robinson list nor CVR's advertising protection is enough to call someone who has not asked for it.
 - Numbers on the workspace's do-not-call list are never called; "ring ikke igen" in a call adds the
   number to it.
-- One package per contact: fixed price, at most `max_attempts` dial attempts and `max_connected_seconds`
-  of connected AI time in total. The package is used (billable) when the first attempt is dialled.
+- Every outbound call costs 4 kr. excl. VAT (billing/prices.py), recorded in `campaign_calls` when Vapi accepts the
+  call. Each contact is dialled at most `max_attempts` times and talks at most `max_connected_seconds` in total,
+  which is what bounds the cost of a campaign.
 - Payment never starts calls. Only an admin's explicit start command sets a campaign running, and
   the worker only dials inside the campaign's calling window in the workspace's time zone.
 - The assistant always says it is a digital assistent, who it calls from, and why.
@@ -28,9 +29,10 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
 from app.core.errors import ApiError, NotImplementedYet, ValidationFailed
-from app.models import Campaign, CampaignContact, DoNotCall, PhoneNumber, Workspace
+from app.models import Campaign, CampaignCall, CampaignContact, DoNotCall, PhoneNumber, Workspace
+from app.modules.billing import prices
 
-PACKAGE_NET_MINOR = 900      # 9,00 kr. excl. VAT per contact
+CALL_NET_MINOR = prices.CAMPAIGN_CALL_NET_MINOR  # 4 kr. excl. VAT per outbound call
 MAX_ATTEMPTS = 2
 MAX_CONNECTED_SECONDS = 180
 RETRY_AFTER = timedelta(hours=3)
@@ -160,18 +162,17 @@ def counts(db: OrmSession, c: Campaign) -> dict:
                            .group_by(CampaignContact.status)).all())
     outcomes = dict(db.execute(select(CampaignContact.outcome, func.count()).where(
         CampaignContact.campaign_id == c.id, CampaignContact.outcome.is_not(None)).group_by(CampaignContact.outcome)).all())
-    used = db.scalar(select(func.count()).where(CampaignContact.campaign_id == c.id,
-                                                CampaignContact.charged_at.is_not(None))) or 0
+    calls = db.scalar(select(func.count()).where(CampaignCall.campaign_id == c.id)) or 0
     total = sum(rows.values())
-    return {"total": total, "by_status": rows, "by_outcome": outcomes, "packages_used": used,
+    return {"total": total, "by_status": rows, "by_outcome": outcomes, "calls": calls,
             "open": rows.get("pending", 0) + rows.get("calling", 0)}
 
 
 def max_cost_net_minor(db: OrmSession, c: Campaign) -> int:
-    """The most the campaign can cost from now: one package per contact not yet charged and still callable."""
-    n = db.scalar(select(func.count()).where(CampaignContact.campaign_id == c.id, CampaignContact.charged_at.is_(None),
-                                             CampaignContact.status == "pending")) or 0
-    return n * c.package_net_minor
+    """The most the campaign can cost from now: every contact still callable, dialled as often as the limit allows."""
+    pending = db.execute(select(CampaignContact.attempts).where(CampaignContact.campaign_id == c.id,
+                                                                  CampaignContact.status == "pending")).scalars().all()
+    return sum(max(0, c.max_attempts - a) for a in pending) * c.call_net_minor
 
 
 def outbound_problem(db: OrmSession, c: Campaign) -> str | None:
@@ -318,8 +319,8 @@ def dial(db: OrmSession, c: Campaign, contact: CampaignContact, now: datetime) -
         vs = db.get(VoiceSession, uuid.UUID(sid))
         if vs is not None:
             vs.provider_call_id = contact.provider_call_id
-    if contact.charged_at is None:
-        contact.charged_at, contact.charged_net_minor = now, c.package_net_minor
+    db.add(CampaignCall(workspace_id=c.workspace_id, campaign_id=c.id, contact_id=contact.id,
+                        provider_call_id=contact.provider_call_id, dialled_at=now, net_minor=c.call_net_minor))
 
 
 def dispatch(db: OrmSession, now: datetime | None = None, max_calls: int = 20) -> int:

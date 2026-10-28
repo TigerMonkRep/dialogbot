@@ -846,8 +846,10 @@ class ActionRun(Base):
 class Campaign(Base):
     """An outbound calling campaign: script, caller number, calling window, contacts.
 
-    One package per contact (fixed price, max attempts, max connected AI seconds in total). Payment
-    never starts calls: a campaign only calls after an admin's explicit start command."""
+    Every outbound call is billed at `call_net_minor` (4 kr. excl. VAT, snapshotted when the campaign is created and
+    recorded per call in `campaign_calls`); each contact is dialled at most `max_attempts` times and talks at most
+    `max_connected_seconds` in total. Payment never starts calls: a campaign only calls after an admin's explicit
+    start command."""
 
     __tablename__ = "campaigns"
     __table_args__ = (
@@ -869,8 +871,8 @@ class Campaign(Base):
     call_days: Mapped[list] = mapped_column(JSONB, nullable=False, default=lambda: ["mon", "tue", "wed", "thu", "fri"])
     call_from: Mapped[str] = mapped_column(String(5), nullable=False, default="09:00")
     call_to: Mapped[str] = mapped_column(String(5), nullable=False, default="17:00")
-    # Package terms snapshotted when the campaign is created (whole øre, seconds).
-    package_net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
+    # Terms snapshotted when the campaign is created (whole øre per call, attempts, seconds).
+    call_net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
     max_attempts: Mapped[int] = mapped_column(Integer, nullable=False)
     max_connected_seconds: Mapped[int] = mapped_column(Integer, nullable=False)
     legal_confirmation: Mapped[dict | None] = mapped_column(JSONB)  # who confirmed the checklist, when, which text
@@ -911,10 +913,27 @@ class CampaignContact(Base):
     error: Mapped[str | None] = mapped_column(String(300))
     lead_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("leads.id", ondelete="SET NULL"))
     conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="SET NULL"))
-    # The package is used (and billable) when the first attempt is dialled; price snapshotted then.
+    # Legacy: before per-call pricing a contact was one package, charged when its first attempt was dialled. Old rows
+    # keep their charge (so past statements do not change); new calls are recorded in `campaign_calls` instead.
     charged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     charged_net_minor: Mapped[int | None] = mapped_column(Integer)
     created_at: Mapped[datetime] = ts_now()
+
+
+class CampaignCall(Base):
+    """One outbound campaign call that Vapi accepted: the unit the customer pays for (4 kr. excl. VAT). The price is
+    snapshotted here, so a later price change never alters an earlier month."""
+
+    __tablename__ = "campaign_calls"
+    __table_args__ = (Index("ix_campaign_calls_workspace_dialled", "workspace_id", "dialled_at"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    campaign_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("campaigns.id", ondelete="CASCADE"), nullable=False)
+    contact_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("campaign_contacts.id", ondelete="CASCADE"), nullable=False)
+    provider_call_id: Mapped[str | None] = mapped_column(String(100))
+    dialled_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
 class DoNotCall(Base):

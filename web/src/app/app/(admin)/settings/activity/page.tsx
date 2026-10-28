@@ -22,7 +22,7 @@ const ACTION: Record<string, [string, string]> = {
   "task.created": ["Opgave oprettet", "add_task"], "task.updated": ["Opgave ændret", "task_alt"],
   "conversation.mode_changed": ["Samtale overtaget/givet tilbage", "swap_horiz"],
   "telephony.number_added": ["Telefonnummer tilknyttet", "add_call"], "telephony.number_updated": ["Telefonnummer ændret", "call"],
-  "reports.settings_updated": ["Rapportindstillinger ændret", "bar_chart"], "agreement.created": ["Prisaftale valgt", "handshake"],
+  "reports.settings_updated": ["Rapportindstillinger ændret", "bar_chart"], "agreement.created": ["Abonnement bekræftet", "handshake"],
   "webchat.updated": ["Webchat ændret", "chat"], "webchat.key_rotated": ["Ny widgetnøgle", "autorenew"],
   "setup.check_run": ["Tjek kørt", "fact_check"], "setup.checks_run_all": ["Alle tjek kørt", "fact_check"],
 };

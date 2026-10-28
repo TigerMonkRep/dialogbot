@@ -1,9 +1,9 @@
 /** Campaign types and Danish labels (plain module: usable from server and client components). */
-export type Counts = { total: number; open: number; packages_used: number; by_status: Record<string, number>; by_outcome: Record<string, number> };
+export type Counts = { total: number; open: number; calls: number; by_status: Record<string, number>; by_outcome: Record<string, number> };
 export type Campaign = {
   id: string; name: string; status: "draft" | "running" | "paused" | "completed"; version: number; purpose: string; opening: string;
   questions: string[]; success: string; phone_number_id: string | null; call_days: string[]; call_from: string; call_to: string;
-  package: { net_minor: number; max_attempts: number; max_connected_seconds: number }; counts: Counts;
+  pricing: { call_net_minor: number; max_attempts: number; max_connected_seconds: number }; counts: Counts;
   max_cost: { net_minor: number; tax_minor: number; gross_minor: number }; outbound_problem: string | null;
   legal_confirmation: { at: string; accepted_max_net_minor: number } | null; started_at: string | null; completed_at: string | null;
 };

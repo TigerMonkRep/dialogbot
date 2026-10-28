@@ -1,12 +1,11 @@
-"""Monthly billing statement (preview only — no invoice, no payment).
+"""Monthly billing statement (the basis of the invoice).
 
 Rules (product rules; money in whole øre, 25 % VAT, half-up on the total):
-- Model A: the monthly subscription of the agreement version in force at the end of the month.
-  Approved leads never change a model-A total.
-- Model B: the sum of the fee snapshots of leads approved in the month (each keeps the price that
-  applied when it was approved, even if the agreement changed later).
-- Campaign packages: one per contact whose first attempt was dialled in the month, at the price
-  snapshotted then.
+- Subscription: the monthly price of the agreement version in force at the end of the month ("Fra 2.495 kr./md.").
+  Approved enquiries never change it; there is no fee per enquiry.
+- Campaign calls: every outbound call dialled in the month, at the price snapshotted on the call (4 kr.).
+- Legacy, kept so old months and old agreements do not change: fee snapshots of leads approved under an old
+  model-B agreement, and the old per-contact campaign packages (9 kr.) that were charged before per-call pricing.
 - Months are calendar months in the workspace's time zone. No proration in this stage.
 """
 from __future__ import annotations
@@ -18,7 +17,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
-from app.models import Campaign, CampaignContact, Lead, ReceptionAgreement
+from app.models import Campaign, CampaignCall, CampaignContact, Lead, ReceptionAgreement
 from app.modules.billing.agreements import TAX_BASIS_POINTS
 from app.modules.billing.money import Money
 
@@ -37,7 +36,7 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
                           .order_by(ReceptionAgreement.version.desc()).limit(1))
     lines: list[dict] = []
     if agreement is not None and agreement.model == "A":
-        lines.append({"kind": "subscription", "description": f"Reception, model A – abonnement (aftale v{agreement.version})",
+        lines.append({"kind": "subscription", "description": f"Dialogbot – abonnement (aftale v{agreement.version})",
                       "net_minor": agreement.monthly_net_minor})
     leads = db.scalars(select(Lead).where(Lead.workspace_id == workspace_id, Lead.billing_status == "approved",
                                           Lead.billing_decided_at >= start, Lead.billing_decided_at < end)
@@ -53,9 +52,17 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
         .join(CampaignContact, CampaignContact.campaign_id == Campaign.id)
         .where(Campaign.workspace_id == workspace_id, CampaignContact.charged_at >= start, CampaignContact.charged_at < end)
         .group_by(Campaign.id, Campaign.name).order_by(Campaign.name)).all()
-    for cid, name, n, net in packages:
+    for cid, name, n, net in packages:  # legacy: charged before per-call pricing
         lines.append({"kind": "campaign", "campaign_id": str(cid), "packages": int(n),
                       "description": f"Kampagne \"{name}\": {n} kontaktpakke{'r' if n != 1 else ''}", "net_minor": int(net or 0)})
+    calls = db.execute(
+        select(Campaign.id, Campaign.name, func.count(CampaignCall.id), func.sum(CampaignCall.net_minor))
+        .join(CampaignCall, CampaignCall.campaign_id == Campaign.id)
+        .where(Campaign.workspace_id == workspace_id, CampaignCall.dialled_at >= start, CampaignCall.dialled_at < end)
+        .group_by(Campaign.id, Campaign.name).order_by(Campaign.name)).all()
+    for cid, name, n, net in calls:
+        lines.append({"kind": "campaign_calls", "campaign_id": str(cid), "calls": int(n),
+                      "description": f"Kampagne \"{name}\": {n} udgående opkald", "net_minor": int(net or 0)})
     from app.modules.ambassadors.service import discount_line
 
     discount = discount_line(db, workspace_id, month, lines)

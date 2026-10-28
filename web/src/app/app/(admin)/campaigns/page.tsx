@@ -6,7 +6,7 @@ import { kr } from "../leads/format";
 import { DoNotCallList, NewCampaign } from "./client";
 import { STATUS, type Campaign, type Dnc } from "./format";
 
-type List = { items: Campaign[]; package: { net_minor: number; max_attempts: number; max_connected_seconds: number } };
+type List = { items: Campaign[]; pricing: { call_net_minor: number; max_attempts: number; max_connected_seconds: number } };
 
 /** C01: campaigns (outbound calls), new campaign, and the do-not-call list. */
 export default async function CampaignsPage() {
@@ -18,7 +18,7 @@ export default async function CampaignsPage() {
     backend<{ items: Dnc[] }>(`/workspaces/${ws.id}/do-not-call`),
     backend<{ is_platform_operator?: boolean }>(`/auth/me`).catch(() => ({ is_platform_operator: false })),
   ]);
-  const p = list.package;
+  const p = list.pricing;
   return (
     <section className="flex flex-col gap-space-lg">
       <div>
@@ -26,7 +26,7 @@ export default async function CampaignsPage() {
         <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Udgående opkald</h1>
         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-2xl">
           Jeres digitale assistent ringer til en liste af kontakter med jeres budskab og sender de interesserede videre som henvendelser.
-          Pris: {kr(p.net_minor)} + moms pr. kontakt – op til {p.max_attempts} forsøg og i alt {p.max_connected_seconds / 60} minutters samtale. Der ringes først, når en administrator trykker Start.
+          Pris: {kr(p.call_net_minor)} + moms pr. udgående opkald – hvert opkald tæller, også et nyt forsøg. Højst {p.max_attempts} forsøg og i alt {p.max_connected_seconds / 60} minutters samtale pr. kontakt. Der ringes først, når en administrator trykker Start.
         </p>
         {me.is_platform_operator && <Link href="/app/operator/sales" className="mt-space-xs flex items-center gap-1 font-label-lg text-label-lg text-primary underline w-fit"><Icon name="admin_panel_settings" size={18} />Salgsopkald: lad AI&apos;en ringe op (kun Dialogbot)</Link>}
       </div>

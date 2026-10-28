@@ -38,7 +38,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       <div className="flex flex-col gap-space-xs">
         <span className="eyebrow">Fakturering</span>
         <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Afregning</h1>
-        <p className="font-body-sm text-body-sm text-on-surface-variant">Oversigt over, hvad måneden koster efter jeres prisaftale. Beløb i kr. med to decimaler, moms 25 %.</p>
+        <p className="font-body-sm text-body-sm text-on-surface-variant">Oversigt over, hvad måneden koster: abonnementet og eventuelle udgående kampagneopkald (4 kr. pr. opkald). Beløb i kr. med to decimaler, moms 25 %.</p>
       </div>
       {sp.card === "saved" && <p role="status" className="p-space-sm rounded-lg bg-secondary-container text-on-secondary-container font-body-sm text-body-sm">Tak – kortet er gemt hos Stripe. Det kan tage et øjeblik, før det vises her.</p>}
       <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
@@ -81,7 +81,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         <Link href={`/app/billing?month=${shift(s.month, 1)}`} className="font-label-lg text-label-lg text-primary flex items-center gap-1">Næste<Icon name="chevron_right" size={20} /></Link>
       </div>
       <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-md">
-        <p className="font-body-md text-body-md">{s.agreement ? <>Prisaftale: <strong>model {s.agreement.model}</strong> (version {s.agreement.version}). {s.approved_leads} godkendte henvendelser, heraf {s.billable_leads} med gebyr.</> : <>Ingen prisaftale i denne måned. <Link href="/app/settings/agreement" className="text-primary underline">Vælg model</Link>.</>}</p>
+        <p className="font-body-md text-body-md">{s.agreement ? <>Abonnement: <strong>aftale v{s.agreement.version}</strong>. {s.approved_leads} godkendte henvendelser{s.billable_leads > 0 ? `, heraf ${s.billable_leads} med gebyr (ældre aftale)` : " – ingen pris pr. henvendelse"}.</> : <>Intet bekræftet abonnement i denne måned. <Link href="/app/settings/agreement" className="text-primary underline">Bekræft abonnement</Link>.</>}</p>
         {s.lines.length === 0 ? <p className="font-body-sm text-body-sm text-on-surface-variant">Ingen poster i denne måned.</p> : (
           <table className="w-full font-body-sm text-body-sm">
             <thead><tr className="text-left text-on-surface-variant"><th className="py-space-xs font-label-md text-label-md">Post</th><th className="py-space-xs font-label-md text-label-md text-right">Netto</th></tr></thead>

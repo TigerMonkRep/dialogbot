@@ -44,7 +44,7 @@ export default function Page() {
       faq={[
         ["Er en AI-receptionist det samme som en chatbot?", "Ikke helt. En chatbot skriver, en AI-receptionist taler i telefonen. Dialogbot gør begge dele med den samme viden."],
         ["Lyder en AI-receptionist som en robot?", "Moderne stemmer lyder naturlige. Dialogbot taler dansk og siger altid ærligt, at den er en digital assistent, hvis kunden spørger."],
-        ["Hvad koster en AI-receptionist?", "Hos Dialogbot 1.495 kr. om måneden eller 149 kr. pr. godkendt henvendelse, ekskl. moms."],
+        ["Hvad koster en AI-receptionist?", "Hos Dialogbot er der ét abonnement fra 2.495 kr. om måneden, ekskl. moms. Der er ingen pris pr. henvendelse."],
       ]} />
   );
 }

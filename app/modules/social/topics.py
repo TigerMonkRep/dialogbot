@@ -19,7 +19,8 @@ FACTS: tuple[str, ...] = (
     "Den svarer kun ud fra den viden, virksomheden selv har godkendt, og gætter aldrig på priser, tider eller vilkår.",
     "Den booker, flytter og aflyser tider og sender SMS-bekræftelser.",
     "Den giver en kort opsummering af hver henvendelse.",
-    "Pris ekskl. moms: fast abonnement 1.495 kr. om måneden, eller 149 kr. pr. godkendt henvendelse.",
+    "Pris ekskl. moms: ét abonnement fra 2.495 kr. om måneden. Der er ingen pris pr. henvendelse.",
+    "Udgående opkald i en kampagne koster 4 kr. pr. opkald ekskl. moms.",
     "Ingen binding og intet opstartsgebyr.",
     "Gratis personlig opsætning, cirka en halv time.",
     "Virksomheder kan beholde deres eget telefonnummer og viderestille til Dialogbot.",
@@ -30,7 +31,7 @@ FACTS: tuple[str, ...] = (
 )
 
 # The only kroner amounts a post may mention (as written on the website).
-ALLOWED_AMOUNTS: frozenset[str] = frozenset({"1.495", "149"})
+ALLOWED_AMOUNTS: frozenset[str] = frozenset({"2.495", "4"})
 
 PLATFORMS = ("facebook", "instagram", "tiktok")
 
@@ -70,12 +71,12 @@ TOPICS: tuple[Topic, ...] = (
         proof="Opsætningen tager cirka en halv time.", tags=("opsætning", "digitalisering")),
     Topic(
         key="pricing", path="/priser", kicker="Priser",
-        angle="Åbenhed om prisen: abonnement eller betaling pr. godkendt henvendelse, ingen binding.",
+        angle="Åbenhed om prisen: ét abonnement fra 2.495 kr. om måneden, 4 kr. pr. udgående kampagneopkald, ingen binding.",
         hooks={"facebook": "Priser uden overraskelser",
-               "instagram": "1.495 kr. om måneden. Eller 149 kr. pr. henvendelse.",
+               "instagram": "Fra 2.495 kr. om måneden. Ét abonnement.",
                "tiktok": "Hvad koster en AI-receptionist? Det her."},
-        points=("Fast abonnement: 1.495 kr. om måneden ekskl. moms",
-                "Eller 149 kr. pr. godkendt henvendelse ekskl. moms",
+        points=("Ét abonnement: fra 2.495 kr. om måneden ekskl. moms",
+                "Udgående kampagneopkald: 4 kr. pr. opkald ekskl. moms",
                 "Ingen binding og intet opstartsgebyr"),
         proof="Alle priser er ekskl. moms.", tags=("pris", "ingenbinding")),
     Topic(

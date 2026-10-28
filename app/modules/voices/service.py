@@ -46,7 +46,7 @@ SMOKE_SENTENCES = (
     "Hej, du taler med Dialogbots AI-assistent hos Fjord Gulvservice. Hvad kan jeg hjælpe med?",
     "Jeg har en ledig tid onsdag den 28. oktober klokken halv elleve.",
     "Tiden er endnu ikke bekræftet. Jeg undersøger, om den blev oprettet.",
-    "Det koster 1.495 kroner om måneden eksklusive moms.",
+    "Det koster 2.495 kroner om måneden eksklusive moms.",
 )
 DEFAULT_SAMPLE = "Hej, du taler med en digital assistent. Hvordan kan jeg hjælpe dig i dag?"
 TRANSITIONS = {

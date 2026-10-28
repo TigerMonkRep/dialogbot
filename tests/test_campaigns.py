@@ -10,7 +10,7 @@ import pytest
 
 from app.config import get_settings
 from app.core.errors import ValidationFailed
-from app.models import Campaign, CampaignContact, DoNotCall, Lead, Task
+from app.models import Campaign, CampaignCall, CampaignContact, DoNotCall, Lead, Task
 from app.modules.billing.statement import statement
 from app.modules.campaigns import service
 
@@ -43,7 +43,7 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     c = _campaign(api, t)
-    assert c["package"] == {"net_minor": 900, "max_attempts": 2, "max_connected_seconds": 180}
+    assert c["pricing"] == {"call_net_minor": 400, "max_attempts": 2, "max_connected_seconds": 180}  # 4 kr. per call
     assert api.post(tok, f"/workspaces/{ws}/do-not-call", {"phone": "21222324", "reason": "Bad os lade være"}).status_code == 201
     r = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": CSV, "kind": "business", "consent_source": "Bad om opkald på messen, marts 2026"}).json()
     assert (r["added"], r["duplicates"], r["blocked"], r["invalid_count"]) == (1, 1, 1, 1)
@@ -56,7 +56,7 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     assert bad.status_code == 422
     ok = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import",
                   {"csv": "Bo;22334455", "kind": "consumer", "consent_source": "Tilmelding på hjemmesiden, marts 2026"}).json()
-    assert ok["added"] == 1 and ok["campaign"]["max_cost"]["net_minor"] == 1800
+    assert ok["added"] == 1 and ok["campaign"]["max_cost"]["net_minor"] == 1600  # 2 contacts × 2 attempts × 4 kr.
     items = api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts").json()["items"]
     assert {x["kind"] for x in items} == {"business", "consumer"}
     # staff can read and block a number, but not create or start campaigns
@@ -92,9 +92,9 @@ def test_start_is_explicit_and_honest(api, two_workspaces, monkeypatch):
     assert c["phone_number_id"] is not None and c["status"] == "draft"
     api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": "Mette;20304050\nOle;21222324", "kind": "business", "consent_source": "Tilmelding på hjemmesiden"})
     start = f"/workspaces/{ws}/campaigns/{c['id']}/start"
-    body = {"expected_version": c["version"], "legal_confirmed": False, "accept_max_net_minor": 1800}
+    body = {"expected_version": c["version"], "legal_confirmed": False, "accept_max_net_minor": 1600}
     assert api.post(tok, start, body).status_code == 422
-    assert api.post(tok, start, body | {"legal_confirmed": True, "accept_max_net_minor": 900}).json()["code"] == "price_changed"
+    assert api.post(tok, start, body | {"legal_confirmed": True, "accept_max_net_minor": 800}).json()["code"] == "price_changed"
     r = api.post(tok, start, body | {"legal_confirmed": True})
     assert r.status_code == 501 and r.json()["code"] == "outbound_not_configured"
     monkeypatch.setenv("VAPI_API_KEY", "vapi-private-key-test")
@@ -104,7 +104,7 @@ def test_start_is_explicit_and_honest(api, two_workspaces, monkeypatch):
     r = api.post(tok, start, body | {"legal_confirmed": True})
     assert r.status_code == 200, r.text
     out = r.json()
-    assert out["status"] == "running" and out["legal_confirmation"]["accepted_max_net_minor"] == 1800
+    assert out["status"] == "running" and out["legal_confirmation"]["accepted_max_net_minor"] == 1600
     assert api.put(tok, f"/workspaces/{ws}/campaigns/{c['id']}", {"name": "x", "expected_version": out["version"]}).status_code == 409
     assert api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/pause").json()["status"] == "paused"
     get_settings.cache_clear()
@@ -119,7 +119,7 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
              {"csv": "Mette Hansen;20304050\nOle Berg;21222324", "kind": "business",
               "consent_source": "Tilmelding på hjemmesiden"})
     r = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/start",
-                 {"expected_version": c["version"], "legal_confirmed": True, "accept_max_net_minor": 1800})
+                 {"expected_version": c["version"], "legal_confirmed": True, "accept_max_net_minor": 1600})
     assert r.status_code == 200, r.text
     calls = []
 
@@ -146,11 +146,12 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
             "call": {"id": call_id, "phoneNumberId": "pn_out", "type": "outboundPhoneCall", "customer": {"number": "+4520304050"}},
             "artifact": {"messages": messages}}}).json()
 
-    # no answer: the package is charged once, a second attempt comes later
+    # no answer: this call is charged (4 kr.), a second attempt comes later and is charged too
     assert report("out_1", [{"role": "bot", "message": "Hej Mette"}], reason="customer-did-not-answer", seconds=0)["outcome"] == "applied"
     mette = db.query(CampaignContact).filter_by(phone="+4520304050").one()
     db.refresh(mette)
-    assert (mette.status, mette.attempts, mette.charged_net_minor) == ("pending", 1, 900)
+    assert (mette.status, mette.attempts, mette.charged_net_minor) == ("pending", 1, None)  # no legacy package
+    assert [x.net_minor for x in db.query(CampaignCall).filter_by(contact_id=mette.id)] == [400]
     assert db.query(Lead).filter(Lead.workspace_id == uuid.UUID(ws)).count() == 0  # not the inbound "ring tilbage" lead
     assert service.dispatch(db, now) == 1 and calls[-1]["customer"]["number"] == "+4521222324"  # Ole meanwhile
     assert report("out_2", [{"role": "bot", "message": "Hej Ole"}, {"role": "user", "message": "Nej tak, ring ikke igen."}])
@@ -172,8 +173,9 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
     service.dispatch(db, later)
     assert db.get(Campaign, uuid.UUID(c["id"])).status == "completed"
     st = statement(db, uuid.UUID(ws), date.today(), "Europe/Copenhagen")
-    camp = [x for x in st["lines"] if x["kind"] == "campaign"]
-    assert camp[0]["packages"] == 2 and camp[0]["net_minor"] == 1800
+    camp = [x for x in st["lines"] if x["kind"] == "campaign_calls"]
+    assert camp[0]["calls"] == 3 and camp[0]["net_minor"] == 1200  # Mette twice, Ole once, 4 kr. each
+    assert not [x for x in st["lines"] if x["kind"] == "campaign"]  # no per-contact packages any more
     assert db.query(DoNotCall).filter_by(phone="+4521222324").one().source == "call"
     entry = api.get(tok, f"/workspaces/{ws}/do-not-call").json()["items"][0]
     assert api.delete(tok, f"/workspaces/{ws}/do-not-call/{entry['id']}").status_code == 409  # own opt-out stays
@@ -185,7 +187,7 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
 def test_window_and_stale_calls(api, two_workspaces, db, monkeypatch):
     t = two_workspaces
     c = Campaign(workspace_id=uuid.UUID(t["ws_a"]), name="x", call_days=["mon"], call_from="09:00", call_to="17:00",
-                 package_net_minor=900, max_attempts=2, max_connected_seconds=180)
+                 call_net_minor=400, max_attempts=2, max_connected_seconds=180)
     monday_10 = datetime(2026, 9, 28, 8, 0, tzinfo=UTC)  # 10:00 in Copenhagen
     assert service.in_window(c, "Europe/Copenhagen", monday_10)
     assert not service.in_window(c, "Europe/Copenhagen", monday_10 + timedelta(hours=8))

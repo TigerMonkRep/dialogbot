@@ -408,3 +408,7 @@ Se `docs/voice/README.md` for status pr. del. Kort fortalt:
 1. **Bruger:** tilkobl Render-forbindelsen (eller opret Blueprint manuelt fra `infra/render.yaml`); indsæt `DATABASE_URL`, `MIGRATION_DATABASE_URL`, `DB_SCHEMA=dialogbot`, `FRONTEND_BASE_URL`, `PUBLIC_BASE_URL`, `EMAIL_FROM` som secrets. Hent hosts fra Supabase Connect (session pooler til runtime, direct til migration).
 2. **Claude:** verificér `/health/ready` på Render → Vercel-import (Root `web`, `API_BASE_URL`) → gennemfør konto→viden→plan på preview-URL og notér links her.
 3. **Uafhængigt af adgang:** fortsæt milepæl A-frontend (P02–P09, S08, S09) og forbered Resend-webhook + Anthropic-adapter (milepæl B).
+
+## 28/10 2026 – priser samlet i ét tilbud
+
+Abonnement fra 2.495 kr./md. og 4 kr. pr. udgående kampagneopkald (ekskl. moms); model B (149 kr. pr. godkendt henvendelse) og kampagnepakker (9 kr.) er udgået. Ældre rækker i dette dokument beskriver tilstanden på det tidspunkt. Se `docs/pricing.md`.

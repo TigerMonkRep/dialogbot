@@ -18,7 +18,7 @@ const SECTIONS: { icon: string; title: string; items: [string, string, string?][
   ] },
   { icon: "contact_support", title: "Henvendelser og afregning", items: [
     ["Henvendelser og opgaver", "Kunder, der vil kontaktes, bliver til henvendelser med en opgave. Kvalificér, godkend og løs dem på Henvendelser.", "/app/leads"],
-    ["Afregning", "Model A er et fast abonnement; model B betaler pr. godkendt henvendelse. Fakturering viser månedens forhåndsvisning.", "/app/billing"],
+    ["Afregning", "Der er ét abonnement fra 2.495 kr. om måneden ekskl. moms, og udgående kampagneopkald koster 4 kr. pr. opkald. Fakturering viser månedens forhåndsvisning.", "/app/billing"],
   ] },
   { icon: "group", title: "Team og sikkerhed", items: [
     ["Roller", "Ejer og administrator godkender viden og ændrer indstillinger. Medarbejdere arbejder med henvendelser og kladder. Læsere kan kun se.", "/app/settings/team"],

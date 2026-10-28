@@ -228,7 +228,7 @@ def test_campaign_caller_id_needs_operator_permission(api, two_workspaces, fake,
     t = two_workspaces
     n = api.map_number(t["ws_b"], "+4570111222", "pn_camp", activate=True, outbound=False)
     c = Campaign(workspace_id=uuid.UUID(t["ws_b"]), name="Test", phone_number_id=uuid.UUID(n["id"]),
-                 package_net_minor=900, max_attempts=2, max_connected_seconds=180)
+                 call_net_minor=400, max_attempts=2, max_connected_seconds=180)
     db.add(c)
     db.flush()
     assert "ikke godkendt til udgående" in (outbound_problem(db, c) or "")

@@ -9,7 +9,7 @@ import { SITE_URL } from "@/lib/site";
  *  FAQ and the dark CTA. "Klar" is only claimed for Google Kalender, Microsoft 365 and SMS/e-mail. */
 export const metadata: Metadata = {
   title: "Byg din AI-receptionist i 3 trin – byggevejledning",
-  description: "Byggevejledningen til Dialogbot: hvad du skal bruge, hvad den kan, hvad den koster – og de 3 trin til din egen AI-receptionist på dansk. Fra 1.495 kr./md. eller 149 kr. pr. godkendt henvendelse.",
+  description: "Byggevejledningen til Dialogbot: hvad du skal bruge, hvad den kan, hvad den koster – og de 3 trin til din egen AI-receptionist på dansk. Fra 2.495 kr./md.",
   alternates: { canonical: "/byggevejledning" },
   openGraph: { url: "/byggevejledning", title: "Byg din AI-receptionist i 3 trin | Dialogbot", images: ["/opengraph-image.png"] },
 };
@@ -114,7 +114,7 @@ export default function Page() {
               <Link href="/proev" className={btnPrimary}>Prøv den nu – den ringer til dig<ArrowIcon size={18} /></Link>
               <a href="#demo" className={btnOutline}><PlayIcon size={18} />Hør Dialogbot tage telefonen</a>
             </div>
-            <p className="m-0 text-sm text-muted">Fra 1.495 kr./md. eller 149 kr. pr. godkendt henvendelse · ekskl. moms</p>
+            <p className="m-0 text-sm text-muted">Fra 2.495 kr./md. · ekskl. moms</p>
           </div>
 
           {/* Hero illustration: a manual step card */}
@@ -272,43 +272,41 @@ export default function Page() {
         <div className={`${container} py-16 sm:py-20 flex flex-col gap-10`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
             <span className={eyebrow}>Pris</span>
-            <h2 className={h2}>Vælg dit sæt. To priser, ingen overraskelser.</h2>
+            <h2 className={h2}>Ét sæt. Én pris, ingen overraskelser.</h2>
             <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Alle priser er ekskl. moms. Opsætningen gør vi sammen på ca. 30 minutter – den koster 0 kr.</p>
           </div>
           <div className="grid gap-6 max-w-[860px] [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))]">
             <article className="flex flex-col gap-5 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block">
               <div className="flex items-center gap-3">
-                <span className="inline-flex w-11 h-11 rounded-xl bg-highlight items-center justify-center font-display font-extrabold text-[22px]">A</span>
-                <span className="font-display font-bold text-xl">Fast pris</span>
+                <span className="inline-flex w-11 h-11 rounded-xl bg-highlight items-center justify-center font-display font-extrabold text-[22px]">1</span>
+                <span className="font-display font-bold text-xl">Abonnement</span>
               </div>
               <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">1.495</span>
+                <span className="text-lg font-semibold text-ink-soft">Fra</span>
+                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">2.495</span>
                 <span className="text-lg font-semibold text-ink-soft">kr./md.</span>
               </div>
               <ul className="m-0 p-0 list-none flex flex-col gap-2.5 text-[15px]">
-                <li className="flex gap-2.5 items-start"><Check />Ubegrænset antal opkald og chats</li>
-                <li className="flex gap-2.5 items-start"><Check />Alle klodser inkluderet</li>
+                <li className="flex gap-2.5 items-start"><Check />Telefon, chat og booking er med</li>
+                <li className="flex gap-2.5 items-start"><Check />Ingen pris pr. henvendelse</li>
                 <li className="flex gap-2.5 items-start"><Check />Opsigelse måned til måned</li>
               </ul>
-              <a href="#kontakt" className={`${btnPrimary} text-base`}>Vælg fast pris</a>
-              <span className="text-[13px] text-muted">Bedst, hvis I får mere end ca. 10 henvendelser om måneden.</span>
+              <a href="#kontakt" className={`${btnPrimary} text-base`}>Kom i gang</a>
             </article>
             <article className="flex flex-col gap-5 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
               <div className="flex items-center gap-3">
-                <span className="inline-flex w-11 h-11 rounded-xl bg-highlight items-center justify-center font-display font-extrabold text-[22px]">B</span>
-                <span className="font-display font-bold text-xl">Pr. henvendelse</span>
+                <span className="inline-flex w-11 h-11 rounded-xl bg-panel border-2 border-ink items-center justify-center font-display font-extrabold text-[22px]">+</span>
+                <span className="font-display font-bold text-xl">Udgående kampagneopkald</span>
               </div>
               <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">149</span>
-                <span className="text-lg font-semibold text-ink-soft">kr. pr. godkendt henvendelse</span>
+                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">4</span>
+                <span className="text-lg font-semibold text-ink-soft">kr. pr. udgående opkald</span>
               </div>
               <ul className="m-0 p-0 list-none flex flex-col gap-2.5 text-[15px]">
-                <li className="flex gap-2.5 items-start"><Check />Ingen fast månedspris</li>
-                <li className="flex gap-2.5 items-start"><Check />Du godkender hver henvendelse, før den tæller</li>
-                <li className="flex gap-2.5 items-start"><Check />Skift til fast pris når som helst</li>
+                <li className="flex gap-2.5 items-start"><Check />Kun hvis I vil have Dialogbot til at ringe ud</li>
+                <li className="flex gap-2.5 items-start"><Check />Kontakterne har selv sagt ja til at blive ringet op</li>
+                <li className="flex gap-2.5 items-start"><Check />Højst 2 forsøg pr. kontakt – I ser den højeste pris, før I starter</li>
               </ul>
-              <a href="#kontakt" className={`${btnOutline} text-base`}>Vælg pr. henvendelse</a>
-              <span className="text-[13px] text-muted">Bedst, hvis I vil prøve det af uden fast udgift.</span>
             </article>
           </div>
         </div>

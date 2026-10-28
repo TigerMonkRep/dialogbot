@@ -89,7 +89,7 @@ export function ProevChat() {
       if (why) botSays(why, "unavailable"); else botSays("Super. Hvad hedder din virksomhed?", "firma");
     } },
     { label: "Hvad kan du?", act: () => { push({ from: "user", text: "Hvad kan du?" }); botSays("Jeg tager telefonen døgnet rundt, svarer på det, kunderne oftest spørger om, booker tider i din kalender og sender dig en besked, hvis der er noget, jeg ikke kan klare.\n\nVil du høre det selv?", "start"); } },
-    { label: "Hvad koster det?", act: () => { push({ from: "user", text: "Hvad koster det?" }); botSays("Enten 1.495 kr. om måneden – eller 149 kr. pr. henvendelse, du selv godkender. Begge ekskl. moms, og opsætningen koster 0 kr.\n\nSkal jeg ringe og vise dig, hvad du får?", "start"); } },
+    { label: "Hvad koster det?", act: () => { push({ from: "user", text: "Hvad koster det?" }); botSays("Ét abonnement fra 2.495 kr. om måneden, ekskl. moms – og opsætningen koster 0 kr.\n\nSkal jeg ringe og vise dig, hvad du får?", "start"); } },
   ];
   const chooseBranch = (label: string, key: string | null) => () => {
     push({ from: "user", text: label });

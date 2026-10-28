@@ -9,7 +9,7 @@ export const BAGS = [
   { n: 2, name: "Mål og sprog", text: "Hvad assistenten skal kunne, og hvilke sprog den taler" },
   { n: 3, name: "Viden og svar", text: "Ydelser, priser og åbningstider. Godkend og test" },
   { n: 4, name: "Kanaler", text: "Stemme, telefon og prøveopkald. Webchat og booking er valgfrie" },
-  { n: 5, name: "Aktivering", text: "Vælg prisaftale, og tænd for receptionen" },
+  { n: 5, name: "Aktivering", text: "Bekræft abonnement, og tænd for receptionen" },
 ] as const;
 
 type Build = { bag: number; step: string; parts: Part[] };
@@ -32,7 +32,7 @@ const BUILD: Record<string, Build> = {
   "booking.calendar": { bag: 4, step: "16a", parts: [{ icon: "calendar_month", label: "Kalender", color: "ghost" }] },
   "integrations.connect": { bag: 4, step: "16b", parts: [{ icon: "hub", label: "Zapier/Make", color: "ghost", optional: true }] },
   "campaign.first": { bag: 4, step: "K1", parts: [{ icon: "contacts", label: "Kontakter (CSV)", color: "sky" }] },
-  "activation.reception": { bag: 5, step: "18", parts: [{ icon: "credit_card", label: "Prisaftale", color: "white" }] },
+  "activation.reception": { bag: 5, step: "18", parts: [{ icon: "credit_card", label: "Abonnement", color: "white" }] },
   "activation.campaigns": { bag: 5, step: "K2", parts: [] },
 };
 

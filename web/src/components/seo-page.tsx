@@ -102,7 +102,7 @@ export function SeoPage({ path, kicker, title, lead, points, sections, faq, arti
             <Link href="/proev" className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] bg-highlight hover:bg-highlight-deep text-ink no-underline font-display font-bold text-lg"><PhoneIcon size={20} width={2.4} />Ring mig op nu</Link>
             <a href={PHONE_TEL} className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] border-2 border-white text-white no-underline font-semibold text-[17px] hover:bg-white/10">{PHONE_DISPLAY}</a>
           </div>
-          <p className="basis-full m-0 text-sm text-line">Eller skriv til <a href={`mailto:${EMAIL}`} className="text-white underline underline-offset-4">{EMAIL}</a>. Fra 1.495 kr./md. eller 149 kr. pr. godkendt henvendelse · ekskl. moms.</p>
+          <p className="basis-full m-0 text-sm text-line">Eller skriv til <a href={`mailto:${EMAIL}`} className="text-white underline underline-offset-4">{EMAIL}</a>. Fra 2.495 kr./md. · ekskl. moms.</p>
         </div>
       </section>
     </SiteChrome>

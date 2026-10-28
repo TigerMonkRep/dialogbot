@@ -309,7 +309,7 @@ test("11 · W01: ejer slår webchat til, kunde chatter på eget domæne, samtale
   await shot(page, info, "indbakke-samtale");
 });
 
-test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, vælger model B, godkender og løser opgaven", async ({ page, browser }, info) => {
+test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, bekræfter abonnementet, godkender og løser opgaven", async ({ page, browser }, info) => {
   const { wsId } = await freshOwner(page, info);
   const CSRF = { "x-requested-with": "dialogbot" };
   const item = await (await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/items`, { headers: CSRF, data: { kind: "service", title: "Gulvafslibning", content: { price_net_minor: 14500 } } })).json();
@@ -346,21 +346,21 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, v�
   await expect(page.getByRole("heading", { name: "Henrik Villumsen" })).toBeVisible();
   await expect(page.getByText(`Ring Henrik Villumsen op – ${windowLabel}`)).toBeVisible();
   await expect(page.getByText(/Ønsker opkald/)).toBeVisible();
-  await expect(page.getByText("Der er ingen prisaftale endnu", { exact: false })).toBeVisible();
+  await expect(page.getByText("Abonnementet er ikke bekræftet endnu", { exact: false }).first()).toBeVisible();
   await page.getByLabel("Kvalificering").selectOption("qualified");
   await page.getByLabel("Forløb").selectOption("contacted");
   await page.getByRole("button", { name: "Gem", exact: true }).click();
   await expect(page.getByLabel("Kvalificering")).toHaveValue("qualified");
 
   await page.goto("/app/settings/agreement");
-  await page.getByRole("button", { name: "Vælg model B" }).click();
-  await expect(page.getByText("Gældende: model B", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "Bekræft abonnement" }).click();
+  await expect(page.getByText("Månedspris: 2.495,00 kr.", { exact: false })).toBeVisible(); // one offer: from 2.495 kr./md.
   await shot(page, info, "prisaftale");
 
   await page.goBack();
   await page.reload();
   await page.getByRole("button", { name: "Godkend henvendelse" }).click();
-  await expect(page.getByText("149,00 kr.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Ingen pris pr. henvendelse", { exact: false }).first()).toBeVisible(); // no fee per enquiry
   await expect(page.getByLabel("Kvalificering")).toBeDisabled();
   await page.getByRole("checkbox", { name: /Færdig: Ring Henrik Villumsen op/ }).check();
   await expect(page.getByRole("checkbox", { name: /Færdig: Ring Henrik Villumsen op/ })).toBeChecked();
@@ -505,10 +505,10 @@ test("15 · Medarbejder overtager en webchat, svarer kunden, og assistenten hold
   await expect(page.getByText("Venter på svar")).toBeVisible();
 });
 
-test("16 · Afregning: godkendt henvendelse under model B vises som 149,00 kr. + moms, tydeligt som forhåndsvisning", async ({ page }, info) => {
+test("16 · Afregning: abonnementet (2.495 kr. + moms) og den godkendte henvendelse uden pris vises tydeligt som forhåndsvisning", async ({ page }, info) => {
   const { wsId } = await freshOwner(page, info);
   const CSRF = { "x-requested-with": "dialogbot" };
-  await page.request.post(`/api/backend/workspaces/${wsId}/agreement`, { headers: CSRF, data: { model: "B" } });
+  await page.request.post(`/api/backend/workspaces/${wsId}/agreement`, { headers: CSRF, data: { model: "A" } });
   const lead = await (await page.request.post(`/api/backend/workspaces/${wsId}/leads`, { headers: CSRF, data: { contact_name: "Birgitte Bruun" } })).json();
   await page.request.patch(`/api/backend/workspaces/${wsId}/leads/${lead.id}`, { headers: CSRF, data: { expected_version: lead.version, qualification_status: "qualified" } });
   expect((await page.request.post(`/api/backend/workspaces/${wsId}/leads/${lead.id}/approve`, { headers: CSRF })).ok()).toBeTruthy();
@@ -516,7 +516,7 @@ test("16 · Afregning: godkendt henvendelse under model B vises som 149,00 kr. +
   await expect(page.getByText("Kortbetaling er ikke sat op endnu.", { exact: false })).toBeVisible(); // no Stripe keys in E2E
   await expect(page.getByText("Den faktureres først, når måneden er slut og kortbetaling er sat op.", { exact: false })).toBeVisible();
   await expect(page.getByRole("link", { name: "Godkendt henvendelse: Birgitte Bruun" })).toBeVisible();
-  await expect(page.getByText("186,25 kr.")).toBeVisible();
+  await expect(page.getByText("3.118,75 kr.")).toBeVisible(); // 2.495 kr. + 25 % moms
   await shot(page, info, "afregning");
 });
 
@@ -656,7 +656,7 @@ test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovk
   await freshOwner(page, info);
   await page.goto("/app/campaigns");
   await expect(page.getByRole("heading", { name: "Udgående opkald" })).toBeVisible();
-  await expect(page.getByText(/9,00 kr\. \+ moms pr\. kontakt/)).toBeVisible();
+  await expect(page.getByText(/4,00 kr\. \+ moms pr\. udgående opkald/)).toBeVisible();
   await page.getByLabel("Navn på kampagnen").fill("Forårstilbud");
   await page.getByLabel("Hvad skal opkaldet handle om?").fill("Tilbyde gulvafslibning til tidligere kunder");
   await page.getByRole("button", { name: "Opret kampagne" }).click();
@@ -673,7 +673,7 @@ test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovk
   await page.getByRole("button", { name: "Tilføj kontakter" }).click();
   await expect(page.getByText(/1 kontakter tilføjet, 1 ugyldige numre \(fx række 2\)/)).toBeVisible();
   await expect(page.getByText("+4520304050")).toBeVisible();
-  await expect(page.getByText(/Højst 9,00 kr\. \+ moms/)).toBeVisible();
+  await expect(page.getByText(/Højst 8,00 kr\. \+ moms/)).toBeVisible();
   // the start is explicit and honest: outbound calling is not set up by Dialogbot in this environment
   await expect(page.getByText(/Udgående opkald er ikke sat op hos Dialogbot endnu/)).toBeVisible();
   const start = page.getByRole("button", { name: "Start kampagne" });
@@ -737,7 +737,7 @@ test("23 · Stemmer: operatør udgiver en kontrolleret stemme; ejer lytter, væl
   await expect(page.getByText("Afspiller simuleret lyd (testmotor).")).toBeVisible();
   await page.getByRole("button", { name: "Vælg som standard" }).click();
   await expect(page.getByText("Standard", { exact: true })).toBeVisible();
-  await page.getByLabel(/^Tekst \(højst/).fill("Det koster 1.495 kroner om måneden.");
+  await page.getByLabel(/^Tekst \(højst/).fill("Det koster 2.495 kroner om måneden.");
   await page.getByRole("button", { name: "Generér og afspil" }).click();
   await expect(page.getByText("Afspiller simuleret lyd (testmotor).")).toBeVisible();
   await page.getByLabel("Ord 1").fill("ApS");

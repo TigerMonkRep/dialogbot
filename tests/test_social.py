@@ -47,8 +47,11 @@ def social(monkeypatch):
 # --- facts and copy ---------------------------------------------------------------------------------------------------
 
 def test_prices_in_the_facts_match_the_website():
-    assert any("1.495 kr." in f and "149 kr." in f for f in FACTS)
-    assert ALLOWED_AMOUNTS == {"1.495", "149"}
+    from app.modules.billing import prices
+
+    assert any("fra 2.495 kr. om måneden" in f for f in FACTS) and any("4 kr. pr. opkald" in f for f in FACTS)
+    assert ALLOWED_AMOUNTS == {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR), prices.kr(prices.CAMPAIGN_CALL_NET_MINOR)}
+    assert not any("149" in f or "1.495" in f for f in FACTS)                          # the old prices are gone
 
 
 @pytest.mark.parametrize("topic", TOPICS, ids=lambda t: t.key)
@@ -98,7 +101,7 @@ def test_guard_rejects_what_the_facts_do_not_support(over, needle):
 
 
 def test_guard_accepts_the_real_prices_and_clean_ai_copy():
-    d = _ai_draft(caption="Fast abonnement er 1.495 kr. om måneden – eller 149 kr. pr. godkendt henvendelse.")
+    d = _ai_draft(caption="Abonnementet er fra 2.495 kr. om måneden, og et udgående kampagneopkald koster 4 kr.")
     assert d.errors == [] and d.generator == "ai" and d.model == "test-model"
     assert d.hashtags[0] == "dialogbot" and "telefonpasning" in d.hashtags      # cleaned, de-duplicated, topic tags added
     assert d.slides[0]["role"] == "hook" and d.slides[-1]["role"] == "cta" and d.slides[-1]["body"] == "dialogbot.dk"

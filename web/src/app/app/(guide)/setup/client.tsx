@@ -67,7 +67,7 @@ export function GoalArchitecture({ wsId, goals, canEdit }: { wsId: string; goals
             <span className="font-label-lg text-label-lg font-bold text-on-surface">Udgående kampagner</span>
             <span className="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">{campaignsOn ? "Aktiveret" : "Valgfri / deaktiveret"}</span>
           </div>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Forudbetalte kontaktpakker (9 kr., højst 2 forsøg). Betaling starter aldrig opkald.</p>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">Udgående opkald koster 4 kr. pr. opkald ekskl. moms, højst 2 forsøg pr. kontakt. Betaling starter aldrig opkald.</p>
         </div>
       </label>
     </div>

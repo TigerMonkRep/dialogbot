@@ -4,7 +4,7 @@ import { SeoPage } from "@/components/seo-page";
 
 export const metadata: Metadata = {
   title: "AI-receptionist til danske virksomheder – tager telefonen døgnet rundt",
-  description: "Dialogbot er en dansk AI-receptionist, der tager telefonen, når I er optaget eller har lukket. Den svarer ud fra jeres egen viden, booker tider og sender jer hver henvendelse. Fra 1.495 kr./md.",
+  description: "Dialogbot er en dansk AI-receptionist, der tager telefonen, når I er optaget eller har lukket. Den svarer ud fra jeres egen viden, booker tider og sender jer hver henvendelse. Fra 2.495 kr./md.",
   alternates: { canonical: "/ai-receptionist" },
   openGraph: { url: "/ai-receptionist", title: "AI-receptionist til danske virksomheder | Dialogbot", images: ["/opengraph-image.png"] },
 };
@@ -32,12 +32,12 @@ export default function Page() {
           <p>I kan beholde jeres nuværende nummer og viderestille til Dialogbot, når I er optaget eller har lukket – eller bruge et nyt Dialogbot-nummer.</p>
         </> },
         { title: "Pris og opsætning", body: <>
-          <p>Der er to prismodeller: et fast abonnement på <strong>1.495 kr. om måneden</strong>, eller <strong>149 kr. pr. godkendt henvendelse</strong> uden fast pris. Alle priser er ekskl. moms.</p>
+          <p>Der er ét abonnement: fra <strong>2.495 kr. om måneden</strong>, uden pris pr. henvendelse. Udgående kampagneopkald koster 4 kr. pr. opkald. Alle priser er ekskl. moms.</p>
           <p>I skal ikke kunne noget teknisk. En fra Dialogbot sætter assistenten op sammen med jer på cirka en halv time. Har I en hjemmeside, henter Dialogbot det meste automatisk, og I kan prøve assistenten af, før den tager et eneste rigtigt opkald. Læs også om <Link href="/ai-telefonsvarer">AI-telefonsvareren</Link> og <Link href="/chatbot">chatbotten til hjemmesiden</Link>.</p>
         </> },
       ]}
       faq={[
-        ["Hvad koster en AI-receptionist hos Dialogbot?", "Enten 1.495 kr. om måneden i fast abonnement eller 149 kr. pr. godkendt henvendelse uden fast pris. Priserne er ekskl. moms."],
+        ["Hvad koster en AI-receptionist hos Dialogbot?", "Ét abonnement fra 2.495 kr. om måneden, uden pris pr. henvendelse. Udgående kampagneopkald koster 4 kr. pr. opkald. Priserne er ekskl. moms."],
         ["Lyder den som en robot?", "Dialogbot taler naturligt dansk med en stemme, I selv vælger, fx Camilla eller Peter. Den siger altid ærligt, at den er en digital assistent, hvis kunden spørger."],
         ["Kan jeg beholde mit telefonnummer?", "Ja. I viderestiller jeres nuværende nummer til Dialogbot, når I er optaget eller har lukket, og beholder jeres teleudbyder."],
         ["Hvad sker der, hvis assistenten ikke kender svaret?", "Den gætter ikke. Den svarer kun ud fra godkendt viden og lover, at en medarbejder vender tilbage, og I får henvendelsen med det samme."],

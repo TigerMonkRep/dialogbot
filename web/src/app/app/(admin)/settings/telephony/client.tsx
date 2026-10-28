@@ -254,7 +254,7 @@ function Activate({ wsId, t, canManage }: { wsId: string; t: Telephony; canManag
   );
   return (
     <>
-      <p className="font-body-md text-body-md">{ready ? "Alt er klar. Når I aktiverer, besvarer assistenten de opkald, I viderestiller." : "Kan aktiveres efter et bestået prøveopkald og en valgt prisaftale."}</p>
+      <p className="font-body-md text-body-md">{ready ? "Alt er klar. Når I aktiverer, besvarer assistenten de opkald, I viderestiller." : "Kan aktiveres efter et bestået prøveopkald og et bekræftet abonnement."}</p>
       {canManage && <div><Button type="button" icon="power_settings_new" onClick={() => on.run()} disabled={!ready || on.pending}>Aktivér telefonen</Button></div>}
       <ErrorBox error={on.error} />
     </>

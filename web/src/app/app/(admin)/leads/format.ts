@@ -20,7 +20,7 @@ export const BILL: Record<string, [string, string]> = {
 };
 export const SOURCE: Record<string, string> = { webchat: "Webchat", phone: "Telefon", manual: "Manuel", campaign: "Kampagne" };
 
-/** Whole øre → "149,00 kr." */
+/** Whole øre → "4,00 kr." */
 export const kr = (minor: number) => `${(minor / 100).toLocaleString("da-DK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kr.`;
 export const when = (iso: string) => new Date(iso).toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" });
 

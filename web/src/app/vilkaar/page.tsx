@@ -16,9 +16,8 @@ export default function TermsPage() {
         ["2. Priser", <>
           <p>Alle priser er i danske kroner ekskl. moms. Moms (25 %) lægges til på fakturaen.</p>
           <ul className="list-disc pl-5 flex flex-col gap-1">
-            <li><strong>Model A – abonnement:</strong> 1.495 kr. pr. måned for receptionen.</li>
-            <li><strong>Model B – betal pr. henvendelse:</strong> 149 kr. pr. henvendelse, som I godkender som relevant. Henvendelser, I afviser, koster ikke noget.</li>
-            <li><strong>Kampagner:</strong> 9 kr. pr. kontakt, der ringes op (højst 2 forsøg pr. kontakt).</li>
+            <li><strong>Abonnement:</strong> fra 2.495 kr. pr. måned. Der er ingen pris pr. henvendelse.</li>
+            <li><strong>Kampagner (udgående opkald):</strong> 4 kr. pr. udgående opkald. Hvert opkald, der ringes, tæller, også et nyt forsøg (højst 2 forsøg pr. kontakt).</li>
             <li>Et dansk telefonnummer til assistenten er inkluderet. Brugen skal ligge inden for normalt forbrug for en virksomhed af jeres størrelse (fair use); ved væsentligt højere forbrug kontakter vi jer om en tillægspris, før den opkræves.</li>
           </ul>
           <p>Kommer I via en ambassadør, får I 50 % rabat på jeres første fakturerede måned. Vi kan ændre priserne med mindst 30 dages varsel på e-mail; ændringen gælder fra den første hele måned efter varslet.</p></>],

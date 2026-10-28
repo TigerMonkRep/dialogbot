@@ -4,7 +4,7 @@
 - Qualification, pipeline and billing are separate axes; billing is decided once
   (approve/reject) and never edited afterwards.
 - Approval requires a qualified lead and a reception agreement; it snapshots the agreement
-  version and the fee in whole øre (0 under model A).
+  version and the fee in whole øre (always 0 now; only an old model-B agreement has a fee).
 """
 from __future__ import annotations
 
@@ -142,7 +142,7 @@ def decide_billing(db: OrmSession, lead: Lead, *, actor: uuid.UUID, decision: st
             raise Conflict("Kun kvalificerede henvendelser kan godkendes", code="lead_not_qualified")
         a = agreements.current(db, lead.workspace_id)
         if a is None:
-            raise Conflict("Vælg en prisaftale (model A eller B), før henvendelser kan godkendes", code="no_agreement")
+            raise Conflict("Bekræft abonnementet, før henvendelser kan godkendes", code="no_agreement")
         lead.agreement_id = a.id
         lead.fee_snapshot = agreements.lead_fee(a).snapshot() | {"agreement_version": a.version, "model": a.model}
         lead.billing_status = "approved"

@@ -125,7 +125,7 @@ export default async function Home() {
           <span className="text-[15px] text-ink-soft">I tvivl?</span>
           <Link href="/proev" className="text-[15px] font-semibold text-ink underline underline-offset-4 inline-flex items-center min-h-11">Spørg chatten – den anbefaler en vej på 10 sekunder</Link>
         </div>
-        <p className="m-0 text-center text-sm text-muted">Fra 1.495 kr./md. eller 149 kr. pr. godkendt henvendelse · ekskl. moms</p>
+        <p className="m-0 text-center text-sm text-muted">Fra 2.495 kr./md. · ekskl. moms</p>
       </div>
     </SiteChrome>
   );
@@ -144,8 +144,8 @@ function structuredData() {
       operatingSystem: "Web", description: SITE_DESCRIPTION, inLanguage: "da", url: SITE_URL,
       publisher: { "@id": `${SITE_URL}/#organization` },
       offers: [
-        { "@type": "Offer", name: "Model A – fast pris", price: "1495", priceCurrency: "DKK", description: "Pr. måned ekskl. moms" },
-        { "@type": "Offer", name: "Model B – pr. henvendelse", price: "149", priceCurrency: "DKK", description: "Pr. godkendt henvendelse ekskl. moms" },
+        { "@type": "Offer", name: "Abonnement – fra", price: "2495", priceCurrency: "DKK", description: "Fra, pr. måned ekskl. moms" },
+        { "@type": "Offer", name: "Udgående kampagneopkald", price: "4", priceCurrency: "DKK", description: "Pr. udgående opkald ekskl. moms" },
       ] },
   ];
 }

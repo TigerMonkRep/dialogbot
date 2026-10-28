@@ -12,6 +12,7 @@ from app.models.domain import (  # noqa: F401
     BusinessProfile,
     Call,
     Campaign,
+    CampaignCall,
     CampaignContact,
     CheckResult,
     CommissionEntry,

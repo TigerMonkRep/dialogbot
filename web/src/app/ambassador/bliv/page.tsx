@@ -26,7 +26,7 @@ export default async function JoinPage() {
     }
   }
   const t = program.terms;
-  const example = 149_500;
+  const example = 249_500; // the subscription, 2.495 kr./md.
   const firstMonth = Math.round(example / 2 * t.rate_bp / 10000);
   const restMonths = (t.months - 1) * Math.round(example * t.rate_bp / 10000);
   const steps: [string, string, string, string[]][] = [

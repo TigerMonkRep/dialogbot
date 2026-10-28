@@ -104,7 +104,7 @@ def missing_info(db: OrmSession, s: TelephonySetup) -> list[dict]:
         out.append({"key": "documents", "text": "Upload virksomhedsregistrering (CVR-udskrift) med dansk adresse, "
                                                 "så vi må tildele et dansk nummer."})
     if agreement(db, s.workspace_id) is None:
-        out.append({"key": "agreement", "text": "Vælg jeres prisaftale under Indstillinger → Aftale."})
+        out.append({"key": "agreement", "text": "Bekræft jeres abonnement under Indstillinger → Aftale."})
     return out
 
 
@@ -483,7 +483,7 @@ def activate(db: OrmSession, ws_id: uuid.UUID, user_id: uuid.UUID) -> TelephonyS
     if t is None or t.status != "passed":
         raise Conflict("Aktivér først efter et bestået prøveopkald", code="telephony_test_required")
     if agreement(db, ws_id) is None:
-        raise Conflict("Vælg jeres prisaftale først", code="telephony_agreement_required")
+        raise Conflict("Bekræft jeres abonnement først", code="telephony_agreement_required")
     s.state, s.activated_at, s.activated_by = "active", _now(), user_id
     return s
 

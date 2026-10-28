@@ -74,11 +74,13 @@ export function BillingPanel({ wsId, lead, canApprove, agreement }: { wsId: stri
   return (
     <section className="bg-surface-container-lowest rounded-2xl p-space-md md:p-space-lg border-2 border-ink flex flex-col gap-space-sm">
       <div className="flex items-center justify-between gap-space-sm"><h2 className="font-headline-sm text-headline-sm text-primary">Afregning</h2><span className={`px-2 py-0.5 rounded-full font-label-sm text-label-sm font-semibold ${cls}`}>{label}</span></div>
-      {lead.fee_snapshot && <p className="font-body-md text-body-md">Pris for denne henvendelse: <strong>{kr(lead.fee_snapshot.net_minor)}</strong> ekskl. moms (model {lead.fee_snapshot.model}, aftale v{lead.fee_snapshot.agreement_version}).</p>}
+      {lead.fee_snapshot && (lead.fee_snapshot.net_minor > 0
+        ? <p className="font-body-md text-body-md">Pris for denne henvendelse (ældre aftale): <strong>{kr(lead.fee_snapshot.net_minor)}</strong> ekskl. moms (aftale v{lead.fee_snapshot.agreement_version}).</p>
+        : <p className="font-body-md text-body-md">Godkendt. Ingen pris pr. henvendelse – den er med i abonnementet (aftale v{lead.fee_snapshot.agreement_version}).</p>)}
       {lead.billing_status === "rejected" && <p className="font-body-sm text-body-sm text-on-surface-variant">Begrundelse: {lead.billing_reason}</p>}
       {lead.billing_status === "pending" && (canApprove ? (
         <>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">{agreement ? `Aftale v${agreement.version} (model ${agreement.model}): en godkendt henvendelse koster ${kr(agreement.model === "B" ? agreement.lead_fee.net_minor : 0)} ekskl. moms.` : "Der er ingen prisaftale endnu – ejeren vælger model A eller B under Indstillinger → Aftale."} Godkendte henvendelser faktureres samlet, når måneden er slut (se Fakturering).</p>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">{agreement ? (agreement.model === "B" ? `Ældre aftale v${agreement.version}: en godkendt henvendelse koster ${kr(agreement.lead_fee.net_minor)} ekskl. moms.` : `Aftale v${agreement.version}: abonnementet dækker henvendelsen – der er ingen pris pr. henvendelse.`) : "Abonnementet er ikke bekræftet endnu – ejeren bekræfter det under Indstillinger → Aftale."} Godkendte henvendelser vises på månedens oversigt (se Fakturering).</p>
           <label htmlFor="b-reason" className="font-label-md text-label-md font-semibold">Begrundelse (kræves ved afvisning)</label>
           <input id="b-reason" className={inputCls} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={500} />
           <ErrorBox error={decide.error} />

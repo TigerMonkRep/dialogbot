@@ -13,7 +13,7 @@ import pytest
 
 from app.config import get_settings
 from app.core.errors import Unauthenticated
-from app.models import BillingAccount, Invoice, Lead
+from app.models import BillingAccount, Invoice
 from app.modules.billing import stripe
 
 WH_SECRET = "whsec_test_0123456789abcdef"
@@ -101,29 +101,35 @@ def test_card_invoice_and_webhooks(api, client, two_workspaces, db, monkeypatch)
     assert ok.status_code == 200 and ok.json()["outcome"] == "applied"
     acc = api.get(tok, f"/workspaces/{ws}/billing/account").json()
     assert acc["card"] == {"brand": "visa", "last4": "4242", "exp": "04/30"}
-    # a model-B month with one approved lead → one invoice of 149 kr. + 25 % moms
-    assert api.post(tok, f"/workspaces/{ws}/agreement", {"model": "B"}).status_code == 201
-    lead = api.post(tok, f"/workspaces/{ws}/leads", {"contact_name": "Mette", "contact_phone": "+4520304050",
-                                                     "need_summary": "Tilbud"}).json()
-    q = api.c.patch(f"{api.base}/workspaces/{ws}/leads/{lead['id']}", headers=api.h(tok),
-                    json={"expected_version": lead["version"], "qualification_status": "qualified"})
-    assert q.status_code == 200, q.text
-    assert api.post(tok, f"/workspaces/{ws}/leads/{lead['id']}/approve", {}).status_code == 200
-    fake.total = 18625
+    # a month on the subscription (2.495 kr.) plus three campaign calls (3 × 4 kr.) → one invoice, + 25 % moms
+    from app.models import Campaign, CampaignCall, CampaignContact, ReceptionAgreement
+
+    assert api.post(tok, f"/workspaces/{ws}/agreement", {"model": "A"}).status_code == 201
     this_month = date.today().replace(day=1)
-    assert api.post(tok, f"/workspaces/{ws}/billing/invoices", {"month": this_month.strftime("%Y-%m")}).status_code == 422
     last = (this_month - timedelta(days=1)).replace(day=15)
-    row = db.get(Lead, uuid.UUID(lead["id"]))
-    db.refresh(row)
-    row.billing_decided_at = datetime.combine(last, datetime.min.time(), tzinfo=UTC)  # approved last month
+    at = datetime.combine(last, datetime.min.time(), tzinfo=UTC)
+    agreement = db.query(ReceptionAgreement).filter_by(workspace_id=uuid.UUID(ws)).one()
+    agreement.created_at = at - timedelta(days=40)  # the agreement was in force during last month
+    camp = Campaign(workspace_id=uuid.UUID(ws), name="Forårstilbud", call_net_minor=400, max_attempts=2,
+                    max_connected_seconds=180)
+    db.add(camp)
+    db.flush()
+    contact = CampaignContact(campaign_id=camp.id, workspace_id=uuid.UUID(ws), phone="+4520304050", kind="business")
+    db.add(contact)
+    db.flush()
+    for i in range(3):
+        db.add(CampaignCall(workspace_id=uuid.UUID(ws), campaign_id=camp.id, contact_id=contact.id,
+                            dialled_at=at + timedelta(hours=i), net_minor=400))
     db.commit()
+    fake.total = 313_375  # (249.500 + 1.200) + 25 %
+    assert api.post(tok, f"/workspaces/{ws}/billing/invoices", {"month": this_month.strftime("%Y-%m")}).status_code == 422
     month = last.strftime("%Y-%m")
     r = api.post(tok, f"/workspaces/{ws}/billing/invoices", {"month": month})
     assert r.status_code == 201, r.text
     inv = r.json()
-    assert (inv["status"], inv["gross_minor"], inv["number"], inv["note"]) == ("open", 18625, "DB-0001", None)
+    assert (inv["status"], inv["gross_minor"], inv["number"], inv["note"]) == ("open", 313_375, "DB-0001", None)
     items = [c for c in fake.calls if c[1] == "/invoiceitems"]
-    assert len(items) == 1 and items[0][2]["amount"] == 14900
+    assert [i[2]["amount"] for i in items] == [249_500, 1_200]  # the subscription, then the 3 calls
     created = next(c for c in fake.calls if c[1] == "/invoices")
     assert "CVR-nr. 25632710" in created[2]["footer"]
     assert created[2]["default_tax_rates"] == ["txr_1"] and created[3] == f"dialogbot-invoice-{ws}-{month}"
@@ -136,5 +142,4 @@ def test_card_invoice_and_webhooks(api, client, two_workspaces, db, monkeypatch)
     items = api.get(tok, f"/workspaces/{ws}/billing/invoices").json()["items"]
     assert items[0]["status"] == "paid" and items[0]["hosted_invoice_url"]
     assert db.query(Invoice).count() >= 1 and db.query(BillingAccount).filter_by(workspace_id=uuid.UUID(ws)).one().card_last4 == "4242"
-    assert db.query(Lead).filter(Lead.workspace_id == uuid.UUID(ws)).count() == 1
     get_settings.cache_clear()

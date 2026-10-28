@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-from app.modules.billing.agreements import MODEL_A_MONTHLY_NET_MINOR, MODEL_B_LEAD_FEE_NET_MINOR
+from app.modules.billing import prices
 
 # The name of the assistant that rings people who asked for a demo. It introduces itself as "Peter fra Dialogbot".
 AGENT_NAME = "Peter"
@@ -86,8 +86,8 @@ INDUSTRIES: dict[str, dict] = {
                     "fra virksomhedens viden, og tag imod en bestilling eller et opkald tilbage.",
         "focus": ["svarer på de faste spørgsmål døgnet rundt", "tager imod reservationer og bestillinger",
                   "sender åbningstider eller adresse på SMS", "samme svar på telefon og i chatten på hjemmesiden"],
-        "objection": "\"Vi får ikke så mange opkald.\" – Så koster model B kun noget, når der kommer en godkendt "
-                     "henvendelse ud af det.",
+        "objection": "\"Vi får ikke så mange opkald.\" – Så er det en fast pris, der ikke vokser med antallet af opkald: "
+                     "ét abonnement, ingen pris pr. opkald og ingen binding.",
     },
     "restaurant": {
         "label": "Hotel, restaurant & café", "icon": "restaurant",
@@ -109,10 +109,6 @@ OTHER = "andet"
 INDUSTRY_CHOICES = (*INDUSTRIES, OTHER)
 
 
-def _kr(minor: int) -> str:
-    return f"{minor // 100:,}".replace(",", ".") + (f",{minor % 100:02d}" if minor % 100 else "")
-
-
 FEATURES = f"""Det Dialogbot kan i dag (sig kun det, der passer til kontakten – aldrig hele listen):
 - Tager telefonen på dansk med en naturlig stemme, døgnet rundt, når virksomheden er optaget eller har lukket.
 - Svarer kun ud fra den viden, virksomheden selv har godkendt: ydelser, priser, åbningstider og regler. Den gætter aldrig.
@@ -129,8 +125,8 @@ en hjemmeside, henter Dialogbot det meste automatisk derfra, og I godkender det,
 prøve assistenten af, før den tager et eneste rigtigt opkald.
 
 Priser (kun når kontakten spørger, eller når I aftaler næste skridt; alle priser er uden moms):
-- Model A: {_kr(MODEL_A_MONTHLY_NET_MINOR)} kr. om måneden – fast pris.
-- Model B: ingen fast pris, {_kr(MODEL_B_LEAD_FEE_NET_MINOR)} kr. pr. godkendt henvendelse.
+- Ét abonnement: fra {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR)} kr. om måneden. Der er ingen pris pr. henvendelse og ingen binding.
+- Kun hvis de vil have assistenten til at ringe ud til kontakter, der selv har sagt ja (en kampagne): {prices.kr(prices.CAMPAIGN_CALL_NET_MINOR)} kr. pr. udgående opkald.
 Lov aldrig rabatter, gratis perioder eller andre priser."""
 
 

@@ -17,7 +17,7 @@ from app.core.idempotency import IdempotencyGuard, scope_for
 from app.core.pagination import PageParams, page
 from app.db import get_db
 from app.models import Conversation, Lead, Task
-from app.modules.billing import agreements
+from app.modules.billing import agreements, prices
 from app.modules.leads import service
 
 router = APIRouter(prefix="/workspaces/{workspace_id}", tags=["leads"])
@@ -26,14 +26,14 @@ router = APIRouter(prefix="/workspaces/{workspace_id}", tags=["leads"])
 # --- Agreement ---------------------------------------------------------------
 
 class AgreementIn(BaseModel):
-    model: Literal["A", "B"]
+    model: Literal["A", "B"] = "A"  # "B" (pay per enquiry) no longer exists: answered with 422 plan_discontinued
 
 
 @router.get("/agreement")
 def get_agreement(ctx: WorkspaceContext = Depends(require_capability("agreements.read")), db: OrmSession = Depends(get_db)):
     return {"current": agreements.out(agreements.current(db, ctx.workspace.id)),
-            "options": {"A": {"monthly_net_minor": agreements.MODEL_A_MONTHLY_NET_MINOR, "lead_fee_net_minor": 0},
-                        "B": {"monthly_net_minor": 0, "lead_fee_net_minor": agreements.MODEL_B_LEAD_FEE_NET_MINOR}}}
+            "plan": {"monthly_net_minor": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "lead_fee_net_minor": 0,
+                     "campaign_call_net_minor": prices.CAMPAIGN_CALL_NET_MINOR}}
 
 
 @router.post("/agreement", status_code=status.HTTP_201_CREATED)

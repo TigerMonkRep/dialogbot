@@ -1,8 +1,8 @@
 """Stripe: card on file and monthly invoices in arrears (test mode first).
 
 - The owner saves a card through Stripe Checkout in *setup* mode – card data never touches us.
-- After a month closes, the worker turns that month's statement (model A subscription, model B
-  approved leads, campaign packages) into ONE Stripe invoice with 25 % Danish VAT, charged
+- After a month closes, the worker turns that month's statement (the subscription and the 4 kr.
+  campaign calls; old model-B leads and old campaign packages on old months) into ONE Stripe invoice with 25 % Danish VAT, charged
   automatically. One invoice per workspace and month (unique row + Stripe idempotency key).
 - Stripe webhooks (signed) move our invoice row to paid / payment_failed / void.
 - Payment never starts calls: nothing in campaigns or telephony reads payment state.

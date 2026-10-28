@@ -51,7 +51,9 @@ function StepCard({ n, title, parts, text, children }: { n: string; title: strin
   );
 }
 
-function Brick({ icon, title, text, badge }: { icon: React.ReactNode; title: string; text: string; badge?: string }) {
+/** A brick in the set. `start` is an optional "start with this brick" link that carries the product intent into
+ *  signup (/signup?intent=…), so the account opens on the right track – as the previous front page did. */
+function Brick({ icon, title, text, badge, start }: { icon: React.ReactNode; title: string; text: string; badge?: string; start?: { href: string; label: string } }) {
   return (
     <div className="flex flex-col gap-3.5 p-[22px] rounded-2xl border-2 border-ink bg-white">
       <div className="flex items-center justify-between">
@@ -60,6 +62,7 @@ function Brick({ icon, title, text, badge }: { icon: React.ReactNode; title: str
       </div>
       <span className="font-display font-bold text-xl">{title}</span>
       <span className="text-[15px] leading-normal text-ink-soft">{text}</span>
+      {start && <Link href={start.href} className="mt-auto inline-flex items-center gap-2 min-h-11 self-start text-[15px] font-semibold text-ink underline underline-offset-4">{start.label}<ArrowIcon size={16} /></Link>}
     </div>
   );
 }
@@ -229,11 +232,11 @@ export default function Page() {
             <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Start med telefonen. Klik flere på, efterhånden som du får brug for dem – de passer sammen.</p>
           </div>
           <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))]">
-            <Brick icon={<PhoneIcon size={24} stroke="#FFFFFF" />} title="Telefon" badge="Start her" text="Besvarer alle opkald på dansk med jeres navn. Stiller videre til dig, når det haster." />
+            <Brick icon={<PhoneIcon size={24} stroke="#FFFFFF" />} title="Telefon" badge="Start her" text="Besvarer alle opkald på dansk med jeres navn. Stiller videre til dig, når det haster." start={{ href: "/signup?intent=reception", label: "Start med reception" }} />
             <Brick icon={<ChatIcon size={24} stroke="#FFFFFF" width={2.2} />} title="Webchat" text="En lille chat på din hjemmeside, der svarer med det samme og samler kontaktoplysninger." />
             <Brick icon={<CalendarIcon size={24} stroke="#FFFFFF" />} title="Booking" text="Finder ledige tider i din kalender og bekræfter aftalen til kunden på SMS." />
             <Brick icon={<SmsIcon size={24} stroke="#FFFFFF" />} title="SMS-svar" text="Ubesvarede opkald får en SMS med det samme, så kunden ved, I vender tilbage." />
-            <Brick icon={<SendIcon size={24} stroke="#FFFFFF" />} title="Kampagner" text="Ring eller skriv til dine eksisterende kunder – fx om tid til service eller nyt tilbud. Du godkender altid først." />
+            <Brick icon={<SendIcon size={24} stroke="#FFFFFF" />} title="Kampagner" text="Ring eller skriv til dine eksisterende kunder – fx om tid til service eller nyt tilbud. Du godkender altid først." start={{ href: "/signup?intent=campaigns", label: "Start med kundeopfølgning" }} />
             <Brick icon={<ChartIcon size={24} stroke="#FFFFFF" />} title="Overblik" text="Alle opkald, chats og aftaler ét sted. Se hvad der blev sagt, og hvad der mangler svar." />
           </div>
         </div>

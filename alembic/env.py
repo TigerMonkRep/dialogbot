@@ -41,6 +41,12 @@ def run_migrations_online() -> None:
                           version_table_schema=_SCHEMA, include_schemas=False)
         with context.begin_transaction():
             context.run_migrations()
+            if not context.is_offline_mode() and context.get_x_argument(as_dictionary=True).get("no_rls") is None:
+                # Every table (also ones created by a migration after the RLS one) gets Row Level Security and no
+                # rights for the Data API roles. Idempotent, same transaction as the migration.
+                from app.core.rls import secure_schema
+
+                secure_schema(connection, _SCHEMA or "public")
 
 
 if context.is_offline_mode():

@@ -110,19 +110,32 @@ export default async function Home() {
         </div>
 
         {/* Both paths converge */}
-        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 px-6 py-[18px] rounded-2xl border-[1.5px] border-ink bg-white">
-          <span className="inline-flex items-center gap-2 text-sm font-semibold"><span aria-hidden className="w-[22px] h-3 rounded bg-accent" />Vej A</span>
-          <svg aria-hidden width="34" height="20" viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M3 10h26M23 4l6 6-6 6" /></svg>
-          <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-[10px] bg-ink text-white font-display font-bold text-sm">Din egen receptionist – tændt</span>
-          <svg aria-hidden width="34" height="20" viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M31 10H5M11 4l-6 6 6 6" /></svg>
-          <span className="inline-flex items-center gap-2 text-sm font-semibold"><span aria-hidden className="w-[22px] h-3 rounded bg-highlight" />Vej B</span>
-          <span className="basis-full text-center text-[13px] text-muted">Begge veje ender samme sted. Den, der ringer til dig i vej A, er den samme, der guider dig i vej B.</span>
+        <div className="px-5 py-[18px] rounded-2xl border-[1.5px] border-ink bg-white">
+          {/* Phone: A and B side by side, both arrows point down into the result. */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 justify-items-center sm:hidden">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold"><span aria-hidden className="w-[22px] h-3 rounded bg-accent" />Vej A</span>
+            <span className="inline-flex items-center gap-2 text-sm font-semibold"><span aria-hidden className="w-[22px] h-3 rounded bg-highlight" />Vej B</span>
+            <svg aria-hidden width="20" height="30" viewBox="0 0 20 30" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M10 3v22M4 19l6 6 6-6" /></svg>
+            <svg aria-hidden width="20" height="30" viewBox="0 0 20 30" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M10 3v22M4 19l6 6 6-6" /></svg>
+            <span className="col-span-2 inline-flex items-center px-3.5 py-2 rounded-[10px] bg-ink text-white font-display font-bold text-sm text-center">Din egen receptionist – tændt</span>
+          </div>
+          {/* Desktop: one row, arrows meet in the middle. */}
+          <div className="hidden sm:flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
+            <span className="inline-flex items-center gap-2 text-sm font-semibold"><span aria-hidden className="w-[22px] h-3 rounded bg-accent" />Vej A</span>
+            <svg aria-hidden width="34" height="20" viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M3 10h26M23 4l6 6-6 6" /></svg>
+            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-[10px] bg-ink text-white font-display font-bold text-sm">Din egen receptionist – tændt</span>
+            <svg aria-hidden width="34" height="20" viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M31 10H5M11 4l-6 6 6 6" /></svg>
+            <span className="inline-flex items-center gap-2 text-sm font-semibold"><span aria-hidden className="w-[22px] h-3 rounded bg-highlight" />Vej B</span>
+          </div>
+          <p className="m-0 mt-3 text-center text-[13px] text-muted">Begge veje ender samme sted. Den, der ringer til dig i vej A, er den samme, der guider dig i vej B.</p>
         </div>
 
         {/* Undecided? ask the assistant */}
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <span className="inline-flex w-8 h-8 rounded-full bg-accent items-center justify-center font-display font-extrabold text-[13px] text-white">D</span>
-          <span className="text-[15px] text-ink-soft">I tvivl?</span>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-center">
+          <span className="inline-flex items-center gap-2">
+            <span className="inline-flex w-8 h-8 rounded-full bg-accent items-center justify-center font-display font-extrabold text-[13px] text-white">D</span>
+            <span className="text-[15px] text-ink-soft">I tvivl?</span>
+          </span>
           <Link href="/proev" className="text-[15px] font-semibold text-ink underline underline-offset-4 inline-flex items-center min-h-11">Spørg chatten – den anbefaler en vej på 10 sekunder</Link>
         </div>
         <p className="m-0 text-center text-sm text-muted">Fra 2.495 kr./md. · ekskl. moms</p>

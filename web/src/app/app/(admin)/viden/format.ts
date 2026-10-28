@@ -44,3 +44,13 @@ export function summarize(kind: string, c: Record<string, unknown>): { headline:
     default: return { headline: JSON.stringify(c), detail: "" };
   }
 }
+
+/** «fra 1.200 kr. pr. m²» → øre + unit. Null when no number can be read. Danish formats: «1.200,50», «1200», «850,-». */
+export function parsePrice(text: string): { minor: number; unit: string } | null {
+  const m = text.match(/(\d{1,3}(?:\.\d{3})+|\d+)(?:,(\d{1,2}))?/);
+  if (!m) return null;
+  const kr = Number(m[1].replace(/\./g, "")), ore = m[2] ? Number(m[2].padEnd(2, "0")) : 0;
+  const low = text.toLowerCase();
+  const unit = /m²|m2|kvm|kvadrat/.test(low) ? "m2" : /time|\/t\b/.test(low) ? "hour" : /stk|styk/.test(low) ? "item" : "job";
+  return { minor: kr * 100 + ore, unit };
+}

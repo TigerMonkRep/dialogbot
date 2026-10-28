@@ -126,29 +126,48 @@ test("4 · Trin 1: virksomhed, mål og sprog gemmes løbende og står der igen",
   await expect(page).toHaveURL(/\/opsaetning\/2/);
 });
 
-test("5 · K03→K05: ny ydelse er kladde, indtil ejeren godkender den", async ({ page }, info) => {
-  await freshOwner(page, info);
-  await page.goto("/app/viden?tab=k03");
-  await expect(page.getByText(/^0 godkendt/).filter({ visible: true }).first()).toBeVisible();
-  await page.getByLabel("Titel").fill("Standard gulvafslibning");
-  await page.getByLabel(/Beskrivelse til assistenten/).fill("Afslibning og 2x lak");
-  await page.getByLabel("Basispris (ekskl. moms)").fill("145");
-  await page.getByRole("button", { name: "Gem som kladde" }).click();
-  await expect(page.getByText(/1 ændring venter\./)).toBeVisible();
-  await shot(page, info, "k03-kladde");
-  await page.goto("/app/viden?tab=k05");
-  await expect(page.getByText("Efter · forslag")).toBeVisible();
-  await expect(page.getByText("145,- kr").first()).toBeVisible();
-  await shot(page, info, "k05-gennemgang");
-  await page.getByRole("button", { name: "Godkend", exact: true }).click();
-  // The card stays and is stamped "Godkendt" until the user moves on.
-  await expect(page.getByRole("status").getByText("Godkendt")).toBeVisible();
-  await page.waitForTimeout(500); // let the stamp land before the screenshot
-  await shot(page, info, "k05-godkendt-stempel");
-  await page.getByRole("button", { name: "Færdig – fjern fra listen" }).click();
-  await expect(page.getByText("Ingen ændringer afventer")).toBeVisible();
-  await page.goto("/app/viden?tab=k03");
-  await expect(page.getByText("Aktiv & godkendt")).toBeVisible();
+test("5 · Viden: ejerens nye ydelse gælder med det samme og Dialogbot siger den højt; en medarbejders forslag venter på godkendelse", async ({ page }, info) => {
+  const { wsId } = await freshOwner(page, info);
+  await page.goto("/app/viden");
+  await expect(page.getByText(/0 godkendte emner/)).toBeVisible();
+  await page.getByRole("button", { name: "Tilføj en ydelse" }).click();
+  await page.getByLabel("Hvad hedder den?").fill("Standard gulvafslibning");
+  await page.getByLabel("Pris (som kunden skal høre den)").fill("fra 145 kr. pr. m²");
+  await page.getByLabel("Hvad skal den sige bagefter?").fill("Afslibning og 2x lak");
+  await page.getByRole("button", { name: "Gem – og vis mig, hvordan den siger det" }).click();
+  await expect(page.getByText(/Sådan svarer den på «Hvad koster Standard gulvafslibning\?»/)).toBeVisible();
+  await expect(page.getByText(/\[fake\] svar på/).first()).toBeVisible();
+  await shot(page, info, "viden-ny-ydelse");
+  await page.reload();
+  const row = page.getByRole("listitem").filter({ hasText: "Standard gulvafslibning" });
+  await expect(row.getByText("145,-")).toBeVisible();
+  await expect(row.getByText("Sælger", { exact: true })).toBeVisible();
+  const live = await (await page.request.get(`/api/backend/workspaces/${wsId}/assistant/knowledge`)).json();
+  expect(JSON.stringify(live.items)).toContain("Standard gulvafslibning");
+  // «Ret»: the price is changed in place and is live at once.
+  await row.getByRole("button", { name: "Ret", exact: true }).click();
+  await page.getByLabel("Pris (ekskl. moms)").fill("165");
+  await page.getByRole("button", { name: "Gem", exact: true }).click();
+  await expect(page.getByText("Gemt – Dialogbot bruger det nu")).toBeVisible();
+
+  // A colleague who may not approve sends a proposal; the owner approves it.
+  const stamp = `Forslag ${Date.now()}`;
+  await page.context().clearCookies();
+  await login(page, SEEDED.staff);
+  await page.goto("/app/viden");
+  await page.getByRole("button", { name: "Tilføj en ydelse" }).click();
+  await page.getByLabel("Hvad hedder den?").fill(stamp);
+  await page.getByLabel("Pris (som kunden skal høre den)").fill("500 kr.");
+  await page.getByRole("button", { name: "Send til godkendelse" }).click();
+  await expect(page.getByText(/Sendt til godkendelse hos en ejer eller administrator/)).toBeVisible();
+  await page.context().clearCookies();
+  await login(page, SEEDED.owner);
+  await page.goto("/app/viden");
+  const card = page.locator("div").filter({ hasText: stamp }).filter({ has: page.getByRole("button", { name: "Godkend", exact: true }) }).last();
+  await expect(card.getByText(/Dialogbot foreslår/)).toBeVisible();
+  await shot(page, info, "viden-forslag");
+  await card.getByRole("button", { name: "Godkend", exact: true }).click();
+  await expect(page.getByRole("listitem").filter({ hasText: stamp })).toBeVisible();
 });
 
 test("6 · Opsætningen kommer først: /app og gamle adresser sender et ufærdigt arbejdsrum til trin 1; «senere» slipper igennem", async ({ page, context }, info) => {
@@ -210,8 +229,10 @@ test("8 · Roller: læser kan ikke redigere, medarbejder kan ikke se aktivitetsl
   await page.getByText("CVR og adresse (valgfrit)").click();
   await expect(page.getByLabel("By")).toBeDisabled();
   await expect(page.getByLabel(/^Hvad I laver/)).toBeDisabled();
-  await page.goto("/app/viden?tab=k03");
-  await expect(page.getByRole("button", { name: /Gem som ny kladde/ })).toHaveCount(0);
+  await page.goto("/app/viden");
+  await expect(page.getByRole("heading", { name: "Det I sælger" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Tilføj en ydelse" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Ret", exact: true })).toHaveCount(0);
   await shot(page, info, "roller-laeser");
   await page.context().clearCookies();
   await login(page, SEEDED.staff);
@@ -224,25 +245,17 @@ test("8 · Roller: læser kan ikke redigere, medarbejder kan ikke se aktivitetsl
   await shot(page, info, "s09-log");
 });
 
-test("9 · R06: medarbejder tester assistenten mod godkendt viden; læser kan ikke", async ({ page }, info) => {
+test("9 · Test som kunde: medarbejder tester assistenten mod godkendt viden fra Det ved den", async ({ page }, info) => {
   await login(page, SEEDED.staff);
-  await page.goto("/app/viden?tab=r06");
-  await expect(page.getByRole("heading", { name: "Test den – spørg som en kunde" })).toBeVisible();
-  await expect(page.getByText(/simuleret model, ikke en rigtig AI/)).toBeVisible();
-  await page.getByLabel("Spørgsmål fra en kunde").fill("Hvad koster afslibning?");
-  await page.getByRole("button", { name: "Spørg assistenten" }).click();
-  const answers = page.getByRole("list", { name: "Testsvar" });
-  await expect(answers.getByText("[fake] svar på: Hvad koster afslibning?")).toBeVisible();
-  await expect(answers.getByText(/assistant-v1 · viden rev\. \d+/)).toBeVisible();
-  await shot(page, info, "r06-test-assistenten");
-  await page.getByLabel("Spørgsmål fra en kunde").fill("AFVIS dette");
-  await page.getByRole("button", { name: "Spørg assistenten" }).click();
-  await expect(answers.getByText("Afvist af modellen")).toBeVisible();
-  await page.context().clearCookies();
-  await login(page, SEEDED.reader);
-  await page.goto("/app/viden?tab=r06");
-  await expect(page.getByText("Test kræver rollen medarbejder eller højere.")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Spørg assistenten" })).toHaveCount(0);
+  await page.goto("/app/viden");
+  const narrow = (page.viewportSize()?.width ?? 1440) < 1280;
+  if (narrow) await page.getByRole("button", { name: "Ændr noget" }).click();
+  await page.getByRole("button", { name: "Test mig som kunde" }).filter({ visible: true }).click();
+  const ask = page.getByLabel("Skriv et spørgsmål, som en kunde ville stille").filter({ visible: true });
+  await ask.fill("Hvad koster afslibning?");
+  await page.keyboard.press("Enter");
+  await expect(page.getByText("[fake] svar på: Hvad koster afslibning?").filter({ visible: true }).first()).toBeVisible();
+  await shot(page, info, "test-som-kunde");
 });
 
 test("10 · P00: forsiden er skjult bag forhåndskode; venteliste; invitationslink virker uden kode", async ({ page }, info) => {
@@ -315,7 +328,13 @@ test("11 · W01: ejer slår webchat til, kunde chatter på eget domæne, samtale
   await page.goto("/app/opkald");
   await page.getByRole("link", { name: /Hvad koster gulvafslibning\?/ }).click();
   await expect(page.getByText("[fake] svar på: Hvad koster gulvafslibning?")).toBeVisible();
-  await shot(page, info, "indbakke-samtale");
+  await shot(page, info, "opkald-samtale");
+  // «Ugen» counts it and lists the question as a topic Dialogbot could answer.
+  await page.goto("/app/ugen");
+  await expect(page.getByRole("heading", { name: "Sådan gik ugen" })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Hvad koster gulvafslibning?" })).toBeVisible();
+  await expect(page.getByText("Ja", { exact: true }).first()).toBeVisible();
+  await shot(page, info, "ugen");
 });
 
 test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, bekræfter abonnementet, godkender og løser opgaven", async ({ page, browser }, info) => {
@@ -350,8 +369,9 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, be
   await shot(site, info, "kontakt-i-webchat");
   await ctx.close();
 
-  await page.goto("/app/opkald/henvendelser");
+  await page.goto("/app/opkald?f=to_you");
   await page.getByRole("link", { name: /Henrik Villumsen/ }).click();
+  await page.getByRole("link", { name: "Åbn henvendelse" }).click();
   await expect(page.getByRole("heading", { name: "Henrik Villumsen" })).toBeVisible();
   await expect(page.getByText(`Ring Henrik Villumsen op – ${windowLabel}`)).toBeVisible();
   await expect(page.getByText(/Ønsker opkald/)).toBeVisible();
@@ -378,20 +398,24 @@ test("12 · Henvendelse: kunde beder om kontakt i webchat, ejer kvalificerer, be
   await expect(page.getByText("Kan I slibe 65 m² plankegulv?").first()).toBeVisible();
 });
 
-test("13 · Rapporter: dagens tal er foreløbige og viser nye henvendelser; e-mailindstilling gemmes", async ({ page }, info) => {
-  const { wsId } = await freshOwner(page, info);
-  const CSRF = { "x-requested-with": "dialogbot" };
-  expect((await page.request.post(`/api/backend/workspaces/${wsId}/leads`, { headers: CSRF, data: { contact_name: "Rapport Rasmussen", need_summary: "Vil have tilbud på lak" } })).ok()).toBeTruthy();
+test("13 · Ugen: ugens tal og emner, uge-vælger, og dagsrapporten kan ændres", async ({ page }, info) => {
+  await freshOwner(page, info);
   await page.goto("/app/ugen");
-  await expect(page.getByText("Foreløbig – dagen er ikke slut")).toBeVisible();
-  await expect(page.getByRole("link", { name: /Rapport Rasmussen/ })).toBeVisible();
-  await expect(page.getByText("Godkendte henvendelser (pris ekskl. moms)")).toBeVisible();
-  await page.getByLabel("Kl.").selectOption("6");
-  await page.getByRole("button", { name: "Gem" }).click();
+  await expect(page.getByRole("heading", { name: "Sådan gik ugen" })).toBeVisible();
+  await expect(page.getByText("opkald og beskeder besvaret")).toBeVisible();
+  await expect(page.getByRole("list", { name: "Opkald pr. dag" }).getByRole("listitem")).toHaveCount(7);
+  await expect(page.getByText("Ingen spørgsmål i denne uge.")).toBeVisible();
+  await page.getByRole("link", { name: /^‹ Uge \d+/ }).click();
+  await expect(page).toHaveURL(/uge=\d{4}-\d{2}-\d{2}/);
+  await expect(page.getByRole("link", { name: "Denne uge" })).toBeVisible();
+  await page.getByRole("link", { name: "Denne uge" }).click();
+  await page.getByText("Ret selv").click();
+  await page.getByLabel("Klokken").selectOption("6");
+  await page.getByRole("button", { name: "Gem", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "Gemt" })).toBeVisible();
-  await shot(page, info, "rapporter");
+  await shot(page, info, "ugen-tom");
   await page.reload();
-  await expect(page.getByLabel("Kl.")).toHaveValue("6");
+  await expect(page.getByText(/kl\. 06/)).toBeVisible();
 });
 
 test("14 · S03: ny kunde sætter telefonen op uden leverandørkonti – nummer, kontrolkode, dokumentation, Dialogbot-nummer, prøveopkald, aktivering; opkald bliver til samtale, henvendelse og opgave", async ({ page }, info) => {
@@ -454,7 +478,7 @@ test("14 · S03: ny kunde sætter telefonen op uden leverandørkonti – nummer,
   const report = await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: {
     type: "end-of-call-report", endedReason: "customer-ended-call", analysis: { summary: "Vil have tilbud på afslibning." },
     phoneNumber: { number: dest },
-    call: { id: callId, customer: { number: "+4520304050" }, startedAt: "2026-09-24T08:00:00Z", endedAt: "2026-09-24T08:01:05Z" },
+    call: { id: callId, customer: { number: "+4520304050" }, startedAt: new Date(Date.now() - 65_000).toISOString(), endedAt: new Date().toISOString() },
     artifact: { messages: [{ role: "bot", message: "Hej, du har ringet til os." }, { role: "user", message: "Hvad koster afslibning?" }] } } } });
   expect((await report.json()).outcome).toBe("applied");
   await page.reload();
@@ -467,9 +491,9 @@ test("14 · S03: ny kunde sætter telefonen op uden leverandørkonti – nummer,
   await expect(page.getByRole("heading", { name: "Telefoni: leverandører, klargøring og numre" })).toBeVisible();
   await shot(page, info, "operator-telefoni");
   await page.goto("/app/opkald");
-  await page.getByRole("link", { name: /Hvad koster afslibning\?/ }).click();
-  await expect(page.getByRole("heading", { name: "Telefonopkald" })).toBeVisible();
-  await page.getByRole("link", { name: /Henvendelse:/ }).click();
+  await page.getByRole("link", { name: /Vil have tilbud på afslibning/ }).click();
+  await expect(page.getByRole("listitem").filter({ hasText: "Hvad koster afslibning?" }).first()).toBeVisible();   // the transcript
+  await page.getByRole("link", { name: "Åbn henvendelse" }).click();
   await expect(page.getByText("Ring tilbage til +4520304050")).toBeVisible();
   await shot(page, info, "telefon-henvendelse");
 });
@@ -496,7 +520,8 @@ test("15 · Medarbejder overtager en webchat, svarer kunden, og assistenten hold
 
   await page.goto("/app/opkald");
   await page.getByRole("link", { name: /Må jeg tale med en person\?/ }).click();
-  await page.getByLabel("Svar kunden i chatten").fill("Hej, det er Mads fra Fjord. Hvad drejer det sig om?");
+  await expect(page).toHaveURL(/\/app\/opkald\/[0-9a-f-]{36}/);
+  await page.getByLabel("Svar kunden i chatten").filter({ visible: true }).fill("Hej, det er Mads fra Fjord. Hvad drejer det sig om?");
   await page.getByRole("button", { name: "Send svar" }).click();
   await expect(page.getByText("En medarbejder har overtaget samtalen", { exact: false })).toBeVisible();
 
@@ -509,9 +534,16 @@ test("15 · Medarbejder overtager en webchat, svarer kunden, og assistenten hold
   await ctx.close();
 
   await expect(page.getByText("Kan I komme onsdag?")).toBeVisible({ timeout: 15_000 }); // inbox auto-refresh
-  await shot(page, info, "indbakke-overtaget");
-  await page.goto("/app/opkald");
-  await expect(page.getByText("Venter på svar")).toBeVisible();
+  await shot(page, info, "opkald-overtaget");
+  await page.goto("/app/opkald?f=to_you");
+  await expect(page.getByRole("link", { name: /Kan I komme onsdag\?|Må jeg tale med en person\?/ })).toBeVisible();
+  // «Marker som klaret» hands the chat back and the row leaves «Til dig».
+  await page.getByRole("link", { name: /Må jeg tale med en person\?/ }).click();
+  await expect(page).toHaveURL(/\/app\/opkald\/[0-9a-f-]{36}/);
+  await page.getByRole("button", { name: "Marker som klaret" }).click();
+  await expect(page.getByRole("button", { name: "Marker som klaret" })).toBeDisabled();
+  await page.goto("/app/opkald?f=to_you");
+  await expect(page.getByText("Ingen opkald eller beskeder passer til filteret.")).toBeVisible();
 });
 
 test("16 · Afregning: abonnementet (2.495 kr. + moms) og den godkendte henvendelse uden pris vises tydeligt som forhåndsvisning", async ({ page }, info) => {
@@ -551,10 +583,10 @@ test("Tastatur og fokus: spring-til-indhold, synlig fokusmarkering og navigation
     if (style) expect(style.outline || style.shadow, `fokus synlig på ${style.tag}`).toBeTruthy();
   }
   await shot(page, info, "fokus");
-  await page.goto("/app/viden?tab=k03");
-  await page.getByRole("link", { name: /Aktive tilbud|Tilbud/ }).focus();
+  await page.goto("/app/viden");
+  await page.getByRole("link", { name: "Ugen", exact: true }).first().focus();
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/tab=k04/);
+  await expect(page).toHaveURL(/\/app\/ugen/);
 });
 
 test("17 · Viden: forslag fra hjemmesiden bliver til kladder med tekst og uden gættede priser", async ({ page }, info) => {
@@ -563,23 +595,23 @@ test("17 · Viden: forslag fra hjemmesiden bliver til kladder med tekst og uden 
     <h1>Fjord Gulv</h1><p>Vi sliber og behandler trægulve i hele Østjylland.</p>
     <h2>Gulvafslibning</h2><p>Afslibning med støvfrit anlæg. Fra 145 kr. pr. m² inkl. moms.</p>
     <h2>Lakering</h2><p>Tre lag slidstærk lak.</p></body></html>`));
-  await page.goto("/app/viden?tab=k03");
-  await expect(page.getByRole("heading", { name: "Hent forslag fra hjemmesiden" })).toBeVisible();
+  await page.goto("/app/viden");
+  await page.getByRole("button", { name: "Hent fra hjemmesiden" }).click();
   await page.getByLabel("Hjemmesidens adresse").fill("http://127.0.0.1:4000/");
   await page.getByRole("button", { name: "Hent forslag" }).click();
-  await expect(page.getByText("3 forslag oprettet som kladder")).toBeVisible({ timeout: 20_000 });
-  await expect(page.getByText("Ydelse: Gulvafslibning")).toBeVisible();
-  await page.goto("/app/viden?tab=k03");
+  await expect(page.getByText(/3 forslag lagt som kladder/)).toBeVisible({ timeout: 20_000 });
+  await page.goto("/app/viden");
+  await expect(page.getByText(/Dialogbot foreslår · Ydelse/).first()).toBeVisible();
   await expect(page.getByText(/Hjemmesiden nævner prisen/).first()).toBeVisible();
-  await shot(page, info, "k03-forslag-fra-hjemmeside");
-  // A wrong suggestion can be deleted; the guide leads on to the personal plan.
-  page.once("dialog", (d) => d.accept());
-  await page.locator("form").filter({ hasText: "Lakering" }).getByRole("button", { name: "Slet" }).click();
-  await expect(page.getByRole("heading", { name: "Lakering" })).toHaveCount(0);
-  await page.getByRole("link", { name: /Fortsæt til personlig plan/ }).click();
-  await expect(page).toHaveURL(/\/opsaetning\/1/);
-  // Nothing is live before approval.
-  const live = await (await page.request.get(`/api/backend/workspaces/${wsId}/assistant/knowledge`)).json();
+  await shot(page, info, "viden-forslag-fra-hjemmeside");
+  // Nothing is live before approval; a wrong suggestion is rejected.
+  let live = await (await page.request.get(`/api/backend/workspaces/${wsId}/assistant/knowledge`)).json();
+  expect(live.items).toEqual([]);
+  page.once("dialog", (d) => d.accept("Passer ikke"));
+  const lak = page.locator("div").filter({ hasText: "Lakering" }).filter({ has: page.getByRole("button", { name: "Afvis" }) }).last();
+  await lak.getByRole("button", { name: "Afvis" }).click();
+  await expect(page.getByText("Lakering")).toHaveCount(0);
+  live = await (await page.request.get(`/api/backend/workspaces/${wsId}/assistant/knowledge`)).json();
   expect(live.items).toEqual([]);
 });
 
@@ -630,8 +662,8 @@ test("20 · I dag og beskeder: en ny henvendelse vises under «Til dig» og som 
   await expect(page.getByRole("link", { name: /1 nye henvendelser/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /Åbn: Ny henvendelse: Mette/ })).toBeVisible();
   await shot(page, info, "overblik");
-  await page.goto("/app/opkald/beskeder");
-  await expect(page.getByText(/Ny henvendelse: Mette/)).toBeVisible();
+  await page.goto("/app/notifications");                 // retired: notifications are «Til dig» on I dag and in Opkald
+  await expect(page).toHaveURL(/\/app\/opkald\?f=to_you/);
   await page.goto("/app/hjaelp");
   await expect(page.getByRole("heading", { name: "Sådan bruger I Dialogbot" })).toBeVisible();
 });
@@ -981,8 +1013,8 @@ test("Skal v2: fire faner, avatar til Konto, bundfaner på telefon, assistent, o
   // No horizontal page scroll at either width.
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBeTruthy();
   const OLD: [string, RegExp][] = [
-    ["/app/overview", /\/app$/], ["/app/knowledge?tab=k03", /\/app\/viden\?tab=k03/], ["/app/inbox", /\/app\/opkald$/], ["/app/leads", /\/app\/opkald\/henvendelser$/],
-    ["/app/tasks", /\/app\/opkald\/opgaver$/], ["/app/notifications", /\/app\/opkald\/beskeder$/], ["/app/reports", /\/app\/ugen$/], ["/app/bookings", /\/app\/aftaler$/],
+    ["/app/overview", /\/app$/], ["/app/knowledge?tab=k03", /\/app\/viden\?tab=k03/], ["/app/inbox", /\/app\/opkald$/], ["/app/leads", /\/app\/opkald\?f=to_you$/],
+    ["/app/tasks", /\/app\/opkald\?f=to_you$/], ["/app/notifications", /\/app\/opkald\?f=to_you$/], ["/app/reports", /\/app\/ugen$/], ["/app/bookings", /\/app\/aftaler$/],
     ["/app/campaigns", /\/app\/kampagner$/], ["/app/settings/team", /\/app\/konto$/], ["/app/settings/profile", /\/app\/konto\/profil$/], ["/app/billing", /\/app\/konto\/fakturering$/],
     ["/app/settings/agreement", /\/app\/konto\/abonnement$/], ["/app/settings/telephony", /\/app\/indstillinger\/telefoni$/], ["/app/settings", /\/app\/indstillinger$/],
     ["/app/reception", /\/app\/indstillinger\/hilsen$/], ["/app/voices", /\/app\/indstillinger\/stemmer$/], ["/app/help", /\/app\/hjaelp$/], ["/app/not-yet", /\/app\/hjaelp$/],
@@ -1060,7 +1092,7 @@ test("Opsætning trin 1→3: virksomhed, stemme, nummer, kontrolkode, dokumentat
   expect((await req.json()).assistant.firstMessage).toContain("Dette er et prøveopkald");
   const report = await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: {
     type: "end-of-call-report", endedReason: "customer-ended-call", analysis: { summary: "Prøveopkald." }, phoneNumber: { number: dest },
-    call: { id: callId, customer: { number: "+4520304050" }, startedAt: "2026-09-24T08:00:00Z", endedAt: "2026-09-24T08:01:05Z" },
+    call: { id: callId, customer: { number: "+4520304050" }, startedAt: new Date(Date.now() - 65_000).toISOString(), endedAt: new Date().toISOString() },
     artifact: { messages: [{ role: "bot", message: "Dette er et prøveopkald." }, { role: "user", message: "Hej." }] } } } });
   expect((await report.json()).outcome).toBe("applied");
   await page.reload();

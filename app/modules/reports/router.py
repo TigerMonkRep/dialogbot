@@ -63,6 +63,29 @@ def put_settings(body: SettingsIn, request: Request, ctx: WorkspaceContext = Dep
     return {**body.model_dump(), "timezone": service.tz_of(db, ctx.workspace.id)}
 
 
+def _monday(start: date | None, tz: str) -> date:
+    return service.week_start_of(start or service.local_today(tz))
+
+
+@router.get("/week")
+def week_view(start: date | None = None, ctx: WorkspaceContext = Depends(require_capability("reports.read")),
+              db: OrmSession = Depends(get_db)):
+    """«Ugen»: Monday..Sunday containing `start` (default: this week) in the workspace's time zone."""
+    tz = service.tz_of(db, ctx.workspace.id)
+    w = service.week(db, ctx.workspace.id, _monday(start, tz), tz)
+    if not ctx.can("reports.costs"):
+        w.pop("campaign_net_minor")
+    return w
+
+
+@router.get("/topics")
+def topics_view(start: date | None = None, ctx: WorkspaceContext = Depends(require_capability("reports.read")),
+                db: OrmSession = Depends(get_db)):
+    """«Det spurgte kunderne om»: grouped first questions of the week with whether the assistant could answer."""
+    tz = service.tz_of(db, ctx.workspace.id)
+    return {"start": _monday(start, tz).isoformat(), "items": service.topics(db, ctx.workspace.id, _monday(start, tz), tz)}
+
+
 @router.get("/{day}")
 def get_report(day: date, ctx: WorkspaceContext = Depends(require_capability("reports.read")),
                db: OrmSession = Depends(get_db)):

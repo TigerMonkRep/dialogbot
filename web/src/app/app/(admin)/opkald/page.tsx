@@ -1,2 +1,6 @@
-// Phase 1 of kundeapp v2: the new route renders the current page; the old route redirects here (next.config.ts).
-export { default } from "../inbox/page";
+import { OpkaldView } from "./view";
+
+export default async function OpkaldPage({ searchParams }: { searchParams: Promise<{ f?: string; q?: string; days?: string }> }) {
+  const { f, q, days } = await searchParams;
+  return <OpkaldView f={f} q={q} days={Number(days) || 30} />;
+}

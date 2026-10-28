@@ -150,7 +150,7 @@ test("5 · K03→K05: ny ydelse er kladde, indtil ejeren godkender den", async (
 test("6 · G01/G05: planen viser én næste handling, tjek kører, ikke-byggede trin er ikke tilgængelige", async ({ page }, info) => {
   await login(page, SEEDED.owner);
   await page.goto("/app/setup");
-  await expect(page.getByText(/AI ikke aktiv/i).filter({ visible: true }).first()).toBeVisible();
+  // The AI status pill left the header with kundeapp v2; the honest status now lives on I dag (checked below: no "Aktiv AI").
   const desktop = info.project.name.startsWith("desktop");
   if (desktop) {
     await expect(page.getByText(/Næste handling/).first()).toBeVisible();

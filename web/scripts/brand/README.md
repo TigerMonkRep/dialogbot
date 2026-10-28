@@ -17,3 +17,18 @@ python3 web/scripts/brand/gen_assets.py        # every PNG/ICO under web/public/
 parts motif). `.build/` is scratch output and is not committed. After a run, copy
 `.build/fonts/Outfit-ExtraBold.ttf` + `Outfit-Bold.ttf` and `web/public/brand/logo-mark-1024.png` (scaled to 512)
 into `app/modules/social/assets/` if the fonts or the mark changed.
+
+## Printed material (`web/public/materiale/`)
+
+`salgsmateriale.html`, `opsaetningsmanual.html` and `ambassadoerhaandbog.html` are self-contained A4 documents in the
+v2 design (one `<section class="page">` per sheet, Outfit/Inter self-hosted in `materiale/fonts/` – copied from
+`node_modules/@fontsource-variable/{outfit,inter}/files/*-latin*-wght-normal.woff2`). Regenerate the PDFs next to them
+with Playwright/Chromium:
+
+```
+cd web && node scripts/materiale-pdf.js                # all three, or name one: salgsmateriale
+```
+
+The script fails if a document prints to more sheets than it has `.page` sections or a page's content is taller than
+A4, so overflow is caught instead of producing cut-off or blank pages. `salgsmateriale.html?navn=…&link=…&kode=…&rabat=…`
+is the personalised ambassador version (the portal links to it); the PDF is the neutral one.

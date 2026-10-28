@@ -54,11 +54,11 @@ export function SellerDemoCall({ info, calls }: { info: SalesInfo; calls: DemoRo
         <Field label="Note (valgfri)"><Input value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} placeholder="Sagde ja kl. 10.15, vil høre om booking" /></Field>
         <label className="flex items-start gap-space-sm font-body-sm text-body-sm">
           <input type="checkbox" className="mt-1 w-4 h-4 accent-primary" checked={f.consent_confirmed} onChange={(e) => setF({ ...f, consent_confirmed: e.target.checked })} />
-          <span>Kontakten har lige sagt ja i telefonen til, at Dialogbots AI ringer op nu.</span>
+          <span>Kontakten har lige sagt ja i telefonen til, at Peter fra Dialogbot (en digital assistent) ringer op nu.</span>
         </label>
         <ErrorBox error={call.error} />
-        {sent && !call.error && <Alert kind="ok">AI&apos;en ringer nu til {sent}. Du kan lægge på.</Alert>}
-        <Button type="submit" icon="call" disabled={!info.available || !f.consent_confirmed || protectedCo || call.pending || !f.company || !f.phone}>{call.pending ? "Ringer op…" : "Lad AI'en ringe op nu"}</Button>
+        {sent && !call.error && <Alert kind="ok">Peter ringer nu til {sent}. Du kan lægge på.</Alert>}
+        <Button type="submit" icon="call" disabled={!info.available || !f.consent_confirmed || protectedCo || call.pending || !f.company || !f.phone}>{call.pending ? "Ringer op…" : "Lad Peter ringe op nu"}</Button>
       </form>
 
       <div className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm min-w-0">

@@ -6,8 +6,8 @@ Dialogbot sælges bedst ved, at kunden selv hører assistenten. Der er tre lovli
 | Vej | Hvem tager initiativet | Samtykke |
 |---|---|---|
 | **Demonummeret** på forsiden | Kunden ringer selv ind | Ikke nødvendigt – kunden ringer selv |
-| **"Ring mig op nu"** på forsiden (`#demo`) | Kunden skriver sit nummer og sætter flueben | Fluebenet. Tekst og version gemmes på opkaldet (`demo-call-web-v1`) |
-| **Sælgerflowet** `/app/operator/sales` | En Dialogbot-sælger ringer selv (et menneske), spørger "må vores AI ringe dig op nu?" og trykker på knappen ved et ja | Sælgerens bekræftelse. Sælgeren og tidspunktet gemmes og auditeres (`demo-call-seller-v1`) |
+| **"Ring mig op nu"** på forsiden (`#demo`) | Kunden skriver sit nummer og sætter flueben | Fluebenet. Tekst og version gemmes på opkaldet (`demo-call-web-v2`) |
+| **Sælgerflowet** `/app/operator/sales` | En Dialogbot-sælger ringer selv (et menneske), spørger "må Peter fra Dialogbot, vores digitale assistent, ringe dig op nu?" og trykker på knappen ved et ja | Sælgerens bekræftelse. Sælgeren og tidspunktet gemmes og auditeres (`demo-call-seller-v2`) |
 
 ## Hvorfor ikke bare lade AI'en ringe kolde opkald?
 
@@ -31,7 +31,8 @@ opkaldsmotoren.
 ## Sådan virker det
 
 - **Opkaldet:**
-  - Assistenten præsenterer sig som Dialogbots digitale assistent og siger, at kunden selv har bedt om opkaldet.
+  - Den, der ringer, hedder **Peter** (`script.AGENT_NAME`). Første sætning er "Hej Mette, det er Peter fra Dialogbot.", derefter at han er en digital assistent, og at kunden selv har bedt om opkaldet. Stemmen er en dansk mandestemme (Peter i stemmekataloget); dens ElevenLabs-id kan skiftes med `SALES_AGENT_VOICE_ID`. Navnet og stemmen følger altid hinanden, uanset hvilken stemme en klient beder om.
+  - Der er ingen voicemail-besked: opdager Vapi en telefonsvarer, lægger Peter på uden at tale (kunden har bedt om et opkald nu, ikke om en besked).
   - Den tilbyder at være receptionist for kundens egen virksomhed i et rollespil eller at svare på spørgsmål om
     Dialogbot, men kun ud fra salgsarbejdsrummets godkendte viden.
   - Et opkald varer højst 5 minutter.

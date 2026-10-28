@@ -36,13 +36,13 @@ MAX_SECONDS = 420  # the script aims for 3-4 minutes; the hard stop leaves room 
 WEB_REPEAT_AFTER = timedelta(hours=24)
 DK_NUMBER = re.compile(r"^\+45[2-9]\d{7}$")
 PREMIUM = re.compile(r"^\+4590")  # 90xx xxxx: overtakseret
-CONSENT_VERSION_WEB = "demo-call-web-v1"
-CONSENT_VERSION_SELLER = "demo-call-seller-v1"
-CONSENT_TEXT_WEB = ("Ja tak, Dialogbots digitale assistent må ringe mig op på dette nummer nu og vise, hvordan den "
-                    "tager telefonen. Opkaldet bliver skrevet ned, og en medarbejder fra Dialogbot må kontakte mig "
-                    "bagefter om det, vi talte om.")
-CONSENT_TEXT_SELLER = ("Kontakten sagde ja i telefonen til, at Dialogbots digitale assistent ringer op nu og viser, "
-                       "hvordan den tager telefonen.")
+CONSENT_VERSION_WEB = "demo-call-web-v2"  # v2: names Peter as the caller
+CONSENT_VERSION_SELLER = "demo-call-seller-v2"
+CONSENT_TEXT_WEB = (f"Ja tak, {script.AGENT_NAME} fra Dialogbot, en digital assistent, må ringe mig op på dette nummer nu "
+                    "og vise, hvordan Dialogbot tager telefonen. Opkaldet bliver skrevet ned, og en medarbejder fra "
+                    "Dialogbot må kontakte mig bagefter om det, vi talte om.")
+CONSENT_TEXT_SELLER = (f"Kontakten sagde ja i telefonen til, at {script.AGENT_NAME} fra Dialogbot, en digital assistent, "
+                       "ringer op nu og viser, hvordan Dialogbot tager telefonen.")
 
 
 class DemoUnavailable(ApiError):
@@ -116,10 +116,24 @@ def info(db: OrmSession) -> dict:
     return {"available": problem(db) is None, "demo_number": demo_number(db), "open_now": in_hours(_now()),
             "hours": {"from": start.strftime("%H:%M"), "to": end.strftime("%H:%M")},
             "consent_text": CONSENT_TEXT_WEB, "consent_version": CONSENT_VERSION_WEB,
+            "agent": script.AGENT_NAME,
             "voices": [{k: v[k] for k in ("key", "name", "gender", "image", "description", "sample")}
-                       for v in _voices()],
+                       for v in _voices() if v["key"] == AGENT_VOICE],
             "industries": [{"key": k, "label": v["label"], "icon": v["icon"], "examples": v["examples"]}
                            for k, v in script.INDUSTRIES.items()]}
+
+
+AGENT_VOICE = "peter"  # key in voices.standard: the catalogue voice of the assistant that rings
+
+
+def agent_voice() -> dict:
+    """Vapi voice of Peter. SALES_AGENT_VOICE_ID (an ElevenLabs voice id) replaces the catalogue's id."""
+    from app.modules.voices import standard
+
+    voice = dict(standard.STANDARD_VOICES[AGENT_VOICE]["voice"])
+    if (custom := get_settings().sales_agent_voice_id):
+        voice["voiceId"] = custom.strip()
+    return voice
 
 
 def _voices() -> list[dict]:
@@ -182,11 +196,9 @@ def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -
         out["server"] = server
     from app.modules.voices import standard
 
-    if d.voice_key in standard.STANDARD_VOICES:  # the visitor picked the voice they want to hear
-        out["voice"] = dict(standard.STANDARD_VOICES[d.voice_key]["voice"])
-        out["voice"].setdefault("chunkPlan", standard.danish_chunk_plan(db, ws.id))
-    else:
-        out["voice"] = standard.provider_voice(db, ws.id, number)
+    # Peter rings, whatever voice the client may have asked for: the name and the voice belong together.
+    out["voice"] = agent_voice()
+    out["voice"].setdefault("chunkPlan", standard.danish_chunk_plan(db, ws.id))
     return out
 
 
@@ -225,7 +237,7 @@ def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: s
     _global_cap(db, ws, now)
     d = DemoCall(workspace_id=ws.id, source="web", phone=phone, name=name.strip()[:200], company=company.strip()[:200],
                  consent_version=CONSENT_VERSION_WEB, consent_text=CONSENT_TEXT_WEB, consented_at=now,
-                 voice_key=voice, industry=industry if industry in script.INDUSTRIES else None,
+                 voice_key=AGENT_VOICE, industry=industry if industry in script.INDUSTRIES else None,
                  industry_other=(script.clean_other(industry_other) or None) if industry not in script.INDUSTRIES else None)
     db.add(d)
     if _blocked(db, ws, phone):

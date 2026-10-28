@@ -99,6 +99,9 @@ class Settings(BaseSettings):
     sales_call_from: str = Field(default="08:00", alias="SALES_CALL_FROM")  # website requests, Copenhagen time
     sales_call_to: str = Field(default="20:00", alias="SALES_CALL_TO")
     sales_max_calls_per_hour: int = Field(default=20, alias="SALES_MAX_CALLS_PER_HOUR")
+    # The voice of "Peter", who rings visitors and prospects. Unset = the catalogue's Peter (app/modules/voices/standard.py).
+    # An ElevenLabs Voice Library id (Vapi → Integrations holds the platform's ElevenLabs key); a Danish male voice.
+    sales_agent_voice_id: str | None = Field(default=None, alias="SALES_AGENT_VOICE_ID")
     # Actions in the customer's own systems (app/modules/integrations/connectors). Stored credentials are envelope-
     # encrypted with CREDENTIALS_KEY (base64url, 32 random bytes; `python -m scripts.credentials_key` prints one).
     # Without it in staging/prod, connectors that store secrets are reported as not available; dev/test derive a

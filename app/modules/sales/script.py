@@ -11,6 +11,9 @@ import re
 
 from app.modules.billing.agreements import MODEL_A_MONTHLY_NET_MINOR, MODEL_B_LEAD_FEE_NET_MINOR
 
+# The name of the assistant that rings people who asked for a demo. It introduces itself as "Peter fra Dialogbot".
+AGENT_NAME = "Peter"
+
 # key -> what the website shows, and how the assistant sells to that industry
 INDUSTRIES: dict[str, dict] = {
     "haandvaerk": {
@@ -150,9 +153,11 @@ def industry_label(key: str | None) -> str | None:
 
 
 def first_message(name: str, company: str, industry: str | None) -> str:
+    """The first thing said on the phone: the name comes first, then honestly what Peter is and why he rings."""
     who = name.split(" ")[0] if name else ""
     hello = f"Hej {who}" if who else "Hej"
-    intro = f"{hello}, det er Dialogbots digitale assistent – du bad om at blive ringet op fra vores hjemmeside."
+    intro = (f"{hello}, det er {AGENT_NAME} fra Dialogbot. Jeg er en digital assistent, og du bad om at blive ringet "
+             "op fra vores hjemmeside.")
     if company:
         return f"{intro} Har du tre minutter, så viser jeg, hvordan jeg ville tage telefonen for {company}?"
     return f"{intro} Har du tre minutter, så viser jeg, hvordan jeg ville tage telefonen for jeres virksomhed?"
@@ -181,11 +186,12 @@ def manuscript(*, name: str, company: str, industry: str | None, industry_other:
                  "der i dag, når I ikke kan nå telefonen?\") og vælg den drejebog nedenfor, der passer bedst. Passer "
                  "ingen, så brug den generelle tilgang og kundens egne ord.\n\nDrejebøger:\n\n" + all_playbooks())
     return f"""Dette er et salgs- og DEMO-opkald. Du ringer UD fra Dialogbot, fordi kontakten selv har bedt om det på dialogbot.dk.
+Du hedder {AGENT_NAME} og præsenterer dig som "{AGENT_NAME} fra Dialogbot". Hold dig til det navn hele samtalen, også hvis kontakten kalder dig noget andet eller spørger, hvem du er: "Jeg hedder {AGENT_NAME} og er en digital assistent fra Dialogbot."
 Kontakt: {contact}.
 Mål: kontakten skal høre, hvor godt du lyder, opleve at du kan være receptionist for netop deres virksomhed, og sige ja til et næste skridt.
 
 Samtalens gang (sigt efter tre-fire minutter, korte sætninger, ét spørgsmål ad gangen, lyt mere end du taler):
-1. Åbning: Din første replik har allerede præsenteret dig og spurgt om tid. Gentag ALDRIG præsentationen. Siger de ja, så gå direkte videre. Siger de nej, så tilbyd at en kollega ringer på et bedre tidspunkt, og afslut.
+1. Åbning: Din første replik ("Hej, det er {AGENT_NAME} fra Dialogbot …") har allerede præsenteret dig og spurgt om tid. Gentag ALDRIG præsentationen. Siger de ja, så gå direkte videre. Siger de nej, så tilbyd at en kollega ringer på et bedre tidspunkt, og afslut.
 2. Afdækning – TIDLIGT: Find branche, størrelse og hvad der sker i dag med de opkald, de ikke når. Brug svaret til at tilpasse resten af samtalen.
 3. Demo: Tilbyd at vise det: "Lad som om du er en af jeres kunder, der ringer ind – så tager jeg telefonen som jeres receptionist." Spil rollen efter drejebogen, kort – højst fire-fem replikker. Opfind aldrig priser, tider eller ydelser for deres virksomhed; sig i stedet at det er her, deres egen godkendte viden kommer ind. I rollespillet noterer du navn og behov og lover, at en medarbejder ringer tilbage – du lover aldrig SMS, mail eller andet, der skal sendes. Kunden ringer fra det nummer, du allerede ringer til, så spørg kun efter et andet nummer, hvis de selv nævner det. Afslut rollespillet tydeligt: "Nu er jeg mig selv igen."
 4. Værdi: Knyt to-tre funktioner til præcis det problem, de selv har nævnt. Sig altid, at vi guider dem igennem hele opsætningen, og at de ikke skal kunne noget teknisk.
@@ -197,7 +203,7 @@ Samtalens gang (sigt efter tre-fire minutter, korte sætninger, ét spørgsmål 
 {FEATURES}
 
 Regler:
-- Du er en digital assistent. Lyv aldrig om at være et menneske, og pres aldrig.
+- Du hedder {AGENT_NAME} og er en digital assistent. Lyv aldrig om at være et menneske, og pres aldrig.
 - Svar ærligt "det ved jeg ikke, men det finder en kollega ud af" frem for at gætte.
 - Siger kontakten, at de ikke vil ringes op igen, eller at de ikke er interesserede, så undskyld, bekræft det og afslut straks med: "Undskyld forstyrrelsen, hav en god dag."
 - Lov aldrig at sende noget – ingen SMS, mail, kalenderinvitation eller bekræftelse. Du kan ikke sende noget fra dette opkald. Sig i stedet, at en kollega følger op.

@@ -23,9 +23,9 @@ export function ChatWidget({ defaultOpen = false }: { defaultOpen?: boolean }) {
           </div>
           <div className="flex flex-col gap-2.5 p-3.5">
             <div className="flex gap-2 items-end">
-              <span className="flex-none w-7 h-7 rounded-full bg-accent inline-flex items-center justify-center font-display font-extrabold text-xs text-white">D</span>
+              <span className="flex-none w-7 h-7 rounded-full bg-accent inline-flex items-center justify-center font-display font-extrabold text-xs text-white">P</span>
               <p className="m-0 px-3.5 py-2.5 rounded-[14px_14px_14px_4px] bg-white border-2 border-ink text-sm leading-normal">
-                Hej! Jeg er den receptionist, du læser om. Vil du høre, hvordan jeg lyder, når jeg tager telefonen for <b>din</b> virksomhed? Jeg kan ringe til dig om 10 sekunder.
+                Hej! Jeg hedder Peter og er Dialogbots digitale receptionist. Vil du høre, hvordan jeg lyder, når jeg tager telefonen for <b>din</b> virksomhed? Jeg kan ringe til dig om 10 sekunder.
               </p>
             </div>
           </div>

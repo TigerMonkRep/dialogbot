@@ -32,11 +32,11 @@ export function PowerToggle({ wsId, code, canManage }: { wsId: string; code: Tel
 type Proposal = { area: string; title: string; body: string; href: string; cta: string };
 
 const CHIPS: { label: string; p: Proposal }[] = [
-  { label: "Ret åbningstider", p: { area: "Åbningstider", title: "Ret, hvornår Dialogbot siger I har åbent", body: "Åbningstiderne ligger under «Det ved den». Du retter dem der, og de gælder, når en ejer eller administrator har godkendt kladden.", href: "/app/knowledge?tab=k03", cta: "Åbn åbningstider" } },
-  { label: "Tilføj en pris", p: { area: "Det I sælger", title: "Tilføj en ydelse med pris", body: "Du skriver navn, pris og en kort forklaring. Dialogbot nævner først prisen, når kladden er godkendt.", href: "/app/knowledge?tab=k03", cta: "Tilføj ydelse" } },
-  { label: "Send SMS til kunder", p: { area: "Kampagne", title: "Lav en SMS-kampagne", body: "Du skriver teksten og vælger modtagere. Intet sendes, før du har godkendt listen og tidspunktet.", href: "/app/campaigns", cta: "Gå til kampagner" } },
-  { label: "Koble et system på", p: { area: "Integration", title: "Forbind kalender eller fagsystem", body: "Under Integrationer ser du, hvad der kan kobles på nu, og hvad der er på vej. Intet markeres som klar, før det virker.", href: "/app/settings/integrationer", cta: "Åbn integrationer" } },
-  { label: "Vis mig ugens tal", p: { area: "Rapporter", title: "Ugens opkald, henvendelser og bookinger", body: "Rapportsiden viser de rigtige tal fra jeres arbejdsrum – ingen estimater.", href: "/app/reports", cta: "Se rapporter" } },
+  { label: "Ret åbningstider", p: { area: "Åbningstider", title: "Ret, hvornår Dialogbot siger I har åbent", body: "Åbningstiderne ligger under «Det ved den». Du retter dem der, og de gælder, når en ejer eller administrator har godkendt kladden.", href: "/app/viden?tab=k03", cta: "Åbn åbningstider" } },
+  { label: "Tilføj en pris", p: { area: "Det I sælger", title: "Tilføj en ydelse med pris", body: "Du skriver navn, pris og en kort forklaring. Dialogbot nævner først prisen, når kladden er godkendt.", href: "/app/viden?tab=k03", cta: "Tilføj ydelse" } },
+  { label: "Send SMS til kunder", p: { area: "Kampagne", title: "Lav en SMS-kampagne", body: "Du skriver teksten og vælger modtagere. Intet sendes, før du har godkendt listen og tidspunktet.", href: "/app/kampagner", cta: "Gå til kampagner" } },
+  { label: "Koble et system på", p: { area: "Integration", title: "Forbind kalender eller fagsystem", body: "Under Integrationer ser du, hvad der kan kobles på nu, og hvad der er på vej. Intet markeres som klar, før det virker.", href: "/app/indstillinger/integrationer", cta: "Åbn integrationer" } },
+  { label: "Vis mig ugens tal", p: { area: "Rapporter", title: "Ugens opkald, henvendelser og bookinger", body: "Rapportsiden viser de rigtige tal fra jeres arbejdsrum – ingen estimater.", href: "/app/ugen", cta: "Se rapporter" } },
 ];
 
 /** Free text is matched to the nearest known change. There is no AI behind this box yet, so it never pretends to. */
@@ -65,7 +65,7 @@ export function ChangePanel({ firstName, summary }: { firstName: string; summary
     setDraft("");
     const p = match(v);
     if (p) propose(v, p);
-    else { say("user", v); say("bot", "Det kan jeg ikke ændre herfra endnu. Vælg en af mulighederne nedenfor, eller find det under «Mere» øverst."); setProposal(null); }
+    else { say("user", v); say("bot", "Det kan jeg ikke ændre herfra endnu. Vælg en af mulighederne nedenfor, eller find det under «Alle indstillinger» (profilen øverst til højre)."); setProposal(null); }
   };
   return (
     <aside aria-label="Din assistent" className="bg-paper border-2 border-ink rounded-2xl shadow-block flex flex-col overflow-hidden">
@@ -105,7 +105,7 @@ export function ChangePanel({ firstName, summary }: { firstName: string; summary
             className="flex-1 min-w-0 min-h-[46px] px-3.5 rounded-xl border-2 border-ink bg-paper text-[15px] text-ink placeholder:text-muted" />
           <button type="submit" aria-label="Send" className="w-[46px] h-[46px] rounded-xl bg-accent text-white inline-flex items-center justify-center hover:bg-accent-deep"><Icon name="arrow_forward" size={20} /></button>
         </form>
-        <Link href="/app/settings/team" className="self-end text-[12px] text-muted hover:text-ink">Avanceret: alle indstillinger</Link>
+        <Link href="/app/konto" className="self-end text-[12px] text-muted hover:text-ink">Avanceret: alle indstillinger</Link>
       </div>
     </aside>
   );

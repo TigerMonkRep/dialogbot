@@ -1,13 +1,16 @@
 name: Deploy check
 
-# After every push to main (and on demand): the running API must report the same Alembic head as this commit.
-# A mismatch means the pre-deploy migration did not run or failed – the worker pauses its jobs in that state and
-# production would otherwise show errors like "column … does not exist". Retries because a rolling deploy takes minutes.
+# The running API must report the same Alembic head as the code on main. A mismatch means the pre-deploy migration did
+# not run or failed – the worker pauses its jobs in that state and production would otherwise show errors like
+# "column … does not exist".
+#
+# This must NOT run on push: Render deploys only when every check on the commit has passed, so a check that waits for
+# the deploy would wait for itself. It runs on a schedule (each run is a quick snapshot, no waiting) and on demand.
 # Set the repository variable API_HEALTH_URL to the production API origin; it defaults to the Render service URL.
 
 on:
-  push:
-    branches: [main]
+  schedule:
+    - cron: "17 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -15,5 +18,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Live database is on this commit's Alembic head
-        run: python3 scripts/check_live_schema.py "${{ vars.API_HEALTH_URL || 'https://dialogbot-api-staging.onrender.com' }}" --wait-minutes 25
+        with:
+          ref: main
+      - name: Live database is on the Alembic head of main
+        run: python3 scripts/check_live_schema.py "${{ vars.API_HEALTH_URL || 'https://dialogbot-api-staging.onrender.com' }}" --wait-minutes 10

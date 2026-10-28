@@ -32,6 +32,6 @@ tjenesten → Environment for at se værdierne.
    så skift kode, så fjern i en senere udrulning).
 4. Workeren sammenligner nu databasens revision med sin egen kode før hvert planlagt job og **pauser** dem (log
    `worker.schema_mismatch`) i stedet for at fejle på hver forespørgsel.
-5. `.github/workflows/deploy-check.yml` kører efter hver push til `main` og fejler, hvis den kørende API ikke står på samme
+5. `.github/workflows/deploy-check.yml` kører hver time (og på forlangende) og fejler, hvis den kørende API ikke står på samme
    Alembic-head som commit'en (`scripts/check_live_schema.py`). `tests/test_schema_head.py` fejler, hvis der er mere end ét head
    eller databasen efter migration ikke står på kodens head.

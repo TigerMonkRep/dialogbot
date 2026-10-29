@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL, SiteChrome } from "@/components/site-chrome";
 import { ArrowIcon, CalendarIcon, ChartIcon, ChatIcon, CheckIcon, ChevronIcon, ClockIcon, PhoneIcon, PlayIcon, PlusIcon, SendIcon, SmsIcon } from "@/components/site-icons";
 import { SITE_URL } from "@/lib/site";
+import { ExplainerVideo } from "@/components/explainer-video";
 
 /** Byggevejledningen — the landing page (design-reference/byggevejledning/Main.dc.html): hero with the "Trin 1 af 3"
  *  card, the 3 steps with parts boxes, result A–D, the six bricks, integrations, the two prices, demo transcript,
@@ -112,6 +113,7 @@ export default function Page() {
             <p className="m-0 text-[19px] leading-[1.55] max-w-[520px] text-ink-soft">Dialogbot tager telefonen, svarer på webchat og booker aftaler for din virksomhed – på dansk, døgnet rundt. Du følger vejledningen, vi sætter klodserne sammen med dig.</p>
             <div className="flex flex-wrap gap-3">
               <Link href="/proev" className={btnPrimary}>Prøv den nu – den ringer til dig<ArrowIcon size={18} /></Link>
+              <ExplainerVideo variant="button" />
               <a href="#demo" className={btnOutline}><PlayIcon size={18} />Hør Dialogbot tage telefonen</a>
             </div>
             <p className="m-0 text-sm text-muted">Fra 2.495 kr./md. · ekskl. moms</p>

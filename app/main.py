@@ -25,6 +25,8 @@ from app.modules.integrations.router import router as integrations_router
 from app.modules.knowledge.router import router as knowledge_router
 from app.modules.leads.router import router as leads_router
 from app.modules.overview.router import router as overview_router
+from app.modules.pages.router import operator_router as pages_operator_router
+from app.modules.pages.router import public_router as pages_public_router
 from app.modules.reception.router import router as reception_router
 from app.modules.reports.router import router as reports_router
 from app.modules.sales.router import operator_router as sales_operator_router
@@ -40,7 +42,6 @@ from app.modules.voices.operator_router import router as voice_operator_router
 from app.modules.voices.own_voice import router as own_voice_router
 from app.modules.voices.router import router as voices_router
 from app.modules.voices.vapi_tts import router as voice_tts_router
-from app.modules.pages.router import operator_router as pages_operator_router, public_router as pages_public_router
 from app.modules.waitlist.router import router as waitlist_router
 from app.modules.webchat.public import router as webchat_public_router
 from app.modules.webchat.router import router as webchat_router

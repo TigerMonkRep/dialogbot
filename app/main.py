@@ -40,6 +40,7 @@ from app.modules.voices.operator_router import router as voice_operator_router
 from app.modules.voices.own_voice import router as own_voice_router
 from app.modules.voices.router import router as voices_router
 from app.modules.voices.vapi_tts import router as voice_tts_router
+from app.modules.pages.router import operator_router as pages_operator_router, public_router as pages_public_router
 from app.modules.waitlist.router import router as waitlist_router
 from app.modules.webchat.public import router as webchat_public_router
 from app.modules.webchat.router import router as webchat_router
@@ -66,7 +67,7 @@ def create_app() -> FastAPI:
     install_error_handlers(app)
     app.include_router(health_router)
     for r in (identity_router, workspaces_router, business_router, knowledge_router, setup_router, integrations_router,
-              webhooks_router, ai_router, waitlist_router,
+              webhooks_router, ai_router, waitlist_router, pages_public_router, pages_operator_router,
               webchat_router, webchat_public_router, leads_router,
               reports_router, telephony_router, vapi_webhook_router, billing_router, reception_router, overview_router,
               bookings_router, bookings_public_router, campaigns_router, voices_router, voice_operator_router, own_voice_router, telephony_setup_router,

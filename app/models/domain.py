@@ -1688,3 +1688,21 @@ class AssistantProposal(Base):
     created_at: Mapped[datetime] = ts_now()
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+# ---------------------------------------------------------------------------
+# Site documents: small pages on dialogbot.dk whose content Dialogbot's own staff edit in place (e.g. /gastrohall)
+# ---------------------------------------------------------------------------
+
+
+class SiteDocument(Base):
+    """One editable page on the public site, keyed by its slug. `blob` is opaque to the server: the Gastro Hall
+    manuscript stores its text encrypted with a password the browser holds, so the database never sees the words.
+    Anyone may read the blob; only platform operators may replace it."""
+
+    __tablename__ = "site_documents"
+
+    slug: Mapped[str] = mapped_column(String(64), primary_key=True)
+    blob: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    updated_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())

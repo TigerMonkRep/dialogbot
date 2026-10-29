@@ -45,6 +45,10 @@ const MOVED: [string, string][] = [
 
 const nextConfig: NextConfig = {
   env: { APP_VERSION: `v${version}`, APP_COMMIT: commit },
+  async rewrites() {
+    // Static, password-protected pages kept in web/public/<slug>/index.html (see docs/site-pages.md).
+    return [{ source: "/gastrohall", destination: "/gastrohall/index.html" }];
+  },
   async redirects() {
     return [
       // Back from the calendar provider's consent screen: while the person is in trin 2, the integrations page hands them back to it.

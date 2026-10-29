@@ -60,6 +60,7 @@ from app.models.domain import (  # noqa: F401
     VoiceSession,
     VoiceUsage,
     VoiceVersion,
+    SiteDocument,
     WaitlistSignup,
     WebchatSettings,
     WebhookEvent,

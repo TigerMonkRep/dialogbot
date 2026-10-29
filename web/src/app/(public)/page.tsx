@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { COMPANY } from "@/components/legal-page";
 import { SiteChrome } from "@/components/site-chrome";
+import { ExplainerVideo } from "@/components/explainer-video";
+import { videoStructuredData } from "@/lib/video";
 import { ArrowIcon, BuildArrowIcon, PhoneIcon } from "@/components/site-icons";
 import { API_BASE_URL, KNOWN_ACCOUNT_COOKIE, REFERRAL_COOKIE, SESSION_COOKIE } from "@/lib/config";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
@@ -59,6 +61,7 @@ export default async function Home() {
           <span className="eyebrow text-[13px] tracking-[1.5px]">Din AI-receptionist – på dansk, døgnet rundt</span>
           <h1 className="m-0 font-display font-extrabold text-[clamp(40px,5.4vw,70px)] leading-none tracking-[-1.8px]">Hvor vil du starte?</h1>
           <p className="m-0 text-lg leading-normal text-ink-soft max-w-[560px]">To veje, samme mål. Vælg den, der passer dig – du kan altid skifte med knappen øverst.</p>
+          <div className="mt-2 max-w-full"><ExplainerVideo /></div>
         </div>
 
         {/* The two doors */}
@@ -161,5 +164,6 @@ function structuredData() {
         { "@type": "Offer", name: "Udgående kampagneopkald", price: "4", priceCurrency: "DKK", description: "Pr. udgående opkald ekskl. moms" },
         { "@type": "Offer", name: "Opsætning fra Dialogbots specialister", price: "5000", priceCurrency: "DKK", description: "Én gang, ekskl. moms – skræddersyet opsætning og integration til egne systemer. Gør-det-selv-opsætning er med i abonnementet." },
       ] },
+    { "@context": "https://schema.org", ...videoStructuredData(SITE_URL) },
   ];
 }

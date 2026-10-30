@@ -18,6 +18,9 @@ AGENT_NAME = "Peter"
 INDUSTRIES: dict[str, dict] = {
     "haandvaerk": {
         "label": "Håndværk & byg", "icon": "construction",
+        # Search (Google Places "Table A" types, one per request) and Danish words for the text query
+        "google_types": ["plumber", "electrician", "roofing_contractor", "painter", "general_contractor"],
+        "search_terms": ["VVS", "elektriker", "tømrer", "maler", "murer"],
         "examples": "VVS, el, tømrer, maler, murer, gulv, tag",
         "pain": "Mester står på stigen eller under en vask og kan ikke tage telefonen. Hvert ubesvaret opkald er "
                 "typisk en kunde, der ringer videre til den næste håndværker på Google.",
@@ -32,6 +35,9 @@ INDUSTRIES: dict[str, dict] = {
     },
     "klinik": {
         "label": "Klinik & sundhed", "icon": "medical_services",
+        # Search (Google Places "Table A" types, one per request) and Danish words for the text query
+        "google_types": ["dentist", "physiotherapist", "chiropractor", "doctor", "veterinary_care"],
+        "search_terms": ["tandlæge", "fysioterapeut", "kiropraktor", "dyrlæge"],
         "examples": "tandlæge, fysioterapeut, kiropraktor, psykolog, dyrlæge",
         "pain": "Telefonen ringer midt i behandlinger, og receptionen er presset i spidsbelastningen om morgenen. "
                 "Patienter, der ikke kommer igennem, flytter til en anden klinik.",
@@ -44,6 +50,9 @@ INDUSTRIES: dict[str, dict] = {
     },
     "skoenhed": {
         "label": "Frisør & skønhed", "icon": "content_cut",
+        # Search (Google Places "Table A" types, one per request) and Danish words for the text query
+        "google_types": ["hair_salon", "barber_shop", "beauty_salon", "nail_salon", "massage"],
+        "search_terms": ["frisør", "barber", "kosmetolog", "negle"],
         "examples": "frisør, barber, kosmetolog, negle, massage",
         "pain": "Man kan ikke tage telefonen med saksen i hånden, og mange kunder ringer om aftenen, når salonen "
                 "er lukket.",
@@ -56,6 +65,9 @@ INDUSTRIES: dict[str, dict] = {
     },
     "auto": {
         "label": "Auto & værksted", "icon": "car_repair",
+        # Search (Google Places "Table A" types, one per request) and Danish words for the text query
+        "google_types": ["car_repair", "car_dealer", "car_wash"],
+        "search_terms": ["autoværksted", "dækcenter", "pladeværksted"],
         "examples": "autoværksted, dækcenter, pladeværksted, bilforhandler",
         "pain": "Mekanikerne er ude i værkstedet, og telefonen ringer konstant om syn, service og dækskift.",
         "scenario": "Kunden ringer og vil have bilen til service eller dækskift. Spørg om bilmærke, model og "
@@ -67,6 +79,9 @@ INDUSTRIES: dict[str, dict] = {
     },
     "raadgivning": {
         "label": "Rådgivning & kontor", "icon": "work",
+        # Search (Google Places "Table A" types, one per request) and Danish words for the text query
+        "google_types": ["lawyer", "accounting", "real_estate_agency", "insurance_agency"],
+        "search_terms": ["advokat", "revisor", "ejendomsmægler"],
         "examples": "advokat, revisor, ejendomsmægler, forsikring, IT-konsulent",
         "pain": "Rådgiverne sidder i møder, og nye kunder, der ringer, får en telefonsvarer og vælger en anden.",
         "scenario": "En mulig ny kunde ringer og har brug for rådgivning, fx en bolighandel, et regnskab eller et "
@@ -79,6 +94,9 @@ INDUSTRIES: dict[str, dict] = {
     },
     "butik": {
         "label": "Butik & service", "icon": "storefront",
+        # Search (Google Places "Table A" types, one per request) and Danish words for the text query
+        "google_types": ["store", "florist", "moving_company", "locksmith"],
+        "search_terms": ["butik", "rengøring", "flyttefirma"],
         "examples": "butik, rengøring, udlejning, flytning, webshop",
         "pain": "De samme spørgsmål om åbningstider, priser og levering fylder telefonen, mens kunderne i butikken "
                 "venter.",
@@ -91,6 +109,9 @@ INDUSTRIES: dict[str, dict] = {
     },
     "restaurant": {
         "label": "Hotel, restaurant & café", "icon": "restaurant",
+        # Search (Google Places "Table A" types, one per request) and Danish words for the text query
+        "google_types": ["restaurant", "cafe", "hotel", "bakery"],
+        "search_terms": ["restaurant", "café", "hotel"],
         "examples": "restaurant, café, hotel, kro, bed & breakfast, catering, selskabslokaler",
         "pain": "Telefonen ringer midt i frokost- og aftenrush, og ingen har tid til at tage den. Bordbestillinger, "
                 "værelsesforespørgsler og selskaber går tabt, eller gæsterne booker et andet sted.",

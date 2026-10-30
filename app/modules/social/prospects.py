@@ -177,21 +177,16 @@ def social_links(html: str) -> dict[str, str]:
 
 
 def fetch_social_links(website: str) -> dict[str, str]:
+    """The company's start page through app/core/safe_fetch (public address only, robots.txt honoured)."""
+    from app.core import safe_fetch
+
+    budget = safe_fetch.Budget(max_pages=1, page_bytes=SITE_MAX_BYTES, timeout=SITE_TIMEOUT)
     try:
-        with httpx.Client(follow_redirects=True, timeout=SITE_TIMEOUT,
-                          headers={"User-Agent": "Mozilla/5.0 (compatible; DialogbotBot/1.0; +https://www.dialogbot.dk)"}) as c:
-            with c.stream("GET", website) as r:
-                if r.status_code >= 400 or "html" not in (r.headers.get("content-type") or ""):
-                    return {}
-                buf = b""
-                for chunk in r.iter_bytes():
-                    buf += chunk
-                    if len(buf) > SITE_MAX_BYTES:
-                        break
-        return social_links(buf.decode("utf-8", errors="ignore"))
-    except (httpx.HTTPError, ValueError) as e:
-        log.info("social.prospects.site_failed", website=website, error=type(e).__name__)
+        page = safe_fetch.get(website, budget=budget)
+    except (safe_fetch.FetchBlocked, safe_fetch.FetchFailed, ValueError) as e:
+        log.info("social.prospects.site_failed", website=website, error=getattr(e, "reason", type(e).__name__))
         return {}
+    return social_links(page.body.decode("utf-8", errors="ignore"))
 
 
 # --- the batch ------------------------------------------------------------------------------------------------------------

@@ -853,6 +853,23 @@
       },
       "DraftEditIn": {
         "properties": {
+          "audience": {
+            "anyOf": [
+              {
+                "enum": [
+                  "public",
+                  "customer_docs",
+                  "internal"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Unset = keep (new draft: the approved version's)",
+            "title": "Audience"
+          },
           "content": {
             "additionalProperties": true,
             "title": "Content",
@@ -890,6 +907,23 @@
       },
       "DraftIn": {
         "properties": {
+          "audience": {
+            "anyOf": [
+              {
+                "enum": [
+                  "public",
+                  "customer_docs",
+                  "internal"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Unset = keep (new draft: the approved version's)",
+            "title": "Audience"
+          },
           "content": {
             "additionalProperties": true,
             "title": "Content",
@@ -1122,6 +1156,88 @@
         "title": "HumanCheckIn",
         "type": "object"
       },
+      "IndustryIn": {
+        "properties": {
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "google_types": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Google Types",
+            "type": "array"
+          },
+          "key": {
+            "maxLength": 40,
+            "minLength": 2,
+            "pattern": "^[a-z0-9_]+$",
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Label",
+            "type": "string"
+          },
+          "search_terms": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Search Terms",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "label"
+        ],
+        "title": "IndustryIn",
+        "type": "object"
+      },
+      "IntegrationNoteIn": {
+        "properties": {
+          "label": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Label",
+            "type": "string"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Note",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "AKTIV",
+              "KRÆVER_OPSÆTNING",
+              "PLANLAGT",
+              "UKENDT"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "system": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "System",
+            "type": "string"
+          }
+        },
+        "required": [
+          "system",
+          "status"
+        ],
+        "title": "IntegrationNoteIn",
+        "type": "object"
+      },
       "InvitationCreateIn": {
         "properties": {
           "email": {
@@ -1231,6 +1347,17 @@
       },
       "ItemCreateIn": {
         "properties": {
+          "audience": {
+            "default": "public",
+            "description": "Only Dialogbot's sales workspace may set anything but public",
+            "enum": [
+              "public",
+              "customer_docs",
+              "internal"
+            ],
+            "title": "Audience",
+            "type": "string"
+          },
           "content": {
             "additionalProperties": true,
             "title": "Content",
@@ -2490,60 +2617,65 @@
         "title": "RunIn",
         "type": "object"
       },
-      "ScriptIn": {
+      "SearchIn": {
         "properties": {
-          "address_form": {
-            "default": "du",
-            "title": "Address Form",
+          "exclude_existing_customers": {
+            "default": true,
+            "title": "Exclude Existing Customers",
+            "type": "boolean"
+          },
+          "geo": {
+            "additionalProperties": true,
+            "description": "{\"text\": \"Aarhus C\"} | {\"postal_codes\": [\"8000\"]} | {\"lat\", \"lng\", \"km\" ≤ 50}",
+            "title": "Geo",
+            "type": "object"
+          },
+          "geo_kind": {
+            "enum": [
+              "place",
+              "postal_codes",
+              "radius"
+            ],
+            "title": "Geo Kind",
             "type": "string"
           },
-          "avoid": {
-            "default": "",
-            "maxLength": 800,
-            "title": "Avoid",
-            "type": "string"
-          },
-          "closing": {
-            "default": "",
-            "maxLength": 300,
-            "title": "Closing",
-            "type": "string"
-          },
-          "collect": {
+          "google_types": {
             "items": {
               "type": "string"
             },
             "maxItems": 10,
-            "title": "Collect",
+            "title": "Google Types",
             "type": "array"
           },
-          "escalation": {
-            "default": "",
-            "maxLength": 800,
-            "title": "Escalation",
-            "type": "string"
+          "industry_keys": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Industry Keys",
+            "type": "array"
           },
-          "expected_version": {
-            "title": "Expected Version",
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Keywords",
+            "type": "array"
+          },
+          "max_results": {
+            "default": 50,
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Max Results",
             "type": "integer"
-          },
-          "greeting": {
-            "default": "",
-            "maxLength": 400,
-            "title": "Greeting",
-            "type": "string"
-          },
-          "persona_name": {
-            "default": "",
-            "maxLength": 60,
-            "title": "Persona Name",
-            "type": "string"
           }
         },
         "required": [
-          "expected_version"
+          "geo_kind",
+          "geo"
         ],
-        "title": "ScriptIn",
+        "title": "SearchIn",
         "type": "object"
       },
       "SellerIn": {
@@ -2709,6 +2841,33 @@
           "consent"
         ],
         "title": "SignupIn",
+        "type": "object"
+      },
+      "SimulateIn": {
+        "properties": {
+          "max_turns": {
+            "default": 12,
+            "maximum": 20.0,
+            "minimum": 2.0,
+            "title": "Max Turns",
+            "type": "integer"
+          },
+          "persona": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Persona",
+            "type": "string"
+          },
+          "script_id": {
+            "format": "uuid",
+            "title": "Script Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "script_id"
+        ],
+        "title": "SimulateIn",
         "type": "object"
       },
       "SuggestIn": {
@@ -3138,6 +3297,11 @@
               }
             ],
             "title": "Approved By"
+          },
+          "audience": {
+            "default": "public",
+            "title": "Audience",
+            "type": "string"
           },
           "content": {
             "additionalProperties": true,
@@ -3804,6 +3968,62 @@
         "title": "ImportIn",
         "type": "object"
       },
+      "app__modules__reception__router__ScriptIn": {
+        "properties": {
+          "address_form": {
+            "default": "du",
+            "title": "Address Form",
+            "type": "string"
+          },
+          "avoid": {
+            "default": "",
+            "maxLength": 800,
+            "title": "Avoid",
+            "type": "string"
+          },
+          "closing": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Closing",
+            "type": "string"
+          },
+          "collect": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Collect",
+            "type": "array"
+          },
+          "escalation": {
+            "default": "",
+            "maxLength": 800,
+            "title": "Escalation",
+            "type": "string"
+          },
+          "expected_version": {
+            "title": "Expected Version",
+            "type": "integer"
+          },
+          "greeting": {
+            "default": "",
+            "maxLength": 400,
+            "title": "Greeting",
+            "type": "string"
+          },
+          "persona_name": {
+            "default": "",
+            "maxLength": 60,
+            "title": "Persona Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expected_version"
+        ],
+        "title": "ScriptIn",
+        "type": "object"
+      },
       "app__modules__reports__router__SettingsIn": {
         "properties": {
           "email_enabled": {
@@ -3822,6 +4042,53 @@
           "send_hour_local"
         ],
         "title": "SettingsIn",
+        "type": "object"
+      },
+      "app__modules__sales__channel_router__ImportIn": {
+        "properties": {
+          "csv": {
+            "description": "Columns: navn, cvr, hjemmeside, telefon, e-mail, postnr",
+            "maxLength": 500000,
+            "minLength": 5,
+            "title": "Csv",
+            "type": "string"
+          },
+          "industry_key": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry Key"
+          }
+        },
+        "required": [
+          "csv"
+        ],
+        "title": "ImportIn",
+        "type": "object"
+      },
+      "app__modules__sales__channel_router__ScriptIn": {
+        "properties": {
+          "profile_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Unset = the newest profile",
+            "title": "Profile Id"
+          }
+        },
+        "title": "ScriptIn",
         "type": "object"
       },
       "app__modules__setup__router__AssignIn": {
@@ -7219,6 +7486,1232 @@
         "summary": "Seller Demo Call",
         "tags": [
           "sales-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/salg": {
+      "get": {
+        "description": "Status (what works, what is missing) and the overview tiles. Works in every mode, also `off`.",
+        "operationId": "overview_api_v1_operator_salg_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Overview",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/companies": {
+      "get": {
+        "operationId": "list_companies_api_v1_operator_salg_companies_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "industry",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Industry"
+            }
+          },
+          {
+            "in": "query",
+            "name": "postal",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 8,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Postal"
+            }
+          },
+          {
+            "in": "query",
+            "name": "research_status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Research Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Source"
+            }
+          },
+          {
+            "in": "query",
+            "name": "quality",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Quality"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search_job",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search Job"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "newest",
+              "enum": [
+                "newest",
+                "name",
+                "relevance",
+                "updated"
+              ],
+              "title": "Sort",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Companies",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/companies/import": {
+      "post": {
+        "description": "Fallback without Google: the operator's own list, marked `import`.",
+        "operationId": "import_companies_api_v1_operator_salg_companies_import_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__sales__channel_router__ImportIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Import Companies",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/companies/{company_id}": {
+      "get": {
+        "operationId": "get_company_api_v1_operator_salg_companies__company_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Company Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Company",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/companies/{company_id}/profile": {
+      "post": {
+        "operationId": "create_profile_api_v1_operator_salg_companies__company_id__profile_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Company Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Profile",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/companies/{company_id}/research": {
+      "post": {
+        "description": "Research the company's own website in the background (only through the safe fetcher).",
+        "operationId": "research_company_api_v1_operator_salg_companies__company_id__research_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Company Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Research Company",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/companies/{company_id}/scripts": {
+      "post": {
+        "operationId": "create_script_api_v1_operator_salg_companies__company_id__scripts_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Company Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/app__modules__sales__channel_router__ScriptIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Script",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/companies/{company_id}/simulate": {
+      "post": {
+        "description": "A simulated conversation (no call, no tool executed). Marked simulated everywhere.",
+        "operationId": "simulate_call_api_v1_operator_salg_companies__company_id__simulate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Company Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Simulate Call",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/industries": {
+      "get": {
+        "operationId": "list_industries_api_v1_operator_salg_industries_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Industries",
+        "tags": [
+          "sales-channel"
+        ]
+      },
+      "put": {
+        "operationId": "put_industry_api_v1_operator_salg_industries_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndustryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Industry",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/integrations": {
+      "get": {
+        "operationId": "list_integrations_api_v1_operator_salg_integrations_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Integrations",
+        "tags": [
+          "sales-channel"
+        ]
+      },
+      "put": {
+        "operationId": "put_integration_api_v1_operator_salg_integrations_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntegrationNoteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Integration",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/knowledge": {
+      "get": {
+        "description": "The sales workspace's approved knowledge with audience, the price list and the script versions in use.",
+        "operationId": "sales_knowledge_api_v1_operator_salg_knowledge_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sales Knowledge",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/scripts/{script_id}/approve": {
+      "post": {
+        "operationId": "approve_script_api_v1_operator_salg_scripts__script_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "script_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Script Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve Script",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/search-jobs": {
+      "get": {
+        "operationId": "list_searches_api_v1_operator_salg_search_jobs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Searches",
+        "tags": [
+          "sales-channel"
+        ]
+      },
+      "post": {
+        "description": "Queue a search. The worker runs it; the answer carries the estimated Google usage (upper bound).\n`dry_run=true` returns the plan and estimate without saving anything (a free-text place that is not a Danish\ntown or postal district is geocoded with one Places request even then).",
+        "operationId": "create_search_api_v1_operator_salg_search_jobs_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "dry_run",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Dry Run",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Search",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/search-jobs/{job_id}": {
+      "get": {
+        "operationId": "get_search_api_v1_operator_salg_search_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Search",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/search-jobs/{job_id}/cancel": {
+      "post": {
+        "operationId": "cancel_search_api_v1_operator_salg_search_jobs__job_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Search",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/search-jobs/{job_id}/resume": {
+      "post": {
+        "operationId": "resume_search_api_v1_operator_salg_search_jobs__job_id__resume_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resume Search",
+        "tags": [
+          "sales-channel"
         ]
       }
     },
@@ -18545,7 +20038,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ScriptIn"
+                "$ref": "#/components/schemas/app__modules__reception__router__ScriptIn"
               }
             }
           },

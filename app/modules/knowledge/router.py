@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime
+from typing import Literal
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Header, Query, Request, Response, status
 from pydantic import BaseModel, Field
@@ -28,6 +29,7 @@ class VersionOut(BaseModel):
     content: dict
     source_type: str
     source_ref: str | None
+    audience: str = "public"
     edit_version: int
     created_by: uuid.UUID | None
     created_at: datetime
@@ -46,17 +48,22 @@ class ItemOut(BaseModel):
     open_draft: VersionOut | None
 
 
+Audience = Literal["public", "customer_docs", "internal"]
+
+
 class ItemCreateIn(BaseModel):
     kind: str
     title: str = Field(min_length=1, max_length=200)
     content: dict = Field(default_factory=dict)
     source_ref: str | None = Field(default=None, max_length=300)
+    audience: Audience = Field(default="public", description="Only Dialogbot's sales workspace may set anything but public")
 
 
 class DraftIn(BaseModel):
     title: str = Field(min_length=1, max_length=200)
     content: dict = Field(default_factory=dict)
     source_ref: str | None = Field(default=None, max_length=300)
+    audience: Audience | None = Field(default=None, description="Unset = keep (new draft: the approved version's)")
 
 
 class DraftEditIn(DraftIn):
@@ -92,7 +99,8 @@ def list_items(p: PageParams = Depends(), kind: str | None = Query(default=None)
 def create_item(body: ItemCreateIn, request: Request, ctx: WorkspaceContext = Depends(get_workspace_context),
                 db: OrmSession = Depends(get_db)):
     item, _ = service.create_item(db, ctx, kind=body.kind, title=body.title, content=body.content,
-                                  source_ref=body.source_ref, request_id=request.state.request_id)
+                                  source_ref=body.source_ref, request_id=request.state.request_id,
+                                  audience=body.audience)
     db.commit()
     return item_out(db, item)
 
@@ -125,7 +133,7 @@ def list_versions(item_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_ca
 def new_draft(item_id: uuid.UUID, body: DraftIn, request: Request,
               ctx: WorkspaceContext = Depends(get_workspace_context), db: OrmSession = Depends(get_db)):
     v = service.new_draft(db, ctx, item_id, title=body.title, content=body.content, source_ref=body.source_ref,
-                          request_id=request.state.request_id)
+                          request_id=request.state.request_id, audience=body.audience)
     db.commit()
     return v_out(v)
 
@@ -134,7 +142,8 @@ def new_draft(item_id: uuid.UUID, body: DraftIn, request: Request,
 def edit_draft(version_id: uuid.UUID, body: DraftEditIn, request: Request,
                ctx: WorkspaceContext = Depends(get_workspace_context), db: OrmSession = Depends(get_db)):
     v = service.edit_draft(db, ctx, version_id, expected_edit_version=body.expected_edit_version, title=body.title,
-                           content=body.content, source_ref=body.source_ref, request_id=request.state.request_id)
+                           content=body.content, source_ref=body.source_ref, request_id=request.state.request_id,
+                           audience=body.audience)
     db.commit()
     return v_out(v)
 

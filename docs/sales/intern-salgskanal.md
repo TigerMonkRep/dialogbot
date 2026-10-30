@@ -70,6 +70,23 @@ Statusser: `EKSISTERER`, `DELVIST`, `MANGLER`, `IKKE_VERIFICERET`. Alle ruter li
 | Drift og rettigheder | `DELVIST` | `app/core/audit.py` `record_audit()` + `audit_log`; `WebhookEvent` dedupe; `telephony_costs`. Ingen retention-indstillinger i `app/config.py`, ingen indsigt/sletning (kun `scripts/waitlist`). Feature-mønster: `none|fake|live`-Literals + `_fail_closed` | Audit, outbox, settings-mønster | `SALES_OUTBOUND_MODE`, retention-job, `sales_data_requests` | `test_operations.py` |
 | Indgående telefon/webchat deler viden | `EKSISTERER` | `POST /demo-call/chat` og demo-opkald bruger `build_system_prompt(db, salgsarbejdsrum)`; samme viden som kundernes webchat | Ja | Kun `audience`-filteret ovenfor | `test_sales_demo_calls.py::test_website_chat_*` |
 
+### Implementeringsstatus (opdateres pr. fase)
+
+Fase 1 er implementeret (migration `b3c5d7e9f1a2`). Drift og brug: `docs/sales/salgskanal-drift.md`.
+
+| Område | Status efter fase 1 | Hvor |
+|---|---|---|
+| Intern adminadgang | `IMPLEMENTERET` – `/app/operator/salg` (Overblik, Find virksomheder, Virksomheder, Viden og tilbud; Demo-opkald linker til den eksisterende konsol), alle ruter `operator()`, 501 når `SALES_OUTBOUND_MODE=off` | `app/modules/sales/channel_router.py`, `web/src/app/app/(admin)/operator/salg/*` |
+| Geografisk branchesøgning | `IMPLEMENTERET` (Google Places New; demo-data uden nøgle; CSV-import) | `sales/search.py`, `sales/places.py` |
+| Virksomheder, dubletter, kilder | `IMPLEMENTERET` (`sales_companies`, `sales_contacts`, `sales_source_facts`; mulig dublet/afdeling markeres, flettes ikke) | `sales/companies.py` |
+| Søgning og scraping | `IMPLEMENTERET` – `app/core/safe_fetch.py` (pinned IP, robots, grænser); videnimport og sociale links bruger det. iCal-synk og webhook-adressetjek bruger stadig den gamle forhåndskontrol | `app/core/safe_fetch.py`, `sales/research.py` |
+| Vidensbase-adgangsklasser | `IMPLEMENTERET` (`knowledge_versions.audience`, filter i `build_system_prompt`; seed-script) | `ai/service.py`, `scripts/seed_sales_knowledge.py` |
+| Individuelle manuskripter | `IMPLEMENTERET` (profil, `peter-sales-v1`, validering, godkendelse; integrationsregister) | `sales/playbook.py`, `sales/integrations.py` |
+| Simulation | `IMPLEMENTERET` (AI-kunde, delaccepter med citater, `would_call`, altid `simulated`) | `sales/simulate.py` |
+| Samtykke og spærring, kampagnekø, Peter-værktøjer, transskript-UI | `MANGLER` (fase 2) | – |
+| Tilbud, ordre, møder, statistik | `MANGLER` (fase 3) | – |
+| Lyd, retention, rettigheder | `MANGLER` (fase 4); indstillingerne findes i `app/config.py` | – |
+
 Konventioner, verificeret: Alembic-head er `a1b2c3d4e5f6` (`alembic.ini` `file_template = %(rev)s_%(slug)s`), CI kører
 `ruff check app tests scripts client voice_pipeline tts_service`, `alembic upgrade head`, `alembic check`, `pytest`,
 `python -m scripts.export_openapi /tmp/openapi.json && cmp docs/openapi.json /tmp/openapi.json`; web: `npx tsc --noEmit`,

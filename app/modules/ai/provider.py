@@ -171,6 +171,8 @@ class FakeProvider:
                               usage=Usage(input_tokens=len(out) // 4, output_tokens=12), request_id="fake-req")
         if system.startswith("WEBSITE_EXTRACTION"):
             return self._extract(question)
+        if system.startswith(("SALES_RESEARCH", "SALES_SIM_CUSTOMER", "SALES_ACCEPTS")):
+            return self._sales(system, question, messages)
         if system.startswith("ASSISTANT_CHANGE"):
             return self._change(question)
         if system.startswith("SUGGEST_SCRIPT"):
@@ -218,6 +220,51 @@ class FakeProvider:
             refusal_category="general_harms" if refused else None,
         )
 
+
+    def _sales(self, system: str, text: str, messages: list[dict]) -> Completion:
+        """Deterministic doubles for the internal sales channel (research, simulated customer, partial accepts)."""
+        import json
+        import re
+
+        if system.startswith("SALES_RESEARCH"):
+            pages = re.findall(r'<side url="([^"]*)">\n(.*?)\n</side>', text, re.S)
+            data: dict = {"services": [], "customer_types": [], "opening_hours": None, "service_area": None,
+                          "booking_system": None, "contact_role_names": [], "phone": None, "email": None, "cvr": None}
+            for url, body in pages:
+                lines = body.split("\n")
+                for i, ln in enumerate(lines):
+                    if ln.startswith("## ") and i > 0:
+                        data["services"].append({"value": ln[3:], "source_url": url, "evidence": ln[3:]})
+                    if (m := re.search(r"(Planway|SimplyBook\.me|Booksy|Timma)", ln)) and not data["booking_system"]:
+                        data["booking_system"] = {"value": m.group(1), "source_url": url, "evidence": ln[:300]}
+                    if (m := re.search(r"(?:Tlf\.?|Telefon|Ring på)[:\s]*(\+?\d[\d ]{6,14}\d)", ln)) and not data["phone"]:
+                        data["phone"] = {"value": m.group(1), "source_url": url, "evidence": ln[:300]}
+                    if (m := re.search(r"[\w.+-]+@[\w-]+\.[\w.]+", ln)) and not data["email"]:
+                        data["email"] = {"value": m.group(0).rstrip("."), "source_url": url, "evidence": ln[:300]}
+                    if (m := re.search(r"CVR\D{0,5}(\d{8})", ln)) and not data["cvr"]:
+                        data["cvr"] = {"value": m.group(1), "source_url": url, "evidence": ln[:300]}
+                    if (m := re.search(r"(Indehaver|Klinikchef|Mester|Direktør)", ln)):
+                        data["contact_role_names"].append({"value": m.group(1), "source_url": url, "evidence": ln[:300]})
+            data["services"] = data["services"][:8]
+            out = json.dumps(data, ensure_ascii=False)
+        elif system.startswith("SALES_SIM_CUSTOMER"):
+            said = sum(1 for m in messages if m["role"] == "assistant")
+            if "ring ikke" in system.lower():
+                lines = ["Hvem er det?", "Ring ikke igen. Farvel."]
+            else:
+                lines = ["Ja, det er mig.", "Vi har travlt, og telefonen ringer tit, mens vi arbejder.",
+                         "Ja, det ville gøre en forskel.", "Hvad koster det?", "Det giver mening. Tak, farvel."]
+            out = lines[min(said, len(lines) - 1)]
+        else:
+            low = text.lower()
+            accepts = [{"no": 5, "result": "JA", "quote": "Det har kunden aldrig sagt", "message_index": None}]
+            if "ja, det ville gøre en forskel" in low:
+                accepts.insert(0, {"no": 2, "result": "JA", "quote": "Ja, det ville gøre en forskel.", "message_index": None})
+            outcome = "opt_out" if "ring ikke igen" in low else "interested" if "giver mening" in low else "unclear"
+            out = json.dumps({"accepts": accepts, "outcome": outcome, "summary": f"Testdobbelt: {outcome}."},
+                             ensure_ascii=False)
+        return Completion(text=out, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
+                          usage=Usage(input_tokens=len(text) // 4, output_tokens=len(out) // 4), request_id="fake-req")
 
     def _change(self, text: str) -> Completion:
         """Deterministic stand-in for «Ændr noget»: a few Danish phrasings map to a change kind; anything else is null."""

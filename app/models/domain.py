@@ -166,6 +166,7 @@ class KnowledgeVersion(Base):
             name="ck_knowledge_versions_status",
         ),
         CheckConstraint("source_type in ('manual','import','extraction')", name="ck_knowledge_versions_source"),
+        CheckConstraint("audience in ('public','customer_docs','internal')", name="ck_knowledge_versions_audience"),
         Index(
             "uq_knowledge_versions_one_approved",
             "item_id",
@@ -190,6 +191,9 @@ class KnowledgeVersion(Base):
     # Provenance: manual entry is also a source.
     source_type: Mapped[str] = mapped_column(String(16), nullable=False, default="manual")
     source_ref: Mapped[str | None] = mapped_column(String(300))
+    # Who may hear it: public (default; every assistant), customer_docs (also Dialogbot's sales Peter, never the
+    # website chat) or internal (never in any prompt). Only the sales workspace sets anything but public.
+    audience: Mapped[str] = mapped_column(String(16), nullable=False, default="public", server_default="public")
     # Optimistic concurrency for editing an open draft.
     edit_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))

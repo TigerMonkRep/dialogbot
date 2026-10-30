@@ -61,7 +61,7 @@ Siden personen står på: {page}"""
 
 def _state(db: OrmSession, ws_id: uuid.UUID) -> str:
     lines = []
-    items = knowledge.active_knowledge(db, ws_id)
+    items = knowledge.active_knowledge(db, ws_id, ("public", "customer_docs"))  # goes into a prompt: never internal
     hours = next((i for i in items if i["kind"] == "opening_hours"), None)
     lines.append("Åbningstider: " + ((hours_text((hours["content"] or {}).get("weekly")) if hours else "") or "ikke angivet"))
     for i in items:

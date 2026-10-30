@@ -78,3 +78,14 @@ from app.models.identity import (  # noqa: F401
     User,
     Workspace,
 )
+from app.models.sales import (  # noqa: F401
+    SalesCompany,
+    SalesContact,
+    SalesIndustry,
+    SalesIntegrationNote,
+    SalesProfile,
+    SalesScript,
+    SalesSearchJob,
+    SalesSimulation,
+    SalesSourceFact,
+)

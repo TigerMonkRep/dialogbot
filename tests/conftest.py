@@ -219,3 +219,6 @@ def two_workspaces(api):
     tok_b = api.user("owner-b@testmail.dk", intent="campaigns")
     ws_b = api.workspace(tok_b, "Havnebord Café")
     return {"tok_a": tok_a, "ws_a": ws_a, "tok_b": tok_b, "ws_b": ws_b}
+
+
+from tests.sales_fixtures import salg  # noqa: E402, F401  (sales channel fixture, tests/test_sales_channel_*.py)

@@ -1,0 +1,3920 @@
+{
+ "_note": "Fiktive virksomheder til demo-tilstand (ingen GOOGLE_PLACES_API_KEY). Domæner er .invalid og numre ligger i det danske 1x-område, som aldrig ringes op.",
+ "places": [
+  {
+   "id": "demo_001",
+   "displayName": {
+    "text": "Fiktiv Frisør Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 1, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14927,
+    "longitude": 10.18943
+   },
+   "types": [
+    "hair_salon",
+    "beauty_salon",
+    "establishment"
+   ],
+   "primaryType": "hair_salon",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_001",
+   "searchTerms": [
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-frisoer-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 01 07",
+    "internationalPhoneNumber": "+45 12 34 01 07",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.7,
+    "userRatingCount": 21
+   },
+   "demoServices": [
+    "Klip",
+    "Farve",
+    "Permanent"
+   ]
+  },
+  {
+   "id": "demo_002",
+   "displayName": {
+    "text": "Prøve Frisør Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 2, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.16121,
+    "longitude": 10.18717
+   },
+   "types": [
+    "hair_salon",
+    "beauty_salon",
+    "establishment"
+   ],
+   "primaryType": "hair_salon",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_002",
+   "searchTerms": [
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-frisoer-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 02 14",
+    "internationalPhoneNumber": "+45 12 34 02 14",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.6,
+    "userRatingCount": 235
+   },
+   "demoServices": [
+    "Klip",
+    "Farve",
+    "Permanent"
+   ]
+  },
+  {
+   "id": "demo_003",
+   "displayName": {
+    "text": "Eksempel Frisør Aarhus 3",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 3, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.15368,
+    "longitude": 10.1849
+   },
+   "types": [
+    "hair_salon",
+    "beauty_salon",
+    "establishment"
+   ],
+   "primaryType": "hair_salon",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_003",
+   "searchTerms": [
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://eksempel-frisoer-aarhus-3.invalid/",
+    "nationalPhoneNumber": "12 34 03 21",
+    "internationalPhoneNumber": "+45 12 34 03 21",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.4,
+    "userRatingCount": 20
+   },
+   "demoServices": [
+    "Klip",
+    "Farve",
+    "Permanent"
+   ]
+  },
+  {
+   "id": "demo_004",
+   "displayName": {
+    "text": "Prøve Barber Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 4, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14728,
+    "longitude": 10.20544
+   },
+   "types": [
+    "barber_shop",
+    "establishment"
+   ],
+   "primaryType": "barber_shop",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_004",
+   "searchTerms": [
+    "barber",
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-barber-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 04 28",
+    "internationalPhoneNumber": "+45 12 34 04 28",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.1,
+    "userRatingCount": 147
+   },
+   "demoServices": [
+    "Herreklip",
+    "Skægtrim"
+   ]
+  },
+  {
+   "id": "demo_005",
+   "displayName": {
+    "text": "Eksempel Barber Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 5, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14447,
+    "longitude": 10.19233
+   },
+   "types": [
+    "barber_shop",
+    "establishment"
+   ],
+   "primaryType": "barber_shop",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_005",
+   "searchTerms": [
+    "barber",
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://eksempel-barber-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 05 35",
+    "internationalPhoneNumber": "+45 12 34 05 35",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.6,
+    "userRatingCount": 245
+   },
+   "demoServices": [
+    "Herreklip",
+    "Skægtrim"
+   ]
+  },
+  {
+   "id": "demo_006",
+   "displayName": {
+    "text": "Demo Barber Aarhus 3",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 6, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14298,
+    "longitude": 10.20682
+   },
+   "types": [
+    "barber_shop",
+    "establishment"
+   ],
+   "primaryType": "barber_shop",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_006",
+   "searchTerms": [
+    "barber",
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://demo-barber-aarhus-3.invalid/",
+    "nationalPhoneNumber": "12 34 06 42",
+    "internationalPhoneNumber": "+45 12 34 06 42",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.0,
+    "userRatingCount": 59
+   },
+   "demoServices": [
+    "Herreklip",
+    "Skægtrim"
+   ]
+  },
+  {
+   "id": "demo_007",
+   "displayName": {
+    "text": "Eksempel VVS Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 7, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14262,
+    "longitude": 10.21774
+   },
+   "types": [
+    "plumber",
+    "establishment"
+   ],
+   "primaryType": "plumber",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_007",
+   "searchTerms": [
+    "vvs"
+   ],
+   "details": {
+    "websiteUri": "https://eksempel-vvs-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 07 49",
+    "internationalPhoneNumber": "+45 12 34 07 49",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.3,
+    "userRatingCount": 39
+   },
+   "demoServices": [
+    "Badeværelser",
+    "Fjernvarme",
+    "Akut vandskade"
+   ]
+  },
+  {
+   "id": "demo_008",
+   "displayName": {
+    "text": "Demo VVS Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 8, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.15448,
+    "longitude": 10.20624
+   },
+   "types": [
+    "plumber",
+    "establishment"
+   ],
+   "primaryType": "plumber",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_008",
+   "searchTerms": [
+    "vvs"
+   ],
+   "details": {
+    "websiteUri": "https://demo-vvs-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 08 56",
+    "internationalPhoneNumber": "+45 12 34 08 56",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.6,
+    "userRatingCount": 177
+   },
+   "demoServices": [
+    "Badeværelser",
+    "Fjernvarme",
+    "Akut vandskade"
+   ]
+  },
+  {
+   "id": "demo_009",
+   "displayName": {
+    "text": "Testgade VVS Aarhus 3",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 9, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14584,
+    "longitude": 10.20666
+   },
+   "types": [
+    "plumber",
+    "establishment"
+   ],
+   "primaryType": "plumber",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_009",
+   "searchTerms": [
+    "vvs"
+   ],
+   "details": {
+    "websiteUri": "https://testgade-vvs-aarhus-3.invalid/",
+    "nationalPhoneNumber": "12 34 09 63",
+    "internationalPhoneNumber": "+45 12 34 09 63",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.6,
+    "userRatingCount": 98
+   },
+   "demoServices": [
+    "Badeværelser",
+    "Fjernvarme",
+    "Akut vandskade"
+   ]
+  },
+  {
+   "id": "demo_010",
+   "displayName": {
+    "text": "Demo El-service Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 10, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14384,
+    "longitude": 10.21188
+   },
+   "types": [
+    "electrician",
+    "establishment"
+   ],
+   "primaryType": "electrician",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_010",
+   "searchTerms": [
+    "elektriker"
+   ],
+   "details": {
+    "websiteUri": "https://demo-el-service-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 10 70",
+    "internationalPhoneNumber": "+45 12 34 10 70",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.6,
+    "userRatingCount": 161
+   },
+   "demoServices": [
+    "El-tavler",
+    "Ladestandere"
+   ]
+  },
+  {
+   "id": "demo_011",
+   "displayName": {
+    "text": "Testgade El-service Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 11, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14644,
+    "longitude": 10.21062
+   },
+   "types": [
+    "electrician",
+    "establishment"
+   ],
+   "primaryType": "electrician",
+   "businessStatus": "CLOSED_PERMANENTLY",
+   "googleMapsUri": "https://maps.example.invalid/demo_011",
+   "searchTerms": [
+    "elektriker"
+   ],
+   "details": {
+    "websiteUri": "https://testgade-el-service-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 11 77",
+    "internationalPhoneNumber": "+45 12 34 11 77",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.4,
+    "userRatingCount": 83
+   },
+   "demoServices": [
+    "El-tavler",
+    "Ladestandere"
+   ]
+  },
+  {
+   "id": "demo_012",
+   "displayName": {
+    "text": "Opdigtet El-service Aarhus 3",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 12, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.15267,
+    "longitude": 10.22034
+   },
+   "types": [
+    "electrician",
+    "establishment"
+   ],
+   "primaryType": "electrician",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_012",
+   "searchTerms": [
+    "elektriker"
+   ],
+   "details": {
+    "websiteUri": "https://opdigtet-el-service-aarhus-3.invalid/",
+    "nationalPhoneNumber": "12 34 12 84",
+    "internationalPhoneNumber": "+45 12 34 12 84",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.4,
+    "userRatingCount": 66
+   },
+   "demoServices": [
+    "El-tavler",
+    "Ladestandere"
+   ]
+  },
+  {
+   "id": "demo_013",
+   "displayName": {
+    "text": "Testgade Tandklinik Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 13, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.16057,
+    "longitude": 10.21136
+   },
+   "types": [
+    "dentist",
+    "health",
+    "establishment"
+   ],
+   "primaryType": "dentist",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_013",
+   "searchTerms": [
+    "tandlæge"
+   ],
+   "details": {
+    "websiteUri": "https://testgade-tandklinik-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 13 91",
+    "internationalPhoneNumber": "+45 12 34 13 91",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.2,
+    "userRatingCount": 150
+   },
+   "demoServices": [
+    "Undersøgelse",
+    "Tandrensning"
+   ]
+  },
+  {
+   "id": "demo_014",
+   "displayName": {
+    "text": "Opdigtet Tandklinik Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 14, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14871,
+    "longitude": 10.2032
+   },
+   "types": [
+    "dentist",
+    "health",
+    "establishment"
+   ],
+   "primaryType": "dentist",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_014",
+   "searchTerms": [
+    "tandlæge"
+   ],
+   "details": {
+    "websiteUri": "https://opdigtet-tandklinik-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 14 98",
+    "internationalPhoneNumber": "+45 12 34 14 98",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.3,
+    "userRatingCount": 117
+   },
+   "demoServices": [
+    "Undersøgelse",
+    "Tandrensning"
+   ]
+  },
+  {
+   "id": "demo_015",
+   "displayName": {
+    "text": "Fiktiv Tandklinik Aarhus 3",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 15, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14841,
+    "longitude": 10.22261
+   },
+   "types": [
+    "dentist",
+    "health",
+    "establishment"
+   ],
+   "primaryType": "dentist",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_015",
+   "searchTerms": [
+    "tandlæge"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-tandklinik-aarhus-3.invalid/",
+    "nationalPhoneNumber": "12 34 15 05",
+    "internationalPhoneNumber": "+45 12 34 15 05",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.1,
+    "userRatingCount": 110
+   },
+   "demoServices": [
+    "Undersøgelse",
+    "Tandrensning"
+   ]
+  },
+  {
+   "id": "demo_016",
+   "displayName": {
+    "text": "Opdigtet Autoværksted Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 16, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14546,
+    "longitude": 10.19708
+   },
+   "types": [
+    "car_repair",
+    "establishment"
+   ],
+   "primaryType": "car_repair",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_016",
+   "searchTerms": [
+    "autoværksted"
+   ],
+   "details": {
+    "websiteUri": "https://opdigtet-autovaerksted-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 16 12",
+    "internationalPhoneNumber": "+45 12 34 16 12",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.9,
+    "userRatingCount": 110
+   },
+   "demoServices": [
+    "Service",
+    "Dækskift",
+    "Syn"
+   ]
+  },
+  {
+   "id": "demo_017",
+   "displayName": {
+    "text": "Fiktiv Autoværksted Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 17, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14244,
+    "longitude": 10.21013
+   },
+   "types": [
+    "car_repair",
+    "establishment"
+   ],
+   "primaryType": "car_repair",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_017",
+   "searchTerms": [
+    "autoværksted"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-autovaerksted-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 17 19",
+    "internationalPhoneNumber": "+45 12 34 17 19",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.8,
+    "userRatingCount": 149
+   },
+   "demoServices": [
+    "Service",
+    "Dækskift",
+    "Syn"
+   ]
+  },
+  {
+   "id": "demo_018",
+   "displayName": {
+    "text": "Prøve Autoværksted Aarhus 3",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 18, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.16044,
+    "longitude": 10.21613
+   },
+   "types": [
+    "car_repair",
+    "establishment"
+   ],
+   "primaryType": "car_repair",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_018",
+   "searchTerms": [
+    "autoværksted"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-autovaerksted-aarhus-3.invalid/",
+    "nationalPhoneNumber": "12 34 18 26",
+    "internationalPhoneNumber": "+45 12 34 18 26",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.3,
+    "userRatingCount": 92
+   },
+   "demoServices": [
+    "Service",
+    "Dækskift",
+    "Syn"
+   ]
+  },
+  {
+   "id": "demo_019",
+   "displayName": {
+    "text": "Fiktiv Spisehus Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 19, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.15576,
+    "longitude": 10.2066
+   },
+   "types": [
+    "restaurant",
+    "food",
+    "establishment"
+   ],
+   "primaryType": "restaurant",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_019",
+   "searchTerms": [
+    "restaurant"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-spisehus-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 19 33",
+    "internationalPhoneNumber": "+45 12 34 19 33",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.5,
+    "userRatingCount": 218
+   },
+   "demoServices": [
+    "Frokost",
+    "Aftenmenu",
+    "Selskaber"
+   ]
+  },
+  {
+   "id": "demo_020",
+   "displayName": {
+    "text": "Prøve Spisehus Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 20, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14375,
+    "longitude": 10.1942
+   },
+   "types": [
+    "restaurant",
+    "food",
+    "establishment"
+   ],
+   "primaryType": "restaurant",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_020",
+   "searchTerms": [
+    "restaurant"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-spisehus-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 20 40",
+    "internationalPhoneNumber": "+45 12 34 20 40",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.7,
+    "userRatingCount": 19
+   },
+   "demoServices": [
+    "Frokost",
+    "Aftenmenu",
+    "Selskaber"
+   ]
+  },
+  {
+   "id": "demo_021",
+   "displayName": {
+    "text": "Eksempel Spisehus Aarhus 3",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 21, 8000 Aarhus C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8000",
+     "shortText": "8000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus C",
+     "shortText": "Aarhus C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.14296,
+    "longitude": 10.21146
+   },
+   "types": [
+    "restaurant",
+    "food",
+    "establishment"
+   ],
+   "primaryType": "restaurant",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_021",
+   "searchTerms": [
+    "restaurant"
+   ],
+   "details": {
+    "websiteUri": "https://eksempel-spisehus-aarhus-3.invalid/",
+    "nationalPhoneNumber": "12 34 21 47",
+    "internationalPhoneNumber": "+45 12 34 21 47",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.6,
+    "userRatingCount": 177
+   },
+   "demoServices": [
+    "Frokost",
+    "Aftenmenu",
+    "Selskaber"
+   ]
+  },
+  {
+   "id": "demo_022",
+   "displayName": {
+    "text": "Fiktiv Frisør Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 22, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.18773,
+    "longitude": 10.17938
+   },
+   "types": [
+    "hair_salon",
+    "beauty_salon",
+    "establishment"
+   ],
+   "primaryType": "hair_salon",
+   "businessStatus": "CLOSED_PERMANENTLY",
+   "googleMapsUri": "https://maps.example.invalid/demo_022",
+   "searchTerms": [
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-frisoer-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 22 54",
+    "internationalPhoneNumber": "+45 12 34 22 54",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.4,
+    "userRatingCount": 174
+   },
+   "demoServices": [
+    "Klip",
+    "Farve",
+    "Permanent"
+   ]
+  },
+  {
+   "id": "demo_023",
+   "displayName": {
+    "text": "Prøve Frisør Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 23, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.17633,
+    "longitude": 10.20563
+   },
+   "types": [
+    "hair_salon",
+    "beauty_salon",
+    "establishment"
+   ],
+   "primaryType": "hair_salon",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_023",
+   "searchTerms": [
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-frisoer-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 23 61",
+    "internationalPhoneNumber": "+45 12 34 23 61",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.4,
+    "userRatingCount": 159
+   },
+   "demoServices": [
+    "Klip",
+    "Farve",
+    "Permanent"
+   ]
+  },
+  {
+   "id": "demo_024",
+   "displayName": {
+    "text": "Prøve Barber Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 24, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.17081,
+    "longitude": 10.17036
+   },
+   "types": [
+    "barber_shop",
+    "establishment"
+   ],
+   "primaryType": "barber_shop",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_024",
+   "searchTerms": [
+    "barber",
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-barber-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 24 68",
+    "internationalPhoneNumber": "+45 12 34 24 68",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.8,
+    "userRatingCount": 36
+   },
+   "demoServices": [
+    "Herreklip",
+    "Skægtrim"
+   ]
+  },
+  {
+   "id": "demo_025",
+   "displayName": {
+    "text": "Eksempel Barber Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 25, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.18572,
+    "longitude": 10.18392
+   },
+   "types": [
+    "barber_shop",
+    "establishment"
+   ],
+   "primaryType": "barber_shop",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_025",
+   "searchTerms": [
+    "barber",
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://eksempel-barber-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 25 75",
+    "internationalPhoneNumber": "+45 12 34 25 75",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.9,
+    "userRatingCount": 130
+   },
+   "demoServices": [
+    "Herreklip",
+    "Skægtrim"
+   ]
+  },
+  {
+   "id": "demo_026",
+   "displayName": {
+    "text": "Eksempel VVS Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 26, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.16993,
+    "longitude": 10.18597
+   },
+   "types": [
+    "plumber",
+    "establishment"
+   ],
+   "primaryType": "plumber",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_026",
+   "searchTerms": [
+    "vvs"
+   ],
+   "details": {
+    "websiteUri": "https://eksempel-vvs-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 26 82",
+    "internationalPhoneNumber": "+45 12 34 26 82",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.5,
+    "userRatingCount": 229
+   },
+   "demoServices": [
+    "Badeværelser",
+    "Fjernvarme",
+    "Akut vandskade"
+   ]
+  },
+  {
+   "id": "demo_027",
+   "displayName": {
+    "text": "Demo VVS Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 27, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.17129,
+    "longitude": 10.18522
+   },
+   "types": [
+    "plumber",
+    "establishment"
+   ],
+   "primaryType": "plumber",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_027",
+   "searchTerms": [
+    "vvs"
+   ],
+   "details": {
+    "websiteUri": "https://demo-vvs-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 27 89",
+    "internationalPhoneNumber": "+45 12 34 27 89",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.6,
+    "userRatingCount": 183
+   },
+   "demoServices": [
+    "Badeværelser",
+    "Fjernvarme",
+    "Akut vandskade"
+   ]
+  },
+  {
+   "id": "demo_028",
+   "displayName": {
+    "text": "Demo El-service Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 28, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.17797,
+    "longitude": 10.18235
+   },
+   "types": [
+    "electrician",
+    "establishment"
+   ],
+   "primaryType": "electrician",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_028",
+   "searchTerms": [
+    "elektriker"
+   ],
+   "details": {
+    "websiteUri": "https://demo-el-service-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 28 96",
+    "internationalPhoneNumber": "+45 12 34 28 96",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.9,
+    "userRatingCount": 248
+   },
+   "demoServices": [
+    "El-tavler",
+    "Ladestandere"
+   ]
+  },
+  {
+   "id": "demo_029",
+   "displayName": {
+    "text": "Testgade El-service Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 29, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.17354,
+    "longitude": 10.17132
+   },
+   "types": [
+    "electrician",
+    "establishment"
+   ],
+   "primaryType": "electrician",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_029",
+   "searchTerms": [
+    "elektriker"
+   ],
+   "details": {
+    "websiteUri": "https://testgade-el-service-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 29 03",
+    "internationalPhoneNumber": "+45 12 34 29 03",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.2,
+    "userRatingCount": 171
+   },
+   "demoServices": [
+    "El-tavler",
+    "Ladestandere"
+   ]
+  },
+  {
+   "id": "demo_030",
+   "displayName": {
+    "text": "Testgade Tandklinik Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 30, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.1736,
+    "longitude": 10.1874
+   },
+   "types": [
+    "dentist",
+    "health",
+    "establishment"
+   ],
+   "primaryType": "dentist",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_030",
+   "searchTerms": [
+    "tandlæge"
+   ],
+   "details": {
+    "websiteUri": "https://testgade-tandklinik-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 30 10",
+    "internationalPhoneNumber": "+45 12 34 30 10",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.6,
+    "userRatingCount": 70
+   },
+   "demoServices": [
+    "Undersøgelse",
+    "Tandrensning"
+   ]
+  },
+  {
+   "id": "demo_031",
+   "displayName": {
+    "text": "Opdigtet Tandklinik Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 31, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.17477,
+    "longitude": 10.17383
+   },
+   "types": [
+    "dentist",
+    "health",
+    "establishment"
+   ],
+   "primaryType": "dentist",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_031",
+   "searchTerms": [
+    "tandlæge"
+   ],
+   "details": {
+    "websiteUri": "https://opdigtet-tandklinik-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 31 17",
+    "internationalPhoneNumber": "+45 12 34 31 17",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.5,
+    "userRatingCount": 159
+   },
+   "demoServices": [
+    "Undersøgelse",
+    "Tandrensning"
+   ]
+  },
+  {
+   "id": "demo_032",
+   "displayName": {
+    "text": "Opdigtet Autoværksted Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 32, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.18159,
+    "longitude": 10.20612
+   },
+   "types": [
+    "car_repair",
+    "establishment"
+   ],
+   "primaryType": "car_repair",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_032",
+   "searchTerms": [
+    "autoværksted"
+   ],
+   "details": {
+    "websiteUri": "https://opdigtet-autovaerksted-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 32 24",
+    "internationalPhoneNumber": "+45 12 34 32 24",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.7,
+    "userRatingCount": 134
+   },
+   "demoServices": [
+    "Service",
+    "Dækskift",
+    "Syn"
+   ]
+  },
+  {
+   "id": "demo_033",
+   "displayName": {
+    "text": "Fiktiv Autoværksted Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 33, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.19081,
+    "longitude": 10.1942
+   },
+   "types": [
+    "car_repair",
+    "establishment"
+   ],
+   "primaryType": "car_repair",
+   "businessStatus": "CLOSED_PERMANENTLY",
+   "googleMapsUri": "https://maps.example.invalid/demo_033",
+   "searchTerms": [
+    "autoværksted"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-autovaerksted-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 33 31",
+    "internationalPhoneNumber": "+45 12 34 33 31",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.7,
+    "userRatingCount": 119
+   },
+   "demoServices": [
+    "Service",
+    "Dækskift",
+    "Syn"
+   ]
+  },
+  {
+   "id": "demo_034",
+   "displayName": {
+    "text": "Fiktiv Spisehus Aarhus",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 34, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.18959,
+    "longitude": 10.1992
+   },
+   "types": [
+    "restaurant",
+    "food",
+    "establishment"
+   ],
+   "primaryType": "restaurant",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_034",
+   "searchTerms": [
+    "restaurant"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-spisehus-aarhus.invalid/",
+    "nationalPhoneNumber": "12 34 34 38",
+    "internationalPhoneNumber": "+45 12 34 34 38",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.9,
+    "userRatingCount": 207
+   },
+   "demoServices": [
+    "Frokost",
+    "Aftenmenu",
+    "Selskaber"
+   ]
+  },
+  {
+   "id": "demo_035",
+   "displayName": {
+    "text": "Prøve Spisehus Aarhus 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 35, 8200 Aarhus N, Danmark",
+   "addressComponents": [
+    {
+     "longText": "8200",
+     "shortText": "8200",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Aarhus N",
+     "shortText": "Aarhus N",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 56.18142,
+    "longitude": 10.18392
+   },
+   "types": [
+    "restaurant",
+    "food",
+    "establishment"
+   ],
+   "primaryType": "restaurant",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_035",
+   "searchTerms": [
+    "restaurant"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-spisehus-aarhus-2.invalid/",
+    "nationalPhoneNumber": "12 34 35 45",
+    "internationalPhoneNumber": "+45 12 34 35 45",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.4,
+    "userRatingCount": 126
+   },
+   "demoServices": [
+    "Frokost",
+    "Aftenmenu",
+    "Selskaber"
+   ]
+  },
+  {
+   "id": "demo_036",
+   "displayName": {
+    "text": "Fiktiv Frisør Odense",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 36, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.39912,
+    "longitude": 10.37079
+   },
+   "types": [
+    "hair_salon",
+    "beauty_salon",
+    "establishment"
+   ],
+   "primaryType": "hair_salon",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_036",
+   "searchTerms": [
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-frisoer-odense.invalid/",
+    "nationalPhoneNumber": "12 34 36 52",
+    "internationalPhoneNumber": "+45 12 34 36 52",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.1,
+    "userRatingCount": 56
+   },
+   "demoServices": [
+    "Klip",
+    "Farve",
+    "Permanent"
+   ]
+  },
+  {
+   "id": "demo_037",
+   "displayName": {
+    "text": "Prøve Frisør Odense 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 37, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.39448,
+    "longitude": 10.3727
+   },
+   "types": [
+    "hair_salon",
+    "beauty_salon",
+    "establishment"
+   ],
+   "primaryType": "hair_salon",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_037",
+   "searchTerms": [
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-frisoer-odense-2.invalid/",
+    "nationalPhoneNumber": "12 34 37 59",
+    "internationalPhoneNumber": "+45 12 34 37 59",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.6,
+    "userRatingCount": 29
+   },
+   "demoServices": [
+    "Klip",
+    "Farve",
+    "Permanent"
+   ]
+  },
+  {
+   "id": "demo_038",
+   "displayName": {
+    "text": "Prøve Barber Odense",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 38, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.38391,
+    "longitude": 10.37435
+   },
+   "types": [
+    "barber_shop",
+    "establishment"
+   ],
+   "primaryType": "barber_shop",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_038",
+   "searchTerms": [
+    "barber",
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-barber-odense.invalid/",
+    "nationalPhoneNumber": "12 34 38 66",
+    "internationalPhoneNumber": "+45 12 34 38 66",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.1,
+    "userRatingCount": 96
+   },
+   "demoServices": [
+    "Herreklip",
+    "Skægtrim"
+   ]
+  },
+  {
+   "id": "demo_039",
+   "displayName": {
+    "text": "Eksempel Barber Odense 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 39, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.39863,
+    "longitude": 10.37111
+   },
+   "types": [
+    "barber_shop",
+    "establishment"
+   ],
+   "primaryType": "barber_shop",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_039",
+   "searchTerms": [
+    "barber",
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://eksempel-barber-odense-2.invalid/",
+    "nationalPhoneNumber": "12 34 39 73",
+    "internationalPhoneNumber": "+45 12 34 39 73",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.2,
+    "userRatingCount": 99
+   },
+   "demoServices": [
+    "Herreklip",
+    "Skægtrim"
+   ]
+  },
+  {
+   "id": "demo_040",
+   "displayName": {
+    "text": "Eksempel VVS Odense",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 40, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.38747,
+    "longitude": 10.37839
+   },
+   "types": [
+    "plumber",
+    "establishment"
+   ],
+   "primaryType": "plumber",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_040",
+   "searchTerms": [
+    "vvs"
+   ],
+   "details": {
+    "websiteUri": "https://eksempel-vvs-odense.invalid/",
+    "nationalPhoneNumber": "12 34 40 80",
+    "internationalPhoneNumber": "+45 12 34 40 80",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.3,
+    "userRatingCount": 96
+   },
+   "demoServices": [
+    "Badeværelser",
+    "Fjernvarme",
+    "Akut vandskade"
+   ]
+  },
+  {
+   "id": "demo_041",
+   "displayName": {
+    "text": "Demo VVS Odense 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 41, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.39528,
+    "longitude": 10.37291
+   },
+   "types": [
+    "plumber",
+    "establishment"
+   ],
+   "primaryType": "plumber",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_041",
+   "searchTerms": [
+    "vvs"
+   ],
+   "details": {
+    "websiteUri": "https://demo-vvs-odense-2.invalid/",
+    "nationalPhoneNumber": "12 34 41 87",
+    "internationalPhoneNumber": "+45 12 34 41 87",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.5,
+    "userRatingCount": 122
+   },
+   "demoServices": [
+    "Badeværelser",
+    "Fjernvarme",
+    "Akut vandskade"
+   ]
+  },
+  {
+   "id": "demo_042",
+   "displayName": {
+    "text": "Demo El-service Odense",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 42, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.39543,
+    "longitude": 10.38077
+   },
+   "types": [
+    "electrician",
+    "establishment"
+   ],
+   "primaryType": "electrician",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_042",
+   "searchTerms": [
+    "elektriker"
+   ],
+   "details": {
+    "websiteUri": "https://demo-el-service-odense.invalid/",
+    "nationalPhoneNumber": "12 34 42 94",
+    "internationalPhoneNumber": "+45 12 34 42 94",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.1,
+    "userRatingCount": 194
+   },
+   "demoServices": [
+    "El-tavler",
+    "Ladestandere"
+   ]
+  },
+  {
+   "id": "demo_043",
+   "displayName": {
+    "text": "Testgade El-service Odense 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 43, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.39212,
+    "longitude": 10.37889
+   },
+   "types": [
+    "electrician",
+    "establishment"
+   ],
+   "primaryType": "electrician",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_043",
+   "searchTerms": [
+    "elektriker"
+   ],
+   "details": {
+    "websiteUri": "https://testgade-el-service-odense-2.invalid/",
+    "nationalPhoneNumber": "12 34 43 01",
+    "internationalPhoneNumber": "+45 12 34 43 01",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.8,
+    "userRatingCount": 44
+   },
+   "demoServices": [
+    "El-tavler",
+    "Ladestandere"
+   ]
+  },
+  {
+   "id": "demo_044",
+   "displayName": {
+    "text": "Testgade Tandklinik Odense",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 44, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.39629,
+    "longitude": 10.37651
+   },
+   "types": [
+    "dentist",
+    "health",
+    "establishment"
+   ],
+   "primaryType": "dentist",
+   "businessStatus": "CLOSED_PERMANENTLY",
+   "googleMapsUri": "https://maps.example.invalid/demo_044",
+   "searchTerms": [
+    "tandlæge"
+   ],
+   "details": {
+    "websiteUri": "https://testgade-tandklinik-odense.invalid/",
+    "nationalPhoneNumber": "12 34 44 08",
+    "internationalPhoneNumber": "+45 12 34 44 08",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 5.0,
+    "userRatingCount": 95
+   },
+   "demoServices": [
+    "Undersøgelse",
+    "Tandrensning"
+   ]
+  },
+  {
+   "id": "demo_045",
+   "displayName": {
+    "text": "Opdigtet Tandklinik Odense 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 45, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.38742,
+    "longitude": 10.39003
+   },
+   "types": [
+    "dentist",
+    "health",
+    "establishment"
+   ],
+   "primaryType": "dentist",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_045",
+   "searchTerms": [
+    "tandlæge"
+   ],
+   "details": {
+    "websiteUri": "https://opdigtet-tandklinik-odense-2.invalid/",
+    "nationalPhoneNumber": "12 34 45 15",
+    "internationalPhoneNumber": "+45 12 34 45 15",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.0,
+    "userRatingCount": 138
+   },
+   "demoServices": [
+    "Undersøgelse",
+    "Tandrensning"
+   ]
+  },
+  {
+   "id": "demo_046",
+   "displayName": {
+    "text": "Opdigtet Autoværksted Odense",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 46, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.39105,
+    "longitude": 10.39402
+   },
+   "types": [
+    "car_repair",
+    "establishment"
+   ],
+   "primaryType": "car_repair",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_046",
+   "searchTerms": [
+    "autoværksted"
+   ],
+   "details": {
+    "websiteUri": "https://opdigtet-autovaerksted-odense.invalid/",
+    "nationalPhoneNumber": "12 34 46 22",
+    "internationalPhoneNumber": "+45 12 34 46 22",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.1,
+    "userRatingCount": 219
+   },
+   "demoServices": [
+    "Service",
+    "Dækskift",
+    "Syn"
+   ]
+  },
+  {
+   "id": "demo_047",
+   "displayName": {
+    "text": "Fiktiv Autoværksted Odense 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 47, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.39017,
+    "longitude": 10.38297
+   },
+   "types": [
+    "car_repair",
+    "establishment"
+   ],
+   "primaryType": "car_repair",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_047",
+   "searchTerms": [
+    "autoværksted"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-autovaerksted-odense-2.invalid/",
+    "nationalPhoneNumber": "12 34 47 29",
+    "internationalPhoneNumber": "+45 12 34 47 29",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.2,
+    "userRatingCount": 200
+   },
+   "demoServices": [
+    "Service",
+    "Dækskift",
+    "Syn"
+   ]
+  },
+  {
+   "id": "demo_048",
+   "displayName": {
+    "text": "Fiktiv Spisehus Odense",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 48, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.38925,
+    "longitude": 10.38996
+   },
+   "types": [
+    "restaurant",
+    "food",
+    "establishment"
+   ],
+   "primaryType": "restaurant",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_048",
+   "searchTerms": [
+    "restaurant"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-spisehus-odense.invalid/",
+    "nationalPhoneNumber": "12 34 48 36",
+    "internationalPhoneNumber": "+45 12 34 48 36",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.5,
+    "userRatingCount": 165
+   },
+   "demoServices": [
+    "Frokost",
+    "Aftenmenu",
+    "Selskaber"
+   ]
+  },
+  {
+   "id": "demo_049",
+   "displayName": {
+    "text": "Prøve Spisehus Odense 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 49, 5000 Odense C, Danmark",
+   "addressComponents": [
+    {
+     "longText": "5000",
+     "shortText": "5000",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "Odense C",
+     "shortText": "Odense C",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.38925,
+    "longitude": 10.40076
+   },
+   "types": [
+    "restaurant",
+    "food",
+    "establishment"
+   ],
+   "primaryType": "restaurant",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_049",
+   "searchTerms": [
+    "restaurant"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-spisehus-odense-2.invalid/",
+    "nationalPhoneNumber": "12 34 49 43",
+    "internationalPhoneNumber": "+45 12 34 49 43",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 5.0,
+    "userRatingCount": 221
+   },
+   "demoServices": [
+    "Frokost",
+    "Aftenmenu",
+    "Selskaber"
+   ]
+  },
+  {
+   "id": "demo_050",
+   "displayName": {
+    "text": "Fiktiv Frisør København",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 50, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.70168,
+    "longitude": 12.56658
+   },
+   "types": [
+    "hair_salon",
+    "beauty_salon",
+    "establishment"
+   ],
+   "primaryType": "hair_salon",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_050",
+   "searchTerms": [
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-frisoer-koebenhavn.invalid/",
+    "nationalPhoneNumber": "12 34 50 50",
+    "internationalPhoneNumber": "+45 12 34 50 50",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.4,
+    "userRatingCount": 208
+   },
+   "demoServices": [
+    "Klip",
+    "Farve",
+    "Permanent"
+   ]
+  },
+  {
+   "id": "demo_051",
+   "displayName": {
+    "text": "Prøve Frisør København 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 51, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.70244,
+    "longitude": 12.57771
+   },
+   "types": [
+    "hair_salon",
+    "beauty_salon",
+    "establishment"
+   ],
+   "primaryType": "hair_salon",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_051",
+   "searchTerms": [
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-frisoer-koebenhavn-2.invalid/",
+    "nationalPhoneNumber": "12 34 51 57",
+    "internationalPhoneNumber": "+45 12 34 51 57",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.4,
+    "userRatingCount": 10
+   },
+   "demoServices": [
+    "Klip",
+    "Farve",
+    "Permanent"
+   ]
+  },
+  {
+   "id": "demo_052",
+   "displayName": {
+    "text": "Prøve Barber København",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 52, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.72075,
+    "longitude": 12.5886
+   },
+   "types": [
+    "barber_shop",
+    "establishment"
+   ],
+   "primaryType": "barber_shop",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_052",
+   "searchTerms": [
+    "barber",
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-barber-koebenhavn.invalid/",
+    "nationalPhoneNumber": "12 34 52 64",
+    "internationalPhoneNumber": "+45 12 34 52 64",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.5,
+    "userRatingCount": 52
+   },
+   "demoServices": [
+    "Herreklip",
+    "Skægtrim"
+   ]
+  },
+  {
+   "id": "demo_053",
+   "displayName": {
+    "text": "Eksempel Barber København 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 53, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.71362,
+    "longitude": 12.59526
+   },
+   "types": [
+    "barber_shop",
+    "establishment"
+   ],
+   "primaryType": "barber_shop",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_053",
+   "searchTerms": [
+    "barber",
+    "frisør"
+   ],
+   "details": {
+    "websiteUri": "https://eksempel-barber-koebenhavn-2.invalid/",
+    "nationalPhoneNumber": "12 34 53 71",
+    "internationalPhoneNumber": "+45 12 34 53 71",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.4,
+    "userRatingCount": 242
+   },
+   "demoServices": [
+    "Herreklip",
+    "Skægtrim"
+   ]
+  },
+  {
+   "id": "demo_054",
+   "displayName": {
+    "text": "Eksempel VVS København",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 54, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.71436,
+    "longitude": 12.57098
+   },
+   "types": [
+    "plumber",
+    "establishment"
+   ],
+   "primaryType": "plumber",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_054",
+   "searchTerms": [
+    "vvs"
+   ],
+   "details": {
+    "websiteUri": "https://eksempel-vvs-koebenhavn.invalid/",
+    "nationalPhoneNumber": "12 34 54 78",
+    "internationalPhoneNumber": "+45 12 34 54 78",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 5.0,
+    "userRatingCount": 23
+   },
+   "demoServices": [
+    "Badeværelser",
+    "Fjernvarme",
+    "Akut vandskade"
+   ]
+  },
+  {
+   "id": "demo_055",
+   "displayName": {
+    "text": "Demo VVS København 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 55, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.70229,
+    "longitude": 12.56607
+   },
+   "types": [
+    "plumber",
+    "establishment"
+   ],
+   "primaryType": "plumber",
+   "businessStatus": "CLOSED_PERMANENTLY",
+   "googleMapsUri": "https://maps.example.invalid/demo_055",
+   "searchTerms": [
+    "vvs"
+   ],
+   "details": {
+    "websiteUri": "https://demo-vvs-koebenhavn-2.invalid/",
+    "nationalPhoneNumber": "12 34 55 85",
+    "internationalPhoneNumber": "+45 12 34 55 85",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.2,
+    "userRatingCount": 55
+   },
+   "demoServices": [
+    "Badeværelser",
+    "Fjernvarme",
+    "Akut vandskade"
+   ]
+  },
+  {
+   "id": "demo_056",
+   "displayName": {
+    "text": "Demo El-service København",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 56, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.70858,
+    "longitude": 12.59641
+   },
+   "types": [
+    "electrician",
+    "establishment"
+   ],
+   "primaryType": "electrician",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_056",
+   "searchTerms": [
+    "elektriker"
+   ],
+   "details": {
+    "websiteUri": "https://demo-el-service-koebenhavn.invalid/",
+    "nationalPhoneNumber": "12 34 56 92",
+    "internationalPhoneNumber": "+45 12 34 56 92",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.6,
+    "userRatingCount": 3
+   },
+   "demoServices": [
+    "El-tavler",
+    "Ladestandere"
+   ]
+  },
+  {
+   "id": "demo_057",
+   "displayName": {
+    "text": "Testgade El-service København 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 57, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.70851,
+    "longitude": 12.58312
+   },
+   "types": [
+    "electrician",
+    "establishment"
+   ],
+   "primaryType": "electrician",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_057",
+   "searchTerms": [
+    "elektriker"
+   ],
+   "details": {
+    "websiteUri": "https://testgade-el-service-koebenhavn-2.invalid/",
+    "nationalPhoneNumber": "12 34 57 99",
+    "internationalPhoneNumber": "+45 12 34 57 99",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.8,
+    "userRatingCount": 24
+   },
+   "demoServices": [
+    "El-tavler",
+    "Ladestandere"
+   ]
+  },
+  {
+   "id": "demo_058",
+   "displayName": {
+    "text": "Testgade Tandklinik København",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 58, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.71703,
+    "longitude": 12.5618
+   },
+   "types": [
+    "dentist",
+    "health",
+    "establishment"
+   ],
+   "primaryType": "dentist",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_058",
+   "searchTerms": [
+    "tandlæge"
+   ],
+   "details": {
+    "websiteUri": "https://testgade-tandklinik-koebenhavn.invalid/",
+    "nationalPhoneNumber": "12 34 58 06",
+    "internationalPhoneNumber": "+45 12 34 58 06",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.4,
+    "userRatingCount": 185
+   },
+   "demoServices": [
+    "Undersøgelse",
+    "Tandrensning"
+   ]
+  },
+  {
+   "id": "demo_059",
+   "displayName": {
+    "text": "Opdigtet Tandklinik København 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 59, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.715,
+    "longitude": 12.57612
+   },
+   "types": [
+    "dentist",
+    "health",
+    "establishment"
+   ],
+   "primaryType": "dentist",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_059",
+   "searchTerms": [
+    "tandlæge"
+   ],
+   "details": {
+    "websiteUri": "https://opdigtet-tandklinik-koebenhavn-2.invalid/",
+    "nationalPhoneNumber": "12 34 59 13",
+    "internationalPhoneNumber": "+45 12 34 59 13",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.2,
+    "userRatingCount": 205
+   },
+   "demoServices": [
+    "Undersøgelse",
+    "Tandrensning"
+   ]
+  },
+  {
+   "id": "demo_060",
+   "displayName": {
+    "text": "Opdigtet Autoværksted København",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 60, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.71226,
+    "longitude": 12.56047
+   },
+   "types": [
+    "car_repair",
+    "establishment"
+   ],
+   "primaryType": "car_repair",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_060",
+   "searchTerms": [
+    "autoværksted"
+   ],
+   "details": {
+    "websiteUri": "https://opdigtet-autovaerksted-koebenhavn.invalid/",
+    "nationalPhoneNumber": "12 34 60 20",
+    "internationalPhoneNumber": "+45 12 34 60 20",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.9,
+    "userRatingCount": 187
+   },
+   "demoServices": [
+    "Service",
+    "Dækskift",
+    "Syn"
+   ]
+  },
+  {
+   "id": "demo_061",
+   "displayName": {
+    "text": "Fiktiv Autoværksted København 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 61, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.7065,
+    "longitude": 12.57306
+   },
+   "types": [
+    "car_repair",
+    "establishment"
+   ],
+   "primaryType": "car_repair",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_061",
+   "searchTerms": [
+    "autoværksted"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-autovaerksted-koebenhavn-2.invalid/",
+    "nationalPhoneNumber": "12 34 61 27",
+    "internationalPhoneNumber": "+45 12 34 61 27",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.9,
+    "userRatingCount": 188
+   },
+   "demoServices": [
+    "Service",
+    "Dækskift",
+    "Syn"
+   ]
+  },
+  {
+   "id": "demo_062",
+   "displayName": {
+    "text": "Fiktiv Spisehus København",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 62, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.70081,
+    "longitude": 12.59672
+   },
+   "types": [
+    "restaurant",
+    "food",
+    "establishment"
+   ],
+   "primaryType": "restaurant",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_062",
+   "searchTerms": [
+    "restaurant"
+   ],
+   "details": {
+    "websiteUri": "https://fiktiv-spisehus-koebenhavn.invalid/",
+    "nationalPhoneNumber": "12 34 62 34",
+    "internationalPhoneNumber": "+45 12 34 62 34",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.0,
+    "userRatingCount": 154
+   },
+   "demoServices": [
+    "Frokost",
+    "Aftenmenu",
+    "Selskaber"
+   ]
+  },
+  {
+   "id": "demo_063",
+   "displayName": {
+    "text": "Prøve Spisehus København 2",
+    "languageCode": "da"
+   },
+   "formattedAddress": "Demovej 63, 2100 København Ø, Danmark",
+   "addressComponents": [
+    {
+     "longText": "2100",
+     "shortText": "2100",
+     "types": [
+      "postal_code"
+     ]
+    },
+    {
+     "longText": "København Ø",
+     "shortText": "København Ø",
+     "types": [
+      "locality",
+      "political"
+     ]
+    }
+   ],
+   "location": {
+    "latitude": 55.71872,
+    "longitude": 12.58926
+   },
+   "types": [
+    "restaurant",
+    "food",
+    "establishment"
+   ],
+   "primaryType": "restaurant",
+   "businessStatus": "OPERATIONAL",
+   "googleMapsUri": "https://maps.example.invalid/demo_063",
+   "searchTerms": [
+    "restaurant"
+   ],
+   "details": {
+    "websiteUri": "https://proeve-spisehus-koebenhavn-2.invalid/",
+    "nationalPhoneNumber": "12 34 63 41",
+    "internationalPhoneNumber": "+45 12 34 63 41",
+    "regularOpeningHours": {
+     "weekdayDescriptions": [
+      "mandag: 09.00–17.00",
+      "tirsdag: 09.00–17.00",
+      "onsdag: 09.00–17.00",
+      "torsdag: 09.00–17.00",
+      "fredag: 09.00–16.00",
+      "lørdag: Lukket",
+      "søndag: Lukket"
+     ]
+    },
+    "rating": 4.1,
+    "userRatingCount": 214
+   },
+   "demoServices": [
+    "Frokost",
+    "Aftenmenu",
+    "Selskaber"
+   ]
+  }
+ ]
+}

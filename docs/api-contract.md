@@ -69,8 +69,10 @@ Arter: `fact, service, coverage_area, opening_hours, known_answer, unknown_answe
 | `POST …/versions/{vid}/approve` | admin+; idempotent; superseder tidligere godkendt; bumper `knowledge_revision`; outbox `knowledge.version_approved`; forælder vidensafhængige tjek. |
 | `POST …/versions/{vid}/reject` `{reason}` | admin+. |
 | `GET …/knowledge/review-queue` | Versioner i gennemgang. |
-| `GET …/assistant/knowledge` | **Kun godkendte** aktuelle versioner + `knowledge_revision`. AI-samtalen er ikke implementeret. |
+| `GET …/assistant/knowledge` | **Kun godkendte** aktuelle versioner + `knowledge_revision` (+ `audience`). AI-samtalen er ikke implementeret. |
 | `GET …/knowledge/offers/{iid}/eligibility?area_m2&on_date` | Evaluerer den godkendte version af et `offer` (K04: `gte 40`, datoer inklusive). |
+
+`audience` på versioner: `public` (standard) · `customer_docs` · `internal`. Kun Dialogbots salgsarbejdsrum (`SALES_WORKSPACE_ID`) må sætte andet end `public` (ellers 422, felt `audience`). Alle prompts får `public`; salgs-Peter får også `customer_docs`; `internal` kommer aldrig i en prompt.
 
 `offer.content`: `{discount_percent, condition:{area_operator: gte|gt|lte|lt, area_threshold_m2}, starts_on, ends_on_inclusive}`.
 
@@ -116,6 +118,27 @@ Se `docs/ambassadors/program.md` for regler.
 | `PUT /operator/ambassadors/referrals/{workspace_id}` | Flyt/fjern kundens ambassadør `{ambassador_id\|null, reason}` (logges). |
 | `GET/POST /operator/ambassadors/payouts`, `GET /operator/ambassadors/payouts/{id}`, `POST …/{id}/paid` `{reference}`, `POST …/{id}/cancel` | Udbetalingskørsler (≥ 500 kr., kun uden blokeringer). |
 | `GET /operator/ambassadors/b-income.csv?year=` | Udbetalt B-indkomst pr. privat ambassadør (navn, CPR, beløb) til eIndkomst. Logges. |
+
+## Dialogbots interne salgskanal (kun operatører)
+
+Alle ruter kræver `is_platform_operator` (403 `operator_only`). Med `SALES_OUTBOUND_MODE=off` svarer alle undtagen `GET /operator/salg` 501 `sales_channel_off`; simulation kræver `simulation|test|live` (ellers 501 `sales_mode_not_allowed`). Se `docs/sales/salgskanal-drift.md`.
+
+| Metode og sti | Beskrivelse |
+|---|---|
+| `GET /operator/salg` | Tilstand, hvad der mangler (navne på indstillinger, aldrig værdier), overbliksfelter med definitioner, "Kræver dig". |
+| `GET /operator/salg/industries`, `PUT …/industries` | Brancher (kode + operatørens egne, som overstyrer pr. nøgle) med Google-typer og søgeord. |
+| `POST /operator/salg/search-jobs[?dry_run=true]` | Body `{industry_keys[], google_types[], keywords[], geo_kind: place|postal_codes|radius, geo, max_results, exclude_existing_customers}` → 202 med job og overslag (`budget.estimate`). `dry_run` gemmer intet. Workeren kører jobbet. |
+| `GET /operator/salg/search-jobs`, `GET …/{id}`, `POST …/{id}/cancel`, `POST …/{id}/resume` | Liste med `requests_today`, fremskridt (`examined, found, skipped, incomplete, duplicates, requests_used, details_used, estimated_cost_minor, reasons`), stop og genoptag. |
+| `POST /operator/salg/companies/import` | `{csv, industry_key?}` (kolonner navn, cvr, hjemmeside, telefon, e-mail, postnr) → 201, mærket `import`. |
+| `GET /operator/salg/companies?q&industry&postal&research_status&source&quality&search_job&sort&limit&offset` | Virksomheder; `contactable` er aldrig `ALLOW` i fase 1. |
+| `GET /operator/salg/companies/{id}` | Detaljer: fakta med kilde (URL/`google_place:<id>`/`import:`/`cvr:`), kontakter, profiler, manuskripter, simulationer, tidslinje. |
+| `POST /operator/salg/companies/{id}/research` | 202; undersøger hjemmesiden i baggrunden gennem `safe_fetch` + AI-udtræk `sales-research-v1`. 409 `no_website`, 409 `sales_workspace_missing`, 501 uden AI. |
+| `POST /operator/salg/companies/{id}/profile` | 201; profil (≤ 3 fakta med kilde, ≤ 2 hypoteser som spørgsmål). |
+| `POST /operator/salg/companies/{id}/scripts` `{profile_id?}` | 201; manuskript `peter-sales-v1` (`body`, `rendered_prompt`, `validation{ok, errors, warnings}`). |
+| `POST /operator/salg/scripts/{id}/approve` | Godkender ved tom fejlliste (409 `script_invalid` ellers); tidligere godkendt → `superseded`; auditeres. |
+| `POST /operator/salg/companies/{id}/simulate` `{script_id, persona, max_turns}` | 201; simuleret samtale mod en AI-kunde: transskript, delaccepter med citater, `would_call` (værktøjer logges, udføres aldrig), `simulated: true`. |
+| `GET /operator/salg/integrations`, `PUT …/integrations` | Integrationsregister (`AKTIV | KRÆVER_OPSÆTNING | PLANLAGT | UKENDT`) og operatør-noter. |
+| `GET /operator/salg/knowledge` | Salgsarbejdsrummets godkendte viden med `audience`, prisliste, manuskriptversioner, register. |
 
 ## Integrationer, drift, dev
 

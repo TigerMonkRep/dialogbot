@@ -197,7 +197,7 @@ def keyterms(db: OrmSession, ws: Workspace) -> list[str]:
     p = db.get(BusinessProfile, ws.id)
     if p is not None:
         terms += [p.legal_name, p.city or "", (p.address_line or "").rsplit(" ", 1)[0]]
-    for item in active_knowledge(db, ws.id):
+    for item in active_knowledge(db, ws.id, ("public", "customer_docs")):  # never internal knowledge
         if item["kind"] in ("service", "offer"):
             terms.append(item["title"])
         elif item["kind"] == "coverage_area":

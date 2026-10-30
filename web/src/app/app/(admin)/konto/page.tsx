@@ -159,6 +159,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
             <LogoutButton />
           </div>
           {me.is_platform_operator && <Link href="/app/operator/admin" className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-highlight border-[1.5px] border-ink text-[14px] font-semibold text-ink">Operatør</Link>}
+          {me.is_platform_operator && <Link href="/app/operator/salg" className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-paper border-[1.5px] border-ink text-[14px] font-semibold text-ink">Dialogbots salg</Link>}
           <p className="text-[13px] text-muted">Logget ind på {sessions.length} {sessions.length === 1 ? "enhed" : "enheder"}. Nulstiller du adgangskoden, logges alle ud.</p>
           <ul className="flex flex-col gap-1.5">{sessions.map((s) => <li key={s.id} className="text-[13px] text-ink-soft">{device(s.user_agent)}{s.current ? <b className="text-ink"> · denne enhed</b> : ` · sidst aktiv ${dt(s.last_seen_at)}`}</li>)}</ul>
         </div>

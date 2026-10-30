@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AdminFrame, NotOperator, load } from "../shared";
 
 const TOOLS: [string, string, string][] = [
+  ["/app/operator/salg", "Dialogbots salg", "Find virksomheder, undersøg dem, byg manuskripter til Peter og simulér samtaler."],
   ["/app/operator/social", "Sociale medier", "Godkend og planlæg opslag på Facebook, Instagram og TikTok."],
   ["/app/operator/ambassadors", "Ambassadører og affiliates", "Godkend, se saldi og kør udbetalinger. Se en ambassadørs egen side via Brugere → Se som."],
   ["/app/operator/sales", "Salg", "Prøveopkald og leads fra hjemmesiden."],

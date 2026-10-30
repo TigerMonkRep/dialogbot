@@ -67,8 +67,16 @@ def estimate_cost_usd_micros(c: Completion) -> int | None:
     return round(usd * 1_000_000)
 
 
-def build_system_prompt(db: OrmSession, workspace: Workspace) -> tuple[str, int]:
-    items = knowledge.active_knowledge(db, workspace.id)
+PROMPT_AUDIENCES = ("public", "customer_docs")  # `internal` knowledge never reaches any prompt
+
+
+def build_system_prompt(db: OrmSession, workspace: Workspace,
+                        audiences: tuple[str, ...] = ("public",)) -> tuple[str, int]:
+    """Instructions + approved knowledge for `audiences` (default: what every assistant may say). Dialogbot's sales
+    Peter passes ("public", "customer_docs"); "internal" is refused here so it can never end in a prompt."""
+    if "internal" in audiences or not set(audiences) <= set(PROMPT_AUDIENCES):
+        raise ValueError("internal knowledge never goes into a prompt")
+    items = knowledge.active_knowledge(db, workspace.id, audiences)
     if not items:
         raise Conflict("Der er ingen godkendt viden endnu. Godkend mindst ét vidensemne, før assistenten kan svare.",
                        code="no_approved_knowledge")

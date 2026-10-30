@@ -280,6 +280,20 @@ def run_schedules() -> None:
             log.warning("commission.release_failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
         try:
+            from app.modules.sales import search as sales_search
+
+            if get_settings().sales_outbound_mode != "off":
+                n = sales_search.run_due(db)
+                if n:
+                    log.info("sales.search_steps", count=n)
+                refreshed = sales_search.daily_refresh_due(db)
+                if refreshed:
+                    log.info("sales.google_refresh", **refreshed)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("sales.search_failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:
             from app.modules.social.service import run_due as run_social
 
             n = run_social(db)

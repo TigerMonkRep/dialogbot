@@ -78,9 +78,27 @@ def approved_version(db: OrmSession, item_id: uuid.UUID) -> KnowledgeVersion | N
                                                     KnowledgeVersion.status == "approved"))
 
 
+AUDIENCES = ("public", "customer_docs", "internal")
+
+
+def check_audience(db: OrmSession, workspace_id: uuid.UUID, audience: str) -> str:
+    """Only Dialogbot's own sales workspace may mark knowledge customer_docs/internal; everyone else is public."""
+    if audience not in AUDIENCES:
+        raise ValidationFailed("Ugyldig målgruppe", field_errors=[{"field": "audience"}])
+    if audience != "public":
+        from app.modules.sales.service import sales_workspace
+
+        ws = sales_workspace(db)
+        if ws is None or ws.id != workspace_id:
+            raise ValidationFailed("Målgruppe kan kun ændres i Dialogbots salgsarbejdsrum",
+                                   field_errors=[{"field": "audience"}])
+    return audience
+
+
 def create_item(db: OrmSession, ctx: WorkspaceContext, *, kind: str, title: str, content: dict,
-                source_ref: str | None, request_id: str | None) -> tuple[KnowledgeItem, KnowledgeVersion]:
+                source_ref: str | None, request_id: str | None, audience: str = "public") -> tuple[KnowledgeItem, KnowledgeVersion]:
     ctx.require("knowledge.draft")
+    audience = check_audience(db, ctx.workspace.id, audience)
     if kind not in KNOWLEDGE_KINDS:
         raise ValidationFailed("Ugyldig vidensart", field_errors=[{"field": "kind"}])
     validate_content(kind, content)
@@ -92,7 +110,8 @@ def create_item(db: OrmSession, ctx: WorkspaceContext, *, kind: str, title: str,
     db.add(item)
     db.flush()
     v = KnowledgeVersion(item_id=item.id, workspace_id=ctx.workspace.id, version_no=1, status="draft", title=title,
-                         content=content, source_type="manual", source_ref=source_ref, created_by=ctx.user_id)
+                         content=content, source_type="manual", source_ref=source_ref, created_by=ctx.user_id,
+                         audience=audience)
     db.add(v)
     db.flush()
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="knowledge.draft_created",
@@ -102,7 +121,7 @@ def create_item(db: OrmSession, ctx: WorkspaceContext, *, kind: str, title: str,
 
 
 def new_draft(db: OrmSession, ctx: WorkspaceContext, item_id: uuid.UUID, *, title: str, content: dict,
-              source_ref: str | None, request_id: str | None) -> KnowledgeVersion:
+              source_ref: str | None, request_id: str | None, audience: str | None = None) -> KnowledgeVersion:
     """Create a new draft version of an existing item. Never touches the approved version."""
     ctx.require("knowledge.draft")
     item = get_scoped(db, KnowledgeItem, item_id, ctx.workspace.id)
@@ -111,9 +130,13 @@ def new_draft(db: OrmSession, ctx: WorkspaceContext, item_id: uuid.UUID, *, titl
                        code="draft_exists")
     validate_content(item.kind, content)
     max_no = db.scalar(select(func.max(KnowledgeVersion.version_no)).where(KnowledgeVersion.item_id == item.id)) or 0
+    if audience is None:  # a new version keeps the audience of the approved one
+        live = approved_version(db, item.id)
+        audience = live.audience if live else "public"
+    audience = check_audience(db, ctx.workspace.id, audience)
     v = KnowledgeVersion(item_id=item.id, workspace_id=ctx.workspace.id, version_no=max_no + 1, status="draft",
                          title=title, content=content, source_type="manual", source_ref=source_ref,
-                         created_by=ctx.user_id)
+                         created_by=ctx.user_id, audience=audience)
     db.add(v)
     db.flush()
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="knowledge.draft_created",
@@ -124,7 +147,8 @@ def new_draft(db: OrmSession, ctx: WorkspaceContext, item_id: uuid.UUID, *, titl
 
 
 def edit_draft(db: OrmSession, ctx: WorkspaceContext, version_id: uuid.UUID, *, expected_edit_version: int,
-               title: str, content: dict, source_ref: str | None, request_id: str | None) -> KnowledgeVersion:
+               title: str, content: dict, source_ref: str | None, request_id: str | None,
+               audience: str | None = None) -> KnowledgeVersion:
     ctx.require("knowledge.draft")
     v = db.scalar(select(KnowledgeVersion).where(KnowledgeVersion.id == version_id,
                                                  KnowledgeVersion.workspace_id == ctx.workspace.id).with_for_update())
@@ -138,15 +162,17 @@ def edit_draft(db: OrmSession, ctx: WorkspaceContext, version_id: uuid.UUID, *, 
                        extra={"current_version": v.edit_version})
     item = db.get(KnowledgeItem, v.item_id)
     validate_content(item.kind, content)
-    before = {"title": v.title, "content": v.content}
+    before = {"title": v.title, "content": v.content, "audience": v.audience}
     v.title, v.content, v.source_ref = title, content, source_ref
+    if audience is not None:
+        v.audience = check_audience(db, ctx.workspace.id, audience)
     v.edit_version += 1
     if v.status == "in_review":
         v.status = "draft"  # edits after submission return the draft to review start
         v.submitted_at = None
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="knowledge.draft_edited",
                  object_type="knowledge_version", object_id=v.id, before=before,
-                 after={"title": title, "content": content}, request_id=request_id)
+                 after={"title": title, "content": content, "audience": v.audience}, request_id=request_id)
     return v
 
 
@@ -246,18 +272,19 @@ def reject(db: OrmSession, ctx: WorkspaceContext, version_id: uuid.UUID, reason:
     return v
 
 
-def active_knowledge(db: OrmSession, workspace_id: uuid.UUID) -> list[dict]:
+def active_knowledge(db: OrmSession, workspace_id: uuid.UUID, audiences: tuple[str, ...] | None = None) -> list[dict]:
     """The assistant's read model: ONLY approved, current versions of
     non-archived items in this workspace. Drafts and raw sources are never
-    included."""
-    rows = db.execute(
-        select(KnowledgeItem, KnowledgeVersion).join(KnowledgeVersion, KnowledgeVersion.item_id == KnowledgeItem.id)
-        .where(KnowledgeItem.workspace_id == workspace_id, KnowledgeVersion.status == "approved",
-               KnowledgeItem.archived_at.is_(None))
-        .order_by(KnowledgeItem.kind, KnowledgeItem.key)
-    )
+    included. `audiences` limits it (prompts pass it; `internal` is never passed to a prompt)."""
+    q = (select(KnowledgeItem, KnowledgeVersion).join(KnowledgeVersion, KnowledgeVersion.item_id == KnowledgeItem.id)
+         .where(KnowledgeItem.workspace_id == workspace_id, KnowledgeVersion.status == "approved",
+                KnowledgeItem.archived_at.is_(None)))
+    if audiences is not None:
+        q = q.where(KnowledgeVersion.audience.in_(audiences))
+    rows = db.execute(q.order_by(KnowledgeItem.kind, KnowledgeItem.key))
     return [
         {"id": str(v.id), "item_id": str(i.id), "kind": i.kind, "title": v.title, "content": v.content,
+         "audience": v.audience,
          "version_no": v.version_no, "status": v.status, "approved_at": v.approved_at.isoformat() if v.approved_at else None}
         for i, v in rows
     ]

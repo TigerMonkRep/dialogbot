@@ -1,7 +1,7 @@
 """Suggest knowledge from the company's own website.
 
 1. Fetch the start page and a handful of same-site pages (services, prices, about, contact …).
-   Only http(s), no private/loopback addresses (checked on every redirect hop), size and page caps.
+   Through app/core/safe_fetch: public addresses only (pinned per hop), size and page caps.
 2. Ask the AI provider to extract services, facts and frequent questions as JSON — strictly what
    the pages say. Prices are never guessed and never stored as numbers: a price the site mentions
    is quoted in the description for the owner to confirm (sites usually show prices incl. VAT).
@@ -10,10 +10,8 @@
 """
 from __future__ import annotations
 
-import ipaddress
 import json
 import re
-import socket
 import uuid
 from datetime import UTC, datetime
 from html.parser import HTMLParser
@@ -37,7 +35,6 @@ MAX_BYTES = 1_500_000
 MAX_TEXT_PER_PAGE = 12_000
 MAX_TEXT_TOTAL = 60_000
 UNITS = ("m2", "hour", "item", "job")
-USER_AGENT = "DialogbotImport/1.0 (henter kun virksomhedens egne sider efter anmodning)"
 SKIP_EXT = re.compile(r"\.(pdf|jpe?g|png|gif|webp|svg|zip|mp4|mp3|docx?|xlsx?|css|js|ico|xml)$", re.I)
 PRIORITY = ("ydelse", "service", "pris", "priser", "produkt", "behandling", "om-os", "om", "kontakt", "aabning",
             "åbning", "omraade", "område", "faq", "spoergsmaal", "spørgsmål", "tilbud")
@@ -50,19 +47,6 @@ class ImportFailed(ApiError):
 
 # --------------------------------------------------------------------------- fetching
 
-def _host_is_public(host: str) -> bool:
-    try:
-        infos = socket.getaddrinfo(host, None)
-    except OSError:
-        return False
-    for info in infos:
-        ip = ipaddress.ip_address(info[4][0])
-        if ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved or ip.is_multicast \
-                or ip.is_unspecified:
-            return False
-    return True
-
-
 def normalize_url(raw: str) -> str:
     url = (raw or "").strip()
     if url and "://" not in url:
@@ -73,39 +57,35 @@ def normalize_url(raw: str) -> str:
     return urldefrag(url)[0]
 
 
+def _host_is_public(host: str) -> bool:
+    """Every address the host resolves to is public (app/core/safe_fetch rules). Used by the webhook and iCal checks."""
+    from app.core import safe_fetch
+
+    try:
+        ips = safe_fetch.system_resolver(host)
+    except safe_fetch.FetchFailed:
+        return False
+    return bool(ips) and all(safe_fetch.ip_allowed(ip) for ip in ips)
+
+
 def _allowed(url: str) -> bool:
+    """Pre-check for the iCal busy-time sync (bookings). Unchanged behaviour: dev/test allow local test sites;
+    staging/prod only public addresses. The importer itself fetches through safe_fetch, which also pins the address."""
     p = urlparse(url)
     if p.scheme not in ("http", "https") or not p.hostname:
         return False
     if get_settings().app_env in ("dev", "test"):
-        return True  # local test sites; staging/prod only fetch public addresses
+        return True
     return _host_is_public(p.hostname)
 
 
 def fetch(url: str) -> tuple[str, str] | None:
-    """GET one HTML page with manual, re-checked redirects. Returns (final_url, html) or None."""
-    import httpx
+    """GET one HTML page through app/core/safe_fetch (pinned public address, re-checked redirects, size and time
+    limits). robots.txt is not applied here: the owner asked us to read their own site. Returns (final_url, html)."""
+    from app.core import safe_fetch
 
-    with httpx.Client(timeout=10.0, follow_redirects=False, headers={"user-agent": USER_AGENT}) as client:
-        for _ in range(4):
-            if not _allowed(url):
-                return None
-            try:
-                with client.stream("GET", url) as r:
-                    if r.status_code in (301, 302, 303, 307, 308) and r.headers.get("location"):
-                        url = urljoin(url, r.headers["location"])
-                        continue
-                    if r.status_code != 200 or "html" not in r.headers.get("content-type", "text/html"):
-                        return None
-                    body = b""
-                    for chunk in r.iter_bytes():
-                        body += chunk
-                        if len(body) > MAX_BYTES:
-                            break
-                    return url, body.decode(r.encoding or "utf-8", errors="replace")
-            except httpx.HTTPError:
-                return None
-    return None
+    budget = safe_fetch.Budget(max_pages=1, page_bytes=MAX_BYTES, timeout=10.0)
+    return safe_fetch.get_html(url, budget=budget, robots=False)
 
 
 class _Text(HTMLParser):

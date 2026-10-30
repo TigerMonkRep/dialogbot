@@ -1,0 +1,223 @@
+{
+ "_note": "Svar i Google Places API (New)-format med tydeligt fiktive virksomheder (.invalid-domæner, numre i det ubrugte 1x-område).",
+ "search_page_1": {
+  "places": [
+   {
+    "id": "ChIJ_test_salon_1",
+    "displayName": {
+     "text": "Salon Fiktiv",
+     "languageCode": "da"
+    },
+    "formattedAddress": "Fiktivvej 1, 8000 Aarhus C, Danmark",
+    "addressComponents": [
+     {
+      "longText": "8000",
+      "shortText": "8000",
+      "types": [
+       "postal_code"
+      ]
+     },
+     {
+      "longText": "Aarhus C",
+      "shortText": "Aarhus C",
+      "types": [
+       "locality",
+       "political"
+      ]
+     }
+    ],
+    "location": {
+     "latitude": 56.155,
+     "longitude": 10.205
+    },
+    "types": [
+     "hair_salon",
+     "beauty_salon",
+     "establishment"
+    ],
+    "primaryType": "hair_salon",
+    "businessStatus": "OPERATIONAL",
+    "googleMapsUri": "https://maps.example.invalid/?cid=ChIJ_test_salon_1"
+   },
+   {
+    "id": "ChIJ_test_salon_2",
+    "displayName": {
+     "text": "Klip Prøve",
+     "languageCode": "da"
+    },
+    "formattedAddress": "Fiktivvej 1, 8000 Aarhus C, Danmark",
+    "addressComponents": [
+     {
+      "longText": "8000",
+      "shortText": "8000",
+      "types": [
+       "postal_code"
+      ]
+     },
+     {
+      "longText": "Aarhus C",
+      "shortText": "Aarhus C",
+      "types": [
+       "locality",
+       "political"
+      ]
+     }
+    ],
+    "location": {
+     "latitude": 56.151,
+     "longitude": 10.21
+    },
+    "types": [
+     "hair_salon",
+     "establishment"
+    ],
+    "primaryType": "hair_salon",
+    "businessStatus": "OPERATIONAL",
+    "googleMapsUri": "https://maps.example.invalid/?cid=ChIJ_test_salon_2"
+   },
+   {
+    "id": "ChIJ_test_closed",
+    "displayName": {
+     "text": "Lukket Salon Eksempel",
+     "languageCode": "da"
+    },
+    "formattedAddress": "Fiktivvej 1, 8000 Aarhus C, Danmark",
+    "addressComponents": [
+     {
+      "longText": "8000",
+      "shortText": "8000",
+      "types": [
+       "postal_code"
+      ]
+     },
+     {
+      "longText": "Aarhus C",
+      "shortText": "Aarhus C",
+      "types": [
+       "locality",
+       "political"
+      ]
+     }
+    ],
+    "location": {
+     "latitude": 56.152,
+     "longitude": 10.2
+    },
+    "types": [
+     "hair_salon",
+     "establishment"
+    ],
+    "primaryType": "hair_salon",
+    "businessStatus": "CLOSED_PERMANENTLY",
+    "googleMapsUri": "https://maps.example.invalid/?cid=ChIJ_test_closed"
+   },
+   {
+    "id": "ChIJ_test_branch",
+    "displayName": {
+     "text": "Salon Fiktiv Nord",
+     "languageCode": "da"
+    },
+    "formattedAddress": "Fiktivvej 1, 8200 Aarhus N, Danmark",
+    "addressComponents": [
+     {
+      "longText": "8200",
+      "shortText": "8200",
+      "types": [
+       "postal_code"
+      ]
+     },
+     {
+      "longText": "Aarhus N",
+      "shortText": "Aarhus N",
+      "types": [
+       "locality",
+       "political"
+      ]
+     }
+    ],
+    "location": {
+     "latitude": 56.18,
+     "longitude": 10.19
+    },
+    "types": [
+     "hair_salon",
+     "establishment"
+    ],
+    "primaryType": "hair_salon",
+    "businessStatus": "OPERATIONAL",
+    "googleMapsUri": "https://maps.example.invalid/?cid=ChIJ_test_branch"
+   }
+  ],
+  "nextPageToken": "page-2-token"
+ },
+ "search_page_2": {
+  "places": [
+   {
+    "id": "ChIJ_test_namesake",
+    "displayName": {
+     "text": "Klip Prøve",
+     "languageCode": "da"
+    },
+    "formattedAddress": "Fiktivvej 1, 8200 Aarhus N, Danmark",
+    "addressComponents": [
+     {
+      "longText": "8200",
+      "shortText": "8200",
+      "types": [
+       "postal_code"
+      ]
+     },
+     {
+      "longText": "Aarhus N",
+      "shortText": "Aarhus N",
+      "types": [
+       "locality",
+       "political"
+      ]
+     }
+    ],
+    "location": {
+     "latitude": 56.181,
+     "longitude": 10.191
+    },
+    "types": [
+     "hair_salon",
+     "establishment"
+    ],
+    "primaryType": "hair_salon",
+    "businessStatus": "OPERATIONAL",
+    "googleMapsUri": "https://maps.example.invalid/?cid=ChIJ_test_namesake"
+   }
+  ]
+ },
+ "details": {
+  "ChIJ_test_salon_1": {
+   "websiteUri": "https://salon-fiktiv.invalid/",
+   "nationalPhoneNumber": "12 34 00 01",
+   "internationalPhoneNumber": "+45 12 34 00 01",
+   "regularOpeningHours": {
+    "weekdayDescriptions": [
+     "mandag: 09.00–17.30",
+     "tirsdag: 09.00–17.30"
+    ]
+   },
+   "rating": 4.6,
+   "userRatingCount": 88
+  },
+  "ChIJ_test_salon_2": {
+   "websiteUri": "https://klip-proeve.invalid/",
+   "nationalPhoneNumber": "12 34 00 02",
+   "internationalPhoneNumber": "+45 12 34 00 02"
+  },
+  "ChIJ_test_branch": {
+   "websiteUri": "https://www.salon-fiktiv.invalid/nord",
+   "nationalPhoneNumber": "12 34 00 03",
+   "internationalPhoneNumber": "+45 12 34 00 03"
+  },
+  "ChIJ_test_namesake": {
+   "websiteUri": "https://klip-proeve-nord.invalid/",
+   "nationalPhoneNumber": "12 34 00 04",
+   "internationalPhoneNumber": "+45 12 34 00 04"
+  }
+ }
+}

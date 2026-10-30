@@ -110,6 +110,42 @@ class Settings(BaseSettings):
     # The voice of "Peter", who rings visitors and prospects. Unset = the catalogue's Peter (app/modules/voices/standard.py).
     # An ElevenLabs Voice Library id (Vapi → Integrations holds the platform's ElevenLabs key); a Danish male voice.
     sales_agent_voice_id: str | None = Field(default=None, alias="SALES_AGENT_VOICE_ID")
+    # Dialogbot's internal sales channel (operator-only, /operator/salg): find companies via Google Places, research
+    # their own website, build a profile and a personal script for Peter, simulate or (later phases) ring.
+    # off = every /operator/salg route except the status page answers 501; research = search, research, profile and
+    # script; simulation = also simulated conversations; test = also calls to SALES_TEST_NUMBERS; live = real calls
+    # that the contact policy allows. Nothing ever starts a live campaign by itself.
+    sales_outbound_mode: Literal["off", "research", "simulation", "test", "live"] = Field(
+        default="off", alias="SALES_OUTBOUND_MODE")
+    sales_test_numbers: str = Field(default="", alias="SALES_TEST_NUMBERS")  # comma-separated E.164
+    sales_research_max_pages: int = Field(default=8, alias="SALES_RESEARCH_MAX_PAGES")
+    sales_research_per_host_concurrency: int = Field(default=2, alias="SALES_RESEARCH_PER_HOST_CONCURRENCY")
+    sales_research_page_bytes: int = Field(default=1_500_000, alias="SALES_RESEARCH_PAGE_BYTES")
+    sales_research_timeout_seconds: float = Field(default=10.0, alias="SALES_RESEARCH_TIMEOUT_SECONDS")
+    sales_research_page_pause_seconds: float = Field(default=2.0, alias="SALES_RESEARCH_PAGE_PAUSE_SECONDS")
+    sales_search_max_results: int = Field(default=200, alias="SALES_SEARCH_MAX_RESULTS")
+    # Google Places API (New), project "Dialogbot" (dialogbot-513209), key restricted to the Places API. Unset = the
+    # search runs on clearly fictitious demo data and the UI says so.
+    google_places_api_key: str | None = Field(default=None, alias="GOOGLE_PLACES_API_KEY")
+    google_places_url: str = Field(default="https://places.googleapis.com/v1/places:searchText", alias="GOOGLE_PLACES_URL")
+    google_places_details_url: str = Field(default="https://places.googleapis.com/v1/places",
+                                           alias="GOOGLE_PLACES_DETAILS_URL")
+    # Hard cap on Places requests per Copenhagen day across all search jobs; a job that hits it is paused.
+    sales_search_daily_request_cap: int = Field(default=500, alias="SALES_SEARCH_DAILY_REQUEST_CAP")
+    # Google's terms: everything except the place id may be cached at most 30 days, then refreshed or deleted.
+    google_places_cache_days: int = Field(default=30, alias="GOOGLE_PLACES_CACHE_DAYS")
+    sales_max_concurrent_calls: int = Field(default=2, alias="SALES_MAX_CONCURRENT_CALLS")
+    sales_max_attempts_per_contact: int = Field(default=2, alias="SALES_MAX_ATTEMPTS_PER_CONTACT")
+    # Call recordings (phase 4): none | supabase (a private bucket in the Supabase project VOICE_STORAGE also uses).
+    sales_recording_storage: Literal["none", "supabase"] = Field(default="none", alias="SALES_RECORDING_STORAGE")
+    sales_recording_bucket: str = Field(default="sales-recordings", alias="SALES_RECORDING_BUCKET")
+    # Retention per data type, for the owner to approve (configuration, not a legal requirement).
+    sales_retention_transcript_days: int = Field(default=90, alias="SALES_RETENTION_TRANSCRIPT_DAYS")
+    sales_retention_audio_days: int = Field(default=30, alias="SALES_RETENTION_AUDIO_DAYS")
+    sales_retention_summary_days: int = Field(default=365, alias="SALES_RETENTION_SUMMARY_DAYS")
+    # Lets the safe fetcher reach private/loopback addresses. Local tests against a site on this machine only;
+    # refused outside dev/test.
+    allow_private_fetch: bool = Field(default=False, alias="ALLOW_PRIVATE_FETCH")
     # Actions in the customer's own systems (app/modules/integrations/connectors). Stored credentials are envelope-
     # encrypted with CREDENTIALS_KEY (base64url, 32 random bytes; `python -m scripts.credentials_key` prints one).
     # Without it in staging/prod, connectors that store secrets are reported as not available; dev/test derive a
@@ -216,6 +252,17 @@ class Settings(BaseSettings):
             raise ValueError("TTS_ENGINE=http requires TTS_SERVICE_URL and TTS_SERVICE_TOKEN")
         if self.voice_storage == "supabase" and not (self.supabase_url and self.supabase_service_role_key):
             raise ValueError("VOICE_STORAGE=supabase requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
+        if self.allow_private_fetch and self.app_env not in ("dev", "test"):
+            raise ValueError(f"ALLOW_PRIVATE_FETCH is for local tests only and is not allowed when APP_ENV={self.app_env}")
+        if self.sales_recording_storage == "supabase" and not (self.supabase_url and self.supabase_service_role_key):
+            raise ValueError("SALES_RECORDING_STORAGE=supabase requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
+        if self.sales_outbound_mode == "live":
+            missing = [n for n, v in (("SALES_WORKSPACE_ID", self.sales_workspace_id), ("VAPI_API_KEY", self.vapi_api_key),
+                                      ("VAPI_SERVER_SECRET", self.vapi_server_secret)) if not v]
+            if self.telephony_provider != "live":
+                missing.append("TELEPHONY_PROVIDER=live")
+            if missing:
+                raise ValueError("SALES_OUTBOUND_MODE=live requires " + ", ".join(missing))
         if self.auth_provider == "external":
             raise ValueError(
                 "AUTH_PROVIDER=external is reserved for a future OIDC integration and is not "

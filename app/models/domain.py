@@ -478,6 +478,9 @@ class ReceptionAgreement(Base):
     monthly_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     lead_fee_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     tax_basis_points: Mapped[int] = mapped_column(Integer, nullable=False, default=2500)
+    # One-off setup fee from an accepted sales offer (specialist setup), billed on the first invoice. 0 = none.
+    setup_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    sales_offer_id: Mapped[uuid.UUID | None] = mapped_column()  # the accepted sales_offers row (no FK: avoids a cycle)
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
 

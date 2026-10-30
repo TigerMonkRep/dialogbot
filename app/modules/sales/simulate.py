@@ -19,6 +19,7 @@ from app.core.errors import ApiError, Conflict, ValidationFailed
 from app.models import SalesCompany, SalesScript, SalesSimulation
 from app.modules.ai.provider import get_provider, tool_result_message
 from app.modules.ai.service import CHANNEL_INSTRUCTIONS, PROMPT_VERSION, build_system_prompt, log_call
+from app.modules.sales.tools import SPECS
 
 ACCEPTS_VERSION = "sales-accepts-v1"
 CUSTOMER_VERSION = "sales-sim-customer-v1"
@@ -27,24 +28,8 @@ END_RE = re.compile(r"hav en god dag|tak for din tid|farvel|tak for snakken", re
 RESULTS = ("JA", "NEJ", "BETINGET", "IKKE_AFKLARET")
 OUTCOMES = ("interested", "meeting", "order_interest", "callback", "not_interested", "opt_out", "unclear")
 
-# The sales tools of phase 2–3 (§8). Offered in the simulation only so the transcript shows what Peter would do.
-TOOLS = [
-    {"name": "hent_tilbud", "description": "Hent det godkendte tilbud eller prislisten.", "input_schema": {"type": "object", "properties": {}}},
-    {"name": "ledige_moedetider", "description": "Find højst to ledige tider til et intro-møde.",
-     "input_schema": {"type": "object", "properties": {"dato_fra": {"type": "string"}, "dato_til": {"type": "string"}}}},
-    {"name": "book_moede", "description": "Book et intro-møde efter kundens udtrykkelige accept.",
-     "input_schema": {"type": "object", "properties": {"slot": {"type": "string"}, "navn": {"type": "string"},
-                                                      "email": {"type": "string"}}, "required": ["slot"]}},
-    {"name": "opret_ordreudkast", "description": "Opret et ordreudkast fra prislisten.",
-     "input_schema": {"type": "object", "properties": {"setup_kind": {"type": "string", "enum": ["diy", "specialist"]}}}},
-    {"name": "send_bestillingslink", "description": "Send bestillingslinket til kontaktens bekræftede destination.",
-     "input_schema": {"type": "object", "properties": {"kanal": {"type": "string", "enum": ["email", "sms"]},
-                                                      "bekraeftet_destination": {"type": "string"}}}},
-    {"name": "registrer_frabedelse", "description": "Registrér at kontakten ikke vil kontaktes igen.",
-     "input_schema": {"type": "object", "properties": {"grund": {"type": "string"}}}},
-    {"name": "bed_menneske_foelge_op", "description": "Bed en kollega følge op.",
-     "input_schema": {"type": "object", "properties": {"emne": {"type": "string"}}}},
-]
+# Peter's call tools (sales/tools.py), offered in the simulation only so the transcript shows what he would do.
+TOOLS = [{"name": t["name"], "description": t["description"], "input_schema": t["parameters"]} for t in SPECS]
 
 CUSTOMER_SYSTEM = """SALES_SIM_CUSTOMER
 Du spiller en dansk erhvervskunde, der bliver ringet op af Peter fra Dialogbot. Det er en øvelse; intet er rigtigt.
@@ -61,10 +46,10 @@ Et ja til demo eller pris er ikke et køb. Brug kun kundens egne ord som citat."
 
 
 def _peter_system(db: OrmSession, ws, s: SalesScript) -> tuple[str, int]:
-    from app.modules.sales.outbound import NO_TOOLS_RULES
+    from app.modules.sales.tools import RULES
 
     base, revision = build_system_prompt(db, ws, ("public", "customer_docs"))
-    return f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{s.rendered_prompt}\n\n{NO_TOOLS_RULES}", revision
+    return f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{s.rendered_prompt}\n\n{RULES}", revision
 
 
 def _first_line(company: SalesCompany, s: SalesScript) -> str:

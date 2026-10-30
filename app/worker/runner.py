@@ -103,7 +103,14 @@ HANDLERS = {
     "email.daily_report": handle_daily_report,
     "email.ambassador": handle_branded,
     "email.branded": handle_branded,  # any mail built where it is queued (tpl.to_payload)
+    "sales.message": lambda db, ev: _sales_message(db, ev),
 }
+
+
+def _sales_message(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.sales.offers import handle_message
+
+    handle_message(db, ev)
 
 # Test hook: event types listed here raise, to exercise retry paths.
 FAIL_EVENT_TYPES: set[str] = set()

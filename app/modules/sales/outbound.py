@@ -56,14 +56,6 @@ def sales_pronunciations() -> tuple[dict, ...]:
             *({"term": prices.kr(m), "say": danish.number(m // 100)} for m in amounts if m >= 100_000))
 
 
-# Peter has no tools on a call yet (calendar, e-mail, SMS and order tools come with phase 3). Without this block the
-# model improvised "I'll check the calendar" and went silent, then promised an e-mail nobody sends.
-NO_TOOLS_RULES = """VÆRKTØJER I DETTE OPKALD – går forud for manuskriptet:
-Du har ingen værktøjer: ingen kalender, ingen e-mail, ingen SMS og ingen ordre. Sig aldrig, at du kigger i en kalender,
-tjekker ledige tider eller sender en mail, et link, en demo eller en bestilling, og lad aldrig kunden vente i stilhed.
-Nævner manuskriptet opret_ordreudkast, send_bestillingslink eller et møde, så gør i stedet sådan: spørg hvilken dag og
-hvilket tidsrum der passer, og om e-mail eller telefon er bedst. Gentag det kort én gang, og sig: "En kollega fra
-Dialogbot vender tilbage og bekræfter det." Lov aldrig et bestemt tidspunkt, en mail eller en demo-video."""
 TEST_BASIS_TEXT = ("Operatøren har bekræftet, at nummeret er operatørens eget testnummer, og at Peter fra Dialogbot "
                    "(en AI-assistent) må ringe op til det i en intern test.")
 TEST_BASIS_VERSION = "sales-test-basis-v1"
@@ -367,11 +359,14 @@ def assistant_for(db: OrmSession, c: Campaign, cc: CampaignContact) -> dict:
     script = db.get(SalesScript, cc.sales_script_id)
     base, _rev = build_system_prompt(db, ws, ("public", "customer_docs"))
     who = (script.body.get("opening") or {}).get("who") or "den ansvarlige for telefonen"
-    system = f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{script.rendered_prompt}\n\n{NO_TOOLS_RULES}"
+    from app.modules.sales import tools
+
+    system = f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{script.rendered_prompt}\n\n{tools.RULES}"
     out: dict = {
         "firstMessage": f"Hej, det er Peter, AI-assistent hos Dialogbot. Taler jeg med {who}?",
         "model": {"provider": get_settings().vapi_model_provider, "model": vapi.phone_model(get_settings()),
-                  "messages": [{"role": "system", "content": system}]},
+                  "messages": [{"role": "system", "content": system}],
+                  "tools": tools.vapi_tools() + [vapi.END_CALL_TOOL]},
         "transcriber": vapi.transcriber_for(db, ws),
         "maxDurationSeconds": MAX_SECONDS,
         "voicemailDetection": {"provider": "vapi"},  # voicemail: hang up, no message is left
@@ -606,4 +601,17 @@ def call_detail(db: OrmSession, cc_id: uuid.UUID) -> dict:
                         "payload": {k: v for k, v in e.payload.items() if k != "rendered_prompt"}} for e in events],
             "qualifications": [{"no": q.accept_no, "result": q.result, "quote": q.quote, "message_index": q.message_index}
                                for q in quals],
-            "decision": policy.decision_out(policy.latest(db, contact.id)) if contact else None}
+            "decision": policy.decision_out(policy.latest(db, contact.id)) if contact else None,
+            "actions": _actions(db, cc.provider_call_id)}
+
+
+def _actions(db: OrmSession, provider_call_id: str | None) -> list[dict]:
+    """Peter's tool runs on this call (sales/tools.py), ok, refused and failed alike."""
+    from app.models import ActionRun
+
+    if not provider_call_id:
+        return []
+    rows = db.scalars(select(ActionRun).where(ActionRun.provider_call_id == provider_call_id,
+                                              ActionRun.connector == "dialogbot_sales").order_by(ActionRun.created_at))
+    return [{"action": r.action, "status": r.status, "said": (r.output or {}).get("besked", ""), "input": r.input,
+             "at": r.created_at.isoformat()} for r in rows]

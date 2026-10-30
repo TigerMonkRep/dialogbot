@@ -136,13 +136,47 @@ ikke endnu.
 **Interne kampagner er usynlige for kunder**: de ligger i salgsarbejdsrummet, men `/workspaces/{ws}/campaigns` viser og
 styrer kun `kind=customer`.
 
+## Peters værktøjer, tilbud, ordre, møder og statistik (fase 3)
+
+**Peters værktøjer under opkaldet** (`app/modules/sales/tools.py`): `hent_tilbud`, `ledige_moedetider`, `book_moede`,
+`opret_ordreudkast`, `send_bestillingslink`, `registrer_frabedelse`, `bed_menneske_foelge_op`. De tilbydes kun på
+opkald i interne kampagner (også testopkald). Opkaldet findes ud fra Vapis opkalds-id i databasen – aldrig ud fra
+metadata eller modellens argumenter – og alt tjekkes mod databasen. `book_moede` og `send_bestillingslink` kræver
+`bekraeftet: true` (kundens udtrykkelige ja). Hver kørsel er én række i `action_runs` (connector `dialogbot_sales`) og
+vises under "Peters handlinger" på opkaldet. Peters instruks siger, at han kun må love det, et værktøj har bekræftet.
+
+**Møder.** Kør `python -m scripts.seed_sales_knowledge` (opretter bookingtypen "Intro-møde (30 min)" i salgsarbejdsrummet),
+godkend åbningstider i salgsarbejdsrummet og slå online booking til (Booking → Indstillinger). Uden det svarer
+`ledige_moedetider`, at en kollega finder en tid, og der oprettes en opgave. Ledige tider kommer fra
+`bookings.slots()` (åbningstider, eksisterende bookinger og en tilsluttet kalender); Peter tilbyder højst to.
+Et møde er `confirmed`, når bookingen er oprettet; aflyses bookingen, vises mødet som aflyst. Afholdt/udeblev
+markeres på virksomhedens side.
+
+**Tilbud og bestillingslink.** På virksomhedens side: "Opret tilbud" (gør-det-selv eller specialist). Beløbene kopieres
+fra `billing/prices.py`; tilbuddet gælder 14 dage. "Send link" sender på e-mail (via outbox; status "sendt" først når
+e-mailadapteren har leveret – med `EMAIL_ADAPTER=simulated` står der "simuleret") eller SMS (fra salgsarbejdsrummets
+SMS-afsender). Når Peter sender, skal adressen matche kontaktens eller virksomhedens kendte e-mail/nummer; ellers venter
+linket på, at du bekræfter adressen ("Kræver dig" og virksomhedens side), og der oprettes en opgave med frist 2 timer.
+Et nyt link erstatter det gamle.
+
+**Accept.** Kunden åbner `/tilbud/<token>`: pris ekskl. og inkl. moms, opsætning, minutpriser, ingen binding,
+vilkårsversion. Accept kræver login eller oprettelse af konto (bekræftet e-mail). Accept opretter et nyt arbejdsrum
+(eller bruger et, kunden administrerer), en aftale med tilbuddets priser (`reception_agreements.sales_offer_id`,
+`setup_net_minor`) og sender videre til kortbetaling i Stripe. Status: kladde → sendt → accepteret. Virksomheden
+bliver først "betalende kunde" ved arbejdsrummets første betalte Stripe-faktura (`invoice.paid`) – derefter blokerer
+kontaktpolitikken den som eksisterende kunde. Specialist-opsætningen kommer på første faktura som linjen `setup_fee`.
+
+**Statistik** (`/app/operator/salg/statistik`, `GET /operator/salg/stats?from&to&campaign`): hvert tal med tæller,
+nævner og definition. Testkampagner (inkl. testopkald) og simulationer tælles aldrig. Omkostningen er leverandørernes
+egen rapporterede pris i USD (estimat).
+
 ## Hvad er mock / kræver konfiguration / ikke implementeret
 
 | | |
 |---|---|
 | Mock | Demo-data uden Google-nøgle; `AI_PROVIDER=fake` i test. |
-| Kræver konfiguration | `GOOGLE_PLACES_API_KEY` (rigtig søgning), `SALES_WORKSPACE_ID` + AI (research og simulation), `CVR_USERNAME/PASSWORD` (reklamebeskyttelse), `SALES_OUTBOUND_MODE=test` + `SALES_TEST_NUMBERS` + Vapi + et udgående nummer i salgsarbejdsrummet (testopkald). |
-| Ikke implementeret (fase 3–4) | Peters værktøjer under opkald (mødebooking, ordreudkast, bestillingslink, frabedelse som værktøj – frabedelse håndteres i dag efter opkaldet), tilbud/ordre/acceptside, møder, statistik, lyd, retention, indsigt/sletning, åbne spørgsmål-kø (tabellen findes). |
+| Kræver konfiguration | `GOOGLE_PLACES_API_KEY` (rigtig søgning), `SALES_WORKSPACE_ID` + AI (research og simulation), `CVR_USERNAME/PASSWORD` (reklamebeskyttelse), `SALES_OUTBOUND_MODE=test` + `SALES_TEST_NUMBERS` + Vapi + et udgående nummer i salgsarbejdsrummet (testopkald), bookingtype "Intro-møde" + åbningstider + online booking i salgsarbejdsrummet (møder), `EMAIL_ADAPTER=resend` (rigtige mails med bestillingslink), SMS i salgsarbejdsrummet (link på SMS), `STRIPE_SECRET_KEY` (kortbetaling efter accept). |
+| Ikke implementeret (fase 4) | Lyd, retention, indsigt/sletning. Åbne spørgsmål oprettes af `bed_menneske_foelge_op`, men har endnu ingen egen kø-side. |
 
 ## Kendte begrænsninger
 

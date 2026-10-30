@@ -148,7 +148,14 @@ Alle ruter kræver `is_platform_operator` (403 `operator_only`). Kundernes `/wor
 | `POST /operator/salg/campaigns/{id}/members` `{contact_ids[], company_ids[]}` | Tilføj kontakter (virksomheders hovednummer); politikken køres (plan). |
 | `POST /operator/salg/campaigns/{id}/start` `{accepted_max_net_minor}`, `…/pause`, `…/stop` | Start kræver godkendt loft og mindst én ALLOW (409 `nothing_allowed`, `preview_not_accepted`, `sales_mode_not_allowed`). |
 | `POST /operator/salg/test-calls` `{company_id, script_id, phone, accepted_test}` | Testopkald til et nummer i `SALES_TEST_NUMBERS` (422 ellers); kræver `SALES_OUTBOUND_MODE=test|live`. |
-| `GET /operator/salg/calls?q&outcome&test`, `GET …/calls/{campaign_contact_id}` | Alle forsøg og ét opkald med transskript, delaccepter, hændelser og politikbeslutning. |
+| `GET /operator/salg/calls?q&outcome&test`, `GET …/calls/{campaign_contact_id}` | Alle forsøg og ét opkald med transskript, delaccepter, hændelser, politikbeslutning og Peters handlinger (`actions`). |
+| `POST /operator/salg/companies/{id}/offers` `{setup_kind, contact_id?}`, `GET /operator/salg/offers/{id}` | Tilbud fra prislisten (versioneret pr. virksomhed, gælder 14 dage). |
+| `POST /operator/salg/offers/{id}/send` `{channel: email\|sms, destination, kind?}`, `…/cancel` | Operatøren sender linket (nyt link erstatter det gamle); 409 `offer_not_sendable` for udløbne/accepterede. |
+| `POST /operator/salg/messages/{id}/send` | Frigiv et link, kunden bad om i et opkald, til en adresse vi ikke havde (operatøren har bekræftet den). |
+| `POST /operator/salg/meetings/{id}` `{status: held\|no_show\|cancelled}` | Markér et intro-møde; aflys aflyser også bookingen. |
+| `GET /operator/salg/stats?from&to&campaign` | Statistik: hver måling med `numerator`, `denominator`, `definition`; test og simulation udeladt. |
+| `GET /public/offers/{token}` | Offentlig tilbudsvisning (pris ekskl./inkl. moms, opsætning, vilkår, status). 404 ved ukendt/erstattet link. |
+| `POST /public/offers/{token}/accept` `{confirm, workspace_id?, workspace_name?}` | Kræver login og bekræftet e-mail. Opretter/bruger arbejdsrum, aftale med tilbuddets snapshot, returnerer `checkout_url` (Stripe) eller `next`. 409 `offer_not_open`/`offer_already_accepted`. |
 
 ## Integrationer, drift, dev
 

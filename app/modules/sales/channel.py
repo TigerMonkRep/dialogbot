@@ -85,5 +85,6 @@ def status(db: OrmSession) -> dict:
                        "research_max_pages": s.sales_research_max_pages,
                        "google_cache_days": s.google_places_cache_days},
             "phases": {"research": True, "simulation": True, "campaigns": True, "test_calls": True,
-                       "offers": False, "recordings": False},
+                       "offers": True, "tools": True, "statistics": True,
+                       "recordings": False},
             "missing": missing}

@@ -261,6 +261,10 @@ def tool_calls(db: OrmSession, message: dict) -> dict:
     from app.modules.reports.service import tz_of
 
     number = find_number(db, message)
+    from app.modules.sales import tools as sales_tools
+
+    call_id = str(_dig(message, "call", "id") or "") or None
+    sales_cc = sales_tools.contact_for_call(db, call_id)  # Dialogbot's own sales call: Peter's tools, looked up by call id
     calls = message.get("toolCallList") or [x.get("toolCall") for x in message.get("toolWithToolCallList") or []] or []
     results = []
     for tc in calls:
@@ -273,7 +277,10 @@ def tool_calls(db: OrmSession, message: dict) -> dict:
             except ValueError:
                 args = {}
         result = "Handlingen er ikke tilgængelig på dette nummer. Tilbyd i stedet, at en medarbejder ringer tilbage."
-        if number is not None and number.active and name:
+        if sales_cc is not None and name:
+            result = sales_tools.execute(db, sales_cc, str(name), args if isinstance(args, dict) else {}, call_id)
+            db.commit()
+        elif number is not None and number.active and name:
             ws = db.get(Workspace, number.workspace_id)
             caller = _dig(message, "call", "customer", "number")
             ctx = RunContext(workspace_id=ws.id, channel="phone", caller_phone=normalize_e164(str(caller)) if caller else None,

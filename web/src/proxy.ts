@@ -11,9 +11,9 @@ export async function proxy(req: NextRequest) {
   const hasSession = Boolean(req.cookies.get(SESSION_COOKIE)?.value);
   const { pathname, search } = req.nextUrl;
   if (gateEnabled() && GATED.has(pathname) && !hasSession) {
-    // Invited colleagues and new ambassadors must be able to create an account from their link.
+    // Invited colleagues, new ambassadors and customers accepting an offer must be able to sign up from their link.
     const next = req.nextUrl.searchParams.get("next") ?? "";
-    const invited = pathname === "/signup" && (next.startsWith("/invite/") || next.startsWith("/ambassador"));
+    const invited = pathname === "/signup" && (next.startsWith("/invite/") || next.startsWith("/ambassador") || next.startsWith("/tilbud/"));
     if (!invited && !(await cookieValid(req.cookies.get(PREVIEW_COOKIE)?.value))) {
       const url = new URL("/preview", req.url);
       if (pathname !== "/") url.searchParams.set("next", pathname + search);

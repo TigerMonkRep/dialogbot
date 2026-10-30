@@ -221,7 +221,7 @@ class SalesScript(Base):
     profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("sales_profiles.id", ondelete="CASCADE"), nullable=False)
     version: Mapped[int] = mapped_column(Integer, nullable=False)
     script_version: Mapped[str] = mapped_column(String(32), nullable=False)
-    offer_id: Mapped[uuid.UUID | None] = mapped_column()  # FK to sales_offers arrives with phase 3
+    offer_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("sales_offers.id", ondelete="SET NULL"))
     body: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     rendered_prompt: Mapped[str] = mapped_column(Text, nullable=False, default="")
     validation: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
@@ -390,4 +390,103 @@ class SalesOpenQuestion(Base):
     status: Mapped[str] = mapped_column(String(10), nullable=False, default="open")
     knowledge_item_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("knowledge_items.id", ondelete="SET NULL"))
     assignee_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+
+
+# --------------------------------------------------------------------------- phase 3: offers, messages, meetings
+
+
+class SalesOffer(Base):
+    """A written offer for one company. Amounts are copied from billing/prices.py when the offer is created – never
+    free amounts. The accept link carries a random token; only its SHA-256 is stored. `sent` is not an order: the
+    customer accepts on the public page, which creates the reception agreement (`agreement_id`)."""
+
+    __tablename__ = "sales_offers"
+    __table_args__ = (
+        CheckConstraint("setup_kind in ('diy','specialist')", name="ck_sales_offers_setup_kind"),
+        CheckConstraint("status in ('draft','sent','accepted','expired','cancelled')", name="ck_sales_offers_status"),
+        CheckConstraint("sent_via is null or sent_via in ('email','sms','manual')", name="ck_sales_offers_sent_via"),
+        UniqueConstraint("company_id", "version", name="uq_sales_offers_company_version"),
+        Index("ix_sales_offers_status", "status", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("sales_companies.id", ondelete="CASCADE"), nullable=False)
+    contact_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("sales_contacts.id", ondelete="SET NULL"))
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    package: Mapped[str] = mapped_column(String(20), nullable=False, default="reception")
+    monthly_net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
+    setup_kind: Mapped[str] = mapped_column(String(10), nullable=False)
+    setup_net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
+    campaign_call_net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
+    campaign_minute_net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
+    inbound_included_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
+    inbound_extra_minute_net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
+    terms_version: Mapped[str] = mapped_column(String(40), nullable=False)
+    tax_basis_points: Mapped[int] = mapped_column(Integer, nullable=False)
+    valid_until: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    status: Mapped[str] = mapped_column(String(10), nullable=False, default="draft")
+    accept_token_hash: Mapped[str | None] = mapped_column(String(64), unique=True)
+    sent_via: Mapped[str | None] = mapped_column(String(8))
+    sent_to: Mapped[str | None] = mapped_column(String(320))
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    accepted_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    agreement_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("reception_agreements.id", ondelete="SET NULL"))
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="SET NULL"))
+    first_invoice_paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class SalesMessageRequest(Base):
+    """A customer's request on a call ("send me the link") and what happened to it. `sent` only after the e-mail or
+    SMS provider accepted it; a destination that does not match the contact waits for an operator (`requested`)."""
+
+    __tablename__ = "sales_message_requests"
+    __table_args__ = (
+        CheckConstraint("kind in ('order_link','offer_summary')", name="ck_sales_message_requests_kind"),
+        CheckConstraint("channel in ('email','sms')", name="ck_sales_message_requests_channel"),
+        CheckConstraint("status in ('requested','sent','failed','cancelled')", name="ck_sales_message_requests_status"),
+        Index("ix_sales_message_requests_status", "status", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("sales_companies.id", ondelete="CASCADE"), nullable=False)
+    contact_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("sales_contacts.id", ondelete="SET NULL"))
+    offer_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("sales_offers.id", ondelete="SET NULL"))
+    campaign_contact_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("campaign_contacts.id", ondelete="SET NULL"))
+    provider_call_id: Mapped[str | None] = mapped_column(String(100))
+    kind: Mapped[str] = mapped_column(String(14), nullable=False)
+    channel: Mapped[str] = mapped_column(String(6), nullable=False)
+    destination: Mapped[str] = mapped_column(String(320), nullable=False)
+    requested_quote: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    status: Mapped[str] = mapped_column(String(10), nullable=False, default="requested")
+    outbox_event_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("outbox_events.id", ondelete="SET NULL"))
+    error: Mapped[str | None] = mapped_column(String(300))
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class SalesMeeting(Base):
+    """An intro meeting with a company, backed by a booking in the sales workspace. `confirmed` only when the booking
+    was created; the booking's own status (cancelled) wins when the two disagree."""
+
+    __tablename__ = "sales_meetings"
+    __table_args__ = (
+        CheckConstraint("status in ('proposed','confirmed','cancelled','held','no_show')", name="ck_sales_meetings_status"),
+        Index("ix_sales_meetings_company", "company_id", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    company_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("sales_companies.id", ondelete="CASCADE"), nullable=False)
+    contact_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("sales_contacts.id", ondelete="SET NULL"))
+    booking_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("bookings.id", ondelete="SET NULL"))
+    campaign_contact_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("campaign_contacts.id", ondelete="SET NULL"))
+    starts_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(10), nullable=False, default="proposed")
+    calendar_confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    note: Mapped[str] = mapped_column(Text, nullable=False, default="")
     created_at: Mapped[datetime] = ts_now()

@@ -8,7 +8,7 @@ Gældende fra 30. oktober 2026 (kampagneminutter og inkluderede indgående minut
 | **Indgående minutter ud over de 300** | **1,50 kr. pr. påbegyndt minut** – afregnes på månedens faktura som egen linje. Kampagne- og demo-opkald tæller ikke som indgående. |
 | **Udgående kampagneopkald** | **4 kr. pr. udgående opkald + 2 kr. pr. påbegyndt samtaleminut** – hvert opkald, der ringes, tæller, også et nyt forsøg; minutterne afregnes, når opkaldsrapporten kommer. Ubesvaret = 4 kr.; 3 minutters samtale = 10 kr. |
 | Opsætning – gør det selv | Med i abonnementet: byggevejledningens tre trin, cirka en halv time. |
-| **Opsætning fra vores specialister** | **5.000 kr.** én gang – skræddersyet opsætning og integration til kundens egne systemer og behov (kalender, CRM, bookingsystem, viden og priser, stemmetræning, test før tænd). Faktureres indtil videre manuelt; `SPECIALIST_SETUP_NET_MINOR` i `prices.py` er tallet. |
+| **Opsætning fra vores specialister** | **5.000 kr.** én gang – skræddersyet opsætning og integration til kundens egne systemer og behov (kalender, CRM, bookingsystem, viden og priser, stemmetræning, test før tænd). Accepteres den via et salgstilbud, kommer den automatisk på første faktura (linjen `setup_fee`, måneden hvor aftalen blev oprettet); ellers faktureres den manuelt. `SPECIALIST_SETUP_NET_MINOR` i `prices.py` er tallet. |
 | Binding | Ingen. Opsigelse til udgangen af måneden. |
 
 Tidligere fandtes to modeller (1.495 kr./md. eller 149 kr. pr. godkendt henvendelse) og kampagnepakker à 9 kr. pr.

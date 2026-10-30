@@ -31,6 +31,7 @@ from app.modules.pages.router import public_router as pages_public_router
 from app.modules.reception.router import router as reception_router
 from app.modules.reports.router import router as reports_router
 from app.modules.sales.channel_router import router as sales_channel_router
+from app.modules.sales.offers_router import router as sales_offers_public_router
 from app.modules.sales.router import operator_router as sales_operator_router
 from app.modules.sales.router import public_router as sales_public_router
 from app.modules.setup.router import router as setup_router
@@ -77,7 +78,8 @@ def create_app() -> FastAPI:
               telephony_operator_router, sales_public_router, sales_operator_router, connections_router,
               integrations_oauth_router, ambassadors_public_router, ambassadors_router, ambassadors_workspace_router,
               ambassadors_operator_router, admin_operator_router, assistant_changes_router,
-              voice_tts_router, social_operator_router, social_public_router, sales_channel_router):
+              voice_tts_router, social_operator_router, social_public_router, sales_channel_router,
+              sales_offers_public_router):
         app.include_router(r, prefix=API_PREFIX)
     if settings.dev_tools_enabled:
         from app.modules.devtools.router import router as dev_router

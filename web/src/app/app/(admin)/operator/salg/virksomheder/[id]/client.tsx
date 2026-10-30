@@ -5,13 +5,15 @@ import { api } from "@/lib/client";
 import { Alert, Badge, Button, ErrorBox, Field, Input, Tag, useSubmit } from "@/components/ui";
 import { type Company, ISSUE, RESEARCH, SOURCE } from "../../labels";
 import { type ContactRow, ContactsPanel } from "./contacts";
+import { type Meeting, type Offer, OffersPanel } from "./offers";
 
 type Fact = { id: string; field: string; value: string; url_or_ref: string; source: string; fetched_at: string; evidence: string; confidence: string };
 type Contact = ContactRow;
 type Profile = { id: string; version: number; facts: { field: string; text: string; source: string }[]; hypotheses: { question: string }[]; relevant_service: string; why_relevant: string; created_at: string };
 type Script = { id: string; version: number; script_version: string; status: string; rendered_prompt: string; validation: { ok: boolean; errors: string[]; warnings: string[] }; body: Record<string, unknown>; created_at: string; approved_at: string | null };
 type Sim = { id: string; script_id: string; persona: string; transcript: { speaker: string; text: string }[]; outcome: string | null; partial_accepts: { no: number; result: string; quote: string | null }[]; would_call: { tool: string; input: unknown }[]; error: string | null; simulated: boolean; created_at: string };
-export type Detail = Company & { facts: Fact[]; contacts: Contact[]; profiles: Profile[]; scripts: Script[]; simulations: Sim[]; timeline: { at: string; kind: string; text: string }[]; quality_text: string[]; research_started_at: string | null };
+export type Detail = Company & { facts: Fact[]; contacts: Contact[]; profiles: Profile[]; scripts: Script[]; simulations: Sim[]; timeline: { at: string; kind: string; text: string }[]; quality_text: string[]; research_started_at: string | null;
+  offers: Offer[]; meetings: Meeting[]; pending_messages: Offer["messages"]; public_email: string | null };
 
 const FIELD: Record<string, string> = {
   name: "Navn", address: "Adresse", google_types: "Google-typer", business_status: "Driftsstatus", website: "Hjemmeside",
@@ -50,7 +52,7 @@ export function CompanyDetail({ c, canSimulate, mode }: { c: Detail; canSimulate
         {c.industry_text && <Tag>{c.industry_text}</Tag>}
         {c.existing_customer && <Tag tone="secondary">Eksisterende kunde</Tag>}
         {c.duplicate_reason && <Tag tone="secondary">{c.duplicate_reason}</Tag>}
-        <span className="text-muted">Må ringes op: {c.contactable.result === "BLOCK" ? `nej – ${c.contactable.reasons.join(", ")}` : "ikke afgjort (kontaktpolitik kommer i fase 2)"}</span>
+        <span className="text-muted">Må ringes op: {c.contactable.result === "BLOCK" ? `nej – ${c.contactable.reasons.join(", ")}` : "afgøres pr. kontakt (se Kontakter)"}</span>
       </div>
       {c.source === "demo" && <Alert kind="info">Demo-data: virksomheden er fiktiv.</Alert>}
       <div className="flex flex-wrap gap-2">
@@ -76,6 +78,8 @@ export function CompanyDetail({ c, canSimulate, mode }: { c: Detail; canSimulate
       </div>
 
       <ContactsPanel companyId={c.id} contacts={c.contacts} approvedScriptId={approved?.id ?? null} mode={mode} advertisingProtected={c.advertising_protected} />
+
+      <OffersPanel companyId={c.id} offers={c.offers} meetings={c.meetings} pending={c.pending_messages} contacts={c.contacts} companyEmail={c.public_email} />
 
       <Box title={`Fakta og kilder (${c.facts.length})`}>
         {c.facts.length === 0 ? <p className="text-muted text-[14px]">Ingen endnu.</p> : (

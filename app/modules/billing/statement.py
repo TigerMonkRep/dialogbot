@@ -102,6 +102,15 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
     discount = discount_line(db, workspace_id, month, lines)
     if discount is not None:
         lines.append(discount)
+    # Specialist setup from an accepted sales offer: once, in the month the agreement was made (its first invoice).
+    # Added after the ambassador discount, which covers the running subscription, not the one-off setup.
+    setup = db.scalars(select(ReceptionAgreement).where(
+        ReceptionAgreement.workspace_id == workspace_id, ReceptionAgreement.setup_net_minor > 0,
+        ReceptionAgreement.created_at >= start, ReceptionAgreement.created_at < end)
+        .order_by(ReceptionAgreement.version)).all()
+    for a in setup:
+        lines.append({"kind": "setup_fee", "agreement_version": a.version,
+                      "description": "Specialist-opsætning (engangsbeløb)", "net_minor": a.setup_net_minor})
     total = Money("DKK", sum(line["net_minor"] for line in lines), TAX_BASIS_POINTS)
     return {
         "month": month.strftime("%Y-%m"), "timezone": tz, "status": "preview", "invoicing": "not_implemented",

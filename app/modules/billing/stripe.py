@@ -258,6 +258,10 @@ def process_event(db: OrmSession, event: dict) -> str:
         if kind == "invoice.payment_failed":
             inv.status = "payment_failed"
         _commission(db, inv, was, kind, obj)
+        if inv.status == "paid" and was != "paid":
+            from app.modules.sales.offers import on_invoice_paid
+
+            on_invoice_paid(db, inv.workspace_id)  # a company from Dialogbot's own sales becomes a paying customer
         return "applied"
     invoice_id = _refunded_invoice_id(kind, obj) if kind in ("charge.refunded", "credit_note.created") else None
     if invoice_id:

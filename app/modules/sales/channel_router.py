@@ -6,7 +6,7 @@ every route answers 501 `sales_channel_off`, except GET /operator/salg, which sa
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from typing import Literal
 
 import structlog
@@ -19,7 +19,16 @@ from app.core.audit import record_audit
 from app.core.auth import Principal
 from app.core.errors import Conflict, NotFound
 from app.db import get_db
-from app.models import SalesCompany, SalesProfile, SalesScript, SalesSearchJob, SalesSimulation
+from app.models import (
+    SalesCompany,
+    SalesMeeting,
+    SalesMessageRequest,
+    SalesOffer,
+    SalesProfile,
+    SalesScript,
+    SalesSearchJob,
+    SalesSimulation,
+)
 from app.modules.sales import channel, companies, integrations, playbook, search, simulate
 from app.modules.voices.operator_router import operator
 
@@ -69,6 +78,12 @@ def overview(db: OrmSession = Depends(get_db), _: Principal = Depends(operator))
         "simulations_30d": count(select(SalesSimulation.id).where(SalesSimulation.created_at >= since)),
         "searches_running": count(select(SalesSearchJob.id).where(SalesSearchJob.status.in_(("queued", "running")))),
         "calls_today": _calls_today(db, now),
+        "meetings_upcoming": count(select(SalesMeeting.id).where(SalesMeeting.status == "confirmed",
+                                                                 SalesMeeting.starts_at >= now)),
+        "offers_open": count(select(SalesOffer.id).where(SalesOffer.status == "sent", SalesOffer.valid_until > now)),
+        "orders_accepted_30d": count(select(SalesOffer.id).where(SalesOffer.accepted_at >= since)),
+        "paying_customers": count(select(SalesOffer.company_id).where(SalesOffer.first_invoice_paid_at.is_not(None))
+                                  .distinct()),
     }
     needs_you = []
     for j in db.scalars(select(SalesSearchJob).where(SalesSearchJob.status.in_(("paused", "failed")))
@@ -89,6 +104,16 @@ def overview(db: OrmSession = Depends(get_db), _: Principal = Depends(operator))
                          .where(Campaign.kind == "internal_sales", CampaignContact.status.in_(("unknown", "failed")))
                          .order_by(CampaignContact.last_attempt_at.desc()).limit(10)):
         needs_you.append({"kind": "call_" + cc.status, "id": str(cc.id), "text": f"{cc.company}: {cc.error or cc.status}"})
+    for r in db.scalars(select(SalesMessageRequest).where(SalesMessageRequest.status.in_(("requested", "failed")),
+                                                          SalesMessageRequest.outbox_event_id.is_(None))
+                        .order_by(SalesMessageRequest.created_at.desc()).limit(10)):
+        c = db.get(SalesCompany, r.company_id)
+        needs_you.append({"kind": "message_" + r.status, "id": str(r.company_id),
+                          "text": f"{c.display_name}: link til {r.destination} " + (
+                              "venter på, at du bekræfter adressen" if r.status == "requested" else f"fejlede ({r.error})")})
+    for o in db.scalars(select(SalesOffer).where(SalesOffer.status == "sent", SalesOffer.valid_until <= now).limit(10)):
+        c = db.get(SalesCompany, o.company_id)
+        needs_you.append({"kind": "offer_expired", "id": str(o.company_id), "text": f"{c.display_name}: tilbud v{o.version} er udløbet"})
     for c in db.scalars(select(SalesCompany).where(SalesCompany.possible_duplicate_of.is_not(None))
                         .order_by(SalesCompany.updated_at.desc()).limit(10)):
         needs_you.append({"kind": "possible_duplicate", "id": str(c.id), "text": f"{c.display_name}: {c.duplicate_reason}"})
@@ -100,10 +125,13 @@ def overview(db: OrmSession = Depends(get_db), _: Principal = Depends(operator))
         "simulations_30d": "Simulerede samtaler de seneste 30 dage. Simulationer tæller aldrig i salgsstatistik.",
         "searches_running": "Søgninger i kø eller i gang.",
         "calls_today": "Opkald Peter har foretaget i dag i interne kampagner (også testopkald og ubesvarede).",
+        "meetings_upcoming": "Bekræftede intro-møder, der ikke har fundet sted endnu.",
+        "offers_open": "Sendte tilbud, der hverken er accepteret eller udløbet.",
+        "orders_accepted_30d": "Tilbud accepteret på acceptsiden de seneste 30 dage (en accept er ikke en betaling).",
+        "paying_customers": "Virksomheder fra salgskanalen, hvis arbejdsrum har betalt sin første faktura.",
     }
     return channel.status(db) | {"tiles": tiles, "definitions": definitions, "needs_you": needs_you,
-                                 "not_built": ["Tilbud og ordrer", "Møder", "Peters værktøjer i opkald",
-                                               "Statistik over opkald", "Lydoptagelser"]}
+                                 "not_built": ["Lydoptagelser", "Sletning efter frister og indsigt (fase 4)"]}
 
 
 @router.get("/industries", dependencies=[Depends(research_gate)])
@@ -721,3 +749,133 @@ def advertising_check(company_id: uuid.UUID, body: AdvertisingIn, request: Reque
                  request_id=request.state.request_id)
     db.commit()
     return companies.out(c)
+
+
+# --------------------------------------------------------------------------- phase 3: offers, meetings, statistics
+
+
+class OfferIn(BaseModel):
+    setup_kind: Literal["diy", "specialist"]
+    contact_id: uuid.UUID | None = None
+
+
+@router.post("/companies/{company_id}/offers", status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(research_gate)])
+def create_offer(company_id: uuid.UUID, body: OfferIn, db: OrmSession = Depends(get_db),
+                 principal: Principal = Depends(operator)):
+    from app.modules.sales import offers
+
+    o = offers.create(db, _company(db, company_id), setup_kind=body.setup_kind, contact_id=body.contact_id,
+                      user_id=principal.user.id)
+    db.commit()
+    return offers.out(db, o)
+
+
+def _offer(db: OrmSession, offer_id: uuid.UUID):
+    from app.models import SalesOffer
+
+    o = db.get(SalesOffer, offer_id)
+    if o is None:
+        raise NotFound("Tilbuddet findes ikke")
+    return o
+
+
+@router.get("/offers/{offer_id}", dependencies=[Depends(research_gate)])
+def get_offer(offer_id: uuid.UUID, db: OrmSession = Depends(get_db)):
+    from app.modules.sales import offers
+
+    return offers.out(db, _offer(db, offer_id))
+
+
+class OfferSendIn(BaseModel):
+    channel: Literal["email", "sms"]
+    destination: str = Field(min_length=3, max_length=320)
+    kind: Literal["order_link", "offer_summary"] = "order_link"
+
+
+@router.post("/offers/{offer_id}/send", dependencies=[Depends(research_gate)])
+def send_offer(offer_id: uuid.UUID, body: OfferSendIn, request: Request, db: OrmSession = Depends(get_db),
+               principal: Principal = Depends(operator)):
+    """The operator's own choice of channel and destination (checked by them): sent at once."""
+    from app.modules.sales import offers
+
+    o = _offer(db, offer_id)
+    r = offers.request_message(db, o, channel=body.channel, destination=body.destination, kind=body.kind,
+                               operator_checked=True)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.offer_sent",
+                 object_type="sales_offer", object_id=o.id, after={"channel": r.channel, "status": r.status},
+                 request_id=request.state.request_id)
+    db.commit()
+    return offers.out(db, o)
+
+
+@router.post("/offers/{offer_id}/cancel", dependencies=[Depends(research_gate)])
+def cancel_offer(offer_id: uuid.UUID, db: OrmSession = Depends(get_db), principal: Principal = Depends(operator)):
+    from app.modules.sales import offers
+
+    o = _offer(db, offer_id)
+    if o.status == "accepted":
+        raise Conflict("Et accepteret tilbud kan ikke annulleres her.", code="offer_already_accepted")
+    o.status, o.accept_token_hash = "cancelled", None
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.offer_cancelled",
+                 object_type="sales_offer", object_id=o.id)
+    db.commit()
+    return offers.out(db, o)
+
+
+@router.post("/messages/{request_id}/send", dependencies=[Depends(research_gate)])
+def send_requested_message(request_id: uuid.UUID, db: OrmSession = Depends(get_db),
+                           principal: Principal = Depends(operator)):
+    """A link the customer asked for on a call, to an address we did not hold: the operator has checked it."""
+    from app.models import SalesMessageRequest, SalesOffer
+    from app.modules.sales import offers
+
+    r = db.get(SalesMessageRequest, request_id)
+    if r is None:
+        raise NotFound("Anmodningen findes ikke")
+    if r.status != "requested" or r.outbox_event_id is not None:
+        raise Conflict("Anmodningen er allerede behandlet.", code="message_already_handled")
+    o = db.get(SalesOffer, r.offer_id)
+    offers.deliver(db, o, r)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.message_released",
+                 object_type="sales_message_request", object_id=r.id, after={"status": r.status})
+    db.commit()
+    return offers.message_out(r)
+
+
+class MeetingIn(BaseModel):
+    status: Literal["held", "no_show", "cancelled"]
+
+
+@router.post("/meetings/{meeting_id}", dependencies=[Depends(research_gate)])
+def update_meeting(meeting_id: uuid.UUID, body: MeetingIn, db: OrmSession = Depends(get_db),
+                   principal: Principal = Depends(operator)):
+    from app.models import Booking, SalesMeeting
+    from app.modules.bookings import service as bookings
+    from app.modules.sales import meetings
+
+    m = db.get(SalesMeeting, meeting_id)
+    if m is None:
+        raise NotFound("Mødet findes ikke")
+    if body.status == "cancelled" and m.booking_id:
+        b = db.get(Booking, m.booking_id)
+        if b is not None and b.status != "cancelled":
+            bookings.cancel(db, b)
+    m.status = body.status
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.meeting_updated",
+                 object_type="sales_meeting", object_id=m.id, after={"status": m.status})
+    db.commit()
+    return meetings.out(db, m)
+
+
+@router.get("/stats", dependencies=[Depends(research_gate)])
+def stats(date_from: date | None = Query(default=None, alias="from"), date_to: date | None = Query(default=None, alias="to"),
+          campaign: uuid.UUID | None = None, db: OrmSession = Depends(get_db)):
+    from app.modules.sales import stats as sales_stats
+
+    today = datetime.now(UTC).date()
+    d_to = date_to or today
+    d_from = date_from or d_to - timedelta(days=29)
+    if d_from > d_to:
+        raise Conflict("Fra-datoen ligger efter til-datoen.", code="bad_range")
+    return sales_stats.compute(db, d_from, d_to, campaign)

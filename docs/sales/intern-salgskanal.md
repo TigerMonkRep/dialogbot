@@ -72,7 +72,7 @@ Statusser: `EKSISTERER`, `DELVIST`, `MANGLER`, `IKKE_VERIFICERET`. Alle ruter li
 
 ### Implementeringsstatus (opdateres pr. fase)
 
-Fase 1 (migration `b3c5d7e9f1a2`) og fase 2 (migration `c4d6e8f0a2b4`) er implementeret. Drift og brug: `docs/sales/salgskanal-drift.md`.
+Fase 1 (migration `b3c5d7e9f1a2`), fase 2 (migration `c4d6e8f0a2b4`) og fase 3 (migration `d5e7f9a1b3c6`) er implementeret. Drift og brug: `docs/sales/salgskanal-drift.md`.
 
 | Område | Status efter fase 1 | Hvor |
 |---|---|---|
@@ -86,8 +86,8 @@ Fase 1 (migration `b3c5d7e9f1a2`) og fase 2 (migration `c4d6e8f0a2b4`) er implem
 | Samtykke og spærring | `IMPLEMENTERET` (`sales_contact_basis`, `sales_block_list`, `policy.evaluate` med `sales_policy_decisions`) | `sales/policy.py`, `sales/outbound.py` |
 | Kampagnekø og testopkald | `IMPLEMENTERET` (`Campaign.kind=internal_sales`, politik før hvert opkald, `dispatch_key`, `unknown`, budget, samtidighed, stop) | `campaigns/service.py`, `sales/outbound.py` |
 | Transskription og opkaldsvisning | `IMPLEMENTERET` (Opkald-fanen; `calls.direction/outcome/…`, `sales_call_events`, `sales_qualifications`); lyd `NOT_RECORDED` | `web/…/operator/salg/opkald` |
-| Peters værktøjer under opkald | `MANGLER` (fase 3) | – |
-| Tilbud, ordre, møder, statistik | `MANGLER` (fase 3) | – |
+| Peters værktøjer under opkald | `IMPLEMENTERET` (7 værktøjer, server-side opslag fra opkalds-id, `bekraeftet` på handlinger, `action_runs`) | `sales/tools.py`, `telephony/vapi.py` |
+| Tilbud, ordre, møder, statistik | `IMPLEMENTERET` (`sales_offers`, `/tilbud/[token]`, aftale med snapshot + `setup_fee`-linje, `first_invoice_paid` fra Stripe, `sales_meetings` på bookinger, `/operator/salg/stats`) | `sales/offers.py`, `sales/meetings.py`, `sales/stats.py` |
 | Lyd, retention, rettigheder | `MANGLER` (fase 4); indstillingerne findes i `app/config.py` | – |
 
 Konventioner, verificeret: Alembic-head er `a1b2c3d4e5f6` (`alembic.ini` `file_template = %(rev)s_%(slug)s`), CI kører

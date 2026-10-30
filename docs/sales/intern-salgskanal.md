@@ -256,7 +256,7 @@ eller en test lykkedes uden evidens (testoutput, API-svar).
   `!tool {json}` → tool call).
 - CVR: `app/modules/business/cvr.py` (`lookup`, `parse`, `configured`, `SOURCE`), ES-branchesøgning i
   `app/modules/social/prospects.py::_cvr_candidates` (+ `INDUSTRIES` med DB07-koder, `_website_from_contacts`).
-- Crawler: `app/modules/knowledge/importer.py` (`fetch`, `_host_is_public`, `crawl`, `parse`, `_Text`, `extract`,
+- Crawler: `app/modules/knowledge/importer.py` (`fetch` via `app/core/safe_fetch.py`, `crawl`, `parse`, `_Text`, `extract`,
   `normalize_url`, `cvr_valid`).
 - Booking: `app/modules/bookings/service.py` (`slots`, `book`, `cancel`), kalenderhandlinger i
   `app/modules/integrations/connectors/calendar.py`; handlingsrør `app/modules/integrations/actions.py`

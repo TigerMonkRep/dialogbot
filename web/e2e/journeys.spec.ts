@@ -872,7 +872,8 @@ test("25 · Integrationer: ærligt katalog, Zapier med signeret webhook, Google 
   await expect(own.getByText("Ikke forbundet")).toBeVisible();
   // Zapier: paste the Catch Hook address, get the signing secret exactly once, test the connection
   const zap = page.locator('[data-connector="zapier"]');
-  await zap.getByLabel(/Catch Hook/).fill("http://localhost:9/hook");
+  // E2E runs with ALLOW_PRIVATE_FETCH=true and simulated delivery; webhook URLs must be https on the standard port
+  await zap.getByLabel(/Catch Hook/).fill("https://127.0.0.1/hook");
   await zap.getByRole("button", { name: "Forbind" }).click();
   await expect(zap.getByText("Vises kun én gang", { exact: false })).toBeVisible();
   await expect(zap.getByText(/^whsec_/)).toBeVisible();

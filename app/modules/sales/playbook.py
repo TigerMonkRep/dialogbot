@@ -28,7 +28,7 @@ from app.modules.sales import companies, integrations, script
 from app.modules.sales.research import is_instruction
 
 SCRIPT_VERSION = "peter-sales-v1"
-TERMS_VERSION = "prisliste-2026-10"  # the list prices in billing/prices.py; offers get their own version in phase 3
+TERMS_VERSION = "prisliste-2026-10b"  # 10b: campaign minutes + included inbound minutes (PR #91)  # the list prices in billing/prices.py; offers get their own version in phase 3
 TEMPLATE = Path(__file__).parent / "data" / f"{SCRIPT_VERSION}.txt"
 FACT_FIELDS = ("service", "booking_system", "customer_type", "service_area", "opening_hours")
 FACT_SENTENCE = {"service": "tilbyder {v}", "booking_system": "bruger {v} til booking",
@@ -46,8 +46,9 @@ FALLBACK_FEATURES = {
     "chat": "svarer i chatten på jeres hjemmeside med samme viden",
     "nummer": "kan tage opkaldene via viderestilling, så I beholder jeres nummer",
 }
-ALLOWED_AMOUNTS = {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR), prices.kr(prices.CAMPAIGN_CALL_NET_MINOR),
-                   prices.kr(prices.SPECIALIST_SETUP_NET_MINOR)}
+ALLOWED_AMOUNTS = {prices.kr(m) for m in (prices.SUBSCRIPTION_MONTHLY_NET_MINOR, prices.CAMPAIGN_CALL_NET_MINOR,
+                                          prices.CAMPAIGN_MINUTE_NET_MINOR, prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
+                                          prices.SPECIALIST_SETUP_NET_MINOR)}
 AMOUNT_RE = re.compile(r"(\d[\d.]*(?:,\d+)?)\s*(?:kr\b|kr\.|kroner)", re.I)
 PLACEHOLDER_RE = re.compile(r"\{\{|\}\}|\[|\]")
 
@@ -167,7 +168,9 @@ def build_body(db: OrmSession, company: SalesCompany, profile: SalesProfile) -> 
                         if booking else None),
         "offer": {"monthly_net_minor": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "setup_kind": "diy",
                   "setup_net_minor": prices.SPECIALIST_SETUP_NET_MINOR,
-                  "campaign_call_net_minor": prices.CAMPAIGN_CALL_NET_MINOR, "terms_version": TERMS_VERSION,
+                  "campaign_call_net_minor": prices.CAMPAIGN_CALL_NET_MINOR,
+                  "campaign_minute_net_minor": prices.CAMPAIGN_MINUTE_NET_MINOR,
+                  "inbound_included_minutes": prices.INBOUND_INCLUDED_MINUTES, "terms_version": TERMS_VERSION,
                   "package_text": "Dialogbot-receptionisten", "setup_text": setup, "terms": "uden binding"},
         "close": {"order_question": f"Skal vi sætte Dialogbot op til {company.display_name} på de vilkår?",
                   "on_demo": "Tilbyd en demonstration med højst to tider.", "on_partner": "Tilbyd at sende oplægget efter anmodning.",
@@ -267,7 +270,8 @@ def validate(db: OrmSession, company: SalesCompany, body: dict, rendered: str) -
     if offer:
         if offer.get("monthly_net_minor") != prices.SUBSCRIPTION_MONTHLY_NET_MINOR \
                 or offer.get("setup_net_minor") not in (0, prices.SPECIALIST_SETUP_NET_MINOR) \
-                or offer.get("campaign_call_net_minor") != prices.CAMPAIGN_CALL_NET_MINOR:
+                or offer.get("campaign_call_net_minor") != prices.CAMPAIGN_CALL_NET_MINOR \
+                or offer.get("campaign_minute_net_minor", prices.CAMPAIGN_MINUTE_NET_MINOR) != prices.CAMPAIGN_MINUTE_NET_MINOR:
             errors.append("Tilbuddets beløb svarer ikke til prislisten i billing/prices.py.")
     for system, status in (body.get("integration_status") or {}).items():
         if status not in integrations.STATUSES:

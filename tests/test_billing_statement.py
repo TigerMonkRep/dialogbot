@@ -1,4 +1,5 @@
-"""Monthly statement: the subscription and the 4 kr. campaign calls in whole øre, month bounds in local time,
+"""Monthly statement: the subscription, the campaign calls (4 kr. + 2 kr. per started minute) and inbound minutes
+above the included 300 in whole øre, month bounds in local time,
 admin-only. Old model-B fee snapshots and old per-contact campaign packages still count, so past months and old
 agreements do not change."""
 from __future__ import annotations
@@ -71,8 +72,8 @@ def test_campaign_calls_are_four_kroner_each_in_the_month_they_were_dialled(api,
     db.commit()
     sep = api.get(two_workspaces["tok_a"], f"/workspaces/{ws}/billing/statement?month=2026-09").json()
     calls = [x for x in sep["lines"] if x["kind"] == "campaign_calls"]
-    assert len(calls) == 1 and calls[0]["calls"] == 3 and calls[0]["net_minor"] == 1_200
-    assert "3 udgående opkald" in calls[0]["description"]
+    assert len(calls) == 1 and calls[0]["calls"] == 3 and calls[0]["net_minor"] == 1_200  # no reports yet: no minutes
+    assert "3 udgående opkald, 0 samtaleminutter" in calls[0]["description"]
     assert sep["totals"]["net_minor"] == 249_500 + 1_200 and sep["totals"]["gross_minor"] == 313_375
     aug = api.get(two_workspaces["tok_a"], f"/workspaces/{ws}/billing/statement?month=2026-08").json()
     assert [x["calls"] for x in aug["lines"] if x["kind"] == "campaign_calls"] == [1]
@@ -94,3 +95,38 @@ def test_no_agreement_roles_and_validation(api, two_workspaces, db):
     assert api.get(t["tok_b"], base).status_code == 404
     db.execute(update(Lead).values(billing_status="approved"))  # no-op safety: nothing leaks across workspaces
     assert api.get(t["tok_b"], f"/workspaces/{t['ws_b']}/billing/statement").json()["lines"] == []
+
+
+def test_inbound_minutes_above_the_included_300_are_charged(api, two_workspaces, db):
+    from app.models import Call, DemoCall
+    from app.modules.billing import prices
+
+    ws = uuid.UUID(two_workspaces["ws_a"])
+    _agreement(db, ws, 1, "A", datetime(2026, 9, 1, tzinfo=UTC))
+    at = datetime(2026, 9, 10, 9, tzinfo=UTC)
+    # 290 full minutes, one 61-second call (2 started minutes) and one 30-second call (1 minute) = 293 minutes
+    db.add(Call(workspace_id=ws, provider="vapi", provider_call_id="in_long", started_at=at, duration_seconds=290 * 60))
+    db.add(Call(workspace_id=ws, provider="vapi", provider_call_id="in_61", started_at=at, duration_seconds=61))
+    db.add(Call(workspace_id=ws, provider="vapi", provider_call_id="in_30", started_at=at, duration_seconds=30))
+    # a demo call and a campaign call are outbound and never count as inbound minutes
+    db.add(Call(workspace_id=ws, provider="vapi", provider_call_id="demo_1", started_at=at, duration_seconds=600))
+    db.add(DemoCall(workspace_id=ws, source="web", phone="+4520304050", consent_version="demo-call-web-v2",
+                    consent_text="ja", consented_at=at, provider_call_id="demo_1", status="done"))
+    db.commit()
+    tok = two_workspaces["tok_a"]
+    sep = api.get(tok, f"/workspaces/{ws}/billing/statement?month=2026-09").json()
+    inbound = [x for x in sep["lines"] if x["kind"] == "inbound_minutes"]
+    assert len(inbound) == 1 and inbound[0]["calls"] == 3 and inbound[0]["minutes"] == 293
+    assert inbound[0]["extra_minutes"] == 0 and inbound[0]["net_minor"] == 0  # within the included 300
+    assert "300 min er med i abonnementet" in inbound[0]["description"]
+    db.add(Call(workspace_id=ws, provider="vapi", provider_call_id="in_more", started_at=at, duration_seconds=10 * 60))
+    db.commit()
+    sep = api.get(tok, f"/workspaces/{ws}/billing/statement?month=2026-09").json()
+    inbound = [x for x in sep["lines"] if x["kind"] == "inbound_minutes"][0]
+    assert (inbound["minutes"], inbound["extra_minutes"]) == (303, 3)
+    assert inbound["net_minor"] == 3 * prices.INBOUND_EXTRA_MINUTE_NET_MINOR == 450  # 1,50 kr. per extra minute
+    assert "3 min ekstra à 1,50 kr." in inbound["description"]
+    assert sep["totals"]["net_minor"] == 249_500 + 450
+    # a month without inbound calls has no inbound line at all
+    oct_lines = api.get(tok, f"/workspaces/{ws}/billing/statement?month=2026-10").json()["lines"]
+    assert not [x for x in oct_lines if x["kind"] == "inbound_minutes"]

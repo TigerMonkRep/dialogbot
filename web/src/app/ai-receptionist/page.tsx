@@ -32,12 +32,12 @@ export default function Page() {
           <p>I kan beholde jeres nuværende nummer og viderestille til Dialogbot, når I er optaget eller har lukket – eller bruge et nyt Dialogbot-nummer.</p>
         </> },
         { title: "Pris og opsætning", body: <>
-          <p>Der er ét abonnement: fra <strong>2.495 kr. om måneden</strong>, uden pris pr. henvendelse. Udgående kampagneopkald koster 4 kr. pr. opkald. Alle priser er ekskl. moms.</p>
+          <p>Der er ét abonnement: fra <strong>2.495 kr. om måneden</strong>, uden pris pr. henvendelse og med 300 minutters indgående opkald om måneden. Udgående kampagneopkald koster 4 kr. pr. opkald plus 2 kr. pr. samtaleminut. Alle priser er ekskl. moms.</p>
           <p>I skal ikke kunne noget teknisk. I sætter selv assistenten op efter byggevejledningens tre trin på cirka en halv time – det er med i abonnementet. Har I en hjemmeside, henter Dialogbot det meste automatisk, og I kan prøve assistenten af, før den tager et eneste rigtigt opkald. Vil I hellere have det gjort, sætter vores egne specialister den op for 5.000 kr. ekskl. moms én gang – skræddersyet og integreret med jeres egne systemer og behov. Læs også om <Link href="/ai-telefonsvarer">AI-telefonsvareren</Link> og <Link href="/chatbot">chatbotten til hjemmesiden</Link>.</p>
         </> },
       ]}
       faq={[
-        ["Hvad koster en AI-receptionist hos Dialogbot?", "Ét abonnement fra 2.495 kr. om måneden, uden pris pr. henvendelse. Udgående kampagneopkald koster 4 kr. pr. opkald. Priserne er ekskl. moms."],
+        ["Hvad koster en AI-receptionist hos Dialogbot?", "Ét abonnement fra 2.495 kr. om måneden, uden pris pr. henvendelse og med 300 minutters indgående opkald om måneden. Udgående kampagneopkald koster 4 kr. pr. opkald plus 2 kr. pr. samtaleminut. Priserne er ekskl. moms."],
         ["Lyder den som en robot?", "Dialogbot taler naturligt dansk med en stemme, I selv vælger, fx Camilla eller Peter. Den siger altid ærligt, at den er en digital assistent, hvis kunden spørger."],
         ["Kan jeg beholde mit telefonnummer?", "Ja. I viderestiller jeres nuværende nummer til Dialogbot, når I er optaget eller har lukket, og beholder jeres teleudbyder."],
         ["Hvad sker der, hvis assistenten ikke kender svaret?", "Den gætter ikke. Den svarer kun ud fra godkendt viden og lover, at en medarbejder vender tilbage, og I får henvendelsen med det samme."],

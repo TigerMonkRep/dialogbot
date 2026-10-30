@@ -17,8 +17,8 @@ export default function TermsPage() {
           <p>Alle priser er i danske kroner ekskl. moms. Moms (25 %) lægges til på fakturaen.</p>
           <ul className="list-disc pl-5 flex flex-col gap-1">
             <li><strong>Abonnement:</strong> fra 2.495 kr. pr. måned. Der er ingen pris pr. henvendelse.</li>
-            <li><strong>Kampagner (udgående opkald):</strong> 4 kr. pr. udgående opkald. Hvert opkald, der ringes, tæller, også et nyt forsøg (højst 2 forsøg pr. kontakt).</li>
-            <li>Et dansk telefonnummer til assistenten er inkluderet. Brugen skal ligge inden for normalt forbrug for en virksomhed af jeres størrelse (fair use); ved væsentligt højere forbrug kontakter vi jer om en tillægspris, før den opkræves.</li>
+            <li><strong>Kampagner (udgående opkald):</strong> 4 kr. pr. udgående opkald plus 2 kr. pr. påbegyndt samtaleminut. Hvert opkald, der ringes, tæller, også et nyt forsøg (højst 2 forsøg og højst 3 samtaleminutter pr. kontakt). Den højeste mulige pris vises, før en kampagne startes.</li>
+            <li><strong>Indgående opkald:</strong> et dansk telefonnummer til assistenten og 300 påbegyndte samtaleminutter pr. kalendermåned er inkluderet. Minutter derudover koster 1,50 kr. pr. påbegyndt minut og afregnes på månedens faktura. Forbruget kan følges løbende i Dialogbot.</li>
           </ul>
           <p>Kommer I via en ambassadør, får I 50 % rabat på jeres første fakturerede måned. Vi kan ændre priserne med mindst 30 dages varsel på e-mail; ændringen gælder fra den første hele måned efter varslet.</p></>],
         ["3. Betaling", <>

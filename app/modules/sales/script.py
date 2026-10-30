@@ -147,8 +147,8 @@ I kan prøve assistenten af, før den tager et eneste rigtigt opkald. Vil I hell
 specialister den op – skræddersyet og integreret med jeres egne systemer (kalender, CRM, bookingsystem) og behov.
 
 Priser (kun når kontakten spørger, eller når I aftaler næste skridt; alle priser er uden moms):
-- Ét abonnement: fra {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR)} kr. om måneden. Der er ingen pris pr. henvendelse og ingen binding.
-- Kun hvis de vil have assistenten til at ringe ud til kontakter, der selv har sagt ja (en kampagne): {prices.kr(prices.CAMPAIGN_CALL_NET_MINOR)} kr. pr. udgående opkald.
+- Ét abonnement: fra {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR)} kr. om måneden. Der er ingen pris pr. henvendelse og ingen binding. {prices.INBOUND_INCLUDED_MINUTES} minutters indgående opkald om måneden er med; derudover {prices.kr(prices.INBOUND_EXTRA_MINUTE_NET_MINOR)} kr. pr. påbegyndt minut.
+- Kun hvis de vil have assistenten til at ringe ud til kontakter, der selv har sagt ja (en kampagne): {prices.kr(prices.CAMPAIGN_CALL_NET_MINOR)} kr. pr. udgående opkald plus {prices.kr(prices.CAMPAIGN_MINUTE_NET_MINOR)} kr. pr. påbegyndt samtaleminut.
 - Opsætning fra vores specialister: {prices.kr(prices.SPECIALIST_SETUP_NET_MINOR)} kr. én gang. Gør-det-selv-opsætningen er med i abonnementet.
 Lov aldrig rabatter, gratis perioder eller andre priser."""
 

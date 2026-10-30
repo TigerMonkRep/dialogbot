@@ -27,8 +27,8 @@ def campaign_out(db: OrmSession, c: Campaign) -> dict:
             "opening": c.opening, "questions": list(c.questions or []), "success": c.success,
             "phone_number_id": str(c.phone_number_id) if c.phone_number_id else None,
             "call_days": list(c.call_days or []), "call_from": c.call_from, "call_to": c.call_to,
-            "pricing": {"call_net_minor": c.call_net_minor, "max_attempts": c.max_attempts,
-                        "max_connected_seconds": c.max_connected_seconds},
+            "pricing": {"call_net_minor": c.call_net_minor, "minute_net_minor": c.minute_net_minor,
+                        "max_attempts": c.max_attempts, "max_connected_seconds": c.max_connected_seconds},
             "counts": service.counts(db, c), "max_cost": Money("DKK", service.max_cost_net_minor(db, c), TAX_BASIS_POINTS).snapshot(),
             "outbound_problem": service.outbound_problem(db, c), "legal_confirmation": c.legal_confirmation,
             "created_at": c.created_at.isoformat(), "started_at": c.started_at.isoformat() if c.started_at else None,
@@ -69,8 +69,8 @@ def _apply(db: OrmSession, c: Campaign, body: CampaignIn, ws_id) -> None:
 def list_campaigns(ctx: WorkspaceContext = Depends(require_capability("campaigns.read")), db: OrmSession = Depends(get_db)):
     rows = db.scalars(select(Campaign).where(Campaign.workspace_id == ctx.workspace.id).order_by(Campaign.created_at.desc()))
     return {"items": [campaign_out(db, c) for c in rows],
-            "pricing": {"call_net_minor": service.CALL_NET_MINOR, "max_attempts": service.MAX_ATTEMPTS,
-                        "max_connected_seconds": service.MAX_CONNECTED_SECONDS},
+            "pricing": {"call_net_minor": service.CALL_NET_MINOR, "minute_net_minor": service.MINUTE_NET_MINOR,
+                        "max_attempts": service.MAX_ATTEMPTS, "max_connected_seconds": service.MAX_CONNECTED_SECONDS},
             "legal_checklist": list(service.LEGAL_CHECKLIST)}
 
 
@@ -78,8 +78,8 @@ def list_campaigns(ctx: WorkspaceContext = Depends(require_capability("campaigns
 def create_campaign(body: CampaignIn, request: Request, ctx: WorkspaceContext = Depends(require_capability("campaigns.manage")),
                     db: OrmSession = Depends(get_db)):
     c = Campaign(workspace_id=ctx.workspace.id, name=body.name, created_by=ctx.user_id,
-                 call_net_minor=service.CALL_NET_MINOR, max_attempts=service.MAX_ATTEMPTS,
-                 max_connected_seconds=service.MAX_CONNECTED_SECONDS)
+                 call_net_minor=service.CALL_NET_MINOR, minute_net_minor=service.MINUTE_NET_MINOR,
+                 max_attempts=service.MAX_ATTEMPTS, max_connected_seconds=service.MAX_CONNECTED_SECONDS)
     if body.phone_number_id is None:  # default: the workspace's first number approved as caller ID
         n = db.scalar(select(PhoneNumber).where(PhoneNumber.workspace_id == ctx.workspace.id, PhoneNumber.active,
                                                 PhoneNumber.status == "active", PhoneNumber.outbound_allowed)

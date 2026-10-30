@@ -127,6 +127,8 @@ def check_url(url: str) -> tuple[str, int]:
         port = p.port or (443 if p.scheme == "https" else 80)
     except ValueError as e:
         raise FetchBlocked("port", "invalid") from e
+    if get_settings().allow_private_fetch:
+        return host, port  # local tests only (refused outside dev/test): a site on this machine, any port
     if port not in (80, 443):
         raise FetchBlocked("port", str(port))
     if host in METADATA_HOSTS or host == "localhost" or host.endswith((".localhost", ".internal", ".local")):
@@ -147,7 +149,7 @@ def resolve_checked(host: str, resolver: Resolver | None = None) -> str:
         bad = [ip for ip in ips if not ip_allowed(ip)]
         if bad:
             raise FetchBlocked("private_address", bad[0])
-    return ips[0]
+    return sorted(ips, key=lambda ip: ":" in ip)[0]  # IPv4 first: many hosts (and local test servers) are v4-only
 
 
 def _pinned(url: str, ip: str) -> tuple[str, str]:

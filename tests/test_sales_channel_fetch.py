@@ -134,6 +134,9 @@ def test_allow_private_fetch_is_for_local_tests_only(monkeypatch):
     site = Site({"/": html()})
     assert safe_fetch.get("http://lokal.test/", resolver=resolver({"lokal.test": ["127.0.0.1"]}),
                           transport=httpx.MockTransport(site)).status == 200
+    page = safe_fetch.get("http://localhost:4000/", resolver=resolver({"localhost": ["127.0.0.1"]}),
+                          transport=httpx.MockTransport(site))
+    assert page.status == 200 and site.seen[-1].url.port == 4000
 
 
 def test_importer_and_social_links_use_the_guard(monkeypatch):

@@ -730,7 +730,7 @@ test("22 · Kampagner: manuskript foreslås af AI, kontakter importeres med lovk
   await page.getByRole("button", { name: "Tilføj kontakter" }).click();
   await expect(page.getByText(/1 kontakter tilføjet, 1 ugyldige numre \(fx række 2\)/)).toBeVisible();
   await expect(page.getByText("+4520304050")).toBeVisible();
-  await expect(page.getByText(/Højst 8,00 kr\. \+ moms/)).toBeVisible();
+  await expect(page.getByText(/Højst 20,00 kr\. \+ moms/)).toBeVisible(); // 1 kontakt × 2 forsøg × (4 kr. + 3 min × 2 kr.)
   // the start is explicit and honest: outbound calling is not set up by Dialogbot in this environment
   await expect(page.getByText(/Udgående opkald er ikke sat op hos Dialogbot endnu/)).toBeVisible();
   const start = page.getByRole("button", { name: "Start kampagne" });

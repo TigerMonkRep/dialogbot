@@ -44,6 +44,18 @@ from app.modules.sales import companies, policy
 log = structlog.get_logger("dialogbot.sales.outbound")
 MAX_SECONDS = 600
 
+def sales_pronunciations() -> tuple[dict, ...]:
+    """Peter's own defaults (a workspace entry under Stemmer → Udtale still wins). Danes say "AI" as the Danish letters;
+    the list prices are written out because Vapi's number formatters are off (they speak English) and the voice
+    misread "2.495"."""
+    from app.modules.billing import prices
+    from app.modules.voices import danish
+
+    amounts = (prices.SUBSCRIPTION_MONTHLY_NET_MINOR, prices.SPECIALIST_SETUP_NET_MINOR)
+    return ({"term": "AI", "say": "a i"},
+            *({"term": prices.kr(m), "say": danish.number(m // 100)} for m in amounts if m >= 100_000))
+
+
 # Peter has no tools on a call yet (calendar, e-mail, SMS and order tools come with phase 3). Without this block the
 # model improvised "I'll check the calendar" and went silent, then promised an e-mail nobody sends.
 NO_TOOLS_RULES = """VÆRKTØJER I DETTE OPKALD – går forud for manuskriptet:
@@ -372,7 +384,7 @@ def assistant_for(db: OrmSession, c: Campaign, cc: CampaignContact) -> dict:
     if (server := vapi.server_block()) is not None:
         out["server"] = server
     out["voice"] = service.agent_voice()
-    out["voice"].setdefault("chunkPlan", standard.danish_chunk_plan(db, ws.id))
+    out["voice"].setdefault("chunkPlan", standard.danish_chunk_plan(db, ws.id, sales_pronunciations()))
     return out
 
 

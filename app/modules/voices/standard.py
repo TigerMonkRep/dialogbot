@@ -97,7 +97,7 @@ def provider_voice(db: OrmSession, ws_id: uuid.UUID, number=None) -> dict:
     return voice
 
 
-def danish_chunk_plan(db: OrmSession, ws_id: uuid.UUID) -> dict:
+def danish_chunk_plan(db: OrmSession, ws_id: uuid.UUID, defaults: tuple[dict, ...] = DEFAULT_PRONUNCIATIONS) -> dict:
     """Vapi's own text formatter is English: it turns numbers into English words ("1200" → "twelve hundred") and
     reads Danish thousand separators as decimals. The Danish voices normalise Danish text themselves, so only the
     language-neutral clean-up formatters stay on, plus the workspace's pronunciation dictionary (Stemmer → Udtale) is applied,
@@ -109,7 +109,7 @@ def danish_chunk_plan(db: OrmSession, ws_id: uuid.UUID) -> dict:
     vs = db.get(WorkspaceVoiceSettings, ws_id)
     own = list(vs.pronunciations if vs else [])
     taken = {str(e.get("term", "")).strip().lower() for e in own}
-    own += [e for e in DEFAULT_PRONUNCIATIONS if e["term"].lower() not in taken]
+    own += [e for e in defaults if e["term"].lower() not in taken]
     entries = sorted(own, key=lambda x: -len(str(x.get("term", ""))))
     replacements = []
     for e in entries:

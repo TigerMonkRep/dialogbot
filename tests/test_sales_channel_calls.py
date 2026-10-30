@@ -165,6 +165,8 @@ def test_internal_test_call_rings_with_peter_and_the_script(api, ring, db):
     assert system.endswith(NO_TOOLS_RULES)  # no promised calendar look-ups or e-mails: Peter has no tools yet
     assert a["metadata"]["script_id"] == str(ring["script"].id) and a["maxDurationSeconds"] == 600
     assert a["voice"]["voiceId"]
+    said = {r["regex"]: r["value"] for r in a["voice"]["chunkPlan"]["formatPlan"]["replacements"]}
+    assert said["AI"] == "a i" and said[r"2\.495"] == "to tusind fire hundrede og femoghalvfems"
     snap = db.scalar(select(SalesCallEvent).where(SalesCallEvent.event_type == "assistant_snapshot"))
     assert snap.payload["rendered_prompt"] == ring["script"].rendered_prompt
     c = db.get(Campaign, out["campaign_id"])

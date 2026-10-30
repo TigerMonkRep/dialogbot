@@ -61,8 +61,10 @@ Et ja til demo eller pris er ikke et køb. Brug kun kundens egne ord som citat."
 
 
 def _peter_system(db: OrmSession, ws, s: SalesScript) -> tuple[str, int]:
+    from app.modules.sales.outbound import NO_TOOLS_RULES
+
     base, revision = build_system_prompt(db, ws, ("public", "customer_docs"))
-    return f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{s.rendered_prompt}", revision
+    return f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{s.rendered_prompt}\n\n{NO_TOOLS_RULES}", revision
 
 
 def _first_line(company: SalesCompany, s: SalesScript) -> str:

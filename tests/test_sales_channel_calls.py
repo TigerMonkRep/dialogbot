@@ -23,6 +23,7 @@ from app.models import (
 )
 from app.modules.campaigns import service as campaigns
 from app.modules.sales import playbook, policy
+from app.modules.sales.outbound import NO_TOOLS_RULES
 from tests.sales_fixtures import approve_knowledge
 
 SECRET = "vapi-test-secret-0123456789abcdef"
@@ -161,6 +162,7 @@ def test_internal_test_call_rings_with_peter_and_the_script(api, ring, db):
     assert a["firstMessage"].startswith("Hej, det er Peter, AI-assistent hos Dialogbot")
     system = a["model"]["messages"][0]["content"]
     assert ring["script"].rendered_prompt in system and "Dialogbot tager telefonen" in system
+    assert system.endswith(NO_TOOLS_RULES)  # no promised calendar look-ups or e-mails: Peter has no tools yet
     assert a["metadata"]["script_id"] == str(ring["script"].id) and a["maxDurationSeconds"] == 600
     assert a["voice"]["voiceId"]
     snap = db.scalar(select(SalesCallEvent).where(SalesCallEvent.event_type == "assistant_snapshot"))

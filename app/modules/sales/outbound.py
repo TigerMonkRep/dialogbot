@@ -43,6 +43,15 @@ from app.modules.sales import companies, policy
 
 log = structlog.get_logger("dialogbot.sales.outbound")
 MAX_SECONDS = 600
+
+# Peter has no tools on a call yet (calendar, e-mail, SMS and order tools come with phase 3). Without this block the
+# model improvised "I'll check the calendar" and went silent, then promised an e-mail nobody sends.
+NO_TOOLS_RULES = """VÆRKTØJER I DETTE OPKALD – går forud for manuskriptet:
+Du har ingen værktøjer: ingen kalender, ingen e-mail, ingen SMS og ingen ordre. Sig aldrig, at du kigger i en kalender,
+tjekker ledige tider eller sender en mail, et link, en demo eller en bestilling, og lad aldrig kunden vente i stilhed.
+Nævner manuskriptet opret_ordreudkast, send_bestillingslink eller et møde, så gør i stedet sådan: spørg hvilken dag og
+hvilket tidsrum der passer, og om e-mail eller telefon er bedst. Gentag det kort én gang, og sig: "En kollega fra
+Dialogbot vender tilbage og bekræfter det." Lov aldrig et bestemt tidspunkt, en mail eller en demo-video."""
 TEST_BASIS_TEXT = ("Operatøren har bekræftet, at nummeret er operatørens eget testnummer, og at Peter fra Dialogbot "
                    "(en AI-assistent) må ringe op til det i en intern test.")
 TEST_BASIS_VERSION = "sales-test-basis-v1"
@@ -346,7 +355,7 @@ def assistant_for(db: OrmSession, c: Campaign, cc: CampaignContact) -> dict:
     script = db.get(SalesScript, cc.sales_script_id)
     base, _rev = build_system_prompt(db, ws, ("public", "customer_docs"))
     who = (script.body.get("opening") or {}).get("who") or "den ansvarlige for telefonen"
-    system = f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{script.rendered_prompt}"
+    system = f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{script.rendered_prompt}\n\n{NO_TOOLS_RULES}"
     out: dict = {
         "firstMessage": f"Hej, det er Peter, AI-assistent hos Dialogbot. Taler jeg med {who}?",
         "model": {"provider": get_settings().vapi_model_provider, "model": vapi.phone_model(get_settings()),

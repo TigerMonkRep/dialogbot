@@ -60,7 +60,7 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
       row({ label: "Aftaler", value: "Ugens aftaler og book for en kunde", status: "ready", href: "/app/aftaler" }),
     ] },
     { n: 5, title: "Kampagner", sub: "Ring til jeres egne kunder", rows: [
-      row({ label: "Udgående opkald", value: goals?.callback ? "Valgt – 4 kr. pr. opkald ekskl. moms" : "Ikke valgt", status: goals?.callback ? "ready" : "off", href: "/app/kampagner" }),
+      row({ label: "Udgående opkald", value: goals?.callback ? "Valgt – 4 kr. pr. opkald + 2 kr. pr. minut ekskl. moms" : "Ikke valgt", status: goals?.callback ? "ready" : "off", href: "/app/kampagner" }),
     ] },
     { n: 6, title: "Systemer", sub: "Kalender og jeres egne værktøjer", rows: [
       row({ label: "Kalender", value: calendar ? calendar.account_label || calendar.label : book?.busy_ics_url ? "iCal-adresse" : "Ikke forbundet", status: calendar || book?.busy_ics_url ? "ready" : "off", ark: "integrationer" }),

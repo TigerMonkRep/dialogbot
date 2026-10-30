@@ -1,4 +1,5 @@
-"""One offer, written once: the subscription from 2.495 kr./md. and 4 kr. per outbound campaign call, both excl. VAT.
+"""One offer, written once: the subscription from 2.495 kr./md. (300 inbound minutes included, then 1,50 kr./min),
+4 kr. per outbound campaign call plus 2 kr. per started minute, and 5.000 kr. for specialist setup, all excl. VAT.
 These tests keep the old prices (1.495 kr., 149 kr. per approved enquiry, 9 kr. per contact) from creeping back into
 any text a customer, a visitor, a salesperson or an AI can read."""
 from __future__ import annotations
@@ -36,6 +37,8 @@ def _files():
 
 def test_list_prices():
     assert prices.SUBSCRIPTION_MONTHLY_NET_MINOR == 249_500 and prices.CAMPAIGN_CALL_NET_MINOR == 400
+    assert prices.CAMPAIGN_MINUTE_NET_MINOR == 200 and prices.INBOUND_INCLUDED_MINUTES == 300 and prices.INBOUND_EXTRA_MINUTE_NET_MINOR == 150
+    assert prices.kr(150) == "1,50" and prices.kr(200) == "2"
     assert prices.SPECIALIST_SETUP_NET_MINOR == 500_000
     assert (prices.kr(249_500), prices.kr(400), prices.kr(450), prices.kr(500_000)) == ("2.495", "4", "4,50", "5.000")
     assert agreements.TAX_BASIS_POINTS == 2500
@@ -57,6 +60,7 @@ def test_the_public_pages_state_both_prices():
     pricing = (ROOT / "web/src/app/priser/page.tsx").read_text(encoding="utf-8")
     llms = (ROOT / "web/public/llms.txt").read_text(encoding="utf-8")
     for text in (pricing, llms):
-        assert "2.495 kr." in text and "4 kr. pr." in text and "5.000 kr." in text and "ekskl. moms" in text
+        assert "2.495 kr." in text and "4 kr. pr." in text and "2 kr. pr." in text and "5.000 kr." in text and "ekskl. moms" in text
+        assert "300 minutter" in text and "1,50 kr." in text  # the included inbound minutes and the price above them
     assert "Fra 2.495 kr./md." in (ROOT / "web/src/app/byggevejledning/page.tsx").read_text(encoding="utf-8")
     assert "Fra 2.495 kr./md." in (ROOT / "web/src/app/(public)/page.tsx").read_text(encoding="utf-8")

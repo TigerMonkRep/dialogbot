@@ -43,7 +43,7 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     c = _campaign(api, t)
-    assert c["pricing"] == {"call_net_minor": 400, "max_attempts": 2, "max_connected_seconds": 180}  # 4 kr. per call
+    assert c["pricing"] == {"call_net_minor": 400, "minute_net_minor": 200, "max_attempts": 2, "max_connected_seconds": 180}  # 4 kr. per call + 2 kr. per started minute
     assert api.post(tok, f"/workspaces/{ws}/do-not-call", {"phone": "21222324", "reason": "Bad os lade være"}).status_code == 201
     r = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": CSV, "kind": "business", "consent_source": "Bad om opkald på messen, marts 2026"}).json()
     assert (r["added"], r["duplicates"], r["blocked"], r["invalid_count"]) == (1, 1, 1, 1)
@@ -56,7 +56,7 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     assert bad.status_code == 422
     ok = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import",
                   {"csv": "Bo;22334455", "kind": "consumer", "consent_source": "Tilmelding på hjemmesiden, marts 2026"}).json()
-    assert ok["added"] == 1 and ok["campaign"]["max_cost"]["net_minor"] == 1600  # 2 contacts × 2 attempts × 4 kr.
+    assert ok["added"] == 1 and ok["campaign"]["max_cost"]["net_minor"] == 4000  # 2 contacts × 2 attempts × (4 kr. + 3 min × 2 kr.)
     items = api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts").json()["items"]
     assert {x["kind"] for x in items} == {"business", "consumer"}
     # staff can read and block a number, but not create or start campaigns
@@ -92,7 +92,7 @@ def test_start_is_explicit_and_honest(api, two_workspaces, monkeypatch):
     assert c["phone_number_id"] is not None and c["status"] == "draft"
     api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": "Mette;20304050\nOle;21222324", "kind": "business", "consent_source": "Tilmelding på hjemmesiden"})
     start = f"/workspaces/{ws}/campaigns/{c['id']}/start"
-    body = {"expected_version": c["version"], "legal_confirmed": False, "accept_max_net_minor": 1600}
+    body = {"expected_version": c["version"], "legal_confirmed": False, "accept_max_net_minor": 4000}
     assert api.post(tok, start, body).status_code == 422
     assert api.post(tok, start, body | {"legal_confirmed": True, "accept_max_net_minor": 800}).json()["code"] == "price_changed"
     r = api.post(tok, start, body | {"legal_confirmed": True})
@@ -104,7 +104,7 @@ def test_start_is_explicit_and_honest(api, two_workspaces, monkeypatch):
     r = api.post(tok, start, body | {"legal_confirmed": True})
     assert r.status_code == 200, r.text
     out = r.json()
-    assert out["status"] == "running" and out["legal_confirmation"]["accepted_max_net_minor"] == 1600
+    assert out["status"] == "running" and out["legal_confirmation"]["accepted_max_net_minor"] == 4000
     assert api.put(tok, f"/workspaces/{ws}/campaigns/{c['id']}", {"name": "x", "expected_version": out["version"]}).status_code == 409
     assert api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/pause").json()["status"] == "paused"
     get_settings.cache_clear()
@@ -119,7 +119,7 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
              {"csv": "Mette Hansen;20304050\nOle Berg;21222324", "kind": "business",
               "consent_source": "Tilmelding på hjemmesiden"})
     r = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/start",
-                 {"expected_version": c["version"], "legal_confirmed": True, "accept_max_net_minor": 1600})
+                 {"expected_version": c["version"], "legal_confirmed": True, "accept_max_net_minor": 4000})
     assert r.status_code == 200, r.text
     calls = []
 
@@ -151,7 +151,8 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
     mette = db.query(CampaignContact).filter_by(phone="+4520304050").one()
     db.refresh(mette)
     assert (mette.status, mette.attempts, mette.charged_net_minor) == ("pending", 1, None)  # no legacy package
-    assert [x.net_minor for x in db.query(CampaignCall).filter_by(contact_id=mette.id)] == [400]
+    first = db.query(CampaignCall).filter_by(contact_id=mette.id).one()
+    assert (first.net_minor, first.connected_seconds, first.minutes_net_minor) == (400, 0, 0)  # unanswered: 4 kr., no minutes
     assert db.query(Lead).filter(Lead.workspace_id == uuid.UUID(ws)).count() == 0  # not the inbound "ring tilbage" lead
     assert service.dispatch(db, now) == 1 and calls[-1]["customer"]["number"] == "+4521222324"  # Ole meanwhile
     assert report("out_2", [{"role": "bot", "message": "Hej Ole"}, {"role": "user", "message": "Nej tak, ring ikke igen."}])
@@ -174,7 +175,11 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
     assert db.get(Campaign, uuid.UUID(c["id"])).status == "completed"
     st = statement(db, uuid.UUID(ws), date.today(), "Europe/Copenhagen")
     camp = [x for x in st["lines"] if x["kind"] == "campaign_calls"]
-    assert camp[0]["calls"] == 3 and camp[0]["net_minor"] == 1200  # Mette twice, Ole once, 4 kr. each
+    # 3 × 4 kr. for dialling + Ole 60 s (1 minute) + Mette 95 s (2 started minutes) at 2 kr. = 18 kr.
+    assert camp[0]["calls"] == 3 and camp[0]["minutes"] == 3 and camp[0]["net_minor"] == 1800
+    assert "3 udgående opkald, 3 samtaleminutter" in camp[0]["description"]
+    by_call = {x.provider_call_id: (x.connected_seconds, x.minutes_net_minor) for x in db.query(CampaignCall)}
+    assert by_call == {"out_1": (0, 0), "out_2": (60, 200), "out_3": (95, 400)}
     assert not [x for x in st["lines"] if x["kind"] == "campaign"]  # no per-contact packages any more
     assert db.query(DoNotCall).filter_by(phone="+4521222324").one().source == "call"
     entry = api.get(tok, f"/workspaces/{ws}/do-not-call").json()["items"][0]

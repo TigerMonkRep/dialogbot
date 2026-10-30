@@ -18,7 +18,7 @@ const SECTIONS: { icon: string; title: string; items: [string, string, string?][
   ] },
   { icon: "contact_support", title: "Henvendelser og afregning", items: [
     ["Henvendelser og opgaver", "Kunder, der vil kontaktes, bliver til henvendelser med en opgave. Kvalificér, godkend og løs dem fra Opkald → Åbn henvendelse.", "/app/opkald?f=to_you"],
-    ["Afregning", "Der er ét abonnement fra 2.495 kr. om måneden ekskl. moms, og udgående kampagneopkald koster 4 kr. pr. opkald. Konto viser månedens forhåndsvisning.", "/app/konto"],
+    ["Afregning", "Der er ét abonnement fra 2.495 kr. om måneden ekskl. moms, inkl. 300 minutters indgående opkald (derefter 1,50 kr. pr. minut). Udgående kampagneopkald koster 4 kr. pr. opkald plus 2 kr. pr. påbegyndt samtaleminut. Konto viser månedens forhåndsvisning.", "/app/konto"],
   ] },
   { icon: "group", title: "Team og sikkerhed", items: [
     ["Roller", "Ejer og administrator godkender viden og ændrer indstillinger. Medarbejdere arbejder med henvendelser og kladder. Læsere kan kun se.", "/app/konto"],

@@ -5,7 +5,7 @@ import { kr } from "../leads/format";
 import { DoNotCallList, EnableOutbound, NewCampaign } from "./client";
 import { STATUS, type Campaign, type Dnc } from "./format";
 
-type List = { items: Campaign[]; pricing: { call_net_minor: number; max_attempts: number; max_connected_seconds: number } };
+type List = { items: Campaign[]; pricing: { call_net_minor: number; minute_net_minor: number; max_attempts: number; max_connected_seconds: number } };
 type Goals = Record<string, unknown> & { version: number; callback: boolean };
 
 /** «Kampagner»: ring to your own customers, one campaign at a time. Shown when «ringe kunder op» is chosen in trin 1. */

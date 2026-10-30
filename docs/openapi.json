@@ -731,6 +731,46 @@
         "title": "ConnectIn",
         "type": "object"
       },
+      "DataRequestIn": {
+        "properties": {
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          },
+          "kind": {
+            "enum": [
+              "access",
+              "erasure",
+              "objection"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "subject": {
+            "enum": [
+              "phone",
+              "email",
+              "cvr"
+            ],
+            "title": "Subject",
+            "type": "string"
+          },
+          "value": {
+            "maxLength": 320,
+            "minLength": 3,
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject",
+          "value",
+          "kind"
+        ],
+        "title": "DataRequestIn",
+        "type": "object"
+      },
       "DecideIn": {
         "properties": {
           "note": {
@@ -2881,6 +2921,11 @@
             "minLength": 2,
             "title": "Name",
             "type": "string"
+          },
+          "recording_enabled": {
+            "default": false,
+            "title": "Recording Enabled",
+            "type": "boolean"
           }
         },
         "required": [
@@ -3328,6 +3373,11 @@
             "minLength": 8,
             "title": "Phone",
             "type": "string"
+          },
+          "record": {
+            "default": false,
+            "title": "Record",
+            "type": "boolean"
           },
           "script_id": {
             "format": "uuid",
@@ -8339,6 +8389,74 @@
         ]
       }
     },
+    "/api/v1/operator/salg/calls/{campaign_contact_id}/audio": {
+      "get": {
+        "description": "A signed URL (≤ 10 min) to the recording. Playing is logged; exporting also needs `can_export_media`.",
+        "operationId": "call_audio_api_v1_operator_salg_calls__campaign_contact_id__audio_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_contact_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Contact Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "export",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Export",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Call Audio",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
     "/api/v1/operator/salg/campaigns": {
       "get": {
         "operationId": "list_sales_campaigns_api_v1_operator_salg_campaigns_get",
@@ -9598,6 +9716,165 @@
           }
         },
         "summary": "Check Contact",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/data-requests": {
+      "get": {
+        "operationId": "list_data_requests_api_v1_operator_salg_data_requests_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Data Requests",
+        "tags": [
+          "sales-channel"
+        ]
+      },
+      "post": {
+        "operationId": "create_data_request_api_v1_operator_salg_data_requests_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DataRequestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Data Request",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/data-requests/{request_id}": {
+      "get": {
+        "operationId": "get_data_request_api_v1_operator_salg_data_requests__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Data Request",
         "tags": [
           "sales-channel"
         ]

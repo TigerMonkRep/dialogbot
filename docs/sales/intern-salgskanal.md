@@ -72,7 +72,7 @@ Statusser: `EKSISTERER`, `DELVIST`, `MANGLER`, `IKKE_VERIFICERET`. Alle ruter li
 
 ### Implementeringsstatus (opdateres pr. fase)
 
-Fase 1 (migration `b3c5d7e9f1a2`), fase 2 (migration `c4d6e8f0a2b4`) og fase 3 (migration `d5e7f9a1b3c6`) er implementeret. Drift og brug: `docs/sales/salgskanal-drift.md`.
+Fase 1 (migration `b3c5d7e9f1a2`), fase 2 (migration `c4d6e8f0a2b4`) fase 3 (migration `d5e7f9a1b3c6`) og fase 4 (migration `e6f8a0b2c4d7`) er implementeret. Drift og brug: `docs/sales/salgskanal-drift.md`.
 
 | Område | Status efter fase 1 | Hvor |
 |---|---|---|
@@ -88,7 +88,7 @@ Fase 1 (migration `b3c5d7e9f1a2`), fase 2 (migration `c4d6e8f0a2b4`) og fase 3 (
 | Transskription og opkaldsvisning | `IMPLEMENTERET` (Opkald-fanen; `calls.direction/outcome/…`, `sales_call_events`, `sales_qualifications`); lyd `NOT_RECORDED` | `web/…/operator/salg/opkald` |
 | Peters værktøjer under opkald | `IMPLEMENTERET` (7 værktøjer, server-side opslag fra opkalds-id, `bekraeftet` på handlinger, `action_runs`) | `sales/tools.py`, `telephony/vapi.py` |
 | Tilbud, ordre, møder, statistik | `IMPLEMENTERET` (`sales_offers`, `/tilbud/[token]`, aftale med snapshot + `setup_fee`-linje, `first_invoice_paid` fra Stripe, `sales_meetings` på bookinger, `/operator/salg/stats`) | `sales/offers.py`, `sales/meetings.py`, `sales/stats.py` |
-| Lyd, retention, rettigheder | `MANGLER` (fase 4); indstillingerne findes i `app/config.py` | – |
+| Lyd, retention, rettigheder | `IMPLEMENTERET` (optagelse kun når lager + kampagne siger det, ellers `recordingEnabled: false` til Vapi; privat bucket, signeret afspilning ≤ 10 min, adgangslog, eksportrettighed; daglig retention; indsigt/sletning/indsigelse; privatlivsudkast) | `sales/recordings.py`, `sales/privacy.py`, `docs/sales/privatliv-udkast.md` |
 
 Konventioner, verificeret: Alembic-head er `a1b2c3d4e5f6` (`alembic.ini` `file_template = %(rev)s_%(slug)s`), CI kører
 `ruff check app tests scripts client voice_pipeline tts_service`, `alembic upgrade head`, `alembic check`, `pytest`,

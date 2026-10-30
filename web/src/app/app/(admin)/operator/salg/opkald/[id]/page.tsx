@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Advanced } from "../../../admin/shared";
 import { Tag } from "@/components/ui";
 import { ChannelOff, NotOperator, SalgFrame, dt, load } from "../../shared";
+import { Player } from "./player";
 
 type Detail = {
   campaign_contact_id: string; campaign: { id: string; name: string; test: boolean }; company: string; company_id: string | null;
@@ -13,6 +14,7 @@ type Detail = {
   qualifications: { no: number; result: string; quote: string | null; message_index: number | null }[];
   decision: { result: string; reason_text: string[]; decided_at: string } | null;
   actions: { action: string; status: string; said: string; input: Record<string, unknown>; at: string }[];
+  recording: { status: string; duration_seconds: number | null; deleted_at: string | null; delete_reason: string | null } | null;
 };
 const TOOL: Record<string, string> = { hent_tilbud: "Hentede tilbuddet", ledige_moedetider: "Slog ledige mødetider op", book_moede: "Bookede møde", opret_ordreudkast: "Oprettede ordreudkast", send_bestillingslink: "Sendte bestillingslink", registrer_frabedelse: "Registrerede frabedelse", bed_menneske_foelge_op: "Bad en kollega følge op" };
 const RUN: Record<string, string> = { ok: "udført", refused: "afvist", failed: "fejlede" };
@@ -41,7 +43,7 @@ export default async function CallPage({ params }: { params: Promise<{ id: strin
           {c.call ? <>
             <p>Start: {dt(c.call.started_at)} · varighed: {c.call.duration_seconds ?? "–"} s</p>
             <p>Afsluttet: {c.call.ended_reason ?? "–"}</p>
-            <p>Lyd: {c.call.recording_status === "NOT_RECORDED" ? "ikke optaget" : c.call.recording_status}</p>
+            <Player ccId={c.campaign_contact_id} rec={c.recording} />
           </> : <p className="text-muted">{c.status === "calling" ? "Afventer opkaldsrapport fra Vapi." : c.status === "unknown" ? "Uvist om opkaldet blev oprettet – ringes ikke op igen automatisk." : "Ingen opkaldsrapport."}</p>}
           {c.error && <p className="text-danger">{c.error}</p>}
           {c.decision && <p className="text-muted">Politik ved seneste forsøg: {c.decision.result}{c.decision.reason_text.length ? ` (${c.decision.reason_text.join(", ")})` : ""}</p>}
@@ -59,7 +61,7 @@ export default async function CallPage({ params }: { params: Promise<{ id: strin
             <ol className="flex flex-col gap-2 text-[14px]">{c.messages.map((m) => (
               <li key={m.index} className={`rounded-xl p-2 max-w-[85%] ${m.speaker === "peter" ? "bg-panel" : "bg-accent-soft self-end"}`}><span className="font-semibold">{m.speaker === "peter" ? "Peter" : "Kunde"}:</span> {m.text}</li>))}</ol>
           )}
-          <p className="text-[12px] text-muted">Tidsstempler pr. replik vises ikke endnu; rækkefølgen er samtalens.</p>
+          <p className="text-[12px] text-muted">Tidsstempler pr. replik vises ikke endnu; rækkefølgen er samtalens.{c.call?.transcript_status === "DELETED" ? " Transskriptet er slettet efter fristen eller på anmodning." : ""}</p>
           <Advanced data={c} />
         </section>
       </div>

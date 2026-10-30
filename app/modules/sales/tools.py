@@ -69,7 +69,9 @@ SPECS: list[dict] = [
                                                       "du ikke kan svare på, ukendt integration, ønske om data/sletning).",
      "parameters": _obj({"emne": {"type": "string"}}, ["emne"])},
 ]
-NAMES = {s["name"] for s in SPECS}
+STOP_RECORDING = {"name": "stop_optagelse", "description": "Kunden vil ikke optages: optagelsen slettes efter samtalen.",
+                  "parameters": _obj({})}
+NAMES = {s["name"] for s in SPECS} | {STOP_RECORDING["name"]}
 
 RULES = """VÆRKTØJER I DETTE OPKALD – går forud for manuskriptet:
 Du har værktøjerne hent_tilbud, ledige_moedetider, book_moede, opret_ordreudkast, send_bestillingslink,
@@ -79,8 +81,8 @@ link er kun sendt, når send_bestillingslink siger det. Siger et værktøj, at e
 Bekræft altid tid og destination med kunden, før du sætter bekraeftet til true. Stil højst to tider til rådighed."""
 
 
-def vapi_tools() -> list[dict]:
-    return [{"type": "function", "function": s} for s in SPECS]
+def vapi_tools(recording: bool = False) -> list[dict]:
+    return [{"type": "function", "function": s} for s in SPECS + ([STOP_RECORDING] if recording else [])]
 
 
 # --------------------------------------------------------------------------- dispatch
@@ -105,7 +107,7 @@ def execute(db: OrmSession, cc: CampaignContact, name: str, args: dict, provider
     try:
         if name not in NAMES:
             raise _Refused("Ukendt værktøj.")
-        spec = next(s for s in SPECS if s["name"] == name)
+        spec = next(s for s in [*SPECS, STOP_RECORDING] if s["name"] == name)
         if CONFIRM in spec["parameters"]["properties"] and args.get(CONFIRM) is not True:
             raise _Refused("Spørg kunden og få et udtrykkeligt ja, før du gør det.")
         out = HANDLERS[name](db, ws, cc, args, provider_call_id, now or datetime.now(UTC))
@@ -269,7 +271,14 @@ def _follow_up(db, ws, cc, args, pcid, now) -> str:
     return "En kollega hos Dialogbot følger op inden for to timer. Sig det til kunden."
 
 
-HANDLERS = {"hent_tilbud": _hent_tilbud, "ledige_moedetider": _ledige, "book_moede": _book,
+def _stop_recording(db, ws, cc, args, pcid, now) -> str:
+    from app.models import SalesCallEvent
+
+    db.add(SalesCallEvent(campaign_contact_id=cc.id, provider_call_id=pcid, event_type="recording_objection", payload={}))
+    return "Registreret: optagelsen bliver ikke gemt og slettes hos telefonudbyderen efter samtalen. Sig det til kunden."
+
+
+HANDLERS = {"stop_optagelse": _stop_recording, "hent_tilbud": _hent_tilbud, "ledige_moedetider": _ledige, "book_moede": _book,
             "opret_ordreudkast": _ordreudkast, "send_bestillingslink": _send, "registrer_frabedelse": _frabedelse,
             "bed_menneske_foelge_op": _follow_up}
 

@@ -907,6 +907,8 @@ class Campaign(Base):
     kind: Mapped[str] = mapped_column(String(16), nullable=False, default="customer", server_default="customer")
     budget_net_minor: Mapped[int | None] = mapped_column(Integer)  # hard ceiling on calls + minutes (internal_sales)
     is_test: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    # internal_sales only: record the calls (also needs SALES_RECORDING_STORAGE); the opening then says so.
+    recording_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
 
 
 class CampaignContact(Base):

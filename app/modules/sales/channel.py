@@ -72,6 +72,8 @@ def status(db: OrmSession) -> dict:
         missing.append("SALES_TEST_NUMBERS er tom – testopkald kræver mindst ét testnummer.")
     if s.sales_outbound_mode in ("off", "research", "simulation"):
         missing.append("Opkald kræver SALES_OUTBOUND_MODE=test (kun testnumre) eller live.")
+    if s.sales_recording_storage == "none":
+        missing.append("SALES_RECORDING_STORAGE=none – opkald optages ikke (Peter beder Vapi om ikke at optage).")
     if s.ai_provider == "none":
         missing.append("AI_PROVIDER=none – research og simulation kræver en AI-udbyder.")
     return {"mode": s.sales_outbound_mode,
@@ -86,5 +88,5 @@ def status(db: OrmSession) -> dict:
                        "google_cache_days": s.google_places_cache_days},
             "phases": {"research": True, "simulation": True, "campaigns": True, "test_calls": True,
                        "offers": True, "tools": True, "statistics": True,
-                       "recordings": False},
+                       "recordings": s.sales_recording_storage != "none", "retention": True, "data_rights": True},
             "missing": missing}

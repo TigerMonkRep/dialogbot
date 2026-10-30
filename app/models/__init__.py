@@ -79,13 +79,16 @@ from app.models.identity import (  # noqa: F401
     Workspace,
 )
 from app.models.sales import (  # noqa: F401
+    CallRecording,
     SalesBlockList,
     SalesCallEvent,
     SalesCompany,
     SalesContact,
     SalesContactBasis,
+    SalesDataRequest,
     SalesIndustry,
     SalesIntegrationNote,
+    SalesMediaAccessLog,
     SalesMeeting,
     SalesMessageRequest,
     SalesOffer,

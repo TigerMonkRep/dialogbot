@@ -154,6 +154,8 @@ Alle ruter kræver `is_platform_operator` (403 `operator_only`). Kundernes `/wor
 | `POST /operator/salg/messages/{id}/send` | Frigiv et link, kunden bad om i et opkald, til en adresse vi ikke havde (operatøren har bekræftet den). |
 | `POST /operator/salg/meetings/{id}` `{status: held\|no_show\|cancelled}` | Markér et intro-møde; aflys aflyser også bookingen. |
 | `GET /operator/salg/stats?from&to&campaign` | Statistik: hver måling med `numerator`, `denominator`, `definition`; test og simulation udeladt. |
+| `GET /operator/salg/calls/{campaign_contact_id}/audio?export` | Signeret link (≤ 600 s) til optagelsen; logges. `export=true` kræver `can_export_media` (403). 409 `recording_unavailable` uden lyd. |
+| `POST /operator/salg/data-requests` `{subject: phone\|email\|cvr, value, kind: access\|erasure\|objection, confirm}`, `GET …`, `GET …/{id}` | Indsigt (JSON i `result`), sletning (kræver `confirm`), indsigelse (spærring). |
 | `GET /public/offers/{token}` | Offentlig tilbudsvisning (pris ekskl./inkl. moms, opsætning, vilkår, status). 404 ved ukendt/erstattet link. |
 | `POST /public/offers/{token}/accept` `{confirm, workspace_id?, workspace_name?}` | Kræver login og bekræftet e-mail. Opretter/bruger arbejdsrum, aftale med tilbuddets snapshot, returnerer `checkout_url` (Stripe) eller `next`. 409 `offer_not_open`/`offer_already_accepted`. |
 

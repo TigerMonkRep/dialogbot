@@ -490,3 +490,66 @@ class SalesMeeting(Base):
     calendar_confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     note: Mapped[str] = mapped_column(Text, nullable=False, default="")
     created_at: Mapped[datetime] = ts_now()
+
+
+# --------------------------------------------------------------------------- phase 4: audio, access log, data requests
+
+
+class CallRecording(Base):
+    """The audio of one internal sales call, in a private bucket. Status mirrors `calls.recording_status`."""
+
+    __tablename__ = "call_recordings"
+    __table_args__ = (
+        CheckConstraint("status in ('PENDING','AVAILABLE','FAILED','NOT_RECORDED','DELETED')",
+                        name="ck_call_recordings_status"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    call_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("calls.id", ondelete="CASCADE"), nullable=False, unique=True)
+    status: Mapped[str] = mapped_column(String(14), nullable=False, default="PENDING")
+    storage_key: Mapped[str | None] = mapped_column(String(300))
+    bytes: Mapped[int | None] = mapped_column(Integer)
+    duration_seconds: Mapped[int | None] = mapped_column(Integer)
+    content_type: Mapped[str | None] = mapped_column(String(60))
+    provider_ref: Mapped[str | None] = mapped_column(String(100))
+    available_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    delete_reason: Mapped[str | None] = mapped_column(String(200))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class SalesMediaAccessLog(Base):
+    """Every play or export of a sales call recording."""
+
+    __tablename__ = "sales_media_access_log"
+    __table_args__ = (
+        CheckConstraint("kind in ('play','export')", name="ck_sales_media_access_log_kind"),
+        Index("ix_sales_media_access_log_call", "call_id", "at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    call_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("calls.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    kind: Mapped[str] = mapped_column(String(8), nullable=False)
+    at: Mapped[datetime] = ts_now()
+
+
+class SalesDataRequest(Base):
+    """A data subject's request about Dialogbot's own sales: access, erasure or objection."""
+
+    __tablename__ = "sales_data_requests"
+    __table_args__ = (
+        CheckConstraint("subject in ('phone','email','cvr')", name="ck_sales_data_requests_subject"),
+        CheckConstraint("kind in ('access','erasure','objection')", name="ck_sales_data_requests_kind"),
+        CheckConstraint("status in ('open','done','rejected')", name="ck_sales_data_requests_status"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    subject: Mapped[str] = mapped_column(String(8), nullable=False)
+    value: Mapped[str] = mapped_column(String(320), nullable=False)
+    kind: Mapped[str] = mapped_column(String(10), nullable=False)
+    status: Mapped[str] = mapped_column(String(10), nullable=False, default="open")
+    handled_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    handled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    result: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    created_at: Mapped[datetime] = ts_now()

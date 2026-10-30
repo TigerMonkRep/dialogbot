@@ -7,6 +7,7 @@ const TABS: [string, string][] = [
   ["/app/operator/salg", "Overblik"], ["/app/operator/salg/find", "Find virksomheder"],
   ["/app/operator/salg/virksomheder", "Virksomheder"], ["/app/operator/salg/kampagner", "Kampagner"],
   ["/app/operator/salg/opkald", "Opkald"], ["/app/operator/salg/statistik", "Statistik"], ["/app/operator/salg/viden", "Viden og tilbud"],
+  ["/app/operator/salg/rettigheder", "Indsigt og sletning"],
   ["/app/operator/sales", "Demo-opkald"],
 ];
 

@@ -131,7 +131,7 @@ def overview(db: OrmSession = Depends(get_db), _: Principal = Depends(operator))
         "paying_customers": "Virksomheder fra salgskanalen, hvis arbejdsrum har betalt sin første faktura.",
     }
     return channel.status(db) | {"tiles": tiles, "definitions": definitions, "needs_you": needs_you,
-                                 "not_built": ["Lydoptagelser", "Sletning efter frister og indsigt (fase 4)"]}
+                                 "not_built": []}
 
 
 @router.get("/industries", dependencies=[Depends(research_gate)])
@@ -588,6 +588,7 @@ class SalesCampaignIn(BaseModel):
     call_from: str = Field(default="09:00", pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
     call_to: str = Field(default="16:00", pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
     max_attempts: int = Field(default=2, ge=1, le=5)
+    recording_enabled: bool = False
 
 
 @router.get("/campaigns", dependencies=[Depends(research_gate)])
@@ -606,7 +607,7 @@ def create_sales_campaign(body: SalesCampaignIn, request: Request, db: OrmSessio
 
     c = outbound.create_campaign(db, name=body.name, budget_net_minor=body.budget_net_minor, call_days=body.call_days,
                                  call_from=body.call_from, call_to=body.call_to, max_attempts=body.max_attempts,
-                                 user_id=principal.user.id)
+                                 user_id=principal.user.id, recording_enabled=body.recording_enabled)
     record_audit(db, workspace_id=c.workspace_id, actor_user_id=principal.user.id, action="sales.campaign_created",
                  object_type="campaign", object_id=c.id, after=body.model_dump(), request_id=request.state.request_id)
     db.commit()
@@ -691,6 +692,7 @@ class TestCallIn(BaseModel):
     script_id: uuid.UUID
     phone: str = Field(min_length=8, max_length=30)
     accepted_test: bool
+    record: bool = False
 
 
 @router.post("/test-calls", status_code=status.HTTP_201_CREATED, dependencies=[Depends(research_gate)])
@@ -703,7 +705,7 @@ def place_test_call(body: TestCallIn, request: Request, db: OrmSession = Depends
     if not body.accepted_test:
         raise ValidationFailed("Bekræft at nummeret er dit eget testnummer", field_errors=[{"field": "accepted_test"}])
     out = outbound.test_call(db, company=_company(db, body.company_id), script=playbook.get_script(db, body.script_id),
-                             phone=body.phone, user_id=principal.user.id)
+                             phone=body.phone, user_id=principal.user.id, record=body.record)
     record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.test_call",
                  object_type="campaign_contact", object_id=out["campaign_contact_id"],
                  after={"status": out["status"], "company_id": str(body.company_id)}, request_id=request.state.request_id)
@@ -879,3 +881,68 @@ def stats(date_from: date | None = Query(default=None, alias="from"), date_to: d
     if d_from > d_to:
         raise Conflict("Fra-datoen ligger efter til-datoen.", code="bad_range")
     return sales_stats.compute(db, d_from, d_to, campaign)
+
+
+# --------------------------------------------------------------------------- phase 4: audio and data subject rights
+
+
+@router.get("/calls/{campaign_contact_id}/audio", dependencies=[Depends(research_gate)])
+def call_audio(campaign_contact_id: uuid.UUID, export: bool = False, db: OrmSession = Depends(get_db),
+               principal: Principal = Depends(operator)):
+    """A signed URL (≤ 10 min) to the recording. Playing is logged; exporting also needs `can_export_media`."""
+    from app.core.errors import Forbidden
+    from app.models import Call, CampaignContact
+    from app.modules.sales import recordings
+
+    if export and not principal.user.can_export_media:
+        raise Forbidden("Eksport af lyd kræver særskilt rettighed.", code="export_not_allowed")
+    cc = db.get(CampaignContact, campaign_contact_id)
+    call = db.scalar(select(Call).where(Call.provider_call_id == cc.provider_call_id)) if cc and cc.provider_call_id else None
+    if call is None or call.campaign_contact_id != cc.id:
+        raise NotFound("Opkaldet findes ikke")
+    out = recordings.play_url(db, call, principal.user.id, export=export)
+    db.commit()
+    return out
+
+
+class DataRequestIn(BaseModel):
+    subject: Literal["phone", "email", "cvr"]
+    value: str = Field(min_length=3, max_length=320)
+    kind: Literal["access", "erasure", "objection"]
+    confirm: bool = False
+
+
+@router.post("/data-requests", status_code=status.HTTP_201_CREATED, dependencies=[Depends(research_gate)])
+def create_data_request(body: DataRequestIn, request: Request, db: OrmSession = Depends(get_db),
+                        principal: Principal = Depends(operator)):
+    from app.core.errors import ValidationFailed
+    from app.modules.sales import privacy
+
+    if body.kind == "erasure" and not body.confirm:
+        raise ValidationFailed("Sletning kan ikke fortrydes. Bekræft den.", field_errors=[{"field": "confirm"}])
+    r = privacy.handle(db, subject=body.subject, value=body.value, kind=body.kind, user_id=principal.user.id)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action=f"sales.data_request_{body.kind}",
+                 object_type="sales_data_request", object_id=r.id, after={"subject": body.subject},
+                 request_id=request.state.request_id)
+    db.commit()
+    return privacy.request_out(r, include_result=True)
+
+
+@router.get("/data-requests", dependencies=[Depends(research_gate)])
+def list_data_requests(db: OrmSession = Depends(get_db)):
+    from app.models import SalesDataRequest
+    from app.modules.sales import privacy
+
+    rows = db.scalars(select(SalesDataRequest).order_by(SalesDataRequest.created_at.desc()).limit(100))
+    return {"items": [privacy.request_out(r) for r in rows]}
+
+
+@router.get("/data-requests/{request_id}", dependencies=[Depends(research_gate)])
+def get_data_request(request_id: uuid.UUID, db: OrmSession = Depends(get_db)):
+    from app.models import SalesDataRequest
+    from app.modules.sales import privacy
+
+    r = db.get(SalesDataRequest, request_id)
+    if r is None:
+        raise NotFound("Anmodningen findes ikke")
+    return privacy.request_out(r, include_result=True)

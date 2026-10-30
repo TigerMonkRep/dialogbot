@@ -35,7 +35,7 @@ export default async function CallsPage({ searchParams }: { searchParams: Promis
               <Link className="font-semibold underline" href={`/app/operator/salg/opkald/${c.campaign_contact_id}`}>{c.company} · <span className="tabular-nums">{c.phone}</span></Link>
               <span className="flex gap-2">{c.campaign.test && <Tag tone="secondary">Test</Tag>}<Tag>{c.outcome ? OUTCOME[c.outcome] ?? c.outcome : STATUS[c.status] ?? c.status}</Tag></span>
             </div>
-            <p className="text-muted">{dt(c.last_attempt_at)} · {c.campaign.name} · forsøg {c.attempts}{c.duration_seconds != null ? ` · ${c.duration_seconds} s` : ""}{c.transcript_status ? ` · ${TRANSCRIPT[c.transcript_status] ?? c.transcript_status}` : ""} · lyd: ikke optaget</p>
+            <p className="text-muted">{dt(c.last_attempt_at)} · {c.campaign.name} · forsøg {c.attempts}{c.duration_seconds != null ? ` · ${c.duration_seconds} s` : ""}{c.transcript_status ? ` · ${TRANSCRIPT[c.transcript_status] ?? c.transcript_status}` : ""}</p>
             {c.summary && <p>{c.summary}</p>}
             {c.error && <p className="text-danger">{c.error}</p>}
           </li>))}</ul>

@@ -95,6 +95,14 @@ class Settings(BaseSettings):
     cvr_url: str = Field(default="http://distribution.virk.dk/cvr-permanent/virksomhed/_search", alias="CVR_URL")
     # Sales demo calls ("Ring mig op nu" on the website and the seller flow): Dialogbot's own workspace, whose
     # approved knowledge describes Dialogbot and whose outbound-approved number places the calls. Unset = off.
+    # Website statistics shown under Operator → Admin → Hjemmeside. Vercel Web Analytics is read with a Vercel API
+    # token (vercel.com/account/tokens); Google Analytics 4 with a Google service account that is a Viewer on the
+    # property (its JSON key, as one line) plus the numeric property id. Unset = that half shows "ikke sat op".
+    vercel_api_token: str | None = Field(default=None, alias="VERCEL_API_TOKEN")
+    vercel_project_id: str = Field(default="prj_RF84xHv5FEIocLvXLIiM4PJgKWA4", alias="VERCEL_PROJECT_ID")
+    vercel_team_id: str = Field(default="team_Ob5jVmkpiG3ZRJjCxzpqVyz9", alias="VERCEL_TEAM_ID")
+    ga4_property_id: str | None = Field(default=None, alias="GA4_PROPERTY_ID")
+    ga_service_account_json: str | None = Field(default=None, alias="GA_SERVICE_ACCOUNT_JSON")
     sales_workspace_id: str | None = Field(default=None, alias="SALES_WORKSPACE_ID")
     sales_call_from: str = Field(default="08:00", alias="SALES_CALL_FROM")  # website requests, Copenhagen time
     sales_call_to: str = Field(default="20:00", alias="SALES_CALL_TO")

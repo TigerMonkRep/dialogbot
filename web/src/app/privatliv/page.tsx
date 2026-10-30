@@ -25,7 +25,7 @@ export default function PrivacyPage() {
         ["Venteliste og demo-opkald", <>
           <p><strong>Venteliste:</strong> e-mail, valgt branche og interesser samt tidspunkt for samtykke – kun for at give dig besked, når vi åbner. Gemmes højst 24 måneder.</p>
           <p><strong>"Ring mig op nu":</strong> telefonnummer, navn, virksomhed, tidspunkt og tekst for dit samtykke samt udskrift af samtalen, så vi kan ringe op og følge op. Siger du nej tak i opkaldet, kommer nummeret på vores spærreliste. Retsgrundlaget er dit samtykke, som du altid kan trække tilbage.</p></>],
-        ["Cookies", <p key="c">Vi bruger kun nødvendige cookies: til at holde dig logget ind, huske dit valgte arbejdsrum, adgangskoden til forsiden og – hvis du kom via en ambassadørs link – hvilken ambassadør der anbefalede os (90 dage). Vi bruger ingen reklame- eller sporingscookies.</p>],
+        ["Cookies", <p key="c">Nødvendige cookies sætter vi uden at spørge: til at holde dig logget ind, huske dit valgte arbejdsrum, adgangskoden til forsiden og – hvis du kom via en ambassadørs link – hvilken ambassadør der anbefalede os (90 dage). Besøgstal måler vi på to måder: Vercel Web Analytics, som hverken bruger cookies eller gemmer noget om dig, og Google Analytics, som sætter en statistikcookie og kun kører, hvis du har sagt ja i banneret – du kan ændre dit valg under &quot;Cookieindstillinger&quot; nederst på siden. Vi bruger ingen reklamecookies.</p>],
         ["Hvem hjælper os? (underdatabehandlere)", <>
           <p>Vi bruger disse leverandører, som behandler data på vores vegne under databehandleraftaler:</p>
           <ul className="list-disc pl-5 flex flex-col gap-1">

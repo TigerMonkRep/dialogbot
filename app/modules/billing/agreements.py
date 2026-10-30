@@ -23,14 +23,20 @@ def current(db: OrmSession, workspace_id: uuid.UUID) -> ReceptionAgreement | Non
                      .order_by(ReceptionAgreement.version.desc()).limit(1))
 
 
-def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid.UUID) -> ReceptionAgreement:
+def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid.UUID, *,
+           offer=None) -> ReceptionAgreement:
+    """`offer` (an accepted SalesOffer) snapshots the offer's monthly price, VAT and setup fee instead of the list
+    price; its amounts were themselves copied from prices.py when the offer was created."""
     if model != "A":
         raise ValidationFailed("Betaling pr. henvendelse findes ikke længere. Der er ét abonnement.",
                                field_errors=[{"field": "model", "message": "Kun abonnement"}], code="plan_discontinued")
     last = db.scalar(select(func.max(ReceptionAgreement.version)).where(ReceptionAgreement.workspace_id == workspace_id))
     a = ReceptionAgreement(workspace_id=workspace_id, version=(last or 0) + 1, model="A", currency="DKK",
-                           monthly_net_minor=prices.SUBSCRIPTION_MONTHLY_NET_MINOR, lead_fee_net_minor=0,
-                           tax_basis_points=TAX_BASIS_POINTS, created_by=created_by)
+                           monthly_net_minor=offer.monthly_net_minor if offer else prices.SUBSCRIPTION_MONTHLY_NET_MINOR,
+                           lead_fee_net_minor=0,
+                           tax_basis_points=offer.tax_basis_points if offer else TAX_BASIS_POINTS,
+                           setup_net_minor=offer.setup_net_minor if offer else 0,
+                           sales_offer_id=offer.id if offer else None, created_by=created_by)
     db.add(a)
     db.flush()
     return a
@@ -48,5 +54,6 @@ def out(a: ReceptionAgreement | None) -> dict | None:
             "monthly": Money(a.currency, a.monthly_net_minor, a.tax_basis_points).snapshot(),
             "lead_fee": lead_fee(a).snapshot(),
             "campaign_call": Money(a.currency, prices.CAMPAIGN_CALL_NET_MINOR, a.tax_basis_points).snapshot(),
+            "setup": Money(a.currency, a.setup_net_minor or 0, a.tax_basis_points).snapshot(),
             "created_at": a.created_at.isoformat(),
             "invoicing": "not_implemented"}

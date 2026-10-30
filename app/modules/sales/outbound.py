@@ -43,6 +43,19 @@ from app.modules.sales import companies, policy
 
 log = structlog.get_logger("dialogbot.sales.outbound")
 MAX_SECONDS = 600
+
+def sales_pronunciations() -> tuple[dict, ...]:
+    """Peter's own defaults (a workspace entry under Stemmer → Udtale still wins). Danes say "AI" as the Danish letters;
+    the list prices are written out because Vapi's number formatters are off (they speak English) and the voice
+    misread "2.495"."""
+    from app.modules.billing import prices
+    from app.modules.voices import danish
+
+    amounts = (prices.SUBSCRIPTION_MONTHLY_NET_MINOR, prices.SPECIALIST_SETUP_NET_MINOR)
+    return ({"term": "AI", "say": "a i"},
+            *({"term": prices.kr(m), "say": danish.number(m // 100)} for m in amounts if m >= 100_000))
+
+
 TEST_BASIS_TEXT = ("Operatøren har bekræftet, at nummeret er operatørens eget testnummer, og at Peter fra Dialogbot "
                    "(en AI-assistent) må ringe op til det i en intern test.")
 TEST_BASIS_VERSION = "sales-test-basis-v1"
@@ -154,7 +167,8 @@ def block_out(b: SalesBlockList) -> dict:
 
 
 def create_campaign(db: OrmSession, *, name: str, budget_net_minor: int | None, call_days: list[str], call_from: str,
-                    call_to: str, max_attempts: int, user_id: uuid.UUID, is_test: bool = False) -> Campaign:
+                    call_to: str, max_attempts: int, user_id: uuid.UUID, is_test: bool = False,
+                    recording_enabled: bool = False) -> Campaign:
     from app.modules.campaigns.service import DAYS
     from app.modules.sales import service
 
@@ -171,7 +185,7 @@ def create_campaign(db: OrmSession, *, name: str, budget_net_minor: int | None, 
                  call_to=call_to, call_net_minor=prices.CAMPAIGN_CALL_NET_MINOR,
                  minute_net_minor=prices.CAMPAIGN_MINUTE_NET_MINOR, max_attempts=max(1, min(max_attempts, limit)),
                  max_connected_seconds=MAX_SECONDS,
-                 budget_net_minor=budget_net_minor, created_by=user_id)
+                 budget_net_minor=budget_net_minor, recording_enabled=recording_enabled, created_by=user_id)
     db.add(c)
     db.flush()
     return c
@@ -346,11 +360,21 @@ def assistant_for(db: OrmSession, c: Campaign, cc: CampaignContact) -> dict:
     script = db.get(SalesScript, cc.sales_script_id)
     base, _rev = build_system_prompt(db, ws, ("public", "customer_docs"))
     who = (script.body.get("opening") or {}).get("who") or "den ansvarlige for telefonen"
-    system = f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{script.rendered_prompt}"
+    from app.modules.sales import recordings, tools
+
+    record = recordings.enabled(c)
+    system = f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{script.rendered_prompt}\n\n{tools.RULES}"
+    if record:
+        system += ("\n\nOPTAGELSE: Samtalen optages. Sig det i åbningen. Siger kunden, at de ikke vil optages, så kald "
+                   "stop_optagelse, sig at optagelsen bliver slettet, og fortsæt kun hvis kunden vil.")
     out: dict = {
-        "firstMessage": f"Hej, det er Peter, AI-assistent hos Dialogbot. Taler jeg med {who}?",
+        "firstMessage": f"Hej, det er Peter, AI-assistent hos Dialogbot. Taler jeg med {who}?"
+                        + (f" {recordings.DISCLOSURE}" if record else ""),
         "model": {"provider": get_settings().vapi_model_provider, "model": vapi.phone_model(get_settings()),
-                  "messages": [{"role": "system", "content": system}]},
+                  "messages": [{"role": "system", "content": system}],
+                  "tools": tools.vapi_tools(recording=record) + [vapi.END_CALL_TOOL]},
+        # Vapi records unless told not to (artifactPlan.recordingEnabled defaults to true)
+        "artifactPlan": recordings.artifact_plan(c),
         "transcriber": vapi.transcriber_for(db, ws),
         "maxDurationSeconds": MAX_SECONDS,
         "voicemailDetection": {"provider": "vapi"},  # voicemail: hang up, no message is left
@@ -363,7 +387,7 @@ def assistant_for(db: OrmSession, c: Campaign, cc: CampaignContact) -> dict:
     if (server := vapi.server_block()) is not None:
         out["server"] = server
     out["voice"] = service.agent_voice()
-    out["voice"].setdefault("chunkPlan", standard.danish_chunk_plan(db, ws.id))
+    out["voice"].setdefault("chunkPlan", standard.danish_chunk_plan(db, ws.id, sales_pronunciations()))
     return out
 
 
@@ -419,7 +443,8 @@ def dial(db: OrmSession, c: Campaign, cc: CampaignContact, now: datetime) -> Non
 # --------------------------------------------------------------------------- test calls
 
 
-def test_call(db: OrmSession, *, company: SalesCompany, script: SalesScript, phone: str, user_id: uuid.UUID) -> dict:
+def test_call(db: OrmSession, *, company: SalesCompany, script: SalesScript, phone: str, user_id: uuid.UUID,
+              record: bool = False) -> dict:
     """An internal test call to one of SALES_TEST_NUMBERS: a one-contact test campaign, dialled now if the policy
     allows. The operator's confirmation becomes a `test` basis on that number."""
     from app.modules.campaigns.service import normalize_phone, outbound_problem
@@ -442,7 +467,7 @@ def test_call(db: OrmSession, *, company: SalesCompany, script: SalesScript, pho
                      evidence_ref=f"operator:{user_id}", valid_until=_now() + timedelta(days=30), user_id=user_id)
     c = create_campaign(db, name=f"Test: {company.display_name}"[:160], budget_net_minor=None,
                         call_days=["mon", "tue", "wed", "thu", "fri", "sat", "sun"], call_from="00:00",
-                        call_to="23:59", max_attempts=1, user_id=user_id, is_test=True)
+                        call_to="23:59", max_attempts=1, user_id=user_id, is_test=True, recording_enabled=record)
     if (why := outbound_problem(db, c)) is not None:
         raise Conflict(why, code="outbound_not_ready")
     add_members(db, c, [contact.id])
@@ -517,6 +542,10 @@ def on_report(db: OrmSession, message: dict, *, call_id: str, conv: Conversation
         for a in accepts:
             db.add(SalesQualification(call_id=call.id, accept_no=a["no"], result=a["result"], quote=a["quote"],
                                       message_index=a["message_index"]))
+    if call is not None:
+        from app.modules.sales import recordings
+
+        recordings.on_report(db, call, c, cc.id)
     return True
 
 
@@ -585,4 +614,27 @@ def call_detail(db: OrmSession, cc_id: uuid.UUID) -> dict:
                         "payload": {k: v for k, v in e.payload.items() if k != "rendered_prompt"}} for e in events],
             "qualifications": [{"no": q.accept_no, "result": q.result, "quote": q.quote, "message_index": q.message_index}
                                for q in quals],
-            "decision": policy.decision_out(policy.latest(db, contact.id)) if contact else None}
+            "decision": policy.decision_out(policy.latest(db, contact.id)) if contact else None,
+            "actions": _actions(db, cc.provider_call_id),
+            "recording": _recording(db, call)}
+
+
+def _recording(db: OrmSession, call) -> dict | None:
+    from app.models import CallRecording
+    from app.modules.sales import recordings
+
+    if call is None:
+        return None
+    return recordings.out(db.scalar(select(CallRecording).where(CallRecording.call_id == call.id)))
+
+
+def _actions(db: OrmSession, provider_call_id: str | None) -> list[dict]:
+    """Peter's tool runs on this call (sales/tools.py), ok, refused and failed alike."""
+    from app.models import ActionRun
+
+    if not provider_call_id:
+        return []
+    rows = db.scalars(select(ActionRun).where(ActionRun.provider_call_id == provider_call_id,
+                                              ActionRun.connector == "dialogbot_sales").order_by(ActionRun.created_at))
+    return [{"action": r.action, "status": r.status, "said": (r.output or {}).get("besked", ""), "input": r.input,
+             "at": r.created_at.isoformat()} for r in rows]

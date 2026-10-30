@@ -731,6 +731,46 @@
         "title": "ConnectIn",
         "type": "object"
       },
+      "DataRequestIn": {
+        "properties": {
+          "confirm": {
+            "default": false,
+            "title": "Confirm",
+            "type": "boolean"
+          },
+          "kind": {
+            "enum": [
+              "access",
+              "erasure",
+              "objection"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "subject": {
+            "enum": [
+              "phone",
+              "email",
+              "cvr"
+            ],
+            "title": "Subject",
+            "type": "string"
+          },
+          "value": {
+            "maxLength": 320,
+            "minLength": 3,
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject",
+          "value",
+          "kind"
+        ],
+        "title": "DataRequestIn",
+        "type": "object"
+      },
       "DecideIn": {
         "properties": {
           "note": {
@@ -1904,6 +1944,24 @@
         "title": "MapIn",
         "type": "object"
       },
+      "MeetingIn": {
+        "properties": {
+          "status": {
+            "enum": [
+              "held",
+              "no_show",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "MeetingIn",
+        "type": "object"
+      },
       "MemberOut": {
         "properties": {
           "created_at": {
@@ -2042,6 +2100,105 @@
           "note"
         ],
         "title": "NoteIn",
+        "type": "object"
+      },
+      "OfferAcceptIn": {
+        "properties": {
+          "confirm": {
+            "title": "Confirm",
+            "type": "boolean"
+          },
+          "workspace_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workspace Id"
+          },
+          "workspace_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workspace Name"
+          }
+        },
+        "required": [
+          "confirm"
+        ],
+        "title": "OfferAcceptIn",
+        "type": "object"
+      },
+      "OfferIn": {
+        "properties": {
+          "contact_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Id"
+          },
+          "setup_kind": {
+            "enum": [
+              "diy",
+              "specialist"
+            ],
+            "title": "Setup Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "setup_kind"
+        ],
+        "title": "OfferIn",
+        "type": "object"
+      },
+      "OfferSendIn": {
+        "properties": {
+          "channel": {
+            "enum": [
+              "email",
+              "sms"
+            ],
+            "title": "Channel",
+            "type": "string"
+          },
+          "destination": {
+            "maxLength": 320,
+            "minLength": 3,
+            "title": "Destination",
+            "type": "string"
+          },
+          "kind": {
+            "default": "order_link",
+            "enum": [
+              "order_link",
+              "offer_summary"
+            ],
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel",
+          "destination"
+        ],
+        "title": "OfferSendIn",
         "type": "object"
       },
       "PaidIn": {
@@ -2764,6 +2921,11 @@
             "minLength": 2,
             "title": "Name",
             "type": "string"
+          },
+          "recording_enabled": {
+            "default": false,
+            "title": "Recording Enabled",
+            "type": "boolean"
           }
         },
         "required": [
@@ -3211,6 +3373,11 @@
             "minLength": 8,
             "title": "Phone",
             "type": "string"
+          },
+          "record": {
+            "default": false,
+            "title": "Record",
+            "type": "boolean"
           },
           "script_id": {
             "format": "uuid",
@@ -8222,6 +8389,74 @@
         ]
       }
     },
+    "/api/v1/operator/salg/calls/{campaign_contact_id}/audio": {
+      "get": {
+        "description": "A signed URL (≤ 10 min) to the recording. Playing is logged; exporting also needs `can_export_media`.",
+        "operationId": "call_audio_api_v1_operator_salg_calls__campaign_contact_id__audio_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaign_contact_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Campaign Contact Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "export",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Export",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Call Audio",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
     "/api/v1/operator/salg/campaigns": {
       "get": {
         "operationId": "list_sales_campaigns_api_v1_operator_salg_campaigns_get",
@@ -9036,6 +9271,73 @@
         ]
       }
     },
+    "/api/v1/operator/salg/companies/{company_id}/offers": {
+      "post": {
+        "operationId": "create_offer_api_v1_operator_salg_companies__company_id__offers_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Company Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Offer",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
     "/api/v1/operator/salg/companies/{company_id}/profile": {
       "post": {
         "operationId": "create_profile_api_v1_operator_salg_companies__company_id__profile_post",
@@ -9419,6 +9721,165 @@
         ]
       }
     },
+    "/api/v1/operator/salg/data-requests": {
+      "get": {
+        "operationId": "list_data_requests_api_v1_operator_salg_data_requests_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Data Requests",
+        "tags": [
+          "sales-channel"
+        ]
+      },
+      "post": {
+        "operationId": "create_data_request_api_v1_operator_salg_data_requests_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DataRequestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Data Request",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/data-requests/{request_id}": {
+      "get": {
+        "operationId": "get_data_request_api_v1_operator_salg_data_requests__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Data Request",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
     "/api/v1/operator/salg/industries": {
       "get": {
         "operationId": "list_industries_api_v1_operator_salg_industries_get",
@@ -9666,6 +10127,313 @@
           }
         },
         "summary": "Sales Knowledge",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/meetings/{meeting_id}": {
+      "post": {
+        "operationId": "update_meeting_api_v1_operator_salg_meetings__meeting_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "meeting_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Meeting Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeetingIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Meeting",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/messages/{request_id}/send": {
+      "post": {
+        "description": "A link the customer asked for on a call, to an address we did not hold: the operator has checked it.",
+        "operationId": "send_requested_message_api_v1_operator_salg_messages__request_id__send_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Request Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Send Requested Message",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/offers/{offer_id}": {
+      "get": {
+        "operationId": "get_offer_api_v1_operator_salg_offers__offer_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Offer Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Offer",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/offers/{offer_id}/cancel": {
+      "post": {
+        "operationId": "cancel_offer_api_v1_operator_salg_offers__offer_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Offer Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Offer",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/offers/{offer_id}/send": {
+      "post": {
+        "description": "The operator's own choice of channel and destination (checked by them): sent at once.",
+        "operationId": "send_offer_api_v1_operator_salg_offers__offer_id__send_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Offer Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferSendIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Send Offer",
         "tags": [
           "sales-channel"
         ]
@@ -10019,6 +10787,104 @@
           }
         },
         "summary": "Resume Search",
+        "tags": [
+          "sales-channel"
+        ]
+      }
+    },
+    "/api/v1/operator/salg/stats": {
+      "get": {
+        "operationId": "stats_api_v1_operator_salg_stats_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "campaign",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Campaign"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stats",
         "tags": [
           "sales-channel"
         ]
@@ -12611,6 +13477,112 @@
           }
         },
         "summary": "Calendar Feed",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/v1/public/offers/{token}": {
+      "get": {
+        "operationId": "view_api_v1_public_offers__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "View",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/v1/public/offers/{token}/accept": {
+      "post": {
+        "operationId": "accept_api_v1_public_offers__token__accept_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferAcceptIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Accept",
         "tags": [
           "public"
         ]

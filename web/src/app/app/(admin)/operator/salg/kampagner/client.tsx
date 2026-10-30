@@ -9,11 +9,11 @@ const kr = (minor: number) => `${(minor / 100).toLocaleString("da-DK", { maximum
 
 export function NewCampaign() {
   const router = useRouter();
-  const [f, setF] = useState({ name: "", budget: "200", call_from: "09:00", call_to: "16:00", max_attempts: 2, days: ["mon", "tue", "wed", "thu", "fri"] });
+  const [f, setF] = useState({ name: "", budget: "200", call_from: "09:00", call_to: "16:00", max_attempts: 2, days: ["mon", "tue", "wed", "thu", "fri"], recording_enabled: false });
   const save = useSubmit(async () => {
     const c = await api<{ id: string }>("/operator/salg/campaigns", { method: "POST", body: JSON.stringify({
       name: f.name, budget_net_minor: f.budget.trim() ? Math.round(Number(f.budget.replace(",", ".")) * 100) : null,
-      call_days: f.days, call_from: f.call_from, call_to: f.call_to, max_attempts: f.max_attempts }) });
+      call_days: f.days, call_from: f.call_from, call_to: f.call_to, max_attempts: f.max_attempts, recording_enabled: f.recording_enabled }) });
     router.push(`/app/operator/salg/kampagner/${c.id}`);
   });
   return (
@@ -28,6 +28,7 @@ export function NewCampaign() {
         <Field label="Fra (dansk tid)"><Input type="time" value={f.call_from} onChange={(e) => setF({ ...f, call_from: e.target.value })} /></Field>
         <Field label="Til" error={fieldError(save.error, "call_to")}><Input type="time" value={f.call_to} onChange={(e) => setF({ ...f, call_to: e.target.value })} /></Field>
       </div>
+      <label className="flex items-start gap-2 text-[13px]"><input type="checkbox" className="mt-1 accent-primary" checked={f.recording_enabled} onChange={(e) => setF({ ...f, recording_enabled: e.target.checked })} /><span>Optag samtalerne (kræver SALES_RECORDING_STORAGE). Peter siger det i åbningen; lyden slettes efter den fastsatte frist.</span></label>
       <Field label="Forsøg pr. kontakt"><Select value={f.max_attempts} onChange={(e) => setF({ ...f, max_attempts: Number(e.target.value) })}><option value={1}>1</option><option value={2}>2</option></Select></Field>
       <ErrorBox error={save.error} />
       <Button type="submit" disabled={!f.name.trim() || f.days.length === 0 || save.pending}>Opret kampagne</Button>

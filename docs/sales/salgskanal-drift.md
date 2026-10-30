@@ -136,13 +136,78 @@ ikke endnu.
 **Interne kampagner er usynlige for kunder**: de ligger i salgsarbejdsrummet, men `/workspaces/{ws}/campaigns` viser og
 styrer kun `kind=customer`.
 
+## Peters værktøjer, tilbud, ordre, møder og statistik (fase 3)
+
+**Peters værktøjer under opkaldet** (`app/modules/sales/tools.py`): `hent_tilbud`, `ledige_moedetider`, `book_moede`,
+`opret_ordreudkast`, `send_bestillingslink`, `registrer_frabedelse`, `bed_menneske_foelge_op`. De tilbydes kun på
+opkald i interne kampagner (også testopkald). Opkaldet findes ud fra Vapis opkalds-id i databasen – aldrig ud fra
+metadata eller modellens argumenter – og alt tjekkes mod databasen. `book_moede` og `send_bestillingslink` kræver
+`bekraeftet: true` (kundens udtrykkelige ja). Hver kørsel er én række i `action_runs` (connector `dialogbot_sales`) og
+vises under "Peters handlinger" på opkaldet. Peters instruks siger, at han kun må love det, et værktøj har bekræftet.
+
+**Møder.** Kør `python -m scripts.seed_sales_knowledge` (opretter bookingtypen "Intro-møde (30 min)" i salgsarbejdsrummet),
+godkend åbningstider i salgsarbejdsrummet og slå online booking til (Booking → Indstillinger). Uden det svarer
+`ledige_moedetider`, at en kollega finder en tid, og der oprettes en opgave. Ledige tider kommer fra
+`bookings.slots()` (åbningstider, eksisterende bookinger og en tilsluttet kalender); Peter tilbyder højst to.
+Et møde er `confirmed`, når bookingen er oprettet; aflyses bookingen, vises mødet som aflyst. Afholdt/udeblev
+markeres på virksomhedens side.
+
+**Tilbud og bestillingslink.** På virksomhedens side: "Opret tilbud" (gør-det-selv eller specialist). Beløbene kopieres
+fra `billing/prices.py`; tilbuddet gælder 14 dage. "Send link" sender på e-mail (via outbox; status "sendt" først når
+e-mailadapteren har leveret – med `EMAIL_ADAPTER=simulated` står der "simuleret") eller SMS (fra salgsarbejdsrummets
+SMS-afsender). Når Peter sender, skal adressen matche kontaktens eller virksomhedens kendte e-mail/nummer; ellers venter
+linket på, at du bekræfter adressen ("Kræver dig" og virksomhedens side), og der oprettes en opgave med frist 2 timer.
+Et nyt link erstatter det gamle.
+
+**Accept.** Kunden åbner `/tilbud/<token>`: pris ekskl. og inkl. moms, opsætning, minutpriser, ingen binding,
+vilkårsversion. Accept kræver login eller oprettelse af konto (bekræftet e-mail). Accept opretter et nyt arbejdsrum
+(eller bruger et, kunden administrerer), en aftale med tilbuddets priser (`reception_agreements.sales_offer_id`,
+`setup_net_minor`) og sender videre til kortbetaling i Stripe. Status: kladde → sendt → accepteret. Virksomheden
+bliver først "betalende kunde" ved arbejdsrummets første betalte Stripe-faktura (`invoice.paid`) – derefter blokerer
+kontaktpolitikken den som eksisterende kunde. Specialist-opsætningen kommer på første faktura som linjen `setup_fee`.
+
+**Statistik** (`/app/operator/salg/statistik`, `GET /operator/salg/stats?from&to&campaign`): hvert tal med tæller,
+nævner og definition. Testkampagner (inkl. testopkald) og simulationer tælles aldrig. Omkostningen er leverandørernes
+egen rapporterede pris i USD (estimat).
+
+## Lyd, sletning efter frister og den registreredes rettigheder (fase 4)
+
+**Optagelse er slået fra som udgangspunkt.** Vapi optager alle opkald, medmindre assistenten siger andet
+(`artifactPlan.recordingEnabled` er som standard `true`, docs.vapi.ai/assistants/call-recording). Peters assistent
+sætter derfor altid feltet: til kun når `SALES_RECORDING_STORAGE=supabase` (kræver `SUPABASE_URL` +
+`SUPABASE_SERVICE_ROLE_KEY` og en **privat** bucket `SALES_RECORDING_BUCKET`) OG kampagnen (eller testopkaldet) har
+"Optag samtalerne". Så siger Peter i åbningen: "Samtalen bliver optaget til kvalitetssikring – sig til, hvis du ikke
+ønsker det." Vil kunden ikke optages, kalder Peter `stop_optagelse`: filen hentes aldrig, og Vapi bedes slette opkaldet
+(`DELETE /call/{id}`, som sletter optagelserne). Vapi har ingen dokumenteret måde at stoppe en optagelse midt i
+samtalen.
+
+**Hentning og afspilning.** Efter opkaldsrapporten henter workeren lyden med den private nøgle fra
+`GET /call/{id}/mono-recording` (svarer med en 302 til et kortlivet signeret link, docs.vapi.ai/assistants/retrieve-call-artifacts)
+og gemmer den som `sales/calls/<call_id>.<wav|mp3>` i bucketen. Opkaldssiden afspiller via et signeret link, der lever
+højst 10 minutter, med hastighedsvalg. Hver afspilning og eksport logges i `sales_media_access_log`. Eksport kræver
+`users.can_export_media` (sættes direkte i databasen for den enkelte operatør).
+
+**Frister** (worker, dagligt efter kl. 3, også når kanalen er slået fra): lyd slettes efter
+`SALES_RETENTION_AUDIO_DAYS` (30), transskript anonymiseres efter `SALES_RETENTION_TRANSCRIPT_DAYS` (90) – hver replik
+bliver "[slettet]", og Vapi bedes slette sin kopi – og opsummeringen ryddes efter `SALES_RETENTION_SUMMARY_DAYS` (365).
+Opkaldsrækken (tid, varighed, udfald) og auditsporet bevares. Kun interne salgsopkald berøres.
+
+**Indsigt og sletning** (fanen "Indsigt og sletning", `POST/GET /operator/salg/data-requests`): indsigt samler alt om et
+telefonnummer, en e-mail eller et CVR-nummer (virksomheder, kontakter, fakta, kontaktgrundlag, opkald med transskript,
+tilbud, beskeder, spærringer) som JSON. Sletning anonymiserer transskripter og opsummeringer, sletter lyd (også hos
+Vapi), sletter kontakterne og – for et CVR-nummer – virksomhedens research; nummeret/CVR'et spærres, så vi ikke
+kontakter igen. Indsigelse spærrer. Telefonnummeret står fortsat i opkaldsloggen af hensyn til afregning og spærring.
+
+**Privatlivstekst.** Udkast i `docs/sales/privatliv-udkast.md` – skal godkendes af ejeren, før det kommer på /privatliv.
+
 ## Hvad er mock / kræver konfiguration / ikke implementeret
 
 | | |
 |---|---|
 | Mock | Demo-data uden Google-nøgle; `AI_PROVIDER=fake` i test. |
-| Kræver konfiguration | `GOOGLE_PLACES_API_KEY` (rigtig søgning), `SALES_WORKSPACE_ID` + AI (research og simulation), `CVR_USERNAME/PASSWORD` (reklamebeskyttelse), `SALES_OUTBOUND_MODE=test` + `SALES_TEST_NUMBERS` + Vapi + et udgående nummer i salgsarbejdsrummet (testopkald). |
-| Ikke implementeret (fase 3–4) | Peters værktøjer under opkald (mødebooking, ordreudkast, bestillingslink, frabedelse som værktøj – frabedelse håndteres i dag efter opkaldet), tilbud/ordre/acceptside, møder, statistik, lyd, retention, indsigt/sletning, åbne spørgsmål-kø (tabellen findes). |
+| Kræver konfiguration | `GOOGLE_PLACES_API_KEY` (rigtig søgning), `SALES_WORKSPACE_ID` + AI (research og simulation), `CVR_USERNAME/PASSWORD` (reklamebeskyttelse), `SALES_OUTBOUND_MODE=test` + `SALES_TEST_NUMBERS` + Vapi + et udgående nummer i salgsarbejdsrummet (testopkald), bookingtype "Intro-møde" + åbningstider + online booking i salgsarbejdsrummet (møder), `EMAIL_ADAPTER=resend` (rigtige mails med bestillingslink), SMS i salgsarbejdsrummet (link på SMS), `STRIPE_SECRET_KEY` (kortbetaling efter accept). |
+| Lyd | `SALES_RECORDING_STORAGE=supabase` + Supabase-nøgler + privat bucket; ellers optages intet. Eksport kræver `users.can_export_media`. |
+| Ikke implementeret | Åbne spørgsmål oprettes af `bed_menneske_foelge_op`, men har endnu ingen egen kø-side; /privatliv-teksten er et udkast; Vapis egne opbevaringsregler styres i Vapi. |
 
 ## Kendte begrænsninger
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Advanced } from "../../../admin/shared";
 import { Tag } from "@/components/ui";
 import { ChannelOff, NotOperator, SalgFrame, dt, load } from "../../shared";
+import { Player } from "./player";
 
 type Detail = {
   campaign_contact_id: string; campaign: { id: string; name: string; test: boolean }; company: string; company_id: string | null;
@@ -12,7 +13,11 @@ type Detail = {
   events: { type: string; at: string; payload: Record<string, unknown> }[];
   qualifications: { no: number; result: string; quote: string | null; message_index: number | null }[];
   decision: { result: string; reason_text: string[]; decided_at: string } | null;
+  actions: { action: string; status: string; said: string; input: Record<string, unknown>; at: string }[];
+  recording: { status: string; duration_seconds: number | null; deleted_at: string | null; delete_reason: string | null } | null;
 };
+const TOOL: Record<string, string> = { hent_tilbud: "Hentede tilbuddet", ledige_moedetider: "Slog ledige mødetider op", book_moede: "Bookede møde", opret_ordreudkast: "Oprettede ordreudkast", send_bestillingslink: "Sendte bestillingslink", registrer_frabedelse: "Registrerede frabedelse", bed_menneske_foelge_op: "Bad en kollega følge op" };
+const RUN: Record<string, string> = { ok: "udført", refused: "afvist", failed: "fejlede" };
 const ACCEPT = ["", "Problemet forstået", "Gør en forskel", "Rette form for hjælp", "Integration passer", "Prisen giver mening"];
 const OUTCOME: Record<string, string> = { interested: "Interesseret", callback: "Ring tilbage", not_interested: "Ikke interesseret", opt_out: "Frabad sig opkald", no_answer: "Intet svar" };
 const EVENT: Record<string, string> = { assistant_snapshot: "Manuskript låst til forsøget", created: "Opkald oprettet hos Vapi", "status-update": "Status fra Vapi", "end-of-call-report": "Opkaldsrapport modtaget" };
@@ -38,12 +43,14 @@ export default async function CallPage({ params }: { params: Promise<{ id: strin
           {c.call ? <>
             <p>Start: {dt(c.call.started_at)} · varighed: {c.call.duration_seconds ?? "–"} s</p>
             <p>Afsluttet: {c.call.ended_reason ?? "–"}</p>
-            <p>Lyd: {c.call.recording_status === "NOT_RECORDED" ? "ikke optaget" : c.call.recording_status}</p>
+            <Player ccId={c.campaign_contact_id} rec={c.recording} />
           </> : <p className="text-muted">{c.status === "calling" ? "Afventer opkaldsrapport fra Vapi." : c.status === "unknown" ? "Uvist om opkaldet blev oprettet – ringes ikke op igen automatisk." : "Ingen opkaldsrapport."}</p>}
           {c.error && <p className="text-danger">{c.error}</p>}
           {c.decision && <p className="text-muted">Politik ved seneste forsøg: {c.decision.result}{c.decision.reason_text.length ? ` (${c.decision.reason_text.join(", ")})` : ""}</p>}
           <h2 className="font-display font-bold text-[16px] mt-2">Delaccepter</h2>
           {c.qualifications.length === 0 ? <p className="text-muted">Ingen.</p> : <ul>{c.qualifications.map((q) => <li key={q.no}>{q.no}. {ACCEPT[q.no]}: {q.result}{q.quote ? ` – "${q.quote}"` : ""}</li>)}</ul>}
+          <h2 className="font-display font-bold text-[16px] mt-2">Peters handlinger</h2>
+          {c.actions.length === 0 ? <p className="text-muted">Ingen.</p> : <ul>{c.actions.map((a, i) => <li key={i}><span className="tabular-nums text-muted">{dt(a.at)}</span> {TOOL[a.action] ?? a.action} – {RUN[a.status] ?? a.status}{a.said ? `: ${a.said}` : ""}</li>)}</ul>}
           <h2 className="font-display font-bold text-[16px] mt-2">Hændelser</h2>
           <ul>{c.events.map((e, i) => <li key={i}><span className="tabular-nums text-muted">{dt(e.at)}</span> {EVENT[e.type] ?? e.type}{e.type === "status-update" && e.payload.status ? `: ${String(e.payload.status)}` : ""}</li>)}</ul>
         </section>
@@ -54,7 +61,7 @@ export default async function CallPage({ params }: { params: Promise<{ id: strin
             <ol className="flex flex-col gap-2 text-[14px]">{c.messages.map((m) => (
               <li key={m.index} className={`rounded-xl p-2 max-w-[85%] ${m.speaker === "peter" ? "bg-panel" : "bg-accent-soft self-end"}`}><span className="font-semibold">{m.speaker === "peter" ? "Peter" : "Kunde"}:</span> {m.text}</li>))}</ol>
           )}
-          <p className="text-[12px] text-muted">Tidsstempler pr. replik vises ikke endnu; rækkefølgen er samtalens.</p>
+          <p className="text-[12px] text-muted">Tidsstempler pr. replik vises ikke endnu; rækkefølgen er samtalens.{c.call?.transcript_status === "DELETED" ? " Transskriptet er slettet efter fristen eller på anmodning." : ""}</p>
           <Advanced data={c} />
         </section>
       </div>

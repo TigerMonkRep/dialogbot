@@ -38,6 +38,7 @@ export function ContactsPanel({ companyId, contacts, approvedScriptId, mode, adv
   const [campaignId, setCampaignId] = useState("");
   const [testPhone, setTestPhone] = useState("");
   const [testOk, setTestOk] = useState(false);
+  const [testRecord, setTestRecord] = useState(false);
   const [testResult, setTestResult] = useState<{ status: string; error: string | null; campaign_contact_id: string } | null>(null);
   const [adv, setAdv] = useState({ value: "false", note: "" });
   useEffect(() => {
@@ -47,7 +48,7 @@ export function ContactsPanel({ companyId, contacts, approvedScriptId, mode, adv
   const add = useSubmit(async () => { await api(`/operator/salg/companies/${companyId}/contacts`, { method: "POST", body: JSON.stringify({ ...nc, name: nc.name || null, role: nc.role || null }) }); setNc({ role: "", name: "", phone: "" }); router.refresh(); });
   const withdraw = useSubmit(async (id: string) => { await api(`/operator/salg/basis/${id}/withdraw`, { method: "POST", body: JSON.stringify({ reason: "Trukket tilbage af operatør" }) }); router.refresh(); });
   const toCampaign = useSubmit(async () => { await api(`/operator/salg/campaigns/${campaignId}/members`, { method: "POST", body: JSON.stringify({ contact_ids: contacts.filter((x) => x.phone_e164).map((x) => x.id) }) }); router.push(`/app/operator/salg/kampagner/${campaignId}`); });
-  const test = useSubmit(async () => { setTestResult(await api(`/operator/salg/test-calls`, { method: "POST", body: JSON.stringify({ company_id: companyId, script_id: approvedScriptId, phone: testPhone, accepted_test: testOk }) })); router.refresh(); });
+  const test = useSubmit(async () => { setTestResult(await api(`/operator/salg/test-calls`, { method: "POST", body: JSON.stringify({ company_id: companyId, script_id: approvedScriptId, phone: testPhone, accepted_test: testOk, record: testRecord }) })); router.refresh(); });
   const advCheck = useSubmit(async () => { await api(`/operator/salg/companies/${companyId}/advertising-check`, { method: "POST", body: JSON.stringify({ advertising_protected: adv.value === "true", note: adv.note }) }); router.refresh(); });
   const canCall = mode === "test" || mode === "live";
 
@@ -114,6 +115,7 @@ export function ContactsPanel({ companyId, contacts, approvedScriptId, mode, adv
           <label className="flex items-start gap-2 text-[13px]"><input type="checkbox" className="mt-1 accent-primary" checked={testOk} onChange={(e) => setTestOk(e.target.checked)} /><span>Nummeret er mit eget testnummer, og Peter (AI-assistent) må ringe til det nu. Det er et rigtigt opkald, der koster som et kampagneopkald.</span></label>
           <ErrorBox error={test.error} />
           {testResult && <Alert kind={testResult.status === "calling" ? "ok" : "warn"}>{testResult.status === "calling" ? "Peter ringer nu." : `Ikke ringet op: ${testResult.error ?? testResult.status}`} <Link className="underline" href={`/app/operator/salg/opkald/${testResult.campaign_contact_id}`}>Se opkaldet</Link></Alert>}
+          <label className="flex items-start gap-2 text-[13px]"><input type="checkbox" className="mt-1 accent-primary" checked={testRecord} onChange={(e) => setTestRecord(e.target.checked)} /><span>Optag opkaldet (kun hvis lydlager er sat op)</span></label>
           <Button type="submit" icon="call" disabled={!canCall || !approvedScriptId || !testOk || !testPhone.trim() || test.pending}>{test.pending ? "Ringer op…" : "Ring til mig"}</Button>
         </form>
       </div>

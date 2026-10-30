@@ -82,6 +82,11 @@ def main(argv: list[str]) -> int:
                          object_type="knowledge_version", object_id=v.id,
                          after={"title": title, "audience": audience, "via": "scripts.seed_sales_knowledge"})
             created += 1
+        if not dry:  # Peter books intro meetings on this booking type (sales/tools.py)
+            from app.modules.sales.tools import ensure_meeting_type
+
+            bt = ensure_meeting_type(db, ws)
+            print(f"bookingtype: {bt.name}")
         db.commit()
         print(f"{created} udkast oprettet. Godkend dem under Viden i salgsarbejdsrummet.")
     return 0

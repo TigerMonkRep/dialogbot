@@ -232,7 +232,25 @@ def detail(db: OrmSession, c: SalesCompany) -> dict:
         live = policy.evaluate(db, contact=x, stage="check", script=approved, store=False) if x.phone_e164 else None
         contact_rows.append(contact_out(x) | {"basis": [outbound.basis_out(b) for b in bases],
                                                "policy": live.out() if live else None})
+    from app.models import SalesMeeting, SalesMessageRequest, SalesOffer
+    from app.modules.sales import meetings, offers
+
+    offer_rows = db.scalars(select(SalesOffer).where(SalesOffer.company_id == c.id).order_by(SalesOffer.version.desc())).all()
+    meeting_rows = db.scalars(select(SalesMeeting).where(SalesMeeting.company_id == c.id)
+                              .order_by(SalesMeeting.created_at.desc())).all()
+    loose = db.scalars(select(SalesMessageRequest).where(SalesMessageRequest.company_id == c.id,
+                                                         SalesMessageRequest.status == "requested")
+                       .order_by(SalesMessageRequest.created_at.desc())).all()
+    timeline = sorted(timeline
+                      + [{"at": o.created_at.isoformat(), "kind": "offer", "text": f"Tilbud v{o.version} ({o.status})"}
+                         for o in offer_rows]
+                      + [{"at": m.created_at.isoformat(), "kind": "meeting", "text": f"Intro-møde ({m.status})"}
+                         for m in meeting_rows],
+                      key=lambda e: e["at"], reverse=True)
     return out(c) | {"facts": [fact_out(f) for f in facts], "contacts": contact_rows,
+                     "offers": [offers.out(db, o) for o in offer_rows],
+                     "meetings": [meetings.out(db, m) for m in meeting_rows],
+                     "pending_messages": [offers.message_out(r) for r in loose if r.outbox_event_id is None],
                      "profiles": [playbook.profile_out(p) for p in profiles],
                      "scripts": [playbook.script_out(s) for s in scripts],
                      "simulations": [simulate.out(s) for s in sims], "timeline": timeline,

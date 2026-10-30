@@ -8,7 +8,6 @@ from sqlalchemy import select
 
 from app.config import get_settings
 from app.core.errors import ApiError
-from app.db import get_session_factory
 from app.models import (
     Call,
     Campaign,
@@ -22,65 +21,13 @@ from app.models import (
     SalesQualification,
 )
 from app.modules.campaigns import service as campaigns
-from app.modules.sales import playbook, policy
-from tests.sales_fixtures import approve_knowledge
+from app.modules.sales import policy
+from app.modules.sales.tools import RULES
+from tests.sales_fixtures import OTHER_NUMBER, SECRET, TEST_NUMBER  # noqa: E402
 
-SECRET = "vapi-test-secret-0123456789abcdef"
-TEST_NUMBER = "+4520304050"
-OTHER_NUMBER = "+4561626364"
 BASIS = {"purpose": "Demo af Dialogbot", "kind": "request", "source": "web_form",
          "text": "Ja tak, Peter fra Dialogbot (en AI-assistent) må ringe mig op om Dialogbot.",
          "text_version": "demo-call-web-v2", "evidence_ref": "test"}
-
-
-@pytest.fixture
-def ring(api, salg, db, monkeypatch):
-    """Sales channel in test mode with a callable number, an approved script and a fake Vapi."""
-    monkeypatch.setenv("SALES_OUTBOUND_MODE", "test")
-    monkeypatch.setenv("SALES_TEST_NUMBERS", f"{TEST_NUMBER}, 20 30 40 51")
-    monkeypatch.setenv("VAPI_API_KEY", "vapi-private-key-test")
-    monkeypatch.setenv("VAPI_SERVER_SECRET", SECRET)
-    monkeypatch.setenv("SALES_MAX_ATTEMPTS_PER_CONTACT", "2")
-    get_settings.cache_clear()
-    approve_knowledge(api, salg["tok"], salg["ws"], "fact", "Telefonpasning", {"text": "Dialogbot tager telefonen."})
-    api.map_number(salg["ws"], "+4570123456", "pn_sales", outbound=True)
-    company = SalesCompany(source="demo", display_name="Salon Fiktiv", website_url="https://salon-fiktiv.invalid/",
-                           domain="salon-fiktiv.invalid", postal_code="8000", city="Aarhus C", industry_key="skoenhed",
-                           industry_text="Frisør & skønhed", google_business_status="OPERATIONAL",
-                           advertising_protected=False)
-    db.add(company)
-    db.flush()
-    from app.modules.sales import companies
-
-    fact = companies.add_fact(db, company, field="service", value="Dameklip", ref="https://salon-fiktiv.invalid/",
-                              evidence="Dameklip", extractor="sales-research-v1")
-    companies.set_main_phone(db, company, TEST_NUMBER, fact)
-    profile = playbook.build_profile(db, company, user_id=None)
-    script = playbook.build_script(db, company, profile, user_id=None)
-    assert script.validation["ok"], script.validation
-    db.commit()
-    op_user = db.scalar(select(SalesContact).where(SalesContact.company_id == company.id))
-    playbook.approve(db, script, user_id=_op_id(db))
-    db.commit()
-    calls: list[dict] = []
-
-    def fake_call(payload):
-        # the attempt is committed as `calling` with its dispatch key BEFORE the provider is asked
-        with get_session_factory()() as other:
-            cc = other.get(CampaignContact, payload["metadata"]["campaign_contact_id"])
-            assert cc.status == "calling" and cc.dispatch_key == payload["metadata"]["dispatch_key"]
-        calls.append(payload)
-        return {"id": f"sales_call_{len(calls)}"}
-
-    monkeypatch.setattr(campaigns, "create_call", fake_call)
-    yield salg | {"company": company, "script": script, "contact": op_user, "calls": calls}
-    get_settings.cache_clear()
-
-
-def _op_id(db):
-    from app.models import User
-
-    return db.scalar(select(User.id).where(User.email_normalized == "operator@testmail.dk"))
 
 
 def _basis(api, op, contact_id, **extra):
@@ -161,8 +108,12 @@ def test_internal_test_call_rings_with_peter_and_the_script(api, ring, db):
     assert a["firstMessage"].startswith("Hej, det er Peter, AI-assistent hos Dialogbot")
     system = a["model"]["messages"][0]["content"]
     assert ring["script"].rendered_prompt in system and "Dialogbot tager telefonen" in system
+    assert system.endswith(RULES)  # promises only what a tool confirmed
+    assert {t["function"]["name"] for t in a["model"]["tools"] if t["type"] == "function"} >= {"book_moede", "send_bestillingslink"}
     assert a["metadata"]["script_id"] == str(ring["script"].id) and a["maxDurationSeconds"] == 600
     assert a["voice"]["voiceId"]
+    said = {r["regex"]: r["value"] for r in a["voice"]["chunkPlan"]["formatPlan"]["replacements"]}
+    assert said["AI"] == "a i" and said[r"2\.495"] == "to tusind fire hundrede og femoghalvfems"
     snap = db.scalar(select(SalesCallEvent).where(SalesCallEvent.event_type == "assistant_snapshot"))
     assert snap.payload["rendered_prompt"] == ring["script"].rendered_prompt
     c = db.get(Campaign, out["campaign_id"])

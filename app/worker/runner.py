@@ -103,7 +103,21 @@ HANDLERS = {
     "email.daily_report": handle_daily_report,
     "email.ambassador": handle_branded,
     "email.branded": handle_branded,  # any mail built where it is queued (tpl.to_payload)
+    "sales.message": lambda db, ev: _sales_message(db, ev),
+    "sales.recording_fetch": lambda db, ev: _sales_recording(db, ev),
 }
+
+
+def _sales_recording(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.sales.recordings import handle_fetch
+
+    handle_fetch(db, ev)
+
+
+def _sales_message(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.sales.offers import handle_message
+
+    handle_message(db, ev)
 
 # Test hook: event types listed here raise, to exercise retry paths.
 FAIL_EVENT_TYPES: set[str] = set()
@@ -209,6 +223,9 @@ def schema_ready() -> bool:
     return st["ok"]
 
 
+_RETENTION_RAN: dict = {}
+
+
 def run_schedules() -> None:
     """Periodic jobs. Each is idempotent (unique snapshots + outbox dedupe), so several workers are safe.
 
@@ -292,6 +309,20 @@ def run_schedules() -> None:
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("sales.search_failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:  # sales retention: daily from 03:00 Copenhagen time, also when the channel is off
+            from datetime import datetime
+            from zoneinfo import ZoneInfo
+
+            from app.modules.sales.privacy import run_retention
+
+            local = datetime.now(ZoneInfo("Europe/Copenhagen"))
+            if local.hour >= 3 and _RETENTION_RAN.get("day") != local.date():
+                run_retention(db)
+                _RETENTION_RAN["day"] = local.date()
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("sales.retention_failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
         try:
             from app.modules.social.service import run_due as run_social

@@ -478,6 +478,9 @@ class ReceptionAgreement(Base):
     monthly_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     lead_fee_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     tax_basis_points: Mapped[int] = mapped_column(Integer, nullable=False, default=2500)
+    # One-off setup fee from an accepted sales offer (specialist setup), billed on the first invoice. 0 = none.
+    setup_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    sales_offer_id: Mapped[uuid.UUID | None] = mapped_column()  # the accepted sales_offers row (no FK: avoids a cycle)
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
 
@@ -904,6 +907,8 @@ class Campaign(Base):
     kind: Mapped[str] = mapped_column(String(16), nullable=False, default="customer", server_default="customer")
     budget_net_minor: Mapped[int | None] = mapped_column(Integer)  # hard ceiling on calls + minutes (internal_sales)
     is_test: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    # internal_sales only: record the calls (also needs SALES_RECORDING_STORAGE); the opening then says so.
+    recording_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
 
 
 class CampaignContact(Base):

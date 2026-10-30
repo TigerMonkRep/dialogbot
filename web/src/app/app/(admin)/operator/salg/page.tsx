@@ -10,7 +10,8 @@ type Overview = Status & {
 const TILES: [string, string][] = [
   ["companies_new_30d", "Nye virksomheder (30 dage)"], ["companies_total", "Virksomheder i alt"], ["researched", "Undersøgt"],
   ["scripts_approved", "Godkendte manuskripter"], ["simulations_30d", "Simulationer (30 dage)"], ["searches_running", "Søgninger i gang"],
-  ["calls_today", "Opkald i dag"],
+  ["calls_today", "Opkald i dag"], ["meetings_upcoming", "Kommende møder"], ["offers_open", "Åbne tilbud"],
+  ["orders_accepted_30d", "Accepterede ordrer (30 dage)"], ["paying_customers", "Betalende kunder"],
 ];
 const MODE: Record<string, string> = {
   off: "Slået fra", research: "Research", simulation: "Simulation", test: "Test (kun testnumre)", live: "Live",
@@ -43,12 +44,12 @@ export default async function SalesOverview() {
           <ul className="flex flex-col gap-2">{o.needs_you.map((n, i) => (
             <li key={i} className="text-[14px]">
               {n.kind.startsWith("search") ? <Link className="underline" href="/app/operator/salg/find">{n.text}</Link>
-                : n.kind.startsWith("call") ? <Link className="underline" href={`/app/operator/salg/opkald/${n.id}`}>{n.text}</Link>
+                : n.kind.startsWith("call_") ? <Link className="underline" href={`/app/operator/salg/opkald/${n.id}`}>{n.text}</Link>
                 : <Link className="underline" href={`/app/operator/salg/virksomheder/${n.id}`}>{n.text}</Link>}
             </li>))}</ul>
         )}
       </div>
-      <p className="text-[13px] text-muted">Ikke bygget endnu (senere faser): {o.not_built.join(", ")}. Demo-opkald fra hjemmesiden findes under fanen Demo-opkald.</p>
+      <p className="text-[13px] text-muted">{o.not_built.length > 0 ? `Ikke bygget endnu: ${o.not_built.join(", ")}. ` : ""}Tal med tæller, nævner og definition findes under <Link className="underline" href="/app/operator/salg/statistik">Statistik</Link>. Demo-opkald fra hjemmesiden findes under fanen Demo-opkald.</p>
     </SalgFrame>
   );
 }

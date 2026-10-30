@@ -9,7 +9,7 @@ import { VIDEO } from "@/lib/video";
  *  video ends on is pixels, so when it ends we lay a real CTA card over it (and the same links always sit under the
  *  video for people who skip). Captions are burned in; the VTT track is there for screen readers but off by default. */
 
-export function ExplainerVideo({ variant = "chip" }: { variant?: "chip" | "button" }) {
+export function ExplainerVideo({ variant = "chip" }: { variant?: "chip" | "button" | "poster" }) {
   const [open, setOpen] = useState(false);
   const [ended, setEnded] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -30,7 +30,19 @@ export function ExplainerVideo({ variant = "chip" }: { variant?: "chip" | "butto
 
   return (
     <>
-      {variant === "chip" ? (
+      {variant === "poster" ? (
+        <button type="button" onClick={() => setOpen(true)} aria-label={`${VIDEO.title} – afspil videoen (70 sekunder)`}
+          className="group relative block w-full max-w-full aspect-video rounded-[20px] overflow-hidden border-2 border-ink bg-panel shadow-block text-left cursor-pointer p-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={VIDEO.poster} alt="" width={1920} height={1080} className="block w-full h-full object-cover" />
+          <span className="absolute inset-0 flex items-center justify-center">
+            <span className="inline-flex items-center gap-3 pl-4 pr-6 min-h-16 rounded-full bg-ink text-white font-display font-bold text-lg border-2 border-ink shadow-block-highlight group-hover:bg-accent transition-colors">
+              <span className="inline-flex w-10 h-10 rounded-full bg-accent text-white items-center justify-center"><PlayIcon size={18} /></span>
+              Se, hvad Dialogbot kan · 70 sek.
+            </span>
+          </span>
+        </button>
+      ) : variant === "chip" ? (
         <button type="button" onClick={() => setOpen(true)}
           className="group inline-flex items-center gap-3.5 p-2 pr-5 rounded-2xl bg-white border-2 border-ink text-ink text-left cursor-pointer hover:bg-panel transition-colors max-w-full">
           <span className="relative block w-[104px] h-[62px] shrink-0 rounded-[10px] overflow-hidden border-[1.5px] border-ink bg-panel">

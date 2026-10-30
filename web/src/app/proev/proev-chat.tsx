@@ -106,10 +106,35 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     setIndustry({ key: null, other: "" }); setTlf(""); setConsent(false); setConsentError(false); setPending(false);
   };
 
+  /** Anything that is not one of the scripted steps goes to Peter himself: POST /demo-call/chat answers from the
+   *  sales workspace's approved knowledge. The step does not change, so the chips stay where they were. */
+  const ask = async (v: string) => {
+    push({ from: "user", text: v }); setDraft(""); setPending(true); setTyping(true);
+    const messages = history.concat({ from: "user", text: v }).slice(-16)
+      .map((m) => ({ role: m.from === "bot" ? "assistant" : "user", content: m.text.slice(0, 600) }));
+    try {
+      const r = await api<{ reply: string }>("/demo-call/chat", { method: "POST", body: JSON.stringify({ messages, website: "" }) });
+      setTyping(false); push({ from: "bot", text: r.reply });
+    } catch (err) {
+      setTyping(false);
+      const a = err as ApiError;
+      push({ from: "bot", text: a?.code === "demo_unavailable"
+        ? `Chatten er ikke helt klar endnu. Ring til os på ${PHONE_DISPLAY} (${HOURS.toLowerCase()}) eller skriv til ${EMAIL} – så svarer vi.`
+        : `Det kunne jeg ikke svare på lige nu. Prøv igen om lidt, eller ring til os på ${PHONE_DISPLAY}.` });
+    } finally { setPending(false); }
+  };
+
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     const v = draft.trim();
     if (!v || pending) return;
+    if (step === "start" || step === "unavailable" || step === "calling" || step === "done") { await ask(v); return; }
+    if (step === "branche") {
+      push({ from: "user", text: v }); setDraft(""); setIndustry({ key: null, other: v });
+      botSays(`Så er jeg receptionist for ${firma} fra nu af. Hvilket nummer skal jeg ringe til?`, "tlf");
+      return;
+    }
+    if (step === "tlf" && !/\d{8}/.test(v.replace(/[\s+\-()]/g, ""))) { await ask(v); return; }
     if (step === "firma") {
       push({ from: "user", text: v }); setFirma(v); setDraft("");
       botSays(`Hej ${v}. Hvad laver I?`, "branche");
@@ -143,8 +168,10 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     } finally { setPending(false); }
   };
 
-  const hasInput = step === "firma" || step === "andet" || step === "tlf";
-  const placeholder = step === "firma" ? "Fx Nørgaard Tømrer" : step === "andet" ? "Fx tømrer, tandlæge, bogholder …" : "Fx 93 70 34 33";
+  const hasInput = true; // the chips are shortcuts; the visitor can always write to Peter instead
+  const placeholder = step === "firma" ? "Fx Nørgaard Tømrer" : step === "andet" ? "Fx tømrer, tandlæge, bogholder …"
+    : step === "tlf" ? "Fx 93 70 34 33 – eller stil et spørgsmål" : step === "branche" ? "Vælg ovenfor – eller skriv, hvad I laver"
+    : "Skriv dit spørgsmål til Peter …";
   const done = step === "done";
   const calling = step === "calling";
   const pastOne = step === "tlf" || calling || done;
@@ -200,6 +227,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
           {step === "start" && !typing && (
             <div className="flex flex-wrap gap-2">{startChips.map((q) => <button key={q.label} type="button" onClick={q.act} className={chip}>{q.label}</button>)}</div>
           )}
+          {(step === "done" || step === "unavailable" || step === "calling") && !typing && null}
           {step === "branche" && !typing && (
             <div className="flex flex-wrap gap-2">{BRANCHES.map(([l, k]) => <button key={l} type="button" onClick={chooseBranch(l, k)} className={chip}>{l}</button>)}</div>
           )}
@@ -215,11 +243,11 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
             <form onSubmit={send} className="flex flex-col gap-3">
               <div className="flex gap-2.5">
                 <label htmlFor="chat-input" className="sr-only">{placeholder}</label>
-                <input ref={inputRef} id="chat-input" type={step === "tlf" ? "tel" : "text"} inputMode={step === "tlf" ? "tel" : "text"} value={draft}
+                <input ref={inputRef} id="chat-input" type="text" inputMode={step === "tlf" ? "tel" : "text"} value={draft}
                   onChange={(e) => setDraft(e.target.value)} placeholder={placeholder} autoComplete={step === "tlf" ? "tel" : "organization"} disabled={pending}
                   className="flex-1 min-w-0 min-h-12 px-4 rounded-xl border-2 border-ink text-base text-ink bg-white placeholder:text-muted/70" />
                 <button type="submit" disabled={pending} className="inline-flex items-center gap-2 min-h-12 px-[18px] rounded-xl bg-accent hover:bg-accent-deep text-white font-semibold text-[15px] cursor-pointer disabled:opacity-60">
-                  {step === "tlf" ? "Ring mig op" : "Send"}<ArrowIcon size={16} />
+                  {step === "tlf" && /\d{8}/.test(draft.replace(/[\s+\-()]/g, "")) ? "Ring mig op" : "Send"}<ArrowIcon size={16} />
                 </button>
               </div>
               {step === "tlf" && (

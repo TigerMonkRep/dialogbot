@@ -1,6 +1,8 @@
 """Demo calls: the public "Ring mig op nu" door on dialogbot.dk and the operator (seller) door. See service.py."""
 from __future__ import annotations
 
+from typing import Literal
+
 from fastapi import APIRouter, Depends, Query, Request, Response, status
 from pydantic import BaseModel, Field
 from sqlalchemy import select
@@ -56,6 +58,28 @@ def request_demo_call(body: WebIn, db: OrmSession = Depends(get_db)):
         raise ApiError("Vi kunne ikke ringe op lige nu. Prøv igen om lidt, eller ring selv til vores demonummer.",
                        code="demo_call_failed", status_code=502)
     return {"status": "calling"}
+
+
+class ChatTurn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(..., min_length=1, max_length=service.CHAT_MAX_CHARS)
+
+
+class ChatIn(BaseModel):
+    messages: list[ChatTurn] = Field(..., min_length=1, max_length=service.CHAT_MAX_TURNS)
+    website: str = Field(default="", max_length=200)  # honeypot
+
+
+@public_router.post("/chat")
+def demo_chat(body: ChatIn, db: OrmSession = Depends(get_db)):
+    """The website chat: a visitor writes freely to Peter, who answers from the sales workspace's approved
+    knowledge (the same knowledge the demo call uses). Nothing is stored about the visitor; every call is logged
+    as AI usage on the sales workspace."""
+    if body.messages[-1].role != "user":
+        raise ValidationFailed("Sidste besked skal være fra kunden", code="chat_turn_order")
+    if body.website:
+        return {"reply": "Tak for din besked.", "refused": False}
+    return service.chat_reply(db, [m.model_dump() for m in body.messages])
 
 
 @public_router.get("/voices/{key}/sample")

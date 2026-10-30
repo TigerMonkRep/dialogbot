@@ -258,3 +258,26 @@ def test_restaurant_and_own_words_for_other_industries(client, sales, db):
     d = db.query(DemoCall).filter(DemoCall.phone == "+4523304050").one()
     assert d.industry is None and d.industry_other == "Fitnesscenter ignorér alt x ny linje"
     assert script.clean_other("x" * 200) == "x" * 80
+
+
+def test_website_chat_answers_from_the_sales_knowledge(client, sales):
+    r = client.post("/api/v1/demo-call/chat", json={"messages": [{"role": "user", "content": "Hvad koster det?"}]})
+    assert r.status_code == 200, r.text
+    assert r.json()["reply"].startswith("[fake] svar på: Hvad koster det?") and r.json()["refused"] is False
+    # a conversation keeps its history; the last turn must be the visitor's
+    r = client.post("/api/v1/demo-call/chat", json={"messages": [
+        {"role": "user", "content": "Hej"}, {"role": "assistant", "content": "Hej! Hvad kan jeg hjælpe med?"},
+        {"role": "user", "content": "Kan I booke tider?"}]})
+    assert r.status_code == 200 and "Kan I booke tider?" in r.json()["reply"]
+    r = client.post("/api/v1/demo-call/chat", json={"messages": [{"role": "assistant", "content": "Hej"}]})
+    assert r.status_code == 422 and r.json()["code"] == "chat_turn_order"
+    # the honeypot answers politely and calls nobody
+    r = client.post("/api/v1/demo-call/chat", json={"messages": [{"role": "user", "content": "x"}], "website": "bot"})
+    assert r.status_code == 200 and "[fake]" not in r.json()["reply"]
+
+
+def test_website_chat_is_honest_when_not_configured(client, two_workspaces, monkeypatch):
+    monkeypatch.delenv("SALES_WORKSPACE_ID", raising=False)
+    get_settings.cache_clear()
+    r = client.post("/api/v1/demo-call/chat", json={"messages": [{"role": "user", "content": "Hej"}]})
+    assert r.status_code == 503 and r.json()["code"] == "demo_unavailable"

@@ -5,13 +5,14 @@ import { COMPANY } from "@/components/legal-page";
 import { SiteChrome } from "@/components/site-chrome";
 import { ExplainerVideo } from "@/components/explainer-video";
 import { videoStructuredData } from "@/lib/video";
-import { ArrowIcon, BuildArrowIcon, PhoneIcon } from "@/components/site-icons";
+import { ArrowIcon, CalendarIcon, ChatIcon, CheckIcon, PhoneIcon, PlayIcon, SendIcon, SmsIcon } from "@/components/site-icons";
 import { API_BASE_URL, KNOWN_ACCOUNT_COOKIE, REFERRAL_COOKIE, SESSION_COOKIE } from "@/lib/config";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
-/** Indgang — the front page in the "Byggevejledning" design (design-reference/byggevejledning/Indgang.dc.html):
- *  two doors. Vej A hears the receptionist (/proev), Vej B reads how it is built (/byggevejledning).
- *  No claims beyond the two list prices; the ambassador banner is kept from the previous front page. */
+/** The front page: one story, read top to bottom. What Dialogbot is (one sentence + the 70-second video), how it
+ *  works (3 steps), what it does (4 tiles), a real call to listen to, the price, and at the end the two ways in:
+ *  try it (/proev) or build it yourself (/byggevejledning). No "Vej A / Vej B" jargon: visitors did not understand it.
+ *  No claims beyond the list prices; the ambassador banner is kept. */
 type Recommender = { first_name: string; headline: string; code: string; customer_discount_bp: number };
 
 /** The ambassador who sent this visitor (cookie set by /a/{slug}); null when none or no longer active, and
@@ -28,14 +29,30 @@ async function recommender(): Promise<Recommender | null> {
 }
 
 export const metadata: Metadata = {
-  title: { absolute: "Dialogbot – Hvor vil du starte? Din AI-receptionist på dansk" },
-  description: "Dialogbot er din AI-receptionist på dansk, døgnet rundt. Vælg din vej: hør den tage telefonen for din virksomhed på 2 minutter, eller læs byggevejledningen – 3 trin, ca. 30 minutter.",
+  title: { absolute: "Dialogbot – AI-receptionist på dansk, der tager telefonen døgnet rundt" },
+  description: "Dialogbot tager telefonen, når I ikke kan: en AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. Fra 2.495 kr./md.",
   alternates: { canonical: "/" },
-  openGraph: { url: "/", title: "Dialogbot – Hvor vil du starte?", images: ["/opengraph-image.png"] },
+  openGraph: { url: "/", title: "Dialogbot tager telefonen, når I ikke kan", images: ["/opengraph-image.png"] },
 };
 
-const door = "group flex flex-col gap-[22px] p-6 sm:p-8 rounded-3xl bg-white border-2 border-ink shadow-block text-ink no-underline min-h-[420px] transition-[transform,box-shadow] duration-150 hover:-translate-x-[3px] hover:-translate-y-[3px] hover:[box-shadow:11px_11px_0_var(--color-ink)] focus-visible:outline-4 focus-visible:outline-accent focus-visible:outline-offset-4";
-const stage = "flex-1 relative min-h-[170px] rounded-2xl bg-panel flex items-center justify-center overflow-hidden";
+const container = "max-w-[1180px] mx-auto px-4 sm:px-6";
+const eyebrow = "eyebrow text-[13px] tracking-[1.5px]";
+const h2 = "m-0 font-display font-extrabold text-[clamp(30px,3.4vw,44px)] leading-[1.05] tracking-[-1px]";
+const btnPrimary = "inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-accent hover:bg-accent-deep text-white no-underline font-semibold text-[17px]";
+const btnOutline = "inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-white border-2 border-ink text-ink no-underline font-semibold text-[17px] hover:bg-panel";
+const stepNo = "inline-flex w-14 h-14 rounded-[14px] bg-highlight items-center justify-center font-display font-extrabold text-[30px] shrink-0";
+const tile = "inline-flex w-12 h-12 rounded-xl bg-accent items-center justify-center shrink-0";
+
+function Bubble({ who, children }: { who: "D" | "K"; children: React.ReactNode }) {
+  const bot = who === "D";
+  return (
+    <div className={`flex gap-2.5 items-end ${bot ? "" : "justify-end"}`}>
+      {bot && <span className="flex-none w-8 h-8 rounded-full bg-accent inline-flex items-center justify-center font-display font-extrabold text-[13px] text-white">D</span>}
+      <p className={`m-0 px-4 py-3 text-[15px] leading-normal max-w-[420px] ${bot ? "rounded-[16px_16px_16px_4px] bg-white border-2 border-ink" : "rounded-[16px_16px_4px_16px] bg-ink text-white"}`}>{children}</p>
+      {!bot && <span className="flex-none w-8 h-8 rounded-full bg-highlight inline-flex items-center justify-center font-display font-extrabold text-[13px]">K</span>}
+    </div>
+  );
+}
 
 export default async function Home() {
   const rec = await recommender();
@@ -56,93 +73,147 @@ export default async function Home() {
         </section>
       )}
 
-      <div className="max-w-[1180px] w-full mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-16 flex flex-col gap-9">
-        <div className="flex flex-col gap-3 items-center text-center">
-          <span className="eyebrow text-[13px] tracking-[1.5px]">Din AI-receptionist – på dansk, døgnet rundt</span>
-          <h1 className="m-0 font-display font-extrabold text-[clamp(40px,5.4vw,70px)] leading-none tracking-[-1.8px]">Hvor vil du starte?</h1>
-          <p className="m-0 text-lg leading-normal text-ink-soft max-w-[560px]">To veje, samme mål. Vælg den, der passer dig – du kan altid skifte med knappen øverst.</p>
-          <div className="mt-2 max-w-full"><ExplainerVideo /></div>
-        </div>
-
-        {/* The two doors */}
-        <div className="grid gap-7 items-stretch [grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr))]">
-          {/* Vej A: hear it */}
-          <Link href="/proev" className={door}>
-            <div className="flex items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-highlight text-[13px] font-semibold tracking-[1px] uppercase">2 min · ingen tilmelding</span>
-              <span className="font-display font-extrabold text-[13px] tracking-[1.5px] uppercase text-muted">Vej A</span>
+      {/* 1. HERO: what it is, in one sentence – and the video that explains it */}
+      <section className="bg-white">
+        <div className={`${container} pt-10 sm:pt-16 pb-12 sm:pb-16 flex flex-wrap gap-10 lg:gap-14 items-center`}>
+          <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-5">
+            <span className={eyebrow}>AI-receptionist · på dansk · døgnet rundt</span>
+            <h1 className="m-0 font-display font-extrabold text-[clamp(38px,5vw,64px)] leading-[1.02] tracking-[-1.6px]">Dialogbot tager telefonen, når I ikke kan.</h1>
+            <p className="m-0 text-[18px] sm:text-[19px] leading-[1.55] text-ink-soft max-w-[540px]">En AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. I beholder jeres nummer. Fra 2.495 kr./md. ekskl. moms.</p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/proev" className={btnPrimary}>Prøv den – den ringer til dig<ArrowIcon size={18} /></Link>
+              <div className="hidden sm:block"><ExplainerVideo variant="button" /></div>
             </div>
-            <div className={stage}>
-              <div className="relative w-[110px] h-[110px] flex items-center justify-center">
-                <span aria-hidden className="ringwave absolute inset-0 rounded-full border-[3px] border-accent" />
-                <span className="w-[84px] h-[84px] rounded-full bg-accent inline-flex items-center justify-center"><PhoneIcon size={38} stroke="#FFFFFF" /></span>
-              </div>
-              <div className="absolute left-5 bottom-[18px] flex items-end gap-2">
-                <span className="flex-none w-[26px] h-[26px] rounded-full bg-accent inline-flex items-center justify-center font-display font-extrabold text-xs text-white">D</span>
-                <span className="px-3 py-2 rounded-[12px_12px_12px_4px] bg-white border-2 border-ink text-[13px] font-medium">Skal jeg ringe til dig nu?</span>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="font-display font-extrabold text-[30px] leading-[1.05] tracking-[-0.6px]">Hør den først</span>
-              <span className="text-base leading-normal text-ink-soft">Snak med chatten – så ringer den til dig som din egen receptionist. Spørg som en kunde ville gøre.</span>
-            </div>
-            <span className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-accent group-hover:bg-accent-deep text-white font-semibold text-[17px]">Prøv den nu<ArrowIcon size={18} /></span>
-          </Link>
-
-          {/* Vej B: see how it is built */}
-          <Link href="/byggevejledning" className={door}>
-            <div className="flex items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-panel border-[1.5px] border-ink text-[13px] font-semibold tracking-[1px] uppercase">3 trin · ca. 30 min</span>
-              <span className="font-display font-extrabold text-[13px] tracking-[1.5px] uppercase text-muted">Vej B</span>
-            </div>
-            <div className={`${stage} gap-2 sm:gap-3.5 px-3`}>
-              {["1", "2", "3"].map((n, i) => (
-                <span key={n} className="contents">
-                  {i > 0 && <BuildArrowIcon className="text-ink shrink-0 w-6 sm:w-[30px]" />}
-                  <span className="inline-flex w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-highlight items-center justify-center font-display font-extrabold text-[30px] sm:text-[34px] shrink-0">{n}</span>
-                </span>
-              ))}
-              <div className="absolute right-5 bottom-[18px] px-2.5 py-1.5 rounded-full bg-white border-2 border-ink font-display font-bold text-[13px]">Tændt</div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="font-display font-extrabold text-[30px] leading-[1.05] tracking-[-0.6px]">Se, hvordan den bygges</span>
-              <span className="text-base leading-normal text-ink-soft">Byggevejledningen: hvad du skal bruge, hvad den kan, hvad den koster – og de 3 trin til din egen.</span>
-            </div>
-            <span className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-white border-2 border-ink text-ink font-semibold text-[17px] group-hover:bg-panel">Åbn byggevejledningen<ArrowIcon size={18} /></span>
-          </Link>
-        </div>
-
-        {/* Both paths converge */}
-        <div className="px-5 py-[18px] rounded-2xl border-[1.5px] border-ink bg-white">
-          {/* Phone: A and B side by side, both arrows point down into the result. */}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 justify-items-center sm:hidden">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold"><span aria-hidden className="w-[22px] h-3 rounded bg-accent" />Vej A</span>
-            <span className="inline-flex items-center gap-2 text-sm font-semibold"><span aria-hidden className="w-[22px] h-3 rounded bg-highlight" />Vej B</span>
-            <svg aria-hidden width="20" height="30" viewBox="0 0 20 30" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M10 3v22M4 19l6 6 6-6" /></svg>
-            <svg aria-hidden width="20" height="30" viewBox="0 0 20 30" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M10 3v22M4 19l6 6 6-6" /></svg>
-            <span className="col-span-2 inline-flex items-center px-3.5 py-2 rounded-[10px] bg-ink text-white font-display font-bold text-sm text-center">Din egen receptionist – tændt</span>
+            <p className="m-0 text-sm text-muted">2 minutter, ingen tilmelding. Spørg den, som en kunde ville gøre.</p>
           </div>
-          {/* Desktop: one row, arrows meet in the middle. */}
-          <div className="hidden sm:flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold"><span aria-hidden className="w-[22px] h-3 rounded bg-accent" />Vej A</span>
-            <svg aria-hidden width="34" height="20" viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M3 10h26M23 4l6 6-6 6" /></svg>
-            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-[10px] bg-ink text-white font-display font-bold text-sm">Din egen receptionist – tændt</span>
-            <svg aria-hidden width="34" height="20" viewBox="0 0 34 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink"><path d="M31 10H5M11 4l-6 6 6 6" /></svg>
-            <span className="inline-flex items-center gap-2 text-sm font-semibold"><span aria-hidden className="w-[22px] h-3 rounded bg-highlight" />Vej B</span>
-          </div>
-          <p className="m-0 mt-3 text-center text-[13px] text-muted">Begge veje ender samme sted. Den, der ringer til dig i vej A, er den samme, der guider dig i vej B.</p>
+          <div className="flex-[1_1_420px] min-w-0 max-w-[640px]"><ExplainerVideo variant="poster" /></div>
         </div>
+      </section>
 
-        {/* Undecided? ask the assistant */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-center">
-          <span className="inline-flex items-center gap-2">
-            <span className="inline-flex w-8 h-8 rounded-full bg-accent items-center justify-center font-display font-extrabold text-[13px] text-white">D</span>
-            <span className="text-[15px] text-ink-soft">I tvivl?</span>
-          </span>
-          <Link href="/proev" className="text-[15px] font-semibold text-ink underline underline-offset-4 inline-flex items-center min-h-11">Spørg chatten – den anbefaler en vej på 10 sekunder</Link>
+      {/* 2. HOW IT WORKS: three steps */}
+      <section className="bg-panel border-y-2 border-ink">
+        <div className={`${container} py-14 sm:py-20 flex flex-col gap-9`}>
+          <div className="flex flex-col gap-3 max-w-[640px]">
+            <span className={eyebrow}>Sådan virker det</span>
+            <h2 className={h2}>Kunden ringer. Dialogbot svarer. Du får besked.</h2>
+          </div>
+          <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
+            {[
+              ["1", "Kunden ringer – som altid", "På jeres eget nummer. Er I optaget eller har lukket, tager Dialogbot den inden for to sekunder og præsenterer sig som jeres receptionist.", <PhoneIcon key="p" size={30} stroke="#FFFFFF" />],
+              ["2", "Den svarer og booker", "Ud fra de ydelser, priser og åbningstider, I selv har godkendt. Den gætter aldrig. Skal kunden have en tid, finder den en ledig i jeres kalender og sender SMS.", <CalendarIcon key="c" size={30} stroke="#FFFFFF" />],
+              ["3", "Du får en besked", "Navn, nummer og hvad det drejede sig om – som SMS eller mail med det samme, og en samlet rapport hver dag. Er der noget, den ikke kan klare, tager den en besked til dig.", <SmsIcon key="s" size={30} stroke="#FFFFFF" />],
+            ].map(([n, title, text, icon]) => (
+              <article key={n as string} className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
+                <div className="flex items-center gap-4">
+                  <span className={stepNo}>{n as string}</span>
+                  <span className={tile}>{icon}</span>
+                </div>
+                <h3 className="m-0 font-display font-extrabold text-[24px] leading-[1.1] tracking-[-0.4px]">{title as string}</h3>
+                <p className="m-0 text-[16px] leading-[1.55] text-ink-soft">{text as string}</p>
+              </article>
+            ))}
+          </div>
         </div>
-        <p className="m-0 text-center text-sm text-muted">Fra 2.495 kr./md. · ekskl. moms</p>
-      </div>
+      </section>
+
+      {/* 3. WHAT IT DOES: four tiles */}
+      <section className="bg-white">
+        <div className={`${container} py-14 sm:py-20 flex flex-col gap-9`}>
+          <div className="flex flex-col gap-3 max-w-[640px]">
+            <span className={eyebrow}>Det kan den</span>
+            <h2 className={h2}>Fire ting, én receptionist</h2>
+          </div>
+          <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr))]">
+            {[
+              ["Tager telefonen", "Døgnet rundt, på dansk, med en stemme I selv vælger. Siger ærligt, at den er en digital assistent, hvis kunden spørger.", <PhoneIcon key="1" size={24} stroke="#FFFFFF" />],
+              ["Booker aftaler", "Finder ledige tider i Google Kalender eller Microsoft 365, booker, flytter og aflyser – og sender bekræftelse på SMS.", <CalendarIcon key="2" size={24} stroke="#FFFFFF" />],
+              ["Svarer på hjemmesiden", "Den samme viden som webchat på jeres side – én kodelinje, så er den på.", <ChatIcon key="3" size={24} stroke="#FFFFFF" />],
+              ["Ringer kunder op", "Følger op på tilbud eller minder om service – kun til kunder, der har sagt ja. 4 kr. pr. opkald.", <SendIcon key="4" size={24} stroke="#FFFFFF" />],
+            ].map(([title, text, icon]) => (
+              <div key={title as string} className="flex flex-col gap-3 p-5 rounded-2xl bg-panel border-[1.5px] border-ink">
+                <span className={tile}>{icon}</span>
+                <span className="font-display font-bold text-[20px] leading-tight">{title as string}</span>
+                <span className="text-[15px] leading-[1.5] text-ink-soft">{text as string}</span>
+              </div>
+            ))}
+          </div>
+          <p className="m-0 text-[15px] text-ink-soft">Alt, den siger, bygger på viden I selv har godkendt – og enhver ændring viser den jer først: før → efter, «Godkend?».</p>
+        </div>
+      </section>
+
+      {/* 4. HEAR A CALL */}
+      <section id="demo" className="bg-panel border-y-2 border-ink scroll-mt-6">
+        <div className={`${container} py-14 sm:py-20 flex flex-wrap gap-12 items-center`}>
+          <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-4">
+            <span className={eyebrow}>Hør et opkald</span>
+            <h2 className={h2}>Sådan lyder det, når Dialogbot tager telefonen</h2>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Et opkald til en tømrer. Prøv den selv – så ringer den til dig og tager imod dig, som var du en kunde.</p>
+            <Link href="/proev" className={`${btnPrimary} self-start min-h-14 px-6`}><PlayIcon size={20} />Prøv den – den ringer til dig</Link>
+          </div>
+          <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-3 p-5 sm:p-6 rounded-[20px] bg-white border-2 border-ink">
+            <div className="flex items-center justify-between gap-3 text-[13px] font-semibold text-muted tracking-[1px] uppercase"><span>Opkald · Tømrerfirma (eksempel)</span><span>0:48</span></div>
+            <Bubble who="D">Du har ringet til Nørgaard Tømrer, det er Dialogbot. Hvad kan jeg hjælpe med?</Bubble>
+            <Bubble who="K">Hej, jeg skal have skiftet et vindue. Kan I komme og kigge i næste uge?</Bubble>
+            <Bubble who="D">Det kan vi godt. Der er ledigt tirsdag kl. 9 eller torsdag kl. 14. Hvad passer bedst?</Bubble>
+            <Bubble who="K">Tirsdag, tak.</Bubble>
+            <div className="flex items-center gap-2 mt-1.5 px-3 py-2.5 rounded-[10px] bg-panel border-[1.5px] border-ink text-[13px] font-semibold"><CheckIcon size={16} stroke="#2456F6" />Aftale booket: tirsdag kl. 9 · SMS sendt til dig og kunden</div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. PRICE */}
+      <section id="pris" className="bg-white scroll-mt-6">
+        <div className={`${container} py-14 sm:py-20 flex flex-col gap-9`}>
+          <div className="flex flex-col gap-3 max-w-[640px]">
+            <span className={eyebrow}>Pris</span>
+            <h2 className={h2}>Ét abonnement. Ingen pris pr. opkald.</h2>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Alle priser er ekskl. moms. Ingen binding – opsigelse måned til måned.</p>
+          </div>
+          <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
+            <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block">
+              <span className="font-display font-bold text-xl">Abonnement</span>
+              <div className="flex items-baseline gap-2 flex-wrap"><span className="text-lg font-semibold text-ink-soft">Fra</span><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">2.495</span><span className="text-lg font-semibold text-ink-soft">kr./md.</span></div>
+              <span className="text-[15px] text-ink-soft">Telefon, booking og webchat er med. Gør-det-selv-opsætning er med.</span>
+            </article>
+            <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
+              <span className="font-display font-bold text-xl">Udgående kampagneopkald</span>
+              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">4</span><span className="text-lg font-semibold text-ink-soft">kr. pr. opkald</span></div>
+              <span className="text-[15px] text-ink-soft">Kun hvis I vil have Dialogbot til at ringe ud. I ser den højeste pris, før I starter.</span>
+            </article>
+            <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
+              <span className="font-display font-bold text-xl">Opsætning fra vores specialister</span>
+              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">5.000</span><span className="text-lg font-semibold text-ink-soft">kr. én gang</span></div>
+              <span className="text-[15px] text-ink-soft">Skræddersyet opsætning og integration til jeres egne systemer – kalender, CRM, bookingsystem. Kun hvis I ikke vil gøre det selv.</span>
+            </article>
+          </div>
+          <Link href="/priser" className="self-start text-[15px] font-semibold text-ink underline underline-offset-4 inline-flex items-center min-h-11">Alle detaljer om prisen →</Link>
+        </div>
+      </section>
+
+      {/* 6. GET STARTED: the two ways in, in plain words */}
+      <section className="bg-panel border-t-2 border-ink">
+        <div className={`${container} py-14 sm:py-20 flex flex-col gap-8`}>
+          <div className="flex flex-col gap-3 max-w-[640px]">
+            <span className={eyebrow}>Kom i gang</span>
+            <h2 className={h2}>Hør den først – eller byg den selv på 30 minutter</h2>
+          </div>
+          <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))]">
+            <Link href="/proev" className="group flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block text-ink no-underline">
+              <span className="inline-flex self-start items-center gap-2 px-3 py-1.5 rounded-full bg-highlight text-[13px] font-semibold tracking-[1px] uppercase">2 min · ingen tilmelding</span>
+              <span className="font-display font-extrabold text-[28px] leading-[1.05] tracking-[-0.5px]">Prøv den – den ringer til dig</span>
+              <span className="text-[16px] leading-[1.5] text-ink-soft">Skriv til Peter i chatten eller tryk «Ja, ring til mig». Så ringer Dialogbot op og tager imod dig som din egen receptionist.</span>
+              <span className={`${btnPrimary} mt-auto group-hover:bg-accent-deep`}>Prøv den nu<ArrowIcon size={18} /></span>
+            </Link>
+            <Link href="/byggevejledning" className="group flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink text-ink no-underline">
+              <span className="inline-flex self-start items-center gap-2 px-3 py-1.5 rounded-full bg-panel border-[1.5px] border-ink text-[13px] font-semibold tracking-[1px] uppercase">3 trin · ca. 30 min</span>
+              <span className="font-display font-extrabold text-[28px] leading-[1.05] tracking-[-0.5px]">Byg den selv</span>
+              <span className="text-[16px] leading-[1.5] text-ink-soft">Byggevejledningen viser trin for trin, hvad du skal bruge, og hvad der sker – ingen teknik, ingen kode.</span>
+              <span className={`${btnOutline} mt-auto`}>Åbn byggevejledningen<ArrowIcon size={18} /></span>
+            </Link>
+          </div>
+          <p className="m-0 text-[15px] text-ink-soft">Vil I hellere have det gjort? Vores specialister sætter den op for 5.000 kr. ekskl. moms, skræddersyet til jeres systemer.</p>
+        </div>
+      </section>
     </SiteChrome>
   );
 }

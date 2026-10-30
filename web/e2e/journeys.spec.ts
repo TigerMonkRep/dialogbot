@@ -14,14 +14,14 @@ test("1 · A01→A03→A06: tilmelding med bevaret hensigt, bekræftelse og før
   await page.getByLabel("Invitationskode").fill(PREVIEW_CODE.toLowerCase());
   await page.getByRole("button", { name: "Lås op og se forsiden" }).click();
   // Indgang: two doors – hear it (/proev) or read how it is built (/byggevejledning).
-  await expect(page.getByRole("heading", { name: "Hvor vil du starte?" })).toBeVisible();
-  await expect(page.getByRole("link", { name: /Hør den først/ })).toHaveAttribute("href", "/proev");
-  await expect(page.getByRole("link", { name: /Se, hvordan den bygges/ })).toHaveAttribute("href", "/byggevejledning");
+  await expect(page.getByRole("heading", { name: "Dialogbot tager telefonen, når I ikke kan." })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Prøv den – den ringer til dig/ }).first()).toHaveAttribute("href", "/proev");
+  await expect(page.getByRole("link", { name: /Byg den selv/ })).toHaveAttribute("href", "/byggevejledning");
   await shot(page, info, "p01-indgang");
   // Vej A: the chat on /proev asks the backend first and is honest – no sales workspace is configured in CI, so it
   // cannot ring anyone and says so instead of pretending a call was placed.
   const demoInfo = page.waitForResponse((r) => r.url().includes("/demo-call") && r.request().method() === "GET");
-  await page.getByRole("link", { name: /Hør den først/ }).click();
+  await page.getByRole("link", { name: /Prøv den – den ringer til dig/ }).first().click();
   await expect(page).toHaveURL(/\/proev$/);
   await demoInfo;
   const log = page.getByRole("log");

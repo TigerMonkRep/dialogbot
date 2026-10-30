@@ -320,3 +320,39 @@ def out(d: DemoCall) -> dict:
             "consent_version": d.consent_version, "consented_at": d.consented_at.isoformat(),
             "seller_user_id": str(d.seller_user_id) if d.seller_user_id else None, "note": d.note,
             "lead_id": str(d.lead_id) if d.lead_id else None, "voice": d.voice_key, "industry": d.industry, "industry_other": d.industry_other, "created_at": d.created_at.isoformat() if d.created_at else None}
+
+
+# ---------------------------------------------------------------------------
+# Website chat: a visitor writes freely to Peter; he answers from the sales workspace's approved knowledge
+# ---------------------------------------------------------------------------
+
+CHAT_MAX_TURNS = 16
+CHAT_MAX_CHARS = 600
+
+CHAT_INSTRUCTIONS = (
+    "Kanal: chatten på dialogbot.dk. Du hedder Peter og er Dialogbots digitale receptionist. Du taler med en "
+    "potentiel kunde, der overvejer Dialogbot til sin egen virksomhed. Svar kort (højst tre-fire sætninger), venligt "
+    "og konkret på dansk, som en hjælpsom medarbejder. Stil højst ét spørgsmål ad gangen. Svar kun ud fra den "
+    "godkendte viden og fakta herunder; opfind aldrig priser, funktioner, integrationer eller garantier. Hvis du ikke "
+    "ved det, så sig det, og tilbyd at en medarbejder ringer (93 70 34 33 eller info@dialogbot.dk). Når det er "
+    "naturligt, så tilbyd at ringe kunden op nu, så de kan høre dig tage telefonen – kunden trykker da på knappen "
+    "«Ja, ring til mig». Du kan ikke selv ringe, booke eller oprette noget fra chatten. Ingen emojis, ingen "
+    "punktopstillinger, ingen links ud over dialogbot.dk.\n\n"
+)
+
+
+def chat_reply(db: OrmSession, history: list[dict]) -> dict:
+    """One answer to the visitor's free text. `history` alternates user/assistant and ends with the user.
+    Requires the sales workspace with approved knowledge; raises ApiError 503 `demo_unavailable` otherwise."""
+    from app.core.errors import ApiError
+    from app.modules.ai import service as ai
+    from app.modules.knowledge import service as knowledge
+
+    ws = sales_workspace(db)
+    if ws is None or not knowledge.active_knowledge(db, ws.id):
+        raise ApiError("Chatten er ikke klar endnu – ring til os på 93 70 34 33.", code="demo_unavailable", status_code=503)
+    msgs = [{"role": m["role"], "content": m["content"][:CHAT_MAX_CHARS]} for m in history[-CHAT_MAX_TURNS:]]
+    c, row = ai.complete_logged(db, ws, user_id=None, purpose="demo_chat", messages=msgs,
+                                extra_instructions=CHAT_INSTRUCTIONS + script.FEATURES)
+    db.commit()
+    return {"reply": ai.visible_reply(c), "refused": row.outcome == "refused"}

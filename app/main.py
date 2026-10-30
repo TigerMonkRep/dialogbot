@@ -11,6 +11,7 @@ from app.modules.ambassadors.router import operator_router as ambassadors_operat
 from app.modules.ambassadors.router import public_router as ambassadors_public_router
 from app.modules.ambassadors.router import router as ambassadors_router
 from app.modules.ambassadors.router import workspace_router as ambassadors_workspace_router
+from app.modules.analytics.router import router as analytics_router
 from app.modules.assistant.router import router as assistant_changes_router
 from app.modules.billing.router import router as billing_router
 from app.modules.bookings.router import public_router as bookings_public_router
@@ -68,7 +69,7 @@ def create_app() -> FastAPI:
     install_error_handlers(app)
     app.include_router(health_router)
     for r in (identity_router, workspaces_router, business_router, knowledge_router, setup_router, integrations_router,
-              webhooks_router, ai_router, waitlist_router, pages_public_router, pages_operator_router,
+              webhooks_router, ai_router, waitlist_router, pages_public_router, pages_operator_router, analytics_router,
               webchat_router, webchat_public_router, leads_router,
               reports_router, telephony_router, vapi_webhook_router, billing_router, reception_router, overview_router,
               bookings_router, bookings_public_router, campaigns_router, voices_router, voice_operator_router, own_voice_router, telephony_setup_router,

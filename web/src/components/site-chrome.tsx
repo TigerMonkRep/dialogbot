@@ -2,6 +2,7 @@ import Link from "next/link";
 import "./site-chrome.css";
 import { COMPANY } from "./legal-page";
 import { ChatWidget } from "./chat-widget";
+import { CookieSettingsLink } from "./site-analytics";
 import { ChatIcon, MenuIcon, PlayIcon } from "./site-icons";
 import { LANDING_PAGES } from "@/lib/site";
 import { INDUSTRIES } from "@/lib/industries";
@@ -98,6 +99,7 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
         <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
           <Link href="/privatliv" className={link}>Privatliv</Link>
           <Link href="/vilkaar" className={link}>Handelsbetingelser</Link>
+          <CookieSettingsLink className={link} />
           <span>CVR {COMPANY.cvr}</span>
         </div>
       </div>

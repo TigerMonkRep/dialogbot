@@ -128,6 +128,11 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
         call = message.get("call") or {}
         log.info("vapi.status_update", call_id=call.get("id"), call_type=call.get("type"), status=message.get("status"),
                  ended_reason=message.get("endedReason"))
+        from app.modules.sales import outbound
+
+        if outbound.on_status_update(db, message):  # Dialogbot's own sales calls: ringing/answered/ended for the view
+            db.commit()
+            return {"received": True, "outcome": "stored"}
         return {"received": True, "outcome": "ignored"}
     if kind == "end-of-call-report":
         call_id = str((message.get("call") or {}).get("id") or "")

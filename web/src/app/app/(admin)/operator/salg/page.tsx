@@ -10,6 +10,7 @@ type Overview = Status & {
 const TILES: [string, string][] = [
   ["companies_new_30d", "Nye virksomheder (30 dage)"], ["companies_total", "Virksomheder i alt"], ["researched", "Undersøgt"],
   ["scripts_approved", "Godkendte manuskripter"], ["simulations_30d", "Simulationer (30 dage)"], ["searches_running", "Søgninger i gang"],
+  ["calls_today", "Opkald i dag"],
 ];
 const MODE: Record<string, string> = {
   off: "Slået fra", research: "Research", simulation: "Simulation", test: "Test (kun testnumre)", live: "Live",
@@ -17,10 +18,10 @@ const MODE: Record<string, string> = {
 
 export default async function SalesOverview() {
   const r = await load<Overview>("/operator/salg");
-  if (!r.ok) return <NotOperator />;
+  if (!r.ok) return <NotOperator status={r.status} message={r.message} />;
   const o = r.data;
   return (
-    <SalgFrame active="/app/operator/salg" title="Dialogbots salg" intro="Find virksomheder, undersøg deres egen hjemmeside, byg en profil og et personligt manuskript til Peter, og prøv samtalen af som simulation. Ingen opkald i denne fase.">
+    <SalgFrame active="/app/operator/salg" title="Dialogbots salg" intro="Find virksomheder, undersøg deres egen hjemmeside, byg en profil og et personligt manuskript til Peter, prøv samtalen som simulation – og lad Peter ringe, når kontaktpolitikken tillader det (testopkald til dine egne testnumre, eller kampagner med dokumenteret kontaktgrundlag).">
       <div className="grid md:grid-cols-3 gap-space-md">
         <div className="rounded-2xl border-2 border-ink bg-paper p-space-md"><span className="eyebrow">Tilstand</span><p className="font-display font-bold text-[22px]">{MODE[o.mode] ?? o.mode}</p><p className="text-[13px] text-muted">SALES_OUTBOUND_MODE – ændres i miljøet, ikke her.</p></div>
         <div className="rounded-2xl border-2 border-ink bg-paper p-space-md"><span className="eyebrow">Virksomhedssøgning</span><p className="font-display font-bold text-[22px]">{o.places === "google" ? "Google Places" : "Demo-data"}</p><p className="text-[13px] text-muted">{o.places === "google" ? `Højst ${o.limits.search_daily_request_cap} forespørgsler pr. dag.` : "Fiktive virksomheder – ingen rigtige data."}</p></div>
@@ -42,11 +43,12 @@ export default async function SalesOverview() {
           <ul className="flex flex-col gap-2">{o.needs_you.map((n, i) => (
             <li key={i} className="text-[14px]">
               {n.kind.startsWith("search") ? <Link className="underline" href="/app/operator/salg/find">{n.text}</Link>
+                : n.kind.startsWith("call") ? <Link className="underline" href={`/app/operator/salg/opkald/${n.id}`}>{n.text}</Link>
                 : <Link className="underline" href={`/app/operator/salg/virksomheder/${n.id}`}>{n.text}</Link>}
             </li>))}</ul>
         )}
       </div>
-      <p className="text-[13px] text-muted">Ikke bygget endnu (senere faser): {o.not_built.join(", ")}. Indtil da kan intet i salgskanalen ringe op; demo-opkald findes under fanen Demo-opkald.</p>
+      <p className="text-[13px] text-muted">Ikke bygget endnu (senere faser): {o.not_built.join(", ")}. Demo-opkald fra hjemmesiden findes under fanen Demo-opkald.</p>
     </SalgFrame>
   );
 }

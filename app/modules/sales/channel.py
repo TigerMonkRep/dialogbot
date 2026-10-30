@@ -66,6 +66,12 @@ def status(db: OrmSession) -> dict:
         missing.append("CVR_USERNAME/CVR_PASSWORD er ikke sat – reklamebeskyttelse vises som ukendt.")
     if ws is None:
         missing.append("SALES_WORKSPACE_ID er ikke sat – research (AI-udtræk) og simulation kræver salgsarbejdsrummet.")
+    if s.sales_outbound_mode in ("test", "live") and not (s.vapi_api_key and s.vapi_server_secret):
+        missing.append("VAPI_API_KEY/VAPI_SERVER_SECRET mangler – der kan ikke ringes op.")
+    if s.sales_outbound_mode == "test" and not s.sales_test_numbers.strip():
+        missing.append("SALES_TEST_NUMBERS er tom – testopkald kræver mindst ét testnummer.")
+    if s.sales_outbound_mode in ("off", "research", "simulation"):
+        missing.append("Opkald kræver SALES_OUTBOUND_MODE=test (kun testnumre) eller live.")
     if s.ai_provider == "none":
         missing.append("AI_PROVIDER=none – research og simulation kræver en AI-udbyder.")
     return {"mode": s.sales_outbound_mode,
@@ -78,6 +84,6 @@ def status(db: OrmSession) -> dict:
                        "search_daily_request_cap": s.sales_search_daily_request_cap,
                        "research_max_pages": s.sales_research_max_pages,
                        "google_cache_days": s.google_places_cache_days},
-            "phases": {"research": True, "simulation": True, "campaigns": False, "test_calls": False,
+            "phases": {"research": True, "simulation": True, "campaigns": True, "test_calls": True,
                        "offers": False, "recordings": False},
             "missing": missing}

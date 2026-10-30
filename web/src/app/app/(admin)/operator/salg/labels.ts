@@ -22,3 +22,12 @@ export const ISSUE: Record<string, string> = {
   missing_website: "Ingen hjemmeside", missing_phone: "Intet nummer", conflicting_phone: "Modstridende numre",
   stale: "Forældet", advertising_protection_unknown: "Reklamebeskyttelse ukendt", not_operational: "Ikke i drift",
 };
+
+export type SalesCampaign = {
+  id: string; name: string; status: string; is_test: boolean; budget_net_minor: number | null; spent_net_minor: number;
+  call_days: string[]; call_from: string; call_to: string; max_attempts: number;
+  counts: { total: number; open: number; calls: number; by_status: Record<string, number>; by_outcome: Record<string, number> };
+  created_at: string | null; started_at: string | null;
+};
+export const CAMPAIGN_STATUS: Record<string, string> = { draft: "Kladde", running: "Kører", paused: "På pause", stopped: "Stoppet", completed: "Færdig" };
+

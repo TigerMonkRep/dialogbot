@@ -293,7 +293,7 @@ def create_call(payload: dict) -> dict:
         r = httpx.post(f"{s.vapi_api_url.rstrip('/')}/call", json=payload, timeout=20.0,
                        headers={"authorization": f"Bearer {s.vapi_api_key}"})
     except httpx.HTTPError as e:
-        raise OutboundFailed("Telefontjenesten svarede ikke") from e
+        raise OutboundFailed("Telefontjenesten svarede ikke", extra={"no_response": True}) from e
     if r.status_code >= 400:
         from app.core.logging import log
 
@@ -356,6 +356,22 @@ def dispatch(db: OrmSession, now: datetime | None = None, max_calls: int = 20) -
             c.status, c.completed_at = "completed", now
             continue
         if dialled >= max_calls or outbound_problem(db, c) or not in_window(c, tz_of(db, c.workspace_id), now):
+            continue
+        if c.kind == "internal_sales":
+            # Dialogbot's own sales: the contact policy decides, right before each call (app/modules/sales/policy)
+            from app.modules.sales import outbound
+
+            if outbound.concurrency_full(db):
+                continue
+            for contact in db.scalars(callable_.order_by(CampaignContact.next_attempt_at.nulls_first(),
+                                                         CampaignContact.created_at).limit(10)):
+                if contact.phone in blocked:
+                    contact.status, contact.error = "skipped", "Frabedt sig opkald"
+                    continue
+                if outbound.gate(db, c, contact, now):
+                    outbound.dial(db, c, contact, now)
+                    dialled += 1
+                    break
             continue
         for contact in db.scalars(callable_.order_by(CampaignContact.next_attempt_at.nulls_first(),
                                                      CampaignContact.created_at).limit(10)):

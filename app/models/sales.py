@@ -267,3 +267,127 @@ class SalesIntegrationNote(Base):
     updated_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
                                                  onupdate=func.now())
+
+
+# --------------------------------------------------------------------------- phase 2: basis, policy, calls
+
+
+class SalesContactBasis(Base):
+    """The documented basis for contacting one person/number on one channel for one purpose. An AI call needs a
+    prior request or consent (markedsføringsloven § 10 stk. 1, also for businesses); without a valid, unwithdrawn,
+    unexpired row the contact policy never answers ALLOW."""
+
+    __tablename__ = "sales_contact_basis"
+    __table_args__ = (
+        CheckConstraint("channel in ('ai_call','human_call','email','sms')", name="ck_sales_contact_basis_channel"),
+        CheckConstraint("kind in ('request','consent')", name="ck_sales_contact_basis_kind"),
+        CheckConstraint("source in ('web_form','seller','lead','import','test')", name="ck_sales_contact_basis_source"),
+        Index("ix_sales_contact_basis_contact", "contact_id", "channel"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    contact_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("sales_contacts.id", ondelete="CASCADE"), nullable=False)
+    channel: Mapped[str] = mapped_column(String(12), nullable=False)
+    purpose: Mapped[str] = mapped_column(String(200), nullable=False)
+    kind: Mapped[str] = mapped_column(String(10), nullable=False)
+    text_version: Mapped[str] = mapped_column(String(40), nullable=False)
+    text: Mapped[str] = mapped_column(Text, nullable=False)
+    source: Mapped[str] = mapped_column(String(12), nullable=False)
+    evidence_ref: Mapped[str] = mapped_column(String(300), nullable=False, default="")
+    granted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    valid_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    withdrawn_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    withdrawn_reason: Mapped[str | None] = mapped_column(String(300))
+    recorded_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class SalesBlockList(Base):
+    """Never contact this phone/domain/CVR for Dialogbot's own sales. Global across internal campaigns; reveals
+    nothing between customers' workspaces (their DoNotCall lists stay their own)."""
+
+    __tablename__ = "sales_block_list"
+    __table_args__ = (
+        UniqueConstraint("kind", "value", name="uq_sales_block_list_value"),
+        CheckConstraint("kind in ('phone','domain','cvr')", name="ck_sales_block_list_kind"),
+        CheckConstraint("source in ('call','manual','dispute')", name="ck_sales_block_list_source"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    kind: Mapped[str] = mapped_column(String(8), nullable=False)
+    value: Mapped[str] = mapped_column(String(200), nullable=False)
+    reason: Mapped[str] = mapped_column(String(300), nullable=False, default="")
+    source: Mapped[str] = mapped_column(String(8), nullable=False)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+
+
+class SalesPolicyDecision(Base):
+    """One evaluation of the contact policy, kept so every call (and every refusal) can be explained later."""
+
+    __tablename__ = "sales_policy_decisions"
+    __table_args__ = (
+        CheckConstraint("stage in ('plan','dispatch','check')", name="ck_sales_policy_decisions_stage"),
+        CheckConstraint("result in ('ALLOW','BLOCK','NEEDS_REVIEW')", name="ck_sales_policy_decisions_result"),
+        Index("ix_sales_policy_decisions_contact", "contact_id", "decided_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    contact_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("sales_contacts.id", ondelete="CASCADE"), nullable=False)
+    campaign_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("campaigns.id", ondelete="CASCADE"))
+    stage: Mapped[str] = mapped_column(String(10), nullable=False)
+    result: Mapped[str] = mapped_column(String(14), nullable=False)
+    reasons: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    evidence: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    decided_at: Mapped[datetime] = ts_now()
+
+
+class SalesCallEvent(Base):
+    """Provider events for an internal sales call (ringing, answered, ended, the assistant snapshot). No personal data
+    beyond what the call row already holds."""
+
+    __tablename__ = "sales_call_events"
+    __table_args__ = (Index("ix_sales_call_events_call", "provider_call_id", "received_at"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    campaign_contact_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("campaign_contacts.id", ondelete="CASCADE"))
+    provider_call_id: Mapped[str | None] = mapped_column(String(100))
+    event_type: Mapped[str] = mapped_column(String(40), nullable=False)
+    payload: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    received_at: Mapped[datetime] = ts_now()
+
+
+class SalesQualification(Base):
+    """One of Peter's five partial accepts on a real call, with the customer's own words as evidence."""
+
+    __tablename__ = "sales_qualifications"
+    __table_args__ = (
+        CheckConstraint("accept_no between 1 and 5", name="ck_sales_qualifications_no"),
+        CheckConstraint("result in ('JA','NEJ','BETINGET','IKKE_AFKLARET')", name="ck_sales_qualifications_result"),
+        UniqueConstraint("call_id", "accept_no", name="uq_sales_qualifications_call_no"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    call_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("calls.id", ondelete="CASCADE"), nullable=False)
+    accept_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    result: Mapped[str] = mapped_column(String(14), nullable=False)
+    quote: Mapped[str | None] = mapped_column(Text)
+    message_index: Mapped[int | None] = mapped_column(Integer)
+    note: Mapped[str] = mapped_column(Text, nullable=False, default="")
+
+
+class SalesOpenQuestion(Base):
+    """A question Peter could not answer from approved knowledge. Turned into a knowledge draft by an operator."""
+
+    __tablename__ = "sales_open_questions"
+    __table_args__ = (CheckConstraint("status in ('open','answered','dismissed')", name="ck_sales_open_questions_status"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    company_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("sales_companies.id", ondelete="CASCADE"))
+    call_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("calls.id", ondelete="SET NULL"))
+    question: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(10), nullable=False, default="open")
+    knowledge_item_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("knowledge_items.id", ondelete="SET NULL"))
+    assignee_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()

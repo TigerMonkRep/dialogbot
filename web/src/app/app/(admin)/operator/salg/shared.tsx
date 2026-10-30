@@ -2,11 +2,11 @@ import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 
-/** Dialogbot's own sales channel: only platform operators. Tabs for what phase 1 has built; the rest is listed
- *  honestly on the overview as "ikke bygget endnu". */
+/** Dialogbot's own sales channel: only platform operators. What is not built yet is listed honestly on the overview. */
 const TABS: [string, string][] = [
   ["/app/operator/salg", "Overblik"], ["/app/operator/salg/find", "Find virksomheder"],
-  ["/app/operator/salg/virksomheder", "Virksomheder"], ["/app/operator/salg/viden", "Viden og tilbud"],
+  ["/app/operator/salg/virksomheder", "Virksomheder"], ["/app/operator/salg/kampagner", "Kampagner"],
+  ["/app/operator/salg/opkald", "Opkald"], ["/app/operator/salg/viden", "Viden og tilbud"],
   ["/app/operator/sales", "Demo-opkald"],
 ];
 
@@ -29,8 +29,12 @@ export function SalgFrame({ active, title, intro, children }: { active: string; 
   );
 }
 
-export function NotOperator() {
-  return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Dialogbots salg er kun for Dialogbot-operatører.</p>;
+/** 403 = not an operator. Anything else is said as it is (e.g. the API is still deploying), never as "not allowed". */
+export function NotOperator({ status = 403, message = "" }: { status?: number; message?: string }) {
+  const text = status === 403 ? "Dialogbots salg er kun for Dialogbot-operatører."
+    : status === 404 ? "Salgskanalen findes ikke på serveren endnu – den er sandsynligvis ved at blive deployet. Prøv igen om et par minutter."
+      : `Siden kunne ikke hentes (${status}${message ? `: ${message}` : ""}). Prøv igen om lidt.`;
+  return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">{text}</p>;
 }
 
 export function ChannelOff({ message }: { message: string }) {

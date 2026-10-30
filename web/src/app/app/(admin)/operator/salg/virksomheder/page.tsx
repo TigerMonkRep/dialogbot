@@ -16,7 +16,7 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
   ]);
   if (!r.ok) {
     if (r.status === 501) return <SalgFrame active="/app/operator/salg/virksomheder" title="Virksomheder"><ChannelOff message={r.message} /></SalgFrame>;
-    return <NotOperator />;
+    return <NotOperator status={r.status} message={r.message} />;
   }
   const { items, total, offset } = r.data;
   const next = new URLSearchParams(qs); next.set("offset", String(offset + 50));

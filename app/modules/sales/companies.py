@@ -143,8 +143,8 @@ ISSUE_TEXT = {
 
 
 def contactable_hint(c: SalesCompany) -> dict:
-    """Phase 1 cannot decide "may be called" (that is the contact policy in phase 2). It only shows what is already
-    known to block. Unknown is never "yes"."""
+    """The list view's quick hint: what is already known to block. The real answer is the contact policy per contact
+    (app/modules/sales/policy), shown on the company page. Unknown is never "yes"."""
     blockers = []
     if c.google_business_status and c.google_business_status != "OPERATIONAL":
         blockers.append("Ikke i drift")
@@ -154,7 +154,8 @@ def contactable_hint(c: SalesCompany) -> dict:
         blockers.append("Eksisterende kunde")
     if not c.main_phone_e164:
         blockers.append("Intet nummer")
-    return {"result": "BLOCK" if blockers else "NEEDS_REVIEW", "reasons": blockers or ["Kontaktpolitik kommer i fase 2"]}
+    return {"result": "BLOCK" if blockers else "NEEDS_REVIEW",
+            "reasons": blockers or ["Afgøres af kontaktpolitikken pr. kontakt (se virksomheden)"]}
 
 
 def out(c: SalesCompany) -> dict:
@@ -185,7 +186,7 @@ def out(c: SalesCompany) -> dict:
 
 def fact_out(f: SalesSourceFact) -> dict:
     src = "google" if f.url_or_ref.startswith("google_place:") else "import" if f.url_or_ref.startswith("import") \
-        else "cvr" if f.url_or_ref.startswith("cvr:") else "website"
+        else "cvr" if f.url_or_ref.startswith("cvr:") else "operator" if f.url_or_ref.startswith("manual:") else "website"
     return {"id": str(f.id), "field": f.field, "value": f.value, "url_or_ref": f.url_or_ref, "source": src,
             "fetched_at": f.fetched_at.isoformat(), "evidence": f.evidence, "confidence": f.confidence,
             "extractor_version": f.extractor_version}
@@ -220,7 +221,18 @@ def detail(db: OrmSession, c: SalesCompany) -> dict:
         + [{"at": s.created_at.isoformat(), "kind": "simulation", "text": f"Simulation: {s.outcome or 'ukendt udfald'}"}
            for s in sims],
         key=lambda e: e["at"], reverse=True)
-    return out(c) | {"facts": [fact_out(f) for f in facts], "contacts": [contact_out(x) for x in contacts],
+    from app.models import SalesContactBasis
+    from app.modules.sales import outbound, policy
+
+    approved = outbound.approved_script(db, c.id)
+    contact_rows = []
+    for x in contacts:
+        bases = db.scalars(select(SalesContactBasis).where(SalesContactBasis.contact_id == x.id)
+                           .order_by(SalesContactBasis.granted_at.desc())).all()
+        live = policy.evaluate(db, contact=x, stage="check", script=approved, store=False) if x.phone_e164 else None
+        contact_rows.append(contact_out(x) | {"basis": [outbound.basis_out(b) for b in bases],
+                                               "policy": live.out() if live else None})
+    return out(c) | {"facts": [fact_out(f) for f in facts], "contacts": contact_rows,
                      "profiles": [playbook.profile_out(p) for p in profiles],
                      "scripts": [playbook.script_out(s) for s in scripts],
                      "simulations": [simulate.out(s) for s in sims], "timeline": timeline,

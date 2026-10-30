@@ -8,7 +8,7 @@ export default async function FindPage() {
   ]);
   if (!ind.ok) {
     if (ind.status === 501) return <SalgFrame active="/app/operator/salg/find" title="Find virksomheder"><ChannelOff message={ind.message} /></SalgFrame>;
-    return <NotOperator />;
+    return <NotOperator status={ind.status} message={ind.message} />;
   }
   return (
     <SalgFrame active="/app/operator/salg/find" title="Find virksomheder" intro="Vælg branche og område. Søgningen kører i baggrunden via Google Places (eller demo-data uden nøgle). Virksomhedernes egen hjemmeside undersøges først, når du beder om det.">

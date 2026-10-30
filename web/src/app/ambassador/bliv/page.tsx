@@ -27,8 +27,10 @@ export default async function JoinPage() {
   }
   const t = program.terms;
   const example = 249_500; // the subscription, 2.495 kr./md.
-  const firstMonth = Math.round(example / 2 * t.rate_bp / 10000);
-  const restMonths = (t.months - 1) * Math.round(example * t.rate_bp / 10000);
+  const firstMonth = Math.round(example / 2 * t.rate_bp / 10000);  // the customer pays half the first month (welcome discount)
+  const perMonth = Math.round(example * t.rate_bp / 10000);
+  const restMonths = (t.months - 1) * perMonth;
+  const firstYear = t.bonus_minor + firstMonth + restMonths;
   const steps: [string, string, string, string[]][] = [
     ["1", "Anbefal", "Svar på fire hurtige spørgsmål om reglerne, og del dit personlige link eller din kode med virksomheder, du kender. Er du under 18, godkender en forælder via e-mail.", ["Gratis konto", "Dit link og din kode"]],
     ["2", "De bliver kunde", `Virksomheden opretter sig via dit link og får ${pct(t.customer_discount_bp ?? 5000)} rabat på første måned. Du ser firmanavn og status – aldrig deres samtaler.`, ["Virksomhed der misser opkald"]],
@@ -62,11 +64,11 @@ export default async function JoinPage() {
           <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-highlight">Sådan tjener du · én kunde på abonnement</span>
           <dl className="m-0 grid grid-cols-[1fr_auto] gap-y-1.5 gap-x-3 text-[15px] tabular-nums">
             <dt className="flex gap-2.5"><b className="font-display font-extrabold min-w-7">1×</b>Startbonus</dt><dd className="m-0 text-right">{kr(t.bonus_minor)}</dd>
-            <dt className="flex gap-2.5"><b className="font-display font-extrabold min-w-7">1×</b>Første måned ({pct(t.rate_bp)} af {kr(example / 2)})</dt><dd className="m-0 text-right">{kr(firstMonth)}</dd>
-            <dt className="flex gap-2.5"><b className="font-display font-extrabold min-w-7">{t.months - 1}×</b>Måneder à {pct(t.rate_bp)} af {kr(example)}</dt><dd className="m-0 text-right">{kr(restMonths)}</dd>
-            <dt className="font-display font-extrabold text-[17px] pt-2 border-t border-white/30">I alt det første år</dt><dd className="m-0 text-right font-display font-extrabold text-[17px] pt-2 border-t border-white/30">{kr(t.bonus_minor + firstMonth + restMonths)}</dd>
+            <dt className="flex gap-2.5"><b className="font-display font-extrabold min-w-7">1×</b>Første måned: {pct(t.rate_bp)} af {kr(example / 2)} (kunden har 50 % rabat)</dt><dd className="m-0 text-right">{kr(firstMonth)}</dd>
+            <dt className="flex gap-2.5"><b className="font-display font-extrabold min-w-7">{t.months - 1}×</b>Måneder à {kr(perMonth)} ({pct(t.rate_bp)} af {kr(example)})</dt><dd className="m-0 text-right">{kr(restMonths)}</dd>
+            <dt className="font-display font-extrabold text-[17px] pt-2 border-t border-white/30">I alt det første år</dt><dd className="m-0 text-right font-display font-extrabold text-[17px] pt-2 border-t border-white/30">{kr(firstYear)}</dd>
           </dl>
-          <p className="m-0 text-[13px] text-white/75">Med 10 kunder er det over 20.000 kr. Beløbene er før skat.</p>
+          <p className="m-0 text-[13px] text-white/75">Med 10 kunder er det {kr(firstYear * 10)} det første år. Beløbene er før skat; andelen regnes af det, kunden faktisk betaler ekskl. moms – også kampagneopkald.</p>
         </div>
       </section>
 

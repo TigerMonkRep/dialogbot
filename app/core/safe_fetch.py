@@ -48,13 +48,13 @@ class FetchBlocked(Exception):
 
     def __init__(self, reason: str, detail: str = ""):
         super().__init__(f"{reason}: {detail}" if detail else reason)
-        self.reason = reason
+        self.reason, self.detail = reason, detail
 
 
 class FetchFailed(Exception):
     def __init__(self, reason: str, detail: str = ""):
         super().__init__(f"{reason}: {detail}" if detail else reason)
-        self.reason = reason
+        self.reason, self.detail = reason, detail
 
 
 @dataclass
@@ -171,10 +171,13 @@ def _host_slot(host: str) -> threading.BoundedSemaphore:
         return sem
 
 
-def _one(client: httpx.Client, url: str, ip: str, host: str, *, max_bytes: int, timeout: float) -> tuple[httpx.Response, bytes, bool]:
+def _one(client: httpx.Client, url: str, ip: str, host: str, *, max_bytes: int, timeout: float, method: str = "GET",
+         content: bytes | None = None, headers: dict | None = None) -> tuple[httpx.Response, bytes, bool]:
     pinned, host_header = _pinned(url, ip)
-    req = client.build_request("GET", pinned, headers={"host": host_header, "user-agent": USER_AGENT,
-                                                       "accept": "text/html,application/xhtml+xml;q=0.9,*/*;q=0.5"},
+    hdrs = httpx.Headers({"user-agent": USER_AGENT, "accept": "text/html,application/xhtml+xml;q=0.9,*/*;q=0.5"})
+    hdrs.update(headers or {})
+    hdrs["host"] = host_header
+    req = client.build_request(method, pinned, content=content, headers=hdrs,
                                extensions={"sni_hostname": host, "timeout": {"connect": timeout, "read": timeout,
                                                                               "write": timeout, "pool": timeout}})
     started = time.monotonic()
@@ -254,6 +257,25 @@ def get(url: str, *, budget: Budget | None = None, resolver: Resolver | None = N
                 raise FetchFailed("content_type", ctype[:60])
             return Page(url=current, status=r.status_code, content_type=ctype, body=body, truncated=truncated)
     raise FetchBlocked("redirects", url)
+
+
+def send(method: str, url: str, *, content: bytes | None = None, headers: dict | None = None, timeout: float = 10.0,
+         max_bytes: int = 64_000, resolver: Resolver | None = None, transport: httpx.BaseTransport | None = None) -> Page:
+    """One request to the pinned, validated address – no redirects followed, no robots.txt (for deliveries such as
+    outgoing webhooks, where the receiver gave us the URL). Any status is returned; a 3xx is NOT followed.
+    Raises FetchBlocked (not allowed) or FetchFailed ("timeout", "http_error", "dns")."""
+    host, _port = check_url(url)
+    ip = resolve_checked(host, resolver)
+    with httpx.Client(follow_redirects=False, transport=transport, timeout=timeout) as client, _host_slot(host):
+        try:
+            r, body, truncated = _one(client, url, ip, host, max_bytes=max_bytes, timeout=timeout, method=method,
+                                      content=content, headers=headers)
+        except httpx.TimeoutException as e:
+            raise FetchFailed("timeout", url) from e
+        except httpx.HTTPError as e:
+            raise FetchFailed("http_error", type(e).__name__) from e
+    return Page(url=url, status=r.status_code, content_type=r.headers.get("content-type", ""), body=body,
+                truncated=truncated)
 
 
 def get_html(url: str, **kw) -> tuple[str, str] | None:

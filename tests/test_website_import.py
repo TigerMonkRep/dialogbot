@@ -56,17 +56,9 @@ def test_url_validation_and_ssrf_guard(monkeypatch):
     assert importer.normalize_url("fjordgulv.dk") == "https://fjordgulv.dk"
     with pytest.raises(ValidationFailed):
         importer.normalize_url("ftp://fjordgulv.dk")
-    monkeypatch.setenv("APP_ENV", "staging")
-    monkeypatch.setenv("SECRET_KEY", "x" * 40)
-    monkeypatch.setenv("ENABLE_DEV_TOOLS", "false")
-    get_settings.cache_clear()
-    try:
-        assert importer._allowed("http://127.0.0.1:8000/") is False
-        assert importer._allowed("http://10.0.0.5/") is False
-        assert importer._allowed("http://169.254.169.254/latest/meta-data") is False
-        assert importer._allowed("http://localhost/") is False
-    finally:
-        get_settings.cache_clear()
+    # the fetch goes through app/core/safe_fetch, which refuses private/metadata addresses in every environment
+    for url in ("http://127.0.0.1:8000/", "http://10.0.0.5/", "http://169.254.169.254/latest/meta-data", "http://localhost/"):
+        assert importer.fetch(url) is None, url
 
 
 def test_import_creates_drafts_only(api, two_workspaces, fake_ai, db):

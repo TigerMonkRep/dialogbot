@@ -8,8 +8,11 @@ down gets retries with backoff; after the last attempt the connection shows the 
 Events: lead.created, booking.created, booking.cancelled, action.completed, conversation.ended, test.ping.
 Payload shape is flat and Zapier/Make-friendly: {"event", "id", "occurred_at", "workspace_id", "data": {...}}.
 
-The URL must be https and public (no private ranges – the same guard the website import uses). In dev/test an
-http localhost URL is accepted so tests can run a receiver.
+The URL must be https on the standard port and resolve to public addresses only (app/core/safe_fetch rules, in every
+environment; ALLOW_PRIVATE_FETCH lets local tests reach an IP literal on this machine). Delivery goes through
+safe_fetch.send: the host is resolved and checked again at send time and the connection is pinned to that address,
+and redirects are not followed, so a DNS answer that changes after the connect-time check cannot reach an internal
+address.
 """
 from __future__ import annotations
 
@@ -20,7 +23,6 @@ import secrets
 import time
 from urllib.parse import urlparse
 
-from app.config import get_settings
 from app.modules.integrations.connectors.base import ActionError, ActionResult, ConnectorSpec, RunContext, obj
 
 EVENTS = ("lead.created", "booking.created", "booking.cancelled", "action.completed", "conversation.ended", "test.ping")
@@ -29,14 +31,16 @@ MAX_BODY = 200_000
 
 
 def url_allowed(url: str) -> bool:
-    from app.modules.knowledge.importer import _host_is_public
+    """Connect-time check. Delivery checks again and pins the address (deliver → safe_fetch.send)."""
+    from app.core import safe_fetch
 
-    p = urlparse(url)
-    if not p.hostname or p.username or p.password:
+    if urlparse(url).scheme != "https":
         return False
-    if get_settings().app_env in ("dev", "test") and p.scheme in ("http", "https") and p.hostname in ("localhost", "127.0.0.1"):
-        return True
-    return p.scheme == "https" and _host_is_public(p.hostname)
+    try:
+        safe_fetch.resolve_checked(safe_fetch.check_url(url)[0])
+    except (safe_fetch.FetchBlocked, safe_fetch.FetchFailed):
+        return False
+    return True
 
 
 def new_secret() -> str:
@@ -70,22 +74,25 @@ def deliver(*, url: str, secret: str, body: bytes, simulated: bool) -> int:
         from app.modules.integrations.connectors.fakes import fake_deliver_webhook
 
         return fake_deliver_webhook(url=url, body=body, headers=headers)
-    import httpx
+    from app.core import safe_fetch
 
-    if not url_allowed(url):
+    if urlparse(url).scheme != "https":
         raise ActionError("Webhook-adressen er ikke tilladt (skal være en offentlig https-adresse)", code="url_not_allowed")
     try:
-        r = httpx.post(url, content=body, headers=headers, timeout=10.0, follow_redirects=False)
-    except httpx.TimeoutException as e:
-        raise ActionError("Modtageren svarede ikke i tide", code="provider_timeout", retryable=True) from e
-    except httpx.HTTPError as e:
+        r = safe_fetch.send("POST", url, content=body, headers=headers, timeout=10.0)
+    except safe_fetch.FetchBlocked as e:
+        raise ActionError("Webhook-adressen er ikke tilladt (skal være en offentlig https-adresse)",
+                          code="url_not_allowed") from e
+    except safe_fetch.FetchFailed as e:
+        if e.reason == "timeout":
+            raise ActionError("Modtageren svarede ikke i tide", code="provider_timeout", retryable=True) from e
         raise ActionError("Modtageren kunne ikke nås", code="provider_unavailable", retryable=True) from e
-    if r.status_code == 410:
+    if r.status == 410:
         raise ActionError("Modtageren har afmeldt webhooken (410)", code="gone")
-    if r.status_code >= 400:
-        raise ActionError(f"Modtageren afviste ({r.status_code})", code="provider_rejected",
-                          retryable=r.status_code == 429 or r.status_code >= 500)
-    return r.status_code
+    if r.status >= 400:
+        raise ActionError(f"Modtageren afviste ({r.status})", code="provider_rejected",
+                          retryable=r.status == 429 or r.status >= 500)
+    return r.status
 
 
 def payload(event: str, event_id: str, workspace_id: str, occurred_at: str, data: dict) -> bytes:

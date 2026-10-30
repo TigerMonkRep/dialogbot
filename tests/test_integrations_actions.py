@@ -17,7 +17,7 @@ import pytest
 from sqlalchemy import text
 
 from app.config import get_settings
-from app.core import crypto
+from app.core import crypto, safe_fetch
 from app.models import ActionRun, Booking, Conversation, IntegrationConnection, OAuthState, OutboxEvent
 from app.modules.integrations import actions, connectors, credentials, oauth
 from app.modules.integrations.connectors import webhook
@@ -26,10 +26,20 @@ from app.modules.integrations.connectors.fakes import WORLD
 from app.worker import runner
 
 SECRET = "vapi-test-secret-0123456789abcdef"
+HOOK = "https://hooks.example.dk/hook"
+PUBLIC_IP = "93.184.216.34"
+DNS = {"hooks.example.dk": [PUBLIC_IP], "intern.example.dk": ["10.0.0.7"]}
+
+
+def _dns(host: str) -> list[str]:
+    if host not in DNS:
+        raise safe_fetch.FetchFailed("dns", host)
+    return DNS[host]
 
 
 @pytest.fixture
 def fake(monkeypatch):
+    monkeypatch.setattr(safe_fetch, "system_resolver", _dns)  # webhook URLs are checked against public DNS answers
     monkeypatch.setenv("CONNECTORS_PROVIDER", "fake")
     monkeypatch.setenv("AI_PROVIDER", "fake")
     monkeypatch.setenv("VAPI_SERVER_SECRET", SECRET)
@@ -127,8 +137,8 @@ def test_roles_and_isolation(api, two_workspaces, fake):
     t = two_workspaces
     staff = api.add_member(t["tok_a"], t["ws_a"], "staff-int@testmail.dk", "staff")
     assert api.get(staff, _base(api, t)).status_code == 200
-    assert api.post(staff, f"{_base(api, t)}/zapier/connect", {"config": {"url": "http://localhost:9/hook"}}).status_code == 403
-    r = api.post(t["tok_a"], f"{_base(api, t)}/zapier/connect", {"config": {"url": "http://localhost:9/hook"}})
+    assert api.post(staff, f"{_base(api, t)}/zapier/connect", {"config": {"url": HOOK}}).status_code == 403
+    r = api.post(t["tok_a"], f"{_base(api, t)}/zapier/connect", {"config": {"url": HOOK}})
     assert r.status_code == 200
     other = {x["key"]: x for x in api.get(t["tok_b"], f"/workspaces/{t['ws_b']}/integrations").json()["items"]}
     assert other["zapier"]["status"] == "not_connected"
@@ -142,13 +152,13 @@ def test_webhook_secret_shown_once_never_readable_and_signed_delivery(api, two_w
     base = _base(api, t)
     bad = api.post(t["tok_a"], f"{base}/webhook/connect", {"config": {"url": "ftp://example.dk/x"}})
     assert bad.status_code == 422
-    r = api.post(t["tok_a"], f"{base}/webhook/connect", {"config": {"url": "http://localhost:9/hook"}},
+    r = api.post(t["tok_a"], f"{base}/webhook/connect", {"config": {"url": HOOK}},
                  **{"Idempotency-Key": "wh-1"})
     assert r.status_code == 200, r.text
     signing = r.json()["signing_secret"]
     assert signing.startswith("whsec_") and r.json()["simulated"] is True
     # the replay of the same command does not hand the secret out again
-    again = api.post(t["tok_a"], f"{base}/webhook/connect", {"config": {"url": "http://localhost:9/hook"}},
+    again = api.post(t["tok_a"], f"{base}/webhook/connect", {"config": {"url": HOOK}},
                      **{"Idempotency-Key": "wh-1"})
     assert "signing_secret" not in again.json()
     # never readable afterwards: not in the catalogue, not in the idempotency table, not in the DB row in clear
@@ -175,7 +185,7 @@ def test_webhook_secret_shown_once_never_readable_and_signed_delivery(api, two_w
 
 def test_webhook_retries_then_marks_error(api, two_workspaces, fake, db):
     t = two_workspaces
-    api.post(t["tok_a"], f"{_base(api, t)}/make/connect", {"config": {"url": "http://localhost:9/make"}})
+    api.post(t["tok_a"], f"{_base(api, t)}/make/connect", {"config": {"url": "https://hooks.example.dk/make"}})
     fake.fail_webhook_times = 1
     api.post(t["tok_a"], f"/workspaces/{t['ws_a']}/leads", {"contact_name": "Ole", "need_summary": "Tilbud"})
     ev = runner.process_once()
@@ -198,6 +208,51 @@ def test_webhook_retries_then_marks_error(api, two_workspaces, fake, db):
     assert db.get(OutboxEvent, ev.id).status == "failed"
     item = next(x for x in api.get(t["tok_a"], _base(api, t)).json()["items"] if x["key"] == "make")
     assert item["status"] == "error" and "kunne ikke leveres" in item["error"]
+
+
+def test_webhook_url_must_be_public_https(api, two_workspaces, fake):
+    for url in ("http://hooks.example.dk/hook", "https://localhost/hook", "https://127.0.0.1/hook",
+                "https://169.254.169.254/latest", "https://intern.example.dk/hook", "https://findes-ikke.example.dk/x",
+                "https://hooks.example.dk:8443/hook", "https://user:pw@hooks.example.dk/hook"):
+        assert webhook.url_allowed(url) is False, url
+    assert webhook.url_allowed(HOOK) is True
+    r = api.post(two_workspaces["tok_a"], f"{_base(api, two_workspaces)}/webhook/connect",
+                 {"config": {"url": "https://intern.example.dk/hook"}})
+    assert r.status_code == 422
+
+
+def test_live_webhook_delivery_is_pinned_and_rechecked(monkeypatch):
+    """Real delivery (not simulated): connects to the address checked at send time, never follows a redirect, and a
+    DNS answer that turned private after the connect-time check is refused before any request."""
+    import functools
+
+    import httpx
+
+    seen: list[httpx.Request] = []
+
+    def receiver(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        if request.url.path == "/flyttet":
+            return httpx.Response(302, headers={"location": "https://intern.example.dk/hook"})
+        return httpx.Response(204)
+
+    dns = dict(DNS)
+    monkeypatch.setattr(safe_fetch, "system_resolver", lambda host: dns[host])
+    monkeypatch.setattr(safe_fetch, "send", functools.partial(safe_fetch.send, transport=httpx.MockTransport(receiver)))
+    body = webhook.payload("test.ping", "t", "", "", {})
+    assert webhook.deliver(url=HOOK, secret="whsec_x", body=body, simulated=False) == 204
+    req = seen[-1]
+    assert req.url.host == PUBLIC_IP and req.headers["host"] == "hooks.example.dk" and req.method == "POST"
+    assert req.extensions["sni_hostname"] == "hooks.example.dk" and req.content == body
+    assert webhook.verify("whsec_x", body, req.headers[webhook.SIGNATURE_HEADER])
+    # a redirect is not followed (the 302 is a status, not a second request)
+    assert webhook.deliver(url="https://hooks.example.dk/flyttet", secret="s", body=body, simulated=False) == 302
+    assert len(seen) == 2
+    # DNS rebinding: the host now resolves to a private address → refused, nothing sent
+    dns["hooks.example.dk"] = ["10.0.0.7"]
+    with pytest.raises(connectors.base.ActionError) as e:
+        webhook.deliver(url=HOOK, secret="s", body=body, simulated=False)
+    assert e.value.code == "url_not_allowed" and len(seen) == 2
 
 
 # --------------------------------------------------------------------------- OAuth

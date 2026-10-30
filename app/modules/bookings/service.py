@@ -219,25 +219,29 @@ def _emit(db: OrmSession, ws_id: uuid.UUID, event: str, b: Booking, tz: str) -> 
 # --------------------------------------------------------------------------- calendar (iCal)
 
 def sync_busy(db: OrmSession, s: BookingSettings) -> int:
-    """Read busy time from the owner's secret iCal address. Stores [start, end] pairs only."""
-    import httpx
+    """Read busy time from the owner's secret iCal address. Stores [start, end] pairs only.
+    Fetched through app/core/safe_fetch (pinned public address, every redirect re-checked, size and time limits)."""
     import icalendar
     import recurring_ical_events
 
-    from app.modules.knowledge.importer import _allowed
+    from app.core import safe_fetch
 
     if not s.busy_ics_url:
         s.busy_blocks, s.busy_error = [], None
         return 0
     url = s.busy_ics_url.strip().replace("webcal://", "https://", 1)
     try:
-        if not _allowed(url):
-            raise ApiError("Kalenderadressen er ikke tilladt", code="calendar_url")
-        with httpx.Client(timeout=15.0, follow_redirects=True) as c:
-            r = c.get(url)
-        if r.status_code != 200 or len(r.content) > ICS_MAX_BYTES:
-            raise ApiError(f"Kalenderen kunne ikke hentes ({r.status_code})", code="calendar_fetch")
-        cal = icalendar.Calendar.from_ical(r.content)
+        try:
+            page = safe_fetch.get(url, budget=safe_fetch.Budget(max_pages=1, page_bytes=ICS_MAX_BYTES, timeout=15.0),
+                                  robots=False, html_only=False)
+        except safe_fetch.FetchBlocked as e:
+            raise ApiError("Kalenderadressen er ikke tilladt", code="calendar_url") from e
+        except safe_fetch.FetchFailed as e:
+            detail = f" ({e.detail})" if e.reason == "status" else ""
+            raise ApiError(f"Kalenderen kunne ikke hentes{detail}", code="calendar_fetch") from e
+        if page.truncated:
+            raise ApiError("Kalenderen er for stor til at blive læst", code="calendar_fetch")
+        cal = icalendar.Calendar.from_ical(page.body)
         now = _now()
         blocks = []
         for ev in recurring_ical_events.of(cal).between(now - timedelta(days=1), now + timedelta(days=s.horizon_days + 2)):

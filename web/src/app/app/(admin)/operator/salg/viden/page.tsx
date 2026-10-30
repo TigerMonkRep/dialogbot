@@ -18,7 +18,7 @@ export default async function KnowledgePage() {
   const r = await load<Knowledge>("/operator/salg/knowledge");
   if (!r.ok) {
     if (r.status === 501) return <SalgFrame active="/app/operator/salg/viden" title="Viden og tilbud"><ChannelOff message={r.message} /></SalgFrame>;
-    return <NotOperator />;
+    return <NotOperator status={r.status} message={r.message} />;
   }
   const k = r.data;
   return (

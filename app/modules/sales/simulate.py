@@ -131,13 +131,14 @@ def run(db: OrmSession, company: SalesCompany, s: SalesScript, *, persona: str, 
     return sim
 
 
-def _classify(db: OrmSession, ws, provider, sim: SalesSimulation, transcript: list[dict], revision: int,
-              user_id: uuid.UUID | None) -> None:
+def classify_accepts(db: OrmSession, ws, provider, transcript: list[dict], revision: int,
+                     user_id: uuid.UUID | None) -> tuple[list[dict], str]:
+    """The five partial accepts with the customer's own words (sales-accepts-v1). A quote the customer never said is
+    dropped, and a JA/BETINGET without a quote becomes IKKE_AFKLARET. Flushes the usage row; does not commit."""
     text = "\n".join(f"[{i}] {'Peter' if t['speaker'] == 'peter' else 'Kunde'}: {t['text']}" for i, t in enumerate(transcript))
     c, _ = log_call(db, ws, provider, user_id=user_id, purpose="sales_accepts", system=ACCEPTS_SYSTEM,
                     messages=[{"role": "user", "content": text}], prompt_version=ACCEPTS_VERSION, revision=revision,
                     max_tokens=800)
-    db.commit()
     start, end = c.text.find("{"), c.text.rfind("}")
     try:
         data = json.loads(c.text[start:end + 1]) if start >= 0 else {}
@@ -156,8 +157,14 @@ def _classify(db: OrmSession, ws, provider, sim: SalesSimulation, transcript: li
         if result in ("JA", "BETINGET") and not quote:
             result = "IKKE_AFKLARET"
         accepts.append({"no": a["no"], "result": result, "quote": quote or None, "message_index": idx})
-    sim.partial_accepts = sorted(accepts, key=lambda a: a["no"])
-    sim.outcome = data.get("outcome") if data.get("outcome") in OUTCOMES else "unclear"
+    outcome = data.get("outcome") if data.get("outcome") in OUTCOMES else "unclear"
+    return sorted(accepts, key=lambda a: a["no"]), outcome
+
+
+def _classify(db: OrmSession, ws, provider, sim: SalesSimulation, transcript: list[dict], revision: int,
+              user_id: uuid.UUID | None) -> None:
+    sim.partial_accepts, sim.outcome = classify_accepts(db, ws, provider, transcript, revision, user_id)
+    db.commit()
 
 
 def out(s: SalesSimulation) -> dict:

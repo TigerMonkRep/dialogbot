@@ -72,7 +72,7 @@ Statusser: `EKSISTERER`, `DELVIST`, `MANGLER`, `IKKE_VERIFICERET`. Alle ruter li
 
 ### Implementeringsstatus (opdateres pr. fase)
 
-Fase 1 er implementeret (migration `b3c5d7e9f1a2`). Drift og brug: `docs/sales/salgskanal-drift.md`.
+Fase 1 (migration `b3c5d7e9f1a2`) og fase 2 (migration `c4d6e8f0a2b4`) er implementeret. Drift og brug: `docs/sales/salgskanal-drift.md`.
 
 | Område | Status efter fase 1 | Hvor |
 |---|---|---|
@@ -83,7 +83,10 @@ Fase 1 er implementeret (migration `b3c5d7e9f1a2`). Drift og brug: `docs/sales/s
 | Vidensbase-adgangsklasser | `IMPLEMENTERET` (`knowledge_versions.audience`, filter i `build_system_prompt`; seed-script) | `ai/service.py`, `scripts/seed_sales_knowledge.py` |
 | Individuelle manuskripter | `IMPLEMENTERET` (profil, `peter-sales-v1`, validering, godkendelse; integrationsregister) | `sales/playbook.py`, `sales/integrations.py` |
 | Simulation | `IMPLEMENTERET` (AI-kunde, delaccepter med citater, `would_call`, altid `simulated`) | `sales/simulate.py` |
-| Samtykke og spærring, kampagnekø, Peter-værktøjer, transskript-UI | `MANGLER` (fase 2) | – |
+| Samtykke og spærring | `IMPLEMENTERET` (`sales_contact_basis`, `sales_block_list`, `policy.evaluate` med `sales_policy_decisions`) | `sales/policy.py`, `sales/outbound.py` |
+| Kampagnekø og testopkald | `IMPLEMENTERET` (`Campaign.kind=internal_sales`, politik før hvert opkald, `dispatch_key`, `unknown`, budget, samtidighed, stop) | `campaigns/service.py`, `sales/outbound.py` |
+| Transskription og opkaldsvisning | `IMPLEMENTERET` (Opkald-fanen; `calls.direction/outcome/…`, `sales_call_events`, `sales_qualifications`); lyd `NOT_RECORDED` | `web/…/operator/salg/opkald` |
+| Peters værktøjer under opkald | `MANGLER` (fase 3) | – |
 | Tilbud, ordre, møder, statistik | `MANGLER` (fase 3) | – |
 | Lyd, retention, rettigheder | `MANGLER` (fase 4); indstillingerne findes i `app/config.py` | – |
 

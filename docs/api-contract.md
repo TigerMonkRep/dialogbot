@@ -121,7 +121,7 @@ Se `docs/ambassadors/program.md` for regler.
 
 ## Dialogbots interne salgskanal (kun operatører)
 
-Alle ruter kræver `is_platform_operator` (403 `operator_only`). Med `SALES_OUTBOUND_MODE=off` svarer alle undtagen `GET /operator/salg` 501 `sales_channel_off`; simulation kræver `simulation|test|live` (ellers 501 `sales_mode_not_allowed`). Se `docs/sales/salgskanal-drift.md`.
+Alle ruter kræver `is_platform_operator` (403 `operator_only`). Kundernes `/workspaces/{ws}/campaigns` viser og styrer kun `kind=customer`. Med `SALES_OUTBOUND_MODE=off` svarer alle undtagen `GET /operator/salg` 501 `sales_channel_off`; simulation kræver `simulation|test|live` (ellers 501 `sales_mode_not_allowed`). Se `docs/sales/salgskanal-drift.md`.
 
 | Metode og sti | Beskrivelse |
 |---|---|
@@ -139,6 +139,16 @@ Alle ruter kræver `is_platform_operator` (403 `operator_only`). Med `SALES_OUTB
 | `POST /operator/salg/companies/{id}/simulate` `{script_id, persona, max_turns}` | 201; simuleret samtale mod en AI-kunde: transskript, delaccepter med citater, `would_call` (værktøjer logges, udføres aldrig), `simulated: true`. |
 | `GET /operator/salg/integrations`, `PUT …/integrations` | Integrationsregister (`AKTIV | KRÆVER_OPSÆTNING | PLANLAGT | UKENDT`) og operatør-noter. |
 | `GET /operator/salg/knowledge` | Salgsarbejdsrummets godkendte viden med `audience`, prisliste, manuskriptversioner, register. |
+| `POST /operator/salg/companies/{id}/contacts` | Tilføj kontakt (rolle, navn, telefon/e-mail). |
+| `POST /operator/salg/companies/{id}/advertising-check` | Manuelt tjek af reklamebeskyttelse `{advertising_protected, note}` (auditeres). |
+| `POST /operator/salg/contacts/{id}/basis`, `POST /operator/salg/basis/{id}/withdraw` | Kontaktgrundlag `{channel, purpose, kind: request|consent, source, text (fuld tekst), text_version, evidence_ref, valid_until}` og tilbagetrækning. |
+| `POST /operator/salg/contacts/{id}/check` | Kør kontaktpolitikken nu → `{result: ALLOW|BLOCK|NEEDS_REVIEW, reasons, reason_text, evidence}` (gemmes). |
+| `GET/POST /operator/salg/block-list` | Dialogbots spærreliste (`phone|domain|cvr`). |
+| `GET/POST /operator/salg/campaigns`, `GET …/{id}` | Interne kampagner (`kind=internal_sales`); detaljen indeholder forhåndsvisningen pr. kontakt og omkostningsloftet. |
+| `POST /operator/salg/campaigns/{id}/members` `{contact_ids[], company_ids[]}` | Tilføj kontakter (virksomheders hovednummer); politikken køres (plan). |
+| `POST /operator/salg/campaigns/{id}/start` `{accepted_max_net_minor}`, `…/pause`, `…/stop` | Start kræver godkendt loft og mindst én ALLOW (409 `nothing_allowed`, `preview_not_accepted`, `sales_mode_not_allowed`). |
+| `POST /operator/salg/test-calls` `{company_id, script_id, phone, accepted_test}` | Testopkald til et nummer i `SALES_TEST_NUMBERS` (422 ellers); kræver `SALES_OUTBOUND_MODE=test|live`. |
+| `GET /operator/salg/calls?q&outcome&test`, `GET …/calls/{campaign_contact_id}` | Alle forsøg og ét opkald med transskript, delaccepter, hændelser og politikbeslutning. |
 
 ## Integrationer, drift, dev
 

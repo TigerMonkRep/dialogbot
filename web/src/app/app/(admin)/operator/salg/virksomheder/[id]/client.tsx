@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/client";
 import { Alert, Badge, Button, ErrorBox, Field, Input, Tag, useSubmit } from "@/components/ui";
 import { type Company, ISSUE, RESEARCH, SOURCE } from "../../labels";
+import { type ContactRow, ContactsPanel } from "./contacts";
 
 type Fact = { id: string; field: string; value: string; url_or_ref: string; source: string; fetched_at: string; evidence: string; confidence: string };
-type Contact = { id: string; name: string | null; role: string | null; phone_e164: string | null; email: string | null; is_main_number: boolean; status: string };
+type Contact = ContactRow;
 type Profile = { id: string; version: number; facts: { field: string; text: string; source: string }[]; hypotheses: { question: string }[]; relevant_service: string; why_relevant: string; created_at: string };
 type Script = { id: string; version: number; script_version: string; status: string; rendered_prompt: string; validation: { ok: boolean; errors: string[]; warnings: string[] }; body: Record<string, unknown>; created_at: string; approved_at: string | null };
 type Sim = { id: string; script_id: string; persona: string; transcript: { speaker: string; text: string }[]; outcome: string | null; partial_accepts: { no: number; result: string; quote: string | null }[]; would_call: { tool: string; input: unknown }[]; error: string | null; simulated: boolean; created_at: string };
@@ -26,7 +27,7 @@ function Box({ title, children }: { title: string; children: React.ReactNode }) 
   return <section className="rounded-2xl border-2 border-ink bg-paper p-space-md flex flex-col gap-2 min-w-0"><h2 className="font-display font-bold text-[18px]">{title}</h2>{children}</section>;
 }
 
-export function CompanyDetail({ c, canSimulate }: { c: Detail; canSimulate: boolean }) {
+export function CompanyDetail({ c, canSimulate, mode }: { c: Detail; canSimulate: boolean; mode: string }) {
   const router = useRouter();
   const [persona, setPersona] = useState("Ejer, travl, har onlinebooking");
   const [researching, setResearching] = useState(Boolean(c.research_started_at));
@@ -60,7 +61,7 @@ export function CompanyDetail({ c, canSimulate }: { c: Detail; canSimulate: bool
       <ErrorBox error={research.error ?? run.error} />
       {c.research_error && <Alert kind="warn">Research: {c.research_error}</Alert>}
 
-      <div className="grid lg:grid-cols-2 gap-space-md">
+      <div className="grid gap-space-md">
         <Box title="Stamdata">
           <dl className="grid grid-cols-[8rem_1fr] gap-x-3 gap-y-1 text-[14px]">
             <dt className="text-muted">Adresse</dt><dd>{[c.address_line, c.postal_code, c.city].filter(Boolean).join(", ") || "ikke fundet"}</dd>
@@ -72,10 +73,9 @@ export function CompanyDetail({ c, canSimulate }: { c: Detail; canSimulate: bool
             <dt className="text-muted">Datakvalitet</dt><dd>{(c.data_quality.issues ?? []).length ? (c.data_quality.issues ?? []).map((i) => ISSUE[i] ?? i).join(", ") : "OK"}</dd>
           </dl>
         </Box>
-        <Box title="Kontakter">
-          {c.contacts.length === 0 ? <p className="text-muted text-[14px]">Ingen fundet.</p> : <ul className="text-[14px]">{c.contacts.map((x) => <li key={x.id}>{x.role ?? x.name ?? "Kontakt"}: {x.phone_e164 ?? x.email ?? "–"} {x.is_main_number && <Tag>Hovednummer</Tag>} <span className="text-muted">({x.status === "unverified" ? "ikke verificeret" : x.status})</span></li>)}</ul>}
-        </Box>
       </div>
+
+      <ContactsPanel companyId={c.id} contacts={c.contacts} approvedScriptId={approved?.id ?? null} mode={mode} advertisingProtected={c.advertising_protected} />
 
       <Box title={`Fakta og kilder (${c.facts.length})`}>
         {c.facts.length === 0 ? <p className="text-muted text-[14px]">Ingen endnu.</p> : (

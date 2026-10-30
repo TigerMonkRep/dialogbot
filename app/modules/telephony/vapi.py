@@ -417,6 +417,9 @@ def end_of_call(db: OrmSession, message: dict) -> str:
 
     if campaigns.on_report(db, message, call_id=call_id, conv=conv, duration=duration, visitor_lines=visitor_lines,
                            transcript="\n".join(lines), summary=summary):
+        from app.modules.sales import outbound
+
+        outbound.on_report(db, message, call_id=call_id, conv=conv, transcript="\n".join(lines))
         return "applied"  # an outbound campaign call: its contact gets the outcome, not a generic callback lead
     from app.modules.sales import service as sales
 

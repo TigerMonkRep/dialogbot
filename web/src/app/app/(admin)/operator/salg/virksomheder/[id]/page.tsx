@@ -8,12 +8,12 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
   if (!r.ok) {
     if (r.status === 501) return <SalgFrame active="/app/operator/salg/virksomheder" title="Virksomhed"><ChannelOff message={r.message} /></SalgFrame>;
     if (r.status === 404) return <SalgFrame active="/app/operator/salg/virksomheder" title="Virksomhed"><p>Virksomheden findes ikke. <Link className="underline" href="/app/operator/salg/virksomheder">Alle virksomheder</Link></p></SalgFrame>;
-    return <NotOperator />;
+    return <NotOperator status={r.status} message={r.message} />;
   }
   return (
     <SalgFrame active="/app/operator/salg/virksomheder" title={r.data.display_name}>
       <Link href="/app/operator/salg/virksomheder" className="text-primary underline text-[14px]">← Alle virksomheder</Link>
-      <CompanyDetail c={r.data} canSimulate={st.ok && ["simulation", "test", "live"].includes(st.data.mode)} />
+      <CompanyDetail c={r.data} canSimulate={st.ok && ["simulation", "test", "live"].includes(st.data.mode)} mode={st.ok ? st.data.mode : "off"} />
     </SalgFrame>
   );
 }

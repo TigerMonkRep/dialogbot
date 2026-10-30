@@ -1,7 +1,8 @@
 # Dialogbots interne salgskanal – drift
 
-Status: **fase 1 implementeret** (søgning, sikker research, profil, manuskript, simulation, admin). Fase 2–4 (kontaktpolitik,
-kampagner, testopkald, tilbud/ordre, møder, statistik, lyd, retention) er **ikke implementeret**. Analyse og plan:
+Status: **fase 1 og 2 implementeret** (søgning, sikker research, profil, manuskript, simulation, kontaktgrundlag,
+kontaktpolitik, spærreliste, interne kampagner, testopkald, opkald og transskript). Fase 3–4 (tilbud/ordre, møder,
+Peters værktøjer under opkald, statistik, lyd, retention) er **ikke implementeret**. Analyse og plan:
 `docs/sales/intern-salgskanal.md`. Kun platformsoperatører har adgang (`/app/operator/salg`, API `/api/v1/operator/salg/*`).
 
 ## Tilstande (`SALES_OUTBOUND_MODE`)
@@ -11,7 +12,8 @@ kampagner, testopkald, tilbud/ordre, møder, statistik, lyd, retention) er **ikk
 | `off` (standard) | Kun statussiden `GET /operator/salg`. Alle andre ruter svarer 501 `sales_channel_off`; workeren kører ingen søgejob. |
 | `research` | Søgning, import, research af hjemmesider, profil, manuskript, integrationsregister. |
 | `simulation` | Som `research` + simulerede samtaler. Anbefalet til staging og til at prøve kanalen af. |
-| `test`, `live` | Accepteres af konfigurationen (`live` kræver Vapi og `TELEPHONY_PROVIDER=live`), men **der findes ingen opkaldskode i fase 1** – intet ringes op. |
+| `test` | Som `simulation` + rigtige opkald, men kontaktpolitikken giver kun ALLOW til numre i `SALES_TEST_NUMBERS`. |
+| `live` | Rigtige opkald til kontakter, som politikken tillader. Kræver Vapi og `TELEPHONY_PROVIDER=live` (ellers starter processen ikke). |
 
 Øvrige variabler: `docs/environment-variables.md` (afsnittet om salgskanalen).
 
@@ -95,13 +97,52 @@ kræver et ordret citat. Findes et gyldigt CVR, slås reklamebeskyttelse op, nå
   `would_call` og udføres aldrig. Delaccepter klassificeres med `sales-accepts-v1`; et citat, kunden aldrig sagde,
   kasseres. Alt er mærket "simuleret" og tæller aldrig i statistik.
 
+## Kontaktgrundlag, kontaktpolitik og opkald (fase 2)
+
+**Kontaktgrundlag.** På en virksomheds side under "Kontakter, kontaktgrundlag og opkald" registreres for hver kontakt
+den fulde tekst, kontakten sagde ja til (anmodning eller samtykke til et AI-opkald), kilde og dokumentation. Det kan
+trækkes tilbage. Koden og `docs/sales/demo-calls.md` holder fast i, at et AI-opkald kræver forudgående anmodning eller
+samtykke – også til virksomheder (markedsføringslovens § 10, stk. 1). Uden gyldigt grundlag er svaret aldrig ALLOW.
+
+**Kontaktpolitik** (`app/modules/sales/policy.py`): ALLOW / BLOCK / NEEDS_REVIEW med grunde. Blokerer ved ugyldig
+kontakt, spærreliste (telefon/domæne/CVR), salgsarbejdsrummets frabedelser, lukket virksomhed, eksisterende kunde,
+reklamebeskyttelse, manglende grundlag, for mange forsøg på tværs af kampagner, uden for vinduet, opbrugt budget,
+stoppet kampagne og tilstand (`test` kun testnumre). Ukendt reklamebeskyttelse og ikke-godkendt manuskript giver
+NEEDS_REVIEW. Uden CVR-adgang kan operatøren registrere et manuelt tjek (fx datacvr.virk.dk) på virksomhedens side.
+Hver beslutning gemmes i `sales_policy_decisions`; den køres ved planlægning og igen lige før hvert opkald.
+
+**Testopkald.** Sæt `SALES_OUTBOUND_MODE=test` og `SALES_TEST_NUMBERS=+45xxxxxxxx` på api og worker. Godkend et
+manuskript, og brug "Testopkald til dit eget nummer" på virksomhedens side. Bekræftelsen gemmes som et `test`-grundlag
+(30 dage) på nummeret; der oprettes en engangskampagne mærket "Test", og Peter ringer straks, hvis politikken
+tillader det. Det er et rigtigt opkald via Vapi og salgsarbejdsrummets udgående nummer.
+
+**Kampagner.** Kampagner → Ny kampagne (vindue, forsøg, budget som hårdt loft). Tilføj kontakter fra en virksomheds
+side. Kampagnesiden viser forhåndsvisningen (ALLOW/BLOCK/NEEDS_REVIEW med grunde og omkostningsloftet: kontakter ×
+forsøg × (4 kr. + 10 min × 2 kr.)). Start kræver, at du godkender loftet, og mindst én ALLOW. Pause og Stop (Stop
+springer alle ventende kontakter over). Workeren ringer højst `SALES_MAX_CONCURRENT_CALLS` samtidigt.
+
+**Idempotens.** Forsøget gemmes som "ringer" med en `dispatch_key`, før Vapi kaldes. Svarer Vapi slet ikke, markeres
+forsøget "uvist" og ringes ikke op igen automatisk (tjek opkaldet hos Vapi). Peters manuskript låses på forsøget
+(`sales_call_events`, type `assistant_snapshot`).
+
+**Efter opkaldet.** Vapis `status-update` og `end-of-call-report` gemmes som hændelser. Udfaldet klassificeres som i
+kundernes kampagner; delaccepterne (`sales-accepts-v1`) gemmes med kundens egne ord, og et citat, kunden aldrig sagde,
+kasseres. Frabedelse → Dialogbots spærreliste + salgsarbejdsrummets frabedelsesliste; ventende forsøg til nummeret
+springes over. Interesserede og "ring tilbage" bliver henvendelser med opgave i salgsarbejdsrummet. Opkald-fanen
+viser alle forsøg (også ubesvarede og fejlede), transskript med talere, opsummering adskilt fra originalen,
+delaccepter og hændelser; der kan søges i samtaletekst. Lyd: "ikke optaget" (fase 4). Tidsstempler pr. replik gemmes
+ikke endnu.
+
+**Interne kampagner er usynlige for kunder**: de ligger i salgsarbejdsrummet, men `/workspaces/{ws}/campaigns` viser og
+styrer kun `kind=customer`.
+
 ## Hvad er mock / kræver konfiguration / ikke implementeret
 
 | | |
 |---|---|
 | Mock | Demo-data uden Google-nøgle; `AI_PROVIDER=fake` i test. |
-| Kræver konfiguration | `GOOGLE_PLACES_API_KEY` (rigtig søgning), `SALES_WORKSPACE_ID` + AI (research og simulation), `CVR_USERNAME/PASSWORD` (reklamebeskyttelse). |
-| Ikke implementeret (fase 2–4) | Kontaktpolitik (`ALLOW/BLOCK/NEEDS_REVIEW`), kontaktgrundlag, spærreliste, interne kampagner, testopkald, opkaldsliste/transskript, Peters rigtige værktøjer, tilbud/ordre/acceptside, møder, statistik, lyd, retention, indsigt/sletning. "Må ringes op" viser i fase 1 kun kendte blokeringer, aldrig "ja". |
+| Kræver konfiguration | `GOOGLE_PLACES_API_KEY` (rigtig søgning), `SALES_WORKSPACE_ID` + AI (research og simulation), `CVR_USERNAME/PASSWORD` (reklamebeskyttelse), `SALES_OUTBOUND_MODE=test` + `SALES_TEST_NUMBERS` + Vapi + et udgående nummer i salgsarbejdsrummet (testopkald). |
+| Ikke implementeret (fase 3–4) | Peters værktøjer under opkald (mødebooking, ordreudkast, bestillingslink, frabedelse som værktøj – frabedelse håndteres i dag efter opkaldet), tilbud/ordre/acceptside, møder, statistik, lyd, retention, indsigt/sletning, åbne spørgsmål-kø (tabellen findes). |
 
 ## Kendte begrænsninger
 

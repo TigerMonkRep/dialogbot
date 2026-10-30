@@ -22,6 +22,17 @@ router = APIRouter(prefix="/workspaces/{workspace_id}", tags=["campaigns"])
 HHMM = r"^([01]\d|2[0-3]):[0-5]\d$"
 
 
+def _own(db: OrmSession, campaign_id, ws_id) -> Campaign:
+    """A customer campaign of this workspace. Dialogbot's internal sales campaigns (in the sales workspace) are run
+    only through /operator/salg and are invisible here."""
+    c = get_scoped(db, Campaign, campaign_id, ws_id)
+    if c.kind != "customer":
+        from app.core.errors import NotFound
+
+        raise NotFound("Kampagnen findes ikke")
+    return c
+
+
 def campaign_out(db: OrmSession, c: Campaign) -> dict:
     return {"id": str(c.id), "name": c.name, "status": c.status, "version": c.version, "purpose": c.purpose,
             "opening": c.opening, "questions": list(c.questions or []), "success": c.success,
@@ -67,7 +78,7 @@ def _apply(db: OrmSession, c: Campaign, body: CampaignIn, ws_id) -> None:
 
 @router.get("/campaigns")
 def list_campaigns(ctx: WorkspaceContext = Depends(require_capability("campaigns.read")), db: OrmSession = Depends(get_db)):
-    rows = db.scalars(select(Campaign).where(Campaign.workspace_id == ctx.workspace.id).order_by(Campaign.created_at.desc()))
+    rows = db.scalars(select(Campaign).where(Campaign.workspace_id == ctx.workspace.id, Campaign.kind == "customer").order_by(Campaign.created_at.desc()))
     return {"items": [campaign_out(db, c) for c in rows],
             "pricing": {"call_net_minor": service.CALL_NET_MINOR, "minute_net_minor": service.MINUTE_NET_MINOR,
                         "max_attempts": service.MAX_ATTEMPTS, "max_connected_seconds": service.MAX_CONNECTED_SECONDS},
@@ -109,13 +120,13 @@ def suggest_script(body: SuggestIn, ctx: WorkspaceContext = Depends(require_capa
 @router.get("/campaigns/{campaign_id}")
 def get_campaign(campaign_id: uuid.UUID, ctx: WorkspaceContext = Depends(require_capability("campaigns.read")),
                  db: OrmSession = Depends(get_db)):
-    return campaign_out(db, get_scoped(db, Campaign, campaign_id, ctx.workspace.id))
+    return campaign_out(db, _own(db, campaign_id, ctx.workspace.id))
 
 
 @router.put("/campaigns/{campaign_id}")
 def update_campaign(campaign_id: uuid.UUID, body: CampaignUpdate, request: Request,
                     ctx: WorkspaceContext = Depends(require_capability("campaigns.manage")), db: OrmSession = Depends(get_db)):
-    c = get_scoped(db, Campaign, campaign_id, ctx.workspace.id)
+    c = _own(db, campaign_id, ctx.workspace.id)
     if c.version != body.expected_version:
         raise Conflict("Kampagnen er ændret af en anden. Genindlæs.", code="version_conflict")
     if c.status in ("running", "completed"):
@@ -140,7 +151,8 @@ def start_campaign(campaign_id: uuid.UUID, body: StartIn, request: Request,
     """The only way a campaign starts calling. Payment never starts calls."""
     from app.modules.ai.service import build_system_prompt
 
-    c = db.scalar(select(Campaign).where(Campaign.id == campaign_id, Campaign.workspace_id == ctx.workspace.id)
+    c = db.scalar(select(Campaign).where(Campaign.id == campaign_id, Campaign.workspace_id == ctx.workspace.id,
+                                         Campaign.kind == "customer")
                   .with_for_update())
     if c is None:
         raise NotFound("Kampagnen findes ikke")
@@ -175,7 +187,7 @@ def start_campaign(campaign_id: uuid.UUID, body: StartIn, request: Request,
 @router.post("/campaigns/{campaign_id}/pause")
 def pause_campaign(campaign_id: uuid.UUID, request: Request,
                    ctx: WorkspaceContext = Depends(require_capability("campaigns.manage")), db: OrmSession = Depends(get_db)):
-    c = get_scoped(db, Campaign, campaign_id, ctx.workspace.id)
+    c = _own(db, campaign_id, ctx.workspace.id)
     if c.status == "running":
         c.status, c.version = "paused", c.version + 1
         record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="campaigns.paused",
@@ -193,7 +205,7 @@ class ImportIn(BaseModel):
 @router.post("/campaigns/{campaign_id}/contacts/import")
 def import_contacts(campaign_id: uuid.UUID, body: ImportIn, request: Request,
                     ctx: WorkspaceContext = Depends(require_capability("campaigns.manage")), db: OrmSession = Depends(get_db)):
-    c = get_scoped(db, Campaign, campaign_id, ctx.workspace.id)
+    c = _own(db, campaign_id, ctx.workspace.id)
     if c.status == "completed":
         raise Conflict("Kampagnen er afsluttet", code="campaign_state")
     out = service.import_contacts(db, c, body.csv, kind=body.kind, consent_source=body.consent_source)
@@ -207,7 +219,7 @@ def import_contacts(campaign_id: uuid.UUID, body: ImportIn, request: Request,
 @router.get("/campaigns/{campaign_id}/contacts")
 def list_contacts(campaign_id: uuid.UUID, status: str | None = None, limit: int = Query(default=200, ge=1, le=1000),
                   ctx: WorkspaceContext = Depends(require_capability("campaigns.read")), db: OrmSession = Depends(get_db)):
-    c = get_scoped(db, Campaign, campaign_id, ctx.workspace.id)
+    c = _own(db, campaign_id, ctx.workspace.id)
     q = select(CampaignContact).where(CampaignContact.campaign_id == c.id)
     if status:
         q = q.where(CampaignContact.status == status)
@@ -217,7 +229,7 @@ def list_contacts(campaign_id: uuid.UUID, status: str | None = None, limit: int 
 @router.delete("/campaigns/{campaign_id}/contacts/{contact_id}")
 def delete_contact(campaign_id: uuid.UUID, contact_id: uuid.UUID,
                    ctx: WorkspaceContext = Depends(require_capability("campaigns.manage")), db: OrmSession = Depends(get_db)):
-    c = get_scoped(db, Campaign, campaign_id, ctx.workspace.id)
+    c = _own(db, campaign_id, ctx.workspace.id)
     x = get_scoped(db, CampaignContact, contact_id, ctx.workspace.id)
     if x.campaign_id != c.id:
         raise NotFound("Kontakten findes ikke")

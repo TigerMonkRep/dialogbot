@@ -633,6 +633,17 @@ class Call(Base):
     summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
     # Provider-reported total cost, millionths of a USD (NULL if not reported).
     cost_usd_micros: Mapped[int | None] = mapped_column(BigInteger)
+    # Outbound calls (campaigns, Dialogbot's sales channel). Existing rows are inbound.
+    direction: Mapped[str] = mapped_column(String(8), nullable=False, default="inbound", server_default="inbound")
+    outcome: Mapped[str | None] = mapped_column(String(24))
+    campaign_contact_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("campaign_contacts.id", ondelete="SET NULL"))
+    script_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("sales_scripts.id", ondelete="SET NULL"))
+    # PENDING | AVAILABLE | FAILED | NOT_RECORDED | DELETED
+    transcript_status: Mapped[str] = mapped_column(String(16), nullable=False, default="AVAILABLE",
+                                                   server_default="AVAILABLE")
+    recording_status: Mapped[str] = mapped_column(String(16), nullable=False, default="NOT_RECORDED",
+                                                  server_default="NOT_RECORDED")
     created_at: Mapped[datetime] = ts_now()
 
 
@@ -858,7 +869,8 @@ class Campaign(Base):
 
     __tablename__ = "campaigns"
     __table_args__ = (
-        CheckConstraint("status in ('draft','running','paused','completed')", name="ck_campaigns_status"),
+        CheckConstraint("status in ('draft','running','paused','completed','stopped')", name="ck_campaigns_status"),
+        CheckConstraint("kind in ('customer','internal_sales')", name="ck_campaigns_kind"),
         Index("ix_campaigns_workspace", "workspace_id", "created_at"),
     )
 
@@ -887,6 +899,11 @@ class Campaign(Base):
     created_at: Mapped[datetime] = ts_now()
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Dialogbot's own sales channel (app/modules/sales): internal_sales campaigns live in the sales workspace, ring
+    # with Peter and a personal script per contact, and every dial passes the contact policy first. customer = as before.
+    kind: Mapped[str] = mapped_column(String(16), nullable=False, default="customer", server_default="customer")
+    budget_net_minor: Mapped[int | None] = mapped_column(Integer)  # hard ceiling on calls + minutes (internal_sales)
+    is_test: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
 
 
 class CampaignContact(Base):
@@ -894,7 +911,7 @@ class CampaignContact(Base):
     __table_args__ = (
         UniqueConstraint("campaign_id", "phone", name="uq_campaign_contacts_phone"),
         CheckConstraint("kind in ('business','consumer')", name="ck_campaign_contacts_kind"),
-        CheckConstraint("status in ('pending','calling','done','no_answer','failed','opted_out','skipped')",
+        CheckConstraint("status in ('pending','calling','done','no_answer','failed','opted_out','skipped','unknown')",
                         name="ck_campaign_contacts_status"),
         Index("ix_campaign_contacts_due", "campaign_id", "status", "next_attempt_at"),
     )
@@ -923,6 +940,15 @@ class CampaignContact(Base):
     # keep their charge (so past statements do not change); new calls are recorded in `campaign_calls` instead.
     charged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     charged_net_minor: Mapped[int | None] = mapped_column(Integer)
+    # internal_sales only: who, with which script and on which documented basis; the policy decision that let the
+    # last attempt through; and a key committed before the provider is called, so a retry never rings twice.
+    sales_contact_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("sales_contacts.id", ondelete="SET NULL"))
+    sales_script_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("sales_scripts.id", ondelete="SET NULL"))
+    sales_contact_basis_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("sales_contact_basis.id", ondelete="SET NULL"))
+    policy_decision_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("sales_policy_decisions.id", ondelete="SET NULL"))
+    dispatch_key: Mapped[str | None] = mapped_column(String(80), unique=True)
     created_at: Mapped[datetime] = ts_now()
 
 

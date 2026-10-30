@@ -27,6 +27,16 @@ router = APIRouter(prefix="/operator/salg", tags=["sales-channel"])
 log = structlog.get_logger("dialogbot.sales.channel")
 
 
+def _calls_today(db: OrmSession, now: datetime) -> int:
+    from zoneinfo import ZoneInfo
+
+    from app.models import Campaign, CampaignCall
+
+    start = now.astimezone(ZoneInfo("Europe/Copenhagen")).replace(hour=0, minute=0, second=0, microsecond=0)
+    return db.scalar(select(func.count()).select_from(CampaignCall).join(Campaign, Campaign.id == CampaignCall.campaign_id)
+                     .where(Campaign.kind == "internal_sales", CampaignCall.dialled_at >= start)) or 0
+
+
 def research_gate(_: Principal = Depends(operator)) -> None:
     channel.require(channel.RESEARCH_MODES)
 
@@ -58,6 +68,7 @@ def overview(db: OrmSession = Depends(get_db), _: Principal = Depends(operator))
         "scripts_approved": count(select(SalesScript.id).where(SalesScript.status == "approved")),
         "simulations_30d": count(select(SalesSimulation.id).where(SalesSimulation.created_at >= since)),
         "searches_running": count(select(SalesSearchJob.id).where(SalesSearchJob.status.in_(("queued", "running")))),
+        "calls_today": _calls_today(db, now),
     }
     needs_you = []
     for j in db.scalars(select(SalesSearchJob).where(SalesSearchJob.status.in_(("paused", "failed")))
@@ -72,6 +83,12 @@ def overview(db: OrmSession = Depends(get_db), _: Principal = Depends(operator))
         ok = (s.validation or {}).get("ok")
         needs_you.append({"kind": "script_draft", "id": str(s.company_id),
                           "text": f"{c.display_name}: manuskript v{s.version} {'klar til godkendelse' if ok else 'har valideringsfejl'}"})
+    from app.models import Campaign, CampaignContact
+
+    for cc in db.scalars(select(CampaignContact).join(Campaign, Campaign.id == CampaignContact.campaign_id)
+                         .where(Campaign.kind == "internal_sales", CampaignContact.status.in_(("unknown", "failed")))
+                         .order_by(CampaignContact.last_attempt_at.desc()).limit(10)):
+        needs_you.append({"kind": "call_" + cc.status, "id": str(cc.id), "text": f"{cc.company}: {cc.error or cc.status}"})
     for c in db.scalars(select(SalesCompany).where(SalesCompany.possible_duplicate_of.is_not(None))
                         .order_by(SalesCompany.updated_at.desc()).limit(10)):
         needs_you.append({"kind": "possible_duplicate", "id": str(c.id), "text": f"{c.display_name}: {c.duplicate_reason}"})
@@ -82,9 +99,10 @@ def overview(db: OrmSession = Depends(get_db), _: Principal = Depends(operator))
         "scripts_approved": "Godkendte manuskripter (gældende versioner).",
         "simulations_30d": "Simulerede samtaler de seneste 30 dage. Simulationer tæller aldrig i salgsstatistik.",
         "searches_running": "Søgninger i kø eller i gang.",
+        "calls_today": "Opkald Peter har foretaget i dag i interne kampagner (også testopkald og ubesvarede).",
     }
     return channel.status(db) | {"tiles": tiles, "definitions": definitions, "needs_you": needs_you,
-                                 "not_built": ["Kampagner", "Opkald og testopkald", "Tilbud og ordrer", "Møder",
+                                 "not_built": ["Tilbud og ordrer", "Møder", "Peters værktøjer i opkald",
                                                "Statistik over opkald", "Lydoptagelser"]}
 
 
@@ -407,3 +425,299 @@ def sales_knowledge(db: OrmSession = Depends(get_db)):
                        "tax_basis_points": prices.TAX_BASIS_POINTS, "terms_version": playbook.TERMS_VERSION},
             "scripts": [{"script_version": v, "status": st, "count": n} for v, st, n in scripts],
             "fallback_features": playbook.FALLBACK_FEATURES, "integrations": integrations.register(db)}
+
+
+# --------------------------------------------------------------------------- phase 2: contacts, basis, policy
+
+
+class ContactIn(BaseModel):
+    name: str | None = Field(default=None, max_length=200)
+    role: str | None = Field(default=None, max_length=120)
+    phone: str | None = Field(default=None, max_length=30)
+    email: str | None = Field(default=None, max_length=320)
+
+
+@router.post("/companies/{company_id}/contacts", status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(research_gate)])
+def add_contact(company_id: uuid.UUID, body: ContactIn, request: Request, db: OrmSession = Depends(get_db),
+                principal: Principal = Depends(operator)):
+    from app.modules.sales import outbound
+
+    c = outbound.add_contact(db, _company(db, company_id), name=body.name, role=body.role, phone=body.phone,
+                             email=body.email)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.contact_added",
+                 object_type="sales_contact", object_id=c.id, after={"company_id": str(company_id), "role": c.role},
+                 request_id=request.state.request_id)
+    db.commit()
+    return companies.contact_out(c)
+
+
+def _contact(db: OrmSession, contact_id: uuid.UUID):
+    from app.models import SalesContact
+
+    c = db.get(SalesContact, contact_id)
+    if c is None:
+        raise NotFound("Kontakten findes ikke")
+    return c
+
+
+class BasisIn(BaseModel):
+    channel: Literal["ai_call", "human_call", "email", "sms"] = "ai_call"
+    purpose: str = Field(min_length=3, max_length=200)
+    kind: Literal["request", "consent"]
+    source: Literal["web_form", "seller", "lead", "import"]
+    text: str = Field(min_length=20, max_length=4000, description="The full text the contact said yes to")
+    text_version: str = Field(default="operator-v1", max_length=40)
+    evidence_ref: str = Field(default="", max_length=300)
+    valid_until: datetime | None = None
+
+
+@router.post("/contacts/{contact_id}/basis", status_code=status.HTTP_201_CREATED, dependencies=[Depends(research_gate)])
+def add_basis(contact_id: uuid.UUID, body: BasisIn, request: Request, db: OrmSession = Depends(get_db),
+              principal: Principal = Depends(operator)):
+    """Register the documented basis for contacting this person (e.g. they asked to be called). Audited."""
+    from app.modules.sales import outbound
+
+    b = outbound.record_basis(db, _contact(db, contact_id), channel=body.channel, purpose=body.purpose, kind=body.kind,
+                              source=body.source, text=body.text, text_version=body.text_version,
+                              evidence_ref=body.evidence_ref, valid_until=body.valid_until, user_id=principal.user.id)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.basis_recorded",
+                 object_type="sales_contact_basis", object_id=b.id,
+                 after={"contact_id": str(contact_id), "channel": b.channel, "kind": b.kind, "source": b.source},
+                 request_id=request.state.request_id)
+    db.commit()
+    return outbound.basis_out(b)
+
+
+class WithdrawIn(BaseModel):
+    reason: str = Field(min_length=2, max_length=300)
+
+
+@router.post("/basis/{basis_id}/withdraw", dependencies=[Depends(research_gate)])
+def withdraw_basis(basis_id: uuid.UUID, body: WithdrawIn, request: Request, db: OrmSession = Depends(get_db),
+                   principal: Principal = Depends(operator)):
+    from app.models import SalesContactBasis
+    from app.modules.sales import outbound
+
+    b = db.get(SalesContactBasis, basis_id)
+    if b is None:
+        raise NotFound("Kontaktgrundlaget findes ikke")
+    outbound.withdraw_basis(db, b, body.reason)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.basis_withdrawn",
+                 object_type="sales_contact_basis", object_id=b.id, after={"reason": body.reason},
+                 request_id=request.state.request_id)
+    db.commit()
+    return outbound.basis_out(b)
+
+
+@router.post("/contacts/{contact_id}/check", dependencies=[Depends(research_gate)])
+def check_contact(contact_id: uuid.UUID, db: OrmSession = Depends(get_db)):
+    """Run the contact policy now (no campaign) and store the decision."""
+    from app.modules.sales import outbound, policy
+
+    contact = _contact(db, contact_id)
+    d = policy.evaluate(db, contact=contact, stage="check", script=outbound.approved_script(db, contact.company_id))
+    db.commit()
+    return d.out()
+
+
+@router.get("/block-list", dependencies=[Depends(research_gate)])
+def list_blocks(db: OrmSession = Depends(get_db)):
+    from app.models import SalesBlockList
+    from app.modules.sales import outbound
+
+    rows = db.scalars(select(SalesBlockList).order_by(SalesBlockList.created_at.desc()).limit(500))
+    return {"items": [outbound.block_out(b) for b in rows]}
+
+
+class BlockIn(BaseModel):
+    kind: Literal["phone", "domain", "cvr"]
+    value: str = Field(min_length=2, max_length=200)
+    reason: str = Field(default="", max_length=300)
+    source: Literal["manual", "dispute"] = "manual"
+
+
+@router.post("/block-list", status_code=status.HTTP_201_CREATED, dependencies=[Depends(research_gate)])
+def add_block(body: BlockIn, request: Request, db: OrmSession = Depends(get_db), principal: Principal = Depends(operator)):
+    from app.modules.sales import outbound
+
+    b = outbound.block(db, kind=body.kind, value=body.value, reason=body.reason, source=body.source,
+                       user_id=principal.user.id)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.blocked",
+                 object_type="sales_block_list", object_id=b.id, after={"kind": b.kind, "source": b.source},
+                 request_id=request.state.request_id)
+    db.commit()
+    return outbound.block_out(b)
+
+
+# --------------------------------------------------------------------------- phase 2: campaigns, test calls, calls
+
+
+class SalesCampaignIn(BaseModel):
+    name: str = Field(min_length=2, max_length=160)
+    budget_net_minor: int | None = Field(default=None, ge=0, le=10_000_000)
+    call_days: list[str] = Field(default_factory=lambda: ["mon", "tue", "wed", "thu", "fri"])
+    call_from: str = Field(default="09:00", pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
+    call_to: str = Field(default="16:00", pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
+    max_attempts: int = Field(default=2, ge=1, le=5)
+
+
+@router.get("/campaigns", dependencies=[Depends(research_gate)])
+def list_sales_campaigns(db: OrmSession = Depends(get_db)):
+    from app.models import Campaign
+    from app.modules.sales import outbound
+
+    rows = db.scalars(select(Campaign).where(Campaign.kind == "internal_sales").order_by(Campaign.created_at.desc()))
+    return {"items": [outbound.campaign_out(db, c) for c in rows]}
+
+
+@router.post("/campaigns", status_code=status.HTTP_201_CREATED, dependencies=[Depends(research_gate)])
+def create_sales_campaign(body: SalesCampaignIn, request: Request, db: OrmSession = Depends(get_db),
+                          principal: Principal = Depends(operator)):
+    from app.modules.sales import outbound
+
+    c = outbound.create_campaign(db, name=body.name, budget_net_minor=body.budget_net_minor, call_days=body.call_days,
+                                 call_from=body.call_from, call_to=body.call_to, max_attempts=body.max_attempts,
+                                 user_id=principal.user.id)
+    record_audit(db, workspace_id=c.workspace_id, actor_user_id=principal.user.id, action="sales.campaign_created",
+                 object_type="campaign", object_id=c.id, after=body.model_dump(), request_id=request.state.request_id)
+    db.commit()
+    return outbound.campaign_out(db, c)
+
+
+@router.get("/campaigns/{campaign_id}", dependencies=[Depends(research_gate)])
+def get_sales_campaign(campaign_id: uuid.UUID, db: OrmSession = Depends(get_db)):
+    from app.modules.sales import outbound
+
+    c = outbound.get_campaign(db, campaign_id)
+    p = outbound.preview(db, c)
+    db.commit()  # the preview stores its plan-stage decisions
+    return outbound.campaign_out(db, c) | {"preview": p}
+
+
+class MembersIn(BaseModel):
+    contact_ids: list[uuid.UUID] = Field(default_factory=list, max_length=500)
+    company_ids: list[uuid.UUID] = Field(default_factory=list, max_length=500,
+                                         description="Adds each company's main number")
+
+
+@router.post("/campaigns/{campaign_id}/members", dependencies=[Depends(research_gate)])
+def add_campaign_members(campaign_id: uuid.UUID, body: MembersIn, request: Request, db: OrmSession = Depends(get_db),
+                         principal: Principal = Depends(operator)):
+    from app.models import SalesContact
+    from app.modules.sales import outbound
+
+    c = outbound.get_campaign(db, campaign_id)
+    ids = list(body.contact_ids)
+    for company_id in body.company_ids:
+        main = db.scalar(select(SalesContact.id).where(SalesContact.company_id == company_id,
+                                                       SalesContact.is_main_number.is_(True)))
+        if main:
+            ids.append(main)
+    out = outbound.add_members(db, c, ids)
+    record_audit(db, workspace_id=c.workspace_id, actor_user_id=principal.user.id, action="sales.campaign_members",
+                 object_type="campaign", object_id=c.id, after={"added": len(out["added"]), "skipped": len(out["skipped"])},
+                 request_id=request.state.request_id)
+    db.commit()
+    return out
+
+
+class StartIn(BaseModel):
+    accepted_max_net_minor: int = Field(ge=0, description="The cost ceiling shown in the preview, accepted by you")
+
+
+@router.post("/campaigns/{campaign_id}/start", dependencies=[Depends(research_gate)])
+def start_sales_campaign(campaign_id: uuid.UUID, body: StartIn, request: Request, db: OrmSession = Depends(get_db),
+                         principal: Principal = Depends(operator)):
+    from app.modules.sales import outbound
+
+    c = outbound.get_campaign(db, campaign_id)
+    p = outbound.start(db, c, user_id=principal.user.id, accepted_max_net_minor=body.accepted_max_net_minor)
+    record_audit(db, workspace_id=c.workspace_id, actor_user_id=principal.user.id, action="sales.campaign_started",
+                 object_type="campaign", object_id=c.id, after={"preview": p["counts"],
+                                                                "accepted_max_net_minor": body.accepted_max_net_minor},
+                 request_id=request.state.request_id)
+    db.commit()
+    return outbound.campaign_out(db, c)
+
+
+@router.post("/campaigns/{campaign_id}/{action}", dependencies=[Depends(research_gate)])
+def control_sales_campaign(campaign_id: uuid.UUID, action: Literal["pause", "stop"], request: Request,
+                           db: OrmSession = Depends(get_db), principal: Principal = Depends(operator)):
+    from app.modules.sales import outbound
+
+    c = outbound.get_campaign(db, campaign_id)
+    if action == "pause":
+        outbound.pause(c)
+        skipped = 0
+    else:
+        skipped = outbound.stop(db, c)
+    record_audit(db, workspace_id=c.workspace_id, actor_user_id=principal.user.id, action=f"sales.campaign_{action}",
+                 object_type="campaign", object_id=c.id, after={"skipped": skipped}, request_id=request.state.request_id)
+    db.commit()
+    return outbound.campaign_out(db, c)
+
+
+class TestCallIn(BaseModel):
+    company_id: uuid.UUID
+    script_id: uuid.UUID
+    phone: str = Field(min_length=8, max_length=30)
+    accepted_test: bool
+
+
+@router.post("/test-calls", status_code=status.HTTP_201_CREATED, dependencies=[Depends(research_gate)])
+def place_test_call(body: TestCallIn, request: Request, db: OrmSession = Depends(get_db),
+                    principal: Principal = Depends(operator)):
+    """An internal test call to a number in SALES_TEST_NUMBERS (SALES_OUTBOUND_MODE=test or live). Real telephony."""
+    from app.core.errors import ValidationFailed
+    from app.modules.sales import outbound
+
+    if not body.accepted_test:
+        raise ValidationFailed("Bekræft at nummeret er dit eget testnummer", field_errors=[{"field": "accepted_test"}])
+    out = outbound.test_call(db, company=_company(db, body.company_id), script=playbook.get_script(db, body.script_id),
+                             phone=body.phone, user_id=principal.user.id)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.test_call",
+                 object_type="campaign_contact", object_id=out["campaign_contact_id"],
+                 after={"status": out["status"], "company_id": str(body.company_id)}, request_id=request.state.request_id)
+    db.commit()
+    return out
+
+
+@router.get("/calls", dependencies=[Depends(research_gate)])
+def list_sales_calls(campaign_id: uuid.UUID | None = None, outcome: str | None = None, test: bool | None = None,
+                     q: str | None = Query(default=None, max_length=100), limit: int = Query(default=100, ge=1, le=500),
+                     db: OrmSession = Depends(get_db)):
+    from app.modules.sales import outbound
+
+    return {"items": outbound.calls(db, campaign_id=campaign_id, outcome=outcome, test=test, q=q, limit=limit)}
+
+
+@router.get("/calls/{campaign_contact_id}", dependencies=[Depends(research_gate)])
+def get_sales_call(campaign_contact_id: uuid.UUID, db: OrmSession = Depends(get_db)):
+    from app.modules.sales import outbound
+
+    return outbound.call_detail(db, campaign_contact_id)
+
+
+class AdvertisingIn(BaseModel):
+    advertising_protected: bool
+    note: str = Field(min_length=5, max_length=300, description="Where it was checked, e.g. datacvr.virk.dk 30/10")
+
+
+@router.post("/companies/{company_id}/advertising-check", dependencies=[Depends(research_gate)])
+def advertising_check(company_id: uuid.UUID, body: AdvertisingIn, request: Request, db: OrmSession = Depends(get_db),
+                      principal: Principal = Depends(operator)):
+    """Record a manual check of advertising protection (when CVR system access is not set up). Audited."""
+    c = _company(db, company_id)
+    before = c.advertising_protected
+    c.advertising_protected = body.advertising_protected
+    companies.add_fact(db, c, field="advertising_protected", value="ja" if body.advertising_protected else "nej",
+                       ref=f"manual:{principal.user.id}", evidence=body.note, confidence="high",
+                       extractor="operator-check-v1")
+    companies.compute_quality(db, c)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="sales.advertising_checked",
+                 object_type="sales_company", object_id=c.id, before={"advertising_protected": before},
+                 after={"advertising_protected": body.advertising_protected, "note": body.note},
+                 request_id=request.state.request_id)
+    db.commit()
+    return companies.out(c)

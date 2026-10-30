@@ -114,6 +114,32 @@ END:VCALENDAR
 """
 
 
+PUBLIC_IP = "93.184.216.34"
+
+
+def _calendar_host(monkeypatch, files: dict[str, bytes], dns: dict[str, list[str]] | None = None) -> list[httpx.Request]:
+    """Serve `files` for calendar.example through safe_fetch (injected resolver + transport, no network)."""
+    import functools
+
+    from app.core import safe_fetch
+
+    dns = {"calendar.example": [PUBLIC_IP], **(dns or {})}
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        path = request.url.path
+        if path.startswith("/redirect"):
+            return httpx.Response(302, headers={"location": request.url.params["to"]})
+        if path in files:
+            return httpx.Response(200, content=files[path], headers={"content-type": "text/calendar"})
+        return httpx.Response(404)
+
+    monkeypatch.setattr(safe_fetch, "system_resolver", lambda host: dns[host])
+    monkeypatch.setattr(safe_fetch, "get", functools.partial(safe_fetch.get, transport=httpx.MockTransport(handler)))
+    return seen
+
+
 def test_calendar_busy_time_blocks_slots(api, two_workspaces, db, monkeypatch):
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
@@ -124,32 +150,39 @@ def test_calendar_busy_time_blocks_slots(api, two_workspaces, db, monkeypatch):
     body = ICS.replace(b"{start}", first.astimezone(UTC).strftime(fmt).encode()).replace(
         b"{end}", (first + timedelta(hours=1)).astimezone(UTC).strftime(fmt).encode())
 
-    class FakeClient:
-        def __init__(self, *a, **kw):
-            pass
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *a):
-            return False
-
-        def get(self, url):
-            return httpx.Response(200, content=body, request=httpx.Request("GET", url))
-
-    monkeypatch.setattr(httpx, "Client", FakeClient)
+    seen = _calendar_host(monkeypatch, {"/private.ics": body})
     s = api.get(tok, f"/workspaces/{ws}/bookings/settings").json()
     r = api.put(tok, f"/workspaces/{ws}/bookings/settings", {"expected_version": s["version"], "enabled": True,
                                                               "lead_time_hours": 0, "horizon_days": 7, "buffer_minutes": 0,
                                                               "busy_ics_url": "webcal://calendar.example/private.ics"})
     out = r.json()
     assert out["busy_error"] is None and out["busy_blocks"] == 1  # the transparent event does not block
+    assert seen[-1].url.host == PUBLIC_IP and seen[-1].headers["host"] == "calendar.example"  # pinned address
     after = api.get(tok, f"/workspaces/{ws}/bookings/slots?type_id={type_id}").json()["items"]
     assert slots[0]["start"] not in {x["start"] for x in after}
     stored = db.get(BookingSettings, __import__("uuid").UUID(ws))
     assert "Privat aftale" not in str(stored.busy_blocks)  # titles are never stored
     check = api.post(tok, f"/workspaces/{ws}/setup/checks/calendar.connection/run").json()
     assert check["evidence"]["calendar_connected"] is True
+
+
+def test_calendar_url_is_fetched_safely(db, monkeypatch):
+    """Private addresses, redirects to private hosts and oversized calendars are refused – also in test."""
+    seen = _calendar_host(monkeypatch, {"/ok.ics": ICS, "/big.ics": b"x" * (service.ICS_MAX_BYTES + 1)},
+                          dns={"intern.example": ["10.0.0.5"]})
+    s = BookingSettings(horizon_days=7)
+    for url in ("https://intern.example/cal.ics", "http://127.0.0.1/cal.ics", "http://169.254.169.254/latest",
+                "https://localhost/cal.ics", "https://calendar.example/redirect?to=https://intern.example/cal.ics"):
+        s.busy_ics_url = url
+        assert service.sync_busy(db, s) == 0
+        assert s.busy_error == "Kalenderadressen er ikke tilladt", url
+    assert [r.url.path for r in seen] == ["/redirect"]  # the private hop was never requested
+    s.busy_ics_url = "https://calendar.example/big.ics"
+    service.sync_busy(db, s)
+    assert s.busy_error == "Kalenderen er for stor til at blive læst"
+    s.busy_ics_url = "https://calendar.example/missing.ics"
+    service.sync_busy(db, s)
+    assert s.busy_error == "Kalenderen kunne ikke hentes (404)"
 
 
 def test_label_is_danish():

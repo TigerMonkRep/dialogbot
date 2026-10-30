@@ -20,7 +20,6 @@ from urllib.parse import urldefrag, urljoin, urlparse
 from sqlalchemy import select
 from sqlalchemy.orm import Session as OrmSession
 
-from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.errors import ApiError, ValidationFailed
 from app.models import KnowledgeItem, KnowledgeVersion, SourceImport, Workspace
@@ -55,28 +54,6 @@ def normalize_url(raw: str) -> str:
     if p.scheme not in ("http", "https") or not p.hostname:
         raise ValidationFailed("Angiv en gyldig adresse, fx https://www.jeres-firma.dk", field_errors=[{"field": "url"}])
     return urldefrag(url)[0]
-
-
-def _host_is_public(host: str) -> bool:
-    """Every address the host resolves to is public (app/core/safe_fetch rules). Used by the webhook and iCal checks."""
-    from app.core import safe_fetch
-
-    try:
-        ips = safe_fetch.system_resolver(host)
-    except safe_fetch.FetchFailed:
-        return False
-    return bool(ips) and all(safe_fetch.ip_allowed(ip) for ip in ips)
-
-
-def _allowed(url: str) -> bool:
-    """Pre-check for the iCal busy-time sync (bookings). Unchanged behaviour: dev/test allow local test sites;
-    staging/prod only public addresses. The importer itself fetches through safe_fetch, which also pins the address."""
-    p = urlparse(url)
-    if p.scheme not in ("http", "https") or not p.hostname:
-        return False
-    if get_settings().app_env in ("dev", "test"):
-        return True
-    return _host_is_public(p.hostname)
 
 
 def fetch(url: str) -> tuple[str, str] | None:

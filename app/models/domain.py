@@ -846,7 +846,8 @@ class ActionRun(Base):
 class Campaign(Base):
     """An outbound calling campaign: script, caller number, calling window, contacts.
 
-    Every outbound call is billed at `call_net_minor` (4 kr. excl. VAT, snapshotted when the campaign is created and
+    Every outbound call is billed at `call_net_minor` (4 kr. excl. VAT) plus `minute_net_minor` per started minute of
+    conversation (2 kr.), both snapshotted when the campaign is created and
     recorded per call in `campaign_calls`); each contact is dialled at most `max_attempts` times and talks at most
     `max_connected_seconds` in total. Payment never starts calls: a campaign only calls after an admin's explicit
     start command."""
@@ -873,6 +874,7 @@ class Campaign(Base):
     call_to: Mapped[str] = mapped_column(String(5), nullable=False, default="17:00")
     # Terms snapshotted when the campaign is created (whole øre per call, attempts, seconds).
     call_net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
+    minute_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=200, server_default="200")  # per started minute
     max_attempts: Mapped[int] = mapped_column(Integer, nullable=False)
     max_connected_seconds: Mapped[int] = mapped_column(Integer, nullable=False)
     legal_confirmation: Mapped[dict | None] = mapped_column(JSONB)  # who confirmed the checklist, when, which text
@@ -921,8 +923,9 @@ class CampaignContact(Base):
 
 
 class CampaignCall(Base):
-    """One outbound campaign call that Vapi accepted: the unit the customer pays for (4 kr. excl. VAT). The price is
-    snapshotted here, so a later price change never alters an earlier month."""
+    """One outbound campaign call that Vapi accepted: the unit the customer pays for – 4 kr. for dialling plus 2 kr. per
+    started minute of conversation (excl. VAT). Both prices are snapshotted here, so a later price change never alters
+    an earlier month."""
 
     __tablename__ = "campaign_calls"
     __table_args__ = (Index("ix_campaign_calls_workspace_dialled", "workspace_id", "dialled_at"),)
@@ -933,7 +936,9 @@ class CampaignCall(Base):
     contact_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("campaign_contacts.id", ondelete="CASCADE"), nullable=False)
     provider_call_id: Mapped[str | None] = mapped_column(String(100))
     dialled_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    net_minor: Mapped[int] = mapped_column(Integer, nullable=False)
+    net_minor: Mapped[int] = mapped_column(Integer, nullable=False)  # the price for dialling (4 kr.)
+    connected_seconds: Mapped[int | None] = mapped_column(Integer)  # set from the end-of-call report; None = no report yet
+    minutes_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")  # started minutes × price
 
 
 class DoNotCall(Base):

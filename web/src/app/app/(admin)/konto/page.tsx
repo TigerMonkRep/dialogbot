@@ -10,8 +10,8 @@ type Member = { id: string; user_id: string; email: string; display_name: string
 type Inv = { id: string; email: string; role: string; status: string; expires_at: string };
 type Me = { id: string; email: string; display_name: string; email_verified: boolean; is_platform_operator?: boolean };
 type Session = { id: string; created_at: string; last_seen_at: string; user_agent: string | null; current: boolean };
-type Agreement = { current: { version: number; model: string; created_at: string; monthly: { net_minor: number } } | null; plan: { monthly_net_minor: number; campaign_call_net_minor: number } };
-type Statement = { month: string; lines: { kind: string; calls?: number; net_minor: number }[]; totals: { net_minor: number; tax_minor: number; gross_minor: number } };
+type Agreement = { current: { version: number; model: string; created_at: string; monthly: { net_minor: number } } | null; plan: { monthly_net_minor: number; campaign_call_net_minor: number; campaign_minute_net_minor: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number } };
+type Statement = { month: string; lines: { kind: string; calls?: number; minutes?: number; included_minutes?: number; extra_minutes?: number; net_minor: number }[]; totals: { net_minor: number; tax_minor: number; gross_minor: number } };
 type Account = { configured: boolean; card: { brand: string; last4: string; exp: string | null } | null; can_manage: boolean };
 type Invoice = { id: string; month: string; status: string; number: string | null; gross_minor: number; hosted_invoice_url: string | null; invoice_pdf: string | null };
 type Referral = { referred: boolean; ambassador_first_name?: string | null; customer_discount_bp?: number; can_add_code: boolean };
@@ -53,6 +53,8 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
   const confirmed = !!agr?.current && agr.current.model !== "B";
   const campaignCalls = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + (l.calls ?? 0), 0) ?? 0;
   const campaignNet = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + l.net_minor, 0) ?? 0;
+  const campaignMinutes = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + (l.minutes ?? 0), 0) ?? 0;
+  const inbound = st?.lines.find((l) => l.kind === "inbound_minutes");
   const previous = shift(month, -1);
   const initials = me.display_name.split(/\s+/).map((s) => s[0]).join("").slice(0, 2).toUpperCase();
   return (
@@ -89,8 +91,13 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
                 </div>
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5">
                   <span className="eyebrow">Kampagneopkald</span>
-                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(agr.plan.campaign_call_net_minor)} <span className="text-[14px] font-semibold">pr. opkald ekskl. moms</span></span>
-                  <span className="text-[14px] text-ink-soft">Denne måned: {campaignCalls} opkald · {kr(campaignNet)} ekskl. moms</span>
+                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(agr.plan.campaign_call_net_minor)} <span className="text-[14px] font-semibold">pr. opkald + {kr(agr.plan.campaign_minute_net_minor)} pr. minut ekskl. moms</span></span>
+                  <span className="text-[14px] text-ink-soft">Denne måned: {campaignCalls} opkald, {campaignMinutes} samtaleminutter · {kr(campaignNet)} ekskl. moms</span>
+                </div>
+                <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5 md:col-span-2">
+                  <span className="eyebrow">Indgående opkald</span>
+                  <span className="font-display font-extrabold text-[22px] text-ink">{inbound?.minutes ?? 0} <span className="text-[14px] font-semibold">af {agr.plan.inbound_included_minutes} inkluderede minutter brugt denne måned</span></span>
+                  <span className="text-[14px] text-ink-soft">{inbound?.extra_minutes ? `${inbound.extra_minutes} minutter ud over de inkluderede · ${kr(inbound.net_minor)} ekskl. moms (${kr(agr.plan.inbound_extra_minute_net_minor)} pr. påbegyndt minut).` : `Minutter ud over de ${agr.plan.inbound_included_minutes} koster ${kr(agr.plan.inbound_extra_minute_net_minor)} pr. påbegyndt minut ekskl. moms.`}</span>
                 </div>
               </div>
               {!confirmed && (owner ? <ConfirmSubscription wsId={ws.id} label="Bekræft abonnement" /> : <p className="text-[14px] text-ink">Ejeren skal bekræfte abonnementet.</p>)}

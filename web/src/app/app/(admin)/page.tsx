@@ -168,7 +168,7 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
             {goals?.callback && (
               <div className="flex flex-col gap-2.5 px-6 py-5 rounded-2xl bg-paper border-2 border-ink">
                 <h2 className="font-display font-extrabold text-[20px] text-ink">Kampagner</h2>
-                <p className="text-[14px] text-ink-soft">Ring til jeres egne kunder – 4 kr. pr. opkald ekskl. moms.</p>
+                <p className="text-[14px] text-ink-soft">Ring til jeres egne kunder – 4 kr. pr. opkald + 2 kr. pr. samtaleminut ekskl. moms.</p>
                 <Link href="/app/kampagner" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">Åbn kampagner</Link>
               </div>
             )}

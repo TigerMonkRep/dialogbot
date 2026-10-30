@@ -137,7 +137,7 @@ export default async function UgenPage({ searchParams }: { searchParams: Promise
           <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">
             <span className="eyebrow">Det kostede ugen</span>
             <p className="font-display font-extrabold text-[30px] leading-none text-ink">{w.campaign_net_minor !== undefined ? `${kr(w.campaign_net_minor)} ekstra` : `${w.campaign_calls} kampagneopkald`}</p>
-            <p className="text-[14px] text-ink-soft">Indgående opkald er med i abonnementet. Kampagneopkald i ugen: {w.campaign_calls} (4 kr. pr. udgående opkald, ekskl. moms).</p>
+            <p className="text-[14px] text-ink-soft">300 minutters indgående opkald om måneden er med i abonnementet. Kampagneopkald i ugen: {w.campaign_calls} (4 kr. pr. udgående opkald + 2 kr. pr. samtaleminut, ekskl. moms).</p>
             {isAdmin && <Link href="/app/konto/fakturering" className="text-[14px] font-semibold text-accent hover:underline">Se abonnement og fakturaer →</Link>}
           </div>
         )}

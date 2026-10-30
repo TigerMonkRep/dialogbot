@@ -229,8 +229,15 @@ def set_client_override(c) -> None:
     _override = c
 
 
-def client():
+def client(source: str | None = None):
+    """The Places client. `source` is a job's recorded source: a job created as "google" must run against Google –
+    never silently on demo data – so a process without the key raises instead."""
     if _override is not None:
         return _override
     key = get_settings().google_places_api_key
+    if source == "google" and not key:
+        raise PlacesError("GOOGLE_PLACES_API_KEY mangler på workeren – søgningen kan ikke køre mod Google. Sæt "
+                          "nøglen på worker-tjenesten og genoptag søgningen.")
+    if source == "demo":
+        return DemoPlaces()
     return GooglePlaces(key) if key else DemoPlaces()

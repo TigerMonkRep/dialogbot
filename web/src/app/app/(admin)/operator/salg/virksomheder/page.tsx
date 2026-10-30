@@ -52,7 +52,7 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                   <td className="p-2">{[c.postal_code, c.city].filter(Boolean).join(" ") || "–"}</td>
                   <td className="p-2">{c.industry_text ?? "–"}</td>
                   <td className="p-2">{RESEARCH[c.research_status]}</td>
-                  <td className="p-2">{c.contactable.result === "BLOCK" ? <span className="text-danger">Nej: {c.contactable.reasons.join(", ")}</span> : <span className="text-muted">Ikke afgjort (fase 2)</span>}</td>
+                  <td className="p-2">{c.contactable.result === "BLOCK" ? <span className="text-danger">Nej: {c.contactable.reasons.join(", ")}</span> : <span className="text-muted">Se kontakter på virksomhedens side</span>}</td>
                   <td className="p-2">{(c.data_quality.issues ?? []).length === 0 ? "OK" : (c.data_quality.issues ?? []).map((i) => <Tag key={i}>{ISSUE[i] ?? i}</Tag>)}</td>
                   <td className="p-2">{SOURCE[c.source]}</td>
                   <td className="p-2 whitespace-nowrap tabular-nums">{dt(c.first_seen_at)}</td>

@@ -7,9 +7,10 @@ Rules (product and Danish law, markedsføringsloven § 10):
   neither the Robinson list nor CVR's advertising protection is enough to call someone who has not asked for it.
 - Numbers on the workspace's do-not-call list are never called; "ring ikke igen" in a call adds the
   number to it.
-- Every outbound call costs 4 kr. excl. VAT (billing/prices.py), recorded in `campaign_calls` when Vapi accepts the
-  call. Each contact is dialled at most `max_attempts` times and talks at most `max_connected_seconds` in total,
-  which is what bounds the cost of a campaign.
+- Every outbound call costs 4 kr. excl. VAT for dialling plus 2 kr. per started minute of conversation
+  (billing/prices.py). The dialling price is recorded in `campaign_calls` when Vapi accepts the call, the minutes
+  when the end-of-call report arrives. Each contact is dialled at most `max_attempts` times and talks at most
+  `max_connected_seconds` in total, which is what bounds the cost of a campaign.
 - Payment never starts calls. Only an admin's explicit start command sets a campaign running, and
   the worker only dials inside the campaign's calling window in the workspace's time zone.
 - The assistant always says it is a digital assistent, who it calls from, and why.
@@ -32,7 +33,8 @@ from app.core.errors import ApiError, NotImplementedYet, ValidationFailed
 from app.models import Campaign, CampaignCall, CampaignContact, DoNotCall, PhoneNumber, Workspace
 from app.modules.billing import prices
 
-CALL_NET_MINOR = prices.CAMPAIGN_CALL_NET_MINOR  # 4 kr. excl. VAT per outbound call
+CALL_NET_MINOR = prices.CAMPAIGN_CALL_NET_MINOR      # 4 kr. excl. VAT per outbound call dialled
+MINUTE_NET_MINOR = prices.CAMPAIGN_MINUTE_NET_MINOR  # 2 kr. excl. VAT per started minute of conversation
 MAX_ATTEMPTS = 2
 MAX_CONNECTED_SECONDS = 180
 RETRY_AFTER = timedelta(hours=3)
@@ -168,11 +170,18 @@ def counts(db: OrmSession, c: Campaign) -> dict:
             "open": rows.get("pending", 0) + rows.get("calling", 0)}
 
 
+def started_minutes(seconds: int | float | None) -> int:
+    """Billing rounds up: 1 s → 1 minute, 61 s → 2 minutes, nothing → 0."""
+    return -(-int(seconds or 0) // 60)
+
+
 def max_cost_net_minor(db: OrmSession, c: Campaign) -> int:
-    """The most the campaign can cost from now: every contact still callable, dialled as often as the limit allows."""
+    """The most the campaign can cost from now: every contact still callable, dialled as often as the limit allows,
+    plus the minutes it could talk (every attempt priced as if it used the whole conversation allowance)."""
     pending = db.execute(select(CampaignContact.attempts).where(CampaignContact.campaign_id == c.id,
                                                                   CampaignContact.status == "pending")).scalars().all()
-    return sum(max(0, c.max_attempts - a) for a in pending) * c.call_net_minor
+    per_attempt = c.call_net_minor + started_minutes(c.max_connected_seconds) * c.minute_net_minor
+    return sum(max(0, c.max_attempts - a) for a in pending) * per_attempt
 
 
 def outbound_problem(db: OrmSession, c: Campaign) -> str | None:
@@ -417,6 +426,10 @@ def on_report(db: OrmSession, message: dict, *, call_id: str, conv, duration: fl
     reason = str(message.get("endedReason") or "")
     answered = visitor_lines > 0 and not any(reason.startswith(r) for r in NO_ANSWER_REASONS)
     contact.conversation_id = conv.id
+    call = db.scalar(select(CampaignCall).where(CampaignCall.provider_call_id == call_id).order_by(CampaignCall.dialled_at.desc()))
+    if call is not None and call.connected_seconds is None:  # price the conversation minutes once, from the report
+        call.connected_seconds = int(duration or 0) if answered else 0
+        call.minutes_net_minor = started_minutes(call.connected_seconds) * c.minute_net_minor
     if answered and duration:
         contact.connected_seconds += int(duration)
     if not answered:

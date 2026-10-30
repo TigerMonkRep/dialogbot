@@ -231,7 +231,7 @@ def week(db: OrmSession, workspace_id: uuid.UUID, start: date, tz: str) -> dict:
             elif role == "assistant" and "v" in slot:
                 slot.setdefault("a", at)
         gaps = [(s["a"] - s["v"]).total_seconds() for s in first.values() if "a" in s and "v" in s]
-    cc = db.execute(select(func.count(), func.coalesce(func.sum(CampaignCall.net_minor), 0))
+    cc = db.execute(select(func.count(), func.coalesce(func.sum(CampaignCall.net_minor + CampaignCall.minutes_net_minor), 0))
                     .where(CampaignCall.workspace_id == workspace_id, CampaignCall.dialled_at >= a,
                            CampaignCall.dialled_at < b)).one()
     summary = feed.counts(list(items.values()))

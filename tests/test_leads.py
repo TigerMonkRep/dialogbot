@@ -124,7 +124,8 @@ def test_approval_snapshots_the_agreement_and_is_idempotent(client, api, chat, d
     gone = api.post(tok, f"{base}/agreement", {"model": "B"})
     assert gone.status_code == 422 and gone.json()["code"] == "plan_discontinued"
     assert api.get(tok, f"{base}/agreement").json()["plan"] == {"monthly_net_minor": 249500, "lead_fee_net_minor": 0,
-                                                                  "campaign_call_net_minor": 400}
+                                                                  "campaign_call_net_minor": 400, "campaign_minute_net_minor": 200,
+                                                                  "inbound_included_minutes": 300, "inbound_extra_minute_net_minor": 150}
     agreement = api.post(tok, f"{base}/agreement", {}).json()                           # confirming again = version 2
     assert agreement["version"] == 2
     key = str(uuid.uuid4())

@@ -33,7 +33,10 @@ class AgreementIn(BaseModel):
 def get_agreement(ctx: WorkspaceContext = Depends(require_capability("agreements.read")), db: OrmSession = Depends(get_db)):
     return {"current": agreements.out(agreements.current(db, ctx.workspace.id)),
             "plan": {"monthly_net_minor": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "lead_fee_net_minor": 0,
-                     "campaign_call_net_minor": prices.CAMPAIGN_CALL_NET_MINOR}}
+                     "campaign_call_net_minor": prices.CAMPAIGN_CALL_NET_MINOR,
+                     "campaign_minute_net_minor": prices.CAMPAIGN_MINUTE_NET_MINOR,
+                     "inbound_included_minutes": prices.INBOUND_INCLUDED_MINUTES,
+                     "inbound_extra_minute_net_minor": prices.INBOUND_EXTRA_MINUTE_NET_MINOR}}
 
 
 @router.post("/agreement", status_code=status.HTTP_201_CREATED)

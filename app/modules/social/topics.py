@@ -19,8 +19,8 @@ FACTS: tuple[str, ...] = (
     "Den svarer kun ud fra den viden, virksomheden selv har godkendt, og gætter aldrig på priser, tider eller vilkår.",
     "Den booker, flytter og aflyser tider og sender SMS-bekræftelser.",
     "Den giver en kort opsummering af hver henvendelse.",
-    "Pris ekskl. moms: ét abonnement fra 2.495 kr. om måneden. Der er ingen pris pr. henvendelse.",
-    "Udgående opkald i en kampagne koster 4 kr. pr. opkald ekskl. moms.",
+    "Pris ekskl. moms: ét abonnement fra 2.495 kr. om måneden. Der er ingen pris pr. henvendelse, og 300 minutters indgående opkald om måneden er med.",
+    "Udgående opkald i en kampagne koster 4 kr. pr. opkald plus 2 kr. pr. påbegyndt samtaleminut ekskl. moms.",
     "Ingen binding.",
     "Opsætning: virksomheden kan selv sætte Dialogbot op efter byggevejledningens tre trin (med i abonnementet, cirka en halv time).",
     "Opsætning fra Dialogbots egne specialister koster 5.000 kr. ekskl. moms én gang og giver en skræddersyet opsætning og integration til virksomhedens egne systemer og behov.",
@@ -32,7 +32,7 @@ FACTS: tuple[str, ...] = (
 )
 
 # The only kroner amounts a post may mention (as written on the website).
-ALLOWED_AMOUNTS: frozenset[str] = frozenset({"2.495", "4", "5.000"})
+ALLOWED_AMOUNTS: frozenset[str] = frozenset({"2.495", "4", "2", "1,50", "5.000"})
 
 PLATFORMS = ("facebook", "instagram", "tiktok")
 
@@ -82,7 +82,7 @@ TOPICS: tuple[Topic, ...] = (
                 "Udgående kampagneopkald har deres egen lille pris",
                 "Ingen binding – gør-det-selv-opsætning er med"),
         proof="Se prisen på dialogbot.dk.", tags=("pris", "ingenbinding"),
-        caption_note="Fra 2.495 kr./md. ekskl. moms. Udgående kampagneopkald: 4 kr. pr. opkald ekskl. moms."),
+        caption_note="Fra 2.495 kr./md. ekskl. moms, 300 minutters indgående opkald er med. Udgående kampagneopkald: 4 kr. pr. opkald + 2 kr. pr. samtaleminut ekskl. moms."),
     Topic(
         key="approved_knowledge", path="/ai-receptionist", kicker="Du bestemmer",
         angle="Dialogbot svarer kun ud fra det, ejeren har godkendt, og gætter aldrig.",

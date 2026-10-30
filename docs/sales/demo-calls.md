@@ -60,7 +60,7 @@ opkaldsmotoren.
 ## Opsætning (ejer)
 
 1. **Opret salgsarbejdsrummet.** Opret et arbejdsrum "Dialogbot" og læg viden om Dialogbot ind: hvad det er, priser
-   (ét abonnement fra 2.495 kr./md. og 4 kr. pr. udgående kampagneopkald) og hvordan man kommer i gang. Godkend al viden.
+   (ét abonnement fra 2.495 kr./md. med 300 indgående minutter, og 4 kr. pr. udgående kampagneopkald + 2 kr. pr. samtaleminut) og hvordan man kommer i gang. Godkend al viden.
 2. **Bestil et nummer.** Bestil et nummer til arbejdsrummet via telefoniopsætningen. Som operatør skal du også tillade
    udgående opkald fra nummeret (`/app/operator/telephony` → Afsender).
 3. **Sæt miljøvariabler.** Sæt `SALES_WORKSPACE_ID` til arbejdsrummets id på API'et. `VAPI_API_KEY` og

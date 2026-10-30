@@ -128,7 +128,7 @@ export default async function Home() {
               ["Tager telefonen", "Døgnet rundt, på dansk, med en stemme I selv vælger. Siger ærligt, at den er en digital assistent, hvis kunden spørger.", <PhoneIcon key="1" size={24} stroke="#FFFFFF" />],
               ["Booker aftaler", "Finder ledige tider i Google Kalender eller Microsoft 365, booker, flytter og aflyser – og sender bekræftelse på SMS.", <CalendarIcon key="2" size={24} stroke="#FFFFFF" />],
               ["Svarer på hjemmesiden", "Den samme viden som webchat på jeres side – én kodelinje, så er den på.", <ChatIcon key="3" size={24} stroke="#FFFFFF" />],
-              ["Ringer kunder op", "Følger op på tilbud eller minder om service – kun til kunder, der har sagt ja. 4 kr. pr. opkald.", <SendIcon key="4" size={24} stroke="#FFFFFF" />],
+              ["Ringer kunder op", "Følger op på tilbud eller minder om service – kun til kunder, der har sagt ja. 4 kr. pr. opkald + 2 kr. pr. minut.", <SendIcon key="4" size={24} stroke="#FFFFFF" />],
             ].map(([title, text, icon]) => (
               <div key={title as string} className="flex flex-col gap-3 p-5 rounded-2xl bg-panel border-[1.5px] border-ink">
                 <span className={tile}>{icon}</span>
@@ -166,19 +166,19 @@ export default async function Home() {
         <div className={`${container} py-14 sm:py-20 flex flex-col gap-9`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
             <span className={eyebrow}>Pris</span>
-            <h2 className={h2}>Ét abonnement. Ingen pris pr. opkald.</h2>
+            <h2 className={h2}>Ét abonnement. Ingen pris pr. henvendelse.</h2>
             <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Alle priser er ekskl. moms. Ingen binding – opsigelse måned til måned.</p>
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
             <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block">
               <span className="font-display font-bold text-xl">Abonnement</span>
               <div className="flex items-baseline gap-2 flex-wrap"><span className="text-lg font-semibold text-ink-soft">Fra</span><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">2.495</span><span className="text-lg font-semibold text-ink-soft">kr./md.</span></div>
-              <span className="text-[15px] text-ink-soft">Telefon, booking og webchat er med. Gør-det-selv-opsætning er med.</span>
+              <span className="text-[15px] text-ink-soft">Telefon, booking og webchat er med – inkl. 300 minutters indgående opkald om måneden. Gør-det-selv-opsætning er med.</span>
             </article>
             <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
               <span className="font-display font-bold text-xl">Udgående kampagneopkald</span>
-              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">4</span><span className="text-lg font-semibold text-ink-soft">kr. pr. opkald</span></div>
-              <span className="text-[15px] text-ink-soft">Kun hvis I vil have Dialogbot til at ringe ud. I ser den højeste pris, før I starter.</span>
+              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">4</span><span className="text-lg font-semibold text-ink-soft">kr. pr. opkald + 2 kr. pr. minut</span></div>
+              <span className="text-[15px] text-ink-soft">Kun hvis I vil have Dialogbot til at ringe ud. Ubesvaret: 4 kr. Tre minutters samtale: 10 kr. I ser den højeste pris, før I starter.</span>
             </article>
             <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
               <span className="font-display font-bold text-xl">Opsætning fra vores specialister</span>
@@ -232,7 +232,7 @@ function structuredData() {
       publisher: { "@id": `${SITE_URL}/#organization` },
       offers: [
         { "@type": "Offer", name: "Abonnement – fra", price: "2495", priceCurrency: "DKK", description: "Fra, pr. måned ekskl. moms" },
-        { "@type": "Offer", name: "Udgående kampagneopkald", price: "4", priceCurrency: "DKK", description: "Pr. udgående opkald ekskl. moms" },
+        { "@type": "Offer", name: "Udgående kampagneopkald", price: "4", priceCurrency: "DKK", description: "Pr. udgående opkald ekskl. moms, plus 2 kr. pr. påbegyndt samtaleminut" },
         { "@type": "Offer", name: "Opsætning fra Dialogbots specialister", price: "5000", priceCurrency: "DKK", description: "Én gang, ekskl. moms – skræddersyet opsætning og integration til egne systemer. Gør-det-selv-opsætning er med i abonnementet." },
       ] },
     { "@context": "https://schema.org", ...videoStructuredData(SITE_URL) },

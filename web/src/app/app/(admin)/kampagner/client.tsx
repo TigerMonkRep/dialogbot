@@ -164,7 +164,7 @@ export function StartCampaign({ wsId, c, checklist }: { wsId: string; c: Campaig
       <span className="eyebrow !text-ink">Før den starter</span>
       <h2 className="font-display font-extrabold text-[20px] text-ink">{c.status === "paused" ? "Genoptag kampagnen" : `${pending} opkald · højst ${kr(c.max_cost.net_minor)} ekskl. moms`}</h2>
       {c.outbound_problem && <Alert kind="warn">{c.outbound_problem}</Alert>}
-      <p className="text-body-md">{pending} kontakter venter. Højst {kr(c.max_cost.net_minor)} + moms ({kr(c.max_cost.gross_minor)} inkl. moms) – {kr(c.pricing.call_net_minor)} + moms pr. udgående opkald, højst {c.pricing.max_attempts} forsøg pr. kontakt. Betaling starter aldrig opkald.</p>
+      <p className="text-body-md">{pending} kontakter venter. Højst {kr(c.max_cost.net_minor)} + moms ({kr(c.max_cost.gross_minor)} inkl. moms) – {kr(c.pricing.call_net_minor)} + moms pr. udgående opkald og {kr(c.pricing.minute_net_minor)} + moms pr. påbegyndt samtaleminut, højst {c.pricing.max_attempts} forsøg og {Math.round(c.pricing.max_connected_seconds / 60)} minutters samtale pr. kontakt. Betaling starter aldrig opkald.</p>
       <fieldset className="flex flex-col gap-1">
         <legend className="text-label-md font-semibold mb-1">Bekræft reglerne for opkald</legend>
         {checklist.map((t, i) => (

@@ -308,3 +308,20 @@ def test_google_fields_expire_after_the_cache_window(salg, db, monkeypatch):
     assert c.google_place_id == "ChIJ_old" and c.rating is None and c.google_fetched_at is None and c.google_types == []
     assert db.scalar(select(SalesSourceFact).where(SalesSourceFact.company_id == c.id)) is None
     assert db.scalar(select(SalesContact).where(SalesContact.company_id == c.id)).source_fact_id is None
+
+
+def test_a_google_job_never_runs_on_demo_data(api, salg, monkeypatch, db):
+    """The API had the key when the job was made; a worker without it must fail the job, not fill it with demo rows."""
+    places.set_client_override(None)
+    monkeypatch.setenv("GOOGLE_PLACES_API_KEY", "api-has-the-key")
+    get_settings.cache_clear()
+    job = search.create_job(db, user_id=None, industry_keys=[], google_types=["hair_salon"], keywords=[],
+                            geo_kind="postal_codes", geo={"postal_codes": ["8000"]}, max_results=10)
+    db.commit()
+    assert job.source == "google"
+    monkeypatch.delenv("GOOGLE_PLACES_API_KEY")
+    get_settings.cache_clear()
+    assert search.run_due(db) == 0
+    db.refresh(job)
+    assert job.status == "failed" and "GOOGLE_PLACES_API_KEY" in job.error
+    assert db.scalar(select(SalesCompany.id)) is None

@@ -445,7 +445,13 @@ def run_due(db: OrmSession, client=None, time_limit: float = STEP_TIME_LIMIT) ->
     job = claim(db)
     if job is None:
         return 0
-    client = client or places.client()
+    try:
+        client = client or places.client(job.source)
+    except places.PlacesError as e:
+        _finish(job, "failed", str(e)[:500])
+        db.commit()
+        log.warning("sales.search.misconfigured", job_id=str(job.id))
+        return 0
     started, steps = time.monotonic(), 0
     try:
         while job.cursor < len(job.plan) and time.monotonic() - started < time_limit:

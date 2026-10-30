@@ -1,6 +1,6 @@
 # Dialogbots interne salgskanal · analyse og Claude Code-prompt
 
-Version 1.0 · 30. oktober 2026 · Analysegrundlag: `TigerMonkRep/dialogbot`, branch `main`, commit `2fd38b4`
+Version 1.1 · 30. oktober 2026 (datakilde ændret til Google Places efter ejerens beslutning) · Analysegrundlag: `TigerMonkRep/dialogbot`, branch `main`, commit `2fd38b4`
 ("Merge pull request #88 … feat/website-analytics"). Analysen er lavet ved læsning af koden; intet er ændret, deployet
 eller ringet. Ingen hemmeligheder er læst – kun navne på indstillinger.
 
@@ -15,11 +15,11 @@ Dokumentet har seks dele: **A** kort vurdering, **B** evidensmatrix, **C** beslu
 brancheplaybooks (`app/modules/sales/`). Kampagnemodulet (`app/modules/campaigns/`) har kontaktliste, opkaldsvindue i
 dansk tid, forsøgsgrænse, 4 kr.-afregning, spærreliste, udfaldsklassificering og en dialer, der kører fra workeren
 hvert minut. Transskriptioner gemmes som samtaler og vises allerede i `/app/opkald`. Vidensbasen har udkast → gennemsyn
-→ godkendelse med versioner og audit. Der findes en CVR-branchesøgning (`app/modules/social/prospects.py`), en
+→ godkendelse med versioner og audit. Der findes et CVR-opslag (`app/modules/business/cvr.py`), en
 website-importer med SSRF-beskyttelse (`app/modules/knowledge/importer.py`), kalenderbooking mod Google/Microsoft, og
 en operatør-rolle med admin-sider.
 
-**Det, der er nyt:** (1) geografisk branchesøgning som baggrundsjob, (2) en virksomheds-/kontaktmodel med kildefakta
+**Det, der er nyt:** (1) virksomhedssøgning via Google Places API efter branche + område som baggrundsjob, (2) en virksomheds-/kontaktmodel med kildefakta
 og dubletkontrol på tværs af kunder, (3) en samlet kontaktpolitik (`ALLOW`/`BLOCK`/`NEEDS_REVIEW`) med
 kontaktgrundlag og central spærring for Dialogbots eget salg, (4) personlige manuskripter som versioner, (5) et
 tilbuds-/ordreudkast med bestillingslink, (6) værktøjer til Peter (mødetider, ordreudkast, frabedelse), (7) en
@@ -29,7 +29,8 @@ samlet salgs-admin med statistik, og (8) lydoptagelser, retention og indsigt/sle
 
 | Afhængighed | Blokerer | Status |
 |---|---|---|
-| CVR system-til-system (`CVR_USERNAME`/`CVR_PASSWORD`) | Rigtig virksomhedssøgning | `IKKE_VERIFICERET` om de er sat i prod; koden svarer 501 uden |
+| Google Places API-nøgle (`GOOGLE_PLACES_API_KEY`) | Rigtig virksomhedssøgning | Findes ikke endnu; oprettes i Google Cloud-projektet `dialogbot-513209` (Places API (New) skal slås til). Uden den kører søgningen på demo-data/import |
+| CVR system-til-system (`CVR_USERNAME`/`CVR_PASSWORD`) | Automatisk tjek af reklamebeskyttelse | `IKKE_VERIFICERET` om de er sat i prod; uden dem → `NEEDS_REVIEW` i stedet for `BLOCK`/`ALLOW` |
 | Vapi (`VAPI_API_KEY`, `VAPI_SERVER_SECRET`) + salgsarbejdsrum med udgående nummer | Internt testopkald | Demo-opkald virker i prod (`GET /demo-call` svarer `available: true`), så det er sat op |
 | Kontaktgrundlag for AI-opkald | Rigtige salgsopkald | Koden og `docs/sales/demo-calls.md` fastslår: AI-opkald kræver forudgående samtykke, også til virksomheder (markedsføringslovens § 10, stk. 1). Research og simulation blokeres ikke |
 | Lydlager (privat bucket) | Afspilning af lyd | Findes ikke; Vapi-optagelse er ikke slået til |
@@ -53,7 +54,7 @@ Statusser: `EKSISTERER`, `DELVIST`, `MANGLER`, `IKKE_VERIFICERET`. Alle ruter li
 |---|---|---|---|---|---|
 | Intern adminadgang | `EKSISTERER` | `app/core/auth.py` (`Principal`, `get_workspace_context`, `get_scoped`), `User.is_platform_operator` (`app/models/identity.py:50`), `operator()` i `app/modules/voices/operator_router.py` → 403 `operator_only`; `scripts/grant_operator.py`; "se som kunde" i `app/modules/admin/router.py` (read-only, 60 min, auditeret). Operatørruter er ikke arbejdsrumsbundne. Web: `web/src/app/app/(admin)/operator/*`, tabs i `operator/admin/shared.tsx`, værktøjsliste i `operator/admin/vaerktoejer/page.tsx`. Ingen operatørmenu i `shell.tsx` – kun links gated på `me.is_platform_operator` | `operator()` som dependency på alle nye ruter; AdminFrame-mønsteret | Nyt operatørområde `/app/operator/salg/*` med egen ramme (AdminFrame siger "kun læsning"), link fra Værktøjer og Konto | `tests/test_admin.py` (403 for ikke-operatører) som skabelon |
 | Dialogbots egen organisation vs. kundernes arbejdsrum | `EKSISTERER` | `SALES_WORKSPACE_ID` + `sales_workspace()` i `app/modules/sales/service.py`; salgsarbejdsrummet er et almindeligt arbejdsrum med Dialogbots godkendte viden, nummer, spærreliste, leads. Globale operatørtabeller findes allerede uden `workspace_id` (`social_prospects`) | Salgsarbejdsrummet som "ejer" af opkald, samtaler, leads | Nye `sales_*`-tabeller er globale (operatør) med FK til salgsarbejdsrummets objekter, hvor de findes | `test_identity_and_access.py` (isolering) |
-| Geografisk branchesøgning | `DELVIST` (kun branche) | `app/modules/social/prospects.py` `_cvr_candidates()`: Elasticsearch mod CVR på `nyesteHovedbranche.branchekode`, udelukker `reklamebeskyttet` og lukkede statusser, finder hjemmeside fra `nyesteKontaktoplysninger`; kører én batch pr. dag, synkront, uden område-filter. `INDUSTRIES` med DB07-koder (6 brancher). CVR-opslag: `app/modules/business/cvr.py` | ES-forespørgslen, `_website_from_contacts`, `parse()`, DB07-koder | Nyt søgejob (tabel + worker-blok) med branchekoder + postnumre/kommune, budget, fremskridt, annullering | `tests/test_cvr_lookup.py` mocker httpx – samme teknik |
+| Geografisk branchesøgning | `MANGLER` (Google) · `DELVIST` (CVR-branche) | Ingen Google Places-integration i repoet (grep: ingen `places.googleapis.com`). Tætteste: `app/modules/social/prospects.py` `_cvr_candidates()` (CVR-branchekode, uden område) og CVR-opslag i `app/modules/business/cvr.py` (`reklamebeskyttet`). `INDUSTRIES` i `sales/script.py` (7 brancher) som brancheliste | `cvr.lookup()` til berigelse, `INDUSTRIES`, httpx-mønstret | Nyt søgejob (tabel + worker-blok) mod Places Text Search med Google-type + område, delområder, dedupe på `places.id`, budget, fremskridt, annullering | `tests/test_cvr_lookup.py` mocker httpx – samme teknik til Places |
 | Virksomhedsoplysninger, dubletter, kilder | `MANGLER` | Tætteste: `SocialProspect` (unik `cvr`), `CampaignContact` (unik campaign+phone), `KnowledgeVersion.source_type/source_ref` (kilde pr. URL). Ingen virksomheds-/kontaktentitet på tværs, ingen kildefakta-tabel, ingen domæne-/telefon-dedupe | Mønstret `source_ref` pr. faktum | Tabeller `sales_companies`, `sales_contacts`, `sales_source_facts` (se E) | Nye enhedstests på dedupe-nøgler |
 | Søgning og scraping | `DELVIST` | `app/modules/knowledge/importer.py`: `fetch()` følger redirects manuelt og tjekker privat IP pr. hop (`_host_is_public`), 12 sider/1,5 MB/10 s, stdlib HTML→tekst, AI-udtræk `website-extract-v1`. Gaps: alle hosts tilladt i dev/test, ingen pinning mod DNS-rebinding, ingen robots.txt, ingen rate limit. `social/prospects.fetch_social_links()` har **ingen** SSRF-beskyttelse (`follow_redirects=True`). Ingen `phonenumbers`-bibliotek; tre E.164-regexes (`campaigns/service.normalize_phone`, `telephony/vapi.normalize_e164`, `integrations/connectors/sms.py`) | `importer.parse/_Text/crawl` og `_host_is_public` | Ét fælles hentemodul `app/core/safe_fetch.py` (IP-pinning, robots, budget, per-host grænse) som både importer, prospects og salgs-research bruger | `tests/test_website_import.py` som skabelon; nye SSRF-tests |
 | Samtykke og spærring | `DELVIST` | `DemoCall` gemmer `consent_version/consent_text/consented_at/source/seller_user_id` (`demo-call-web-v2`, `demo-call-seller-v2`). `CampaignContact.consent_source` (fritekst ≥ 5 tegn). `DoNotCall` pr. arbejdsrum (`source` manual/call), automatisk ved udfald `opt_out`. CVR `advertising_protected` (None = ukendt). Juridisk linje i `campaigns/service.py` docstring + `LEGAL_CHECKLIST` (`campaign-legal-v2`): AI-opkald kræver forudgående samtykke, også B2B. Ingen samlet policyfunktion, ingen beslutningslog, ingen telefonverifikation (OTP) | `DemoCall`-feltsættet, `DoNotCall`, CVR-tjek | `sales_contact_basis` (grundlag pr. kontakt/kanal), global `sales_block_list`, `policy.evaluate()` → `ALLOW/BLOCK/NEEDS_REVIEW` med grunde, kaldt ved planlægning og i `dial()` | `tests/test_campaigns.py`, `test_sales_demo_calls.py` |
@@ -85,17 +86,29 @@ Konventioner, verificeret: Alembic-head er `a1b2c3d4e5f6` (`alembic.ini` `file_t
    Viden og tilbud · Indstillinger. Link fra `operator/admin/vaerktoejer/page.tsx` (`TOOLS`) og fra `konto/page.tsx`
    ved siden af "Operatør". Den eksisterende demo-konsol `/app/operator/sales` flyttes ind under Opkald → "Demo-opkald"
    (ruten beholdes som redirect).
-2. **Datakilde til virksomhedssøgning: CVR system-til-system (Erhvervsstyrelsen).** Repoet bruger allerede
-   indekset (`CVR_URL`, `cvr.py`, `prospects.py`); det er officielt, gratis, dækker hele Danmark, kan filtreres på
-   DB07-branchekode (`Vrvirksomhed.virksomhedMetadata.nyesteHovedbranche.branchekode`) og på registreret adresse
-   (`nyesteBeliggenhedsadresse.postnummer` / `kommune.kommuneKode`), og leverer hjemmeside, telefon og e-mail fra
-   `nyesteKontaktoplysninger`, når virksomheden selv har registreret dem. Geografi = **registreret beliggenhedsadresse**
-   (afdelinger = produktionsenheder er ikke med i V1 og markeres som begrænsning). Radius-søgning laves som
-   postnummer-liste ud fra en vedligeholdt postnummer→koordinat-tabel (DAWA/Dataforsyningen er offentlig og gratis;
-   V1 bruger en statisk CSV i repoet). Google Places er fravalgt i V1 (betalt, brugsretsbegrænsninger på lagring).
+2. **Datakilde til virksomhedssøgning: Google Places API (New), Text Search** – ejerens valg (30. oktober 2026):
+   søgningen skal bygge på Google, ikke CVR. Googles søgeresultatsider må ikke scrapes (Googles vilkår og
+   bot-beskyttelse; opgavens eget forbud mod at omgå CAPTCHA), så den officielle vej er
+   `POST https://places.googleapis.com/v1/places:searchText` (verificeret 30. oktober 2026 i Googles dokumentation):
+   `textQuery` (fx "frisør i Aarhus"), `includedType` (én Google-type fra tabel A, fx `hair_salon`, med
+   `strictTypeFiltering`), `locationBias` som cirkel (`center` + `radius` ≤ 50.000 m) eller `locationRestriction` som
+   rektangel, `languageCode="da"`, `regionCode="DK"`, `pageSize` ≤ 20 og `nextPageToken` – **højst 60 resultater pr.
+   forespørgsel**, så større områder deles op i delområder (postnummer/bydel-rektangler eller cirkler), og resultater
+   dedupliceres på `places.id`. Feltmasken afgør prisen: `places.id` er gratis (Essentials), `displayName`,
+   `formattedAddress`, `location`, `types`, `primaryType`, `businessStatus`, `googleMapsUri` er Pro ($32 pr. 1.000,
+   5.000 gratis/md.), mens `websiteUri`, `nationalPhoneNumber`, `internationalPhoneNumber`, `regularOpeningHours`,
+   `rating`, `userRatingCount` er Enterprise ($35 pr. 1.000, 1.000 gratis/md.). Én søgning med kontaktdata koster
+   altså ca. 0,25 kr. pr. side à 20 virksomheder; en søgning på 200 virksomheder ≈ 2–3 kr. Nøglen ligger i Google
+   Cloud-projektet "Dialogbot" (`dialogbot-513209`, oprettet 30. oktober 2026) med Places API (New) slået til og en
+   API-restriktion til netop det API; backend læser den fra `GOOGLE_PLACES_API_KEY`.
+   Brugsret (Google Maps Platform Terms): `places.id` må gemmes permanent; øvrige Google-felter må caches i højst
+   30 dage og skal derefter genopfriskes eller slettes – derfor gemmes Google-felter med `google_fetched_at` og
+   jobbet "genopfrisk" kører før kontakt; Dialogbots egen research af virksomhedens hjemmeside er vores egne data.
+   Geografi = virksomhedens placering ifølge Google (butik/kontor), hvilket passer til "fysisk beliggenhed".
+   **CVR bruges kun som berigelse**, ikke som kilde: for hver virksomhed med fundet CVR (fra hjemmesiden eller et
+   navn+adresse-opslag) hentes `reklamebeskyttet`, juridisk navn og status via det eksisterende `cvr.py`, fordi
+   reklamebeskyttelse skal respekteres. Uden CVR-legitimation er feltet ukendt → `NEEDS_REVIEW`.
    CSV/URL-import er fallback, tydeligt mærket "importeret".
-   `IKKE_VERIFICERET`: feltstierne til postnummer og kontaktoplysninger skal Claude Code bekræfte mod det rigtige indeks
-   med testlegitimation, før de bruges; `_cvr_candidates()` viser, hvordan indekset svarer i dag.
 3. **Ét sikkert hentemodul** `app/core/safe_fetch.py` erstatter de to crawlere: DNS-opslag → IP-pinning i
    forbindelsen (ikke kun forhåndstjek), privat/reserveret/metadata-blok, kun http(s) på 80/443, ingen credentials i
    URL, manuelle redirects med gentjek, robots.txt (hentes og caches pr. host, `DialogbotResearch/1.0`), højst 8 sider
@@ -152,8 +165,8 @@ Konventioner, verificeret: Alembic-head er `a1b2c3d4e5f6` (`alembic.ini` `file_t
     policy, kontaktgrundlag, kampagnekobling, internt testopkald, transskriptvisning → Fase 3 tilbud/ordre, møde,
     statistik → Fase 4 lyd, retention, indsigt/sletning, dokumentation.
 
-**Væsentlige kompromiser:** afdelinger (p-enheder) i CVR udelades i V1; radius er postnummerbaseret; Google Places
-udelades; telefon-OTP på "ring mig op" tages ikke med (eksisterende dør ændres ikke); ElevenLabs Agents bruges ikke
+**Væsentlige kompromiser:** Google giver højst 60 resultater pr. forespørgsel (løses med delområder, ikke garanti for
+fuld dækning); Google-felter må kun caches 30 dage; CVR er kun berigelse; telefon-OTP på "ring mig op" tages ikke med (eksisterende dør ændres ikke); ElevenLabs Agents bruges ikke
 til udgående.
 
 ---
@@ -162,7 +175,8 @@ til udgående.
 
 | Nr. | Afklaring | Blokerer |
 |---|---|---|
-| 1 | **Er CVR system-til-system-legitimation sat i prod/staging (`CVR_USERNAME`/`CVR_PASSWORD`)?** Uden den virker søgningen kun som demo/import. Ansøges gratis hos Erhvervsstyrelsen (cvrselvbetjening@erst.dk). | Integration (ikke kode) |
+| 1 | **Google Places API-nøgle.** Slå *Places API (New)* til i Google Cloud-projektet `dialogbot-513209`, opret en API-nøgle begrænset til det API, sæt et dagligt kvoteloft og budgetalarm i Google Cloud Billing (kræver betalingskonto på projektet), og læg nøglen som `GOOGLE_PLACES_API_KEY` på backend-tjenesten i Render. Uden den kører søgningen på demo-data/import. | Integration (ikke kode) |
+| 1b | **CVR-legitimation (`CVR_USERNAME`/`CVR_PASSWORD`)** til automatisk tjek af reklamebeskyttelse; uden den skal operatøren tjekke manuelt (`NEEDS_REVIEW`). Gratis hos Erhvervsstyrelsen (cvrselvbetjening@erst.dk). | Kun bekvemmelighed |
 | 2 | **Kontaktgrundlag for rigtige salgsopkald.** Koden holder fast i, at AI-opkald kræver forudgående anmodning/samtykke, også B2B. Skal "live" i V1 kun dække kontakter, der selv har bedt om opkald (web/sælger/lead), og skal et menneske ringe først i alle andre tilfælde? Anbefalet ja; en advokat bør bekræfte. | Kun live salg |
 | 3 | **Retentionfrister** (forslag 90 dage transskript, 30 dage lyd, 365 dage opsummering) og om optagelse overhovedet ønskes i V1. | Fase 4 |
 | 4 | **Lydlager**: Supabase Storage (allerede leverandør) som privat bucket – ok? | Fase 4 |
@@ -252,6 +266,9 @@ Hemmeligheder: læs aldrig `.env`, udskriv aldrig nøgler. Konstater kun, om en 
 - `SALES_TEST_NUMBERS: str = ""` (kommasepareret E.164; kun disse må ringes i `test`).
 - `SALES_RESEARCH_MAX_PAGES=8`, `SALES_RESEARCH_PER_HOST_CONCURRENCY=2`, `SALES_RESEARCH_PAGE_BYTES=1_500_000`,
   `SALES_RESEARCH_TIMEOUT_SECONDS=10`, `SALES_SEARCH_MAX_RESULTS=200`.
+- `GOOGLE_PLACES_API_KEY: str | None = None` (unset = søgning kun som demo/import), `GOOGLE_PLACES_URL="https://places.googleapis.com/v1/places:searchText"`,
+  `SALES_SEARCH_DAILY_REQUEST_CAP=500` (hårdt loft på Places-forespørgsler pr. dag, tælles i `sales_search_jobs.budget`),
+  `GOOGLE_PLACES_CACHE_DAYS=30` (Googles vilkår: felter ud over `places.id` genopfriskes eller slettes efter 30 dage).
 - `SALES_MAX_CONCURRENT_CALLS=2`, `SALES_MAX_ATTEMPTS_PER_CONTACT=2`.
 - `SALES_RECORDING_STORAGE: Literal["none","supabase"]="none"` + lagerindstillinger (navne efter eksisterende
   Supabase-mønster i repoet; opfind ikke en anden leverandør).
@@ -274,7 +291,9 @@ Fase 1:
   `source` (`cvr`|`import`), `status` (`queued`|`running`|`paused`|`done`|`failed`|`cancelled`), `progress` JSONB
   ({examined, found, skipped, incomplete, reasons}), `budget` JSONB, `lease_expires_at`, `error`, `started_at`,
   `finished_at`.
-- `sales_companies`: id, `cvr` (unik, nullable), `legal_name`, `display_name`, `industry_code`, `industry_text`,
+- `sales_companies`: id, `google_place_id` (unik, nullable – må gemmes permanent), `google_fetched_at`,
+  `google_types` JSONB, `google_primary_type`, `google_business_status`, `google_maps_uri`, `rating` (nullable),
+  `user_rating_count` (nullable), `latitude`, `longitude`, `cvr` (unik, nullable – berigelse), `legal_name`, `display_name`, `industry_code`, `industry_text`,
   `address_line`, `postal_code`, `city`, `municipality_code`, `domain` (normaliseret, indeks), `website_url`,
   `main_phone_e164` (indeks), `public_email`, `cvr_status`, `advertising_protected` (nullable bool),
   `relevance_score`, `relevance_reasons` JSONB, `data_quality` JSONB, `research_status`
@@ -335,25 +354,52 @@ Fase 4:
 - `sales_data_requests`: id, `subject` (`phone`|`email`|`cvr`), `value`, `kind` (`access`|`erasure`|`objection`),
   `status`, `handled_by`, `handled_at`, `result` JSONB.
 
-#### 3. Virksomhedssøgning (fase 1) – `app/modules/sales/search.py` + worker
+#### 3. Virksomhedssøgning (fase 1) – `app/modules/sales/search.py` + worker (Google Places API, New)
 
-- `POST /operator/salg/search-jobs` (body: `industry_codes[]` og/eller `industry_keys[]` fra `INDUSTRIES`,
-  `keywords[]`, `geo_kind`, `geo`, `max_results`, `exclude_existing_customers=true`) → 202 med jobbet.
-  `GET /operator/salg/search-jobs`, `GET …/{id}`, `POST …/{id}/cancel`, `POST …/{id}/resume`.
+- `POST /operator/salg/search-jobs` (body: `industry_keys[]` fra `INDUSTRIES` og/eller `google_types[]` (Google
+  Places-typer fra tabel A, fx `hair_salon`, `plumber`, `restaurant`, `dentist`, `car_repair`, `electrician`,
+  `beauty_salon`, `physiotherapist`, `lawyer`, `accounting`) og/eller `keywords[]` (fritekst, fx "VVS"),
+  `geo_kind` (`place`|`postal_codes`|`radius`), `geo` (`{"text": "Aarhus"}` | `{"postal_codes": [...]}` |
+  `{"lat","lng","km"}` med km ≤ 50), `max_results` (≤ `SALES_SEARCH_MAX_RESULTS`), `exclude_existing_customers=true`)
+  → 202 med jobbet og et **anslået forbrug** (antal forespørgsler × pris pr. SKU). `GET /operator/salg/search-jobs`,
+  `GET …/{id}`, `POST …/{id}/cancel`, `POST …/{id}/resume`.
+- Brancheliste: udvid `INDUSTRIES` i `sales/script.py` med `google_types` og `search_terms` pr. branche (fx håndværk →
+  `plumber`, `electrician`, `roofing_contractor`, `painter`; "tømrer", "VVS", "elektriker"). Nye brancher kan oprettes i
+  admin (`sales_industries`-tabel med label, google_types, search_terms, aktiv) og overstyrer koden.
 - Jobbet kører i workeren (ny blok i `run_schedules()` + `claim`-mønster med `lease_expires_at`; højst ét job ad gangen).
-  Trin: (1) CVR ES-forespørgsel pr. branchekode med filter på `nyesteBeliggenhedsadresse.postnummer` (liste) eller
-  `kommune.kommuneKode`; udeluk `reklamebeskyttet=true` fra automatisk kontakt (men gem virksomheden med
-  `advertising_protected=true`, så "fundet" ≠ "må ringes"), udeluk lukkede statusser (genbrug `_CLOSED` fra
-  `prospects.py`). Paginér med `from/size`, respekter `max_results` og `SALES_SEARCH_MAX_RESULTS`. (2) Udtræk
-  navn, adresse, branche, hjemmeside, telefon, e-mail fra `nyesteKontaktoplysninger`; gem som `sales_source_facts`
-  med `url_or_ref="cvr:<cvr>"`. (3) Dublettjek mod `sales_companies` (cvr/domæne+postnr/telefon) og mod
-  eksisterende kunder (`workspaces` med aktiv `ReceptionAgreement` – match på CVR i virksomhedsprofilen eller på
-  domæne i `workspace.website`, hvis feltet findes; ellers kun CVR). (4) `progress` opdateres pr. 25 virksomheder;
-  `cancel` stopper mellem batches. Radius: brug en statisk `app/modules/sales/data/postnumre.csv` (postnr, lat, lng)
-  til at vælge postnumre inden for km – dokumentér kilden (Dataforsyningen/DAWA, offentlig) i filens hoved.
-- **Verificér feltstierne** mod CVR-indekset med testlegitimation, før du låser dem; hvis legitimation mangler, lav
-  en `FakeCvrSearch` (deterministisk fixture i `tests/fixtures/sales_cvr.json` med tydeligt fiktive firmaer, domæner
-  på `.invalid`, numre fra Vapis/Twilios dokumenterede testnumre) og vis "demo-data" i UI'et.
+  Trin: (1) **Delområder:** `place` → geokod tekst til midtpunkt via Text Search (Essentials, gratis) og lav en cirkel
+  på 5 km; `postal_codes` → ét delområde pr. postnummer (midtpunkt fra `app/modules/sales/data/postnumre.csv`,
+  kilde Dataforsyningen/DAWA, offentlig); `radius` → ét delområde, delt i et gitter af cirkler à 3 km når km > 5, så
+  grænsen på 60 resultater pr. forespørgsel ikke skjuler virksomheder. (2) **Text Search pr. delområde × type/term:**
+  `POST {GOOGLE_PLACES_URL}` med headers `X-Goog-Api-Key`, `X-Goog-FieldMask`, body `{textQuery: "<term> i <område>",
+  includedType, strictTypeFiltering: true, locationBias: {circle: {center, radius}}, languageCode: "da", regionCode:
+  "DK", pageSize: 20, pageToken}`; følg `nextPageToken` (max 3 sider); feltmaske **to-trins**: først
+  `places.id,places.displayName,places.formattedAddress,places.location,places.types,places.primaryType,
+  places.businessStatus,places.googleMapsUri` (Pro) til dedupe/relevans, derefter kun for nye, relevante
+  virksomheder Place Details (`GET https://places.googleapis.com/v1/places/{id}`) med
+  `websiteUri,nationalPhoneNumber,internationalPhoneNumber,regularOpeningHours,rating,userRatingCount` (Enterprise) –
+  så betales kun kontaktdata for virksomheder, vi beholder. Respekter `SALES_SEARCH_DAILY_REQUEST_CAP` (tæl hver
+  forespørgsel i `sales_search_jobs.budget`; stop jobbet med status `paused` + årsag, når loftet er nået).
+  `businessStatus != OPERATIONAL` → gem som `incomplete`, ikke kontaktbar. (3) **Gem fakta:** navn, adresse, typer,
+  hjemmeside, telefon (E.164 via `normalize_phone`), åbningstider som `sales_source_facts` med
+  `url_or_ref="google_place:<id>"`, `fetched_at=now`, `confidence=high`; sæt `google_fetched_at`. (4) **Dublettjek**
+  mod `sales_companies` (google_place_id / normaliseret domæne+postnr / telefon) og mod eksisterende kunder
+  (`workspaces` med aktiv `ReceptionAgreement`: match på domæne i virksomhedsprofilen eller på CVR, hvis kendt).
+  Navnebrødre med andet postnummer forbliver adskilte; samme domæne + forskellig adresse = "mulig afdeling", ikke
+  flettet. (5) **CVR-berigelse (valgfri):** find CVR på hjemmesiden under research (`importer.profile_suggestion`) og
+  slå `reklamebeskyttet`, juridisk navn og status op med `cvr.lookup()`, når legitimation findes; ellers
+  `advertising_protected=None`. (6) `progress` opdateres pr. delområde ({examined, found, skipped, incomplete,
+  requests_used, estimated_cost_minor}); `cancel` stopper mellem forespørgsler.
+- **Googles vilkår i kode:** `google_place_id` gemmes permanent; alle andre Google-felter har `google_fetched_at`, og
+  et dagligt job markerer virksomheder ældre end `GOOGLE_PLACES_CACHE_DAYS` som `stale` og genopfrisker dem (Place
+  Details) før de kan sættes i en kampagne, eller nulstiller felterne, hvis genopfriskning fejler. Google-data vises
+  med kildeangivelse "Google" i UI'et. Ingen scraping af Googles søgeresultatsider, Google Maps-websiden eller
+  Google Business-profiler; ingen visning af anmeldelsestekster (kræver Atmosphere-SKU og attribution) i V1.
+- **Verificér request/response-formatet** mod Googles aktuelle dokumentation (Text Search (New), Place Details (New))
+  og dokumentér feltmaskerne i `docs/sales/salgskanal-drift.md`. Uden `GOOGLE_PLACES_API_KEY`: brug en
+  `FakePlacesSearch` (deterministisk fixture i `tests/fixtures/sales_places.json` med tydeligt fiktive firmaer,
+  `.invalid`-domæner og leverandørernes dokumenterede testnumre) og vis "demo-data" i UI'et. Tests mocker httpx
+  som i `tests/test_cvr_lookup.py`.
 - Fallback: `POST /operator/salg/companies/import` (CSV: navn, cvr, hjemmeside, telefon, e-mail, postnr) – mærket
   `source=import`.
 
@@ -632,7 +678,7 @@ det, og tilbyder afklaring. Et klart nej afslutter samtalen med tak.
 Opret `tests/test_sales_channel_*.py` og `tests/fixtures/sales_*.json` (fiktive firmaer, `.invalid`-domæner,
 leverandørernes testnumre). Minimum:
 1. Operatørkrav: alle nye ruter → 403 for almindelige brugere; 501 når `SALES_OUTBOUND_MODE=off`.
-2. Søgejob: branche + postnumre giver forventede fixtures med kilder; `reklamebeskyttet` og lukkede gemmes men er
+2. Søgejob: branche + område giver forventede fixtures med kilder (`google_place:<id>`); ikke-`OPERATIONAL`, `reklamebeskyttet` og lukkede gemmes men er
    ikke kontaktbare; gentagen søgning skaber ingen dubletter; navnebror med andet postnr forbliver adskilt; afdeling
    med samme domæne markeres "mulig dublet", ikke flettet; cancel stopper mellem batches.
 3. `safe_fetch`: privat IP, metadata-IP, redirect til privat, `file://`, port 8080, credentials i URL, DNS-rebinding
@@ -660,7 +706,7 @@ leverandørernes testnumre). Minimum:
 
 - `docs/sales/intern-salgskanal.md` (dette dokument): opdatér afsnit B med `IMPLEMENTERET`-status pr. område.
 - Ny `docs/sales/salgskanal-drift.md`: tilstande, miljøvariabler, hvordan en søgning, et testopkald og et tilbud køres,
-  kendte begrænsninger (p-enheder, radius, ingen Places, OTP), hvad der er mock.
+  kendte begrænsninger (60 resultater pr. Google-forespørgsel, 30 dages cache, CVR kun berigelse, OTP), Google-forbrug og -kvoter, hvad der er mock.
 - `docs/environment-variables.md`, `docs/pricing.md` (setup-linje), `docs/api-contract.md` (nye ruter), `docs/openapi.json`.
 - Afsluttende rapport: ændringsoversigt pr. fil, migrationer, beståede/fejlede tests (med output), hvad der er
   implementeret / mock / kræver konfiguration / ikke implementeret, og den trinvise guide til at prøve funktionen
@@ -678,11 +724,14 @@ Fase 4 (migration 4, lyd, retention, rettigheder, privatlivsudkast). Lav en PR p
 ## F. Testguide til René (efter fase 1–2 er merget)
 
 Forudsætninger: `SALES_OUTBOUND_MODE=simulation` på staging (fase 1) og `=test` + `SALES_TEST_NUMBERS=+45<dit nummer>`
-til trin 7–9 (fase 2). Trin 1–6 bruger ingen ekstern tjeneste (CVR kun hvis legitimation er sat; ellers demo-data).
+til trin 7–9 (fase 2). Trin 2 bruger Google Places API (`GOOGLE_PLACES_API_KEY`; ellers demo-data); trin 3–6 bruger kun
+virksomhedens egen hjemmeside og AI.
 
 1. Log ind som operatør på https://www.dialogbot.dk/app → Konto → "Dialogbots salg" (eller Operatør → Værktøjer → Salg).
-2. **Find virksomheder:** vælg "Frisører og saloner", postnumre 8000–8260, max 20 → Start. Følg fremskridt; se antal
-   fundet/sprunget over/ufuldstændige. (Uden CVR-legitimation står der "demo-data".)
+2. **Find virksomheder:** vælg "Frisører og saloner", område "Aarhus C" (eller radius 5 km fra Aarhus), max 20 →
+   se anslået forbrug (få kroner) → Start. Følg fremskridt; se antal fundet/sprunget over/ufuldstændige og hvilke
+   felter der kommer fra Google. *Bruger Google Places API (betalt, dækket af den gratis månedskvote ved små tests).*
+   (Uden `GOOGLE_PLACES_API_KEY` står der "demo-data".)
 3. **Virksomheder:** åbn én virksomhed → "Undersøg hjemmeside". Tjek fakta med kilde-URL og tidspunkt; tjek at
    manglende oplysninger står som "ikke fundet", ikke gæt. *Intet ekstern tjeneste ud over virksomhedens egen hjemmeside.*
 4. **Profil og manuskript:** tryk "Byg profil" → "Lav manuskript". Læs valideringen (ingen pladsholdere, pris =

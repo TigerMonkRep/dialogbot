@@ -1,7 +1,7 @@
 """sales channel phase 1
 
 Revision ID: b3c5d7e9f1a2
-Revises: a1b2c3d4e5f6
+Revises: b7d2e4f6a8c0
 Create Date: 2026-10-30 12:22:02.719089
 """
 from alembic import op
@@ -9,7 +9,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 revision = 'b3c5d7e9f1a2'
-down_revision = 'a1b2c3d4e5f6'
+down_revision = 'b7d2e4f6a8c0'
 branch_labels = None
 depends_on = None
 

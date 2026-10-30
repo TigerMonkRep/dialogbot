@@ -84,7 +84,7 @@ kræver et ordret citat. Findes et gyldigt CVR, slås reklamebeskyttelse op, nå
 
 - Profil: ≤ 3 fakta med kilde, ≤ 2 hypoteser (altid spørgsmål), relevant ydelse.
 - Manuskript `peter-sales-v1`: teksten i `app/modules/sales/data/peter-sales-v1.txt` (afsnit E §9) med felterne udfyldt;
-  et felt uden værdi fjerner hele sætningen. Validering: ingen pladsholdere, kun beløbene 2.495/4/5.000 kr. fra
+  et felt uden værdi fjerner hele sætningen. Validering: ingen pladsholdere, kun beløbene i prislisten (2.495, 4, 2, 1,50 og 5.000 kr.) fra
   `billing/prices.py`, integrationsstatus fra registret, fakta med gyldig kilde, funktioner fra godkendt viden,
   kalenderbooking kun når integrationen er AKTIV, reklamebeskyttede virksomheder afvises. Godkendelse kræver en tom
   fejlliste og auditeres. Advarsler: intet kontaktgrundlag (fase 2), ukendt reklamebeskyttelse, reserveliste for viden.

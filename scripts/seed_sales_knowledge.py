@@ -44,8 +44,10 @@ ITEMS: list[tuple[str, str, str, str]] = [
      f"{prices.kr(prices.SPECIALIST_SETUP_NET_MINOR)} kr. én gang ekskl. moms.", "public"),
     ("fact", "Priser",
      f"Abonnementet koster {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR)} kr. om måneden ekskl. moms, uden binding "
-     f"og uden pris pr. henvendelse. Udgående kampagneopkald koster {prices.kr(prices.CAMPAIGN_CALL_NET_MINOR)} kr. pr. "
-     "opkald ekskl. moms.", "public"),
+     f"og uden pris pr. henvendelse. {prices.INBOUND_INCLUDED_MINUTES} minutters indgående opkald om måneden er med; "
+     f"derefter {prices.kr(prices.INBOUND_EXTRA_MINUTE_NET_MINOR)} kr. pr. påbegyndt minut. Udgående kampagneopkald "
+     f"koster {prices.kr(prices.CAMPAIGN_CALL_NET_MINOR)} kr. pr. opkald plus {prices.kr(prices.CAMPAIGN_MINUTE_NET_MINOR)} "
+     "kr. pr. påbegyndt samtaleminut, alt ekskl. moms.", "public"),
     ("fact", "Samtaler og opsummeringer for kunder",
      "Kunder ser deres samtaler og opsummeringer i indbakken i Dialogbot.", "customer_docs"),
 ]

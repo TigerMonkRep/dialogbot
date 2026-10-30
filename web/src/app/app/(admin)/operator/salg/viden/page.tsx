@@ -7,7 +7,7 @@ type Knowledge = {
   sales_workspace: { id: string; name: string; knowledge_revision: number } | null;
   items: { item_id: string; kind: string; title: string; audience: string; version_no: number }[];
   open_drafts: number;
-  prices: { monthly_net_minor: number; campaign_call_net_minor: number; specialist_setup_net_minor: number; tax_basis_points: number; terms_version: string };
+  prices: { monthly_net_minor: number; campaign_call_net_minor: number; campaign_minute_net_minor: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number; specialist_setup_net_minor: number; tax_basis_points: number; terms_version: string };
   scripts: { script_version: string; status: string; count: number }[];
   fallback_features: Record<string, string>; integrations: Reg[];
 };
@@ -40,7 +40,8 @@ export default async function KnowledgePage() {
           <h2 className="font-display font-bold text-[18px]">Prisliste ({k.prices.terms_version})</h2>
           <ul className="flex flex-col gap-1 mt-1">
             <li>Abonnement: {kr(k.prices.monthly_net_minor)} om måneden ekskl. moms, uden binding</li>
-            <li>Udgående kampagneopkald: {kr(k.prices.campaign_call_net_minor)} pr. opkald ekskl. moms</li>
+            <li>Indgående opkald: {k.prices.inbound_included_minutes} minutter om måneden er med, derefter {kr(k.prices.inbound_extra_minute_net_minor)} pr. påbegyndt minut ekskl. moms</li>
+            <li>Udgående kampagneopkald: {kr(k.prices.campaign_call_net_minor)} pr. opkald + {kr(k.prices.campaign_minute_net_minor)} pr. påbegyndt samtaleminut ekskl. moms</li>
             <li>Specialist-opsætning: {kr(k.prices.specialist_setup_net_minor)} én gang ekskl. moms (gør-det-selv er med i abonnementet)</li>
             <li>Moms: {k.prices.tax_basis_points / 100} %</li>
           </ul>

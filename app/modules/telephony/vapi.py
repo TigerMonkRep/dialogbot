@@ -48,9 +48,57 @@ STOP_SPEAKING_PLAN = {"numWords": 2, "backoffSeconds": 1.0,
                       "acknowledgementPhrases": ["ja", "jo", "jah", "mm", "mhm", "okay", "ok", "nå", "nåh", "præcis",
                                                  "netop", "fint", "godt", "javel", "jaja", "yes", "klart"]}
 # Wait for the caller to finish: longer after an unfinished sentence ("øh …") and while they read out digits.
+# These are the conservative defaults; apply_pacing() below tightens them from PACING (overridable at runtime).
 START_SPEAKING_PLAN = {"waitSeconds": 0.6,
                        "transcriptionEndpointingPlan": {"onPunctuationSeconds": 0.4, "onNoPunctuationSeconds": 1.4,
                                                         "onNumberSeconds": 1.2}}
+
+# Conversation pacing – what makes a call feel like talking to a person instead of waiting for a machine.
+# Every number is a trade-off between answering fast and never cutting the caller off; the defaults below were chosen
+# for Danish callers and can be overridden without a deploy through VAPI_PACING_JSON (same keys), so two settings can be
+# compared on the demo number. Quality is never traded: the voice model and the dialogue model stay what they are.
+PACING: dict[str, Any] = {
+    "wait_seconds": 0.35,              # pause after the caller stops before the assistant starts (was 0.6)
+    "on_punctuation_seconds": 0.25,    # after a sentence that ends in . ? !   (was 0.4)
+    "on_no_punctuation_seconds": 0.9,  # after an unfinished sentence, "øh …"   (was 1.4)
+    "on_number_seconds": 1.2,          # while the caller reads out digits – unchanged, numbers come slowly
+    "backoff_seconds": 0.8,            # how long the assistant stays quiet after being interrupted (was 1.0)
+    "max_tokens": 150,                 # answers stay short: a couple of spoken sentences, never a monologue
+    "temperature": 0.7,                # a little variation so the same question is not answered word for word
+    "min_characters": 12,              # the voice starts on the first clause instead of waiting for ~30 characters
+    "optimize_streaming_latency": 3,   # ElevenLabs: lowest first-byte latency without touching voice quality (0–4)
+    "background_sound": "office",      # faint office ambience so a short pause never sounds like a dead line
+}
+
+
+def pacing() -> dict:
+    """PACING with any VAPI_PACING_JSON overrides (unknown keys are ignored, so a typo cannot break calls)."""
+    override = _json_setting(get_settings().vapi_pacing_json) or {}
+    return {**PACING, **{k: v for k, v in override.items() if k in PACING}}
+
+
+def apply_pacing(assistant: dict) -> dict:
+    """Set the pacing on a Vapi assistant: turn-taking, answer length, voice streaming and background sound.
+    Values an assistant already carries explicitly (e.g. a voice's own chunkPlan replacements) are kept."""
+    p = pacing()
+    assistant["startSpeakingPlan"] = {
+        "waitSeconds": p["wait_seconds"],
+        "transcriptionEndpointingPlan": {"onPunctuationSeconds": p["on_punctuation_seconds"],
+                                         "onNoPunctuationSeconds": p["on_no_punctuation_seconds"],
+                                         "onNumberSeconds": p["on_number_seconds"]}}
+    assistant["stopSpeakingPlan"] = {**STOP_SPEAKING_PLAN, "backoffSeconds": p["backoff_seconds"]}
+    if isinstance(assistant.get("model"), dict):
+        assistant["model"].setdefault("maxTokens", p["max_tokens"])
+        assistant["model"].setdefault("temperature", p["temperature"])
+    if p.get("background_sound") and p["background_sound"] != "off":
+        assistant.setdefault("backgroundSound", p["background_sound"])
+    voice = assistant.get("voice")
+    if isinstance(voice, dict) and voice.get("provider") == "11labs":
+        voice.setdefault("optimizeStreamingLatency", p["optimize_streaming_latency"])
+        chunk = voice.setdefault("chunkPlan", {"enabled": True})
+        if chunk.get("enabled", True):
+            chunk.setdefault("minCharacters", p["min_characters"])
+    return assistant
 # The assistant hangs up itself: Vapi's endCall tool, plus the closing line the phone prompt ends every call with.
 END_CALL_TOOL = {"type": "endCall"}
 END_CALL_PHRASES = ["hav en rigtig god dag", "hav en god dag"]
@@ -342,7 +390,7 @@ def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
         assistant["voice"] = provider_voice
     if session is not None:
         db.commit()
-    return {"assistant": assistant}
+    return {"assistant": apply_pacing(assistant)}
 
 
 def _parse_ts(v: Any) -> datetime | None:

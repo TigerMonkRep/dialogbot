@@ -388,7 +388,7 @@ def assistant_for(db: OrmSession, c: Campaign, cc: CampaignContact) -> dict:
         out["server"] = server
     out["voice"] = service.agent_voice()
     out["voice"].setdefault("chunkPlan", standard.danish_chunk_plan(db, ws.id, sales_pronunciations()))
-    return out
+    return vapi.apply_pacing(out)
 
 
 def snapshot(db: OrmSession, cc: CampaignContact, assistant: dict) -> None:

@@ -138,6 +138,15 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     assert a["voice"]["provider"] == "11labs" and a["voice"]["voiceId"] == "4RklGmuxoAskAbGXplXN"  # Camilla
     assert a["voice"]["model"] == "eleven_v4_turbo" and a["voice"]["stability"] < 0.5
     assert "number" not in a["voice"]["chunkPlan"]["formatPlan"]["formattersEnabled"]  # Vapi's English formatter
+    # pacing: answers start fast, stay short, and the voice streams from the first clause – quality settings untouched
+    plan = a["startSpeakingPlan"]
+    assert plan["waitSeconds"] == 0.35 and plan["transcriptionEndpointingPlan"]["onNoPunctuationSeconds"] == 0.9
+    assert a["stopSpeakingPlan"]["backoffSeconds"] == 0.8
+    assert a["model"]["maxTokens"] == 150 and a["model"]["temperature"] == 0.7
+    assert a["voice"]["optimizeStreamingLatency"] == 3 and a["voice"]["chunkPlan"]["minCharacters"] == 12
+    assert a["backgroundSound"] == "office"
+    assert "phone-v6" not in a["model"]["messages"][0]["content"]  # the version tag is for the log, not the prompt
+    assert "Lige et øjeblik, jeg kigger." in a["model"]["messages"][0]["content"]
     assert "dansk" in a["model"]["messages"][0]["content"] and n["voice"] is None
     # the workspace picks another ready-made Danish voice; unknown keys are rejected
     vs = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/voices").json()
@@ -173,7 +182,7 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
                     headers=api.h(t["tok_a"]))
     assert r.status_code == 200 and r.json()["voice"]["voiceId"] == "AbCdEf1234567890"
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
-    assert {k: v for k, v in a["voice"].items() if k != "chunkPlan"} == {"provider": "11labs", "voiceId": "AbCdEf1234567890", "model": "eleven_multilingual_v2"}
+    assert {k: v for k, v in a["voice"].items() if k not in ("chunkPlan", "optimizeStreamingLatency")} == {"provider": "11labs", "voiceId": "AbCdEf1234567890", "model": "eleven_multilingual_v2"}
     assert "Brug gerne jyske vendinger." in a["model"]["messages"][0]["content"]
     api.c.patch(url, json={"voice_model": "eleven_flash_v2_5"}, headers=api.h(t["tok_a"]))
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
@@ -334,3 +343,30 @@ def test_inbound_assistant_hangs_up_itself(client, api, two_workspaces, configur
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
     assert {"type": "endCall"} in a["model"]["tools"] and "hav en god dag" in a["endCallPhrases"]
     assert "endCall" in a["model"]["messages"][0]["content"]
+
+
+def test_pacing_can_be_tuned_without_a_deploy(api, client, two_workspaces, configured, monkeypatch):
+    from app.modules.telephony import vapi
+
+    t = two_workspaces
+    _setup(api, t)
+    monkeypatch.setenv("VAPI_PACING_JSON", '{"wait_seconds": 0.5, "max_tokens": 90, "background_sound": "off", "typo": 1}')
+    get_settings.cache_clear()
+    try:
+        assert vapi.pacing()["wait_seconds"] == 0.5 and "typo" not in vapi.pacing()
+        a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+        assert a["startSpeakingPlan"]["waitSeconds"] == 0.5 and a["model"]["maxTokens"] == 90
+        assert "backgroundSound" not in a
+        assert a["startSpeakingPlan"]["transcriptionEndpointingPlan"]["onNumberSeconds"] == 1.2  # defaults stay
+    finally:
+        monkeypatch.delenv("VAPI_PACING_JSON")
+        get_settings.cache_clear()
+
+
+def test_knowledge_lines_are_compact():
+    from app.modules.ai.service import knowledge_line
+
+    assert knowledge_line({"kind": "fact", "title": "Åbningstider", "content": {"text": "Mandag til fredag 8-16"}}) == \
+        "fact · Åbningstider: Mandag til fredag 8-16"
+    line = knowledge_line({"kind": "service", "title": "Afslibning", "content": {"price_net_minor": 14500, "promote": False}})
+    assert line == 'service · Afslibning: {"price_net_minor":14500,"promote":false}'

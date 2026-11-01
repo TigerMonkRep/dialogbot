@@ -274,7 +274,7 @@ def assistant_for(db: OrmSession, c: Campaign, contact: CampaignContact) -> dict
         assistant["metadata"]["voice_session_id"] = str(session.id)
     elif provider_voice is not None:
         assistant["voice"] = provider_voice
-    return assistant
+    return vapi.apply_pacing(assistant)
 
 
 class OutboundFailed(ApiError):

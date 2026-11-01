@@ -28,7 +28,7 @@ INSTRUCTIONS = """Du er den digitale receptionist for virksomheden "{name}". Du 
 Regler:
 - Brug udelukkende oplysningerne i <godkendt_viden> nedenfor. Det er virksomhedens godkendte viden; intet andet er bekræftet.
 - Hvis svaret ikke fremgår af den godkendte viden, så sig det ærligt og tilbyd, at en medarbejder vender tilbage. Gæt aldrig på priser, tider, tilbud eller vilkår.
-- Priser i den godkendte viden er angivet i hele øre ekskl. moms (fx price_net_minor 14500 = 145,00 kr. ekskl. moms), medmindre andet står.
+- Hver linje i <godkendt_viden> er ét emne: type · titel: indhold. Priser er angivet i hele øre ekskl. moms (fx price_net_minor 14500 = 145,00 kr. ekskl. moms), medmindre andet står.
 - Du kan ikke booke, ringe op, tage imod betaling eller love noget på virksomhedens vegne. Sig det, hvis kunden beder om det.
 - Ydelser med "promote": false nævner du kun, hvis kunden selv spørger om dem. Ydelser uden feltet eller med "promote": true må du gerne nævne, når det passer til samtalen.
 - Svar kort, venligt og på kundens sprog (standard dansk).
@@ -70,6 +70,17 @@ def estimate_cost_usd_micros(c: Completion) -> int | None:
 PROMPT_AUDIENCES = ("public", "customer_docs")  # `internal` knowledge never reaches any prompt
 
 
+def knowledge_line(item: dict) -> str:
+    """One approved item as one compact line: `type · titel: {content}`. The content keeps its JSON (the fields are
+    what the rules refer to), but without the wrapper object and the spaces – on the phone every token in the system
+    prompt is paid for in waiting time on every turn, and this is about 40 % shorter than the old JSON-per-line."""
+    content = item["content"]
+    if isinstance(content, dict) and set(content) == {"text"}:
+        content = content["text"]
+    body = content if isinstance(content, str) else json.dumps(content, ensure_ascii=False, separators=(",", ":"))
+    return f"{item['kind']} · {item['title']}: {body}"
+
+
 def build_system_prompt(db: OrmSession, workspace: Workspace,
                         audiences: tuple[str, ...] = ("public",)) -> tuple[str, int]:
     """Instructions + approved knowledge for `audiences` (default: what every assistant may say). Dialogbot's sales
@@ -80,8 +91,7 @@ def build_system_prompt(db: OrmSession, workspace: Workspace,
     if not items:
         raise Conflict("Der er ingen godkendt viden endnu. Godkend mindst ét vidensemne, før assistenten kan svare.",
                        code="no_approved_knowledge")
-    body = "\n".join(json.dumps({"type": i["kind"], "titel": i["title"], "indhold": i["content"]}, ensure_ascii=False)
-                     for i in items)
+    body = "\n".join(knowledge_line(i) for i in items)
     from app.modules.reception import service as reception
 
     prompt = INSTRUCTIONS.format(name=workspace.name, revision=workspace.knowledge_revision, knowledge=body)
@@ -95,12 +105,16 @@ CHANNEL_INSTRUCTIONS: dict[str, tuple[str, str]] = {
                               "booke eller tale med en medarbejder, så bed dem trykke på knappen \"Bliv kontaktet\" "
                               "under chatten og efterlade navn og e-mail eller telefon. Bed ikke om CPR-nummer eller "
                               "betalingsoplysninger."),
-    "phone": ("phone-v5", "Kanal: telefonopkald. Alt, hvad du skriver, bliver læst højt af en dansk stemme, og kunden "
+    "phone": ("phone-v6", "Kanal: telefonopkald. Alt, hvad du skriver, bliver læst højt af en dansk stemme, og kunden "
                           "hører det kun én gang. Lyd som en rigtig, venlig og erfaren dansk receptionist – ikke som en "
                           "maskine. Tal naturligt dansk talesprog i korte sætninger, som regel én eller to ad gangen, og "
-                          "stil ét spørgsmål ad gangen. Reager kort og menneskeligt på det, kunden siger, før du svarer, "
-                          "fx \"Ja, selvfølgelig\", \"Det forstår jeg godt\", \"Åh, det lyder irriterende\" eller "
-                          "\"Lige et øjeblik\" – men variér det, og gentag ikke den samme vending. Brug du-form, "
+                          "stil ét spørgsmål ad gangen. Begynd altid med en kort, naturlig reaktion på det, kunden lige "
+                          "sagde – to-fem ord, fx \"Ja, selvfølgelig.\", \"Det forstår jeg godt.\", \"Åh, det lyder "
+                          "irriterende.\", \"Lige et øjeblik.\" – sæt punktum efter den, og kom så med det vigtigste "
+                          "i én sætning; variér reaktionerne, og gentag aldrig den samme vending to gange i træk. Det "
+                          "vigtigste først, detaljerne kun hvis kunden spørger. Når du skal slå noget op eller bruge et "
+                          "værktøj, så sig først \"Lige et øjeblik, jeg kigger.\" og vent med resten. Hold hvert svar "
+                          "under cirka tyve ord, medmindre kunden beder om en forklaring. Brug du-form, "
                           "medmindre kunden selv siger De. Brug kundens navn en enkelt gang, når du kender det, ikke i "
                           "hver sætning. Gentag ikke, hvad virksomheden laver, hvis du allerede har sagt det. Brug danske "
                           "vendinger frem for oversat engelsk – sig fx \"Det kan jeg godt hjælpe med\" i stedet for "

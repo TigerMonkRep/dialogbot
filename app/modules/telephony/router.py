@@ -104,7 +104,8 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
         if mode == "not_active":
             return vapi.not_active_assistant(db, number)
         try:
-            out = vapi.assistant_config(db, number)
+            raw_caller = ((message.get("call") or {}).get("customer") or {}).get("number") or (message.get("customer") or {}).get("number")
+            out = vapi.assistant_config(db, number, caller=vapi.normalize_e164(str(raw_caller)) if raw_caller else None)
             if mode == "test":
                 out["assistant"]["firstMessage"] = "Dette er et prøveopkald. " + out["assistant"].get("firstMessage", "")
                 out["assistant"]["metadata"]["telephony_test"] = True

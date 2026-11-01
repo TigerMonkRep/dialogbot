@@ -220,10 +220,11 @@ def opening_line(c: Campaign, ws: Workspace, contact: CampaignContact) -> str:
 
 
 def system_prompt(db: OrmSession, c: Campaign, ws: Workspace, contact: CampaignContact) -> str:
-    from app.modules.ai.service import build_system_prompt
+    from app.modules.ai.service import build_system_prompt, known_number_section
 
     base, _rev = build_system_prompt(db, ws)  # approved knowledge only; 409 without it
     qs = "\n".join(f"- {q}" for q in c.questions or [])
+    number_note = known_number_section(contact.phone, how="det nummer, jeg ringer til nu")
     who = ", ".join(x for x in (contact.name, contact.company) if x) or "kontakten"
     return f"""{base}
 
@@ -239,7 +240,9 @@ Regler for udgående opkald:
 - Hvis personen siger nej eller ikke vil ringes op igen, så undskyld forstyrrelsen, bekræft at de ikke bliver ringet op igen, og afslut straks. Pres aldrig.
 - Lov aldrig priser, rabatter eller aftaler, der ikke står i den godkendte viden. En medarbejder følger op.
 - Hvis det ikke er den rette person eller et forkert nummer, så undskyld og afslut.
-- Tal naturligt dansk, kort og venligt. Afslut med at takke for snakken."""
+- Tal naturligt dansk, kort og venligt. Afslut med at takke for snakken.
+
+Kundens telefonnummer: {number_note}"""
 
 
 def assistant_for(db: OrmSession, c: Campaign, contact: CampaignContact) -> dict:

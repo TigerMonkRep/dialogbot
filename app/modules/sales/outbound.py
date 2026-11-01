@@ -363,7 +363,11 @@ def assistant_for(db: OrmSession, c: Campaign, cc: CampaignContact) -> dict:
     from app.modules.sales import recordings, tools
 
     record = recordings.enabled(c)
-    system = f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{script.rendered_prompt}\n\n{tools.RULES}"
+    from app.modules.ai.service import known_number_section
+
+    number_note = known_number_section(cc.phone, how="det nummer, jeg ringer til nu")
+    system = (f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n{script.rendered_prompt}"
+              f"\n\nKundens telefonnummer: {number_note}\n\n{tools.RULES}")
     if record:
         system += ("\n\nOPTAGELSE: Samtalen optages. Sig det i åbningen. Siger kunden, at de ikke vil optages, så kald "
                    "stop_optagelse, sig at optagelsen bliver slettet, og fortsæt kun hvis kunden vil.")

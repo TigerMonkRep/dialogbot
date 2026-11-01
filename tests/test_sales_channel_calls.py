@@ -109,6 +109,7 @@ def test_internal_test_call_rings_with_peter_and_the_script(api, ring, db):
     system = a["model"]["messages"][0]["content"]
     assert ring["script"].rendered_prompt in system and "Dialogbot tager telefonen" in system
     assert system.endswith(RULES)  # promises only what a tool confirmed
+    assert "det nummer, jeg ringer til nu, er tyve, tredive, fyrre, enoghalvtreds" in system  # confirms, never asks for it
     assert {t["function"]["name"] for t in a["model"]["tools"] if t["type"] == "function"} >= {"book_moede", "send_bestillingslink"}
     assert a["metadata"]["script_id"] == str(ring["script"].id) and a["maxDurationSeconds"] == 600
     assert a["voice"]["voiceId"]

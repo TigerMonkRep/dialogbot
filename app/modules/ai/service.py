@@ -99,13 +99,60 @@ def build_system_prompt(db: OrmSession, workspace: Workspace,
     return (f"{prompt}\n\n{script}" if script else prompt), workspace.knowledge_revision
 
 
+_ONES = ["nul", "en", "to", "tre", "fire", "fem", "seks", "syv", "otte", "ni", "ti", "elleve", "tolv", "tretten", "fjorten",
+         "femten", "seksten", "sytten", "atten", "nitten"]
+_TENS = {2: "tyve", 3: "tredive", 4: "fyrre", 5: "halvtreds", 6: "tres", 7: "halvfjerds", 8: "firs", 9: "halvfems"}
+
+
+def spoken_pair(n: int) -> str:
+    """0–99 as Danish words, the way a phone number is read out: 7 → "nul syv", 21 → "enogtyve"."""
+    if n < 10:
+        return f"nul {_ONES[n]}"
+    if n < 20:
+        return _ONES[n]
+    tens, ones = divmod(n, 10)
+    return _TENS[tens] if ones == 0 else f"{_ONES[ones]}og{_TENS[tens]}"
+
+
+def spoken_phone(e164: str) -> str:
+    """A Danish number as it is said: "+45 20 30 40 50" → "tyve, tredive, fyrre, halvtreds". Other countries: the
+    country code first ("plus fireogfyrre, …"). Odd digit counts end with a single digit."""
+    digits = "".join(ch for ch in (e164 or "") if ch.isdigit())
+    prefix = ""
+    if e164.startswith("+") and not digits.startswith("45"):
+        prefix = "plus " + " ".join(_ONES[int(d)] for d in digits[:2]) + ", "
+        digits = digits[2:]
+    elif digits.startswith("45") and len(digits) == 10:
+        digits = digits[2:]
+    pairs = [digits[i:i + 2] for i in range(0, len(digits), 2)]
+    words = [spoken_pair(int(p)) if len(p) == 2 else _ONES[int(p)] for p in pairs if p]
+    return prefix + ", ".join(words)
+
+
+def known_number_section(e164: str | None, *, how: str) -> str:
+    """What the assistant knows about the caller's number, so it never asks a person to dictate a number it already
+    has. `how` says where the number comes from, in the caller's own perspective: "det nummer, du ringer fra",
+    "det nummer, du skrev på hjemmesiden", "det nummer, jeg ringer til nu"."""
+    if not e164:
+        return ("Kundens nummer er skjult, så du kender det ikke. Skal en medarbejder ringe tilbage, så bed om nummeret "
+                "ét ciffer-par ad gangen, og gentag det i par (fx \"tyve, tredive, fyrre, halvtreds\"), så kunden kan rette.")
+    last = spoken_phone(e164).split(", ")[-2:]
+    tail = " ".join(last)
+    return (f"Du kender allerede kundens telefonnummer: {how}, er {spoken_phone(e164)}. Bed ALDRIG kunden om at "
+            f"diktere et nummer, du allerede har. Skal en medarbejder ringe tilbage, så spørg i stedet: \"Skal vi ringe "
+            f"på {how} – det, der ender på {tail}?\" Siger kunden ja, er nummeret bekræftet, og du går videre. Vil "
+            "kunden hellere ringes op på et andet nummer, så tag det ét ciffer-par ad gangen, gentag det i par (fx "
+            "\"tyve, tredive, fyrre, halvtreds\"), og bekræft. Spørg højst to gange; derefter bruger du det nummer, du "
+            "kender, og siger, at medarbejderen bekræfter det.")
+
+
 # Channel-specific additions to the system prompt; the logged prompt version includes the suffix.
 CHANNEL_INSTRUCTIONS: dict[str, tuple[str, str]] = {
     "webchat": ("webchat-v1", "Kanal: webchat på virksomhedens hjemmeside. Hvis kunden vil kontaktes, have et tilbud, "
                               "booke eller tale med en medarbejder, så bed dem trykke på knappen \"Bliv kontaktet\" "
                               "under chatten og efterlade navn og e-mail eller telefon. Bed ikke om CPR-nummer eller "
                               "betalingsoplysninger."),
-    "phone": ("phone-v6", "Kanal: telefonopkald. Alt, hvad du skriver, bliver læst højt af en dansk stemme, og kunden "
+    "phone": ("phone-v7", "Kanal: telefonopkald. Alt, hvad du skriver, bliver læst højt af en dansk stemme, og kunden "
                           "hører det kun én gang. Lyd som en rigtig, venlig og erfaren dansk receptionist – ikke som en "
                           "maskine. Tal naturligt dansk talesprog i korte sætninger, som regel én eller to ad gangen, og "
                           "stil ét spørgsmål ad gangen. Begynd altid med en kort, naturlig reaktion på det, kunden lige "
@@ -128,9 +175,10 @@ CHANNEL_INSTRUCTIONS: dict[str, tuple[str, str]] = {
                           "så bed kunden stave det. Når kunden staver, så sæt bogstaverne sammen præcis som stavet (fx "
                           "\"R e n é\" bliver René) og bekræft ved at stave det tilbage. Spørg højst to gange efter det "
                           "samme; derefter går du videre med det, du har, og siger, at medarbejderen bekræfter det, når de "
-                          "ringer tilbage. Gentag telefonnumre kort, så kunden kan rette dem. Hvis kunden vil kontaktes, "
-                          "have et tilbud, booke eller tale med en medarbejder, så sig, at en medarbejder ringer tilbage "
-                          "på det nummer, de ringer fra, og spørg om deres navn. Du kan ikke stille om, booke eller tage "
+                          "ringer tilbage. Hvis kunden vil kontaktes, have et tilbud, booke eller tale med en medarbejder, så "
+                          "sig, at en medarbejder ringer tilbage, bekræft nummeret som beskrevet under \"Kundens "
+                          "telefonnummer\", og spørg om deres navn. Når du siger et telefonnummer højt, så sig det i "
+                          "ciffer-par (\"tyve, tredive, fyrre, halvtreds\"), aldrig som ét langt tal. Du kan ikke stille om, booke eller tage "
                           "imod betaling. Når kunden ikke har mere, så afslut kort og venligt med en sætning, der "
                           "slutter med \"Hav en god dag\", og læg derefter på med værktøjet endCall. Bliv ikke "
                           "hængende i røret efter farvel."),

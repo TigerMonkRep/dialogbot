@@ -194,6 +194,9 @@ def test_peter_rings_whatever_voice_is_asked_for_and_the_script_adapts(client, s
     assert "byggevejledningens tre trin" in system.lower() and "specialister" in system.lower() \
         and "2.495 kr." in system and "4 kr. pr. udgående opkald" in system and "5.000 kr. én gang" in system
     assert "1.495" not in system and "149 kr" not in system and "model B" not in system.lower()
+    # Peter knows the number the visitor typed and confirms it for the specialist's call-back instead of asking for it
+    assert "det nummer, du skrev på hjemmesiden, er tyve, tredive, fyrre, halvtreds" in system
+    assert "Bed ALDRIG kunden om at diktere et nummer" in system
     assert payload["firstMessage"].startswith("Hej Mette, det er Peter fra Dialogbot.")
     assert "Hansen VVS" in payload["firstMessage"]
     # the call's status updates and report come back to us, whatever is configured on the number in Vapi

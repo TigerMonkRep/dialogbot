@@ -172,8 +172,11 @@ def system_prompt(db: OrmSession, ws: Workspace, d: DemoCall) -> str:
     from app.modules.ai.service import CHANNEL_INSTRUCTIONS, build_system_prompt
 
     base, _rev = build_system_prompt(db, ws)  # approved knowledge about Dialogbot only
+    from app.modules.ai.service import known_number_section
+
     return (f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n"
-            + script.manuscript(name=d.name, company=d.company, industry=d.industry, industry_other=d.industry_other))
+            + script.manuscript(name=d.name, company=d.company, industry=d.industry, industry_other=d.industry_other)
+            + "\n\nKundens telefonnummer: " + known_number_section(d.phone, how="det nummer, du skrev på hjemmesiden"))
 
 
 def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -> dict:

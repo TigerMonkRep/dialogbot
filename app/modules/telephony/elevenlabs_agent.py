@@ -74,7 +74,8 @@ def initiation(db: OrmSession, body: dict) -> dict:
         cfg = vapi.not_active_assistant(db, number)["assistant"]
         system = cfg["model"]["messages"][0]["content"]
     else:
-        cfg = vapi.assistant_config(db, number)["assistant"]
+        raw_caller = body.get("caller_id")
+        cfg = vapi.assistant_config(db, number, caller=vapi.normalize_e164(str(raw_caller)) if raw_caller else None)["assistant"]
         system = cfg["model"]["messages"][0]["content"]
         if mode == "test":
             cfg["firstMessage"] = "Dette er et prøveopkald. " + cfg.get("firstMessage", "")

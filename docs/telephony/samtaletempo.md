@@ -61,3 +61,16 @@ Den godkendte viden sendes som én kompakt linje pr. emne (`type · titel: indho
 Sæt fx `VAPI_PACING_JSON={"on_no_punctuation_seconds": 0.7, "wait_seconds": 0.3}` på `dialogbot-api-staging` og
 `dialogbot-worker-staging` i Render, genstart, ring igen. Fjern variablen for at gå tilbage til standarderne. Ukendte
 nøgler ignoreres, så en tastefejl kan ikke stoppe opkald.
+
+## Telefonnumre: bekræft, spørg ikke
+
+Assistenten kender næsten altid kundens nummer i forvejen: det nummer, der ringes fra (Vapi `call.customer.number`,
+ElevenLabs `caller_id`), det nummer, der blev skrevet på hjemmesiden (demo-opkald), eller det nummer, kampagnen eller
+salgskanalen ringer til. `known_number_section()` i `app/modules/ai/service.py` lægger derfor en blok "Kundens
+telefonnummer" ind i alle fire telefon-prompter med nummeret udtalt i ciffer-par ("tyve, tredive, fyrre, halvtreds")
+og reglen: bed aldrig kunden diktere et nummer, du har – spørg "Skal vi ringe på det nummer, du ringer fra – det, der
+ender på …?". Kun hvis kunden vil ringes op på et andet nummer, tages det ét ciffer-par ad gangen og gentages i par.
+Er nummeret skjult, siger blokken det, og assistenten spørger i par.
+
+Transskriptionen kører med Deepgram `numerals: true`, så cifre kommer som "20 30 40 50" i stedet for "tyve tredive
+fyrre halvtreds" – det læser modellen langt mere sikkert, og `onNumberSeconds` giver kunden tid til at sige hele nummeret.

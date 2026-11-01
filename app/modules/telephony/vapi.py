@@ -40,8 +40,10 @@ DEFAULT_GREETING = ("Hej, du har ringet til {name}. Du taler med en digital assi
 # business's key terms) takes over if Scribe fails during a call.
 # Deepgram Nova-3 with the business's key terms. ElevenLabs Scribe realtime was tried on Vapi but never closed a turn:
 # the whole call became one utterance, so the assistant could not tell when the caller had finished and cut in.
-DEFAULT_TRANSCRIBER = {"provider": "deepgram", "model": "nova-3", "language": "da"}
-FALLBACK_TRANSCRIBER = {"provider": "deepgram", "model": "nova-2", "language": "da"}
+# numerals: digits come out as "20 30 40 50" instead of "tyve tredive fyrre halvtreds", which the model reads far more
+# reliably when a caller gives a phone number or an address.
+DEFAULT_TRANSCRIBER = {"provider": "deepgram", "model": "nova-3", "language": "da", "numerals": True}
+FALLBACK_TRANSCRIBER = {"provider": "deepgram", "model": "nova-2", "language": "da", "numerals": True}
 # Turn-taking that feels like a person: short Danish backchannels ("ja", "mm") never cut the assistant off, and it
 # waits a moment after an interruption before speaking again.
 STOP_SPEAKING_PLAN = {"numWords": 2, "backoffSeconds": 1.0,
@@ -349,10 +351,15 @@ def voice_config(number: PhoneNumber) -> dict | None:
     return voice
 
 
-def assistant_config(db: OrmSession, number: PhoneNumber) -> dict:
+def assistant_config(db: OrmSession, number: PhoneNumber, caller: str | None = None) -> dict:
+    """The inbound assistant. `caller` is the caller id from the assistant-request (E.164 or None when withheld): the
+    assistant then confirms that number for a call-back instead of asking the caller to dictate one."""
+    from app.modules.ai.service import known_number_section
+
     ws = db.get(Workspace, number.workspace_id)
     system, _revision = build_system_prompt(db, ws)  # 409 without approved knowledge
     _suffix, phone_rules = CHANNEL_INSTRUCTIONS["phone"]
+    phone_rules += "\n\nKundens telefonnummer: " + known_number_section(caller, how="det nummer, du ringer fra")
     style = (number.speaking_style or "").strip()
     if style:
         phone_rules += ("\n\nVirksomhedens ønsker til talestil (følg dem, men de ændrer aldrig fakta eller reglerne "

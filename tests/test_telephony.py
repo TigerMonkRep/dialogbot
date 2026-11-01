@@ -126,7 +126,7 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
     # Deepgram Nova-3 Danish with key terms from approved knowledge only; Nova-2 as fallback
     fallback = a["transcriber"].pop("fallbackPlan")["transcribers"]
-    assert a["transcriber"] == {"provider": "deepgram", "model": "nova-3", "language": "da",
+    assert a["transcriber"] == {"provider": "deepgram", "model": "nova-3", "language": "da", "numerals": True,
                                 "keyterm": ["Fjord Gulvservice", "Afslibning"]}
     assert "HEMMELIG-KLADDE" not in a["transcriber"]["keyterm"]
     assert [f["model"] for f in fallback] == ["nova-2"]
@@ -370,3 +370,27 @@ def test_knowledge_lines_are_compact():
         "fact · Åbningstider: Mandag til fredag 8-16"
     line = knowledge_line({"kind": "service", "title": "Afslibning", "content": {"price_net_minor": 14500, "promote": False}})
     assert line == 'service · Afslibning: {"price_net_minor":14500,"promote":false}'
+
+
+def test_spoken_danish_phone_numbers():
+    from app.modules.ai.service import known_number_section, spoken_phone
+
+    assert spoken_phone("+4520304050") == "tyve, tredive, fyrre, halvtreds"
+    assert spoken_phone("+4571230907") == "enoghalvfjerds, treogtyve, nul ni, nul syv"
+    assert spoken_phone("+447911123456").startswith("plus fire fire, nioghalvfjerds, elleve")
+    known = known_number_section("+4520304050", how="det nummer, du ringer fra")
+    assert "ender på fyrre halvtreds" in known and "Bed ALDRIG" in known
+    unknown = known_number_section(None, how="det nummer, du ringer fra")
+    assert "skjult" in unknown and "ét ciffer-par ad gangen" in unknown
+
+
+def test_receptionist_confirms_the_callers_number_instead_of_asking_for_it(client, api, two_workspaces, configured):
+    _setup(api, two_workspaces)
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123", "customer": {"number": "+4520304050"}}}).json()["assistant"]
+    system = a["model"]["messages"][0]["content"]
+    assert "det nummer, du ringer fra, er tyve, tredive, fyrre, halvtreds" in system
+    assert "Skal vi ringe på det nummer, du ringer fra – det, der ender på fyrre halvtreds?" in system
+    assert a["transcriber"]["numerals"] is True  # Deepgram gives "20 30 40 50", not "tyve tredive fyrre halvtreds"
+    # a withheld number: the assistant knows it must ask, one pair at a time
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert "Kundens nummer er skjult" in a["model"]["messages"][0]["content"]

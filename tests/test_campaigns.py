@@ -137,6 +137,7 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
     assert "digital assistent" in p["assistant"]["firstMessage"] and "Mette" in p["assistant"]["firstMessage"]
     assert p["assistant"]["maxDurationSeconds"] == 180
     assert "Hvor mange m²?" in p["assistant"]["model"]["messages"][0]["content"]
+    assert "det nummer, jeg ringer til nu, er tyve, tredive, fyrre, halvtreds" in p["assistant"]["model"]["messages"][0]["content"]
     assert service.dispatch(db, now) == 0  # one call in flight per campaign
     h = {"authorization": f"Bearer {SECRET}"}
 

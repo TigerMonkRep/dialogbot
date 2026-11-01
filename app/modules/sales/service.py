@@ -199,7 +199,7 @@ def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -
     # Peter rings, whatever voice the client may have asked for: the name and the voice belong together.
     out["voice"] = agent_voice()
     out["voice"].setdefault("chunkPlan", standard.danish_chunk_plan(db, ws.id))
-    return out
+    return vapi.apply_pacing(out)
 
 
 def place(db: OrmSession, ws: Workspace, d: DemoCall) -> None:

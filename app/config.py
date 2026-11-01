@@ -82,6 +82,9 @@ class Settings(BaseSettings):
     vapi_model: str | None = Field(default=None, alias="VAPI_MODEL")  # default: AI_MODEL_ID
     # Optional JSON objects passed through to Vapi's assistant config (e.g. a Danish voice/transcriber).
     vapi_voice_json: str | None = Field(default=None, alias="VAPI_VOICE_JSON")
+    # Conversation pacing overrides (JSON with the keys of telephony.vapi.PACING) – for comparing settings on the demo
+    # number without a deploy. Unset = the tuned defaults.
+    vapi_pacing_json: str | None = Field(default=None, alias="VAPI_PACING_JSON")
     vapi_transcriber_json: str | None = Field(default=None, alias="VAPI_TRANSCRIBER_JSON")
     # Server-side only: lets owners hear a chosen ElevenLabs voice before calls go live.
     elevenlabs_api_key: str | None = Field(default=None, alias="ELEVENLABS_API_KEY")

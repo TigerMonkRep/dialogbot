@@ -105,7 +105,8 @@ def test_internal_test_call_rings_with_peter_and_the_script(api, ring, db):
     payload = ring["calls"][0]
     a = payload["assistant"]
     assert payload["customer"]["number"] == "+4520304051"
-    assert a["firstMessage"].startswith("Hej, det er Peter, AI-assistent hos Dialogbot")
+    # the greeting is spoken through Peter's pronunciation dictionary: "AI" is said as the Danish letters
+    assert a["firstMessage"].startswith("Hej, det er Peter, a i-assistent hos Dialogbot")
     system = a["model"]["messages"][0]["content"]
     assert ring["script"].rendered_prompt in system and "Dialogbot tager telefonen" in system
     assert system.endswith(RULES)  # promises only what a tool confirmed

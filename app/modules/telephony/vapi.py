@@ -100,6 +100,33 @@ def apply_pacing(assistant: dict) -> dict:
         chunk = voice.setdefault("chunkPlan", {"enabled": True})
         if chunk.get("enabled", True):
             chunk.setdefault("minCharacters", p["min_characters"])
+    return spoken_first_message(assistant)
+
+
+def spoken_first_message(assistant: dict) -> dict:
+    """The greeting is spoken by the voice straight from `firstMessage`, so the pronunciation dictionary that Vapi
+    applies to the dialogue model's output (the voice's chunkPlan replacements, e.g. "Berle Pool" → "Bærle Pool")
+    is applied to the greeting here, before the assistant is handed over. Idempotent for whole-word entries."""
+    text = assistant.get("firstMessage")
+    chunk = (assistant.get("voice") or {}).get("chunkPlan") or {}
+    plan = chunk.get("formatPlan") or {}
+    if not isinstance(text, str) or not text or not chunk.get("enabled", True) or not plan.get("enabled", True):
+        return assistant
+    for r in plan.get("replacements") or []:
+        opts = {o.get("type"): o.get("enabled", True) for o in r.get("options") or []}
+        if r.get("type") == "regex" and r.get("regex"):
+            pattern = r["regex"]
+        elif r.get("type") == "exact" and r.get("key"):
+            pattern = re.escape(r["key"])
+        else:
+            continue
+        if opts.get("whole-word"):
+            pattern = rf"(?<!\w){pattern}(?!\w)"
+        try:
+            text = re.sub(pattern, str(r.get("value", "")), text, flags=re.IGNORECASE if opts.get("ignore-case") else 0)
+        except re.error:
+            continue
+    assistant["firstMessage"] = text
     return assistant
 # The assistant hangs up itself: Vapi's endCall tool, plus the closing line the phone prompt ends every call with.
 END_CALL_TOOL = {"type": "endCall"}

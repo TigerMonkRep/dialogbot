@@ -12046,6 +12046,64 @@
         ]
       }
     },
+    "/api/v1/operator/telephony/numbers/{number_id}/inbound": {
+      "post": {
+        "description": "Point a number's incoming calls at Vapi (and so at our assistant, voice and transcriber): Twilio's voice\nwebhook back to Vapi's inbound URL, and the Vapi number's server URL to our webhook. Undoes what importing the\nsame number into another engine (ElevenLabs Agents) did to the Twilio webhook. Platform credentials only.",
+        "operationId": "route_inbound_api_v1_operator_telephony_numbers__number_id__inbound_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Number Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Route Inbound",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
     "/api/v1/operator/telephony/tests/expire": {
       "post": {
         "operationId": "expire_api_v1_operator_telephony_tests_expire_post",

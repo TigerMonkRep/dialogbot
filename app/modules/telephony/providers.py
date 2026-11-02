@@ -95,6 +95,23 @@ class TwilioClient:
                 return Number(n["sid"], n["phone_number"], friendly_name)
         return None
 
+    def find_by_e164(self, e164: str) -> tuple[str, str] | None:
+        """(account_sid, number_sid) for a number owned by the main account or one of its subaccounts."""
+        accounts = [self.account_sid] + [a["sid"] for a in self._req("GET", "/Accounts.json", params={"PageSize": 100})
+                                         .get("accounts", []) if a.get("sid") != self.account_sid]
+        for sid in accounts:
+            out = self._req("GET", f"/Accounts/{sid}/IncomingPhoneNumbers.json",
+                            params={"PhoneNumber": e164, "PageSize": 5})
+            for n in out.get("incoming_phone_numbers", []):
+                if n.get("phone_number") == e164:
+                    return sid, n["sid"]
+        return None
+
+    def set_voice_url(self, account_sid: str, number_sid: str, url: str) -> None:
+        """Where Twilio sends an incoming call on this number (the webhook an import into another engine overwrote)."""
+        self._req("POST", f"/Accounts/{account_sid}/IncomingPhoneNumbers/{number_sid}.json",
+                  data={"VoiceUrl": url, "VoiceMethod": "POST"})
+
     def available(self, sub_sid: str, country: str, number_type: str) -> list[str]:
         kind = {"local": "Local", "mobile": "Mobile"}[number_type]
         out = self._req("GET", f"/Accounts/{sub_sid}/AvailablePhoneNumbers/{country}/{kind}.json",
@@ -147,6 +164,11 @@ class VapiClient:
     def call(self, payload: dict) -> str:
         return str(self._req("POST", "/call", json=payload).get("id") or "")
 
+    def set_server(self, number_id: str, server_url: str, server_secret: str) -> None:
+        """Inbound calls on this number ask our webhook for the assistant."""
+        self._req("PATCH", f"/phone-number/{number_id}",
+                  json={"server": {"url": server_url, "headers": {"Authorization": f"Bearer {server_secret}"}}})
+
 
 # --------------------------------------------------------------------------- fake adapters (dev/test)
 
@@ -175,6 +197,15 @@ WORLD = FakeWorld()
 
 class FakeTwilio:
     account_sid = "ACfake00000000000000000000000000"
+
+    def find_by_e164(self, e164: str) -> tuple[str, str] | None:
+        for sid, n in WORLD.numbers.items():
+            if n["n"].e164 == e164:
+                return n["sub"], sid
+        return None
+
+    def set_voice_url(self, account_sid: str, number_sid: str, url: str) -> None:
+        WORLD.numbers[number_sid]["voice_url"] = url
 
     def find_subaccount(self, friendly_name: str) -> str | None:
         return WORLD.subaccounts.get(friendly_name)
@@ -222,6 +253,10 @@ class FakeVapi:
     def call(self, payload: dict) -> str:
         WORLD.calls.append(payload)
         return f"call-{next(WORLD.seq)}"
+
+    def set_server(self, number_id: str, server_url: str, server_secret: str) -> None:
+        WORLD.servers = getattr(WORLD, "servers", {})
+        WORLD.servers[number_id] = server_url
 
 
 def providers() -> tuple[object, object] | None:

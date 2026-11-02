@@ -122,7 +122,8 @@ class Session:
         in_rate = int(start.get("sampleRate") or 16000)
         self.in_rate = in_rate
         self.rate = in_rate if in_rate in SUPPORTED_RATES else 16000
-        config = TranscriptionConfig(language=LANGUAGE, enable_partials=True, max_delay=s.speechmatics_max_delay,
+        # Agent STT rejects the RT-only options (max_delay and friends): language, partials and the dictionary only
+        config = TranscriptionConfig(language=LANGUAGE, enable_partials=True,
                                      additional_vocab=additional_vocab(self.db, self.ws, self.own))
         self.client = AgentSttAsyncClient(api_key=s.speechmatics_api_key, url=s.speechmatics_rt_url,
                                           app="dialogbot/1.0", transcription_config=config,
@@ -198,7 +199,11 @@ async def serve(socket: WebSocket) -> None:
                     except ValueError:
                         continue
                     if msg.get("type") == "start" and session.client is None:
-                        await session.start(msg)
+                        try:
+                            await session.start(msg)
+                        except Exception as e:  # noqa: BLE001 – Speechmatics refused the session: log and hang up cleanly
+                            logger.error("linden.start_failed", detail=str(e)[:300])
+                            break
         finally:
             await session.close()
     finally:

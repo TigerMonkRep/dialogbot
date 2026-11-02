@@ -116,7 +116,7 @@ def test_bridge_speaks_vapis_protocol(client, api, two_workspaces, configured, m
     assert fake.closed and fake.kw["api_key"] == "sm-test"
     assert array.array("h", fake.audio[0]).tolist() == [1, 2, 3]  # only the caller's channel went to Speechmatics
     cfg = fake.kw["transcription_config"]
-    assert cfg.language == "da" and cfg.enable_partials is True and cfg.max_delay == 0.7
+    assert cfg.language == "da" and cfg.enable_partials is True and cfg.max_delay is None  # Agent STT rejects max_delay
     vocab = cfg.additional_vocab
     assert vocab[0] == {"content": "Berle Pool"} and {"content": "Fjord Gulvservice"} in vocab
     assert {"content": "Kjeld", "sounds_like": ["kell", "keld", "kjell"]} in vocab

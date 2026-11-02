@@ -192,3 +192,8 @@ def test_capture_and_replay_endpoints(client, api, two_workspaces, configured, m
     assert array.array("h", FakeClient.instances[-1].audio[0]).tolist()[:3] == [5, 6, 7]
     assert api.c.post(f"{api.base}/operator/telephony/linden/replay", files={"file": ("x.wav", b"nope", "audio/wav")},
                       headers=api.h(op)).status_code == 422
+    # a known recording from the repo plays without an upload
+    FakeClient.instances.clear()
+    r = api.c.post(f"{api.base}/operator/telephony/linden/replay?fixture=berle_pool_16k", headers=api.h(op))
+    assert r.status_code == 200 and r.json()["rate_sent"] == 16000 and r.json()["seconds"] > 2
+    assert api.c.post(f"{api.base}/operator/telephony/linden/replay?fixture=../etc/passwd", headers=api.h(op)).status_code == 404

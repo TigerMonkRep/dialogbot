@@ -3,7 +3,9 @@ errors, provisioning jobs, documentation review, manual verification, number map
 here – never in the customer's settings. Secrets are never returned: configuration is reported as booleans."""
 from __future__ import annotations
 
+import re
 import uuid
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Request, Response, UploadFile
 from pydantic import BaseModel, Field
@@ -266,11 +268,16 @@ def linden_capture(principal: Principal = Depends(operator)):
                              "x-capture-rate": str(cap["rate"]), "x-capture-channels": str(cap["channels"])})
 
 
+FIXTURES = Path(__file__).resolve().parents[3] / "tests" / "fixtures" / "linden"
+
+
 @router.post("/linden/replay")
-async def linden_replay(file: UploadFile = File(...), ws_id: uuid.UUID | None = None,
-                        principal: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+async def linden_replay(file: UploadFile | None = File(default=None), fixture: str | None = None,
+                        ws_id: uuid.UUID | None = None, principal: Principal = Depends(operator),
+                        db: OrmSession = Depends(get_db)):
     """Run a WAV (mono or stereo, 8/16 kHz 16-bit) through the bridge's Speechmatics session without a phone call and
-    return the segments. Stereo takes channel 0, like the bridge. The offline test of Danish recognition."""
+    return the segments. Stereo takes channel 0, like the bridge. `fixture` names a known recording from
+    tests/fixtures/linden (Peter's voice, known text) instead of an upload. The offline test of Danish recognition."""
     import io
     import wave
 
@@ -279,7 +286,16 @@ async def linden_replay(file: UploadFile = File(...), ws_id: uuid.UUID | None = 
 
     if not linden.configured():
         raise NotImplementedYet("Speechmatics er ikke sat op (SPEECHMATICS_API_KEY mangler)", code="speechmatics_not_configured")
-    raw = await file.read()
+    if fixture:
+        name = re.sub(r"[^a-z0-9_]", "", fixture.lower())
+        path = FIXTURES / f"{name}.wav"
+        if not path.is_file():
+            raise NotFound(f"Ukendt testlyd: {name}", code="fixture_not_found")
+        raw = path.read_bytes()
+    elif file is not None:
+        raw = await file.read()
+    else:
+        raise ValidationFailed("Vedhæft en WAV eller angiv fixture", field_errors=[{"field": "file"}])
     try:
         with wave.open(io.BytesIO(raw), "rb") as w:
             channels, width, rate = w.getnchannels(), w.getsampwidth(), w.getframerate()

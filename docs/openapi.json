@@ -341,14 +341,18 @@
       "Body_linden_replay_api_v1_operator_telephony_linden_replay_post": {
         "properties": {
           "file": {
-            "contentMediaType": "application/octet-stream",
-            "title": "File",
-            "type": "string"
+            "anyOf": [
+              {
+                "contentMediaType": "application/octet-stream",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File"
           }
         },
-        "required": [
-          "file"
-        ],
         "title": "Body_linden_replay_api_v1_operator_telephony_linden_replay_post",
         "type": "object"
       },
@@ -12043,9 +12047,25 @@
     },
     "/api/v1/operator/telephony/linden/replay": {
       "post": {
-        "description": "Run a WAV (mono or stereo, 8/16 kHz 16-bit) through the bridge's Speechmatics session without a phone call and\nreturn the segments. Stereo takes channel 0, like the bridge. The offline test of Danish recognition.",
+        "description": "Run a WAV (mono or stereo, 8/16 kHz 16-bit) through the bridge's Speechmatics session without a phone call and\nreturn the segments. Stereo takes channel 0, like the bridge. `fixture` names a known recording from\ntests/fixtures/linden (Peter's voice, known text) instead of an upload. The offline test of Danish recognition.",
         "operationId": "linden_replay_api_v1_operator_telephony_linden_replay_post",
         "parameters": [
+          {
+            "in": "query",
+            "name": "fixture",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Fixture"
+            }
+          },
           {
             "in": "query",
             "name": "ws_id",
@@ -12087,8 +12107,7 @@
                 "$ref": "#/components/schemas/Body_linden_replay_api_v1_operator_telephony_linden_replay_post"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {

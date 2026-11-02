@@ -379,7 +379,7 @@ def assistant_for(db: OrmSession, c: Campaign, cc: CampaignContact) -> dict:
                   "tools": tools.vapi_tools(recording=record) + [vapi.END_CALL_TOOL]},
         # Vapi records unless told not to (artifactPlan.recordingEnabled defaults to true)
         "artifactPlan": recordings.artifact_plan(c),
-        "transcriber": vapi.transcriber_for(db, ws),
+        "transcriber": vapi.transcriber_for(db, ws, extra=[cc.company, cc.name, *(cc.name or "").split()]),
         "maxDurationSeconds": MAX_SECONDS,
         "voicemailDetection": {"provider": "vapi"},  # voicemail: hang up, no message is left
         "endCallPhrases": ["Tak for din tid", "hav en god dag"],

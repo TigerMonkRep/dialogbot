@@ -197,6 +197,9 @@ def test_peter_rings_whatever_voice_is_asked_for_and_the_script_adapts(client, s
     # Peter knows the number the visitor typed and confirms it for the specialist's call-back instead of asking for it
     assert "det nummer, du skrev på hjemmesiden, er tyve, tredive, fyrre, halvtreds" in system
     assert "Bed ALDRIG kunden om at diktere et nummer" in system
+    # the prospect's own names go to the transcriber as key terms, and the website spelling is authoritative
+    assert payload["transcriber"]["keyterm"][:3] == ["Hansen VVS", "Mette Hansen", "Mette"]
+    assert "tag det ALDRIG som en rettelse" in system
     assert payload["firstMessage"].startswith("Hej Mette, det er Peter fra Dialogbot.")
     assert "Hansen VVS" in payload["firstMessage"]
     # the call's status updates and report come back to us, whatever is configured on the number in Vapi

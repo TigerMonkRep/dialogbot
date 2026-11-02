@@ -84,8 +84,10 @@ class FakeClient:
 
         self.audio.append(chunk)
         n = len(self.audio)
-        self.handlers[ServerMessageType.ADD_PARTIAL_SEGMENT]({"segment": {"transcript": f"andr {n}"}})
-        self.handlers[ServerMessageType.ADD_SEGMENT]({"segment": {"transcript": f"André {n}."}})
+        if ServerMessageType.ADD_PARTIAL_SEGMENT in self.handlers:
+            self.handlers[ServerMessageType.ADD_PARTIAL_SEGMENT]({"segment": {"transcript": f"andr {n}"}})
+        self.handlers[ServerMessageType.ADD_SEGMENT]({"segment": {"transcript": f"André {n}."},
+                                                      "metadata": {"start_time": n - 1, "end_time": n}})
 
 
 def test_bridge_speaks_vapis_protocol(client, api, two_workspaces, configured, monkeypatch):
@@ -145,3 +147,48 @@ def test_odd_sized_frames_never_slip_the_channels():
     for c in s.client.chunks:
         got.frombytes(c)
     assert got.tolist() == [1, 2, 3, 4] and s.carry == b""
+
+
+def test_capture_and_replay_endpoints(client, api, two_workspaces, configured, monkeypatch):
+    """The bridge keeps the first seconds of the latest call for an operator to download as WAV, and a WAV can be
+    replayed through the same Speechmatics session without a phone call."""
+    import io
+    import wave
+
+    import speechmatics.agent_stt as sm
+
+    t = two_workspaces
+    _setup(api, t)
+    op = api.operator()
+    linden.CAPTURE.update({"pcm": b"", "rate": 0, "channels": 0, "started_at": None, "session": None})
+    assert api.get(op, "/operator/telephony/linden/capture.wav").status_code == 404
+    monkeypatch.setenv("SPEECHMATICS_API_KEY", "sm-test")
+    get_settings.cache_clear()
+    monkeypatch.setattr(sm, "AgentSttAsyncClient", FakeClient)
+    url = f"/api/v1/webhooks/vapi/transcriber?ws={t['ws_a']}"
+    with client.websocket_connect(url, headers={"Authorization": f"Bearer {SECRET}"}) as socket:
+        socket.send_text(json.dumps({"type": "start", "encoding": "linear16", "container": "raw",
+                                     "sampleRate": 16000, "channels": 2}))
+        socket.send_bytes(array.array("h", [1, 9, 2, 9]).tobytes())
+        socket.receive_text()
+        socket.receive_text()
+    r = api.c.get(f"{api.base}/operator/telephony/linden/capture.wav", headers=api.h(op))
+    assert r.status_code == 200 and r.headers["x-capture-channels"] == "2" and r.headers["x-capture-rate"] == "16000"
+    with wave.open(io.BytesIO(r.content), "rb") as w:
+        assert w.getnchannels() == 2 and w.getnframes() == 2
+    # replay: a stereo WAV goes in, channel 0 reaches Speechmatics, the segments come back as text
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as w:
+        w.setnchannels(2)
+        w.setsampwidth(2)
+        w.setframerate(16000)
+        w.writeframes(array.array("h", [5, 9, 6, 9, 7, 9]).tobytes())
+    FakeClient.instances.clear()
+    r = api.c.post(f"{api.base}/operator/telephony/linden/replay?ws_id={t['ws_a']}",
+                   files={"file": ("test.wav", buf.getvalue(), "audio/wav")}, headers=api.h(op))
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["channels_in"] == 2 and body["rate_sent"] == 16000 and body["text"].startswith("André 1.")
+    assert array.array("h", FakeClient.instances[-1].audio[0]).tolist()[:3] == [5, 6, 7]
+    assert api.c.post(f"{api.base}/operator/telephony/linden/replay", files={"file": ("x.wav", b"nope", "audio/wav")},
+                      headers=api.h(op)).status_code == 422

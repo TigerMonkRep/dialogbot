@@ -35,6 +35,11 @@ logger = structlog.get_logger(__name__)
 LANGUAGE = "da"
 SUPPORTED_RATES = (8000, 16000)
 
+# Diagnostics: the raw audio Vapi sent at the start of the most recent call, exactly as received (interleaved PCM),
+# so an operator can download it as WAV and hear/measure what the recogniser was given. Memory only, one call.
+CAPTURE_SECONDS = 12
+CAPTURE: dict[str, Any] = {"pcm": b"", "rate": 0, "channels": 0, "started_at": None}
+
 
 def configured() -> bool:
     return bool(get_settings().speechmatics_api_key)
@@ -146,12 +151,16 @@ class Session:
         self.client.on(ServerMessageType.ERROR, lambda m: logger.warning("linden.error", detail=m))
         await self.client.__aenter__()
         self.ready.set()
+        CAPTURE.update({"pcm": b"", "rate": in_rate, "channels": self.channels, "session": self,
+                        "started_at": __import__("datetime").datetime.now(__import__("datetime").UTC).isoformat()})
         logger.info("linden.started", rate=self.rate, in_rate=in_rate, channels=self.channels, channel=self.channel,
                     vocab=len(config.additional_vocab or []))
 
     async def audio(self, pcm: bytes) -> None:
         if self.client is None:
             return
+        if len(CAPTURE["pcm"]) < CAPTURE_SECONDS * self.in_rate * 2 * self.channels and CAPTURE.get("session") is self:
+            CAPTURE["pcm"] += pcm
         data = self.carry + pcm
         frame = 2 * self.channels
         whole = len(data) - len(data) % frame
@@ -231,3 +240,38 @@ async def serve(socket: WebSocket) -> None:
             await session.close()
     finally:
         db.close()
+
+
+async def replay(pcm16k_mono: bytes, db: OrmSession, ws: Workspace | None, own: list[str],
+                 rate: int = 16000) -> list[dict]:
+    """Run a known recording through the same Speechmatics session the bridge uses, without a phone call.
+    Returns the final segments ({text, start, end}) – the offline test of "can Linden do Danish over our bridge"."""
+    from speechmatics.agent_stt import (
+        AgentSttAsyncClient,
+        AudioEncoding,
+        AudioFormat,
+        ServerMessageType,
+        TranscriptionConfig,
+    )
+
+    s = get_settings()
+    config = TranscriptionConfig(language=LANGUAGE, enable_partials=False,
+                                 additional_vocab=additional_vocab(db, ws, own))
+    client = AgentSttAsyncClient(api_key=s.speechmatics_api_key, url=s.speechmatics_rt_url, app="dialogbot/replay",
+                                 transcription_config=config,
+                                 audio_format=AudioFormat(encoding=AudioEncoding.PCM_S16LE, sample_rate=rate),
+                                 record_events=False)
+    out: list[dict] = []
+
+    def on_segment(message: dict) -> None:
+        seg = message.get("segment") or {}
+        meta = message.get("metadata") or {}
+        out.append({"text": seg.get("transcript") or "", "start": meta.get("start_time"), "end": meta.get("end_time")})
+
+    client.on(ServerMessageType.ADD_SEGMENT, on_segment)
+    async with client:
+        step = rate * 2 // 10  # 100 ms chunks, sent as fast as the service takes them
+        for i in range(0, len(pcm16k_mono), step):
+            await client.send_audio(pcm16k_mono[i:i + step])
+        await client.send_audio(bytes(rate * 2))  # a second of silence so the last segment closes
+    return out

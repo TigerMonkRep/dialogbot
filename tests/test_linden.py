@@ -121,3 +121,26 @@ def test_bridge_speaks_vapis_protocol(client, api, two_workspaces, configured, m
     assert vocab[0] == {"content": "Berle Pool"} and {"content": "Fjord Gulvservice"} in vocab
     assert {"content": "Kjeld", "sounds_like": ["kell", "keld", "kjell"]} in vocab
     assert len(vocab) <= vapi.SPEECHMATICS_MAX_VOCABULARY
+
+
+def test_odd_sized_frames_never_slip_the_channels():
+    """Vapi's binary frames need not end on a whole stereo frame; leftover bytes carry over, so channel 0 stays
+    the caller across frames instead of flipping to the assistant."""
+    import asyncio
+
+    class Sink:
+        def __init__(self):
+            self.chunks = []
+
+        async def send_audio(self, chunk):
+            self.chunks.append(chunk)
+
+    s = linden.Session.__new__(linden.Session)
+    s.client, s.channels, s.in_rate, s.rate, s.channel, s.carry = Sink(), 2, 16000, 16000, 0, b""
+    stereo = array.array("h", [1, 9, 2, 9, 3, 9, 4, 9]).tobytes()  # 4 stereo frames = 16 bytes
+    asyncio.run(s.audio(stereo[:6]))   # 1 whole frame + 2 bytes carried
+    asyncio.run(s.audio(stereo[6:]))   # the rest
+    got = array.array("h")
+    for c in s.client.chunks:
+        got.frombytes(c)
+    assert got.tolist() == [1, 2, 3, 4] and s.carry == b""

@@ -66,12 +66,13 @@ def additional_vocab(db: OrmSession, ws: Workspace | None, own: list[str]) -> li
             for i in items]
 
 
-def customer_channel(pcm: bytes, channels: int, in_rate: int, out_rate: int) -> bytes:
-    """Channel 0 of interleaved 16-bit PCM, resampled to `out_rate` when the rates differ (linear interpolation;
-    phone audio is narrow-band, so nothing is lost that the recogniser would use)."""
+def customer_channel(pcm: bytes, channels: int, in_rate: int, out_rate: int, channel: int = 0) -> bytes:
+    """One channel of interleaved 16-bit PCM (whole frames only – the caller keeps any trailing bytes so the
+    interleaving never slips), resampled to `out_rate` when the rates differ (linear interpolation; phone audio is
+    narrow-band, so nothing is lost that the recogniser would use)."""
     samples = array.array("h")
     samples.frombytes(pcm[: len(pcm) - len(pcm) % (2 * channels)])
-    mono = samples[::channels] if channels > 1 else samples
+    mono = samples[channel::channels] if channels > 1 else samples
     if in_rate == out_rate or not len(mono):
         return mono.tobytes()
     ratio = in_rate / out_rate
@@ -94,7 +95,11 @@ class Session:
     def __init__(self, socket: WebSocket, db: OrmSession, ws: Workspace | None, own: list[str]):
         self.socket, self.db, self.ws, self.own = socket, db, ws, own
         self.rate = 16000
+        self.in_rate = 16000
         self.channels = 2
+        self.channel = get_settings().speechmatics_customer_channel  # Vapi: customer is channel 0, assistant 1
+        self.carry = b""  # bytes left over from the last frame that did not complete a whole interleaved frame
+        self.levels = [0, 0, 0]  # sum |sample| per channel + frames, for the first seconds (diagnostics in the log)
         self.client: Any = None
         self.ready = asyncio.Event()
         self.sent: list[dict] = []  # what we told Vapi, for logs and tests
@@ -141,12 +146,30 @@ class Session:
         self.client.on(ServerMessageType.ERROR, lambda m: logger.warning("linden.error", detail=m))
         await self.client.__aenter__()
         self.ready.set()
-        logger.info("linden.started", rate=self.rate, channels=self.channels, vocab=len(config.additional_vocab or []))
+        logger.info("linden.started", rate=self.rate, in_rate=in_rate, channels=self.channels, channel=self.channel,
+                    vocab=len(config.additional_vocab or []))
 
     async def audio(self, pcm: bytes) -> None:
         if self.client is None:
             return
-        await self.client.send_audio(customer_channel(pcm, self.channels, self.in_rate, self.rate))
+        data = self.carry + pcm
+        frame = 2 * self.channels
+        whole = len(data) - len(data) % frame
+        self.carry = data[whole:]
+        if not whole:
+            return
+        if self.channels > 1 and self.levels[2] < 5 * self.in_rate:  # the first ~5 s: which channel carries whom?
+            samples = array.array("h")
+            samples.frombytes(data[:whole])
+            self.levels[0] += sum(abs(x) for x in samples[0::self.channels])
+            self.levels[1] += sum(abs(x) for x in samples[1::self.channels])
+            self.levels[2] += len(samples) // self.channels
+            if self.levels[2] >= 5 * self.in_rate:
+                n = max(1, self.levels[2])
+                logger.info("linden.levels", ch0=round(self.levels[0] / n), ch1=round(self.levels[1] / n),
+                            frames=self.levels[2], channel=self.channel)
+        await self.client.send_audio(customer_channel(data[:whole], self.channels, self.in_rate, self.rate,
+                                                      self.channel))
 
     async def close(self) -> None:
         if self.client is not None:

@@ -338,6 +338,20 @@
         "title": "BlockIn",
         "type": "object"
       },
+      "Body_linden_replay_api_v1_operator_telephony_linden_replay_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_linden_replay_api_v1_operator_telephony_linden_replay_post",
+        "type": "object"
+      },
       "BusinessNumberIn": {
         "properties": {
           "carrier": {
@@ -11974,6 +11988,129 @@
           }
         },
         "summary": "Jobs",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/linden/capture.wav": {
+      "get": {
+        "description": "The raw audio Vapi sent at the start of the most recent bridged call, as a WAV an operator can listen to.",
+        "operationId": "linden_capture_api_v1_operator_telephony_linden_capture_wav_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Linden Capture",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/linden/replay": {
+      "post": {
+        "description": "Run a WAV (mono or stereo, 8/16 kHz 16-bit) through the bridge's Speechmatics session without a phone call and\nreturn the segments. Stereo takes channel 0, like the bridge. The offline test of Danish recognition.",
+        "operationId": "linden_replay_api_v1_operator_telephony_linden_replay_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ws_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ws Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_linden_replay_api_v1_operator_telephony_linden_replay_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Linden Replay",
         "tags": [
           "telephony-operator"
         ]

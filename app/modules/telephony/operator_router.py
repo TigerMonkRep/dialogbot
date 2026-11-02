@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, File, Request, Response, UploadFile
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
@@ -241,6 +241,59 @@ def route_inbound(number_id: uuid.UUID, request: Request, principal: Principal =
     db.commit()
     return {"e164": n.e164, "engine": "vapi", "voice_url": VAPI_INBOUND_URL, "server_url": server_url,
             "twilio_number_sid": number_sid}
+
+
+@router.get("/linden/capture.wav")
+def linden_capture(principal: Principal = Depends(operator)):
+    """The raw audio Vapi sent at the start of the most recent bridged call, as a WAV an operator can listen to."""
+    import io
+    import wave
+
+    from app.modules.telephony import linden
+
+    cap = linden.CAPTURE
+    if not cap["pcm"]:
+        raise NotFound("Ingen optagelse endnu – broen gemmer de første sekunder af næste opkald", code="no_capture")
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as w:
+        w.setnchannels(cap["channels"] or 1)
+        w.setsampwidth(2)
+        w.setframerate(cap["rate"] or 16000)
+        w.writeframes(cap["pcm"])
+    return Response(buf.getvalue(), media_type="audio/wav",
+                    headers={"content-disposition": "attachment; filename=linden-capture.wav",
+                             "x-capture-started": str(cap.get("started_at") or ""),
+                             "x-capture-rate": str(cap["rate"]), "x-capture-channels": str(cap["channels"])})
+
+
+@router.post("/linden/replay")
+async def linden_replay(file: UploadFile = File(...), ws_id: uuid.UUID | None = None,
+                        principal: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
+    """Run a WAV (mono or stereo, 8/16 kHz 16-bit) through the bridge's Speechmatics session without a phone call and
+    return the segments. Stereo takes channel 0, like the bridge. The offline test of Danish recognition."""
+    import io
+    import wave
+
+    from app.core.errors import NotImplementedYet
+    from app.modules.telephony import linden
+
+    if not linden.configured():
+        raise NotImplementedYet("Speechmatics er ikke sat op (SPEECHMATICS_API_KEY mangler)", code="speechmatics_not_configured")
+    raw = await file.read()
+    try:
+        with wave.open(io.BytesIO(raw), "rb") as w:
+            channels, width, rate = w.getnchannels(), w.getsampwidth(), w.getframerate()
+            pcm = w.readframes(w.getnframes())
+    except (wave.Error, EOFError):
+        raise ValidationFailed("Filen skal være en WAV (16-bit PCM)", field_errors=[{"field": "file"}])
+    if width != 2:
+        raise ValidationFailed("WAV skal være 16-bit PCM", field_errors=[{"field": "file"}])
+    target = rate if rate in linden.SUPPORTED_RATES else 16000
+    mono = linden.customer_channel(pcm, channels, rate, target)
+    ws = _ws(db, ws_id) if ws_id else None
+    segments = await linden.replay(mono, db, ws, [], rate=target)
+    return {"rate_in": rate, "channels_in": channels, "rate_sent": target, "seconds": round(len(mono) / 2 / target, 1),
+            "segments": segments, "text": " ".join(s["text"] for s in segments).strip()}
 
 
 @router.post("/tests/expire")

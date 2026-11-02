@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import uuid
 
-from fastapi import APIRouter, Depends, Header, Request, Response
+from fastapi import APIRouter, Depends, Header, Request, Response, WebSocket
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -20,6 +20,14 @@ from app.modules.telephony import vapi
 
 webhook_router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 router = APIRouter(prefix="/workspaces/{workspace_id}", tags=["telephony"])
+
+
+@webhook_router.websocket("/vapi/transcriber")
+async def vapi_transcriber(socket: WebSocket):
+    """Vapi's custom-transcriber stream for a call, bridged to Speechmatics Agent STT (telephony.linden)."""
+    from app.modules.telephony import linden
+
+    await linden.serve(socket)
 
 
 @webhook_router.post("/elevenlabs/init")

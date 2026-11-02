@@ -137,6 +137,7 @@ def test_odd_sized_frames_never_slip_the_channels():
 
     s = linden.Session.__new__(linden.Session)
     s.client, s.channels, s.in_rate, s.rate, s.channel, s.carry = Sink(), 2, 16000, 16000, 0, b""
+    s.levels = [0, 0, 0]
     stereo = array.array("h", [1, 9, 2, 9, 3, 9, 4, 9]).tobytes()  # 4 stereo frames = 16 bytes
     asyncio.run(s.audio(stereo[:6]))   # 1 whole frame + 2 bytes carried
     asyncio.run(s.audio(stereo[6:]))   # the rest

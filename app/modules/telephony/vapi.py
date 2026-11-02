@@ -275,9 +275,11 @@ def keyterms(db: OrmSession, ws: Workspace) -> list[str]:
     return out[:MAX_KEYTERMS]
 
 
-def transcriber_for(db: OrmSession, ws: Workspace | None) -> dict:
+def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | None = None) -> dict:
     """The transcriber config (VAPI_TRANSCRIBER_JSON, or Deepgram Nova-3 Danish with Nova-2 as fallback),
-    with the business's key terms added to any Deepgram model that supports keyterm prompting."""
+    with the business's key terms added to any Deepgram model that supports keyterm prompting. `extra` are terms
+    this one call will hear: the person we ring and their company, which the generic model otherwise mishears
+    ("Berle Pool" → "Berligt pool")."""
     configured = _json_setting(get_settings().vapi_transcriber_json)
     t = configured or dict(DEFAULT_TRANSCRIBER)
     if configured is None:
@@ -285,9 +287,14 @@ def transcriber_for(db: OrmSession, ws: Workspace | None) -> dict:
     for d in [t, *t.get("fallbackPlan", {}).get("transcribers", [])]:
         if (ws is not None and d.get("provider") == "deepgram" and str(d.get("model", "")).startswith(KEYTERM_MODELS)
                 and "keyterm" not in d):
-            terms = keyterms(db, ws)
+            own: list[str] = []  # the call's own names first; the cap keeps the total within Deepgram's budget
+            for x in extra or []:
+                x = re.sub(r"\s+", " ", str(x or "")).strip(" .,:;-")
+                if 1 < len(x) <= 50 and x.lower() not in {t.lower() for t in own}:
+                    own.append(x)
+            terms = own + [t for t in keyterms(db, ws) if t.lower() not in {t.lower() for t in own}]
             if terms:
-                d["keyterm"] = terms
+                d["keyterm"] = terms[:MAX_KEYTERMS]
     return t
 
 

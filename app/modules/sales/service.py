@@ -187,7 +187,7 @@ def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -
         "firstMessage": first_message(d),
         "model": {"provider": s.vapi_model_provider, "model": vapi.phone_model(s),
                   "messages": [{"role": "system", "content": system_prompt(db, ws, d)}]},
-        "transcriber": vapi.transcriber_for(db, ws),
+        "transcriber": vapi.transcriber_for(db, ws, extra=[d.company, d.name, *(d.name or "").split()]),
         "maxDurationSeconds": MAX_SECONDS,
         "voicemailDetection": {"provider": "vapi"},
         "endCallPhrases": ["Tak for snakken, hav en god dag", "Undskyld forstyrrelsen, hav en god dag"],

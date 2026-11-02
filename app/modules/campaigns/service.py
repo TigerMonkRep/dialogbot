@@ -256,7 +256,7 @@ def assistant_for(db: OrmSession, c: Campaign, contact: CampaignContact) -> dict
         "firstMessage": opening_line(c, ws, contact),
         "model": {"provider": s.vapi_model_provider, "model": vapi.phone_model(s),
                   "messages": [{"role": "system", "content": system_prompt(db, c, ws, contact)}]},
-        "transcriber": vapi.transcriber_for(db, ws),
+        "transcriber": vapi.transcriber_for(db, ws, extra=[contact.company, contact.name, *(contact.name or "").split()]),
         "maxDurationSeconds": remaining,
         "voicemailDetection": {"provider": "vapi"},
         "endCallPhrases": ["Tak for snakken, hav en god dag", "Undskyld forstyrrelsen, hav en god dag"],

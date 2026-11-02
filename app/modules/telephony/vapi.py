@@ -309,6 +309,14 @@ def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | Non
     this one call will hear: the person we ring and their company, which the generic model otherwise mishears
     ("Berle Pool" → "Berligt pool")."""
     configured = _json_setting(get_settings().vapi_transcriber_json)
+    if configured is not None and configured.get("provider") == "custom-transcriber" and not configured.get("server"):
+        from app.modules.telephony import linden
+
+        # Speechmatics Agent STT through our bridge; without its key the call still works, on Deepgram
+        configured = None if not linden.configured() else configured
+        use_linden = configured is not None
+    else:
+        use_linden = False
     t = configured or dict(DEFAULT_TRANSCRIBER)
     if configured is None:
         t["fallbackPlan"] = {"transcribers": [dict(FALLBACK_TRANSCRIBER)]}
@@ -317,6 +325,10 @@ def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | Non
         x = re.sub(r"\s+", " ", str(x or "")).strip(" .,:;-")
         if 1 < len(x) <= 50 and x.lower() not in {t.lower() for t in own}:
             own.append(x)
+    if use_linden:
+        from app.modules.telephony import linden
+
+        return {**t, **linden.transcriber_config(ws, own)}
     for d in [t, *t.get("fallbackPlan", {}).get("transcribers", [])]:
         if ws is None:
             continue

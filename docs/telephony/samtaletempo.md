@@ -74,3 +74,15 @@ Er nummeret skjult, siger blokken det, og assistenten spørger i par.
 
 Transskriptionen kører med Deepgram `numerals: true`, så cifre kommer som "20 30 40 50" i stedet for "tyve tredive
 fyrre halvtreds" – det læser modellen langt mere sikkert, og `onNumberSeconds` giver kunden tid til at sige hele nummeret.
+
+## Lytteren: Speechmatics Agent STT (Linden) gennem vores egen bro
+
+Test den 2. november med 20 danske navne sagt isoleret over telefon: Deepgram Nova-3 ramte 5, Azure 8 (med
+lydudfald), ElevenLabs Scribe 9. Ingen af dem kan lære danske navne på forhånd ud over Deepgrams 100 nøgleord.
+Speechmatics' Agent STT (model `linden-1`) er bygget til voice agents og tager en ordbog på op til 1.000 ord med
+"lyder som"-varianter. Vapi's indbyggede Speechmatics-integration bruger ikke Linden, så `telephony/linden.py` er
+en bro: Vapi streamer opkaldets lyd (custom-transcriber-protokollen) til `/api/v1/webhooks/vapi/transcriber`, broen
+sender kundens kanal til Speechmatics `/v2/agent` med ordbogen (opkaldets egne navne → firmaets ord → de mest
+almindelige danske navne fra `danish_names.py`) og sender hvert stykke udskrift tilbage til Vapi, delvist og endeligt.
+Slås til med `VAPI_TRANSCRIBER_JSON={"provider": "custom-transcriber"}` og `SPEECHMATICS_API_KEY`; uden nøglen
+bruges Deepgram.

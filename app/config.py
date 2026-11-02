@@ -86,6 +86,11 @@ class Settings(BaseSettings):
     # number without a deploy. Unset = the tuned defaults.
     vapi_pacing_json: str | None = Field(default=None, alias="VAPI_PACING_JSON")
     vapi_transcriber_json: str | None = Field(default=None, alias="VAPI_TRANSCRIBER_JSON")
+    # Speechmatics Agent STT (Linden) through our own transcriber bridge: VAPI_TRANSCRIBER_JSON={"provider":
+    # "custom-transcriber"} sends every call's audio to /webhooks/vapi/transcriber, which forwards it to Speechmatics.
+    speechmatics_api_key: str | None = Field(default=None, alias="SPEECHMATICS_API_KEY")
+    speechmatics_rt_url: str | None = Field(default=None, alias="SPEECHMATICS_RT_URL")  # default: the EU endpoint
+    speechmatics_max_delay: float = Field(default=0.7, alias="SPEECHMATICS_MAX_DELAY")  # seconds before a segment is final
     # Server-side only: lets owners hear a chosen ElevenLabs voice before calls go live.
     elevenlabs_api_key: str | None = Field(default=None, alias="ELEVENLABS_API_KEY")
     # ElevenLabs Agents trial (an alternative call engine to Vapi): a shared secret ElevenLabs sends as the

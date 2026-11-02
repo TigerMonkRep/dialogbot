@@ -256,6 +256,14 @@ def keyterms(db: OrmSession, ws: Workspace) -> list[str]:
             for key in ("areas", "cities", "postal_areas", "municipalities"):
                 terms += [str(x) for x in c.get(key) or [] if isinstance(x, str)]
     terms += list(db.scalars(select(BookingType.name).where(BookingType.workspace_id == ws.id, BookingType.active)))
+    # the team: callers ask for colleagues by name, and a first name is what the model otherwise "corrects"
+    from app.models import Membership, User
+
+    for name in db.scalars(select(User.display_name).join(Membership, Membership.user_id == User.id)
+                           .where(Membership.workspace_id == ws.id).order_by(User.display_name)):
+        name = (name or "").strip()
+        if name and "@" not in name:
+            terms += [name, name.split()[0]]
     out: list[str] = []
     seen: set[str] = set()
     for t in terms:

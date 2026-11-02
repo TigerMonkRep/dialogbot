@@ -127,7 +127,7 @@ def test_danish_transcriber_voice_and_speaking_style(client, api, two_workspaces
     # Deepgram Nova-3 Danish with key terms from approved knowledge only; Nova-2 as fallback
     fallback = a["transcriber"].pop("fallbackPlan")["transcribers"]
     assert a["transcriber"] == {"provider": "deepgram", "model": "nova-3", "language": "da", "numerals": True,
-                                "keyterm": ["Fjord Gulvservice", "Afslibning"]}
+                                "keyterm": ["Fjord Gulvservice", "Afslibning", "Test"]}  # "Test": the owner's name
     assert "HEMMELIG-KLADDE" not in a["transcriber"]["keyterm"]
     assert [f["model"] for f in fallback] == ["nova-2"]
     # it waits longer while the caller is mid-sentence or reading out digits
@@ -394,3 +394,21 @@ def test_receptionist_confirms_the_callers_number_instead_of_asking_for_it(clien
     # a withheld number: the assistant knows it must ask, one pair at a time
     a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
     assert "Kundens nummer er skjult" in a["model"]["messages"][0]["content"]
+
+
+def test_team_names_are_key_terms_and_the_assistant_keeps_the_name_it_heard(client, api, two_workspaces, configured):
+    """"André" must not become "Andreas": colleagues' names go to Deepgram as key terms, and the phone rules forbid
+    swapping a heard name for a more common one."""
+    t = two_workspaces
+    _setup(api, t)
+    api.register("andre@testmail.dk", name="André Kjeldsen")
+    tok = api.login("andre@testmail.dk")
+    api.verify(tok)
+    r = api.invite(t["tok_a"], t["ws_a"], "andre@testmail.dk", "staff")
+    assert r.status_code == 201, r.text
+    api.c.post("/api/v1/invitations/accept", json={"token": api.invite_link(tok)}, headers=api.h(tok))
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    terms = a["transcriber"]["keyterm"]
+    assert "André Kjeldsen" in terms and "André" in terms and "andre@testmail.dk" not in terms
+    system = a["model"]["messages"][0]["content"]
+    assert "André er ikke Andreas" in system and "gentag navnet præcis som du hørte det" in system

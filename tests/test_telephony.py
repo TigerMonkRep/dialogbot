@@ -396,6 +396,28 @@ def test_receptionist_confirms_the_callers_number_instead_of_asking_for_it(clien
     assert "Kundens nummer er skjult" in a["model"]["messages"][0]["content"]
 
 
+def test_greeting_is_spoken_with_the_pronunciation_dictionary(client, api, two_workspaces, configured):
+    """"Berle Pool" is said "Bærle Pool": the dictionary under Stemmer → Udtale reaches the greeting too, not only
+    the dialogue model's answers (Vapi applies chunkPlan replacements to those itself)."""
+    t = two_workspaces
+    n = _setup(api, t)
+    api.c.patch(f"/api/v1/workspaces/{t['ws_a']}/phone-numbers/{n['id']}",
+                json={"greeting": "Goddag, du har ringet til Berle Pool. Du taler med en digital assistent."},
+                headers=api.h(t["tok_a"]))
+    vs = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/voices").json()
+    r = api.c.put(f"/api/v1/workspaces/{t['ws_a']}/voices/settings",
+                  json={"expected_version": vs["settings"]["version"], "pronunciations": [{"term": "Berle", "say": "Bærle"}]},
+                  headers=api.h(t["tok_a"]))
+    assert r.status_code == 200, r.text
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["firstMessage"].startswith("Goddag, du har ringet til Bærle Pool.")
+    assert any(rep["regex"] == "Berle" and rep["value"] == "Bærle" for rep in a["voice"]["chunkPlan"]["formatPlan"]["replacements"])
+    # idempotent and whole-word: a second pass changes nothing, and "Berlevåg" is left alone
+    from app.modules.telephony.vapi import spoken_first_message
+    again = spoken_first_message({"firstMessage": a["firstMessage"] + " Berlevåg.", "voice": a["voice"]})
+    assert again["firstMessage"] == a["firstMessage"] + " Berlevåg."
+
+
 def test_team_names_are_key_terms_and_the_assistant_keeps_the_name_it_heard(client, api, two_workspaces, configured):
     """"André" must not become "Andreas": colleagues' names go to Deepgram as key terms, and the phone rules forbid
     swapping a heard name for a more common one."""

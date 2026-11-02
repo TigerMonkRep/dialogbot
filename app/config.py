@@ -90,6 +90,7 @@ class Settings(BaseSettings):
     # "custom-transcriber"} sends every call's audio to /webhooks/vapi/transcriber, which forwards it to Speechmatics.
     speechmatics_api_key: str | None = Field(default=None, alias="SPEECHMATICS_API_KEY")
     speechmatics_rt_url: str | None = Field(default=None, alias="SPEECHMATICS_RT_URL")  # default: the EU endpoint
+    speechmatics_customer_channel: int = Field(default=0, alias="SPEECHMATICS_CUSTOMER_CHANNEL")  # Vapi: 0 = customer
     # Server-side only: lets owners hear a chosen ElevenLabs voice before calls go live.
     elevenlabs_api_key: str | None = Field(default=None, alias="ELEVENLABS_API_KEY")
     # ElevenLabs Agents trial (an alternative call engine to Vapi): a shared secret ElevenLabs sends as the

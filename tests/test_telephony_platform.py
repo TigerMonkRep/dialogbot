@@ -237,3 +237,28 @@ def test_campaign_caller_id_needs_operator_permission(api, two_workspaces, fake,
                 headers=api.h(api.operator()))
     db.expire_all()
     assert outbound_problem(db, c) is None
+
+
+def test_operator_routes_a_numbers_inbound_calls_to_vapi(api, two_workspaces, fake, monkeypatch):
+    """A Twilio number imported into another engine (ElevenLabs Agents) has its voice webhook pointed back at Vapi,
+    and the Vapi number's server URL at our webhook – with platform credentials, no dashboard logins."""
+    from app.modules.telephony.providers import Number
+
+    monkeypatch.setenv("VAPI_SERVER_SECRET", "s3cret")
+    monkeypatch.setenv("PUBLIC_BASE_URL", "https://api.dialogbot.dk")
+    get_settings.cache_clear()
+    t = two_workspaces
+    n = api.map_number(t["ws_a"], "+4593703433", "pn_main", activate=True, outbound=True)
+    WORLD.numbers["PN_main"] = {"sub": "ACfake00000000000000000000000000", "n": Number("PN_main", "+4593703433", "Dialogbot")}
+    op = api.operator()
+    assert api.post(t["tok_a"], f"/operator/telephony/numbers/{n['id']}/inbound", {}).status_code == 403
+    r = api.post(op, f"/operator/telephony/numbers/{n['id']}/inbound", {})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["voice_url"] == "https://api.vapi.ai/twilio/inbound_call"
+    assert body["server_url"] == "https://api.dialogbot.dk/api/v1/webhooks/vapi" and body["twilio_number_sid"] == "PN_main"
+    assert WORLD.numbers["PN_main"]["voice_url"] == "https://api.vapi.ai/twilio/inbound_call"
+    assert WORLD.servers["pn_main"] == "https://api.dialogbot.dk/api/v1/webhooks/vapi"
+    # a number Twilio does not know is reported, not guessed
+    other = api.map_number(t["ws_b"], "+4570111333", "pn_other", activate=True, outbound=False)
+    assert api.post(op, f"/operator/telephony/numbers/{other['id']}/inbound", {}).json()["code"] == "number_not_on_twilio"

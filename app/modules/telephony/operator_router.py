@@ -207,6 +207,42 @@ def patch_number(number_id: uuid.UUID, body: NumberPatch, request: Request, prin
     return _number(n)
 
 
+VAPI_INBOUND_URL = "https://api.vapi.ai/twilio/inbound_call"
+
+
+@router.post("/numbers/{number_id}/inbound")
+def route_inbound(number_id: uuid.UUID, request: Request, principal: Principal = Depends(operator),
+                  db: OrmSession = Depends(get_db)):
+    """Point a number's incoming calls at Vapi (and so at our assistant, voice and transcriber): Twilio's voice
+    webhook back to Vapi's inbound URL, and the Vapi number's server URL to our webhook. Undoes what importing the
+    same number into another engine (ElevenLabs Agents) did to the Twilio webhook. Platform credentials only."""
+    from app.config import get_settings
+    from app.core.errors import NotImplementedYet
+
+    n = db.get(PhoneNumber, number_id)
+    if n is None:
+        raise NotFound("Nummeret findes ikke")
+    pair = providers.providers()
+    if pair is None:
+        raise NotImplementedYet("Platformtelefoni er ikke sat op (Twilio/Vapi-nøgler mangler)", code="telephony_not_configured")
+    twilio, vapi_client = pair
+    s = get_settings()
+    found = twilio.find_by_e164(n.e164)
+    if found is None:
+        raise NotFound(f"{n.e164} findes ikke på Dialogbots Twilio-konto", code="number_not_on_twilio")
+    account_sid, number_sid = found
+    twilio.set_voice_url(account_sid, number_sid, VAPI_INBOUND_URL)
+    server_url = f"{s.public_base_url.rstrip('/')}/api/v1/webhooks/vapi"
+    if n.provider_number_id and s.vapi_server_secret:
+        vapi_client.set_server(n.provider_number_id, server_url, s.vapi_server_secret)
+    n.provider_sid = number_sid
+    _audit(db, request, principal, n.workspace_id, "telephony.inbound_routed",
+           {"e164": n.e164, "engine": "vapi", "twilio_number_sid": number_sid, "server_url": server_url})
+    db.commit()
+    return {"e164": n.e164, "engine": "vapi", "voice_url": VAPI_INBOUND_URL, "server_url": server_url,
+            "twilio_number_sid": number_sid}
+
+
 @router.post("/tests/expire")
 def expire(principal: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
     n = platform.expire_tests(db)

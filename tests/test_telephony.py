@@ -434,3 +434,23 @@ def test_team_names_are_key_terms_and_the_assistant_keeps_the_name_it_heard(clie
     assert "André Kjeldsen" in terms and "André" in terms and "andre@testmail.dk" not in terms
     system = a["model"]["messages"][0]["content"]
     assert "André er ikke Andreas" in system and "gentag navnet præcis som du hørte det" in system
+
+
+def test_speechmatics_gets_the_danish_names_dictionary(client, api, two_workspaces, configured, monkeypatch):
+    """VAPI_TRANSCRIBER_JSON switches to Speechmatics; its custom dictionary carries this call's own names first,
+    then the business's terms, then the common Danish names with "sounds like" spellings – never above the cap."""
+    from app.modules.telephony import vapi
+
+    t = two_workspaces
+    _setup(api, t)
+    monkeypatch.setenv("VAPI_TRANSCRIBER_JSON", '{"provider": "speechmatics", "language": "da"}')
+    get_settings.cache_clear()
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    tr = a["transcriber"]
+    assert tr["provider"] == "speechmatics" and tr["language"] == "da" and "fallbackPlan" not in tr
+    vocab = tr["customVocabulary"]
+    contents = [v["content"] for v in vocab]
+    assert contents[:2] == ["Fjord Gulvservice", "Afslibning"]  # the business first
+    assert "André" in contents and "Kjærgaard" in contents and "Pernille" in contents
+    assert next(v for v in vocab if v["content"] == "Kjeld")["soundsLike"] == ["kell", "keld", "kjell"]
+    assert len(vocab) <= vapi.SPEECHMATICS_MAX_VOCABULARY and len(set(c.lower() for c in contents)) == len(contents)

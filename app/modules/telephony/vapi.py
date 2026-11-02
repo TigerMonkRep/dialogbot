@@ -304,25 +304,52 @@ def keyterms(db: OrmSession, ws: Workspace) -> list[str]:
 
 def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | None = None) -> dict:
     """The transcriber config (VAPI_TRANSCRIBER_JSON, or Deepgram Nova-3 Danish with Nova-2 as fallback),
-    with the business's key terms added to any Deepgram model that supports keyterm prompting. `extra` are terms
+    with the business's key terms added to any Deepgram model that supports keyterm prompting, and the names
+    dictionary to Speechmatics (VAPI_TRANSCRIBER_JSON={"provider": "speechmatics", "language": "da"}). `extra` are terms
     this one call will hear: the person we ring and their company, which the generic model otherwise mishears
     ("Berle Pool" → "Berligt pool")."""
     configured = _json_setting(get_settings().vapi_transcriber_json)
     t = configured or dict(DEFAULT_TRANSCRIBER)
     if configured is None:
         t["fallbackPlan"] = {"transcribers": [dict(FALLBACK_TRANSCRIBER)]}
+    own: list[str] = []  # the call's own names first; the caps keep the totals within each provider's budget
+    for x in extra or []:
+        x = re.sub(r"\s+", " ", str(x or "")).strip(" .,:;-")
+        if 1 < len(x) <= 50 and x.lower() not in {t.lower() for t in own}:
+            own.append(x)
     for d in [t, *t.get("fallbackPlan", {}).get("transcribers", [])]:
-        if (ws is not None and d.get("provider") == "deepgram" and str(d.get("model", "")).startswith(KEYTERM_MODELS)
+        if ws is None:
+            continue
+        if (d.get("provider") == "deepgram" and str(d.get("model", "")).startswith(KEYTERM_MODELS)
                 and "keyterm" not in d):
-            own: list[str] = []  # the call's own names first; the cap keeps the total within Deepgram's budget
-            for x in extra or []:
-                x = re.sub(r"\s+", " ", str(x or "")).strip(" .,:;-")
-                if 1 < len(x) <= 50 and x.lower() not in {t.lower() for t in own}:
-                    own.append(x)
             terms = own + [t for t in keyterms(db, ws) if t.lower() not in {t.lower() for t in own}]
             if terms:
                 d["keyterm"] = terms[:MAX_KEYTERMS]
+        elif d.get("provider") == "speechmatics" and not d.get("customVocabulary"):
+            d["customVocabulary"] = speechmatics_vocabulary(db, ws, own)
     return t
+
+
+SPEECHMATICS_MAX_VOCABULARY = 1000  # Speechmatics: up to 1,000 custom-dictionary entries per session
+
+
+def speechmatics_vocabulary(db: OrmSession, ws: Workspace, own: list[str]) -> list[dict]:
+    """The custom dictionary for Speechmatics: this call's own names, the business's terms, then the common Danish
+    given and family names (telephony.danish_names) up to the provider's cap. A caller's name said on its own is the
+    hardest thing a Danish model hears, and a dictionary of real Danish names is what moves it."""
+    from app.modules.telephony import danish_names
+
+    items: list[dict] = []
+    seen: set[str] = set()
+    for term in [*own, *keyterms(db, ws)]:
+        if term.lower() not in seen:
+            seen.add(term.lower())
+            items.append({"content": term})
+    for item in danish_names.vocabulary(SPEECHMATICS_MAX_VOCABULARY):
+        if item["content"].lower() not in seen:
+            seen.add(item["content"].lower())
+            items.append(item)
+    return items[:SPEECHMATICS_MAX_VOCABULARY]
 
 
 def server_block() -> dict | None:

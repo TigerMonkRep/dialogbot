@@ -68,6 +68,15 @@ Backend: nyt modul `app/modules/assistant/` med
 - Kan den ikke forstå det, svarer den med et spørgsmål eller et link til det rigtige felt i Alle indstillinger – aldrig med «fejl».
 - Fase 1 kan bruge chips som deep-links og genbruge `assistant/preview` til «Test mig som kunde»; den generiske propose/apply er fase 3.
 
+**Nu (assistent-guide v2, november 2026):** `POST …/assistant/changes` tager også `history` (de sidste ~10 beskeder) og
+svarer med `type`: `answer` (vejledning ud fra `app/modules/assistant/guide.md` + kundens nuværende opsætning, med højst ét
+link fra sidekortet `PAGES` i `service.py`), `question`, `change` (før → efter + Godkend som før) eller `request` (et
+«ønske» til Dialogbot-teamet, tabellen `assistant_requests`, set i `/app/operator/oensker`). Alle i arbejdsrummet kan
+spørge; ændringer kræver stadig den rolle, området kræver. Svar skrives på personens sprog i appen. Kendte ændringer:
+åbningstider, pris på en ydelse, fast svar, emne den ikke må svare på, bookingregler, dagsrapport, hilsen, navn og
+tiltale, hvornår en medarbejder overtager, samtalesprog, standardstemme, velkomst i webchatten og virksomhedsoplysninger
+(telefon, hjemmeside, adresse, beskrivelse). `guide.md` skal rettes, når produktet eller priserne ændres.
+
 ## 6. Skærm for skærm
 
 Alle felter/endpoints herunder findes allerede, medmindre andet er nævnt. Boards viser indhold og rækkefølge; teksterne i boards er den copy, der skal bruges (eksempeldata som «Nørgaard Tømrer» er selvfølgelig data).

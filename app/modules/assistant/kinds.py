@@ -18,7 +18,16 @@ from sqlalchemy.orm import Session as OrmSession
 from app.core.audit import record_audit
 from app.core.auth import WorkspaceContext
 from app.core.errors import Conflict, ValidationFailed
-from app.models import KnowledgeItem, KnowledgeVersion
+from app.core.languages import LANGUAGES, NAME_DA
+from app.models import (
+    BusinessProfile,
+    KnowledgeItem,
+    KnowledgeVersion,
+    LanguageSettings,
+    PhoneNumber,
+    ReceptionScript,
+    WebchatSettings,
+)
 from app.modules.bookings import service as bookings
 from app.modules.knowledge import service as knowledge
 from app.modules.reports import service as reports
@@ -263,6 +272,287 @@ def _a_report(db, ctx, p, rid):
     return "Dagsrapporten er ændret."
 
 
+# --- reception manuscript: greeting, name and form of address, hand-over -------------------------------------------------
+
+def _script(db: OrmSession, ctx: WorkspaceContext, lock: bool = False) -> ReceptionScript | None:
+    q = select(ReceptionScript).where(ReceptionScript.workspace_id == ctx.workspace.id)
+    return db.scalar(q.with_for_update() if lock else q)
+
+
+def _save_script(db: OrmSession, ctx: WorkspaceContext, changes: dict, rid: str | None) -> None:
+    """The same write as PUT /reception/script: one new version, audited."""
+    from app.modules.reception import service as reception
+
+    s = _script(db, ctx, lock=True)
+    before = {k: getattr(s, k) for k in reception.FIELDS} if s else None
+    if s is None:
+        s = ReceptionScript(workspace_id=ctx.workspace.id, version=0, address_form="du", collect=[])
+        db.add(s)
+    for k, v in changes.items():
+        setattr(s, k, v)
+    s.version = (s.version or 0) + 1
+    s.updated_by = ctx.user_id
+    db.flush()
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="reception.script_updated",
+                 object_type="reception_script", object_id=ctx.workspace.id, before=before,
+                 after={k: getattr(s, k) for k in reception.FIELDS}, request_id=rid)
+
+
+def _own_number_greeting(db: OrmSession, ws_id: uuid.UUID) -> bool:
+    return any(n.greeting.strip() for n in db.scalars(select(PhoneNumber).where(
+        PhoneNumber.workspace_id == ws_id, PhoneNumber.status != "released")))
+
+
+def _v_greeting(p: dict) -> dict:
+    return {"greeting": _text(p.get("greeting"), 400, "Hilsenen")}
+
+
+def _d_greeting(db, ctx, p):
+    if _own_number_greeting(db, ctx.workspace.id):
+        raise Conflict("Jeres telefonnummer har sin egen hilsen, som går forud. Ret den under Alle indstillinger → Telefon.",
+                       code="assistant_noop")
+    s = _script(db, ctx)
+    return "Hilsen i telefonen og chatten", (s.greeting if s and s.greeting else "Standardhilsen"), p["greeting"]
+
+
+def _a_greeting(db, ctx, p, rid):
+    _save_script(db, ctx, {"greeting": p["greeting"]}, rid)
+    return "Hilsenen er ændret."
+
+
+def _v_persona(p: dict) -> dict:
+    out: dict = {}
+    if p.get("persona_name") is not None:
+        out["persona_name"] = re.sub(r"\s+", " ", str(p["persona_name"])).strip()[:60]
+    if p.get("address_form") is not None:
+        if p["address_form"] not in ("du", "De"):
+            raise _bad("Tiltaleformen skal være du eller De")
+        out["address_form"] = p["address_form"]
+    if not out:
+        raise _bad("Intet at ændre ved navn eller tiltale")
+    return out
+
+
+def _persona_text(name: str, form: str) -> str:
+    return f"{'Navn: ' + name if name else 'Intet navn'} · siger {form}"
+
+
+def _d_persona(db, ctx, p):
+    s = _script(db, ctx)
+    cur = {"persona_name": s.persona_name if s else "", "address_form": s.address_form if s else "du"}
+    new = {**cur, **p}
+    return "Navn og tiltale", _persona_text(cur["persona_name"], cur["address_form"]), _persona_text(new["persona_name"], new["address_form"])
+
+
+def _a_persona(db, ctx, p, rid):
+    _save_script(db, ctx, p, rid)
+    return "Navn og tiltale er ændret."
+
+
+def _v_escalation(p: dict) -> dict:
+    return {"escalation": _text(p.get("escalation"), 800, "Hvornår en medarbejder skal overtage")}
+
+
+def _d_escalation(db, ctx, p):
+    s = _script(db, ctx)
+    return "Hvornår en medarbejder overtager", (s.escalation if s and s.escalation else "Ikke angivet"), p["escalation"]
+
+
+def _a_escalation(db, ctx, p, rid):
+    _save_script(db, ctx, {"escalation": p["escalation"]}, rid)
+    return "Det er gemt. Assistenten giver videre til en medarbejder i de situationer."
+
+
+# --- conversation languages -----------------------------------------------------------------------------------------------
+
+def _lang(v: Any) -> str:
+    c = str(v or "").strip().lower()
+    c = "no" if c in ("nb", "nn") else c
+    if c not in LANGUAGES:
+        raise _bad("Det sprog findes ikke i Dialogbot")
+    return c
+
+
+def _v_languages(p: dict) -> dict:
+    out: dict = {}
+    if p.get("default") is not None:
+        out["default"] = _lang(p["default"])
+    if isinstance(p.get("enabled"), list) and p["enabled"]:
+        out["enabled"] = list(dict.fromkeys(_lang(x) for x in p["enabled"][:len(LANGUAGES)]))
+    if not out:
+        raise _bad("Intet sprog at ændre")
+    return out
+
+
+def _lang_text(default: str, enabled: list[str]) -> str:
+    others = [NAME_DA[c] for c in enabled if c != default and c in NAME_DA]
+    return f"Standard {NAME_DA.get(default, default)}" + (f" · også {', '.join(others)}" if others else "")
+
+
+def _lang_new(cur: LanguageSettings, p: dict) -> tuple[str, list[str]]:
+    from app.core.languages import normalize
+
+    default = p.get("default") or normalize(cur.default_conversation_language)
+    enabled = p.get("enabled") or [normalize(x) for x in cur.enabled_conversation_languages or []]
+    if default not in enabled:
+        enabled = [default, *enabled]
+    return default, list(dict.fromkeys(enabled))
+
+
+def _d_languages(db, ctx, p):
+    from app.core.languages import normalize
+
+    cur = db.get(LanguageSettings, ctx.workspace.id)
+    if cur is None:
+        raise Conflict("Sprogindstillingerne findes ikke endnu. Udfyld trin 1 først.", code="assistant_noop")
+    before = _lang_text(normalize(cur.default_conversation_language), [normalize(x) for x in cur.enabled_conversation_languages or []])
+    return "Samtalesprog", before, _lang_text(*_lang_new(cur, p))
+
+
+def _a_languages(db, ctx, p, rid):
+    from app.modules.setup.checks import invalidate_checks
+
+    ls = db.scalar(select(LanguageSettings).where(LanguageSettings.workspace_id == ctx.workspace.id).with_for_update())
+    before = {"default_conversation_language": ls.default_conversation_language, "enabled_conversation_languages": list(ls.enabled_conversation_languages)}
+    ls.default_conversation_language, ls.enabled_conversation_languages = _lang_new(ls, p)
+    ls.version += 1
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="languages.updated",
+                 object_type="language_settings", object_id=ctx.workspace.id, before=before,
+                 after={"default_conversation_language": ls.default_conversation_language,
+                        "enabled_conversation_languages": ls.enabled_conversation_languages}, request_id=rid)
+    invalidate_checks(db, ctx.workspace.id, changed_area="languages", reason="Sprogindstillinger blev ændret")
+    return "Samtalesprogene er ændret."
+
+
+# --- standard voice -------------------------------------------------------------------------------------------------------
+
+def _v_voice(p: dict) -> dict:
+    from app.modules.voices import standard
+
+    key = str(p.get("voice") or "").strip().lower()
+    if key not in standard.STANDARD_VOICES:
+        raise _bad("Vælg en af standardstemmerne: " + ", ".join(v["name"] for v in standard.STANDARD_VOICES.values()))
+    return {"voice": key}
+
+
+def _voice_text(db, ws_id) -> str:
+    from app.modules.voices import service as voices
+    from app.modules.voices import standard
+
+    s = voices.settings(db, ws_id)
+    if s.default_profile_id:
+        return "Egen stemme"
+    return standard.STANDARD_VOICES[standard.chosen(db, ws_id) or standard.DEFAULT]["name"]
+
+
+def _d_voice(db, ctx, p):
+    from app.modules.voices import standard
+
+    if any(n.voice_id.strip() for n in db.scalars(select(PhoneNumber).where(PhoneNumber.workspace_id == ctx.workspace.id,
+                                                                            PhoneNumber.status != "released"))):
+        raise Conflict("Jeres telefonnummer har sin egen stemme valgt, som går forud. Skift den under Alle indstillinger → Telefon.",
+                       code="assistant_noop")
+    return "Stemme i telefonen", _voice_text(db, ctx.workspace.id), standard.STANDARD_VOICES[p["voice"]]["name"]
+
+
+def _a_voice(db, ctx, p, rid):
+    from datetime import UTC, datetime
+
+    from app.modules.setup.checks import invalidate_checks
+    from app.modules.voices import service as voices
+
+    s = voices.settings(db, ctx.workspace.id, lock=True)
+    s.standard_voice, s.default_profile_id, s.last_preview = p["voice"], None, None
+    s.version += 1
+    s.updated_at = datetime.now(UTC)
+    invalidate_checks(db, ctx.workspace.id, changed_area="voice", reason="voices.settings_updated")
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="voices.settings_updated",
+                 object_type="workspace_voice_settings", object_id=ctx.workspace.id,
+                 after={"default_profile_id": None, "standard_voice": p["voice"], "fallback": s.fallback}, request_id=rid)
+    return "Stemmen er skiftet. Hør den under Stemme."
+
+
+# --- webchat greeting -----------------------------------------------------------------------------------------------------
+
+def _v_webchat(p: dict) -> dict:
+    return {"greeting": _text(p.get("greeting"), 300, "Velkomsten")}
+
+
+def _d_webchat(db, ctx, p):
+    s = db.get(WebchatSettings, ctx.workspace.id)
+    return "Velkomst i webchatten", (s.greeting if s and s.greeting else "Standardvelkomst"), p["greeting"]
+
+
+def _a_webchat(db, ctx, p, rid):
+    from app.modules.setup.checks import invalidate_checks
+    from app.modules.webchat import service as webchat
+
+    webchat.get_or_create(db, ctx.workspace.id)
+    s = db.scalar(select(WebchatSettings).where(WebchatSettings.workspace_id == ctx.workspace.id).with_for_update())
+    before = {"enabled": s.enabled, "allowed_origins": list(s.allowed_origins), "greeting": s.greeting}
+    s.greeting = p["greeting"]
+    s.version += 1
+    invalidate_checks(db, ctx.workspace.id, changed_area="integrations", reason="webchat.updated")
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="webchat.updated",
+                 object_type="webchat_settings", object_id=ctx.workspace.id, before=before,
+                 after={**before, "greeting": s.greeting}, request_id=rid)
+    return "Velkomsten i webchatten er ændret."
+
+
+# --- business profile -----------------------------------------------------------------------------------------------------
+
+PROFILE_FIELDS = {"phone": ("Telefon", 40), "website_url": ("Hjemmeside", 500), "address_line": ("Adresse", 300),
+                  "postal_code": ("Postnummer", 16), "city": ("By", 120), "description": ("Hvad I laver", 4000)}
+
+
+def _v_profile(p: dict) -> dict:
+    out: dict = {}
+    for k, (name, n) in PROFILE_FIELDS.items():
+        if p.get(k) is None:
+            continue
+        v = _text(p[k], n, name) if k == "description" else re.sub(r"\s+", " ", str(p[k])).strip()[:n]
+        if k == "website_url" and v:
+            if not re.match(r"^https?://", v):
+                v = "https://" + v
+            if not re.fullmatch(r"https?://[\w.-]+\.[a-z]{2,}(/\S*)?", v, re.I):
+                raise _bad("Hjemmesidens adresse kunne ikke læses")
+        if k == "phone" and v and not re.fullmatch(r"\+?[\d ]{8,20}", v):
+            raise _bad("Telefonnummeret kunne ikke læses")
+        if k == "postal_code" and v and not re.fullmatch(r"\d{3,5}", v):
+            raise _bad("Postnummeret kunne ikke læses")
+        out[k] = v or None if k != "description" else v
+    if not out:
+        raise _bad("Intet at ændre i virksomhedsoplysningerne")
+    return out
+
+
+def _profile_text(vals: dict, keys) -> str:
+    return " · ".join(f"{PROFILE_FIELDS[k][0]}: {(vals.get(k) or '–')[:120]}" for k in keys)
+
+
+def _d_profile(db, ctx, p):
+    prof = db.get(BusinessProfile, ctx.workspace.id)
+    if prof is None:
+        raise Conflict("Virksomhedsprofilen findes ikke endnu. Udfyld trin 1 først.", code="assistant_noop")
+    cur = {k: getattr(prof, k) for k in p}
+    return "Virksomhedsoplysninger", _profile_text(cur, p), _profile_text(p, p)
+
+
+def _a_profile(db, ctx, p, rid):
+    from app.modules.setup.checks import invalidate_checks
+
+    prof = db.scalar(select(BusinessProfile).where(BusinessProfile.workspace_id == ctx.workspace.id).with_for_update())
+    before = {k: getattr(prof, k) for k in PROFILE_FIELDS}
+    for k, v in p.items():
+        setattr(prof, k, v)
+    prof.version += 1
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="profile.updated",
+                 object_type="business_profile", object_id=ctx.workspace.id, before=before,
+                 after={k: getattr(prof, k) for k in PROFILE_FIELDS}, request_id=rid)
+    invalidate_checks(db, ctx.workspace.id, changed_area="profile", reason="Virksomhedsprofilen blev ændret")
+    return "Virksomhedsoplysningerne er ændret."
+
+
 KINDS: dict[str, Kind] = {k.key: k for k in (
     Kind("opening_hours", "Åbningstider", "knowledge.approve",
          'params: {"weekly": [{"days": ["mon","tue",...], "open": "08:00", "close": "16:00"}]} – dage er mon,tue,wed,thu,fri,sat,sun; erstatter ALLE åbningstider.',
@@ -282,4 +572,25 @@ KINDS: dict[str, Kind] = {k.key: k for k in (
     Kind("report_settings", "Dagsrapport", "reports.manage",
          'params: {"send_hour_local": 0-23, "email_enabled": true|false} – kun de felter der ændres.',
          _v_report, _d_report, _a_report, "/app/ugen"),
+    Kind("greeting", "Hilsen", "reception.manage",
+         'params: {"greeting": "det assistenten siger først i telefonen og chatten, højst 400 tegn; {virksomhed} = firmanavnet"} – kun en hilsen personen selv har formuleret eller bedt om.',
+         _v_greeting, _d_greeting, _a_greeting, "/app/indstillinger?ark=hilsen"),
+    Kind("persona", "Navn og tiltale", "reception.manage",
+         'params: {"persona_name": "navnet assistenten præsenterer sig med", "address_form": "du|De"} – kun de felter der ændres.',
+         _v_persona, _d_persona, _a_persona, "/app/indstillinger?ark=hilsen"),
+    Kind("escalation", "Hvornår en medarbejder overtager", "reception.manage",
+         'params: {"escalation": "de situationer hvor den straks skal give videre til en medarbejder"} – erstatter hele teksten; tag det eksisterende med, hvis personen tilføjer noget.',
+         _v_escalation, _d_escalation, _a_escalation, "/app/indstillinger?ark=hilsen"),
+    Kind("conversation_languages", "Samtalesprog", "languages.edit",
+         'params: {"default": "da|en|de|es|fr|it|no|sv", "enabled": ["da","en",...]} – default er det sprog den starter på; enabled er alle sprog den må tale. Kun de felter der ændres.',
+         _v_languages, _d_languages, _a_languages, "/app/indstillinger?ark=telefoni"),
+    Kind("standard_voice", "Stemme", "voices.manage",
+         'params: {"voice": "camilla|peter"} – Camilla (kvinde, rigsdansk) eller Peter (mand, let jysk). Skifter fra egen stemme til standardstemmen.',
+         _v_voice, _d_voice, _a_voice, "/app/indstillinger?ark=stemmer"),
+    Kind("webchat_greeting", "Velkomst i webchatten", "webchat.manage",
+         'params: {"greeting": "det webchatten skriver først, højst 300 tegn"}.',
+         _v_webchat, _d_webchat, _a_webchat, "/app/indstillinger?ark=webchat"),
+    Kind("business_profile", "Virksomhedsoplysninger", "profile.edit",
+         'params: kun de felter der ændres: {"phone": "+45 …", "website_url": "https://…", "address_line": "…", "postal_code": "8000", "city": "…", "description": "hvad virksomheden laver"}.',
+         _v_profile, _d_profile, _a_profile, "/opsaetning/1"),
 )}

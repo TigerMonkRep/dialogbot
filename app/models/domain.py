@@ -1732,6 +1732,42 @@ class AssistantProposal(Base):
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
+ASSISTANT_REQUEST_STATUSES = ("new", "planned", "done", "declined")
+ASSISTANT_REQUEST_CATEGORIES = ("phone", "voice", "knowledge", "booking", "webchat", "campaigns", "reports",
+                                "integrations", "account", "other")
+
+
+class AssistantRequest(Base):
+    """A wish the assistant could not fulfil, or a feature a customer asked for, in the customer's own words.
+
+    Created by the assistant (never typed by an operator); repeats from the same workspace are counted on one row
+    (`times_asked`) instead of making a new one. Dialogbot's operators see every workspace's rows in
+    /app/operator/oensker and set `status` and `admin_note`."""
+
+    __tablename__ = "assistant_requests"
+    __table_args__ = (
+        CheckConstraint("status in ('new','planned','done','declined')", name="ck_assistant_requests_status"),
+        CheckConstraint("category in ('phone','voice','knowledge','booking','webchat','campaigns','reports',"
+                        "'integrations','account','other')", name="ck_assistant_requests_category"),
+        Index("ix_assistant_requests_ws_created", "workspace_id", "created_at"),
+        Index("ix_assistant_requests_status_updated", "status", "updated_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    text: Mapped[str] = mapped_column(Text, nullable=False)                        # the customer's own words
+    page: Mapped[str | None] = mapped_column(String(200))                          # where they were in the app
+    summary: Mapped[str] = mapped_column(Text, nullable=False, default="")         # the model's one line (Danish)
+    category: Mapped[str] = mapped_column(String(20), nullable=False, default="other")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="new")
+    admin_note: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    times_asked: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(),
+                                                 onupdate=func.now())
+
+
 # ---------------------------------------------------------------------------
 # Site documents: small pages on dialogbot.dk whose content Dialogbot's own staff edit in place (e.g. /gastrohall)
 # ---------------------------------------------------------------------------

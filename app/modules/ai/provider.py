@@ -267,12 +267,15 @@ class FakeProvider:
                           usage=Usage(input_tokens=len(text) // 4, output_tokens=len(out) // 4), request_id="fake-req")
 
     def _change(self, text: str) -> Completion:
-        """Deterministic stand-in for «Ændr noget»: a few Danish phrasings map to a change kind; anything else is null."""
+        """Deterministic stand-in for the in-app assistant: a few Danish phrasings map to a change kind, a wish
+        (`request`), a question back or an answer; anything else is null (not understood)."""
         import json
         import re
 
         low = text.lower().strip()
-        out: dict = {"kind": None, "params": {}, "reply": "", "question": ""}
+        out: dict = {"type": None, "kind": None, "params": {}, "reply": "", "question": ""}
+        langs = {"dansk": "da", "engelsk": "en", "tysk": "de", "spansk": "es", "fransk": "fr", "italiensk": "it",
+                 "norsk": "no", "svensk": "sv"}
         days = {"man": "mon", "tir": "tue", "ons": "wed", "tor": "thu", "fre": "fri", "lør": "sat", "søn": "sun"}
         order = list(days)
         if m := re.search(r"åbningstider\D*?(man|tir|ons|tor|fre|lør|søn)\w*\s*[-–]\s*(man|tir|ons|tor|fre|lør|søn)\w*\s+(\d{1,2})\s*[-–]\s*(\d{1,2})", low):
@@ -304,8 +307,42 @@ class FakeProvider:
             elif re.search(r"slå.{0,20}til", low):
                 p["email_enabled"] = True
             out.update(kind="report_settings", params=p)
+        elif m := re.search(r"velkomst(?:en)? i webchatten\s*(?:skal være:?|:)\s*(.+)", text.strip(), re.I):
+            out.update(kind="webchat_greeting", params={"greeting": m.group(1).strip(" «»\"")})
+        elif m := re.search(r"hilsen(?:en)?\s*(?:skal være:?|:)\s*(.+)", text.strip(), re.I):
+            out.update(kind="greeting", params={"greeting": m.group(1).strip(" «»\"")})
+        elif "stemme" in low and (m := re.search(r"\b(camilla|peter)\b", low)):
+            out.update(kind="standard_voice", params={"voice": m.group(1)})
+        elif m := re.search(r"(?:sige|tiltale kunderne med)\s+(du|De)\b", text):
+            out.update(kind="persona", params={"address_form": m.group(1)})
+        elif m := re.search(r"(?:hedde|præsentere sig som)\s+(\w+)", text, re.I):
+            out.update(kind="persona", params={"persona_name": m.group(1)})
+        elif m := re.search(r"medarbejder skal overtage,? når\s+(.+)", text.strip(), re.I):
+            out.update(kind="escalation", params={"escalation": m.group(1).strip()})
+        elif "samtalesprog" in low or re.search(r"(?:tale|svare på)\s+(?:også\s+)?(" + "|".join(langs) + ")", low):
+            found = [langs[w] for w in re.findall("|".join(langs), low)]
+            p = {"enabled": ["da", *found]} if "også" in low else {"default": found[0]} if found else {}
+            out.update(kind="conversation_languages", params=p)
+        elif m := re.search(r"hjemmeside(?:n)? er\s+(\S+)", low):
+            out.update(kind="business_profile", params={"website_url": m.group(1).rstrip(".")})
+        elif m := re.search(r"telefonnummer(?:et)? er\s+(\+?[\d ]{8,20})", low):
+            out.update(kind="business_profile", params={"phone": m.group(1).strip()})
+        elif re.search(r"ønske|kan i lave|i burde|farve|opsig|integration til", low):
+            cat = ("webchat" if "webchat" in low or "farve" in low else "account" if "opsig" in low
+                   else "integrations" if "integration" in low else "other")
+            summary = re.sub(r"^(ønske:|jeg har et ønske:)\s*", "", text.strip(), flags=re.I)[:80]
+            out.update(type="request", summary=f"Ønske: {summary}", category=cat,
+                       reply="Det kan Dialogbot ikke endnu. Jeg har sendt ønsket videre til Dialogbot-teamet.")
         elif "lukket" in low:
             out["question"] = "Hvilke åbningstider skal gælde? Skriv fx «åbningstider man-fre 8-16»."
+        elif low.endswith("?") or re.match(r"(hvordan|hvad|hvor|hvornår|kan jeg|kan i)\b", low):
+            link = ("/app/indstillinger?ark=telefoni" if "viderestil" in low else "/app/konto" if re.search(r"pris|koster|faktura", low)
+                    else "/ikke/en/side" if "ugyldig" in low else "/app/hjaelp")
+            out.update(type="answer", reply=f"[fake] vejledning: {text.strip()}", link=link)
+        if out["kind"]:
+            out["type"] = "change"
+        elif out["question"]:
+            out["type"] = "question"
         s = json.dumps(out, ensure_ascii=False)
         return Completion(text=s, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
                           usage=Usage(input_tokens=len(text) // 4, output_tokens=len(s) // 4), request_id="fake-req")

@@ -4,16 +4,25 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { api, type ApiError } from "@/lib/client";
 import { Icon } from "./ui";
-import { useRaw, useT } from "@/i18n/client";
+import { useLocale, useRaw, useT } from "@/i18n/client";
 import type { T } from "@/i18n/translate";
 
-/** «Ændr noget»: the person says what to change, the assistant shows it as before → after, and nothing applies before
- *  «Godkend». One component: a sticky column from 1280 px, a full-screen sheet behind a button below that, and the same
- *  panel in the setup (there it is called «Jeg hjælper med trin N»). */
+/** «Ændr noget»: a short conversation. The person asks about Dialogbot or their own setup (answer + a link to the right
+ *  page), or says what to change (shown as before → after; nothing applies before «Godkend»). What Dialogbot cannot do is
+ *  sent to the Dialogbot team as a wish. One component: a sticky column from 1280 px, a full-screen sheet behind a button
+ *  below that, and the same panel in the setup (there it is called «Jeg hjælper med trin N»). */
 
 type Proposal = { id: string; kind: string; label: string; summary: string; before: string; after: string };
+type PageLink = { key?: string; label: string; href: string };
+type Turn = {
+  type: "answer" | "question" | "change" | "request" | "fallback"; reply: string; link?: PageLink | null; proposal: Proposal | null;
+  request?: { id: string; summary: string; duplicate: boolean } | null; code?: string | null; vars?: Record<string, string> | null;
+};
+/** Server codes for its own (Danish) sentences → keys under setup.assistant.codes, used for the other languages. */
+const CODES: Record<string, string> = { link_only: "linkOnly", not_understood: "notUnderstood", ai_off: "aiOff", role_needed: "roleNeeded", already: "already", details_missing: "detailsMissing" };
+const HISTORY = 10;
 type Msg =
-  | { id: number; from: "bot" | "user"; text: string; link?: { label: string; href: string } | null }
+  | { id: number; from: "bot" | "user"; text: string; link?: PageLink | null; note?: string; test?: boolean }
   | { id: number; from: "card"; proposal: Proposal; state: "open" | "busy" | "applied" | "declined" | "error"; note?: string; href?: string };
 type Chip = { label: string } & ({ fill: string } | { href: string } | { say: string } | { test: true });
 
@@ -27,6 +36,8 @@ const pageChips = (t: T): { match: (p: string) => boolean; chips: Chip[] }[] => 
   { match: (p) => p.startsWith("/app/kampagner"), chips: [{ label: t("chips.hearVoice"), href: "/app/indstillinger/stemmer" }, { label: t("chips.seeBilling"), href: "/app/konto/fakturering" }] },
 ];
 const fallbackChips = (t: T): Chip[] => [{ label: t("chips.allSettings"), href: "/app/indstillinger" }, { label: t("chips.help"), href: "/app/hjaelp" }];
+/** Always offered last: ask for something Dialogbot cannot do yet (it goes to the Dialogbot team). */
+const wishChip = (t: T): Chip => ({ label: t("chips.wish"), fill: t("chips.wishFill") });
 
 const msgOf = (e: unknown, fallback: string) => (e as ApiError)?.message ?? fallback;
 
@@ -87,6 +98,7 @@ function Panel({ title, subtitle, chips, msgs, busy, test, canChange, onSend, on
               <p className={`m-0 px-3.5 py-2.5 text-[14px] leading-relaxed max-w-[320px] whitespace-pre-line border-2 border-ink ${m.from === "bot" ? "bg-paper text-ink rounded-[14px] rounded-bl-[4px]" : "bg-ink text-paper rounded-[14px] rounded-br-[4px]"}`}>
                 {m.text}
                 {m.from === "bot" && m.link && <> <Link href={m.link.href} className="underline font-semibold">{m.link.label}</Link></>}
+                {m.from === "bot" && m.note && <span className="flex items-center gap-1 mt-1.5 text-[12px] font-semibold text-success"><Icon name="check_circle" size={16} />{m.note}</span>}
               </p>
             </div>
           ))}
@@ -102,15 +114,14 @@ function Panel({ title, subtitle, chips, msgs, busy, test, canChange, onSend, on
               : <button key={c.label} type="button" onClick={() => onChip(c, (t) => { setDraft(t); input.current?.focus(); })} className="min-h-[44px] px-3.5 rounded-full bg-paper border-2 border-ink text-ink text-[14px] font-semibold hover:bg-panel-deep">{c.label}</button>)}
           </div>
         </>)}
-        {canChange || test ? (
-          <form onSubmit={submit} className="flex gap-2">
-            <label htmlFor={askId} className="sr-only">{test ? tr("askTestLabel") : tr("askLabel")}</label>
-            <input id={askId} ref={input} type="text" value={draft} onChange={(e) => setDraft(e.target.value)} maxLength={1000} autoComplete="off"
-              placeholder={test ? tr("askTestPlaceholder") : tr("askPlaceholder")}
-              className="flex-1 min-w-0 min-h-[46px] px-3.5 rounded-xl border-2 border-ink bg-paper text-[15px] text-ink placeholder:text-muted" />
-            <button type="submit" disabled={busy || !draft.trim()} aria-label={tr("send")} className="w-[46px] h-[46px] rounded-xl bg-ink text-paper inline-flex items-center justify-center hover:opacity-90 disabled:opacity-50"><Icon name="arrow_forward" size={20} /></button>
-          </form>
-        ) : <p className="m-0 text-[13px] text-muted">{tr("readOnly")}</p>}
+        {!canChange && !test && <p className="m-0 text-[13px] text-muted">{tr("readOnly")}</p>}
+        <form onSubmit={submit} className="flex gap-2">
+          <label htmlFor={askId} className="sr-only">{test ? tr("askTestLabel") : tr("askLabel")}</label>
+          <input id={askId} ref={input} type="text" value={draft} onChange={(e) => setDraft(e.target.value)} maxLength={1000} autoComplete="off"
+            placeholder={test ? tr("askTestPlaceholder") : tr("askPlaceholder")}
+            className="flex-1 min-w-0 min-h-[46px] px-3.5 rounded-xl border-2 border-ink bg-paper text-[15px] text-ink placeholder:text-muted" />
+          <button type="submit" disabled={busy || !draft.trim()} aria-label={tr("send")} className="w-[46px] h-[46px] rounded-xl bg-ink text-paper inline-flex items-center justify-center hover:opacity-90 disabled:opacity-50"><Icon name="arrow_forward" size={20} /></button>
+        </form>
         <Link href="/app/indstillinger" onClick={onClose} className="self-end text-[12px] text-muted hover:text-ink">{tr("advanced")}</Link>
       </div>
     </aside>
@@ -122,6 +133,7 @@ export function AssistantDock({ wsId, canChange, step, column = true, name }: { 
   const router = useRouter();
   const t = useT("setup.assistant");
   const raw = useRaw();
+  const locale = useLocale();
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState<Msg[]>([{ id: 0, from: "bot", text: step ? t("greetStep", { step }) : name ? t("greetName", { name }) : t("greet") }]);
   const [busy, setBusy] = useState(false);
@@ -151,16 +163,27 @@ export function AssistantDock({ wsId, canChange, step, column = true, name }: { 
   }, []);
   const patch = (id: number, p: Partial<Extract<Msg, { from: "card" }>>) => setMsgs((l) => l.map((m) => (m.id === id && m.from === "card" ? { ...m, ...p } : m)));
 
+  /** The conversation so far (text turns of this panel, not «Test mig som kunde»), oldest first. */
+  const history = () => msgs.flatMap((m) => (m.from === "card" || m.test ? [] : [{ role: m.from === "user" ? "user" : "assistant", text: m.text }])).slice(-HISTORY);
+  /** The server's own sentences are Danish; in another language use our translation of the same sentence. */
+  const replyText = (r: Turn) => {
+    const key = r.code ? CODES[r.code] : undefined;
+    if (locale === "da" || !key) return r.reply;
+    return key === "aiOff" ? t("aiOff") : t(`codes.${key}`, { label: r.link ? pageLabel(r.link) : r.vars?.label ?? "" });
+  };
+  const pageLabel = (l: PageLink) => (l.key && raw<Record<string, string>>("setup.assistant.pages")?.[l.key]) || l.label;
   const send = async (text: string) => {
-    add({ from: "user", text });
+    const past = history();
+    add({ from: "user", text, test });
     setBusy(true);
     try {
       if (test) {
         const r = await api<{ reply: string }>(`/workspaces/${wsId}/assistant/preview`, { method: "POST", body: JSON.stringify({ message: text }) });
-        add({ from: "bot", text: r.reply });
+        add({ from: "bot", text: r.reply, test: true });
       } else {
-        const r = await api<{ proposal: Proposal | null; reply: string; link?: { label: string; href: string } | null }>(`/workspaces/${wsId}/assistant/changes`, { method: "POST", body: JSON.stringify({ text, context: path }) });
-        add({ from: "bot", text: r.reply, link: r.proposal ? null : r.link });
+        const r = await api<Turn>(`/workspaces/${wsId}/assistant/changes`, { method: "POST", body: JSON.stringify({ text, context: path, history: past }) });
+        const note = r.request ? (r.request.duplicate ? t("requestRepeat") : t("requestSent")) : undefined;
+        add({ from: "bot", text: replyText(r), link: r.proposal || !r.link ? null : { ...r.link, label: pageLabel(r.link) }, note });
         if (r.proposal) add({ from: "card", proposal: r.proposal, state: "open" });
       }
     } catch (e) {
@@ -189,9 +212,9 @@ export function AssistantDock({ wsId, canChange, step, column = true, name }: { 
   const chip = (c: Chip, fill: (t: string) => void) => {
     if ("fill" in c) fill(c.fill);
     else if ("say" in c) { add({ from: "user", text: c.label }); add({ from: "bot", text: c.say }); }
-    else if ("test" in c) { setTest(true); add({ from: "bot", text: t("testIntro") }); }
+    else if ("test" in c) { setTest(true); add({ from: "bot", text: t("testIntro"), test: true }); }
   };
-  const chips = step ? raw<Record<string, Chip[]>>("setup.assistant.setupChips")?.[String(step)] ?? [] : pageChips(t).find((c) => c.match(path))?.chips ?? fallbackChips(t);
+  const chips = step ? raw<Record<string, Chip[]>>("setup.assistant.setupChips")?.[String(step)] ?? [] : [...(pageChips(t).find((c) => c.match(path))?.chips ?? fallbackChips(t)), wishChip(t)];
   const title = step ? t("titleStep", { step }) : t("title");
   const subtitle = step ? t("subtitleStep") : t("subtitle");
   const panelProps = { title, subtitle, chips, msgs, busy, test, canChange, onSend: send, onChip: chip, onApply: apply, onDecline: decline, onLeaveTest: () => { setTest(false); add({ from: "bot", text: t("backToChanges") }); } };

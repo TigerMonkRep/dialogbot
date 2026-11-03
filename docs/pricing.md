@@ -21,7 +21,7 @@ kontakt. De findes ikke mere.
   (150 øre) og `SPECIALIST_SETUP_NET_MINOR` (500.000 øre). Prisaftalen, kampagner, Peters salgsmanuskript og testene læser dem derfra.
 - **Tekster** (skal rettes i hånden, når prisen ændres): `web/src/app/priser`, `byggevejledning`, forsiden
   (`(public)/page.tsx`, inkl. strukturerede data), `ai-receptionist`, `chatbot`, `ai-telefonsvarer`, `vilkaar`,
-  `proev-chat.tsx`, `web/public/llms.txt`, `web/public/materiale/*.html`, `app/modules/social/topics.py`
+  `proev-chat.tsx`, `app/modules/assistant/guide.md` (assistenten i appen), `web/public/llms.txt`, `web/public/materiale/*.html`, `app/modules/social/topics.py`
   (`FACTS`, `ALLOWED_AMOUNTS`) og `design-reference/byggevejledning`.
 - `tests/test_prices.py` fejler, hvis en gammel pris eller "model A/B" dukker op igen i disse tekster.
 

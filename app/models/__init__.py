@@ -1,4 +1,6 @@
 from app.models.domain import (  # noqa: F401
+    ASSISTANT_REQUEST_CATEGORIES,
+    ASSISTANT_REQUEST_STATUSES,
     KNOWLEDGE_KINDS,
     VERSION_STATUSES,
     ActionRun,
@@ -6,6 +8,7 @@ from app.models.domain import (  # noqa: F401
     Ambassador,
     AmbassadorPayout,
     AssistantProposal,
+    AssistantRequest,
     BillingAccount,
     Booking,
     BookingSettings,

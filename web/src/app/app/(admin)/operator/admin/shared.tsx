@@ -2,17 +2,19 @@ import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 
-/** Shared frame for the operator admin: six tabs, one heading. Everything here is read-only. */
+/** Shared frame for the operator admin: seven tabs, one heading. Everything here is read-only, except «Ønsker», where
+ *  operators set a status and a note on the customers' wishes. */
 const TABS: [string, string][] = [
   ["/app/operator/admin", "Overblik"], ["/app/operator/admin/kunder", "Kunder"], ["/app/operator/admin/brugere", "Brugere"],
-  ["/app/operator/admin/drift", "Drift"], ["/app/operator/admin/hjemmeside", "Hjemmeside"], ["/app/operator/admin/vaerktoejer", "Værktøjer"],
+  ["/app/operator/oensker", "Ønsker"], ["/app/operator/admin/drift", "Drift"], ["/app/operator/admin/hjemmeside", "Hjemmeside"],
+  ["/app/operator/admin/vaerktoejer", "Værktøjer"],
 ];
 
-export function AdminFrame({ active, title, intro, children }: { active: string; title: string; intro?: string; children: React.ReactNode }) {
+export function AdminFrame({ active, title, intro, eyebrow = "Admin · kun læsning", children }: { active: string; title: string; intro?: string; eyebrow?: string; children: React.ReactNode }) {
   return (
     <section className="flex flex-col gap-space-lg">
       <div>
-        <span className="eyebrow">Admin · kun læsning</span>
+        <span className="eyebrow">{eyebrow}</span>
         <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{title}</h1>
         {intro && <p className="font-body-sm text-body-sm text-on-surface-variant max-w-3xl mt-1">{intro}</p>}
       </div>

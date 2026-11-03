@@ -7,6 +7,7 @@ Adresse: `/app/operator/admin` (menu: konto → Operatør → *Admin: overblik*)
 | Overblik | Trafiklys (grøn/gul/rød), "kræver opmærksomhed", de vigtigste tal |
 | Kunder | Søg; pr. kunde: medlemmer, fakturering, telefoni, ambassadør, opkald, kampagner, logbog + *Vis alle detaljer (avanceret)* med rå rækker |
 | Brugere | Alle personer (kunder, kolleger, ambassadører) med *Se som* |
+| Ønsker (`/app/operator/oensker`) | Det, kunderne har bedt assistenten om, som Dialogbot ikke kan endnu – med kundens egne ord, side, kategori og hvor mange gange de har spurgt. Tal pr. status og pr. kategori. **Her kan operatøren skrive**: status (ny/planlagt/lavet/afvist), kategori og en intern note (logges på kundens arbejdsrum). Nye ønsker står under "kræver opmærksomhed" og sendes som mail til alle operatører. |
 | Drift | Databaseversion vs. kode, opgavekø, fejlede opgaver, e-mails, global logbog |
 | Værktøjer | Genveje til social, ambassadører, salg, telefoni, stemmer |
 

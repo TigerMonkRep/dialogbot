@@ -235,3 +235,35 @@ def test_assistant_turns_come_from_the_model_when_our_transcriber_only_hears_the
     both = {"artifact": {"messages": [{"role": "bot", "message": "Hej"}, {"role": "user", "message": "Hej"}],
                          "messagesOpenAIFormatted": [{"role": "assistant", "content": "andet"}]}}
     assert [m["message"] for m in vapi.transcript_messages(both)] == ["Hej", "Hej"]
+
+
+def test_the_bridge_logs_a_timeline_of_who_spoke_and_what_vapi_was_told():
+    import asyncio
+
+    class Sock:
+        async def send_text(self, t):
+            pass
+
+    s = linden.Session(Sock(), None, None, [], "soniox")
+    s.channels, s.in_rate, s.rate = 2, 16000, 16000
+
+    class Fake:
+        async def send_audio(self, pcm):
+            pass
+    s.client = Fake()
+    loud, quiet = 3000, 0
+    one_s = array.array("h", [quiet, loud] * 16000).tobytes()       # caller silent, Peter talking
+    both = array.array("h", [loud, loud] * 16000).tobytes()         # both talking
+    asyncio.run(s.audio(one_s))
+    asyncio.run(s.audio(both))
+    asyncio.run(s.send("hej der", False))
+    log = s.timeline_log()
+    assert log["half_seconds"] == 4
+    assert log["caller"] == "0099" and log["peter"] == "9999" and log["sent"] == "...p"
+
+
+def test_empty_bot_turns_from_vapi_do_not_hide_what_the_assistant_said():
+    msg = {"artifact": {"messages": [{"role": "bot", "message": ""}, {"role": "user", "message": "Hej"}],
+                        "messagesOpenAIFormatted": [{"role": "assistant", "content": "Goddag"},
+                                                    {"role": "user", "content": "Hej"}]}}
+    assert [m["message"] for m in vapi.transcript_messages(msg)] == ["Goddag", "Hej"]

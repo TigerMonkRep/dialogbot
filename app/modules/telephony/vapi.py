@@ -503,7 +503,9 @@ def transcript_messages(message: dict) -> list[dict]:
     only transcribes the caller) the assistant's turns are missing there. Vapi's `messagesOpenAIFormatted` holds what
     the assistant actually said (the dialogue model's output), so it is used whenever the transcript has no bot turn."""
     msgs = _dig(message, "artifact", "messages") or message.get("messages") or []
-    has_bot = any(isinstance(m, dict) and ROLE.get(str(m.get("role", "")).lower()) == "assistant" for m in msgs)
+    # a bot turn only counts if it has text: with our transcriber Vapi lists the assistant's turns but empty
+    has_bot = any(isinstance(m, dict) and ROLE.get(str(m.get("role", "")).lower()) == "assistant"
+                  and str(m.get("message") or m.get("content") or "").strip() for m in msgs)
     oa = _dig(message, "artifact", "messagesOpenAIFormatted") or message.get("messagesOpenAIFormatted") or []
     if has_bot or not oa:
         return [m for m in msgs if isinstance(m, dict)]

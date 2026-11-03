@@ -122,6 +122,10 @@ class Session:
         self.channel = get_settings().speechmatics_customer_channel  # Vapi: customer is channel 0, assistant 1
         self.carry = b""  # bytes left over from the last frame that did not complete a whole interleaved frame
         self.levels = [0, 0, 0]  # sum |sample| per channel + frames, for the first seconds (diagnostics in the log)
+        # The whole call, per half second: caller level, assistant level, partials/finals we sent to Vapi. Logged once
+        # at the end as compact strings, so a call that "doesn't listen" can be read afterwards: is the caller's
+        # channel silent while Peter speaks (Vapi muting it), or is the caller heard but Vapi not interrupting?
+        self.timeline: list[list[int]] = []  # [sum|ch0|, sum|ch1|, frames, partials, finals]
         self.client: Any = None
         self.ready = asyncio.Event()
         self.sent: list[dict] = []  # what we told Vapi, for logs and tests
@@ -133,6 +137,8 @@ class Session:
         msg = {"type": "transcriber-response", "transcription": text, "channel": "customer",
                "transcriptType": "final" if final else "partial"}
         self.sent.append(msg)
+        if getattr(self, "timeline", None):
+            self.timeline[-1][4 if final else 3] += 1
         if final:  # what Vapi was told the caller said – the first thing to look at when a call goes wrong
             logger.info("bridge.final", stt=self.stt, text=text[:200])
         await self.socket.send_text(json.dumps(msg))
@@ -215,6 +221,23 @@ class Session:
         self.carry = data[whole:]
         if not whole:
             return
+        if self.channels > 1:
+            tl = self.__dict__.setdefault("timeline", [])  # (tests may build a Session without __init__)
+            samples = array.array("h")
+            samples.frombytes(data[:whole])
+            half = self.in_rate // 2
+            pos = 0
+            n = len(samples) // self.channels
+            while pos < n:
+                if not tl or tl[-1][2] >= half:
+                    tl.append([0, 0, 0, 0, 0])
+                cur = tl[-1]
+                take = min(half - cur[2], n - pos)
+                seg = samples[pos * self.channels:(pos + take) * self.channels]
+                cur[0] += sum(abs(x) for x in seg[0::self.channels])
+                cur[1] += sum(abs(x) for x in seg[1::self.channels])
+                cur[2] += take
+                pos += take
         if self.channels > 1 and self.levels[2] < 5 * self.in_rate:  # the first ~5 s: which channel carries whom?
             samples = array.array("h")
             samples.frombytes(data[:whole])
@@ -228,7 +251,19 @@ class Session:
         await self.client.send_audio(customer_channel(data[:whole], self.channels, self.in_rate, self.rate,
                                                       self.channel))  # Adapter.send_audio has the same signature
 
+    def timeline_log(self) -> dict:
+        """Per half second: caller level (0-9), assistant level (0-9), and what we told Vapi (p=partial, F=final)."""
+        def lvl(total: int, frames: int) -> str:
+            avg = total / max(1, frames)
+            return str(min(9, int(avg // 150)))  # ~150 per step: 0 = digital silence/hiss, 9 = loud speech
+        caller = "".join(lvl(t[0], t[2]) for t in self.timeline)
+        peter = "".join(lvl(t[1], t[2]) for t in self.timeline)
+        sent = "".join("F" if t[4] else "p" if t[3] else "." for t in self.timeline)
+        return {"caller": caller, "peter": peter, "sent": sent, "half_seconds": len(self.timeline)}
+
     async def close(self) -> None:
+        if getattr(self, "timeline", None):
+            logger.info("bridge.timeline", stt=self.stt, **self.timeline_log())
         if self.adapter is not None:
             try:
                 await asyncio.wait_for(self.adapter.finish(), timeout=3)

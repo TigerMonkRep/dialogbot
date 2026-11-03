@@ -446,6 +446,31 @@ def test_a_batch_waits_and_retries_when_the_provider_has_not_released_the_previo
     assert detail["id"] == run["id"]
 
 
+def test_profiles_on_the_same_provider_account_run_one_after_the_other_and_other_providers_side_by_side():
+    ids = {p: [uuid_mod.uuid4(), uuid_mod.uuid4()] for p in "CDEF"}
+    chains = service._chains(ids)
+    assert len(chains) == 3  # Speechmatics (C and D share one account and its concurrent-session limit), Soniox, ElevenLabs
+    speechmatics = next(c for c in chains if ids["C"][0] in c)
+    assert speechmatics == ids["C"] + ids["D"]
+
+
+def test_a_run_left_running_by_a_restart_is_marked_interrupted_and_a_live_one_is_not(db):
+    from datetime import UTC, datetime, timedelta
+
+    old = datetime.now(UTC) - timedelta(minutes=30)
+    rows = [SttTestRun(profile_id="F", actual_profile="F", channel="replay", mode="controlled", case_id="S03", split="final",
+                       source="manifest", reference="x", status="kører", config={}, created_at=old) for _ in range(2)]
+    db.add_all(rows)
+    db.flush()
+    service._LIVE.add(rows[1].id)
+    try:
+        assert service.sweep_orphans(db) == 1
+    finally:
+        service._LIVE.discard(rows[1].id)
+    assert rows[0].status == "fejl" and "afbrudt" in rows[0].result["error"]
+    assert rows[1].status == "kører"
+
+
 def test_batch_all_expands_to_every_case_with_audio_and_a_profile_without_access_is_recorded_not_run(db, monkeypatch):
     monkeypatch.delenv("SONIOX_API_KEY", raising=False)
     get_settings.cache_clear()

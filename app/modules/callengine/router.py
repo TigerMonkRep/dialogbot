@@ -99,13 +99,13 @@ def status(_: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
                       for c in calls]}
 
 
-class TestCallIn(BaseModel):
+class EngineTestCallIn(BaseModel):
     to: str = Field(..., description="Det nummer, Peter skal ringe til (E.164, fx +4512345678)")
     number_id: uuid.UUID | None = Field(default=None, description="Vores nummer, der ringer ud (standard: det første aktive)")
 
 
 @router.post("/test-call")
-def test_call(body: TestCallIn, request: Request, principal: Principal = Depends(operator),
+def test_call(body: EngineTestCallIn, request: Request, principal: Principal = Depends(operator),
               db: OrmSession = Depends(get_db)):
     """Peter rings `to` from one of our numbers and runs the call on the engine – the number's incoming calls are not
     touched. Uses the number's own greeting, knowledge, tools and voice; the call is stored without creating a lead."""
@@ -201,12 +201,12 @@ def simulation_recording(sim_id: str, _: Principal = Depends(operator)):
     return Response(data, media_type="audio/wav", headers={"content-disposition": f"attachment; filename=sim-{sim_id}.wav"})
 
 
-class RouteIn(BaseModel):
+class EngineRouteIn(BaseModel):
     confirm: bool = Field(False, description="Skal være true: alle indgående opkald på nummeret flyttes til motoren")
 
 
 @router.post("/numbers/{number_id}/inbound")
-def route_to_engine(number_id: uuid.UUID, body: RouteIn, request: Request, principal: Principal = Depends(operator),
+def route_to_engine(number_id: uuid.UUID, body: EngineRouteIn, request: Request, principal: Principal = Depends(operator),
                     db: OrmSession = Depends(get_db)):
     """Point a number's incoming calls at the engine (Twilio voice webhook → our TwiML). Undo:
     POST /operator/telephony/numbers/{id}/inbound puts it back on Vapi."""

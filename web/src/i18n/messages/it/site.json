@@ -1,1 +1,430 @@
-{}
+{
+  "prices": {
+    "monthly": "2.495",
+    "setup": "5.000",
+    "perCall": "4"
+  },
+  "demoCall": {
+    "label": "Chiamata · Falegnameria (esempio)",
+    "lines": [
+      "Ha chiamato la Falegnameria Nørgaard, sono Dialogbot. Come posso aiutarla?",
+      "Buongiorno, dovrei far sostituire una finestra. Potete passare a vederla la prossima settimana?",
+      "Certamente. Abbiamo disponibilità martedì alle 9 oppure giovedì alle 14. Cosa preferisce?",
+      "Martedì, grazie."
+    ],
+    "booked": "Appuntamento prenotato: martedì alle 9 · SMS inviato a lei e al cliente",
+    "botInitial": "D",
+    "customerInitial": "C"
+  },
+  "home": {
+    "meta": {
+      "title": "Dialogbot – il receptionist AI che risponde al telefono 24 ore su 24, in italiano",
+      "description": "Dialogbot risponde al telefono quando voi non potete: un receptionist AI che parla la lingua dei vostri clienti, risponde 24 ore su 24, prenota appuntamenti nel vostro calendario e vi invia un messaggio per ogni chiamata. 2.495 kr./mese.",
+      "ogTitle": "Dialogbot risponde al telefono quando voi non potete"
+    },
+    "referral": {
+      "label": "Segnalazione",
+      "offer": "{name} le ha consigliato Dialogbot: riceve uno sconto del {pct} % sul primo mese.",
+      "bonus": "{name} è ambassador di Dialogbot e riceve un bonus se lei diventa cliente. Lo sconto viene applicato automaticamente quando si registra da qui.",
+      "cta": "Inizia ora"
+    },
+    "hero": {
+      "eyebrow": "Per artigiani, studi medici e saloni · in italiano · 24 ore su 24",
+      "title": "Dialogbot risponde al telefono quando voi non potete.",
+      "lead": "Un receptionist AI che parla la lingua dei vostri clienti, risponde 24 ore su 24, prenota appuntamenti nel vostro calendario e vi invia un messaggio per ogni chiamata. Mantenete il vostro numero. 2.495 kr./mese IVA esclusa.",
+      "cta": "Lo provi: la richiama lui",
+      "note": "2 minuti, nessuna registrazione. Gli faccia le domande che farebbe un cliente."
+    },
+    "how": {
+      "eyebrow": "Come funziona",
+      "title": "Il cliente chiama. Dialogbot risponde. Lei riceve un messaggio.",
+      "lead": "Una chiamata persa è un cliente perso: la maggior parte non richiama più. È proprio questa sensazione che Dialogbot le toglie: essere in cima a una scala o avere un cliente in poltrona e sentire il telefono squillare senza poter rispondere.",
+      "steps": [
+        { "title": "Il cliente chiama, come sempre", "text": "Sul vostro numero di sempre. Se siete occupati o chiusi, Dialogbot risponde entro due secondi e si presenta come il vostro receptionist." },
+        { "title": "Risponde e prenota", "text": "In base ai servizi, ai prezzi e agli orari che avete approvato voi. Non tira mai a indovinare. Se il cliente ha bisogno di un appuntamento, trova uno slot libero nel vostro calendario e invia un SMS." },
+        { "title": "Lei riceve un messaggio", "text": "Nome, numero e motivo della chiamata, subito via SMS o e-mail, più un report riepilogativo ogni giorno. Se c'è qualcosa che non può gestire, prende un messaggio per lei." }
+      ]
+    },
+    "features": {
+      "eyebrow": "Cosa sa fare",
+      "title": "Quattro funzioni, un solo receptionist",
+      "items": [
+        { "title": "Risponde al telefono", "text": "24 ore su 24, nella lingua dei vostri clienti, con una voce scelta da voi. Se il cliente lo chiede, dice onestamente di essere un assistente digitale." },
+        { "title": "Prenota appuntamenti", "text": "Trova gli orari liberi in Google Calendar o Microsoft 365, prenota, sposta e annulla, e invia la conferma via SMS." },
+        { "title": "Risponde sul sito web", "text": "Le stesse conoscenze anche come webchat sul vostro sito: chi chiede prezzi e orari riceve subito una risposta, anche la sera. Basta una riga di codice per attivarla." },
+        { "title": "Richiama i clienti", "text": "Fa follow-up sui preventivi o ricorda la manutenzione, solo ai clienti che hanno dato il consenso. 4 kr. a chiamata + 2 kr. al minuto." }
+      ],
+      "note": "Tutto ciò che dice si basa su conoscenze approvate da voi, e ogni modifica ve la mostra prima: prima → dopo, «Approvare?»."
+    },
+    "demo": {
+      "eyebrow": "Ascolti una chiamata",
+      "title": "Ecco come suona quando Dialogbot risponde al telefono",
+      "lead": "Una chiamata a un falegname. Lo provi lei stesso: la richiama e la accoglie come se fosse un cliente.",
+      "cta": "Lo provi: la richiama lui"
+    },
+    "price": {
+      "eyebrow": "Prezzo",
+      "title": "Un solo abbonamento. Nessun costo per contatto.",
+      "lead": "Tutti i prezzi sono IVA esclusa. Nessun vincolo: disdetta di mese in mese.",
+      "subscription": {
+        "name": "Abbonamento",
+        "badge": "Consigliato",
+        "unit": "kr./mese",
+        "text": "Prezzo tutto incluso: telefono, prenotazioni e webchat, con 300 minuti di chiamate in entrata al mese. Nessun vincolo. La configurazione fai da te è inclusa.",
+        "compare": "Il prezzo di un servizio di segreteria telefonica, ma con un receptionist che prenota anche gli appuntamenti nel vostro calendario.",
+        "cta": "Scelga qui: prima lo ascolti"
+      },
+      "campaign": {
+        "name": "Chiamate in uscita delle campagne",
+        "unit": "kr. a chiamata + 2 kr. al minuto",
+        "text": "Solo se volete che Dialogbot effettui chiamate. Senza risposta: 4 kr. Tre minuti di conversazione: 10 kr. Vedete il prezzo massimo prima di iniziare."
+      },
+      "setup": {
+        "name": "Configurazione a cura dei nostri specialisti",
+        "unit": "kr. una tantum",
+        "text": "Configurazione su misura e integrazione con i vostri sistemi: calendario, CRM, sistema di prenotazione. Solo se non volete farlo da soli."
+      },
+      "whyTitle": "Perché costiamo più di un chatbot",
+      "whyText": "Un chatbot economico risponde con ciò che ha imparato da internet. Dialogbot risponde solo in base a conoscenze approvate da voi e vi mostra prima ogni modifica: prima → dopo, «Approvare?». Sa anche prenotare, spostare e annullare appuntamenti nel vostro calendario e inviare conferme via SMS, e voi ricevete un messaggio per ogni chiamata. Ecco perché costa più di una segreteria telefonica.",
+      "allDetails": "Tutti i dettagli sul prezzo →"
+    },
+    "start": {
+      "eyebrow": "Inizia ora",
+      "title": "Prima lo ascolti, oppure lo configuri da solo in 30 minuti",
+      "try": {
+        "badge": "2 min · nessuna registrazione",
+        "title": "Lo provi: la richiama lui",
+        "text": "Scriva a Peter nella chat o prema «Sì, chiamami». Dialogbot la richiama e la accoglie come se fosse il suo receptionist.",
+        "cta": "Lo provi ora"
+      },
+      "build": {
+        "badge": "3 passaggi · circa 30 min",
+        "title": "Lo configuri da solo",
+        "text": "La guida alla configurazione mostra passo dopo passo cosa le serve e cosa succede: niente tecnicismi, nessun codice.",
+        "cta": "Apri la guida alla configurazione"
+      },
+      "specialists": "Preferite che ci pensi qualcun altro? I nostri specialisti lo configurano per 5.000 kr. IVA esclusa, su misura per i vostri sistemi."
+    },
+    "ld": {
+      "appDescription": "Dialogbot è un receptionist AI che gestisce telefono e chat per la sua azienda 24 ore su 24, nella lingua dei suoi clienti: risponde in base alle vostre conoscenze, prenota appuntamenti e raccoglie le richieste. Vi accompagniamo in tutta la configurazione.",
+      "subscription": { "name": "Abbonamento", "description": "Al mese IVA esclusa, con 300 minuti di chiamate in entrata inclusi. Nessun vincolo." },
+      "campaign": { "name": "Chiamate in uscita delle campagne", "description": "Per chiamata in uscita IVA esclusa, più 2 kr. per ogni minuto di conversazione iniziato" },
+      "setup": { "name": "Configurazione a cura degli specialisti di Dialogbot", "description": "Una tantum, IVA esclusa: configurazione su misura e integrazione con i propri sistemi. La configurazione fai da te è inclusa nell'abbonamento." }
+    }
+  },
+  "guide": {
+    "meta": {
+      "title": "Crei il suo receptionist AI in 3 passaggi – guida alla configurazione",
+      "description": "La guida alla configurazione di Dialogbot: cosa le serve, cosa sa fare, quanto costa e i 3 passaggi per avere il suo receptionist AI che risponde in italiano. 2.495 kr./mese.",
+      "ogTitle": "Crei il suo receptionist AI in 3 passaggi | Dialogbot"
+    },
+    "breadcrumb": "Guida alla configurazione",
+    "nav": {
+      "steps": "Come si configura",
+      "bricks": "I moduli",
+      "systems": "Compatibile con i suoi sistemi",
+      "price": "Prezzo",
+      "demo": "Ascolti una demo"
+    },
+    "faq": [
+      { "q": "Sembra un robot?", "a": "No. Dialogbot parla un italiano naturale e si presenta sempre come receptionist digitale, così il cliente sa con chi sta parlando. Ascolti la demo qui sopra." },
+      { "q": "Devo cambiare numero di telefono?", "a": "No. Mantiene il suo numero e lo inoltra: sempre, oppure solo quando non risponde. Le mostriamo come fare nel passaggio 3." },
+      { "q": "E se non sa rispondere?", "a": "In quel caso prende un messaggio con nome, numero e motivo della chiamata e glielo invia subito. Non tira mai a indovinare prezzi o accordi che non gli avete fornito." },
+      { "q": "Sono vincolato?", "a": "No. Il prezzo fisso si può disdire di mese in mese e la tariffa per contatto non ha costi fissi." }
+    ],
+    "partsTitle": "Le serve",
+    "hero": {
+      "badge": "passaggi · circa 30 minuti · niente tecnicismi",
+      "titleLine1": "Crei il suo receptionist AI.",
+      "titleLine2": "Passo dopo passo.",
+      "lead": "Dialogbot risponde al telefono, gestisce la webchat e prenota appuntamenti per la sua azienda, nella lingua dei suoi clienti, 24 ore su 24. Lei segue la guida, noi assembliamo i moduli insieme a lei.",
+      "cta": "Lo provi ora: la richiama lui",
+      "listen": "Ascolti Dialogbot rispondere al telefono",
+      "price": "2.495 kr./mese · IVA esclusa"
+    },
+    "heroCard": {
+      "step": "Passaggio 1 di 3",
+      "title": "Ci parli della sua azienda",
+      "parts": ["numero di telefono", "orari di apertura", "di cosa vi occupate"],
+      "hours": "Lun–ven 8–17"
+    },
+    "steps": {
+      "eyebrow": "Guida alla configurazione",
+      "title": "Come configurarlo, in 3 passaggi",
+      "lead": "Nessuna app da installare, nessun codice. Ogni passaggio mostra esattamente cosa le serve e cosa succede.",
+      "items": [
+        { "title": "Ci parli della sua azienda", "parts": ["il suo numero di telefono", "orari di apertura", "le domande che vi fanno più spesso"], "text": "Compili un breve modulo, oppure ce lo racconti al telefono. Bastano 5 minuti." },
+        { "title": "Lo configuriamo e testiamo insieme", "parts": ["videochiamata con noi", "chiamata di prova al suo nuovo receptionist"], "text": "Configuriamo voce, risposte e prenotazioni mentre lei guarda. Chiama lei stesso e sente che funziona." },
+        { "title": "Lo attivi e torni al lavoro", "parts": ["inoltro del suo numero (le mostriamo come)"], "text": "Da quel momento riceve un SMS o un'e-mail ogni volta che c'è un appuntamento o un messaggio per lei." }
+      ],
+      "duration": "circa 30 min",
+      "switchOn": "Dialogbot: ATTIVO",
+      "answered": "Chiamata risposta",
+      "booked": "Appuntamento prenotato"
+    },
+    "result": {
+      "eyebrow": "Il risultato finale",
+      "title": "Ecco come si svolge una chiamata a configurazione completata",
+      "lead": "Ogni chiamata segue lo stesso semplice percorso. Vede tutte le richieste in un'unica panoramica e può sempre correggere ciò che Dialogbot è autorizzato a dire.",
+      "items": [
+        { "title": "Il cliente chiama", "text": "Anche fuori orario, quando è fuori per un lavoro o ha clienti in negozio." },
+        { "title": "Dialogbot risponde", "text": "Nella lingua del cliente, con il vostro nome, i vostri prezzi e i vostri orari, senza farlo attendere." },
+        { "title": "Prenota o prende un messaggio", "text": "Orari liberi nel suo calendario, oppure un messaggio con nome, numero e motivo della chiamata." },
+        { "title": "Lei riceve un messaggio", "text": "SMS o e-mail immediati. Richiama quando le è comodo." }
+      ]
+    },
+    "bricks": {
+      "eyebrow": "I moduli del kit",
+      "title": "Scelga i moduli che le servono",
+      "lead": "Inizi dal telefono. Aggiunga altri moduli man mano che le servono: si combinano tra loro.",
+      "startHere": "Inizi da qui",
+      "phone": { "title": "Telefono", "text": "Risponde a tutte le chiamate con il vostro nome, nella lingua di chi chiama. Le passa la chiamata quando è urgente.", "start": "Inizia con la reception" },
+      "webchat": { "title": "Webchat", "text": "Una piccola chat sul suo sito che risponde subito e raccoglie i dati di contatto." },
+      "booking": { "title": "Prenotazioni", "text": "Trova gli orari liberi nel suo calendario e conferma l'appuntamento al cliente via SMS." },
+      "sms": { "title": "Risposta via SMS", "text": "Le chiamate senza risposta ricevono subito un SMS, così il cliente sa che lo ricontatterete." },
+      "campaigns": { "title": "Campagne", "text": "Chiami o scriva ai suoi clienti esistenti, ad esempio per la manutenzione o una nuova offerta. Lei approva sempre prima.", "start": "Inizia con il follow-up clienti" },
+      "overview": { "title": "Panoramica", "text": "Tutte le chiamate, le chat e gli appuntamenti in un unico posto. Veda cosa è stato detto e cosa attende ancora risposta." }
+    },
+    "systems": {
+      "eyebrow": "Compatibile con i suoi sistemi",
+      "title": "I moduli si integrano con ciò che usate già",
+      "lead": "Calendario, CRM o sistema di prenotazione: Dialogbot registra appuntamenti e messaggi dove siete abituati a guardare. Se usate qualcosa che non abbiamo ancora collegato, ve lo diciamo onestamente e lo integriamo durante la configurazione.",
+      "googleCalendar": "Google Calendar",
+      "microsoft": "Microsoft 365 / Outlook",
+      "crm": "Il suo CRM",
+      "bookingSystem": "Il suo sistema di prenotazione",
+      "smsEmail": "SMS ed e-mail",
+      "ready": "Pronto",
+      "readyAlways": "Pronto · funziona sempre",
+      "connectedInSetup": "Collegato durante la configurazione",
+      "otherTitle": "Altro?",
+      "otherText": "Chieda alla chat: lo prende in nota",
+      "note": "«Pronto» significa che funziona già oggi. Tutto il resto lo colleghiamo insieme a lei, e finché non funziona riceve sempre appuntamenti e messaggi via SMS ed e-mail."
+    },
+    "pricing": {
+      "eyebrow": "Prezzo",
+      "title": "Un kit. Un prezzo, nessuna sorpresa.",
+      "lead": "Tutti i prezzi sono IVA esclusa. La configurazione potete farla da soli in circa 30 minuti: è inclusa. Se la volete su misura dai nostri specialisti, costa 5.000 kr. una tantum.",
+      "subscription": {
+        "name": "Abbonamento",
+        "from": "Da",
+        "unit": "kr./mese",
+        "points": ["Telefono, chat e prenotazioni inclusi", "Nessun costo per contatto", "Disdetta di mese in mese"],
+        "cta": "Inizia ora"
+      },
+      "campaign": {
+        "name": "Chiamate in uscita delle campagne",
+        "unit": "kr. per chiamata in uscita",
+        "points": ["Solo se volete che Dialogbot effettui chiamate", "I contatti hanno dato il consenso a essere chiamati", "Al massimo 2 tentativi per contatto: vedete il prezzo massimo prima di iniziare"]
+      },
+      "setup": {
+        "name": "Configurazione a cura dei nostri specialisti",
+        "unit": "kr. una tantum",
+        "points": ["Solo se non volete farlo da soli: i tre passaggi sono inclusi nell'abbonamento", "Configurazione su misura e integrazione con i vostri sistemi ed esigenze", "Colleghiamo calendario, CRM o sistema di prenotazione, inseriamo conoscenze e prezzi, addestriamo la voce e testiamo insieme prima dell'attivazione"]
+      }
+    },
+    "demo": {
+      "eyebrow": "Demo",
+      "title": "Ascolti Dialogbot rispondere al telefono",
+      "lead": "Ecco come suona una chiamata a un falegname. Lo provi lei stesso: la richiama e la accoglie come un cliente.",
+      "cta": "Lo provi: la richiama lui"
+    },
+    "faqSection": {
+      "eyebrow": "Domande",
+      "title": "Le domande che quasi tutti fanno per prime"
+    },
+    "cta": {
+      "title": "Pronto per il passaggio 1?",
+      "lead": "Ci chiami e lo configuriamo insieme. Oppure ci scriva e la richiamiamo entro l'orario di apertura.",
+      "write": "Ci scriva"
+    }
+  },
+  "proev": {
+    "meta": {
+      "title": "Provi Dialogbot – parli con lui e la richiamerà",
+      "description": "Nessun modulo, nessuna registrazione. Dica alla chat come si chiama la sua azienda e di cosa vi occupate: Dialogbot la richiama e la accoglie come il suo receptionist.",
+      "ogTitle": "Provi Dialogbot – la richiama lui | Dialogbot"
+    },
+    "eyebrow": "Passaggio 0 · prima di configurare qualsiasi cosa",
+    "title": "Ci parli. Poi la richiama, come il suo receptionist.",
+    "lead": "Nessun modulo, nessuna registrazione. Dica alla chat come si chiama la sua azienda e di cosa vi occupate. Dialogbot la richiama e la accoglie come se fosse un cliente.",
+    "chat": {
+      "greeting": "Buongiorno! Mi chiamo Peter e sono il receptionist digitale di Dialogbot. Vuole sentire come suono quando rispondo al telefono per la sua azienda?",
+      "hours": "lun–ven 08–17",
+      "branches": {
+        "haandvaerk": "Artigiano",
+        "klinik": "Studio medico",
+        "skoenhed": "Parrucchiere / salone",
+        "restaurant": "Ristorante",
+        "raadgivning": "Consulente",
+        "other": "Altro"
+      },
+      "steps": {
+        "start": "Inizio",
+        "firma": "Passaggio 1 · chi siete",
+        "branche": "Passaggio 1 · di cosa vi occupate",
+        "andet": "Passaggio 1 · di cosa vi occupate",
+        "tlf": "Passaggio 2 · il suo numero",
+        "calling": "Passaggio 2 · chiamata in corso",
+        "done": "Passaggio 3 · crei il suo",
+        "unavailable": "Non al momento"
+      },
+      "blockerInactive": "La chiamata di prova sarà attivata a breve: fino ad allora la richiamiamo noi manualmente in orario di apertura. Ci chiami al {phone} ({hours}) oppure scriva il suo numero a {email} e la richiameremo.",
+      "blockerClosed": "Effettuo chiamate solo tra le {from} e le {to} nei giorni feriali. Torni in quell'orario, oppure scriva il suo numero a {email} e la richiameremo in orario di apertura.",
+      "blockerOwnNumber": " Può anche chiamare lei il mio numero demo {number}.",
+      "chipCall": "Sì, chiamami",
+      "chipWhat": "Cosa sai fare?",
+      "chipPrice": "Quanto costa?",
+      "askCompany": "Ottimo. Come si chiama la sua azienda?",
+      "answerWhat": "Rispondo al telefono 24 ore su 24, rispondo alle domande più frequenti dei clienti, prenoto appuntamenti nel suo calendario e le invio un messaggio se c'è qualcosa che non riesco a gestire.\n\nVuole sentirlo di persona?",
+      "answerPrice": "Un abbonamento da 2.495 kr. al mese, IVA esclusa. La configurazione potete farla da soli: è inclusa. Se volete che i nostri specialisti la adattino ai vostri sistemi, costa 5.000 kr. una tantum.\n\nLa chiamo per mostrarle cosa ottiene?",
+      "askOther": "Mi scriva in breve di cosa vi occupate, così so come accogliere i clienti.",
+      "askNumber": "Da questo momento sono il receptionist di {company}. A quale numero devo chiamare?",
+      "helloCompany": "Buongiorno {company}. Di cosa vi occupate?",
+      "chatNotReady": "La chat non è ancora del tutto pronta. Ci chiami al {phone} ({hours}) o scriva a {email}: le risponderemo.",
+      "chatFailed": "Al momento non riesco a rispondere. Riprovi tra poco oppure ci chiami al {phone}.",
+      "serviceDown": "Non sono riuscito a raggiungere il servizio di chiamata. Riprovi tra poco.",
+      "callingNow": "Sto chiamando il {number}: entro un minuto riceverà una chiamata da Peter di Dialogbot. Risponda e mi chieda tutto ciò che un cliente chiederebbe a {company}.",
+      "callSent": "La chiamata è stata inviata al suo telefono. Non ha squillato? Ci chiami al {phone} e glielo mostriamo dal vivo.\n\nVuole crearne uno suo? Bastano 3 passaggi e circa 30 minuti, e la guido io per tutto il percorso.",
+      "callFailed": "Al momento non è stato possibile chiamare. Riprovi tra poco.",
+      "callRetry": "{message} Scriva di nuovo il numero oppure ci chiami lei al {phone}.",
+      "placeholderCompany": "Es. Falegnameria Nørgaard",
+      "placeholderOther": "Es. falegname, dentista, commercialista …",
+      "placeholderPhone": "Es. 93 70 34 33 – oppure faccia una domanda",
+      "placeholderBranch": "Scelga qui sopra, oppure scriva di cosa vi occupate",
+      "placeholderDefault": "Scriva la sua domanda a Peter …",
+      "consentFallback": "Sì, Peter di Dialogbot, un assistente digitale, può chiamarmi ora a questo numero per mostrarmi come Dialogbot risponde al telefono. La chiamata viene trascritta e un collaboratore di Dialogbot può contattarmi in seguito in merito a ciò di cui abbiamo parlato.",
+      "phoneDoneTitle": "La chiamata è partita",
+      "phoneDoneText": "Le è piaciuto? Il suo receptionist è a soli tre passaggi di distanza.",
+      "phoneUnavailableTitle": "La chiamata di prova sarà attivata a breve",
+      "phoneUnavailableText": "Fino ad allora la richiamiamo noi manualmente in orario di apertura ({hours}). Chiami il {phone} o scriva a {email}.",
+      "phoneIdleTitle": "Il suo telefono squillerà a breve",
+      "phoneIdleText": "Dopo che avrà scritto il suo numero nella chat, Peter di Dialogbot la chiamerà entro un minuto.",
+      "stageLabel": "Chat con Dialogbot",
+      "status": "Risponde subito",
+      "close": "Chiudi la chat",
+      "typing": "Dialogbot sta scrivendo",
+      "callUs": "Ci chiami",
+      "mailSubject": "Richiamatemi – chiamata di prova",
+      "mailUs": "Ci scriva il suo numero",
+      "seeGuide": "Vedi la guida alla configurazione",
+      "tryAgain": "Riprova",
+      "callMe": "Richiamatemi",
+      "send": "Invia",
+      "consentError": "Spunti la casella se posso chiamarla.",
+      "buildNow": "Sì, crea il mio ora (passaggio 1 di 3)",
+      "pickUp": "Risponda quando squilla. Può riagganciare in qualsiasi momento.",
+      "privacy": "Chiamiamo solo il numero che scrive lei e non lo usiamo per nient'altro che questa chiamata e un eventuale follow-up, se ha dato il consenso.",
+      "ringing": "Chiamata al {number} …",
+      "presentBefore": "Mi presento come receptionist di ",
+      "presentAfter": ". Mi chieda prezzi, orari o un appuntamento.",
+      "sideSteps": ["Dica alla chat chi siete", "Risponda al telefono e faccia domande come un cliente", "Le piace? Allora configuriamo quello vero"],
+      "sideNote": "La stessa chat la accompagna anche dopo: quando dice sì, la guida nella configurazione, collega il suo calendario e testa tutto insieme a lei."
+    }
+  },
+  "preview": {
+    "meta": {
+      "title": "Dialogbot – anteprima privata",
+      "description": "Dialogbot è un assistente AI per telefono, webchat e follow-up, che parla la lingua dei suoi clienti. Si iscriva per l'accesso anticipato."
+    },
+    "skip": "Vai al contenuto",
+    "badge": "Anteprima privata",
+    "eyebrow": "Passaggio 0 · Prima di configurare",
+    "title": "Sblocchi con il codice di accesso anticipato",
+    "lead": "Dialogbot è un receptionist AI per telefono, webchat e follow-up, che parla la lingua dei suoi clienti. Stiamo perfezionando i dettagli prima dell'apertura al pubblico. Inserisca il codice di invito ricevuto per vedere la home page e creare un account.",
+    "codesBefore": "I codici vengono assegnati alle aziende pilota e a partner selezionati. Se ha già un account, ",
+    "codesLink": "acceda",
+    "codesAfter": ".",
+    "waitlistEyebrow": "Nessun codice?",
+    "waitlistTitle": "Si iscriva per l'accesso anticipato",
+    "waitlistLead": "Riceva un avviso nella sua casella di posta non appena apriamo a nuove aziende. Niente spam: solo un avviso all'apertura, e può cancellarsi in qualsiasi momento.",
+    "footerNav": "Piè di pagina",
+    "footer": {
+      "privacy": "Privacy",
+      "terms": "Condizioni commerciali",
+      "contact": "Contatti",
+      "login": "Accesso per il team"
+    },
+    "unlock": {
+      "checkFailed": "Non è stato possibile verificare il codice.",
+      "label": "Codice di invito",
+      "placeholder": "Es. DGB-XXXX-XXXX",
+      "checking": "Verifica del codice…",
+      "submit": "Sblocca e vedi la home page"
+    },
+    "waitlist": {
+      "doneTitle": "Grazie, è in lista d'attesa.",
+      "doneText": "Scriveremo a {email} quando apriremo a nuove aziende. Non invieremo nient'altro.",
+      "email": "La sua e-mail di lavoro",
+      "emailPlaceholder": "nome@azienda.it",
+      "industry": "Tipo di azienda",
+      "industryPlaceholder": "Scelga il suo settore…",
+      "interests": "Quale problema volete risolvere per primo?",
+      "honeypot": "Sito web",
+      "consent": "Sì, potete scrivermi quando Dialogbot apre. Conserviamo solo l'e-mail e le risposte sopra per questo scopo, e può sempre chiedere di essere cancellato.",
+      "consentLink": "Scopra come",
+      "invalid": "Controlli l'indirizzo e-mail e di aver spuntato la casella.",
+      "pending": "Iscrizione in corso…",
+      "submit": "Iscrivimi alla lista d'attesa"
+    },
+    "industries": {
+      "craft": "Artigianato ed edilizia",
+      "clinic": "Saloni, studi e trattamenti",
+      "service": "Servizi, consulenza e immobiliare",
+      "retail": "Commercio B2B e ufficio",
+      "other": "Altro settore"
+    },
+    "interestOptions": {
+      "missed_calls": "Chiamate perse in orario di apertura",
+      "calendar_booking": "Prenotazione automatica in calendario",
+      "quote_followup": "Follow-up sui preventivi"
+    }
+  },
+  "video": {
+    "title": "Scopra cosa sa fare Dialogbot",
+    "posterAlt": "Dialogbot risponde al telefono per una piccola impresa – spiegato in 70 secondi",
+    "description": "Dialogbot spiegato in 70 secondi: risponde al telefono, prenota appuntamenti, risponde sul sito web, e lei approva tutto ciò che è autorizzato a dire.",
+    "playAria": "{title} – riproduci il video (70 secondi)",
+    "short": "70 sec.",
+    "chipMeta": "70 secondi · con sottotitoli · spiega esattamente cosa offriamo",
+    "close": "Chiudi il video",
+    "captionsLabel": "Danese",
+    "unsupported": "Il suo browser non riesce a riprodurre il video.",
+    "download": "Scarica il video",
+    "soundsGood": "Le sembra interessante per voi?",
+    "tryDialogbot": "Provi Dialogbot",
+    "guide": "La guida alla configurazione",
+    "endTitle": "Provi Dialogbot di persona",
+    "endText": "La richiama entro 10 secondi e la accoglie come il suo receptionist.",
+    "endCta": "Lo provi: la richiama lui",
+    "endGuide": "Apri la guida alla configurazione",
+    "again": "Rivedi il video"
+  },
+  "proof": {
+    "eyebrow": "Cosa dicono i clienti",
+    "title": "Aziende che lasciano rispondere Dialogbot al telefono",
+    "trustpilot": "su Trustpilot · {n} recensioni",
+    "screenshotCaption": "Ecco come appare l'approvazione: Dialogbot vi mostra prima la modifica, prima → dopo, «Approvare?».",
+    "founderLabel": "L'uomo dietro Dialogbot",
+    "linkedin": "Mi trovi su LinkedIn →",
+    "data": {
+      "quotes": {},
+      "usageLabel": "",
+      "founderRole": "",
+      "founderWhy": "",
+      "screenshotAlt": ""
+    }
+  },
+  "lego": {
+    "partsTitle": "Le serve"
+  },
+  "cookies": {
+    "label": "Cookie statistici",
+    "title": "Possiamo misurare le visite?",
+    "text": "Vorremmo usare Google Analytics per vedere quali pagine vengono lette, così da migliorare il sito. Questo imposta un cookie statistico. Può rifiutare: il sito funziona esattamente allo stesso modo.",
+    "readMore": "Maggiori informazioni",
+    "accept": "Sì, va bene",
+    "decline": "No, grazie",
+    "settings": "Impostazioni dei cookie"
+  }
+}

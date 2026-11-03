@@ -358,7 +358,7 @@
     },
     "answering": {
       "voice": "Voice",
-      "voiceHint": "Choose a Danish voice",
+      "voiceHint": "Choose a voice",
       "greeting": "Greeting",
       "greetingHint": "Write how the assistant greets",
       "hours": "Opening hours",
@@ -462,7 +462,7 @@
   "voices": {
     "readersBlocked": "Voices can be viewed by staff, administrators and owners.",
     "eyebrow": "Voices",
-    "title": "Danish voice for your assistant",
+    "title": "Voice for your assistant",
     "intro": "Choose the voice customers hear on the phone. The web chat doesn't use speech. Only voices that have passed Dialogbot's checks can be selected.",
     "recordOwn": "Record your own voice",
     "operatorView": "Operator view",
@@ -472,7 +472,7 @@
       "unknown": "Gender not specified"
     },
     "engineSimulated": "Test environment: the speech engine is simulated. Samples are a tone, not speech, and don't count as a tested voice.",
-    "engineMissing": "Choose the Danish voice your customers will hear on the phone. More voices are added continuously.",
+    "engineMissing": "Choose the voice your customers will hear on the phone. More voices are added continuously.",
     "steps": {
       "aria": "Voice setup",
       "step": "Step {n}",
@@ -488,7 +488,7 @@
     },
     "standard": {
       "title": "Choose phone voice",
-      "intro": "Danish voices that work right away. The choice applies to all your phone numbers and campaigns, and you can always switch. You hear the voice when you call your number.",
+      "intro": "Natural voices that work right away. The choice applies to all your phone numbers and campaigns, and you can always switch. You hear the voice when you call your number.",
       "danish": "Danish",
       "inUse": "In use",
       "stopAria": "Stop the sample of {name}",
@@ -518,7 +518,7 @@
       "unknown": "Not specified",
       "dialect": "Dialect",
       "notAssessed": "Not assessed",
-      "empty": "More Danish voices – including dialects – are on the way. They will appear here once they have passed our checks of rights, audio quality and phone sound. Until then, the phone uses the voice you selected above.",
+      "empty": "More voices – including dialects and accents – are on the way. They will appear here once they have passed our checks of rights, audio quality and phone sound. Until then, the phone uses the voice you selected above.",
       "default": "Default",
       "pilot": "Pilot in your workspace",
       "listeningPending": "Listening test pending",

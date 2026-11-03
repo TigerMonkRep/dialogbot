@@ -1,1 +1,948 @@
-{}
+{
+  "ui": {
+    "reference": "Référence : {id}"
+  },
+  "status": {
+    "complete": "Terminé",
+    "passed": "Réussi",
+    "approved": "Validé",
+    "published": "Envoyé",
+    "accepted": "Accepté",
+    "in_progress": "En cours",
+    "in_review": "En relecture",
+    "scheduled": "Planifié",
+    "publishing": "Envoi en cours",
+    "pending": "En attente",
+    "stale": "Obsolète",
+    "rejected": "Refusé",
+    "blocked": "Bloqué",
+    "expired": "Expiré",
+    "failed": "Échoué",
+    "not_available": "Non disponible",
+    "not_started": "Non démarré",
+    "untested": "Non testé",
+    "skipped": "Ignoré",
+    "draft": "Brouillon",
+    "superseded": "Remplacé",
+    "cancelled": "Annulé",
+    "revoked": "Révoqué"
+  },
+  "nav": {
+    "today": "Aujourd’hui",
+    "knowledge": "Ce qu’il sait",
+    "calls": "Appels",
+    "week": "La semaine"
+  },
+  "shell": {
+    "verify": {
+      "before": "Votre adresse e-mail n’est pas confirmée.",
+      "link": "Confirmer maintenant",
+      "after": "pour créer des espaces de travail."
+    },
+    "skip": "Aller au contenu",
+    "homeAria": "Dialogbot – Aujourd’hui",
+    "envStaging": "Préproduction",
+    "envDev": "Développement",
+    "tagline": "L’accueil IA qui répond au téléphone pour vous",
+    "env": "Environnement : {env}",
+    "help": "Aide",
+    "workspaceAria": "Espace de travail : {name}",
+    "chooseWorkspace": "Choisir un espace de travail",
+    "newWorkspace": "Nouvel espace de travail",
+    "pages": "Pages",
+    "accountAria": "Compte : {name}",
+    "account": "Compte",
+    "viewAs": {
+      "before": "Vous consultez en tant que",
+      "after": "– lecture seule, aucune modification possible.",
+      "end": "Quitter et revenir à l’administration"
+    }
+  },
+  "outcome": {
+    "booked": "Rendez-vous pris",
+    "to_you": "Pour vous",
+    "done": "Traité"
+  },
+  "overview": {
+    "turnedOn": "Dialogbot est activé",
+    "turnedOnSub": "Il répondra au téléphone au prochain appel de vos clients.",
+    "notDone": "Pas terminé",
+    "setupNext": "La configuration n’est pas terminée · prochaine étape : {n}",
+    "step1": "– entreprise",
+    "step2": "– agenda & outils",
+    "step3": "– test & activation",
+    "continue": "Continuer",
+    "isOn": "Dialogbot est activé",
+    "isOff": "Dialogbot est désactivé",
+    "isNotOn": "Dialogbot n’est pas activé",
+    "statusLine": {
+      "active": "Répond au téléphone quand vous ne le faites pas.",
+      "paused": "En pause – les appels vous parviennent comme avant.",
+      "not_started": "Le téléphone n’est pas encore configuré.",
+      "awaiting_info": "Des informations manquent avant de pouvoir connecter le téléphone.",
+      "provisioning": "La connexion est en cours de préparation.",
+      "ready_for_test": "Prêt pour l’appel test.",
+      "test_failed": "L’appel test a échoué – réessayez."
+    },
+    "setUpPhone": "Configurer le téléphone",
+    "tiles": {
+      "calls": "appels",
+      "callsSub": "dernières 24 heures",
+      "leads": "nouvelles demandes",
+      "leadsSub": "{n} ouvertes au total",
+      "toYou": "pour vous",
+      "toYouSub": "attendent votre réponse"
+    },
+    "toYou": "Pour vous",
+    "toYouSub": "La seule chose à faire aujourd’hui.",
+    "nothingWaiting": "Rien ne vous attend pour le moment.",
+    "todo": {
+      "lead": {
+        "tag": "Nouvelle demande",
+        "cta": "Ouvrir"
+      },
+      "conversation": {
+        "tag": "Vous attend",
+        "cta": "Répondre"
+      },
+      "task": {
+        "tag": "Tâche",
+        "cta": "Ouvrir"
+      },
+      "knowledge": {
+        "tag": "À valider",
+        "cta": "Relire"
+      },
+      "import": {
+        "tag": "Suggestion",
+        "cta": "Voir les suggestions"
+      }
+    },
+    "latestCalls": "Derniers appels",
+    "latestCallsSub": "Cliquez sur un appel pour lire ce qui a été dit.",
+    "noCalls": "Aucun appel pour l’instant.",
+    "callsStaffOnly": "Les appels sont visibles par les collaborateurs, administrateurs et propriétaires.",
+    "read": "Lire",
+    "allCalls": "Voir tous les appels",
+    "appointments": "Rendez-vous",
+    "noAppointments": "Aucun rendez-vous à venir.",
+    "weekAppointments": "Voir les rendez-vous de la semaine",
+    "campaigns": "Campagnes",
+    "campaignsSub": "Appelez vos propres clients – 4 kr. par appel + 2 kr. par minute de conversation HT.",
+    "openCampaigns": "Ouvrir les campagnes",
+    "allActivity": "Toute l’activité des 14 derniers jours",
+    "power": {
+      "aria": "Activer ou désactiver Dialogbot",
+      "onlyAdmins": "Seuls les propriétaires et administrateurs peuvent activer et désactiver",
+      "setupFirst": "Le téléphone doit être configuré avant de pouvoir activer Dialogbot"
+    }
+  },
+  "time": {
+    "today": "Aujourd’hui",
+    "yesterday": "Hier",
+    "minSec": "{m} min {s} s",
+    "weekdaysShort": [
+      "Lun",
+      "Mar",
+      "Mer",
+      "Jeu",
+      "Ven",
+      "Sam",
+      "Dim"
+    ],
+    "weekdaysShortLower": [
+      "lun",
+      "mar",
+      "mer",
+      "jeu",
+      "ven",
+      "sam",
+      "dim"
+    ]
+  },
+  "calls": {
+    "resolve": "Marquer comme traité",
+    "saveAsLead": "Enregistrer comme demande",
+    "reply": {
+      "label": "Répondre au client dans le chat",
+      "placeholderStaff": "Écrivez votre réponse…",
+      "placeholderAi": "En répondant, vous reprenez la conversation et Dialogbot se met en pause.",
+      "send": "Envoyer la réponse",
+      "handBack": "Rendre la main à Dialogbot"
+    },
+    "staffOnly": "Les appels et messages sont visibles par les collaborateurs, administrateurs et propriétaires.",
+    "title": "Appels et messages",
+    "eyebrow": "Tout ce dont Dialogbot a parlé avec vos clients",
+    "filtersAria": "Filtres",
+    "filters": {
+      "all": "Tous",
+      "to_you": "Pour vous",
+      "booked": "Rendez-vous",
+      "done": "Traités par Dialogbot",
+      "webchat": "Chat web"
+    },
+    "lastDays": "{n} derniers jours",
+    "search": "Rechercher un nom, un numéro ou un sujet",
+    "noMatch": "Aucun appel ni message ne correspond au filtre.",
+    "empty": "Aucun appel ni message pour l’instant. Quand vos clients appellent ou écrivent, tout est regroupé ici.",
+    "showing": "Affichage des {n} plus récents sur {total}. Utilisez la recherche ou une période plus courte.",
+    "conversation": "La conversation",
+    "back": "Tous les appels et messages",
+    "phone": "Téléphone",
+    "transcript": "Transcription",
+    "noTranscript": "Aucune transcription enregistrée.",
+    "staff": "Collaborateur",
+    "staffInitial": "C",
+    "actions": "Ce qu’a fait Dialogbot",
+    "run": {
+      "ok": "Effectuée",
+      "failed": "Échouée",
+      "refused": "Non effectuée"
+    },
+    "simulated": "simulé",
+    "callBack": "Rappeler",
+    "makeAppointment": "Prendre rendez-vous",
+    "openLead": "Ouvrir la demande",
+    "takenOver": "Un collaborateur a repris la conversation – Dialogbot ne répond plus tant qu’on ne lui rend pas la main.",
+    "wrongAnswer": "La réponse était fausse ? Dites-le à l’assistant sous « Ce qu’il sait » – il se corrigera."
+  },
+  "common": {
+    "save": "Enregistrer",
+    "saved": "Enregistré",
+    "kr": "{amount} kr.",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler"
+  },
+  "week": {
+    "form": {
+      "edit": "Modifier moi-même",
+      "email": "Envoyer le rapport de la veille par e-mail",
+      "at": "À"
+    },
+    "staffOnly": "La semaine est visible par les collaborateurs, administrateurs et propriétaires.",
+    "weekN": "Semaine {n}",
+    "title": "Bilan de la semaine",
+    "chooseWeek": "Choisir une semaine",
+    "thisWeek": "Cette semaine",
+    "num": {
+      "answered": "appels et messages traités",
+      "answeredSub": "{phone} au téléphone · {chat} en chat web",
+      "bookings": "rendez-vous pris",
+      "vsLastWeek": "{d} par rapport à la semaine dernière",
+      "noneYet": "aucun pour l’instant",
+      "toYou": "messages pour vous",
+      "waiting": "vous attendent",
+      "allDone": "tous traités",
+      "response": "avant sa réponse dans le chat",
+      "noChat": "aucun chat cette semaine",
+      "allDay": "24 h/24"
+    },
+    "perDay": "Appels par jour",
+    "answered": "traités",
+    "messageToYou": "message pour vous",
+    "dayAria": "{day} : {answered} traités, {toYou} pour vous",
+    "topics": {
+      "title": "Ce que vos clients ont demandé",
+      "sub": "S’il manque une réponse, ajoutez-la sous « Ce qu’il sait ».",
+      "empty": "Aucune question cette semaine.",
+      "topic": "Sujet",
+      "times": "Fois",
+      "couldAnswer": "Dialogbot a pu répondre",
+      "yes": "Oui",
+      "booked": "{n} rendez-vous",
+      "no": "Non",
+      "partly": "En partie ({n} sur {total})",
+      "tookMessage": "a pris un message",
+      "addAnswer": "Ajouter une réponse",
+      "note": "Regroupé automatiquement à partir de ce que les clients ont écrit ou dit en premier. Deux questions similaires sont fusionnées."
+    },
+    "report": {
+      "title": "Rapport quotidien",
+      "on": {
+        "before": "Chaque jour à",
+        "after": "les propriétaires et administrateurs reçoivent les appels et rendez-vous de la veille dans un seul e-mail."
+      },
+      "off": {
+        "before": "Le rapport quotidien par e-mail est",
+        "bold": "désactivé",
+        "after": ". Vous trouverez les chiffres de la semaine ici."
+      },
+      "ask": "Vous pouvez aussi demander à l’assistant : « Envoie le rapport à 18 h »."
+    },
+    "cost": {
+      "title": "Coût de la semaine",
+      "extra": "{amount} en supplément",
+      "calls": "{n} appels de campagne",
+      "note": "300 minutes d’appels entrants par mois sont incluses dans l’abonnement. Appels de campagne cette semaine : {n} (4 kr. par appel sortant + 2 kr. par minute de conversation, HT).",
+      "billing": "Voir l’abonnement et les factures"
+    }
+  },
+  "bookings": {
+    "source": {
+      "webchat": "Chat web",
+      "phone": "Téléphone",
+      "manual": "Manuel"
+    },
+    "card": {
+      "confirmCancel": "Annuler le rendez-vous ? Le client n’est pas prévenu automatiquement – appelez-le ou écrivez-lui.",
+      "call": "Appeler",
+      "conversation": "La conversation",
+      "lead": "Demande",
+      "cancel": "Annuler"
+    },
+    "book": {
+      "noSlotsError": "Aucun créneau disponible. Vérifiez les horaires d’ouverture et l’agenda.",
+      "type": "De quoi ont-ils besoin ?",
+      "name": "Nom",
+      "phone": "Téléphone",
+      "when": "Quand",
+      "first": "Premier créneau libre – {label}",
+      "noSlots": "Aucun créneau disponible",
+      "booked": "Réservé : {label}.",
+      "booking": "Réservation…",
+      "submit": "Réserver",
+      "note": "Le client ne reçoit pas encore de SMS – envoyez-lui vous-même une confirmation. « Premier créneau libre » prend le prochain horaire permis par les horaires d’ouverture et l’agenda."
+    },
+    "calendar": {
+      "reading": "Lecture…",
+      "readNow": "Lire l’agenda maintenant",
+      "copied": "Adresse copiée",
+      "copy": "Copier l’adresse de l’agenda",
+      "title": "Agenda",
+      "error": "Impossible de lire l’agenda",
+      "connected": "Connecté",
+      "notConnected": "Non connecté",
+      "lastRead": "Dernière lecture {at} · {n} périodes occupées. Dialogbot voit uniquement quand vous êtes occupé.",
+      "without": "Sans agenda, Dialogbot ne connaît que les horaires d’ouverture et les rendez-vous qu’il a lui-même pris.",
+      "change": "Connecter ou changer d’agenda"
+    },
+    "staffOnly": "Les rendez-vous sont visibles par les collaborateurs, administrateurs et propriétaires.",
+    "eyebrow": "Aujourd’hui → Rendez-vous",
+    "title": "Rendez-vous pris par Dialogbot",
+    "intro": "Déplacez ou annulez ici. Les créneaux occupés de votre agenda sont bloqués, et chaque réservation devient une demande avec une tâche.",
+    "prevWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "noHours": {
+      "before": "Aucun horaire d’ouverture n’est validé, il n’y a donc aucun créneau disponible.",
+      "link": "Ajoutez vos horaires sous « Ce qu’il sait »"
+    },
+    "weekAria": "Rendez-vous de la semaine",
+    "closed": "Fermé · Dialogbot ne prend pas de rendez-vous",
+    "none": "Aucun rendez-vous",
+    "bookFor": "Réserver pour un client",
+    "noTypes": {
+      "before": "Il n’y a pas encore de type de rendez-vous.",
+      "link": "Créez-en un sous Tous les paramètres → Rendez-vous"
+    },
+    "rules": {
+      "title": "Comment il prend les rendez-vous",
+      "online": "Réservation en ligne",
+      "on": "Activée",
+      "off": "Désactivée",
+      "noHours": "Aucun horaire d’ouverture",
+      "earliest": "Au plus tôt",
+      "immediately": "immédiatement",
+      "hoursAhead": "{n} heures à l’avance",
+      "horizon": "au plus {n} jours à l’avance",
+      "pause": "Battement",
+      "buffer": "{n} min entre les rendez-vous",
+      "types": "Types",
+      "noTypes": "Aucun",
+      "ask": "Dites-le à l’assistant – il vous montre la règle avant qu’elle ne s’applique. Toutes les règles :",
+      "allSettings": "Tous les paramètres → Rendez-vous"
+    }
+  },
+  "leads": {
+    "qual": {
+      "unqualified": "Non évaluée",
+      "qualified": "Qualifiée",
+      "disqualified": "Non pertinente"
+    },
+    "pipe": {
+      "new": "Nouvelle",
+      "contacted": "Contactée",
+      "won": "Gagnée",
+      "lost": "Perdue"
+    },
+    "bill": {
+      "pending": "En attente de validation",
+      "approved": "Validée",
+      "rejected": "Refusée"
+    },
+    "source": {
+      "webchat": "Chat web",
+      "phone": "Téléphone",
+      "manual": "Manuelle",
+      "campaign": "Campagne"
+    },
+    "callbackWindow": "{day} de {from} à {to}",
+    "editor": {
+      "title": "Client et besoin",
+      "name": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "need": "Besoin",
+      "qualification": "Qualification",
+      "locked": "Verrouillé, car la facturation est réglée.",
+      "reason": "Motif",
+      "pipeline": "Suivi"
+    },
+    "billing": {
+      "title": "Facturation",
+      "price": {
+        "before": "Prix de cette demande (ancien contrat) :",
+        "after": "HT (contrat v{v})."
+      },
+      "included": "Validée. Aucun prix par demande – elle est incluse dans l’abonnement (contrat v{v}).",
+      "reason": "Motif : {reason}",
+      "modelB": "Ancien contrat v{v} : une demande validée coûte {price} HT.",
+      "modelA": "Contrat v{v} : l’abonnement couvre la demande – il n’y a aucun prix par demande.",
+      "noAgreement": "L’abonnement n’est pas encore confirmé – le propriétaire le confirme sous Paramètres → Contrat.",
+      "monthly": "Les demandes validées figurent sur le récapitulatif du mois (voir Facturation).",
+      "reasonLabel": "Motif (obligatoire en cas de refus)",
+      "approve": "Valider la demande",
+      "reject": "Refuser",
+      "onlyQualified": "Seules les demandes qualifiées peuvent être validées.",
+      "adminsApprove": "Les propriétaires et administrateurs valident les demandes."
+    },
+    "tasks": {
+      "title": "Tâches",
+      "none": "Aucune tâche.",
+      "doneAria": "Terminée : {title}",
+      "due": "Échéance {at}",
+      "new": "Nouvelle tâche",
+      "newPlaceholder": "Nouvelle tâche…",
+      "add": "Ajouter"
+    },
+    "back": "Demandes",
+    "noName": "(sans nom)",
+    "created": "créée {at}",
+    "wantsCall": "Souhaite être rappelé {window}",
+    "seeConversation": "Voir la conversation"
+  },
+  "campaigns": {
+    "status": {
+      "draft": "Brouillon",
+      "running": "En cours",
+      "paused": "En pause",
+      "completed": "Terminée"
+    },
+    "contactStatus": {
+      "pending": "En attente",
+      "calling": "Appel en cours",
+      "done": "Joint",
+      "no_answer": "Pas de réponse",
+      "failed": "Échec",
+      "opted_out": "Refuse les appels",
+      "skipped": "Bloqué"
+    },
+    "outcome": {
+      "interested": "Intéressé",
+      "callback": "À rappeler",
+      "not_interested": "Pas intéressé",
+      "opt_out": "Ne veut pas être appelé",
+      "no_answer": "Pas de réponse"
+    },
+    "staffOnly": "Les campagnes sont visibles par les collaborateurs, administrateurs et propriétaires.",
+    "eyebrow": "Aujourd’hui → Campagnes",
+    "enable": {
+      "title": "Vous voulez aussi passer des appels ?",
+      "body": "Dialogbot peut appeler vos propres clients avec un message – par exemple une offre – et vous transmettre les personnes intéressées. Cela coûte {price} par appel sortant HT. Aucun appel n’est passé avant votre validation.",
+      "onlyAdmins": "Seuls les propriétaires et administrateurs peuvent activer les appels sortants.",
+      "ask": "Vous pouvez aussi le demander à l’assistant.",
+      "pending": "Activation…",
+      "button": "Oui, activer les appels sortants"
+    },
+    "eyebrowPrice": "Aujourd’hui → Campagnes · appels sortants · {price} par appel HT",
+    "title": "Appelez vos clients – une campagne à la fois",
+    "intro": "Trois étapes : vous choisissez qui appeler, écoutez ce qu’il dira, et validez le prix avant le premier appel. Le prix est de {price} + TVA par appel sortant – chaque appel compte, y compris une nouvelle tentative. {attempts} tentatives maximum et {minutes} minutes de conversation au total par contact. Dialogbot n’appelle jamais une personne inscrite sur la liste d’opposition.",
+    "salesCalls": "Appels commerciaux : laisser l’IA appeler (Dialogbot uniquement)",
+    "need": {
+      "title": "Il vous faut",
+      "list": "une liste de noms et numéros (CSV ou collée depuis Excel)",
+      "sentence": "une phrase expliquant pourquoi vous appelez"
+    },
+    "onlyAdmins": "Seuls les administrateurs et propriétaires peuvent créer et lancer des campagnes.",
+    "previous": "Campagnes précédentes",
+    "none": "Aucune campagne pour l’instant.",
+    "summary": "{calls} appels · {answered} joints · {interested} intéressés · {open} restants",
+    "stats": {
+      "contacts": "Contacts",
+      "answered": "Joints",
+      "interested": "Intéressés",
+      "callback": "À rappeler",
+      "noAnswer": "Pas de réponse",
+      "left": "Restants"
+    },
+    "detail": {
+      "who": "Qui doit-il appeler ?",
+      "contacts": "{n} contacts. Les numéros inscrits sur la liste d’opposition sont ignorés. Dialogbot n’utilise que le nom et le numéro.",
+      "noContacts": "Aucun contact pour l’instant.",
+      "private": "Particulier",
+      "business": "Professionnel",
+      "consent": "consentement",
+      "noConsent": "Consentement manquant – ne sera pas appelé",
+      "attempts": "{n} tentatives",
+      "priceNote": "{price} kr. par appel HT. Vous ne payez que les appels passés. Arrêtez à tout moment."
+    },
+    "new": {
+      "title": "Nouvelle campagne",
+      "name": "Nom de la campagne",
+      "namePlaceholder": "Offre de printemps 2027",
+      "purpose": "Quel est l’objet de l’appel ?",
+      "purposeHint": "Par ex. « Proposer un ponçage de parquet aux anciens clients avant les vacances d’été ». L’IA propose le script à partir de cela et de vos connaissances.",
+      "create": "Créer la campagne"
+    },
+    "editor": {
+      "suggested": "La proposition de l’IA a été insérée. Ajustez-la, puis cliquez sur Enregistrer.",
+      "saved": "Enregistré.",
+      "what": "Que doit-il dire ?",
+      "suggesting": "Proposition en cours…",
+      "suggest": "Proposer avec l’IA",
+      "running": "La campagne est en cours. Mettez-la en pause pour modifier le script.",
+      "purpose": "Objet de l’appel",
+      "opening": "Première réplique",
+      "openingHint": "{navn} est remplacé par le prénom du contact et {virksomhed} par le nom de votre entreprise. L’assistant indique toujours qu’il est un assistant numérique.",
+      "questions": "Questions (une par ligne)",
+      "success": "Quand le contact est-il intéressé ?",
+      "fromNumber": "Appeler depuis le numéro",
+      "addNumber": "Ajoutez votre numéro sous Paramètres → Téléphonie.",
+      "chooseNumber": "Choisir un numéro",
+      "when": "Quand – et que fait-il des réponses ?",
+      "whenSub": "Si le client dit oui, il vous est transmis comme demande. S’il dit non, il est ajouté à la liste d’opposition.",
+      "onlyCalls": "Les appels ont lieu uniquement",
+      "from": "De",
+      "to": "À",
+      "save": "Enregistrer la campagne"
+    },
+    "import": {
+      "title": "Ajouter des contacts",
+      "intro": "Téléversez un fichier CSV (par ex. enregistré depuis Excel) ou collez la liste. Colonnes : nom, téléphone et éventuellement entreprise et e-mail. Les numéros danois peuvent être saisis sans +45. Les numéros inscrits sur la liste d’opposition sont ignorés.",
+      "added": "{n} contacts ajoutés",
+      "duplicates": "{n} existaient déjà",
+      "blocked": "{n} figurent sur la liste d’opposition",
+      "invalid": "{n} numéros invalides (par ex. ligne {rows})",
+      "file": "Fichier CSV",
+      "paste": "Ou collez la liste",
+      "pastePlaceholder": "Nom;Téléphone;Entreprise\nMette Hansen;20 30 40 50;Hansen Byg ApS",
+      "who": "Qui sont les contacts ?",
+      "businesses": "Entreprises",
+      "consumers": "Particuliers",
+      "consent": "Où et quand ont-ils accepté d’être appelés ?",
+      "consentHint": "L’assistant appelle sans humain au bout du fil. Selon l’article 10 de la loi danoise sur les pratiques commerciales (markedsføringsloven), le contact doit l’avoir demandé au préalable – y compris lorsqu’il s’agit d’une entreprise. Il ne suffit pas qu’il ne figure pas sur la liste Robinson ou qu’il ne soit pas protégé contre la prospection dans le registre CVR.",
+      "consentPlaceholder": "Inscription sur le site web, mars 2026",
+      "importing": "Importation…"
+    },
+    "start": {
+      "completed": "La campagne est terminée : tous les contacts ont été appelés.",
+      "running": "La campagne est en cours. Les contacts sont appelés un par un pendant la plage horaire choisie.",
+      "pause": "Mettre en pause",
+      "before": "Avant le lancement",
+      "resumeTitle": "Reprendre la campagne",
+      "heading": "{n} appels · {max} HT maximum",
+      "body": "{n} contacts en attente. {max} + TVA maximum ({gross} TTC) – {call} + TVA par appel sortant et {minute} + TVA par minute de conversation entamée, {attempts} tentatives et {minutes} minutes de conversation maximum par contact. Le paiement ne déclenche jamais d’appel.",
+      "confirm": "Confirmer les règles d’appel",
+      "starting": "Lancement…",
+      "resume": "Reprendre",
+      "start": "Lancer la campagne"
+    },
+    "remove": "Supprimer",
+    "dnc": {
+      "title": "Liste d’opposition",
+      "intro": "Les numéros de cette liste ne sont jamais appelés dans une campagne. Si quelqu’un dit pendant un appel qu’il ne veut plus être appelé, il y est ajouté automatiquement.",
+      "optedOut": "A refusé les appels",
+      "phone": "Numéro de téléphone",
+      "reason": "Motif (facultatif)",
+      "block": "Bloquer le numéro"
+    }
+  },
+  "knowledge": {
+    "kind": {
+      "service": "Prestation",
+      "opening_hours": "Horaires d’ouverture",
+      "coverage_area": "Zone d’intervention",
+      "fact": "Info",
+      "known_answer": "Réponse connue",
+      "unknown_answer": "Sujet interdit",
+      "offer": "Offre"
+    },
+    "unit": {
+      "m2": "m²",
+      "hour": "heure",
+      "item": "unité",
+      "job": "intervention"
+    },
+    "sum": {
+      "noPrice": "Aucun prix",
+      "noTimes": "Aucun horaire",
+      "noZones": "Aucune zone",
+      "human": "L’assistant renvoie vers un humain.",
+      "allAreas": "toutes surfaces",
+      "discount": "-{pct} % à partir de {thr}",
+      "period": "{from} – {to} (inclus)"
+    },
+    "pendingSuggestions": "{n} suggestions en attente",
+    "eyebrow": "Ce qu’il sait sur vous",
+    "title": "Tout ce que Dialogbot peut dire à vos clients",
+    "intro": "Si ce n’est pas ici, il ne le dit pas – il prend alors un message pour vous. Vous pouvez tout corriger directement et tester la réponse avec l’assistant.",
+    "revision": "{n} sujets validés · révision {rev}",
+    "about": {
+      "title": "À propos de vous",
+      "sub": "Ce qu’il dit en premier",
+      "what": "Votre activité",
+      "notFilled": "Pas encore renseigné",
+      "noHours": "Aucun horaire validé",
+      "where": "Où vous intervenez",
+      "notSet": "Non précisé",
+      "addFact": "Ajouter une information qu’il doit connaître"
+    },
+    "edit": "Modifier",
+    "close": "Fermer",
+    "changePending": "Modification en attente",
+    "sell": {
+      "title": "Ce que vous vendez",
+      "sub": "Prestations et tarifs – ce qu’il peut proposer",
+      "none": "Aucune prestation pour l’instant – sans elles, il ne peut pas répondre sur les prix.",
+      "sells": "Le propose",
+      "onlyAsked": "Seulement si on demande",
+      "howMuch": "Combien coûte {name} ?",
+      "offers": "Offres et remises",
+      "addOffer": "Ajouter une offre",
+      "note": "« Le propose » signifie qu’il mentionne lui-même la prestation quand c’est pertinent. « Seulement si on demande » signifie qu’il se contente de répondre sur le prix. Les prix sont HT."
+    },
+    "questions": {
+      "title": "Les questions de vos clients",
+      "sub": "{n} réponses validées",
+      "none": "Aucune réponse type pour l’instant. Ajoutez les questions que vos clients posent le plus souvent.",
+      "add": "Ajouter une réponse"
+    },
+    "rules": {
+      "title": "Ce qu’il ne doit pas faire",
+      "sub": "Dans ces cas, il prend un message pour vous",
+      "none": "Aucune règle pour l’instant.",
+      "add": "Ajouter une règle"
+    },
+    "seeAll": "Voir les {n}",
+    "showFewer": "Afficher moins",
+    "f": {
+      "price": "Prix (HT)",
+      "unit": "Unité",
+      "per": "par {unit}",
+      "promote": "Le propose-t-il de lui-même ?",
+      "after": "Que doit-il dire ensuite ?",
+      "period": "Plage {n}",
+      "opens": "Ouverture",
+      "closes": "Fermeture",
+      "removePeriod": "Supprimer la plage",
+      "addPeriod": "Ajouter une plage",
+      "closed": "En dehors des horaires d’ouverture",
+      "closedPlaceholder": "Par ex. week-ends et jours fériés : prend uniquement des messages",
+      "zones": "Où intervenez-vous ? (séparez par des virgules)",
+      "fact": "Ce qu’il doit savoir",
+      "question": "La question",
+      "answer": "La réponse",
+      "rule": "Sujet sur lequel il ne doit pas se prononcer",
+      "discount": "Remise (%)",
+      "threshold": "À partir de (m²)",
+      "from": "Du",
+      "to": "Au (inclus)",
+      "offerName": "Nom de l’offre",
+      "name": "Nom"
+    },
+    "sendForApproval": "Envoyer pour validation",
+    "savedLive": "Enregistré – Dialogbot l’utilise désormais",
+    "sentToOwner": "Envoyé pour validation à un propriétaire ou administrateur",
+    "sent": "Envoyé pour validation",
+    "hear": {
+      "listening": "Écoute…",
+      "button": "Écouter",
+      "answer": "Voici comment il répond à « {q} »"
+    },
+    "service": {
+      "badPrice": "Indiquez le prix en chiffres, par ex. « à partir de 1.200 kr. » ou « 850 kr. par m² ».",
+      "priceLine": "Prix : {price}.",
+      "add": "Ajouter une prestation",
+      "new": "Nouvelle prestation · 3 champs",
+      "price": "Prix (tel que le client doit l’entendre)",
+      "pricePlaceholder": "à partir de 1.200 kr.",
+      "notePlaceholder": "Par ex. : nous convenons d’une date pour la visite technique",
+      "saveAndShow": "Enregistrer – et me montrer comment il le dit"
+    },
+    "remove": {
+      "confirm": "Supprimer « {label} » ? Dialogbot cesse immédiatement de l’utiliser.",
+      "aria": "Supprimer {label}"
+    },
+    "draft": {
+      "rejectPrompt": "Pourquoi refusez-vous la suggestion ? (enregistré dans le journal)",
+      "rejectDefault": "Ne convient pas",
+      "suggests": "Dialogbot suggère",
+      "now": "Actuellement :",
+      "proposal": "Suggestion :",
+      "approving": "Validation…",
+      "approveAnswer": "Valider la réponse",
+      "approve": "Valider",
+      "awaiting": "En attente de validation par un propriétaire ou administrateur",
+      "editAnswer": "Modifier la réponse"
+    },
+    "import": {
+      "button": "Récupérer depuis le site web",
+      "intro": "Nous lisons vos propres pages et suggérons des prestations, des informations et des réponses types. Les suggestions restent en brouillon jusqu’à votre validation. Les prix ne sont jamais devinés.",
+      "needsAi": "Nécessite que l’IA soit activée sur le serveur.",
+      "url": "Adresse du site web",
+      "urlPlaceholder": "https://www.votre-entreprise.fr",
+      "reading": "Lecture du site…",
+      "fetch": "Obtenir des suggestions",
+      "running": "Lecture des pages et rédaction des suggestions. Cela prend généralement moins d’une minute.",
+      "failed": "L’importation a échoué.",
+      "noNew": "Aucune nouvelle suggestion",
+      "created": "{n} suggestions enregistrées en brouillon – validez-les ci-dessous",
+      "pages": "{n} pages lues."
+    }
+  },
+  "account": {
+    "language": {
+      "title": "Langue",
+      "sub": "La langue de l’application. Enregistrée sur votre utilisateur."
+    },
+    "card": {
+      "opening": "Ouverture de Stripe…",
+      "change": "Changer de carte",
+      "add": "Ajouter une carte de paiement"
+    },
+    "invoiceNow": {
+      "pending": "Création…",
+      "button": "Facturer {month} maintenant"
+    },
+    "referral": {
+      "ask": "Vous avez un code ambassadeur ?",
+      "label": "Code ambassadeur",
+      "placeholder": "Ex. : MADS42",
+      "hint": "De la part de la personne qui vous a recommandé Dialogbot. Vous bénéficiez de 50 % de réduction sur le premier mois facturé.",
+      "add": "Ajouter le code",
+      "referred": "Vous avez été recommandé par {name} (ambassadeur Dialogbot) et bénéficiez de {pct} % de réduction sur le premier mois facturé."
+    },
+    "logout": "Se déconnecter",
+    "role": {
+      "reader": "Lecture",
+      "editor": "Modification",
+      "owner": "Propriétaire"
+    },
+    "team": {
+      "title": "Qui peut voir et modifier",
+      "intro": "Le propriétaire peut tout faire. « Modification » permet de corriger les connaissances et les règles. « Lecture » permet de consulter les appels et les rapports.",
+      "role": "Rôle",
+      "onlyAdmins": "Seuls les propriétaires et administrateurs peuvent inviter et modifier les rôles.",
+      "confirmLeave": "Quitter l’espace de travail ?",
+      "confirmRemove": "Retirer {name} de l’espace de travail ?",
+      "you": "(vous)",
+      "roleFor": "Rôle de {name}",
+      "leave": "Quitter",
+      "confirmRevoke": "Révoquer l’invitation ? Le lien cessera de fonctionner.",
+      "invited": "Invités – pas encore de réponse :",
+      "expires": "expire le {date}",
+      "resend": "Renvoyer",
+      "revoke": "Révoquer",
+      "inviteEmail": "Inviter par e-mail",
+      "emailPlaceholder": "collegue@entreprise.fr",
+      "may": "Droits",
+      "sending": "Envoi…",
+      "invite": "Inviter",
+      "sent": "L’invitation a été envoyée."
+    },
+    "invoiceStatus": {
+      "creating": "En cours de création",
+      "open": "En attente de paiement",
+      "paid": "Payée",
+      "payment_failed": "Échec du paiement",
+      "failed": "Impayée",
+      "void": "Annulée"
+    },
+    "eyebrow": "En fin de carnet · Compte",
+    "title": "Équipe, abonnement et factures",
+    "sub": {
+      "title": "Abonnement",
+      "cardSaved": "Merci – la carte est enregistrée chez Stripe. Son affichage ici peut prendre un instant.",
+      "fixed": "Abonnement fixe",
+      "perMonth": "/mois HT",
+      "confirmed": "Confirmé · contrat v{v}. Configuration en autonomie incluse.",
+      "notConfirmed": "Configuration en autonomie incluse. Pas encore confirmé.",
+      "campaign": "Appels de campagne",
+      "campaignPrice": "par appel + {minute} par minute HT",
+      "campaignMonth": "Ce mois-ci : {calls} appels, {minutes} minutes de conversation · {amount} HT",
+      "inbound": "Appels entrants",
+      "inboundUsed": "sur {n} minutes incluses utilisées ce mois-ci",
+      "inboundExtra": "{n} minutes au-delà du forfait inclus · {amount} HT ({price} par minute entamée).",
+      "inboundPrice": "Les minutes au-delà des {n} coûtent {price} par minute entamée HT.",
+      "confirm": "Confirmer l’abonnement",
+      "ownerMustConfirm": "Le propriétaire doit confirmer l’abonnement.",
+      "older": "Ancien contrat – confirmez l’abonnement pour passer à l’abonnement actuel.",
+      "note": "Les prix sont HT. Sans engagement – dites-le à l’assistant ou écrivez à info@dialogbot.dk si vous souhaitez résilier. Le paiement ne déclenche jamais d’appel."
+    },
+    "pay": {
+      "title": "Paiement",
+      "notConfigured": "Le paiement par carte n’est pas encore configuré. D’ici là, le récapitulatif n’est qu’un aperçu, et aucun prélèvement n’est effectué.",
+      "card": "Carte",
+      "expires": "expire {exp}",
+      "noCard": "Aucune carte de paiement",
+      "withCard": "Chaque mois est facturé à terme échu et prélevé automatiquement sur la carte.",
+      "withoutCard": "Sans carte, le mois n’est pas facturé.",
+      "onlyOwner": "Seul le propriétaire peut modifier la carte de paiement."
+    },
+    "invoices": {
+      "title": "Factures",
+      "soFar": "{month} jusqu’à présent :",
+      "totals": "{net} HT · TVA {tax} · total {gross}",
+      "billedEnd": "Facturé à la fin du mois.",
+      "billedEndCard": "Facturé à la fin du mois, une fois le paiement par carte configuré.",
+      "none": "Aucune facture pour l’instant.",
+      "month": "Mois",
+      "status": "Statut",
+      "total": "Total TTC",
+      "open": "Ouvrir",
+      "pdf": "Télécharger le PDF"
+    },
+    "me": {
+      "unknownDevice": "Appareil inconnu",
+      "browser": "Navigateur",
+      "device": "{browser} sur {os}",
+      "owner": "propriétaire",
+      "reader": "lecture",
+      "editor": "modification",
+      "notVerified": "Votre adresse e-mail n’est pas confirmée – confirmez-la maintenant",
+      "changePassword": "Changer le mot de passe",
+      "operator": "Opérateur",
+      "sales": "Ventes Dialogbot",
+      "sessions": "Connecté sur {n|1 appareil|# appareils}. Si vous réinitialisez votre mot de passe, tous les appareils sont déconnectés.",
+      "thisDevice": "cet appareil",
+      "lastActive": "dernière activité {at}"
+    },
+    "ws": {
+      "title": "Espaces de travail",
+      "this": "celui-ci",
+      "new": "Créer un Dialogbot pour une autre entreprise"
+    },
+    "data": {
+      "title": "Données et historique",
+      "sub": "Qui a modifié quoi, et quand, figure dans l’historique.",
+      "log": "Voir toutes les modifications",
+      "settings": "Tous les paramètres"
+    }
+  },
+  "help": {
+    "start": {
+      "title": "Bien démarrer",
+      "guide": {
+        "q": "L’assistant de configuration",
+        "a": "L’assistant vous guide à travers l’entreprise, les objectifs, les langues et les connaissances. À chaque étape, l’IA propose du contenu à partir de votre site web – vous ajustez et enregistrez."
+      },
+      "fetch": {
+        "q": "Récupérer les informations du site web",
+        "a": "La page Entreprise lit votre site web et remplit la description, le CVR, le téléphone et l’adresse lorsqu’ils y figurent. Les prestations et les horaires deviennent des brouillons."
+      }
+    },
+    "knowledge": {
+      "title": "Connaissances",
+      "approved": {
+        "q": "Seules les connaissances validées sont utilisées",
+        "a": "L’assistant répond exclusivement à partir des sujets validés. Les brouillons et suggestions ne sont jamais utilisés avant d’avoir été validés par un propriétaire ou un administrateur."
+      },
+      "prices": {
+        "q": "Prix",
+        "a": "Les prix sont saisis HT. L’IA ne devine jamais un prix – si un prix figure sur votre site, il est cité dans le brouillon pour que vous puissiez le confirmer."
+      },
+      "edit": {
+        "q": "Supprimer ou modifier",
+        "a": "Modifiez un sujet et enregistrez-le comme nouveau brouillon, ou supprimez-le. Si vous supprimez une connaissance validée, l’assistant cesse immédiatement de l’utiliser."
+      }
+    },
+    "reception": {
+      "title": "Accueil, téléphone et chat",
+      "script": {
+        "q": "Script d’accueil",
+        "a": "Définissez le message d’accueil, ce que l’assistant demande et quand un collaborateur prend le relais. S’applique au téléphone comme au chat."
+      },
+      "phone": {
+        "q": "Téléphone et voix",
+        "a": "Gardez votre numéro et renvoyez-le vers votre numéro Dialogbot. Choisissez une voix, testez la connexion et activez. Les appels arrivent sous Appels, avec transcription."
+      },
+      "webchat": {
+        "q": "Chat web",
+        "a": "Activez le widget, validez vos domaines et insérez le code sur votre site. Vous pouvez reprendre une conversation sous Appels."
+      }
+    },
+    "leads": {
+      "title": "Demandes et facturation",
+      "tasks": {
+        "q": "Demandes et tâches",
+        "a": "Les clients qui souhaitent être recontactés deviennent des demandes avec une tâche. Qualifiez-les, validez-les et traitez-les depuis Appels → Ouvrir la demande."
+      },
+      "billing": {
+        "q": "Facturation",
+        "a": "Il y a un seul abonnement à partir de 2.495 kr. par mois HT, avec 300 minutes d’appels entrants (puis 1,50 kr. par minute). Les appels sortants de campagne coûtent 4 kr. par appel plus 2 kr. par minute de conversation entamée. La page Compte affiche l’aperçu du mois."
+      }
+    },
+    "team": {
+      "title": "Équipe et sécurité",
+      "roles": {
+        "q": "Rôles",
+        "a": "Le propriétaire et l’administrateur valident les connaissances et modifient les paramètres. Les collaborateurs traitent les demandes et les brouillons. Les lecteurs peuvent uniquement consulter."
+      },
+      "log": {
+        "q": "Journal d’activité",
+        "a": "Toutes les validations, suppressions et modifications de paramètres sont journalisées, avec l’auteur et la date."
+      }
+    },
+    "title": "Comment utiliser Dialogbot",
+    "goThere": "Y aller"
+  },
+  "reception": {
+    "staffOnly": "L’accueil est visible par les collaborateurs, administrateurs et propriétaires.",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "eyebrow": "Accueil",
+    "title": "Votre accueil numérique",
+    "intro": "L’assistant répond au téléphone et dans le chat de votre site à partir des connaissances validées et du script ci-dessous. Les clients qui souhaitent être recontactés deviennent des demandes.",
+    "phone": {
+      "notConfigured": "La connexion vocale n’est pas configurée sur le serveur.",
+      "noVoice": "aucune voix choisie",
+      "noNumber": "Aucun numéro actif associé.",
+      "settings": "Paramètres de téléphonie"
+    },
+    "webchat": {
+      "activeOn": "Actif sur {n} domaine(s).",
+      "off": "Le widget n’est pas activé.",
+      "settings": "Paramètres du chat web"
+    },
+    "stats": {
+      "conversations": "Conversations"
+    },
+    "try": "Testez l’assistant avec le script et vos connaissances validées avant vos clients.",
+    "test": "Tester l’assistant",
+    "script": {
+      "title": "Script d’accueil",
+      "intro": "Définit comment l’assistant salue, ce qu’il demande et quand un collaborateur doit prendre le relais – au téléphone et dans le chat. Les informations et les prix proviennent toujours uniquement des connaissances validées.",
+      "activeVersion": "Version active {v}",
+      "onlyAdmins": "Seuls les propriétaires et administrateurs peuvent modifier le script.",
+      "writing": "Rédaction d’une proposition à partir de votre entreprise et de vos connaissances…",
+      "suggested": "La proposition de l’IA a été insérée. Ajustez-la, puis cliquez sur « Enregistrer le script ».",
+      "saved": "Enregistré. L’assistant utilise le script dès la prochaine conversation.",
+      "persona": "Nom de l’assistant (facultatif)",
+      "personaPlaceholder": "par ex. Sophie",
+      "address": "Forme d’adresse",
+      "informal": "tu (informel)",
+      "formal": "vous (formel)",
+      "greeting": "Message d’accueil téléphonique",
+      "greetingHint": "Utilisez {virksomhed} pour le nom de l’entreprise. Si le message ne mentionne pas qu’il s’agit d’un assistant numérique, nous l’ajoutons automatiquement.",
+      "collect": "Ce que l’assistant doit demander (une question par ligne)",
+      "collectHint": "Utilisé lorsque le client souhaite un devis, un rendez-vous ou un rappel. Une question à la fois.",
+      "escalation": "Transférer immédiatement à un collaborateur quand …",
+      "escalationHint": "Par ex. dégâts urgents ou réclamations. L’assistant promet un rappel rapide et crée une demande.",
+      "avoid": "Ce que l’assistant ne doit pas promettre ni commenter",
+      "avoidHint": "Par ex. des prix définitifs sans visite technique.",
+      "closing": "Conclusion",
+      "closingHint": "Courte et aimable.",
+      "suggestAgain": "Proposer à nouveau",
+      "save": "Enregistrer le script"
+    }
+  }
+}

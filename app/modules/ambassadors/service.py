@@ -285,6 +285,7 @@ def send_parent_request(db: OrmSession, a: Ambassador, user: User) -> None:
     link = f"{get_settings().frontend_base_url}/ambassador/foraelder?token={raw}"
     from app.modules.integrations import email_templates as tpl
 
+    # The parent has no account with a known language, so the request stays Danish (the programme is Danish).
     mail = tpl.ambassador_parent(a.parent_name or "", a.full_name, user.email, link, RULES_TEXT,
                                  _kr(a.bonus_minor), f"{a.rate_bp / 100:g} %".replace(".", ","), a.months)
     enqueue(db, event_type="email.ambassador", dedupe_key=f"ambassador-parent:{a.id}:{a.parent_token_hash[:16]}",
@@ -532,7 +533,8 @@ def mark_paid(db: OrmSession, p: AmbassadorPayout, operator_id: uuid.UUID, refer
         from app.modules.integrations import email_templates as tpl
 
         mail = tpl.ambassador_paid(a.full_name.split()[0], _kr(p.amount_minor), a.bank_last4, p.number,
-                                   p.income_type == "b_income", f"{get_settings().frontend_base_url}/ambassador")
+                                   p.income_type == "b_income", f"{get_settings().frontend_base_url}/ambassador",
+                                   lang=u.interface_language or "da")
         enqueue(db, event_type="email.ambassador", dedupe_key=f"ambassador-paid:{p.id}",
                 payload={"to_email": u.email, "email": tpl.to_payload(mail)})
     return p

@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.errors import Conflict, Unauthenticated, ValidationFailed
+from app.core.languages import normalize as normalize_language
 from app.core.outbox import enqueue
 from app.core.security import hash_password, new_token, normalize_email, token_digest, verify_password
 from app.models import AuthToken, Session, User
@@ -48,7 +49,8 @@ def issue_verification(db: OrmSession, user: User) -> None:
                      expires_at=_now() + timedelta(hours=s.verification_ttl_hours)))
     link = f"{s.frontend_base_url}/verify-email?token={raw}"
     enqueue(db, event_type="email.verify_address", dedupe_key=f"verify:{user.id}:{token_digest(raw)[:16]}",
-            payload={"user_id": str(user.id), "to_email": user.email, "link": link})
+            payload={"user_id": str(user.id), "to_email": user.email, "link": link,
+                     "lang": normalize_language(user.interface_language)})
 
 
 def verify_email(db: OrmSession, raw_token: str) -> User:
@@ -98,7 +100,8 @@ def request_password_reset(db: OrmSession, email: str) -> None:
                      expires_at=_now() + timedelta(minutes=s.reset_ttl_minutes)))
     link = f"{s.frontend_base_url}/password/reset?token={raw}"
     enqueue(db, event_type="email.password_reset", dedupe_key=f"reset:{user.id}:{token_digest(raw)[:16]}",
-            payload={"user_id": str(user.id), "to_email": user.email, "link": link})
+            payload={"user_id": str(user.id), "to_email": user.email, "link": link,
+                     "lang": normalize_language(user.interface_language)})
 
 
 def reset_password(db: OrmSession, *, raw_token: str, new_password: str) -> User:

@@ -1,1 +1,260 @@
-{}
+{
+  "notice": "Dies ist eine Übersetzung. Rechtlich verbindlich ist die dänische Fassung.",
+  "shell": {
+    "nav": "Rechtliches",
+    "terms": "Bedingungen",
+    "privacy": "Datenschutz",
+    "contact": "Kontakt",
+    "cvr": "CVR-Nr."
+  },
+  "gdpr": {
+    "meta": {
+      "title": "DSGVO und Daten – so schützt Dialogbot die Daten Ihrer Kunden",
+      "description": "Was Dialogbot über Anrufe und SMS speichert, wo die Daten liegen, wie der Auftragsverarbeitungsvertrag funktioniert und was bei Kündigung passiert. Kurz und in verständlicher Sprache.",
+      "ogTitle": "DSGVO und Daten | Dialogbot"
+    },
+    "kicker": "DSGVO und Daten",
+    "title": "DSGVO und Daten: was wir speichern und wo",
+    "lead": "Ihre Kunden rufen an und schreiben – mit personenbezogenen Daten. Hier steht in verständlicher Sprache, was Dialogbot damit macht.",
+    "points": [
+      "Sie sind Verantwortlicher – Dialogbot ist Ihr Auftragsverarbeiter",
+      "Die Datenbank liegt in der EU",
+      "Der Auftragsverarbeitungsvertrag ist Teil der Bedingungen",
+      "Anrufe können in Text transkribiert werden",
+      "Dialogbot sagt ehrlich, dass er eine KI ist",
+      "Bei Kündigung erhalten Sie auf Wunsch eine Kopie der Daten, danach löschen wir sie"
+    ],
+    "sections": [
+      {
+        "title": "Wer ist wofür verantwortlich?",
+        "body": [
+          { "type": "p", "parts": ["Sie sind ", { "b": "Verantwortlicher" }, " für die Daten Ihrer Kunden. Dialogbot ist ", { "b": "Auftragsverarbeiter" }, " und verarbeitet die Daten nur nach Ihrer Weisung. Das gilt auch, wenn Ihre Kunden Patienten, Mandanten oder Privatpersonen sind."] }
+        ]
+      },
+      {
+        "title": "Was speichern wir?",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              "Telefonnummer, Name und Inhalt der Nachricht, wenn jemand Sie anruft oder Ihnen schreibt",
+              "Eine Niederschrift des Gesprächs – Anrufe können in Text transkribiert werden",
+              "Buchungen und SMS-Bestätigungen",
+              "Die Zusammenfassung jeder Anfrage, die Sie von Dialogbot erhalten",
+              "Das Wissen und die Preise, die Sie selbst für den Assistenten bestätigt haben"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Wo liegen die Daten?",
+        "body": [
+          { "type": "p", "parts": ["Die Datenbank liegt in der EU (Irland), der Server in der EU (Frankfurt). Telefonie, Sprache und KI laufen bei Unterauftragnehmern, von denen einige Daten in den USA verarbeiten können. Dies geschieht auf Grundlage des EU-U.S. Data Privacy Framework oder der Standardvertragsklauseln der EU-Kommission. Die vollständige Liste der Unterauftragsverarbeiter finden Sie in der ", { "link": "/privatliv", "text": "Datenschutzerklärung" }, "."] }
+        ]
+      },
+      {
+        "title": "Auftragsverarbeitungsvertrag",
+        "body": [
+          { "type": "p", "parts": ["Unser Auftragsverarbeitungsvertrag ist Bestandteil der ", { "link": "/vilkaar", "text": "Bedingungen" }, ", Sie müssen also keinen separaten anfordern. Schreiben Sie an ", { "email": true }, ", wenn Sie eine unterzeichnete Kopie für Ihre eigene Dokumentation benötigen."] }
+        ]
+      },
+      {
+        "title": "Was sagt der Assistent den Kunden?",
+        "body": [
+          { "type": "p", "text": "Dialogbot sagt ehrlich, dass er ein digitaler Assistent ist, wenn der Kunde fragt, und weist im Gespräch darauf hin. Er antwortet nur auf Grundlage von Wissen, das Sie selbst bestätigt haben." }
+        ]
+      },
+      {
+        "title": "Wenn Sie kündigen",
+        "body": [
+          { "type": "p", "text": "Ihre Daten gehören Ihnen. Innerhalb von 30 Tagen nach der Kündigung können Sie eine Kopie anfordern. Danach löschen wir sie, sofern das Gesetz nicht verlangt, dass wir sie aufbewahren – z. B. Rechnungen für 5 Jahre." }
+        ]
+      },
+      {
+        "title": "Fragen oder Auskunft",
+        "body": [
+          { "type": "p", "parts": ["Möchte einer Ihrer Kunden Auskunft über seine Daten erhalten oder sie löschen lassen, helfen wir Ihnen bei der Antwort. Schreiben Sie an ", { "email": true }, ". Kunden können sich auch bei der dänischen Datenschutzbehörde ", { "href": "https://www.datatilsynet.dk", "text": "Datatilsynet" }, " beschweren."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Kann ich einen Auftragsverarbeitungsvertrag erhalten?", "Ja. Er ist Bestandteil der Bedingungen. Schreiben Sie an info@dialogbot.dk, wenn Sie eine unterzeichnete Kopie wünschen."],
+      ["Liegen die Daten in der EU?", "Die Datenbank liegt in der EU (Irland) und der Server in der EU (Frankfurt). Einige Unterauftragnehmer für Telefonie, Sprache und KI können Daten in den USA verarbeiten, auf Grundlage des EU-U.S. Data Privacy Framework oder von Standardvertragsklauseln."],
+      ["Was passiert mit den Daten, wenn ich kündige?", "Sie können innerhalb von 30 Tagen eine Kopie anfordern. Danach löschen wir die Daten, sofern das Gesetz nicht verlangt, dass wir sie aufbewahren."]
+    ]
+  },
+  "privacy": {
+    "meta": {
+      "title": "Datenschutz | Dialogbot",
+      "description": "So verarbeitet Dialogbot personenbezogene Daten von Kunden, deren Kunden, Botschaftern und Besuchern."
+    },
+    "label": "Datenschutz",
+    "title": "So verarbeiten wir personenbezogene Daten",
+    "updated": "Aktualisiert am 6. Oktober 2026.",
+    "intro": "Hier sehen Sie, welche Daten Dialogbot verarbeitet, warum, wie lange und wer uns dabei hilft. Die Seite gilt für Kunden, die eigenen Kunden unserer Kunden, Botschafter und Besucher.",
+    "sections": [
+      {
+        "title": "Wer ist verantwortlich?",
+        "body": [
+          { "type": "p", "parts": ["{name} (CVR-Nr. {cvr}), {address}. Schreiben Sie an ", { "email": true }, " zu allen Fragen, die Ihre Daten betreffen."] }
+        ]
+      },
+      {
+        "title": "Kunden (Unternehmen mit einem Konto)",
+        "body": [
+          { "type": "p", "text": "Wir verarbeiten Name, E-Mail-Adresse und Passwort (verschlüsselt gespeichert) der Nutzer, die Angaben zum Unternehmen (Name, CVR, Adresse, Telefon, Öffnungszeiten, Leistungen und Preise) sowie das Wissen, das Sie für den Assistenten hinterlegen. Aus Sicherheitsgründen protokollieren wir wichtige Handlungen, z. B. Bestätigungen und Rollenänderungen." },
+          { "type": "p", "text": "Zweck ist die Erbringung und Abrechnung des Dienstes. Rechtsgrundlage ist der Vertrag mit Ihnen (Art. 6 Abs. 1 lit. b Datenschutz-Grundverordnung) und unser berechtigtes Interesse an Sicherheit und Betrieb (lit. f)." }
+        ]
+      },
+      {
+        "title": "Zahlung",
+        "body": [
+          { "type": "p", "text": "Zahlungskarten werden von Stripe verarbeitet. Wir sehen nur den Kartentyp, die letzten vier Ziffern und das Ablaufdatum. Rechnungen werden nach dem dänischen Buchführungsgesetz (bogføringsloven) 5 Jahre aufbewahrt." }
+        ]
+      },
+      {
+        "title": "Ihre Kunden (Gespräche, Anrufe und Anfragen)",
+        "body": [
+          { "type": "p", "parts": ["Wenn der Assistent am Telefon oder auf der Website mit Ihren Kunden spricht, verarbeiten wir Telefonnummer, Name, Inhalt der Nachricht, eine Niederschrift des Gesprächs, Buchungen und die daraus entstehenden Anfragen. Dies tun wir als ", { "b": "Auftragsverarbeiter" }, " im Auftrag des Unternehmens, das der Kunde kontaktiert hat – das Unternehmen ist Verantwortlicher. Siehe ", { "link": "/vilkaar", "text": "die Bedingungen" }, "."] },
+          { "type": "p", "text": "Anrufe können in Text transkribiert werden. Der Assistent weist zu Beginn des Gesprächs darauf hin, dass er eine KI ist." }
+        ]
+      },
+      {
+        "title": "Botschafter",
+        "body": [
+          { "type": "p", "text": "Wenn Sie Botschafter sind, verarbeiten wir Name, E-Mail-Adresse, Telefon, Geburtsdatum, Ihren Gruß, die von Ihnen vermittelten Kunden (nur Firmenname und Status), Ihren Bonus und Ihre Auszahlungen." },
+          { "type": "p", "parts": ["Ohne CVR-Nummer verarbeiten wir außerdem Ihre ", { "b": "CPR-Nummer" }, " und Ihre ", { "b": "Bankkontonummer" }, ". Die CPR-Nummer wird nur verwendet, um Ihren Bonus als B-Einkommen an die dänische Steuerbehörde (Skattestyrelsen) zu melden, wozu wir verpflichtet sind; die Kontonummer nur für die Auszahlung. Beide werden verschlüsselt gespeichert und können nur von Administratoren von Dialogbot eingesehen werden, und jede Einsicht wird protokolliert. Sind Sie unter 18, verarbeiten wir außerdem Name, E-Mail-Adresse und Zustimmung Ihres Elternteils."] },
+          { "type": "p", "text": "Rechtsgrundlage ist der Vertrag mit Ihnen (Art. 6 Abs. 1 lit. b) sowie unsere rechtliche Meldepflicht (lit. c und § 11 des dänischen Datenschutzgesetzes zur CPR-Nummer). Die Daten werden gespeichert, solange Sie Botschafter sind, und danach aus Gründen der Buchführung und Besteuerung 5 Jahre lang." }
+        ]
+      },
+      {
+        "title": "Warteliste und Demo-Anrufe",
+        "body": [
+          { "type": "p", "parts": [{ "b": "Warteliste:" }, " E-Mail-Adresse, gewählte Branche und Interessen sowie Zeitpunkt der Einwilligung – nur um Sie zu benachrichtigen, wenn wir öffnen. Wird höchstens 24 Monate gespeichert."] },
+          { "type": "p", "parts": [{ "b": "\"Jetzt anrufen lassen\":" }, " Telefonnummer, Name, Unternehmen, Zeitpunkt und Text Ihrer Einwilligung sowie eine Niederschrift des Gesprächs, damit wir anrufen und nachfassen können. Lehnen Sie im Anruf ab, wird die Nummer auf unsere Sperrliste gesetzt. Rechtsgrundlage ist Ihre Einwilligung, die Sie jederzeit widerrufen können."] }
+        ]
+      },
+      {
+        "title": "Cookies",
+        "body": [
+          { "type": "p", "text": "Notwendige Cookies setzen wir ohne Nachfrage: um Sie angemeldet zu halten, sich Ihren gewählten Arbeitsbereich und das Passwort für die Startseite zu merken und – falls Sie über den Link eines Botschafters gekommen sind – welcher Botschafter uns empfohlen hat (90 Tage). Besucherzahlen messen wir auf zwei Arten: mit Vercel Web Analytics, das weder Cookies verwendet noch etwas über Sie speichert, und mit Google Analytics, das ein Statistik-Cookie setzt und nur läuft, wenn Sie im Banner zugestimmt haben – Sie können Ihre Wahl unter \"Cookie-Einstellungen\" unten auf der Seite ändern. Wir verwenden keine Werbe-Cookies." }
+        ]
+      },
+      {
+        "title": "Wer hilft uns? (Unterauftragsverarbeiter)",
+        "body": [
+          { "type": "p", "text": "Wir nutzen folgende Anbieter, die Daten in unserem Auftrag im Rahmen von Auftragsverarbeitungsverträgen verarbeiten:" },
+          {
+            "type": "ul",
+            "items": [
+              "Supabase – Datenbank (EU, Irland)",
+              "Render – Server (EU, Frankfurt)",
+              "Vercel – Website und App",
+              "Resend – Versand von E-Mails (EU, Irland)",
+              "Stripe – Zahlung",
+              "Anthropic – KI-Modell, das die Antworten formuliert",
+              "Vapi und Twilio – Telefonie",
+              "Deepgram und ElevenLabs – Sprache zu Text und Text zu Sprache"
+            ]
+          },
+          { "type": "p", "text": "Einige von ihnen können Daten in den USA verarbeiten. Die Übermittlung erfolgt auf Grundlage des EU-U.S. Data Privacy Framework oder der Standardvertragsklauseln der EU-Kommission." }
+        ]
+      },
+      {
+        "title": "Ihre Rechte",
+        "body": [
+          { "type": "p", "parts": ["Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch – sowie das Recht, eine Einwilligung zu widerrufen. Schreiben Sie an ", { "email": true }, ". Betrifft es ein Gespräch mit einem unserer Kunden, helfen wir diesem Unternehmen, Ihnen zu antworten. Sie können sich bei der dänischen Datenschutzbehörde Datatilsynet beschweren (", { "href": "https://www.datatilsynet.dk", "text": "datatilsynet.dk" }, ")."] }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "meta": {
+      "title": "Bedingungen | Dialogbot",
+      "description": "Abonnement- und Geschäftsbedingungen für Dialogbot."
+    },
+    "label": "Bedingungen",
+    "title": "Abonnement- und Geschäftsbedingungen",
+    "updated": "Version 1 · gültig ab 6. Oktober 2026.",
+    "intro": "Diese Bedingungen gelten, wenn ein Unternehmen ein Konto erstellt und Dialogbot nutzt. Dialogbot wird ausschließlich an Gewerbetreibende verkauft. \"Wir\" ist {name} (CVR-Nr. {cvr}), {address}. \"Sie\" ist das Unternehmen, das den Arbeitsbereich erstellt hat.",
+    "sections": [
+      {
+        "title": "1. Die Leistung",
+        "body": [
+          { "type": "p", "text": "Dialogbot ist ein KI-Rezeptionist, der Anrufe und Nachrichten auf Ihrer Website beantworten, Anfragen entgegennehmen, Termine buchen und – wenn Sie dies wählen – Kontakte anrufen kann, die ihre Einwilligung gegeben haben. Der Assistent antwortet auf Grundlage des Wissens, das Sie selbst in Ihrem Arbeitsbereich bestätigt haben." },
+          { "type": "p", "text": "Wir entwickeln den Dienst laufend weiter. Funktionen, die als \"in Vorbereitung\" oder \"nicht verfügbar\" gekennzeichnet sind, sind nicht Teil des Vertrags, bis sie eingeführt werden." }
+        ]
+      },
+      {
+        "title": "2. Preise",
+        "body": [
+          { "type": "p", "text": "Alle Preise verstehen sich in dänischen Kronen zzgl. MwSt. Die MwSt. (25 %) wird auf der Rechnung hinzugerechnet." },
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Abonnement:" }, " ab 2.495 kr. pro Monat. Es gibt keinen Preis pro Anfrage."],
+              [{ "b": "Kampagnen (ausgehende Anrufe):" }, " 4 kr. pro ausgehendem Anruf plus 2 kr. pro angefangener Gesprächsminute. Jeder getätigte Anruf zählt, auch ein erneuter Versuch (höchstens 2 Versuche und höchstens 3 Gesprächsminuten pro Kontakt). Der höchstmögliche Preis wird angezeigt, bevor eine Kampagne gestartet wird."],
+              [{ "b": "Eingehende Anrufe:" }, " eine dänische Telefonnummer für den Assistenten und 300 angefangene Gesprächsminuten pro Kalendermonat sind inbegriffen. Weitere Minuten kosten 1,50 kr. pro angefangener Minute und werden auf der Monatsrechnung abgerechnet. Der Verbrauch kann laufend in Dialogbot verfolgt werden."]
+            ]
+          },
+          { "type": "p", "text": "Kommen Sie über einen Botschafter, erhalten Sie 50 % Rabatt auf Ihren ersten abgerechneten Monat. Wir können die Preise mit einer Frist von mindestens 30 Tagen per E-Mail ändern; die Änderung gilt ab dem ersten vollen Monat nach der Ankündigung." }
+        ]
+      },
+      {
+        "title": "3. Zahlung",
+        "body": [
+          { "type": "p", "text": "Sie hinterlegen eine Zahlungskarte bei unserem Zahlungsdienstleister Stripe. Wir rechnen einmal im Monat nachträglich für den Vormonat ab, und der Betrag wird automatisch von der Karte abgebucht. Wir selbst speichern keine Kartendaten." },
+          { "type": "p", "text": "Kann die Zahlung nicht durchgeführt werden, werden Sie benachrichtigt. Ist eine Rechnung 14 Tage nach Fälligkeit nicht bezahlt, können wir den Assistenten pausieren, bis die Zahlung erfolgt ist." },
+          { "type": "p", "parts": ["Haben Sie Fragen zu einer Rechnung, ", { "link": "/kontakt", "text": "kontaktieren Sie uns" }, ", bevor Sie bei Ihrer Bank Widerspruch einlegen."] }
+        ]
+      },
+      {
+        "title": "4. Beginn, Laufzeit und Kündigung",
+        "body": [
+          { "type": "p", "text": "Der Vertrag läuft, bis er gekündigt wird. Sie können zum Ende des laufenden Monats kündigen, indem Sie uns schreiben. Wir können mit einer Frist von 30 Tagen kündigen. Es gibt keine Mindestlaufzeit. Die Einrichtung ist inbegriffen, wenn Sie sie selbst vornehmen; die Einrichtung durch die Spezialisten von Dialogbot kostet 5.000 kr. zzgl. MwSt. und wird einmalig gezahlt, bevor die Arbeit beginnt." },
+          { "type": "p", "text": "Bei wesentlicher Vertragsverletzung – z. B. Missbrauch des Dienstes oder Nichtzahlung – können wir den Zugang ohne Vorankündigung sperren." }
+        ]
+      },
+      {
+        "title": "5. Ihre Verantwortung",
+        "body": [
+          { "type": "p", "text": "Sie sind dafür verantwortlich, dass das Wissen, die Preise, Öffnungszeiten und Antworten, die Sie bestätigen, korrekt sind, und dafür, den Anfragen nachzugehen, die der Assistent entgegennimmt." },
+          { "type": "p", "text": "Nutzen Sie Kampagnen (ausgehende Anrufe), sind Sie dafür verantwortlich, dass jeder Kontakt eine vorherige, nachweisbare Einwilligung erteilt hat, von einem automatisierten System angerufen zu werden, vgl. § 10 des dänischen Marketinggesetzes (markedsføringsloven), und dass Unternehmen mit Werbesperre nicht kontaktiert werden. Der Dienst darf nicht für rechtswidrige, irreführende oder verletzende Inhalte genutzt werden." },
+          { "type": "p", "text": "Sie müssen Ihre Zugangsdaten vertraulich behandeln und den richtigen Personen in Ihrem Team Zugang gewähren." }
+        ]
+      },
+      {
+        "title": "6. KI und Haftungsbeschränkung",
+        "body": [
+          { "type": "p", "text": "Der Assistent nutzt künstliche Intelligenz. Er ist angewiesen, nur auf Grundlage Ihres bestätigten Wissens zu antworten und es zu sagen, wenn er die Antwort nicht kennt, kann sich aber irren oder etwas missverstehen. Er weist stets darauf hin, dass er eine KI ist." },
+          { "type": "p", "text": "Wir haften nicht für indirekte Verluste, z. B. entgangenen Umsatz, verlorene Kunden oder Folgeschäden. Unsere Gesamthaftung ist auf den Betrag begrenzt, den Sie in den letzten 3 Monaten vor dem Schaden für den Dienst gezahlt haben. Wir haften nicht für Ausfälle bei Dritten wie Telefonanbietern und Cloud-Anbietern oder für Umstände außerhalb unserer Kontrolle." }
+        ]
+      },
+      {
+        "title": "7. Daten und personenbezogene Daten",
+        "body": [
+          { "type": "p", "parts": ["Ihre Daten gehören Ihnen. Wenn der Assistent mit Ihren Kunden spricht, verarbeiten wir personenbezogene Daten in Ihrem Auftrag als Auftragsverarbeiter. Wir verarbeiten Daten nur nach Ihrer Weisung und gemäß unserem Auftragsverarbeitungsvertrag, der Bestandteil dieser Bedingungen ist. Die Liste der von uns genutzten Unterauftragsverarbeiter (u. a. Hosting, Telefonie, Sprache und KI) finden Sie in der ", { "link": "/privatliv", "text": "Datenschutzerklärung" }, "."] },
+          { "type": "p", "text": "Bei Kündigung können Sie innerhalb von 30 Tagen eine Kopie Ihrer Daten anfordern. Danach löschen wir sie, sofern das Gesetz nicht verlangt, dass wir sie aufbewahren (z. B. Rechnungen für 5 Jahre)." }
+        ]
+      },
+      {
+        "title": "8. Änderungen der Bedingungen",
+        "body": [
+          { "type": "p", "text": "Wir können die Bedingungen mit einer Frist von 30 Tagen per E-Mail ändern. Wesentliche Änderungen zu Ihrem Nachteil berechtigen Sie zur Kündigung mit Wirkung zum Datum der Änderung." }
+        ]
+      },
+      {
+        "title": "9. Anwendbares Recht und Streitigkeiten",
+        "body": [
+          { "type": "p", "text": "Der Vertrag unterliegt dänischem Recht. Meinungsverschiedenheiten werden nach Möglichkeit im Dialog gelöst; andernfalls entscheidet das Gericht in Aarhus (Retten i Aarhus)." }
+        ]
+      },
+      {
+        "title": "Kontakt",
+        "body": [
+          { "type": "p", "parts": ["{name}, CVR-Nr. {cvr}, {address} · ", { "email": true }, " · ", { "link": "/kontakt", "text": "Kontakt und Support" }] }
+        ]
+      }
+    ]
+  }
+}

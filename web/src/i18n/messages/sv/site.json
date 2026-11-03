@@ -1,1 +1,430 @@
-{}
+{
+  "prices": {
+    "monthly": "2.495",
+    "setup": "5.000",
+    "perCall": "4"
+  },
+  "demoCall": {
+    "label": "Samtal · Snickerifirma (exempel)",
+    "lines": [
+      "Du har ringt till Nørgaard Tømrer, det här är Dialogbot. Vad kan jag hjälpa till med?",
+      "Hej, jag behöver byta ett fönster. Kan ni komma och titta nästa vecka?",
+      "Det går bra. Det finns lediga tider tisdag kl. 9 eller torsdag kl. 14. Vilket passar bäst?",
+      "Tisdag, tack."
+    ],
+    "booked": "Tid bokad: tisdag kl. 9 · sms skickat till dig och kunden",
+    "botInitial": "D",
+    "customerInitial": "K"
+  },
+  "home": {
+    "meta": {
+      "title": "Dialogbot – AI-receptionist som svarar i telefon dygnet runt, på svenska",
+      "description": "Dialogbot svarar i telefon när ni inte kan: en AI-receptionist som svarar dygnet runt på svenska och på kundernas eget språk, bokar tider i er kalender och skickar ett meddelande om varje samtal. 2.495 kr./mån.",
+      "ogTitle": "Dialogbot svarar i telefon när ni inte kan"
+    },
+    "referral": {
+      "label": "Rekommendation",
+      "offer": "{name} har rekommenderat Dialogbot till dig – du får {pct} % rabatt på din första månad.",
+      "bonus": "{name} är Dialogbot-ambassadör och får en bonus om du blir kund. Rabatten dras automatiskt när du registrerar dig härifrån.",
+      "cta": "Kom igång"
+    },
+    "hero": {
+      "eyebrow": "För hantverkare, kliniker och salonger · på svenska · dygnet runt",
+      "title": "Dialogbot svarar i telefon när ni inte kan.",
+      "lead": "En AI-receptionist som svarar på svenska – och på era kunders språk – dygnet runt, bokar tider i er kalender och skickar ett meddelande om varje samtal. Ni behåller ert nummer. 2.495 kr./mån. exkl. moms.",
+      "cta": "Testa den – den ringer upp dig",
+      "note": "2 minuter, ingen registrering. Fråga den som en kund skulle göra."
+    },
+    "how": {
+      "eyebrow": "Så fungerar det",
+      "title": "Kunden ringer. Dialogbot svarar. Du får besked.",
+      "lead": "Ett obesvarat samtal är en förlorad kund – de flesta ringer aldrig igen. Det är den känslan Dialogbot tar ifrån dig: att stå på stegen eller ha en kund i stolen och höra telefonen ringa utan att kunna svara.",
+      "steps": [
+        { "title": "Kunden ringer – som vanligt", "text": "På ert eget nummer. Är ni upptagna eller har stängt svarar Dialogbot inom två sekunder och presenterar sig som er receptionist." },
+        { "title": "Den svarar och bokar", "text": "Utifrån de tjänster, priser och öppettider ni själva har godkänt. Den gissar aldrig. Behöver kunden en tid hittar den en ledig i er kalender och skickar sms." },
+        { "title": "Du får ett meddelande", "text": "Namn, nummer och vad det gällde – som sms eller mejl direkt, och en samlad rapport varje dag. Om det är något den inte klarar tar den ett meddelande åt dig." }
+      ]
+    },
+    "features": {
+      "eyebrow": "Det här kan den",
+      "title": "Fyra saker, en receptionist",
+      "items": [
+        { "title": "Svarar i telefon", "text": "Dygnet runt, på svenska eller kundens eget språk, med en röst ni själva väljer. Säger ärligt att den är en digital assistent om kunden frågar." },
+        { "title": "Bokar möten", "text": "Hittar lediga tider i Google Kalender eller Microsoft 365, bokar, flyttar och avbokar – och skickar bekräftelse via sms." },
+        { "title": "Svarar på webbplatsen", "text": "Samma kunskap som webbchatt på er sida: kunder som frågar om priser och öppettider får svar direkt – även på kvällen. En kodrad, sedan är den igång." },
+        { "title": "Ringer upp kunder", "text": "Följer upp offerter eller påminner om service – bara till kunder som har sagt ja. 4 kr. per samtal + 2 kr. per minut." }
+      ],
+      "note": "Allt den säger bygger på kunskap ni själva har godkänt – och varje ändring visar den er först: före → efter, «Godkänna?»."
+    },
+    "demo": {
+      "eyebrow": "Lyssna på ett samtal",
+      "title": "Så låter det när Dialogbot svarar i telefon",
+      "lead": "Ett samtal till en snickare. Testa den själv – då ringer den upp dig och tar emot dig som om du vore en kund.",
+      "cta": "Testa den – den ringer upp dig"
+    },
+    "price": {
+      "eyebrow": "Pris",
+      "title": "Ett abonnemang. Inget pris per ärende.",
+      "lead": "Alla priser är exkl. moms. Ingen bindningstid – uppsägning månad för månad.",
+      "subscription": {
+        "name": "Abonnemang",
+        "badge": "Rekommenderas",
+        "unit": "kr./mån.",
+        "text": "Hela priset: telefon, bokning och webbchatt ingår – inkl. 300 minuter inkommande samtal per månad. Ingen bindningstid. Konfiguration på egen hand ingår.",
+        "compare": "Priset för en telefonpassning – men en receptionist som också bokar tiderna i er kalender.",
+        "cta": "Välj här – lyssna på den först"
+      },
+      "campaign": {
+        "name": "Utgående kampanjsamtal",
+        "unit": "kr. per samtal + 2 kr. per minut",
+        "text": "Bara om ni vill att Dialogbot ska ringa ut. Obesvarat: 4 kr. Tre minuters samtal: 10 kr. Ni ser det högsta priset innan ni startar."
+      },
+      "setup": {
+        "name": "Konfiguration av våra specialister",
+        "unit": "kr. engångsavgift",
+        "text": "Skräddarsydd konfiguration och integration med era egna system – kalender, CRM, bokningssystem. Bara om ni inte vill göra det själva."
+      },
+      "whyTitle": "Varför vi kostar mer än en chattbot",
+      "whyText": "En billig chattbot svarar med det den har lärt sig från internet. Dialogbot svarar bara utifrån kunskap ni själva har godkänt och visar er varje ändring först: före → efter, «Godkänna?». Den kan också boka, flytta och avboka tider i er kalender och skicka sms-bekräftelse – och ni får ett meddelande om varje samtal. Därför kostar den mer än en telefonsvarare.",
+      "allDetails": "Alla detaljer om priset →"
+    },
+    "start": {
+      "eyebrow": "Kom igång",
+      "title": "Lyssna på den först – eller bygg den själv på 30 minuter",
+      "try": {
+        "badge": "2 min · ingen registrering",
+        "title": "Testa den – den ringer upp dig",
+        "text": "Skriv till Peter i chatten eller tryck «Ja, ring mig». Då ringer Dialogbot upp och tar emot dig som din egen receptionist.",
+        "cta": "Testa den nu"
+      },
+      "build": {
+        "badge": "3 steg · ca 30 min",
+        "title": "Bygg den själv",
+        "text": "Bygganvisningen visar steg för steg vad du behöver och vad som händer – ingen teknik, ingen kod.",
+        "cta": "Öppna bygganvisningen"
+      },
+      "specialists": "Vill ni hellre att någon gör det åt er? Våra specialister konfigurerar den för 5.000 kr. exkl. moms, skräddarsytt för era system."
+    },
+    "ld": {
+      "appDescription": "Dialogbot är en AI-receptionist som svarar i telefon och chatt åt ditt företag dygnet runt – på svenska och på kundernas eget språk – utifrån er egen kunskap, bokar tider och samlar in ärenden. Vi guidar er genom hela konfigurationen.",
+      "subscription": { "name": "Abonnemang", "description": "Per månad exkl. moms, inkl. 300 minuter inkommande samtal. Ingen bindningstid." },
+      "campaign": { "name": "Utgående kampanjsamtal", "description": "Per utgående samtal exkl. moms, plus 2 kr. per påbörjad samtalsminut" },
+      "setup": { "name": "Konfiguration av Dialogbots specialister", "description": "Engångsavgift, exkl. moms – skräddarsydd konfiguration och integration med egna system. Konfiguration på egen hand ingår i abonnemanget." }
+    }
+  },
+  "guide": {
+    "meta": {
+      "title": "Bygg din AI-receptionist i 3 steg – bygganvisning",
+      "description": "Bygganvisningen för Dialogbot: vad du behöver, vad den kan, vad den kostar – och de 3 stegen till din egen AI-receptionist som svarar på svenska. 2.495 kr./mån.",
+      "ogTitle": "Bygg din AI-receptionist i 3 steg | Dialogbot"
+    },
+    "breadcrumb": "Bygganvisning",
+    "nav": {
+      "steps": "Så bygger du",
+      "bricks": "Byggklossarna",
+      "systems": "Passar ditt system",
+      "price": "Pris",
+      "demo": "Lyssna på en demo"
+    },
+    "faq": [
+      { "q": "Låter det som en robot?", "a": "Nej. Dialogbot talar naturlig svenska – och kundens eget språk – och presenterar sig alltid som en digital receptionist, så att kunden vet vem de pratar med. Lyssna på demon ovan." },
+      { "q": "Måste jag byta telefonnummer?", "a": "Nej. Du behåller ditt nummer och vidarekopplar det – antingen alltid eller bara när du inte svarar. Vi visar hur i steg 3." },
+      { "q": "Vad händer om den inte kan svara?", "a": "Då tar den ett meddelande med namn, nummer och ärende och skickar det till dig direkt. Den gissar aldrig om priser eller bokningar som ni inte har gett den." },
+      { "q": "Är jag bunden?", "a": "Nej. Fast pris kan sägas upp månad för månad, och per ärende har ingen fast kostnad." }
+    ],
+    "partsTitle": "Du behöver",
+    "hero": {
+      "badge": "steg · ca 30 minuter · ingen teknik",
+      "titleLine1": "Bygg din egen AI-receptionist.",
+      "titleLine2": "Steg för steg.",
+      "lead": "Dialogbot svarar i telefon, svarar i webbchatten och bokar möten åt ditt företag – på svenska och på kundernas språk, dygnet runt. Du följer anvisningen, vi sätter ihop klossarna tillsammans med dig.",
+      "cta": "Testa den nu – den ringer upp dig",
+      "listen": "Hör Dialogbot svara i telefon",
+      "price": "2.495 kr./mån. · exkl. moms"
+    },
+    "heroCard": {
+      "step": "Steg 1 av 3",
+      "title": "Berätta om ditt företag",
+      "parts": ["telefonnummer", "öppettider", "vad ni gör"],
+      "hours": "Mån–fre 8–17"
+    },
+    "steps": {
+      "eyebrow": "Bygganvisning",
+      "title": "Så bygger du den – i 3 steg",
+      "lead": "Inga appar att installera, ingen kod. Varje steg visar exakt vad du behöver och vad som händer.",
+      "items": [
+        { "title": "Berätta om ditt företag", "parts": ["ditt telefonnummer", "öppettider", "det ni oftast får frågor om"], "text": "Fyll i ett kort formulär – eller berätta det för oss i telefon. Det tar 5 minuter." },
+        { "title": "Vi bygger och testar tillsammans", "parts": ["videomöte med oss", "testsamtal till din nya receptionist"], "text": "Vi ställer in röst, svar och bokning medan du tittar på. Du ringer själv och hör att det fungerar." },
+        { "title": "Slå på – och gå tillbaka till jobbet", "parts": ["vidarekoppling av ditt nummer (vi visar hur)"], "text": "Från och med nu får du ett sms eller mejl varje gång det finns en bokning eller ett meddelande till dig." }
+      ],
+      "duration": "ca 30 min",
+      "switchOn": "Dialogbot: PÅ",
+      "answered": "Samtal besvarat",
+      "booked": "Tid bokad"
+    },
+    "result": {
+      "eyebrow": "Färdigt resultat",
+      "title": "Så ser ett samtal ut när den är byggd",
+      "lead": "Varje samtal följer samma enkla linje. Du ser alla ärenden i en samlad översikt och kan alltid ändra vad Dialogbot får säga.",
+      "items": [
+        { "title": "Kunden ringer", "text": "Även utanför öppettiderna, när du är ute på ett jobb eller har kunder i butiken." },
+        { "title": "Dialogbot svarar", "text": "På svenska eller kundens språk, med ert namn, era priser och öppettider – och utan att låta kunden vänta." },
+        { "title": "Bokar eller tar meddelande", "text": "Lediga tider i din kalender, eller ett meddelande med namn, nummer och ärende." },
+        { "title": "Du får besked", "text": "Sms eller mejl direkt. Du ringer tillbaka när det passar dig." }
+      ]
+    },
+    "bricks": {
+      "eyebrow": "Klossarna i byggsatsen",
+      "title": "Välj de klossar du behöver",
+      "lead": "Börja med telefonen. Lägg till fler efter hand som du behöver dem – de passar ihop.",
+      "startHere": "Börja här",
+      "phone": { "title": "Telefon", "text": "Besvarar alla samtal på svenska eller kundens språk, med ert namn. Kopplar vidare till dig när det brådskar.", "start": "Börja med reception" },
+      "webchat": { "title": "Webbchatt", "text": "En liten chatt på din webbplats som svarar direkt och samlar in kontaktuppgifter." },
+      "booking": { "title": "Bokning", "text": "Hittar lediga tider i din kalender och bekräftar bokningen för kunden via sms." },
+      "sms": { "title": "Sms-svar", "text": "Obesvarade samtal får ett sms direkt, så att kunden vet att ni återkommer." },
+      "campaigns": { "title": "Kampanjer", "text": "Ring eller skriv till dina befintliga kunder – t.ex. om dags för service eller ett nytt erbjudande. Du godkänner alltid först.", "start": "Börja med kunduppföljning" },
+      "overview": { "title": "Översikt", "text": "Alla samtal, chattar och bokningar på ett ställe. Se vad som sades och vad som väntar på svar." }
+    },
+    "systems": {
+      "eyebrow": "Passar ditt system",
+      "title": "Klossarna passar det ni redan använder",
+      "lead": "Kalender, CRM eller bokningssystem – Dialogbot skriver bokningar och meddelanden där ni brukar titta. Använder ni något vi inte har kopplat på än säger vi det ärligt och bygger in det under konfigurationen.",
+      "googleCalendar": "Google Kalender",
+      "microsoft": "Microsoft 365 / Outlook",
+      "crm": "Ditt CRM",
+      "bookingSystem": "Ditt bokningssystem",
+      "smsEmail": "Sms och e-post",
+      "ready": "Klar",
+      "readyAlways": "Klar · fungerar alltid",
+      "connectedInSetup": "Kopplas på vid konfigurationen",
+      "otherTitle": "Något annat?",
+      "otherText": "Fråga chatten – den antecknar det",
+      "note": "«Klar» betyder att det fungerar i dag. Allt annat kopplar vi på tillsammans med dig – och tills det fungerar får du alltid bokningar och meddelanden via sms och e-post."
+    },
+    "pricing": {
+      "eyebrow": "Pris",
+      "title": "En byggsats. Ett pris, inga överraskningar.",
+      "lead": "Alla priser är exkl. moms. Konfigurationen kan ni göra själva på ca 30 minuter – den ingår. Vill ni ha den skräddarsydd av våra specialister kostar det 5.000 kr. en gång.",
+      "subscription": {
+        "name": "Abonnemang",
+        "from": "Från",
+        "unit": "kr./mån.",
+        "points": ["Telefon, chatt och bokning ingår", "Inget pris per ärende", "Uppsägning månad för månad"],
+        "cta": "Kom igång"
+      },
+      "campaign": {
+        "name": "Utgående kampanjsamtal",
+        "unit": "kr. per utgående samtal",
+        "points": ["Bara om ni vill att Dialogbot ska ringa ut", "Kontakterna har själva sagt ja till att bli uppringda", "Högst 2 försök per kontakt – ni ser det högsta priset innan ni startar"]
+      },
+      "setup": {
+        "name": "Konfiguration av våra specialister",
+        "unit": "kr. engångsavgift",
+        "points": ["Bara om ni inte vill göra det själva – de tre stegen ingår i abonnemanget", "Skräddarsydd konfiguration och integration med era egna system och behov", "Kalender, CRM eller bokningssystem kopplas på, kunskap och priser läggs in, rösten tränas – och vi testar tillsammans innan den slås på"]
+      }
+    },
+    "demo": {
+      "eyebrow": "Demo",
+      "title": "Hör Dialogbot svara i telefon",
+      "lead": "Så här låter ett samtal till en snickare. Testa den själv – då ringer den upp dig och tar emot dig som en kund.",
+      "cta": "Testa den – den ringer upp dig"
+    },
+    "faqSection": {
+      "eyebrow": "Frågor",
+      "title": "Det de flesta frågar om först"
+    },
+    "cta": {
+      "title": "Redo för steg 1?",
+      "lead": "Ring oss så bygger vi den tillsammans. Eller skriv, så ringer vi tillbaka inom öppettiderna.",
+      "write": "Skriv till oss"
+    }
+  },
+  "proev": {
+    "meta": {
+      "title": "Testa Dialogbot – prata med den, så ringer den upp dig",
+      "description": "Inget formulär, ingen registrering. Berätta för chatten vad ditt företag heter och vad ni gör – så ringer Dialogbot upp dig och tar emot dig som din egen receptionist.",
+      "ogTitle": "Testa Dialogbot – den ringer upp dig | Dialogbot"
+    },
+    "eyebrow": "Steg 0 · innan du bygger något",
+    "title": "Prata med den. Sedan ringer den upp dig – som din egen receptionist.",
+    "lead": "Inget formulär, ingen registrering. Berätta för chatten vad ditt företag heter och vad ni gör. Sedan ringer Dialogbot upp dig och tar emot dig som om du vore en kund.",
+    "chat": {
+      "greeting": "Hej! Jag heter Peter och är Dialogbots digitala receptionist. Vill du höra hur jag låter när jag svarar i telefon åt ditt företag?",
+      "hours": "mån–fre 08–17",
+      "branches": {
+        "haandvaerk": "Hantverkare",
+        "klinik": "Klinik",
+        "skoenhed": "Frisör / salong",
+        "restaurant": "Restaurang",
+        "raadgivning": "Rådgivare",
+        "other": "Något annat"
+      },
+      "steps": {
+        "start": "Start",
+        "firma": "Steg 1 · vilka är ni",
+        "branche": "Steg 1 · vad gör ni",
+        "andet": "Steg 1 · vad gör ni",
+        "tlf": "Steg 2 · ditt nummer",
+        "calling": "Steg 2 · ringer",
+        "done": "Steg 3 · bygg din egen",
+        "unavailable": "Inte just nu"
+      },
+      "blockerInactive": "Testsamtalet aktiveras snart – fram till dess ringer vi upp dig manuellt inom öppettiderna. Ring oss på {phone} ({hours}), eller skicka ditt nummer till {email}, så ringer vi upp dig.",
+      "blockerClosed": "Jag ringer bara upp mellan kl. {from} och {to} på vardagar. Kom tillbaka då – eller skicka ditt nummer till {email}, så ringer vi upp dig inom öppettiderna.",
+      "blockerOwnNumber": " Du kan också själv ringa mitt demonummer {number}.",
+      "chipCall": "Ja, ring mig",
+      "chipWhat": "Vad kan du?",
+      "chipPrice": "Vad kostar det?",
+      "askCompany": "Toppen. Vad heter ditt företag?",
+      "answerWhat": "Jag svarar i telefon dygnet runt, svarar på det kunderna oftast frågar om, bokar tider i din kalender och skickar ett meddelande till dig om det är något jag inte klarar.\n\nVill du höra det själv?",
+      "answerPrice": "Ett abonnemang för 2.495 kr. i månaden, exkl. moms. Konfigurationen kan ni göra själva – den ingår. Vill ni att våra specialister skräddarsyr den för era system kostar det 5.000 kr. en gång.\n\nSka jag ringa och visa vad du får?",
+      "askOther": "Skriv kort vad ni gör – så vet jag hur jag ska ta emot kunderna.",
+      "askNumber": "Då är jag receptionist för {company} från och med nu. Vilket nummer ska jag ringa?",
+      "helloCompany": "Hej {company}. Vad gör ni?",
+      "chatNotReady": "Chatten är inte riktigt klar än. Ring oss på {phone} ({hours}) eller skriv till {email} – så svarar vi.",
+      "chatFailed": "Det kunde jag inte svara på just nu. Försök igen om en stund eller ring oss på {phone}.",
+      "serviceDown": "Jag fick inte kontakt med samtalstjänsten. Försök igen om en stund.",
+      "callingNow": "Jag ringer {number} nu – du får ett samtal från Peter på Dialogbot inom en minut. Svara och fråga mig om allt som en kund skulle fråga {company} om.",
+      "callSent": "Samtalet är skickat till din telefon. Ringde det inte? Ring oss då på {phone}, så visar vi det live.\n\nVill du bygga din egen? Det tar 3 steg och ca 30 minuter, och jag guidar dig hela vägen.",
+      "callFailed": "Vi kunde inte ringa upp just nu. Försök igen om en stund.",
+      "callRetry": "{message} Skriv numret igen eller ring själv till oss på {phone}.",
+      "placeholderCompany": "T.ex. Nørgaard Tømrer",
+      "placeholderOther": "T.ex. snickare, tandläkare, redovisningskonsult …",
+      "placeholderPhone": "T.ex. 93 70 34 33 – eller ställ en fråga",
+      "placeholderBranch": "Välj ovan – eller skriv vad ni gör",
+      "placeholderDefault": "Skriv din fråga till Peter …",
+      "consentFallback": "Ja tack, Peter från Dialogbot, en digital assistent, får ringa mig på det här numret nu och visa hur Dialogbot svarar i telefon. Samtalet skrivs ned, och en medarbetare från Dialogbot får kontakta mig efteråt om det vi pratade om.",
+      "phoneDoneTitle": "Samtalet har startats",
+      "phoneDoneText": "Föll det dig i smaken? Då är din egen receptionist tre steg bort.",
+      "phoneUnavailableTitle": "Testsamtalet aktiveras snart",
+      "phoneUnavailableText": "Fram till dess ringer vi upp dig manuellt inom öppettiderna ({hours}). Ring {phone} eller skriv till {email}.",
+      "phoneIdleTitle": "Din telefon ringer snart",
+      "phoneIdleText": "När du har skrivit ditt nummer i chatten ringer Peter från Dialogbot inom en minut.",
+      "stageLabel": "Chatta med Dialogbot",
+      "status": "Svarar direkt",
+      "close": "Stäng chatten",
+      "typing": "Dialogbot skriver",
+      "callUs": "Ring oss",
+      "mailSubject": "Ring upp mig – testsamtal",
+      "mailUs": "Skicka ditt nummer till oss",
+      "seeGuide": "Se bygganvisningen",
+      "tryAgain": "Försök igen",
+      "callMe": "Ring upp mig",
+      "send": "Skicka",
+      "consentError": "Kryssa i rutan om jag får ringa upp dig.",
+      "buildNow": "Ja – bygg min nu (steg 1 av 3)",
+      "pickUp": "Svara när telefonen ringer. Du kan lägga på när som helst.",
+      "privacy": "Vi ringer bara det nummer du själv skriver och använder det inte till något annat än det här samtalet och en uppföljning, om du har sagt ja till det.",
+      "ringing": "Ringer {number} …",
+      "presentBefore": "Jag presenterar mig som receptionist för ",
+      "presentAfter": ". Fråga mig om priser, tider eller en bokning.",
+      "sideSteps": ["Berätta för chatten vilka ni är", "Svara i telefon – fråga som en kund", "Gillar du det? Då bygger vi den riktiga"],
+      "sideNote": "Samma chatt följer med dig vidare: När du säger ja guidar den dig genom konfigurationen, kopplar på din kalender och testar allt tillsammans med dig."
+    }
+  },
+  "preview": {
+    "meta": {
+      "title": "Dialogbot – privat förhandsversion",
+      "description": "Dialogbot är en AI-assistent för telefon, webbchatt och uppföljning som svarar på svenska och på kundernas eget språk. Anmäl dig för tidig åtkomst."
+    },
+    "skip": "Hoppa till innehållet",
+    "badge": "Privat förhandsversion",
+    "eyebrow": "Steg 0 · Innan du bygger",
+    "title": "Lås upp med förhandskod",
+    "lead": "Dialogbot är en AI-receptionist för telefon, webbchatt och uppföljning – på svenska och på kundernas eget språk. Vi finslipar detaljerna inför den offentliga lanseringen. Ange inbjudningskoden du har fått för att se startsidan och skapa ett konto.",
+    "codesBefore": "Koder delas ut till pilotföretag och utvalda partner. Har du redan ett konto, ",
+    "codesLink": "logga in",
+    "codesAfter": ".",
+    "waitlistEyebrow": "Ingen kod?",
+    "waitlistTitle": "Anmäl dig för tidig åtkomst",
+    "waitlistLead": "Få besked i din inkorg så snart vi öppnar för nya företag. Ingen spam – bara besked vid lanseringen, och du kan avregistrera dig när som helst.",
+    "footerNav": "Sidfot",
+    "footer": {
+      "privacy": "Integritet",
+      "terms": "Köpvillkor",
+      "contact": "Kontakt",
+      "login": "Logga in för teamet"
+    },
+    "unlock": {
+      "checkFailed": "Koden kunde inte kontrolleras.",
+      "label": "Inbjudningskod",
+      "placeholder": "T.ex. DGB-XXXX-XXXX",
+      "checking": "Kontrollerar koden…",
+      "submit": "Lås upp och se startsidan"
+    },
+    "waitlist": {
+      "doneTitle": "Tack – du står på väntelistan.",
+      "doneText": "Vi skriver till {email} när vi öppnar för nya företag. Vi skickar inget annat.",
+      "email": "Din jobbmejl",
+      "emailPlaceholder": "namn@foretag.se",
+      "industry": "Typ av företag",
+      "industryPlaceholder": "Välj din bransch…",
+      "interests": "Vad vill ni främst lösa först?",
+      "honeypot": "Webbplats",
+      "consent": "Ja, ni får skriva till mig när Dialogbot öppnar. Vi sparar bara e-postadressen och svaren ovan för det syftet, och du kan alltid be om att bli raderad.",
+      "consentLink": "Läs hur",
+      "invalid": "Kontrollera e-postadressen och att du har kryssat i rutan.",
+      "pending": "Anmäler dig…",
+      "submit": "Sätt upp mig på väntelistan"
+    },
+    "industries": {
+      "craft": "Hantverk & Bygg",
+      "clinic": "Salong, Klinik & Behandling",
+      "service": "Service, Rådgivning & Fastighet",
+      "retail": "B2B-handel & Kontor",
+      "other": "Annan bransch"
+    },
+    "interestOptions": {
+      "missed_calls": "Missade samtal under öppettiderna",
+      "calendar_booking": "Automatisk kalenderbokning",
+      "quote_followup": "Uppföljning av offerter"
+    }
+  },
+  "video": {
+    "title": "Se vad Dialogbot kan",
+    "posterAlt": "Dialogbot svarar i telefon åt ett litet företag – förklarat på 70 sekunder",
+    "description": "Dialogbot förklarat på 70 sekunder: svarar i telefon, bokar tider, svarar på webbplatsen – och du godkänner allt den får säga.",
+    "playAria": "{title} – spela upp videon (70 sekunder)",
+    "short": "70 sek.",
+    "chipMeta": "70 sekunder · med undertexter · förklarar exakt vad vi erbjuder",
+    "close": "Stäng videon",
+    "captionsLabel": "Dansk",
+    "unsupported": "Din webbläsare kan inte spela upp videon.",
+    "download": "Ladda ned videon",
+    "soundsGood": "Låter det som något för er?",
+    "tryDialogbot": "Testa Dialogbot",
+    "guide": "Bygganvisningen",
+    "endTitle": "Testa Dialogbot själv",
+    "endText": "Den ringer upp dig om 10 sekunder och tar emot dig som din egen receptionist.",
+    "endCta": "Testa den – den ringer upp dig",
+    "endGuide": "Öppna bygganvisningen",
+    "again": "Se den igen"
+  },
+  "proof": {
+    "eyebrow": "Det här säger kunderna",
+    "title": "Företag som låter Dialogbot svara i telefon",
+    "trustpilot": "på Trustpilot · {n} omdömen",
+    "screenshotCaption": "Så ser det ut när ni godkänner: Dialogbot visar er ändringen först – före → efter, «Godkänna?».",
+    "founderLabel": "Mannen bakom Dialogbot",
+    "linkedin": "Hitta mig på LinkedIn →",
+    "data": {
+      "quotes": {},
+      "usageLabel": "",
+      "founderRole": "",
+      "founderWhy": "",
+      "screenshotAlt": ""
+    }
+  },
+  "lego": {
+    "partsTitle": "Du behöver"
+  },
+  "cookies": {
+    "label": "Cookies för statistik",
+    "title": "Får vi mäta besök?",
+    "text": "Vi vill gärna använda Google Analytics för att se vilka sidor som läses, så att vi kan göra webbplatsen bättre. Det sätter en statistikcookie. Du kan säga nej – sidan fungerar precis lika bra.",
+    "readMore": "Läs mer",
+    "accept": "Ja, det går bra",
+    "decline": "Nej tack",
+    "settings": "Cookieinställningar"
+  }
+}

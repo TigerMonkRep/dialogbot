@@ -24,6 +24,8 @@ import re
 from dataclasses import dataclass, field
 
 from app.config import get_settings
+from app.core.languages import normalize
+from app.modules.integrations.email_texts import GREETING_WORDS, TEXTS, t
 
 INK = "#14213D"
 INK_SOFT = "#3C4659"
@@ -72,7 +74,12 @@ CSS = f"""
 # Sender identity in every footer (e-handelsloven § 7: name, CVR and address).
 COMPANY_LINE = "Dialogbot · CVR-nr. 25632710 · Abildgade 18, 8200 Aarhus"
 
-ROLE_DA = {"owner": "ejer", "admin": "administrator", "staff": "medarbejder", "reader": "læser"}
+ROLES = {lang: {r: TEXTS[lang][f"role_{r}"] for r in ("owner", "admin", "staff", "reader")} for lang in TEXTS}
+ROLE_DA = ROLES["da"]
+
+
+def _role(role: str, lang: str) -> str:
+    return ROLES.get(normalize(lang), ROLE_DA).get(role, role)
 
 
 @dataclass
@@ -87,20 +94,23 @@ class Email:
     preheader: str | None = None  # the preview line shown next to the subject in the inbox
     step: int | None = None  # set when the mail is a step in the set-up: a yellow step square above the heading
     rows: list[tuple[str, str]] = field(default_factory=list)  # label/value facts shown in a panel (the day's numbers)
+    lang: str = "da"  # the language of the layout's own words (greeting, button fallback, footer company line)
 
     def text(self) -> str:
+        lang = self.lang
         parts = [self.heading, ""]
         if self.rows:
             parts += [*[f"{k}: {v}" for k, v in self.rows], ""]
         parts += [p for para in self.paragraphs for p in (para, "")]
         if self.button_url:
-            parts += [f"{self.button_label or 'Åbn'}: {self.button_url}", ""]
+            parts += [f"{self.button_label or t(lang, 'open')}: {self.button_url}", ""]
         if self.note:
             parts += [self.note, ""]
-        parts += ["Venlig hilsen", "Dialogbot", "", "—", self.footer_reason, f"{COMPANY_LINE} · dialogbot.dk"]
+        parts += [t(lang, "regards"), "Dialogbot", "", "—", self.footer_reason, f"{t(lang, 'company_line')} · dialogbot.dk"]
         return "\n".join(parts).strip() + "\n"
 
     def html(self) -> str:
+        lang = normalize(self.lang)
         base = get_settings().frontend_base_url.rstrip("/")
         logo = f"{base}{LOGO_PATH}"
         e = html.escape
@@ -124,9 +134,9 @@ class Email:
                 f'<tr><td style="border-radius:14px;background:{ACCENT};">'
                 f'<a class="btna" href="{e(self.button_url, quote=True)}" style="display:inline-block;padding:16px 26px;'
                 f'font:600 16px/1 {FONT};color:#ffffff;text-decoration:none;border-radius:14px;">'
-                f'{e(self.button_label or "Åbn")}</a></td></tr></table>'
-                f'<p class="mt" style="margin:0 0 16px;font:13px/1.5 {FONT};color:{MUTED};">Virker knappen ikke? Kopiér '
-                f'dette link ind i din browser:<br><a class="lk" href="{e(self.button_url, quote=True)}" '
+                f'{e(self.button_label or t(lang, "open"))}</a></td></tr></table>'
+                f'<p class="mt" style="margin:0 0 16px;font:13px/1.5 {FONT};color:{MUTED};">{e(t(lang, "button_fallback"))}'
+                f'<br><a class="lk" href="{e(self.button_url, quote=True)}" '
                 f'style="color:{ACCENT};word-break:break-all;">{e(self.button_url)}</a></p>')
         note = (f'<p class="mt" style="margin:0 0 16px;font:13px/1.5 {FONT};color:{MUTED};">{e(self.note)}</p>'
                 if self.note else "")
@@ -138,9 +148,9 @@ class Email:
                     f'<tr><td width="48" height="48" align="center" valign="middle" style="width:48px;height:48px;'
                     f'border-radius:12px;background:{HIGHLIGHT};font:800 24px/48px {HEAD_FONT};color:{INK};">'
                     f'{self.step}</td><td class="mt" style="padding-left:12px;font:600 12px/1 {FONT};'
-                    f'letter-spacing:0.12em;text-transform:uppercase;color:{MUTED};">Trin {self.step}</td></tr></table>')
+                    f'letter-spacing:0.12em;text-transform:uppercase;color:{MUTED};">{e(t(lang, "step", n=self.step))}</td></tr></table>')
         return f"""<!doctype html>
-<html lang="da"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="{lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark">
 <title>{e(self.subject)}</title><style>{CSS}</style></head>
 <body class="pg" style="margin:0;padding:0;background:{PANEL};">{pre}
@@ -156,10 +166,10 @@ class Email:
 <div class="pad" style="padding:32px 32px 16px;">
 {step}<h1 class="hd h1" style="margin:0 0 20px;font:800 26px/1.25 {HEAD_FONT};color:{INK};letter-spacing:-0.3px;">{e(self.heading)}</h1>
 {panel}{paras}{button}{note}
-<p class="tx" style="margin:8px 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">Venlig hilsen<br><strong class="hd" style="color:{INK};">Dialogbot</strong></p>
+<p class="tx" style="margin:8px 0 16px;font:16px/1.6 {FONT};color:{INK_SOFT};">{e(t(lang, "regards"))}<br><strong class="hd" style="color:{INK};">Dialogbot</strong></p>
 </div></td></tr>
 <tr><td class="mt" style="padding:20px 8px 0;font:12px/1.6 {FONT};color:{MUTED};text-align:center;">
-{e(self.footer_reason)}<br>{e(COMPANY_LINE)} · <a href="{e(base, quote=True)}" style="color:{MUTED};">dialogbot.dk</a>
+{e(self.footer_reason)}<br>{e(t(lang, "company_line"))} · <a href="{e(base, quote=True)}" style="color:{MUTED};">dialogbot.dk</a>
 </td></tr>
 </table></td></tr></table></body></html>"""
 
@@ -167,87 +177,102 @@ class Email:
 _URL = re.compile(r"(https?://\S+)")
 
 
-def from_plain(subject: str, body: str, footer_reason: str | None = None) -> Email:
+def from_plain(subject: str, body: str, footer_reason: str | None = None, lang: str = "da") -> Email:
     """Wrap an older free-text email (subject + body) in the branded layout.
 
     A greeting line becomes the heading, a closing "Venlig hilsen …" is dropped (the layout adds its own), and the
-    first stand-alone link or "Label: link" line becomes the button."""
+    first stand-alone link or "Label: link" line becomes the button. `lang` is the language of the layout's own
+    words; the greeting and closing of that language are recognised as well as the Danish ones."""
+    lang = normalize(lang)
+    greetings = tuple(dict.fromkeys(GREETING_WORDS["da"] + GREETING_WORDS.get(lang, ())))
+    closings = tuple(dict.fromkeys(("venlig hilsen", t(lang, "regards").lower())))
     blocks = [b.strip() for b in re.split(r"\n\s*\n", body.strip()) if b.strip()]
     heading = subject
-    if blocks and re.match(r"^(Hej|Kære)\b", blocks[0]) and "\n" not in blocks[0]:
+    if blocks and re.match(r"^(" + "|".join(re.escape(g) for g in greetings) + r")\b", blocks[0]) and "\n" not in blocks[0]:
         heading = blocks.pop(0).rstrip(",")
-    if blocks and blocks[-1].lower().startswith("venlig hilsen"):
+    if blocks and blocks[-1].lower().startswith(closings):
         blocks.pop()
     button_label = button_url = None
     kept: list[str] = []
     for b in blocks:
         m = re.fullmatch(r"(?:(.{2,60}?):\s*)?(https?://\S+)", b)
         if button_url is None and m:
-            button_label, button_url = (m.group(1) or "Åbn").strip(), m.group(2)
+            button_label, button_url = (m.group(1) or t(lang, "open")).strip(), m.group(2)
             continue
         if button_url is None and "\n" in b:
             lines = b.split("\n")
             if _URL.fullmatch(lines[-1].strip()):
                 button_url = lines[-1].strip()
-                button_label = "Åbn"
+                button_label = t(lang, "open")
                 b = "\n".join(lines[:-1]).strip()
         kept.append(b)
     return Email(subject=subject, heading=heading, paragraphs=kept, button_label=button_label, button_url=button_url,
-                 footer_reason=footer_reason or "Du får denne e-mail, fordi du har en konto hos Dialogbot.")
+                 footer_reason=footer_reason or t(lang, "footer_account"), lang=lang)
 
 
 # --------------------------------------------------------------------------- the emails
+# Every builder takes `lang` (app/core/languages.py; Danish is the source). The texts live in email_texts.py.
 
-def verify(link: str) -> Email:
+def verify(link: str, lang: str = "da") -> Email:
+    lang = normalize(lang)
     return Email(
-        subject="Bekræft din e-mail hos Dialogbot",
-        preheader="Ét klik, så er din konto klar.",
-        heading="Velkommen til Dialogbot",
+        subject=t(lang, "verify_subject"),
+        preheader=t(lang, "verify_preheader"),
+        heading=t(lang, "verify_heading"),
         step=1,
-        paragraphs=["Tak, fordi du har oprettet en konto. Bekræft din e-mailadresse, så kan du komme i gang med at "
-                    "sætte din AI-receptionist op."],
-        button_label="Bekræft min e-mail", button_url=link,
-        note="Linket virker i 48 timer. Har du ikke oprettet en konto hos Dialogbot, kan du se bort fra denne e-mail.",
-        footer_reason="Du får denne e-mail, fordi nogen har oprettet en konto hos Dialogbot med din adresse.")
+        paragraphs=[t(lang, "verify_body")],
+        button_label=t(lang, "verify_button"), button_url=link,
+        note=t(lang, "verify_note"),
+        footer_reason=t(lang, "verify_footer"), lang=lang)
 
 
-def reset(link: str) -> Email:
+def reset(link: str, lang: str = "da") -> Email:
+    lang = normalize(lang)
     return Email(
-        subject="Nulstil din adgangskode hos Dialogbot",
-        preheader="Vælg en ny adgangskode – linket virker i 1 time.",
-        heading="Nulstil din adgangskode",
-        paragraphs=["Vi har fået en anmodning om at nulstille adgangskoden til din Dialogbot-konto. Klik på knappen "
-                    "for at vælge en ny."],
-        button_label="Vælg ny adgangskode", button_url=link,
-        note="Linket virker i 1 time og kan kun bruges én gang. Har du ikke bedt om det, kan du se bort fra denne "
-             "e-mail – din adgangskode forbliver uændret.")
+        subject=t(lang, "reset_subject"),
+        preheader=t(lang, "reset_preheader"),
+        heading=t(lang, "reset_heading"),
+        paragraphs=[t(lang, "reset_body")],
+        button_label=t(lang, "reset_button"), button_url=link,
+        note=t(lang, "reset_note"),
+        footer_reason=t(lang, "footer_account"), lang=lang)
 
 
-def invitation(workspace: str, invited_by: str, role: str, link: str) -> Email:
+def invitation(workspace: str, invited_by: str, role: str, link: str, lang: str = "da") -> Email:
+    lang = normalize(lang)
+    r = _role(role, lang)
     return Email(
-        subject=f"{invited_by} har inviteret dig til {workspace} på Dialogbot",
-        preheader=f"Du er inviteret som {ROLE_DA.get(role, role)}.",
-        heading=f"Du er inviteret til {workspace}",
-        paragraphs=[f"{invited_by} har inviteret dig til {workspace} på Dialogbot som {ROLE_DA.get(role, role)}. "
-                    "Som medlem kan du se henvendelser, samtaler og opgaver."],
-        button_label="Acceptér invitationen", button_url=link,
-        note="Invitationen virker i 72 timer. Har du ikke en konto endnu, opretter du den undervejs.",
-        footer_reason=f"Du får denne e-mail, fordi {invited_by} har inviteret dig til Dialogbot.")
+        subject=t(lang, "invitation_subject", invited_by=invited_by, workspace=workspace),
+        preheader=t(lang, "invitation_preheader", role=r),
+        heading=t(lang, "invitation_heading", workspace=workspace),
+        paragraphs=[t(lang, "invitation_body", invited_by=invited_by, workspace=workspace, role=r)],
+        button_label=t(lang, "invitation_button"), button_url=link,
+        note=t(lang, "invitation_note"),
+        footer_reason=t(lang, "invitation_footer", invited_by=invited_by), lang=lang)
 
 
-def new_lead(workspace: str, contact_name: str, need: str, link: str) -> Email:
-    name = contact_name or "En kunde"
+def new_lead(workspace: str, contact_name: str, need: str, link: str, lang: str = "da") -> Email:
+    lang = normalize(lang)
+    name = contact_name or t(lang, "lead_someone")
     return Email(
-        subject=f"Ny henvendelse: {name}",
-        preheader=need[:90] if need else f"{name} vil gerne kontaktes.",
-        heading="Ny henvendelse",
-        paragraphs=[f"{name} vil gerne kontaktes af {workspace}.", f"Behov: {need or '(ikke angivet)'}"],
-        button_label="Se henvendelsen", button_url=link,
-        footer_reason=f"Du får denne e-mail, fordi du er tilknyttet {workspace} på Dialogbot.")
+        subject=t(lang, "lead_subject", name=name),
+        preheader=need[:90] if need else t(lang, "lead_preheader", name=name),
+        heading=t(lang, "lead_heading"),
+        paragraphs=[t(lang, "lead_body", name=name, workspace=workspace),
+                    t(lang, "lead_need", need=need or t(lang, "lead_need_missing"))],
+        button_label=t(lang, "lead_button"), button_url=link,
+        footer_reason=t(lang, "lead_footer", workspace=workspace), lang=lang)
 
 
-def daily_report(subject: str, body: str, link: str | None) -> Email:
-    """The day's numbers as a small panel, then who called. Internal counters (AI answers) stay in the app."""
+# The label of the internal AI counter in every language: that line stays in the app, never in the mail.
+_AI_LABELS = tuple({TEXTS[x]["report_ai_label"] for x in TEXTS})
+
+
+def daily_report(subject: str, body: str, link: str | None, lang: str = "da") -> Email:
+    """The day's numbers as a small panel, then who called. Internal counters (AI answers) stay in the app.
+
+    `subject` and `body` come from app/modules/reports/service.py, already in `lang`."""
+    lang = normalize(lang)
     lines = body.split("\n")
     heading = lines[0] if lines else subject
     blocks = [b.strip() for b in re.split(r"\n\s*\n", "\n".join(lines[1:]).strip()) if b.strip()]
@@ -256,92 +281,86 @@ def daily_report(subject: str, body: str, link: str | None) -> Email:
     for b in blocks:
         facts = [ln.split(": ", 1) for ln in b.split("\n") if ": " in ln and not ln.startswith("- ")]
         if not rows and facts and len(facts) == len(b.split("\n")):
-            rows = [(k, v) for k, v in facts if not k.startswith("AI-svar")]
+            rows = [(k, v) for k, v in facts if not k.startswith(_AI_LABELS)]
         else:
             paragraphs.append(b)
     return Email(subject=subject, heading=heading, paragraphs=paragraphs, rows=rows,
-                 preheader="Gårsdagens henvendelser, samtaler og opgaver.",
-                 button_label="Se hele rapporten" if link else None, button_url=link,
-                 footer_reason="Du får denne e-mail, fordi dagsrapporten er slået til for jeres arbejdsrum. Du kan "
-                               "slå den fra under Rapporter.")
+                 preheader=t(lang, "report_preheader"),
+                 button_label=t(lang, "report_button") if link else None, button_url=link,
+                 footer_reason=t(lang, "report_footer"), lang=lang)
 
 
 # --------------------------------------------------------------------------- ambassador programme
 
 def ambassador_parent(parent_name: str, ambassador_name: str, ambassador_email: str, link: str, rules: str,
-                      bonus: str, share: str, months: int) -> Email:
+                      bonus: str, share: str, months: int, lang: str = "da") -> Email:
+    lang = normalize(lang)
     first = ambassador_name.split()[0]
     return Email(
-        subject=f"{first} vil være ambassadør for Dialogbot – vil du godkende?",
-        preheader=f"{first} er under 18, så vi har brug for din godkendelse, før vi udbetaler bonus.",
-        heading=f"Hej {parent_name}",
-        paragraphs=[f"{ambassador_name} ({ambassador_email}) har meldt sig som ambassadør for Dialogbot. Som "
-                    "ambassadør anbefaler man Dialogbot – en dansk AI-receptionist – til virksomheder, man kender, og "
-                    "får en bonus, når de bliver betalende kunder.",
-                    f"Bonussen er {bonus} pr. ny kunde plus {share} af det, kunden betaler, i {months} måneder. Den "
-                    "udbetales til " + first + "s bankkonto som B-indkomst, som vi indberetter til Skattestyrelsen. "
-                    "Der trækkes ikke skat.",
-                    f"Fordi {first} er under 18, udbetaler vi først, når du har godkendt aftalen. {first} kan godt "
-                    "dele sit link imens.",
-                    f"Reglerne {first} har sagt ja til:\n{rules}"],
-        button_label="Læs og godkend aftalen", button_url=link,
-        note="Har du spørgsmål, eller vil du ikke godkende, så svar bare på denne e-mail.",
-        footer_reason=f"Du får denne e-mail, fordi {ambassador_name} har oplyst dig som forælder eller værge.")
+        subject=t(lang, "amb_parent_subject", first=first),
+        preheader=t(lang, "amb_parent_preheader", first=first),
+        heading=t(lang, "greeting", name=parent_name),
+        paragraphs=[t(lang, "amb_parent_p1", ambassador_name=ambassador_name, ambassador_email=ambassador_email),
+                    t(lang, "amb_parent_p2", bonus=bonus, share=share, months=months, first=first),
+                    t(lang, "amb_parent_p3", first=first),
+                    t(lang, "amb_parent_p4", first=first, rules=rules)],
+        button_label=t(lang, "amb_parent_button"), button_url=link,
+        note=t(lang, "amb_parent_note"),
+        footer_reason=t(lang, "amb_parent_footer", ambassador_name=ambassador_name), lang=lang)
 
 
-def ambassador_approved(first_name: str, link: str, code: str, portal: str) -> Email:
+def ambassador_approved(first_name: str, link: str, code: str, portal: str, lang: str = "da") -> Email:
+    lang = normalize(lang)
     return Email(
-        subject="Velkommen som Dialogbot-ambassadør",
-        preheader=f"Dit personlige link og din kode {code} er klar.",
-        heading=f"Velkommen som ambassadør, {first_name}",
-        paragraphs=["Du er godkendt. Del dit personlige link med virksomheder, du kender:",
-                    f"{link}\nDin kode: {code}",
-                    "Rabat, bonus, saldo og færdige tekster ligger på din side. Skriv altid, at det er reklame, og at "
-                    "du får bonus – og send kun til folk, du kender."],
-        button_label="Gå til min ambassadørside", button_url=portal,
-        footer_reason="Du får denne e-mail, fordi du har meldt dig som ambassadør for Dialogbot.")
+        subject=t(lang, "amb_approved_subject"),
+        preheader=t(lang, "amb_approved_preheader", code=code),
+        heading=t(lang, "amb_approved_heading", first_name=first_name),
+        paragraphs=[t(lang, "amb_approved_p1"), t(lang, "amb_approved_code", link=link, code=code),
+                    t(lang, "amb_approved_p3")],
+        button_label=t(lang, "amb_approved_button"), button_url=portal,
+        footer_reason=t(lang, "amb_footer_signed_up"), lang=lang)
 
 
-def ambassador_rejected(first_name: str, note: str) -> Email:
-    paras = ["Tak for din interesse i at blive ambassadør for Dialogbot. Vi kan desværre ikke godkende din "
-             "tilmelding lige nu."]
+def ambassador_rejected(first_name: str, note: str, lang: str = "da") -> Email:
+    lang = normalize(lang)
+    paras = [t(lang, "amb_rejected_p1")]
     if note:
         paras.append(note)
-    paras.append("Har du spørgsmål, så svar bare på denne e-mail.")
-    return Email(subject="Din tilmelding som Dialogbot-ambassadør", heading=f"Hej {first_name}", paragraphs=paras,
-                 footer_reason="Du får denne e-mail, fordi du har meldt dig som ambassadør for Dialogbot.")
+    paras.append(t(lang, "amb_reply"))
+    return Email(subject=t(lang, "amb_rejected_subject"), heading=t(lang, "greeting", name=first_name), paragraphs=paras,
+                 footer_reason=t(lang, "amb_footer_signed_up"), lang=lang)
 
 
 def ambassador_paid(first_name: str, amount: str, bank_last4: str | None, number: int, b_income: bool,
-                    portal: str) -> Email:
-    paras = [f"Vi har overført {amount} til din bankkonto"
-             + (f", der slutter på {bank_last4}" if bank_last4 else "") + ". Pengene er normalt på kontoen inden for "
-             "1–2 bankdage.",
-             f"Afregningsbilag nr. {number} ligger på din ambassadørside."]
+                    portal: str, lang: str = "da") -> Email:
+    lang = normalize(lang)
+    paras = [t(lang, "amb_paid_transfer", amount=amount,
+               bank=t(lang, "amb_paid_bank", last4=bank_last4) if bank_last4 else ""),
+             t(lang, "amb_paid_statement", number=number)]
     if b_income:
-        paras.append("Beløbet er B-indkomst, og vi indberetter det til Skattestyrelsen. Der er ikke trukket skat, så "
-                     "husk at tjekke din forskudsopgørelse.")
-    paras.append("Tak, fordi du anbefaler Dialogbot!")
-    return Email(subject=f"Din ambassadørbonus på {amount} er på vej", preheader="Se afregningsbilaget på din side.",
-                 heading=f"Hej {first_name}, din bonus er på vej", paragraphs=paras,
-                 button_label="Se afregningsbilaget", button_url=portal,
-                 footer_reason="Du får denne e-mail, fordi du er ambassadør for Dialogbot.")
+        paras.append(t(lang, "amb_paid_b_income"))
+    paras.append(t(lang, "amb_paid_thanks"))
+    return Email(subject=t(lang, "amb_paid_subject", amount=amount), preheader=t(lang, "amb_paid_preheader"),
+                 heading=t(lang, "amb_paid_heading", first_name=first_name), paragraphs=paras,
+                 button_label=t(lang, "amb_paid_button"), button_url=portal,
+                 footer_reason=t(lang, "amb_paid_footer"), lang=lang)
 
 
-def social_drafts_waiting(items: list[tuple[str, str]], link: str, skip_after_hours: int = 6) -> Email:
+def social_drafts_waiting(items: list[tuple[str, str]], link: str, skip_after_hours: int = 6, lang: str = "da") -> Email:
     """Operator reminder: drafts of Dialogbot's own social posts that are not approved shortly before their slot.
-    `items` = (platform and time, topic) per draft. Nothing is posted without the approval."""
+    `items` = (platform and time, topic) per draft. Nothing is posted without the approval. Dialogbot's operators
+    work in Danish, so the caller leaves `lang` at Danish."""
+    lang = normalize(lang)
     n = len(items)
     return Email(
-        subject=f"{n} opslag venter på din godkendelse" if n != 1 else "1 opslag venter på din godkendelse",
-        preheader="Godkend dem i operatør-oversigten, før tidspunktet.",
-        heading="Opslag venter på dig",
-        paragraphs=["Disse kladder er ikke godkendt endnu. Kig på billede og tekst, ret om nødvendigt, og tryk Godkend."],
+        subject=t(lang, "social_subject_many", n=n) if n != 1 else t(lang, "social_subject_one"),
+        preheader=t(lang, "social_preheader"),
+        heading=t(lang, "social_heading"),
+        paragraphs=[t(lang, "social_body")],
         rows=list(items),
-        button_label="Gennemse og godkend", button_url=link,
-        note=f"Intet bliver postet uden din godkendelse. Er et opslag ikke godkendt {skip_after_hours} timer efter "
-             "tidspunktet, springes det over.",
-        footer_reason="Du får denne e-mail, fordi du er operatør hos Dialogbot.")
+        button_label=t(lang, "social_button"), button_url=link,
+        note=t(lang, "social_note", hours=skip_after_hours),
+        footer_reason=t(lang, "social_footer"), lang=lang)
 
 
 def to_payload(mail: Email) -> dict:
@@ -349,7 +368,7 @@ def to_payload(mail: Email) -> dict:
     return {"subject": mail.subject, "heading": mail.heading, "paragraphs": mail.paragraphs,
             "button_label": mail.button_label, "button_url": mail.button_url, "note": mail.note,
             "footer_reason": mail.footer_reason, "preheader": mail.preheader, "step": mail.step,
-            "rows": [list(r) for r in mail.rows]}
+            "rows": [list(r) for r in mail.rows], "lang": mail.lang}
 
 
 def from_payload(p: dict) -> Email:
@@ -358,7 +377,8 @@ def from_payload(p: dict) -> Email:
         data = {k: v for k, v in p["email"].items() if k in Email.__dataclass_fields__}
         data["rows"] = [(str(k), str(v)) for k, v in data.get("rows") or []]
         return Email(**data)
-    return from_plain(p.get("subject") or "Besked fra Dialogbot", p.get("body") or "")
+    lang = normalize(p.get("lang"))
+    return from_plain(p.get("subject") or t(lang, "default_subject"), p.get("body") or "", lang=lang)
 
 
 # --------------------------------------------------------------------------- the registry

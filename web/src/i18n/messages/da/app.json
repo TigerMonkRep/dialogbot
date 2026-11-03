@@ -827,5 +827,122 @@
       "log": "Se alle ændringer",
       "settings": "Alle indstillinger"
     }
+  },
+  "help": {
+    "start": {
+      "title": "Kom i gang",
+      "guide": {
+        "q": "Opsætningsguiden",
+        "a": "Guiden tager jer gennem virksomhed, mål, sprog og viden. Ved hvert trin foreslår AI'en indhold ud fra jeres hjemmeside – I retter til og gemmer."
+      },
+      "fetch": {
+        "q": "Hent oplysninger fra hjemmesiden",
+        "a": "Virksomhedssiden læser jeres hjemmeside og udfylder beskrivelse, CVR, telefon og adresse, når de står på siden. Ydelser og åbningstider bliver kladder."
+      }
+    },
+    "knowledge": {
+      "title": "Viden",
+      "approved": {
+        "q": "Kun godkendt viden bruges",
+        "a": "Assistenten svarer udelukkende ud fra godkendte emner. Kladder og forslag bruges aldrig, før en ejer eller administrator har godkendt dem."
+      },
+      "prices": {
+        "q": "Priser",
+        "a": "Priser indtastes ekskl. moms. AI'en gætter aldrig en pris – står der en pris på hjemmesiden, citeres den i kladden, så I kan bekræfte den."
+      },
+      "edit": {
+        "q": "Slet eller ret",
+        "a": "Ret et emne og gem det som ny kladde, eller slet det. Sletter I godkendt viden, holder assistenten straks op med at bruge den."
+      }
+    },
+    "reception": {
+      "title": "Reception, telefon og chat",
+      "script": {
+        "q": "Receptionsmanuskript",
+        "a": "Bestem hilsen, hvad assistenten spørger om, og hvornår en medarbejder overtager. Gælder både telefon og chat."
+      },
+      "phone": {
+        "q": "Telefon og dansk stemme",
+        "a": "Behold jeres nummer og viderestil det til jeres Dialogbot-nummer. Vælg en dansk stemme, test forbindelsen og aktivér. Opkald lander under Opkald med udskrift."
+      },
+      "webchat": {
+        "q": "Webchat",
+        "a": "Slå widgetten til, godkend jeres domæner og indsæt koden på hjemmesiden. I kan overtage en samtale under Opkald."
+      }
+    },
+    "leads": {
+      "title": "Henvendelser og afregning",
+      "tasks": {
+        "q": "Henvendelser og opgaver",
+        "a": "Kunder, der vil kontaktes, bliver til henvendelser med en opgave. Kvalificér, godkend og løs dem fra Opkald → Åbn henvendelse."
+      },
+      "billing": {
+        "q": "Afregning",
+        "a": "Der er ét abonnement fra 2.495 kr. om måneden ekskl. moms, inkl. 300 minutters indgående opkald (derefter 1,50 kr. pr. minut). Udgående kampagneopkald koster 4 kr. pr. opkald plus 2 kr. pr. påbegyndt samtaleminut. Konto viser månedens forhåndsvisning."
+      }
+    },
+    "team": {
+      "title": "Team og sikkerhed",
+      "roles": {
+        "q": "Roller",
+        "a": "Ejer og administrator godkender viden og ændrer indstillinger. Medarbejdere arbejder med henvendelser og kladder. Læsere kan kun se."
+      },
+      "log": {
+        "q": "Aktivitetslog",
+        "a": "Alle godkendelser, sletninger og ændringer af indstillinger logges med hvem og hvornår."
+      }
+    },
+    "title": "Sådan bruger I Dialogbot",
+    "goThere": "Gå dertil"
+  },
+  "reception": {
+    "staffOnly": "Receptionen kan ses af medarbejdere, administratorer og ejere.",
+    "active": "Aktiv",
+    "inactive": "Ikke aktiv",
+    "eyebrow": "Reception",
+    "title": "Jeres digitale reception",
+    "intro": "Assistenten svarer i telefonen og i chatten på jeres hjemmeside ud fra godkendt viden og manuskriptet herunder. Kunder, der vil kontaktes, bliver til henvendelser.",
+    "phone": {
+      "notConfigured": "Stemmeforbindelsen er ikke sat op på serveren.",
+      "noVoice": "mangler dansk stemme",
+      "noNumber": "Intet aktivt nummer tilknyttet.",
+      "settings": "Telefoni-indstillinger"
+    },
+    "webchat": {
+      "activeOn": "Aktiv på {n} domæne(r).",
+      "off": "Widgetten er ikke slået til.",
+      "settings": "Webchat-indstillinger"
+    },
+    "stats": {
+      "conversations": "Samtaler"
+    },
+    "try": "Prøv assistenten med manuskriptet og jeres godkendte viden, før kunderne gør.",
+    "test": "Test assistenten",
+    "script": {
+      "title": "Receptionsmanuskript",
+      "intro": "Styrer hvordan assistenten hilser, hvad den spørger om, og hvornår en medarbejder skal overtage – i telefonen og i chatten. Fakta og priser kommer stadig kun fra godkendt viden.",
+      "activeVersion": "Aktiv version {v}",
+      "onlyAdmins": "Kun ejere og administratorer kan ændre manuskriptet.",
+      "writing": "Skriver et forslag ud fra jeres virksomhed og viden…",
+      "suggested": "Forslag fra AI er sat ind. Ret til, og tryk \"Gem manuskript\".",
+      "saved": "Gemt. Assistenten bruger manuskriptet fra næste samtale.",
+      "persona": "Navn på assistenten (valgfri)",
+      "personaPlaceholder": "fx Sofie",
+      "address": "Tiltale",
+      "informal": "du (uformel)",
+      "formal": "De (formel)",
+      "greeting": "Telefonhilsen",
+      "greetingHint": "Brug {virksomhed} for firmanavnet. Nævner hilsenen ikke, at det er en digital assistent, tilføjer vi det automatisk.",
+      "collect": "Det skal assistenten spørge om (ét pr. linje)",
+      "collectHint": "Bruges når kunden vil have tilbud, en tid eller et opkald. Ét spørgsmål ad gangen.",
+      "escalation": "Giv straks videre til en medarbejder når …",
+      "escalationHint": "Fx akutte skader eller klager. Assistenten lover et hurtigt opkald og opretter en henvendelse.",
+      "avoid": "Det må assistenten ikke love eller udtale sig om",
+      "avoidHint": "Fx endelige priser uden besigtigelse.",
+      "closing": "Afslutning",
+      "closingHint": "Kort og venlig.",
+      "suggestAgain": "Foreslå igen",
+      "save": "Gem manuskript"
+    }
   }
 }

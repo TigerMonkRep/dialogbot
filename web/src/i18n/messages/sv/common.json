@@ -1,1 +1,25 @@
-{}
+{
+  "language": "Språk",
+  "chrome": {
+    "home": "Dialogbot startsida",
+    "choosePath": "Välj väg",
+    "tryIt": "Testa den",
+    "buildGuide": "Bygganvisning",
+    "mainMenu": "Huvudmeny",
+    "pricing": "Priser",
+    "location": "Aarhus · Danmark",
+    "hours": "Mån–fre 08–17",
+    "privacy": "Integritet",
+    "gdpr": "GDPR",
+    "terms": "Köpvillkor",
+    "pages": "Sidor",
+    "about": "Om oss",
+    "gdprData": "GDPR och data",
+    "contact": "Kontakt",
+    "login": "Logga in",
+    "signup": "Skapa konto",
+    "knowledge": "Kunskap",
+    "byIndustry": "AI-receptionist för din bransch",
+    "skip": "Hoppa till innehållet"
+  }
+}

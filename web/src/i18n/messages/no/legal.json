@@ -1,1 +1,260 @@
-{}
+{
+  "notice": "Dette er en oversettelse. Den danske versjonen er juridisk bindende.",
+  "shell": {
+    "nav": "Juridisk",
+    "terms": "Vilkår",
+    "privacy": "Personvern",
+    "contact": "Kontakt",
+    "cvr": "CVR-nr."
+  },
+  "gdpr": {
+    "meta": {
+      "title": "GDPR og data – slik tar Dialogbot vare på kundenes opplysninger",
+      "description": "Hva Dialogbot lagrer om anrop og SMS, hvor dataene ligger, hvordan databehandleravtalen fungerer, og hva som skjer når dere sier opp. Kort og på et klart språk.",
+      "ogTitle": "GDPR og data | Dialogbot"
+    },
+    "kicker": "GDPR og data",
+    "title": "GDPR og data: hva vi lagrer, og hvor",
+    "lead": "Kundene deres ringer og skriver med personopplysninger. Her står det på et klart språk hva Dialogbot gjør med dem.",
+    "points": [
+      "Dere er behandlingsansvarlige – Dialogbot er databehandleren deres",
+      "Databasen ligger i EU",
+      "Databehandleravtalen er en del av vilkårene",
+      "Anrop kan transkriberes til tekst",
+      "Dialogbot sier ærlig at den er en AI",
+      "Sier dere opp, kan dere få en kopi av dataene, og så sletter vi"
+    ],
+    "sections": [
+      {
+        "title": "Hvem har ansvar for hva?",
+        "body": [
+          { "type": "p", "parts": ["Det er dere som er ", { "b": "behandlingsansvarlige" }, " for kundenes opplysninger. Dialogbot er ", { "b": "databehandler" }, " og behandler bare opplysningene etter deres instruks. Det gjelder også hvis kundene deres er pasienter, klienter eller privatpersoner."] }
+        ]
+      },
+      {
+        "title": "Hva lagrer vi?",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              "Telefonnummer, navn og innholdet i meldingen når noen ringer eller skriver til dere",
+              "En utskrift av samtalen – anrop kan bli transkribert til tekst",
+              "Bookinger og SMS-bekreftelser",
+              "Oppsummeringen av hver henvendelse som dere får fra Dialogbot",
+              "Kunnskapen og prisene dere selv har godkjent for assistenten"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Hvor ligger dataene?",
+        "body": [
+          { "type": "p", "parts": ["Databasen ligger i EU (Irland), og serveren i EU (Frankfurt). Telefoni, tale og AI kjører hos underleverandører, og noen av dem kan behandle data i USA. Det skjer på grunnlag av EU-U.S. Data Privacy Framework eller EU-kommisjonens standardkontrakter. Den fullstendige listen over underdatabehandlere står i ", { "link": "/privatliv", "text": "personvernerklæringen" }, "."] }
+        ]
+      },
+      {
+        "title": "Databehandleravtale",
+        "body": [
+          { "type": "p", "parts": ["Databehandleravtalen vår inngår i ", { "link": "/vilkaar", "text": "vilkårene" }, ", så dere trenger ikke be om en egen. Skriv til ", { "email": true }, " hvis dere trenger en signert kopi til egen dokumentasjon."] }
+        ]
+      },
+      {
+        "title": "Hva forteller assistenten kundene?",
+        "body": [
+          { "type": "p", "text": "Dialogbot sier ærlig at den er en digital assistent hvis kunden spør, og den opplyser om det i samtalen. Den svarer bare ut fra kunnskap dere selv har godkjent." }
+        ]
+      },
+      {
+        "title": "Når dere sier opp",
+        "body": [
+          { "type": "p", "text": "Dataene deres tilhører dere. Innen 30 dager etter oppsigelsen kan dere be om en kopi. Deretter sletter vi dem, med mindre loven krever at vi oppbevarer dem – f.eks. fakturaer i 5 år." }
+        ]
+      },
+      {
+        "title": "Spørsmål eller innsyn",
+        "body": [
+          { "type": "p", "parts": ["Vil en av kundene deres ha innsyn i eller få slettet opplysningene sine, hjelper vi dere med å svare. Skriv til ", { "email": true }, ". Kunder kan også klage til ", { "href": "https://www.datatilsynet.dk", "text": "Datatilsynet" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Kan jeg få en databehandleravtale?", "Ja. Den inngår i vilkårene. Skriv til info@dialogbot.dk hvis dere vil ha en signert kopi."],
+      ["Ligger dataene i EU?", "Databasen ligger i EU (Irland) og serveren i EU (Frankfurt). Noen underleverandører for telefoni, tale og AI kan behandle data i USA på grunnlag av EU-U.S. Data Privacy Framework eller standardkontrakter."],
+      ["Hva skjer med dataene når jeg sier opp?", "Dere kan innen 30 dager be om en kopi. Deretter sletter vi dataene, med mindre loven krever at vi oppbevarer dem."]
+    ]
+  },
+  "privacy": {
+    "meta": {
+      "title": "Personvern | Dialogbot",
+      "description": "Slik behandler Dialogbot personopplysninger om kunder, kundenes kunder, ambassadører og besøkende."
+    },
+    "label": "Personvern",
+    "title": "Slik behandler vi personopplysninger",
+    "updated": "Oppdatert 6. oktober 2026.",
+    "intro": "Her kan du se hvilke opplysninger Dialogbot behandler, hvorfor, hvor lenge og hvem som hjelper oss med det. Siden dekker kunder, kundenes egne kunder, ambassadører og besøkende.",
+    "sections": [
+      {
+        "title": "Hvem er ansvarlig?",
+        "body": [
+          { "type": "p", "parts": ["{name} (CVR-nr. {cvr}), {address}. Skriv til ", { "email": true }, " om alt som gjelder opplysningene dine."] }
+        ]
+      },
+      {
+        "title": "Kunder (bedrifter med en konto)",
+        "body": [
+          { "type": "p", "text": "Vi behandler navn, e-post og passord (lagret kryptert) for brukerne, bedriftens opplysninger (navn, CVR, adresse, telefon, åpningstider, tjenester og priser) og kunnskapen dere legger inn for assistenten. Vi logger viktige handlinger, f.eks. godkjenninger og endringer av roller, av sikkerhetshensyn." },
+          { "type": "p", "text": "Formålet er å levere tjenesten og fakturere for den. Rettsgrunnlaget er avtalen med dere (personvernforordningens art. 6 nr. 1 bokstav b) og vår berettigede interesse i sikkerhet og drift (bokstav f)." }
+        ]
+      },
+      {
+        "title": "Betaling",
+        "body": [
+          { "type": "p", "text": "Betalingskort håndteres av Stripe. Vi ser bare korttypen, de fire siste sifrene og utløpsdatoen. Fakturaer oppbevares i 5 år i henhold til den danske bokføringsloven." }
+        ]
+      },
+      {
+        "title": "Kundene deres (samtaler, anrop og henvendelser)",
+        "body": [
+          { "type": "p", "parts": ["Når assistenten snakker med kundene deres på telefon eller på nettsiden, behandler vi telefonnummer, navn, innholdet i meldingen, utskrift av samtalen, bookinger og henvendelsene som oppstår. Det gjør vi som ", { "b": "databehandler" }, " på vegne av bedriften kunden har kontaktet – bedriften er behandlingsansvarlig. Se ", { "link": "/vilkaar", "text": "vilkårene" }, "."] },
+          { "type": "p", "text": "Anrop kan bli transkribert til tekst. Assistenten opplyser i starten av samtalen at den er en AI." }
+        ]
+      },
+      {
+        "title": "Ambassadører",
+        "body": [
+          { "type": "p", "text": "Er du ambassadør, behandler vi navn, e-post, telefon, fødselsdato, hilsenen din, kundene du har henvist (bare firmanavn og status), bonusen din og utbetalingene dine." },
+          { "type": "p", "parts": ["Uten CVR behandler vi også ", { "b": "CPR-nummeret" }, " og ", { "b": "bankkontonummeret" }, " ditt. CPR-nummeret brukes bare til å innrapportere bonusen din som B-inntekt til Skattestyrelsen, noe vi har plikt til; kontonummeret bare til utbetaling. Begge lagres kryptert og kan bare ses av Dialogbots administratorer, og hver visning logges. Er du under 18, behandler vi også navnet, e-posten og godkjenningen til forelderen din."] },
+          { "type": "p", "text": "Rettsgrunnlaget er avtalen med deg (art. 6 nr. 1 bokstav b) og vår rettslige forpliktelse til å innrapportere (bokstav c og den danske databeskyttelsesloven § 11 om CPR). Opplysningene oppbevares så lenge du er ambassadør, og deretter i 5 år av hensyn til bokføring og skatt." }
+        ]
+      },
+      {
+        "title": "Venteliste og demosamtaler",
+        "body": [
+          { "type": "p", "parts": [{ "b": "Venteliste:" }, " e-post, valgt bransje og interesser samt tidspunkt for samtykke – bare for å gi deg beskjed når vi åpner. Oppbevares i høyst 24 måneder."] },
+          { "type": "p", "parts": [{ "b": "«Ring meg nå»:" }, " telefonnummer, navn, bedrift, tidspunkt og tekst for samtykket ditt samt utskrift av samtalen, slik at vi kan ringe deg og følge opp. Sier du nei takk i samtalen, kommer nummeret på sperrelisten vår. Rettsgrunnlaget er samtykket ditt, som du alltid kan trekke tilbake."] }
+        ]
+      },
+      {
+        "title": "Informasjonskapsler",
+        "body": [
+          { "type": "p", "text": "Nødvendige informasjonskapsler setter vi uten å spørre: for å holde deg innlogget, huske arbeidsområdet du har valgt, passordet til forsiden og – hvis du kom via lenken til en ambassadør – hvilken ambassadør som anbefalte oss (90 dager). Besøkstall måler vi på to måter: Vercel Web Analytics, som verken bruker informasjonskapsler eller lagrer noe om deg, og Google Analytics, som setter en statistikkinformasjonskapsel og bare kjører hvis du har sagt ja i banneret – du kan endre valget ditt under «Innstillinger for informasjonskapsler» nederst på siden. Vi bruker ingen reklameinformasjonskapsler." }
+        ]
+      },
+      {
+        "title": "Hvem hjelper oss? (underdatabehandlere)",
+        "body": [
+          { "type": "p", "text": "Vi bruker disse leverandørene, som behandler data på våre vegne under databehandleravtaler:" },
+          {
+            "type": "ul",
+            "items": [
+              "Supabase – database (EU, Irland)",
+              "Render – server (EU, Frankfurt)",
+              "Vercel – nettside og app",
+              "Resend – utsending av e-post (EU, Irland)",
+              "Stripe – betaling",
+              "Anthropic – AI-modell som formulerer svarene",
+              "Vapi og Twilio – telefoni",
+              "Deepgram og ElevenLabs – tale til tekst og tekst til tale"
+            ]
+          },
+          { "type": "p", "text": "Noen av dem kan behandle data i USA. Overføringen skjer på grunnlag av EU-U.S. Data Privacy Framework eller EU-kommisjonens standardkontrakter." }
+        ]
+      },
+      {
+        "title": "Rettighetene dine",
+        "body": [
+          { "type": "p", "parts": ["Du har rett til innsyn, retting, sletting, begrensning, dataportabilitet og til å protestere – og til å trekke tilbake et samtykke. Skriv til ", { "email": true }, ". Gjelder det en samtale med en av kundene våre, hjelper vi den bedriften med å svare deg. Du kan klage til det danske Datatilsynet (", { "href": "https://www.datatilsynet.dk", "text": "datatilsynet.dk" }, ")."] }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "meta": {
+      "title": "Vilkår | Dialogbot",
+      "description": "Abonnements- og salgsvilkår for Dialogbot."
+    },
+    "label": "Vilkår",
+    "title": "Abonnements- og salgsvilkår",
+    "updated": "Versjon 1 · gjeldende fra 6. oktober 2026.",
+    "intro": "Disse vilkårene gjelder når en bedrift oppretter en konto og bruker Dialogbot. Dialogbot selges bare til næringsdrivende. «Vi» er {name} (CVR-nr. {cvr}), {address}. «Dere» er bedriften som har opprettet arbeidsområdet.",
+    "sections": [
+      {
+        "title": "1. Tjenesten",
+        "body": [
+          { "type": "p", "text": "Dialogbot er en AI-resepsjonist som kan besvare anrop og meldinger på nettsiden deres, ta imot henvendelser, booke timer og – hvis dere velger det – ringe kontakter som har gitt samtykke. Assistenten svarer ut fra kunnskapen dere selv har godkjent i arbeidsområdet deres." },
+          { "type": "p", "text": "Vi videreutvikler tjenesten løpende. Funksjoner som er merket «kommer» eller «ikke tilgjengelig», er ikke en del av avtalen før de er lansert." }
+        ]
+      },
+      {
+        "title": "2. Priser",
+        "body": [
+          { "type": "p", "text": "Alle priser er i danske kroner eks. mva. Mva. (25 %) legges til på fakturaen." },
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Abonnement:" }, " fra 2.495 kr. per måned. Det er ingen pris per henvendelse."],
+              [{ "b": "Kampanjer (utgående anrop):" }, " 4 kr. per utgående anrop pluss 2 kr. per påbegynt samtaleminutt. Hvert anrop som ringes, teller, også et nytt forsøk (høyst 2 forsøk og høyst 3 samtaleminutter per kontakt). Høyest mulig pris vises før en kampanje startes."],
+              [{ "b": "Innkommende anrop:" }, " et dansk telefonnummer til assistenten og 300 påbegynte samtaleminutter per kalendermåned er inkludert. Minutter utover dette koster 1,50 kr. per påbegynt minutt og avregnes på månedens faktura. Forbruket kan følges løpende i Dialogbot."]
+            ]
+          },
+          { "type": "p", "text": "Kommer dere via en ambassadør, får dere 50 % rabatt på den første fakturerte måneden. Vi kan endre prisene med minst 30 dagers varsel på e-post; endringen gjelder fra den første hele måneden etter varselet." }
+        ]
+      },
+      {
+        "title": "3. Betaling",
+        "body": [
+          { "type": "p", "text": "Dere lagrer et betalingskort hos betalingsleverandøren vår, Stripe. Vi fakturerer etterskuddsvis én gang i måneden for forrige måned, og beløpet trekkes automatisk fra kortet. Vi lagrer ikke kortopplysninger selv." },
+          { "type": "p", "text": "Kan betalingen ikke gjennomføres, får dere beskjed. Er en faktura ikke betalt 14 dager etter forfall, kan vi sette assistenten på pause til betalingen er på plass." },
+          { "type": "p", "parts": ["Har dere spørsmål om en faktura, ", { "link": "/kontakt", "text": "kontakt oss" }, " før dere bestrider den hos banken."] }
+        ]
+      },
+      {
+        "title": "4. Oppstart, løpetid og oppsigelse",
+        "body": [
+          { "type": "p", "text": "Avtalen løper til den sies opp. Dere kan si opp til utgangen av inneværende måned ved å skrive til oss. Vi kan si opp med 30 dagers varsel. Det er ingen bindingstid. Oppsett er inkludert når dere gjør det selv; oppsett utført av Dialogbots spesialister koster 5.000 kr. eks. mva. og betales én gang før arbeidet starter." },
+          { "type": "p", "text": "Ved vesentlig mislighold – f.eks. misbruk av tjenesten eller manglende betaling – kan vi stenge tilgangen uten varsel." }
+        ]
+      },
+      {
+        "title": "5. Deres ansvar",
+        "body": [
+          { "type": "p", "text": "Dere er ansvarlige for at kunnskapen, prisene, åpningstidene og svarene dere godkjenner, er korrekte, og for å følge opp henvendelsene assistenten tar imot." },
+          { "type": "p", "text": "Bruker dere kampanjer (utgående anrop), er dere ansvarlige for at hver kontakt har gitt et forhåndsgitt, dokumenterbart samtykke til å bli oppringt av et automatisk system, jf. den danske markedsføringsloven § 10, og for at reklamebeskyttede bedrifter ikke kontaktes. Tjenesten må ikke brukes til ulovlig, villedende eller krenkende innhold." },
+          { "type": "p", "text": "Dere må holde innloggingen deres fortrolig og gi tilgang til de rette personene i teamet." }
+        ]
+      },
+      {
+        "title": "6. AI og ansvarsbegrensning",
+        "body": [
+          { "type": "p", "text": "Assistenten bruker kunstig intelligens. Den er instruert i å bare svare ut fra den godkjente kunnskapen deres og i å si fra hvis den ikke vet svaret, men den kan ta feil eller misforstå. Den opplyser alltid at den er en AI." },
+          { "type": "p", "text": "Vi er ikke ansvarlige for indirekte tap, f.eks. tapt omsetning, tapte kunder eller følgeskader. Vårt samlede ansvar er begrenset til beløpet dere har betalt for tjenesten de siste 3 månedene før skaden. Vi er ikke ansvarlige for driftsavbrudd hos tredjeparter som teleselskaper og skyleverandører eller for forhold utenfor vår kontroll." }
+        ]
+      },
+      {
+        "title": "7. Data og personopplysninger",
+        "body": [
+          { "type": "p", "parts": ["Dataene deres tilhører dere. Når assistenten snakker med kundene deres, behandler vi personopplysninger på deres vegne som databehandler. Vi behandler bare data etter deres instruks og i henhold til databehandleravtalen vår, som inngår i disse vilkårene. Listen over underdatabehandlere vi bruker (bl.a. hosting, telefoni, tale og AI), fremgår av ", { "link": "/privatliv", "text": "personvernerklæringen" }, "."] },
+          { "type": "p", "text": "Ved oppsigelse kan dere innen 30 dager be om en kopi av dataene deres. Deretter sletter vi dem, med mindre loven krever at vi oppbevarer dem (f.eks. fakturaer i 5 år)." }
+        ]
+      },
+      {
+        "title": "8. Endringer i vilkårene",
+        "body": [
+          { "type": "p", "text": "Vi kan endre vilkårene med 30 dagers varsel på e-post. Vesentlige endringer i deres disfavør gir dere rett til å si opp med virkning fra endringsdatoen." }
+        ]
+      },
+      {
+        "title": "9. Lovvalg og tvister",
+        "body": [
+          { "type": "p", "text": "Avtalen er underlagt dansk rett. Uenigheter søkes løst gjennom dialog; ellers avgjøres de ved Retten i Aarhus." }
+        ]
+      },
+      {
+        "title": "Kontakt",
+        "body": [
+          { "type": "p", "parts": ["{name}, CVR-nr. {cvr}, {address} · ", { "email": true }, " · ", { "link": "/kontakt", "text": "Kontakt og støtte" }] }
+        ]
+      }
+    ]
+  }
+}

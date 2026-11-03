@@ -1,1 +1,691 @@
-{}
+{
+  "ai-telefonsvarer-eller-telefonpasning": {
+    "meta": {
+      "title": "Répondeur IA ou permanence téléphonique – que choisir ?",
+      "description": "Répondeur classique, permanence téléphonique ou répondeur IA ? Découvrez les différences de prix, de disponibilité et de qualité pour choisir la bonne solution.",
+      "ogTitle": "Répondeur IA ou permanence téléphonique ? | Dialogbot"
+    },
+    "kicker": "Répondeur IA ou permanence téléphonique",
+    "title": "Répondeur IA ou permanence téléphonique – que choisir ?",
+    "lead": "Quand vous ne pouvez pas répondre vous-même, trois options s’offrent à vous : un répondeur classique, une permanence téléphonique assurée par des humains, ou un répondeur IA. Voici les différences.",
+    "points": [
+      "Répondeur : bon marché, mais le client raccroche souvent",
+      "Permanence téléphonique : un humain répond, mais généralement aux heures de bureau",
+      "Répondeur IA : répond 24 h/24 et peut prendre des rendez-vous",
+      "Choisissez selon le volume d’appels, vos horaires et vos besoins"
+    ],
+    "sections": [
+      {
+        "title": "1. Le répondeur classique",
+        "body": [
+          {
+            "type": "p",
+            "text": "Simple et bon marché, mais beaucoup de clients raccrochent au lieu de laisser un message – et appellent un concurrent. Vous devez écouter vous-même les messages et rappeler sans savoir de quoi il s’agit."
+          }
+        ]
+      },
+      {
+        "title": "2. La permanence téléphonique",
+        "body": [
+          {
+            "type": "p",
+            "text": "Une personne répond en votre nom et prend un message. L’expérience est personnelle, mais la facturation se fait généralement à l’appel ou au mois, et beaucoup de services ne sont ouverts qu’aux heures de bureau. La standardiste connaît rarement vos prestations et vos tarifs en détail."
+          }
+        ]
+      },
+      {
+        "title": "3. Le répondeur IA",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Un répondeur IA comme ",
+              {
+                "link": "/ai-telefonsvarer",
+                "text": "Dialogbot"
+              },
+              " parle avec vos clients dans leur langue, 24 h/24, répond à partir de vos propres connaissances validées, et peut prendre des rendez-vous et envoyer des confirmations par SMS. Vous recevez un résumé écrit de chaque conversation au lieu d’un message vocal."
+            ]
+          },
+          {
+            "type": "p",
+            "text": "En revanche, ce n’est pas un humain – il le dit honnêtement et vous transmet les demandes auxquelles il ne peut pas répondre."
+          }
+        ]
+      },
+      {
+        "title": "Comparatif",
+        "body": [
+          {
+            "type": "table",
+            "other": "Permanence téléphonique",
+            "rows": [
+              [
+                "Qui répond",
+                "Une IA en français, uniquement à partir des connaissances que vous avez validées",
+                "Une personne qui ne connaît pas toujours vos prestations"
+              ],
+              [
+                "Disponibilité",
+                "24 h/24",
+                "Généralement aux heures de bureau"
+              ],
+              [
+                "Rendez-vous",
+                "Directement dans votre agenda, avec confirmation par SMS",
+                "Généralement un message dont vous assurez vous-même le suivi"
+              ],
+              [
+                "Prix",
+                "2.495 kr./mois HT, aucun prix par demande",
+                "Généralement à l’appel ou au mois"
+              ],
+              [
+                "Retour pour vous",
+                "Résumé écrit de chaque conversation et rapport quotidien",
+                "Un message par appel"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Comment choisir",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [
+                {
+                  "b": "Peu d’appels, et seulement en journée ?"
+                },
+                " Un répondeur peut suffire."
+              ],
+              [
+                {
+                  "b": "Un humain au bout du fil est essentiel ?"
+                },
+                " La permanence téléphonique – mais vérifiez ses horaires."
+              ],
+              [
+                {
+                  "b": "Beaucoup d’appels, y compris le soir, et besoin de prise de rendez-vous ?"
+                },
+                " Un répondeur IA offre le meilleur rapport qualité-prix."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Écoutez la différence",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              {
+                "link": "/proev",
+                "text": "Faites-vous appeler par Dialogbot"
+              },
+              " et écoutez à quoi ressemble un répondeur IA. Consultez aussi les ",
+              {
+                "link": "/priser",
+                "text": "tarifs"
+              },
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Un répondeur IA peut-il remplacer une permanence téléphonique ?",
+        "Pour la plupart des demandes courantes, oui : il répond, qualifie le besoin et prend rendez-vous. Les demandes complexes vous sont transmises."
+      ],
+      [
+        "Un répondeur IA est-il disponible la nuit ?",
+        "Oui, Dialogbot répond au téléphone 24 h/24."
+      ],
+      [
+        "Qu’est-ce qui coûte le moins cher : une permanence téléphonique ou Dialogbot ?",
+        "La permanence téléphonique est généralement facturée à l’appel ou au mois. Dialogbot est un abonnement unique à 2.495 kr. par mois HT, avec 300 minutes d’appels entrants et aucun prix par demande. Voir aussi /viden/dialogbot-vs-vocalis."
+      ],
+      [
+        "Puis-je garder mon numéro ?",
+        "Oui. Vous renvoyez votre numéro vers Dialogbot quand vous êtes occupé ou fermé."
+      ]
+    ]
+  },
+  "dialogbot-vs-almindelig-chatbot": {
+    "meta": {
+      "title": "Dialogbot ou un chatbot classique – quelle différence ?",
+      "description": "Un chatbot classique répond sur un site web. Dialogbot répond aussi au téléphone, prend des rendez-vous et ne répond qu’à partir des connaissances que vous avez validées. Découvrez les différences.",
+      "ogTitle": "Dialogbot ou un chatbot classique ? | Dialogbot"
+    },
+    "kicker": "Dialogbot ou un chatbot classique",
+    "title": "Dialogbot ou un chatbot classique – quelle différence ?",
+    "lead": "Un chatbot classique répond sur votre site web. Dialogbot répond aussi au téléphone, prend les rendez-vous et vous laisse valider tout ce qu’il a le droit de dire.",
+    "points": [
+      "Chatbot : écrit sur le site web",
+      "Dialogbot : téléphone, chat et rendez-vous avec les mêmes connaissances",
+      "Dialogbot ne devine jamais – uniquement des connaissances validées",
+      "Un seul abonnement : 2.495 kr./mois"
+    ],
+    "sections": [
+      {
+        "title": "Vue d’ensemble",
+        "body": [
+          {
+            "type": "table",
+            "other": "Chatbot classique",
+            "rows": [
+              [
+                "Canaux",
+                "Téléphone et chat web avec les mêmes connaissances",
+                "Généralement uniquement le chat sur le site"
+              ],
+              [
+                "Rendez-vous",
+                "Trouve les créneaux libres dans votre agenda et envoie une confirmation par SMS",
+                "Rarement – souvent un simple lien ou un message"
+              ],
+              [
+                "Base de ses réponses",
+                "Uniquement les connaissances que vous avez validées – et vous voyez chaque modification d’abord",
+                "Variable : certains répondent librement à partir d’un modèle d’IA"
+              ],
+              [
+                "Quand il ne sait pas répondre",
+                "Il le dit et prend un message pour vous",
+                "Variable"
+              ],
+              [
+                "Retour pour vous",
+                "Nom, numéro et objet de l’appel – et un rapport chaque jour",
+                "Variable"
+              ],
+              [
+                "Prix",
+                "2.495 kr./mois – aucun prix par demande",
+                "À partir de quelques centaines de kr./mois"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Quand un chatbot classique suffit-il ?",
+        "body": [
+          {
+            "type": "p",
+            "text": "Si vos clients vous écrivent presque exclusivement et que vous n’avez besoin ni de prise de rendez-vous ni de réponse au téléphone, un simple chatbot peut suffire – et coûter moins cher."
+          }
+        ]
+      },
+      {
+        "title": "Quand Dialogbot apporte-t-il plus ?",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Quand le téléphone sonne alors que vous êtes sur l’échelle ou avec un client, et qu’un appel manqué est un client perdu. Dialogbot décroche en deux secondes, prend un rendez-vous et vous prévient. En savoir plus sur le ",
+              {
+                "link": "/ai-receptionist",
+                "text": "réceptionniste IA"
+              },
+              " et le ",
+              {
+                "link": "/chatbot",
+                "text": "chatbot pour site web"
+              },
+              ", inclus dans l’abonnement."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Écoutez-le vous-même",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              {
+                "link": "/proev",
+                "text": "Laissez Dialogbot vous appeler"
+              },
+              " – deux minutes, sans inscription."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Dialogbot peut-il être simplement un chatbot ?",
+        "Oui. Le chat web est inclus dans l’abonnement et utilise les mêmes connaissances validées que le téléphone. C’est une seule ligne de code sur votre site."
+      ],
+      [
+        "Dialogbot devine-t-il s’il ne connaît pas la réponse ?",
+        "Non. Il répond uniquement à partir de connaissances validées et prend un message pour vous s’il ne peut pas répondre."
+      ],
+      [
+        "Combien ça coûte ?",
+        "2.495 kr. par mois HT avec 300 minutes d’appels entrants. Sans engagement."
+      ]
+    ]
+  },
+  "dialogbot-vs-vocalis": {
+    "meta": {
+      "title": "Dialogbot ou Vocalis – prix fixe ou forfaits de minutes ?",
+      "description": "Comparez Dialogbot et Vocalis : prix mensuel fixe ou forfaits de minutes, connaissances validées, prise de rendez-vous et démarrage. Prix HT.",
+      "ogTitle": "Dialogbot ou Vocalis ? | Dialogbot"
+    },
+    "kicker": "Dialogbot ou Vocalis",
+    "title": "Dialogbot ou Vocalis – prix fixe ou forfaits de minutes ?",
+    "lead": "Tous deux créent des employés IA pour les TPE et PME. La différence tient surtout à la façon dont vous payez et dont vous démarrez.",
+    "points": [
+      "Dialogbot : 2.495 kr./mois, 300 minutes incluses, puis 1,50 kr./min",
+      "Vocalis : à partir de 899 kr./mois pour 100 minutes, puis des forfaits de minutes",
+      "Dialogbot : uniquement des connaissances validées – et vous validez chaque modification",
+      "Dialogbot : écoutez-le d’abord, sans inscription"
+    ],
+    "sections": [
+      {
+        "title": "Vue d’ensemble",
+        "body": [
+          {
+            "type": "table",
+            "other": "Vocalis",
+            "rows": [
+              [
+                "Prix mensuel (HT)",
+                "2.495 kr. – un seul abonnement",
+                "À partir de 899 kr. pour 100 minutes (Basis)"
+              ],
+              [
+                "Une fois les minutes épuisées",
+                "1,50 kr. par minute entamée au-delà des 300 incluses",
+                "Forfaits de minutes automatiques jusqu’à 3.995 kr./mois"
+              ],
+              [
+                "Base des réponses",
+                "Les connaissances que vous avez validées – et vous voyez chaque modification d’abord (avant → après, « Valider ? »)",
+                "Voir la description de Vocalis"
+              ],
+              [
+                "Rendez-vous",
+                "Google Agenda ou Microsoft 365, avec confirmation par SMS",
+                "Voir la description de Vocalis"
+              ],
+              [
+                "Pour démarrer",
+                "Écoutez-le d’abord : il vous appelle, sans inscription. Configuration en autonomie en une demi-heure environ",
+                "Consultation gratuite et rappel"
+              ],
+              [
+                "Engagement",
+                "Aucun – résiliable de mois en mois",
+                "Voir la description de Vocalis"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Prix : fixe ou à la consommation",
+        "body": [
+          {
+            "type": "p",
+            "text": "Vocalis démarre plus bas, mais le prix suit la consommation : au-delà des 100 minutes, des forfaits sont ajoutés automatiquement. Dialogbot coûte plus cher au départ, mais 300 minutes sont incluses et les minutes supplémentaires coûtent 1,50 kr. La facture est prévisible et vous pouvez toujours suivre votre consommation."
+          },
+          {
+            "type": "p",
+            "parts": [
+              "Si vous ne recevez que quelques appels par mois, un prix d’entrée plus bas peut mieux convenir. Si le téléphone sonne toute la journée, un prix fixe est la solution rassurante. Voir ",
+              {
+                "link": "/priser",
+                "text": "tous les tarifs"
+              },
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "La grande différence : les connaissances validées",
+        "body": [
+          {
+            "type": "p",
+            "text": "Dialogbot répond uniquement à partir des prestations, tarifs et horaires que vous avez vous-même validés, et le dit s’il ne connaît pas la réponse. Chaque modification s’affiche d’abord en avant → après avec « Valider ? ». C’est ce mécanisme qui l’empêche de deviner."
+          }
+        ]
+      },
+      {
+        "title": "Écoutez la différence vous-même",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              {
+                "link": "/proev",
+                "text": "Laissez Dialogbot vous appeler"
+              },
+              " – cela prend deux minutes et ne nécessite aucune inscription."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Dialogbot est-il plus cher que Vocalis ?",
+        "Au départ, oui : 2.495 kr. par mois contre 899 kr. pour 100 minutes. En revanche, 300 minutes sont incluses et le prix ne s’envole pas si vous recevez plus d’appels."
+      ],
+      [
+        "Puis-je passer de Vocalis à Dialogbot ?",
+        "Oui. Vous gardez votre numéro actuel et le renvoyez vers Dialogbot, sans aucun engagement."
+      ],
+      [
+        "Où trouver les tarifs actuels de Vocalis ?",
+        "Directement chez Vocalis. Les prix indiqués ici sont les tarifs publics au moment de la rédaction et peuvent avoir changé."
+      ]
+    ]
+  },
+  "hvad-er-en-ai-receptionist": {
+    "meta": {
+      "title": "Qu’est-ce qu’un réceptionniste IA – et comment fonctionne-t-il ?",
+      "description": "Un réceptionniste IA gère le téléphone et le chat de votre entreprise, répond à partir de vos propres connaissances et prend des rendez-vous. Voici comment il fonctionne et ce qu’il faut vérifier.",
+      "ogTitle": "Qu’est-ce qu’un réceptionniste IA ? | Dialogbot"
+    },
+    "kicker": "Qu’est-ce qu’un réceptionniste IA ?",
+    "title": "Qu’est-ce qu’un réceptionniste IA – et comment fonctionne-t-il ?",
+    "lead": "Un réceptionniste IA est un assistant numérique qui gère le téléphone et le chat de votre entreprise. Voici ce qu’il sait faire, comment il fonctionne et ce qu’il faut vérifier avant d’en choisir un.",
+    "points": [
+      "Répond au téléphone et au chat 24 h/24",
+      "Répond à partir des connaissances propres à l’entreprise",
+      "Qualifie le besoin et recueille les coordonnées",
+      "Peut prendre des rendez-vous et envoyer des SMS",
+      "Ne doit jamais deviner ni promettre quelque chose que vous n’avez pas validé"
+    ],
+    "sections": [
+      {
+        "title": "En bref",
+        "body": [
+          {
+            "type": "p",
+            "text": "Un réceptionniste IA répond quand vous ne pouvez pas : quand vous êtes occupé, chez un client ou fermé. Au lieu d’un répondeur qui demande au client de laisser un message, il discute avec lui, comprend son besoin et recueille son nom, son numéro et sa demande, pour que vous puissiez rappeler un client déjà qualifié."
+          },
+          {
+            "type": "p",
+            "parts": [
+              "Il repose sur trois briques : la ",
+              {
+                "b": "reconnaissance vocale"
+              },
+              ", qui comprend ce que dit le client, un ",
+              {
+                "b": "modèle de langage"
+              },
+              ", qui trouve la bonne réponse dans les connaissances de l’entreprise, et une ",
+              {
+                "b": "voix"
+              },
+              ", qui répond naturellement dans la langue du client."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Que sait faire un réceptionniste IA ?",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              "Répondre aux questions courantes : horaires, tarifs, prestations, adresse et stationnement.",
+              "Qualifier le besoin avec les questions définies par l’entreprise.",
+              "Trouver des créneaux libres et prendre, déplacer ou annuler des rendez-vous.",
+              "Envoyer une confirmation au client par SMS.",
+              "Transmettre à l’entreprise un bref résumé écrit de chaque conversation."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Ce qu’il ne doit pas faire",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Un bon réceptionniste IA ",
+              {
+                "b": "ne devine jamais"
+              },
+              ". Il doit répondre uniquement à partir des connaissances validées par l’entreprise et dire honnêtement quand une information n’est pas disponible. Il ne doit pas promettre de remises, donner de conseils professionnels ni se faire passer pour un humain."
+            ]
+          },
+          {
+            "type": "p",
+            "text": "Chez Dialogbot, toute connaissance commence sous forme de brouillon et n’est utilisée qu’une fois validée par un propriétaire ou un administrateur."
+          }
+        ]
+      },
+      {
+        "title": "Ce qu’il faut vérifier",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [
+                {
+                  "b": "Voix en français"
+                },
+                " – sonne-t-elle naturelle, et comprend-elle les noms et le vocabulaire métier ?"
+              ],
+              [
+                {
+                  "b": "Contrôle"
+                },
+                " – pouvez-vous valider vous-même ce qu’il a le droit de dire ?"
+              ],
+              [
+                {
+                  "b": "Actions"
+                },
+                " – peut-il prendre des rendez-vous et envoyer des SMS, ou se contente-t-il de prendre des messages ?"
+              ],
+              [
+                {
+                  "b": "Mise en place"
+                },
+                " – êtes-vous accompagné, ou devez-vous vous débrouiller seul ?"
+              ],
+              [
+                {
+                  "b": "Prix"
+                },
+                " – prix fixe ou par demande, et y a-t-il un engagement ?"
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Essayez vous-même",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Le meilleur test, c’est de l’écouter. ",
+              {
+                "link": "/proev",
+                "text": "Faites-vous appeler par Dialogbot"
+              },
+              ", choisissez votre secteur et écoutez comment il répondrait au téléphone pour vous. En savoir plus sur le ",
+              {
+                "link": "/ai-receptionist",
+                "text": "réceptionniste IA de Dialogbot"
+              },
+              " ou consulter les ",
+              {
+                "link": "/priser",
+                "text": "tarifs"
+              },
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Un réceptionniste IA, est-ce la même chose qu’un chatbot ?",
+        "Pas tout à fait. Un chatbot écrit, un réceptionniste IA parle au téléphone. Dialogbot fait les deux avec les mêmes connaissances."
+      ],
+      [
+        "Un réceptionniste IA sonne-t-il comme un robot ?",
+        "Les voix modernes sont naturelles. Dialogbot parle la langue de vos clients et indique toujours honnêtement qu’il est un assistant numérique si le client le demande."
+      ],
+      [
+        "Combien coûte un réceptionniste IA ?",
+        "Chez Dialogbot, il y a un seul abonnement à 2.495 kr. par mois HT. Aucun prix par demande."
+      ]
+    ]
+  },
+  "viderestil-telefonen": {
+    "meta": {
+      "title": "Comment renvoyer vos appels quand vous êtes occupé",
+      "description": "Renvoyez les appels de votre mobile en cas d’occupation, de non-réponse ou systématiquement avec les codes standard **67*, **61* et **21* – et désactivez le renvoi avec ##002#. Guide pour les entreprises danoises.",
+      "ogTitle": "Comment renvoyer vos appels | Dialogbot"
+    },
+    "kicker": "Renvoyer vos appels",
+    "title": "Comment renvoyer vos appels quand vous êtes occupé",
+    "lead": "Avec le renvoi d’appel, les appels sont transférés vers un autre numéro – par exemple votre réceptionniste IA – quand vous ne pouvez pas les prendre. Voici les codes standard à composer sur votre mobile.",
+    "points": [
+      "Si occupé : **67*numéro#",
+      "Si pas de réponse : **61*numéro#",
+      "Si le téléphone est éteint : **62*numéro#",
+      "Toujours : **21*numéro#",
+      "Désactiver tous les renvois : ##002#"
+    ],
+    "sections": [
+      {
+        "title": "Les codes",
+        "body": [
+          {
+            "type": "p",
+            "text": "Ces codes sont standard sur le réseau mobile et fonctionnent chez la plupart des opérateurs danois. Saisissez le numéro précédé de +45 et appuyez sur appeler après le code."
+          },
+          {
+            "type": "ul",
+            "items": [
+              [
+                {
+                  "b": "Quand vous êtes occupé :"
+                },
+                " ",
+                {
+                  "code": "**67*+4512345678#"
+                }
+              ],
+              [
+                {
+                  "b": "Quand vous ne répondez pas :"
+                },
+                " ",
+                {
+                  "code": "**61*+4512345678#"
+                },
+                " – certains opérateurs permettent d’indiquer un nombre de secondes : ",
+                {
+                  "code": "**61*+4512345678**20#"
+                }
+              ],
+              [
+                {
+                  "b": "Quand le téléphone est éteint ou hors réseau :"
+                },
+                " ",
+                {
+                  "code": "**62*+4512345678#"
+                }
+              ],
+              [
+                {
+                  "b": "Tous les appels, toujours :"
+                },
+                " ",
+                {
+                  "code": "**21*+4512345678#"
+                }
+              ],
+              [
+                {
+                  "b": "Désactiver tous les renvois :"
+                },
+                " ",
+                {
+                  "code": "##002#"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "p",
+            "text": "Si un code ne fonctionne pas, ou si vous avez une ligne fixe ou un standard IP, activez le renvoi dans l’application ou l’espace client de votre opérateur, ou renseignez-vous auprès de lui."
+          }
+        ]
+      },
+      {
+        "title": "La configuration astucieuse",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "La plupart des entreprises utilisent ",
+              {
+                "b": "occupé + pas de réponse + éteint"
+              },
+              ". Ainsi, vous répondez vous-même quand vous le pouvez, et tous les autres appels vont à votre réceptionniste IA plutôt qu’au répondeur."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Renvoyer vers Dialogbot",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Lors de votre inscription à Dialogbot, vous recevez un numéro Dialogbot vers lequel renvoyer vos appels – et nous vous aidons à le faire pendant la configuration. En savoir plus sur le ",
+              {
+                "link": "/ai-telefonsvarer",
+                "text": "répondeur IA"
+              },
+              " ou ",
+              {
+                "link": "/proev",
+                "text": "écoutez-le vous-même"
+              },
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Le renvoi d’appel est-il payant ?",
+        "Cela dépend de votre abonnement chez votre opérateur. Vérifiez auprès de lui le prix des appels renvoyés."
+      ],
+      [
+        "Comment vérifier si le renvoi est activé ?",
+        "Composez par exemple *#67# ou *#61# et appuyez sur appeler – le téléphone affiche alors le statut."
+      ],
+      [
+        "Puis-je garder mon propre numéro ?",
+        "Oui. Vos clients appellent toujours votre numéro ; les appels ne sont renvoyés que lorsque vous ne répondez pas vous-même."
+      ]
+    ]
+  }
+}

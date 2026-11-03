@@ -7,7 +7,6 @@ import type { Item, Profile, SourceImport, Version } from "./types";
 import { DAYS, UNITS, kindLabel, parsePrice, summarize, unitLabel, type Fmt } from "./format";
 import { useLocale, useRaw, useT } from "@/i18n/client";
 import { HTML_LANG } from "@/i18n/config";
-import type { T } from "@/i18n/translate";
 
 type Content = Record<string, unknown>;
 /** Translator, number/date language and weekday names for `summarize`. */

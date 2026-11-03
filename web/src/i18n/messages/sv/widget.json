@@ -1,1 +1,8 @@
-{}
+{
+  "chat": {
+    "openAria": "Öppna chatten",
+    "closeAria": "Stäng chatten",
+    "close": "Stäng",
+    "launcher": "Prata med Dialogbot"
+  }
+}

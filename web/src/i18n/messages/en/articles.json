@@ -30,7 +30,7 @@
       {
         "title": "3. AI answering machine",
         "body": [
-          { "type": "p", "parts": ["An AI answering machine like ", { "link": "/ai-telefonsvarer", "text": "Dialogbot" }, " talks to the caller in Danish around the clock, answers from your own approved knowledge and can book appointments and send SMS confirmations. You get a written summary of every conversation instead of a voice message."] },
+          { "type": "p", "parts": ["An AI answering machine like ", { "link": "/ai-telefonsvarer", "text": "Dialogbot" }, " talks to the caller in your customers' language around the clock, answers from your own approved knowledge and can book appointments and send SMS confirmations. You get a written summary of every conversation instead of a voice message."] },
           { "type": "p", "text": "On the other hand, it isn't a person – it says so honestly and passes on matters it can't answer to you." }
         ]
       },
@@ -41,7 +41,7 @@
             "type": "table",
             "other": "Call answering service",
             "rows": [
-              ["Who answers", "AI in Danish, only from knowledge you have approved", "A person who doesn't always know your services"],
+              ["Who answers", "AI in your customers' language, only from knowledge you have approved", "A person who doesn't always know your services"],
               ["Opening hours", "Around the clock", "Usually normal working hours"],
               ["Booking", "Directly in your calendar, with SMS confirmation", "Usually a message you follow up on yourselves"],
               ["Price", "2.495 kr./month excl. VAT, no price per enquiry", "Usually per call or per month"],
@@ -215,7 +215,7 @@
         "title": "In short",
         "body": [
           { "type": "p", "text": "An AI receptionist answers when you can't: when you're busy, with a customer or closed. Instead of an answering machine asking the caller to leave a message, it talks to the caller, finds out what they need, and collects name, number and need, so you can call back a warm lead." },
-          { "type": "p", "parts": ["It is built on three parts: ", { "b": "speech recognition" }, " that understands what the caller says, a ", { "b": "language model" }, " that finds the right answer in the business's knowledge, and a ", { "b": "voice" }, " that answers naturally in Danish."] }
+          { "type": "p", "parts": ["It is built on three parts: ", { "b": "speech recognition" }, " that understands what the caller says, a ", { "b": "language model" }, " that finds the right answer in the business's knowledge, and a ", { "b": "voice" }, " that answers naturally in your customers' language."] }
         ]
       },
       {
@@ -246,7 +246,7 @@
           {
             "type": "ul",
             "items": [
-              [{ "b": "Danish speech" }, " – does it sound natural, and does it understand names and trade terms?"],
+              [{ "b": "Speech" }, " – does it sound natural in your customers' language, and does it understand names and trade terms?"],
               [{ "b": "Control" }, " – can you approve what it is allowed to say?"],
               [{ "b": "Actions" }, " – can it book and send SMS, or does it only take messages?"],
               [{ "b": "Setup" }, " – do you get help, or do you have to figure it out yourself?"],
@@ -264,7 +264,7 @@
     ],
     "faq": [
       ["Is an AI receptionist the same as a chatbot?", "Not quite. A chatbot writes; an AI receptionist talks on the phone. Dialogbot does both with the same knowledge."],
-      ["Does an AI receptionist sound like a robot?", "Modern voices sound natural. Dialogbot speaks Danish and always says honestly that it is a digital assistant if the caller asks."],
+      ["Does an AI receptionist sound like a robot?", "Modern voices sound natural. Dialogbot speaks 8 languages, including English, and always says honestly that it is a digital assistant if the caller asks."],
       ["What does an AI receptionist cost?", "At Dialogbot there is one subscription at 2.495 kr. per month, excl. VAT. There is no price per enquiry."]
     ]
   },

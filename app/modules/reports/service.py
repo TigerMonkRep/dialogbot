@@ -18,6 +18,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
+from app.core.languages import normalize as normalize_language
 from app.core.outbox import enqueue
 from app.models import (
     AiUsage,
@@ -134,18 +135,28 @@ def generate(db: OrmSession, workspace_id: uuid.UUID, day: date, now: datetime |
     return r
 
 
-def _summary_text(ws_name: str, d: dict) -> str:
-    kr = lambda m: f"{m / 100:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")  # noqa: E731
-    lines = [f"Dagsrapport for {ws_name} – {d['date']}", "",
-             f"Samtaler: {d['conversations']['started']} (kundebeskeder: {d['conversations']['visitor_messages']})",
-             f"AI-svar: {d['ai']['ok']} ok, {d['ai']['refused']} afvist, {d['ai']['error']} fejl",
-             f"Nye henvendelser: {d['leads']['new']}",
-             f"Godkendte henvendelser: {d['leads']['approved']} ({kr(d['leads']['approved_fee_net_minor'])} kr. ekskl. moms)",
-             f"Opgaver: {d['tasks']['created']} oprettet, {d['tasks']['completed']} løst, "
-             f"{d['tasks']['open_overdue_at_end']} åbne over frist"]
-    if d["leads"]["new_items"]:
-        lines += ["", "Nye henvendelser:"] + [f"- {x['contact_name'] or '(uden navn)'}: {x['need_summary']}"
-                                              for x in d["leads"]["new_items"]]
+def _summary_subject(ws_name: str, day: date, lang: str = "da") -> str:
+    from app.modules.integrations.email_texts import t
+
+    return t(lang, "report_subject", date=day.isoformat(), workspace=ws_name)
+
+
+def _summary_text(ws_name: str, d: dict, lang: str = "da") -> str:
+    """The day's numbers as text in `lang` (the e-mail turns the fact lines into a panel)."""
+    from app.modules.integrations.email_texts import money, t
+
+    c, ai, leads, tasks = d["conversations"], d["ai"], d["leads"], d["tasks"]
+    lines = [t(lang, "report_title", workspace=ws_name, date=d["date"]), "",
+             t(lang, "report_conversations", started=c["started"], messages=c["visitor_messages"]),
+             f"{t(lang, 'report_ai_label')}: "
+             + t(lang, "report_ai", ok=ai["ok"], refused=ai["refused"], error=ai["error"]),
+             t(lang, "report_new_leads", n=leads["new"]),
+             t(lang, "report_approved", n=leads["approved"], amount=money(lang, leads["approved_fee_net_minor"])),
+             t(lang, "report_tasks", created=tasks["created"], done=tasks["completed"],
+               overdue=tasks["open_overdue_at_end"])]
+    if leads["new_items"]:
+        lines += ["", t(lang, "report_new_list")] + [
+            f"- {x['contact_name'] or t(lang, 'report_unnamed')}: {x['need_summary']}" for x in leads["new_items"]]
     return "\n".join(lines)
 
 
@@ -168,13 +179,15 @@ def run_due(db: OrmSession, now: datetime | None = None) -> int:
         made += 1
         if s.email_enabled:
             link = f"{get_settings().frontend_base_url}/app/ugen?date={day.isoformat()}"
-            body = _summary_text(ws.name, r.data)
-            for user_id, email in db.execute(select(User.id, User.email).join(Membership, Membership.user_id == User.id)
-                                             .where(Membership.workspace_id == ws.id,
-                                                    Membership.role.in_(("owner", "admin")))):
+            # One mail per recipient, each in the recipient's own interface language.
+            for user_id, email, user_lang in db.execute(
+                    select(User.id, User.email, User.interface_language).join(Membership, Membership.user_id == User.id)
+                    .where(Membership.workspace_id == ws.id, Membership.role.in_(("owner", "admin")))):
+                lang = normalize_language(user_lang)
                 enqueue(db, event_type="email.daily_report", dedupe_key=f"daily_report:{ws.id}:{day}:{user_id}",
-                        workspace_id=ws.id, payload={"to_email": email, "subject": f"Dagsrapport {day.isoformat()} – {ws.name}",
-                                                     "body": body, "link": link})
+                        workspace_id=ws.id, payload={"to_email": email, "subject": _summary_subject(ws.name, day, lang),
+                                                     "body": _summary_text(ws.name, r.data, lang), "link": link,
+                                                     "lang": lang})
         db.commit()
     db.commit()
     return made

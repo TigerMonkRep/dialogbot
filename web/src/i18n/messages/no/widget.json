@@ -1,1 +1,8 @@
-{}
+{
+  "chat": {
+    "openAria": "Åpne chatten",
+    "closeAria": "Lukk chatten",
+    "close": "Lukk",
+    "launcher": "Snakk med Dialogbot"
+  }
+}

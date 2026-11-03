@@ -1,1 +1,25 @@
-{}
+{
+  "language": "Langue",
+  "chrome": {
+    "home": "Accueil Dialogbot",
+    "choosePath": "Choisir votre parcours",
+    "tryIt": "Essayez-le",
+    "buildGuide": "Guide de configuration",
+    "mainMenu": "Menu principal",
+    "pricing": "Tarifs",
+    "location": "Aarhus · Danemark",
+    "hours": "Lun–ven 8 h–17 h",
+    "privacy": "Confidentialité",
+    "gdpr": "RGPD",
+    "terms": "Conditions générales de vente",
+    "pages": "Pages",
+    "about": "À propos",
+    "gdprData": "RGPD et données",
+    "contact": "Contact",
+    "login": "Se connecter",
+    "signup": "Créer un compte",
+    "knowledge": "Ressources",
+    "byIndustry": "Réceptionniste IA pour votre secteur",
+    "skip": "Aller au contenu"
+  }
+}

@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Dialogbot – AI receptionist, AI phone answering and chatbot for Danish businesses",
-    "description": "Dialogbot is a Danish AI receptionist that answers the phone and the chat for your business around the clock – replying from your own knowledge, booking appointments and collecting enquiries. We guide you through the whole setup.",
+    "title": "Dialogbot – AI receptionist, AI phone answering and chatbot for small and medium-sized businesses",
+    "description": "Dialogbot is an AI receptionist that answers the phone and the chat for your business around the clock, in 8 languages – replying from your own knowledge, booking appointments and collecting enquiries. We guide you through the whole setup.",
     "keywords": ["Dialogbot", "AI receptionist", "AI receptionist for small business", "AI phone answering", "AI answering service", "AI phone assistant", "chatbot", "website chatbot", "call answering service", "virtual receptionist", "business answering machine"]
   },
   "nav": {
@@ -14,7 +14,7 @@
   "articles": {
     "hvad-er-en-ai-receptionist": {
       "title": "What is an AI receptionist – and how does it work?",
-      "teaser": "How an AI receptionist answers the phone for a Danish business, what it can do, and what it shouldn't do."
+      "teaser": "How an AI receptionist answers the phone for a small business, what it can do, and what it shouldn't do."
     },
     "ai-telefonsvarer-eller-telefonpasning": {
       "title": "AI answering machine or call answering service – which suits you?",
@@ -86,7 +86,7 @@
       },
       "included": {
         "title": "Included in the subscription",
-        "items": ["AI receptionist and AI phone answering in Danish – around the clock", "A website chatbot with the same knowledge", "Booking, rescheduling and cancelling appointments, plus SMS confirmation", "A summary of every enquiry, tasks and a daily report", "Do-it-yourself setup: the build guide's three steps, about half an hour, with the assistant at hand"]
+        "items": ["AI receptionist and AI phone answering in 8 languages – around the clock", "A website chatbot with the same knowledge", "Booking, rescheduling and cancelling appointments, plus SMS confirmation", "A summary of every enquiry, tasks and a daily report", "Do-it-yourself setup: the build guide's three steps, about half an hour, with the assistant at hand"]
       },
       "specialists": {
         "title": "Setup by our specialists – 5.000 kr.",
@@ -127,14 +127,14 @@
   },
   "receptionist": {
     "meta": {
-      "title": "AI receptionist for Danish businesses – answers the phone 24/7",
-      "description": "Dialogbot is a Danish AI receptionist that answers the phone when you're busy or closed. It replies from your own knowledge, books appointments and sends you every enquiry. 2.495 kr./month.",
-      "ogTitle": "AI receptionist for Danish businesses | Dialogbot"
+      "title": "AI receptionist for small and medium-sized businesses – answers the phone 24/7",
+      "description": "Dialogbot is an AI receptionist that answers the phone in your customers' language when you're busy or closed. It replies from your own knowledge, books appointments and sends you every enquiry. 2.495 kr./month.",
+      "ogTitle": "AI receptionist for small businesses | Dialogbot"
     },
     "kicker": "AI receptionist",
     "title": "An AI receptionist that answers the phone when you can't",
-    "lead": "Dialogbot is a digital receptionist that speaks Danish. It takes calls and chats around the clock, answers only from the knowledge you have approved, and makes sure no customer slips through the cracks.",
-    "points": ["Answers in Danish with a natural voice", "Knows your services, prices and opening hours", "Books, moves and cancels appointments", "Sends you a short summary of every enquiry", "We guide you through the whole setup"],
+    "lead": "Dialogbot is a digital receptionist that speaks your customers' language. It takes calls and chats around the clock, answers only from the knowledge you have approved, and makes sure no customer slips through the cracks.",
+    "points": ["Answers in English – or your customers' language – with a natural voice", "Knows your services, prices and opening hours", "Books, moves and cancels appointments", "Sends you a short summary of every enquiry", "We guide you through the whole setup"],
     "sections": {
       "what": {
         "title": "What is an AI receptionist?",
@@ -171,7 +171,7 @@
     "faq": [
       ["How much does an AI receptionist from Dialogbot cost?", "One subscription at 2.495 kr. a month, with no charge per enquiry and 300 minutes of inbound calls a month included. Outbound campaign calls cost 4 kr. per call plus 2 kr. per minute of conversation. Prices are excl. VAT."],
       ["What happens to customer data – is it GDPR compliant?", "Calls and messages are processed by us as a data processor on your behalf, the database is located in the EU, and you get a data processing agreement as part of the terms. Read it all in plain language on our GDPR and data page: /gdpr."],
-      ["Does it sound like a robot?", "Dialogbot speaks natural Danish in a voice you choose, e.g. Camilla or Peter. It always says honestly that it is a digital assistant if the customer asks."],
+      ["Does it sound like a robot?", "Dialogbot speaks with a natural voice you choose – there are voices in 8 languages. It always says honestly that it is a digital assistant if the customer asks."],
       ["Can I keep my phone number?", "Yes. You forward your current number to Dialogbot when you're busy or closed, and keep your phone provider."],
       ["What happens if the assistant doesn't know the answer?", "It doesn't guess. It only answers from approved knowledge, promises that a member of staff will get back to the customer, and you receive the enquiry straight away."],
       ["How long does setup take?", "If you do it yourself, the build guide's three steps take about half an hour, and the assistant guides you along the way. If you choose setup by our specialists (5.000 kr. excl. VAT), we arrange a meeting and set it up tailored to your systems."]
@@ -179,18 +179,18 @@
   },
   "phone": {
     "meta": {
-      "title": "AI phone answering and AI answering machine for businesses – in Danish",
-      "description": "An AI answering machine that talks to the customer instead of asking them to leave a message. Dialogbot answers the phone in Danish, clarifies the request, books appointments and sends you the enquiry.",
-      "ogTitle": "AI phone answering in Danish | Dialogbot"
+      "title": "AI phone answering and AI answering machine for businesses – in 8 languages",
+      "description": "An AI answering machine that talks to the customer instead of asking them to leave a message. Dialogbot answers the phone in English or your customers' language, clarifies the request, books appointments and sends you the enquiry.",
+      "ogTitle": "AI phone answering in 8 languages | Dialogbot"
     },
     "kicker": "AI phone answering",
     "title": "The AI answering machine that actually talks to your customer",
-    "lead": "No customer wants to leave a message. Dialogbot is an AI phone assistant that takes the call in Danish, understands what the customer wants, and makes sure you can call back right away – or books the appointment directly.",
-    "points": ["Answers the phone in Danish – around the clock", "Knows your own trade terms and names", "Books appointments and sends SMS confirmations", "No voicemails to listen through", "Keep your own number"],
+    "lead": "No customer wants to leave a message. Dialogbot is an AI phone assistant that takes the call in your customers' language, understands what the customer wants, and makes sure you can call back right away – or books the appointment directly.",
+    "points": ["Answers the phone in your customers' language – around the clock", "Knows your own trade terms and names", "Books appointments and sends SMS confirmations", "No voicemails to listen through", "Keep your own number"],
     "sections": {
       "conversation": {
         "title": "From answering machine to conversation",
-        "p1": "An ordinary answering machine asks the customer to leave a message – and many hang up and call a competitor instead. An AI answering machine like Dialogbot answers with a natural Danish voice instead, asks the right questions and collects the details for you.",
+        "p1": "An ordinary answering machine asks the customer to leave a message – and many hang up and call a competitor instead. An AI answering machine like Dialogbot answers with a natural voice instead, asks the right questions and collects the details for you.",
         "p2": "Afterwards, you get a short written summary of the conversation with name, number and request – and a task if the customer needs a call back. You'll never have to listen through a voicemail again."
       },
       "howItWorks": {
@@ -204,7 +204,7 @@
       },
       "human": {
         "title": "Does it sound human?",
-        "p1": "Dialogbot speaks natural Danish and listens until the customer has finished talking. You choose the voice yourself, and you can hear it before you decide. It always says honestly that it is a digital assistant – it never pretends to be a human.",
+        "p1": "Dialogbot speaks your customers' language naturally and listens until the customer has finished talking. You choose the voice yourself, and you can hear it before you decide. It always says honestly that it is a digital assistant – it never pretends to be a human.",
         "p2a": "The best way to find out is to try it: ",
         "p2Link": "get a call from Dialogbot",
         "p2b": ", and hear for yourself how it would answer the phone for you."
@@ -223,20 +223,20 @@
     "faq": [
       ["What is the difference between an AI answering machine and an ordinary one?", "An ordinary answering machine records a message. An AI answering machine talks to the customer, answers questions from your knowledge, clarifies the request and can book an appointment – and you get a written summary."],
       ["Can I use my own number?", "Yes. You forward your current number to Dialogbot when you're busy or closed. You can also get a new Dialogbot number."],
-      ["Does it understand Danish dialects?", "Dialogbot is built for spoken Danish and uses your own trade terms and names from the knowledge you approve, so it recognises them better."],
+      ["Does it understand accents and dialects?", "Dialogbot is built for natural spoken conversation in the language you choose and uses your own trade terms and names from the knowledge you approve, so it recognises them better."],
       ["How much does it cost?", "One subscription at 2.495 kr. a month, excl. VAT. There is no charge per enquiry."],
       ["Can I hear it before I buy?", "Yes. Enter your number on the front page, choose a voice and your industry, and Dialogbot will call you and show you."]
     ]
   },
   "chatbot": {
     "meta": {
-      "title": "Website chatbot – a Danish AI chatbot with your own knowledge",
-      "description": "Get a Danish AI chatbot on your website that answers from your own services, prices and opening hours, collects enquiries and can book appointments. The same knowledge as your AI receptionist.",
-      "ogTitle": "Website chatbot in Danish | Dialogbot"
+      "title": "Website chatbot – an AI chatbot with your own knowledge",
+      "description": "Get an AI chatbot on your website that answers from your own services, prices and opening hours, collects enquiries and can book appointments. The same knowledge as your AI receptionist.",
+      "ogTitle": "Website chatbot in 8 languages | Dialogbot"
     },
     "kicker": "Website chatbot",
-    "title": "A Danish chatbot that knows your business",
-    "lead": "Dialogbot's chatbot answers your visitors in Danish – around the clock – from the knowledge you have approved. It collects enquiries, can book appointments, and a member of staff can take over the conversation at any time.",
+    "title": "A chatbot that knows your business",
+    "lead": "Dialogbot's chatbot answers your visitors in the language you choose – around the clock – from the knowledge you have approved. It collects enquiries, can book appointments, and a member of staff can take over the conversation at any time.",
     "points": ["Answers only from your approved knowledge", "Collects name, contact details and request", "Books appointments right in the chat", "A member of staff can take over the conversation", "The same knowledge as on the phone"],
     "sections": {
       "noGuessing": {
@@ -296,7 +296,7 @@
     "sections": {
       "why": {
         "title": "Why Dialogbot exists",
-        "p": "When the phone rings while you're up a ladder or have a customer in the chair, you lose a customer. Dialogbot answers the phone for you – in Danish, around the clock, and only with the knowledge you have approved."
+        "p": "When the phone rings while you're up a ladder or have a customer in the chair, you lose a customer. Dialogbot answers the phone for you – in your customers' language, around the clock, and only with the knowledge you have approved."
       },
       "find": {
         "title": "How to find us",
@@ -360,16 +360,16 @@
   "knowledge": {
     "meta": {
       "title": "Guides to AI receptionists, AI phone answering and chatbots",
-      "description": "Guides for Danish businesses on AI receptionists, AI phone answering, call answering services, call forwarding and website chatbots.",
+      "description": "Guides for small businesses on AI receptionists, AI phone answering, call answering services, call forwarding and website chatbots.",
       "ogTitle": "Guides | Dialogbot"
     },
     "kicker": "Guides",
     "title": "Guides to AI receptionists and call answering",
-    "lead": "Short, practical guides for Danish businesses that want to get on top of their phone and enquiries – without hiring an extra person.",
+    "lead": "Short, practical guides for small businesses that want to get on top of their phone and enquiries – without hiring an extra person.",
     "guidesTitle": "Guides",
     "industriesTitle": "AI receptionist for your industry",
     "faq": [
-      ["What is Dialogbot?", "A Danish AI receptionist that answers the phone and the chat for your business, replies from your own approved knowledge and books appointments."],
+      ["What is Dialogbot?", "An AI receptionist that answers the phone and the chat for your business in 8 languages, replies from your own approved knowledge and books appointments."],
       ["Can I hear it?", "Yes. Go to Try it, tell the chat what you do, and Dialogbot will call you and show you."]
     ]
   },
@@ -377,7 +377,7 @@
     "kicker": "AI receptionist for {name}",
     "setupPoint": "We guide you through the whole setup",
     "problemTitle": "The problem for {name}",
-    "problemText": " Dialogbot is a Danish AI receptionist for {examples} that answers the phone and the chat when you can't.",
+    "problemText": " Dialogbot is an AI receptionist for {examples} that answers the phone and the chat when you can't.",
     "scenarioTitle": "What it sounds like (example)",
     "scenarioNote": "The example is an illustration. Dialogbot always answers from the knowledge you have approved. ",
     "scenarioLink": "Hear it yourself – get a call",

@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.audit import record_audit
 from app.core.errors import Conflict, ValidationFailed
+from app.core.languages import normalize as normalize_language
 from app.core.outbox import enqueue
 from app.models import Conversation, Lead, Membership, Task, User, Workspace
 from app.modules.billing import agreements
@@ -195,10 +196,10 @@ def visitor_contact(db: OrmSession, conv: Conversation, *, name: str, email: str
 
 def _notify_new_lead(db: OrmSession, lead: Lead) -> None:
     ws = db.get(Workspace, lead.workspace_id)
-    recipients = db.execute(select(User.id, User.email).join(Membership, Membership.user_id == User.id)
+    recipients = db.execute(select(User.id, User.email, User.interface_language).join(Membership, Membership.user_id == User.id)
                             .where(Membership.workspace_id == lead.workspace_id, Membership.role.in_(("owner", "admin"))))
     link = f"{get_settings().frontend_base_url}/app/leads/{lead.id}"
-    for user_id, email in recipients:
+    for user_id, email, lang in recipients:  # each recipient gets the mail in their own interface language
         enqueue(db, event_type="email.new_lead", dedupe_key=f"new_lead:{lead.id}:{user_id}", workspace_id=lead.workspace_id,
                 payload={"to_email": email, "workspace_name": ws.name if ws else "", "contact_name": lead.contact_name,
-                         "need_summary": lead.need_summary[:500], "link": link})
+                         "need_summary": lead.need_summary[:500], "link": link, "lang": normalize_language(lang)})

@@ -1,1 +1,8 @@
-{}
+{
+  "chat": {
+    "openAria": "Ouvrir le chat",
+    "closeAria": "Fermer le chat",
+    "close": "Fermer",
+    "launcher": "Discuter avec Dialogbot"
+  }
+}

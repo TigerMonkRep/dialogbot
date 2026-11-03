@@ -827,5 +827,122 @@
       "log": "See all changes",
       "settings": "All settings"
     }
+  },
+  "help": {
+    "title": "How to use Dialogbot",
+    "goThere": "Go there",
+    "start": {
+      "title": "Getting started",
+      "guide": {
+        "q": "The setup guide",
+        "a": "The guide takes you through business, goals, language and knowledge. At each step the AI suggests content based on your website – you adjust and save."
+      },
+      "fetch": {
+        "q": "Fetch details from the website",
+        "a": "The business page reads your website and fills in description, CVR number, phone and address when they're on the site. Services and opening hours become drafts."
+      }
+    },
+    "knowledge": {
+      "title": "Knowledge",
+      "approved": {
+        "q": "Only approved knowledge is used",
+        "a": "The assistant answers only from approved items. Drafts and suggestions are never used until an owner or admin has approved them."
+      },
+      "prices": {
+        "q": "Prices",
+        "a": "Prices are entered excl. VAT. The AI never guesses a price – if a price is on the website, it's quoted in the draft so you can confirm it."
+      },
+      "edit": {
+        "q": "Delete or edit",
+        "a": "Edit an item and save it as a new draft, or delete it. If you delete approved knowledge, the assistant stops using it immediately."
+      }
+    },
+    "reception": {
+      "title": "Reception, phone and chat",
+      "script": {
+        "q": "Reception script",
+        "a": "Decide the greeting, what the assistant asks about, and when a staff member takes over. Applies to both phone and chat."
+      },
+      "phone": {
+        "q": "Phone and voice",
+        "a": "Keep your number and forward it to your Dialogbot number. Choose a voice, test the connection and activate. Calls land under Calls with a transcript."
+      },
+      "webchat": {
+        "q": "Webchat",
+        "a": "Turn on the widget, approve your domains and paste the code into your website. You can take over a conversation under Calls."
+      }
+    },
+    "leads": {
+      "title": "Enquiries and billing",
+      "tasks": {
+        "q": "Enquiries and tasks",
+        "a": "Customers who want to be contacted become enquiries with a task. Qualify, approve and resolve them from Calls → Open enquiry."
+      },
+      "billing": {
+        "q": "Billing",
+        "a": "There's one subscription from 2.495 kr. per month excl. VAT, including 300 minutes of incoming calls (then 1,50 kr. per minute). Outgoing campaign calls cost 4 kr. per call plus 2 kr. per started minute of conversation. Account shows the month's preview."
+      }
+    },
+    "team": {
+      "title": "Team and security",
+      "roles": {
+        "q": "Roles",
+        "a": "Owners and admins approve knowledge and change settings. Staff work with enquiries and drafts. Readers can only view."
+      },
+      "log": {
+        "q": "Activity log",
+        "a": "All approvals, deletions and settings changes are logged with who and when."
+      }
+    }
+  },
+  "reception": {
+    "staffOnly": "Reception can be viewed by staff, admins and owners.",
+    "active": "Active",
+    "inactive": "Not active",
+    "eyebrow": "Reception",
+    "title": "Your digital reception",
+    "intro": "The assistant answers the phone and the chat on your website based on approved knowledge and the script below. Customers who want to be contacted become enquiries.",
+    "phone": {
+      "notConfigured": "The voice connection isn't set up on the server.",
+      "noVoice": "missing voice",
+      "noNumber": "No active number linked.",
+      "settings": "Telephony settings"
+    },
+    "webchat": {
+      "activeOn": "Active on {n} domain(s).",
+      "off": "The widget isn't turned on.",
+      "settings": "Webchat settings"
+    },
+    "stats": {
+      "conversations": "Conversations"
+    },
+    "try": "Try the assistant with the script and your approved knowledge before your customers do.",
+    "test": "Test the assistant",
+    "script": {
+      "title": "Reception script",
+      "intro": "Controls how the assistant greets, what it asks about, and when a staff member should take over – on the phone and in the chat. Facts and prices still only come from approved knowledge.",
+      "activeVersion": "Active version {v}",
+      "onlyAdmins": "Only owners and admins can change the script.",
+      "writing": "Writing a suggestion based on your business and knowledge…",
+      "suggested": "AI suggestions have been filled in. Adjust and press \"Save script\".",
+      "saved": "Saved. The assistant uses the script from the next conversation.",
+      "persona": "Assistant name (optional)",
+      "personaPlaceholder": "e.g. Sofie",
+      "address": "Form of address",
+      "informal": "du (informal)",
+      "formal": "De (formal)",
+      "greeting": "Phone greeting",
+      "greetingHint": "Use {virksomhed} for the company name. If the greeting doesn't mention that it's a digital assistant, we add it automatically.",
+      "collect": "What the assistant should ask about (one per line)",
+      "collectHint": "Used when the customer wants a quote, an appointment or a call. One question at a time.",
+      "escalation": "Hand over to a staff member immediately when …",
+      "escalationHint": "E.g. urgent damage or complaints. The assistant promises a quick call and creates an enquiry.",
+      "avoid": "What the assistant must not promise or comment on",
+      "avoidHint": "E.g. final prices without an inspection.",
+      "closing": "Closing",
+      "closingHint": "Short and friendly.",
+      "suggestAgain": "Suggest again",
+      "save": "Save script"
+    }
   }
 }

@@ -1,1 +1,25 @@
-{}
+{
+  "language": "Idioma",
+  "chrome": {
+    "home": "Inicio de Dialogbot",
+    "choosePath": "Elija su camino",
+    "tryIt": "Pruébelo",
+    "buildGuide": "Guía de construcción",
+    "mainMenu": "Menú principal",
+    "pricing": "Precios",
+    "location": "Aarhus · Dinamarca",
+    "hours": "Lun–vie 08–17",
+    "privacy": "Privacidad",
+    "gdpr": "RGPD",
+    "terms": "Condiciones de venta",
+    "pages": "Páginas",
+    "about": "Quiénes somos",
+    "gdprData": "RGPD y datos",
+    "contact": "Contacto",
+    "login": "Iniciar sesión",
+    "signup": "Crear cuenta",
+    "knowledge": "Recursos",
+    "byIndustry": "Recepcionista con IA para su sector",
+    "skip": "Saltar al contenido"
+  }
+}

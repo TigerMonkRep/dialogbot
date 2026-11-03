@@ -28,6 +28,7 @@ from app.db import get_session_factory
 from app.models import EmailDelivery, OutboxEvent
 from app.modules.integrations import email_templates as tpl
 from app.modules.integrations.email import OutgoingEmail, get_email_adapter
+from app.modules.integrations.email_texts import user_language, workspace_language
 
 log = structlog.get_logger("dialogbot.worker")
 
@@ -53,27 +54,34 @@ def _send_mail(db: OrmSession, ev: OutboxEvent, mail) -> None:
                                              workspace_id=ev.workspace_id))
 
 
+# The mail's language is chosen where it is queued (payload "lang"). Events queued before that carried no language:
+# account mails then follow the user's interface language and an invitation the workspace's, everything else Danish.
+
 def handle_invitation(db: OrmSession, ev: OutboxEvent) -> None:
     p = ev.payload
-    _send_mail(db, ev, tpl.invitation(p["workspace_name"], p["invited_by"], p["role"], p["link"]))
+    lang = p.get("lang") or workspace_language(db, ev.workspace_id)
+    _send_mail(db, ev, tpl.invitation(p["workspace_name"], p["invited_by"], p["role"], p["link"], lang=lang))
 
 
 def handle_verify(db: OrmSession, ev: OutboxEvent) -> None:
-    _send_mail(db, ev, tpl.verify(ev.payload["link"]))
+    lang = ev.payload.get("lang") or user_language(db, ev.payload.get("user_id"))
+    _send_mail(db, ev, tpl.verify(ev.payload["link"], lang=lang))
 
 
 def handle_reset(db: OrmSession, ev: OutboxEvent) -> None:
-    _send_mail(db, ev, tpl.reset(ev.payload["link"]))
+    lang = ev.payload.get("lang") or user_language(db, ev.payload.get("user_id"))
+    _send_mail(db, ev, tpl.reset(ev.payload["link"], lang=lang))
 
 
 def handle_new_lead(db: OrmSession, ev: OutboxEvent) -> None:
     p = ev.payload
-    _send_mail(db, ev, tpl.new_lead(p["workspace_name"], p["contact_name"], p.get("need_summary") or "", p["link"]))
+    _send_mail(db, ev, tpl.new_lead(p["workspace_name"], p["contact_name"], p.get("need_summary") or "", p["link"],
+                                    lang=p.get("lang") or "da"))
 
 
 def handle_daily_report(db: OrmSession, ev: OutboxEvent) -> None:
     p = ev.payload
-    _send_mail(db, ev, tpl.daily_report(p["subject"], p["body"], p.get("link")))
+    _send_mail(db, ev, tpl.daily_report(p["subject"], p["body"], p.get("link"), lang=p.get("lang") or "da"))
 
 
 def handle_branded(db: OrmSession, ev: OutboxEvent) -> None:

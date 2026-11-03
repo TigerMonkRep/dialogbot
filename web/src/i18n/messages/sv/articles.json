@@ -1,1 +1,324 @@
-{}
+{
+  "ai-telefonsvarer-eller-telefonpasning": {
+    "meta": {
+      "title": "AI-telefonsvarare eller telefonpassning – vad passar er?",
+      "description": "Telefonsvarare, telefonpassningstjänst eller AI-telefonsvarare? Se skillnaderna i pris, tillgänglighet och kvalitet, så att du kan välja rätt lösning.",
+      "ogTitle": "AI-telefonsvarare eller telefonpassning? | Dialogbot"
+    },
+    "kicker": "AI-telefonsvarare eller telefonpassning",
+    "title": "AI-telefonsvarare eller telefonpassning – vad passar er?",
+    "lead": "När du inte själv kan svara i telefon finns det tre alternativ: en vanlig telefonsvarare, en telefonpassningstjänst med människor eller en AI-telefonsvarare. Här är skillnaderna.",
+    "points": [
+      "Telefonsvarare: billig, men kunden lägger ofta på",
+      "Telefonpassning: en människa svarar, men oftast bara under kontorstid",
+      "AI-telefonsvarare: svarar dygnet runt och kan boka",
+      "Välj utifrån samtalsvolym, öppettider och behov"
+    ],
+    "sections": [
+      {
+        "title": "1. Den vanliga telefonsvararen",
+        "body": [
+          { "type": "p", "text": "Billig och enkel, men många kunder lägger på i stället för att lämna ett meddelande – och ringer en konkurrent. Du måste själv lyssna igenom meddelandena och ringa tillbaka utan att veta vad ärendet gäller." }
+        ]
+      },
+      {
+        "title": "2. Telefonpassningstjänst",
+        "body": [
+          { "type": "p", "text": "En människa svarar i telefon i ditt namn och skriver ett meddelande. Det ger en personlig upplevelse, men debiteras oftast per samtal eller per månad, och många tjänster har bara öppet under vanlig kontorstid. Receptionisten känner sällan till dina tjänster och priser i detalj." }
+        ]
+      },
+      {
+        "title": "3. AI-telefonsvarare",
+        "body": [
+          { "type": "p", "parts": ["En AI-telefonsvarare som ", { "link": "/ai-telefonsvarer", "text": "Dialogbot" }, " pratar med kunden på svenska eller kundens eget språk dygnet runt, svarar utifrån din egen godkända kunskap och kan boka tider och skicka sms-bekräftelser. Du får en skriftlig sammanfattning av varje samtal i stället för ett röstmeddelande."] },
+          { "type": "p", "text": "Å andra sidan är den ingen människa – det säger den ärligt, och ärenden som den inte kan svara på skickar den vidare till dig." }
+        ]
+      },
+      {
+        "title": "Jämförelse",
+        "body": [
+          {
+            "type": "table",
+            "other": "Telefonpassning",
+            "rows": [
+              ["Vem svarar", "AI på svenska och kundens språk, bara utifrån kunskap ni har godkänt", "En människa som inte alltid känner till era tjänster"],
+              ["Öppettider", "Dygnet runt", "Oftast vanlig kontorstid"],
+              ["Bokning", "Direkt i er kalender, med sms-bekräftelse", "Oftast ett meddelande som ni själva följer upp"],
+              ["Pris", "2.495 kr./mån. exkl. moms, inget pris per ärende", "Oftast per samtal eller per månad"],
+              ["Meddelande till er", "Skriftlig sammanfattning av varje samtal och en daglig rapport", "Ett meddelande per samtal"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Så väljer du",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Få samtal och bara dagtid?" }, " En telefonsvarare kan räcka."],
+              [{ "b": "Viktigt med en människa i luren?" }, " Telefonpassning – men kontrollera öppettiderna."],
+              [{ "b": "Många samtal, även på kvällen, och önskemål om bokning?" }, " En AI-telefonsvarare ger mest för pengarna."]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Hör skillnaden",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "Bli uppringd av Dialogbot" }, " och hör hur en AI-telefonsvarare låter. Se även ", { "link": "/priser", "text": "priserna" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Kan en AI-telefonsvarare ersätta telefonpassning?", "För de flesta standardärenden ja: den svarar, reder ut behovet och bokar. Komplexa ärenden skickas vidare till er."],
+      ["Är en AI-telefonsvarare tillgänglig på natten?", "Ja, Dialogbot svarar i telefon dygnet runt."],
+      ["Vad är billigast: telefonpassning eller Dialogbot?", "Telefonpassning debiteras oftast per samtal eller per månad. Dialogbot är ett abonnemang för 2.495 kr. i månaden exkl. moms med 300 minuter inkommande samtal och inget pris per ärende. Se även /viden/dialogbot-vs-vocalis."],
+      ["Kan jag behålla mitt nummer?", "Ja. Du vidarekopplar ditt nummer till Dialogbot när du är upptagen eller har stängt."]
+    ]
+  },
+  "dialogbot-vs-almindelig-chatbot": {
+    "meta": {
+      "title": "Dialogbot eller en vanlig chattbot – vad är skillnaden?",
+      "description": "En vanlig chattbot svarar på en webbplats. Dialogbot svarar också i telefon, bokar tider och svarar bara utifrån kunskap som ni själva har godkänt. Se skillnaderna.",
+      "ogTitle": "Dialogbot eller en vanlig chattbot? | Dialogbot"
+    },
+    "kicker": "Dialogbot eller en vanlig chattbot",
+    "title": "Dialogbot eller en vanlig chattbot – vad är skillnaden?",
+    "lead": "En vanlig chattbot svarar på webbplatsen. Dialogbot svarar också i telefon, bokar tiderna och låter er godkänna allt den får säga.",
+    "points": [
+      "Chattbot: skriver på webbplatsen",
+      "Dialogbot: telefon, chatt och bokning med samma kunskap",
+      "Dialogbot gissar aldrig – bara godkänd kunskap",
+      "Ett abonnemang: 2.495 kr./mån."
+    ],
+    "sections": [
+      {
+        "title": "Översikt",
+        "body": [
+          {
+            "type": "table",
+            "other": "Vanlig chattbot",
+            "rows": [
+              ["Kanaler", "Telefon och webbchatt med samma kunskap", "Oftast bara chatt på webbplatsen"],
+              ["Bokning", "Hittar lediga tider i er kalender och skickar sms-bekräftelse", "Sällan – ofta bara en länk eller ett meddelande"],
+              ["Vad den svarar utifrån", "Bara kunskap ni själva har godkänt – och ni ser varje ändring först", "Varierar: vissa svarar fritt utifrån en AI-modell"],
+              ["När den inte kan svara", "Den säger det och tar ett meddelande åt er", "Varierar"],
+              ["Meddelande till er", "Namn, nummer och vad det gällde – och en rapport varje dag", "Varierar"],
+              ["Pris", "2.495 kr./mån. – inget pris per ärende", "Från några hundra kr./mån. och uppåt"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "När räcker en vanlig chattbot?",
+        "body": [
+          { "type": "p", "text": "Om era kunder nästan bara skriver och ni inte behöver boka tider eller få telefonen besvarad kan en enkel chattbot räcka – och vara billigare." }
+        ]
+      },
+      {
+        "title": "När ger Dialogbot mer?",
+        "body": [
+          { "type": "p", "parts": ["När telefonen ringer medan ni står på stegen eller har en kund i stolen, och ett obesvarat samtal är en förlorad kund. Dialogbot svarar inom två sekunder, bokar en tid och meddelar er. Läs mer om ", { "link": "/ai-receptionist", "text": "AI-receptionisten" }, " och ", { "link": "/chatbot", "text": "chattboten för webbplatsen" }, ", som ingår i abonnemanget."] }
+        ]
+      },
+      {
+        "title": "Hör den själv",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "Låt Dialogbot ringa upp er" }, " – två minuter, ingen registrering."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Kan Dialogbot också vara bara en chattbot?", "Ja. Webbchatten ingår i abonnemanget och använder samma godkända kunskap som telefonen. Det är en kodrad på webbplatsen."],
+      ["Gissar Dialogbot om den inte vet svaret?", "Nej. Den svarar bara utifrån godkänd kunskap och tar ett meddelande åt er om den inte kan svara."],
+      ["Vad kostar det?", "2.495 kr. i månaden exkl. moms med 300 minuter inkommande samtal. Ingen bindningstid."]
+    ]
+  },
+  "dialogbot-vs-vocalis": {
+    "meta": {
+      "title": "Dialogbot eller Vocalis – fast pris eller minutpaket?",
+      "description": "Jämför Dialogbot och Vocalis: fast månadspris eller minutpaket, godkänd kunskap, bokning och hur ni kommer igång. Priser exkl. moms.",
+      "ogTitle": "Dialogbot eller Vocalis? | Dialogbot"
+    },
+    "kicker": "Dialogbot eller Vocalis",
+    "title": "Dialogbot eller Vocalis – fast pris eller minutpaket?",
+    "lead": "Båda bygger AI-medarbetare för företag. Skillnaden ligger framför allt i hur ni betalar och hur ni kommer igång.",
+    "points": [
+      "Dialogbot: 2.495 kr./mån., 300 minuter ingår, därefter 1,50 kr./min.",
+      "Vocalis: från 899 kr./mån. för 100 minuter, därefter minutpaket",
+      "Dialogbot: bara godkänd kunskap – och ni godkänner varje ändring",
+      "Dialogbot: lyssna på den först, utan registrering"
+    ],
+    "sections": [
+      {
+        "title": "Översikt",
+        "body": [
+          {
+            "type": "table",
+            "other": "Vocalis",
+            "rows": [
+              ["Pris per månad (exkl. moms)", "2.495 kr. – ett abonnemang", "Från 899 kr. för 100 minuter (Basis)"],
+              ["När minuterna är slut", "1,50 kr. per påbörjad minut efter de 300 som ingår", "Automatiska minutpaket upp till 3.995 kr./mån."],
+              ["Svarar utifrån", "Kunskap ni själva har godkänt – och ni ser varje ändring först (före → efter, «Godkänna?»)", "Se Vocalis egen beskrivning"],
+              ["Bokning", "Google Kalender eller Microsoft 365, med sms-bekräftelse", "Se Vocalis egen beskrivning"],
+              ["Så kommer ni igång", "Lyssna på den först: den ringer upp er, utan registrering. Konfigurera själva på ca en halvtimme", "Kostnadsfri konsultation och återuppringning"],
+              ["Bindningstid", "Ingen – säg upp månad för månad", "Se Vocalis egen beskrivning"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Pris: fast eller mätt",
+        "body": [
+          { "type": "p", "text": "Vocalis börjar lägre, men priset följer förbrukningen: går ni över de 100 minuterna köps paket till automatiskt. Dialogbot kostar mer från början, men 300 minuter ingår och minuter därutöver kostar 1,50 kr. Räkningen går att förutse, och ni kan alltid se er förbrukning." },
+          { "type": "p", "parts": ["Har ni bara några få samtal i månaden kan ett lägre startpris passa bättre. Ringer telefonen hela dagen är ett fast pris det trygga valet. Se ", { "link": "/priser", "text": "alla priser" }, "."] }
+        ]
+      },
+      {
+        "title": "Den stora skillnaden: godkänd kunskap",
+        "body": [
+          { "type": "p", "text": "Dialogbot svarar bara utifrån de tjänster, priser och öppettider ni själva har godkänt och säger till om den inte vet svaret. Varje ändring visas först som före → efter med «Godkänna?». Det är den mekanismen som gör att den inte gissar." }
+        ]
+      },
+      {
+        "title": "Hör skillnaden själv",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "Låt Dialogbot ringa upp er" }, " – det tar två minuter och kräver ingen registrering."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Är Dialogbot dyrare än Vocalis?", "I grunden ja: 2.495 kr. i månaden mot från 899 kr. för 100 minuter. Å andra sidan ingår 300 minuter, och priset rusar inte om ni får fler samtal."],
+      ["Kan jag byta från Vocalis till Dialogbot?", "Ja. Ni behåller ert nuvarande telefonnummer och vidarekopplar till Dialogbot, och det finns ingen bindningstid."],
+      ["Var kan jag se Vocalis aktuella priser?", "Hos Vocalis själva. Priserna här är de publicerade listpriserna när sidan skrevs, och de kan ha ändrats."]
+    ]
+  },
+  "hvad-er-en-ai-receptionist": {
+    "meta": {
+      "title": "Vad är en AI-receptionist – och hur fungerar den?",
+      "description": "En AI-receptionist svarar i telefon och chatt åt ditt företag, svarar utifrån er egen kunskap och bokar tider. Så fungerar den, och det här ska du titta efter.",
+      "ogTitle": "Vad är en AI-receptionist? | Dialogbot"
+    },
+    "kicker": "Vad är en AI-receptionist?",
+    "title": "Vad är en AI-receptionist – och hur fungerar den?",
+    "lead": "En AI-receptionist är en digital assistent som svarar i telefon och chatt åt ditt företag. Här är vad den kan, hur den fungerar och vad du ska titta efter innan du väljer en.",
+    "points": [
+      "Svarar i telefon och chatt dygnet runt",
+      "Svarar utifrån företagets egen kunskap",
+      "Reder ut behovet och samlar in kontaktuppgifter",
+      "Kan boka tider och skicka sms",
+      "Ska aldrig gissa eller lova något som ni inte har godkänt"
+    ],
+    "sections": [
+      {
+        "title": "Kort sagt",
+        "body": [
+          { "type": "p", "text": "En AI-receptionist svarar när du inte själv kan: när du är upptagen, hos en kund eller har stängt. I stället för en telefonsvarare som ber kunden lämna ett meddelande pratar den med kunden, tar reda på vad de behöver och samlar in namn, nummer och behov, så att du kan ringa tillbaka till en varm kund." },
+          { "type": "p", "parts": ["Den bygger på tre delar: ", { "b": "taligenkänning" }, " som förstår vad kunden säger, en ", { "b": "språkmodell" }, " som hittar rätt svar i företagets kunskap och en ", { "b": "röst" }, " som svarar naturligt på svenska eller kundens eget språk."] }
+        ]
+      },
+      {
+        "title": "Vad kan en AI-receptionist?",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              "Svara på standardfrågorna: öppettider, priser, tjänster, adress och parkering.",
+              "Reda ut behovet med de frågor som företaget har bestämt.",
+              "Hitta lediga tider och boka, flytta eller avboka möten.",
+              "Skicka en bekräftelse till kunden via sms.",
+              "Ge företaget en kort, skriftlig sammanfattning av varje samtal."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Vad ska den inte kunna?",
+        "body": [
+          { "type": "p", "parts": ["En bra AI-receptionist ", { "b": "gissar aldrig" }, ". Den ska bara svara utifrån kunskap som företaget har godkänt och ärligt säga när något inte framgår. Den får inte lova rabatter, ge fackmässiga råd eller låtsas vara en människa."] },
+          { "type": "p", "text": "Hos Dialogbot börjar all kunskap som ett utkast och används först när en ägare eller administratör har godkänt den." }
+        ]
+      },
+      {
+        "title": "Det här ska du titta efter",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Språk" }, " – låter den naturlig på svenska och dina kunders språk, och förstår den namn och fackord?"],
+              [{ "b": "Kontroll" }, " – kan du själv godkänna vad den får säga?"],
+              [{ "b": "Åtgärder" }, " – kan den boka och skicka sms, eller tar den bara meddelanden?"],
+              [{ "b": "Konfiguration" }, " – får du hjälp, eller måste du lista ut det själv?"],
+              [{ "b": "Pris" }, " – fast pris eller per ärende, och finns det bindningstid?"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Testa själv",
+        "body": [
+          { "type": "p", "parts": ["Det bästa testet är att lyssna på den. ", { "link": "/proev", "text": "Bli uppringd av Dialogbot" }, ", välj din bransch och hör hur den skulle svara i telefon åt dig. Läs mer om ", { "link": "/ai-receptionist", "text": "Dialogbots AI-receptionist" }, " eller se ", { "link": "/priser", "text": "priserna" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Är en AI-receptionist samma sak som en chattbot?", "Inte riktigt. En chattbot skriver, en AI-receptionist pratar i telefon. Dialogbot gör båda med samma kunskap."],
+      ["Låter en AI-receptionist som en robot?", "Moderna röster låter naturliga. Dialogbot talar svenska och kundens eget språk och säger alltid ärligt att den är en digital assistent om kunden frågar."],
+      ["Vad kostar en AI-receptionist?", "Hos Dialogbot finns ett abonnemang för 2.495 kr. i månaden, exkl. moms. Det finns inget pris per ärende."]
+    ]
+  },
+  "viderestil-telefonen": {
+    "meta": {
+      "title": "Så vidarekopplar du telefonen när du är upptagen",
+      "description": "Vidarekoppla din mobil vid upptaget, inget svar eller alltid med standardkoderna **67*, **61* och **21* – och stäng av det igen med ##002#. Guide för företag.",
+      "ogTitle": "Så vidarekopplar du telefonen | Dialogbot"
+    },
+    "kicker": "Vidarekoppla telefonen",
+    "title": "Så vidarekopplar du telefonen när du är upptagen",
+    "lead": "Med vidarekoppling går samtal vidare till ett annat nummer – t.ex. din AI-receptionist – när du inte själv kan ta dem. Här är standardkoderna som du slår på mobilen.",
+    "points": [
+      "Vid upptaget: **67*nummer#",
+      "Vid inget svar: **61*nummer#",
+      "När telefonen är avstängd: **62*nummer#",
+      "Alltid: **21*nummer#",
+      "Stäng av all vidarekoppling: ##002#"
+    ],
+    "sections": [
+      {
+        "title": "Koderna",
+        "body": [
+          { "type": "p", "text": "Koderna är standard i mobilnätet och fungerar hos de flesta danska teleoperatörer. Skriv numret med +45 framför och tryck ring efter koden." },
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "När du är upptagen:" }, " ", { "code": "**67*+4512345678#" }],
+              [{ "b": "När du inte svarar:" }, " ", { "code": "**61*+4512345678#" }, " – vissa operatörer låter dig ange antal sekunder: ", { "code": "**61*+4512345678**20#" }],
+              [{ "b": "När telefonen är avstängd eller saknar täckning:" }, " ", { "code": "**62*+4512345678#" }],
+              [{ "b": "Alla samtal, alltid:" }, " ", { "code": "**21*+4512345678#" }],
+              [{ "b": "Stäng av all vidarekoppling:" }, " ", { "code": "##002#" }]
+            ]
+          },
+          { "type": "p", "text": "Fungerar en kod inte, eller har du fast telefoni eller en IP-växel, aktivera vidarekoppling i operatörens app eller självbetjäning, eller fråga din operatör." }
+        ]
+      },
+      {
+        "title": "Den smarta konfigurationen",
+        "body": [
+          { "type": "p", "parts": ["De flesta företag använder ", { "b": "upptaget + inget svar + avstängd" }, ". Då svarar du själv när du kan, och alla andra samtal går till din AI-receptionist i stället för till telefonsvararen."] }
+        ]
+      },
+      {
+        "title": "Vidarekoppla till Dialogbot",
+        "body": [
+          { "type": "p", "parts": ["När du registrerar dig hos Dialogbot får du ett Dialogbot-nummer som du vidarekopplar till – och vi hjälper dig med det under konfigurationen. Läs mer om ", { "link": "/ai-telefonsvarer", "text": "AI-telefonsvararen" }, " eller ", { "link": "/proev", "text": "hör den själv" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Kostar vidarekoppling något?", "Det beror på ditt abonnemang hos operatören. Kontrollera priset för vidarekopplade samtal hos din operatör."],
+      ["Hur kontrollerar jag om vidarekoppling är aktiverad?", "Slå t.ex. *#67# eller *#61# och tryck ring – då visar telefonen status."],
+      ["Kan jag behålla mitt eget nummer?", "Ja. Kunderna ringer fortfarande till ditt nummer; samtalen vidarekopplas bara när du inte själv svarar."]
+    ]
+  }
+}

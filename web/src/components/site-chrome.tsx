@@ -39,19 +39,20 @@ export function LogoMark({ size = 36 }: { size?: number }) {
 /** Segmented pill: the same two doors as the front page, always visible. */
 export async function PathSwitch({ current }: { current?: Path }) {
   const t = await getT("common");
-  const item = (href: string, key: Path, icon: React.ReactNode, label: string) => {
+  const item = (href: string, key: Path, icon: React.ReactNode, label: string, short = label) => {
     const active = current === key;
     return (
       <Link href={href} aria-current={active ? "page" : undefined}
-        className={`inline-flex items-center gap-2 min-h-10 px-4 rounded-full text-sm font-semibold no-underline ${active ? "bg-ink text-white" : "text-ink hover:bg-panel"}`}>
-        {icon}{label}
+        className={`inline-flex items-center gap-2 min-h-10 px-3 sm:px-4 whitespace-nowrap rounded-full text-sm font-semibold no-underline ${active ? "bg-ink text-white" : "text-ink hover:bg-panel"}`}>
+        <span className="hidden sm:inline-flex" aria-hidden="true">{icon}</span>
+        <span className="sm:hidden">{short}</span><span className="hidden sm:inline">{label}</span>
       </Link>
     );
   };
   return (
     <nav aria-label={t("chrome.choosePath")} className="inline-flex p-1 rounded-full border-2 border-ink bg-white">
       {item("/proev", "proev", <PlayIcon size={16} />, t("chrome.tryIt"))}
-      {item("/byggevejledning", "byggevejledning", <MenuIcon size={16} />, t("chrome.buildGuide"))}
+      {item("/byggevejledning", "byggevejledning", <MenuIcon size={16} />, t("chrome.buildGuide"), t("chrome.buildGuideShort"))}
     </nav>
   );
 }
@@ -80,10 +81,10 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
             {nav.map(([h, l]) => <Link key={h} href={h} className="text-ink no-underline inline-flex items-center min-h-11 hover:text-accent">{l}</Link>)}
           </nav>
         )}
-        <div className={`flex items-center gap-4 sm:gap-6 ${nav ? "lg:ml-0 ml-auto" : "ml-auto"}`}>
+        <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-6 ${nav ? "lg:ml-0 ml-auto" : "ml-auto"}`}>
           <PathSwitch current={current} />
           <Link href="/priser" className="inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline hover:text-accent">{t("chrome.pricing")}</Link>
-          <LanguageSwitcher />
+          <LanguageSwitcher compact />
           {phone && <a href={PHONE_TEL} className="hidden sm:inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline">{locale === "da" ? PHONE_DISPLAY : PHONE_INTL}</a>}
         </div>
       </div>

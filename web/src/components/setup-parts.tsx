@@ -17,7 +17,7 @@ export function Part({ letter, title, hint, aside, children }: { letter: string;
       <header className="flex items-start gap-3">
         <span className="shrink-0 w-10 h-10 rounded-[10px] bg-highlight text-ink font-display font-extrabold text-[20px] inline-flex items-center justify-center" aria-hidden>{letter}</span>
         <div className="flex-1 min-w-0">
-          <h2 className="font-display font-extrabold text-[22px] leading-tight tracking-[-0.4px] text-ink">{title}</h2>
+          <h2 className="font-display font-extrabold text-[20px] sm:text-[22px] leading-tight tracking-[-0.4px] text-ink">{title}</h2>
           {hint && <p className="text-[14px] text-muted mt-0.5">{hint}</p>}
         </div>
         {aside}

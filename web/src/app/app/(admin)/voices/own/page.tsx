@@ -24,7 +24,7 @@ export default async function OwnVoicePage() {
     <section className="flex flex-col gap-4">
       <div>
         <span className="eyebrow">{t("ownVoice.eyebrow")}</span>
-        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("ownVoice.title")}</h1>
+        <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("ownVoice.title")}</h1>
         <p className="text-body-sm text-ink-soft max-w-2xl">{t("ownVoice.intro")}</p>
       </div>
       <OwnVoice wsId={ws.id} projects={items} defaults={defaults} manuscript={manuscript} />

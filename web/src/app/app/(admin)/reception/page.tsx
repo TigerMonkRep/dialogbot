@@ -39,7 +39,7 @@ export default async function ReceptionPage() {
     <section className="flex flex-col gap-4">
       <div>
         <span className="eyebrow">{t("reception.eyebrow")}</span>
-        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("reception.title")}</h1>
+        <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("reception.title")}</h1>
         <p className="text-body-sm text-ink-soft max-w-2xl">{t("reception.intro")}</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -49,7 +49,7 @@ export default async function ReceptionPage() {
         <Channel icon="chat" title="Webchat" ok={ov.channels.webchat.enabled} text={ov.channels.webchat.enabled ? t("reception.webchat.activeOn", { n: ov.channels.webchat.origins }) : t("reception.webchat.off")} href="/app/settings/webchat" cta={t("reception.webchat.settings")} />
         <div className="bg-paper rounded-2xl p-3 border-2 border-ink grid grid-cols-3 gap-2 text-center">
           {([[t("reception.stats.conversations"), ov.last_7_days.conversations, "/app/inbox"], [t("nav.calls"), ov.last_7_days.calls, "/app/settings/telephony"], [t("leads.back"), ov.last_7_days.leads, "/app/leads"]] as const).map(([l, v, h]) => (
-            <Link key={l} href={h} className="rounded-lg p-1 hover:bg-panel"><p className="font-display text-headline-md text-ink font-bold">{v}</p><p className="text-label-sm text-ink-soft">{l}</p></Link>
+            <Link key={l} href={h} className="min-w-0 rounded-lg p-1 hover:bg-panel"><p className="font-display text-headline-md text-ink font-bold">{v}</p><p className="text-label-sm tracking-normal text-ink-soft hyphens-auto">{l}</p></Link>
           ))}
           <p className="col-span-3 text-label-sm text-ink-soft">{t("calls.lastDays", { n: 7 })}</p>
         </div>

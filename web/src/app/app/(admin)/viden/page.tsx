@@ -49,7 +49,7 @@ export default async function VidenPage({ searchParams }: { searchParams: Promis
       <div className="flex flex-wrap items-end gap-3 md:gap-6">
         <div className="flex flex-col gap-1.5 flex-[1_1_320px]">
           <span className="eyebrow">{t("knowledge.eyebrow")}</span>
-          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("knowledge.title")}</h1>
+          <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("knowledge.title")}</h1>
           <p className="text-[15px] leading-relaxed text-ink-soft max-w-[620px]">{t("knowledge.intro")} <b className="text-ink">{t("knowledge.revision", { n: active.items.length, rev: active.knowledge_revision })}</b>.</p>
         </div>
         {canDraft && <ImportFromSite wsId={ws.id} defaultUrl={profile.website_url ?? ""} initial={latest.import} aiReady={importReady} openByDefault={imp === "1"} />}

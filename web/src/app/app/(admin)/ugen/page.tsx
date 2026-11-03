@@ -53,7 +53,7 @@ export default async function UgenPage({ searchParams }: { searchParams: Promise
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="flex flex-col gap-1.5">
             <span className="eyebrow">{tr("week.weekN", { n: isoWeek(w.start) })} · {short(lang, w.start)} – {short(lang, w.end)}</span>
-            <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{tr("week.title")}</h1>
+            <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{tr("week.title")}</h1>
           </div>
           <nav className="flex flex-wrap gap-2" aria-label={tr("week.chooseWeek")}>
             <Link href={`/app/ugen?uge=${addDays(w.start, -7)}`} className="inline-flex items-center min-h-[44px] px-4 rounded-full border-[1.5px] border-ink text-[14px] font-semibold text-ink hover:bg-panel">‹ {tr("week.weekN", { n: isoWeek(addDays(w.start, -7)) })}</Link>
@@ -103,19 +103,19 @@ export default async function UgenPage({ searchParams }: { searchParams: Promise
           </div>
           {t.items.length === 0 ? <p className="px-4 py-3.5 rounded-xl border-[1.5px] border-dashed border-ink text-[14px] text-ink-soft">{tr("week.topics.empty")}</p> : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-[14px]">
+              <table className="table-stack w-full text-left text-[15px] sm:text-[14px]">
                 <thead><tr className="border-b-2 border-ink text-[12px] uppercase tracking-[0.08em] text-muted"><th className="py-2 pr-3 font-semibold">{tr("week.topics.topic")}</th><th className="py-2 pr-3 font-semibold">{tr("week.topics.times")}</th><th className="py-2 font-semibold">{tr("week.topics.couldAnswer")}</th><th /></tr></thead>
                 <tbody>
                   {t.items.map((x) => (
                     <tr key={x.topic} className="border-b-[1.5px] border-line align-middle">
-                      <td className="py-3 pr-3 text-ink">{x.topic}</td>
-                      <td className="py-3 pr-3 text-ink-soft">{x.count}</td>
+                      <td className="py-3 pr-3 text-ink font-semibold sm:font-normal">{x.topic}</td>
+                      <td data-label={tr("week.topics.times")} className="py-3 pr-3 text-ink-soft">{x.count}</td>
                       <td className="py-3 pr-3">
                         {x.could_answer
                           ? <span className="inline-flex px-2.5 py-1 rounded-full bg-success-soft text-success text-[12px] font-semibold">{tr("week.topics.yes")}{x.booked ? ` · ${tr("week.topics.booked", { n: x.booked })}` : ""}</span>
                           : <span className="inline-flex px-2.5 py-1 rounded-full bg-highlight text-ink text-[12px] font-semibold">{x.to_you === x.count ? tr("week.topics.no") : tr("week.topics.partly", { n: x.to_you, total: x.count })} · {tr("week.topics.tookMessage")}</span>}
                       </td>
-                      <td className="py-3 text-right whitespace-nowrap">{!x.could_answer && <Link href={`/app/viden?emne=${encodeURIComponent(x.topic)}#spoergsmaal`} className="font-semibold text-accent hover:underline">{tr("week.topics.addAnswer")} →</Link>}</td>
+                      <td className="stack-inline py-3 text-right whitespace-nowrap max-sm:!pt-2">{!x.could_answer && <Link href={`/app/viden?emne=${encodeURIComponent(x.topic)}#spoergsmaal`} className="font-semibold text-accent hover:underline">{tr("week.topics.addAnswer")} →</Link>}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -26,7 +26,7 @@ export default async function VoicesPage() {
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <span className="eyebrow">{t("voices.eyebrow")}</span>
-          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("voices.title")}</h1>
+          <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("voices.title")}</h1>
           <p className="text-body-sm text-ink-soft max-w-2xl">{t("voices.intro")}</p>
         </div>
         <div className="flex flex-wrap gap-3">

@@ -159,6 +159,36 @@ body { font-family: var(--font-body); min-height: 100dvh; }
 }
 .material-symbols-outlined.filled { font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24; }
 
+/* ── Phones (below sm = 640 px) ──────────────────────────────────────────
+   Unlayered on purpose: these win over Tailwind utilities, so every page gets them without per-page classes. */
+/* Long words, e-mails and URLs wrap instead of pushing the page wider than the screen. */
+body { overflow-wrap: break-word; }
+input[type="file"] { max-width: 100%; }
+@media (max-width: 639.98px) {
+  /* iOS zooms into any field under 16 px: keep form fields at 16 px on a phone. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]), select, textarea { font-size: 16px; }
+  /* `.table-stack`: a table becomes one card per row (thead hidden, td[data-label] shows its column name). */
+  .table-stack, .table-stack tbody, .table-stack tr, .table-stack td { display: block; width: 100%; min-width: 0; }
+  .table-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .table-stack tr { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; padding: 12px 0; }
+  .table-stack td { padding: 3px 0; text-align: left; white-space: normal; }
+  .table-stack td.stack-inline { width: auto; } /* short cells (a role, a button) share one line */
+  .table-stack td:empty { display: none; }
+  .table-stack td[data-label]::before {
+    content: attr(data-label); display: block; margin-bottom: 2px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted);
+  }
+}
+/* `.app-type`: the logged-in app, setup and login on a phone read at ≥ 14–15 px. Small print written as 13/14 px
+   (fine on a desktop) is lifted one step below sm; desktop sizes (sm:… and up) are untouched. */
+@media (max-width: 639.98px) {
+  .app-type .text-\[14px\] { font-size: 15px; }
+  .app-type .text-\[13px\], .app-type .text-body-sm { font-size: 14px; }
+}
+/* Fixed action bars on a phone: room for the bar plus the floating assistant button above it.
+   --action-bar-h is measured by <MobileActionBar> (components/mobile-action-bar.tsx). */
+@utility pb-action-bar { padding-bottom: calc(var(--action-bar-h, 0px) + 88px); }
+
 /* Stitch base helpers */
 body { overscroll-behavior: none; }
 @utility pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }

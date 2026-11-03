@@ -31,7 +31,8 @@
     "today": "Oggi",
     "knowledge": "Cosa sa",
     "calls": "Chiamate",
-    "week": "Settimana"
+    "week": "Settimana",
+    "knowledgeShort": "Cosa sa"
   },
   "shell": {
     "verify": {

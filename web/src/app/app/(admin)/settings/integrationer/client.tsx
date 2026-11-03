@@ -60,7 +60,7 @@ export function Integrations({ wsId, data, canManage }: { wsId: string; data: Ca
     <section className="flex flex-col gap-4">
       <div>
         <span className="eyebrow">{t("integrations.eyebrow")}</span>
-        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("integrations.title")}</h1>
+        <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("integrations.title")}</h1>
         <p className="text-body-sm text-ink-soft max-w-3xl">{t("integrations.intro")}</p>
       </div>
       {data.simulated && <Alert kind="warn">{t("integrations.simulated")}</Alert>}
@@ -197,13 +197,13 @@ function Runs({ runs, items }: { runs: ActionRun[]; items: Connector[] }) {
       <h2 className="font-display text-headline-sm text-ink">{t("integrations.recent")}</h2>
       {runs.length === 0 ? <p className="text-body-sm text-ink-soft">{t("integrations.noRuns")}</p> : (
         <div className="overflow-x-auto">
-          <table className="w-full text-body-sm">
+          <table className="table-stack w-full text-body-sm">
             <thead><tr className="text-left text-ink-soft"><th className="pr-3">{t("integrations.th.time")}</th><th className="pr-3">{t("integrations.th.channel")}</th><th className="pr-3">{t("integrations.th.system")}</th><th className="pr-3">{t("integrations.th.action")}</th><th>{t("integrations.th.status")}</th></tr></thead>
             <tbody>{runs.map((r) => (
               <tr key={r.id} className="align-top border-t border-line/40">
                 <td className="pr-3 py-1 tabular-nums whitespace-nowrap">{new Date(r.created_at).toLocaleString(HTML_LANG[locale], { dateStyle: "short", timeStyle: "short" })}</td>
-                <td className="pr-3 py-1">{["phone", "webchat", "test", "system"].includes(r.channel) ? t(`integrations.channel.${r.channel}`) : r.channel}</td>
-                <td className="pr-3 py-1">{name(r.connector)}</td>
+                <td data-label={t("integrations.th.channel")} className="pr-3 py-1">{["phone", "webchat", "test", "system"].includes(r.channel) ? t(`integrations.channel.${r.channel}`) : r.channel}</td>
+                <td data-label={t("integrations.th.system")} className="pr-3 py-1">{name(r.connector)}</td>
                 <td className="pr-3 py-1">{r.conversation_id ? <Link className="text-ink underline" href={`/app/inbox/${r.conversation_id}`}>{r.label}</Link> : r.label}{r.simulated ? t("integrations.simulatedSuffix") : ""}{r.error ? <><br /><span className="text-ink-soft">{r.error}</span></> : null}</td>
                 <td className="py-1"><span className={`px-2 py-0.5 rounded-full text-label-sm ${RUN[r.status]}`}>{t(`integrations.run.${r.status}`)}</span></td>
               </tr>

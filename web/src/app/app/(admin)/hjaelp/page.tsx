@@ -18,7 +18,7 @@ export default async function HelpPage() {
     <section className="flex flex-col gap-4 max-w-4xl">
       <div>
         <span className="eyebrow">{t("shell.help")}</span>
-        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("help.title")}</h1>
+        <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("help.title")}</h1>
       </div>
       {SECTIONS.map((s) => (
         <div key={s.id} className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">

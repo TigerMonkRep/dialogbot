@@ -67,7 +67,7 @@ export async function OpkaldView({ selected, f = "all", q = "", days = 30 }: { s
       <section className={`${selected ? "hidden lg:flex" : "flex"} flex-[999_1_400px] min-w-0 flex-col gap-4`} aria-label={t("calls.title")}>
         <div className="flex flex-col gap-1.5">
           <span className="eyebrow">{t("calls.eyebrow")}</span>
-          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("calls.title")}</h1>
+          <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("calls.title")}</h1>
         </div>
         <nav className="flex flex-wrap items-center gap-2" aria-label={t("calls.filtersAria")}>
           {FILTERS.map(([k, c]) => {

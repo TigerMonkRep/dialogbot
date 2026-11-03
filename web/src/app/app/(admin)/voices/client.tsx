@@ -309,7 +309,7 @@ function Pronunciations({ wsId, data }: { wsId: string; data: VoicesData }) {
           <Button type="button" variant="ghost" icon="delete" aria-label={t("voices.pronunciations.removeAria", { n: i + 1 })} onClick={() => setRows(rows.filter((_, j) => j !== i))} />
         </div>
       ))}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <Button type="button" variant="tonal" icon="add" onClick={() => setRows([...rows, { term: "", say: "" }])}>{t("voices.pronunciations.add")}</Button>
         <Button type="button" icon="save" onClick={() => save.run()} disabled={save.pending}>{t("voices.pronunciations.save")}</Button>
       </div>

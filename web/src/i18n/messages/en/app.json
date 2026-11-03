@@ -31,7 +31,8 @@
     "today": "Today",
     "knowledge": "What it knows",
     "calls": "Calls",
-    "week": "Week"
+    "week": "Week",
+    "knowledgeShort": "Knowledge"
   },
   "shell": {
     "verify": {

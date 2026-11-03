@@ -6,7 +6,7 @@ import { Icon } from "./ui";
 import { useT } from "@/i18n/client";
 
 type Ws = { id: string; name: string; role: string; product_intent: string };
-export type NavItem = { href: string; match: string; also?: string[]; label: string; icon: string };
+export type NavItem = { href: string; match: string; also?: string[]; label: string; short?: string; icon: string };
 
 /** "I dag" (/app) is only active on its own page and the two pages reached from it (Aftaler, Kampagner). */
 const isActive = (path: string, item: NavItem) =>
@@ -83,7 +83,8 @@ export function TabNav({ items }: { items: NavItem[] }) {
   );
 }
 
-/** The same four pages as bottom tabs on a phone: icon + label, the selected one gets a yellow pill behind the icon. */
+/** The same four pages as bottom tabs on a phone: icon over a short label (`short` when the full one is long), the
+ *  selected one gets a yellow pill behind the icon. A label never runs into its neighbour: it is truncated in its cell. */
 export function BottomTabs({ items }: { items: NavItem[] }) {
   const path = usePathname();
   const t = useT("app");
@@ -93,10 +94,10 @@ export function BottomTabs({ items }: { items: NavItem[] }) {
         {items.map((it) => {
           const active = isActive(path, it);
           return (
-            <li key={it.label}>
-              <Link href={it.href} aria-current={active ? "page" : undefined} className="flex flex-col items-center justify-center gap-0.5 min-h-[60px] text-[12px] font-semibold text-ink">
+            <li key={it.label} className="min-w-0">
+              <Link href={it.href} aria-current={active ? "page" : undefined} className="flex flex-col items-center justify-center gap-0.5 min-h-[60px] px-1 text-[12px] leading-tight font-semibold text-ink">
                 <span className={`inline-flex items-center justify-center w-12 h-7 rounded-full ${active ? "bg-highlight" : ""}`}><Icon name={it.icon} size={20} filled={active} /></span>
-                {it.label}
+                <span className="block max-w-full truncate">{it.short ?? it.label}</span>
               </Link>
             </li>
           );

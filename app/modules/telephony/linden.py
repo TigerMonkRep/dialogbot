@@ -133,6 +133,8 @@ class Session:
         msg = {"type": "transcriber-response", "transcription": text, "channel": "customer",
                "transcriptType": "final" if final else "partial"}
         self.sent.append(msg)
+        if final:  # what Vapi was told the caller said – the first thing to look at when a call goes wrong
+            logger.info("bridge.final", stt=self.stt, text=text[:200])
         await self.socket.send_text(json.dumps(msg))
 
     def _on_adapter_event(self, ev) -> None:
@@ -150,11 +152,15 @@ class Session:
         self.rate = self.in_rate if self.in_rate in SUPPORTED_RATES else 16000
         vocab = [{"content": v["content"], **({"sounds_like": v["sounds_like"]} if v.get("sounds_like") else {})}
                  for v in additional_vocab(self.db, self.ws, self.own)]
-        cfg = adapters.AdapterConfig(sample_rate=self.rate, vocabulary=vocab, controlled=False)
+        # Vapi owns the turn here, and Vapi only acts on FINAL text: release finished words at every pause
+        cfg = adapters.AdapterConfig(sample_rate=self.rate, vocabulary=vocab, controlled=False, release_on_pause=True)
         self.adapter = adapters.make(self.stt, cfg, on_event=self._on_adapter_event)
         await self.adapter.open()
         self.client = self.adapter  # "started" for the receive loop
         self.ready.set()
+        # the diagnostic capture works for every recogniser, not only Linden
+        CAPTURE.update({"pcm": b"", "rate": self.in_rate, "channels": self.channels, "session": self,
+                        "started_at": __import__("datetime").datetime.now(__import__("datetime").UTC).isoformat()})
         logger.info("stt.started", stt=self.stt, rate=self.rate, in_rate=self.in_rate, channels=self.channels,
                     vocab=len(vocab))
 

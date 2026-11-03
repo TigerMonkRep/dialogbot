@@ -52,6 +52,10 @@ class AdapterConfig:
     url: str | None = None
     # Soniox only: how aggressively it ends a turn. None = the provider default; never tuned silently.
     soniox_endpoint: dict | None = None
+    # Soniox only: also release the finished words as a `final` whenever the caller pauses (every token final, none
+    # pending) – not only at Soniox' own `<end>`. Needed when SOMEONE ELSE owns the turn (Vapi through the bridge):
+    # Vapi only acts on final text, and waiting for `<end>` left it with partials only – Peter never answered.
+    release_on_pause: bool = False
 
 
 class Adapter:
@@ -340,6 +344,9 @@ class Soniox(Adapter):
                 self._final.append(tok)
             else:
                 nonfinal.append(text)
+        if msg.get("tokens") and self.cfg.release_on_pause and self._final and not nonfinal:
+            self._release(None)  # a pause: everything heard so far is final – hand it over now
+            return
         if msg.get("tokens"):
             shown = ("".join(t["text"] for t in self._final) + "".join(nonfinal)).strip()
             if shown:

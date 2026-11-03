@@ -162,6 +162,31 @@ def test_soniox_buffers_final_tokens_and_releases_them_at_the_end_marker_without
     assert partials[0] == "Vi bliver"  # a later partial replaces, it does not append
 
 
+def test_soniox_for_vapi_releases_finished_words_at_every_pause_not_only_at_end():
+    """3 Nov 2026: through the Vapi bridge Soniox only produced a final at its own <end>; Vapi, which owns the turn
+    and only acts on final text, got partials only and Peter never answered. With release_on_pause the words go out
+    as a final as soon as the caller pauses (all tokens final, none pending)."""
+    a = adapters.Soniox(_cfg(release_on_pause=True), "k")
+    for m in [
+        {"tokens": [_tok("Vi", False), _tok(" er", False)]},
+        {"tokens": [_tok("Vi", True, 0, 200), _tok(" er", True, 200, 400), _tok(" en", False)]},  # still talking
+        {"tokens": [_tok(" en", True, 400, 500), _tok(" frisørsalon.", True, 500, 1200)]},     # pause
+        {"tokens": [_tok(" Og", False)]},
+        {"tokens": [_tok(" Og", True, 2000, 2200), _tok(" i", True, 2200, 2300), _tok("<end>", True)]},
+    ]:
+        a.handle(m)
+    finals = [e.text for e in a.events if e.kind == "final"]
+    assert finals == ["Vi er en frisørsalon.", "Og i"]
+    partials = [e.text for e in a.events if e.kind == "partial"]
+    assert partials == ["Vi er", "Vi er en", "Og"]   # a released segment never comes back in a later partial
+
+
+def test_soniox_without_release_on_pause_still_waits_for_end():
+    a = adapters.Soniox(_cfg(), "k")
+    a.handle({"tokens": [_tok("Hej", True, 0, 200), _tok(" der.", True, 200, 500)]})
+    assert not [e for e in a.events if e.kind == "final"]
+
+
 def test_soniox_fin_marker_is_our_own_flush_not_a_provider_turn():
     a = adapters.Soniox(_cfg(controlled=True), "k")
     asm = _feed(a, [{"tokens": [_tok("Jeg", True, 0, 100), _tok(" ved", True, 100, 300), _tok("<fin>", True)]}])

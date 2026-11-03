@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "@/lib/site";
 import { SiteAnalytics } from "@/components/site-analytics";
+import { I18nProvider } from "@/i18n/client";
+import { DEFAULT_LOCALE, HTML_LANG } from "@/i18n/config";
+import { getLocale, messagesFor } from "@/i18n/server";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -18,10 +21,16 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#2456F6" };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
   return (
-    <html lang="da">
-      <body className="bg-paper text-ink text-body-md antialiased">{children}<SiteAnalytics /></body>
+    <html lang={HTML_LANG[locale]}>
+      <body className="bg-paper text-ink text-body-md antialiased">
+        <I18nProvider locale={locale} messages={messagesFor(locale)} fallback={messagesFor(DEFAULT_LOCALE)}>
+          {children}
+        </I18nProvider>
+        <SiteAnalytics />
+      </body>
     </html>
   );
 }

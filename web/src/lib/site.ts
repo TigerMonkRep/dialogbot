@@ -1,5 +1,5 @@
 /** Public site facts used for SEO: canonical origin, the keyword landing pages and shared copy. */
-export const SITE_URL = "https://www.dialogbot.dk";
+export const SITE_URL = "https://dialogbot.app";
 export const SITE_NAME = "Dialogbot";
 export const SITE_TITLE = "Dialogbot – AI-receptionist, AI-telefonsvarer og chatbot til danske virksomheder";
 export const SITE_DESCRIPTION =

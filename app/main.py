@@ -17,6 +17,8 @@ from app.modules.billing.router import router as billing_router
 from app.modules.bookings.router import public_router as bookings_public_router
 from app.modules.bookings.router import router as bookings_router
 from app.modules.business.router import router as business_router
+from app.modules.callengine.router import router as engine_operator_router
+from app.modules.callengine.router import webhook_router as engine_webhook_router
 from app.modules.campaigns.router import router as campaigns_router
 from app.modules.health.router import router as health_router
 from app.modules.identity.router import router as identity_router
@@ -76,7 +78,7 @@ def create_app() -> FastAPI:
               webchat_router, webchat_public_router, leads_router,
               reports_router, telephony_router, vapi_webhook_router, billing_router, reception_router, overview_router,
               bookings_router, bookings_public_router, campaigns_router, voices_router, voice_operator_router, own_voice_router, telephony_setup_router,
-              telephony_operator_router, stt_operator_router, sales_public_router, sales_operator_router, connections_router,
+              telephony_operator_router, stt_operator_router, engine_operator_router, engine_webhook_router, sales_public_router, sales_operator_router, connections_router,
               integrations_oauth_router, ambassadors_public_router, ambassadors_router, ambassadors_workspace_router,
               ambassadors_operator_router, admin_operator_router, assistant_changes_router,
               voice_tts_router, social_operator_router, social_public_router, sales_channel_router,

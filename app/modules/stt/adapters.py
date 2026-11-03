@@ -56,6 +56,9 @@ class AdapterConfig:
     # pending) – not only at Soniox' own `<end>`. Needed when SOMEONE ELSE owns the turn (Vapi through the bridge):
     # Vapi only acts on final text, and waiting for `<end>` left it with partials only – Peter never answered.
     release_on_pause: bool = False
+    # Soniox only: the wire format of the audio we send. Phone audio from Twilio is 8 kHz µ-law ("mulaw") and is sent
+    # as it arrives – no conversion, nothing lost.
+    audio_format: str = "pcm_s16le"
 
 
 class Adapter:
@@ -299,7 +302,7 @@ class Soniox(Adapter):
         self._reader: asyncio.Task | None = None
 
     def start_message(self) -> dict:
-        msg: dict[str, Any] = {"model": self.requested_model, "audio_format": "pcm_s16le",
+        msg: dict[str, Any] = {"model": self.requested_model, "audio_format": self.cfg.audio_format,
                                "sample_rate": self.cfg.sample_rate, "num_channels": 1,
                                "language_hints": [self.cfg.language],
                                "enable_endpoint_detection": not self.cfg.controlled}

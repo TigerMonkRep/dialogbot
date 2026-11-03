@@ -112,6 +112,11 @@ class TwilioClient:
         self._req("POST", f"/Accounts/{account_sid}/IncomingPhoneNumbers/{number_sid}.json",
                   data={"VoiceUrl": url, "VoiceMethod": "POST"})
 
+    def create_call(self, account_sid: str, to: str, from_: str, twiml: str, timeout_s: int = 30) -> str:
+        """Ring `to` from one of our numbers and run `twiml` when they answer (Dialogbot's own call engine)."""
+        return self._req("POST", f"/Accounts/{account_sid}/Calls.json",
+                         data={"To": to, "From": from_, "Twiml": twiml, "Timeout": str(timeout_s)})["sid"]
+
     def available(self, sub_sid: str, country: str, number_type: str) -> list[str]:
         kind = {"local": "Local", "mobile": "Mobile"}[number_type]
         out = self._req("GET", f"/Accounts/{sub_sid}/AvailablePhoneNumbers/{country}/{kind}.json",
@@ -218,6 +223,11 @@ class FakeTwilio:
 
     def subaccount_token(self, sub_sid: str) -> str:
         return "fake-subaccount-token"
+
+    def create_call(self, account_sid: str, to: str, from_: str, twiml: str, timeout_s: int = 30) -> str:
+        sid = f"CA{next(WORLD.seq):032d}"
+        WORLD.calls = [*getattr(WORLD, "calls", []), {"sid": sid, "to": to, "from": from_, "twiml": twiml}]
+        return sid
 
     def find_number(self, sub_sid: str, friendly_name: str) -> Number | None:
         for n in WORLD.numbers.values():

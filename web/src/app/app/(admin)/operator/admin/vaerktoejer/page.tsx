@@ -7,6 +7,7 @@ const TOOLS: [string, string, string][] = [
   ["/app/operator/ambassadors", "Ambassadører og affiliates", "Godkend, se saldi og kør udbetalinger. Se en ambassadørs egen side via Brugere → Se som."],
   ["/app/operator/sales", "Salg", "Prøveopkald og leads fra hjemmesiden."],
   ["/app/operator/telephony", "Telefoni", "Numre, dokumenter og opsætningsjob."],
+  ["/app/operator/stemmetest", "Stemmetest", "Sammenlign talegenkendelse på dansk med samme lyd (kun testtilstand)."],
   ["/app/operator/voices", "Stemmer", "Gennemgå rettigheder og udgiv stemmer."],
 ];
 

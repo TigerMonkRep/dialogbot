@@ -50,6 +50,7 @@ from app.models.domain import (  # noqa: F401
     SocialPost,
     SocialProspect,
     SourceImport,
+    SttTestRun,
     Task,
     TelephonyAccount,
     TelephonyCost,

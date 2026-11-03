@@ -1746,3 +1746,41 @@ class SiteDocument(Base):
     blob: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     updated_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
+
+
+# ---------------------------------------------------------------------------
+# Stemmetest: one row per replayed recording (or live/browser/phone result) through one recogniser profile
+# ---------------------------------------------------------------------------
+
+
+class SttTestRun(Base):
+    """A measured run of one recording through one profile (docs/voice/stemmetest.md). `result` holds the raw
+    provider events, the finished turns, the raw (un-corrected) transcript, WER, entity hits, timings and the
+    requested vs reported model; `config` is the snapshot the session was bound to. Operator-only; never shown to
+    customers, and never holds API keys or tokens. `actual_profile` differs from `profile_id` only after a fallback –
+    such a run does not count towards the original profile's results."""
+
+    __tablename__ = "stt_test_runs"
+    __table_args__ = (
+        CheckConstraint("status in ('kører','ok','fejl','mangler_adgang')", name="ck_stt_test_runs_status"),
+        CheckConstraint("channel in ('replay','browser','telefon')", name="ck_stt_test_runs_channel"),
+        CheckConstraint("mode in ('controlled','natural')", name="ck_stt_test_runs_mode"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), index=True)
+    started_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    profile_id: Mapped[str] = mapped_column(String(8), nullable=False)
+    actual_profile: Mapped[str] = mapped_column(String(8), nullable=False)
+    channel: Mapped[str] = mapped_column(String(10), nullable=False, default="replay")
+    mode: Mapped[str] = mapped_column(String(12), nullable=False, default="controlled")
+    case_id: Mapped[str | None] = mapped_column(String(32))
+    split: Mapped[str | None] = mapped_column(String(8))
+    source: Mapped[str] = mapped_column(String(10), nullable=False, default="manifest")  # manifest | upload
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="kører")
+    reference: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    transcript_raw: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    config: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    result: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    created_at: Mapped[datetime] = ts_now()
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

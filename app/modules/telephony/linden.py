@@ -34,6 +34,11 @@ logger = structlog.get_logger(__name__)
 
 LANGUAGE = "da"
 SUPPORTED_RATES = (8000, 16000)
+# Which recogniser the bridge feeds. "speechmatics-agent" (Linden) is the original, tested path in this file; the
+# others go through the shared adapters in app/modules/stt (Stemmetest, docs/voice/stemmetest.md). In every case VAPI
+# closes the customer's turn – the bridge only sends partial and final text – so exactly one component owns endpointing.
+DEFAULT_STT = "speechmatics-agent"
+STT_CHOICES = ("speechmatics-agent", "speechmatics-rt", "soniox", "elevenlabs-scribe")
 
 # Diagnostics: the raw audio Vapi sent at the start of the most recent call, exactly as received (interleaved PCM),
 # so an operator can download it as WAV and hear/measure what the recogniser was given. Memory only, one call.
@@ -41,17 +46,26 @@ CAPTURE_SECONDS = 12
 CAPTURE: dict[str, Any] = {"pcm": b"", "rate": 0, "channels": 0, "started_at": None}
 
 
-def configured() -> bool:
-    return bool(get_settings().speechmatics_api_key)
+def chosen(stt: str | None) -> str:
+    return stt if stt in STT_CHOICES else DEFAULT_STT
 
 
-def transcriber_config(ws: Workspace | None, own: list[str]) -> dict:
+def configured(stt: str | None = None) -> bool:
+    """Is the key for the chosen recogniser present? (Linden and Speechmatics Realtime share one key.)"""
+    from app.modules.stt import adapters
+
+    return bool(adapters.key_for(chosen(stt)))
+
+
+def transcriber_config(ws: Workspace | None, own: list[str], stt: str | None = None) -> dict:
     """The Vapi `transcriber` block that routes the call's audio through the bridge."""
     s = get_settings()
     base = s.public_base_url.rstrip("/").replace("https://", "wss://", 1).replace("http://", "ws://", 1)
     params = []
     if ws is not None:
         params.append(f"ws={ws.id}")
+    if chosen(stt) != DEFAULT_STT:
+        params.append(f"stt={chosen(stt)}")
     for x in own:
         params.append(f"extra={quote(x)}")
     url = f"{base}/api/v1/webhooks/vapi/transcriber" + (f"?{'&'.join(params)}" if params else "")
@@ -97,8 +111,11 @@ def customer_channel(pcm: bytes, channels: int, in_rate: int, out_rate: int, cha
 class Session:
     """One Vapi call's bridge: a Speechmatics Agent STT session fed with the caller's audio."""
 
-    def __init__(self, socket: WebSocket, db: OrmSession, ws: Workspace | None, own: list[str]):
+    def __init__(self, socket: WebSocket, db: OrmSession, ws: Workspace | None, own: list[str],
+                 stt: str = DEFAULT_STT):
         self.socket, self.db, self.ws, self.own = socket, db, ws, own
+        self.stt = stt
+        self.adapter: Any = None  # a stt.adapters.Adapter when the recogniser is not Linden
         self.rate = 16000
         self.in_rate = 16000
         self.channels = 2
@@ -118,7 +135,32 @@ class Session:
         self.sent.append(msg)
         await self.socket.send_text(json.dumps(msg))
 
+    def _on_adapter_event(self, ev) -> None:
+        """Adapter → Vapi: partial and final text only. Turn events are NOT forwarded; Vapi owns end-of-turn."""
+        if ev.kind in ("partial", "final"):
+            asyncio.get_running_loop().create_task(self.send(ev.text, ev.kind == "final"))
+        elif ev.kind == "error":
+            logger.warning("stt.error", stt=self.stt, detail=ev.text[:200])
+
+    async def start_adapter(self, start: dict) -> None:
+        from app.modules.stt import adapters
+
+        self.channels = int(start.get("channels") or 2)
+        self.in_rate = int(start.get("sampleRate") or 16000)
+        self.rate = self.in_rate if self.in_rate in SUPPORTED_RATES else 16000
+        vocab = [{"content": v["content"], **({"sounds_like": v["sounds_like"]} if v.get("sounds_like") else {})}
+                 for v in additional_vocab(self.db, self.ws, self.own)]
+        cfg = adapters.AdapterConfig(sample_rate=self.rate, vocabulary=vocab, controlled=False)
+        self.adapter = adapters.make(self.stt, cfg, on_event=self._on_adapter_event)
+        await self.adapter.open()
+        self.client = self.adapter  # "started" for the receive loop
+        self.ready.set()
+        logger.info("stt.started", stt=self.stt, rate=self.rate, in_rate=self.in_rate, channels=self.channels,
+                    vocab=len(vocab))
+
     async def start(self, start: dict) -> None:
+        if self.stt != DEFAULT_STT:
+            return await self.start_adapter(start)
         from speechmatics.agent_stt import (
             AgentSttAsyncClient,
             AudioEncoding,
@@ -178,9 +220,20 @@ class Session:
                 logger.info("linden.levels", ch0=round(self.levels[0] / n), ch1=round(self.levels[1] / n),
                             frames=self.levels[2], channel=self.channel)
         await self.client.send_audio(customer_channel(data[:whole], self.channels, self.in_rate, self.rate,
-                                                      self.channel))
+                                                      self.channel))  # Adapter.send_audio has the same signature
 
     async def close(self) -> None:
+        if self.adapter is not None:
+            try:
+                await asyncio.wait_for(self.adapter.finish(), timeout=3)
+            except Exception as e:  # noqa: BLE001 – the call is over either way
+                logger.info("stt.finish", detail=str(e))
+            try:
+                await asyncio.wait_for(self.adapter.close(), timeout=3)
+            except Exception as e:  # noqa: BLE001
+                logger.info("stt.close", detail=str(e))
+            self.adapter = self.client = None
+            return
         if self.client is not None:
             try:
                 await asyncio.wait_for(self.client.__aexit__(None, None, None), timeout=5)
@@ -204,7 +257,8 @@ async def serve(socket: WebSocket) -> None:
     if not authorized(socket):
         await socket.close(code=4401)
         return
-    if not configured():
+    stt = chosen(socket.query_params.get("stt"))
+    if not configured(stt):
         await socket.close(code=4503)
         return
     await socket.accept()
@@ -217,7 +271,7 @@ async def serve(socket: WebSocket) -> None:
                 ws = db.get(Workspace, uuid.UUID(ws_id))
             except ValueError:
                 ws = None
-        session = Session(socket, db, ws, socket.query_params.getlist("extra"))
+        session = Session(socket, db, ws, socket.query_params.getlist("extra"), stt)
         try:
             while True:
                 frame = await socket.receive()

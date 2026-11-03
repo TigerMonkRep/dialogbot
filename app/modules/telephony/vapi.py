@@ -460,7 +460,7 @@ def assistant_config(db: OrmSession, number: PhoneNumber, caller: str | None = N
     from app.modules.telephony import phone_languages as pl
 
     ws = db.get(Workspace, number.workspace_id)
-    lang = pl.call_language(db, ws.id)  # the language the business serves its callers in
+    lang = pl.call_language(db, ws.id, caller)  # the caller's language if the business serves it, else its default
     system, _revision = build_system_prompt(db, ws)  # 409 without approved knowledge
     _suffix, phone_rules = CHANNEL_INSTRUCTIONS["phone"]
     phone_rules += "\n\nKundens telefonnummer: " + known_number_section(caller, how="det nummer, du ringer fra")

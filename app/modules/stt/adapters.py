@@ -58,6 +58,9 @@ class AdapterConfig:
     # pending) – not only at Soniox' own `<end>`. Needed when SOMEONE ELSE owns the turn (Vapi through the bridge):
     # Vapi only acts on final text, and waiting for `<end>` left it with partials only – Peter never answered.
     release_on_pause: bool = False
+    # Soniox only: send the agent's own words to the recogniser as context (`agent_text`, stt-rt-v6 and later), so it
+    # understands short answers to Peter's questions ("tirsdag", "ja, den") better.
+    agent_text: bool = False
 
 
 class Adapter:
@@ -294,7 +297,10 @@ class Soniox(Adapter):
 
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
-        self.requested_model = self.cfg.model or "stt-rt-v5"
+        from app.config import get_settings
+
+        # SONIOX_MODEL picks the model everywhere (bridge, engine, Stemmetest); v5 until v6 is measured on our audio
+        self.requested_model = self.cfg.model or get_settings().soniox_model or "stt-rt-v5"
         self.turn_owner = "replay (finalize → <fin>)" if self.cfg.controlled else "Soniox (semantisk endpoint, <end>)"
         self._final: list[dict] = []
         self.ws: Any = None
@@ -305,8 +311,12 @@ class Soniox(Adapter):
                                "sample_rate": self.cfg.sample_rate, "num_channels": 1,
                                "language_hints": [self.cfg.language],
                                "enable_endpoint_detection": not self.cfg.controlled}
+        if self.cfg.agent_text and self.supports_agent_text:
+            msg["enable_agent_text_input"] = True
+        from app.core.languages import NAME_EN
+
         ctx: dict[str, Any] = {"general": [{"key": "domain", "value": "Telefonreception"},
-                                           {"key": "language", "value": "Dansk"}]}
+                                           {"key": "language", "value": NAME_EN.get(self.cfg.language, "Danish")}]}
         terms = []
         for v in self.cfg.vocabulary[:MAX_SONIOX_TERMS]:
             terms.append(v["content"])
@@ -386,6 +396,21 @@ class Soniox(Adapter):
 
     async def send_audio(self, pcm: bytes) -> None:
         await self.ws.send(pcm)
+
+    @property
+    def supports_agent_text(self) -> bool:
+        """Agent text input exists from stt-rt-v6 (docs.soniox.com, websocket API, 3 Nov 2026)."""
+        m = re.search(r"stt-rt-v(\d+)", self.requested_model or "")
+        return bool(m and int(m.group(1)) >= 6)
+
+    async def agent_text(self, text: str, end_of_segment: bool = True) -> None:
+        """What the agent says, as context for the caller's answer. A no-op unless enabled and supported."""
+        if self.ws is None or not (self.cfg.agent_text and self.supports_agent_text) or not text.strip():
+            return
+        msg: dict[str, Any] = {"type": "agent_text", "text": text}
+        if end_of_segment:
+            msg["end_of_segment"] = True
+        await self.ws.send(json.dumps(msg))
 
     async def flush(self) -> None:
         await self.ws.send(json.dumps({"type": "finalize"}))

@@ -1,17 +1,20 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "@/i18n/link";
-import { useT } from "@/i18n/client";
+import { useLocale, useT } from "@/i18n/client";
+import { HTML_LANG, LOCALE_NAMES } from "@/i18n/config";
 import { ArrowIcon, CloseIcon, PlayIcon } from "./site-icons";
-import { VIDEO } from "@/lib/video";
+import { videoFor } from "@/lib/video";
 
-/** The 70-second explainer (web/public/video/). A poster "chip" opens our own player – no iframe, nothing third
+/** The ~90-second explainer (web/public/video/, one version per language). A poster "chip" opens our own player – no iframe, nothing third
  *  party. On a phone the player takes the whole screen; on wider screens it is a dialog. The "Prøv Dialogbot" the
  *  video ends on is pixels, so when it ends we lay a real CTA card over it (and the same links always sit under the
  *  video for people who skip). Captions are burned in; the VTT track is there for screen readers but off by default. */
 
 export function ExplainerVideo({ variant = "chip" }: { variant?: "chip" | "button" | "poster" }) {
   const t = useT("site");
+  const locale = useLocale();
+  const VIDEO = videoFor(locale);
   const title = t("video.title");
   const [open, setOpen] = useState(false);
   const [ended, setEnded] = useState(false);
@@ -84,7 +87,7 @@ export function ExplainerVideo({ variant = "chip" }: { variant?: "chip" | "butto
               <video ref={videoRef} controls playsInline preload="none" poster={VIDEO.poster} onEnded={() => setEnded(true)}
                 className="block w-full h-full" aria-label={t("video.description")}>
                 <source src={VIDEO.src} type="video/mp4" />
-                <track kind="captions" src={VIDEO.captions} srcLang="da" label={t("video.captionsLabel")} />
+                <track kind="captions" src={VIDEO.captions} srcLang={HTML_LANG[locale]} label={LOCALE_NAMES[locale]} />
                 {t("video.unsupported")} <a href={VIDEO.src}>{t("video.download")}</a>.
               </video>
             </div>

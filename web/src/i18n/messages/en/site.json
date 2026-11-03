@@ -40,19 +40,40 @@
       "title": "The customer calls. Dialogbot answers. You get the message.",
       "lead": "A missed call is a lost customer – most never call back. That's the feeling Dialogbot takes away: standing on a ladder or with a client in the chair, hearing the phone ring and not being able to pick up.",
       "steps": [
-        { "title": "The customer calls – as always", "text": "On your own number. If you're busy or closed, Dialogbot picks up within two seconds and introduces itself as your receptionist." },
-        { "title": "It answers and books", "text": "Based on the services, prices and opening hours you have approved. It never guesses. If the customer needs an appointment, it finds a free slot in your calendar and sends an SMS." },
-        { "title": "You get a message", "text": "Name, number and what it was about – by SMS or email straight away, plus a summary report every day. If there's something it can't handle, it takes a message for you." }
+        {
+          "title": "The customer calls – as always",
+          "text": "On your own number. If you're busy or closed, Dialogbot picks up within two seconds and introduces itself as your receptionist."
+        },
+        {
+          "title": "It answers and books",
+          "text": "Based on the services, prices and opening hours you have approved. It never guesses. If the customer needs an appointment, it finds a free slot in your calendar and sends an SMS."
+        },
+        {
+          "title": "You get a message",
+          "text": "Name, number and what it was about – by SMS or email straight away, plus a summary report every day. If there's something it can't handle, it takes a message for you."
+        }
       ]
     },
     "features": {
       "eyebrow": "What it does",
       "title": "Four jobs, one receptionist",
       "items": [
-        { "title": "Answers the phone", "text": "Around the clock, with a voice you choose. It's honest that it's a digital assistant if the customer asks." },
-        { "title": "Books appointments", "text": "Finds free slots in Google Calendar or Microsoft 365, books, moves and cancels – and sends a confirmation by SMS." },
-        { "title": "Answers on your website", "text": "The same knowledge as a web chat on your site: customers asking about prices and opening hours get an answer straight away – evenings too. One line of code and it's live." },
-        { "title": "Calls customers", "text": "Follows up on quotes or sends service reminders – only to customers who have said yes. 4 kr. per call + 2 kr. per minute." }
+        {
+          "title": "Answers the phone",
+          "text": "Around the clock, with a voice you choose. It's honest that it's a digital assistant if the customer asks."
+        },
+        {
+          "title": "Books appointments",
+          "text": "Finds free slots in Google Calendar or Microsoft 365, books, moves and cancels – and sends a confirmation by SMS."
+        },
+        {
+          "title": "Answers on your website",
+          "text": "The same knowledge as a web chat on your site: customers asking about prices and opening hours get an answer straight away – evenings too. One line of code and it's live."
+        },
+        {
+          "title": "Calls customers",
+          "text": "Follows up on quotes or sends service reminders – only to customers who have said yes. 4 kr. per call + 2 kr. per minute."
+        }
       ],
       "note": "Everything it says is based on knowledge you have approved – and it shows you every change first: before → after, “Approve?”."
     },
@@ -107,9 +128,18 @@
     },
     "ld": {
       "appDescription": "Dialogbot is an AI receptionist from Denmark that answers the phone and the chat for your business around the clock – replying from your own knowledge, booking appointments and collecting enquiries. We guide you through the whole setup.",
-      "subscription": { "name": "Subscription", "description": "Per month excl. VAT, including 300 minutes of incoming calls. No lock-in." },
-      "campaign": { "name": "Outbound campaign calls", "description": "Per outbound call excl. VAT, plus 2 kr. per started minute of conversation" },
-      "setup": { "name": "Setup by Dialogbot's specialists", "description": "One-off, excl. VAT – tailored setup and integration with your own systems. Do-it-yourself setup is included in the subscription." }
+      "subscription": {
+        "name": "Subscription",
+        "description": "Per month excl. VAT, including 300 minutes of incoming calls. No lock-in."
+      },
+      "campaign": {
+        "name": "Outbound campaign calls",
+        "description": "Per outbound call excl. VAT, plus 2 kr. per started minute of conversation"
+      },
+      "setup": {
+        "name": "Setup by Dialogbot's specialists",
+        "description": "One-off, excl. VAT – tailored setup and integration with your own systems. Do-it-yourself setup is included in the subscription."
+      }
     }
   },
   "guide": {
@@ -127,10 +157,22 @@
       "demo": "Hear a demo"
     },
     "faq": [
-      { "q": "Does it sound like a robot?", "a": "No. Dialogbot speaks naturally and always introduces itself as a digital receptionist, so the customer knows who they're talking to. Listen to the demo above." },
-      { "q": "Do I need to change my phone number?", "a": "No. You keep your number and forward it – either always, or only when you don't pick up. We show you how in step 3." },
-      { "q": "What if it can't answer?", "a": "Then it takes a message with name, number and what it's about, and sends it to you straight away. It never guesses at prices or appointments you haven't given it." },
-      { "q": "Am I tied in?", "a": "No. The fixed price can be cancelled month to month, and pay-per-enquiry has no fixed cost." }
+      {
+        "q": "Does it sound like a robot?",
+        "a": "No. Dialogbot speaks naturally and always introduces itself as a digital receptionist, so the customer knows who they're talking to. Listen to the demo above."
+      },
+      {
+        "q": "Do I need to change my phone number?",
+        "a": "No. You keep your number and forward it – either always, or only when you don't pick up. We show you how in step 3."
+      },
+      {
+        "q": "What if it can't answer?",
+        "a": "Then it takes a message with name, number and what it's about, and sends it to you straight away. It never guesses at prices or appointments you haven't given it."
+      },
+      {
+        "q": "Am I tied in?",
+        "a": "No. The fixed price can be cancelled month to month, and pay-per-enquiry has no fixed cost."
+      }
     ],
     "partsTitle": "You will need",
     "hero": {
@@ -145,7 +187,11 @@
     "heroCard": {
       "step": "Step 1 of 3",
       "title": "Tell us about your business",
-      "parts": ["phone number", "opening hours", "what you do"],
+      "parts": [
+        "phone number",
+        "opening hours",
+        "what you do"
+      ],
       "hours": "Mon–Fri 8–17"
     },
     "steps": {
@@ -153,9 +199,30 @@
       "title": "How to build it – in 3 steps",
       "lead": "No apps to install, no code. Each step shows exactly what you need and what happens.",
       "items": [
-        { "title": "Tell us about your business", "parts": ["your phone number", "opening hours", "the questions you're asked most often"], "text": "Fill in a short form – or tell us over the phone. It takes 5 minutes." },
-        { "title": "We build and test it together", "parts": ["a video call with us", "a test call to your new receptionist"], "text": "We set up the voice, answers and booking while you watch. You call it yourself and hear that it works." },
-        { "title": "Switch it on – and get back to work", "parts": ["call forwarding on your number (we show you how)"], "text": "From now on you get an SMS or email every time there's an appointment or a message for you." }
+        {
+          "title": "Tell us about your business",
+          "parts": [
+            "your phone number",
+            "opening hours",
+            "the questions you're asked most often"
+          ],
+          "text": "Fill in a short form – or tell us over the phone. It takes 5 minutes."
+        },
+        {
+          "title": "We build and test it together",
+          "parts": [
+            "a video call with us",
+            "a test call to your new receptionist"
+          ],
+          "text": "We set up the voice, answers and booking while you watch. You call it yourself and hear that it works."
+        },
+        {
+          "title": "Switch it on – and get back to work",
+          "parts": [
+            "call forwarding on your number (we show you how)"
+          ],
+          "text": "From now on you get an SMS or email every time there's an appointment or a message for you."
+        }
       ],
       "duration": "approx. 30 min",
       "switchOn": "Dialogbot: ON",
@@ -167,10 +234,22 @@
       "title": "What a call looks like once it's built",
       "lead": "Every call follows the same simple path. You see all enquiries in one overview and can always change what Dialogbot is allowed to say.",
       "items": [
-        { "title": "The customer calls", "text": "Even outside opening hours, when you're out on a job or have customers in the shop." },
-        { "title": "Dialogbot answers", "text": "With your name, prices and opening hours – and without keeping the customer waiting." },
-        { "title": "Books or takes a message", "text": "Free slots in your calendar, or a message with name, number and what it's about." },
-        { "title": "You get the message", "text": "SMS or email straight away. You call back when it suits you." }
+        {
+          "title": "The customer calls",
+          "text": "Even outside opening hours, when you're out on a job or have customers in the shop."
+        },
+        {
+          "title": "Dialogbot answers",
+          "text": "With your name, prices and opening hours – and without keeping the customer waiting."
+        },
+        {
+          "title": "Books or takes a message",
+          "text": "Free slots in your calendar, or a message with name, number and what it's about."
+        },
+        {
+          "title": "You get the message",
+          "text": "SMS or email straight away. You call back when it suits you."
+        }
       ]
     },
     "bricks": {
@@ -178,12 +257,32 @@
       "title": "Pick the bricks you need",
       "lead": "Start with the phone. Click more on as you need them – they all fit together.",
       "startHere": "Start here",
-      "phone": { "title": "Phone", "text": "Answers every call with your business name. Puts the caller through to you when it's urgent.", "start": "Start with reception" },
-      "webchat": { "title": "Web chat", "text": "A small chat on your website that replies straight away and collects contact details." },
-      "booking": { "title": "Booking", "text": "Finds free slots in your calendar and confirms the appointment to the customer by SMS." },
-      "sms": { "title": "SMS replies", "text": "Missed calls get an SMS straight away, so the customer knows you'll get back to them." },
-      "campaigns": { "title": "Campaigns", "text": "Call or message your existing customers – for example about a service being due or a new offer. You always approve first.", "start": "Start with customer follow-up" },
-      "overview": { "title": "Overview", "text": "All calls, chats and appointments in one place. See what was said and what still needs an answer." }
+      "phone": {
+        "title": "Phone",
+        "text": "Answers every call with your business name. Puts the caller through to you when it's urgent.",
+        "start": "Start with reception"
+      },
+      "webchat": {
+        "title": "Web chat",
+        "text": "A small chat on your website that replies straight away and collects contact details."
+      },
+      "booking": {
+        "title": "Booking",
+        "text": "Finds free slots in your calendar and confirms the appointment to the customer by SMS."
+      },
+      "sms": {
+        "title": "SMS replies",
+        "text": "Missed calls get an SMS straight away, so the customer knows you'll get back to them."
+      },
+      "campaigns": {
+        "title": "Campaigns",
+        "text": "Call or message your existing customers – for example about a service being due or a new offer. You always approve first.",
+        "start": "Start with customer follow-up"
+      },
+      "overview": {
+        "title": "Overview",
+        "text": "All calls, chats and appointments in one place. See what was said and what still needs an answer."
+      }
     },
     "systems": {
       "eyebrow": "Works with your system",
@@ -209,18 +308,30 @@
         "name": "Subscription",
         "from": "From",
         "unit": "kr./month",
-        "points": ["Phone, chat and booking included", "No charge per enquiry", "Cancel month to month"],
+        "points": [
+          "Phone, chat and booking included",
+          "No charge per enquiry",
+          "Cancel month to month"
+        ],
         "cta": "Get started"
       },
       "campaign": {
         "name": "Outbound campaign calls",
         "unit": "kr. per outbound call",
-        "points": ["Only if you want Dialogbot to make calls", "Contacts have agreed to be called", "No more than 2 attempts per contact – you see the maximum price before you start"]
+        "points": [
+          "Only if you want Dialogbot to make calls",
+          "Contacts have agreed to be called",
+          "No more than 2 attempts per contact – you see the maximum price before you start"
+        ]
       },
       "setup": {
         "name": "Setup by our specialists",
         "unit": "kr. one-off",
-        "points": ["Only if you'd rather not do it yourself – the three steps are included in the subscription", "Tailored setup and integration with your own systems and needs", "Calendar, CRM or booking system connected, knowledge and prices added, voice trained – and we test it together before it goes live"]
+        "points": [
+          "Only if you'd rather not do it yourself – the three steps are included in the subscription",
+          "Tailored setup and integration with your own systems and needs",
+          "Calendar, CRM or booking system connected, knowledge and prices added, voice trained – and we test it together before it goes live"
+        ]
       }
     },
     "demo": {
@@ -318,7 +429,11 @@
       "ringing": "Calling {number} …",
       "presentBefore": "I'll introduce myself as the receptionist for ",
       "presentAfter": ". Ask me about prices, availability or booking an appointment.",
-      "sideSteps": ["Tell the chat who you are", "Pick up – ask like a customer would", "Like it? Then we'll build the real one"],
+      "sideSteps": [
+        "Tell the chat who you are",
+        "Pick up – ask like a customer would",
+        "Like it? Then we'll build the real one"
+      ],
       "sideNote": "The same chat stays with you: once you say yes, it guides you through the setup, connects your calendar and tests everything together with you."
     }
   },
@@ -382,13 +497,12 @@
   },
   "video": {
     "title": "See what Dialogbot can do",
-    "posterAlt": "Dialogbot answers the phone for a small business – explained in 70 seconds",
-    "description": "Dialogbot explained in 70 seconds: answers the phone, books appointments, replies on your website – and you approve everything it's allowed to say.",
-    "playAria": "{title} – play the video (70 seconds)",
-    "short": "70 sec.",
-    "chipMeta": "70 seconds · with subtitles · explains exactly what we offer",
+    "posterAlt": "Dialogbot answers the phone for a small business – explained in 90 seconds",
+    "description": "Dialogbot explained in 90 seconds: answers the phone, books appointments, replies on your website – and you approve everything it's allowed to say.",
+    "playAria": "{title} – play the video (90 seconds)",
+    "short": "90 sec.",
+    "chipMeta": "90 seconds · with subtitles · explains exactly what we offer",
     "close": "Close the video",
-    "captionsLabel": "Dansk",
     "unsupported": "Your browser can't play the video.",
     "download": "Download the video",
     "soundsGood": "Sounds like something for you?",

@@ -11,7 +11,7 @@ import { ApprovalScreenshot } from "@/components/approval-screenshot";
 import { ProofSection } from "@/components/proof-section";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { getLocale, getRaw, getT } from "@/i18n/server";
-import { HTML_LANG } from "@/i18n/config";
+import { HTML_LANG, type Locale } from "@/i18n/config";
 import type { T } from "@/i18n/translate";
 
 /** The front page: one story, read top to bottom. What Dialogbot is (one sentence + the 70-second video), how it
@@ -74,7 +74,7 @@ export default async function Home() {
   const K = t("demoCall.customerInitial");
   return (
     <SiteChrome compactFooter={false}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(t, HTML_LANG[locale])) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(t, HTML_LANG[locale], locale)) }} />
       {rec && (
         <section aria-label={t("home.referral.label")} className="bg-highlight border-b-2 border-ink">
           <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
@@ -248,7 +248,7 @@ export default async function Home() {
 
 /** schema.org data for Google: the company, the site and the product with its two list prices. `t` is the "site"
  *  translator, `lang` the page's BCP-47 language. */
-function structuredData(t: T, lang: string) {
+function structuredData(t: T, lang: string, locale: Locale) {
   const org = { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL,
     logo: `${SITE_URL}/icon.png`, email: COMPANY.email, telephone: "+4593703433", vatID: `DK${COMPANY.cvr}`,
     address: { "@type": "PostalAddress", streetAddress: "Abildgade 18", postalCode: "8200", addressLocality: "Aarhus", addressCountry: "DK" } };
@@ -264,6 +264,6 @@ function structuredData(t: T, lang: string) {
         { "@type": "Offer", name: t("home.ld.campaign.name"), price: "4", priceCurrency: "DKK", description: t("home.ld.campaign.description") },
         { "@type": "Offer", name: t("home.ld.setup.name"), price: "5000", priceCurrency: "DKK", description: t("home.ld.setup.description") },
       ] },
-    { "@context": "https://schema.org", ...videoStructuredData(SITE_URL, t) },
+    { "@context": "https://schema.org", ...videoStructuredData(SITE_URL, t, locale, lang) },
   ];
 }

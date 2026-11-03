@@ -1,0 +1,254 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Outfit;src:url(fonts/outfit.woff2) format("woff2");font-weight:100 900}
+@font-face{font-family:Inter;src:url(fonts/inter.woff2) format("woff2");font-weight:100 900}
+:root{--ink:#14213D;--soft:#3C4659;--muted:#5B6475;--panel:#EEF4FB;--line:#D6DEEA;--accent:#2456F6;--hl:#FFCF3F}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#fff;font-family:Inter,sans-serif;color:var(--ink)}
+.stage{position:absolute;inset:0;background:#fff}
+.dark .stage{background:var(--ink)}
+.head{position:absolute;left:84px;right:84px;top:50px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:16px;font-family:Outfit;font-weight:700;font-size:42px;letter-spacing:-.5px}
+.logo i{width:56px;height:56px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center}
+.tr{font-size:20px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+.hair{position:absolute;left:84px;right:84px;top:130px;height:2px;background:var(--line)}
+.scene{position:absolute;inset:0;opacity:0}
+.eyebrow{position:absolute;left:86px;top:180px;font-size:22px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.02em}
+h1{text-wrap:balance;position:absolute;left:82px;top:212px;font-family:Outfit;font-weight:800;font-size:84px;line-height:1.02;letter-spacing:-2px;max-width:1500px}
+.sub{position:absolute;left:86px;font-size:30px;color:var(--muted)}
+.card{position:absolute;border:3px solid var(--ink);border-radius:22px;background:#fff;box-shadow:12px 12px 0 var(--ink)}
+.card.p{background:var(--panel)}
+.card.b{background:var(--accent);color:#fff}
+.lab{font-size:20px;font-weight:600;color:var(--accent);text-transform:uppercase}
+.d{font-family:Outfit;font-weight:700}
+.pill{display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);border-radius:999px;background:var(--hl);font-weight:600;color:var(--ink)}
+.btn{display:flex;align-items:center;justify-content:center;border-radius:12px;background:var(--accent);color:#fff;font-weight:700}
+.ic{width:62px;height:62px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
+.prog{position:absolute;left:84px;right:84px;top:957px;display:flex;gap:16px}
+.prog b{flex:1;height:6px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}
+.prog b u{position:absolute;inset:0;background:var(--accent);transform-origin:left}
+.dark .prog b{background:#2B3956}.dark .prog b u{background:var(--hl)}
+.illu{position:absolute;right:86px;top:912px;font-size:17px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.cap{position:absolute;left:120px;right:120px;top:996px;text-align:center;font-size:30px;font-weight:500;line-height:1.3}
+.dark .cap,.dark .head{color:#fff}.dark .tr{color:var(--hl)}.dark .hair{background:#2B3956}
+.r{will-change:opacity,transform}
+</style></head>
+<body>
+<div class="stage"></div>
+<div class="head"><div class="logo"><i id="logoI"></i><span>Dialogbot</span></div><div class="tr" id="tr"></div></div>
+<div class="hair"></div>
+<div id="scenes"></div>
+<div class="illu" id="illu"></div>
+<div class="prog" id="prog"></div>
+<div class="cap" id="cap"></div>
+<script>
+const SV = {
+  chat:c=>`<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>`,
+  phone:(c,s=30)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="${c}"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>`,
+  cal:(c,s=34)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><g fill="${c}" stroke="none"><circle cx="8" cy="14" r="1"/><circle cx="12" cy="14" r="1"/><circle cx="16" cy="14" r="1"/><circle cx="8" cy="17.5" r="1"/><circle cx="12" cy="17.5" r="1"/></g></svg>`,
+  check:(bg,fg,s=28)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="${bg}"/><path d="M7 12.5l3.2 3L17 9" fill="none" stroke="${fg}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  shield:c=>`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5" stroke-linecap="round"/></svg>`,
+  mail:c=>`<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>`,
+  win:(c,s=30)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>`,
+  arrow:`<svg width="64" height="24" viewBox="0 0 64 24" fill="none" stroke="#14213D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h58M50 3l10 9-10 9"/></svg>`,
+};
+const P = new URLSearchParams(location.search);
+let S, T;  // script (screen texts + voice lines), timing
+const el = (h) => { const d = document.createElement('div'); d.innerHTML = h.trim(); return d.firstChild; };
+const esc = (s) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+// Each scene: html + reveal cues. Elements with data-at="L" (line index in the scene) or "L+0.6" (seconds after that line starts) fade/slide in.
+function build() {
+  const s = S.screen, wrap = document.getElementById('scenes');
+  document.getElementById('logoI').innerHTML = SV.chat('#fff');
+  const scenes = [
+  // 0 intro
+  `<div class="scene">
+    <div style="position:absolute;left:84px;top:180px;width:860px;display:flex;flex-direction:column;align-items:flex-start;gap:22px">
+      <div class="eyebrow r" data-at="0" style="position:static">${esc(s.s0.eyebrow)}</div>
+      <div class="r d" data-at="0" style="font-weight:800;font-size:104px;line-height:1.02;letter-spacing:-2px;max-width:760px;text-wrap:balance;margin-top:-10px">${esc(s.s0.title)}</div>
+      <div class="r" data-at="0+0.6" style="background:var(--hl);padding:10px 20px;border-radius:6px;font-family:Outfit;font-weight:800;font-size:54px;letter-spacing:-1px">${esc(s.s0.highlight)}</div>
+      <div class="r" data-at="1" style="font-size:30px;line-height:1.5;color:var(--soft);margin-top:8px">${esc(s.s0.text1)}<br>${esc(s.s0.text2)}</div>
+    </div>
+    <div class="card r" data-at="0" style="left:1060px;top:180px;width:420px;height:640px;border-radius:44px;padding:30px;text-align:center">
+      <div style="width:110px;height:10px;border-radius:5px;background:var(--ink);margin:0 auto 26px"></div>
+      <div style="font-size:16px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">${esc(s.s0.incoming)}</div>
+      <div class="ring" style="width:140px;height:140px;border-radius:50%;background:var(--panel);margin:40px auto 30px;display:flex;align-items:center;justify-content:center">${SV.phone('#2456F6',56)}</div>
+      <div class="d" style="font-size:36px">${esc(s.s0.caller)}</div>
+      <div style="font-size:18px;color:var(--muted);margin-top:6px">${esc(s.s0.callerSub)}</div>
+      <div style="width:84px;height:84px;border-radius:50%;background:var(--accent);margin:56px auto 0;display:flex;align-items:center;justify-content:center">${SV.phone('#fff',38)}</div>
+    </div>
+    <div class="card b r" data-at="1" style="left:900px;top:690px;width:620px;padding:26px 30px;display:flex;align-items:center;gap:18px;font-family:Outfit;font-weight:700;font-size:32px">${SV.check('#FFCF3F','#14213D',36)}${esc(s.s0.takes)}</div>
+  </div>`,
+  // 1 telefon
+  `<div class="scene">
+    <div class="eyebrow">${esc(s.s1.eyebrow)}</div>
+    <h1 style="max-width:900px;font-size:76px">${esc(s.s1.title)}</h1>
+    ${s.s1.items.map((it,i)=>`<div class="card p r" data-at="0+${0.5+i*0.9}" style="left:86px;top:${470+i*130}px;width:820px;height:104px;padding:18px 26px;display:flex;align-items:center;gap:20px;border-radius:16px;box-shadow:none;border-width:2px">${SV.check('#FFCF3F','#14213D',34)}<div><div class="d" style="font-size:30px">${esc(it[0])}</div><div style="font-size:19px;color:var(--muted)">${esc(it[1])}</div></div></div>`).join('')}
+    <div class="card r" data-at="0" style="left:1030px;top:200px;width:800px;height:600px;padding:36px 40px">
+      <div style="display:flex;gap:20px;align-items:center;padding-bottom:24px;border-bottom:2px solid var(--ink)"><div class="ic">${SV.phone('#fff',32)}</div><div><div class="d" style="font-size:32px">${esc(s.s1.cardTitle)}</div><div style="font-size:19px;color:var(--muted)">${esc(s.s1.cardSub)}</div></div></div>
+      <div class="d" style="text-align:center;font-size:40px;margin-top:56px">${esc(s.s1.question)}</div>
+      <div class="wave" style="display:flex;gap:7px;align-items:center;justify-content:center;height:110px;margin-top:30px">${Array.from({length:30},()=>'<i style="display:block;width:8px;border-radius:4px;background:var(--accent);height:10px"></i>').join('')}</div>
+      <div style="display:flex;justify-content:center;margin-top:44px"><span class="pill r" data-at="1" style="padding:8px 40px;font-size:22px">${esc(s.s1.keepNumber)}</span></div>
+    </div>
+  </div>`,
+  // 2 booking
+  `<div class="scene">
+    <div class="eyebrow">${esc(s.s2.eyebrow)}</div>
+    <h1>${esc(s.s2.title)}</h1>
+    <div class="sub" style="top:330px">${esc(s.s2.sub)}</div>
+    <div class="card p r" data-at="0" style="left:88px;top:432px;width:534px;padding:30px 32px"><div class="lab">${esc(s.s2.customer)}</div><div class="d" style="font-size:38px;line-height:1.25;margin-top:14px">${esc(s.s2.quote)}</div></div>
+    <div class="r" data-at="1" style="position:absolute;left:642px;top:510px">${SV.arrow}</div>
+    <div class="card r" data-at="1" style="left:728px;top:432px;width:540px;height:384px;padding:34px 38px">
+      <div style="display:flex;gap:20px;align-items:center;padding-bottom:28px;border-bottom:2px solid var(--ink)"><div class="ic">${SV.cal('#fff')}</div><div class="d" style="font-size:36px">${esc(s.s2.calendar)}</div></div>
+      <div style="font-size:21px;color:var(--muted);text-transform:uppercase;margin-top:30px">${esc(s.s2.day)}</div>
+      <div class="d" style="font-size:84px;line-height:1.05">${esc(s.s2.time)}</div>
+      <span class="pill r" data-at="2" style="margin-top:14px;padding:8px 54px;font-size:26px">${esc(s.s2.booked)}</span>
+    </div>
+    <div class="r" data-at="2" style="position:absolute;left:1288px;top:612px">${SV.arrow}</div>
+    <div class="card b r" data-at="2+0.5" style="left:1370px;top:486px;width:458px;height:280px;padding:34px 36px">
+      <div style="display:flex;gap:22px;align-items:center">${SV.chat('#fff')}<span class="d" style="font-size:34px">${esc(s.s2.smsTitle)}</span></div>
+      <div style="font-size:28px;line-height:1.45;margin-top:36px">${esc(s.s2.smsText)}</div>
+    </div>
+  </div>`,
+  // 3 flere muligheder
+  `<div class="scene">
+    <div class="eyebrow">${esc(s.s3.eyebrow)}</div>
+    <h1 style="font-size:76px">${esc(s.s3.title)}</h1>
+    <div class="card r" data-at="0" style="left:88px;top:380px;width:830px;height:460px;padding:34px 38px">
+      <div style="display:flex;gap:20px;align-items:center;padding-bottom:26px;border-bottom:2px solid var(--ink)"><div class="ic">${SV.win('#fff')}</div><div class="d" style="font-size:32px">${esc(s.s3.webTitle)}</div></div>
+      <div class="r" data-at="0+0.6" style="margin:34px 0 0 auto;width:fit-content;max-width:560px;background:var(--panel);border-radius:12px;padding:16px 26px;font-size:24px">${esc(s.s3.webQ)}</div>
+      <div class="r" data-at="0+1.4" style="margin-top:22px;width:fit-content;max-width:560px;background:var(--accent);color:#fff;border-radius:12px;padding:20px 26px;font-size:24px;line-height:1.4">${esc(s.s3.webA)}</div>
+    </div>
+    <div class="card p r" data-at="1" style="left:1000px;top:380px;width:830px;height:460px;padding:34px 38px">
+      <div style="display:flex;gap:20px;align-items:center"><div class="ic">${SV.phone('#fff',32)}</div><div class="d" style="font-size:32px">${esc(s.s3.campTitle)}</div></div>
+      <span class="pill" style="margin-top:26px;padding:6px 36px;font-size:20px">${esc(s.s3.consent)}</span>
+      <div class="r" data-at="2" style="font-size:24px;font-weight:600;margin-top:26px">${esc(s.s3.approveFirst)}</div>
+      <div style="display:flex;gap:56px;margin-top:20px">${s.s3.checks.map((c,i)=>`<span class="r" data-at="2+${0.3+i*0.5}" style="display:flex;gap:12px;align-items:center;font-size:24px;font-weight:600">${SV.check('#2456F6','#fff',30)}${esc(c)}</span>`).join('')}</div>
+      <div class="btn r" data-at="2+1.9" style="margin-top:36px;width:440px;height:68px;font-size:24px">${esc(s.s3.approveStart)}</div>
+    </div>
+  </div>`,
+  // 4 kontrol
+  `<div class="scene">
+    <div class="eyebrow">${esc(s.s4.eyebrow)}</div>
+    <h1>${esc(s.s4.title)}</h1>
+    ${s.s4.lines.map((l,i)=>`<div class="d r" data-at="0+${0.3+i*0.5}" style="position:absolute;left:86px;top:${400+i*72}px;font-size:58px;font-weight:600">${esc(l)}</div>`).join('')}
+    <div class="r" data-at="3" style="position:absolute;left:86px;top:700px;display:flex;align-items:center;gap:16px;font-size:24px;font-weight:600"><span style="width:52px;height:52px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center">${SV.shield('#fff')}</span>${esc(s.s4.doubt)}</div>
+    <div class="card b r" data-at="1" style="left:1010px;top:320px;width:810px;padding:22px 34px;font-family:Outfit;font-weight:700;font-size:38px">${esc(s.s4.quote)}</div>
+    <div class="card r" data-at="1+0.8" style="left:950px;top:470px;width:840px;padding:30px 34px">
+      <div class="lab" style="font-size:18px">${esc(s.s4.hoursLabel)}</div>
+      <div style="display:flex;gap:30px;align-items:center;margin-top:18px;font-size:24px"><span style="width:90px;color:var(--muted);font-size:18px">${esc(s.s4.before)}</span>${esc(s.s4.beforeVal)}</div>
+      <div style="display:flex;gap:30px;align-items:center;margin-top:12px;font-size:24px;background:var(--hl);border-radius:8px;padding:10px 0"><span style="width:90px;color:var(--muted);font-size:18px;padding-left:0">${esc(s.s4.after)}</span><b style="font-weight:600">${esc(s.s4.afterVal)}</b></div>
+      <div style="display:flex;gap:30px;align-items:center;margin-top:26px">
+        <div style="position:relative;width:370px;height:64px">
+          <div class="btn chg-a" style="position:absolute;inset:0;font-size:24px">${esc(s.s4.approve)}</div>
+          <div class="btn chg-b" style="position:absolute;inset:0;font-size:24px;background:var(--hl);color:var(--ink);opacity:0">${esc(s.s4.approved)} ✓</div>
+        </div>
+        <span style="font-size:18px;color:var(--muted)">${esc(s.s4.seeFirst)}</span>
+      </div>
+    </div>
+  </div>`,
+  // 5 overblik
+  `<div class="scene">
+    <div class="eyebrow">${esc(s.s5.eyebrow)}</div>
+    <h1 style="max-width:640px">${esc(s.s5.title)}</h1>
+    <div class="r" data-at="2" style="position:absolute;left:86px;top:430px;font-size:32px;line-height:1.5;color:var(--soft)">${esc(s.s5.text1)}<br>${esc(s.s5.text2)}</div>
+    <div class="card r" data-at="0" style="left:760px;top:170px;width:450px;height:700px;border-radius:44px;padding:40px 34px">
+      <div class="d" style="font-size:40px">${esc(s.s5.today)}</div>
+      <div class="pill" style="width:100%;margin-top:14px;padding:6px;font-size:18px">${esc(s.s5.on)}</div>
+      <div style="display:flex;gap:14px;margin-top:22px">${s.s5.stats.map(([n,l])=>`<div style="flex:1;border:2px solid var(--ink);border-radius:12px;padding:10px 14px"><div class="d" style="font-size:40px">${n}</div><div style="font-size:15px;color:var(--muted)">${esc(l)}</div></div>`).join('')}</div>
+      <div class="d" style="font-size:24px;margin-top:30px">${esc(s.s5.forYou)}</div>
+      <div style="border:2px solid var(--ink);border-radius:12px;padding:14px 18px;margin-top:12px"><div style="font-size:20px;font-weight:600">${esc(s.s5.task)}</div><div style="font-size:16px;color:var(--muted)">${esc(s.s5.taskSub)}</div></div>
+      <div class="btn" style="margin-top:28px;height:60px;font-size:20px">${esc(s.s5.button)}</div>
+    </div>
+    <div class="card r" data-at="1" style="left:1300px;top:420px;width:500px;padding:34px 36px">
+      <div class="ic" style="width:56px;height:56px">${SV.mail('#fff')}</div>
+      <div class="d" style="font-size:32px;margin-top:22px">${esc(s.s5.mailTitle)}</div>
+      <div style="font-size:22px;color:var(--muted);margin-top:8px;line-height:1.45">${esc(s.s5.mailText)}</div>
+    </div>
+  </div>`,
+  // 6 kom i gang
+  `<div class="scene">
+    <div class="eyebrow">${esc(s.s6.eyebrow)}</div>
+    <h1>${esc(s.s6.title)}</h1>
+    ${s.s6.steps.map(([h,txt],i)=>`<div class="card p r" data-at="1+${i*0.8}" style="left:${88+i*590}px;top:400px;width:540px;height:340px;padding:34px 36px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span style="width:56px;height:56px;border-radius:10px;background:var(--hl);display:flex;align-items:center;justify-content:center" class="d"><span style="font-size:32px">${i+1}</span></span>${[SV.win('#2456F6',36),SV.cal('#2456F6',36),SV.phone('#2456F6',36)][i]}</div>
+      <div class="d" style="font-size:36px;margin-top:40px">${esc(h)}</div>
+      <div style="font-size:22px;color:var(--muted);margin-top:14px;line-height:1.5">${esc(txt)}</div>
+    </div>`).join('')}
+    <div class="r" data-at="2" style="position:absolute;left:0;right:0;top:800px;text-align:center;font-size:28px;font-weight:600">${esc(s.s6.help)}</div>
+  </div>`,
+  // 7 end (dark)
+  `<div class="scene" style="text-align:center">
+    <div class="r" data-at="0" style="position:absolute;left:0;right:0;top:220px;display:flex;justify-content:center;gap:34px">${'<i style="width:14px;height:14px;border-radius:50%;background:var(--hl);display:block"></i>'.repeat(3)}</div>
+    <div class="r" data-at="0" style="position:absolute;left:0;right:0;top:272px;font-size:22px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--hl)">${esc(s.s7.eyebrow)}</div>
+    <div class="d r" data-at="0" style="text-wrap:balance;position:absolute;left:360px;right:360px;top:322px;color:#fff;font-weight:800;font-size:84px;line-height:1.08;letter-spacing:-2px">${esc(s.s7.title)}</div>
+    <div class="r" data-at="1" style="position:absolute;left:0;right:0;top:546px;font-size:30px;color:#D6DEEA">${esc(s.s7.text)}</div>
+    <div class="r" data-at="1+0.4" style="position:absolute;left:50%;top:620px;transform:translateX(-50%);width:auto;padding:0 60px;height:90px;border-radius:12px;background:var(--hl);color:var(--ink);font-weight:700;font-size:28px;display:flex;align-items:center;justify-content:center;white-space:nowrap">${esc(s.s7.cta)}</div>
+    <div class="d r" data-at="2" style="position:absolute;left:0;right:0;top:752px;color:#fff;font-size:46px">${esc(s.s7.domain)}</div>
+    <div class="r" data-at="2" style="position:absolute;left:0;right:0;top:818px;color:#D6DEEA;font-size:22px">${esc(s.s7.domainSub)}</div>
+  </div>`,
+  ];
+  scenes.forEach(h => wrap.appendChild(el(h)));
+  document.getElementById('prog').innerHTML = scenes.map(() => '<b><u></u></b>').join('');
+}
+
+const ease = (x) => x <= 0 ? 0 : x >= 1 ? 1 : 1 - Math.pow(1 - x, 3);
+function cueTime(sc, at) {
+  const [l, off] = String(at).split('+');
+  return T.scenes[sc].lines[+l].start + (off ? +off : 0);
+}
+
+function frame(t) {
+  const scenes = [...document.querySelectorAll('#scenes > .scene')];
+  let cur = 0;
+  T.scenes.forEach((sc, i) => { if (t >= sc.start) cur = i; });
+  const dark = cur === T.scenes.length - 1;
+  document.body.classList.toggle('dark', dark);
+  document.getElementById('logoI').style.background = dark ? '#FFCF3F' : '#2456F6';
+  document.getElementById('logoI').innerHTML = SV.chat(dark ? '#14213D' : '#fff');
+  document.getElementById('tr').textContent = dark ? S.screen.s7.topRight : S.screen.topRight;
+  document.getElementById('illu').textContent = cur >= 1 && cur <= 5 ? S.screen.illustrated : '';
+  scenes.forEach((s, i) => {
+    const sc = T.scenes[i];
+    const fin = ease((t - sc.start + 0.05) / 0.45), fout = i < scenes.length - 1 ? ease((t - T.scenes[i + 1].start + 0.2) / 0.3) : 0;
+    const vis = t >= sc.start - 0.05 && (i === scenes.length - 1 || t < T.scenes[i + 1].start + 0.1);
+    s.style.display = vis ? '' : 'none';
+    s.style.opacity = vis ? Math.min(fin, 1 - fout) : 0;
+    if (!vis) return;
+    s.querySelectorAll('.r').forEach(r => {
+      const p = ease((t - cueTime(i, r.dataset.at)) / 0.5);
+      r.style.opacity = p;
+      const base = r.style.transform.includes('translateX(-50%)') ? 'translateX(-50%) ' : '';
+      r.style.transform = base + `translateY(${(1 - p) * 26}px)`;
+    });
+  });
+  // scene-specific motion
+  const w = scenes[1].querySelectorAll('.wave i');
+  const talk = t > T.scenes[1].lines[0].start + 0.8;
+  w.forEach((b, k) => { const h = talk ? 14 + 90 * Math.abs(Math.sin(t * 5.3 + k * 0.7) * Math.cos(t * 2.1 + k * 0.33)) * (1 - Math.abs(k - 14.5) / 18) : 10; b.style.height = h + 'px'; });
+  const ring = scenes[0].querySelector('.ring');
+  if (ring) { const ph = (t % 1.2) / 1.2; ring.style.boxShadow = t < T.scenes[0].lines[1].start ? `0 0 0 ${ph * 34}px rgba(36,86,246,${0.28 * (1 - ph)})` : 'none'; }
+  const a4 = cueTime(4, '2+0.8'), cb = scenes[4].querySelector('.chg-b'), ca = scenes[4].querySelector('.chg-a');
+  if (cb) { const p = ease((t - a4) / 0.35); cb.style.opacity = p; ca.style.opacity = 1 - p; }
+  // progress + caption
+  document.querySelectorAll('#prog u').forEach((u, i) => {
+    const sc = T.scenes[i], end = i < T.scenes.length - 1 ? T.scenes[i + 1].start : T.total;
+    u.style.transform = `scaleX(${Math.max(0, Math.min(1, (t - sc.start) / (end - sc.start)))})`;
+  });
+  let cap = '';
+  T.scenes.forEach((sc, i) => sc.lines.forEach((ln, j) => { if (t >= ln.start && t < ln.end + 0.35) cap = S.voice[i][j]; }));
+  document.getElementById('cap').textContent = cap;
+}
+
+window.setup = async (lang, timing) => {
+  S = await (await fetch(`script/${lang}.json`)).json();
+  T = timing;
+  build();
+  await document.fonts.ready;
+  return true;
+};
+window.frame = frame;
+</script>
+</body></html>

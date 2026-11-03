@@ -1,0 +1,24 @@
+{
+  "voice": [
+    ["Når du har hænderne fulde, hvem tager så telefonen?", "Dialogbot tager imod dine kunder,", "mens du passer dit arbejde."],
+    ["Din AI-assistent svarer på spørgsmål om din virksomhed, dine priser og åbningstider.", "Du beholder dit telefonnummer."],
+    ["En kunde vil have et tilbud?", "Dialogbot finder en ledig tid i din kalender,", "booker besøget og sender en SMS-bekræftelse."],
+    ["Den samme assistent hjælper på hjemmesiden.", "Og med kundens samtykke kan du starte opkaldskampagner.", "Du godkender listen, teksten og prisen først."],
+    ["Du bestemmer, hvad den må sige og gøre.", "Skriv bare: Vi holder lukket fredag.", "Se ændringen, og godkend.", "Er den i tvivl, tager den en besked."],
+    ["Se opkald, aftaler og beskeder på mobilen.", "Få dagens overblik på mail.", "Mindre administration. Mere tid til kunderne."],
+    ["Kom i gang i tre trin:", "Din virksomhed. Din kalender. Test og tænd.", "Vil du have hjælp? Vi hjælper med opsætningen."],
+    ["Prøv Dialogbot selv.", "Hør, hvordan den tager imod dine kunder.", "Vælg din løsning, og kom i gang på dialogbot.app."]
+  ],
+  "screen": {
+    "topRight": "Din AI-assistent",
+    "illustrated": "Illustreret eksempel",
+    "s0": {"eyebrow": "Din næste kunde ringer.", "title": "Hænderne fulde?", "highlight": "Vi tager telefonen.", "text1": "Du passer arbejdet.", "text2": "Dialogbot tager imod kunderne.", "incoming": "Indgående opkald", "caller": "En ny kunde", "callerSub": "Dit eksisterende nummer", "takes": "Dialogbot tager den"},
+    "s1": {"eyebrow": "01 / Telefon", "title": "En assistent, der kender din virksomhed.", "items": [["Ydelser", "Det, I hjælper kunderne med"], ["Priser", "De priser, du har godkendt"], ["Åbningstider", "Også når noget ændrer sig"]], "cardTitle": "Dialogbot svarer", "cardSub": "Din virksomhed · din måde", "question": "Hvordan kan jeg hjælpe?", "keepNumber": "Du beholder dit nummer"},
+    "s2": {"eyebrow": "02 / Booking", "title": "Fra opkald til aftale.", "sub": "En god henvendelse bliver til et konkret næste skridt.", "customer": "Kunden", "quote": "“Kan I komme og kigge?”", "calendar": "Din kalender", "day": "Tirsdag", "time": "09:00", "booked": "Besøg booket", "smsTitle": "SMS sendt", "smsText": "Din aftale er booket. Vi ses tirsdag kl. 9."},
+    "s3": {"eyebrow": "03 / Flere måder at hjælpe", "title": "Samme assistent. Flere muligheder.", "webTitle": "Webchat på din hjemmeside", "webQ": "Hvad koster et besøg?", "webA": "Jeg hjælper dig med priser og finder en ledig tid.", "campTitle": "Opkaldskampagner", "consent": "Til kunder med samtykke", "approveFirst": "Du godkender først:", "checks": ["Liste", "Manuskript", "Pris"], "approveStart": "Godkend og start"},
+    "s4": {"eyebrow": "04 / Du har kontrollen", "title": "Du bestemmer.", "lines": ["Din viden.", "Dine regler.", "Din godkendelse."], "doubt": "Ved tvivl: besked til dig", "quote": "“Vi holder lukket fredag.”", "hoursLabel": "Åbningstider", "before": "Før", "beforeVal": "Man–fre 08–17", "after": "Efter", "afterVal": "Man–tors 08–17 · fredag lukket", "approve": "Godkend ændring", "approved": "Ændring godkendt", "seeFirst": "Du ser ændringen først"},
+    "s5": {"eyebrow": "05 / Overblik", "title": "Dit overblik. I lommen.", "text1": "Mindre administration.", "text2": "Mere tid til kunderne.", "today": "I dag", "on": "Dialogbot er tændt", "stats": [["7", "opkald"], ["3", "aftaler"], ["2", "til dig"]], "forYou": "Til dig", "task": "Kunde ønsker et tilbud", "taskSub": "Besked · ring tilbage", "button": "Se opkald og aftaler", "mailTitle": "Dagens overblik", "mailText": "Opkald og aftaler. Samlet på mail."},
+    "s6": {"eyebrow": "06 / Kom i gang", "title": "Tre trin. Så er du i gang.", "steps": [["Din virksomhed", "Hent fra hjemmesiden. Godkend det, den skal vide."], ["Din kalender", "Forbind din kalender. Vælg, hvornår den må booke."], ["Test og tænd", "Vælg stemme. Test et opkald. Tænd, når du er klar."]], "help": "Vi hjælper gerne med opsætningen."},
+    "s7": {"topRight": "Prøv Dialogbot selv", "eyebrow": "Mere ro til at drive din virksomhed", "title": "Giv hver henvendelse en god start.", "text": "Hør, hvordan Dialogbot tager imod dine kunder.", "cta": "Prøv Dialogbot selv →", "domain": "dialogbot.app", "domainSub": "Vælg din løsning · kom i gang"}
+  }
+}

@@ -48,6 +48,43 @@ Hvad der skal indtales for at gøre de resterende målinger ægte. Hver sætning
 | K36 | tuning | rettelse_booking | Jeg vil gerne flytte min booking fra fredag til lørdag klokken seksten. |  |
 | K37 | final | tavshed | (8 sekunders tavshed) | 8 sekunders tavshed (stuestøj); referencen er tom; tester at intet opfindes |
 
+## Den brede tal-prøve (T01–T24, N-varianter)
+
+Disse cases har allerede syntetisk lyd (telefonbånd, 8 kHz), som bruges, til der ligger en menneskeindtaling. Optag dem selv for at få et ægte svar – prioritér **telefonnumre (T07–T10), beløb og procent (T01–T05), tid og dato, vej-/postnumre og alle navne (K02, K06–K12)**. Filnavnet er case-id'et (`T07.wav`); en menneskefil har altid forrang over den syntetiske. Sig tal præcis som sætningen står (ord, ikke cifre), og for telefonnumre i den stil, casen viser (par, enkeltcifre, med pauser). `N`-cases er samme sætning som en ren case med støj; optag dem med rigtig baggrundsstøj.
+
+| ID | Split | Gruppe | Sig |
+|---|---|---|---|
+| T01 | final | tal_beloeb | Abonnementet koster to tusind fire hundrede og femoghalvfems kroner om måneden. |
+| T02 | tuning | tal_beloeb | Det bliver ni hundrede og halvfems kroner i alt. |
+| T03 | final | tal_beloeb | Beløbet er fem tusind syv hundrede og toogtyve kroner og femogfyrre øre. |
+| T04 | final | tal_beloeb | Vi giver tolv procent i rabat, altså tre hundrede og fireoghalvfjerds kroner. |
+| T05 | tuning | tal_stor | Vi har haft et tusind tre hundrede og otteogfirs opkald i denne måned. |
+| T06 | final | tal_stor | Firmaet blev stiftet i nitten hundrede og treoghalvfems. |
+| T07 | final | tal_telefon | Mit nummer er toogfyrre, enoghalvfjerds, otteogtres, nioghalvfems. |
+| T08 | final | tal_telefon | Mit nummer er to, nul, tre, nul, fire, fem, seks, syv. |
+| T09 | tuning | tal_telefon | Mit nummer er plus femogfyrre, tyve, tredive, fyrre, halvtreds. |
+| T10 | final | tal_telefon | Jeg kan ringes op på nul syv, treogtredive, otteogfirs, tolv. |
+| T11 | final | tal_nummer | Mit ordrenummer er et, to, tre, fire, fem, seks. |
+| T12 | final | adresse | Jeg bor på Abildgade atten, otte tusind to hundrede, Aarhus C. |
+| T13 | tuning | adresse | Leveringsadressen er Tangevej fireogtyve, otte tusind fem hundrede, Grenaa. |
+| T14 | final | tal_tid | Kan vi sige klokken tretten femogfyrre? |
+| T15 | tuning | tal_tid | Det er den enogtyvende december klokken seksten tredive. |
+| T16 | final | tal_tid | Vi har åbent fra otte til sytten på hverdage. |
+| T17 | final | tal_tid | Bookingen er lavet den femte marts to tusind og seksogtyve. |
+| T18 | final | tal_tid | Vi mødes klokken ti minutter i halv ni. |
+| T19 | final | tal_enhed | Gulvet er et hundrede og toogtyve kvadratmeter. |
+| T20 | tuning | tal_enhed | Vi er femten personer, tre børn og tolv voksne. |
+| T21 | final | tal_rettelse | Nummeret er tyve, tredive, fyrre, halvtreds, nej undskyld, tyve, tredive, fyrre, treoghalvtreds. |
+| T22 | tuning | tal_rettelse | Det koster tre hundrede, nej fire hundrede og halvtreds kroner. |
+| T23 | final | kombineret | Jeg hedder Kasper Lindgaard, mit nummer er tyve, tredive, fyrre, halvtreds, og jeg vil gerne have en tid på torsdag klokken fjorten tredive. |
+| T24 | final | kombineret | Booking til otte personer den tolvte november klokken atten femten, under navnet Thorsen. |
+| N1 | final | stoej_tal | Abonnementet koster to tusind fire hundrede og femoghalvfems kroner om måneden. |
+| N2 | final | stoej_tal | Mit nummer er toogfyrre, enoghalvfjerds, otteogtres, nioghalvfems. |
+| N3 | final | stoej_tal | Kan vi sige klokken tretten femogfyrre? |
+| N4 | final | stoej_tal | Nummeret er tyve, tredive, fyrre, halvtreds, nej undskyld, tyve, tredive, fyrre, treoghalvtreds. |
+| N5 | final | stoej_tal | Jeg hedder Kasper Lindgaard, mit nummer er tyve, tredive, fyrre, halvtreds, og jeg vil gerne have en tid på torsdag klokken fjorten tredive. |
+| N6 | final | stoej_tal | Booking til otte personer den tolvte november klokken atten femten, under navnet Thorsen. |
+
 ## Samtalescenarier (levende)
 
 | ID | Scenarie | Kunden siger | Forventet handling |

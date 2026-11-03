@@ -13,8 +13,10 @@ import math
 import uuid as uuid_mod
 
 import pytest
+from sqlalchemy import select
 
 from app.config import get_settings
+from app.models import SttTestRun
 from app.modules.stt import adapters, manifest, metrics, profiles, replay, service
 from app.modules.stt.events import SttEvent, TurnAssembler
 from app.modules.telephony import linden, vapi
@@ -303,12 +305,17 @@ def test_the_manifest_has_the_required_cases_and_a_clean_tuning_final_split():
     assert manifest.load()["timezone"] == "Europe/Copenhagen"
 
 
+KNOWN_SYNTHETIC_K = {"K02", "K08", "K10", "K11", "K12", "K13", "K14", "K16", "K17", "K18", "K20", "K21", "K22", "K25"}
+
+
 def test_cases_without_a_human_recording_say_so_instead_of_being_scored():
     over = manifest.overview()
     assert over["counts"]["kort"] == len(manifest.cases())
     missing = [c for c in over["cases"] if c["status"] == "mangler_optagelse"]
     ready = [c for c in over["cases"] if c["status"] == "klar"]
-    assert missing and {c["id"] for c in ready} == {"S01", "S02", "S03"}
+    assert missing and {"S01", "S02", "S03"} <= {c["id"] for c in ready}
+    assert all(c["id"].startswith(("S", "T", "N")) or c["id"] in KNOWN_SYNTHETIC_K for c in ready)
+    assert all(c["synthetic"] for c in ready)  # nothing here is a human recording yet; the page must say so
 
 
 def test_the_shared_vocabulary_never_contains_a_test_answer():
@@ -328,6 +335,98 @@ def test_every_known_recording_is_a_readable_wav_with_the_stated_rate():
         if p:
             pcm, rate = manifest.read_wav(p)
             assert rate == c["audio_rate"] and len(pcm) > rate
+
+
+# --------------------------------------------------------------------------- the broad number/time/address benchmark
+
+def test_a_perfect_transcript_scores_full_marks_on_every_case_with_audio():
+    """If the facts a case expects are not in its own reference, the benchmark would punish a perfect recogniser."""
+    for c in manifest.cases():
+        if not c.get("audio") or not c["text"]:
+            continue
+        w = metrics.wer(c["text"], c["text"], c.get("reference_alts"))
+        assert w["errors"] == 0, c["id"]
+        got = metrics.entities(c["entities"], c["text"])
+        assert not got["missed"], (c["id"], got["missed"])
+
+
+def test_a_recogniser_that_writes_digits_instead_of_words_is_not_punished_for_a_correct_reading():
+    cases = {c["id"]: c for c in manifest.cases()}
+    for cid, written in (("T01", "Abonnementet koster 2.495 kr. om måneden."), ("T08", "Mit nummer er 20304567."),
+                         ("T11", "Mit ordrenummer er 123456."), ("T06", "Firmaet blev stiftet i 1993."),
+                         ("T14", "Kan vi sige kl. 13.45?"), ("T07", "Mit nummer er 42 71 68 99."),
+                         ("T03", "Beløbet er 5.722,45 kr."), ("T19", "Gulvet er 122 m².")):
+        c = cases[cid]
+        w = metrics.wer(c["text"], written, c.get("reference_alts"))
+        assert w["errors"] == 0, (cid, w)
+        assert not metrics.entities(c["entities"], written)["missed"], cid
+
+
+def test_the_closest_written_form_counts_and_a_wrong_number_is_still_wrong():
+    c = next(x for x in manifest.cases() if x["id"] == "T08")
+    assert metrics.wer(c["text"], "Mit nummer er 20304567.", c["reference_alts"])["reference_used"] == "alt"
+    wrong = "Mit nummer er 20304568."
+    assert metrics.wer(c["text"], wrong, c["reference_alts"])["errors"] > 0
+    assert metrics.entities(c["entities"], wrong)["missed"]
+    assert metrics.wer("a b", "a b")["errors"] == 0 and "reference_used" not in metrics.wer("a b", "a b")
+
+
+def test_the_broad_set_covers_numbers_times_phone_numbers_addresses_and_noise_with_clean_pairs():
+    cases = {c["id"]: c for c in manifest.cases()}
+    groups = {c["group"] for c in cases.values() if c.get("audio")}
+    for g in ("tal_beloeb", "tal_stor", "tal_telefon", "tal_nummer", "adresse", "tal_tid", "tal_enhed", "tal_rettelse",
+              "kombineret", "stoej_tal"):
+        assert g in groups, g
+    types = {e["type"] for c in cases.values() if c.get("audio") for e in c["entities"]}
+    assert {"beløb", "procent", "telefon", "tid", "dato", "postnummer", "vejnummer", "ordrenummer", "måleenhed",
+            "årstal", "antal", "navn"} <= types
+    noisy = [c for c in cases.values() if c["group"] == "stoej_tal"]
+    assert len(noisy) == 6
+    for n in noisy:  # every noisy case has the same words as a clean one: the drop can be measured on identical text
+        assert any(c["text"] == n["text"] and c["group"] != "stoej_tal" for c in cases.values()), n["id"]
+    assert sum(1 for c in cases.values() if c.get("audio")) >= 44
+    assert sum(1 for c in cases.values() if c.get("audio") and c["split"] == "tuning") >= 10
+
+
+def test_a_human_recording_replaces_the_synthetic_stand_in_without_touching_the_manifest(tmp_path, monkeypatch):
+    import shutil
+
+    case = next(c for c in manifest.cases() if c["id"] == "T01")
+    assert manifest.is_synthetic(case) and manifest.audio_path(case).parent.name == "synthetic"
+    shutil.copy(manifest.audio_path(case), tmp_path / "T01.wav")
+    monkeypatch.setenv("STEMMETEST_AUDIO_DIR", str(tmp_path))
+    get_settings.cache_clear()
+    try:
+        assert manifest.audio_path(case) == tmp_path / "T01.wav" and not manifest.is_synthetic(case)
+    finally:
+        get_settings.cache_clear()
+
+
+def test_a_batch_runs_every_case_through_every_profile_one_after_the_other(api, fake_factory):
+    op = api.operator()
+    r = api.post(op, "/operator/stemmetest/batch", {"profiles": ["E"], "cases": ["S03", "T16"], "mode": "controlled"})
+    assert r.status_code == 202, r.text
+    assert r.json() == {"runs": 2, "profiles": ["E"]}
+    runs = api.get(op, "/operator/stemmetest/runs").json()["runs"]
+    assert {x["case_id"] for x in runs} == {"S03", "T16"} and all(x["status"] == "ok" for x in runs)
+    row = next(x for x in api.get(op, "/operator/stemmetest/summary?mode=controlled").json()["rows"] if x["profile"] == "E")
+    assert row["measured"]["cases"] == 2 and set(row["by_group"]) == {"steder", "tal_tid"}
+    assert row["by_group"]["tal_tid"]["cases"] == 1 and row["by_group"]["tal_tid"]["entities"]["tid"]["total"] == 2
+    assert api.post(op, "/operator/stemmetest/batch", {"profiles": ["Z"], "cases": "alle"}).status_code == 404
+    assert api.post(op, "/operator/stemmetest/batch", {"profiles": ["E"], "cases": ["K01"]}).status_code == 422  # no audio
+
+
+def test_batch_all_expands_to_every_case_with_audio_and_a_profile_without_access_is_recorded_not_run(db, monkeypatch):
+    monkeypatch.delenv("SONIOX_API_KEY", raising=False)
+    get_settings.cache_clear()
+    try:
+        todo = service.create_batch(db, user_id=None, profile_ids=["E"], case_ids="alle", mode="controlled", workspace_id=None)
+        assert todo == {}  # Soniox has no key: every run is `mangler_adgang`, nothing is started
+        rows = db.scalars(select(SttTestRun).where(SttTestRun.profile_id == "E")).all()
+        assert len(rows) == sum(1 for c in manifest.cases() if manifest.audio_path(c))
+        assert {r.status for r in rows} == {"mangler_adgang"}
+    finally:
+        get_settings.cache_clear()
 
 
 # --------------------------------------------------------------------------- profiles and the capability matrix
@@ -539,7 +638,7 @@ def test_overview_lists_profiles_manifest_and_honest_limits_without_secrets(api,
     body = r.json()
     assert [p["id"] for p in body["profiles"]] == ["A", "B", "C", "D", "E", "F"]
     assert body["testmode"] is True and body["browser_call"]["status"] == "ikke_bygget"
-    assert body["manifest"]["counts"]["med_lyd"] == 3
+    assert body["manifest"]["counts"]["med_lyd"] == sum(1 for c in manifest.cases() if manifest.audio_path(c)) >= 47
     assert "sx-secret-test-value" not in r.text
     e = next(p for p in body["profiles"] if p["id"] == "E")
     assert e["access"]["status"] == "klar"

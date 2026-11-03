@@ -37,9 +37,10 @@ async def main_async(args) -> dict:
         results = []
         for c in cases:
             pcm, rate = manifest.read_wav(manifest.audio_path(c))
-            r = await replay.run_audio(p, pcm, rate, reference=c["text"], expected=c["entities"], vocabulary=vocab, mode=args.mode)
+            r = await replay.run_audio(p, pcm, rate, reference=c["text"], expected=c["entities"], vocabulary=vocab, mode=args.mode,
+                                       reference_alts=c.get("reference_alts"))
             r["case"] = c["id"]
-            r["synthetic"] = c.get("synthetic", False)
+            r["synthetic"] = manifest.is_synthetic(c)
             results.append(r)
             print(f'{p.id} {c["id"]}: {r["status"]} wer={r.get("wer", {}).get("wer")} "{r.get("transcript_raw", r.get("error"))}"',
                   file=sys.stderr)

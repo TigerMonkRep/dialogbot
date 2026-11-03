@@ -79,7 +79,25 @@ Ingen sammenlagt kvalitetsscore – skjulte vægte kunne skjule et forkert telef
 
 ## Testgrundlag
 
-`tests/fixtures/stemmetest/manifest.json`: 40 korte cases (37 menneskeindtalte afventer + 3 kendte syntetiske Peter-optagelser), 14 `tuning` og 26 `final` (adskilt), 10 samtalescenarier, tidszone Europe/Copenhagen, reference = ordene der siges, forventede nøgleoplysninger pr. case. **Kun 3 cases har lyd i dag, og de er syntetiske** – dialekt, støj og telefonkvalitet er uafklaret. Hvad der skal indtales: [`stemmetest-optagelser.md`](stemmetest-optagelser.md). Den fælles ordliste (firmanavne + de mest almindelige danske navne) indeholder ingen testsvar (testet), og hver udbyders grænse registreres (ElevenLabs: 50 keyterms, derfor står firmaordene først).
+`tests/fixtures/stemmetest/manifest.json`: 70 korte cases (K01–K37 navne/steder/tider m.m., S01–S03, og den brede tal-prøve T01–T24 + N-varianter), 10 samtalescenarier, tidszone Europe/Copenhagen, reference = ordene der siges, forventede nøgleoplysninger pr. case. Tuning og final holdes adskilt. Den fælles ordliste indeholder ingen testsvar (testet), og hver udbyders grænse registreres (ElevenLabs: 50 keyterms, derfor står firmaordene først).
+
+**47 cases har lyd i dag – alle syntetiske** (ElevenLabs-stemmer, lavet til telefonbånd: 8 kHz, 300–3400 Hz, mu-law; filerne ligger i `tests/fixtures/stemmetest/synthetic/`). De 6 `stoej_tal`-cases (N-varianter) er de samme sætninger som rene cases med pink støj omkring 10 dB SNR, så støjens pris kan måles på identisk tekst.
+
+### Den brede prøve (tal og detaljer)
+
+Tal er ofte dér, en agent gør størst skade (forkert telefonnummer, beløb eller tidspunkt). Områder (`group`): `tal_beloeb` (beløb, procent), `tal_stor` (store tal, årstal), `tal_telefon` (telefonnumre i forskellige oplæsningsstile), `tal_nummer` (ordre/kundenumre), `adresse` (vejnumre, postnumre), `tal_tid` (klokkeslæt, datoer), `tal_enhed` (mål og enheder), `tal_rettelse` (rettelse midt i tal), `kombineret` (tal og navne i samme sætning), `stoej_tal` (støj). Forventede oplysninger har typer som beløb, procent, telefon, tid, dato, postnummer, vejnummer, ordrenummer, måleenhed, årstal, antal og navn; resultaterne vises pr. type og pr. område ("Pr. område" på siden).
+
+**Cifre eller ord er begge rigtige.** En genkender, der skriver `2.495 kr.`, må ikke straffes over for en, der skriver "to tusinde fire hundrede …". Derfor kan en case have `reference_alts` (samme sætning med tal skrevet som cifre), og scoren bruger den nærmeste ("reference_used" gemmes). Et forkert tal er stadig forkert. Testen `test_a_perfect_transcript_scores_full_marks_on_every_case_with_audio` sikrer, at ingen case straffer en perfekt udskrift.
+
+**Kør hele prøven.** Stemmetest-siden har knappen *Kør alle cases med lyd* (`POST /operator/stemmetest/batch`, `{profiles, cases:"alle", mode}`): alle valgte profiler kører parallelt, men hver profil tager én case ad gangen i realtid (ca. 5–7 minutter for fire profiler), og højst 400 kørsler pr. kald. Profiler uden adgang noteres som *mangler adgang* og springes over.
+
+**Sådan skal tallene læses.**
+- Syntetisk tale er pænere end ægte opkald; absolutte tal er optimistiske. Forskelle mellem udbydere og mellem rene og støjede cases er det informative.
+- Testtalen er lavet med ElevenLabs; ElevenLabs Scribe (profil F) er samme leverandør og kan have en fordel. Tag det med i vurderingen.
+- Rammer alle udbydere samme sted forkert, så mistænk først selve oplæsningen (udtale), ikke genkendelserne.
+- Ingen samlet vinder ud fra syntetisk lyd. Menneskeindtalte optagelser (navne, tal, telefonnumre) afgør: en optagelse `<ID>.wav` i `STEMMETEST_AUDIO_DIR` eller `tests/fixtures/stemmetest/audio/` erstatter automatisk den syntetiske uden ændring i manifestet.
+
+Hvad der skal indtales: [`stemmetest-optagelser.md`](stemmetest-optagelser.md).
 
 ## Stemmen (TTS) – separat fase
 
@@ -102,6 +120,6 @@ Arbejdet er forberedt, ikke kørt. T0 (nuværende) og T1 (ElevenLabs v4 Turbo) e
 
 ## Kendte begrænsninger
 
-- Ingen rigtige udbyderkørsler, ingen menneskeindtalte optagelser, ingen browsersamtale, ingen automatisk måling af afbrydelser/første hørbare svar.
+- Ingen menneskeindtalte optagelser (kun syntetiske stand-ins), ingen browsersamtale, ingen automatisk måling af afbrydelser/første hørbare svar.
 - Udbydernes regions- og dataopbevaringskrav for Soniox og ElevenLabs er ikke undersøgt (markeret *ikke testet*); testoptagelser forlader serveren til udbyderen – tjek mod projektets krav, før der bruges rigtige kunders lyd.
 - Uploadede optagelser gemmes ikke (kun resultatet); kørsler gemmes i `stt_test_runs` (operatør-only, ingen nøgler).

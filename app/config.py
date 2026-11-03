@@ -97,6 +97,8 @@ class Settings(BaseSettings):
     # Stemmetest (docs/voice/stemmetest.md): the extra recognisers compared against Speechmatics. ElevenLabs Scribe uses
     # ELEVENLABS_API_KEY below. Server-side only; never returned by any endpoint.
     soniox_api_key: str | None = Field(default=None, alias="SONIOX_API_KEY")
+    # Soniox real-time model for every use (bridge, own engine, Stemmetest), e.g. "stt-rt-v6". Unset = stt-rt-v5.
+    soniox_model: str | None = Field(default=None, alias="SONIOX_MODEL")
     stemmetest_audio_dir: str | None = Field(default=None, alias="STEMMETEST_AUDIO_DIR")  # human recordings per case
     # Optional USD per audio hour per recogniser, e.g. {"soniox": 0.12}: filled in from the provider's own price page.
     # Unset = the run reports audio seconds and says "pris ikke angivet" rather than guessing a price.

@@ -926,3 +926,21 @@ def test_one_company_can_be_switched_to_another_recogniser_and_back_without_touc
     bridge_env.delenv("ELEVENLABS_API_KEY", raising=False)
     get_settings.cache_clear()
     assert vapi.transcriber_for(db, a)["provider"] == "deepgram"
+
+
+def test_soniox_model_comes_from_settings_and_agent_text_only_from_v6(monkeypatch):
+    from app.config import get_settings
+
+    monkeypatch.setenv("SONIOX_MODEL", "stt-rt-v6")
+    get_settings.cache_clear()
+    try:
+        a = adapters.Soniox(_cfg(agent_text=True, language="de"), "k")
+        m = a.start_message()
+        assert m["model"] == "stt-rt-v6" and m["enable_agent_text_input"] is True
+        assert {"key": "language", "value": "German"} in m["context"]["general"]
+        old = adapters.Soniox(_cfg(agent_text=True, model="stt-rt-v5"), "k")
+        assert "enable_agent_text_input" not in old.start_message()
+    finally:
+        monkeypatch.delenv("SONIOX_MODEL")
+        get_settings.cache_clear()
+    assert adapters.Soniox(_cfg(), "k").start_message()["model"] == "stt-rt-v5"

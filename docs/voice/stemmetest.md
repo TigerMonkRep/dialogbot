@@ -81,7 +81,7 @@ Ingen sammenlagt kvalitetsscore – skjulte vægte kunne skjule et forkert telef
 
 `tests/fixtures/stemmetest/manifest.json`: 70 korte cases (K01–K37 navne/steder/tider m.m., S01–S03, og den brede tal-prøve T01–T24 + N-varianter), 10 samtalescenarier, tidszone Europe/Copenhagen, reference = ordene der siges, forventede nøgleoplysninger pr. case. Tuning og final holdes adskilt. Den fælles ordliste indeholder ingen testsvar (testet), og hver udbyders grænse registreres (ElevenLabs: 50 keyterms, derfor står firmaordene først).
 
-**47 cases har lyd i dag – alle syntetiske** (ElevenLabs-stemmer, lavet til telefonbånd: 8 kHz, 300–3400 Hz, mu-law; filerne ligger i `tests/fixtures/stemmetest/synthetic/`). De 6 `stoej_tal`-cases (N-varianter) er de samme sætninger som rene cases med pink støj omkring 10 dB SNR, så støjens pris kan måles på identisk tekst.
+**47 cases har lyd i dag: 40 syntetiske og 7 menneskeindtalte** (S01, K20, T07, T09, T21, T23 er indtalt af Fürster på telefon, omregnet til 8 kHz mono; S02 er hans S01 gjort smallere som telefonlinje). De syntetiske er ElevenLabs-stemmer, lavet til telefonbånd: 8 kHz, 300–3400 Hz, mu-law; filerne ligger i `tests/fixtures/stemmetest/synthetic/`). De 6 `stoej_tal`-cases (N-varianter) er de samme sætninger som rene cases med pink støj omkring 10 dB SNR, så støjens pris kan måles på identisk tekst.
 
 ### Den brede prøve (tal og detaljer)
 

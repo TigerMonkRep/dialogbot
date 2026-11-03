@@ -262,3 +262,28 @@ def test_operator_routes_a_numbers_inbound_calls_to_vapi(api, two_workspaces, fa
     # a number Twilio does not know is reported, not guessed
     other = api.map_number(t["ws_b"], "+4570111333", "pn_other", activate=True, outbound=False)
     assert api.post(op, f"/operator/telephony/numbers/{other['id']}/inbound", {}).json()["code"] == "number_not_on_twilio"
+
+
+def test_numbers_are_bought_in_the_business_country(client, api, two_workspaces):
+    """A German business gets a German number (with its own approved documents, as in Denmark); a country we cannot
+    buy in yet waits instead of buying a Danish number by mistake."""
+    import uuid
+
+    from app.db import get_session_factory
+    from app.models import BusinessProfile
+    from app.modules.telephony import platform
+
+    t = two_workspaces
+    ws = uuid.UUID(t["ws_a"])
+    db = get_session_factory()()
+    try:
+        assert platform.number_country(db, ws) == "DK"
+        bp = db.get(BusinessProfile, ws)
+        bp.country = "de"
+        db.commit()
+        assert platform.number_country(db, ws) == "DE"
+        bp.country = "US"
+        db.commit()
+        assert platform.number_country(db, ws) is None
+    finally:
+        db.close()

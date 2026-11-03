@@ -257,6 +257,21 @@ def request_connection(db: OrmSession, ws_id: uuid.UUID) -> TelephonyJob:
     return job
 
 
+# Countries we can buy a local number in. Each needs the customer's own approved regulatory bundle at Twilio (the
+# documents step), exactly as Denmark does; adding a country here does not bypass that.
+NUMBER_COUNTRIES = ("DK", "GB", "IE", "DE", "AT", "CH", "ES", "FR", "BE", "IT", "NO", "SE")
+
+
+def number_country(db: OrmSession, ws_id: uuid.UUID) -> str | None:
+    """The country the business's number is bought in: its business-profile country, if we support it; else None.
+    No profile = the platform default (TELEPHONY_NUMBER_COUNTRY, Denmark)."""
+    from app.models import BusinessProfile
+
+    bp = db.get(BusinessProfile, ws_id)
+    c = (bp.country if bp and bp.country else get_settings().telephony_number_country).upper()
+    return c if c in NUMBER_COUNTRIES else None
+
+
 def _name(ws_id: uuid.UUID) -> str:
     return f"dialogbot-{ws_id}"
 
@@ -303,9 +318,15 @@ def run_job(db: OrmSession, job: TelephonyJob) -> TelephonyJob:
                     return job
                 job.status, job.last_error = "failed", "Købet kunne ikke genfindes hos Twilio. Tjek underkontoen manuelt."
                 return job
-            options = twilio.available(acct.external_id, settings.telephony_number_country, settings.telephony_number_type)
+            country = number_country(db, job.workspace_id)
+            if country is None:
+                job.status, job.waiting_for = "waiting", "country_not_supported"
+                job.next_attempt_at = _now() + timedelta(hours=6)
+                job.last_error = "Vi kan endnu ikke købe numre i virksomhedens land."
+                return job
+            options = twilio.available(acct.external_id, country, settings.telephony_number_type)
             if not options:
-                raise prov.ProviderError("Ingen ledige danske numre lige nu", retryable=True)
+                raise prov.ProviderError(f"Ingen ledige numre i {country} lige nu", retryable=True)
             job.state = {**job.state, "purchase_started": True, "purchase_candidate": options[0]}
             db.flush()
             try:

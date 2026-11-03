@@ -1,7 +1,7 @@
 {
  "version": 1,
  "timezone": "Europe/Copenhagen",
- "note": "Referencen er ordene, der SIGES. Menneskelig indtaling mangler for K-sagerne (audio: null). Se docs/voice/stemmetest-optagelser.md. tuning og final er adskilt: tuning bruges til at vælge indstillinger, final kun til den afsluttende måling.",
+ "note": "Referencen er ordene, der SIGES. Menneskelig indtaling mangler for K-sagerne (audio: null). Se docs/voice/stemmetest-optagelser.md. tuning og final er adskilt: tuning bruges til at vælge indstillinger, final kun til den afsluttende måling. Syntetisk lyd (ElevenLabs, 8 kHz telefonbånd) ligger i synthetic/ og kan overstyres af menneskeindtalte <ID>.wav i audio/ eller STEMMETEST_AUDIO_DIR. Syntetisk tale er lettere end ægte tale og fra samme leverandør som én af genkenderne (ElevenLabs): brug tallene til at finde svagheder i tal-, tids- og nummerforståelse, ikke til at udpege en vinder. reference_alts er samme ytring skrevet på en anden korrekt måde (cifre mod ord); den nærmeste tæller.",
  "cases": [
   {
    "id": "K01",
@@ -38,8 +38,10 @@
      "value": "lørdag"
     }
    ],
-   "audio": null,
-   "synthetic": false
+   "audio": "tests/fixtures/stemmetest/synthetic/K02.wav",
+   "synthetic": true,
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Isabella (københavnsk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K03",
@@ -144,8 +146,10 @@
      "value": "Søren Brøndum Mikkelsen"
     }
    ],
-   "audio": null,
-   "synthetic": false
+   "audio": "tests/fixtures/stemmetest/synthetic/K08.wav",
+   "synthetic": true,
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Mathias (jysk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K09",
@@ -174,8 +178,10 @@
      "value": "Mads Fogh Nygaard"
     }
    ],
-   "audio": null,
-   "synthetic": false
+   "audio": "tests/fixtures/stemmetest/synthetic/K10.wav",
+   "synthetic": true,
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Thomas (sjællandsk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K11",
@@ -189,8 +195,10 @@
      "value": "Gitte Skovgaard-Poulsen"
     }
    ],
-   "audio": null,
-   "synthetic": false
+   "audio": "tests/fixtures/stemmetest/synthetic/K11.wav",
+   "synthetic": true,
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Astrid), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K12",
@@ -201,11 +209,17 @@
    "entities": [
     {
      "type": "navn",
-     "value": "Birgitte Hvidbjerg"
+     "value": "Birgitte"
+    },
+    {
+     "type": "navn",
+     "value": "Hvidbjerg"
     }
    ],
-   "audio": null,
-   "synthetic": false
+   "audio": "tests/fixtures/stemmetest/synthetic/K12.wav",
+   "synthetic": true,
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Kresten (sjællandsk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K13",
@@ -219,9 +233,11 @@
      "value": "seks"
     }
    ],
-   "audio": null,
-   "synthetic": false,
-   "error_type": "rettelse"
+   "audio": "tests/fixtures/stemmetest/synthetic/K13.wav",
+   "synthetic": true,
+   "error_type": "rettelse",
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Peter (jysk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K14",
@@ -235,9 +251,11 @@
      "value": "syv"
     }
    ],
-   "audio": null,
-   "synthetic": false,
-   "error_type": "rettelse"
+   "audio": "tests/fixtures/stemmetest/synthetic/K14.wav",
+   "synthetic": true,
+   "error_type": "rettelse",
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Freja), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K15",
@@ -275,8 +293,10 @@
      ]
     }
    ],
-   "audio": null,
-   "synthetic": false
+   "audio": "tests/fixtures/stemmetest/synthetic/K16.wav",
+   "synthetic": true,
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Jones (jysk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K17",
@@ -300,8 +320,10 @@
      ]
     }
    ],
-   "audio": null,
-   "synthetic": false
+   "audio": "tests/fixtures/stemmetest/synthetic/K17.wav",
+   "synthetic": true,
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Isabella (københavnsk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K18",
@@ -322,8 +344,10 @@
      ]
     }
    ],
-   "audio": null,
-   "synthetic": false
+   "audio": "tests/fixtures/stemmetest/synthetic/K18.wav",
+   "synthetic": true,
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Thomas (sjællandsk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K19",
@@ -356,9 +380,11 @@
      "value": "20 30 40 50"
     }
    ],
-   "audio": null,
-   "synthetic": false,
-   "pace": "langsomt med pauser"
+   "audio": "tests/fixtures/stemmetest/synthetic/K20.wav",
+   "synthetic": true,
+   "pace": "langsomt med pauser",
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Peter (jysk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K21",
@@ -372,9 +398,11 @@
      "value": "12 34 56 78"
     }
    ],
-   "audio": null,
-   "synthetic": false,
-   "pace": "langsomt med pauser"
+   "audio": "tests/fixtures/stemmetest/synthetic/K21.wav",
+   "synthetic": true,
+   "pace": "langsomt med pauser",
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Mathias (jysk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K22",
@@ -388,9 +416,11 @@
      "value": "test@eksempel.dk"
     }
    ],
-   "audio": null,
-   "synthetic": false,
-   "pace": "langsomt med pauser"
+   "audio": "tests/fixtures/stemmetest/synthetic/K22.wav",
+   "synthetic": true,
+   "pace": "langsomt med pauser",
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Kresten (sjællandsk)), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K23",
@@ -446,9 +476,11 @@
      "value": "seksten"
     }
    ],
-   "audio": null,
-   "synthetic": false,
-   "pace": "hurtig tale"
+   "audio": "tests/fixtures/stemmetest/synthetic/K25.wav",
+   "synthetic": true,
+   "pace": "hurtig tale",
+   "audio_rate": 8000,
+   "note": "Syntetisk stand-in (ElevenLabs, Freja), telefonbånd 8 kHz – erstattes af menneskeindtaling"
   },
   {
    "id": "K26",
@@ -750,6 +782,622 @@
    "audio": "tests/fixtures/linden/berle_pool_16k.wav",
    "audio_rate": 16000,
    "note": "Peters stemme (syntetisk)"
+  },
+  {
+   "id": "T01",
+   "kind": "kort",
+   "group": "tal_beloeb",
+   "split": "final",
+   "text": "Abonnementet koster to tusind fire hundrede og femoghalvfems kroner om måneden.",
+   "entities": [
+    {
+     "type": "beløb",
+     "value": "2495 kr"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T01.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Peter (jysk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T02",
+   "kind": "kort",
+   "group": "tal_beloeb",
+   "split": "tuning",
+   "text": "Det bliver ni hundrede og halvfems kroner i alt.",
+   "entities": [
+    {
+     "type": "beløb",
+     "value": "990 kr"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T02.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Freja), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T03",
+   "kind": "kort",
+   "group": "tal_beloeb",
+   "split": "final",
+   "text": "Beløbet er fem tusind syv hundrede og toogtyve kroner og femogfyrre øre.",
+   "entities": [
+    {
+     "type": "beløb",
+     "value": "5722,45 kr"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T03.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Kresten (sjællandsk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T04",
+   "kind": "kort",
+   "group": "tal_beloeb",
+   "split": "final",
+   "text": "Vi giver tolv procent i rabat, altså tre hundrede og fireoghalvfjerds kroner.",
+   "entities": [
+    {
+     "type": "procent",
+     "value": "12 %"
+    },
+    {
+     "type": "beløb",
+     "value": "374 kr"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T04.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Isabella (københavnsk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T05",
+   "kind": "kort",
+   "group": "tal_stor",
+   "split": "tuning",
+   "text": "Vi har haft et tusind tre hundrede og otteogfirs opkald i denne måned.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "1388"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T05.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Mathias (jysk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T06",
+   "kind": "kort",
+   "group": "tal_stor",
+   "split": "final",
+   "text": "Firmaet blev stiftet i nitten hundrede og treoghalvfems.",
+   "entities": [
+    {
+     "type": "årstal",
+     "value": "nitten hundrede og treoghalvfems",
+     "alt": [
+      "1993"
+     ]
+    }
+   ],
+   "reference_alts": [
+    "Firmaet blev stiftet i et tusind ni hundrede og treoghalvfems."
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T06.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Thomas (sjællandsk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T07",
+   "kind": "kort",
+   "group": "tal_telefon",
+   "split": "final",
+   "text": "Mit nummer er toogfyrre, enoghalvfjerds, otteogtres, nioghalvfems.",
+   "entities": [
+    {
+     "type": "telefon",
+     "value": "42 71 68 99"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T07.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Jones (jysk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T08",
+   "kind": "kort",
+   "group": "tal_telefon",
+   "split": "final",
+   "text": "Mit nummer er to, nul, tre, nul, fire, fem, seks, syv.",
+   "entities": [
+    {
+     "type": "telefon",
+     "value": "20304567",
+     "alt": [
+      "to nul tre nul fire fem seks syv"
+     ]
+    }
+   ],
+   "reference_alts": [
+    "Mit nummer er tyve tredive femogfyrre syvogtres."
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T08.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Astrid), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T09",
+   "kind": "kort",
+   "group": "tal_telefon",
+   "split": "tuning",
+   "text": "Mit nummer er plus femogfyrre, tyve, tredive, fyrre, halvtreds.",
+   "entities": [
+    {
+     "type": "telefon",
+     "value": "20 30 40 50"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T09.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Peter (jysk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T10",
+   "kind": "kort",
+   "group": "tal_telefon",
+   "split": "final",
+   "text": "Jeg kan ringes op på nul syv, treogtredive, otteogfirs, tolv.",
+   "entities": [
+    {
+     "type": "telefon",
+     "value": "07 33 88 12"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T10.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Freja), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T11",
+   "kind": "kort",
+   "group": "tal_nummer",
+   "split": "final",
+   "text": "Mit ordrenummer er et, to, tre, fire, fem, seks.",
+   "entities": [
+    {
+     "type": "ordrenummer",
+     "value": "123456",
+     "alt": [
+      "et to tre fire fem seks"
+     ]
+    }
+   ],
+   "reference_alts": [
+    "Mit ordrenummer er et hundrede og treogtyve tusind fire hundrede og seksoghalvtreds."
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T11.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Mathias (jysk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T12",
+   "kind": "kort",
+   "group": "adresse",
+   "split": "final",
+   "text": "Jeg bor på Abildgade atten, otte tusind to hundrede, Aarhus C.",
+   "entities": [
+    {
+     "type": "vejnummer",
+     "value": "atten"
+    },
+    {
+     "type": "postnummer",
+     "value": "8200"
+    },
+    {
+     "type": "sted",
+     "value": "Aarhus"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T12.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Kresten (sjællandsk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T13",
+   "kind": "kort",
+   "group": "adresse",
+   "split": "tuning",
+   "text": "Leveringsadressen er Tangevej fireogtyve, otte tusind fem hundrede, Grenaa.",
+   "entities": [
+    {
+     "type": "vejnummer",
+     "value": "24"
+    },
+    {
+     "type": "postnummer",
+     "value": "8500"
+    },
+    {
+     "type": "sted",
+     "value": "Grenaa"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T13.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Isabella (københavnsk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T14",
+   "kind": "kort",
+   "group": "tal_tid",
+   "split": "final",
+   "text": "Kan vi sige klokken tretten femogfyrre?",
+   "entities": [
+    {
+     "type": "tid",
+     "value": "tretten femogfyrre"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T14.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Thomas (sjællandsk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T15",
+   "kind": "kort",
+   "group": "tal_tid",
+   "split": "tuning",
+   "text": "Det er den enogtyvende december klokken seksten tredive.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "enogtyvende december"
+    },
+    {
+     "type": "tid",
+     "value": "seksten tredive"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T15.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Astrid), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T16",
+   "kind": "kort",
+   "group": "tal_tid",
+   "split": "final",
+   "text": "Vi har åbent fra otte til sytten på hverdage.",
+   "entities": [
+    {
+     "type": "tid",
+     "value": "otte"
+    },
+    {
+     "type": "tid",
+     "value": "sytten"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T16.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Jones (jysk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T17",
+   "kind": "kort",
+   "group": "tal_tid",
+   "split": "final",
+   "text": "Bookingen er lavet den femte marts to tusind og seksogtyve.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "femte marts"
+    },
+    {
+     "type": "årstal",
+     "value": "to tusind og seksogtyve"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T17.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Peter (jysk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T18",
+   "kind": "kort",
+   "group": "tal_tid",
+   "split": "final",
+   "text": "Vi mødes klokken ti minutter i halv ni.",
+   "entities": [
+    {
+     "type": "tid",
+     "value": "ti minutter i halv ni"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T18.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Freja), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T19",
+   "kind": "kort",
+   "group": "tal_enhed",
+   "split": "final",
+   "text": "Gulvet er et hundrede og toogtyve kvadratmeter.",
+   "entities": [
+    {
+     "type": "måleenhed",
+     "value": "122 m²"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T19.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Kresten (sjællandsk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T20",
+   "kind": "kort",
+   "group": "tal_enhed",
+   "split": "tuning",
+   "text": "Vi er femten personer, tre børn og tolv voksne.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "femten"
+    },
+    {
+     "type": "antal",
+     "value": "tre"
+    },
+    {
+     "type": "antal",
+     "value": "tolv"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T20.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Mathias (jysk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T21",
+   "kind": "kort",
+   "group": "tal_rettelse",
+   "split": "final",
+   "text": "Nummeret er tyve, tredive, fyrre, halvtreds, nej undskyld, tyve, tredive, fyrre, treoghalvtreds.",
+   "entities": [
+    {
+     "type": "telefon",
+     "value": "20 30 40 53"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T21.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Isabella (københavnsk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T22",
+   "kind": "kort",
+   "group": "tal_rettelse",
+   "split": "tuning",
+   "text": "Det koster tre hundrede, nej fire hundrede og halvtreds kroner.",
+   "entities": [
+    {
+     "type": "beløb",
+     "value": "450 kr"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T22.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Thomas (sjællandsk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T23",
+   "kind": "kort",
+   "group": "kombineret",
+   "split": "final",
+   "text": "Jeg hedder Kasper Lindgaard, mit nummer er tyve, tredive, fyrre, halvtreds, og jeg vil gerne have en tid på torsdag klokken fjorten tredive.",
+   "entities": [
+    {
+     "type": "navn",
+     "value": "Kasper Lindgaard"
+    },
+    {
+     "type": "telefon",
+     "value": "20 30 40 50"
+    },
+    {
+     "type": "dato",
+     "value": "torsdag"
+    },
+    {
+     "type": "tid",
+     "value": "fjorten tredive"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T23.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Peter (jysk)), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "T24",
+   "kind": "kort",
+   "group": "kombineret",
+   "split": "final",
+   "text": "Booking til otte personer den tolvte november klokken atten femten, under navnet Thorsen.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "otte"
+    },
+    {
+     "type": "dato",
+     "value": "tolvte november"
+    },
+    {
+     "type": "tid",
+     "value": "atten femten"
+    },
+    {
+     "type": "navn",
+     "value": "Thorsen"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/T24.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Syntetisk tale (ElevenLabs, Astrid), telefonbånd 8 kHz; erstattes af menneskeindtaling"
+  },
+  {
+   "id": "N1",
+   "kind": "kort",
+   "group": "stoej_tal",
+   "split": "final",
+   "text": "Abonnementet koster to tusind fire hundrede og femoghalvfems kroner om måneden.",
+   "entities": [
+    {
+     "type": "beløb",
+     "value": "2495 kr"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/N1.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Samme ord og stemme som T01 med baggrundsstøj (lyserød støj, ca. 10 dB signal/støj) – måler faldet fra ren telefonlyd"
+  },
+  {
+   "id": "N2",
+   "kind": "kort",
+   "group": "stoej_tal",
+   "split": "final",
+   "text": "Mit nummer er toogfyrre, enoghalvfjerds, otteogtres, nioghalvfems.",
+   "entities": [
+    {
+     "type": "telefon",
+     "value": "42 71 68 99"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/N2.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Samme ord og stemme som T07 med baggrundsstøj (lyserød støj, ca. 10 dB signal/støj) – måler faldet fra ren telefonlyd"
+  },
+  {
+   "id": "N3",
+   "kind": "kort",
+   "group": "stoej_tal",
+   "split": "final",
+   "text": "Kan vi sige klokken tretten femogfyrre?",
+   "entities": [
+    {
+     "type": "tid",
+     "value": "tretten femogfyrre"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/N3.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Samme ord og stemme som T14 med baggrundsstøj (lyserød støj, ca. 10 dB signal/støj) – måler faldet fra ren telefonlyd"
+  },
+  {
+   "id": "N4",
+   "kind": "kort",
+   "group": "stoej_tal",
+   "split": "final",
+   "text": "Nummeret er tyve, tredive, fyrre, halvtreds, nej undskyld, tyve, tredive, fyrre, treoghalvtreds.",
+   "entities": [
+    {
+     "type": "telefon",
+     "value": "20 30 40 53"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/N4.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Samme ord og stemme som T21 med baggrundsstøj (lyserød støj, ca. 10 dB signal/støj) – måler faldet fra ren telefonlyd"
+  },
+  {
+   "id": "N5",
+   "kind": "kort",
+   "group": "stoej_tal",
+   "split": "final",
+   "text": "Jeg hedder Kasper Lindgaard, mit nummer er tyve, tredive, fyrre, halvtreds, og jeg vil gerne have en tid på torsdag klokken fjorten tredive.",
+   "entities": [
+    {
+     "type": "navn",
+     "value": "Kasper Lindgaard"
+    },
+    {
+     "type": "telefon",
+     "value": "20 30 40 50"
+    },
+    {
+     "type": "dato",
+     "value": "torsdag"
+    },
+    {
+     "type": "tid",
+     "value": "fjorten tredive"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/N5.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Samme ord og stemme som T23 med baggrundsstøj (lyserød støj, ca. 10 dB signal/støj) – måler faldet fra ren telefonlyd"
+  },
+  {
+   "id": "N6",
+   "kind": "kort",
+   "group": "stoej_tal",
+   "split": "final",
+   "text": "Booking til otte personer den tolvte november klokken atten femten, under navnet Thorsen.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "otte"
+    },
+    {
+     "type": "dato",
+     "value": "tolvte november"
+    },
+    {
+     "type": "tid",
+     "value": "atten femten"
+    },
+    {
+     "type": "navn",
+     "value": "Thorsen"
+    }
+   ],
+   "audio": "tests/fixtures/stemmetest/synthetic/N6.wav",
+   "audio_rate": 8000,
+   "synthetic": true,
+   "note": "Samme ord og stemme som T24 med baggrundsstøj (lyserød støj, ca. 10 dB signal/støj) – måler faldet fra ren telefonlyd"
   }
  ],
  "scenarios": [

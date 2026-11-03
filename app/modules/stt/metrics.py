@@ -37,10 +37,22 @@ def edit_distance(a: list, b: list) -> int:
     return prev[-1]
 
 
-def wer(reference: str, hypothesis: str) -> dict:
-    ref, hyp = canon(reference), canon(hypothesis)
-    errors = edit_distance(ref, hyp)
-    return {"errors": errors, "ref_words": len(ref), "wer": round(errors / len(ref), 4) if ref else None}
+def wer(reference: str, hypothesis: str, alts: list[str] | None = None) -> dict:
+    """WER against the reference, or against the closest of `alts` (same facts, other written form: "20304567" read as
+    digit pairs vs said digit by digit, "1993" vs "nitten hundrede treoghalvfems"). The best match is used so a
+    recogniser is never punished for choosing a correct written form; `reference_used` says which one counted."""
+    hyp = canon(hypothesis)
+    best = None
+    for i, r in enumerate([reference, *(alts or [])]):
+        ref = canon(r)
+        errors = edit_distance(ref, hyp)
+        if best is None or errors < best[0]:
+            best = (errors, ref, i)
+    errors, ref, used = best
+    out = {"errors": errors, "ref_words": len(ref), "wer": round(errors / len(ref), 4) if ref else None}
+    if alts:
+        out["reference_used"] = "alt" if used else "said"
+    return out
 
 
 def _contains(haystack: list[str], needle: list[str]) -> bool:

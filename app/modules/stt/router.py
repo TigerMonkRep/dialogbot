@@ -83,6 +83,26 @@ def start_run(request: Request, tasks: BackgroundTasks, body: dict, principal: P
     return service.run_out(run)
 
 
+@router.post("/batch", status_code=202)
+def start_batch(request: Request, tasks: BackgroundTasks, body: dict, principal: Principal = Depends(operator),
+                db: OrmSession = Depends(get_db)):
+    """Body: {profiles: [ids], cases: "alle" | [ids], mode, workspace_id?}. Runs every chosen case through every chosen
+    profile in real time, one stream per profile at a time. 202 + the run ids; poll GET /runs."""
+    profile_ids = [str(p) for p in body.get("profiles", [])]
+    if not profile_ids or any(p not in profiles.BY_ID for p in profile_ids):
+        raise NotFound("Profilen findes ikke")
+    ws = uuid.UUID(body["workspace_id"]) if body.get("workspace_id") else None
+    todo = service.create_batch(db, user_id=principal.user.id, profile_ids=profile_ids, case_ids=body.get("cases", "alle"),
+                                mode=str(body.get("mode", "controlled")), workspace_id=ws)
+    record_audit(db, workspace_id=ws, actor_user_id=principal.user.id, action="stemmetest.batch", object_type="stt_test_run",
+                 object_id=None, after={"profiles": profile_ids, "cases": body.get("cases", "alle"),
+                                        "runs": sum(len(v) for v in todo.values())}, request_id=request.state.request_id)
+    db.commit()
+    if todo:
+        tasks.add_task(service.execute_batch, todo)
+    return {"runs": sum(len(v) for v in todo.values()), "profiles": sorted(todo)}
+
+
 @router.post("/runs/upload", status_code=202)
 async def start_upload(request: Request, tasks: BackgroundTasks, file: UploadFile = File(...), profile: str = Form(...),
                        reference: str = Form(""), mode: str = Form("controlled"), workspace_id: str | None = Form(None),

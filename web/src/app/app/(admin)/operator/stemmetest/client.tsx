@@ -7,7 +7,7 @@ type Access = { status: "klar" | "mangler_adgang" | "ikke_replaybar"; missing: s
 type Profile = { id: string; label: string; purpose: string; adapter: string | null; model: string | null; turn_owner: string; live: string; notes: string; capabilities: Record<string, string>; access: Access };
 type Stat = { n: number; median: number | null; p95: number | null; uncertain: boolean };
 type Measured = { cases: number; wer: number | null; errors: number; ref_words: number; entities: Record<string, { hits: number; total: number }>; first_final_s: Stat; final_after_audio_s: Stat; turn_end_after_audio_s: Stat };
-type Row = { profile: string; label: string; model: string | null; turn_owner: string; access: Access; status: string; measured?: Measured; human_cases?: number; note?: string | null };
+type Row = { profile: string; label: string; model: string | null; turn_owner: string; access: Access; status: string; measured?: Measured; human_cases?: number; note?: string | null; by_group?: Record<string, Measured> };
 type Case = { id: string; group: string; split: string; text: string; status: string; synthetic: boolean; note?: string | null; audio_rate?: number | null };
 type Scenario = { id: string; title: string; script: string[]; expected_action: string; tool_fault?: string | null; status: string };
 export type Overview = {
@@ -30,6 +30,11 @@ type Run = {
 
 const pct = (x: number | null | undefined) => (x == null ? "–" : `${(x * 100).toFixed(1).replace(".", ",")} %`);
 const sec = (x: number | null | undefined) => (x == null ? "–" : `${x.toFixed(2).replace(".", ",")} s`);
+const GROUP_LABEL: Record<string, string> = {
+  tal_beloeb: "Beløb og procent", tal_stor: "Store tal og årstal", tal_telefon: "Telefonnumre", tal_nummer: "Ordre- og kundenumre",
+  adresse: "Adresser og postnumre", tal_tid: "Tid og dato", tal_enhed: "Mål og enheder", tal_rettelse: "Rettelser midt i tal",
+  kombineret: "Tal og navne i samme sætning", stoej_tal: "Tal med baggrundsstøj", navne: "Navne", steder: "Steder",
+};
 const statText = (s: Stat) => (s.n === 0 ? "ikke målt" : `median ${sec(s.median)} · p95 ${sec(s.p95)} · n=${s.n}${s.uncertain ? " (usikker, få målinger)" : ""}`);
 
 function Entities({ e }: { e: Record<string, { hits: number; total: number }> }) {
@@ -117,6 +122,12 @@ export function Stemmetest({ data }: { data: Overview }) {
     }
     await refresh();
   });
+  const [batchInfo, setBatchInfo] = useState("");
+  const batch = useSubmit(async () => {
+    const r = await api<{ runs: number; profiles: string[] }>("/operator/stemmetest/batch", { method: "POST", body: JSON.stringify({ profiles: picked, cases: "alle", mode, workspace_id: ws || undefined }) });
+    setBatchInfo(`${r.runs} kørsler er sat i gang (${r.profiles.join(", ") || "ingen profiler med adgang"}). De kører i realtid, én ad gangen pr. profil – regn med nogle minutter.`);
+    await refresh();
+  });
   const upload = useSubmit(async () => {
     if (!upFile) return;
     const fd = new FormData();
@@ -128,6 +139,7 @@ export function Stemmetest({ data }: { data: Overview }) {
   });
   const active = data.profiles.filter((p) => picked.includes(p.id)).map((p) => p.label).join(", ") || "ingen";
   const rows = summary[split];
+  const groups = useMemo(() => Array.from(new Set(rows.flatMap((r) => Object.keys(r.by_group ?? {})))).sort(), [rows]);
   const wsName = data.workspaces.find((w) => w.id === ws)?.name ?? "ingen valgt (fælles testordliste)";
 
   return (
@@ -156,7 +168,10 @@ export function Stemmetest({ data }: { data: Overview }) {
           })}
         </fieldset>
         <div className="flex gap-space-sm items-center"><Button onClick={() => start.run()} disabled={start.pending || !picked.length || !caseId}>Kør test</Button>{mode === "controlled" && <span className="font-body-sm text-on-surface-variant">Kontrolleret STT-test – ikke dokumentation for en naturlig samtale.</span>}</div>
+        <div className="flex gap-space-sm items-center flex-wrap"><Button variant="secondary" onClick={() => batch.run()} disabled={batch.pending || !picked.length}>Kør alle {data.manifest.counts.med_lyd} cases med lyd</Button><span className="font-body-sm text-on-surface-variant">Hele den brede prøve (tal, telefonnumre, adresser, tid, støj, navne) gennem de valgte profiler.</span></div>
+        {batchInfo && <Alert kind="info">{batchInfo}</Alert>}
         <ErrorBox error={start.error} />
+        <ErrorBox error={batch.error} />
       </section>
 
       <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm">
@@ -173,6 +188,21 @@ export function Stemmetest({ data }: { data: Overview }) {
                 <td>{statText(r.measured.final_after_audio_s)}</td><td className="text-on-surface-variant">separat lyttetest</td><td className="text-on-surface-variant">pris ikke angivet</td>
               </>) : (<td colSpan={6} className="text-on-surface-variant">{r.status}{r.access.reason ? ` – ${r.access.reason}` : ""}</td>)}
             </tr>))}</tbody></table></div>
+      </section>
+
+      <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm">
+        <h2 className="font-title-md text-title-md font-bold">Pr. område</h2>
+        <p className="font-body-sm text-on-surface-variant">Samme mål delt op pr. type prøve, så svagheder ikke forsvinder i ét samlet tal. Hver celle viser ordfejl og de vigtige oplysninger (tal, tider, navne) den ramte rigtigt, med antal cases. Sammenlign &quot;Tal med baggrundsstøj&quot; med de rene områder for at se, hvad støj koster. Syntetisk tale er lettere end ægte opkald.</p>
+        <div className="overflow-x-auto"><table className="w-full font-body-sm text-body-sm">
+          <thead><tr className="text-left text-on-surface-variant"><th>Område</th>{rows.filter((r) => r.by_group).map((r) => <th key={r.profile}>{r.label}</th>)}</tr></thead>
+          <tbody>{groups.map((g) => (
+            <tr key={g} className="align-top border-t border-line">
+              <td className="py-1"><b>{GROUP_LABEL[g] ?? g}</b></td>
+              {rows.filter((r) => r.by_group).map((r) => { const m = r.by_group?.[g]; return (
+                <td key={r.profile}>{m ? (<>Ordfejl {pct(m.wer)} · {m.cases} cases<div><Entities e={m.entities} /></div></>) : <span className="text-on-surface-variant">ikke målt</span>}</td>); })}
+            </tr>))}
+            {!groups.length && <tr><td className="text-on-surface-variant py-1">Kør hele prøven for at se resultater pr. område.</td></tr>}
+          </tbody></table></div>
       </section>
 
       <section className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm">

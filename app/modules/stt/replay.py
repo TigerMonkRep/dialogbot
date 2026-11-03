@@ -38,7 +38,7 @@ def _silence(seconds: float, rate: int) -> bytes:
 async def run_audio(profile: Profile, pcm: bytes, rate: int, *, reference: str, expected: list[dict],
                     vocabulary: list[dict], mode: str = "controlled", chunk_s: float = CHUNK_S,
                     factory: Callable[..., adapters.Adapter] | None = None, realtime: bool = True,
-                    settle_s: float = SETTLE_S) -> dict:
+                    settle_s: float = SETTLE_S, reference_alts: list[str] | None = None) -> dict:
     """Run one recording; always returns a result dict (never raises for provider trouble)."""
     cfg = adapters.AdapterConfig(sample_rate=rate, vocabulary=vocabulary, controlled=(mode == "controlled"),
                                  model=profile.model)
@@ -105,7 +105,7 @@ async def run_audio(profile: Profile, pcm: bytes, rate: int, *, reference: str, 
             pass
 
     return {**base, **_summarise(ad, assembler, closed_at, t_audio_end, flush_at, reference, expected,
-                                 base["audio_seconds"])}
+                                 base["audio_seconds"], reference_alts)}
 
 
 def _vocab_used(adapter_id: str | None, offered: int) -> int:
@@ -128,7 +128,8 @@ async def _quiet(ad: adapters.Adapter, settle_s: float, quiet_s: float) -> None:
 
 
 def _summarise(ad: adapters.Adapter, asm: TurnAssembler, closed_at: dict, t_end: float, flush_at: float | None,
-               reference: str, expected: list[dict], audio_seconds: float) -> dict:
+               reference: str, expected: list[dict], audio_seconds: float,
+               reference_alts: list[str] | None = None) -> dict:
     events = ad.events
     errors = [e for e in events if e.kind == "error"]
     finals = [e for e in events if e.kind == "final" and e.text.strip()]
@@ -155,7 +156,7 @@ def _summarise(ad: adapters.Adapter, asm: TurnAssembler, closed_at: dict, t_end:
         "turns": [{"text": t.text, "segments": t.segments, "late": t.late, "closed_by": t.closed_by} for t in turns],
         "turn_count": len(turns),
         "premature_split": len(turns) > 1,
-        "wer": metrics.wer(reference, transcript) if reference or transcript else metrics.wer("", ""),
+        "wer": metrics.wer(reference, transcript, reference_alts) if reference or transcript else metrics.wer("", ""),
         "entities": metrics.entities(expected, transcript), "timing": timing,
         "price": metrics.price(ad.id, audio_seconds, prices),
         "events": [e.as_dict() for e in events[:MAX_EVENTS]], "events_total": len(events),

@@ -41,6 +41,7 @@ def create_run(db: OrmSession, *, user_id: uuid.UUID | None, profile_id: str, mo
     if workspace_id and ws is None:
         raise NotFound("Arbejdsrummet findes ikke")
     case = None
+    reference_alts: list[str] = []
     if upload is None:
         case = manifest.get(case_id or "")
         if case is None or case["kind"] != "kort":
@@ -48,12 +49,14 @@ def create_run(db: OrmSession, *, user_id: uuid.UUID | None, profile_id: str, mo
         if manifest.audio_path(case) is None:
             raise Conflict("Der mangler en menneskeindtalt optagelse til denne case", code="recording_missing")
         reference, expected = case["text"], case["entities"]
+        reference_alts = case.get("reference_alts") or []
     run = SttTestRun(workspace_id=workspace_id, started_by=user_id, profile_id=p.id, actual_profile=p.id,
                      channel="replay", mode=mode, case_id=case["id"] if case else None,
                      split=case["split"] if case else None, source="manifest" if case else "upload",
                      reference=reference, status="kører",
                      config={"profile": p.id, "model": p.model, "turn_owner": p.turn_owner, "mode": mode,
-                             "synthetic": bool(case and case.get("synthetic")), "expected": expected or [],
+                             "synthetic": bool(case and manifest.is_synthetic(case)), "expected": expected or [],
+                             "reference_alts": reference_alts,
                              "workspace": str(workspace_id) if workspace_id else None})
     acc = profiles.access(p)
     if acc["status"] == "mangler_adgang":
@@ -64,6 +67,41 @@ def create_run(db: OrmSession, *, user_id: uuid.UUID | None, profile_id: str, mo
     if upload is not None and run.status == "kører":
         _UPLOADS[run.id] = upload
     return run
+
+
+MAX_BATCH = 400
+
+
+def create_batch(db: OrmSession, *, user_id: uuid.UUID | None, profile_ids: list[str], case_ids: list[str] | str,
+                 mode: str, workspace_id: uuid.UUID | None) -> dict[str, list[uuid.UUID]]:
+    """One run per (profile, case) for every replayable profile and every case that has audio. Returns the ids that
+    still have to be executed, per profile (a profile without access is recorded as `mangler_adgang` and skipped)."""
+    cases = [c for c in manifest.cases() if manifest.audio_path(c)] if case_ids in ("alle", "all") else [
+        c for c in (manifest.get(i) for i in case_ids) if c and c["kind"] == "kort" and manifest.audio_path(c)]
+    if not cases:
+        raise ValidationFailed("Ingen af de valgte cases har lyd", field_errors={"cases": "ingen lyd"})
+    if len(profile_ids) * len(cases) > MAX_BATCH:
+        raise ValidationFailed("For mange kørsler på én gang", field_errors={"cases": f"højst {MAX_BATCH}"})
+    todo: dict[str, list[uuid.UUID]] = {}
+    for pid in profile_ids:
+        for c in cases:
+            run = create_run(db, user_id=user_id, profile_id=pid, mode=mode, case_id=c["id"], workspace_id=workspace_id)
+            if run.status == "kører":
+                todo.setdefault(pid, []).append(run.id)
+    return todo
+
+
+async def execute_batch(todo: dict[str, list[uuid.UUID]]) -> None:
+    """Profiles run side by side, but each profile runs its cases one after the other: one open provider connection
+    per profile at a time, so a batch never trips a provider's concurrency limit (and never burns more than one
+    real-time stream per provider)."""
+    import asyncio
+
+    async def one(ids: list[uuid.UUID]) -> None:
+        for rid in ids:
+            await execute(rid)
+
+    await asyncio.gather(*(one(ids) for ids in todo.values()))
 
 
 async def execute(run_id: uuid.UUID) -> None:
@@ -83,7 +121,8 @@ async def execute(run_id: uuid.UUID) -> None:
                 pcm, rate = manifest.read_wav(manifest.audio_path(manifest.get(run.case_id)))
             ws = db.get(Workspace, run.workspace_id) if run.workspace_id else None
             result = await replay.run_audio(p, pcm, rate, reference=run.reference, expected=run.config.get("expected", []),
-                                            vocabulary=_vocabulary(db, ws), mode=run.mode, factory=FACTORY)
+                                            vocabulary=_vocabulary(db, ws), mode=run.mode, factory=FACTORY,
+                                            reference_alts=run.config.get("reference_alts") or None)
         except Exception as e:  # noqa: BLE001
             result = {"status": "fejl", "error": f"{type(e).__name__}: {str(e)[:200]}"}
         run.result = result
@@ -114,6 +153,17 @@ def run_out(r: SttTestRun, detail: bool = False) -> dict:
     return out
 
 
+def _by_group(runs: list[dict]) -> dict[str, dict]:
+    """Same measures per case group (tal_telefon, tal_tid, navne, stoej_tal …): where a recogniser is weak, not one
+    blended number. Every group keeps its own denominators."""
+    groups: dict[str, list[dict]] = {}
+    for r in runs:
+        case = manifest.get(r["case_id"] or "")
+        if case:
+            groups.setdefault(case["group"], []).append(r)
+    return {g: metrics.aggregate(rs) for g, rs in sorted(groups.items())}
+
+
 def summary(db: OrmSession, split: str | None, mode: str | None) -> list[dict]:
     """One row per profile. Only finished `ok` replay runs on the profile's OWN recogniser count (a fallback run
     would carry another actual_profile). Profiles with nothing measured say so, with the reason."""
@@ -131,6 +181,7 @@ def summary(db: OrmSession, split: str | None, mode: str | None) -> list[dict]:
         if runs:
             real = [r for r in runs if not r["synthetic"]]
             row["measured"] = metrics.aggregate(runs)
+            row["by_group"] = _by_group(runs)
             row["human_cases"] = len(real)
             row["note"] = (None if real else "kun syntetisk tale (Peters stemme): dialekt og telefonkvalitet er uafklaret")
             row["status"] = "målt"

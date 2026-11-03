@@ -1,6 +1,7 @@
 """Creating, executing and summarising Stemmetest runs (operator only, replay channel)."""
 from __future__ import annotations
 
+import asyncio
 import uuid
 from collections.abc import Callable
 from datetime import UTC, datetime
@@ -91,15 +92,26 @@ def create_batch(db: OrmSession, *, user_id: uuid.UUID | None, profile_ids: list
     return todo
 
 
+# A provider releases a closed real-time session a moment after the socket is gone. Opening the next one at once can hit
+# its concurrent-session limit ("Concurrent Quota Exceeded", close code 4005) – that is our pacing, not the recogniser,
+# so it must never count as a failed or missing result: wait, then try the same case again.
+QUOTA_RETRY_DELAYS = (4.0, 10.0, 20.0)
+BATCH_GAP_S = 2.0
+
+
+def _is_quota(result: dict) -> bool:
+    e = str(result.get("error") or "").lower()
+    return result.get("status") == "fejl" and ("quota" in e or "concurrent" in e or "4005" in e) and "balance" not in e
+
+
 async def execute_batch(todo: dict[str, list[uuid.UUID]]) -> None:
     """Profiles run side by side, but each profile runs its cases one after the other: one open provider connection
     per profile at a time, so a batch never trips a provider's concurrency limit (and never burns more than one
     real-time stream per provider)."""
-    import asyncio
-
     async def one(ids: list[uuid.UUID]) -> None:
         for rid in ids:
             await execute(rid)
+            await asyncio.sleep(BATCH_GAP_S)
 
     await asyncio.gather(*(one(ids) for ids in todo.values()))
 
@@ -120,9 +132,15 @@ async def execute(run_id: uuid.UUID) -> None:
             else:
                 pcm, rate = manifest.read_wav(manifest.audio_path(manifest.get(run.case_id)))
             ws = db.get(Workspace, run.workspace_id) if run.workspace_id else None
-            result = await replay.run_audio(p, pcm, rate, reference=run.reference, expected=run.config.get("expected", []),
-                                            vocabulary=_vocabulary(db, ws), mode=run.mode, factory=FACTORY,
-                                            reference_alts=run.config.get("reference_alts") or None)
+            for attempt in range(len(QUOTA_RETRY_DELAYS) + 1):
+                result = await replay.run_audio(p, pcm, rate, reference=run.reference, expected=run.config.get("expected", []),
+                                                vocabulary=_vocabulary(db, ws), mode=run.mode, factory=FACTORY,
+                                                reference_alts=run.config.get("reference_alts") or None)
+                if not _is_quota(result) or attempt == len(QUOTA_RETRY_DELAYS):
+                    break
+                await asyncio.sleep(QUOTA_RETRY_DELAYS[attempt])
+            if attempt:
+                result["quota_retries"] = attempt
         except Exception as e:  # noqa: BLE001
             result = {"status": "fejl", "error": f"{type(e).__name__}: {str(e)[:200]}"}
         run.result = result

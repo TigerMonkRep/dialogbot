@@ -57,12 +57,34 @@ BACKCHANNELS = {
 }
 
 
-def call_language(db: OrmSession, workspace_id) -> str:
-    """The language this business's callers are served in."""
+# The language a caller from this country code most likely speaks (longest prefix wins).
+COUNTRY_LANGUAGE = {"+45": "da", "+299": "da", "+298": "da", "+46": "sv", "+47": "no", "+49": "de", "+43": "de",
+                    "+41": "de", "+44": "en", "+353": "en", "+1": "en", "+61": "en", "+64": "en", "+34": "es",
+                    "+33": "fr", "+32": "fr", "+352": "fr", "+39": "it"}
+
+
+def caller_language(caller: str | None) -> str | None:
+    """+4520… → "da". None for a withheld or unknown number."""
+    c = (caller or "").replace(" ", "")
+    if not c.startswith("+"):
+        return None
+    for n in (4, 3, 2):
+        if c[:n] in COUNTRY_LANGUAGE:
+            return COUNTRY_LANGUAGE[c[:n]]
+    return None
+
+
+def call_language(db: OrmSession, workspace_id, caller: str | None = None) -> str:
+    """The language this call is answered in: the caller's own language (from the country code) when the business has
+    turned that language on, otherwise the business's default language. A Danish number is answered in Danish whenever
+    Danish is on, even if the default is another language."""
     from app.models import LanguageSettings
 
     ls = db.get(LanguageSettings, workspace_id) if workspace_id else None
-    return normalize(ls.default_conversation_language if ls else DEFAULT)
+    default = normalize(ls.default_conversation_language if ls else DEFAULT)
+    enabled = {normalize(x) for x in ((ls.enabled_conversation_languages if ls else None) or [])} | {default}
+    guess = caller_language(caller)
+    return guess if guess in enabled else default
 
 
 def report_language(db: OrmSession, workspace_id) -> str:

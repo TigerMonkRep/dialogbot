@@ -487,3 +487,31 @@ def test_the_bridge_is_told_the_call_language(client, api, two_workspaces, confi
     get_settings.cache_clear()
     assert linden.transcriber_config(ws, [], "soniox", "sv")["server"]["url"].endswith("&stt=soniox&lang=sv")
     assert "lang=" not in linden.transcriber_config(ws, [], "soniox", "da")["server"]["url"]
+
+
+def test_a_danish_caller_is_answered_in_danish_when_danish_is_on(client, api, two_workspaces, configured):
+    """Default English with Danish also turned on: a +45 caller hears Danish, a +44 caller English, and a withheld or
+    unknown number the default. A language the business has not turned on is never picked from the number."""
+    t = two_workspaces
+    _setup(api, t)
+    ls = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/languages").json()
+    r = api.put(t["tok_a"], f"/workspaces/{t['ws_a']}/languages", {
+        "expected_version": ls["version"], "interface_language": "da", "default_conversation_language": "en",
+        "enabled_conversation_languages": ["en", "da"], "report_language": "da"})
+    assert r.status_code == 200, r.text
+
+    def greet(number):
+        call = {"phoneNumberId": "pn_123", **({"customer": {"number": number}} if number else {})}
+        return _post(client, {"type": "assistant-request", "call": call}).json()["assistant"]["firstMessage"]
+
+    assert greet("+4520304050").startswith("Hej, du har ringet til")
+    assert greet("+447700900123").startswith("Hello, you've reached")
+    assert greet(None).startswith("Hello, you've reached")
+    assert greet("+4915112345678").startswith("Hello, you've reached")  # German is not on
+
+
+def test_caller_language_from_country_code():
+    from app.modules.telephony.phone_languages import caller_language
+    assert caller_language("+4520304050") == "da" and caller_language("+46701234567") == "sv"
+    assert caller_language("+35312345") == "en" and caller_language("+12025550100") == "en"
+    assert caller_language("20304050") is None and caller_language(None) is None

@@ -1,0 +1,877 @@
+{
+ "version": 1,
+ "timezone": "Europe/Copenhagen",
+ "note": "Referencen er ordene, der SIGES. Menneskelig indtaling mangler for K-sagerne (audio: null). Se docs/voice/stemmetest-optagelser.md. tuning og final er adskilt: tuning bruges til at vælge indstillinger, final kun til den afsluttende måling.",
+ "cases": [
+  {
+   "id": "K01",
+   "kind": "kort",
+   "group": "steder",
+   "split": "final",
+   "text": "Hej, jeg vil gerne booke til Gastro Hall.",
+   "entities": [
+    {
+     "type": "sted",
+     "value": "Gastro Hall"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K02",
+   "kind": "kort",
+   "group": "steder",
+   "split": "final",
+   "text": "Vi skal til Racehall i Aarhus på lørdag.",
+   "entities": [
+    {
+     "type": "sted",
+     "value": "Racehall"
+    },
+    {
+     "type": "sted",
+     "value": "Aarhus"
+    },
+    {
+     "type": "dato",
+     "value": "lørdag"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K03",
+   "kind": "kort",
+   "group": "steder",
+   "split": "tuning",
+   "text": "Jeg ringer fra Dialogbot i Viby.",
+   "entities": [
+    {
+     "type": "sted",
+     "value": "Dialogbot"
+    },
+    {
+     "type": "sted",
+     "value": "Viby"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K04",
+   "kind": "kort",
+   "group": "steder",
+   "split": "final",
+   "text": "Jeg bor i Højbjerg lige uden for Aarhus.",
+   "entities": [
+    {
+     "type": "sted",
+     "value": "Højbjerg"
+    },
+    {
+     "type": "sted",
+     "value": "Aarhus"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K05",
+   "kind": "kort",
+   "group": "steder",
+   "split": "final",
+   "text": "Er det Racehall eller Gastro Hall, der har åbent søndag?",
+   "entities": [
+    {
+     "type": "sted",
+     "value": "Racehall"
+    },
+    {
+     "type": "sted",
+     "value": "Gastro Hall"
+    },
+    {
+     "type": "dato",
+     "value": "søndag"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K06",
+   "kind": "kort",
+   "group": "navne",
+   "split": "tuning",
+   "text": "Mit navn er Pernille Kjærgaard.",
+   "entities": [
+    {
+     "type": "navn",
+     "value": "Pernille Kjærgaard"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K07",
+   "kind": "kort",
+   "group": "navne",
+   "split": "final",
+   "text": "Mit navn er André Thorsen.",
+   "entities": [
+    {
+     "type": "navn",
+     "value": "André Thorsen"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K08",
+   "kind": "kort",
+   "group": "navne",
+   "split": "final",
+   "text": "Mit navn er Søren Brøndum Mikkelsen.",
+   "entities": [
+    {
+     "type": "navn",
+     "value": "Søren Brøndum Mikkelsen"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K09",
+   "kind": "kort",
+   "group": "navne",
+   "split": "tuning",
+   "text": "Mit navn er Jytte Ørum.",
+   "entities": [
+    {
+     "type": "navn",
+     "value": "Jytte Ørum"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K10",
+   "kind": "kort",
+   "group": "navne",
+   "split": "final",
+   "text": "Mit navn er Mads Fogh Nygaard.",
+   "entities": [
+    {
+     "type": "navn",
+     "value": "Mads Fogh Nygaard"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K11",
+   "kind": "kort",
+   "group": "navne",
+   "split": "final",
+   "text": "Mit navn er Gitte Skovgaard-Poulsen.",
+   "entities": [
+    {
+     "type": "navn",
+     "value": "Gitte Skovgaard-Poulsen"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K12",
+   "kind": "kort",
+   "group": "navne",
+   "split": "tuning",
+   "text": "Det er Birgitte med to t'er, Hvidbjerg.",
+   "entities": [
+    {
+     "type": "navn",
+     "value": "Birgitte Hvidbjerg"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K13",
+   "kind": "kort",
+   "group": "rettelse_antal",
+   "split": "final",
+   "text": "Vi bliver fire … nej, seks personer.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "seks"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "error_type": "rettelse"
+  },
+  {
+   "id": "K14",
+   "kind": "kort",
+   "group": "rettelse_antal",
+   "split": "final",
+   "text": "Vi er fem, nej vent, syv personer.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "syv"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "error_type": "rettelse"
+  },
+  {
+   "id": "K15",
+   "kind": "kort",
+   "group": "rettelse_antal",
+   "split": "tuning",
+   "text": "Kan vi være otte, nej, ti personer?",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "ti"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "error_type": "rettelse"
+  },
+  {
+   "id": "K16",
+   "kind": "kort",
+   "group": "dato_tid",
+   "split": "final",
+   "text": "På fredag klokken halv syv.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "fredag"
+    },
+    {
+     "type": "tid",
+     "value": "halv syv",
+     "alt": [
+      "klokken atten tredive",
+      "atten tredive"
+     ]
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K17",
+   "kind": "kort",
+   "group": "dato_tid",
+   "split": "final",
+   "text": "Lørdag den ottende november klokken fjorten.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "ottende november",
+     "alt": [
+      "8 november"
+     ]
+    },
+    {
+     "type": "tid",
+     "value": "fjorten",
+     "alt": [
+      "klokken fjorten"
+     ]
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K18",
+   "kind": "kort",
+   "group": "dato_tid",
+   "split": "tuning",
+   "text": "I morgen klokken kvart over fem.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "i morgen"
+    },
+    {
+     "type": "tid",
+     "value": "kvart over fem",
+     "alt": [
+      "sytten femten"
+     ]
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K19",
+   "kind": "kort",
+   "group": "dato_tid",
+   "split": "final",
+   "text": "Mandag klokken otte om aftenen.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "mandag"
+    },
+    {
+     "type": "tid",
+     "value": "otte"
+    }
+   ],
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "K20",
+   "kind": "kort",
+   "group": "telefon",
+   "split": "final",
+   "text": "Mit nummer er tyve, tredive, fyrre, halvtreds.",
+   "entities": [
+    {
+     "type": "telefon",
+     "value": "20 30 40 50"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "pace": "langsomt med pauser"
+  },
+  {
+   "id": "K21",
+   "kind": "kort",
+   "group": "telefon",
+   "split": "tuning",
+   "text": "Nummeret er tolv, fireogtredive, seksoghalvtreds, otteoghalvfjerds.",
+   "entities": [
+    {
+     "type": "telefon",
+     "value": "12 34 56 78"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "pace": "langsomt med pauser"
+  },
+  {
+   "id": "K22",
+   "kind": "kort",
+   "group": "telefon",
+   "split": "final",
+   "text": "Min mail er test snabel-a eksempel punktum d k.",
+   "entities": [
+    {
+     "type": "mail",
+     "value": "test@eksempel.dk"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "pace": "langsomt med pauser"
+  },
+  {
+   "id": "K23",
+   "kind": "kort",
+   "group": "taenkepause",
+   "split": "final",
+   "text": "Vi skal være, øh, lad mig se, syv personer.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "syv"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "pauses": "1-2 s midt i sætningen",
+   "error_type": "for_tidligt_svar"
+  },
+  {
+   "id": "K24",
+   "kind": "kort",
+   "group": "taenkepause",
+   "split": "tuning",
+   "text": "Jeg vil gerne booke, øhm, ja, en bane til, øh, fredag.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "fredag"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "pauses": "1-2 s midt i sætningen",
+   "error_type": "for_tidligt_svar"
+  },
+  {
+   "id": "K25",
+   "kind": "kort",
+   "group": "variation",
+   "split": "final",
+   "text": "Kan jeg få booket en bane til seks personer på lørdag klokken seksten.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "seks"
+    },
+    {
+     "type": "dato",
+     "value": "lørdag"
+    },
+    {
+     "type": "tid",
+     "value": "seksten"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "pace": "hurtig tale"
+  },
+  {
+   "id": "K26",
+   "kind": "kort",
+   "group": "variation",
+   "split": "final",
+   "text": "Jeg skal bruge et bord til fire personer på torsdag.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "fire"
+    },
+    {
+     "type": "dato",
+     "value": "torsdag"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "pace": "lav stemme, ca. 20 cm fra mikrofon"
+  },
+  {
+   "id": "K27",
+   "kind": "kort",
+   "group": "variation",
+   "split": "tuning",
+   "text": "Kan jeg få en tid i morgen klokken ti.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "i morgen"
+    },
+    {
+     "type": "tid",
+     "value": "ti"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "dialect": "fynsk/jysk/sjællandsk/sønderjysk: indtal samme sætning hver for sig"
+  },
+  {
+   "id": "K28",
+   "kind": "kort",
+   "group": "variation",
+   "split": "final",
+   "text": "Jeg vil gerne bestille et bord på søndag klokken atten.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "søndag"
+    },
+    {
+     "type": "tid",
+     "value": "atten"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "dialect": "bornholmsk eller vestjysk"
+  },
+  {
+   "id": "K29",
+   "kind": "kort",
+   "group": "stoej",
+   "split": "final",
+   "text": "Jeg vil gerne have et bord til fem personer klokken nitten.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "fem"
+    },
+    {
+     "type": "tid",
+     "value": "nitten"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "noise": "restaurantstøj i baggrunden"
+  },
+  {
+   "id": "K30",
+   "kind": "kort",
+   "group": "stoej",
+   "split": "tuning",
+   "text": "Vi er seks personer og kommer på lørdag.",
+   "entities": [
+    {
+     "type": "antal",
+     "value": "seks"
+    },
+    {
+     "type": "dato",
+     "value": "lørdag"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "noise": "en anden person taler i baggrunden (referencen er KUN kundens ord)",
+   "error_type": "baggrundssnak"
+  },
+  {
+   "id": "K31",
+   "kind": "kort",
+   "group": "bekraeftelse",
+   "split": "final",
+   "text": "Ja.",
+   "entities": [],
+   "audio": null,
+   "synthetic": false,
+   "negative_for": "afbrydelse",
+   "note": "må ikke afbryde agenten"
+  },
+  {
+   "id": "K32",
+   "kind": "kort",
+   "group": "bekraeftelse",
+   "split": "final",
+   "text": "Mhm.",
+   "entities": [],
+   "audio": null,
+   "synthetic": false,
+   "negative_for": "afbrydelse",
+   "note": "må ikke afbryde agenten"
+  },
+  {
+   "id": "K33",
+   "kind": "kort",
+   "group": "bekraeftelse",
+   "split": "tuning",
+   "text": "Okay.",
+   "entities": [],
+   "audio": null,
+   "synthetic": false,
+   "negative_for": "afbrydelse",
+   "note": "må ikke afbryde agenten"
+  },
+  {
+   "id": "K34",
+   "kind": "kort",
+   "group": "afbrydelse",
+   "split": "final",
+   "text": "Vent lige, det var ikke det, jeg mente.",
+   "entities": [],
+   "audio": null,
+   "synthetic": false,
+   "positive_for": "afbrydelse",
+   "note": "skal afbryde agenten"
+  },
+  {
+   "id": "K35",
+   "kind": "kort",
+   "group": "afbrydelse",
+   "split": "final",
+   "text": "Nej nej, stop, jeg skulle bruge fredag.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "fredag"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "positive_for": "afbrydelse",
+   "note": "skal afbryde agenten"
+  },
+  {
+   "id": "K36",
+   "kind": "kort",
+   "group": "rettelse_booking",
+   "split": "tuning",
+   "text": "Jeg vil gerne flytte min booking fra fredag til lørdag klokken seksten.",
+   "entities": [
+    {
+     "type": "dato",
+     "value": "fredag"
+    },
+    {
+     "type": "dato",
+     "value": "lørdag"
+    },
+    {
+     "type": "tid",
+     "value": "seksten"
+    }
+   ],
+   "audio": null,
+   "synthetic": false,
+   "error_type": "rettelse"
+  },
+  {
+   "id": "K37",
+   "kind": "kort",
+   "group": "tavshed",
+   "split": "final",
+   "text": "",
+   "entities": [],
+   "audio": null,
+   "synthetic": false,
+   "note": "8 sekunders tavshed (stuestøj); referencen er tom; tester at intet opfindes",
+   "error_type": "tavshed"
+  },
+  {
+   "id": "S01",
+   "kind": "kort",
+   "group": "steder",
+   "split": "tuning",
+   "synthetic": true,
+   "text": "Hej, du har ringet til Fjord Gulvservice. Vi kører afslibning i Roskilde, Odense, Vejle, Lyngby, Ringkøbing og Grenå. Vores tømrer og mester ringer dig op i morgen.",
+   "entities": [
+    {
+     "type": "sted",
+     "value": "Roskilde"
+    },
+    {
+     "type": "sted",
+     "value": "Odense"
+    },
+    {
+     "type": "sted",
+     "value": "Vejle"
+    },
+    {
+     "type": "sted",
+     "value": "Lyngby"
+    },
+    {
+     "type": "sted",
+     "value": "Ringkøbing"
+    },
+    {
+     "type": "sted",
+     "value": "Grenå"
+    },
+    {
+     "type": "sted",
+     "value": "Fjord Gulvservice"
+    }
+   ],
+   "audio": "tests/fixtures/linden/peter_steder_16k.wav",
+   "audio_rate": 16000,
+   "note": "Peters stemme (syntetisk), ren lyd"
+  },
+  {
+   "id": "S02",
+   "kind": "kort",
+   "group": "steder",
+   "split": "tuning",
+   "synthetic": true,
+   "text": "Hej, du har ringet til Fjord Gulvservice. Vi kører afslibning i Roskilde, Odense, Vejle, Lyngby, Ringkøbing og Grenå. Vores tømrer og mester ringer dig op i morgen.",
+   "entities": [
+    {
+     "type": "sted",
+     "value": "Roskilde"
+    },
+    {
+     "type": "sted",
+     "value": "Odense"
+    },
+    {
+     "type": "sted",
+     "value": "Vejle"
+    },
+    {
+     "type": "sted",
+     "value": "Lyngby"
+    },
+    {
+     "type": "sted",
+     "value": "Ringkøbing"
+    },
+    {
+     "type": "sted",
+     "value": "Grenå"
+    },
+    {
+     "type": "sted",
+     "value": "Fjord Gulvservice"
+    }
+   ],
+   "audio": "tests/fixtures/linden/peter_steder_8k_phone.wav",
+   "audio_rate": 8000,
+   "note": "samme, båndbegrænset som telefonlinje (syntetisk)"
+  },
+  {
+   "id": "S03",
+   "kind": "kort",
+   "group": "steder",
+   "split": "final",
+   "synthetic": true,
+   "text": "Goddag, du har ringet til Berle Pool. Hvad kan jeg gøre for dig?",
+   "entities": [
+    {
+     "type": "sted",
+     "value": "Berle Pool"
+    }
+   ],
+   "audio": "tests/fixtures/linden/berle_pool_16k.wav",
+   "audio_rate": 16000,
+   "note": "Peters stemme (syntetisk)"
+  }
+ ],
+ "scenarios": [
+  {
+   "id": "SC01",
+   "kind": "scenarie",
+   "title": "Almindelig booking",
+   "script": [
+    "Jeg vil gerne booke en bane til seks personer på lørdag klokken seksten.",
+    "Mit navn er Pernille Kjærgaard.",
+    "Ja, det er rigtigt."
+   ],
+   "expected_action": "booking_oprettet_én_gang",
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "SC02",
+   "kind": "scenarie",
+   "title": "Rettelse midt i bookingen",
+   "script": [
+    "Vi bliver fire … nej, seks personer.",
+    "Fredag. Nej, lørdag.",
+    "Ja."
+   ],
+   "expected_action": "booking_oprettet_med_seks_og_lørdag",
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "SC03",
+   "kind": "scenarie",
+   "title": "Tvetydigt tidspunkt",
+   "script": [
+    "På fredag klokken halv syv.",
+    "(svar på agentens afklaring) Den ottende, om aftenen."
+   ],
+   "expected_action": "agenten_afklarer_dato_og_klokkeslæt_før_booking",
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "SC04",
+   "kind": "scenarie",
+   "title": "Kunden tænker højt",
+   "script": [
+    "Vi skal være, øh, lad mig se, ... syv personer, tror jeg.",
+    "Ja, syv."
+   ],
+   "expected_action": "agenten_venter_og_afbryder_ikke",
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "SC05",
+   "kind": "scenarie",
+   "title": "Baggrundssnak",
+   "script": [
+    "(en anden taler i rummet) Jeg vil gerne have et bord på torsdag.",
+    "Til fire."
+   ],
+   "expected_action": "agenten_reagerer_kun_på_kunden",
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "SC06",
+   "kind": "scenarie",
+   "title": "Reel afbrydelse",
+   "script": [
+    "(mens agenten forklarer priser) Vent lige, det var ikke det, jeg mente."
+   ],
+   "expected_action": "agenten_tier_inden_for_målt_tid_og_lytter",
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "SC07",
+   "kind": "scenarie",
+   "title": "Korte bekræftelser",
+   "script": [
+    "(under agentens forklaring) Ja. … Mhm. … Okay."
+   ],
+   "expected_action": "agenten_afbrydes_ikke",
+   "audio": null,
+   "synthetic": false
+  },
+  {
+   "id": "SC08",
+   "kind": "scenarie",
+   "title": "Kalenderen svarer ikke",
+   "script": [
+    "Jeg vil gerne booke fredag klokken atten til fire."
+   ],
+   "expected_action": "timeout_undersøges_før_gentagelse_ingen_dobbeltbooking",
+   "audio": null,
+   "synthetic": false,
+   "tool_fault": "kalender-timeout (testtilstand)"
+  },
+  {
+   "id": "SC09",
+   "kind": "scenarie",
+   "title": "Tavshed og afbrudt netværk",
+   "script": [
+    "(ingen tale i 8 s)",
+    "(forbindelsen afbrydes midt i en sætning)"
+   ],
+   "expected_action": "graciøs_afslutning_ingen_booking_ingen_dobbelt_svar",
+   "audio": null,
+   "synthetic": false,
+   "tool_fault": "netværksafbrud"
+  },
+  {
+   "id": "SC10",
+   "kind": "scenarie",
+   "title": "Rettelse af tidligere aftalt booking",
+   "script": [
+    "Jeg vil gerne flytte min booking fra fredag til lørdag klokken seksten."
+   ],
+   "expected_action": "eksisterende_booking_ændres_ikke_annulleres_ikke_ubegrundet",
+   "audio": null,
+   "synthetic": false
+  }
+ ]
+}

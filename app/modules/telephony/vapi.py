@@ -309,11 +309,16 @@ def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | Non
     this one call will hear: the person we ring and their company, which the generic model otherwise mishears
     ("Berle Pool" → "Berligt pool")."""
     configured = _json_setting(get_settings().vapi_transcriber_json)
+    per_company = _json_setting(get_settings().vapi_stt_by_workspace_json) if ws is not None else None
+    if per_company and str(ws.id) in per_company:  # explicit, per-company opt-in; never applied to anyone else
+        configured = {"provider": "custom-transcriber", "stt": str(per_company[str(ws.id)])}
     if configured is not None and configured.get("provider") == "custom-transcriber" and not configured.get("server"):
         from app.modules.telephony import linden
 
-        # Speechmatics Agent STT through our bridge; without its key the call still works, on Deepgram
-        configured = None if not linden.configured() else configured
+        # Our bridge (Speechmatics Agent STT by default; "stt" picks soniox / elevenlabs-scribe / speechmatics-rt for the
+        # Stemmetest). Without the chosen recogniser's key the call still works, on Deepgram
+        stt = configured.get("stt")
+        configured = None if not linden.configured(stt) else {k: v for k, v in configured.items() if k != "stt"}
         use_linden = configured is not None
     else:
         use_linden = False
@@ -328,7 +333,7 @@ def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | Non
     if use_linden:
         from app.modules.telephony import linden
 
-        return {**t, **linden.transcriber_config(ws, own)}
+        return {**t, **linden.transcriber_config(ws, own, stt)}
     for d in [t, *t.get("fallbackPlan", {}).get("transcribers", [])]:
         if ws is None:
             continue

@@ -91,6 +91,16 @@ class Settings(BaseSettings):
     speechmatics_api_key: str | None = Field(default=None, alias="SPEECHMATICS_API_KEY")
     speechmatics_rt_url: str | None = Field(default=None, alias="SPEECHMATICS_RT_URL")  # default: the EU endpoint
     speechmatics_customer_channel: int = Field(default=0, alias="SPEECHMATICS_CUSTOMER_CHANNEL")  # Vapi: 0 = customer
+    # Per-company recogniser for the bridge, e.g. {"<workspace-uuid>": "soniox"}. Only listed workspaces change; every
+    # other call keeps the production transcriber. Remove the entry (and restart) to roll one company back. Unset = off.
+    vapi_stt_by_workspace_json: str | None = Field(default=None, alias="VAPI_STT_BY_WORKSPACE_JSON")
+    # Stemmetest (docs/voice/stemmetest.md): the extra recognisers compared against Speechmatics. ElevenLabs Scribe uses
+    # ELEVENLABS_API_KEY below. Server-side only; never returned by any endpoint.
+    soniox_api_key: str | None = Field(default=None, alias="SONIOX_API_KEY")
+    stemmetest_audio_dir: str | None = Field(default=None, alias="STEMMETEST_AUDIO_DIR")  # human recordings per case
+    # Optional USD per audio hour per recogniser, e.g. {"soniox": 0.12}: filled in from the provider's own price page.
+    # Unset = the run reports audio seconds and says "pris ikke angivet" rather than guessing a price.
+    stemmetest_prices_json: str | None = Field(default=None, alias="STEMMETEST_PRICES_JSON")
     # Server-side only: lets owners hear a chosen ElevenLabs voice before calls go live.
     elevenlabs_api_key: str | None = Field(default=None, alias="ELEVENLABS_API_KEY")
     # ElevenLabs Agents trial (an alternative call engine to Vapi): a shared secret ElevenLabs sends as the

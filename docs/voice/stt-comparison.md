@@ -50,3 +50,7 @@ Bevis: `docs/voice/evidence/stt-coral-wav2vec2-phone-2026-09-30.json`.
 
 2. Tilføj `coral:100`, når `HF_TOKEN` er sat. Det giver dialekter.
 3. Den endelige test: 20–30 rigtige prøveopkald, optaget med samtykke, med navne, adresser og telefonnumre.
+
+## Stemmetest (2.–3. november 2026)
+
+Speechmatics (Enhanced og Linden), Soniox og ElevenLabs Scribe sammenlignes nu på samme optagelser i realtid på siden *Operatør → Værktøjer → Stemmetest*. Se [`stemmetest.md`](stemmetest.md).

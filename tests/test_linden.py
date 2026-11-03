@@ -197,3 +197,41 @@ def test_capture_and_replay_endpoints(client, api, two_workspaces, configured, m
     r = api.c.post(f"{api.base}/operator/telephony/linden/replay?fixture=berle_pool_16k", headers=api.h(op))
     assert r.status_code == 200 and r.json()["rate_sent"] == 16000 and r.json()["seconds"] > 2
     assert api.c.post(f"{api.base}/operator/telephony/linden/replay?fixture=../etc/passwd", headers=api.h(op)).status_code == 404
+
+
+def test_the_bridge_never_sends_text_without_a_word():
+    import asyncio
+
+    class Sock:
+        def __init__(self):
+            self.out = []
+
+        async def send_text(self, t):
+            self.out.append(t)
+
+    sock = Sock()
+    s = linden.Session(sock, None, None, [], "soniox")
+    asyncio.run(s.send(".", True))
+    asyncio.run(s.send("Kan du", True))
+    assert [json.loads(x)["transcription"] for x in sock.out] == ["Kan du"]
+
+
+def test_assistant_turns_come_from_the_model_when_our_transcriber_only_hears_the_caller():
+    msg = {"artifact": {
+        "messages": [{"role": "user", "message": "Hvad koster det?"}],
+        "messagesOpenAIFormatted": [
+            {"role": "system", "content": "SYSTEM"},
+            {"role": "assistant", "content": "Goddag, det er Peter."},
+            {"role": "user", "content": "Hvad koster det?"},
+            {"role": "assistant", "tool_calls": [{"id": "x"}], "content": ""},
+            {"role": "tool", "content": "{}"},
+            {"role": "assistant", "content": [{"type": "text", "text": "Det koster 2.495 kr. om måneden."}]}],
+        "stereoRecordingUrl": "https://storage.vapi.ai/abc-stereo.wav", "recordingUrl": "https://storage.vapi.ai/abc.wav"}}
+    assert [(m["role"], m["message"]) for m in vapi.transcript_messages(msg)] == [
+        ("assistant", "Goddag, det er Peter."), ("user", "Hvad koster det?"),
+        ("assistant", "Det koster 2.495 kr. om måneden.")]
+    assert vapi.recording_url(msg) == "https://storage.vapi.ai/abc-stereo.wav"
+    # a transcript that already has the assistant (Deepgram, Vapi's own transcribers) is used as it is
+    both = {"artifact": {"messages": [{"role": "bot", "message": "Hej"}, {"role": "user", "message": "Hej"}],
+                         "messagesOpenAIFormatted": [{"role": "assistant", "content": "andet"}]}}
+    assert [m["message"] for m in vapi.transcript_messages(both)] == ["Hej", "Hej"]

@@ -181,6 +181,17 @@ def test_soniox_for_vapi_releases_finished_words_at_every_pause_not_only_at_end(
     assert partials == ["Vi er", "Vi er en", "Og"]   # a released segment never comes back in a later partial
 
 
+def test_soniox_for_vapi_holds_a_half_sentence_over_a_pause():
+    """3 Nov 2026 15:14: "Kan du" was released at a short pause, Vapi let Peter start, and the caller had to start over
+    twice. A pause only hands words over after a finished sentence."""
+    a = adapters.Soniox(_cfg(release_on_pause=True), "k")
+    a.handle({"tokens": [_tok("Kan", True, 0, 200), _tok(" du", True, 200, 400)]})          # pause mid-sentence
+    assert not [e for e in a.events if e.kind == "final"]
+    a.handle({"tokens": [_tok(" oplæse", True, 900, 1300), _tok(" vores", False)]})
+    a.handle({"tokens": [_tok(" vores", True, 1300, 1500), _tok(" navn?", True, 1500, 1900)]})
+    assert [e.text for e in a.events if e.kind == "final"] == ["Kan du oplæse vores navn?"]
+
+
 def test_soniox_without_release_on_pause_still_waits_for_end():
     a = adapters.Soniox(_cfg(), "k")
     a.handle({"tokens": [_tok("Hej", True, 0, 200), _tok(" der.", True, 200, 500)]})

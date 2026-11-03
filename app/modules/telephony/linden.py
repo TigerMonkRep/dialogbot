@@ -128,7 +128,7 @@ class Session:
 
     async def send(self, text: str, final: bool) -> None:
         text = (text or "").strip()
-        if not text:
+        if not text or not any(c.isalnum() for c in text):  # a lone "." is not something the caller said
             return
         msg = {"type": "transcriber-response", "transcription": text, "channel": "customer",
                "transcriptType": "final" if final else "partial"}

@@ -636,6 +636,8 @@ class Call(Base):
     summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
     # Provider-reported total cost, millionths of a USD (NULL if not reported).
     cost_usd_micros: Mapped[int | None] = mapped_column(BigInteger)
+    # The provider's recording (stereo when offered: caller and assistant on separate channels). Operator review only.
+    recording_url: Mapped[str | None] = mapped_column(Text)
     # Outbound calls (campaigns, Dialogbot's sales channel). Existing rows are inbound.
     direction: Mapped[str] = mapped_column(String(8), nullable=False, default="inbound", server_default="inbound")
     outcome: Mapped[str | None] = mapped_column(String(24))

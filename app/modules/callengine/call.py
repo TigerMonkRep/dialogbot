@@ -191,7 +191,7 @@ def summarise(transcript: list[dict]) -> str:
 
 
 def recording_key(call_sid: str) -> str:
-    return f"platform/engine-calls/{call_sid}.wav"
+    return f"platform/engine-calls/{call_sid.lower()}.wav"  # storage keys are lower-case
 
 
 def report(setup: dict, call_sid: str, caller: str | None, started: datetime, ended: datetime, reason: str,

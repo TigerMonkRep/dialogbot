@@ -44,7 +44,8 @@ STILL_THERE = "Er du der stadig?"
 GOODBYE_IDLE = "Jeg lægger på nu, men du er altid velkommen til at ringe igen. Hav en god dag."
 ANSWERED = "[Opkaldet blev besvaret]"
 ABBREVIATIONS = ("kl.", "ca.", "f.eks.", "bl.a.", "evt.", "nr.", "osv.", "dvs.", "inkl.", "ekskl.", "tlf.", "mht.",
-                 "pga.", "jf.", "st.", "th.", "tv.", "mv.", "hhv.", "iflg.", "vedr.")
+                 "pga.", "jf.", "st.", "th.", "tv.", "mv.", "hhv.", "iflg.", "vedr.", "pr.", "hr.", "fr.",
+                 "ift.", "bl.", "m.m.", "o.l.", "dsb.", "a/s", "aps.")
 
 
 # --------------------------------------------------------------------------- the pieces the engine is built from
@@ -243,10 +244,10 @@ class CallEngine:
             return
         if kind != "final":
             return
-        if self.speaking and only_backchannel(text):
+        busy = self.response is not None and not self.response.done()
+        if (self.speaking or busy) and only_backchannel(text):  # "ja", "mm" while Peter talks or thinks: let him go on
             logger.info("engine.backchannel", text=text[:80], t=self.elapsed())
             return
-        busy = self.response is not None and not self.response.done()
         if busy:
             await self.interrupt("new-turn")
         self.transcript.append({"role": "user", "message": text, "t": self.elapsed()})

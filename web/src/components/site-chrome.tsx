@@ -76,6 +76,7 @@ export function SiteHeader({ current, nav, phone = true, badge, navAlways = fals
         )}
         <div className={`flex items-center gap-4 sm:gap-6 ${nav ? "lg:ml-0 ml-auto" : "ml-auto"}`}>
           <PathSwitch current={current} />
+          <Link href="/priser" className="inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline hover:text-accent">Priser</Link>
           {phone && <a href={PHONE_TEL} className="hidden sm:inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline">{PHONE_DISPLAY}</a>}
         </div>
       </div>
@@ -98,6 +99,7 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
           <Link href="/privatliv" className={link}>Privatliv</Link>
+          <Link href="/gdpr" className={link}>GDPR</Link>
           <Link href="/vilkaar" className={link}>Handelsbetingelser</Link>
           <CookieSettingsLink className={link} />
           <span>CVR {COMPANY.cvr}</span>
@@ -112,6 +114,8 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
               <Link href="/proev" className={quiet}>Prøv den</Link>
               <Link href="/byggevejledning" className={quiet}>Byggevejledning</Link>
               <Link href="/priser" className={quiet}>Priser</Link>
+              <Link href="/om" className={quiet}>Om os</Link>
+              <Link href="/gdpr" className={quiet}>GDPR og data</Link>
               <Link href="/kontakt" className={quiet}>Kontakt</Link>
               <Link href="/login" className={quiet}>Log ind</Link>
               <Link href="/signup" className={quiet}>Opret konto</Link>

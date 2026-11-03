@@ -5,6 +5,7 @@ export const VIDEO = {
   thumb: "/video/dialogbot-forklaret-thumb.jpg",
   captions: "/video/dialogbot-forklaret-da.vtt",
   title: "Se, hvad Dialogbot kan",
+  posterAlt: "Dialogbot tager telefonen for en dansk virksomhed – forklaret på 70 sekunder",
   description: "Dialogbot forklaret på 70 sekunder: tager telefonen, booker tider, svarer på hjemmesiden – og du godkender alt, den må sige.",
   durationIso: "PT1M10S",
   uploadDate: "2026-10-29T09:00:00+01:00",

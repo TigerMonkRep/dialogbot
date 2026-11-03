@@ -62,5 +62,7 @@ def test_the_public_pages_state_both_prices():
     for text in (pricing, llms):
         assert "2.495 kr." in text and "4 kr. pr." in text and "2 kr. pr." in text and "5.000 kr." in text and "ekskl. moms" in text
         assert "300 minutter" in text and "1,50 kr." in text  # the included inbound minutes and the price above them
-    assert "Fra 2.495 kr./md." in (ROOT / "web/src/app/byggevejledning/page.tsx").read_text(encoding="utf-8")
-    assert "Fra 2.495 kr./md." in (ROOT / "web/src/app/(public)/page.tsx").read_text(encoding="utf-8")
+    # One flat subscription: the price is stated without "Fra" (it implied a tier ladder that does not exist).
+    for page in ("web/src/app/byggevejledning/page.tsx", "web/src/app/(public)/page.tsx"):
+        text = (ROOT / page).read_text(encoding="utf-8")
+        assert "2.495 kr./md." in text and "Fra 2.495" not in text

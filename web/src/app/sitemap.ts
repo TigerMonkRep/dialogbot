@@ -15,6 +15,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...ARTICLES.map((a) => page(`/viden/${a.slug}`, 0.7, "monthly")),
     page("/ambassador/bliv", 0.6, "monthly"),
     page("/signup", 0.5, "yearly"),
+    page("/om", 0.5, "monthly"),
+    page("/gdpr", 0.6, "monthly"),
     page("/kontakt", 0.4, "yearly"),
     page("/vilkaar", 0.2, "yearly"),
     page("/privatliv", 0.2, "yearly"),

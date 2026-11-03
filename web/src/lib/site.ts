@@ -22,4 +22,8 @@ export const ARTICLES: { slug: string; title: string; teaser: string; published:
     teaser: "Telefonsvarer, telefonpasningsservice eller AI: fordele og ulemper, så I kan vælge rigtigt." },
   { slug: "viderestil-telefonen", title: "Sådan viderestiller du telefonen, når du er optaget", published: "2026-10-07",
     teaser: "De koder, du taster på mobilen for at viderestille ved optaget, ingen svar eller altid – og hvordan du slår det fra igen." },
+  { slug: "dialogbot-vs-vocalis", title: "Dialogbot eller Vocalis – fast pris eller minutpakker?", published: "2026-11-03",
+    teaser: "Fast månedspris eller minutpakker, godkendt viden og booking: forskellene på Dialogbot og Vocalis." },
+  { slug: "dialogbot-vs-almindelig-chatbot", title: "Dialogbot eller en almindelig chatbot – hvad er forskellen?", published: "2026-11-03",
+    teaser: "En chatbot svarer på hjemmesiden. Dialogbot tager også telefonen og booker tider." },
 ];

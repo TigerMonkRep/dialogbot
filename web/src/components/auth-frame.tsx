@@ -11,7 +11,7 @@ export function AuthFrame({ title, subtitle, children, code, icon = "lock", asid
 }) {
   const t = useT("auth");
   return (
-    <div className="min-h-dvh bg-panel text-ink flex flex-col">
+    <div className="min-h-dvh bg-panel text-ink app-type flex flex-col">
       <header className="sticky top-0 z-40 bg-paper border-b-2 border-ink">
         <div className="max-w-[1280px] mx-auto min-h-16 px-4 md:px-6 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">

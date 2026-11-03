@@ -46,7 +46,7 @@ export default async function AftalerPage({ searchParams }: { searchParams: Prom
       <section className="flex-[999_1_460px] min-w-0 flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
           <span className="eyebrow">{t("bookings.eyebrow")}</span>
-          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("bookings.title")}</h1>
+          <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("bookings.title")}</h1>
           <p className="text-[15px] leading-relaxed text-ink-soft max-w-[620px]">{t("bookings.intro")}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">

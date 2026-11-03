@@ -28,12 +28,12 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
       <section className="flex-[999_1_460px] min-w-0 flex flex-col gap-5">
         <Breadcrumb items={[[t("overview.campaigns"), "/app/kampagner"], [c.name]]} />
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{c.name}</h1>
+          <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{c.name}</h1>
           <span className={`px-3 py-1 rounded-full text-label-sm font-semibold ${STATUS[c.status]}`}>{t(`campaigns.status.${c.status}`)}</span>
         </div>
-        <dl className="grid grid-cols-3 md:grid-cols-6 gap-2">{stats.map(([k, v]) => (
-          <div key={k} className="bg-paper rounded-2xl p-3 border-2 border-ink">
-            <dt className="text-label-sm text-ink-soft">{k}</dt>
+        <dl className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">{stats.map(([k, v]) => (
+          <div key={k} className="min-w-0 bg-paper rounded-2xl p-3 border-2 border-ink">
+            <dt className="text-label-sm text-ink-soft hyphens-auto">{k}</dt>
             <dd className="font-display font-extrabold text-[24px] text-ink">{v}</dd>
           </div>
         ))}</dl>

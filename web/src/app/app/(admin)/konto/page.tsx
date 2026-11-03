@@ -70,14 +70,14 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
       <div className="flex-[999_1_460px] min-w-0 flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
           <span className="eyebrow">{t("account.eyebrow")}</span>
-          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("account.title")}</h1>
+          <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("account.title")}</h1>
         </div>
 
         <section className={BOX} aria-labelledby="konto-1">
           <Head n={1} id="konto-1" title={t("account.team.title")} />
           <p className="text-[14px] text-ink-soft">{t("account.team.intro")}</p>
           <div className="overflow-x-auto">
-            <table className="w-full text-left min-w-[480px]">
+            <table className="table-stack w-full text-left sm:min-w-[480px]">
               <thead><tr className="text-[12px] uppercase tracking-[0.08em] text-muted"><th className="pb-2 pr-3 font-semibold">{t("leads.editor.name")}</th><th className="pb-2 pr-3 font-semibold">{t("leads.editor.email")}</th><th className="pb-2 pr-3 font-semibold">{t("account.team.role")}</th><th /></tr></thead>
               <tbody>{members.map((m) => <MemberRow key={m.id} wsId={ws.id} m={m} myRole={ws.role} isMe={m.user_id === me.id} />)}</tbody>
             </table>
@@ -134,13 +134,13 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
               </div>
               {invoices.items.length === 0 ? <p className="text-[14px] text-ink-soft">{t("account.invoices.none")}</p> : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left min-w-[440px]">
+                  <table className="table-stack w-full text-left sm:min-w-[440px]">
                     <thead><tr className="text-[12px] uppercase tracking-[0.08em] text-muted"><th className="pb-2 pr-3 font-semibold">{t("account.invoices.month")}</th><th className="pb-2 pr-3 font-semibold">{t("account.invoices.status")}</th><th className="pb-2 pr-3 font-semibold">{t("account.invoices.total")}</th><th /></tr></thead>
                     <tbody>{invoices.items.map((i) => (
                       <tr key={i.id} className="border-t-[1.5px] border-line text-[14px]">
                         <td className="py-3 pr-3 font-semibold text-ink">{monthLabel(lang, i.month)}{i.number && <span className="font-normal text-muted"> · {i.number}</span>}</td>
-                        <td className="py-3 pr-3 text-ink-soft">{INV_STATUS.includes(i.status) ? t(`account.invoiceStatus.${i.status}`) : i.status}</td>
-                        <td className="py-3 pr-3 tabular-nums text-ink">{kr(i.gross_minor)}</td>
+                        <td data-label={t("account.invoices.status")} className="py-3 pr-3 text-ink-soft">{INV_STATUS.includes(i.status) ? t(`account.invoiceStatus.${i.status}`) : i.status}</td>
+                        <td data-label={t("account.invoices.total")} className="py-3 pr-3 tabular-nums text-ink">{kr(i.gross_minor)}</td>
                         <td className="py-3 text-right whitespace-nowrap">
                           {i.hosted_invoice_url && <a href={i.hosted_invoice_url} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent hover:underline">{t("account.invoices.open")}</a>}
                           {i.invoice_pdf && <a href={i.invoice_pdf} target="_blank" rel="noopener noreferrer" className="ml-3 font-semibold text-accent hover:underline">{t("account.invoices.pdf")}</a>}

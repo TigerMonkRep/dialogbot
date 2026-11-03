@@ -28,7 +28,7 @@ export default async function Trin3() {
           <span className="w-14 h-14 rounded-[14px] bg-highlight text-ink font-display font-extrabold text-[30px] inline-flex items-center justify-center" aria-hidden>3</span>
           <div>
             <span className="eyebrow">{tr("eyebrow")}</span>
-            <h1 className="font-display font-extrabold text-[30px] md:text-[40px] leading-[1.05] tracking-[-1px] text-ink">{tr("title")}</h1>
+            <h1 className="font-display font-extrabold text-[27px] sm:text-[30px] md:text-[40px] leading-[1.05] tracking-[-0.8px] sm:tracking-[-1px] text-ink">{tr("title")}</h1>
           </div>
         </div>
         <Need items={raw<[string, string, string?][]>("setup.step3Page.need")} title={raw<string>("setup.need.title")} />

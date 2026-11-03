@@ -28,10 +28,10 @@ export function MemberRow({ wsId, m, myRole, isMe }: { wsId: string; m: Member; 
   return (
     <tr className="border-t-[1.5px] border-line align-middle">
       <td className="py-3 pr-3 text-[15px] font-semibold text-ink">{m.display_name}{isMe && <span className="ml-1.5 text-[13px] font-normal text-muted">{t("account.team.you")}</span>}</td>
-      <td className="py-3 pr-3 text-[14px] text-ink-soft break-all">{m.email}</td>
-      <td className="py-3 pr-3">
+      <td className="py-3 pr-3 text-[15px] sm:text-[14px] text-ink-soft break-all">{m.email}</td>
+      <td className="stack-inline py-3 pr-3 max-sm:!pt-2">
         {canManage ? (
-          <select aria-label={t("account.team.roleFor", { name: m.display_name })} className={`${inputCls} min-w-[130px]`} value={shown} onChange={(e) => change.run(e.target.value)}>
+          <select aria-label={t("account.team.roleFor", { name: m.display_name })} className={`${inputCls} sm:min-w-[130px] max-sm:w-auto`} value={shown} onChange={(e) => change.run(e.target.value)}>
             {m.role === "owner" && <option value="owner">{t("account.role.owner")}</option>}
             {RANK[myRole] >= 3 && <option value="admin">{t("account.role.editor")}</option>}
             <option value="reader">{t("account.role.reader")}</option>
@@ -39,7 +39,7 @@ export function MemberRow({ wsId, m, myRole, isMe }: { wsId: string; m: Member; 
         ) : <span className="inline-flex px-3 py-1.5 rounded-full border-[1.5px] border-ink text-[13px] font-semibold text-ink">{roleLabel(t, m.role)}</span>}
         <ErrorBox error={change.error ?? remove.error} />
       </td>
-      <td className="py-3 text-right">{(canManage || isMe) && m.role !== "owner" && <button type="button" className={`${BTN} text-danger`} disabled={remove.pending} onClick={() => remove.run()}>{isMe ? t("account.team.leave") : t("campaigns.remove")}</button>}</td>
+      <td className="stack-inline py-3 text-right max-sm:!pt-2">{(canManage || isMe) && m.role !== "owner" && <button type="button" className={`${BTN} text-danger`} disabled={remove.pending} onClick={() => remove.run()}>{isMe ? t("account.team.leave") : t("campaigns.remove")}</button>}</td>
     </tr>
   );
 }
@@ -54,7 +54,7 @@ export function InvitationRow({ wsId, id, email, role, expires }: { wsId: string
   });
   return (
     <li className="flex flex-wrap items-center gap-x-4 gap-y-2 py-3 border-t-[1.5px] border-line">
-      <span className="flex-1 min-w-[200px] text-[14px] text-ink">{t("account.team.invited")} <b>{email}</b> <span className="text-muted">· {roleLabel(t, role)} · {t("account.team.expires", { date: new Date(expires).toLocaleDateString(lang) })}</span></span>
+      <span className="flex-1 min-w-0 basis-full sm:basis-auto sm:min-w-[200px] text-[14px] text-ink">{t("account.team.invited")} <b>{email}</b> <span className="text-muted">· {roleLabel(t, role)} · {t("account.team.expires", { date: new Date(expires).toLocaleDateString(lang) })}</span></span>
       <button type="button" className={BTN} disabled={act.pending} onClick={() => act.run("resend")}>{t("account.team.resend")}</button>
       <button type="button" className={`${BTN} text-danger`} disabled={act.pending} onClick={() => act.run("revoke")}>{t("account.team.revoke")}</button>
       <ErrorBox error={act.error} />

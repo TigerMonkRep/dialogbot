@@ -8,6 +8,7 @@ import { api, type ApiError } from "@/lib/client";
 import { useLocale, useRaw, useT } from "@/i18n/client";
 import { LOCALES, LOCALE_NAMES, isLocale } from "@/i18n/config";
 import { cardsFromGoals, goalsFromCards, hoursText, originOf, parseHours, parseZones, zonesText, type Cards, type DayVocab, type WeeklyRange } from "@/lib/setup";
+import { MobileActionBar } from "@/components/mobile-action-bar";
 
 export type Profile = { version: number; legal_name: string; description: string; website_url: string | null; manual_setup: boolean; cvr: string | null; address_line: string | null; postal_code: string | null; city: string | null; country: string; timezone: string; phone: string | null };
 export type Goals = { version: number; product_intent: string; guidance_mode: string; inbound_phone: boolean; webchat: boolean; callback: boolean; booking: boolean; conversation_goals: string[] };
@@ -301,8 +302,8 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
         </div>
       </Part>
 
-      <div className="fixed sm:static inset-x-0 bottom-0 z-20 bg-paper sm:bg-transparent border-t-2 sm:border-0 border-ink px-4 py-3 sm:p-0 pb-safe flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
-        <p className="text-[13px] text-muted" role="status" aria-live="polite">
+      <MobileActionBar className="flex-col-reverse sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-[13px] leading-snug text-muted" role="status" aria-live="polite">
           {save === "saving" ? t("status.saving") : save === "saved" ? t("status.saved") : save === "error" ? "" : t("status.idle")}{t("status.comeBack")}
           {!ready && <span className="block">{t("status.fillIn")}</span>}
           {problem && <span className="block text-danger" role="alert">{problem} {problem === t("versionConflict") && <button type="button" className="underline" onClick={() => router.refresh()}>{t("status.reload")}</button>}</span>}
@@ -314,7 +315,7 @@ export function Step1({ wsId, canEdit, canApprove, aiReady, cvrReady, profile, g
         }} className={`inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-xl font-semibold text-[16px] ${ready ? "bg-accent text-white hover:bg-accent-deep" : "bg-line text-muted"} disabled:opacity-70`}>
           {next === 2 ? t("nextTo2") : t("nextTo3")}<Icon name="arrow_forward" size={18} />
         </button>
-      </div>
+      </MobileActionBar>
     </div>
   );
 }

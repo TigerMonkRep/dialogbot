@@ -229,7 +229,7 @@ export function AssistantDock({ wsId, canChange, step, column = true, name }: { 
         </div>
       )}
       <button type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}
-        className={`${hide} fixed right-4 ${step ? "bottom-[88px] sm:bottom-6" : "bottom-[76px] sm:bottom-6"} sm:right-6 z-40 inline-flex items-center gap-2 min-h-[52px] pl-4 pr-5 rounded-full bg-ink text-paper border-2 border-ink shadow-block-highlight font-display font-bold text-[15px]`}>
+        className={`${hide} fixed right-4 ${step ? "bottom-[calc(var(--action-bar-h,0px)+12px)] sm:bottom-6" : "bottom-[calc(72px+env(safe-area-inset-bottom))] sm:bottom-6"} sm:right-6 z-40 inline-flex items-center gap-2 min-h-[52px] pl-4 pr-5 rounded-full bg-ink text-paper border-2 border-ink shadow-block-highlight font-display font-bold text-[15px]`}>
         <Icon name="edit" size={18} />{step ? t("help") : t("change")}
       </button>
     </>

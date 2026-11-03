@@ -1004,7 +1004,8 @@ test("Skal v2: fire faner, avatar til Konto, bundfaner på telefon, assistent, o
   await page.goto("/app");
   const mobile = (page.viewportSize()?.width ?? 1440) < 640;
   const tabs = mobile ? page.locator("nav[aria-label='Sider']").last() : page.locator("header nav[aria-label='Sider']");
-  for (const label of ["I dag", "Det ved den", "Opkald", "Ugen"]) await expect(tabs.getByRole("link", { name: label })).toBeVisible();
+  // The bottom tabs on a phone use the short label «Viden» (nav.knowledgeShort) so all four fit.
+  for (const label of ["I dag", mobile ? "Viden" : "Det ved den", "Opkald", "Ugen"]) await expect(tabs.getByRole("link", { name: label })).toBeVisible();
   await expect(page.getByRole("link", { name: /^Mere/ })).toHaveCount(0);
   await expect(tabs.getByRole("link", { name: "I dag" })).toHaveAttribute("aria-current", "page");
   await tabs.getByRole("link", { name: "Opkald" }).click();

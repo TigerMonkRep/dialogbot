@@ -31,7 +31,8 @@
     "today": "Idag",
     "knowledge": "Det här vet den",
     "calls": "Samtal",
-    "week": "Veckan"
+    "week": "Veckan",
+    "knowledgeShort": "Kunskap"
   },
   "shell": {
     "verify": {

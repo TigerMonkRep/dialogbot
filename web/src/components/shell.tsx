@@ -16,7 +16,7 @@ type Capability = { key: string; status: "available" | "simulated" | "not_implem
  *  `label` is a key in the `app` namespace (translated in the shell). */
 export const MAIN: NavItem[] = [
   { href: "/app", match: "/app", also: ["/app/aftaler", "/app/kampagner"], label: "nav.today", icon: "today" },
-  { href: "/app/viden", match: "/app/viden", label: "nav.knowledge", icon: "menu_book" },
+  { href: "/app/viden", match: "/app/viden", label: "nav.knowledge", short: "nav.knowledgeShort", icon: "menu_book" },
   { href: "/app/opkald", match: "/app/opkald", label: "nav.calls", icon: "call" },
   { href: "/app/ugen", match: "/app/ugen", label: "nav.week", icon: "bar_chart" },
 ];
@@ -55,11 +55,11 @@ const SkipLink = ({ label }: { label: string }) => <a href="#main" className="sr
 async function Shell({ children }: { children: React.ReactNode }) {
   const { workspaces, me, current, env } = await shellData();
   const t = await getT("app");
-  const nav = MAIN.map((it) => ({ ...it, label: t(it.label) }));
+  const nav = MAIN.map((it) => ({ ...it, label: t(it.label), short: it.short ? t(it.short) : undefined }));
   let viewAs: { name: string; email: string } | null = null;
   try { const raw = (await cookies()).get(VIEWAS_COOKIE)?.value; if (raw) viewAs = JSON.parse(raw); } catch { /* ignore a broken cookie */ }
   return (
-    <div className="min-h-dvh bg-panel text-ink flex flex-col">
+    <div className="min-h-dvh bg-panel text-ink app-type flex flex-col overflow-x-clip">
       <SkipLink label={t("shell.skip")} />
       {viewAs && <ViewAsBanner who={viewAs} />}
       <header className="sticky top-0 z-30 bg-paper border-b-2 border-ink pt-safe">
@@ -78,8 +78,8 @@ async function Shell({ children }: { children: React.ReactNode }) {
         <VerifyBanner me={me} />
       </header>
 
-      <main id="main" className="flex-grow w-full pb-[92px] sm:pb-0">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-7 flex gap-6 items-start">
+      <main id="main" className="flex-grow w-full pb-[148px] sm:pb-24 xl:pb-0">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-5 md:py-7 flex gap-6 items-start">
           <div className="flex-1 min-w-0 flex flex-col">{children}</div>
           {current && <AssistantDock wsId={current.id} canChange={current.role !== "reader"} name={(me?.display_name ?? "").split(" ")[0] || undefined} />}
         </div>

@@ -19,7 +19,7 @@ export default async function Trin1({ searchParams }: { searchParams: Promise<{ 
   const head = (
     <div className="flex flex-col gap-3 mb-6">
       <span className="eyebrow">{t("eyebrow")}</span>
-      <h1 className="font-display font-extrabold text-[34px] md:text-[44px] leading-[1.02] tracking-[-1px] text-ink">{t("title")}</h1>
+      <h1 className="font-display font-extrabold text-[28px] sm:text-[34px] md:text-[44px] leading-[1.05] tracking-[-0.8px] sm:tracking-[-1px] text-ink">{t("title")}</h1>
       <p className="text-[16px] text-ink-soft max-w-[620px]">{t("intro")}</p>
       <Need items={raw<[string, string, string?][]>("setup.step1Page.need")} title={raw<string>("setup.need.title")} />
     </div>

@@ -134,7 +134,7 @@ export function ImportContacts({ wsId, id }: { wsId: string; id: string }) {
       <h2 className="font-display text-headline-sm text-ink">{t("campaigns.import.title")}</h2>
       <p className="text-body-sm text-ink-soft">{t("campaigns.import.intro")}</p>
       {res && <Alert kind="ok">{t("campaigns.import.added", { n: res.added })}{res.duplicates ? `, ${t("campaigns.import.duplicates", { n: res.duplicates })}` : ""}{res.blocked ? `, ${t("campaigns.import.blocked", { n: res.blocked })}` : ""}{res.invalid_count ? `, ${t("campaigns.import.invalid", { n: res.invalid_count, rows: res.invalid.map((x) => x.row).slice(0, 5).join(", ") })}` : ""}.</Alert>}
-      <Field label={t("campaigns.import.file")}><input type="file" accept=".csv,text/csv,text/plain" onChange={onFile} className="text-body-md" /></Field>
+      <Field label={t("campaigns.import.file")}><input type="file" accept=".csv,text/csv,text/plain" onChange={onFile} className="block w-full min-w-0 text-body-md" /></Field>
       <Field label={t("campaigns.import.paste")} error={fieldError(run.error, "csv")}><Textarea value={f.csv} onChange={(e) => setF({ ...f, csv: e.target.value })} placeholder={t("campaigns.import.pastePlaceholder")} /></Field>
       <fieldset className="flex flex-col gap-1">
         <legend className="text-label-md font-semibold mb-1">{t("campaigns.import.who")}</legend>

@@ -85,7 +85,7 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
       <div className="flex flex-col gap-1.5">
         <Link href="/app" className="text-[14px] font-semibold text-accent hover:underline w-fit">{t("overview.back")}</Link>
         <span className="eyebrow">{t("overview.eyebrow")}</span>
-        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("overview.title")}</h1>
+        <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("overview.title")}</h1>
         <p className="text-[15px] leading-relaxed text-ink-soft max-w-[640px]">{t("overview.intro")}</p>
       </div>
       <SettingsTiles chapters={chapters} canChange={staff} />

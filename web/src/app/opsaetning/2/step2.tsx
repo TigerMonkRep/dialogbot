@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui";
 import { api, type ApiError } from "@/lib/client";
 import { useRaw, useT } from "@/i18n/client";
 import type { T } from "@/i18n/translate";
+import { MobileActionBar } from "@/components/mobile-action-bar";
 
 export type Connector = { key: string; label: string; availability: "ready" | "coming" | "via_zapier"; status: "not_connected" | "connected" | "error" | "not_implemented"; simulated: boolean; account_label: string; last_ok_at: string | null; error: string | null };
 export type BookingSettings = { version: number; enabled: boolean; lead_time_hours: number; horizon_days: number; buffer_minutes: number; busy_ics_url: string | null; types: { id: string; name: string; duration_minutes: number; active: boolean }[] };
@@ -104,12 +105,12 @@ export function Step2({ wsId, canManage, connectors, booking, goals, notice }: {
       </section>
 
       {error && <p role="alert" className="text-[14px] text-danger">{error}</p>}
-      <div className="fixed sm:static inset-x-0 bottom-0 z-20 bg-paper sm:bg-transparent border-t-2 sm:border-0 border-ink px-4 py-3 sm:p-0 pb-safe flex flex-col sm:flex-row sm:items-center gap-3">
+      <MobileActionBar className="flex-col sm:flex-row sm:items-center">
         <button type="button" onClick={next} disabled={busy !== null} className={`inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-xl font-semibold text-[16px] disabled:opacity-60 ${connected ? "bg-accent text-white hover:bg-accent-deep" : "bg-paper text-accent border-2 border-accent hover:bg-panel"}`}>
           {t("next")}<Icon name="arrow_forward" size={18} />
         </button>
         <button type="button" onClick={skip} disabled={busy !== null} className="min-h-[44px] px-2 text-[15px] font-semibold text-ink underline underline-offset-2">{t("skip")}</button>
-      </div>
+      </MobileActionBar>
     </div>
   );
 }

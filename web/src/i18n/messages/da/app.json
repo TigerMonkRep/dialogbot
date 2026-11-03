@@ -31,7 +31,8 @@
     "today": "I dag",
     "knowledge": "Det ved den",
     "calls": "Opkald",
-    "week": "Ugen"
+    "week": "Ugen",
+    "knowledgeShort": "Viden"
   },
   "shell": {
     "verify": {

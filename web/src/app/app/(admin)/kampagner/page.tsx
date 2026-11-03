@@ -40,7 +40,7 @@ export default async function KampagnerPage() {
       <section className="flex-[999_1_460px] min-w-0 flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
           <span className="eyebrow">{t("campaigns.eyebrowPrice", { price: kr(p.call_net_minor, lang) })}</span>
-          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("campaigns.title")}</h1>
+          <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("campaigns.title")}</h1>
           <p className="text-[15px] leading-relaxed text-ink-soft max-w-[640px]">
             {t("campaigns.intro", { price: kr(p.call_net_minor, lang), attempts: p.max_attempts, minutes: p.max_connected_seconds / 60 })}
           </p>

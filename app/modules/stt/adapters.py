@@ -21,6 +21,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import json
+import re
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -35,6 +36,7 @@ ELEVENLABS_ERRORS = ("error", "rate_limited", "quota_exceeded", "throttled", "qu
                      "unaccepted_terms", "auth_error", "input_error", "chunk_size_exceeded", "transcriber_error",
                      "insufficient_audio_activity", "session_time_limit_exceeded", "invalid_request")
 MAX_SONIOX_TERMS = 1000
+SENTENCE_END = re.compile(r"[.!?…][\"”)]?\s*$")
 MAX_ELEVENLABS_KEYTERMS = 50  # API maximum; each keyterm run adds a 20 % premium to the transcription price
 
 
@@ -344,8 +346,11 @@ class Soniox(Adapter):
                 self._final.append(tok)
             else:
                 nonfinal.append(text)
-        if msg.get("tokens") and self.cfg.release_on_pause and self._final and not nonfinal:
-            self._release(None)  # a pause: everything heard so far is final – hand it over now
+        if msg.get("tokens") and self.cfg.release_on_pause and self._final and not nonfinal \
+                and SENTENCE_END.search("".join(t["text"] for t in self._final)):
+            # a pause after a finished sentence: hand it over now. A pause mid-sentence ("Kan du …") is held until the
+            # caller goes on or Soniox ends the turn – released early, it let Vapi start Peter talking over the caller.
+            self._release(None)
             return
         if msg.get("tokens"):
             shown = ("".join(t["text"] for t in self._final) + "".join(nonfinal)).strip()

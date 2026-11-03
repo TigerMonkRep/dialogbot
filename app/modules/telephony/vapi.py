@@ -498,6 +498,36 @@ def _parse_ts(v: Any) -> datetime | None:
 ROLE = {"user": "visitor", "customer": "visitor", "assistant": "assistant", "bot": "assistant"}
 
 
+def transcript_messages(message: dict) -> list[dict]:
+    """The call's turns. Vapi builds `artifact.messages` from the TRANSCRIBER, so with our own transcriber (the bridge
+    only transcribes the caller) the assistant's turns are missing there. Vapi's `messagesOpenAIFormatted` holds what
+    the assistant actually said (the dialogue model's output), so it is used whenever the transcript has no bot turn."""
+    msgs = _dig(message, "artifact", "messages") or message.get("messages") or []
+    has_bot = any(isinstance(m, dict) and ROLE.get(str(m.get("role", "")).lower()) == "assistant" for m in msgs)
+    oa = _dig(message, "artifact", "messagesOpenAIFormatted") or message.get("messagesOpenAIFormatted") or []
+    if has_bot or not oa:
+        return [m for m in msgs if isinstance(m, dict)]
+    out = []
+    for m in oa:
+        if not isinstance(m, dict) or m.get("role") not in ("user", "assistant") or m.get("tool_calls"):
+            continue
+        content = m.get("content")
+        if isinstance(content, list):  # [{"type": "text", "text": …}]
+            content = " ".join(str(c.get("text", "")) for c in content if isinstance(c, dict))
+        out.append({"role": m["role"], "message": str(content or "")})
+    return out
+
+
+def recording_url(message: dict) -> str | None:
+    """Prefer the stereo recording (caller and assistant on separate channels)."""
+    for path in (("artifact", "stereoRecordingUrl"), ("stereoRecordingUrl",), ("artifact", "recordingUrl"),
+                 ("recordingUrl",), ("artifact", "recording", "stereoUrl"), ("artifact", "recording", "mono", "combinedUrl")):
+        v = _dig(message, *path)
+        if isinstance(v, str) and v.startswith("https://"):
+            return v[:2000]
+    return None
+
+
 def end_of_call(db: OrmSession, message: dict) -> str:
     """Store one call. Returns outcome: applied | unmatched | duplicate."""
     call_id = str(_dig(message, "call", "id") or "")
@@ -526,7 +556,7 @@ def end_of_call(db: OrmSession, message: dict) -> str:
     db.flush()
     visitor_lines = 0
     lines: list[str] = []
-    for m in (_dig(message, "artifact", "messages") or message.get("messages") or []):
+    for m in transcript_messages(message):
         role = ROLE.get(str(m.get("role", "")).lower()) if isinstance(m, dict) else None
         text = (m.get("message") or m.get("content") or "") if role else ""
         if not role or not str(text).strip():
@@ -541,7 +571,8 @@ def end_of_call(db: OrmSession, message: dict) -> str:
                 provider_call_id=call_id, from_number=caller, to_number=number.e164, started_at=started, ended_at=ended,
                 duration_seconds=int(duration) if duration is not None else None,
                 ended_reason=str(message.get("endedReason") or "")[:100] or None, summary=summary,
-                cost_usd_micros=round(float(cost) * 1_000_000) if isinstance(cost, int | float) else None)
+                cost_usd_micros=round(float(cost) * 1_000_000) if isinstance(cost, int | float) else None,
+                recording_url=recording_url(message))
     db.add(call)
     try:
         db.flush()

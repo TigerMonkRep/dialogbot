@@ -51,6 +51,9 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // HeyCatch short links: one letter or digit, e.g. /x. The query carries the channel attribution. No real
+      // single-character route exists (/a/[slug] is a longer path).
+      { source: "/:l([a-z0-9])", destination: "/?utm_source=heycatch&utm_campaign=:l", permanent: false },
       // Back from the calendar provider's consent screen: while the person is in trin 2, the integrations page hands them back to it.
       { source: "/app/settings/integrationer", has: [{ type: "cookie" as const, key: "db_setup_return" }], destination: "/opsaetning/2", permanent: false },
       ...MOVED.map(([source, destination]) => ({ source, destination, permanent: true })),

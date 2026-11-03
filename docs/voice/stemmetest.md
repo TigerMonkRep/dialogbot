@@ -2,6 +2,16 @@
 
 Status 3. november 2026. **Der er ingen målinger mod de rigtige udbydere endnu** – sessionen havde hverken `SPEECHMATICS_API_KEY`, `SONIOX_API_KEY` eller `ELEVENLABS_API_KEY`, og der findes ingen menneskeindtalte optagelser. Alt nedenfor, der kan bygges uden dem, er bygget og testet (mock og rigtig lokal WebSocket); resten står som *mangler*. Der er hverken opfundet tal eller udpeget en vinder.
 
+## Opfølgning 3. november 2026 (andet forsøg, stadig uden målinger)
+
+Nøglerne blev søgt i sessionens miljø (`SPEECHMATICS_API_KEY`, `SONIOX_API_KEY`, `ELEVENLABS_API_KEY`, `VAPI_API_KEY`, `STEMMETEST_AUDIO_DIR`: alle ikke sat). Renders værktøj kan kun *skrive* miljøvariabler på `dialogbot-api-staging` og ikke læse dem, og GitHub Actions secrets kan ikke læses fra en session. Nøglerne blev derfor ikke fundet, og ingen blev udskrevet eller gemt.
+
+- Baseline (Python 3.12, `requirements.lock`, Postgres 16): `ruff check app tests scripts` uden fejl; hele `pytest` bestået, 4 live-tests sprunget over (`Mangler SPEECHMATICS_API_KEY` ×2, `SONIOX_API_KEY`, `ELEVENLABS_API_KEY`).
+- `RUN_LIVE_STT=1 pytest tests/test_stemmetest_live.py`: ingen forbindelse afprøvet, derfor ingen adapterrettelser og ingen ændrede modelnavne.
+- CLI: C, D, E og F står som *mangler adgang*; 37 af 40 cases mangler menneskeindtalt optagelse (`tests/fixtures/stemmetest/audio` indeholder kun `.gitkeep`). S01–S03 er ikke kørt, fordi ingen udbyder kan nås.
+- Live-opkald (SC01–SC10) og stemmeprøver (TTS) er ikke forsøgt: ingen samtykke til opkald, ingen testnumre, ingen ElevenLabs-nøgle, intet voice id.
+- Der er ikke målt noget, så ingen sammenligning, pris eller anbefaling ud over den ovenfor.
+
 ## Hvor du åbner den
 
 *Operatør → Værktøjer → Stemmetest* (`/app/operator/stemmetest`, kun Dialogbot-operatører; API `/api/v1/operator/stemmetest`). Siden viser testtilstand, valgt virksomhed, aktive profiler og status; profiler uden adgang står som *Mangler adgang* med den manglende miljøvariabel; profil A og B står som *Måles i live-opkald*. Resultater har etiketterne *Forstod kunden / Bookede korrekt / Afbrydelser / Svartid / Stemme / Pris*; model, endpointing, lydformat, SDK-versioner og eventtidslinje ligger under *Avanceret*.

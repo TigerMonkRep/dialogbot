@@ -356,6 +356,47 @@
         "title": "Body_linden_replay_api_v1_operator_telephony_linden_replay_post",
         "type": "object"
       },
+      "Body_simulate_api_v1_operator_telephony_engine_simulate_post": {
+        "properties": {
+          "file": {
+            "anyOf": [
+              {
+                "contentMediaType": "application/octet-stream",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File"
+          },
+          "fixture": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixture"
+          },
+          "number_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Number Id"
+          }
+        },
+        "title": "Body_simulate_api_v1_operator_telephony_engine_simulate_post",
+        "type": "object"
+      },
       "Body_start_upload_api_v1_operator_stemmetest_runs_upload_post": {
         "properties": {
           "file": {
@@ -1126,6 +1167,45 @@
           "title"
         ],
         "title": "DraftIn",
+        "type": "object"
+      },
+      "EngineRouteIn": {
+        "properties": {
+          "confirm": {
+            "default": false,
+            "description": "Skal være true: alle indgående opkald på nummeret flyttes til motoren",
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "title": "EngineRouteIn",
+        "type": "object"
+      },
+      "EngineTestCallIn": {
+        "properties": {
+          "number_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Vores nummer, der ringer ud (standard: det første aktive)",
+            "title": "Number Id"
+          },
+          "to": {
+            "description": "Det nummer, Peter skal ringe til (E.164, fx +4512345678)",
+            "title": "To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "to"
+        ],
+        "title": "EngineTestCallIn",
         "type": "object"
       },
       "ExtraIn": {
@@ -12438,6 +12518,348 @@
         ]
       }
     },
+    "/api/v1/operator/telephony/engine": {
+      "get": {
+        "operationId": "status_api_v1_operator_telephony_engine_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Status",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/engine/calls/{call_sid}/recording.wav": {
+      "get": {
+        "operationId": "call_recording_api_v1_operator_telephony_engine_calls__call_sid__recording_wav_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "call_sid",
+            "required": true,
+            "schema": {
+              "title": "Call Sid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Call Recording",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/engine/numbers/{number_id}/inbound": {
+      "post": {
+        "description": "Point a number's incoming calls at the engine (Twilio voice webhook → our TwiML). Undo:\nPOST /operator/telephony/numbers/{id}/inbound puts it back on Vapi.",
+        "operationId": "route_to_engine_api_v1_operator_telephony_engine_numbers__number_id__inbound_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Number Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EngineRouteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Route To Engine",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/engine/simulate": {
+      "post": {
+        "description": "A recording (16-bit WAV, any rate) plays the caller; the real engine answers on a virtual line at real speed.\nReturns the turn-by-turn log with latencies, and a two-track recording (left: caller, right: Peter).\n`fixture` names a known recording from tests/fixtures/linden instead of an upload. No phone rings.",
+        "operationId": "simulate_api_v1_operator_telephony_engine_simulate_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_simulate_api_v1_operator_telephony_engine_simulate_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Simulate",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/engine/simulations/{sim_id}.wav": {
+      "get": {
+        "operationId": "simulation_recording_api_v1_operator_telephony_engine_simulations__sim_id__wav_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sim_id",
+            "required": true,
+            "schema": {
+              "title": "Sim Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Simulation Recording",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/telephony/engine/test-call": {
+      "post": {
+        "description": "Peter rings `to` from one of our numbers and runs the call on the engine – the number's incoming calls are not\ntouched. Uses the number's own greeting, knowledge, tools and voice; the call is stored without creating a lead.",
+        "operationId": "test_call_api_v1_operator_telephony_engine_test_call_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EngineTestCallIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Test Call",
+        "tags": [
+          "telephony-operator"
+        ]
+      }
+    },
     "/api/v1/operator/telephony/jobs": {
       "get": {
         "operationId": "jobs_api_v1_operator_telephony_jobs_get",
@@ -15279,6 +15701,26 @@
           }
         },
         "summary": "Elevenlabs Tool",
+        "tags": [
+          "webhooks"
+        ]
+      }
+    },
+    "/api/v1/webhooks/engine/twiml": {
+      "post": {
+        "description": "Twilio's voice webhook for a number pointed at the engine. The signed token in the URL names the number.",
+        "operationId": "twiml_api_v1_webhooks_engine_twiml_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Twiml",
         "tags": [
           "webhooks"
         ]

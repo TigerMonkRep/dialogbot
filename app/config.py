@@ -97,6 +97,11 @@ class Settings(BaseSettings):
     # Stemmetest (docs/voice/stemmetest.md): the extra recognisers compared against Speechmatics. ElevenLabs Scribe uses
     # ELEVENLABS_API_KEY below. Server-side only; never returned by any endpoint.
     soniox_api_key: str | None = Field(default=None, alias="SONIOX_API_KEY")
+    # Dialogbot's own call engine (app/modules/callengine): Twilio → Soniox → Claude → ElevenLabs, no Vapi.
+    # ENGINE_MODEL: the dialogue model (default: VAPI_MODEL, else the fast phone default). ENGINE_SONIOX_ENDPOINT_JSON:
+    # Soniox endpoint tuning, e.g. {"max_endpoint_delay_ms": 1500}; unset = Soniox' default.
+    engine_model: str | None = Field(default=None, alias="ENGINE_MODEL")
+    engine_soniox_endpoint_json: str | None = Field(default=None, alias="ENGINE_SONIOX_ENDPOINT_JSON")
     stemmetest_audio_dir: str | None = Field(default=None, alias="STEMMETEST_AUDIO_DIR")  # human recordings per case
     # Optional USD per audio hour per recogniser, e.g. {"soniox": 0.12}: filled in from the provider's own price page.
     # Unset = the run reports audio seconds and says "pris ikke angivet" rather than guessing a price.

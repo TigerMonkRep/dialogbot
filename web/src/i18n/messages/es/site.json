@@ -40,19 +40,40 @@
       "title": "El cliente llama. Dialogbot responde. Usted recibe el aviso.",
       "lead": "Una llamada sin atender es un cliente perdido: la mayoría no vuelve a llamar. Esa es la sensación de la que le libra Dialogbot: estar subido a una escalera o con un cliente en la silla y oír el teléfono sin poder cogerlo.",
       "steps": [
-        { "title": "El cliente llama, como siempre", "text": "A su propio número. Si está ocupado o ha cerrado, Dialogbot contesta en menos de dos segundos y se presenta como su recepcionista." },
-        { "title": "Responde y reserva", "text": "Según los servicios, precios y horarios que usted mismo ha aprobado. Nunca se lo inventa. Si el cliente necesita una cita, busca un hueco libre en su calendario y envía un SMS." },
-        { "title": "Usted recibe un aviso", "text": "Nombre, número y motivo de la llamada, al instante por SMS o correo electrónico, y un informe resumido cada día. Si hay algo que no puede resolver, le toma el recado." }
+        {
+          "title": "El cliente llama, como siempre",
+          "text": "A su propio número. Si está ocupado o ha cerrado, Dialogbot contesta en menos de dos segundos y se presenta como su recepcionista."
+        },
+        {
+          "title": "Responde y reserva",
+          "text": "Según los servicios, precios y horarios que usted mismo ha aprobado. Nunca se lo inventa. Si el cliente necesita una cita, busca un hueco libre en su calendario y envía un SMS."
+        },
+        {
+          "title": "Usted recibe un aviso",
+          "text": "Nombre, número y motivo de la llamada, al instante por SMS o correo electrónico, y un informe resumido cada día. Si hay algo que no puede resolver, le toma el recado."
+        }
       ]
     },
     "features": {
       "eyebrow": "Lo que hace",
       "title": "Cuatro funciones, un recepcionista",
       "items": [
-        { "title": "Atiende el teléfono", "text": "Las 24 horas, en español o en el idioma del cliente, con la voz que usted elija. Dice con honestidad que es un asistente digital si el cliente lo pregunta." },
-        { "title": "Reserva citas", "text": "Busca huecos libres en Google Calendar o Microsoft 365, reserva, cambia y cancela citas, y envía la confirmación por SMS." },
-        { "title": "Responde en su web", "text": "El mismo conocimiento como chat en su página: los clientes que preguntan por precios y horarios reciben respuesta al instante, también por la noche. Una línea de código y listo." },
-        { "title": "Llama a sus clientes", "text": "Hace seguimiento de presupuestos o recuerda revisiones, solo a clientes que han dado su consentimiento. 4 kr. por llamada + 2 kr. por minuto." }
+        {
+          "title": "Atiende el teléfono",
+          "text": "Las 24 horas, en español o en el idioma del cliente, con la voz que usted elija. Dice con honestidad que es un asistente digital si el cliente lo pregunta."
+        },
+        {
+          "title": "Reserva citas",
+          "text": "Busca huecos libres en Google Calendar o Microsoft 365, reserva, cambia y cancela citas, y envía la confirmación por SMS."
+        },
+        {
+          "title": "Responde en su web",
+          "text": "El mismo conocimiento como chat en su página: los clientes que preguntan por precios y horarios reciben respuesta al instante, también por la noche. Una línea de código y listo."
+        },
+        {
+          "title": "Llama a sus clientes",
+          "text": "Hace seguimiento de presupuestos o recuerda revisiones, solo a clientes que han dado su consentimiento. 4 kr. por llamada + 2 kr. por minuto."
+        }
       ],
       "note": "Todo lo que dice se basa en información que usted ha aprobado, y cualquier cambio se lo muestra primero: antes → después, «¿Aprobar?»."
     },
@@ -107,9 +128,18 @@
     },
     "ld": {
       "appDescription": "Dialogbot es un recepcionista con IA que atiende el teléfono y el chat de su empresa las 24 horas, en el idioma de sus clientes: responde con su propia información, reserva citas y reúne todas las consultas. Le guiamos durante toda la configuración.",
-      "subscription": { "name": "Suscripción", "description": "Al mes, IVA no incluido, con 300 minutos de llamadas entrantes. Sin permanencia." },
-      "campaign": { "name": "Llamadas salientes de campaña", "description": "Por llamada saliente, IVA no incluido, más 2 kr. por minuto de conversación iniciado" },
-      "setup": { "name": "Configuración por los especialistas de Dialogbot", "description": "Pago único, IVA no incluido: configuración a medida e integración con sus propios sistemas. La configuración por su cuenta está incluida en la suscripción." }
+      "subscription": {
+        "name": "Suscripción",
+        "description": "Al mes, IVA no incluido, con 300 minutos de llamadas entrantes. Sin permanencia."
+      },
+      "campaign": {
+        "name": "Llamadas salientes de campaña",
+        "description": "Por llamada saliente, IVA no incluido, más 2 kr. por minuto de conversación iniciado"
+      },
+      "setup": {
+        "name": "Configuración por los especialistas de Dialogbot",
+        "description": "Pago único, IVA no incluido: configuración a medida e integración con sus propios sistemas. La configuración por su cuenta está incluida en la suscripción."
+      }
     }
   },
   "guide": {
@@ -127,10 +157,22 @@
       "demo": "Escuche una demo"
     },
     "faq": [
-      { "q": "¿Suena como un robot?", "a": "No. Dialogbot habla un español natural y siempre se presenta como recepcionista digital, para que el cliente sepa con quién habla. Escuche la demo de arriba." },
-      { "q": "¿Tengo que cambiar de número de teléfono?", "a": "No. Conserva su número y lo desvía: siempre o solo cuando no contesta. Le enseñamos cómo en el paso 3." },
-      { "q": "¿Y si no sabe responder?", "a": "Entonces toma un recado con nombre, número y motivo y se lo envía al instante. Nunca se inventa precios ni citas que usted no le haya dado." },
-      { "q": "¿Tengo permanencia?", "a": "No. La tarifa fija se puede cancelar mes a mes, y la modalidad por contacto no tiene coste fijo." }
+      {
+        "q": "¿Suena como un robot?",
+        "a": "No. Dialogbot habla un español natural y siempre se presenta como recepcionista digital, para que el cliente sepa con quién habla. Escuche la demo de arriba."
+      },
+      {
+        "q": "¿Tengo que cambiar de número de teléfono?",
+        "a": "No. Conserva su número y lo desvía: siempre o solo cuando no contesta. Le enseñamos cómo en el paso 3."
+      },
+      {
+        "q": "¿Y si no sabe responder?",
+        "a": "Entonces toma un recado con nombre, número y motivo y se lo envía al instante. Nunca se inventa precios ni citas que usted no le haya dado."
+      },
+      {
+        "q": "¿Tengo permanencia?",
+        "a": "No. La tarifa fija se puede cancelar mes a mes, y la modalidad por contacto no tiene coste fijo."
+      }
     ],
     "partsTitle": "Necesitará",
     "hero": {
@@ -145,7 +187,11 @@
     "heroCard": {
       "step": "Paso 1 de 3",
       "title": "Háblenos de su empresa",
-      "parts": ["número de teléfono", "horario", "a qué se dedican"],
+      "parts": [
+        "número de teléfono",
+        "horario",
+        "a qué se dedican"
+      ],
       "hours": "Lun–vie 8–17"
     },
     "steps": {
@@ -153,9 +199,30 @@
       "title": "Cómo construirlo, en 3 pasos",
       "lead": "Sin apps que instalar, sin código. Cada paso le muestra exactamente qué necesita y qué ocurre.",
       "items": [
-        { "title": "Háblenos de su empresa", "parts": ["su número de teléfono", "horario", "lo que más le preguntan"], "text": "Rellene un breve formulario o cuéntenoslo por teléfono. Son 5 minutos." },
-        { "title": "Lo construimos y probamos juntos", "parts": ["videollamada con nosotros", "llamada de prueba a su nuevo recepcionista"], "text": "Configuramos la voz, las respuestas y las reservas mientras usted lo ve. Usted mismo llama y comprueba que funciona." },
-        { "title": "Actívelo y vuelva al trabajo", "parts": ["desvío de su número (le enseñamos cómo)"], "text": "A partir de ahora recibirá un SMS o un correo cada vez que haya una cita o un recado para usted." }
+        {
+          "title": "Háblenos de su empresa",
+          "parts": [
+            "su número de teléfono",
+            "horario",
+            "lo que más le preguntan"
+          ],
+          "text": "Rellene un breve formulario o cuéntenoslo por teléfono. Son 5 minutos."
+        },
+        {
+          "title": "Lo construimos y probamos juntos",
+          "parts": [
+            "videollamada con nosotros",
+            "llamada de prueba a su nuevo recepcionista"
+          ],
+          "text": "Configuramos la voz, las respuestas y las reservas mientras usted lo ve. Usted mismo llama y comprueba que funciona."
+        },
+        {
+          "title": "Actívelo y vuelva al trabajo",
+          "parts": [
+            "desvío de su número (le enseñamos cómo)"
+          ],
+          "text": "A partir de ahora recibirá un SMS o un correo cada vez que haya una cita o un recado para usted."
+        }
       ],
       "duration": "unos 30 min",
       "switchOn": "Dialogbot: ACTIVADO",
@@ -167,10 +234,22 @@
       "title": "Así es una llamada cuando ya está construido",
       "lead": "Cada llamada sigue la misma línea sencilla. Ve todas las consultas en un único resumen y siempre puede corregir lo que Dialogbot puede decir.",
       "items": [
-        { "title": "El cliente llama", "text": "También fuera del horario, cuando está en un trabajo o tiene clientes en la tienda." },
-        { "title": "Dialogbot responde", "text": "En el idioma del cliente, con su nombre, precios y horarios, y sin hacerle esperar." },
-        { "title": "Reserva o toma un recado", "text": "Huecos libres en su calendario, o un recado con nombre, número y motivo." },
-        { "title": "Usted recibe el aviso", "text": "SMS o correo al instante. Devuelve la llamada cuando le venga bien." }
+        {
+          "title": "El cliente llama",
+          "text": "También fuera del horario, cuando está en un trabajo o tiene clientes en la tienda."
+        },
+        {
+          "title": "Dialogbot responde",
+          "text": "En el idioma del cliente, con su nombre, precios y horarios, y sin hacerle esperar."
+        },
+        {
+          "title": "Reserva o toma un recado",
+          "text": "Huecos libres en su calendario, o un recado con nombre, número y motivo."
+        },
+        {
+          "title": "Usted recibe el aviso",
+          "text": "SMS o correo al instante. Devuelve la llamada cuando le venga bien."
+        }
       ]
     },
     "bricks": {
@@ -178,12 +257,32 @@
       "title": "Elija las piezas que necesita",
       "lead": "Empiece por el teléfono. Añada más a medida que las necesite: encajan entre sí.",
       "startHere": "Empiece aquí",
-      "phone": { "title": "Teléfono", "text": "Atiende todas las llamadas en el idioma del cliente y con el nombre de su empresa. Le pasa la llamada cuando es urgente.", "start": "Empezar con recepción" },
-      "webchat": { "title": "Chat web", "text": "Un pequeño chat en su web que responde al instante y recoge datos de contacto." },
-      "booking": { "title": "Reservas", "text": "Busca huecos libres en su calendario y confirma la cita al cliente por SMS." },
-      "sms": { "title": "Respuesta por SMS", "text": "Las llamadas perdidas reciben un SMS al instante, para que el cliente sepa que le devolverán la llamada." },
-      "campaigns": { "title": "Campañas", "text": "Llame o escriba a sus clientes actuales, por ejemplo para una revisión o una nueva oferta. Usted siempre lo aprueba antes.", "start": "Empezar con seguimiento de clientes" },
-      "overview": { "title": "Resumen", "text": "Todas las llamadas, chats y citas en un solo lugar. Vea qué se dijo y qué queda por responder." }
+      "phone": {
+        "title": "Teléfono",
+        "text": "Atiende todas las llamadas en el idioma del cliente y con el nombre de su empresa. Le pasa la llamada cuando es urgente.",
+        "start": "Empezar con recepción"
+      },
+      "webchat": {
+        "title": "Chat web",
+        "text": "Un pequeño chat en su web que responde al instante y recoge datos de contacto."
+      },
+      "booking": {
+        "title": "Reservas",
+        "text": "Busca huecos libres en su calendario y confirma la cita al cliente por SMS."
+      },
+      "sms": {
+        "title": "Respuesta por SMS",
+        "text": "Las llamadas perdidas reciben un SMS al instante, para que el cliente sepa que le devolverán la llamada."
+      },
+      "campaigns": {
+        "title": "Campañas",
+        "text": "Llame o escriba a sus clientes actuales, por ejemplo para una revisión o una nueva oferta. Usted siempre lo aprueba antes.",
+        "start": "Empezar con seguimiento de clientes"
+      },
+      "overview": {
+        "title": "Resumen",
+        "text": "Todas las llamadas, chats y citas en un solo lugar. Vea qué se dijo y qué queda por responder."
+      }
     },
     "systems": {
       "eyebrow": "Compatible con su sistema",
@@ -209,18 +308,30 @@
         "name": "Suscripción",
         "from": "Desde",
         "unit": "kr./mes",
-        "points": ["Teléfono, chat y reservas incluidos", "Sin precio por contacto", "Cancelación mes a mes"],
+        "points": [
+          "Teléfono, chat y reservas incluidos",
+          "Sin precio por contacto",
+          "Cancelación mes a mes"
+        ],
         "cta": "Empezar"
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
         "unit": "kr. por llamada saliente",
-        "points": ["Solo si quiere que Dialogbot haga llamadas", "Los contactos han aceptado expresamente que se les llame", "Máximo 2 intentos por contacto: verá el precio máximo antes de empezar"]
+        "points": [
+          "Solo si quiere que Dialogbot haga llamadas",
+          "Los contactos han aceptado expresamente que se les llame",
+          "Máximo 2 intentos por contacto: verá el precio máximo antes de empezar"
+        ]
       },
       "setup": {
         "name": "Configuración por nuestros especialistas",
         "unit": "kr. pago único",
-        "points": ["Solo si no quiere hacerlo usted mismo: los tres pasos están incluidos en la suscripción", "Configuración a medida e integración con sus propios sistemas y necesidades", "Conectamos el calendario, CRM o sistema de reservas, cargamos la información y los precios, entrenamos la voz y lo probamos juntos antes de activarlo"]
+        "points": [
+          "Solo si no quiere hacerlo usted mismo: los tres pasos están incluidos en la suscripción",
+          "Configuración a medida e integración con sus propios sistemas y necesidades",
+          "Conectamos el calendario, CRM o sistema de reservas, cargamos la información y los precios, entrenamos la voz y lo probamos juntos antes de activarlo"
+        ]
       }
     },
     "demo": {
@@ -318,7 +429,11 @@
       "ringing": "Llamando al {number}…",
       "presentBefore": "Me presento como recepcionista de ",
       "presentAfter": ". Pregúnteme por precios, horarios o una cita.",
-      "sideSteps": ["Cuente al chat quiénes son", "Conteste el teléfono y pregunte como un cliente", "¿Le gusta? Entonces construimos el de verdad"],
+      "sideSteps": [
+        "Cuente al chat quiénes son",
+        "Conteste el teléfono y pregunte como un cliente",
+        "¿Le gusta? Entonces construimos el de verdad"
+      ],
       "sideNote": "El mismo chat le acompaña después: cuando diga que sí, le guía por la configuración, conecta su calendario y lo prueba todo con usted."
     }
   },
@@ -382,13 +497,12 @@
   },
   "video": {
     "title": "Vea lo que hace Dialogbot",
-    "posterAlt": "Dialogbot atiende el teléfono de una empresa, explicado en 70 segundos",
-    "description": "Dialogbot explicado en 70 segundos: atiende el teléfono, reserva citas, responde en su web, y usted aprueba todo lo que puede decir.",
-    "playAria": "{title}: reproducir el vídeo (70 segundos)",
-    "short": "70 s",
-    "chipMeta": "70 segundos · con subtítulos · explica exactamente lo que ofrecemos",
+    "posterAlt": "Dialogbot atiende el teléfono de una empresa, explicado en 90 segundos",
+    "description": "Dialogbot explicado en 90 segundos: atiende el teléfono, reserva citas, responde en su web, y usted aprueba todo lo que puede decir.",
+    "playAria": "{title}: reproducir el vídeo (90 segundos)",
+    "short": "90 s",
+    "chipMeta": "90 segundos · con subtítulos · explica exactamente lo que ofrecemos",
     "close": "Cerrar el vídeo",
-    "captionsLabel": "Danés",
     "unsupported": "Su navegador no puede reproducir el vídeo.",
     "download": "Descargar el vídeo",
     "soundsGood": "¿Le parece interesante para su empresa?",

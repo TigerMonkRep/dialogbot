@@ -1,0 +1,185 @@
+{
+  "voice": [
+    [
+      "Wenn Sie alle Hände voll zu tun haben – wer geht ans Telefon?",
+      "Dialogbot kümmert sich um Ihre Kunden,",
+      "während Sie Ihre Arbeit machen."
+    ],
+    [
+      "Ihr KI-Assistent beantwortet Fragen zu Ihrem Unternehmen, Ihren Preisen und Öffnungszeiten.",
+      "Ihre Telefonnummer behalten Sie."
+    ],
+    [
+      "Ein Kunde möchte ein Angebot?",
+      "Dialogbot findet einen freien Termin in Ihrem Kalender,",
+      "bucht den Besuch und schickt eine SMS-Bestätigung."
+    ],
+    [
+      "Derselbe Assistent hilft auch auf Ihrer Website.",
+      "Und mit Einwilligung Ihrer Kunden starten Sie Anrufkampagnen.",
+      "Liste, Text und Preis geben Sie vorher frei."
+    ],
+    [
+      "Sie bestimmen, was er sagen und tun darf.",
+      "Schreiben Sie einfach: Am Freitag haben wir zu.",
+      "Änderung ansehen und freigeben.",
+      "Ist er unsicher, nimmt er eine Nachricht auf."
+    ],
+    [
+      "Anrufe, Termine und Nachrichten auf dem Handy.",
+      "Die Tagesübersicht per E-Mail.",
+      "Weniger Verwaltung. Mehr Zeit für Ihre Kunden."
+    ],
+    [
+      "In drei Schritten startklar:",
+      "Ihr Unternehmen. Ihr Kalender. Testen und einschalten.",
+      "Sie möchten Hilfe? Wir unterstützen Sie bei der Einrichtung."
+    ],
+    [
+      "Testen Sie Dialogbot selbst.",
+      "Hören Sie, wie er Ihre Kunden empfängt.",
+      "Wählen Sie Ihr Paket und legen Sie los auf dialogbot.app."
+    ]
+  ],
+  "screen": {
+    "topRight": "Ihr KI-Assistent",
+    "illustrated": "Illustriertes Beispiel",
+    "s0": {
+      "eyebrow": "Ihr nächster Kunde ruft an.",
+      "title": "Alle Hände voll?",
+      "highlight": "Wir gehen ran.",
+      "text1": "Sie machen Ihre Arbeit.",
+      "text2": "Dialogbot empfängt die Kunden.",
+      "incoming": "Eingehender Anruf",
+      "caller": "Ein neuer Kunde",
+      "callerSub": "Ihre bisherige Nummer",
+      "takes": "Dialogbot übernimmt"
+    },
+    "s1": {
+      "eyebrow": "01 / Telefon",
+      "title": "Ein Assistent, der Ihr Unternehmen kennt.",
+      "items": [
+        [
+          "Leistungen",
+          "Womit Sie Ihren Kunden helfen"
+        ],
+        [
+          "Preise",
+          "Die Preise, die Sie freigegeben haben"
+        ],
+        [
+          "Öffnungszeiten",
+          "Auch wenn sich etwas ändert"
+        ]
+      ],
+      "cardTitle": "Dialogbot antwortet",
+      "cardSub": "Ihr Unternehmen · Ihr Stil",
+      "question": "Wie kann ich helfen?",
+      "keepNumber": "Ihre Nummer bleibt"
+    },
+    "s2": {
+      "eyebrow": "02 / Buchung",
+      "title": "Vom Anruf zum Termin.",
+      "sub": "Aus einer guten Anfrage wird ein konkreter nächster Schritt.",
+      "customer": "Kunde",
+      "quote": "„Können Sie mal vorbeischauen?“",
+      "calendar": "Ihr Kalender",
+      "day": "Dienstag",
+      "time": "09:00",
+      "booked": "Besuch gebucht",
+      "smsTitle": "SMS gesendet",
+      "smsText": "Ihr Termin ist gebucht. Bis Dienstag um 9 Uhr."
+    },
+    "s3": {
+      "eyebrow": "03 / Noch mehr Hilfe",
+      "title": "Ein Assistent. Mehr Möglichkeiten.",
+      "webTitle": "Webchat auf Ihrer Website",
+      "webQ": "Was kostet ein Besuch?",
+      "webA": "Ich helfe bei Preisen und finde einen freien Termin.",
+      "campTitle": "Anrufkampagnen",
+      "consent": "Für Kunden mit Einwilligung",
+      "approveFirst": "Sie geben zuerst frei:",
+      "checks": [
+        "Liste",
+        "Skript",
+        "Preis"
+      ],
+      "approveStart": "Freigeben und starten"
+    },
+    "s4": {
+      "eyebrow": "04 / Sie haben die Kontrolle",
+      "title": "Sie entscheiden.",
+      "lines": [
+        "Ihr Wissen.",
+        "Ihre Regeln.",
+        "Ihre Freigabe."
+      ],
+      "doubt": "Im Zweifel: Nachricht an Sie",
+      "quote": "„Am Freitag haben wir zu.“",
+      "hoursLabel": "Öffnungszeiten",
+      "before": "Vorher",
+      "beforeVal": "Mo–Fr 8–17 Uhr",
+      "after": "Nachher",
+      "afterVal": "Mo–Do 8–17 Uhr · Fr geschlossen",
+      "approve": "Änderung freigeben",
+      "approved": "Änderung freigegeben",
+      "seeFirst": "Sie sehen die Änderung zuerst"
+    },
+    "s5": {
+      "eyebrow": "05 / Überblick",
+      "title": "Ihr Überblick. In der Tasche.",
+      "text1": "Weniger Verwaltung.",
+      "text2": "Mehr Zeit für Kunden.",
+      "today": "Heute",
+      "on": "Dialogbot ist aktiv",
+      "stats": [
+        [
+          "7",
+          "Anrufe"
+        ],
+        [
+          "3",
+          "Termine"
+        ],
+        [
+          "2",
+          "für Sie"
+        ]
+      ],
+      "forYou": "Für Sie",
+      "task": "Kunde wünscht ein Angebot",
+      "taskSub": "Nachricht · zurückrufen",
+      "button": "Anrufe und Termine ansehen",
+      "mailTitle": "Tagesübersicht",
+      "mailText": "Anrufe und Termine. Gesammelt per E-Mail."
+    },
+    "s6": {
+      "eyebrow": "06 / Loslegen",
+      "title": "Drei Schritte. Und los geht's.",
+      "steps": [
+        [
+          "Ihr Unternehmen",
+          "Von der Website übernehmen. Freigeben, was er wissen soll."
+        ],
+        [
+          "Ihr Kalender",
+          "Kalender verbinden. Festlegen, wann er buchen darf."
+        ],
+        [
+          "Testen und starten",
+          "Stimme wählen. Anruf testen. Einschalten, wenn Sie bereit sind."
+        ]
+      ],
+      "help": "Gerne helfen wir bei der Einrichtung."
+    },
+    "s7": {
+      "topRight": "Dialogbot selbst testen",
+      "eyebrow": "Mehr Ruhe für Ihr Geschäft",
+      "title": "Jeder Anfrage einen guten Start geben.",
+      "text": "Hören Sie, wie Dialogbot Ihre Kunden empfängt.",
+      "cta": "Dialogbot selbst testen →",
+      "domain": "dialogbot.app",
+      "domainSub": "Lösung wählen · loslegen"
+    }
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "voice": [
+    [
+      "Quand vous avez les mains prises, qui répond au téléphone ?",
+      "Dialogbot accueille vos clients",
+      "pendant que vous faites votre travail."
+    ],
+    [
+      "Votre assistant IA répond aux questions sur votre entreprise, vos tarifs et vos horaires.",
+      "Vous gardez votre numéro de téléphone."
+    ],
+    [
+      "Un client veut un devis ?",
+      "Dialogbot trouve un créneau libre dans votre agenda,",
+      "réserve la visite et envoie une confirmation par SMS."
+    ],
+    [
+      "Le même assistant vous aide sur votre site web.",
+      "Et avec l'accord de vos clients, vous pouvez lancer des campagnes d'appels.",
+      "Vous validez d'abord la liste, le texte et le prix."
+    ],
+    [
+      "Vous décidez de ce qu'il peut dire et faire.",
+      "Écrivez simplement : Nous sommes fermés vendredi.",
+      "Vérifiez la modification, puis validez.",
+      "En cas de doute, il prend un message."
+    ],
+    [
+      "Appels, rendez-vous et messages sur votre mobile.",
+      "Le récap du jour par e-mail.",
+      "Moins d'administratif. Plus de temps pour vos clients."
+    ],
+    [
+      "Lancez-vous en trois étapes :",
+      "Votre entreprise. Votre agenda. Testez et activez.",
+      "Besoin d'aide ? Nous vous aidons à tout configurer."
+    ],
+    [
+      "Essayez Dialogbot vous-même.",
+      "Écoutez comment il accueille vos clients.",
+      "Choisissez votre formule et lancez-vous sur dialogbot.app."
+    ]
+  ],
+  "screen": {
+    "topRight": "Votre assistant IA",
+    "illustrated": "Exemple illustré",
+    "s0": {
+      "eyebrow": "Votre prochain client appelle.",
+      "title": "Les mains prises ?",
+      "highlight": "On décroche pour vous.",
+      "text1": "Vous faites votre métier.",
+      "text2": "Dialogbot accueille vos clients.",
+      "incoming": "Appel entrant",
+      "caller": "Un nouveau client",
+      "callerSub": "Votre numéro actuel",
+      "takes": "Dialogbot décroche"
+    },
+    "s1": {
+      "eyebrow": "01 / Téléphone",
+      "title": "Un assistant qui connaît votre entreprise.",
+      "items": [
+        [
+          "Prestations",
+          "Ce que vous proposez à vos clients"
+        ],
+        [
+          "Tarifs",
+          "Les tarifs que vous avez validés"
+        ],
+        [
+          "Horaires",
+          "Même quand ils changent"
+        ]
+      ],
+      "cardTitle": "Dialogbot répond",
+      "cardSub": "Votre entreprise · votre style",
+      "question": "Comment puis-je vous aider ?",
+      "keepNumber": "Vous gardez votre numéro"
+    },
+    "s2": {
+      "eyebrow": "02 / Réservation",
+      "title": "De l'appel au rendez-vous.",
+      "sub": "Une bonne demande devient une étape concrète.",
+      "customer": "Le client",
+      "quote": "« Vous pouvez passer jeter un œil ? »",
+      "calendar": "Votre agenda",
+      "day": "Mardi",
+      "time": "09:00",
+      "booked": "Visite réservée",
+      "smsTitle": "SMS envoyé",
+      "smsText": "Votre rendez-vous est confirmé. À mardi, 9 h."
+    },
+    "s3": {
+      "eyebrow": "03 / Encore plus d'aide",
+      "title": "Un assistant. Plus de possibilités.",
+      "webTitle": "Chat sur votre site web",
+      "webQ": "Combien coûte une visite ?",
+      "webA": "Je vous aide sur les tarifs et je trouve un créneau.",
+      "campTitle": "Campagnes d'appels",
+      "consent": "Clients ayant donné leur accord",
+      "approveFirst": "Vous validez d'abord :",
+      "checks": [
+        "Liste",
+        "Script",
+        "Prix"
+      ],
+      "approveStart": "Valider et lancer"
+    },
+    "s4": {
+      "eyebrow": "04 / Vous gardez la main",
+      "title": "Vous décidez.",
+      "lines": [
+        "Vos infos.",
+        "Vos règles.",
+        "Votre validation."
+      ],
+      "doubt": "En cas de doute : un message pour vous",
+      "quote": "« Nous sommes fermés vendredi. »",
+      "hoursLabel": "Horaires",
+      "before": "Avant",
+      "beforeVal": "Lun–ven 8 h–17 h",
+      "after": "Après",
+      "afterVal": "Lun–jeu 8 h–17 h · ven. fermé",
+      "approve": "Valider la modification",
+      "approved": "Modification validée",
+      "seeFirst": "Vous voyez d'abord la modification"
+    },
+    "s5": {
+      "eyebrow": "05 / Vue d'ensemble",
+      "title": "Votre activité. Dans la poche.",
+      "text1": "Moins d'administratif.",
+      "text2": "Plus de temps pour vos clients.",
+      "today": "Aujourd'hui",
+      "on": "Dialogbot est activé",
+      "stats": [
+        [
+          "7",
+          "appels"
+        ],
+        [
+          "3",
+          "rendez-vous"
+        ],
+        [
+          "2",
+          "pour vous"
+        ]
+      ],
+      "forYou": "Pour vous",
+      "task": "Un client veut un devis",
+      "taskSub": "Message · à rappeler",
+      "button": "Voir appels et rendez-vous",
+      "mailTitle": "Récap du jour",
+      "mailText": "Appels et rendez-vous. Réunis par e-mail."
+    },
+    "s6": {
+      "eyebrow": "06 / Démarrer",
+      "title": "Trois étapes. Et c'est parti.",
+      "steps": [
+        [
+          "Votre entreprise",
+          "Importez depuis votre site. Validez ce qu'il doit savoir."
+        ],
+        [
+          "Votre agenda",
+          "Connectez votre agenda. Choisissez quand il peut réserver."
+        ],
+        [
+          "Testez et activez",
+          "Choisissez une voix. Testez un appel. Activez quand vous êtes prêt."
+        ]
+      ],
+      "help": "Nous vous aidons volontiers à tout configurer."
+    },
+    "s7": {
+      "topRight": "Essayez Dialogbot",
+      "eyebrow": "Plus de sérénité pour votre activité",
+      "title": "Chaque demande mérite un bon départ.",
+      "text": "Écoutez comment Dialogbot accueille vos clients.",
+      "cta": "Essayez Dialogbot →",
+      "domain": "dialogbot.app",
+      "domainSub": "Choisissez votre formule · lancez-vous"
+    }
+  }
+}

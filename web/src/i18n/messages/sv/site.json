@@ -40,19 +40,40 @@
       "title": "Kunden ringer. Dialogbot svarar. Du får besked.",
       "lead": "Ett obesvarat samtal är en förlorad kund – de flesta ringer aldrig igen. Det är den känslan Dialogbot tar ifrån dig: att stå på stegen eller ha en kund i stolen och höra telefonen ringa utan att kunna svara.",
       "steps": [
-        { "title": "Kunden ringer – som vanligt", "text": "På ert eget nummer. Är ni upptagna eller har stängt svarar Dialogbot inom två sekunder och presenterar sig som er receptionist." },
-        { "title": "Den svarar och bokar", "text": "Utifrån de tjänster, priser och öppettider ni själva har godkänt. Den gissar aldrig. Behöver kunden en tid hittar den en ledig i er kalender och skickar sms." },
-        { "title": "Du får ett meddelande", "text": "Namn, nummer och vad det gällde – som sms eller mejl direkt, och en samlad rapport varje dag. Om det är något den inte klarar tar den ett meddelande åt dig." }
+        {
+          "title": "Kunden ringer – som vanligt",
+          "text": "På ert eget nummer. Är ni upptagna eller har stängt svarar Dialogbot inom två sekunder och presenterar sig som er receptionist."
+        },
+        {
+          "title": "Den svarar och bokar",
+          "text": "Utifrån de tjänster, priser och öppettider ni själva har godkänt. Den gissar aldrig. Behöver kunden en tid hittar den en ledig i er kalender och skickar sms."
+        },
+        {
+          "title": "Du får ett meddelande",
+          "text": "Namn, nummer och vad det gällde – som sms eller mejl direkt, och en samlad rapport varje dag. Om det är något den inte klarar tar den ett meddelande åt dig."
+        }
       ]
     },
     "features": {
       "eyebrow": "Det här kan den",
       "title": "Fyra saker, en receptionist",
       "items": [
-        { "title": "Svarar i telefon", "text": "Dygnet runt, på svenska eller kundens eget språk, med en röst ni själva väljer. Säger ärligt att den är en digital assistent om kunden frågar." },
-        { "title": "Bokar möten", "text": "Hittar lediga tider i Google Kalender eller Microsoft 365, bokar, flyttar och avbokar – och skickar bekräftelse via sms." },
-        { "title": "Svarar på webbplatsen", "text": "Samma kunskap som webbchatt på er sida: kunder som frågar om priser och öppettider får svar direkt – även på kvällen. En kodrad, sedan är den igång." },
-        { "title": "Ringer upp kunder", "text": "Följer upp offerter eller påminner om service – bara till kunder som har sagt ja. 4 kr. per samtal + 2 kr. per minut." }
+        {
+          "title": "Svarar i telefon",
+          "text": "Dygnet runt, på svenska eller kundens eget språk, med en röst ni själva väljer. Säger ärligt att den är en digital assistent om kunden frågar."
+        },
+        {
+          "title": "Bokar möten",
+          "text": "Hittar lediga tider i Google Kalender eller Microsoft 365, bokar, flyttar och avbokar – och skickar bekräftelse via sms."
+        },
+        {
+          "title": "Svarar på webbplatsen",
+          "text": "Samma kunskap som webbchatt på er sida: kunder som frågar om priser och öppettider får svar direkt – även på kvällen. En kodrad, sedan är den igång."
+        },
+        {
+          "title": "Ringer upp kunder",
+          "text": "Följer upp offerter eller påminner om service – bara till kunder som har sagt ja. 4 kr. per samtal + 2 kr. per minut."
+        }
       ],
       "note": "Allt den säger bygger på kunskap ni själva har godkänt – och varje ändring visar den er först: före → efter, «Godkänna?»."
     },
@@ -107,9 +128,18 @@
     },
     "ld": {
       "appDescription": "Dialogbot är en AI-receptionist som svarar i telefon och chatt åt ditt företag dygnet runt – på svenska och på kundernas eget språk – utifrån er egen kunskap, bokar tider och samlar in ärenden. Vi guidar er genom hela konfigurationen.",
-      "subscription": { "name": "Abonnemang", "description": "Per månad exkl. moms, inkl. 300 minuter inkommande samtal. Ingen bindningstid." },
-      "campaign": { "name": "Utgående kampanjsamtal", "description": "Per utgående samtal exkl. moms, plus 2 kr. per påbörjad samtalsminut" },
-      "setup": { "name": "Konfiguration av Dialogbots specialister", "description": "Engångsavgift, exkl. moms – skräddarsydd konfiguration och integration med egna system. Konfiguration på egen hand ingår i abonnemanget." }
+      "subscription": {
+        "name": "Abonnemang",
+        "description": "Per månad exkl. moms, inkl. 300 minuter inkommande samtal. Ingen bindningstid."
+      },
+      "campaign": {
+        "name": "Utgående kampanjsamtal",
+        "description": "Per utgående samtal exkl. moms, plus 2 kr. per påbörjad samtalsminut"
+      },
+      "setup": {
+        "name": "Konfiguration av Dialogbots specialister",
+        "description": "Engångsavgift, exkl. moms – skräddarsydd konfiguration och integration med egna system. Konfiguration på egen hand ingår i abonnemanget."
+      }
     }
   },
   "guide": {
@@ -127,10 +157,22 @@
       "demo": "Lyssna på en demo"
     },
     "faq": [
-      { "q": "Låter det som en robot?", "a": "Nej. Dialogbot talar naturlig svenska – och kundens eget språk – och presenterar sig alltid som en digital receptionist, så att kunden vet vem de pratar med. Lyssna på demon ovan." },
-      { "q": "Måste jag byta telefonnummer?", "a": "Nej. Du behåller ditt nummer och vidarekopplar det – antingen alltid eller bara när du inte svarar. Vi visar hur i steg 3." },
-      { "q": "Vad händer om den inte kan svara?", "a": "Då tar den ett meddelande med namn, nummer och ärende och skickar det till dig direkt. Den gissar aldrig om priser eller bokningar som ni inte har gett den." },
-      { "q": "Är jag bunden?", "a": "Nej. Fast pris kan sägas upp månad för månad, och per ärende har ingen fast kostnad." }
+      {
+        "q": "Låter det som en robot?",
+        "a": "Nej. Dialogbot talar naturlig svenska – och kundens eget språk – och presenterar sig alltid som en digital receptionist, så att kunden vet vem de pratar med. Lyssna på demon ovan."
+      },
+      {
+        "q": "Måste jag byta telefonnummer?",
+        "a": "Nej. Du behåller ditt nummer och vidarekopplar det – antingen alltid eller bara när du inte svarar. Vi visar hur i steg 3."
+      },
+      {
+        "q": "Vad händer om den inte kan svara?",
+        "a": "Då tar den ett meddelande med namn, nummer och ärende och skickar det till dig direkt. Den gissar aldrig om priser eller bokningar som ni inte har gett den."
+      },
+      {
+        "q": "Är jag bunden?",
+        "a": "Nej. Fast pris kan sägas upp månad för månad, och per ärende har ingen fast kostnad."
+      }
     ],
     "partsTitle": "Du behöver",
     "hero": {
@@ -145,7 +187,11 @@
     "heroCard": {
       "step": "Steg 1 av 3",
       "title": "Berätta om ditt företag",
-      "parts": ["telefonnummer", "öppettider", "vad ni gör"],
+      "parts": [
+        "telefonnummer",
+        "öppettider",
+        "vad ni gör"
+      ],
       "hours": "Mån–fre 8–17"
     },
     "steps": {
@@ -153,9 +199,30 @@
       "title": "Så bygger du den – i 3 steg",
       "lead": "Inga appar att installera, ingen kod. Varje steg visar exakt vad du behöver och vad som händer.",
       "items": [
-        { "title": "Berätta om ditt företag", "parts": ["ditt telefonnummer", "öppettider", "det ni oftast får frågor om"], "text": "Fyll i ett kort formulär – eller berätta det för oss i telefon. Det tar 5 minuter." },
-        { "title": "Vi bygger och testar tillsammans", "parts": ["videomöte med oss", "testsamtal till din nya receptionist"], "text": "Vi ställer in röst, svar och bokning medan du tittar på. Du ringer själv och hör att det fungerar." },
-        { "title": "Slå på – och gå tillbaka till jobbet", "parts": ["vidarekoppling av ditt nummer (vi visar hur)"], "text": "Från och med nu får du ett sms eller mejl varje gång det finns en bokning eller ett meddelande till dig." }
+        {
+          "title": "Berätta om ditt företag",
+          "parts": [
+            "ditt telefonnummer",
+            "öppettider",
+            "det ni oftast får frågor om"
+          ],
+          "text": "Fyll i ett kort formulär – eller berätta det för oss i telefon. Det tar 5 minuter."
+        },
+        {
+          "title": "Vi bygger och testar tillsammans",
+          "parts": [
+            "videomöte med oss",
+            "testsamtal till din nya receptionist"
+          ],
+          "text": "Vi ställer in röst, svar och bokning medan du tittar på. Du ringer själv och hör att det fungerar."
+        },
+        {
+          "title": "Slå på – och gå tillbaka till jobbet",
+          "parts": [
+            "vidarekoppling av ditt nummer (vi visar hur)"
+          ],
+          "text": "Från och med nu får du ett sms eller mejl varje gång det finns en bokning eller ett meddelande till dig."
+        }
       ],
       "duration": "ca 30 min",
       "switchOn": "Dialogbot: PÅ",
@@ -167,10 +234,22 @@
       "title": "Så ser ett samtal ut när den är byggd",
       "lead": "Varje samtal följer samma enkla linje. Du ser alla ärenden i en samlad översikt och kan alltid ändra vad Dialogbot får säga.",
       "items": [
-        { "title": "Kunden ringer", "text": "Även utanför öppettiderna, när du är ute på ett jobb eller har kunder i butiken." },
-        { "title": "Dialogbot svarar", "text": "På svenska eller kundens språk, med ert namn, era priser och öppettider – och utan att låta kunden vänta." },
-        { "title": "Bokar eller tar meddelande", "text": "Lediga tider i din kalender, eller ett meddelande med namn, nummer och ärende." },
-        { "title": "Du får besked", "text": "Sms eller mejl direkt. Du ringer tillbaka när det passar dig." }
+        {
+          "title": "Kunden ringer",
+          "text": "Även utanför öppettiderna, när du är ute på ett jobb eller har kunder i butiken."
+        },
+        {
+          "title": "Dialogbot svarar",
+          "text": "På svenska eller kundens språk, med ert namn, era priser och öppettider – och utan att låta kunden vänta."
+        },
+        {
+          "title": "Bokar eller tar meddelande",
+          "text": "Lediga tider i din kalender, eller ett meddelande med namn, nummer och ärende."
+        },
+        {
+          "title": "Du får besked",
+          "text": "Sms eller mejl direkt. Du ringer tillbaka när det passar dig."
+        }
       ]
     },
     "bricks": {
@@ -178,12 +257,32 @@
       "title": "Välj de klossar du behöver",
       "lead": "Börja med telefonen. Lägg till fler efter hand som du behöver dem – de passar ihop.",
       "startHere": "Börja här",
-      "phone": { "title": "Telefon", "text": "Besvarar alla samtal på svenska eller kundens språk, med ert namn. Kopplar vidare till dig när det brådskar.", "start": "Börja med reception" },
-      "webchat": { "title": "Webbchatt", "text": "En liten chatt på din webbplats som svarar direkt och samlar in kontaktuppgifter." },
-      "booking": { "title": "Bokning", "text": "Hittar lediga tider i din kalender och bekräftar bokningen för kunden via sms." },
-      "sms": { "title": "Sms-svar", "text": "Obesvarade samtal får ett sms direkt, så att kunden vet att ni återkommer." },
-      "campaigns": { "title": "Kampanjer", "text": "Ring eller skriv till dina befintliga kunder – t.ex. om dags för service eller ett nytt erbjudande. Du godkänner alltid först.", "start": "Börja med kunduppföljning" },
-      "overview": { "title": "Översikt", "text": "Alla samtal, chattar och bokningar på ett ställe. Se vad som sades och vad som väntar på svar." }
+      "phone": {
+        "title": "Telefon",
+        "text": "Besvarar alla samtal på svenska eller kundens språk, med ert namn. Kopplar vidare till dig när det brådskar.",
+        "start": "Börja med reception"
+      },
+      "webchat": {
+        "title": "Webbchatt",
+        "text": "En liten chatt på din webbplats som svarar direkt och samlar in kontaktuppgifter."
+      },
+      "booking": {
+        "title": "Bokning",
+        "text": "Hittar lediga tider i din kalender och bekräftar bokningen för kunden via sms."
+      },
+      "sms": {
+        "title": "Sms-svar",
+        "text": "Obesvarade samtal får ett sms direkt, så att kunden vet att ni återkommer."
+      },
+      "campaigns": {
+        "title": "Kampanjer",
+        "text": "Ring eller skriv till dina befintliga kunder – t.ex. om dags för service eller ett nytt erbjudande. Du godkänner alltid först.",
+        "start": "Börja med kunduppföljning"
+      },
+      "overview": {
+        "title": "Översikt",
+        "text": "Alla samtal, chattar och bokningar på ett ställe. Se vad som sades och vad som väntar på svar."
+      }
     },
     "systems": {
       "eyebrow": "Passar ditt system",
@@ -209,18 +308,30 @@
         "name": "Abonnemang",
         "from": "Från",
         "unit": "kr./mån.",
-        "points": ["Telefon, chatt och bokning ingår", "Inget pris per ärende", "Uppsägning månad för månad"],
+        "points": [
+          "Telefon, chatt och bokning ingår",
+          "Inget pris per ärende",
+          "Uppsägning månad för månad"
+        ],
         "cta": "Kom igång"
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
         "unit": "kr. per utgående samtal",
-        "points": ["Bara om ni vill att Dialogbot ska ringa ut", "Kontakterna har själva sagt ja till att bli uppringda", "Högst 2 försök per kontakt – ni ser det högsta priset innan ni startar"]
+        "points": [
+          "Bara om ni vill att Dialogbot ska ringa ut",
+          "Kontakterna har själva sagt ja till att bli uppringda",
+          "Högst 2 försök per kontakt – ni ser det högsta priset innan ni startar"
+        ]
       },
       "setup": {
         "name": "Konfiguration av våra specialister",
         "unit": "kr. engångsavgift",
-        "points": ["Bara om ni inte vill göra det själva – de tre stegen ingår i abonnemanget", "Skräddarsydd konfiguration och integration med era egna system och behov", "Kalender, CRM eller bokningssystem kopplas på, kunskap och priser läggs in, rösten tränas – och vi testar tillsammans innan den slås på"]
+        "points": [
+          "Bara om ni inte vill göra det själva – de tre stegen ingår i abonnemanget",
+          "Skräddarsydd konfiguration och integration med era egna system och behov",
+          "Kalender, CRM eller bokningssystem kopplas på, kunskap och priser läggs in, rösten tränas – och vi testar tillsammans innan den slås på"
+        ]
       }
     },
     "demo": {
@@ -318,7 +429,11 @@
       "ringing": "Ringer {number} …",
       "presentBefore": "Jag presenterar mig som receptionist för ",
       "presentAfter": ". Fråga mig om priser, tider eller en bokning.",
-      "sideSteps": ["Berätta för chatten vilka ni är", "Svara i telefon – fråga som en kund", "Gillar du det? Då bygger vi den riktiga"],
+      "sideSteps": [
+        "Berätta för chatten vilka ni är",
+        "Svara i telefon – fråga som en kund",
+        "Gillar du det? Då bygger vi den riktiga"
+      ],
       "sideNote": "Samma chatt följer med dig vidare: När du säger ja guidar den dig genom konfigurationen, kopplar på din kalender och testar allt tillsammans med dig."
     }
   },
@@ -382,13 +497,12 @@
   },
   "video": {
     "title": "Se vad Dialogbot kan",
-    "posterAlt": "Dialogbot svarar i telefon åt ett litet företag – förklarat på 70 sekunder",
-    "description": "Dialogbot förklarat på 70 sekunder: svarar i telefon, bokar tider, svarar på webbplatsen – och du godkänner allt den får säga.",
-    "playAria": "{title} – spela upp videon (70 sekunder)",
-    "short": "70 sek.",
-    "chipMeta": "70 sekunder · med undertexter · förklarar exakt vad vi erbjuder",
+    "posterAlt": "Dialogbot svarar i telefon åt ett litet företag – förklarat på 90 sekunder",
+    "description": "Dialogbot förklarat på 90 sekunder: svarar i telefon, bokar tider, svarar på webbplatsen – och du godkänner allt den får säga.",
+    "playAria": "{title} – spela upp videon (90 sekunder)",
+    "short": "90 sek.",
+    "chipMeta": "90 sekunder · med undertexter · förklarar exakt vad vi erbjuder",
     "close": "Stäng videon",
-    "captionsLabel": "Dansk",
     "unsupported": "Din webbläsare kan inte spela upp videon.",
     "download": "Ladda ned videon",
     "soundsGood": "Låter det som något för er?",

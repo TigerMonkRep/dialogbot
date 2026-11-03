@@ -1,0 +1,185 @@
+{
+  "voice": [
+    [
+      "Når du har hendene fulle, hvem tar telefonen da?",
+      "Dialogbot tar imot kundene dine",
+      "mens du passer jobben din."
+    ],
+    [
+      "AI-assistenten din svarer på spørsmål om bedriften din, prisene og åpningstidene.",
+      "Du beholder telefonnummeret ditt."
+    ],
+    [
+      "Vil en kunde ha et tilbud?",
+      "Dialogbot finner en ledig tid i kalenderen din,",
+      "booker besøket og sender en SMS-bekreftelse."
+    ],
+    [
+      "Den samme assistenten hjelper til på nettsiden.",
+      "Og med kundens samtykke kan du starte ringekampanjer.",
+      "Du godkjenner listen, teksten og prisen først."
+    ],
+    [
+      "Du bestemmer hva den kan si og gjøre.",
+      "Skriv bare: Vi holder stengt fredag.",
+      "Se endringen, og godkjenn.",
+      "Er den i tvil, tar den imot en beskjed."
+    ],
+    [
+      "Se samtaler, avtaler og beskjeder på mobilen.",
+      "Få dagens oversikt på e-post.",
+      "Mindre administrasjon. Mer tid til kundene."
+    ],
+    [
+      "Kom i gang i tre steg:",
+      "Bedriften din. Kalenderen din. Test og slå på.",
+      "Vil du ha hjelp? Vi hjelper deg med oppsettet."
+    ],
+    [
+      "Prøv Dialogbot selv.",
+      "Hør hvordan den tar imot kundene dine.",
+      "Velg løsningen din, og kom i gang på dialogbot.app."
+    ]
+  ],
+  "screen": {
+    "topRight": "Din AI-assistent",
+    "illustrated": "Illustrert eksempel",
+    "s0": {
+      "eyebrow": "Din neste kunde ringer.",
+      "title": "Hendene fulle?",
+      "highlight": "Vi tar telefonen.",
+      "text1": "Du passer jobben.",
+      "text2": "Dialogbot tar imot kundene.",
+      "incoming": "Innkommende anrop",
+      "caller": "En ny kunde",
+      "callerSub": "Ditt eksisterende nummer",
+      "takes": "Dialogbot tar den"
+    },
+    "s1": {
+      "eyebrow": "01 / Telefon",
+      "title": "En assistent som kjenner bedriften din.",
+      "items": [
+        [
+          "Tjenester",
+          "Det dere hjelper kundene med"
+        ],
+        [
+          "Priser",
+          "Prisene du har godkjent"
+        ],
+        [
+          "Åpningstider",
+          "Også når noe endrer seg"
+        ]
+      ],
+      "cardTitle": "Dialogbot svarer",
+      "cardSub": "Din bedrift · din måte",
+      "question": "Hvordan kan jeg hjelpe?",
+      "keepNumber": "Du beholder nummeret ditt"
+    },
+    "s2": {
+      "eyebrow": "02 / Booking",
+      "title": "Fra samtale til avtale.",
+      "sub": "En god henvendelse blir et konkret neste steg.",
+      "customer": "Kunden",
+      "quote": "«Kan dere komme og ta en titt?»",
+      "calendar": "Kalenderen din",
+      "day": "Tirsdag",
+      "time": "09:00",
+      "booked": "Besøk booket",
+      "smsTitle": "SMS sendt",
+      "smsText": "Avtalen din er booket. Vi ses tirsdag kl. 9."
+    },
+    "s3": {
+      "eyebrow": "03 / Flere måter å hjelpe på",
+      "title": "Samme assistent. Flere muligheter.",
+      "webTitle": "Webchat på nettsiden din",
+      "webQ": "Hva koster et besøk?",
+      "webA": "Jeg hjelper deg med priser og finner en ledig tid.",
+      "campTitle": "Ringekampanjer",
+      "consent": "Til kunder med samtykke",
+      "approveFirst": "Du godkjenner først:",
+      "checks": [
+        "Liste",
+        "Manus",
+        "Pris"
+      ],
+      "approveStart": "Godkjenn og start"
+    },
+    "s4": {
+      "eyebrow": "04 / Du har kontrollen",
+      "title": "Du bestemmer.",
+      "lines": [
+        "Din kunnskap.",
+        "Dine regler.",
+        "Din godkjenning."
+      ],
+      "doubt": "Ved tvil: beskjed til deg",
+      "quote": "«Vi holder stengt fredag.»",
+      "hoursLabel": "Åpningstider",
+      "before": "Før",
+      "beforeVal": "Man–fre 08–17",
+      "after": "Etter",
+      "afterVal": "Man–tor 08–17 · fredag stengt",
+      "approve": "Godkjenn endring",
+      "approved": "Endring godkjent",
+      "seeFirst": "Du ser endringen først"
+    },
+    "s5": {
+      "eyebrow": "05 / Oversikt",
+      "title": "Din oversikt. I lomma.",
+      "text1": "Mindre administrasjon.",
+      "text2": "Mer tid til kundene.",
+      "today": "I dag",
+      "on": "Dialogbot er på",
+      "stats": [
+        [
+          "7",
+          "samtaler"
+        ],
+        [
+          "3",
+          "avtaler"
+        ],
+        [
+          "2",
+          "til deg"
+        ]
+      ],
+      "forYou": "Til deg",
+      "task": "Kunde ønsker et tilbud",
+      "taskSub": "Beskjed · ring tilbake",
+      "button": "Se samtaler og avtaler",
+      "mailTitle": "Dagens oversikt",
+      "mailText": "Samtaler og avtaler. Samlet på e-post."
+    },
+    "s6": {
+      "eyebrow": "06 / Kom i gang",
+      "title": "Tre steg. Så er du i gang.",
+      "steps": [
+        [
+          "Bedriften din",
+          "Hent fra nettsiden. Godkjenn det den skal vite."
+        ],
+        [
+          "Kalenderen din",
+          "Koble til kalenderen. Velg når den kan booke."
+        ],
+        [
+          "Test og slå på",
+          "Velg stemme. Test en samtale. Slå på når du er klar."
+        ]
+      ],
+      "help": "Vi hjelper gjerne med oppsettet."
+    },
+    "s7": {
+      "topRight": "Prøv Dialogbot selv",
+      "eyebrow": "Mer ro til å drive bedriften din",
+      "title": "Gi hver henvendelse en god start.",
+      "text": "Hør hvordan Dialogbot tar imot kundene dine.",
+      "cta": "Prøv Dialogbot selv →",
+      "domain": "dialogbot.app",
+      "domainSub": "Velg løsning · kom i gang"
+    }
+  }
+}

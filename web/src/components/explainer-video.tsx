@@ -34,7 +34,7 @@ export function ExplainerVideo({ variant = "chip" }: { variant?: "chip" | "butto
         <button type="button" onClick={() => setOpen(true)} aria-label={`${VIDEO.title} – afspil videoen (70 sekunder)`}
           className="group relative block w-full max-w-full aspect-video rounded-[20px] overflow-hidden border-2 border-ink bg-panel shadow-block text-left cursor-pointer p-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={VIDEO.poster} alt="" width={1920} height={1080} className="block w-full h-full object-cover" />
+          <img src={VIDEO.thumb} srcSet={`${VIDEO.thumb} 640w, ${VIDEO.poster} 1920w`} sizes="(min-width: 1024px) 640px, 100vw" alt={VIDEO.posterAlt} width={1920} height={1080} fetchPriority="high" decoding="async" className="block w-full h-full object-cover" />
           <span className="absolute inset-0 flex items-center justify-center">
             <span className="inline-flex items-center gap-3 pl-4 pr-6 min-h-16 rounded-full bg-ink text-white font-display font-bold text-lg border-2 border-ink shadow-block-highlight group-hover:bg-accent transition-colors">
               <span className="inline-flex w-10 h-10 rounded-full bg-accent text-white items-center justify-center"><PlayIcon size={18} /></span>

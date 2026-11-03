@@ -1,3 +1,4 @@
+import { FounderBlock } from "@/components/founder-block";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL, SiteChrome } from "@/components/site-chrome";
@@ -10,7 +11,7 @@ import { ExplainerVideo } from "@/components/explainer-video";
  *  FAQ and the dark CTA. "Klar" is only claimed for Google Kalender, Microsoft 365 and SMS/e-mail. */
 export const metadata: Metadata = {
   title: "Byg din AI-receptionist i 3 trin – byggevejledning",
-  description: "Byggevejledningen til Dialogbot: hvad du skal bruge, hvad den kan, hvad den koster – og de 3 trin til din egen AI-receptionist på dansk. Fra 2.495 kr./md.",
+  description: "Byggevejledningen til Dialogbot: hvad du skal bruge, hvad den kan, hvad den koster – og de 3 trin til din egen AI-receptionist på dansk. 2.495 kr./md.",
   alternates: { canonical: "/byggevejledning" },
   openGraph: { url: "/byggevejledning", title: "Byg din AI-receptionist i 3 trin | Dialogbot", images: ["/opengraph-image.png"] },
 };
@@ -116,7 +117,7 @@ export default function Page() {
               <ExplainerVideo variant="button" />
               <a href="#demo" className={btnOutline}><PlayIcon size={18} />Hør Dialogbot tage telefonen</a>
             </div>
-            <p className="m-0 text-sm text-muted">Fra 2.495 kr./md. · ekskl. moms</p>
+            <p className="m-0 text-sm text-muted">2.495 kr./md. · ekskl. moms</p>
           </div>
 
           {/* Hero illustration: a manual step card */}
@@ -365,6 +366,8 @@ export default function Page() {
           </div>
         </div>
       </section>
+
+      <div className={`${container} py-10`}><FounderBlock /></div>
 
       {/* CTA */}
       <section id="kontakt" className="bg-ink text-white scroll-mt-6">

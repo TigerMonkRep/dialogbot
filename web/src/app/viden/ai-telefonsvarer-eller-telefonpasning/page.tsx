@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CompareTable } from "@/components/compare-table";
 import { SeoPage } from "@/components/seo-page";
 
 const path = "/viden/ai-telefonsvarer-eller-telefonpasning";
@@ -23,6 +24,13 @@ export default function Page() {
           <p>En AI-telefonsvarer som <Link href="/ai-telefonsvarer">Dialogbot</Link> taler med kunden på dansk døgnet rundt, svarer ud fra din egen godkendte viden og kan booke tider og sende SMS-bekræftelser. Du får en skrevet opsummering af hver samtale i stedet for en talebesked.</p>
           <p>Til gengæld er den ikke et menneske – den siger det ærligt og sender sager, den ikke kan svare på, videre til dig.</p>
         </> },
+        { title: "Sammenlignet", body: <CompareTable other="Telefonpasning" rows={[
+          ["Hvem svarer", "AI på dansk, kun ud fra viden I har godkendt", "Et menneske, der ikke altid kender jeres ydelser"],
+          ["Åbningstid", "Døgnet rundt", "Typisk almindelig arbejdstid"],
+          ["Booking", "Direkte i jeres kalender, med SMS-bekræftelse", "Normalt en besked, I selv følger op på"],
+          ["Pris", "2.495 kr./md. ekskl. moms, ingen pris pr. henvendelse", "Typisk pr. opkald eller pr. måned"],
+          ["Besked til jer", "Skriftlig opsummering af hver samtale og en daglig rapport", "En besked pr. opkald"],
+        ]} /> },
         { title: "Sådan vælger du", body: <ul>
           <li><strong>Få opkald og kun om dagen?</strong> En telefonsvarer kan være nok.</li>
           <li><strong>Vigtigt med et menneske i røret?</strong> Telefonpasning – men tjek åbningstiden.</li>
@@ -33,6 +41,7 @@ export default function Page() {
       faq={[
         ["Kan en AI-telefonsvarer erstatte telefonpasning?", "For de fleste faste henvendelser ja: den svarer, afklarer behovet og booker. Komplekse sager sendes videre til jer."],
         ["Er en AI-telefonsvarer tilgængelig om natten?", "Ja, Dialogbot tager telefonen døgnet rundt."],
+        ["Hvad er billigst: telefonpasning eller Dialogbot?", "Telefonpasning afregnes typisk pr. opkald eller pr. måned. Dialogbot er ét abonnement til 2.495 kr. om måneden ekskl. moms med 300 minutters indgående opkald og ingen pris pr. henvendelse. Se også /viden/dialogbot-vs-vocalis."],
         ["Kan jeg beholde mit nummer?", "Ja. Du viderestiller dit nummer til Dialogbot, når du er optaget eller har lukket."],
       ]} />
   );

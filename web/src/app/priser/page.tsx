@@ -3,8 +3,8 @@ import Link from "next/link";
 import { SeoPage } from "@/components/seo-page";
 
 export const metadata: Metadata = {
-  title: "Priser – AI-receptionist fra 2.495 kr. om måneden",
-  description: "Se prisen på Dialogbot: ét abonnement fra 2.495 kr. om måneden ekskl. moms med 300 minutters indgående opkald. Telefon, chat, booking og personlig opsætning er med. Udgående kampagneopkald koster 4 kr. pr. opkald.",
+  title: "Priser – AI-receptionist til 2.495 kr. om måneden",
+  description: "Se prisen på Dialogbot: ét abonnement til 2.495 kr. om måneden ekskl. moms med 300 minutters indgående opkald. Telefon, chat, booking og personlig opsætning er med. Udgående kampagneopkald koster 4 kr. pr. opkald.",
   alternates: { canonical: "/priser" },
   openGraph: { url: "/priser", title: "Priser på AI-receptionist | Dialogbot", images: ["/opengraph-image.png"] },
 };
@@ -12,13 +12,18 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <SeoPage path="/priser" kicker="Priser"
-      title="Ét abonnement – fra 2.495 kr. om måneden"
+      title="Ét abonnement – 2.495 kr. om måneden"
       lead="Én pris, den fulde Dialogbot: AI-receptionist på telefonen, chatbot på hjemmesiden, booking og en opsummering af hver henvendelse. Alle priser er ekskl. moms."
-      points={["Fra 2.495 kr. om måneden – ét abonnement", "Ingen pris pr. henvendelse", "300 minutters indgående opkald om måneden er med", "Udgående kampagneopkald: 4 kr. pr. opkald + 2 kr. pr. minut", "Ingen binding", "Gør-det-selv-opsætning er med – specialist-opsætning 5.000 kr."]}
+      points={["2.495 kr. om måneden – ét abonnement", "Ingen pris pr. henvendelse", "300 minutters indgående opkald om måneden er med", "Udgående kampagneopkald: 4 kr. pr. opkald + 2 kr. pr. minut", "Ingen binding", "Gør-det-selv-opsætning er med – specialist-opsætning 5.000 kr."]}
       sections={[
         { title: "Abonnementet", body: <>
-          <p><strong>Fra 2.495 kr. om måneden</strong> ekskl. moms. Der er ingen pris pr. henvendelse, og <strong>300 minutters indgående opkald om måneden er med</strong> – det rækker til de fleste små virksomheder. Taler jeres kunder mere med assistenten end det, koster hvert påbegyndt minut derudover 1,50 kr. I kan altid se jeres forbrug i Dialogbot.</p>
-          <p>Passer til virksomheder, hvor telefonen ringer, mens I har travlt: håndværkere, klinikker, saloner, værksteder og rådgivere.</p>
+          <p><strong>2.495 kr. om måneden</strong> ekskl. moms. Der er ingen pris pr. henvendelse, og <strong>300 minutters indgående opkald om måneden er med</strong> – det rækker til de fleste små virksomheder. Taler jeres kunder mere med assistenten end det, koster hvert påbegyndt minut derudover 1,50 kr. I kan altid se jeres forbrug i Dialogbot.</p>
+          <p>Prisen på en telefonpasning – men en receptionist, der også booker tiderne i jeres kalender og sender en besked om hvert opkald.</p>
+          <p>Passer til virksomheder, hvor telefonen ringer, mens I har travlt: håndværkere, klinikker, saloner, værksteder og rådgivere. Vil I høre den først, kan I <Link href="/proev">lade Dialogbot ringe til jer</Link> – det tager to minutter og kræver ingen tilmelding.</p>
+        </> },
+        { title: "Hvorfor vi koster mere end en chatbot", body: <>
+          <p>Der findes billigere løsninger fra omkring 400 kr. om måneden. Mange af dem prissætter efter minutter eller henvendelser, så regningen kan svinge fra måned til måned.</p>
+          <p>Dialogbot svarer <strong>kun ud fra viden, I selv har godkendt</strong>, og viser jer enhver ændring først: før → efter, «Godkend?». Den booker, flytter og aflyser tider i Google Kalender eller Microsoft 365, sender SMS-bekræftelse og giver jer en besked om hvert opkald og en rapport hver dag. Det er derfor, den koster mere – og I ved på forhånd, hvad regningen bliver. Se også <Link href="/viden/dialogbot-vs-vocalis">Dialogbot og Vocalis</Link> og <Link href="/viden/dialogbot-vs-almindelig-chatbot">Dialogbot og en almindelig chatbot</Link>.</p>
         </> },
         { title: "Det er med i abonnementet", body: <ul>
           <li>AI-receptionist og AI-telefonsvarer på dansk – døgnet rundt</li>
@@ -39,7 +44,9 @@ export default function Page() {
       ]}
       faq={[
         ["Er der binding?", "Nej. Der er ingen binding. I kan opsige til udgangen af den løbende måned."],
-        ["Hvad betyder \"fra\" 2.495 kr.?", "Det er prisen for abonnementet, ekskl. moms. Der er ingen ekstra pris pr. henvendelse."],
+        ["Er 2.495 kr. hele prisen?", "Ja, det er hele prisen for abonnementet, ekskl. moms. Der er kun ét abonnement og ingen ekstra pris pr. henvendelse. Kun hvis I bruger mere end 300 indgående minutter om måneden, koster hvert minut derudover 1,50 kr."],
+        ["Kan jeg prøve den, før jeg køber?", "Ja. Dialogbot ringer til jer og tager imod jer, som var I en kunde – det tager to minutter og kræver ingen tilmelding. Og der er ingen binding."],
+        ["Hvor bliver mine kunders oplysninger af?", "Det står i en kort, almindelig tekst på siden om GDPR og data: hvad der gemmes, hvor, og hvordan databehandleraftalen fungerer."],
         ["Hvad koster udgående kampagneopkald?", "4 kr. pr. udgående opkald plus 2 kr. pr. påbegyndt samtaleminut, ekskl. moms. Et ubesvaret opkald koster 4 kr., en samtale på 3 minutter 10 kr. Kontakterne skal på forhånd have sagt ja til at blive ringet op, og en kampagne ringer først, når I selv trykker Start."],
         ["Hvad sker der, hvis vi får mange indgående opkald?", "300 minutters indgående opkald om måneden er med i abonnementet. Derudover koster hvert påbegyndt minut 1,50 kr. ekskl. moms – det står på fakturaen som en særskilt linje, og I kan følge forbruget løbende i Dialogbot."],
         ["Koster opsætningen noget?", "Ikke hvis I gør det selv: byggevejledningens tre trin er med i abonnementet og tager cirka en halv time. Opsætning fra vores specialister koster 5.000 kr. ekskl. moms én gang og giver jer en skræddersyet opsætning og integration til jeres egne systemer og behov."],

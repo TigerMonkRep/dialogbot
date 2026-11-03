@@ -203,3 +203,10 @@ def test_window_and_stale_calls(api, two_workspaces, db, monkeypatch):
     assert (contact.status, contact.outcome) == ("no_answer", "no_answer")
     with pytest.raises(ValidationFailed):
         service.import_contacts(db, c, "", kind="business", consent_source="")
+
+
+def test_csv_headers_in_every_ui_language():
+    for head in ("Name;Phone;Company", "Nombre;Teléfono;Empresa", "Namn;Telefon;Företag", "Nome;Telefono;Azienda",
+                 "Nom;Téléphone;Entreprise", "Name;Telefon;Unternehmen", "Navn;Telefon;Bedrift"):
+        rows = service.parse_csv(f"{head}\nAnna Berg;20 30 40 50;Berg AS")
+        assert len(rows) == 1 and rows[0]["name"] == "Anna Berg" and rows[0]["company"] == "Berg AS", head

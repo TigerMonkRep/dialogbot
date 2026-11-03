@@ -72,11 +72,15 @@ def normalize_phone(raw: str) -> str | None:
     return n if E164.match(n) else None
 
 
+# Column names in every UI language (da, en, de, es, fr, it, no, sv), lower-case.
 HEADERS = {
-    "name": ("navn", "name", "kontakt", "kontaktperson", "fulde navn", "fornavn"),
-    "phone": ("telefon", "telefonnummer", "tlf", "tlf.", "phone", "mobil", "mobilnummer", "nummer", "number"),
-    "company": ("firma", "virksomhed", "company", "firmanavn", "organisation"),
-    "email": ("email", "e-mail", "mail"),
+    "name": ("navn", "name", "kontakt", "kontaktperson", "fulde navn", "fornavn", "namn", "nombre", "nom", "nome",
+             "vorname", "ansprechpartner", "contact", "contatto", "contacto"),
+    "phone": ("telefon", "telefonnummer", "tlf", "tlf.", "phone", "mobil", "mobilnummer", "nummer", "number",
+              "teléfono", "telefono", "téléphone", "tel", "tel.", "móvil", "cellulare", "portable", "handy"),
+    "company": ("firma", "virksomhed", "company", "firmanavn", "organisation", "företag", "bedrift", "empresa",
+                "entreprise", "société", "azienda", "unternehmen", "selskap"),
+    "email": ("email", "e-mail", "mail", "e-post", "correo", "courriel"),
 }
 
 

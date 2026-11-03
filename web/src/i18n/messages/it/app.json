@@ -524,7 +524,7 @@
       "invalid": "{n} numeri non validi (ad es. riga {rows})",
       "file": "File CSV",
       "paste": "Oppure incolli l'elenco",
-      "pastePlaceholder": "Name;Phone;Company\nMette Hansen;20 30 40 50;Hansen Byg ApS",
+      "pastePlaceholder": "Nome;Telefono;Azienda\nMette Hansen;20 30 40 50;Hansen Byg ApS",
       "who": "Chi sono i contatti?",
       "businesses": "Aziende",
       "consumers": "Privati",

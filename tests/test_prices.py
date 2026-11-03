@@ -57,12 +57,13 @@ def test_the_old_prices_are_gone_everywhere_a_person_or_an_ai_can_read():
 
 
 def test_the_public_pages_state_both_prices():
-    pricing = (ROOT / "web/src/app/priser/page.tsx").read_text(encoding="utf-8")
+    # The page texts live in the Danish source dictionaries (web/src/i18n/messages/da); the other languages are
+    # translations of them and keep the same amounts.
+    pricing = (ROOT / "web/src/i18n/messages/da/landing.json").read_text(encoding="utf-8")
     llms = (ROOT / "web/public/llms.txt").read_text(encoding="utf-8")
     for text in (pricing, llms):
         assert "2.495 kr." in text and "4 kr. pr." in text and "2 kr. pr." in text and "5.000 kr." in text and "ekskl. moms" in text
         assert "300 minutter" in text and "1,50 kr." in text  # the included inbound minutes and the price above them
     # One flat subscription: the price is stated without "Fra" (it implied a tier ladder that does not exist).
-    for page in ("web/src/app/byggevejledning/page.tsx", "web/src/app/(public)/page.tsx"):
-        text = (ROOT / page).read_text(encoding="utf-8")
-        assert "2.495 kr./md." in text and "Fra 2.495" not in text
+    text = (ROOT / "web/src/i18n/messages/da/site.json").read_text(encoding="utf-8")  # front page + build guide
+    assert "2.495 kr./md." in text and "Fra 2.495" not in text

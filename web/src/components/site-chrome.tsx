@@ -1,5 +1,5 @@
 import Link from "@/i18n/link";
-import { getT } from "@/i18n/server";
+import { getLocale, getT } from "@/i18n/server";
 import { LanguageSwitcher } from "./language-switcher";
 import "./site-chrome.css";
 import { COMPANY } from "./legal-page";
@@ -67,6 +67,7 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
   navAlways?: boolean;
 }) {
   const t = await getT("common");
+  const locale = await getLocale();
   return (
     <header className="border-b-2 border-ink bg-white">
       <div className="max-w-[1180px] mx-auto px-4 sm:px-6 min-h-[72px] py-3 flex flex-wrap items-center gap-x-6 gap-y-3 sm:gap-x-8">
@@ -83,7 +84,7 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
           <PathSwitch current={current} />
           <Link href="/priser" className="inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline hover:text-accent">{t("chrome.pricing")}</Link>
           <LanguageSwitcher />
-          {phone && <a href={PHONE_TEL} className="hidden sm:inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline">{PHONE_DISPLAY}</a>}
+          {phone && <a href={PHONE_TEL} className="hidden sm:inline-flex items-center min-h-11 text-sm font-semibold text-ink no-underline">{locale === "da" ? PHONE_DISPLAY : PHONE_INTL}</a>}
         </div>
       </div>
     </header>

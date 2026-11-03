@@ -416,6 +416,36 @@ def test_a_batch_runs_every_case_through_every_profile_one_after_the_other(api, 
     assert api.post(op, "/operator/stemmetest/batch", {"profiles": ["E"], "cases": ["K01"]}).status_code == 422  # no audio
 
 
+def test_a_provider_quota_error_is_retried_and_a_balance_error_is_not():
+    q = {"status": "fejl", "error": "forbindelse: Concurrent Quota Exceeded"}
+    assert service._is_quota(q)
+    assert service._is_quota({"status": "fejl", "error": "forbindelse: Send message failed: received 4005 (private use) quota_exceeded"})
+    assert not service._is_quota({"status": "fejl", "error": "organization_balance_exhausted: Organization balance exhausted"})
+    assert not service._is_quota({"status": "ok", "error": "Concurrent Quota Exceeded"})
+
+
+def test_a_batch_waits_and_retries_when_the_provider_has_not_released_the_previous_session(api, fake_factory, monkeypatch):
+    monkeypatch.setattr(service, "QUOTA_RETRY_DELAYS", (0.0, 0.0, 0.0))
+    monkeypatch.setattr(service, "BATCH_GAP_S", 0.0)
+    calls = {"n": 0}
+    text = "Goddag, du har ringet til Berle Pool. Hvad kan jeg gøre for dig?"
+
+    def factory(adapter_id, cfg):
+        calls["n"] += 1
+        if calls["n"] <= 2:  # the first two opens are refused, the third is accepted
+            return Scripted(cfg, [(1, ("error", "forbindelse: Concurrent Quota Exceeded"))])
+        return Scripted(cfg, [], on_flush=[("final", text, {"start": 0, "end": 3.0})])
+
+    monkeypatch.setattr(service, "FACTORY", factory)
+    op = api.operator()
+    assert api.post(op, "/operator/stemmetest/batch", {"profiles": ["E"], "cases": ["S03"]}).status_code == 202
+    run = api.get(op, "/operator/stemmetest/runs").json()["runs"][0]
+    detail = api.get(op, f"/operator/stemmetest/runs/{run['id']}").json()
+    assert (run["status"], run["error"], calls["n"]) == ("ok", None, 3), run
+    assert run["wer"]["errors"] == 0
+    assert detail["id"] == run["id"]
+
+
 def test_batch_all_expands_to_every_case_with_audio_and_a_profile_without_access_is_recorded_not_run(db, monkeypatch):
     monkeypatch.delenv("SONIOX_API_KEY", raising=False)
     get_settings.cache_clear()

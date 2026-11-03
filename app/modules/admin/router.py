@@ -25,6 +25,7 @@ from app.core.security import new_token, token_digest
 from app.db import get_db
 from app.models import (
     Ambassador,
+    AssistantRequest,
     AuditLog,
     BillingAccount,
     Call,
@@ -97,6 +98,7 @@ def overview(db: OrmSession = Depends(get_db), principal: Principal = Depends(op
                         .order_by(SocialPost.scheduled_for).limit(5)).all()
     bad_invoices = db.scalars(select(Invoice).where(Invoice.status.in_(("payment_failed", "failed"))).order_by(desc(Invoice.created_at)).limit(5)).all()
     pending_amb = db.scalar(select(func.count()).select_from(Ambassador).where(Ambassador.status == "pending")) or 0
+    new_wishes = db.scalar(select(func.count()).select_from(AssistantRequest).where(AssistantRequest.status == "new")) or 0
 
     attention: list[dict] = []
     if not st["ok"]:
@@ -116,6 +118,9 @@ def overview(db: OrmSession = Depends(get_db), principal: Principal = Depends(op
         attention.append({"level": "amber", "title": f"Faktura {i.month:%Y-%m} er ikke betalt ({i.status})", "detail": str(i.workspace_id), "href": f"/app/operator/admin/kunder/{i.workspace_id}"})
     if pending_amb:
         attention.append({"level": "blue", "title": f"{pending_amb} ambassadør(er) venter på svar", "detail": "", "href": "/app/operator/ambassadors"})
+    if new_wishes:
+        attention.append({"level": "blue", "title": f"{new_wishes} nye ønsker fra kunderne", "detail": "Det, assistenten ikke kunne hjælpe med.",
+                          "href": "/app/operator/oensker"})
 
     level = "red" if any(a["level"] == "red" for a in attention) else "amber" if any(a["level"] == "amber" for a in attention) else "green"
     s = get_settings()

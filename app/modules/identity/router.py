@@ -8,6 +8,7 @@ from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.auth import Principal, get_current_principal
+from app.core.errors import ValidationFailed
 from app.db import get_db
 from app.modules.identity import service
 
@@ -103,6 +104,29 @@ def logout(principal: Principal = Depends(get_current_principal), db: OrmSession
 @router.get("/me", response_model=UserOut)
 def me(principal: Principal = Depends(get_current_principal)):
     return user_out(principal.user)
+
+
+class MeIn(BaseModel):
+    """The user's own settings. `locale` (the web's name) and `interface_language` are the same thing."""
+    locale: str | None = Field(default=None, max_length=16)
+    interface_language: str | None = Field(default=None, max_length=16)
+    display_name: str | None = Field(default=None, min_length=1, max_length=200)
+
+
+@router.patch("/me", response_model=UserOut)
+def update_me(body: MeIn, principal: Principal = Depends(get_current_principal), db: OrmSession = Depends(get_db)):
+    from app.core.languages import LANGUAGES
+
+    lang = body.locale or body.interface_language
+    user = db.merge(principal.user)
+    if lang is not None:
+        if lang not in LANGUAGES:
+            raise ValidationFailed("Ukendt sprog", field_errors=[{"field": "locale"}])
+        user.interface_language = lang
+    if body.display_name is not None:
+        user.display_name = body.display_name.strip()
+    db.commit()
+    return user_out(user)
 
 
 @router.post("/verify-email", response_model=UserOut)

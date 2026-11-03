@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
+import { getT } from "@/i18n/server";
 import { Sheet } from "./sheet";
 import { SettingsTiles, type Chapter, type Row } from "./tiles";
 import BookingSheet from "./_sheets/booking";
@@ -11,7 +12,7 @@ import WebchatPage from "../settings/webchat/page";
 import ReceptionPage from "../reception/page";
 import VoicesPage from "../voices/page";
 
-const SHEETS: Record<string, string> = { telefoni: "Telefon", hilsen: "Hilsen og manuskript", stemmer: "Stemme", webchat: "Webchat og domæner", booking: "Booking", integrationer: "Kalender og systemer", log: "Historik" };
+const SHEETS = ["telefoni", "hilsen", "stemmer", "webchat", "booking", "integrationer", "log"];
 
 type Tel = { status: { code: string; label: string; next_step: string }; business_number: string | null };
 type Web = { enabled: boolean; available: boolean; allowed_origins: string[] };
@@ -23,6 +24,7 @@ type Voices = { settings: { standard_voice: string | null; standard_default: str
 /** «Alle indstillinger»: everything Dialogbot knows and does, as eight chapters of tiles. Simple values go through the assistant; forms open as sheets. */
 export default async function IndstillingerPage({ searchParams }: { searchParams: Promise<{ ark?: string; page?: string }> }) {
   const ws = await requireWorkspace();
+  const t = await getT("settings");
   const sp = await searchParams;
   const staff = ws.role !== "reader";
   const settle = async <T,>(p: Promise<T>) => p.catch(() => null);
@@ -41,54 +43,54 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
   const connected = cat?.items.filter((i) => i.status === "connected") ?? [];
   const row = (r: Row) => r;
   const chapters: Chapter[] = [
-    { n: 1, title: "Telefon", sub: "Nummer, hilsen og stemme", rows: [
-      row({ label: "Nummer", value: tel ? `${tel.status.label}${tel.business_number ? ` · ${tel.business_number}` : ""}` : "–", status: tel?.status.code === "active" ? "ready" : tel && tel.status.code !== "not_started" ? "soon" : "off", ark: "telefoni" }),
-      row({ label: "Hilsen", value: script?.greeting ? `«${script.greeting.slice(0, 80)}${script.greeting.length > 80 ? "…" : ""}»` : "Standardhilsen", status: script?.greeting ? "ready" : "soon", ark: "hilsen" }),
-      row({ label: "Stemme", value: voices ? (voices.settings.default_profile_id ? "Valgt stemme" : `Standard: ${voices.settings.standard_voice ?? voices.settings.standard_default}`) : "–", status: voices ? "ready" : "off", ark: "stemmer" }),
+    { n: 1, title: t("overview.phone.title"), sub: t("overview.phone.sub"), rows: [
+      row({ label: t("overview.phone.number"), value: tel ? `${tel.status.label}${tel.business_number ? ` · ${tel.business_number}` : ""}` : "–", status: tel?.status.code === "active" ? "ready" : tel && tel.status.code !== "not_started" ? "soon" : "off", ark: "telefoni" }),
+      row({ label: t("overview.phone.greeting"), value: script?.greeting ? `«${script.greeting.slice(0, 80)}${script.greeting.length > 80 ? "…" : ""}»` : t("overview.phone.greetingDefault"), status: script?.greeting ? "ready" : "soon", ark: "hilsen" }),
+      row({ label: t("overview.phone.voice"), value: voices ? (voices.settings.default_profile_id ? t("overview.phone.voiceChosen") : t("overview.phone.voiceStandard", { name: voices.settings.standard_voice ?? voices.settings.standard_default })) : "–", status: voices ? "ready" : "off", ark: "stemmer" }),
     ] },
-    { n: 2, title: "Viden", sub: "Hvad den ved, og hvad den ikke må", rows: [
-      row({ label: "Det ved den", value: know ? `${know.items.length} godkendte emner · revision ${know.knowledge_revision}` : "–", status: know && know.items.length > 0 ? "ready" : "off", href: "/app/viden" }),
-      row({ label: "Om virksomheden", value: "Navn, hvad I laver, adresse, sprog", status: "ready", href: "/opsaetning/1" }),
+    { n: 2, title: t("overview.knowledge.title"), sub: t("overview.knowledge.sub"), rows: [
+      row({ label: t("overview.knowledge.known"), value: know ? t("overview.knowledge.knownValue", { n: know.items.length, rev: know.knowledge_revision }) : "–", status: know && know.items.length > 0 ? "ready" : "off", href: "/app/viden" }),
+      row({ label: t("overview.knowledge.about"), value: t("overview.knowledge.aboutValue"), status: "ready", href: "/opsaetning/1" }),
     ] },
-    { n: 3, title: "Kanaler", sub: "Hvor kunderne kan række ud", rows: [
-      row({ label: "Webchat", value: web ? (web.available ? `Aktiv på ${web.allowed_origins.length} domæne(r)` : web.enabled ? "Slået til – mangler noget" : "Slået fra") : "–", status: web?.available ? "ready" : web?.enabled ? "soon" : "off", ark: "webchat" }),
+    { n: 3, title: t("overview.channels.title"), sub: t("overview.channels.sub"), rows: [
+      row({ label: t("overview.channels.webchat"), value: web ? (web.available ? t("overview.channels.activeOn", { n: web.allowed_origins.length }) : web.enabled ? t("overview.channels.onMissing") : t("overview.channels.off")) : "–", status: web?.available ? "ready" : web?.enabled ? "soon" : "off", ark: "webchat" }),
     ] },
-    { n: 4, title: "Booking", sub: "Kalender og regler for aftaler", rows: [
-      row({ label: "Online booking", value: book ? `${book.enabled ? "Slået til" : "Slået fra"} · ${book.types.filter((t) => t.active).length} typer` : "–", status: book?.enabled ? "ready" : "off", ark: "booking" }),
-      row({ label: "Pause mellem aftaler", value: book ? `${book.buffer_minutes} min` : "–", status: book ? "ready" : "off", say: "Sæt pausen mellem aftaler til " }),
-      row({ label: "Tidligst og højst", value: book ? `${book.lead_time_hours} timer frem · højst ${book.horizon_days} dage frem` : "–", status: book ? "ready" : "off", say: "Hvor langt frem må kunderne booke? Skriv fx «højst 30 dage frem»." }),
-      row({ label: "Aftaler", value: "Ugens aftaler og book for en kunde", status: "ready", href: "/app/aftaler" }),
+    { n: 4, title: t("overview.booking.title"), sub: t("overview.booking.sub"), rows: [
+      row({ label: t("overview.booking.online"), value: book ? t("overview.booking.onlineValue", { state: book.enabled ? t("overview.booking.on") : t("overview.booking.off"), n: book.types.filter((x) => x.active).length }) : "–", status: book?.enabled ? "ready" : "off", ark: "booking" }),
+      row({ label: t("overview.booking.buffer"), value: book ? t("overview.booking.bufferValue", { n: book.buffer_minutes }) : "–", status: book ? "ready" : "off", say: t("overview.booking.bufferSay") }),
+      row({ label: t("overview.booking.window"), value: book ? t("overview.booking.windowValue", { lead: book.lead_time_hours, horizon: book.horizon_days }) : "–", status: book ? "ready" : "off", say: t("overview.booking.windowSay") }),
+      row({ label: t("overview.booking.appointments"), value: t("overview.booking.appointmentsValue"), status: "ready", href: "/app/aftaler" }),
     ] },
-    { n: 5, title: "Kampagner", sub: "Ring til jeres egne kunder", rows: [
-      row({ label: "Udgående opkald", value: goals?.callback ? "Valgt – 4 kr. pr. opkald + 2 kr. pr. minut ekskl. moms" : "Ikke valgt", status: goals?.callback ? "ready" : "off", href: "/app/kampagner" }),
+    { n: 5, title: t("overview.campaigns.title"), sub: t("overview.campaigns.sub"), rows: [
+      row({ label: t("overview.campaigns.outbound"), value: goals?.callback ? t("overview.campaigns.chosen") : t("overview.campaigns.notChosen"), status: goals?.callback ? "ready" : "off", href: "/app/kampagner" }),
     ] },
-    { n: 6, title: "Systemer", sub: "Kalender og jeres egne værktøjer", rows: [
-      row({ label: "Kalender", value: calendar ? calendar.account_label || calendar.label : book?.busy_ics_url ? "iCal-adresse" : "Ikke forbundet", status: calendar || book?.busy_ics_url ? "ready" : "off", ark: "integrationer" }),
-      row({ label: "Forbundne systemer", value: connected.length ? connected.map((c) => c.label).join(", ") : "Ingen endnu", status: connected.length ? "ready" : "off", ark: "integrationer" }),
+    { n: 6, title: t("overview.systems.title"), sub: t("overview.systems.sub"), rows: [
+      row({ label: t("overview.systems.calendar"), value: calendar ? calendar.account_label || calendar.label : book?.busy_ics_url ? t("overview.systems.ical") : t("overview.systems.notConnected"), status: calendar || book?.busy_ics_url ? "ready" : "off", ark: "integrationer" }),
+      row({ label: t("overview.systems.connected"), value: connected.length ? connected.map((c) => c.label).join(", ") : t("overview.systems.none"), status: connected.length ? "ready" : "off", ark: "integrationer" }),
     ] },
-    { n: 7, title: "Team og konto", sub: "Hvem må hvad, abonnement og fakturaer", rows: [
-      row({ label: "Team", value: members ? `${members.length} med adgang` : "–", status: "ready", href: "/app/konto" }),
-      row({ label: "Abonnement og fakturaer", value: "Fra 2.495 kr./md. ekskl. moms", status: "ready", href: "/app/konto" }),
+    { n: 7, title: t("overview.team.title"), sub: t("overview.team.sub"), rows: [
+      row({ label: t("overview.team.team"), value: members ? t("overview.team.teamValue", { n: members.length }) : "–", status: "ready", href: "/app/konto" }),
+      row({ label: t("overview.team.billing"), value: t("overview.team.billingValue"), status: "ready", href: "/app/konto" }),
     ] },
-    { n: 8, title: "Teknik", sub: "For dig, der vil se det hele", rows: [
-      row({ label: "Webchat-kode og widgetnøgle", value: "Indlejringskode til hjemmesiden", status: web?.enabled ? "ready" : "off", ark: "webchat", tech: true }),
-      row({ label: "Webhooks og Zapier", value: "Signerede webhooks til jeres systemer", status: "ready", ark: "integrationer", tech: true }),
-      row({ label: "Log og eksport", value: "Alle ændringer, nyeste først", status: "ready", ark: "log", tech: true }),
+    { n: 8, title: t("overview.tech.title"), sub: t("overview.tech.sub"), rows: [
+      row({ label: t("overview.tech.embed"), value: t("overview.tech.embedValue"), status: web?.enabled ? "ready" : "off", ark: "webchat", tech: true }),
+      row({ label: t("overview.tech.webhooks"), value: t("overview.tech.webhooksValue"), status: "ready", ark: "integrationer", tech: true }),
+      row({ label: t("overview.tech.log"), value: t("overview.tech.logValue"), status: "ready", ark: "log", tech: true }),
     ] },
   ];
-  const ark = sp.ark && sp.ark in SHEETS ? sp.ark : null;
+  const ark = sp.ark && SHEETS.includes(sp.ark) ? sp.ark : null;
   const pageParam = Promise.resolve({ page: sp.page });
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1.5">
-        <Link href="/app" className="text-[14px] font-semibold text-accent hover:underline w-fit">← Tilbage til I dag</Link>
-        <span className="eyebrow">Bagerst i hæftet</span>
-        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Alle indstillinger</h1>
-        <p className="text-[15px] leading-relaxed text-ink-soft max-w-[640px]">Alt, Dialogbot ved og gør – ét sted, i almindeligt dansk. «Ændr» på en enkel værdi sender det til assistenten, som viser ændringen, før den gælder. Større formularer åbner som et ark.</p>
+        <Link href="/app" className="text-[14px] font-semibold text-accent hover:underline w-fit">{t("overview.back")}</Link>
+        <span className="eyebrow">{t("overview.eyebrow")}</span>
+        <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("overview.title")}</h1>
+        <p className="text-[15px] leading-relaxed text-ink-soft max-w-[640px]">{t("overview.intro")}</p>
       </div>
       <SettingsTiles chapters={chapters} canChange={staff} />
       {ark && (
-        <Sheet title={SHEETS[ark]}>
+        <Sheet title={t(`overview.sheets.${ark}`)} closeLabel={t("sheet.close")}>
           {ark === "telefoni" && <TelephonyPage />}
           {ark === "hilsen" && <ReceptionPage />}
           {ark === "stemmer" && <VoicesPage />}

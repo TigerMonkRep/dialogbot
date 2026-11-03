@@ -288,6 +288,11 @@ def get_languages(ctx: WorkspaceContext = Depends(get_workspace_context), db: Or
 def update_languages(body: LanguagesIn, request: Request,
                      ctx: WorkspaceContext = Depends(require_capability("languages.edit")),
                      db: OrmSession = Depends(get_db)):
+    from app.core.languages import normalize
+
+    # One code per language everywhere ("da-DK", "nb" → "da", "no"); Peter's language is default_conversation_language
+    body.default_conversation_language = normalize(body.default_conversation_language)
+    body.enabled_conversation_languages = list(dict.fromkeys(normalize(x) for x in body.enabled_conversation_languages))
     if body.default_conversation_language not in body.enabled_conversation_languages:
         raise ValidationFailed("Standardsamtalesproget skal være blandt de aktiverede samtalesprog",
                                field_errors=[{"field": "default_conversation_language"}])

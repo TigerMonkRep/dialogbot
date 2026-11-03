@@ -1,1 +1,430 @@
-{}
+{
+  "prices": {
+    "monthly": "2.495",
+    "setup": "5.000",
+    "perCall": "4"
+  },
+  "demoCall": {
+    "label": "Opkald · Tømrerfirma (eksempel)",
+    "lines": [
+      "Du har ringet til Nørgaard Tømrer, det er Dialogbot. Hvad kan jeg hjælpe med?",
+      "Hej, jeg skal have skiftet et vindue. Kan I komme og kigge i næste uge?",
+      "Det kan vi godt. Der er ledigt tirsdag kl. 9 eller torsdag kl. 14. Hvad passer bedst?",
+      "Tirsdag, tak."
+    ],
+    "booked": "Aftale booket: tirsdag kl. 9 · SMS sendt til dig og kunden",
+    "botInitial": "D",
+    "customerInitial": "K"
+  },
+  "home": {
+    "meta": {
+      "title": "Dialogbot – AI-receptionist på dansk, der tager telefonen døgnet rundt",
+      "description": "Dialogbot tager telefonen, når I ikke kan: en AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. 2.495 kr./md.",
+      "ogTitle": "Dialogbot tager telefonen, når I ikke kan"
+    },
+    "referral": {
+      "label": "Anbefaling",
+      "offer": "{name} har anbefalet Dialogbot til dig – du får {pct} % rabat på din første måned.",
+      "bonus": "{name} er Dialogbot-ambassadør og får en bonus, hvis du bliver kunde. Rabatten kommer automatisk, når du opretter dig herfra.",
+      "cta": "Kom i gang"
+    },
+    "hero": {
+      "eyebrow": "For håndværkere, klinikker og saloner · på dansk · døgnet rundt",
+      "title": "Dialogbot tager telefonen, når I ikke kan.",
+      "lead": "En AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. I beholder jeres nummer. 2.495 kr./md. ekskl. moms.",
+      "cta": "Prøv den – den ringer til dig",
+      "note": "2 minutter, ingen tilmelding. Spørg den, som en kunde ville gøre."
+    },
+    "how": {
+      "eyebrow": "Sådan virker det",
+      "title": "Kunden ringer. Dialogbot svarer. Du får besked.",
+      "lead": "Et ubesvaret opkald er en tabt kunde – de fleste ringer aldrig igen. Det er den følelse, Dialogbot tager fra dig: at stå på stigen eller med en kunde i stolen og høre telefonen ringe uden at kunne tage den.",
+      "steps": [
+        { "title": "Kunden ringer – som altid", "text": "På jeres eget nummer. Er I optaget eller har lukket, tager Dialogbot den inden for to sekunder og præsenterer sig som jeres receptionist." },
+        { "title": "Den svarer og booker", "text": "Ud fra de ydelser, priser og åbningstider, I selv har godkendt. Den gætter aldrig. Skal kunden have en tid, finder den en ledig i jeres kalender og sender SMS." },
+        { "title": "Du får en besked", "text": "Navn, nummer og hvad det drejede sig om – som SMS eller mail med det samme, og en samlet rapport hver dag. Er der noget, den ikke kan klare, tager den en besked til dig." }
+      ]
+    },
+    "features": {
+      "eyebrow": "Det kan den",
+      "title": "Fire ting, én receptionist",
+      "items": [
+        { "title": "Tager telefonen", "text": "Døgnet rundt, på dansk, med en stemme I selv vælger. Siger ærligt, at den er en digital assistent, hvis kunden spørger." },
+        { "title": "Booker aftaler", "text": "Finder ledige tider i Google Kalender eller Microsoft 365, booker, flytter og aflyser – og sender bekræftelse på SMS." },
+        { "title": "Svarer på hjemmesiden", "text": "Den samme viden som webchat på jeres side: kunder, der spørger om priser og åbningstider, får svar med det samme – også om aftenen. Én kodelinje, så er den på." },
+        { "title": "Ringer kunder op", "text": "Følger op på tilbud eller minder om service – kun til kunder, der har sagt ja. 4 kr. pr. opkald + 2 kr. pr. minut." }
+      ],
+      "note": "Alt, den siger, bygger på viden I selv har godkendt – og enhver ændring viser den jer først: før → efter, «Godkend?»."
+    },
+    "demo": {
+      "eyebrow": "Hør et opkald",
+      "title": "Sådan lyder det, når Dialogbot tager telefonen",
+      "lead": "Et opkald til en tømrer. Prøv den selv – så ringer den til dig og tager imod dig, som var du en kunde.",
+      "cta": "Prøv den – den ringer til dig"
+    },
+    "price": {
+      "eyebrow": "Pris",
+      "title": "Ét abonnement. Ingen pris pr. henvendelse.",
+      "lead": "Alle priser er ekskl. moms. Ingen binding – opsigelse måned til måned.",
+      "subscription": {
+        "name": "Abonnement",
+        "badge": "Anbefalet",
+        "unit": "kr./md.",
+        "text": "Hele prisen: telefon, booking og webchat er med – inkl. 300 minutters indgående opkald om måneden. Ingen binding. Gør-det-selv-opsætning er med.",
+        "compare": "Prisen på en telefonpasning – men en receptionist, der også booker tiderne i jeres kalender.",
+        "cta": "Vælg her – hør den først"
+      },
+      "campaign": {
+        "name": "Udgående kampagneopkald",
+        "unit": "kr. pr. opkald + 2 kr. pr. minut",
+        "text": "Kun hvis I vil have Dialogbot til at ringe ud. Ubesvaret: 4 kr. Tre minutters samtale: 10 kr. I ser den højeste pris, før I starter."
+      },
+      "setup": {
+        "name": "Opsætning fra vores specialister",
+        "unit": "kr. én gang",
+        "text": "Skræddersyet opsætning og integration til jeres egne systemer – kalender, CRM, bookingsystem. Kun hvis I ikke vil gøre det selv."
+      },
+      "whyTitle": "Hvorfor vi koster mere end en chatbot",
+      "whyText": "En billig chatbot svarer med det, den har lært af internettet. Dialogbot svarer kun ud fra viden, I selv har godkendt, og viser jer hver ændring først: før → efter, «Godkend?». Den kan også booke, flytte og aflyse tider i jeres kalender og sende SMS-bekræftelse – og I får en besked om hvert opkald. Det er derfor, den koster mere end en telefonsvarer.",
+      "allDetails": "Alle detaljer om prisen →"
+    },
+    "start": {
+      "eyebrow": "Kom i gang",
+      "title": "Hør den først – eller byg den selv på 30 minutter",
+      "try": {
+        "badge": "2 min · ingen tilmelding",
+        "title": "Prøv den – den ringer til dig",
+        "text": "Skriv til Peter i chatten eller tryk «Ja, ring til mig». Så ringer Dialogbot op og tager imod dig som din egen receptionist.",
+        "cta": "Prøv den nu"
+      },
+      "build": {
+        "badge": "3 trin · ca. 30 min",
+        "title": "Byg den selv",
+        "text": "Byggevejledningen viser trin for trin, hvad du skal bruge, og hvad der sker – ingen teknik, ingen kode.",
+        "cta": "Åbn byggevejledningen"
+      },
+      "specialists": "Vil I hellere have det gjort? Vores specialister sætter den op for 5.000 kr. ekskl. moms, skræddersyet til jeres systemer."
+    },
+    "ld": {
+      "appDescription": "Dialogbot er en dansk AI-receptionist, der tager telefonen og chatten for din virksomhed døgnet rundt – svarer ud fra jeres egen viden, booker tider og samler henvendelser. Vi guider jer gennem hele opsætningen.",
+      "subscription": { "name": "Abonnement", "description": "Pr. måned ekskl. moms, inkl. 300 minutters indgående opkald. Ingen binding." },
+      "campaign": { "name": "Udgående kampagneopkald", "description": "Pr. udgående opkald ekskl. moms, plus 2 kr. pr. påbegyndt samtaleminut" },
+      "setup": { "name": "Opsætning fra Dialogbots specialister", "description": "Én gang, ekskl. moms – skræddersyet opsætning og integration til egne systemer. Gør-det-selv-opsætning er med i abonnementet." }
+    }
+  },
+  "guide": {
+    "meta": {
+      "title": "Byg din AI-receptionist i 3 trin – byggevejledning",
+      "description": "Byggevejledningen til Dialogbot: hvad du skal bruge, hvad den kan, hvad den koster – og de 3 trin til din egen AI-receptionist på dansk. 2.495 kr./md.",
+      "ogTitle": "Byg din AI-receptionist i 3 trin | Dialogbot"
+    },
+    "breadcrumb": "Byggevejledning",
+    "nav": {
+      "steps": "Sådan bygger du",
+      "bricks": "Klodserne",
+      "systems": "Passer til dit system",
+      "price": "Pris",
+      "demo": "Hør en demo"
+    },
+    "faq": [
+      { "q": "Lyder det som en robot?", "a": "Nej. Dialogbot taler naturligt dansk og præsenterer sig altid som en digital receptionist, så kunden ved, hvem de taler med. Hør demoen ovenfor." },
+      { "q": "Skal jeg skifte telefonnummer?", "a": "Nej. Du beholder dit nummer og viderestiller det – enten altid, eller kun når du ikke tager den. Vi viser dig hvordan i trin 3." },
+      { "q": "Hvad hvis den ikke kan svare?", "a": "Så tager den en besked med navn, nummer og ærinde og sender den til dig med det samme. Den gætter aldrig på priser eller aftaler, I ikke har givet den." },
+      { "q": "Er jeg bundet?", "a": "Nej. Fast pris kan opsiges måned til måned, og pr. henvendelse har ingen fast udgift." }
+    ],
+    "partsTitle": "Du skal bruge",
+    "hero": {
+      "badge": "trin · ca. 30 minutter · ingen teknik",
+      "titleLine1": "Byg din egen AI-receptionist.",
+      "titleLine2": "Trin for trin.",
+      "lead": "Dialogbot tager telefonen, svarer på webchat og booker aftaler for din virksomhed – på dansk, døgnet rundt. Du følger vejledningen, vi sætter klodserne sammen med dig.",
+      "cta": "Prøv den nu – den ringer til dig",
+      "listen": "Hør Dialogbot tage telefonen",
+      "price": "2.495 kr./md. · ekskl. moms"
+    },
+    "heroCard": {
+      "step": "Trin 1 af 3",
+      "title": "Fortæl os om din virksomhed",
+      "parts": ["telefonnummer", "åbningstider", "hvad I laver"],
+      "hours": "Man–fre 8–17"
+    },
+    "steps": {
+      "eyebrow": "Byggevejledning",
+      "title": "Sådan bygger du den – i 3 trin",
+      "lead": "Ingen apps at installere, ingen kode. Hvert trin viser præcis, hvad du skal bruge, og hvad der sker.",
+      "items": [
+        { "title": "Fortæl os om din virksomhed", "parts": ["dit telefonnummer", "åbningstider", "det, I oftest bliver spurgt om"], "text": "Udfyld en kort formular – eller fortæl det til os i telefonen. Det tager 5 minutter." },
+        { "title": "Vi bygger og tester sammen", "parts": ["videomøde med os", "prøveopkald til din nye receptionist"], "text": "Vi sætter stemme, svar og booking op, mens du ser på. Du ringer selv og hører, at det virker." },
+        { "title": "Tænd – og gå tilbage til arbejdet", "parts": ["viderestilling af dit nummer (vi viser hvordan)"], "text": "Fra nu af får du en SMS eller e-mail, hver gang der er en aftale eller en besked til dig." }
+      ],
+      "duration": "ca. 30 min",
+      "switchOn": "Dialogbot: TIL",
+      "answered": "Opkald besvaret",
+      "booked": "Aftale booket"
+    },
+    "result": {
+      "eyebrow": "Færdigt resultat",
+      "title": "Sådan ser et opkald ud, når den er bygget",
+      "lead": "Hvert opkald følger den samme simple linje. Du ser alle henvendelser i ét overblik og kan altid rette, hvad Dialogbot må sige.",
+      "items": [
+        { "title": "Kunden ringer", "text": "Også uden for åbningstid, når du er på en opgave eller har kunder i butikken." },
+        { "title": "Dialogbot svarer", "text": "På dansk, med jeres navn, priser og åbningstider – og uden at lade kunden vente." },
+        { "title": "Booker eller tager besked", "text": "Ledige tider i din kalender, eller en besked med navn, nummer og ærinde." },
+        { "title": "Du får besked", "text": "SMS eller e-mail med det samme. Du ringer tilbage, når det passer dig." }
+      ]
+    },
+    "bricks": {
+      "eyebrow": "Klodserne i sættet",
+      "title": "Vælg de klodser, du har brug for",
+      "lead": "Start med telefonen. Klik flere på, efterhånden som du får brug for dem – de passer sammen.",
+      "startHere": "Start her",
+      "phone": { "title": "Telefon", "text": "Besvarer alle opkald på dansk med jeres navn. Stiller videre til dig, når det haster.", "start": "Start med reception" },
+      "webchat": { "title": "Webchat", "text": "En lille chat på din hjemmeside, der svarer med det samme og samler kontaktoplysninger." },
+      "booking": { "title": "Booking", "text": "Finder ledige tider i din kalender og bekræfter aftalen til kunden på SMS." },
+      "sms": { "title": "SMS-svar", "text": "Ubesvarede opkald får en SMS med det samme, så kunden ved, I vender tilbage." },
+      "campaigns": { "title": "Kampagner", "text": "Ring eller skriv til dine eksisterende kunder – fx om tid til service eller nyt tilbud. Du godkender altid først.", "start": "Start med kundeopfølgning" },
+      "overview": { "title": "Overblik", "text": "Alle opkald, chats og aftaler ét sted. Se hvad der blev sagt, og hvad der mangler svar." }
+    },
+    "systems": {
+      "eyebrow": "Passer til dit system",
+      "title": "Klodserne passer på det, I allerede bruger",
+      "lead": "Kalender, CRM eller bookingsystem – Dialogbot skriver aftaler og beskeder derhen, hvor I plejer at kigge. Bruger I noget, vi ikke har koblet på endnu, siger vi det ærligt og bygger det ind under opsætningen.",
+      "googleCalendar": "Google Kalender",
+      "microsoft": "Microsoft 365 / Outlook",
+      "crm": "Dit CRM",
+      "bookingSystem": "Dit bookingsystem",
+      "smsEmail": "SMS og e-mail",
+      "ready": "Klar",
+      "readyAlways": "Klar · virker altid",
+      "connectedInSetup": "Kobles på i opsætningen",
+      "otherTitle": "Noget andet?",
+      "otherText": "Spørg chatten – den noterer det",
+      "note": "«Klar» betyder, at det virker i dag. Alt andet kobler vi på sammen med dig – og indtil det virker, får du altid aftaler og beskeder på SMS og e-mail."
+    },
+    "pricing": {
+      "eyebrow": "Pris",
+      "title": "Ét sæt. Én pris, ingen overraskelser.",
+      "lead": "Alle priser er ekskl. moms. Opsætningen kan I gøre selv på ca. 30 minutter – den er med. Vil I have den skræddersyet af vores specialister, koster det 5.000 kr. én gang.",
+      "subscription": {
+        "name": "Abonnement",
+        "from": "Fra",
+        "unit": "kr./md.",
+        "points": ["Telefon, chat og booking er med", "Ingen pris pr. henvendelse", "Opsigelse måned til måned"],
+        "cta": "Kom i gang"
+      },
+      "campaign": {
+        "name": "Udgående kampagneopkald",
+        "unit": "kr. pr. udgående opkald",
+        "points": ["Kun hvis I vil have Dialogbot til at ringe ud", "Kontakterne har selv sagt ja til at blive ringet op", "Højst 2 forsøg pr. kontakt – I ser den højeste pris, før I starter"]
+      },
+      "setup": {
+        "name": "Opsætning fra vores specialister",
+        "unit": "kr. én gang",
+        "points": ["Kun hvis I ikke vil gøre det selv – de tre trin er med i abonnementet", "Skræddersyet opsætning og integration til jeres egne systemer og behov", "Kalender, CRM eller bookingsystem kobles på, viden og priser lægges ind, stemmen trænes – og vi tester sammen, før den tændes"]
+      }
+    },
+    "demo": {
+      "eyebrow": "Demo",
+      "title": "Hør Dialogbot tage telefonen",
+      "lead": "Sådan lyder et opkald til en tømrer. Prøv den selv – så ringer den til dig og tager imod dig som en kunde.",
+      "cta": "Prøv den – den ringer til dig"
+    },
+    "faqSection": {
+      "eyebrow": "Spørgsmål",
+      "title": "Det, de fleste spørger om først"
+    },
+    "cta": {
+      "title": "Klar til trin 1?",
+      "lead": "Ring til os, så bygger vi den sammen. Eller skriv, så ringer vi tilbage inden for åbningstiden.",
+      "write": "Skriv til os"
+    }
+  },
+  "proev": {
+    "meta": {
+      "title": "Prøv Dialogbot – snak med den, så ringer den til dig",
+      "description": "Ingen formular, ingen tilmelding. Fortæl chatten, hvad din virksomhed hedder og hvad I laver – så ringer Dialogbot til dig og tager imod dig som din egen receptionist.",
+      "ogTitle": "Prøv Dialogbot – den ringer til dig | Dialogbot"
+    },
+    "eyebrow": "Trin 0 · før du bygger noget",
+    "title": "Snak med den. Så ringer den til dig – som din egen receptionist.",
+    "lead": "Ingen formular, ingen tilmelding. Fortæl chatten, hvad din virksomhed hedder, og hvad I laver. Så ringer Dialogbot til dig og tager imod dig, som var du en kunde.",
+    "chat": {
+      "greeting": "Hej! Jeg hedder Peter og er Dialogbots digitale receptionist. Vil du høre, hvordan jeg lyder, når jeg tager telefonen for din virksomhed?",
+      "hours": "man–fre 08–17",
+      "branches": {
+        "haandvaerk": "Håndværker",
+        "klinik": "Klinik",
+        "skoenhed": "Frisør / salon",
+        "restaurant": "Restaurant",
+        "raadgivning": "Rådgiver",
+        "other": "Noget andet"
+      },
+      "steps": {
+        "start": "Start",
+        "firma": "Trin 1 · hvem er I",
+        "branche": "Trin 1 · hvad laver I",
+        "andet": "Trin 1 · hvad laver I",
+        "tlf": "Trin 2 · dit nummer",
+        "calling": "Trin 2 · ringer",
+        "done": "Trin 3 · byg din egen",
+        "unavailable": "Ikke lige nu"
+      },
+      "blockerInactive": "Prøveopkaldet aktiveres snart – indtil da ringer vi til dig manuelt inden for åbningstiden. Ring til os på {phone} ({hours}), eller skriv dit nummer til {email}, så ringer vi til dig.",
+      "blockerClosed": "Jeg ringer kun op mellem kl. {from} og {to} på hverdage. Kom tilbage der – eller skriv dit nummer til {email}, så ringer vi til dig inden for åbningstiden.",
+      "blockerOwnNumber": " Du kan også selv ringe til mit demonummer {number}.",
+      "chipCall": "Ja, ring til mig",
+      "chipWhat": "Hvad kan du?",
+      "chipPrice": "Hvad koster det?",
+      "askCompany": "Super. Hvad hedder din virksomhed?",
+      "answerWhat": "Jeg tager telefonen døgnet rundt, svarer på det, kunderne oftest spørger om, booker tider i din kalender og sender dig en besked, hvis der er noget, jeg ikke kan klare.\n\nVil du høre det selv?",
+      "answerPrice": "Ét abonnement til 2.495 kr. om måneden, ekskl. moms. Opsætningen kan I gøre selv – det er med. Vil I have vores specialister til at skræddersy den til jeres systemer, koster det 5.000 kr. én gang.\n\nSkal jeg ringe og vise dig, hvad du får?",
+      "askOther": "Skriv kort, hvad I laver – så ved jeg, hvordan jeg skal tage imod kunderne.",
+      "askNumber": "Så er jeg receptionist for {company} fra nu af. Hvilket nummer skal jeg ringe til?",
+      "helloCompany": "Hej {company}. Hvad laver I?",
+      "chatNotReady": "Chatten er ikke helt klar endnu. Ring til os på {phone} ({hours}) eller skriv til {email} – så svarer vi.",
+      "chatFailed": "Det kunne jeg ikke svare på lige nu. Prøv igen om lidt, eller ring til os på {phone}.",
+      "serviceDown": "Jeg kunne ikke få fat i opkaldstjenesten. Prøv igen om lidt.",
+      "callingNow": "Jeg ringer til {number} nu – du får et opkald fra Peter fra Dialogbot inden for et minut. Tag den, og spørg mig om alt det, en kunde ville spørge {company} om.",
+      "callSent": "Opkaldet er sendt til din telefon. Ringede den ikke? Så ring til os på {phone}, så viser vi det live.\n\nVil du bygge din egen? Det tager 3 trin og ca. 30 minutter, og jeg guider dig hele vejen.",
+      "callFailed": "Vi kunne ikke ringe op lige nu. Prøv igen om lidt.",
+      "callRetry": "{message} Skriv nummeret igen, eller ring selv til os på {phone}.",
+      "placeholderCompany": "Fx Nørgaard Tømrer",
+      "placeholderOther": "Fx tømrer, tandlæge, bogholder …",
+      "placeholderPhone": "Fx 93 70 34 33 – eller stil et spørgsmål",
+      "placeholderBranch": "Vælg ovenfor – eller skriv, hvad I laver",
+      "placeholderDefault": "Skriv dit spørgsmål til Peter …",
+      "consentFallback": "Ja tak, Peter fra Dialogbot, en digital assistent, må ringe mig op på dette nummer nu og vise, hvordan Dialogbot tager telefonen. Opkaldet bliver skrevet ned, og en medarbejder fra Dialogbot må kontakte mig bagefter om det, vi talte om.",
+      "phoneDoneTitle": "Opkaldet er sat i gang",
+      "phoneDoneText": "Var det noget? Så er din egen receptionist tre trin væk.",
+      "phoneUnavailableTitle": "Prøveopkaldet aktiveres snart",
+      "phoneUnavailableText": "Indtil da ringer vi til dig manuelt inden for åbningstiden ({hours}). Ring til {phone} eller skriv til {email}.",
+      "phoneIdleTitle": "Din telefon ringer snart",
+      "phoneIdleText": "Når du har skrevet dit nummer i chatten, ringer Peter fra Dialogbot inden for et minut.",
+      "stageLabel": "Chat med Dialogbot",
+      "status": "Svarer med det samme",
+      "close": "Luk chatten",
+      "typing": "Dialogbot skriver",
+      "callUs": "Ring til os",
+      "mailSubject": "Ring mig op – prøveopkald",
+      "mailUs": "Skriv dit nummer til os",
+      "seeGuide": "Se byggevejledningen",
+      "tryAgain": "Prøv igen",
+      "callMe": "Ring mig op",
+      "send": "Send",
+      "consentError": "Sæt kryds, hvis jeg må ringe dig op.",
+      "buildNow": "Ja – byg min nu (trin 1 af 3)",
+      "pickUp": "Tag telefonen, når den ringer. Du kan lægge på når som helst.",
+      "privacy": "Vi ringer kun til det nummer, du selv skriver, og bruger det ikke til andet end dette opkald og en opfølgning, hvis du har sagt ja til det.",
+      "ringing": "Ringer til {number} …",
+      "presentBefore": "Jeg præsenterer mig som receptionist for ",
+      "presentAfter": ". Spørg mig om priser, tider eller en aftale.",
+      "sideSteps": ["Fortæl chatten, hvem I er", "Tag telefonen – spørg som en kunde", "Kan du lide det? Så bygger vi den rigtige"],
+      "sideNote": "Den samme chat følger dig videre: Når du siger ja, guider den dig gennem opsætningen, kobler din kalender på og tester det hele sammen med dig."
+    }
+  },
+  "preview": {
+    "meta": {
+      "title": "Dialogbot – privat preview",
+      "description": "Dialogbot er en dansk AI-assistent til telefon, webchat og opfølgning. Skriv dig op til tidlig adgang."
+    },
+    "skip": "Spring til indhold",
+    "badge": "Privat preview",
+    "eyebrow": "Trin 0 · Før du bygger",
+    "title": "Lås op med forhåndskode",
+    "lead": "Dialogbot er en dansk AI-receptionist til telefon, webchat og opfølgning. Vi finpudser detaljerne før offentlig åbning. Indtast den invitationskode, du har fået, for at se forsiden og oprette en konto.",
+    "codesBefore": "Koder udleveres til pilotvirksomheder og udvalgte partnere. Har du allerede en konto, så ",
+    "codesLink": "log ind",
+    "codesAfter": ".",
+    "waitlistEyebrow": "Ingen kode?",
+    "waitlistTitle": "Skriv dig op til tidlig adgang",
+    "waitlistLead": "Få besked i din indbakke, så snart vi åbner for nye virksomheder. Ingen spam – kun besked ved åbning, og du kan slette dig når som helst.",
+    "footerNav": "Sidefod",
+    "footer": {
+      "privacy": "Privatliv",
+      "terms": "Handelsbetingelser",
+      "contact": "Kontakt",
+      "login": "Log ind for teamet"
+    },
+    "unlock": {
+      "checkFailed": "Koden kunne ikke kontrolleres.",
+      "label": "Invitationskode",
+      "placeholder": "F.eks. DGB-XXXX-XXXX",
+      "checking": "Tjekker koden…",
+      "submit": "Lås op og se forsiden"
+    },
+    "waitlist": {
+      "doneTitle": "Tak – du står på ventelisten.",
+      "doneText": "Vi skriver til {email}, når vi åbner for nye virksomheder. Vi sender ikke andet.",
+      "email": "Din arbejds-e-mail",
+      "emailPlaceholder": "navn@virksomhed.dk",
+      "industry": "Virksomhedstype",
+      "industryPlaceholder": "Vælg din branche…",
+      "interests": "Hvad vil I primært løse først?",
+      "honeypot": "Hjemmeside",
+      "consent": "Ja, I må skrive til mig, når Dialogbot åbner. Vi gemmer kun e-mail og svarene ovenfor til det formål, og du kan altid bede om at blive slettet.",
+      "consentLink": "Læs hvordan",
+      "invalid": "Tjek e-mailadressen og at du har sat flueben.",
+      "pending": "Skriver dig op…",
+      "submit": "Skriv mig på ventelisten"
+    },
+    "industries": {
+      "craft": "Håndværk & Byggeri",
+      "clinic": "Salon, Klinik & Behandling",
+      "service": "Service, Rådgivning & Ejendom",
+      "retail": "B2B Handel & Kontor",
+      "other": "Anden branche"
+    },
+    "interestOptions": {
+      "missed_calls": "Tabte opkald i åbningstiden",
+      "calendar_booking": "Automatisk kalenderbooking",
+      "quote_followup": "Opfølgning på tilbud"
+    }
+  },
+  "video": {
+    "title": "Se, hvad Dialogbot kan",
+    "posterAlt": "Dialogbot tager telefonen for en dansk virksomhed – forklaret på 70 sekunder",
+    "description": "Dialogbot forklaret på 70 sekunder: tager telefonen, booker tider, svarer på hjemmesiden – og du godkender alt, den må sige.",
+    "playAria": "{title} – afspil videoen (70 sekunder)",
+    "short": "70 sek.",
+    "chipMeta": "70 sekunder · med undertekster · forklarer præcis, hvad vi tilbyder",
+    "close": "Luk videoen",
+    "captionsLabel": "Dansk",
+    "unsupported": "Din browser kan ikke afspille videoen.",
+    "download": "Hent videoen",
+    "soundsGood": "Lyder det som noget for jer?",
+    "tryDialogbot": "Prøv Dialogbot",
+    "guide": "Byggevejledningen",
+    "endTitle": "Prøv Dialogbot selv",
+    "endText": "Den ringer til dig om 10 sekunder og tager imod dig som din egen receptionist.",
+    "endCta": "Prøv den – den ringer til dig",
+    "endGuide": "Åbn byggevejledningen",
+    "again": "Se den igen"
+  },
+  "proof": {
+    "eyebrow": "Det siger kunderne",
+    "title": "Virksomheder, der lader Dialogbot tage telefonen",
+    "trustpilot": "på Trustpilot · {n} anmeldelser",
+    "screenshotCaption": "Sådan ser det ud, når I godkender: Dialogbot viser jer ændringen først – før → efter, «Godkend?».",
+    "founderLabel": "Manden bag Dialogbot",
+    "linkedin": "Find mig på LinkedIn →",
+    "data": {
+      "quotes": {},
+      "usageLabel": "",
+      "founderRole": "",
+      "founderWhy": "",
+      "screenshotAlt": ""
+    }
+  },
+  "lego": {
+    "partsTitle": "Du skal bruge"
+  },
+  "cookies": {
+    "label": "Cookies til statistik",
+    "title": "Må vi måle besøg?",
+    "text": "Vi vil gerne bruge Google Analytics til at se, hvilke sider der bliver læst, så vi kan gøre hjemmesiden bedre. Det sætter en statistikcookie. Du kan sige nej – siden virker præcis lige godt.",
+    "readMore": "Læs mere",
+    "accept": "Ja, det er fint",
+    "decline": "Nej tak",
+    "settings": "Cookieindstillinger"
+  }
+}

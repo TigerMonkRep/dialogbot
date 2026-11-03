@@ -92,6 +92,7 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
 
 export async function SiteFooter({ compact = false }: { compact?: boolean }) {
   const t = await getT("common");
+  const tl = await getT("landing");
   const link = "text-ink no-underline hover:text-accent inline-flex items-center min-h-11 sm:min-h-0";
   const quiet = "text-muted no-underline hover:text-ink inline-flex items-center min-h-8";
   return (
@@ -129,11 +130,11 @@ export async function SiteFooter({ compact = false }: { compact?: boolean }) {
             </nav>
             <nav aria-label={t("chrome.knowledge")} className="flex flex-col gap-1">
               <span className="eyebrow mb-1">{t("chrome.knowledge")}</span>
-              {LANDING_PAGES.filter((p) => p.href !== "/priser").map((p) => <Link key={p.href} href={p.href} className={quiet}>{p.label}</Link>)}
+              {LANDING_PAGES.filter((p) => p.href !== "/priser").map((p) => <Link key={p.href} href={p.href} className={quiet}>{tl(`nav.${p.key}`)}</Link>)}
             </nav>
             <nav aria-label={t("chrome.byIndustry")} className="flex flex-col gap-1">
               <span className="eyebrow mb-1">{t("chrome.byIndustry")}</span>
-              {INDUSTRIES.map((i) => <Link key={i.slug} href={`/ai-receptionist/${i.slug}`} className={quiet}>{i.plural}</Link>)}
+              {INDUSTRIES.map((i) => <Link key={i.slug} href={`/ai-receptionist/${i.slug}`} className={quiet}>{tl(`industries.${i.slug}.plural`)}</Link>)}
             </nav>
           </div>
         </div>

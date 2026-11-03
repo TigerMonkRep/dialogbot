@@ -1,48 +1,42 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { SeoPage } from "@/components/seo-page";
+import Link from "@/i18n/link";
+import { getLocale, getRaw, getT } from "@/i18n/server";
+import { SeoPage, type SeoFaq } from "@/components/seo-page";
+import { alternatesFor, openGraphFor } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "AI-receptionist til danske virksomheder – tager telefonen døgnet rundt",
-  description: "Dialogbot er en dansk AI-receptionist, der tager telefonen, når I er optaget eller har lukket. Den svarer ud fra jeres egen viden, booker tider og sender jer hver henvendelse. 2.495 kr./md.",
-  alternates: { canonical: "/ai-receptionist" },
-  openGraph: { url: "/ai-receptionist", title: "AI-receptionist til danske virksomheder | Dialogbot", images: ["/opengraph-image.png"] },
-};
+const PATH = "/ai-receptionist";
 
-export default function Page() {
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, locale] = await Promise.all([getT("landing.receptionist.meta"), getLocale()]);
+  return { title: t("title"), description: t("description"), alternates: alternatesFor(PATH, locale),
+    openGraph: openGraphFor(PATH, locale, t("ogTitle")) };
+}
+
+export default async function Page() {
+  const [t, raw] = await Promise.all([getT("landing.receptionist"), getRaw()]);
+  const s = (key: string) => t(`sections.${key}`);
   return (
-    <SeoPage path="/ai-receptionist" kicker="AI-receptionist"
-      title="En AI-receptionist, der tager telefonen, når I ikke kan"
-      lead="Dialogbot er en digital receptionist på dansk. Den tager imod opkald og chats døgnet rundt, svarer kun ud fra den viden, I selv har godkendt, og sørger for, at ingen kunde går tabt."
-      points={["Svarer på dansk med en naturlig stemme", "Kender jeres ydelser, priser og åbningstider", "Booker, flytter og aflyser tider", "Sender jer en kort opsummering af hver henvendelse", "Vi guider jer gennem hele opsætningen"]}
+    <SeoPage path={PATH} kicker={t("kicker")}
+      title={t("title")}
+      lead={t("lead")}
+      points={raw<string[]>("landing.receptionist.points")}
       sections={[
-        { title: "Hvad er en AI-receptionist?", body: <>
-          <p>En AI-receptionist er en digital assistent, der passer telefonen og chatten for jeres virksomhed. Den tager imod kunden, finder ud af hvad de har brug for, svarer på de faste spørgsmål og samler navn, nummer og behov, så I kan ringe tilbage til en varm kunde.</p>
-          <p>Med Dialogbot bestemmer I selv, hvad assistenten må sige. Al viden starter som en kladde, og den bliver først brugt, når en ejer eller administrator har godkendt den. Assistenten gætter aldrig – hvis noget ikke fremgår af jeres viden, siger den det ærligt og lover, at en medarbejder vender tilbage.</p>
+        { title: s("what.title"), body: <>
+          <p>{s("what.p1")}</p>
+          <p>{s("what.p2")}</p>
         </> },
-        { title: "Det kan Dialogbot gøre for jer", body: <ul>
-          <li><strong>Tage telefonen</strong>, når I er optaget, er ude hos en kunde eller har lukket – også om aftenen og i weekenden.</li>
-          <li><strong>Afklare behovet</strong> med de spørgsmål, I har godkendt, og sende jer en opsummering med navn og nummer.</li>
-          <li><strong>Booke tider</strong> ud fra jeres åbningstider og bookingregler – og sende kunden en bekræftelse på SMS.</li>
-          <li><strong>Svare i chatten</strong> på jeres hjemmeside med den samme viden som på telefonen.</li>
-          <li><strong>Følge op</strong> på tilbud, I har sendt, og give jer en daglig rapport over alle henvendelser.</li>
+        { title: s("canDo.title"), body: <ul>
+          {raw<[string, string][]>("landing.receptionist.sections.canDo.items").map(([b, rest]) => <li key={b}><strong>{b}</strong>{rest}</li>)}
         </ul> },
-        { title: "Til håndværkere, klinikker, saloner, restauranter og rådgivere", body: <>
-          <p>Dialogbot sættes op efter jeres egne ydelser og arbejdsgange. Håndværkeren slipper for at tage telefonen fra stigen, klinikken aflaster receptionen i morgentimerne, salonen kan blive ved kunden i stolen, og restauranten mister ikke bordbestillinger i myldretiden.</p>
-          <p>I kan beholde jeres nuværende nummer og viderestille til Dialogbot, når I er optaget eller har lukket – eller bruge et nyt Dialogbot-nummer.</p>
+        { title: s("industries.title"), body: <>
+          <p>{s("industries.p1")}</p>
+          <p>{s("industries.p2")}</p>
         </> },
-        { title: "Pris og opsætning", body: <>
-          <p>Der er ét abonnement: <strong>2.495 kr. om måneden</strong>, uden pris pr. henvendelse og med 300 minutters indgående opkald om måneden. Udgående kampagneopkald koster 4 kr. pr. opkald plus 2 kr. pr. samtaleminut. Alle priser er ekskl. moms.</p>
-          <p>I skal ikke kunne noget teknisk. I sætter selv assistenten op efter byggevejledningens tre trin på cirka en halv time – det er med i abonnementet. Har I en hjemmeside, henter Dialogbot det meste automatisk, og I kan prøve assistenten af, før den tager et eneste rigtigt opkald. Vil I hellere have det gjort, sætter vores egne specialister den op for 5.000 kr. ekskl. moms én gang – skræddersyet og integreret med jeres egne systemer og behov. Læs også om <Link href="/ai-telefonsvarer">AI-telefonsvareren</Link> og <Link href="/chatbot">chatbotten til hjemmesiden</Link>.</p>
+        { title: s("price.title"), body: <>
+          <p>{s("price.p1a")}<strong>{s("price.p1Price")}</strong>{s("price.p1b")}</p>
+          <p>{s("price.p2a")}<Link href="/ai-telefonsvarer">{s("price.p2Phone")}</Link>{s("price.p2b")}<Link href="/chatbot">{s("price.p2Chatbot")}</Link>{s("price.p2c")}</p>
         </> },
       ]}
-      faq={[
-        ["Hvad koster en AI-receptionist hos Dialogbot?", "Ét abonnement til 2.495 kr. om måneden, uden pris pr. henvendelse og med 300 minutters indgående opkald om måneden. Udgående kampagneopkald koster 4 kr. pr. opkald plus 2 kr. pr. samtaleminut. Priserne er ekskl. moms."],
-        ["Hvad sker der med kundernes oplysninger – er det GDPR-sikkert?", "Opkald og beskeder behandles som databehandler på jeres vegne, databasen ligger i EU, og I får en databehandleraftale som en del af vilkårene. Læs det hele i almindeligt dansk på siden om GDPR og data: /gdpr."],
-        ["Lyder den som en robot?", "Dialogbot taler naturligt dansk med en stemme, I selv vælger, fx Camilla eller Peter. Den siger altid ærligt, at den er en digital assistent, hvis kunden spørger."],
-        ["Kan jeg beholde mit telefonnummer?", "Ja. I viderestiller jeres nuværende nummer til Dialogbot, når I er optaget eller har lukket, og beholder jeres teleudbyder."],
-        ["Hvad sker der, hvis assistenten ikke kender svaret?", "Den gætter ikke. Den svarer kun ud fra godkendt viden og lover, at en medarbejder vender tilbage, og I får henvendelsen med det samme."],
-        ["Hvor lang tid tager opsætningen?", "Gør I det selv, tager byggevejledningens tre trin cirka en halv time, og assistenten guider jer undervejs. Vælger I opsætning fra vores specialister (5.000 kr. ekskl. moms), aftaler vi et møde og sætter den op skræddersyet til jeres systemer."],
-      ]} />
+      faq={raw<SeoFaq[]>("landing.receptionist.faq")} />
   );
 }

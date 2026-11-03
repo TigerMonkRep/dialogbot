@@ -1,11 +1,12 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { getT } from "@/i18n/server";
 import { API_BASE_URL, COOKIE_OPTS, CSRF_HEADER, CSRF_VALUE, KNOWN_ACCOUNT_COOKIE, KNOWN_ACCOUNT_MAX_AGE, SESSION_COOKIE } from "@/lib/config";
 
 /** Exchanges credentials for a backend session and stores it in an httpOnly cookie. */
 export async function POST(req: NextRequest) {
   if (req.headers.get(CSRF_HEADER) !== CSRF_VALUE) {
-    return NextResponse.json({ code: "csrf_required", message: "Manglende anti-CSRF-header" }, { status: 403 });
+    return NextResponse.json({ code: "csrf_required", message: (await getT("auth"))("errors.csrf") }, { status: 403 });
   }
   const r = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
     method: "POST", headers: { "content-type": "application/json", "user-agent": req.headers.get("user-agent") ?? "" },

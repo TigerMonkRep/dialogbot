@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
 import { api } from "@/lib/client";
+import { useT } from "@/i18n/client";
 import { Button, ErrorBox, Field, Input, useSubmit } from "@/components/ui";
 
 export function AcceptOffer({ token, company }: { token: string; company: string }) {
+  const t = useT("auth");
   const [name, setName] = useState(company);
   const [ok, setOk] = useState(false);
   const { run, pending, error } = useSubmit(async () => {
@@ -13,10 +15,10 @@ export function AcceptOffer({ token, company }: { token: string; company: string
   });
   return (
     <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); run(); }}>
-      <Field label="Navn på jeres arbejdsrum"><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={120} /></Field>
-      <label className="flex items-start gap-2 text-body-sm"><input type="checkbox" className="mt-1 accent-primary" checked={ok} onChange={(e) => setOk(e.target.checked)} /><span>Jeg accepterer tilbuddet og vilkårene ovenfor på vegne af virksomheden.</span></label>
+      <Field label={t("offer.workspaceName")}><Input value={name} onChange={(e) => setName(e.target.value)} maxLength={120} /></Field>
+      <label className="flex items-start gap-2 text-body-sm"><input type="checkbox" className="mt-1 accent-primary" checked={ok} onChange={(e) => setOk(e.target.checked)} /><span>{t("offer.confirm")}</span></label>
       <ErrorBox error={error} />
-      <Button type="submit" icon="check_circle" disabled={pending || !ok || !name.trim()} className="w-full h-12 rounded-lg">{pending ? "Accepterer…" : "Accepter og gå til betaling"}</Button>
+      <Button type="submit" icon="check_circle" disabled={pending || !ok || !name.trim()} className="w-full h-12 rounded-lg">{pending ? t("offer.submitting") : t("offer.submit")}</Button>
     </form>
   );
 }

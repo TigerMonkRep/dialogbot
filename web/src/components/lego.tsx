@@ -33,12 +33,14 @@ export function Brick({ icon, color = "lime", size = 44, optional = false }: { i
 
 export type Part = { icon: string; label: string; color?: BrickColor; optional?: boolean; count?: string };
 
-/** The "Du skal bruge" callout at the top of a step: 1.5 px outline, eyebrow, chips with Outfit "1×" counts. */
-export function PartsBox({ parts, compact = false }: { parts: Part[]; compact?: boolean }) {
+/** The "Du skal bruge" callout at the top of a step: 1.5 px outline, eyebrow, chips with Outfit "1×" counts.
+ *  `title` is the translated heading – t("lego.partsTitle") from the "site" namespace (getT on the server, useT in
+ *  a client component); this file is shared by both, so it takes the text instead of fetching it. */
+export function PartsBox({ parts, title, compact = false }: { parts: Part[]; title: string; compact?: boolean }) {
   if (parts.length === 0) return null;
   return (
-    <div className={`flex flex-col gap-2 rounded-xl border-[1.5px] border-ink bg-paper ${compact ? "px-3 py-2.5" : "px-3.5 py-3"}`} aria-label="Du skal bruge">
-      <span className="eyebrow">Du skal bruge</span>
+    <div className={`flex flex-col gap-2 rounded-xl border-[1.5px] border-ink bg-paper ${compact ? "px-3 py-2.5" : "px-3.5 py-3"}`} aria-label={title}>
+      <span className="eyebrow">{title}</span>
       <div className="flex flex-wrap gap-2">
         {parts.map((p) => (
           <span key={p.label} className={`inline-flex items-center gap-2 rounded-lg bg-panel font-medium text-ink ${compact ? "px-2 py-1 text-[13px]" : "px-2.5 py-1.5 text-[14px]"} ${p.optional ? "border-[1.5px] border-dashed border-ink" : ""}`}>

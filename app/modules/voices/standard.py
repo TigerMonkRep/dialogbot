@@ -26,6 +26,33 @@ STANDARD_VOICES: dict[str, dict] = {
                         "language": "da", **_HUMAN}},
 }
 DEFAULT = "camilla"
+
+# Native phone voices for the other languages (ElevenLabs Voice Library, chosen 3 Nov 2026 for calm, standard-accent
+# customer-service speech). A business serving callers in one of these languages gets the voice of the same gender as
+# its chosen standard voice (Peter → male, Camilla → female). Danish keeps Camilla/Peter above.
+LANGUAGE_VOICES: dict[str, dict[str, dict]] = {
+    "en": {"male": {"voiceId": "sIivXWc5MTlPIP3kJXhg", "name": "Hayes"},
+           "female": {"voiceId": "bm3QvaZ3fUSCRBC3UV1f", "name": "Steffy"}},
+    "de": {"male": {"voiceId": "MMwckqU477oQxnAk1SgA", "name": "Ben"},
+           "female": {"voiceId": "zKHQdbB8oaQ7roNTiDTK", "name": "Laura"}},
+    "es": {"male": {"voiceId": "xuWkhjhJVDpt7iU0oRDd", "name": "Nil"},
+           "female": {"voiceId": "1eHrpOW5l98cxiSRjbzJ", "name": "Raquel"}},
+    "fr": {"male": {"voiceId": "eOwAMwUJEGkP44SKOXIH", "name": "Julien"},
+           "female": {"voiceId": "YxrwjAKoUKULGd0g8K9Y", "name": "Lucie"}},
+    "it": {"male": {"voiceId": "2OoHspMHbpIu5oiMaqDy", "name": "Marco"},
+           "female": {"voiceId": "MuTiG4dbrEGYEy3XP4iP", "name": "Rossana"}},
+    "no": {"male": {"voiceId": "nhvaqgRyAq6BmFs3WcdX", "name": "Øyvind"},
+           "female": {"voiceId": "MULNGIATG7qUsJ0Sjuhy", "name": "Kristine"}},
+    "sv": {"male": {"voiceId": "LJGqDlSQqFnmhbStEO8I", "name": "David"},
+           "female": {"voiceId": "kPdGSxhZAqy4bmPAf9iJ", "name": "Evelina"}},
+}
+
+
+def language_voice(lang: str, gender: str) -> dict | None:
+    v = LANGUAGE_VOICES.get(lang, {}).get(gender)
+    if v is None:
+        return None
+    return {"provider": "11labs", "voiceId": v["voiceId"], "model": "eleven_v4_turbo", "language": lang, **_HUMAN}
 # Vapi formatters that only strip markup; number/date/time/amount/phone/acronym formatters speak English.
 LANGUAGE_NEUTRAL_FORMATTERS = ("markdown", "asterisk", "stripAsterisk", "quote", "newline")
 # Said the way Danes say them; a workspace's own entry for the same term wins.
@@ -81,19 +108,26 @@ def chosen(db: OrmSession, ws_id: uuid.UUID) -> str | None:
     return key if key in STANDARD_VOICES else None
 
 
-def provider_voice(db: OrmSession, ws_id: uuid.UUID, number=None) -> dict:
+def provider_voice(db: OrmSession, ws_id: uuid.UUID, number=None, lang: str = "da") -> dict:
     """Vapi voice for a call: the number's ElevenLabs voice → the workspace's chosen standard voice →
     VAPI_VOICE_JSON → the default Danish standard voice (so the phone never falls back to a non-Danish voice).
-    Always carries the Danish chunk plan (see danish_chunk_plan)."""
+    For a business serving callers in another language: the number's own voice if it has one, else the native voice
+    of that language with the gender of the chosen standard voice. Always carries the chunk plan (pronunciations);
+    the Danish defaults ("AI" → "ej aj") only for Danish."""
     from app.modules.telephony import vapi
 
     if number is not None and (own := vapi.voice_config(number)):
         voice = own
+        if lang != "da" and voice.get("model") in vapi.LANGUAGE_CODE_MODELS:
+            voice["language"] = lang
+    elif lang != "da":
+        key = chosen(db, ws_id) or DEFAULT
+        voice = language_voice(lang, STANDARD_VOICES[key]["gender"]) or dict(STANDARD_VOICES[key]["voice"])
     elif key := chosen(db, ws_id):
         voice = dict(STANDARD_VOICES[key]["voice"])
     else:
         voice = vapi._json_setting(get_settings().vapi_voice_json) or dict(STANDARD_VOICES[DEFAULT]["voice"])
-    voice.setdefault("chunkPlan", danish_chunk_plan(db, ws_id))
+    voice.setdefault("chunkPlan", danish_chunk_plan(db, ws_id, () if lang != "da" else DEFAULT_PRONUNCIATIONS))
     return voice
 
 

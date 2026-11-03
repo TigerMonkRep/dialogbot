@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "./ui";
+import { useT } from "@/i18n/client";
 
 type Ws = { id: string; name: string; role: string; product_intent: string };
 export type NavItem = { href: string; match: string; also?: string[]; label: string; icon: string };
@@ -33,6 +34,7 @@ const POPOVER = "absolute mt-2 rounded-2xl bg-paper border-2 border-ink shadow-b
 
 export function WorkspaceChip({ workspaces, current, compact = false, plain = false }: { workspaces: Ws[]; current: Ws | null; compact?: boolean; plain?: boolean }) {
   const router = useRouter();
+  const t = useT("app");
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
   if (!current) return null;
@@ -40,13 +42,13 @@ export function WorkspaceChip({ workspaces, current, compact = false, plain = fa
   if (single) return <span className={`truncate min-h-[44px] inline-flex items-center text-muted ${compact ? "text-[12px] max-w-[140px]" : "text-[14px] max-w-[220px]"}`}>{current.name}</span>;
   return (
     <div className="relative min-w-0" ref={ref}>
-      <button onClick={() => setOpen(!open)} aria-haspopup="listbox" aria-expanded={open} aria-label={`Arbejdsrum: ${current.name}`}
+      <button onClick={() => setOpen(!open)} aria-haspopup="listbox" aria-expanded={open} aria-label={t("shell.workspaceAria", { name: current.name })}
         className={`flex items-center gap-1 min-h-[44px] rounded-xl text-muted hover:text-ink ${plain || compact ? "" : "px-2"} ${compact ? "text-[12px]" : "text-[14px]"}`}>
         <span className={`truncate ${compact ? "max-w-[140px]" : "max-w-[220px]"}`}>{current.name}</span>
         <Icon name="expand_more" size={16} />
       </button>
       {open && (
-        <ul role="listbox" aria-label="Vælg arbejdsrum" className={`${POPOVER} left-0 w-72`}>
+        <ul role="listbox" aria-label={t("shell.chooseWorkspace")} className={`${POPOVER} left-0 w-72`}>
           {workspaces.map((w) => (
             <li key={w.id} role="option" aria-selected={w.id === current.id}>
               <button onClick={async () => { await selectWs(w.id); setOpen(false); router.refresh(); }} className={`w-full text-left ${MENU_ITEM} ${w.id === current.id ? "bg-panel" : ""}`}>
@@ -55,7 +57,7 @@ export function WorkspaceChip({ workspaces, current, compact = false, plain = fa
               </button>
             </li>
           ))}
-          <li className="border-t-[1.5px] border-ink mt-1 pt-1"><Link href="/opsaetning/1?ny=1" onClick={() => setOpen(false)} className={`${MENU_ITEM} text-accent`}><Icon name="add_circle" size={18} />Nyt arbejdsrum</Link></li>
+          <li className="border-t-[1.5px] border-ink mt-1 pt-1"><Link href="/opsaetning/1?ny=1" onClick={() => setOpen(false)} className={`${MENU_ITEM} text-accent`}><Icon name="add_circle" size={18} />{t("shell.newWorkspace")}</Link></li>
         </ul>
       )}
     </div>
@@ -65,8 +67,9 @@ export function WorkspaceChip({ workspaces, current, compact = false, plain = fa
 /** The four pages as a pill-shaped segmented control (desktop and tablet). Selected = ink with white text. */
 export function TabNav({ items }: { items: NavItem[] }) {
   const path = usePathname();
+  const t = useT("app");
   return (
-    <nav className="inline-flex p-1 rounded-full border-2 border-ink bg-paper" aria-label="Sider">
+    <nav className="inline-flex p-1 rounded-full border-2 border-ink bg-paper" aria-label={t("shell.pages")}>
       {items.map((it) => {
         const active = isActive(path, it);
         return (
@@ -83,8 +86,9 @@ export function TabNav({ items }: { items: NavItem[] }) {
 /** The same four pages as bottom tabs on a phone: icon + label, the selected one gets a yellow pill behind the icon. */
 export function BottomTabs({ items }: { items: NavItem[] }) {
   const path = usePathname();
+  const t = useT("app");
   return (
-    <nav aria-label="Sider" className="sm:hidden fixed inset-x-0 bottom-0 z-40 bg-paper border-t-2 border-ink pb-safe">
+    <nav aria-label={t("shell.pages")} className="sm:hidden fixed inset-x-0 bottom-0 z-40 bg-paper border-t-2 border-ink pb-safe">
       <ul className="grid grid-cols-4">
         {items.map((it) => {
           const active = isActive(path, it);
@@ -105,9 +109,10 @@ export function BottomTabs({ items }: { items: NavItem[] }) {
 /** The yellow avatar with the user's initial: one tap to Konto (profile, team, billing, log out). */
 export function Avatar({ me }: { me: { display_name: string; email: string } | null }) {
   const path = usePathname();
+  const t = useT("app");
   const initial = (me?.display_name || me?.email || "?").trim().charAt(0).toUpperCase();
   return (
-    <Link href="/app/konto" aria-label={me ? `Konto: ${me.display_name}` : "Konto"} aria-current={path.startsWith("/app/konto") ? "page" : undefined}
+    <Link href="/app/konto" aria-label={me ? t("shell.accountAria", { name: me.display_name }) : t("shell.account")} aria-current={path.startsWith("/app/konto") ? "page" : undefined}
       className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center">
       <span className="w-10 h-10 rounded-full bg-highlight text-ink font-display font-extrabold text-[15px] flex items-center justify-center border-2 border-ink">{initial}</span>
     </Link>
@@ -117,15 +122,16 @@ export function Avatar({ me }: { me: { display_name: string; email: string } | n
 /** Shown on every page while an operator looks at a customer's account ("se som kunde"): read-only, ends with one click. */
 export function ViewAsBanner({ who }: { who: { name: string; email: string } }) {
   const router = useRouter();
+  const t = useT("app");
   const [busy, setBusy] = useState(false);
   return (
     <div role="status" className="bg-ink text-paper border-b-2 border-ink px-4 py-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[14px]">
-      <span className="flex items-center gap-2"><Icon name="visibility" size={18} />Du ser som <strong>{who.name}</strong> ({who.email}) – kun læsning, intet kan ændres.</span>
+      <span className="flex items-center gap-2"><Icon name="visibility" size={18} />{t("shell.viewAs.before")} <strong>{who.name}</strong> ({who.email}) {t("shell.viewAs.after")}</span>
       <button disabled={busy} className="underline font-semibold disabled:opacity-60" onClick={async () => {
         setBusy(true);
         await fetch("/api/admin/view-as/end", { method: "POST", headers: { "x-requested-with": "dialogbot" } });
         router.push("/app/operator/admin/kunder"); router.refresh();
-      }}>Afslut og gå tilbage til admin</button>
+      }}>{t("shell.viewAs.end")}</button>
     </div>
   );
 }

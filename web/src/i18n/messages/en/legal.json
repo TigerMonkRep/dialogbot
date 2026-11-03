@@ -1,1 +1,260 @@
-{}
+{
+  "notice": "This is a translation. The Danish version is legally binding.",
+  "shell": {
+    "nav": "Legal",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "contact": "Contact",
+    "cvr": "CVR no."
+  },
+  "gdpr": {
+    "meta": {
+      "title": "GDPR and data – how Dialogbot looks after your customers' information",
+      "description": "What Dialogbot stores about calls and SMS, where data is kept, how the data processing agreement works, and what happens when you cancel. Short and in plain language.",
+      "ogTitle": "GDPR and data | Dialogbot"
+    },
+    "kicker": "GDPR and data",
+    "title": "GDPR and data: what we store, and where",
+    "lead": "Your customers call and write with personal information. Here, in plain language, is what Dialogbot does with it.",
+    "points": [
+      "You are the data controller – Dialogbot is your data processor",
+      "The database is located in the EU",
+      "A data processing agreement is part of the terms",
+      "Calls can be transcribed to text",
+      "Dialogbot honestly says that it is an AI",
+      "If you cancel, you can get a copy of your data, and then we delete it"
+    ],
+    "sections": [
+      {
+        "title": "Who is responsible for what?",
+        "body": [
+          { "type": "p", "parts": ["You are the ", { "b": "data controller" }, " for your customers' information. Dialogbot is the ", { "b": "data processor" }, " and only processes the information on your instructions. This also applies if your customers are patients, clients or private individuals."] }
+        ]
+      },
+      {
+        "title": "What do we store?",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              "Phone number, name and the content of the message when someone calls or writes to you",
+              "A transcript of the conversation – calls can be transcribed to text",
+              "Bookings and SMS confirmations",
+              "The summary of each enquiry that you receive from Dialogbot",
+              "The knowledge and prices you have approved for the assistant yourselves"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Where is the data kept?",
+        "body": [
+          { "type": "p", "parts": ["The database is located in the EU (Ireland), and the server in the EU (Frankfurt). Telephony, speech and AI run with subcontractors, and some of them may process data in the USA. This takes place on the basis of the EU-U.S. Data Privacy Framework or the European Commission's standard contractual clauses. The full list of sub-processors is in the ", { "link": "/privatliv", "text": "privacy policy" }, "."] }
+        ]
+      },
+      {
+        "title": "Data processing agreement",
+        "body": [
+          { "type": "p", "parts": ["Our data processing agreement is part of the ", { "link": "/vilkaar", "text": "terms" }, ", so you don't need to ask for a separate one. Write to ", { "email": true }, " if you need a signed copy for your own documentation."] }
+        ]
+      },
+      {
+        "title": "What does the assistant tell your customers?",
+        "body": [
+          { "type": "p", "text": "Dialogbot honestly says that it is a digital assistant if the customer asks, and it states this in the conversation. It only answers from knowledge you have approved yourselves." }
+        ]
+      },
+      {
+        "title": "When you cancel",
+        "body": [
+          { "type": "p", "text": "Your data belongs to you. Within 30 days of cancellation you can ask for a copy. After that we delete it, unless the law requires us to keep it – e.g. invoices for 5 years." }
+        ]
+      },
+      {
+        "title": "Questions or access requests",
+        "body": [
+          { "type": "p", "parts": ["If one of your customers wants access to or deletion of their information, we help you respond. Write to ", { "email": true }, ". Customers can also complain to ", { "href": "https://www.datatilsynet.dk", "text": "Datatilsynet" }, " (the Danish Data Protection Agency)."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Can I get a data processing agreement?", "Yes. It is part of the terms. Write to info@dialogbot.dk if you would like a signed copy."],
+      ["Is the data kept in the EU?", "The database is located in the EU (Ireland) and the server in the EU (Frankfurt). Some subcontractors for telephony, speech and AI may process data in the USA on the basis of the EU-U.S. Data Privacy Framework or standard contractual clauses."],
+      ["What happens to the data when I cancel?", "Within 30 days you can ask for a copy. After that we delete the data, unless the law requires us to keep it."]
+    ]
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy | Dialogbot",
+      "description": "How Dialogbot processes personal data about customers, their customers, ambassadors and visitors."
+    },
+    "label": "Privacy",
+    "title": "How we process personal data",
+    "updated": "Updated 6 October 2026.",
+    "intro": "Here you can see what information Dialogbot processes, why, for how long and who helps us with it. This page covers customers, customers' own customers, ambassadors and visitors.",
+    "sections": [
+      {
+        "title": "Who is responsible?",
+        "body": [
+          { "type": "p", "parts": ["{name} (CVR no. {cvr}), {address}. Write to ", { "email": true }, " about anything concerning your information."] }
+        ]
+      },
+      {
+        "title": "Customers (businesses with an account)",
+        "body": [
+          { "type": "p", "text": "We process name, email and password (stored encrypted) for users, the business's details (name, CVR, address, phone, opening hours, services and prices) and the knowledge you add for the assistant. We log important actions, e.g. approvals and changes of roles, for security reasons." },
+          { "type": "p", "text": "The purpose is to deliver the service and invoice for it. The legal basis is our agreement with you (Article 6(1)(b) of the General Data Protection Regulation) and our legitimate interest in security and operations (point (f))." }
+        ]
+      },
+      {
+        "title": "Payment",
+        "body": [
+          { "type": "p", "text": "Payment cards are handled by Stripe. We only see the card type, the last four digits and the expiry date. Invoices are kept for 5 years under the Danish Bookkeeping Act." }
+        ]
+      },
+      {
+        "title": "Your customers (conversations, calls and enquiries)",
+        "body": [
+          { "type": "p", "parts": ["When the assistant talks to your customers on the phone or on the website, we process phone number, name, the content of the message, a transcript of the conversation, bookings and the enquiries that arise. We do this as ", { "b": "data processor" }, " on behalf of the business the customer has contacted – the business is the data controller. See the ", { "link": "/vilkaar", "text": "terms" }, "."] },
+          { "type": "p", "text": "Calls can be transcribed to text. The assistant states at the start of the conversation that it is an AI." }
+        ]
+      },
+      {
+        "title": "Ambassadors",
+        "body": [
+          { "type": "p", "text": "If you are an ambassador, we process your name, email, phone, date of birth, your greeting, the customers you have referred (company name and status only), your bonus and your payouts." },
+          { "type": "p", "parts": ["Without a CVR number we also process your ", { "b": "CPR number" }, " and your ", { "b": "bank account number" }, ". The CPR number is only used to report your bonus as B-income to the Danish Tax Agency (Skattestyrelsen), which we are obliged to do; the account number only for payouts. Both are stored encrypted and can only be seen by Dialogbot's administrators, and every viewing is logged. If you are under 18, we also process your parent's name, email and approval."] },
+          { "type": "p", "text": "The legal basis is our agreement with you (Article 6(1)(b)) and our legal obligation to report (point (c) and section 11 of the Danish Data Protection Act on CPR numbers). The information is kept for as long as you are an ambassador, and then for 5 years for bookkeeping and tax purposes." }
+        ]
+      },
+      {
+        "title": "Waiting list and demo calls",
+        "body": [
+          { "type": "p", "parts": [{ "b": "Waiting list:" }, " email, chosen industry and interests, and the time of consent – only to notify you when we open. Kept for at most 24 months."] },
+          { "type": "p", "parts": [{ "b": "\"Call me now\":" }, " phone number, name, company, time and text of your consent, and a transcript of the conversation, so we can call you and follow up. If you say no thanks during the call, the number is put on our block list. The legal basis is your consent, which you can always withdraw."] }
+        ]
+      },
+      {
+        "title": "Cookies",
+        "body": [
+          { "type": "p", "text": "We set necessary cookies without asking: to keep you logged in, remember your chosen workspace, the password for the front page and – if you came via an ambassador's link – which ambassador recommended us (90 days). We measure visitor numbers in two ways: Vercel Web Analytics, which neither uses cookies nor stores anything about you, and Google Analytics, which sets a statistics cookie and only runs if you have said yes in the banner – you can change your choice under \"Cookie settings\" at the bottom of the page. We do not use advertising cookies." }
+        ]
+      },
+      {
+        "title": "Who helps us? (sub-processors)",
+        "body": [
+          { "type": "p", "text": "We use these suppliers, which process data on our behalf under data processing agreements:" },
+          {
+            "type": "ul",
+            "items": [
+              "Supabase – database (EU, Ireland)",
+              "Render – server (EU, Frankfurt)",
+              "Vercel – website and app",
+              "Resend – sending emails (EU, Ireland)",
+              "Stripe – payment",
+              "Anthropic – AI model that formulates the answers",
+              "Vapi and Twilio – telephony",
+              "Deepgram and ElevenLabs – speech to text and text to speech"
+            ]
+          },
+          { "type": "p", "text": "Some of them may process data in the USA. Transfers take place on the basis of the EU-U.S. Data Privacy Framework or the European Commission's standard contractual clauses." }
+        ]
+      },
+      {
+        "title": "Your rights",
+        "body": [
+          { "type": "p", "parts": ["You have the right of access, rectification, erasure, restriction, data portability and to object – and to withdraw a consent. Write to ", { "email": true }, ". If it concerns a conversation with one of our customers, we help that business respond to you. You can complain to Datatilsynet, the Danish Data Protection Agency (", { "href": "https://www.datatilsynet.dk", "text": "datatilsynet.dk" }, ")."] }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "meta": {
+      "title": "Terms | Dialogbot",
+      "description": "Subscription and sales terms for Dialogbot."
+    },
+    "label": "Terms",
+    "title": "Subscription and sales terms",
+    "updated": "Version 1 · effective from 6 October 2026.",
+    "intro": "These terms apply when a business creates an account and uses Dialogbot. Dialogbot is sold to businesses only. \"We\" are {name} (CVR no. {cvr}), {address}. \"You\" are the business that has created the workspace.",
+    "sections": [
+      {
+        "title": "1. The service",
+        "body": [
+          { "type": "p", "text": "Dialogbot is an AI receptionist that can answer calls and messages on your website, receive enquiries, book appointments and – if you choose to – call contacts who have given their consent. The assistant answers from the knowledge you have approved yourselves in your workspace." },
+          { "type": "p", "text": "We continuously develop the service. Features marked as \"coming soon\" or \"not available\" are not part of the agreement until they have been launched." }
+        ]
+      },
+      {
+        "title": "2. Prices",
+        "body": [
+          { "type": "p", "text": "All prices are in Danish kroner excl. VAT. VAT (25 %) is added on the invoice." },
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Subscription:" }, " from 2.495 kr. per month. There is no price per enquiry."],
+              [{ "b": "Campaigns (outbound calls):" }, " 4 kr. per outbound call plus 2 kr. per started minute of conversation. Every call placed counts, including a retry (at most 2 attempts and at most 3 minutes of conversation per contact). The highest possible price is shown before a campaign is started."],
+              [{ "b": "Inbound calls:" }, " a Danish phone number for the assistant and 300 started minutes of conversation per calendar month are included. Minutes beyond that cost 1,50 kr. per started minute and are charged on the month's invoice. Usage can be followed continuously in Dialogbot."]
+            ]
+          },
+          { "type": "p", "text": "If you come via an ambassador, you get a 50 % discount on your first invoiced month. We may change the prices with at least 30 days' notice by email; the change applies from the first full month after the notice." }
+        ]
+      },
+      {
+        "title": "3. Payment",
+        "body": [
+          { "type": "p", "text": "You store a payment card with our payment provider Stripe. We invoice in arrears once a month for the previous month, and the amount is charged automatically to the card. We do not store card details ourselves." },
+          { "type": "p", "text": "If the payment cannot be completed, you will be notified. If an invoice has not been paid 14 days after the due date, we may pause the assistant until the payment is settled." },
+          { "type": "p", "parts": ["If you have questions about an invoice, please ", { "link": "/kontakt", "text": "contact us" }, " before you dispute it with your bank."] }
+        ]
+      },
+      {
+        "title": "4. Start, term and cancellation",
+        "body": [
+          { "type": "p", "text": "The agreement runs until it is cancelled. You can cancel with effect from the end of the current month by writing to us. We can cancel with 30 days' notice. There is no commitment. Setup is included when you do it yourselves; setup by Dialogbot's specialists costs 5.000 kr. excl. VAT and is paid once, before the work begins." },
+          { "type": "p", "text": "In the event of material breach – e.g. misuse of the service or non-payment – we may close access without notice." }
+        ]
+      },
+      {
+        "title": "5. Your responsibility",
+        "body": [
+          { "type": "p", "text": "You are responsible for ensuring that the knowledge, prices, opening hours and answers you approve are correct, and for following up on the enquiries the assistant receives." },
+          { "type": "p", "text": "If you use campaigns (outbound calls), you are responsible for ensuring that each contact has given prior, documentable consent to be called by an automated system, cf. section 10 of the Danish Marketing Practices Act, and that businesses protected against marketing (reklamebeskyttede) are not contacted. The service must not be used for illegal, misleading or offensive content." },
+          { "type": "p", "text": "You must keep your login confidential and give access to the right people in your team." }
+        ]
+      },
+      {
+        "title": "6. AI and limitation of liability",
+        "body": [
+          { "type": "p", "text": "The assistant uses artificial intelligence. It is instructed to answer only from your approved knowledge and to say so if it doesn't know the answer, but it can make mistakes or misunderstand. It always states that it is an AI." },
+          { "type": "p", "text": "We are not liable for indirect losses, e.g. lost revenue, lost customers or consequential damages. Our total liability is limited to the amount you have paid for the service in the 3 months preceding the damage. We are not liable for outages at third parties such as telecom operators and cloud providers or for circumstances beyond our control." }
+        ]
+      },
+      {
+        "title": "7. Data and personal data",
+        "body": [
+          { "type": "p", "parts": ["Your data belongs to you. When the assistant talks to your customers, we process personal data on your behalf as data processor. We only process data on your instructions and in accordance with our data processing agreement, which forms part of these terms. The list of sub-processors we use (including hosting, telephony, speech and AI) is set out in the ", { "link": "/privatliv", "text": "privacy policy" }, "."] },
+          { "type": "p", "text": "On cancellation you can ask for a copy of your data within 30 days. After that we delete it, unless the law requires us to keep it (e.g. invoices for 5 years)." }
+        ]
+      },
+      {
+        "title": "8. Changes to the terms",
+        "body": [
+          { "type": "p", "text": "We may change the terms with 30 days' notice by email. Material changes to your disadvantage give you the right to cancel with effect from the date of the change." }
+        ]
+      },
+      {
+        "title": "9. Governing law and disputes",
+        "body": [
+          { "type": "p", "text": "The agreement is governed by Danish law. Disagreements are sought to be resolved through dialogue; otherwise they are settled by the District Court of Aarhus (Retten i Aarhus)." }
+        ]
+      },
+      {
+        "title": "Contact",
+        "body": [
+          { "type": "p", "parts": ["{name}, CVR no. {cvr}, {address} · ", { "email": true }, " · ", { "link": "/kontakt", "text": "Contact and support" }] }
+        ]
+      }
+    ]
+  }
+}

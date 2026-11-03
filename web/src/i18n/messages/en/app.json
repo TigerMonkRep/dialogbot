@@ -1,1 +1,831 @@
-{}
+{
+  "ui": {
+    "reference": "Reference: {id}"
+  },
+  "status": {
+    "complete": "Completed",
+    "passed": "Passed",
+    "approved": "Approved",
+    "published": "Sent",
+    "accepted": "Accepted",
+    "in_progress": "In progress",
+    "in_review": "In review",
+    "scheduled": "Scheduled",
+    "publishing": "Posting now",
+    "pending": "Pending",
+    "stale": "Outdated",
+    "rejected": "Rejected",
+    "blocked": "Blocked",
+    "expired": "Expired",
+    "failed": "Failed",
+    "not_available": "Not available",
+    "not_started": "Not started",
+    "untested": "Not tested",
+    "skipped": "Skipped",
+    "draft": "Draft",
+    "superseded": "Replaced",
+    "cancelled": "Cancelled",
+    "revoked": "Revoked"
+  },
+  "nav": {
+    "today": "Today",
+    "knowledge": "What it knows",
+    "calls": "Calls",
+    "week": "Week"
+  },
+  "shell": {
+    "verify": {
+      "before": "Your email isn't verified.",
+      "link": "Verify now",
+      "after": "to create workspaces."
+    },
+    "skip": "Skip to content",
+    "homeAria": "Dialogbot – Today",
+    "envStaging": "Staging",
+    "envDev": "Development",
+    "tagline": "AI reception that answers the phone for you",
+    "env": "Environment: {env}",
+    "help": "Help",
+    "workspaceAria": "Workspace: {name}",
+    "chooseWorkspace": "Choose workspace",
+    "newWorkspace": "New workspace",
+    "pages": "Pages",
+    "accountAria": "Account: {name}",
+    "account": "Account",
+    "viewAs": {
+      "before": "You are viewing as",
+      "after": "– read-only, nothing can be changed.",
+      "end": "End and return to admin"
+    }
+  },
+  "outcome": {
+    "booked": "Appointment booked",
+    "to_you": "For you",
+    "done": "Handled"
+  },
+  "overview": {
+    "turnedOn": "Dialogbot is on",
+    "turnedOnSub": "It will answer the next time customers call.",
+    "notDone": "Not finished",
+    "setupNext": "Setup isn't finished · next: step {n}",
+    "step1": "– business",
+    "step2": "– calendar & systems",
+    "step3": "– test & switch on",
+    "continue": "Continue",
+    "isOn": "Dialogbot is on",
+    "isOff": "Dialogbot is off",
+    "isNotOn": "Dialogbot isn't on",
+    "statusLine": {
+      "active": "Answers the phone when you don't.",
+      "paused": "Paused – calls reach you as before.",
+      "not_started": "The phone isn't set up yet.",
+      "awaiting_info": "Needs more information before the phone can be connected.",
+      "provisioning": "The connection is being prepared.",
+      "ready_for_test": "Ready for a test call.",
+      "test_failed": "The test call failed – try again."
+    },
+    "setUpPhone": "Set up the phone",
+    "tiles": {
+      "calls": "calls",
+      "callsSub": "last 24 hours",
+      "leads": "new enquiries",
+      "leadsSub": "{n} open in total",
+      "toYou": "for you",
+      "toYouSub": "waiting for your reply"
+    },
+    "toYou": "For you",
+    "toYouSub": "The only things you need to do today.",
+    "nothingWaiting": "Nothing is waiting for you right now.",
+    "todo": {
+      "lead": {
+        "tag": "New enquiry",
+        "cta": "Open"
+      },
+      "conversation": {
+        "tag": "Waiting for you",
+        "cta": "Reply"
+      },
+      "task": {
+        "tag": "Task",
+        "cta": "Open"
+      },
+      "knowledge": {
+        "tag": "Approve",
+        "cta": "Review"
+      },
+      "import": {
+        "tag": "Suggestion",
+        "cta": "See suggestion"
+      }
+    },
+    "latestCalls": "Latest calls",
+    "latestCallsSub": "Click one to read what was said.",
+    "noCalls": "No calls yet.",
+    "callsStaffOnly": "Calls can be viewed by staff, admins and owners.",
+    "read": "Read",
+    "allCalls": "See all calls",
+    "appointments": "Appointments",
+    "noAppointments": "No upcoming appointments.",
+    "weekAppointments": "See this week's appointments",
+    "campaigns": "Campaigns",
+    "campaignsSub": "Call your own customers – 4 kr. per call + 2 kr. per minute of conversation, excl. VAT.",
+    "openCampaigns": "Open campaigns",
+    "allActivity": "All activity in the last 14 days",
+    "power": {
+      "aria": "Turn Dialogbot on or off",
+      "onlyAdmins": "Only owners and admins can turn it on and off",
+      "setupFirst": "The phone must be set up before Dialogbot can be turned on"
+    }
+  },
+  "time": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "minSec": "{m} min {s} s",
+    "weekdaysShort": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    ],
+    "weekdaysShortLower": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    ]
+  },
+  "calls": {
+    "resolve": "Mark as handled",
+    "saveAsLead": "Save as enquiry",
+    "reply": {
+      "label": "Reply to the customer in the chat",
+      "placeholderStaff": "Write your reply…",
+      "placeholderAi": "When you reply, you take over the conversation and Dialogbot pauses.",
+      "send": "Send reply",
+      "handBack": "Hand back to Dialogbot"
+    },
+    "staffOnly": "Calls and messages can be viewed by staff, admins and owners.",
+    "title": "Calls and messages",
+    "eyebrow": "Everything Dialogbot has talked to customers about",
+    "filtersAria": "Filters",
+    "filters": {
+      "all": "All",
+      "to_you": "For you",
+      "booked": "Appointments",
+      "done": "Handled by Dialogbot",
+      "webchat": "Webchat"
+    },
+    "lastDays": "Last {n} days",
+    "search": "Search name, number or topic",
+    "noMatch": "No calls or messages match the filter.",
+    "empty": "No calls or messages yet. When customers call or write, they'll show up here.",
+    "showing": "Showing the newest {n} of {total}. Use search or a shorter period.",
+    "conversation": "The conversation",
+    "back": "All calls and messages",
+    "phone": "Phone",
+    "transcript": "Transcript",
+    "noTranscript": "No transcript saved.",
+    "staff": "Staff member",
+    "staffInitial": "S",
+    "actions": "What Dialogbot did",
+    "run": {
+      "ok": "Done",
+      "failed": "Failed",
+      "refused": "Not done"
+    },
+    "simulated": "simulated",
+    "callBack": "Call back",
+    "makeAppointment": "Make an appointment",
+    "openLead": "Open enquiry",
+    "takenOver": "A staff member has taken over the conversation – Dialogbot won't reply until it's handed back.",
+    "wrongAnswer": "Was the answer wrong? Tell the assistant under «What it knows» – and it will correct itself."
+  },
+  "common": {
+    "save": "Save",
+    "saved": "Saved",
+    "kr": "{amount} kr.",
+    "saving": "Saving…",
+    "cancel": "Cancel"
+  },
+  "week": {
+    "form": {
+      "edit": "Edit yourself",
+      "email": "Email yesterday's report",
+      "at": "At"
+    },
+    "staffOnly": "The week can be viewed by staff, admins and owners.",
+    "weekN": "Week {n}",
+    "title": "How the week went",
+    "chooseWeek": "Choose week",
+    "thisWeek": "This week",
+    "num": {
+      "answered": "calls and messages answered",
+      "answeredSub": "{phone} by phone · {chat} in webchat",
+      "bookings": "appointments booked",
+      "vsLastWeek": "{d} vs. last week",
+      "noneYet": "none yet",
+      "toYou": "messages for you",
+      "waiting": "waiting for you",
+      "allDone": "all handled",
+      "response": "before it replies in the chat",
+      "noChat": "no chats this week",
+      "allDay": "around the clock"
+    },
+    "perDay": "Calls per day",
+    "answered": "answered",
+    "messageToYou": "message for you",
+    "dayAria": "{day}: {answered} answered, {toYou} for you",
+    "topics": {
+      "title": "What customers asked about",
+      "sub": "If an answer is missing, add it under «What it knows».",
+      "empty": "No questions this week.",
+      "topic": "Topic",
+      "times": "Times",
+      "couldAnswer": "Dialogbot could answer",
+      "yes": "Yes",
+      "booked": "booked {n}",
+      "no": "No",
+      "partly": "Partly ({n} of {total})",
+      "tookMessage": "took a message",
+      "addAnswer": "Add answer",
+      "note": "Grouped automatically from what customers wrote or said first. Similar questions are merged."
+    },
+    "report": {
+      "title": "Daily report",
+      "on": {
+        "before": "Every day at",
+        "after": "owners and admins get yesterday's calls and appointments in one email."
+      },
+      "off": {
+        "before": "The daily email report is",
+        "bold": "turned off",
+        "after": ". You'll find the week's numbers here."
+      },
+      "ask": "You can also ask the assistant: «Send the report at 18:00»."
+    },
+    "cost": {
+      "title": "What the week cost",
+      "extra": "{amount} extra",
+      "calls": "{n} campaign calls",
+      "note": "300 minutes of incoming calls per month are included in the subscription. Campaign calls this week: {n} (4 kr. per outgoing call + 2 kr. per minute of conversation, excl. VAT).",
+      "billing": "See subscription and invoices"
+    }
+  },
+  "bookings": {
+    "source": {
+      "webchat": "Webchat",
+      "phone": "Phone",
+      "manual": "Manual"
+    },
+    "card": {
+      "confirmCancel": "Cancel the appointment? The customer isn't notified automatically – call or write to them.",
+      "call": "Call",
+      "conversation": "Conversation",
+      "lead": "Enquiry",
+      "cancel": "Cancel"
+    },
+    "book": {
+      "noSlotsError": "There are no free times. Check opening hours and calendar.",
+      "type": "What do they need?",
+      "name": "Name",
+      "phone": "Phone",
+      "when": "When",
+      "first": "First available – {label}",
+      "noSlots": "No free times",
+      "booked": "Booked {label}.",
+      "booking": "Booking…",
+      "submit": "Book",
+      "note": "The customer doesn't get a text message yet – send a confirmation yourself. «First available» takes the next time that opening hours and calendar allow."
+    },
+    "calendar": {
+      "reading": "Reading…",
+      "readNow": "Read the calendar now",
+      "copied": "Address copied",
+      "copy": "Copy calendar address",
+      "title": "Calendar",
+      "error": "Couldn't read the calendar",
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "lastRead": "Last read {at} · {n} busy periods. Dialogbot only sees when you're busy.",
+      "without": "Without a calendar, Dialogbot only knows the opening hours and the appointments it booked itself.",
+      "change": "Connect or change calendar"
+    },
+    "staffOnly": "Appointments can be viewed by staff, admins and owners.",
+    "eyebrow": "Today → Appointments",
+    "title": "Appointments Dialogbot has booked",
+    "intro": "Move or cancel them here. Busy time in your calendar is blocked, and every booking becomes an enquiry with a task.",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
+    "noHours": {
+      "before": "There are no approved opening hours, so there are no free times.",
+      "link": "Add opening hours under «What it knows»"
+    },
+    "weekAria": "This week's appointments",
+    "closed": "Closed · Dialogbot doesn't book",
+    "none": "No appointments",
+    "bookFor": "Book for a customer",
+    "noTypes": {
+      "before": "There are no booking types yet.",
+      "link": "Create one under All settings → Booking"
+    },
+    "rules": {
+      "title": "How it books",
+      "online": "Online booking",
+      "on": "On",
+      "off": "Off",
+      "noHours": "No opening hours",
+      "earliest": "Earliest",
+      "immediately": "right away",
+      "hoursAhead": "{n} hours ahead",
+      "horizon": "at most {n} days ahead",
+      "pause": "Break",
+      "buffer": "{n} min between appointments",
+      "types": "Types",
+      "noTypes": "None",
+      "ask": "Tell the assistant – it shows the rule before it applies. All rules:",
+      "allSettings": "All settings → Booking"
+    }
+  },
+  "leads": {
+    "qual": {
+      "unqualified": "Not assessed",
+      "qualified": "Qualified",
+      "disqualified": "Not relevant"
+    },
+    "pipe": {
+      "new": "New",
+      "contacted": "Contacted",
+      "won": "Won",
+      "lost": "Lost"
+    },
+    "bill": {
+      "pending": "Awaiting approval",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "source": {
+      "webchat": "Webchat",
+      "phone": "Phone",
+      "manual": "Manual",
+      "campaign": "Campaign"
+    },
+    "callbackWindow": "{day} at {from}–{to}",
+    "editor": {
+      "title": "Customer and need",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "need": "Need",
+      "qualification": "Qualification",
+      "locked": "Locked because billing has been decided.",
+      "reason": "Reason",
+      "pipeline": "Progress"
+    },
+    "billing": {
+      "title": "Billing",
+      "price": {
+        "before": "Price for this enquiry (older agreement):",
+        "after": "excl. VAT (agreement v{v})."
+      },
+      "included": "Approved. No price per enquiry – it's included in the subscription (agreement v{v}).",
+      "reason": "Reason: {reason}",
+      "modelB": "Older agreement v{v}: an approved enquiry costs {price} excl. VAT.",
+      "modelA": "Agreement v{v}: the subscription covers the enquiry – there's no price per enquiry.",
+      "noAgreement": "The subscription isn't confirmed yet – the owner confirms it under Settings → Agreement.",
+      "monthly": "Approved enquiries appear on the monthly statement (see Billing).",
+      "reasonLabel": "Reason (required when rejecting)",
+      "approve": "Approve enquiry",
+      "reject": "Reject",
+      "onlyQualified": "Only qualified enquiries can be approved.",
+      "adminsApprove": "Owners and admins approve enquiries."
+    },
+    "tasks": {
+      "title": "Tasks",
+      "none": "No tasks.",
+      "doneAria": "Done: {title}",
+      "due": "Due {at}",
+      "new": "New task",
+      "newPlaceholder": "New task…",
+      "add": "Add"
+    },
+    "back": "Enquiries",
+    "noName": "(no name)",
+    "created": "created {at}",
+    "wantsCall": "Wants a call {window}",
+    "seeConversation": "See the conversation"
+  },
+  "campaigns": {
+    "status": {
+      "draft": "Draft",
+      "running": "Running",
+      "paused": "Paused",
+      "completed": "Finished"
+    },
+    "contactStatus": {
+      "pending": "Waiting",
+      "calling": "Calling now",
+      "done": "Talked to",
+      "no_answer": "No answer",
+      "failed": "Failed",
+      "opted_out": "Opted out of calls",
+      "skipped": "Blocked"
+    },
+    "outcome": {
+      "interested": "Interested",
+      "callback": "Call back",
+      "not_interested": "Not interested",
+      "opt_out": "Doesn't want calls",
+      "no_answer": "No answer"
+    },
+    "staffOnly": "Campaigns can be viewed by staff, admins and owners.",
+    "eyebrow": "Today → Campaigns",
+    "enable": {
+      "title": "Do you want to call out too?",
+      "body": "Dialogbot can call your own customers with a message – e.g. an offer – and pass the interested ones on to you. It costs {price} per outgoing call excl. VAT. Nothing is called until you've approved it.",
+      "onlyAdmins": "Only owners and admins can turn on outgoing calls.",
+      "ask": "You can also tell the assistant.",
+      "pending": "Turning on…",
+      "button": "Yes, turn on outgoing calls"
+    },
+    "eyebrowPrice": "Today → Campaigns · outgoing calls · {price} per call excl. VAT",
+    "title": "Call your customers – one campaign at a time",
+    "intro": "Three steps: choose who it should call, hear what it says, and approve the price before the first call goes out. The price is {price} + VAT per outgoing call – every call counts, including a new attempt. At most {attempts} attempts and {minutes} minutes of conversation in total per contact. Dialogbot never calls anyone on the block list.",
+    "salesCalls": "Sales calls: let the AI call (Dialogbot only)",
+    "need": {
+      "title": "You'll need",
+      "list": "a list with name and number (CSV or pasted from Excel)",
+      "sentence": "one sentence about why you're calling"
+    },
+    "onlyAdmins": "Only admins and owners can create and start campaigns.",
+    "previous": "Previous campaigns",
+    "none": "No campaigns yet.",
+    "summary": "{calls} calls · {answered} talked to · {interested} interested · {open} left",
+    "stats": {
+      "contacts": "Contacts",
+      "answered": "Talked to",
+      "interested": "Interested",
+      "callback": "Call back",
+      "noAnswer": "No answer",
+      "left": "Left"
+    },
+    "detail": {
+      "who": "Who should it call?",
+      "contacts": "{n} contacts. Numbers on the block list are skipped. Dialogbot only uses name and number.",
+      "noContacts": "No contacts yet.",
+      "private": "Private",
+      "business": "Business",
+      "consent": "consent",
+      "noConsent": "Missing consent – won't be called",
+      "attempts": "{n} attempts",
+      "priceNote": "{price} kr. per call excl. VAT. You only pay for the calls that go out. Stop at any time."
+    },
+    "new": {
+      "title": "New campaign",
+      "name": "Campaign name",
+      "namePlaceholder": "Spring offer 2027",
+      "purpose": "What should the call be about?",
+      "purposeHint": "E.g. \"Offer floor sanding to previous customers before the summer holidays\". The AI suggests the script based on this and your knowledge.",
+      "create": "Create campaign"
+    },
+    "editor": {
+      "suggested": "AI suggestions have been filled in. Adjust them and press Save.",
+      "saved": "Saved.",
+      "what": "What should it say?",
+      "suggesting": "Suggesting…",
+      "suggest": "Suggest with AI",
+      "running": "The campaign is running. Pause it to change the script.",
+      "purpose": "Purpose of the call",
+      "opening": "Opening line",
+      "openingHint": "{navn} becomes the contact's first name and {virksomhed} your name. The assistant always says it's a digital assistant.",
+      "questions": "Questions (one per line)",
+      "success": "When is the contact interested?",
+      "fromNumber": "Call from number",
+      "addNumber": "Add your number under Settings → Telephony.",
+      "chooseNumber": "Choose number",
+      "when": "When – and what does it do with the answers?",
+      "whenSub": "If the customer says yes, they're passed on to you as an enquiry. If they say no, they go on the block list.",
+      "onlyCalls": "Calls are only made",
+      "from": "From",
+      "to": "To",
+      "save": "Save campaign"
+    },
+    "import": {
+      "title": "Add contacts",
+      "intro": "Upload a CSV file (e.g. saved from Excel) or paste the list. Columns: name, phone and optionally company and email. Danish numbers may be written without +45. Numbers on the block list are skipped.",
+      "added": "{n} contacts added",
+      "duplicates": "{n} already existed",
+      "blocked": "{n} are on the block list",
+      "invalid": "{n} invalid numbers (e.g. row {rows})",
+      "file": "CSV file",
+      "paste": "Or paste the list",
+      "pastePlaceholder": "Name;Phone;Company\nMette Hansen;20 30 40 50;Hansen Byg ApS",
+      "who": "Who are the contacts?",
+      "businesses": "Businesses",
+      "consumers": "Private individuals",
+      "consent": "Where and when did they agree to be called?",
+      "consentHint": "The assistant calls without a human on the line. Under section 10 of the Danish Marketing Practices Act, this requires the contact to have asked for it in advance – also when it's a business. It isn't enough that they're not on the Robinson list or marked as advertising-protected in the CVR register.",
+      "consentPlaceholder": "Sign-up on the website, March 2026",
+      "importing": "Importing…"
+    },
+    "start": {
+      "completed": "The campaign is finished: all contacts have been called.",
+      "running": "The campaign is running. One contact is called at a time within the chosen hours.",
+      "pause": "Pause",
+      "before": "Before it starts",
+      "resumeTitle": "Resume the campaign",
+      "heading": "{n} calls · at most {max} excl. VAT",
+      "body": "{n} contacts waiting. At most {max} + VAT ({gross} incl. VAT) – {call} + VAT per outgoing call and {minute} + VAT per started minute of conversation, at most {attempts} attempts and {minutes} minutes of conversation per contact. Payment never starts calls.",
+      "confirm": "Confirm the rules for calls",
+      "starting": "Starting…",
+      "resume": "Resume",
+      "start": "Start campaign"
+    },
+    "remove": "Remove",
+    "dnc": {
+      "title": "Block list",
+      "intro": "Numbers here are never called in a campaign. If someone says in a call that they don't want to be called again, they're added to the list automatically.",
+      "optedOut": "Opted out of calls",
+      "phone": "Phone number",
+      "reason": "Reason (optional)",
+      "block": "Block number"
+    }
+  },
+  "knowledge": {
+    "kind": {
+      "service": "Service",
+      "opening_hours": "Opening hours",
+      "coverage_area": "Service area",
+      "fact": "Fact",
+      "known_answer": "Known answer",
+      "unknown_answer": "Must not be answered",
+      "offer": "Offer"
+    },
+    "unit": {
+      "m2": "m²",
+      "hour": "hour",
+      "item": "item",
+      "job": "job"
+    },
+    "sum": {
+      "noPrice": "No price",
+      "noTimes": "No times",
+      "noZones": "No zones",
+      "human": "The assistant refers to a person.",
+      "allAreas": "all areas",
+      "discount": "-{pct}% at {thr}",
+      "period": "{from} – {to} (both days incl.)"
+    },
+    "pendingSuggestions": "{n|1 suggestion waiting|# suggestions waiting}",
+    "eyebrow": "What it knows about you",
+    "title": "Everything Dialogbot may tell your customers",
+    "intro": "If it's not here, it doesn't say it – it takes a message for you instead. You can edit everything directly and test the answer in the assistant.",
+    "revision": "{n} approved items · revision {rev}",
+    "about": {
+      "title": "About you",
+      "sub": "What it says first",
+      "what": "What you do",
+      "notFilled": "Not filled in yet",
+      "noHours": "No approved opening hours",
+      "where": "Where you work",
+      "notSet": "Not specified",
+      "addFact": "Add something it should know"
+    },
+    "edit": "Edit",
+    "close": "Close",
+    "changePending": "Change pending",
+    "sell": {
+      "title": "What you sell",
+      "sub": "Services and prices – what it may offer",
+      "none": "No services yet – without them it can't answer questions about prices.",
+      "sells": "Sells",
+      "onlyAsked": "Only if asked",
+      "howMuch": "How much does {name} cost?",
+      "offers": "Offers and discounts",
+      "addOffer": "Add an offer",
+      "note": "«Sells» means it mentions the service itself when it fits. «Only if asked» means it only answers about the price. Prices are excl. VAT."
+    },
+    "questions": {
+      "title": "Questions customers ask",
+      "sub": "{n} answers approved",
+      "none": "No fixed answers yet. Add the questions customers ask most often.",
+      "add": "Add an answer"
+    },
+    "rules": {
+      "title": "What it must not do",
+      "sub": "Here it takes a message for you instead",
+      "none": "No rules yet.",
+      "add": "Add a rule"
+    },
+    "seeAll": "See all {n}",
+    "showFewer": "Show fewer",
+    "f": {
+      "price": "Price (excl. VAT)",
+      "unit": "Unit",
+      "per": "per {unit}",
+      "promote": "Does it sell it itself?",
+      "after": "What should it say afterwards?",
+      "period": "Time slot {n}",
+      "opens": "Opens",
+      "closes": "Closes",
+      "removePeriod": "Remove time slot",
+      "addPeriod": "Add time slot",
+      "closed": "Outside opening hours",
+      "closedPlaceholder": "E.g. weekends and public holidays: only takes messages",
+      "zones": "Where do you work? (separate with commas)",
+      "fact": "What it may know",
+      "question": "The question",
+      "answer": "The answer",
+      "rule": "Topic it must not comment on",
+      "discount": "Discount (%)",
+      "threshold": "Applies from at least (m²)",
+      "from": "From",
+      "to": "Up to and including",
+      "offerName": "What is the offer called?",
+      "name": "What is it called?"
+    },
+    "sendForApproval": "Send for approval",
+    "savedLive": "Saved – Dialogbot uses it now",
+    "sentToOwner": "Sent for approval by an owner or admin",
+    "sent": "Sent for approval",
+    "hear": {
+      "listening": "Listening…",
+      "button": "Hear",
+      "answer": "How it answers «{q}»"
+    },
+    "service": {
+      "badPrice": "Write the price with numbers, e.g. «from 1,200 kr.» or «850 kr. per m²».",
+      "priceLine": "Price: {price}.",
+      "add": "Add a service",
+      "new": "New service · 3 fields",
+      "price": "Price (as the customer should hear it)",
+      "pricePlaceholder": "from 1,200 kr.",
+      "notePlaceholder": "E.g.: We'll book a time for an inspection",
+      "saveAndShow": "Save – and show me how it says it"
+    },
+    "remove": {
+      "confirm": "Remove «{label}»? Dialogbot stops using it immediately.",
+      "aria": "Remove {label}"
+    },
+    "draft": {
+      "rejectPrompt": "Why are you rejecting the suggestion? (saved in the log)",
+      "rejectDefault": "Doesn't fit",
+      "suggests": "Dialogbot suggests",
+      "now": "Now:",
+      "proposal": "Suggestion:",
+      "approving": "Approving…",
+      "approveAnswer": "Approve the answer",
+      "approve": "Approve",
+      "awaiting": "Awaiting approval by an owner or admin",
+      "editAnswer": "Edit the answer"
+    },
+    "import": {
+      "button": "Fetch from website",
+      "intro": "We read your own pages and suggest services, facts and fixed answers. The suggestions stay as drafts until you've approved them. Prices are never guessed.",
+      "needsAi": "Requires AI to be turned on on the server.",
+      "url": "Website address",
+      "urlPlaceholder": "https://www.your-company.com",
+      "reading": "Reading the website…",
+      "fetch": "Get suggestions",
+      "running": "Reading pages and writing suggestions. It usually takes under a minute.",
+      "failed": "The import failed.",
+      "noNew": "No new suggestions",
+      "created": "{n} suggestions added as drafts – approve them below",
+      "pages": "{n} pages read."
+    }
+  },
+  "account": {
+    "language": {
+      "title": "Language",
+      "sub": "The language of the app. Saved on your user."
+    },
+    "card": {
+      "opening": "Opening Stripe…",
+      "change": "Change card",
+      "add": "Add payment card"
+    },
+    "invoiceNow": {
+      "pending": "Creating…",
+      "button": "Invoice {month} now"
+    },
+    "referral": {
+      "ask": "Do you have an ambassador code?",
+      "label": "Ambassador code",
+      "placeholder": "E.g. MADS42",
+      "hint": "From the person who recommended Dialogbot. You get 50% off the first invoiced month.",
+      "add": "Add code",
+      "referred": "You were recommended by {name} (Dialogbot ambassador) and get {pct}% off the first invoiced month."
+    },
+    "logout": "Log out",
+    "role": {
+      "reader": "Can view",
+      "editor": "Can edit",
+      "owner": "Owner"
+    },
+    "team": {
+      "title": "Who can view and edit",
+      "intro": "The owner can do everything. «Can edit» changes knowledge and rules. «Can view» reads calls and reports.",
+      "role": "Role",
+      "onlyAdmins": "Only owners and admins can invite and change roles.",
+      "confirmLeave": "Leave the workspace?",
+      "confirmRemove": "Remove {name} from the workspace?",
+      "you": "(you)",
+      "roleFor": "Role for {name}",
+      "leave": "Leave",
+      "confirmRevoke": "Revoke the invitation? The link will stop working.",
+      "invited": "Invited – no reply yet:",
+      "expires": "expires {date}",
+      "resend": "Resend",
+      "revoke": "Revoke",
+      "inviteEmail": "Invite by email",
+      "emailPlaceholder": "colleague@company.com",
+      "may": "Can",
+      "sending": "Sending…",
+      "invite": "Invite",
+      "sent": "The invitation has been sent."
+    },
+    "invoiceStatus": {
+      "creating": "Being created",
+      "open": "Awaiting payment",
+      "paid": "Paid",
+      "payment_failed": "Payment failed",
+      "failed": "Not paid",
+      "void": "Cancelled"
+    },
+    "eyebrow": "Back of the booklet · Account",
+    "title": "Team, subscription and invoices",
+    "sub": {
+      "title": "Subscription",
+      "cardSaved": "Thanks – the card is saved with Stripe. It may take a moment before it shows here.",
+      "fixed": "Fixed subscription",
+      "perMonth": "/month excl. VAT",
+      "confirmed": "Confirmed · agreement v{v}. Do-it-yourself setup is included.",
+      "notConfirmed": "Do-it-yourself setup is included. Not confirmed yet.",
+      "campaign": "Campaign calls",
+      "campaignPrice": "per call + {minute} per minute excl. VAT",
+      "campaignMonth": "This month: {calls} calls, {minutes} minutes of conversation · {amount} excl. VAT",
+      "inbound": "Incoming calls",
+      "inboundUsed": "of {n} included minutes used this month",
+      "inboundExtra": "{n} minutes beyond the included ones · {amount} excl. VAT ({price} per started minute).",
+      "inboundPrice": "Minutes beyond the {n} cost {price} per started minute excl. VAT.",
+      "confirm": "Confirm subscription",
+      "ownerMustConfirm": "The owner must confirm the subscription.",
+      "older": "Older agreement – confirm the subscription to switch to the current subscription.",
+      "note": "Prices are excl. VAT. No commitment – tell the assistant or write to info@dialogbot.dk if you want to cancel. Payment never starts calls."
+    },
+    "pay": {
+      "title": "Payment",
+      "notConfigured": "Card payment isn't set up yet. Until then the statement is only a preview, and no payment is taken.",
+      "card": "Card",
+      "expires": "expires {exp}",
+      "noCard": "No payment card",
+      "withCard": "Each month is invoiced in arrears and charged automatically to the card.",
+      "withoutCard": "Without a card, the month isn't invoiced.",
+      "onlyOwner": "Only the owner can change the payment card."
+    },
+    "invoices": {
+      "title": "Invoices",
+      "soFar": "{month} so far:",
+      "totals": "{net} excl. VAT · VAT {tax} · total {gross}",
+      "billedEnd": "Invoiced when the month ends.",
+      "billedEndCard": "Invoiced when the month ends and card payment is set up.",
+      "none": "No invoices yet.",
+      "month": "Month",
+      "status": "Status",
+      "total": "Total incl. VAT",
+      "open": "Open",
+      "pdf": "Download PDF"
+    },
+    "me": {
+      "unknownDevice": "Unknown device",
+      "browser": "Browser",
+      "device": "{browser} on {os}",
+      "owner": "owner",
+      "reader": "can view",
+      "editor": "can edit",
+      "notVerified": "Your email isn't verified – verify now",
+      "changePassword": "Change password",
+      "operator": "Operator",
+      "sales": "Dialogbot sales",
+      "sessions": "Logged in on {n|1 device|# devices}. If you reset your password, everyone is logged out.",
+      "thisDevice": "this device",
+      "lastActive": "last active {at}"
+    },
+    "ws": {
+      "title": "Workspace",
+      "this": "this one",
+      "new": "Build a Dialogbot for another business"
+    },
+    "data": {
+      "title": "Data and history",
+      "sub": "Who changed what, and when, is in the history.",
+      "log": "See all changes",
+      "settings": "All settings"
+    }
+  }
+}

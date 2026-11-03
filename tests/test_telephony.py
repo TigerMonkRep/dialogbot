@@ -454,3 +454,36 @@ def test_speechmatics_gets_the_danish_names_dictionary(client, api, two_workspac
     assert "André" in contents and "Kjærgaard" in contents and "Pernille" in contents
     assert next(v for v in vocab if v["content"] == "Kjeld")["soundsLike"] == ["kell", "keld", "kjell"]
     assert len(vocab) <= vapi.SPEECHMATICS_MAX_VOCABULARY and len(set(c.lower() for c in contents)) == len(contents)
+
+
+def test_a_german_business_gets_a_german_call(client, api, two_workspaces, configured):
+    """The business's call language (language_settings.default_conversation_language) decides what the caller hears
+    and how they are heard: greeting, recogniser, dialogue language, native voice, goodbye and backchannels."""
+    t = two_workspaces
+    _setup(api, t)
+    ls = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/languages").json()
+    r = api.put(t["tok_a"], f"/workspaces/{t['ws_a']}/languages", {
+        "expected_version": ls["version"], "interface_language": "da", "default_conversation_language": "de-DE",
+        "enabled_conversation_languages": ["de"], "report_language": "de"})
+    assert r.status_code == 200, r.text
+    assert r.json()["default_conversation_language"] == "de"  # normalised
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["firstMessage"].startswith("Guten Tag, Sie sind verbunden mit")
+    assert a["transcriber"]["language"] == "de"
+    assert a["model"]["messages"][0]["content"].startswith("LANGUAGE: This phone call is in German.")
+    from app.modules.voices.standard import LANGUAGE_VOICES
+    assert a["voice"]["voiceId"] == LANGUAGE_VOICES["de"]["female"]["voiceId"] and a["voice"]["language"] == "de"
+    assert not any(rep.get("value") == "ej aj" for rep in a["voice"]["chunkPlan"].get("formatPlan", {}).get("replacements", []))
+    assert "auf wiederhören" in a["endCallPhrases"]
+    assert "genau" in a["stopSpeakingPlan"]["acknowledgementPhrases"]
+    assert "German" in a["analysisPlan"]["summaryPlan"]["messages"][0]["content"]
+
+
+def test_the_bridge_is_told_the_call_language(client, api, two_workspaces, configured, monkeypatch):
+    from app.models import Workspace
+    from app.modules.telephony import linden
+    ws = Workspace(id=__import__("uuid").UUID(two_workspaces["ws_a"]), name="x", slug="x")
+    monkeypatch.setenv("PUBLIC_BASE_URL", "https://api.dialogbot.dk")
+    get_settings.cache_clear()
+    assert linden.transcriber_config(ws, [], "soniox", "sv")["server"]["url"].endswith("&stt=soniox&lang=sv")
+    assert "lang=" not in linden.transcriber_config(ws, [], "soniox", "da")["server"]["url"]

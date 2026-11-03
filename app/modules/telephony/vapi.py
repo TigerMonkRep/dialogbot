@@ -216,6 +216,18 @@ ANALYSIS_PLAN = {"summaryPlan": {"messages": [
     {"role": "user", "content": "Udskrift:\n\n{{transcript}}\n\nÅrsag til at opkaldet sluttede: {{endedReason}}"}]}}
 
 
+def analysis_plan(lang: str = "da") -> dict:
+    """ANALYSIS_PLAN, with the summary written in the business's report language."""
+    from app.modules.telephony import phone_languages as pl
+
+    if lang == "da":
+        return ANALYSIS_PLAN
+    msgs = [dict(m) for m in ANALYSIS_PLAN["summaryPlan"]["messages"]]
+    msgs[0]["content"] = msgs[0]["content"].replace("Opsummér opkaldet på dansk", "Opsummér opkaldet") \
+        + pl.summary_instruction(lang)
+    return {"summaryPlan": {"messages": msgs}}
+
+
 def phone_model(s) -> str:
     """The model id sent to Vapi: VAPI_MODEL, else the fast phone default – replaced by that default when Vapi would
     refuse it (only checked for the anthropic provider, whose list we know)."""
@@ -302,7 +314,7 @@ def keyterms(db: OrmSession, ws: Workspace) -> list[str]:
     return out[:MAX_KEYTERMS]
 
 
-def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | None = None) -> dict:
+def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | None = None, lang: str = "da") -> dict:
     """The transcriber config (VAPI_TRANSCRIBER_JSON, or Deepgram Nova-3 Danish with Nova-2 as fallback),
     with the business's key terms added to any Deepgram model that supports keyterm prompting, and the names
     dictionary to Speechmatics (VAPI_TRANSCRIBER_JSON={"provider": "speechmatics", "language": "da"}). `extra` are terms
@@ -325,6 +337,10 @@ def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | Non
     t = configured or dict(DEFAULT_TRANSCRIBER)
     if configured is None:
         t["fallbackPlan"] = {"transcribers": [dict(FALLBACK_TRANSCRIBER)]}
+    if lang != "da":  # the business's callers speak another language: every recogniser listens for that
+        for d in [t, *t.get("fallbackPlan", {}).get("transcribers", [])]:
+            if "language" in d or d.get("provider") in ("deepgram", "speechmatics"):
+                d["language"] = lang
     own: list[str] = []  # the call's own names first; the caps keep the totals within each provider's budget
     for x in extra or []:
         x = re.sub(r"\s+", " ", str(x or "")).strip(" .,:;-")
@@ -333,7 +349,7 @@ def transcriber_for(db: OrmSession, ws: Workspace | None, extra: list[str] | Non
     if use_linden:
         from app.modules.telephony import linden
 
-        return {**t, **linden.transcriber_config(ws, own, stt)}
+        return {**t, **linden.transcriber_config(ws, own, stt, lang)}
     for d in [t, *t.get("fallbackPlan", {}).get("transcribers", [])]:
         if ws is None:
             continue
@@ -441,8 +457,10 @@ def assistant_config(db: OrmSession, number: PhoneNumber, caller: str | None = N
     """The inbound assistant. `caller` is the caller id from the assistant-request (E.164 or None when withheld): the
     assistant then confirms that number for a call-back instead of asking the caller to dictate one."""
     from app.modules.ai.service import known_number_section
+    from app.modules.telephony import phone_languages as pl
 
     ws = db.get(Workspace, number.workspace_id)
+    lang = pl.call_language(db, ws.id)  # the language the business serves its callers in
     system, _revision = build_system_prompt(db, ws)  # 409 without approved knowledge
     _suffix, phone_rules = CHANNEL_INSTRUCTIONS["phone"]
     phone_rules += "\n\nKundens telefonnummer: " + known_number_section(caller, how="det nummer, du ringer fra")
@@ -453,13 +471,13 @@ def assistant_config(db: OrmSession, number: PhoneNumber, caller: str | None = N
     s = get_settings()
     assistant: dict[str, Any] = {
         "firstMessage": (number.greeting.strip() or reception.spoken_greeting(db.get(reception.ReceptionScript, ws.id), ws)
-                         or DEFAULT_GREETING.format(name=ws.name)),
+                         or pl.greeting(lang, ws.name)),
         "model": {"provider": s.vapi_model_provider, "model": phone_model(s),
-                  "messages": [{"role": "system", "content": f"{system}\n\n{phone_rules}"}]},
-        "transcriber": transcriber_for(db, ws),
-        "analysisPlan": ANALYSIS_PLAN,
+                  "messages": [{"role": "system", "content": f"{pl.directive(lang)}{system}\n\n{phone_rules}"}]},
+        "transcriber": transcriber_for(db, ws, lang=lang),
+        "analysisPlan": analysis_plan(pl.report_language(db, ws.id)),
         "stopSpeakingPlan": STOP_SPEAKING_PLAN, "startSpeakingPlan": START_SPEAKING_PLAN,
-        "endCallPhrases": END_CALL_PHRASES,
+        "endCallPhrases": pl.END_PHRASES.get(lang, END_CALL_PHRASES),
         "metadata": {"workspace_id": str(ws.id), "phone_number_id": str(number.id)},
     }
     from app.modules.integrations import actions as _actions
@@ -472,7 +490,7 @@ def assistant_config(db: OrmSession, number: PhoneNumber, caller: str | None = N
     from app.modules.voices import service as voices
     from app.modules.voices import standard
 
-    provider_voice = standard.provider_voice(db, ws.id, number)
+    provider_voice = standard.provider_voice(db, ws.id, number, lang)
 
     dialogbot_voice, session = voices.vapi_voice(db, ws.id, channel="inbound_phone", provider_voice=provider_voice,
                                                  number=number)
@@ -483,7 +501,10 @@ def assistant_config(db: OrmSession, number: PhoneNumber, caller: str | None = N
         assistant["voice"] = provider_voice
     if session is not None:
         db.commit()
-    return {"assistant": apply_pacing(assistant)}
+    assistant = apply_pacing(assistant)
+    if lang != "da":  # the caller's own backchannels ("yes", "mhm") must not stop Peter either
+        assistant["stopSpeakingPlan"]["acknowledgementPhrases"] = pl.BACKCHANNELS[lang]
+    return {"assistant": assistant}
 
 
 def _parse_ts(v: Any) -> datetime | None:

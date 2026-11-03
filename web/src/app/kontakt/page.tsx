@@ -1,44 +1,50 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/i18n/link";
+import { getLocale, getT } from "@/i18n/server";
 import { COMPANY } from "@/components/legal-page";
-import { HOURS, PHONE_DISPLAY, PHONE_INTL, PHONE_TEL, SiteChrome } from "@/components/site-chrome";
+import { PHONE_DISPLAY, PHONE_INTL, PHONE_TEL, SiteChrome } from "@/components/site-chrome";
 import { PhoneIcon, SmsIcon } from "@/components/site-icons";
+import { alternatesFor } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Kontakt og support | Dialogbot",
-  description: "Sådan kontakter du Dialogbot om din konto, betaling eller dine data. Ring på 93 70 34 33 eller skriv til info@dialogbot.dk.",
-  alternates: { canonical: "/kontakt" },
-};
+const PATH = "/kontakt";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, locale] = await Promise.all([getT("landing.contact.meta"), getLocale()]);
+  return { title: t("title"), description: t("description"), alternates: alternatesFor(PATH, locale) };
+}
 
 /** Kontakt — on the shared public chrome. Nummer, overskrift, tekst; one action (ring) first. */
-export default function ContactPage() {
+export default async function ContactPage() {
+  const [t, tc] = await Promise.all([getT("landing.contact"), getT("common")]);
+  const hours = tc("chrome.hours");
+  const s = (key: string) => t(`sections.${key}`);
   const sections: [string, React.ReactNode][] = [
-    ["E-mail", <p key="e">Skriv til <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>. Skriv gerne navnet på din virksomhed og den e-mail, du er logget ind med, så vi hurtigt kan finde din konto. Vi svarer på hverdage, som regel inden for én arbejdsdag.</p>],
-    ["Telefon", <p key="t">Ring på <a href={PHONE_TEL}>{PHONE_INTL}</a> – {HOURS.toLowerCase()}.</p>],
-    ["Post", <p key="p">{COMPANY.name}, CVR-nr. {COMPANY.cvr}, {COMPANY.address}.</p>],
-    ["Betaling og fakturaer", <p key="b">Spørgsmål om en betaling eller en faktura fra Dialogbot: skriv til os, før du gør indsigelse hos din bank, så finder vi en løsning hurtigst. Dine fakturaer kan du altid se under Fakturering, når du er logget ind.</p>],
-    ["Er du logget ind?", <p key="h">Så finder du svar på de fleste spørgsmål under Hjælp i appen, og du kan se din opsætning, dine samtaler og henvendelser direkte.</p>],
-    ["Ambassadører", <p key="a">Spørgsmål om bonus, udbetalinger eller reglerne: skriv til samme adresse. Læs om programmet på <Link href="/ambassador/bliv">dialogbot.dk/ambassador/bliv</Link>.</p>],
-    ["Persondata", <p key="d">Vil du have indsigt i, rettet eller slettet dine oplysninger, så læs <Link href="/privatliv">privatlivspolitikken</Link> og skriv til os.</p>],
+    [s("email.title"), <p key="e">{s("email.a")}<a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>{s("email.b")}</p>],
+    [s("phone.title"), <p key="t">{s("phone.a")}<a href={PHONE_TEL}>{PHONE_INTL}</a>{s("phone.b")}{hours.toLowerCase()}.</p>],
+    [s("post.title"), <p key="p">{COMPANY.name}, {t("cvrNo")} {COMPANY.cvr}, {COMPANY.address}.</p>],
+    [s("billing.title"), <p key="b">{s("billing.p")}</p>],
+    [s("loggedIn.title"), <p key="h">{s("loggedIn.p")}</p>],
+    [s("ambassadors.title"), <p key="a">{s("ambassadors.a")}<Link href="/ambassador/bliv">dialogbot.dk/ambassador/bliv</Link>{s("ambassadors.b")}</p>],
+    [s("data.title"), <p key="d">{s("data.a")}<Link href="/privatliv">{s("data.link")}</Link>{s("data.b")}</p>],
   ];
   return (
     <SiteChrome>
       <section className="bg-panel border-b-2 border-ink">
         <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-12 sm:py-16 flex flex-wrap gap-10 items-start">
           <div className="flex-[1_1_420px] flex flex-col gap-4">
-            <span className="eyebrow text-[13px] tracking-[1.5px]">Kontakt</span>
-            <h1 className="m-0 font-display font-extrabold text-[clamp(34px,4.6vw,60px)] leading-[1.03] tracking-[-1.4px]">Kontakt og support</h1>
-            <p className="m-0 text-lg leading-[1.55] text-ink-soft max-w-[620px]">Har du spørgsmål til din konto, en faktura, din assistent eller dine data, så ring eller skriv. Vi svarer på hverdage, som regel inden for én arbejdsdag.</p>
-            <p className="m-0 text-sm text-muted">Opdateret 28. oktober 2026.</p>
+            <span className="eyebrow text-[13px] tracking-[1.5px]">{t("eyebrow")}</span>
+            <h1 className="m-0 font-display font-extrabold text-[clamp(34px,4.6vw,60px)] leading-[1.03] tracking-[-1.4px]">{t("title")}</h1>
+            <p className="m-0 text-lg leading-[1.55] text-ink-soft max-w-[620px]">{t("lead")}</p>
+            <p className="m-0 text-sm text-muted">{t("updated")}</p>
           </div>
           <div className="flex-[1_1_300px] max-w-[460px] flex flex-col gap-3">
             <a href={PHONE_TEL} className="flex items-center gap-3.5 p-5 rounded-[20px] bg-white border-2 border-ink shadow-block text-ink no-underline">
               <span className="inline-flex w-12 h-12 rounded-xl bg-accent items-center justify-center shrink-0"><PhoneIcon size={24} stroke="#FFFFFF" /></span>
-              <span className="flex flex-col"><span className="eyebrow">Ring · {HOURS}</span><span className="font-display font-extrabold text-2xl tracking-[-0.5px]">{PHONE_DISPLAY}</span></span>
+              <span className="flex flex-col"><span className="eyebrow">{t("call")} · {hours}</span><span className="font-display font-extrabold text-2xl tracking-[-0.5px]">{PHONE_DISPLAY}</span></span>
             </a>
             <a href={`mailto:${COMPANY.email}`} className="flex items-center gap-3.5 p-5 rounded-[20px] bg-white border-2 border-ink text-ink no-underline hover:bg-panel">
               <span className="inline-flex w-12 h-12 rounded-xl bg-ink items-center justify-center shrink-0"><SmsIcon size={24} stroke="#FFFFFF" /></span>
-              <span className="flex flex-col"><span className="eyebrow">Skriv</span><span className="font-display font-bold text-xl">{COMPANY.email}</span></span>
+              <span className="flex flex-col"><span className="eyebrow">{t("write")}</span><span className="font-display font-bold text-xl">{COMPANY.email}</span></span>
             </a>
           </div>
         </div>
@@ -53,7 +59,7 @@ export default function ContactPage() {
             </div>
           </section>
         ))}
-        <p className="m-0 text-sm text-muted">{COMPANY.name} · CVR-nr. {COMPANY.cvr} · {COMPANY.address}</p>
+        <p className="m-0 text-sm text-muted">{COMPANY.name} · {t("cvrNo")} {COMPANY.cvr} · {COMPANY.address}</p>
       </div>
     </SiteChrome>
   );

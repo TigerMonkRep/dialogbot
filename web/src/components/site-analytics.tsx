@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
+import { useLocale, useT } from "@/i18n/client";
+import { localizeHref } from "@/i18n/config";
 
 /** Website statistics, mounted once in the root layout.
  *
@@ -57,34 +59,45 @@ export function SiteAnalytics() {
           `}</Script>
         </>
       )}
-      {showBanner && (
-        <div role="dialog" aria-label="Cookies til statistik"
-          className="fixed z-[70] left-3 right-3 bottom-3 sm:left-auto sm:right-5 sm:bottom-5 sm:max-w-[420px] rounded-2xl bg-white border-2 border-ink shadow-block p-4 flex flex-col gap-3"
-          style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
-          <p className="m-0 font-display font-bold text-[16px] text-ink">Må vi måle besøg?</p>
-          <p className="m-0 text-[14px] text-ink-soft">
-            Vi vil gerne bruge Google Analytics til at se, hvilke sider der bliver læst, så vi kan gøre hjemmesiden bedre.
-            Det sætter en statistikcookie. Du kan sige nej – siden virker præcis lige godt. <a href="/privatliv" className="underline text-ink">Læs mere</a>.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => choose("granted")}
-              className="inline-flex items-center justify-center min-h-11 px-4 rounded-xl bg-accent text-white font-semibold text-[15px] border-0 cursor-pointer hover:bg-accent-deep">Ja, det er fint</button>
-            <button type="button" onClick={() => choose("denied")}
-              className="inline-flex items-center justify-center min-h-11 px-4 rounded-xl bg-white border-2 border-ink text-ink font-semibold text-[15px] cursor-pointer hover:bg-panel">Nej tak</button>
-          </div>
-        </div>
-      )}
+      {showBanner && <ConsentBanner choose={choose} />}
     </>
+  );
+}
+
+/** The consent banner. A separate component so the translations are only read when it actually shows. */
+function ConsentBanner({ choose }: { choose: (v: Exclude<Consent, null>) => void }) {
+  const t = useT("site");
+  const locale = useLocale();
+  return (
+    <div role="dialog" aria-label={t("cookies.label")}
+      className="fixed z-[70] left-3 right-3 bottom-3 sm:left-auto sm:right-5 sm:bottom-5 sm:max-w-[420px] rounded-2xl bg-white border-2 border-ink shadow-block p-4 flex flex-col gap-3"
+      style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
+      <p className="m-0 font-display font-bold text-[16px] text-ink">{t("cookies.title")}</p>
+      <p className="m-0 text-[14px] text-ink-soft">
+        {t("cookies.text")} <a href={localizeHref(locale, "/privatliv")} className="underline text-ink">{t("cookies.readMore")}</a>.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <button type="button" onClick={() => choose("granted")}
+          className="inline-flex items-center justify-center min-h-11 px-4 rounded-xl bg-accent text-white font-semibold text-[15px] border-0 cursor-pointer hover:bg-accent-deep">{t("cookies.accept")}</button>
+        <button type="button" onClick={() => choose("denied")}
+          className="inline-flex items-center justify-center min-h-11 px-4 rounded-xl bg-white border-2 border-ink text-ink font-semibold text-[15px] cursor-pointer hover:bg-panel">{t("cookies.decline")}</button>
+      </div>
+    </div>
   );
 }
 
 /** A small "Cookieindstillinger" link for the footer: clears the choice so the banner shows again. */
 export function CookieSettingsLink({ className = "" }: { className?: string }) {
   if (!GA_ID) return null;
+  return <CookieSettingsButton className={className} />;
+}
+
+function CookieSettingsButton({ className }: { className: string }) {
+  const t = useT("site");
   return (
     <button type="button" className={`bg-transparent border-0 p-0 cursor-pointer ${className}`}
       onClick={() => { try { localStorage.removeItem(KEY); } catch {} window.dispatchEvent(new Event("db-consent")); }}>
-      Cookieindstillinger
+      {t("cookies.settings")}
     </button>
   );
 }

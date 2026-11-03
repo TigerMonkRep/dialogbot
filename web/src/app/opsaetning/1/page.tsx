@@ -5,6 +5,7 @@ import { setupStatus } from "@/lib/setup.server";
 import { requireWorkspaceOrNull } from "@/lib/workspace.server";
 import { Need } from "@/components/setup-parts";
 import { SetupShell } from "@/components/setup-shell";
+import { getRaw, getT } from "@/i18n/server";
 import { CreateWorkspace, Step1, type Fact, type Goals, type Languages, type Profile } from "./step1";
 
 /** Trin 1 af 3 – Virksomhed. */
@@ -13,12 +14,14 @@ export default async function Trin1({ searchParams }: { searchParams: Promise<{ 
   // ?ny=1: «Byg en Dialogbot til en anden virksomhed» – a fresh workspace, not the current one.
   const ws = ny ? null : await requireWorkspaceOrNull();
   const me = await backend<{ signup_intent: string | null; email_verified: boolean }>("/auth/me");
+  const t = await getT("setup.step1Page");
+  const raw = await getRaw();
   const head = (
     <div className="flex flex-col gap-3 mb-6">
-      <span className="eyebrow">Byg din Dialogbot · trin 1 af 3 · ca. 5 min</span>
-      <h1 className="font-display font-extrabold text-[34px] md:text-[44px] leading-[1.02] tracking-[-1px] text-ink">Hvem er I – og hvad skal den gøre?</h1>
-      <p className="text-[16px] text-ink-soft max-w-[620px]">Ét trin. Vi henter det meste fra jeres hjemmeside – du retter kun det, der er forkert. Det kan ændres senere ved at sige det til assistenten.</p>
-      <Need items={[["1×", "hjemmeside-adresse"], ["1×", "CVR-nummer", "eller bare navnet"], ["1×", "det nummer, kunderne ringer til"]]} />
+      <span className="eyebrow">{t("eyebrow")}</span>
+      <h1 className="font-display font-extrabold text-[34px] md:text-[44px] leading-[1.02] tracking-[-1px] text-ink">{t("title")}</h1>
+      <p className="text-[16px] text-ink-soft max-w-[620px]">{t("intro")}</p>
+      <Need items={raw<[string, string, string?][]>("setup.step1Page.need")} title={raw<string>("setup.need.title")} />
     </div>
   );
   if (!ws) {

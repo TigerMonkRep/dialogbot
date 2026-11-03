@@ -1,8 +1,9 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import Link from "@/i18n/link";
+import { useRaw, useT } from "@/i18n/client";
 import { api, type ApiError } from "@/lib/client";
-import { EMAIL, HOURS, PHONE_DISPLAY, PHONE_TEL } from "@/lib/contact";
+import { EMAIL, PHONE_DISPLAY, PHONE_TEL } from "@/lib/contact";
 import { ArrowIcon, CloseIcon, PhoneIcon } from "@/components/site-icons";
 
 /** The "Prøv den" conversation (Proev.dc.html): start → firma → branche (→ andet) → tlf → calling → done.
@@ -16,15 +17,10 @@ type Info = {
 type Step = "start" | "firma" | "branche" | "andet" | "tlf" | "calling" | "done" | "unavailable";
 type Msg = { from: "bot" | "user"; text: string };
 
-/** Chip label → the backend's industry key (app/modules/sales/script.py). "Noget andet" asks for the visitor's own words. */
-const BRANCHES: [string, string | null][] = [
-  ["Håndværker", "haandvaerk"], ["Klinik", "klinik"], ["Frisør / salon", "skoenhed"], ["Restaurant", "restaurant"], ["Rådgiver", "raadgivning"], ["Noget andet", null],
-];
-const GREETING = "Hej! Jeg hedder Peter og er Dialogbots digitale receptionist. Vil du høre, hvordan jeg lyder, når jeg tager telefonen for din virksomhed?";
-const STEP_LABEL: Record<Step, string> = {
-  start: "Start", firma: "Trin 1 · hvem er I", branche: "Trin 1 · hvad laver I", andet: "Trin 1 · hvad laver I",
-  tlf: "Trin 2 · dit nummer", calling: "Trin 2 · ringer", done: "Trin 3 · byg din egen", unavailable: "Ikke lige nu",
-};
+/** The chips: the backend's industry keys (app/modules/sales/script.py); null = "Noget andet", which asks for the
+ *  visitor's own words. Labels: site.json → proev.chat.branches.<key> ("other" for null). Step labels:
+ *  proev.chat.steps.<step>. */
+const BRANCHES: (string | null)[] = ["haandvaerk", "klinik", "skoenhed", "restaurant", "raadgivning", null];
 /** How long the phone card shows "ringer" before the chat moves on. We cannot see when the call ends. */
 const CALL_WINDOW_MS = 45_000;
 
@@ -40,6 +36,11 @@ const avatar = "flex-none w-[30px] h-[30px] rounded-full bg-accent inline-flex i
 /** `embedded`: the chat stage alone, filling its container (the floating widget on every other page) – no side
  *  column, the log scrolls, and the header gets a close button. Default: the full /proev layout with the aside. */
 export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; onClose?: () => void } = {}) {
+  const t = useT("site");
+  const raw = useRaw();
+  const c = (key: string, vars?: Record<string, string | number>) => t(`proev.chat.${key}`, vars);
+  const GREETING = c("greeting");
+  const hours = c("hours");
   const [info, setInfo] = useState<Info | null | "error">(null);
   const [step, setStep] = useState<Step>("start");
   const [history, setHistory] = useState<Msg[]>([{ from: "bot", text: GREETING }]);
@@ -75,29 +76,29 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
   const blocker = (): string | null => {
     if (info === null) return null; // still loading: ask on, check again before dialling
     if (info === "error" || !info.available) {
-      return `Prøveopkaldet aktiveres snart – indtil da ringer vi til dig manuelt inden for åbningstiden. Ring til os på ${PHONE_DISPLAY} (${HOURS.toLowerCase()}), eller skriv dit nummer til ${EMAIL}, så ringer vi til dig.`;
+      return c("blockerInactive", { phone: PHONE_DISPLAY, hours, email: EMAIL });
     }
     if (!info.open_now) {
-      const own = info.demo_number ? ` Du kan også selv ringe til mit demonummer ${pretty(info.demo_number)}.` : "";
-      return `Jeg ringer kun op mellem kl. ${info.hours.from} og ${info.hours.to} på hverdage. Kom tilbage der – eller skriv dit nummer til ${EMAIL}, så ringer vi til dig inden for åbningstiden.${own}`;
+      const own = info.demo_number ? c("blockerOwnNumber", { number: pretty(info.demo_number) }) : "";
+      return `${c("blockerClosed", { from: info.hours.from, to: info.hours.to, email: EMAIL })}${own}`;
     }
     return null;
   };
 
   const startChips = [
-    { label: "Ja, ring til mig", act: () => {
-      push({ from: "user", text: "Ja, ring til mig" });
+    { label: c("chipCall"), act: () => {
+      push({ from: "user", text: c("chipCall") });
       const why = blocker();
-      if (why) botSays(why, "unavailable"); else botSays("Super. Hvad hedder din virksomhed?", "firma");
+      if (why) botSays(why, "unavailable"); else botSays(c("askCompany"), "firma");
     } },
-    { label: "Hvad kan du?", act: () => { push({ from: "user", text: "Hvad kan du?" }); botSays("Jeg tager telefonen døgnet rundt, svarer på det, kunderne oftest spørger om, booker tider i din kalender og sender dig en besked, hvis der er noget, jeg ikke kan klare.\n\nVil du høre det selv?", "start"); } },
-    { label: "Hvad koster det?", act: () => { push({ from: "user", text: "Hvad koster det?" }); botSays("Ét abonnement til 2.495 kr. om måneden, ekskl. moms. Opsætningen kan I gøre selv – det er med. Vil I have vores specialister til at skræddersy den til jeres systemer, koster det 5.000 kr. én gang.\n\nSkal jeg ringe og vise dig, hvad du får?", "start"); } },
+    { label: c("chipWhat"), act: () => { push({ from: "user", text: c("chipWhat") }); botSays(c("answerWhat"), "start"); } },
+    { label: c("chipPrice"), act: () => { push({ from: "user", text: c("chipPrice") }); botSays(c("answerPrice"), "start"); } },
   ];
   const chooseBranch = (label: string, key: string | null) => () => {
     push({ from: "user", text: label });
     setIndustry({ key, other: "" });
-    if (key === null) botSays("Skriv kort, hvad I laver – så ved jeg, hvordan jeg skal tage imod kunderne.", "andet");
-    else botSays(`Så er jeg receptionist for ${firma} fra nu af. Hvilket nummer skal jeg ringe til?`, "tlf");
+    if (key === null) botSays(c("askOther"), "andet");
+    else botSays(c("askNumber", { company: firma }), "tlf");
   };
 
   const reset = () => {
@@ -119,8 +120,8 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
       setTyping(false);
       const a = err as ApiError;
       push({ from: "bot", text: a?.code === "demo_unavailable"
-        ? `Chatten er ikke helt klar endnu. Ring til os på ${PHONE_DISPLAY} (${HOURS.toLowerCase()}) eller skriv til ${EMAIL} – så svarer vi.`
-        : `Det kunne jeg ikke svare på lige nu. Prøv igen om lidt, eller ring til os på ${PHONE_DISPLAY}.` });
+        ? c("chatNotReady", { phone: PHONE_DISPLAY, hours, email: EMAIL })
+        : c("chatFailed", { phone: PHONE_DISPLAY }) });
     } finally { setPending(false); }
   };
 
@@ -131,60 +132,60 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
     if (step === "start" || step === "unavailable" || step === "calling" || step === "done") { await ask(v); return; }
     if (step === "branche") {
       push({ from: "user", text: v }); setDraft(""); setIndustry({ key: null, other: v });
-      botSays(`Så er jeg receptionist for ${firma} fra nu af. Hvilket nummer skal jeg ringe til?`, "tlf");
+      botSays(c("askNumber", { company: firma }), "tlf");
       return;
     }
     if (step === "tlf" && !/\d{8}/.test(v.replace(/[\s+\-()]/g, ""))) { await ask(v); return; }
     if (step === "firma") {
       push({ from: "user", text: v }); setFirma(v); setDraft("");
-      botSays(`Hej ${v}. Hvad laver I?`, "branche");
+      botSays(c("helloCompany", { company: v }), "branche");
       return;
     }
     if (step === "andet") {
       push({ from: "user", text: v }); setIndustry((i) => ({ ...i, other: v })); setDraft("");
-      botSays(`Så er jeg receptionist for ${firma} fra nu af. Hvilket nummer skal jeg ringe til?`, "tlf");
+      botSays(c("askNumber", { company: firma }), "tlf");
       return;
     }
     if (step !== "tlf") return;
     if (!consent) { setConsentError(true); return; }
     const why = blocker();
     push({ from: "user", text: v }); setTlf(v); setDraft("");
-    if (why || info === null || info === "error") { botSays(why ?? "Jeg kunne ikke få fat i opkaldstjenesten. Prøv igen om lidt.", "unavailable"); return; }
+    if (why || info === null || info === "error") { botSays(why ?? c("serviceDown"), "unavailable"); return; }
     setPending(true); setTyping(true);
     try {
       await api("/demo-call", { method: "POST", body: JSON.stringify({
         phone: v, company: firma, consent: true, consent_version: info.consent_version, website: "",
         industry: industry.key ?? "andet", industry_other: industry.key ? null : industry.other || null }) });
       setTyping(false);
-      push({ from: "bot", text: `Jeg ringer til ${v} nu – du får et opkald fra Peter fra Dialogbot inden for et minut. Tag den, og spørg mig om alt det, en kunde ville spørge ${firma} om.` });
+      push({ from: "bot", text: c("callingNow", { number: v, company: firma }) });
       setStep("calling");
-      later(() => botSays(`Opkaldet er sendt til din telefon. Ringede den ikke? Så ring til os på ${PHONE_DISPLAY}, så viser vi det live.\n\nVil du bygge din egen? Det tager 3 trin og ca. 30 minutter, og jeg guider dig hele vejen.`, "done"), CALL_WINDOW_MS);
+      later(() => botSays(c("callSent", { phone: PHONE_DISPLAY }), "done"), CALL_WINDOW_MS);
     } catch (err) {
       setTyping(false);
       const a = err as ApiError;
-      const msg = a?.message || "Vi kunne ikke ringe op lige nu. Prøv igen om lidt.";
+      const msg = a?.message || c("callFailed");
       if (a?.code === "demo_unavailable") botSays(msg, "unavailable");
-      else botSays(`${msg} Skriv nummeret igen, eller ring selv til os på ${PHONE_DISPLAY}.`, "tlf");
+      else botSays(c("callRetry", { message: msg, phone: PHONE_DISPLAY }), "tlf");
     } finally { setPending(false); }
   };
 
   const hasInput = true; // the chips are shortcuts; the visitor can always write to Peter instead
-  const placeholder = step === "firma" ? "Fx Nørgaard Tømrer" : step === "andet" ? "Fx tømrer, tandlæge, bogholder …"
-    : step === "tlf" ? "Fx 93 70 34 33 – eller stil et spørgsmål" : step === "branche" ? "Vælg ovenfor – eller skriv, hvad I laver"
-    : "Skriv dit spørgsmål til Peter …";
+  const placeholder = step === "firma" ? c("placeholderCompany") : step === "andet" ? c("placeholderOther")
+    : step === "tlf" ? c("placeholderPhone") : step === "branche" ? c("placeholderBranch")
+    : c("placeholderDefault");
   const done = step === "done";
   const calling = step === "calling";
   const pastOne = step === "tlf" || calling || done;
   const consentText = info && info !== "error" ? info.consent_text
-    : "Ja tak, Peter fra Dialogbot, en digital assistent, må ringe mig op på dette nummer nu og vise, hvordan Dialogbot tager telefonen. Opkaldet bliver skrevet ned, og en medarbejder fra Dialogbot må kontakte mig bagefter om det, vi talte om.";
+    : c("consentFallback");
 
   const phone = calling ? null
-    : done ? ["Opkaldet er sat i gang", "Var det noget? Så er din egen receptionist tre trin væk."]
-    : step === "unavailable" ? ["Prøveopkaldet aktiveres snart", `Indtil da ringer vi til dig manuelt inden for åbningstiden (${HOURS.toLowerCase()}). Ring til ${PHONE_DISPLAY} eller skriv til ${EMAIL}.`]
-    : ["Din telefon ringer snart", "Når du har skrevet dit nummer i chatten, ringer Peter fra Dialogbot inden for et minut."];
+    : done ? [c("phoneDoneTitle"), c("phoneDoneText")]
+    : step === "unavailable" ? [c("phoneUnavailableTitle"), c("phoneUnavailableText", { hours, phone: PHONE_DISPLAY, email: EMAIL })]
+    : [c("phoneIdleTitle"), c("phoneIdleText")];
 
   const stage = (
-      <section aria-label="Chat med Dialogbot"
+      <section aria-label={c("stageLabel")}
         className={`min-w-0 bg-white flex flex-col overflow-hidden ${embedded
  ?"h-full w-full"
  :"flex-[1_1_460px] max-w-[640px] border-2 border-ink rounded-[22px] shadow-block"}`}>
@@ -192,11 +193,11 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
           <span className="inline-flex w-10 h-10 rounded-xl bg-accent items-center justify-center font-display font-extrabold text-white text-lg">D</span>
           <div className="flex flex-col min-w-0">
             <span className="font-display font-bold text-[17px]">Dialogbot</span>
-            <span className="text-[13px] text-muted flex items-center gap-1.5"><span aria-hidden className="w-2 h-2 rounded-full bg-[#1B9E5A]" />Svarer med det samme</span>
+            <span className="text-[13px] text-muted flex items-center gap-1.5"><span aria-hidden className="w-2 h-2 rounded-full bg-[#1B9E5A]" />{c("status")}</span>
           </div>
-          <span className={`ml-auto text-xs font-semibold tracking-[1.5px] uppercase px-2.5 py-1.5 rounded-full bg-highlight ${embedded ? "hidden sm:inline" : ""}`} aria-live="polite">{STEP_LABEL[step]}</span>
+          <span className={`ml-auto text-xs font-semibold tracking-[1.5px] uppercase px-2.5 py-1.5 rounded-full bg-highlight ${embedded ? "hidden sm:inline" : ""}`} aria-live="polite">{c(`steps.${step}`)}</span>
           {onClose && (
-            <button type="button" onClick={onClose} aria-label="Luk chatten" className={`w-11 h-11 rounded-[10px] bg-white inline-flex items-center justify-center text-ink hover:bg-panel cursor-pointer ${embedded ? "ml-auto sm:ml-0" : "ml-2"}`}>
+            <button type="button" onClick={onClose} aria-label={c("close")} className={`w-11 h-11 rounded-[10px] bg-white inline-flex items-center justify-center text-ink hover:bg-panel cursor-pointer ${embedded ? "ml-auto sm:ml-0" : "ml-2"}`}>
               <CloseIcon size={18} />
             </button>
           )}
@@ -213,7 +214,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
             );
           })}
           {typing && (
-            <div className="flex gap-2.5 items-end" aria-label="Dialogbot skriver">
+            <div className="flex gap-2.5 items-end" aria-label={c("typing")}>
               <span className={avatar}>D</span>
               <span className="inline-flex gap-[5px] px-4 py-3.5 rounded-[16px_16px_16px_4px] bg-white border-2 border-ink">
                 <span className="dot1 w-[7px] h-[7px] rounded-full bg-ink" /><span className="dot2 w-[7px] h-[7px] rounded-full bg-ink" /><span className="dot3 w-[7px] h-[7px] rounded-full bg-ink" />
@@ -229,14 +230,14 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
           )}
           {(step === "done" || step === "unavailable" || step === "calling") && !typing && null}
           {step === "branche" && !typing && (
-            <div className="flex flex-wrap gap-2">{BRANCHES.map(([l, k]) => <button key={l} type="button" onClick={chooseBranch(l, k)} className={chip}>{l}</button>)}</div>
+            <div className="flex flex-wrap gap-2">{BRANCHES.map((k) => { const l = c(`branches.${k ?? "other"}`); return <button key={k ?? "other"} type="button" onClick={chooseBranch(l, k)} className={chip}>{l}</button>; })}</div>
           )}
           {step === "unavailable" && !typing && (
             <div className="flex flex-wrap gap-2">
-              <a href={PHONE_TEL} className={`${chip} inline-flex items-center gap-2 no-underline`}><PhoneIcon size={16} />Ring til os</a>
-              <a href={`mailto:${EMAIL}?subject=${encodeURIComponent("Ring mig op – prøveopkald")}`} className={`${chip} inline-flex items-center no-underline`}>Skriv dit nummer til os</a>
-              <Link href="/byggevejledning" className={`${chip} inline-flex items-center no-underline`}>Se byggevejledningen</Link>
-              <button type="button" onClick={reset} className={chip}>Prøv igen</button>
+              <a href={PHONE_TEL} className={`${chip} inline-flex items-center gap-2 no-underline`}><PhoneIcon size={16} />{c("callUs")}</a>
+              <a href={`mailto:${EMAIL}?subject=${encodeURIComponent(c("mailSubject"))}`} className={`${chip} inline-flex items-center no-underline`}>{c("mailUs")}</a>
+              <Link href="/byggevejledning" className={`${chip} inline-flex items-center no-underline`}>{c("seeGuide")}</Link>
+              <button type="button" onClick={reset} className={chip}>{c("tryAgain")}</button>
             </div>
           )}
           {hasInput && (
@@ -247,7 +248,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
                   onChange={(e) => setDraft(e.target.value)} placeholder={placeholder} autoComplete={step === "tlf" ? "tel" : "organization"} disabled={pending}
                   className="flex-1 min-w-0 min-h-12 px-4 rounded-xl border-2 border-ink text-base text-ink bg-white placeholder:text-muted/70" />
                 <button type="submit" disabled={pending} className="inline-flex items-center gap-2 min-h-12 px-[18px] rounded-xl bg-accent hover:bg-accent-deep text-white font-semibold text-[15px] cursor-pointer disabled:opacity-60">
-                  {step === "tlf" && /\d{8}/.test(draft.replace(/[\s+\-()]/g, "")) ? "Ring mig op" : "Send"}<ArrowIcon size={16} />
+                  {step === "tlf" && /\d{8}/.test(draft.replace(/[\s+\-()]/g, "")) ? c("callMe") : c("send")}<ArrowIcon size={16} />
                 </button>
               </div>
               {step === "tlf" && (
@@ -257,7 +258,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
                   <label className={`flex items-start gap-3 text-[13px] leading-normal cursor-pointer ${consentError ? "text-danger" : "text-ink-soft"}`}>
                     <input type="checkbox" checked={consent} onChange={(e) => { setConsent(e.target.checked); if (e.target.checked) setConsentError(false); }}
                       className="mt-0.5 w-5 h-5 shrink-0 accent-accent" aria-invalid={consentError} />
-                    <span>{consentText}{consentError && <b className="block mt-1">Sæt kryds, hvis jeg må ringe dig op.</b>}</span>
+                    <span>{consentText}{consentError && <b className="block mt-1">{c("consentError")}</b>}</span>
                   </label>
                 </>
               )}
@@ -265,17 +266,18 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
           )}
           {done && (
             <div className="flex flex-wrap gap-2.5">
-              <Link href="/signup" className="inline-flex items-center gap-2.5 min-h-12 px-5 rounded-xl bg-accent hover:bg-accent-deep text-white no-underline font-semibold text-[15px]">Ja – byg min nu (trin 1 af 3)</Link>
-              <button type="button" onClick={reset} className="min-h-12 px-[18px] rounded-xl bg-white border-2 border-ink text-ink font-semibold text-[15px] cursor-pointer hover:bg-panel">Prøv igen</button>
+              <Link href="/signup" className="inline-flex items-center gap-2.5 min-h-12 px-5 rounded-xl bg-accent hover:bg-accent-deep text-white no-underline font-semibold text-[15px]">{c("buildNow")}</Link>
+              <button type="button" onClick={reset} className="min-h-12 px-[18px] rounded-xl bg-white border-2 border-ink text-ink font-semibold text-[15px] cursor-pointer hover:bg-panel">{c("tryAgain")}</button>
             </div>
           )}
-          {calling && <p className="m-0 text-sm font-semibold">Tag telefonen, når den ringer. Du kan lægge på når som helst.</p>}
-          <span className="text-xs text-muted">Vi ringer kun til det nummer, du selv skriver, og bruger det ikke til andet end dette opkald og en opfølgning, hvis du har sagt ja til det.</span>
+          {calling && <p className="m-0 text-sm font-semibold">{c("pickUp")}</p>}
+          <span className="text-xs text-muted">{c("privacy")}</span>
         </div>
       </section>
   );
 
   if (embedded) return stage;
+  const sideSteps = raw<string[]>("site.proev.chat.sideSteps");
 
   return (
     <div className="flex flex-wrap gap-8 items-start">
@@ -291,8 +293,8 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
                 <span aria-hidden className="ringwave2 absolute inset-0 rounded-full border-[3px] border-accent" />
                 <span className="w-[72px] h-[72px] rounded-full bg-accent inline-flex items-center justify-center"><PhoneIcon size={32} stroke="#FFFFFF" /></span>
               </div>
-              <span className="font-display font-bold text-xl">Ringer til {tlf} …</span>
-              <span className="text-sm text-ink-soft">Jeg præsenterer mig som receptionist for <b>{firma}</b>. Spørg mig om priser, tider eller en aftale.</span>
+              <span className="font-display font-bold text-xl">{c("ringing", { number: tlf })}</span>
+              <span className="text-sm text-ink-soft">{c("presentBefore")}<b>{firma}</b>{c("presentAfter")}</span>
             </>
           ) : (
             <>
@@ -304,15 +306,15 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
         </div>
 
         <ol className="m-0 p-0 list-none flex flex-col gap-2.5">
-          {([["1", "Fortæl chatten, hvem I er", true], ["2", "Tag telefonen – spørg som en kunde", pastOne], ["3", "Kan du lide det? Så bygger vi den rigtige", done]] as [string, string, boolean][]).map(([n, t, on]) => (
+          {([["1", sideSteps[0], true], ["2", sideSteps[1], pastOne], ["3", sideSteps[2], done]] as [string, string, boolean][]).map(([n, label, on]) => (
             <li key={n} className="flex gap-3 items-center px-3.5 py-3 rounded-[14px] bg-white border-2 border-ink">
               <span className={`flex-none inline-flex w-9 h-9 rounded-[10px] items-center justify-center font-display font-extrabold text-lg ${on ? "bg-highlight" : "bg-panel"}`}>{n}</span>
-              <span className="text-[15px] font-semibold">{t}</span>
+              <span className="text-[15px] font-semibold">{label}</span>
             </li>
           ))}
         </ol>
 
-        <p className="m-0 text-[13px] leading-normal text-muted">Den samme chat følger dig videre: Når du siger ja, guider den dig gennem opsætningen, kobler din kalender på og tester det hele sammen med dig.</p>
+        <p className="m-0 text-[13px] leading-normal text-muted">{c("sideNote")}</p>
       </aside>
     </div>
   );

@@ -1,41 +1,36 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { SeoPage } from "@/components/seo-page";
+import Link from "@/i18n/link";
+import { getLocale, getRaw, getT } from "@/i18n/server";
+import { SeoPage, type SeoFaq } from "@/components/seo-page";
+import { alternatesFor, openGraphFor } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Chatbot til hjemmesiden – dansk AI-chatbot med jeres egen viden",
-  description: "Få en dansk AI-chatbot på jeres hjemmeside, der svarer ud fra jeres egne ydelser, priser og åbningstider, samler henvendelser og kan booke tider. Samme viden som jeres AI-receptionist.",
-  alternates: { canonical: "/chatbot" },
-  openGraph: { url: "/chatbot", title: "Chatbot til hjemmesiden på dansk | Dialogbot", images: ["/opengraph-image.png"] },
-};
+const PATH = "/chatbot";
 
-export default function Page() {
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, locale] = await Promise.all([getT("landing.chatbot.meta"), getLocale()]);
+  return { title: t("title"), description: t("description"), alternates: alternatesFor(PATH, locale),
+    openGraph: openGraphFor(PATH, locale, t("ogTitle")) };
+}
+
+export default async function Page() {
+  const [t, raw] = await Promise.all([getT("landing.chatbot"), getRaw()]);
+  const s = (key: string) => t(`sections.${key}`);
   return (
-    <SeoPage path="/chatbot" kicker="Chatbot til hjemmesiden"
-      title="En dansk chatbot, der kender jeres forretning"
-      lead="Dialogbots chatbot svarer jeres besøgende på dansk – døgnet rundt – ud fra den viden, I selv har godkendt. Den samler henvendelser, kan booke tider, og en medarbejder kan overtage samtalen når som helst."
-      points={["Svarer kun ud fra jeres godkendte viden", "Samler navn, kontakt og behov", "Booker tider direkte i chatten", "En medarbejder kan overtage samtalen", "Samme viden som på telefonen"]}
+    <SeoPage path={PATH} kicker={t("kicker")}
+      title={t("title")}
+      lead={t("lead")}
+      points={raw<string[]>("landing.chatbot.points")}
       sections={[
-        { title: "En chatbot, der ikke gætter", body: <>
-          <p>Mange chatbots finder på svar. Dialogbot gør ikke. Den svarer kun ud fra de ydelser, priser, åbningstider og regler, I selv har godkendt – og siger ærligt, når noget ikke fremgår, så en medarbejder kan følge op.</p>
-          <p>Har I en hjemmeside, henter Dialogbot det meste automatisk derfra som kladder, som I gennemgår og godkender. Så er chatbotten klar på kort tid.</p>
+        { title: s("noGuessing.title"), body: <>
+          <p>{s("noGuessing.p1")}</p>
+          <p>{s("noGuessing.p2")}</p>
         </> },
-        { title: "Det kan chatbotten", body: <ul>
-          <li><strong>Svare på spørgsmål</strong> om ydelser, priser, åbningstider og praktiske forhold.</li>
-          <li><strong>Samle henvendelser</strong> med navn, kontaktoplysninger og behov – og sende dem til jeres indbakke.</li>
-          <li><strong>Booke tider</strong> ud fra jeres åbningstider og bookingregler.</li>
-          <li><strong>Lade jer tage over:</strong> en medarbejder kan svare kunden direkte i samtalen, mens assistenten holder pause.</li>
-          <li><strong>Tilbyde et opkald tilbage</strong> i et tidsrum, der passer kunden.</li>
+        { title: s("canDo.title"), body: <ul>
+          {raw<[string, string][]>("landing.chatbot.sections.canDo.items").map(([b, rest]) => <li key={b}><strong>{b}</strong>{rest}</li>)}
         </ul> },
-        { title: "Chat og telefon med én og samme viden", body: <p>Chatbotten bruger den samme godkendte viden som Dialogbots <Link href="/ai-receptionist">AI-receptionist</Link> og <Link href="/ai-telefonsvarer">AI-telefonsvarer</Link>. Retter I en pris ét sted, er den rettet både i chatten og på telefonen. Chatten sættes på jeres hjemmeside med en lille indlejringskode, som vi hjælper jer med.</p> },
-        { title: "Pris", body: <p>Chatbotten er en del af Dialogbot: ét abonnement til <strong>2.495 kr. om måneden</strong> – ekskl. moms og uden pris pr. henvendelse. Opsætningen gør I selv efter byggevejledningen – eller lad vores specialister skræddersy den for 5.000 kr. én gang.</p> },
+        { title: s("sameKnowledge.title"), body: <p>{s("sameKnowledge.a")}<Link href="/ai-receptionist">{s("sameKnowledge.receptionistLink")}</Link>{s("sameKnowledge.b")}<Link href="/ai-telefonsvarer">{s("sameKnowledge.phoneLink")}</Link>{s("sameKnowledge.c")}</p> },
+        { title: s("price.title"), body: <p>{s("price.a")}<strong>{s("price.price")}</strong>{s("price.b")}</p> },
       ]}
-      faq={[
-        ["Hvordan kommer chatbotten på min hjemmeside?", "I indsætter en lille indlejringskode på hjemmesiden. Byggevejledningen viser hvordan, og I bestemmer selv, på hvilke domæner chatten må vises."],
-        ["Kan en medarbejder overtage samtalen?", "Ja. En medarbejder kan svare kunden direkte i samtalen, og assistenten holder pause imens."],
-        ["Finder chatbotten selv på svar?", "Nej. Den svarer kun ud fra den viden, I har godkendt, og siger ærligt, når noget ikke fremgår."],
-        ["Kan den både chatte og tage telefonen?", "Ja. Dialogbot bruger den samme viden i chatten og på telefonen."],
-        ["Hvad koster chatbotten?", "Den er en del af Dialogbot: ét abonnement til 2.495 kr. om måneden, ekskl. moms."],
-      ]} />
+      faq={raw<SeoFaq[]>("landing.chatbot.faq")} />
   );
 }

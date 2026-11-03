@@ -1,4 +1,6 @@
 /** Types and formatting shared by the ambassador portal and the operator pages. */
+import { HTML_LANG, type Locale } from "@/i18n/config";
+
 export type Terms = { bonus_minor: number; rate_bp: number; months: number; hold_days?: number; customer_discount_bp?: number; min_payout_minor?: number; min_age?: number };
 export type Balances = { held_minor: number; payable_minor: number; in_payout_minor: number; paid_minor: number; min_payout_minor: number };
 export type Profile = {
@@ -15,14 +17,23 @@ export type Payout = { id: string; number: number; status: "pending" | "paid" | 
 export type Statement = Payout & { ambassador: { full_name: string; kind: string; company_name: string | null; cvr: string | null; vat_registered: boolean; bank_last4: string | null }; lines: Entry[]; tax_note: string };
 export type Program = { rules_version: string; rules_text: string; quiz: { id: string; question: string; options: { id: string; label: string }[] }[]; terms: Terms };
 
-export const kr = (minor: number) => `${(minor / 100).toLocaleString("da-DK", { minimumFractionDigits: minor % 100 ? 2 : 0, maximumFractionDigits: 2 })} kr.`;
-export const pct = (bp: number) => `${(bp / 100).toLocaleString("da-DK")} %`;
-export const date = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("da-DK", { day: "numeric", month: "short", year: "numeric" }) : "–");
-export const monthLabel = (ym: string | null) => {
-  if (!ym) return "–";
-  const [y, m] = ym.split("-").map(Number);
-  return new Date(y, m - 1, 1).toLocaleDateString("da-DK", { month: "long", year: "numeric" });
-};
+/** Formatting in the given language (the ambassador portal); without a locale Danish, as the operator pages use.
+ *  Amounts stay in kr. in every language – only the number format follows the locale. */
+export function formatters(locale?: Locale) {
+  const tag = locale ? HTML_LANG[locale] : "da-DK";
+  return {
+    kr: (minor: number) => `${(minor / 100).toLocaleString(tag, { minimumFractionDigits: minor % 100 ? 2 : 0, maximumFractionDigits: 2 })} kr.`,
+    pct: (bp: number) => `${(bp / 100).toLocaleString(tag)} %`,
+    date: (iso: string | null) => (iso ? new Date(iso).toLocaleDateString(tag, { day: "numeric", month: "short", year: "numeric" }) : "–"),
+    monthLabel: (ym: string | null) => {
+      if (!ym) return "–";
+      const [y, m] = ym.split("-").map(Number);
+      return new Date(y, m - 1, 1).toLocaleDateString(tag, { month: "long", year: "numeric" });
+    },
+  };
+}
+export const { kr, pct, date, monthLabel } = formatters();
+/** Danish labels for the operator pages; the ambassador portal uses `auth.ambassador.status.<status>` and only the tone. */
 export const STATUS: Record<Profile["status"], { label: string; tone: string }> = {
   pending: { label: "Afventer godkendelse", tone: "bg-highlight text-ink border-highlight" },
   active: { label: "Aktiv", tone: "bg-success-soft text-success border-success-soft" },

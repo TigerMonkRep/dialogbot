@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { ApiError } from "@/lib/client";
+import { useT } from "@/i18n/client";
 
 /* Byggevejledning design system v2 (docs/brand.md). Flat colours, 2 px ink outlines,
    one action colour (accent / Klods-blå), one "you are here" colour (highlight / Trin-gul). */
@@ -83,8 +84,9 @@ export function Alert({ kind = "error", children, icon }: { kind?: "error" | "ok
 }
 
 export function ErrorBox({ error }: { error: ApiError | null }) {
+  const t = useT("app");
   if (!error) return null;
-  return <Alert>{error.message}{error.request_id && <span className="mt-1 block text-label-sm opacity-70">Reference: {error.request_id}</span>}</Alert>;
+  return <Alert>{error.message}{error.request_id && <span className="mt-1 block text-label-sm opacity-70">{t("ui.reference", { id: error.request_id })}</span>}</Alert>;
 }
 
 /* Status pills. ok = soft green (only for things that really work), progress = accent-soft,
@@ -99,18 +101,21 @@ const PILL = {
   off: "bg-paper text-muted border-ink border-dashed",
 } as const;
 type Pill = keyof typeof PILL;
-const STATUS: Record<string, [string, Pill]> = {
-  complete: ["Gennemført", "ok"], passed: ["Bestået", "ok"], approved: ["Godkendt", "ok"], published: ["Gået ud", "ok"], accepted: ["Accepteret", "ok"],
-  in_progress: ["I gang", "progress"], in_review: ["Til gennemgang", "progress"], scheduled: ["Planlagt", "progress"], publishing: ["Poster nu", "progress"],
-  pending: ["Afventer", "pending"],
-  stale: ["Forældet", "error"], rejected: ["Afvist", "error"], blocked: ["Blokeret", "error"], expired: ["Udløbet", "error"],
-  failed: ["Fejlet", "failed"],
-  not_available: ["Ikke tilgængelig", "off"], not_started: ["Ikke startet", "off"], untested: ["Ikke testet", "off"], skipped: ["Sprunget over", "off"],
-  draft: ["Kladde", "neutral"], superseded: ["Erstattet", "neutral"], cancelled: ["Annulleret", "neutral"], revoked: ["Tilbagekaldt", "neutral"],
+/** Status → tone; the label is `app.status.<status>`. */
+const STATUS: Record<string, Pill> = {
+  complete: "ok", passed: "ok", approved: "ok", published: "ok", accepted: "ok",
+  in_progress: "progress", in_review: "progress", scheduled: "progress", publishing: "progress",
+  pending: "pending",
+  stale: "error", rejected: "error", blocked: "error", expired: "error",
+  failed: "failed",
+  not_available: "off", not_started: "off", untested: "off", skipped: "off",
+  draft: "neutral", superseded: "neutral", cancelled: "neutral", revoked: "neutral",
 };
 export function Badge({ status }: { status: string }) {
-  const [label, tone] = STATUS[status] ?? [status, "neutral" as Pill];
-  return <span className={`inline-flex items-center rounded-full border-[1.5px] px-2.5 py-0.5 text-[12px] font-semibold uppercase tracking-[0.06em] whitespace-nowrap ${PILL[tone]}`}>{label}</span>;
+  const t = useT("app");
+  const tone = STATUS[status];
+  const label = tone ? t(`status.${status}`) : status;
+  return <span className={`inline-flex items-center rounded-full border-[1.5px] px-2.5 py-0.5 text-[12px] font-semibold uppercase tracking-[0.06em] whitespace-nowrap ${PILL[tone ?? "neutral"]}`}>{label}</span>;
 }
 export function Tag({ children, tone = "neutral" }: { children: React.ReactNode; tone?: "neutral" | "secondary" | "tertiary" }) {
   const c = { neutral: "bg-panel text-ink border-[1.5px] border-ink", secondary: "bg-highlight text-ink font-semibold", tertiary: "bg-accent-soft text-accent-deep font-semibold" }[tone];

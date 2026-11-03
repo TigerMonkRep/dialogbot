@@ -1,26 +1,31 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { SeoPage } from "@/components/seo-page";
-import { ARTICLES } from "@/lib/site";
-import { INDUSTRIES } from "@/lib/industries";
+import Link from "@/i18n/link";
+import { getLocale, getRaw, getT } from "@/i18n/server";
+import { SeoPage, type SeoFaq } from "@/components/seo-page";
+import { ARTICLES, alternatesFor, openGraphFor } from "@/lib/site";
+import { INDUSTRIES, industryKey, type IndustryCopy } from "@/lib/industries";
 
-export const metadata: Metadata = {
-  title: "Viden om AI-receptionist, AI-telefonsvarer og chatbot",
-  description: "Guides til danske virksomheder om AI-receptionist, AI-telefonsvarer, telefonpasning, viderestilling og chatbot på hjemmesiden.",
-  alternates: { canonical: "/viden" },
-  openGraph: { url: "/viden", title: "Viden | Dialogbot", images: ["/opengraph-image.png"] },
-};
+const PATH = "/viden";
 
-export default function Page() {
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, locale] = await Promise.all([getT("landing.knowledge.meta"), getLocale()]);
+  return { title: t("title"), description: t("description"), alternates: alternatesFor(PATH, locale),
+    openGraph: openGraphFor(PATH, locale, t("ogTitle")) };
+}
+
+export default async function Page() {
+  const [t, tl, raw] = await Promise.all([getT("landing.knowledge"), getT("landing"), getRaw()]);
+  const articles = ARTICLES.map((a) => ({ slug: a.slug, title: tl(`articles.${a.slug}.title`), teaser: tl(`articles.${a.slug}.teaser`) }));
+  const industries = INDUSTRIES.map((i) => ({ slug: i.slug, ...raw<IndustryCopy>(industryKey(i.slug)) }));
   return (
-    <SeoPage path="/viden" kicker="Viden"
-      title="Guides om AI-receptionist og telefonpasning"
-      lead="Korte, praktiske guides til danske virksomheder, der vil have styr på telefonen og henvendelserne – uden at ansætte en ekstra person."
-      points={ARTICLES.map((a) => a.title)}
+    <SeoPage path={PATH} kicker={t("kicker")}
+      title={t("title")}
+      lead={t("lead")}
+      points={articles.map((a) => a.title)}
       sections={[
-        { title: "Guides", body: <ul>{ARTICLES.map((a) => <li key={a.slug}><Link href={`/viden/${a.slug}`}><strong>{a.title}</strong></Link> – {a.teaser}</li>)}</ul> },
-        { title: "AI-receptionist til din branche", body: <ul>{INDUSTRIES.map((i) => <li key={i.slug}><Link href={`/ai-receptionist/${i.slug}`}>AI-receptionist til {i.name}</Link> – {i.examples}</li>)}</ul> },
+        { title: t("guidesTitle"), body: <ul>{articles.map((a) => <li key={a.slug}><Link href={`/viden/${a.slug}`}><strong>{a.title}</strong></Link> – {a.teaser}</li>)}</ul> },
+        { title: t("industriesTitle"), body: <ul>{industries.map((i) => <li key={i.slug}><Link href={`/ai-receptionist/${i.slug}`}>{tl("industryLink", { name: i.name })}</Link> – {i.examples}</li>)}</ul> },
       ]}
-      faq={[["Hvad er Dialogbot?", "En dansk AI-receptionist, der tager telefonen og chatten for din virksomhed, svarer ud fra jeres egen godkendte viden og booker tider."], ["Kan jeg høre den?", "Ja. Gå til Prøv den, fortæl chatten hvad I laver, så ringer Dialogbot dig op og viser det."]]} />
+      faq={raw<SeoFaq[]>("landing.knowledge.faq")} />
   );
 }

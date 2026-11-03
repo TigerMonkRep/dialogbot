@@ -1,48 +1,28 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { CompareTable } from "@/components/compare-table";
-import { SeoPage } from "@/components/seo-page";
+import { Blocks, type RichSection } from "@/components/legal-page";
+import { SeoPage, type SeoFaq } from "@/components/seo-page";
+import { getLocale, getRaw, getT, localePath } from "@/i18n/server";
 
-const path = "/viden/ai-telefonsvarer-eller-telefonpasning";
-export const metadata: Metadata = {
-  title: "AI-telefonsvarer eller telefonpasning – hvad passer til jer?",
-  description: "Telefonsvarer, telefonpasningsservice eller AI-telefonsvarer? Se forskellene på pris, tilgængelighed og kvalitet, så du kan vælge den rigtige løsning.",
-  alternates: { canonical: path },
-  openGraph: { url: path, type: "article", title: "AI-telefonsvarer eller telefonpasning? | Dialogbot", images: ["/opengraph-image.png"] },
-};
+const slug = "ai-telefonsvarer-eller-telefonpasning";
+const path = `/viden/${slug}`;
 
-export default function Page() {
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT(`articles.${slug}`);
+  const url = localePath(await getLocale(), path);
+  return {
+    title: t("meta.title"), description: t("meta.description"), alternates: { canonical: url },
+    openGraph: { url, type: "article", title: t("meta.ogTitle"), images: ["/opengraph-image.png"] },
+  };
+}
+
+export default async function Page() {
+  const t = await getT(`articles.${slug}`);
+  const raw = await getRaw();
+  const sections = raw<RichSection[]>(`articles.${slug}.sections`);
   return (
-    <SeoPage path={path} kicker="AI-telefonsvarer eller telefonpasning" article={{ published: "2026-10-07" }}
-      title="AI-telefonsvarer eller telefonpasning – hvad passer til jer?"
-      lead="Når du ikke selv kan tage telefonen, er der tre muligheder: en almindelig telefonsvarer, en telefonpasningsservice med mennesker, eller en AI-telefonsvarer. Her er forskellene."
-      points={["Telefonsvarer: billig, men kunden lægger ofte på", "Telefonpasning: et menneske svarer, men typisk kun i åbningstid", "AI-telefonsvarer: svarer døgnet rundt og kan booke", "Vælg ud fra opkaldsmængde, åbningstid og behov"]}
-      sections={[
-        { title: "1. Den almindelige telefonsvarer", body: <p>Billig og enkel, men mange kunder lægger på i stedet for at lægge en besked – og ringer til en konkurrent. Du skal selv lytte beskederne igennem og ringe tilbage uden at vide, hvad sagen drejer sig om.</p> },
-        { title: "2. Telefonpasningsservice", body: <p>Et menneske tager telefonen i dit navn og skriver en besked. Det giver en personlig oplevelse, men afregnes typisk pr. opkald eller pr. måned, og mange services har kun åbent i almindelig arbejdstid. Receptionisten kender sjældent dine ydelser og priser i detaljer.</p> },
-        { title: "3. AI-telefonsvarer", body: <>
-          <p>En AI-telefonsvarer som <Link href="/ai-telefonsvarer">Dialogbot</Link> taler med kunden på dansk døgnet rundt, svarer ud fra din egen godkendte viden og kan booke tider og sende SMS-bekræftelser. Du får en skrevet opsummering af hver samtale i stedet for en talebesked.</p>
-          <p>Til gengæld er den ikke et menneske – den siger det ærligt og sender sager, den ikke kan svare på, videre til dig.</p>
-        </> },
-        { title: "Sammenlignet", body: <CompareTable other="Telefonpasning" rows={[
-          ["Hvem svarer", "AI på dansk, kun ud fra viden I har godkendt", "Et menneske, der ikke altid kender jeres ydelser"],
-          ["Åbningstid", "Døgnet rundt", "Typisk almindelig arbejdstid"],
-          ["Booking", "Direkte i jeres kalender, med SMS-bekræftelse", "Normalt en besked, I selv følger op på"],
-          ["Pris", "2.495 kr./md. ekskl. moms, ingen pris pr. henvendelse", "Typisk pr. opkald eller pr. måned"],
-          ["Besked til jer", "Skriftlig opsummering af hver samtale og en daglig rapport", "En besked pr. opkald"],
-        ]} /> },
-        { title: "Sådan vælger du", body: <ul>
-          <li><strong>Få opkald og kun om dagen?</strong> En telefonsvarer kan være nok.</li>
-          <li><strong>Vigtigt med et menneske i røret?</strong> Telefonpasning – men tjek åbningstiden.</li>
-          <li><strong>Mange opkald, også om aftenen, og ønske om booking?</strong> En AI-telefonsvarer giver mest for pengene.</li>
-        </ul> },
-        { title: "Hør forskellen", body: <p><Link href="/proev">Bliv ringet op af Dialogbot</Link> og hør, hvordan en AI-telefonsvarer lyder. Se også <Link href="/priser">priserne</Link>.</p> },
-      ]}
-      faq={[
-        ["Kan en AI-telefonsvarer erstatte telefonpasning?", "For de fleste faste henvendelser ja: den svarer, afklarer behovet og booker. Komplekse sager sendes videre til jer."],
-        ["Er en AI-telefonsvarer tilgængelig om natten?", "Ja, Dialogbot tager telefonen døgnet rundt."],
-        ["Hvad er billigst: telefonpasning eller Dialogbot?", "Telefonpasning afregnes typisk pr. opkald eller pr. måned. Dialogbot er ét abonnement til 2.495 kr. om måneden ekskl. moms med 300 minutters indgående opkald og ingen pris pr. henvendelse. Se også /viden/dialogbot-vs-vocalis."],
-        ["Kan jeg beholde mit nummer?", "Ja. Du viderestiller dit nummer til Dialogbot, når du er optaget eller har lukket."],
-      ]} />
+    <SeoPage path={path} kicker={t("kicker")} article={{ published: "2026-10-07" }}
+      title={t("title")} lead={t("lead")} points={raw<string[]>(`articles.${slug}.points`)}
+      sections={sections.map((s) => ({ title: s.title, body: <Blocks blocks={s.body} /> }))}
+      faq={raw<SeoFaq[]>(`articles.${slug}.faq`)} />
   );
 }

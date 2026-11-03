@@ -1,8 +1,8 @@
-/** "Du skal bruge": the box before every step. */
-export function Need({ items }: { items: [count: string, text: string, note?: string][] }) {
+/** "Du skal bruge": the box before every step. `title` is setup.need.title in the current language. */
+export function Need({ items, title }: { items: [count: string, text: string, note?: string][]; title: string }) {
   return (
     <div className="rounded-2xl border-[1.5px] border-ink bg-paper px-4 py-3 flex flex-wrap items-center gap-x-5 gap-y-2">
-      <span className="eyebrow">Du skal bruge</span>
+      <span className="eyebrow">{title}</span>
       {items.map(([n, t, note]) => (
         <span key={t} className="text-[14px] text-ink"><b className="font-display">{n}</b> {t}{note && <span className="text-muted"> ({note})</span>}</span>
       ))}

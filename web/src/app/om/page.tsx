@@ -1,34 +1,35 @@
 import type { Metadata } from "next";
 import { COMPANY } from "@/components/legal-page";
 import { FounderBlock } from "@/components/founder-block";
-import { SeoPage } from "@/components/seo-page";
+import { SeoPage, type SeoFaq } from "@/components/seo-page";
+import { getLocale, getRaw, getT } from "@/i18n/server";
 import { FOUNDER } from "@/lib/proof";
+import { alternatesFor, openGraphFor } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Om Dialogbot – hvem der står bag",
-  description: "Dialogbot er et dansk firma i Aarhus. Her kan du se, hvem der står bag, hvor vi sidder, og hvordan du kommer i kontakt med os.",
-  alternates: { canonical: "/om" },
-  openGraph: { url: "/om", title: "Om Dialogbot", images: ["/opengraph-image.png"] },
-};
+const PATH = "/om";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, locale] = await Promise.all([getT("landing.about.meta"), getLocale()]);
+  return { title: t("title"), description: t("description"), alternates: alternatesFor(PATH, locale),
+    openGraph: openGraphFor(PATH, locale, t("ogTitle")) };
+}
 
 /** Who is behind Dialogbot (audit D3.3). The founder block fills in from src/lib/proof.ts; until then the page
  *  shows only what is already public: company, address, phone. */
-export default function Page() {
+export default async function Page() {
+  const [t, raw] = await Promise.all([getT("landing.about"), getRaw()]);
   return (
-    <SeoPage path="/om" kicker="Om os"
-      title="Hvem står bag Dialogbot?"
-      lead={FOUNDER ? `${FOUNDER.name} har bygget Dialogbot, så små virksomheder kan tage telefonen, også når de ikke kan.` : "Dialogbot er et dansk firma i Aarhus, og du kan altid ringe til os."}
-      points={["Dansk firma i Aarhus", `CVR ${COMPANY.cvr}`, "Ring til os – vi tager telefonen i åbningstiden", "Ingen binding"]}
+    <SeoPage path={PATH} kicker={t("kicker")}
+      title={t("title")}
+      lead={FOUNDER ? t("leadFounder", { name: FOUNDER.name }) : t("lead")}
+      points={[t("points.company"), t("points.cvr", { cvr: COMPANY.cvr }), t("points.call"), t("points.noBinding")]}
       sections={[
-        { title: "Hvorfor Dialogbot findes", body: <>
-          <p>Når telefonen ringer, mens du står på stigen eller har en kunde i stolen, mister du en kunde. Dialogbot tager telefonen for dig – på dansk, døgnet rundt, og kun med den viden, du selv har godkendt.</p>
+        { title: t("sections.why.title"), body: <>
+          <p>{t("sections.why.p")}</p>
           {FOUNDER && <FounderBlock />}
         </> },
-        { title: "Sådan finder du os", body: <p>{COMPANY.name}, CVR-nr. {COMPANY.cvr}, {COMPANY.address}. Skriv til <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a> eller ring på <a href="tel:+4593703433">93 70 34 33</a>.</p> },
+        { title: t("sections.find.title"), body: <p>{COMPANY.name}, {t("sections.find.cvrNo")} {COMPANY.cvr}, {COMPANY.address}. {t("sections.find.a")}<a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>{t("sections.find.b")}<a href="tel:+4593703433">93 70 34 33</a>.</p> },
       ]}
-      faq={[
-        ["Kan jeg tale med et menneske?", "Ja. Ring til os på 93 70 34 33 i åbningstiden, eller skriv til info@dialogbot.dk."],
-        ["Hvem passer på mine kunders oplysninger?", "Det står i almindeligt dansk på siden om GDPR og data."],
-      ]} />
+      faq={raw<SeoFaq[]>("landing.about.faq")} />
   );
 }

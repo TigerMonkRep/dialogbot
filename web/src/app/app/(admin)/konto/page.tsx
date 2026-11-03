@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
-import { kr } from "../leads/format";
+import { kr as krDa } from "../leads/format";
 import { AddCard, ConfirmSubscription, InvoiceMonth, ReferralCode } from "./billing";
 import { InvitationRow, InviteForm, MemberRow } from "./team";
 import { LogoutButton } from "./logout";
+import { LanguageSection } from "./language";
+import { getLocale, getT } from "@/i18n/server";
+import { HTML_LANG } from "@/i18n/config";
+import type { T } from "@/i18n/translate";
 
 type Member = { id: string; user_id: string; email: string; display_name: string; role: string };
 type Inv = { id: string; email: string; role: string; status: string; expires_at: string };
@@ -16,15 +20,16 @@ type Account = { configured: boolean; card: { brand: string; last4: string; exp:
 type Invoice = { id: string; month: string; status: string; number: string | null; gross_minor: number; hosted_invoice_url: string | null; invoice_pdf: string | null };
 type Referral = { referred: boolean; ambassador_first_name?: string | null; customer_discount_bp?: number; can_add_code: boolean };
 
-const INV_STATUS: Record<string, string> = { creating: "Oprettes", open: "Afventer betaling", paid: "Betalt", payment_failed: "Betaling fejlede", failed: "Ikke betalt", void: "Annulleret" };
-const monthLabel = (ym: string) => { const s = new Date(`${ym}-15T12:00:00`).toLocaleDateString("da-DK", { month: "long", year: "numeric" }); return s.charAt(0).toUpperCase() + s.slice(1); };
+/** Invoice statuses; labels are `app.account.invoiceStatus.<status>`. */
+const INV_STATUS = ["creating", "open", "paid", "payment_failed", "failed", "void"];
+const monthLabel = (lang: string, ym: string) => { const s = new Date(`${ym}-15T12:00:00`).toLocaleDateString(lang, { month: "long", year: "numeric" }); return s.charAt(0).toUpperCase() + s.slice(1); };
 const shift = (ym: string, d: number) => { const [y, m] = ym.split("-").map(Number); const t = new Date(Date.UTC(y, m - 1 + d, 1)); return `${t.getUTCFullYear()}-${String(t.getUTCMonth() + 1).padStart(2, "0")}`; };
-const dt = (s: string) => new Date(s).toLocaleString("da-DK", { dateStyle: "medium", timeStyle: "short" });
-function device(ua: string | null) {
-  if (!ua) return "Ukendt enhed";
+const dt = (lang: string, s: string) => new Date(s).toLocaleString(lang, { dateStyle: "medium", timeStyle: "short" });
+function device(t: T, ua: string | null) {
+  if (!ua) return t("account.me.unknownDevice");
   const os = /iPhone|iPad/.test(ua) ? "iOS" : /Android/.test(ua) ? "Android" : /Mac OS/.test(ua) ? "macOS" : /Windows/.test(ua) ? "Windows" : /Linux/.test(ua) ? "Linux" : "";
-  const br = /Edg\//.test(ua) ? "Edge" : /Chrome\//.test(ua) ? "Chrome" : /Firefox\//.test(ua) ? "Firefox" : /Safari\//.test(ua) ? "Safari" : "Browser";
-  return [br, os].filter(Boolean).join(" på ");
+  const br = /Edg\//.test(ua) ? "Edge" : /Chrome\//.test(ua) ? "Chrome" : /Firefox\//.test(ua) ? "Firefox" : /Safari\//.test(ua) ? "Safari" : t("account.me.browser");
+  return os ? t("account.me.device", { browser: br, os }) : br;
 }
 
 const BOX = "flex flex-col gap-4 px-5 md:px-6 py-5 rounded-2xl bg-paper border-2 border-ink";
@@ -32,6 +37,9 @@ const BOX = "flex flex-col gap-4 px-5 md:px-6 py-5 rounded-2xl bg-paper border-2
 /** «Konto»: who may see and change, the subscription and the invoices – and your own login on the right. */
 export default async function KontoPage({ searchParams }: { searchParams: Promise<{ card?: string }> }) {
   const ws = await requireWorkspace();
+  const t = await getT("app");
+  const lang = HTML_LANG[await getLocale()];
+  const kr = (minor: number) => krDa(minor, lang);
   const admin = ws.role === "owner" || ws.role === "admin";
   const owner = ws.role === "owner";
   const { card } = await searchParams;
@@ -61,81 +69,81 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
     <div className="flex flex-wrap gap-6 items-start">
       <div className="flex-[999_1_460px] min-w-0 flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
-          <span className="eyebrow">Bagerst i hæftet · Konto</span>
-          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">Team, abonnement og fakturaer</h1>
+          <span className="eyebrow">{t("account.eyebrow")}</span>
+          <h1 className="font-display font-extrabold text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("account.title")}</h1>
         </div>
 
         <section className={BOX} aria-labelledby="konto-1">
-          <Head n={1} id="konto-1" title="Hvem må se og ændre" />
-          <p className="text-[14px] text-ink-soft">Ejeren kan alt. «Kan ændre» retter viden og regler. «Kan se» læser opkald og rapporter.</p>
+          <Head n={1} id="konto-1" title={t("account.team.title")} />
+          <p className="text-[14px] text-ink-soft">{t("account.team.intro")}</p>
           <div className="overflow-x-auto">
             <table className="w-full text-left min-w-[480px]">
-              <thead><tr className="text-[12px] uppercase tracking-[0.08em] text-muted"><th className="pb-2 pr-3 font-semibold">Navn</th><th className="pb-2 pr-3 font-semibold">E-mail</th><th className="pb-2 pr-3 font-semibold">Rolle</th><th /></tr></thead>
+              <thead><tr className="text-[12px] uppercase tracking-[0.08em] text-muted"><th className="pb-2 pr-3 font-semibold">{t("leads.editor.name")}</th><th className="pb-2 pr-3 font-semibold">{t("leads.editor.email")}</th><th className="pb-2 pr-3 font-semibold">{t("account.team.role")}</th><th /></tr></thead>
               <tbody>{members.map((m) => <MemberRow key={m.id} wsId={ws.id} m={m} myRole={ws.role} isMe={m.user_id === me.id} />)}</tbody>
             </table>
           </div>
           {pending.length > 0 && <ul>{pending.map((i) => <InvitationRow key={i.id} wsId={ws.id} id={i.id} email={i.email} role={i.role} expires={i.expires_at} />)}</ul>}
-          {admin ? <InviteForm wsId={ws.id} myRole={ws.role} /> : <p className="text-[14px] text-muted">Kun ejere og administratorer kan invitere og ændre roller.</p>}
+          {admin ? <InviteForm wsId={ws.id} myRole={ws.role} /> : <p className="text-[14px] text-muted">{t("account.team.onlyAdmins")}</p>}
         </section>
 
         {admin && agr && st && acc && invoices && referral && (
           <>
             <section id="abonnement" className={`${BOX.replace("bg-paper", !confirmed && owner ? "bg-highlight" : "bg-paper")}`} aria-labelledby="konto-2">
-              <Head n={2} id="konto-2" title="Abonnement" />
-              {card === "saved" && <p role="status" className="rounded-xl bg-success-soft px-4 py-3 text-[14px] font-semibold text-success">Tak – kortet er gemt hos Stripe. Det kan tage et øjeblik, før det vises her.</p>}
+              <Head n={2} id="konto-2" title={t("account.sub.title")} />
+              {card === "saved" && <p role="status" className="rounded-xl bg-success-soft px-4 py-3 text-[14px] font-semibold text-success">{t("account.sub.cardSaved")}</p>}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5">
-                  <span className="eyebrow">Fast abonnement</span>
-                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(agr.plan.monthly_net_minor)} <span className="text-[14px] font-semibold">/md. ekskl. moms</span></span>
-                  <span className="text-[14px] text-ink-soft">{confirmed ? `Bekræftet · aftale v${agr.current!.version}. Gør-det-selv-opsætning er med.` : "Gør-det-selv-opsætning er med. Ikke bekræftet endnu."}</span>
+                  <span className="eyebrow">{t("account.sub.fixed")}</span>
+                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(agr.plan.monthly_net_minor)} <span className="text-[14px] font-semibold">{t("account.sub.perMonth")}</span></span>
+                  <span className="text-[14px] text-ink-soft">{confirmed ? t("account.sub.confirmed", { v: agr.current!.version }) : t("account.sub.notConfirmed")}</span>
                 </div>
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5">
-                  <span className="eyebrow">Kampagneopkald</span>
-                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(agr.plan.campaign_call_net_minor)} <span className="text-[14px] font-semibold">pr. opkald + {kr(agr.plan.campaign_minute_net_minor)} pr. minut ekskl. moms</span></span>
-                  <span className="text-[14px] text-ink-soft">Denne måned: {campaignCalls} opkald, {campaignMinutes} samtaleminutter · {kr(campaignNet)} ekskl. moms</span>
+                  <span className="eyebrow">{t("account.sub.campaign")}</span>
+                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(agr.plan.campaign_call_net_minor)} <span className="text-[14px] font-semibold">{t("account.sub.campaignPrice", { minute: kr(agr.plan.campaign_minute_net_minor) })}</span></span>
+                  <span className="text-[14px] text-ink-soft">{t("account.sub.campaignMonth", { calls: campaignCalls, minutes: campaignMinutes, amount: kr(campaignNet) })}</span>
                 </div>
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5 md:col-span-2">
-                  <span className="eyebrow">Indgående opkald</span>
-                  <span className="font-display font-extrabold text-[22px] text-ink">{inbound?.minutes ?? 0} <span className="text-[14px] font-semibold">af {agr.plan.inbound_included_minutes} inkluderede minutter brugt denne måned</span></span>
-                  <span className="text-[14px] text-ink-soft">{inbound?.extra_minutes ? `${inbound.extra_minutes} minutter ud over de inkluderede · ${kr(inbound.net_minor)} ekskl. moms (${kr(agr.plan.inbound_extra_minute_net_minor)} pr. påbegyndt minut).` : `Minutter ud over de ${agr.plan.inbound_included_minutes} koster ${kr(agr.plan.inbound_extra_minute_net_minor)} pr. påbegyndt minut ekskl. moms.`}</span>
+                  <span className="eyebrow">{t("account.sub.inbound")}</span>
+                  <span className="font-display font-extrabold text-[22px] text-ink">{inbound?.minutes ?? 0} <span className="text-[14px] font-semibold">{t("account.sub.inboundUsed", { n: agr.plan.inbound_included_minutes })}</span></span>
+                  <span className="text-[14px] text-ink-soft">{inbound?.extra_minutes ? t("account.sub.inboundExtra", { n: inbound.extra_minutes, amount: kr(inbound.net_minor), price: kr(agr.plan.inbound_extra_minute_net_minor) }) : t("account.sub.inboundPrice", { n: agr.plan.inbound_included_minutes, price: kr(agr.plan.inbound_extra_minute_net_minor) })}</span>
                 </div>
               </div>
-              {!confirmed && (owner ? <ConfirmSubscription wsId={ws.id} label="Bekræft abonnement" /> : <p className="text-[14px] text-ink">Ejeren skal bekræfte abonnementet.</p>)}
-              {agr.current?.model === "B" && <p className="text-[14px] text-ink">Ældre aftale – bekræft abonnementet for at skifte til det nuværende abonnement.</p>}
+              {!confirmed && (owner ? <ConfirmSubscription wsId={ws.id} label={t("account.sub.confirm")} /> : <p className="text-[14px] text-ink">{t("account.sub.ownerMustConfirm")}</p>)}
+              {agr.current?.model === "B" && <p className="text-[14px] text-ink">{t("account.sub.older")}</p>}
               <div className="flex flex-col gap-2 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5">
-                <span className="eyebrow">Betaling</span>
-                {!acc.configured ? <p className="text-[14px] text-ink-soft">Kortbetaling er ikke sat op endnu. Indtil da er oversigten kun en forhåndsvisning, og der trækkes ingen betaling.</p> : (
+                <span className="eyebrow">{t("account.pay.title")}</span>
+                {!acc.configured ? <p className="text-[14px] text-ink-soft">{t("account.pay.notConfigured")}</p> : (
                   <>
-                    <p className="text-[15px] font-semibold text-ink">{acc.card ? <>Kort <span className="capitalize">{acc.card.brand}</span> •••• {acc.card.last4}{acc.card.exp ? ` · udløber ${acc.card.exp}` : ""}</> : "Intet betalingskort"}</p>
-                    <p className="text-[14px] text-ink-soft">{acc.card ? "Hver måned faktureres bagud og trækkes automatisk på kortet." : "Uden kort bliver måneden ikke faktureret."}</p>
-                    {acc.can_manage ? <AddCard wsId={ws.id} hasCard={!!acc.card} /> : <p className="text-[13px] text-muted">Kun ejeren kan ændre betalingskortet.</p>}
-                    {acc.can_manage && acc.card && !invoices.items.some((i) => i.month === previous) && <InvoiceMonth wsId={ws.id} month={previous} label={monthLabel(previous).toLowerCase()} />}
+                    <p className="text-[15px] font-semibold text-ink">{acc.card ? <>{t("account.pay.card")} <span className="capitalize">{acc.card.brand}</span> •••• {acc.card.last4}{acc.card.exp ? ` · ${t("account.pay.expires", { exp: acc.card.exp })}` : ""}</> : t("account.pay.noCard")}</p>
+                    <p className="text-[14px] text-ink-soft">{acc.card ? t("account.pay.withCard") : t("account.pay.withoutCard")}</p>
+                    {acc.can_manage ? <AddCard wsId={ws.id} hasCard={!!acc.card} /> : <p className="text-[13px] text-muted">{t("account.pay.onlyOwner")}</p>}
+                    {acc.can_manage && acc.card && !invoices.items.some((i) => i.month === previous) && <InvoiceMonth wsId={ws.id} month={previous} label={monthLabel(lang, previous).toLowerCase()} />}
                   </>
                 )}
               </div>
               {referral.referred
-                ? <p className="rounded-xl bg-success-soft px-4 py-3 text-[14px] text-success">I er anbefalet af {referral.ambassador_first_name} (Dialogbot-ambassadør) og får {(referral.customer_discount_bp ?? 5000) / 100} % rabat på første fakturerede måned.</p>
+                ? <p className="rounded-xl bg-success-soft px-4 py-3 text-[14px] text-success">{t("account.referral.referred", { name: referral.ambassador_first_name ?? "", pct: (referral.customer_discount_bp ?? 5000) / 100 })}</p>
                 : referral.can_add_code && <ReferralCode wsId={ws.id} />}
-              <p className="text-[13px] text-muted">Priser er ekskl. moms. Ingen binding – sig det til assistenten eller skriv til info@dialogbot.dk, hvis I vil opsige. Betaling starter aldrig opkald.</p>
+              <p className="text-[13px] text-muted">{t("account.sub.note")}</p>
             </section>
 
             <section id="fakturaer" className={BOX} aria-labelledby="konto-3">
-              <Head n={3} id="konto-3" title="Fakturaer" />
+              <Head n={3} id="konto-3" title={t("account.invoices.title")} />
               <div className="rounded-xl border-[1.5px] border-line px-4 py-3 text-[14px] text-ink-soft">
-                <b className="text-ink">{monthLabel(st.month)} indtil videre:</b> {kr(st.totals.net_minor)} ekskl. moms · moms {kr(st.totals.tax_minor)} · i alt {kr(st.totals.gross_minor)} Faktureres, når måneden er slut{acc.configured ? "" : " og kortbetaling er sat op"}.
+                <b className="text-ink">{t("account.invoices.soFar", { month: monthLabel(lang, st.month) })}</b> {t("account.invoices.totals", { net: kr(st.totals.net_minor), tax: kr(st.totals.tax_minor), gross: kr(st.totals.gross_minor) })} {acc.configured ? t("account.invoices.billedEnd") : t("account.invoices.billedEndCard")}
               </div>
-              {invoices.items.length === 0 ? <p className="text-[14px] text-ink-soft">Ingen fakturaer endnu.</p> : (
+              {invoices.items.length === 0 ? <p className="text-[14px] text-ink-soft">{t("account.invoices.none")}</p> : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left min-w-[440px]">
-                    <thead><tr className="text-[12px] uppercase tracking-[0.08em] text-muted"><th className="pb-2 pr-3 font-semibold">Måned</th><th className="pb-2 pr-3 font-semibold">Status</th><th className="pb-2 pr-3 font-semibold">I alt inkl. moms</th><th /></tr></thead>
+                    <thead><tr className="text-[12px] uppercase tracking-[0.08em] text-muted"><th className="pb-2 pr-3 font-semibold">{t("account.invoices.month")}</th><th className="pb-2 pr-3 font-semibold">{t("account.invoices.status")}</th><th className="pb-2 pr-3 font-semibold">{t("account.invoices.total")}</th><th /></tr></thead>
                     <tbody>{invoices.items.map((i) => (
                       <tr key={i.id} className="border-t-[1.5px] border-line text-[14px]">
-                        <td className="py-3 pr-3 font-semibold text-ink">{monthLabel(i.month)}{i.number && <span className="font-normal text-muted"> · {i.number}</span>}</td>
-                        <td className="py-3 pr-3 text-ink-soft">{INV_STATUS[i.status] ?? i.status}</td>
+                        <td className="py-3 pr-3 font-semibold text-ink">{monthLabel(lang, i.month)}{i.number && <span className="font-normal text-muted"> · {i.number}</span>}</td>
+                        <td className="py-3 pr-3 text-ink-soft">{INV_STATUS.includes(i.status) ? t(`account.invoiceStatus.${i.status}`) : i.status}</td>
                         <td className="py-3 pr-3 tabular-nums text-ink">{kr(i.gross_minor)}</td>
                         <td className="py-3 text-right whitespace-nowrap">
-                          {i.hosted_invoice_url && <a href={i.hosted_invoice_url} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent hover:underline">Åben</a>}
-                          {i.invoice_pdf && <a href={i.invoice_pdf} target="_blank" rel="noopener noreferrer" className="ml-3 font-semibold text-accent hover:underline">Hent PDF</a>}
+                          {i.hosted_invoice_url && <a href={i.hosted_invoice_url} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent hover:underline">{t("account.invoices.open")}</a>}
+                          {i.invoice_pdf && <a href={i.invoice_pdf} target="_blank" rel="noopener noreferrer" className="ml-3 font-semibold text-accent hover:underline">{t("account.invoices.pdf")}</a>}
                         </td>
                       </tr>
                     ))}</tbody>
@@ -151,28 +159,29 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
         <div className="flex flex-col gap-3 px-5 py-5 rounded-2xl bg-paper border-2 border-ink shadow-block">
           <div className="flex items-center gap-3">
             <span className="inline-flex w-12 h-12 rounded-full bg-highlight border-2 border-ink items-center justify-center font-display font-extrabold text-[18px] text-ink" aria-hidden>{initials}</span>
-            <div className="min-w-0"><p className="font-display font-extrabold text-[18px] text-ink truncate">{me.display_name}</p><p className="text-[13px] text-muted truncate">{me.email} · {ws.role === "owner" ? "ejer" : ws.role === "reader" ? "kan se" : "kan ændre"}</p></div>
+            <div className="min-w-0"><p className="font-display font-extrabold text-[18px] text-ink truncate">{me.display_name}</p><p className="text-[13px] text-muted truncate">{me.email} · {ws.role === "owner" ? t("account.me.owner") : ws.role === "reader" ? t("account.me.reader") : t("account.me.editor")}</p></div>
           </div>
-          {!me.email_verified && <Link href="/verify-email" className="rounded-xl bg-danger-soft px-4 py-3 text-[14px] font-semibold text-danger">E-mailen er ikke bekræftet – bekræft nu</Link>}
+          {!me.email_verified && <Link href="/verify-email" className="rounded-xl bg-danger-soft px-4 py-3 text-[14px] font-semibold text-danger">{t("account.me.notVerified")}</Link>}
           <div className="flex flex-wrap gap-2">
-            <Link href="/password/forgot" className="inline-flex items-center min-h-[44px] px-4 rounded-xl border-[1.5px] border-ink text-[14px] font-semibold text-ink hover:bg-panel">Skift adgangskode</Link>
+            <Link href="/password/forgot" className="inline-flex items-center min-h-[44px] px-4 rounded-xl border-[1.5px] border-ink text-[14px] font-semibold text-ink hover:bg-panel">{t("account.me.changePassword")}</Link>
             <LogoutButton />
           </div>
-          {me.is_platform_operator && <Link href="/app/operator/admin" className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-highlight border-[1.5px] border-ink text-[14px] font-semibold text-ink">Operatør</Link>}
-          {me.is_platform_operator && <Link href="/app/operator/salg" className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-paper border-[1.5px] border-ink text-[14px] font-semibold text-ink">Dialogbots salg</Link>}
-          <p className="text-[13px] text-muted">Logget ind på {sessions.length} {sessions.length === 1 ? "enhed" : "enheder"}. Nulstiller du adgangskoden, logges alle ud.</p>
-          <ul className="flex flex-col gap-1.5">{sessions.map((s) => <li key={s.id} className="text-[13px] text-ink-soft">{device(s.user_agent)}{s.current ? <b className="text-ink"> · denne enhed</b> : ` · sidst aktiv ${dt(s.last_seen_at)}`}</li>)}</ul>
+          {me.is_platform_operator && <Link href="/app/operator/admin" className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-highlight border-[1.5px] border-ink text-[14px] font-semibold text-ink">{t("account.me.operator")}</Link>}
+          {me.is_platform_operator && <Link href="/app/operator/salg" className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-paper border-[1.5px] border-ink text-[14px] font-semibold text-ink">{t("account.me.sales")}</Link>}
+          <p className="text-[13px] text-muted">{t("account.me.sessions", { n: sessions.length })}</p>
+          <ul className="flex flex-col gap-1.5">{sessions.map((s) => <li key={s.id} className="text-[13px] text-ink-soft">{device(t, s.user_agent)}{s.current ? <b className="text-ink"> · {t("account.me.thisDevice")}</b> : ` · ${t("account.me.lastActive", { at: dt(lang, s.last_seen_at) })}`}</li>)}</ul>
+        </div>
+        <LanguageSection />
+        <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">
+          <span className="eyebrow">{t("account.ws.title")}</span>
+          <p className="text-[15px] font-semibold text-ink">{ws.name} <span className="font-normal text-muted">· {t("account.ws.this")}</span></p>
+          <Link href="/opsaetning/1?ny=1" className="inline-flex items-center min-h-[44px] text-[14px] font-semibold text-accent hover:underline">+ {t("account.ws.new")}</Link>
         </div>
         <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">
-          <span className="eyebrow">Arbejdsrum</span>
-          <p className="text-[15px] font-semibold text-ink">{ws.name} <span className="font-normal text-muted">· dette</span></p>
-          <Link href="/opsaetning/1?ny=1" className="inline-flex items-center min-h-[44px] text-[14px] font-semibold text-accent hover:underline">+ Byg en Dialogbot til en anden virksomhed</Link>
-        </div>
-        <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">
-          <span className="eyebrow">Data og historik</span>
-          <p className="text-[14px] text-ink-soft">Hvem der har ændret hvad, og hvornår, ligger i historikken.</p>
-          <Link href="/app/indstillinger?ark=log" className="inline-flex items-center min-h-[44px] text-[14px] font-semibold text-accent hover:underline">Se alle ændringer →</Link>
-          <Link href="/app/indstillinger" className="inline-flex items-center min-h-[44px] text-[14px] font-semibold text-accent hover:underline">Alle indstillinger →</Link>
+          <span className="eyebrow">{t("account.data.title")}</span>
+          <p className="text-[14px] text-ink-soft">{t("account.data.sub")}</p>
+          <Link href="/app/indstillinger?ark=log" className="inline-flex items-center min-h-[44px] text-[14px] font-semibold text-accent hover:underline">{t("account.data.log")} →</Link>
+          <Link href="/app/indstillinger" className="inline-flex items-center min-h-[44px] text-[14px] font-semibold text-accent hover:underline">{t("account.data.settings")} →</Link>
         </div>
       </aside>
     </div>

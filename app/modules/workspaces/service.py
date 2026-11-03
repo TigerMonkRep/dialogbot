@@ -24,6 +24,7 @@ from app.models import (
     Workspace,
 )
 from app.modules.identity.service import INTENTS
+from app.modules.integrations.email_texts import workspace_language
 
 
 def _now() -> datetime:
@@ -151,7 +152,8 @@ def create_invitation(db: OrmSession, ctx: WorkspaceContext, *, email: str, role
     link = f"{s.frontend_base_url}/invite/{raw}"
     enqueue(db, event_type="email.invitation", dedupe_key=f"invitation:{inv.id}", workspace_id=ctx.workspace.id,
             payload={"invitation_id": str(inv.id), "to_email": inv.email, "workspace_name": ctx.workspace.name,
-                     "role": role, "link": link, "invited_by": ctx.principal.user.display_name})
+                     "role": role, "link": link, "invited_by": ctx.principal.user.display_name,
+                     "lang": workspace_language(db, ctx.workspace.id)})
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="invitation.created",
                  object_type="invitation", object_id=inv.id, after={"email": norm, "role": role},
                  request_id=request_id)
@@ -191,7 +193,8 @@ def resend_invitation(db: OrmSession, ctx: WorkspaceContext, invitation_id: uuid
     enqueue(db, event_type="email.invitation", dedupe_key=f"invitation:{inv.id}:resend:{token_digest(raw)[:12]}",
             workspace_id=ctx.workspace.id,
             payload={"invitation_id": str(inv.id), "to_email": inv.email, "workspace_name": ctx.workspace.name,
-                     "role": inv.role, "link": link, "invited_by": ctx.principal.user.display_name})
+                     "role": inv.role, "link": link, "invited_by": ctx.principal.user.display_name,
+                     "lang": workspace_language(db, ctx.workspace.id)})
     return inv
 
 

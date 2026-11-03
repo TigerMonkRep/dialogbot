@@ -1,25 +1,32 @@
-import Link from "next/link";
+"use client";
+import Link from "@/i18n/link";
+import { useT } from "@/i18n/client";
 import { Icon, LogoMark } from "./ui";
+import { LanguageSwitcher } from "./language-switcher";
 
 /** Auth layout (Byggevejledning): paper header with 2 px ink line, back link and "Sikker" pill;
  *  an intro card (blue icon tile, code, Outfit title) and the form card. Centered column on desktop. */
 export function AuthFrame({ title, subtitle, children, code, icon = "lock", aside, back = "/" }: {
   title: string; subtitle?: string; children: React.ReactNode; code?: string; icon?: string; aside?: React.ReactNode; back?: string;
 }) {
+  const t = useT("auth");
   return (
     <div className="min-h-dvh bg-panel text-ink flex flex-col">
       <header className="sticky top-0 z-40 bg-paper border-b-2 border-ink">
         <div className="max-w-[1280px] mx-auto min-h-16 px-4 md:px-6 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Link href={back} aria-label="Tilbage" className="w-11 h-11 -ml-2 rounded-xl flex items-center justify-center text-ink hover:bg-panel"><Icon name="arrow_back" size={24} /></Link>
+            <Link href={back} aria-label={t("frame.back")} className="w-11 h-11 -ml-2 rounded-xl flex items-center justify-center text-ink hover:bg-panel"><Icon name="arrow_back" size={24} /></Link>
             <Link href="/" className="flex items-center gap-2.5">
               <LogoMark size={32} />
               <span className="font-display font-extrabold text-[20px] tracking-[-0.3px] text-ink">Dialogbot</span>
             </Link>
           </div>
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border-[1.5px] border-ink bg-paper text-[12px] font-semibold" title="Forbindelsen er krypteret, og sessionen gemmes i en httpOnly-cookie">
-            <Icon name="lock" size={16} className="text-accent" />Sikker
-          </span>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full border-[1.5px] border-ink bg-paper text-[12px] font-semibold" title={t("frame.secureTitle")}>
+              <Icon name="lock" size={16} className="text-accent" />{t("frame.secure")}
+            </span>
+          </div>
         </div>
       </header>
       <main id="main" className="flex-1 flex justify-center px-4 py-6 md:py-10">

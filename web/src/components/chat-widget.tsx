@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { ChatIcon } from "./site-icons";
 import { ProevChat } from "@/app/proev/proev-chat";
+import { useT } from "@/i18n/client";
 
 /** The floating "Snak med Dialogbot" chat. Open by default on /byggevejledning (wide screens only), closed elsewhere.
  *  It is the real /proev conversation (proev-chat.tsx): on a phone it takes the whole screen, on wider screens it is
@@ -10,6 +11,7 @@ import { ProevChat } from "@/app/proev/proev-chat";
 export function ChatWidget({ defaultOpen = false }: { defaultOpen?: boolean }) {
   // Starts closed on the server; opens after mount on wide screens only – on a phone the chat takes the whole
   // screen, so it must never cover the page the visitor just asked for.
+  const t = useT("widget.chat");
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (defaultOpen && window.matchMedia("(min-width: 640px)").matches) setOpen(true);
@@ -38,10 +40,10 @@ export function ChatWidget({ defaultOpen = false }: { defaultOpen?: boolean }) {
           <ProevChat embedded onClose={() => setOpen(false)} />
         </div>
       )}
-      <button type="button" onClick={() => setOpen((o) => !o)} aria-label={open ? "Luk chatten" : "Åbn chatten"} aria-expanded={open}
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-label={open ? t("closeAria") : t("openAria")} aria-expanded={open}
         className={`fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-50 items-center gap-2.5 min-h-14 pl-4 pr-5 rounded-full bg-ink text-white border-2 border-ink shadow-block-highlight font-display font-bold text-base cursor-pointer ${open ? "hidden sm:inline-flex" : "inline-flex"}`}>
         <ChatIcon size={22} />
-        {open ? "Luk" : "Snak med Dialogbot"}
+        {open ? t("close") : t("launcher")}
       </button>
     </>
   );

@@ -1,4 +1,5 @@
-/** Campaign types and Danish labels (plain module: usable from server and client components). */
+/** Campaign types and status labels (plain module: usable from server and client components). */
+import type { T } from "@/i18n/translate";
 export type Counts = { total: number; open: number; calls: number; by_status: Record<string, number>; by_outcome: Record<string, number> };
 export type Campaign = {
   id: string; name: string; status: "draft" | "running" | "paused" | "completed"; version: number; purpose: string; opening: string;
@@ -14,15 +15,16 @@ export type Contact = {
 export type Dnc = { id: string; phone: string; reason: string; source: string; created_at: string };
 export type PhoneNumber = { id: string; e164: string; label: string; active: boolean };
 
-export const STATUS: Record<Campaign["status"], [string, string]> = {
-  draft: ["Kladde", "bg-line text-ink-soft"],
-  running: ["Kører", "bg-success-soft text-success"],
-  paused: ["På pause", "bg-accent-soft text-accent-deep"],
-  completed: ["Afsluttet", "bg-panel text-ink"],
+/** Status → pill class; the label is `app.campaigns.status.<status>`. */
+export const STATUS: Record<Campaign["status"], string> = {
+  draft: "bg-line text-ink-soft",
+  running: "bg-success-soft text-success",
+  paused: "bg-accent-soft text-accent-deep",
+  completed: "bg-panel text-ink",
 };
-export const CONTACT_STATUS: Record<string, string> = {
-  pending: "Venter", calling: "Ringer nu", done: "Talt med", no_answer: "Intet svar", failed: "Fejlede", opted_out: "Frabedt sig opkald", skipped: "Spærret",
-};
-export const OUTCOME: Record<string, string> = {
-  interested: "Interesseret", callback: "Ring tilbage", not_interested: "Ikke interesseret", opt_out: "Vil ikke ringes op", no_answer: "Intet svar",
-};
+const CONTACT_STATUS = ["pending", "calling", "done", "no_answer", "failed", "opted_out", "skipped"];
+const OUTCOME = ["interested", "callback", "not_interested", "opt_out", "no_answer"];
+/** A contact's outcome if it has one, else its status (unknown values are shown as they are). */
+export const contactLabel = (t: T, x: { outcome: string | null; status: string }) =>
+  x.outcome ? (OUTCOME.includes(x.outcome) ? t(`campaigns.outcome.${x.outcome}`) : x.outcome)
+    : CONTACT_STATUS.includes(x.status) ? t(`campaigns.contactStatus.${x.status}`) : x.status;

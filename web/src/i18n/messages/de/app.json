@@ -1,0 +1,948 @@
+{
+  "ui": {
+    "reference": "Referenz: {id}"
+  },
+  "status": {
+    "complete": "Abgeschlossen",
+    "passed": "Bestanden",
+    "approved": "Bestätigt",
+    "published": "Veröffentlicht",
+    "accepted": "Angenommen",
+    "in_progress": "In Bearbeitung",
+    "in_review": "In Prüfung",
+    "scheduled": "Geplant",
+    "publishing": "Wird veröffentlicht",
+    "pending": "Ausstehend",
+    "stale": "Veraltet",
+    "rejected": "Abgelehnt",
+    "blocked": "Blockiert",
+    "expired": "Abgelaufen",
+    "failed": "Fehlgeschlagen",
+    "not_available": "Nicht verfügbar",
+    "not_started": "Nicht gestartet",
+    "untested": "Nicht getestet",
+    "skipped": "Übersprungen",
+    "draft": "Entwurf",
+    "superseded": "Ersetzt",
+    "cancelled": "Storniert",
+    "revoked": "Widerrufen"
+  },
+  "nav": {
+    "today": "Heute",
+    "knowledge": "Das weiß er",
+    "calls": "Anrufe",
+    "week": "Die Woche"
+  },
+  "shell": {
+    "verify": {
+      "before": "Ihre E-Mail-Adresse ist nicht bestätigt.",
+      "link": "Jetzt bestätigen",
+      "after": ", um Arbeitsbereiche zu erstellen."
+    },
+    "skip": "Zum Inhalt springen",
+    "homeAria": "Dialogbot – Heute",
+    "envStaging": "Staging",
+    "envDev": "Entwicklung",
+    "tagline": "KI-Empfang, der für Sie ans Telefon geht",
+    "env": "Umgebung: {env}",
+    "help": "Hilfe",
+    "workspaceAria": "Arbeitsbereich: {name}",
+    "chooseWorkspace": "Arbeitsbereich wählen",
+    "newWorkspace": "Neuer Arbeitsbereich",
+    "pages": "Seiten",
+    "accountAria": "Konto: {name}",
+    "account": "Konto",
+    "viewAs": {
+      "before": "Sie sehen die Ansicht als",
+      "after": "– nur Lesezugriff, nichts kann geändert werden.",
+      "end": "Beenden und zurück zum Admin"
+    }
+  },
+  "outcome": {
+    "booked": "Termin gebucht",
+    "to_you": "An Sie",
+    "done": "Erledigt"
+  },
+  "overview": {
+    "turnedOn": "Dialogbot ist eingeschaltet",
+    "turnedOnSub": "Er geht ans Telefon, wenn Kunden das nächste Mal anrufen.",
+    "notDone": "Nicht fertig",
+    "setupNext": "Die Einrichtung ist nicht abgeschlossen · nächster: Schritt {n}",
+    "step1": "– Unternehmen",
+    "step2": "– Kalender & Systeme",
+    "step3": "– Testen & einschalten",
+    "continue": "Fortfahren",
+    "isOn": "Dialogbot ist eingeschaltet",
+    "isOff": "Dialogbot ist ausgeschaltet",
+    "isNotOn": "Dialogbot ist nicht eingeschaltet",
+    "statusLine": {
+      "active": "Geht ans Telefon, wenn Sie es selbst nicht tun.",
+      "paused": "Pausiert – Anrufe gehen wie bisher an Sie.",
+      "not_started": "Das Telefon ist noch nicht eingerichtet.",
+      "awaiting_info": "Es fehlen Angaben, bevor das Telefon angebunden werden kann.",
+      "provisioning": "Die Verbindung wird vorbereitet.",
+      "ready_for_test": "Bereit für den Testanruf.",
+      "test_failed": "Der Testanruf ist fehlgeschlagen – bitte erneut versuchen."
+    },
+    "setUpPhone": "Telefon einrichten",
+    "tiles": {
+      "calls": "Anrufe",
+      "callsSub": "letzte 24 Stunden",
+      "leads": "neue Anfragen",
+      "leadsSub": "{n} offen insgesamt",
+      "toYou": "an Sie",
+      "toYouSub": "warten auf Ihre Antwort"
+    },
+    "toYou": "An Sie",
+    "toYouSub": "Das Einzige, was Sie heute tun müssen.",
+    "nothingWaiting": "Gerade wartet nichts auf Sie.",
+    "todo": {
+      "lead": {
+        "tag": "Neue Anfrage",
+        "cta": "Öffnen"
+      },
+      "conversation": {
+        "tag": "Wartet auf Sie",
+        "cta": "Antworten"
+      },
+      "task": {
+        "tag": "Aufgabe",
+        "cta": "Öffnen"
+      },
+      "knowledge": {
+        "tag": "Bestätigen",
+        "cta": "Prüfen"
+      },
+      "import": {
+        "tag": "Vorschlag",
+        "cta": "Vorschläge ansehen"
+      }
+    },
+    "latestCalls": "Letzte Anrufe",
+    "latestCallsSub": "Klicken Sie auf einen Anruf, um zu lesen, was gesagt wurde.",
+    "noCalls": "Noch keine Anrufe.",
+    "callsStaffOnly": "Anrufe können von Mitarbeitern, Administratoren und Inhabern eingesehen werden.",
+    "read": "Lesen",
+    "allCalls": "Alle Anrufe ansehen",
+    "appointments": "Termine",
+    "noAppointments": "Keine anstehenden Termine.",
+    "weekAppointments": "Termine der Woche ansehen",
+    "campaigns": "Kampagnen",
+    "campaignsSub": "Rufen Sie Ihre eigenen Kunden an – 4 kr. pro Anruf + 2 kr. pro Gesprächsminute zzgl. MwSt.",
+    "openCampaigns": "Kampagnen öffnen",
+    "allActivity": "Alle Aktivitäten der letzten 14 Tage",
+    "power": {
+      "aria": "Dialogbot ein- oder ausschalten",
+      "onlyAdmins": "Nur Inhaber und Administratoren können ein- und ausschalten",
+      "setupFirst": "Das Telefon muss eingerichtet sein, bevor Dialogbot eingeschaltet werden kann"
+    }
+  },
+  "time": {
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "minSec": "{m} Min. {s} Sek.",
+    "weekdaysShort": [
+      "Mo",
+      "Di",
+      "Mi",
+      "Do",
+      "Fr",
+      "Sa",
+      "So"
+    ],
+    "weekdaysShortLower": [
+      "Mo",
+      "Di",
+      "Mi",
+      "Do",
+      "Fr",
+      "Sa",
+      "So"
+    ]
+  },
+  "calls": {
+    "resolve": "Als erledigt markieren",
+    "saveAsLead": "Als Anfrage speichern",
+    "reply": {
+      "label": "Dem Kunden im Chat antworten",
+      "placeholderStaff": "Ihre Antwort …",
+      "placeholderAi": "Wenn Sie antworten, übernehmen Sie das Gespräch, und Dialogbot pausiert.",
+      "send": "Antwort senden",
+      "handBack": "An Dialogbot zurückgeben"
+    },
+    "staffOnly": "Anrufe und Nachrichten können von Mitarbeitern, Administratoren und Inhabern eingesehen werden.",
+    "title": "Anrufe und Nachrichten",
+    "eyebrow": "Alles, worüber Dialogbot mit Ihren Kunden gesprochen hat",
+    "filtersAria": "Filter",
+    "filters": {
+      "all": "Alle",
+      "to_you": "An Sie",
+      "booked": "Termine",
+      "done": "Von Dialogbot erledigt",
+      "webchat": "Webchat"
+    },
+    "lastDays": "Letzte {n} Tage",
+    "search": "Name, Nummer oder Thema suchen",
+    "noMatch": "Keine Anrufe oder Nachrichten passen zum Filter.",
+    "empty": "Noch keine Anrufe oder Nachrichten. Sobald Kunden anrufen oder schreiben, werden sie hier gesammelt.",
+    "showing": "Die neuesten {n} von {total} werden angezeigt. Nutzen Sie die Suche oder einen kürzeren Zeitraum.",
+    "conversation": "Das Gespräch",
+    "back": "Alle Anrufe und Nachrichten",
+    "phone": "Telefon",
+    "transcript": "Niederschrift",
+    "noTranscript": "Keine Niederschrift gespeichert.",
+    "staff": "Mitarbeiter",
+    "staffInitial": "M",
+    "actions": "Das hat Dialogbot getan",
+    "run": {
+      "ok": "Ausgeführt",
+      "failed": "Fehlgeschlagen",
+      "refused": "Nicht ausgeführt"
+    },
+    "simulated": "simuliert",
+    "callBack": "Zurückrufen",
+    "makeAppointment": "Termin vereinbaren",
+    "openLead": "Anfrage öffnen",
+    "takenOver": "Ein Mitarbeiter hat das Gespräch übernommen – Dialogbot antwortet erst wieder, wenn es zurückgegeben wird.",
+    "wrongAnswer": "War die Antwort falsch? Schreiben Sie es dem Assistenten unter «Das weiß er» – dann korrigiert er sich."
+  },
+  "common": {
+    "save": "Speichern",
+    "saved": "Gespeichert",
+    "kr": "{amount} kr.",
+    "saving": "Wird gespeichert …",
+    "cancel": "Abbrechen"
+  },
+  "week": {
+    "form": {
+      "edit": "Selbst ändern",
+      "email": "Bericht vom Vortag per E-Mail senden",
+      "at": "Uhrzeit"
+    },
+    "staffOnly": "Die Woche kann von Mitarbeitern, Administratoren und Inhabern eingesehen werden.",
+    "weekN": "KW {n}",
+    "title": "So lief die Woche",
+    "chooseWeek": "Woche wählen",
+    "thisWeek": "Diese Woche",
+    "num": {
+      "answered": "Anrufe und Nachrichten beantwortet",
+      "answeredSub": "{phone} am Telefon · {chat} im Webchat",
+      "bookings": "Termine gebucht",
+      "vsLastWeek": "{d} gegenüber letzter Woche",
+      "noneYet": "noch keine",
+      "toYou": "Nachrichten an Sie",
+      "waiting": "warten auf Sie",
+      "allDone": "alle erledigt",
+      "response": "bis er im Chat antwortet",
+      "noChat": "kein Chat in dieser Woche",
+      "allDay": "rund um die Uhr"
+    },
+    "perDay": "Anrufe pro Tag",
+    "answered": "beantwortet",
+    "messageToYou": "Nachricht an Sie",
+    "dayAria": "{day}: {answered} beantwortet, {toYou} an Sie",
+    "topics": {
+      "title": "Das haben die Kunden gefragt",
+      "sub": "Fehlt eine Antwort, hinterlegen Sie sie unter «Das weiß er».",
+      "empty": "Keine Fragen in dieser Woche.",
+      "topic": "Thema",
+      "times": "Anzahl",
+      "couldAnswer": "Dialogbot konnte antworten",
+      "yes": "Ja",
+      "booked": "{n} gebucht",
+      "no": "Nein",
+      "partly": "Teilweise ({n} von {total})",
+      "tookMessage": "hat Nachricht aufgenommen",
+      "addAnswer": "Antwort hinzufügen",
+      "note": "Automatisch zusammengestellt aus dem, was die Kunden zuerst geschrieben oder gesagt haben. Ähneln sich zwei Fragen, werden sie zusammengefasst."
+    },
+    "report": {
+      "title": "Tagesbericht",
+      "on": {
+        "before": "Jeden Tag um",
+        "after": "Uhr erhalten Inhaber und Administratoren die Anrufe und Termine des Vortags in einer E-Mail."
+      },
+      "off": {
+        "before": "Der Tagesbericht per E-Mail ist",
+        "bold": "ausgeschaltet",
+        "after": ". Die Zahlen der Woche finden Sie hier."
+      },
+      "ask": "Sie können auch den Assistenten bitten: «Sende den Bericht um 18 Uhr»."
+    },
+    "cost": {
+      "title": "Das hat die Woche gekostet",
+      "extra": "{amount} zusätzlich",
+      "calls": "{n} Kampagnenanrufe",
+      "note": "300 Minuten eingehender Anrufe pro Monat sind im Abonnement enthalten. Kampagnenanrufe in dieser Woche: {n} (4 kr. pro ausgehendem Anruf + 2 kr. pro Gesprächsminute, zzgl. MwSt.).",
+      "billing": "Abonnement und Rechnungen ansehen"
+    }
+  },
+  "bookings": {
+    "source": {
+      "webchat": "Webchat",
+      "phone": "Telefon",
+      "manual": "Manuell"
+    },
+    "card": {
+      "confirmCancel": "Termin stornieren? Der Kunde wird nicht automatisch benachrichtigt – rufen Sie ihn an oder schreiben Sie ihm.",
+      "call": "Anrufen",
+      "conversation": "Das Gespräch",
+      "lead": "Anfrage",
+      "cancel": "Stornieren"
+    },
+    "book": {
+      "noSlotsError": "Es gibt keine freien Zeiten. Prüfen Sie Öffnungszeiten und Kalender.",
+      "type": "Was wird benötigt?",
+      "name": "Name",
+      "phone": "Telefon",
+      "when": "Wann",
+      "first": "Nächster freier Termin – {label}",
+      "noSlots": "Keine freien Zeiten",
+      "booked": "{label} gebucht.",
+      "booking": "Wird gebucht …",
+      "submit": "Buchen",
+      "note": "Der Kunde erhält noch keine SMS – senden Sie selbst eine Bestätigung. «Nächster freier Termin» nimmt die nächste Zeit, die Öffnungszeiten und Kalender zulassen."
+    },
+    "calendar": {
+      "reading": "Wird gelesen …",
+      "readNow": "Kalender jetzt lesen",
+      "copied": "Die Adresse wurde kopiert",
+      "copy": "Kalenderadresse kopieren",
+      "title": "Kalender",
+      "error": "Der Kalender konnte nicht gelesen werden",
+      "connected": "Verbunden",
+      "notConnected": "Nicht verbunden",
+      "lastRead": "Zuletzt gelesen {at} · {n} belegte Zeiträume. Dialogbot sieht nur, wann Sie belegt sind.",
+      "without": "Ohne Kalender kennt Dialogbot nur die Öffnungszeiten und die Termine, die er selbst gebucht hat.",
+      "change": "Kalender verbinden oder wechseln"
+    },
+    "staffOnly": "Termine können von Mitarbeitern, Administratoren und Inhabern eingesehen werden.",
+    "eyebrow": "Heute → Termine",
+    "title": "Termine, die Dialogbot gebucht hat",
+    "intro": "Hier verschieben oder stornieren. Belegte Zeiten in Ihrem Kalender werden blockiert, und jede Buchung wird zu einer Anfrage mit einer Aufgabe.",
+    "prevWeek": "Vorherige Woche",
+    "nextWeek": "Nächste Woche",
+    "noHours": {
+      "before": "Es gibt keine bestätigten Öffnungszeiten, daher gibt es keine freien Zeiten.",
+      "link": "Öffnungszeiten unter «Das weiß er» hinzufügen"
+    },
+    "weekAria": "Termine der Woche",
+    "closed": "Geschlossen · Dialogbot bucht nicht",
+    "none": "Keine Termine",
+    "bookFor": "Für einen Kunden buchen",
+    "noTypes": {
+      "before": "Es gibt noch keine Terminarten.",
+      "link": "Legen Sie eine unter Alle Einstellungen → Buchung an"
+    },
+    "rules": {
+      "title": "So bucht er",
+      "online": "Onlinebuchung",
+      "on": "Eingeschaltet",
+      "off": "Ausgeschaltet",
+      "noHours": "Keine Öffnungszeiten",
+      "earliest": "Frühestens",
+      "immediately": "sofort",
+      "hoursAhead": "{n} Stunden im Voraus",
+      "horizon": "höchstens {n} Tage im Voraus",
+      "pause": "Pause",
+      "buffer": "{n} Min. zwischen Terminen",
+      "types": "Arten",
+      "noTypes": "Keine",
+      "ask": "Sagen Sie es dem Assistenten – er zeigt Ihnen die Regel, bevor sie gilt. Alle Regeln:",
+      "allSettings": "Alle Einstellungen → Buchung"
+    }
+  },
+  "leads": {
+    "qual": {
+      "unqualified": "Nicht bewertet",
+      "qualified": "Qualifiziert",
+      "disqualified": "Nicht relevant"
+    },
+    "pipe": {
+      "new": "Neu",
+      "contacted": "Kontaktiert",
+      "won": "Gewonnen",
+      "lost": "Verloren"
+    },
+    "bill": {
+      "pending": "Bestätigung ausstehend",
+      "approved": "Bestätigt",
+      "rejected": "Abgelehnt"
+    },
+    "source": {
+      "webchat": "Webchat",
+      "phone": "Telefon",
+      "manual": "Manuell",
+      "campaign": "Kampagne"
+    },
+    "callbackWindow": "{day} {from}–{to} Uhr",
+    "editor": {
+      "title": "Kunde und Anliegen",
+      "name": "Name",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "need": "Anliegen",
+      "qualification": "Qualifizierung",
+      "locked": "Gesperrt, da die Abrechnung entschieden ist.",
+      "reason": "Begründung",
+      "pipeline": "Verlauf"
+    },
+    "billing": {
+      "title": "Abrechnung",
+      "price": {
+        "before": "Preis für diese Anfrage (ältere Vereinbarung):",
+        "after": "zzgl. MwSt. (Vereinbarung v{v})."
+      },
+      "included": "Bestätigt. Kein Preis pro Anfrage – sie ist im Abonnement enthalten (Vereinbarung v{v}).",
+      "reason": "Begründung: {reason}",
+      "modelB": "Ältere Vereinbarung v{v}: Eine bestätigte Anfrage kostet {price} zzgl. MwSt.",
+      "modelA": "Vereinbarung v{v}: Das Abonnement deckt die Anfrage ab – es gibt keinen Preis pro Anfrage.",
+      "noAgreement": "Das Abonnement ist noch nicht bestätigt – der Inhaber bestätigt es unter Einstellungen → Vereinbarung.",
+      "monthly": "Bestätigte Anfragen erscheinen in der Monatsübersicht (siehe Abrechnung).",
+      "reasonLabel": "Begründung (bei Ablehnung erforderlich)",
+      "approve": "Anfrage bestätigen",
+      "reject": "Ablehnen",
+      "onlyQualified": "Nur qualifizierte Anfragen können bestätigt werden.",
+      "adminsApprove": "Inhaber und Administratoren bestätigen Anfragen."
+    },
+    "tasks": {
+      "title": "Aufgaben",
+      "none": "Keine Aufgaben.",
+      "doneAria": "Erledigt: {title}",
+      "due": "Frist {at}",
+      "new": "Neue Aufgabe",
+      "newPlaceholder": "Neue Aufgabe …",
+      "add": "Hinzufügen"
+    },
+    "back": "Anfragen",
+    "noName": "(ohne Namen)",
+    "created": "erstellt {at}",
+    "wantsCall": "Wünscht Rückruf {window}",
+    "seeConversation": "Gespräch ansehen"
+  },
+  "campaigns": {
+    "status": {
+      "draft": "Entwurf",
+      "running": "Läuft",
+      "paused": "Pausiert",
+      "completed": "Abgeschlossen"
+    },
+    "contactStatus": {
+      "pending": "Wartet",
+      "calling": "Wird angerufen",
+      "done": "Gesprochen",
+      "no_answer": "Keine Antwort",
+      "failed": "Fehlgeschlagen",
+      "opted_out": "Anrufe abgelehnt",
+      "skipped": "Gesperrt"
+    },
+    "outcome": {
+      "interested": "Interessiert",
+      "callback": "Rückruf",
+      "not_interested": "Nicht interessiert",
+      "opt_out": "Möchte nicht angerufen werden",
+      "no_answer": "Keine Antwort"
+    },
+    "staffOnly": "Kampagnen können von Mitarbeitern, Administratoren und Inhabern eingesehen werden.",
+    "eyebrow": "Heute → Kampagnen",
+    "enable": {
+      "title": "Möchten Sie auch ausgehend anrufen?",
+      "body": "Dialogbot kann Ihre eigenen Kunden mit einer Botschaft anrufen – z. B. einem Angebot – und die Interessierten an Sie weiterleiten. Das kostet {price} pro ausgehendem Anruf zzgl. MwSt. Angerufen wird erst, wenn Sie es bestätigt haben.",
+      "onlyAdmins": "Nur Inhaber und Administratoren können ausgehende Anrufe einschalten.",
+      "ask": "Sie können es auch dem Assistenten sagen.",
+      "pending": "Wird eingeschaltet …",
+      "button": "Ja, ausgehende Anrufe einschalten"
+    },
+    "eyebrowPrice": "Heute → Kampagnen · ausgehende Anrufe · {price} pro Anruf zzgl. MwSt.",
+    "title": "Rufen Sie Ihre Kunden an – eine Kampagne nach der anderen",
+    "intro": "Drei Schritte: Sie wählen, wen er anrufen soll, hören, was er sagt, und bestätigen den Preis, bevor der erste Anruf rausgeht. Der Preis beträgt {price} + MwSt. pro ausgehendem Anruf – jeder Anruf zählt, auch ein erneuter Versuch. Höchstens {attempts} Versuche und insgesamt {minutes} Minuten Gespräch pro Kontakt. Dialogbot ruft nie jemanden auf der Sperrliste an.",
+    "salesCalls": "Verkaufsanrufe: die KI anrufen lassen (nur Dialogbot)",
+    "need": {
+      "title": "Sie benötigen",
+      "list": "eine Liste mit Name und Nummer (CSV oder aus Excel eingefügt)",
+      "sentence": "einen Satz dazu, warum Sie anrufen"
+    },
+    "onlyAdmins": "Nur Administratoren und Inhaber können Kampagnen erstellen und starten.",
+    "previous": "Frühere Kampagnen",
+    "none": "Noch keine Kampagnen.",
+    "summary": "{calls} Anrufe · {answered} gesprochen · {interested} interessiert · {open} verbleibend",
+    "stats": {
+      "contacts": "Kontakte",
+      "answered": "Gesprochen",
+      "interested": "Interessiert",
+      "callback": "Rückruf",
+      "noAnswer": "Keine Antwort",
+      "left": "Verbleibend"
+    },
+    "detail": {
+      "who": "Wen soll er anrufen?",
+      "contacts": "{n} Kontakte. Nummern auf der Sperrliste werden übersprungen. Dialogbot verwendet nur Name und Nummer.",
+      "noContacts": "Noch keine Kontakte.",
+      "private": "Privat",
+      "business": "Gewerblich",
+      "consent": "Einwilligung",
+      "noConsent": "Einwilligung fehlt – wird nicht angerufen",
+      "attempts": "{n} Versuche",
+      "priceNote": "{price} kr. pro Anruf zzgl. MwSt. Sie zahlen nur für Anrufe, die tatsächlich rausgehen. Jederzeit stoppbar."
+    },
+    "new": {
+      "title": "Neue Kampagne",
+      "name": "Name der Kampagne",
+      "namePlaceholder": "Frühjahrsangebot 2027",
+      "purpose": "Worum soll es im Anruf gehen?",
+      "purposeHint": "Z. B. \"Früheren Kunden vor den Sommerferien Bodenschleifen anbieten\". Die KI schlägt daraus und aus Ihrem Wissen ein Skript vor.",
+      "create": "Kampagne erstellen"
+    },
+    "editor": {
+      "suggested": "Der Vorschlag der KI wurde eingefügt. Passen Sie ihn an und drücken Sie Speichern.",
+      "saved": "Gespeichert.",
+      "what": "Was soll er sagen?",
+      "suggesting": "Wird vorgeschlagen …",
+      "suggest": "Mit KI vorschlagen",
+      "running": "Die Kampagne läuft. Pausieren Sie sie, um das Skript zu ändern.",
+      "purpose": "Zweck des Anrufs",
+      "opening": "Erster Satz",
+      "openingHint": "{navn} wird zum Vornamen des Kontakts und {virksomhed} zu Ihrem Namen. Der Assistent sagt immer, dass er ein digitaler Assistent ist.",
+      "questions": "Fragen (eine pro Zeile)",
+      "success": "Wann ist der Kontakt interessiert?",
+      "fromNumber": "Anrufen von Nummer",
+      "addNumber": "Fügen Sie Ihre Nummer unter Einstellungen → Telefonie hinzu.",
+      "chooseNumber": "Nummer wählen",
+      "when": "Wann – und was tut er mit den Antworten?",
+      "whenSub": "Sagt der Kunde Ja, wird er als Anfrage an Sie weitergeleitet. Sagt er Nein, kommt er auf die Sperrliste.",
+      "onlyCalls": "Angerufen wird nur",
+      "from": "Von",
+      "to": "Bis",
+      "save": "Kampagne speichern"
+    },
+    "import": {
+      "title": "Kontakte hinzufügen",
+      "intro": "Laden Sie eine CSV-Datei hoch (z. B. aus Excel gespeichert) oder fügen Sie die Liste ein. Spalten: Name, Telefon und optional Firma und E-Mail. Dänische Nummern können ohne +45 geschrieben werden. Nummern auf der Sperrliste werden übersprungen.",
+      "added": "{n} Kontakte hinzugefügt",
+      "duplicates": "{n} waren bereits vorhanden",
+      "blocked": "{n} stehen auf der Sperrliste",
+      "invalid": "{n} ungültige Nummern (z. B. Zeile {rows})",
+      "file": "CSV-Datei",
+      "paste": "Oder Liste einfügen",
+      "pastePlaceholder": "Name;Telefon;Firma\nMette Hansen;20 30 40 50;Hansen Byg ApS",
+      "who": "Wer sind die Kontakte?",
+      "businesses": "Unternehmen",
+      "consumers": "Privatpersonen",
+      "consent": "Wo und wann haben sie zugestimmt, angerufen zu werden?",
+      "consentHint": "Der Assistent ruft ohne einen Menschen am Hörer an. Nach § 10 des dänischen Marketinggesetzes (markedsføringsloven) setzt das voraus, dass der Kontakt dies vorher verlangt hat – auch wenn es sich um ein Unternehmen handelt. Es reicht nicht, dass er nicht auf der Robinsonliste steht oder im CVR-Register keine Werbesperre hat.",
+      "consentPlaceholder": "Anmeldung auf der Website, März 2026",
+      "importing": "Wird importiert …"
+    },
+    "start": {
+      "completed": "Die Kampagne ist abgeschlossen: Alle Kontakte wurden angerufen.",
+      "running": "Die Kampagne läuft. Im gewählten Zeitraum wird jeweils ein Kontakt angerufen.",
+      "pause": "Pausieren",
+      "before": "Bevor sie startet",
+      "resumeTitle": "Kampagne fortsetzen",
+      "heading": "{n} Anrufe · höchstens {max} zzgl. MwSt.",
+      "body": "{n} Kontakte warten. Höchstens {max} + MwSt. ({gross} inkl. MwSt.) – {call} + MwSt. pro ausgehendem Anruf und {minute} + MwSt. pro angefangener Gesprächsminute, höchstens {attempts} Versuche und {minutes} Minuten Gespräch pro Kontakt. Eine Zahlung startet niemals Anrufe.",
+      "confirm": "Regeln für Anrufe bestätigen",
+      "starting": "Wird gestartet …",
+      "resume": "Fortsetzen",
+      "start": "Kampagne starten"
+    },
+    "remove": "Entfernen",
+    "dnc": {
+      "title": "Sperrliste",
+      "intro": "Nummern auf dieser Liste werden in keiner Kampagne angerufen. Sagt jemand in einem Anruf, dass er nicht mehr angerufen werden möchte, wird er automatisch auf die Liste gesetzt.",
+      "optedOut": "Anrufe abgelehnt",
+      "phone": "Telefonnummer",
+      "reason": "Grund (optional)",
+      "block": "Nummer sperren"
+    }
+  },
+  "knowledge": {
+    "kind": {
+      "service": "Leistung",
+      "opening_hours": "Öffnungszeiten",
+      "coverage_area": "Einsatzgebiet",
+      "fact": "Fakt",
+      "known_answer": "Bekannte Antwort",
+      "unknown_answer": "Darf nicht beantwortet werden",
+      "offer": "Angebot"
+    },
+    "unit": {
+      "m2": "m²",
+      "hour": "Stunde",
+      "item": "Stk.",
+      "job": "Auftrag"
+    },
+    "sum": {
+      "noPrice": "Kein Preis",
+      "noTimes": "Keine Zeiten",
+      "noZones": "Keine Gebiete",
+      "human": "Der Assistent verweist an einen Menschen.",
+      "allAreas": "alle Flächen",
+      "discount": "-{pct}% ab {thr}",
+      "period": "{from} – {to} (beide Tage inkl.)"
+    },
+    "pendingSuggestions": "{n} Vorschläge warten",
+    "eyebrow": "Das weiß er über Sie",
+    "title": "Alles, was Dialogbot Ihren Kunden sagen darf",
+    "intro": "Steht es nicht hier, sagt er es nicht – dann nimmt er stattdessen eine Nachricht für Sie auf. Sie können alles direkt korrigieren und die Antwort im Assistenten testen.",
+    "revision": "{n} bestätigte Themen · Revision {rev}",
+    "about": {
+      "title": "Über Sie",
+      "sub": "Was er als Erstes sagt",
+      "what": "Was Sie tun",
+      "notFilled": "Noch nicht ausgefüllt",
+      "noHours": "Keine bestätigten Öffnungszeiten",
+      "where": "Wo Sie im Einsatz sind",
+      "notSet": "Nicht angegeben",
+      "addFact": "Etwas hinzufügen, das er wissen soll"
+    },
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "changePending": "Änderung ausstehend",
+    "sell": {
+      "title": "Was Sie verkaufen",
+      "sub": "Leistungen und Preise – was er anbieten darf",
+      "none": "Noch keine Leistungen – ohne sie kann er keine Fragen zu Preisen beantworten.",
+      "sells": "Verkauft",
+      "onlyAsked": "Nur auf Nachfrage",
+      "howMuch": "Was kostet {name}?",
+      "offers": "Angebote und Rabatte",
+      "addOffer": "Angebot hinzufügen",
+      "note": "«Verkauft» bedeutet, dass er die Leistung selbst erwähnt, wenn es passt. «Nur auf Nachfrage» bedeutet, dass er nur den Preis nennt, wenn danach gefragt wird. Preise verstehen sich zzgl. MwSt."
+    },
+    "questions": {
+      "title": "Fragen, die Kunden stellen",
+      "sub": "{n} Antworten bestätigt",
+      "none": "Noch keine festen Antworten. Fügen Sie die Fragen hinzu, die Kunden am häufigsten stellen.",
+      "add": "Antwort hinzufügen"
+    },
+    "rules": {
+      "title": "Das darf er nicht",
+      "sub": "Hier nimmt er stattdessen eine Nachricht für Sie auf",
+      "none": "Noch keine Regeln.",
+      "add": "Regel hinzufügen"
+    },
+    "seeAll": "Alle {n} ansehen",
+    "showFewer": "Weniger anzeigen",
+    "f": {
+      "price": "Preis (zzgl. MwSt.)",
+      "unit": "Einheit",
+      "per": "pro {unit}",
+      "promote": "Verkauft er es selbst?",
+      "after": "Was soll er danach sagen?",
+      "period": "Zeitraum {n}",
+      "opens": "Öffnet",
+      "closes": "Schließt",
+      "removePeriod": "Zeitraum entfernen",
+      "addPeriod": "Zeitraum hinzufügen",
+      "closed": "Außerhalb der Öffnungszeiten",
+      "closedPlaceholder": "z. B. Wochenende und Feiertage: nimmt nur Nachrichten entgegen",
+      "zones": "Wo sind Sie im Einsatz? (durch Komma trennen)",
+      "fact": "Was er wissen darf",
+      "question": "Die Frage",
+      "answer": "Die Antwort",
+      "rule": "Thema, zu dem er sich nicht äußern darf",
+      "discount": "Rabatt (%)",
+      "threshold": "Gilt ab mindestens (m²)",
+      "from": "Von",
+      "to": "Bis einschließlich",
+      "offerName": "Wie heißt das Angebot?",
+      "name": "Wie heißt es?"
+    },
+    "sendForApproval": "Zur Bestätigung senden",
+    "savedLive": "Gespeichert – Dialogbot verwendet es jetzt",
+    "sentToOwner": "Zur Bestätigung an einen Inhaber oder Administrator gesendet",
+    "sent": "Zur Bestätigung gesendet",
+    "hear": {
+      "listening": "Hört zu …",
+      "button": "Anhören",
+      "answer": "So antwortet er auf «{q}»"
+    },
+    "service": {
+      "badPrice": "Schreiben Sie den Preis mit Zahlen, z. B. «ab 1.200 kr.» oder «850 kr. pro m²».",
+      "priceLine": "Preis: {price}.",
+      "add": "Leistung hinzufügen",
+      "new": "Neue Leistung · 3 Felder",
+      "price": "Preis (so, wie der Kunde ihn hören soll)",
+      "pricePlaceholder": "ab 1.200 kr.",
+      "notePlaceholder": "z. B.: Wir vereinbaren einen Besichtigungstermin",
+      "saveAndShow": "Speichern – und mir zeigen, wie er es sagt"
+    },
+    "remove": {
+      "confirm": "«{label}» entfernen? Dialogbot verwendet es sofort nicht mehr.",
+      "aria": "{label} entfernen"
+    },
+    "draft": {
+      "rejectPrompt": "Warum lehnen Sie den Vorschlag ab? (wird im Protokoll gespeichert)",
+      "rejectDefault": "Passt nicht",
+      "suggests": "Dialogbot schlägt vor",
+      "now": "Jetzt:",
+      "proposal": "Vorschlag:",
+      "approving": "Wird bestätigt …",
+      "approveAnswer": "Antwort bestätigen",
+      "approve": "Bestätigen",
+      "awaiting": "Wartet auf Bestätigung durch einen Inhaber oder Administrator",
+      "editAnswer": "Antwort bearbeiten"
+    },
+    "import": {
+      "button": "Von der Website übernehmen",
+      "intro": "Wir lesen Ihre eigenen Seiten und schlagen Leistungen, Fakten und feste Antworten vor. Die Vorschläge bleiben Entwürfe, bis Sie sie bestätigt haben. Preise werden nie geraten.",
+      "needsAi": "Erfordert, dass KI auf dem Server eingeschaltet ist.",
+      "url": "Adresse der Website",
+      "urlPlaceholder": "https://www.ihr-unternehmen.de",
+      "reading": "Website wird gelesen …",
+      "fetch": "Vorschläge abrufen",
+      "running": "Seiten werden gelesen und Vorschläge geschrieben. Das dauert meist weniger als eine Minute.",
+      "failed": "Der Import ist fehlgeschlagen.",
+      "noNew": "Keine neuen Vorschläge",
+      "created": "{n} Vorschläge als Entwürfe angelegt – bestätigen Sie sie unten",
+      "pages": "{n} Seiten gelesen."
+    }
+  },
+  "account": {
+    "language": {
+      "title": "Sprache",
+      "sub": "Die Sprache der App. Wird für Ihren Benutzer gespeichert."
+    },
+    "card": {
+      "opening": "Stripe wird geöffnet …",
+      "change": "Karte wechseln",
+      "add": "Zahlungskarte hinzufügen"
+    },
+    "invoiceNow": {
+      "pending": "Wird erstellt …",
+      "button": "{month} jetzt abrechnen"
+    },
+    "referral": {
+      "ask": "Haben Sie einen Botschafter-Code?",
+      "label": "Botschafter-Code",
+      "placeholder": "z. B. MADS42",
+      "hint": "Von der Person, die Dialogbot empfohlen hat. Sie erhalten 50 % Rabatt auf den ersten abgerechneten Monat.",
+      "add": "Code hinzufügen",
+      "referred": "Sie wurden von {name} (Dialogbot-Botschafter) empfohlen und erhalten {pct} % Rabatt auf den ersten abgerechneten Monat."
+    },
+    "logout": "Abmelden",
+    "role": {
+      "reader": "Kann ansehen",
+      "editor": "Kann ändern",
+      "owner": "Inhaber"
+    },
+    "team": {
+      "title": "Wer darf ansehen und ändern",
+      "intro": "Der Inhaber darf alles. «Kann ändern» bearbeitet Wissen und Regeln. «Kann ansehen» liest Anrufe und Berichte.",
+      "role": "Rolle",
+      "onlyAdmins": "Nur Inhaber und Administratoren können einladen und Rollen ändern.",
+      "confirmLeave": "Arbeitsbereich verlassen?",
+      "confirmRemove": "{name} aus dem Arbeitsbereich entfernen?",
+      "you": "(Sie)",
+      "roleFor": "Rolle für {name}",
+      "leave": "Verlassen",
+      "confirmRevoke": "Einladung widerrufen? Der Link funktioniert dann nicht mehr.",
+      "invited": "Eingeladen – noch nicht geantwortet:",
+      "expires": "läuft ab am {date}",
+      "resend": "Erneut senden",
+      "revoke": "Widerrufen",
+      "inviteEmail": "Per E-Mail einladen",
+      "emailPlaceholder": "kollege@firma.de",
+      "may": "Darf",
+      "sending": "Wird gesendet …",
+      "invite": "Einladen",
+      "sent": "Die Einladung wurde gesendet."
+    },
+    "invoiceStatus": {
+      "creating": "Wird erstellt",
+      "open": "Zahlung ausstehend",
+      "paid": "Bezahlt",
+      "payment_failed": "Zahlung fehlgeschlagen",
+      "failed": "Nicht bezahlt",
+      "void": "Storniert"
+    },
+    "eyebrow": "Hinten im Heft · Konto",
+    "title": "Team, Abonnement und Rechnungen",
+    "sub": {
+      "title": "Abonnement",
+      "cardSaved": "Danke – die Karte ist bei Stripe gespeichert. Es kann einen Moment dauern, bis sie hier angezeigt wird.",
+      "fixed": "Festes Abonnement",
+      "perMonth": "/Monat zzgl. MwSt.",
+      "confirmed": "Bestätigt · Vereinbarung v{v}. Einrichtung in Eigenregie ist inklusive.",
+      "notConfirmed": "Einrichtung in Eigenregie ist inklusive. Noch nicht bestätigt.",
+      "campaign": "Kampagnenanrufe",
+      "campaignPrice": "pro Anruf + {minute} pro Minute zzgl. MwSt.",
+      "campaignMonth": "Diesen Monat: {calls} Anrufe, {minutes} Gesprächsminuten · {amount} zzgl. MwSt.",
+      "inbound": "Eingehende Anrufe",
+      "inboundUsed": "von {n} inklusiven Minuten diesen Monat verbraucht",
+      "inboundExtra": "{n} Minuten über die inklusiven hinaus · {amount} zzgl. MwSt. ({price} pro angefangener Minute).",
+      "inboundPrice": "Minuten über die {n} hinaus kosten {price} pro angefangener Minute zzgl. MwSt.",
+      "confirm": "Abonnement bestätigen",
+      "ownerMustConfirm": "Der Inhaber muss das Abonnement bestätigen.",
+      "older": "Ältere Vereinbarung – bestätigen Sie das Abonnement, um zum aktuellen Abonnement zu wechseln.",
+      "note": "Preise zzgl. MwSt. Keine Mindestlaufzeit – sagen Sie es dem Assistenten oder schreiben Sie an info@dialogbot.dk, wenn Sie kündigen möchten. Eine Zahlung startet niemals Anrufe."
+    },
+    "pay": {
+      "title": "Zahlung",
+      "notConfigured": "Die Kartenzahlung ist noch nicht eingerichtet. Bis dahin ist die Übersicht nur eine Vorschau, und es wird nichts abgebucht.",
+      "card": "Karte",
+      "expires": "läuft ab {exp}",
+      "noCard": "Keine Zahlungskarte",
+      "withCard": "Jeder Monat wird nachträglich abgerechnet und automatisch von der Karte abgebucht.",
+      "withoutCard": "Ohne Karte wird der Monat nicht abgerechnet.",
+      "onlyOwner": "Nur der Inhaber kann die Zahlungskarte ändern."
+    },
+    "invoices": {
+      "title": "Rechnungen",
+      "soFar": "{month} bisher:",
+      "totals": "{net} zzgl. MwSt. · MwSt. {tax} · gesamt {gross}",
+      "billedEnd": "Wird am Monatsende abgerechnet.",
+      "billedEndCard": "Wird am Monatsende abgerechnet, sobald die Kartenzahlung eingerichtet ist.",
+      "none": "Noch keine Rechnungen.",
+      "month": "Monat",
+      "status": "Status",
+      "total": "Gesamt inkl. MwSt.",
+      "open": "Offen",
+      "pdf": "PDF herunterladen"
+    },
+    "me": {
+      "unknownDevice": "Unbekanntes Gerät",
+      "browser": "Browser",
+      "device": "{browser} auf {os}",
+      "owner": "Inhaber",
+      "reader": "kann ansehen",
+      "editor": "kann ändern",
+      "notVerified": "Die E-Mail-Adresse ist nicht bestätigt – jetzt bestätigen",
+      "changePassword": "Passwort ändern",
+      "operator": "Operator",
+      "sales": "Dialogbot-Vertrieb",
+      "sessions": "Angemeldet auf {n|1 Gerät|# Geräten}. Wenn Sie das Passwort zurücksetzen, werden alle abgemeldet.",
+      "thisDevice": "dieses Gerät",
+      "lastActive": "zuletzt aktiv {at}"
+    },
+    "ws": {
+      "title": "Arbeitsbereiche",
+      "this": "dieser",
+      "new": "Einen Dialogbot für ein anderes Unternehmen einrichten"
+    },
+    "data": {
+      "title": "Daten und Verlauf",
+      "sub": "Wer was wann geändert hat, steht im Verlauf.",
+      "log": "Alle Änderungen ansehen",
+      "settings": "Alle Einstellungen"
+    }
+  },
+  "help": {
+    "start": {
+      "title": "Erste Schritte",
+      "guide": {
+        "q": "Der Einrichtungsassistent",
+        "a": "Der Assistent führt Sie durch Unternehmen, Ziele, Sprache und Wissen. Bei jedem Schritt schlägt die KI Inhalte auf Grundlage Ihrer Website vor – Sie passen sie an und speichern."
+      },
+      "fetch": {
+        "q": "Angaben von der Website übernehmen",
+        "a": "Die Unternehmensseite liest Ihre Website und füllt Beschreibung, CVR, Telefon und Adresse aus, sofern sie auf der Seite stehen. Leistungen und Öffnungszeiten werden zu Entwürfen."
+      }
+    },
+    "knowledge": {
+      "title": "Wissen",
+      "approved": {
+        "q": "Nur bestätigtes Wissen wird verwendet",
+        "a": "Der Assistent antwortet ausschließlich auf Grundlage bestätigter Themen. Entwürfe und Vorschläge werden nie verwendet, bevor ein Inhaber oder Administrator sie bestätigt hat."
+      },
+      "prices": {
+        "q": "Preise",
+        "a": "Preise werden zzgl. MwSt. eingegeben. Die KI rät nie einen Preis – steht ein Preis auf der Website, wird er im Entwurf zitiert, damit Sie ihn bestätigen können."
+      },
+      "edit": {
+        "q": "Löschen oder bearbeiten",
+        "a": "Bearbeiten Sie ein Thema und speichern Sie es als neuen Entwurf, oder löschen Sie es. Löschen Sie bestätigtes Wissen, verwendet der Assistent es sofort nicht mehr."
+      }
+    },
+    "reception": {
+      "title": "Empfang, Telefon und Chat",
+      "script": {
+        "q": "Gesprächsleitfaden für den Empfang",
+        "a": "Legen Sie die Begrüßung fest, was der Assistent fragt und wann ein Mitarbeiter übernimmt. Gilt für Telefon und Chat."
+      },
+      "phone": {
+        "q": "Telefon und Stimme",
+        "a": "Behalten Sie Ihre Nummer und leiten Sie sie auf Ihre Dialogbot-Nummer um. Wählen Sie eine Stimme, testen Sie die Verbindung und aktivieren Sie. Anrufe landen unter Anrufe mit Niederschrift."
+      },
+      "webchat": {
+        "q": "Webchat",
+        "a": "Schalten Sie das Widget ein, bestätigen Sie Ihre Domains und fügen Sie den Code in die Website ein. Unter Anrufe können Sie ein Gespräch übernehmen."
+      }
+    },
+    "leads": {
+      "title": "Anfragen und Abrechnung",
+      "tasks": {
+        "q": "Anfragen und Aufgaben",
+        "a": "Kunden, die kontaktiert werden möchten, werden zu Anfragen mit einer Aufgabe. Qualifizieren, bestätigen und erledigen Sie sie unter Anrufe → Anfrage öffnen."
+      },
+      "billing": {
+        "q": "Abrechnung",
+        "a": "Es gibt ein Abonnement ab 2.495 kr. im Monat zzgl. MwSt., inkl. 300 Minuten eingehender Anrufe (danach 1,50 kr. pro Minute). Ausgehende Kampagnenanrufe kosten 4 kr. pro Anruf plus 2 kr. pro angefangener Gesprächsminute. Unter Konto sehen Sie die Vorschau des Monats."
+      }
+    },
+    "team": {
+      "title": "Team und Sicherheit",
+      "roles": {
+        "q": "Rollen",
+        "a": "Inhaber und Administratoren bestätigen Wissen und ändern Einstellungen. Mitarbeiter arbeiten mit Anfragen und Entwürfen. Leser können nur ansehen."
+      },
+      "log": {
+        "q": "Aktivitätsprotokoll",
+        "a": "Alle Bestätigungen, Löschungen und Änderungen an Einstellungen werden mit Person und Zeitpunkt protokolliert."
+      }
+    },
+    "title": "So nutzen Sie Dialogbot",
+    "goThere": "Dorthin"
+  },
+  "reception": {
+    "staffOnly": "Der Empfang kann von Mitarbeitern, Administratoren und Inhabern eingesehen werden.",
+    "active": "Aktiv",
+    "inactive": "Nicht aktiv",
+    "eyebrow": "Empfang",
+    "title": "Ihr digitaler Empfang",
+    "intro": "Der Assistent antwortet am Telefon und im Chat auf Ihrer Website auf Grundlage bestätigten Wissens und des Gesprächsleitfadens unten. Kunden, die kontaktiert werden möchten, werden zu Anfragen.",
+    "phone": {
+      "notConfigured": "Die Sprachverbindung ist auf dem Server nicht eingerichtet.",
+      "noVoice": "Stimme fehlt",
+      "noNumber": "Keine aktive Nummer verknüpft.",
+      "settings": "Telefonie-Einstellungen"
+    },
+    "webchat": {
+      "activeOn": "Aktiv auf {n} Domain(s).",
+      "off": "Das Widget ist nicht eingeschaltet.",
+      "settings": "Webchat-Einstellungen"
+    },
+    "stats": {
+      "conversations": "Gespräche"
+    },
+    "try": "Testen Sie den Assistenten mit dem Gesprächsleitfaden und Ihrem bestätigten Wissen, bevor Ihre Kunden es tun.",
+    "test": "Assistenten testen",
+    "script": {
+      "title": "Gesprächsleitfaden für den Empfang",
+      "intro": "Steuert, wie der Assistent begrüßt, was er fragt und wann ein Mitarbeiter übernehmen soll – am Telefon und im Chat. Fakten und Preise kommen weiterhin nur aus bestätigtem Wissen.",
+      "activeVersion": "Aktive Version {v}",
+      "onlyAdmins": "Nur Inhaber und Administratoren können den Gesprächsleitfaden ändern.",
+      "writing": "Ein Vorschlag auf Grundlage Ihres Unternehmens und Wissens wird geschrieben …",
+      "suggested": "Der Vorschlag der KI wurde eingefügt. Passen Sie ihn an und drücken Sie \"Gesprächsleitfaden speichern\".",
+      "saved": "Gespeichert. Der Assistent verwendet den Gesprächsleitfaden ab dem nächsten Gespräch.",
+      "persona": "Name des Assistenten (optional)",
+      "personaPlaceholder": "z. B. Sofie",
+      "address": "Anrede",
+      "informal": "du (informell)",
+      "formal": "Sie (formell)",
+      "greeting": "Telefonbegrüßung",
+      "greetingHint": "Verwenden Sie {virksomhed} für den Firmennamen. Erwähnt die Begrüßung nicht, dass es sich um einen digitalen Assistenten handelt, ergänzen wir das automatisch.",
+      "collect": "Das soll der Assistent fragen (eins pro Zeile)",
+      "collectHint": "Wird verwendet, wenn der Kunde ein Angebot, einen Termin oder einen Rückruf möchte. Eine Frage nach der anderen.",
+      "escalation": "Sofort an einen Mitarbeiter übergeben, wenn …",
+      "escalationHint": "Z. B. akute Schäden oder Beschwerden. Der Assistent verspricht einen schnellen Rückruf und legt eine Anfrage an.",
+      "avoid": "Das darf der Assistent nicht versprechen oder dazu nichts sagen",
+      "avoidHint": "Z. B. endgültige Preise ohne Besichtigung.",
+      "closing": "Abschluss",
+      "closingHint": "Kurz und freundlich.",
+      "suggestAgain": "Erneut vorschlagen",
+      "save": "Gesprächsleitfaden speichern"
+    }
+  }
+}

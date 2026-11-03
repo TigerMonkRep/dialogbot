@@ -1,0 +1,581 @@
+{
+  "meta": {
+    "title": "Dialogbot – recepcionista con IA, contestador inteligente y chatbot para empresas",
+    "description": "Dialogbot es un recepcionista con IA que atiende el teléfono y el chat de su empresa las 24 horas, en el idioma de sus clientes: responde con su propia información, reserva citas y reúne todas las consultas. Le guiamos durante toda la configuración.",
+    "keywords": ["Dialogbot", "recepcionista con IA", "recepcionista virtual", "contestador automático con IA", "teléfono con IA", "asistente telefónico con IA", "chatbot", "chatbot para web", "servicio de atención telefónica", "recepcionista digital", "contestador para empresas"]
+  },
+  "nav": {
+    "aiReceptionist": "Recepcionista con IA",
+    "aiPhone": "Contestador con IA",
+    "chatbot": "Chatbot para su web",
+    "pricing": "Precios",
+    "knowledge": "Recursos"
+  },
+  "articles": {
+    "hvad-er-en-ai-receptionist": {
+      "title": "¿Qué es un recepcionista con IA y cómo funciona?",
+      "teaser": "Cómo atiende el teléfono de una empresa un recepcionista con IA, qué puede hacer y qué no debe hacer."
+    },
+    "ai-telefonsvarer-eller-telefonpasning": {
+      "title": "Contestador con IA o servicio de atención telefónica: ¿qué le conviene?",
+      "teaser": "Contestador, servicio de atención telefónica o IA: ventajas e inconvenientes para elegir bien."
+    },
+    "viderestil-telefonen": {
+      "title": "Cómo desviar el teléfono cuando está ocupado",
+      "teaser": "Los códigos que se marcan en el móvil para desviar si comunica, si no contesta o siempre, y cómo desactivarlo de nuevo."
+    },
+    "dialogbot-vs-vocalis": {
+      "title": "Dialogbot o Vocalis: ¿precio fijo o paquetes de minutos?",
+      "teaser": "Precio mensual fijo o paquetes de minutos, información aprobada y reservas: las diferencias entre Dialogbot y Vocalis."
+    },
+    "dialogbot-vs-almindelig-chatbot": {
+      "title": "Dialogbot o un chatbot normal: ¿cuál es la diferencia?",
+      "teaser": "Un chatbot responde en la web. Dialogbot además atiende el teléfono y reserva citas."
+    }
+  },
+  "industryLink": "Recepcionista con IA para {name}",
+  "seoPage": {
+    "breadcrumb": "Ruta de navegación",
+    "knowledge": "Recursos",
+    "tryIt": "Pruébelo: le llamará",
+    "seeGuide": "Ver la guía de construcción",
+    "inShort": "En resumen",
+    "faqEyebrow": "Preguntas",
+    "faqTitle": "Preguntas frecuentes",
+    "ctaTitle": "Escuche a Dialogbot atender el teléfono, en su propio teléfono",
+    "ctaText": "Cuente al chat cómo se llama su empresa y a qué se dedica, y el asistente le llamará para mostrarle cómo atendería el teléfono por usted.",
+    "callMe": "Llámeme ahora",
+    "orWrite": "O escriba a ",
+    "priceLine": ". 2.495 kr./mes · IVA no incluido. Sin permanencia."
+  },
+  "compareTable": {
+    "difference": "Diferencia"
+  },
+  "pricing": {
+    "meta": {
+      "title": "Precios – recepcionista con IA por 2.495 kr. al mes",
+      "description": "Consulte el precio de Dialogbot: una suscripción de 2.495 kr. al mes, IVA no incluido, con 300 minutos de llamadas entrantes. Teléfono, chat, reservas y configuración personal incluidos. Las llamadas salientes de campaña cuestan 4 kr. por llamada.",
+      "ogTitle": "Precios del recepcionista con IA | Dialogbot"
+    },
+    "kicker": "Precios",
+    "title": "Una suscripción: 2.495 kr. al mes",
+    "lead": "Un precio, Dialogbot completo: recepcionista con IA al teléfono, chatbot en su web, reservas y un resumen de cada consulta. Todos los precios sin IVA.",
+    "points": ["2.495 kr. al mes: una sola suscripción", "Sin precio por contacto", "300 minutos de llamadas entrantes al mes incluidos", "Llamadas salientes de campaña: 4 kr. por llamada + 2 kr. por minuto", "Sin permanencia", "Configuración por su cuenta incluida; configuración por especialistas 5.000 kr."],
+    "sections": {
+      "subscription": {
+        "title": "La suscripción",
+        "p1Price": "2.495 kr. al mes",
+        "p1a": ", IVA no incluido. No hay precio por contacto y ",
+        "p1Minutes": "se incluyen 300 minutos de llamadas entrantes al mes",
+        "p1b": ", suficiente para la mayoría de las pequeñas empresas. Si sus clientes hablan más con el asistente, cada minuto iniciado adicional cuesta 1,50 kr. Siempre puede consultar su consumo en Dialogbot.",
+        "p2": "El precio de un servicio de atención telefónica, pero con un recepcionista que además reserva las citas en su calendario y le avisa de cada llamada.",
+        "p3a": "Ideal para empresas cuyo teléfono suena cuando están ocupadas: oficios, clínicas, salones, talleres y asesorías. Si quiere escucharlo antes, puede ",
+        "p3Link": "dejar que Dialogbot le llame",
+        "p3b": ": son dos minutos y no requiere registro."
+      },
+      "whyMore": {
+        "title": "Por qué cuesta más que un chatbot",
+        "p1": "Hay soluciones más baratas desde unas 400 kr. al mes. Muchas cobran por minutos o por contacto, así que la factura puede variar de un mes a otro.",
+        "p2a": "Dialogbot responde ",
+        "p2Strong": "solo con información que usted ha aprobado",
+        "p2b": " y le muestra cualquier cambio primero: antes → después, «¿Aprobar?». Reserva, cambia y cancela citas en Google Calendar o Microsoft 365, envía confirmaciones por SMS y le avisa de cada llamada, con un informe diario. Por eso cuesta más, y usted sabe de antemano cuánto pagará. Vea también ",
+        "p2Vocalis": "Dialogbot y Vocalis",
+        "p2c": " y ",
+        "p2Chatbot": "Dialogbot y un chatbot normal",
+        "p2d": "."
+      },
+      "included": {
+        "title": "Lo que incluye la suscripción",
+        "items": ["Recepcionista con IA y contestador con IA en el idioma de sus clientes, las 24 horas", "Chatbot para su web con la misma información", "Reserva, cambio y cancelación de citas, con confirmación por SMS", "Resumen de cada consulta, tareas e informe diario", "Configuración por su cuenta: los tres pasos de la guía, una media hora, con el asistente a mano"]
+      },
+      "specialists": {
+        "title": "Configuración por nuestros especialistas: 5.000 kr.",
+        "p1a": "Puede configurar Dialogbot usted mismo: los tres pasos de la guía están incluidos en la suscripción. Si prefiere que se lo hagamos, nuestros propios especialistas lo configuran por ",
+        "p1Price": "5.000 kr.",
+        "p1b": ", IVA no incluido, en un único pago.",
+        "p2": "Así obtiene una configuración a medida e integrada con sus propios sistemas y necesidades: conectamos el calendario, el CRM o el sistema de reservas, cargamos su información y sus precios, entrenamos la voz con sus nombres y lo probamos todo con usted antes de activarlo."
+      },
+      "outbound": {
+        "title": "Llamadas salientes de campaña",
+        "p1a": "Si quiere que el asistente llame a contactos que han aceptado expresamente recibir llamadas, cuesta ",
+        "p1Call": "4 kr. por llamada saliente",
+        "p1b": " más ",
+        "p1Minute": "2 kr. por minuto de conversación iniciado",
+        "p1c": ", IVA no incluido, igual que una factura de teléfono.",
+        "p2": "Cada llamada realizada cuenta, también un nuevo intento. Una llamada sin respuesta cuesta 4 kr., y una conversación de 3 minutos, 10 kr. A cada contacto se le llama como máximo 2 veces y se habla como máximo 3 minutos en total, y usted ve el precio máximo antes de pulsar Iniciar."
+      },
+      "start": {
+        "title": "Empezar",
+        "a": "Escuche primero cómo suena: ",
+        "tryLink": "reciba una llamada de Dialogbot",
+        "b": ". Cuando esté listo, ",
+        "signupLink": "cree una cuenta",
+        "c": " y siga la guía de construcción, o solicite la configuración por nuestros especialistas. Más información sobre ",
+        "receptionistLink": "el recepcionista con IA",
+        "d": "."
+      }
+    },
+    "faq": [
+      ["¿Hay permanencia?", "No. No hay permanencia. Puede cancelar con efecto al final del mes en curso."],
+      ["¿2.495 kr. es el precio total?", "Sí, es el precio total de la suscripción, IVA no incluido. Solo hay una suscripción y ningún coste adicional por contacto. Solo si usa más de 300 minutos entrantes al mes, cada minuto adicional cuesta 1,50 kr."],
+      ["¿Puedo probarlo antes de comprar?", "Sí. Dialogbot le llama y le atiende como si fuera un cliente: son dos minutos y no requiere registro. Y no hay permanencia."],
+      ["¿Dónde quedan los datos de mis clientes?", "Lo explicamos en un texto breve y claro en la página sobre RGPD y datos: qué se guarda, dónde y cómo funciona el contrato de encargo del tratamiento."],
+      ["¿Cuánto cuestan las llamadas salientes de campaña?", "4 kr. por llamada saliente más 2 kr. por minuto de conversación iniciado, IVA no incluido. Una llamada sin respuesta cuesta 4 kr.; una conversación de 3 minutos, 10 kr. Los contactos deben haber aceptado previamente recibir llamadas, y una campaña solo empieza a llamar cuando usted pulsa Iniciar."],
+      ["¿Qué pasa si recibimos muchas llamadas entrantes?", "La suscripción incluye 300 minutos de llamadas entrantes al mes. A partir de ahí, cada minuto iniciado cuesta 1,50 kr., IVA no incluido: aparece en la factura como una línea aparte, y puede seguir el consumo en todo momento en Dialogbot."],
+      ["¿La configuración tiene coste?", "No si la hace usted mismo: los tres pasos de la guía están incluidos en la suscripción y llevan una media hora. La configuración por nuestros especialistas cuesta 5.000 kr., IVA no incluido, en un único pago, y le ofrece una configuración a medida e integrada con sus propios sistemas y necesidades."]
+    ]
+  },
+  "receptionist": {
+    "meta": {
+      "title": "Recepcionista con IA para empresas – atiende el teléfono las 24 horas",
+      "description": "Dialogbot es un recepcionista con IA que atiende el teléfono en español cuando usted está ocupado o ha cerrado. Responde con su propia información, reserva citas y le envía cada consulta. 2.495 kr./mes.",
+      "ogTitle": "Recepcionista con IA para pymes | Dialogbot"
+    },
+    "kicker": "Recepcionista con IA",
+    "title": "Un recepcionista con IA que atiende el teléfono cuando usted no puede",
+    "lead": "Dialogbot es un recepcionista digital que habla el idioma de sus clientes. Atiende llamadas y chats las 24 horas, responde solo con la información que usted ha aprobado y se asegura de que no se pierda ningún cliente.",
+    "points": ["Responde en español con una voz natural", "Conoce sus servicios, precios y horarios", "Reserva, cambia y cancela citas", "Le envía un breve resumen de cada consulta", "Le guiamos durante toda la configuración"],
+    "sections": {
+      "what": {
+        "title": "¿Qué es un recepcionista con IA?",
+        "p1": "Un recepcionista con IA es un asistente digital que atiende el teléfono y el chat de su empresa. Recibe al cliente, averigua qué necesita, responde a las preguntas habituales y recoge nombre, número y necesidad, para que usted devuelva la llamada a un cliente ya interesado.",
+        "p2": "Con Dialogbot, usted decide qué puede decir el asistente. Toda la información empieza como borrador y solo se usa cuando un propietario o administrador la ha aprobado. El asistente nunca se lo inventa: si algo no figura en su información, lo dice con honestidad y promete que un empleado se pondrá en contacto."
+      },
+      "canDo": {
+        "title": "Lo que Dialogbot puede hacer por usted",
+        "items": [
+          ["Atender el teléfono", " cuando está ocupado, visitando a un cliente o ha cerrado, también por la noche y los fines de semana."],
+          ["Aclarar la necesidad", " con las preguntas que usted ha aprobado, y enviarle un resumen con nombre y número."],
+          ["Reservar citas", " según su horario y sus reglas de reserva, y enviar al cliente una confirmación por SMS."],
+          ["Responder en el chat", " de su web con la misma información que al teléfono."],
+          ["Hacer seguimiento", " de los presupuestos que ha enviado y darle un informe diario de todas las consultas."]
+        ]
+      },
+      "industries": {
+        "title": "Para oficios, clínicas, salones, restaurantes y asesorías",
+        "p1": "Dialogbot se configura según sus propios servicios y procesos. El profesional de oficios no tiene que coger el teléfono subido a la escalera, la clínica descarga la recepción a primera hora, el salón puede seguir con el cliente en la silla y el restaurante no pierde reservas en la hora punta.",
+        "p2": "Puede conservar su número actual y desviarlo a Dialogbot cuando esté ocupado o haya cerrado, o usar un número nuevo de Dialogbot."
+      },
+      "price": {
+        "title": "Precio y configuración",
+        "p1a": "Hay una sola suscripción: ",
+        "p1Price": "2.495 kr. al mes",
+        "p1b": ", sin precio por contacto y con 300 minutos de llamadas entrantes al mes. Las llamadas salientes de campaña cuestan 4 kr. por llamada más 2 kr. por minuto de conversación. Todos los precios sin IVA.",
+        "p2a": "No necesita conocimientos técnicos. Usted mismo configura el asistente siguiendo los tres pasos de la guía en una media hora, y está incluido en la suscripción. Si tiene web, Dialogbot obtiene casi todo automáticamente, y puede probar el asistente antes de que atienda una sola llamada real. Si prefiere que se lo hagamos, nuestros propios especialistas lo configuran por 5.000 kr., IVA no incluido, en un único pago: a medida e integrado con sus propios sistemas y necesidades. Lea también sobre ",
+        "p2Phone": "el contestador con IA",
+        "p2b": " y ",
+        "p2Chatbot": "el chatbot para su web",
+        "p2c": "."
+      }
+    },
+    "faq": [
+      ["¿Cuánto cuesta un recepcionista con IA en Dialogbot?", "Una suscripción de 2.495 kr. al mes, sin precio por contacto y con 300 minutos de llamadas entrantes al mes. Las llamadas salientes de campaña cuestan 4 kr. por llamada más 2 kr. por minuto de conversación. Precios sin IVA."],
+      ["¿Qué pasa con los datos de los clientes? ¿Cumple el RGPD?", "Las llamadas y los mensajes se tratan como encargado del tratamiento en su nombre, la base de datos está en la UE y recibe un contrato de encargo del tratamiento como parte de las condiciones. Léalo todo en lenguaje claro en la página sobre RGPD y datos: /gdpr."],
+      ["¿Suena como un robot?", "Dialogbot habla de forma natural, en español o en el idioma de su cliente, con la voz que usted elija, por ejemplo Camilla o Peter. Siempre dice con honestidad que es un asistente digital si el cliente lo pregunta."],
+      ["¿Puedo conservar mi número de teléfono?", "Sí. Desvía su número actual a Dialogbot cuando esté ocupado o haya cerrado, y mantiene su operador."],
+      ["¿Qué pasa si el asistente no sabe la respuesta?", "No se la inventa. Solo responde con información aprobada y promete que un empleado se pondrá en contacto, y usted recibe la consulta al instante."],
+      ["¿Cuánto tarda la configuración?", "Si la hace usted mismo, los tres pasos de la guía llevan una media hora, y el asistente le guía durante el proceso. Si elige la configuración por nuestros especialistas (5.000 kr., IVA no incluido), concertamos una reunión y lo configuramos a medida de sus sistemas."]
+    ]
+  },
+  "phone": {
+    "meta": {
+      "title": "Contestador con IA y teléfono con IA para empresas, en español",
+      "description": "Un contestador con IA que habla con el cliente en lugar de pedirle que deje un mensaje. Dialogbot atiende el teléfono en el idioma de sus clientes, aclara la necesidad, reserva citas y le envía la consulta.",
+      "ogTitle": "Contestador con IA y teléfono con IA en español | Dialogbot"
+    },
+    "kicker": "Contestador con IA",
+    "title": "El contestador con IA que de verdad habla con el cliente",
+    "lead": "A ningún cliente le gusta dejar un mensaje. Dialogbot es un teléfono con IA que atiende la llamada en el idioma del cliente, entiende lo que quiere y se asegura de que usted pueda devolver la llamada enseguida, o reserva la cita directamente.",
+    "points": ["Atiende el teléfono en español, las 24 horas", "Conoce sus propios términos técnicos y nombres", "Reserva citas y envía confirmación por SMS", "Sin mensajes de voz que escuchar", "Conserve su propio número"],
+    "sections": {
+      "conversation": {
+        "title": "Del contestador a la conversación",
+        "p1": "Un contestador normal pide al cliente que deje un mensaje, y muchos cuelgan y llaman a la competencia. Un contestador con IA como Dialogbot, en cambio, responde con una voz natural en el idioma del cliente, hace las preguntas adecuadas y recoge los datos por usted.",
+        "p2": "Después recibe un breve resumen escrito de la conversación con nombre, número y necesidad, y una tarea si hay que devolver la llamada. Nunca más tendrá que escuchar un mensaje de voz."
+      },
+      "howItWorks": {
+        "title": "Cómo funciona el teléfono con IA",
+        "items": [
+          ["Desvío:", " desvía su número a Dialogbot cuando está ocupado o ha cerrado, o usa un número nuevo de Dialogbot."],
+          ["Su información:", " el asistente responde según sus servicios, precios, horarios y reglas aprobados."],
+          ["Acciones:", " puede buscar huecos libres, reservar, cambiar y cancelar citas y enviar un SMS al cliente, siempre tras su consentimiento."],
+          ["Resumen:", " todas las conversaciones llegan a su bandeja de entrada y recibe un informe diario."]
+        ]
+      },
+      "human": {
+        "title": "¿Suena como una persona?",
+        "p1": "Dialogbot habla de forma natural y escucha hasta que el cliente termina de hablar. Usted elige la voz y puede escucharla antes de decidirse. Siempre dice con honestidad que es un asistente digital: nunca miente diciendo que es una persona.",
+        "p2a": "La mejor manera de comprobarlo es probarlo: ",
+        "p2Link": "reciba una llamada de Dialogbot",
+        "p2b": " y escuche cómo atendería el teléfono por usted."
+      },
+      "price": {
+        "title": "Precio",
+        "a": "Una suscripción de ",
+        "price": "2.495 kr. al mes",
+        "b": ", IVA no incluido y sin precio por contacto. La configuración la hace usted mismo siguiendo la guía, o deje que nuestros especialistas la hagan a medida por 5.000 kr. en un único pago. Vea también ",
+        "receptionistLink": "recepcionista con IA",
+        "c": " y ",
+        "chatbotLink": "chatbot para su web",
+        "d": "."
+      }
+    },
+    "faq": [
+      ["¿Qué diferencia hay entre un contestador con IA y un contestador normal?", "Un contestador normal graba un mensaje. Un contestador con IA habla con el cliente, responde a sus preguntas con su información, aclara la necesidad y puede reservar una cita, y usted recibe un resumen escrito."],
+      ["¿Puedo usar mi propio número?", "Sí. Desvía su número actual a Dialogbot cuando esté ocupado o haya cerrado. También puede obtener un número nuevo de Dialogbot."],
+      ["¿Entiende acentos regionales?", "Dialogbot está hecho para el habla real y usa sus propios términos técnicos y nombres de la información que usted aprueba, para reconocerlos mejor."],
+      ["¿Cuánto cuesta?", "Una suscripción de 2.495 kr. al mes, IVA no incluido. No hay precio por contacto."],
+      ["¿Puedo escucharlo antes de comprar?", "Sí. Escriba su número en la página de inicio, elija una voz y su sector, y Dialogbot le llamará para mostrárselo."]
+    ]
+  },
+  "chatbot": {
+    "meta": {
+      "title": "Chatbot para su web: chatbot con IA en español con su propia información",
+      "description": "Tenga en su web un chatbot con IA que responde en el idioma de sus visitantes según sus propios servicios, precios y horarios, reúne consultas y puede reservar citas. La misma información que su recepcionista con IA.",
+      "ogTitle": "Chatbot para su web en español | Dialogbot"
+    },
+    "kicker": "Chatbot para su web",
+    "title": "Un chatbot que conoce su negocio",
+    "lead": "El chatbot de Dialogbot responde a sus visitantes en su idioma, las 24 horas, con la información que usted ha aprobado. Reúne consultas, puede reservar citas y un empleado puede tomar el control de la conversación en cualquier momento.",
+    "points": ["Responde solo con su información aprobada", "Recoge nombre, contacto y necesidad", "Reserva citas directamente en el chat", "Un empleado puede tomar el control de la conversación", "La misma información que al teléfono"],
+    "sections": {
+      "noGuessing": {
+        "title": "Un chatbot que no se lo inventa",
+        "p1": "Muchos chatbots se inventan las respuestas. Dialogbot no. Responde solo según los servicios, precios, horarios y reglas que usted ha aprobado, y dice con honestidad cuándo algo no figura, para que un empleado pueda hacer el seguimiento.",
+        "p2": "Si tiene web, Dialogbot obtiene casi todo automáticamente de ella como borradores, que usted revisa y aprueba. Así el chatbot está listo en poco tiempo."
+      },
+      "canDo": {
+        "title": "Lo que hace el chatbot",
+        "items": [
+          ["Responder preguntas", " sobre servicios, precios, horarios y cuestiones prácticas."],
+          ["Reunir consultas", " con nombre, datos de contacto y necesidad, y enviarlas a su bandeja de entrada."],
+          ["Reservar citas", " según su horario y sus reglas de reserva."],
+          ["Dejarle tomar el control:", " un empleado puede responder al cliente directamente en la conversación mientras el asistente hace una pausa."],
+          ["Ofrecer una llamada de vuelta", " en la franja que le venga bien al cliente."]
+        ]
+      },
+      "sameKnowledge": {
+        "title": "Chat y teléfono con la misma información",
+        "a": "El chatbot usa la misma información aprobada que el ",
+        "receptionistLink": "recepcionista con IA",
+        "b": " y el ",
+        "phoneLink": "contestador con IA",
+        "c": " de Dialogbot. Si corrige un precio en un sitio, queda corregido tanto en el chat como al teléfono. El chat se añade a su web con un pequeño código de inserción, y le ayudamos a hacerlo."
+      },
+      "price": {
+        "title": "Precio",
+        "a": "El chatbot forma parte de Dialogbot: una suscripción de ",
+        "price": "2.495 kr. al mes",
+        "b": ", IVA no incluido y sin precio por contacto. La configuración la hace usted mismo siguiendo la guía, o deje que nuestros especialistas la hagan a medida por 5.000 kr. en un único pago."
+      }
+    },
+    "faq": [
+      ["¿Cómo se añade el chatbot a mi web?", "Inserta un pequeño código de inserción en su web. La guía de construcción le muestra cómo, y usted decide en qué dominios puede mostrarse el chat."],
+      ["¿Puede un empleado tomar el control de la conversación?", "Sí. Un empleado puede responder al cliente directamente en la conversación, y el asistente hace una pausa mientras tanto."],
+      ["¿El chatbot se inventa las respuestas?", "No. Solo responde con la información que usted ha aprobado y dice con honestidad cuándo algo no figura."],
+      ["¿Puede chatear y también atender el teléfono?", "Sí. Dialogbot usa la misma información en el chat y al teléfono."],
+      ["¿Cuánto cuesta el chatbot?", "Forma parte de Dialogbot: una suscripción de 2.495 kr. al mes, IVA no incluido."]
+    ]
+  },
+  "about": {
+    "meta": {
+      "title": "Sobre Dialogbot – quién está detrás",
+      "description": "Dialogbot es una empresa danesa con sede en Aarhus. Aquí puede ver quién está detrás, dónde estamos y cómo ponerse en contacto con nosotros.",
+      "ogTitle": "Sobre Dialogbot"
+    },
+    "kicker": "Quiénes somos",
+    "title": "¿Quién está detrás de Dialogbot?",
+    "leadFounder": "{name} ha creado Dialogbot para que las pequeñas empresas puedan atender el teléfono, incluso cuando no pueden.",
+    "lead": "Dialogbot es una empresa danesa con sede en Aarhus, y siempre puede llamarnos.",
+    "points": {
+      "company": "Empresa danesa con sede en Aarhus",
+      "cvr": "CVR {cvr}",
+      "call": "Llámenos: atendemos el teléfono en horario de oficina",
+      "noBinding": "Sin permanencia"
+    },
+    "sections": {
+      "why": {
+        "title": "Por qué existe Dialogbot",
+        "p": "Cuando el teléfono suena mientras está subido a una escalera o tiene un cliente en la silla, pierde un cliente. Dialogbot atiende el teléfono por usted, en el idioma de sus clientes, las 24 horas, y solo con la información que usted ha aprobado."
+      },
+      "find": {
+        "title": "Dónde encontrarnos",
+        "cvrNo": "N.º CVR",
+        "a": "Escriba a ",
+        "b": " o llame al "
+      }
+    },
+    "faq": [
+      ["¿Puedo hablar con una persona?", "Sí. Llámenos al 93 70 34 33 en horario de oficina o escriba a info@dialogbot.dk."],
+      ["¿Quién protege los datos de mis clientes?", "Lo explicamos en lenguaje claro en la página sobre RGPD y datos."]
+    ]
+  },
+  "contact": {
+    "meta": {
+      "title": "Contacto y soporte | Dialogbot",
+      "description": "Cómo contactar con Dialogbot sobre su cuenta, pagos o sus datos. Llame al 93 70 34 33 o escriba a info@dialogbot.dk."
+    },
+    "eyebrow": "Contacto",
+    "title": "Contacto y soporte",
+    "lead": "Si tiene preguntas sobre su cuenta, una factura, su asistente o sus datos, llámenos o escríbanos. Respondemos en días laborables, normalmente en un día hábil.",
+    "updated": "Actualizado el 28 de octubre de 2026.",
+    "call": "Llamar",
+    "write": "Escribir",
+    "cvrNo": "N.º CVR",
+    "sections": {
+      "email": {
+        "title": "Correo electrónico",
+        "a": "Escriba a ",
+        "b": ". Indique el nombre de su empresa y el correo con el que inicia sesión, para que podamos encontrar su cuenta rápidamente. Respondemos en días laborables, normalmente en un día hábil."
+      },
+      "phone": {
+        "title": "Teléfono",
+        "a": "Llame al ",
+        "b": " – "
+      },
+      "post": {
+        "title": "Correo postal"
+      },
+      "billing": {
+        "title": "Pagos y facturas",
+        "p": "Preguntas sobre un pago o una factura de Dialogbot: escríbanos antes de presentar una reclamación ante su banco y encontraremos una solución más rápido. Puede ver sus facturas en todo momento en Facturación cuando haya iniciado sesión."
+      },
+      "loggedIn": {
+        "title": "¿Ha iniciado sesión?",
+        "p": "Entonces encontrará respuesta a la mayoría de las preguntas en Ayuda dentro de la app, y podrá ver directamente su configuración, sus conversaciones y sus consultas."
+      },
+      "ambassadors": {
+        "title": "Embajadores",
+        "a": "Preguntas sobre bonificaciones, pagos o las reglas: escriba a la misma dirección. Lea sobre el programa en ",
+        "b": "."
+      },
+      "data": {
+        "title": "Datos personales",
+        "a": "Si quiere acceder a sus datos, rectificarlos o suprimirlos, lea la ",
+        "link": "política de privacidad",
+        "b": " y escríbanos."
+      }
+    }
+  },
+  "knowledge": {
+    "meta": {
+      "title": "Recursos sobre recepcionista con IA, contestador con IA y chatbot",
+      "description": "Guías para empresas sobre recepcionista con IA, contestador con IA, servicios de atención telefónica, desvío de llamadas y chatbot para su web.",
+      "ogTitle": "Recursos | Dialogbot"
+    },
+    "kicker": "Recursos",
+    "title": "Guías sobre recepcionista con IA y atención telefónica",
+    "lead": "Guías breves y prácticas para pymes que quieren tener controlados el teléfono y las consultas, sin contratar a otra persona.",
+    "guidesTitle": "Guías",
+    "industriesTitle": "Recepcionista con IA para su sector",
+    "faq": [
+      ["¿Qué es Dialogbot?", "Un recepcionista con IA que atiende el teléfono y el chat de su empresa en el idioma de sus clientes, responde con su propia información aprobada y reserva citas."],
+      ["¿Puedo escucharlo?", "Sí. Vaya a Pruébelo, cuente al chat a qué se dedican y Dialogbot le llamará para mostrárselo."]
+    ]
+  },
+  "industry": {
+    "kicker": "Recepcionista con IA para {name}",
+    "setupPoint": "Le guiamos durante toda la configuración",
+    "problemTitle": "El problema de {name}",
+    "problemText": " Dialogbot es un recepcionista con IA para {examples} que atiende el teléfono y el chat cuando usted no puede.",
+    "scenarioTitle": "Así suena (ejemplo)",
+    "scenarioNote": "El ejemplo es ilustrativo. Dialogbot siempre responde con la información que usted ha aprobado. ",
+    "scenarioLink": "Escúchelo usted mismo: reciba una llamada",
+    "scenarioEnd": ".",
+    "priceTitle": "Precio y configuración",
+    "priceA": "Una suscripción de ",
+    "price": "2.495 kr. al mes",
+    "priceB": ", IVA no incluido y sin precio por contacto. Alguien de Dialogbot lo configura con usted en una media hora. Vea todos los detalles en la ",
+    "priceLink": "página de precios",
+    "priceC": ".",
+    "othersTitle": "Dialogbot para otros sectores",
+    "faq": [
+      ["¿Cuánto cuesta?", "Una suscripción de 2.495 kr. al mes, IVA no incluido. No hay precio por contacto."],
+      ["¿Podemos conservar nuestro número de teléfono?", "Sí. Desvía su número a Dialogbot cuando esté ocupado o haya cerrado."]
+    ]
+  },
+  "industries": {
+    "haandvaerkere": {
+      "name": "profesionales de oficios",
+      "plural": "Profesionales de oficios",
+      "examples": "fontanería, electricidad, carpintería, pintura, albañilería, suelos y tejados",
+      "title": "Recepcionista con IA para profesionales de oficios: atienda el teléfono desde la escalera",
+      "description": "Dialogbot atiende el teléfono del fontanero, el electricista, el carpintero y el pintor cuando tienen las manos ocupadas. Recoge el trabajo y la dirección y reserva visitas de valoración.",
+      "pain": "El jefe está subido a una escalera o debajo de un fregadero y no puede coger el teléfono. Cada llamada sin atender suele ser un cliente que llama al siguiente profesional que encuentra en Google.",
+      "scenario": [["Cliente", "Hola, tengo una fuga en el váter, ¿pueden venir a verlo?"], ["Dialogbot", "Claro que sí. ¿En qué dirección es y es urgente?"], ["Cliente", "Calle Mayor 12, en Madrid. A ser posible esta semana."], ["Dialogbot", "Gracias. Lo he anotado y el jefe le llamará hoy para concretar la hora."]],
+      "benefits": ["Atiende el teléfono cuando tiene las manos ocupadas", "Reúne el trabajo, la dirección y la urgencia en un solo mensaje para el jefe", "Reserva visitas de valoración directamente en el calendario", "Hace seguimiento de los presupuestos que ha enviado"],
+      "objection": ["Mis clientes quieren hablar conmigo.", "Y lo harán. Dialogbot solo atiende las llamadas que usted no puede coger y se asegura de que devuelva la llamada a un cliente interesado con todos los datos a mano."],
+      "faq": [["¿Puede Dialogbot dar precio por un trabajo?", "Solo si usted ha introducido el precio y lo ha aprobado, por ejemplo un precio fijo por m². Si no, anota el trabajo y promete que el jefe le enviará un presupuesto."], ["¿Puede reservar visitas de valoración?", "Sí, según su horario y sus reglas de reserva, y siempre pide permiso al cliente antes."]]
+    },
+    "klinikker": {
+      "name": "clínicas",
+      "plural": "Clínicas",
+      "examples": "dentistas, fisioterapeutas, quiroprácticos, psicólogos y veterinarios",
+      "title": "Recepcionista con IA para clínicas: reserve citas las 24 horas",
+      "description": "Dialogbot reserva, cambia y cancela citas para el dentista, el fisioterapeuta y el quiropráctico, también fuera del horario, y descarga la recepción a primera hora.",
+      "pain": "El teléfono suena en mitad de los tratamientos y la recepción está desbordada por la mañana. Los pacientes que no consiguen comunicar buscan otra clínica.",
+      "scenario": [["Paciente", "Necesito cambiar mi cita del jueves."], ["Dialogbot", "Le ayudo con eso. La próxima cita libre es el viernes a las 9:30 o el lunes a las 14:00. ¿Qué le viene mejor?"], ["Paciente", "El viernes."], ["Dialogbot", "Su cita queda cambiada al viernes a las 9:30. ¿Quiere una confirmación por SMS?"]],
+      "benefits": ["Reserva, cambia y cancela citas las 24 horas", "Envía confirmación por SMS", "Descarga la recepción a primera hora", "Nunca da consejos sobre tratamientos: remite a la clínica"],
+      "objection": ["¿Y la confidencialidad?", "El asistente solo pregunta lo necesario para reservar. Usted decide las reglas, y las conversaciones pueden eliminarse según sus propios plazos."],
+      "faq": [["¿Da Dialogbot consejos sanitarios?", "No. Reserva citas y responde a preguntas prácticas, y siempre remite a la clínica para cuestiones profesionales."], ["¿Pueden los pacientes cambiar y cancelar citas por sí mismos?", "Sí. Dialogbot encuentra la cita por número de teléfono o nombre y la cambia o cancela cuando el paciente lo confirma."]]
+    },
+    "frisoerer": {
+      "name": "peluquerías y salones",
+      "plural": "Peluquerías y salones",
+      "examples": "peluquerías, barberías, centros de estética, uñas y masajes",
+      "title": "Recepcionista con IA para peluquerías y salones: reserve sin soltar las tijeras",
+      "description": "Dialogbot atiende el teléfono de la peluquería, la barbería y el centro de estética y reserva citas, también por la noche, para que nunca tenga que interrumpir a un cliente en la silla.",
+      "pain": "No se puede coger el teléfono con las tijeras en la mano, y muchos clientes llaman por la noche, cuando el salón está cerrado.",
+      "scenario": [["Cliente", "¿Tienen hueco para un corte de caballero mañana después de las 16:00?"], ["Dialogbot", "Hay una cita libre mañana a las 16:30. ¿Se la reservo a su nombre?"], ["Cliente", "Sí, gracias, soy Javier."], ["Dialogbot", "Listo, Javier: reservado mañana a las 16:30. Recibirá una confirmación por SMS."]],
+      "benefits": ["Reserva citas, también por la noche y los fines de semana", "Envía confirmación por SMS", "Responde sobre precios y horarios según su propia lista de precios", "Nunca tendrá que interrumpir a un cliente en la silla"],
+      "objection": ["Ya tenemos reservas online.", "Perfecto, pero muchos llaman igualmente. Dialogbot atiende esas llamadas y reserva en el mismo calendario, para que no se pierda ninguna."],
+      "faq": [["¿Puede Dialogbot leer nuestra lista de precios?", "Sí, cuando la haya introducido y aprobado. Solo responde con información aprobada."], ["¿Qué pasa por la noche?", "Dialogbot atiende el teléfono las 24 horas y reserva dentro de su horario de apertura."]]
+    },
+    "autovaerksteder": {
+      "name": "talleres mecánicos",
+      "plural": "Talleres mecánicos",
+      "examples": "talleres mecánicos, centros de neumáticos, talleres de chapa y concesionarios",
+      "title": "Recepcionista con IA para talleres: revisiones, ITV y cambio de neumáticos",
+      "description": "Dialogbot recibe pedidos de revisión, ITV y cambio de neumáticos, anota el coche y la matrícula y reserva citas mientras los mecánicos trabajan.",
+      "pain": "Los mecánicos están en el taller y el teléfono no para de sonar por ITV, revisiones y cambios de neumáticos.",
+      "scenario": [["Cliente", "Necesito cambiar a neumáticos de invierno."], ["Dialogbot", "Nos encargamos. ¿Qué coche es y tiene la matrícula?"], ["Cliente", "Un Golf, 1234 ABC."], ["Dialogbot", "Gracias. Hay una cita libre el miércoles a las 8:00. ¿Se la reservo?"]],
+      "benefits": ["Recibe pedidos de revisión, ITV y cambio de neumáticos", "Anota el coche, la matrícula y el problema", "Reserva citas y envía SMS", "Responde sobre horarios y precios según su lista de precios"],
+      "objection": ["Es demasiado técnico para un robot.", "No tiene que diagnosticar el coche. Reúne los datos para que el mecánico devuelva la llamada bien preparado."],
+      "faq": [["¿Puede Dialogbot hacer un diagnóstico?", "No. Reúne información sobre el coche y el problema para que pueda devolver la llamada preparado."], ["¿Puede reservar cambios de neumáticos en temporada alta?", "Sí, según sus huecos libres y sus reglas de reserva."]]
+    },
+    "raadgivere": {
+      "name": "asesorías y despachos",
+      "plural": "Asesorías y despachos",
+      "examples": "abogados, contables, agentes inmobiliarios, seguros y consultores informáticos",
+      "title": "Recepcionista con IA para abogados, contables y asesores",
+      "description": "Dialogbot cualifica las nuevas consultas con sus propias preguntas, reserva reuniones iniciales y envía un resumen claro al asesor adecuado.",
+      "pain": "Los asesores están reunidos, y los nuevos clientes que llaman se encuentran con un contestador y eligen a otro.",
+      "scenario": [["Cliente", "Necesito ayuda con la compraventa de una vivienda."], ["Dialogbot", "Con mucho gusto le ayudamos. ¿Es una compra o una venta, y para cuándo debe estar cerrada la operación?"], ["Cliente", "Una compra, en el plazo de un mes."], ["Dialogbot", "Gracias. ¿Le reservo una breve reunión inicial o prefiere que le llame un asesor?"]],
+      "benefits": ["Cualifica las nuevas consultas con sus propias preguntas", "Reserva reuniones iniciales", "Envía un resumen claro al asesor adecuado", "Nunca promete nada que usted no haya aprobado"],
+      "objection": ["Nuestros clientes esperan a una persona.", "El asistente dice con honestidad que es digital y se asegura de que una persona devuelva la llamada con el caso ya entendido."],
+      "faq": [["¿Da Dialogbot asesoramiento jurídico o financiero?", "No. Aclara brevemente el caso y lo envía al asesor adecuado."], ["¿Puede distinguir entre tipos de casos?", "Sí, con las preguntas que usted apruebe, por ejemplo compra o venta, particular o empresa."]]
+    },
+    "restauranter": {
+      "name": "restaurantes, hoteles y cafeterías",
+      "plural": "Restaurantes, hoteles y cafeterías",
+      "examples": "restaurantes, cafeterías, hoteles, hostales, bed & breakfast y catering",
+      "title": "Recepcionista con IA para restaurantes, hoteles y cafeterías",
+      "description": "Dialogbot recibe reservas de mesa y consultas en hora punta y después del cierre, y responde sobre la carta, el horario y el aparcamiento con su propia información.",
+      "pain": "El teléfono suena en plena hora punta del almuerzo y la cena. Se pierden reservas de mesa, consultas de habitaciones y eventos, o los clientes reservan en otro sitio.",
+      "scenario": [["Cliente", "¿Tienen mesa para cuatro el sábado a las 21:00?"], ["Dialogbot", "Con mucho gusto lo anoto. ¿A qué nombre, y hay alguna alergia que debamos saber?"], ["Cliente", "García. Una persona es celíaca."], ["Dialogbot", "Gracias. He anotado mesa para cuatro el sábado a las 21:00 a nombre de García, con una persona celíaca."]],
+      "benefits": ["Recibe reservas de mesa y consultas, también en hora punta y después del cierre", "Responde sobre horarios, carta, precios, aparcamiento y check-in", "Reúne consultas de grupos y catering con número de personas, fecha y preferencias", "El personal puede seguir atendiendo a los clientes"],
+      "objection": ["Ya usamos un sistema de reservas.", "Bien, pero muchos clientes llaman igualmente. Dialogbot atiende esas llamadas para que el personal no tenga que interrumpir el servicio o la recepción."],
+      "faq": [["¿Puede Dialogbot recibir reservas de grupos y catering?", "Sí. Reúne el número de personas, la fecha y las preferencias, y envía la consulta al responsable."], ["¿Puede responder sobre la carta?", "Sí, cuando haya introducido y aprobado la carta y los precios."]]
+    }
+  },
+  "ambassador": {
+    "join": {
+      "eyebrow": "Embajador de Dialogbot",
+      "title": "Recomiende Dialogbot y gane dinero con cada cliente",
+      "intro": "¿Conoce a un profesional de oficios, una peluquería o una clínica que pierde llamadas? Enséñeles Dialogbot. Si se hacen clientes, usted recibe una bonificación inicial y una comisión recurrente, y ellos un {discount} de descuento el primer mes.",
+      "cta": "Hágase embajador",
+      "earnTitle": "Cuánto gana · un cliente con suscripción",
+      "startBonus": "Bonificación inicial",
+      "firstMonth": "Primer mes: {rate} de {amount} (el cliente tiene un 50 % de descuento)",
+      "months": "Meses a {perMonth} ({rate} de {amount})",
+      "total": "Total el primer año",
+      "tenCustomers": "Con 10 clientes son {amount} el primer año. Los importes son antes de impuestos; la comisión se calcula sobre lo que el cliente paga realmente sin IVA, incluidas las llamadas de campaña."
+    },
+    "steps": {
+      "eyebrow": "Cómo funciona",
+      "title": "Tres pasos y ya está",
+      "needs": "Necesitará",
+      "recommendTitle": "Recomiende",
+      "recommendText": "Responda a cuatro preguntas rápidas sobre las reglas y comparta su enlace personal o su código con empresas que conozca. Si es menor de 18 años, su padre, madre o tutor lo aprueba por correo electrónico.",
+      "recommendParts": ["Cuenta gratuita", "Su enlace y su código"],
+      "customerTitle": "Se hacen clientes",
+      "customerText": "La empresa se registra con su enlace y obtiene un {discount} de descuento el primer mes. Usted ve el nombre de la empresa y el estado, nunca sus conversaciones.",
+      "customerParts": ["Empresa que pierde llamadas"],
+      "payoutTitle": "Usted cobra",
+      "payoutText": "{bonus} cuando el cliente ha pagado la primera factura, más {rate} de lo que pague durante {months} meses. Se paga en su cuenta bancaria.",
+      "payoutParts": ["Cuenta bancaria", "CPR o CVR"]
+    },
+    "rules": {
+      "eyebrow": "Las reglas",
+      "title": "Cómo funciona",
+      "earned": "Solo gana cuando el cliente ha pagado. El importe figura como \"ganado\" durante {days} días y después queda listo para el pago.",
+      "payoutMin": "Le pagamos en su cuenta bancaria cuando tenga al menos {amount} disponibles.",
+      "tax": "Sin CVR, la bonificación es un ingreso B (B-indkomst): la declaramos a la Agencia Tributaria danesa (Skattestyrelsen) con su número CPR, y usted paga el impuesto a través de su declaración provisional (forskudsopgørelse). No practicamos retención.",
+      "cvr": "Si tiene CVR, recibirá en su lugar un justificante de liquidación (con IVA, si está dado de alta en el IVA).",
+      "age": "Debe tener al menos {age} años. Si es menor de 18, su padre, madre o tutor debe aprobar el acuerdo antes de que paguemos; mientras tanto puede conseguir clientes.",
+      "privacy": "Usted ve el nombre de la empresa de sus clientes, su estado y su bonificación, nunca sus conversaciones ni sus datos de clientes.",
+      "agreeTitle": "Las reglas que acepta"
+    },
+    "signup": {
+      "eyebrow": "Registro",
+      "title": "Hágase embajador",
+      "loginFirst": "Primero cree una cuenta gratuita (o inicie sesión). Después volverá directamente aquí.",
+      "createAccount": "Crear cuenta",
+      "login": "Iniciar sesión",
+      "verifyFirst": "Confirme primero su correo electrónico: hemos enviado un enlace a {email}. ",
+      "resend": "Enviar enlace nuevo"
+    },
+    "faq": {
+      "eyebrow": "Preguntas",
+      "title": "Lo que preguntan los embajadores",
+      "whenQ": "¿Cuándo cobro?",
+      "whenA": "Cuando su cliente haya pagado su primera factura, recibe {bonus}. El importe figura como ganado durante {days} días y se paga cuando tenga al menos {amount} disponibles.",
+      "taxQ": "¿Tengo que pagar impuestos?",
+      "taxA": "Sí. Sin CVR es un ingreso B (B-indkomst), que declaramos a la Agencia Tributaria danesa (Skattestyrelsen); usted paga el impuesto a través de su declaración provisional. Con CVR recibe un justificante de liquidación.",
+      "ageQ": "¿Puedo ser menor de 18 años?",
+      "ageA": "Sí, a partir de {age} años. Su padre, madre o tutor debe aprobar el acuerdo por correo electrónico antes de que paguemos. Mientras tanto puede compartir su enlace.",
+      "rulesQ": "¿Qué no puedo hacer?",
+      "rulesA": "Siempre debe indicar que es publicidad y que recibe una bonificación. Nada de correos ni SMS masivos a personas que no conoce, y nunca use IA para llamar a nadie."
+    },
+    "form": {
+      "iAm": "Soy",
+      "private": "Particular",
+      "privateHint": "Sin CVR: la bonificación es un ingreso B",
+      "company": "Empresa",
+      "companyHint": "Con CVR: liquidación mediante justificante",
+      "fullName": "Nombre completo",
+      "mobile": "Teléfono móvil",
+      "mobileHint": "Para poder llamarle si hay alguna duda.",
+      "birthDate": "Fecha de nacimiento",
+      "cpr": "Número CPR (puede esperar)",
+      "cprHint": "Necesario para declarar ingresos B. Se guarda cifrado.",
+      "cprPlaceholder": "DDMMAA-XXXX",
+      "companyName": "Nombre de la empresa",
+      "cvr": "Número CVR",
+      "vatRegistered": "La empresa está dada de alta en el IVA",
+      "minorTitle": "Es menor de 18 años: su padre, madre o tutor debe aprobarlo",
+      "minorText": "Enviaremos un correo con el acuerdo y las reglas. Mientras tanto puede compartir su enlace y conseguir clientes; solo pagaremos cuando el acuerdo esté aprobado.",
+      "parentName": "Nombre del padre, madre o tutor",
+      "parentEmail": "Correo del padre, madre o tutor",
+      "bankReg": "N.º de registro bancario (puede esperar)",
+      "bankAccount": "Número de cuenta (puede esperar)",
+      "bankAccountHint": "Aquí le pagaremos. Se guarda cifrado.",
+      "headline": "Su saludo en su página (opcional)",
+      "headlineHint": "Se muestra a quienes usan su enlace. Por ejemplo: \"Mi tío lo usa en su empresa de fontanería.\"",
+      "motivation": "¿A quién quiere recomendar Dialogbot? (opcional)",
+      "quizTitle": "Cuatro preguntas sobre las reglas",
+      "wrong": "Incorrecto: lea las reglas de la izquierda e inténtelo de nuevo.",
+      "answerAll": "Responda a las cuatro preguntas para registrarse.",
+      "submitting": "Registrando…",
+      "submit": "Registrarme como embajador",
+      "footnote": "Al registrarse acepta las reglas. Aprobamos a todos los embajadores manualmente, normalmente en un par de días."
+    },
+    "parent": {
+      "eyebrow": "Padre, madre o tutor",
+      "title": "Aprobar el acuerdo de embajador",
+      "invalid": "El enlace no es válido o ha caducado. Pida a su hijo o hija que envíe un nuevo correo desde su página de embajador.",
+      "loading": "Cargando el acuerdo…",
+      "done": "¡Gracias! El acuerdo está aprobado. {first} ya puede cobrar su bonificación.",
+      "intro": "{name} quiere ser embajador de Dialogbot. Esto significa que {first} recomienda Dialogbot a empresas y recibe una bonificación cuando se convierten en clientes de pago:",
+      "bonus": "{amount} cuando un cliente ha pagado su primera factura",
+      "share": "{rate} de lo que pague el cliente durante {months} meses",
+      "payout": "Se paga en la cuenta bancaria de {first}. Es un ingreso B (B-indkomst) que declaramos a la Agencia Tributaria danesa (Skattestyrelsen); no se practica retención.",
+      "stop": "El acuerdo puede terminarse en cualquier momento: escríbanos.",
+      "rulesTitle": "Las reglas que ha aceptado {first}",
+      "yourName": "Su nombre",
+      "confirm": "Soy padre, madre o tutor de {name} y apruebo que {first} sea embajador de Dialogbot en estas condiciones.",
+      "confirming": "Aprobando…",
+      "submit": "Aprobar el acuerdo"
+    }
+  }
+}

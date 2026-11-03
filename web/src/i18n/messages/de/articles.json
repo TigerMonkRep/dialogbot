@@ -1,0 +1,324 @@
+{
+  "ai-telefonsvarer-eller-telefonpasning": {
+    "meta": {
+      "title": "KI-Anrufbeantworter oder Telefonservice – was passt zu Ihnen?",
+      "description": "Anrufbeantworter, Telefonservice oder KI-Anrufbeantworter? Sehen Sie die Unterschiede bei Preis, Erreichbarkeit und Qualität, damit Sie die richtige Lösung wählen.",
+      "ogTitle": "KI-Anrufbeantworter oder Telefonservice? | Dialogbot"
+    },
+    "kicker": "KI-Anrufbeantworter oder Telefonservice",
+    "title": "KI-Anrufbeantworter oder Telefonservice – was passt zu Ihnen?",
+    "lead": "Wenn Sie selbst nicht ans Telefon gehen können, gibt es drei Möglichkeiten: einen gewöhnlichen Anrufbeantworter, einen Telefonservice mit Menschen oder einen KI-Anrufbeantworter. Hier sind die Unterschiede.",
+    "points": [
+      "Anrufbeantworter: günstig, aber der Kunde legt oft auf",
+      "Telefonservice: ein Mensch antwortet, aber meist nur zu Geschäftszeiten",
+      "KI-Anrufbeantworter: antwortet rund um die Uhr und kann buchen",
+      "Wählen Sie nach Anrufvolumen, Öffnungszeiten und Bedarf"
+    ],
+    "sections": [
+      {
+        "title": "1. Der gewöhnliche Anrufbeantworter",
+        "body": [
+          { "type": "p", "text": "Günstig und einfach, aber viele Kunden legen auf, statt eine Nachricht zu hinterlassen – und rufen die Konkurrenz an. Sie müssen die Nachrichten selbst abhören und zurückrufen, ohne zu wissen, worum es geht." }
+        ]
+      },
+      {
+        "title": "2. Telefonservice",
+        "body": [
+          { "type": "p", "text": "Ein Mensch nimmt in Ihrem Namen ab und notiert eine Nachricht. Das wirkt persönlich, wird aber meist pro Anruf oder pro Monat abgerechnet, und viele Dienste sind nur zu den üblichen Geschäftszeiten erreichbar. Die Telefonkraft kennt Ihre Leistungen und Preise selten im Detail." }
+        ]
+      },
+      {
+        "title": "3. KI-Anrufbeantworter",
+        "body": [
+          { "type": "p", "parts": ["Ein KI-Anrufbeantworter wie ", { "link": "/ai-telefonsvarer", "text": "Dialogbot" }, " spricht rund um die Uhr in der Sprache Ihrer Kunden mit dem Anrufer, antwortet auf Grundlage Ihres eigenen bestätigten Wissens und kann Termine buchen und SMS-Bestätigungen senden. Statt einer Sprachnachricht erhalten Sie eine schriftliche Zusammenfassung jedes Gesprächs."] },
+          { "type": "p", "text": "Dafür ist er kein Mensch – er sagt das ehrlich und leitet Anliegen, die er nicht beantworten kann, an Sie weiter." }
+        ]
+      },
+      {
+        "title": "Im Vergleich",
+        "body": [
+          {
+            "type": "table",
+            "other": "Telefonservice",
+            "rows": [
+              ["Wer antwortet", "KI in der Sprache Ihrer Kunden, nur auf Grundlage von Wissen, das Sie bestätigt haben", "Ein Mensch, der Ihre Leistungen nicht immer kennt"],
+              ["Erreichbarkeit", "Rund um die Uhr", "Meist zu den üblichen Geschäftszeiten"],
+              ["Buchung", "Direkt in Ihren Kalender, mit SMS-Bestätigung", "Meist eine Nachricht, der Sie selbst nachgehen"],
+              ["Preis", "2.495 kr./Monat zzgl. MwSt., kein Preis pro Anfrage", "Meist pro Anruf oder pro Monat"],
+              ["Nachricht an Sie", "Schriftliche Zusammenfassung jedes Gesprächs und ein Tagesbericht", "Eine Nachricht pro Anruf"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "So treffen Sie die Wahl",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Wenige Anrufe und nur tagsüber?" }, " Ein Anrufbeantworter kann genügen."],
+              [{ "b": "Ist ein Mensch am Hörer wichtig?" }, " Telefonservice – aber prüfen Sie die Erreichbarkeit."],
+              [{ "b": "Viele Anrufe, auch abends, und Bedarf an Terminbuchung?" }, " Ein KI-Anrufbeantworter bietet am meisten fürs Geld."]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Hören Sie den Unterschied",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "Lassen Sie sich von Dialogbot anrufen" }, " und hören Sie, wie ein KI-Anrufbeantworter klingt. Siehe auch ", { "link": "/priser", "text": "die Preise" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Kann ein KI-Anrufbeantworter einen Telefonservice ersetzen?", "Für die meisten Routineanfragen ja: Er antwortet, klärt das Anliegen und bucht. Komplexe Fälle werden an Sie weitergeleitet."],
+      ["Ist ein KI-Anrufbeantworter auch nachts erreichbar?", "Ja, Dialogbot geht rund um die Uhr ans Telefon."],
+      ["Was ist günstiger: Telefonservice oder Dialogbot?", "Ein Telefonservice wird meist pro Anruf oder pro Monat abgerechnet. Dialogbot ist ein Abonnement für 2.495 kr. im Monat zzgl. MwSt. mit 300 Minuten eingehender Anrufe und ohne Preis pro Anfrage. Siehe auch /viden/dialogbot-vs-vocalis."],
+      ["Kann ich meine Nummer behalten?", "Ja. Sie leiten Ihre Nummer auf Dialogbot um, wenn Sie besetzt oder geschlossen sind."]
+    ]
+  },
+  "dialogbot-vs-almindelig-chatbot": {
+    "meta": {
+      "title": "Dialogbot oder ein gewöhnlicher Chatbot – was ist der Unterschied?",
+      "description": "Ein gewöhnlicher Chatbot antwortet auf einer Website. Dialogbot geht außerdem ans Telefon, bucht Termine und antwortet nur auf Grundlage von Wissen, das Sie selbst bestätigt haben. Die Unterschiede im Überblick.",
+      "ogTitle": "Dialogbot oder ein gewöhnlicher Chatbot? | Dialogbot"
+    },
+    "kicker": "Dialogbot oder ein gewöhnlicher Chatbot",
+    "title": "Dialogbot oder ein gewöhnlicher Chatbot – was ist der Unterschied?",
+    "lead": "Ein gewöhnlicher Chatbot antwortet auf der Website. Dialogbot geht außerdem ans Telefon, bucht die Termine und lässt Sie alles bestätigen, was er sagen darf.",
+    "points": [
+      "Chatbot: schreibt auf der Website",
+      "Dialogbot: Telefon, Chat und Buchung mit demselben Wissen",
+      "Dialogbot rät nie – nur bestätigtes Wissen",
+      "Ein Abonnement: 2.495 kr./Monat"
+    ],
+    "sections": [
+      {
+        "title": "Überblick",
+        "body": [
+          {
+            "type": "table",
+            "other": "Gewöhnlicher Chatbot",
+            "rows": [
+              ["Kanäle", "Telefon und Webchat mit demselben Wissen", "Meist nur Chat auf der Website"],
+              ["Buchung", "Findet freie Zeiten in Ihrem Kalender und sendet SMS-Bestätigung", "Selten – oft nur ein Link oder eine Nachricht"],
+              ["Worauf er seine Antworten stützt", "Nur auf Wissen, das Sie selbst bestätigt haben – und Sie sehen jede Änderung zuerst", "Unterschiedlich: manche antworten frei auf Basis eines KI-Modells"],
+              ["Wenn er nicht antworten kann", "Er sagt es und nimmt eine Nachricht für Sie auf", "Unterschiedlich"],
+              ["Nachricht an Sie", "Name, Nummer und worum es ging – und jeden Tag ein Bericht", "Unterschiedlich"],
+              ["Preis", "2.495 kr./Monat – kein Preis pro Anfrage", "Ab wenigen hundert kr./Monat aufwärts"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Wann reicht ein gewöhnlicher Chatbot?",
+        "body": [
+          { "type": "p", "text": "Wenn Ihre Kunden fast nur schreiben und Sie weder Termine buchen noch Anrufe entgegennehmen lassen müssen, kann ein einfacher Chatbot genügen – und günstiger sein." }
+        ]
+      },
+      {
+        "title": "Wann bietet Dialogbot mehr?",
+        "body": [
+          { "type": "p", "parts": ["Wenn das Telefon klingelt, während Sie auf der Leiter stehen oder einen Kunden im Stuhl haben, und ein unbeantworteter Anruf ein verlorener Kunde ist. Dialogbot nimmt innerhalb von zwei Sekunden ab, bucht einen Termin und informiert Sie. Mehr über ", { "link": "/ai-receptionist", "text": "den KI-Rezeptionisten" }, " und ", { "link": "/chatbot", "text": "den Chatbot für die Website" }, ", der Teil des Abonnements ist."] }
+        ]
+      },
+      {
+        "title": "Hören Sie selbst",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "Lassen Sie sich von Dialogbot anrufen" }, " – zwei Minuten, keine Anmeldung."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Kann Dialogbot auch einfach nur ein Chatbot sein?", "Ja. Der Webchat ist im Abonnement enthalten und nutzt dasselbe bestätigte Wissen wie das Telefon. Es ist eine einzige Codezeile auf der Website."],
+      ["Rät Dialogbot, wenn er die Antwort nicht kennt?", "Nein. Er antwortet nur auf Grundlage bestätigten Wissens und nimmt eine Nachricht für Sie auf, wenn er nicht antworten kann."],
+      ["Was kostet das?", "2.495 kr. im Monat zzgl. MwSt. mit 300 Minuten eingehender Anrufe. Keine Mindestlaufzeit."]
+    ]
+  },
+  "dialogbot-vs-vocalis": {
+    "meta": {
+      "title": "Dialogbot oder Vocalis – Festpreis oder Minutenpakete?",
+      "description": "Dialogbot und Vocalis im Vergleich: fester Monatspreis oder Minutenpakete, bestätigtes Wissen, Buchung und wie Sie starten. Preise zzgl. MwSt.",
+      "ogTitle": "Dialogbot oder Vocalis? | Dialogbot"
+    },
+    "kicker": "Dialogbot oder Vocalis",
+    "title": "Dialogbot oder Vocalis – Festpreis oder Minutenpakete?",
+    "lead": "Beide entwickeln KI-Mitarbeiter für Unternehmen. Der Unterschied liegt vor allem darin, wie Sie bezahlen und wie Sie starten.",
+    "points": [
+      "Dialogbot: 2.495 kr./Monat, 300 Minuten inklusive, danach 1,50 kr./Min.",
+      "Vocalis: ab 899 kr./Monat für 100 Minuten, danach Minutenpakete",
+      "Dialogbot: nur bestätigtes Wissen – und Sie bestätigen jede Änderung",
+      "Dialogbot: erst anhören, ohne Anmeldung"
+    ],
+    "sections": [
+      {
+        "title": "Überblick",
+        "body": [
+          {
+            "type": "table",
+            "other": "Vocalis",
+            "rows": [
+              ["Preis pro Monat (zzgl. MwSt.)", "2.495 kr. – ein Abonnement", "Ab 899 kr. für 100 Minuten (Basis)"],
+              ["Wenn die Minuten aufgebraucht sind", "1,50 kr. pro angefangener Minute nach den 300 inklusiven", "Automatische Minutenpakete bis 3.995 kr./Monat"],
+              ["Antworten auf Grundlage von", "Wissen, das Sie selbst bestätigt haben – und Sie sehen jede Änderung zuerst (vorher → nachher, «Bestätigen?»)", "Siehe Vocalis' eigene Beschreibung"],
+              ["Buchung", "Google Kalender oder Microsoft 365, mit SMS-Bestätigung", "Siehe Vocalis' eigene Beschreibung"],
+              ["So starten Sie", "Erst anhören: Er ruft Sie an, ohne Anmeldung. Selbst einrichten in ca. einer halben Stunde", "Kostenlose Beratung und Rückruf"],
+              ["Mindestlaufzeit", "Keine – monatlich kündbar", "Siehe Vocalis' eigene Beschreibung"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Preis: fest oder nach Verbrauch",
+        "body": [
+          { "type": "p", "text": "Vocalis startet günstiger, aber der Preis folgt dem Verbrauch: Überschreiten Sie die 100 Minuten, werden automatisch Pakete hinzugebucht. Dialogbot kostet zunächst mehr, aber 300 Minuten sind inklusive, und jede weitere Minute kostet 1,50 kr. Die Rechnung ist vorhersehbar, und Sie sehen Ihren Verbrauch jederzeit." },
+          { "type": "p", "parts": ["Gibt es nur wenige Anrufe im Monat, kann ein niedrigerer Einstiegspreis besser passen. Klingelt das Telefon den ganzen Tag, ist ein Festpreis die sichere Wahl. Siehe ", { "link": "/priser", "text": "alle Preise" }, "."] }
+        ]
+      },
+      {
+        "title": "Der große Unterschied: bestätigtes Wissen",
+        "body": [
+          { "type": "p", "text": "Dialogbot antwortet nur auf Grundlage der Leistungen, Preise und Öffnungszeiten, die Sie selbst bestätigt haben, und sagt es, wenn er die Antwort nicht kennt. Jede Änderung wird zuerst als vorher → nachher mit «Bestätigen?» angezeigt. Genau dieser Mechanismus sorgt dafür, dass er nicht rät." }
+        ]
+      },
+      {
+        "title": "Hören Sie den Unterschied selbst",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "Lassen Sie sich von Dialogbot anrufen" }, " – das dauert zwei Minuten und erfordert keine Anmeldung."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Ist Dialogbot teurer als Vocalis?", "Zunächst ja: 2.495 kr. im Monat gegenüber ab 899 kr. für 100 Minuten. Dafür sind 300 Minuten inklusive, und der Preis springt nicht, wenn Sie mehr Anrufe bekommen."],
+      ["Kann ich von Vocalis zu Dialogbot wechseln?", "Ja. Sie behalten Ihre bisherige Telefonnummer und leiten auf Dialogbot um, und es gibt keine Mindestlaufzeit."],
+      ["Wo finde ich die aktuellen Preise von Vocalis?", "Bei Vocalis selbst. Die Preise hier sind die veröffentlichten Listenpreise zum Zeitpunkt der Erstellung dieser Seite und können sich geändert haben."]
+    ]
+  },
+  "hvad-er-en-ai-receptionist": {
+    "meta": {
+      "title": "Was ist ein KI-Rezeptionist – und wie funktioniert er?",
+      "description": "Ein KI-Rezeptionist übernimmt Telefon und Chat für Ihr Unternehmen, antwortet auf Grundlage Ihres eigenen Wissens und bucht Termine. So funktioniert er – und darauf sollten Sie achten.",
+      "ogTitle": "Was ist ein KI-Rezeptionist? | Dialogbot"
+    },
+    "kicker": "Was ist ein KI-Rezeptionist?",
+    "title": "Was ist ein KI-Rezeptionist – und wie funktioniert er?",
+    "lead": "Ein KI-Rezeptionist ist ein digitaler Assistent, der Telefon und Chat für Ihr Unternehmen übernimmt. Hier erfahren Sie, was er kann, wie er funktioniert und worauf Sie achten sollten, bevor Sie sich für einen entscheiden.",
+    "points": [
+      "Übernimmt Telefon und Chat rund um die Uhr",
+      "Antwortet auf Grundlage des eigenen Wissens des Unternehmens",
+      "Klärt das Anliegen und sammelt Kontaktdaten",
+      "Kann Termine buchen und SMS senden",
+      "Darf nie raten oder etwas versprechen, das Sie nicht bestätigt haben"
+    ],
+    "sections": [
+      {
+        "title": "Kurz gesagt",
+        "body": [
+          { "type": "p", "text": "Ein KI-Rezeptionist antwortet, wenn Sie es selbst nicht können: wenn Sie besetzt sind, bei einem Kunden oder geschlossen haben. Statt eines Anrufbeantworters, der den Kunden um eine Nachricht bittet, spricht er mit dem Kunden, findet heraus, was er braucht, und sammelt Name, Nummer und Anliegen, damit Sie einen interessierten Kunden zurückrufen können." },
+          { "type": "p", "parts": ["Er besteht aus drei Teilen: einer ", { "b": "Spracherkennung" }, ", die versteht, was der Kunde sagt, einem ", { "b": "Sprachmodell" }, ", das die richtige Antwort im Wissen des Unternehmens findet, und einer ", { "b": "Stimme" }, ", die natürlich in der Sprache des Anrufers antwortet."] }
+        ]
+      },
+      {
+        "title": "Was kann ein KI-Rezeptionist?",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              "Die üblichen Fragen beantworten: Öffnungszeiten, Preise, Leistungen, Adresse und Parken.",
+              "Das Anliegen mit den Fragen klären, die das Unternehmen festgelegt hat.",
+              "Freie Zeiten finden und Termine buchen, verschieben oder stornieren.",
+              "Dem Kunden eine Bestätigung per SMS senden.",
+              "Dem Unternehmen eine kurze, schriftliche Zusammenfassung jedes Gesprächs liefern."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Was sollte er nicht können?",
+        "body": [
+          { "type": "p", "parts": ["Ein guter KI-Rezeptionist ", { "b": "rät nie" }, ". Er sollte nur auf Grundlage von Wissen antworten, das das Unternehmen bestätigt hat, und ehrlich sagen, wenn etwas nicht daraus hervorgeht. Er darf keine Rabatte versprechen, keine fachliche Beratung geben und nicht so tun, als sei er ein Mensch."] },
+          { "type": "p", "text": "Bei Dialogbot beginnt jedes Wissen als Entwurf und wird erst verwendet, wenn ein Inhaber oder Administrator es bestätigt hat." }
+        ]
+      },
+      {
+        "title": "Darauf sollten Sie achten",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Gesprochene Sprache" }, " – klingt er natürlich, und versteht er Namen und Fachbegriffe?"],
+              [{ "b": "Kontrolle" }, " – können Sie selbst bestätigen, was er sagen darf?"],
+              [{ "b": "Aktionen" }, " – kann er buchen und SMS senden, oder nimmt er nur Nachrichten auf?"],
+              [{ "b": "Einrichtung" }, " – bekommen Sie Hilfe, oder müssen Sie es selbst herausfinden?"],
+              [{ "b": "Preis" }, " – Festpreis oder pro Anfrage, und gibt es eine Mindestlaufzeit?"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Probieren Sie es selbst aus",
+        "body": [
+          { "type": "p", "parts": ["Der beste Test ist, ihn zu hören. ", { "link": "/proev", "text": "Lassen Sie sich von Dialogbot anrufen" }, ", wählen Sie Ihre Branche und hören Sie, wie er für Sie ans Telefon gehen würde. Mehr über ", { "link": "/ai-receptionist", "text": "den KI-Rezeptionisten von Dialogbot" }, " oder sehen Sie sich ", { "link": "/priser", "text": "die Preise" }, " an."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Ist ein KI-Rezeptionist dasselbe wie ein Chatbot?", "Nicht ganz. Ein Chatbot schreibt, ein KI-Rezeptionist spricht am Telefon. Dialogbot macht beides mit demselben Wissen."],
+      ["Klingt ein KI-Rezeptionist wie ein Roboter?", "Moderne Stimmen klingen natürlich. Dialogbot spricht in der Sprache Ihrer Kunden und sagt immer ehrlich, dass er ein digitaler Assistent ist, wenn der Kunde fragt."],
+      ["Was kostet ein KI-Rezeptionist?", "Bei Dialogbot gibt es ein Abonnement für 2.495 kr. im Monat, zzgl. MwSt. Es gibt keinen Preis pro Anfrage."]
+    ]
+  },
+  "viderestil-telefonen": {
+    "meta": {
+      "title": "So leiten Sie Ihr Telefon um, wenn Sie besetzt sind",
+      "description": "Leiten Sie Ihr Handy bei Besetzt, bei Nichtannahme oder immer mit den Standardcodes **67*, **61* und **21* um – und schalten Sie die Umleitung mit ##002# wieder aus. Ein Leitfaden für Unternehmen in Dänemark.",
+      "ogTitle": "So leiten Sie Ihr Telefon um | Dialogbot"
+    },
+    "kicker": "Telefon umleiten",
+    "title": "So leiten Sie Ihr Telefon um, wenn Sie besetzt sind",
+    "lead": "Mit einer Rufumleitung werden Anrufe an eine andere Nummer weitergeleitet – z. B. an Ihren KI-Rezeptionisten –, wenn Sie sie selbst nicht annehmen können. Hier sind die Standardcodes, die Sie am Handy eingeben.",
+    "points": [
+      "Bei Besetzt: **67*Nummer#",
+      "Bei Nichtannahme: **61*Nummer#",
+      "Wenn das Telefon ausgeschaltet ist: **62*Nummer#",
+      "Immer: **21*Nummer#",
+      "Alle Umleitungen ausschalten: ##002#"
+    ],
+    "sections": [
+      {
+        "title": "Die Codes",
+        "body": [
+          { "type": "p", "text": "Die Codes sind im Mobilfunknetz Standard und funktionieren bei den meisten dänischen Telefonanbietern. Geben Sie die Nummer mit +45 davor ein und drücken Sie nach dem Code auf Anrufen." },
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Wenn Sie besetzt sind:" }, " ", { "code": "**67*+4512345678#" }],
+              [{ "b": "Wenn Sie nicht rangehen:" }, " ", { "code": "**61*+4512345678#" }, " – bei manchen Anbietern können Sie die Anzahl der Sekunden angeben: ", { "code": "**61*+4512345678**20#" }],
+              [{ "b": "Wenn das Telefon ausgeschaltet ist oder keinen Empfang hat:" }, " ", { "code": "**62*+4512345678#" }],
+              [{ "b": "Alle Anrufe, immer:" }, " ", { "code": "**21*+4512345678#" }],
+              [{ "b": "Alle Umleitungen ausschalten:" }, " ", { "code": "##002#" }]
+            ]
+          },
+          { "type": "p", "text": "Funktioniert ein Code nicht, oder haben Sie einen Festnetzanschluss oder eine IP-Telefonanlage, aktivieren Sie die Rufumleitung in der App oder im Kundenportal Ihres Telefonanbieters, oder fragen Sie Ihren Anbieter." }
+        ]
+      },
+      {
+        "title": "Die clevere Einrichtung",
+        "body": [
+          { "type": "p", "parts": ["Die meisten Unternehmen nutzen ", { "b": "Besetzt + Nichtannahme + ausgeschaltet" }, ". So gehen Sie selbst ran, wenn Sie können, und alle anderen Anrufe landen bei Ihrem KI-Rezeptionisten statt auf dem Anrufbeantworter."] }
+        ]
+      },
+      {
+        "title": "Auf Dialogbot umleiten",
+        "body": [
+          { "type": "p", "parts": ["Wenn Sie sich bei Dialogbot registrieren, erhalten Sie eine Dialogbot-Nummer, auf die Sie umleiten – und wir helfen Ihnen bei der Einrichtung dabei. Mehr über ", { "link": "/ai-telefonsvarer", "text": "den KI-Anrufbeantworter" }, " oder ", { "link": "/proev", "text": "hören Sie ihn selbst" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Kostet die Rufumleitung etwas?", "Das hängt von Ihrem Tarif beim Telefonanbieter ab. Prüfen Sie bei Ihrem Anbieter den Preis für umgeleitete Anrufe."],
+      ["Wie prüfe ich, ob die Rufumleitung aktiv ist?", "Geben Sie z. B. *#67# oder *#61# ein und drücken Sie auf Anrufen – dann zeigt das Telefon den Status an."],
+      ["Kann ich meine eigene Nummer behalten?", "Ja. Die Kunden rufen weiterhin Ihre Nummer an; die Anrufe werden nur umgeleitet, wenn Sie selbst nicht rangehen."]
+    ]
+  }
+}

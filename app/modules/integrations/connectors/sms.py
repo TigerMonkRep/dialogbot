@@ -1,7 +1,8 @@
 """SMS confirmations through Dialogbot's Twilio account (the platform's main account acts on the workspace's
 sub-account, so the customer never handles a Twilio login).
 
-The assistant can only send *templates*: fixed Danish texts filled from the workspace's approved knowledge and
+The assistant can only send *templates*: fixed texts (in the language the workspace serves callers in, its
+`default_conversation_language`) filled from the workspace's approved knowledge and
 profile and from facts of the conversation (the caller's number, the booking it just made). It cannot write free
 text into an SMS, so nothing unapproved ever reaches a customer's phone.
 
@@ -43,11 +44,18 @@ def default_sender(ws: Workspace) -> str:
     return name or get_settings().sms_default_sender
 
 
-def _opening_hours_text(db: OrmSession, ws_id: uuid.UUID) -> str:
+def caller_language(db: OrmSession, ws: Workspace) -> str:
+    """The language the business serves its callers in (its default conversation language); Danish by default."""
+    from app.modules.integrations.email_texts import workspace_language
+
+    return workspace_language(db, ws.id, "default_conversation_language")
+
+
+def _opening_hours_text(db: OrmSession, ws_id: uuid.UUID, lang: str = "da") -> str:
     from app.modules.bookings.service import DAYS
     from app.modules.knowledge.service import active_knowledge
 
-    da = {"mon": "man", "tue": "tir", "wed": "ons", "thu": "tor", "fri": "fre", "sat": "lør", "sun": "søn"}
+    short = {d: texts.day_short(i, lang) for i, d in enumerate(("mon", "tue", "wed", "thu", "fri", "sat", "sun"))}
     parts = []
     for item in active_knowledge(db, ws_id):
         if item["kind"] != "opening_hours":
@@ -55,14 +63,16 @@ def _opening_hours_text(db: OrmSession, ws_id: uuid.UUID) -> str:
         for row in (item["content"] or {}).get("weekly") or []:
             days = [d for d in DAYS if d in (row.get("days") or [])]
             if days and row.get("open") and row.get("close"):
-                span = f"{da[days[0]]}–{da[days[-1]]}" if len(days) > 1 else da[days[0]]
+                span = f"{short[days[0]]}–{short[days[-1]]}" if len(days) > 1 else short[days[0]]
                 parts.append(f"{span} {row['open']}–{row['close']}")
     return ", ".join(parts)
 
 
 def render(db: OrmSession, ws: Workspace, template: str, ctx: RunContext) -> str:
-    """Only approved knowledge, profile fields and conversation facts go into the text."""
+    """Only approved knowledge, profile fields and conversation facts go into the text, in the callers' language.
+    What the business wrote itself (service names, opening hours, address, website) is used as written."""
     profile = db.get(BusinessProfile, ws.id)
+    lang = caller_language(db, ws)
     if template == "booking":
         q = select(Booking).where(Booking.workspace_id == ws.id, Booking.status == "confirmed")
         if ctx.conversation_id:
@@ -76,26 +86,27 @@ def render(db: OrmSession, ws: Workspace, template: str, ctx: RunContext) -> str
             raise ActionRefused("Der er ingen booking i denne samtale at bekræfte", code="no_booking")
         from app.modules.bookings.service import label
 
-        return texts.booking(ws.name, b.contact_name or "", b.title.split(":")[0], label(b.starts_at, ctx.tz))
+        when = label(b.starts_at, ctx.tz) if lang == "da" else texts.when(b.starts_at, ctx.tz, lang)
+        return texts.booking(ws.name, b.contact_name or "", b.title.split(":")[0], when, lang)
     if template == "ring_tilbage":
-        return texts.call_back(ws.name)
+        return texts.call_back(ws.name, lang)
     if template == "aabningstider":
-        hours = _opening_hours_text(db, ws.id)
+        hours = _opening_hours_text(db, ws.id, lang)
         if not hours:
             raise ActionRefused("Virksomheden har ingen godkendte åbningstider", code="no_opening_hours")
-        return texts.opening_hours(ws.name, hours)
+        return texts.opening_hours(ws.name, hours, lang)
     if template == "adresse":
         addr = " ".join(x for x in ((profile.address_line, profile.postal_code, profile.city) if profile else ()) if x)
         if not addr.strip():
             raise ActionRefused("Virksomhedens adresse er ikke udfyldt", code="no_address")
-        return texts.address(ws.name, addr)
+        return texts.address(ws.name, addr, lang)
     if template == "kontakt":
         phone = (profile.phone if profile else "") or ""
         site = (profile.website_url if profile else "") or ""
-        bits = ", ".join(x for x in (f"tlf. {phone}" if phone else "", site) if x)
+        bits = ", ".join(x for x in (texts.phone(phone, lang) if phone else "", site) if x)
         if not bits:
             raise ActionRefused("Virksomhedens kontaktoplysninger er ikke udfyldt", code="no_contact")
-        return texts.contact(ws.name, bits)
+        return texts.contact(ws.name, bits, lang)
     raise ActionRefused("Ukendt skabelon", code="unknown_template")
 
 

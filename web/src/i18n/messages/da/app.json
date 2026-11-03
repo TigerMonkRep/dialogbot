@@ -1,0 +1,948 @@
+{
+  "ui": {
+    "reference": "Reference: {id}"
+  },
+  "status": {
+    "complete": "Gennemført",
+    "passed": "Bestået",
+    "approved": "Godkendt",
+    "published": "Gået ud",
+    "accepted": "Accepteret",
+    "in_progress": "I gang",
+    "in_review": "Til gennemgang",
+    "scheduled": "Planlagt",
+    "publishing": "Poster nu",
+    "pending": "Afventer",
+    "stale": "Forældet",
+    "rejected": "Afvist",
+    "blocked": "Blokeret",
+    "expired": "Udløbet",
+    "failed": "Fejlet",
+    "not_available": "Ikke tilgængelig",
+    "not_started": "Ikke startet",
+    "untested": "Ikke testet",
+    "skipped": "Sprunget over",
+    "draft": "Kladde",
+    "superseded": "Erstattet",
+    "cancelled": "Annulleret",
+    "revoked": "Tilbagekaldt"
+  },
+  "nav": {
+    "today": "I dag",
+    "knowledge": "Det ved den",
+    "calls": "Opkald",
+    "week": "Ugen"
+  },
+  "shell": {
+    "verify": {
+      "before": "Din e-mail er ikke bekræftet.",
+      "link": "Bekræft nu",
+      "after": "for at oprette arbejdsrum."
+    },
+    "skip": "Spring til indhold",
+    "homeAria": "Dialogbot – I dag",
+    "envStaging": "Staging",
+    "envDev": "Udvikling",
+    "tagline": "AI-reception, der tager telefonen for dig",
+    "env": "Miljø: {env}",
+    "help": "Hjælp",
+    "workspaceAria": "Arbejdsrum: {name}",
+    "chooseWorkspace": "Vælg arbejdsrum",
+    "newWorkspace": "Nyt arbejdsrum",
+    "pages": "Sider",
+    "accountAria": "Konto: {name}",
+    "account": "Konto",
+    "viewAs": {
+      "before": "Du ser som",
+      "after": "– kun læsning, intet kan ændres.",
+      "end": "Afslut og gå tilbage til admin"
+    }
+  },
+  "outcome": {
+    "booked": "Aftale booket",
+    "to_you": "Til dig",
+    "done": "Klaret"
+  },
+  "overview": {
+    "turnedOn": "Dialogbot er tændt",
+    "turnedOnSub": "Den tager telefonen, næste gang kunderne ringer.",
+    "notDone": "Ikke færdig",
+    "setupNext": "Opsætningen er ikke færdig · næste: trin {n}",
+    "step1": "– virksomhed",
+    "step2": "– kalender & systemer",
+    "step3": "– test & tænd",
+    "continue": "Fortsæt",
+    "isOn": "Dialogbot er tændt",
+    "isOff": "Dialogbot er slukket",
+    "isNotOn": "Dialogbot er ikke tændt",
+    "statusLine": {
+      "active": "Tager telefonen, når I ikke selv gør.",
+      "paused": "Sat på pause – opkald går til jer som før.",
+      "not_started": "Telefonen er ikke sat op endnu.",
+      "awaiting_info": "Mangler oplysninger, før telefonen kan kobles på.",
+      "provisioning": "Forbindelsen gøres klar.",
+      "ready_for_test": "Klar til prøveopkald.",
+      "test_failed": "Prøveopkaldet fejlede – prøv igen."
+    },
+    "setUpPhone": "Sæt telefonen op",
+    "tiles": {
+      "calls": "opkald",
+      "callsSub": "seneste 24 timer",
+      "leads": "nye henvendelser",
+      "leadsSub": "{n} åbne i alt",
+      "toYou": "til dig",
+      "toYouSub": "venter på dit svar"
+    },
+    "toYou": "Til dig",
+    "toYouSub": "Det eneste, du skal gøre i dag.",
+    "nothingWaiting": "Intet venter på dig lige nu.",
+    "todo": {
+      "lead": {
+        "tag": "Ny henvendelse",
+        "cta": "Åbn"
+      },
+      "conversation": {
+        "tag": "Venter på dig",
+        "cta": "Svar"
+      },
+      "task": {
+        "tag": "Opgave",
+        "cta": "Åbn"
+      },
+      "knowledge": {
+        "tag": "Godkend",
+        "cta": "Gennemgå"
+      },
+      "import": {
+        "tag": "Forslag",
+        "cta": "Se forslag"
+      }
+    },
+    "latestCalls": "Seneste opkald",
+    "latestCallsSub": "Klik på et for at læse, hvad der blev sagt.",
+    "noCalls": "Ingen opkald endnu.",
+    "callsStaffOnly": "Opkald kan ses af medarbejdere, administratorer og ejere.",
+    "read": "Læs",
+    "allCalls": "Se alle opkald",
+    "appointments": "Aftaler",
+    "noAppointments": "Ingen kommende aftaler.",
+    "weekAppointments": "Se ugens aftaler",
+    "campaigns": "Kampagner",
+    "campaignsSub": "Ring til jeres egne kunder – 4 kr. pr. opkald + 2 kr. pr. samtaleminut ekskl. moms.",
+    "openCampaigns": "Åbn kampagner",
+    "allActivity": "Al aktivitet de seneste 14 dage",
+    "power": {
+      "aria": "Tænd eller sluk Dialogbot",
+      "onlyAdmins": "Kun ejere og administratorer kan tænde og slukke",
+      "setupFirst": "Telefonen skal sættes op, før Dialogbot kan tændes"
+    }
+  },
+  "time": {
+    "today": "I dag",
+    "yesterday": "I går",
+    "minSec": "{m} min {s} s",
+    "weekdaysShort": [
+      "Man",
+      "Tir",
+      "Ons",
+      "Tor",
+      "Fre",
+      "Lør",
+      "Søn"
+    ],
+    "weekdaysShortLower": [
+      "man",
+      "tir",
+      "ons",
+      "tor",
+      "fre",
+      "lør",
+      "søn"
+    ]
+  },
+  "calls": {
+    "resolve": "Marker som klaret",
+    "saveAsLead": "Gem som henvendelse",
+    "reply": {
+      "label": "Svar kunden i chatten",
+      "placeholderStaff": "Skriv dit svar…",
+      "placeholderAi": "Når du svarer, overtager du samtalen, og Dialogbot holder pause.",
+      "send": "Send svar",
+      "handBack": "Giv tilbage til Dialogbot"
+    },
+    "staffOnly": "Opkald og beskeder kan ses af medarbejdere, administratorer og ejere.",
+    "title": "Opkald og beskeder",
+    "eyebrow": "Alt, Dialogbot har talt med kunderne om",
+    "filtersAria": "Filtre",
+    "filters": {
+      "all": "Alle",
+      "to_you": "Til dig",
+      "booked": "Aftaler",
+      "done": "Klaret af Dialogbot",
+      "webchat": "Webchat"
+    },
+    "lastDays": "Seneste {n} dage",
+    "search": "Søg navn, nummer eller emne",
+    "noMatch": "Ingen opkald eller beskeder passer til filteret.",
+    "empty": "Ingen opkald eller beskeder endnu. Når kunderne ringer eller skriver, samles de her.",
+    "showing": "Viser de nyeste {n} af {total}. Brug søgning eller en kortere periode.",
+    "conversation": "Samtalen",
+    "back": "Alle opkald og beskeder",
+    "phone": "Telefon",
+    "transcript": "Udskrift",
+    "noTranscript": "Ingen udskrift gemt.",
+    "staff": "Medarbejder",
+    "staffInitial": "M",
+    "actions": "Det gjorde Dialogbot",
+    "run": {
+      "ok": "Udført",
+      "failed": "Fejlede",
+      "refused": "Ikke udført"
+    },
+    "simulated": "simuleret",
+    "callBack": "Ring tilbage",
+    "makeAppointment": "Lav en aftale",
+    "openLead": "Åbn henvendelse",
+    "takenOver": "En medarbejder har overtaget samtalen – Dialogbot svarer ikke, før den gives tilbage.",
+    "wrongAnswer": "Var svaret forkert? Skriv det til assistenten under «Det ved den» – så retter den sig."
+  },
+  "common": {
+    "save": "Gem",
+    "saved": "Gemt",
+    "kr": "{amount} kr.",
+    "saving": "Gemmer…",
+    "cancel": "Annuller"
+  },
+  "week": {
+    "form": {
+      "edit": "Ret selv",
+      "email": "Send gårsdagens rapport på mail",
+      "at": "Klokken"
+    },
+    "staffOnly": "Ugen kan ses af medarbejdere, administratorer og ejere.",
+    "weekN": "Uge {n}",
+    "title": "Sådan gik ugen",
+    "chooseWeek": "Vælg uge",
+    "thisWeek": "Denne uge",
+    "num": {
+      "answered": "opkald og beskeder besvaret",
+      "answeredSub": "{phone} på telefon · {chat} i webchat",
+      "bookings": "aftaler booket",
+      "vsLastWeek": "{d} mod sidste uge",
+      "noneYet": "ingen endnu",
+      "toYou": "beskeder til dig",
+      "waiting": "venter på dig",
+      "allDone": "alle klaret",
+      "response": "før den svarer i chatten",
+      "noChat": "ingen chat i ugen",
+      "allDay": "døgnet rundt"
+    },
+    "perDay": "Opkald pr. dag",
+    "answered": "besvaret",
+    "messageToYou": "besked til dig",
+    "dayAria": "{day}: {answered} besvaret, {toYou} til dig",
+    "topics": {
+      "title": "Det spurgte kunderne om",
+      "sub": "Mangler der et svar, lægger du det ind under «Det ved den».",
+      "empty": "Ingen spørgsmål i denne uge.",
+      "topic": "Emne",
+      "times": "Gange",
+      "couldAnswer": "Dialogbot kunne svare",
+      "yes": "Ja",
+      "booked": "bookede {n}",
+      "no": "Nej",
+      "partly": "Delvist ({n} af {total})",
+      "tookMessage": "tog besked",
+      "addAnswer": "Tilføj svar",
+      "note": "Samlet automatisk ud fra det, kunderne skrev eller sagde først. Ligner to spørgsmål hinanden, lægges de sammen."
+    },
+    "report": {
+      "title": "Dagsrapport",
+      "on": {
+        "before": "Hver dag kl.",
+        "after": "får ejere og administratorer gårsdagens opkald og aftaler som én mail."
+      },
+      "off": {
+        "before": "Dagsrapporten på mail er",
+        "bold": "slået fra",
+        "after": ". Tal for ugen finder du her."
+      },
+      "ask": "Du kan også bede assistenten: «Send rapporten kl. 18»."
+    },
+    "cost": {
+      "title": "Det kostede ugen",
+      "extra": "{amount} ekstra",
+      "calls": "{n} kampagneopkald",
+      "note": "300 minutters indgående opkald om måneden er med i abonnementet. Kampagneopkald i ugen: {n} (4 kr. pr. udgående opkald + 2 kr. pr. samtaleminut, ekskl. moms).",
+      "billing": "Se abonnement og fakturaer"
+    }
+  },
+  "bookings": {
+    "source": {
+      "webchat": "Webchat",
+      "phone": "Telefon",
+      "manual": "Manuelt"
+    },
+    "card": {
+      "confirmCancel": "Aflys aftalen? Kunden får ikke automatisk besked – ring eller skriv til dem.",
+      "call": "Ring",
+      "conversation": "Samtalen",
+      "lead": "Henvendelse",
+      "cancel": "Aflys"
+    },
+    "book": {
+      "noSlotsError": "Der er ingen ledige tider. Tjek åbningstider og kalender.",
+      "type": "Hvad skal de have?",
+      "name": "Navn",
+      "phone": "Telefon",
+      "when": "Hvornår",
+      "first": "Først ledige – {label}",
+      "noSlots": "Ingen ledige tider",
+      "booked": "Booket {label}.",
+      "booking": "Booker…",
+      "submit": "Book",
+      "note": "Kunden får ingen SMS endnu – send selv en bekræftelse. «Først ledige» tager næste tid, som åbningstider og kalender tillader."
+    },
+    "calendar": {
+      "reading": "Læser…",
+      "readNow": "Læs kalenderen nu",
+      "copied": "Adressen er kopieret",
+      "copy": "Kopiér kalenderadresse",
+      "title": "Kalender",
+      "error": "Kunne ikke læse kalenderen",
+      "connected": "Forbundet",
+      "notConnected": "Ikke forbundet",
+      "lastRead": "Sidst læst {at} · {n} optagne perioder. Dialogbot ser kun, hvornår I er optaget.",
+      "without": "Uden kalender kender Dialogbot kun åbningstiderne og de aftaler, den selv har booket.",
+      "change": "Forbind eller skift kalender"
+    },
+    "staffOnly": "Aftaler kan ses af medarbejdere, administratorer og ejere.",
+    "eyebrow": "I dag → Aftaler",
+    "title": "Aftaler, Dialogbot har booket",
+    "intro": "Flyt eller aflys her. Optaget tid i jeres kalender blokeres, og hver booking bliver en henvendelse med en opgave.",
+    "prevWeek": "Forrige uge",
+    "nextWeek": "Næste uge",
+    "noHours": {
+      "before": "Der er ingen godkendte åbningstider, så der er ingen ledige tider.",
+      "link": "Tilføj åbningstider under «Det ved den»"
+    },
+    "weekAria": "Ugens aftaler",
+    "closed": "Lukket · Dialogbot booker ikke",
+    "none": "Ingen aftaler",
+    "bookFor": "Book for en kunde",
+    "noTypes": {
+      "before": "Der er ingen bookingtyper endnu.",
+      "link": "Opret en under Alle indstillinger → Booking"
+    },
+    "rules": {
+      "title": "Sådan booker den",
+      "online": "Online booking",
+      "on": "Slået til",
+      "off": "Slået fra",
+      "noHours": "Ingen åbningstider",
+      "earliest": "Tidligst",
+      "immediately": "med det samme",
+      "hoursAhead": "{n} timer frem",
+      "horizon": "højst {n} dage frem",
+      "pause": "Pause",
+      "buffer": "{n} min mellem aftaler",
+      "types": "Typer",
+      "noTypes": "Ingen",
+      "ask": "Sig det til assistenten – den viser reglen, før den gælder. Alle regler:",
+      "allSettings": "Alle indstillinger → Booking"
+    }
+  },
+  "leads": {
+    "qual": {
+      "unqualified": "Ikke vurderet",
+      "qualified": "Kvalificeret",
+      "disqualified": "Ikke relevant"
+    },
+    "pipe": {
+      "new": "Ny",
+      "contacted": "Kontaktet",
+      "won": "Vundet",
+      "lost": "Tabt"
+    },
+    "bill": {
+      "pending": "Afventer godkendelse",
+      "approved": "Godkendt",
+      "rejected": "Afvist"
+    },
+    "source": {
+      "webchat": "Webchat",
+      "phone": "Telefon",
+      "manual": "Manuel",
+      "campaign": "Kampagne"
+    },
+    "callbackWindow": "{day} kl. {from}–{to}",
+    "editor": {
+      "title": "Kunde og behov",
+      "name": "Navn",
+      "email": "E-mail",
+      "phone": "Telefon",
+      "need": "Behov",
+      "qualification": "Kvalificering",
+      "locked": "Låst, fordi afregningen er afgjort.",
+      "reason": "Begrundelse",
+      "pipeline": "Forløb"
+    },
+    "billing": {
+      "title": "Afregning",
+      "price": {
+        "before": "Pris for denne henvendelse (ældre aftale):",
+        "after": "ekskl. moms (aftale v{v})."
+      },
+      "included": "Godkendt. Ingen pris pr. henvendelse – den er med i abonnementet (aftale v{v}).",
+      "reason": "Begrundelse: {reason}",
+      "modelB": "Ældre aftale v{v}: en godkendt henvendelse koster {price} ekskl. moms.",
+      "modelA": "Aftale v{v}: abonnementet dækker henvendelsen – der er ingen pris pr. henvendelse.",
+      "noAgreement": "Abonnementet er ikke bekræftet endnu – ejeren bekræfter det under Indstillinger → Aftale.",
+      "monthly": "Godkendte henvendelser vises på månedens oversigt (se Fakturering).",
+      "reasonLabel": "Begrundelse (kræves ved afvisning)",
+      "approve": "Godkend henvendelse",
+      "reject": "Afvis",
+      "onlyQualified": "Kun kvalificerede henvendelser kan godkendes.",
+      "adminsApprove": "Ejere og administratorer godkender henvendelser."
+    },
+    "tasks": {
+      "title": "Opgaver",
+      "none": "Ingen opgaver.",
+      "doneAria": "Færdig: {title}",
+      "due": "Frist {at}",
+      "new": "Ny opgave",
+      "newPlaceholder": "Ny opgave…",
+      "add": "Tilføj"
+    },
+    "back": "Henvendelser",
+    "noName": "(uden navn)",
+    "created": "oprettet {at}",
+    "wantsCall": "Ønsker opkald {window}",
+    "seeConversation": "Se samtalen"
+  },
+  "campaigns": {
+    "status": {
+      "draft": "Kladde",
+      "running": "Kører",
+      "paused": "På pause",
+      "completed": "Afsluttet"
+    },
+    "contactStatus": {
+      "pending": "Venter",
+      "calling": "Ringer nu",
+      "done": "Talt med",
+      "no_answer": "Intet svar",
+      "failed": "Fejlede",
+      "opted_out": "Frabedt sig opkald",
+      "skipped": "Spærret"
+    },
+    "outcome": {
+      "interested": "Interesseret",
+      "callback": "Ring tilbage",
+      "not_interested": "Ikke interesseret",
+      "opt_out": "Vil ikke ringes op",
+      "no_answer": "Intet svar"
+    },
+    "staffOnly": "Kampagner kan ses af medarbejdere, administratorer og ejere.",
+    "eyebrow": "I dag → Kampagner",
+    "enable": {
+      "title": "Vil I også ringe ud?",
+      "body": "Dialogbot kan ringe til jeres egne kunder med et budskab – fx et tilbud – og sende de interesserede videre til jer. Det koster {price} pr. udgående opkald ekskl. moms. Der ringes først, når I har godkendt.",
+      "onlyAdmins": "Kun ejere og administratorer kan slå udgående opkald til.",
+      "ask": "Du kan også sige det til assistenten.",
+      "pending": "Slår til…",
+      "button": "Ja, slå udgående opkald til"
+    },
+    "eyebrowPrice": "I dag → Kampagner · udgående opkald · {price} pr. opkald ekskl. moms",
+    "title": "Ring til jeres kunder – én kampagne ad gangen",
+    "intro": "Tre trin: du vælger, hvem den skal ringe til, hører hvad den siger, og godkender prisen, før første opkald går ud. Prisen er {price} + moms pr. udgående opkald – hvert opkald tæller, også et nyt forsøg. Højst {attempts} forsøg og i alt {minutes} minutters samtale pr. kontakt. Dialogbot ringer aldrig til nogen på spærrelisten.",
+    "salesCalls": "Salgsopkald: lad AI'en ringe op (kun Dialogbot)",
+    "need": {
+      "title": "Du skal bruge",
+      "list": "en liste med navn og nummer (CSV eller indsat fra Excel)",
+      "sentence": "én sætning om, hvorfor I ringer"
+    },
+    "onlyAdmins": "Kun administratorer og ejere kan oprette og starte kampagner.",
+    "previous": "Tidligere kampagner",
+    "none": "Ingen kampagner endnu.",
+    "summary": "{calls} opkald · {answered} talt med · {interested} interesserede · {open} tilbage",
+    "stats": {
+      "contacts": "Kontakter",
+      "answered": "Talt med",
+      "interested": "Interesserede",
+      "callback": "Ring tilbage",
+      "noAnswer": "Intet svar",
+      "left": "Tilbage"
+    },
+    "detail": {
+      "who": "Hvem skal den ringe til?",
+      "contacts": "{n} kontakter. Numre på spærrelisten springes over. Dialogbot bruger kun navn og nummer.",
+      "noContacts": "Ingen kontakter endnu.",
+      "private": "Privat",
+      "business": "Erhverv",
+      "consent": "samtykke",
+      "noConsent": "Mangler samtykke – ringes ikke op",
+      "attempts": "{n} forsøg",
+      "priceNote": "{price} kr. pr. opkald ekskl. moms. Du betaler kun for de opkald, der går ud. Stop når som helst."
+    },
+    "new": {
+      "title": "Ny kampagne",
+      "name": "Navn på kampagnen",
+      "namePlaceholder": "Forårstilbud 2027",
+      "purpose": "Hvad skal opkaldet handle om?",
+      "purposeHint": "Fx \"Tilbyde gulvafslibning til tidligere kunder inden sommerferien\". AI'en foreslår manuskriptet ud fra det og jeres viden.",
+      "create": "Opret kampagne"
+    },
+    "editor": {
+      "suggested": "Forslag fra AI er sat ind. Ret det til, og tryk Gem.",
+      "saved": "Gemt.",
+      "what": "Hvad skal den sige?",
+      "suggesting": "Foreslår…",
+      "suggest": "Foreslå med AI",
+      "running": "Kampagnen kører. Sæt den på pause for at ændre manuskriptet.",
+      "purpose": "Formål med opkaldet",
+      "opening": "Første replik",
+      "openingHint": "{navn} bliver kontaktens fornavn og {virksomhed} jeres navn. Assistenten siger altid, at den er en digital assistent.",
+      "questions": "Spørgsmål (ét pr. linje)",
+      "success": "Hvornår er kontakten interesseret?",
+      "fromNumber": "Ring fra nummer",
+      "addNumber": "Tilføj jeres nummer under Indstillinger → Telefoni.",
+      "chooseNumber": "Vælg nummer",
+      "when": "Hvornår – og hvad gør den ved svar?",
+      "whenSub": "Siger kunden ja, sendes de videre som en henvendelse til jer. Siger de nej, kommer de på spærrelisten.",
+      "onlyCalls": "Der ringes kun",
+      "from": "Fra kl.",
+      "to": "Til kl.",
+      "save": "Gem kampagne"
+    },
+    "import": {
+      "title": "Tilføj kontakter",
+      "intro": "Upload en CSV-fil (fx gemt fra Excel) eller indsæt listen. Kolonner: navn, telefon og evt. firma og e-mail. Danske numre må skrives uden +45. Numre på spærrelisten springes over.",
+      "added": "{n} kontakter tilføjet",
+      "duplicates": "{n} fandtes allerede",
+      "blocked": "{n} står på spærrelisten",
+      "invalid": "{n} ugyldige numre (fx række {rows})",
+      "file": "CSV-fil",
+      "paste": "Eller indsæt listen",
+      "pastePlaceholder": "Navn;Telefon;Firma\nMette Hansen;20 30 40 50;Hansen Byg ApS",
+      "who": "Hvem er kontakterne?",
+      "businesses": "Virksomheder",
+      "consumers": "Privatpersoner",
+      "consent": "Hvor og hvornår har de sagt ja til at blive ringet op?",
+      "consentHint": "Assistenten ringer uden et menneske i røret. Efter markedsføringsloven § 10 kræver det, at kontakten på forhånd har bedt om det – også når det er en virksomhed. Det er ikke nok, at de ikke står på Robinsonlisten eller er reklamebeskyttet i CVR.",
+      "consentPlaceholder": "Tilmelding på hjemmesiden, marts 2026",
+      "importing": "Importerer…"
+    },
+    "start": {
+      "completed": "Kampagnen er afsluttet: alle kontakter er ringet op.",
+      "running": "Kampagnen kører. Der ringes til én kontakt ad gangen i det valgte tidsrum.",
+      "pause": "Sæt på pause",
+      "before": "Før den starter",
+      "resumeTitle": "Genoptag kampagnen",
+      "heading": "{n} opkald · højst {max} ekskl. moms",
+      "body": "{n} kontakter venter. Højst {max} + moms ({gross} inkl. moms) – {call} + moms pr. udgående opkald og {minute} + moms pr. påbegyndt samtaleminut, højst {attempts} forsøg og {minutes} minutters samtale pr. kontakt. Betaling starter aldrig opkald.",
+      "confirm": "Bekræft reglerne for opkald",
+      "starting": "Starter…",
+      "resume": "Genoptag",
+      "start": "Start kampagne"
+    },
+    "remove": "Fjern",
+    "dnc": {
+      "title": "Spærreliste",
+      "intro": "Numre her bliver aldrig ringet op i en kampagne. Siger nogen i et opkald, at de ikke vil ringes op igen, kommer de automatisk på listen.",
+      "optedOut": "Frabad sig opkald",
+      "phone": "Telefonnummer",
+      "reason": "Årsag (valgfri)",
+      "block": "Spær nummer"
+    }
+  },
+  "knowledge": {
+    "kind": {
+      "service": "Ydelse",
+      "opening_hours": "Åbningstider",
+      "coverage_area": "Dækningsområde",
+      "fact": "Faktum",
+      "known_answer": "Kendt svar",
+      "unknown_answer": "Må ikke besvares",
+      "offer": "Tilbud"
+    },
+    "unit": {
+      "m2": "m²",
+      "hour": "time",
+      "item": "stk.",
+      "job": "opgave"
+    },
+    "sum": {
+      "noPrice": "Ingen pris",
+      "noTimes": "Ingen tider",
+      "noZones": "Ingen zoner",
+      "human": "Assistenten henviser til et menneske.",
+      "allAreas": "alle arealer",
+      "discount": "-{pct}% ved {thr}",
+      "period": "{from} – {to} (begge dage inkl.)"
+    },
+    "pendingSuggestions": "{n} forslag venter",
+    "eyebrow": "Det ved den om jer",
+    "title": "Alt, Dialogbot må sige til jeres kunder",
+    "intro": "Står det ikke her, siger den det ikke – så tager den en besked til dig i stedet. Du kan rette alt direkte og teste svaret i assistenten.",
+    "revision": "{n} godkendte emner · revision {rev}",
+    "about": {
+      "title": "Om jer",
+      "sub": "Det, den siger først",
+      "what": "Hvad I laver",
+      "notFilled": "Ikke udfyldt endnu",
+      "noHours": "Ingen godkendte åbningstider",
+      "where": "Hvor I kører",
+      "notSet": "Ikke angivet",
+      "addFact": "Tilføj noget, den skal vide"
+    },
+    "edit": "Ret",
+    "close": "Luk",
+    "changePending": "Ændring afventer",
+    "sell": {
+      "title": "Det I sælger",
+      "sub": "Ydelser og priser – det, den må tilbyde",
+      "none": "Ingen ydelser endnu – uden dem kan den ikke svare på priser.",
+      "sells": "Sælger",
+      "onlyAsked": "Kun hvis spurgt",
+      "howMuch": "Hvad koster {name}?",
+      "offers": "Tilbud og rabatter",
+      "addOffer": "Tilføj et tilbud",
+      "note": "«Sælger» betyder, at den selv nævner ydelsen, når det passer. «Kun hvis spurgt» betyder, at den kun svarer på prisen. Priser er ekskl. moms."
+    },
+    "questions": {
+      "title": "Spørgsmål kunderne stiller",
+      "sub": "{n} svar godkendt",
+      "none": "Ingen faste svar endnu. Tilføj de spørgsmål, kunderne oftest stiller.",
+      "add": "Tilføj et svar"
+    },
+    "rules": {
+      "title": "Det må den ikke",
+      "sub": "Her tager den en besked til dig i stedet",
+      "none": "Ingen regler endnu.",
+      "add": "Tilføj en regel"
+    },
+    "seeAll": "Se alle {n}",
+    "showFewer": "Vis færre",
+    "f": {
+      "price": "Pris (ekskl. moms)",
+      "unit": "Enhed",
+      "per": "pr. {unit}",
+      "promote": "Sælger den selv?",
+      "after": "Hvad skal den sige bagefter?",
+      "period": "Tidsrum {n}",
+      "opens": "Åbner",
+      "closes": "Lukker",
+      "removePeriod": "Fjern tidsrum",
+      "addPeriod": "Tilføj tidsrum",
+      "closed": "Uden for åbningstid",
+      "closedPlaceholder": "Fx weekend og helligdage: tager kun imod besked",
+      "zones": "Hvor kører I? (adskil med komma)",
+      "fact": "Det, den må vide",
+      "question": "Spørgsmålet",
+      "answer": "Svaret",
+      "rule": "Emne, den ikke må udtale sig om",
+      "discount": "Rabat (%)",
+      "threshold": "Gælder ved mindst (m²)",
+      "from": "Fra",
+      "to": "Til og med",
+      "offerName": "Hvad hedder tilbuddet?",
+      "name": "Hvad hedder den?"
+    },
+    "sendForApproval": "Send til godkendelse",
+    "savedLive": "Gemt – Dialogbot bruger det nu",
+    "sentToOwner": "Sendt til godkendelse hos en ejer eller administrator",
+    "sent": "Sendt til godkendelse",
+    "hear": {
+      "listening": "Lytter…",
+      "button": "Hør",
+      "answer": "Sådan svarer den på «{q}»"
+    },
+    "service": {
+      "badPrice": "Skriv prisen med tal, fx «fra 1.200 kr.» eller «850 kr. pr. m²».",
+      "priceLine": "Pris: {price}.",
+      "add": "Tilføj en ydelse",
+      "new": "Ny ydelse · 3 felter",
+      "price": "Pris (som kunden skal høre den)",
+      "pricePlaceholder": "fra 1.200 kr.",
+      "notePlaceholder": "Fx: Vi aftaler tid for besigtigelse",
+      "saveAndShow": "Gem – og vis mig, hvordan den siger det"
+    },
+    "remove": {
+      "confirm": "Fjern «{label}»? Dialogbot holder straks op med at bruge det.",
+      "aria": "Fjern {label}"
+    },
+    "draft": {
+      "rejectPrompt": "Hvorfor afviser du forslaget? (gemmes i loggen)",
+      "rejectDefault": "Passer ikke",
+      "suggests": "Dialogbot foreslår",
+      "now": "Nu:",
+      "proposal": "Forslag:",
+      "approving": "Godkender…",
+      "approveAnswer": "Godkend svaret",
+      "approve": "Godkend",
+      "awaiting": "Afventer godkendelse hos en ejer eller administrator",
+      "editAnswer": "Ret svaret"
+    },
+    "import": {
+      "button": "Hent fra hjemmesiden",
+      "intro": "Vi læser jeres egne sider og foreslår ydelser, fakta og faste svar. Forslagene ligger som kladder, til du har godkendt dem. Priser gættes aldrig.",
+      "needsAi": "Kræver, at AI er slået til på serveren.",
+      "url": "Hjemmesidens adresse",
+      "urlPlaceholder": "https://www.jeres-firma.dk",
+      "reading": "Læser hjemmesiden…",
+      "fetch": "Hent forslag",
+      "running": "Læser sider og skriver forslag. Det tager typisk under et minut.",
+      "failed": "Importen fejlede.",
+      "noNew": "Ingen nye forslag",
+      "created": "{n} forslag lagt som kladder – godkend dem herunder",
+      "pages": "{n} sider læst."
+    }
+  },
+  "account": {
+    "language": {
+      "title": "Sprog",
+      "sub": "Sproget i appen. Gemmes på din bruger."
+    },
+    "card": {
+      "opening": "Åbner Stripe…",
+      "change": "Skift kort",
+      "add": "Tilføj betalingskort"
+    },
+    "invoiceNow": {
+      "pending": "Opretter…",
+      "button": "Fakturér {month} nu"
+    },
+    "referral": {
+      "ask": "Har du en ambassadørkode?",
+      "label": "Ambassadørkode",
+      "placeholder": "Fx MADS42",
+      "hint": "Fra den, der anbefalede Dialogbot. I får 50 % rabat på første fakturerede måned.",
+      "add": "Tilføj kode",
+      "referred": "I er anbefalet af {name} (Dialogbot-ambassadør) og får {pct} % rabat på første fakturerede måned."
+    },
+    "logout": "Log ud",
+    "role": {
+      "reader": "Kan se",
+      "editor": "Kan ændre",
+      "owner": "Ejer"
+    },
+    "team": {
+      "title": "Hvem må se og ændre",
+      "intro": "Ejeren kan alt. «Kan ændre» retter viden og regler. «Kan se» læser opkald og rapporter.",
+      "role": "Rolle",
+      "onlyAdmins": "Kun ejere og administratorer kan invitere og ændre roller.",
+      "confirmLeave": "Forlad arbejdsrummet?",
+      "confirmRemove": "Fjern {name} fra arbejdsrummet?",
+      "you": "(dig)",
+      "roleFor": "Rolle for {name}",
+      "leave": "Forlad",
+      "confirmRevoke": "Tilbagekald invitationen? Linket holder op med at virke.",
+      "invited": "Inviteret – ikke svaret endnu:",
+      "expires": "udløber {date}",
+      "resend": "Send igen",
+      "revoke": "Tilbagekald",
+      "inviteEmail": "Invitér med e-mail",
+      "emailPlaceholder": "kollega@firma.dk",
+      "may": "Må",
+      "sending": "Sender…",
+      "invite": "Invitér",
+      "sent": "Invitationen er sendt."
+    },
+    "invoiceStatus": {
+      "creating": "Oprettes",
+      "open": "Afventer betaling",
+      "paid": "Betalt",
+      "payment_failed": "Betaling fejlede",
+      "failed": "Ikke betalt",
+      "void": "Annulleret"
+    },
+    "eyebrow": "Bagerst i hæftet · Konto",
+    "title": "Team, abonnement og fakturaer",
+    "sub": {
+      "title": "Abonnement",
+      "cardSaved": "Tak – kortet er gemt hos Stripe. Det kan tage et øjeblik, før det vises her.",
+      "fixed": "Fast abonnement",
+      "perMonth": "/md. ekskl. moms",
+      "confirmed": "Bekræftet · aftale v{v}. Gør-det-selv-opsætning er med.",
+      "notConfirmed": "Gør-det-selv-opsætning er med. Ikke bekræftet endnu.",
+      "campaign": "Kampagneopkald",
+      "campaignPrice": "pr. opkald + {minute} pr. minut ekskl. moms",
+      "campaignMonth": "Denne måned: {calls} opkald, {minutes} samtaleminutter · {amount} ekskl. moms",
+      "inbound": "Indgående opkald",
+      "inboundUsed": "af {n} inkluderede minutter brugt denne måned",
+      "inboundExtra": "{n} minutter ud over de inkluderede · {amount} ekskl. moms ({price} pr. påbegyndt minut).",
+      "inboundPrice": "Minutter ud over de {n} koster {price} pr. påbegyndt minut ekskl. moms.",
+      "confirm": "Bekræft abonnement",
+      "ownerMustConfirm": "Ejeren skal bekræfte abonnementet.",
+      "older": "Ældre aftale – bekræft abonnementet for at skifte til det nuværende abonnement.",
+      "note": "Priser er ekskl. moms. Ingen binding – sig det til assistenten eller skriv til info@dialogbot.dk, hvis I vil opsige. Betaling starter aldrig opkald."
+    },
+    "pay": {
+      "title": "Betaling",
+      "notConfigured": "Kortbetaling er ikke sat op endnu. Indtil da er oversigten kun en forhåndsvisning, og der trækkes ingen betaling.",
+      "card": "Kort",
+      "expires": "udløber {exp}",
+      "noCard": "Intet betalingskort",
+      "withCard": "Hver måned faktureres bagud og trækkes automatisk på kortet.",
+      "withoutCard": "Uden kort bliver måneden ikke faktureret.",
+      "onlyOwner": "Kun ejeren kan ændre betalingskortet."
+    },
+    "invoices": {
+      "title": "Fakturaer",
+      "soFar": "{month} indtil videre:",
+      "totals": "{net} ekskl. moms · moms {tax} · i alt {gross}",
+      "billedEnd": "Faktureres, når måneden er slut.",
+      "billedEndCard": "Faktureres, når måneden er slut og kortbetaling er sat op.",
+      "none": "Ingen fakturaer endnu.",
+      "month": "Måned",
+      "status": "Status",
+      "total": "I alt inkl. moms",
+      "open": "Åben",
+      "pdf": "Hent PDF"
+    },
+    "me": {
+      "unknownDevice": "Ukendt enhed",
+      "browser": "Browser",
+      "device": "{browser} på {os}",
+      "owner": "ejer",
+      "reader": "kan se",
+      "editor": "kan ændre",
+      "notVerified": "E-mailen er ikke bekræftet – bekræft nu",
+      "changePassword": "Skift adgangskode",
+      "operator": "Operatør",
+      "sales": "Dialogbots salg",
+      "sessions": "Logget ind på {n|1 enhed|# enheder}. Nulstiller du adgangskoden, logges alle ud.",
+      "thisDevice": "denne enhed",
+      "lastActive": "sidst aktiv {at}"
+    },
+    "ws": {
+      "title": "Arbejdsrum",
+      "this": "dette",
+      "new": "Byg en Dialogbot til en anden virksomhed"
+    },
+    "data": {
+      "title": "Data og historik",
+      "sub": "Hvem der har ændret hvad, og hvornår, ligger i historikken.",
+      "log": "Se alle ændringer",
+      "settings": "Alle indstillinger"
+    }
+  },
+  "help": {
+    "start": {
+      "title": "Kom i gang",
+      "guide": {
+        "q": "Opsætningsguiden",
+        "a": "Guiden tager jer gennem virksomhed, mål, sprog og viden. Ved hvert trin foreslår AI'en indhold ud fra jeres hjemmeside – I retter til og gemmer."
+      },
+      "fetch": {
+        "q": "Hent oplysninger fra hjemmesiden",
+        "a": "Virksomhedssiden læser jeres hjemmeside og udfylder beskrivelse, CVR, telefon og adresse, når de står på siden. Ydelser og åbningstider bliver kladder."
+      }
+    },
+    "knowledge": {
+      "title": "Viden",
+      "approved": {
+        "q": "Kun godkendt viden bruges",
+        "a": "Assistenten svarer udelukkende ud fra godkendte emner. Kladder og forslag bruges aldrig, før en ejer eller administrator har godkendt dem."
+      },
+      "prices": {
+        "q": "Priser",
+        "a": "Priser indtastes ekskl. moms. AI'en gætter aldrig en pris – står der en pris på hjemmesiden, citeres den i kladden, så I kan bekræfte den."
+      },
+      "edit": {
+        "q": "Slet eller ret",
+        "a": "Ret et emne og gem det som ny kladde, eller slet det. Sletter I godkendt viden, holder assistenten straks op med at bruge den."
+      }
+    },
+    "reception": {
+      "title": "Reception, telefon og chat",
+      "script": {
+        "q": "Receptionsmanuskript",
+        "a": "Bestem hilsen, hvad assistenten spørger om, og hvornår en medarbejder overtager. Gælder både telefon og chat."
+      },
+      "phone": {
+        "q": "Telefon og dansk stemme",
+        "a": "Behold jeres nummer og viderestil det til jeres Dialogbot-nummer. Vælg en dansk stemme, test forbindelsen og aktivér. Opkald lander under Opkald med udskrift."
+      },
+      "webchat": {
+        "q": "Webchat",
+        "a": "Slå widgetten til, godkend jeres domæner og indsæt koden på hjemmesiden. I kan overtage en samtale under Opkald."
+      }
+    },
+    "leads": {
+      "title": "Henvendelser og afregning",
+      "tasks": {
+        "q": "Henvendelser og opgaver",
+        "a": "Kunder, der vil kontaktes, bliver til henvendelser med en opgave. Kvalificér, godkend og løs dem fra Opkald → Åbn henvendelse."
+      },
+      "billing": {
+        "q": "Afregning",
+        "a": "Der er ét abonnement fra 2.495 kr. om måneden ekskl. moms, inkl. 300 minutters indgående opkald (derefter 1,50 kr. pr. minut). Udgående kampagneopkald koster 4 kr. pr. opkald plus 2 kr. pr. påbegyndt samtaleminut. Konto viser månedens forhåndsvisning."
+      }
+    },
+    "team": {
+      "title": "Team og sikkerhed",
+      "roles": {
+        "q": "Roller",
+        "a": "Ejer og administrator godkender viden og ændrer indstillinger. Medarbejdere arbejder med henvendelser og kladder. Læsere kan kun se."
+      },
+      "log": {
+        "q": "Aktivitetslog",
+        "a": "Alle godkendelser, sletninger og ændringer af indstillinger logges med hvem og hvornår."
+      }
+    },
+    "title": "Sådan bruger I Dialogbot",
+    "goThere": "Gå dertil"
+  },
+  "reception": {
+    "staffOnly": "Receptionen kan ses af medarbejdere, administratorer og ejere.",
+    "active": "Aktiv",
+    "inactive": "Ikke aktiv",
+    "eyebrow": "Reception",
+    "title": "Jeres digitale reception",
+    "intro": "Assistenten svarer i telefonen og i chatten på jeres hjemmeside ud fra godkendt viden og manuskriptet herunder. Kunder, der vil kontaktes, bliver til henvendelser.",
+    "phone": {
+      "notConfigured": "Stemmeforbindelsen er ikke sat op på serveren.",
+      "noVoice": "mangler dansk stemme",
+      "noNumber": "Intet aktivt nummer tilknyttet.",
+      "settings": "Telefoni-indstillinger"
+    },
+    "webchat": {
+      "activeOn": "Aktiv på {n} domæne(r).",
+      "off": "Widgetten er ikke slået til.",
+      "settings": "Webchat-indstillinger"
+    },
+    "stats": {
+      "conversations": "Samtaler"
+    },
+    "try": "Prøv assistenten med manuskriptet og jeres godkendte viden, før kunderne gør.",
+    "test": "Test assistenten",
+    "script": {
+      "title": "Receptionsmanuskript",
+      "intro": "Styrer hvordan assistenten hilser, hvad den spørger om, og hvornår en medarbejder skal overtage – i telefonen og i chatten. Fakta og priser kommer stadig kun fra godkendt viden.",
+      "activeVersion": "Aktiv version {v}",
+      "onlyAdmins": "Kun ejere og administratorer kan ændre manuskriptet.",
+      "writing": "Skriver et forslag ud fra jeres virksomhed og viden…",
+      "suggested": "Forslag fra AI er sat ind. Ret til, og tryk \"Gem manuskript\".",
+      "saved": "Gemt. Assistenten bruger manuskriptet fra næste samtale.",
+      "persona": "Navn på assistenten (valgfri)",
+      "personaPlaceholder": "fx Sofie",
+      "address": "Tiltale",
+      "informal": "du (uformel)",
+      "formal": "De (formel)",
+      "greeting": "Telefonhilsen",
+      "greetingHint": "Brug {virksomhed} for firmanavnet. Nævner hilsenen ikke, at det er en digital assistent, tilføjer vi det automatisk.",
+      "collect": "Det skal assistenten spørge om (ét pr. linje)",
+      "collectHint": "Bruges når kunden vil have tilbud, en tid eller et opkald. Ét spørgsmål ad gangen.",
+      "escalation": "Giv straks videre til en medarbejder når …",
+      "escalationHint": "Fx akutte skader eller klager. Assistenten lover et hurtigt opkald og opretter en henvendelse.",
+      "avoid": "Det må assistenten ikke love eller udtale sig om",
+      "avoidHint": "Fx endelige priser uden besigtigelse.",
+      "closing": "Afslutning",
+      "closingHint": "Kort og venlig.",
+      "suggestAgain": "Foreslå igen",
+      "save": "Gem manuskript"
+    }
+  }
+}

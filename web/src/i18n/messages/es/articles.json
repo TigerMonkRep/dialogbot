@@ -1,0 +1,324 @@
+{
+  "ai-telefonsvarer-eller-telefonpasning": {
+    "meta": {
+      "title": "Contestador con IA o servicio de atención telefónica: ¿qué le conviene?",
+      "description": "¿Contestador, servicio de atención telefónica o contestador con IA? Vea las diferencias de precio, disponibilidad y calidad para elegir la solución adecuada.",
+      "ogTitle": "¿Contestador con IA o servicio de atención telefónica? | Dialogbot"
+    },
+    "kicker": "Contestador con IA o atención telefónica",
+    "title": "Contestador con IA o servicio de atención telefónica: ¿qué le conviene?",
+    "lead": "Cuando no puede coger el teléfono, tiene tres opciones: un contestador normal, un servicio de atención telefónica con personas o un contestador con IA. Estas son las diferencias.",
+    "points": [
+      "Contestador: barato, pero el cliente suele colgar",
+      "Atención telefónica: responde una persona, pero normalmente solo en horario de oficina",
+      "Contestador con IA: responde las 24 horas y puede reservar citas",
+      "Elija según el volumen de llamadas, el horario y sus necesidades"
+    ],
+    "sections": [
+      {
+        "title": "1. El contestador normal",
+        "body": [
+          { "type": "p", "text": "Barato y sencillo, pero muchos clientes cuelgan en lugar de dejar un mensaje y llaman a la competencia. Tiene que escuchar usted mismo los mensajes y devolver la llamada sin saber de qué se trata." }
+        ]
+      },
+      {
+        "title": "2. Servicio de atención telefónica",
+        "body": [
+          { "type": "p", "text": "Una persona atiende el teléfono en su nombre y toma un recado. Ofrece una experiencia personal, pero suele cobrarse por llamada o por mes, y muchos servicios solo funcionan en horario laboral normal. La recepcionista rara vez conoce sus servicios y precios en detalle." }
+        ]
+      },
+      {
+        "title": "3. Contestador con IA",
+        "body": [
+          { "type": "p", "parts": ["Un contestador con IA como ", { "link": "/ai-telefonsvarer", "text": "Dialogbot" }, " habla con el cliente en su idioma las 24 horas, responde con su propia información aprobada y puede reservar citas y enviar confirmaciones por SMS. Recibe un resumen escrito de cada conversación en lugar de un mensaje de voz."] },
+          { "type": "p", "text": "Eso sí, no es una persona: lo dice con honestidad y le pasa a usted los casos que no puede resolver." }
+        ]
+      },
+      {
+        "title": "Comparativa",
+        "body": [
+          {
+            "type": "table",
+            "other": "Atención telefónica",
+            "rows": [
+              ["Quién responde", "IA en el idioma del cliente, solo con la información que usted ha aprobado", "Una persona que no siempre conoce sus servicios"],
+              ["Horario", "Las 24 horas", "Normalmente horario laboral"],
+              ["Reservas", "Directamente en su calendario, con confirmación por SMS", "Normalmente un recado al que usted da seguimiento"],
+              ["Precio", "2.495 kr./mes, IVA no incluido, sin precio por contacto", "Normalmente por llamada o por mes"],
+              ["Aviso para usted", "Resumen escrito de cada conversación y un informe diario", "Un recado por llamada"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Cómo elegir",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "¿Pocas llamadas y solo de día?" }, " Un contestador puede bastar."],
+              [{ "b": "¿Es importante que conteste una persona?" }, " Atención telefónica, pero compruebe el horario."],
+              [{ "b": "¿Muchas llamadas, también por la noche, y necesita reservas?" }, " Un contestador con IA es lo que más rinde por su dinero."]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Escuche la diferencia",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "Reciba una llamada de Dialogbot" }, " y escuche cómo suena un contestador con IA. Vea también los ", { "link": "/priser", "text": "precios" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["¿Puede un contestador con IA sustituir a un servicio de atención telefónica?", "Para la mayoría de las consultas habituales, sí: responde, aclara la necesidad y reserva citas. Los casos complejos se los pasa a usted."],
+      ["¿Está disponible un contestador con IA por la noche?", "Sí, Dialogbot atiende el teléfono las 24 horas."],
+      ["¿Qué es más barato: un servicio de atención telefónica o Dialogbot?", "La atención telefónica suele cobrarse por llamada o por mes. Dialogbot es una suscripción de 2.495 kr. al mes, IVA no incluido, con 300 minutos de llamadas entrantes y sin precio por contacto. Vea también /viden/dialogbot-vs-vocalis."],
+      ["¿Puedo conservar mi número?", "Sí. Desvía su número a Dialogbot cuando esté ocupado o haya cerrado."]
+    ]
+  },
+  "dialogbot-vs-almindelig-chatbot": {
+    "meta": {
+      "title": "Dialogbot o un chatbot normal: ¿cuál es la diferencia?",
+      "description": "Un chatbot normal responde en una web. Dialogbot además atiende el teléfono, reserva citas y solo responde con información que usted ha aprobado. Vea las diferencias.",
+      "ogTitle": "¿Dialogbot o un chatbot normal? | Dialogbot"
+    },
+    "kicker": "Dialogbot o un chatbot normal",
+    "title": "Dialogbot o un chatbot normal: ¿cuál es la diferencia?",
+    "lead": "Un chatbot normal responde en la web. Dialogbot además atiende el teléfono, reserva las citas y le permite aprobar todo lo que puede decir.",
+    "points": [
+      "Chatbot: escribe en la web",
+      "Dialogbot: teléfono, chat y reservas con la misma información",
+      "Dialogbot nunca se lo inventa: solo información aprobada",
+      "Una suscripción: 2.495 kr./mes"
+    ],
+    "sections": [
+      {
+        "title": "Resumen",
+        "body": [
+          {
+            "type": "table",
+            "other": "Chatbot normal",
+            "rows": [
+              ["Canales", "Teléfono y chat web con la misma información", "Normalmente solo chat en la web"],
+              ["Reservas", "Busca huecos libres en su calendario y envía confirmación por SMS", "Rara vez: a menudo solo un enlace o un mensaje"],
+              ["En qué basa sus respuestas", "Solo en información que usted ha aprobado, y usted ve cada cambio primero", "Varía: algunos responden libremente con un modelo de IA"],
+              ["Cuando no sabe responder", "Lo dice y le toma un recado", "Varía"],
+              ["Aviso para usted", "Nombre, número y motivo, y un informe cada día", "Varía"],
+              ["Precio", "2.495 kr./mes, sin precio por contacto", "Desde unos cientos de kr./mes en adelante"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "¿Cuándo basta con un chatbot normal?",
+        "body": [
+          { "type": "p", "text": "Si sus clientes casi solo escriben y no necesita reservar citas ni que le atiendan el teléfono, un chatbot sencillo puede bastar, y es más barato." }
+        ]
+      },
+      {
+        "title": "¿Cuándo aporta más Dialogbot?",
+        "body": [
+          { "type": "p", "parts": ["Cuando el teléfono suena mientras está subido a una escalera o tiene un cliente en la silla, y una llamada sin atender es un cliente perdido. Dialogbot contesta en menos de dos segundos, reserva una cita y le avisa. Más información sobre ", { "link": "/ai-receptionist", "text": "el recepcionista con IA" }, " y ", { "link": "/chatbot", "text": "el chatbot para su web" }, ", que forma parte de la suscripción."] }
+        ]
+      },
+      {
+        "title": "Escúchelo usted mismo",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "Deje que Dialogbot le llame" }, ": dos minutos, sin registro."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["¿Puede Dialogbot ser solo un chatbot?", "Sí. El chat web está incluido en la suscripción y usa la misma información aprobada que el teléfono. Es una línea de código en su web."],
+      ["¿Se lo inventa Dialogbot si no sabe la respuesta?", "No. Solo responde con información aprobada y le toma un recado si no puede responder."],
+      ["¿Cuánto cuesta?", "2.495 kr. al mes, IVA no incluido, con 300 minutos de llamadas entrantes. Sin permanencia."]
+    ]
+  },
+  "dialogbot-vs-vocalis": {
+    "meta": {
+      "title": "Dialogbot o Vocalis: ¿precio fijo o paquetes de minutos?",
+      "description": "Compare Dialogbot y Vocalis: precio mensual fijo o paquetes de minutos, información aprobada, reservas y cómo empezar. Precios sin IVA.",
+      "ogTitle": "¿Dialogbot o Vocalis? | Dialogbot"
+    },
+    "kicker": "Dialogbot o Vocalis",
+    "title": "Dialogbot o Vocalis: ¿precio fijo o paquetes de minutos?",
+    "lead": "Ambos crean empleados de IA para empresas. La diferencia está sobre todo en cómo se paga y cómo se empieza.",
+    "points": [
+      "Dialogbot: 2.495 kr./mes, 300 minutos incluidos, después 1,50 kr./min",
+      "Vocalis: desde 899 kr./mes por 100 minutos, después paquetes de minutos",
+      "Dialogbot: solo información aprobada, y usted aprueba cada cambio",
+      "Dialogbot: escúchelo primero, sin registro"
+    ],
+    "sections": [
+      {
+        "title": "Resumen",
+        "body": [
+          {
+            "type": "table",
+            "other": "Vocalis",
+            "rows": [
+              ["Precio al mes (sin IVA)", "2.495 kr.: una sola suscripción", "Desde 899 kr. por 100 minutos (Basis)"],
+              ["Cuando se agotan los minutos", "1,50 kr. por minuto iniciado tras los 300 incluidos", "Paquetes de minutos automáticos de hasta 3.995 kr./mes"],
+              ["Responde según", "Información que usted ha aprobado, y usted ve cada cambio primero (antes → después, «¿Aprobar?»)", "Vea la descripción de Vocalis"],
+              ["Reservas", "Google Calendar o Microsoft 365, con confirmación por SMS", "Vea la descripción de Vocalis"],
+              ["Cómo empezar", "Escúchelo primero: le llama, sin registro. Configúrelo usted mismo en una media hora", "Consulta gratuita y llamada de vuelta"],
+              ["Permanencia", "Ninguna: cancelación mes a mes", "Vea la descripción de Vocalis"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Precio: fijo o por consumo",
+        "body": [
+          { "type": "p", "text": "Vocalis parte de un precio más bajo, pero el precio sigue al consumo: si supera los 100 minutos, se compran paquetes automáticamente. Dialogbot cuesta más de partida, pero incluye 300 minutos, y los minutos adicionales cuestan 1,50 kr. La factura es previsible y siempre puede ver su consumo." },
+          { "type": "p", "parts": ["Si recibe pocas llamadas al mes, un precio de entrada más bajo puede encajar mejor. Si el teléfono no para en todo el día, un precio fijo es lo más seguro. Vea ", { "link": "/priser", "text": "todos los precios" }, "."] }
+        ]
+      },
+      {
+        "title": "La gran diferencia: información aprobada",
+        "body": [
+          { "type": "p", "text": "Dialogbot solo responde según los servicios, precios y horarios que usted ha aprobado, y lo dice si no sabe la respuesta. Cada cambio se muestra primero como antes → después con «¿Aprobar?». Es el mecanismo que hace que no se lo invente." }
+        ]
+      },
+      {
+        "title": "Escuche la diferencia usted mismo",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "Deje que Dialogbot le llame" }, ": son dos minutos y no requiere registro."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["¿Es Dialogbot más caro que Vocalis?", "De partida, sí: 2.495 kr. al mes frente a desde 899 kr. por 100 minutos. A cambio, incluye 300 minutos y el precio no se dispara si recibe más llamadas."],
+      ["¿Puedo pasarme de Vocalis a Dialogbot?", "Sí. Conserva su número de teléfono actual y lo desvía a Dialogbot, y no hay permanencia."],
+      ["¿Dónde puedo ver los precios actuales de Vocalis?", "En la propia Vocalis. Los precios indicados aquí son las tarifas publicadas cuando se escribió esta página y pueden haber cambiado."]
+    ]
+  },
+  "hvad-er-en-ai-receptionist": {
+    "meta": {
+      "title": "¿Qué es un recepcionista con IA y cómo funciona?",
+      "description": "Un recepcionista con IA atiende el teléfono y el chat de su empresa, responde con su propia información y reserva citas. Así funciona y esto es lo que debe tener en cuenta.",
+      "ogTitle": "¿Qué es un recepcionista con IA? | Dialogbot"
+    },
+    "kicker": "¿Qué es un recepcionista con IA?",
+    "title": "¿Qué es un recepcionista con IA y cómo funciona?",
+    "lead": "Un recepcionista con IA es un asistente digital que atiende el teléfono y el chat de su empresa. Esto es lo que puede hacer, cómo funciona y qué debe tener en cuenta antes de elegir uno.",
+    "points": [
+      "Atiende el teléfono y el chat las 24 horas",
+      "Responde con la información propia de la empresa",
+      "Aclara la necesidad y recoge datos de contacto",
+      "Puede reservar citas y enviar SMS",
+      "Nunca debe inventar ni prometer nada que usted no haya aprobado"
+    ],
+    "sections": [
+      {
+        "title": "En resumen",
+        "body": [
+          { "type": "p", "text": "Un recepcionista con IA responde cuando usted no puede: cuando está ocupado, con un cliente o ha cerrado. En lugar de un contestador que pide al cliente que deje un mensaje, habla con el cliente, averigua qué necesita y recoge nombre, número y necesidad, para que usted devuelva la llamada a un cliente ya interesado." },
+          { "type": "p", "parts": ["Se basa en tres piezas: ", { "b": "reconocimiento de voz" }, ", que entiende lo que dice el cliente; un ", { "b": "modelo de lenguaje" }, ", que encuentra la respuesta correcta en la información de la empresa; y una ", { "b": "voz" }, " que responde de forma natural en el idioma del cliente."] }
+        ]
+      },
+      {
+        "title": "¿Qué puede hacer un recepcionista con IA?",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              "Responder a las preguntas habituales: horarios, precios, servicios, dirección y aparcamiento.",
+              "Aclarar la necesidad con las preguntas que ha decidido la empresa.",
+              "Buscar huecos libres y reservar, cambiar o cancelar citas.",
+              "Enviar al cliente una confirmación por SMS.",
+              "Dar a la empresa un breve resumen escrito de cada conversación."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "¿Qué no debe hacer?",
+        "body": [
+          { "type": "p", "parts": ["Un buen recepcionista con IA ", { "b": "nunca se lo inventa" }, ". Solo debe responder con información que la empresa ha aprobado y decir con honestidad cuándo algo no figura. No debe prometer descuentos, dar consejos profesionales ni hacerse pasar por una persona."] },
+          { "type": "p", "text": "En Dialogbot, toda la información empieza como borrador y solo se usa cuando un propietario o administrador la ha aprobado." }
+        ]
+      },
+      {
+        "title": "Lo que debe tener en cuenta",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Voz y idioma" }, ": ¿suena natural y entiende nombres y términos técnicos?"],
+              [{ "b": "Control" }, ": ¿puede aprobar usted mismo lo que puede decir?"],
+              [{ "b": "Acciones" }, ": ¿puede reservar y enviar SMS, o solo toma recados?"],
+              [{ "b": "Configuración" }, ": ¿recibe ayuda o tiene que arreglárselas solo?"],
+              [{ "b": "Precio" }, ": ¿precio fijo o por contacto, y hay permanencia?"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Pruébelo usted mismo",
+        "body": [
+          { "type": "p", "parts": ["La mejor prueba es escucharlo. ", { "link": "/proev", "text": "Reciba una llamada de Dialogbot" }, ", elija su sector y escuche cómo atendería el teléfono por usted. Más información sobre ", { "link": "/ai-receptionist", "text": "el recepcionista con IA de Dialogbot" }, " o vea los ", { "link": "/priser", "text": "precios" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["¿Un recepcionista con IA es lo mismo que un chatbot?", "No exactamente. Un chatbot escribe; un recepcionista con IA habla por teléfono. Dialogbot hace ambas cosas con la misma información."],
+      ["¿Suena como un robot un recepcionista con IA?", "Las voces modernas suenan naturales. Dialogbot habla español y los idiomas de sus clientes, y siempre dice con honestidad que es un asistente digital si el cliente lo pregunta."],
+      ["¿Cuánto cuesta un recepcionista con IA?", "En Dialogbot hay una suscripción de 2.495 kr. al mes, IVA no incluido. No hay precio por contacto."]
+    ]
+  },
+  "viderestil-telefonen": {
+    "meta": {
+      "title": "Cómo desviar el teléfono cuando está ocupado",
+      "description": "Desvíe su móvil si comunica, si no contesta o siempre con los códigos estándar **67*, **61* y **21*, y desactívelo de nuevo con ##002#. Guía para empresas.",
+      "ogTitle": "Cómo desviar el teléfono | Dialogbot"
+    },
+    "kicker": "Desviar el teléfono",
+    "title": "Cómo desviar el teléfono cuando está ocupado",
+    "lead": "Con el desvío de llamadas, las llamadas pasan a otro número, por ejemplo su recepcionista con IA, cuando usted no puede atenderlas. Estos son los códigos estándar que se marcan en el móvil.",
+    "points": [
+      "Si comunica: **67*número#",
+      "Si no contesta: **61*número#",
+      "Si el teléfono está apagado: **62*número#",
+      "Siempre: **21*número#",
+      "Desactivar todos los desvíos: ##002#"
+    ],
+    "sections": [
+      {
+        "title": "Los códigos",
+        "body": [
+          { "type": "p", "text": "Los códigos son estándar en la red móvil y funcionan en la mayoría de los operadores daneses. Escriba el número con +45 delante y pulse llamar después del código." },
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Cuando comunica:" }, " ", { "code": "**67*+4512345678#" }],
+              [{ "b": "Cuando no contesta:" }, " ", { "code": "**61*+4512345678#" }, "; algunos operadores permiten indicar el número de segundos: ", { "code": "**61*+4512345678**20#" }],
+              [{ "b": "Cuando el teléfono está apagado o sin cobertura:" }, " ", { "code": "**62*+4512345678#" }],
+              [{ "b": "Todas las llamadas, siempre:" }, " ", { "code": "**21*+4512345678#" }],
+              [{ "b": "Desactivar todos los desvíos:" }, " ", { "code": "##002#" }]
+            ]
+          },
+          { "type": "p", "text": "Si un código no funciona, o tiene un fijo o una centralita IP, active el desvío en la app o el área de cliente de su operador, o pregunte a su operador." }
+        ]
+      },
+      {
+        "title": "La configuración inteligente",
+        "body": [
+          { "type": "p", "parts": ["La mayoría de las empresas usan ", { "b": "comunica + no contesta + apagado" }, ". Así usted atiende el teléfono cuando puede, y todas las demás llamadas van a su recepcionista con IA en lugar de al contestador."] }
+        ]
+      },
+      {
+        "title": "Desviar a Dialogbot",
+        "body": [
+          { "type": "p", "parts": ["Cuando se da de alta en Dialogbot, recibe un número de Dialogbot al que desviar las llamadas, y le ayudamos con ello durante la configuración. Más información sobre ", { "link": "/ai-telefonsvarer", "text": "el contestador con IA" }, " o ", { "link": "/proev", "text": "escúchelo usted mismo" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["¿Tiene coste el desvío de llamadas?", "Depende de su tarifa con el operador. Consulte el precio de las llamadas desviadas con su operador."],
+      ["¿Cómo compruebo si el desvío está activado?", "Marque, por ejemplo, *#67# o *#61# y pulse llamar: el teléfono le mostrará el estado."],
+      ["¿Puedo conservar mi propio número?", "Sí. Los clientes siguen llamando a su número; las llamadas solo se desvían cuando usted no las atiende."]
+    ]
+  }
+}

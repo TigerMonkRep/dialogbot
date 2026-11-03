@@ -3,6 +3,7 @@ import { setupStatus } from "@/lib/setup.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { Need } from "@/components/setup-parts";
 import { SetupShell } from "@/components/setup-shell";
+import { getRaw, getT } from "@/i18n/server";
 import type { Telephony } from "@/app/app/(admin)/settings/telephony/client";
 import { Step3, type VoicesData, type Webchat } from "./step3";
 
@@ -17,6 +18,8 @@ export default async function Trin3() {
     staff ? backend<Telephony>(`/workspaces/${ws.id}/telephony`).catch(() => null) : Promise.resolve(null),
     staff ? backend<Webchat>(`/workspaces/${ws.id}/webchat`).catch(() => null) : Promise.resolve(null),
   ]);
+  const tr = await getT("setup.step3Page");
+  const raw = await getRaw();
   const address = [profile.address_line, [profile.postal_code, profile.city].filter(Boolean).join(" ")].filter(Boolean).join(", ");
   return (
     <SetupShell step={3} steps={st.steps} workspaceName={ws.name} wide assistant={{ wsId: ws.id, canChange: ws.role !== "reader" }}>
@@ -24,11 +27,11 @@ export default async function Trin3() {
         <div className="flex items-center gap-4">
           <span className="w-14 h-14 rounded-[14px] bg-highlight text-ink font-display font-extrabold text-[30px] inline-flex items-center justify-center" aria-hidden>3</span>
           <div>
-            <span className="eyebrow">Trin 3 af 3 · sidste trin</span>
-            <h1 className="font-display font-extrabold text-[30px] md:text-[40px] leading-[1.05] tracking-[-1px] text-ink">Vælg stemme, forbind telefonen – og tænd</h1>
+            <span className="eyebrow">{tr("eyebrow")}</span>
+            <h1 className="font-display font-extrabold text-[30px] md:text-[40px] leading-[1.05] tracking-[-1px] text-ink">{tr("title")}</h1>
           </div>
         </div>
-        <Need items={[["1×", "en telefon at ringe fra"], ["10", "sekunder til viderestilling"]]} />
+        <Need items={raw<[string, string, string?][]>("setup.step3Page.need")} title={raw<string>("setup.need.title")} />
       </div>
       <Step3 wsId={ws.id} canManage={ws.role === "owner" || ws.role === "admin"} goals={st.goals} voices={voices} t={t} webchat={webchat}
         company={profile.legal_name} cvr={profile.cvr ?? ""} address={address} phone={profile.phone ?? ""} website={profile.website_url ?? ""} />

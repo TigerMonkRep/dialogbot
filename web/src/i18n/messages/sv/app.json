@@ -1,0 +1,948 @@
+{
+  "ui": {
+    "reference": "Referens: {id}"
+  },
+  "status": {
+    "complete": "Slutförd",
+    "passed": "Godkänd",
+    "approved": "Godkänd",
+    "published": "Publicerad",
+    "accepted": "Accepterad",
+    "in_progress": "Pågår",
+    "in_review": "Under granskning",
+    "scheduled": "Planerad",
+    "publishing": "Publiceras nu",
+    "pending": "Väntar",
+    "stale": "Inaktuell",
+    "rejected": "Avvisad",
+    "blocked": "Blockerad",
+    "expired": "Utgången",
+    "failed": "Misslyckad",
+    "not_available": "Inte tillgänglig",
+    "not_started": "Inte startad",
+    "untested": "Inte testad",
+    "skipped": "Överhoppad",
+    "draft": "Utkast",
+    "superseded": "Ersatt",
+    "cancelled": "Annullerad",
+    "revoked": "Återkallad"
+  },
+  "nav": {
+    "today": "Idag",
+    "knowledge": "Det här vet den",
+    "calls": "Samtal",
+    "week": "Veckan"
+  },
+  "shell": {
+    "verify": {
+      "before": "Din e-post är inte bekräftad.",
+      "link": "Bekräfta nu",
+      "after": "för att skapa arbetsytor."
+    },
+    "skip": "Hoppa till innehållet",
+    "homeAria": "Dialogbot – Idag",
+    "envStaging": "Staging",
+    "envDev": "Utveckling",
+    "tagline": "AI-reception som svarar i telefon åt dig",
+    "env": "Miljö: {env}",
+    "help": "Hjälp",
+    "workspaceAria": "Arbetsyta: {name}",
+    "chooseWorkspace": "Välj arbetsyta",
+    "newWorkspace": "Ny arbetsyta",
+    "pages": "Sidor",
+    "accountAria": "Konto: {name}",
+    "account": "Konto",
+    "viewAs": {
+      "before": "Du ser som",
+      "after": "– endast läsning, inget kan ändras.",
+      "end": "Avsluta och gå tillbaka till admin"
+    }
+  },
+  "outcome": {
+    "booked": "Tid bokad",
+    "to_you": "Till dig",
+    "done": "Klart"
+  },
+  "overview": {
+    "turnedOn": "Dialogbot är påslagen",
+    "turnedOnSub": "Den svarar i telefon nästa gång kunderna ringer.",
+    "notDone": "Inte klar",
+    "setupNext": "Konfigurationen är inte klar · nästa: steg {n}",
+    "step1": "– företag",
+    "step2": "– kalender & system",
+    "step3": "– testa & slå på",
+    "continue": "Fortsätt",
+    "isOn": "Dialogbot är påslagen",
+    "isOff": "Dialogbot är avstängd",
+    "isNotOn": "Dialogbot är inte påslagen",
+    "statusLine": {
+      "active": "Svarar i telefon när ni inte gör det själva.",
+      "paused": "Pausad – samtalen går till er som förut.",
+      "not_started": "Telefonen är inte konfigurerad än.",
+      "awaiting_info": "Uppgifter saknas innan telefonen kan kopplas på.",
+      "provisioning": "Anslutningen förbereds.",
+      "ready_for_test": "Redo för testsamtal.",
+      "test_failed": "Testsamtalet misslyckades – försök igen."
+    },
+    "setUpPhone": "Konfigurera telefonen",
+    "tiles": {
+      "calls": "samtal",
+      "callsSub": "senaste 24 timmarna",
+      "leads": "nya ärenden",
+      "leadsSub": "{n} öppna totalt",
+      "toYou": "till dig",
+      "toYouSub": "väntar på ditt svar"
+    },
+    "toYou": "Till dig",
+    "toYouSub": "Det enda du behöver göra i dag.",
+    "nothingWaiting": "Inget väntar på dig just nu.",
+    "todo": {
+      "lead": {
+        "tag": "Nytt ärende",
+        "cta": "Öppna"
+      },
+      "conversation": {
+        "tag": "Väntar på dig",
+        "cta": "Svara"
+      },
+      "task": {
+        "tag": "Uppgift",
+        "cta": "Öppna"
+      },
+      "knowledge": {
+        "tag": "Godkänn",
+        "cta": "Granska"
+      },
+      "import": {
+        "tag": "Förslag",
+        "cta": "Se förslag"
+      }
+    },
+    "latestCalls": "Senaste samtal",
+    "latestCallsSub": "Klicka på ett för att läsa vad som sades.",
+    "noCalls": "Inga samtal än.",
+    "callsStaffOnly": "Samtal kan ses av medarbetare, administratörer och ägare.",
+    "read": "Läs",
+    "allCalls": "Se alla samtal",
+    "appointments": "Bokningar",
+    "noAppointments": "Inga kommande bokningar.",
+    "weekAppointments": "Se veckans bokningar",
+    "campaigns": "Kampanjer",
+    "campaignsSub": "Ring era egna kunder – 4 kr. per samtal + 2 kr. per samtalsminut exkl. moms.",
+    "openCampaigns": "Öppna kampanjer",
+    "allActivity": "All aktivitet de senaste 14 dagarna",
+    "power": {
+      "aria": "Slå på eller stäng av Dialogbot",
+      "onlyAdmins": "Endast ägare och administratörer kan slå på och stänga av",
+      "setupFirst": "Telefonen måste konfigureras innan Dialogbot kan slås på"
+    }
+  },
+  "time": {
+    "today": "Idag",
+    "yesterday": "Igår",
+    "minSec": "{m} min {s} s",
+    "weekdaysShort": [
+      "Mån",
+      "Tis",
+      "Ons",
+      "Tor",
+      "Fre",
+      "Lör",
+      "Sön"
+    ],
+    "weekdaysShortLower": [
+      "mån",
+      "tis",
+      "ons",
+      "tor",
+      "fre",
+      "lör",
+      "sön"
+    ]
+  },
+  "calls": {
+    "resolve": "Markera som klart",
+    "saveAsLead": "Spara som ärende",
+    "reply": {
+      "label": "Svara kunden i chatten",
+      "placeholderStaff": "Skriv ditt svar…",
+      "placeholderAi": "När du svarar tar du över samtalet och Dialogbot pausar.",
+      "send": "Skicka svar",
+      "handBack": "Lämna tillbaka till Dialogbot"
+    },
+    "staffOnly": "Samtal och meddelanden kan ses av medarbetare, administratörer och ägare.",
+    "title": "Samtal och meddelanden",
+    "eyebrow": "Allt som Dialogbot har pratat med kunderna om",
+    "filtersAria": "Filter",
+    "filters": {
+      "all": "Alla",
+      "to_you": "Till dig",
+      "booked": "Bokningar",
+      "done": "Klarat av Dialogbot",
+      "webchat": "Webbchatt"
+    },
+    "lastDays": "Senaste {n} dagarna",
+    "search": "Sök namn, nummer eller ämne",
+    "noMatch": "Inga samtal eller meddelanden matchar filtret.",
+    "empty": "Inga samtal eller meddelanden än. När kunderna ringer eller skriver samlas de här.",
+    "showing": "Visar de senaste {n} av {total}. Använd sökning eller en kortare period.",
+    "conversation": "Samtalet",
+    "back": "Alla samtal och meddelanden",
+    "phone": "Telefon",
+    "transcript": "Utskrift",
+    "noTranscript": "Ingen utskrift sparad.",
+    "staff": "Medarbetare",
+    "staffInitial": "M",
+    "actions": "Det här gjorde Dialogbot",
+    "run": {
+      "ok": "Utfört",
+      "failed": "Misslyckades",
+      "refused": "Inte utfört"
+    },
+    "simulated": "simulerat",
+    "callBack": "Ring tillbaka",
+    "makeAppointment": "Boka en tid",
+    "openLead": "Öppna ärende",
+    "takenOver": "En medarbetare har tagit över samtalet – Dialogbot svarar inte förrän det lämnas tillbaka.",
+    "wrongAnswer": "Var svaret fel? Skriv det till assistenten under «Det här vet den» – så rättar den sig."
+  },
+  "common": {
+    "save": "Spara",
+    "saved": "Sparat",
+    "kr": "{amount} kr.",
+    "saving": "Sparar…",
+    "cancel": "Avbryt"
+  },
+  "week": {
+    "form": {
+      "edit": "Ändra själv",
+      "email": "Skicka gårdagens rapport via e-post",
+      "at": "Klockan"
+    },
+    "staffOnly": "Veckan kan ses av medarbetare, administratörer och ägare.",
+    "weekN": "Vecka {n}",
+    "title": "Så gick veckan",
+    "chooseWeek": "Välj vecka",
+    "thisWeek": "Den här veckan",
+    "num": {
+      "answered": "samtal och meddelanden besvarade",
+      "answeredSub": "{phone} i telefon · {chat} i webbchatt",
+      "bookings": "tider bokade",
+      "vsLastWeek": "{d} jämfört med förra veckan",
+      "noneYet": "inga än",
+      "toYou": "meddelanden till dig",
+      "waiting": "väntar på dig",
+      "allDone": "alla klara",
+      "response": "innan den svarar i chatten",
+      "noChat": "ingen chatt under veckan",
+      "allDay": "dygnet runt"
+    },
+    "perDay": "Samtal per dag",
+    "answered": "besvarade",
+    "messageToYou": "meddelande till dig",
+    "dayAria": "{day}: {answered} besvarade, {toYou} till dig",
+    "topics": {
+      "title": "Det här frågade kunderna om",
+      "sub": "Saknas ett svar lägger du in det under «Det här vet den».",
+      "empty": "Inga frågor den här veckan.",
+      "topic": "Ämne",
+      "times": "Gånger",
+      "couldAnswer": "Dialogbot kunde svara",
+      "yes": "Ja",
+      "booked": "bokade {n}",
+      "no": "Nej",
+      "partly": "Delvis ({n} av {total})",
+      "tookMessage": "tog meddelande",
+      "addAnswer": "Lägg till svar",
+      "note": "Sammanställs automatiskt utifrån det kunderna skrev eller sa först. Om två frågor liknar varandra slås de ihop."
+    },
+    "report": {
+      "title": "Dagsrapport",
+      "on": {
+        "before": "Varje dag kl.",
+        "after": "får ägare och administratörer gårdagens samtal och bokningar i ett mejl."
+      },
+      "off": {
+        "before": "Dagsrapporten via e-post är",
+        "bold": "avstängd",
+        "after": ". Siffror för veckan hittar du här."
+      },
+      "ask": "Du kan också be assistenten: «Skicka rapporten kl. 18»."
+    },
+    "cost": {
+      "title": "Det här kostade veckan",
+      "extra": "{amount} extra",
+      "calls": "{n} kampanjsamtal",
+      "note": "300 minuter inkommande samtal per månad ingår i abonnemanget. Kampanjsamtal under veckan: {n} (4 kr. per utgående samtal + 2 kr. per samtalsminut, exkl. moms).",
+      "billing": "Se abonnemang och fakturor"
+    }
+  },
+  "bookings": {
+    "source": {
+      "webchat": "Webbchatt",
+      "phone": "Telefon",
+      "manual": "Manuellt"
+    },
+    "card": {
+      "confirmCancel": "Avboka? Kunden får inte automatiskt besked – ring eller skriv till dem.",
+      "call": "Ring",
+      "conversation": "Samtalet",
+      "lead": "Ärende",
+      "cancel": "Avboka"
+    },
+    "book": {
+      "noSlotsError": "Det finns inga lediga tider. Kontrollera öppettider och kalender.",
+      "type": "Vad ska de ha?",
+      "name": "Namn",
+      "phone": "Telefon",
+      "when": "När",
+      "first": "Första lediga – {label}",
+      "noSlots": "Inga lediga tider",
+      "booked": "Bokat {label}.",
+      "booking": "Bokar…",
+      "submit": "Boka",
+      "note": "Kunden får inget sms än – skicka själv en bekräftelse. «Första lediga» tar nästa tid som öppettider och kalender tillåter."
+    },
+    "calendar": {
+      "reading": "Läser…",
+      "readNow": "Läs kalendern nu",
+      "copied": "Adressen är kopierad",
+      "copy": "Kopiera kalenderadress",
+      "title": "Kalender",
+      "error": "Kunde inte läsa kalendern",
+      "connected": "Ansluten",
+      "notConnected": "Inte ansluten",
+      "lastRead": "Senast läst {at} · {n} upptagna perioder. Dialogbot ser bara när ni är upptagna.",
+      "without": "Utan kalender känner Dialogbot bara till öppettiderna och de tider den själv har bokat.",
+      "change": "Anslut eller byt kalender"
+    },
+    "staffOnly": "Bokningar kan ses av medarbetare, administratörer och ägare.",
+    "eyebrow": "Idag → Bokningar",
+    "title": "Tider som Dialogbot har bokat",
+    "intro": "Flytta eller avboka här. Upptagen tid i er kalender blockeras, och varje bokning blir ett ärende med en uppgift.",
+    "prevWeek": "Föregående vecka",
+    "nextWeek": "Nästa vecka",
+    "noHours": {
+      "before": "Det finns inga godkända öppettider, så det finns inga lediga tider.",
+      "link": "Lägg till öppettider under «Det här vet den»"
+    },
+    "weekAria": "Veckans bokningar",
+    "closed": "Stängt · Dialogbot bokar inte",
+    "none": "Inga bokningar",
+    "bookFor": "Boka åt en kund",
+    "noTypes": {
+      "before": "Det finns inga bokningstyper än.",
+      "link": "Skapa en under Alla inställningar → Bokning"
+    },
+    "rules": {
+      "title": "Så bokar den",
+      "online": "Onlinebokning",
+      "on": "På",
+      "off": "Av",
+      "noHours": "Inga öppettider",
+      "earliest": "Tidigast",
+      "immediately": "direkt",
+      "hoursAhead": "{n} timmar framåt",
+      "horizon": "högst {n} dagar framåt",
+      "pause": "Paus",
+      "buffer": "{n} min mellan bokningar",
+      "types": "Typer",
+      "noTypes": "Inga",
+      "ask": "Säg det till assistenten – den visar regeln innan den gäller. Alla regler:",
+      "allSettings": "Alla inställningar → Bokning"
+    }
+  },
+  "leads": {
+    "qual": {
+      "unqualified": "Inte bedömt",
+      "qualified": "Kvalificerat",
+      "disqualified": "Inte relevant"
+    },
+    "pipe": {
+      "new": "Nytt",
+      "contacted": "Kontaktat",
+      "won": "Vunnet",
+      "lost": "Förlorat"
+    },
+    "bill": {
+      "pending": "Väntar på godkännande",
+      "approved": "Godkänt",
+      "rejected": "Avvisat"
+    },
+    "source": {
+      "webchat": "Webbchatt",
+      "phone": "Telefon",
+      "manual": "Manuellt",
+      "campaign": "Kampanj"
+    },
+    "callbackWindow": "{day} kl. {from}–{to}",
+    "editor": {
+      "title": "Kund och behov",
+      "name": "Namn",
+      "email": "E-post",
+      "phone": "Telefon",
+      "need": "Behov",
+      "qualification": "Kvalificering",
+      "locked": "Låst eftersom avräkningen är avgjord.",
+      "reason": "Motivering",
+      "pipeline": "Förlopp"
+    },
+    "billing": {
+      "title": "Avräkning",
+      "price": {
+        "before": "Pris för det här ärendet (äldre avtal):",
+        "after": "exkl. moms (avtal v{v})."
+      },
+      "included": "Godkänt. Inget pris per ärende – det ingår i abonnemanget (avtal v{v}).",
+      "reason": "Motivering: {reason}",
+      "modelB": "Äldre avtal v{v}: ett godkänt ärende kostar {price} exkl. moms.",
+      "modelA": "Avtal v{v}: abonnemanget täcker ärendet – det finns inget pris per ärende.",
+      "noAgreement": "Abonnemanget är inte bekräftat än – ägaren bekräftar det under Inställningar → Avtal.",
+      "monthly": "Godkända ärenden visas i månadens översikt (se Fakturering).",
+      "reasonLabel": "Motivering (krävs vid avvisning)",
+      "approve": "Godkänn ärende",
+      "reject": "Avvisa",
+      "onlyQualified": "Endast kvalificerade ärenden kan godkännas.",
+      "adminsApprove": "Ägare och administratörer godkänner ärenden."
+    },
+    "tasks": {
+      "title": "Uppgifter",
+      "none": "Inga uppgifter.",
+      "doneAria": "Klar: {title}",
+      "due": "Deadline {at}",
+      "new": "Ny uppgift",
+      "newPlaceholder": "Ny uppgift…",
+      "add": "Lägg till"
+    },
+    "back": "Ärenden",
+    "noName": "(utan namn)",
+    "created": "skapat {at}",
+    "wantsCall": "Vill bli uppringd {window}",
+    "seeConversation": "Se samtalet"
+  },
+  "campaigns": {
+    "status": {
+      "draft": "Utkast",
+      "running": "Pågår",
+      "paused": "Pausad",
+      "completed": "Avslutad"
+    },
+    "contactStatus": {
+      "pending": "Väntar",
+      "calling": "Ringer nu",
+      "done": "Pratat med",
+      "no_answer": "Inget svar",
+      "failed": "Misslyckades",
+      "opted_out": "Har avböjt samtal",
+      "skipped": "Spärrad"
+    },
+    "outcome": {
+      "interested": "Intresserad",
+      "callback": "Ring tillbaka",
+      "not_interested": "Inte intresserad",
+      "opt_out": "Vill inte bli uppringd",
+      "no_answer": "Inget svar"
+    },
+    "staffOnly": "Kampanjer kan ses av medarbetare, administratörer och ägare.",
+    "eyebrow": "Idag → Kampanjer",
+    "enable": {
+      "title": "Vill ni också ringa ut?",
+      "body": "Dialogbot kan ringa era egna kunder med ett budskap – t.ex. ett erbjudande – och skicka de intresserade vidare till er. Det kostar {price} per utgående samtal exkl. moms. Det rings först när ni har godkänt.",
+      "onlyAdmins": "Endast ägare och administratörer kan aktivera utgående samtal.",
+      "ask": "Du kan också säga det till assistenten.",
+      "pending": "Aktiverar…",
+      "button": "Ja, aktivera utgående samtal"
+    },
+    "eyebrowPrice": "Idag → Kampanjer · utgående samtal · {price} per samtal exkl. moms",
+    "title": "Ring era kunder – en kampanj i taget",
+    "intro": "Tre steg: du väljer vem den ska ringa, hör vad den säger och godkänner priset innan första samtalet går ut. Priset är {price} + moms per utgående samtal – varje samtal räknas, även ett nytt försök. Högst {attempts} försök och totalt {minutes} minuters samtal per kontakt. Dialogbot ringer aldrig någon på spärrlistan.",
+    "salesCalls": "Säljsamtal: låt AI:n ringa upp (endast Dialogbot)",
+    "need": {
+      "title": "Du behöver",
+      "list": "en lista med namn och nummer (CSV eller inklistrad från Excel)",
+      "sentence": "en mening om varför ni ringer"
+    },
+    "onlyAdmins": "Endast administratörer och ägare kan skapa och starta kampanjer.",
+    "previous": "Tidigare kampanjer",
+    "none": "Inga kampanjer än.",
+    "summary": "{calls} samtal · {answered} pratat med · {interested} intresserade · {open} kvar",
+    "stats": {
+      "contacts": "Kontakter",
+      "answered": "Pratat med",
+      "interested": "Intresserade",
+      "callback": "Ring tillbaka",
+      "noAnswer": "Inget svar",
+      "left": "Kvar"
+    },
+    "detail": {
+      "who": "Vem ska den ringa?",
+      "contacts": "{n} kontakter. Nummer på spärrlistan hoppas över. Dialogbot använder bara namn och nummer.",
+      "noContacts": "Inga kontakter än.",
+      "private": "Privat",
+      "business": "Företag",
+      "consent": "samtycke",
+      "noConsent": "Samtycke saknas – rings inte upp",
+      "attempts": "{n} försök",
+      "priceNote": "{price} kr. per samtal exkl. moms. Du betalar bara för de samtal som går ut. Stoppa när som helst."
+    },
+    "new": {
+      "title": "Ny kampanj",
+      "name": "Namn på kampanjen",
+      "namePlaceholder": "Vårerbjudande 2027",
+      "purpose": "Vad ska samtalet handla om?",
+      "purposeHint": "T.ex. \"Erbjuda golvslipning till tidigare kunder före sommarsemestern\". AI:n föreslår manuset utifrån det och er kunskap.",
+      "create": "Skapa kampanj"
+    },
+    "editor": {
+      "suggested": "Förslag från AI har lagts in. Justera det och tryck Spara.",
+      "saved": "Sparat.",
+      "what": "Vad ska den säga?",
+      "suggesting": "Föreslår…",
+      "suggest": "Föreslå med AI",
+      "running": "Kampanjen pågår. Pausa den för att ändra manuset.",
+      "purpose": "Syfte med samtalet",
+      "opening": "Första repliken",
+      "openingHint": "{navn} blir kontaktens förnamn och {virksomhed} ert namn. Assistenten säger alltid att den är en digital assistent.",
+      "questions": "Frågor (en per rad)",
+      "success": "När är kontakten intresserad?",
+      "fromNumber": "Ring från nummer",
+      "addNumber": "Lägg till ert nummer under Inställningar → Telefoni.",
+      "chooseNumber": "Välj nummer",
+      "when": "När – och vad gör den med svaren?",
+      "whenSub": "Säger kunden ja skickas de vidare som ett ärende till er. Säger de nej hamnar de på spärrlistan.",
+      "onlyCalls": "Det rings bara",
+      "from": "Från kl.",
+      "to": "Till kl.",
+      "save": "Spara kampanj"
+    },
+    "import": {
+      "title": "Lägg till kontakter",
+      "intro": "Ladda upp en CSV-fil (t.ex. sparad från Excel) eller klistra in listan. Kolumner: namn, telefon och ev. företag och e-post. Danska nummer får skrivas utan +45. Nummer på spärrlistan hoppas över.",
+      "added": "{n} kontakter tillagda",
+      "duplicates": "{n} fanns redan",
+      "blocked": "{n} står på spärrlistan",
+      "invalid": "{n} ogiltiga nummer (t.ex. rad {rows})",
+      "file": "CSV-fil",
+      "paste": "Eller klistra in listan",
+      "pastePlaceholder": "Namn;Telefon;Företag\nMette Hansen;20 30 40 50;Hansen Byg ApS",
+      "who": "Vilka är kontakterna?",
+      "businesses": "Företag",
+      "consumers": "Privatpersoner",
+      "consent": "Var och när har de sagt ja till att bli uppringda?",
+      "consentHint": "Assistenten ringer utan en människa i luren. Enligt § 10 i den danska marknadsföringslagen (markedsføringsloven) kräver det att kontakten i förväg har bett om det – även när det är ett företag. Det räcker inte att de inte står på Robinsonlistan eller är reklamskyddade i CVR-registret.",
+      "consentPlaceholder": "Anmälan på webbplatsen, mars 2026",
+      "importing": "Importerar…"
+    },
+    "start": {
+      "completed": "Kampanjen är avslutad: alla kontakter har ringts upp.",
+      "running": "Kampanjen pågår. Det rings till en kontakt i taget under den valda tiden.",
+      "pause": "Pausa",
+      "before": "Innan den startar",
+      "resumeTitle": "Återuppta kampanjen",
+      "heading": "{n} samtal · högst {max} exkl. moms",
+      "body": "{n} kontakter väntar. Högst {max} + moms ({gross} inkl. moms) – {call} + moms per utgående samtal och {minute} + moms per påbörjad samtalsminut, högst {attempts} försök och {minutes} minuters samtal per kontakt. Betalning startar aldrig samtal.",
+      "confirm": "Bekräfta reglerna för samtal",
+      "starting": "Startar…",
+      "resume": "Återuppta",
+      "start": "Starta kampanj"
+    },
+    "remove": "Ta bort",
+    "dnc": {
+      "title": "Spärrlista",
+      "intro": "Nummer här rings aldrig upp i en kampanj. Säger någon under ett samtal att de inte vill bli uppringda igen hamnar de automatiskt på listan.",
+      "optedOut": "Avböjde samtal",
+      "phone": "Telefonnummer",
+      "reason": "Orsak (valfritt)",
+      "block": "Spärra nummer"
+    }
+  },
+  "knowledge": {
+    "kind": {
+      "service": "Tjänst",
+      "opening_hours": "Öppettider",
+      "coverage_area": "Täckningsområde",
+      "fact": "Fakta",
+      "known_answer": "Känt svar",
+      "unknown_answer": "Får inte besvaras",
+      "offer": "Erbjudande"
+    },
+    "unit": {
+      "m2": "m²",
+      "hour": "timme",
+      "item": "st.",
+      "job": "uppdrag"
+    },
+    "sum": {
+      "noPrice": "Inget pris",
+      "noTimes": "Inga tider",
+      "noZones": "Inga zoner",
+      "human": "Assistenten hänvisar till en människa.",
+      "allAreas": "alla ytor",
+      "discount": "-{pct}% vid {thr}",
+      "period": "{from} – {to} (båda dagarna inkl.)"
+    },
+    "pendingSuggestions": "{n} förslag väntar",
+    "eyebrow": "Det här vet den om er",
+    "title": "Allt som Dialogbot får säga till era kunder",
+    "intro": "Står det inte här säger den det inte – då tar den ett meddelande åt dig i stället. Du kan ändra allt direkt och testa svaret i assistenten.",
+    "revision": "{n} godkända ämnen · revision {rev}",
+    "about": {
+      "title": "Om er",
+      "sub": "Det den säger först",
+      "what": "Vad ni gör",
+      "notFilled": "Inte ifyllt än",
+      "noHours": "Inga godkända öppettider",
+      "where": "Var ni kör",
+      "notSet": "Inte angivet",
+      "addFact": "Lägg till något den ska veta"
+    },
+    "edit": "Ändra",
+    "close": "Stäng",
+    "changePending": "Ändring väntar",
+    "sell": {
+      "title": "Det ni säljer",
+      "sub": "Tjänster och priser – det den får erbjuda",
+      "none": "Inga tjänster än – utan dem kan den inte svara på priser.",
+      "sells": "Säljer",
+      "onlyAsked": "Bara om någon frågar",
+      "howMuch": "Vad kostar {name}?",
+      "offers": "Erbjudanden och rabatter",
+      "addOffer": "Lägg till ett erbjudande",
+      "note": "«Säljer» betyder att den själv nämner tjänsten när det passar. «Bara om någon frågar» betyder att den bara svarar på priset. Priser är exkl. moms."
+    },
+    "questions": {
+      "title": "Frågor som kunderna ställer",
+      "sub": "{n} svar godkända",
+      "none": "Inga fasta svar än. Lägg till de frågor som kunderna oftast ställer.",
+      "add": "Lägg till ett svar"
+    },
+    "rules": {
+      "title": "Det här får den inte",
+      "sub": "Här tar den ett meddelande åt dig i stället",
+      "none": "Inga regler än.",
+      "add": "Lägg till en regel"
+    },
+    "seeAll": "Se alla {n}",
+    "showFewer": "Visa färre",
+    "f": {
+      "price": "Pris (exkl. moms)",
+      "unit": "Enhet",
+      "per": "per {unit}",
+      "promote": "Säljer den själv?",
+      "after": "Vad ska den säga efteråt?",
+      "period": "Tidsintervall {n}",
+      "opens": "Öppnar",
+      "closes": "Stänger",
+      "removePeriod": "Ta bort tidsintervall",
+      "addPeriod": "Lägg till tidsintervall",
+      "closed": "Utanför öppettiderna",
+      "closedPlaceholder": "T.ex. helger och helgdagar: tar bara emot meddelanden",
+      "zones": "Var kör ni? (separera med kommatecken)",
+      "fact": "Det den får veta",
+      "question": "Frågan",
+      "answer": "Svaret",
+      "rule": "Ämne som den inte får uttala sig om",
+      "discount": "Rabatt (%)",
+      "threshold": "Gäller vid minst (m²)",
+      "from": "Från",
+      "to": "Till och med",
+      "offerName": "Vad heter erbjudandet?",
+      "name": "Vad heter den?"
+    },
+    "sendForApproval": "Skicka för godkännande",
+    "savedLive": "Sparat – Dialogbot använder det nu",
+    "sentToOwner": "Skickat för godkännande till en ägare eller administratör",
+    "sent": "Skickat för godkännande",
+    "hear": {
+      "listening": "Lyssnar…",
+      "button": "Lyssna",
+      "answer": "Så svarar den på «{q}»"
+    },
+    "service": {
+      "badPrice": "Skriv priset med siffror, t.ex. «från 1.200 kr.» eller «850 kr. per m²».",
+      "priceLine": "Pris: {price}.",
+      "add": "Lägg till en tjänst",
+      "new": "Ny tjänst · 3 fält",
+      "price": "Pris (som kunden ska höra det)",
+      "pricePlaceholder": "från 1.200 kr.",
+      "notePlaceholder": "T.ex.: Vi bokar en tid för besiktning",
+      "saveAndShow": "Spara – och visa mig hur den säger det"
+    },
+    "remove": {
+      "confirm": "Ta bort «{label}»? Dialogbot slutar använda det direkt.",
+      "aria": "Ta bort {label}"
+    },
+    "draft": {
+      "rejectPrompt": "Varför avvisar du förslaget? (sparas i loggen)",
+      "rejectDefault": "Stämmer inte",
+      "suggests": "Dialogbot föreslår",
+      "now": "Nu:",
+      "proposal": "Förslag:",
+      "approving": "Godkänner…",
+      "approveAnswer": "Godkänn svaret",
+      "approve": "Godkänn",
+      "awaiting": "Väntar på godkännande av en ägare eller administratör",
+      "editAnswer": "Ändra svaret"
+    },
+    "import": {
+      "button": "Hämta från webbplatsen",
+      "intro": "Vi läser era egna sidor och föreslår tjänster, fakta och fasta svar. Förslagen ligger som utkast tills du har godkänt dem. Priser gissas aldrig.",
+      "needsAi": "Kräver att AI är aktiverat på servern.",
+      "url": "Webbplatsens adress",
+      "urlPlaceholder": "https://www.ert-foretag.se",
+      "reading": "Läser webbplatsen…",
+      "fetch": "Hämta förslag",
+      "running": "Läser sidor och skriver förslag. Det tar oftast under en minut.",
+      "failed": "Importen misslyckades.",
+      "noNew": "Inga nya förslag",
+      "created": "{n} förslag har lagts som utkast – godkänn dem nedan",
+      "pages": "{n} sidor lästa."
+    }
+  },
+  "account": {
+    "language": {
+      "title": "Språk",
+      "sub": "Språket i appen. Sparas på din användare."
+    },
+    "card": {
+      "opening": "Öppnar Stripe…",
+      "change": "Byt kort",
+      "add": "Lägg till betalkort"
+    },
+    "invoiceNow": {
+      "pending": "Skapar…",
+      "button": "Fakturera {month} nu"
+    },
+    "referral": {
+      "ask": "Har du en ambassadörskod?",
+      "label": "Ambassadörskod",
+      "placeholder": "T.ex. MADS42",
+      "hint": "Från den som rekommenderade Dialogbot. Ni får 50 % rabatt på första fakturerade månaden.",
+      "add": "Lägg till kod",
+      "referred": "Ni är rekommenderade av {name} (Dialogbot-ambassadör) och får {pct} % rabatt på första fakturerade månaden."
+    },
+    "logout": "Logga ut",
+    "role": {
+      "reader": "Kan se",
+      "editor": "Kan ändra",
+      "owner": "Ägare"
+    },
+    "team": {
+      "title": "Vem får se och ändra",
+      "intro": "Ägaren kan allt. «Kan ändra» rättar kunskap och regler. «Kan se» läser samtal och rapporter.",
+      "role": "Roll",
+      "onlyAdmins": "Endast ägare och administratörer kan bjuda in och ändra roller.",
+      "confirmLeave": "Lämna arbetsytan?",
+      "confirmRemove": "Ta bort {name} från arbetsytan?",
+      "you": "(du)",
+      "roleFor": "Roll för {name}",
+      "leave": "Lämna",
+      "confirmRevoke": "Återkalla inbjudan? Länken slutar fungera.",
+      "invited": "Inbjuden – har inte svarat än:",
+      "expires": "går ut {date}",
+      "resend": "Skicka igen",
+      "revoke": "Återkalla",
+      "inviteEmail": "Bjud in via e-post",
+      "emailPlaceholder": "kollega@foretag.se",
+      "may": "Får",
+      "sending": "Skickar…",
+      "invite": "Bjud in",
+      "sent": "Inbjudan har skickats."
+    },
+    "invoiceStatus": {
+      "creating": "Skapas",
+      "open": "Väntar på betalning",
+      "paid": "Betald",
+      "payment_failed": "Betalningen misslyckades",
+      "failed": "Inte betald",
+      "void": "Annullerad"
+    },
+    "eyebrow": "Längst bak i häftet · Konto",
+    "title": "Team, abonnemang och fakturor",
+    "sub": {
+      "title": "Abonnemang",
+      "cardSaved": "Tack – kortet är sparat hos Stripe. Det kan ta en stund innan det visas här.",
+      "fixed": "Fast abonnemang",
+      "perMonth": "/mån. exkl. moms",
+      "confirmed": "Bekräftat · avtal v{v}. Konfiguration på egen hand ingår.",
+      "notConfirmed": "Konfiguration på egen hand ingår. Inte bekräftat än.",
+      "campaign": "Kampanjsamtal",
+      "campaignPrice": "per samtal + {minute} per minut exkl. moms",
+      "campaignMonth": "Den här månaden: {calls} samtal, {minutes} samtalsminuter · {amount} exkl. moms",
+      "inbound": "Inkommande samtal",
+      "inboundUsed": "av {n} inkluderade minuter använda den här månaden",
+      "inboundExtra": "{n} minuter utöver de inkluderade · {amount} exkl. moms ({price} per påbörjad minut).",
+      "inboundPrice": "Minuter utöver de {n} kostar {price} per påbörjad minut exkl. moms.",
+      "confirm": "Bekräfta abonnemang",
+      "ownerMustConfirm": "Ägaren måste bekräfta abonnemanget.",
+      "older": "Äldre avtal – bekräfta abonnemanget för att byta till det nuvarande abonnemanget.",
+      "note": "Priser är exkl. moms. Ingen bindningstid – säg det till assistenten eller skriv till info@dialogbot.dk om ni vill säga upp. Betalning startar aldrig samtal."
+    },
+    "pay": {
+      "title": "Betalning",
+      "notConfigured": "Kortbetalning är inte konfigurerad än. Fram till dess är översikten bara en förhandsvisning, och ingen betalning dras.",
+      "card": "Kort",
+      "expires": "går ut {exp}",
+      "noCard": "Inget betalkort",
+      "withCard": "Varje månad faktureras i efterskott och dras automatiskt från kortet.",
+      "withoutCard": "Utan kort faktureras inte månaden.",
+      "onlyOwner": "Endast ägaren kan ändra betalkortet."
+    },
+    "invoices": {
+      "title": "Fakturor",
+      "soFar": "{month} hittills:",
+      "totals": "{net} exkl. moms · moms {tax} · totalt {gross}",
+      "billedEnd": "Faktureras när månaden är slut.",
+      "billedEndCard": "Faktureras när månaden är slut och kortbetalning är konfigurerad.",
+      "none": "Inga fakturor än.",
+      "month": "Månad",
+      "status": "Status",
+      "total": "Totalt inkl. moms",
+      "open": "Öppna",
+      "pdf": "Ladda ned PDF"
+    },
+    "me": {
+      "unknownDevice": "Okänd enhet",
+      "browser": "Webbläsare",
+      "device": "{browser} på {os}",
+      "owner": "ägare",
+      "reader": "kan se",
+      "editor": "kan ändra",
+      "notVerified": "E-postadressen är inte bekräftad – bekräfta nu",
+      "changePassword": "Byt lösenord",
+      "operator": "Operatör",
+      "sales": "Dialogbots försäljning",
+      "sessions": "Inloggad på {n|1 enhet|# enheter}. Om du återställer lösenordet loggas alla ut.",
+      "thisDevice": "den här enheten",
+      "lastActive": "senast aktiv {at}"
+    },
+    "ws": {
+      "title": "Arbetsytor",
+      "this": "den här",
+      "new": "Bygg en Dialogbot för ett annat företag"
+    },
+    "data": {
+      "title": "Data och historik",
+      "sub": "Vem som har ändrat vad, och när, finns i historiken.",
+      "log": "Se alla ändringar",
+      "settings": "Alla inställningar"
+    }
+  },
+  "help": {
+    "start": {
+      "title": "Kom igång",
+      "guide": {
+        "q": "Konfigurationsguiden",
+        "a": "Guiden tar er genom företag, mål, språk och kunskap. I varje steg föreslår AI:n innehåll utifrån er webbplats – ni justerar och sparar."
+      },
+      "fetch": {
+        "q": "Hämta uppgifter från webbplatsen",
+        "a": "Företagssidan läser er webbplats och fyller i beskrivning, CVR, telefon och adress när de finns på sidan. Tjänster och öppettider blir utkast."
+      }
+    },
+    "knowledge": {
+      "title": "Kunskap",
+      "approved": {
+        "q": "Bara godkänd kunskap används",
+        "a": "Assistenten svarar uteslutande utifrån godkända ämnen. Utkast och förslag används aldrig innan en ägare eller administratör har godkänt dem."
+      },
+      "prices": {
+        "q": "Priser",
+        "a": "Priser anges exkl. moms. AI:n gissar aldrig ett pris – står det ett pris på webbplatsen citeras det i utkastet så att ni kan bekräfta det."
+      },
+      "edit": {
+        "q": "Radera eller ändra",
+        "a": "Ändra ett ämne och spara det som ett nytt utkast, eller radera det. Raderar ni godkänd kunskap slutar assistenten använda den direkt."
+      }
+    },
+    "reception": {
+      "title": "Reception, telefon och chatt",
+      "script": {
+        "q": "Receptionsmanus",
+        "a": "Bestäm hälsningen, vad assistenten frågar om och när en medarbetare tar över. Gäller både telefon och chatt."
+      },
+      "phone": {
+        "q": "Telefon och röst",
+        "a": "Behåll ert nummer och vidarekoppla det till ert Dialogbot-nummer. Välj en röst, testa anslutningen och aktivera. Samtal hamnar under Samtal med utskrift."
+      },
+      "webchat": {
+        "q": "Webbchatt",
+        "a": "Slå på widgeten, godkänn era domäner och klistra in koden på webbplatsen. Ni kan ta över ett samtal under Samtal."
+      }
+    },
+    "leads": {
+      "title": "Ärenden och avräkning",
+      "tasks": {
+        "q": "Ärenden och uppgifter",
+        "a": "Kunder som vill bli kontaktade blir ärenden med en uppgift. Kvalificera, godkänn och lös dem från Samtal → Öppna ärende."
+      },
+      "billing": {
+        "q": "Avräkning",
+        "a": "Det finns ett abonnemang från 2.495 kr. i månaden exkl. moms, inkl. 300 minuter inkommande samtal (därefter 1,50 kr. per minut). Utgående kampanjsamtal kostar 4 kr. per samtal plus 2 kr. per påbörjad samtalsminut. Konto visar månadens förhandsvisning."
+      }
+    },
+    "team": {
+      "title": "Team och säkerhet",
+      "roles": {
+        "q": "Roller",
+        "a": "Ägare och administratörer godkänner kunskap och ändrar inställningar. Medarbetare arbetar med ärenden och utkast. Läsare kan bara se."
+      },
+      "log": {
+        "q": "Aktivitetslogg",
+        "a": "Alla godkännanden, raderingar och ändringar av inställningar loggas med vem och när."
+      }
+    },
+    "title": "Så använder ni Dialogbot",
+    "goThere": "Gå dit"
+  },
+  "reception": {
+    "staffOnly": "Receptionen kan ses av medarbetare, administratörer och ägare.",
+    "active": "Aktiv",
+    "inactive": "Inte aktiv",
+    "eyebrow": "Reception",
+    "title": "Er digitala reception",
+    "intro": "Assistenten svarar i telefon och i chatten på er webbplats utifrån godkänd kunskap och manuset nedan. Kunder som vill bli kontaktade blir ärenden.",
+    "phone": {
+      "notConfigured": "Röstanslutningen är inte konfigurerad på servern.",
+      "noVoice": "röst saknas",
+      "noNumber": "Inget aktivt nummer kopplat.",
+      "settings": "Telefoniinställningar"
+    },
+    "webchat": {
+      "activeOn": "Aktiv på {n} domän(er).",
+      "off": "Widgeten är inte påslagen.",
+      "settings": "Webbchattinställningar"
+    },
+    "stats": {
+      "conversations": "Samtal"
+    },
+    "try": "Testa assistenten med manuset och er godkända kunskap innan kunderna gör det.",
+    "test": "Testa assistenten",
+    "script": {
+      "title": "Receptionsmanus",
+      "intro": "Styr hur assistenten hälsar, vad den frågar om och när en medarbetare ska ta över – i telefon och i chatten. Fakta och priser kommer fortfarande bara från godkänd kunskap.",
+      "activeVersion": "Aktiv version {v}",
+      "onlyAdmins": "Endast ägare och administratörer kan ändra manuset.",
+      "writing": "Skriver ett förslag utifrån ert företag och er kunskap…",
+      "suggested": "Förslag från AI har lagts in. Justera och tryck \"Spara manus\".",
+      "saved": "Sparat. Assistenten använder manuset från nästa samtal.",
+      "persona": "Namn på assistenten (valfritt)",
+      "personaPlaceholder": "t.ex. Sofie",
+      "address": "Tilltal",
+      "informal": "du (informellt)",
+      "formal": "ni (formellt)",
+      "greeting": "Telefonhälsning",
+      "greetingHint": "Använd {virksomhed} för företagsnamnet. Om hälsningen inte nämner att det är en digital assistent lägger vi till det automatiskt.",
+      "collect": "Det här ska assistenten fråga om (en per rad)",
+      "collectHint": "Används när kunden vill ha en offert, en tid eller ett samtal. En fråga i taget.",
+      "escalation": "Lämna genast över till en medarbetare när …",
+      "escalationHint": "T.ex. akuta skador eller klagomål. Assistenten lovar ett snabbt samtal och skapar ett ärende.",
+      "avoid": "Det här får assistenten inte lova eller uttala sig om",
+      "avoidHint": "T.ex. slutliga priser utan besiktning.",
+      "closing": "Avslutning",
+      "closingHint": "Kort och vänlig.",
+      "suggestAgain": "Föreslå igen",
+      "save": "Spara manus"
+    }
+  }
+}

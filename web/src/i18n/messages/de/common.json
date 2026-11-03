@@ -1,0 +1,25 @@
+{
+  "language": "Sprache",
+  "chrome": {
+    "home": "Dialogbot Startseite",
+    "choosePath": "Weg wählen",
+    "tryIt": "Ausprobieren",
+    "buildGuide": "Einrichtungsleitfaden",
+    "mainMenu": "Hauptmenü",
+    "pricing": "Preise",
+    "location": "Aarhus · Dänemark",
+    "hours": "Mo–Fr 08–17 Uhr",
+    "privacy": "Datenschutz",
+    "gdpr": "DSGVO",
+    "terms": "AGB",
+    "pages": "Seiten",
+    "about": "Über uns",
+    "gdprData": "DSGVO und Daten",
+    "contact": "Kontakt",
+    "login": "Anmelden",
+    "signup": "Konto erstellen",
+    "knowledge": "Wissen",
+    "byIndustry": "KI-Rezeptionist für Ihre Branche",
+    "skip": "Zum Inhalt springen"
+  }
+}

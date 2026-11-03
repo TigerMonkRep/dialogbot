@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/i18n/link";
 import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { COMPANY } from "@/components/legal-page";
@@ -9,7 +9,10 @@ import { ArrowIcon, CalendarIcon, ChatIcon, CheckIcon, PhoneIcon, PlayIcon, Send
 import { API_BASE_URL, KNOWN_ACCOUNT_COOKIE, REFERRAL_COOKIE, SESSION_COOKIE } from "@/lib/config";
 import { ApprovalScreenshot } from "@/components/approval-screenshot";
 import { ProofSection } from "@/components/proof-section";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { getLocale, getRaw, getT } from "@/i18n/server";
+import { HTML_LANG } from "@/i18n/config";
+import type { T } from "@/i18n/translate";
 
 /** The front page: one story, read top to bottom. What Dialogbot is (one sentence + the 70-second video), how it
  *  works (3 steps), what it does (4 tiles), a real call to listen to, the price, and at the end the two ways in:
@@ -30,12 +33,15 @@ async function recommender(): Promise<Recommender | null> {
   } catch { return null; }
 }
 
-export const metadata: Metadata = {
-  title: { absolute: "Dialogbot – AI-receptionist på dansk, der tager telefonen døgnet rundt" },
-  description: "Dialogbot tager telefonen, når I ikke kan: en AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. 2.495 kr./md.",
-  alternates: { canonical: "/" },
-  openGraph: { url: "/", title: "Dialogbot tager telefonen, når I ikke kan", images: ["/opengraph-image.png"] },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT("site");
+  return {
+    title: { absolute: t("home.meta.title") },
+    description: t("home.meta.description"),
+    alternates: { canonical: "/" },
+    openGraph: { url: "/", title: t("home.meta.ogTitle"), images: ["/opengraph-image.png"] },
+  };
+}
 
 const container = "max-w-[1180px] mx-auto px-4 sm:px-6";
 const eyebrow = "eyebrow text-[13px] tracking-[1.5px]";
@@ -45,32 +51,40 @@ const btnOutline = "inline-flex items-center justify-center gap-2.5 min-h-[52px]
 const stepNo = "inline-flex w-14 h-14 rounded-[14px] bg-highlight items-center justify-center font-display font-extrabold text-[30px] shrink-0";
 const tile = "inline-flex w-12 h-12 rounded-xl bg-accent items-center justify-center shrink-0";
 
-function Bubble({ who, children }: { who: "D" | "K"; children: React.ReactNode }) {
+function Bubble({ who, initial, children }: { who: "D" | "K"; initial: string; children: React.ReactNode }) {
   const bot = who === "D";
   return (
     <div className={`flex gap-2.5 items-end ${bot ? "" : "justify-end"}`}>
-      {bot && <span className="flex-none w-8 h-8 rounded-full bg-accent inline-flex items-center justify-center font-display font-extrabold text-[13px] text-white">D</span>}
+      {bot && <span className="flex-none w-8 h-8 rounded-full bg-accent inline-flex items-center justify-center font-display font-extrabold text-[13px] text-white">{initial}</span>}
       <p className={`m-0 px-4 py-3 text-[15px] leading-normal max-w-[420px] ${bot ? "rounded-[16px_16px_16px_4px] bg-white border-2 border-ink" : "rounded-[16px_16px_4px_16px] bg-ink text-white"}`}>{children}</p>
-      {!bot && <span className="flex-none w-8 h-8 rounded-full bg-highlight inline-flex items-center justify-center font-display font-extrabold text-[13px]">K</span>}
+      {!bot && <span className="flex-none w-8 h-8 rounded-full bg-highlight inline-flex items-center justify-center font-display font-extrabold text-[13px]">{initial}</span>}
     </div>
   );
 }
 
 export default async function Home() {
   const rec = await recommender();
+  const t = await getT("site");
+  const raw = await getRaw();
+  const locale = await getLocale();
+  const howSteps = raw<{ title: string; text: string }[]>("site.home.how.steps");
+  const features = raw<{ title: string; text: string }[]>("site.home.features.items");
+  const lines = raw<string[]>("site.demoCall.lines");
+  const D = t("demoCall.botInitial");
+  const K = t("demoCall.customerInitial");
   return (
     <SiteChrome compactFooter={false}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(t, HTML_LANG[locale])) }} />
       {rec && (
-        <section aria-label="Anbefaling" className="bg-highlight border-b-2 border-ink">
+        <section aria-label={t("home.referral.label")} className="bg-highlight border-b-2 border-ink">
           <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
             <span className="w-10 h-10 rounded-full bg-ink text-highlight flex items-center justify-center font-display font-extrabold text-lg shrink-0" aria-hidden>{rec.first_name.slice(0, 1)}</span>
             <div className="flex-1 min-w-0 text-ink">
-              <p className="font-semibold text-[15px]">{rec.first_name} har anbefalet Dialogbot til dig – du får {rec.customer_discount_bp / 100} % rabat på din første måned.</p>
+              <p className="font-semibold text-[15px]">{t("home.referral.offer", { name: rec.first_name, pct: rec.customer_discount_bp / 100 })}</p>
               {rec.headline && <p className="text-sm">&ldquo;{rec.headline}&rdquo;</p>}
-              <p className="text-xs text-ink-soft">{rec.first_name} er Dialogbot-ambassadør og får en bonus, hvis du bliver kunde. Rabatten kommer automatisk, når du opretter dig herfra.</p>
+              <p className="text-xs text-ink-soft">{t("home.referral.bonus", { name: rec.first_name })}</p>
             </div>
-            <Link href="/signup" className="inline-flex items-center justify-center gap-2 min-h-11 bg-ink text-white font-semibold text-[15px] px-5 rounded-xl no-underline">Kom i gang<ArrowIcon size={16} /></Link>
+            <Link href="/signup" className="inline-flex items-center justify-center gap-2 min-h-11 bg-ink text-white font-semibold text-[15px] px-5 rounded-xl no-underline">{t("home.referral.cta")}<ArrowIcon size={16} /></Link>
           </div>
         </section>
       )}
@@ -79,14 +93,14 @@ export default async function Home() {
       <section className="bg-white">
         <div className={`${container} pt-10 sm:pt-16 pb-12 sm:pb-16 flex flex-wrap gap-10 lg:gap-14 items-center`}>
           <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-5">
-            <span className={eyebrow}>For håndværkere, klinikker og saloner · på dansk · døgnet rundt</span>
-            <h1 className="m-0 font-display font-extrabold text-[clamp(38px,5vw,64px)] leading-[1.02] tracking-[-1.6px]">Dialogbot tager telefonen, når I ikke kan.</h1>
-            <p className="m-0 text-[18px] sm:text-[19px] leading-[1.55] text-ink-soft max-w-[540px]">En AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. I beholder jeres nummer. 2.495 kr./md. ekskl. moms.</p>
+            <span className={eyebrow}>{t("home.hero.eyebrow")}</span>
+            <h1 className="m-0 font-display font-extrabold text-[clamp(38px,5vw,64px)] leading-[1.02] tracking-[-1.6px]">{t("home.hero.title")}</h1>
+            <p className="m-0 text-[18px] sm:text-[19px] leading-[1.55] text-ink-soft max-w-[540px]">{t("home.hero.lead")}</p>
             <div className="flex flex-wrap gap-3">
-              <Link href="/proev" className={btnPrimary}>Prøv den – den ringer til dig<ArrowIcon size={18} /></Link>
+              <Link href="/proev" className={btnPrimary}>{t("home.hero.cta")}<ArrowIcon size={18} /></Link>
               <div className="hidden sm:block"><ExplainerVideo variant="button" /></div>
             </div>
-            <p className="m-0 text-sm text-muted">2 minutter, ingen tilmelding. Spørg den, som en kunde ville gøre.</p>
+            <p className="m-0 text-sm text-muted">{t("home.hero.note")}</p>
           </div>
           <div className="flex-[1_1_420px] min-w-0 max-w-[640px]"><ExplainerVideo variant="poster" /></div>
         </div>
@@ -96,15 +110,15 @@ export default async function Home() {
       <section className="bg-panel border-y-2 border-ink">
         <div className={`${container} py-14 sm:py-20 flex flex-col gap-9`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
-            <span className={eyebrow}>Sådan virker det</span>
-            <h2 className={h2}>Kunden ringer. Dialogbot svarer. Du får besked.</h2>
-            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Et ubesvaret opkald er en tabt kunde – de fleste ringer aldrig igen. Det er den følelse, Dialogbot tager fra dig: at stå på stigen eller med en kunde i stolen og høre telefonen ringe uden at kunne tage den.</p>
+            <span className={eyebrow}>{t("home.how.eyebrow")}</span>
+            <h2 className={h2}>{t("home.how.title")}</h2>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("home.how.lead")}</p>
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
             {[
-              ["1", "Kunden ringer – som altid", "På jeres eget nummer. Er I optaget eller har lukket, tager Dialogbot den inden for to sekunder og præsenterer sig som jeres receptionist.", <PhoneIcon key="p" size={30} stroke="#FFFFFF" />],
-              ["2", "Den svarer og booker", "Ud fra de ydelser, priser og åbningstider, I selv har godkendt. Den gætter aldrig. Skal kunden have en tid, finder den en ledig i jeres kalender og sender SMS.", <CalendarIcon key="c" size={30} stroke="#FFFFFF" />],
-              ["3", "Du får en besked", "Navn, nummer og hvad det drejede sig om – som SMS eller mail med det samme, og en samlet rapport hver dag. Er der noget, den ikke kan klare, tager den en besked til dig.", <SmsIcon key="s" size={30} stroke="#FFFFFF" />],
+              ["1", howSteps[0].title, howSteps[0].text, <PhoneIcon key="p" size={30} stroke="#FFFFFF" />],
+              ["2", howSteps[1].title, howSteps[1].text, <CalendarIcon key="c" size={30} stroke="#FFFFFF" />],
+              ["3", howSteps[2].title, howSteps[2].text, <SmsIcon key="s" size={30} stroke="#FFFFFF" />],
             ].map(([n, title, text, icon]) => (
               <article key={n as string} className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
                 <div className="flex items-center gap-4">
@@ -123,15 +137,15 @@ export default async function Home() {
       <section className="bg-white">
         <div className={`${container} py-14 sm:py-20 flex flex-col gap-9`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
-            <span className={eyebrow}>Det kan den</span>
-            <h2 className={h2}>Fire ting, én receptionist</h2>
+            <span className={eyebrow}>{t("home.features.eyebrow")}</span>
+            <h2 className={h2}>{t("home.features.title")}</h2>
           </div>
           <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr))]">
             {[
-              ["Tager telefonen", "Døgnet rundt, på dansk, med en stemme I selv vælger. Siger ærligt, at den er en digital assistent, hvis kunden spørger.", <PhoneIcon key="1" size={24} stroke="#FFFFFF" />],
-              ["Booker aftaler", "Finder ledige tider i Google Kalender eller Microsoft 365, booker, flytter og aflyser – og sender bekræftelse på SMS.", <CalendarIcon key="2" size={24} stroke="#FFFFFF" />],
-              ["Svarer på hjemmesiden", "Den samme viden som webchat på jeres side: kunder, der spørger om priser og åbningstider, får svar med det samme – også om aftenen. Én kodelinje, så er den på.", <ChatIcon key="3" size={24} stroke="#FFFFFF" />],
-              ["Ringer kunder op", "Følger op på tilbud eller minder om service – kun til kunder, der har sagt ja. 4 kr. pr. opkald + 2 kr. pr. minut.", <SendIcon key="4" size={24} stroke="#FFFFFF" />],
+              [features[0].title, features[0].text, <PhoneIcon key="1" size={24} stroke="#FFFFFF" />],
+              [features[1].title, features[1].text, <CalendarIcon key="2" size={24} stroke="#FFFFFF" />],
+              [features[2].title, features[2].text, <ChatIcon key="3" size={24} stroke="#FFFFFF" />],
+              [features[3].title, features[3].text, <SendIcon key="4" size={24} stroke="#FFFFFF" />],
             ].map(([title, text, icon]) => (
               <div key={title as string} className="flex flex-col gap-3 p-5 rounded-2xl bg-panel border-[1.5px] border-ink">
                 <span className={tile}>{icon}</span>
@@ -140,7 +154,7 @@ export default async function Home() {
               </div>
             ))}
           </div>
-          <p className="m-0 text-[15px] text-ink-soft">Alt, den siger, bygger på viden I selv har godkendt – og enhver ændring viser den jer først: før → efter, «Godkend?».</p>
+          <p className="m-0 text-[15px] text-ink-soft">{t("home.features.note")}</p>
         </div>
       </section>
 
@@ -148,18 +162,18 @@ export default async function Home() {
       <section id="demo" className="bg-panel border-y-2 border-ink scroll-mt-6">
         <div className={`${container} py-14 sm:py-20 flex flex-wrap gap-12 items-center`}>
           <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-4">
-            <span className={eyebrow}>Hør et opkald</span>
-            <h2 className={h2}>Sådan lyder det, når Dialogbot tager telefonen</h2>
-            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Et opkald til en tømrer. Prøv den selv – så ringer den til dig og tager imod dig, som var du en kunde.</p>
-            <Link href="/proev" className={`${btnPrimary} self-start min-h-14 px-6`}><PlayIcon size={20} />Prøv den – den ringer til dig</Link>
+            <span className={eyebrow}>{t("home.demo.eyebrow")}</span>
+            <h2 className={h2}>{t("home.demo.title")}</h2>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("home.demo.lead")}</p>
+            <Link href="/proev" className={`${btnPrimary} self-start min-h-14 px-6`}><PlayIcon size={20} />{t("home.demo.cta")}</Link>
           </div>
           <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-3 p-5 sm:p-6 rounded-[20px] bg-white border-2 border-ink">
-            <div className="flex items-center justify-between gap-3 text-[13px] font-semibold text-muted tracking-[1px] uppercase"><span>Opkald · Tømrerfirma (eksempel)</span><span>0:48</span></div>
-            <Bubble who="D">Du har ringet til Nørgaard Tømrer, det er Dialogbot. Hvad kan jeg hjælpe med?</Bubble>
-            <Bubble who="K">Hej, jeg skal have skiftet et vindue. Kan I komme og kigge i næste uge?</Bubble>
-            <Bubble who="D">Det kan vi godt. Der er ledigt tirsdag kl. 9 eller torsdag kl. 14. Hvad passer bedst?</Bubble>
-            <Bubble who="K">Tirsdag, tak.</Bubble>
-            <div className="flex items-center gap-2 mt-1.5 px-3 py-2.5 rounded-[10px] bg-panel border-[1.5px] border-ink text-[13px] font-semibold"><CheckIcon size={16} stroke="#2456F6" />Aftale booket: tirsdag kl. 9 · SMS sendt til dig og kunden</div>
+            <div className="flex items-center justify-between gap-3 text-[13px] font-semibold text-muted tracking-[1px] uppercase"><span>{t("demoCall.label")}</span><span>0:48</span></div>
+            <Bubble who="D" initial={D}>{lines[0]}</Bubble>
+            <Bubble who="K" initial={K}>{lines[1]}</Bubble>
+            <Bubble who="D" initial={D}>{lines[2]}</Bubble>
+            <Bubble who="K" initial={K}>{lines[3]}</Bubble>
+            <div className="flex items-center gap-2 mt-1.5 px-3 py-2.5 rounded-[10px] bg-panel border-[1.5px] border-ink text-[13px] font-semibold"><CheckIcon size={16} stroke="#2456F6" />{t("demoCall.booked")}</div>
           </div>
           <ApprovalScreenshot />
         </div>
@@ -173,34 +187,34 @@ export default async function Home() {
       <section id="pris" className="bg-white scroll-mt-6">
         <div className={`${container} py-14 sm:py-20 flex flex-col gap-9`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
-            <span className={eyebrow}>Pris</span>
-            <h2 className={h2}>Ét abonnement. Ingen pris pr. henvendelse.</h2>
-            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Alle priser er ekskl. moms. Ingen binding – opsigelse måned til måned.</p>
+            <span className={eyebrow}>{t("home.price.eyebrow")}</span>
+            <h2 className={h2}>{t("home.price.title")}</h2>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("home.price.lead")}</p>
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
             <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block">
-              <span className="flex items-center gap-3 flex-wrap"><span className="font-display font-bold text-xl">Abonnement</span><span className="inline-flex items-center min-h-6 px-2.5 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">Anbefalet</span></span>
-              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">2.495</span><span className="text-lg font-semibold text-ink-soft">kr./md.</span></div>
-              <span className="text-[15px] text-ink-soft">Hele prisen: telefon, booking og webchat er med – inkl. 300 minutters indgående opkald om måneden. Ingen binding. Gør-det-selv-opsætning er med.</span>
-              <span className="text-[15px] text-ink-soft">Prisen på en telefonpasning – men en receptionist, der også booker tiderne i jeres kalender.</span>
-              <Link href="/proev" className={`${btnPrimary} mt-auto`}>Vælg her – hør den først<ArrowIcon size={18} /></Link>
+              <span className="flex items-center gap-3 flex-wrap"><span className="font-display font-bold text-xl">{t("home.price.subscription.name")}</span><span className="inline-flex items-center min-h-6 px-2.5 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">{t("home.price.subscription.badge")}</span></span>
+              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">{t("prices.monthly")}</span><span className="text-lg font-semibold text-ink-soft">{t("home.price.subscription.unit")}</span></div>
+              <span className="text-[15px] text-ink-soft">{t("home.price.subscription.text")}</span>
+              <span className="text-[15px] text-ink-soft">{t("home.price.subscription.compare")}</span>
+              <Link href="/proev" className={`${btnPrimary} mt-auto`}>{t("home.price.subscription.cta")}<ArrowIcon size={18} /></Link>
             </article>
             <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
-              <span className="font-display font-bold text-xl">Udgående kampagneopkald</span>
-              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">4</span><span className="text-lg font-semibold text-ink-soft">kr. pr. opkald + 2 kr. pr. minut</span></div>
-              <span className="text-[15px] text-ink-soft">Kun hvis I vil have Dialogbot til at ringe ud. Ubesvaret: 4 kr. Tre minutters samtale: 10 kr. I ser den højeste pris, før I starter.</span>
+              <span className="font-display font-bold text-xl">{t("home.price.campaign.name")}</span>
+              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">{t("prices.perCall")}</span><span className="text-lg font-semibold text-ink-soft">{t("home.price.campaign.unit")}</span></div>
+              <span className="text-[15px] text-ink-soft">{t("home.price.campaign.text")}</span>
             </article>
             <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
-              <span className="font-display font-bold text-xl">Opsætning fra vores specialister</span>
-              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">5.000</span><span className="text-lg font-semibold text-ink-soft">kr. én gang</span></div>
-              <span className="text-[15px] text-ink-soft">Skræddersyet opsætning og integration til jeres egne systemer – kalender, CRM, bookingsystem. Kun hvis I ikke vil gøre det selv.</span>
+              <span className="font-display font-bold text-xl">{t("home.price.setup.name")}</span>
+              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">{t("prices.setup")}</span><span className="text-lg font-semibold text-ink-soft">{t("home.price.setup.unit")}</span></div>
+              <span className="text-[15px] text-ink-soft">{t("home.price.setup.text")}</span>
             </article>
           </div>
           <div className="flex flex-col gap-2 max-w-[720px]">
-            <h3 className="m-0 font-display font-bold text-[22px] leading-tight">Hvorfor vi koster mere end en chatbot</h3>
-            <p className="m-0 text-[16px] leading-[1.55] text-ink-soft">En billig chatbot svarer med det, den har lært af internettet. Dialogbot svarer kun ud fra viden, I selv har godkendt, og viser jer hver ændring først: før → efter, «Godkend?». Den kan også booke, flytte og aflyse tider i jeres kalender og sende SMS-bekræftelse – og I får en besked om hvert opkald. Det er derfor, den koster mere end en telefonsvarer.</p>
+            <h3 className="m-0 font-display font-bold text-[22px] leading-tight">{t("home.price.whyTitle")}</h3>
+            <p className="m-0 text-[16px] leading-[1.55] text-ink-soft">{t("home.price.whyText")}</p>
           </div>
-          <Link href="/priser" className="self-start text-[15px] font-semibold text-ink underline underline-offset-4 inline-flex items-center min-h-11">Alle detaljer om prisen →</Link>
+          <Link href="/priser" className="self-start text-[15px] font-semibold text-ink underline underline-offset-4 inline-flex items-center min-h-11">{t("home.price.allDetails")}</Link>
         </div>
       </section>
 
@@ -208,47 +222,48 @@ export default async function Home() {
       <section className="bg-panel border-t-2 border-ink">
         <div className={`${container} py-14 sm:py-20 flex flex-col gap-8`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
-            <span className={eyebrow}>Kom i gang</span>
-            <h2 className={h2}>Hør den først – eller byg den selv på 30 minutter</h2>
+            <span className={eyebrow}>{t("home.start.eyebrow")}</span>
+            <h2 className={h2}>{t("home.start.title")}</h2>
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))]">
             <Link href="/proev" className="group flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block text-ink no-underline">
-              <span className="inline-flex self-start items-center gap-2 px-3 py-1.5 rounded-full bg-highlight text-[13px] font-semibold tracking-[1px] uppercase">2 min · ingen tilmelding</span>
-              <span className="font-display font-extrabold text-[28px] leading-[1.05] tracking-[-0.5px]">Prøv den – den ringer til dig</span>
-              <span className="text-[16px] leading-[1.5] text-ink-soft">Skriv til Peter i chatten eller tryk «Ja, ring til mig». Så ringer Dialogbot op og tager imod dig som din egen receptionist.</span>
-              <span className={`${btnPrimary} mt-auto group-hover:bg-accent-deep`}>Prøv den nu<ArrowIcon size={18} /></span>
+              <span className="inline-flex self-start items-center gap-2 px-3 py-1.5 rounded-full bg-highlight text-[13px] font-semibold tracking-[1px] uppercase">{t("home.start.try.badge")}</span>
+              <span className="font-display font-extrabold text-[28px] leading-[1.05] tracking-[-0.5px]">{t("home.start.try.title")}</span>
+              <span className="text-[16px] leading-[1.5] text-ink-soft">{t("home.start.try.text")}</span>
+              <span className={`${btnPrimary} mt-auto group-hover:bg-accent-deep`}>{t("home.start.try.cta")}<ArrowIcon size={18} /></span>
             </Link>
             <Link href="/byggevejledning" className="group flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink text-ink no-underline">
-              <span className="inline-flex self-start items-center gap-2 px-3 py-1.5 rounded-full bg-panel border-[1.5px] border-ink text-[13px] font-semibold tracking-[1px] uppercase">3 trin · ca. 30 min</span>
-              <span className="font-display font-extrabold text-[28px] leading-[1.05] tracking-[-0.5px]">Byg den selv</span>
-              <span className="text-[16px] leading-[1.5] text-ink-soft">Byggevejledningen viser trin for trin, hvad du skal bruge, og hvad der sker – ingen teknik, ingen kode.</span>
-              <span className={`${btnOutline} mt-auto`}>Åbn byggevejledningen<ArrowIcon size={18} /></span>
+              <span className="inline-flex self-start items-center gap-2 px-3 py-1.5 rounded-full bg-panel border-[1.5px] border-ink text-[13px] font-semibold tracking-[1px] uppercase">{t("home.start.build.badge")}</span>
+              <span className="font-display font-extrabold text-[28px] leading-[1.05] tracking-[-0.5px]">{t("home.start.build.title")}</span>
+              <span className="text-[16px] leading-[1.5] text-ink-soft">{t("home.start.build.text")}</span>
+              <span className={`${btnOutline} mt-auto`}>{t("home.start.build.cta")}<ArrowIcon size={18} /></span>
             </Link>
           </div>
-          <p className="m-0 text-[15px] text-ink-soft">Vil I hellere have det gjort? Vores specialister sætter den op for 5.000 kr. ekskl. moms, skræddersyet til jeres systemer.</p>
+          <p className="m-0 text-[15px] text-ink-soft">{t("home.start.specialists")}</p>
         </div>
       </section>
     </SiteChrome>
   );
 }
 
-/** schema.org data for Google: the company, the site and the product with its two list prices. */
-function structuredData() {
+/** schema.org data for Google: the company, the site and the product with its two list prices. `t` is the "site"
+ *  translator, `lang` the page's BCP-47 language. */
+function structuredData(t: T, lang: string) {
   const org = { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL,
     logo: `${SITE_URL}/icon.png`, email: COMPANY.email, telephone: "+4593703433", vatID: `DK${COMPANY.cvr}`,
     address: { "@type": "PostalAddress", streetAddress: "Abildgade 18", postalCode: "8200", addressLocality: "Aarhus", addressCountry: "DK" } };
   return [
     { "@context": "https://schema.org", ...org },
     { "@context": "https://schema.org", "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: SITE_URL, name: SITE_NAME,
-      inLanguage: "da-DK", publisher: { "@id": `${SITE_URL}/#organization` } },
+      inLanguage: lang, publisher: { "@id": `${SITE_URL}/#organization` } },
     { "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Dialogbot", applicationCategory: "BusinessApplication",
-      operatingSystem: "Web", description: SITE_DESCRIPTION, inLanguage: "da", url: SITE_URL,
+      operatingSystem: "Web", description: t("home.ld.appDescription"), inLanguage: lang, url: SITE_URL,
       publisher: { "@id": `${SITE_URL}/#organization` },
       offers: [
-        { "@type": "Offer", name: "Abonnement", price: "2495", priceCurrency: "DKK", description: "Pr. måned ekskl. moms, inkl. 300 minutters indgående opkald. Ingen binding." },
-        { "@type": "Offer", name: "Udgående kampagneopkald", price: "4", priceCurrency: "DKK", description: "Pr. udgående opkald ekskl. moms, plus 2 kr. pr. påbegyndt samtaleminut" },
-        { "@type": "Offer", name: "Opsætning fra Dialogbots specialister", price: "5000", priceCurrency: "DKK", description: "Én gang, ekskl. moms – skræddersyet opsætning og integration til egne systemer. Gør-det-selv-opsætning er med i abonnementet." },
+        { "@type": "Offer", name: t("home.ld.subscription.name"), price: "2495", priceCurrency: "DKK", description: t("home.ld.subscription.description") },
+        { "@type": "Offer", name: t("home.ld.campaign.name"), price: "4", priceCurrency: "DKK", description: t("home.ld.campaign.description") },
+        { "@type": "Offer", name: t("home.ld.setup.name"), price: "5000", priceCurrency: "DKK", description: t("home.ld.setup.description") },
       ] },
-    { "@context": "https://schema.org", ...videoStructuredData(SITE_URL) },
+    { "@context": "https://schema.org", ...videoStructuredData(SITE_URL, t) },
   ];
 }

@@ -1,5 +1,6 @@
 "use client";
-import Link from "next/link";
+import Link from "@/i18n/link";
+import { useT } from "@/i18n/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { api, fieldError } from "@/lib/client";
@@ -11,6 +12,7 @@ import { PasswordField } from "@/components/password-field";
 function SignupForm() {
   const params = useSearchParams();
   const router = useRouter();
+  const t = useT("auth");
   const [form, setForm] = useState({ email: "", password: "", display_name: "", signup_intent: params.get("intent") ?? "reception" });
   const { run, pending, error } = useSubmit(async () => {
     await api("/auth/register", { method: "POST", body: JSON.stringify(form) });
@@ -24,22 +26,23 @@ function SignupForm() {
   return (
     <form onSubmit={(e) => { e.preventDefault(); run(); }} className="space-y-3">
       <ErrorBox error={error} />
-      <Field label="Dit navn" error={fieldError(error, "display_name")}><Input required value={form.display_name} onChange={set("display_name")} autoComplete="name" /></Field>
-      <Field label="E-mail" error={fieldError(error, "email")}><Input type="email" required value={form.email} onChange={set("email")} autoComplete="email" /></Field>
-      <PasswordField label="Adgangskode" value={form.password} onChange={(v) => setForm({ ...form, password: v })} error={fieldError(error, "password")} />
-      <Field label="Jeg vil starte med">
+      <Field label={t("signup.name")} error={fieldError(error, "display_name")}><Input required value={form.display_name} onChange={set("display_name")} autoComplete="name" /></Field>
+      <Field label={t("fields.email")} error={fieldError(error, "email")}><Input type="email" required value={form.email} onChange={set("email")} autoComplete="email" /></Field>
+      <PasswordField label={t("fields.password")} value={form.password} onChange={(v) => setForm({ ...form, password: v })} error={fieldError(error, "password")} />
+      <Field label={t("signup.startWith")}>
         <Select value={form.signup_intent} onChange={set("signup_intent")}>
-          <option value="reception">Reception</option><option value="campaigns">Kampagner</option><option value="both">Begge dele</option>
+          <option value="reception">{t("signup.intentReception")}</option><option value="campaigns">{t("signup.intentCampaigns")}</option><option value="both">{t("signup.intentBoth")}</option>
         </Select>
       </Field>
-      <Button type="submit" icon="person_add" disabled={pending} className="w-full h-12 rounded-lg">{pending ? "Opretter…" : "Opret konto"}</Button>
-      <p className="text-center text-body-sm text-ink-soft">Har du en konto? <Link className="text-label-md font-semibold text-muted underline" href="/login">Log ind</Link></p>
+      <Button type="submit" icon="person_add" disabled={pending} className="w-full h-12 rounded-lg">{pending ? t("signup.submitting") : t("signup.submit")}</Button>
+      <p className="text-center text-body-sm text-ink-soft">{t("signup.haveAccount")} <Link className="text-label-md font-semibold text-muted underline" href="/login">{t("signup.login")}</Link></p>
     </form>
   );
 }
 
 export default function SignupPage() {
+  const t = useT("auth");
   return (
-    <AuthFrame icon="person_add" title="Opret konto" subtitle="Dit produktvalg følger med til opsætningen, så planen passer til det, du vil bruge Dialogbot til."><Suspense><SignupForm /></Suspense></AuthFrame>
+    <AuthFrame icon="person_add" title={t("signup.title")} subtitle={t("signup.subtitle")}><Suspense><SignupForm /></Suspense></AuthFrame>
   );
 }

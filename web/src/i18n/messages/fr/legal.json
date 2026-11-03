@@ -1,0 +1,515 @@
+{
+  "notice": "Ceci est une traduction. Seule la version danoise fait foi juridiquement.",
+  "shell": {
+    "nav": "Mentions juridiques",
+    "terms": "Conditions",
+    "privacy": "Confidentialité",
+    "contact": "Contact",
+    "cvr": "N° CVR"
+  },
+  "gdpr": {
+    "meta": {
+      "title": "RGPD et données – comment Dialogbot protège les données de vos clients",
+      "description": "Ce que Dialogbot conserve sur les appels et les SMS, où sont hébergées les données, comment fonctionne l’accord de sous-traitance et ce qui se passe en cas de résiliation. En bref et en langage clair.",
+      "ogTitle": "RGPD et données | Dialogbot"
+    },
+    "kicker": "RGPD et données",
+    "title": "RGPD et données : ce que nous conservons, et où",
+    "lead": "Vos clients vous appellent et vous écrivent en partageant des informations personnelles. Voici, en langage clair, ce que Dialogbot en fait.",
+    "points": [
+      "Vous êtes responsable du traitement – Dialogbot est votre sous-traitant",
+      "La base de données est hébergée dans l’UE",
+      "L’accord de sous-traitance fait partie des conditions",
+      "Les appels peuvent être transcrits en texte",
+      "Dialogbot indique honnêtement qu’il est une IA",
+      "En cas de résiliation, vous pouvez obtenir une copie des données, puis nous les supprimons"
+    ],
+    "sections": [
+      {
+        "title": "Qui est responsable de quoi ?",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "C’est vous qui êtes ",
+              {
+                "b": "responsable du traitement"
+              },
+              " des données de vos clients. Dialogbot est ",
+              {
+                "b": "sous-traitant"
+              },
+              " et ne traite les données que sur vos instructions. Cela vaut aussi si vos clients sont des patients, des clients de cabinet ou des particuliers."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Que conservons-nous ?",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              "Le numéro de téléphone, le nom et le contenu du message lorsque quelqu’un vous appelle ou vous écrit",
+              "Une transcription de la conversation – les appels peuvent être transcrits en texte",
+              "Les réservations et les confirmations par SMS",
+              "Le résumé de chaque demande que Dialogbot vous transmet",
+              "Les connaissances et les tarifs que vous avez vous-même validés pour l’assistant"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Où sont les données ?",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "La base de données est hébergée dans l’UE (Irlande) et le serveur dans l’UE (Francfort). La téléphonie, la voix et l’IA sont assurées par des sous-traitants, dont certains peuvent traiter des données aux États-Unis. Cela se fait sur la base du EU-U.S. Data Privacy Framework ou des clauses contractuelles types de la Commission européenne. La liste complète des sous-traitants ultérieurs figure dans la ",
+              {
+                "link": "/privatliv",
+                "text": "politique de confidentialité"
+              },
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Accord de sous-traitance",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Notre accord de sous-traitance est inclus dans les ",
+              {
+                "link": "/vilkaar",
+                "text": "conditions"
+              },
+              ", vous n’avez donc pas besoin d’en demander un séparément. Écrivez à ",
+              {
+                "email": true
+              },
+              " si vous avez besoin d’un exemplaire signé pour votre propre documentation."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Que dit l’assistant à vos clients ?",
+        "body": [
+          {
+            "type": "p",
+            "text": "Dialogbot indique honnêtement qu’il est un assistant numérique si le client le demande, et le précise au cours de la conversation. Il répond uniquement à partir des connaissances que vous avez vous-même validées."
+          }
+        ]
+      },
+      {
+        "title": "En cas de résiliation",
+        "body": [
+          {
+            "type": "p",
+            "text": "Vos données vous appartiennent. Dans les 30 jours suivant la résiliation, vous pouvez en demander une copie. Nous les supprimons ensuite, sauf si la loi nous impose de les conserver – par exemple les factures pendant 5 ans."
+          }
+        ]
+      },
+      {
+        "title": "Questions ou droit d’accès",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Si l’un de vos clients souhaite accéder à ses données ou les faire supprimer, nous vous aidons à lui répondre. Écrivez à ",
+              {
+                "email": true
+              },
+              ". Les clients peuvent aussi porter plainte auprès de l’autorité danoise de protection des données, ",
+              {
+                "href": "https://www.datatilsynet.dk",
+                "text": "Datatilsynet"
+              },
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "faq": [
+      [
+        "Puis-je obtenir un accord de sous-traitance ?",
+        "Oui. Il est inclus dans les conditions. Écrivez à info@dialogbot.dk si vous souhaitez un exemplaire signé."
+      ],
+      [
+        "Les données sont-elles hébergées dans l’UE ?",
+        "La base de données est hébergée dans l’UE (Irlande) et le serveur dans l’UE (Francfort). Certains sous-traitants pour la téléphonie, la voix et l’IA peuvent traiter des données aux États-Unis sur la base du EU-U.S. Data Privacy Framework ou de clauses contractuelles types."
+      ],
+      [
+        "Que deviennent les données en cas de résiliation ?",
+        "Vous pouvez en demander une copie dans les 30 jours. Nous supprimons ensuite les données, sauf si la loi nous impose de les conserver."
+      ]
+    ]
+  },
+  "privacy": {
+    "meta": {
+      "title": "Confidentialité | Dialogbot",
+      "description": "Comment Dialogbot traite les données personnelles de ses clients, des clients de ses clients, des ambassadeurs et des visiteurs."
+    },
+    "label": "Confidentialité",
+    "title": "Comment nous traitons les données personnelles",
+    "updated": "Mise à jour le 6 octobre 2026.",
+    "intro": "Vous trouverez ici les données que Dialogbot traite, pourquoi, pendant combien de temps et qui nous aide à le faire. Cette page concerne les clients, les propres clients de nos clients, les ambassadeurs et les visiteurs.",
+    "sections": [
+      {
+        "title": "Qui est responsable ?",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "{name} (n° CVR {cvr}), {address}. Écrivez à ",
+              {
+                "email": true
+              },
+              " pour toute question concernant vos données."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Clients (entreprises disposant d’un compte)",
+        "body": [
+          {
+            "type": "p",
+            "text": "Nous traitons le nom, l’e-mail et le mot de passe (stocké de manière chiffrée) des utilisateurs, les informations de l’entreprise (nom, CVR, adresse, téléphone, horaires d’ouverture, prestations et tarifs) ainsi que les connaissances que vous fournissez à l’assistant. Nous journalisons les actions importantes, par exemple les validations et les changements de rôles, pour des raisons de sécurité."
+          },
+          {
+            "type": "p",
+            "text": "La finalité est de fournir le service et de le facturer. La base juridique est le contrat conclu avec vous (article 6, paragraphe 1, point b, du règlement général sur la protection des données) et notre intérêt légitime en matière de sécurité et d’exploitation (point f)."
+          }
+        ]
+      },
+      {
+        "title": "Paiement",
+        "body": [
+          {
+            "type": "p",
+            "text": "Les cartes de paiement sont gérées par Stripe. Nous ne voyons que le type de carte, les quatre derniers chiffres et la date d’expiration. Les factures sont conservées 5 ans conformément à la loi danoise sur la comptabilité."
+          }
+        ]
+      },
+      {
+        "title": "Vos clients (conversations, appels et demandes)",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Lorsque l’assistant échange avec vos clients au téléphone ou sur votre site web, nous traitons le numéro de téléphone, le nom, le contenu du message, la transcription de la conversation, les réservations et les demandes qui en découlent. Nous le faisons en tant que ",
+              {
+                "b": "sous-traitant"
+              },
+              " pour le compte de l’entreprise que le client a contactée – cette entreprise est responsable du traitement. Voir les ",
+              {
+                "link": "/vilkaar",
+                "text": "conditions"
+              },
+              "."
+            ]
+          },
+          {
+            "type": "p",
+            "text": "Les appels peuvent être transcrits en texte. L’assistant indique au début de la conversation qu’il est une IA."
+          }
+        ]
+      },
+      {
+        "title": "Ambassadeurs",
+        "body": [
+          {
+            "type": "p",
+            "text": "Si vous êtes ambassadeur, nous traitons votre nom, e-mail, téléphone, date de naissance, votre message d’accueil, les clients que vous avez recommandés (uniquement le nom de l’entreprise et le statut), votre prime et vos versements."
+          },
+          {
+            "type": "p",
+            "parts": [
+              "Sans numéro CVR, nous traitons également votre ",
+              {
+                "b": "numéro CPR"
+              },
+              " et votre ",
+              {
+                "b": "numéro de compte bancaire"
+              },
+              ". Le numéro CPR sert uniquement à déclarer votre prime comme revenu B à l’administration fiscale danoise (Skattestyrelsen), ce à quoi nous sommes tenus ; le numéro de compte sert uniquement au versement. Tous deux sont stockés de manière chiffrée, ne sont visibles que par les administrateurs de Dialogbot, et chaque consultation est journalisée. Si vous avez moins de 18 ans, nous traitons aussi le nom, l’e-mail et l’accord de votre parent."
+            ]
+          },
+          {
+            "type": "p",
+            "text": "La base juridique est le contrat conclu avec vous (art. 6, par. 1, point b) et notre obligation légale de déclaration (point c et article 11 de la loi danoise sur la protection des données concernant le CPR). Les données sont conservées tant que vous êtes ambassadeur, puis pendant 5 ans pour des raisons comptables et fiscales."
+          }
+        ]
+      },
+      {
+        "title": "Liste d’attente et appels de démonstration",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              {
+                "b": "Liste d’attente :"
+              },
+              " e-mail, secteur choisi et centres d’intérêt ainsi que la date du consentement – uniquement pour vous prévenir de notre ouverture. Conservés 24 mois maximum."
+            ]
+          },
+          {
+            "type": "p",
+            "parts": [
+              {
+                "b": "« Rappelez-moi maintenant » :"
+              },
+              " numéro de téléphone, nom, entreprise, date et texte de votre consentement ainsi que la transcription de la conversation, afin de pouvoir vous rappeler et assurer le suivi. Si vous refusez pendant l’appel, le numéro est ajouté à notre liste d’opposition. La base juridique est votre consentement, que vous pouvez retirer à tout moment."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Cookies",
+        "body": [
+          {
+            "type": "p",
+            "text": "Nous déposons les cookies nécessaires sans vous le demander : pour vous garder connecté, mémoriser l’espace de travail choisi, le mot de passe de la page d’accueil et – si vous êtes arrivé via le lien d’un ambassadeur – quel ambassadeur nous a recommandés (90 jours). Nous mesurons la fréquentation de deux manières : Vercel Web Analytics, qui n’utilise pas de cookies et ne conserve rien sur vous, et Google Analytics, qui dépose un cookie statistique et ne fonctionne que si vous l’avez accepté dans le bandeau – vous pouvez modifier votre choix via « Paramètres des cookies » en bas de page. Nous n’utilisons aucun cookie publicitaire."
+          }
+        ]
+      },
+      {
+        "title": "Qui nous aide ? (sous-traitants ultérieurs)",
+        "body": [
+          {
+            "type": "p",
+            "text": "Nous faisons appel aux prestataires suivants, qui traitent des données pour notre compte dans le cadre d’accords de sous-traitance :"
+          },
+          {
+            "type": "ul",
+            "items": [
+              "Supabase – base de données (UE, Irlande)",
+              "Render – serveur (UE, Francfort)",
+              "Vercel – site web et application",
+              "Resend – envoi d’e-mails (UE, Irlande)",
+              "Stripe – paiement",
+              "Anthropic – modèle d’IA qui formule les réponses",
+              "Vapi et Twilio – téléphonie",
+              "Deepgram et ElevenLabs – reconnaissance et synthèse vocales"
+            ]
+          },
+          {
+            "type": "p",
+            "text": "Certains d’entre eux peuvent traiter des données aux États-Unis. Le transfert s’effectue sur la base du EU-U.S. Data Privacy Framework ou des clauses contractuelles types de la Commission européenne."
+          }
+        ]
+      },
+      {
+        "title": "Vos droits",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Vous disposez d’un droit d’accès, de rectification, d’effacement, de limitation, de portabilité et d’opposition – ainsi que du droit de retirer votre consentement. Écrivez à ",
+              {
+                "email": true
+              },
+              ". S’il s’agit d’une conversation avec l’un de nos clients, nous aidons cette entreprise à vous répondre. Vous pouvez porter plainte auprès de l’autorité danoise de protection des données, Datatilsynet (",
+              {
+                "href": "https://www.datatilsynet.dk",
+                "text": "datatilsynet.dk"
+              },
+              ")."
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "meta": {
+      "title": "Conditions | Dialogbot",
+      "description": "Conditions d’abonnement et conditions générales de vente de Dialogbot."
+    },
+    "label": "Conditions",
+    "title": "Conditions d’abonnement et conditions générales de vente",
+    "updated": "Version 1 · en vigueur à compter du 6 octobre 2026.",
+    "intro": "Les présentes conditions s’appliquent lorsqu’une entreprise crée un compte et utilise Dialogbot. Dialogbot est vendu exclusivement aux professionnels. « Nous » désigne {name} (n° CVR {cvr}), {address}. « Vous » désigne l’entreprise qui a créé l’espace de travail.",
+    "sections": [
+      {
+        "title": "1. Le service",
+        "body": [
+          {
+            "type": "p",
+            "text": "Dialogbot est un réceptionniste IA qui peut répondre aux appels et aux messages sur votre site web, recevoir des demandes, prendre des rendez-vous et – si vous le choisissez – appeler des contacts ayant donné leur consentement. L’assistant répond à partir des connaissances que vous avez vous-même validées dans votre espace de travail."
+          },
+          {
+            "type": "p",
+            "text": "Nous faisons évoluer le service en continu. Les fonctionnalités signalées comme « bientôt disponible » ou « non disponible » ne font pas partie du contrat avant leur lancement."
+          }
+        ]
+      },
+      {
+        "title": "2. Tarifs",
+        "body": [
+          {
+            "type": "p",
+            "text": "Tous les prix sont en couronnes danoises HT. La TVA (25 %) est ajoutée sur la facture."
+          },
+          {
+            "type": "ul",
+            "items": [
+              [
+                {
+                  "b": "Abonnement :"
+                },
+                " à partir de 2.495 kr. par mois. Aucun prix par demande."
+              ],
+              [
+                {
+                  "b": "Campagnes (appels sortants) :"
+                },
+                " 4 kr. par appel sortant plus 2 kr. par minute de conversation entamée. Chaque appel passé compte, y compris une nouvelle tentative (2 tentatives maximum et 3 minutes de conversation maximum par contact). Le prix maximal possible est affiché avant le lancement d’une campagne."
+              ],
+              [
+                {
+                  "b": "Appels entrants :"
+                },
+                " un numéro de téléphone danois pour l’assistant et 300 minutes de conversation entamées par mois civil sont inclus. Les minutes supplémentaires coûtent 1,50 kr. par minute entamée et sont facturées sur la facture du mois. La consommation peut être suivie en continu dans Dialogbot."
+              ]
+            ]
+          },
+          {
+            "type": "p",
+            "text": "Si vous venez via un ambassadeur, vous bénéficiez de 50 % de remise sur votre premier mois facturé. Nous pouvons modifier les prix moyennant un préavis d’au moins 30 jours par e-mail ; la modification s’applique à partir du premier mois complet suivant le préavis."
+          }
+        ]
+      },
+      {
+        "title": "3. Paiement",
+        "body": [
+          {
+            "type": "p",
+            "text": "Vous enregistrez une carte de paiement auprès de notre prestataire de paiement Stripe. Nous facturons à terme échu une fois par mois pour le mois précédent, et le montant est prélevé automatiquement sur la carte. Nous ne conservons pas nous-mêmes les données de carte."
+          },
+          {
+            "type": "p",
+            "text": "Si le paiement échoue, vous en êtes informé. Si une facture n’est pas réglée 14 jours après son échéance, nous pouvons mettre l’assistant en pause jusqu’à régularisation du paiement."
+          },
+          {
+            "type": "p",
+            "parts": [
+              "Pour toute question sur une facture, ",
+              {
+                "link": "/kontakt",
+                "text": "contactez-nous"
+              },
+              " avant de faire opposition auprès de votre banque."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "4. Démarrage, durée et résiliation",
+        "body": [
+          {
+            "type": "p",
+            "text": "Le contrat court jusqu’à sa résiliation. Vous pouvez résilier pour la fin du mois en cours en nous écrivant. Nous pouvons résilier moyennant un préavis de 30 jours. Il n’y a aucun engagement. La mise en service est incluse lorsque vous la faites vous-même ; la mise en service par les spécialistes de Dialogbot coûte 5.000 kr. HT, payable une seule fois avant le début des travaux."
+          },
+          {
+            "type": "p",
+            "text": "En cas de manquement grave – par exemple un usage abusif du service ou un défaut de paiement – nous pouvons couper l’accès sans préavis."
+          }
+        ]
+      },
+      {
+        "title": "5. Vos responsabilités",
+        "body": [
+          {
+            "type": "p",
+            "text": "Vous êtes responsable de l’exactitude des connaissances, des tarifs, des horaires d’ouverture et des réponses que vous validez, ainsi que du suivi des demandes reçues par l’assistant."
+          },
+          {
+            "type": "p",
+            "text": "Si vous utilisez les campagnes (appels sortants), vous êtes responsable de vous assurer que chaque contact a donné un consentement préalable et documentable à être appelé par un système automatisé, conformément à l’article 10 de la loi danoise sur les pratiques commerciales (markedsføringsloven), et que les entreprises protégées contre la prospection ne sont pas contactées. Le service ne doit pas être utilisé pour du contenu illégal, trompeur ou offensant."
+          },
+          {
+            "type": "p",
+            "text": "Vous devez garder vos identifiants confidentiels et donner accès aux bonnes personnes de votre équipe."
+          }
+        ]
+      },
+      {
+        "title": "6. IA et limitation de responsabilité",
+        "body": [
+          {
+            "type": "p",
+            "text": "L’assistant utilise l’intelligence artificielle. Il a pour instruction de répondre uniquement à partir de vos connaissances validées et de le dire s’il ne connaît pas la réponse, mais il peut se tromper ou mal comprendre. Il indique toujours qu’il est une IA."
+          },
+          {
+            "type": "p",
+            "text": "Nous ne sommes pas responsables des pertes indirectes, par exemple la perte de chiffre d’affaires, la perte de clients ou les dommages consécutifs. Notre responsabilité totale est limitée au montant que vous avez payé pour le service au cours des 3 derniers mois précédant le dommage. Nous ne sommes pas responsables des pannes chez des tiers tels que les opérateurs télécom et les fournisseurs cloud, ni des circonstances échappant à notre contrôle."
+          }
+        ]
+      },
+      {
+        "title": "7. Données et données personnelles",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "Vos données vous appartiennent. Lorsque l’assistant échange avec vos clients, nous traitons des données personnelles pour votre compte en tant que sous-traitant. Nous ne traitons les données que sur vos instructions et conformément à notre accord de sous-traitance, qui fait partie des présentes conditions. La liste des sous-traitants ultérieurs que nous utilisons (notamment hébergement, téléphonie, voix et IA) figure dans la ",
+              {
+                "link": "/privatliv",
+                "text": "politique de confidentialité"
+              },
+              "."
+            ]
+          },
+          {
+            "type": "p",
+            "text": "En cas de résiliation, vous pouvez demander une copie de vos données dans les 30 jours. Nous les supprimons ensuite, sauf si la loi nous impose de les conserver (par exemple les factures pendant 5 ans)."
+          }
+        ]
+      },
+      {
+        "title": "8. Modification des conditions",
+        "body": [
+          {
+            "type": "p",
+            "text": "Nous pouvons modifier les conditions moyennant un préavis de 30 jours par e-mail. Toute modification substantielle en votre défaveur vous donne le droit de résilier avec effet à la date de la modification."
+          }
+        ]
+      },
+      {
+        "title": "9. Droit applicable et litiges",
+        "body": [
+          {
+            "type": "p",
+            "text": "Le contrat est régi par le droit danois. Les différends sont d’abord réglés par le dialogue ; à défaut, ils sont tranchés par le tribunal d’Aarhus (Retten i Aarhus)."
+          }
+        ]
+      },
+      {
+        "title": "Contact",
+        "body": [
+          {
+            "type": "p",
+            "parts": [
+              "{name}, n° CVR {cvr}, {address} · ",
+              {
+                "email": true
+              },
+              " · ",
+              {
+                "link": "/kontakt",
+                "text": "Contact et support"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

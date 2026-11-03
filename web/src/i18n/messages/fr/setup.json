@@ -1,0 +1,476 @@
+{
+  "later": {
+    "link": "Je ferai le reste plus tard"
+  },
+  "need": {
+    "title": "Il vous faut"
+  },
+  "shell": {
+    "skipToContent": "Aller au contenu",
+    "home": "Dialogbot – Aujourd’hui",
+    "nav": "Configuration",
+    "steps": [
+      "Entreprise",
+      "Agenda & outils",
+      "Test & activation"
+    ],
+    "stepAria": "Étape {n} : {label}",
+    "skipped": " (ignorée)",
+    "laterNote": " – vous retrouverez tout via l’icône de profil → Tous les paramètres."
+  },
+  "hours": {
+    "days": [
+      "lun",
+      "mar",
+      "mer",
+      "jeu",
+      "ven",
+      "sam",
+      "dim"
+    ],
+    "dayNames": [
+      "lundi",
+      "mardi",
+      "mercredi",
+      "jeudi",
+      "vendredi",
+      "samedi",
+      "dimanche"
+    ],
+    "and": "et"
+  },
+  "step1Page": {
+    "eyebrow": "Créez votre Dialogbot · étape 1 sur 3 · env. 5 min",
+    "title": "Qui êtes-vous – et que doit-il faire ?",
+    "intro": "Une seule étape. Nous récupérons l’essentiel sur votre site web – vous ne corrigez que ce qui est faux. Vous pourrez tout modifier plus tard en le disant simplement à l’assistant.",
+    "need": [
+      [
+        "1×",
+        "adresse de site web"
+      ],
+      [
+        "1×",
+        "numéro CVR",
+        "ou simplement le nom"
+      ],
+      [
+        "1×",
+        "le numéro que vos clients appellent"
+      ]
+    ]
+  },
+  "step1": {
+    "kind": {
+      "opening_hours": "Horaires",
+      "coverage_area": "Intervient à",
+      "service": "Prestation",
+      "fact": "Info",
+      "known_answer": "Réponse",
+      "offer": "Offre",
+      "unknown_answer": "Interdit"
+    },
+    "profileTag": {
+      "legal_name": "Nom",
+      "cvr": "CVR",
+      "phone": "Téléphone",
+      "description": "Votre activité",
+      "address_line": "Adresse"
+    },
+    "langNames": {
+      "da": "Danois",
+      "en": "Anglais",
+      "de": "Allemand"
+    },
+    "versionConflict": "Cette page a été modifiée ailleurs. Rechargez-la pour voir la dernière version.",
+    "saveFailed": "Enregistrement impossible. Réessayez.",
+    "hoursHint": "Écrivez par ex. « Lun–ven 07–16 » ou « Lun–ven 07–16 ; sam 09–12 ». C’est enregistré dès que c’est lisible.",
+    "hoursTitle": "Horaires d’ouverture",
+    "zonesTitle": "Zone d’intervention",
+    "siteUnreadable": "Impossible de lire le site web.",
+    "siteSlow": "La lecture du site web prend du temps. Réessayez dans un instant.",
+    "siteFailed": "Impossible de récupérer les informations du site web.",
+    "readOnly": "Votre rôle (lecteur) permet de consulter, mais pas de modifier.",
+    "a": {
+      "title": "Récupérer depuis votre site web",
+      "hintAi": "Dialogbot lit votre site et propose le nom, votre activité, vos horaires et vos tarifs.",
+      "hintNoAi": "L’adresse est enregistrée. Les suggestions issues du site nécessitent que l’IA soit activée.",
+      "urlAria": "Adresse du site web",
+      "urlPlaceholder": "entreprise.fr",
+      "reading": "Lecture du site …",
+      "fetch": "Récupérer",
+      "foundOn": "Trouvé sur {site} · validez ou corrigez",
+      "theSite": "le site",
+      "approveAll": "Tout valider ({n})",
+      "fixYellow": "Corriger ce qui est en jaune",
+      "allApproved": "Tout est validé et désormais utilisé par Dialogbot."
+    },
+    "b": {
+      "title": "À propos de vous",
+      "hint": "Ce que Dialogbot dit en premier – et ce qu’il utilise pour répondre juste.",
+      "name": "Nom (tel qu’il le prononce)",
+      "phone": "Numéro que vos clients appellent",
+      "phonePlaceholder": "+45 12 34 56 78",
+      "description": "Votre activité – en une phrase",
+      "descriptionPlaceholder": "Ex. : fenêtres, portes et terrasses à Lyon et ses environs",
+      "customerLanguage": "Langue utilisée avec vos clients",
+      "hours": "Horaires d’ouverture",
+      "hoursPlaceholder": "Lun–ven 07–16",
+      "zones": "Où vous intervenez",
+      "zonesPlaceholder": "Lyon + 30 km",
+      "factsLive": "Les horaires et la zone sont utilisés par Dialogbot dès leur enregistrement.",
+      "factsDraft": "Vos modifications sont enregistrées en brouillon et validées par un administrateur.",
+      "cvrSummary": "CVR et adresse (facultatif)",
+      "cvr": "CVR",
+      "address": "Adresse",
+      "postalCode": "Code postal",
+      "city": "Ville",
+      "cvrLooked": "Recherché : {note}"
+    },
+    "c": {
+      "title": "Que doit-il faire pour vous ?",
+      "hint": "Choisissez ce qui vous correspond. Cela détermine les questions des étapes 2 et 3.",
+      "cards": {
+        "phone": {
+          "title": "Répondre au téléphone",
+          "sub": "quand vous ne pouvez pas – ou toujours"
+        },
+        "booking": {
+          "title": "Prendre des rendez-vous",
+          "sub": "directement dans votre agenda"
+        },
+        "web": {
+          "title": "Répondre sur votre site",
+          "sub": "chat web – une seule ligne de code"
+        },
+        "outbound": {
+          "title": "Appeler vos clients",
+          "sub": "campagnes · 4 kr. par appel HT"
+        }
+      },
+      "langAria": "Langue",
+      "speaks": "Il parle",
+      "alwaysDanish": "Les rapports et cette page s’affichent toujours en français."
+    },
+    "status": {
+      "saving": "Enregistrement …",
+      "saved": "Enregistré",
+      "idle": "Enregistrement automatique",
+      "comeBack": " · vous pouvez toujours revenir ici",
+      "fillIn": "Renseignez le nom, le numéro de téléphone et votre activité pour continuer.",
+      "reload": "Recharger"
+    },
+    "nextTo2": "Passer à l’étape 2 : agenda & outils",
+    "nextTo3": "Passer à l’étape 3 : test & activation"
+  },
+  "create": {
+    "verifyFirst": "Confirmez d’abord votre adresse e-mail.",
+    "verifyLink": "Aller à la confirmation",
+    "referral": "Vous venez via le lien d’un ambassadeur – la remise de bienvenue est incluse.",
+    "name": "Nom (tel qu’il le prononce)",
+    "namePlaceholder": "Ex. : Menuiserie Martin",
+    "failed": "Création impossible. Réessayez.",
+    "creating": "Création …",
+    "next": "Continuer"
+  },
+  "step2Page": {
+    "eyebrow": "Étape 2 sur 3",
+    "title": "Où doivent arriver les rendez-vous ?",
+    "need": [
+      [
+        "1×",
+        "identifiant de votre agenda"
+      ],
+      [
+        "2",
+        "minutes"
+      ]
+    ],
+    "connector": {
+      "google_calendar": "Google Agenda",
+      "microsoft_calendar": "Agenda Microsoft 365"
+    },
+    "theCalendar": "L’agenda",
+    "connected": "{name} est connecté.",
+    "error": "{name} n’a pas pu être connecté ({error}). Réessayez ou passez cette étape."
+  },
+  "step2": {
+    "ago": {
+      "now": "à l’instant",
+      "min": "il y a {n} min",
+      "hours": "il y a {n} h",
+      "days": "il y a {n} j"
+    },
+    "connectFailed": "Connexion impossible. Réessayez.",
+    "saveFailed": "Enregistrement impossible. Réessayez.",
+    "defaultType": "Rendez-vous",
+    "comingSoon": "Bientôt disponible.",
+    "connected": "Connecté",
+    "as": " en tant que {account}",
+    "sync": " · synchro {ago}",
+    "simulated": " (simulé)",
+    "connectionFailed": "Échec de la connexion",
+    "notConnected": "Non connecté",
+    "opening": "Ouverture …",
+    "reconnect": "Reconnecter",
+    "connect": "Connecter",
+    "google": "Google Agenda",
+    "microsoft": "Microsoft 365 / Outlook",
+    "otherTitle": "Un autre outil",
+    "otherText": "CRM, outil de réservation, logiciel métier – dites-nous lequel et nous étudierons la question. Il n’est connecté que lorsqu’il fonctionne.",
+    "writeUs": "Écrivez-nous",
+    "managersOnly": "Seuls les propriétaires et administrateurs peuvent connecter des outils.",
+    "writesTitle": "Ce que Dialogbot inscrit dans l’agenda",
+    "writes": [
+      [
+        "1×",
+        "rendez-vous avec le nom, le numéro et l’objet de la demande du client"
+      ],
+      [
+        "1×",
+        "confirmation pour vous avec l’horaire du rendez-vous"
+      ],
+      [
+        "0×",
+        "modification de vos rendez-vous existants – il n’y touche jamais"
+      ]
+    ],
+    "defaultsNote": "Les créneaux suivent vos horaires d’ouverture de l’étape 1. Pour commencer : rendez-vous de 45 minutes, 15 minutes de battement et au plus tôt demain. Modifiable sous Rendez-vous.",
+    "next": "Passer à l’étape 3 : test & activation",
+    "skip": "Passer – je n’utilise pas d’agenda"
+  },
+  "step3Page": {
+    "eyebrow": "Étape 3 sur 3 · dernière étape",
+    "title": "Choisissez une voix, connectez le téléphone – et activez",
+    "need": [
+      [
+        "1×",
+        "un téléphone pour appeler"
+      ],
+      [
+        "10",
+        "secondes pour le renvoi d’appel"
+      ]
+    ]
+  },
+  "step3": {
+    "failed": "Cela n’a pas fonctionné. Réessayez.",
+    "voice": {
+      "sampleFailed": "Impossible de charger l’extrait.",
+      "title": "Voix",
+      "hint": "Choisissez-en une. Vous pourrez toujours changer.",
+      "simulatedTag": "Tonalité test",
+      "notReadyTag": "Pas prête",
+      "simulatedNote": "Environnement de test : « Écouter » joue une tonalité test signalée, pas une vraie voix.",
+      "groupAria": "Voix",
+      "stopAria": "Arrêter {name}",
+      "stop": "Arrêter",
+      "hearAria": "Écouter {name}",
+      "hear": "Écouter",
+      "chosen": "Choisie",
+      "choose": "Choisir",
+      "word": "Le mot",
+      "say": "Comment le prononcer",
+      "sayPlaceholder": "Écrivez-le comme il se prononce",
+      "save": "Enregistrer",
+      "mispronounced": "Il prononce mal « {word} » ?",
+      "companyName": "le nom de l’entreprise",
+      "fixIt": "Corriger",
+      "fixed": " · Enregistré. Réessayez « Écouter » ou appelez votre propre numéro."
+    },
+    "phone": {
+      "sub": {
+        "mobile": "Forfait mobile",
+        "landline": "Ligne fixe",
+        "ip_pbx": "Standard ou téléphonie IP",
+        "unknown": "Je ne sais pas"
+      },
+      "yourNumber": "Votre numéro – celui que vos clients appellent",
+      "numberPlaceholder": "+45 12 34 56 78",
+      "subscription": "Quel type d’abonnement est-ce ?",
+      "when": "Quand Dialogbot doit-il répondre ?",
+      "always": "Toujours",
+      "whenNotAnswering": "Seulement quand je ne réponds pas",
+      "keepNumber": "Vous gardez votre numéro et votre opérateur. Dialogbot prend simplement les appels que vous lui renvoyez.",
+      "saveNumber": "Enregistrer le numéro",
+      "confirmIntro": " – confirmez qu’il vous appartient. Nous vous appelons et lisons un code à 6 chiffres.",
+      "callAgain": "Rappeler",
+      "callMe": "Appelez-moi avec un code",
+      "code": "Le code",
+      "confirm": "Confirmer",
+      "confirmManagersOnly": "Seuls les propriétaires et administrateurs peuvent confirmer le numéro.",
+      "callOnWay": "L’appel arrive. Le code est valable 10 minutes.",
+      "docsIntro": "Pour vous attribuer un numéro danois, l’opérateur télécom doit connaître l’entreprise. Dialogbot transmet les informations – vous ne créez aucun compte.",
+      "companyName": "Nom de l’entreprise",
+      "cvr": "Numéro CVR",
+      "address": "Adresse au Danemark",
+      "cvrExtract": "Extrait du registre CVR (PDF, PNG ou JPG)",
+      "sendDocs": "Envoyer les justificatifs",
+      "verifiedIntro": "Le numéro est confirmé. Dialogbot prépare maintenant un numéro vers lequel vous renverrez vos appels. Tout se fait chez nous – vous ne créez aucun compte.",
+      "connect": "Connecter le téléphone",
+      "numberEyebrow": "Votre numéro",
+      "modeNoAnswer": "Seulement quand vous ne répondez pas",
+      "modeBusy": "Quand vous ne répondez pas ou que la ligne est occupée",
+      "verified": "Le numéro est confirmé.",
+      "howTo": "Voici comment faire – 10 secondes suffisent",
+      "dial": "Composez ceci sur votre téléphone et appuyez sur appeler :",
+      "cancelBefore": "Désactivez le renvoi avec ",
+      "cancelAfter": ". Le code correspond à votre opérateur. Ça ne fonctionne pas ? ",
+      "writeUs": "Écrivez-nous",
+      "together": " et nous le ferons ensemble.",
+      "forwardTo": "Renvoyer vers ",
+      "testPassed": "L’appel test a réussi{simulated}.",
+      "simulated": " (simulé)",
+      "calling": "Appel en cours … appelez maintenant le {number} depuis un autre téléphone (valable jusqu’à {time}).",
+      "newTest": "Nouvel appel test",
+      "startTest": "Lancer l’appel test",
+      "ownNumber": "J’appelle notre propre numéro pour tester le renvoi.",
+      "testFailed": "L’appel test a échoué.",
+      "title": "Téléphone",
+      "hint": "Vous gardez votre numéro. Nous prenons simplement les appels."
+    },
+    "chat": {
+      "mailSubject": "Une ligne à ajouter au site web",
+      "mailBody": "Bonjour,\n\nPeux-tu ajouter cette ligne sur le site web (juste avant </body>) ?\n\n{code}\n\nMerci !",
+      "title": "Chat web sur votre site",
+      "hint": "Facultatif. Le même assistant – sous forme de chat.",
+      "ready": "Prêt",
+      "on": "Activé",
+      "off": "Désactivé",
+      "onlyOnBefore": "Le chat ne peut s’afficher que sur ",
+      "onlyOnAfter": " – l’adresse de l’étape 1.",
+      "noSite": "Indiquez l’adresse de votre site web à l’étape 1 pour que nous sachions où afficher le chat.",
+      "turningOn": "Activation …",
+      "turnOn": "Activer le chat web",
+      "managersOnly": "Seuls les propriétaires et administrateurs peuvent activer le chat web.",
+      "oneLine": "Une seule ligne doit être ajoutée à votre site. Pas besoin de la comprendre – envoyez-la à la personne qui gère votre site.",
+      "codeAria": "Ligne de code",
+      "copied": "Copié",
+      "copy": "Copier la ligne",
+      "sendWebmaster": "Envoyer à mon webmaster",
+      "seen": "La ligne est sur le site – le statut est Prêt.",
+      "notSeen": "Dès que la ligne sera sur le site, le statut passera automatiquement à « Prêt »."
+    },
+    "needs": {
+      "confirmNumber": "confirmer votre numéro",
+      "connectPhone": "connecter le téléphone",
+      "testCall": "effectuer l’appel test",
+      "confirmSubscription": "confirmer l’abonnement",
+      "turnOnChat": "activer le chat web"
+    },
+    "noChannels": "Vous n’avez choisi ni la prise d’appels ni les réponses sur votre site à l’étape 1. La voix sera utilisée pour les campagnes.",
+    "changeChoice": "Modifier le choix",
+    "isOn": "Dialogbot est activé",
+    "allReady": "Tout est prêt – activez Dialogbot",
+    "almost": "Presque prêt",
+    "pauseNote": "Vous pouvez toujours le mettre en pause depuis Aujourd’hui.",
+    "readyPhone": "L’appel test a réussi. Une fois activé, Dialogbot prendra les appels que vous lui renvoyez.",
+    "readyNoPhone": "Une fois activé, Dialogbot est prêt.",
+    "missing": "Manquant : {list}.",
+    "goToday": "Aller à Aujourd’hui",
+    "turningOn": "Activation …",
+    "turnOn": "Activer Dialogbot",
+    "managersOnly": "Seuls les propriétaires et administrateurs peuvent l’activer.",
+    "subscriptionNote": "L’abonnement démarre à 2.495 kr./mois HT, et les appels sortants de campagne coûtent 4 kr. par appel HT.",
+    "confirmSubscription": "Confirmer l’abonnement",
+    "findAgain": "Vous retrouverez tout via l’icône de profil → Tous les paramètres."
+  },
+  "assistant": {
+    "setupChips": {
+      "1": [
+        {
+          "label": "Horaires d’ouverture",
+          "fill": "Horaires lun-ven 8-16"
+        },
+        {
+          "label": "Que se passe-t-il à l’étape 2 ?",
+          "say": "À l’étape 2, vous connectez votre agenda pour que les rendez-vous y arrivent. C’est facultatif – vous pouvez passer cette étape."
+        }
+      ],
+      "2": [
+        {
+          "label": "Qu’inscrivez-vous dans l’agenda ?",
+          "say": "Un rendez-vous avec le nom, le numéro et l’objet de la demande du client – et une confirmation pour vous. Je ne touche jamais à vos rendez-vous existants."
+        },
+        {
+          "label": "Que se passe-t-il à l’étape 3 ?",
+          "say": "À l’étape 3, vous choisissez une voix, connectez le téléphone via un renvoi d’appel et activez Dialogbot."
+        }
+      ],
+      "3": [
+        {
+          "label": "Comment renvoyer mes appels ?",
+          "say": "Composez le code de l’étape 3 sur votre téléphone et appuyez sur appeler. Désactivez le renvoi avec le code juste en dessous."
+        },
+        {
+          "label": "Puis-je revenir en arrière ?",
+          "say": "Oui. Vous pouvez mettre Dialogbot en pause depuis Aujourd’hui et désactiver le renvoi sur votre téléphone."
+        }
+      ]
+    },
+    "chips": {
+      "fixHours": "Corriger les horaires",
+      "fixHoursFill": "Horaires lun-ven 8-16",
+      "addPrice": "Ajouter un prix",
+      "addPriceFill": "Le prix de  est de  kr.",
+      "weekNumbers": "Voir les chiffres de la semaine",
+      "readPriceList": "Importer ma grille tarifaire",
+      "testMe": "Testez-moi comme un client",
+      "addAnswer": "Ajouter une réponse",
+      "addAnswerFill": "Question :  Réponse : ",
+      "waiting": "Ce qui m’attend",
+      "tasks": "Mes tâches",
+      "fixReport": "Modifier le rapport quotidien",
+      "fixReportFill": "Envoyer le rapport quotidien à 7 h",
+      "seeCalls": "Voir les appels",
+      "fixBooking": "Modifier les règles de réservation",
+      "fixBookingFill": "Mettre le battement entre rendez-vous à 15 min",
+      "connectCalendar": "Connecter l’agenda",
+      "hearVoice": "Écouter votre voix",
+      "seeBilling": "Voir la facturation",
+      "allSettings": "Tous les paramètres",
+      "help": "Aide"
+    },
+    "card": {
+      "aria": "Modification : {label}",
+      "eyebrow": "Modification · avant → après",
+      "before": "Avant : {value}",
+      "after": "Après : {value}",
+      "saving": "Enregistrement …",
+      "approve": "Valider",
+      "decline": "Non, laisser",
+      "applied": "Validé et enregistré.",
+      "seeIt": "Voir",
+      "declined": "Rien n’a été modifié."
+    },
+    "testTitle": "Testez-moi comme un client",
+    "testSubtitle": "Posez vos questions comme un client – seules les connaissances validées sont utilisées",
+    "back": "Retour",
+    "close": "Fermer",
+    "log": "Conversation",
+    "thinking": "Réflexion …",
+    "popular": "Les demandes les plus fréquentes",
+    "askTestLabel": "Écrivez une question qu’un client pourrait poser",
+    "askLabel": "Écrivez ce que vous voulez modifier",
+    "askTestPlaceholder": "Ex. : Combien coûte un ponçage ?",
+    "askPlaceholder": "Écrivez ce que vous voulez modifier …",
+    "send": "Envoyer",
+    "readOnly": "Votre rôle permet de consulter, mais pas de modifier. Demandez à un propriétaire ou à un administrateur.",
+    "advanced": "Avancé : tous les paramètres",
+    "greetStep": "Je vous aide pour l’étape {step}. Écrivez-moi si quelque chose doit être corrigé – vous verrez la modification avant qu’elle ne s’applique.",
+    "greetName": "Bonjour {name}. Que voulez-vous modifier ? Dites-le avec vos mots – je vous montre la modification avant qu’elle ne s’applique.",
+    "greet": "Bonjour. Que voulez-vous modifier ? Dites-le avec vos mots – je vous montre la modification avant qu’elle ne s’applique.",
+    "noKnowledge": "Il n’y a pas encore de connaissances validées à tester. Ajoutez-en et validez-les d’abord.",
+    "aiOff": "Je ne peux pas répondre pour le moment. Utilisez un raccourci ou passez par Tous les paramètres.",
+    "failed": "Cela n’a pas fonctionné. Réessayez dans un instant.",
+    "applyFailed": "La modification n’a pas pu être enregistrée. Réessayez.",
+    "declinedReply": "D’accord, rien n’a été modifié.",
+    "testIntro": "Posez-moi une question qu’un client pourrait poser. Je réponds uniquement à partir de vos connaissances validées.",
+    "titleStep": "Je vous aide pour l’étape {step}",
+    "title": "Modifier quelque chose",
+    "subtitleStep": "Je vous montre toujours la modification avant qu’elle ne s’applique",
+    "subtitle": "Dites-le – vous verrez la modification avant qu’elle ne s’applique",
+    "backToChanges": "Retour aux modifications. Que voulez-vous modifier ?",
+    "help": "Aide",
+    "change": "Modifier quelque chose"
+  }
+}

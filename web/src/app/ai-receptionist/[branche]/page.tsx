@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/i18n/link";
 import { notFound } from "next/navigation";
-import { SeoPage } from "@/components/seo-page";
-import { INDUSTRIES, industryBySlug } from "@/lib/industries";
+import { getLocale, getRaw, getT } from "@/i18n/server";
+import { SeoPage, type SeoFaq } from "@/components/seo-page";
+import { INDUSTRIES, industryBySlug, industryKey, type IndustryCopy } from "@/lib/industries";
+import { alternatesFor, openGraphFor } from "@/lib/site";
 
 export const dynamicParams = false;
 
@@ -13,31 +15,35 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ branche: string }> }): Promise<Metadata> {
   const i = industryBySlug((await params).branche);
   if (!i) return {};
+  const [raw, locale] = await Promise.all([getRaw(), getLocale()]);
+  const c = raw<IndustryCopy>(industryKey(i.slug));
   const path = `/ai-receptionist/${i.slug}`;
-  return { title: i.title, description: i.description, alternates: { canonical: path },
-    openGraph: { url: path, title: `${i.title} | Dialogbot`, images: ["/opengraph-image.png"] } };
+  return { title: c.title, description: c.description, alternates: alternatesFor(path, locale),
+    openGraph: openGraphFor(path, locale, `${c.title} | Dialogbot`) };
 }
 
 export default async function Page({ params }: { params: Promise<{ branche: string }> }) {
   const i = industryBySlug((await params).branche);
   if (!i) notFound();
-  const others = INDUSTRIES.filter((x) => x.slug !== i.slug);
+  const [t, tl, raw] = await Promise.all([getT("landing.industry"), getT("landing"), getRaw()]);
+  const c = raw<IndustryCopy>(industryKey(i.slug));
+  const others = INDUSTRIES.filter((x) => x.slug !== i.slug).map((x) => ({ slug: x.slug, name: raw<IndustryCopy>(industryKey(x.slug)).name }));
   return (
-    <SeoPage path={`/ai-receptionist/${i.slug}`} kicker={`AI-receptionist til ${i.name}`} title={i.title.split(" – ")[0]}
-      lead={i.description} points={[...i.benefits, "Vi guider jer gennem hele opsætningen"]}
+    <SeoPage path={`/ai-receptionist/${i.slug}`} kicker={t("kicker", { name: c.name })} title={c.title.split(" – ")[0]}
+      lead={c.description} points={[...c.benefits, t("setupPoint")]}
       sections={[
-        { title: `Problemet for ${i.name}`, body: <p>{i.pain} Dialogbot er en dansk AI-receptionist til {i.examples}, der tager telefonen og chatten, når I ikke selv kan.</p> },
-        { title: "Sådan lyder det (eksempel)", body: <div className="flex flex-col gap-2.5 not-prose">
-          {i.scenario.map(([who, line], n) => (
+        { title: t("problemTitle", { name: c.name }), body: <p>{c.pain}{t("problemText", { examples: c.examples })}</p> },
+        { title: t("scenarioTitle"), body: <div className="flex flex-col gap-2.5 not-prose">
+          {c.scenario.map(([who, line], n) => (
             <p key={n} className={`m-0 px-4 py-3 text-[15px] leading-normal max-w-[460px] border-2 border-ink ${who === "Dialogbot" ? "self-start rounded-[16px_16px_16px_4px] bg-white text-ink" : "self-end rounded-[16px_16px_4px_16px] bg-ink text-white"}`}>
               <span className="block text-xs font-semibold tracking-[1px] uppercase opacity-70 mb-0.5">{who}</span>{line}</p>
           ))}
-          <p className="text-sm text-muted">Eksemplet er en illustration. Dialogbot svarer altid ud fra den viden, I selv har godkendt. <Link href="/proev">Hør den selv – bliv ringet op</Link>.</p>
+          <p className="text-sm text-muted">{t("scenarioNote")}<Link href="/proev">{t("scenarioLink")}</Link>{t("scenarioEnd")}</p>
         </div> },
-        { title: `“${i.objection[0]}”`, body: <p>{i.objection[1]}</p> },
-        { title: "Pris og opsætning", body: <p>Ét abonnement til <strong>2.495 kr. om måneden</strong> – ekskl. moms og uden pris pr. henvendelse. En fra Dialogbot sætter det op sammen med jer på cirka en halv time. Se alle detaljer på <Link href="/priser">prissiden</Link>.</p> },
-        { title: "Dialogbot til andre brancher", body: <ul>{others.map((o) => <li key={o.slug}><Link href={`/ai-receptionist/${o.slug}`}>AI-receptionist til {o.name}</Link></li>)}</ul> },
+        { title: `“${c.objection[0]}”`, body: <p>{c.objection[1]}</p> },
+        { title: t("priceTitle"), body: <p>{t("priceA")}<strong>{t("price")}</strong>{t("priceB")}<Link href="/priser">{t("priceLink")}</Link>{t("priceC")}</p> },
+        { title: t("othersTitle"), body: <ul>{others.map((o) => <li key={o.slug}><Link href={`/ai-receptionist/${o.slug}`}>{tl("industryLink", { name: o.name })}</Link></li>)}</ul> },
       ]}
-      faq={[...i.faq, ["Hvad koster det?", "Ét abonnement til 2.495 kr. om måneden, ekskl. moms. Der er ingen pris pr. henvendelse."], ["Kan vi beholde vores telefonnummer?", "Ja. I viderestiller jeres nummer til Dialogbot, når I er optaget eller har lukket."]]} />
+      faq={[...c.faq, ...raw<SeoFaq[]>("landing.industry.faq")]} />
   );
 }

@@ -6,43 +6,32 @@ import { requireWorkspace } from "@/lib/workspace.server";
 import { setupStatus } from "@/lib/setup.server";
 import { Icon } from "@/components/ui";
 import { PowerToggle, type TelephonyCode } from "./client";
+import { getLocale, getT } from "@/i18n/server";
+import { HTML_LANG } from "@/i18n/config";
 
 type Activity = { id: string; kind: string; title: string; body: string; href: string; at: string };
 type Overview = { kpis: Record<string, number>; activity: Activity[] };
 type Telephony = { status: { code: TelephonyCode; label: string; next_step: string }; business_number: string | null; destination: { e164: string } | null };
 type Row = { id: string; channel: string; outcome: "booked" | "to_you" | "done"; name: string; origin: string | null; summary: string; question: string; started_at: string };
 type Appt = { id: string; title: string; label: string; starts_at: string; contact_name: string };
-const TAG: Record<Row["outcome"], [string, string]> = { booked: ["Aftale booket", "bg-success-soft text-success"], to_you: ["Til dig", "bg-highlight text-ink"], done: ["Klaret", "bg-accent-soft text-accent-deep"] };
+/** Outcome → pill class; the label is `app.outcome.<outcome>`. */
+const TAG: Record<Row["outcome"], string> = { booked: "bg-success-soft text-success", to_you: "bg-highlight text-ink", done: "bg-accent-soft text-accent-deep" };
 
-/** What each "to you" item is and what the one button does. */
-const TODO: Record<string, { tag: string; cta: string }> = {
-  lead: { tag: "Ny henvendelse", cta: "Åbn" },
-  conversation: { tag: "Venter på dig", cta: "Svar" },
-  task: { tag: "Opgave", cta: "Åbn" },
-  knowledge: { tag: "Godkend", cta: "Gennemgå" },
-  import: { tag: "Forslag", cta: "Se forslag" },
-};
+/** What each "to you" item is and what the one button does: `app.overview.todo.<kind>.tag|cta`. */
+const TODO = new Set(["lead", "conversation", "task", "knowledge", "import"]);
 
-const STATUS_LINE: Record<TelephonyCode, string> = {
-  active: "Tager telefonen, når I ikke selv gør.",
-  paused: "Sat på pause – opkald går til jer som før.",
-  not_started: "Telefonen er ikke sat op endnu.",
-  awaiting_info: "Mangler oplysninger, før telefonen kan kobles på.",
-  provisioning: "Forbindelsen gøres klar.",
-  ready_for_test: "Klar til prøveopkald.",
-  test_failed: "Prøveopkaldet fejlede – prøv igen.",
-};
-
-const hhmm = (iso: string | null) => iso ? new Date(iso).toLocaleTimeString("da-DK", { hour: "2-digit", minute: "2-digit" }) : "–";
-const dayLabel = (iso: string | null) => {
+const hhmm = (lang: string, iso: string | null) => iso ? new Date(iso).toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" }) : "–";
+const dayLabel = (lang: string, iso: string | null) => {
   if (!iso) return "";
   const d = new Date(iso), now = new Date();
-  return d.toDateString() === now.toDateString() ? "" : d.toLocaleDateString("da-DK", { day: "numeric", month: "short" });
+  return d.toDateString() === now.toDateString() ? "" : d.toLocaleDateString(lang, { day: "numeric", month: "short" });
 };
 
 /** "I dag": status + today's numbers, the list of things that need you, the latest calls, and the one place to change things from. */
 export default async function OverviewPage({ searchParams }: { searchParams: Promise<{ taendt?: string }> }) {
   const ws = await requireWorkspace();
+  const t = await getT("app");
+  const lang = HTML_LANG[await getLocale()];
   const { taendt } = await searchParams;
   // The three setup steps come first. «Jeg gør resten senere» (cookie) lets people look around before they are done.
   const st = await setupStatus(ws.id, ws.role);
@@ -60,7 +49,7 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
   const k = ov.kpis;
   const code: TelephonyCode = tel?.status.code ?? "not_started";
   const on = code === "active";
-  const todo = ov.activity.filter((a) => a.kind in TODO && (a.kind !== "task" || a.title.startsWith("Overskredet")));
+  const todo = ov.activity.filter((a) => TODO.has(a.kind) && (a.kind !== "task" || a.title.startsWith("Overskredet")));
 
   return (
     <div className="flex flex-wrap gap-6 items-start">
@@ -69,15 +58,15 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
         {taendt && st.done && (
           <div role="status" className="stamp-in flex items-center gap-3 px-5 py-4 rounded-2xl border-2 border-ink bg-highlight shadow-block-sm">
             <Icon name="power_settings_new" size={26} />
-            <span className="font-display font-extrabold text-[20px] text-ink">Dialogbot er tændt</span>
-            <span className="text-[14px] text-ink-soft">Den tager telefonen, næste gang kunderne ringer.</span>
+            <span className="font-display font-extrabold text-[20px] text-ink">{t("overview.turnedOn")}</span>
+            <span className="text-[14px] text-ink-soft">{t("overview.turnedOnSub")}</span>
           </div>
         )}
         {!st.done && (
           <Link href={`/opsaetning/${st.next}`} className="flex flex-wrap items-center gap-3 px-5 py-4 rounded-2xl border-2 border-dashed border-ink bg-paper hover:bg-panel">
-            <span className="inline-flex px-2.5 py-1 rounded-full bg-highlight text-[11px] font-semibold uppercase tracking-[0.08em]">Ikke færdig</span>
-            <span className="flex-1 min-w-[200px] text-[15px] font-semibold text-ink">Opsætningen er ikke færdig · næste: trin {st.next} {st.next === 1 ? "– virksomhed" : st.next === 2 ? "– kalender & systemer" : "– test & tænd"}</span>
-            <span className="inline-flex items-center gap-1 text-[14px] font-semibold text-ink">Fortsæt<Icon name="arrow_forward" size={18} /></span>
+            <span className="inline-flex px-2.5 py-1 rounded-full bg-highlight text-[11px] font-semibold uppercase tracking-[0.08em]">{t("overview.notDone")}</span>
+            <span className="flex-1 min-w-[200px] text-[15px] font-semibold text-ink">{t("overview.setupNext", { n: st.next })} {st.next === 1 ? t("overview.step1") : st.next === 2 ? t("overview.step2") : t("overview.step3")}</span>
+            <span className="inline-flex items-center gap-1 text-[14px] font-semibold text-ink">{t("overview.continue")}<Icon name="arrow_forward" size={18} /></span>
           </Link>
         )}
 
@@ -85,18 +74,18 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
         <div className="flex flex-wrap items-center gap-4 md:gap-6 px-6 py-5 rounded-2xl bg-paper border-2 border-ink">
           <span className="inline-flex w-12 h-12 rounded-xl bg-highlight items-center justify-center font-display font-extrabold text-[24px] text-ink" aria-hidden>1</span>
           <div className="flex flex-col gap-0.5 flex-[1_1_200px]">
-            <h1 className="font-display font-extrabold text-[24px] leading-tight tracking-[-0.4px] text-ink">Dialogbot er {on ? "tændt" : code === "paused" ? "slukket" : "ikke tændt"}</h1>
-            <span className="text-[14px] text-muted">{STATUS_LINE[code]}{tel?.business_number ? ` · ${tel.business_number}` : ""}</span>
-            {!on && code !== "paused" && staff && <Link href="/app/indstillinger/telefoni" className="text-[14px] font-semibold text-ink underline underline-offset-2 w-fit mt-1">Sæt telefonen op</Link>}
+            <h1 className="font-display font-extrabold text-[24px] leading-tight tracking-[-0.4px] text-ink">{on ? t("overview.isOn") : code === "paused" ? t("overview.isOff") : t("overview.isNotOn")}</h1>
+            <span className="text-[14px] text-muted">{t(`overview.statusLine.${code}`)}{tel?.business_number ? ` · ${tel.business_number}` : ""}</span>
+            {!on && code !== "paused" && staff && <Link href="/app/indstillinger/telefoni" className="text-[14px] font-semibold text-ink underline underline-offset-2 w-fit mt-1">{t("overview.setUpPhone")}</Link>}
           </div>
           {staff && <PowerToggle wsId={ws.id} code={code} canManage={canManage} />}
         </div>
 
         {/* today's numbers */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-          <Tile n={k.calls_24h ?? 0} label="opkald" sub="seneste 24 timer" href="/app/opkald" />
-          <Tile n={k.new_leads_24h ?? 0} label="nye henvendelser" sub={`${k.open_leads ?? 0} åbne i alt`} href="/app/opkald/henvendelser" />
-          <Tile n={todo.length} label="til dig" sub="venter på dit svar" href="#til-dig" />
+          <Tile n={k.calls_24h ?? 0} label={t("overview.tiles.calls")} sub={t("overview.tiles.callsSub")} href="/app/opkald" />
+          <Tile n={k.new_leads_24h ?? 0} label={t("overview.tiles.leads")} sub={t("overview.tiles.leadsSub", { n: k.open_leads ?? 0 })} href="/app/opkald/henvendelser" />
+          <Tile n={todo.length} label={t("overview.tiles.toYou")} sub={t("overview.tiles.toYouSub")} href="#til-dig" />
         </div>
 
         {/* 2. To you */}
@@ -104,24 +93,24 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
           <div className="flex items-center gap-3.5">
             <span className="inline-flex w-12 h-12 rounded-xl bg-highlight items-center justify-center font-display font-extrabold text-[24px] text-ink" aria-hidden>2</span>
             <div className="flex flex-col">
-              <h2 className="font-display font-extrabold text-[22px] leading-tight tracking-[-0.3px] text-ink">Til dig</h2>
-              <span className="text-[14px] text-muted">Det eneste, du skal gøre i dag.</span>
+              <h2 className="font-display font-extrabold text-[22px] leading-tight tracking-[-0.3px] text-ink">{t("overview.toYou")}</h2>
+              <span className="text-[14px] text-muted">{t("overview.toYouSub")}</span>
             </div>
           </div>
           {todo.length === 0 ? (
-            <p className="px-4 py-3.5 rounded-[14px] border-[1.5px] border-dashed border-ink text-[14px] text-ink-soft">Intet venter på dig lige nu.</p>
+            <p className="px-4 py-3.5 rounded-[14px] border-[1.5px] border-dashed border-ink text-[14px] text-ink-soft">{t("overview.nothingWaiting")}</p>
           ) : (
             <ul className="flex flex-col gap-2.5">
               {todo.map((a) => {
-                const t = TODO[a.kind];
+                const tag = t(`overview.todo.${a.kind}.tag`), cta = t(`overview.todo.${a.kind}.cta`);
                 return (
                   <li key={a.id} className="flex flex-wrap items-center gap-2.5 md:gap-3.5 px-4 py-3.5 rounded-[14px] border-2 border-ink bg-paper">
-                    <span className="inline-flex px-2.5 py-1 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.08em]">{t.tag}</span>
+                    <span className="inline-flex px-2.5 py-1 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.08em]">{tag}</span>
                     <div className="flex-[1_1_240px] flex flex-col gap-0.5 min-w-0">
                       <span className="text-[15px] font-semibold text-ink">{a.title}</span>
                       {a.body && <span className="text-[13px] text-ink-soft truncate">{a.body}</span>}
                     </div>
-                    <Link href={a.href} aria-label={`${t.cta}: ${a.title}`} className="inline-flex items-center min-h-[44px] px-4 rounded-xl bg-accent text-white text-[14px] font-semibold hover:bg-accent-deep">{t.cta}</Link>
+                    <Link href={a.href} aria-label={`${cta}: ${a.title}`} className="inline-flex items-center min-h-[44px] px-4 rounded-xl bg-accent text-white text-[14px] font-semibold hover:bg-accent-deep">{cta}</Link>
                   </li>
                 );
               })}
@@ -134,42 +123,42 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
           <div className="flex items-center gap-3.5">
             <span className="inline-flex w-12 h-12 rounded-xl bg-highlight items-center justify-center font-display font-extrabold text-[24px] text-ink" aria-hidden>3</span>
             <div className="flex flex-col">
-              <h2 className="font-display font-extrabold text-[22px] leading-tight tracking-[-0.3px] text-ink">Seneste opkald</h2>
-              <span className="text-[14px] text-muted">Klik på et for at læse, hvad der blev sagt.</span>
+              <h2 className="font-display font-extrabold text-[22px] leading-tight tracking-[-0.3px] text-ink">{t("overview.latestCalls")}</h2>
+              <span className="text-[14px] text-muted">{t("overview.latestCallsSub")}</span>
             </div>
           </div>
           {!calls || calls.items.length === 0 ? (
-            <p className="px-4 py-3.5 rounded-[14px] border-[1.5px] border-dashed border-ink text-[14px] text-ink-soft">{calls ? "Ingen opkald endnu." : "Opkald kan ses af medarbejdere, administratorer og ejere."}</p>
+            <p className="px-4 py-3.5 rounded-[14px] border-[1.5px] border-dashed border-ink text-[14px] text-ink-soft">{calls ? t("overview.noCalls") : t("overview.callsStaffOnly")}</p>
           ) : (
             <ul className="flex flex-col border-t-[1.5px] border-ink">
               {calls.items.map((c) => (
                 <li key={c.id} className="flex flex-wrap items-center gap-2 md:gap-4 py-3 border-b-[1.5px] border-ink text-[14px]">
-                  <span className="font-display font-bold min-w-[48px] text-ink">{hhmm(c.started_at)}<span className="block text-[11px] font-body font-medium text-muted">{dayLabel(c.started_at)}</span></span>
+                  <span className="font-display font-bold min-w-[48px] text-ink">{hhmm(lang, c.started_at)}<span className="block text-[11px] font-body font-medium text-muted">{dayLabel(lang, c.started_at)}</span></span>
                   <span className="flex-[1_1_220px] min-w-0 text-ink"><b>{c.channel === "webchat" ? `Webchat${c.name !== "Webchat" ? ` · ${c.name}` : ""}` : c.name}</b>{c.summary || c.question ? ` · ${c.summary || c.question}` : ""}</span>
-                  <span className={`inline-flex px-2.5 py-1 rounded-full text-[12px] font-semibold ${TAG[c.outcome][1]}`}>{TAG[c.outcome][0]}</span>
-                  <Link href={`/app/opkald/${c.id}`} className="font-semibold text-ink underline underline-offset-2">Læs</Link>
+                  <span className={`inline-flex px-2.5 py-1 rounded-full text-[12px] font-semibold ${TAG[c.outcome]}`}>{t(`outcome.${c.outcome}`)}</span>
+                  <Link href={`/app/opkald/${c.id}`} className="font-semibold text-ink underline underline-offset-2">{t("overview.read")}</Link>
                 </li>
               ))}
             </ul>
           )}
-          <Link href="/app/opkald" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">Se alle opkald</Link>
+          <Link href="/app/opkald" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">{t("overview.allCalls")}</Link>
         </div>
 
         {/* Aftaler (and Kampagner when outbound calls are chosen) */}
         {staff && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="flex flex-col gap-2.5 px-6 py-5 rounded-2xl bg-paper border-2 border-ink">
-              <h2 className="font-display font-extrabold text-[20px] text-ink">Aftaler</h2>
-              {nextAppts.length === 0 ? <p className="text-[14px] text-ink-soft">Ingen kommende aftaler.</p> : (
+              <h2 className="font-display font-extrabold text-[20px] text-ink">{t("overview.appointments")}</h2>
+              {nextAppts.length === 0 ? <p className="text-[14px] text-ink-soft">{t("overview.noAppointments")}</p> : (
                 <ul className="flex flex-col">{nextAppts.map((a) => <li key={a.id} className="py-2 border-t-[1.5px] border-line text-[14px] text-ink"><b>{a.label}</b> · {a.contact_name || a.title}</li>)}</ul>
               )}
-              <Link href="/app/aftaler" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">Se ugens aftaler</Link>
+              <Link href="/app/aftaler" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">{t("overview.weekAppointments")}</Link>
             </div>
             {goals?.callback && (
               <div className="flex flex-col gap-2.5 px-6 py-5 rounded-2xl bg-paper border-2 border-ink">
-                <h2 className="font-display font-extrabold text-[20px] text-ink">Kampagner</h2>
-                <p className="text-[14px] text-ink-soft">Ring til jeres egne kunder – 4 kr. pr. opkald + 2 kr. pr. samtaleminut ekskl. moms.</p>
-                <Link href="/app/kampagner" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">Åbn kampagner</Link>
+                <h2 className="font-display font-extrabold text-[20px] text-ink">{t("overview.campaigns")}</h2>
+                <p className="text-[14px] text-ink-soft">{t("overview.campaignsSub")}</p>
+                <Link href="/app/kampagner" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">{t("overview.openCampaigns")}</Link>
               </div>
             )}
           </div>
@@ -178,12 +167,12 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
         {/* Everything else that happened, for completeness */}
         {ov.activity.length > 0 && (
           <details className="rounded-2xl bg-paper border-[1.5px] border-ink px-6 py-4">
-            <summary className="cursor-pointer text-[14px] font-semibold text-ink">Al aktivitet de seneste 14 dage</summary>
+            <summary className="cursor-pointer text-[14px] font-semibold text-ink">{t("overview.allActivity")}</summary>
             <ul className="mt-3 flex flex-col">
               {ov.activity.map((a) => (
                 <li key={a.id}><Link href={a.href} className="flex items-start gap-3 py-2.5 border-t-[1.5px] border-line hover:bg-panel -mx-2 px-2 rounded-lg">
                   <span className="flex-1 min-w-0 text-[14px] text-ink"><span className="block font-semibold">{a.title}</span>{a.body && <span className="block text-[13px] text-ink-soft truncate">{a.body}</span>}</span>
-                  <span className="text-[12px] text-muted shrink-0">{new Date(a.at).toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" })}</span>
+                  <span className="text-[12px] text-muted shrink-0">{new Date(a.at).toLocaleString(lang, { dateStyle: "short", timeStyle: "short" })}</span>
                 </Link></li>
               ))}
             </ul>

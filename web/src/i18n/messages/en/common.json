@@ -1,0 +1,25 @@
+{
+  "language": "Language",
+  "chrome": {
+    "home": "Dialogbot home",
+    "choosePath": "Choose a path",
+    "tryIt": "Try it",
+    "buildGuide": "Building guide",
+    "mainMenu": "Main menu",
+    "pricing": "Pricing",
+    "location": "Aarhus · Denmark",
+    "hours": "Mon–Fri 08–17",
+    "privacy": "Privacy",
+    "gdpr": "GDPR",
+    "terms": "Terms of sale",
+    "pages": "Pages",
+    "about": "About us",
+    "gdprData": "GDPR and data",
+    "contact": "Contact",
+    "login": "Log in",
+    "signup": "Create account",
+    "knowledge": "Resources",
+    "byIndustry": "AI receptionist for your industry",
+    "skip": "Skip to content"
+  }
+}

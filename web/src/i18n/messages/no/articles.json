@@ -1,0 +1,324 @@
+{
+  "ai-telefonsvarer-eller-telefonpasning": {
+    "meta": {
+      "title": "AI-telefonsvarer eller telefonvakt – hva passer for dere?",
+      "description": "Telefonsvarer, telefonvakttjeneste eller AI-telefonsvarer? Se forskjellene i pris, tilgjengelighet og kvalitet, så du kan velge riktig løsning.",
+      "ogTitle": "AI-telefonsvarer eller telefonvakt? | Dialogbot"
+    },
+    "kicker": "AI-telefonsvarer eller telefonvakt",
+    "title": "AI-telefonsvarer eller telefonvakt – hva passer for dere?",
+    "lead": "Når du ikke kan ta telefonen selv, har du tre muligheter: en vanlig telefonsvarer, en telefonvakttjeneste med mennesker eller en AI-telefonsvarer. Her er forskjellene.",
+    "points": [
+      "Telefonsvarer: billig, men kunden legger ofte på",
+      "Telefonvakt: et menneske svarer, men som regel bare i åpningstiden",
+      "AI-telefonsvarer: svarer døgnet rundt og kan booke",
+      "Velg ut fra antall anrop, åpningstid og behov"
+    ],
+    "sections": [
+      {
+        "title": "1. Den vanlige telefonsvareren",
+        "body": [
+          { "type": "p", "text": "Billig og enkel, men mange kunder legger på i stedet for å legge igjen en beskjed – og ringer en konkurrent. Du må selv høre gjennom beskjedene og ringe tilbake uten å vite hva saken gjelder." }
+        ]
+      },
+      {
+        "title": "2. Telefonvakttjeneste",
+        "body": [
+          { "type": "p", "text": "Et menneske tar telefonen i ditt navn og skriver ned en beskjed. Det gir en personlig opplevelse, men faktureres som regel per anrop eller per måned, og mange tjenester er bare åpne i vanlig arbeidstid. Resepsjonisten kjenner sjelden tjenestene og prisene dine i detalj." }
+        ]
+      },
+      {
+        "title": "3. AI-telefonsvarer",
+        "body": [
+          { "type": "p", "parts": ["En AI-telefonsvarer som ", { "link": "/ai-telefonsvarer", "text": "Dialogbot" }, " snakker med kunden på norsk – eller på kundens eget språk – døgnet rundt, svarer ut fra din egen godkjente kunnskap og kan booke timer og sende SMS-bekreftelser. Du får en skriftlig oppsummering av hver samtale i stedet for en talebeskjed."] },
+          { "type": "p", "text": "Til gjengjeld er den ikke et menneske – det sier den ærlig, og saker den ikke kan svare på, sender den videre til deg." }
+        ]
+      },
+      {
+        "title": "Sammenlignet",
+        "body": [
+          {
+            "type": "table",
+            "other": "Telefonvakt",
+            "rows": [
+              ["Hvem svarer", "AI på norsk og kundens språk, bare ut fra kunnskap dere har godkjent", "Et menneske som ikke alltid kjenner tjenestene deres"],
+              ["Åpningstid", "Døgnet rundt", "Som regel vanlig arbeidstid"],
+              ["Booking", "Rett i kalenderen deres, med SMS-bekreftelse", "Vanligvis en beskjed dere selv må følge opp"],
+              ["Pris", "2.495 kr./mnd. eks. mva., ingen pris per henvendelse", "Som regel per anrop eller per måned"],
+              ["Beskjed til dere", "Skriftlig oppsummering av hver samtale og en daglig rapport", "En beskjed per anrop"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Slik velger du",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Få anrop og bare på dagtid?" }, " Da kan en telefonsvarer være nok."],
+              [{ "b": "Viktig med et menneske i andre enden?" }, " Telefonvakt – men sjekk åpningstiden."],
+              [{ "b": "Mange anrop, også på kveldstid, og ønske om booking?" }, " En AI-telefonsvarer gir mest for pengene."]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Hør forskjellen",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "Bli oppringt av Dialogbot" }, " og hør hvordan en AI-telefonsvarer høres ut. Se også ", { "link": "/priser", "text": "prisene" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Kan en AI-telefonsvarer erstatte telefonvakt?", "For de fleste faste henvendelser, ja: den svarer, avklarer behovet og booker. Komplekse saker sendes videre til dere."],
+      ["Er en AI-telefonsvarer tilgjengelig om natten?", "Ja, Dialogbot tar telefonen døgnet rundt."],
+      ["Hva er billigst: telefonvakt eller Dialogbot?", "Telefonvakt faktureres som regel per anrop eller per måned. Dialogbot er ett abonnement til 2.495 kr. i måneden eks. mva. med 300 minutter innkommende anrop og ingen pris per henvendelse. Se også /viden/dialogbot-vs-vocalis."],
+      ["Kan jeg beholde nummeret mitt?", "Ja. Du viderekobler nummeret ditt til Dialogbot når du er opptatt eller har stengt."]
+    ]
+  },
+  "dialogbot-vs-almindelig-chatbot": {
+    "meta": {
+      "title": "Dialogbot eller en vanlig chatbot – hva er forskjellen?",
+      "description": "En vanlig chatbot svarer på en nettside. Dialogbot tar også telefonen, booker timer og svarer bare ut fra kunnskap dere selv har godkjent. Se forskjellene.",
+      "ogTitle": "Dialogbot eller en vanlig chatbot? | Dialogbot"
+    },
+    "kicker": "Dialogbot eller en vanlig chatbot",
+    "title": "Dialogbot eller en vanlig chatbot – hva er forskjellen?",
+    "lead": "En vanlig chatbot svarer på nettsiden. Dialogbot tar også telefonen, booker timene og lar dere godkjenne alt den får si.",
+    "points": [
+      "Chatbot: skriver på nettsiden",
+      "Dialogbot: telefon, chat og booking med samme kunnskap",
+      "Dialogbot gjetter aldri – bare godkjent kunnskap",
+      "Ett abonnement: 2.495 kr./mnd."
+    ],
+    "sections": [
+      {
+        "title": "Oversikt",
+        "body": [
+          {
+            "type": "table",
+            "other": "Vanlig chatbot",
+            "rows": [
+              ["Kanaler", "Telefon og nettchat med samme kunnskap", "Som regel bare chat på nettsiden"],
+              ["Booking", "Finner ledige tider i kalenderen deres og sender SMS-bekreftelse", "Sjelden – ofte bare en lenke eller en beskjed"],
+              ["Hva den svarer ut fra", "Bare kunnskap dere selv har godkjent – og dere ser hver endring først", "Varierer: noen svarer fritt ut fra en AI-modell"],
+              ["Når den ikke kan svare", "Den sier fra og tar imot en beskjed til dere", "Varierer"],
+              ["Beskjed til dere", "Navn, nummer og hva det gjaldt – og en rapport hver dag", "Varierer"],
+              ["Pris", "2.495 kr./mnd. – ingen pris per henvendelse", "Fra noen hundre kr./mnd. og oppover"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Når er en vanlig chatbot nok?",
+        "body": [
+          { "type": "p", "text": "Hvis kundene deres nesten bare skriver, og dere verken trenger å få booket timer eller få telefonen besvart, kan en enkel chatbot være nok – og billigere." }
+        ]
+      },
+      {
+        "title": "Når gir Dialogbot mer?",
+        "body": [
+          { "type": "p", "parts": ["Når telefonen ringer mens dere står på stigen eller har en kunde i stolen, og et ubesvart anrop er en tapt kunde. Dialogbot svarer innen to sekunder, booker en time og gir dere beskjed. Les mer om ", { "link": "/ai-receptionist", "text": "AI-resepsjonisten" }, " og ", { "link": "/chatbot", "text": "chatboten for nettsiden" }, ", som er en del av abonnementet."] }
+        ]
+      },
+      {
+        "title": "Hør den selv",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "La Dialogbot ringe dere" }, " – to minutter, ingen registrering."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Kan Dialogbot også bare være en chatbot?", "Ja. Nettchatten er inkludert i abonnementet, og den bruker den samme godkjente kunnskapen som telefonen. Det er én kodelinje på nettsiden."],
+      ["Gjetter Dialogbot hvis den ikke vet svaret?", "Nei. Den svarer bare ut fra godkjent kunnskap og tar imot en beskjed til dere hvis den ikke kan svare."],
+      ["Hva koster det?", "2.495 kr. i måneden eks. mva. med 300 minutter innkommende anrop. Ingen bindingstid."]
+    ]
+  },
+  "dialogbot-vs-vocalis": {
+    "meta": {
+      "title": "Dialogbot eller Vocalis – fastpris eller minuttpakker?",
+      "description": "Sammenlign Dialogbot og Vocalis: fast månedspris eller minuttpakker, godkjent kunnskap, booking og hvordan dere kommer i gang. Priser eks. mva.",
+      "ogTitle": "Dialogbot eller Vocalis? | Dialogbot"
+    },
+    "kicker": "Dialogbot eller Vocalis",
+    "title": "Dialogbot eller Vocalis – fastpris eller minuttpakker?",
+    "lead": "Begge bygger AI-medarbeidere for små og mellomstore bedrifter. Forskjellen ligger særlig i hvordan dere betaler, og hvordan dere kommer i gang.",
+    "points": [
+      "Dialogbot: 2.495 kr./mnd., 300 minutter inkludert, deretter 1,50 kr./min.",
+      "Vocalis: fra 899 kr./mnd. for 100 minutter, deretter minuttpakker",
+      "Dialogbot: bare godkjent kunnskap – og dere godkjenner hver endring",
+      "Dialogbot: hør den først, uten registrering"
+    ],
+    "sections": [
+      {
+        "title": "Oversikt",
+        "body": [
+          {
+            "type": "table",
+            "other": "Vocalis",
+            "rows": [
+              ["Pris per måned (eks. mva.)", "2.495 kr. – ett abonnement", "Fra 899 kr. for 100 minutter (Basis)"],
+              ["Når minuttene er brukt opp", "1,50 kr. per påbegynt minutt etter de 300 inkluderte", "Automatiske minuttpakker opptil 3.995 kr./mnd."],
+              ["Svarer ut fra", "Kunnskap dere selv har godkjent – og dere ser hver endring først (før → etter, «Godkjenne?»)", "Se Vocalis' egen beskrivelse"],
+              ["Booking", "Google Kalender eller Microsoft 365, med SMS-bekreftelse", "Se Vocalis' egen beskrivelse"],
+              ["Slik kommer dere i gang", "Hør den først: den ringer dere, uten registrering. Sett den opp selv på rundt en halvtime", "Gratis konsultasjon og tilbakeringing"],
+              ["Bindingstid", "Ingen – si opp fra måned til måned", "Se Vocalis' egen beskrivelse"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Pris: fast eller målt",
+        "body": [
+          { "type": "p", "text": "Vocalis starter lavere, men prisen følger forbruket: går dere over de 100 minuttene, kjøpes det automatisk flere pakker. Dialogbot koster mer i utgangspunktet, men 300 minutter er inkludert, og minutter utover det koster 1,50 kr. Regningen er forutsigbar, og dere kan alltid se forbruket deres." },
+          { "type": "p", "parts": ["Har dere bare noen få anrop i måneden, kan en lavere startpris passe bedre. Ringer telefonen hele dagen, er fastpris det trygge valget. Se ", { "link": "/priser", "text": "alle priser" }, "."] }
+        ]
+      },
+      {
+        "title": "Den store forskjellen: godkjent kunnskap",
+        "body": [
+          { "type": "p", "text": "Dialogbot svarer bare ut fra tjenestene, prisene og åpningstidene dere selv har godkjent, og sier fra hvis den ikke vet svaret. Hver endring vises først som før → etter med «Godkjenne?». Det er den mekanismen som gjør at den ikke gjetter." }
+        ]
+      },
+      {
+        "title": "Hør forskjellen selv",
+        "body": [
+          { "type": "p", "parts": [{ "link": "/proev", "text": "La Dialogbot ringe dere" }, " – det tar to minutter og krever ingen registrering."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Er Dialogbot dyrere enn Vocalis?", "I utgangspunktet ja: 2.495 kr. i måneden mot fra 899 kr. for 100 minutter. Til gjengjeld er 300 minutter inkludert, og prisen hopper ikke hvis dere får flere anrop."],
+      ["Kan jeg bytte fra Vocalis til Dialogbot?", "Ja. Dere beholder telefonnummeret dere har i dag og viderekobler til Dialogbot, og det er ingen bindingstid."],
+      ["Hvor kan jeg se Vocalis' gjeldende priser?", "Hos Vocalis selv. Prisene her er de publiserte listeprisene da siden ble skrevet, og de kan ha endret seg."]
+    ]
+  },
+  "hvad-er-en-ai-receptionist": {
+    "meta": {
+      "title": "Hva er en AI-resepsjonist – og hvordan fungerer den?",
+      "description": "En AI-resepsjonist tar telefonen og chatten for bedriften din, svarer ut fra deres egen kunnskap og booker timer. Slik fungerer den, og dette bør du se etter.",
+      "ogTitle": "Hva er en AI-resepsjonist? | Dialogbot"
+    },
+    "kicker": "Hva er en AI-resepsjonist?",
+    "title": "Hva er en AI-resepsjonist – og hvordan fungerer den?",
+    "lead": "En AI-resepsjonist er en digital assistent som tar telefonen og chatten for bedriften din. Her er hva den kan, hvordan den fungerer, og hva du bør se etter før du velger en.",
+    "points": [
+      "Tar telefonen og chatten døgnet rundt",
+      "Svarer ut fra bedriftens egen kunnskap",
+      "Avklarer behovet og samler inn kontaktopplysninger",
+      "Kan booke timer og sende SMS",
+      "Skal aldri gjette eller love noe dere ikke har godkjent"
+    ],
+    "sections": [
+      {
+        "title": "Kort fortalt",
+        "body": [
+          { "type": "p", "text": "En AI-resepsjonist svarer når du ikke kan selv: når du er opptatt, er hos en kunde eller har stengt. I stedet for en telefonsvarer som ber kunden legge igjen en beskjed, snakker den med kunden, finner ut hva de trenger, og samler inn navn, nummer og behov, slik at du kan ringe tilbake til en varm kunde." },
+          { "type": "p", "parts": ["Den bygger på tre deler: ", { "b": "talegjenkjenning" }, " som forstår hva kunden sier, en ", { "b": "språkmodell" }, " som finner riktig svar i bedriftens kunnskap, og en ", { "b": "stemme" }, " som svarer naturlig på norsk – eller på kundens eget språk."] }
+        ]
+      },
+      {
+        "title": "Hva kan en AI-resepsjonist?",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              "Svare på de faste spørsmålene: åpningstider, priser, tjenester, adresse og parkering.",
+              "Avklare behovet med spørsmålene bedriften har bestemt.",
+              "Finne ledige tider og booke, flytte eller avlyse avtaler.",
+              "Sende kunden en bekreftelse på SMS.",
+              "Gi bedriften en kort, skriftlig oppsummering av hver samtale."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Hva skal den ikke kunne?",
+        "body": [
+          { "type": "p", "parts": ["En god AI-resepsjonist ", { "b": "gjetter aldri" }, ". Den skal bare svare ut fra kunnskap bedriften har godkjent, og ærlig si fra når noe ikke står der. Den får ikke love rabatter, gi faglige råd eller late som om den er et menneske."] },
+          { "type": "p", "text": "Hos Dialogbot starter all kunnskap som et utkast og tas først i bruk når en eier eller administrator har godkjent den." }
+        ]
+      },
+      {
+        "title": "Dette bør du se etter",
+        "body": [
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Norsk tale" }, " – høres den naturlig ut, og forstår den navn og fagord?"],
+              [{ "b": "Kontroll" }, " – kan du selv godkjenne hva den får si?"],
+              [{ "b": "Handlinger" }, " – kan den booke og sende SMS, eller tar den bare imot beskjeder?"],
+              [{ "b": "Oppsett" }, " – får du hjelp, eller må du finne ut av det selv?"],
+              [{ "b": "Pris" }, " – fastpris eller per henvendelse, og er det bindingstid?"]
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Prøv det selv",
+        "body": [
+          { "type": "p", "parts": ["Den beste testen er å høre den. ", { "link": "/proev", "text": "Bli oppringt av Dialogbot" }, ", velg bransjen din og hør hvordan den ville tatt telefonen for deg. Les mer om ", { "link": "/ai-receptionist", "text": "Dialogbots AI-resepsjonist" }, " eller se ", { "link": "/priser", "text": "prisene" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Er en AI-resepsjonist det samme som en chatbot?", "Ikke helt. En chatbot skriver, en AI-resepsjonist snakker i telefonen. Dialogbot gjør begge deler med den samme kunnskapen."],
+      ["Høres en AI-resepsjonist ut som en robot?", "Moderne stemmer høres naturlige ut. Dialogbot snakker norsk – og kundens eget språk – og sier alltid ærlig at den er en digital assistent hvis kunden spør."],
+      ["Hva koster en AI-resepsjonist?", "Hos Dialogbot er det ett abonnement til 2.495 kr. i måneden eks. mva. Det er ingen pris per henvendelse."]
+    ]
+  },
+  "viderestil-telefonen": {
+    "meta": {
+      "title": "Slik viderekobler du telefonen når du er opptatt",
+      "description": "Viderekoble mobilen ved opptatt, ingen svar eller alltid med standardkodene **67*, **61* og **21* – og slå det av igjen med ##002#. Veiledning for danske bedrifter.",
+      "ogTitle": "Slik viderekobler du telefonen | Dialogbot"
+    },
+    "kicker": "Viderekoble telefonen",
+    "title": "Slik viderekobler du telefonen når du er opptatt",
+    "lead": "Med viderekobling går anrop videre til et annet nummer – f.eks. AI-resepsjonisten din – når du ikke kan ta dem selv. Her er standardkodene du taster på mobilen.",
+    "points": [
+      "Ved opptatt: **67*nummer#",
+      "Ved ingen svar: **61*nummer#",
+      "Når telefonen er avslått: **62*nummer#",
+      "Alltid: **21*nummer#",
+      "Slå av all viderekobling: ##002#"
+    ],
+    "sections": [
+      {
+        "title": "Kodene",
+        "body": [
+          { "type": "p", "text": "Kodene er standard i mobilnettet og virker hos de fleste danske teleselskaper. Skriv nummeret med +45 foran, og trykk ring etter koden." },
+          {
+            "type": "ul",
+            "items": [
+              [{ "b": "Når du er opptatt:" }, " ", { "code": "**67*+4512345678#" }],
+              [{ "b": "Når du ikke svarer:" }, " ", { "code": "**61*+4512345678#" }, " – noen selskaper lar deg angi antall sekunder: ", { "code": "**61*+4512345678**20#" }],
+              [{ "b": "Når telefonen er avslått eller uten dekning:" }, " ", { "code": "**62*+4512345678#" }],
+              [{ "b": "Alle anrop, alltid:" }, " ", { "code": "**21*+4512345678#" }],
+              [{ "b": "Slå av all viderekobling:" }, " ", { "code": "##002#" }]
+            ]
+          },
+          { "type": "p", "text": "Virker ikke en kode, eller har du fasttelefon eller et IP-telefonisystem, kan du slå på viderekobling i appen eller selvbetjeningen til teleselskapet, eller spørre teleselskapet ditt." }
+        ]
+      },
+      {
+        "title": "Det smarte oppsettet",
+        "body": [
+          { "type": "p", "parts": ["De fleste bedrifter bruker ", { "b": "opptatt + ingen svar + avslått" }, ". Da tar du telefonen selv når du kan, og alle andre anrop går til AI-resepsjonisten i stedet for til telefonsvareren."] }
+        ]
+      },
+      {
+        "title": "Viderekoble til Dialogbot",
+        "body": [
+          { "type": "p", "parts": ["Når du registrerer deg hos Dialogbot, får du et Dialogbot-nummer som du viderekobler til – og vi hjelper deg med det under oppsettet. Les mer om ", { "link": "/ai-telefonsvarer", "text": "AI-telefonsvareren" }, " eller ", { "link": "/proev", "text": "hør den selv" }, "."] }
+        ]
+      }
+    ],
+    "faq": [
+      ["Koster viderekobling noe?", "Det avhenger av abonnementet ditt hos teleselskapet. Sjekk prisen på viderekoblede anrop hos selskapet ditt."],
+      ["Hvordan sjekker jeg om viderekobling er slått på?", "Tast f.eks. *#67# eller *#61# og trykk ring – da viser telefonen statusen."],
+      ["Kan jeg beholde mitt eget nummer?", "Ja. Kundene ringer fortsatt nummeret ditt; anropene viderekobles bare når du ikke tar dem selv."]
+    ]
+  }
+}

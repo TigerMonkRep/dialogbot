@@ -415,8 +415,10 @@ def _decide(db, request, principal, a: Ambassador, new: str, note: str, allowed_
 
         u = db.get(User, a.user_id)
         first = a.full_name.split()[0]
-        mail = (tpl.ambassador_approved(first, service.link_for(a), a.code, f"{get_settings().frontend_base_url}/ambassador")
-                if new == "active" else tpl.ambassador_rejected(first, a.decision_note))
+        lang = u.interface_language or "da"  # the ambassador's own interface language
+        mail = (tpl.ambassador_approved(first, service.link_for(a), a.code, f"{get_settings().frontend_base_url}/ambassador",
+                                        lang=lang)
+                if new == "active" else tpl.ambassador_rejected(first, a.decision_note, lang=lang))
         enqueue(db, event_type="email.ambassador", dedupe_key=f"ambassador-decided:{a.id}:{new}",
                 payload={"to_email": u.email, "email": tpl.to_payload(mail)})
     db.commit()

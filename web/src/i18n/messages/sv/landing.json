@@ -1,0 +1,581 @@
+{
+  "meta": {
+    "title": "Dialogbot – AI-receptionist, AI-telefonsvarare och chattbot för små och medelstora företag",
+    "description": "Dialogbot är en AI-receptionist som svarar i telefon och chatt åt ditt företag dygnet runt – på svenska och på kundernas eget språk – utifrån er egen kunskap, bokar tider och samlar in ärenden. Vi guidar er genom hela konfigurationen.",
+    "keywords": ["Dialogbot", "AI-receptionist", "AI receptionist", "AI-telefonsvarare", "AI telefon", "AI-telefonassistent", "chattbot", "chattbot för webbplats", "telefonpassning", "digital receptionist", "telefonsvarare för företag"]
+  },
+  "nav": {
+    "aiReceptionist": "AI-receptionist",
+    "aiPhone": "AI-telefonsvarare",
+    "chatbot": "Chattbot för webbplatsen",
+    "pricing": "Priser",
+    "knowledge": "Kunskap"
+  },
+  "articles": {
+    "hvad-er-en-ai-receptionist": {
+      "title": "Vad är en AI-receptionist – och hur fungerar den?",
+      "teaser": "Så svarar en AI-receptionist i telefon åt ett företag, vad den kan och vad den inte ska kunna."
+    },
+    "ai-telefonsvarer-eller-telefonpasning": {
+      "title": "AI-telefonsvarare eller telefonpassning – vad passar er?",
+      "teaser": "Telefonsvarare, telefonpassningstjänst eller AI: för- och nackdelar, så att ni kan välja rätt."
+    },
+    "viderestil-telefonen": {
+      "title": "Så vidarekopplar du telefonen när du är upptagen",
+      "teaser": "Koderna du slår på mobilen för att vidarekoppla vid upptaget, inget svar eller alltid – och hur du stänger av det igen."
+    },
+    "dialogbot-vs-vocalis": {
+      "title": "Dialogbot eller Vocalis – fast pris eller minutpaket?",
+      "teaser": "Fast månadspris eller minutpaket, godkänd kunskap och bokning: skillnaderna mellan Dialogbot och Vocalis."
+    },
+    "dialogbot-vs-almindelig-chatbot": {
+      "title": "Dialogbot eller en vanlig chattbot – vad är skillnaden?",
+      "teaser": "En chattbot svarar på webbplatsen. Dialogbot svarar också i telefon och bokar tider."
+    }
+  },
+  "industryLink": "AI-receptionist för {name}",
+  "seoPage": {
+    "breadcrumb": "Brödsmulor",
+    "knowledge": "Kunskap",
+    "tryIt": "Testa den – den ringer upp dig",
+    "seeGuide": "Se bygganvisningen",
+    "inShort": "Kort sagt",
+    "faqEyebrow": "Frågor",
+    "faqTitle": "Vanliga frågor",
+    "ctaTitle": "Hör Dialogbot svara i telefon – på din egen telefon",
+    "ctaText": "Berätta för chatten vad ditt företag heter och vad ni gör, så ringer assistenten upp dig och visar hur den skulle svara i telefon åt er.",
+    "callMe": "Ring upp mig nu",
+    "orWrite": "Eller skriv till ",
+    "priceLine": ". 2.495 kr./mån. · exkl. moms. Ingen bindningstid."
+  },
+  "compareTable": {
+    "difference": "Skillnad"
+  },
+  "pricing": {
+    "meta": {
+      "title": "Priser – AI-receptionist för 2.495 kr. i månaden",
+      "description": "Se priset för Dialogbot: ett abonnemang för 2.495 kr. i månaden exkl. moms med 300 minuter inkommande samtal. Telefon, chatt, bokning och personlig konfiguration ingår. Utgående kampanjsamtal kostar 4 kr. per samtal.",
+      "ogTitle": "Priser för AI-receptionist | Dialogbot"
+    },
+    "kicker": "Priser",
+    "title": "Ett abonnemang – 2.495 kr. i månaden",
+    "lead": "Ett pris, hela Dialogbot: AI-receptionist i telefon, chattbot på webbplatsen, bokning och en sammanfattning av varje ärende. Alla priser är exkl. moms.",
+    "points": ["2.495 kr. i månaden – ett abonnemang", "Inget pris per ärende", "300 minuter inkommande samtal per månad ingår", "Utgående kampanjsamtal: 4 kr. per samtal + 2 kr. per minut", "Ingen bindningstid", "Konfiguration på egen hand ingår – konfiguration av specialister 5.000 kr."],
+    "sections": {
+      "subscription": {
+        "title": "Abonnemanget",
+        "p1Price": "2.495 kr. i månaden",
+        "p1a": " exkl. moms. Det finns inget pris per ärende, och ",
+        "p1Minutes": "300 minuter inkommande samtal per månad ingår",
+        "p1b": " – det räcker för de flesta små företag. Pratar era kunder mer än så med assistenten kostar varje påbörjad minut därutöver 1,50 kr. Ni kan alltid se er förbrukning i Dialogbot.",
+        "p2": "Priset för en telefonpassning – men en receptionist som också bokar tiderna i er kalender och skickar ett meddelande om varje samtal.",
+        "p3a": "Passar företag där telefonen ringer medan ni har fullt upp: hantverkare, kliniker, salonger, verkstäder och rådgivare. Vill ni höra den först kan ni ",
+        "p3Link": "låta Dialogbot ringa upp er",
+        "p3b": " – det tar två minuter och kräver ingen registrering."
+      },
+      "whyMore": {
+        "title": "Varför vi kostar mer än en chattbot",
+        "p1": "Det finns billigare lösningar från omkring 400 kr. i månaden. Många av dem tar betalt per minut eller per ärende, så räkningen kan variera från månad till månad.",
+        "p2a": "Dialogbot svarar ",
+        "p2Strong": "bara utifrån kunskap som ni själva har godkänt",
+        "p2b": " och visar er varje ändring först: före → efter, «Godkänna?». Den bokar, flyttar och avbokar tider i Google Kalender eller Microsoft 365, skickar sms-bekräftelse och ger er ett meddelande om varje samtal och en rapport varje dag. Därför kostar den mer – och ni vet i förväg vad räkningen blir. Se även ",
+        "p2Vocalis": "Dialogbot och Vocalis",
+        "p2c": " och ",
+        "p2Chatbot": "Dialogbot och en vanlig chattbot",
+        "p2d": "."
+      },
+      "included": {
+        "title": "Det här ingår i abonnemanget",
+        "items": ["AI-receptionist och AI-telefonsvarare på svenska och på kundernas språk – dygnet runt", "Chattbot för webbplatsen med samma kunskap", "Bokning, ombokning och avbokning av tider samt sms-bekräftelse", "Sammanfattning av varje ärende, uppgifter och daglig rapport", "Konfiguration på egen hand: bygganvisningens tre steg, ungefär en halvtimme, med assistenten till hands"]
+      },
+      "specialists": {
+        "title": "Konfiguration av våra specialister – 5.000 kr.",
+        "p1a": "Ni kan konfigurera Dialogbot själva – bygganvisningens tre steg ingår i abonnemanget. Vill ni hellre att någon gör det åt er konfigurerar våra egna specialister den för ",
+        "p1Price": "5.000 kr.",
+        "p1b": " exkl. moms, som en engångsavgift.",
+        "p2": "Då får ni en skräddarsydd konfiguration och integration med era egna system och behov: vi kopplar på kalender, CRM eller bokningssystem, lägger in er kunskap och era priser, tränar rösten på era namn och testar allt tillsammans med er innan den slås på."
+      },
+      "outbound": {
+        "title": "Utgående kampanjsamtal",
+        "p1a": "Vill ni att assistenten ska ringa ut till kontakter som själva har sagt ja till att bli uppringda kostar det ",
+        "p1Call": "4 kr. per utgående samtal",
+        "p1b": " plus ",
+        "p1Minute": "2 kr. per påbörjad samtalsminut",
+        "p1c": " exkl. moms – precis som en telefonräkning.",
+        "p2": "Varje samtal som rings räknas – även ett nytt försök. Ett obesvarat samtal kostar därför 4 kr. och ett samtal på 3 minuter 10 kr. En kontakt rings högst 2 gånger och pratar högst 3 minuter totalt, och ni ser det högsta priset innan ni trycker Start."
+      },
+      "start": {
+        "title": "Kom igång",
+        "a": "Hör först hur det låter: ",
+        "tryLink": "bli uppringd av Dialogbot",
+        "b": ". När ni är redo ",
+        "signupLink": "skapar ni ett konto",
+        "c": " och följer bygganvisningen – eller beställer konfiguration av våra specialister. Läs mer om ",
+        "receptionistLink": "AI-receptionisten",
+        "d": "."
+      }
+    },
+    "faq": [
+      ["Finns det någon bindningstid?", "Nej. Det finns ingen bindningstid. Ni kan säga upp till slutet av innevarande månad."],
+      ["Är 2.495 kr. hela priset?", "Ja, det är hela priset för abonnemanget, exkl. moms. Det finns bara ett abonnemang och inget extra pris per ärende. Endast om ni använder mer än 300 inkommande minuter i månaden kostar varje minut därutöver 1,50 kr."],
+      ["Kan jag testa den innan jag köper?", "Ja. Dialogbot ringer upp er och tar emot er som om ni vore en kund – det tar två minuter och kräver ingen registrering. Och det finns ingen bindningstid."],
+      ["Vart tar mina kunders uppgifter vägen?", "Det står i en kort och begriplig text på sidan om GDPR och data: vad som sparas, var och hur personuppgiftsbiträdesavtalet fungerar."],
+      ["Vad kostar utgående kampanjsamtal?", "4 kr. per utgående samtal plus 2 kr. per påbörjad samtalsminut, exkl. moms. Ett obesvarat samtal kostar 4 kr., ett samtal på 3 minuter 10 kr. Kontakterna måste i förväg ha sagt ja till att bli uppringda, och en kampanj ringer först när ni själva trycker Start."],
+      ["Vad händer om vi får många inkommande samtal?", "300 minuter inkommande samtal per månad ingår i abonnemanget. Därutöver kostar varje påbörjad minut 1,50 kr. exkl. moms – det står som en separat rad på fakturan, och ni kan följa förbrukningen löpande i Dialogbot."],
+      ["Kostar konfigurationen något?", "Inte om ni gör det själva: bygganvisningens tre steg ingår i abonnemanget och tar ungefär en halvtimme. Konfiguration av våra specialister kostar 5.000 kr. exkl. moms som engångsavgift och ger er en skräddarsydd konfiguration och integration med era egna system och behov."]
+    ]
+  },
+  "receptionist": {
+    "meta": {
+      "title": "AI-receptionist för små och medelstora företag – svarar i telefon dygnet runt",
+      "description": "Dialogbot är en AI-receptionist som svarar i telefon när ni är upptagna eller har stängt – på svenska och på kundernas eget språk. Den svarar utifrån er egen kunskap, bokar tider och skickar varje ärende till er. 2.495 kr./mån.",
+      "ogTitle": "AI-receptionist för små och medelstora företag | Dialogbot"
+    },
+    "kicker": "AI-receptionist",
+    "title": "En AI-receptionist som svarar i telefon när ni inte kan",
+    "lead": "Dialogbot är en digital receptionist som talar svenska – och era kunders språk. Den tar emot samtal och chattar dygnet runt, svarar bara utifrån den kunskap ni själva har godkänt och ser till att ingen kund går förlorad.",
+    "points": ["Svarar på svenska och på kundernas språk med en naturlig röst", "Känner till era tjänster, priser och öppettider", "Bokar, flyttar och avbokar tider", "Skickar en kort sammanfattning av varje ärende till er", "Vi guidar er genom hela konfigurationen"],
+    "sections": {
+      "what": {
+        "title": "Vad är en AI-receptionist?",
+        "p1": "En AI-receptionist är en digital assistent som sköter telefonen och chatten åt ert företag. Den tar emot kunden, tar reda på vad de behöver, svarar på standardfrågorna och samlar in namn, nummer och behov, så att ni kan ringa tillbaka till en varm kund.",
+        "p2": "Med Dialogbot bestämmer ni själva vad assistenten får säga. All kunskap börjar som ett utkast och används först när en ägare eller administratör har godkänt den. Assistenten gissar aldrig – om något inte framgår av er kunskap säger den det ärligt och lovar att en medarbetare återkommer."
+      },
+      "canDo": {
+        "title": "Det här kan Dialogbot göra åt er",
+        "items": [
+          ["Svara i telefon", " när ni är upptagna, är ute hos en kund eller har stängt – även på kvällar och helger."],
+          ["Reda ut behovet", " med de frågor ni har godkänt och skicka en sammanfattning med namn och nummer till er."],
+          ["Boka tider", " utifrån era öppettider och bokningsregler – och skicka en bekräftelse till kunden via sms."],
+          ["Svara i chatten", " på er webbplats med samma kunskap som i telefonen."],
+          ["Följa upp", " offerter ni har skickat och ge er en daglig rapport över alla ärenden."]
+        ]
+      },
+      "industries": {
+        "title": "För hantverkare, kliniker, salonger, restauranger och rådgivare",
+        "p1": "Dialogbot konfigureras efter era egna tjänster och arbetssätt. Hantverkaren slipper svara i telefon uppe på stegen, kliniken avlastar receptionen på morgonen, salongen kan stanna hos kunden i stolen och restaurangen förlorar inga bordsbokningar under rusningen.",
+        "p2": "Ni kan behålla ert nuvarande nummer och vidarekoppla till Dialogbot när ni är upptagna eller har stängt – eller använda ett nytt Dialogbot-nummer."
+      },
+      "price": {
+        "title": "Pris och konfiguration",
+        "p1a": "Det finns ett abonnemang: ",
+        "p1Price": "2.495 kr. i månaden",
+        "p1b": ", utan pris per ärende och med 300 minuter inkommande samtal per månad. Utgående kampanjsamtal kostar 4 kr. per samtal plus 2 kr. per samtalsminut. Alla priser är exkl. moms.",
+        "p2a": "Ni behöver inga tekniska kunskaper. Ni konfigurerar assistenten själva enligt bygganvisningens tre steg på ungefär en halvtimme – det ingår i abonnemanget. Har ni en webbplats hämtar Dialogbot det mesta automatiskt, och ni kan testa assistenten innan den tar ett enda riktigt samtal. Vill ni hellre att någon gör det åt er konfigurerar våra egna specialister den för 5.000 kr. exkl. moms som engångsavgift – skräddarsytt och integrerat med era egna system och behov. Läs också om ",
+        "p2Phone": "AI-telefonsvararen",
+        "p2b": " och ",
+        "p2Chatbot": "chattboten för webbplatsen",
+        "p2c": "."
+      }
+    },
+    "faq": [
+      ["Vad kostar en AI-receptionist hos Dialogbot?", "Ett abonnemang för 2.495 kr. i månaden, utan pris per ärende och med 300 minuter inkommande samtal per månad. Utgående kampanjsamtal kostar 4 kr. per samtal plus 2 kr. per samtalsminut. Priserna är exkl. moms."],
+      ["Vad händer med kundernas uppgifter – är det GDPR-säkert?", "Samtal och meddelanden behandlas av oss som personuppgiftsbiträde för er räkning, databasen finns inom EU och ni får ett personuppgiftsbiträdesavtal som en del av villkoren. Läs allt i klarspråk på sidan om GDPR och data: /gdpr."],
+      ["Låter den som en robot?", "Dialogbot talar naturlig svenska – och kundens eget språk – med en röst ni själva väljer, t.ex. Camilla eller Peter. Den säger alltid ärligt att den är en digital assistent om kunden frågar."],
+      ["Kan jag behålla mitt telefonnummer?", "Ja. Ni vidarekopplar ert nuvarande nummer till Dialogbot när ni är upptagna eller har stängt och behåller er teleoperatör."],
+      ["Vad händer om assistenten inte vet svaret?", "Den gissar inte. Den svarar bara utifrån godkänd kunskap och lovar att en medarbetare återkommer, och ni får ärendet direkt."],
+      ["Hur lång tid tar konfigurationen?", "Gör ni det själva tar bygganvisningens tre steg ungefär en halvtimme, och assistenten guidar er under tiden. Väljer ni konfiguration av våra specialister (5.000 kr. exkl. moms) bokar vi ett möte och konfigurerar den skräddarsytt för era system."]
+    ]
+  },
+  "phone": {
+    "meta": {
+      "title": "AI-telefonsvarare och AI-telefon för företag – på svenska och fler språk",
+      "description": "En AI-telefonsvarare som pratar med kunden i stället för att be dem lämna ett meddelande. Dialogbot svarar i telefon på svenska och på kundernas eget språk, reder ut behovet, bokar tider och skickar ärendet till er.",
+      "ogTitle": "AI-telefonsvarare och AI-telefon på svenska | Dialogbot"
+    },
+    "kicker": "AI-telefonsvarare",
+    "title": "AI-telefonsvararen som faktiskt pratar med kunden",
+    "lead": "Ingen kund orkar lämna ett meddelande. Dialogbot är en AI-telefon som tar samtalet på svenska eller kundens eget språk, förstår vad kunden vill och ser till att ni kan ringa tillbaka direkt – eller bokar tiden på en gång.",
+    "points": ["Svarar i telefon på svenska och på kundernas språk – dygnet runt", "Kan era egna fackord och namn", "Bokar tider och skickar sms-bekräftelse", "Inga röstmeddelanden att lyssna igenom", "Behåll ert eget nummer"],
+    "sections": {
+      "conversation": {
+        "title": "Från telefonsvarare till samtal",
+        "p1": "En vanlig telefonsvarare ber kunden lämna ett meddelande – och många lägger på och ringer en konkurrent i stället. En AI-telefonsvarare som Dialogbot svarar i stället med en naturlig röst på kundens språk, ställer rätt frågor och samlar in uppgifterna åt er.",
+        "p2": "Efteråt får ni en kort, skriftlig sammanfattning av samtalet med namn, nummer och behov – och en uppgift om kunden ska ringas upp. Ni behöver aldrig mer lyssna igenom ett röstmeddelande."
+      },
+      "howItWorks": {
+        "title": "Så fungerar AI-telefonen",
+        "items": [
+          ["Vidarekoppling:", " Ni vidarekopplar ert nummer till Dialogbot när ni är upptagna eller har stängt – eller använder ett nytt Dialogbot-nummer."],
+          ["Er kunskap:", " Assistenten svarar utifrån era godkända tjänster, priser, öppettider och regler."],
+          ["Åtgärder:", " Den kan hitta lediga tider, boka, flytta och avboka möten och skicka ett sms till kunden – alltid först efter kundens ja."],
+          ["Översikt:", " Alla samtal hamnar i er inkorg, och ni får en daglig rapport."]
+        ]
+      },
+      "human": {
+        "title": "Låter den som en människa?",
+        "p1": "Dialogbot talar naturlig svenska – och kundens eget språk – och lyssnar tills kunden har pratat klart. Ni väljer själva rösten och kan lyssna på den innan ni bestämmer er. Den säger alltid ärligt att den är en digital assistent – den ljuger aldrig om att vara en människa.",
+        "p2a": "Det bästa sättet att ta reda på det är att testa: ",
+        "p2Link": "bli uppringd av Dialogbot",
+        "p2b": " och hör själv hur den skulle svara i telefon åt er."
+      },
+      "price": {
+        "title": "Pris",
+        "a": "Ett abonnemang för ",
+        "price": "2.495 kr. i månaden",
+        "b": " – exkl. moms och utan pris per ärende. Konfigurationen gör ni själva enligt bygganvisningen – eller låt våra specialister skräddarsy den för 5.000 kr. som engångsavgift. Se även ",
+        "receptionistLink": "AI-receptionist",
+        "c": " och ",
+        "chatbotLink": "chattbot för webbplatsen",
+        "d": "."
+      }
+    },
+    "faq": [
+      ["Vad är skillnaden mellan en AI-telefonsvarare och en vanlig telefonsvarare?", "En vanlig telefonsvarare spelar in ett meddelande. En AI-telefonsvarare pratar med kunden, svarar på frågor utifrån er kunskap, reder ut behovet och kan boka en tid – och ni får en skriftlig sammanfattning."],
+      ["Kan jag använda mitt eget nummer?", "Ja. Ni vidarekopplar ert nuvarande nummer till Dialogbot när ni är upptagna eller har stängt. Ni kan också få ett nytt Dialogbot-nummer."],
+      ["Förstår den svenska med dialekt?", "Dialogbot är byggd för talad svenska och flera andra språk och använder era egna fackord och namn från den kunskap ni godkänner, så att den lättare känner igen dem."],
+      ["Vad kostar det?", "Ett abonnemang för 2.495 kr. i månaden, exkl. moms. Det finns inget pris per ärende."],
+      ["Kan jag lyssna på den innan jag köper?", "Ja. Skriv ditt nummer på startsidan, välj en röst och din bransch, så ringer Dialogbot upp dig och visar det."]
+    ]
+  },
+  "chatbot": {
+    "meta": {
+      "title": "Chattbot för webbplatsen – AI-chattbot med er egen kunskap",
+      "description": "Få en AI-chattbot på er webbplats som svarar på svenska och på besökarens eget språk utifrån era egna tjänster, priser och öppettider, samlar in ärenden och kan boka tider. Samma kunskap som er AI-receptionist.",
+      "ogTitle": "Chattbot för webbplatsen på svenska | Dialogbot"
+    },
+    "kicker": "Chattbot för webbplatsen",
+    "title": "En chattbot som känner till er verksamhet",
+    "lead": "Dialogbots chattbot svarar era besökare på svenska och på deras eget språk – dygnet runt – utifrån den kunskap ni själva har godkänt. Den samlar in ärenden, kan boka tider och en medarbetare kan ta över samtalet när som helst.",
+    "points": ["Svarar bara utifrån er godkända kunskap", "Samlar in namn, kontaktuppgifter och behov", "Bokar tider direkt i chatten", "En medarbetare kan ta över samtalet", "Samma kunskap som i telefonen"],
+    "sections": {
+      "noGuessing": {
+        "title": "En chattbot som inte gissar",
+        "p1": "Många chattbottar hittar på svar. Det gör inte Dialogbot. Den svarar bara utifrån de tjänster, priser, öppettider och regler ni själva har godkänt – och säger ärligt när något inte framgår, så att en medarbetare kan följa upp.",
+        "p2": "Har ni en webbplats hämtar Dialogbot det mesta automatiskt därifrån som utkast, som ni går igenom och godkänner. Sedan är chattboten klar på kort tid."
+      },
+      "canDo": {
+        "title": "Det här kan chattboten",
+        "items": [
+          ["Svara på frågor", " om tjänster, priser, öppettider och praktiska frågor."],
+          ["Samla in ärenden", " med namn, kontaktuppgifter och behov – och skicka dem till er inkorg."],
+          ["Boka tider", " utifrån era öppettider och bokningsregler."],
+          ["Låta er ta över:", " en medarbetare kan svara kunden direkt i samtalet medan assistenten pausar."],
+          ["Erbjuda att ringa tillbaka", " vid en tid som passar kunden."]
+        ]
+      },
+      "sameKnowledge": {
+        "title": "Chatt och telefon med en och samma kunskap",
+        "a": "Chattboten använder samma godkända kunskap som Dialogbots ",
+        "receptionistLink": "AI-receptionist",
+        "b": " och ",
+        "phoneLink": "AI-telefonsvarare",
+        "c": ". Rättar ni ett pris på ett ställe är det rättat både i chatten och i telefonen. Chatten läggs in på er webbplats med en liten inbäddningskod, som vi hjälper er med."
+      },
+      "price": {
+        "title": "Pris",
+        "a": "Chattboten är en del av Dialogbot: ett abonnemang för ",
+        "price": "2.495 kr. i månaden",
+        "b": " – exkl. moms och utan pris per ärende. Konfigurationen gör ni själva enligt bygganvisningen – eller låt våra specialister skräddarsy den för 5.000 kr. som engångsavgift."
+      }
+    },
+    "faq": [
+      ["Hur kommer chattboten in på min webbplats?", "Ni klistrar in en liten inbäddningskod på webbplatsen. Bygganvisningen visar hur, och ni bestämmer själva på vilka domäner chatten får visas."],
+      ["Kan en medarbetare ta över samtalet?", "Ja. En medarbetare kan svara kunden direkt i samtalet, och assistenten pausar under tiden."],
+      ["Hittar chattboten på egna svar?", "Nej. Den svarar bara utifrån den kunskap ni har godkänt och säger ärligt när något inte framgår."],
+      ["Kan den både chatta och svara i telefon?", "Ja. Dialogbot använder samma kunskap i chatten och i telefonen."],
+      ["Vad kostar chattboten?", "Den är en del av Dialogbot: ett abonnemang för 2.495 kr. i månaden, exkl. moms."]
+    ]
+  },
+  "about": {
+    "meta": {
+      "title": "Om Dialogbot – vilka som står bakom",
+      "description": "Dialogbot är ett danskt företag i Aarhus. Här ser du vilka som står bakom, var vi sitter och hur du kommer i kontakt med oss.",
+      "ogTitle": "Om Dialogbot"
+    },
+    "kicker": "Om oss",
+    "title": "Vilka står bakom Dialogbot?",
+    "leadFounder": "{name} har byggt Dialogbot så att små företag kan svara i telefon, även när de inte hinner.",
+    "lead": "Dialogbot är ett danskt företag i Aarhus, och du kan alltid ringa oss.",
+    "points": {
+      "company": "Danskt företag i Aarhus",
+      "cvr": "CVR {cvr}",
+      "call": "Ring oss – vi svarar i telefon under öppettiderna",
+      "noBinding": "Ingen bindningstid"
+    },
+    "sections": {
+      "why": {
+        "title": "Varför Dialogbot finns",
+        "p": "När telefonen ringer medan du står på stegen eller har en kund i stolen förlorar du en kund. Dialogbot svarar i telefon åt dig – på svenska och på kundernas eget språk, dygnet runt, och bara med den kunskap du själv har godkänt."
+      },
+      "find": {
+        "title": "Så hittar du oss",
+        "cvrNo": "CVR-nr",
+        "a": "Skriv till ",
+        "b": " eller ring "
+      }
+    },
+    "faq": [
+      ["Kan jag prata med en människa?", "Ja. Ring oss på 93 70 34 33 under öppettiderna eller skriv till info@dialogbot.dk."],
+      ["Vem tar hand om mina kunders uppgifter?", "Det står i klarspråk på sidan om GDPR och data."]
+    ]
+  },
+  "contact": {
+    "meta": {
+      "title": "Kontakt och support | Dialogbot",
+      "description": "Så kontaktar du Dialogbot om ditt konto, betalningar eller dina data. Ring 93 70 34 33 eller skriv till info@dialogbot.dk."
+    },
+    "eyebrow": "Kontakt",
+    "title": "Kontakt och support",
+    "lead": "Har du frågor om ditt konto, en faktura, din assistent eller dina data, ring eller skriv. Vi svarar på vardagar, oftast inom en arbetsdag.",
+    "updated": "Uppdaterad 28 oktober 2026.",
+    "call": "Ring",
+    "write": "Skriv",
+    "cvrNo": "CVR-nr",
+    "sections": {
+      "email": {
+        "title": "E-post",
+        "a": "Skriv till ",
+        "b": ". Ange gärna namnet på ditt företag och den e-postadress du är inloggad med, så att vi snabbt hittar ditt konto. Vi svarar på vardagar, oftast inom en arbetsdag."
+      },
+      "phone": {
+        "title": "Telefon",
+        "a": "Ring ",
+        "b": " – "
+      },
+      "post": {
+        "title": "Post"
+      },
+      "billing": {
+        "title": "Betalning och fakturor",
+        "p": "Frågor om en betalning eller en faktura från Dialogbot: skriv till oss innan du bestrider den hos din bank, så hittar vi snabbast en lösning. Dina fakturor kan du alltid se under Fakturering när du är inloggad."
+      },
+      "loggedIn": {
+        "title": "Är du inloggad?",
+        "p": "Då hittar du svar på de flesta frågor under Hjälp i appen, och du kan se din konfiguration, dina samtal och ärenden direkt."
+      },
+      "ambassadors": {
+        "title": "Ambassadörer",
+        "a": "Frågor om bonus, utbetalningar eller reglerna: skriv till samma adress. Läs om programmet på ",
+        "b": "."
+      },
+      "data": {
+        "title": "Personuppgifter",
+        "a": "Vill du få tillgång till, rätta eller radera dina uppgifter, läs ",
+        "link": "integritetspolicyn",
+        "b": " och skriv till oss."
+      }
+    }
+  },
+  "knowledge": {
+    "meta": {
+      "title": "Kunskap om AI-receptionist, AI-telefonsvarare och chattbot",
+      "description": "Guider för företag om AI-receptionist, AI-telefonsvarare, telefonpassning, vidarekoppling och chattbot på webbplatsen.",
+      "ogTitle": "Kunskap | Dialogbot"
+    },
+    "kicker": "Kunskap",
+    "title": "Guider om AI-receptionist och telefonpassning",
+    "lead": "Korta, praktiska guider för små och medelstora företag som vill ha koll på telefonen och ärendena – utan att anställa en person till.",
+    "guidesTitle": "Guider",
+    "industriesTitle": "AI-receptionist för din bransch",
+    "faq": [
+      ["Vad är Dialogbot?", "En AI-receptionist som svarar i telefon och chatt åt ditt företag – på svenska och på kundernas eget språk – utifrån er egen godkända kunskap och bokar tider."],
+      ["Kan jag lyssna på den?", "Ja. Gå till Testa den, berätta för chatten vad ni gör, så ringer Dialogbot upp dig och visar det."]
+    ]
+  },
+  "industry": {
+    "kicker": "AI-receptionist för {name}",
+    "setupPoint": "Vi guidar er genom hela konfigurationen",
+    "problemTitle": "Problemet för {name}",
+    "problemText": " Dialogbot är en AI-receptionist för {examples} som svarar i telefon och chatt – på svenska och på kundernas eget språk – när ni inte kan själva.",
+    "scenarioTitle": "Så låter det (exempel)",
+    "scenarioNote": "Exemplet är en illustration. Dialogbot svarar alltid utifrån den kunskap ni själva har godkänt. ",
+    "scenarioLink": "Hör den själv – bli uppringd",
+    "scenarioEnd": ".",
+    "priceTitle": "Pris och konfiguration",
+    "priceA": "Ett abonnemang för ",
+    "price": "2.495 kr. i månaden",
+    "priceB": " – exkl. moms och utan pris per ärende. Någon från Dialogbot konfigurerar det tillsammans med er på ungefär en halvtimme. Se alla detaljer på ",
+    "priceLink": "prissidan",
+    "priceC": ".",
+    "othersTitle": "Dialogbot för andra branscher",
+    "faq": [
+      ["Vad kostar det?", "Ett abonnemang för 2.495 kr. i månaden, exkl. moms. Det finns inget pris per ärende."],
+      ["Kan vi behålla vårt telefonnummer?", "Ja. Ni vidarekopplar ert nummer till Dialogbot när ni är upptagna eller har stängt."]
+    ]
+  },
+  "industries": {
+    "haandvaerkere": {
+      "name": "hantverkare",
+      "plural": "Hantverkare",
+      "examples": "VVS, el, snickare, målare, murare, golv och tak",
+      "title": "AI-receptionist för hantverkare – svara i telefon från stegen",
+      "description": "Dialogbot svarar i telefon åt rörmokaren, elektrikern, snickaren och målaren när ni har händerna fulla. Den samlar in uppdrag och adress och bokar besiktningar.",
+      "pain": "Hantverkaren står på stegen eller under ett handfat och kan inte svara i telefon. Varje obesvarat samtal är oftast en kund som ringer vidare till nästa hantverkare på Google.",
+      "scenario": [["Kund", "Hej, jag har en toalett som läcker, kan ni komma och titta på den?"], ["Dialogbot", "Det kan vi. Vilken adress gäller det, och är det bråttom?"], ["Kund", "Storgatan 12 i Malmö – helst den här veckan."], ["Dialogbot", "Tack. Jag har noterat det, och hantverkaren ringer upp dig i dag för att boka en tid."]],
+      "benefits": ["Svarar i telefon när ni har händerna fulla", "Samlar uppdrag, adress och hur bråttom det är i ett meddelande till hantverkaren", "Bokar besiktningar direkt i kalendern", "Följer upp de offerter ni har skickat"],
+      "objection": ["Mina kunder vill prata med mig personligen.", "Det ska de också få. Dialogbot tar bara de samtal ni inte själva hinner med och ser till att ni ringer tillbaka till en varm kund med alla uppgifter klara."],
+      "faq": [["Kan Dialogbot ge pris på ett uppdrag?", "Bara om ni har lagt in priset och godkänt det, t.ex. ett fast pris per m². Annars noterar den uppdraget och lovar att hantverkaren återkommer med en offert."], ["Kan den boka besiktningar?", "Ja, utifrån era öppettider och bokningsregler – och den frågar alltid kunden om lov först."]]
+    },
+    "klinikker": {
+      "name": "kliniker",
+      "plural": "Kliniker",
+      "examples": "tandläkare, fysioterapeut, kiropraktor, psykolog och veterinär",
+      "title": "AI-receptionist för kliniker – boka tider dygnet runt",
+      "description": "Dialogbot bokar, flyttar och avbokar tider åt tandläkaren, fysioterapeuten och kiropraktorn – även utanför öppettiderna – och avlastar receptionen på morgonen.",
+      "pain": "Telefonen ringer mitt under behandlingar, och receptionen är pressad på morgonen. Patienter som inte kommer fram väljer en annan klinik.",
+      "scenario": [["Patient", "Jag behöver flytta min tid på torsdag."], ["Dialogbot", "Det kan jag hjälpa till med. Nästa lediga tid är fredag kl. 9.30 eller måndag kl. 14. Vilken passar bäst?"], ["Patient", "Fredag."], ["Dialogbot", "Då är din tid flyttad till fredag kl. 9.30. Vill du ha en bekräftelse via sms?"]],
+      "benefits": ["Bokar, flyttar och avbokar tider dygnet runt", "Skickar bekräftelse via sms", "Avlastar receptionen på morgonen", "Ger aldrig behandlingsråd – den hänvisar till kliniken"],
+      "objection": ["Hur är det med sekretessen?", "Assistenten frågar bara om det som behövs för att boka. Ni bestämmer själva reglerna, och samtalen kan raderas enligt era egna tidsgränser."],
+      "faq": [["Ger Dialogbot medicinska råd?", "Nej. Den bokar och svarar på praktiska frågor och hänvisar alltid till kliniken vid medicinska frågor."], ["Kan patienter flytta och avboka själva?", "Ja. Dialogbot hittar bokningen utifrån telefonnummer eller namn och flyttar eller avbokar när patienten har sagt ja."]]
+    },
+    "frisoerer": {
+      "name": "frisörer och salonger",
+      "plural": "Frisörer och salonger",
+      "examples": "frisör, barberare, hudterapeut, naglar och massage",
+      "title": "AI-receptionist för frisörer och salonger – boka utan att släppa saxen",
+      "description": "Dialogbot svarar i telefon åt frisören, barberaren och skönhetssalongen och bokar tider – även på kvällen – så att ni aldrig behöver avbryta en kund i stolen.",
+      "pain": "Man kan inte svara i telefon med saxen i handen, och många kunder ringer på kvällen när salongen är stängd.",
+      "scenario": [["Kund", "Har ni en tid för herrklippning i morgon efter kl. 16?"], ["Dialogbot", "Det finns en ledig tid i morgon kl. 16.30. Ska jag boka den i ditt namn?"], ["Kund", "Ja tack, det är Mads."], ["Dialogbot", "Då är du bokad i morgon kl. 16.30, Mads. Du får en bekräftelse via sms."]],
+      "benefits": ["Bokar tider, även på kvällar och helger", "Skickar sms-bekräftelse", "Svarar på priser och öppettider utifrån er egen prislista", "Ni behöver aldrig avbryta en kund i stolen"],
+      "objection": ["Vi har redan onlinebokning.", "Toppen – många ringer ändå. Dialogbot tar de samtalen och bokar i samma kalender, så att ingen faller mellan stolarna."],
+      "faq": [["Kan Dialogbot läsa upp vår prislista?", "Ja, när ni har lagt in den och godkänt den. Den svarar bara utifrån godkänd kunskap."], ["Vad händer på kvällen?", "Dialogbot svarar i telefon dygnet runt och bokar inom era öppettider."]]
+    },
+    "autovaerksteder": {
+      "name": "bilverkstäder",
+      "plural": "Bilverkstäder",
+      "examples": "bilverkstad, däckverkstad, plåtverkstad och bilhandlare",
+      "title": "AI-receptionist för bilverkstäder – service, besiktning och däckbyte",
+      "description": "Dialogbot tar emot beställningar av service, besiktning och däckbyte, noterar bil och registreringsnummer och bokar tider medan mekanikerna jobbar.",
+      "pain": "Mekanikerna är ute i verkstaden, och telefonen ringer hela tiden om besiktning, service och däckbyte.",
+      "scenario": [["Kund", "Jag behöver byta till vinterdäck."], ["Dialogbot", "Det fixar vi. Vilken bil gäller det, och har du registreringsnumret?"], ["Kund", "En Golf, ABC 123."], ["Dialogbot", "Tack. Det finns en ledig tid onsdag kl. 8. Ska jag boka den?"]],
+      "benefits": ["Tar emot beställningar av service, besiktning och däckbyte", "Noterar bil, registreringsnummer och problem", "Bokar tider och skickar sms", "Svarar på öppettider och priser från er prislista"],
+      "objection": ["Det är för tekniskt för en robot.", "Den ska inte diagnostisera bilen. Den samlar in uppgifterna så att mekanikern ringer tillbaka väl förberedd."],
+      "faq": [["Kan Dialogbot ställa en diagnos?", "Nej. Den samlar in uppgifter om bil och problem så att ni kan ringa tillbaka förberedda."], ["Kan den boka däckbyten under högsäsong?", "Ja, utifrån era lediga tider och bokningsregler."]]
+    },
+    "raadgivere": {
+      "name": "rådgivare och kontor",
+      "plural": "Rådgivare och kontor",
+      "examples": "advokat, revisor, fastighetsmäklare, försäkring och IT-konsult",
+      "title": "AI-receptionist för advokater, revisorer och rådgivare",
+      "description": "Dialogbot kvalificerar nya förfrågningar med era egna frågor, bokar inledande möten och skickar en tydlig sammanfattning till rätt rådgivare.",
+      "pain": "Rådgivarna sitter i möten, och nya kunder som ringer möts av en telefonsvarare och väljer någon annan.",
+      "scenario": [["Kund", "Jag behöver hjälp med en bostadsaffär."], ["Dialogbot", "Det hjälper vi gärna till med. Gäller det ett köp eller en försäljning, och när ska affären vara klar?"], ["Kund", "Ett köp – inom en månad."], ["Dialogbot", "Tack. Ska jag boka ett kort inledande möte, eller vill du bli uppringd av en rådgivare?"]],
+      "benefits": ["Kvalificerar nya förfrågningar med era egna frågor", "Bokar inledande möten", "Skickar en tydlig sammanfattning till rätt rådgivare", "Lovar aldrig något som ni inte har godkänt"],
+      "objection": ["Våra kunder förväntar sig en människa.", "Assistenten säger ärligt att den är digital och ser till att en människa ringer tillbaka med ärendet redan förstått."],
+      "faq": [["Ger Dialogbot juridisk eller ekonomisk rådgivning?", "Nej. Den reder kort ut ärendet och skickar det till rätt rådgivare."], ["Kan den skilja mellan olika typer av ärenden?", "Ja, med de frågor ni godkänner, t.ex. köp eller försäljning, privat eller företag."]]
+    },
+    "restauranter": {
+      "name": "restauranger, hotell och kaféer",
+      "plural": "Restauranger, hotell och kaféer",
+      "examples": "restaurang, kafé, hotell, värdshus, bed & breakfast och catering",
+      "title": "AI-receptionist för restauranger, hotell och kaféer",
+      "description": "Dialogbot tar emot bordsbokningar och förfrågningar under rusningen och efter stängning och svarar på frågor om meny, öppettider och parkering utifrån er egen kunskap.",
+      "pain": "Telefonen ringer mitt i lunch- och kvällsrusningen. Bordsbokningar, rumsförfrågningar och sällskap går förlorade, eller så bokar gästerna någon annanstans.",
+      "scenario": [["Gäst", "Kan vi få ett bord för fyra på lördag kl. 19?"], ["Dialogbot", "Det noterar jag gärna. Vilket namn får jag skriva, och finns det allergier vi behöver känna till?"], ["Gäst", "Hansen – en av oss är glutenallergiker."], ["Dialogbot", "Tack. Jag har noterat bord för fyra lördag kl. 19 i namnet Hansen med glutenallergi."]],
+      "benefits": ["Tar emot bordsbokningar och förfrågningar, även under rusningen och efter stängning", "Svarar på öppettider, meny, priser, parkering och incheckning", "Samlar in förfrågningar om sällskap och catering med antal, datum och önskemål", "Personalen kan stanna hos gästerna"],
+      "objection": ["Vi använder redan ett bokningssystem.", "Bra – många gäster ringer ändå. Dialogbot tar de samtalen, så att personalen slipper avbryta serveringen eller receptionen."],
+      "faq": [["Kan Dialogbot ta emot sällskap och catering?", "Ja. Den samlar in antal, datum och önskemål och skickar förfrågan till den ansvarige."], ["Kan den svara på frågor om menyn?", "Ja, när ni har lagt in meny och priser och godkänt dem."]]
+    }
+  },
+  "ambassador": {
+    "join": {
+      "eyebrow": "Dialogbot-ambassadör",
+      "title": "Rekommendera Dialogbot – och tjäna pengar på varje kund",
+      "intro": "Känner du en hantverkare, en frisör eller en klinik som missar samtal? Visa dem Dialogbot. Blir de kund får du en startbonus och en löpande andel – och de får {discount} rabatt på första månaden.",
+      "cta": "Bli ambassadör",
+      "earnTitle": "Så tjänar du · en kund med abonnemang",
+      "startBonus": "Startbonus",
+      "firstMonth": "Första månaden: {rate} av {amount} (kunden har 50 % rabatt)",
+      "months": "Månader à {perMonth} ({rate} av {amount})",
+      "total": "Totalt första året",
+      "tenCustomers": "Med 10 kunder blir det {amount} första året. Beloppen är före skatt; andelen räknas på det kunden faktiskt betalar exkl. moms – även kampanjsamtal."
+    },
+    "steps": {
+      "eyebrow": "Så gör du",
+      "title": "Tre steg – sedan är du igång",
+      "needs": "Du behöver",
+      "recommendTitle": "Rekommendera",
+      "recommendText": "Svara på fyra snabba frågor om reglerna och dela din personliga länk eller din kod med företag du känner. Är du under 18 godkänner en förälder via e-post.",
+      "recommendParts": ["Gratis konto", "Din länk och din kod"],
+      "customerTitle": "De blir kund",
+      "customerText": "Företaget registrerar sig via din länk och får {discount} rabatt på första månaden. Du ser företagsnamn och status – aldrig deras samtal.",
+      "customerParts": ["Företag som missar samtal"],
+      "payoutTitle": "Du får utbetalning",
+      "payoutText": "{bonus} när kunden har betalat första fakturan, plus {rate} av det de betalar i {months} månader. Betalas ut till ditt bankkonto.",
+      "payoutParts": ["Bankkonto", "CPR eller CVR"]
+    },
+    "rules": {
+      "eyebrow": "Reglerna",
+      "title": "Så fungerar det",
+      "earned": "Du tjänar bara när kunden har betalat. Beloppet står som \"intjänat\" i {days} dagar och blir sedan klart för utbetalning.",
+      "payoutMin": "Vi betalar ut till ditt bankkonto när du har minst {amount} klart.",
+      "tax": "Utan CVR är bonusen B-inkomst: vi rapporterar den till Skattestyrelsen (den danska skattemyndigheten) med ditt CPR-nummer, och du betalar själv skatten via den preliminära skatteberäkningen (forskudsopgørelsen). Vi drar ingen skatt.",
+      "cvr": "Har du CVR får du i stället ett avräkningsunderlag (med moms om du är momsregistrerad).",
+      "age": "Du måste vara minst {age} år. Är du under 18 måste en förälder godkänna avtalet innan vi betalar ut – du kan skaffa kunder under tiden.",
+      "privacy": "Du ser dina kunders företagsnamn, status och din bonus – aldrig deras samtal eller kunddata.",
+      "agreeTitle": "Reglerna du säger ja till"
+    },
+    "signup": {
+      "eyebrow": "Anmälan",
+      "title": "Bli ambassadör",
+      "loginFirst": "Skapa först ett gratis konto (eller logga in). Då kommer du direkt tillbaka hit.",
+      "createAccount": "Skapa konto",
+      "login": "Logga in",
+      "verifyFirst": "Bekräfta din e-post först – vi har skickat en länk till {email}. ",
+      "resend": "Skicka ny länk"
+    },
+    "faq": {
+      "eyebrow": "Frågor",
+      "title": "Det här frågar ambassadörer om",
+      "whenQ": "När får jag pengar?",
+      "whenA": "När din kund har betalat sin första faktura får du {bonus}. Beloppet står som intjänat i {days} dagar och betalas ut när du har minst {amount} klart.",
+      "taxQ": "Måste jag betala skatt?",
+      "taxA": "Ja. Utan CVR är det B-inkomst, som vi rapporterar till Skattestyrelsen – du betalar själv skatten via den preliminära skatteberäkningen. Med CVR får du ett avräkningsunderlag.",
+      "ageQ": "Får jag vara under 18?",
+      "ageA": "Ja, från {age} år. En förälder måste godkänna avtalet via e-post innan vi betalar ut. Du kan dela din länk under tiden.",
+      "rulesQ": "Vad får jag inte göra?",
+      "rulesA": "Du måste alltid skriva att det är reklam och att du får bonus. Inga massutskick via mejl eller sms till folk du inte känner, och använd aldrig AI för att ringa upp folk."
+    },
+    "form": {
+      "iAm": "Jag är",
+      "private": "Privatperson",
+      "privateHint": "Utan CVR – bonusen är B-inkomst",
+      "company": "Företag",
+      "companyHint": "Med CVR – avräkning via underlag",
+      "fullName": "Fullständigt namn",
+      "mobile": "Mobilnummer",
+      "mobileHint": "Så att vi kan ringa om det finns frågor.",
+      "birthDate": "Födelsedatum",
+      "cpr": "CPR-nummer (kan vänta)",
+      "cprHint": "Behövs för att rapportera B-inkomst. Sparas krypterat.",
+      "cprPlaceholder": "DDMMÅÅ-XXXX",
+      "companyName": "Företagsnamn",
+      "cvr": "CVR-nummer",
+      "vatRegistered": "Företaget är momsregistrerat",
+      "minorTitle": "Du är under 18 – en förälder måste godkänna",
+      "minorText": "Vi skickar ett mejl med avtalet och reglerna. Du kan dela din länk och skaffa kunder under tiden; vi betalar ut först när avtalet är godkänt.",
+      "parentName": "Förälderns namn",
+      "parentEmail": "Förälderns e-post",
+      "bankReg": "Reg.nr (kan vänta)",
+      "bankAccount": "Kontonummer (kan vänta)",
+      "bankAccountHint": "Hit betalar vi ut. Sparas krypterat.",
+      "headline": "Din hälsning på din sida (valfritt)",
+      "headlineHint": "Visas för dem som använder din länk. T.ex. \"Min farbror använder den i sin VVS-firma.\"",
+      "motivation": "Vem vill du rekommendera Dialogbot till? (valfritt)",
+      "quizTitle": "Fyra frågor om reglerna",
+      "wrong": "Fel – läs reglerna till vänster och försök igen.",
+      "answerAll": "Svara på alla fyra frågorna för att anmäla dig.",
+      "submitting": "Anmäler…",
+      "submit": "Anmäl mig som ambassadör",
+      "footnote": "Genom att anmäla dig accepterar du reglerna. Vi godkänner alla ambassadörer manuellt – normalt inom ett par dagar."
+    },
+    "parent": {
+      "eyebrow": "Förälder eller vårdnadshavare",
+      "title": "Godkänn ambassadörsavtal",
+      "invalid": "Länken är ogiltig eller har gått ut. Be ditt barn skicka ett nytt mejl från sin ambassadörssida.",
+      "loading": "Hämtar avtalet…",
+      "done": "Tack! Avtalet är godkänt. {first} kan nu få sin bonus utbetald.",
+      "intro": "{name} vill gärna bli ambassadör för Dialogbot. Det innebär att {first} rekommenderar Dialogbot till företag och får en bonus när de blir betalande kunder:",
+      "bonus": "{amount} när en kund har betalat sin första faktura",
+      "share": "{rate} av det kunden betalar i {months} månader",
+      "payout": "Betalas ut till bankkontot som tillhör {first}. Det är B-inkomst, som vi rapporterar till Skattestyrelsen (den danska skattemyndigheten) – ingen skatt dras.",
+      "stop": "Avtalet kan avslutas när som helst – skriv till oss.",
+      "rulesTitle": "Reglerna som {first} har sagt ja till",
+      "yourName": "Ditt namn",
+      "confirm": "Jag är förälder/vårdnadshavare till {name} och godkänner att {first} är ambassadör för Dialogbot på dessa villkor.",
+      "confirming": "Godkänner…",
+      "submit": "Godkänn avtalet"
+    }
+  }
+}

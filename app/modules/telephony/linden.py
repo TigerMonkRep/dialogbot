@@ -57,7 +57,7 @@ def configured(stt: str | None = None) -> bool:
     return bool(adapters.key_for(chosen(stt)))
 
 
-def transcriber_config(ws: Workspace | None, own: list[str], stt: str | None = None) -> dict:
+def transcriber_config(ws: Workspace | None, own: list[str], stt: str | None = None, lang: str = "da") -> dict:
     """The Vapi `transcriber` block that routes the call's audio through the bridge."""
     s = get_settings()
     base = s.public_base_url.rstrip("/").replace("https://", "wss://", 1).replace("http://", "ws://", 1)
@@ -66,6 +66,8 @@ def transcriber_config(ws: Workspace | None, own: list[str], stt: str | None = N
         params.append(f"ws={ws.id}")
     if chosen(stt) != DEFAULT_STT:
         params.append(f"stt={chosen(stt)}")
+    if lang != LANGUAGE:
+        params.append(f"lang={lang}")
     for x in own:
         params.append(f"extra={quote(x)}")
     url = f"{base}/api/v1/webhooks/vapi/transcriber" + (f"?{'&'.join(params)}" if params else "")
@@ -115,6 +117,7 @@ class Session:
                  stt: str = DEFAULT_STT):
         self.socket, self.db, self.ws, self.own = socket, db, ws, own
         self.stt = stt
+        self.lang = LANGUAGE  # the business's call language (?lang=…), Danish by default
         self.adapter: Any = None  # a stt.adapters.Adapter when the recogniser is not Linden
         self.rate = 16000
         self.in_rate = 16000
@@ -159,7 +162,8 @@ class Session:
         vocab = [{"content": v["content"], **({"sounds_like": v["sounds_like"]} if v.get("sounds_like") else {})}
                  for v in additional_vocab(self.db, self.ws, self.own)]
         # Vapi owns the turn here, and Vapi only acts on FINAL text: release finished words at every pause
-        cfg = adapters.AdapterConfig(sample_rate=self.rate, vocabulary=vocab, controlled=False, release_on_pause=True)
+        cfg = adapters.AdapterConfig(sample_rate=self.rate, vocabulary=vocab, controlled=False, release_on_pause=True,
+                                     language=self.lang)
         self.adapter = adapters.make(self.stt, cfg, on_event=self._on_adapter_event)
         await self.adapter.open()
         self.client = self.adapter  # "started" for the receive loop
@@ -187,7 +191,7 @@ class Session:
         self.in_rate = in_rate
         self.rate = in_rate if in_rate in SUPPORTED_RATES else 16000
         # Agent STT rejects the RT-only options (max_delay and friends): language, partials and the dictionary only
-        config = TranscriptionConfig(language=LANGUAGE, enable_partials=True,
+        config = TranscriptionConfig(language=self.lang, enable_partials=True,
                                      additional_vocab=additional_vocab(self.db, self.ws, self.own))
         self.client = AgentSttAsyncClient(api_key=s.speechmatics_api_key, url=s.speechmatics_rt_url,
                                           app="dialogbot/1.0", transcription_config=config,
@@ -313,6 +317,9 @@ async def serve(socket: WebSocket) -> None:
             except ValueError:
                 ws = None
         session = Session(socket, db, ws, socket.query_params.getlist("extra"), stt)
+        from app.core.languages import normalize
+
+        session.lang = normalize(socket.query_params.get("lang") or LANGUAGE)
         try:
             while True:
                 frame = await socket.receive()

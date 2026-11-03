@@ -1,7 +1,9 @@
-import Link from "next/link";
+import Link from "@/i18n/link";
+import { HTML_LANG } from "@/i18n/config";
+import { getLocale, getT } from "@/i18n/server";
 import { SiteChrome, EMAIL, PHONE_DISPLAY, PHONE_TEL } from "./site-chrome";
 import { ArrowIcon, CheckIcon, ChevronIcon, PhoneIcon, PlayIcon } from "./site-icons";
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, localeUrl } from "@/lib/site";
 
 export type SeoSection = { title: string; body: React.ReactNode };
 export type SeoFaq = [string, string];
@@ -9,11 +11,12 @@ export type SeoFaq = [string, string];
 /** Shared frame for the keyword landing pages (AI-receptionist, AI-telefonsvarer, chatbot, priser, viden) in the
  *  "Byggevejledning" design: eyebrow + Outfit h1 on the panel surface, numbered sections as 2 px ink cards, FAQ as
  *  <details>, dark CTA. Server component. Every claim is something Dialogbot does today. */
-export function SeoPage({ path, kicker, title, lead, points, sections, faq, article }: {
+export async function SeoPage({ path, kicker, title, lead, points, sections, faq, article }: {
   path: string; kicker: string; title: string; lead: string; points: string[]; sections: SeoSection[]; faq: SeoFaq[];
   /** A guide under /viden: adds Article structured data and puts "Viden" in the breadcrumb. */
   article?: { published: string };
 }) {
+  const [t, locale] = await Promise.all([getT("landing.seoPage"), getLocale()]);
   const jsonLd = [
     {
       "@context": "https://schema.org", "@type": "FAQPage",
@@ -22,14 +25,14 @@ export function SeoPage({ path, kicker, title, lead, points, sections, faq, arti
     {
       "@context": "https://schema.org", "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Dialogbot", item: SITE_URL },
-        ...(article ? [{ "@type": "ListItem", position: 2, name: "Viden", item: `${SITE_URL}/viden` }] : []),
-        { "@type": "ListItem", position: article ? 3 : 2, name: kicker, item: `${SITE_URL}${path}` },
+        { "@type": "ListItem", position: 1, name: "Dialogbot", item: localeUrl(locale, "/") },
+        ...(article ? [{ "@type": "ListItem", position: 2, name: t("knowledge"), item: localeUrl(locale, "/viden") }] : []),
+        { "@type": "ListItem", position: article ? 3 : 2, name: kicker, item: localeUrl(locale, path) },
       ],
     },
     ...(article ? [{
-      "@context": "https://schema.org", "@type": "Article", headline: title, description: lead, inLanguage: "da-DK",
-      datePublished: article.published, dateModified: article.published, mainEntityOfPage: `${SITE_URL}${path}`,
+      "@context": "https://schema.org", "@type": "Article", headline: title, description: lead, inLanguage: HTML_LANG[locale],
+      datePublished: article.published, dateModified: article.published, mainEntityOfPage: localeUrl(locale, path),
       image: `${SITE_URL}/opengraph-image.png`,
       author: { "@type": "Organization", name: "Dialogbot", url: SITE_URL },
       publisher: { "@type": "Organization", name: "Dialogbot", logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.png` } },
@@ -44,20 +47,20 @@ export function SeoPage({ path, kicker, title, lead, points, sections, faq, arti
       <section className="bg-panel border-b-2 border-ink">
         <div className={`${container} py-12 sm:py-16 flex flex-wrap gap-10 items-start`}>
           <div className="flex-[1_1_460px] min-w-0 flex flex-col gap-4">
-            <nav aria-label="Brødkrumme" className="eyebrow text-[13px] tracking-[1.5px] flex flex-wrap items-center gap-2">
+            <nav aria-label={t("breadcrumb")} className="eyebrow text-[13px] tracking-[1.5px] flex flex-wrap items-center gap-2">
               <Link href="/" className="text-muted no-underline hover:text-ink">Dialogbot</Link><span aria-hidden>/</span>
-              {article && <><Link href="/viden" className="text-muted no-underline hover:text-ink">Viden</Link><span aria-hidden>/</span></>}
+              {article && <><Link href="/viden" className="text-muted no-underline hover:text-ink">{t("knowledge")}</Link><span aria-hidden>/</span></>}
               <span className="text-ink">{kicker}</span>
             </nav>
             <h1 className="m-0 font-display font-extrabold text-[clamp(34px,4.6vw,60px)] leading-[1.03] tracking-[-1.4px] text-balance">{title}</h1>
             <p className="m-0 text-lg leading-[1.55] text-ink-soft max-w-[620px]">{lead}</p>
             <div className="flex flex-wrap gap-3 pt-1">
-              <Link href="/proev" className="inline-flex items-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-accent hover:bg-accent-deep text-white no-underline font-semibold text-[17px]"><PlayIcon size={18} />Prøv den – den ringer til dig</Link>
-              <Link href="/byggevejledning" className="inline-flex items-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-white border-2 border-ink text-ink no-underline font-semibold text-[17px] hover:bg-panel">Se byggevejledningen<ArrowIcon size={18} /></Link>
+              <Link href="/proev" className="inline-flex items-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-accent hover:bg-accent-deep text-white no-underline font-semibold text-[17px]"><PlayIcon size={18} />{t("tryIt")}</Link>
+              <Link href="/byggevejledning" className="inline-flex items-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-white border-2 border-ink text-ink no-underline font-semibold text-[17px] hover:bg-panel">{t("seeGuide")}<ArrowIcon size={18} /></Link>
             </div>
           </div>
           <div className="flex-[1_1_300px] min-w-0 max-w-[460px] bg-white border-2 border-ink rounded-[20px] p-5 sm:p-6 flex flex-col gap-3 shadow-block">
-            <span className="eyebrow">Kort fortalt</span>
+            <span className="eyebrow">{t("inShort")}</span>
             <ul className="m-0 p-0 list-none flex flex-col gap-2.5 text-[15px] leading-snug">
               {points.map((p) => <li key={p} className="flex items-start gap-2.5"><CheckIcon size={20} stroke="#2456F6" className="flex-none mt-0.5" />{p}</li>)}
             </ul>
@@ -78,8 +81,8 @@ export function SeoPage({ path, kicker, title, lead, points, sections, faq, arti
         ))}
 
         <section aria-labelledby="faq-title" className="flex flex-col gap-3 pt-6">
-          <span className="eyebrow text-[13px] tracking-[1.5px]">Spørgsmål</span>
-          <h2 id="faq-title" className="m-0 font-display font-extrabold text-[clamp(28px,3vw,38px)] leading-[1.1] tracking-[-0.8px]">Ofte stillede spørgsmål</h2>
+          <span className="eyebrow text-[13px] tracking-[1.5px]">{t("faqEyebrow")}</span>
+          <h2 id="faq-title" className="m-0 font-display font-extrabold text-[clamp(28px,3vw,38px)] leading-[1.1] tracking-[-0.8px]">{t("faqTitle")}</h2>
           <div className="flex flex-col border-t-2 border-ink mt-2">
             {faq.map(([q, a]) => (
               <details key={q} className="faq border-b-2 border-ink">
@@ -95,14 +98,14 @@ export function SeoPage({ path, kicker, title, lead, points, sections, faq, arti
       <section className="bg-ink text-white border-t-2 border-ink">
         <div className={`${container} py-14 sm:py-16 flex flex-wrap gap-8 items-center justify-between`}>
           <div className="flex-[1_1_420px] flex flex-col gap-3">
-            <h2 className="m-0 font-display font-extrabold text-[clamp(30px,3.6vw,46px)] leading-[1.05] tracking-[-1px] text-balance">Hør Dialogbot tage telefonen – på din egen telefon</h2>
-            <p className="m-0 text-lg leading-[1.55] text-line max-w-[520px]">Fortæl chatten, hvad din virksomhed hedder og hvad I laver, så ringer assistenten dig op og viser, hvordan den ville tage telefonen for jer.</p>
+            <h2 className="m-0 font-display font-extrabold text-[clamp(30px,3.6vw,46px)] leading-[1.05] tracking-[-1px] text-balance">{t("ctaTitle")}</h2>
+            <p className="m-0 text-lg leading-[1.55] text-line max-w-[520px]">{t("ctaText")}</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link href="/proev" className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] bg-highlight hover:bg-highlight-deep text-ink no-underline font-display font-bold text-lg"><PhoneIcon size={20} width={2.4} />Ring mig op nu</Link>
+            <Link href="/proev" className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] bg-highlight hover:bg-highlight-deep text-ink no-underline font-display font-bold text-lg"><PhoneIcon size={20} width={2.4} />{t("callMe")}</Link>
             <a href={PHONE_TEL} className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] border-2 border-white text-white no-underline font-semibold text-[17px] hover:bg-white/10">{PHONE_DISPLAY}</a>
           </div>
-          <p className="basis-full m-0 text-sm text-line">Eller skriv til <a href={`mailto:${EMAIL}`} className="text-white underline underline-offset-4">{EMAIL}</a>. 2.495 kr./md. · ekskl. moms. Ingen binding.</p>
+          <p className="basis-full m-0 text-sm text-line">{t("orWrite")}<a href={`mailto:${EMAIL}`} className="text-white underline underline-offset-4">{EMAIL}</a>{t("priceLine")}</p>
         </div>
       </section>
     </SiteChrome>

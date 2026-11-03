@@ -1,0 +1,581 @@
+{
+  "meta": {
+    "title": "Dialogbot – AI receptionist, AI phone answering and chatbot for small and medium-sized businesses",
+    "description": "Dialogbot is an AI receptionist that answers the phone and the chat for your business around the clock, in 8 languages – replying from your own knowledge, booking appointments and collecting enquiries. We guide you through the whole setup.",
+    "keywords": ["Dialogbot", "AI receptionist", "AI receptionist for small business", "AI phone answering", "AI answering service", "AI phone assistant", "chatbot", "website chatbot", "call answering service", "virtual receptionist", "business answering machine"]
+  },
+  "nav": {
+    "aiReceptionist": "AI receptionist",
+    "aiPhone": "AI phone answering",
+    "chatbot": "Website chatbot",
+    "pricing": "Pricing",
+    "knowledge": "Guides"
+  },
+  "articles": {
+    "hvad-er-en-ai-receptionist": {
+      "title": "What is an AI receptionist – and how does it work?",
+      "teaser": "How an AI receptionist answers the phone for a small business, what it can do, and what it shouldn't do."
+    },
+    "ai-telefonsvarer-eller-telefonpasning": {
+      "title": "AI answering machine or call answering service – which suits you?",
+      "teaser": "Voicemail, a call answering service or AI: the pros and cons, so you can make the right choice."
+    },
+    "viderestil-telefonen": {
+      "title": "How to forward your phone when you're busy",
+      "teaser": "The codes you dial on your mobile to forward calls when busy, unanswered or always – and how to turn it off again."
+    },
+    "dialogbot-vs-vocalis": {
+      "title": "Dialogbot or Vocalis – fixed price or minute bundles?",
+      "teaser": "A fixed monthly price or minute bundles, approved knowledge and booking: the differences between Dialogbot and Vocalis."
+    },
+    "dialogbot-vs-almindelig-chatbot": {
+      "title": "Dialogbot or an ordinary chatbot – what's the difference?",
+      "teaser": "A chatbot answers on your website. Dialogbot also answers the phone and books appointments."
+    }
+  },
+  "industryLink": "AI receptionist for {name}",
+  "seoPage": {
+    "breadcrumb": "Breadcrumb",
+    "knowledge": "Guides",
+    "tryIt": "Try it – it calls you",
+    "seeGuide": "See the build guide",
+    "inShort": "In short",
+    "faqEyebrow": "Questions",
+    "faqTitle": "Frequently asked questions",
+    "ctaTitle": "Hear Dialogbot answer the phone – on your own phone",
+    "ctaText": "Tell the chat your business name and what you do, and the assistant will call you and show you how it would answer the phone for you.",
+    "callMe": "Call me now",
+    "orWrite": "Or email ",
+    "priceLine": ". 2.495 kr./month · excl. VAT. No lock-in."
+  },
+  "compareTable": {
+    "difference": "Difference"
+  },
+  "pricing": {
+    "meta": {
+      "title": "Pricing – AI receptionist for 2.495 kr. a month",
+      "description": "See Dialogbot's pricing: one subscription at 2.495 kr. a month excl. VAT including 300 minutes of inbound calls. Phone, chat, booking and personal setup are included. Outbound campaign calls cost 4 kr. per call.",
+      "ogTitle": "AI receptionist pricing | Dialogbot"
+    },
+    "kicker": "Pricing",
+    "title": "One subscription – 2.495 kr. a month",
+    "lead": "One price, the full Dialogbot: an AI receptionist on the phone, a chatbot on your website, booking and a summary of every enquiry. All prices are excl. VAT.",
+    "points": ["2.495 kr. a month – one subscription", "No charge per enquiry", "300 minutes of inbound calls a month included", "Outbound campaign calls: 4 kr. per call + 2 kr. per minute", "No lock-in", "Do-it-yourself setup included – specialist setup 5.000 kr."],
+    "sections": {
+      "subscription": {
+        "title": "The subscription",
+        "p1Price": "2.495 kr. a month",
+        "p1a": " excl. VAT. There is no charge per enquiry, and ",
+        "p1Minutes": "300 minutes of inbound calls a month are included",
+        "p1b": " – enough for most small businesses. If your customers talk to the assistant for longer than that, each additional minute started costs 1,50 kr. You can always see your usage in Dialogbot.",
+        "p2": "The price of a call answering service – but a receptionist that also books appointments in your calendar and sends you a message about every call.",
+        "p3a": "Made for businesses whose phone rings while they're busy: tradespeople, clinics, salons, garages and advisers. Want to hear it first? You can ",
+        "p3Link": "have Dialogbot call you",
+        "p3b": " – it takes two minutes and no sign-up."
+      },
+      "whyMore": {
+        "title": "Why we cost more than a chatbot",
+        "p1": "There are cheaper solutions from around 400 kr. a month. Many of them charge by the minute or by the enquiry, so the bill can vary from month to month.",
+        "p2a": "Dialogbot answers ",
+        "p2Strong": "only from knowledge you have approved yourself",
+        "p2b": ", and shows you every change first: before → after, “Approve?”. It books, moves and cancels appointments in Google Calendar or Microsoft 365, sends SMS confirmations and gives you a message about every call and a report every day. That's why it costs more – and you know in advance what the bill will be. See also ",
+        "p2Vocalis": "Dialogbot vs. Vocalis",
+        "p2c": " and ",
+        "p2Chatbot": "Dialogbot vs. an ordinary chatbot",
+        "p2d": "."
+      },
+      "included": {
+        "title": "Included in the subscription",
+        "items": ["AI receptionist and AI phone answering in 8 languages – around the clock", "A website chatbot with the same knowledge", "Booking, rescheduling and cancelling appointments, plus SMS confirmation", "A summary of every enquiry, tasks and a daily report", "Do-it-yourself setup: the build guide's three steps, about half an hour, with the assistant at hand"]
+      },
+      "specialists": {
+        "title": "Setup by our specialists – 5.000 kr.",
+        "p1a": "You can set Dialogbot up yourself – the build guide's three steps are included in the subscription. If you'd rather have it done for you, our own specialists will set it up for ",
+        "p1Price": "5.000 kr.",
+        "p1b": " excl. VAT, paid once.",
+        "p2": "You get a tailored setup and integration with your own systems and needs: we connect your calendar, CRM or booking system, add your knowledge and prices, train the voice on your names and test everything together with you before it goes live."
+      },
+      "outbound": {
+        "title": "Outbound campaign calls",
+        "p1a": "If you want the assistant to call contacts who have agreed to be called, it costs ",
+        "p1Call": "4 kr. per outbound call",
+        "p1b": " plus ",
+        "p1Minute": "2 kr. per minute of conversation started",
+        "p1c": " excl. VAT – just like a phone bill.",
+        "p2": "Every call placed counts – including a retry. An unanswered call therefore costs 4 kr., and a 3-minute conversation 10 kr. A contact is called at most twice and talks for at most 3 minutes in total, and you see the maximum price before you press Start."
+      },
+      "start": {
+        "title": "Get started",
+        "a": "First, hear what it sounds like: ",
+        "tryLink": "get a call from Dialogbot",
+        "b": ". When you're ready, ",
+        "signupLink": "create an account",
+        "c": " and follow the build guide – or order setup from our specialists. Read more about ",
+        "receptionistLink": "the AI receptionist",
+        "d": "."
+      }
+    },
+    "faq": [
+      ["Is there a lock-in period?", "No. There is no lock-in. You can cancel at the end of the current month."],
+      ["Is 2.495 kr. the full price?", "Yes, that is the full price of the subscription, excl. VAT. There is only one subscription and no extra charge per enquiry. Only if you use more than 300 inbound minutes a month does each additional minute cost 1,50 kr."],
+      ["Can I try it before I buy?", "Yes. Dialogbot calls you and handles you as if you were a customer – it takes two minutes and no sign-up. And there's no lock-in."],
+      ["What happens to my customers' data?", "It's explained in a short, plain-language text on our GDPR and data page: what is stored, where, and how the data processing agreement works."],
+      ["What do outbound campaign calls cost?", "4 kr. per outbound call plus 2 kr. per minute of conversation started, excl. VAT. An unanswered call costs 4 kr., a 3-minute conversation 10 kr. Contacts must have agreed in advance to be called, and a campaign only starts calling when you press Start yourself."],
+      ["What if we get a lot of inbound calls?", "300 minutes of inbound calls a month are included in the subscription. Beyond that, each minute started costs 1,50 kr. excl. VAT – it appears as a separate line on the invoice, and you can track your usage in Dialogbot at any time."],
+      ["Does setup cost anything?", "Not if you do it yourself: the build guide's three steps are included in the subscription and take about half an hour. Setup by our specialists costs 5.000 kr. excl. VAT, paid once, and gives you a tailored setup and integration with your own systems and needs."]
+    ]
+  },
+  "receptionist": {
+    "meta": {
+      "title": "AI receptionist for small and medium-sized businesses – answers the phone 24/7",
+      "description": "Dialogbot is an AI receptionist that answers the phone in your customers' language when you're busy or closed. It replies from your own knowledge, books appointments and sends you every enquiry. 2.495 kr./month.",
+      "ogTitle": "AI receptionist for small businesses | Dialogbot"
+    },
+    "kicker": "AI receptionist",
+    "title": "An AI receptionist that answers the phone when you can't",
+    "lead": "Dialogbot is a digital receptionist that speaks your customers' language. It takes calls and chats around the clock, answers only from the knowledge you have approved, and makes sure no customer slips through the cracks.",
+    "points": ["Answers in English – or your customers' language – with a natural voice", "Knows your services, prices and opening hours", "Books, moves and cancels appointments", "Sends you a short summary of every enquiry", "We guide you through the whole setup"],
+    "sections": {
+      "what": {
+        "title": "What is an AI receptionist?",
+        "p1": "An AI receptionist is a digital assistant that handles the phone and the chat for your business. It greets the customer, works out what they need, answers the common questions and collects name, number and request, so you can call back a warm lead.",
+        "p2": "With Dialogbot, you decide what the assistant may say. All knowledge starts as a draft and is only used once an owner or administrator has approved it. The assistant never guesses – if something isn't covered by your knowledge, it says so honestly and promises that a member of staff will get back to the customer."
+      },
+      "canDo": {
+        "title": "What Dialogbot can do for you",
+        "items": [
+          ["Answer the phone", " when you're busy, out with a customer or closed – including evenings and weekends."],
+          ["Clarify the request", " with the questions you have approved, and send you a summary with name and number."],
+          ["Book appointments", " based on your opening hours and booking rules – and send the customer an SMS confirmation."],
+          ["Answer in the chat", " on your website with the same knowledge as on the phone."],
+          ["Follow up", " on quotes you have sent, and give you a daily report of all enquiries."]
+        ]
+      },
+      "industries": {
+        "title": "For tradespeople, clinics, salons, restaurants and advisers",
+        "p1": "Dialogbot is set up around your own services and workflows. The tradesperson doesn't have to answer the phone from a ladder, the clinic takes pressure off reception in the morning rush, the salon can stay with the customer in the chair, and the restaurant doesn't lose table bookings at peak times.",
+        "p2": "You can keep your current number and forward it to Dialogbot when you're busy or closed – or use a new Dialogbot number."
+      },
+      "price": {
+        "title": "Price and setup",
+        "p1a": "There is one subscription: ",
+        "p1Price": "2.495 kr. a month",
+        "p1b": ", with no charge per enquiry and 300 minutes of inbound calls a month included. Outbound campaign calls cost 4 kr. per call plus 2 kr. per minute of conversation. All prices are excl. VAT.",
+        "p2a": "You don't need any technical skills. You set up the assistant yourself following the build guide's three steps in about half an hour – it's included in the subscription. If you have a website, Dialogbot fetches most of the information automatically, and you can test the assistant before it takes a single real call. If you'd rather have it done for you, our own specialists will set it up for 5.000 kr. excl. VAT, paid once – tailored and integrated with your own systems and needs. Read also about ",
+        "p2Phone": "AI phone answering",
+        "p2b": " and ",
+        "p2Chatbot": "the website chatbot",
+        "p2c": "."
+      }
+    },
+    "faq": [
+      ["How much does an AI receptionist from Dialogbot cost?", "One subscription at 2.495 kr. a month, with no charge per enquiry and 300 minutes of inbound calls a month included. Outbound campaign calls cost 4 kr. per call plus 2 kr. per minute of conversation. Prices are excl. VAT."],
+      ["What happens to customer data – is it GDPR compliant?", "Calls and messages are processed by us as a data processor on your behalf, the database is located in the EU, and you get a data processing agreement as part of the terms. Read it all in plain language on our GDPR and data page: /gdpr."],
+      ["Does it sound like a robot?", "Dialogbot speaks with a natural voice you choose – there are voices in 8 languages. It always says honestly that it is a digital assistant if the customer asks."],
+      ["Can I keep my phone number?", "Yes. You forward your current number to Dialogbot when you're busy or closed, and keep your phone provider."],
+      ["What happens if the assistant doesn't know the answer?", "It doesn't guess. It only answers from approved knowledge, promises that a member of staff will get back to the customer, and you receive the enquiry straight away."],
+      ["How long does setup take?", "If you do it yourself, the build guide's three steps take about half an hour, and the assistant guides you along the way. If you choose setup by our specialists (5.000 kr. excl. VAT), we arrange a meeting and set it up tailored to your systems."]
+    ]
+  },
+  "phone": {
+    "meta": {
+      "title": "AI phone answering and AI answering machine for businesses – in 8 languages",
+      "description": "An AI answering machine that talks to the customer instead of asking them to leave a message. Dialogbot answers the phone in English or your customers' language, clarifies the request, books appointments and sends you the enquiry.",
+      "ogTitle": "AI phone answering in 8 languages | Dialogbot"
+    },
+    "kicker": "AI phone answering",
+    "title": "The AI answering machine that actually talks to your customer",
+    "lead": "No customer wants to leave a message. Dialogbot is an AI phone assistant that takes the call in your customers' language, understands what the customer wants, and makes sure you can call back right away – or books the appointment directly.",
+    "points": ["Answers the phone in your customers' language – around the clock", "Knows your own trade terms and names", "Books appointments and sends SMS confirmations", "No voicemails to listen through", "Keep your own number"],
+    "sections": {
+      "conversation": {
+        "title": "From answering machine to conversation",
+        "p1": "An ordinary answering machine asks the customer to leave a message – and many hang up and call a competitor instead. An AI answering machine like Dialogbot answers with a natural voice instead, asks the right questions and collects the details for you.",
+        "p2": "Afterwards, you get a short written summary of the conversation with name, number and request – and a task if the customer needs a call back. You'll never have to listen through a voicemail again."
+      },
+      "howItWorks": {
+        "title": "How the AI phone works",
+        "items": [
+          ["Call forwarding:", " You forward your number to Dialogbot when you're busy or closed – or use a new Dialogbot number."],
+          ["Your knowledge:", " The assistant answers from your approved services, prices, opening hours and rules."],
+          ["Actions:", " It can find available times, book, move and cancel appointments and send the customer an SMS – always only after the customer says yes."],
+          ["Overview:", " All conversations land in your inbox, and you get a daily report."]
+        ]
+      },
+      "human": {
+        "title": "Does it sound human?",
+        "p1": "Dialogbot speaks your customers' language naturally and listens until the customer has finished talking. You choose the voice yourself, and you can hear it before you decide. It always says honestly that it is a digital assistant – it never pretends to be a human.",
+        "p2a": "The best way to find out is to try it: ",
+        "p2Link": "get a call from Dialogbot",
+        "p2b": ", and hear for yourself how it would answer the phone for you."
+      },
+      "price": {
+        "title": "Price",
+        "a": "One subscription at ",
+        "price": "2.495 kr. a month",
+        "b": " – excl. VAT and with no charge per enquiry. You do the setup yourself with the build guide – or let our specialists tailor it for 5.000 kr., paid once. See also ",
+        "receptionistLink": "AI receptionist",
+        "c": " and ",
+        "chatbotLink": "website chatbot",
+        "d": "."
+      }
+    },
+    "faq": [
+      ["What is the difference between an AI answering machine and an ordinary one?", "An ordinary answering machine records a message. An AI answering machine talks to the customer, answers questions from your knowledge, clarifies the request and can book an appointment – and you get a written summary."],
+      ["Can I use my own number?", "Yes. You forward your current number to Dialogbot when you're busy or closed. You can also get a new Dialogbot number."],
+      ["Does it understand accents and dialects?", "Dialogbot is built for natural spoken conversation in the language you choose and uses your own trade terms and names from the knowledge you approve, so it recognises them better."],
+      ["How much does it cost?", "One subscription at 2.495 kr. a month, excl. VAT. There is no charge per enquiry."],
+      ["Can I hear it before I buy?", "Yes. Enter your number on the front page, choose a voice and your industry, and Dialogbot will call you and show you."]
+    ]
+  },
+  "chatbot": {
+    "meta": {
+      "title": "Website chatbot – an AI chatbot with your own knowledge",
+      "description": "Get an AI chatbot on your website that answers from your own services, prices and opening hours, collects enquiries and can book appointments. The same knowledge as your AI receptionist.",
+      "ogTitle": "Website chatbot in 8 languages | Dialogbot"
+    },
+    "kicker": "Website chatbot",
+    "title": "A chatbot that knows your business",
+    "lead": "Dialogbot's chatbot answers your visitors in the language you choose – around the clock – from the knowledge you have approved. It collects enquiries, can book appointments, and a member of staff can take over the conversation at any time.",
+    "points": ["Answers only from your approved knowledge", "Collects name, contact details and request", "Books appointments right in the chat", "A member of staff can take over the conversation", "The same knowledge as on the phone"],
+    "sections": {
+      "noGuessing": {
+        "title": "A chatbot that doesn't guess",
+        "p1": "Many chatbots make up answers. Dialogbot doesn't. It only answers from the services, prices, opening hours and rules you have approved – and says honestly when something isn't covered, so a member of staff can follow up.",
+        "p2": "If you have a website, Dialogbot automatically fetches most of the information from it as drafts, which you review and approve. Then the chatbot is ready in no time."
+      },
+      "canDo": {
+        "title": "What the chatbot can do",
+        "items": [
+          ["Answer questions", " about services, prices, opening hours and practical matters."],
+          ["Collect enquiries", " with name, contact details and request – and send them to your inbox."],
+          ["Book appointments", " based on your opening hours and booking rules."],
+          ["Let you take over:", " a member of staff can reply to the customer directly in the conversation while the assistant pauses."],
+          ["Offer a call back", " at a time that suits the customer."]
+        ]
+      },
+      "sameKnowledge": {
+        "title": "Chat and phone with one and the same knowledge",
+        "a": "The chatbot uses the same approved knowledge as Dialogbot's ",
+        "receptionistLink": "AI receptionist",
+        "b": " and ",
+        "phoneLink": "AI phone answering",
+        "c": ". Correct a price in one place, and it's corrected in both the chat and on the phone. The chat is added to your website with a small embed code, and we'll help you with it."
+      },
+      "price": {
+        "title": "Price",
+        "a": "The chatbot is part of Dialogbot: one subscription at ",
+        "price": "2.495 kr. a month",
+        "b": " – excl. VAT and with no charge per enquiry. You do the setup yourself with the build guide – or let our specialists tailor it for 5.000 kr., paid once."
+      }
+    },
+    "faq": [
+      ["How do I get the chatbot on my website?", "You paste a small embed code into your website. The build guide shows you how, and you decide which domains the chat may appear on."],
+      ["Can a member of staff take over the conversation?", "Yes. A member of staff can reply to the customer directly in the conversation, and the assistant pauses in the meantime."],
+      ["Does the chatbot make up answers?", "No. It only answers from the knowledge you have approved, and says honestly when something isn't covered."],
+      ["Can it both chat and answer the phone?", "Yes. Dialogbot uses the same knowledge in the chat and on the phone."],
+      ["How much does the chatbot cost?", "It's part of Dialogbot: one subscription at 2.495 kr. a month, excl. VAT."]
+    ]
+  },
+  "about": {
+    "meta": {
+      "title": "About Dialogbot – who's behind it",
+      "description": "Dialogbot is a Danish company based in Aarhus. Here you can see who's behind it, where we are, and how to get in touch with us.",
+      "ogTitle": "About Dialogbot"
+    },
+    "kicker": "About us",
+    "title": "Who's behind Dialogbot?",
+    "leadFounder": "{name} built Dialogbot so small businesses can answer the phone, even when they can't.",
+    "lead": "Dialogbot is a Danish company based in Aarhus, and you can always call us.",
+    "points": {
+      "company": "Danish company based in Aarhus",
+      "cvr": "CVR {cvr}",
+      "call": "Call us – we answer the phone during opening hours",
+      "noBinding": "No lock-in"
+    },
+    "sections": {
+      "why": {
+        "title": "Why Dialogbot exists",
+        "p": "When the phone rings while you're up a ladder or have a customer in the chair, you lose a customer. Dialogbot answers the phone for you – in your customers' language, around the clock, and only with the knowledge you have approved."
+      },
+      "find": {
+        "title": "How to find us",
+        "cvrNo": "CVR no.",
+        "a": "Email ",
+        "b": " or call "
+      }
+    },
+    "faq": [
+      ["Can I talk to a human?", "Yes. Call us on 93 70 34 33 during opening hours, or email info@dialogbot.dk."],
+      ["Who looks after my customers' data?", "It's explained in plain language on our GDPR and data page."]
+    ]
+  },
+  "contact": {
+    "meta": {
+      "title": "Contact and support | Dialogbot",
+      "description": "How to contact Dialogbot about your account, payment or your data. Call 93 70 34 33 or email info@dialogbot.dk."
+    },
+    "eyebrow": "Contact",
+    "title": "Contact and support",
+    "lead": "If you have questions about your account, an invoice, your assistant or your data, call or write to us. We reply on weekdays, usually within one working day.",
+    "updated": "Updated 28 October 2026.",
+    "call": "Call",
+    "write": "Email",
+    "cvrNo": "CVR no.",
+    "sections": {
+      "email": {
+        "title": "Email",
+        "a": "Write to ",
+        "b": ". Please include your company name and the email address you log in with, so we can find your account quickly. We reply on weekdays, usually within one working day."
+      },
+      "phone": {
+        "title": "Phone",
+        "a": "Call ",
+        "b": " – "
+      },
+      "post": {
+        "title": "Post"
+      },
+      "billing": {
+        "title": "Payments and invoices",
+        "p": "Questions about a payment or an invoice from Dialogbot: write to us before you dispute it with your bank – that's the fastest way to find a solution. You can always see your invoices under Billing when you're logged in."
+      },
+      "loggedIn": {
+        "title": "Are you logged in?",
+        "p": "Then you'll find answers to most questions under Help in the app, and you can see your setup, your conversations and enquiries directly."
+      },
+      "ambassadors": {
+        "title": "Ambassadors",
+        "a": "Questions about bonuses, payouts or the rules: write to the same address. Read about the programme at ",
+        "b": "."
+      },
+      "data": {
+        "title": "Personal data",
+        "a": "If you want access to, correction or deletion of your data, read ",
+        "link": "the privacy policy",
+        "b": " and write to us."
+      }
+    }
+  },
+  "knowledge": {
+    "meta": {
+      "title": "Guides to AI receptionists, AI phone answering and chatbots",
+      "description": "Guides for small businesses on AI receptionists, AI phone answering, call answering services, call forwarding and website chatbots.",
+      "ogTitle": "Guides | Dialogbot"
+    },
+    "kicker": "Guides",
+    "title": "Guides to AI receptionists and call answering",
+    "lead": "Short, practical guides for small businesses that want to get on top of their phone and enquiries – without hiring an extra person.",
+    "guidesTitle": "Guides",
+    "industriesTitle": "AI receptionist for your industry",
+    "faq": [
+      ["What is Dialogbot?", "An AI receptionist that answers the phone and the chat for your business in 8 languages, replies from your own approved knowledge and books appointments."],
+      ["Can I hear it?", "Yes. Go to Try it, tell the chat what you do, and Dialogbot will call you and show you."]
+    ]
+  },
+  "industry": {
+    "kicker": "AI receptionist for {name}",
+    "setupPoint": "We guide you through the whole setup",
+    "problemTitle": "The problem for {name}",
+    "problemText": " Dialogbot is an AI receptionist for {examples} that answers the phone and the chat when you can't.",
+    "scenarioTitle": "What it sounds like (example)",
+    "scenarioNote": "The example is an illustration. Dialogbot always answers from the knowledge you have approved. ",
+    "scenarioLink": "Hear it yourself – get a call",
+    "scenarioEnd": ".",
+    "priceTitle": "Price and setup",
+    "priceA": "One subscription at ",
+    "price": "2.495 kr. a month",
+    "priceB": " – excl. VAT and with no charge per enquiry. Someone from Dialogbot sets it up together with you in about half an hour. See all the details on ",
+    "priceLink": "the pricing page",
+    "priceC": ".",
+    "othersTitle": "Dialogbot for other industries",
+    "faq": [
+      ["How much does it cost?", "One subscription at 2.495 kr. a month, excl. VAT. There is no charge per enquiry."],
+      ["Can we keep our phone number?", "Yes. You forward your number to Dialogbot when you're busy or closed."]
+    ]
+  },
+  "industries": {
+    "haandvaerkere": {
+      "name": "tradespeople",
+      "plural": "Tradespeople",
+      "examples": "plumbers, electricians, carpenters, painters, bricklayers, flooring and roofing",
+      "title": "AI receptionist for tradespeople – answer the phone from the ladder",
+      "description": "Dialogbot answers the phone for the plumber, the electrician, the carpenter and the painter when your hands are full. It collects the job details and address and books site visits.",
+      "pain": "The boss is up a ladder or under a sink and can't answer the phone. Every missed call is typically a customer who calls the next tradesperson on Google instead.",
+      "scenario": [["Customer", "Hi, I have a leaking toilet – could you come and take a look?"], ["Dialogbot", "We can certainly do that. What's the address, and is it urgent?"], ["Customer", "Vesterbrogade 12 in Aarhus – this week, ideally."], ["Dialogbot", "Thank you. I've noted it down, and the boss will call you today to arrange a time."]],
+      "benefits": ["Answers the phone when your hands are full", "Collects the job, address and urgency in one message to the boss", "Books site visits directly in the calendar", "Follows up on the quotes you've sent"],
+      "objection": ["My customers want to talk to me.", "And they should. Dialogbot only takes the calls you can't get to yourself, and makes sure you call back a warm lead with all the details ready."],
+      "faq": [["Can Dialogbot quote a price for a job?", "Only if you have entered and approved the price, e.g. a fixed price per m². Otherwise it notes the job and promises that the boss will get back with a quote."], ["Can it book site visits?", "Yes, based on your opening hours and booking rules – and it always asks the customer for permission first."]]
+    },
+    "klinikker": {
+      "name": "clinics",
+      "plural": "Clinics",
+      "examples": "dentists, physiotherapists, chiropractors, psychologists and vets",
+      "title": "AI receptionist for clinics – book appointments around the clock",
+      "description": "Dialogbot books, moves and cancels appointments for the dentist, the physiotherapist and the chiropractor – also outside opening hours – and takes pressure off reception in the morning rush.",
+      "pain": "The phone rings in the middle of treatments, and reception is swamped in the morning. Patients who can't get through find another clinic.",
+      "scenario": [["Patient", "I need to move my appointment on Thursday."], ["Dialogbot", "I can help with that. The next available times are Friday at 9.30 or Monday at 14. Which suits you best?"], ["Patient", "Friday."], ["Dialogbot", "Your appointment has been moved to Friday at 9.30. Would you like a confirmation by SMS?"]],
+      "benefits": ["Books, moves and cancels appointments around the clock", "Sends confirmations by SMS", "Takes pressure off reception in the morning rush", "Never gives treatment advice – it refers to the clinic"],
+      "objection": ["What about confidentiality?", "The assistant only asks for what it needs to make the booking. You set the rules yourself, and conversations can be deleted according to your own retention periods."],
+      "faq": [["Does Dialogbot give medical advice?", "No. It books and answers practical questions, and always refers to the clinic for clinical questions."], ["Can patients move and cancel appointments themselves?", "Yes. Dialogbot finds the appointment by phone number or name and moves or cancels it once the patient has said yes."]]
+    },
+    "frisoerer": {
+      "name": "hairdressers and salons",
+      "plural": "Hairdressers and salons",
+      "examples": "hairdressers, barbers, beauticians, nail salons and massage",
+      "title": "AI receptionist for hairdressers and salons – book without putting down the scissors",
+      "description": "Dialogbot answers the phone for the hairdresser, the barber and the beauty salon and books appointments – in the evening too – so you never have to interrupt a customer in the chair.",
+      "pain": "You can't answer the phone with scissors in your hand, and many customers call in the evening when the salon is closed.",
+      "scenario": [["Customer", "Do you have a slot for a men's cut tomorrow after 4 pm?"], ["Dialogbot", "There's a free slot tomorrow at 16.30. Shall I reserve it in your name?"], ["Customer", "Yes please, it's Mads."], ["Dialogbot", "You're booked for tomorrow at 16.30, Mads. You'll get a confirmation by SMS."]],
+      "benefits": ["Books appointments, including evenings and weekends", "Sends SMS confirmations", "Answers questions about prices and opening hours from your own price list", "You never have to interrupt a customer in the chair"],
+      "objection": ["We already have online booking.", "Great – many people call anyway. Dialogbot takes those calls and books in the same calendar, so nobody falls through the cracks."],
+      "faq": [["Can Dialogbot read out our price list?", "Yes, once you have added and approved it. It only answers from approved knowledge."], ["What happens in the evening?", "Dialogbot answers the phone around the clock and books within your opening hours."]]
+    },
+    "autovaerksteder": {
+      "name": "garages",
+      "plural": "Garages",
+      "examples": "car repair shops, tyre centres, body shops and car dealers",
+      "title": "AI receptionist for garages – servicing, inspections and tyre changes",
+      "description": "Dialogbot takes orders for servicing, inspections and tyre changes, notes the car and registration number and books appointments while the mechanics work.",
+      "pain": "The mechanics are out in the workshop, and the phone rings constantly about inspections, servicing and tyre changes.",
+      "scenario": [["Customer", "I need to switch to winter tyres."], ["Dialogbot", "We can sort that out. Which car is it, and do you have the registration number?"], ["Customer", "A Golf, AB 12 345."], ["Dialogbot", "Thank you. There's a free slot on Wednesday at 8. Shall I book it?"]],
+      "benefits": ["Takes orders for servicing, inspections and tyre changes", "Notes the car, registration number and problem", "Books appointments and sends an SMS", "Answers questions about opening hours and prices from your price list"],
+      "objection": ["It's too technical for a robot.", "It doesn't have to diagnose the car. It collects the details so the mechanic can call back well prepared."],
+      "faq": [["Can Dialogbot diagnose a fault?", "No. It collects details about the car and the problem, so you can call back prepared."], ["Can it book tyre changes in the busy season?", "Yes, based on your available times and booking rules."]]
+    },
+    "raadgivere": {
+      "name": "advisers and offices",
+      "plural": "Advisers and offices",
+      "examples": "lawyers, accountants, estate agents, insurance and IT consultants",
+      "title": "AI receptionist for lawyers, accountants and advisers",
+      "description": "Dialogbot qualifies new enquiries with your own questions, books initial meetings and sends a clear summary to the right adviser.",
+      "pain": "Your advisers are in meetings, and new clients who call reach an answering machine and choose someone else.",
+      "scenario": [["Customer", "I need help with a property purchase."], ["Dialogbot", "We'd be happy to help. Is it a purchase or a sale, and when does the deal need to be completed?"], ["Customer", "A purchase – within a month."], ["Dialogbot", "Thank you. Shall I book a short initial meeting, or would you like an adviser to call you?"]],
+      "benefits": ["Qualifies new enquiries with your own questions", "Books initial meetings", "Sends a clear summary to the right adviser", "Never promises anything you haven't approved"],
+      "objection": ["Our clients expect a human.", "The assistant says honestly that it is digital, and makes sure a human calls back with the case already understood."],
+      "faq": [["Does Dialogbot give legal or financial advice?", "No. It briefly clarifies the matter and passes it on to the right adviser."], ["Can it tell different types of cases apart?", "Yes, using the questions you approve, e.g. purchase or sale, private or business."]]
+    },
+    "restauranter": {
+      "name": "restaurants, hotels and cafés",
+      "plural": "Restaurants, hotels and cafés",
+      "examples": "restaurants, cafés, hotels, inns, bed & breakfasts and catering",
+      "title": "AI receptionist for restaurants, hotels and cafés",
+      "description": "Dialogbot takes table bookings and enquiries during the rush and after closing, and answers questions about the menu, opening hours and parking from your own knowledge.",
+      "pain": "The phone rings in the middle of the lunch and dinner rush. Table bookings, room enquiries and group bookings get lost, or guests book somewhere else.",
+      "scenario": [["Guest", "Could we get a table for four on Saturday at 7 pm?"], ["Dialogbot", "I'll gladly note that. What name should I put it under, and are there any allergies we should know about?"], ["Guest", "Hansen – one of us is gluten intolerant."], ["Dialogbot", "Thank you. I've noted a table for four on Saturday at 7 pm under the name Hansen, with a gluten allergy."]],
+      "benefits": ["Takes table bookings and enquiries, including during the rush and after closing", "Answers questions about opening hours, menu, prices, parking and check-in", "Collects group and catering enquiries with numbers, date and requests", "Your staff can stay with the guests"],
+      "objection": ["We already use a booking system.", "Fine – many guests call anyway. Dialogbot takes those calls, so your staff don't have to break off from serving or the front desk."],
+      "faq": [["Can Dialogbot handle group bookings and catering?", "Yes. It collects numbers, date and requests and sends the enquiry to the person in charge."], ["Can it answer questions about the menu?", "Yes, once you have added and approved the menu and prices."]]
+    }
+  },
+  "ambassador": {
+    "join": {
+      "eyebrow": "Dialogbot Ambassador",
+      "title": "Recommend Dialogbot – and earn money on every customer",
+      "intro": "Do you know a tradesperson, a hairdresser or a clinic that misses calls? Show them Dialogbot. If they become a customer, you get a starting bonus and an ongoing share – and they get {discount} off their first month.",
+      "cta": "Become an ambassador",
+      "earnTitle": "How you earn · one subscribing customer",
+      "startBonus": "Starting bonus",
+      "firstMonth": "First month: {rate} of {amount} (the customer gets 50 % off)",
+      "months": "Months at {perMonth} ({rate} of {amount})",
+      "total": "Total in the first year",
+      "tenCustomers": "With 10 customers, that's {amount} in the first year. Amounts are before tax; the share is calculated on what the customer actually pays excl. VAT – including campaign calls."
+    },
+    "steps": {
+      "eyebrow": "How it works",
+      "title": "Three steps – and you're up and running",
+      "needs": "You'll need",
+      "recommendTitle": "Recommend",
+      "recommendText": "Answer four quick questions about the rules, and share your personal link or code with businesses you know. If you're under 18, a parent approves by email.",
+      "recommendParts": ["Free account", "Your link and code"],
+      "customerTitle": "They become a customer",
+      "customerText": "The business signs up via your link and gets {discount} off the first month. You see the company name and status – never their conversations.",
+      "customerParts": ["A business that misses calls"],
+      "payoutTitle": "You get paid",
+      "payoutText": "{bonus} once the customer has paid their first invoice, plus {rate} of what they pay for {months} months. Paid out to your bank account.",
+      "payoutParts": ["Bank account", "CPR or CVR number"]
+    },
+    "rules": {
+      "eyebrow": "The rules",
+      "title": "How it works",
+      "earned": "You only earn once the customer has paid. The amount shows as \"earned\" for {days} days and then becomes available for payout.",
+      "payoutMin": "We pay out to your bank account once you have at least {amount} available.",
+      "tax": "Without a CVR number, the bonus is B-income: we report it to the Danish Tax Agency (Skattestyrelsen) with your CPR number, and you pay the tax yourself via your preliminary income assessment. We don't withhold tax.",
+      "cvr": "If you have a CVR number, you get a settlement statement instead (with VAT if you are VAT-registered).",
+      "age": "You must be at least {age} years old. If you're under 18, a parent must approve the agreement before we pay out – you can still bring in customers in the meantime.",
+      "privacy": "You see your customers' company name, status and your bonus – never their conversations or customer data.",
+      "agreeTitle": "The rules you agree to"
+    },
+    "signup": {
+      "eyebrow": "Sign up",
+      "title": "Become an ambassador",
+      "loginFirst": "First create a free account (or log in). You'll come straight back here afterwards.",
+      "createAccount": "Create account",
+      "login": "Log in",
+      "verifyFirst": "Confirm your email first – we've sent a link to {email}. ",
+      "resend": "Send a new link"
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "title": "What ambassadors ask",
+      "whenQ": "When do I get paid?",
+      "whenA": "When your customer has paid their first invoice, you get {bonus}. The amount shows as earned for {days} days and is paid out once you have at least {amount} available.",
+      "taxQ": "Do I have to pay tax?",
+      "taxA": "Yes. Without a CVR number it is B-income, which we report to the Danish Tax Agency (Skattestyrelsen) – you pay the tax yourself via your preliminary income assessment. With a CVR number, you get a settlement statement.",
+      "ageQ": "Can I be under 18?",
+      "ageA": "Yes, from the age of {age}. A parent must approve the agreement by email before we pay out. You can still share your link in the meantime.",
+      "rulesQ": "What am I not allowed to do?",
+      "rulesA": "You must always state that it is advertising and that you receive a bonus. No mass emails or text messages to people you don't know, and never use AI to call people."
+    },
+    "form": {
+      "iAm": "I am",
+      "private": "Private individual",
+      "privateHint": "No CVR – the bonus is B-income",
+      "company": "Business",
+      "companyHint": "With CVR – settled via statement",
+      "fullName": "Full name",
+      "mobile": "Mobile number",
+      "mobileHint": "So we can call if there are any questions.",
+      "birthDate": "Date of birth",
+      "cpr": "CPR number (can wait)",
+      "cprHint": "Needed to report B-income. Stored encrypted.",
+      "cprPlaceholder": "DDMMYY-XXXX",
+      "companyName": "Company name",
+      "cvr": "CVR number",
+      "vatRegistered": "The business is VAT-registered",
+      "minorTitle": "You're under 18 – a parent must approve",
+      "minorText": "We'll send an email with the agreement and the rules. You can still share your link and bring in customers in the meantime; we only pay out once the agreement has been approved.",
+      "parentName": "Parent's name",
+      "parentEmail": "Parent's email",
+      "bankReg": "Sort code / reg. no. (can wait)",
+      "bankAccount": "Account number (can wait)",
+      "bankAccountHint": "This is where we pay out. Stored encrypted.",
+      "headline": "Your greeting on your page (optional)",
+      "headlineHint": "Shown to people who use your link. E.g. \"My uncle uses it in his plumbing business.\"",
+      "motivation": "Who would you recommend Dialogbot to? (optional)",
+      "quizTitle": "Four questions about the rules",
+      "wrong": "Incorrect – read the rules on the left and try again.",
+      "answerAll": "Answer all four questions to sign up.",
+      "submitting": "Signing up…",
+      "submit": "Sign me up as an ambassador",
+      "footnote": "By signing up, you accept the rules. We approve all ambassadors manually – usually within a couple of days."
+    },
+    "parent": {
+      "eyebrow": "Parent or guardian",
+      "title": "Approve ambassador agreement",
+      "invalid": "The link is invalid or has expired. Ask your child to send a new email from their ambassador page.",
+      "loading": "Loading the agreement…",
+      "done": "Thank you! The agreement has been approved. {first} can now have their bonus paid out.",
+      "intro": "{name} would like to be a Dialogbot ambassador. This means that {first} recommends Dialogbot to businesses and gets a bonus when they become paying customers:",
+      "bonus": "{amount} when a customer has paid their first invoice",
+      "share": "{rate} of what the customer pays for {months} months",
+      "payout": "Paid out to {first}'s bank account. It is B-income, which we report to the Danish Tax Agency (Skattestyrelsen) – no tax is withheld.",
+      "stop": "The agreement can be stopped at any time – just write to us.",
+      "rulesTitle": "The rules {first} has agreed to",
+      "yourName": "Your name",
+      "confirm": "I am the parent/guardian of {name} and approve that {first} is a Dialogbot ambassador on these terms.",
+      "confirming": "Approving…",
+      "submit": "Approve the agreement"
+    }
+  }
+}

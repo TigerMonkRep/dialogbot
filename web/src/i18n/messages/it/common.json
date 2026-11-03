@@ -1,0 +1,25 @@
+{
+  "language": "Lingua",
+  "chrome": {
+    "home": "Home page di Dialogbot",
+    "choosePath": "Scegli il percorso",
+    "tryIt": "Lo provi",
+    "buildGuide": "Guida alla configurazione",
+    "mainMenu": "Menu principale",
+    "pricing": "Prezzi",
+    "location": "Aarhus · Danimarca",
+    "hours": "Lun–ven 08–17",
+    "privacy": "Privacy",
+    "gdpr": "GDPR",
+    "terms": "Condizioni commerciali",
+    "pages": "Pagine",
+    "about": "Chi siamo",
+    "gdprData": "GDPR e dati",
+    "contact": "Contatti",
+    "login": "Accedi",
+    "signup": "Crea account",
+    "knowledge": "Risorse",
+    "byIndustry": "Receptionist AI per il suo settore",
+    "skip": "Vai al contenuto"
+  }
+}

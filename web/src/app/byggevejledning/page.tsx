@@ -1,5 +1,6 @@
 import { FounderBlock } from "@/components/founder-block";
-import Link from "next/link";
+import Link from "@/i18n/link";
+import { getRaw, getT } from "@/i18n/server";
 import type { Metadata } from "next";
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL, SiteChrome } from "@/components/site-chrome";
 import { ArrowIcon, CalendarIcon, ChartIcon, ChatIcon, CheckIcon, ChevronIcon, ClockIcon, PhoneIcon, PlayIcon, PlusIcon, SendIcon, SmsIcon } from "@/components/site-icons";
@@ -9,21 +10,19 @@ import { ExplainerVideo } from "@/components/explainer-video";
 /** Byggevejledningen — the landing page (design-reference/byggevejledning/Main.dc.html): hero with the "Trin 1 af 3"
  *  card, the 3 steps with parts boxes, result A–D, the six bricks, integrations, the two prices, demo transcript,
  *  FAQ and the dark CTA. "Klar" is only claimed for Google Kalender, Microsoft 365 and SMS/e-mail. */
-export const metadata: Metadata = {
-  title: "Byg din AI-receptionist i 3 trin – byggevejledning",
-  description: "Byggevejledningen til Dialogbot: hvad du skal bruge, hvad den kan, hvad den koster – og de 3 trin til din egen AI-receptionist på dansk. 2.495 kr./md.",
-  alternates: { canonical: "/byggevejledning" },
-  openGraph: { url: "/byggevejledning", title: "Byg din AI-receptionist i 3 trin | Dialogbot", images: ["/opengraph-image.png"] },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT("site");
+  return {
+    title: t("guide.meta.title"),
+    description: t("guide.meta.description"),
+    alternates: { canonical: "/byggevejledning" },
+    openGraph: { url: "/byggevejledning", title: t("guide.meta.ogTitle"), images: ["/opengraph-image.png"] },
+  };
+}
 
-const NAV: [string, string][] = [["#trin", "Sådan bygger du"], ["#klodser", "Klodserne"], ["#systemer", "Passer til dit system"], ["#pris", "Pris"], ["#demo", "Hør en demo"]];
-
-const FAQ: [string, string][] = [
-  ["Lyder det som en robot?", "Nej. Dialogbot taler naturligt dansk og præsenterer sig altid som en digital receptionist, så kunden ved, hvem de taler med. Hør demoen ovenfor."],
-  ["Skal jeg skifte telefonnummer?", "Nej. Du beholder dit nummer og viderestiller det – enten altid, eller kun når du ikke tager den. Vi viser dig hvordan i trin 3."],
-  ["Hvad hvis den ikke kan svare?", "Så tager den en besked med navn, nummer og ærinde og sender den til dig med det samme. Den gætter aldrig på priser eller aftaler, I ikke har givet den."],
-  ["Er jeg bundet?", "Nej. Fast pris kan opsiges måned til måned, og pr. henvendelse har ingen fast udgift."],
-];
+/** Anchor → label key under guide.nav. FAQ: guide.faq ({ q, a }[]). */
+const NAV: [string, string][] = [["#trin", "steps"], ["#klodser", "bricks"], ["#systemer", "systems"], ["#pris", "price"], ["#demo", "demo"]];
+type Item = { title: string; text: string };
 
 const container = "max-w-[1180px] mx-auto px-4 sm:px-6";
 const eyebrow = "eyebrow text-[13px] tracking-[1.5px]";
@@ -34,7 +33,7 @@ const stepNo = "inline-flex w-14 h-14 rounded-[14px] bg-highlight items-center j
 const partsBox = "border-[1.5px] border-ink rounded-xl px-3.5 py-3 flex flex-col gap-2";
 const tile = "inline-flex w-12 h-12 rounded-xl bg-accent items-center justify-center shrink-0";
 
-function StepCard({ n, title, parts, text, children }: { n: string; title: string; parts: string[]; text: string; children: React.ReactNode }) {
+function StepCard({ n, title, parts, partsTitle, text, children }: { n: string; title: string; parts: string[]; partsTitle: string; text: string; children: React.ReactNode }) {
   return (
     <article className="border-2 border-ink rounded-[20px] p-6 flex flex-col gap-[18px] bg-white">
       <div className="flex items-center gap-3.5">
@@ -43,7 +42,7 @@ function StepCard({ n, title, parts, text, children }: { n: string; title: strin
       </div>
       <div className="h-[150px] rounded-[14px] bg-panel relative overflow-hidden">{children}</div>
       <div className={partsBox}>
-        <span className={eyebrow.replace("text-[13px]", "text-xs")}>Du skal bruge</span>
+        <span className={eyebrow.replace("text-[13px]", "text-xs")}>{partsTitle}</span>
         <ul className="m-0 p-0 list-none flex flex-col gap-1.5 text-[15px]">
           {parts.map((p) => <li key={p} className="flex gap-2.5"><b className="font-display font-extrabold min-w-7">1×</b>{p}</li>)}
         </ul>
@@ -80,26 +79,39 @@ function System({ icon, name, status, ready, dark }: { icon: React.ReactNode; na
 
 function Check() { return <CheckIcon size={20} stroke="#2456F6" className="flex-none" />; }
 
-function Bubble({ who, children }: { who: "D" | "K"; children: React.ReactNode }) {
+function Bubble({ who, initial, children }: { who: "D" | "K"; initial: string; children: React.ReactNode }) {
   const bot = who === "D";
   return (
     <div className={`flex gap-2.5 items-end ${bot ? "" : "justify-end"}`}>
-      {bot && <span className="flex-none w-8 h-8 rounded-full bg-accent inline-flex items-center justify-center font-display font-extrabold text-[13px] text-white">D</span>}
+      {bot && <span className="flex-none w-8 h-8 rounded-full bg-accent inline-flex items-center justify-center font-display font-extrabold text-[13px] text-white">{initial}</span>}
       <p className={`m-0 px-4 py-3 text-[15px] leading-normal max-w-[420px] ${bot ? "rounded-[16px_16px_16px_4px] bg-white border-2 border-ink" : "rounded-[16px_16px_4px_16px] bg-ink text-white"}`}>{children}</p>
-      {!bot && <span className="flex-none w-8 h-8 rounded-full bg-highlight inline-flex items-center justify-center font-display font-extrabold text-[13px]">K</span>}
+      {!bot && <span className="flex-none w-8 h-8 rounded-full bg-highlight inline-flex items-center justify-center font-display font-extrabold text-[13px]">{initial}</span>}
     </div>
   );
 }
 
-export default function Page() {
+export default async function Page() {
+  const t = await getT("site");
+  const raw = await getRaw();
+  const FAQ = raw<{ q: string; a: string }[]>("site.guide.faq").map(({ q, a }) => [q, a] as [string, string]);
+  const nav: [string, string][] = NAV.map(([h, k]) => [h, t(`guide.nav.${k}`)]);
+  const partsTitle = t("guide.partsTitle");
+  const steps = raw<{ title: string; parts: string[]; text: string }[]>("site.guide.steps.items");
+  const result = raw<Item[]>("site.guide.result.items");
+  const lines = raw<string[]>("site.demoCall.lines");
+  const D = t("demoCall.botInitial");
+  const K = t("demoCall.customerInitial");
+  const sub = raw<string[]>("site.guide.pricing.subscription.points");
+  const camp = raw<string[]>("site.guide.pricing.campaign.points");
+  const setup = raw<string[]>("site.guide.pricing.setup.points");
   const jsonLd = [
     { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: FAQ.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Dialogbot", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: "Byggevejledning", item: `${SITE_URL}/byggevejledning` }] },
+      { "@type": "ListItem", position: 2, name: t("guide.breadcrumb"), item: `${SITE_URL}/byggevejledning` }] },
   ];
   return (
-    <SiteChrome current="byggevejledning" nav={NAV} chatOpen>
+    <SiteChrome current="byggevejledning" nav={nav} chatOpen>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* HERO */}
@@ -108,16 +120,16 @@ export default function Page() {
           <div className="flex-[1_1_420px] min-w-0 flex flex-col gap-6">
             <div className="inline-flex items-center gap-2.5 self-start bg-white border-2 border-ink rounded-full py-1.5 pr-3.5 pl-1.5 text-sm font-semibold">
               <span className="inline-flex w-7 h-7 rounded-full bg-highlight items-center justify-center font-display font-extrabold text-[15px]">3</span>
-              <span>trin · ca. 30 minutter · ingen teknik</span>
+              <span>{t("guide.hero.badge")}</span>
             </div>
-            <h1 className="m-0 font-display font-extrabold text-[clamp(40px,5.2vw,68px)] leading-[1.02] tracking-[-1.5px]">Byg din egen AI-receptionist.<br />Trin for trin.</h1>
-            <p className="m-0 text-[19px] leading-[1.55] max-w-[520px] text-ink-soft">Dialogbot tager telefonen, svarer på webchat og booker aftaler for din virksomhed – på dansk, døgnet rundt. Du følger vejledningen, vi sætter klodserne sammen med dig.</p>
+            <h1 className="m-0 font-display font-extrabold text-[clamp(40px,5.2vw,68px)] leading-[1.02] tracking-[-1.5px]">{t("guide.hero.titleLine1")}<br />{t("guide.hero.titleLine2")}</h1>
+            <p className="m-0 text-[19px] leading-[1.55] max-w-[520px] text-ink-soft">{t("guide.hero.lead")}</p>
             <div className="flex flex-wrap gap-3">
-              <Link href="/proev" className={btnPrimary}>Prøv den nu – den ringer til dig<ArrowIcon size={18} /></Link>
+              <Link href="/proev" className={btnPrimary}>{t("guide.hero.cta")}<ArrowIcon size={18} /></Link>
               <ExplainerVideo variant="button" />
-              <a href="#demo" className={btnOutline}><PlayIcon size={18} />Hør Dialogbot tage telefonen</a>
+              <a href="#demo" className={btnOutline}><PlayIcon size={18} />{t("guide.hero.listen")}</a>
             </div>
-            <p className="m-0 text-sm text-muted">2.495 kr./md. · ekskl. moms</p>
+            <p className="m-0 text-sm text-muted">{t("guide.hero.price")}</p>
           </div>
 
           {/* Hero illustration: a manual step card */}
@@ -126,14 +138,14 @@ export default function Page() {
               <div className="flex items-center gap-3.5">
                 <span className={stepNo}>1</span>
                 <div className="flex flex-col">
-                  <span className="eyebrow">Trin 1 af 3</span>
-                  <span className="font-display font-bold text-xl">Fortæl os om din virksomhed</span>
+                  <span className="eyebrow">{t("guide.heroCard.step")}</span>
+                  <span className="font-display font-bold text-xl">{t("guide.heroCard.title")}</span>
                 </div>
               </div>
               <div className={partsBox}>
-                <span className="eyebrow">Du skal bruge</span>
+                <span className="eyebrow">{partsTitle}</span>
                 <div className="flex flex-wrap gap-2">
-                  {["telefonnummer", "åbningstider", "hvad I laver"].map((p) => (
+                  {raw<string[]>("site.guide.heroCard.parts").map((p) => (
                     <span key={p} className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-panel text-sm font-medium"><b className="font-display font-extrabold">1×</b>{p}</span>
                   ))}
                 </div>
@@ -145,7 +157,7 @@ export default function Page() {
                 <div className="absolute left-[calc(8%+20px)] bottom-11 w-20 h-10 rounded-[10px] bg-highlight" />
                 <div className="absolute left-[calc(8%+20px)] -bottom-1 w-20 h-10 rounded-t-[10px] bg-ink" />
                 <svg className="absolute left-[calc(8%+140px)] top-[34px] hidden min-[400px]:block" width="64" height="28" viewBox="0 0 64 28" fill="none" stroke="#14213D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M60 14H6M14 4 4 14l10 10" /></svg>
-                <div className="absolute right-[6%] top-[22px] w-[120px] h-[52px] border-[3px] border-ink rounded-[14px] bg-white hidden min-[400px]:flex items-center justify-center font-display font-bold text-[15px]">Man–fre 8–17</div>
+                <div className="absolute right-[6%] top-[22px] w-[120px] h-[52px] border-[3px] border-ink rounded-[14px] bg-white hidden min-[400px]:flex items-center justify-center font-display font-bold text-[15px]">{t("guide.heroCard.hours")}</div>
                 <div className="absolute right-[calc(6%+100px)] top-[74px] w-0 h-0 border-l-[10px] border-r-[10px] border-t-[12px] border-l-transparent border-r-transparent border-t-ink hidden min-[400px]:block" />
                 <div className="absolute right-[6%] top-[104px] w-[120px] h-[52px] border-[3px] border-ink rounded-[14px] bg-white hidden min-[400px]:flex items-center justify-center font-display font-bold text-[15px]">+45 …</div>
               </div>
@@ -158,12 +170,12 @@ export default function Page() {
       <section id="trin" className="bg-white scroll-mt-6">
         <div className={`${container} py-16 sm:py-20 flex flex-col gap-10`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
-            <span className={eyebrow}>Byggevejledning</span>
-            <h2 className={h2}>Sådan bygger du den – i 3 trin</h2>
-            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Ingen apps at installere, ingen kode. Hvert trin viser præcis, hvad du skal bruge, og hvad der sker.</p>
+            <span className={eyebrow}>{t("guide.steps.eyebrow")}</span>
+            <h2 className={h2}>{t("guide.steps.title")}</h2>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("guide.steps.lead")}</p>
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))]">
-            <StepCard n="1" title="Fortæl os om din virksomhed" parts={["dit telefonnummer", "åbningstider", "det, I oftest bliver spurgt om"]} text="Udfyld en kort formular – eller fortæl det til os i telefonen. Det tager 5 minutter.">
+            <StepCard n="1" title={steps[0].title} parts={steps[0].parts} partsTitle={partsTitle} text={steps[0].text}>
               <div aria-hidden>
                 <div className="absolute left-6 top-[22px] w-[150px] h-[106px] border-[3px] border-ink rounded-[14px] bg-white flex flex-col gap-2.5 p-3.5">
                   <div className="h-2.5 rounded-[5px] bg-ink w-[70%]" /><div className="h-2.5 rounded-[5px] bg-line w-[90%]" /><div className="h-2.5 rounded-[5px] bg-line w-[55%]" />
@@ -172,23 +184,23 @@ export default function Page() {
                 <div className="absolute right-6 top-10 w-[70px] h-[70px] rounded-2xl bg-accent flex items-center justify-center"><ChatIcon size={34} stroke="#FFFFFF" /></div>
               </div>
             </StepCard>
-            <StepCard n="2" title="Vi bygger og tester sammen" parts={["videomøde med os", "prøveopkald til din nye receptionist"]} text="Vi sætter stemme, svar og booking op, mens du ser på. Du ringer selv og hører, at det virker.">
+            <StepCard n="2" title={steps[1].title} parts={steps[1].parts} partsTitle={partsTitle} text={steps[1].text}>
               <div aria-hidden>
                 <div className="absolute left-[34px] top-[50px] w-[90px] h-[50px] rounded-xl bg-accent" />
                 <div className="absolute left-[124px] top-[50px] w-4 h-[50px] bg-accent rounded-r-lg" />
                 <svg className="absolute left-[150px] top-[62px]" width="40" height="26" viewBox="0 0 40 26" fill="none" stroke="#14213D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M36 13H4M12 5 4 13l8 8" /></svg>
                 <div className="absolute left-[200px] top-[50px] w-[90px] h-[50px] rounded-xl bg-highlight" />
                 <div className="absolute left-[200px] top-[62px] w-3.5 h-[26px] bg-panel rounded-r-md" />
-                <div className="absolute right-5 bottom-3.5 px-2.5 py-1.5 rounded-full bg-white border-2 border-ink font-display font-bold text-[13px]">ca. 30 min</div>
+                <div className="absolute right-5 bottom-3.5 px-2.5 py-1.5 rounded-full bg-white border-2 border-ink font-display font-bold text-[13px]">{t("guide.steps.duration")}</div>
               </div>
             </StepCard>
-            <StepCard n="3" title="Tænd – og gå tilbage til arbejdet" parts={["viderestilling af dit nummer (vi viser hvordan)"]} text="Fra nu af får du en SMS eller e-mail, hver gang der er en aftale eller en besked til dig.">
+            <StepCard n="3" title={steps[2].title} parts={steps[2].parts} partsTitle={partsTitle} text={steps[2].text}>
               <div aria-hidden>
                 <div className="absolute left-[30px] top-[30px] w-[120px] h-14 rounded-full bg-accent flex items-center justify-end p-1.5"><div className="w-11 h-11 rounded-full bg-white" /></div>
-                <div className="absolute left-9 top-24 font-display font-bold text-sm">Dialogbot: TIL</div>
+                <div className="absolute left-9 top-24 font-display font-bold text-sm">{t("guide.steps.switchOn")}</div>
                 <div className="absolute right-7 top-[30px] flex flex-col gap-2">
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-[10px] bg-white border-2 border-ink text-[13px] font-semibold"><PhoneIcon size={16} width={2.4} />Opkald besvaret</div>
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-[10px] bg-white border-2 border-ink text-[13px] font-semibold"><CalendarIcon size={16} width={2.4} />Aftale booket</div>
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-[10px] bg-white border-2 border-ink text-[13px] font-semibold"><PhoneIcon size={16} width={2.4} />{t("guide.steps.answered")}</div>
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-[10px] bg-white border-2 border-ink text-[13px] font-semibold"><CalendarIcon size={16} width={2.4} />{t("guide.steps.booked")}</div>
                 </div>
               </div>
             </StepCard>
@@ -201,23 +213,23 @@ export default function Page() {
         <div className={`${container} py-16 sm:py-[72px] flex flex-col gap-8`}>
           <div className="flex flex-wrap items-end gap-x-10 gap-y-4">
             <div className="flex flex-col gap-3 max-w-[560px] flex-[1_1_360px]">
-              <span className={eyebrow}>Færdigt resultat</span>
-              <h2 className={h2}>Sådan ser et opkald ud, når den er bygget</h2>
+              <span className={eyebrow}>{t("guide.result.eyebrow")}</span>
+              <h2 className={h2}>{t("guide.result.title")}</h2>
             </div>
-            <p className="m-0 text-base leading-[1.55] text-ink-soft flex-[1_1_320px] max-w-[440px]">Hvert opkald følger den samme simple linje. Du ser alle henvendelser i ét overblik og kan altid rette, hvad Dialogbot må sige.</p>
+            <p className="m-0 text-base leading-[1.55] text-ink-soft flex-[1_1_320px] max-w-[440px]">{t("guide.result.lead")}</p>
           </div>
           <ol className="m-0 p-0 list-none flex flex-wrap gap-4 items-stretch">
             {([
-              ["A", "Kunden ringer", "Også uden for åbningstid, når du er på en opgave eller har kunder i butikken."],
-              ["B", "Dialogbot svarer", "På dansk, med jeres navn, priser og åbningstider – og uden at lade kunden vente."],
-              ["C", "Booker eller tager besked", "Ledige tider i din kalender, eller en besked med navn, nummer og ærinde."],
-              ["D", "Du får besked", "SMS eller e-mail med det samme. Du ringer tilbage, når det passer dig."],
-            ] as [string, string, string][]).map(([l, t, d], i) => {
+              ["A", result[0].title, result[0].text],
+              ["B", result[1].title, result[1].text],
+              ["C", result[2].title, result[2].text],
+              ["D", result[3].title, result[3].text],
+            ] as [string, string, string][]).map(([l, title, d], i) => {
               const dark = i === 3;
               return (
                 <li key={l} className={`flex-[1_1_220px] flex flex-col gap-3 p-5 rounded-2xl border-2 border-ink ${dark ? "bg-ink text-white" : "bg-white"}`}>
                   <span className="inline-flex w-10 h-10 rounded-[10px] bg-highlight text-ink items-center justify-center font-display font-extrabold text-xl">{l}</span>
-                  <span className="font-display font-bold text-lg">{t}</span>
+                  <span className="font-display font-bold text-lg">{title}</span>
                   <span className={`text-sm leading-normal ${dark ? "text-line" : "text-ink-soft"}`}>{d}</span>
                 </li>
               );
@@ -230,17 +242,17 @@ export default function Page() {
       <section id="klodser" className="bg-white scroll-mt-6">
         <div className={`${container} py-16 sm:py-20 flex flex-col gap-10`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
-            <span className={eyebrow}>Klodserne i sættet</span>
-            <h2 className={h2}>Vælg de klodser, du har brug for</h2>
-            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Start med telefonen. Klik flere på, efterhånden som du får brug for dem – de passer sammen.</p>
+            <span className={eyebrow}>{t("guide.bricks.eyebrow")}</span>
+            <h2 className={h2}>{t("guide.bricks.title")}</h2>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("guide.bricks.lead")}</p>
           </div>
           <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))]">
-            <Brick icon={<PhoneIcon size={24} stroke="#FFFFFF" />} title="Telefon" badge="Start her" text="Besvarer alle opkald på dansk med jeres navn. Stiller videre til dig, når det haster." start={{ href: "/signup?intent=reception", label: "Start med reception" }} />
-            <Brick icon={<ChatIcon size={24} stroke="#FFFFFF" width={2.2} />} title="Webchat" text="En lille chat på din hjemmeside, der svarer med det samme og samler kontaktoplysninger." />
-            <Brick icon={<CalendarIcon size={24} stroke="#FFFFFF" />} title="Booking" text="Finder ledige tider i din kalender og bekræfter aftalen til kunden på SMS." />
-            <Brick icon={<SmsIcon size={24} stroke="#FFFFFF" />} title="SMS-svar" text="Ubesvarede opkald får en SMS med det samme, så kunden ved, I vender tilbage." />
-            <Brick icon={<SendIcon size={24} stroke="#FFFFFF" />} title="Kampagner" text="Ring eller skriv til dine eksisterende kunder – fx om tid til service eller nyt tilbud. Du godkender altid først." start={{ href: "/signup?intent=campaigns", label: "Start med kundeopfølgning" }} />
-            <Brick icon={<ChartIcon size={24} stroke="#FFFFFF" />} title="Overblik" text="Alle opkald, chats og aftaler ét sted. Se hvad der blev sagt, og hvad der mangler svar." />
+            <Brick icon={<PhoneIcon size={24} stroke="#FFFFFF" />} title={t("guide.bricks.phone.title")} badge={t("guide.bricks.startHere")} text={t("guide.bricks.phone.text")} start={{ href: "/signup?intent=reception", label: t("guide.bricks.phone.start") }} />
+            <Brick icon={<ChatIcon size={24} stroke="#FFFFFF" width={2.2} />} title={t("guide.bricks.webchat.title")} text={t("guide.bricks.webchat.text")} />
+            <Brick icon={<CalendarIcon size={24} stroke="#FFFFFF" />} title={t("guide.bricks.booking.title")} text={t("guide.bricks.booking.text")} />
+            <Brick icon={<SmsIcon size={24} stroke="#FFFFFF" />} title={t("guide.bricks.sms.title")} text={t("guide.bricks.sms.text")} />
+            <Brick icon={<SendIcon size={24} stroke="#FFFFFF" />} title={t("guide.bricks.campaigns.title")} text={t("guide.bricks.campaigns.text")} start={{ href: "/signup?intent=campaigns", label: t("guide.bricks.campaigns.start") }} />
+            <Brick icon={<ChartIcon size={24} stroke="#FFFFFF" />} title={t("guide.bricks.overview.title")} text={t("guide.bricks.overview.text")} />
           </div>
         </div>
       </section>
@@ -249,23 +261,23 @@ export default function Page() {
       <section id="systemer" className="bg-white border-t-2 border-ink scroll-mt-6">
         <div className={`${container} py-16 sm:py-[72px] flex flex-wrap gap-10 items-start`}>
           <div className="flex-[1_1_320px] flex flex-col gap-3 max-w-[460px]">
-            <span className={eyebrow}>Passer til dit system</span>
-            <h2 className={h2}>Klodserne passer på det, I allerede bruger</h2>
-            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Kalender, CRM eller bookingsystem – Dialogbot skriver aftaler og beskeder derhen, hvor I plejer at kigge. Bruger I noget, vi ikke har koblet på endnu, siger vi det ærligt og bygger det ind under opsætningen.</p>
+            <span className={eyebrow}>{t("guide.systems.eyebrow")}</span>
+            <h2 className={h2}>{t("guide.systems.title")}</h2>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("guide.systems.lead")}</p>
           </div>
           <div className="flex-[1_1_460px] flex flex-col gap-3.5">
             <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr))]">
-              <System icon={<CalendarIcon size={18} stroke="#FFFFFF" />} name="Google Kalender" status="Klar" ready />
-              <System icon={<CalendarIcon size={18} stroke="#FFFFFF" />} name="Microsoft 365 / Outlook" status="Klar" ready />
-              <System icon={<ChartIcon size={18} stroke="#FFFFFF" />} name="Dit CRM" status="Kobles på i opsætningen" dark />
-              <System icon={<ClockIcon size={18} stroke="#FFFFFF" />} name="Dit bookingsystem" status="Kobles på i opsætningen" dark />
-              <System icon={<SmsIcon size={18} stroke="#FFFFFF" />} name="SMS og e-mail" status="Klar · virker altid" ready dark />
+              <System icon={<CalendarIcon size={18} stroke="#FFFFFF" />} name={t("guide.systems.googleCalendar")} status={t("guide.systems.ready")} ready />
+              <System icon={<CalendarIcon size={18} stroke="#FFFFFF" />} name={t("guide.systems.microsoft")} status={t("guide.systems.ready")} ready />
+              <System icon={<ChartIcon size={18} stroke="#FFFFFF" />} name={t("guide.systems.crm")} status={t("guide.systems.connectedInSetup")} dark />
+              <System icon={<ClockIcon size={18} stroke="#FFFFFF" />} name={t("guide.systems.bookingSystem")} status={t("guide.systems.connectedInSetup")} dark />
+              <System icon={<SmsIcon size={18} stroke="#FFFFFF" />} name={t("guide.systems.smsEmail")} status={t("guide.systems.readyAlways")} ready dark />
               <Link href="/proev" className="flex items-center gap-3 px-4 py-3.5 rounded-[14px] border-2 border-dashed border-ink bg-panel text-ink no-underline hover:bg-panel-deep">
                 <span className="inline-flex w-9 h-9 rounded-[10px] bg-white border-2 border-ink items-center justify-center flex-none"><PlusIcon size={18} /></span>
-                <span className="flex flex-col"><span className="font-semibold text-[15px]">Noget andet?</span><span className="text-xs text-muted">Spørg chatten – den noterer det</span></span>
+                <span className="flex flex-col"><span className="font-semibold text-[15px]">{t("guide.systems.otherTitle")}</span><span className="text-xs text-muted">{t("guide.systems.otherText")}</span></span>
               </Link>
             </div>
-            <p className="m-0 text-[13px] leading-normal text-muted">«Klar» betyder, at det virker i dag. Alt andet kobler vi på sammen med dig – og indtil det virker, får du altid aftaler og beskeder på SMS og e-mail.</p>
+            <p className="m-0 text-[13px] leading-normal text-muted">{t("guide.systems.note")}</p>
           </div>
         </div>
       </section>
@@ -274,56 +286,50 @@ export default function Page() {
       <section id="pris" className="bg-panel border-y-2 border-ink scroll-mt-6">
         <div className={`${container} py-16 sm:py-20 flex flex-col gap-10`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
-            <span className={eyebrow}>Pris</span>
-            <h2 className={h2}>Ét sæt. Én pris, ingen overraskelser.</h2>
-            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Alle priser er ekskl. moms. Opsætningen kan I gøre selv på ca. 30 minutter – den er med. Vil I have den skræddersyet af vores specialister, koster det 5.000 kr. én gang.</p>
+            <span className={eyebrow}>{t("guide.pricing.eyebrow")}</span>
+            <h2 className={h2}>{t("guide.pricing.title")}</h2>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("guide.pricing.lead")}</p>
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))]">
             <article className="flex flex-col gap-5 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block">
               <div className="flex items-center gap-3">
                 <span className="inline-flex w-11 h-11 rounded-xl bg-highlight items-center justify-center font-display font-extrabold text-[22px]">1</span>
-                <span className="font-display font-bold text-xl">Abonnement</span>
+                <span className="font-display font-bold text-xl">{t("guide.pricing.subscription.name")}</span>
               </div>
               <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-lg font-semibold text-ink-soft">Fra</span>
-                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">2.495</span>
-                <span className="text-lg font-semibold text-ink-soft">kr./md.</span>
+                <span className="text-lg font-semibold text-ink-soft">{t("guide.pricing.subscription.from")}</span>
+                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">{t("prices.monthly")}</span>
+                <span className="text-lg font-semibold text-ink-soft">{t("guide.pricing.subscription.unit")}</span>
               </div>
               <ul className="m-0 p-0 list-none flex flex-col gap-2.5 text-[15px]">
-                <li className="flex gap-2.5 items-start"><Check />Telefon, chat og booking er med</li>
-                <li className="flex gap-2.5 items-start"><Check />Ingen pris pr. henvendelse</li>
-                <li className="flex gap-2.5 items-start"><Check />Opsigelse måned til måned</li>
+                {sub.map((x) => <li key={x} className="flex gap-2.5 items-start"><Check />{x}</li>)}
               </ul>
-              <a href="#kontakt" className={`${btnPrimary} text-base`}>Kom i gang</a>
+              <a href="#kontakt" className={`${btnPrimary} text-base`}>{t("guide.pricing.subscription.cta")}</a>
             </article>
             <article className="flex flex-col gap-5 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
               <div className="flex items-center gap-3">
                 <span className="inline-flex w-11 h-11 rounded-xl bg-panel border-2 border-ink items-center justify-center font-display font-extrabold text-[22px]">+</span>
-                <span className="font-display font-bold text-xl">Udgående kampagneopkald</span>
+                <span className="font-display font-bold text-xl">{t("guide.pricing.campaign.name")}</span>
               </div>
               <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">4</span>
-                <span className="text-lg font-semibold text-ink-soft">kr. pr. udgående opkald</span>
+                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">{t("prices.perCall")}</span>
+                <span className="text-lg font-semibold text-ink-soft">{t("guide.pricing.campaign.unit")}</span>
               </div>
               <ul className="m-0 p-0 list-none flex flex-col gap-2.5 text-[15px]">
-                <li className="flex gap-2.5 items-start"><Check />Kun hvis I vil have Dialogbot til at ringe ud</li>
-                <li className="flex gap-2.5 items-start"><Check />Kontakterne har selv sagt ja til at blive ringet op</li>
-                <li className="flex gap-2.5 items-start"><Check />Højst 2 forsøg pr. kontakt – I ser den højeste pris, før I starter</li>
+                {camp.map((x) => <li key={x} className="flex gap-2.5 items-start"><Check />{x}</li>)}
               </ul>
             </article>
             <article className="flex flex-col gap-5 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
               <div className="flex items-center gap-3">
                 <span className="inline-flex w-11 h-11 rounded-xl bg-panel border-2 border-ink items-center justify-center font-display font-extrabold text-[22px]">+</span>
-                <span className="font-display font-bold text-xl">Opsætning fra vores specialister</span>
+                <span className="font-display font-bold text-xl">{t("guide.pricing.setup.name")}</span>
               </div>
               <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">5.000</span>
-                <span className="text-lg font-semibold text-ink-soft">kr. én gang</span>
+                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">{t("prices.setup")}</span>
+                <span className="text-lg font-semibold text-ink-soft">{t("guide.pricing.setup.unit")}</span>
               </div>
               <ul className="m-0 p-0 list-none flex flex-col gap-2.5 text-[15px]">
-                <li className="flex gap-2.5 items-start"><Check />Kun hvis I ikke vil gøre det selv – de tre trin er med i abonnementet</li>
-                <li className="flex gap-2.5 items-start"><Check />Skræddersyet opsætning og integration til jeres egne systemer og behov</li>
-                <li className="flex gap-2.5 items-start"><Check />Kalender, CRM eller bookingsystem kobles på, viden og priser lægges ind, stemmen trænes – og vi tester sammen, før den tændes</li>
+                {setup.map((x) => <li key={x} className="flex gap-2.5 items-start"><Check />{x}</li>)}
               </ul>
             </article>
           </div>
@@ -334,17 +340,17 @@ export default function Page() {
       <section id="demo" className="bg-white scroll-mt-6">
         <div className={`${container} py-16 sm:py-20 flex flex-wrap gap-12 items-center`}>
           <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-4">
-            <span className={eyebrow}>Demo</span>
-            <h2 className={h2}>Hør Dialogbot tage telefonen</h2>
-            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">Sådan lyder et opkald til en tømrer. Prøv den selv – så ringer den til dig og tager imod dig som en kunde.</p>
-            <Link href="/proev" className={`${btnPrimary} self-start min-h-14 px-6`}><PlayIcon size={20} />Prøv den – den ringer til dig</Link>
+            <span className={eyebrow}>{t("guide.demo.eyebrow")}</span>
+            <h2 className={h2}>{t("guide.demo.title")}</h2>
+            <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("guide.demo.lead")}</p>
+            <Link href="/proev" className={`${btnPrimary} self-start min-h-14 px-6`}><PlayIcon size={20} />{t("guide.demo.cta")}</Link>
           </div>
           <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-3 p-5 sm:p-6 rounded-[20px] bg-panel border-2 border-ink">
-            <div className="flex items-center justify-between gap-3 text-[13px] font-semibold text-muted tracking-[1px] uppercase"><span>Opkald · Tømrerfirma (eksempel)</span><span>0:48</span></div>
-            <Bubble who="D">Du har ringet til Nørgaard Tømrer, det er Dialogbot. Hvad kan jeg hjælpe med?</Bubble>
-            <Bubble who="K">Hej, jeg skal have skiftet et vindue. Kan I komme og kigge i næste uge?</Bubble>
-            <Bubble who="D">Det kan vi godt. Der er ledigt tirsdag kl. 9 eller torsdag kl. 14. Hvad passer bedst?</Bubble>
-            <div className="flex items-center gap-2 mt-1.5 px-3 py-2.5 rounded-[10px] bg-white border-[1.5px] border-ink text-[13px] font-semibold"><CheckIcon size={16} stroke="#2456F6" />Aftale booket: tirsdag kl. 9 · SMS sendt til dig og kunden</div>
+            <div className="flex items-center justify-between gap-3 text-[13px] font-semibold text-muted tracking-[1px] uppercase"><span>{t("demoCall.label")}</span><span>0:48</span></div>
+            <Bubble who="D" initial={D}>{lines[0]}</Bubble>
+            <Bubble who="K" initial={K}>{lines[1]}</Bubble>
+            <Bubble who="D" initial={D}>{lines[2]}</Bubble>
+            <div className="flex items-center gap-2 mt-1.5 px-3 py-2.5 rounded-[10px] bg-white border-[1.5px] border-ink text-[13px] font-semibold"><CheckIcon size={16} stroke="#2456F6" />{t("demoCall.booked")}</div>
           </div>
         </div>
       </section>
@@ -353,8 +359,8 @@ export default function Page() {
       <section className="bg-white border-t-2 border-ink">
         <div className={`${container} py-16 sm:py-[72px] flex flex-wrap gap-10`}>
           <div className="flex-[1_1_300px] flex flex-col gap-3">
-            <span className={eyebrow}>Spørgsmål</span>
-            <h2 className="m-0 font-display font-extrabold text-[clamp(28px,3vw,38px)] leading-[1.1] tracking-[-0.8px]">Det, de fleste spørger om først</h2>
+            <span className={eyebrow}>{t("guide.faqSection.eyebrow")}</span>
+            <h2 className="m-0 font-display font-extrabold text-[clamp(28px,3vw,38px)] leading-[1.1] tracking-[-0.8px]">{t("guide.faqSection.title")}</h2>
           </div>
           <div className="flex-[2_1_460px] flex flex-col border-t-2 border-ink">
             {FAQ.map(([q, a]) => (
@@ -373,12 +379,12 @@ export default function Page() {
       <section id="kontakt" className="bg-ink text-white scroll-mt-6">
         <div className={`${container} py-16 sm:py-20 flex flex-wrap gap-10 items-center justify-between`}>
           <div className="flex-[1_1_420px] flex flex-col gap-3.5">
-            <h2 className="m-0 font-display font-extrabold text-[clamp(32px,4vw,52px)] leading-[1.03] tracking-[-1.2px]">Klar til trin 1?</h2>
-            <p className="m-0 text-lg leading-[1.55] text-line max-w-[520px]">Ring til os, så bygger vi den sammen. Eller skriv, så ringer vi tilbage inden for åbningstiden.</p>
+            <h2 className="m-0 font-display font-extrabold text-[clamp(32px,4vw,52px)] leading-[1.03] tracking-[-1.2px]">{t("guide.cta.title")}</h2>
+            <p className="m-0 text-lg leading-[1.55] text-line max-w-[520px]">{t("guide.cta.lead")}</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <a href={PHONE_TEL} className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] bg-highlight hover:bg-highlight-deep text-ink no-underline font-display font-bold text-lg"><PhoneIcon size={20} width={2.4} />{PHONE_DISPLAY}</a>
-            <a href={`mailto:${EMAIL}`} className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] border-2 border-white text-white no-underline font-semibold text-[17px] hover:bg-white/10">Skriv til os</a>
+            <a href={`mailto:${EMAIL}`} className="inline-flex items-center gap-2.5 min-h-14 px-6 rounded-[14px] border-2 border-white text-white no-underline font-semibold text-[17px] hover:bg-white/10">{t("guide.cta.write")}</a>
           </div>
         </div>
       </section>

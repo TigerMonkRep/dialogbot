@@ -1,55 +1,48 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { SeoPage } from "@/components/seo-page";
+import Link from "@/i18n/link";
+import { getLocale, getRaw, getT } from "@/i18n/server";
+import { SeoPage, type SeoFaq } from "@/components/seo-page";
+import { alternatesFor, openGraphFor } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Priser – AI-receptionist til 2.495 kr. om måneden",
-  description: "Se prisen på Dialogbot: ét abonnement til 2.495 kr. om måneden ekskl. moms med 300 minutters indgående opkald. Telefon, chat, booking og personlig opsætning er med. Udgående kampagneopkald koster 4 kr. pr. opkald.",
-  alternates: { canonical: "/priser" },
-  openGraph: { url: "/priser", title: "Priser på AI-receptionist | Dialogbot", images: ["/opengraph-image.png"] },
-};
+const PATH = "/priser";
 
-export default function Page() {
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, locale] = await Promise.all([getT("landing.pricing.meta"), getLocale()]);
+  return { title: t("title"), description: t("description"), alternates: alternatesFor(PATH, locale),
+    openGraph: openGraphFor(PATH, locale, t("ogTitle")) };
+}
+
+export default async function Page() {
+  const [t, raw] = await Promise.all([getT("landing.pricing"), getRaw()]);
+  const s = (key: string) => t(`sections.${key}`);
   return (
-    <SeoPage path="/priser" kicker="Priser"
-      title="Ét abonnement – 2.495 kr. om måneden"
-      lead="Én pris, den fulde Dialogbot: AI-receptionist på telefonen, chatbot på hjemmesiden, booking og en opsummering af hver henvendelse. Alle priser er ekskl. moms."
-      points={["2.495 kr. om måneden – ét abonnement", "Ingen pris pr. henvendelse", "300 minutters indgående opkald om måneden er med", "Udgående kampagneopkald: 4 kr. pr. opkald + 2 kr. pr. minut", "Ingen binding", "Gør-det-selv-opsætning er med – specialist-opsætning 5.000 kr."]}
+    <SeoPage path={PATH} kicker={t("kicker")}
+      title={t("title")}
+      lead={t("lead")}
+      points={raw<string[]>("landing.pricing.points")}
       sections={[
-        { title: "Abonnementet", body: <>
-          <p><strong>2.495 kr. om måneden</strong> ekskl. moms. Der er ingen pris pr. henvendelse, og <strong>300 minutters indgående opkald om måneden er med</strong> – det rækker til de fleste små virksomheder. Taler jeres kunder mere med assistenten end det, koster hvert påbegyndt minut derudover 1,50 kr. I kan altid se jeres forbrug i Dialogbot.</p>
-          <p>Prisen på en telefonpasning – men en receptionist, der også booker tiderne i jeres kalender og sender en besked om hvert opkald.</p>
-          <p>Passer til virksomheder, hvor telefonen ringer, mens I har travlt: håndværkere, klinikker, saloner, værksteder og rådgivere. Vil I høre den først, kan I <Link href="/proev">lade Dialogbot ringe til jer</Link> – det tager to minutter og kræver ingen tilmelding.</p>
+        { title: s("subscription.title"), body: <>
+          <p><strong>{s("subscription.p1Price")}</strong>{s("subscription.p1a")}<strong>{s("subscription.p1Minutes")}</strong>{s("subscription.p1b")}</p>
+          <p>{s("subscription.p2")}</p>
+          <p>{s("subscription.p3a")}<Link href="/proev">{s("subscription.p3Link")}</Link>{s("subscription.p3b")}</p>
         </> },
-        { title: "Hvorfor vi koster mere end en chatbot", body: <>
-          <p>Der findes billigere løsninger fra omkring 400 kr. om måneden. Mange af dem prissætter efter minutter eller henvendelser, så regningen kan svinge fra måned til måned.</p>
-          <p>Dialogbot svarer <strong>kun ud fra viden, I selv har godkendt</strong>, og viser jer enhver ændring først: før → efter, «Godkend?». Den booker, flytter og aflyser tider i Google Kalender eller Microsoft 365, sender SMS-bekræftelse og giver jer en besked om hvert opkald og en rapport hver dag. Det er derfor, den koster mere – og I ved på forhånd, hvad regningen bliver. Se også <Link href="/viden/dialogbot-vs-vocalis">Dialogbot og Vocalis</Link> og <Link href="/viden/dialogbot-vs-almindelig-chatbot">Dialogbot og en almindelig chatbot</Link>.</p>
+        { title: s("whyMore.title"), body: <>
+          <p>{s("whyMore.p1")}</p>
+          <p>{s("whyMore.p2a")}<strong>{s("whyMore.p2Strong")}</strong>{s("whyMore.p2b")}<Link href="/viden/dialogbot-vs-vocalis">{s("whyMore.p2Vocalis")}</Link>{s("whyMore.p2c")}<Link href="/viden/dialogbot-vs-almindelig-chatbot">{s("whyMore.p2Chatbot")}</Link>{s("whyMore.p2d")}</p>
         </> },
-        { title: "Det er med i abonnementet", body: <ul>
-          <li>AI-receptionist og AI-telefonsvarer på dansk – døgnet rundt</li>
-          <li>Chatbot til hjemmesiden med samme viden</li>
-          <li>Booking, flytning og aflysning af tider samt SMS-bekræftelse</li>
-          <li>Opsummering af hver henvendelse, opgaver og daglig rapport</li>
-          <li>Gør-det-selv-opsætning: byggevejledningens tre trin, cirka en halv time, med assistenten ved hånden</li>
+        { title: s("included.title"), body: <ul>
+          {raw<string[]>("landing.pricing.sections.included.items").map((x) => <li key={x}>{x}</li>)}
         </ul> },
-        { title: "Opsætning fra vores specialister – 5.000 kr.", body: <>
-          <p>I kan sætte Dialogbot op selv – byggevejledningens tre trin er med i abonnementet. Vil I hellere have det gjort, sætter vores egne specialister den op for <strong>5.000 kr.</strong> ekskl. moms, betalt én gang.</p>
-          <p>Så får I en skræddersyet opsætning og integration til jeres egne systemer og behov: vi kobler kalender, CRM eller bookingsystem på, lægger jeres viden og priser ind, træner stemmen på jeres navne og tester det hele sammen med jer, før den tændes.</p>
+        { title: s("specialists.title"), body: <>
+          <p>{s("specialists.p1a")}<strong>{s("specialists.p1Price")}</strong>{s("specialists.p1b")}</p>
+          <p>{s("specialists.p2")}</p>
         </> },
-        { title: "Udgående kampagneopkald", body: <>
-          <p>Vil I have assistenten til at ringe ud til kontakter, der selv har sagt ja til at blive ringet op, koster det <strong>4 kr. pr. udgående opkald</strong> plus <strong>2 kr. pr. påbegyndt samtaleminut</strong> ekskl. moms – ligesom en telefonregning.</p>
-          <p>Hvert opkald, der ringes, tæller – også et nyt forsøg. Et ubesvaret opkald koster derfor 4 kr., og en samtale på 3 minutter 10 kr. En kontakt ringes højst 2 gange og taler højst 3 minutter i alt, og I ser den højeste pris, før I trykker Start.</p>
+        { title: s("outbound.title"), body: <>
+          <p>{s("outbound.p1a")}<strong>{s("outbound.p1Call")}</strong>{s("outbound.p1b")}<strong>{s("outbound.p1Minute")}</strong>{s("outbound.p1c")}</p>
+          <p>{s("outbound.p2")}</p>
         </> },
-        { title: "Kom i gang", body: <p>Hør først, hvordan det lyder: <Link href="/proev">bliv ringet op af Dialogbot</Link>. Når I er klar, <Link href="/signup">opretter I en konto</Link> og følger byggevejledningen – eller bestiller opsætning fra vores specialister. Læs mere om <Link href="/ai-receptionist">AI-receptionisten</Link>.</p> },
+        { title: s("start.title"), body: <p>{s("start.a")}<Link href="/proev">{s("start.tryLink")}</Link>{s("start.b")}<Link href="/signup">{s("start.signupLink")}</Link>{s("start.c")}<Link href="/ai-receptionist">{s("start.receptionistLink")}</Link>{s("start.d")}</p> },
       ]}
-      faq={[
-        ["Er der binding?", "Nej. Der er ingen binding. I kan opsige til udgangen af den løbende måned."],
-        ["Er 2.495 kr. hele prisen?", "Ja, det er hele prisen for abonnementet, ekskl. moms. Der er kun ét abonnement og ingen ekstra pris pr. henvendelse. Kun hvis I bruger mere end 300 indgående minutter om måneden, koster hvert minut derudover 1,50 kr."],
-        ["Kan jeg prøve den, før jeg køber?", "Ja. Dialogbot ringer til jer og tager imod jer, som var I en kunde – det tager to minutter og kræver ingen tilmelding. Og der er ingen binding."],
-        ["Hvor bliver mine kunders oplysninger af?", "Det står i en kort, almindelig tekst på siden om GDPR og data: hvad der gemmes, hvor, og hvordan databehandleraftalen fungerer."],
-        ["Hvad koster udgående kampagneopkald?", "4 kr. pr. udgående opkald plus 2 kr. pr. påbegyndt samtaleminut, ekskl. moms. Et ubesvaret opkald koster 4 kr., en samtale på 3 minutter 10 kr. Kontakterne skal på forhånd have sagt ja til at blive ringet op, og en kampagne ringer først, når I selv trykker Start."],
-        ["Hvad sker der, hvis vi får mange indgående opkald?", "300 minutters indgående opkald om måneden er med i abonnementet. Derudover koster hvert påbegyndt minut 1,50 kr. ekskl. moms – det står på fakturaen som en særskilt linje, og I kan følge forbruget løbende i Dialogbot."],
-        ["Koster opsætningen noget?", "Ikke hvis I gør det selv: byggevejledningens tre trin er med i abonnementet og tager cirka en halv time. Opsætning fra vores specialister koster 5.000 kr. ekskl. moms én gang og giver jer en skræddersyet opsætning og integration til jeres egne systemer og behov."],
-      ]} />
+      faq={raw<SeoFaq[]>("landing.pricing.faq")} />
   );
 }

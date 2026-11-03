@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { api, apiAudio, type ApiError } from "@/lib/client";
 import { Alert, Button, ErrorBox, Field, Icon, Input, Select, Textarea, useSubmit } from "@/components/ui";
+import { useT } from "@/i18n/client";
 
 export type Voice = {
   id: string; slug: string; display_name: string; gender: "female" | "male" | "unknown"; dialect: string | null; dialect_basis: string;
@@ -20,7 +21,6 @@ export type VoicesData = {
   settings: { version: number; default_profile_id: string | null; standard_voice: string | null; standard_default: string; fallback: "provider_voice" | "transfer"; pronunciations: { term: string; say: string }[]; pronunciation_version: number };
 };
 
-const GENDER: Record<string, string> = { female: "Kvinde", male: "Mand", unknown: "Køn ikke angivet" };
 const STEP_OK = (s: string) => s === "passed";
 
 /** One shared audio player: playing a new sample stops the previous one; Stop cancels a pending request. */
@@ -58,26 +58,28 @@ function usePlayer() {
 }
 
 function EngineNotice({ engine }: { engine: VoicesData["engine"] }) {
+  const t = useT("settings");
   if (engine === "available") return null;
   return engine === "simulated"
-    ? <Alert kind="warn" icon="science">Testmiljø: talemotoren er simuleret. Prøverne er en tone, ikke tale, og tæller ikke som afprøvet stemme.</Alert>
-    : <Alert kind="info" icon="info">Vælg den danske stemme, jeres kunder skal høre i telefonen. Flere stemmer kommer løbende.</Alert>;
+    ? <Alert kind="warn" icon="science">{t("voices.engineSimulated")}</Alert>
+    : <Alert kind="info" icon="info">{t("voices.engineMissing")}</Alert>;
 }
 
 function Steps({ standardVoice, heard, testCall }: { standardVoice: boolean; heard: string; testCall: string }) {
   // A ready-made standard voice has no sample to play: steps 2–3 are covered by the test call.
-  const viaCall = "Ikke nødvendigt for standardstemmer – I hører stemmen og velkomsten i prøveopkaldet.";
+  const t = useT("settings");
+  const viaCall = t("voices.steps.viaCall");
   const items: [string, boolean, string, string?][] = [
-    ["Vælg stemme", true, "Vælg en stemme nedenfor."],
-    ["Lyt til prøven", standardVoice || STEP_OK(heard), standardVoice ? viaCall : "Afspil standardprøven for den valgte stemme."],
-    ["Afprøv jeres velkomst", standardVoice || STEP_OK(heard), standardVoice ? viaCall : "Hør velkomsten fra Reception med stemmen."],
-    ["Gennemfør et prøveopkald", STEP_OK(testCall), "Ring til jeres nummer. Et gemt valg er ikke en bestået telefontest.", "/app/setup#checks"],
+    [t("voices.steps.choose"), true, t("voices.steps.chooseHint")],
+    [t("voices.steps.listen"), standardVoice || STEP_OK(heard), standardVoice ? viaCall : t("voices.steps.listenHint")],
+    [t("voices.steps.greeting"), standardVoice || STEP_OK(heard), standardVoice ? viaCall : t("voices.steps.greetingHint")],
+    [t("voices.steps.testCall"), STEP_OK(testCall), t("voices.steps.testCallHint"), "/app/setup#checks"],
   ];
   return (
-    <ol className="grid grid-cols-1 md:grid-cols-4 gap-2" aria-label="Opsætning af stemme">
+    <ol className="grid grid-cols-1 md:grid-cols-4 gap-2" aria-label={t("voices.steps.aria")}>
       {items.map(([label, done, hint, href], i) => (
         <li key={label} className={`rounded-2xl p-2 flex flex-col gap-1 ${done ? "bg-success-soft text-success" : "bg-paper border-2 border-ink"}`}>
-          <span className="flex items-center gap-1 eyebrow"><Icon name={done ? "check_circle" : "radio_button_unchecked"} size={16} />Trin {i + 1}</span>
+          <span className="flex items-center gap-1 eyebrow"><Icon name={done ? "check_circle" : "radio_button_unchecked"} size={16} />{t("voices.steps.step", { n: i + 1 })}</span>
           <span className="text-label-lg">{label}</span>
           {(!done || hint === viaCall) && <span className="text-body-sm">{href ? <Link className="underline" href={href}>{hint}</Link> : hint}</span>}
         </li>
@@ -96,6 +98,7 @@ async function saveSettings(wsId: string, patch: Partial<VoicesData["settings"]>
 /** Ready-made Danish voices. Work today without Dialogbot's own speech engine. The provider is never shown. */
 function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesData; canManage: boolean }) {
   const router = useRouter();
+  const t = useT("settings");
   const player = usePlayer();
   const current = data.settings.standard_voice ?? data.settings.standard_default;
   const pick = useSubmit(async (key: string) => {
@@ -105,8 +108,8 @@ function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesD
   return (
     <section aria-labelledby="std-h" className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-3">
       <div>
-        <h2 id="std-h" className="font-display text-headline-sm text-ink">Vælg telefonstemme</h2>
-        <p className="text-body-sm text-ink-soft max-w-3xl">Danske stemmer, der virker med det samme. Valget gælder alle jeres telefonnumre og kampagner, og I kan altid skifte. I hører stemmen, når I ringer til jeres nummer.</p>
+        <h2 id="std-h" className="font-display text-headline-sm text-ink">{t("voices.standard.title")}</h2>
+        <p className="text-body-sm text-ink-soft max-w-3xl">{t("voices.standard.intro")}</p>
       </div>
       <ErrorBox error={pick.error ?? player.error} />
       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -120,15 +123,15 @@ function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesD
               <div className="flex flex-col gap-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="font-display text-headline-sm text-ink">{v.name}</h3>
-                  <span className="text-label-sm text-ink-soft">{GENDER[v.gender]} · Dansk</span>
-                  {active && <span className="px-2 py-0.5 rounded-full bg-ink text-paper text-label-sm flex items-center gap-1"><Icon name="check" size={14} />Bruges nu</span>}
+                  <span className="text-label-sm text-ink-soft">{t(`voices.gender.${v.gender}`)} · {t("voices.standard.danish")}</span>
+                  {active && <span className="px-2 py-0.5 rounded-full bg-ink text-paper text-label-sm flex items-center gap-1"><Icon name="check" size={14} />{t("voices.standard.inUse")}</span>}
                 </div>
                 <p className="text-body-sm text-ink-soft">{v.description}</p>
                 <div className="flex flex-wrap gap-2">
                   {v.sample && (playing
-                    ? <Button type="button" variant="tonal" icon={player.state?.phase === "loading" ? "hourglass_top" : "stop"} onClick={player.stop} aria-label={`Stop prøven med ${v.name}`}>{player.state?.phase === "loading" ? "Henter …" : "Stop"}</Button>
-                    : <Button type="button" variant="tonal" icon="play_arrow" onClick={() => player.play(`std-${v.key}`, `/workspaces/${wsId}/voices/standard/${v.key}/sample`, {})} aria-label={`Hør ${v.name}`}>Hør {v.name}</Button>)}
-                  {canManage && !active && <Button type="button" variant="tonal" disabled={pick.pending} onClick={() => pick.run(v.key)}>Vælg {v.name}</Button>}
+                    ? <Button type="button" variant="tonal" icon={player.state?.phase === "loading" ? "hourglass_top" : "stop"} onClick={player.stop} aria-label={t("voices.standard.stopAria", { name: v.name })}>{player.state?.phase === "loading" ? t("voices.standard.loading") : t("voices.standard.stop")}</Button>
+                    : <Button type="button" variant="tonal" icon="play_arrow" onClick={() => player.play(`std-${v.key}`, `/workspaces/${wsId}/voices/standard/${v.key}/sample`, {})} aria-label={t("voices.standard.hearAria", { name: v.name })}>{t("voices.standard.hear", { name: v.name })}</Button>)}
+                  {canManage && !active && <Button type="button" variant="tonal" disabled={pick.pending} onClick={() => pick.run(v.key)}>{t("voices.standard.choose", { name: v.name })}</Button>}
                 </div>
               </div>
             </li>
@@ -139,13 +142,9 @@ function StandardVoices({ wsId, data, canManage }: { wsId: string; data: VoicesD
   );
 }
 
-const ORIGIN: Record<Voice["origin"], string> = {
-  designed: "Designet stemme", dataset_speaker: "Professionel oplæser", customer_recorded: "Jeres egen stemme",
-  hired_speaker: "Indtaler med aftale",
-};
-
 function Meta({ v }: { v: Voice }) {
-  const bits = [GENDER[v.gender], v.dialect ?? "Dialekt ikke vurderet", v.age_description ?? "Alder ukendt"];
+  const t = useT("settings");
+  const bits = [t(`voices.gender.${v.gender}`), v.dialect ?? t("voices.meta.noDialect"), v.age_description ?? t("voices.meta.ageUnknown")];
   if (v.timbre) bits.push(v.timbre);
   return <p className="text-body-sm text-ink-soft">{bits.join(" · ")}</p>;
 }
@@ -154,11 +153,13 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
   wsId: string; data: VoicesData; canManage: boolean; greeting: string; steps: { heard: string; testCall: string };
 }) {
   const router = useRouter();
+  const t = useT("settings");
   const player = usePlayer();
   const [filter, setFilter] = useState({ gender: "", dialect: "" });
   const [own, setOwn] = useState({ voice: data.settings.default_profile_id ?? data.items[0]?.id ?? "", text: "" });
-  const dialects = Array.from(new Set(data.items.map((v) => v.dialect ?? "Ikke vurderet")));
-  const shown = data.items.filter((v) => (!filter.gender || v.gender === filter.gender) && (!filter.dialect || (v.dialect ?? "Ikke vurderet") === filter.dialect));
+  const notAssessed = t("voices.library.notAssessed");
+  const dialects = Array.from(new Set(data.items.map((v) => v.dialect ?? notAssessed)));
+  const shown = data.items.filter((v) => (!filter.gender || v.gender === filter.gender) && (!filter.dialect || (v.dialect ?? notAssessed) === filter.dialect));
   const choose = useSubmit(async (profileId: string) => {
     await saveSettings(wsId, { default_profile_id: profileId });
     router.refresh();
@@ -169,21 +170,21 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
       <EngineNotice engine={data.engine} />
       <Steps standardVoice={!data.settings.default_profile_id} heard={steps.heard} testCall={steps.testCall} />
       <StandardVoices wsId={wsId} data={data} canManage={canManage} />
-      {player.state?.simulated && <p role="status" className="text-body-sm text-ink-soft">Afspiller simuleret lyd (testmotor).</p>}
+      {player.state?.simulated && <p role="status" className="text-body-sm text-ink-soft">{t("voices.library.playingSimulated")}</p>}
       <ErrorBox error={player.error ?? choose.error} />
 
       <section aria-labelledby="lib-h" className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-3">
         <div className="flex flex-wrap items-end justify-between gap-2">
-          <h2 id="lib-h" className="font-display text-headline-sm text-ink">Dialogbot-stemmer</h2>
+          <h2 id="lib-h" className="font-display text-headline-sm text-ink">{t("voices.library.title")}</h2>
           {data.items.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              <Field label="Køn"><Select value={filter.gender} onChange={(e) => setFilter({ ...filter, gender: e.target.value })}><option value="">Alle</option><option value="female">Kvinde</option><option value="male">Mand</option><option value="unknown">Ikke angivet</option></Select></Field>
-              <Field label="Dialekt"><Select value={filter.dialect} onChange={(e) => setFilter({ ...filter, dialect: e.target.value })}><option value="">Alle</option>{dialects.map((d) => <option key={d}>{d}</option>)}</Select></Field>
+              <Field label={t("voices.library.gender")}><Select value={filter.gender} onChange={(e) => setFilter({ ...filter, gender: e.target.value })}><option value="">{t("voices.library.all")}</option><option value="female">{t("voices.library.female")}</option><option value="male">{t("voices.library.male")}</option><option value="unknown">{t("voices.library.unknown")}</option></Select></Field>
+              <Field label={t("voices.library.dialect")}><Select value={filter.dialect} onChange={(e) => setFilter({ ...filter, dialect: e.target.value })}><option value="">{t("voices.library.all")}</option>{dialects.map((d) => <option key={d}>{d}</option>)}</Select></Field>
             </div>
           )}
         </div>
         {data.items.length === 0 ? (
-          <p className="text-body-md text-ink-soft">Flere danske stemmer – også med dialekt – er på vej. De bliver vist her, når de har bestået vores kontrol af rettigheder, lydkvalitet og telefonlyd. Indtil da bruger telefonen den stemme, I har valgt ovenfor.</p>
+          <p className="text-body-md text-ink-soft">{t("voices.library.empty")}</p>
         ) : (
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {shown.map((v) => {
@@ -196,21 +197,21 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
                       ? <img src={`/voices/designed/${v.slug}.svg`} alt="" width={56} height={56} className="w-14 h-14 rounded-xl shrink-0" />
                       : <Icon name="record_voice_over" className="text-ink" />}
                     <h3 className="text-label-lg text-ink">{v.display_name}</h3>
-                    {isDefault && <span className="ml-auto px-2 py-0.5 rounded-full bg-ink text-paper text-label-sm">Standard</span>}
+                    {isDefault && <span className="ml-auto px-2 py-0.5 rounded-full bg-ink text-paper text-label-sm">{t("voices.library.default")}</span>}
                   </div>
                   <Meta v={v} />
                   {v.description && <p className="text-body-sm">{v.description}</p>}
                   <div className="flex flex-wrap gap-1">
-                    <span className="px-2 py-0.5 rounded-full bg-success-soft text-success text-label-sm">{ORIGIN[v.origin]}</span>
-                    {v.active_version?.pilot && <span className="px-2 py-0.5 rounded-full bg-accent-soft text-accent-deep text-label-sm">Pilot i jeres arbejdsrum</span>}
-                    {v.active_version && v.active_version.listening_test !== "passed" && <span className="px-2 py-0.5 rounded-full bg-line text-label-sm">Lyttetest afventer</span>}
-                    {v.active_version?.simulated && <span className="px-2 py-0.5 rounded-full bg-line text-label-sm">Simuleret</span>}
+                    <span className="px-2 py-0.5 rounded-full bg-success-soft text-success text-label-sm">{t(`voices.origin.${v.origin}`)}</span>
+                    {v.active_version?.pilot && <span className="px-2 py-0.5 rounded-full bg-accent-soft text-accent-deep text-label-sm">{t("voices.library.pilot")}</span>}
+                    {v.active_version && v.active_version.listening_test !== "passed" && <span className="px-2 py-0.5 rounded-full bg-line text-label-sm">{t("voices.library.listeningPending")}</span>}
+                    {v.active_version?.simulated && <span className="px-2 py-0.5 rounded-full bg-line text-label-sm">{t("voices.library.simulated")}</span>}
                   </div>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {playing(`s-${v.id}`)
-                      ? <Button type="button" variant="tonal" icon="stop" onClick={player.stop}>{player.state?.phase === "loading" ? "Genererer … stop" : "Stop"}</Button>
-                      : <Button type="button" variant="tonal" icon="play_arrow" onClick={() => player.play(`s-${v.id}`, `/workspaces/${wsId}/voices/${v.id}/preview`, {})} aria-label={`Afspil prøve med ${v.display_name}`}>Lyt</Button>}
-                    {canManage && !isDefault && <Button type="button" icon="check" onClick={() => choose.run(v.id)} disabled={choose.pending}>Vælg som standard</Button>}
+                      ? <Button type="button" variant="tonal" icon="stop" onClick={player.stop}>{player.state?.phase === "loading" ? t("voices.library.generatingStop") : t("voices.library.stop")}</Button>
+                      : <Button type="button" variant="tonal" icon="play_arrow" onClick={() => player.play(`s-${v.id}`, `/workspaces/${wsId}/voices/${v.id}/preview`, {})} aria-label={t("voices.library.playAria", { name: v.display_name })}>{t("voices.library.listen")}</Button>}
+                    {canManage && !isDefault && <Button type="button" icon="check" onClick={() => choose.run(v.id)} disabled={choose.pending}>{t("voices.library.makeDefault")}</Button>}
                   </div>
                 </li>
               );
@@ -221,20 +222,20 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
 
       {data.items.length > 0 && (
         <section aria-labelledby="try-h" className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">
-          <h2 id="try-h" className="font-display text-headline-sm text-ink">Afprøv med jeres egen tekst</h2>
+          <h2 id="try-h" className="font-display text-headline-sm text-ink">{t("voices.library.tryTitle")}</h2>
           <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-2">
-            <Field label="Stemme"><Select value={own.voice} onChange={(e) => setOwn({ ...own, voice: e.target.value })}>{data.items.map((v) => <option key={v.id} value={v.id}>{v.display_name}</option>)}</Select></Field>
-            <Field label={`Tekst (højst ${data.preview_max_chars} tegn)`} hint={`${own.text.length}/${data.preview_max_chars}`}>
-              <Textarea value={own.text} maxLength={data.preview_max_chars} onChange={(e) => setOwn({ ...own, text: e.target.value })} placeholder="Fx: Vi har en ledig tid onsdag den 28. oktober klokken 10.30." />
+            <Field label={t("voices.library.voice")}><Select value={own.voice} onChange={(e) => setOwn({ ...own, voice: e.target.value })}>{data.items.map((v) => <option key={v.id} value={v.id}>{v.display_name}</option>)}</Select></Field>
+            <Field label={t("voices.library.text", { n: data.preview_max_chars })} hint={`${own.text.length}/${data.preview_max_chars}`}>
+              <Textarea value={own.text} maxLength={data.preview_max_chars} onChange={(e) => setOwn({ ...own, text: e.target.value })} placeholder={t("voices.library.textPlaceholder")} />
             </Field>
           </div>
           <div className="flex flex-wrap gap-2">
             {playing("own")
-              ? <Button type="button" variant="tonal" icon="stop" onClick={player.stop}>{player.state?.phase === "loading" ? "Genererer … stop" : "Stop"}</Button>
-              : <Button type="button" icon="graphic_eq" disabled={!own.voice || !own.text.trim()} onClick={() => player.play("own", `/workspaces/${wsId}/voices/${own.voice}/preview`, { text: own.text })}>Generér og afspil</Button>}
+              ? <Button type="button" variant="tonal" icon="stop" onClick={player.stop}>{player.state?.phase === "loading" ? t("voices.library.generatingStop") : t("voices.library.stop")}</Button>
+              : <Button type="button" icon="graphic_eq" disabled={!own.voice || !own.text.trim()} onClick={() => player.play("own", `/workspaces/${wsId}/voices/${own.voice}/preview`, { text: own.text })}>{t("voices.library.generate")}</Button>}
             {greeting && data.settings.default_profile_id && (playing("greet")
-              ? <Button type="button" variant="tonal" icon="stop" onClick={player.stop}>Stop</Button>
-              : <Button type="button" variant="tonal" icon="waving_hand" onClick={() => player.play("greet", `/workspaces/${wsId}/voices/${data.settings.default_profile_id}/preview`, { text: greeting.replaceAll("{virksomhed}", "").slice(0, data.preview_max_chars) })}>Hør jeres velkomst</Button>)}
+              ? <Button type="button" variant="tonal" icon="stop" onClick={player.stop}>{t("voices.library.stop")}</Button>
+              : <Button type="button" variant="tonal" icon="waving_hand" onClick={() => player.play("greet", `/workspaces/${wsId}/voices/${data.settings.default_profile_id}/preview`, { text: greeting.replaceAll("{virksomhed}", "").slice(0, data.preview_max_chars) })}>{t("voices.library.hearGreeting")}</Button>)}
           </div>
         </section>
       )}
@@ -247,36 +248,37 @@ export function VoiceLibrary({ wsId, data, canManage, greeting, steps }: {
 
 function Assignments({ wsId, data }: { wsId: string; data: VoicesData }) {
   const router = useRouter();
+  const t = useT("settings");
   const [msg, setMsg] = useState<string | null>(null);
   const save = useSubmit(async (kind: "phone-numbers" | "campaigns", id: string, value: string) => {
     await api(`/workspaces/${wsId}/voices/assignments/${kind}/${id}`, { method: "PUT", body: JSON.stringify({ voice_profile_id: value || null }) });
-    setMsg("Gemt. Nye samtaler bruger stemmen; igangværende samtaler beholder deres stemme.");
+    setMsg(t("voices.assignments.saved"));
     router.refresh();
   });
   const fallback = useSubmit(async (value: string) => {
     await saveSettings(wsId, { fallback: value as VoicesData["settings"]["fallback"] });
     router.refresh();
   });
-  const opts = [<option key="" value="">Arbejdsrummets standard</option>, ...data.items.map((v) => <option key={v.id} value={v.id}>{v.display_name}</option>)];
+  const opts = [<option key="" value="">{t("voices.assignments.workspaceDefault")}</option>, ...data.items.map((v) => <option key={v.id} value={v.id}>{v.display_name}</option>)];
   return (
     <section aria-labelledby="asg-h" className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">
-      <h2 id="asg-h" className="font-display text-headline-sm text-ink">Assistenter og kampagner</h2>
+      <h2 id="asg-h" className="font-display text-headline-sm text-ink">{t("voices.assignments.title")}</h2>
       {msg && <Alert kind="ok">{msg}</Alert>}
-      {data.assignments.phone_numbers.length === 0 && data.assignments.campaigns.length === 0 && <p className="text-body-md text-ink-soft">Ingen telefonnumre eller kampagner endnu. De bruger standardstemmen, når de oprettes.</p>}
+      {data.assignments.phone_numbers.length === 0 && data.assignments.campaigns.length === 0 && <p className="text-body-md text-ink-soft">{t("voices.assignments.empty")}</p>}
       {data.assignments.phone_numbers.map((n) => (
-        <Field key={n.id} label={`Telefonassistent ${n.e164}${n.label ? ` (${n.label})` : ""}`}>
+        <Field key={n.id} label={`${t("voices.assignments.phone", { number: n.e164 })}${n.label ? ` (${n.label})` : ""}`}>
           <Select defaultValue={n.voice_profile_id ?? ""} onChange={(e) => save.run("phone-numbers", n.id, e.target.value)}>{opts}</Select>
         </Field>
       ))}
       {data.assignments.campaigns.map((c) => (
-        <Field key={c.id} label={`Kampagne: ${c.name}`} hint="Et stemmeskift starter aldrig opkald og ændrer ikke prisen.">
+        <Field key={c.id} label={t("voices.assignments.campaign", { name: c.name })} hint={t("voices.assignments.campaignHint")}>
           <Select defaultValue={c.voice_profile_id ?? ""} onChange={(e) => save.run("campaigns", c.id, e.target.value)}>{opts}</Select>
         </Field>
       ))}
-      <Field label="Hvis stemmen fejler under et opkald" hint="Reservestemmen er den stemme, der er valgt under Indstillinger → Telefoni.">
+      <Field label={t("voices.assignments.fallback")} hint={t("voices.assignments.fallbackHint")}>
         <Select value={data.settings.fallback} onChange={(e) => fallback.run(e.target.value)}>
-          <option value="provider_voice">Skift til den godkendte reservestemme</option>
-          <option value="transfer">Ingen reservestemme – opkaldet går videre efter telefoniudbyderens fejlhåndtering</option>
+          <option value="provider_voice">{t("voices.assignments.fallbackProvider")}</option>
+          <option value="transfer">{t("voices.assignments.fallbackTransfer")}</option>
         </Select>
       </Field>
       <ErrorBox error={save.error ?? fallback.error} />
@@ -286,6 +288,7 @@ function Assignments({ wsId, data }: { wsId: string; data: VoicesData }) {
 
 function Pronunciations({ wsId, data }: { wsId: string; data: VoicesData }) {
   const router = useRouter();
+  const t = useT("settings");
   const [rows, setRows] = useState(data.settings.pronunciations.length ? data.settings.pronunciations : [{ term: "", say: "" }]);
   const [saved, setSaved] = useState(false);
   const save = useSubmit(async () => {
@@ -296,19 +299,19 @@ function Pronunciations({ wsId, data }: { wsId: string; data: VoicesData }) {
   const set = (i: number, k: "term" | "say", v: string) => { setSaved(false); setRows(rows.map((r, j) => (j === i ? { ...r, [k]: v } : r))); };
   return (
     <section aria-labelledby="pron-h" className="bg-paper rounded-2xl p-3 md:p-4 border-2 border-ink flex flex-col gap-2">
-      <h2 id="pron-h" className="font-display text-headline-sm text-ink">Udtaleordbog</h2>
-      <p className="text-body-sm text-ink-soft">Skriv hvordan navne skal udtales, fx firmanavne eller stednavne. Gælder hele ord. Version {data.settings.pronunciation_version}. En ændring kræver et nyt prøveopkald.</p>
-      {saved && <Alert kind="ok">Gemt.</Alert>}
+      <h2 id="pron-h" className="font-display text-headline-sm text-ink">{t("voices.pronunciations.title")}</h2>
+      <p className="text-body-sm text-ink-soft">{t("voices.pronunciations.intro", { version: data.settings.pronunciation_version })}</p>
+      {saved && <Alert kind="ok">{t("voices.pronunciations.saved")}</Alert>}
       {rows.map((r, i) => (
         <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-end">
-          <Field label={i === 0 ? "Skrives" : ""}><Input aria-label={`Ord ${i + 1}`} value={r.term} onChange={(e) => set(i, "term", e.target.value)} placeholder="ApS" /></Field>
-          <Field label={i === 0 ? "Udtales" : ""}><Input aria-label={`Udtale ${i + 1}`} value={r.say} onChange={(e) => set(i, "say", e.target.value)} placeholder="a p s" /></Field>
-          <Button type="button" variant="ghost" icon="delete" aria-label={`Fjern række ${i + 1}`} onClick={() => setRows(rows.filter((_, j) => j !== i))} />
+          <Field label={i === 0 ? t("voices.pronunciations.written") : ""}><Input aria-label={t("voices.pronunciations.wordAria", { n: i + 1 })} value={r.term} onChange={(e) => set(i, "term", e.target.value)} placeholder={t("voices.pronunciations.termPlaceholder")} /></Field>
+          <Field label={i === 0 ? t("voices.pronunciations.spoken") : ""}><Input aria-label={t("voices.pronunciations.sayAria", { n: i + 1 })} value={r.say} onChange={(e) => set(i, "say", e.target.value)} placeholder={t("voices.pronunciations.sayPlaceholder")} /></Field>
+          <Button type="button" variant="ghost" icon="delete" aria-label={t("voices.pronunciations.removeAria", { n: i + 1 })} onClick={() => setRows(rows.filter((_, j) => j !== i))} />
         </div>
       ))}
       <div className="flex gap-2">
-        <Button type="button" variant="tonal" icon="add" onClick={() => setRows([...rows, { term: "", say: "" }])}>Tilføj ord</Button>
-        <Button type="button" icon="save" onClick={() => save.run()} disabled={save.pending}>Gem udtaleordbog</Button>
+        <Button type="button" variant="tonal" icon="add" onClick={() => setRows([...rows, { term: "", say: "" }])}>{t("voices.pronunciations.add")}</Button>
+        <Button type="button" icon="save" onClick={() => save.run()} disabled={save.pending}>{t("voices.pronunciations.save")}</Button>
       </div>
       <ErrorBox error={save.error} />
     </section>

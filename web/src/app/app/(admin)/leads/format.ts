@@ -7,25 +7,30 @@ export type Lead = {
 };
 export type TaskItem = { id: string; lead_id: string | null; title: string; status: string; due_at: string | null; assignee_user_id: string | null; created_at: string; completed_at: string | null };
 
-export const QUAL: Record<string, [string, string]> = {
-  unqualified: ["Ikke vurderet", "bg-line text-ink-soft"],
-  qualified: ["Kvalificeret", "bg-success-soft text-success"],
-  disqualified: ["Ikke relevant", "bg-danger-soft text-danger"],
-};
-export const PIPE: Record<string, string> = { new: "Ny", contacted: "Kontaktet", won: "Vundet", lost: "Tabt" };
-export const BILL: Record<string, [string, string]> = {
-  pending: ["Afventer godkendelse", "bg-accent-soft text-accent-deep"],
-  approved: ["Godkendt", "bg-success-soft text-success"],
-  rejected: ["Afvist", "bg-line text-ink-soft"],
-};
-export const SOURCE: Record<string, string> = { webchat: "Webchat", phone: "Telefon", manual: "Manuel", campaign: "Kampagne" };
+import type { T } from "@/i18n/translate";
 
-/** Whole øre → "4,00 kr." */
-export const kr = (minor: number) => `${(minor / 100).toLocaleString("da-DK", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kr.`;
-export const when = (iso: string) => new Date(iso).toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short" });
+/** Status → pill class; labels are `app.leads.qual.<k>`, `app.leads.pipe.<k>`, `app.leads.bill.<k>`, `app.leads.source.<k>`. */
+export const QUAL: Record<string, string> = {
+  unqualified: "bg-line text-ink-soft",
+  qualified: "bg-success-soft text-success",
+  disqualified: "bg-danger-soft text-danger",
+};
+export const PIPE = ["new", "contacted", "won", "lost"];
+export const BILL: Record<string, string> = {
+  pending: "bg-accent-soft text-accent-deep",
+  approved: "bg-success-soft text-success",
+  rejected: "bg-line text-ink-soft",
+};
+const SOURCES = ["webchat", "phone", "manual", "campaign"];
+export const sourceLabel = (t: T, s: string) => (SOURCES.includes(s) ? t(`leads.source.${s}`) : s);
+
+/** Whole øre → "4,00 kr." (number in the viewer's language; the currency stays kr.). `lang` is a BCP-47 tag (HTML_LANG). */
+export const kr = (minor: number, lang = "da") => `${(minor / 100).toLocaleString(lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kr.`;
+export const when = (iso: string, lang = "da") => new Date(iso).toLocaleString(lang, { dateStyle: "short", timeStyle: "short" });
 
 /** "tirsdag 29.9. kl. 08.00–12.00" in the viewer's locale time zone. */
-export const callbackWindow = (from: string, to: string) => {
-  const f = new Date(from), t = new Date(to);
-  return `${f.toLocaleDateString("da-DK", { weekday: "long", day: "numeric", month: "numeric" })} kl. ${f.toLocaleTimeString("da-DK", { timeStyle: "short" })}–${t.toLocaleTimeString("da-DK", { timeStyle: "short" })}`;
+export const callbackWindow = (t: T, lang: string, from: string, to: string) => {
+  const f = new Date(from), e = new Date(to);
+  return t("leads.callbackWindow", { day: f.toLocaleDateString(lang, { weekday: "long", day: "numeric", month: "numeric" }),
+    from: f.toLocaleTimeString(lang, { timeStyle: "short" }), to: e.toLocaleTimeString(lang, { timeStyle: "short" }) });
 };

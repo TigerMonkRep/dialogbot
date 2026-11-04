@@ -322,8 +322,10 @@ def start(db: OrmSession, ws: Workspace, user_id: uuid.UUID, url: str) -> tuple[
     return imp, True
 
 
-def run(import_id: uuid.UUID, fetcher=None) -> None:
-    """Background job (own DB session). Never raises: failures are stored on the import row."""
+def run(import_id: uuid.UUID, fetcher=None, pages: list[dict] | None = None) -> None:
+    """Background job (own DB session). Never raises: failures are stored on the import row.
+    `pages` ([{url, title, text}], already crawled – the quiz-funnel fetches the site before the workspace exists)
+    skips the crawl."""
     from app.db import get_session_factory
 
     db = get_session_factory()()
@@ -331,7 +333,7 @@ def run(import_id: uuid.UUID, fetcher=None) -> None:
         imp = db.get(SourceImport, import_id)
         ws = db.get(Workspace, imp.workspace_id)
         try:
-            pages = crawl(imp.url, fetcher)
+            pages = pages or crawl(imp.url, fetcher)
             imp.pages = [{"url": p["url"], "title": p["title"][:200], "chars": len(p["text"])} for p in pages]
             db.commit()
             data = extract(db, ws, imp.created_by, pages)

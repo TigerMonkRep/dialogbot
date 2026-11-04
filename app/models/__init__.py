@@ -71,6 +71,7 @@ from app.models.domain import (  # noqa: F401
     WorkspaceCategory,
     WorkspaceVoiceSettings,
 )
+from app.models.funnel import FunnelDraft  # noqa: F401
 from app.models.identity import (  # noqa: F401
     ROLE_RANK,
     ROLES,

@@ -539,5 +539,205 @@
     "accept": "Sì, va bene",
     "decline": "No, grazie",
     "settings": "Impostazioni dei cookie"
+  },
+  "funnel": {
+    "entry": "Provalo in 2 minuti",
+    "shell": {
+      "skip": "Vai al contenuto",
+      "back": "Indietro",
+      "home": "Home",
+      "stepOf": "Passo {n} di {total}",
+      "simulated": "Simulato",
+      "footer": "Dialogbot · Aarhus",
+      "privacy": "Privacy"
+    },
+    "actions": {
+      "next": "Avanti",
+      "wait": "Attendi …"
+    },
+    "common": {
+      "loading": "Caricamento …",
+      "errorTitle": "Qualcosa è andato storto. Riprova.",
+      "choose": "Scegline una",
+      "chooseMany": "Scegline una o più",
+      "startOver": "Ricomincia"
+    },
+    "places": {
+      "label": "Nome dell'azienda",
+      "placeholder": "Es. Fjordgulv ApS",
+      "google": "Dati di Google",
+      "none": "Nessun suggerimento: scrivi il nome e vai avanti.",
+      "searching": "Ricerca …"
+    },
+    "estimate": {
+      "about": "circa",
+      "perWeek": "chiamate a settimana",
+      "source": "Fonte: {source}",
+      "edit": "correggi il numero se lo conosci meglio"
+    },
+    "build": {
+      "pending": "In corso …",
+      "stillPending": "Ci vuole un po' di più: finiamo in background",
+      "done": "Pronto",
+      "skipped": "Saltato",
+      "default": "Predefinito"
+    },
+    "gate": {
+      "name": "Nome",
+      "namePh": "Il tuo nome",
+      "nameHint": "Così sappiamo con chi parliamo.",
+      "phone": "Cellulare",
+      "phonePh": "12 34 56 78",
+      "phoneHint": "Ti inviamo un codice via SMS. Nessuna chiamata prima che tu l'abbia inserito.",
+      "email": "E-mail",
+      "emailPh": "tu@azienda.it",
+      "emailHint": "Qui inviamo il link al tuo account.",
+      "consent": "Consenso",
+      "next": "Avanti",
+      "send": "Invia codice",
+      "sending": "Invio …",
+      "back": "Indietro",
+      "edit": "Modifica",
+      "editAria": "Modifica {field}",
+      "errName": "Scrivi il tuo nome (almeno 2 caratteri).",
+      "errPhone": "Scrivi un numero di cellulare danese di 8 cifre.",
+      "errEmail": "Scrivi un indirizzo e-mail valido.",
+      "errConsent": "Spunta la casella per continuare.",
+      "consentPrivacyBefore": "Leggi di più nella nostra ",
+      "consentPrivacyLink": "informativa sulla privacy",
+      "consentPrivacyAfter": "."
+    },
+    "code": {
+      "lead": "Abbiamo inviato un codice a 6 cifre al {phone}.",
+      "label": "Codice dall'SMS",
+      "hint": "Il codice vale 10 minuti.",
+      "verifying": "Verifica del codice …",
+      "resent": "Nuovo codice inviato.",
+      "resend": "Invia di nuovo il codice",
+      "resendIn": "Invia di nuovo tra {s} s",
+      "wrongNumber": "Numero sbagliato?",
+      "noGate": "Non abbiamo ancora inviato un codice.",
+      "toGate": "Inserisci i tuoi dati"
+    },
+    "erhverv": {
+      "meta": {
+        "title": "Prova Dialogbot in 2 minuti: lei ti chiama",
+        "description": "Rispondi a cinque domande: costruiamo una receptionist per la tua azienda e ti chiamiamo per fartela sentire. Nessuna registrazione finché non vuoi tu.",
+        "stepTitle": "Prova Dialogbot – passo {n}"
+      },
+      "hooks": {
+        "default": {
+          "eyebrow": "",
+          "title": "Di cosa vi occupate?",
+          "help": "Così la receptionist sa come accogliere i vostri clienti."
+        },
+        "stige": {
+          "eyebrow": "Sei sulla scala",
+          "title": "Il telefono squilla. Chi risponde?",
+          "help": "Rispondi a cinque domande e lei ti chiama tra 2 minuti. Di cosa vi occupate?"
+        },
+        "1605": {
+          "eyebrow": "Ore 16.05",
+          "title": "Il cliente chiama quando siete già andati via. Chi risponde?",
+          "help": "Rispondi a cinque domande e lei ti chiama tra 2 minuti. Di cosa vi occupate?"
+        },
+        "telefonsvarer": {
+          "eyebrow": "La segreteria",
+          "title": "Il cliente riattacca alla segreteria. E se qualcuno rispondesse?",
+          "help": "Rispondi a cinque domande e lei ti chiama tra 2 minuti. Di cosa vi occupate?"
+        }
+      },
+      "industries": {
+        "haandvaerker": "Artigiano",
+        "klinik": "Clinica",
+        "salon": "Parrucchiere / salone",
+        "vaerksted": "Officina",
+        "raadgiver": "Consulente",
+        "restaurant": "Ristorante"
+      },
+      "s2": {
+        "title": "Come si chiama l'azienda?",
+        "help": "Vi cerchiamo, così lei conosce indirizzo, orari e sito web."
+      },
+      "s3": {
+        "title": "Quando non rispondete al telefono?",
+        "help": "Scegli tutto ciò che vale per voi.",
+        "missed": {
+          "lunch": "A pranzo",
+          "after16": "Dopo le 16",
+          "driving": "Quando guidiamo",
+          "weekend": "Nel weekend",
+          "never_free": "Abbiamo raramente le mani libere"
+        }
+      },
+      "s4": {
+        "title": "Cosa deve saper fare?",
+        "help": "Scegline una o più: il resto si può attivare dopo.",
+        "wants": {
+          "book": {
+            "label": "Prenotare appuntamenti",
+            "hint": "Direttamente nel vostro calendario"
+          },
+          "message": {
+            "label": "Prendere messaggi",
+            "hint": "Ricevete un SMS per ogni chiamata"
+          },
+          "prices": {
+            "label": "Rispondere sui prezzi",
+            "hint": "In base al vostro sito web"
+          }
+        }
+      },
+      "s5": {
+        "title": "Stiamo costruendo la vostra receptionist …",
+        "titleNamed": "Stiamo costruendo la receptionist di {company} …",
+        "help": "Ci vuole meno di un minuto. Niente è stato ancora inviato o chiamato.",
+        "rows": {
+          "knowledge": "Conoscenza dal vostro sito",
+          "voice": "Voce per il settore",
+          "hours": "Orari di apertura",
+          "number": "Numero da cui chiamare"
+        },
+        "detail": {
+          "knowledgeSkipped": "Nessun sito trovato: potete aggiungere conoscenza dopo",
+          "hoursDefault": "Predefinito lun–ven 08–16: correggilo dopo",
+          "hoursDone": "Da Google: {hours}"
+        },
+        "cta": "Ascoltala ora"
+      },
+      "s6": {
+        "title": "Chi deve chiamare?",
+        "lead": "Nome, cellulare ed e-mail: ti inviamo un codice e lei ti chiama.",
+        "consent": "Sì, la receptionist digitale di Dialogbot può chiamarmi una volta a questo numero e mostrare come risponde al telefono per noi. Dialogbot può inviarmi un codice via SMS e creare un account per me con la mia e-mail. La chiamata viene trascritta e un dipendente di Dialogbot può contattarmi dopo riguardo a ciò di cui abbiamo parlato."
+      },
+      "s7": {
+        "title": "Inserisci il codice dell'SMS"
+      },
+      "klar": {
+        "metaTitle": "Sta chiamando ora",
+        "title": "Sta chiamando ora il {phone}",
+        "titleNoPhone": "Sta chiamando ora",
+        "lead": "Rispondi e chiedi quello che un cliente chiederebbe a {company}.",
+        "hours": "Chiama solo nei giorni feriali tra le {from} e le {to}.",
+        "closed": "Siamo fuori dall'orario delle chiamate (feriali {from}–{to}). Chiamerà appena inizia.",
+        "hoursFallback": "Chiama solo nei giorni feriali durante l'orario di apertura.",
+        "waiting": "La chiamata è in arrivo",
+        "inProgress": "La conversazione è in corso …",
+        "waitedOut": "Non abbiamo avuto risposta alla chiamata",
+        "doneTitle": "Com'è andata la conversazione",
+        "duration": "{s} secondi",
+        "noSummary": "La chiamata è terminata. Il riepilogo arriva nella vostra casella.",
+        "noCallBefore": "Non ha squillato? Chiamaci al ",
+        "noCallAfter": " e te lo mostriamo dal vivo.",
+        "makeHers": "Rendila vostra",
+        "again": "Riascolta",
+        "note": "Il tuo account è creato: ti abbiamo inviato un link per scegliere la password.",
+        "noDraft": "Non abbiamo trovato la tua bozza.",
+        "startOver": "Ricomincia",
+        "notLoggedIn": "Accedi per vedere com'è andata la chiamata.",
+        "login": "Accedi",
+        "statusAria": "Stato della chiamata"
+      }
+    }
   }
 }

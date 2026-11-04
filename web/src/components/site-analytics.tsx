@@ -18,6 +18,18 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const KEY = "db-consent";
 type Consent = "granted" | "denied" | null;
 
+/** A GA4 event (`gtag('event', name, params)`) when Google Analytics is loaded and allowed; otherwise nothing. Safe to
+ *  call anywhere in the browser – never throws, never blocks. Funnel events: funnel_step / funnel_gate /
+ *  funnel_verified / funnel_call_done with {kind, step, hook, industry}. */
+export function track(name: string, params: Record<string, string | number | null | undefined> = {}) {
+  if (typeof window === "undefined") return;
+  const g = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+  if (typeof g !== "function") return;
+  const clean: Record<string, string | number> = {};
+  for (const [k, v] of Object.entries(params)) if (v !== null && v !== undefined) clean[k] = v;
+  try { g("event", name, clean); } catch { /* analytics must never break the page */ }
+}
+
 function readConsent(): Consent {
   try { const v = localStorage.getItem(KEY); return v === "granted" || v === "denied" ? v : null; } catch { return null; }
 }

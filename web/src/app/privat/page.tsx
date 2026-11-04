@@ -66,6 +66,7 @@ export default async function PrivatLanding() {
             <p className="m-0 text-[18px] leading-normal text-ink-soft max-w-[520px]">{t("landing.lead")}</p>
             <div className="flex flex-wrap items-center gap-3 mt-1.5">
               <Link href={tryHref} className={PILL_CTA}>{t("landing.cta")}</Link>
+              <Link href="/privat/start" className="inline-flex items-center justify-center min-h-[48px] px-5 rounded-full border-2 border-ink bg-white text-[15px] font-semibold text-ink no-underline hover:bg-panel" data-funnel-entry>{t("funnel.entry")}</Link>
               <span className="text-[14px] text-muted">{t("landing.note")}</span>
             </div>
           </div>

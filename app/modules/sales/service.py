@@ -176,6 +176,7 @@ def system_prompt(db: OrmSession, ws: Workspace, d: DemoCall) -> str:
 
     return (f"{base}\n\n{CHANNEL_INSTRUCTIONS['phone'][1]}\n\n"
             + script.manuscript(name=d.name, company=d.company, industry=d.industry, industry_other=d.industry_other)
+            + (f"\n\n{script.context_section(d.context)}" if d.context else "")
             + "\n\nKundens telefonnummer: " + known_number_section(d.phone, how="det nummer, du skrev på hjemmesiden"))
 
 
@@ -222,9 +223,11 @@ def place(db: OrmSession, ws: Workspace, d: DemoCall) -> None:
 
 
 def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: str | None = None,
-                industry: str | None = None, industry_other: str | None = None) -> DemoCall | None:
+                industry: str | None = None, industry_other: str | None = None,
+                context: str | None = None) -> DemoCall | None:
     """The public door. Returns None when the number must not be called (do-not-call): the answer to the visitor
-    is the same, so the endpoint does not reveal who has opted out."""
+    is the same, so the endpoint does not reveal who has opted out. `context` (quiz-funnel): documented facts about
+    the company – address, opening hours, what the visitor answered – that the manuscript may use in the role-play."""
     now = _now()
     phone = danish_number(phone)
     if problem(db) is not None:
@@ -241,7 +244,8 @@ def request_web(db: OrmSession, *, phone: str, name: str, company: str, voice: s
     d = DemoCall(workspace_id=ws.id, source="web", phone=phone, name=name.strip()[:200], company=company.strip()[:200],
                  consent_version=CONSENT_VERSION_WEB, consent_text=CONSENT_TEXT_WEB, consented_at=now,
                  voice_key=AGENT_VOICE, industry=industry if industry in script.INDUSTRIES else None,
-                 industry_other=(script.clean_other(industry_other) or None) if industry not in script.INDUSTRIES else None)
+                 industry_other=(script.clean_other(industry_other) or None) if industry not in script.INDUSTRIES else None,
+                 context=(context or "").strip()[:4000] or None)
     db.add(d)
     if _blocked(db, ws, phone):
         d.status, d.error = "skipped", "Nummeret står på spærrelisten"

@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useT } from "@/i18n/client";
 import { ADDON, type Task, type TaskStatus } from "@/lib/privat/api";
 import { isDanishMobile } from "@/lib/privat/fake";
@@ -11,7 +12,7 @@ import { useFmt, usePlan, usePrivat } from "./store";
 const PILL = "inline-flex items-center justify-center gap-2 rounded-full font-semibold border-2 border-ink min-h-[44px] px-4 text-[15px]";
 const PRIMARY = `${PILL} bg-accent text-white hover:bg-accent-deep disabled:opacity-60`;
 const OUTLINE = `${PILL} bg-paper text-ink hover:bg-panel`;
-export const DAY_CARD = "rounded-[24px] border-2 border-ink bg-paper p-5 flex flex-col gap-3";
+export const DAY_CARD = "min-w-0 rounded-[24px] border-2 border-ink bg-paper p-5 flex flex-col gap-3";
 
 /** The three shortcut chips: Mind mig om / Lav en liste / Ring for mig. They fill the composer (never send);
  *  «Ring for mig» only when its add-on is on. */
@@ -268,15 +269,31 @@ export function DayPage() {
           <p className="m-0 text-[16px] text-ink-soft hidden xl:block">{t("day2.lead")}</p>
         </div>
         {mode === "loading" && <p className="m-0 text-[14px] text-muted" role="status">{t("common.loading")}</p>}
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-6 items-start">
+        <Suspense><WelcomeBanner /></Suspense>
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-6 items-start">
           <ChatCard />
           <YourTurn />
         </div>
       </section>
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-6 items-start">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-6 items-start">
         <TasksSection />
         <RoomCard />
       </div>
+    </div>
+  );
+}
+
+/** One-time banner after the Privat funnel (/privat/dag?velkommen=1): Peter has set the day up – the first call waits
+ *  in «Din tur». Closing it is local; the query is not re-read. */
+function WelcomeBanner() {
+  const t = useT("privat");
+  const params = useSearchParams();
+  const [open, setOpen] = useState(params.get("velkommen") === "1");
+  if (!open) return null;
+  return (
+    <div role="status" data-welcome className="flex items-center gap-2 rounded-xl border-[1.5px] border-ink bg-highlight pl-3 pr-1 py-1">
+      <span className="flex-1 min-h-[44px] inline-flex items-center text-[15px] font-semibold">{t("day.welcomeFunnel")}</span>
+      <button type="button" onClick={() => setOpen(false)} aria-label={t("list.welcomeDismiss")} className="w-11 h-11 inline-flex items-center justify-center shrink-0"><Ico name="close" size={18} /></button>
     </div>
   );
 }

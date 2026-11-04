@@ -1026,6 +1026,9 @@ class DemoCall(Base):
     voice_key: Mapped[str | None] = mapped_column(String(40))  # standard voice the visitor chose (camilla | peter)
     industry: Mapped[str | None] = mapped_column(String(40))  # sales.script.INDUSTRIES key, chosen or found in the call
     industry_other: Mapped[str | None] = mapped_column(String(80))  # the visitor's own words when none fits
+    # Extra, documented facts for the manuscript (quiz-funnel: the company's public details and the visitor's own
+    # answers), appended to the system prompt. Never instructions from the visitor.
+    context: Mapped[str | None] = mapped_column(Text)
     lead_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("leads.id", ondelete="SET NULL"))
     conversation_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("conversations.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()

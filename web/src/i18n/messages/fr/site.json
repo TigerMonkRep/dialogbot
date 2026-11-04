@@ -539,5 +539,205 @@
     "accept": "Oui, c’est d’accord",
     "decline": "Non merci",
     "settings": "Paramètres des cookies"
+  },
+  "funnel": {
+    "entry": "Essayer en 2 minutes",
+    "shell": {
+      "skip": "Aller au contenu",
+      "back": "Retour",
+      "home": "Accueil",
+      "stepOf": "Étape {n} sur {total}",
+      "simulated": "Simulé",
+      "footer": "Dialogbot · Aarhus",
+      "privacy": "Confidentialité"
+    },
+    "actions": {
+      "next": "Continuer",
+      "wait": "Patientez …"
+    },
+    "common": {
+      "loading": "Chargement …",
+      "errorTitle": "Un problème est survenu. Réessayez.",
+      "choose": "Choisissez une option",
+      "chooseMany": "Choisissez une ou plusieurs options",
+      "startOver": "Recommencer"
+    },
+    "places": {
+      "label": "Nom de l'entreprise",
+      "placeholder": "Ex. Fjordgulv ApS",
+      "google": "Données Google",
+      "none": "Aucune suggestion – saisissez le nom et continuez.",
+      "searching": "Recherche …"
+    },
+    "estimate": {
+      "about": "env.",
+      "perWeek": "appels par semaine",
+      "source": "Source : {source}",
+      "edit": "corrigez le chiffre si vous le connaissez mieux"
+    },
+    "build": {
+      "pending": "En cours …",
+      "stillPending": "Cela prend un peu plus de temps – nous terminons en arrière-plan",
+      "done": "Prêt",
+      "skipped": "Ignoré",
+      "default": "Par défaut"
+    },
+    "gate": {
+      "name": "Nom",
+      "namePh": "Votre nom",
+      "nameHint": "Pour savoir à qui nous parlons.",
+      "phone": "Mobile",
+      "phonePh": "12 34 56 78",
+      "phoneHint": "Nous vous envoyons un code par SMS. Aucun appel avant que vous l'ayez saisi.",
+      "email": "E-mail",
+      "emailPh": "vous@entreprise.fr",
+      "emailHint": "C'est ici que nous envoyons le lien vers votre compte.",
+      "consent": "Consentement",
+      "next": "Continuer",
+      "send": "Envoyer le code",
+      "sending": "Envoi …",
+      "back": "Retour",
+      "edit": "Modifier",
+      "editAria": "Modifier {field}",
+      "errName": "Saisissez votre nom (2 caractères minimum).",
+      "errPhone": "Saisissez un numéro de mobile danois à 8 chiffres.",
+      "errEmail": "Saisissez une adresse e-mail valide.",
+      "errConsent": "Cochez la case pour continuer.",
+      "consentPrivacyBefore": "En savoir plus dans notre ",
+      "consentPrivacyLink": "politique de confidentialité",
+      "consentPrivacyAfter": "."
+    },
+    "code": {
+      "lead": "Nous avons envoyé un code à 6 chiffres au {phone}.",
+      "label": "Code reçu par SMS",
+      "hint": "Le code est valable 10 minutes.",
+      "verifying": "Vérification du code …",
+      "resent": "Nouveau code envoyé.",
+      "resend": "Renvoyer le code",
+      "resendIn": "Renvoyer dans {s} s",
+      "wrongNumber": "Mauvais numéro ?",
+      "noGate": "Nous n'avons pas encore envoyé de code.",
+      "toGate": "Saisir vos coordonnées"
+    },
+    "erhverv": {
+      "meta": {
+        "title": "Essayez Dialogbot en 2 minutes – elle vous appelle",
+        "description": "Répondez à cinq questions : nous construisons une réceptionniste pour votre entreprise et vous appelons pour que vous l'entendiez. Pas d'inscription avant que vous le vouliez.",
+        "stepTitle": "Essayer Dialogbot – étape {n}"
+      },
+      "hooks": {
+        "default": {
+          "eyebrow": "",
+          "title": "Que faites-vous ?",
+          "help": "Pour que la réceptionniste sache comment accueillir vos clients."
+        },
+        "stige": {
+          "eyebrow": "Vous êtes sur l'échelle",
+          "title": "Le téléphone sonne. Qui décroche ?",
+          "help": "Répondez à cinq questions et elle vous appelle dans 2 minutes. Que faites-vous ?"
+        },
+        "1605": {
+          "eyebrow": "16 h 05",
+          "title": "Le client appelle après votre départ. Qui décroche ?",
+          "help": "Répondez à cinq questions et elle vous appelle dans 2 minutes. Que faites-vous ?"
+        },
+        "telefonsvarer": {
+          "eyebrow": "Le répondeur",
+          "title": "Le client raccroche sur le répondeur. Et si quelqu'un décrochait ?",
+          "help": "Répondez à cinq questions et elle vous appelle dans 2 minutes. Que faites-vous ?"
+        }
+      },
+      "industries": {
+        "haandvaerker": "Artisan",
+        "klinik": "Clinique",
+        "salon": "Coiffeur / salon",
+        "vaerksted": "Garage",
+        "raadgiver": "Conseil",
+        "restaurant": "Restaurant"
+      },
+      "s2": {
+        "title": "Comment s'appelle l'entreprise ?",
+        "help": "Nous vous recherchons pour qu'elle connaisse l'adresse, les horaires et le site web."
+      },
+      "s3": {
+        "title": "Quand ne répondez-vous pas au téléphone ?",
+        "help": "Cochez tout ce qui s'applique.",
+        "missed": {
+          "lunch": "À midi",
+          "after16": "Après 16 h",
+          "driving": "Sur la route",
+          "weekend": "Le week-end",
+          "never_free": "Nous avons rarement les mains libres"
+        }
+      },
+      "s4": {
+        "title": "Que doit-elle savoir faire ?",
+        "help": "Choisissez une ou plusieurs options – le reste s'active plus tard.",
+        "wants": {
+          "book": {
+            "label": "Prendre des rendez-vous",
+            "hint": "Directement dans votre agenda"
+          },
+          "message": {
+            "label": "Prendre des messages",
+            "hint": "Vous recevez un SMS par appel"
+          },
+          "prices": {
+            "label": "Répondre sur les prix",
+            "hint": "D'après votre site web"
+          }
+        }
+      },
+      "s5": {
+        "title": "Nous construisons votre réceptionniste …",
+        "titleNamed": "Nous construisons la réceptionniste de {company} …",
+        "help": "Moins d'une minute. Rien n'a encore été envoyé ni appelé.",
+        "rows": {
+          "knowledge": "Connaissances de votre site",
+          "voice": "Voix adaptée au secteur",
+          "hours": "Horaires d'ouverture",
+          "number": "Numéro d'appel"
+        },
+        "detail": {
+          "knowledgeSkipped": "Aucun site trouvé – vous pourrez ajouter des connaissances ensuite",
+          "hoursDefault": "Par défaut lun–ven 08–16 – à modifier ensuite",
+          "hoursDone": "Depuis Google : {hours}"
+        },
+        "cta": "L'écouter maintenant"
+      },
+      "s6": {
+        "title": "Qui doit-elle appeler ?",
+        "lead": "Nom, mobile et e-mail – nous envoyons un code, et elle vous appelle.",
+        "consent": "Oui, la réceptionniste numérique de Dialogbot peut m'appeler une fois à ce numéro et montrer comment elle répond au téléphone pour nous. Dialogbot peut m'envoyer un code par SMS et me créer un compte avec mon e-mail. L'appel est transcrit et un employé de Dialogbot peut me contacter ensuite au sujet de notre échange."
+      },
+      "s7": {
+        "title": "Saisissez le code reçu par SMS"
+      },
+      "klar": {
+        "metaTitle": "Elle appelle maintenant",
+        "title": "Elle appelle maintenant le {phone}",
+        "titleNoPhone": "Elle appelle maintenant",
+        "lead": "Décrochez et posez les questions qu'un client poserait à {company}.",
+        "hours": "Elle n'appelle qu'en semaine entre {from} et {to}.",
+        "closed": "C'est en dehors des heures d'appel (en semaine {from}–{to}). Elle appellera dès l'ouverture.",
+        "hoursFallback": "Elle n'appelle qu'en semaine, pendant les heures d'ouverture.",
+        "waiting": "L'appel arrive",
+        "inProgress": "La conversation est en cours …",
+        "waitedOut": "Nous n'avons pas eu de réponse à l'appel",
+        "doneTitle": "Comment s'est passée la conversation",
+        "duration": "{s} secondes",
+        "noSummary": "L'appel est terminé. Le résumé arrive dans votre boîte de réception.",
+        "noCallBefore": "Ça n'a pas sonné ? Appelez-nous au ",
+        "noCallAfter": " et nous vous le montrons en direct.",
+        "makeHers": "Faites-en la vôtre",
+        "again": "Réécouter",
+        "note": "Votre compte est créé – nous vous avons envoyé un lien pour choisir un mot de passe.",
+        "noDraft": "Nous n'avons pas trouvé votre brouillon.",
+        "startOver": "Recommencer",
+        "notLoggedIn": "Connectez-vous pour voir comment s'est passé l'appel.",
+        "login": "Se connecter",
+        "statusAria": "État de l'appel"
+      }
+    }
   }
 }

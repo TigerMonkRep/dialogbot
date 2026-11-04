@@ -539,5 +539,205 @@
     "accept": "Ja, det er greit",
     "decline": "Nei takk",
     "settings": "Innstillinger for informasjonskapsler"
+  },
+  "funnel": {
+    "entry": "Prøv på 2 minutter",
+    "shell": {
+      "skip": "Hopp til innhold",
+      "back": "Tilbake",
+      "home": "Forside",
+      "stepOf": "Trinn {n} av {total}",
+      "simulated": "Simulert",
+      "footer": "Dialogbot · Aarhus",
+      "privacy": "Personvern"
+    },
+    "actions": {
+      "next": "Videre",
+      "wait": "Vent …"
+    },
+    "common": {
+      "loading": "Henter …",
+      "errorTitle": "Noe gikk galt. Prøv igjen.",
+      "choose": "Velg én",
+      "chooseMany": "Velg én eller flere",
+      "startOver": "Start på nytt"
+    },
+    "places": {
+      "label": "Bedriftens navn",
+      "placeholder": "F.eks. Fjordgulv ApS",
+      "google": "Data fra Google",
+      "none": "Ingen forslag – skriv navnet og gå videre.",
+      "searching": "Søker …"
+    },
+    "estimate": {
+      "about": "ca.",
+      "perWeek": "anrop i uken",
+      "source": "Kilde: {source}",
+      "edit": "rett tallet hvis du vet bedre"
+    },
+    "build": {
+      "pending": "Pågår …",
+      "stillPending": "Tar litt lengre tid – vi gjør det ferdig i bakgrunnen",
+      "done": "Klar",
+      "skipped": "Hoppet over",
+      "default": "Standard"
+    },
+    "gate": {
+      "name": "Navn",
+      "namePh": "Navnet ditt",
+      "nameHint": "Så vet vi hvem vi snakker med.",
+      "phone": "Mobil",
+      "phonePh": "12 34 56 78",
+      "phoneHint": "Vi sender en kode på SMS. Ingen anrop før du har tastet den.",
+      "email": "E-post",
+      "emailPh": "deg@firma.no",
+      "emailHint": "Hit sender vi lenken til kontoen din.",
+      "consent": "Samtykke",
+      "next": "Videre",
+      "send": "Send kode",
+      "sending": "Sender …",
+      "back": "Tilbake",
+      "edit": "Endre",
+      "editAria": "Endre {field}",
+      "errName": "Skriv navnet ditt (minst 2 tegn).",
+      "errPhone": "Skriv et dansk mobilnummer med 8 sifre.",
+      "errEmail": "Skriv en gyldig e-postadresse.",
+      "errConsent": "Kryss av for å fortsette.",
+      "consentPrivacyBefore": "Les mer i vår ",
+      "consentPrivacyLink": "personvernerklæring",
+      "consentPrivacyAfter": "."
+    },
+    "code": {
+      "lead": "Vi har sendt en 6-sifret kode til {phone}.",
+      "label": "Kode fra SMS",
+      "hint": "Koden gjelder i 10 minutter.",
+      "verifying": "Sjekker koden …",
+      "resent": "Ny kode sendt.",
+      "resend": "Send koden på nytt",
+      "resendIn": "Send på nytt om {s} sek.",
+      "wrongNumber": "Feil nummer?",
+      "noGate": "Vi har ikke sendt en kode ennå.",
+      "toGate": "Skriv inn opplysningene dine"
+    },
+    "erhverv": {
+      "meta": {
+        "title": "Prøv Dialogbot på 2 minutter – hun ringer deg",
+        "description": "Svar på fem spørsmål, så bygger vi en resepsjonist til bedriften deres og ringer deg, så du kan høre henne. Ingen registrering før du vil.",
+        "stepTitle": "Prøv Dialogbot – trinn {n}"
+      },
+      "hooks": {
+        "default": {
+          "eyebrow": "",
+          "title": "Hva driver dere med?",
+          "help": "Da vet resepsjonisten hvordan hun tar imot kundene deres."
+        },
+        "stige": {
+          "eyebrow": "Du står i stigen",
+          "title": "Telefonen ringer. Hvem tar den?",
+          "help": "Svar på fem spørsmål, så ringer hun deg om 2 minutter. Hva driver dere med?"
+        },
+        "1605": {
+          "eyebrow": "Kl. 16.05",
+          "title": "Kunden ringer etter at dere har gått hjem. Hvem tar den?",
+          "help": "Svar på fem spørsmål, så ringer hun deg om 2 minutter. Hva driver dere med?"
+        },
+        "telefonsvarer": {
+          "eyebrow": "Telefonsvareren",
+          "title": "Kunden legger på ved telefonsvareren. Hva om noen tok den?",
+          "help": "Svar på fem spørsmål, så ringer hun deg om 2 minutter. Hva driver dere med?"
+        }
+      },
+      "industries": {
+        "haandvaerker": "Håndverker",
+        "klinik": "Klinikk",
+        "salon": "Frisør / salong",
+        "vaerksted": "Verksted",
+        "raadgiver": "Rådgiver",
+        "restaurant": "Restaurant"
+      },
+      "s2": {
+        "title": "Hva heter bedriften?",
+        "help": "Vi slår dere opp, så hun kjenner adresse, åpningstider og nettside."
+      },
+      "s3": {
+        "title": "Når tar dere ikke telefonen?",
+        "help": "Velg alt som passer.",
+        "missed": {
+          "lunch": "I lunsjen",
+          "after16": "Etter kl. 16",
+          "driving": "Når vi kjører",
+          "weekend": "I helgen",
+          "never_free": "Vi har sjelden hendene frie"
+        }
+      },
+      "s4": {
+        "title": "Hva skal hun kunne?",
+        "help": "Velg én eller flere – resten kan dere slå på senere.",
+        "wants": {
+          "book": {
+            "label": "Booke timer",
+            "hint": "Rett i kalenderen deres"
+          },
+          "message": {
+            "label": "Ta imot beskjeder",
+            "hint": "Dere får en SMS om hvert anrop"
+          },
+          "prices": {
+            "label": "Svare på priser",
+            "hint": "Ut fra nettsiden deres"
+          }
+        }
+      },
+      "s5": {
+        "title": "Vi bygger resepsjonisten deres …",
+        "titleNamed": "Vi bygger resepsjonisten til {company} …",
+        "help": "Det tar under et minutt. Ingenting er sendt eller ringt ennå.",
+        "rows": {
+          "knowledge": "Kunnskap fra nettsiden deres",
+          "voice": "Stemme for bransjen",
+          "hours": "Åpningstider",
+          "number": "Nummer å ringe fra"
+        },
+        "detail": {
+          "knowledgeSkipped": "Ingen nettside funnet – dere kan legge til kunnskap etterpå",
+          "hoursDefault": "Standard man–fre 08–16 – endre det etterpå",
+          "hoursDone": "Fra Google: {hours}"
+        },
+        "cta": "Hør henne nå"
+      },
+      "s6": {
+        "title": "Hvem skal hun ringe til?",
+        "lead": "Navn, mobil og e-post – så sender vi en kode, og hun ringer deg.",
+        "consent": "Ja takk, Dialogbots digitale resepsjonist kan ringe meg på dette nummeret én gang og vise hvordan hun tar telefonen for oss. Dialogbot kan sende meg en SMS-kode og opprette en konto til meg med e-posten min. Samtalen blir skrevet ned, og en medarbeider fra Dialogbot kan kontakte meg etterpå om det vi snakket om."
+      },
+      "s7": {
+        "title": "Tast koden fra SMS-en"
+      },
+      "klar": {
+        "metaTitle": "Hun ringer nå",
+        "title": "Hun ringer nå til {phone}",
+        "titleNoPhone": "Hun ringer nå",
+        "lead": "Ta telefonen og spør slik en kunde ville spurt {company}.",
+        "hours": "Hun ringer bare på hverdager kl. {from}–{to}.",
+        "closed": "Dette er utenfor ringetiden (hverdager kl. {from}–{to}). Hun ringer så snart den åpner.",
+        "hoursFallback": "Hun ringer bare på hverdager innenfor åpningstiden.",
+        "waiting": "Anropet er på vei",
+        "inProgress": "Samtalen pågår …",
+        "waitedOut": "Vi fikk ikke svar på anropet",
+        "doneTitle": "Slik gikk samtalen",
+        "duration": "{s} sekunder",
+        "noSummary": "Samtalen er over. Referatet kommer i innboksen deres.",
+        "noCallBefore": "Ringte den ikke? Ring oss på ",
+        "noCallAfter": ", så viser vi det live.",
+        "makeHers": "Gjør henne til deres",
+        "again": "Hør det igjen",
+        "note": "Kontoen din er opprettet – vi har sendt deg en lenke for å velge passord.",
+        "noDraft": "Vi fant ikke utkastet ditt.",
+        "startOver": "Start på nytt",
+        "notLoggedIn": "Logg inn for å se hvordan anropet gikk.",
+        "login": "Logg inn",
+        "statusAria": "Status for anropet"
+      }
+    }
   }
 }

@@ -90,12 +90,14 @@ jobs:
             web.log
           retention-days: 14
 
-  # Dialogbot Privat in fake mode: everything is simulated in the browser, so no API or database is needed.
+  # Dialogbot Privat and the two quiz-funnels in fake mode: everything is simulated in the browser, so no API or
+  # database is needed.
   privat:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       NEXT_PUBLIC_PRIVAT_FAKE: "1"
+      NEXT_PUBLIC_FUNNEL_FAKE: "1"
       BASE_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@v4
@@ -115,6 +117,9 @@ jobs:
       - name: Playwright – Dialogbot Privat (375 + 1440 px)
         working-directory: web
         run: npx playwright test e2e/privat.spec.ts --project=desktop-1440
+      - name: Playwright – quiz-funnels /start og /privat/start (390 + 1440 px)
+        working-directory: web
+        run: npx playwright test e2e/funnel.spec.ts
       - name: Upload report
         if: always()
         uses: actions/upload-artifact@v4

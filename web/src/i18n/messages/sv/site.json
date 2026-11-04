@@ -356,7 +356,7 @@
       "description": "Inget formulär, ingen registrering. Berätta för chatten vad ditt företag heter och vad ni gör – så ringer Dialogbot upp dig och tar emot dig som din egen receptionist.",
       "ogTitle": "Testa Dialogbot – den ringer upp dig | Dialogbot"
     },
-    "eyebrow": "Steg 0 · innan du bygger något",
+    "eyebrow": "Prova Dialogbot gratis",
     "title": "Prata med den. Sedan ringer den upp dig – som din egen receptionist.",
     "lead": "Inget formulär, ingen registrering. Berätta för chatten vad ditt företag heter och vad ni gör. Sedan ringer Dialogbot upp dig och tar emot dig som om du vore en kund.",
     "chat": {
@@ -444,7 +444,6 @@
     },
     "skip": "Hoppa till innehållet",
     "badge": "Privat förhandsversion",
-    "eyebrow": "Steg 0 · Innan du bygger",
     "title": "Lås upp med förhandskod",
     "lead": "Dialogbot är en AI-receptionist för telefon, webbchatt och uppföljning – på svenska och på kundernas eget språk. Vi finslipar detaljerna inför den offentliga lanseringen. Ange inbjudningskoden du har fått för att se startsidan och skapa ett konto.",
     "codesBefore": "Koder delas ut till pilotföretag och utvalda partner. Har du redan ett konto, ",

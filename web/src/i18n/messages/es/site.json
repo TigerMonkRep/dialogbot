@@ -356,7 +356,7 @@
       "description": "Sin formularios, sin registro. Cuente al chat cómo se llama su empresa y a qué se dedica, y Dialogbot le llamará y le atenderá como si fuera su propio recepcionista.",
       "ogTitle": "Pruebe Dialogbot: le llamará | Dialogbot"
     },
-    "eyebrow": "Paso 0 · antes de construir nada",
+    "eyebrow": "Prueba Dialogbot gratis",
     "title": "Hable con él. Después le llamará, como su propio recepcionista.",
     "lead": "Sin formularios, sin registro. Cuente al chat cómo se llama su empresa y a qué se dedica. Dialogbot le llamará y le atenderá como si fuera un cliente.",
     "chat": {
@@ -444,7 +444,6 @@
     },
     "skip": "Saltar al contenido",
     "badge": "Preview privada",
-    "eyebrow": "Paso 0 · Antes de construir",
     "title": "Desbloquee con su código de acceso",
     "lead": "Dialogbot es un recepcionista con IA para teléfono, chat web y seguimiento, en el idioma de sus clientes. Estamos puliendo los detalles antes del lanzamiento público. Introduzca el código de invitación que ha recibido para ver la página de inicio y crear una cuenta.",
     "codesBefore": "Los códigos se entregan a empresas piloto y socios seleccionados. Si ya tiene una cuenta, ",

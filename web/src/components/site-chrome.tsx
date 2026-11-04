@@ -99,19 +99,24 @@ export async function SiteFooter({ compact = false }: { compact?: boolean }) {
   const quiet = "text-muted no-underline hover:text-ink inline-flex items-center min-h-8";
   return (
     <footer className="border-t-2 border-ink bg-white mt-auto">
-      <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-8 flex flex-wrap items-center justify-between gap-x-10 gap-y-4 text-sm text-muted">
-        <Logo size={28} textSize={18} />
-        <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
-          <span>{t("chrome.location")}</span>
-          <span>{t("chrome.hours")}</span>
-          <a href={`mailto:${EMAIL}`} className={link}>{EMAIL}</a>
-          <a href={PHONE_TEL} className={link}>{PHONE_INTL}</a>
+      <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-8 flex flex-col gap-5 text-sm text-muted">
+        {/* Row 1: logo | contact. Row 2: legal links | CVR – both rows share the same left and right edges. */}
+        <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-3">
+          <Logo size={28} textSize={18} />
+          <div className="flex flex-wrap gap-x-6 gap-y-1 items-center">
+            <span>{t("chrome.location")}</span>
+            <span>{t("chrome.hours")}</span>
+            <a href={`mailto:${EMAIL}`} className={link}>{EMAIL}</a>
+            <a href={PHONE_TEL} className={link}>{PHONE_INTL}</a>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
-          <Link href="/privatliv" className={link}>{t("chrome.privacy")}</Link>
-          <Link href="/gdpr" className={link}>{t("chrome.gdpr")}</Link>
-          <Link href="/vilkaar" className={link}>{t("chrome.terms")}</Link>
-          <CookieSettingsLink className={link} />
+        <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-2">
+          <div className="flex flex-wrap gap-x-6 gap-y-1 items-center">
+            <Link href="/privatliv" className={link}>{t("chrome.privacy")}</Link>
+            <Link href="/gdpr" className={link}>{t("chrome.gdpr")}</Link>
+            <Link href="/vilkaar" className={link}>{t("chrome.terms")}</Link>
+            <CookieSettingsLink className={link} />
+          </div>
           <span>CVR {COMPANY.cvr}</span>
         </div>
       </div>

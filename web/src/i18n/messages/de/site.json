@@ -356,7 +356,7 @@
       "description": "Kein Formular, keine Anmeldung. Sagen Sie dem Chat, wie Ihr Unternehmen heißt und was Sie tun – dann ruft Dialogbot Sie an und empfängt Sie als Ihr eigener Empfang.",
       "ogTitle": "Dialogbot testen – er ruft Sie an | Dialogbot"
     },
-    "eyebrow": "Schritt 0 · bevor Sie etwas einrichten",
+    "eyebrow": "Dialogbot kostenlos testen",
     "title": "Chatten Sie mit ihm. Dann ruft er Sie an – als Ihr eigener Empfang.",
     "lead": "Kein Formular, keine Anmeldung. Sagen Sie dem Chat, wie Ihr Unternehmen heißt und was Sie tun. Dann ruft Dialogbot Sie an und empfängt Sie, als wären Sie ein Kunde.",
     "chat": {
@@ -444,7 +444,6 @@
     },
     "skip": "Zum Inhalt springen",
     "badge": "Private Vorschau",
-    "eyebrow": "Schritt 0 · Bevor Sie einrichten",
     "title": "Mit Vorabcode freischalten",
     "lead": "Dialogbot ist ein KI-Rezeptionist für Telefon, Webchat und Nachverfolgung. Wir feilen vor dem öffentlichen Start noch an den Details. Geben Sie den Einladungscode ein, den Sie erhalten haben, um die Startseite zu sehen und ein Konto zu erstellen.",
     "codesBefore": "Codes werden an Pilotunternehmen und ausgewählte Partner vergeben. Wenn Sie bereits ein Konto haben, ",

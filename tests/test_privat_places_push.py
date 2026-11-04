@@ -171,7 +171,8 @@ def test_closed_now_schedules_for_next_opening(api, pv, db, fake_places, dial):
     assert r.json()["next_open_text"] == "I morgen kl. 9.00"
     t = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False, "at_next_open": True}).json()
     assert t["status"] == "planned" and t["call"]["status"] == "scheduled" and dial == []
-    assert pv.me(tok)["reserved"] == 3
+    me = pv.me(tok)  # in the trial the scheduled call is one of the plan's calls: nothing is reserved in credits
+    assert me["reserved"] == 0 and me["calls_used"] == 1 and t["usage_text"] == "Opkald 1 af 10 i Plus"
     c = db.query(PrivateCall).one()
     assert c.place_id == "fona-1" and c.scheduled_for == THU_9
     due = db.query(OutboxEvent).filter_by(event_type="privat.call_due").one()

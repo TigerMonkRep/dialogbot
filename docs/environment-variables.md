@@ -22,7 +22,7 @@
 | `AI_MODEL_ID` | nej | API | Anthropic → Models | Standard `claude-opus-5`. Logges pr. kald i `ai_usage`. |
 | `PRIVAT_AI_MODEL_ID` | nej | API | Anthropic → Models | Modellen i Dialogbot Privats chat (en person venter med telefonen i hånden – vælg en hurtig model, fx `claude-sonnet-5`). Tom = `AI_MODEL_ID`. |
 | `PRIVAT_AI_EFFORT` | nej | API | — | `low` (standard), `medium` eller `high` for Privat-chatten. Lav = korte, hurtige svar. |
-| `PRIVAT_WEB_SEARCH` | nej | API | — | `true` (standard): Privat-chatten må søge på nettet (Anthropics web_search-værktøj) efter links til, hvor noget kan købes, priser og åbningstider. `false` slår det fra. |
+| `PRIVAT_WEB_SEARCH` | nej | API | — | `true` (standard): købslink-finderen (`privat/links.py`) må søge på nettet (Anthropics web_search i et separat, lille modelkald) efter en produktside, hvor et punkt på listen kan købes; siden hentes og skal være en rigtig købsside, før linket sættes. `false` slår det fra. |
 | `ANTHROPIC_API_KEY` | ved anthropic | API | Anthropic Console → API Keys (sæt månedligt forbrugsloft) | Uden nøgle nægter processen at starte med `AI_PROVIDER=anthropic`. |
 | `AI_EFFORT` | nej | API | — | `low` / `medium` (standard) / `high`. |
 | `AI_MAX_OUTPUT_TOKENS` | nej | API | — | Standard 2048 (inkl. tænkning). |

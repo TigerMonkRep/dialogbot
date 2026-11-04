@@ -1,12 +1,31 @@
 # Miljøer og databaser
 
-Sidst verificeret 2026-10-28. Det der **ikke** kan læses (miljøvariablers værdier) er markeret.
+Sidst verificeret 2026-11-04. Det der **ikke** kan læses (miljøvariablers værdier) er markeret.
 
 | Render-tjeneste | Rolle | Database | Hvordan det er fastslået |
 |---|---|---|---|
-| `dialogbot-api-staging` | API (FastAPI) og kører `alembic upgrade head` som pre-deploy | **Supabase `dialogbot-prod`** (`wpcrnfyhukjjpcgcvxkc`, skema `dialogbot`) | `/health/ready` svarer med samme Alembic-revision som produktionsdatabasen; kun prod har `social_posts` m.fl. |
+| `dialogbot-api-staging` | API (FastAPI) og kører `alembic upgrade head` som pre-deploy | **Supabase `dialogbot-prod-fra`** (`dmnbphhocnmjiqtcjddg`, eu-central-1/Frankfurt, skema `dialogbot`) | Flyttet 2026-11-04 kl. 20.21 UTC (se nedenfor); `pg_stat_activity` i det nye projekt viser `dialogbot_app`/`dialogbot_migrate` fra Render. |
 | `dialogbot-worker-staging` | Worker (`python -m app.worker.runner`): outbox + planlagte jobs hvert minut | Samme produktionsdatabase | Workerens fejl `column … does not exist` kom fra produktionsskemaet; kladderne i `social_posts` ligger i prod |
 | – | – | Supabase `dialogbot-staging` (`zofdupmpcokvcvstsozm`) | **Ubrugt/forældet**: Alembic `3c1d29602dcc`, 65 tabeller, ingen `social_*`-tabeller. Ingen tjeneste skriver til den. Må ikke bruges til at teste migrationer, før den er migreret frem. |
+
+## Flytningen til Frankfurt (2026-11-04)
+
+Render-tjenesterne kører i Frankfurt, men databasen lå i `eu-west-1` (Irland): 25–50 ms pr. tur-retur til databasen, som
+hvert API-kald betaler flere gange. Supabase kan ikke flytte et projekt mellem regioner, så:
+
+1. Nyt projekt `dialogbot-prod-fra` (`dmnbphhocnmjiqtcjddg`, eu-central-1, Micro). `infra/supabase-roles.sql` kørt (nye
+   adgangskoder til `dialogbot_migrate`/`dialogbot_app`; kun i Render Environment).
+2. Skemaet genskabt 1:1 fra det gamle projekt (120 tabeller, 240 FK, 267 indeks – kolonner/constraints/indeks md5-sammenlignet),
+   Alembic sat til samme revision (`b4e8f2a6c1d3`).
+3. Data kopieret med `postgres_fdw` fra det nye projekt mod det gamle (4 589 rækker, alle tabeller talt op mod kilden),
+   derefter et delta-løb efter skiftet (0 nye app-rækker i vinduet). FDW-link, midlertidig læserolle og logtabel fjernet igen.
+4. `DATABASE_URL` (API + worker) og `MIGRATION_DATABASE_URL` (API) peger nu på session-pooleren
+   `aws-1-eu-central-1.pooler.supabase.com:5432` med `rolle.dmnbphhocnmjiqtcjddg` som brugernavn. Pre-deploy-migrationen kørte
+   rent; `/health/ready` 200, DB-opslag svarer på ~40 ms serverside.
+
+Det gamle projekt `dialogbot-prod` (`wpcrnfyhukjjpcgcvxkc`, eu-west-1) er **ikke** slettet – det er reserven, indtil
+flytningen er bekræftet i drift. Betalte projekter kan ikke pauses; slet det fra Supabase-dashboardet (Settings → General), når
+det ikke skal bruges mere (ellers ~10 USD/md. for compute). Ingen tjeneste skriver til det længere.
 
 Tjenesternes *navne* siger "staging", men de **er** produktion. Omdøbning er en bevidst, separat beslutning (URL'er, DNS og
 Vercel-miljøvariabler peger på dem).

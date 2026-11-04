@@ -245,7 +245,8 @@
     "businessWaiting": "{n|Én oppgave venter|# oppgaver venter} på svar fra en bedrift. Du får beskjed når de svarer.",
     "earlier": "Oppgave: {title}. Åpne oppgaven",
     "googleData": "Data fra Google",
-    "demoData": "Demodata – fiktive bedrifter, ikke fra Google"
+    "demoData": "Demodata – fiktive bedrifter, ikke fra Google",
+    "typing": "Peter skriver …"
   },
   "list": {
     "count": "{n|1 punkt|# punkter} · {done} fullført",

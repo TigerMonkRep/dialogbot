@@ -245,7 +245,8 @@
     "businessWaiting": "{n|Un'attività attende|# attività attendono} la risposta di un'azienda. Ti avviseremo quando risponde.",
     "earlier": "Attività: {title}. Apri l'attività",
     "googleData": "Dati da Google",
-    "demoData": "Dati dimostrativi – aziende fittizie, non da Google"
+    "demoData": "Dati dimostrativi – aziende fittizie, non da Google",
+    "typing": "Peter sta scrivendo …"
   },
   "list": {
     "count": "{n|1 voce|# voci} · {done} fatte",

@@ -72,7 +72,7 @@ class AIProvider(Protocol):
     model: str
 
     def complete(self, *, system: str, messages: list[dict], max_tokens: int,
-                 tools: list[dict] | None = None) -> Completion: ...
+                 tools: list[dict] | None = None, model: str | None = None, effort: str | None = None) -> Completion: ...
 
 
 class AnthropicProvider:
@@ -89,18 +89,20 @@ class AnthropicProvider:
         self.client = client or anthropic.Anthropic(api_key=settings.anthropic_api_key, timeout=60.0)
 
     def complete(self, *, system: str, messages: list[dict], max_tokens: int,
-                 tools: list[dict] | None = None) -> Completion:
+                 tools: list[dict] | None = None, model: str | None = None, effort: str | None = None) -> Completion:
+        """`model` / `effort` override the account defaults for this one call (Privat's chat runs faster)."""
         a = self._anthropic
         kwargs: dict = {
-            "model": self.model,
+            "model": model or self.model,
             "max_tokens": max_tokens,
             # One stable system block (instructions + approved knowledge) marked for prompt caching.
             "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
             "messages": messages,
-            "output_config": {"effort": self.effort},
+            "output_config": {"effort": effort or self.effort},
         }
         if tools:
-            # Function tools (name, description, input_schema); the model answers with tool_use blocks.
+            # Function tools (name, description, input_schema) and server tools ({"type": "web_search_20250305", …});
+            # the model answers with tool_use blocks for the former and runs the latter itself.
             kwargs["tools"] = tools
         if self.fallbacks:
             kwargs["betas"] = [FALLBACK_BETA]
@@ -126,16 +128,25 @@ class AnthropicProvider:
         text = "".join(b.text for b in resp.content if getattr(b, "type", None) == "text").strip()
         calls = [ToolCall(id=str(b.id), name=str(b.name), input=dict(b.input or {}))
                  for b in resp.content if getattr(b, "type", None) == "tool_use"]
-        assistant_content = [
-            {"type": "text", "text": b.text} if getattr(b, "type", None) == "text"
-            else {"type": "tool_use", "id": b.id, "name": b.name, "input": dict(b.input or {})}
-            for b in resp.content if getattr(b, "type", None) in ("text", "tool_use")
-        ]
+        # The assistant turn as it has to be replayed before tool results: text (with any citations from a web
+        # search), our tool_use blocks, and the server tool's own use/result blocks in their original order.
+        assistant_content = []
+        for b in resp.content:
+            kind = getattr(b, "type", None)
+            if kind == "text":
+                block: dict = {"type": "text", "text": b.text}
+                if getattr(b, "citations", None):
+                    block["citations"] = [c.model_dump(exclude_none=True) for c in b.citations]
+                assistant_content.append(block)
+            elif kind == "tool_use":
+                assistant_content.append({"type": "tool_use", "id": b.id, "name": b.name, "input": dict(b.input or {})})
+            elif kind in ("server_tool_use", "web_search_tool_result"):
+                assistant_content.append(b.model_dump(exclude_none=True))
         details = getattr(resp, "stop_details", None)
         return Completion(
             text=text,
             stop_reason=str(resp.stop_reason or "unknown"),
-            requested_model=self.model,
+            requested_model=model or self.model,
             served_model=served,
             usage=Usage(input_tokens=u.input_tokens or 0, output_tokens=u.output_tokens or 0,
                         cache_creation_input_tokens=u.cache_creation_input_tokens or 0,
@@ -159,8 +170,9 @@ class FakeProvider:
         self.last_messages: list[dict] | None = None
 
     def complete(self, *, system: str, messages: list[dict], max_tokens: int,
-                 tools: list[dict] | None = None) -> Completion:
+                 tools: list[dict] | None = None, model: str | None = None, effort: str | None = None) -> Completion:
         self.last_system, self.last_messages, self.last_tools = system, messages, tools
+        self.last_model, self.last_effort = model, effort
         question = messages[-1]["content"] if messages else ""
         if tools is not None and (call := self._tool_turn(question, tools)) is not None:
             return call

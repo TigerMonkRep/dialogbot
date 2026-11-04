@@ -240,7 +240,7 @@ def test_simulation_logs_tool_calls_without_running_them(api, salg, company, db)
     s = api.post(salg["op"], f"/operator/salg/companies/{company.id}/scripts", {}).json()
 
     class ToolCustomer(ai_provider.FakeProvider):
-        def complete(self, *, system, messages, max_tokens, tools=None):
+        def complete(self, *, system, messages, max_tokens, tools=None, **_):
             if system.startswith("SALES_SIM_CUSTOMER"):
                 return ai_provider.Completion(text='!registrer_frabedelse {"grund": "vil ikke"}', stop_reason="end_turn",
                                               requested_model=self.model, served_model=self.model)

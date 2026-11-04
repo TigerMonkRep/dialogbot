@@ -122,13 +122,13 @@ function Message({ m, latestCard, open, prevUser }: { m: ChatMessage; latestCard
 export function ChatPane() {
   const t = useT("privat");
   const f = useFmt();
-  const { messages, focusId, setFocus, task, error, note, setNote, mode } = usePrivat();
+  const { messages, pending, focusId, setFocus, task, error, note, setNote, mode } = usePrivat();
   const end = useRef<HTMLDivElement>(null);
   const focus = task(focusId);
   // Follow the conversation: new messages, and the last card changing state (proposal → in progress → answered).
   const last = messages[messages.length - 1];
   const lastState = last?.task_id ? `${task(last.task_id)?.status}:${task(last.task_id)?.call?.result ?? ""}` : "";
-  useEffect(() => { end.current?.scrollIntoView({ block: "end" }); }, [messages.length, lastState]);
+  useEffect(() => { end.current?.scrollIntoView({ block: "end" }); }, [messages.length, lastState, pending]);
   // The last message per task carries the live card; older ones become compact links.
   const lastFor = new Map<string, string>();
   for (const m of messages) if (m.task_id && CARD_KINDS.has(m.kind)) lastFor.set(m.task_id, m.id);
@@ -151,6 +151,15 @@ export function ChatPane() {
               </div>
             );
           })}
+          {pending && (
+            <>
+              <div className="flex flex-col gap-2"><Message m={pending} latestCard open={false} prevUser={null} /></div>
+              <div className={`${BOT} flex items-center gap-1.5`} role="status" aria-label={t("chat.typing")} data-testid="typing">
+                <span className="sr-only">{t("chat.typing")}</span>
+                {[0, 1, 2].map((i) => <span key={i} aria-hidden className="w-2 h-2 rounded-full bg-ink/60 animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />)}
+              </div>
+            </>
+          )}
           {note && (
             <div role="status" className="self-stretch flex items-start gap-2 rounded-xl border-[1.5px] border-ink bg-panel p-3 text-[14px]">
               <span className="flex-1">{note}</span>

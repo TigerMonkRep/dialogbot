@@ -21,8 +21,8 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.errors import ApiError, NotFound
-from app.models import PrivateMessage, PrivateProfile, PrivateTask, PrivateTaskItem, PrivateTaskMember
-from app.modules.privat import addons, rules, service, sharing
+from app.models import AiUsage, PrivateMessage, PrivateProfile, PrivateTask, PrivateTaskItem, PrivateTaskMember
+from app.modules.privat import addons, links, rules, service, sharing
 
 PROMPT_VERSION = "privat-v1"
 MAX_TOOL_ROUNDS = 4
@@ -51,10 +51,10 @@ Regler:
 - En rettelse af en eksisterende opgave er gratis; brug add_items/move_reminder i stedet for at lave en ny opgave.
 {search}{lists}{about}{addons}"""
 
-SEARCH_RULE = """- Links og fakta: vil brugeren have et link til, hvor noget kan købes, eller spørger om pris, åbningstider eller
-  andet, du ikke ved, så søg på nettet med web_search (helst danske butikker) og svar med 1-3 konkrete links. Sæt linket
-  på punktet (add_items med {{text, link}} til nye punkter, set_item_link til et punkt, der findes). Skriv aldrig et link,
-  du ikke har fundet i en søgning; find du intet, så sig det kort.
+SEARCH_RULE = """- Købslinks: vil brugeren have et link til, hvor noget kan købes, så kald find_buy_link med punktets tekst – den
+  søger, tjekker at siden er en rigtig købsside, og sætter linket på punktet selv. Spørg ikke først. På en ønskeliste
+  sætter du find_links: true i create_list/add_items, når punkterne er konkrete produkter (en bog, et spil, mærke +
+  model), så linket er der fra starten. Skriv aldrig selv et link.
 """
 NO_SEARCH_RULE = """- Du kan ikke slå links eller priser op; beder brugeren om det, så sig det kort og foreslå, at de sender linket.
 """
@@ -84,17 +84,23 @@ ITEM = {"anyOf": [{"type": "string"},
                         "note": {"type": "string"}}, ["text"])]}
 CORE_TOOLS = [
     {"name": "create_list", "description": "Lav en ny liste (bruger én af månedens gratis opgaver). Punkter er tekst "
-                                           "eller {text, link, note}.",
+                                           "eller {text, link, note}. find_links: true finder købslinks til punkterne "
+                                           "(ønskelister med konkrete produkter).",
      "input_schema": _obj({"title": {"type": "string"}, "type": {"type": "string", "enum": list(service.LIST_TYPES)},
-                           "items": {"type": "array", "items": ITEM}}, ["title"])},
+                           "items": {"type": "array", "items": ITEM}, "find_links": {"type": "boolean"}}, ["title"])},
     {"name": "add_items", "description": "Tilføj punkter til en eksisterende liste (gratis). Udelad task_id for den "
                                          "liste, samtalen handler om, eller den nyeste liste. Punkter er tekst eller "
-                                         "{text, link, note}.",
-     "input_schema": _obj({"task_id": {"type": "string"}, "items": {"type": "array", "items": ITEM}}, ["items"])},
-    {"name": "set_item_link", "description": "Sæt et link (hvor det kan købes) på et punkt, der allerede står på "
+                                         "{text, link, note}. find_links: true finder købslinks til de nye punkter.",
+     "input_schema": _obj({"task_id": {"type": "string"}, "items": {"type": "array", "items": ITEM},
+                           "find_links": {"type": "boolean"}}, ["items"])},
+    {"name": "set_item_link", "description": "Sæt et link, brugeren selv har sendt, på et punkt, der allerede står på "
                                              "listen. item er punktets tekst, som den står på listen.",
      "input_schema": _obj({"task_id": {"type": "string"}, "item": {"type": "string"}, "link": {"type": "string"},
                            "note": {"type": "string"}}, ["item", "link"])},
+    {"name": "find_buy_link", "description": "Find og sæt et verificeret købslink (dansk webshop, rigtig produktside) "
+                                             "på et eller flere punkter, der står på listen. items er punkternes tekst.",
+     "input_schema": _obj({"task_id": {"type": "string"}, "items": {"type": "array", "items": {"type": "string"}}},
+                          ["items"])},
     {"name": "create_reminder", "description": "Lav en påmindelse på et bestemt tidspunkt.",
      "input_schema": _obj({"title": {"type": "string"}, "remind_at": {"type": "string"}}, ["title", "remind_at"])},
     {"name": "move_reminder", "description": "Flyt en eksisterende påmindelse (gratis). remind_at er et fuldt "
@@ -118,25 +124,10 @@ def _suggest_tool(offer: list[addons.Addon]) -> dict | None:
                                                                     "enum": [a.key for a in offer]}}, ["key"])}
 
 
-def web_search_tool(city: str | None) -> dict | None:
-    """Anthropic's server-side web search, run by the model itself: links to where something can be bought, prices,
-    opening hours. Only with the real provider and PRIVAT_WEB_SEARCH on."""
-    from app.config import get_settings
-
-    s = get_settings()
-    if s.ai_provider != "anthropic" or not s.privat_web_search:
-        return None
-    loc: dict = {"type": "approximate", "country": "DK", "timezone": "Europe/Copenhagen"}
-    if city:
-        loc["city"] = city[:100]
-    return {"type": "web_search_20250305", "name": "web_search", "max_uses": 3, "user_location": loc}
-
-
-def tools_for(db: OrmSession, ws_id: uuid.UUID, *, city: str | None = None) -> tuple[list[dict], dict]:
-    """(tool definitions for the model, name → add-on tool) – only enabled add-ons contribute tools."""
-    defs = list(CORE_TOOLS)
-    if (ws := web_search_tool(city)) is not None:
-        defs.append(ws)
+def tools_for(db: OrmSession, ws_id: uuid.UUID) -> tuple[list[dict], dict]:
+    """(tool definitions for the model, name → add-on tool) – only enabled add-ons contribute tools. The buy-link
+    finder (privat/links.py) is offered when web search is on; the chat model itself never searches."""
+    defs = [t for t in CORE_TOOLS if t["name"] != "find_buy_link" or links.enabled()]
     extra = {}
     for t in addons.tools_for(db, ws_id):
         defs.append({"name": t.name, "description": t.description, "input_schema": t.input_schema})
@@ -160,11 +151,9 @@ def _system(db: OrmSession, ctx, about: PrivateTask | None) -> str:
             about_txt += "Punkter: " + ", ".join(i["text"] for i in items) + "\n"
     on = addons.enabled_keys(db, ctx.ws_id)
     addons_txt = "\nTilføjelser slået til: " + (", ".join(sorted(on)) or "ingen") + "\n"
-    profile = db.get(PrivateProfile, ctx.ws_id)
-    city = profile.location_city if profile else None
     return SYSTEM.format(name=ctx.user.display_name, call_part=" og opkald til virksomheder" if "ring-for-mig" in on
                          else "", now=now.strftime("%Y-%m-%dT%H:%M"), weekday=rules.WEEKDAYS[now.weekday()],
-                         search=SEARCH_RULE if web_search_tool(city) else NO_SEARCH_RULE,
+                         search=SEARCH_RULE if links.enabled() else NO_SEARCH_RULE,
                          lists=lists_txt, about=about_txt, addons=addons_txt)
 
 
@@ -204,8 +193,7 @@ def run(db: OrmSession, ctx, text: str, about_task_id: uuid.UUID | None) -> list
 
     settings = get_settings()
     provider = get_provider()
-    profile = db.get(PrivateProfile, ctx.ws_id)
-    tools, extra = tools_for(db, ctx.ws_id, city=profile.location_city if profile else None)
+    tools, extra = tools_for(db, ctx.ws_id)
     system = _system(db, ctx, about)
     messages = _history(db, ctx)
     ask = dict(user_id=ctx.user_id, purpose="privat_chat", system=system, prompt_version=PROMPT_VERSION, revision=0,
@@ -306,6 +294,9 @@ def h_create_list(turn: Turn, a: dict) -> str:
     task = service.create_digital(turn.db, turn.ctx, kind="list", title=title, items=items, list_type=lt)
     _apply_links(turn, task, rich)
     intro = f"Her er din {title.lower()}" + (f" med {_join(items)}." if items else ".")
+    if a.get("find_links") and items and task.status != "draft" and links.enabled():
+        found = _find_links(turn, task, [t for t, link, _n in rich if not link])
+        intro += " " + _links_text(found)
     _created(turn, task, intro)
     return f"Liste oprettet (id {task.id}, status {task.status})."
 
@@ -355,11 +346,79 @@ def h_add_items(turn: Turn, a: dict) -> str:
     _apply_links(turn, task, rich)
     names = [i.text for i in added]
     with_links = sum(1 for _t, link, _n in rich if link)
-    turn.say("text", f"Tilføjet {_join(names)}" + (" – med link til, hvor det kan købes." if with_links else
-                                                   ". Det er stadig den samme liste, og en rettelse koster ingen opgave."),
-             task_id=task.id)
+    text = f"Tilføjet {_join(names)}" + (" – med link til, hvor det kan købes." if with_links else
+                                        ". Det er stadig den samme liste, og en rettelse koster ingen opgave.")
+    if a.get("find_links") and links.enabled():
+        text += " " + _links_text(_find_links(turn, task, [t for t, link, _n in rich if not link]))
+    turn.say("text", text, task_id=task.id)
     turn.say("task", task.title, task_id=task.id)
     return f"Tilføjet til {task.id}."
+
+
+def _find_links(turn: Turn, task: PrivateTask, items: list[str]) -> list[links.BuyLink]:
+    """Search + verify + set, for the list's rows whose text matches `items`. Each search is logged in ai_usage."""
+    from app.modules.ai.provider import get_provider
+    from app.modules.ai.service import fill_usage
+
+    profile = turn.db.get(PrivateProfile, turn.ctx.ws_id)
+    results = links.find_buy_links(items, profile.location_city if profile else None)
+    provider = get_provider()
+    out = []
+    for r, completion in results:
+        if completion is not None:
+            row = AiUsage(workspace_id=turn.ctx.ws_id, user_id=turn.ctx.user_id, purpose="privat_link",
+                          provider=provider.name, requested_model=completion.requested_model,
+                          prompt_version="privat-link-v1", knowledge_revision=0)
+            turn.db.add(fill_usage(row, completion))
+        if r.found:
+            row_item = _item_named(turn, task, r.item)
+            if row_item is not None:
+                row_item.link = r.url
+                note = " · ".join(x for x in (r.shop, r.price) if x)
+                if note and not row_item.note:
+                    row_item.note = note[:500]
+        out.append(r)
+    turn.db.flush()
+    return out
+
+
+def _item_named(turn: Turn, task: PrivateTask, wanted: str) -> PrivateTaskItem | None:
+    w = wanted.strip().lower()
+    rows = list(turn.db.scalars(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id)
+                                .order_by(PrivateTaskItem.position, PrivateTaskItem.created_at)))
+    return next((r for r in rows if r.text.lower() == w), None) or \
+        next((r for r in rows if w and (w in r.text.lower() or r.text.lower() in w)), None)
+
+
+def _links_text(found: list[links.BuyLink]) -> str:
+    ok = [r for r in found if r.found]
+    missing = [r for r in found if not r.found]
+    parts = []
+    if ok:
+        parts.append("Købslink sat på " + _join_names([f"{r.item} ({r.shop}{' · ' + r.price if r.price else ''})" for r in ok])
+                      + " – tryk på punktet for at åbne det.")
+    if missing:
+        parts.append("Jeg fandt ikke en butik, der sælger " + _join_names([r.item for r in missing])
+                     + " lige nu – skriv forfatter, mærke eller model, så prøver jeg igen.")
+    return " ".join(parts)
+
+
+def _join_names(xs: list[str]) -> str:
+    return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " og " + xs[-1]
+
+
+def h_find_buy_link(turn: Turn, a: dict) -> str:
+    task, m = _resolve(turn, a.get("task_id"), "list", "editor")
+    service.can_add(task, m)
+    wanted = [str(x).strip() for x in (a.get("items") or []) if str(x).strip()][:links.MAX_ITEMS]
+    if not wanted:
+        return "Angiv punktets tekst i items."
+    # the row's own text is what we search for (the model may have shortened it)
+    names = [(_item_named(turn, task, w).text if _item_named(turn, task, w) is not None else w) for w in wanted]
+    found = _find_links(turn, task, names)
+    turn.say("text", _links_text(found), task_id=task.id)
+    turn.say("task", task.title, task_id=task.id)
+    return "; ".join(f"{r.item}: {r.url or 'intet verificeret link'}" for r in found)
 
 
 def h_set_item_link(turn: Turn, a: dict) -> str:
@@ -445,7 +504,7 @@ def h_suggest_addon(turn: Turn, a: dict) -> str:
     return "Tilføjelsen er tilbudt brugeren."
 
 
-CORE_HANDLERS = {"create_list": h_create_list, "add_items": h_add_items, "set_item_link": h_set_item_link,
+CORE_HANDLERS = {"create_list": h_create_list, "add_items": h_add_items, "set_item_link": h_set_item_link, "find_buy_link": h_find_buy_link,
                  "create_reminder": h_create_reminder,
                  "move_reminder": h_move_reminder, "list_waiting": h_list_waiting,
                  "ask_clarifying": h_ask_clarifying, "suggest_addon": h_suggest_addon}

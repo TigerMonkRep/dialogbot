@@ -225,6 +225,15 @@ def log_call(db: OrmSession, workspace: Workspace, provider, *, user_id: uuid.UU
         db.add(row)
         db.commit()
         raise
+    fill_usage(row, c)
+    db.add(row)
+    db.flush()
+    return c, row
+
+
+def fill_usage(row: AiUsage, c: Completion) -> AiUsage:
+    """Copy a completion's outcome and usage onto an ai_usage row (also for calls made outside log_call, such as the
+    link finder's parallel searches, which record their rows afterwards)."""
     row.outcome = "refused" if c.stop_reason == "refusal" else "truncated" if c.stop_reason == "max_tokens" else "ok"
     row.served_model, row.stop_reason = c.served_model, c.stop_reason[:32]
     row.input_tokens, row.output_tokens = c.usage.input_tokens, c.usage.output_tokens
@@ -232,9 +241,7 @@ def log_call(db: OrmSession, workspace: Workspace, provider, *, user_id: uuid.UU
     row.cache_read_input_tokens = c.usage.cache_read_input_tokens
     row.est_cost_usd_micros = estimate_cost_usd_micros(c)
     row.latency_ms, row.provider_request_id = c.latency_ms, c.request_id
-    db.add(row)
-    db.flush()
-    return c, row
+    return row
 
 
 def visible_reply(c: Completion) -> str:

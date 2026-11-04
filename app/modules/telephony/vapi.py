@@ -92,6 +92,11 @@ def apply_pacing(assistant: dict) -> dict:
     if isinstance(assistant.get("model"), dict):
         assistant["model"].setdefault("maxTokens", p["max_tokens"])
         assistant["model"].setdefault("temperature", p["temperature"])
+    # Vapi builds the assistant's own turns in the conversation history from a TRANSCRIPTION of the assistant's audio.
+    # Our bridge (telephony.linden) only transcribes the caller, so with it every assistant turn in the history is
+    # empty: the model never sees what it already said and answers the opening question again after each "Ja" or
+    # "Begge dele" (call 2026-11-04 19:59). The model's own text in the history fixes that for every recogniser.
+    assistant.setdefault("modelOutputInMessagesEnabled", True)
     if p.get("background_sound") and p["background_sound"] != "off":
         assistant.setdefault("backgroundSound", p["background_sound"])
     voice = assistant.get("voice")

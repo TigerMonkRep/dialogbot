@@ -15,7 +15,9 @@ Task = {
                 confirmed_text|null, business_reply|null, business_price_text|null, duration_seconds|null},
   events: [{at, text}]                            // historik, nyeste sidst
 }
-Balance = {free_used, free_limit: 10, credits, reserved, sponsor_left_today, phone_display|null, phone_verified: bool}
+Balance = {free_used, free_limit: 10, credits, reserved, sponsor_left_today, phone_display|null, phone_verified: bool,
+  plan: "none"|"basis"|"plus"|"familie", plan_status: "trial"|"active"|"past_due"|"canceled"|"expired"|"none",
+  trial_days_left: int, calls_quota: int, calls_used: int, calls_left: int, entitled: bool}   // se «Abonnement»
 ChatMessage = {id, role: "user"|"assistant", kind: "text"|"task"|"move"|"clarify"|"call_proposal"|"draft"|"waiting",
   text, task_id|null, about_task_id|null, before|null, after|null,
   options: [{id, label, sub}]|null, links: [task_id]|null, created_at}
@@ -36,9 +38,57 @@ POST /privat/calls/{task_id}/decline          → Task
 POST /privat/calls/{task_id}/retry            → Task (tilbage til awaiting_user med nyt forslag)
 POST /privat/phone/start {phone}              → {sent: true}          // SMS-kode, 6 cifre, 10 min
 POST /privat/phone/verify {code}              → Balance
-POST /privat/credits/checkout                 → {url}                 // Stripe Checkout mode=payment, 10 credits, 29,00 kr. inkl. moms
+POST /privat/credits/checkout                 → {url}                 // Stripe Checkout mode=payment, 10 credits («ekstra opkald»), 29,00 kr. inkl. moms
+GET  /privat/subscription                     → Subscription          // ?session_id=cs_… synkroniserer først fra Stripe Checkout-sessionen
+POST /privat/subscription/checkout {plan, interval} → {url}           // Stripe Checkout mode=subscription
+POST /privat/subscription/portal              → {url}                 // Stripe Billing Portal; 501 not_configured uden Stripe/kunde
 GET  /privat/ledger                           → [{id, kind, amount, text, created_at}]
 POST /privat/sponsor/claim {task_id}          → Task                  // pilot: simuleret indslag, max 2/dag
+
+## Abonnement (Dialogbot Privat: prøveperiode, Basis, Plus, Familie)
+Abonnementet afløser credits som primær model; credits bliver «ekstra opkald». Backend: `app/modules/privat/subscriptions.py`,
+tabel `private_subscriptions` (én række pr. privat arbejdsrum). Priser: `app/modules/billing/prices.py` (`PRIVAT_PLANS`, øre inkl. moms) og docs/pricing.md.
+
+- **Prøveperiode:** 14 dage fra oprettelsen af kontoen, uden kort, med Plus-rettigheder (`status:"trial"`, `plan:"plus"`). Konti fra
+  før abonnementer fandtes får prøveperioden ved første læsning (fra «nu»). Udløbet → `status:"expired"`, `plan:"none"`, `entitled:false`.
+- **entitled** = trial, active eller past_due (og canceled indtil `current_period_end`). Med rettigheder: lister/påmindelser ubegrænsede
+  (`Task.paid_by:"plan"`, `usage_text` «Med i prøveperioden» / «Med i Plus»; tæller ALDRIG på de 10 gratis), opkald trækkes af planens
+  månedskvote, apps med `included_in` kan slås til. Uden rettigheder: præcis den gamle adfærd (10 gratis opgaver/md., credits til opkald).
+- **Opkald:** kvote pr. kalendermåned (Europe/Copenhagen) = `calls_quota`; `calls_used` = godkendte plan-opkald i måneden, hvor resultatet
+  ikke er no_answer/failed (et opkald, ingen tager, tæller ikke). `approve`: er der kvote → `private_calls.paid_via:"plan"`, ingen credits
+  reserveres, `usage_text` «Opkald N af M i Plus», besvaret → «Opkald N af M i Plus · besvaret, 2 min. 10 sek.». Kvote brugt (eller ingen
+  rettigheder) → den gamle credit-sti (3 credits, `paid_via:"credits"`); 409 `insufficient_credits` får `extra {credits, needed,
+  calls_left, needs_plan}` (`needs_plan:true` = ingen plan/udløbet trial). Forslagets `usage_text`: «Opkald N af M i Plus, når du godkender»
+  eller «Højst 3 credits, når du godkender».
+- **Stripe:** Checkout `mode=subscription`, `line_items[0].price_data` {currency dkk, unit_amount (md.-pris eller årstotal), tax_behavior
+  inclusive, recurring {interval}}, `product_data.name` «Dialogbot Privat – Plus», metadata {kind:"privat_subscription", workspace_id, plan,
+  interval} på sessionen og `subscription_data.metadata`; > 48 timer tilbage af prøveperioden → `subscription_data.trial_end` = trial_ends_at.
+  success_url `/privat/konto?abonnement=ok&session_id={CHECKOUT_SESSION_ID}`, cancel_url `/privat/konto?abonnement=annulleret`.
+  Valgfri faste price-id'er: `PRIVAT_STRIPE_PRICE_<PLAN>_<INTERVAL>` (fx `PRIVAT_STRIPE_PRICE_PLUS_MONTH`); ellers inline price_data.
+  Webhook (`/webhooks/stripe`, samme WebhookEvent-idempotens som credits): `checkout.session.completed` med mode=subscription (henter
+  GET /v1/subscriptions/{id}) og `customer.subscription.created|updated|deleted` → upsert. Stripe-status trialing/active → `active`,
+  past_due/incomplete/paused → `past_due`, canceled/unpaid/incomplete_expired → `canceled`. Et ældre abonnement, der ender, rører ikke det,
+  der afløste det. `GET /privat/subscription?session_id=` læser sessionen FRA Stripe (aldrig fra browseren) og kræver, at den hører til
+  kaldernes eget arbejdsrum (404 `session_not_yours`; 422 ved ugyldigt id). Opsigelse/skift: Billing Portal (`POST /subscription/portal`,
+  return_url `/privat/konto`).
+
+```
+Subscription = {
+  plan: "none"|"basis"|"plus"|"familie",
+  status: "trial"|"active"|"past_due"|"canceled"|"expired"|"none",   // trial = lokal prøveperiode (Plus-rettigheder)
+  interval: "month"|"year"|null,
+  trial_ends_at: iso|null, trial_days_left: int,                      // dage tilbage, rundet op (dag 1 = 14)
+  current_period_end: iso|null, cancel_at_period_end: bool,
+  entitled: bool,
+  calls_quota: int, calls_used: int, calls_left: int,                 // denne kalendermåned
+  people_limit: int, apps_included: bool,
+  plans: Plan[]                                                       // kataloget (frontend hardcoder ingen priser)
+}
+Plan = {key, name, monthly_minor, yearly_monthly_minor, yearly_total_minor, calls, people, apps_included, recommended: bool, features: string[]}
+POST /privat/subscription/checkout {plan: "basis"|"plus"|"familie", interval: "month"|"year"} → {url}   (422 ved ukendt plan)
+```
+Fejlkoder: 409 `needs_plan` (add-on kræver plan; `extra {addon, plans}`), 501 `not_configured` (portal uden Stripe eller uden kunde),
+404 `session_not_yours`. `insufficient_credits` bevares som fallback for opkald.
 
 ## Tilføjelse: delte lister (ønskelister, indkøbslister, to-do)
 Lister kan deles med andre. To slags deling:
@@ -74,16 +124,26 @@ private lister og påmindelser, kvote/credits/konto. Tilføjelser i første vers
 - "ring-for-mig"  Ring for mig – opkald til virksomheder (credits pr. opkald)        status: available
 - "delte-lister"  Delte lister – fælles lister, alle kan tilføje                       status: available, gratis
 - "oenskelister"  Ønskelister – del ønsker, andre reserverer i hemmelighed            status: available, gratis
-- "kalender"      Kalender – læg aftaler i din Google/Outlook-kalender                 status: coming_soon
-- "pakker"        Pakker – følg dine forsendelser                                       status: coming_soon
+- "kalender"      Kalender – læg aftaler i din Google/Outlook-kalender                 status: coming_soon, Plus/Familie
+- "pakker"        Pakker – følg dine forsendelser                                       status: coming_soon, Plus/Familie
+- "foedselsdage"  Fødselsdage · "madplan" Madplan · "bil-og-syn" Bil & syn · "regninger" Regninger ·
+  "laege-og-tandlaege" Læge & tandlæge · "pakkeliste" Pakkeliste                       status: coming_soon, Plus/Familie
+  (ikoner: cake, utensils, car, receipt, heart, suitcase – web falder tilbage på «puzzle», indtil de er tegnet)
+"ring-for-mig" har included_in = basis/plus/familie (opkald er planens kvote; slået til bliver den ved, og uden plan bruges credits).
 Nye tilføjelser skal kunne tilføjes ved at registrere ÉT objekt i et katalog (backend: app/modules/privat/addons.py; web: læser kataloget
 fra API) – ingen ændringer spredt rundt i koden.
 
 Addon = {key, name, tagline, description, icon, category, price_text, pricing: "free"|"credits"|"monthly", monthly_price_minor|null,
   status: "available"|"beta"|"coming_soon", permissions: [string] (fx "Ringer til virksomheder du godkender", "Deler en liste via link"),
-  requires: [key], enabled: bool, enabled_at|null}
+  requires: [key], enabled: bool, enabled_at|null,
+  what: string,            // hvad den gør, 1–2 sætninger (Butikkens bundark)
+  example: string,         // hvad man siger til Peter, fx «Ring til cykelværkstedet …»
+  steps: [string],         // opsætningstrin, vist før «Start opsætningen» (= enable)
+  included_in: [plan key], // tom = gratis for alle; fx ["plus","familie"]
+  included: bool,          // kan slås til med mine nuværende rettigheder (trial = Plus)
+  requires_plan: bool}     // = included_in ikke tom
 GET    /privat/addons                    → Addon[]   (katalog + om det er slået til for mig)
-POST   /privat/addons/{key}/enable       → Addon     (409 coming_soon; idempotent)
+POST   /privat/addons/{key}/enable       → Addon     (409 coming_soon; 409 needs_plan {addon, plans} når included_in ikke dækkes; idempotent)
 POST   /privat/addons/{key}/disable      → Addon     (data bevares; delte lister jeg ejer bliver ikke slettet, men deling pauses)
 Gating: endepunkter og chat-værktøjer for en tilføjelse kræver at den er slået til (403 addon_disabled {addon:key}). Chatten får kun de
 værktøjer, hvis tilføjelser er slået til; beder brugeren om noget fra en slået-fra tilføjelse, svarer den med et kort «Slå <navn> til» (kind:"addon",
@@ -204,7 +264,7 @@ Alt ovenfor er implementeret. Afvigelser er bagudkompatible (kun ekstra felter/e
 - «Se som kunde» (operatør-sessioner) kan ALDRIG se private data: 403 `view_as_not_allowed`.
 - Isolation: et privat arbejdsrum (`workspaces.kind='personal'`) kan aldrig nås via `/workspaces/{id}/…` (404), vises ikke i
   `GET /workspaces`, admin-kundelister/-tal, daglige rapporter eller fakturering. Opgaver nås KUN via `private_task_members`.
-- Fejlkoder (409 medmindre andet): `needs_phone`, `insufficient_credits`, `outside_hours`, `sponsor_limit`, `coming_soon`,
+- Fejlkoder (409 medmindre andet): `needs_phone`, `insufficient_credits`, `outside_hours`, `sponsor_limit`, `coming_soon`, `needs_plan`,
   `already_reserved`, `not_reserved_by_you`, `share_mode_locked`, `call_not_proposed`, `call_running`, `code_expired`,
   `too_many_attempts`, `too_soon`, `demo_business`; 403: `addon_disabled` (+ `addon`), `read_only`, `owner_only`, `use_reserve`,
   `owner_cannot_reserve`, `sharing_paused`; 404 `invite_invalid`; 422 forkert kode (+ `attempts_left`); 429 `rate_limited`;
@@ -220,7 +280,8 @@ Alt ovenfor er implementeret. Afvigelser er bagudkompatible (kun ekstra felter/e
 - Påmindelsesstatus: planned → done, når påmindelsen er sendt (push; e-mail kun uden aktivt abonnement).
 
 ## Regler
-- 10 gratis digitale opgaver (lister/påmindelser) pr. kalendermåned (Europe/Copenhagen). Opkald bruger ikke gratis opgaver.
+- Med prøveperiode eller plan (`entitled`): ubegrænsede lister/påmindelser (`paid_by:"plan"`) og opkald af planens kvote – se «Abonnement».
+- Ellers 10 gratis digitale opgaver (lister/påmindelser) pr. kalendermåned (Europe/Copenhagen). Opkald bruger ikke gratis opgaver.
   Opgave nr. 11 → `draft` (en draft-påmindelse sendes aldrig) indtil `activate` (1 credit, `spend:<task_id>`) eller sponsor
   (højst 2 pr. dag, `sponsor:<task_id>`). Rettelser, afkrydsning, læsning, afklaring og alt, som medlemmer gør på en delt liste, er gratis.
 - Balance = SUM(credit_ledger). `reserve` −3, `capture` 0 (reservationen bliver forbruget), `release` +3. `reserved` = åbne reservationer.
@@ -294,7 +355,8 @@ Alt ovenfor er implementeret. Afvigelser er bagudkompatible (kun ekstra felter/e
 
 ## Nye miljøvariabler
 `PRIVAT_ENABLED`, `PRIVAT_ALLOWED_EMAILS`, `PRIVAT_POOL_NUMBERS`, `PRIVAT_STRIPE_PRICE_ID` (valgfri; ellers inline-pris 2900 øre
-inkl. moms), `PRIVAT_DEFAULT_ADDONS` (standard `ring-for-mig,delte-lister,oenskelister`), `PRIVAT_SHORT_URL_BASE`
+inkl. moms), `PRIVAT_STRIPE_PRICE_{BASIS,PLUS,FAMILIE}_{MONTH,YEAR}` (valgfri faste Stripe-priser for abonnementerne; ellers inline
+price_data), `PRIVAT_DEFAULT_ADDONS` (standard `ring-for-mig,delte-lister,oenskelister`), `PRIVAT_SHORT_URL_BASE`
 (standard `https://dialogbot.app/i/`), `PRIVAT_GROUP_URL_BASE` (standard `https://dialogbot.app/g/`).
 `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (Web Push; `python -m scripts.generate_vapid` laver et par – læg det aldrig i git).
 `GOOGLE_PLACES_API_KEY` (findes allerede) skal også stå på API-tjenesten, ikke kun workeren.

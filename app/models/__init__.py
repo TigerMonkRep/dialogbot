@@ -96,6 +96,7 @@ from app.models.privat import (  # noqa: F401, E402
     PrivatePhoneCode,
     PrivateProfile,
     PrivateReferral,
+    PrivateSubscription,
     PrivateTask,
     PrivateTaskEvent,
     PrivateTaskItem,

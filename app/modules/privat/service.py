@@ -1,8 +1,9 @@
 """Tasks, the monthly quota, reminders and the JSON shapes of docs/privat-api.md.
 
 Rules:
-- 10 new digital tasks (lists, reminders) per calendar month, Europe/Copenhagen. Editing, ticking, reading and
-  clarifying are free; a shared list is ONE task for its owner, whatever its members do.
+- With the trial or a plan (subscriptions.entitlements → entitled) lists and reminders are unlimited (paid_by 'plan').
+- Otherwise 10 new digital tasks (lists, reminders) per calendar month, Europe/Copenhagen. Editing, ticking, reading
+  and clarifying are free; a shared list is ONE task for its owner, whatever its members do.
 - Task #11 in a month is saved as a draft until activated with 1 credit (spend:<task_id>) or a sponsor spot (max 2 a
   day, sponsor:<task_id>). A draft reminder never fires.
 - A reminder is one outbox event (privat.reminder) due at remind_at; moving it cancels the old event and creates
@@ -57,13 +58,20 @@ def free_used(db: OrmSession, ws_id: uuid.UUID) -> int:
 
 
 def balance_out(db: OrmSession, ctx) -> dict:
+    from app.modules.privat import subscriptions
+
     p = ctx.profile
+    ent = subscriptions.entitlements(db, ctx.ws_id)
     return {"free_used": free_used(db, ctx.ws_id), "free_limit": rules.FREE_LIMIT,
             "credits": ledger.balance(db, ctx.ws_id), "reserved": ledger.reserved(db, ctx.ws_id),
             "sponsor_left_today": max(0, rules.SPONSOR_PER_DAY - ledger.sponsor_used_today(db, ctx.ws_id)),
             "phone_display": rules.phone_display(p.phone_e164) if p.phone_verified_at else None,
             "phone_verified": p.phone_verified_at is not None, "push_enabled": _push_enabled(db, ctx.user_id),
-            "location_city": p.location_city}
+            "location_city": p.location_city,
+            # the subscription (docs/privat-api.md): trial counts as Plus; credits are "ekstra opkald" beyond the quota
+            "plan": ent["plan"], "plan_status": ent["status"], "trial_days_left": ent["trial_days_left"],
+            "calls_quota": ent["calls_quota"], "calls_used": ent["calls_used"], "calls_left": ent["calls_left"],
+            "entitled": ent["entitled"]}
 
 
 def _push_enabled(db: OrmSession, user_id: uuid.UUID) -> bool:
@@ -100,8 +108,15 @@ def create_digital(db: OrmSession, ctx, *, kind: str, title: str, items: list[st
     else:
         task.next_step = {"shopping": "Køb ind", "wishlist": "Del ønskelisten", "todo": "Gør punkterne færdige"}.get(
             list_type or "", "Kryds af, når det er klaret")
+    from app.modules.privat import subscriptions
+
+    ent = subscriptions.entitlements(db, ctx.ws_id)
     used = free_used(db, ctx.ws_id)
-    if used < rules.FREE_LIMIT:
+    if ent["entitled"]:
+        # the trial and every plan include unlimited lists and reminders: never one of the month's free tasks
+        task.paid_by = "plan"
+        task.usage_text = "Med i prøveperioden" if ent["status"] == "trial" else f"Med i {subscriptions.plan_label(ent)}"
+    elif used < rules.FREE_LIMIT:
         task.paid_by, task.free_month = "free", rules.month_key()
         task.usage_text = f"{used + 1} af {rules.FREE_LIMIT} gratis opgaver i {rules.month_name()}"
     else:

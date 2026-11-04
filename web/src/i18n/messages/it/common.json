@@ -22,5 +22,10 @@
     "knowledge": "Risorse",
     "byIndustry": "Receptionist AI per il suo settore",
     "skip": "Vai al contenuto"
+  },
+  "audience": {
+    "business": "Per le aziende – Dialogbot Erhverv",
+    "private": "Per te a casa – Dialogbot Privat",
+    "label": "Scegli: azienda o privato"
   }
 }

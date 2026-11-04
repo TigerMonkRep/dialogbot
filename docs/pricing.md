@@ -14,6 +14,28 @@ Gældende fra 30. oktober 2026 (kampagneminutter og inkluderede indgående minut
 Tidligere fandtes to modeller (1.495 kr./md. eller 149 kr. pr. godkendt henvendelse) og kampagnepakker à 9 kr. pr.
 kontakt. De findes ikke mere.
 
+## Dialogbot Privat – abonnement (priser inkl. 25 % moms)
+
+Gældende fra 4. november 2026. Private kunder: 14 dages gratis prøveperiode med Plus-rettigheder (uden kort), derefter vælger man selv.
+Credits (10 for 29 kr.) findes stadig som «ekstra opkald», når månedens opkald er brugt (3 credits pr. besvaret opkald, uændret).
+
+| Plan | Pr. måned | Pr. måned ved årlig betaling (betales årligt) | Opkald/md. | Personer | Alle apps i Butikken |
+|---|---|---|---|---|---|
+| Basis | 49 kr. (4900 øre) | 39 kr. (46.800 øre/år) | 3 | 1 | nej |
+| **Plus** (anbefalet) | 99 kr. (9900 øre) | 79 kr. (94.800 øre/år) | 10 | 1 | ja |
+| Familie | 169 kr. (16.900 øre) | 135 kr. (162.000 øre/år) | 25 | 5 | ja |
+
+- Lister og påmindelser: ubegrænsede i prøveperioden og på alle planer. Uden plan (udløbet prøveperiode): 10 gratis opgaver/md. og
+  credits som før.
+- Opkald trækkes af planens kvote pr. kalendermåned (Europe/Copenhagen); et opkald, som ingen tager, eller som fejler, tæller ikke.
+  Når kvoten er brugt: 3 credits pr. opkald (den eksisterende logik).
+- Apps i Butikken med `included_in` (Kalender, Pakker og de kommende) kræver prøveperiode, Plus eller Familie; «Ring for mig» er med i
+  alle planer. Delte lister og ønskelister er gratis for alle.
+- Opsigelse og skift: Stripe Billing Portal. Ingen binding.
+- **Kode:** `app/modules/billing/prices.py` – `PRIVAT_PLANS` (øre inkl. moms) og `PRIVAT_TRIAL_DAYS`; `app/modules/privat/subscriptions.py`
+  læser dem, og `GET /privat/subscription` leverer kataloget til web (docs/privat-api.md), så web hardcoder ingen priser.
+  Stripe: inline `price_data` (tax_behavior inclusive) eller faste price-id'er via `PRIVAT_STRIPE_PRICE_<PLAN>_<INTERVAL>`.
+
 ## Hvor tallene bor
 
 - **Kode:** `app/modules/billing/prices.py` – `SUBSCRIPTION_MONTHLY_NET_MINOR` (249.500 øre), `CAMPAIGN_CALL_NET_MINOR`

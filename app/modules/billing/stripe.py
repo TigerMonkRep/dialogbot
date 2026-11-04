@@ -254,6 +254,18 @@ def process_event(db: OrmSession, event: dict) -> str:
         privat = on_checkout_event(db, kind, obj)  # Dialogbot Privat credit packs (mode=payment)
         if privat is not None:
             return privat
+        if kind == "checkout.session.completed":
+            from app.modules.privat.subscriptions import on_checkout_completed
+
+            privat = on_checkout_completed(db, obj)  # Dialogbot Privat subscriptions (mode=subscription)
+            if privat is not None:
+                return privat
+    if kind.startswith("customer.subscription."):
+        from app.modules.privat.subscriptions import on_subscription_event
+
+        privat = on_subscription_event(db, kind, obj)
+        if privat is not None:
+            return privat
     if kind == "checkout.session.completed" and obj.get("mode") == "setup" and obj.get("setup_intent"):
         return "applied" if save_card_from_setup_intent(db, str(obj["setup_intent"])) else "ignored"
     if kind.startswith("invoice.") and obj.get("id"):

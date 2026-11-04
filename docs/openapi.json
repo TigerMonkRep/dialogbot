@@ -3794,6 +3794,26 @@
         "title": "SponsorIn",
         "type": "object"
       },
+      "SubscriptionCheckoutIn": {
+        "properties": {
+          "interval": {
+            "default": "month",
+            "pattern": "^(month|year)$",
+            "title": "Interval",
+            "type": "string"
+          },
+          "plan": {
+            "pattern": "^(basis|plus|familie)$",
+            "title": "Plan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan"
+        ],
+        "title": "SubscriptionCheckoutIn",
+        "type": "object"
+      },
       "SuggestIn": {
         "properties": {
           "purpose": {
@@ -17223,6 +17243,177 @@
           }
         },
         "summary": "Sponsor Claim",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/subscription": {
+      "get": {
+        "description": "The trial / plan and this month's call quota. With ?session_id= (back from Stripe Checkout) the session is read\nfrom Stripe first, so the page is right before the webhook lands.",
+        "operationId": "subscription_api_v1_privat_subscription_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "session_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Session Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Subscription",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/subscription/checkout": {
+      "post": {
+        "description": "Stripe Checkout (mode=subscription). The plan becomes active through the webhook / the return sync.",
+        "operationId": "subscription_checkout_api_v1_privat_subscription_checkout_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionCheckoutIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Subscription Checkout",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/subscription/portal": {
+      "post": {
+        "description": "Stripe Billing Portal: change plan, cancel, update card. 501 not_configured without Stripe or a customer.",
+        "operationId": "subscription_portal_api_v1_privat_subscription_portal_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Subscription Portal",
         "tags": [
           "privat"
         ]

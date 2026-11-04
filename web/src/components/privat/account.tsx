@@ -1,27 +1,77 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui";
 import { useT } from "@/i18n/client";
 import { BIG, Eyebrow, LINK, Pill, Sim } from "./bits";
 import { PhoneVerify } from "./cards";
 import { PushPrompt } from "./push";
 import { Ico, Tile } from "./icons";
-import { useFmt, usePrivat } from "./store";
+import { useFmt, usePlan, usePrivat } from "./store";
 import { bareLink, smsHref, platformOf } from "@/lib/privat/sms";
-import type { ShareResult } from "@/lib/privat/api";
+import { CONFLICT, type BillingInterval, type PlanKey, type ShareResult } from "@/lib/privat/api";
+import type { ApiError } from "@/lib/client";
+
+const PLAN_KEYS: PlanKey[] = ["basis", "plus", "familie"];
+const isPlanKey = (v: string | null): v is PlanKey => !!v && (PLAN_KEYS as string[]).includes(v);
 
 export function AccountPane() {
   const t = useT("privat");
   const f = useFmt();
-  const { balance, ledger, session, mode, simulated, fake, run, note, setNote, openSheet, go, loggedIn } = usePrivat();
+  const { balance, ledger, session, mode, simulated, fake, run, note, setNote, openSheet, go, loggedIn, api, refresh, setSubscription, setError } = usePrivat();
+  const p = usePlan();
   const params = useSearchParams();
+  const router = useRouter();
   const [changing, setChanging] = useState(false);
+  const [picker, setPicker] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
+  const handled = useRef<string | null>(null);
+  // Credits checkout return (unchanged) and the subscription flows: ?abonnement=ok&session_id= (synchronise, then
+  // «Dit abonnement er aktivt»), ?abonnement=annulleret, ?portal=simuleret, and ?plan=&interval= (start the checkout).
   useEffect(() => {
     const c = params.get("checkout");
     if (c === "success") setNote(t("account.purchasedReal"));
     if (c === "cancel") setNote(t("account.purchaseCancelled"));
   }, [params, setNote, t]);
+  useEffect(() => {
+    if (mode === "loading" || mode === "demo") return;
+    const key = params.toString();
+    if (!key || handled.current === key) return;
+    const ab = params.get("abonnement");
+    const sid = params.get("session_id");
+    const plan = params.get("plan");
+    const interval = params.get("interval") === "year" ? "year" : "month";
+    const clean = () => router.replace("/privat/konto");
+    if (ab === "ok") {
+      handled.current = key;
+      (async () => {
+        try { const sb = await api.subscription(sid ?? undefined); setSubscription(sb); await refresh(); setNote(t("plan.activated")); }
+        catch (e) { setError(e as ApiError); }
+        clean();
+      })();
+    } else if (ab === "annulleret") { handled.current = key; setNote(t("plan.cancelled")); clean(); }
+    else if (params.get("portal") === "simuleret") { handled.current = key; setNote(t("plan.portalSimulated")); clean(); }
+    else if (isPlanKey(plan)) {
+      // From the landing page's plan cards: start the checkout once logged in (the login sheet keeps the query in `next`).
+      if (!loggedIn) { if (handled.current !== `login:${key}`) { handled.current = `login:${key}`; openSheet({ kind: "login" }); } return; }
+      handled.current = key;
+      void startCheckout(plan, interval);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params, mode, loggedIn]);
+  const startCheckout = async (plan: PlanKey, interval: BillingInterval) => {
+    if (!loggedIn) { openSheet({ kind: "login" }); return; }
+    setRedirecting(true); setError(null);
+    try { const { url } = await api.subscriptionCheckout({ plan, interval }); window.location.href = url; }
+    catch (e) { setError(e as ApiError); setRedirecting(false); }
+  };
+  const pickerOpen = picker || params.get("planer") === "1" || isPlanKey(params.get("plan"));
+  const togglePicker = () => { if (pickerOpen && params.get("planer") === "1") router.replace("/privat/konto"); setPicker(!pickerOpen); };
+  const portal = async () => {
+    setError(null);
+    try { const { url } = await api.subscriptionPortal(); if (simulated) setNote(t("plan.portalSimulated")); else window.location.href = url; }
+    catch (e) { const x = e as ApiError; if (x.code === CONFLICT.notConfigured || x.status === 501) setNote(t("plan.portalMissing")); else setError(x); }
+  };
   const limit = balance?.free_limit ?? 10;
   const used = balance?.free_used ?? 0;
   const left = Math.max(0, limit - used);
@@ -32,25 +82,62 @@ export function AccountPane() {
       <h2 className="m-0 font-display font-extrabold text-[28px] tracking-[-0.5px]">{t("account.title")}</h2>
       <p className="m-0 text-[14px] text-ink-soft [overflow-wrap:anywhere]">{line}</p>
       {simulated && <p className="m-0 text-[13px] flex gap-2 items-center flex-wrap"><Sim />{t("account.simulatedLine")}</p>}
+      {note && <p className="m-0 rounded-[18px] border-2 border-success bg-success-soft px-4 py-3 text-[15px] font-semibold text-success" role="status" data-testid="account-note">{note}</p>}
 
-      <div className="rounded-[18px] border-2 border-ink bg-paper p-4 shadow-block flex flex-col gap-2.5">
-        <Eyebrow><span suppressHydrationWarning>{t("account.free", { month: f.month() })}</span></Eyebrow>
-        <div className="flex items-baseline gap-2"><span className="font-display font-extrabold text-[36px]" data-testid="free-left">{left}</span><span className="text-[15px] text-ink-soft">{t("account.freeLeft", { limit })}</span></div>
-        <div className="h-3 border-2 border-ink rounded-full overflow-hidden bg-paper" role="progressbar" aria-valuemin={0} aria-valuemax={limit} aria-valuenow={used} aria-label={t("account.freeBarAria", { used, limit })}>
-          <div className="h-full bg-accent" style={{ width: `${Math.min(100, (used / limit) * 100)}%` }} />
+      {/* Subscription */}
+      <section className="rounded-[24px] border-2 border-ink bg-paper p-5 shadow-block flex flex-col gap-3" aria-labelledby="sub-h" data-testid="subscription-card">
+        <div className="flex items-start gap-2 flex-wrap">
+          <div className="flex-1 min-w-0 flex flex-col gap-1">
+            <Eyebrow>{t("plan.title")}</Eyebrow>
+            <h3 id="sub-h" className="m-0 font-display font-extrabold text-[26px] leading-tight">{p.entitled ? p.rightsName : t(`plan.status.${p.status}`)}</h3>
+          </div>
+          <Pill tone={p.status === "active" ? "ok" : p.status === "trial" ? "highlight" : p.status === "past_due" ? "beta" : "plain"}>{t(`plan.status.${p.status}`)}</Pill>
         </div>
-        <p className="m-0 text-[13px] text-muted">{t("account.freeNote", { limit })}</p>
-      </div>
+        {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays })} <span className="text-ink-soft">{p.plan === "none" ? t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyKr(p.rightsKey) })}</span></p>}
+        {p.status === "expired" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.expiredLine")}</p>}
+        {p.status === "none" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.noneLine", { limit })}</p>}
+        {p.status === "past_due" && <p className="m-0 text-[15px] text-danger font-semibold">{t("plan.pastDue")}</p>}
+        {p.status === "active" && p.periodEnd && <p className="m-0 text-[14px] text-ink-soft" suppressHydrationWarning>{p.cancelAtPeriodEnd ? t("plan.cancelAtEnd", { date: f.date(p.periodEnd) }) : t("plan.renews", { date: f.date(p.periodEnd) })}</p>}
+        {p.entitled && (
+          <div className="flex flex-col gap-1.5">
+            <div className="flex justify-between text-[14px]"><span>{t("plan.calls")}</span><strong data-testid="calls-used">{t("plan.callsUsed", { used: p.callsUsed, quota: p.callsQuota })}</strong></div>
+            <div className="h-3 border-2 border-ink rounded-full overflow-hidden bg-paper" role="progressbar" aria-valuemin={0} aria-valuemax={p.callsQuota} aria-valuenow={p.callsUsed} aria-label={t("plan.callsBarAria", { used: p.callsUsed, quota: p.callsQuota })}>
+              <div className="h-full bg-accent" style={{ width: `${p.callsQuota ? Math.min(100, (p.callsUsed / p.callsQuota) * 100) : 0}%` }} />
+            </div>
+            <p className="m-0 text-[13px] text-muted">{t("plan.unlimited")}</p>
+          </div>
+        )}
+        <div className="flex gap-2 flex-wrap">
+          {p.plan === "none"
+            ? <Button className={`${BIG} rounded-full`} onClick={togglePicker} aria-expanded={pickerOpen} disabled={mode === "demo"}>{pickerOpen ? t("plan.hidePicker") : t("plan.choose")}</Button>
+            : <>
+              <Button variant="outline" className="border-2 rounded-full" onClick={togglePicker} aria-expanded={pickerOpen}>{pickerOpen ? t("plan.hidePicker") : t("plan.change")}</Button>
+              <Button variant="outline" className="border-2 rounded-full" onClick={portal}>{t("plan.manage")}</Button>
+            </>}
+        </div>
+        {pickerOpen && <PlanPicker onPick={startCheckout} busy={redirecting} />}
+      </section>
 
-      <div className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5">
-        <Eyebrow>{t("account.credits")}</Eyebrow>
+      {!p.entitled && (
+        <div className="rounded-[20px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5">
+          <Eyebrow><span suppressHydrationWarning>{t("account.free", { month: f.month() })}</span></Eyebrow>
+          <div className="flex items-baseline gap-2"><span className="font-display font-extrabold text-[36px]" data-testid="free-left">{left}</span><span className="text-[15px] text-ink-soft">{t("account.freeLeft", { limit })}</span></div>
+          <div className="h-3 border-2 border-ink rounded-full overflow-hidden bg-paper" role="progressbar" aria-valuemin={0} aria-valuemax={limit} aria-valuenow={used} aria-label={t("account.freeBarAria", { used, limit })}>
+            <div className="h-full bg-accent" style={{ width: `${Math.min(100, (used / limit) * 100)}%` }} />
+          </div>
+          <p className="m-0 text-[13px] text-muted">{t("account.freeNote", { limit })}</p>
+        </div>
+      )}
+
+      {/* Credits = «Ekstra opkald» */}
+      <div className="rounded-[20px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5">
+        <Eyebrow>{t("plan.extra")}</Eyebrow>
         <div className="flex items-baseline gap-2.5 flex-wrap">
-          <span className="font-display font-extrabold text-[36px]" data-testid="credits">{balance?.credits ?? 0}</span><span className="text-[15px] text-ink-soft">{t("account.creditsWord")}</span>
+          <span className="font-display font-extrabold text-[36px]" data-testid="credits">{balance?.credits ?? 0}</span><span className="text-[15px] text-ink-soft">{t("plan.extraWord")}</span>
           {(balance?.reserved ?? 0) > 0 && <Pill tone="progress">{t("account.reserved", { n: balance!.reserved })}</Pill>}
         </div>
-        <p className="m-0 text-[13px] text-muted">{t("account.creditsNote")}</p>
-        <Button className={`${BIG} self-start`} onClick={() => openSheet({ kind: "buy" })} disabled={mode === "demo"}>{t("account.buy")}</Button>
-        {note && <p className="m-0 text-[14px] font-semibold text-success" role="status">{note}</p>}
+        <p className="m-0 text-[13px] text-muted">{t("plan.extraNote")}</p>
+        <Button variant={p.entitled ? "outline" : "primary"} className={`${BIG} rounded-full self-start`} onClick={() => openSheet({ kind: "buy" })} disabled={mode === "demo"}>{t("account.buy")}</Button>
       </div>
 
       <section className="flex flex-col gap-1.5" aria-labelledby="ledger-h">
@@ -89,12 +176,12 @@ export function AccountPane() {
 
       <InviteFriends />
 
-      <section className="rounded-[18px] border-2 border-ink bg-panel p-4 flex items-start gap-3">
-        <Tile name="puzzle" />
+      <section className="rounded-[20px] border-2 border-ink bg-panel p-4 flex items-start gap-3">
+        <Tile name="shop" className="bg-accent text-white rounded-[12px] border-2 border-ink" />
         <div className="flex-1 min-w-0 flex flex-col gap-2">
-          <h3 className="m-0 font-display font-bold text-[19px]">{t("account.addons")}</h3>
-          <p className="m-0 text-[14px] text-ink-soft">{t("account.addonsText")}</p>
-          <Button variant="outline" className="self-start border-2" onClick={() => go("addons")}>{t("account.addonsBtn")}</Button>
+          <h3 className="m-0 font-display font-bold text-[19px]">{t("store.title")}</h3>
+          <p className="m-0 text-[14px] text-ink-soft">{t("store.intro")}</p>
+          <Button variant="outline" className="self-start border-2 rounded-full" onClick={() => go("store")}>{t("store.title")}</Button>
         </div>
       </section>
 
@@ -103,12 +190,66 @@ export function AccountPane() {
           <Eyebrow>{t("account.tools")}</Eyebrow>
           <div className="flex gap-2 flex-wrap">
             <Button variant="outline" onClick={() => run(() => fake.useUpFree())}>{t("account.useUp")}</Button>
+            <Button variant="outline" onClick={() => run(() => fake.endTrial())}>{t("plan.endTrial")}</Button>
             <Button variant="outline" onClick={async () => { const r = await run(() => fake.repeatPayment()); if (r) setNote(r.ref ? t("account.repeatNote", { ref: r.ref }) : t("account.repeatNone")); }}>{t("account.repeatPay")}</Button>
             <Button variant="outline" onClick={() => run(() => fake.emptyDay())}>{t("account.emptyDay")}</Button>
             <Button variant="outline" onClick={async () => { await run(() => fake.reset()); setNote(""); }}>{t("account.reset")}</Button>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/** Plan picker: Månedligt / Årligt · spar 20 % and the three plan cards (Plus = Anbefalet). A pick starts Stripe Checkout. */
+/** Plan features arrive as i18n keys from the local catalogue (landing.pricing.features.*) or as finished Danish text
+ *  from the API; keys are translated, text is shown as it is. */
+function featureText(t: (k: string, p?: Record<string, string | number>) => string, x: string, pl: { calls: number; people: number }): string {
+  if (/\s/.test(x)) return x;
+  if (x === "calls") return t("landing.pricing.features.calls", { n: pl.calls });
+  if (x === "people") return t("landing.pricing.features.people", { n: pl.people });
+  return t(`landing.pricing.features.${x}`);
+}
+
+function PlanPicker({ onPick, busy }: { onPick: (plan: PlanKey, interval: BillingInterval) => void; busy: boolean }) {
+  const t = useT("privat");
+  const params = useSearchParams();
+  const p = usePlan();
+  const [interval, setInterval] = useState<BillingInterval>(params.get("interval") === "year" ? "year" : "month");
+  const kr = (minor: number) => Math.round(minor / 100).toLocaleString("da-DK");
+  return (
+    <div className="flex flex-col gap-3 pt-2 border-t-[1.5px] border-line" data-testid="plan-picker">
+      <p className="m-0 font-display font-bold text-[18px]">{t("plan.pickerTitle")}</p>
+      <div role="group" aria-label={t("plan.monthly")} className="grid grid-cols-2 gap-1 p-1 rounded-full border-2 border-ink self-start">
+        {(["month", "year"] as BillingInterval[]).map((iv) => (
+          <button key={iv} type="button" aria-pressed={interval === iv} onClick={() => setInterval(iv)}
+            className={`min-h-[38px] px-4 rounded-full text-[14px] font-semibold whitespace-nowrap ${interval === iv ? "bg-ink text-paper" : "hover:bg-panel"}`}>{t(iv === "month" ? "plan.monthly" : "plan.yearly")}</button>
+        ))}
+      </div>
+      <ul className="m-0 p-0 list-none grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+        {p.plans.map((pl) => {
+          const current = p.plan === pl.key;
+          const price = interval === "year" ? pl.yearly_monthly_minor : pl.monthly_minor;
+          return (
+            <li key={pl.key} className={`relative rounded-[20px] border-2 p-4 flex flex-col gap-2 ${pl.recommended ? "border-accent bg-accent-soft shadow-block-sm" : "border-ink bg-paper"}`} data-testid={`plan-${pl.key}`}>
+              {pl.recommended && <span className="absolute -top-3 left-4 inline-flex items-center min-h-6 px-2.5 rounded-full border-[1.5px] border-ink bg-accent text-white text-[11px] font-bold uppercase tracking-[0.06em]">{t("plan.recommended")}</span>}
+              <div className="flex items-baseline gap-2 flex-wrap mt-1">
+                <span className="font-display font-extrabold text-[20px]">{pl.name}</span>
+                {current && <Pill tone="ok">{t("plan.currentPlan")}</Pill>}
+              </div>
+              <div className="flex flex-col"><span className="font-display font-extrabold text-[28px] leading-none">{t("plan.perMonth", { price: kr(price) })}</span>
+                <span className="text-[12px] text-muted">{interval === "year" ? t("plan.yearlyNote", { total: kr(pl.yearly_total_minor) }) : t("plan.monthlyNote")}</span></div>
+              <ul className="m-0 p-0 list-none flex flex-col gap-1">
+                {pl.features.map((x) => <li key={x} className="flex gap-2 text-[14px]"><span className="text-accent mt-0.5"><Ico name="check" size={16} /></span><span>{featureText(t, x, pl)}</span></li>)}
+              </ul>
+              <Button className={`mt-1 rounded-full border-2 border-ink ${pl.recommended ? "" : "!bg-paper !text-ink hover:!bg-panel"}`} disabled={busy || (current && p.status === "active")} onClick={() => onPick(pl.key, interval)}>
+                {busy ? t("plan.redirecting") : p.status === "none" ? t("plan.startTrial") : t("plan.select", { plan: pl.name })}
+              </Button>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="m-0 text-[13px] text-muted">{t("plan.pickerNote")}</p>
     </div>
   );
 }

@@ -5,6 +5,9 @@ add-on: ONE `Addon` object registered in CATALOG below. An add-on brings its own
 a handler "module:function" that is imported only when called) and its endpoints call `require(db, ws_id, key)`.
 Adding a feature = `register(Addon(...))` here (or from the feature's own module) – the shop endpoint, the chat's tool
 list, the gating and the «Slå … til» offer in the chat all read the catalog; nothing else changes.
+
+Plans: an add-on with `included_in` (plan keys) can only be switched on with the trial or one of those plans
+(409 needs_plan, see subscriptions.py). Once on, it stays on; calls fall back to credits when the plan lapses.
 """
 from __future__ import annotations
 
@@ -42,6 +45,13 @@ class Addon:
     pricing: str = "free"  # free | credits | monthly
     monthly_price_minor: int | None = None
     status: str = "available"  # available | beta | coming_soon
+    # The Shop texts: what it does (1–2 sentences), what you say to Peter, and the setup steps shown before enable.
+    what: str = ""
+    example: str = ""
+    steps: tuple[str, ...] = ()
+    # Plans whose rights include this app (the trial counts as Plus). Empty = free for everyone, plan or not.
+    # Non-empty: enable() answers 409 needs_plan unless the account is entitled to one of them.
+    included_in: tuple[str, ...] = ()
     permissions: tuple[str, ...] = ()
     requires: tuple[str, ...] = ()
     tools: tuple[AddonTool, ...] = ()
@@ -83,9 +93,17 @@ _STR_LIST = {"type": "array", "items": {"type": "string"}}
 register(Addon(
     key="ring-for-mig", name="Ring for mig", tagline="Assistenten ringer til virksomheder for dig",
     description="Bed assistenten ringe til fx værkstedet, frisøren eller boligforeningen. Du godkender hvert opkald, "
-                "før der bliver ringet, og ser præcis hvad assistenten må spørge om og sige ja til. Et opkald "
-                "reserverer 3 credits; tager ingen telefonen, får du dem igen.",
-    icon="phone", category="opkald", price_text="3 credits pr. besvaret opkald", pricing="credits",
+                "før der bliver ringet, og ser præcis hvad assistenten må spørge om og sige ja til. Opkald er med i "
+                "din plan (prøveperioden tæller som Plus); ud over månedens opkald koster et ekstra opkald 3 credits, "
+                "som du får igen, hvis ingen tager telefonen.",
+    icon="phone", category="opkald", price_text="Med i alle planer – ekstra opkald for 3 credits", pricing="credits",
+    what="Peter ringer til værkstedet, frisøren eller lægen for dig og aftaler en tid. Du godkender hvert opkald, "
+         "før der bliver ringet, og ser bagefter, hvad virksomheden svarede.",
+    example="«Ring til cykelværkstedet og find en tid torsdag efter klokken tre»",
+    steps=("Bekræft dit mobilnummer, så Peter kan sige, hvem han ringer for",
+           "Fortæl Peter, hvem han skal ringe til, og hvad han må sige ja til",
+           "Godkend forslaget – først da ringer Peter"),
+    included_in=("basis", "plus", "familie"),
     permissions=("Ringer til virksomheder, du har godkendt", "Siger dit navn til virksomheden",
                  "Deler kun dit mobilnummer, hvis du siger ja"),
     keywords=("ring", "ringe", "opkald", "telefon"),
@@ -108,6 +126,11 @@ register(Addon(
     description="Del en indkøbsliste eller to-do-liste med familien. Alle kan tilføje og krydse af, og I kan se, "
                 "hvem der gjorde hvad.",
     icon="users", category="lister", price_text="Gratis", pricing="free",
+    what="Del en indkøbs- eller to-do-liste med dem, du bor med. Alle kan tilføje og krydse af fra deres egen "
+         "telefon, og I kan se, hvem der gjorde hvad.",
+    example="«Del indkøbslisten med Anna»",
+    steps=("Lav en liste, eller vælg en du har", "Bed Peter dele den – du får et link",
+           "Send linket fra din egen telefon; de andre er med, når de trykker"),
     permissions=("Deler en liste via et link, du selv sender", "Viser dit fornavn for dem, du deler med"),
     keywords=("del ", "dele", "delt", "fælles"),
     tools=(AddonTool(
@@ -141,6 +164,12 @@ register(Addon(
     description="Del din ønskeliste. Dem, du deler med, kan skrive «Jeg køber den», så to ikke køber det samme – "
                 "og du ser aldrig, hvad der er reserveret. Overraskelsen holdes.",
     icon="gift", category="lister", price_text="Gratis", pricing="free",
+    what="Lav en ønskeliste og del den. Dem, du deler med, kan reservere en gave i hemmelighed, så to ikke køber det "
+         "samme – og du ser aldrig, hvad der er taget.",
+    example="«Lav en ønskeliste med en ny cykelhjelm og den bog, jeg talte om»",
+    steps=("Sig dine ønsker til Peter – han samler dem på en liste",
+           "Del listen med familien eller vennerne via et link",
+           "De reserverer i hemmelighed; du får bare gaverne"),
     permissions=("Deler en ønskeliste via et link, du selv sender", "Viser dit fornavn for dem, du deler med"),
     keywords=("ønskeliste", "ønsker", "fødselsdag", "gave"),
     on_disable="app.modules.privat.sharing:pause_sharing",
@@ -150,15 +179,111 @@ register(Addon(
 register(Addon(
     key="kalender", name="Kalender", tagline="Læg aftaler i din Google- eller Outlook-kalender",
     description="Aftaler, assistenten laver for dig, kommer automatisk i din egen kalender.",
-    icon="calendar", category="aftaler", price_text="Kommer snart", pricing="free", status="coming_soon",
+    icon="calendar", category="aftaler", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    what="De tider, Peter aftaler for dig, lander automatisk i din egen Google- eller Outlook-kalender – med adresse "
+         "og det, I aftalte.",
+    example="«Læg tiden hos frisøren i min kalender»",
+    steps=("Forbind din Google- eller Outlook-kalender", "Vælg hvilken kalender aftaler skal i",
+           "Peter skriver aftalerne ind, når de er bekræftet"),
+    included_in=("plus", "familie"),
     permissions=("Skriver aftaler i din kalender",), keywords=("kalender",),
 ))
 
 register(Addon(
     key="pakker", name="Pakker", tagline="Følg dine forsendelser",
     description="Få besked, når en pakke er på vej, og hvor du kan hente den.",
-    icon="package", category="hverdag", price_text="Kommer snart", pricing="free", status="coming_soon",
+    icon="package", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    what="Giv Peter dit track-and-trace-nummer, så holder han øje med pakken og siger til, når den er klar til "
+         "afhentning – og hvor.",
+    example="«Følg pakken med nummer 00340434…»",
+    steps=("Sig eller indsæt forsendelsesnummeret til Peter", "Peter følger pakken hos fragtfirmaet",
+           "Du får besked, når den er på vej og kan hentes"),
+    included_in=("plus", "familie"),
     permissions=("Læser forsendelsesnumre, du giver assistenten",), keywords=("pakke", "forsendelse"),
+))
+
+register(Addon(
+    key="foedselsdage", name="Fødselsdage", tagline="Glem aldrig en fødselsdag igen",
+    description="Peter husker familiens og vennernes fødselsdage og minder dig om dem i god tid – med et forslag til en gave.",
+    icon="cake", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    what="Fortæl Peter, hvem der har fødselsdag hvornår. Han minder dig om det nogle dage før, så du kan nå at købe "
+         "en gave eller sende en hilsen.",
+    example="«Mors fødselsdag er den 14. marts – mind mig om det en uge før»",
+    steps=("Sig navnene og datoerne til Peter – én ad gangen eller mange på én gang",
+           "Vælg hvor mange dage før, du vil mindes om det",
+           "Peter minder dig om det hvert år"),
+    included_in=("plus", "familie"),
+    permissions=("Gemmer navne og fødselsdatoer, du giver assistenten",), keywords=("fødselsdag", "fylder år"),
+))
+
+register(Addon(
+    key="madplan", name="Madplan", tagline="Ugens aftensmad – og indkøbslisten følger med",
+    description="Peter laver en madplan for ugen ud fra det, I kan lide, og skriver indkøbslisten til den.",
+    icon="utensils", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    what="Sig hvor mange I er, og hvad I kan lide, så foreslår Peter aftensmad for ugen. Siger du ja, bliver "
+         "ingredienserne til en indkøbsliste, du kan dele med husstanden.",
+    example="«Lav en madplan for næste uge – vi er fire, og børnene spiser ikke fisk»",
+    steps=("Fortæl Peter, hvor mange I er, og hvad I ikke spiser",
+           "Få et forslag til ugen og ret det, der ikke passer",
+           "Sig ja – indkøbslisten laves automatisk"),
+    included_in=("plus", "familie"),
+    permissions=("Gemmer jeres madvaner og allergier, som du selv skriver dem",), keywords=("madplan", "aftensmad"),
+))
+
+register(Addon(
+    key="bil-og-syn", name="Bil & syn", tagline="Syn, service og dæk – Peter holder styr på bilen",
+    description="Peter husker, hvornår bilen skal til syn og service, og ringer til værkstedet og aftaler en tid, når det er ved at være tid.",
+    icon="car", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    what="Giv Peter bilens nummerplade, så kender han næste synsdato. Han minder dig om syn, service og skift til "
+         "vinterdæk – og kan ringe til dit værksted og aftale tiden for dig.",
+    example="«Bilen skal til syn i maj – find en tid hos mit værksted i uge 18»",
+    steps=("Sig nummerpladen til Peter", "Vælg dit værksted (eller lad Peter foreslå et i nærheden)",
+           "Peter minder dig om syn og service og aftaler tiden, når du siger ja"),
+    included_in=("plus", "familie"),
+    permissions=("Slår bilens synsdato op på nummerpladen", "Ringer til dit værksted, når du har godkendt det"),
+    keywords=("bil", "syn", "værksted", "dæk"),
+))
+
+register(Addon(
+    key="regninger", name="Regninger", tagline="Bliv mindet om regninger, før de forfalder",
+    description="Peter husker faste regninger og abonnementer og minder dig om dem, før de skal betales – så du undgår rykkere.",
+    icon="receipt", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    what="Fortæl Peter om dine faste regninger – husleje, forsikring, streaming – og hvornår de forfalder. Han "
+         "minder dig om dem i tide og viser dig månedens overblik. Peter betaler aldrig noget selv.",
+    example="«Mind mig om bilforsikringen den 1. hver måned – den er 640 kr.»",
+    steps=("Sig regningerne og deres dato til Peter", "Vælg hvor mange dage før, du vil have besked",
+           "Se månedens regninger samlet på Min dag"),
+    included_in=("plus", "familie"),
+    permissions=("Gemmer regningernes navn, beløb og dato, som du selv skriver dem", "Har aldrig adgang til din bank"),
+    keywords=("regning", "regninger", "abonnement", "forfalder"),
+))
+
+register(Addon(
+    key="laege-og-tandlaege", name="Læge & tandlæge", tagline="Tider hos læge og tandlæge – uden at hænge i telefonen",
+    description="Peter ringer til lægen eller tandlægen og booker tiden for dig, og minder dig om det årlige tandeftersyn.",
+    icon="heart", category="aftaler", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    what="Sig hvad det drejer sig om, og hvornår du kan, så ringer Peter til din læge eller tandlæge, når de åbner, "
+         "og aftaler en tid. Han fortæller aldrig mere, end du har sagt god for.",
+    example="«Book et tandeftersyn hos min tandlæge – helst en morgen i næste måned»",
+    steps=("Gem din læge og tandlæge (navn og nummer)", "Sig til Peter, hvad du skal, og hvornår du kan",
+           "Godkend opkaldet – Peter ringer og lægger tiden i din kalender"),
+    included_in=("plus", "familie"),
+    permissions=("Ringer til din læge eller tandlæge, når du har godkendt det",
+                 "Siger kun dit navn og det, du selv har skrevet"),
+    keywords=("læge", "tandlæge", "tandeftersyn", "lægetid"),
+))
+
+register(Addon(
+    key="pakkeliste", name="Pakkeliste", tagline="Pakkelister til rejser og ture, der kan genbruges",
+    description="Peter laver en pakkeliste til turen – ud fra vejret, hvor længe I er væk, og hvem der skal med – og husker den til næste gang.",
+    icon="suitcase", category="lister", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    what="Sig hvor I skal hen, hvor længe, og hvem der skal med, så skriver Peter en pakkeliste, som I krydser af. "
+         "Næste gang starter han fra den, I brugte sidst.",
+    example="«Lav en pakkeliste til en uge i sommerhus med to børn»",
+    steps=("Fortæl Peter om turen – sted, længde og hvem", "Ret listen til, og del den med rejsefællerne",
+           "Kryds af, mens I pakker"),
+    included_in=("plus", "familie"),
+    permissions=("Gemmer dine pakkelister til næste tur",), keywords=("pakkeliste", "pakke til", "rejse", "ferie"),
 ))
 
 # Which add-on a shared list needs, per share mode.
@@ -190,23 +315,41 @@ def get(key: str) -> Addon:
     return a
 
 
-def out(db: OrmSession, ws_id: uuid.UUID, a: Addon) -> dict:
+def included(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> bool:
+    """Whether the account's current rights let it switch this add-on on (free, or entitled to a listed plan)."""
+    if not a.included_in:
+        return True
+    from app.modules.privat import subscriptions
+
+    return subscriptions.covers(ent or subscriptions.entitlements(db, ws_id), a.included_in)
+
+
+def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> dict:
     row = db.get(PrivateAddonEnabled, (ws_id, a.key))
     on = row is not None and a.status != "coming_soon"
     return {"key": a.key, "name": a.name, "tagline": a.tagline, "description": a.description, "icon": a.icon,
             "category": a.category, "price_text": a.price_text, "pricing": a.pricing,
             "monthly_price_minor": a.monthly_price_minor, "status": a.status, "permissions": list(a.permissions),
-            "requires": list(a.requires), "enabled": on, "enabled_at": row.enabled_at.isoformat() if on else None}
+            "requires": list(a.requires), "enabled": on, "enabled_at": row.enabled_at.isoformat() if on else None,
+            "what": a.what, "example": a.example, "steps": list(a.steps), "included_in": list(a.included_in),
+            "included": included(db, ws_id, a, ent), "requires_plan": bool(a.included_in)}
 
 
 def catalog_out(db: OrmSession, ws_id: uuid.UUID) -> list[dict]:
-    return [out(db, ws_id, a) for a in CATALOG.values()]
+    from app.modules.privat import subscriptions
+
+    ent = subscriptions.entitlements(db, ws_id)
+    return [out(db, ws_id, a, ent) for a in CATALOG.values()]
 
 
 def enable(db: OrmSession, ws_id: uuid.UUID, key: str) -> Addon:
     a = get(key)
     if a.status == "coming_soon":
         raise Conflict(f"«{a.name}» kommer snart", code="coming_soon", extra={"addon": key})
+    if not included(db, ws_id, a):
+        names = [n for n in ("Plus", "Familie", "Basis") if n.lower() in a.included_in]
+        raise Conflict(f"«{a.name}» er med i {' og '.join(names[:2]) if names else 'et abonnement'} – start 14 dage "
+                       "gratis eller vælg en plan", code="needs_plan", extra={"addon": key, "plans": list(a.included_in)})
     for dep in a.requires:
         if not is_enabled(db, ws_id, dep):
             enable(db, ws_id, dep)

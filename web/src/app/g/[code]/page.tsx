@@ -11,5 +11,5 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Group join link (dialogbot.app/g/K7Q2M9XA): people add themselves to someone's group – no contacts are imported. */
 export default async function Page({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
-  return <GroupJoinPage code={code.toUpperCase()} loggedIn={await isLoggedIn()} />;
+  return <div data-theme="privat" className="contents"><GroupJoinPage code={code.toUpperCase()} loggedIn={await isLoggedIn()} /></div>;
 }

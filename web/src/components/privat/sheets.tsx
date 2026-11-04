@@ -9,8 +9,8 @@ import { SMS_LIMIT, bareLink, contactPickerAvailable, hasEmoji, pickContacts, pl
 import { FAKE_ME } from "@/lib/privat/fake";
 import { Avatars, BIG, Eyebrow, LINK, SR, Sim } from "./bits";
 import { Ico } from "./icons";
-import { AddonDetail, addonText } from "./addons";
-import { useFmt, usePrivat } from "./store";
+import { AddonDetail, NeedsPlanOffer, addonText } from "./addons";
+import { useFmt, usePlan, usePrivat } from "./store";
 
 /** Bottom sheet on a phone, centred dialog on a wide screen. Escape and the X close it; focus moves in and back. */
 export function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
@@ -57,13 +57,15 @@ export function Sheets() {
     : k === "sponsor" ? <SponsorSheet onClose={closeSheet} />
     : k === "share" ? <ShareSheet onClose={closeSheet} />
     : k === "addon" ? <AddonSheet onClose={closeSheet} />
-    : k === "addonOff" ? <AddonOffSheet onClose={closeSheet} /> : null;
+    : k === "addonOff" ? <AddonOffSheet onClose={closeSheet} />
+    : k === "needsPlan" ? <NeedsPlanSheet onClose={closeSheet} /> : null;
 }
 
 function LoginSheet({ onClose }: { onClose: () => void }) {
   const t = useT("privat");
-  const { mode, simulatedLogin } = usePrivat();
-  const next = encodeURIComponent("/privat/samtale");
+  const { mode, simulatedLogin, screen } = usePrivat();
+  // Back to where the login was asked for: Konto keeps its query (?plan=… starts the checkout after login).
+  const next = encodeURIComponent(screen === "account" && typeof window !== "undefined" ? `${window.location.pathname}${window.location.search}` : "/privat/samtale");
   return (
     <Sheet title={t("login.title")} onClose={onClose}>
       <p className="m-0 text-[15px] leading-normal text-ink-soft">{t("login.text")}</p>
@@ -98,22 +100,32 @@ function MicSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
+/** The plan path first («Vælg plan»), then credits as «ekstra opkald». With a plan whose month is used up: buy extra
+ *  calls or change plan. */
 function PaywallSheet({ onClose }: { onClose: () => void }) {
   const t = useT("privat");
   const f = useFmt();
-  const { sheet, task, balance, run, openSheet, setNote, messages } = usePrivat();
+  const { sheet, task, balance, run, openSheet, setNote, choosePlan: toPlans } = usePrivat();
+  const p = usePlan();
   const tk = task(sheet?.taskId);
   const call = tk?.kind === "call";
   const credits = balance?.credits ?? 0;
   const later = () => { onClose(); if (tk?.status === "draft") setNote(t("paywall.laterNote")); };
-  void messages;
+  const choosePlan = () => { onClose(); toPlans(); };
+  const quotaUsed = call && p.entitled && p.callsQuota > 0;
+  const title = call ? (quotaUsed ? t("plan.paywallCallTitlePlan") : t("paywall.titleCall")) : t("paywall.titleDigital", { limit: balance?.free_limit ?? 10 });
+  const text = call
+    ? (quotaUsed ? t("plan.paywallCallTextPlan", { used: p.callsUsed, quota: p.callsQuota, plan: p.rightsName }) : `${t("plan.paywallCallTextNone")} ${t("paywall.textCall", { n: tk?.call?.max_credits ?? 3, have: credits })}`)
+    : `${t("paywall.textDigital", { limit: balance?.free_limit ?? 10, month: f.month() })} ${t("plan.paywallDigitalPlan")}`;
   return (
-    <Sheet title={call ? t("paywall.titleCall") : t("paywall.titleDigital", { limit: balance?.free_limit ?? 10 })} onClose={onClose}>
+    <Sheet title={title} onClose={onClose}>
       {tk && <div className="rounded-[18px] border-2 border-dashed border-ink px-3.5 py-3"><span className="eyebrow text-[11px]">{t("paywall.draft")}</span><div className="font-semibold text-[16px] [overflow-wrap:anywhere]">{tk.title}</div></div>}
-      <p className="m-0 text-[15px] leading-normal text-ink-soft">{call ? t("paywall.textCall", { n: tk?.call?.max_credits ?? 3, have: credits }) : t("paywall.textDigital", { limit: balance?.free_limit ?? 10, month: f.month() })}</p>
-      {!call && <Button className={BIG} disabled={credits < 1} onClick={async () => { const r = await run((a) => a.activate(tk!.id, "credit")); if (r) onClose(); }}>{t("paywall.useCredit", { n: credits })}</Button>}
-      <Button variant="outline" className="border-2" onClick={() => openSheet({ kind: "buy", taskId: sheet?.taskId })}>{t("paywall.buy")}</Button>
-      {!call && <Button variant="outline" className="border-2" disabled={(balance?.sponsor_left_today ?? 0) < 1} onClick={() => openSheet({ kind: "sponsor", taskId: sheet?.taskId })}>{t("paywall.sponsor", { n: balance?.sponsor_left_today ?? 0 })}</Button>}
+      <p className="m-0 text-[15px] leading-normal text-ink-soft">{text}</p>
+      {!p.entitled && <Button className={`${BIG} rounded-full`} onClick={choosePlan}>{p.status === "none" ? t("store.needsPlan.trial") : t("plan.paywallChoose")}</Button>}
+      {!call && <Button className={`${p.entitled ? BIG : "border-2 border-ink"} rounded-full`} variant={p.entitled ? "primary" : "outline"} disabled={credits < 1} onClick={async () => { const r = await run((a) => a.activate(tk!.id, "credit")); if (r) onClose(); }}>{t("paywall.useCredit", { n: credits })}</Button>}
+      <Button variant={quotaUsed ? "primary" : "outline"} className={`${quotaUsed ? BIG : "border-2"} rounded-full`} onClick={() => openSheet({ kind: "buy", taskId: sheet?.taskId })}>{t("plan.paywallBuy")} · {t("paywall.buy")}</Button>
+      {quotaUsed && <Button variant="outline" className="border-2 rounded-full" onClick={choosePlan}>{t("plan.change")}</Button>}
+      {!call && <Button variant="outline" className="border-2 rounded-full" disabled={(balance?.sponsor_left_today ?? 0) < 1} onClick={() => openSheet({ kind: "sponsor", taskId: sheet?.taskId })}>{t("paywall.sponsor", { n: balance?.sponsor_left_today ?? 0 })}</Button>}
       <button type="button" className={`${LINK} self-center`} onClick={later}>{t("paywall.later")}</button>
     </Sheet>
   );
@@ -299,6 +311,19 @@ function AddonSheet({ onClose }: { onClose: () => void }) {
   const a = addons?.find((x) => x.key === sheet?.addonKey);
   if (!a) return null;
   return <Sheet title={addonText(t, a, "name")} onClose={onClose}><AddonDetail a={a} /></Sheet>;
+}
+
+/** «Med i Plus – start 14 dage gratis / Vælg plan» for an app (addonKey) or a call (taskId). */
+function NeedsPlanSheet({ onClose }: { onClose: () => void }) {
+  const t = useT("privat");
+  const { sheet, addons } = usePrivat();
+  const a = addons?.find((x) => x.key === sheet?.addonKey);
+  return (
+    <Sheet title={a ? addonText(t, a, "name") : t("store.needsPlan.callTitle")} onClose={onClose}>
+      <NeedsPlanOffer name={a ? addonText(t, a, "name") : undefined} call={!a} />
+      <button type="button" className={`${LINK} self-center`} onClick={onClose}>{t("store.needsPlan.later")}</button>
+    </Sheet>
+  );
 }
 
 function AddonOffSheet({ onClose }: { onClose: () => void }) {

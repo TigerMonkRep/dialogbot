@@ -36,3 +36,17 @@ PRIVAT_CREDIT_PACK_GROSS_MINOR = PRIVAT_CREDIT_PACK_NET_MINOR * (10000 + TAX_BAS
 PRIVAT_CALL_CREDITS = 3                   # an approved call reserves 3 credits; released if nobody answers
 PRIVAT_FREE_TASKS_PER_MONTH = 10
 PRIVAT_WELCOME_CREDITS = 3
+
+# Dialogbot Privat subscriptions (app/modules/privat/subscriptions.py). Consumer prices, so INCL. 25 % VAT, in øre.
+# The yearly plan is paid once a year (yearly_total); yearly_monthly is what that comes to per month (~20 % off).
+# Calls are per calendar month (Europe/Copenhagen); a call nobody answers does not count. Beyond the quota the
+# credit pack above is sold as "ekstra opkald" (3 credits per call).
+PRIVAT_TRIAL_DAYS = 14
+PRIVAT_PLANS: tuple[dict, ...] = (
+    {"key": "basis", "name": "Basis", "monthly_minor": 4900, "yearly_monthly_minor": 3900, "yearly_total_minor": 46800,
+     "calls": 3, "people": 1, "apps_included": False, "recommended": False},
+    {"key": "plus", "name": "Plus", "monthly_minor": 9900, "yearly_monthly_minor": 7900, "yearly_total_minor": 94800,
+     "calls": 10, "people": 1, "apps_included": True, "recommended": True},
+    {"key": "familie", "name": "Familie", "monthly_minor": 16900, "yearly_monthly_minor": 13500,
+     "yearly_total_minor": 162000, "calls": 25, "people": 5, "apps_included": True, "recommended": False},
+)

@@ -22,5 +22,10 @@
     "knowledge": "Resources",
     "byIndustry": "AI receptionist for your industry",
     "skip": "Skip to content"
+  },
+  "audience": {
+    "business": "For businesses – Dialogbot Erhverv",
+    "private": "For you at home – Dialogbot Privat",
+    "label": "Choose: business or private"
   }
 }

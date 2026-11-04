@@ -22,5 +22,10 @@
     "knowledge": "Wissen",
     "byIndustry": "KI-Rezeptionist für Ihre Branche",
     "skip": "Zum Inhalt springen"
+  },
+  "audience": {
+    "business": "Für Unternehmen – Dialogbot Erhverv",
+    "private": "Für dich zu Hause – Dialogbot Privat",
+    "label": "Wählen: Unternehmen oder privat"
   }
 }

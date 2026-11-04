@@ -63,7 +63,7 @@ class PrivateTask(Base):
         CheckConstraint("kind in ('list','reminder','call')", name="ck_private_tasks_kind"),
         CheckConstraint("status in ('awaiting_user','draft','planned','in_progress','awaiting_business','done',"
                         "'declined')", name="ck_private_tasks_status"),
-        CheckConstraint("paid_by in ('free','credit','sponsor','none','call')", name="ck_private_tasks_paid_by"),
+        CheckConstraint("paid_by in ('free','credit','sponsor','none','call','plan')", name="ck_private_tasks_paid_by"),
         CheckConstraint("list_type is null or list_type in ('shopping','wishlist','todo')",
                         name="ck_private_tasks_list_type"),
         CheckConstraint("share_mode is null or share_mode in ('group','wishlist')", name="ck_private_tasks_share_mode"),
@@ -86,6 +86,7 @@ class PrivateTask(Base):
     who: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     usage_text: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     # free (one of the month's 10) | credit | sponsor | none (draft, not paid yet) | call (paid by call credits)
+    # | plan (included in the trial or a subscription: never counts against the free quota)
     paid_by: Mapped[str] = mapped_column(String(16), nullable=False, default="none")
     free_month: Mapped[str | None] = mapped_column(String(7))  # "2026-11" when it used a free task that month
     is_example: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
@@ -252,7 +253,9 @@ class PrivateCall(Base):
     __table_args__ = (
         CheckConstraint("status in ('proposed','approved','scheduled','dialling','in_progress','unknown','answered',"
                         "'no_answer','failed','declined')", name="ck_private_calls_status"),
+        CheckConstraint("paid_via is null or paid_via in ('credits','plan')", name="ck_private_calls_paid_via"),
         Index("ix_private_calls_task", "task_id", "created_at"),
+        Index("ix_private_calls_ws_approved", "workspace_id", "approved_at"),
         Index("ix_private_calls_business_phone", "business_phone_e164", "expires_at"),
     )
 
@@ -274,6 +277,9 @@ class PrivateCall(Base):
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="proposed")
     # answered | no_answer | failed | declined (null while proposed or running)
     result: Mapped[str | None] = mapped_column(String(16))
+    # Set at approval: credits (3 credits reserved, the pre-subscription path) | plan (one of the month's plan calls).
+    # Null for calls approved before subscriptions existed (they were all paid with credits).
+    paid_via: Mapped[str | None] = mapped_column(String(8))
     pool_number: Mapped[str | None] = mapped_column(String(20))
     vapi_call_id: Mapped[str | None] = mapped_column(String(100), unique=True)
     ended_reason: Mapped[str | None] = mapped_column(String(100))
@@ -295,6 +301,33 @@ class PrivateCall(Base):
     next_open_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     scheduled_for: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = ts_now()
+
+
+class PrivateSubscription(Base):
+    """The one subscription of a personal workspace (app/modules/privat/subscriptions.py).
+
+    status: trial (the local 14-day trial with Plus rights; no Stripe object yet) | active | past_due | canceled –
+    the last three mirror the Stripe subscription in `stripe_subscription_id`. "expired" (a trial past trial_ends_at)
+    and "none" are derived when read, never stored."""
+
+    __tablename__ = "private_subscriptions"
+    __table_args__ = (
+        CheckConstraint("plan in ('basis','plus','familie')", name="ck_private_subscriptions_plan"),
+        CheckConstraint("status in ('trial','active','past_due','canceled')", name="ck_private_subscriptions_status"),
+        CheckConstraint("interval is null or interval in ('month','year')", name="ck_private_subscriptions_interval"),
+    )
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    plan: Mapped[str] = mapped_column(String(16), nullable=False, default="plus")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="trial")
+    interval: Mapped[str | None] = mapped_column(String(8))
+    stripe_customer_id: Mapped[str | None] = mapped_column(String(100))
+    stripe_subscription_id: Mapped[str | None] = mapped_column(String(100), unique=True)
+    trial_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    current_period_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    cancel_at_period_end: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = ts_now()
 
 
 class PrivateAddonEnabled(Base):

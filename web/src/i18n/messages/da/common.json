@@ -22,5 +22,10 @@
     "knowledge": "Viden",
     "byIndustry": "AI-receptionist til din branche",
     "skip": "Spring til indhold"
+  },
+  "audience": {
+    "business": "Til virksomheder – Dialogbot Erhverv",
+    "private": "Til dig derhjemme – Dialogbot Privat",
+    "label": "Vælg: virksomhed eller privat"
   }
 }

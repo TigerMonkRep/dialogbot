@@ -8,8 +8,8 @@ import type { ApiError, ApiError as ClientApiError } from "@/lib/client";
 import { FAKE_SMS_CODE } from "@/lib/privat/fake";
 import { Avatars, BIG, CheckBox, CHIP, Eyebrow, Ex, Kv, LINK, Pill, Sim, SR } from "./bits";
 import { Ico, Tile } from "./icons";
-import { useFmt, usePrivat } from "./store";
-import { addonText } from "./addons";
+import { useFmt, usePlan, usePrivat } from "./store";
+import { addonIncluded, addonText } from "./addons";
 import { PushPrompt } from "./push";
 import { isDanishMobile } from "@/lib/privat/fake";
 import { platformOf, smsHref } from "@/lib/privat/sms";
@@ -284,6 +284,7 @@ export function CallCard({ task }: { task: Task }) {
   const raw = useRaw();
   const f = useFmt();
   const { simulated, mode, balance, run, api, refresh, openSheet, openTask, fake, addonOn, sendAbout } = usePrivat();
+  const plan = usePlan();
   const c = task.call!;
   const [editing, setEditing] = useState(false);
   const [win, setWin] = useState(c.window);
@@ -300,11 +301,13 @@ export function CallCard({ task }: { task: Task }) {
   const closed = c.open_now === false;
   const swap = (s: string) => (win && win !== c.window ? s.split(c.window).join(win) : s);
   const credits = balance?.credits ?? 0;
+  // The plan's monthly quota pays first; credits («ekstra opkald») when it is used up or there is no plan.
+  const viaPlan = plan.entitled && plan.callsLeft > 0;
   const approve = async (phoneJustVerified = false) => {
     setErr(null);
     if (!addonOn(ADDON.call)) { openSheet({ kind: "addon", addonKey: ADDON.call }); return; }
     if (!phoneJustVerified && balance && !balance.phone_verified) { setNeedPhone(true); return; }
-    if (credits < c.max_credits) { openSheet({ kind: "paywall", taskId: task.id }); return; }
+    if (!viaPlan && credits < c.max_credits) { openSheet({ kind: "paywall", taskId: task.id }); return; }
     setBusy(true);
     try {
       await api.approveCall(task.id, { window: win, share_phone: share, ...(mobile ? { confirm_business: isBusiness } : {}), ...(closed ? { at_next_open: true } : {}) });
@@ -314,6 +317,7 @@ export function CallCard({ task }: { task: Task }) {
       const x = e as ClientApiError;
       if (x.code === CONFLICT.needsPhone) setNeedPhone(true);
       else if (x.code === CONFLICT.insufficientCredits) openSheet({ kind: "paywall", taskId: task.id });
+      else if (x.code === CONFLICT.needsPlan) openSheet({ kind: "needsPlan", taskId: task.id });
       else if (x.code === CONFLICT.addonDisabled) openSheet({ kind: "addon", addonKey: ADDON.call });
       else if (x.code === CONFLICT.demoBusiness) setErr(t("call.demoBusiness"));
       // The card was stale (no number yet / just closed / mobile number): refresh so it shows the right step, and say why.
@@ -324,7 +328,9 @@ export function CallCard({ task }: { task: Task }) {
     } finally { setBusy(false); }
   };
   const res = c.result;
-  const usage = t("call.callUsage", { n: c.max_credits, duration: f.duration(c.duration_seconds) });
+  // The backend's usage text («1 af 10 opkald i Plus · 2 min.» or «3 credits · …») wins; the credits line is the fallback.
+  const usage = task.usage_text || t("call.callUsage", { n: c.max_credits, duration: f.duration(c.duration_seconds) });
+  const noAnswerTitle = plan.entitled ? t("day2.noAnswerPlan") : t("call.noAnswerTitle", { n: c.max_credits });
 
   if (task.status === "declined" || res === "declined") {
     return <div className={BAD}><h3 className="m-0 font-display font-bold text-[18px]">{t("call.declinedTitle")}</h3><p className="m-0 text-[14px] text-ink-soft">{t("call.declinedText")}</p></div>;
@@ -334,7 +340,7 @@ export function CallCard({ task }: { task: Task }) {
       <div className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-3">
         <div className="flex gap-2 items-center flex-wrap"><Pill>{t("status.planned")}</Pill>{simulated && <Sim />}</div>
         <h3 className="m-0 font-display font-bold text-[20px] [overflow-wrap:anywhere]">{t("call.plannedTitle", { name: c.business_name, when: c.next_open_text ?? "" })}</h3>
-        <p className="m-0 text-[14px] text-ink-soft">{t("call.reserved", { n: c.max_credits })}</p>
+        <p className="m-0 text-[14px] text-ink-soft">{task.usage_text || t("call.reserved", { n: c.max_credits })}</p>
         {simulated && fake && (
           <div className="flex gap-2 flex-wrap">
             <Button variant="outline" onClick={() => run((a) => (a as typeof fake).simulateOutcome(task.id, "answered"))}>{t("call.outcomeAnswered")}</Button>
@@ -350,7 +356,7 @@ export function CallCard({ task }: { task: Task }) {
       <div className="rounded-[18px] border-2 border-ink bg-accent-soft p-4 flex flex-col gap-3">
         <div className="flex gap-2 items-center flex-wrap"><Pill>{t("status.in_progress")}</Pill>{simulated && <Sim label={t("call.simulatedCall")} />}</div>
         <h3 className="m-0 font-display font-bold text-[20px] [overflow-wrap:anywhere]">{t("call.calling", { name: c.business_name })}</h3>
-        <p className="m-0 text-[14px] text-ink-soft">{t("call.reserved", { n: c.max_credits })}</p>
+        <p className="m-0 text-[14px] text-ink-soft">{task.usage_text || t("call.reserved", { n: c.max_credits })}</p>
         {simulated && fake ? (
           <>
             <Eyebrow className="mt-1">{t("call.chooseOutcome")}</Eyebrow>
@@ -379,7 +385,7 @@ export function CallCard({ task }: { task: Task }) {
     return (
       <div className={BAD}>
         <div className="flex gap-2 items-center flex-wrap"><Pill tone="highlight">{t("status.awaiting_user")}</Pill>{simulated && <Sim />}</div>
-        <h3 className="m-0 font-display font-bold text-[20px]">{t("call.noAnswerTitle", { n: c.max_credits })}</h3>
+        <h3 className="m-0 font-display font-bold text-[20px]">{noAnswerTitle}</h3>
         <p className="m-0 text-[15px] text-ink-soft">{t("call.noAnswerText")}</p>
         <div className="flex gap-2 flex-wrap">
           <Button className={BIG} onClick={() => run((a) => a.retryCall(task.id))}>{t("call.retry")}</Button>
@@ -422,7 +428,8 @@ export function CallCard({ task }: { task: Task }) {
         [t("call.mayNot"), c.may_not],
       ]} />
       <div className="rounded-xl border-[1.5px] border-ink bg-panel p-3 flex flex-col gap-1.5">
-        <span className="text-[15px]"><b>{t("call.cost", { n: c.max_credits })}</b> {t("call.costTime")}</span>
+        {viaPlan ? <span className="text-[15px]"><b>{t("day2.callQuota", { used: plan.callsUsed + 1, quota: plan.callsQuota, plan: plan.rightsName })}</b></span>
+          : <span className="text-[15px]"><b>{t("call.cost", { n: c.max_credits })}</b> {t("call.costTime")}</span>}
         <span className="text-[14px] text-ink-soft">{t("call.refund")}</span>
         <span className="text-[14px] text-ink-soft">{t("call.price")}</span>
       </div>
@@ -450,7 +457,7 @@ export function CallCard({ task }: { task: Task }) {
           <span className="flex flex-col"><span className="text-[15px] font-semibold">{t("call.isBusiness")}</span><span className="text-[13px] text-muted">{t("call.isBusinessHint")}</span></span>
         </label>
       )}
-      {credits < c.max_credits && <p className="m-0 text-[14px] text-danger font-semibold">{t("call.needCredits", { have: credits, need: c.max_credits })}</p>}
+      {!viaPlan && credits < c.max_credits && <p className="m-0 text-[14px] text-danger font-semibold">{t("call.needCredits", { have: credits, need: c.max_credits })}</p>}
       {needPhone && (
         <div className="rounded-xl border-2 border-ink bg-paper p-3 flex flex-col gap-2">
           <p className="m-0 font-semibold">{t("call.phoneStep")}</p>
@@ -491,10 +498,11 @@ export function DraftCard({ task }: { task: Task }) {
 
 export function AddonCard({ addonKey, retryText }: { addonKey: string; retryText: string | null }) {
   const t = useT("privat");
-  const { addons, run, send, go } = usePrivat();
+  const { addons, run, send, go, openSheet, entitled } = usePrivat();
   const a = addons?.find((x) => x.key === addonKey);
   const name = a ? addonText(t, a, "name") : addonKey;
   const on = !!a?.enabled;
+  const enable = () => (a && !addonIncluded(a, entitled) ? openSheet({ kind: "needsPlan", addonKey }) : run((x) => x.enableAddon(addonKey)));
   return (
     <div className={PROPOSAL}>
       <div className="flex items-center gap-2.5">
@@ -503,9 +511,9 @@ export function AddonCard({ addonKey, retryText }: { addonKey: string; retryText
       </div>
       {!on && <p className="m-0 text-[15px] text-ink-soft">{t("addonCard.text")}</p>}
       <div className="flex gap-2 flex-wrap items-center">
-        {!on && a?.status !== "coming_soon" && <Button className={BIG} onClick={() => run((x) => x.enableAddon(addonKey))}>{t("addons.enable")}</Button>}
+        {!on && a?.status !== "coming_soon" && <Button className={BIG} onClick={enable}>{t("addons.enable")}</Button>}
         {on && retryText && <Button className={BIG} onClick={() => send(retryText)}>{t("addonCard.resend")}</Button>}
-        <button type="button" className={LINK} onClick={() => go("addons")}>{t("addonCard.seeAll")}</button>
+        <button type="button" className={LINK} onClick={() => go("store")}>{t("addonCard.seeAll")}</button>
       </div>
     </div>
   );

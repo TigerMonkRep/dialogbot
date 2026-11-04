@@ -22,5 +22,10 @@
     "knowledge": "Kunskap",
     "byIndustry": "AI-receptionist för din bransch",
     "skip": "Hoppa till innehållet"
+  },
+  "audience": {
+    "business": "För företag – Dialogbot Erhverv",
+    "private": "För dig hemma – Dialogbot Privat",
+    "label": "Välj: företag eller privat"
   }
 }

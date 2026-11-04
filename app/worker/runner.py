@@ -367,9 +367,11 @@ def run_schedules() -> None:
             from app.modules.privat.lookup_limits import prune
 
             prune(db)  # rate-limit rows older than two days
+            from app.modules.browser.lookup import scrub_expired
             from app.modules.privat.places import scrub_cached
 
             scrub_cached(db)  # Google content older than GOOGLE_PLACES_CACHE_DAYS (place_id is kept)
+            scrub_expired(db)  # ... also in the cached business lookups of the assistant's booking
             n = sweep_stale(db)
             if n:
                 log.info("privat.calls_released", count=n)

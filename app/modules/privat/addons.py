@@ -118,7 +118,34 @@ register(Addon(
               "window": {"type": "string", "description": "Hvornår brugeren kan, fx 'torsdag efter kl. 15'"},
               "may_ask": {"type": "string"}, "may_agree": {"type": "string"}, "may_not": {"type": "string"}},
              ["purpose"]),
-        "app.modules.privat.chat:tool_propose_call"),),
+        "app.modules.privat.chat:tool_propose_call"),
+        AddonTool(
+            "find_business",
+            "Slå en virksomhed op (CVR-registret og Google), før du booker hos den. Send navn og gerne by. Svaret har et "
+            "business_id, som start_booking bruger. Opfind aldrig navn, nummer eller hjemmeside.",
+            _obj({"name": {"type": "string"}, "city": {"type": "string"}}, ["name"]),
+            "app.modules.browser.assistant:tool_find_business"),
+        AddonTool(
+            "start_booking",
+            "Book en tid hos en virksomhed, du har fundet med find_business. Du vælger IKKE selv, om der ringes, eller om det "
+            "bookes på hjemmesiden: Dialogbot vælger efter faste regler og fortæller brugeren hvilket. Send "
+            "user_said_track KUN hvis brugeren selv skrev, at du skal ringe («ring») eller booke på hjemmesiden («skriv»). "
+            "service og preferred_windows skal komme fra brugeren (konkrete datoer, evt. med klokkeslæt); gæt aldrig. Der "
+            "bliver hverken ringet eller booket uden brugerens godkendelse.",
+            _obj({"business_id": {"type": "string"}, "intent": {"type": "string", "enum": ["book", "flyt", "aflys"]},
+                  "service": {"type": "string", "description": "Fx herreklip, tandrensning"},
+                  "preferred_windows": {"type": "array", "items": _obj(
+                      {"date": {"type": "string", "description": "YYYY-MM-DD"}, "from": {"type": "string", "description": "HH:MM"},
+                       "to": {"type": "string", "description": "HH:MM"}}, ["date"])},
+                  "user_said_track": {"type": "string", "enum": ["ring", "skriv"]}},
+                 ["business_id", "intent"]),
+            "app.modules.browser.assistant:tool_start_booking"),
+        AddonTool(
+            "switch_to_phone",
+            "Brug, når brugeren siger «ring i stedet» (eller lignende), mens en booking på en hjemmeside kører. Stopper "
+            "bookingen og laver et forslag til et opkald, som brugeren godkender.",
+            _obj({"task_id": {"type": "string"}}),
+            "app.modules.browser.assistant:tool_switch_to_phone"),),
 ))
 
 register(Addon(

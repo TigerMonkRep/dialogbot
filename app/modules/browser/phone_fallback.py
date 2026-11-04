@@ -25,6 +25,7 @@ REASONS = {
     "intent_unsupported": "jeg kan endnu ikke ændre eller aflyse tider på hjemmesider",
     "ai_unavailable": "jeg kunne ikke finde ud af siden",
     "llm_gave_up": "jeg kunne ikke finde ud af siden",
+    "user_switched": "du bad om et opkald i stedet",
 }
 
 

@@ -1,4 +1,4 @@
-from app.models.browser import BrowserRun, BusinessBookingProfile  # noqa: F401
+from app.models.browser import BrowserRun, BusinessBookingProfile, ExternalBusinessContact  # noqa: F401
 from app.models.domain import (  # noqa: F401
     ASSISTANT_REQUEST_CATEGORIES,
     ASSISTANT_REQUEST_STATUSES,

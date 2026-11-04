@@ -25,14 +25,19 @@ from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from app.models import BrowserRun, PrivateMessage, PrivateTask
 from app.modules.browser import storage
 from app.modules.browser.events import BROWSER_EVENT_TYPES, EVENT_DECISION, EVENT_RUN  # noqa: F401
+from app.modules.privat import ledger, sharing
 from app.modules.privat import service as privat_service
-from app.modules.privat import sharing
 
 ACTIVE = ("planned", "running", "awaiting_approval", "approved")
 FINAL = ("done", "failed", "fallback_phone")
 APPROVAL_MAX_AGE = timedelta(hours=24)  # a yes older than a day no longer fits the slot that was shown
 INTENTS = ("book", "flyt", "aflys")
 SAME_AS_APPROVED_KEYS = ("service", "date", "time", "price", "name", "staff")
+# What a browser booking costs, in credits. ONE constant on purpose: a call costs rules.CALL_CREDITS (3) today and the two are
+# not priced differently by decision yet; change this when they are. Reserved at start, spent when the run ends in a booking
+# (or in a click that may have booked), released when nothing was booked.
+BROWSER_BOOKING_CREDITS = 1
+SPENT_ERROR_CODES = ("unexpected_commit", "commit_unconfirmed")
 
 
 def _now() -> datetime:
@@ -81,6 +86,11 @@ def start_run(db: OrmSession, task: PrivateTask, *, goal: dict, allowed_domains:
                      max_steps=s.browser_max_steps, max_seconds=s.browser_max_seconds)
     db.add(run)
     db.flush()
+    if ledger.balance(db, task.workspace_id) < BROWSER_BOOKING_CREDITS:
+        raise Conflict("En booking på hjemmesiden reserverer 1 credit", code="insufficient_credits")
+    ledger.add(db, task.workspace_id, kind="reserve", amount=-BROWSER_BOOKING_CREDITS, source_ref=f"browser:{run.id}:reserve",
+               task_id=task.id, text="Booking på hjemmeside – reserveret")
+    task.usage_text = f"{BROWSER_BOOKING_CREDITS} credit reserveret"
     task.status, task.next_step, task.who = "in_progress", "Booker online – intet bliver bekræftet uden dit ja", "Dialogbot"
     privat_service.event(db, task, "Dialogbot går i gang med at finde en tid på virksomhedens bookingside")
     privat_service.touch(task)
@@ -162,6 +172,18 @@ def cas(db: OrmSession, run_id: uuid.UUID, from_: tuple[str, ...] | str, to: str
     return res.rowcount == 1
 
 
+def _settle_credit(db: OrmSession, run: BrowserRun, task: PrivateTask, *, spent: bool) -> None:
+    """The reserved credit becomes the price (capture) or comes back (release). Idempotent per run (unique source_ref)."""
+    if spent:
+        ledger.add(db, run.workspace_id, kind="capture", amount=0, source_ref=f"browser:{run.id}:capture", task_id=task.id,
+                   text="Booking på hjemmeside")
+        task.usage_text = f"{BROWSER_BOOKING_CREDITS} credit · booking på hjemmeside"
+    else:
+        ledger.add(db, run.workspace_id, kind="release", amount=BROWSER_BOOKING_CREDITS, source_ref=f"browser:{run.id}:release",
+                   task_id=task.id, text="Booking på hjemmeside ikke gennemført – reservation frigivet")
+        task.usage_text = "Intet forbrug"
+
+
 def _owner_message(db: OrmSession, run: BrowserRun, task: PrivateTask, *, kind: str = "text", text: str,
                    **kw) -> PrivateMessage:
     return privat_service.add_message(db, run.workspace_id, kind=kind, text=text, task_id=task.id, **kw)
@@ -232,7 +254,7 @@ def finish_done(db: OrmSession, run: BrowserRun, result: dict) -> None:
     price = s.get("price") or ba.get("price")
     run.status, run.finished_at, run.error_code, run.result = "done", _now(), None, result
     task.status, task.next_step, task.who = "done", confirmed, f"{_business(run, task)} har bekræftet"
-    task.usage_text = ""
+    _settle_credit(db, run, task, spent=True)
     privat_service.event(db, task, f"Booket: {confirmed}" + (f" · pris {price}" if price else "")
                          + (f" · bookingnr. {result['reference']}" if result.get("reference") else ""))
     ev = run.evidence_urls or []
@@ -258,6 +280,7 @@ def finish_failed(db: OrmSession, run: BrowserRun, error_code: str, *, details: 
     if details:
         run.result = {**(run.result or {}), "error_details": details}
     biz = _business(run, task)
+    _settle_credit(db, run, task, spent=error_code in SPENT_ERROR_CODES)
     if error_code == "declined":
         task.status, task.next_step, task.who = "declined", "Afvist – der er ikke booket", "Dig"
         privat_service.event(db, task, "Du afviste bookingen. Intet er booket")
@@ -289,6 +312,12 @@ def finish_failed(db: OrmSession, run: BrowserRun, error_code: str, *, details: 
     _answer_draft(db, task, "decline" if error_code == "declined" else "expired")
 
 
+def calls_pending_usage(db: OrmSession, task: PrivateTask) -> str:
+    from app.modules.privat import calls
+
+    return calls.pending_usage_text(db, task.workspace_id)
+
+
 def finish_fallback(db: OrmSession, run: BrowserRun, error_code: str, found: dict | None = None) -> None:
     """The browser could not do it (CAPTCHA, login, budget, no free time ...): hand over to the phone track. The task's
     call part is prepared with what was found (phone_fallback.apply); the user approves the call like any other call."""
@@ -298,11 +327,18 @@ def finish_fallback(db: OrmSession, run: BrowserRun, error_code: str, found: dic
     run.status, run.finished_at, run.error_code = "fallback_phone", _now(), error_code[:40]
     run.result = {**(run.result or {}), "found": found or {}}
     phone_fallback.apply(db, run, task, found, error_code)
-    privat_service.event(db, task, f"Booking på hjemmesiden kunne ikke gennemføres ({error_code}). Intet er booket")
+    _settle_credit(db, run, task, spent=False)
+    task.usage_text = calls_pending_usage(db, task)
+    switched = error_code == "user_switched"
+    privat_service.event(db, task, "Du bad om et opkald i stedet for en booking på hjemmesiden" if switched else
+                         f"Booking på hjemmesiden kunne ikke gennemføres ({error_code}). Intet er booket")
     privat_service.touch(task)
-    _owner_message(db, run, task, kind="call_proposal",
-                   text=f"Jeg kunne ikke booke hos {_business(run, task)} på hjemmesiden – {phone_fallback.reason_text(error_code)}. "
-                        "Intet er booket. Her er et forslag til et opkald i stedet; der bliver ikke ringet, før du godkender.")
+    biz = _business(run, task)
+    text = (f"Okay, jeg ringer til {biz} i stedet. Her er forslaget til opkaldet; der bliver ikke ringet, før du godkender."
+            if switched else
+            f"Jeg kunne ikke booke hos {biz} på hjemmesiden – {phone_fallback.reason_text(error_code)}. Intet er booket. "
+            "Her er et forslag til et opkald i stedet; der bliver ikke ringet, før du godkender.")
+    _owner_message(db, run, task, kind="call_proposal", text=text)
     _answer_draft(db, task, "expired")
 
 
@@ -339,3 +375,22 @@ def decline(db: OrmSession, ctx, task_id: uuid.UUID) -> BrowserRun:
     outbox.enqueue(db, event_type=EVENT_DECISION, dedupe_key=f"browser:{run.id}:decline",
                    payload={"run_id": str(run.id), "decision": "decline"}, workspace_id=run.workspace_id)
     return run
+
+
+def cancel_for_phone(db: OrmSession, ctx, task_id: uuid.UUID) -> BrowserRun:
+    """«Ring i stedet»: end an unfinished browser run and prepare the call. The worker lets go of the browser by itself (it
+    sees the status change). Refused once the confirming click may be made: a booking in flight cannot be called back."""
+    task, run = latest_run(db, ctx, task_id, lock=True)
+    if run.status == "fallback_phone" and run.error_code == "user_switched":
+        return run
+    if run.status in FINAL:
+        raise Conflict("Bookingen er allerede afsluttet", code="browser_run_finished")
+    if (run.result or {}).get("_confirming"):
+        raise Conflict("Bookingen er allerede ved at blive gennemført og kan ikke fortrydes her", code="browser_run_confirming")
+    finish_fallback(db, run, "user_switched", (run.result or {}).get("found") or {})
+    return run
+
+
+def active_run_for(db: OrmSession, task_id: uuid.UUID) -> BrowserRun | None:
+    return db.scalar(select(BrowserRun).where(BrowserRun.task_id == task_id, BrowserRun.status.in_(ACTIVE))
+                     .order_by(BrowserRun.created_at.desc()).limit(1))

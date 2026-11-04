@@ -418,3 +418,16 @@ BrowserRun = {id, task_id, engine, mode: "playbook"|"llm"|null,
 - **Fejlkoder i `error_code`:** `declined`, `unexpected_commit`, `commit_unconfirmed`, `forbidden_field`, `commit_limit`,
   `approval_expired`, `worker_lost`, `internal_error`; `fallback_phone`: `captcha`, `login_required`, `budget_steps`, `budget_time`,
   `no_availability`, `session_expired`, `unexpected_step`, `playbook:<årsag>`.
+
+### Assistentens bookingværktøjer (tilføjelsen «Ring for mig»)
+
+| Værktøj | Hvad |
+|---|---|
+| `find_business(name, city?)` | Slår virksomheden op (CVR + Google Places), gemmer opslaget. Svarer med `business_id` og fakta. Opfinder intet |
+| `start_booking(business_id, intent, service, preferred_windows[], user_said_track?)` | Vælger spor efter faste regler (se nedenfor), siger hvilket, og starter enten en browser-kørsel eller et opkaldsforslag |
+| `switch_to_phone(task_id?)` | «Ring i stedet»: stopper en kørsel, der ikke har trykket bekræft, frigiver creditten og laver opkaldsforslaget |
+
+Sporregler, i rækkefølge (kode i `app/modules/browser/routing.py`; modellen vælger ikke): 1. brugeren sagde «ring» → telefon; «skriv» → browser, hvis det kan lade sig gøre,
+ellers telefon med forklaring; 2. ønsket er ikke `book` → telefon; 3. hjemmeside fundet + kendt og tilladt motor + bookingadresse + brugerens navn og bekræftede mobil på profilen
+(+ workeren slået til + 1 credit) → browser; 4. ellers telefon. Er ydelse eller tidsramme ikke konkret, spørger assistenten; der startes intet.
+En browser-booking koster **1 credit** (reserveres, bruges ved booking, frigives ellers). Kørslen får kun brugerens eget navn og mobilnummer.

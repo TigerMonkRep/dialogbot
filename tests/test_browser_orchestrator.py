@@ -639,3 +639,71 @@ def test_a_playbook_miss_hands_over_to_the_llm_from_the_page_it_is_on(api, db, p
     assert (run.mode, run.status) == ("llm", "awaiting_approval"), (run.status, run.error_code, run.result)
     assert not hits(site) and "Herreklip" in run.before_after["text"] and "Mette Hansen" in run.before_after["text"]
     assert model.calls == 2
+
+
+# =====================================================================================================================
+# A5: errors fall to the phone without asking again; «ring i stedet» cancels a live run
+# =====================================================================================================================
+
+def test_a_browser_failure_goes_straight_to_a_call_proposal_without_asking_again(api, db, pv, site):
+    from app.modules.privat import ledger
+
+    tok, tid, rid = new_run(db, pv, site, variant="booking-captcha")
+    ws = pv.ws(tok)
+    assert ledger.balance(db, ws) == 2                                      # the booking's credit is reserved
+    orchestrator.drive(rid)
+    ms = msgs(db, tid)
+    assert any(m.kind == "call_proposal" for m in ms)                       # the proposal is there at once ...
+    assert not any(m.kind == "clarify" or "Skal jeg ringe i stedet" in m.text for m in ms)   # ... nobody asks «skal jeg ringe?»
+    assert ledger.balance(db, ws) == 3                                      # nothing was booked: the credit is back
+
+
+def test_ring_i_stedet_while_the_browser_waits_for_the_yes_lets_go_of_the_browser(api, db, pv, site):
+    tok, tid, rid = new_run(db, pv, site)
+    t = threading.Thread(target=orchestrator.drive, args=(rid,), kwargs={"ttl": 60})
+    t.start()
+    wait_for(db, rid, "awaiting_approval")
+    with get_session_factory()() as s:
+        from types import SimpleNamespace
+
+        service.cancel_for_phone(s, SimpleNamespace(user_id=db.get(PrivateTask, tid) and _owner_id(db, tid)), tid)
+        s.commit()
+    t.join(20)
+    assert not t.is_alive()                                                  # the live session was closed
+    run = fresh(db, rid)
+    assert (run.status, run.error_code) == ("fallback_phone", "user_switched") and not hits(site)
+    assert api.post(tok, f"/privat/tasks/{tid}/browser/approve").status_code == 409   # a late yes finds nothing to confirm
+
+
+def _owner_id(db, tid):
+    from app.models import PrivateTaskMember
+
+    return db.scalar(select(PrivateTaskMember.user_id).where(PrivateTaskMember.task_id == tid, PrivateTaskMember.role == "owner"))
+
+
+def test_a_cancelled_run_stops_between_steps(api, db, pv, site):
+    """«Ring i stedet» in the middle of the page work: the next step sees it and the browser stops, before anything is confirmed."""
+    tok, tid, rid = new_run(db, pv, site)
+    steps = {"n": 0}
+
+    def factory(snap):
+        s = orchestrator.default_session(snap)
+        base = s.cancel_check
+
+        def check():
+            steps["n"] += 1
+            if steps["n"] == 4:                                              # the user types «ring i stedet» during step 4
+                from types import SimpleNamespace
+
+                with get_session_factory()() as x:
+                    service.cancel_for_phone(x, SimpleNamespace(user_id=_owner_id(db, tid)), tid)
+                    x.commit()
+            return base()
+
+        s.cancel_check = check
+        return s
+
+    orchestrator.drive(rid, session_factory=factory)
+    run = fresh(db, rid)
+    assert (run.status, run.error_code) == ("fallback_phone", "user_switched")
+    assert steps["n"] < 12 and not hits(site)

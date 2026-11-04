@@ -339,3 +339,13 @@ def test_approved_run_may_see_the_receipt(site, workdir):
     with session(site, workdir, approved=True) as s:
         s.navigate(site.url + "/booking/kvittering.html?service=Herreklip&navn=Mette")
         s.wait(10)  # no unexpected_commit: this run was approved
+
+
+def test_a_cancelled_run_stops_at_the_next_tool_call(site, workdir):
+    flag = {"stop": False}
+    with session(site, workdir, cancel_check=lambda: flag["stop"]) as s:
+        s.navigate(site.url + "/booking/ydelse.html")
+        flag["stop"] = True
+        with pytest.raises(FallbackPhone) as e:
+            s.read_page()
+        assert e.value.error_code == "cancelled" and s.steps[-1].result == "cancelled"

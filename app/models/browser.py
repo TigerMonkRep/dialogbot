@@ -8,7 +8,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, DateTime, Float, ForeignKey, Index, Integer, String
+from sqlalchemy import Boolean, CheckConstraint, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -77,3 +77,45 @@ class BusinessBookingProfile(Base):
     booking_url: Mapped[str | None] = mapped_column(String(1000))
     confidence: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     detected_at: Mapped[datetime] = ts_now()
+
+
+class ExternalBusinessContact(Base):
+    """A business that is NOT a Dialogbot customer, as far as we know: what we looked up about it once, so we do not pay for the
+    same lookup twice (CVR register, Google Places). Used by the assistant's booking (A5) and by the lead loop (B).
+
+    Public facts only. Google Places content (website, phone, opening hours) is dropped after GOOGLE_PLACES_CACHE_DAYS and only
+    `place_id` is kept (Google's caching rules, see app/modules/privat/places.py). `email` exists only after an explicit yes
+    (lead loop); nothing in the booking flow writes it."""
+
+    __tablename__ = "external_business_contacts"
+    __table_args__ = (
+        CheckConstraint("last_outcome in ('interested','declined','skipped','not_asked')", name="ck_external_business_contacts_outcome"),
+        Index("uq_external_business_contacts_cvr", "cvr", unique=True, postgresql_where="cvr is not null"),
+        Index("uq_external_business_contacts_phone", "phone_e164", unique=True, postgresql_where="phone_e164 is not null"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    cvr: Mapped[str | None] = mapped_column(String(8))
+    phone_e164: Mapped[str | None] = mapped_column(String(20))
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    # Only ever from Google Places (the CVR register's «website» entries are not trusted); dropped with the other Google content.
+    website: Mapped[str | None] = mapped_column(String(500))
+    # which booking engine the website uses (found once, browser_worker/engine_detect.py)
+    booking_profile_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("business_booking_profiles.id", ondelete="SET NULL"))
+    is_dialogbot_customer: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    blocklisted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    blocklist_reason: Mapped[str | None] = mapped_column(String(40))
+    last_pitch_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    pitch_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    last_outcome: Mapped[str] = mapped_column(String(16), nullable=False, default="not_asked", server_default="not_asked")
+    email: Mapped[str | None] = mapped_column(String(320))
+    # --- lookup cache (A5) ---
+    lookup_key: Mapped[str | None] = mapped_column(String(300), unique=True)   # «navn|by», normalised
+    address: Mapped[str | None] = mapped_column(String(300))
+    city: Mapped[str | None] = mapped_column(String(100))
+    place_id: Mapped[str | None] = mapped_column(String(300))
+    opening_hours: Mapped[list | None] = mapped_column(JSONB)                  # Google periods; dropped with the other Google content
+    advertising_protected: Mapped[bool | None] = mapped_column()               # CVR «reklamebeskyttet»; None = the register did not say
+    cvr_looked_up_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    google_looked_up_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = ts_now()

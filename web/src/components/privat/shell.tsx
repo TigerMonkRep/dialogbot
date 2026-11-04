@@ -12,6 +12,7 @@ import { ChatPane } from "./chat";
 import { DayPage } from "./day";
 import { Ico } from "./icons";
 import { Sheets } from "./sheets";
+import { InstallCapture } from "@/components/install-app";
 import { registerSw } from "@/lib/privat/push";
 import { PrivatProvider, initials, usePlan, usePrivat, type Screen, type Session } from "./store";
 import { TaskDetail, TasksPane } from "./tasks";
@@ -37,6 +38,7 @@ function Shell() {
   return (
     <div className="h-dvh flex flex-col bg-paper text-ink overflow-hidden app-type" data-busy={busy || mode === "loading" ? "true" : "false"}>
       <a href="#privat-main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-3 focus:py-2 focus:rounded-lg focus:bg-ink focus:text-paper">{t("header.skip")}</a>
+      <InstallCapture />
       <Header />
       <AccountNotice />
       {screen === "day" ? (

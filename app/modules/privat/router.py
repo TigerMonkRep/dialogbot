@@ -71,6 +71,7 @@ class PhoneVerifyIn(BaseModel):
 class SubscriptionCheckoutIn(BaseModel):
     plan: str = Field(pattern="^(basis|plus|familie)$")
     interval: str = Field(default="month", pattern="^(month|year)$")
+    code: str | None = Field(default=None, max_length=40, description="rabatkode (valgfri)")
 
 
 class ItemIn(BaseModel):
@@ -134,7 +135,7 @@ def subscription(session_id: str | None = Query(default=None, max_length=200), c
 def subscription_checkout(body: SubscriptionCheckoutIn, ctx: PrivateCtx = Depends(private_ctx),
                           db: OrmSession = Depends(get_db)):
     """Stripe Checkout (mode=subscription). The plan becomes active through the webhook / the return sync."""
-    url = subscriptions.checkout(db, ctx, plan=body.plan, interval=body.interval)
+    url = subscriptions.checkout(db, ctx, plan=body.plan, interval=body.interval, code=body.code)
     db.commit()
     return {"url": url}
 

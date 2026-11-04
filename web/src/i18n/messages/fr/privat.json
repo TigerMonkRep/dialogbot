@@ -27,7 +27,7 @@
     "title": "Que puis-je régler pour vous ?",
     "lead": "Écrivez ou dictez une tâche. Peter tient des listes, vous rappelle les choses – et appelle le coiffeur, le garage ou le restaurant pour vous. Il n'appelle jamais avant que vous ayez dit oui.",
     "cta": "Essayer gratuitement 14 jours",
-    "note": "Sans carte. Sans engagement. Sans appli à télécharger.",
+    "note": "Sans carte. Sans engagement.",
     "login": "Se connecter",
     "demo": {
       "role": "votre assistant personnel",
@@ -622,7 +622,8 @@
     "useUp": "Mettre la consommation à 10/10",
     "repeatPay": "Répéter le dernier signal de paiement",
     "emptyDay": "Afficher une journée vide",
-    "reset": "Recommencer"
+    "reset": "Recommencer",
+    "installTitle": "Installer l'app"
   },
   "invite": {
     "title": "Inviter des amis",
@@ -720,7 +721,8 @@
     "iosTitle": "Sur iPhone, les notifications fonctionnent depuis l'écran d'accueil",
     "iosStep1": "Touchez Partager en bas de Safari.",
     "iosStep2": "Choisissez « Sur l'écran d'accueil » et ouvrez Dialogbot depuis là.",
-    "iosNote": "Ensuite, vous pourrez activer les notifications ici."
+    "iosNote": "Ensuite, vous pourrez activer les notifications ici.",
+    "installedAsk": "L'app est sur votre écran d'accueil. Un message quand il se passe quelque chose ?"
   },
   "nav": {
     "day": "Ma journée",
@@ -894,7 +896,11 @@
     "paywallCallTextPlan": "Vous avez utilisé {used} sur {quota} appels dans {plan}. Achetez des appels supplémentaires ou passez à un forfait supérieur.",
     "paywallCallTextNone": "Avec Basis, Plus ou Familie, les appels sont inclus. Vous pouvez aussi acheter des appels supplémentaires.",
     "paywallDigitalPlan": "Avec un forfait, listes et rappels sont illimités.",
-    "endTrial": "Terminer l’essai"
+    "endTrial": "Terminer l’essai",
+    "codeAsk": "Vous avez un code de réduction ?",
+    "codeLabel": "Code de réduction",
+    "codePlaceholder": "Ex. BIENVENUE",
+    "codeHint": "La réduction est appliquée sur la page de paiement."
   },
   "funnel": {
     "entry": "Essayer en 2 minutes",

@@ -30,5 +30,27 @@
     "label": "Choisir : entreprise ou particulier",
     "businessShort": "Entreprises",
     "privateShort": "Particuliers"
+  },
+  "install": {
+    "button": "Télécharger l'app",
+    "opening": "Ouverture…",
+    "installed": "{name} est sur votre écran d'accueil.",
+    "done": "{name} a été ajouté à votre écran d'accueil.",
+    "doneNotify": "{name} a été ajouté à votre écran d'accueil et les notifications sont activées.",
+    "introPrivat": "Ayez Dialogbot Privat comme app sur votre téléphone : un geste depuis l'écran d'accueil et un message quand il se passe quelque chose.",
+    "introErhverv": "Ayez Dialogbot comme app sur votre téléphone : un geste depuis l'écran d'accueil vers les appels, rendez-vous et demandes.",
+    "hintIos": "iPhone : Partager → Sur l'écran d'accueil",
+    "hintAndroid": "Android : via le menu du navigateur",
+    "hintDesktop": "Ouvrez cette page sur votre téléphone pour installer l'app.",
+    "manualAndroid": "Touchez le menu (⋮) en haut du navigateur et choisissez « Ajouter à l'écran d'accueil » ou « Installer l'application ».",
+    "manualDesktop": "Ouvrez {host}{path} sur votre téléphone et touchez Télécharger l'app.",
+    "thenNotify": "Ouvrez ensuite l'app depuis l'écran d'accueil et touchez « Activer les notifications ».",
+    "iosTitle": "Mettre l'app sur votre iPhone",
+    "iosStep1": "Touchez Partager en bas de Safari.",
+    "iosStep2": "Choisissez « Sur l'écran d'accueil » puis Ajouter.",
+    "iosStep3": "Ouvrez Dialogbot depuis l'écran d'accueil.",
+    "iosStep3Privat": "Ouvrez Dialogbot depuis l'écran d'accueil et touchez « Activer les notifications ».",
+    "iosNote": "Apple n'autorise pas une page à s'installer elle-même : il faut ces deux gestes.",
+    "close": "Fermer"
   }
 }

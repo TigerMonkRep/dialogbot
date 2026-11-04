@@ -36,6 +36,23 @@ Credits (10 for 29 kr.) findes stadig som «ekstra opkald», når månedens opka
   læser dem, og `GET /privat/subscription` leverer kataloget til web (docs/privat-api.md), så web hardcoder ingen priser.
   Stripe: inline `price_data` (tax_behavior inclusive) eller faste price-id'er via `PRIVAT_STRIPE_PRICE_<PLAN>_<INTERVAL>`.
 
+## Rabatkoder (operatører laver dem under Admin → Rabatkoder)
+
+Én tabel (`discount_codes`), to veje ind. Koden er A-Z/0-9, 3-20 tegn, gemmes med store bogstaver; den gælder, når den er aktiv,
+inden for sit tidsvindue og under sit maks. antal. `discount_redemptions` husker, hvilket arbejdsrum der brugte hvilken kode (én gang pr.
+arbejdsrum). Kode: `app/modules/billing/discounts.py`.
+
+- **Erhverv:** ejeren skriver koden under Konto → Abonnement («Har du en rabatkode?», `PUT /workspaces/{id}/billing/discount`). Fra
+  den måned står der en negativ linje `discount_code` på månedsoversigten og dermed på Stripe-fakturaen: *én gang* = den første måned,
+  *et antal måneder* = så mange måneder fra den måned, *altid* = hver måned. Procent regnes af månedens positive linjer; et beløb er
+  ekskl. moms og aldrig mere end måneden. Én kode pr. arbejdsrum (409 ellers).
+- **Privat:** planen betales gennem Stripe Checkout, så en kode til Privat/begge spejles til en Stripe-coupon + promotion code, når
+  den oprettes (`stripe_coupon_id`, `stripe_promotion_code_id`; kræver `STRIPE_SECRET_KEY`). Checkout-siden viser Stripes eget felt
+  «Tilføj rabatkode» (`allow_promotion_codes`), eller koden sættes på forhånd, når kunden kommer med den: feltet i planvælgeren eller
+  et link `dialogbot.app/privat/konto?plan=plus&kode=KODEN` (`discounts=[{promotion_code}]`). Den færdige Checkout-session fortæller,
+  hvilken promotion code der blev brugt, og det bliver brugen i `discount_redemptions`. Et beløb er her inkl. moms, som planpriserne.
+- Deaktivering stopper koden (også hos Stripe); kunder, der allerede har brugt den, beholder rabatten.
+
 ## Hvor tallene bor
 
 - **Kode:** `app/modules/billing/prices.py` – `SUBSCRIPTION_MONTHLY_NET_MINOR` (249.500 øre), `CAMPAIGN_CALL_NET_MINOR`

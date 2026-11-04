@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
 
-/** Web app manifest: "Føj til hjemmeskærm" uses the robot logo as the app icon. */
-export default function manifest(): MetadataRoute.Manifest {
+/** Web app manifest for the business app ("Føj til hjemmeskærm" → /app, the blue mark). Served from a route rather
+ *  than the manifest.ts convention, so the /privat segment can point at its own manifest through metadata – a
+ *  file-based root manifest would override that on every page. */
+function manifest(): MetadataRoute.Manifest {
   return {
     name: "Dialogbot",
     short_name: "Dialogbot",
@@ -18,4 +20,8 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/icons/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
+}
+
+export function GET() {
+  return Response.json(manifest(), { headers: { "content-type": "application/manifest+json", "cache-control": "public, max-age=3600" } });
 }

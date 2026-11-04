@@ -6,19 +6,24 @@ import { LanguageSwitcher } from "./language-switcher";
 
 /** Auth layout (Byggevejledning): paper header with 2 px ink line, back link and "Sikker" pill;
  *  an intro card (blue icon tile, code, Outfit title) and the form card. Centered column on desktop. */
-export function AuthFrame({ title, subtitle, children, code, icon = "lock", aside, back = "/" }: {
+export function AuthFrame({ title, subtitle, children, code, icon = "lock", aside, back, audience = "erhverv" }: {
   title: string; subtitle?: string; children: React.ReactNode; code?: string; icon?: string; aside?: React.ReactNode; back?: string;
+  /** "privat": the orange Dialogbot Privat look (data-theme), the logo leads to /privat – a private customer who signs
+   *  up to pay for a plan never sees the Erhverv blue. */
+  audience?: "erhverv" | "privat";
 }) {
   const t = useT("auth");
+  const privat = audience === "privat";
+  const home = privat ? "/privat" : "/";
   return (
-    <div className="min-h-dvh bg-panel text-ink app-type flex flex-col">
+    <div className="min-h-dvh bg-panel text-ink app-type flex flex-col" data-theme={privat ? "privat" : undefined} data-audience={audience}>
       <header className="sticky top-0 z-40 bg-paper border-b-2 border-ink">
         <div className="max-w-[1280px] mx-auto min-h-16 px-4 md:px-6 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Link href={back} aria-label={t("frame.back")} className="w-11 h-11 -ml-2 rounded-xl flex items-center justify-center text-ink hover:bg-panel"><Icon name="arrow_back" size={24} /></Link>
-            <Link href="/" className="flex items-center gap-2.5">
+            <Link href={back ?? home} aria-label={t("frame.back")} className="w-11 h-11 -ml-2 rounded-xl flex items-center justify-center text-ink hover:bg-panel"><Icon name="arrow_back" size={24} /></Link>
+            <Link href={home} className="flex items-center gap-2.5">
               <LogoMark size={32} />
-              <span className="font-display font-extrabold text-[20px] tracking-[-0.3px] text-ink">Dialogbot</span>
+              <span className="font-display font-extrabold text-[20px] tracking-[-0.3px] text-ink">Dialogbot{privat && <span className="text-accent"> {t("frame.privat")}</span>}</span>
             </Link>
           </div>
           <div className="flex items-center gap-2">

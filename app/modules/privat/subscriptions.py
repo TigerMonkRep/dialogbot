@@ -25,7 +25,7 @@ from app.core.errors import NotFound, NotImplementedYet, ValidationFailed
 from app.models import PrivateCall, PrivateProfile, PrivateSubscription, Workspace
 from app.modules.billing import prices
 from app.modules.billing import stripe as stripe_api
-from app.modules.privat import rules
+from app.modules.privat import branding, rules
 
 KIND = "privat_subscription"
 PLANS: dict[str, dict] = {p["key"]: dict(p) for p in prices.PRIVAT_PLANS}
@@ -168,8 +168,12 @@ def price_id(plan: str, interval: str) -> str | None:
     return getattr(get_settings(), f"privat_stripe_price_{plan}_{interval}", None) or None
 
 
-def checkout(db: OrmSession, ctx, *, plan: str, interval: str) -> str:
-    """A Stripe Checkout page (mode=subscription). The subscription itself arrives with the webhook / sync."""
+def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None = None) -> str:
+    """A Stripe Checkout page (mode=subscription). The subscription itself arrives with the webhook / sync.
+    `code`: a discount code the customer typed (or ?kode=) – applied on the Stripe page; without one the page shows
+    Stripe's own field for a code."""
+    from app.modules.billing import discounts
+
     if plan not in PLANS:
         raise ValidationFailed("Vælg Basis, Plus eller Familie", field_errors=[{"field": "plan"}])
     if interval not in INTERVALS:
@@ -201,7 +205,12 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str) -> str:
         payload["customer"] = row.stripe_customer_id
     else:
         payload["customer_email"] = ctx.user.email
-    sess = stripe_api.request("POST", "/checkout/sessions", payload)
+    applied = discounts.privat_checkout_discounts(db, code)
+    if applied:
+        payload["discounts"] = applied  # Stripe allows either a fixed discount or its code field, not both
+    else:
+        payload["allow_promotion_codes"] = True
+    sess = branding.create_checkout_session(payload)
     return sess["url"]
 
 
@@ -298,7 +307,15 @@ def on_checkout_completed(db: OrmSession, obj: dict) -> str | None:
     if not sub_id:
         return "ignored"
     sub = stripe_api.request("GET", f"/subscriptions/{sub_id}")
-    return upsert_from_stripe_subscription(db, sub, session_meta=meta)
+    result = upsert_from_stripe_subscription(db, sub, session_meta=meta)
+    if result == "applied":
+        from app.modules.billing import discounts
+
+        try:
+            discounts.record_privat_redemption(db, uuid.UUID(str(meta.get("workspace_id"))), obj)
+        except ValueError:
+            pass
+    return result
 
 
 def on_subscription_event(db: OrmSession, kind: str, obj: dict) -> str | None:

@@ -30,5 +30,27 @@
     "label": "Elige: empresa o particular",
     "businessShort": "Empresas",
     "privateShort": "Particulares"
+  },
+  "install": {
+    "button": "Descargar app",
+    "opening": "Abriendo…",
+    "installed": "{name} está en tu pantalla de inicio.",
+    "done": "{name} se ha añadido a tu pantalla de inicio.",
+    "doneNotify": "{name} se ha añadido a tu pantalla de inicio y las notificaciones están activadas.",
+    "introPrivat": "Ten Dialogbot Privat como app en el móvil: un toque desde la pantalla de inicio y un aviso cuando pase algo.",
+    "introErhverv": "Ten Dialogbot como app en el móvil: un toque desde la pantalla de inicio a llamadas, citas y consultas.",
+    "hintIos": "iPhone: Compartir → Añadir a pantalla de inicio",
+    "hintAndroid": "Android: desde el menú del navegador",
+    "hintDesktop": "Abre esta página en tu móvil para instalar la app.",
+    "manualAndroid": "Toca el menú (⋮) arriba en el navegador y elige «Añadir a pantalla de inicio» o «Instalar app».",
+    "manualDesktop": "Abre {host}{path} en tu móvil y toca Descargar app allí.",
+    "thenNotify": "Después abre la app desde la pantalla de inicio y toca «Activar notificaciones».",
+    "iosTitle": "Cómo tener la app en tu iPhone",
+    "iosStep1": "Toca Compartir abajo en Safari.",
+    "iosStep2": "Elige «Añadir a pantalla de inicio» y toca Añadir.",
+    "iosStep3": "Abre Dialogbot desde la pantalla de inicio.",
+    "iosStep3Privat": "Abre Dialogbot desde la pantalla de inicio y toca «Activar notificaciones».",
+    "iosNote": "Apple no permite que una página se instale sola: son estos dos toques.",
+    "close": "Cerrar"
   }
 }

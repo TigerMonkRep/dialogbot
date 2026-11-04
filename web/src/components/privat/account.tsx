@@ -6,6 +6,8 @@ import { useT } from "@/i18n/client";
 import { BIG, Eyebrow, LINK, Pill, Sim } from "./bits";
 import { PhoneVerify } from "./cards";
 import { PushPrompt } from "./push";
+import { InstallApp } from "@/components/install-app";
+import { enablePush } from "@/lib/privat/push";
 import { Ico, Tile } from "./icons";
 import { useFmt, usePlan, usePrivat } from "./store";
 import { bareLink, smsHref, platformOf } from "@/lib/privat/sms";
@@ -52,21 +54,36 @@ export function AccountPane() {
     } else if (ab === "annulleret") { handled.current = key; setNote(t("plan.cancelled")); clean(); }
     else if (params.get("portal") === "simuleret") { handled.current = key; setNote(t("plan.portalSimulated")); clean(); }
     else if (isPlanKey(plan)) {
-      // From the landing page's plan cards: start the checkout once logged in (the login sheet keeps the query in `next`).
-      if (!loggedIn) { if (handled.current !== `login:${key}`) { handled.current = `login:${key}`; openSheet({ kind: "login" }); } return; }
+      // From the landing page's plan cards: straight on to the payment once logged in. Without a login the real site
+      // goes directly to the Privat sign-up (no sheet in between), which comes back here with the same query and
+      // starts the checkout; fake mode keeps the sheet with its simulated login.
+      if (!loggedIn) {
+        if (handled.current === `login:${key}`) return;
+        handled.current = `login:${key}`;
+        if (mode === "fake") openSheet({ kind: "login" });
+        else window.location.assign(`/signup?next=${encodeURIComponent(`/privat/konto?${key}`)}`);
+        return;
+      }
       handled.current = key;
       void startCheckout(plan, interval);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params, mode, loggedIn]);
-  const startCheckout = async (plan: PlanKey, interval: BillingInterval) => {
+  const startCheckout = async (plan: PlanKey, interval: BillingInterval, code?: string) => {
     if (!loggedIn) { openSheet({ kind: "login" }); return; }
     setRedirecting(true); setError(null);
-    try { const { url } = await api.subscriptionCheckout({ plan, interval }); window.location.href = url; }
+    const kode = (code ?? params.get("kode") ?? "").trim();
+    try { const { url } = await api.subscriptionCheckout({ plan, interval, ...(kode ? { code: kode } : {}) }); window.location.href = url; }
     catch (e) { setError(e as ApiError); setRedirecting(false); }
   };
-  const pickerOpen = picker || params.get("planer") === "1" || isPlanKey(params.get("plan"));
-  const togglePicker = () => { if (pickerOpen && params.get("planer") === "1") router.replace("/privat/konto"); setPicker(!pickerOpen); };
+  // Without a plan (the trial included) the three plans are open from the start – one tap to the payment; the button
+  // folds them away. With a plan they open on «Skift plan», ?planer=1 or ?plan=….
+  const [hidden, setHidden] = useState(false);
+  const pickerOpen = (p.plan === "none" && !hidden && mode !== "demo") || picker || params.get("planer") === "1" || isPlanKey(params.get("plan"));
+  const togglePicker = () => {
+    if (pickerOpen && params.get("planer") === "1") router.replace("/privat/konto");
+    if (p.plan === "none") setHidden(pickerOpen); else setPicker(!pickerOpen);
+  };
   const portal = async () => {
     setError(null);
     try { const { url } = await api.subscriptionPortal(); if (simulated) setNote(t("plan.portalSimulated")); else window.location.href = url; }
@@ -167,6 +184,11 @@ export function AccountPane() {
         </section>
       )}
 
+      <section className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" aria-labelledby="install-h">
+        <h3 id="install-h" className="m-0 font-display font-bold text-[19px]">{t("account.installTitle")}</h3>
+        <InstallApp audience="privat" enableNotifications={() => enablePush(api).then(() => refresh())} />
+      </section>
+
       <section className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" aria-labelledby="notif-h">
         <h3 id="notif-h" className="m-0 font-display font-bold text-[19px]">{t("push.title")}</h3>
         <PushPrompt moment="account" />
@@ -211,11 +233,16 @@ function featureText(t: (k: string, p?: Record<string, string | number>) => stri
   return t(`landing.pricing.features.${x}`);
 }
 
-function PlanPicker({ onPick, busy }: { onPick: (plan: PlanKey, interval: BillingInterval) => void; busy: boolean }) {
+function PlanPicker({ onPick, busy }: { onPick: (plan: PlanKey, interval: BillingInterval, code?: string) => void; busy: boolean }) {
   const t = useT("privat");
   const params = useSearchParams();
   const p = usePlan();
+  const { error } = usePrivat();
   const [interval, setInterval] = useState<BillingInterval>(params.get("interval") === "year" ? "year" : "month");
+  // A discount code (operator-made): from ?kode= in a campaign link, or typed here. Applied on the Stripe page.
+  const [code, setCode] = useState(params.get("kode") ?? "");
+  const [codeOpen, setCodeOpen] = useState(!!params.get("kode"));
+  const codeError = error?.field_errors?.find((f) => f.field === "code") ? error.message : null;
   const kr = (minor: number) => Math.round(minor / 100).toLocaleString("da-DK");
   return (
     <div className="flex flex-col gap-3 pt-2 border-t-[1.5px] border-line" data-testid="plan-picker">
@@ -242,13 +269,23 @@ function PlanPicker({ onPick, busy }: { onPick: (plan: PlanKey, interval: Billin
               <ul className="m-0 p-0 list-none flex flex-col gap-1">
                 {pl.features.map((x) => <li key={x} className="flex gap-2 text-[14px]"><span className="text-accent mt-0.5"><Ico name="check" size={16} /></span><span>{featureText(t, x, pl)}</span></li>)}
               </ul>
-              <Button className={`mt-1 rounded-full border-2 border-ink ${pl.recommended ? "" : "!bg-paper !text-ink hover:!bg-panel"}`} disabled={busy || (current && p.status === "active")} onClick={() => onPick(pl.key, interval)}>
+              <Button className={`mt-1 rounded-full border-2 border-ink ${pl.recommended ? "" : "!bg-paper !text-ink hover:!bg-panel"}`} disabled={busy || (current && p.status === "active")} onClick={() => onPick(pl.key, interval, code.trim() || undefined)}>
                 {busy ? t("plan.redirecting") : p.status === "none" ? t("plan.startTrial") : t("plan.select", { plan: pl.name })}
               </Button>
             </li>
           );
         })}
       </ul>
+      {codeOpen ? (
+        <div className="flex flex-col gap-1" data-testid="discount-code">
+          <label htmlFor="privat-kode" className="text-[13px] font-semibold">{t("plan.codeLabel")}</label>
+          <input id="privat-kode" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder={t("plan.codePlaceholder")} autoCapitalize="characters" spellCheck={false}
+            className="min-h-[46px] max-w-[260px] rounded-[14px] border-2 border-ink px-3.5 text-[16px] font-semibold tracking-[0.06em] uppercase bg-paper" />
+          <p className={`m-0 text-[13px] ${codeError ? "text-danger font-semibold" : "text-muted"}`} role={codeError ? "alert" : undefined}>{codeError ?? t("plan.codeHint")}</p>
+        </div>
+      ) : (
+        <button type="button" className={`${LINK} self-start`} onClick={() => setCodeOpen(true)}>{t("plan.codeAsk")}</button>
+      )}
       <p className="m-0 text-[13px] text-muted">{t("plan.pickerNote")}</p>
     </div>
   );

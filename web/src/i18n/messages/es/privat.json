@@ -27,7 +27,7 @@
     "title": "¿Qué quieres que resuelva por ti?",
     "lead": "Escribe o dicta una tarea. Peter lleva listas, te recuerda cosas y llama a la peluquería, al taller o al restaurante por ti. Nunca llama antes de que hayas dicho sí.",
     "cta": "Prueba gratis 14 días",
-    "note": "Sin tarjeta. Sin permanencia. Sin app que descargar.",
+    "note": "Sin tarjeta. Sin permanencia.",
     "login": "Iniciar sesión",
     "demo": {
       "role": "tu asistente personal",
@@ -622,7 +622,8 @@
     "useUp": "Poner el consumo en 10/10",
     "repeatPay": "Repetir la última señal de pago",
     "emptyDay": "Mostrar día vacío",
-    "reset": "Empezar de nuevo"
+    "reset": "Empezar de nuevo",
+    "installTitle": "Instalar la app"
   },
   "invite": {
     "title": "Invita a tus amigos",
@@ -720,7 +721,8 @@
     "iosTitle": "En iPhone, las notificaciones funcionan desde la pantalla de inicio",
     "iosStep1": "Toca Compartir abajo en Safari.",
     "iosStep2": "Elige «Añadir a pantalla de inicio» y abre Dialogbot desde ahí.",
-    "iosNote": "Después podrás activar las notificaciones aquí."
+    "iosNote": "Después podrás activar las notificaciones aquí.",
+    "installedAsk": "La app está en tu pantalla de inicio. ¿Quieres un aviso cuando pase algo?"
   },
   "nav": {
     "day": "Mi día",
@@ -894,7 +896,11 @@
     "paywallCallTextPlan": "Has usado {used} de {quota} llamadas en {plan}. Compra llamadas extra o cambia a un plan mayor.",
     "paywallCallTextNone": "Con Basis, Plus o Familie las llamadas están incluidas. También puedes comprar llamadas extra.",
     "paywallDigitalPlan": "Con un plan, listas y recordatorios son ilimitados.",
-    "endTrial": "Terminar la prueba"
+    "endTrial": "Terminar la prueba",
+    "codeAsk": "¿Tienes un código de descuento?",
+    "codeLabel": "Código de descuento",
+    "codePlaceholder": "P. ej. BIENVENIDO",
+    "codeHint": "El descuento se aplica en la página de pago."
   },
   "funnel": {
     "entry": "Pruébalo en 2 minutos",

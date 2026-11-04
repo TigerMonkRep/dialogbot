@@ -30,5 +30,27 @@
     "label": "Velg: bedrift eller privat",
     "businessShort": "Bedrift",
     "privateShort": "Privat"
+  },
+  "install": {
+    "button": "Last ned app",
+    "opening": "Åpner…",
+    "installed": "{name} er på hjemskjermen din.",
+    "done": "{name} er lagt på hjemskjermen din.",
+    "doneNotify": "{name} er lagt på hjemskjermen din, og varsler er slått på.",
+    "introPrivat": "Få Dialogbot Privat som app på telefonen: ett trykk fra hjemskjermen og beskjed når noe skjer.",
+    "introErhverv": "Få Dialogbot som app på telefonen – ett trykk fra hjemskjermen til anrop, avtaler og henvendelser.",
+    "hintIos": "iPhone: via Del → Legg til på Hjem-skjerm",
+    "hintAndroid": "Android: via nettleserens meny",
+    "hintDesktop": "Åpne siden på telefonen for å hente appen.",
+    "manualAndroid": "Trykk på menyen (⋮) øverst i nettleseren og velg «Legg til på startskjermen» eller «Installer app».",
+    "manualDesktop": "Åpne {host}{path} på telefonen og trykk Last ned app der.",
+    "thenNotify": "Åpne appen fra hjemskjermen etterpå og trykk «Slå på varsler».",
+    "iosTitle": "Slik får du appen på iPhone",
+    "iosStep1": "Trykk på Del nederst i Safari.",
+    "iosStep2": "Velg «Legg til på Hjem-skjerm» og trykk Legg til.",
+    "iosStep3": "Åpne Dialogbot fra hjemskjermen.",
+    "iosStep3Privat": "Åpne Dialogbot fra hjemskjermen og trykk «Slå på varsler».",
+    "iosNote": "Apple lar ikke en side installere seg selv – det er disse to trykkene som skal til.",
+    "close": "Lukk"
   }
 }

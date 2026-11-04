@@ -22,6 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: { card: "summary_large_image", title, description },
     verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
     appleWebApp: { title: "Dialogbot", capable: true, statusBarStyle: "black-translucent" },
+    manifest: "/manifest.webmanifest",
   };
 }
 

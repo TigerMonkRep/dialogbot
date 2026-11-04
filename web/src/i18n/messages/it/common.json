@@ -30,5 +30,27 @@
     "label": "Scegli: azienda o privato",
     "businessShort": "Aziende",
     "privateShort": "Privati"
+  },
+  "install": {
+    "button": "Scarica l'app",
+    "opening": "Apertura…",
+    "installed": "{name} è nella tua schermata Home.",
+    "done": "{name} è stato aggiunto alla schermata Home.",
+    "doneNotify": "{name} è stato aggiunto alla schermata Home e le notifiche sono attive.",
+    "introPrivat": "Avere Dialogbot Privat come app sul telefono: un tocco dalla schermata Home e un avviso quando succede qualcosa.",
+    "introErhverv": "Avere Dialogbot come app sul telefono: un tocco dalla schermata Home a chiamate, appuntamenti e richieste.",
+    "hintIos": "iPhone: Condividi → Aggiungi alla schermata Home",
+    "hintAndroid": "Android: dal menu del browser",
+    "hintDesktop": "Apri questa pagina sul telefono per installare l'app.",
+    "manualAndroid": "Tocca il menu (⋮) in alto nel browser e scegli «Aggiungi a schermata Home» o «Installa app».",
+    "manualDesktop": "Apri {host}{path} sul telefono e tocca Scarica l'app.",
+    "thenNotify": "Poi apri l'app dalla schermata Home e tocca «Attiva le notifiche».",
+    "iosTitle": "Come mettere l'app sul tuo iPhone",
+    "iosStep1": "Tocca Condividi in basso in Safari.",
+    "iosStep2": "Scegli «Aggiungi alla schermata Home» e tocca Aggiungi.",
+    "iosStep3": "Apri Dialogbot dalla schermata Home.",
+    "iosStep3Privat": "Apri Dialogbot dalla schermata Home e tocca «Attiva le notifiche».",
+    "iosNote": "Apple non permette a una pagina di installarsi da sola: servono questi due tocchi.",
+    "close": "Chiudi"
   }
 }

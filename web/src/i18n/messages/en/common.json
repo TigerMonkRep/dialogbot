@@ -30,5 +30,27 @@
     "label": "Choose: business or private",
     "businessShort": "Business",
     "privateShort": "Personal"
+  },
+  "install": {
+    "button": "Download app",
+    "opening": "Opening…",
+    "installed": "{name} is on your home screen.",
+    "done": "{name} has been added to your home screen.",
+    "doneNotify": "{name} has been added to your home screen and notifications are on.",
+    "introPrivat": "Get Dialogbot Privat as an app on your phone: one tap from the home screen and a message when something happens.",
+    "introErhverv": "Get Dialogbot as an app on your phone – one tap from the home screen to calls, bookings and enquiries.",
+    "hintIos": "iPhone: via Share → Add to Home Screen",
+    "hintAndroid": "Android: via the browser menu",
+    "hintDesktop": "Open this page on your phone to get the app.",
+    "manualAndroid": "Tap the menu (⋮) at the top of the browser and choose “Add to Home screen” or “Install app”.",
+    "manualDesktop": "Open {host}{path} on your phone and tap Download app there.",
+    "thenNotify": "Then open the app from the home screen and tap “Turn on notifications”.",
+    "iosTitle": "Getting the app on your iPhone",
+    "iosStep1": "Tap Share at the bottom of Safari.",
+    "iosStep2": "Choose “Add to Home Screen” and tap Add.",
+    "iosStep3": "Open Dialogbot from the home screen.",
+    "iosStep3Privat": "Open Dialogbot from the home screen and tap “Turn on notifications”.",
+    "iosNote": "Apple does not let a page install itself – it takes these two taps.",
+    "close": "Close"
   }
 }

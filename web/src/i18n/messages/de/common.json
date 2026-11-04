@@ -30,5 +30,27 @@
     "label": "Wählen: Unternehmen oder privat",
     "businessShort": "Unternehmen",
     "privateShort": "Privat"
+  },
+  "install": {
+    "button": "App herunterladen",
+    "opening": "Öffnet…",
+    "installed": "{name} ist auf deinem Startbildschirm.",
+    "done": "{name} liegt jetzt auf deinem Startbildschirm.",
+    "doneNotify": "{name} liegt jetzt auf deinem Startbildschirm, Benachrichtigungen sind an.",
+    "introPrivat": "Hol dir Dialogbot Privat als App aufs Handy: ein Tipp vom Startbildschirm und eine Nachricht, wenn etwas passiert.",
+    "introErhverv": "Hol dir Dialogbot als App aufs Handy – ein Tipp vom Startbildschirm zu Anrufen, Terminen und Anfragen.",
+    "hintIos": "iPhone: über Teilen → Zum Home-Bildschirm",
+    "hintAndroid": "Android: über das Browser-Menü",
+    "hintDesktop": "Öffne die Seite auf deinem Handy, um die App zu holen.",
+    "manualAndroid": "Tippe oben im Browser auf das Menü (⋮) und wähle „Zum Startbildschirm“ oder „App installieren“.",
+    "manualDesktop": "Öffne {host}{path} auf deinem Handy und tippe dort auf App herunterladen.",
+    "thenNotify": "Öffne die App danach vom Startbildschirm und tippe auf „Benachrichtigungen einschalten“.",
+    "iosTitle": "So kommt die App auf dein iPhone",
+    "iosStep1": "Tippe unten in Safari auf Teilen.",
+    "iosStep2": "Wähle „Zum Home-Bildschirm“ und tippe auf Hinzufügen.",
+    "iosStep3": "Öffne Dialogbot vom Home-Bildschirm.",
+    "iosStep3Privat": "Öffne Dialogbot vom Home-Bildschirm und tippe auf „Benachrichtigungen einschalten“.",
+    "iosNote": "Apple erlaubt keiner Seite, sich selbst zu installieren – diese zwei Tipps sind nötig.",
+    "close": "Schließen"
   }
 }

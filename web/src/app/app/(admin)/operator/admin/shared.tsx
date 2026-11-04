@@ -7,7 +7,7 @@ import { requireWorkspace } from "@/lib/workspace.server";
 const TABS: [string, string][] = [
   ["/app/operator/admin", "Overblik"], ["/app/operator/admin/kunder", "Kunder"], ["/app/operator/admin/brugere", "Brugere"],
   ["/app/operator/oensker", "Ønsker"], ["/app/operator/admin/drift", "Drift"], ["/app/operator/admin/hjemmeside", "Hjemmeside"],
-  ["/app/operator/admin/vaerktoejer", "Værktøjer"], ["/app/operator/privat", "Privat"],
+  ["/app/operator/admin/rabatkoder", "Rabatkoder"], ["/app/operator/admin/vaerktoejer", "Værktøjer"], ["/app/operator/privat", "Privat"],
 ];
 
 export function AdminFrame({ active, title, intro, eyebrow = "Admin · kun læsning", children }: { active: string; title: string; intro?: string; eyebrow?: string; children: React.ReactNode }) {

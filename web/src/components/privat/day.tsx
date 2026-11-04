@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useT } from "@/i18n/client";
 import { ADDON, type Task, type TaskStatus } from "@/lib/privat/api";
@@ -7,6 +7,9 @@ import { isDanishMobile } from "@/lib/privat/fake";
 import { CHIP, Ex, SR, TONE } from "./bits";
 import { Ico, Tile } from "./icons";
 import { useFmt, usePlan, usePrivat } from "./store";
+import { Button } from "@/components/ui";
+import { currentPushState, enablePush } from "@/lib/privat/push";
+import { isStandalone, takeNotifyPending } from "@/lib/install";
 
 /** Pill button (Privat: rounded-full everywhere). */
 const PILL = "inline-flex items-center justify-center gap-2 rounded-full font-semibold border-2 border-ink min-h-[44px] px-4 text-[15px]";
@@ -270,6 +273,7 @@ export function DayPage() {
         </div>
         {mode === "loading" && <p className="m-0 text-[14px] text-muted" role="status">{t("common.loading")}</p>}
         <Suspense><WelcomeBanner /></Suspense>
+        <InstalledBanner />
         <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-6 items-start">
           <ChatCard />
           <YourTurn />
@@ -294,6 +298,28 @@ function WelcomeBanner() {
     <div role="status" data-welcome className="flex items-center gap-2 rounded-xl border-[1.5px] border-ink bg-highlight pl-3 pr-1 py-1">
       <span className="flex-1 min-h-[44px] inline-flex items-center text-[15px] font-semibold">{t("day.welcomeFunnel")}</span>
       <button type="button" onClick={() => setOpen(false)} aria-label={t("list.welcomeDismiss")} className="w-11 h-11 inline-flex items-center justify-center shrink-0"><Ico name="close" size={18} /></button>
+    </div>
+  );
+}
+
+/** The installed app's first open after «Download app»: the one tap that turns notifications on (web push needs a tap
+ *  inside the home-screen app on iPhone; on Android it may already be on, then nothing shows). */
+function InstalledBanner() {
+  const t = useT("privat");
+  const { api, refresh } = usePrivat();
+  const [show, setShow] = useState(false);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    if (!isStandalone() || !takeNotifyPending()) return;
+    currentPushState().then((s) => { if (s === "default") setShow(true); });
+  }, []);
+  if (!show) return null;
+  const on = async () => { setBusy(true); try { await enablePush(api); await refresh(); } finally { setBusy(false); setShow(false); } };
+  return (
+    <div role="status" data-testid="installed-banner" className="flex items-center gap-2 flex-wrap rounded-xl border-[1.5px] border-ink bg-highlight pl-3 pr-2 py-2">
+      <span className="flex-1 min-w-[200px] text-[15px] font-semibold">{t("push.installedAsk")}</span>
+      <Button className="rounded-full border-2 border-ink" onClick={on} disabled={busy}>{t("push.enable")}</Button>
+      <button type="button" onClick={() => setShow(false)} aria-label={t("list.welcomeDismiss")} className="w-11 h-11 inline-flex items-center justify-center shrink-0"><Ico name="close" size={18} /></button>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { VIEWAS_COOKIE } from "@/lib/config";
 import { AssistantDock } from "./assistant";
 import { getT } from "@/i18n/server";
 import { Avatar, BottomTabs, TabNav, ViewAsBanner, WorkspaceChip, type NavItem } from "./shell.client";
+import { InstallCapture } from "@/components/install-app";
 
 type Ws = { id: string; name: string; role: string; product_intent: string };
 type Me = { display_name: string; email: string; email_verified: boolean; is_platform_operator?: boolean };
@@ -97,6 +98,7 @@ async function Shell({ children }: { children: React.ReactNode }) {
         </div>
       </footer>
       <BottomTabs items={nav} />
+      <InstallCapture />
     </div>
   );
 }

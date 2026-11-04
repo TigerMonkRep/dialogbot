@@ -30,5 +30,27 @@
     "label": "Välj: företag eller privat",
     "businessShort": "Företag",
     "privateShort": "Privat"
+  },
+  "install": {
+    "button": "Ladda ner app",
+    "opening": "Öppnar…",
+    "installed": "{name} finns på din hemskärm.",
+    "done": "{name} har lagts på din hemskärm.",
+    "doneNotify": "{name} har lagts på din hemskärm och notiser är på.",
+    "introPrivat": "Få Dialogbot Privat som app i mobilen: ett tryck från hemskärmen och besked när något händer.",
+    "introErhverv": "Få Dialogbot som app i mobilen – ett tryck från hemskärmen till samtal, bokningar och förfrågningar.",
+    "hintIos": "iPhone: via Dela → Lägg till på hemskärmen",
+    "hintAndroid": "Android: via webbläsarens meny",
+    "hintDesktop": "Öppna sidan i mobilen för att hämta appen.",
+    "manualAndroid": "Tryck på menyn (⋮) högst upp i webbläsaren och välj «Lägg till på startskärmen» eller «Installera app».",
+    "manualDesktop": "Öppna {host}{path} i mobilen och tryck på Ladda ner app där.",
+    "thenNotify": "Öppna sedan appen från hemskärmen och tryck på «Slå på notiser».",
+    "iosTitle": "Så får du appen på din iPhone",
+    "iosStep1": "Tryck på Dela längst ner i Safari.",
+    "iosStep2": "Välj «Lägg till på hemskärmen» och tryck Lägg till.",
+    "iosStep3": "Öppna Dialogbot från hemskärmen.",
+    "iosStep3Privat": "Öppna Dialogbot från hemskärmen och tryck på «Slå på notiser».",
+    "iosNote": "Apple låter inte en sida installera sig själv – det är de här två trycken som krävs.",
+    "close": "Stäng"
   }
 }

@@ -1050,6 +1050,61 @@ class BillingAccount(Base):
     updated_at: Mapped[datetime] = ts_now()
 
 
+DISCOUNT_AUDIENCES = ("erhverv", "privat", "begge")
+DISCOUNT_DURATIONS = ("once", "repeating", "forever")
+
+
+class DiscountCode(Base):
+    """A discount code an operator made in the admin, for Erhverv, Privat or both.
+
+    Erhverv: the customer types it on Konto; it becomes a negative line on the monthly statement (and so on the
+    Stripe invoice) – `once` on the first invoiced month after redemption, `repeating` for duration_months months,
+    `forever` on every month. Percent is of the month's positive lines; amount_off_minor is ex VAT.
+    Privat: the code is mirrored to a Stripe coupon + promotion code (stripe_*), so Stripe Checkout applies it to the
+    subscription itself; amount_off_minor is then incl. VAT, like the plan prices."""
+
+    __tablename__ = "discount_codes"
+    __table_args__ = (
+        CheckConstraint("audience in ('erhverv','privat','begge')", name="ck_discount_codes_audience"),
+        CheckConstraint("duration in ('once','repeating','forever')", name="ck_discount_codes_duration"),
+        CheckConstraint("(percent_off is null) <> (amount_off_minor is null)", name="ck_discount_codes_one_value"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    code: Mapped[str] = mapped_column(String(40), unique=True)
+    audience: Mapped[str] = mapped_column(String(10))
+    percent_off: Mapped[int | None] = mapped_column(Integer)
+    amount_off_minor: Mapped[int | None] = mapped_column(Integer)
+    duration: Mapped[str] = mapped_column(String(10), default="once")
+    duration_months: Mapped[int | None] = mapped_column(Integer)
+    max_redemptions: Mapped[int | None] = mapped_column(Integer)
+    starts_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    note: Mapped[str] = mapped_column(String(300), default="")
+    stripe_coupon_id: Mapped[str | None] = mapped_column(String(64))
+    stripe_promotion_code_id: Mapped[str | None] = mapped_column(String(64))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = ts_now()
+
+
+class DiscountRedemption(Base):
+    """One workspace used one code (once per workspace). Erhverv: typed on Konto. Privat: seen on the completed
+    Checkout Session (stripe_ref = the session id)."""
+
+    __tablename__ = "discount_redemptions"
+    __table_args__ = (UniqueConstraint("code_id", "workspace_id", name="uq_discount_redemptions_ws"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    code_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("discount_codes.id", ondelete="CASCADE"), index=True)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), index=True)
+    audience: Mapped[str] = mapped_column(String(10))
+    source: Mapped[str] = mapped_column(String(30))
+    stripe_ref: Mapped[str | None] = mapped_column(String(80))
+    redeemed_at: Mapped[datetime] = ts_now()
+
+
 class Invoice(Base):
     """One monthly invoice (in arrears) created at Stripe from the statement. Unique per workspace+month."""
 

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { kr as krDa } from "../leads/format";
-import { AddCard, ConfirmSubscription, InvoiceMonth, ReferralCode } from "./billing";
+import { AddCard, ConfirmSubscription, DiscountCode, InvoiceMonth, ReferralCode } from "./billing";
+import { InstallApp, InstallCapture } from "@/components/install-app";
 import { InvitationRow, InviteForm, MemberRow } from "./team";
 import { LogoutButton } from "./logout";
 import { LanguageSection } from "./language";
@@ -19,6 +20,7 @@ type Statement = { month: string; lines: { kind: string; calls?: number; minutes
 type Account = { configured: boolean; card: { brand: string; last4: string; exp: string | null } | null; can_manage: boolean };
 type Invoice = { id: string; month: string; status: string; number: string | null; gross_minor: number; hosted_invoice_url: string | null; invoice_pdf: string | null };
 type Referral = { referred: boolean; ambassador_first_name?: string | null; customer_discount_bp?: number; can_add_code: boolean };
+type Discount = { code: string | null; text?: string; from_month?: string; to_month?: string | null; can_add: boolean; can_manage: boolean };
 
 /** Invoice statuses; labels are `app.account.invoiceStatus.<status>`. */
 const INV_STATUS = ["creating", "open", "paid", "payment_failed", "failed", "void"];
@@ -50,13 +52,14 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
     backend<Me>("/auth/me"),
     backend<Session[]>("/auth/sessions").catch(() => [] as Session[]),
   ]);
-  const [agr, st, acc, invoices, referral] = admin ? await Promise.all([
+  const [agr, st, acc, invoices, referral, discount] = admin ? await Promise.all([
     backend<Agreement>(`/workspaces/${ws.id}/agreement`),
     backend<Statement>(`/workspaces/${ws.id}/billing/statement`),
     backend<Account>(`/workspaces/${ws.id}/billing/account`),
     backend<{ items: Invoice[] }>(`/workspaces/${ws.id}/billing/invoices`),
     backend<Referral>(`/workspaces/${ws.id}/referral`),
-  ]) : [null, null, null, null, null];
+    backend<Discount>(`/workspaces/${ws.id}/billing/discount`).catch(() => null),
+  ]) : [null, null, null, null, null, null];
   const pending = invitations.filter((i) => i.status === "pending");
   const confirmed = !!agr?.current && agr.current.model !== "B";
   const campaignCalls = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + (l.calls ?? 0), 0) ?? 0;
@@ -67,6 +70,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
   const initials = me.display_name.split(/\s+/).map((s) => s[0]).join("").slice(0, 2).toUpperCase();
   return (
     <div className="flex flex-wrap gap-6 items-start">
+      <InstallCapture />
       <div className="flex-[999_1_460px] min-w-0 flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
           <span className="eyebrow">{t("account.eyebrow")}</span>
@@ -124,6 +128,9 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
               {referral.referred
                 ? <p className="rounded-xl bg-success-soft px-4 py-3 text-[14px] text-success">{t("account.referral.referred", { name: referral.ambassador_first_name ?? "", pct: (referral.customer_discount_bp ?? 5000) / 100 })}</p>
                 : referral.can_add_code && <ReferralCode wsId={ws.id} />}
+              {discount?.code
+                ? <p className="rounded-xl bg-success-soft px-4 py-3 text-[14px] text-success">{discount.to_month ? t("account.discount.applied", { code: discount.code, text: discount.text ?? "", from: monthLabel(lang, discount.from_month!), to: monthLabel(lang, discount.to_month) }) : t("account.discount.appliedForever", { code: discount.code, text: discount.text ?? "", from: monthLabel(lang, discount.from_month!) })}</p>
+                : discount?.can_add && discount.can_manage && <DiscountCode wsId={ws.id} />}
               <p className="text-[13px] text-muted">{t("account.sub.note")}</p>
             </section>
 
@@ -177,6 +184,10 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
           {me.is_platform_operator && <Link href="/app/operator/salg" className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-paper border-[1.5px] border-ink text-[14px] font-semibold text-ink">{t("account.me.sales")}</Link>}
           <p className="text-[13px] text-muted">{t("account.me.sessions", { n: sessions.length })}</p>
           <ul className="flex flex-col gap-1.5">{sessions.map((s) => <li key={s.id} className="text-[13px] text-ink-soft">{device(t, s.user_agent)}{s.current ? <b className="text-ink"> · {t("account.me.thisDevice")}</b> : ` · ${t("account.me.lastActive", { at: dt(lang, s.last_seen_at) })}`}</li>)}</ul>
+        </div>
+        <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">
+          <span className="eyebrow">{t("account.install.title")}</span>
+          <InstallApp audience="erhverv" />
         </div>
         <LanguageSection />
         <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">

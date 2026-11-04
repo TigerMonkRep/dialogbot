@@ -30,5 +30,27 @@
     "label": "Vælg: virksomhed eller privat",
     "businessShort": "Erhverv",
     "privateShort": "Privat"
+  },
+  "install": {
+    "button": "Download app",
+    "opening": "Åbner…",
+    "installed": "{name} er på din hjemmeskærm.",
+    "done": "{name} er lagt på din hjemmeskærm.",
+    "doneNotify": "{name} er lagt på din hjemmeskærm, og notifikationer er slået til.",
+    "introPrivat": "Få Dialogbot Privat som app på telefonen: ét tryk fra hjemmeskærmen og besked, når der sker noget.",
+    "introErhverv": "Få Dialogbot som app på telefonen – ét tryk fra hjemmeskærmen til opkald, aftaler og henvendelser.",
+    "hintIos": "iPhone: via Del → Føj til hjemmeskærm",
+    "hintAndroid": "Android: via browserens menu",
+    "hintDesktop": "Åbn siden på din telefon for at hente appen.",
+    "manualAndroid": "Tryk på menuen (⋮) øverst i browseren, og vælg «Føj til startskærm» eller «Installér app».",
+    "manualDesktop": "Åbn {host}{path} på din telefon, og tryk Download app dér.",
+    "thenNotify": "Åbn appen fra hjemmeskærmen bagefter, og tryk «Slå notifikationer til».",
+    "iosTitle": "Sådan får du appen på din iPhone",
+    "iosStep1": "Tryk på Del nederst i Safari.",
+    "iosStep2": "Vælg «Føj til hjemmeskærm», og tryk Tilføj.",
+    "iosStep3": "Åbn Dialogbot fra hjemmeskærmen.",
+    "iosStep3Privat": "Åbn Dialogbot fra hjemmeskærmen, og tryk «Slå notifikationer til».",
+    "iosNote": "Apple tillader ikke, at en side installerer sig selv – det er de to tryk, der skal til.",
+    "close": "Luk"
   }
 }

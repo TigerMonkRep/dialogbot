@@ -102,6 +102,11 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
     discount = discount_line(db, workspace_id, month, lines)
     if discount is not None:
         lines.append(discount)
+    from app.modules.billing.discounts import erhverv_line
+
+    code_discount = erhverv_line(db, workspace_id, month, tz, lines)  # an operator's discount code typed on Konto
+    if code_discount is not None:
+        lines.append(code_discount)
     # Specialist setup from an accepted sales offer: once, in the month the agreement was made (its first invoice).
     # Added after the ambassador discount, which covers the running subscription, not the one-off setup.
     setup = db.scalars(select(ReceptionAgreement).where(

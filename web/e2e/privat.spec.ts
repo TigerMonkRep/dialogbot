@@ -477,7 +477,9 @@ for (const width of [375, 1440]) {
 
     test("abonnement: Vælg plan → Plus (årligt) → retur fra betaling → «Dit abonnement er aktivt»", async ({ page }) => {
       await open(page, "/privat/konto");
-      const card = page.getByTestId("subscription-card");
+      // Only the visible card: on a slow runner the server-streamed copy of the pane (inside a hidden Suspense
+      // template, «Ingen plan» before the data) can still be in the DOM for a moment and would trip strict mode.
+      const card = page.getByTestId("subscription-card").filter({ visible: true });
       await expect(card).toContainText("Prøveperiode");
       // Without a chosen plan the three plans are open from the start – no «Vælg plan» tap before the payment.
       const picker = page.getByTestId("plan-picker");

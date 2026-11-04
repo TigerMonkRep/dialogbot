@@ -16,7 +16,7 @@ test("1 · A01→A03→A06: tilmelding med bevaret hensigt, bekræftelse og før
   // Indgang: two doors – hear it (/proev) or read how it is built (/byggevejledning).
   await expect(page.getByRole("heading", { name: "Dialogbot tager telefonen, når I ikke kan." })).toBeVisible();
   await expect(page.getByRole("link", { name: /Prøv den – den ringer til dig/ }).first()).toHaveAttribute("href", "/da/proev"); // marketing pages carry the language
-  await expect(page.getByRole("link", { name: /Byg den selv/ })).toHaveAttribute("href", "/da/byggevejledning");
+  await expect(page.getByRole("link", { name: /Byg den selv/ }).first()).toHaveAttribute("href", "/da/byggevejledning"); // the price section carries a second door
   await shot(page, info, "p01-indgang");
   // Vej A: the chat on /proev asks the backend first and is honest – no sales workspace is configured in CI, so it
   // cannot ring anyone and says so instead of pretending a call was placed.

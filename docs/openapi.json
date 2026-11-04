@@ -1091,6 +1091,119 @@
         "title": "DetailsIn",
         "type": "object"
       },
+      "DiscountCodeIn": {
+        "properties": {
+          "amount_off_minor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount Off Minor"
+          },
+          "audience": {
+            "pattern": "^(erhverv|privat|begge)$",
+            "title": "Audience",
+            "type": "string"
+          },
+          "code": {
+            "maxLength": 40,
+            "title": "Code",
+            "type": "string"
+          },
+          "duration": {
+            "default": "once",
+            "pattern": "^(once|repeating|forever)$",
+            "title": "Duration",
+            "type": "string"
+          },
+          "duration_months": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Months"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "max_redemptions": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Redemptions"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Note",
+            "type": "string"
+          },
+          "percent_off": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Percent Off"
+          },
+          "starts_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Starts At"
+          }
+        },
+        "required": [
+          "code",
+          "audience"
+        ],
+        "title": "DiscountCodeIn",
+        "type": "object"
+      },
+      "DiscountIn": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "DiscountIn",
+        "type": "object"
+      },
       "DiscoverIn": {
         "properties": {
           "industry": {
@@ -3906,6 +4019,19 @@
       },
       "SubscriptionCheckoutIn": {
         "properties": {
+          "code": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "rabatkode (valgfri)",
+            "title": "Code"
+          },
           "interval": {
             "default": "month",
             "pattern": "^(month|year)$",
@@ -7844,6 +7970,168 @@
           }
         },
         "summary": "Overview",
+        "tags": [
+          "admin-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/admin/rabatkoder": {
+      "get": {
+        "description": "Every discount code, newest first, with how often it was used.",
+        "operationId": "discount_codes_api_v1_operator_admin_rabatkoder_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Discount Codes",
+        "tags": [
+          "admin-operator"
+        ]
+      },
+      "post": {
+        "description": "Make a code for Erhverv, Privat or both. Privat/begge codes are mirrored to Stripe (coupon + promotion code)\nso Checkout can apply them.",
+        "operationId": "create_discount_code_api_v1_operator_admin_rabatkoder_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscountCodeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Discount Code",
+        "tags": [
+          "admin-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/admin/rabatkoder/{code_id}/deaktiver": {
+      "post": {
+        "description": "Stop a code (also at Stripe). Customers who already redeemed it keep their discount.",
+        "operationId": "deactivate_discount_code_api_v1_operator_admin_rabatkoder__code_id__deaktiver_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Code Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Deactivate Discount Code",
         "tags": [
           "admin-operator"
         ]
@@ -21216,6 +21504,130 @@
           }
         },
         "summary": "Card Checkout",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/billing/discount": {
+      "get": {
+        "description": "The discount code this workspace uses (if any): the code, its terms and the months it covers.",
+        "operationId": "get_discount_api_v1_workspaces__workspace_id__billing_discount_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Discount",
+        "tags": [
+          "billing"
+        ]
+      },
+      "put": {
+        "description": "The owner types a discount code. One per workspace; it counts from the current month's statement.",
+        "operationId": "put_discount_api_v1_workspaces__workspace_id__billing_discount_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscountIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Discount",
         "tags": [
           "billing"
         ]

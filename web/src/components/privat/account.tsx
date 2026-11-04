@@ -95,6 +95,16 @@ export function AccountPane() {
   const left = Math.max(0, limit - used);
   const line = mode === "demo" ? t("account.exampleLine") : loggedIn ? t("account.privateLine", { email: session.email ?? (simulated ? "mette@eksempel.dk" : "") }) : t("account.exampleLine");
   const amount = (kind: string, n: number) => kind === "sponsor" ? t("account.oneTask") : `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n)}${kind === "reserve" ? ` ${t("account.reservedSuffix")}` : ""}`;
+  // Before the data is in (the server-rendered copy and the first client frame) only the heading: no «Ingen plan»
+  // card that is wrong for a second and, on a slow machine, sits next to the real one while hydration settles.
+  if (mode === "loading") {
+    return (
+      <div className="px-4 pt-5 pb-7 flex flex-col gap-[18px]" aria-label={t("account.title")} aria-busy="true">
+        <h2 className="m-0 font-display font-extrabold text-[28px] tracking-[-0.5px]">{t("account.title")}</h2>
+        <p className="m-0 text-[14px] text-muted" role="status">{t("common.loading")}</p>
+      </div>
+    );
+  }
   return (
     <div className="px-4 pt-5 pb-7 flex flex-col gap-[18px]" aria-label={t("account.title")}>
       <h2 className="m-0 font-display font-extrabold text-[28px] tracking-[-0.5px]">{t("account.title")}</h2>

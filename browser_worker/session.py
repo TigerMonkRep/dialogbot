@@ -18,6 +18,7 @@ import shutil
 import tempfile
 import time
 from collections.abc import Callable
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -72,6 +73,7 @@ class BrowserSession:
         self._own_workdir = self.workdir is None
         self._pw = self._browser = self._ctx = self.page = None
         self._t0 = 0.0
+        self._paused = 0.0
         self._last_page: dict = {}
         self._video = None
 
@@ -159,7 +161,16 @@ class BrowserSession:
         return self._video
 
     def elapsed(self) -> float:
-        return self.clock() - self._t0
+        """Active time: waiting for a human's approval (`hold`) does not use up the run's max_seconds."""
+        return self.clock() - self._t0 - self._paused
+
+    @contextmanager
+    def hold(self):
+        t = self.clock()
+        try:
+            yield
+        finally:
+            self._paused += self.clock() - t
 
     # --- step bookkeeping ------------------------------------------------------------------------------------
     def _begin(self, tool: str, arg: str) -> Step:

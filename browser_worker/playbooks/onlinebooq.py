@@ -37,7 +37,7 @@ SELECTORS = {
     # elements that are navigation, not choices (never treated as a service/staff/date option)
     "ignore": r"^(forside|home|tilbage|back|kontakt|contact|log\s*ind|login|opret\s+konto|sprog|language)$",
     # «any employee» option on the staff step
-    "staff_any": r"ingen\s+pr[æe]ference|valgfri|vilk[åa]rlig|enhver|no\s+preference|any(\s+employee|\s+staff)?",
+    "staff_any": r"\b(?:ingen\s+pr[æe]ference|valgfri|vilk[åa]rlig|enhver|no\s+preference|any(?:\s+employee|\s+staff)?)\b",
     # contact form fields (textbox accessible names)
     "field_name": r"^(navn|fulde\s+navn|name|full\s+name)",
     "field_phone": r"(telefon|mobil|tlf|phone|mobile)",
@@ -47,13 +47,15 @@ SELECTORS = {
     # the button that COMMITS the booking (clicked only after human approval)
     "confirm": r"(bekr[æe]ft|book\s+nu|gennemf[øo]r|confirm|complete\s+booking)",
     # labels on the summary page and on the receipt (label → regex), values are read from the text that follows
+    # Whole words only (parse_pairs adds the closing word boundary): «tid» must not match «Ventetid», «Åbningstider»,
+    # «Tidligere bookinger»; «pris» must not match «Prisliste».
     "summary": {
-        "service": r"ydelse|behandling|service",
-        "staff": r"medarbejder|behandler|staff|employee",
-        "date": r"dato|date",
-        "time": r"tid|tidspunkt|time",
-        "price": r"pris|price|total",
-        "name": r"navn|name",
+        "service": r"\b(?:ydelse|behandling|service)",
+        "staff": r"\b(?:medarbejder|behandler|staff|employee)",
+        "date": r"\b(?:dato|date)",
+        "time": r"\b(?:tid|tidspunkt|klokken|time)",
+        "price": r"\b(?:pris|price|total)",
+        "name": r"\b(?:navn|name)",
     },
     "reference": r"(?:bookingnummer|booking\s*(?:nr\.?|number)|reference|ref\.?)\s*:?\s*([A-Z0-9][A-Z0-9-]{3,})",
     "receipt": r"tak\s+for\s+din\s+booking|din\s+tid\s+er\s+booket|booking\s+(?:is\s+)?confirmed|kvittering",

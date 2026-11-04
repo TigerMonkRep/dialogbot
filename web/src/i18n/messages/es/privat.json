@@ -286,6 +286,12 @@
     "after": "Ahora",
     "note": "Sigue habiendo un solo recordatorio. El cambio no ha costado ninguna tarea."
   },
+  "browser": {
+    "label": "Reserva en el sitio web · esperando tu sí",
+    "before": "Ahora",
+    "after": "Propuesta",
+    "note": "No se reserva nada hasta que lo apruebes."
+  },
   "call": {
     "proposal": "Propuesta · espera tu sí",
     "ask": "¿Llamo a {name}?",

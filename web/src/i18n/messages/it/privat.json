@@ -286,6 +286,12 @@
     "after": "Ora",
     "note": "C'è sempre un solo promemoria. La modifica non è costata nessuna attività."
   },
+  "browser": {
+    "label": "Prenotazione sul sito · in attesa del tuo sì",
+    "before": "Ora",
+    "after": "Proposta",
+    "note": "Non viene prenotato nulla finché non approvi."
+  },
   "call": {
     "proposal": "Proposta · attende il tuo sì",
     "ask": "Chiamo {name}?",

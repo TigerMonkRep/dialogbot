@@ -135,3 +135,16 @@ def test_date_and_time_helpers():
     for label in ("Onsdag 11. november 2026", "110. november", "10. december"):
         assert not rx.search(label), label
     assert parse_time("09:00") == (9, 0) and parse_time("9.30 - 10.00") == (9, 30) and parse_time("Herreklip") is None
+
+
+def test_summary_labels_are_whole_words():
+    from browser_worker.playbooks.common import parse_pairs
+
+    lines = [f'text "{t}"' for t in ("Ventetid", "ca. 5 min", "Åbningstider", "man-fre", "Tidligere bookinger", "ingen",
+                                    "Prisliste", "se her", "Tid", "10:30", "Pris", "350 kr.", "Tidspunkt: 11:00")]
+    got = parse_pairs(lines, onlinebooq.SELECTORS["summary"])
+    assert got["time"] == "10:30"      # the first real «Tid» row, not «Ventetid» / «Åbningstider» / «Tidligere …»
+    assert got["price"] == "350 kr."   # not «Prisliste»
+    assert parse_pairs(['text "Tidspunkt: 11:00"'], onlinebooq.SELECTORS["summary"])["time"] == "11:00"
+    assert parse_pairs(['text "Prisliste"', 'text "x"'], onlinebooq.SELECTORS["summary"]) == {}
+    assert parse_pairs(['text "Tidligere bookinger"', 'text "x"'], onlinebooq.SELECTORS["summary"]) == {}

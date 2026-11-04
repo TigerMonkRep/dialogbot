@@ -160,18 +160,24 @@ def _worker_id() -> str:
     return f"{socket.gethostname()}:{os.getpid()}:{uuid.uuid4().hex[:6]}"
 
 
-def claim_one(db: OrmSession, worker_id: str) -> OutboxEvent | None:
+def _browser_types() -> tuple[str, ...]:
+    from app.modules.browser.events import BROWSER_EVENT_TYPES
+
+    return BROWSER_EVENT_TYPES
+
+
+def claim_one(db: OrmSession, worker_id: str, *, only_types: tuple[str, ...] | None = None) -> OutboxEvent | None:
+    """Claim one due event. The main worker never claims browser events (they belong to the browser worker process,
+    which holds the live browser sessions); the browser worker claims ONLY those (`only_types`)."""
     s = get_settings()
     now = _now()
-    ev = db.scalar(
-        select(OutboxEvent)
-        .where(OutboxEvent.next_attempt_at <= now,
-               or_(OutboxEvent.status == "queued",
-                   (OutboxEvent.status == "processing") & (OutboxEvent.lease_expires_at < now)))
-        .order_by(OutboxEvent.next_attempt_at)
-        .with_for_update(skip_locked=True)
-        .limit(1)
-    )
+    q = (select(OutboxEvent)
+         .where(OutboxEvent.next_attempt_at <= now,
+                or_(OutboxEvent.status == "queued",
+                    (OutboxEvent.status == "processing") & (OutboxEvent.lease_expires_at < now))))
+    q = q.where(OutboxEvent.event_type.in_(only_types)) if only_types else q.where(
+        OutboxEvent.event_type.not_in(_browser_types()))
+    ev = db.scalar(q.order_by(OutboxEvent.next_attempt_at).with_for_update(skip_locked=True).limit(1))
     if ev is None:
         return None
     ev.status = "processing"
@@ -202,12 +208,14 @@ def finish(db: OrmSession, ev_id: uuid.UUID, *, error: str | None) -> None:
     db.commit()
 
 
-def process_once(worker_id: str | None = None) -> OutboxEvent | None:
-    """Claim and process a single event. Returns the event (post-state) or None."""
+def process_once(worker_id: str | None = None, *, handlers: dict | None = None,
+                 only_types: tuple[str, ...] | None = None) -> OutboxEvent | None:
+    """Claim and process a single event. Returns the event (post-state) or None. `handlers`/`only_types` let a separate
+    worker process (the browser worker) reuse this mechanism with its own event types."""
     worker_id = worker_id or _worker_id()
     factory = get_session_factory()
     with factory() as db:
-        ev = claim_one(db, worker_id)
+        ev = claim_one(db, worker_id, only_types=only_types)
         if ev is None:
             return None
         ev_id, ev_type = ev.id, ev.event_type
@@ -217,7 +225,7 @@ def process_once(worker_id: str | None = None) -> OutboxEvent | None:
             ev = db.get(OutboxEvent, ev_id)
             if ev_type in FAIL_EVENT_TYPES:
                 raise HandlerError("simulated failure")
-            handler = HANDLERS.get(ev_type)
+            handler = (handlers if handlers is not None else HANDLERS).get(ev_type)
             if handler is None:
                 raise HandlerError(f"no handler for {ev_type}")
             handler(db, ev)

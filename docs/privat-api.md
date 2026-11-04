@@ -19,6 +19,8 @@ Balance = {free_used, free_limit: 10, credits, reserved, sponsor_left_today, pho
   plan: "none"|"basis"|"plus"|"familie", plan_status: "trial"|"active"|"past_due"|"canceled"|"expired"|"none",
   trial_days_left: int, calls_quota: int, calls_used: int, calls_left: int, entitled: bool}   // se «Abonnement»
 ChatMessage = {id, role: "user"|"assistant", kind: "text"|"task"|"move"|"clarify"|"call_proposal"|"draft"|"waiting",
+  // «draft» betyder to ting: en opgave gemt som kladde (ingen options) ELLER en booking på en virksomheds hjemmeside, der
+  // venter på dit ja (options Godkend/Afvis, før/efter udfyldt). Skil dem ad på `options`. Se «Booking på hjemmeside».
   text, task_id|null, about_task_id|null, before|null, after|null,
   options: [{id, label, sub}]|null, links: [task_id]|null, created_at}
 
@@ -365,3 +367,48 @@ price_data), `PRIVAT_DEFAULT_ADDONS` (standard `ring-for-mig,delte-lister,oenske
 (standard `https://dialogbot.app/i/`), `PRIVAT_GROUP_URL_BASE` (standard `https://dialogbot.app/g/`).
 `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (Web Push; `python -m scripts.generate_vapid` laver et par – læg det aldrig i git).
 `GOOGLE_PLACES_API_KEY` (findes allerede) skal også stå på API-tjenesten, ikke kun workeren.
+
+
+## Booking på hjemmeside (browser-agenten) – Godkend/Afvis og kørslen
+
+Assistenten kan booke på en virksomheds offentlige bookingside (kun godkendte bookingmotorer og domæner; se
+`docs/ADR-004-browser-worker.md`). Agenten udfylder bookingen, men **trykker aldrig «Bekræft/Book/Betal/Send» uden dit ja**. Slået
+fra, medmindre `BROWSER_WORKER_ENABLED=true`. Kan agenten ikke (CAPTCHA, login, intet ledigt, for mange trin), falder opgaven tilbage til
+telefonsporet (`call`).
+
+```
+GET  /privat/tasks/{id}/browser          → BrowserRun      // seneste kørsel. 404 hvis opgaven ikke er din, eller der ingen kørsel er
+POST /privat/tasks/{id}/browser/approve  (Idempotency-Key) → BrowserRun   // 409 browser_run_not_awaiting | approval_expired
+POST /privat/tasks/{id}/browser/decline  (Idempotency-Key) → BrowserRun   // 409 browser_run_not_awaiting
+```
+
+```
+BrowserRun = {id, task_id, engine, mode: "playbook"|"llm"|null,
+  status: "planned"|"running"|"awaiting_approval"|"approved"|"done"|"failed"|"fallback_phone",
+  goal: {intent: "book"|"flyt"|"aflys", service, preferred_windows: [{date, from, to}], contact: {name, phone?, mail?}, business_name?},
+  before_after: {service, staff, date, time, price, name, ...}|null,        // det udfyldte forslag, før intet er bekræftet
+  steps: [{n, tool, arg, result, at, screenshot_url|null}],                   // uden refs/selectors og uden det, der blev skrevet i felter
+  evidence: [{kind: "screenshot"|"video"|"receipt_pdf", name, url}],          // url: signeret, udløber efter 5 minutter
+  result: {reference?, receipt_text?, summary?, found?}|null, error_code|null,
+  max_steps, max_seconds, started_at, awaiting_since, approval_expires_at|null, approved_at, finished_at, created_at}
+```
+
+- **Forløb.** Agenten udfylder, stopper ved bekræft-knappen og sender en `ChatMessage` af `kind: "draft"` med `before`/`after` og
+  to valg: `options: [{id:"approve",label:"Godkend"},{id:"decline",label:"Afvis"}]`. Valgene kan besvares enten via
+  `POST /privat/messages/{id}/options/{option_id}` (som chatten gør) eller via `…/browser/approve|decline`: det er den samme handling.
+  Opgaven står som `awaiting_user`.
+- **Godkend** er idempotent (gentagelse = samme tilstand, ingen anden effekt; `Idempotency-Key` genafspiller svaret). Browser-sessionen holdes
+  i live i `BROWSER_APPROVAL_TTL_SECONDS` (standard 600). Dit ja gælder **præcis det forslag, du så**: har siden ændret sig, når
+  sessionen er udløbet og køres igen, bekræftes intet, og du får et nyt forslag. Et ja ældre end 24 timer afvises (`approval_expired`).
+  Udløbet TTL → en **playbook**-kørsel genafspilles til samme punkt; en **LLM**-kørsel kan ikke genafspilles og går til `fallback_phone`
+  (`error_code=session_expired`). Når bookingen er gennemført: `done`, opgaven får tid og pris (`next_step`, begivenheder, `call.confirmed_text`)
+  og kvitteringen gemmes som PDF + screenshot.
+- **Afvis** er idempotent: `failed` med `error_code=declined`, opgaven bliver `declined`, intet er booket.
+- **Mulig uønsket booking.** Fører et klik, som ikke så ud som en bekræftelse, til en side, der ligner en kvittering, stopper kørslen
+  (`failed`, `error_code=unexpected_commit`). Opgaven bliver `awaiting_user`, og beskeden til dig indeholder siden og teksten:
+  *«Bookingen kan være gennemført – ring eller skriv til virksomheden for at aflyse, hvis du ikke ønsker den.»* Samme tekst
+  (`commit_unconfirmed`), hvis bekræft blev trykket, men ingen kvittering kunne læses. Der siges aldrig «intet er booket» efter et bekræft-klik.
+- **Evidens** ligger i en privat Supabase-bucket (`BROWSER_EVIDENCE_BUCKET`) og udleveres kun som signerede, kortlivede links.
+- **Fejlkoder i `error_code`:** `declined`, `unexpected_commit`, `commit_unconfirmed`, `forbidden_field`, `commit_limit`,
+  `approval_expired`, `worker_lost`, `internal_error`; `fallback_phone`: `captcha`, `login_required`, `budget_steps`, `budget_time`,
+  `no_availability`, `session_expired`, `unexpected_step`, `playbook:<årsag>`.

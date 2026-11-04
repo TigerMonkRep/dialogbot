@@ -94,7 +94,8 @@ def parse_pairs(lines: list[str], labels: dict[str, str]) -> dict[str, str]:
     vals = text_values(lines)
     out: dict[str, str] = {}
     for key, pattern in labels.items():
-        rx = re.compile(rf"^(?:{pattern})\s*:?\s*(.*)$", re.IGNORECASE)
+        # (?!\w): the label must be a whole word («tid» must not read «Tidligere bookinger» or «Ventetid»)
+        rx = re.compile(rf"^(?:{pattern})(?!\w)\s*:?\s*(.*)$", re.IGNORECASE)
         for i, v in enumerate(vals):
             m = rx.match(v.strip())
             if not m:

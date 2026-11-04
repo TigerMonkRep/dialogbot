@@ -7,10 +7,10 @@ telefonsporet (`call`-opgaven i Privat).
 
 Beslutningerne står i [`docs/ADR-004-browser-worker.md`](../docs/ADR-004-browser-worker.md).
 
-> **Status (A1–A2):** kernen (netværksvagt, de syv værktøjer, forbudte felter og klik, CAPTCHA/login, budget,
-> sikkerhedsnet mod uskyldigt mærkede bekræft-knapper), OnlineBooq-playbook og motor-genkendelse er bygget og testet mod en
-> lokal HTML-klon. Godkendelsesgate, endpoints, LLM-fallback, bevis-upload og drift kommer i A3–A4 (se
-> `docs/implementation-progress.md`, checkpoint 30).
+> **Status (A1–A3):** kernen (netværksvagt, de syv værktøjer, forbudte felter og klik, CAPTCHA/login, budget,
+> sikkerhedsnet mod uskyldigt mærkede bekræft-knapper), OnlineBooq-playbook, motor-genkendelse, godkendelsesgate
+> (Godkend/Afvis, TTL, replay), endpoints og worker-proces er bygget og testet mod en lokal HTML-klon. LLM-fallback, telefon-fallback
+> med forslag til opkaldet, video og beskyttelse mod DNS-rebinding kommer i A4 (se `docs/implementation-progress.md`, checkpoint 30).
 > **Ikke verificeret mod nogen rigtig bookingside.** Alt er testet mod `tests/sites/onlinebooq/`, en klon bygget ud fra
 > OnlineBooqs offentlige flow (ydelse → medarbejder → dato → tid → kontaktoplysninger → bekræft). Selectors og
 > genkendelsessignaturer er derfor **ikke** bekræftet mod en rigtig side.
@@ -90,12 +90,40 @@ bekræft-knap tilbage («tak for din booking», «din tid er booket», «bekræf
 `error_code=unexpected_commit`, og URL + screenshot gemmes, så brugeren kan aflyse. Det fanger en «Næste»-knap, der i
 virkeligheden booker. Det er et sikkerhedsnet, ikke en erstatning for godkendelsen: bookingen kan allerede være gennemført.
 
+## Godkendelsesgate og drift
+
+Processen `python -m browser_worker.runner` genbruger outbox'en (`app/worker/runner.py`: lease, retry, dedupe), men henter **kun**
+`privat.browser_run` og `privat.browser_decision`; hovedworkeren henter aldrig disse. Håndtererne returnerer med det samme og giver
+kørslen til en tråd (`orchestrator.py`), fordi en kørsel holder sin Playwright-session i live, mens den venter på dit ja. **Kør præcis én
+instans** (`numInstances: 1`).
+
+```
+planned ─▶ running ─▶ awaiting_approval ─▶ approved ─▶ running ─▶ done
+              │             │ afvis                        │
+              ▼             ▼                              ▼
+       fallback_phone   failed(declined)         failed / fallback_phone
+```
+
+- Tilstandsskift, som to processer kunne konkurrere om (start, godkend, genoptag), er **compare-and-set** (`service.cas`): en kørsel har
+  præcis én udfører, og en booking bekræftes højst én gang, uanset hvad der sker med outbox-events eller genstarter (testet med to samtidige
+  drivere).
+- **Under ventetiden** holdes sessionen i `BROWSER_APPROVAL_TTL_SECONDS` og sender et hjerteslag (`result._live_until`). Ventetiden tæller
+  ikke med i `max_seconds`. Et ja, mens sessionen lever, bekræfter i samme browser.
+- **Udløbet TTL:** browseren lukkes; kørslen bliver stående som `awaiting_approval`. Et senere ja **genafspiller playbooken** i en ny session til
+  samme punkt og bekræfter kun, hvis tid, dato, ydelse, pris og navn er **identiske** med det, du godkendte; ellers vises et nyt forslag,
+  og det gamle ja gælder ikke. En **LLM-kørsel kan ikke genafspilles** og går til `fallback_phone` (`session_expired`).
+- **Efter bekræft-klikket** siges der aldrig «intet er booket»: lykkes kvitteringen ikke, er status `commit_unconfirmed`, og du bliver bedt om at tjekke
+  hos virksomheden.
+- **Oprydning:** `sweep()` afslutter kørsler, som ingen tråd ejer længere (`worker_lost`), og sætter et ja, som ingen har samlet op, i kø igen.
+- Bevis (skærmbilleder pr. trin, forslag, slutside, kvitterings-PDF) uploades til den private bucket; lokale filer slettes efter kørslen.
+
 ## Kør tests (ingen netværk)
 
 ```bash
 pip install -r requirements.lock -r browser_worker/requirements.lock
 playwright install --with-deps chromium      # lokalt; i en container med forhåndsinstalleret Chromium: BROWSER_CHROMIUM_PATH=…
 pytest -p no:cacheprovider -c /dev/null --rootdir . browser_worker/tests
+pytest tests/test_browser_orchestrator.py     # hele kørsler mod klonen: rigtig Chromium + PostgreSQL (som i CI-jobbet browser-worker)
 ```
 
 Testene serverer `tests/sites/<motor>/` fra en lokal server (`tests/site_server.py`) og rører aldrig en rigtig hjemmeside.

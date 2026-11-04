@@ -286,6 +286,12 @@
     "after": "Nu",
     "note": "Det finns fortfarande bara en påminnelse. Ändringen kostade ingen uppgift."
   },
+  "browser": {
+    "label": "Bokning på webbplatsen · väntar på ditt ja",
+    "before": "Nu",
+    "after": "Förslag",
+    "note": "Inget bokas förrän du godkänner."
+  },
   "call": {
     "proposal": "Förslag · väntar på ditt ja",
     "ask": "Ska jag ringa {name}?",

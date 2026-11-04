@@ -141,3 +141,62 @@ services:
         value: "60"
       - key: WORKER_MAX_ATTEMPTS
         value: "5"
+
+  # Browser worker: books on external public booking pages after a human yes in the Privat app (docs/ADR-004-browser-worker.md).
+  # Off until BROWSER_WORKER_ENABLED=true (set in the dashboard, after the legal review of each booking engine's terms).
+  # Exactly ONE instance: live Playwright sessions are in-process, and it claims only the privat.browser_* outbox events.
+  # Network: the container should have no access to cloud metadata (Render private-network setting; not verified here).
+  - type: worker
+    name: dialogbot-browser-worker-staging
+    runtime: docker
+    region: frankfurt
+    plan: standard            # Chromium needs more than 512 MB
+    dockerfilePath: ./browser_worker/Dockerfile
+    dockerContext: .
+    numInstances: 1
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: APP_ENV
+        value: staging
+      - key: ENABLE_DEV_TOOLS
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: DB_SCHEMA
+        value: dialogbot
+      - key: EMAIL_ADAPTER
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: FRONTEND_BASE_URL
+        sync: false
+      - key: AI_PROVIDER
+        sync: false
+      - key: AI_MODEL_ID
+        value: claude-opus-5
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: BROWSER_WORKER_ENABLED   # dashboard-managed; "false" keeps the worker idle
+        sync: false
+      - key: BROWSER_EVIDENCE_BUCKET
+        value: browser-evidence
+      - key: BROWSER_MAX_STEPS
+        value: "25"
+      - key: BROWSER_MAX_SECONDS
+        value: "180"
+      - key: BROWSER_APPROVAL_TTL_SECONDS
+        value: "600"
+      - key: BROWSER_ALLOWED_ENGINES
+        value: onlinebooq
+      - key: WORKER_LEASE_SECONDS
+        value: "60"
+      - key: WORKER_MAX_ATTEMPTS
+        value: "5"

@@ -99,6 +99,9 @@ const chat = (page: Page) => page.getByRole("region", { name: "Samtale" });
 
 for (const width of [375, 1440]) {
   test.describe(`${width}px`, () => {
+    // The journeys need a web build with NEXT_PUBLIC_PRIVAT_FAKE=1 (the «privat» job in e2e.yml); the main journeys
+    // job builds against the real API and skips them.
+    test.skip(process.env.NEXT_PUBLIC_PRIVAT_FAKE !== "1", "kræver et web-build med NEXT_PUBLIC_PRIVAT_FAKE=1");
     test.use({ viewport: { width, height: width > 1000 ? 900 : 812 } });
 
     test("liste: oprettes, tilføj æbler → én liste med 3 punkter, gratis-tæller uændret", async ({ page }) => {

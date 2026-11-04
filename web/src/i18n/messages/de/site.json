@@ -93,21 +93,46 @@
         "unit": "kr./Monat",
         "text": "Der volle Preis: Telefon, Buchung und Webchat sind enthalten – inkl. 300 Minuten eingehender Anrufe pro Monat. Keine Mindestlaufzeit. Die Einrichtung in Eigenregie ist inklusive.",
         "compare": "Der Preis eines Telefonservice – aber ein Empfang, der auch die Termine in Ihrem Kalender bucht.",
-        "cta": "Hier wählen – vorher anhören"
+        "cta": "Hier wählen – vorher anhören",
+        "points": [
+          "Telefon, Buchung und Webchat – alles inklusive",
+          "300 Minuten eingehende Anrufe pro Monat",
+          "Keine Bindung – monatlich kündbar"
+        ]
       },
       "campaign": {
         "name": "Ausgehende Kampagnenanrufe",
         "unit": "kr. pro Anruf + 2 kr. pro Minute",
-        "text": "Nur wenn Dialogbot für Sie anrufen soll. Unbeantwortet: 4 kr. Drei Minuten Gespräch: 10 kr. Sie sehen den Höchstpreis, bevor Sie starten."
+        "text": "Nur wenn Dialogbot für Sie anrufen soll. Unbeantwortet: 4 kr. Drei Minuten Gespräch: 10 kr. Sie sehen den Höchstpreis, bevor Sie starten.",
+        "badge": "Zusatzoption",
+        "points": [
+          "Bezahlung nur pro Anruf – kein zusätzliches Abo",
+          "Sie geben das Skript frei, bevor jemand angerufen wird",
+          "Der Höchstpreis wird vor dem Start angezeigt"
+        ],
+        "cta": "Kampagne planen"
       },
       "setup": {
         "name": "Einrichtung durch unsere Spezialisten",
         "unit": "kr. einmalig",
-        "text": "Maßgeschneiderte Einrichtung und Integration in Ihre eigenen Systeme – Kalender, CRM, Buchungssystem. Nur wenn Sie es nicht selbst machen möchten."
+        "text": "Maßgeschneiderte Einrichtung und Integration in Ihre eigenen Systeme – Kalender, CRM, Buchungssystem. Nur wenn Sie es nicht selbst machen möchten.",
+        "badge": "Zusatzoption · einmalig",
+        "points": [
+          "Kalender, CRM und Buchungssystem angebunden",
+          "Empfangsskript gemeinsam mit Ihnen geschrieben",
+          "Sie geben alles frei, bevor der erste Anruf kommt"
+        ],
+        "cta": "Einrichtung buchen"
       },
       "whyTitle": "Warum wir mehr kosten als ein Chatbot",
       "whyText": "Ein günstiger Chatbot antwortet mit dem, was er aus dem Internet gelernt hat. Dialogbot antwortet nur auf Grundlage von Wissen, das Sie selbst bestätigt haben, und zeigt Ihnen jede Änderung zuerst: vorher → nachher, «Bestätigen?». Er kann außerdem Termine in Ihrem Kalender buchen, verschieben und stornieren und SMS-Bestätigungen senden – und Sie werden über jeden Anruf informiert. Deshalb kostet er mehr als ein Anrufbeantworter.",
-      "allDetails": "Alle Details zum Preis →"
+      "allDetails": "Alle Details zum Preis →",
+      "bottom": {
+        "title": "Bereit, sie zu hören?",
+        "text": "Peter ruft Sie in unter einer Minute zurück – kostenlos, ohne Anmeldung.",
+        "primary": "Erst anhören",
+        "secondary": "Selbst bauen in 30 Min."
+      }
     },
     "start": {
       "eyebrow": "Jetzt starten",

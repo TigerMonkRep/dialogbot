@@ -93,21 +93,46 @@
         "unit": "kr./mån.",
         "text": "Hela priset: telefon, bokning och webbchatt ingår – inkl. 300 minuter inkommande samtal per månad. Ingen bindningstid. Konfiguration på egen hand ingår.",
         "compare": "Priset för en telefonpassning – men en receptionist som också bokar tiderna i er kalender.",
-        "cta": "Välj här – lyssna på den först"
+        "cta": "Välj här – lyssna på den först",
+        "points": [
+          "Telefon, bokning och webbchatt – allt ingår",
+          "300 minuter inkommande samtal per månad",
+          "Ingen bindning – uppsägning månad till månad"
+        ]
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
         "unit": "kr. per samtal + 2 kr. per minut",
-        "text": "Bara om ni vill att Dialogbot ska ringa ut. Obesvarat: 4 kr. Tre minuters samtal: 10 kr. Ni ser det högsta priset innan ni startar."
+        "text": "Bara om ni vill att Dialogbot ska ringa ut. Obesvarat: 4 kr. Tre minuters samtal: 10 kr. Ni ser det högsta priset innan ni startar.",
+        "badge": "Tillval",
+        "points": [
+          "Betalning endast per samtal – inget extra abonnemang",
+          "Ni godkänner manuset innan den ringer någon",
+          "Maxpriset visas innan kampanjen startar"
+        ],
+        "cta": "Planera en kampanj"
       },
       "setup": {
         "name": "Konfiguration av våra specialister",
         "unit": "kr. engångsavgift",
-        "text": "Skräddarsydd konfiguration och integration med era egna system – kalender, CRM, bokningssystem. Bara om ni inte vill göra det själva."
+        "text": "Skräddarsydd konfiguration och integration med era egna system – kalender, CRM, bokningssystem. Bara om ni inte vill göra det själva.",
+        "badge": "Tillval · en gång",
+        "points": [
+          "Kalender, CRM och bokningssystem kopplade",
+          "Receptionsmanus skrivet tillsammans med er",
+          "Ni godkänner allt före första samtalet"
+        ],
+        "cta": "Boka uppsättning"
       },
       "whyTitle": "Varför vi kostar mer än en chattbot",
       "whyText": "En billig chattbot svarar med det den har lärt sig från internet. Dialogbot svarar bara utifrån kunskap ni själva har godkänt och visar er varje ändring först: före → efter, «Godkänna?». Den kan också boka, flytta och avboka tider i er kalender och skicka sms-bekräftelse – och ni får ett meddelande om varje samtal. Därför kostar den mer än en telefonsvarare.",
-      "allDetails": "Alla detaljer om priset →"
+      "allDetails": "Alla detaljer om priset →",
+      "bottom": {
+        "title": "Redo att höra den?",
+        "text": "Peter ringer upp dig på under en minut – gratis och utan registrering.",
+        "primary": "Hör den först",
+        "secondary": "Bygg den själv på 30 min."
+      }
     },
     "start": {
       "eyebrow": "Kom igång",

@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { API_BASE_URL, CSRF_HEADER, CSRF_VALUE, SESSION_COOKIE } from "@/lib/config";
+import { visitorIp } from "@/lib/visitor-ip";
 
 /** Some upstream calls are slow by nature (Instagram takes up to a minute to process a carousel on publish-now). */
 export const maxDuration = 120;
@@ -22,6 +23,8 @@ async function proxy(req: NextRequest, ctx: { params: Promise<{ path: string[] }
     const v = req.headers.get(h);
     if (v) headers.set(h, v);
   }
+  const ip = visitorIp(req.headers);
+  if (ip) headers.set("x-forwarded-for", ip);
   const body = req.method === "GET" || req.method === "HEAD" ? undefined : await req.arrayBuffer(); // binary-safe (WAV uploads)
   const upstream = await fetch(url, { method: req.method, headers, body, cache: "no-store", redirect: "manual" });
   const out = new NextResponse(upstream.status === 204 ? null : upstream.body, { status: upstream.status });

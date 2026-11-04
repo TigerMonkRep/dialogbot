@@ -16075,6 +16075,54 @@
         ]
       }
     },
+    "/api/v1/privat/bootstrap": {
+      "get": {
+        "description": "Everything the app needs on load and after an action, in ONE request: before this the web made eleven\n(me, day, tasks ×2, messages, ledger, addons, referrals, groups, subscription), each paying for its own\nsession lookup and the Frankfurt↔database round trips – about a second of pure waiting after every message.",
+        "operationId": "bootstrap_api_v1_privat_bootstrap_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Bootstrap",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
     "/api/v1/privat/businesses/search": {
       "get": {
         "description": "At most 3 businesses (Google Places; demo data without a key). 30 searches per user per hour (429).\nShow «Data fra Google» with results whose source is \"google\".",

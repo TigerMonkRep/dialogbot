@@ -32,6 +32,7 @@ def _item(task, text):
 
 def test_shared_grocery(api, pv):
     mette = pv.account("mette@testmail.dk", "Mette Hansen")
+    pv.expire_trial(mette)  # on the free quota, so the "one task for the owner" count below is visible
     ole = pv.user("ole@testmail.dk", "Ole Berg")
     tid = pv.make_list(mette)
     inv = _share(api, mette, tid)
@@ -202,9 +203,9 @@ def test_addon_gating(api, pv, monkeypatch):
     monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": "x"})
     tok = pv.account("mette@testmail.dk")
     cat = {a["key"]: a for a in api.get(tok, "/privat/addons").json()}
-    assert {k: (a["status"], a["enabled"]) for k, a in cat.items()} == {
-        "ring-for-mig": ("available", True), "delte-lister": ("available", True), "oenskelister": ("available", True),
-        "kalender": ("coming_soon", False), "pakker": ("coming_soon", False)}
+    assert {k: (a["status"], a["enabled"]) for k, a in cat.items() if a["status"] != "coming_soon"} == {
+        "ring-for-mig": ("available", True), "delte-lister": ("available", True), "oenskelister": ("available", True)}
+    assert {k for k, a in cat.items() if a["status"] == "coming_soon"} >= {"kalender", "pakker"}
     assert api.post(tok, "/privat/addons/kalender/enable").json()["code"] == "coming_soon"
     out = pv.say(tok, "Ring til cykelværkstedet og find en tid torsdag efter klokken tre")
     clar = out["messages"][-1]
@@ -241,7 +242,8 @@ def test_addon_catalog_extensible(api, pv, dummy_addon):
     assert a == {"key": "test-tilfoejelse", "name": "Testtilføjelse", "tagline": "Kun til test",
                  "description": "Bevis for, at ét objekt er nok.", "icon": "star", "category": "test",
                  "price_text": "Gratis", "pricing": "free", "monthly_price_minor": None, "status": "available",
-                 "permissions": ["Ingen"], "requires": [], "enabled": False, "enabled_at": None}
+                 "permissions": ["Ingen"], "requires": [], "enabled": False, "enabled_at": None,
+                 "what": "", "example": "", "steps": [], "included_in": [], "included": True, "requires_plan": False}
     assert api.post(tok, "/privat/addons/test-tilfoejelse/enable").json()["enabled"] is True
 
 

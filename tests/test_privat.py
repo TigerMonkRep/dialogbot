@@ -39,7 +39,9 @@ def test_account_is_personal_idempotent_and_flagged(api, pv, db, monkeypatch):
     assert api.get(tok, "/workspaces").json() == []  # never listed as a business workspace
     assert api.get(tok, f"/workspaces/{ws.id}/business-profile").status_code == 404
     assert pv.me(tok) == {"free_used": 0, "free_limit": 10, "credits": 3, "reserved": 0, "sponsor_left_today": 2,
-                          "phone_display": None, "phone_verified": False}
+                          "phone_display": None, "phone_verified": False,
+                          "plan": "plus", "plan_status": "trial", "trial_days_left": 14, "calls_quota": 10,
+                          "calls_used": 0, "calls_left": 10, "entitled": True}
     assert _ledger(db, ws.id) == [("grant", 3, f"welcome:{ws.id}")]
     # pilot allow-list and the feature flag
     monkeypatch.setenv("PRIVAT_ALLOWED_EMAILS", "someone@else.dk")
@@ -101,7 +103,9 @@ def test_isolation(api, pv, two_workspaces):
 # --------------------------------------------------------------------------- quota
 
 def test_free_task_11(api, pv, db):
+    """The pre-subscription path: trial over, no plan → 10 free tasks, then drafts."""
     tok = pv.account("mette@testmail.dk")
+    pv.expire_trial(tok)
     for i in range(10):
         pv.say(tok, f"Lav en liste med ting {i}")
     assert pv.me(tok)["free_used"] == 10
@@ -157,7 +161,7 @@ def test_reminder_move(api, pv, db):
     pv.say(tok, "Flyt den til kl 18", about=tid)
     evs = active()
     assert len(evs) == 1 and evs[0].next_attempt_at == datetime(2026, 11, 5, 17, 0, tzinfo=UTC)
-    assert pv.me(tok)["free_used"] == 1  # moving is free
+    assert len(api.get(tok, "/privat/tasks").json()) == 1  # moving is free: still one task
     # deliver: e-mail, task done; a cancelled event never sends
     db.query(OutboxEvent).filter(OutboxEvent.id == evs[0].id).update({"next_attempt_at": datetime.now(UTC)})
     db.commit()
@@ -250,6 +254,7 @@ def test_needs_phone_insufficient_credits_outside_hours(api, pv, db, monkeypatch
     called = []
     monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": "x"})
     tok = pv.account("mette@testmail.dk")
+    pv.expire_trial(tok)  # credits path (plan calls: tests/test_privat_subscription.py)
     tid = _propose(pv, tok)
     path = f"/privat/calls/{tid}/approve"
     assert api.post(tok, path, {"share_phone": False}).json()["code"] == "needs_phone"
@@ -265,12 +270,15 @@ def test_needs_phone_insufficient_credits_outside_hours(api, pv, db, monkeypatch
     db.commit()
     r = api.post(tok, path, {"share_phone": False})
     assert r.status_code == 409 and r.json()["code"] == "insufficient_credits"
+    assert r.json()["calls_left"] == 0 and r.json()["needs_plan"] is True
     assert called == [] and pv.me(tok)["reserved"] == 0
 
 
 def _approve(api, pv, tok, monkeypatch, vapi_id="call_v1", name="Mette Hansen"):
+    """Approve on the credits path (trial over, no plan): 3 credits reserved."""
     called = []
     monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": vapi_id})
+    pv.expire_trial(tok)
     pv.verify_phone(tok)
     tid = _propose(pv, tok)
     t = api.post(tok, f"/privat/calls/{tid}/approve", {"window": "torsdag efter kl. 15", "share_phone": False},
@@ -425,7 +433,7 @@ def test_chat_basics_waiting_and_clarify(api, pv):
     # idempotent chat: the same key replays, nothing is created twice
     a = pv.say(tok, "Lav en liste med kage", key="same")
     b = pv.say(tok, "Lav en liste med kage", key="same")
-    assert a == b and pv.me(tok)["free_used"] == 2
+    assert a == b and len(api.get(tok, "/privat/tasks").json()) == 2
     led = api.get(tok, "/privat/ledger").json()
     assert led[0]["kind"] == "grant" and led[0]["amount"] == 3
 

@@ -3,11 +3,14 @@
 Flow:
 1. The chat only PROPOSES a call (task awaiting_user + private_calls row status proposed). Nothing is dialled.
 2. approve() locks recipient, number, may_ask/may_agree/may_not, window and share_phone, and requires a verified mobile
-   (409 needs_phone), ≥ 3 credits (409 insufficient_credits) and a weekday 08–18 Copenhagen time (409 outside_hours).
-   It reserves 3 credits (call:<id>:reserve) in the same transaction, then dials like sales/outbound.dial: the status
-   is committed BEFORE the Vapi request; no answer from Vapi = "unknown" (never redialled automatically).
+   (409 needs_phone) and a weekday 08–18 Copenhagen time (409 outside_hours). Payment: with the trial or a plan and
+   quota left, the call is one of the month's plan calls (paid_via 'plan', no credits move); otherwise ≥ 3 credits
+   (409 insufficient_credits, extra carries calls_left/needs_plan) are reserved (call:<id>:reserve, paid_via
+   'credits'). Then it dials like sales/outbound.dial: the status is committed BEFORE the Vapi request; no answer from
+   Vapi = "unknown" (never redialled automatically).
 3. The end-of-call report (routed by metadata.private_call_id) captures (call:<id>:capture) when the business
-   answered and spoke, or releases (+3, call:<id>:release) on no answer / failure. Replays change nothing.
+   answered and spoke, or releases (+3, call:<id>:release) on no answer / failure. A plan call moves no credits: a
+   lost one simply does not count against the quota. Replays change nothing.
 4. A business calling a pool number back is routed by ITS number to the newest open call to it (14 days).
 Pool numbers come from PRIVAT_POOL_NUMBERS; Dialogbot never buys numbers here.
 """
@@ -25,7 +28,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.errors import ApiError, Conflict, NotFound, NotImplementedYet, ValidationFailed
 from app.models import PhoneNumber, PrivateCall, PrivateProfile, PrivateTask, User, Workspace
-from app.modules.privat import addons, ledger, rules, service, sharing
+from app.modules.privat import addons, ledger, rules, service, sharing, subscriptions
 
 ADDON = "ring-for-mig"
 MAX_SECONDS = 180
@@ -33,6 +36,8 @@ STALE = timedelta(minutes=30)
 FINAL = ("answered", "no_answer", "failed", "declined")
 NO_ANSWER_TEXT = "Ingen tog telefonen – dine 3 credits er frigivet"
 FAILED_TEXT = "Opkaldet gik ikke igennem – dine 3 credits er frigivet"
+PLAN_NO_ANSWER_TEXT = "Ingen tog telefonen – opkaldet tæller ikke"
+PLAN_FAILED_TEXT = "Opkaldet gik ikke igennem – opkaldet tæller ikke"
 OUTCOME_SYSTEM = """PRIVAT_CALL_OUTCOME
 Du får udskriften af et opkald, som en digital assistent har foretaget til en virksomhed på vegne af en privatperson.
 Vurder resultatet og svar med ét JSON-objekt og intet andet:
@@ -103,7 +108,7 @@ def propose(db: OrmSession, ctx, *, business_name: str, phone: str, address: str
         title = f"{title} {window}"
     now = _now()
     task = PrivateTask(workspace_id=ctx.ws_id, kind="call", title=title[:300], status="awaiting_user",
-                       next_step="Godkend opkaldet", who="Dig", usage_text="Højst 3 credits, når du godkender",
+                       next_step="Godkend opkaldet", who="Dig", usage_text=pending_usage_text(db, ctx.ws_id),
                        paid_by="call", created_at=now, updated_at=now)
     db.add(task)
     db.flush()
@@ -126,6 +131,14 @@ def propose(db: OrmSession, ctx, *, business_name: str, phone: str, address: str
     return task
 
 
+def pending_usage_text(db: OrmSession, ws_id: uuid.UUID) -> str:
+    """What approving will cost: the next plan call, or 3 credits."""
+    ent = subscriptions.entitlements(db, ws_id)
+    if ent["entitled"] and ent["calls_left"] > 0:
+        return f"Opkald {ent['calls_used'] + 1} af {ent['calls_quota']} i {subscriptions.plan_label(ent)}, når du godkender"
+    return "Højst 3 credits, når du godkender"
+
+
 def _own_call_task(db: OrmSession, ctx, task_id: uuid.UUID) -> tuple[PrivateTask, PrivateCall]:
     task, m = sharing.access(db, task_id, ctx.user_id, lock=True)
     if task.kind != "call" or m.role != "owner":
@@ -145,9 +158,13 @@ def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, shar
     profile = db.scalar(select(PrivateProfile).where(PrivateProfile.workspace_id == ctx.ws_id).with_for_update())
     if profile.phone_verified_at is None or not profile.phone_e164:
         raise Conflict("Bekræft dit mobilnummer, før assistenten ringer for dig", code="needs_phone")
-    if ledger.balance(db, ctx.ws_id) < rules.CALL_CREDITS:
-        raise Conflict("Et opkald reserverer 3 credits", code="insufficient_credits",
-                       extra={"credits": ledger.balance(db, ctx.ws_id), "needed": rules.CALL_CREDITS})
+    ent = subscriptions.entitlements(db, ctx.ws_id)
+    use_plan = ent["entitled"] and ent["calls_left"] > 0
+    if not use_plan and ledger.balance(db, ctx.ws_id) < rules.CALL_CREDITS:
+        raise Conflict("Månedens opkald er brugt – et ekstra opkald reserverer 3 credits" if ent["entitled"]
+                       else "Et opkald reserverer 3 credits", code="insufficient_credits",
+                       extra={"credits": ledger.balance(db, ctx.ws_id), "needed": rules.CALL_CREDITS,
+                              "calls_left": ent["calls_left"], "needs_plan": not ent["entitled"]})
     if not rules.in_call_hours():
         raise Conflict("Assistenten ringer kun til virksomheder på hverdage kl. 8–18", code="outside_hours")
     if c.business_phone_e164 in {f["phone"] for f in _fixtures()} and get_settings().app_env not in ("dev", "test"):
@@ -162,11 +179,16 @@ def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, shar
     c.approved_snapshot = {"business_name": c.business_name, "business_phone_e164": c.business_phone_e164,
                            "may_ask": c.may_ask, "may_agree": c.may_agree, "may_not": c.may_not, "window": c.window,
                            "share_phone": c.share_phone, "approved_at": now.isoformat()}
-    ledger.add(db, ctx.ws_id, kind="reserve", amount=-rules.CALL_CREDITS, source_ref=f"call:{c.id}:reserve",
-               task_id=task.id, text=f"Reserveret til opkald til {c.business_name}")
-    task.status, task.next_step, task.who, task.usage_text = "in_progress", "Assistenten ringer op", "Assistenten", \
-        "3 credits reserveret"
-    service.event(db, task, "Du godkendte opkaldet. 3 credits reserveret.")
+    if use_plan:
+        c.paid_via = "plan"
+        usage = f"Opkald {ent['calls_used'] + 1} af {ent['calls_quota']} i {subscriptions.plan_label(ent)}"
+    else:
+        c.paid_via = "credits"
+        ledger.add(db, ctx.ws_id, kind="reserve", amount=-rules.CALL_CREDITS, source_ref=f"call:{c.id}:reserve",
+                   task_id=task.id, text=f"Reserveret til opkald til {c.business_name}")
+        usage = "3 credits reserveret"
+    task.status, task.next_step, task.who, task.usage_text = "in_progress", "Assistenten ringer op", "Assistenten", usage
+    service.event(db, task, f"Du godkendte opkaldet. {usage}.")
     service.touch(task)
     db.commit()
     dial(db, c.id)
@@ -202,7 +224,7 @@ def retry(db: OrmSession, ctx, task_id: uuid.UUID) -> PrivateTask:
                       status="proposed", created_at=max(_now(), c.created_at + timedelta(microseconds=1)))
     db.add(new)
     task.status, task.next_step, task.who, task.usage_text = "awaiting_user", "Godkend opkaldet", "Dig", \
-        "Højst 3 credits, når du godkender"
+        pending_usage_text(db, ctx.ws_id)
     service.event(db, task, "Nyt forslag til opkald")
     service.touch(task)
     db.flush()
@@ -308,10 +330,14 @@ def dial(db: OrmSession, call_id: uuid.UUID) -> None:
 
 def _release(db: OrmSession, c: PrivateCall, task: PrivateTask, *, result: str, reason: str | None) -> None:
     c.status, c.result, c.ended_reason, c.ended_at = result, result, (reason or "")[:100] or None, _now()
-    ledger.add(db, c.workspace_id, kind="release", amount=rules.CALL_CREDITS, source_ref=f"call:{c.id}:release",
-               task_id=task.id, text="Ingen svar – reservation frigivet" if result == "no_answer"
-               else "Opkaldet gik ikke igennem – reservation frigivet")
-    text = NO_ANSWER_TEXT if result == "no_answer" else FAILED_TEXT
+    if c.paid_via == "plan":
+        # nothing was reserved: a lost plan call is simply left out of the month's count (subscriptions.calls_used)
+        text = PLAN_NO_ANSWER_TEXT if result == "no_answer" else PLAN_FAILED_TEXT
+    else:
+        ledger.add(db, c.workspace_id, kind="release", amount=rules.CALL_CREDITS, source_ref=f"call:{c.id}:release",
+                   task_id=task.id, text="Ingen svar – reservation frigivet" if result == "no_answer"
+                   else "Opkaldet gik ikke igennem – reservation frigivet")
+        text = NO_ANSWER_TEXT if result == "no_answer" else FAILED_TEXT
     task.status, task.next_step, task.who, task.usage_text = "awaiting_user", "Prøv igen eller annullér", "Dig", \
         "Intet forbrug – ingen svarede" if result == "no_answer" else "Intet forbrug"
     service.event(db, task, text)
@@ -398,13 +424,20 @@ def on_report(db: OrmSession, message: dict) -> str | None:
         return "applied"
     c.status, c.result, c.ended_reason, c.ended_at = "answered", "answered", reason[:100] or None, _now()
     c.duration_seconds = int(duration) if isinstance(duration, int | float) else None
-    ledger.add(db, c.workspace_id, kind="capture", amount=0, source_ref=f"call:{c.id}:capture", task_id=task.id,
-               text=f"Opkald til {c.business_name} · besvaret{_dur(c.duration_seconds)}")
+    if c.paid_via == "plan":
+        ent = subscriptions.entitlements(db, c.workspace_id)
+        quota = ent["calls_quota"] or subscriptions.PLANS[subscriptions.TRIAL_PLAN]["calls"]
+        charged = f"Opkald {subscriptions.plan_call_index(db, c)} af {quota} i {subscriptions.plan_label(ent)}"
+        task.usage_text = f"{charged} · besvaret{_dur(c.duration_seconds)}"
+    else:
+        ledger.add(db, c.workspace_id, kind="capture", amount=0, source_ref=f"call:{c.id}:capture", task_id=task.id,
+                   text=f"Opkald til {c.business_name} · besvaret{_dur(c.duration_seconds)}")
+        charged = "3 credits trukket"
+        task.usage_text = f"3 credits · besvaret opkald{_dur(c.duration_seconds)}"
     data = classify(db, db.get(Workspace, c.workspace_id), transcript, summary)
     c.business_reply = str(data.get("summary") or summary or "")[:4000] or None
     if data.get("price_text"):
         c.business_price_text = str(data["price_text"])[:300]
-    task.usage_text = f"3 credits · besvaret opkald{_dur(c.duration_seconds)}"
     if data["outcome"] == "confirmed" and data.get("confirmed_text"):
         c.confirmed_text = str(data["confirmed_text"])[:300]
         task.status, task.next_step, task.who = "done", c.confirmed_text, f"{c.business_name} har bekræftet"
@@ -416,7 +449,7 @@ def on_report(db: OrmSession, message: dict) -> str | None:
         task.status, task.next_step, task.who = "done", "Se svaret fra virksomheden", "Dig"
         text = f"Opkaldet er slut. {c.business_name} svarede: {c.business_reply or 'se opgaven'}"
     service.event(db, task, f"Opkaldet blev besvaret. {c.business_reply or ''}".strip())
-    service.event(db, task, "3 credits trukket")
+    service.event(db, task, charged)
     service.touch(task)
     service.add_message(db, c.workspace_id, kind="text", text=text, task_id=task.id)
     service.notify_owner(db, task, subject=f"Opkald til {c.business_name}", text=text, dedupe=f"call:{c.id}:answered")

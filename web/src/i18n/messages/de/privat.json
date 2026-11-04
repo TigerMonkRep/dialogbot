@@ -245,7 +245,8 @@
     "businessWaiting": "{n|Eine Aufgabe wartet|# Aufgaben warten} auf die Antwort eines Unternehmens. Du bekommst Bescheid, sobald sie antworten.",
     "earlier": "Aufgabe: {title}. Aufgabe öffnen",
     "googleData": "Daten von Google",
-    "demoData": "Demodaten – fiktive Unternehmen, nicht von Google"
+    "demoData": "Demodaten – fiktive Unternehmen, nicht von Google",
+    "typing": "Peter schreibt …"
   },
   "list": {
     "count": "{n|1 Punkt|# Punkte} · {done} erledigt",

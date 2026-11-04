@@ -51,7 +51,7 @@ const ss = {
 type Ctx = {
   mode: Mode; simulated: boolean; session: Session; loggedIn: boolean;
   api: PrivatApi; fake: FakePrivat | null;
-  balance: Balance | null; tasks: Task[]; day: Day | null; messages: ChatMessage[]; ledger: LedgerEntry[]; addons: Addon[] | null; referrals: Referrals | null; groups: Group[];
+  balance: Balance | null; tasks: Task[]; day: Day | null; messages: ChatMessage[]; pending: ChatMessage | null; ledger: LedgerEntry[]; addons: Addon[] | null; referrals: Referrals | null; groups: Group[];
   /** GET /privat/subscription (null until loaded or when the backend lacks it – then `balance` may still carry the plan fields). */
   subscription: Subscription | null; setSubscription(s: Subscription | null): void;
   /** Plan rights apply (trial, active or past_due). */
@@ -183,15 +183,20 @@ export function PrivatProvider({ session, children }: { session: Session; childr
     if (withTask?.task_id) setFocus(withTask.task_id);
   }, []);
 
+  // The user's line shows at once (a «pending» bubble) and Peter's typing dots run until the API answers; the real
+  // messages replace the bubble. On an error the bubble goes and the text returns to the field.
+  const [pending, setPending] = useState<ChatMessage | null>(null);
   const doSend = useCallback(async (t: string) => {
     setBusy(true); setError(null);
+    setPending({ id: `pending-${Date.now()}`, role: "user", kind: "text", text: t, task_id: null, about_task_id: focusId, before: null, after: null, options: null, links: null, created_at: new Date().toISOString() });
     try {
       const r = await apiRef.current.send(t, focusId);
       setBalance(r.balance);
       afterMessages(r.messages);
+      setPending(null);  // the real messages are in place – before the refresh, so the line never shows twice
       await refresh();
     } catch (e) { setError(e as ApiError); setDraft(t); }
-    finally { setBusy(false); }
+    finally { setPending(null); setBusy(false); }
   }, [focusId, afterMessages, refresh]);
 
   const send = useCallback(async (text?: string) => {
@@ -245,7 +250,7 @@ export function PrivatProvider({ session, children }: { session: Session; childr
 
   const value = useMemo<Ctx>(() => ({
     mode, simulated: mode === "fake", session, loggedIn, api: apiRef.current, fake: fakeRef.current,
-    balance, tasks, day, messages, ledger, addons, referrals, groups, subscription, setSubscription,
+    balance, tasks, day, messages, pending, ledger, addons, referrals, groups, subscription, setSubscription,
     entitled: subscription ? subscription.entitled : !!balance?.entitled,
     task: (id) => (id ? tasks.find((t) => t.id === id) : undefined),
     // Without a catalog (API not there yet) nothing is hidden.

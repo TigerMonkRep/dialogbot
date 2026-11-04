@@ -245,7 +245,8 @@
     "businessWaiting": "{n|One task is|# tasks are} waiting for a business to reply. You will be told when they do.",
     "earlier": "Task: {title}. Open the task",
     "googleData": "Data from Google",
-    "demoData": "Demo data – fictitious businesses, not from Google"
+    "demoData": "Demo data – fictitious businesses, not from Google",
+    "typing": "Peter is typing …"
   },
   "list": {
     "count": "{n|1 item|# items} · {done} done",

@@ -245,7 +245,8 @@
     "businessWaiting": "{n|Une tâche attend|# tâches attendent} la réponse d'une entreprise. Vous serez prévenu dès qu'elle répond.",
     "earlier": "Tâche : {title}. Ouvrir la tâche",
     "googleData": "Données de Google",
-    "demoData": "Données de démonstration – entreprises fictives, pas de Google"
+    "demoData": "Données de démonstration – entreprises fictives, pas de Google",
+    "typing": "Peter écrit …"
   },
   "list": {
     "count": "{n|1 élément|# éléments} · {done} fait(s)",

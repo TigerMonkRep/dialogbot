@@ -17,11 +17,11 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.errors import ApiError, NotFound
-from app.models import PrivateMessage, PrivateTask, PrivateTaskMember
+from app.models import PrivateMessage, PrivateProfile, PrivateTask, PrivateTaskItem, PrivateTaskMember
 from app.modules.privat import addons, rules, service, sharing
 
 PROMPT_VERSION = "privat-v1"
@@ -49,7 +49,15 @@ Regler:
   som brugeren skal godkende.
 - Beder brugeren om noget, som kræver en tilføjelse, der ikke er slået til, så brug suggest_addon.
 - En rettelse af en eksisterende opgave er gratis; brug add_items/move_reminder i stedet for at lave en ny opgave.
-{lists}{about}{addons}"""
+{search}{lists}{about}{addons}"""
+
+SEARCH_RULE = """- Links og fakta: vil brugeren have et link til, hvor noget kan købes, eller spørger om pris, åbningstider eller
+  andet, du ikke ved, så søg på nettet med web_search (helst danske butikker) og svar med 1-3 konkrete links. Sæt linket
+  på punktet (add_items med {{text, link}} til nye punkter, set_item_link til et punkt, der findes). Skriv aldrig et link,
+  du ikke har fundet i en søgning; find du intet, så sig det kort.
+"""
+NO_SEARCH_RULE = """- Du kan ikke slå links eller priser op; beder brugeren om det, så sig det kort og foreslå, at de sender linket.
+"""
 
 
 @dataclass
@@ -71,14 +79,22 @@ def _obj(props: dict, required: list[str] | None = None) -> dict:
     return {"type": "object", "properties": props, "required": required or []}
 
 
+ITEM = {"anyOf": [{"type": "string"},
+                  _obj({"text": {"type": "string"}, "link": {"type": "string", "description": "https://… hvor det kan købes"},
+                        "note": {"type": "string"}}, ["text"])]}
 CORE_TOOLS = [
-    {"name": "create_list", "description": "Lav en ny liste (bruger én af månedens gratis opgaver).",
+    {"name": "create_list", "description": "Lav en ny liste (bruger én af månedens gratis opgaver). Punkter er tekst "
+                                           "eller {text, link, note}.",
      "input_schema": _obj({"title": {"type": "string"}, "type": {"type": "string", "enum": list(service.LIST_TYPES)},
-                           "items": {"type": "array", "items": {"type": "string"}}}, ["title"])},
+                           "items": {"type": "array", "items": ITEM}}, ["title"])},
     {"name": "add_items", "description": "Tilføj punkter til en eksisterende liste (gratis). Udelad task_id for den "
-                                         "liste, samtalen handler om, eller den nyeste liste.",
-     "input_schema": _obj({"task_id": {"type": "string"}, "items": {"type": "array", "items": {"type": "string"}}},
-                          ["items"])},
+                                         "liste, samtalen handler om, eller den nyeste liste. Punkter er tekst eller "
+                                         "{text, link, note}.",
+     "input_schema": _obj({"task_id": {"type": "string"}, "items": {"type": "array", "items": ITEM}}, ["items"])},
+    {"name": "set_item_link", "description": "Sæt et link (hvor det kan købes) på et punkt, der allerede står på "
+                                             "listen. item er punktets tekst, som den står på listen.",
+     "input_schema": _obj({"task_id": {"type": "string"}, "item": {"type": "string"}, "link": {"type": "string"},
+                           "note": {"type": "string"}}, ["item", "link"])},
     {"name": "create_reminder", "description": "Lav en påmindelse på et bestemt tidspunkt.",
      "input_schema": _obj({"title": {"type": "string"}, "remind_at": {"type": "string"}}, ["title", "remind_at"])},
     {"name": "move_reminder", "description": "Flyt en eksisterende påmindelse (gratis). remind_at er et fuldt "
@@ -102,9 +118,25 @@ def _suggest_tool(offer: list[addons.Addon]) -> dict | None:
                                                                     "enum": [a.key for a in offer]}}, ["key"])}
 
 
-def tools_for(db: OrmSession, ws_id: uuid.UUID) -> tuple[list[dict], dict]:
+def web_search_tool(city: str | None) -> dict | None:
+    """Anthropic's server-side web search, run by the model itself: links to where something can be bought, prices,
+    opening hours. Only with the real provider and PRIVAT_WEB_SEARCH on."""
+    from app.config import get_settings
+
+    s = get_settings()
+    if s.ai_provider != "anthropic" or not s.privat_web_search:
+        return None
+    loc: dict = {"type": "approximate", "country": "DK", "timezone": "Europe/Copenhagen"}
+    if city:
+        loc["city"] = city[:100]
+    return {"type": "web_search_20250305", "name": "web_search", "max_uses": 3, "user_location": loc}
+
+
+def tools_for(db: OrmSession, ws_id: uuid.UUID, *, city: str | None = None) -> tuple[list[dict], dict]:
     """(tool definitions for the model, name → add-on tool) – only enabled add-ons contribute tools."""
     defs = list(CORE_TOOLS)
+    if (ws := web_search_tool(city)) is not None:
+        defs.append(ws)
     extra = {}
     for t in addons.tools_for(db, ws_id):
         defs.append({"name": t.name, "description": t.description, "input_schema": t.input_schema})
@@ -128,8 +160,11 @@ def _system(db: OrmSession, ctx, about: PrivateTask | None) -> str:
             about_txt += "Punkter: " + ", ".join(i["text"] for i in items) + "\n"
     on = addons.enabled_keys(db, ctx.ws_id)
     addons_txt = "\nTilføjelser slået til: " + (", ".join(sorted(on)) or "ingen") + "\n"
+    profile = db.get(PrivateProfile, ctx.ws_id)
+    city = profile.location_city if profile else None
     return SYSTEM.format(name=ctx.user.display_name, call_part=" og opkald til virksomheder" if "ring-for-mig" in on
                          else "", now=now.strftime("%Y-%m-%dT%H:%M"), weekday=rules.WEEKDAYS[now.weekday()],
+                         search=SEARCH_RULE if web_search_tool(city) else NO_SEARCH_RULE,
                          lists=lists_txt, about=about_txt, addons=addons_txt)
 
 
@@ -165,12 +200,17 @@ def run(db: OrmSession, ctx, text: str, about_task_id: uuid.UUID | None) -> list
         db.commit()  # the user answered «skriv nummeret»: no model needed
         return [user_msg, *attached]
     db.commit()
+    from app.config import get_settings
+
+    settings = get_settings()
     provider = get_provider()
-    tools, extra = tools_for(db, ctx.ws_id)
+    profile = db.get(PrivateProfile, ctx.ws_id)
+    tools, extra = tools_for(db, ctx.ws_id, city=profile.location_city if profile else None)
     system = _system(db, ctx, about)
     messages = _history(db, ctx)
-    c, _row = log_call(db, ctx.workspace, provider, user_id=ctx.user_id, purpose="privat_chat", system=system,
-                       messages=messages, prompt_version=PROMPT_VERSION, revision=0, max_tokens=1024, tools=tools)
+    ask = dict(user_id=ctx.user_id, purpose="privat_chat", system=system, prompt_version=PROMPT_VERSION, revision=0,
+               max_tokens=1024, tools=tools, model=settings.privat_ai_model_id, effort=settings.privat_ai_effort)
+    c, _row = log_call(db, ctx.workspace, provider, messages=messages, **ask)
     rounds = 0
     errors: list[str] = []
     while c.tool_calls and rounds < MAX_TOOL_ROUNDS:
@@ -186,9 +226,10 @@ def run(db: OrmSession, ctx, text: str, about_task_id: uuid.UUID | None) -> list
                 errors.append(e.message)
                 results.append((call.id, f"Fejl: {e.message}"))
         db.commit()
+        if turn.out and not errors:
+            break  # the tools already said what happened (card, question, list) – no second model turn, no wait
         messages = messages + [{"role": "assistant", "content": c.assistant_content}, tool_result_message(results)]
-        c, _row = log_call(db, ctx.workspace, provider, user_id=ctx.user_id, purpose="privat_chat", system=system,
-                           messages=messages, prompt_version=PROMPT_VERSION, revision=0, max_tokens=1024, tools=tools)
+        c, _row = log_call(db, ctx.workspace, provider, messages=messages, **ask)
     if not turn.out:
         reply = c.text.strip() if c.stop_reason != "refusal" and c.text else ""
         turn.say("text", reply or (errors[-1] if errors else
@@ -217,9 +258,26 @@ def _parse_when(raw: str | None) -> datetime | None:
 
 
 def _items(raw) -> list[str]:
+    return [t for t, _l, _n in _rich_items(raw)]
+
+
+def _rich_items(raw) -> list[tuple[str, str | None, str | None]]:
+    """Items as (text, link, note): plain strings, or {text, link, note} from a web search."""
     if isinstance(raw, str):
         raw = re.split(r",|\sog\s", raw)
-    return [str(x).strip()[:300] for x in (raw or []) if str(x).strip()][:50]
+    out: list[tuple[str, str | None, str | None]] = []
+    for x in raw or []:
+        if isinstance(x, dict):
+            text = str(x.get("text") or "").strip()[:300]
+            link = str(x.get("link") or "").strip()[:1000] or None
+            note = str(x.get("note") or "").strip()[:500] or None
+            if link and not link.startswith(("https://", "http://")):
+                link = None
+        else:
+            text, link, note = str(x).strip()[:300], None, None
+        if text:
+            out.append((text, link, note))
+    return out[:50]
 
 
 def _cap(s: str) -> str:
@@ -241,10 +299,12 @@ def _created(turn: Turn, task: PrivateTask, intro: str) -> None:
 
 
 def h_create_list(turn: Turn, a: dict) -> str:
-    items = _items(a.get("items"))
+    rich = _rich_items(a.get("items"))
+    items = [t for t, _l, _n in rich]
     lt = a.get("type") if a.get("type") in service.LIST_TYPES else None
     title = _cap(str(a.get("title") or "").strip()) or {"shopping": "Indkøbsliste", "wishlist": "Ønskeliste"}.get(lt or "", "Liste")
     task = service.create_digital(turn.db, turn.ctx, kind="list", title=title, items=items, list_type=lt)
+    _apply_links(turn, task, rich)
     intro = f"Her er din {title.lower()}" + (f" med {_join(items)}." if items else ".")
     _created(turn, task, intro)
     return f"Liste oprettet (id {task.id}, status {task.status})."
@@ -269,14 +329,59 @@ def _resolve(turn: Turn, task_id, kind: str, min_role: str = "viewer") -> tuple[
     raise NotFound("Jeg fandt ingen åben " + ("liste" if kind == "list" else "påmindelse"))
 
 
+def _apply_links(turn: Turn, task: PrivateTask, rich: list[tuple[str, str | None, str | None]]) -> int:
+    """Links/notes from {text, link, note} items land on the matching rows (text match, newest first)."""
+    n = 0
+    for text, link, note in rich:
+        if not link and not note:
+            continue
+        row = turn.db.scalar(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id,
+                                                            func.lower(PrivateTaskItem.text) == text.lower())
+                             .order_by(PrivateTaskItem.created_at.desc()).limit(1))
+        if row is None:
+            continue
+        if link:
+            row.link = link
+        if note and not row.note:
+            row.note = note
+        n += 1
+    return n
+
+
 def h_add_items(turn: Turn, a: dict) -> str:
     task, m = _resolve(turn, a.get("task_id"), "list", "editor")
-    added = service.add_items(turn.db, task, m, _items(a.get("items")))
+    rich = _rich_items(a.get("items"))
+    added = service.add_items(turn.db, task, m, [t for t, _l, _n in rich])
+    _apply_links(turn, task, rich)
     names = [i.text for i in added]
-    turn.say("text", f"Tilføjet {_join(names)}. Det er stadig den samme liste, og en rettelse koster ingen opgave.",
+    with_links = sum(1 for _t, link, _n in rich if link)
+    turn.say("text", f"Tilføjet {_join(names)}" + (" – med link til, hvor det kan købes." if with_links else
+                                                   ". Det er stadig den samme liste, og en rettelse koster ingen opgave."),
              task_id=task.id)
     turn.say("task", task.title, task_id=task.id)
     return f"Tilføjet til {task.id}."
+
+
+def h_set_item_link(turn: Turn, a: dict) -> str:
+    task, m = _resolve(turn, a.get("task_id"), "list", "editor")
+    service.can_add(task, m)
+    link = str(a.get("link") or "").strip()[:1000]
+    if not link.startswith(("https://", "http://")):
+        return "Linket skal starte med https://. Søg efter et rigtigt link først."
+    wanted = str(a.get("item") or "").strip().lower()
+    rows = list(turn.db.scalars(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id)
+                                .order_by(PrivateTaskItem.position, PrivateTaskItem.created_at)))
+    row = next((r for r in rows if r.text.lower() == wanted), None) or \
+        next((r for r in rows if wanted and (wanted in r.text.lower() or r.text.lower() in wanted)), None)
+    if row is None:
+        return "Punktet findes ikke på listen: " + ", ".join(r.text for r in rows[:20])
+    row.link = link
+    if (note := str(a.get("note") or "").strip()[:500]):
+        row.note = note
+    turn.db.flush()
+    turn.say("text", f"Linket er sat på «{row.text}» – tryk på punktet for at åbne det.", task_id=task.id)
+    turn.say("task", task.title, task_id=task.id)
+    return f"Link sat på {row.id}."
 
 
 def h_create_reminder(turn: Turn, a: dict) -> str:
@@ -340,7 +445,8 @@ def h_suggest_addon(turn: Turn, a: dict) -> str:
     return "Tilføjelsen er tilbudt brugeren."
 
 
-CORE_HANDLERS = {"create_list": h_create_list, "add_items": h_add_items, "create_reminder": h_create_reminder,
+CORE_HANDLERS = {"create_list": h_create_list, "add_items": h_add_items, "set_item_link": h_set_item_link,
+                 "create_reminder": h_create_reminder,
                  "move_reminder": h_move_reminder, "list_waiting": h_list_waiting,
                  "ask_clarifying": h_ask_clarifying, "suggest_addon": h_suggest_addon}
 

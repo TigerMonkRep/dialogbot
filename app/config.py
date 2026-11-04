@@ -52,6 +52,12 @@ class Settings(BaseSettings):
     ai_model_id: str = Field(default="claude-opus-5", alias="AI_MODEL_ID")
     ai_effort: Literal["low", "medium", "high"] = Field(default="medium", alias="AI_EFFORT")
     ai_max_output_tokens: int = Field(default=2048, alias="AI_MAX_OUTPUT_TOKENS")
+    # Dialogbot Privat's chat answers a person who is waiting with the phone in hand: its own (faster) model and a low
+    # effort. Unset = AI_MODEL_ID. The chat may also search the web (Anthropic's server-side web_search tool) for
+    # links to where something can be bought, prices and opening hours – off with PRIVAT_WEB_SEARCH=false.
+    privat_ai_model_id: str | None = Field(default=None, alias="PRIVAT_AI_MODEL_ID")
+    privat_ai_effort: Literal["low", "medium", "high"] = Field(default="low", alias="PRIVAT_AI_EFFORT")
+    privat_web_search: bool = Field(default=True, alias="PRIVAT_WEB_SEARCH")
     # Anthropic server-side refusal fallback ("fallbacks": "default", beta header server-side-fallback-2026-07-01):
     # on a policy decline the API re-runs the call on the model's default fallback model. Set false to pin one model
     # (required if AI_MODEL_ID names a model without a server-defined default fallback).

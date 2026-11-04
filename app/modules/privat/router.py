@@ -21,8 +21,11 @@ from app.modules.privat import (
     groups,
     invites,
     ledger,
+    lookup_limits,
     payments,
     phone,
+    places,
+    push,
     referrals,
     service,
     sharing,
@@ -43,6 +46,9 @@ class MessageIn(BaseModel):
 class ApproveIn(BaseModel):
     window: str | None = Field(default=None, max_length=200)
     share_phone: bool = False
+    confirm_business: bool = Field(default=False, description="Påkrævet, når nummeret ligner et mobilnummer")
+    at_next_open: bool = Field(default=False, description="Ring ved næste åbningstid, hvis virksomheden har lukket nu "
+                                                          "(eller uden for kl. 8–18)")
 
 
 class ActivateIn(BaseModel):
@@ -232,35 +238,38 @@ def _public_enabled() -> None:
 
 
 @public_router.get("/invites/by-code/{code}")
-def invite_preview_by_code(code: str, db: OrmSession = Depends(get_db)):
-    """Public (no login): the short link /i/{code}. Same preview as by token; nothing personal beyond first name."""
+def invite_preview_by_code(code: str, request: Request, db: OrmSession = Depends(get_db)):
+    """Public (no login): the short link /i/{code}. Same preview as by token; nothing personal beyond first name.
+    Rate limited per IP, misses (unknown codes) much more strictly (429 rate_limited)."""
     _public_enabled()
-    out = invites.preview(db, code=code)
+    out = lookup_limits.guarded(db, request, lambda: invites.preview(db, code=code))
     db.commit()
     return out
 
 
 @public_router.get("/invites/{token}")
-def invite_preview(token: str, db: OrmSession = Depends(get_db)):
-    """Public (no login): title, owner's first name, list type, item COUNT, share mode, and the Dialogbot card."""
+def invite_preview(token: str, request: Request, db: OrmSession = Depends(get_db)):
+    """Public (no login): title, owner's first name, list type, item COUNT, share mode, and the Dialogbot card.
+    Rate limited per IP (429 rate_limited)."""
     _public_enabled()
-    out = invites.preview(db, token)
+    out = lookup_limits.guarded(db, request, lambda: invites.preview(db, token))
     db.commit()
     return out
 
 
 @router.post("/invites/by-code/{code}/accept")
-def invite_accept_by_code(code: str, principal: Principal = Depends(get_current_principal),
+def invite_accept_by_code(code: str, request: Request, principal: Principal = Depends(get_current_principal),
                           db: OrmSession = Depends(get_db)):
-    out = invites.accept(db, principal, code=code)
+    out = lookup_limits.guarded(db, request, lambda: invites.accept(db, principal, code=code))
     db.commit()
     return out
 
 
 @router.post("/invites/{token}/accept")
-def invite_accept(token: str, principal: Principal = Depends(get_current_principal), db: OrmSession = Depends(get_db)):
+def invite_accept(token: str, request: Request, principal: Principal = Depends(get_current_principal),
+                  db: OrmSession = Depends(get_db)):
     """Join (creates the private account if needed). Returns the shared Task (or {} for a non-list invite)."""
-    out = invites.accept(db, principal, token)
+    out = lookup_limits.guarded(db, request, lambda: invites.accept(db, principal, token))
     db.commit()
     return out
 
@@ -376,19 +385,22 @@ def optional_principal(request: Request, db: OrmSession = Depends(get_db),
 
 
 @public_router.get("/group-invites/by-code/{code}")
-def group_invite_preview(code: str, db: OrmSession = Depends(get_db)):
-    """Public: group name, owner's first name, member COUNT. Never names or numbers."""
+def group_invite_preview(code: str, request: Request, db: OrmSession = Depends(get_db)):
+    """Public: group name, owner's first name, member COUNT. Never names or numbers. Rate limited per IP."""
     _public_enabled()
-    return groups.link_preview(db, code)
+    out = lookup_limits.guarded(db, request, lambda: groups.link_preview(db, code))
+    db.commit()
+    return out
 
 
 @public_router.post("/group-invites/by-code/{code}/join")
-def group_invite_join(code: str, body: GroupJoinIn, db: OrmSession = Depends(get_db),
+def group_invite_join(code: str, body: GroupJoinIn, request: Request, db: OrmSession = Depends(get_db),
                       principal: Principal | None = Depends(optional_principal)):
     """Login optional. Without login: name, and a number only after an SMS code (first call: code_sent; then again
     with `code`). Max 50 new members per link per hour."""
     _public_enabled()
-    out = groups.join(db, code, principal=principal, name=body.name, phone=body.phone, sms_code=body.code)
+    out = lookup_limits.guarded(db, request, lambda: groups.join(db, code, principal=principal, name=body.name,
+                                                                 phone=body.phone, sms_code=body.code))
     db.commit()
     return out
 
@@ -494,7 +506,7 @@ def post_message(body: MessageIn, response: Response, ctx: PrivateCtx = Depends(
 @router.post("/messages/{message_id}/options/{option_id}")
 def answer_option(message_id: uuid.UUID, option_id: str, ctx: PrivateCtx = Depends(private_ctx),
                   db: OrmSession = Depends(get_db)):
-    msgs = chat.answer_option(db, ctx, message_id, option_id[:40])
+    msgs = chat.answer_option(db, ctx, message_id, option_id[:320])
     db.commit()
     return _chat_out(db, ctx, msgs)
 
@@ -510,7 +522,8 @@ def approve_call(task_id: uuid.UUID, body: ApproveIn, response: Response, ctx: P
     if guard.replay:
         response.status_code = guard.replay[0]
         return guard.replay[1]
-    t = calls.approve(db, ctx, task_id, window=body.window, share_phone=body.share_phone)
+    t = calls.approve(db, ctx, task_id, window=body.window, share_phone=body.share_phone,
+                      at_next_open=body.at_next_open, confirm_business=body.confirm_business)
     out = service.task_out(db, t, ctx.user_id)
     guard.store(200, out)
     db.commit()
@@ -529,6 +542,83 @@ def retry_call(task_id: uuid.UUID, ctx: PrivateCtx = Depends(private_ctx), db: O
     t = calls.retry(db, ctx, task_id)
     db.commit()
     return service.task_out(db, t, ctx.user_id)
+
+
+# --------------------------------------------------------------------------- business search and location
+
+class LocationIn(BaseModel):
+    city: str | None = Field(default=None, max_length=100)
+    postcode: str | None = Field(default=None, max_length=10)
+    lat: float | None = None
+    lng: float | None = None
+
+
+@router.get("/businesses/search")
+def business_search(q: str = Query(min_length=1, max_length=120), lat: float | None = None, lng: float | None = None,
+                    city: str | None = Query(default=None, max_length=100), ctx: PrivateCtx = Depends(private_ctx),
+                    db: OrmSession = Depends(get_db)):
+    """At most 3 businesses (Google Places; demo data without a key). 30 searches per user per hour (429).
+    Show «Data fra Google» with results whose source is "google"."""
+    addons.require(db, ctx.ws_id, "ring-for-mig")
+    out = [{k: v for k, v in r.items() if k != "phone_kind"} for r in places.search(db, ctx, q, lat=lat, lng=lng,
+                                                                                    city=city)]
+    db.commit()
+    return out
+
+
+@router.patch("/me/location")
+def set_location(body: LocationIn, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """Only what the user gives (city, postcode or the browser's position); used to find businesses near them."""
+    places.set_location(db, ctx, city=body.city, postcode=body.postcode, lat=body.lat, lng=body.lng)
+    db.commit()
+    return service.balance_out(db, ctx)
+
+
+# --------------------------------------------------------------------------- web push
+
+class PushKeys(BaseModel):
+    p256dh: str = Field(min_length=10, max_length=200)
+    auth: str = Field(min_length=8, max_length=100)
+
+
+class PushSubIn(BaseModel):
+    endpoint: str = Field(min_length=10, max_length=2000)
+    keys: PushKeys
+
+
+class PushUnsubIn(BaseModel):
+    endpoint: str = Field(min_length=10, max_length=2000)
+
+
+@router.get("/push/public-key")
+def push_public_key(ctx: PrivateCtx = Depends(private_ctx)):
+    return {"public_key": push.public_key()}
+
+
+@router.post("/push/subscriptions")
+def push_subscribe(body: PushSubIn, request: Request, ctx: PrivateCtx = Depends(private_ctx),
+                   db: OrmSession = Depends(get_db)):
+    push.public_key()  # 501 push_not_configured without VAPID keys
+    sub = push.subscribe(db, ctx.user_id, endpoint=body.endpoint, p256dh=body.keys.p256dh, auth=body.keys.auth,
+                         user_agent=request.headers.get("user-agent"))
+    db.commit()
+    return {"id": str(sub.id)}
+
+
+@router.delete("/push/subscriptions")
+def push_unsubscribe(body: PushUnsubIn, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    removed = push.unsubscribe(db, ctx.user_id, body.endpoint)
+    db.commit()
+    return {"removed": removed}
+
+
+@router.post("/push/test")
+def push_test(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """Sends «Det virker – du får besked her» to every subscription of the caller."""
+    push.public_key()
+    n = push.test(db, ctx.user_id)
+    db.commit()
+    return {"sent": n}
 
 
 # --------------------------------------------------------------------------- phone and credits

@@ -13,6 +13,7 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     DateTime,
+    Float,
     ForeignKey,
     Index,
     Integer,
@@ -29,7 +30,7 @@ from app.models.identity import ts_now, uuid_pk
 PRIVATE_TASK_KINDS = ("list", "reminder", "call")
 PRIVATE_TASK_STATUSES = ("awaiting_user", "draft", "planned", "in_progress", "awaiting_business", "done", "declined")
 CREDIT_KINDS = ("grant", "purchase", "reserve", "capture", "release", "spend", "sponsor", "referral")
-PRIVATE_CALL_STATUSES = ("proposed", "approved", "dialling", "in_progress", "unknown", "answered", "no_answer",
+PRIVATE_CALL_STATUSES = ("proposed", "approved", "scheduled", "dialling", "in_progress", "unknown", "answered", "no_answer",
                          "failed", "declined")
 
 
@@ -48,6 +49,11 @@ class PrivateProfile(Base):
     phone_code_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     phone_code_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     phone_code_sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Where to look for businesses – only what the user gave themselves (PATCH /privat/me/location).
+    location_city: Mapped[str | None] = mapped_column(String(100))
+    location_postcode: Mapped[str | None] = mapped_column(String(10))
+    location_lat: Mapped[float | None] = mapped_column(Float)
+    location_lng: Mapped[float | None] = mapped_column(Float)
     created_at: Mapped[datetime] = ts_now()
 
 
@@ -195,7 +201,8 @@ class PrivateMessage(Base):
     __tablename__ = "private_messages"
     __table_args__ = (
         CheckConstraint("role in ('user','assistant')", name="ck_private_messages_role"),
-        CheckConstraint("kind in ('text','task','move','clarify','call_proposal','draft','waiting','addon')",
+        CheckConstraint("kind in ('text','task','move','clarify','call_proposal','draft','waiting','addon',"
+                        "'share_proposal')",
                         name="ck_private_messages_kind"),
         Index("ix_private_messages_ws_created", "workspace_id", "created_at"),
     )
@@ -212,7 +219,7 @@ class PrivateMessage(Base):
     # [{id, label, sub, action, ...}] – `action` and its data never leave the server (see service.message_out)
     options: Mapped[list | None] = mapped_column(JSONB)
     links: Mapped[list | None] = mapped_column(JSONB)
-    answered_option_id: Mapped[str | None] = mapped_column(String(40))
+    answered_option_id: Mapped[str | None] = mapped_column(String(320))  # e.g. "place:<google place id>"
     addon_key: Mapped[str | None] = mapped_column(String(40))  # kind "addon": the add-on the user is offered
     created_at: Mapped[datetime] = ts_now()
 
@@ -243,8 +250,8 @@ class PrivateCall(Base):
 
     __tablename__ = "private_calls"
     __table_args__ = (
-        CheckConstraint("status in ('proposed','approved','dialling','in_progress','unknown','answered','no_answer',"
-                        "'failed','declined')", name="ck_private_calls_status"),
+        CheckConstraint("status in ('proposed','approved','scheduled','dialling','in_progress','unknown','answered',"
+                        "'no_answer','failed','declined')", name="ck_private_calls_status"),
         Index("ix_private_calls_task", "task_id", "created_at"),
         Index("ix_private_calls_business_phone", "business_phone_e164", "expires_at"),
     )
@@ -254,7 +261,10 @@ class PrivateCall(Base):
     task_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("private_tasks.id", ondelete="CASCADE"), nullable=False)
     business_name: Mapped[str] = mapped_column(String(200), nullable=False)
     business_address: Mapped[str] = mapped_column(String(300), nullable=False, default="")
-    business_phone_e164: Mapped[str] = mapped_column(String(20), nullable=False)
+    # Null when the business has no number we can use yet: the user replies with it in the chat (about_task_id).
+    business_phone_e164: Mapped[str | None] = mapped_column(String(20))
+    # Where the number came from: google | demo (never dialled) | user
+    phone_source: Mapped[str | None] = mapped_column(String(8))
     purpose: Mapped[str] = mapped_column(Text, nullable=False, default="")
     may_ask: Mapped[str] = mapped_column(Text, nullable=False, default="")
     may_agree: Mapped[str] = mapped_column(Text, nullable=False, default="")
@@ -278,6 +288,12 @@ class PrivateCall(Base):
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # A call back from this business to a pool number is matched to this call until then (dialled + 14 days).
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Google place id (the only Places field that may be stored indefinitely); null for a number the user typed.
+    place_id: Mapped[str | None] = mapped_column(String(300))
+    # The business was closed when proposed: its next opening (inside our calling hours). With approval «ved næste
+    # åbningstid» the call waits (status scheduled) and is dialled at scheduled_for by the worker.
+    next_open_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    scheduled_for: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = ts_now()
 
 
@@ -359,3 +375,47 @@ class PrivatePhoneCode(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = ts_now()
+
+
+class PrivateLookup(Base):
+    """One public lookup of an invitation or group link (by token or short code), for rate limiting so codes cannot be
+    enumerated. Only a keyed hash of the IP is stored; rows older than two days are deleted by the worker."""
+
+    __tablename__ = "private_lookups"
+    __table_args__ = (
+        CheckConstraint("outcome in ('hit','miss')", name="ck_private_lookups_outcome"),
+        Index("ix_private_lookups_ip_created", "ip_hash", "created_at"),
+        Index("ix_private_lookups_outcome_created", "outcome", "created_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    ip_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    outcome: Mapped[str] = mapped_column(String(8), nullable=False)
+    created_at: Mapped[datetime] = ts_now()
+
+
+class PrivateBusinessSearch(Base):
+    """One business search by a private user (rate limit 30/hour). The query itself is not stored."""
+
+    __tablename__ = "private_business_searches"
+    __table_args__ = (Index("ix_private_business_searches_ws_created", "workspace_id", "created_at"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    created_at: Mapped[datetime] = ts_now()
+
+
+class PushSubscription(Base):
+    """A Web Push subscription (VAPID) of one browser/device. Deleted when the push service answers 404/410."""
+
+    __tablename__ = "push_subscriptions"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    endpoint: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    p256dh: Mapped[str] = mapped_column(String(200), nullable=False)
+    auth: Mapped[str] = mapped_column(String(100), nullable=False)
+    user_agent: Mapped[str | None] = mapped_column(String(400))
+    created_at: Mapped[datetime] = ts_now()
+    last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    failures: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")

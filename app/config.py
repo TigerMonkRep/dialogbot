@@ -247,6 +247,11 @@ class Settings(BaseSettings):
     # Short invitation links people text from their own phone: <base><code>, resolved by the web route /i/{code}.
     privat_short_url_base: str = Field(default="https://dialogbot.app/i/", alias="PRIVAT_SHORT_URL_BASE")
     privat_group_url_base: str = Field(default="https://dialogbot.app/g/", alias="PRIVAT_GROUP_URL_BASE")
+    # Web Push (VAPID) for Dialogbot Privat. `python -m scripts.generate_vapid` prints a new pair. Without the keys,
+    # notifications go by e-mail. VAPID_SUBJECT is a mailto: or https: contact for the push services.
+    vapid_public_key: str | None = Field(default=None, alias="VAPID_PUBLIC_KEY")
+    vapid_private_key: str | None = Field(default=None, alias="VAPID_PRIVATE_KEY")
+    vapid_subject: str = Field(default="mailto:info@dialogbot.dk", alias="VAPID_SUBJECT")
     # Add-ons (app/modules/privat/addons.py) switched on when a private account is created.
     privat_default_addons: str = Field(default="ring-for-mig,delte-lister,oenskelister", alias="PRIVAT_DEFAULT_ADDONS")
 

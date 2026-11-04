@@ -160,6 +160,36 @@ Safari på iPhone kan ikke læse kontakter. Tre veje, alle i piloten:
 Senere (fase 2): en tynd iOS/Android-app (Capacitor) med den rigtige kontaktvælger (CNContactPickerViewController – ingen adgang til
 hele adressebogen) og den native SMS-skærm (MFMessageComposeViewController, flere modtagere, ved om beskeden blev sendt) + push.
 
+## Tilføjelse 6: Find virksomheden selv + push-notifikationer (skal virke i piloten)
+### Find virksomheden
+Assistenten slår selv virksomheden op, når brugeren skriver «Ring til cykelværkstedet …» eller «Ring til Fona i Bruuns Galleri».
+Kilde: Google Places API (New) via den eksisterende klient app/modules/sales/places.py (Text Search med Pro-felter, derefter Place Details
+for nationalPhoneNumber/internationalPhoneNumber, regularOpeningHours, rating, userRatingCount – kun for de 3 viste kandidater).
+Uden GOOGLE_PLACES_API_KEY: DemoPlaces (fiktive, kan aldrig ringes op). Placering: brugerens profil (postnummer/by) eller browserens
+position, som der KUN spørges om, når en søgning har brug for den; ellers spørger chatten «Hvilken by?». Resultater må ikke caches ud over
+Googles regler (place_id må gemmes; øvrigt indhold højst GOOGLE_PLACES_CACHE_DAYS). Vis «Data fra Google» ved resultater (krav).
+Åbningstider bruges: er virksomheden lukket nu, foreslår assistenten næste åbningstid og planlægger opkaldet dér (status planned).
+Ingen nummer fra Google → assistenten siger det og beder om nummeret. Kun numre der ser ud som rigtige danske erhvervsnumre (+45, 8 cifre)
+kan ringes op; mobilnumre (2x/3x/4x/5x/6x/7x/8x/9x – brug sales.service.danish_number-reglerne) kræver at brugeren bekræfter «Det er en virksomhed».
+GET  /privat/businesses/search?q=&lat=&lng=&city=  → [{place_id, name, address, phone_display, phone_e164|null, rating|null,
+      rating_count|null, open_now|null, next_open_text|null, distance_km|null, maps_url, source:"google"|"demo"}]  (max 3; rate-limit pr. bruger 30/time)
+Chat-svaret «clarify» får options fra denne søgning (sub = adresse · afstand · åben/lukket · ★).
+PATCH /privat/me/location {city?|postcode?|lat,lng}  (gemmes kun når brugeren selv giver den)
+
+### Push-notifikationer (Web Push, VAPID)
+Påmindelser, svar fra virksomheder, opkaldsudfald, nye medlemmer/tilføjelser på delte lister og invitationer der er accepteret sendes
+som push. E-mail bruges kun som reserve, hvis brugeren ingen aktive push-abonnementer har, eller push fejler (410 Gone → slet abonnement).
+- service worker web/public/sw.js (push + notificationclick → åbner den relevante side), registreres fra /privat.
+- Tabel push_subscriptions (id, user_id, endpoint UNIQUE, p256dh, auth, user_agent, created_at, last_success_at, failures).
+- Afsendelse via pywebpush (VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT=mailto:...) i en outbox-handler push.send (retries/backoff).
+- iPhone: virker fra iOS 16.4, når siden er føjet til hjemmeskærmen. Web viser en kort vejledning («Del → Føj til hjemmeskærm») før
+  der spørges om tilladelse, og kun når brugeren laver sin første påmindelse eller godkender et opkald.
+GET    /privat/push/public-key → {public_key}
+POST   /privat/push/subscriptions {endpoint, keys:{p256dh, auth}} → {id}
+DELETE /privat/push/subscriptions {endpoint}
+POST   /privat/push/test → {sent: n}   (sender «Det virker – du får besked her»)
+GET    /privat/me får: push_enabled: bool, location_city|null
+
 ---
 
 # Implementering (backend, app/modules/privat) – afvigelser og præciseringer
@@ -187,7 +217,7 @@ Alt ovenfor er implementeret. Afvigelser er bagudkompatible (kun ekstra felter/e
   «Delt med dig – koster dig ingenting».
 - `ChatMessage` har også `answered_option_id` (valgt svar på en clarify) og `addon_key` (kind "addon").
   `options[].id` er stabile id'er; serverens handlingsdata sendes aldrig ud.
-- Påmindelsesstatus: planned → done, når påmindelsen er sendt (e-mail nu; push er en tom krog: `service.push_hook`).
+- Påmindelsesstatus: planned → done, når påmindelsen er sendt (push; e-mail kun uden aktivt abonnement).
 
 ## Regler
 - 10 gratis digitale opgaver (lister/påmindelser) pr. kalendermåned (Europe/Copenhagen). Opkald bruger ikke gratis opgaver.
@@ -202,9 +232,8 @@ Alt ovenfor er implementeret. Afvigelser er bagudkompatible (kun ekstra felter/e
   `approved_snapshot`). Status committes før Vapi kaldes; intet svar fra Vapi = `unknown` (ringes aldrig op igen automatisk).
   Uden rapport i 30 min. frigives reservationen af workerens planlagte job.
 - Opkald fra puljenumre i `PRIVAT_POOL_NUMBERS` (fx `+4589871234=<vapi-phone-number-id>`). Samme virksomhed får altid samme puljenummer.
-- Virksomhedsopslag: i piloten skal brugeren selv skrive navn + nummer (nummeret skal stå i brugerens egne beskeder – modellen kan
-  ikke opfinde det), eller vælge fra et lille fiktivt Aarhus-fixture (Cykelmageren / Østbyens Cykler). Fixture-numrene må kun ringes
-  op i dev/test (409 `demo_business` ellers). **Rigtigt virksomhedsopslag (Google Places/CVR) er fremtidigt arbejde.**
+- Virksomhedsopslag: se «Find virksomheden» nedenfor. Et nummer, brugeren selv skriver, skal stå i brugerens egne beskeder
+  (modellen kan ikke opfinde det). Det fiktive Aarhus-fixture (Cykelmageren / Østbyens Cykler) bruges kun med FakeProvider i dev/test.
 - Tilbageopkald til et puljenummer rutes på opkalderens nummer til nyeste åbne opkald til den virksomhed (14 dage). Flere brugere →
   assistenten spørger hvem; ukendt → høflig generisk besked uden persondata. Viderestilling til brugerens verificerede mobil kun ved share_phone.
 
@@ -226,9 +255,46 @@ Alt ovenfor er implementeret. Afvigelser er bagudkompatible (kun ekstra felter/e
 - Gruppe-link uden login: `join {name, phone}` sender en SMS-kode og svarer `{joined:false, code_sent:true}`; kald igen med
   `{name, phone, code}`. Højst 50 nye medlemmer pr. link pr. time, 20 koder pr. link/time, 3 pr. nummer/time (429 `rate_limited`).
   `join` svarer også `already`.
+- Rate limits på de offentlige opslag (`GET /privat/invites/{token}`, `GET /privat/invites/by-code/{code}`,
+  `GET /privat/group-invites/by-code/{code}` samt accept/join af links): pr. IP 30/min og 300/døgn; forkerte/ukendte koder
+  tælles strengere: 10/min og 50/døgn; desuden højst 1000 forkerte opslag i timen i alt. Over grænsen: 429 `rate_limited`
+  («Der er prøvet for mange links fra din forbindelse. Vent lidt, og prøv igen.») – også for gyldige koder. IP = første adresse i
+  `X-Forwarded-For` (web-BFF'en skal videresende besøgendes adresse); kun en nøglet hash af IP'en gemmes, rækker slettes efter 2 døgn.
 - OG-billede (`/privat/og/invite/{token}.png`) er ikke lavet i backend – web bruger Next opengraph-image (titel + fornavn + mærke, aldrig varer).
+
+## Find virksomheden og push (Tilføjelse 6) – sådan virker API'et
+- Søgning: den eksisterende klient `app/modules/sales/places.py` (Text Search med Pro-felter → Place Details kun for de ≤ 3 viste).
+  Mangler `GOOGLE_PLACES_API_KEY` i API-tjenesten, logges én advarsel (`privat.places_key_missing`), og DemoPlaces bruges
+  (fiktive numre, som aldrig ringes op: 409 `demo_business`). Kun `place_id` gemmes varigt; adresse/åbningstid på forslag og
+  valg i chatten ryddes efter `GOOGLE_PLACES_CACHE_DAYS`. Søgninger: 30 pr. bruger pr. time (429 `rate_limited`).
+  Søgning med Google uden kendt placering → 409 `needs_location`.
+- Chat: mangler placering, svarer chatten med en clarify med options `location:geo` og `location:city` (web spørger, kalder
+  `PATCH /privat/me/location` og sender brugerens besked igen). Resultater er clarify-options med id `place:<place_id>`
+  (`place:demo…` for DemoPlaces) og `sub` = «adresse · afstand · åben nu/lukket nu · ★ x,x (n) · telefon». Valg via
+  `POST /privat/messages/{id}/options/{option_id}` laver ALTID et opkaldsforslag (call_proposal) – der ringes aldrig uden godkendelse.
+- Nummerregler: kun numre, som `sales.service.danish_number` accepterer. Uden nummer: forslaget laves med `call.phone_e164 = null`, og
+  brugeren svarer med nummeret som almindelig chatbesked med `about_task_id` = opkaldsopgaven; serveren tager nummeret, sætter det på
+  forslaget og svarer med en tekst + en ny `call_proposal`. Godkendelse uden nummer → 409 `needs_business_phone`.
+  Mobil-lignende nummer: `call.is_mobile = true`, og approve kræver `confirm_business: true` (ellers 409 `confirm_business`).
+- `Task.call` har også: `phone_e164`, `is_mobile`, `source` ("google"|"demo"|"user"), `open_now` (null uden åbningstider),
+  `next_open_text`, `scheduled_for`.
+- Lukket nu: forslaget fortæller næste åbningstid (inden for hverdage 8–18). `approve` uden `at_next_open` → 409 `business_closed`
+  (eller `outside_hours`) med `next_open_at`/`next_open_text`; med `at_next_open: true` reserveres 3 credits, opkaldet får status
+  `scheduled`, opgaven `planned`, og workeren ringer på tidspunktet (job `privat.call_due`) – kun fordi godkendelsen er gemt.
+  Godkender brugeren ikke, minder job `privat.call_ask` om forslaget, når virksomheden åbner (ringer aldrig selv). Et planlagt opkald kan
+  annulleres med `decline` (credits frigives).
+- Deling i chatten: `kind: "share_proposal"` (task_id = listen). Med en gruppe er `options[0]` = `{id: group_id, label: gruppenavn}`;
+  web åbner sit dele-ark. Svar på options-endepunktet med gruppens id deler også (én ad gangen).
+- `GET /privat/invites/{token}` accepterer også en kort kode (8 tegn) som token.
+- `GET /privat/groups` → medlemmer har også `user_id`.
+- Push: `push.send` i outboxen (retry/backoff). 404/410 sletter abonnementet; e-mail sendes, hvis det var det sidste, eller når push
+  fejler for sidste gang. Påmindelser, opkaldsudfald, tilbageopkald, «X har åbent nu» og accepterede invitationer: push, ellers e-mail.
+  Nye punkter/medlemmer på delte lister: kun push, højst én pr. liste pr. modtager pr. 2 minutter, aldrig til den, der gjorde det, og
+  aldrig for reservationer. Uden VAPID-nøgler: `GET /privat/push/public-key` → 501 `push_not_configured`, og alt går som e-mail.
 
 ## Nye miljøvariabler
 `PRIVAT_ENABLED`, `PRIVAT_ALLOWED_EMAILS`, `PRIVAT_POOL_NUMBERS`, `PRIVAT_STRIPE_PRICE_ID` (valgfri; ellers inline-pris 2900 øre
 inkl. moms), `PRIVAT_DEFAULT_ADDONS` (standard `ring-for-mig,delte-lister,oenskelister`), `PRIVAT_SHORT_URL_BASE`
 (standard `https://dialogbot.app/i/`), `PRIVAT_GROUP_URL_BASE` (standard `https://dialogbot.app/g/`).
+`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (Web Push; `python -m scripts.generate_vapid` laver et par – læg det aldrig i git).
+`GOOGLE_PLACES_API_KEY` (findes allerede) skal også stå på API-tjenesten, ikke kun workeren.

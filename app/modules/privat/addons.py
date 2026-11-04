@@ -92,11 +92,11 @@ register(Addon(
     tools=(AddonTool(
         "propose_call",
         "Foreslå et opkald til en virksomhed. Der bliver ALDRIG ringet, før brugeren har godkendt forslaget. Opfind "
-        "aldrig et telefonnummer: brug kun et nummer, brugeren selv har skrevet, eller en virksomhed fra listen, du "
-        "får tilbage (fixture_id). Kender du ikke nummeret, så send kun business_name/category.",
+        "aldrig et telefonnummer: send kun phone, hvis brugeren selv har skrevet det. Ellers send business_name eller "
+        "category (og city, hvis brugeren nævnte en by) – så slår Dialogbot virksomheden op og lader brugeren vælge.",
         _obj({"business_name": {"type": "string"}, "phone": {"type": "string", "description": "Kun hvis brugeren skrev det"},
               "category": {"type": "string", "description": "Fx cykelværksted, frisør, tandlæge"},
-              "fixture_id": {"type": "string"}, "purpose": {"type": "string"},
+              "city": {"type": "string"}, "purpose": {"type": "string"},
               "window": {"type": "string", "description": "Hvornår brugeren kan, fx 'torsdag efter kl. 15'"},
               "may_ask": {"type": "string"}, "may_agree": {"type": "string"}, "may_not": {"type": "string"}},
              ["purpose"]),

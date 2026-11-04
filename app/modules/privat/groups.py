@@ -56,6 +56,7 @@ def group_out(db: OrmSession, g: PrivateGroup) -> dict:
     """For the OWNER only (it contains the numbers the owner saved)."""
     return {"id": str(g.id), "name": g.name, "created_at": g.created_at.isoformat(),
             "members": [{"id": str(m.id), "name": m.name, "phone_e164": m.phone_e164,
+                         "user_id": str(m.user_id) if m.user_id else None,
                          "phone_display": rules.phone_display(m.phone_e164), "has_dialogbot": _known_user(db, m) is not None}
                         for m in members(db, g)]}
 
@@ -187,8 +188,12 @@ def share(db: OrmSession, ctx, task_id: uuid.UUID, group_id: uuid.UUID, *, mode:
                 db.add(PrivateTaskMember(task_id=task.id, user_id=uid, role=role))
                 db.flush()
                 p = db.scalar(select(PrivateProfile).where(PrivateProfile.user_id == uid))
-                service.add_message(db, p.workspace_id, kind="text", task_id=task.id,
-                                    text=f"{rules.first_name(ctx.user.display_name)} har delt «{task.title}» med dig.")
+                shared_text = f"{rules.first_name(ctx.user.display_name)} har delt «{task.title}» med dig."
+                service.add_message(db, p.workspace_id, kind="text", task_id=task.id, text=shared_text)
+                from app.modules.privat import push
+
+                push.notify(db, uid, title=task.title, body=shared_text, url=service._task_url(task),
+                            dedupe=f"shared:{task.id}:{uid}")
                 u = db.get(User, uid)  # the person's own name – never the owner's label for them
                 service.event(db, task, f"{rules.first_name(u.display_name if u else None)} er med på listen")
             if m.user_id is None:

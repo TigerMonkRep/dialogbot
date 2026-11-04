@@ -338,6 +338,11 @@ async def serve(socket: WebSocket) -> None:
                         except Exception as e:  # noqa: BLE001 – Speechmatics refused the session: log and hang up cleanly
                             logger.error("linden.start_failed", detail=str(e)[:300])
                             break
+                        # The database is only needed to build the dictionary. Hand the pooled connection back now,
+                        # so a call in progress never holds one of the API's few connections for its whole length
+                        # (4 Nov 2026: the pool ran dry under the Privat app's polling, the bridge then waited 30 s
+                        # for a connection and died, and the caller was never heard).
+                        db.close()
         finally:
             await session.close()
     finally:

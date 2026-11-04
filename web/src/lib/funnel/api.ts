@@ -68,7 +68,10 @@ export const realFunnel: FunnelApi = {
   create: (body) => call<Draft>(`${B}/drafts`, { method: "POST", body: JSON.stringify(body) }),
   get: (id) => call<Draft>(`${B}/drafts/${encodeURIComponent(id)}`),
   patch: (id, step, answers) => call<Draft>(`${B}/drafts/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ step, answers }) }),
-  places: (q, industry) => call<Place[]>(`${B}/places?q=${encodeURIComponent(q)}${industry ? `&industry=${encodeURIComponent(industry)}` : ""}`),
+  places: async (q, industry) => {
+    const r = await call<Place[] | { items: Place[] }>(`${B}/places?q=${encodeURIComponent(q)}${industry ? `&industry=${encodeURIComponent(industry)}` : ""}`);
+    return Array.isArray(r) ? r : r.items ?? [];
+  },
   gate: (id, body) => call<GateResult>(`${B}/drafts/${encodeURIComponent(id)}/gate`, { method: "POST", body: JSON.stringify(body) }),
   // Not through the generic proxy: the Next route stores the session token in the httpOnly cookie (like /api/auth/login).
   verify: (id, code) => call<VerifyResult>("/api/funnel/verify", { method: "POST", body: JSON.stringify({ draft_id: id, code }) }),

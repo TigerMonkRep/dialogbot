@@ -12,7 +12,7 @@ import { useFmt, usePlan, usePrivat } from "./store";
 const PILL = "inline-flex items-center justify-center gap-2 rounded-full font-semibold border-2 border-ink min-h-[44px] px-4 text-[15px]";
 const PRIMARY = `${PILL} bg-accent text-white hover:bg-accent-deep disabled:opacity-60`;
 const OUTLINE = `${PILL} bg-paper text-ink hover:bg-panel`;
-export const DAY_CARD = "rounded-[24px] border-2 border-ink bg-paper p-5 flex flex-col gap-3";
+export const DAY_CARD = "min-w-0 rounded-[24px] border-2 border-ink bg-paper p-5 flex flex-col gap-3";
 
 /** The three shortcut chips: Mind mig om / Lav en liste / Ring for mig. They fill the composer (never send);
  *  «Ring for mig» only when its add-on is on. */
@@ -270,12 +270,12 @@ export function DayPage() {
         </div>
         {mode === "loading" && <p className="m-0 text-[14px] text-muted" role="status">{t("common.loading")}</p>}
         <Suspense><WelcomeBanner /></Suspense>
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-6 items-start">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-6 items-start">
           <ChatCard />
           <YourTurn />
         </div>
       </section>
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-6 items-start">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-6 items-start">
         <TasksSection />
         <RoomCard />
       </div>

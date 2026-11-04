@@ -11,7 +11,11 @@ import threading
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
+import structlog
+
 from app.modules.integrations.connectors.base import ActionError
+
+log = structlog.get_logger("dialogbot.fakes")
 
 
 @dataclass
@@ -95,6 +99,8 @@ def fake_send_sms(*, sender: str, to: str, body: str, workspace_id: str) -> str:
     with WORLD.lock:
         sid = f"SMfake{next(WORLD.seq):026d}"
         WORLD.sms.append({"sid": sid, "from": sender, "to": to, "body": body, "workspace_id": workspace_id})
+    # Simulated only (dev/test): the text never leaves the process, so the log is the one place to read a code from.
+    log.info("sms.simulated", sid=sid, to=to, body=body)
     return sid
 
 

@@ -18,11 +18,13 @@ export function BuildProgress({ rows, maxSeconds = 30, onSettled }: { rows: Buil
   const [timedOut, setTimedOut] = useState(false);
   const settled = useRef(false);
 
+  // Keyed on the draft id, not the draft object: every poll replaces the object, which would restart the clock.
+  const draftId = draft?.id ?? null;
   useEffect(() => {
-    if (!draft) return;
+    if (!draftId) return;
     const stop = window.setTimeout(() => setTimedOut(true), maxSeconds * 1000);
     return () => window.clearTimeout(stop);
-  }, [draft, maxSeconds]);
+  }, [draftId, maxSeconds]);
   useEffect(() => {
     if (!pending || timedOut) return;
     const h = window.setInterval(() => { void refresh(); }, 1500);

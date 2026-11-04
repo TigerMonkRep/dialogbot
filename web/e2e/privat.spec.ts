@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { parseVcf } from "../src/lib/privat/vcard";
 import { normalizeDk, parseNumbers, platformOf, smsHref } from "../src/lib/privat/sms";
+import { visitorIp } from "../src/lib/visitor-ip";
 
 /** Dialogbot Privat in fake mode (the dev/build server runs with NEXT_PUBLIC_PRIVAT_FAKE=1; all data is simulated in the
  *  browser). Run: NEXT_PUBLIC_PRIVAT_FAKE=1 next dev, then BASE_URL=… npx playwright test e2e/privat.spec.ts --project=desktop-1440
@@ -42,6 +43,13 @@ test.describe("enheder", () => {
     expect(smsHref(body, ["+4512345678", "+4587654321"], "android")).toBe(`sms:+4512345678;+4587654321?body=${enc}`);
     expect(platformOf(IOS_UA)).toBe("ios");
     expect(platformOf(ANDROID_UA)).toBe("android");
+  });
+  test("besøgendes IP videresendes (x-real-ip før x-forwarded-for, skrald afvises)", () => {
+    expect(visitorIp(new Headers({ "x-real-ip": "203.0.113.7", "x-forwarded-for": "198.51.100.1, 10.0.0.1" }))).toBe("203.0.113.7");
+    expect(visitorIp(new Headers({ "x-forwarded-for": "198.51.100.1, 10.0.0.1" }))).toBe("198.51.100.1");
+    expect(visitorIp(new Headers({ "x-forwarded-for": "2001:db8::1" }))).toBe("2001:db8::1");
+    expect(visitorIp(new Headers({ "x-real-ip": "hej; drop" }))).toBeNull();
+    expect(visitorIp(new Headers())).toBeNull();
   });
   test("numre normaliseres til +45", () => {
     expect(normalizeDk("12 34 56 78")).toBe("+4512345678");

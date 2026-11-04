@@ -815,7 +815,10 @@
       "sales": "Ventas de Dialogbot",
       "sessions": "Sesión iniciada en {n|1 dispositivo|# dispositivos}. Si restablece la contraseña, se cerrarán todas las sesiones.",
       "thisDevice": "este dispositivo",
-      "lastActive": "última actividad {at}"
+      "lastActive": "última actividad {at}",
+      "switchLabel": "Cambiar entre empresa y privado",
+      "business": "Empresa",
+      "private": "Privado"
     },
     "ws": {
       "title": "Espacios de trabajo",

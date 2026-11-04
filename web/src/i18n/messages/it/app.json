@@ -815,7 +815,10 @@
       "sales": "Vendite Dialogbot",
       "sessions": "Accesso effettuato su {n|1 dispositivo|# dispositivi}. Se reimposta la password, verranno disconnessi tutti.",
       "thisDevice": "questo dispositivo",
-      "lastActive": "ultima attività {at}"
+      "lastActive": "ultima attività {at}",
+      "switchLabel": "Passa tra azienda e privato",
+      "business": "Azienda",
+      "private": "Privato"
     },
     "ws": {
       "title": "Spazio di lavoro",

@@ -815,7 +815,10 @@
       "sales": "Dialogbots försäljning",
       "sessions": "Inloggad på {n|1 enhet|# enheter}. Om du återställer lösenordet loggas alla ut.",
       "thisDevice": "den här enheten",
-      "lastActive": "senast aktiv {at}"
+      "lastActive": "senast aktiv {at}",
+      "switchLabel": "Växla mellan företag och privat",
+      "business": "Företag",
+      "private": "Privat"
     },
     "ws": {
       "title": "Arbetsytor",

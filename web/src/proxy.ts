@@ -84,6 +84,11 @@ export async function proxy(req: NextRequest) {
   }
   const res = NextResponse.next();
   if (protectedPath) res.headers.set("cache-control", "no-store, private");
+  // Dialogbot Privat: public without login (the landing /privat, invites /privat/invitation/*, group links /g/*,
+  // short links /i/*), and the app pages show example data until the visitor saves a task, so none of them is
+  // redirected to /login. They are not localized marketing pages (language = cookie). Pages that depend on the
+  // session are never cached by a shared cache.
+  if (isPrivatPath(pathname) && pathname !== "/privat") res.headers.set("cache-control", "no-store, private");
   // Gated pages vary by cookie; never let a shared cache serve them to someone without access.
   if (gateEnabled() && GATED.has(pathname)) res.headers.set("cache-control", "private, no-store");
   return res;
@@ -104,7 +109,12 @@ async function gateFor(req: NextRequest, path: string, search: string): Promise<
   return res;
 }
 
+/** Dialogbot Privat routes (public; see above). */
+function isPrivatPath(pathname: string): boolean {
+  return pathname === "/privat" || pathname.startsWith("/privat/") || pathname.startsWith("/g/") || pathname.startsWith("/i/");
+}
+
 // Everything except Next's own files, API routes and files with an extension (images, robots.txt, sitemap.xml …).
 export const config = { matcher: ["/((?!_next/|api/|a/|.*\\.[a-zA-Z0-9]+$).*)"] };
 
-export const _test = { isPublicPage, splitLocale, LOCALES };
+export const _test = { isPublicPage, splitLocale, LOCALES, isPrivatPath };

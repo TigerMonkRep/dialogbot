@@ -1,0 +1,4 @@
+# Browser worker runtime. It also imports app/ (database, outbox, AI client), so the image installs the repository's
+# requirements.lock first and this file on top. Resolve into requirements.lock with:
+#   pip install --dry-run --ignore-installed --report report.json -r browser_worker/requirements.in  (python 3.12, linux x86_64)
+playwright==1.64.1

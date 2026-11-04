@@ -36,7 +36,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.lock
       - name: Lint
-        run: ruff check app tests scripts client voice_pipeline tts_service
+        run: ruff check app tests scripts client voice_pipeline tts_service browser_worker
       - name: Migrate from empty database
         run: alembic upgrade head
       - name: Migration is complete (no drift between models and migrations)
@@ -65,3 +65,21 @@ jobs:
           pip install -r tts_service/requirements-test.txt pyarrow==25.0.1 soundfile==0.14.0 scipy==1.17.1 uvicorn==0.54.0
       - name: TTS service and voice pipeline tests
         run: pytest -p no:cacheprovider -c /dev/null --rootdir . tts_service/tests voice_pipeline/tests
+
+  browser-worker:
+    # Tethered browser agent against local HTML clones of booking sites (no network, no real sites).
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock -r browser_worker/requirements.lock
+      - name: Install Chromium (with ffmpeg for video)
+        run: playwright install --with-deps chromium
+      - name: Browser worker tests
+        run: pytest -p no:cacheprovider -c /dev/null --rootdir . browser_worker/tests

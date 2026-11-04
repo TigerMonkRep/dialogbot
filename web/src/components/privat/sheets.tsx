@@ -138,7 +138,7 @@ function BuySheet({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title={t("buy.title")} onClose={onClose}>
       <div className="rounded-[18px] border-2 border-ink p-4 flex flex-col gap-1.5">
-        <div className="flex justify-between text-[16px]"><span>{t("buy.item")}</span><b>29,00 kr.</b></div>
+        <div className="flex justify-between text-[16px]"><span>{t("buy.item")}</span><b>29 kr.</b></div>
         <div className="flex justify-between text-[13px] text-muted"><span>{t("buy.vat")}</span><span>5,80 kr.</span></div>
         <p className="m-0 mt-1 text-[13px] text-muted">{t("buy.note")}</p>
       </div>

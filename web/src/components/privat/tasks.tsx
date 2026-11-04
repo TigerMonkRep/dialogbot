@@ -7,6 +7,7 @@ import type { Task, TaskStatus } from "@/lib/privat/api";
 import { BIG, Eyebrow, Ex, KindLabel, Kv, LINK, ROW, Sim, StatusBadge } from "./bits";
 import { ListBody } from "./cards";
 import { Ico } from "./icons";
+import { Composer } from "./day";
 import { useFmt, usePrivat } from "./store";
 
 const GROUPS: [string, TaskStatus[]][] = [
@@ -28,6 +29,8 @@ export function TasksPane() {
   return (
     <div className="px-4 pt-5 pb-7 flex flex-col gap-5" aria-label={t("tasks.title")}>
       <h2 className="m-0 font-display font-extrabold text-[28px] tracking-[-0.5px]">{t("tasks.title")}</h2>
+      {/* Below xl the conversation is not on screen, so the list carries its own field: a sent line opens Samtale. */}
+      <div className="xl:hidden" data-testid="tasks-composer"><Composer id="privat-ask-tasks" /></div>
       {mode !== "loading" && groups.length === 0 && <p className="m-0 text-[15px] text-muted">{t("tasks.empty")}</p>}
       {groups.map((g) => (
         <section key={g.key} className="flex flex-col gap-2" aria-label={t(`groups.${g.key}`)}>

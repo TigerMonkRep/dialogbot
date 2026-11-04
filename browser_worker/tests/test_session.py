@@ -286,3 +286,56 @@ def test_own_workdir_is_deleted_by_cleanup(site):
     assert wd.exists()
     s.cleanup()
     assert not wd.exists()
+
+
+# --- extended word list ----------------------------------------------------------------------------------------
+
+@pytest.mark.parametrize("label", ["Indsend", "indsender formularen", "Tilmeld", "Opret booking", "Opret booking nu"])
+def test_added_commit_words(label):
+    assert limits.matches_forbidden_click(label)
+
+
+@pytest.mark.parametrize("label", ["Fortsæt", "Næste", "Videre", "Opret", "Tilbage"])
+def test_wizard_steps_stay_harmless(label):
+    assert not limits.matches_forbidden_click(label)
+
+
+# --- safety net: an innocent-looking button that really books --------------------------------------------------
+
+def test_unexpected_commit_is_caught_when_next_really_books(site, workdir):
+    with session(site, workdir) as s:
+        s.navigate(site.url + "/booking-sneaky/ydelse.html")
+        go(s, "Herreklip")
+        go(s, "Ingen præference")
+        go(s, "Tirsdag 10")
+        go(s, "10:30")
+        s.read_page()
+        s.type(s.find("textbox", "Navn"), "Mette Hansen")
+        s.type(s.find("textbox", "Telefon"), "+4512345678")
+        with pytest.raises(RunFailed) as e:
+            s.click(s.find("button", "Næste"))  # label is innocent: the guard does not stop the click ...
+        assert e.value.error_code == "unexpected_commit"  # ... but the receipt that follows is caught
+        d = e.value.details
+        assert d["url"].endswith("/booking-sneaky/slut.html") or "/slut.html" in d["url"]
+        assert d["screenshot_file"] and (workdir / "shots").exists()
+        assert any(h.startswith("/booking-sneaky/slut") for h in site.hits)  # honest: the site HAD been committed
+
+
+def test_summary_page_titled_bekraeftelse_is_not_flagged(site, workdir):
+    with session(site, workdir) as s:
+        s.navigate(site.url + "/booking/oversigt-bekraeftelse.html?service=Herreklip&navn=Mette")
+        s.wait(10)  # the page says «Bekræftelse», but its confirm button is still there: not a receipt, no false alarm
+
+
+def test_wait_also_catches_a_delayed_commit(site, workdir):
+    with session(site, workdir) as s:
+        s.navigate(site.url + "/booking/kvittering.html?service=Herreklip&navn=Mette")
+        with pytest.raises(RunFailed) as e:
+            s.wait(10)
+        assert e.value.error_code == "unexpected_commit"
+
+
+def test_approved_run_may_see_the_receipt(site, workdir):
+    with session(site, workdir, approved=True) as s:
+        s.navigate(site.url + "/booking/kvittering.html?service=Herreklip&navn=Mette")
+        s.wait(10)  # no unexpected_commit: this run was approved

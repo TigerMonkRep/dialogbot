@@ -127,6 +127,21 @@ el => {
 }
 """
 
+# Names of the clickable things on the page, WITHOUT touching the refs (read_page renumbers them).
+CLICKABLE_NAMES_JS = r"""
+() => {
+  const clean = s => (s || '').replace(/\s+/g, ' ').trim();
+  const vis = el => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el);
+                      return cs.display !== 'none' && cs.visibility !== 'hidden' && (r.width > 0 || r.height > 0); };
+  const out = [];
+  document.querySelectorAll('a[href], button, input[type=submit], input[type=button], [role=button], [role=link]').forEach(el => {
+    if (!vis(el)) return;
+    out.push(clean(el.getAttribute('aria-label') || el.innerText || el.value || el.getAttribute('title') || ''));
+  });
+  return out;
+}
+"""
+
 CAPTCHA_LOGIN_JS = r"""
 (captchaSelectors) => {
   const vis = el => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el);

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="da"><head><meta charset="utf-8"><title>Kontaktoplysninger – OnlineBooq</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{font:16px system-ui;max-width:640px;margin:2rem auto;padding:0 1rem}a.opt,button{display:block;margin:.5rem 0;padding:.7rem 1rem;border:1px solid #888;border-radius:6px;text-decoration:none;color:#000;background:#f4f4f4;font:inherit;text-align:left}label{display:block;margin:.8rem 0 .2rem}input,textarea{width:100%;padding:.5rem;box-sizing:border-box}.hidden{display:none}</style>
+</head><body>
+<header><strong>OnlineBooq</strong> · Salon Test · <a href="/index.html">Forside</a></header>
+
+<h1>Dine oplysninger</h1>
+<form method="get" action="slut.html">
+{{hidden}}
+<label for="navn">Navn</label><input id="navn" name="navn" autocomplete="name" required>
+<label for="telefon">Telefon</label><input id="telefon" name="telefon" type="tel" autocomplete="tel" required>
+<label for="mail">E-mail</label><input id="mail" name="mail" type="email" autocomplete="email">
+<label for="besked">Besked til frisøren</label><textarea id="besked" name="besked" rows="3"></textarea>
+<button type="submit">Næste</button>
+</form>
+
+</body></html>

@@ -20,10 +20,11 @@ class RunOutcome(Exception):
 
     status = "failed"
 
-    def __init__(self, error_code: str, message: str = ""):
+    def __init__(self, error_code: str, message: str = "", details: dict | None = None):
         super().__init__(message or error_code)
         self.error_code = error_code
         self.message = message or error_code
+        self.details: dict = details or {}  # machine-readable context (url, screenshot, what was found ...)
 
 
 class FallbackPhone(RunOutcome):

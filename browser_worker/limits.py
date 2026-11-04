@@ -22,7 +22,10 @@ FORBIDDEN_FIELD_RE = re.compile(
 COMMIT_WORDS = (
     "bekræft", "book nu", "gennemfør", "betal", "send", "confirm", "submit", "pay", "complete",
     "bestil", "reserver", "afslut", "godkend", "accept", "place order", "order now", "køb", "buy", "finish",
+    "indsend", "tilmeld", "opret booking",
 )
+# «fortsæt» and «næste» are deliberately NOT here: they are normal wizard steps. A site that hides the real commit
+# behind such a label is caught afterwards by `looks_like_receipt` (unexpected_commit), see session.click.
 FORBIDDEN_CLICK_RE = re.compile(r"(?<!\w)(?:" + "|".join(re.escape(w) for w in COMMIT_WORDS) + ")", re.IGNORECASE)
 
 # --- CAPTCHA / login --------------------------------------------------------------------------------------------
@@ -65,3 +68,23 @@ def is_captcha_url(url: str) -> bool:
     except ValueError:
         hostpath = low
     return any(h in hostpath for h in CAPTCHA_HOSTS)
+
+
+# --- safety net: did an unapproved click just commit something? -----------------------------------------------------
+RECEIPT_RE = re.compile(
+    r"tak\s+for\s+din\s+(?:booking|bestilling|reservation)|din\s+tid\s+er\s+(?:booket|bekræftet)|bekræftelse|kvittering"
+    r"|booking\s+(?:is\s+)?confirmed|reservation\s+(?:is\s+)?complete|thank\s+you\s+for\s+(?:your\s+)?booking",
+    re.IGNORECASE,
+)
+
+
+def looks_like_receipt(text: str, *, commit_buttons_left: bool) -> str | None:
+    """The matching phrase if the page reads like a booking receipt AND no commit button is left on it.
+
+    A summary page titled «Bekræftelse af oplysninger» still offers «Bekræft booking»: that is a page before the commit,
+    not a receipt. A page that mentions «kvittering» but has no button to press is what a committed booking looks like.
+    """
+    if commit_buttons_left:
+        return None
+    m = RECEIPT_RE.search(text or "")
+    return m.group(0) if m else None

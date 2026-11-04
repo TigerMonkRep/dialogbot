@@ -250,6 +250,8 @@ class BrowserSession:
             except PlaywrightError as e:
                 self._navigation_error(e)
             self._after_navigation()
+            if not hit:
+                self._check_unexpected_commit(step)
             return f"OK {self.page.url}"
 
         return self._run("click", ref, do)
@@ -295,6 +297,7 @@ class BrowserSession:
         def do(step: Step) -> str:
             self.page.wait_for_timeout(max(0, min(int(ms), MAX_WAIT_MS)))
             self._check_walls()
+            self._check_unexpected_commit(step)
             return "OK"
 
         return self._run("wait", str(ms), do)
@@ -324,6 +327,19 @@ class BrowserSession:
             if m and not limits.matches_forbidden_field(m.group(1)):
                 out[m.group(1)] = m.group(2)
         return out
+
+    def back(self) -> str:
+        """Playbook helper: one step back in history (logged as a navigate; same allow-list and wall checks)."""
+
+        def do(step: Step) -> str:
+            try:
+                self.page.go_back(wait_until="domcontentloaded")
+            except PlaywrightError as e:
+                self._navigation_error(e)
+            self._after_navigation()
+            return f"OK {self.page.url}"
+
+        return self._run("navigate", "back", do)
 
     def receipt_pdf(self, path: Path) -> Path:
         self.page.pdf(path=str(path), format="A4", print_background=True)
@@ -356,6 +372,25 @@ class BrowserSession:
                                              f["placeholder"], f["id"])
         if hit:
             raise RunFailed("forbidden_field", f"Feltet ser ud til at være et forbudt felt ({hit}).")
+
+    def _check_unexpected_commit(self, step: Step) -> None:
+        """Safety net for a commit button with an innocent label («Næste» that really books). A click we did not flag as
+        committing led to a page that reads like a receipt and offers nothing left to confirm: the booking may have been
+        made without a human yes. Stop, keep url + screenshot, and let the caller tell the user (A3) so they can cancel."""
+        if self.approved or self.commits_used or self.page is None:
+            return
+        try:
+            facts = self.page.evaluate(page_reader.CAPTCHA_LOGIN_JS, [])
+            names = self.page.evaluate(page_reader.CLICKABLE_NAMES_JS)
+        except PlaywrightError:
+            return
+        left = any(limits.matches_forbidden_click(n) for n in names)
+        phrase = limits.looks_like_receipt(facts["text"], commit_buttons_left=left)
+        if phrase:
+            self._shot(step)
+            raise RunFailed("unexpected_commit", "Siden ligner en kvittering, selvom der ikke var givet godkendelse.",
+                            details={"url": self.page.url, "phrase": phrase, "step": step.n,
+                                     "screenshot_file": step.screenshot_file})
 
     def _after_navigation(self) -> None:
         if self.page.url.startswith("chrome-error:"):  # a link whose target the allow-list aborted

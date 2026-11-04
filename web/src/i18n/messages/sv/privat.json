@@ -624,7 +624,9 @@
     "repeatPay": "Upprepa senaste betalningssignalen",
     "emptyDay": "Visa tom dag",
     "reset": "Börja om",
-    "installTitle": "Hämta appen"
+    "installTitle": "Hämta appen",
+    "languageTitle": "Språk",
+    "languageText": "Appen och Peters svar följer språket här."
   },
   "invite": {
     "title": "Bjud in vänner",

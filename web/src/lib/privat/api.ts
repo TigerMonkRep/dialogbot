@@ -85,6 +85,8 @@ export type LocationBody = { city?: string; postcode?: string; lat?: number; lng
 export type PushSubscriptionBody = { endpoint: string; keys: { p256dh: string; auth: string } };
 export type ChatOption = { id: string; label: string; sub: string };
 /** "share_proposal": «Del indkøbslisten med Anna» → a card that makes an invite link on request (nothing is sent). */
+export type Bootstrap = { me: Balance; day: Day; tasks: Task[]; messages: ChatMessage[]; ledger: LedgerEntry[]; addons: Addon[] | null; referrals: Referrals | null; groups: Group[]; subscription: Subscription | null };
+
 export type ChatMessageKind = "text" | "task" | "move" | "clarify" | "call_proposal" | "draft" | "waiting" | "addon" | "share_proposal";
 export type ChatMessage = {
   id: string; role: "user" | "assistant"; kind: ChatMessageKind;
@@ -193,7 +195,11 @@ export interface PrivatApi {
   removeMember(taskId: string, memberId: string): Promise<Task>;
   // Business lookup, location, push («Tilføjelse 6»)
   searchBusinesses(q: { q: string; lat?: number; lng?: number; city?: string }): Promise<Business[]>;
+  /** One request for everything the shell shows (GET /privat/bootstrap). */
+  bootstrap(): Promise<Bootstrap>;
   setLocation(body: LocationBody): Promise<Balance>;
+  /** The app language, saved on the user (PATCH /auth/me) so e-mails and other devices follow it. */
+  setLocale(locale: string): Promise<unknown>;
   pushPublicKey(): Promise<{ public_key: string }>;
   pushSubscribe(body: PushSubscriptionBody): Promise<{ id: string }>;
   pushUnsubscribe(endpoint: string): Promise<void>;
@@ -276,7 +282,9 @@ export const realPrivat: PrivatApi = {
     if (q.city) p.set("city", q.city);
     return api(`${P}/businesses/search?${p}`);
   },
+  bootstrap: () => api(`${P}/bootstrap`),
   setLocation: (body) => api(`${P}/me/location`, { method: "PATCH", body: JSON.stringify(body) }),
+  setLocale: (locale) => api("/auth/me", { method: "PATCH", body: JSON.stringify({ locale }) }),
   pushPublicKey: () => api(`${P}/push/public-key`),
   pushSubscribe: (body) => api(`${P}/push/subscriptions`, json(body)),
   pushUnsubscribe: (endpoint) => api(`${P}/push/subscriptions`, { method: "DELETE", body: JSON.stringify({ endpoint }) }),

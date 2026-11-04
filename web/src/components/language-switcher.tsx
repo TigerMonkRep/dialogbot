@@ -21,8 +21,10 @@ export function LanguageSwitcher({ className = "", onSaved, compact = false }: {
     onSaved?.(next);
     const seg = pathname.split("/")[1];
     const bare = isLocale(seg) ? pathname.slice(seg.length + 1) || "/" : pathname;
+    // The root layout (I18nProvider, <html lang>) is kept across a soft navigation, so a push alone left the
+    // client-side texts – this very dropdown, the explainer video – in the old language. Refresh re-fetches it.
     if (isPublicPage(bare)) router.push(bare === "/" ? `/${next}` : `/${next}${bare}`);
-    else router.refresh();
+    router.refresh();
   }
   const select = (cls: string) => (
     <select value={locale} onChange={(e) => change(e.target.value)} aria-label={t("language")} className={cls}>

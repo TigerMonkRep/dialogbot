@@ -544,6 +544,13 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
   const fake: FakePrivat = {
     async account() { await wait(); return { workspace_id: "fake-personal", created: false }; },
     async me() { await wait(); return done(balance()); },
+    async bootstrap() {
+      const [me, d, own, shared, messages, ledger, addons, referrals, groups, subscription] = await Promise.all([
+        fake.me(), fake.day(), fake.tasks(), fake.sharedTasks(), fake.messages(), fake.ledger(), fake.addons(), fake.referrals(), fake.groups(), fake.subscription()]);
+      const tasks = [...own];
+      for (const t of shared) if (!tasks.some((x) => x.id === t.id)) tasks.push(t);
+      return { me, day: d, tasks, messages, ledger, addons, referrals, groups, subscription };
+    },
     async day() { await wait(); return done(day()); },
     async tasks(status) { await wait(); return done(status ? s.tasks.filter((t) => t.status === status) : s.tasks); },
     async task(id) { await wait(); return done(find(id)); },
@@ -895,6 +902,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
         return { place_id: `demo-${k}`, name: x.name, address: x.address, phone_display: x.phone ?? "", phone_e164: ph, rating: x.rating, rating_count: x.count,
           open_now: x.open, next_open_text: x.open ? null : x.next ?? null, distance_km: x.km, maps_url: "https://maps.google.com/", source: "demo" as const }; });
     },
+    async setLocale() { await wait(); return {}; },
     async setLocation(body) {
       await wait();
       s.location = body.city?.trim() || (body.postcode ? `${body.postcode.trim()}${body.postcode.trim() === "8000" ? " Aarhus C" : ""}` : body.lat != null ? "din position" : null);

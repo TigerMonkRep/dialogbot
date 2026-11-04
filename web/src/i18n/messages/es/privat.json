@@ -624,7 +624,9 @@
     "repeatPay": "Repetir la última señal de pago",
     "emptyDay": "Mostrar día vacío",
     "reset": "Empezar de nuevo",
-    "installTitle": "Instalar la app"
+    "installTitle": "Instalar la app",
+    "languageTitle": "Idioma",
+    "languageText": "La app y las respuestas de Peter siguen el idioma elegido aquí."
   },
   "invite": {
     "title": "Invita a tus amigos",

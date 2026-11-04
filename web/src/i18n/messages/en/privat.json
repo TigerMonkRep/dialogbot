@@ -624,7 +624,9 @@
     "repeatPay": "Repeat last payment signal",
     "emptyDay": "Show empty day",
     "reset": "Start over",
-    "installTitle": "Get the app"
+    "installTitle": "Get the app",
+    "languageTitle": "Language",
+    "languageText": "The app and Peter's answers follow the language here."
   },
   "invite": {
     "title": "Invite friends",

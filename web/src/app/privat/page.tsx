@@ -3,6 +3,7 @@ import Link from "next/link";
 import SiteLink from "@/i18n/link";
 import { LogoMark } from "@/components/ui";
 import { AudienceSwitch } from "@/components/audience-switch";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { Ico } from "@/components/privat/icons";
 import { PublicPlans } from "@/components/privat/plans-public";
 import { InstallApp } from "@/components/install-app";
@@ -52,6 +53,7 @@ export default async function PrivatLanding() {
           </Link>
           <AudienceSwitch current="privat" size="sm" />
           <span className="flex-1" />
+          <LanguageSwitcher compact />
           <Link href={`/login?next=${encodeURIComponent(tryHref)}`} className="inline-flex items-center min-h-11 px-[18px] rounded-full border-2 border-ink bg-paper text-[15px] font-semibold text-ink no-underline hover:bg-panel">{t("landing.login")}</Link>
         </div>
       </header>

@@ -116,14 +116,9 @@ export function PrivatProvider({ session, children }: { session: Session; childr
       if (!retried && (e as ApiError).code === CONFLICT.accountMissing) { await a.account(); return refresh(true); }
       throw e;
     }
-    const soft = <T,>(p: Promise<T>, fb: T) => p.catch(() => fb);
-    const [b, d, mineT, shared, m, l, ad, rf, gr, sb] = await Promise.all([
-      a.me(), a.day(), a.tasks(), soft(a.sharedTasks(), [] as Task[]), a.messages(), soft(a.ledger(), [] as LedgerEntry[]),
-      soft(a.addons(), null as Addon[] | null), soft(a.referrals(), null as Referrals | null), soft(a.groups(), [] as Group[]),
-      soft(a.subscription(), null as Subscription | null)]);
-    const all = [...mineT];
-    for (const t of shared) if (!all.some((x) => x.id === t.id)) all.push(t);
-    setBalance(b); setDay(d); setTasks(all); setMessages(m); setLedger(l); setAddons(ad); setReferrals(rf); setGroups(gr); setSubscription(sb);
+    const x = await a.bootstrap();  // one round trip instead of ten
+    setBalance(x.me); setDay(x.day); setTasks(x.tasks); setMessages(x.messages); setLedger(x.ledger); setAddons(x.addons);
+    setReferrals(x.referrals); setGroups(x.groups); setSubscription(x.subscription);
   }, []);
 
   useEffect(() => {

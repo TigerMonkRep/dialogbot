@@ -363,6 +363,14 @@ def test_pacing_can_be_tuned_without_a_deploy(api, client, two_workspaces, confi
         get_settings.cache_clear()
 
 
+def test_assistant_history_uses_the_models_own_words(api, client, two_workspaces, configured):
+    """With our own transcriber only the caller is transcribed, so Vapi's history of the assistant's turns would be
+    empty and the model would answer the opening question again after every short reply (the 4 Nov 2026 call)."""
+    _setup(api, two_workspaces)
+    a = _post(client, {"type": "assistant-request", "call": {"phoneNumberId": "pn_123"}}).json()["assistant"]
+    assert a["modelOutputInMessagesEnabled"] is True
+
+
 def test_knowledge_lines_are_compact():
     from app.modules.ai.service import knowledge_line
 

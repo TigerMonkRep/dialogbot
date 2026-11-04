@@ -179,7 +179,7 @@ export function PrivatProvider({ session, children }: { session: Session; childr
 
   const afterMessages = useCallback((msgs: ChatMessage[]) => {
     setMessages((cur) => [...cur, ...msgs.filter((m) => !cur.some((c) => c.id === m.id))]);
-    const d = msgs.find((m) => m.kind === "draft" && m.task_id && !m.options?.length); // not a booking awaiting a yes
+    const d = msgs.find((m) => m.kind === "draft" && m.task_id);
     if (d) setSheet({ kind: "paywall", taskId: d.task_id });
     const withTask = msgs.find((m) => m.task_id && m.kind !== "move");
     if (withTask?.task_id) setFocus(withTask.task_id);

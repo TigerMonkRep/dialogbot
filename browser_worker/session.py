@@ -63,6 +63,12 @@ class BrowserSession:
     headless: bool = True
     chromium_path: str | None = field(default_factory=lambda: os.environ.get("BROWSER_CHROMIUM_PATH") or None)
     clock: Callable[[], float] = time.monotonic
+    # host -> ip, resolved and checked before launch and pinned in Chromium (--host-resolver-rules) against DNS rebinding
+    pins: dict[str, str] = field(default_factory=dict)
+    # checks a sub-domain's addresses the first time it is used (raises when they are internal)
+    address_check: Callable[[str], None] | None = None
+    # called before every tool call; True = the run was cancelled elsewhere (e.g. «ring i stedet»)
+    cancel_check: Callable[[], bool] | None = None
 
     def __post_init__(self) -> None:
         self.allowed_domains = netguard.normalize_domains(self.allowed_domains)
@@ -90,7 +96,7 @@ class BrowserSession:
             self.workdir = Path(tempfile.mkdtemp(prefix="browser-run-"))
         (self.workdir / "shots").mkdir(parents=True, exist_ok=True)
         self._pw = sync_playwright().start()
-        kw = {"headless": self.headless, "args": netguard.chromium_args(self.allowed_domains)}
+        kw = {"headless": self.headless, "args": netguard.chromium_args(self.allowed_domains, self.pins)}
         if self.chromium_path:
             kw["executable_path"] = self.chromium_path
         self._browser = self._pw.chromium.launch(**kw)
@@ -104,7 +110,8 @@ class BrowserSession:
         self._ctx = self._browser.new_context(**ctx_kw)
         self._ctx.set_default_timeout(ACTION_TIMEOUT_MS)
         self._ctx.set_default_navigation_timeout(NAV_TIMEOUT_MS)
-        netguard.install(self._ctx, self.allowed_domains, self._on_block)
+        netguard.install(self._ctx, self.allowed_domains, self._on_block, pinned=set(self.pins),
+                         address_check=self.address_check)
         self._ctx.on("requestfailed", self._on_failed)
         self.page = self._ctx.new_page()
         self.page.on("popup", self._on_popup)
@@ -176,6 +183,9 @@ class BrowserSession:
     def _begin(self, tool: str, arg: str) -> Step:
         step = Step(n=len(self.steps) + 1, tool=tool, arg=arg[:300], at=datetime.now(UTC).isoformat())
         self.steps.append(step)
+        if self.cancel_check is not None and self.cancel_check():
+            step.result = "cancelled"
+            raise FallbackPhone("cancelled", "Kørslen er annulleret")
         if step.n > self.budget.max_steps:
             step.result = "budget: max_steps"
             raise FallbackPhone("budget_steps", f"Over {self.budget.max_steps} trin")

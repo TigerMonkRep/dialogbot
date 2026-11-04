@@ -18,9 +18,9 @@ Task = {
 Balance = {free_used, free_limit: 10, credits, reserved, sponsor_left_today, phone_display|null, phone_verified: bool,
   plan: "none"|"basis"|"plus"|"familie", plan_status: "trial"|"active"|"past_due"|"canceled"|"expired"|"none",
   trial_days_left: int, calls_quota: int, calls_used: int, calls_left: int, entitled: bool}   // se «Abonnement»
-ChatMessage = {id, role: "user"|"assistant", kind: "text"|"task"|"move"|"clarify"|"call_proposal"|"draft"|"waiting",
-  // «draft» betyder to ting: en opgave gemt som kladde (ingen options) ELLER en booking på en virksomheds hjemmeside, der
-  // venter på dit ja (options Godkend/Afvis, før/efter udfyldt). Skil dem ad på `options`. Se «Booking på hjemmeside».
+ChatMessage = {id, role: "user"|"assistant", kind: "text"|"task"|"move"|"clarify"|"call_proposal"|"draft"|"waiting"|"booking_proposal",
+  // «draft» = en opgave gemt som kladde (kortet åbner betalingsarket). «booking_proposal» = en booking på en virksomheds
+  // hjemmeside, der venter på dit ja (Godkend/Afvis, før/efter udfyldt). Egen type, så de aldrig forveksles. Se «Booking på hjemmeside».
   text, task_id|null, about_task_id|null, before|null, after|null,
   options: [{id, label, sub}]|null, links: [task_id]|null, created_at}
 
@@ -393,7 +393,7 @@ BrowserRun = {id, task_id, engine, mode: "playbook"|"llm"|null,
   max_steps, max_seconds, started_at, awaiting_since, approval_expires_at|null, approved_at, finished_at, created_at}
 ```
 
-- **Forløb.** Agenten udfylder, stopper ved bekræft-knappen og sender en `ChatMessage` af `kind: "draft"` med `before`/`after` og
+- **Forløb.** Agenten udfylder, stopper ved bekræft-knappen og sender en `ChatMessage` af `kind: "booking_proposal"` med `before`/`after` og
   to valg: `options: [{id:"approve",label:"Godkend"},{id:"decline",label:"Afvis"}]`. Valgene kan besvares enten via
   `POST /privat/messages/{id}/options/{option_id}` (som chatten gør) eller via `…/browser/approve|decline`: det er den samme handling.
   Opgaven står som `awaiting_user`.
@@ -408,6 +408,12 @@ BrowserRun = {id, task_id, engine, mode: "playbook"|"llm"|null,
   (`failed`, `error_code=unexpected_commit`). Opgaven bliver `awaiting_user`, og beskeden til dig indeholder siden og teksten:
   *«Bookingen kan være gennemført – ring eller skriv til virksomheden for at aflyse, hvis du ikke ønsker den.»* Samme tekst
   (`commit_unconfirmed`), hvis bekræft blev trykket, men ingen kvittering kunne læses. Der siges aldrig «intet er booket» efter et bekræft-klik.
+- **Telefon-fallback.** Kan agenten ikke (CAPTCHA, login, intet ledigt, budget, ukendt side ...), bliver opgaven en `call`-opgave i `awaiting_user`
+  med et opkaldsforslag (`call_proposal`), hvor `may_ask` indeholder det, agenten nåede at se (ydelse, ledige tider). Der ringes først, når du
+  godkender opkaldet som ethvert andet opkald. `error_code`/`result.found` på kørslen viser årsagen.
+- **LLM-fallback.** Er motoren ukendt, eller rammer en playbook-selector ikke, overtager en model med de samme syv værktøjer og de samme hårde
+  grænser (`mode: "llm"`). En LLM-kørsel kan ikke genafspilles: er dens session udløbet, går den til telefonen (`session_expired`).
+  `unsafe_target`: en tilladt vært pegede på en intern adresse, og kørslen blev afvist, før en browser startede.
 - **Evidens** ligger i en privat Supabase-bucket (`BROWSER_EVIDENCE_BUCKET`) og udleveres kun som signerede, kortlivede links.
 - **Fejlkoder i `error_code`:** `declined`, `unexpected_commit`, `commit_unconfirmed`, `forbidden_field`, `commit_limit`,
   `approval_expired`, `worker_lost`, `internal_error`; `fallback_phone`: `captcha`, `login_required`, `budget_steps`, `budget_time`,

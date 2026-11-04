@@ -66,7 +66,7 @@ def url_allowed(url: str, allowed: list[str]) -> bool:
     return host_allowed(parts.hostname, allowed)
 
 
-def chromium_args(allowed: list[str]) -> list[str]:
+def chromium_args(allowed: list[str], pins: dict[str, str] | None = None) -> list[str]:
     """Layer 1, inside Chromium's network stack: everything is sent to a dead proxy except the allowed hosts.
 
     Playwright's `route()` is NOT invoked for the hops of a redirect after `continue_()`, so a 302 from an allowed page
@@ -79,24 +79,44 @@ def chromium_args(allowed: list[str]) -> list[str]:
         bypass.append(d)
         if not _is_ip(d):
             bypass.append("*." + d)
-    return [
-        "--proxy-server=http://127.0.0.1:9", "--proxy-bypass-list=" + ";".join(bypass),
-        ]
+    args = ["--proxy-server=http://127.0.0.1:9", "--proxy-bypass-list=" + ";".join(bypass)]
+    if pins:
+        # DNS-rebinding guard: the addresses were resolved and checked BEFORE launch (app/core/safe_fetch.resolve_checked);
+        # Chromium is told to use exactly those, so an allowed host cannot start to point at an internal address mid-run.
+        rules = ",".join(f"MAP {h} {'[' + ip + ']' if ':' in ip else ip}" for h, ip in sorted(pins.items()))
+        args.append(f"--host-resolver-rules={rules}")
+    return args
 
 
-def install(context, allowed: list[str], on_block: Callable[[str], None]) -> None:
+def install(context, allowed: list[str], on_block: Callable[[str], None], *, pinned: set[str] | None = None,
+            address_check: Callable[[str], None] | None = None) -> None:
     """Install the guard on a Playwright BrowserContext (all pages, popups included, and WebSockets)."""
+
+    checked: dict[str, bool] = {}
+
+    def address_ok(host: str | None) -> bool:
+        """A sub-domain of a listed host cannot be pinned (we do not know it before the page asks), so its addresses are
+        checked the first time it is used. Residual risk: the answer may differ at connect time (see ADR-004)."""
+        if not host or address_check is None or _is_ip(host) or host in (pinned or ()):
+            return True
+        if host not in checked:
+            try:
+                address_check(host)
+                checked[host] = True
+            except Exception:  # noqa: BLE001 – FetchBlocked / FetchFailed: not an address we may connect to
+                checked[host] = False
+        return checked[host]
 
     def route(r):
         url = r.request.url
-        if url_allowed(url, allowed):
+        if url_allowed(url, allowed) and address_ok(urlsplit(url).hostname):
             r.continue_()
         else:
             on_block(url)
             r.abort("blockedbyclient")
 
     def ws_route(ws):
-        if url_allowed(ws.url, allowed):
+        if url_allowed(ws.url, allowed) and address_ok(urlsplit(ws.url).hostname):
             ws.connect_to_server()
         else:
             on_block(ws.url)

@@ -99,7 +99,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.lock -r browser_worker/requirements.lock
       - name: Install Chromium (with ffmpeg for video)
-        run: playwright install --with-deps chromium
+        run: |
+          playwright install --with-deps chromium
+          playwright install ffmpeg
+          sudo apt-get install -y --no-install-recommends ffmpeg   # the video is cut with ffmpeg before it is uploaded
       - name: Browser worker tests (session, playbook, engine detection)
         run: pytest -p no:cacheprovider -c /dev/null --rootdir . browser_worker/tests
       - name: Browser worker orchestrator tests (real Chromium + PostgreSQL)

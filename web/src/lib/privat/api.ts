@@ -87,7 +87,7 @@ export type ChatOption = { id: string; label: string; sub: string };
 /** "share_proposal": «Del indkøbslisten med Anna» → a card that makes an invite link on request (nothing is sent). */
 export type Bootstrap = { me: Balance; day: Day; tasks: Task[]; messages: ChatMessage[]; ledger: LedgerEntry[]; addons: Addon[] | null; referrals: Referrals | null; groups: Group[]; subscription: Subscription | null };
 
-export type ChatMessageKind = "text" | "task" | "move" | "clarify" | "call_proposal" | "draft" | "waiting" | "addon" | "share_proposal";
+export type ChatMessageKind = "text" | "task" | "move" | "clarify" | "call_proposal" | "draft" | "waiting" | "addon" | "share_proposal" | "booking_proposal";
 export type ChatMessage = {
   id: string; role: "user" | "assistant"; kind: ChatMessageKind;
   text: string; task_id: string | null; about_task_id: string | null; before: string | null; after: string | null;

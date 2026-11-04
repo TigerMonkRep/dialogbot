@@ -44,8 +44,8 @@ function Message({ m, latestCard, open, prevUser }: { m: ChatMessage; latestCard
       </div>
     );
   }
-  // A "draft" with answer options is a booking on a business's website waiting for the user's yes (not a quota draft).
-  if (m.kind === "draft" && m.options?.length) return <BrowserApprovalCard m={m} task={tk} open={!m.answered_option_id} />;
+  // A booking on a business's own website, filled in and waiting for the user's yes (its own kind: never a quota draft).
+  if (m.kind === "booking_proposal") return <BrowserApprovalCard m={m} task={tk} open={!m.answered_option_id} />;
   if (CARD_KINDS.has(m.kind) && tk) {
     if (!latestCard) return <Earlier task={tk} />;
     if (m.kind === "draft") return <DraftCard task={tk} />;

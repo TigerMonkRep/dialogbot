@@ -173,6 +173,8 @@ def _business(run: BrowserRun, task: PrivateTask) -> str:
 
 def format_proposal(ba: dict | None) -> str:
     ba = ba or {}
+    if not ba.get("service") and ba.get("text"):  # an LLM run: the page's own words, not a parsed summary
+        return str(ba["text"])[:200]
     staff = ba.get("staff")
     parts = [ba.get("service"), f"{ba.get('date')} kl. {ba.get('time')}" if ba.get("date") and ba.get("time") else None,
              f"hos {staff}" if staff and not re.search(r"pr[æe]ference", staff, re.I) else None, ba.get("price")]
@@ -192,7 +194,7 @@ def to_awaiting(db: OrmSession, run: BrowserRun, before_after: dict, *, changed:
     privat_service.event(db, task, "Bookingen er udfyldt og venter på dit ja – intet er bekræftet" if not changed else
                          "Tiden havde ændret sig – nyt forslag venter på dit ja")
     privat_service.touch(task)
-    _owner_message(db, run, task, kind="draft", before=(run.goal or {}).get("current") or "Ingen tid endnu",
+    _owner_message(db, run, task, kind="booking_proposal", before=(run.goal or {}).get("current") or "Ingen tid endnu",
                    after=format_proposal(before_after), about_task_id=task.id,
                    text=f"{why}Jeg er klar til at booke hos {biz}. Intet er booket endnu. Godkend, hvis det skal "
                         f"gennemføres, eller afvis. Forslaget gælder i {get_settings().browser_approval_ttl_seconds // 60} "
@@ -213,7 +215,7 @@ def enter_awaiting(db: OrmSession, run_id: uuid.UUID, before_after: dict, *, cha
 
 
 def _answer_draft(db: OrmSession, task: PrivateTask, option_id: str) -> None:
-    for m in db.scalars(select(PrivateMessage).where(PrivateMessage.task_id == task.id, PrivateMessage.kind == "draft",
+    for m in db.scalars(select(PrivateMessage).where(PrivateMessage.task_id == task.id, PrivateMessage.kind == "booking_proposal",
                                                      PrivateMessage.answered_option_id.is_(None))):
         m.answered_option_id = option_id
 
@@ -222,14 +224,21 @@ def finish_done(db: OrmSession, run: BrowserRun, result: dict) -> None:
     task = db.get(PrivateTask, run.task_id)
     s = result.get("summary") or {}
     ba = run.before_after or {}
-    when = f"{s.get('date') or ba.get('date')} kl. {s.get('time') or ba.get('time')}"
-    confirmed = f"{s.get('service') or ba.get('service') or 'Tid'}, {when}"[:300]
+    if not ba.get("service") and ba.get("text"):
+        confirmed = str(ba["text"])[:300]
+    else:
+        when = f"{s.get('date') or ba.get('date')} kl. {s.get('time') or ba.get('time')}"
+        confirmed = f"{s.get('service') or ba.get('service') or 'Tid'}, {when}"[:300]
     price = s.get("price") or ba.get("price")
     run.status, run.finished_at, run.error_code, run.result = "done", _now(), None, result
     task.status, task.next_step, task.who = "done", confirmed, f"{_business(run, task)} har bekræftet"
     task.usage_text = ""
     privat_service.event(db, task, f"Booket: {confirmed}" + (f" · pris {price}" if price else "")
                          + (f" · bookingnr. {result['reference']}" if result.get("reference") else ""))
+    ev = run.evidence_urls or []
+    if ev:  # the links themselves are signed and short-lived, so the event only says what exists (see the run page)
+        kinds = {"receipt_pdf": "kvittering som PDF", "video": "video", "screenshot": "billeder"}
+        privat_service.event(db, task, "Bevis gemt: " + ", ".join(kinds[k] for k in kinds if any(e.get("kind") == k for e in ev)))
     call = privat_service.latest_call(db, task.id)
     if call is not None:
         call.confirmed_text = confirmed
@@ -281,16 +290,19 @@ def finish_failed(db: OrmSession, run: BrowserRun, error_code: str, *, details: 
 
 
 def finish_fallback(db: OrmSession, run: BrowserRun, error_code: str, found: dict | None = None) -> None:
-    """The browser could not do it (CAPTCHA, login, budget, no free time ...): hand over to the phone track. The call
-    proposal itself is created in browser_worker/phone_fallback (A4); here the run, the task and the user are told."""
+    """The browser could not do it (CAPTCHA, login, budget, no free time ...): hand over to the phone track. The task's
+    call part is prepared with what was found (phone_fallback.apply); the user approves the call like any other call."""
+    from app.modules.browser import phone_fallback
+
     task = db.get(PrivateTask, run.task_id)
     run.status, run.finished_at, run.error_code = "fallback_phone", _now(), error_code[:40]
     run.result = {**(run.result or {}), "found": found or {}}
-    task.status, task.next_step, task.who = "awaiting_user", "Skal jeg ringe i stedet?", "Dig"
-    privat_service.event(db, task, f"Booking på hjemmesiden kunne ikke gennemføres ({error_code}). Telefonen er næste skridt")
+    phone_fallback.apply(db, run, task, found, error_code)
+    privat_service.event(db, task, f"Booking på hjemmesiden kunne ikke gennemføres ({error_code}). Intet er booket")
     privat_service.touch(task)
-    _owner_message(db, run, task, text=f"Jeg kunne ikke booke hos {_business(run, task)} på hjemmesiden. "
-                                       "Intet er booket. Skal jeg ringe i stedet?")
+    _owner_message(db, run, task, kind="call_proposal",
+                   text=f"Jeg kunne ikke booke hos {_business(run, task)} på hjemmesiden – {phone_fallback.reason_text(error_code)}. "
+                        "Intet er booket. Her er et forslag til et opkald i stedet; der bliver ikke ringet, før du godkender.")
     _answer_draft(db, task, "expired")
 
 

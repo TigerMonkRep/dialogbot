@@ -141,7 +141,7 @@ def test_draft_message_has_before_after_and_buttons(api, db, pv, enabled):
     tok, tid, _ = make_run(db, pv, state="awaiting_approval")
     msgs = api.get(tok, f"/privat/messages?task_id={tid}").json()
     msgs = msgs if isinstance(msgs, list) else msgs.get("messages", msgs)
-    draft = next(m for m in msgs if m["kind"] == "draft")
+    draft = next(m for m in msgs if m["kind"] == "booking_proposal")
     assert draft["before"] == "Ingen tid endnu"
     assert draft["after"] == "Herreklip, tirsdag 10. november 2026 kl. 10:30, 350 kr."
     assert [o["label"] for o in draft["options"]] == ["Godkend", "Afvis"]
@@ -161,13 +161,13 @@ def test_approve_is_idempotent_and_queues_exactly_one_decision(api, db, pv, enab
     db.expire_all()
     assert len(events(db, "approve")) == 1
     assert api.get(tok, f"/privat/tasks/{tid}").json()["status"] == "in_progress"
-    draft = db.scalar(select(PrivateMessage).where(PrivateMessage.kind == "draft"))
+    draft = db.scalar(select(PrivateMessage).where(PrivateMessage.kind == "booking_proposal"))
     assert draft.answered_option_id == "approve"
 
 
 def test_approve_through_the_chat_button_is_the_same_thing(api, db, pv, enabled):
     tok, tid, rid = make_run(db, pv, state="awaiting_approval")
-    draft = db.scalar(select(PrivateMessage).where(PrivateMessage.kind == "draft"))
+    draft = db.scalar(select(PrivateMessage).where(PrivateMessage.kind == "booking_proposal"))
     r = api.post(tok, f"/privat/messages/{draft.id}/options/approve")
     assert r.status_code == 200, r.text
     db.expire_all()
@@ -269,7 +269,23 @@ def test_fallback_phone_tells_the_user_and_keeps_what_was_found(api, db, pv, ena
     run = api.get(tok, f"/privat/tasks/{tid}/browser").json()
     assert (run["status"], run["error_code"]) == ("fallback_phone", "captcha")
     assert run["result"]["found"] == {"services": ["Herreklip"]}
-    assert api.get(tok, f"/privat/tasks/{tid}").json()["status"] == "awaiting_user"
+    t = api.get(tok, f"/privat/tasks/{tid}").json()
+    assert t["status"] == "awaiting_user"
+
+
+def test_fallback_prepares_the_call_with_what_the_browser_found(api, db, pv, enabled):
+    tok, tid, rid = make_run(db, pv)
+    found = {"service": "Herreklip", "times_seen": {"2026-11-10": ["09:00", "10:30", "14:00"]}}
+    _finish(db, rid, service.finish_fallback, "no_availability", found)
+    t = api.get(tok, f"/privat/tasks/{tid}").json()
+    assert t["kind"] == "call" and t["status"] == "awaiting_user" and t["next_step"] == "Godkend opkaldet"
+    c = t["call"]
+    assert c["business_name"] == "Salon Test" and "10:30" in c["may_ask"] and "Tjek, at tiden stadig er ledig" in c["may_ask"]
+    assert c["result"] is None                                    # a proposal: NOTHING is dialled before the user approves
+    msgs = [m for m in db.scalars(select(PrivateMessage).where(PrivateMessage.task_id == tid))]
+    assert any(m.kind == "call_proposal" and "ingen ledige tider" in m.text and "Intet er booket" in m.text for m in msgs)
+    row = db.scalars(select(PrivateCall).where(PrivateCall.task_id == tid)).all()
+    assert len(row) == 1 and row[0].status == "proposed"          # updated, not duplicated
 
 
 # --- the compare-and-set that keeps a booking from being confirmed twice ---------------------------------------------

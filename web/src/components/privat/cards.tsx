@@ -498,7 +498,7 @@ export function DraftCard({ task }: { task: Task }) {
 }
 
 /** A booking on a business's own website, filled in but NOT confirmed: the yes is the user's (docs/ADR-004-browser-worker.md).
- *  Same message kind as a quota draft ("draft"), told apart by its answer options (Godkend / Afvis). */
+ *  Its own message kind ("booking_proposal"), so it can never be mistaken for a quota draft (which opens the paywall). */
 export function BrowserApprovalCard({ m, task, open }: { m: ChatMessage; task: Task | undefined; open: boolean }) {
   const t = useT("privat");
   const { pick, busy } = usePrivat();

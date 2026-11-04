@@ -7,10 +7,11 @@ telefonsporet (`call`-opgaven i Privat).
 
 Beslutningerne står i [`docs/ADR-004-browser-worker.md`](../docs/ADR-004-browser-worker.md).
 
-> **Status (A1–A3):** kernen (netværksvagt, de syv værktøjer, forbudte felter og klik, CAPTCHA/login, budget,
+> **Status (A1–A4):** kernen (netværksvagt, de syv værktøjer, forbudte felter og klik, CAPTCHA/login, budget,
 > sikkerhedsnet mod uskyldigt mærkede bekræft-knapper), OnlineBooq-playbook, motor-genkendelse, godkendelsesgate
 > (Godkend/Afvis, TTL, replay), endpoints og worker-proces er bygget og testet mod en lokal HTML-klon. LLM-fallback, telefon-fallback
-> med forslag til opkaldet, video og beskyttelse mod DNS-rebinding kommer i A4 (se `docs/implementation-progress.md`, checkpoint 30).
+> med forslag til opkaldet, video og beskyttelse mod DNS-rebinding er bygget (A4); at starte en kørsel fra chatten er A5 (se
+> `docs/implementation-progress.md`, checkpoint 30).
 > **Ikke verificeret mod nogen rigtig bookingside.** Alt er testet mod `tests/sites/onlinebooq/`, en klon bygget ud fra
 > OnlineBooqs offentlige flow (ydelse → medarbejder → dato → tid → kontaktoplysninger → bekræft). Selectors og
 > genkendelsessignaturer er derfor **ikke** bekræftet mod en rigtig side.
@@ -115,7 +116,14 @@ planned ─▶ running ─▶ awaiting_approval ─▶ approved ─▶ running �
 - **Efter bekræft-klikket** siges der aldrig «intet er booket»: lykkes kvitteringen ikke, er status `commit_unconfirmed`, og du bliver bedt om at tjekke
   hos virksomheden.
 - **Oprydning:** `sweep()` afslutter kørsler, som ingen tråd ejer længere (`worker_lost`), og sætter et ja, som ingen har samlet op, i kø igen.
-- Bevis (skærmbilleder pr. trin, forslag, slutside, kvitterings-PDF) uploades til den private bucket; lokale filer slettes efter kørslen.
+- **Bevis** (skærmbillede pr. trin, forslag, slutside, kvitterings-PDF, video) uploades til den private bucket. Videoen klippes med ffmpeg til
+  `BROWSER_MAX_SECONDS` før upload (kan den ikke klippes, uploades den ikke); lokale filer slettes efter kørslen.
+- **LLM-fallback** (`llm_agent.py`): når motoren er ukendt, eller en playbook-selector ikke rammer, overtager en model fra den side, kørslen står på. Samme
+  syv værktøjer, samme session og samme hårde grænser; sidens tekst sendes som data (`<side_indhold>`), og hvert kald logges i `ai_usage`
+  (`browser_agent`; omkostning i `browser_runs.cost_cents`). En LLM-kørsel kan ikke genafspilles.
+- **Telefon-fallback:** `fallback_phone` forbereder opgavens opkaldsforslag med det, agenten så (`app/modules/browser/phone_fallback.py`). Intet ringes uden brugerens godkendelse.
+- **DNS-rebinding:** før start slås hver tilladt vært op med `safe_fetch.resolve_checked`; en intern adresse giver `unsafe_target`, og de kontrollerede adresser pinnes i
+  Chromium (`--host-resolver-rules`). Underdomæner kontrolleres første gang, de bruges. Kør containeren uden adgang til cloud-metadata.
 
 ## Kør tests (ingen netværk)
 
@@ -127,7 +135,7 @@ pytest tests/test_browser_orchestrator.py     # hele kørsler mod klonen: rigtig
 ```
 
 Testene serverer `tests/sites/<motor>/` fra en lokal server (`tests/site_server.py`) og rører aldrig en rigtig hjemmeside.
-Videooptagelse kræver Playwrights ffmpeg (`playwright install ffmpeg`, følger med `--with-deps chromium`-trinnet i CI).
+Videooptagelse kræver Playwrights ffmpeg (`playwright install ffmpeg`); at klippe videoen kræver `ffmpeg` på PATH (installeret i Docker-imaget og i CI-jobbet).
 
 ## Drift
 

@@ -15,24 +15,27 @@ Rules enforced here (the hard limits per tool call live in session.py):
 """
 from __future__ import annotations
 
+import ipaddress
 import threading
 import time
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import structlog
+from sqlalchemy import select
 
 from app.config import get_settings
+from app.core import safe_fetch
 from app.core.errors import ApiError
 from app.db import get_session_factory
 from app.models import BrowserRun
 from app.modules.browser import service, storage
 
-from . import playbooks
+from . import evidence, llm_agent, playbooks
 from .errors import ApprovalRequired, FallbackPhone, RunFailed, ToolError
-from .playbooks.common import NoAvailability, PlaybookMiss
+from .playbooks.common import NoAvailability, PlaybookMiss, PlaybookUnsupported
 from .session import BrowserSession, Budget
 
 log = structlog.get_logger("dialogbot.browser_worker")
@@ -40,7 +43,7 @@ log = structlog.get_logger("dialogbot.browser_worker")
 MAX_CONCURRENT = 2            # browsers at once on one worker (a live, waiting session holds a slot for the approval TTL)
 POLL_SECONDS = 1.0
 LIVE_HEARTBEAT_SECONDS = 15   # the live session refreshes `result._live_until`; the decision handler trusts it
-RECORD_VIDEO = False          # switched on together with the ffmpeg trim to BROWSER_MAX_SECONDS (evidence, A4)
+RECORD_VIDEO = True           # uploaded only after being cut to the run's max_seconds (evidence.cap_video)
 SLOTS = threading.BoundedSemaphore(MAX_CONCURRENT)
 RUNNING: dict[uuid.UUID, threading.Thread] = {}
 
@@ -56,6 +59,7 @@ class Snap:
     max_seconds: int
     base_n: int
     before_after: dict | None
+    pins: dict[str, str] = field(default_factory=dict)
 
 
 def _now() -> datetime:
@@ -71,9 +75,31 @@ def _snap(run_id: uuid.UUID) -> Snap | None:
                     r.max_seconds, max((s.get("n", 0) for s in (r.steps or [])), default=0), r.before_after)
 
 
+def _cancelled(run_id: uuid.UUID) -> bool:
+    with get_session_factory()() as db:
+        status = db.scalar(select(BrowserRun.status).where(BrowserRun.id == run_id))
+    return status not in ("running", "approved", "awaiting_approval")
+
+
 def default_session(snap: Snap) -> BrowserSession:
     return BrowserSession(allowed_domains=snap.domains, budget=Budget(snap.max_steps, snap.max_seconds),
-                          approved=False, record_video=RECORD_VIDEO)
+                          approved=False, record_video=RECORD_VIDEO, pins=snap.pins,
+                          address_check=lambda host: safe_fetch.resolve_checked(host),
+                          cancel_check=lambda: _cancelled(snap.run_id))
+
+
+def resolve_pins(domains: list[str], resolver=None) -> dict[str, str]:
+    """Resolve every allowed host BEFORE launch and refuse the run if any address is internal (private, loopback,
+    link-local, cloud metadata ...). The checked address is pinned in Chromium, so it cannot change mid-run (DNS rebinding).
+    Raises safe_fetch.FetchBlocked / FetchFailed."""
+    pins: dict[str, str] = {}
+    for d in domains:
+        ip = safe_fetch.resolve_checked(d, resolver)
+        try:
+            ipaddress.ip_address(d)  # an IP literal needs no pin, only the check above
+        except ValueError:
+            pins[d] = ip
+    return pins
 
 
 # --------------------------------------------------------------------------- persistence helpers
@@ -142,13 +168,13 @@ def _same_slot(old: dict | None, new: dict) -> bool:
 # --------------------------------------------------------------------------- the run
 
 def drive(run_id: uuid.UUID, *, replay: bool = False, ttl: int | None = None, poll: float | None = None,
-          session_factory=default_session) -> None:
+          session_factory=default_session, resolver=None, provider=None) -> None:
     with SLOTS:
         _drive(run_id, replay, ttl if ttl is not None else get_settings().browser_approval_ttl_seconds,
-               poll if poll is not None else POLL_SECONDS, session_factory)
+               poll if poll is not None else POLL_SECONDS, session_factory, resolver, provider)
 
 
-def _drive(run_id: uuid.UUID, replay: bool, ttl: int, poll: float, session_factory) -> None:
+def _drive(run_id: uuid.UUID, replay: bool, ttl: int, poll: float, session_factory, resolver, provider) -> None:
     snap = _snap(run_id)
     if snap is None:
         return
@@ -157,28 +183,51 @@ def _drive(run_id: uuid.UUID, replay: bool, ttl: int, poll: float, session_facto
         if not service.cas(db, run_id, "approved" if replay else "planned", "running", **fields):
             return  # somebody else drives it (or it was declined meanwhile)
         db.commit()
+    try:
+        snap.pins = resolve_pins(snap.domains, resolver)
+    except safe_fetch.FetchBlocked as e:  # an allowed host points at an internal address: refuse before any browser starts
+        log.warning("browser.unsafe_target", run_id=str(run_id), reason=e.reason)
+        reason = e.reason
+        _settle(snap, lambda db, r: service.finish_failed(db, r, "unsafe_target", details={"reason": reason}))
+        return
+    except safe_fetch.FetchFailed:
+        _settle(snap, lambda db, r: service.finish_fallback(db, r, "dns_failed", {}))
+        return
     session = session_factory(snap)
     uploaded: set[int] = set()
     found: dict = {}
     try:
         session.start()
         pb = playbooks.get(snap.engine) if snap.engine in get_settings().browser_engines else None
-        if pb is None:
-            raise PlaybookMiss("no_playbook")  # A4: the LLM fallback takes over here
-        _set(snap, mode="playbook")
-        prepared = pb.prepare(session, snap.goal, snap.goal["start_url"])
-        found = prepared.meta.get("found") or {}
-        ba = prepared.before_after
-        _persist(snap, session, uploaded)
-        if replay and _same_slot(snap.before_after, ba):
-            session.approved = True  # same slot the user said yes to: confirm
-            return _confirm(snap, session, pb, uploaded)
-        try:
-            pb.confirm(session)
-        except ApprovalRequired:
-            pass
-        else:  # cannot happen with an unapproved session; refuse rather than assume
-            raise RunFailed("unexpected_commit", "Bekræftelse uden godkendelse")
+        ba = None
+        if pb is not None:
+            try:
+                prepared = pb.prepare(session, snap.goal, snap.goal["start_url"])
+                ba, found = prepared.before_after, prepared.meta.get("found") or {}
+            except PlaybookUnsupported as e:  # flyt/aflys: not automated in v1, the phone is the track
+                raise FallbackPhone("intent_unsupported", e.reason) from e
+            except PlaybookMiss as e:  # a selector did not match: the LLM may take over from the page we are on
+                found = e.found or found
+        if ba is None and replay:
+            raise FallbackPhone("session_expired", "Siden kunne ikke genafspilles")
+        if ba is not None:
+            _set(snap, mode="playbook")
+            _persist(snap, session, uploaded)
+            if replay and _same_slot(snap.before_after, ba):
+                session.approved = True  # exactly the slot the user said yes to: confirm
+                return _confirm(snap, session, pb.confirm, uploaded)
+            try:
+                pb.confirm(session)
+            except ApprovalRequired:
+                pass
+            else:  # cannot happen with an unapproved session; refuse rather than assume
+                raise RunFailed("unexpected_commit", "Bekræftelse uden godkendelse")
+            confirm_fn = pb.confirm
+        else:
+            _set(snap, mode="llm")
+            parked = llm_agent.run(session, run_id, snap.goal, start_url=snap.goal["start_url"], provider=provider)
+            ba = llm_agent.before_after(session, snap.goal, snap.engine)
+            confirm_fn = lambda s: llm_agent.confirm(s, parked)  # noqa: E731
         _add_evidence(snap, "screenshot", "Udfyldt forslag, før bekræftelse",
                       _upload(snap, session.final_screenshot(session.workdir / "proposal.png"), "proposal", 1, "png",
                               "image/png"))
@@ -195,7 +244,7 @@ def _drive(run_id: uuid.UUID, replay: bool, ttl: int, poll: float, session_facto
                 return
             db.commit()
         session.approved = True
-        _confirm(snap, session, pb, uploaded)
+        _confirm(snap, session, confirm_fn, uploaded)
     except ApprovalRequired as e:  # a commit-labelled click inside the playbook's own path: not a path we understand
         _fallback(snap, session, "unexpected_step", {"label": e.label, **found})
     except RunFailed as e:
@@ -215,8 +264,12 @@ def _drive(run_id: uuid.UUID, replay: bool, ttl: int, poll: float, session_facto
             _persist(snap, session, uploaded)
         except Exception as e:  # noqa: BLE001
             log.warning("browser.persist_failed", run_id=str(run_id), error=type(e).__name__)
-        session.close()
-        session.cleanup()
+        video = session.close()
+        try:
+            _video(snap, session, video)
+        except Exception as e:  # noqa: BLE001 – evidence must never change the outcome of a run
+            log.warning("browser.video_failed", run_id=str(run_id), error=type(e).__name__)
+        session.cleanup()  # screenshots, video and temp files are deleted locally, whatever happened
 
 
 def _fallback(snap: Snap, session: BrowserSession, code: str, found: dict) -> None:
@@ -237,8 +290,28 @@ def _failed(snap: Snap, session: BrowserSession, uploaded: set[int], e: RunFaile
                                                                          if k in ("url", "phrase", "reason")}))
 
 
-def _confirm(snap: Snap, session: BrowserSession, pb, uploaded: set[int]) -> None:
-    result = pb.confirm(session)
+def _video(snap: Snap, session: BrowserSession, video: Path | None) -> None:
+    """Upload the recording only after cutting it to max_seconds (never untrimmed), then drop the local files."""
+    if video is None:
+        return
+    capped = evidence.cap_video(video, session.workdir / "video-capped.webm", snap.max_seconds)
+    with get_session_factory()() as db:
+        n = 1 + sum(1 for e in (db.get(BrowserRun, snap.run_id).evidence_urls or []) if e.get("kind") == "video")
+    key = _upload(snap, capped, "video", n, "webm", "video/webm")
+    _add_evidence(snap, "video", f"Video (højst de første {snap.max_seconds} sekunder)", key)
+
+
+def _mark_confirming(snap: Snap) -> None:
+    """From here on the confirming click may already be made: a cancel («ring i stedet») can no longer be promised."""
+    with get_session_factory()() as db:
+        run = db.get(BrowserRun, snap.run_id)
+        run.result = {**(run.result or {}), "_confirming": True}
+        db.commit()
+
+
+def _confirm(snap: Snap, session: BrowserSession, confirm_fn, uploaded: set[int]) -> None:
+    _mark_confirming(snap)
+    result = confirm_fn(session)
     _persist(snap, session, uploaded)
     pdf = _upload(snap, _try(session.receipt_pdf, session.workdir / "receipt.pdf"), "receipt", 1, "pdf", "application/pdf")
     shot = _upload(snap, _try(session.final_screenshot, session.workdir / "final.png"), "final", 1, "png", "image/png")

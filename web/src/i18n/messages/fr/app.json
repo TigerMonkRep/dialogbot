@@ -815,7 +815,10 @@
       "sales": "Ventes Dialogbot",
       "sessions": "Connecté sur {n|1 appareil|# appareils}. Si vous réinitialisez votre mot de passe, tous les appareils sont déconnectés.",
       "thisDevice": "cet appareil",
-      "lastActive": "dernière activité {at}"
+      "lastActive": "dernière activité {at}",
+      "switchLabel": "Basculer entre entreprise et privé",
+      "business": "Entreprise",
+      "private": "Privé"
     },
     "ws": {
       "title": "Espaces de travail",

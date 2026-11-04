@@ -2,12 +2,12 @@ import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 
-/** Shared frame for the operator admin: seven tabs, one heading. Everything here is read-only, except «Ønsker», where
+/** Shared frame for the operator admin: eight tabs, one heading. Everything here is read-only, except «Ønsker», where
  *  operators set a status and a note on the customers' wishes. */
 const TABS: [string, string][] = [
   ["/app/operator/admin", "Overblik"], ["/app/operator/admin/kunder", "Kunder"], ["/app/operator/admin/brugere", "Brugere"],
   ["/app/operator/oensker", "Ønsker"], ["/app/operator/admin/drift", "Drift"], ["/app/operator/admin/hjemmeside", "Hjemmeside"],
-  ["/app/operator/admin/vaerktoejer", "Værktøjer"],
+  ["/app/operator/admin/vaerktoejer", "Værktøjer"], ["/app/operator/privat", "Privat"],
 ];
 
 export function AdminFrame({ active, title, intro, eyebrow = "Admin · kun læsning", children }: { active: string; title: string; intro?: string; eyebrow?: string; children: React.ReactNode }) {

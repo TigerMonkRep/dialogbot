@@ -1,0 +1,10 @@
+BEGIN:VCARD
+VERSION:4.0
+FN:Line Holm
+TEL;VALUE=uri;TYPE="cell,voice":tel:+45-61-62-63-64
+END:VCARD
+BEGIN:VCARD
+VERSION:4.0
+FN:Ingen nummer
+EMAIL:x@example.com
+END:VCARD

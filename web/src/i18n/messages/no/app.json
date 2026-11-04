@@ -815,7 +815,10 @@
       "sales": "Dialogbots salg",
       "sessions": "Logget inn på {n|1 enhet|# enheter}. Tilbakestiller du passordet, blir alle logget ut.",
       "thisDevice": "denne enheten",
-      "lastActive": "sist aktiv {at}"
+      "lastActive": "sist aktiv {at}",
+      "switchLabel": "Bytt mellom bedrift og privat",
+      "business": "Bedrift",
+      "private": "Privat"
     },
     "ws": {
       "title": "Arbeidsområder",

@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Dialogbot Privat – prototype</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Outfit:wght@700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#14213D;background:#FFFFFF}
+a{color:#2456F6}a:hover{color:#1A3FC0}
+*{box-sizing:border-box}
+button{font-family:Inter,system-ui,sans-serif}
+.d{font-family:Outfit,Inter,sans-serif}
+.eb{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5B6475;margin:0}
+.btn{min-height:52px;padding:0 18px;border-radius:12px;border:2px solid #14213D;background:#2456F6;color:#FFFFFF;font-size:16px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{background:#1A3FC0}
+.btn:disabled{background:#D6DEEA;color:#5B6475;border-color:#D6DEEA;cursor:not-allowed}
+.btn2{min-height:44px;padding:0 16px;border-radius:12px;border:2px solid #14213D;background:#FFFFFF;color:#14213D;font-size:15px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn2:hover{background:#EEF4FB}
+.btn2:disabled{color:#5B6475;border-color:#D6DEEA;cursor:not-allowed}
+.lnk{background:none;border:0;padding:0;min-height:44px;color:#2456F6;font-size:15px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.chip{min-height:44px;padding:0 14px;border-radius:999px;border:2px solid #14213D;background:#FFFFFF;color:#14213D;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.chip:hover{background:#EEF4FB}
+.card{border:2px solid #14213D;border-radius:18px;background:#FFFFFF;padding:16px}
+.prop{border:2px dashed #14213D;border-radius:18px;background:#FFFFFF;padding:16px}
+.ok{border:2px solid #1B6B3A;border-radius:18px;background:#DDF5E4;padding:16px}
+.bad{border:2px solid #14213D;border-radius:18px;background:#EEF4FB;padding:16px}
+.badge{display:inline-flex;align-items:center;min-height:24px;padding:0 10px;border-radius:999px;border:1.5px solid #14213D;font-size:12px;font-weight:600;white-space:nowrap}
+.sim{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;border-radius:999px;border:1.5px dashed #14213D;background:#EEF4FB;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#14213D}
+.ex{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:999px;background:#EEF4FB;font-size:11px;font-weight:600;color:#5B6475}
+.row{border:1.5px solid #14213D;border-radius:14px;background:#FFFFFF;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;cursor:pointer;color:#14213D;font:inherit}
+.row:hover{background:#EEF4FB}
+.t2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.wrap{overflow-wrap:anywhere}
+.ico{width:40px;height:40px;border-radius:10px;background:#2456F6;color:#FFFFFF;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.tab{flex:1;min-height:64px;border:0;background:#FFFFFF;color:#14213D;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer}
+.kv{display:grid;grid-template-columns:118px minmax(0,1fr);gap:6px 12px;font-size:15px;margin:0}
+.kv dt{color:#5B6475;font-weight:600;font-size:13px;padding-top:2px}
+.kv dd{margin:0;overflow-wrap:anywhere}
+input.field{flex:1;min-width:0;min-height:52px;border:2px solid #14213D;border-radius:14px;padding:0 14px;font-size:16px;font-family:Inter,sans-serif;color:#14213D;background:#FFFFFF}
+input.field:focus,button:focus-visible,.row:focus-visible{outline:3px solid #2456F6;outline-offset:2px}
+.box{width:24px;height:24px;border-radius:7px;border:2px solid #14213D;display:inline-flex;align-items:center;justify-content:center;flex:none;background:#FFFFFF}
+.lst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.lst button{width:100%;min-height:44px;display:flex;align-items:center;gap:12px;background:none;border:0;padding:0 4px;font-size:16px;color:#14213D;cursor:pointer;text-align:left;border-radius:8px}
+.lst button:hover{background:#EEF4FB}
+</style>
+</helmet>
+
+<div style="{{rootStyle}}">
+
+<!-- ============ Header ============ -->
+<header style="flex:none;display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:2px solid #14213D;background:#FFFFFF;min-height:64px">
+<button type="button" onClick="{{goHome}}" aria-label="Dialogbot Privat – Min dag" style="display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;color:#14213D">
+<svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="13.44" fill="#2456F6"></rect><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4z" transform="translate(10.8 10.8) scale(1.1)" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span class="d" style="font-weight:800;font-size:22px;letter-spacing:-.3px">Dialogbot</span>
+<span style="font-size:13px;font-weight:600;color:#5B6475;border:1.5px solid #D6DEEA;border-radius:999px;padding:2px 8px">Privat</span>
+</button>
+<div style="flex:1"></div>
+<sc-if value="{{inApp}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{goAccount}}" class="chip" style="min-height:40px;padding:0 12px" aria-label="{{balanceAria}}">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v8M9 10.5h4.5a1.5 1.5 0 0 1 0 3H9"></path></svg>
+<span>{{creditsShort}}</span>
+<span style="color:#5B6475;font-weight:500">· {{freeShort}}</span>
+</button>
+</sc-if>
+<sc-if value="{{isLanding}}" hint-placeholder-val="{{ false }}">
+<button type="button" class="btn2" onClick="{{start}}">Log ind</button>
+</sc-if>
+</header>
+
+<!-- ============ Landing: første besøg ============ -->
+<sc-if value="{{isLanding}}" hint-placeholder-val="{{ false }}">
+<main style="{{landingStyle}}">
+<div style="{{landingTextStyle}}">
+<p class="eb" style="color:#2456F6">Dialogbot Privat</p>
+<h1 class="d" style="{{heroStyle}}">Din egen personlige assistent</h1>
+<p style="margin:0;font-size:18px;line-height:1.5;color:#3C4659">Skriv eller sig, hvad du skal have klaret. Den laver lister, minder dig om ting og kan ringe til fx cykelværkstedet for dig – men først når du har sagt ja.</p>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+<button type="button" class="btn" onClick="{{start}}" style="width:100%;max-width:360px">Prøv gratis</button>
+<p style="margin:0;font-size:13px;color:#5B6475">10 gratis hverdagsopgaver hver måned. Du prøver med eksempeldata – vi beder først om login, når du vil gemme din egen opgave.</p>
+</div>
+</div>
+<div class="card" style="{{exampleStyle}}">
+<p class="eb">Et hverdagseksempel</p>
+<div style="align-self:flex-end;max-width:85%;background:#14213D;color:#FFFFFF;border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:15px;line-height:1.4">Ring til cykelværkstedet og find en tid torsdag efter kl. 15</div>
+<div class="prop" style="padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+<span class="eb" style="font-size:11px">Forslag · venter på dit ja</span>
+<span style="font-size:15px;font-weight:600">Ring til Cykelmageren · højst 3 credits</span>
+<span style="font-size:13px;color:#5B6475">Må aftale aflevering torsdag efter kl. 15. Må ikke sige ja til reparationer.</span>
+</div>
+<div class="ok" style="padding:12px 14px;display:flex;gap:10px;align-items:center">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B6B3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+<span style="font-size:15px;font-weight:600;color:#14213D">Torsdag kl. 15.30 er bekræftet af værkstedet</span>
+</div>
+</div>
+</main>
+</sc-if>
+
+<!-- ============ App ============ -->
+<sc-if value="{{inApp}}" hint-placeholder-val="{{ true }}">
+<div style="{{bodyStyle}}">
+
+<!-- ===== Min dag ===== -->
+<section style="{{dayStyle}}" aria-label="Min dag">
+<div style="padding:20px 16px 28px;display:flex;flex-direction:column;gap:22px">
+
+<sc-if value="{{showDayComposer}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p class="eb">{{dateLabel}}</p>
+<h1 class="d" style="margin:0;font-size:30px;line-height:1.1;letter-spacing:-.5px;font-weight:800">Hvad skal jeg klare for dig?</h1>
+<form onSubmit="{{onSend}}" style="display:flex;gap:8px;align-items:center">
+<label for="ask-day" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Skriv til assistenten</label>
+<input id="ask-day" class="field" value="{{draft}}" onChange="{{onDraft}}" placeholder="Skriv, hvad du skal have klaret" autocomplete="off">
+<button type="button" class="btn2" onClick="{{mic}}" aria-label="Indtal med mikrofonen" style="min-width:52px;min-height:52px;padding:0">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>
+</button>
+</form>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{shortcuts}}" as="sc" hint-placeholder-count="3">
+<button type="button" class="chip" onClick="{{sc.go}}">{{sc.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{showDayTitle}}" hint-placeholder-val="{{ false }}">
+<div>
+<p class="eb">{{dateLabel}}</p>
+<h2 class="d" style="margin:4px 0 0;font-size:28px;font-weight:800;letter-spacing:-.5px">Min dag</h2>
+</div>
+</sc-if>
+
+<sc-if value="{{dayEmpty}}" hint-placeholder-val="{{ false }}">
+<div class="card" style="display:flex;flex-direction:column;gap:10px;background:#EEF4FB">
+<h3 class="d" style="margin:0;font-size:20px">Din dag er tom</h3>
+<p style="margin:0;font-size:15px;color:#3C4659;line-height:1.5">Intet venter på dig. Prøv at skrive «Mind mig om at hente pakken i morgen kl. 16» – det tager under et minut.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{hasAwaiting}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:8px">
+<span style="width:28px;height:28px;border-radius:8px;background:#FFCF3F;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px" class="d">{{awaitingCount}}</span>
+<h2 class="d" style="margin:0;font-size:20px;font-weight:700">Afventer dit svar</h2>
+</div>
+<sc-for list="{{awaiting}}" as="t" hint-placeholder-count="1">
+<button type="button" class="row" onClick="{{t.open}}" style="border-width:2px;box-shadow:{{t.shadow}}">
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="badge" style="{{t.badgeStyle}}">{{t.statusLabel}}</span><sc-if value="{{t.ex}}" hint-placeholder-val="{{ false }}"><span class="ex">Eksempel</span></sc-if></span>
+<span class="t2" style="font-weight:600;font-size:16px">{{t.title}}</span>
+<span style="font-size:14px;color:#3C4659">Næste skridt: {{t.next}}</span>
+</div>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="flex:none;margin-top:4px"><path d="M9 6l6 6-6 6"></path></svg>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{hasToday}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:10px">
+<h2 class="d" style="margin:0;font-size:20px;font-weight:700">I dag</h2>
+<sc-for list="{{today}}" as="t" hint-placeholder-count="2">
+<button type="button" class="row" onClick="{{t.open}}">
+<span style="min-width:58px;font-weight:700;font-size:15px" class="d">{{t.time}}</span>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+<span class="t2" style="font-weight:600;font-size:15px">{{t.title}}</span>
+<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="badge" style="{{t.badgeStyle}}">{{t.statusLabel}}</span><sc-if value="{{t.ex}}" hint-placeholder-val="{{ false }}"><span class="ex">Eksempel</span></sc-if></span>
+</div>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{hasSoon}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:10px">
+<h2 class="d" style="margin:0;font-size:20px;font-weight:700">Snart</h2>
+<sc-for list="{{soon}}" as="t" hint-placeholder-count="2">
+<button type="button" class="row" onClick="{{t.open}}">
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+<span class="t2" style="font-weight:600;font-size:15px">{{t.title}}</span>
+<span style="font-size:14px;color:#3C4659">{{t.when}} · {{t.who}}</span>
+<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="badge" style="{{t.badgeStyle}}">{{t.statusLabel}}</span><sc-if value="{{t.ex}}" hint-placeholder-val="{{ false }}"><span class="ex">Eksempel</span></sc-if></span>
+</div>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{isDesk}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:8px;flex-wrap:wrap;border-top:1.5px solid #D6DEEA;padding-top:16px">
+<button type="button" class="btn2" onClick="{{goTasks}}">Mine opgaver</button>
+<button type="button" class="btn2" onClick="{{goAccount}}">Konto og credits</button>
+</div>
+</sc-if>
+</div>
+</section>
+
+<!-- ===== Samtale ===== -->
+<section style="{{chatStyle}}" aria-label="Samtale">
+<div style="flex:1;min-height:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px" aria-live="polite">
+<sc-if value="{{isDesk}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:12px;padding:8px 0 12px;border-bottom:1.5px solid #D6DEEA">
+<p class="eb">{{dateLabel}}</p>
+<h1 class="d" style="margin:0;font-size:34px;line-height:1.1;letter-spacing:-.6px;font-weight:800">Hvad skal jeg klare for dig?</h1>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{shortcuts}}" as="sc" hint-placeholder-count="3">
+<button type="button" class="chip" onClick="{{sc.go}}">{{sc.label}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-for list="{{msgs}}" as="m" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:8px">
+
+<sc-if value="{{m.isMe}}" hint-placeholder-val="{{ false }}">
+<div style="align-self:flex-end;max-width:86%;display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+<sc-if value="{{m.hasAbout}}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:600;color:#5B6475" class="wrap">Om opgaven: {{m.about}}</span></sc-if>
+<div class="wrap" style="background:#14213D;color:#FFFFFF;border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:16px;line-height:1.4">{{m.text}}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{m.isBotText}}" hint-placeholder-val="{{ true }}">
+<div class="wrap" style="align-self:flex-start;max-width:90%;background:#EEF4FB;border-radius:16px 16px 16px 4px;padding:10px 14px;font-size:16px;line-height:1.45">{{m.text}}</div>
+</sc-if>
+
+<sc-if value="{{m.isWaiting}}" hint-placeholder-val="{{ false }}">
+<div style="align-self:stretch;display:flex;flex-direction:column;gap:8px">
+<div style="background:#EEF4FB;border-radius:16px 16px 16px 4px;padding:10px 14px;font-size:16px;line-height:1.45;align-self:flex-start">{{m.text}}</div>
+<sc-for list="{{m.links}}" as="l" hint-placeholder-count="1">
+<button type="button" class="row" onClick="{{l.open}}" style="border-width:2px">
+<span style="width:10px;height:10px;border-radius:50%;background:#FFCF3F;border:1.5px solid #14213D;flex:none;margin-top:6px"></span>
+<span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span class="t2" style="font-weight:600">{{l.title}}</span><span style="font-size:14px;color:#3C4659">{{l.next}}</span></span>
+<span style="font-size:14px;font-weight:600;color:#2456F6;flex:none">Svar</span>
+</button>
+</sc-for>
+<sc-if value="{{m.hasExtra}}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:14px;color:#3C4659">{{m.extra}}</p></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{m.isClarify}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:8px;align-self:stretch">
+<div style="background:#EEF4FB;border-radius:16px 16px 16px 4px;padding:10px 14px;font-size:16px;line-height:1.45;align-self:flex-start">{{m.text}}</div>
+<sc-if value="{{m.open}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:8px" role="group" aria-label="Vælg et svar">
+<sc-for list="{{m.options}}" as="o" hint-placeholder-count="2">
+<button type="button" class="row" onClick="{{o.pick}}" style="border-width:2px">
+<span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">{{o.label}}</span><span style="font-size:13px;color:#5B6475">{{o.sub}}</span></span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{m.wasAnswered}}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#5B6475">Du valgte: {{m.answered}}</span></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{m.isList}}" hint-placeholder-val="{{ false }}">
+<div class="card" style="align-self:stretch;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:10px">
+<span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"></path></svg></span>
+<div style="flex:1;min-width:0"><h3 class="d wrap" style="margin:0;font-size:19px">{{m.tv.title}}</h3><span style="font-size:13px;color:#5B6475">{{m.tv.itemCount}} · {{m.tv.usage}}</span></div>
+</div>
+<ul class="lst">
+<sc-for list="{{m.tv.items}}" as="li" hint-placeholder-count="3">
+<li><button type="button" onClick="{{li.toggle}}" aria-pressed="{{li.pressed}}"><span class="box" style="{{li.boxStyle}}"><sc-if value="{{li.done}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></span><span style="{{li.textStyle}}">{{li.t}}</span></button></li>
+</sc-for>
+</ul>
+<button type="button" class="lnk" onClick="{{m.tv.talk}}" style="align-self:flex-start">Tal om listen</button>
+</div>
+</sc-if>
+
+<sc-if value="{{m.isRem}}" hint-placeholder-val="{{ false }}">
+<div class="card" style="align-self:stretch;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:10px">
+<span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"></path><path d="M10 21h4"></path></svg></span>
+<div style="flex:1;min-width:0"><h3 class="d wrap" style="margin:0;font-size:19px">{{m.tv.title}}</h3><span style="font-size:14px;color:#3C4659">{{m.tv.when}}</span></div>
+</div>
+<sc-if value="{{m.tv.notifOff}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:8px;border-top:1.5px solid #D6DEEA;padding-top:10px">
+<p style="margin:0;font-size:14px;color:#3C4659">Skal jeg give dig besked på telefonen – også når appen er lukket?</p>
+<button type="button" class="btn2" onClick="{{m.tv.enableNotif}}" style="align-self:flex-start">Slå notifikationer til</button>
+</div>
+</sc-if>
+<sc-if value="{{m.tv.notifOn}}" hint-placeholder-val="{{ false }}">
+<p style="margin:0;font-size:14px;color:#3C4659;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="sim">Simuleret</span>Du får en notifikation {{m.tv.whenLower}}, også når browseren er lukket.</p>
+</sc-if>
+<span style="font-size:13px;color:#5B6475">{{m.tv.usage}}</span>
+</div>
+</sc-if>
+
+<sc-if value="{{m.isMove}}" hint-placeholder-val="{{ false }}">
+<div class="card" style="align-self:stretch;display:flex;flex-direction:column;gap:10px">
+<p class="eb">Påmindelsen er flyttet</p>
+<h3 class="d wrap" style="margin:0;font-size:19px">{{m.tv.title}}</h3>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center">
+<div style="border:1.5px solid #D6DEEA;border-radius:12px;padding:10px"><span class="eb" style="font-size:11px">Før</span><div style="font-size:15px;text-decoration:line-through;color:#5B6475">{{m.before}}</div></div>
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14213D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+<div style="border:2px solid #14213D;border-radius:12px;padding:10px"><span class="eb" style="font-size:11px">Nu</span><div style="font-size:15px;font-weight:700">{{m.after}}</div></div>
+</div>
+<p style="margin:0;font-size:13px;color:#5B6475">Der er stadig kun én påmindelse. Ændringen kostede ingen opgave.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{m.isApproval}}" hint-placeholder-val="{{ false }}">
+<div style="align-self:stretch">
+<sc-if value="{{m.tv.apAsk}}" hint-placeholder-val="{{ false }}">
+<div class="prop" style="display:flex;flex-direction:column;gap:12px">
+<p class="eb">Forslag · afventer dit ja</p>
+<h3 class="d wrap" style="margin:0;font-size:20px">Skal jeg ringe til {{m.tv.shop}}?</h3>
+<dl class="kv">
+<dt>Modtager</dt><dd>{{m.tv.shop}}, {{m.tv.addr}}</dd>
+<dt>Nummer</dt><dd>{{m.tv.phone}} <span class="ex">Eksempelnummer</span></dd>
+<dt>Må spørge om</dt><dd>En tid til at aflevere cyklen {{m.tv.win}}</dd>
+<dt>Må aftale</dt><dd>Aflevering {{m.tv.win}}. Dit navn og nummer må gives videre.</dd>
+<dt>Må ikke</dt><dd>Sige ja til reparationer eller priser</dd>
+</dl>
+<div style="border:1.5px solid #14213D;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;background:#EEF4FB">
+<span style="font-size:15px"><b>Assistentens opkald: højst 3 credits</b> (op til 3 min.)</span>
+<span style="font-size:14px;color:#3C4659">Svarer ingen, er der optaget eller en telefonsvarer, får du dine credits igen.</span>
+<span style="font-size:14px;color:#3C4659">Prisen hos værkstedet er noget andet – den aftaler jeg ikke, men jeg fortæller dig, hvad de siger.</span>
+</div>
+<sc-if value="{{m.tv.needCredits}}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:14px;color:#B3261E;font-weight:600">Du har {{m.tv.creditsLeft}} credits. Opkaldet kræver 3.</p></sc-if>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button type="button" class="btn" onClick="{{m.tv.approve}}" style="flex:1 1 180px">Godkend opkald</button>
+<button type="button" class="btn2" onClick="{{m.tv.edit}}">Ret</button>
+<button type="button" class="btn2" onClick="{{m.tv.decline}}">Afvis</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{m.tv.apEdit}}" hint-placeholder-val="{{ false }}">
+<div class="prop" style="display:flex;flex-direction:column;gap:12px">
+<p class="eb">Ret forslaget</p>
+<p style="margin:0;font-size:15px">Hvornår må jeg aftale aflevering?</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap" role="group" aria-label="Tidsrum">
+<sc-for list="{{m.tv.wins}}" as="w" hint-placeholder-count="3">
+<button type="button" class="chip" onClick="{{w.pick}}" style="{{w.style}}" aria-pressed="{{w.pressed}}">{{w.label}}</button>
+</sc-for>
+</div>
+<button type="button" class="btn" onClick="{{m.tv.saveEdit}}" style="align-self:flex-start">Gem ændringen</button>
+</div>
+</sc-if>
+<sc-if value="{{m.tv.apProgress}}" hint-placeholder-val="{{ false }}">
+<div class="card" style="display:flex;flex-direction:column;gap:12px;background:#DCE6FF">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="badge" style="background:#FFFFFF">I gang</span><span class="sim">Simuleret opkald</span></div>
+<h3 class="d wrap" style="margin:0;font-size:20px">Ringer til {{m.tv.shop}} …</h3>
+<p style="margin:0;font-size:14px;color:#3C4659">3 credits er reserveret. De trækkes kun, hvis værkstedet svarer.</p>
+<p class="eb" style="margin-top:4px">Prototype: vælg udfald</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button type="button" class="btn2" onClick="{{m.tv.answered}}">Værkstedet svarer</button>
+<button type="button" class="btn2" onClick="{{m.tv.noanswer}}">Ingen svarer</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{m.tv.apAnswered}}" hint-placeholder-val="{{ false }}">
+<div class="ok" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="badge" style="border-color:#1B6B3A;color:#1B6B3A;background:#FFFFFF">Bekræftet af værkstedet</span><span class="sim">Simuleret</span></div>
+<h3 class="d" style="margin:0;font-size:22px">{{m.tv.confirmed}} er bekræftet</h3>
+<p style="margin:0;font-size:15px;line-height:1.5"><b>Værkstedets svar:</b> «{{m.tv.reply}}»</p>
+<dl class="kv">
+<dt>Pris hos værkstedet</dt><dd>{{m.tv.shopPrice}} (oplyst i opkaldet)</dd>
+<dt>Assistentens opkald</dt><dd>3 credits · 2 min. 10 sek.</dd>
+</dl>
+<button type="button" class="lnk" onClick="{{m.tv.open}}" style="align-self:flex-start">Se hele opgaven</button>
+</div>
+</sc-if>
+<sc-if value="{{m.tv.apNoAnswer}}" hint-placeholder-val="{{ false }}">
+<div class="bad" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="badge" style="background:#FFCF3F">Afventer dit svar</span><span class="sim">Simuleret</span></div>
+<h3 class="d" style="margin:0;font-size:20px">Ingen tog telefonen – dine 3 credits er frigivet</h3>
+<p style="margin:0;font-size:15px;color:#3C4659">Jeg lagde ingen besked. Vil du have, at jeg prøver igen?</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button type="button" class="btn" onClick="{{m.tv.retry}}">Prøv igen</button>
+<button type="button" class="btn2" onClick="{{m.tv.decline}}">Annullér opgaven</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{m.tv.apDeclined}}" hint-placeholder-val="{{ false }}">
+<div class="bad" style="display:flex;flex-direction:column;gap:6px">
+<h3 class="d" style="margin:0;font-size:18px">Opkaldet er afvist</h3>
+<p style="margin:0;font-size:14px;color:#3C4659">Der er ikke ringet, og intet er brugt.</p>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{m.isPaywall}}" hint-placeholder-val="{{ false }}">
+<div class="prop" style="align-self:stretch;display:flex;flex-direction:column;gap:10px">
+<p class="eb">Udkast · klar til at gemme</p>
+<h3 class="d wrap" style="margin:0;font-size:19px">{{m.tv.title}}</h3>
+<sc-if value="{{m.tv.isDraft}}" hint-placeholder-val="{{ true }}">
+<p style="margin:0;font-size:15px;color:#3C4659">Dine 10 gratis opgaver i november er brugt. Udkastet venter, mens du vælger.</p>
+<button type="button" class="btn" onClick="{{m.tv.pay}}" style="align-self:flex-start">Vælg, hvordan du fortsætter</button>
+</sc-if>
+<sc-if value="{{m.tv.notDraft}}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:14px;color:#1B6B3A;font-weight:600">Opgaven er aktiv – {{m.tv.usage}}.</p></sc-if>
+</div>
+</sc-if>
+
+</div>
+</sc-for>
+</div>
+
+<div style="flex:none;border-top:2px solid #14213D;padding:10px 12px 12px;background:#FFFFFF;display:flex;flex-direction:column;gap:8px">
+<sc-if value="{{hasFocus}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:8px;background:#FFCF3F;border:1.5px solid #14213D;border-radius:12px;padding:4px 4px 4px 12px">
+<span style="flex:1;min-width:0;font-size:14px" class="t2"><b>Taler om:</b> {{focusTitle}}</span>
+<button type="button" onClick="{{clearFocus}}" aria-label="Stop med at tale om opgaven" style="width:40px;height:40px;border:0;background:none;cursor:pointer;color:#14213D;display:inline-flex;align-items:center;justify-content:center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</button>
+</div>
+</sc-if>
+<form onSubmit="{{onSend}}" style="display:flex;gap:8px;align-items:center">
+<label for="ask-chat" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Skriv til assistenten</label>
+<input id="ask-chat" class="field" value="{{draft}}" onChange="{{onDraft}}" placeholder="{{placeholder}}" autocomplete="off">
+<button type="button" class="btn2" onClick="{{mic}}" aria-label="Indtal med mikrofonen" style="min-width:52px;min-height:52px;padding:0">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>
+</button>
+<button type="submit" class="btn" aria-label="Send" style="min-width:52px;padding:0">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+</button>
+</form>
+</div>
+</section>
+
+<!-- ===== Højre: opgaver, detalje, konto ===== -->
+<section style="{{rightStyle}}">
+<sc-if value="{{showTasks}}" hint-placeholder-val="{{ false }}">
+<div style="padding:20px 16px 28px;display:flex;flex-direction:column;gap:20px" aria-label="Mine opgaver">
+<h2 class="d" style="margin:0;font-size:28px;font-weight:800;letter-spacing:-.5px">Mine opgaver</h2>
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:8px">
+<h3 style="margin:0;font-size:15px;font-weight:600;display:flex;gap:8px;align-items:center">{{g.label}} <span style="color:#5B6475;font-weight:500">({{g.count}})</span></h3>
+<sc-for list="{{g.items}}" as="t" hint-placeholder-count="2">
+<button type="button" class="row" onClick="{{t.open}}">
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
+<span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="badge" style="{{t.badgeStyle}}">{{t.statusLabel}}</span><span style="font-size:12px;color:#5B6475;font-weight:600">{{t.kindLabel}}</span><sc-if value="{{t.ex}}" hint-placeholder-val="{{ false }}"><span class="ex">Eksempel</span></sc-if></span>
+<span class="t2" style="font-weight:600;font-size:15px">{{t.title}}</span>
+<span style="font-size:13px;color:#3C4659">{{t.next}} · {{t.when}} · {{t.who}}</span>
+</div>
+</button>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{showTask}}" hint-placeholder-val="{{ false }}">
+<div style="padding:16px 16px 28px;display:flex;flex-direction:column;gap:16px" aria-label="Opgave">
+<button type="button" class="lnk" onClick="{{goTasks}}" style="align-self:flex-start">← Mine opgaver</button>
+<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span class="badge" style="{{sel.badgeStyle}}">{{sel.statusLabel}}</span><span style="font-size:12px;color:#5B6475;font-weight:600">{{sel.kindLabel}}</span><sc-if value="{{sel.ex}}" hint-placeholder-val="{{ false }}"><span class="ex">Eksempel</span></sc-if></div>
+<h2 class="d wrap" style="margin:0;font-size:26px;line-height:1.15;font-weight:800;letter-spacing:-.4px">{{sel.title}}</h2>
+<div class="card" style="box-shadow:8px 8px 0 #14213D;display:flex;flex-direction:column;gap:10px">
+<p class="eb">Næste skridt</p>
+<p style="margin:0;font-size:17px;font-weight:600" class="wrap">{{sel.next}}</p>
+<dl class="kv">
+<dt>Formål</dt><dd>{{sel.purpose}}</dd>
+<dt>Tidspunkt</dt><dd>{{sel.when}}</dd>
+<dt>Hvem gør noget</dt><dd>{{sel.who}}</dd>
+<dt>Forbrug</dt><dd>{{sel.usage}}</dd>
+</dl>
+<sc-if value="{{sel.showOptions}}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{sel.options}}" as="o" hint-placeholder-count="2">
+<button type="button" class="btn2" onClick="{{o.pick}}">{{o.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{sel.isDraft}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn" onClick="{{sel.pay}}">Vælg, hvordan du fortsætter</button></sc-if>
+<sc-if value="{{sel.apAsk}}" hint-placeholder-val="{{ false }}"><button type="button" class="btn" onClick="{{sel.talk}}">Se forslaget og godkend</button></sc-if>
+</div>
+
+<sc-if value="{{sel.isList}}" hint-placeholder-val="{{ false }}">
+<div class="card">
+<ul class="lst">
+<sc-for list="{{sel.items}}" as="li" hint-placeholder-count="3">
+<li><button type="button" onClick="{{li.toggle}}" aria-pressed="{{li.pressed}}"><span class="box" style="{{li.boxStyle}}"><sc-if value="{{li.done}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></span><span style="{{li.textStyle}}">{{li.t}}</span></button></li>
+</sc-for>
+</ul>
+</div>
+</sc-if>
+
+<sc-if value="{{sel.apAnswered}}" hint-placeholder-val="{{ false }}">
+<div class="ok" style="display:flex;flex-direction:column;gap:8px">
+<p class="eb" style="color:#1B6B3A">Udfald · bekræftet af værkstedet</p>
+<p style="margin:0;font-size:15px;line-height:1.5">«{{sel.reply}}»</p>
+<dl class="kv">
+<dt>Aftale</dt><dd>{{sel.confirmed}}</dd>
+<dt>Pris hos værkstedet</dt><dd>{{sel.shopPrice}}</dd>
+<dt>Opkaldet</dt><dd>3 credits · 2 min. 10 sek. <span class="sim">Simuleret</span></dd>
+</dl>
+</div>
+</sc-if>
+<sc-if value="{{sel.apNoAnswer}}" hint-placeholder-val="{{ false }}">
+<div class="bad" style="display:flex;flex-direction:column;gap:8px">
+<p class="eb">Udfald</p>
+<p style="margin:0;font-size:15px;font-weight:600">Ingen tog telefonen – dine 3 credits er frigivet</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn" onClick="{{sel.retry}}">Prøv igen</button><button type="button" class="btn2" onClick="{{sel.decline}}">Annullér</button></div>
+</div>
+</sc-if>
+
+<button type="button" class="btn2" onClick="{{sel.talk}}" style="align-self:flex-start">Tal om opgaven</button>
+
+<div style="display:flex;flex-direction:column;gap:8px">
+<h3 style="margin:0;font-size:15px;font-weight:600">Historik</h3>
+<ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;border-left:2px solid #D6DEEA;padding-left:12px">
+<sc-for list="{{sel.history}}" as="h" hint-placeholder-count="2">
+<li style="font-size:14px;display:flex;gap:10px"><span style="color:#5B6475;min-width:72px">{{h.t}}</span><span class="wrap">{{h.x}}</span></li>
+</sc-for>
+</ol>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{showAccount}}" hint-placeholder-val="{{ false }}">
+<div style="padding:20px 16px 28px;display:flex;flex-direction:column;gap:18px" aria-label="Konto og credits">
+<h2 class="d" style="margin:0;font-size:28px;font-weight:800;letter-spacing:-.5px">Konto og credits</h2>
+<p style="margin:0;font-size:14px;color:#3C4659">{{accountLine}}</p>
+<div class="card" style="box-shadow:8px 8px 0 #14213D;display:flex;flex-direction:column;gap:10px">
+<p class="eb">Gratis hverdagsopgaver · november</p>
+<div style="display:flex;align-items:baseline;gap:8px"><span class="d" style="font-size:36px;font-weight:800">{{freeLeft}}</span><span style="font-size:15px;color:#3C4659">af 10 tilbage</span></div>
+<div style="height:12px;border:2px solid #14213D;border-radius:999px;overflow:hidden;background:#FFFFFF"><div style="{{freeBar}}"></div></div>
+<p style="margin:0;font-size:13px;color:#5B6475">Læsning, afkrydsning, spørgsmål og rettelser af en opgave er gratis. Nye opgaver efter de 10 koster 1 credit.</p>
+</div>
+<div class="card" style="display:flex;flex-direction:column;gap:10px">
+<p class="eb">Credits</p>
+<div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap"><span class="d" style="font-size:36px;font-weight:800">{{credits}}</span><span style="font-size:15px;color:#3C4659">credits</span><sc-if value="{{hasReserved}}" hint-placeholder-val="{{ false }}"><span class="badge" style="background:#DCE6FF;border-color:#2456F6">{{reserved}} reserveret</span></sc-if></div>
+<p style="margin:0;font-size:13px;color:#5B6475">Et besvaret opkald koster 3 credits (op til 3 min.). 10 credits koster 29 kr. inkl. moms – engangskøb, intet abonnement.</p>
+<button type="button" class="btn" onClick="{{openBuy}}" style="align-self:flex-start">Køb 10 credits · 29 kr.</button>
+<sc-if value="{{hasPayNote}}" hint-placeholder-val="{{ false }}"><p style="margin:0;font-size:14px;font-weight:600;color:#1B6B3A" role="status">{{payNote}}</p></sc-if>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<h3 style="margin:0;font-size:15px;font-weight:600">Bevægelser</h3>
+<sc-for list="{{ledger}}" as="l" hint-placeholder-count="2">
+<div style="display:flex;gap:10px;justify-content:space-between;border-bottom:1.5px solid #D6DEEA;padding:8px 0;font-size:14px"><span class="wrap">{{l.text}}</span><span style="font-weight:700;white-space:nowrap">{{l.amount}}</span></div>
+</sc-for>
+</div>
+<div style="border:1.5px dashed #14213D;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;background:#EEF4FB">
+<p class="eb">Testværktøjer · kun prototype</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button type="button" class="btn2" onClick="{{useUp}}">Sæt forbrug til 10/10</button>
+<button type="button" class="btn2" onClick="{{repeatPay}}">Gentag sidste betalingssignal</button>
+<button type="button" class="btn2" onClick="{{clearEx}}">Vis tom dag</button>
+<button type="button" class="btn2" onClick="{{reset}}">Start forfra</button>
+</div>
+</div>
+</div>
+</sc-if>
+</section>
+
+</div>
+
+<sc-if value="{{showTabs}}" hint-placeholder-val="{{ true }}">
+<nav aria-label="Hovedmenu" style="flex:none;display:flex;border-top:2px solid #14213D;background:#FFFFFF">
+<sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
+<button type="button" class="tab" onClick="{{tb.go}}" aria-current="{{tb.current}}" style="{{tb.style}}">
+<span style="{{tb.dot}}"></span>
+{{tb.label}}
+</button>
+</sc-for>
+</nav>
+</sc-if>
+</sc-if>
+
+<!-- ============ Ark (sheets) ============ -->
+<sc-if value="{{hasSheet}}" hint-placeholder-val="{{ false }}">
+<div style="{{overlayStyle}}">
+<div role="dialog" aria-modal="true" aria-label="{{sheetTitle}}" style="{{sheetStyle}}">
+<div style="display:flex;align-items:flex-start;gap:8px">
+<h2 class="d" style="margin:0;flex:1;font-size:22px;font-weight:800">{{sheetTitle}}</h2>
+<button type="button" onClick="{{closeSheet}}" aria-label="Luk" style="width:44px;height:44px;border:0;background:none;cursor:pointer;color:#14213D;display:inline-flex;align-items:center;justify-content:center">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</button>
+</div>
+
+<sc-if value="{{sheetLogin}}" hint-placeholder-val="{{ false }}">
+<p style="margin:0;font-size:15px;line-height:1.5;color:#3C4659">For at gemme din egen opgave skal du have en privat konto. Dine opgaver, samtaler og credits ligger adskilt fra virksomhedskonti.</p>
+<label for="mail" style="font-size:14px;font-weight:600">E-mail</label>
+<input id="mail" class="field" value="mette@eksempel.dk" readonly style="flex:none">
+<button type="button" class="btn" onClick="{{login}}">Fortsæt med e-mail <span class="sim" style="background:#FFFFFF">Simuleret</span></button>
+<button type="button" class="lnk" onClick="{{closeSheet}}" style="align-self:center">Ikke nu</button>
+</sc-if>
+
+<sc-if value="{{sheetMic}}" hint-placeholder-val="{{ false }}">
+<p style="margin:0;font-size:15px;line-height:1.5;color:#3C4659">Dialogbot lytter kun, mens du taler til den. Optagelsen bliver til tekst, som du ser, før noget sker.</p>
+<button type="button" class="btn" onClick="{{allowMic}}">Tillad mikrofon <span class="sim" style="background:#FFFFFF">Simuleret</span></button>
+<button type="button" class="lnk" onClick="{{closeSheet}}" style="align-self:center">Skriv i stedet</button>
+</sc-if>
+
+<sc-if value="{{sheetPay}}" hint-placeholder-val="{{ false }}">
+<div class="prop" style="padding:12px 14px"><span class="eb" style="font-size:11px">Udkast</span><div class="wrap" style="font-weight:600;font-size:16px">{{payTitle}}</div></div>
+<p style="margin:0;font-size:15px;line-height:1.5;color:#3C4659">{{payText}}</p>
+<sc-if value="{{payDigital}}" hint-placeholder-val="{{ true }}">
+<button type="button" class="btn" onClick="{{useCredit}}" disabled="{{noCredit}}">Brug 1 credit · du har {{credits}}</button>
+</sc-if>
+<button type="button" class="btn2" onClick="{{openBuy}}">Køb 10 credits · 29 kr. inkl. moms</button>
+<sc-if value="{{payDigital}}" hint-placeholder-val="{{ true }}">
+<button type="button" class="btn2" onClick="{{openSponsor}}" disabled="{{noSponsor}}">Se et sponsorindslag · +1 opgave ({{sponsorLeft}} tilbage i dag)</button>
+</sc-if>
+<button type="button" class="lnk" onClick="{{later}}" style="align-self:center">Senere – gem udkastet</button>
+</sc-if>
+
+<sc-if value="{{sheetBuy}}" hint-placeholder-val="{{ false }}">
+<div class="card" style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;font-size:16px"><span>10 credits</span><b>29,00 kr.</b></div>
+<div style="display:flex;justify-content:space-between;font-size:13px;color:#5B6475"><span>Heraf moms</span><span>5,80 kr.</span></div>
+<p style="margin:4px 0 0;font-size:13px;color:#5B6475">Engangskøb. Credits udløber ikke i piloten.</p>
+</div>
+<button type="button" class="btn" onClick="{{buy}}">Betal 29 kr. <span class="sim" style="background:#FFFFFF">Simuleret køb</span></button>
+<button type="button" class="lnk" onClick="{{backToPay}}" style="align-self:center">Tilbage</button>
+</sc-if>
+
+<sc-if value="{{sheetSponsor}}" hint-placeholder-val="{{ false }}">
+<div style="border:2px solid #14213D;border-radius:16px;overflow:hidden">
+<div style="background:#EEF4FB;padding:8px 12px;display:flex;justify-content:space-between;align-items:center"><span class="eb" style="font-size:11px">Sponsoreret indslag</span><span class="sim">Simuleret</span></div>
+<div style="padding:18px 14px;display:flex;flex-direction:column;gap:6px;min-height:120px;justify-content:center;text-align:center">
+<span class="d" style="font-size:20px;font-weight:700">[Annoncørens indslag, 15 sek.]</span>
+<span style="font-size:13px;color:#5B6475">Fiktiv annoncør i prototypen</span>
+</div>
+</div>
+<p style="margin:0;font-size:14px;color:#3C4659">Du får 1 ekstra opgave, når indslaget er set. Højst 2 pr. dag. Annoncen får intet at vide om dine samtaler eller opgaver.</p>
+<button type="button" class="btn" onClick="{{watched}}">Jeg har set indslaget – giv mig opgaven</button>
+<button type="button" class="lnk" onClick="{{backToPay}}" style="align-self:center">Senere</button>
+</sc-if>
+
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["mobile","desktop"],"default":"mobile"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.n = 1000;
+    this.state = this.fresh();
+  }
+
+  examples() {
+    return [
+      { id: 'e1', ex: true, kind: 'decision', title: 'Vælg tid hos Tandlæge Holm', status: 'you', next: 'Vælg tirsdag kl. 9.00 eller onsdag kl. 14.30', when: 'Svar senest i dag kl. 18', who: 'Dig', purpose: 'Få en ny tid til tandeftersyn', usage: '1 gratis opgave (oktober)', options: ['Tirsdag kl. 9.00', 'Onsdag kl. 14.30'], history: [{ t: 'I går 14.12', x: 'Klinikken foreslog to tider' }] },
+      { id: 'e2', ex: true, kind: 'call', title: 'Spørg boligforeningen, om de har modtaget min klage over den utætte radiator i badeværelset på 2. sal', status: 'biz', next: 'Boligforeningen ringer tilbage', when: 'Lovet inden fredag', who: 'Boligforeningen', purpose: 'Få bekræftet, at klagen er modtaget', usage: '3 credits · besvaret opkald, 2 min. 40 sek.', history: [{ t: 'Mandag 10.03', x: 'Opkald besvaret. De undersøger sagen og ringer tilbage.' }] },
+      { id: 'e3', ex: true, kind: 'reminder', title: 'Hent Ida i børnehaven', status: 'planned', time: '15.45', when: 'I dag kl. 15.45', day: 'I dag', who: 'Assistenten minder dig', purpose: 'Påmindelse', usage: '1 gratis opgave', today: true, history: [{ t: 'Mandag', x: 'Oprettet' }] },
+      { id: 'e4', ex: true, kind: 'reminder', title: 'Køb gave til Idas fødselsdag', status: 'planned', when: 'Fredag kl. 10.00', day: 'Fredag', who: 'Assistenten minder dig', purpose: 'Påmindelse', usage: '1 gratis opgave', history: [{ t: 'I går', x: 'Oprettet' }] },
+      { id: 'e5', ex: true, kind: 'reminder', title: 'Aflever pant i Netto', status: 'done', when: 'I går kl. 17.00', who: 'Dig', purpose: 'Påmindelse', usage: '1 gratis opgave', history: [{ t: 'I går 17.00', x: 'Påmindelse sendt' }, { t: 'I går 18.20', x: 'Markeret som klaret' }] }
+    ];
+  }
+
+  fresh() {
+    return {
+      screen: 'landing', right: 'tasks', loggedIn: false, sheet: null, sheetFor: null, draft: '', pendingText: null,
+      freeUsed: 8, credits: 3, reserved: 0, sponsorToday: 0, micOk: false, notifOk: false,
+      focus: null, selected: 'e1', editing: null, lastPay: null, payNote: '', paySeq: 1040,
+      msgs: [{ id: 1, from: 'bot', kind: 'text', text: 'Hej Mette. Skriv eller indtal, hvad jeg skal klare – en liste, en påmindelse eller et opkald. Jeg ringer aldrig, før du har sagt ja.' }],
+      tasks: this.examples(),
+      ledger: [{ text: 'Velkomstcredits (én gang)', amount: '+3' }]
+    };
+  }
+
+  nid() { this.n += 1; return this.n; }
+  desk() { return (this.props.mode || 'mobile') === 'desktop'; }
+  cap(s) { s = (s || '').trim(); return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  hh(m) { return m[1] + '.' + (m[2] || '00'); }
+  items(str) {
+    return (str || '').replace(/[.!]+$/, '').split(/,|\sog\s/i).map((x) => this.cap(x.trim())).filter(Boolean);
+  }
+  bot(o) { return Object.assign({ id: this.nid(), from: 'bot' }, o); }
+  upd(tasks, id, fn) { return tasks.map((t) => (t.id === id ? fn(t) : t)); }
+
+  // ---------- chat ----------
+  send(text) {
+    const t = (text == null ? this.state.draft : text).trim();
+    if (!t) return;
+    const creates = !/hvad venter/i.test(t);
+    if (!this.state.loggedIn && creates) {
+      this.setState({ sheet: 'login', pendingText: t, draft: '' });
+      return;
+    }
+    this.process(t);
+  }
+
+  process(text) {
+    const s = this.state;
+    const focusT = s.tasks.find((x) => x.id === s.focus);
+    const me = { id: this.nid(), from: 'me', kind: 'text', text: text, about: focusT ? focusT.title : null };
+    const r = this.reply(s, text.toLowerCase(), text, focusT);
+    const patch = Object.assign({}, r.patch || {});
+    this.setState(Object.assign(patch, {
+      msgs: s.msgs.concat([me], r.msgs),
+      tasks: r.tasks || s.tasks,
+      draft: '',
+      screen: this.desk() ? s.screen : 'chat'
+    }));
+  }
+
+  reply(s, low, text, focusT) {
+    const open = (k) => s.tasks.slice().reverse().find((t) => t.kind === k && t.status !== 'done' && !t.ex);
+    if (/hvad venter/.test(low)) {
+      const w = s.tasks.filter((t) => t.status === 'you' || t.status === 'draft');
+      const b = s.tasks.filter((t) => t.status === 'biz');
+      return { msgs: [this.bot({ kind: 'waiting',
+        text: w.length ? (w.length === 1 ? 'Én ting venter på dit svar:' : w.length + ' ting venter på dit svar:') : 'Intet venter på dit svar lige nu.',
+        links: w.map((t) => t.id),
+        extra: b.length ? (b.length === 1 ? 'Én opgave venter på svar fra en virksomhed. Du får besked, når de svarer.' : b.length + ' opgaver venter på svar fra en virksomhed.') : '' })] };
+    }
+    const listT = focusT && focusT.kind === 'list' ? focusT : open('list');
+    if (listT && /(tilføj|tilfoej|husk også|sæt .+ på)/.test(low) && !/liste med/.test(low)) {
+      const raw = text.replace(/^.*?(tilføj|tilfoej|husk også|sæt)\s*/i, '').replace(/\s*(på listen|til listen|på)\s*[.!]?$/i, '');
+      const its = this.items(raw);
+      const tasks = this.upd(s.tasks, listT.id, (t) => Object.assign({}, t, {
+        items: t.items.concat(its.map((x) => ({ t: x, done: false }))),
+        history: t.history.concat([{ t: 'Nu', x: 'Tilføjet: ' + its.join(', ').toLowerCase() + ' (gratis rettelse)' }]) }));
+      return { tasks: tasks, patch: { focus: listT.id }, msgs: [
+        this.bot({ kind: 'text', text: 'Tilføjet ' + its.join(' og ').toLowerCase() + '. Det er stadig den samme liste, og en rettelse koster ingen opgave.' }),
+        this.bot({ kind: 'list', taskId: listT.id })] };
+    }
+    const remT = focusT && focusT.kind === 'reminder' ? focusT : open('reminder');
+    const hm = low.match(/kl\.?\s*(\d{1,2})(?:[.:](\d{2}))?/);
+    if (remT && /(flyt|ændr|skub|ret den)/.test(low) && hm) {
+      const before = remT.when;
+      const after = remT.day + ' kl. ' + this.hh(hm);
+      const tasks = this.upd(s.tasks, remT.id, (t) => Object.assign({}, t, {
+        when: after, time: this.hh(hm), next: 'Påmindelse ' + after.charAt(0).toLowerCase() + after.slice(1),
+        history: t.history.concat([{ t: 'Nu', x: 'Flyttet fra ' + before.toLowerCase() + ' til ' + after.toLowerCase() }]) }));
+      return { tasks: tasks, patch: { focus: remT.id }, msgs: [this.bot({ kind: 'move', taskId: remT.id, before: before, after: after })] };
+    }
+    if (/liste/.test(low)) {
+      const m = text.match(/\smed\s(.+)$/i);
+      const its = m ? this.items(m[1]) : [];
+      const title = /indkøb/.test(low) ? 'Indkøbsliste' : 'Liste';
+      return this.newDigital(s, { kind: 'list', title: title, items: its.map((x) => ({ t: x, done: false })), status: 'progress', when: 'I dag', who: 'Dig', purpose: 'Huske det, der skal købes', today: true, time: 'I dag' },
+        'list', its.length ? 'Her er din ' + title.toLowerCase() + ' med ' + its.join(' og ').toLowerCase() + '.' : 'Her er din liste.');
+    }
+    if (/mind mig om/.test(low)) {
+      let what = text.replace(/^.*?mind mig om\s*(at\s+)?/i, '');
+      let day = 'I dag';
+      if (/i morgen/i.test(what)) day = 'I morgen'; else if (/torsdag/i.test(what)) day = 'Torsdag'; else if (/fredag/i.test(what)) day = 'Fredag';
+      what = what.replace(/\s*(i morgen|i dag|på torsdag|torsdag|på fredag|fredag)\b.*$/i, '').replace(/\s*kl\.?.*$/i, '');
+      const time = hm ? this.hh(hm) : '9.00';
+      const when = day + ' kl. ' + time;
+      return this.newDigital(s, { kind: 'reminder', title: this.cap(what) || 'Påmindelse', day: day, time: time, when: when, status: 'planned', who: 'Assistenten minder dig', purpose: 'Påmindelse', today: day === 'I dag' },
+        'reminder', 'Jeg minder dig om det ' + when.charAt(0).toLowerCase() + when.slice(1) + '.');
+    }
+    if (/ring til|ring for mig|ring op/.test(low)) {
+      if (!/cykel/.test(low)) return { msgs: [this.bot({ kind: 'text', text: 'Hvem skal jeg ringe til? Skriv navnet eller nummeret. I prototypen kan du prøve med cykelværkstedet.' })] };
+      let win = 'torsdag efter kl. 15';
+      const k = low.match(/(?:kl\.?|klokken)\s*(\d{1,2}|tre|fire|fem)/);
+      const words = { tre: 15, fire: 16, fem: 17 };
+      if (k) { let h = words[k[1]] || +k[1]; if (h < 12) h += 12; win = 'torsdag efter kl. ' + h; }
+      return { msgs: [this.bot({ kind: 'clarify', text: 'Hvilket cykelværksted mener du? Jeg fandt to tæt på dig:', win: win, options: [
+        { label: 'Cykelmageren', sub: 'Nørregade 12, 8000 Aarhus C · 4,7 ★ · 600 m', act: 'call', shop: 'Cykelmageren', addr: 'Nørregade 12, 8000 Aarhus C', phone: '86 12 34 56', price: '450 kr. for et almindeligt eftersyn' },
+        { label: 'Østbyens Cykler', sub: 'Østergade 3, 8000 Aarhus C · 4,5 ★ · 1,2 km', act: 'call', shop: 'Østbyens Cykler', addr: 'Østergade 3, 8000 Aarhus C', phone: '86 98 76 54', price: '395 kr. for et almindeligt eftersyn' },
+        { label: 'Et andet værksted', sub: 'Skriv navnet eller nummeret', act: 'other' }] })] };
+    }
+    return { msgs: [this.bot({ kind: 'clarify', text: 'Skal jeg lave en påmindelse, en liste eller ringe for dig?', options: [
+      { label: 'Mind mig om …', sub: 'En besked på et bestemt tidspunkt', act: 'prefill', text: 'Mind mig om ' },
+      { label: 'Lav en liste', sub: 'Med punkter, du kan krydse af', act: 'prefill', text: 'Lav en liste med ' },
+      { label: 'Ring for mig', sub: 'Du godkender, før jeg ringer', act: 'prefill', text: 'Ring til ' }] })] };
+  }
+
+  newDigital(s, base, card, intro) {
+    const t = Object.assign({ id: 'n' + this.nid(), ex: false, items: [], history: [{ t: 'Nu', x: 'Oprettet i samtalen' }] }, base);
+    t.next = t.kind === 'list' ? 'Køb ind' : 'Påmindelse ' + t.when.charAt(0).toLowerCase() + t.when.slice(1);
+    if (s.freeUsed < 10) {
+      t.usage = '1 af 10 gratis opgaver i november';
+      return { tasks: s.tasks.concat([t]), patch: { freeUsed: s.freeUsed + 1, focus: t.id }, msgs: [this.bot({ kind: 'text', text: intro }), this.bot({ kind: card, taskId: t.id })] };
+    }
+    t.realStatus = t.status; t.realNext = t.next; t.status = 'draft'; t.next = 'Vælg, hvordan opgaven skal betales'; t.usage = 'Ikke betalt endnu';
+    t.pendingCard = card; t.pendingIntro = intro;
+    return { tasks: s.tasks.concat([t]), patch: { sheet: 'paywall', sheetFor: t.id, focus: t.id }, msgs: [this.bot({ kind: 'paywall', taskId: t.id })] };
+  }
+
+  activate(id, usage, extra) {
+    const s = this.state;
+    const t = s.tasks.find((x) => x.id === id);
+    if (!t || t.status !== 'draft') { this.setState(Object.assign({ sheet: null, sheetFor: null }, extra)); return; }
+    const tasks = this.upd(s.tasks, id, (x) => Object.assign({}, x, { status: x.realStatus, next: x.realNext, usage: usage, history: x.history.concat([{ t: 'Nu', x: 'Fortsat: ' + usage }]) }));
+    this.setState(Object.assign({}, extra, {
+      tasks: tasks, sheet: null, sheetFor: null,
+      msgs: s.msgs.concat([this.bot({ kind: 'text', text: t.pendingIntro + ' Opgaven er aktiv nu.' }), this.bot({ kind: t.pendingCard, taskId: id })])
+    }));
+  }
+
+  pick(mid, o) {
+    const s = this.state;
+    const m = s.msgs.find((x) => x.id === mid);
+    const msgs = s.msgs.map((x) => (x.id === mid ? Object.assign({}, x, { answered: o.label }) : x));
+    if (o.act === 'prefill') { this.setState({ msgs: msgs, draft: o.text }); return; }
+    if (o.act === 'other') { this.setState({ msgs: msgs.concat([this.bot({ kind: 'text', text: 'Skriv navnet eller nummeret på værkstedet, så finder jeg det.' })]) }); return; }
+    const id = 'n' + this.nid();
+    const task = { id: id, ex: false, kind: 'call', title: 'Aflever cyklen hos ' + o.shop + ' ' + m.win, status: 'you', next: 'Godkend opkaldet', when: 'Når du godkender', who: 'Dig', purpose: 'Få en tid til at aflevere cyklen ' + m.win, usage: 'Højst 3 credits, når du godkender',
+      call: { shop: o.shop, addr: o.addr, phone: o.phone, win: m.win, price: o.price, result: null }, history: [{ t: 'Nu', x: 'Forslag til opkald oprettet' }] };
+    this.setState({ msgs: msgs.concat([{ id: this.nid(), from: 'me', kind: 'text', text: o.label }, this.bot({ kind: 'approval', taskId: id })]), tasks: s.tasks.concat([task]), focus: id });
+  }
+
+  // ---------- opkald ----------
+  approve(id) {
+    const s = this.state;
+    if (s.credits < 3) { this.setState({ sheet: 'paywall', sheetFor: id }); return; }
+    this.setState({
+      credits: s.credits - 3, reserved: s.reserved + 3, editing: null,
+      ledger: s.ledger.concat([{ text: 'Reserveret til opkald', amount: '−3 (reserveret)' }]),
+      tasks: this.upd(s.tasks, id, (t) => Object.assign({}, t, { status: 'progress', next: 'Assistenten ringer op', when: 'Nu', who: 'Assistenten', usage: '3 credits reserveret', history: t.history.concat([{ t: 'Nu', x: 'Du godkendte opkaldet. 3 credits reserveret.' }]) }))
+    });
+  }
+  answered(id) {
+    const s = this.state;
+    const t0 = s.tasks.find((x) => x.id === id);
+    const confirmed = 'Torsdag kl. 15.30';
+    const reply = 'Vi kan godt tage cyklen torsdag kl. 15.30. Et almindeligt eftersyn koster ' + t0.call.price.replace(/ for .*/, '') + ' hos os – vi ringer, hvis der skal mere til.';
+    this.setState({
+      reserved: s.reserved - 3,
+      ledger: s.ledger.concat([{ text: 'Opkald til ' + t0.call.shop + ' · besvaret, 2 min. 10 sek.', amount: '−3' }]),
+      tasks: this.upd(s.tasks, id, (t) => Object.assign({}, t, { status: 'done', confirmed: true, agenda: true,
+        call: Object.assign({}, t.call, { result: 'answered', confirmed: confirmed, reply: reply }),
+        title: 'Aflever cyklen hos ' + t.call.shop, next: confirmed + ' – aflever cyklen', when: confirmed, who: t.call.shop + ' har bekræftet', usage: '3 credits · besvaret opkald, 2 min. 10 sek.',
+        history: t.history.concat([{ t: 'Nu', x: 'Opkaldet blev besvaret. ' + t.call.shop + ' bekræftede ' + confirmed.toLowerCase() + '.' }, { t: 'Nu', x: '3 credits trukket' }]) })),
+      msgs: s.msgs.concat([this.bot({ kind: 'text', text: 'Opkaldet er slut. ' + t0.call.shop + ' har bekræftet ' + confirmed.toLowerCase() + '. Jeg minder dig om det torsdag kl. 14.30.' })])
+    });
+  }
+  noanswer(id) {
+    const s = this.state;
+    this.setState({
+      reserved: s.reserved - 3, credits: s.credits + 3,
+      ledger: s.ledger.concat([{ text: 'Ingen svar – reservation frigivet', amount: '+3' }]),
+      tasks: this.upd(s.tasks, id, (t) => Object.assign({}, t, { status: 'you', call: Object.assign({}, t.call, { result: 'noanswer' }), next: 'Prøv igen eller annullér', when: 'Nu', who: 'Dig', usage: 'Intet forbrug – ingen svarede',
+        history: t.history.concat([{ t: 'Nu', x: 'Ingen tog telefonen. 3 credits frigivet.' }]) })),
+      msgs: s.msgs.concat([this.bot({ kind: 'text', text: 'Ingen tog telefonen hos værkstedet. Du har fået dine 3 credits igen.' })])
+    });
+  }
+  retry(id) {
+    this.setState({ tasks: this.upd(this.state.tasks, id, (t) => Object.assign({}, t, { status: 'you', call: Object.assign({}, t.call, { result: null }), next: 'Godkend opkaldet', usage: 'Højst 3 credits, når du godkender' })),
+      msgs: this.state.msgs.concat([this.bot({ kind: 'approval', taskId: id })]), focus: id, screen: this.desk() ? this.state.screen : 'chat' });
+  }
+  decline(id) {
+    this.setState({ editing: null, tasks: this.upd(this.state.tasks, id, (t) => Object.assign({}, t, { status: 'done', declined: true, call: Object.assign({}, t.call, { result: 'declined' }), next: 'Afvist – der er ikke ringet', usage: 'Intet forbrug',
+      history: t.history.concat([{ t: 'Nu', x: 'Du afviste opkaldet' }]) })) });
+  }
+  setWin(id, w) {
+    this.setState({ tasks: this.upd(this.state.tasks, id, (t) => Object.assign({}, t, { title: 'Aflever cyklen hos ' + t.call.shop + ' ' + w, purpose: 'Få en tid til at aflevere cyklen ' + w, call: Object.assign({}, t.call, { win: w }) })) });
+  }
+
+  // ---------- betaling ----------
+  buy() {
+    const s = this.state;
+    const ref = 'PAY-' + (s.paySeq + 1);
+    const ledger = s.ledger.concat([{ text: 'Købt 10 credits · 29 kr. inkl. moms · ' + ref, amount: '+10' }]);
+    const t = s.tasks.find((x) => x.id === s.sheetFor);
+    const base = { paySeq: s.paySeq + 1, lastPay: ref, payNote: 'Købet er registreret (' + ref + ').' };
+    if (t && t.status === 'draft') {
+      this.activate(t.id, '1 credit (efter månedens 10 gratis)', Object.assign(base, { credits: s.credits + 9, ledger: ledger.concat([{ text: 'Ny opgave efter månedsgrænsen', amount: '−1' }]) }));
+      return;
+    }
+    this.setState(Object.assign(base, { credits: s.credits + 10, ledger: ledger, sheet: null, sheetFor: null,
+      msgs: t ? s.msgs.concat([this.bot({ kind: 'text', text: 'Du har nu ' + (s.credits + 10) + ' credits. Godkend opkaldet, når du er klar.' })]) : s.msgs }));
+  }
+  useCredit() {
+    const s = this.state;
+    if (s.credits < 1) return;
+    this.activate(s.sheetFor, '1 credit (efter månedens 10 gratis)', { credits: s.credits - 1, ledger: s.ledger.concat([{ text: 'Ny opgave efter månedsgrænsen', amount: '−1' }]) });
+  }
+  watched() {
+    const s = this.state;
+    if (s.sponsorToday >= 2) return;
+    this.activate(s.sheetFor, 'Sponsorindslag (+1 opgave)', { sponsorToday: s.sponsorToday + 1, ledger: s.ledger.concat([{ text: 'Sponsorindslag set – 1 ekstra opgave', amount: '+1 opgave' }]) });
+  }
+  later() {
+    const s = this.state;
+    const t = s.tasks.find((x) => x.id === s.sheetFor);
+    this.setState({ sheet: null, msgs: t && t.status === 'draft' ? s.msgs.concat([this.bot({ kind: 'text', text: 'Udkastet ligger under «Afventer dit svar». Du kan fortsætte, når du vil.' })]) : s.msgs });
+  }
+  repeatPay() {
+    const s = this.state;
+    this.setState({ payNote: s.lastPay ? 'Betalingssignalet ' + s.lastPay + ' er allerede registreret. Ingen ekstra credits.' : 'Der er ingen betaling at gentage endnu – køb først 10 credits.', screen: this.desk() ? s.screen : 'account', right: 'account' });
+  }
+
+  // ---------- navigation ----------
+  go(where) {
+    if (this.desk()) {
+      if (where === 'tasks' || where === 'task' || where === 'account') this.setState({ right: where });
+      return;
+    }
+    this.setState({ screen: where });
+  }
+  openTask(id) { this.setState({ selected: id, editing: null, screen: this.desk() ? this.state.screen : 'task', right: 'task' }); }
+  talk(id) { this.setState({ focus: id, screen: this.desk() ? this.state.screen : 'chat' }); }
+  toggle(id, i) {
+    this.setState({ tasks: this.upd(this.state.tasks, id, (t) => Object.assign({}, t, { items: t.items.map((it, j) => (j === i ? Object.assign({}, it, { done: !it.done }) : it)) })) });
+  }
+  decide(id, o) {
+    this.setState({ tasks: this.upd(this.state.tasks, id, (t) => Object.assign({}, t, { status: 'biz', next: 'Klinikken bekræfter ' + o.toLowerCase(), who: 'Tandlæge Holm', when: o,
+      history: t.history.concat([{ t: 'Nu', x: 'Du valgte ' + o.toLowerCase() + '. Afventer klinikkens bekræftelse.' }]) })) });
+  }
+
+  // ---------- visning ----------
+  tv(t) {
+    if (!t) return null;
+    const s = this.state;
+    const SM = {
+      you: ['Afventer dit svar', 'background:#FFCF3F;border-color:#14213D;color:#14213D'],
+      draft: ['Udkast · afventer dit valg', 'background:#FFFFFF;border-style:dashed;border-color:#14213D;color:#14213D'],
+      progress: ['I gang', 'background:#DCE6FF;border-color:#2456F6;color:#14213D'],
+      planned: ['Planlagt', 'background:#FFFFFF;border-color:#14213D;color:#14213D'],
+      biz: ['Afventer svar fra virksomheden', 'background:#EEF4FB;border-color:#5B6475;color:#14213D'],
+      done: ['Klaret', 'background:#DDF5E4;border-color:#1B6B3A;color:#1B6B3A']
+    };
+    const KL = { list: 'Liste', reminder: 'Påmindelse', call: 'Opkald', decision: 'Beslutning' };
+    const sm = SM[t.status];
+    const c = t.call || {};
+    const res = c.result || null;
+    const WINS = ['torsdag efter kl. 15', 'torsdag efter kl. 16', 'fredag formiddag'];
+    const done = (t.items || []).filter((x) => x.done).length;
+    return {
+      id: t.id, title: t.title, ex: !!t.ex, statusLabel: t.declined ? 'Afvist' : (t.confirmed ? 'Klaret · bekræftet' : sm[0]), badgeStyle: sm[1],
+      shadow: t.status === 'you' || t.status === 'draft' ? '4px 4px 0 #14213D' : 'none',
+      next: t.next, when: t.when || '', who: t.who || '', purpose: t.purpose || t.title, usage: t.usage || '—', kindLabel: KL[t.kind] || '',
+      time: t.time || (t.when || '').replace(/^.*kl\. /, ''),
+      isList: t.kind === 'list', itemCount: (t.items || []).length + ' punkter · ' + done + ' klaret',
+      items: (t.items || []).map((it, i) => ({ t: it.t, done: it.done, pressed: it.done ? 'true' : 'false', toggle: () => this.toggle(t.id, i),
+        boxStyle: it.done ? 'background:#2456F6;border-color:#2456F6' : '', textStyle: it.done ? 'text-decoration:line-through;color:#5B6475' : '' })),
+      whenLower: (t.when || '').charAt(0).toLowerCase() + (t.when || '').slice(1),
+      notifOff: !s.notifOk, notifOn: s.notifOk, enableNotif: () => this.setState({ notifOk: true }),
+      showOptions: t.kind === 'decision' && t.status === 'you',
+      options: (t.options || []).map((o) => ({ label: o, pick: () => this.decide(t.id, o) })),
+      shop: c.shop || '', addr: c.addr || '', phone: c.phone || '', win: c.win || '', shopPrice: c.price || '', confirmed: c.confirmed || '', reply: c.reply || '',
+      apAsk: t.kind === 'call' && t.status === 'you' && !res && s.editing !== t.id,
+      apEdit: s.editing === t.id,
+      apProgress: t.kind === 'call' && t.status === 'progress',
+      apAnswered: res === 'answered', apNoAnswer: res === 'noanswer' && t.status === 'you', apDeclined: res === 'declined',
+      needCredits: s.credits < 3, creditsLeft: s.credits,
+      wins: WINS.map((w) => ({ label: w, pick: () => this.setWin(t.id, w), pressed: c.win === w ? 'true' : 'false', style: c.win === w ? 'background:#14213D;color:#FFFFFF' : '' })),
+      isDraft: t.status === 'draft', notDraft: t.status !== 'draft',
+      history: (t.history || []).slice().reverse(),
+      open: () => this.openTask(t.id), talk: () => this.talk(t.id), pay: () => this.setState({ sheet: 'paywall', sheetFor: t.id }),
+      approve: () => this.approve(t.id), edit: () => this.setState({ editing: t.id }), saveEdit: () => this.setState({ editing: null }), decline: () => this.decline(t.id),
+      answered: () => this.answered(t.id), noanswer: () => this.noanswer(t.id), retry: () => this.retry(t.id)
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const desk = this.desk();
+    const inApp = s.screen !== 'landing';
+    const byId = (id) => s.tasks.find((x) => x.id === id);
+    const awaiting = s.tasks.filter((t) => t.status === 'you' || t.status === 'draft').map((t) => this.tv(t));
+    const today = s.tasks.filter((t) => t.today && t.status !== 'done' && t.status !== 'you' && t.status !== 'draft').map((t) => this.tv(t));
+    const soon = s.tasks.filter((t) => !t.today && (t.status === 'planned' || t.status === 'biz' || t.status === 'progress' || t.agenda)).slice(0, 4).map((t) => this.tv(t));
+    const GROUPS = [['Afventer dit svar', ['you', 'draft']], ['I gang', ['progress']], ['Planlagt', ['planned']], ['Afventer svar fra virksomheden', ['biz']], ['Klaret', ['done']]];
+    const groups = GROUPS.map(([label, st]) => {
+      const items = s.tasks.filter((t) => st.indexOf(t.status) >= 0).map((t) => this.tv(t));
+      return { label: label, count: items.length, items: items };
+    }).filter((g) => g.count);
+    const msgs = s.msgs.map((m) => ({
+      key: m.id, isMe: m.from === 'me', isBotText: m.from === 'bot' && m.kind === 'text', text: m.text || '', about: m.about || '', hasAbout: !!m.about,
+      isList: m.kind === 'list', isRem: m.kind === 'reminder', isMove: m.kind === 'move', before: m.before || '', after: m.after || '',
+      isClarify: m.kind === 'clarify', open: m.kind === 'clarify' && !m.answered, wasAnswered: !!m.answered, answered: m.answered || '',
+      options: (m.options || []).map((o) => ({ label: o.label, sub: o.sub || '', pick: () => this.pick(m.id, o) })),
+      isApproval: m.kind === 'approval', isPaywall: m.kind === 'paywall', isWaiting: m.kind === 'waiting',
+      links: (m.links || []).map((id) => { const x = byId(id); return { title: x ? x.title : '', next: x ? x.next : '', open: () => this.openTask(id) }; }),
+      extra: m.extra || '', hasExtra: !!m.extra,
+      tv: this.tv(m.taskId ? byId(m.taskId) : null) || {}
+    }));
+    const focusT = byId(s.focus);
+    const sel = this.tv(byId(s.selected) || s.tasks[0]) || {};
+    const payT = byId(s.sheetFor);
+    const payDigital = !payT || payT.kind !== 'call';
+    const sheetTitles = { login: 'Gem din opgave', mic: 'Brug mikrofonen', paywall: payDigital ? 'Månedens 10 gratis opgaver er brugt' : 'Du mangler credits til opkaldet', buy: 'Køb 10 credits', sponsor: 'Frivilligt sponsorindslag' };
+    const pane = (on, extra) => (on ? extra : 'display:none');
+    const sc = s.screen;
+    const rightOn = desk ? true : (sc === 'tasks' || sc === 'task' || sc === 'account');
+    const rightWhich = desk ? s.right : sc;
+    const tabsDef = [['day', 'Min dag'], ['chat', 'Samtale'], ['tasks', 'Opgaver'], ['account', 'Konto']];
+    const active = sc === 'task' ? 'tasks' : sc;
+    const go = (w) => () => this.go(w);
+    const pre = (txt) => () => { this.setState({ draft: txt }); };
+    const freeLeft = Math.max(0, 10 - s.freeUsed);
+
+    return {
+      isDesk: desk, inApp: inApp, isLanding: !inApp,
+      rootStyle: 'position:relative;overflow:hidden;display:flex;flex-direction:column;background:#FFFFFF;color:#14213D;font-family:Inter,system-ui,sans-serif;' + (desk ? 'width:1440px;height:900px' : 'width:390px;height:844px'),
+      landingStyle: desk ? 'flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:64px;align-items:center;padding:56px 96px;background:#EEF4FB' : 'flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:24px;padding:28px 20px 32px;background:#EEF4FB',
+      landingTextStyle: 'display:flex;flex-direction:column;gap:16px',
+      heroStyle: desk ? 'margin:0;font-size:68px;line-height:1.02;letter-spacing:-1.5px;font-weight:800' : 'margin:0;font-size:40px;line-height:1.05;letter-spacing:-1px;font-weight:800',
+      exampleStyle: 'display:flex;flex-direction:column;gap:10px;box-shadow:8px 8px 0 #14213D' + (desk ? ';padding:28px' : ''),
+      start: () => this.setState({ screen: 'day' }),
+      bodyStyle: desk ? 'flex:1;min-height:0;display:grid;grid-template-columns:380px minmax(0,1fr) 460px' : 'flex:1;min-height:0;position:relative',
+      dayStyle: desk ? 'min-height:0;overflow-y:auto;border-right:2px solid #14213D;background:#EEF4FB' : pane(sc === 'day', 'position:absolute;inset:0;overflow-y:auto;background:#FFFFFF'),
+      chatStyle: desk ? 'min-height:0;display:flex;flex-direction:column;border-right:2px solid #14213D' : pane(sc === 'chat', 'position:absolute;inset:0;display:flex;flex-direction:column'),
+      rightStyle: desk ? 'min-height:0;overflow-y:auto' : pane(rightOn, 'position:absolute;inset:0;overflow-y:auto'),
+      showTasks: rightWhich === 'tasks', showTask: rightWhich === 'task', showAccount: rightWhich === 'account',
+      showDayComposer: !desk, showDayTitle: desk, showTabs: !desk,
+      dateLabel: 'Onsdag 4. november',
+      draft: s.draft, onDraft: (e) => this.setState({ draft: e.target.value }),
+      onSend: (e) => { if (e && e.preventDefault) e.preventDefault(); this.send(); },
+      placeholder: focusT ? 'Skriv om denne opgave' : 'Skriv, hvad du skal have klaret',
+      mic: () => (s.micOk ? this.setState({ draft: 'Ring til cykelværkstedet og find en tid torsdag efter klokken tre' }) : this.setState({ sheet: 'mic' })),
+      allowMic: () => this.setState({ micOk: true, sheet: null, draft: 'Ring til cykelværkstedet og find en tid torsdag efter klokken tre', screen: desk ? s.screen : (s.screen === 'day' ? 'day' : s.screen) }),
+      shortcuts: [
+        { label: 'Mind mig om', go: pre('Mind mig om at hente pakken i morgen kl. 16') },
+        { label: 'Lav en liste', go: pre('Lav en indkøbsliste med mælk og rugbrød') },
+        { label: 'Ring for mig', go: pre('Ring til cykelværkstedet og aftal aflevering torsdag efter kl. 15') },
+        { label: 'Hvad venter på mig?', go: pre('Hvad venter på mig?') }
+      ],
+      awaiting: awaiting, hasAwaiting: awaiting.length > 0, awaitingCount: String(awaiting.length),
+      today: today, hasToday: today.length > 0, soon: soon, hasSoon: soon.length > 0,
+      dayEmpty: !awaiting.length && !today.length && !soon.length,
+      msgs: msgs, hasFocus: !!focusT, focusTitle: focusT ? focusT.title : '', clearFocus: () => this.setState({ focus: null }),
+      groups: groups, sel: sel,
+      credits: String(s.credits), reserved: String(s.reserved), hasReserved: s.reserved > 0,
+      creditsShort: s.credits + ' credits', freeShort: freeLeft + ' gratis', balanceAria: s.credits + ' credits og ' + freeLeft + ' gratis opgaver tilbage. Åbn konto',
+      freeLeft: String(freeLeft), freeBar: 'height:100%;background:#2456F6;width:' + (s.freeUsed * 10) + '%',
+      accountLine: s.loggedIn ? 'Privat konto · mette@eksempel.dk · adskilt fra virksomhedskonti' : 'Du prøver med eksempeldata. Log ind, når du gemmer din første opgave.',
+      ledger: s.ledger.slice().reverse(), payNote: s.payNote, hasPayNote: !!s.payNote,
+      tabs: tabsDef.map(([k, l]) => ({ label: l, go: go(k), current: active === k ? 'page' : 'false',
+        style: active === k ? 'color:#14213D' : 'color:#5B6475',
+        dot: 'width:28px;height:4px;border-radius:2px;background:' + (active === k ? '#14213D' : 'transparent') })),
+      goHome: () => this.setState({ screen: s.screen === 'landing' ? 'landing' : 'day' }),
+      goTasks: go('tasks'), goAccount: go('account'),
+      hasSheet: !!s.sheet, sheetTitle: sheetTitles[s.sheet] || '',
+      sheetLogin: s.sheet === 'login', sheetMic: s.sheet === 'mic', sheetPay: s.sheet === 'paywall', sheetBuy: s.sheet === 'buy', sheetSponsor: s.sheet === 'sponsor',
+      overlayStyle: 'position:absolute;inset:0;z-index:20;background:rgba(20,33,61,.55);display:flex;' + (desk ? 'align-items:center;justify-content:center' : 'align-items:flex-end'),
+      sheetStyle: 'background:#FFFFFF;border:2px solid #14213D;display:flex;flex-direction:column;gap:12px;padding:18px 18px 22px;max-height:92%;overflow-y:auto;' + (desk ? 'width:480px;border-radius:20px;box-shadow:8px 8px 0 #14213D' : 'width:100%;border-radius:20px 20px 0 0'),
+      closeSheet: () => this.setState({ sheet: null, draft: s.sheet === 'login' && s.pendingText ? s.pendingText : s.draft }),
+      login: () => { const p = s.pendingText; this.setState({ loggedIn: true, sheet: null, pendingText: null }, () => { if (p) this.process(p); }); },
+      payTitle: payT ? payT.title : '', payDigital: payDigital,
+      payText: payDigital ? 'Opgaven er gemt som udkast. Fortsæt med 1 credit, køb credits eller se et frivilligt sponsorindslag – eller vent til december, hvor du får 10 nye gratis opgaver.' : 'Et opkald reserverer 3 credits, når du godkender. Du har ' + s.credits + '.',
+      noCredit: s.credits < 1, noSponsor: s.sponsorToday >= 2, sponsorLeft: String(2 - s.sponsorToday),
+      useCredit: () => this.useCredit(), openBuy: () => this.setState({ sheet: 'buy' }), openSponsor: () => this.setState({ sheet: 'sponsor' }),
+      backToPay: () => this.setState({ sheet: s.sheetFor ? 'paywall' : null }),
+      buy: () => this.buy(), watched: () => this.watched(), later: () => this.later(),
+      useUp: () => this.setState({ freeUsed: 10 }), repeatPay: () => this.repeatPay(),
+      clearEx: () => this.setState({ tasks: s.tasks.filter((t) => !t.ex), selected: null }),
+      reset: () => { this.n = 1000; this.setState(Object.assign(this.fresh(), { screen: 'day' })); }
+    };
+  }
+}
+</script>
+</body>
+</html>

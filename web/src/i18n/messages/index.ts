@@ -5,6 +5,7 @@ import da_auth from "./da/auth.json";
 import da_common from "./da/common.json";
 import da_landing from "./da/landing.json";
 import da_legal from "./da/legal.json";
+import da_privat from "./da/privat.json";
 import da_settings from "./da/settings.json";
 import da_setup from "./da/setup.json";
 import da_site from "./da/site.json";
@@ -15,6 +16,7 @@ import de_auth from "./de/auth.json";
 import de_common from "./de/common.json";
 import de_landing from "./de/landing.json";
 import de_legal from "./de/legal.json";
+import de_privat from "./de/privat.json";
 import de_settings from "./de/settings.json";
 import de_setup from "./de/setup.json";
 import de_site from "./de/site.json";
@@ -25,6 +27,7 @@ import en_auth from "./en/auth.json";
 import en_common from "./en/common.json";
 import en_landing from "./en/landing.json";
 import en_legal from "./en/legal.json";
+import en_privat from "./en/privat.json";
 import en_settings from "./en/settings.json";
 import en_setup from "./en/setup.json";
 import en_site from "./en/site.json";
@@ -35,6 +38,7 @@ import es_auth from "./es/auth.json";
 import es_common from "./es/common.json";
 import es_landing from "./es/landing.json";
 import es_legal from "./es/legal.json";
+import es_privat from "./es/privat.json";
 import es_settings from "./es/settings.json";
 import es_setup from "./es/setup.json";
 import es_site from "./es/site.json";
@@ -45,6 +49,7 @@ import fr_auth from "./fr/auth.json";
 import fr_common from "./fr/common.json";
 import fr_landing from "./fr/landing.json";
 import fr_legal from "./fr/legal.json";
+import fr_privat from "./fr/privat.json";
 import fr_settings from "./fr/settings.json";
 import fr_setup from "./fr/setup.json";
 import fr_site from "./fr/site.json";
@@ -55,6 +60,7 @@ import it_auth from "./it/auth.json";
 import it_common from "./it/common.json";
 import it_landing from "./it/landing.json";
 import it_legal from "./it/legal.json";
+import it_privat from "./it/privat.json";
 import it_settings from "./it/settings.json";
 import it_setup from "./it/setup.json";
 import it_site from "./it/site.json";
@@ -65,6 +71,7 @@ import no_auth from "./no/auth.json";
 import no_common from "./no/common.json";
 import no_landing from "./no/landing.json";
 import no_legal from "./no/legal.json";
+import no_privat from "./no/privat.json";
 import no_settings from "./no/settings.json";
 import no_setup from "./no/setup.json";
 import no_site from "./no/site.json";
@@ -75,6 +82,7 @@ import sv_auth from "./sv/auth.json";
 import sv_common from "./sv/common.json";
 import sv_landing from "./sv/landing.json";
 import sv_legal from "./sv/legal.json";
+import sv_privat from "./sv/privat.json";
 import sv_settings from "./sv/settings.json";
 import sv_setup from "./sv/setup.json";
 import sv_site from "./sv/site.json";
@@ -88,6 +96,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     common: da_common,
     landing: da_landing,
     legal: da_legal,
+    privat: da_privat,
     settings: da_settings,
     setup: da_setup,
     site: da_site,
@@ -100,6 +109,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     common: de_common,
     landing: de_landing,
     legal: de_legal,
+    privat: de_privat,
     settings: de_settings,
     setup: de_setup,
     site: de_site,
@@ -112,6 +122,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     common: en_common,
     landing: en_landing,
     legal: en_legal,
+    privat: en_privat,
     settings: en_settings,
     setup: en_setup,
     site: en_site,
@@ -124,6 +135,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     common: es_common,
     landing: es_landing,
     legal: es_legal,
+    privat: es_privat,
     settings: es_settings,
     setup: es_setup,
     site: es_site,
@@ -136,6 +148,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     common: fr_common,
     landing: fr_landing,
     legal: fr_legal,
+    privat: fr_privat,
     settings: fr_settings,
     setup: fr_setup,
     site: fr_site,
@@ -148,6 +161,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     common: it_common,
     landing: it_landing,
     legal: it_legal,
+    privat: it_privat,
     settings: it_settings,
     setup: it_setup,
     site: it_site,
@@ -160,6 +174,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     common: no_common,
     landing: no_landing,
     legal: no_legal,
+    privat: no_privat,
     settings: no_settings,
     setup: no_setup,
     site: no_site,
@@ -172,6 +187,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     common: sv_common,
     landing: sv_landing,
     legal: sv_legal,
+    privat: sv_privat,
     settings: sv_settings,
     setup: sv_setup,
     site: sv_site,

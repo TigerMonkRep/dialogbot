@@ -815,7 +815,10 @@
       "sales": "Dialogbots salg",
       "sessions": "Logget ind på {n|1 enhed|# enheder}. Nulstiller du adgangskoden, logges alle ud.",
       "thisDevice": "denne enhed",
-      "lastActive": "sidst aktiv {at}"
+      "lastActive": "sidst aktiv {at}",
+      "switchLabel": "Skift mellem virksomhed og privat",
+      "business": "Virksomhed",
+      "private": "Privat"
     },
     "ws": {
       "title": "Arbejdsrum",

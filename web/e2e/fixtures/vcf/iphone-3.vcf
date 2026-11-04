@@ -1,0 +1,21 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Hansen;Anna;;;
+FN:Anna Hansen
+TEL;type=HOME;type=VOICE:+45 86 12 34 56
+TEL;type=CELL;type=VOICE;type=pref:+45 21 22 23 24
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+N:Jensen;Peter;;;
+FN:Peter
+  Jensen
+item1.TEL;type=pref:31 32 33 34
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+N:Ørsted;Mor;;;
+FN:Mor Ørsted
+TEL;type=CELL:41424344
+EMAIL:mor@example.com
+END:VCARD

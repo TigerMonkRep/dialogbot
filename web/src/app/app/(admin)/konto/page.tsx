@@ -166,6 +166,13 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
             <Link href="/password/forgot" className="inline-flex items-center min-h-[44px] px-4 rounded-xl border-[1.5px] border-ink text-[14px] font-semibold text-ink hover:bg-panel">{t("account.me.changePassword")}</Link>
             <LogoutButton />
           </div>
+          {(process.env.NEXT_PUBLIC_PRIVAT_SWITCH === "1" || process.env.NEXT_PUBLIC_PRIVAT_FAKE === "1") && (
+            <div role="group" aria-label={t("account.me.switchLabel")} className="grid grid-cols-2 gap-1 p-1 rounded-full border-2 border-ink max-w-xs">
+              <span aria-current="true" className="min-h-[40px] rounded-full bg-ink text-paper text-[14px] font-semibold inline-flex items-center justify-center">{t("account.me.business")}</span>
+              {/* Dialogbot Privat creates the private account itself (POST /privat/account) on its first load. */}
+              <Link href="/privat/dag" className="min-h-[40px] rounded-full text-[14px] font-semibold inline-flex items-center justify-center hover:bg-panel">{t("account.me.private")}</Link>
+            </div>
+          )}
           {me.is_platform_operator && <Link href="/app/operator/admin" className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-highlight border-[1.5px] border-ink text-[14px] font-semibold text-ink">{t("account.me.operator")}</Link>}
           {me.is_platform_operator && <Link href="/app/operator/salg" className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-paper border-[1.5px] border-ink text-[14px] font-semibold text-ink">{t("account.me.sales")}</Link>}
           <p className="text-[13px] text-muted">{t("account.me.sessions", { n: sessions.length })}</p>

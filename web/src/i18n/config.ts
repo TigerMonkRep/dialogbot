@@ -20,7 +20,7 @@ export const OG_LOCALE: Record<Locale, string> = {
 };
 
 /** Message namespaces – one JSON file per namespace per locale (messages/<locale>/<ns>.json). */
-export const NAMESPACES = ["common", "site", "landing", "articles", "legal", "auth", "setup", "app", "settings", "widget"] as const;
+export const NAMESPACES = ["common", "site", "landing", "articles", "legal", "auth", "setup", "app", "settings", "widget", "privat"] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 
 export function isLocale(v: unknown): v is Locale {

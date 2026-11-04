@@ -815,7 +815,10 @@
       "sales": "Dialogbot-Vertrieb",
       "sessions": "Angemeldet auf {n|1 Gerät|# Geräten}. Wenn Sie das Passwort zurücksetzen, werden alle abgemeldet.",
       "thisDevice": "dieses Gerät",
-      "lastActive": "zuletzt aktiv {at}"
+      "lastActive": "zuletzt aktiv {at}",
+      "switchLabel": "Zwischen Firma und privat wechseln",
+      "business": "Firma",
+      "private": "Privat"
     },
     "ws": {
       "title": "Arbeitsbereiche",

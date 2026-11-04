@@ -815,7 +815,10 @@
       "sales": "Dialogbot sales",
       "sessions": "Logged in on {n|1 device|# devices}. If you reset your password, everyone is logged out.",
       "thisDevice": "this device",
-      "lastActive": "last active {at}"
+      "lastActive": "last active {at}",
+      "switchLabel": "Switch between business and private",
+      "business": "Business",
+      "private": "Private"
     },
     "ws": {
       "title": "Workspace",

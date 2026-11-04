@@ -113,7 +113,14 @@ HANDLERS = {
     "email.branded": handle_branded,  # any mail built where it is queued (tpl.to_payload)
     "sales.message": lambda db, ev: _sales_message(db, ev),
     "sales.recording_fetch": lambda db, ev: _sales_recording(db, ev),
+    "privat.reminder": lambda db, ev: _privat_reminder(db, ev),
 }
+
+
+def _privat_reminder(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.privat.service import handle_reminder
+
+    handle_reminder(db, ev)
 
 
 def _sales_recording(db: OrmSession, ev: OutboxEvent) -> None:
@@ -331,6 +338,16 @@ def run_schedules() -> None:
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("sales.retention_failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
+        try:  # Dialogbot Privat: release reservations of calls that never got a report
+            from app.modules.privat.calls import sweep_stale
+
+            n = sweep_stale(db)
+            if n:
+                log.info("privat.calls_released", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("privat.sweep_failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
         try:
             from app.modules.social.service import run_due as run_social

@@ -163,7 +163,8 @@ def get_workspace_context(
         # Not a member: respond as if the workspace does not exist.
         raise NotFound("Arbejdsrummet findes ikke")
     workspace = db.get(Workspace, workspace_id)
-    if workspace is None or workspace.status == "closed":
+    if workspace is None or workspace.status == "closed" or workspace.kind != "business":
+        # A personal (Dialogbot Privat) workspace is never reachable through business endpoints.
         raise NotFound("Arbejdsrummet findes ikke")
     return WorkspaceContext(principal=principal, workspace=workspace, membership=membership)
 

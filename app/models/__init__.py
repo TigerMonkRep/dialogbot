@@ -82,6 +82,23 @@ from app.models.identity import (  # noqa: F401
     User,
     Workspace,
 )
+from app.models.privat import (  # noqa: F401, E402
+    CreditLedger,
+    PrivateAddonEnabled,
+    PrivateCall,
+    PrivateGroup,
+    PrivateGroupLink,
+    PrivateGroupMember,
+    PrivateInvite,
+    PrivateMessage,
+    PrivatePhoneCode,
+    PrivateProfile,
+    PrivateReferral,
+    PrivateTask,
+    PrivateTaskEvent,
+    PrivateTaskItem,
+    PrivateTaskMember,
+)
 from app.models.sales import (  # noqa: F401
     CallRecording,
     SalesBlockList,

@@ -45,6 +45,8 @@ class User(Base):
     interface_language: Mapped[str] = mapped_column(String(16), nullable=False, default="da")
     # Product intent chosen on signup (A01): reception | campaigns | both
     signup_intent: Mapped[str | None] = mapped_column(String(32))
+    # Where the user came from, e.g. "invite:<private_invites.id>" (Dialogbot Privat). The raw token is never stored.
+    signup_source: Mapped[str | None] = mapped_column(String(80))
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     # Dialogbot staff who may review rights and publish platform voices. Set only via scripts/grant_operator.py.
     is_platform_operator: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
@@ -99,12 +101,18 @@ class AuthToken(Base):
 
 class Workspace(Base):
     __tablename__ = "workspaces"
-    __table_args__ = (CheckConstraint("status in ('active','closing','closed')", name="ck_workspaces_status"),)
+    __table_args__ = (
+        CheckConstraint("status in ('active','closing','closed')", name="ck_workspaces_status"),
+        CheckConstraint("kind in ('business','personal')", name="ck_workspaces_kind"),
+    )
 
     id: Mapped[uuid.UUID] = uuid_pk()
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     slug: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="active")
+    # business = a company using Dialogbot; personal = one consumer's Dialogbot Privat space (app/modules/privat).
+    # Business endpoints never resolve a personal workspace (app.core.auth.get_workspace_context).
+    kind: Mapped[str] = mapped_column(String(16), nullable=False, default="business", server_default="business")
     # Product intent at workspace level (A06): reception | campaigns | both
     product_intent: Mapped[str] = mapped_column(String(32), nullable=False, default="reception")
     # Monotonic revision of the workspace's approved knowledge; bumped on approval.

@@ -212,7 +212,8 @@ def invoice_due(db: OrmSession, today_utc: datetime | None = None) -> int:
     if not configured():
         return 0
     n = 0
-    for a in db.scalars(select(BillingAccount).where(BillingAccount.payment_method_id.is_not(None))).all():
+    for a in db.scalars(select(BillingAccount).join(Workspace, Workspace.id == BillingAccount.workspace_id)
+                        .where(BillingAccount.payment_method_id.is_not(None), Workspace.kind == "business")).all():
         ws = db.get(Workspace, a.workspace_id)
         tz = tz_of(db, ws.id)
         first = local_today(tz).replace(day=1)
@@ -247,6 +248,12 @@ def verify_signature(secret: str, header: str | None, payload: bytes, now: float
 def process_event(db: OrmSession, event: dict) -> str:
     kind = str(event.get("type") or "")
     obj = (event.get("data") or {}).get("object") or {}
+    if kind.startswith("checkout.session."):
+        from app.modules.privat.payments import on_checkout_event
+
+        privat = on_checkout_event(db, kind, obj)  # Dialogbot Privat credit packs (mode=payment)
+        if privat is not None:
+            return privat
     if kind == "checkout.session.completed" and obj.get("mode") == "setup" and obj.get("setup_intent"):
         return "applied" if save_card_from_setup_intent(db, str(obj["setup_intent"])) else "ignored"
     if kind.startswith("invoice.") and obj.get("id"):

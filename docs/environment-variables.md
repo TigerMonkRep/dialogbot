@@ -88,6 +88,12 @@
 | `FRONTEND_BASE_URL` | ja | API, worker | Vercel-URL | Links i mails (verificering, reset, invitation). |
 | `WORKER_POLL_SECONDS`, `WORKER_LEASE_SECONDS`, `WORKER_MAX_ATTEMPTS` | nej | worker | — | 1 / 60 / 5. |
 | `LOG_LEVEL` | nej | API, worker | — | `INFO`. |
+| `PRIVAT_ENABLED` | nej | API, worker | — | Dialogbot Privat (docs/privat-api.md). Standard `false`. |
+| `PRIVAT_ALLOWED_EMAILS` | nej | API | — | Kommaliste over e-mails i piloten; tom = alle (når slået til). |
+| `PRIVAT_POOL_NUMBERS` | ved private opkald | API, worker | Dialogbots egne Vapi-numre | Kommaliste `+45…=<vapi-phone-number-id>`; ringer ud og modtager tilbageopkald. Købes manuelt – koden køber aldrig numre. |
+| `PRIVAT_STRIPE_PRICE_ID` | nej | API | Stripe → Products | Pris for 10 credits (29,00 kr. inkl. moms). Tom = inline-pris 2900 øre. |
+| `PRIVAT_DEFAULT_ADDONS` | nej | API | — | Tilføjelser slået til for nye private konti. Standard `ring-for-mig,delte-lister,oenskelister`. |
+| `PRIVAT_SHORT_URL_BASE`, `PRIVAT_GROUP_URL_BASE` | nej | API | — | Korte links i SMS-tekster. Standard `https://dialogbot.app/i/` og `/g/`. |
 | `SEED_DEMO_PASSWORD` | nej | manuel kørsel (kun dev/staging) | — | Seed nægter `prod`. |
 | `TEST_DATABASE_URL` | CI/lokal test | pytest | — | Separat database; skemaet droppes ved hver kørsel. |
 

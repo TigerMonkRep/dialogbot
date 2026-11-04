@@ -35,7 +35,7 @@ def _audit(db, request, principal, run: SttTestRun, action: str) -> None:
 
 @router.get("")
 def overview(principal: Principal = Depends(operator), db: OrmSession = Depends(get_db)):
-    workspaces = [{"id": str(w.id), "name": w.name} for w in db.scalars(select(Workspace).order_by(Workspace.name))]
+    workspaces = [{"id": str(w.id), "name": w.name} for w in db.scalars(select(Workspace).where(Workspace.kind == "business").order_by(Workspace.name))]
     return {"testmode": True, "honesty": HONESTY, "profiles": [profiles.describe(p) for p in profiles.PROFILES],
             "manifest": manifest.overview(), "workspaces": workspaces,
             "summary": {"final": service.summary(db, "final", "controlled"), "tuning": service.summary(db, "tuning", "controlled")},

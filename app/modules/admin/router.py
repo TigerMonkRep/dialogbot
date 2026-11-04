@@ -129,9 +129,11 @@ def overview(db: OrmSession = Depends(get_db), principal: Principal = Depends(op
         "environment": s.app_env,
         "schema": st,
         "tiles": {
-            "workspaces": db.scalar(select(func.count()).select_from(Workspace).where(Workspace.status == "active")) or 0,
+            "workspaces": db.scalar(select(func.count()).select_from(Workspace).where(
+                Workspace.status == "active", Workspace.kind == "business")) or 0,
             "users": db.scalar(select(func.count()).select_from(User).where(User.is_active.is_(True))) or 0,
-            "new_workspaces_7d": db.scalar(select(func.count()).select_from(Workspace).where(Workspace.created_at > week)) or 0,
+            "new_workspaces_7d": db.scalar(select(func.count()).select_from(Workspace).where(
+                Workspace.created_at > week, Workspace.kind == "business")) or 0,
             "calls_7d": db.scalar(select(func.count()).select_from(Call).where(Call.started_at > week)) or 0,
             "conversations_7d": db.scalar(select(func.count()).select_from(Conversation).where(Conversation.created_at > week)) or 0,
             "leads_7d": db.scalar(select(func.count()).select_from(Lead).where(Lead.created_at > week)) or 0,
@@ -153,12 +155,13 @@ def _owner(db: OrmSession, ws_id: uuid.UUID) -> User | None:
 @router.get("/customers")
 def customers(q: str = Query(default="", max_length=100), limit: int = Query(default=50, ge=1, le=200),
               db: OrmSession = Depends(get_db), principal: Principal = Depends(operator)):
-    stmt = select(Workspace).order_by(desc(Workspace.created_at)).limit(limit)
+    stmt = select(Workspace).where(Workspace.kind == "business").order_by(desc(Workspace.created_at)).limit(limit)
     if q.strip():
         like = f"%{q.strip().lower()}%"
         member_ws = select(Membership.workspace_id).join(User, User.id == Membership.user_id).where(
             or_(func.lower(User.email).like(like), func.lower(User.display_name).like(like)))
-        stmt = select(Workspace).where(or_(func.lower(Workspace.name).like(like), Workspace.id.in_(member_ws))) \
+        stmt = select(Workspace).where(Workspace.kind == "business",
+                                       or_(func.lower(Workspace.name).like(like), Workspace.id.in_(member_ws))) \
             .order_by(desc(Workspace.created_at)).limit(limit)
     week = _now() - timedelta(days=30)
     out = []
@@ -177,7 +180,7 @@ def customers(q: str = Query(default="", max_length=100), limit: int = Query(def
 @router.get("/customers/{workspace_id}")
 def customer(workspace_id: uuid.UUID, db: OrmSession = Depends(get_db), principal: Principal = Depends(operator)):
     ws = db.get(Workspace, workspace_id)
-    if ws is None:
+    if ws is None or ws.kind != "business":  # private consumers are not business customers
         raise NotFound("Kunden findes ikke")
     members = db.execute(select(Membership, User).join(User, User.id == Membership.user_id)
                          .where(Membership.workspace_id == ws.id).order_by(Membership.created_at)).all()
@@ -226,7 +229,7 @@ def users(q: str = Query(default="", max_length=100), limit: int = Query(default
     out = []
     for u in db.scalars(stmt):
         ms = db.execute(select(Membership.role, Workspace.id, Workspace.name).join(Workspace, Workspace.id == Membership.workspace_id)
-                        .where(Membership.user_id == u.id)).all()
+                        .where(Membership.user_id == u.id, Workspace.kind == "business")).all()
         amb = db.scalar(select(Ambassador).where(Ambassador.user_id == u.id))
         seen = db.scalar(select(func.max(Session.last_seen_at)).where(Session.user_id == u.id, Session.impersonator_user_id.is_(None)))
         out.append({"id": str(u.id), "email": u.email, "name": u.display_name, "active": u.is_active,

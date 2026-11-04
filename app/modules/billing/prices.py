@@ -28,3 +28,11 @@ def kr(minor: int) -> str:
     """Whole øre → "2.495" or "4" or "4,50" (Danish thousands separator, decimals only when needed)."""
     whole = f"{minor // 100:,}".replace(",", ".")
     return whole + (f",{minor % 100:02d}" if minor % 100 else "")
+
+# Dialogbot Privat: a pack of credits, bought by consumers with Stripe Checkout (mode=payment). Prices incl. VAT.
+PRIVAT_CREDIT_PACK_CREDITS = 10
+PRIVAT_CREDIT_PACK_NET_MINOR = 2320       # 23,20 kr. excl. VAT
+PRIVAT_CREDIT_PACK_GROSS_MINOR = PRIVAT_CREDIT_PACK_NET_MINOR * (10000 + TAX_BASIS_POINTS) // 10000  # 29 kr.
+PRIVAT_CALL_CREDITS = 3                   # an approved call reserves 3 credits; released if nobody answers
+PRIVAT_FREE_TASKS_PER_MONTH = 10
+PRIVAT_WELCOME_CREDITS = 3

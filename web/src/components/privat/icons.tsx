@@ -20,12 +20,25 @@ const P: Record<string, React.ReactNode> = {
   trash: <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" />,
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
   plus: <path d="M12 5v14M5 12h14" />,
+  // Butikken (app icons)
+  cake: <><path d="M4 20h16M5 20v-6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6" /><path d="M5 15.5c1.2 0 1.2 1 2.4 1s1.2-1 2.3-1 1.2 1 2.3 1 1.2-1 2.3-1 1.2 1 2.4 1" /><path d="M12 12V9M12 6.5a1.5 1.5 0 0 0 0-3 1.5 1.5 0 0 0 0 3z" /></>,
+  utensils: <><path d="M5 3v7a3 3 0 0 0 6 0V3M8 3v18" /><path d="M18 3c-2 1-3 4-3 7v2h3v9M18 3v9" /></>,
+  car: <><path d="M4 16v-4l2-5h12l2 5v4z" /><path d="M4 12h16M6 16v2M18 16v2" /><circle cx="7.5" cy="14" r=".6" /><circle cx="16.5" cy="14" r=".6" /></>,
+  receipt: <><path d="M6 3h12v18l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5L6 21z" /><path d="M9 8h6M9 12h6M9 16h4" /></>,
+  stethoscope: <><path d="M6 3v6a5 5 0 0 0 10 0V3" /><path d="M11 14v2a4 4 0 0 0 8 0v-2" /><circle cx="19" cy="12" r="2" /></>,
+  suitcase: <><rect x="3.5" y="8" width="17" height="12" rx="2" /><path d="M9 8V5h6v3M9 8v12M15 8v12" /></>,
+  sparkle: <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" />,
+  shop: <><path d="M4 9l1.5-5h13L20 9" /><path d="M4 9a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0" /><path d="M5 11v9h14v-9M10 20v-5h4v5" /></>,
+  home: <><path d="M4 11l8-7 8 7" /><path d="M6 10v10h12V10" /><path d="M10 20v-6h4v6" /></>,
+  user: <><circle cx="12" cy="8" r="4" /><path d="M4.5 21a7.5 7.5 0 0 1 15 0" /></>,
 };
 
 /** Known add-on icon keys map onto these; anything new falls back to the generic puzzle piece. */
 export function iconFor(key: string | null | undefined): string {
   const k = (key ?? "").toLowerCase();
-  const alias: Record<string, string> = { call: "phone", telephone: "phone", group: "users", shared: "users", wishlist: "gift", box: "package", parcel: "package" };
+  const alias: Record<string, string> = { call: "phone", telephone: "phone", group: "users", shared: "users", wishlist: "gift", box: "package", parcel: "package",
+    birthday: "cake", birthdays: "cake", food: "utensils", meal: "utensils", mealplan: "utensils", fork: "utensils", vehicle: "car", auto: "car", bill: "receipt", bills: "receipt", invoice: "receipt",
+    doctor: "stethoscope", health: "stethoscope", medical: "stethoscope", travel: "suitcase", luggage: "suitcase", packing: "suitcase", trip: "suitcase", reminder: "bell", lists: "list", store: "shop" };
   return P[k] ? k : alias[k] && P[alias[k]] ? alias[k] : "puzzle";
 }
 
@@ -37,9 +50,9 @@ export function Ico({ name, size = 20, stroke = 2.2, className = "" }: { name: s
 }
 
 /** White icon on a blue tile (brand: "Ikoner: 2,2 px streg, hvide på blå flise"). */
-export function Tile({ name, size = 40 }: { name: string; size?: number }) {
+export function Tile({ name, size = 40, className = "bg-accent text-white rounded-[10px]" }: { name: string; size?: number; className?: string }) {
   return (
-    <span className="inline-flex items-center justify-center rounded-[10px] bg-accent text-white shrink-0" style={{ width: size, height: size }} aria-hidden>
+    <span className={`inline-flex items-center justify-center shrink-0 ${className}`} style={{ width: size, height: size }} aria-hidden>
       <Ico name={name} size={Math.round(size / 2)} />
     </span>
   );

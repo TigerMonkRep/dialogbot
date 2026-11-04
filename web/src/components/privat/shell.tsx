@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 import { LogoMark } from "@/components/ui";
 import { useT } from "@/i18n/client";
 import { AccountPane } from "./account";
-import { AddonsPage } from "./addons";
+import { StorePage } from "./addons";
 import { PeoplePage } from "./people";
 import { Sim } from "./bits";
 import { ChatPane } from "./chat";
-import { DayPane } from "./day";
+import { DayPage } from "./day";
 import { Ico } from "./icons";
 import { Sheets } from "./sheets";
 import { registerSw } from "@/lib/privat/push";
-import { PrivatProvider, initials, usePrivat, type Screen, type Session } from "./store";
+import { PrivatProvider, initials, usePlan, usePrivat, type Screen, type Session } from "./store";
 import { TaskDetail, TasksPane } from "./tasks";
 
 export function PrivatApp({ session }: { session: Session }) {
@@ -28,36 +28,37 @@ function Shell() {
   // The push service worker (public/sw.js) is registered for the /privat pages; asking for permission comes later.
   useEffect(() => { void registerSw(); }, []);
   const t = useT("privat");
-  const { screen, routeTaskId, isDesk, busy, mode } = usePrivat();
-  // On a wide screen the right column shows Opgaver unless the route asks for a task, Konto or Tilføjelser.
-  const right: Screen = screen === "day" || screen === "chat" ? "tasks" : screen;
-  const show = (s: "day" | "chat" | "right") => (s === "right" ? ["tasks", "task", "account", "addons", "people"].includes(screen) : screen === s);
-  const pane = (s: "day" | "chat" | "right") => `${show(s) ? "flex" : "hidden"} xl:flex`;
-  void isDesk;
+  const { screen, routeTaskId, busy, mode } = usePrivat();
+  // Min dag is its own page. Every other screen keeps the conversation on a wide screen: Samtale on the left and
+  // Opgaver (or the task, Konto, Butikken, Folk) on the right; on a phone one of them fills the screen.
+  const right: Screen = screen === "chat" ? "tasks" : screen;
+  const rightLabel = right === "store" || right === "addons" ? t("nav.store") : t(`header.right.${right}`);
+  const pane = (on: boolean) => `${on ? "flex" : "hidden"} xl:flex`;
   return (
     <div className="h-dvh flex flex-col bg-paper text-ink overflow-hidden app-type" data-busy={busy || mode === "loading" ? "true" : "false"}>
       <a href="#privat-main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-3 focus:py-2 focus:rounded-lg focus:bg-ink focus:text-paper">{t("header.skip")}</a>
       <Header />
       <AccountNotice />
-      <div id="privat-main" className="flex-1 min-h-0 relative xl:grid xl:grid-cols-[380px_minmax(0,1fr)_460px]">
-        <section aria-label={t("day.title")} className={`${pane("day")} flex-col absolute inset-0 xl:static overflow-y-auto bg-paper xl:bg-panel xl:border-r-2 xl:border-ink`}>
-          <div className="w-full max-w-[720px] mx-auto xl:max-w-none"><DayPane /></div>
-        </section>
-        <section aria-label={t("chat.label")} className={`${pane("chat")} flex-col absolute inset-0 xl:static min-h-0 xl:border-r-2 xl:border-ink`}>
-          <div className="flex-1 min-h-0 flex flex-col w-full max-w-[720px] mx-auto xl:max-w-none"><ChatPane /></div>
-        </section>
-        <section aria-label={t(`header.right.${right}`)} className={`${pane("right")} flex-col absolute inset-0 xl:static overflow-y-auto`}>
-          <div className="w-full max-w-[720px] mx-auto xl:max-w-none">
-            <Suspense>
-              {right === "tasks" && <TasksPane />}
-              {right === "task" && routeTaskId && <TaskDetail key={routeTaskId} id={routeTaskId} />}
-              {right === "account" && <AccountPane />}
-              {right === "addons" && <AddonsPage />}
-              {right === "people" && <PeoplePage />}
-            </Suspense>
-          </div>
-        </section>
-      </div>
+      {screen === "day" ? (
+        <main id="privat-main" aria-label={t("day.title")} className="flex-1 min-h-0 overflow-y-auto bg-paper"><DayPage /></main>
+      ) : (
+        <div id="privat-main" className="flex-1 min-h-0 relative xl:grid xl:grid-cols-[minmax(0,1fr)_480px]">
+          <section aria-label={t("chat.label")} className={`${pane(screen === "chat")} flex-col absolute inset-0 xl:static min-h-0 xl:border-r-2 xl:border-ink`}>
+            <div className="flex-1 min-h-0 flex flex-col w-full max-w-[760px] mx-auto xl:max-w-none"><ChatPane /></div>
+          </section>
+          <section aria-label={rightLabel} className={`${pane(screen !== "chat")} flex-col absolute inset-0 xl:static overflow-y-auto`}>
+            <div className="w-full max-w-[720px] mx-auto xl:max-w-none">
+              <Suspense>
+                {right === "tasks" && <TasksPane />}
+                {right === "task" && routeTaskId && <TaskDetail key={routeTaskId} id={routeTaskId} />}
+                {right === "account" && <AccountPane />}
+                {(right === "store" || right === "addons") && <StorePage />}
+                {right === "people" && <PeoplePage />}
+              </Suspense>
+            </div>
+          </section>
+        </div>
+      )}
       <Tabs />
       <Sheets />
     </div>
@@ -77,29 +78,44 @@ function AccountNotice() {
   return null;
 }
 
+/** Header: logo + PRIVAT pill, the pill navigation (wide screens), the plan badge and the account avatar. */
 function Header() {
   const t = useT("privat");
-  const { balance, go, mode, simulated, loggedIn, session } = usePrivat();
+  const { balance, go, mode, simulated, loggedIn, session, screen } = usePrivat();
+  const p = usePlan();
   const free = balance ? Math.max(0, balance.free_limit - balance.free_used) : null;
+  const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : screen === "addons" ? "store" : screen;
+  const nav: [Screen, string][] = [["day", "nav.day"], ["tasks", "nav.tasks"], ["store", "nav.store"]];
+  // The badge: «Plus · prøveperiode, 9 dage tilbage», the plan name, or (without rights) credits and free tasks.
+  const badge = p.entitled
+    ? (p.status === "trial" ? t("nav.trialBadge", { plan: p.rightsName, n: p.trialDays }) : t("nav.planBadge", { plan: p.rightsName }))
+    : balance ? `${t("header.credits", { n: balance.credits })} · ${t("header.free", { n: free ?? 0 })}` : "";
+  const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialBadgeShort", { plan: p.rightsName, n: p.trialDays }) : p.entitled ? p.rightsName : balance ? t("header.credits", { n: balance.credits }) : "";
   return (
     <header className="flex-none flex items-center gap-2.5 px-4 py-3 min-h-16 border-b-2 border-ink bg-paper pt-safe">
       <Link href="/privat/dag" aria-label={t("header.homeAria")} className="flex items-center gap-2.5 min-w-0 min-h-[44px]">
         <LogoMark size={36} />
         <span className="font-display font-extrabold text-[22px] tracking-[-0.3px] hidden min-[380px]:inline">Dialogbot</span>
-        <span className="text-[13px] font-semibold text-muted border-[1.5px] border-line rounded-full px-2 py-0.5">{t("brand.privat")}</span>
+        <span className="text-[11px] font-bold tracking-[0.08em] uppercase text-accent border-[1.5px] border-accent rounded-full px-2 py-0.5">{t("brand.privat")}</span>
       </Link>
       {simulated && <span className="hidden sm:inline-flex"><Sim /></span>}
+      <nav aria-label={t("nav.primary")} className="hidden xl:flex items-center gap-1 ml-4 p-1 rounded-full border-2 border-ink bg-paper">
+        {nav.map(([k, label]) => (
+          <button key={k} type="button" onClick={() => go(k)} aria-current={active === k ? "page" : undefined}
+            className={`min-h-[38px] px-4 rounded-full text-[14px] font-semibold whitespace-nowrap ${active === k ? "bg-ink text-paper" : "text-ink hover:bg-panel"}`}>{t(label)}</button>
+        ))}
+      </nav>
       <span className="flex-1" />
       {balance && (
-        <button type="button" onClick={() => go("account")} aria-label={t("header.balanceAria", { credits: balance.credits, free: free ?? 0 })}
-          className="inline-flex items-center gap-2 min-h-[44px] px-3 rounded-full border-2 border-ink bg-paper text-[14px] font-semibold whitespace-nowrap hover:bg-panel" data-testid="balance-chip">
-          <Ico name="coin" size={18} />
-          <span>{t("header.credits", { n: balance.credits })}</span>
-          <span className="text-muted font-medium hidden min-[400px]:inline">· {t("header.free", { n: free ?? 0 })}</span>
+        <button type="button" onClick={() => go("account")} aria-label={p.entitled ? t("nav.planAria", { text: badge }) : t("header.balanceAria", { credits: balance.credits, free: free ?? 0 })}
+          data-credits={balance.credits} data-free={free ?? 0} data-plan={p.plan} data-status={p.status} data-calls-left={p.callsLeft}
+          className={`inline-flex items-center gap-2 min-h-[44px] px-3.5 rounded-full border-2 border-ink text-[14px] font-semibold whitespace-nowrap ${p.entitled ? "bg-accent-soft hover:bg-panel-deep" : "bg-paper hover:bg-panel"}`} data-testid="balance-chip">
+          <span className={`w-2.5 h-2.5 rounded-full border-[1.5px] border-ink ${p.entitled ? "bg-accent" : "bg-highlight"}`} aria-hidden />
+          <span className="hidden sm:inline">{badge}</span><span className="sm:hidden">{badgeShort}</span>
         </button>
       )}
       {loggedIn && mode !== "loading" ? <AccountMenu session={session} /> : mode === "demo" ? (
-        <Link href={`/login?next=${encodeURIComponent("/privat/dag")}`} className="hidden sm:inline-flex items-center min-h-[44px] px-4 rounded-xl border-2 border-ink font-semibold text-[15px] hover:bg-panel">{t("header.login")}</Link>
+        <Link href={`/login?next=${encodeURIComponent("/privat/dag")}`} className="hidden sm:inline-flex items-center min-h-[44px] px-4 rounded-full border-2 border-ink font-semibold text-[15px] hover:bg-panel">{t("header.login")}</Link>
       ) : null}
     </header>
   );
@@ -147,7 +163,7 @@ function AccountMenu({ session }: { session: Session }) {
             </div>
           )}
           <button type="button" role="menuitem" className={item} onClick={() => { setOpen(false); go("account"); }}><Ico name="coin" size={18} />{t("header.account")}</button>
-          <button type="button" role="menuitem" className={item} onClick={() => { setOpen(false); go("addons"); }}><Ico name="puzzle" size={18} />{t("header.addons")}</button>
+          <button type="button" role="menuitem" className={item} onClick={() => { setOpen(false); go("store"); }}><Ico name="shop" size={18} />{t("nav.store")}</button>
           <button type="button" role="menuitem" className={item} onClick={() => { setOpen(false); go("people"); }}><Ico name="users" size={18} />{t("header.people")}</button>
           <button type="button" role="menuitem" className={item} onClick={logout}><Ico name="arrow" size={18} />{t("header.logout")}</button>
         </div>
@@ -156,17 +172,18 @@ function AccountMenu({ session }: { session: Session }) {
   );
 }
 
+/** Phone tabs: Min dag · Opgaver · Butikken · Folk · Konto. The conversation (/privat/samtale) counts as Min dag. */
 function Tabs() {
   const t = useT("privat");
   const { screen } = usePrivat();
-  const active = screen === "task" ? "tasks" : screen === "addons" || screen === "people" ? "account" : screen;
-  const tabs: [Screen, string, string][] = [["day", "/privat/dag", "tabs.day"], ["chat", "/privat/samtale", "tabs.chat"], ["tasks", "/privat/opgaver", "tabs.tasks"], ["account", "/privat/konto", "tabs.account"]];
+  const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : screen === "addons" ? "store" : screen;
+  const tabs: [Screen, string, string, string][] = [["day", "/privat/dag", "nav.day", "home"], ["tasks", "/privat/opgaver", "tabs.tasks", "list"], ["store", "/privat/butik", "nav.store", "shop"], ["people", "/privat/folk", "nav.people", "users"], ["account", "/privat/konto", "nav.account", "user"]];
   return (
     <nav aria-label={t("tabs.label")} className="xl:hidden flex-none flex border-t-2 border-ink bg-paper pb-safe">
-      {tabs.map(([k, href, label]) => (
+      {tabs.map(([k, href, label, icon]) => (
         <Link key={k} href={href} aria-current={active === k ? "page" : undefined}
-          className={`flex-1 min-w-0 min-h-16 flex flex-col items-center justify-center gap-1 text-[12px] font-semibold ${active === k ? "text-ink" : "text-muted"}`}>
-          <span className={`w-7 h-1 rounded-sm ${active === k ? "bg-ink" : "bg-transparent"}`} aria-hidden />
+          className={`flex-1 min-w-0 min-h-16 flex flex-col items-center justify-center gap-1 text-[11px] font-semibold ${active === k ? "text-ink" : "text-muted"}`}>
+          <span className={`inline-flex items-center justify-center w-9 h-7 rounded-full ${active === k ? "bg-accent-soft text-ink" : ""}`}><Ico name={icon} size={20} /></span>
           <span className="max-w-full truncate px-1">{t(label)}</span>
         </Link>
       ))}

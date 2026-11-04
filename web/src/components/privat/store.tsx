@@ -2,17 +2,21 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { ApiError } from "@/lib/client";
-import { CONFLICT, isUnavailable, realPrivat, type Addon, type Balance, type ChatMessage, type Day, type Group, type LedgerEntry, type PrivatApi, type Referrals, type Task } from "@/lib/privat/api";
+import { CONFLICT, isUnavailable, realPrivat, type Addon, type Balance, type ChatMessage, type Day, type Group, type LedgerEntry, type PrivatApi, type Referrals, type Subscription, type Task,
+  type BillingInterval, type Plan, type PlanKey, type SubscriptionPlan, type SubscriptionStatus } from "@/lib/privat/api";
 import { createFakePrivat, type FakePrivat } from "@/lib/privat/fake";
 import { useLocale, useT } from "@/i18n/client";
 import { HTML_LANG } from "@/i18n/config";
+import { PLANS, TRIAL_DAYS } from "@/lib/privat/plans";
 
 /** fake = full simulation (NEXT_PUBLIC_PRIVAT_FAKE=1, or the real API is missing); demo = visitor without login looking at
  *  example data (creating something asks for login); real = the Privat API. */
 export type Mode = "loading" | "fake" | "demo" | "real";
-export type SheetKind = "login" | "mic" | "paywall" | "buy" | "sponsor" | "share" | "addon" | "addonOff";
+/** needsPlan: «Med i Plus – start 14 dage gratis / Vælg plan» (an app or a call needs trial/Plus/Familie). */
+export type SheetKind = "login" | "mic" | "paywall" | "buy" | "sponsor" | "share" | "addon" | "addonOff" | "needsPlan";
 export type Sheet = { kind: SheetKind; taskId?: string | null; addonKey?: string; groupId?: string } | null;
-export type Screen = "day" | "chat" | "tasks" | "task" | "account" | "addons" | "people";
+/** "store" = Butikken (/privat/butik); "addons" is kept as an alias for the old name. */
+export type Screen = "day" | "chat" | "tasks" | "task" | "account" | "store" | "addons" | "people";
 export type Session = { loggedIn: boolean; name: string | null; email: string | null; businessWsId: string | null };
 
 export const FORCE_FAKE = process.env.NEXT_PUBLIC_PRIVAT_FAKE === "1";
@@ -25,7 +29,7 @@ export function screenOf(path: string): { screen: Screen; taskId: string | null 
   if (m) return { screen: "task", taskId: decodeURIComponent(m[1]) };
   if (path.startsWith("/privat/opgaver")) return { screen: "tasks", taskId: null };
   if (path.startsWith("/privat/konto")) return { screen: "account", taskId: null };
-  if (path.startsWith("/privat/tilfoejelser")) return { screen: "addons", taskId: null };
+  if (path.startsWith("/privat/butik") || path.startsWith("/privat/tilfoejelser")) return { screen: "store", taskId: null };
   if (path.startsWith("/privat/folk")) return { screen: "people", taskId: null };
   if (path.startsWith("/privat/samtale")) return { screen: "chat", taskId: null };
   return { screen: "day", taskId: null };
@@ -48,6 +52,10 @@ type Ctx = {
   mode: Mode; simulated: boolean; session: Session; loggedIn: boolean;
   api: PrivatApi; fake: FakePrivat | null;
   balance: Balance | null; tasks: Task[]; day: Day | null; messages: ChatMessage[]; ledger: LedgerEntry[]; addons: Addon[] | null; referrals: Referrals | null; groups: Group[];
+  /** GET /privat/subscription (null until loaded or when the backend lacks it – then `balance` may still carry the plan fields). */
+  subscription: Subscription | null; setSubscription(s: Subscription | null): void;
+  /** Plan rights apply (trial, active or past_due). */
+  entitled: boolean;
   task(id: string | null | undefined): Task | undefined;
   addonOn(key: string): boolean;
   draft: string; setDraft(v: string): void;
@@ -67,6 +75,8 @@ type Ctx = {
   simulatedLogin(): Promise<void>;
   screen: Screen; routeTaskId: string | null; isDesk: boolean;
   openTask(id: string): void; talk(id: string): void; go(s: Screen): void;
+  /** Konto with the plan picker open («Vælg plan» everywhere). */
+  choosePlan(): void;
 };
 const C = createContext<Ctx | null>(null);
 export function usePrivat(): Ctx { const c = useContext(C); if (!c) throw new Error("PrivatProvider mangler"); return c; }
@@ -88,6 +98,7 @@ export function PrivatProvider({ session, children }: { session: Session; childr
   const [addons, setAddons] = useState<Addon[] | null>(null);
   const [referrals, setReferrals] = useState<Referrals | null>(null);
   const [groups, setGroups] = useState<Group[]>([]);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [draft, setDraft] = useState("");
   const [focusId, setFocus] = useState<string | null>(null);
   const [sheet, setSheet] = useState<Sheet>(null);
@@ -106,12 +117,13 @@ export function PrivatProvider({ session, children }: { session: Session; childr
       throw e;
     }
     const soft = <T,>(p: Promise<T>, fb: T) => p.catch(() => fb);
-    const [b, d, mineT, shared, m, l, ad, rf, gr] = await Promise.all([
+    const [b, d, mineT, shared, m, l, ad, rf, gr, sb] = await Promise.all([
       a.me(), a.day(), a.tasks(), soft(a.sharedTasks(), [] as Task[]), a.messages(), soft(a.ledger(), [] as LedgerEntry[]),
-      soft(a.addons(), null as Addon[] | null), soft(a.referrals(), null as Referrals | null), soft(a.groups(), [] as Group[])]);
+      soft(a.addons(), null as Addon[] | null), soft(a.referrals(), null as Referrals | null), soft(a.groups(), [] as Group[]),
+      soft(a.subscription(), null as Subscription | null)]);
     const all = [...mineT];
     for (const t of shared) if (!all.some((x) => x.id === t.id)) all.push(t);
-    setBalance(b); setDay(d); setTasks(all); setMessages(m); setLedger(l); setAddons(ad); setReferrals(rf); setGroups(gr);
+    setBalance(b); setDay(d); setTasks(all); setMessages(m); setLedger(l); setAddons(ad); setReferrals(rf); setGroups(gr); setSubscription(sb);
   }, []);
 
   useEffect(() => {
@@ -156,10 +168,11 @@ export function PrivatProvider({ session, children }: { session: Session; childr
   }, [refresh]);
 
   const go = useCallback((s: Screen) => {
-    const href = { day: "/privat/dag", chat: "/privat/samtale", tasks: "/privat/opgaver", task: "/privat/opgaver", account: "/privat/konto", addons: "/privat/tilfoejelser", people: "/privat/folk" }[s];
+    const href = { day: "/privat/dag", chat: "/privat/samtale", tasks: "/privat/opgaver", task: "/privat/opgaver", account: "/privat/konto", store: "/privat/butik", addons: "/privat/butik", people: "/privat/folk" }[s];
     router.push(href);
   }, [router]);
   const openTask = useCallback((id: string) => router.push(`/privat/opgaver/${encodeURIComponent(id)}`), [router]);
+  const choosePlan = useCallback(() => router.push("/privat/konto?planer=1"), [router]);
   const talk = useCallback((id: string) => { setFocus(id); if (!isDesk) router.push("/privat/samtale"); }, [isDesk, router]);
 
   const afterMessages = useCallback((msgs: ChatMessage[]) => {
@@ -191,7 +204,7 @@ export function PrivatProvider({ session, children }: { session: Session; childr
       return;
     }
     setDraft("");
-    if (!isDesk && screen !== "chat") router.push("/privat/samtale");
+    if (screen === "day" || (!isDesk && screen !== "chat")) router.push("/privat/samtale");
     await doSend(t);
   }, [draft, loggedIn, isDesk, screen, router, doSend]);
 
@@ -216,7 +229,7 @@ export function PrivatProvider({ session, children }: { session: Session; childr
     ss.set(FAKE_LOGIN_KEY, "1"); ss.del(PENDING_KEY);
     setFakeLogin(true); setSheet(null);
     const p = pendingRef.current; pendingRef.current = null;
-    if (p) { if (!isDesk && screen !== "chat") router.push("/privat/samtale"); await doSend(p); }
+    if (p) { if (screen === "day" || (!isDesk && screen !== "chat")) router.push("/privat/samtale"); await doSend(p); }
   }, [doSend, isDesk, screen, router]);
 
   const pick = useCallback(async (messageId: string, optionId: string) => {
@@ -232,16 +245,47 @@ export function PrivatProvider({ session, children }: { session: Session; childr
 
   const value = useMemo<Ctx>(() => ({
     mode, simulated: mode === "fake", session, loggedIn, api: apiRef.current, fake: fakeRef.current,
-    balance, tasks, day, messages, ledger, addons, referrals, groups,
+    balance, tasks, day, messages, ledger, addons, referrals, groups, subscription, setSubscription,
+    entitled: subscription ? subscription.entitled : !!balance?.entitled,
     task: (id) => (id ? tasks.find((t) => t.id === id) : undefined),
     // Without a catalog (API not there yet) nothing is hidden.
     addonOn: (key) => !addons || addons.length === 0 || !!addons.find((a) => a.key === key)?.enabled || !addons.some((a) => a.key === key),
     draft, setDraft, focusId, setFocus, sheet, openSheet: setSheet, closeSheet, note, setNote, busy, error, setError,
-    refresh, run, send, sendAbout, saveLocation, pick, simulatedLogin, screen, routeTaskId, isDesk, openTask, talk, go,
-  }), [sendAbout, saveLocation, mode, session, loggedIn, balance, tasks, day, messages, ledger, addons, referrals, groups, draft, focusId, sheet, closeSheet, note, busy, error,
-    refresh, run, send, pick, simulatedLogin, screen, routeTaskId, isDesk, openTask, talk, go]);
+    refresh, run, send, sendAbout, saveLocation, pick, simulatedLogin, screen, routeTaskId, isDesk, openTask, talk, go, choosePlan,
+  }), [sendAbout, saveLocation, mode, session, loggedIn, balance, tasks, day, messages, ledger, addons, referrals, groups, subscription, draft, focusId, sheet, closeSheet, note, busy, error,
+    refresh, run, send, pick, simulatedLogin, screen, routeTaskId, isDesk, openTask, talk, go, choosePlan]);
 
   return <C.Provider value={value}>{children}</C.Provider>;
+}
+
+// ---------- subscription view ----------
+export type PlanView = {
+  plan: SubscriptionPlan; status: SubscriptionStatus; entitled: boolean; trialDays: number; trialTotal: number;
+  callsQuota: number; callsUsed: number; callsLeft: number;
+  /** The plan whose rights apply («Plus» during the trial) and its name. */
+  rightsKey: PlanKey; rightsName: string;
+  plans: Plan[]; interval: BillingInterval | null; periodEnd: string | null; cancelAtPeriodEnd: boolean;
+  /** kr. per month for a plan key (monthly billing). */
+  monthlyKr(key: PlanKey): number;
+};
+/** One view of the subscription for the UI: GET /subscription when loaded, else the plan fields on /me, else nothing. */
+export function usePlan(): PlanView {
+  const { subscription: sb, balance: b } = usePrivat();
+  return useMemo(() => {
+    const plans: Plan[] = sb?.plans?.length ? sb.plans : PLANS.map((p) => ({ key: p.key, name: p.name, monthly_minor: p.monthly * 100, yearly_monthly_minor: p.yearlyMonthly * 100,
+      yearly_total_minor: p.yearlyTotal * 100, calls: p.calls, people: p.people, apps_included: p.appsIncluded, recommended: p.recommended, features: p.features }));
+    const plan: SubscriptionPlan = sb?.plan ?? b?.plan ?? "none";
+    const status: SubscriptionStatus = sb?.status ?? b?.plan_status ?? "none";
+    const entitled = sb ? sb.entitled : !!b?.entitled;
+    const rightsKey: PlanKey = plan === "none" ? "plus" : plan;
+    const rightsName = plans.find((p) => p.key === rightsKey)?.name ?? "Plus";
+    return {
+      plan, status, entitled, trialDays: sb?.trial_days_left ?? b?.trial_days_left ?? 0, trialTotal: TRIAL_DAYS,
+      callsQuota: sb?.calls_quota ?? b?.calls_quota ?? 0, callsUsed: sb?.calls_used ?? b?.calls_used ?? 0, callsLeft: sb?.calls_left ?? b?.calls_left ?? 0,
+      rightsKey, rightsName, plans, interval: sb?.interval ?? null, periodEnd: sb?.current_period_end ?? null, cancelAtPeriodEnd: !!sb?.cancel_at_period_end,
+      monthlyKr: (key) => Math.round((plans.find((p) => p.key === key)?.monthly_minor ?? 0) / 100),
+    };
+  }, [sb, b]);
 }
 
 // ---------- formatting (Europe/Copenhagen wall clock of the browser) ----------

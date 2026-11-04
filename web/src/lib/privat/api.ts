@@ -49,6 +49,31 @@ export type Balance = {
   phone_display: string | null; phone_verified: boolean;
   /** «Tilføjelse 6» */
   push_enabled?: boolean; location_city?: string | null;
+  // Subscription summary (privat-abonnement-brief): the same numbers as GET /privat/subscription, so the header and
+  // the paywall need only /me. Optional until the backend sends them.
+  plan?: SubscriptionPlan; plan_status?: SubscriptionStatus; trial_days_left?: number;
+  calls_quota?: number; calls_used?: number; calls_left?: number; entitled?: boolean;
+};
+// ---------- subscription (privat-abonnement-brief) ----------
+export type PlanKey = "basis" | "plus" | "familie";
+export type SubscriptionPlan = "none" | PlanKey;
+/** trial = the local 14-day trial (Plus rights, no card); entitled = trial or active/past_due. */
+export type SubscriptionStatus = "trial" | "active" | "past_due" | "canceled" | "expired" | "none";
+export type BillingInterval = "month" | "year";
+/** The plan catalogue comes from the API (prices in øre), so the web hard-codes none of it. */
+export type Plan = {
+  key: PlanKey; name: string; monthly_minor: number; yearly_monthly_minor: number; yearly_total_minor: number;
+  calls: number; people: number; apps_included: boolean; recommended: boolean; features: string[];
+};
+export type Subscription = {
+  plan: SubscriptionPlan; status: SubscriptionStatus; interval: BillingInterval | null;
+  trial_ends_at: string | null; trial_days_left: number;
+  current_period_end: string | null; cancel_at_period_end: boolean;
+  entitled: boolean;
+  /** This calendar month (Europe/Copenhagen). */
+  calls_quota: number; calls_used: number; calls_left: number;
+  people_limit: number; apps_included: boolean;
+  plans: Plan[];
 };
 /** Business lookup (Google Places; DemoPlaces without a key – never callable). Show «Data fra Google» with results. */
 export type Business = {
@@ -113,6 +138,17 @@ export type Addon = {
   key: string; name: string; tagline: string; description: string; icon: string; category: string; price_text: string;
   pricing: "free" | "credits" | "monthly"; monthly_price_minor: number | null; status: AddonStatus;
   permissions: string[]; requires: string[]; enabled: boolean; enabled_at: string | null;
+  // Butikken (privat-abonnement-brief). Optional until the backend sends them.
+  /** What it does, 1–2 sentences («Hvad den gør»). */
+  what?: string;
+  /** What you say to Peter («Sådan siger du det til Peter»). */
+  example?: string;
+  /** Setup steps shown before «Start opsætningen». */
+  steps?: string[];
+  /** Can be switched on with the user's current rights (trial/plan or free). */
+  included?: boolean;
+  /** Needs trial/Plus/Familie – POST /enable answers 409 needs_plan otherwise. */
+  requires_plan?: boolean;
 };
 /** Add-on keys the UI reacts to (shortcuts, share button). Unknown keys still show in the shop. */
 export const ADDON = { call: "ring-for-mig", sharedLists: "delte-lister", wishlists: "oenskelister" } as const;
@@ -136,6 +172,11 @@ export interface PrivatApi {
   phoneVerify(code: string): Promise<Balance>;
   checkout(): Promise<{ url: string }>;
   ledger(): Promise<LedgerEntry[]>;
+  // Subscription (privat-abonnement-brief). sessionId = Stripe Checkout session on return (synchronises first).
+  subscription(sessionId?: string): Promise<Subscription>;
+  subscriptionCheckout(body: { plan: PlanKey; interval: BillingInterval }): Promise<{ url: string }>;
+  /** Stripe Billing Portal (501 not_configured when Stripe is missing). */
+  subscriptionPortal(): Promise<{ url: string }>;
   sponsorClaim(taskId: string): Promise<Task>;
   // Shared lists
   sharedTasks(): Promise<Task[]>;
@@ -212,6 +253,9 @@ export const realPrivat: PrivatApi = {
   phoneVerify: (code) => api(`${P}/phone/verify`, json({ code })),
   checkout: () => api(`${P}/credits/checkout`, json({})),
   ledger: () => api(`${P}/ledger`),
+  subscription: (sessionId) => api(`${P}/subscription${sessionId ? `?session_id=${enc(sessionId)}` : ""}`),
+  subscriptionCheckout: (body) => api(`${P}/subscription/checkout`, json(body)),
+  subscriptionPortal: () => api(`${P}/subscription/portal`, json({})),
   sponsorClaim: (taskId) => api(`${P}/sponsor/claim`, json({ task_id: taskId })),
   sharedTasks: () => api(`${P}/tasks?shared=1`),
   addItem: (taskId, body) => api(`${P}/tasks/${enc(taskId)}/items`, json(body)),
@@ -277,4 +321,9 @@ export const isShortCode = (s: string) => /^[A-HJ-NP-Z2-9]{8}$/.test(s);
 /** 409 codes from POST /calls/{id}/approve and /tasks/{id}/activate. */
 export const CONFLICT = { needsPhone: "needs_phone", insufficientCredits: "insufficient_credits", outsideHours: "outside_hours", sponsorLimit: "sponsor_limit", addonDisabled: "addon_disabled", comingSoon: "coming_soon",
   demoBusiness: "demo_business", sharingPaused: "sharing_paused", accountMissing: "privat_account_missing",
-  emailNotVerified: "email_not_verified", viewAsNotAllowed: "view_as_not_allowed" } as const;
+  emailNotVerified: "email_not_verified", viewAsNotAllowed: "view_as_not_allowed",
+  /** 409 from /addons/{key}/enable and /calls/{id}/approve: needs trial/Plus/Familie. */
+  needsPlan: "needs_plan", notConfigured: "not_configured" } as const;
+
+/** Plan rights apply (trial, active or past_due). */
+export const entitled = (b: Balance | Subscription | null | undefined): boolean => !!b?.entitled;

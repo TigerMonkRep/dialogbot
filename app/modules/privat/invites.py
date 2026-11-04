@@ -24,7 +24,7 @@ from app.models import PrivateInvite, PrivateProfile, User
 from app.modules.privat import addons, rules
 
 CTA_TEXT = ("{name} bruger Dialogbot – en personlig assistent, der laver lister, minder dig om ting og ringer for dig. "
-            "Få din egen: 10 gratis opgaver hver måned")
+            "Få din egen: prøv Dialogbot Privat gratis i 14 dage")
 TRY_RESOURCE = "dialogbot"  # an invitation to Dialogbot itself (Konto → «Inviter venner»)
 
 

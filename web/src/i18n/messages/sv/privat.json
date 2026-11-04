@@ -1,7 +1,7 @@
 {
   "meta": {
     "landingTitle": "Dialogbot Privat – din egen personliga assistent",
-    "landingDescription": "Skriv eller säg vad du behöver få gjort. Dialogbot gör listor, påminner dig om saker och ringer åt dig – men först när du har sagt ja. 10 gratis uppgifter varje månad.",
+    "landingDescription": "Skriv eller säg vad du behöver få gjort. Dialogbot gör listor, påminner dig och ringer åt dig – men först när du har sagt ja. Prova gratis i 14 dagar.",
     "day": "Min dag",
     "chat": "Samtal",
     "tasks": "Mina uppgifter",
@@ -22,12 +22,12 @@
   },
   "landing": {
     "metaTitle": "Dialogbot Privat – din egen personliga assistent",
-    "metaDescription": "Skriv eller säg en uppgift. Peter gör listor, påminner dig och ringer för dig – aldrig innan du sagt ja. Prova gratis i 14 dagar utan kort.",
+    "metaDescription": "Skriv eller tala in en uppgift. Peter gör listor, påminner dig och ringer åt dig – men aldrig innan du har sagt ja. Prova gratis i 14 dagar.",
     "eyebrow": "Din egen personliga assistent",
     "title": "Vad ska jag fixa för dig?",
     "lead": "Skriv eller säg en uppgift. Peter gör listor, påminner dig om saker – och ringer frisören, verkstaden eller restaurangen för dig. Han ringer aldrig innan du har sagt ja.",
     "cta": "Prova gratis i 14 dagar",
-    "note": "Inget kort. Ingen bindningstid.",
+    "note": "14 dagar gratis. Säg upp när som helst.",
     "login": "Logga in",
     "demo": {
       "role": "din personliga assistent",
@@ -92,7 +92,7 @@
     },
     "pricing": {
       "title": "14 dagar gratis. Sedan väljer du själv.",
-      "text": "Prova allt i 14 dagar utan kort. Därefter ett abonnemang – avsluta när du vill. Priser inkl. moms.",
+      "text": "Prova allt i 14 dagar. Du registrerar dig med kort, och det dras först när provperioden är slut – säg upp innan, så betalar du inget. Priser inkl. moms.",
       "intervalLabel": "Betalning",
       "monthly": "Månadsvis",
       "yearly": "Årsvis · spara 20 %",
@@ -134,8 +134,10 @@
     "skip": "Hoppa till innehållet",
     "homeAria": "Dialogbot Privat – Min dag",
     "credits": "{n} krediter",
-    "free": "{n} gratis",
-    "balanceAria": "{credits} krediter och {free} gratis uppgifter kvar. Öppna konto",
+    "balanceAria": "{credits} credits. Öppna konto",
+    "noPlanBadge": "Utan plan · prova 14 dagar",
+    "noPlanBadgeShort": "Utan plan",
+    "noPlanAria": "Utan plan. Öppna konto och starta 14 dagar gratis",
     "login": "Logga in",
     "menu": "Kontomeny",
     "switchLabel": "Växla mellan företag och privat",
@@ -356,7 +358,8 @@
   },
   "draft": {
     "label": "Utkast · klart att spara",
-    "text": "Dina {limit} gratis uppgifter i {month} är använda. Utkastet väntar medan du väljer.",
+    "text": "Din provperiod är slut. Utkastet väntar medan du väljer plan.",
+    "textTrial": "Utkastet väntar på din provperiod – 14 dagar gratis, kortet dras först efteråt.",
     "choose": "Välj hur du vill fortsätta",
     "active": "Uppgiften är aktiv – {usage}."
   },
@@ -511,15 +514,18 @@
     "someone": "Din vän",
     "brandTitle": "{name} använder Dialogbot",
     "brandText": "– en personlig assistent som gör listor, påminner dig om saker och ringer åt dig.",
-    "brandOffer": "Skaffa din egen: 10 gratis uppgifter varje månad",
+    "brandOffer": "Skaffa din egen: prova Dialogbot Privat gratis i 14 dagar",
     "brandCta": "Läs om Dialogbot Privat"
   },
   "paywall": {
-    "titleDigital": "Månadens {limit} gratis uppgifter är använda",
+    "titleDigital": "Det kräver en plan",
     "titleCall": "Du saknar krediter till samtalet",
+    "titleTrial": "Det kräver en plan",
     "draft": "Utkast",
-    "textDigital": "Uppgiften är sparad som utkast. Fortsätt med 1 kredit, köp krediter eller se ett frivilligt sponsrat inslag – eller vänta till nästa månad, då får du {limit} nya gratis uppgifter.",
+    "textDigital": "Uppgiften är sparad som utkast. Välj en plan, fortsätt med 1 credit eller se ett frivilligt sponsorinslag.",
     "textCall": "Ett samtal reserverar {n} krediter när du godkänner. Du har {have}.",
+    "textTrial": "Prova Dialogbot Privat gratis i 14 dagar. Du registrerar dig med kort, och det dras först när provperioden är slut – säg upp innan, så betalar du inget. Uppgiften är sparad som utkast tills du har valt.",
+    "trialNote": "Plus · 79 kr/mån efter provperioden · säg upp när som helst",
     "useCredit": "Använd 1 kredit · du har {n}",
     "buy": "Köp 10 krediter · 29 kr. inkl. moms",
     "sponsor": "Se ett sponsrat inslag · +1 uppgift ({n} kvar i dag)",
@@ -594,10 +600,8 @@
     "privateLine": "Privat konto · {email} · åtskilt från företagskonton",
     "exampleLine": "Du provar med exempeldata. Logga in när du sparar din första uppgift.",
     "simulatedLine": "Privat-API:t är inte påslaget än – allt här är en simulering i din webbläsare.",
-    "free": "Gratis vardagsuppgifter · {month}",
-    "freeLeft": "av {limit} kvar",
-    "freeBarAria": "{used} av {limit} gratis uppgifter använda",
-    "freeNote": "Läsning, avbockning, frågor och ändringar av en uppgift är gratis. Nya uppgifter efter de {limit} kostar 1 kredit.",
+    "free": "Utan plan",
+    "freeNote": "Utan plan kan du se och reservera på listor som andra delar med dig – egna uppgifter, listor och samtal kräver en plan. Prova allt gratis i 14 dagar.",
     "credits": "Krediter",
     "creditsWord": "krediter",
     "reserved": "{n} reserverade",
@@ -620,7 +624,7 @@
     "repeatNote": "Betalningssignalen {ref} är redan registrerad. Inga extra krediter.",
     "repeatNone": "Det finns ingen betalning att upprepa än – köp 10 krediter först.",
     "tools": "Testverktyg · endast simulering",
-    "useUp": "Sätt förbrukning till 10/10",
+    "startFree": "Återställ till konto utan plan",
     "repeatPay": "Upprepa senaste betalningssignalen",
     "emptyDay": "Visa tom dag",
     "reset": "Börja om",
@@ -795,8 +799,8 @@
       "trialAria": "{n} av {total} provdagar kvar",
       "noteTrial": "Listor och påminnelser är obegränsade. Efter provperioden fortsätter du på {plan} för {price} kr/mån – eller väljer en annan plan.",
       "notePlan": "Listor och påminnelser är obegränsade. Fler samtal än ditt abonnemang? Extra samtal köps under Konto.",
-      "noteFree": "Utan plan har du {limit} gratis uppgifter i månaden och betalar samtal med extra samtal (credits).",
-      "freeLeft": "Gratis uppgifter kvar",
+      "noteFree": "Utan plan kan du se och reservera på listor som andra delar med dig. Egna uppgifter och samtal kräver en plan.",
+      "noteNone": "Utan plan kan du se och reservera på listor som andra delar med dig. Prova allt i 14 dagar – kortet dras först efteråt.",
       "extraCalls": "Extra samtal (credits)",
       "choosePlan": "Välj plan",
       "changePlan": "Byt plan",
@@ -859,7 +863,7 @@
     "trialThen": "Därefter {plan} för {price} kr/mån",
     "trialThenNone": "Välj en plan innan den tar slut – annars fortsätter du utan plan.",
     "expiredLine": "Din provperiod är slut. Välj en plan för att få samtal och alla appar igen.",
-    "noneLine": "Ingen plan. Du har {limit} gratis uppgifter i månaden och kan köpa extra samtal.",
+    "noneLine": "Ingen plan. Du kan se och reservera på listor som andra delar med dig. Prova allt gratis i 14 dagar – kortet dras först när provperioden är slut.",
     "renews": "Förnyas {date}",
     "cancelAtEnd": "Uppsagt – slutar {date}",
     "pastDue": "Betalningen saknas – uppdatera ditt kort under Hantera abonnemang.",
@@ -909,7 +913,7 @@
     "entry": "Prova på 2 minuter",
     "meta": {
       "title": "Peter ordnar din dag på 2 minuter",
-      "description": "Svara på fyra frågor, så gör Peter dina listor, påminnelser och det första samtalet – klart när du loggar in. Gratis i 14 dagar, utan kort.",
+      "description": "Svara på fyra frågor, så gör Peter dina listor, påminnelser och det första samtalet – klart när du har startat din gratis provperiod.",
       "stepTitle": "Dialogbot Privat – steg {n}"
     },
     "s1": {
@@ -1065,7 +1069,7 @@
     "s6": {
       "title": "Vem ska Peter hjälpa?",
       "lead": "Namn, mobil och e-post – så skickar vi en kod, och din dag står klar.",
-      "consent": "Ja tack, skapa ett Dialogbot Privat-konto åt mig med min e-post och skicka mig en SMS-kod. Provperioden på 14 dagar börjar nu och kräver inget kort. Peter ringer aldrig någon förrän jag har sagt ja.",
+      "consent": "Ja tack, skapa ett Dialogbot Privat-konto åt mig med min e-post och skicka en SMS-kod. Provperioden på 14 dagar väljer jag efteråt. Peter ringer aldrig någon innan jag har sagt ja.",
       "codeTitle": "Ange koden från SMS:et"
     }
   }

@@ -374,8 +374,10 @@ def disable(db: OrmSession, ws_id: uuid.UUID, key: str) -> Addon:
 
 
 def enable_defaults(db: OrmSession, ws_id: uuid.UUID) -> None:
+    """The default add-ons – those the account's rights allow. Called at account creation (the free tier gets the
+    free ones) and again when the trial or a plan arrives from Stripe (then the plan's ones come on)."""
     for key in (k.strip() for k in get_settings().privat_default_addons.split(",")):
-        if key in CATALOG and CATALOG[key].status != "coming_soon":
+        if key in CATALOG and CATALOG[key].status != "coming_soon" and included(db, ws_id, CATALOG[key]):
             enable(db, ws_id, key)
 
 

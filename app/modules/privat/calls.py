@@ -98,8 +98,9 @@ def problem(db: OrmSession, c: PrivateCall) -> str | None:
 
 def propose(db: OrmSession, ctx, *, business_name: str, phone: str | None, address: str, price_text: str | None,
             purpose: str, window: str, may_ask=None, may_agree=None, may_not=None, place_id: str | None = None,
-            next_open_at=None, phone_source: str | None = None) -> PrivateTask:
-    addons.require(db, ctx.ws_id, ADDON)
+            next_open_at=None, phone_source: str | None = None, require_addon: bool = True) -> PrivateTask:
+    if require_addon:  # the quiz-funnel proposes the first call before the trial (and so the add-on) is on
+        addons.require(db, ctx.ws_id, ADDON)
     purpose = (purpose or "").strip() or "Aftal en tid"
     window = (window or "").strip()
     title = purpose[:1].upper() + purpose[1:]

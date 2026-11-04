@@ -1,7 +1,7 @@
 {
   "meta": {
     "landingTitle": "Dialogbot Privat – votre propre assistant personnel",
-    "landingDescription": "Écrivez ou dites ce qu'il faut faire. Dialogbot fait des listes, vous rappelle des choses et appelle pour vous – mais seulement après votre oui. 10 tâches gratuites chaque mois.",
+    "landingDescription": "Écrivez ou dites ce qu'il faut faire. Dialogbot fait des listes, vous rappelle les choses et appelle pour vous – mais seulement quand vous avez dit oui. Essai gratuit de 14 jours.",
     "day": "Ma journée",
     "chat": "Conversation",
     "tasks": "Mes tâches",
@@ -22,12 +22,12 @@
   },
   "landing": {
     "metaTitle": "Dialogbot Privat – votre assistant personnel",
-    "metaDescription": "Écrivez ou dictez une tâche. Peter tient des listes, vous rappelle les choses et appelle pour vous – jamais avant votre oui. Essai gratuit de 14 jours, sans carte.",
+    "metaDescription": "Écrivez ou dictez une tâche. Peter fait des listes, vous rappelle les choses et appelle pour vous – mais jamais avant que vous ayez dit oui. Essai gratuit de 14 jours.",
     "eyebrow": "Votre assistant personnel",
     "title": "Que puis-je régler pour vous ?",
     "lead": "Écrivez ou dictez une tâche. Peter tient des listes, vous rappelle les choses – et appelle le coiffeur, le garage ou le restaurant pour vous. Il n'appelle jamais avant que vous ayez dit oui.",
     "cta": "Essayer gratuitement 14 jours",
-    "note": "Sans carte. Sans engagement.",
+    "note": "14 jours gratuits. Résiliable à tout moment.",
     "login": "Se connecter",
     "demo": {
       "role": "votre assistant personnel",
@@ -92,7 +92,7 @@
     },
     "pricing": {
       "title": "14 jours gratuits. Ensuite, vous choisissez.",
-      "text": "Essayez tout pendant 14 jours sans carte. Ensuite un seul abonnement – résiliable à tout moment. Prix TTC.",
+      "text": "Essayez tout pendant 14 jours. Vous vous inscrivez avec une carte, débitée seulement à la fin de l'essai – résiliez avant, et vous ne payez rien. Prix TTC.",
       "intervalLabel": "Facturation",
       "monthly": "Mensuel",
       "yearly": "Annuel · -20 %",
@@ -134,8 +134,10 @@
     "skip": "Aller au contenu",
     "homeAria": "Dialogbot Privat – Ma journée",
     "credits": "{n} crédits",
-    "free": "{n} gratuites",
-    "balanceAria": "{credits} crédits et {free} tâches gratuites restantes. Ouvrir le compte",
+    "balanceAria": "{credits} crédits. Ouvrir le compte",
+    "noPlanBadge": "Sans forfait · essayer 14 jours",
+    "noPlanBadgeShort": "Sans forfait",
+    "noPlanAria": "Sans forfait. Ouvrir le compte et commencer 14 jours gratuits",
     "login": "Se connecter",
     "menu": "Menu du compte",
     "switchLabel": "Basculer entre entreprise et privé",
@@ -356,7 +358,8 @@
   },
   "draft": {
     "label": "Brouillon · prêt à enregistrer",
-    "text": "Vos {limit} tâches gratuites de {month} sont utilisées. Le brouillon attend pendant que vous choisissez.",
+    "text": "Votre essai est terminé. Le brouillon attend pendant que vous choisissez un forfait.",
+    "textTrial": "Le brouillon attend votre essai – 14 jours gratuits, la carte n'est débitée qu'après.",
     "choose": "Choisir comment continuer",
     "active": "La tâche est active – {usage}."
   },
@@ -511,15 +514,18 @@
     "someone": "Votre amie",
     "brandTitle": "{name} utilise Dialogbot",
     "brandText": "– un assistant personnel qui fait des listes, vous rappelle des choses et appelle pour vous.",
-    "brandOffer": "Obtenez le vôtre : 10 tâches gratuites chaque mois",
+    "brandOffer": "Ayez le vôtre : essayez Dialogbot Privat gratuitement pendant 14 jours",
     "brandCta": "En savoir plus sur Dialogbot Privat"
   },
   "paywall": {
-    "titleDigital": "Les {limit} tâches gratuites du mois sont utilisées",
+    "titleDigital": "Il faut un forfait",
     "titleCall": "Il vous manque des crédits pour l'appel",
+    "titleTrial": "Il faut un forfait",
     "draft": "Brouillon",
-    "textDigital": "La tâche est enregistrée comme brouillon. Continuez avec 1 crédit, achetez des crédits ou regardez une annonce sponsorisée facultative – ou attendez le mois prochain et ses {limit} nouvelles tâches gratuites.",
+    "textDigital": "La tâche est enregistrée comme brouillon. Choisissez un forfait, continuez avec 1 crédit ou regardez un clip sponsorisé facultatif.",
     "textCall": "Un appel réserve {n} crédits quand vous l'approuvez. Vous en avez {have}.",
+    "textTrial": "Essayez Dialogbot Privat gratuitement pendant 14 jours. Vous vous inscrivez avec une carte, débitée seulement à la fin de l'essai – résiliez avant, et vous ne payez rien. La tâche reste en brouillon jusqu'à votre choix.",
+    "trialNote": "Plus · 79 kr./mois après l'essai · résiliable à tout moment",
     "useCredit": "Utiliser 1 crédit · vous en avez {n}",
     "buy": "Acheter 10 crédits · 29 kr. TTC",
     "sponsor": "Voir une annonce sponsorisée · +1 tâche ({n} restantes aujourd'hui)",
@@ -594,10 +600,8 @@
     "privateLine": "Compte privé · {email} · séparé des comptes entreprise",
     "exampleLine": "Vous essayez avec des données d'exemple. Connectez-vous en enregistrant votre première tâche.",
     "simulatedLine": "L'API Privat n'est pas encore activée – tout ici est une simulation dans votre navigateur.",
-    "free": "Tâches du quotidien gratuites · {month}",
-    "freeLeft": "sur {limit} restantes",
-    "freeBarAria": "{used} tâches gratuites utilisées sur {limit}",
-    "freeNote": "Lire, cocher, poser des questions et corriger une tâche est gratuit. Les nouvelles tâches au-delà des {limit} coûtent 1 crédit.",
+    "free": "Sans forfait",
+    "freeNote": "Sans forfait, vous pouvez voir et réserver sur les listes que d'autres partagent avec vous – vos propres tâches, listes et appels demandent un forfait. Essayez tout gratuitement pendant 14 jours.",
     "credits": "Crédits",
     "creditsWord": "crédits",
     "reserved": "{n} réservés",
@@ -620,7 +624,7 @@
     "repeatNote": "Le signal de paiement {ref} est déjà enregistré. Aucun crédit supplémentaire.",
     "repeatNone": "Aucun paiement à répéter – achetez d'abord 10 crédits.",
     "tools": "Outils de test · simulation uniquement",
-    "useUp": "Mettre la consommation à 10/10",
+    "startFree": "Réinitialiser en compte sans forfait",
     "repeatPay": "Répéter le dernier signal de paiement",
     "emptyDay": "Afficher une journée vide",
     "reset": "Recommencer",
@@ -795,8 +799,8 @@
       "trialAria": "{n} sur {total} jours d’essai restants",
       "noteTrial": "Listes et rappels sont illimités. Après l’essai, vous continuez sur {plan} à {price} kr./mois – ou choisissez un autre forfait.",
       "notePlan": "Listes et rappels sont illimités. Plus d’appels que votre abonnement ? Les appels supplémentaires s’achètent sous Compte.",
-      "noteFree": "Sans forfait, vous avez {limit} tâches gratuites par mois et payez les appels avec des appels supplémentaires (crédits).",
-      "freeLeft": "Tâches gratuites restantes",
+      "noteFree": "Sans forfait, vous pouvez voir et réserver sur les listes que d'autres partagent avec vous. Vos propres tâches et appels demandent un forfait.",
+      "noteNone": "Sans forfait, vous pouvez voir et réserver sur les listes que d'autres partagent avec vous. Essayez tout pendant 14 jours – la carte n'est débitée qu'après.",
       "extraCalls": "Appels supplémentaires (crédits)",
       "choosePlan": "Choisir un forfait",
       "changePlan": "Changer de forfait",
@@ -859,7 +863,7 @@
     "trialThen": "Ensuite {plan} à {price} kr./mois",
     "trialThenNone": "Choisissez un forfait avant la fin – sinon vous continuez sans forfait.",
     "expiredLine": "Votre essai est terminé. Choisissez un forfait pour retrouver les appels et toutes les apps.",
-    "noneLine": "Sans forfait. Vous avez {limit} tâches gratuites par mois et pouvez acheter des appels supplémentaires.",
+    "noneLine": "Aucun forfait. Vous pouvez voir et réserver sur les listes que d'autres partagent avec vous. Essayez tout gratuitement pendant 14 jours – la carte n'est débitée qu'à la fin de l'essai.",
     "renews": "Renouvelé le {date}",
     "cancelAtEnd": "Résilié – se termine le {date}",
     "pastDue": "Le paiement manque – mettez à jour votre carte sous Gérer l’abonnement.",
@@ -909,7 +913,7 @@
     "entry": "Essayer en 2 minutes",
     "meta": {
       "title": "Peter organise votre journée en 2 minutes",
-      "description": "Répondez à quatre questions et Peter crée vos listes, vos rappels et le premier appel – prêts à votre connexion. 14 jours gratuits, sans carte.",
+      "description": "Répondez à quatre questions et Peter prépare vos listes, rappels et le premier appel – prêts dès que vous avez commencé votre essai gratuit.",
       "stepTitle": "Dialogbot Privat – étape {n}"
     },
     "s1": {
@@ -1065,7 +1069,7 @@
     "s6": {
       "title": "Qui Peter doit-il aider ?",
       "lead": "Nom, mobile et e-mail – nous envoyons un code, et votre journée est prête.",
-      "consent": "Oui, créez-moi un compte Dialogbot Privat avec mon e-mail et envoyez-moi un code par SMS. L'essai de 14 jours commence maintenant et ne demande pas de carte. Peter n'appelle jamais personne avant mon accord.",
+      "consent": "Oui, créez-moi un compte Dialogbot Privat avec mon e-mail et envoyez-moi un code SMS. Je choisis l'essai de 14 jours ensuite. Peter n'appelle jamais personne avant que j'aie dit oui.",
       "codeTitle": "Saisissez le code reçu par SMS"
     }
   }

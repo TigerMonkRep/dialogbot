@@ -480,15 +480,15 @@ export function CallCard({ task }: { task: Task }) {
 
 export function DraftCard({ task }: { task: Task }) {
   const t = useT("privat");
-  const f = useFmt();
-  const { openSheet, balance } = usePrivat();
+  const { openSheet } = usePrivat();
+  const p = usePlan();
   return (
     <div className={PROPOSAL}>
       <Eyebrow>{t("draft.label")}</Eyebrow>
       <h3 className="m-0 font-display font-bold text-[19px] [overflow-wrap:anywhere]">{task.title}</h3>
       {task.status === "draft" ? (
         <>
-          <p className="m-0 text-[15px] text-ink-soft">{t("draft.text", { limit: balance?.free_limit ?? 10, month: f.month() })}</p>
+          <p className="m-0 text-[15px] text-ink-soft">{t(p.status === "none" ? "draft.textTrial" : "draft.text")}</p>
           <Button className={`${BIG} self-start`} onClick={() => openSheet({ kind: "paywall", taskId: task.id })}>{t("draft.choose")}</Button>
         </>
       ) : <p className="m-0 text-[14px] text-success font-semibold">{t("draft.active", { usage: task.usage_text })}</p>}

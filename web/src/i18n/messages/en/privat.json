@@ -1,7 +1,7 @@
 {
   "meta": {
     "landingTitle": "Dialogbot Privat – your own personal assistant",
-    "landingDescription": "Type or say what you need done. Dialogbot makes lists, reminds you of things and calls for you – but only once you have said yes. 10 free tasks every month.",
+    "landingDescription": "Write or say what you need done. Dialogbot makes lists, reminds you of things and calls for you – but only once you have said yes. Try it free for 14 days.",
     "day": "My day",
     "chat": "Conversation",
     "tasks": "My tasks",
@@ -22,12 +22,12 @@
   },
   "landing": {
     "metaTitle": "Dialogbot Privat – your own personal assistant",
-    "metaDescription": "Type or dictate a task. Peter keeps lists, reminds you of things and makes calls for you – never before you have said yes. Try it free for 14 days, no card.",
+    "metaDescription": "Write or dictate a task. Peter makes lists, reminds you of things and calls for you – but never before you have said yes. Try it free for 14 days.",
     "eyebrow": "Your own personal assistant",
     "title": "What can I take care of for you?",
     "lead": "Type or dictate a task. Peter keeps lists, reminds you of things – and calls the hairdresser, the garage or the restaurant for you. He never calls before you have said yes.",
     "cta": "Try free for 14 days",
-    "note": "No card. No commitment.",
+    "note": "14 days free. Cancel any time.",
     "login": "Log in",
     "demo": {
       "role": "your personal assistant",
@@ -92,7 +92,7 @@
     },
     "pricing": {
       "title": "14 days free. Then you choose.",
-      "text": "Try everything for 14 days without a card. Then one subscription – cancel any time. Prices incl. VAT.",
+      "text": "Try everything for 14 days. You sign up with a card, and it is only charged once the trial ends – cancel before, and you pay nothing. Prices incl. VAT.",
       "intervalLabel": "Billing",
       "monthly": "Monthly",
       "yearly": "Yearly · save 20 %",
@@ -134,8 +134,10 @@
     "skip": "Skip to content",
     "homeAria": "Dialogbot Privat – My day",
     "credits": "{n} credits",
-    "free": "{n} free",
-    "balanceAria": "{credits} credits and {free} free tasks left. Open account",
+    "balanceAria": "{credits} credits. Open account",
+    "noPlanBadge": "No plan · try 14 days",
+    "noPlanBadgeShort": "No plan",
+    "noPlanAria": "No plan. Open account and start 14 days free",
     "login": "Log in",
     "menu": "Account menu",
     "switchLabel": "Switch between business and private",
@@ -356,7 +358,8 @@
   },
   "draft": {
     "label": "Draft · ready to save",
-    "text": "Your {limit} free tasks in {month} are used. The draft waits while you choose.",
+    "text": "Your trial has ended. The draft waits while you choose a plan.",
+    "textTrial": "The draft waits for your trial – 14 days free, the card is only charged afterwards.",
     "choose": "Choose how to continue",
     "active": "The task is active – {usage}."
   },
@@ -511,15 +514,18 @@
     "someone": "Your friend",
     "brandTitle": "{name} uses Dialogbot",
     "brandText": "– a personal assistant that makes lists, reminds you of things and calls for you.",
-    "brandOffer": "Get your own: 10 free tasks every month",
+    "brandOffer": "Get your own: try Dialogbot Privat free for 14 days",
     "brandCta": "Read about Dialogbot Privat"
   },
   "paywall": {
-    "titleDigital": "This month's {limit} free tasks are used",
+    "titleDigital": "This needs a plan",
     "titleCall": "You need more credits for the call",
+    "titleTrial": "This needs a plan",
     "draft": "Draft",
-    "textDigital": "The task is saved as a draft. Continue with 1 credit, buy credits or watch a voluntary sponsored clip – or wait until next month, when you get {limit} new free tasks.",
+    "textDigital": "The task is saved as a draft. Choose a plan, continue with 1 credit or watch a voluntary sponsored clip.",
     "textCall": "A call reserves {n} credits when you approve it. You have {have}.",
+    "textTrial": "Try Dialogbot Privat free for 14 days. You sign up with a card, and it is only charged once the trial ends – cancel before, and you pay nothing. The task is saved as a draft until you have chosen.",
+    "trialNote": "Plus · 79 kr./month after the trial · cancel any time",
     "useCredit": "Use 1 credit · you have {n}",
     "buy": "Buy 10 credits · 29 kr. incl. VAT",
     "sponsor": "Watch a sponsored clip · +1 task ({n} left today)",
@@ -594,10 +600,8 @@
     "privateLine": "Private account · {email} · separate from business accounts",
     "exampleLine": "You are trying it with example data. Log in when you save your first task.",
     "simulatedLine": "The Privat API is not switched on yet – everything here is a simulation in your browser.",
-    "free": "Free everyday tasks · {month}",
-    "freeLeft": "of {limit} left",
-    "freeBarAria": "{used} of {limit} free tasks used",
-    "freeNote": "Reading, ticking off, questions and edits of a task are free. New tasks after the {limit} cost 1 credit.",
+    "free": "No plan",
+    "freeNote": "Without a plan you can view and reserve on lists others share with you – your own tasks, lists and calls need a plan. Try everything free for 14 days.",
     "credits": "Credits",
     "creditsWord": "credits",
     "reserved": "{n} reserved",
@@ -620,7 +624,7 @@
     "repeatNote": "The payment signal {ref} is already registered. No extra credits.",
     "repeatNone": "There is no payment to repeat yet – buy 10 credits first.",
     "tools": "Test tools · simulation only",
-    "useUp": "Set usage to 10/10",
+    "startFree": "Reset to an account without a plan",
     "repeatPay": "Repeat last payment signal",
     "emptyDay": "Show empty day",
     "reset": "Start over",
@@ -795,8 +799,8 @@
       "trialAria": "{n} of {total} trial days left",
       "noteTrial": "Lists and reminders are unlimited. After the trial you continue on {plan} at {price} kr./mo. – or pick another plan.",
       "notePlan": "Lists and reminders are unlimited. More calls than your subscription? Extra calls are bought under Account.",
-      "noteFree": "Without a plan you have {limit} free tasks a month and pay for calls with extra calls (credits).",
-      "freeLeft": "Free tasks left",
+      "noteFree": "Without a plan you can view and reserve on lists others share with you. Your own tasks and calls need a plan.",
+      "noteNone": "Without a plan you can view and reserve on lists others share with you. Try everything for 14 days – the card is only charged afterwards.",
       "extraCalls": "Extra calls (credits)",
       "choosePlan": "Choose plan",
       "changePlan": "Change plan",
@@ -859,7 +863,7 @@
     "trialThen": "Then {plan} at {price} kr./mo.",
     "trialThenNone": "Choose a plan before it ends – otherwise you continue without one.",
     "expiredLine": "Your trial is over. Choose a plan to get calls and all apps back.",
-    "noneLine": "No plan. You have {limit} free tasks a month and can buy extra calls.",
+    "noneLine": "No plan. You can view and reserve on lists others share with you. Try everything free for 14 days – the card is only charged once the trial ends.",
     "renews": "Renews {date}",
     "cancelAtEnd": "Cancelled – ends {date}",
     "pastDue": "Payment is missing – update your card under Manage subscription.",
@@ -909,7 +913,7 @@
     "entry": "Try it in 2 minutes",
     "meta": {
       "title": "Peter sets up your day in 2 minutes",
-      "description": "Answer four questions and Peter makes your lists, reminders and the first call – ready when you log in. Free for 14 days, no card.",
+      "description": "Answer four questions and Peter makes your lists, reminders and the first call – ready once you have started your free trial.",
       "stepTitle": "Dialogbot Privat – step {n}"
     },
     "s1": {
@@ -1065,7 +1069,7 @@
     "s6": {
       "title": "Who should Peter help?",
       "lead": "Name, mobile and e-mail – then we send a code, and your day is ready.",
-      "consent": "Yes, create a Dialogbot Privat account for me with my e-mail and send me a text code. The 14-day trial starts now and needs no card. Peter never calls anyone before I have said yes.",
+      "consent": "Yes please, create a Dialogbot Privat account for me with my e-mail and send me an SMS code. I choose the 14-day trial afterwards. Peter never calls anyone before I have said yes.",
       "codeTitle": "Enter the code from the text message"
     }
   }

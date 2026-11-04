@@ -34,7 +34,7 @@ PRIVAT_CREDIT_PACK_CREDITS = 10
 PRIVAT_CREDIT_PACK_NET_MINOR = 2320       # 23,20 kr. excl. VAT
 PRIVAT_CREDIT_PACK_GROSS_MINOR = PRIVAT_CREDIT_PACK_NET_MINOR * (10000 + TAX_BASIS_POINTS) // 10000  # 29 kr.
 PRIVAT_CALL_CREDITS = 3                   # an approved call reserves 3 credits; released if nobody answers
-PRIVAT_FREE_TASKS_PER_MONTH = 10
+PRIVAT_FREE_TASKS_PER_MONTH = 0  # the free tier only receives shared lists; a plan (14-day card trial) does the rest
 PRIVAT_WELCOME_CREDITS = 3
 
 # Dialogbot Privat subscriptions (app/modules/privat/subscriptions.py). Consumer prices, so INCL. 25 % VAT, in øre.

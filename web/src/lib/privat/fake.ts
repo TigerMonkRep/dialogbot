@@ -16,7 +16,7 @@ import { ADDON, type Addon, type ApproveBody, type Balance, type BillingInterval
   type SuggestedPerson, type SendResult, type Task, type TaskItem, type TaskStatus } from "./api";
 
 export const FAKE_SMS_CODE = "123456";
-const FREE_LIMIT = 10;
+const FREE_LIMIT = 0; // no free tasks any more: without a plan the account only reads lists shared with it
 const CALL_CREDITS = 3;
 const SPONSOR_PER_DAY = 2;
 
@@ -44,7 +44,7 @@ type Meta = { kind: "shops" | "prefill" | "decide" | "mkgroup" | "where"; query?
 type Pending = { status: TaskStatus; next: string; intro: string };
 /** Simulated subscription: a 14-day trial with Plus rights from the first use; checkout activates the chosen plan
  *  after a fake redirect (the session id carries plan and interval). Calls count per calendar month. */
-type Sub = { plan: SubscriptionPlan; status: SubscriptionStatus; interval: BillingInterval | null; trialStart: string; periodEnd: string | null; cancelAtPeriodEnd: boolean;
+type Sub = { plan: SubscriptionPlan; status: SubscriptionStatus; interval: BillingInterval | null; trialStart: string | null; periodEnd: string | null; cancelAtPeriodEnd: boolean;
   callsMonth: string; callsUsed: number; checkouts: Record<string, { plan: PlanKey; interval: BillingInterval }> };
 type State = {
   v: 8; sub: Sub; quotaCalls: Record<string, true>; location: string | null; push: string[]; joinLinks: Record<string, string>; groups: Group[]; status: Record<string, (InviteStatus & { key: string })[]>; ref: { invited: number; joined: number; activated: number; credits_earned: number; viaInvite: string | null; selfRewarded: boolean; annaJoined: boolean; annaRewarded: boolean };
@@ -241,7 +241,7 @@ function fresh(): State {
     v: 8, sub: { plan: "none", status: "trial", interval: null, trialStart: new Date().toISOString(), periodEnd: null, cancelAtPeriodEnd: false, callsMonth: monthKey(), callsUsed: 0, checkouts: {} },
     quotaCalls: {}, location: null, push: [], joinLinks: {}, groups: [], status: {}, ref: { invited: 0, joined: 0, activated: 0, credits_earned: 0, viaInvite: null, selfRewarded: false, annaJoined: false, annaRewarded: false },
     addons: { [ADDON.call]: true, [ADDON.sharedLists]: true, [ADDON.wishlists]: true }, invites: {}, reservations: { s1c: "other" },
-    invitable: sh.invitable, n: 1000, freeUsed: 8, credits: 3, reserved: 0, sponsorDay: dayKey(new Date()), sponsorUsed: 0,
+    invitable: sh.invitable, n: 1000, freeUsed: 0, credits: 3, reserved: 0, sponsorDay: dayKey(new Date()), sponsorUsed: 0,
     phone: null, phoneVerified: false, phonePending: null,
     tasks: [...examples(), ...sh.joined], msgs: [],
     ledger: [{ id: "l1", kind: "welcome", amount: 3, text: "Velkomstcredits (én gang)", created_at: atDay(-3, 9) }],
@@ -262,7 +262,8 @@ export type FakeTools = {
   simulateInviteeActivated(): Promise<{ rewarded: boolean }>;
   /** Moves the next invited person along: «Ikke åbnet endnu» → «Har åbnet» → «Med». */
   simulateInviteProgress(taskId: string): Promise<void>;
-  useUpFree(): Promise<void>;
+  /** Back to a fresh account without a trial (status «none»): only lists shared with it, drafts for the rest. */
+  startFree(): Promise<void>;
   /** Ends the trial now (no plan): the free quota and credits apply again. */
   endTrial(): Promise<void>;
   emptyDay(): Promise<void>;
@@ -294,11 +295,14 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
   function subscription(): Subscription {
     const sb = s.sub;
     if (sb.callsMonth !== monthKey()) { sb.callsMonth = monthKey(); sb.callsUsed = 0; }
-    const trialEnd = addDays(sb.trialStart, TRIAL_DAYS);
-    const trialLeft = Math.max(0, Math.ceil((new Date(trialEnd).getTime() - Date.now()) / 86_400_000));
+    // No trial started yet (a fresh account, or one that only reads shared lists): status «none» – the trial starts
+    // with the card at the checkout, as on the real site.
+    const trialEnd = sb.trialStart ? addDays(sb.trialStart, TRIAL_DAYS) : null;
+    const trialLeft = trialEnd ? Math.max(0, Math.ceil((new Date(trialEnd).getTime() - Date.now()) / 86_400_000)) : 0;
     const trialActive = trialLeft > 0;
     let status: SubscriptionStatus = sb.status;
-    if (sb.plan === "none") status = trialActive ? "trial" : "expired";
+    if (!sb.trialStart) status = "none";
+    else if (sb.plan === "none") status = trialActive ? "trial" : "expired";
     else if (status === "trial" && !trialActive) status = "active";
     const entitled = status === "trial" || status === "active" || status === "past_due";
     // Rights: the chosen plan, or Plus during the trial.
@@ -373,14 +377,12 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       t.usage_text = `Med i ${planName()} · ubegrænset`;
       return [msg({ kind: "text", text: intro }), msg({ kind: "task", task_id: t.id })];
     }
-    if (s.freeUsed < FREE_LIMIT) {
-      s.freeUsed += 1;
-      t.usage_text = `1 af ${FREE_LIMIT} gratis opgaver i ${monthDa()}`;
-      return [msg({ kind: "text", text: intro }), msg({ kind: "task", task_id: t.id })];
-    }
     s.pending[t.id] = { status: t.status, next: t.next_step, intro };
-    t.status = "draft"; t.next_step = "Vælg, hvordan opgaven skal betales"; t.usage_text = "Ikke betalt endnu";
-    return [msg({ kind: "draft", task_id: t.id, text: `Dine ${FREE_LIMIT} gratis opgaver i ${monthDa()} er brugt. Udkastet venter, mens du vælger.` })];
+    t.status = "draft"; t.next_step = "Venter på din plan"; t.usage_text = "Ikke betalt endnu";
+    const st = subscription().status;
+    return [msg({ kind: "draft", task_id: t.id, text: st === "none"
+      ? "Det kræver en plan. Prøv Dialogbot Privat gratis i 14 dage – kortet trækkes først, når prøveperioden er slut. Opgaven er gemt som udkast, til du har valgt."
+      : "Din prøveperiode er slut. Vælg en plan, eller brug 1 credit – udkastet venter, mens du vælger." })];
   }
 
   function activate(t: Task, usage: string): ChatMessage[] {
@@ -568,7 +570,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       if (method === "sponsor") return fake.sponsorClaim(taskId);
       if (s.credits < 1) fail(409, "insufficient_credits", "Du har ingen credits");
       s.credits -= 1; ledger("task_credit", -1, "Ny opgave efter månedsgrænsen");
-      s.msgs.push(...activate(t, `1 credit (efter månedens ${FREE_LIMIT} gratis)`));
+      s.msgs.push(...activate(t, "1 credit"));
       return done(t);
     },
     async messages(taskId) { await wait(); return done(taskId ? s.msgs.filter((m) => m.task_id === taskId || m.about_task_id === taskId) : s.msgs); },
@@ -700,9 +702,13 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
         // Return from the (simulated) Stripe Checkout: the session id says which plan was chosen.
         const co = s.sub.checkouts[sessionId];
         if (co) {
-          const sb = s.sub; const cur = subscription();
+          const sb = s.sub; const before = subscription();
+          if (!sb.trialStart) sb.trialStart = new Date().toISOString();  // the card is in: the 14 days start now
+          const cur = before.status === "none" ? { ...before, status: "trial" as const, trial_days_left: TRIAL_DAYS, trial_ends_at: addDays(sb.trialStart, TRIAL_DAYS) } : before;
           sb.plan = co.plan; sb.interval = co.interval; sb.cancelAtPeriodEnd = false;
           delete sb.checkouts[sessionId];
+          // Every draft that waited for the plan comes alive, paid by it.
+          for (const t of s.tasks) if (t.status === "draft" && s.pending[t.id]) s.msgs.push(...activate(t, "Med i prøveperioden"));
           const start = cur.status === "trial" && cur.trial_days_left > 2 ? cur.trial_ends_at! : new Date().toISOString();
           const d = new Date(start); if (co.interval === "year") d.setFullYear(d.getFullYear() + 1); else d.setMonth(d.getMonth() + 1);
           sb.periodEnd = d.toISOString();
@@ -1022,7 +1028,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       let activated = false;
       if (t && t.status === "draft") {
         s.credits -= 1; ledger("task_credit", -1, "Ny opgave efter månedsgrænsen");
-        s.msgs.push(...activate(t, `1 credit (efter månedens ${FREE_LIMIT} gratis)`)); activated = true;
+        s.msgs.push(...activate(t, "1 credit")); activated = true;
       }
       save();
       return { ref, activated };
@@ -1050,7 +1056,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       t.updated_at = new Date().toISOString();
       save();
     },
-    async useUpFree() { await wait(); s.freeUsed = FREE_LIMIT; save(); },
+    async startFree() { await wait(); s.sub = { ...s.sub, plan: "none", status: "none", interval: null, trialStart: null, periodEnd: null, cancelAtPeriodEnd: false }; s.credits = 0; save(); },
     async endTrial() { await wait(); s.sub.trialStart = addDays(new Date().toISOString(), -(TRIAL_DAYS + 1)); if (s.sub.plan === "none") s.sub.status = "expired"; save(); },
     async emptyDay() { await wait(); s.tasks = s.tasks.filter((t) => !t.is_example); save(); },
     async reset() { await wait(); s = fresh(); save(); },

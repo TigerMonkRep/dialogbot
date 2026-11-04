@@ -96,7 +96,6 @@ async function where(page: Page) {
 
 /** The plan badge in the header carries the numbers as data attributes (the visible text depends on the plan). */
 const chip = (page: Page) => page.getByTestId("balance-chip");
-const freeLeft = async (page: Page) => Number(await chip(page).getAttribute("data-free"));
 const credits = async (page: Page) => Number(await chip(page).getAttribute("data-credits"));
 const callsLeft = async (page: Page) => Number(await chip(page).getAttribute("data-calls-left"));
 async function noOverflow(page: Page) {
@@ -121,9 +120,9 @@ for (const width of [375, 1440]) {
     needsFake();
     test.use({ viewport: { width, height: width > 1000 ? 900 : 812 } });
 
-    test("liste: oprettes, tilføj æbler → én liste med 3 punkter, gratis-tæller uændret (prøveperiode = ubegrænset)", async ({ page }) => {
+    test("liste: oprettes, tilføj æbler → én liste med 3 punkter (prøveperiode = ubegrænset)", async ({ page }) => {
       await open(page, "/privat/dag", { login: false });
-      await expect.poll(() => freeLeft(page)).toBe(2);
+      await expect(chip(page)).toHaveAttribute("data-status", "trial");
       await expect(page.getByTestId("day-chat-card")).toBeVisible();
       await expect(page.getByTestId("your-turn")).toBeVisible();
       await expect(page.getByTestId("room-card")).toBeVisible();
@@ -133,13 +132,13 @@ for (const width of [375, 1440]) {
       await expect(sheet.getByRole("link", { name: "Opret privat konto" })).toHaveAttribute("href", /\/signup\?next=/);
       await sheet.getByRole("button", { name: /Fortsæt som testbruger/ }).click();
       await expect(chat(page).getByRole("heading", { name: "Indkøbsliste" })).toBeVisible();
-      // Lists and reminders are unlimited with the trial: the free counter does not move.
-      await expect.poll(() => freeLeft(page)).toBe(2);
+      // Lists and reminders are unlimited with the trial: credits do not move.
+      await expect.poll(() => credits(page)).toBe(3);
       await say(page, "Tilføj æbler");
       const card = chat(page).getByRole("heading", { name: "Indkøbsliste" }).locator("xpath=ancestor::div[contains(@class,'rounded-[18px]')][1]");
       await expect(card.getByRole("button", { name: "Æbler" })).toBeVisible();
       await expect(card.locator("button[aria-pressed]")).toHaveCount(3);
-      await expect.poll(() => freeLeft(page)).toBe(2);
+      await expect.poll(() => credits(page)).toBe(3);
       await gotoTab(page, "Opgaver");
       await expect(page.getByRole("region", { name: "Mine opgaver" }).getByText("Indkøbsliste", { exact: true })).toHaveCount(1);
       await noOverflow(page);
@@ -212,15 +211,38 @@ for (const width of [375, 1440]) {
       await expect(page.getByRole("heading", { name: "Vælg tid hos Tandlæge Holm", level: 2 })).toBeVisible();
     });
 
-    test("uden plan: 10/10 brugt → ny opgave bliver udkast → brug 1 credit → aktiv", async ({ page }) => {
+    test("uden plan (ny konto): ny opgave bliver udkast → Start 14 dage gratis → betaling → aktiv", async ({ page }) => {
+      await open(page, "/privat/konto");
+      await page.getByRole("button", { name: "Nulstil til konto uden plan" }).click();
+      await expect(page.getByTestId("subscription-card")).toContainText("Ingen plan");
+      await expect(page.getByTestId("free-tier")).toContainText("Uden plan kan du se og reservere");
+      await expect(chip(page)).toHaveAttribute("data-status", "none");
+      await gotoTab(page, "Samtale");
+      await say(page, "Lav en liste med kaffe og te");
+      // The trial first – no credits, no sponsor spot around the card.
+      const trial = page.getByRole("dialog", { name: "Det kræver en plan" });
+      await expect(trial).toBeVisible();
+      await expect(trial.getByRole("button", { name: /Brug 1 credit/ })).toHaveCount(0);
+      await expect(trial.getByRole("button", { name: /sponsorindslag/ })).toHaveCount(0);
+      await trial.getByTestId("paywall-trial").click();
+      // Back from the (simulated) checkout: the trial runs and the draft is live, paid by it.
+      await expect(page).toHaveURL(/\/privat\/konto/);
+      await expect(page.getByTestId("account-note")).toHaveText("Dit abonnement er aktivt.");
+      await expect(chip(page)).toHaveAttribute("data-status", "trial");
+      await gotoTab(page, "Samtale");
+      await expect(chat(page).getByText("Opgaven er aktiv nu.", { exact: false })).toBeVisible();
+      await expect(chat(page).getByText("Med i prøveperioden").first()).toBeVisible();
+      await gotoTab(page, "Opgaver");
+      await expect(page.getByRole("region", { name: "Mine opgaver" }).getByRole("button", { name: /^I gang Liste/ })).toBeVisible();
+    });
+
+    test("prøveperiode slut: ny opgave bliver udkast → brug 1 credit → aktiv", async ({ page }) => {
       await open(page, "/privat/konto");
       await page.getByRole("button", { name: "Afslut prøveperioden" }).click();
       await expect(page.getByTestId("subscription-card")).toContainText("Prøveperiode slut");
-      await page.getByRole("button", { name: "Sæt forbrug til 10/10" }).click();
-      await expect.poll(() => freeLeft(page)).toBe(0);
       await gotoTab(page, "Samtale");
       await say(page, "Lav en liste med kaffe og te");
-      const sheet = page.getByRole("dialog", { name: "Månedens 10 gratis opgaver er brugt" });
+      const sheet = page.getByRole("dialog", { name: "Det kræver en plan" });
       await expect(sheet).toBeVisible();
       await expect(sheet.getByRole("button", { name: /Se et sponsorindslag/ })).toBeVisible();
       await expect(sheet.getByRole("button", { name: "Vælg plan" })).toBeVisible();
@@ -296,7 +318,7 @@ for (const width of [375, 1440]) {
       await expect(page.getByText("Anna har delt en liste med dig")).toBeVisible();
       await expect(page.getByText("2 punkter")).toBeVisible();
       await expect(page.getByText("Anna bruger Dialogbot")).toBeVisible();
-      await expect(page.getByText("Få din egen: 10 gratis opgaver hver måned")).toBeVisible();
+      await expect(page.getByText("Få din egen: prøv Dialogbot Privat gratis i 14 dage")).toBeVisible();
       await expect(page.getByText("Grillkul")).toHaveCount(0);
       await noOverflow(page);
       await page.getByRole("button", { name: "Åbn listen" }).click();

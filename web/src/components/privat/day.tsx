@@ -213,10 +213,8 @@ function Bar({ value, max, label }: { value: number; max: number; label: string 
 /** «Dit råderum»: calls left, trial days left (or the plan), «Vælg plan». Without rights: the free quota and credits. */
 export function RoomCard() {
   const t = useT("privat");
-  const { balance, addons, openSheet, choosePlan } = usePrivat();
+  const { balance, addons, openSheet, choosePlan, startTrial } = usePrivat();
   const p = usePlan();
-  const limit = balance?.free_limit ?? 10;
-  const freeLeft = Math.max(0, limit - (balance?.free_used ?? 0));
   const eyebrow = p.status === "trial" ? t("day2.room.trialEyebrow", { plan: p.rightsName }) : p.entitled ? t("day2.room.planEyebrow", { plan: p.rightsName, status: t(`plan.status.${p.status}`) }) : t("day2.room.freeEyebrow");
   const fresh = addons?.find((a) => !a.enabled && a.status !== "coming_soon" && a.requires_plan);
   return (
@@ -240,13 +238,11 @@ export function RoomCard() {
         </>
       ) : (
         <>
-          <div className="flex flex-col gap-1.5">
-            <div className="flex justify-between text-[14px]"><span>{t("day2.room.freeLeft")}</span><strong>{freeLeft} / {limit}</strong></div>
-            <Bar value={freeLeft} max={limit} label={t("account.freeBarAria", { used: balance?.free_used ?? 0, limit })} />
-          </div>
-          <div className="flex justify-between text-[14px]"><span>{t("day2.room.extraCalls")}</span><strong>{balance?.credits ?? 0}</strong></div>
-          <p className="m-0 text-[13px] text-muted leading-normal">{t("day2.room.noteFree", { limit })}</p>
-          <button type="button" className={`${PRIMARY} self-start`} onClick={choosePlan}>{p.status === "none" ? t("day2.room.startTrial") : t("day2.room.choosePlan")}</button>
+          {p.status !== "none" && <div className="flex justify-between text-[14px]"><span>{t("day2.room.extraCalls")}</span><strong>{balance?.credits ?? 0}</strong></div>}
+          <p className="m-0 text-[13px] text-muted leading-normal">{t(p.status === "none" ? "day2.room.noteNone" : "day2.room.noteFree")}</p>
+          {p.status === "none"
+            ? <button type="button" className={`${PRIMARY} self-start`} onClick={() => void startTrial()}>{t("day2.room.startTrial")}</button>
+            : <button type="button" className={`${PRIMARY} self-start`} onClick={choosePlan}>{t("day2.room.choosePlan")}</button>}
         </>
       )}
       {fresh && (

@@ -1,7 +1,7 @@
 {
   "meta": {
     "landingTitle": "Dialogbot Privat – il tuo assistente personale",
-    "landingDescription": "Scrivi o di' cosa devi sbrigare. Dialogbot fa liste, ti ricorda le cose e chiama per te – ma solo dopo il tuo sì. 10 attività gratuite ogni mese.",
+    "landingDescription": "Scrivi o di' cosa devi far fare. Dialogbot crea liste, ti ricorda le cose e chiama per te – ma solo quando hai detto sì. Prova gratis per 14 giorni.",
     "day": "La mia giornata",
     "chat": "Conversazione",
     "tasks": "Le mie attività",
@@ -22,12 +22,12 @@
   },
   "landing": {
     "metaTitle": "Dialogbot Privat – il tuo assistente personale",
-    "metaDescription": "Scrivi o detta un compito. Peter tiene liste, ti ricorda le cose e chiama per te – mai prima del tuo sì. Prova gratis per 14 giorni, senza carta.",
+    "metaDescription": "Scrivi o detta un compito. Peter crea liste, ti ricorda le cose e chiama per te – ma mai prima che tu abbia detto sì. Prova gratis per 14 giorni.",
     "eyebrow": "Il tuo assistente personale",
     "title": "Cosa posso sistemare per te?",
     "lead": "Scrivi o detta un compito. Peter tiene liste, ti ricorda le cose – e chiama il parrucchiere, l'officina o il ristorante per te. Non chiama mai prima che tu abbia detto sì.",
     "cta": "Prova gratis per 14 giorni",
-    "note": "Nessuna carta. Nessun vincolo.",
+    "note": "14 giorni gratis. Disdici quando vuoi.",
     "login": "Accedi",
     "demo": {
       "role": "il tuo assistente personale",
@@ -92,7 +92,7 @@
     },
     "pricing": {
       "title": "14 giorni gratis. Poi scegli tu.",
-      "text": "Prova tutto per 14 giorni senza carta. Poi un solo abbonamento – disdici quando vuoi. Prezzi IVA inclusa.",
+      "text": "Prova tutto per 14 giorni. Ti registri con una carta, addebitata solo alla fine della prova – disdici prima e non paghi nulla. Prezzi IVA inclusa.",
       "intervalLabel": "Fatturazione",
       "monthly": "Mensile",
       "yearly": "Annuale · risparmi il 20 %",
@@ -134,8 +134,10 @@
     "skip": "Vai al contenuto",
     "homeAria": "Dialogbot Privat – La mia giornata",
     "credits": "{n} crediti",
-    "free": "{n} gratis",
-    "balanceAria": "{credits} crediti e {free} attività gratuite rimaste. Apri l'account",
+    "balanceAria": "{credits} crediti. Apri l'account",
+    "noPlanBadge": "Senza piano · prova 14 giorni",
+    "noPlanBadgeShort": "Senza piano",
+    "noPlanAria": "Senza piano. Apri l'account e inizia 14 giorni gratis",
     "login": "Accedi",
     "menu": "Menu account",
     "switchLabel": "Passa tra azienda e privato",
@@ -356,7 +358,8 @@
   },
   "draft": {
     "label": "Bozza · pronta da salvare",
-    "text": "Le tue {limit} attività gratuite di {month} sono esaurite. La bozza aspetta mentre scegli.",
+    "text": "La tua prova è finita. La bozza aspetta mentre scegli un piano.",
+    "textTrial": "La bozza aspetta la tua prova – 14 giorni gratis, la carta viene addebitata solo dopo.",
     "choose": "Scegli come continuare",
     "active": "L'attività è attiva – {usage}."
   },
@@ -511,15 +514,18 @@
     "someone": "La tua amica",
     "brandTitle": "{name} usa Dialogbot",
     "brandText": "– un assistente personale che fa liste, ti ricorda le cose e chiama per te.",
-    "brandOffer": "Prendi il tuo: 10 attività gratuite ogni mese",
+    "brandOffer": "Prendi il tuo: prova Dialogbot Privat gratis per 14 giorni",
     "brandCta": "Scopri Dialogbot Privat"
   },
   "paywall": {
-    "titleDigital": "Le {limit} attività gratuite del mese sono esaurite",
+    "titleDigital": "Serve un piano",
     "titleCall": "Ti mancano crediti per la chiamata",
+    "titleTrial": "Serve un piano",
     "draft": "Bozza",
-    "textDigital": "L'attività è salvata come bozza. Continua con 1 credito, compra crediti o guarda un contenuto sponsorizzato facoltativo – oppure aspetta il mese prossimo, quando ricevi {limit} nuove attività gratuite.",
+    "textDigital": "Il compito è salvato come bozza. Scegli un piano, continua con 1 credito o guarda un clip sponsorizzato facoltativo.",
     "textCall": "Una chiamata riserva {n} crediti quando la approvi. Ne hai {have}.",
+    "textTrial": "Prova Dialogbot Privat gratis per 14 giorni. Ti registri con una carta, addebitata solo alla fine della prova – disdici prima e non paghi nulla. Il compito resta una bozza finché non scegli.",
+    "trialNote": "Plus · 79 kr./mese dopo la prova · disdici quando vuoi",
     "useCredit": "Usa 1 credito · ne hai {n}",
     "buy": "Compra 10 crediti · 29 kr. IVA incl.",
     "sponsor": "Guarda un contenuto sponsorizzato · +1 attività ({n} rimasti oggi)",
@@ -594,10 +600,8 @@
     "privateLine": "Account privato · {email} · separato dagli account aziendali",
     "exampleLine": "Stai provando con dati di esempio. Accedi quando salvi la tua prima attività.",
     "simulatedLine": "L'API Privat non è ancora attiva – qui è tutto una simulazione nel tuo browser.",
-    "free": "Attività quotidiane gratuite · {month}",
-    "freeLeft": "su {limit} rimaste",
-    "freeBarAria": "{used} di {limit} attività gratuite usate",
-    "freeNote": "Leggere, spuntare, fare domande e correggere un'attività è gratis. Le nuove attività dopo le {limit} costano 1 credito.",
+    "free": "Senza piano",
+    "freeNote": "Senza piano puoi vedere e prenotare sulle liste che altri condividono con te – compiti, liste e chiamate tuoi richiedono un piano. Prova tutto gratis per 14 giorni.",
     "credits": "Crediti",
     "creditsWord": "crediti",
     "reserved": "{n} riservati",
@@ -620,7 +624,7 @@
     "repeatNote": "Il segnale di pagamento {ref} è già registrato. Nessun credito extra.",
     "repeatNone": "Non c'è ancora nessun pagamento da ripetere – compra prima 10 crediti.",
     "tools": "Strumenti di test · solo simulazione",
-    "useUp": "Imposta il consumo a 10/10",
+    "startFree": "Ripristina ad account senza piano",
     "repeatPay": "Ripeti l'ultimo segnale di pagamento",
     "emptyDay": "Mostra giornata vuota",
     "reset": "Ricomincia",
@@ -795,8 +799,8 @@
       "trialAria": "{n} di {total} giorni di prova rimasti",
       "noteTrial": "Liste e promemoria sono illimitati. Dopo la prova continui con {plan} a {price} kr./mese – o scegli un altro piano.",
       "notePlan": "Liste e promemoria sono illimitati. Più chiamate del tuo abbonamento? Le chiamate extra si acquistano in Account.",
-      "noteFree": "Senza piano hai {limit} attività gratuite al mese e paghi le chiamate con chiamate extra (crediti).",
-      "freeLeft": "Attività gratuite rimaste",
+      "noteFree": "Senza piano puoi vedere e prenotare sulle liste che altri condividono con te. Compiti e chiamate tuoi richiedono un piano.",
+      "noteNone": "Senza piano puoi vedere e prenotare sulle liste che altri condividono con te. Prova tutto per 14 giorni – la carta viene addebitata solo dopo.",
       "extraCalls": "Chiamate extra (crediti)",
       "choosePlan": "Scegli piano",
       "changePlan": "Cambia piano",
@@ -859,7 +863,7 @@
     "trialThen": "Poi {plan} a {price} kr./mese",
     "trialThenNone": "Scegli un piano prima che finisca – altrimenti continui senza piano.",
     "expiredLine": "La tua prova è finita. Scegli un piano per riavere chiamate e tutte le app.",
-    "noneLine": "Nessun piano. Hai {limit} attività gratuite al mese e puoi acquistare chiamate extra.",
+    "noneLine": "Nessun piano. Puoi vedere e prenotare sulle liste che altri condividono con te. Prova tutto gratis per 14 giorni – la carta viene addebitata solo alla fine della prova.",
     "renews": "Si rinnova il {date}",
     "cancelAtEnd": "Annullato – termina il {date}",
     "pastDue": "Manca il pagamento – aggiorna la carta in Gestisci abbonamento.",
@@ -909,7 +913,7 @@
     "entry": "Provalo in 2 minuti",
     "meta": {
       "title": "Peter organizza la tua giornata in 2 minuti",
-      "description": "Rispondi a quattro domande e Peter crea le tue liste, i promemoria e la prima chiamata, pronti quando accedi. Gratis per 14 giorni, senza carta.",
+      "description": "Rispondi a quattro domande e Peter prepara le tue liste, i promemoria e la prima chiamata – pronti appena hai iniziato la prova gratuita.",
       "stepTitle": "Dialogbot Privat – passo {n}"
     },
     "s1": {
@@ -1065,7 +1069,7 @@
     "s6": {
       "title": "Chi deve aiutare Peter?",
       "lead": "Nome, cellulare ed e-mail: ti inviamo un codice e la tua giornata è pronta.",
-      "consent": "Sì, create un account Dialogbot Privat con la mia e-mail e inviatemi un codice via SMS. La prova di 14 giorni inizia ora e non richiede carta. Peter non chiama mai nessuno prima che io abbia detto sì.",
+      "consent": "Sì, crea un account Dialogbot Privat con la mia e-mail e inviami un codice SMS. Scelgo la prova di 14 giorni dopo. Peter non chiama mai nessuno prima che io abbia detto sì.",
       "codeTitle": "Inserisci il codice dell'SMS"
     }
   }

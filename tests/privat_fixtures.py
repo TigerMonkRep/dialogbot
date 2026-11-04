@@ -37,11 +37,31 @@ class Pv:
         self.api.verify(tok)
         return tok
 
-    def account(self, email: str, name: str = "Mette Hansen") -> str:
+    def account(self, email: str, name: str = "Mette Hansen", *, trial: bool = True) -> str:
+        """A private account. `trial=True` (the default) puts it on the 14-day trial as Stripe Checkout would have
+        (card given, Stripe «trialing», Plus) – what nearly every test is about. `trial=False` is the free tier a
+        fresh sign-up has before the checkout."""
         tok = self.user(email, name)
         r = self.api.post(tok, "/privat/account")
         assert r.status_code == 200, r.text
+        if trial:
+            self.start_trial(tok)
         return tok
+
+    def start_trial(self, tok: str, plan: str = "plus", days: int = 14) -> None:
+        """The trial as the Stripe webhook mirrors it after Checkout: status trial, the chosen plan, trial_ends_at."""
+        ws = self.ws(tok)
+        with get_session_factory()() as db:
+            row = db.get(PrivateSubscription, ws)
+            row.plan, row.status, row.interval = plan, "trial", "month"
+            row.stripe_customer_id, row.stripe_subscription_id = "cus_test", f"sub_trial_{ws.hex[:8]}"
+            row.trial_ends_at = self.clock() + timedelta(days=days)
+            db.flush()
+            from app.modules.privat import addons, service
+
+            addons.enable_defaults(db, ws)
+            service.activate_drafts_with_plan(db, ws)
+            db.commit()
 
     def ws(self, tok: str) -> uuid.UUID:
         uid = self.uid(tok)

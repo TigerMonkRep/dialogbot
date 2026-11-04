@@ -38,11 +38,15 @@ def test_account_is_personal_idempotent_and_flagged(api, pv, db, monkeypatch):
         assert db.query(model).filter_by(workspace_id=ws.id).count() == 0
     assert api.get(tok, "/workspaces").json() == []  # never listed as a business workspace
     assert api.get(tok, f"/workspaces/{ws.id}/business-profile").status_code == 404
-    assert pv.me(tok) == {"free_used": 0, "free_limit": 10, "credits": 3, "reserved": 0, "sponsor_left_today": 2,
+    # a fresh account is the free tier: no rights until the 14-day trial starts at Stripe Checkout, with a card
+    assert pv.me(tok) == {"free_used": 0, "free_limit": 0, "credits": 3, "reserved": 0, "sponsor_left_today": 2,
                           "phone_display": None, "phone_verified": False, "push_enabled": False,
                           "location_city": None,
-                          "plan": "plus", "plan_status": "trial", "trial_days_left": 14, "calls_quota": 10,
-                          "calls_used": 0, "calls_left": 10, "entitled": True}
+                          "plan": "none", "plan_status": "none", "trial_days_left": 0, "calls_quota": 0,
+                          "calls_used": 0, "calls_left": 0, "entitled": False}
+    pv.start_trial(tok)  # … as the webhook mirrors it after the checkout
+    me = pv.me(tok)
+    assert (me["plan"], me["plan_status"], me["trial_days_left"], me["calls_quota"], me["entitled"]) == ("plus", "trial", 14, 10, True)
     assert _ledger(db, ws.id) == [("grant", 3, f"welcome:{ws.id}")]
     # pilot allow-list and the feature flag
     monkeypatch.setenv("PRIVAT_ALLOWED_EMAILS", "someone@else.dk")
@@ -104,18 +108,16 @@ def test_isolation(api, pv, two_workspaces):
 # --------------------------------------------------------------------------- quota
 
 def test_free_task_11(api, pv, db):
-    """The pre-subscription path: trial over, no plan → 10 free tasks, then drafts."""
+    """Without a plan (trial over): no free tasks – a new task becomes a draft; editing what exists stays free."""
     tok = pv.account("mette@testmail.dk")
+    lid = pv.make_list(tok)  # made during the trial
     pv.expire_trial(tok)
-    for i in range(10):
-        pv.say(tok, f"Lav en liste med ting {i}")
-    assert pv.me(tok)["free_used"] == 10
-    lid = api.get(tok, "/privat/tasks").json()[0]["id"]
+    assert pv.me(tok)["free_used"] == 0 and pv.me(tok)["free_limit"] == 0
     # editing, ticking and reading an existing task is free
     pv.say(tok, "Tilføj æbler", about=lid)
     t = pv.task(tok, lid).json()
     api.post(tok, f"/privat/tasks/{lid}/items/{t['items'][0]['id']}/toggle")
-    assert pv.me(tok)["free_used"] == 10
+    assert pv.me(tok)["free_used"] == 0
     out = pv.say(tok, "Mind mig om at hente pakken i morgen kl 16")
     draft = next(m for m in out["messages"] if m["kind"] == "draft")
     t11 = pv.task(tok, draft["task_id"]).json()
@@ -123,7 +125,7 @@ def test_free_task_11(api, pv, db):
     assert db.query(OutboxEvent).filter(OutboxEvent.event_type == "privat.reminder",
                                         OutboxEvent.dedupe_key.like(f"privat-reminder:{t11['id']}:%")).count() == 0
     t = api.post(tok, f"/privat/tasks/{t11['id']}/activate", {"method": "credit"}).json()
-    assert t["status"] == "planned" and t["usage_text"] == "1 credit (efter månedens 10 gratis)"
+    assert t["status"] == "planned" and t["usage_text"] == "1 credit"
     assert api.post(tok, f"/privat/tasks/{t11['id']}/activate", {"method": "credit"}).json()["status"] == "planned"
     ws = pv.ws(tok)
     assert [r for r in _ledger(db, ws) if r[0] == "spend"] == [("spend", -1, f"spend:{t11['id']}")]
@@ -136,9 +138,11 @@ def test_free_task_11(api, pv, db):
     r = api.post(tok, f"/privat/tasks/{drafts[2]}/activate", {"method": "sponsor"})
     assert r.status_code == 409 and r.json()["code"] == "sponsor_limit"
     assert pv.me(tok)["sponsor_left_today"] == 0
-    # a new month gives 10 new free tasks
+    # the trial (card at Stripe) activates every draft that waited for it
     pv.clock.at = datetime(2026, 12, 1, 9, 0, tzinfo=UTC)
-    assert pv.me(tok)["free_used"] == 0
+    pv.start_trial(tok)
+    assert pv.task(tok, drafts[2]).json()["status"] == "in_progress"  # a list's own status
+    assert pv.task(tok, drafts[2]).json()["usage_text"] == "Med i prøveperioden"
 
 
 # --------------------------------------------------------------------------- reminders

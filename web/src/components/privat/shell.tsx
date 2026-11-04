@@ -91,8 +91,8 @@ function Header() {
   // The badge: «Plus · prøveperiode, 9 dage tilbage», the plan name, or (without rights) credits and free tasks.
   const badge = p.entitled
     ? (p.status === "trial" ? t("nav.trialBadge", { plan: p.rightsName, n: p.trialDays }) : t("nav.planBadge", { plan: p.rightsName }))
-    : balance ? `${t("header.credits", { n: balance.credits })} · ${t("header.free", { n: free ?? 0 })}` : "";
-  const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialBadgeShort", { plan: p.rightsName, n: p.trialDays }) : p.entitled ? p.rightsName : balance ? t("header.credits", { n: balance.credits }) : "";
+    : balance ? (p.status === "none" ? t("header.noPlanBadge") : t("header.credits", { n: balance.credits })) : "";
+  const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialBadgeShort", { plan: p.rightsName, n: p.trialDays }) : p.entitled ? p.rightsName : balance ? (p.status === "none" ? t("header.noPlanBadgeShort") : t("header.credits", { n: balance.credits })) : "";
   return (
     <header className="flex-none flex items-center gap-2.5 px-4 py-3 min-h-16 border-b-2 border-ink bg-paper pt-safe">
       <Link href="/privat/dag" aria-label={t("header.homeAria")} className="flex items-center gap-2.5 min-w-0 min-h-[44px]">
@@ -109,7 +109,7 @@ function Header() {
       </nav>
       <span className="flex-1" />
       {balance && (
-        <button type="button" onClick={() => go("account")} aria-label={p.entitled ? t("nav.planAria", { text: badge }) : t("header.balanceAria", { credits: balance.credits, free: free ?? 0 })}
+        <button type="button" onClick={() => go("account")} aria-label={p.entitled ? t("nav.planAria", { text: badge }) : (p.status === "none" ? t("header.noPlanAria") : t("header.balanceAria", { credits: balance.credits }))}
           data-credits={balance.credits} data-free={free ?? 0} data-plan={p.plan} data-status={p.status} data-calls-left={p.callsLeft}
           className={`inline-flex items-center gap-2 min-h-[44px] px-3.5 rounded-full border-2 border-ink text-[14px] font-semibold whitespace-nowrap ${p.entitled ? "bg-accent-soft hover:bg-panel-deep" : "bg-paper hover:bg-panel"}`} data-testid="balance-chip">
           <span className={`w-2.5 h-2.5 rounded-full border-[1.5px] border-ink ${p.entitled ? "bg-accent" : "bg-highlight"}`} aria-hidden />

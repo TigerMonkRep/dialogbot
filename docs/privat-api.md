@@ -259,8 +259,13 @@ Alt ovenfor er implementeret. Afvigelser er bagudkompatible (kun ekstra felter/e
 ## Generelt
 - Feature-flag: `PRIVAT_ENABLED` (standard false) + `PRIVAT_ALLOWED_EMAILS` (kommaliste; tom = alle). Uden adgang: 403 `privat_not_enabled`.
   Offentlige invitationsendepunkter svarer 404 `invite_invalid`, når flaget er slået fra.
-- Privat konto kræver bekræftet e-mail (403 `email_not_verified`). GET-endepunkter uden konto: 404 `privat_account_missing`;
-  POST-endepunkter opretter kontoen automatisk (samme som `POST /privat/account`).
+- Privat konto kræver bekræftet e-mail **eller** bekræftet mobilnummer (403 `email_not_verified` når ingen af delene er sat).
+  GET-endepunkter uden konto: 404 `privat_account_missing`; POST-endepunkter opretter kontoen automatisk (samme som `POST /privat/account`).
+- **Konto via telefon (quiz-funnelen `/privat/start`, docs/funnel-api.md):** ved verify af SMS-koden sættes `users.phone_verified_at`, og
+  `deps.ensure_account` accepterer det som bevis i stedet for e-mailen. Kontoen oprettes med en tilfældig adgangskode og en velkomstmail
+  med «Vælg adgangskode»-link; e-mailen forbliver uverificeret, til brugeren selv bekræfter den. Profilens `phone_e164`/`phone_verified_at`
+  sættes fra funnelen, så `needs_phone` ikke rammer ved det første opkald. Findes e-mailen allerede, logges den eksisterende bruger ind
+  (audit `user.funnel_login`).
 - «Se som kunde» (operatør-sessioner) kan ALDRIG se private data: 403 `view_as_not_allowed`.
 - Isolation: et privat arbejdsrum (`workspaces.kind='personal'`) kan aldrig nås via `/workspaces/{id}/…` (404), vises ikke i
   `GET /workspaces`, admin-kundelister/-tal, daglige rapporter eller fakturering. Opgaver nås KUN via `private_task_members`.

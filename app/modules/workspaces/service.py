@@ -37,8 +37,10 @@ def _slugify(name: str) -> str:
 
 
 def create_workspace(db: OrmSession, *, user: User, name: str, product_intent: str | None,
-                     request_id: str | None = None) -> Workspace:
-    if user.email_verified_at is None:
+                     request_id: str | None = None, require_verified: bool = True) -> Workspace:
+    """`require_verified=False` only for the quiz-funnel (app/modules/funnel), where the person proved a mobile
+    number with an SMS code instead of the e-mail address."""
+    if require_verified and user.email_verified_at is None:
         raise Forbidden("Bekræft din e-mail, før du opretter et arbejdsrum", code="email_not_verified")
     intent = product_intent or user.signup_intent or "reception"
     if intent not in INTENTS:

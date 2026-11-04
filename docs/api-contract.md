@@ -119,6 +119,12 @@ Se `docs/ambassadors/program.md` for regler.
 | `GET/POST /operator/ambassadors/payouts`, `GET /operator/ambassadors/payouts/{id}`, `POST …/{id}/paid` `{reference}`, `POST …/{id}/cancel` | Udbetalingskørsler (≥ 500 kr., kun uden blokeringer). |
 | `GET /operator/ambassadors/b-income.csv?year=` | Udbetalt B-indkomst pr. privat ambassadør (navn, CPR, beløb) til eIndkomst. Logges. |
 
+## Quiz-funnels (`/start`, `/privat/start`)
+
+Offentlige ruter under `/funnel` (ingen login før reveal, rate-limit pr. IP, honeypot ved gaten): `POST/GET/PATCH /funnel/drafts`, `GET /funnel/places`,
+`POST /funnel/drafts/{id}/gate` (SMS-kode), `POST /funnel/drafts/{id}/verify` (opretter/logger ind bruger, svarer som `POST /auth/login` plus
+`session_token`), `GET /funnel/drafts/{id}/reveal` (session). Kontrakt og regler: `docs/funnel-api.md`.
+
 ## Dialogbots interne salgskanal (kun operatører)
 
 Alle ruter kræver `is_platform_operator` (403 `operator_only`). Kundernes `/workspaces/{ws}/campaigns` viser og styrer kun `kind=customer`. Med `SALES_OUTBOUND_MODE=off` svarer alle undtagen `GET /operator/salg` 501 `sales_channel_off`; simulation kræver `simulation|test|live` (ellers 501 `sales_mode_not_allowed`). Se `docs/sales/salgskanal-drift.md`.

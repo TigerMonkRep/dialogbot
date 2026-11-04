@@ -369,6 +369,16 @@ def run_schedules() -> None:
             db.rollback()
             log.warning("privat.sweep_failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
+        try:  # quiz-funnel drafts nobody verified within seven days
+            from app.modules.funnel.service import purge_expired
+
+            n = purge_expired(db)
+            if n:
+                log.info("funnel.drafts_purged", count=n)
+        except Exception as exc:  # noqa: BLE001
+            db.rollback()
+            log.warning("funnel.purge_failed", error=f"{type(exc).__name__}: {exc}")
+    with get_session_factory()() as db:
         try:
             from app.modules.social.service import run_due as run_social
 

@@ -40,6 +40,10 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(320), nullable=False)
     email_normalized: Mapped[str] = mapped_column(String(320), nullable=False, unique=True)
     email_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Set when the person proved a mobile number with an SMS code (quiz-funnel sign-up, app/modules/funnel). An
+    # account created that way has an unverified e-mail until the welcome link is used; Dialogbot Privat accepts
+    # either proof (privat/deps.ensure_account).
+    phone_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     password_hash: Mapped[str] = mapped_column(Text, nullable=False)
     display_name: Mapped[str] = mapped_column(String(200), nullable=False)
     interface_language: Mapped[str] = mapped_column(String(16), nullable=False, default="da")

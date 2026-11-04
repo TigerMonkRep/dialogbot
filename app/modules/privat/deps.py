@@ -56,9 +56,12 @@ def find_profile(db: OrmSession, user_id: uuid.UUID) -> PrivateProfile | None:
 
 def ensure_account(db: OrmSession, user: User, *, signup_source: str | None = None) -> tuple[PrivateProfile, bool]:
     """The user's personal workspace, created once (owner membership, NO business seed rows, 3 welcome credits,
-    the 14-day trial, default add-ons). Idempotent: the user row is locked, and private_profiles.user_id is unique."""
+    the 14-day trial, default add-ons). Idempotent: the user row is locked, and private_profiles.user_id is unique.
+
+    Proof of identity: a verified e-mail OR a verified mobile number (users.phone_verified_at, set by the quiz-funnel
+    after the SMS code) – see docs/privat-api.md «Konto via telefon»."""
     check_allowed(user)
-    if user.email_verified_at is None:
+    if user.email_verified_at is None and user.phone_verified_at is None:
         raise Forbidden("Bekræft din e-mail først", code="email_not_verified")
     p = find_profile(db, user.id)
     if p is not None:

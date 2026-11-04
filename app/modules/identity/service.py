@@ -74,15 +74,21 @@ def _consume(db: OrmSession, raw_token: str, purpose: str) -> AuthToken:
 
 
 def login(db: OrmSession, *, email: str, password: str, user_agent: str | None) -> tuple[User, str]:
-    s = get_settings()
     user = db.scalar(select(User).where(User.email_normalized == normalize_email(email)))
     # Constant-shape failure regardless of which part was wrong.
     if user is None or not user.is_active or not verify_password(password, user.password_hash):
         raise Unauthenticated("Forkert e-mail eller adgangskode", code="invalid_credentials")
+    return user, start_session(db, user, user_agent)
+
+
+def start_session(db: OrmSession, user: User, user_agent: str | None) -> str:
+    """A new server-side session for a user whose identity was just proven (password, or the SMS code of the
+    quiz-funnel). Returns the raw token; only its digest is stored."""
+    s = get_settings()
     raw = new_token()
     db.add(Session(user_id=user.id, token_hash=token_digest(raw),
                    expires_at=_now() + timedelta(hours=s.session_ttl_hours), user_agent=(user_agent or "")[:400]))
-    return user, raw
+    return raw
 
 
 def logout(db: OrmSession, session: Session) -> None:

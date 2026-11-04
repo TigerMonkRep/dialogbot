@@ -21,17 +21,114 @@
     "loading": "Wird geladen …"
   },
   "landing": {
-    "title": "Dein eigener persönlicher Assistent",
-    "lead": "Schreib oder sag, was erledigt werden soll. Er macht Listen, erinnert dich an Dinge und kann zum Beispiel die Fahrradwerkstatt für dich anrufen – aber erst, wenn du Ja gesagt hast.",
-    "cta": "Kostenlos testen",
+    "metaTitle": "Dialogbot Privat – dein persönlicher Assistent",
+    "metaDescription": "Schreib oder sprich eine Aufgabe. Peter führt Listen, erinnert dich und ruft für dich an – nie, bevor du Ja gesagt hast. 14 Tage kostenlos testen, ohne Karte.",
+    "eyebrow": "Dein persönlicher Assistent",
+    "title": "Was soll ich für dich erledigen?",
+    "lead": "Schreib oder sprich eine Aufgabe. Peter führt Listen, erinnert dich an Dinge – und ruft für dich beim Friseur, in der Werkstatt oder im Restaurant an. Er ruft nie an, bevor du Ja gesagt hast.",
+    "cta": "14 Tage kostenlos testen",
+    "note": "Keine Karte. Keine Bindung. Keine App zum Herunterladen.",
     "login": "Anmelden",
-    "note": "10 kostenlose Alltagsaufgaben jeden Monat. Du testest mit Beispieldaten – anmelden musst du dich erst, wenn du eine eigene Aufgabe speichern willst.",
-    "exampleLabel": "Ein Beispiel aus dem Alltag",
-    "exampleAsk": "Ruf die Fahrradwerkstatt an und finde einen Termin am Donnerstag nach 15 Uhr",
-    "proposalLabel": "Vorschlag · wartet auf dein Ja",
-    "proposalTitle": "Cykelmageren anrufen · höchstens 3 Credits",
-    "proposalText": "Darf die Abgabe am Donnerstag nach 15 Uhr vereinbaren. Darf keinen Reparaturen zustimmen.",
-    "confirmed": "Donnerstag 15.30 Uhr ist von der Werkstatt bestätigt"
+    "demo": {
+      "role": "dein persönlicher Assistent",
+      "badge": "Interaktive Demo",
+      "ask": "Finde einen Termin, um meinen Fahrradreifen flicken zu lassen – Donnerstag nach 15 Uhr.",
+      "replyBefore": "Ich schlage vor, bei ",
+      "replyName": "Cykelkælderen",
+      "replyAfter": " in Trøjborg anzurufen. Ich vereinbare nur eine Abgabezeit – keine Reparaturen. Soll ich anrufen?",
+      "yes": "Ja, anrufen",
+      "wait": "Warte kurz",
+      "quickRemind": "Erinnere mich",
+      "quickList": "Liste anlegen",
+      "quickCall": "Ruf für mich an",
+      "inputLabel": "Aufgabe eingeben",
+      "placeholder": "Probier: Erinnere mich um 17 Uhr an Milch",
+      "send": "Senden",
+      "done": "Erledigt: Cykelkælderen Donnerstag 15.30 Uhr. In deinem Kalender eingetragen."
+    },
+    "three": {
+      "title": "Drei Dinge, die Peter für dich tut",
+      "included": "In allen Abos enthalten",
+      "includedTrial": "In allen Abos enthalten – 14 Tage kostenlos testen",
+      "items": [
+        {
+          "title": "Merkt sich alles",
+          "text": "Einkäufe, Packliste, Geburtstage. Sag es, und es steht da. Teile die Liste mit allen zu Hause."
+        },
+        {
+          "title": "Erinnert dich",
+          "text": "Eine Nachricht, wenn es Zeit ist. Nicht zwanzig Benachrichtigungen – eine, wenn sie zählt."
+        },
+        {
+          "title": "Ruft für dich an",
+          "text": "Zahnarzt, Werkstatt, Restaurant. Peter ruft an, vereinbart innerhalb deiner Vorgaben und meldet sich zurück."
+        }
+      ]
+    },
+    "control": {
+      "title": "Du entscheidest. Immer.",
+      "text": "Peter schlägt zuerst vor, was er tun will, und wartet auf dein Ja. Er sagt immer, dass er ein Assistent ist, der in deinem Namen anruft – und er kann weder deine Karte noch dein MitID benutzen.",
+      "steps": [
+        "Du sagst, was erledigt werden soll",
+        "Peter schlägt einen Plan vor – du sagst Ja",
+        "Er erledigt es und meldet sich zurück"
+      ]
+    },
+    "store": {
+      "eyebrow": "Der Shop",
+      "title": "Peter lernt jeden Monat Neues",
+      "text": "Jede App ist eine Sache, bei der Peter helfen kann. Tippen, lesen, was sie tut, und installieren – dann richtet er sie mit dir ein. Alle Apps sind in Plus und Familie enthalten.",
+      "cta": "Alle Apps ansehen",
+      "apps": {
+        "sharedLists": "Geteilte Listen",
+        "wishlist": "Wunschliste",
+        "birthdays": "Geburtstage",
+        "calendar": "Kalender",
+        "meals": "Essensplan",
+        "car": "Auto & TÜV",
+        "doctor": "Arzt & Zahnarzt",
+        "more": "Weitere folgen"
+      }
+    },
+    "pricing": {
+      "title": "14 Tage kostenlos. Dann wählst du selbst.",
+      "text": "Teste alles 14 Tage ohne Karte. Danach ein Abo – jederzeit kündbar. Preise inkl. MwSt.",
+      "intervalLabel": "Abrechnung",
+      "monthly": "Monatlich",
+      "yearly": "Jährlich · 20 % sparen",
+      "recommended": "Empfohlen",
+      "perMonth": "DKK/Monat",
+      "billedMonthly": "Monatliche Abrechnung",
+      "billedYearly": "Jährliche Abrechnung: {amount} DKK",
+      "cta": "14 Tage kostenlos starten",
+      "note": "Mehr Anrufe als im Abo? Zusätzliche Anrufe kaufst du in der App. Keine Bindung – Plan wechseln oder jeden Monat kündigen.",
+      "tagline": {
+        "basis": "Für alle, die den Alltag im Griff haben wollen.",
+        "plus": "Für alle, die nicht mehr herumtelefonieren wollen.",
+        "familie": "Für den ganzen Haushalt – ein Konto, mehrere Personen."
+      },
+      "features": {
+        "listsUnlimited": "Listen und Erinnerungen – unbegrenzt",
+        "calls": "{n} Anrufe pro Monat",
+        "people": "{n|1 Person|Bis zu # Personen}",
+        "allInBasis": "Alles aus Basis",
+        "allInPlus": "Alles aus Plus",
+        "sharedLists": "Geteilte Listen und Wunschlisten",
+        "allApps": "Alle Apps im Shop",
+        "sharedCalendar": "Gemeinsamer Kalender und Einkauf"
+      }
+    },
+    "final": {
+      "title": "Fang heute mit etwas Kleinem an",
+      "text": "„Erinnere mich um 17 Uhr an Milch“ ist ein guter Anfang.",
+      "cta": "14 Tage kostenlos starten"
+    },
+    "footer": {
+      "brand": "Dialogbot Privat · dialogbot.app/privat",
+      "business": "Du hast ein Unternehmen? Dialogbot Erhverv",
+      "privacy": "Datenschutz",
+      "terms": "AGB"
+    }
   },
   "header": {
     "skip": "Zum Inhalt springen",

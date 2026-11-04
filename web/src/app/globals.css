@@ -138,6 +138,27 @@
   --text-label-sm--font-weight: 600;
 }
 
+/* ── Dialogbot Privat theme ───────────────────────────────────────────────
+   `data-theme="privat"` on the root element of every /privat page. Same ink, outlines, fonts and block shadow; the
+   action colour turns orange and paper/panel go warm. Tailwind v4 utilities (bg-accent, text-accent, bg-panel …)
+   resolve to var(--color-*), so they follow this override without per-component changes. The logo (LogoMark,
+   bg-accent) becomes orange automatically. Trin-gul (highlight) is kept. */
+[data-theme="privat"] {
+  --color-accent: #E0521A;
+  --color-accent-deep: #B8400F;
+  --color-accent-soft: #FFE1D2;
+  --color-on-accent: #FFFFFF;
+  --color-paper: #FFFBF5;
+  --color-panel: #FFF4E6;
+  --color-panel-deep: #FFE8CC;
+  --color-success-soft: #BFE8D2;
+  /* legacy Material names that map onto accent/panel */
+  --color-tertiary-fixed: #FFE1D2;
+  --color-on-tertiary-fixed: #B8400F;
+  --color-surface-variant: #FFF4E6;
+  --color-surface-container-low: #FFF4E6;
+}
+
 /* Byggevejledning primitives */
 @utility shadow-block { box-shadow: 8px 8px 0 var(--color-ink); }
 @utility shadow-block-sm { box-shadow: 4px 4px 0 var(--color-ink); }

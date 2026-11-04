@@ -21,17 +21,114 @@
     "loading": "Loading …"
   },
   "landing": {
-    "title": "Your own personal assistant",
-    "lead": "Type or say what you need done. It makes lists, reminds you of things and can call the bike shop for you, for example – but only once you have said yes.",
-    "cta": "Try for free",
+    "metaTitle": "Dialogbot Privat – your own personal assistant",
+    "metaDescription": "Type or dictate a task. Peter keeps lists, reminds you of things and makes calls for you – never before you have said yes. Try it free for 14 days, no card.",
+    "eyebrow": "Your own personal assistant",
+    "title": "What can I take care of for you?",
+    "lead": "Type or dictate a task. Peter keeps lists, reminds you of things – and calls the hairdresser, the garage or the restaurant for you. He never calls before you have said yes.",
+    "cta": "Try free for 14 days",
+    "note": "No card. No commitment. No app to download.",
     "login": "Log in",
-    "note": "10 free everyday tasks every month. You try it with example data – we only ask you to log in when you want to save your own task.",
-    "exampleLabel": "An everyday example",
-    "exampleAsk": "Call the bike shop and find a time on Thursday after 3 pm",
-    "proposalLabel": "Proposal · waiting for your yes",
-    "proposalTitle": "Call Cykelmageren · at most 3 credits",
-    "proposalText": "May agree on drop-off Thursday after 3 pm. May not agree to repairs.",
-    "confirmed": "Thursday at 15.30 is confirmed by the shop"
+    "demo": {
+      "role": "your personal assistant",
+      "badge": "Interactive demo",
+      "ask": "Find a time to get my bike tyre fixed – Thursday after 3 pm.",
+      "replyBefore": "I suggest calling ",
+      "replyName": "Cykelkælderen",
+      "replyAfter": " in Trøjborg. I will only agree a drop-off time – no repairs. Shall I call?",
+      "yes": "Yes, call",
+      "wait": "Hold on",
+      "quickRemind": "Remind me",
+      "quickList": "Make a list",
+      "quickCall": "Call for me",
+      "inputLabel": "Type your task",
+      "placeholder": "Try: Remind me to buy milk at 5 pm",
+      "send": "Send",
+      "done": "Done: Cykelkælderen Thursday at 3.30 pm. Added to your calendar."
+    },
+    "three": {
+      "title": "Three things Peter does for you",
+      "included": "Included in every plan",
+      "includedTrial": "Included in every plan – try 14 days free",
+      "items": [
+        {
+          "title": "Remembers for you",
+          "text": "Groceries, packing lists, birthdays. Say it and it is written down. Share the list with the people at home."
+        },
+        {
+          "title": "Reminds you",
+          "text": "One message when it is time. Not twenty notifications – one, when it matters."
+        },
+        {
+          "title": "Calls for you",
+          "text": "The dentist, the garage, the restaurant. Peter calls, agrees within your limits and reports back."
+        }
+      ]
+    },
+    "control": {
+      "title": "You decide. Always.",
+      "text": "Peter first proposes what he will do and waits for your yes. He always says he is an assistant calling on your behalf – and he cannot use your card or your MitID.",
+      "steps": [
+        "You say what needs doing",
+        "Peter proposes a plan – you say yes",
+        "He gets it done and reports back"
+      ]
+    },
+    "store": {
+      "eyebrow": "The Store",
+      "title": "Peter learns something new every month",
+      "text": "Each app is one thing Peter can help with. Tap, read what it does and install it – then he sets it up together with you. All apps are included in Plus and Familie.",
+      "cta": "See all apps",
+      "apps": {
+        "sharedLists": "Shared lists",
+        "wishlist": "Wish list",
+        "birthdays": "Birthdays",
+        "calendar": "Calendar",
+        "meals": "Meal plan",
+        "car": "Car & inspection",
+        "doctor": "Doctor & dentist",
+        "more": "More coming"
+      }
+    },
+    "pricing": {
+      "title": "14 days free. Then you choose.",
+      "text": "Try everything for 14 days without a card. Then one subscription – cancel any time. Prices incl. VAT.",
+      "intervalLabel": "Billing",
+      "monthly": "Monthly",
+      "yearly": "Yearly · save 20 %",
+      "recommended": "Recommended",
+      "perMonth": "DKK/mo.",
+      "billedMonthly": "Billed monthly",
+      "billedYearly": "Billed yearly: DKK {amount}",
+      "cta": "Start 14 days free",
+      "note": "More calls than your plan? Extra calls are bought in the app. No commitment – change plan or stop every month.",
+      "tagline": {
+        "basis": "For keeping everyday life in order.",
+        "plus": "For never having to ring around again.",
+        "familie": "For the whole household – one account, several people."
+      },
+      "features": {
+        "listsUnlimited": "Lists and reminders – unlimited",
+        "calls": "{n} calls per month",
+        "people": "{n|1 person|Up to # people}",
+        "allInBasis": "Everything in Basis",
+        "allInPlus": "Everything in Plus",
+        "sharedLists": "Shared lists and wish lists",
+        "allApps": "All apps in the store",
+        "sharedCalendar": "Shared calendar and groceries"
+      }
+    },
+    "final": {
+      "title": "Start with something small today",
+      "text": "“Remind me to buy milk at 5 pm” is a fine start.",
+      "cta": "Start 14 days free"
+    },
+    "footer": {
+      "brand": "Dialogbot Privat · dialogbot.app/privat",
+      "business": "Have a business? Dialogbot Erhverv",
+      "privacy": "Privacy",
+      "terms": "Terms"
+    }
   },
   "header": {
     "skip": "Skip to content",

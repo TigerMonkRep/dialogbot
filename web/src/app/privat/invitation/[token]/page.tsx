@@ -12,5 +12,5 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Public invite to a shared list: value first (title, who, how many), then a calm Dialogbot card. */
 export default async function Page({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  return <Suspense><InvitationPage token={token} loggedIn={await isLoggedIn()} /></Suspense>;
+  return <div data-theme="privat" className="contents"><Suspense><InvitationPage token={token} loggedIn={await isLoggedIn()} /></Suspense></div>;
 }

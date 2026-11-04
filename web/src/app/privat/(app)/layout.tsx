@@ -10,5 +10,6 @@ export const metadata: Metadata = { manifest: "/privat/manifest.webmanifest", ap
  *  without login see example data and are asked to log in when they save their first own task. */
 export default async function PrivatLayout({ children }: { children: React.ReactNode }) {
   const session = await privatSession();
-  return <><PrivatApp session={session} />{children}</>;
+  // data-theme="privat": orange accent, warm paper/panel (globals.css). The shell renders into this wrapper.
+  return <div data-theme="privat" className="contents"><PrivatApp session={session} />{children}</div>;
 }

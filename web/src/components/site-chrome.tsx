@@ -8,6 +8,9 @@ import { CookieSettingsLink } from "./site-analytics";
 import { ChatIcon, MenuIcon, PlayIcon } from "./site-icons";
 import { LANDING_PAGES } from "@/lib/site";
 import { INDUSTRIES } from "@/lib/industries";
+import { AudienceSwitch } from "./audience-switch";
+export { AudienceSwitch } from "./audience-switch";
+export type { Audience } from "./audience-switch";
 
 /** Shared chrome for the public site in the "Byggevejledning" design (design-reference/byggevejledning/*.dc.html):
  *  2 px ink rules, the logo mark, the two-door "path switch" (Prøv den | Byggevejledning) and the phone number.
@@ -71,6 +74,7 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
   const locale = await getLocale();
   return (
     <header className="border-b-2 border-ink bg-white">
+      <AudienceSwitch current="erhverv" />
       <div className="max-w-[1180px] mx-auto px-4 sm:px-6 min-h-[72px] py-3 flex flex-wrap items-center gap-x-6 gap-y-3 sm:gap-x-8">
         <span className="inline-flex items-center gap-2.5">
           <Logo />

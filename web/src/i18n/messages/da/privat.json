@@ -21,17 +21,114 @@
     "loading": "Henter …"
   },
   "landing": {
-    "title": "Din egen personlige assistent",
-    "lead": "Skriv eller sig, hvad du skal have klaret. Den laver lister, minder dig om ting og kan ringe til fx cykelværkstedet for dig – men først når du har sagt ja.",
-    "cta": "Prøv gratis",
+    "metaTitle": "Dialogbot Privat – din egen personlige assistent",
+    "metaDescription": "Skriv eller indtal en opgave. Peter laver lister, minder dig om ting og ringer for dig – men aldrig før du har sagt ja. Prøv gratis i 14 dage uden kort.",
+    "eyebrow": "Din egen personlige assistent",
+    "title": "Hvad skal jeg klare for dig?",
+    "lead": "Skriv eller indtal en opgave. Peter laver lister, minder dig om ting – og ringer til frisøren, værkstedet eller restauranten for dig. Han ringer aldrig, før du har sagt ja.",
+    "cta": "Prøv gratis i 14 dage",
+    "note": "Ingen kort. Ingen binding. Ingen app at hente.",
     "login": "Log ind",
-    "note": "10 gratis hverdagsopgaver hver måned. Du prøver med eksempeldata – vi beder først om login, når du vil gemme din egen opgave.",
-    "exampleLabel": "Et hverdagseksempel",
-    "exampleAsk": "Ring til cykelværkstedet og find en tid torsdag efter kl. 15",
-    "proposalLabel": "Forslag · venter på dit ja",
-    "proposalTitle": "Ring til Cykelmageren · højst 3 credits",
-    "proposalText": "Må aftale aflevering torsdag efter kl. 15. Må ikke sige ja til reparationer.",
-    "confirmed": "Torsdag kl. 15.30 er bekræftet af værkstedet"
+    "demo": {
+      "role": "din personlige assistent",
+      "badge": "Interaktiv demo",
+      "ask": "Find en tid til at få min cykel lappet – torsdag efter kl. 15.",
+      "replyBefore": "Jeg foreslår at ringe til ",
+      "replyName": "Cykelkælderen",
+      "replyAfter": " på Trøjborg. Jeg aftaler kun en afleveringstid – ikke reparationer. Skal jeg ringe?",
+      "yes": "Ja, ring",
+      "wait": "Vent lidt",
+      "quickRemind": "Mind mig om",
+      "quickList": "Lav en liste",
+      "quickCall": "Ring for mig",
+      "inputLabel": "Skriv din opgave",
+      "placeholder": "Prøv: Mind mig om at købe mælk kl. 17",
+      "send": "Send",
+      "done": "Ordnet: Cykelkælderen torsdag kl. 15.30. Lagt i din kalender."
+    },
+    "three": {
+      "title": "Tre ting, Peter gør for dig",
+      "included": "Med i alle abonnementer",
+      "includedTrial": "Med i alle abonnementer – prøv 14 dage gratis",
+      "items": [
+        {
+          "title": "Husker for dig",
+          "text": "Indkøb, pakkeliste, fødselsdage. Sig det, og det står der. Del listen med dem derhjemme."
+        },
+        {
+          "title": "Minder dig om det",
+          "text": "En besked, når det er tid. Ikke tyve notifikationer – én, når den betyder noget."
+        },
+        {
+          "title": "Ringer for dig",
+          "text": "Tandlægen, værkstedet, restauranten. Peter ringer, aftaler inden for dine rammer og melder tilbage."
+        }
+      ]
+    },
+    "control": {
+      "title": "Du bestemmer. Altid.",
+      "text": "Peter foreslår først, hvad han vil gøre, og venter på dit ja. Han siger altid, at han er en assistent, der ringer på dine vegne – og han kan ikke bruge dit kort eller dit MitID.",
+      "steps": [
+        "Du siger, hvad du skal have ordnet",
+        "Peter foreslår en plan – du siger ja",
+        "Han ordner det og melder tilbage"
+      ]
+    },
+    "store": {
+      "eyebrow": "Butikken",
+      "title": "Peter lærer nyt hver måned",
+      "text": "Hver app er én ting, Peter kan hjælpe med. Tryk, læs hvad den gør, og installér – så sætter han den op sammen med dig. Alle apps er med i Plus og Familie.",
+      "cta": "Se alle apps",
+      "apps": {
+        "sharedLists": "Delte lister",
+        "wishlist": "Ønskeseddel",
+        "birthdays": "Fødselsdage",
+        "calendar": "Kalender",
+        "meals": "Madplan",
+        "car": "Bil & syn",
+        "doctor": "Læge & tandlæge",
+        "more": "Flere på vej"
+      }
+    },
+    "pricing": {
+      "title": "14 dage gratis. Så vælger du selv.",
+      "text": "Prøv alt i 14 dage uden kort. Derefter ét abonnement – opsig når som helst. Priser inkl. moms.",
+      "intervalLabel": "Betaling",
+      "monthly": "Månedligt",
+      "yearly": "Årligt · spar 20 %",
+      "recommended": "Anbefalet",
+      "perMonth": "kr./md.",
+      "billedMonthly": "Betales månedligt",
+      "billedYearly": "Betales årligt: {amount} kr.",
+      "cta": "Start 14 dage gratis",
+      "note": "Flere opkald end dit abonnement? Ekstra opkald købes i appen. Ingen binding – du kan skifte plan eller stoppe hver måned.",
+      "tagline": {
+        "basis": "Til dig, der vil have styr på hverdagen.",
+        "plus": "Til dig, der vil slippe for at ringe rundt.",
+        "familie": "Til hele husstanden – én konto, flere folk."
+      },
+      "features": {
+        "listsUnlimited": "Lister og påmindelser – ubegrænset",
+        "calls": "{n} opkald om måneden",
+        "people": "{n|1 person|Op til # personer}",
+        "allInBasis": "Alt i Basis",
+        "allInPlus": "Alt i Plus",
+        "sharedLists": "Delte lister og ønskesedler",
+        "allApps": "Alle apps i butikken",
+        "sharedCalendar": "Fælles kalender og indkøb"
+      }
+    },
+    "final": {
+      "title": "Prøv med noget småt i dag",
+      "text": "«Mind mig om at købe mælk kl. 17» er en fin start.",
+      "cta": "Start 14 dage gratis"
+    },
+    "footer": {
+      "brand": "Dialogbot Privat · dialogbot.app/privat",
+      "business": "Har du en virksomhed? Dialogbot Erhverv",
+      "privacy": "Privatliv",
+      "terms": "Handelsbetingelser"
+    }
   },
   "header": {
     "skip": "Spring til indholdet",

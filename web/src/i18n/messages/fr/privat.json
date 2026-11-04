@@ -21,17 +21,114 @@
     "loading": "Chargement …"
   },
   "landing": {
-    "title": "Votre propre assistant personnel",
-    "lead": "Écrivez ou dites ce qu'il faut faire. Il fait des listes, vous rappelle des choses et peut par exemple appeler l'atelier vélo pour vous – mais seulement après votre oui.",
-    "cta": "Essayer gratuitement",
+    "metaTitle": "Dialogbot Privat – votre assistant personnel",
+    "metaDescription": "Écrivez ou dictez une tâche. Peter tient des listes, vous rappelle les choses et appelle pour vous – jamais avant votre oui. Essai gratuit de 14 jours, sans carte.",
+    "eyebrow": "Votre assistant personnel",
+    "title": "Que puis-je régler pour vous ?",
+    "lead": "Écrivez ou dictez une tâche. Peter tient des listes, vous rappelle les choses – et appelle le coiffeur, le garage ou le restaurant pour vous. Il n'appelle jamais avant que vous ayez dit oui.",
+    "cta": "Essayer gratuitement 14 jours",
+    "note": "Sans carte. Sans engagement. Sans appli à télécharger.",
     "login": "Se connecter",
-    "note": "10 tâches du quotidien gratuites chaque mois. Vous essayez avec des données d'exemple – la connexion n'est demandée que pour enregistrer votre propre tâche.",
-    "exampleLabel": "Un exemple du quotidien",
-    "exampleAsk": "Appelle l'atelier vélo et trouve un créneau jeudi après 15 h",
-    "proposalLabel": "Proposition · attend votre oui",
-    "proposalTitle": "Appeler Cykelmageren · 3 crédits maximum",
-    "proposalText": "Peut convenir d'un dépôt jeudi après 15 h. Ne peut pas accepter de réparations.",
-    "confirmed": "Jeudi à 15 h 30 est confirmé par l'atelier"
+    "demo": {
+      "role": "votre assistant personnel",
+      "badge": "Démo interactive",
+      "ask": "Trouve un créneau pour réparer mon pneu de vélo – jeudi après 15 h.",
+      "replyBefore": "Je propose d'appeler ",
+      "replyName": "Cykelkælderen",
+      "replyAfter": " à Trøjborg. Je conviens seulement d'une heure de dépôt – pas de réparations. J'appelle ?",
+      "yes": "Oui, appelle",
+      "wait": "Attends",
+      "quickRemind": "Rappelle-moi",
+      "quickList": "Créer une liste",
+      "quickCall": "Appelle pour moi",
+      "inputLabel": "Écrivez votre tâche",
+      "placeholder": "Essayez : Rappelle-moi d'acheter du lait à 17 h",
+      "send": "Envoyer",
+      "done": "Réglé : Cykelkælderen jeudi à 15 h 30. Ajouté à votre agenda."
+    },
+    "three": {
+      "title": "Trois choses que Peter fait pour vous",
+      "included": "Inclus dans tous les abonnements",
+      "includedTrial": "Inclus dans tous les abonnements – essai gratuit de 14 jours",
+      "items": [
+        {
+          "title": "Se souvient pour vous",
+          "text": "Courses, liste de valise, anniversaires. Dites-le, c'est noté. Partagez la liste avec ceux de la maison."
+        },
+        {
+          "title": "Vous le rappelle",
+          "text": "Un message quand c'est le moment. Pas vingt notifications – une seule, quand ça compte."
+        },
+        {
+          "title": "Appelle pour vous",
+          "text": "Le dentiste, le garage, le restaurant. Peter appelle, convient dans vos limites et vous fait un retour."
+        }
+      ]
+    },
+    "control": {
+      "title": "Vous décidez. Toujours.",
+      "text": "Peter propose d'abord ce qu'il va faire et attend votre oui. Il dit toujours qu'il est un assistant qui appelle en votre nom – et il ne peut utiliser ni votre carte ni votre MitID.",
+      "steps": [
+        "Vous dites ce qu'il faut régler",
+        "Peter propose un plan – vous dites oui",
+        "Il s'en occupe et vous fait un retour"
+      ]
+    },
+    "store": {
+      "eyebrow": "La boutique",
+      "title": "Peter apprend du nouveau chaque mois",
+      "text": "Chaque appli est une chose pour laquelle Peter peut aider. Touchez, lisez ce qu'elle fait et installez-la – il la configure avec vous. Toutes les applis sont incluses dans Plus et Familie.",
+      "cta": "Voir toutes les applis",
+      "apps": {
+        "sharedLists": "Listes partagées",
+        "wishlist": "Liste de souhaits",
+        "birthdays": "Anniversaires",
+        "calendar": "Agenda",
+        "meals": "Menus",
+        "car": "Voiture & contrôle",
+        "doctor": "Médecin & dentiste",
+        "more": "D'autres arrivent"
+      }
+    },
+    "pricing": {
+      "title": "14 jours gratuits. Ensuite, vous choisissez.",
+      "text": "Essayez tout pendant 14 jours sans carte. Ensuite un seul abonnement – résiliable à tout moment. Prix TTC.",
+      "intervalLabel": "Facturation",
+      "monthly": "Mensuel",
+      "yearly": "Annuel · -20 %",
+      "recommended": "Recommandé",
+      "perMonth": "DKK/mois",
+      "billedMonthly": "Facturé chaque mois",
+      "billedYearly": "Facturé à l'année : {amount} DKK",
+      "cta": "Commencer 14 jours gratuits",
+      "note": "Plus d'appels que votre abonnement ? Les appels supplémentaires s'achètent dans l'appli. Sans engagement – changez de formule ou arrêtez chaque mois.",
+      "tagline": {
+        "basis": "Pour garder le quotidien en ordre.",
+        "plus": "Pour ne plus jamais passer de coups de fil.",
+        "familie": "Pour tout le foyer – un compte, plusieurs personnes."
+      },
+      "features": {
+        "listsUnlimited": "Listes et rappels – illimités",
+        "calls": "{n} appels par mois",
+        "people": "{n|1 personne|Jusqu'à # personnes}",
+        "allInBasis": "Tout Basis",
+        "allInPlus": "Tout Plus",
+        "sharedLists": "Listes partagées et listes de souhaits",
+        "allApps": "Toutes les applis de la boutique",
+        "sharedCalendar": "Agenda et courses partagés"
+      }
+    },
+    "final": {
+      "title": "Commencez par quelque chose de simple",
+      "text": "« Rappelle-moi d'acheter du lait à 17 h » est un bon début.",
+      "cta": "Commencer 14 jours gratuits"
+    },
+    "footer": {
+      "brand": "Dialogbot Privat · dialogbot.app/privat",
+      "business": "Vous avez une entreprise ? Dialogbot Erhverv",
+      "privacy": "Confidentialité",
+      "terms": "Conditions"
+    }
   },
   "header": {
     "skip": "Aller au contenu",

@@ -117,6 +117,28 @@ def me(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db))
     return out
 
 
+@router.get("/bootstrap")
+def bootstrap(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """Everything the app needs on load and after an action, in ONE request: before this the web made eleven
+    (me, day, tasks ×2, messages, ledger, addons, referrals, groups, subscription), each paying for its own
+    session lookup and the Frankfurt↔database round trips – about a second of pure waiting after every message."""
+    me = service.balance_out(db, ctx)
+    own = [service.task_out(db, t, ctx.user_id) for t in service.list_tasks(db, ctx)]
+    seen = {t["id"] for t in own}
+    shared = [service.task_out(db, t, ctx.user_id) for t in service.list_tasks(db, ctx, shared=True) if str(t.id) not in seen]
+    out = {
+        "me": me, "day": service.day(db, ctx), "tasks": own + shared,
+        "messages": [service.message_out(m) for m in service.messages(db, ctx, None)],
+        "ledger": [{"id": str(r.id), "kind": r.kind, "amount": r.amount, "text": r.text, "created_at": r.created_at.isoformat()}
+                   for r in ledger.rows(db, ctx.ws_id)],
+        "addons": addons.catalog_out(db, ctx.ws_id), "referrals": referrals.summary(db, ctx),
+        "groups": [groups.group_out(db, g) for g in groups.list_groups(db, ctx)],
+        "subscription": subscriptions.subscription_out(db, ctx.ws_id),
+    }
+    db.commit()
+    return out
+
+
 # --------------------------------------------------------------------------- subscription
 
 @router.get("/subscription")

@@ -624,7 +624,9 @@
     "repeatPay": "Gentag sidste betalingssignal",
     "emptyDay": "Vis tom dag",
     "reset": "Start forfra",
-    "installTitle": "Hent appen"
+    "installTitle": "Hent appen",
+    "languageTitle": "Sprog",
+    "languageText": "Appen og Peters svar følger sproget her."
   },
   "invite": {
     "title": "Inviter venner",

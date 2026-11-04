@@ -7,6 +7,7 @@ import { BIG, Eyebrow, LINK, Pill, Sim } from "./bits";
 import { PhoneVerify } from "./cards";
 import { PushPrompt } from "./push";
 import { InstallApp } from "@/components/install-app";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { enablePush } from "@/lib/privat/push";
 import { Ico, Tile } from "./icons";
 import { useFmt, usePlan, usePrivat } from "./store";
@@ -183,6 +184,12 @@ export function AccountPane() {
           )}
         </section>
       )}
+
+      <section className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" aria-labelledby="lang-h">
+        <h3 id="lang-h" className="m-0 font-display font-bold text-[19px]">{t("account.languageTitle")}</h3>
+        <p className="m-0 text-[14px] text-ink-soft">{t("account.languageText")}</p>
+        <LanguageSwitcher className="self-start" onSaved={(l) => { if (mode === "real") api.setLocale(l).catch(() => {}); }} />
+      </section>
 
       <section className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" aria-labelledby="install-h">
         <h3 id="install-h" className="m-0 font-display font-bold text-[19px]">{t("account.installTitle")}</h3>

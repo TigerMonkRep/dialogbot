@@ -143,3 +143,30 @@ def test_card_invoice_and_webhooks(api, client, two_workspaces, db, monkeypatch)
     assert items[0]["status"] == "paid" and items[0]["hosted_invoice_url"]
     assert db.query(Invoice).count() >= 1 and db.query(BillingAccount).filter_by(workspace_id=uuid.UUID(ws)).one().card_last4 == "4242"
     get_settings.cache_clear()
+
+
+def test_request_sends_the_form_as_a_mapping(monkeypatch):
+    """httpx reads a list of pairs as raw byte content ("expected a bytes-like object, tuple found" in production
+    on the first subscription checkout); the flattened form must be handed over as a dict."""
+    import httpx
+
+    seen = {}
+
+    def fake_request(method, url, *, data=None, params=None, headers=None, timeout=None):
+        seen.update(method=method, url=url, data=data, params=params)
+        return httpx.Response(200, json={"id": "cs_1", "url": "https://checkout.stripe.com/c/cs_1"})
+
+    monkeypatch.setattr(httpx, "request", fake_request)
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_x")
+    from app.config import get_settings
+
+    get_settings.cache_clear()
+    try:
+        out = stripe.request("POST", "/checkout/sessions", {"mode": "subscription", "line_items": [{"quantity": 1, "price_data": {
+            "currency": "dkk", "recurring": {"interval": "month"}}}], "metadata": {"kind": "privat_subscription"}})
+    finally:
+        get_settings.cache_clear()
+    assert out["url"].startswith("https://checkout.stripe.com/")
+    assert isinstance(seen["data"], dict) and seen["params"] is None
+    assert seen["data"]["line_items[0][price_data][recurring][interval]"] == "month"
+    assert seen["data"]["metadata[kind]"] == "privat_subscription"

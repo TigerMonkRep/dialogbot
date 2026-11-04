@@ -72,8 +72,10 @@ def request(method: str, path: str, data: dict | None = None, *, idempotency_key
     if idempotency_key:
         headers["idempotency-key"] = idempotency_key
     try:
-        r = httpx.request(method, f"{API}{path}", data=_flatten(data or {}) if method != "GET" else None,
-                          params=_flatten(data or {}) if method == "GET" else None, headers=headers, timeout=30.0)
+        # httpx takes a mapping (a list of pairs is read as raw byte content); the flattened keys are unique.
+        form = dict(_flatten(data or {}))
+        r = httpx.request(method, f"{API}{path}", data=form if method != "GET" else None,
+                          params=form if method == "GET" else None, headers=headers, timeout=30.0)
     except httpx.HTTPError as e:
         raise StripeFailed("Stripe svarede ikke") from e
     body = r.json() if r.content else {}

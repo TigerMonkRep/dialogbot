@@ -467,6 +467,7 @@ for (const width of [375, 1440]) {
       await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
       await page.goto("/privat/konto");
       await page.getByRole("button", { name: "Afslut prøveperioden" }).click();
+      await expect(page.getByTestId("subscription-card")).toContainText("Prøveperiode slut");
       await page.goto("/privat/butik");
       await page.getByRole("button", { name: "Åbn Kalender" }).click();
       await expect(page.getByRole("dialog").getByTestId("needs-plan")).toContainText("Med i Plus");

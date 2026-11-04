@@ -66,11 +66,18 @@ def balance_out(db: OrmSession, ctx) -> dict:
             "credits": ledger.balance(db, ctx.ws_id), "reserved": ledger.reserved(db, ctx.ws_id),
             "sponsor_left_today": max(0, rules.SPONSOR_PER_DAY - ledger.sponsor_used_today(db, ctx.ws_id)),
             "phone_display": rules.phone_display(p.phone_e164) if p.phone_verified_at else None,
-            "phone_verified": p.phone_verified_at is not None,
+            "phone_verified": p.phone_verified_at is not None, "push_enabled": _push_enabled(db, ctx.user_id),
+            "location_city": p.location_city,
             # the subscription (docs/privat-api.md): trial counts as Plus; credits are "ekstra opkald" beyond the quota
             "plan": ent["plan"], "plan_status": ent["status"], "trial_days_left": ent["trial_days_left"],
             "calls_quota": ent["calls_quota"], "calls_used": ent["calls_used"], "calls_left": ent["calls_left"],
             "entitled": ent["entitled"]}
+
+
+def _push_enabled(db: OrmSession, user_id: uuid.UUID) -> bool:
+    from app.modules.privat import push
+
+    return push.has_subscriptions(db, user_id)
 
 
 def _lock_profile(db: OrmSession, ws_id: uuid.UUID) -> PrivateProfile:
@@ -169,6 +176,11 @@ def add_items(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, texts: li
     prefix = "" if m.role == "owner" else f"{rules.first_name(who.display_name)}: "
     event(db, task, f"{prefix}Tilføjet: " + ", ".join(i.text.lower() for i in out) + " (gratis rettelse)")
     touch(task)
+    if task.share_mode:
+        from app.modules.privat import push
+
+        push.notify_list_activity(db, task, actor_user_id=m.user_id,
+                                  text=f"{rules.first_name(who.display_name)} tilføjede " + ", ".join(i.text.lower() for i in out))
     return out
 
 
@@ -273,7 +285,7 @@ def move_reminder(db: OrmSession, task: PrivateTask, when: datetime) -> tuple[st
 
 
 def handle_reminder(db: OrmSession, ev: OutboxEvent) -> None:
-    """Worker handler (privat.reminder): e-mail now. Push notifications are a later step: see push_hook."""
+    """Worker handler (privat.reminder): push when the owner has a subscription, else e-mail."""
     from app.modules.integrations import email_templates as tpl
     from app.worker.runner import _send_mail
 
@@ -285,34 +297,41 @@ def handle_reminder(db: OrmSession, ev: OutboxEvent) -> None:
     mail = tpl.Email(subject=f"Påmindelse: {task.title}", heading=task.title,
                      paragraphs=[f"Du bad mig minde dig om det {rules.lower_first(when)}."],
                      footer_reason="Du får denne e-mail, fordi du bad Dialogbot om en påmindelse.")
-    _send_mail(db, ev, mail)
-    push_hook(db, task, title="Påmindelse", body=task.title)
+    from app.modules.privat import push
+
+    owner_id = db.scalar(select(PrivateProfile.user_id).where(PrivateProfile.workspace_id == task.workspace_id))
+    if owner_id and push.has_subscriptions(db, owner_id):  # push is primary; e-mail only without a subscription
+        push.notify(db, owner_id, title="Påmindelse", body=task.title, url=_task_url(task),
+                    dedupe=f"reminder:{task.id}:{task.reminder_version}",
+                    email={"to_email": ev.payload["to_email"], "email": tpl.to_payload(mail)})
+    else:
+        _send_mail(db, ev, mail)
     task.status, task.next_step, task.who = "done", "Klaret", "Dig"
     event(db, task, "Påmindelse sendt")
     touch(task)
 
 
-def push_hook(db: OrmSession, task: PrivateTask, *, title: str, body: str) -> None:
-    """Hook for push notifications (app/PWA), not built yet. Every user notification passes here, so adding push is
-    one function: look up the user's push subscriptions and send. E-mail is the channel today."""
-    return None
+def _task_url(task: PrivateTask) -> str:
+    from app.config import get_settings
+
+    return f"{get_settings().frontend_base_url.rstrip('/')}/privat/opgaver/{task.id}"
 
 
 def notify_owner(db: OrmSession, task: PrivateTask, *, subject: str, text: str, dedupe: str) -> None:
-    """Tell the task's owner by e-mail (and later push) – a service message about their own task, never marketing."""
-    from app.config import get_settings
+    """Tell the task's owner: push, or e-mail without a working subscription. A service message, never marketing."""
     from app.modules.integrations import email_templates as tpl
 
     owner_id = db.scalar(select(PrivateProfile.user_id).where(PrivateProfile.workspace_id == task.workspace_id))
     owner = db.get(User, owner_id)
     if owner is None:
         return
+    from app.modules.privat import push
+
     mail = tpl.Email(subject=subject, heading=task.title, paragraphs=[text], button_label="Åbn opgaven",
-                     button_url=f"{get_settings().frontend_base_url.rstrip('/')}/privat/opgaver/{task.id}",
+                     button_url=_task_url(task),
                      footer_reason="Du får denne e-mail, fordi Dialogbot arbejder på en opgave for dig.")
-    enqueue(db, event_type="email.branded", dedupe_key=f"privat-notify:{dedupe}"[:200], workspace_id=task.workspace_id,
-            payload={"to_email": owner.email, "email": tpl.to_payload(mail)})
-    push_hook(db, task, title=subject, body=text)
+    push.notify(db, owner.id, title=subject, body=text, url=_task_url(task), dedupe=dedupe,
+                email={"to_email": owner.email, "email": tpl.to_payload(mail)}, workspace_id=task.workspace_id)
 
 
 # --------------------------------------------------------------------------- reading
@@ -363,11 +382,24 @@ def call_out(c: PrivateCall | None) -> dict | None:
     if c is None:
         return None
     return {"business_name": c.business_name, "address": c.business_address,
-            "phone_display": rules.phone_display(c.business_phone_e164), "may_ask": c.may_ask,
+            "phone_display": rules.phone_display(c.business_phone_e164) or "", "may_ask": c.may_ask,
             "may_agree": c.may_agree, "may_not": c.may_not, "window": c.window, "max_credits": rules.CALL_CREDITS,
             "share_phone": c.share_phone, "result": c.result, "confirmed_text": c.confirmed_text,
             "business_reply": c.business_reply, "business_price_text": c.business_price_text,
-            "duration_seconds": c.duration_seconds, "status": c.status}
+            "duration_seconds": c.duration_seconds, "status": c.status, **_call_extra(c)}
+
+
+def _call_extra(c: PrivateCall) -> dict:
+    from app.modules.privat import places
+
+    now = rules.now()
+    closed = c.next_open_at is not None and c.next_open_at > now
+    kind = places.classify_phone(c.business_phone_e164)[1] if c.business_phone_e164 else "none"
+    return {"phone_e164": c.business_phone_e164, "is_mobile": kind == "mobile",
+            "source": {"fixture": "demo"}.get(c.phone_source or "", c.phone_source) or ("google" if c.place_id else "user"),
+            "open_now": (not closed) if c.place_id else None,
+            "next_open_text": rules.when_text(c.next_open_at) if closed else None,
+            "scheduled_for": c.scheduled_for.isoformat() if c.scheduled_for else None}
 
 
 def _names(db: OrmSession, ids: set) -> dict:

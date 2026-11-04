@@ -89,3 +89,39 @@ jobs:
             worker.log
             web.log
           retention-days: 14
+
+  # Dialogbot Privat in fake mode: everything is simulated in the browser, so no API or database is needed.
+  privat:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_PRIVAT_FAKE: "1"
+      BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Build and start web (fake mode)
+        working-directory: web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run build
+          nohup npm run start -- -p 3000 > ../web.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/privat && break; sleep 1; done
+      - name: Playwright – Dialogbot Privat (375 + 1440 px)
+        working-directory: web
+        run: npx playwright test e2e/privat.spec.ts --project=desktop-1440
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-privat-${{ github.sha }}
+          path: |
+            web/playwright-report
+            web/test-results
+            web.log
+          retention-days: 14

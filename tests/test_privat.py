@@ -39,7 +39,8 @@ def test_account_is_personal_idempotent_and_flagged(api, pv, db, monkeypatch):
     assert api.get(tok, "/workspaces").json() == []  # never listed as a business workspace
     assert api.get(tok, f"/workspaces/{ws.id}/business-profile").status_code == 404
     assert pv.me(tok) == {"free_used": 0, "free_limit": 10, "credits": 3, "reserved": 0, "sponsor_left_today": 2,
-                          "phone_display": None, "phone_verified": False,
+                          "phone_display": None, "phone_verified": False, "push_enabled": False,
+                          "location_city": None,
                           "plan": "plus", "plan_status": "trial", "trial_days_left": 14, "calls_quota": 10,
                           "calls_used": 0, "calls_left": 10, "entitled": True}
     assert _ledger(db, ws.id) == [("grant", 3, f"welcome:{ws.id}")]
@@ -218,7 +219,8 @@ def _propose(pv, tok) -> str:
     clar = out["messages"][-1]
     assert clar["kind"] == "clarify" and [o["label"] for o in clar["options"]] == ["Cykelmageren", "Østbyens Cykler",
                                                                                      "En anden"]
-    r = pv.api.post(tok, f"/privat/messages/{clar['id']}/options/cykelmageren")
+    assert clar["options"][0]["id"] == "place:cykelmageren"
+    r = pv.api.post(tok, f"/privat/messages/{clar['id']}/options/{clar['options'][0]['id']}")
     prop = r.json()["messages"][-1]
     assert prop["kind"] == "call_proposal"
     return prop["task_id"]

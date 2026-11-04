@@ -257,6 +257,18 @@
       },
       "ApproveIn": {
         "properties": {
+          "at_next_open": {
+            "default": false,
+            "description": "Ring ved næste åbningstid, hvis virksomheden har lukket nu (eller uden for kl. 8–18)",
+            "title": "At Next Open",
+            "type": "boolean"
+          },
+          "confirm_business": {
+            "default": false,
+            "description": "Påkrævet, når nummeret ligner et mobilnummer",
+            "title": "Confirm Business",
+            "type": "boolean"
+          },
           "share_phone": {
             "default": false,
             "title": "Share Phone",
@@ -2093,6 +2105,58 @@
         "title": "LeadPatch",
         "type": "object"
       },
+      "LocationIn": {
+        "properties": {
+          "city": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "lat": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lat"
+          },
+          "lng": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lng"
+          },
+          "postcode": {
+            "anyOf": [
+              {
+                "maxLength": 10,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postcode"
+          }
+        },
+        "title": "LocationIn",
+        "type": "object"
+      },
       "LoginIn": {
         "properties": {
           "email": {
@@ -3012,6 +3076,62 @@
           }
         },
         "title": "ProspectActIn",
+        "type": "object"
+      },
+      "PushKeys": {
+        "properties": {
+          "auth": {
+            "maxLength": 100,
+            "minLength": 8,
+            "title": "Auth",
+            "type": "string"
+          },
+          "p256dh": {
+            "maxLength": 200,
+            "minLength": 10,
+            "title": "P256Dh",
+            "type": "string"
+          }
+        },
+        "required": [
+          "p256dh",
+          "auth"
+        ],
+        "title": "PushKeys",
+        "type": "object"
+      },
+      "PushSubIn": {
+        "properties": {
+          "endpoint": {
+            "maxLength": 2000,
+            "minLength": 10,
+            "title": "Endpoint",
+            "type": "string"
+          },
+          "keys": {
+            "$ref": "#/components/schemas/PushKeys"
+          }
+        },
+        "required": [
+          "endpoint",
+          "keys"
+        ],
+        "title": "PushSubIn",
+        "type": "object"
+      },
+      "PushUnsubIn": {
+        "properties": {
+          "endpoint": {
+            "maxLength": 2000,
+            "minLength": 10,
+            "title": "Endpoint",
+            "type": "string"
+          }
+        },
+        "required": [
+          "endpoint"
+        ],
+        "title": "PushUnsubIn",
         "type": "object"
       },
       "RegisterIn": {
@@ -15082,6 +15202,114 @@
         ]
       }
     },
+    "/api/v1/privat/businesses/search": {
+      "get": {
+        "description": "At most 3 businesses (Google Places; demo data without a key). 30 searches per user per hour (429).\nShow «Data fra Google» with results whose source is \"google\".",
+        "operationId": "business_search_api_v1_privat_businesses_search_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lat",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lat"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lng",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lng"
+            }
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "City"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Business Search",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
     "/api/v1/privat/calls/{task_id}/approve": {
       "post": {
         "operationId": "approve_call_api_v1_privat_calls__task_id__approve_post",
@@ -15376,7 +15604,7 @@
     },
     "/api/v1/privat/group-invites/by-code/{code}": {
       "get": {
-        "description": "Public: group name, owner's first name, member COUNT. Never names or numbers.",
+        "description": "Public: group name, owner's first name, member COUNT. Never names or numbers. Rate limited per IP.",
         "operationId": "group_invite_preview_api_v1_privat_group_invites_by_code__code__get",
         "parameters": [
           {
@@ -15953,7 +16181,7 @@
     },
     "/api/v1/privat/invites/by-code/{code}": {
       "get": {
-        "description": "Public (no login): the short link /i/{code}. Same preview as by token; nothing personal beyond first name.",
+        "description": "Public (no login): the short link /i/{code}. Same preview as by token; nothing personal beyond first name.\nRate limited per IP, misses (unknown codes) much more strictly (429 rate_limited).",
         "operationId": "invite_preview_by_code_api_v1_privat_invites_by_code__code__get",
         "parameters": [
           {
@@ -16050,7 +16278,7 @@
     },
     "/api/v1/privat/invites/{token}": {
       "get": {
-        "description": "Public (no login): title, owner's first name, list type, item COUNT, share mode, and the Dialogbot card.",
+        "description": "Public (no login): title, owner's first name, list type, item COUNT, share mode, and the Dialogbot card.\nRate limited per IP (429 rate_limited).",
         "operationId": "invite_preview_api_v1_privat_invites__token__get",
         "parameters": [
           {
@@ -16235,6 +16463,64 @@
           }
         },
         "summary": "Me",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/me/location": {
+      "patch": {
+        "description": "Only what the user gives (city, postcode or the browser's position); used to find businesses near them.",
+        "operationId": "set_location_api_v1_privat_me_location_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Location",
         "tags": [
           "privat"
         ]
@@ -16597,6 +16883,213 @@
           }
         },
         "summary": "Phone Verify",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/push/public-key": {
+      "get": {
+        "operationId": "push_public_key_api_v1_privat_push_public_key_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Push Public Key",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/push/subscriptions": {
+      "delete": {
+        "operationId": "push_unsubscribe_api_v1_privat_push_subscriptions_delete",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushUnsubIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Push Unsubscribe",
+        "tags": [
+          "privat"
+        ]
+      },
+      "post": {
+        "operationId": "push_subscribe_api_v1_privat_push_subscriptions_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushSubIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Push Subscribe",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/push/test": {
+      "post": {
+        "description": "Sends «Det virker – du får besked her» to every subscription of the caller.",
+        "operationId": "push_test_api_v1_privat_push_test_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Push Test",
         "tags": [
           "privat"
         ]

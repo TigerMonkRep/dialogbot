@@ -50,6 +50,10 @@ test.describe("enheder", () => {
   });
 });
 
+// The browser journeys need a web build with NEXT_PUBLIC_PRIVAT_FAKE=1 (the «privat» job in e2e.yml); the main journeys
+// job builds against the real API and skips them. The unit tests above always run.
+const needsFake = () => test.skip(process.env.NEXT_PUBLIC_PRIVAT_FAKE !== "1", "kræver et web-build med NEXT_PUBLIC_PRIVAT_FAKE=1");
+
 // ---------------------------------------------------------------- helpers
 
 async function open(page: Page, path = "/privat/dag", { login = true } = {}) {
@@ -106,6 +110,7 @@ const chat = (page: Page) => page.getByRole("region", { name: "Samtale" });
 
 for (const width of [375, 1440]) {
   test.describe(`${width}px`, () => {
+    needsFake();
     test.use({ viewport: { width, height: width > 1000 ? 900 : 812 } });
 
     test("liste: oprettes, tilføj æbler → én liste med 3 punkter, gratis-tæller uændret (prøveperiode = ubegrænset)", async ({ page }) => {
@@ -298,8 +303,14 @@ for (const width of [375, 1440]) {
       await chat(page).getByRole("button", { name: "Del", exact: true }).click();
       await page.getByRole("dialog").getByRole("button", { name: "Lav invitationslink" }).click();
       await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
+      // Each simulated step saves to sessionStorage after a short delay: wait until it is saved, or the next step (and the
+      // reload) runs too early – the bonus then never lands (seen in CI).
+      const saved = (key: "annaJoined" | "annaRewarded") => expect.poll(() => page.evaluate(
+        (k) => JSON.parse(sessionStorage.getItem("dialogbot-privat-fake") ?? "{}")?.ref?.[k] === true, key)).toBe(true);
       await chat(page).getByRole("button", { name: /Anna tilføjer noget/ }).click();
+      await saved("annaJoined");
       await chat(page).getByRole("button", { name: /Anna laver sin første egen opgave/ }).click();
+      await saved("annaRewarded");
       await page.goto("/privat/konto");
       await expect(page.getByTestId("ledger").getByText("Invitationsbonus: Anna lavede sin første opgave")).toBeVisible();
       await expect.poll(() => credits(page)).toBe(6);
@@ -486,6 +497,7 @@ for (const width of [375, 1440]) {
 
 for (const [label, ua, scheme] of [["iPhone", IOS_UA, "sms:?&body="], ["Android", ANDROID_UA, "sms:?body="]] as const) {
   test.describe(`del-ark på ${label}`, () => {
+    needsFake();
     test.use({ viewport: { width: 375, height: 812 }, userAgent: ua });
     test(`SMS-link har ${scheme} og kontaktvælgeren er skjult uden API`, async ({ page }) => {
       await open(page);
@@ -526,6 +538,7 @@ async function mockPush(page: Page, opts: { standalone?: boolean } = {}) {
 }
 
 test.describe("push", () => {
+  needsFake();
   test.use({ viewport: { width: 375, height: 812 } });
   test("Konto: slå til → abonnement sendes; test; slå fra", async ({ page }) => {
     await mockPush(page);
@@ -553,6 +566,7 @@ test.describe("push", () => {
 });
 
 test.describe("push på iPhone", () => {
+  needsFake();
   test.use({ viewport: { width: 375, height: 812 }, userAgent: IOS_UA });
   test("Safari uden hjemmeskærm viser vejledningen og spørger ikke", async ({ page }) => {
     await mockPush(page);

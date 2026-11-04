@@ -9,6 +9,7 @@ No contacts are uploaded or stored, and no recipient ever reaches the server (no
 """
 from __future__ import annotations
 
+import re
 import uuid
 from datetime import timedelta
 
@@ -122,6 +123,8 @@ def invite_out(db: OrmSession, inv: PrivateInvite, raw: str, inviter_name: str, 
 def lookup(db: OrmSession, raw: str | None = None, *, code: str | None = None, lock: bool = False) -> PrivateInvite:
     """A usable invite, by token or by short code (case-insensitive). Unknown, revoked and expired all answer the
     same 404 (nothing to probe)."""
+    if code is None and raw and re.fullmatch(r"[A-HJ-NP-Za-hj-np-z2-9]{8}", raw.strip()):
+        code = raw  # the web may pass a short code where a token is expected
     if code is not None:
         q = select(PrivateInvite).where(PrivateInvite.short_code == (code or "").strip().upper()[:8])
     else:
@@ -170,6 +173,7 @@ def accept(db: OrmSession, principal, raw: str | None = None, *, code: str | Non
             result, joined = h.accept(db, inv, ctx)
     if joined and inv.inviter_user_id != user.id:
         inv.accepted_count += 1
+        _notify_inviter(db, inv, user)
     if inv.recipient_group_member_id and inv.inviter_user_id != user.id:
         from app.models import PrivateGroupMember
 
@@ -188,3 +192,18 @@ def revoke_for(db: OrmSession, resource_type: str, resource_id: uuid.UUID) -> in
                                                PrivateInvite.resource_id == resource_id,
                                                PrivateInvite.revoked_at.is_(None)).values(revoked_at=rules.now()))
     return r.rowcount or 0
+
+
+def _notify_inviter(db: OrmSession, inv: PrivateInvite, user: User) -> None:
+    """The inviter hears that someone said yes (push; e-mail without a subscription). Never anything to the invitee."""
+    from app.modules.integrations import email_templates as tpl
+    from app.modules.privat import push
+
+    inviter = db.get(User, inv.inviter_user_id)
+    if inviter is None:
+        return
+    text = f"{rules.first_name(user.display_name)} har sagt ja til din invitation."
+    mail = tpl.Email(subject=text, heading=text, paragraphs=["Du kan se det i Dialogbot."],
+                     footer_reason="Du får denne e-mail, fordi du har inviteret nogen i Dialogbot.")
+    push.notify(db, inviter.id, title="Dialogbot", body=text, url=None, dedupe=f"invite-accepted:{inv.id}:{user.id}",
+                email={"to_email": inviter.email, "email": tpl.to_payload(mail)})

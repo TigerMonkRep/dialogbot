@@ -4,9 +4,9 @@ Core tools (always): create_list, add_items, create_reminder, move_reminder, lis
 suggest_addon. Add-on tools (propose_call, share_list, …) come from the catalog (addons.py) and are only offered when
 the add-on is on; for a switched-off add-on the model can only offer it (suggest_addon → a kind "addon" message).
 
-Calls: the assistant NEVER invents a business or a number. For the pilot a call needs a number the user wrote
-themselves, or a pick from a small fixture of fictional Aarhus businesses (FIXTURES, demo only – refused for real
-dialling outside dev/test). Looking real businesses up (Google Places/CVR) is future work.
+Calls: the assistant NEVER invents a business or a number. A call needs a number the user wrote themselves, or a pick
+among ≤ 3 businesses found with Google Places (privat/places.py). FIXTURES (fictional Aarhus bike shops) are only
+used with FakeProvider in dev/test.
 Nothing is ever dialled from the chat: propose_call only creates a proposal the user approves in /privat/calls.
 """
 from __future__ import annotations
@@ -36,7 +36,6 @@ FIXTURES = (
      "address": "Østergade 3, 8000 Aarhus C", "phone": "+4586987654", "sub": "Østergade 3, 8000 Aarhus C · 1,2 km",
      "price": "395 kr. for et almindeligt eftersyn"},
 )
-CATEGORY_WORDS = {"cykelværksted": ("cykel", "cykelværksted", "cykelsmed")}
 
 SYSTEM = """PRIVAT_ASSISTANT
 Du er Dialogbot, en personlig dansk assistent for {name}. Du hjælper med lister, påmindelser{call_part}.
@@ -61,9 +60,9 @@ class Turn:
     about: PrivateTask | None
     out: list[PrivateMessage] = field(default_factory=list)
 
-    def say(self, kind: str, text: str, **kw) -> PrivateMessage:
-        m = service.add_message(self.db, self.ctx.ws_id, kind=kind, text=text,
-                                about_task_id=self.about.id if self.about else None, **kw)
+    def say(self, kind: str, text: str, about_task_id_override=None, **kw) -> PrivateMessage:
+        about = about_task_id_override or (self.about.id if self.about else None)
+        m = service.add_message(self.db, self.ctx.ws_id, kind=kind, text=text, about_task_id=about, **kw)
         self.out.append(m)
         return m
 
@@ -162,6 +161,9 @@ def run(db: OrmSession, ctx, text: str, about_task_id: uuid.UUID | None) -> list
     user_msg = service.add_message(db, ctx.ws_id, role="user", kind="text", text=text,
                                    about_task_id=about.id if about else None)
     turn = Turn(db=db, ctx=ctx, text=text, about=about)
+    if about is not None and about.kind == "call" and (attached := attach_number(db, ctx, about, text)) is not None:
+        db.commit()  # the user answered «skriv nummeret»: no model needed
+        return [user_msg, *attached]
     db.commit()
     provider = get_provider()
     tools, extra = tools_for(db, ctx.ws_id)
@@ -358,25 +360,51 @@ def _user_wrote(turn: Turn, phone_e164: str) -> bool:
     return any(national in _digits(t) for t in texts)
 
 
-def _fixture(key: str | None) -> dict | None:
-    k = (key or "").strip().lower()
-    return next((f for f in FIXTURES if k in (f["id"], f["name"].lower())), None)
+LOCATION_OPTIONS = [
+    {"id": "location:geo", "label": "Brug min position", "sub": "Kun når du trykker", "action": "text",
+     "text": "Tryk «Brug min position», eller skriv byen eller postnummeret."},
+    {"id": "location:city", "label": "Skriv by eller postnummer", "sub": "Fx 8000 eller Aarhus C", "action": "text",
+     "text": "Skriv byen eller postnummeret, så leder jeg der."},
+]
 
 
-def _category(*words: str) -> str | None:
-    low = " ".join(w.lower() for w in words if w)
-    return next((c for c, ws in CATEGORY_WORDS.items() if any(w in low for w in ws)), None)
+def _propose(turn: Turn, *, name: str, phone: str | None, source: str, address: str = "", place_id: str | None = None,
+             next_open_at: str | None = None, data: dict | None = None) -> str:
+    """Always a proposal (never a call). A missing number is asked for in the chat; a mobile-looking number must be
+    confirmed as a business when approving (confirm_business); demo numbers can never be dialled."""
+    from app.modules.privat import calls, places
+
+    data = data or {}
+    e164, kind = places.classify_phone(phone)
+    nxt = datetime.fromisoformat(next_open_at) if next_open_at else None
+    task = calls.propose(turn.db, turn.ctx, business_name=name, phone=e164, address=address, price_text=None,
+                         purpose=data.get("purpose") or "", window=data.get("window") or "", may_ask=data.get("may_ask"),
+                         may_agree=data.get("may_agree"), may_not=data.get("may_not"), place_id=place_id,
+                         next_open_at=nxt, phone_source=source)
+    if e164 is None:
+        text = (f"Jeg har ikke et nummer til {name}, som jeg kan ringe til. Skriv nummeret her, så bruger jeg det. "
+                "Jeg ringer først, når du godkender.")
+    elif nxt is not None and nxt > rules.now():
+        text = (f"{name} har lukket nu. Næste åbningstid er {rules.lower_first(rules.when_text(nxt))} – godkend, så "
+                "ringer jeg dér. Jeg ringer først, når du godkender.")
+    else:
+        text = f"Her er mit forslag til opkaldet til {name}. Jeg ringer først, når du godkender."
+    if e164 is not None and kind == "mobile":
+        text += " Nummeret ligner et mobilnummer – bekræft, at det er en virksomhed, når du godkender."
+    turn.say("call_proposal", text, task_id=task.id)
+    return f"Forslag oprettet (id {task.id}). Der er IKKE ringet; brugeren skal godkende."
 
 
 def tool_propose_call(turn: Turn, a: dict) -> str:
+    """Never invents a business or a number: a number the user typed, or a pick among ≤ 3 search results."""
+    from app.core.errors import Conflict
     from app.modules.campaigns.service import normalize_phone
-    from app.modules.privat import calls
+    from app.modules.privat import places
 
     name = str(a.get("business_name") or "").strip()[:200]
-    window = str(a.get("window") or "").strip()[:200]
-    purpose = str(a.get("purpose") or "").strip()[:300]
-    fx = _fixture(a.get("fixture_id")) or _fixture(name)
-    if fx is None and a.get("phone"):
+    data = {"window": str(a.get("window") or "").strip()[:200], "purpose": str(a.get("purpose") or "").strip()[:300],
+            **{k: str(a[k])[:2000] for k in ("may_ask", "may_agree", "may_not") if a.get(k)}}
+    if a.get("phone"):
         phone = normalize_phone(str(a["phone"]))
         if phone is None or not _user_wrote(turn, phone):
             turn.say("text", f"Hvilket nummer skal jeg ringe til{' hos ' + name if name else ''}? Skriv det, så "
@@ -385,32 +413,57 @@ def tool_propose_call(turn: Turn, a: dict) -> str:
         if not name:
             turn.say("text", "Hvad hedder virksomheden? Så laver jeg et forslag, du kan godkende.")
             return "Mangler virksomhedens navn."
-        task = calls.propose(turn.db, turn.ctx, business_name=name, phone=phone, address="", price_text=None,
-                             purpose=purpose, window=window, may_ask=a.get("may_ask"), may_agree=a.get("may_agree"),
-                             may_not=a.get("may_not"))
-        turn.say("call_proposal", f"Her er mit forslag til opkaldet til {name}. Jeg ringer først, når du godkender.",
-                 task_id=task.id)
-        return f"Forslag oprettet (id {task.id}). Der er IKKE ringet; brugeren skal godkende."
-    if fx is not None:
-        task = calls.propose(turn.db, turn.ctx, business_name=fx["name"], phone=fx["phone"], address=fx["address"],
-                             price_text=fx["price"], purpose=purpose, window=window, may_ask=a.get("may_ask"),
-                             may_agree=a.get("may_agree"), may_not=a.get("may_not"))
-        turn.say("call_proposal", f"Her er mit forslag til opkaldet til {fx['name']}. Jeg ringer først, når du "
-                                  "godkender.", task_id=task.id)
-        return f"Forslag oprettet (id {task.id}). Der er IKKE ringet."
-    cat = _category(str(a.get("category") or ""), name, turn.text)
-    if cat:
-        opts = [{"id": f["id"], "label": f["name"], "sub": f["sub"], "action": "call_fixture", "fixture_id": f["id"],
-                 "window": window, "purpose": purpose} for f in FIXTURES if f["category"] == cat]
-        opts.append({"id": "other", "label": "En anden", "sub": "Skriv navnet og nummeret", "action": "text",
-                     "text": "Skriv navnet og nummeret på virksomheden, så laver jeg et forslag."})
-        turn.say("clarify", f"Hvilket {cat} mener du? Jeg fandt to tæt på dig:", options=opts)
-        return "Brugeren vælger virksomhed."
-    turn.say("text", "Hvem skal jeg ringe til? Skriv virksomhedens navn og telefonnummer.")
-    return "Mangler virksomhed og nummer. Opfind dem ikke."
+        return _propose(turn, name=name, phone=phone, source="user", data=data)
+    query = name or str(a.get("category") or "").strip()
+    if not query:
+        turn.say("text", "Hvem skal jeg ringe til? Skriv virksomhedens navn – og gerne byen.")
+        return "Mangler virksomhed. Opfind den ikke."
+    try:
+        results = places.search(turn.db, turn.ctx, query, city=str(a.get("city") or "").strip() or None)
+    except Conflict as e:
+        if e.code == "needs_location":
+            turn.say("clarify", "Hvor skal jeg lede?", options=LOCATION_OPTIONS)
+            return "Brugeren skal give en by eller sin position."
+        raise
+    if not results:
+        turn.say("text", f"Jeg fandt ingen «{query}» i nærheden. Skriv navn og nummer, så laver jeg et forslag.")
+        return "Ingen resultater."
+    opts = [{"id": f"place:{r['place_id']}"[:320], "label": r["name"], "sub": places.option_sub(r),
+             "action": "call_place", "place_id": r["place_id"], "address": r["address"], "phone": r["phone_e164"],
+             "source": r["source"], "next_open_at": r["next_open_at"], **data} for r in results]
+    opts.append({"id": "other", "label": "En anden", "sub": "Skriv navnet og nummeret", "action": "text",
+                 "text": "Skriv navnet og nummeret på virksomheden, så laver jeg et forslag."})
+    google = " (data fra Google)" if results[0]["source"] == "google" else ""
+    turn.say("clarify", f"Hvem mener du? Jeg fandt {len(results)} tæt på dig{google}:", options=opts)
+    return "Brugeren vælger virksomhed."
+
+
+def attach_number(db: OrmSession, ctx, task: PrivateTask, text: str) -> list[PrivateMessage] | None:
+    """The user answers «skriv nummeret» with a message about the call task: the number goes on the proposal.
+    None when the message is not such an answer (then the model handles it)."""
+    from app.modules.privat import calls, places
+
+    m = re.search(r"(\+?45)?\s*(\d{2}\s?\d{2}\s?\d{2}\s?\d{2})", text or "")
+    c = calls.latest_proposed(db, task)
+    if m is None or c is None or c.business_phone_e164:
+        return None
+    e164, kind = places.classify_phone(m.group(2))
+    turn = Turn(db=db, ctx=ctx, text=text, about=task)
+    if e164 is None:
+        turn.say("text", "Det nummer kan jeg ikke ringe til. Skriv et dansk nummer med 8 cifre.")
+        return turn.out
+    c.business_phone_e164, c.phone_source = e164, "user"
+    service.event(db, task, f"Nummer tilføjet: {rules.phone_display(e164)}")
+    service.touch(task)
+    turn.say("text", f"Tak. Jeg bruger {rules.phone_display(e164)}." + (
+        " Det ligner et mobilnummer – bekræft, at det er en virksomhed, når du godkender." if kind == "mobile" else ""))
+    turn.say("call_proposal", f"Her er mit forslag til opkaldet til {c.business_name}. Jeg ringer først, når du "
+                              "godkender.", task_id=task.id)
+    return turn.out
 
 
 def tool_share_list(turn: Turn, a: dict) -> str:
+    """A share_proposal card: the web makes the link only when the user taps it (nothing is ever sent by Dialogbot)."""
     task, m = _resolve(turn, a.get("task_id"), "list", "owner")
     if m.role != "owner":
         return "Kun ejeren kan dele listen."
@@ -419,15 +472,11 @@ def tool_share_list(turn: Turn, a: dict) -> str:
     key = addons.SHARE_MODE_ADDON[mode]
     if not addons.is_enabled(turn.db, turn.ctx.ws_id, key):
         return h_suggest_addon(turn, {"key": key})
-    role = a.get("role") if a.get("role") in ("editor", "viewer") else "editor"
     who = str(a.get("with_name") or "").strip()[:60]
-    turn.say("clarify", f"Skal jeg lave et invitationslink til «{task.title}»{', så du kan dele den med ' + who if who else ''}? "
-                        "Der bliver ikke sendt noget – du deler selv linket.",
-             task_id=task.id, options=[
-                 {"id": "yes", "label": "Ja, lav linket", "sub": "Du deler det selv", "action": "share",
-                  "task_id": str(task.id), "mode": mode, "role": role},
-                 {"id": "no", "label": "Nej tak", "sub": "", "action": "text", "text": "Fint, listen er ikke delt."}])
-    return "Brugeren skal sige ja, før der laves et link."
+    turn.say("share_proposal", f"Skal jeg lave et invitationslink til «{task.title}»"
+                               f"{', som du kan sende til ' + who if who else ''}? Der sendes intet, før du selv deler "
+                               "linket.", task_id=task.id, about_task_id_override=task.id)
+    return "Forslaget er vist; brugeren laver selv linket."
 
 
 # --------------------------------------------------------------------------- answering a clarify message
@@ -450,19 +499,13 @@ def answer_option(db: OrmSession, ctx, message_id: uuid.UUID, option_id: str) ->
         return run(db, ctx, opt.get("text") or opt["label"], about.id if about else None)
     user_msg = service.add_message(db, ctx.ws_id, role="user", kind="text", text=opt["label"])
     turn = Turn(db=db, ctx=ctx, text=opt["label"], about=about)
-    if act == "call_fixture":
+    if act == "call_place":
         addons.require(db, ctx.ws_id, "ring-for-mig")
-        tool_propose_call(turn, {"fixture_id": opt.get("fixture_id"), "window": opt.get("window"),
-                                 "purpose": opt.get("purpose")})
-    elif act == "share":
-        from app.modules.privat import invites
-
-        mode = opt.get("mode") or "group"
-        inv, raw = invites.create(db, ctx, addon_key=addons.SHARE_MODE_ADDON[mode],
-                                  resource_id=uuid.UUID(opt["task_id"]), mode=mode, role=opt.get("role") or "editor")
-        o = invites.invite_out(db, inv, raw, ctx.user.display_name)
-        turn.say("text", f"Her er linket – send det selv fra din telefon: {o['short_url']}\n"
-                         f"Forslag til SMS: «{o['suggested_text']}»", task_id=uuid.UUID(opt["task_id"]))
+        _propose(turn, name=opt["label"], phone=opt.get("phone"), source=opt.get("source") or "google",
+                 address=opt.get("address") or "", place_id=opt.get("place_id"), next_open_at=opt.get("next_open_at"),
+                 data=opt)
+    elif act == "expired":
+        turn.say("text", "Det forslag er for gammelt. Skriv igen, hvem jeg skal ringe til.")
     elif act == "share_group":
         from app.modules.privat import groups
 
@@ -510,12 +553,11 @@ def tool_share_with_group(turn: Turn, a: dict) -> str:
         return h_suggest_addon(turn, {"key": key})
     n = len(groups.members(turn.db, g))
     base = {"action": "share_group", "task_id": str(task.id), "group_id": str(g.id), "mode": mode}
-    turn.say("clarify", f"Skal jeg dele «{task.title}» med {g.name} ({n} personer)? Dem, der har Dialogbot, får den "
-                        "med det samme; de andre får en SMS, som du selv sender fra din telefon.", task_id=task.id,
-             options=[{"id": "one", "label": "Ja, én ad gangen", "sub": "Personlig SMS og link til hver", **base,
-                       "style": "one_by_one"},
-                      {"id": "all", "label": "Ja, én samlet SMS", "sub": "Én gruppebesked", **base, "style": "group_sms"},
-                      {"id": "no", "label": "Nej tak", "sub": "", "action": "text", "text": "Fint, listen er ikke delt."}])
+    # share_proposal: options[0] is the group; the web opens its share sheet (nothing is shared before the yes)
+    turn.say("share_proposal", f"Skal jeg dele «{task.title}» med {g.name}? Dem, der har Dialogbot, kommer med med det "
+                               "samme – resten får en SMS fra dig. Der sendes intet, før du siger ja.",
+             task_id=task.id, about_task_id_override=task.id,
+             options=[{"id": str(g.id), "label": g.name, "sub": f"{n} personer", **base, "style": "one_by_one"}])
     return "Brugeren skal sige ja, før der deles."
 
 

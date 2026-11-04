@@ -208,7 +208,7 @@ def test_addon_gating(api, pv, monkeypatch):
     assert api.post(tok, "/privat/addons/kalender/enable").json()["code"] == "coming_soon"
     out = pv.say(tok, "Ring til cykelværkstedet og find en tid torsdag efter klokken tre")
     clar = out["messages"][-1]
-    tid = api.post(tok, f"/privat/messages/{clar['id']}/options/cykelmageren").json()["messages"][-1]["task_id"]
+    tid = api.post(tok, f"/privat/messages/{clar['id']}/options/{clar['options'][0]['id']}").json()["messages"][-1]["task_id"]
     assert api.post(tok, "/privat/addons/ring-for-mig/disable").json()["enabled"] is False
     pv.verify_phone(tok)
     r = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False})
@@ -458,9 +458,10 @@ def test_group_join_link(api, pv, db):
     assert next(m for m in members if m["name"] == "Bo")["phone_e164"] == "+4522334455"
     assert api.c.get(f"/api/v1/privat/group-invites/by-code/{code}").json()["member_count"] == 4
     # rate limit: 50 new members per link per hour
-    for i in range(47):
-        assert api.c.post(base, json={"name": f"Person {i}"}).status_code == 200
-    r = api.c.post(base, json={"name": "En for meget"})
+    for i in range(47):  # different people, different addresses (the per-IP lookup limit is tested separately)
+        assert api.c.post(base, json={"name": f"Person {i}"},
+                          headers={"x-forwarded-for": f"10.0.1.{i}"}).status_code == 200
+    r = api.c.post(base, json={"name": "En for meget"}, headers={"x-forwarded-for": "10.0.2.1"})
     assert r.status_code == 429 and r.json()["code"] == "rate_limited"
     # revoke and expiry
     api.post(mette, f"/privat/groups/{g['id']}/join-link/revoke")
@@ -482,16 +483,63 @@ def test_groups_and_sharing_in_chat_need_a_yes(api, pv):
     assert [g["name"] for g in api.get(mette, "/privat/groups").json()] == ["Familien", "Kolleger"]
     lid = pv.make_list(mette)
     out = pv.say(mette, "Del indkøbslisten med familien", about=lid)
-    clar = out["messages"][-1]
-    assert clar["kind"] == "clarify" and "Familien (5 personer)" in clar["text"]
+    prop = out["messages"][-1]
+    group_id = api.get(mette, "/privat/groups").json()[0]["id"]
+    assert prop["kind"] == "share_proposal" and prop["task_id"] == lid and prop["about_task_id"] == lid
+    assert (prop["options"][0]["id"], prop["options"][0]["label"]) == (group_id, "Familien")
     assert pv.task(ole, lid).status_code == 404  # not shared before the yes
-    r = api.post(mette, f"/privat/messages/{clar['id']}/options/one").json()
+    r = api.post(mette, f"/privat/messages/{prop['id']}/options/{group_id}").json()
     assert r["messages"][-1]["text"] == "Ole, Anna har fået listen i appen. 3 mangler en SMS fra dig – åbn listen og tryk «Send SMS»."
     assert pv.task(ole, lid).status_code == 200
-    # a single share link also needs a yes
+    # a single share link: a share_proposal card, the link is made only when the user taps it (POST /share)
     out = pv.say(mette, "Del indkøbslisten med Anna", about=lid)
-    clar = out["messages"][-1]
-    assert [o["id"] for o in clar["options"]] == ["yes", "no"]
-    r = api.post(mette, f"/privat/messages/{clar['id']}/options/yes").json()
-    assert "dialogbot.app/i/" in r["messages"][-1]["text"]
-    assert api.post(mette, f"/privat/messages/{clar['id']}/options/yes").json()["messages"] == []  # answered once
+    prop = out["messages"][-1]
+    assert prop["kind"] == "share_proposal" and prop["options"] is None and "Anna" in prop["text"]
+    assert api.post(mette, f"/privat/messages/{group_id and prop['id']}/options/x").status_code == 404
+
+
+def test_public_lookups_are_rate_limited(api, pv, db):
+    from app.models import PrivateLookup
+    from app.modules.privat import lookup_limits
+
+    mette = pv.account("mette@testmail.dk")
+    inv = _share(api, mette, pv.make_list(mette))
+    g = _group(api, mette)
+    link = api.post(mette, f"/privat/groups/{g['id']}/join-link").json()
+    good = [f"/api/v1/privat/invites/by-code/{inv['short_code']}", f"/api/v1/privat/invites/{inv['token']}",
+            f"/api/v1/privat/group-invites/by-code/{link['short_code']}"]
+    bad = ["/api/v1/privat/invites/by-code/AAAAAAAA", "/api/v1/privat/invites/nope",
+           "/api/v1/privat/group-invites/by-code/BBBBBBBB"]
+
+    def get(path, ip):
+        return api.c.get(path, headers={"x-forwarded-for": ip})
+
+    # misses are counted strictly: 10 a minute, then even a real code is refused from that address
+    for i in range(10):
+        assert get(bad[i % 3], "10.9.9.9").status_code == 404
+    r = get(good[0], "10.9.9.9")
+    assert r.status_code == 429 and r.json()["code"] == "rate_limited" and r.json()["message"].startswith("Der er prøvet")
+    assert get(good[0], "10.8.8.8").status_code == 200  # another address is not affected
+    pv.clock.at += timedelta(seconds=61)
+    assert get(good[1], "10.9.9.9").status_code == 200  # the minute has passed
+    # … and 50 a day
+    for i in range(40):
+        if i % 10 == 0:
+            pv.clock.at += timedelta(seconds=61)
+        assert get(bad[0], "10.9.9.9").status_code == 404
+    pv.clock.at += timedelta(seconds=61)
+    assert get(good[2], "10.9.9.9").status_code == 429
+    # hits: 30 a minute
+    for i in range(30):
+        assert get(good[i % 3], "10.7.7.7").status_code == 200, i
+    assert get(good[0], "10.7.7.7").status_code == 429
+    # the IP itself is never stored
+    assert "10.7.7.7" not in json.dumps([r.ip_hash for r in db.query(PrivateLookup).all()])
+    # a global ceiling on misses stops enumeration spread over many addresses
+    lookup_limits.GLOBAL_MISSES_PER_HOUR, old = 55, lookup_limits.GLOBAL_MISSES_PER_HOUR
+    try:
+        for i in range(5):
+            get(bad[0], f"10.6.6.{i}")
+        assert get(good[0], "10.5.5.5").status_code == 429
+    finally:
+        lookup_limits.GLOBAL_MISSES_PER_HOUR = old

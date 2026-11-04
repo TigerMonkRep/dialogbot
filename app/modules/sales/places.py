@@ -77,6 +77,9 @@ class Details:
     opening_hours: list[str] | None = None
     rating: float | None = None
     user_rating_count: int | None = None
+    # regularOpeningHours.periods ([{open: {day, hour, minute}, close: {...}}], day 0 = Sunday) – used by Dialogbot
+    # Privat to know whether a business is open now. Same request, no extra field in the mask.
+    periods: list[dict] | None = None
 
 
 def _component(components: list, kind: str) -> str | None:
@@ -102,10 +105,11 @@ def parse_place(p: dict) -> Place:
 
 def parse_details(d: dict) -> Details:
     hours = (d.get("regularOpeningHours") or {}).get("weekdayDescriptions")
+    periods = (d.get("regularOpeningHours") or {}).get("periods")
     return Details(website=d.get("websiteUri"), phone_national=d.get("nationalPhoneNumber"),
                    phone_international=d.get("internationalPhoneNumber"),
                    opening_hours=list(hours) if hours else None, rating=d.get("rating"),
-                   user_rating_count=d.get("userRatingCount"))
+                   user_rating_count=d.get("userRatingCount"), periods=list(periods) if periods else None)
 
 
 class GooglePlaces:

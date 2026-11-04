@@ -162,6 +162,10 @@ def accept(db: OrmSession, inv: PrivateInvite, ctx) -> tuple[dict, bool]:
         db.flush()
         joined = True
         service.event(db, task, f"{rules.first_name(ctx.user.display_name)} er med på listen")
+        from app.modules.privat import push
+
+        push.notify_list_activity(db, task, actor_user_id=ctx.user_id,
+                                  text=f"{rules.first_name(ctx.user.display_name)} er med på listen")
     return service.task_out(db, task, ctx.user_id), joined
 
 

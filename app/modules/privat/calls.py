@@ -91,8 +91,9 @@ def problem(db: OrmSession, c: PrivateCall) -> str | None:
 
 # --------------------------------------------------------------------------- proposal
 
-def propose(db: OrmSession, ctx, *, business_name: str, phone: str, address: str, price_text: str | None,
-            purpose: str, window: str, may_ask=None, may_agree=None, may_not=None) -> PrivateTask:
+def propose(db: OrmSession, ctx, *, business_name: str, phone: str | None, address: str, price_text: str | None,
+            purpose: str, window: str, may_ask=None, may_agree=None, may_not=None, place_id: str | None = None,
+            next_open_at=None, phone_source: str | None = None) -> PrivateTask:
     addons.require(db, ctx.ws_id, ADDON)
     purpose = (purpose or "").strip() or "Aftal en tid"
     window = (window or "").strip()
@@ -116,14 +117,29 @@ def propose(db: OrmSession, ctx, *, business_name: str, phone: str, address: str
                     may_agree=str(may_agree or (f"En tid {window}" if window else "Et tidspunkt, der passer"))[:2000],
                     may_not=str(may_not or "Betale, give andre oplysninger end dit navn, eller sige ja til ekstra "
                                            "arbejde eller andre tider")[:2000],
-                    status="proposed", created_at=now)
+                    status="proposed", created_at=now, place_id=place_id, phone_source=phone_source,
+                    next_open_at=next_open_at if next_open_at and next_open_at > now else None)
     db.add(c)
     service.event(db, task, "Forslag til opkald oprettet")
     db.flush()
+    if c.next_open_at is not None:  # closed now: ask again when they open (never dials by itself)
+        _schedule(db, "privat.call_ask", c, c.next_open_at)
     from app.modules.privat import referrals
 
     referrals.try_activate(db, ctx.user_id)
     return task
+
+
+def latest_proposed(db: OrmSession, task: PrivateTask) -> PrivateCall | None:
+    c = db.scalar(select(PrivateCall).where(PrivateCall.task_id == task.id)
+                  .order_by(PrivateCall.created_at.desc(), PrivateCall.id).limit(1).with_for_update())
+    return c if c is not None and c.status == "proposed" else None
+
+
+def is_mobile(c: PrivateCall) -> bool:
+    from app.modules.privat import places
+
+    return places.classify_phone(c.business_phone_e164)[1] == "mobile" if c.business_phone_e164 else False
 
 
 def _own_call_task(db: OrmSession, ctx, task_id: uuid.UUID) -> tuple[PrivateTask, PrivateCall]:
@@ -137,19 +153,48 @@ def _own_call_task(db: OrmSession, ctx, task_id: uuid.UUID) -> tuple[PrivateTask
     return task, c
 
 
-def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, share_phone: bool) -> PrivateTask:
+def _schedule(db: OrmSession, event_type: str, c: PrivateCall, at) -> None:
+    from app.core.outbox import enqueue
+
+    ev = enqueue(db, event_type=event_type, dedupe_key=f"{event_type}:{c.id}:{at.isoformat()}", workspace_id=c.workspace_id,
+                 payload={"private_call_id": str(c.id), "at": at.isoformat()})
+    ev.next_attempt_at = at
+
+
+def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, share_phone: bool,
+            at_next_open: bool = False, confirm_business: bool = False) -> PrivateTask:
     addons.require(db, ctx.ws_id, ADDON)
     task, c = _own_call_task(db, ctx, task_id)
     if c.status != "proposed" or task.status != "awaiting_user":
         return task  # already approved (or declined): repeating it changes nothing
+    if not c.business_phone_e164:
+        raise Conflict(f"Skriv nummeret til {c.business_name} i samtalen først", code="needs_business_phone")
+    if c.phone_source == "demo":
+        raise Conflict("Det er et eksempel fra demodata. Skriv navn og nummer på den rigtige virksomhed.",
+                       code="demo_business")
+    if is_mobile(c) and not confirm_business:
+        raise Conflict("Nummeret ligner et mobilnummer. Bekræft, at det er en virksomhed.", code="confirm_business")
     profile = db.scalar(select(PrivateProfile).where(PrivateProfile.workspace_id == ctx.ws_id).with_for_update())
     if profile.phone_verified_at is None or not profile.phone_e164:
         raise Conflict("Bekræft dit mobilnummer, før assistenten ringer for dig", code="needs_phone")
     if ledger.balance(db, ctx.ws_id) < rules.CALL_CREDITS:
         raise Conflict("Et opkald reserverer 3 credits", code="insufficient_credits",
                        extra={"credits": ledger.balance(db, ctx.ws_id), "needed": rules.CALL_CREDITS})
-    if not rules.in_call_hours():
-        raise Conflict("Assistenten ringer kun til virksomheder på hverdage kl. 8–18", code="outside_hours")
+    now = _now()
+    closed = c.next_open_at is not None and c.next_open_at > now
+    later = None
+    if closed or not rules.in_call_hours():
+        later = c.next_open_at if closed else _next_window(now)
+        if later is None:
+            raise Conflict("Der er ingen åbningstid inden for den næste uge", code="business_closed")
+        if not at_next_open:
+            extra = {"next_open_at": later.isoformat() if later else None,
+                     "next_open_text": rules.when_text(later) if later else None}
+            if closed:
+                raise Conflict(f"{c.business_name} har lukket nu. Godkend «ved næste åbningstid», så ringer jeg dér.",
+                               code="business_closed", extra=extra)
+            raise Conflict("Assistenten ringer kun til virksomheder på hverdage kl. 8–18", code="outside_hours",
+                           extra=extra)
     if c.business_phone_e164 in {f["phone"] for f in _fixtures()} and get_settings().app_env not in ("dev", "test"):
         raise Conflict("Det er et eksempel. Skriv navn og nummer på den rigtige virksomhed.", code="demo_business")
     if (why := problem(db, c)) is not None:
@@ -157,13 +202,25 @@ def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, shar
     if window is not None and window.strip():
         c.window = window.strip()[:200]
     c.share_phone = bool(share_phone)
-    now = _now()
     c.status, c.approved_at = "approved", now
     c.approved_snapshot = {"business_name": c.business_name, "business_phone_e164": c.business_phone_e164,
                            "may_ask": c.may_ask, "may_agree": c.may_agree, "may_not": c.may_not, "window": c.window,
-                           "share_phone": c.share_phone, "approved_at": now.isoformat()}
+                           "share_phone": c.share_phone, "approved_at": now.isoformat(),
+                           "at_next_open": bool(later is not None and at_next_open),
+                           "confirm_business": bool(confirm_business)}
     ledger.add(db, ctx.ws_id, kind="reserve", amount=-rules.CALL_CREDITS, source_ref=f"call:{c.id}:reserve",
                task_id=task.id, text=f"Reserveret til opkald til {c.business_name}")
+    if later is not None:  # approved «ved næste åbningstid»: the worker dials then (call_due), not before
+        c.status, c.scheduled_for = "scheduled", later
+        _schedule(db, "privat.call_due", c, later)
+        task.status, task.next_step, task.who, task.due_at = "planned", \
+            f"Assistenten ringer {rules.lower_first(rules.when_text(later))}", "Assistenten", later
+        task.usage_text = "3 credits reserveret"
+        service.event(db, task, f"Du godkendte opkaldet ved næste åbningstid ({rules.lower_first(rules.when_text(later))})."
+                                " 3 credits reserveret.")
+        service.touch(task)
+        db.commit()
+        return task
     task.status, task.next_step, task.who, task.usage_text = "in_progress", "Assistenten ringer op", "Assistenten", \
         "3 credits reserveret"
     service.event(db, task, "Du godkendte opkaldet. 3 credits reserveret.")
@@ -174,9 +231,24 @@ def approve(db: OrmSession, ctx, task_id: uuid.UUID, *, window: str | None, shar
     return task
 
 
+def _next_window(after):
+    from app.modules.privat import places
+
+    return places.next_call_time(None, after)
+
+
 def decline(db: OrmSession, ctx, task_id: uuid.UUID) -> PrivateTask:
     addons.require(db, ctx.ws_id, ADDON)
     task, c = _own_call_task(db, ctx, task_id)
+    if c.status == "scheduled":  # a planned call can still be cancelled: nothing was dialled, credits come back
+        c.status, c.result = "declined", "declined"
+        ledger.add(db, c.workspace_id, kind="release", amount=rules.CALL_CREDITS, source_ref=f"call:{c.id}:release",
+                   task_id=task.id, text="Planlagt opkald annulleret – reservation frigivet")
+        task.status, task.next_step, task.usage_text, task.who, task.due_at = "declined", \
+            "Annulleret – der er ikke ringet", "Intet forbrug", "Dig", None
+        service.event(db, task, "Du annullerede det planlagte opkald. 3 credits frigivet.")
+        service.touch(task)
+        return task
     if c.status != "proposed":
         if c.status == "declined":
             return task
@@ -578,3 +650,41 @@ def validate_window(window: str | None) -> str | None:
     if window is not None and len(window) > 200:
         raise ValidationFailed("Tidsrummet er for langt", field_errors=[{"field": "window"}])
     return window
+
+
+# --------------------------------------------------------------------------- scheduled calls (worker)
+
+def handle_call_due(db: OrmSession, ev) -> None:
+    """privat.call_due: dial an approved «ved næste åbningstid» call. Only with the stored approval; never otherwise."""
+    c = db.scalar(select(PrivateCall).where(PrivateCall.id == uuid.UUID(ev.payload["private_call_id"])).with_for_update())
+    if c is None or c.status != "scheduled" or not c.approved_at or not (c.approved_snapshot or {}).get("at_next_open"):
+        return
+    now = _now()
+    if not rules.in_call_hours(now):  # the worker came late: wait for the next calling window
+        nxt = _next_window(now)
+        c.scheduled_for = nxt
+        _schedule(db, "privat.call_due", c, nxt)
+        return
+    task = db.get(PrivateTask, c.task_id)
+    if task is None or task.status in ("declined", "done"):
+        return
+    c.status = "approved"
+    task.status, task.next_step = "in_progress", "Assistenten ringer op"
+    service.event(db, task, "Virksomheden har åbnet – assistenten ringer nu")
+    db.commit()
+    dial(db, c.id)
+
+
+def handle_call_ask(db: OrmSession, ev) -> None:
+    """privat.call_ask: the business has opened; a proposal that is still waiting is offered again (never dialled)."""
+    c = db.get(PrivateCall, uuid.UUID(ev.payload["private_call_id"]))
+    if c is None or c.status != "proposed":
+        return
+    task = db.get(PrivateTask, c.task_id)
+    if task is None or task.status != "awaiting_user":
+        return
+    c.next_open_at = None
+    text = f"{c.business_name} har åbent nu. Skal jeg ringe?"
+    service.add_message(db, c.workspace_id, kind="call_proposal", text=text, task_id=task.id)
+    service.event(db, task, text)
+    service.notify_owner(db, task, subject=f"{c.business_name} har åbent nu", text=text, dedupe=f"call-ask:{c.id}")

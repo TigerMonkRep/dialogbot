@@ -114,7 +114,22 @@ HANDLERS = {
     "sales.message": lambda db, ev: _sales_message(db, ev),
     "sales.recording_fetch": lambda db, ev: _sales_recording(db, ev),
     "privat.reminder": lambda db, ev: _privat_reminder(db, ev),
+    "privat.call_due": lambda db, ev: _privat("handle_call_due", db, ev),
+    "privat.call_ask": lambda db, ev: _privat("handle_call_ask", db, ev),
+    "push.send": lambda db, ev: _push_send(db, ev),
 }
+
+
+def _privat(name: str, db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.privat import calls
+
+    getattr(calls, name)(db, ev)
+
+
+def _push_send(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.privat.push import handle_send
+
+    handle_send(db, ev)
 
 
 def _privat_reminder(db: OrmSession, ev: OutboxEvent) -> None:
@@ -341,7 +356,12 @@ def run_schedules() -> None:
     with get_session_factory()() as db:
         try:  # Dialogbot Privat: release reservations of calls that never got a report
             from app.modules.privat.calls import sweep_stale
+            from app.modules.privat.lookup_limits import prune
 
+            prune(db)  # rate-limit rows older than two days
+            from app.modules.privat.places import scrub_cached
+
+            scrub_cached(db)  # Google content older than GOOGLE_PLACES_CACHE_DAYS (place_id is kept)
             n = sweep_stale(db)
             if n:
                 log.info("privat.calls_released", count=n)

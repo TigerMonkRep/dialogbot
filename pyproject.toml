@@ -18,6 +18,7 @@ dependencies = [
   "httpx==0.28.1",
   "PyJWT[crypto]==2.15.0",
   "speechmatics-agent-stt==0.3.0",
+  "pywebpush==2.3.0",
 ]
 
 [project.optional-dependencies]

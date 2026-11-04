@@ -85,11 +85,13 @@ from app.models.identity import (  # noqa: F401
 from app.models.privat import (  # noqa: F401, E402
     CreditLedger,
     PrivateAddonEnabled,
+    PrivateBusinessSearch,
     PrivateCall,
     PrivateGroup,
     PrivateGroupLink,
     PrivateGroupMember,
     PrivateInvite,
+    PrivateLookup,
     PrivateMessage,
     PrivatePhoneCode,
     PrivateProfile,
@@ -98,6 +100,7 @@ from app.models.privat import (  # noqa: F401, E402
     PrivateTaskEvent,
     PrivateTaskItem,
     PrivateTaskMember,
+    PushSubscription,
 )
 from app.models.sales import (  # noqa: F401
     CallRecording,

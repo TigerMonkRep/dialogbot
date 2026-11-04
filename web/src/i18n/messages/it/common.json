@@ -21,11 +21,14 @@
     "signup": "Crea account",
     "knowledge": "Risorse",
     "byIndustry": "Receptionist AI per il suo settore",
-    "skip": "Vai al contenuto"
+    "skip": "Vai al contenuto",
+    "tagline": "La tua receptionist IA – in danese, 24 ore su 24. Risponde al telefono, prenota appuntamenti e raccoglie richieste quando non puoi."
   },
   "audience": {
     "business": "Per le aziende – Dialogbot Erhverv",
     "private": "Per te a casa – Dialogbot Privat",
-    "label": "Scegli: azienda o privato"
+    "label": "Scegli: azienda o privato",
+    "businessShort": "Aziende",
+    "privateShort": "Privati"
   }
 }

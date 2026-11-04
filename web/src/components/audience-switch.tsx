@@ -3,34 +3,26 @@ import { getT } from "@/i18n/server";
 
 export type Audience = "erhverv" | "privat";
 
-/** The thin ink bar at the very top of both sites (design canvas "Dialogbot – Erhverv vs. Privat"): two segments,
- *  "Til virksomheder – Dialogbot Erhverv" (blue square, active = Klods-blå) and "Til dig derhjemme – Dialogbot Privat"
- *  (orange dot, active = orange). Links go to / and /privat. Server component – reads its texts from common.json
- *  ("audience.*"), so it can sit in SiteHeader as well as in the Privat landing and app. */
-export async function AudienceSwitch({ current }: { current: Audience }) {
+/** The small two-door pill that sits next to the logo on both sites: «Erhverv | Privat». Same shape as the path
+ *  switch (rounded-full, 2 px ink), the active door filled with ink; each door carries its colour dot (Klods-blå
+ *  square for Erhverv, Hjemme-orange dot for Privat). Server component – texts from common.json ("audience.*"). */
+export async function AudienceSwitch({ current, size = "md" }: { current: Audience; size?: "sm" | "md" }) {
   const t = await getT("common");
-  const seg = "inline-flex items-center gap-2 min-h-9 px-4 text-[13px] leading-none no-underline whitespace-nowrap";
-  const business = current === "erhverv";
+  const h = size === "sm" ? "min-h-8 px-3 text-[12px]" : "min-h-9 px-3.5 text-[13px]";
+  const seg = `inline-flex items-center gap-2 ${h} rounded-full font-semibold leading-none no-underline whitespace-nowrap`;
+  const door = (key: Audience, href: string, label: string, title: string) => {
+    const active = current === key;
+    const dot = key === "erhverv"
+      ? <span aria-hidden="true" className={`inline-block w-2.5 h-2.5 rounded-[2px] ${active ? "bg-white" : ""}`} style={active ? undefined : { background: "#2456F6" }} />
+      : <span aria-hidden="true" className={`inline-block w-2.5 h-2.5 rounded-full ${active ? "bg-white" : ""}`} style={active ? undefined : { background: "#E0521A" }} />;
+    return active
+      ? <span aria-current="page" title={title} className={`${seg} bg-ink text-white`}>{dot}{label}</span>
+      : <Link href={href} title={title} className={`${seg} text-ink hover:bg-panel`}>{dot}{label}</Link>;
+  };
   return (
-    <nav aria-label={t("audience.label")} className="flex flex-wrap items-center justify-center bg-ink text-white">
-      {business ? (
-        <span aria-current="page" className={`${seg} font-semibold`} style={{ background: "#2456F6" }}>
-          <span aria-hidden="true" className="inline-block w-3.5 h-3.5 rounded-[3px] bg-white" />{t("audience.business")}
-        </span>
-      ) : (
-        <Link href="/" className={`${seg} text-white opacity-90 hover:opacity-100 hover:bg-white/10`}>
-          <span aria-hidden="true" className="inline-block w-3.5 h-3.5 rounded-[3px]" style={{ background: "#2456F6" }} />{t("audience.business")}
-        </Link>
-      )}
-      {!business ? (
-        <span aria-current="page" className={`${seg} font-semibold`} style={{ background: "#E0521A" }}>
-          <span aria-hidden="true" className="inline-block w-3.5 h-3.5 rounded-full bg-white" />{t("audience.private")}
-        </span>
-      ) : (
-        <Link href="/privat" className={`${seg} text-white opacity-90 hover:opacity-100 hover:bg-white/10`}>
-          <span aria-hidden="true" className="inline-block w-3.5 h-3.5 rounded-full" style={{ background: "#E0521A" }} />{t("audience.private")}
-        </Link>
-      )}
+    <nav aria-label={t("audience.label")} className="inline-flex p-1 rounded-full border-2 border-ink bg-white shrink-0">
+      {door("erhverv", "/", t("audience.businessShort"), t("audience.business"))}
+      {door("privat", "/privat", t("audience.privateShort"), t("audience.private"))}
     </nav>
   );
 }

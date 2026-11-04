@@ -21,11 +21,14 @@
     "signup": "Konto erstellen",
     "knowledge": "Wissen",
     "byIndustry": "KI-Rezeptionist für Ihre Branche",
-    "skip": "Zum Inhalt springen"
+    "skip": "Zum Inhalt springen",
+    "tagline": "Ihre KI-Rezeptionistin – auf Dänisch, rund um die Uhr. Nimmt Anrufe an, bucht Termine und sammelt Anfragen, wenn Sie nicht können."
   },
   "audience": {
     "business": "Für Unternehmen – Dialogbot Erhverv",
     "private": "Für dich zu Hause – Dialogbot Privat",
-    "label": "Wählen: Unternehmen oder privat"
+    "label": "Wählen: Unternehmen oder privat",
+    "businessShort": "Unternehmen",
+    "privateShort": "Privat"
   }
 }

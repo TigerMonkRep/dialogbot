@@ -43,15 +43,13 @@ export default async function PrivatLanding() {
   return (
     <div data-theme="privat" className="min-h-dvh flex flex-col bg-paper text-ink">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-full focus:bg-ink focus:text-white">{tc("chrome.skip")}</a>
-      <AudienceSwitch current="privat" />
-
       <header className="border-b-2 border-ink bg-paper">
         <div className={`${WRAP} min-h-[72px] py-3 flex flex-wrap items-center gap-3`}>
           <Link href="/privat" className="inline-flex items-center gap-2.5 min-h-11 text-ink no-underline" aria-label="Dialogbot Privat">
             <LogoMark size={36} />
             <span className="font-display font-extrabold text-[22px] tracking-[-0.3px]">Dialogbot</span>
-            <span className="inline-flex items-center rounded-full bg-accent text-on-accent text-[12px] font-semibold uppercase tracking-[0.04em] px-2.5 py-[3px]">{t("brand.privat")}</span>
           </Link>
+          <AudienceSwitch current="privat" size="sm" />
           <span className="flex-1" />
           <Link href={`/login?next=${encodeURIComponent(tryHref)}`} className="inline-flex items-center min-h-11 px-[18px] rounded-full border-2 border-ink bg-paper text-[15px] font-semibold text-ink no-underline hover:bg-panel">{t("landing.login")}</Link>
         </div>

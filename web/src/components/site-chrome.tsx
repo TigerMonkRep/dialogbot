@@ -74,11 +74,11 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
   const locale = await getLocale();
   return (
     <header className="border-b-2 border-ink bg-white">
-      <AudienceSwitch current="erhverv" />
-      <div className="max-w-[1180px] mx-auto px-4 sm:px-6 min-h-[72px] py-3 flex flex-wrap items-center gap-x-6 gap-y-3 sm:gap-x-8">
-        <span className="inline-flex items-center gap-2.5">
+      <div className="max-w-[1180px] mx-auto px-4 sm:px-6 min-h-[72px] py-3 flex flex-wrap items-center gap-x-5 gap-y-3 sm:gap-x-8">
+        <span className="inline-flex items-center gap-3 sm:gap-4">
           <Logo />
           {badge && <span className="inline-flex items-center min-h-6 px-2.5 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">{badge}</span>}
+          <AudienceSwitch current="erhverv" size="sm" />
         </span>
         {nav && (
           <nav aria-label={t("chrome.mainMenu")} className={`${navAlways ? "flex" : "hidden lg:flex"} flex-wrap gap-x-5 gap-y-1 text-[15px] font-medium ml-auto`}>
@@ -99,57 +99,58 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
 export async function SiteFooter({ compact = false }: { compact?: boolean }) {
   const t = await getT("common");
   const tl = await getT("landing");
-  const link = "text-ink no-underline hover:text-accent inline-flex items-center min-h-11 sm:min-h-0";
-  const quiet = "text-muted no-underline hover:text-ink inline-flex items-center min-h-8";
+  const link = "text-ink no-underline hover:text-accent inline-flex items-center min-h-10 sm:min-h-8 text-[14px]";
+  const quiet = "text-muted no-underline hover:text-ink inline-flex items-center min-h-10 sm:min-h-7 text-[14px]";
+  const head = "font-display font-bold text-[13px] uppercase tracking-[0.12em] text-ink mb-2";
   return (
-    <footer className="border-t-2 border-ink bg-white mt-auto">
-      <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-8 flex flex-col gap-5 text-sm text-muted">
-        {/* Row 1: logo | contact. Row 2: legal links | CVR – both rows share the same left and right edges. */}
-        <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-3">
-          <Logo size={28} textSize={18} />
-          <div className="flex flex-wrap gap-x-6 gap-y-1 items-center">
-            <span>{t("chrome.location")}</span>
-            <span>{t("chrome.hours")}</span>
-            <a href={`mailto:${EMAIL}`} className={link}>{EMAIL}</a>
+    <footer className="border-t-2 border-ink bg-panel mt-auto">
+      <div className={`max-w-[1180px] mx-auto px-4 sm:px-6 ${compact ? "py-8" : "py-10 sm:py-12"} grid gap-x-10 gap-y-8 ${compact ? "" : "md:grid-cols-[1.4fr_1fr_1fr_1fr]"}`}>
+        {/* Brand + contact: the one column every page has. */}
+        <div className="flex flex-col gap-4 max-w-[340px]">
+          <Logo size={32} textSize={20} />
+          <p className="m-0 text-[15px] leading-normal text-ink-soft">{t("chrome.tagline")}</p>
+          <address className="not-italic flex flex-col gap-1 text-[14px] text-ink-soft">
+            <span>{t("chrome.location")} · {t("chrome.hours")}</span>
             <a href={PHONE_TEL} className={link}>{PHONE_INTL}</a>
-          </div>
+            <a href={`mailto:${EMAIL}`} className={link}>{EMAIL}</a>
+          </address>
+          <div><AudienceSwitch current="erhverv" size="sm" /></div>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-2">
-          <div className="flex flex-wrap gap-x-6 gap-y-1 items-center">
-            <Link href="/privatliv" className={link}>{t("chrome.privacy")}</Link>
-            <Link href="/gdpr" className={link}>{t("chrome.gdpr")}</Link>
-            <Link href="/vilkaar" className={link}>{t("chrome.terms")}</Link>
-            <CookieSettingsLink className={link} />
-          </div>
-          <span>CVR {COMPANY.cvr}</span>
-        </div>
-      </div>
-      {!compact && (
-        <div className="border-t border-line">
-          {/* SEO link index: kept in the HTML for crawlers, visually quiet (small, muted, grouped). */}
-          <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-6 grid gap-x-10 gap-y-5 text-[13px] leading-6 text-muted sm:grid-cols-3">
-            <nav aria-label={t("chrome.pages")} className="flex flex-col gap-1">
-              <span className="eyebrow mb-1">{t("chrome.pages")}</span>
+        {!compact && (
+          <>
+            <nav aria-label={t("chrome.pages")} className="flex flex-col">
+              <span className={head}>{t("chrome.pages")}</span>
               <Link href="/proev" className={quiet}>{t("chrome.tryIt")}</Link>
               <Link href="/byggevejledning" className={quiet}>{t("chrome.buildGuide")}</Link>
               <Link href="/priser" className={quiet}>{t("chrome.pricing")}</Link>
               <Link href="/om" className={quiet}>{t("chrome.about")}</Link>
-              <Link href="/gdpr" className={quiet}>{t("chrome.gdprData")}</Link>
               <Link href="/kontakt" className={quiet}>{t("chrome.contact")}</Link>
               <Link href="/login" className={quiet}>{t("chrome.login")}</Link>
               <Link href="/signup" className={quiet}>{t("chrome.signup")}</Link>
             </nav>
-            <nav aria-label={t("chrome.knowledge")} className="flex flex-col gap-1">
-              <span className="eyebrow mb-1">{t("chrome.knowledge")}</span>
+            <nav aria-label={t("chrome.knowledge")} className="flex flex-col">
+              <span className={head}>{t("chrome.knowledge")}</span>
               {LANDING_PAGES.filter((p) => p.href !== "/priser").map((p) => <Link key={p.href} href={p.href} className={quiet}>{tl(`nav.${p.key}`)}</Link>)}
+              <Link href="/gdpr" className={quiet}>{t("chrome.gdprData")}</Link>
             </nav>
-            <nav aria-label={t("chrome.byIndustry")} className="flex flex-col gap-1">
-              <span className="eyebrow mb-1">{t("chrome.byIndustry")}</span>
+            <nav aria-label={t("chrome.byIndustry")} className="flex flex-col">
+              <span className={head}>{t("chrome.byIndustry")}</span>
               {INDUSTRIES.map((i) => <Link key={i.slug} href={`/ai-receptionist/${i.slug}`} className={quiet}>{tl(`industries.${i.slug}.plural`)}</Link>)}
             </nav>
-          </div>
+          </>
+        )}
+      </div>
+      <div className="border-t border-line">
+        <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center gap-x-6 gap-y-1 text-[13px] text-muted">
+          <span>© {new Date().getFullYear()} {COMPANY.name} · CVR {COMPANY.cvr}</span>
+          <span className="flex flex-wrap gap-x-5 gap-y-1 sm:ml-auto">
+            <Link href="/privatliv" className={quiet}>{t("chrome.privacy")}</Link>
+            <Link href="/gdpr" className={quiet}>{t("chrome.gdpr")}</Link>
+            <Link href="/vilkaar" className={quiet}>{t("chrome.terms")}</Link>
+            <CookieSettingsLink className={quiet} />
+          </span>
         </div>
-      )}
+      </div>
     </footer>
   );
 }

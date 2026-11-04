@@ -31,15 +31,24 @@ function LoginForm() {
       <Button type="submit" icon="login" disabled={pending} className="w-full h-12 rounded-lg">{pending ? t("login.submitting") : t("login.submit")}</Button>
       <p className="flex justify-between text-body-sm text-ink-soft">
         <Link className="font-semibold text-ink underline" href="/password/forgot">{t("login.forgot")}</Link>
-        <Link className="font-semibold text-ink underline" href="/signup">{t("login.signup")}</Link>
+        <Link className="font-semibold text-ink underline" href={params.get("next") ? `/signup?next=${encodeURIComponent(params.get("next")!)}` : "/signup"}>{t("login.signup")}</Link>
       </p>
     </form>
   );
 }
 
-export default function LoginPage() {
+/** ?next=/privat… is a Dialogbot Privat login: the orange frame, and the sign-up link keeps `next`. */
+function LoginScreen() {
   const t = useT("auth");
+  const next = useSearchParams().get("next");
+  const privat = !!next && next.startsWith("/privat");
   return (
-    <AuthFrame icon="key" title={t("login.title")} subtitle={t("login.subtitle")}><Suspense><LoginForm /></Suspense></AuthFrame>
+    <AuthFrame icon="key" audience={privat ? "privat" : "erhverv"} title={t("login.title")} subtitle={privat ? t("login.privatSubtitle") : t("login.subtitle")}>
+      <LoginForm />
+    </AuthFrame>
   );
+}
+
+export default function LoginPage() {
+  return <Suspense><LoginScreen /></Suspense>;
 }

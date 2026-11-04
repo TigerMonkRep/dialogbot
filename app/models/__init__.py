@@ -1,6 +1,8 @@
 from app.models.domain import (  # noqa: F401
     ASSISTANT_REQUEST_CATEGORIES,
     ASSISTANT_REQUEST_STATUSES,
+    DISCOUNT_AUDIENCES,
+    DISCOUNT_DURATIONS,
     KNOWLEDGE_KINDS,
     VERSION_STATUSES,
     ActionRun,
@@ -24,6 +26,8 @@ from app.models.domain import (  # noqa: F401
     ConversationMessage,
     DailyReport,
     DemoCall,
+    DiscountCode,
+    DiscountRedemption,
     DoNotCall,
     EmailDelivery,
     GoalSelection,

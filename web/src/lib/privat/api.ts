@@ -175,7 +175,7 @@ export interface PrivatApi {
   ledger(): Promise<LedgerEntry[]>;
   // Subscription (privat-abonnement-brief). sessionId = Stripe Checkout session on return (synchronises first).
   subscription(sessionId?: string): Promise<Subscription>;
-  subscriptionCheckout(body: { plan: PlanKey; interval: BillingInterval }): Promise<{ url: string }>;
+  subscriptionCheckout(body: { plan: PlanKey; interval: BillingInterval; code?: string }): Promise<{ url: string }>;
   /** Stripe Billing Portal (501 not_configured when Stripe is missing). */
   subscriptionPortal(): Promise<{ url: string }>;
   sponsorClaim(taskId: string): Promise<Task>;

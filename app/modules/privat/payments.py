@@ -13,8 +13,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.models import PrivateProfile, Workspace
 from app.modules.billing import prices
-from app.modules.billing import stripe as stripe_api
-from app.modules.privat import ledger
+from app.modules.privat import branding, ledger
 
 KIND = "privat_credits"
 
@@ -30,8 +29,8 @@ def checkout(db: OrmSession, ctx) -> str:
             "currency": "dkk", "unit_amount": prices.PRIVAT_CREDIT_PACK_GROSS_MINOR, "tax_behavior": "inclusive",
             "product_data": {"name": f"{prices.PRIVAT_CREDIT_PACK_CREDITS} credits – Dialogbot Privat",
                              "description": "29 kr. inkl. 25 % moms (23,20 kr. + 5,80 kr. moms)"}}}
-    sess = stripe_api.request("POST", "/checkout/sessions", {
-        "mode": "payment", "line_items": [line], "locale": "da", "customer_email": ctx.user.email,
+    sess = branding.create_checkout_session({
+        "mode": "payment", "line_items": [line], "locale": "da", "customer_email": ctx.user.email, "allow_promotion_codes": True,
         "client_reference_id": str(ctx.ws_id), "metadata": meta, "payment_intent_data": {"metadata": meta},
         "success_url": f"{base}/privat/konto?betaling=ok", "cancel_url": f"{base}/privat/konto?betaling=annulleret"})
     return sess["url"]

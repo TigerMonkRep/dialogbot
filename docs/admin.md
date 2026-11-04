@@ -1,6 +1,6 @@
 # Admin (kun for Dialogbot-operatører)
 
-Adresse: `/app/operator/admin` (menu: konto → Operatør → *Admin: overblik*). Alt er **kun læsning**.
+Adresse: `/app/operator/admin` (menu: konto → Operatør → *Admin: overblik*). Alt er **kun læsning** – på nær Ønsker (status/note) og Rabatkoder (opret/deaktivér).
 
 | Side | Indhold |
 |---|---|
@@ -9,6 +9,7 @@ Adresse: `/app/operator/admin` (menu: konto → Operatør → *Admin: overblik*)
 | Brugere | Alle personer (kunder, kolleger, ambassadører) med *Se som* |
 | Ønsker (`/app/operator/oensker`) | Det, kunderne har bedt assistenten om, som Dialogbot ikke kan endnu – med kundens egne ord, side, kategori og hvor mange gange de har spurgt. Tal pr. status og pr. kategori. **Her kan operatøren skrive**: status (ny/planlagt/lavet/afvist), kategori og en intern note (logges på kundens arbejdsrum). Nye ønsker står under "kræver opmærksomhed" og sendes som mail til alle operatører. |
 | Drift | Databaseversion vs. kode, opgavekø, fejlede opgaver, e-mails, global logbog |
+| Rabatkoder | **Her kan operatøren skrive**: opret koder til Erhverv, Privat eller begge (procent eller fast beløb; én gang / et antal måneder / altid; maks. antal; slutdato; intern note), se hvor mange der har brugt dem, og deaktivér. Se docs/pricing.md → *Rabatkoder*. |
 | Værktøjer | Genveje til social, ambassadører, salg, telefoni, stemmer |
 
 Hemmeligheder (adgangskode-hash, token-hash, krypteret CPR/bank, nøgler) returneres aldrig; rå visninger viser `<skjult>`.

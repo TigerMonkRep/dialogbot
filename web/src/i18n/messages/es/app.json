@@ -830,6 +830,18 @@
       "sub": "Quién ha cambiado qué y cuándo figura en el historial.",
       "log": "Ver todos los cambios",
       "settings": "Todos los ajustes"
+    },
+    "discount": {
+      "ask": "¿Tienes un código de descuento?",
+      "label": "Código de descuento",
+      "placeholder": "P. ej. BIENVENIDO20",
+      "hint": "Un código de Dialogbot. El descuento aparece como una línea en la factura mensual.",
+      "add": "Usar código",
+      "applied": "Código {code}: {text} – válido de {from} a {to}.",
+      "appliedForever": "Código {code}: {text} – válido desde {from}."
+    },
+    "install": {
+      "title": "Dialogbot en tu móvil"
     }
   },
   "help": {

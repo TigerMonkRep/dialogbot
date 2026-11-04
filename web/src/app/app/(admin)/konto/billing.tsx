@@ -50,3 +50,22 @@ export function ReferralCode({ wsId }: { wsId: string }) {
     </form>
   );
 }
+
+/** An operator's discount code (made under Admin → Rabatkoder). One per workspace; it counts from this month's statement. */
+export function DiscountCode({ wsId }: { wsId: string }) {
+  const router = useRouter();
+  const t = useT("app");
+  const [open, setOpen] = useState(false);
+  const [code, setCode] = useState("");
+  const s = useSubmit(async () => { await api(`/workspaces/${wsId}/billing/discount`, { method: "PUT", body: JSON.stringify({ code }) }); router.refresh(); });
+  if (!open) return <button type="button" onClick={() => setOpen(true)} className="self-start min-h-[44px] text-[14px] font-semibold text-accent hover:underline">{t("account.discount.ask")}</button>;
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); s.run(); }} className="flex flex-wrap items-end gap-3 rounded-xl border-[1.5px] border-dashed border-ink p-4">
+      <div className="flex-1 min-w-[180px]"><label htmlFor="discount-code" className="block text-[13px] font-semibold mb-1">{t("account.discount.label")}</label><input id="discount-code" required className={`${inputCls} uppercase`} value={code} onChange={(e) => setCode(e.target.value)} placeholder={t("account.discount.placeholder")} autoCapitalize="characters" />
+        <p className="text-[13px] text-muted mt-1">{t("account.discount.hint")}</p>
+        {fieldError(s.error, "code") && <p role="alert" className="text-[13px] text-danger">{fieldError(s.error, "code")}</p>}</div>
+      <button type="submit" className={BTN_PRIMARY} disabled={s.pending}>{s.pending ? t("common.saving") : t("account.discount.add")}</button>
+      {!fieldError(s.error, "code") && <ErrorBox error={s.error} />}
+    </form>
+  );
+}

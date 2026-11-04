@@ -27,7 +27,7 @@
     "title": "What can I take care of for you?",
     "lead": "Type or dictate a task. Peter keeps lists, reminds you of things – and calls the hairdresser, the garage or the restaurant for you. He never calls before you have said yes.",
     "cta": "Try free for 14 days",
-    "note": "No card. No commitment. No app to download.",
+    "note": "No card. No commitment.",
     "login": "Log in",
     "demo": {
       "role": "your personal assistant",
@@ -622,7 +622,8 @@
     "useUp": "Set usage to 10/10",
     "repeatPay": "Repeat last payment signal",
     "emptyDay": "Show empty day",
-    "reset": "Start over"
+    "reset": "Start over",
+    "installTitle": "Get the app"
   },
   "invite": {
     "title": "Invite friends",
@@ -720,7 +721,8 @@
     "iosTitle": "On iPhone, notifications work from the home screen",
     "iosStep1": "Tap Share at the bottom of Safari.",
     "iosStep2": "Choose «Add to Home Screen» and open Dialogbot from there.",
-    "iosNote": "Then you can turn on notifications here."
+    "iosNote": "Then you can turn on notifications here.",
+    "installedAsk": "The app is on your home screen. Want a message when something happens?"
   },
   "nav": {
     "day": "My day",
@@ -894,7 +896,11 @@
     "paywallCallTextPlan": "You have used {used} of {quota} calls in {plan}. Buy extra calls or switch to a bigger plan.",
     "paywallCallTextNone": "With Basis, Plus or Familie calls are included. You can also buy extra calls.",
     "paywallDigitalPlan": "With a plan, lists and reminders are unlimited.",
-    "endTrial": "End the trial"
+    "endTrial": "End the trial",
+    "codeAsk": "Have a discount code?",
+    "codeLabel": "Discount code",
+    "codePlaceholder": "E.g. WELCOME",
+    "codeHint": "The discount is applied on the payment page."
   },
   "funnel": {
     "entry": "Try it in 2 minutes",

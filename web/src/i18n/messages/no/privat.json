@@ -27,7 +27,7 @@
     "title": "Hva skal jeg ordne for deg?",
     "lead": "Skriv eller si en oppgave. Peter lager lister, minner deg på ting – og ringer frisøren, verkstedet eller restauranten for deg. Han ringer aldri før du har sagt ja.",
     "cta": "Prøv gratis i 14 dager",
-    "note": "Ingen kort. Ingen binding. Ingen app å laste ned.",
+    "note": "Ingen kort. Ingen binding.",
     "login": "Logg inn",
     "demo": {
       "role": "din personlige assistent",
@@ -622,7 +622,8 @@
     "useUp": "Sett forbruk til 10/10",
     "repeatPay": "Gjenta siste betalingssignal",
     "emptyDay": "Vis tom dag",
-    "reset": "Start på nytt"
+    "reset": "Start på nytt",
+    "installTitle": "Hent appen"
   },
   "invite": {
     "title": "Inviter venner",
@@ -720,7 +721,8 @@
     "iosTitle": "På iPhone virker varsler fra Hjem-skjermen",
     "iosStep1": "Trykk på Del nederst i Safari.",
     "iosStep2": "Velg «Legg til på Hjem-skjerm», og åpne Dialogbot derfra.",
-    "iosNote": "Deretter kan du slå på varsler her."
+    "iosNote": "Deretter kan du slå på varsler her.",
+    "installedAsk": "Appen er på hjemskjermen din. Skal jeg gi beskjed når noe skjer?"
   },
   "nav": {
     "day": "Min dag",
@@ -894,7 +896,11 @@
     "paywallCallTextPlan": "Du har brukt {used} av {quota} anrop i {plan}. Kjøp ekstra anrop, eller bytt til en større plan.",
     "paywallCallTextNone": "Med Basis, Plus eller Familie er anrop inkludert. Du kan også kjøpe ekstra anrop.",
     "paywallDigitalPlan": "Med en plan er lister og påminnelser ubegrenset.",
-    "endTrial": "Avslutt prøveperioden"
+    "endTrial": "Avslutt prøveperioden",
+    "codeAsk": "Har du en rabattkode?",
+    "codeLabel": "Rabattkode",
+    "codePlaceholder": "F.eks. VELKOMMEN",
+    "codeHint": "Rabatten trekkes fra på betalingssiden."
   },
   "funnel": {
     "entry": "Prøv på 2 minutter",

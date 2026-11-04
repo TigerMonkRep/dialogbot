@@ -830,6 +830,18 @@
       "sub": "Chi ha modificato cosa, e quando, è registrato nella cronologia.",
       "log": "Vedi tutte le modifiche",
       "settings": "Tutte le impostazioni"
+    },
+    "discount": {
+      "ask": "Hai un codice sconto?",
+      "label": "Codice sconto",
+      "placeholder": "Es. BENVENUTO20",
+      "hint": "Un codice di Dialogbot. Lo sconto compare come riga nella fattura mensile.",
+      "add": "Usa il codice",
+      "applied": "Codice {code}: {text} – valido da {from} a {to}.",
+      "appliedForever": "Codice {code}: {text} – valido da {from}."
+    },
+    "install": {
+      "title": "Dialogbot sul telefono"
     }
   },
   "help": {

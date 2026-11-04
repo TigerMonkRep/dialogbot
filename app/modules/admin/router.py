@@ -14,7 +14,7 @@ from decimal import Decimal
 from typing import Any
 
 from fastapi import APIRouter, Depends, Query, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import desc, func, inspect, or_, select
 from sqlalchemy.orm import Session as OrmSession
 
@@ -303,3 +303,62 @@ def view_as(body: ViewAsIn, request: Request, db: OrmSession = Depends(get_db), 
     return {"token": raw_token, "expires_at": exp.isoformat(), "user": {"id": str(target.id), "email": target.email, "name": target.display_name},
             "ambassador": db.scalar(select(func.count()).select_from(Ambassador).where(Ambassador.user_id == target.id)) > 0}
 
+
+
+# --------------------------------------------------------------------------- discount codes (the one thing operators WRITE here)
+
+class DiscountCodeIn(BaseModel):
+    code: str = Field(max_length=40)
+    audience: str = Field(pattern="^(erhverv|privat|begge)$")
+    percent_off: int | None = None
+    amount_off_minor: int | None = None
+    duration: str = Field(default="once", pattern="^(once|repeating|forever)$")
+    duration_months: int | None = None
+    max_redemptions: int | None = None
+    starts_at: datetime | None = None
+    ends_at: datetime | None = None
+    note: str = Field(default="", max_length=300)
+
+
+@router.get("/rabatkoder")
+def discount_codes(db: OrmSession = Depends(get_db), principal: Principal = Depends(operator)):
+    """Every discount code, newest first, with how often it was used."""
+    from app.models import DiscountCode
+    from app.modules.billing import discounts
+
+    rows = db.scalars(select(DiscountCode).order_by(desc(DiscountCode.created_at))).all()
+    from app.modules.billing import stripe as stripe_api
+
+    return {"items": [discounts.out(db, r) for r in rows], "stripe": stripe_api.configured()}
+
+
+@router.post("/rabatkoder", status_code=201)
+def create_discount_code(body: DiscountCodeIn, request: Request, db: OrmSession = Depends(get_db),
+                         principal: Principal = Depends(operator)):
+    """Make a code for Erhverv, Privat or both. Privat/begge codes are mirrored to Stripe (coupon + promotion code)
+    so Checkout can apply them."""
+    from app.modules.billing import discounts
+
+    row = discounts.create(db, code=body.code, audience=body.audience, percent_off=body.percent_off,
+                           amount_off_minor=body.amount_off_minor, duration=body.duration, duration_months=body.duration_months,
+                           max_redemptions=body.max_redemptions, starts_at=body.starts_at, ends_at=body.ends_at,
+                           note=body.note, created_by=principal.user.id)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="operator.discount_code_created",
+                 object_type="discount_code", object_id=row.id,
+                 after={"code": row.code, "audience": row.audience, "text": discounts.describe(row)},
+                 request_id=request.state.request_id)
+    db.commit()
+    return discounts.out(db, row)
+
+
+@router.post("/rabatkoder/{code_id}/deaktiver")
+def deactivate_discount_code(code_id: uuid.UUID, request: Request, db: OrmSession = Depends(get_db),
+                             principal: Principal = Depends(operator)):
+    """Stop a code (also at Stripe). Customers who already redeemed it keep their discount."""
+    from app.modules.billing import discounts
+
+    row = discounts.deactivate(db, code_id)
+    record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="operator.discount_code_deactivated",
+                 object_type="discount_code", object_id=row.id, after={"code": row.code}, request_id=request.state.request_id)
+    db.commit()
+    return discounts.out(db, row)

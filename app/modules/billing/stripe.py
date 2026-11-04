@@ -62,7 +62,10 @@ def _flatten(data: dict, prefix: str = "") -> list[tuple[str, str]]:
     return out
 
 
-def request(method: str, path: str, data: dict | None = None, *, idempotency_key: str | None = None) -> dict:
+def request(method: str, path: str, data: dict | None = None, *, idempotency_key: str | None = None,
+            version: str | None = None) -> dict:
+    """One Stripe call. `version` pins the Stripe-Version header for that call alone (a parameter that only exists
+    from a given API version, such as Checkout branding_settings); everything else runs on the account's version."""
     import httpx
 
     key = get_settings().stripe_secret_key
@@ -71,6 +74,8 @@ def request(method: str, path: str, data: dict | None = None, *, idempotency_key
     headers = {"authorization": f"Bearer {key}"}
     if idempotency_key:
         headers["idempotency-key"] = idempotency_key
+    if version:
+        headers["stripe-version"] = version
     try:
         # httpx takes a mapping (a list of pairs is read as raw byte content); the flattened keys are unique.
         form = dict(_flatten(data or {}))

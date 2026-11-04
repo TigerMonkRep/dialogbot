@@ -830,6 +830,18 @@
       "sub": "Wer was wann geändert hat, steht im Verlauf.",
       "log": "Alle Änderungen ansehen",
       "settings": "Alle Einstellungen"
+    },
+    "discount": {
+      "ask": "Hast du einen Rabattcode?",
+      "label": "Rabattcode",
+      "placeholder": "Z. B. WILLKOMMEN20",
+      "hint": "Ein Code von Dialogbot. Der Rabatt erscheint als Zeile auf der Monatsrechnung.",
+      "add": "Code einlösen",
+      "applied": "Rabattcode {code}: {text} – gilt {from} bis {to}.",
+      "appliedForever": "Rabattcode {code}: {text} – gilt ab {from}."
+    },
+    "install": {
+      "title": "Dialogbot auf deinem Handy"
     }
   },
   "help": {

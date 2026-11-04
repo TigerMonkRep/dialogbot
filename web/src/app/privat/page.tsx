@@ -5,6 +5,7 @@ import { LogoMark } from "@/components/ui";
 import { AudienceSwitch } from "@/components/audience-switch";
 import { Ico } from "@/components/privat/icons";
 import { PublicPlans } from "@/components/privat/plans-public";
+import { InstallApp } from "@/components/install-app";
 import { getRaw, getT } from "@/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -67,6 +68,7 @@ export default async function PrivatLanding() {
               <Link href="/privat/start" className="inline-flex items-center justify-center min-h-[48px] px-5 rounded-full border-2 border-ink bg-white text-[15px] font-semibold text-ink no-underline hover:bg-panel" data-funnel-entry>{t("funnel.entry")}</Link>
               <span className="text-[14px] text-muted">{t("landing.note")}</span>
             </div>
+            <InstallApp audience="privat" compact />
           </div>
 
           {/* Static demo card */}

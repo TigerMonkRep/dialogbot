@@ -27,7 +27,7 @@
     "title": "Was soll ich für dich erledigen?",
     "lead": "Schreib oder sprich eine Aufgabe. Peter führt Listen, erinnert dich an Dinge – und ruft für dich beim Friseur, in der Werkstatt oder im Restaurant an. Er ruft nie an, bevor du Ja gesagt hast.",
     "cta": "14 Tage kostenlos testen",
-    "note": "Keine Karte. Keine Bindung. Keine App zum Herunterladen.",
+    "note": "Keine Karte. Keine Bindung.",
     "login": "Anmelden",
     "demo": {
       "role": "dein persönlicher Assistent",
@@ -622,7 +622,8 @@
     "useUp": "Verbrauch auf 10/10 setzen",
     "repeatPay": "Letztes Zahlungssignal wiederholen",
     "emptyDay": "Leeren Tag zeigen",
-    "reset": "Von vorn beginnen"
+    "reset": "Von vorn beginnen",
+    "installTitle": "App holen"
   },
   "invite": {
     "title": "Freunde einladen",
@@ -720,7 +721,8 @@
     "iosTitle": "Auf dem iPhone funktionieren Benachrichtigungen vom Home-Bildschirm",
     "iosStep1": "Tippe unten in Safari auf Teilen.",
     "iosStep2": "Wähle «Zum Home-Bildschirm» und öffne Dialogbot von dort.",
-    "iosNote": "Danach kannst du hier Benachrichtigungen einschalten."
+    "iosNote": "Danach kannst du hier Benachrichtigungen einschalten.",
+    "installedAsk": "Die App ist auf deinem Startbildschirm. Soll ich Bescheid geben, wenn etwas passiert?"
   },
   "nav": {
     "day": "Mein Tag",
@@ -894,7 +896,11 @@
     "paywallCallTextPlan": "Du hast {used} von {quota} Anrufen in {plan} genutzt. Kaufe Extra-Anrufe oder wechsle zu einem größeren Plan.",
     "paywallCallTextNone": "Mit Basis, Plus oder Familie sind Anrufe inklusive. Du kannst auch Extra-Anrufe kaufen.",
     "paywallDigitalPlan": "Mit einem Plan sind Listen und Erinnerungen unbegrenzt.",
-    "endTrial": "Testphase beenden"
+    "endTrial": "Testphase beenden",
+    "codeAsk": "Hast du einen Rabattcode?",
+    "codeLabel": "Rabattcode",
+    "codePlaceholder": "Z. B. WILLKOMMEN",
+    "codeHint": "Der Rabatt wird auf der Bezahlseite abgezogen."
   },
   "funnel": {
     "entry": "In 2 Minuten ausprobieren",

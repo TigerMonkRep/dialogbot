@@ -830,6 +830,18 @@
       "sub": "Who changed what, and when, is in the history.",
       "log": "See all changes",
       "settings": "All settings"
+    },
+    "discount": {
+      "ask": "Have a discount code?",
+      "label": "Discount code",
+      "placeholder": "E.g. WELCOME20",
+      "hint": "A code from Dialogbot. The discount appears as a line on the monthly invoice.",
+      "add": "Use code",
+      "applied": "Discount code {code}: {text} – applies {from} to {to}.",
+      "appliedForever": "Discount code {code}: {text} – applies from {from}."
+    },
+    "install": {
+      "title": "Dialogbot on your phone"
     }
   },
   "help": {

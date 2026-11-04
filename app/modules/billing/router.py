@@ -65,6 +65,34 @@ def card_checkout(request: Request, ctx: WorkspaceContext = Depends(require_capa
     return {"url": url}
 
 
+# --------------------------------------------------------------------------- discount code (operators make them in the admin)
+
+class DiscountIn(BaseModel):
+    code: str
+
+
+@router.get("/discount")
+def get_discount(ctx: WorkspaceContext = Depends(require_capability("billing.read")), db: OrmSession = Depends(get_db)):
+    """The discount code this workspace uses (if any): the code, its terms and the months it covers."""
+    from app.modules.billing import discounts
+
+    return discounts.erhverv_status(db, ctx.workspace.id, tz_of(db, ctx.workspace.id)) | {"can_manage": ctx.can("billing.manage")}
+
+
+@router.put("/discount")
+def put_discount(body: DiscountIn, request: Request, ctx: WorkspaceContext = Depends(require_capability("billing.manage")),
+                 db: OrmSession = Depends(get_db)):
+    """The owner types a discount code. One per workspace; it counts from the current month's statement."""
+    from app.modules.billing import discounts
+
+    r = discounts.redeem_erhverv(db, ctx.workspace.id, body.code)
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="billing.discount_code_used",
+                 object_type="discount_redemption", object_id=r.id, after={"code": discounts.normalize(body.code)},
+                 request_id=request.state.request_id)
+    db.commit()
+    return discounts.erhverv_status(db, ctx.workspace.id, tz_of(db, ctx.workspace.id)) | {"can_manage": True}
+
+
 @router.get("/invoices")
 def list_invoices(ctx: WorkspaceContext = Depends(require_capability("billing.read")), db: OrmSession = Depends(get_db)):
     from app.models import Invoice

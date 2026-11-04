@@ -479,8 +479,10 @@ for (const width of [375, 1440]) {
       await open(page, "/privat/konto");
       const card = page.getByTestId("subscription-card");
       await expect(card).toContainText("Prøveperiode");
-      await card.getByRole("button", { name: "Vælg plan" }).click();
+      // Without a chosen plan the three plans are open from the start – no «Vælg plan» tap before the payment.
       const picker = page.getByTestId("plan-picker");
+      await expect(picker).toBeVisible();
+      await expect(card.getByRole("button", { name: "Skjul planer" })).toBeVisible();
       await picker.getByRole("button", { name: "Årligt · spar 20 %" }).click();
       await expect(picker.getByTestId("plan-plus")).toContainText("Anbefalet");
       await expect(picker.getByTestId("plan-plus")).toContainText("79 kr./md.");

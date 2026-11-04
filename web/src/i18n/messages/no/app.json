@@ -830,6 +830,18 @@
       "sub": "Hvem som har endret hva, og når, ligger i historikken.",
       "log": "Se alle endringer",
       "settings": "Alle innstillinger"
+    },
+    "discount": {
+      "ask": "Har du en rabattkode?",
+      "label": "Rabattkode",
+      "placeholder": "F.eks. VELKOMMEN20",
+      "hint": "En kode fra Dialogbot. Rabatten står som en linje på månedsfakturaen.",
+      "add": "Bruk kode",
+      "applied": "Rabattkode {code}: {text} – gjelder {from} til {to}.",
+      "appliedForever": "Rabattkode {code}: {text} – gjelder fra {from}."
+    },
+    "install": {
+      "title": "Dialogbot på telefonen"
     }
   },
   "help": {

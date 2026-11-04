@@ -50,6 +50,25 @@ async def stripe_webhook(request: Request, db: OrmSession = Depends(get_db)):
         raise ValidationFailed("Ugyldig JSON") from e
     if not isinstance(event, dict):
         raise ValidationFailed("Ugyldig hændelse")
+    from sqlalchemy import select
+    from sqlalchemy.exc import IntegrityError
+
+    from app.models import WebhookEvent
+
+    event_id = str(event.get("id") or "")[:200]
+    if event_id and db.scalar(select(WebhookEvent.id).where(WebhookEvent.provider == "stripe",
+                                                            WebhookEvent.event_id == event_id)) is not None:
+        return {"received": True, "duplicate": True, "outcome": "duplicate"}  # a resent event changes nothing
     outcome = stripe.process_event(db, event)
-    db.commit()
+    if event_id:
+        # Recorded in the same transaction as its effect (e.g. a credit grant), so the effect happens once.
+        obj = (event.get("data") or {}).get("object") or {}
+        db.add(WebhookEvent(provider="stripe", event_id=event_id, event_type=str(event.get("type") or "")[:64] or "unknown",
+                            payload={"type": event.get("type"), "object_id": obj.get("id"), "object": obj.get("object")},
+                            outcome=outcome if outcome in ("applied", "ignored", "unmatched") else "ignored"))
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        return {"received": True, "duplicate": True, "outcome": "duplicate"}
     return {"received": True, "outcome": outcome}

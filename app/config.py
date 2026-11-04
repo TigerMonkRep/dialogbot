@@ -234,6 +234,22 @@ class Settings(BaseSettings):
     # Public site used in captions and as link target.
     social_site_url: str = Field(default="https://www.dialogbot.dk", alias="SOCIAL_SITE_URL")
 
+    # Dialogbot Privat (app/modules/privat): a personal assistant for private consumers. Off by default.
+    # PRIVAT_ALLOWED_EMAILS: comma list of e-mails that may use it during the pilot; empty = everyone (when enabled).
+    privat_enabled: bool = Field(default=False, alias="PRIVAT_ENABLED")
+    privat_allowed_emails: str = Field(default="", alias="PRIVAT_ALLOWED_EMAILS")
+    # Platform numbers that place private calls and receive call-backs: comma list of E.164, each optionally with its
+    # Vapi phone-number id ("+4589871234=3f2a…"); without an id the number must exist as a phone_numbers row.
+    # Dialogbot never buys these automatically.
+    privat_pool_numbers: str = Field(default="", alias="PRIVAT_POOL_NUMBERS")
+    # Optional Stripe Price id for the credit pack (10 credits, 29 kr. incl. VAT). Unset = inline price_data.
+    privat_stripe_price_id: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_ID")
+    # Short invitation links people text from their own phone: <base><code>, resolved by the web route /i/{code}.
+    privat_short_url_base: str = Field(default="https://dialogbot.app/i/", alias="PRIVAT_SHORT_URL_BASE")
+    privat_group_url_base: str = Field(default="https://dialogbot.app/g/", alias="PRIVAT_GROUP_URL_BASE")
+    # Add-ons (app/modules/privat/addons.py) switched on when a private account is created.
+    privat_default_addons: str = Field(default="ring-for-mig,delte-lister,oenskelister", alias="PRIVAT_DEFAULT_ADDONS")
+
     # Dev tooling: the simulated mailbox and test identities are gated on this.
     enable_dev_tools: bool = Field(default=False, alias="ENABLE_DEV_TOOLS")
 

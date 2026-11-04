@@ -65,7 +65,8 @@ def create_workspace(db: OrmSession, *, user: User, name: str, product_intent: s
 def list_workspaces_for_user(db: OrmSession, user_id: uuid.UUID) -> list[tuple[Workspace, Membership]]:
     rows = db.execute(
         select(Workspace, Membership).join(Membership, Membership.workspace_id == Workspace.id)
-        .where(Membership.user_id == user_id, Workspace.status != "closed").order_by(Workspace.created_at)
+        .where(Membership.user_id == user_id, Workspace.status != "closed", Workspace.kind == "business")
+        .order_by(Workspace.created_at)
     )
     return [(w, m) for w, m in rows]
 

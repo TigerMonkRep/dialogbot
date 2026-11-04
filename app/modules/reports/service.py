@@ -164,7 +164,7 @@ def run_due(db: OrmSession, now: datetime | None = None) -> int:
     """Snapshot yesterday for workspaces whose local send hour has passed; e-mail once. Returns count."""
     now = now or datetime.now(UTC)
     made = 0
-    for ws in db.scalars(select(Workspace)).all():
+    for ws in db.scalars(select(Workspace).where(Workspace.kind == "business")).all():  # never personal workspaces
         tz = tz_of(db, ws.id)
         local_now = now.astimezone(ZoneInfo(tz))
         s = settings_for(db, ws.id)

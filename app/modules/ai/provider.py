@@ -164,6 +164,10 @@ class FakeProvider:
         question = messages[-1]["content"] if messages else ""
         if tools is not None and (call := self._tool_turn(question, tools)) is not None:
             return call
+        if system.startswith("PRIVAT_"):  # Dialogbot Privat: chat tools and call outcomes
+            from app.modules.privat.fake import respond
+
+            return respond(self.model, system, messages, tools)
         if isinstance(question, list):  # a tool_result turn: answer with the tool's text
             results = [str(b.get("content") or "") for b in question if isinstance(b, dict) and b.get("type") == "tool_result"]
             out = "[fake] handling: " + " | ".join(results)

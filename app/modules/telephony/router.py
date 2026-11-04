@@ -14,7 +14,7 @@ from app.core.audit import record_audit
 from app.core.auth import WorkspaceContext, get_scoped, require_capability
 from app.core.errors import ApiError, ValidationFailed
 from app.db import get_db
-from app.models import Call, PhoneNumber
+from app.models import Call, PhoneNumber, WebhookEvent
 from app.modules.setup.checks import invalidate_checks
 from app.modules.telephony import vapi
 
@@ -92,6 +92,30 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
     if not isinstance(message, dict):
         raise ValidationFailed("Mangler 'message'")
     kind = str(message.get("type", ""))
+    from app.modules.privat import calls as privat_calls
+
+    if kind == "assistant-request" and privat_calls.is_pool_call(message):
+        # A business calling a Dialogbot Privat pool number back: routed by the caller's number (privat/calls.py).
+        out = privat_calls.callback_assistant(db, message)
+        db.commit()
+        return out
+    if kind == "end-of-call-report":
+        call_id = str((message.get("call") or {}).get("id") or "")
+        event_key = f"{call_id}:{kind}"
+        if call_id and db.scalar(select(WebhookEvent.id).where(WebhookEvent.provider == "vapi",
+                                                               WebhookEvent.event_id == event_key)):
+            return {"received": True, "duplicate": True}
+        privat_outcome = privat_calls.on_report(db, message)
+        if privat_outcome is not None:  # a private call: never stored as a business call or conversation
+            if privat_outcome != "duplicate":
+                vapi.record_event(db, event_key, kind, {"call_id": call_id, "type": kind, "privat": True},
+                                  privat_outcome)
+            try:
+                db.commit()
+            except IntegrityError:
+                db.rollback()
+                return {"received": True, "duplicate": True}
+            return {"received": True, "duplicate": privat_outcome == "duplicate", "outcome": privat_outcome}
     if kind == "assistant-request":
         from app.core.logging import log
         from app.modules.telephony import platform

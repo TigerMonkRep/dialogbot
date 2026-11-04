@@ -19,7 +19,6 @@ export function FunnelShell({ step: forced, children, brand = "Dialogbot", home 
   return (
     <div className="min-h-dvh bg-paper text-ink flex flex-col app-type overflow-x-clip" data-funnel={f.kind} data-step={step}>
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-3 focus:py-2 focus:rounded-lg focus:bg-ink focus:text-paper">{t("skip")}</a>
-      {f.audience}
       <header className="border-b-2 border-ink bg-white">
         <div className="max-w-[720px] mx-auto px-2 sm:px-4 min-h-14 sm:min-h-16 flex items-center gap-1 sm:gap-2">
           <button type="button" onClick={f.back} aria-label={t("back")} className="w-11 h-11 rounded-xl inline-flex items-center justify-center text-ink hover:bg-panel cursor-pointer">

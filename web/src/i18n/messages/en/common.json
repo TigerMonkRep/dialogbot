@@ -21,11 +21,14 @@
     "signup": "Create account",
     "knowledge": "Resources",
     "byIndustry": "AI receptionist for your industry",
-    "skip": "Skip to content"
+    "skip": "Skip to content",
+    "tagline": "Your AI receptionist – in Danish, around the clock. Answers the phone, books appointments and collects enquiries when you can't."
   },
   "audience": {
     "business": "For businesses – Dialogbot Erhverv",
     "private": "For you at home – Dialogbot Privat",
-    "label": "Choose: business or private"
+    "label": "Choose: business or private",
+    "businessShort": "Business",
+    "privateShort": "Personal"
   }
 }

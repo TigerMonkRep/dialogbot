@@ -21,11 +21,14 @@
     "signup": "Opprett konto",
     "knowledge": "Kunnskap",
     "byIndustry": "AI-resepsjonist for din bransje",
-    "skip": "Hopp til innhold"
+    "skip": "Hopp til innhold",
+    "tagline": "Din AI-resepsjonist – på dansk, døgnet rundt. Tar telefonen, booker timer og samler henvendelser når dere ikke kan."
   },
   "audience": {
     "business": "Til bedrifter – Dialogbot Erhverv",
     "private": "Til deg hjemme – Dialogbot Privat",
-    "label": "Velg: bedrift eller privat"
+    "label": "Velg: bedrift eller privat",
+    "businessShort": "Bedrift",
+    "privateShort": "Privat"
   }
 }

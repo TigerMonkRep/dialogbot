@@ -244,6 +244,14 @@ class Settings(BaseSettings):
     privat_pool_numbers: str = Field(default="", alias="PRIVAT_POOL_NUMBERS")
     # Optional Stripe Price id for the credit pack (10 credits, 29 kr. incl. VAT). Unset = inline price_data.
     privat_stripe_price_id: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_ID")
+    # Optional Stripe Price ids for the subscriptions (app/modules/privat/subscriptions.py), one per plan and interval.
+    # Unset = inline price_data with the amounts from app/modules/billing/prices.py (incl. VAT).
+    privat_stripe_price_basis_month: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_BASIS_MONTH")
+    privat_stripe_price_basis_year: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_BASIS_YEAR")
+    privat_stripe_price_plus_month: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_PLUS_MONTH")
+    privat_stripe_price_plus_year: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_PLUS_YEAR")
+    privat_stripe_price_familie_month: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_FAMILIE_MONTH")
+    privat_stripe_price_familie_year: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_FAMILIE_YEAR")
     # Short invitation links people text from their own phone: <base><code>, resolved by the web route /i/{code}.
     privat_short_url_base: str = Field(default="https://dialogbot.app/i/", alias="PRIVAT_SHORT_URL_BASE")
     privat_group_url_base: str = Field(default="https://dialogbot.app/g/", alias="PRIVAT_GROUP_URL_BASE")

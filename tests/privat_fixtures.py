@@ -2,13 +2,13 @@
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
 from app.config import get_settings
 from app.db import get_session_factory
-from app.models import PrivateProfile, User
+from app.models import PrivateProfile, PrivateSubscription, User
 from app.modules.privat import rules
 
 SECRET = "vapi-secret-privat-test"
@@ -67,6 +67,28 @@ class Pv:
 
     def me(self, tok: str) -> dict:
         return self.api.get(tok, "/privat/me").json()
+
+    def expire_trial(self, tok: str) -> None:
+        """Put the account past its 14-day trial (no plan): the free quota and credits apply, as before subscriptions."""
+        ws = self.ws(tok)
+        with get_session_factory()() as db:
+            row = db.get(PrivateSubscription, ws)
+            row.status, row.trial_ends_at = "trial", self.clock() - timedelta(days=1)
+            db.commit()
+
+    def set_plan(self, tok: str, plan: str, *, status: str = "active", interval: str = "month",
+                 period_days: int = 30) -> None:
+        """A paid plan as the Stripe webhook would have mirrored it."""
+        ws = self.ws(tok)
+        with get_session_factory()() as db:
+            row = db.get(PrivateSubscription, ws)
+            row.plan, row.status, row.interval = plan, status, interval
+            row.stripe_customer_id, row.stripe_subscription_id = "cus_test", f"sub_test_{ws.hex[:8]}"
+            row.current_period_end = self.clock() + timedelta(days=period_days)
+            db.commit()
+
+    def subscription(self, tok: str) -> dict:
+        return self.api.get(tok, "/privat/subscription").json()
 
     def task(self, tok: str, tid: str):
         return self.api.get(tok, f"/privat/tasks/{tid}")

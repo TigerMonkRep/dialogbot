@@ -56,7 +56,7 @@ def find_profile(db: OrmSession, user_id: uuid.UUID) -> PrivateProfile | None:
 
 def ensure_account(db: OrmSession, user: User, *, signup_source: str | None = None) -> tuple[PrivateProfile, bool]:
     """The user's personal workspace, created once (owner membership, NO business seed rows, 3 welcome credits,
-    default add-ons). Idempotent: the user row is locked, and private_profiles.user_id is unique."""
+    the 14-day trial, default add-ons). Idempotent: the user row is locked, and private_profiles.user_id is unique."""
     check_allowed(user)
     if user.email_verified_at is None:
         raise Forbidden("Bekræft din e-mail først", code="email_not_verified")
@@ -77,8 +77,9 @@ def ensure_account(db: OrmSession, user: User, *, signup_source: str | None = No
     db.flush()
     ledger.add(db, ws.id, kind="grant", amount=rules.WELCOME_CREDITS, source_ref=f"welcome:{ws.id}",
                text="Velkomstcredits (én gang)")
-    from app.modules.privat import addons
+    from app.modules.privat import addons, subscriptions
 
+    subscriptions.start_trial(db, ws.id)  # 14 days with Plus rights, no card – before the default add-ons
     addons.enable_defaults(db, ws.id)
     if signup_source and not user.signup_source:
         user.signup_source = signup_source[:80]

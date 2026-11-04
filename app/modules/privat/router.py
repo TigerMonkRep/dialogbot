@@ -26,6 +26,7 @@ from app.modules.privat import (
     referrals,
     service,
     sharing,
+    subscriptions,
 )
 from app.modules.privat.deps import PrivateCtx, private_ctx
 from app.modules.voices.operator_router import operator
@@ -59,6 +60,11 @@ class PhoneStartIn(BaseModel):
 
 class PhoneVerifyIn(BaseModel):
     code: str = Field(min_length=4, max_length=10)
+
+
+class SubscriptionCheckoutIn(BaseModel):
+    plan: str = Field(pattern="^(basis|plus|familie)$")
+    interval: str = Field(default="month", pattern="^(month|year)$")
 
 
 class ItemIn(BaseModel):
@@ -99,7 +105,40 @@ def create_account(principal: Principal = Depends(get_current_principal), db: Or
 
 @router.get("/me")
 def me(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
-    return service.balance_out(db, ctx)
+    out = service.balance_out(db, ctx)
+    db.commit()  # an account from before subscriptions gets its trial row on first read
+    return out
+
+
+# --------------------------------------------------------------------------- subscription
+
+@router.get("/subscription")
+def subscription(session_id: str | None = Query(default=None, max_length=200), ctx: PrivateCtx = Depends(private_ctx),
+                 db: OrmSession = Depends(get_db)):
+    """The trial / plan and this month's call quota. With ?session_id= (back from Stripe Checkout) the session is read
+    from Stripe first, so the page is right before the webhook lands."""
+    if session_id:
+        subscriptions.sync_from_session(db, ctx, session_id)
+    out = subscriptions.subscription_out(db, ctx.ws_id)
+    db.commit()
+    return out
+
+
+@router.post("/subscription/checkout")
+def subscription_checkout(body: SubscriptionCheckoutIn, ctx: PrivateCtx = Depends(private_ctx),
+                          db: OrmSession = Depends(get_db)):
+    """Stripe Checkout (mode=subscription). The plan becomes active through the webhook / the return sync."""
+    url = subscriptions.checkout(db, ctx, plan=body.plan, interval=body.interval)
+    db.commit()
+    return {"url": url}
+
+
+@router.post("/subscription/portal")
+def subscription_portal(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """Stripe Billing Portal: change plan, cancel, update card. 501 not_configured without Stripe or a customer."""
+    url = subscriptions.portal(db, ctx)
+    db.commit()
+    return {"url": url}
 
 
 @router.get("/day")

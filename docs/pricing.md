@@ -16,8 +16,17 @@ kontakt. De findes ikke mere.
 
 ## Dialogbot Privat – abonnement (priser inkl. 25 % moms)
 
-Gældende fra 4. november 2026. Private kunder: 14 dages gratis prøveperiode med Plus-rettigheder (uden kort), derefter vælger man selv.
+Gældende fra 4. november 2026. Private kunder: 14 dages gratis prøveperiode med den valgte plans rettigheder – prøveperioden starter
+først i Stripe Checkout, hvor kort, navn, adresse og telefon indtastes (`trial_period_days`, `payment_method_collection: always`,
+`billing_address_collection: required`, telefon), og kortet trækkes først, når den slutter. Opsiges den inden, betales intet.
 Credits (10 for 29 kr.) findes stadig som «ekstra opkald», når månedens opkald er brugt (3 credits pr. besvaret opkald, uændret).
+
+**Uden plan (status `none` – ny konto, eller prøveperiode aldrig startet):** stærkt begrænset gratis-version. Man kan modtage, se og
+reservere på lister, andre deler med én (delte lister og ønskelister), men ikke oprette egne opgaver, lister eller opkald – chatten
+gemmer dem som udkast (`paid_by: none`) og foreslår «Start 14 dage gratis». Når prøveperioden (eller en plan) kommer fra Stripe, bliver
+alle udkast aktive og betalt af planen (`service.activate_drafts_with_plan`), og standard-tilføjelserne slås til. De tidligere
+10 gratis opgaver/md. er væk (`PRIVAT_FREE_TASKS_PER_MONTH = 0`). Quiz-tragten (`/privat/start`) opretter kontoen og alle lister,
+påmindelser og det første opkaldsforslag som udkast og sender videre til `/privat/konto?plan=plus&velkommen=1`, der starter checkout.
 
 | Plan | Pr. måned | Pr. måned ved årlig betaling (betales årligt) | Opkald/md. | Personer | Alle apps i Butikken |
 |---|---|---|---|---|---|
@@ -25,8 +34,8 @@ Credits (10 for 29 kr.) findes stadig som «ekstra opkald», når månedens opka
 | **Plus** (anbefalet) | 99 kr. (9900 øre) | 79 kr. (94.800 øre/år) | 10 | 1 | ja |
 | Familie | 169 kr. (16.900 øre) | 135 kr. (162.000 øre/år) | 25 | 5 | ja |
 
-- Lister og påmindelser: ubegrænsede i prøveperioden og på alle planer. Uden plan (udløbet prøveperiode): 10 gratis opgaver/md. og
-  credits som før.
+- Lister og påmindelser: ubegrænsede i prøveperioden og på alle planer. Udløbet prøveperiode uden plan (`expired`): nye opgaver bliver
+  udkast, som kan aktiveres med 1 credit eller et sponsorindslag som før – eller med en plan.
 - Opkald trækkes af planens kvote pr. kalendermåned (Europe/Copenhagen); et opkald, som ingen tager, eller som fejler, tæller ikke.
   Når kvoten er brugt: 3 credits pr. opkald (den eksisterende logik).
 - Apps i Butikken med `included_in` (Kalender, Pakker og de kommende) kræver prøveperiode, Plus eller Familie; «Ring for mig» er med i

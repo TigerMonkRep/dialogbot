@@ -77,6 +77,8 @@ type Ctx = {
   openTask(id: string): void; talk(id: string): void; go(s: Screen): void;
   /** Konto with the plan picker open («Vælg plan» everywhere). */
   choosePlan(): void;
+  /** «Start 14 dage gratis»: straight to the checkout (Plus, monthly) – the card first, then the trial. */
+  startTrial(): Promise<void>;
 };
 const C = createContext<Ctx | null>(null);
 export function usePrivat(): Ctx { const c = useContext(C); if (!c) throw new Error("PrivatProvider mangler"); return c; }
@@ -168,6 +170,11 @@ export function PrivatProvider({ session, children }: { session: Session; childr
   }, [router]);
   const openTask = useCallback((id: string) => router.push(`/privat/opgaver/${encodeURIComponent(id)}`), [router]);
   const choosePlan = useCallback(() => router.push("/privat/konto?planer=1"), [router]);
+  const startTrial = useCallback(async () => {
+    if (!loggedIn) { setSheet({ kind: "login" }); return; }
+    const r = await run((a) => a.subscriptionCheckout({ plan: "plus", interval: "month" }));
+    if (r?.url) window.location.href = r.url;
+  }, [loggedIn, run]);
   const talk = useCallback((id: string) => { setFocus(id); if (!isDesk) router.push("/privat/samtale"); }, [isDesk, router]);
 
   const afterMessages = useCallback((msgs: ChatMessage[]) => {
@@ -251,9 +258,9 @@ export function PrivatProvider({ session, children }: { session: Session; childr
     // Without a catalog (API not there yet) nothing is hidden.
     addonOn: (key) => !addons || addons.length === 0 || !!addons.find((a) => a.key === key)?.enabled || !addons.some((a) => a.key === key),
     draft, setDraft, focusId, setFocus, sheet, openSheet: setSheet, closeSheet, note, setNote, busy, error, setError,
-    refresh, run, send, sendAbout, saveLocation, pick, simulatedLogin, screen, routeTaskId, isDesk, openTask, talk, go, choosePlan,
+    refresh, run, send, sendAbout, saveLocation, pick, simulatedLogin, screen, routeTaskId, isDesk, openTask, talk, go, choosePlan, startTrial,
   }), [sendAbout, saveLocation, mode, session, loggedIn, balance, tasks, day, messages, ledger, addons, referrals, groups, subscription, draft, focusId, sheet, closeSheet, note, busy, error,
-    refresh, run, send, pick, simulatedLogin, screen, routeTaskId, isDesk, openTask, talk, go, choosePlan]);
+    refresh, run, send, pick, simulatedLogin, screen, routeTaskId, isDesk, openTask, talk, go, choosePlan, startTrial]);
 
   return <C.Provider value={value}>{children}</C.Provider>;
 }

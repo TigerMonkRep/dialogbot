@@ -121,7 +121,7 @@ def create_digital(db: OrmSession, ctx, *, kind: str, title: str, items: list[st
         task.usage_text = f"{used + 1} af {rules.FREE_LIMIT} gratis opgaver i {rules.month_name()}"
     else:
         task.pending_status, task.status, task.paid_by = status, "draft", "none"
-        task.next_step, task.usage_text = "Vælg, hvordan opgaven skal betales", "Ikke betalt endnu"
+        task.next_step, task.usage_text = "Venter på din plan", "Ikke betalt endnu"
     db.add(task)
     db.flush()
     sharing.add_owner(db, task, ctx.user_id)
@@ -208,6 +208,33 @@ def delete_item(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, item_id
     touch(task)
 
 
+def activate_drafts_with_plan(db: OrmSession, ws_id: uuid.UUID) -> int:
+    """The trial or a plan just arrived from Stripe: every draft that waited for it (the quiz-funnel's lists and
+    reminders, a free-tier attempt) becomes active, paid by the plan. Returns how many."""
+    rows = list(db.scalars(select(PrivateTask).where(PrivateTask.workspace_id == ws_id, PrivateTask.status == "draft",
+                                                      PrivateTask.paid_by == "none")))
+    for task in rows:
+        task.status, task.pending_status = task.pending_status or "planned", None
+        task.paid_by, task.usage_text = "plan", "Med i prøveperioden"
+        if task.kind == "reminder" and task.remind_at:
+            task.next_step = "Påmindelse " + rules.lower_first(rules.when_text(task.remind_at))
+            schedule_reminder(db, task)
+        elif task.kind == "list":
+            task.next_step = {"shopping": "Køb ind", "wishlist": "Del ønskelisten", "todo": "Gør punkterne færdige"}.get(
+                task.list_type or "", "Kryds af, når det er klaret")
+        event(db, task, "Aktiv – med i prøveperioden")
+        touch(task)
+    db.flush()
+    if rows:
+        from app.modules.privat import referrals
+
+        owners = set(db.scalars(select(PrivateTaskMember.user_id).where(PrivateTaskMember.task_id.in_([t.id for t in rows]),
+                                                                        PrivateTaskMember.role == "owner")))
+        for uid in owners:
+            referrals.try_activate(db, uid)  # the invitee's first real task may be the draft that just came alive
+    return len(rows)
+
+
 def activate(db: OrmSession, ctx, task: PrivateTask, method: str) -> PrivateTask:
     """Draft → active, paid with 1 credit or a sponsor spot. Repeating it on an active task changes nothing."""
     if task.workspace_id != ctx.ws_id:
@@ -221,7 +248,7 @@ def activate(db: OrmSession, ctx, task: PrivateTask, method: str) -> PrivateTask
             raise Conflict("Du har ingen credits", code="insufficient_credits")
         ledger.add(db, ctx.ws_id, kind="spend", amount=-1, source_ref=f"spend:{task.id}", task_id=task.id,
                    text="Ny opgave efter månedsgrænsen")
-        task.paid_by, task.usage_text = "credit", "1 credit (efter månedens 10 gratis)"
+        task.paid_by, task.usage_text = "credit", "1 credit"
     elif method == "sponsor":
         if ledger.sponsor_used_today(db, ctx.ws_id) >= rules.SPONSOR_PER_DAY:
             raise Conflict("Du har set dagens 2 sponsorindslag", code="sponsor_limit")

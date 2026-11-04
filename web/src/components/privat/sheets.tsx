@@ -100,28 +100,40 @@ function MicSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
-/** The plan path first («Vælg plan»), then credits as «ekstra opkald». With a plan whose month is used up: buy extra
- *  calls or change plan. */
+/** Without a trial yet (status «none»): the trial first – one tap to the checkout, card first, no credits or sponsor
+ *  spots on the way round it. After the trial: the plan path («Vælg plan»), then credits as «ekstra opkald». With a
+ *  plan whose month is used up: buy extra calls or change plan. */
 function PaywallSheet({ onClose }: { onClose: () => void }) {
   const t = useT("privat");
-  const f = useFmt();
-  const { sheet, task, balance, run, openSheet, setNote, choosePlan: toPlans } = usePrivat();
+  const { sheet, task, balance, run, openSheet, setNote, choosePlan: toPlans, startTrial, busy } = usePrivat();
   const p = usePlan();
   const tk = task(sheet?.taskId);
   const call = tk?.kind === "call";
   const credits = balance?.credits ?? 0;
   const later = () => { onClose(); if (tk?.status === "draft") setNote(t("paywall.laterNote")); };
   const choosePlan = () => { onClose(); toPlans(); };
+  const trialFirst = !p.entitled && p.status === "none";
   const quotaUsed = call && p.entitled && p.callsQuota > 0;
-  const title = call ? (quotaUsed ? t("plan.paywallCallTitlePlan") : t("paywall.titleCall")) : t("paywall.titleDigital", { limit: balance?.free_limit ?? 10 });
-  const text = call
+  const title = trialFirst ? t("paywall.titleTrial") : call ? (quotaUsed ? t("plan.paywallCallTitlePlan") : t("paywall.titleCall")) : t("paywall.titleDigital");
+  const text = trialFirst ? t("paywall.textTrial") : call
     ? (quotaUsed ? t("plan.paywallCallTextPlan", { used: p.callsUsed, quota: p.callsQuota, plan: p.rightsName }) : `${t("plan.paywallCallTextNone")} ${t("paywall.textCall", { n: tk?.call?.max_credits ?? 3, have: credits })}`)
-    : `${t("paywall.textDigital", { limit: balance?.free_limit ?? 10, month: f.month() })} ${t("plan.paywallDigitalPlan")}`;
+    : `${t("paywall.textDigital")} ${t("plan.paywallDigitalPlan")}`;
+  if (trialFirst) {
+    return (
+      <Sheet title={title} onClose={onClose}>
+        {tk && <div className="rounded-[18px] border-2 border-dashed border-ink px-3.5 py-3"><span className="eyebrow text-[11px]">{t("paywall.draft")}</span><div className="font-semibold text-[16px] [overflow-wrap:anywhere]">{tk.title}</div></div>}
+        <p className="m-0 text-[15px] leading-normal text-ink-soft">{text}</p>
+        <Button className={`${BIG} rounded-full`} disabled={busy} onClick={() => void startTrial()} data-testid="paywall-trial">{t("store.needsPlan.trial")}</Button>
+        <p className="m-0 text-[13px] text-muted text-center">{t("paywall.trialNote")}</p>
+        <button type="button" className={`${LINK} self-center`} onClick={later}>{t("paywall.later")}</button>
+      </Sheet>
+    );
+  }
   return (
     <Sheet title={title} onClose={onClose}>
       {tk && <div className="rounded-[18px] border-2 border-dashed border-ink px-3.5 py-3"><span className="eyebrow text-[11px]">{t("paywall.draft")}</span><div className="font-semibold text-[16px] [overflow-wrap:anywhere]">{tk.title}</div></div>}
       <p className="m-0 text-[15px] leading-normal text-ink-soft">{text}</p>
-      {!p.entitled && <Button className={`${BIG} rounded-full`} onClick={choosePlan}>{p.status === "none" ? t("store.needsPlan.trial") : t("plan.paywallChoose")}</Button>}
+      {!p.entitled && <Button className={`${BIG} rounded-full`} onClick={choosePlan}>{t("plan.paywallChoose")}</Button>}
       {!call && <Button className={`${p.entitled ? BIG : "border-2 border-ink"} rounded-full`} variant={p.entitled ? "primary" : "outline"} disabled={credits < 1} onClick={async () => { const r = await run((a) => a.activate(tk!.id, "credit")); if (r) onClose(); }}>{t("paywall.useCredit", { n: credits })}</Button>}
       <Button variant={quotaUsed ? "primary" : "outline"} className={`${quotaUsed ? BIG : "border-2"} rounded-full`} onClick={() => openSheet({ kind: "buy", taskId: sheet?.taskId })}>{t("plan.paywallBuy")} · {t("paywall.buy")}</Button>
       {quotaUsed && <Button variant="outline" className="border-2 rounded-full" onClick={choosePlan}>{t("plan.change")}</Button>}

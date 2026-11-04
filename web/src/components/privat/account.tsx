@@ -90,9 +90,6 @@ export function AccountPane() {
     try { const { url } = await api.subscriptionPortal(); if (simulated) setNote(t("plan.portalSimulated")); else window.location.href = url; }
     catch (e) { const x = e as ApiError; if (x.code === CONFLICT.notConfigured || x.status === 501) setNote(t("plan.portalMissing")); else setError(x); }
   };
-  const limit = balance?.free_limit ?? 10;
-  const used = balance?.free_used ?? 0;
-  const left = Math.max(0, limit - used);
   const line = mode === "demo" ? t("account.exampleLine") : loggedIn ? t("account.privateLine", { email: session.email ?? (simulated ? "mette@eksempel.dk" : "") }) : t("account.exampleLine");
   const amount = (kind: string, n: number) => kind === "sponsor" ? t("account.oneTask") : `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n)}${kind === "reserve" ? ` ${t("account.reservedSuffix")}` : ""}`;
   // Before the data is in (the server-rendered copy and the first client frame) only the heading: no «Ingen plan»
@@ -123,7 +120,7 @@ export function AccountPane() {
         </div>
         {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays })} <span className="text-ink-soft">{p.plan === "none" ? t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyKr(p.rightsKey) })}</span></p>}
         {p.status === "expired" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.expiredLine")}</p>}
-        {p.status === "none" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.noneLine", { limit })}</p>}
+        {p.status === "none" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.noneLine")}</p>}
         {p.status === "past_due" && <p className="m-0 text-[15px] text-danger font-semibold">{t("plan.pastDue")}</p>}
         {p.status === "active" && p.periodEnd && <p className="m-0 text-[14px] text-ink-soft" suppressHydrationWarning>{p.cancelAtPeriodEnd ? t("plan.cancelAtEnd", { date: f.date(p.periodEnd) }) : t("plan.renews", { date: f.date(p.periodEnd) })}</p>}
         {p.entitled && (
@@ -147,13 +144,9 @@ export function AccountPane() {
       </section>
 
       {!p.entitled && (
-        <div className="rounded-[20px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5">
-          <Eyebrow><span suppressHydrationWarning>{t("account.free", { month: f.month() })}</span></Eyebrow>
-          <div className="flex items-baseline gap-2"><span className="font-display font-extrabold text-[36px]" data-testid="free-left">{left}</span><span className="text-[15px] text-ink-soft">{t("account.freeLeft", { limit })}</span></div>
-          <div className="h-3 border-2 border-ink rounded-full overflow-hidden bg-paper" role="progressbar" aria-valuemin={0} aria-valuemax={limit} aria-valuenow={used} aria-label={t("account.freeBarAria", { used, limit })}>
-            <div className="h-full bg-accent" style={{ width: `${Math.min(100, (used / limit) * 100)}%` }} />
-          </div>
-          <p className="m-0 text-[13px] text-muted">{t("account.freeNote", { limit })}</p>
+        <div className="rounded-[20px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" data-testid="free-tier">
+          <Eyebrow>{t("account.free")}</Eyebrow>
+          <p className="m-0 text-[15px] text-ink-soft">{t("account.freeNote")}</p>
         </div>
       )}
 
@@ -228,7 +221,7 @@ export function AccountPane() {
         <div className="rounded-[14px] border-[1.5px] border-dashed border-ink bg-panel p-3 flex flex-col gap-2">
           <Eyebrow>{t("account.tools")}</Eyebrow>
           <div className="flex gap-2 flex-wrap">
-            <Button variant="outline" onClick={() => run(() => fake.useUpFree())}>{t("account.useUp")}</Button>
+            <Button variant="outline" onClick={() => run(() => fake.startFree())}>{t("account.startFree")}</Button>
             <Button variant="outline" onClick={() => run(() => fake.endTrial())}>{t("plan.endTrial")}</Button>
             <Button variant="outline" onClick={async () => { const r = await run(() => fake.repeatPayment()); if (r) setNote(r.ref ? t("account.repeatNote", { ref: r.ref }) : t("account.repeatNone")); }}>{t("account.repeatPay")}</Button>
             <Button variant="outline" onClick={() => run(() => fake.emptyDay())}>{t("account.emptyDay")}</Button>

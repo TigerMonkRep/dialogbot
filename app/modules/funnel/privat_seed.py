@@ -75,7 +75,8 @@ def create(db: OrmSession, ctx, answers: dict) -> dict:
         spec = POSTPONED[key]
         if spec["kind"] == "call":
             turn = chat.Turn(db=db, ctx=ctx, text="", about=None)
-            chat._propose(turn, name=spec["business"], phone=None, source="user", data={"purpose": spec["purpose"]})
+            chat._propose(turn, name=spec["business"], phone=None, source="user", data={"purpose": spec["purpose"]},
+                          require_addon=False)  # «Ring for mig» comes on with the trial; approving needs it anyway
             task = next(m.task_id for m in turn.out if m.task_id)
             ids.append(str(task))
             first_call = first_call or str(task)

@@ -83,7 +83,7 @@ ITEM = {"anyOf": [{"type": "string"},
                   _obj({"text": {"type": "string"}, "link": {"type": "string", "description": "https://… hvor det kan købes"},
                         "note": {"type": "string"}}, ["text"])]}
 CORE_TOOLS = [
-    {"name": "create_list", "description": "Lav en ny liste (bruger én af månedens gratis opgaver). Punkter er tekst "
+    {"name": "create_list", "description": "Lav en ny liste (kræver prøveperiode eller plan – ellers gemmes den som udkast). Punkter er tekst "
                                            "eller {text, link, note}. find_links: true finder købslinks til punkterne "
                                            "(ønskelister med konkrete produkter).",
      "input_schema": _obj({"title": {"type": "string"}, "type": {"type": "string", "enum": list(service.LIST_TYPES)},
@@ -279,8 +279,8 @@ def _join(items: list[str]) -> str:
 
 def _created(turn: Turn, task: PrivateTask, intro: str) -> None:
     if task.status == "draft":
-        turn.say("draft", f"Månedens {rules.FREE_LIMIT} gratis opgaver er brugt. Opgaven er gemt som udkast – "
-                          "fortsæt med 1 credit, køb credits eller se et frivilligt sponsorindslag.", task_id=task.id)
+        turn.say("draft", "Det kræver en plan. Prøv Dialogbot Privat gratis i 14 dage – kortet trækkes først, når "
+                          "prøveperioden er slut. Opgaven er gemt som udkast, til du har valgt.", task_id=task.id)
         return
     turn.say("text", intro, task_id=task.id)
     turn.say("task", task.title, task_id=task.id)
@@ -534,7 +534,7 @@ LOCATION_OPTIONS = [
 
 
 def _propose(turn: Turn, *, name: str, phone: str | None, source: str, address: str = "", place_id: str | None = None,
-             next_open_at: str | None = None, data: dict | None = None) -> str:
+             next_open_at: str | None = None, data: dict | None = None, require_addon: bool = True) -> str:
     """Always a proposal (never a call). A missing number is asked for in the chat; a mobile-looking number must be
     confirmed as a business when approving (confirm_business); demo numbers can never be dialled."""
     from app.modules.privat import calls, places
@@ -545,7 +545,7 @@ def _propose(turn: Turn, *, name: str, phone: str | None, source: str, address: 
     task = calls.propose(turn.db, turn.ctx, business_name=name, phone=e164, address=address, price_text=None,
                          purpose=data.get("purpose") or "", window=data.get("window") or "", may_ask=data.get("may_ask"),
                          may_agree=data.get("may_agree"), may_not=data.get("may_not"), place_id=place_id,
-                         next_open_at=nxt, phone_source=source)
+                         next_open_at=nxt, phone_source=source, require_addon=require_addon)
     if e164 is None:
         text = (f"Jeg har ikke et nummer til {name}, som jeg kan ringe til. Skriv nummeret her, så bruger jeg det. "
                 "Jeg ringer først, når du godkender.")

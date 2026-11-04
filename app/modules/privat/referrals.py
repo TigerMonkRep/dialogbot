@@ -55,7 +55,8 @@ def inviter_rewards_this_month(db: OrmSession, inviter_ws: uuid.UUID) -> int:
 
 def has_own_task(db: OrmSession, user_id: uuid.UUID) -> bool:
     return db.scalar(select(PrivateTask.id).join(PrivateTaskMember, PrivateTaskMember.task_id == PrivateTask.id)
-                     .where(PrivateTaskMember.user_id == user_id, PrivateTaskMember.role == "owner").limit(1)) is not None
+                     .where(PrivateTaskMember.user_id == user_id, PrivateTaskMember.role == "owner",
+                            PrivateTask.status != "draft").limit(1)) is not None  # a free-tier draft is not activity
 
 
 def try_activate(db: OrmSession, user_id: uuid.UUID) -> bool:

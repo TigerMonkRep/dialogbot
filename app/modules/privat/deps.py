@@ -82,7 +82,7 @@ def ensure_account(db: OrmSession, user: User, *, signup_source: str | None = No
                text="Velkomstcredits (én gang)")
     from app.modules.privat import addons, subscriptions
 
-    subscriptions.start_trial(db, ws.id)  # 14 days with Plus rights, no card – before the default add-ons
+    subscriptions.start_free(db, ws.id)  # no rights yet: the 14-day trial starts at Stripe Checkout, with a card
     addons.enable_defaults(db, ws.id)
     if signup_source and not user.signup_source:
         user.signup_source = signup_source[:80]

@@ -32,7 +32,6 @@ def _item(task, text):
 
 def test_shared_grocery(api, pv):
     mette = pv.account("mette@testmail.dk", "Mette Hansen")
-    pv.expire_trial(mette)  # on the free quota, so the "one task for the owner" count below is visible
     ole = pv.user("ole@testmail.dk", "Ole Berg")
     tid = pv.make_list(mette)
     inv = _share(api, mette, tid)
@@ -48,9 +47,11 @@ def test_shared_grocery(api, pv):
     assert _item(t, "Kaffe")["added_by_name"] == "Ole Berg"
     assert {m["name"]: m["role"] for m in t["members"]} == {"Mette Hansen": "owner", "Ole Berg": "editor"}
     assert any(e["text"].startswith("Ole: Tilføjet: smør") for e in t["events"])
-    # one task for the owner, nothing for the member
-    assert pv.me(mette)["free_used"] == 1 and pv.me(ole)["free_used"] == 0
+    # the member (free tier, no plan) edits and sees the owner's list without paying anything
+    assert pv.me(ole)["entitled"] is False and pv.me(ole)["free_used"] == 0
     assert [x["id"] for x in api.get(ole, "/privat/tasks?shared=1").json()] == [tid]
+    # … but cannot make lists of their own without the trial
+    assert next(m["kind"] for m in pv.say(ole, "Lav en liste med te")["messages"] if m["role"] == "assistant") == "draft"
 
 
 def _wishlist(api, pv):
@@ -277,6 +278,7 @@ def test_referral_once(api, pv, db):
     _accept(api, nina, i1["token"])
     _accept(api, nina, i2["token"])
     _accept(api, nina, i1["token"])  # replay
+    pv.start_trial(nina)  # own lists need the trial (card at Stripe)
     pv.make_list(nina, "Lav en liste med æg")
     pv.make_list(nina, "Lav en liste med mel")
     nid = pv.uid(nina)
@@ -297,7 +299,9 @@ def test_referral_needs_activation(api, pv, db):
     tid = inv and _accept(api, nina, inv["token"])["id"]
     api.post(nina, f"/privat/tasks/{tid}/items", {"text": "Ost"})  # editing a shared list is not an own task
     assert _referral_ledger(db, pv.ws(nina)) == [] and _referral_ledger(db, pv.ws(mette)) == []
-    pv.say(nina, "Mind mig om at ringe til mor i morgen kl 10")
+    pv.say(nina, "Mind mig om at ringe til mor i morgen kl 10")  # free tier: a draft, not an own task
+    assert _referral_ledger(db, pv.ws(nina)) == []
+    pv.start_trial(nina)  # the trial activates the draft – and that counts
     assert len(_referral_ledger(db, pv.ws(nina))) == 1 and len(_referral_ledger(db, pv.ws(mette))) == 1
 
 
@@ -307,6 +311,7 @@ def test_referral_monthly_cap(api, pv, db):
     for i in range(11):
         tok = pv.user(f"ny{i}@testmail.dk", f"Ny{i} Person")
         _accept(api, tok, link["token"])
+        pv.start_trial(tok)
         pv.make_list(tok, f"Lav en liste med ting{i}")
         assert len(_referral_ledger(db, pv.ws(tok))) == 1  # every invitee is rewarded
     assert len(_referral_ledger(db, pv.ws(mette))) == 10
@@ -319,6 +324,7 @@ def test_referral_existing_user_no_reward(api, pv, db):
     mette = pv.account("mette@testmail.dk")
     inv = _share(api, mette, pv.make_list(mette))
     _accept(api, ole, inv["token"])
+    pv.start_trial(ole)
     pv.make_list(ole, "Lav en liste med øl")
     _accept(api, mette, inv["token"])  # self-invite
     assert db.query(PrivateReferral).count() == 0
@@ -331,6 +337,7 @@ def test_growth_operator_only(api, pv):
     api.c.get(f"/api/v1/privat/invites/{inv['token']}")
     nina = pv.user("nina@testmail.dk", "Nina Ny")
     _accept(api, nina, inv["token"])
+    pv.start_trial(nina)
     pv.make_list(nina, "Lav en liste med te")
     assert api.get(mette, "/operator/privat/growth").status_code == 403
     g = api.get(api.operator(), "/operator/privat/growth").json()

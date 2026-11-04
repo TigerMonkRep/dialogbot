@@ -224,7 +224,7 @@ def test_erhverv_without_places_hit_and_closed_demo_line(client, api, funnel, db
     assert db.get(WorkspaceVoiceSettings, uuid.UUID(out["workspace_id"])).standard_voice == "camilla"
 
 
-def test_privat_full_path(client, api, funnel, db):
+def test_privat_full_path(client, api, funnel, db, pv):
     r = client.post("/api/v1/funnel/drafts", json={"kind": "privat", "hook": "udsat"})
     assert r.status_code == 201
     did = r.json()["id"]
@@ -237,11 +237,18 @@ def test_privat_full_path(client, api, funnel, db):
     assert d["build"]["tasks"] == 2 and d["build"]["lists"] == 2 and d["build"]["first_call"] == {"title": "Bestil tid hos tandlægen"}
     assert db.query(PrivateTask).count() == 0 and db.query(User).filter_by(email_normalized="mette@testmail.dk").count() == 0
     assert _gate(client, did).status_code == 202
-    out = client.post(f"/api/v1/funnel/drafts/{did}/verify", json={"code": _code()}).json()
-    assert out["status"] == "ok" and out["next"] == "/privat/dag?velkommen=1" and out["new_user"] is True
+    r = client.post(f"/api/v1/funnel/drafts/{did}/verify", json={"code": _code()})
+    out = r.json()
+    assert r.status_code == 200, r.text
+    assert out["status"] == "ok" and out["next"] == "/privat/konto?plan=plus&velkommen=1" and out["new_user"] is True
     tok = out["session_token"]
     me = api.get(tok, "/privat/me").json()
-    assert me["phone_verified"] is True and me["phone_display"] == "20 30 40 50" and me["plan_status"] == "trial"
+    assert me["phone_verified"] is True and me["phone_display"] == "20 30 40 50" and me["plan_status"] == "none"
+    # everything the quiz built waits as drafts until the trial (card first) is in
+    tasks = api.get(tok, "/privat/tasks").json()
+    assert sorted(t["status"] for t in tasks) == ["awaiting_user", "draft", "draft", "draft"]
+    pv.start_trial(tok)
+    assert api.get(tok, "/privat/me").json()["plan_status"] == "trial"
     db.expire_all()
     assert db.query(User).filter_by(email_normalized="mette@testmail.dk").one().email_verified_at is None  # phone proof only
     day = api.get(tok, "/privat/day").json()

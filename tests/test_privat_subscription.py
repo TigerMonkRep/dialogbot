@@ -49,20 +49,23 @@ def _sub_obj(ws, *, sid="sub_1", status="active", plan="plus", interval="month",
 
 # --------------------------------------------------------------------------- trial and shape
 
-def test_trial_starts_with_the_account(api, pv, db):
-    tok = pv.account("mette@testmail.dk")
+def test_the_account_starts_free_and_the_trial_comes_with_the_card(api, pv, db):
+    tok = pv.account("mette@testmail.dk", trial=False)
     ws = pv.ws(tok)
     row = db.get(PrivateSubscription, ws)
-    assert (row.status, row.plan, row.trial_ends_at) == ("trial", "plus", WED_10 + timedelta(days=14))
-    api.post(tok, "/privat/account")  # idempotent: the trial is not restarted
-    db.expire_all()
-    assert db.get(PrivateSubscription, ws).trial_ends_at == WED_10 + timedelta(days=14)
+    assert (row.status, row.trial_ends_at, row.stripe_subscription_id) == ("none", None, None)  # the free tier
     sub = pv.subscription(tok)
     assert set(sub) == SUB_KEYS and all(set(p) == PLAN_KEYS for p in sub["plans"])
+    assert (sub["plan"], sub["status"], sub["entitled"], sub["calls_quota"], sub["trial_days_left"]) == ("none", "none", False, 0, 0)
+    api.post(tok, "/privat/account")  # idempotent
+    db.expire_all()
+    assert db.get(PrivateSubscription, ws).status == "none"
+    pv.start_trial(tok)  # Stripe Checkout with a card → the webhook mirrors «trialing» as our trial
+    sub = pv.subscription(tok)
     assert sub["plan"] == "plus" and sub["status"] == "trial" and sub["entitled"] is True
     assert sub["trial_days_left"] == 14 and sub["trial_ends_at"] == (WED_10 + timedelta(days=14)).isoformat()
     assert (sub["calls_quota"], sub["calls_used"], sub["calls_left"]) == (10, 0, 10)
-    assert sub["people_limit"] == 1 and sub["apps_included"] is True and sub["interval"] is None
+    assert sub["people_limit"] == 1 and sub["apps_included"] is True and sub["interval"] == "month"
     assert [p["key"] for p in sub["plans"]] == ["basis", "plus", "familie"]
     plus = sub["plans"][1]
     assert (plus["monthly_minor"], plus["yearly_monthly_minor"], plus["yearly_total_minor"]) == (9900, 7900, 94800)
@@ -79,16 +82,29 @@ def test_trial_starts_with_the_account(api, pv, db):
     assert (me["plan"], me["plan_status"], me["entitled"], me["calls_left"]) == ("none", "expired", False, 0)
 
 
-def test_old_account_gets_a_trial_lazily(api, pv, db):
+def test_old_account_without_a_row_is_free(api, pv, db):
     tok = pv.account("mette@testmail.dk")
     ws = pv.ws(tok)
     db.query(PrivateSubscription).filter_by(workspace_id=ws).delete()
     db.commit()
     pv.clock.at = WED_10 + timedelta(days=40)
     me = pv.me(tok)
-    assert me["plan_status"] == "trial" and me["trial_days_left"] == 14
+    assert me["plan_status"] == "none" and me["trial_days_left"] == 0 and me["entitled"] is False
     db.expire_all()
-    assert db.get(PrivateSubscription, ws).trial_ends_at == pv.clock.at + timedelta(days=14)
+    assert db.get(PrivateSubscription, ws).status == "none"
+
+
+def test_an_old_cardless_trial_keeps_running(api, pv, db):
+    """Accounts from before this change had a local trial without a card: it is honoured until it expires."""
+    tok = pv.account("mette@testmail.dk", trial=False)
+    ws = pv.ws(tok)
+    row = db.get(PrivateSubscription, ws)
+    row.status, row.plan, row.trial_ends_at = "trial", "plus", WED_10 + timedelta(days=3)
+    db.commit()
+    me = pv.me(tok)
+    assert (me["plan_status"], me["plan"], me["entitled"], me["trial_days_left"]) == ("trial", "plus", True, 3)
+    pv.clock.at = WED_10 + timedelta(days=4)
+    assert pv.me(tok)["plan_status"] == "expired"
 
 
 def test_entitlements_per_status(api, pv):
@@ -124,11 +140,9 @@ def test_task_11_is_not_a_draft_during_the_trial(api, pv, db):
     out = pv.say(tok, "Mind mig om at hente pakken i morgen kl 16")
     assert out["messages"][-1]["kind"] == "task"
     assert pv.task(tok, out["messages"][-1]["task_id"]).json()["usage_text"] == "Med i Basis"
-    # trial over, no plan: the free quota is back, counted from zero (plan tasks never used it)
+    # trial over, no plan: nothing is free – the next task is a draft
     pv.expire_trial(tok)
-    for i in range(10):
-        assert pv.say(tok, f"Lav en liste med x{i}")["messages"][-1]["kind"] == "task"
-    assert pv.me(tok)["free_used"] == 10
+    assert pv.me(tok)["free_used"] == 0 and pv.me(tok)["free_limit"] == 0
     assert pv.say(tok, "Lav en liste med y")["messages"][-1]["kind"] == "draft"
 
 
@@ -242,7 +256,7 @@ def test_addon_enable_needs_plan(api, pv):
 # --------------------------------------------------------------------------- Stripe
 
 def test_checkout_payload(api, pv, monkeypatch):
-    tok = pv.account("mette@testmail.dk")
+    tok = pv.account("mette@testmail.dk", trial=False)  # a fresh sign-up: the trial starts here, with the card
     ws = pv.ws(tok)
     _stripe_env(monkeypatch)
     sent = []
@@ -259,17 +273,20 @@ def test_checkout_payload(api, pv, monkeypatch):
                                                    "description": "99 kr. pr. måned inkl. 25 % moms · 10 opkald om måneden"}}
     meta = {"kind": "privat_subscription", "workspace_id": str(ws), "plan": "plus", "interval": "month"}
     assert d["metadata"] == meta and d["subscription_data"]["metadata"] == meta
-    assert d["subscription_data"]["trial_end"] == int((WED_10 + timedelta(days=14)).timestamp())  # trial kept
+    assert d["subscription_data"]["trial_period_days"] == 14  # 14 days free, the card is given now
+    assert d["payment_method_collection"] == "always" and d["billing_address_collection"] == "required"
+    assert d["phone_number_collection"] == {"enabled": True}  # name, address and phone at Stripe, never stored by us
     assert d["customer_email"] == "mette@testmail.dk" and d["client_reference_id"] == str(ws)
     assert d["success_url"] == "http://frontend.test/privat/konto?abonnement=ok&session_id={CHECKOUT_SESSION_ID}"
     assert d["cancel_url"] == "http://frontend.test/privat/konto?abonnement=annulleret"
-    # yearly: the yearly total, interval year; under 48 h of trial left → no trial_end
-    pv.clock.at = WED_10 + timedelta(days=13)
+    # yearly: the yearly total, interval year. After a trial (expired or running at Stripe): never a second one.
+    pv.start_trial(tok)
+    pv.expire_trial(tok)
     api.post(tok, "/privat/subscription/checkout", {"plan": "familie", "interval": "year"})
     d = sent[1][2]
     assert d["line_items"][0]["price_data"]["unit_amount"] == 162000
     assert d["line_items"][0]["price_data"]["recurring"] == {"interval": "year"}
-    assert "trial_end" not in d["subscription_data"]
+    assert "trial_period_days" not in d["subscription_data"] and "trial_end" not in d["subscription_data"]
     # a fixed Stripe price id replaces price_data
     monkeypatch.setenv("PRIVAT_STRIPE_PRICE_BASIS_MONTH", "price_basis_m")
     get_settings.cache_clear()
@@ -280,17 +297,28 @@ def test_checkout_payload(api, pv, monkeypatch):
 
 
 def test_webhook_upserts_subscription(api, client, pv, db, monkeypatch):
-    tok = pv.account("mette@testmail.dk")
+    tok = pv.account("mette@testmail.dk", trial=False)
     ws = pv.ws(tok)
     _stripe_env(monkeypatch)
-    sub = _sub_obj(ws, status="trialing", customer="cus_1")
+    # Stripe's trialing (the 14 days on the subscription the card was given for) is our trial, with its trial_end
+    sub = _sub_obj(ws, status="trialing", customer="cus_1") | {"trial_end": int((WED_10 + timedelta(days=14)).timestamp())}
     ev = {"id": "evt_sub_1", "type": "customer.subscription.created", "data": {"object": sub}}
     assert _stripe_event(client, ev)["outcome"] == "applied"
     assert _stripe_event(client, ev)["duplicate"] is True
     row = db.get(PrivateSubscription, ws)
     assert (row.status, row.plan, row.interval, row.stripe_subscription_id, row.stripe_customer_id) == \
-        ("active", "plus", "month", "sub_1", "cus_1")
-    assert row.current_period_end == WED_10 + timedelta(days=30) and row.cancel_at_period_end is False
+        ("trial", "plus", "month", "sub_1", "cus_1")
+    assert row.trial_ends_at == WED_10 + timedelta(days=14)
+    s = pv.subscription(tok)
+    assert (s["status"], s["plan"], s["entitled"], s["calls_quota"], s["trial_days_left"]) == ("trial", "plus", True, 10, 14)
+    # the plan's default add-ons came on with the rights
+    assert {a["key"] for a in api.get(tok, "/privat/addons").json() if a["enabled"]} >= {"ring-for-mig"}
+    # after the 14 days Stripe makes it active
+    sub = _sub_obj(ws, status="active", customer="cus_1")
+    assert _stripe_event(client, {"id": "evt_sub_1b", "type": "customer.subscription.updated", "data": {"object": sub}})["outcome"] == "applied"
+    db.expire_all()
+    row = db.get(PrivateSubscription, ws)
+    assert row.status == "active" and row.current_period_end == WED_10 + timedelta(days=30) and row.cancel_at_period_end is False
     s = pv.subscription(tok)
     assert (s["status"], s["plan"], s["entitled"], s["calls_quota"]) == ("active", "plus", True, 10)
     assert s["current_period_end"] == (WED_10 + timedelta(days=30)).isoformat()
@@ -375,7 +403,7 @@ def test_checkout_completed_and_session_sync(api, client, pv, db, monkeypatch):
 
 
 def test_portal(api, pv, monkeypatch):
-    tok = pv.account("mette@testmail.dk")
+    tok = pv.account("mette@testmail.dk", trial=False)  # no Stripe customer yet
     r = api.post(tok, "/privat/subscription/portal")
     assert r.status_code == 501 and r.json()["code"] == "not_configured"  # no Stripe
     _stripe_env(monkeypatch)

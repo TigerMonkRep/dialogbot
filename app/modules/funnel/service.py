@@ -70,7 +70,9 @@ CONSENT_TEXT_ERHVERV = ("Ja tak, Peter fra Dialogbot, en digital assistent, må 
                         "om. Dialogbot må oprette en konto til mig med denne e-mail og dette mobilnummer.")
 CONSENT_TEXT_PRIVAT = ("Ja tak, Dialogbot må oprette en privat konto til mig med denne e-mail og dette mobilnummer og "
                        "sætte mine opgaver op. Der ringes ikke til nogen, før jeg selv godkender et opkald.")
-NEXT = {"erhverv": "/start/klar", "privat": "/privat/dag?velkommen=1"}
+# Privat: the account has no rights until the 14-day trial starts at Stripe (card) – Konto opens the checkout at
+# once, and the lists and reminders the quiz built wait as drafts until the trial is in.
+NEXT = {"erhverv": "/start/klar", "privat": "/privat/konto?plan=plus&velkommen=1"}
 PRIVAT_PATHS = {"postponed": list, "household": str, "hate_calls": str, "remind_at": str}
 ERHVERV_PATHS = {"industry": str, "company_name": str, "place_id": str, "missed": list, "missed_per_week": int,
                  "wants": list}

@@ -32,8 +32,9 @@ PLANS: dict[str, dict] = {p["key"]: dict(p) for p in prices.PRIVAT_PLANS}
 INTERVALS = ("month", "year")
 TRIAL_PLAN = "plus"
 ENTITLED_STATUSES = ("trial", "active", "past_due")
-# Stripe subscription status → ours. Everything Stripe still bills (incl. its own trialing) is "active" to us.
-STRIPE_STATUS = {"trialing": "active", "active": "active", "past_due": "past_due", "canceled": "canceled",
+# Stripe subscription status → ours. Stripe's trialing is our "trial": the 14 days run on the subscription the card
+# was given for (Checkout, trial_period_days), and Stripe flips it to active by itself when they are over.
+STRIPE_STATUS = {"trialing": "trial", "active": "active", "past_due": "past_due", "canceled": "canceled",
                  "unpaid": "canceled", "incomplete_expired": "canceled", "incomplete": "past_due", "paused": "past_due"}
 FEATURES = {
     "basis": ("Ubegrænsede lister og påmindelser", "3 opkald om måneden", "Delte lister og ønskelister"),
@@ -62,15 +63,14 @@ def get(db: OrmSession, ws_id: uuid.UUID, *, lock: bool = False) -> PrivateSubsc
     return db.scalar(q.with_for_update() if lock else q)
 
 
-def start_trial(db: OrmSession, ws_id: uuid.UUID) -> PrivateSubscription:
-    """The trial row (status trial, Plus, 14 days from now). Idempotent: an existing row is returned untouched."""
+def start_free(db: OrmSession, ws_id: uuid.UUID) -> PrivateSubscription:
+    """The account's row without any rights (status none): the free tier sees lists shared with it and nothing
+    else. The 14-day trial starts at Stripe Checkout, with a card (checkout()). Idempotent."""
     row = get(db, ws_id)
     if row is not None:
         return row
     now = rules.now()
-    row = PrivateSubscription(workspace_id=ws_id, plan=TRIAL_PLAN, status="trial",
-                              trial_ends_at=now + timedelta(days=prices.PRIVAT_TRIAL_DAYS), created_at=now,
-                              updated_at=now)
+    row = PrivateSubscription(workspace_id=ws_id, plan=TRIAL_PLAN, status="none", created_at=now, updated_at=now)
     try:
         with db.begin_nested():
             db.add(row)
@@ -79,8 +79,18 @@ def start_trial(db: OrmSession, ws_id: uuid.UUID) -> PrivateSubscription:
     return row
 
 
+def start_trial(db: OrmSession, ws_id: uuid.UUID) -> PrivateSubscription:
+    """Old name: accounts no longer get a card-less trial; this is the free row now."""
+    return start_free(db, ws_id)
+
+
 def ensure(db: OrmSession, ws_id: uuid.UUID) -> PrivateSubscription:
-    return get(db, ws_id) or start_trial(db, ws_id)
+    return get(db, ws_id) or start_free(db, ws_id)
+
+
+def trial_available(row: PrivateSubscription) -> bool:
+    """One trial per account: never had one (local or at Stripe) and never a subscription."""
+    return row.trial_ends_at is None and row.stripe_subscription_id is None
 
 
 # --------------------------------------------------------------------------- entitlements
@@ -112,11 +122,11 @@ def plan_call_index(db: OrmSession, c: PrivateCall) -> int:
 
 def _state(row: PrivateSubscription | None, now: datetime) -> tuple[str, str, bool]:
     """(status, plan, entitled) as the contract defines them, from the stored row."""
-    if row is None:
+    if row is None or row.status == "none":
         return "none", "none", False
     if row.status == "trial":
         if row.trial_ends_at is not None and row.trial_ends_at > now:
-            return "trial", TRIAL_PLAN, True
+            return "trial", row.plan if row.plan in PLANS else TRIAL_PLAN, True
         return "expired", "none", False
     if row.status in ("active", "past_due"):
         return row.status, row.plan, True
@@ -193,12 +203,18 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
             "product_data": {"name": f"Dialogbot Privat – {p['name']}",
                              "description": f"{prices.kr(amount)} kr. {per} inkl. 25 % moms · {p['calls']} opkald om måneden"}}}
     sub_data: dict = {"metadata": meta}
-    if row.status == "trial" and row.trial_ends_at is not None \
+    if trial_available(row):
+        # «Prøv gratis i 14 dage»: the card is given now, nothing is charged until the trial is over, and Stripe
+        # turns the subscription active by itself. One trial per account.
+        sub_data["trial_period_days"] = prices.PRIVAT_TRIAL_DAYS
+    elif row.status == "trial" and row.trial_ends_at is not None and row.stripe_subscription_id is None \
             and row.trial_ends_at - rules.now() > timedelta(hours=48):
-        sub_data["trial_end"] = int(row.trial_ends_at.timestamp())  # the rest of the free trial is kept
+        sub_data["trial_end"] = int(row.trial_ends_at.timestamp())  # an old card-less trial keeps its remaining days
     payload: dict = {
         "mode": "subscription", "line_items": [line], "locale": "da", "client_reference_id": str(ctx.ws_id),
-        "metadata": meta, "subscription_data": sub_data,
+        "metadata": meta, "subscription_data": sub_data, "payment_method_collection": "always",
+        # Name, address and phone are collected by Stripe on the same page (they are never stored by us).
+        "billing_address_collection": "required", "phone_number_collection": {"enabled": True},
         "success_url": f"{base}/privat/konto?abonnement=ok&session_id={{CHECKOUT_SESSION_ID}}",
         "cancel_url": f"{base}/privat/konto?abonnement=annulleret"}
     if row.stripe_customer_id:
@@ -275,13 +291,15 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
         return "ignored"
     plan = meta.get("plan") if meta.get("plan") in PLANS else None
     interval = meta.get("interval") if meta.get("interval") in INTERVALS else _interval_of(obj)
-    row = get(db, ws_id, lock=True) or start_trial(db, ws_id)
+    row = get(db, ws_id, lock=True) or start_free(db, ws_id)
     if row.stripe_subscription_id and row.stripe_subscription_id != sid and status == "canceled":
         return "ignored"  # an older subscription ending must not touch the one that replaced it
     if plan is None and row.stripe_subscription_id != sid:
         return "unmatched"  # a subscription we cannot place on a plan
     row.stripe_subscription_id = sid
     row.status = status
+    if status == "trial":
+        row.trial_ends_at = _ts(obj.get("trial_end")) or row.trial_ends_at or (rules.now() + timedelta(days=prices.PRIVAT_TRIAL_DAYS))
     row.plan = plan or row.plan
     row.interval = interval or row.interval
     cust = obj.get("customer")
@@ -292,6 +310,12 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
     row.current_period_end = _period_end(obj) or row.current_period_end
     row.cancel_at_period_end = bool(obj.get("cancel_at_period_end"))
     row.updated_at = rules.now()
+    db.flush()
+    if status in ENTITLED_STATUSES:
+        from app.modules.privat import addons, service
+
+        addons.enable_defaults(db, ws_id)  # the plan's default add-ons («Ring for mig» …) come on with the rights
+        service.activate_drafts_with_plan(db, ws_id)  # what waited for the plan (the funnel's lists …) goes live
     return "applied"
 
 

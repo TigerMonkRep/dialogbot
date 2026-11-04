@@ -306,20 +306,21 @@ class PrivateCall(Base):
 class PrivateSubscription(Base):
     """The one subscription of a personal workspace (app/modules/privat/subscriptions.py).
 
-    status: trial (the local 14-day trial with Plus rights; no Stripe object yet) | active | past_due | canceled –
-    the last three mirror the Stripe subscription in `stripe_subscription_id`. "expired" (a trial past trial_ends_at)
-    and "none" are derived when read, never stored."""
+    status: none (the free tier: no rights, no Stripe object) | trial (Stripe's trialing – 14 days on the
+    subscription the card was given for; older rows: the card-less trial) | active | past_due | canceled – the last
+    four mirror the Stripe subscription in `stripe_subscription_id`. "expired" (a trial past trial_ends_at) is derived
+    when read."""
 
     __tablename__ = "private_subscriptions"
     __table_args__ = (
         CheckConstraint("plan in ('basis','plus','familie')", name="ck_private_subscriptions_plan"),
-        CheckConstraint("status in ('trial','active','past_due','canceled')", name="ck_private_subscriptions_status"),
+        CheckConstraint("status in ('none','trial','active','past_due','canceled')", name="ck_private_subscriptions_status"),
         CheckConstraint("interval is null or interval in ('month','year')", name="ck_private_subscriptions_interval"),
     )
 
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
     plan: Mapped[str] = mapped_column(String(16), nullable=False, default="plus")
-    status: Mapped[str] = mapped_column(String(16), nullable=False, default="trial")
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="none")
     interval: Mapped[str | None] = mapped_column(String(8))
     stripe_customer_id: Mapped[str | None] = mapped_column(String(100))
     stripe_subscription_id: Mapped[str | None] = mapped_column(String(100), unique=True)

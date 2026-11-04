@@ -153,7 +153,10 @@ export function ChatPane() {
           })}
           {pending && (
             <>
-              <div className="flex flex-col gap-2"><Message m={pending} latestCard open={false} prevUser={null} /></div>
+              {/* The 5 s background refresh can bring the saved line in from the server before Peter has answered
+                  (a link search takes 10-20 s): then only the real line is shown, the dots stay. */}
+              {!messages.some((m) => m.role === "user" && m.text === pending.text && Date.parse(m.created_at) > Date.parse(pending.created_at) - 120_000) && (
+                <div className="flex flex-col gap-2"><Message m={pending} latestCard open={false} prevUser={null} /></div>)}
               <div className={`${BOT} flex items-center gap-1.5`} role="status" aria-label={t("chat.typing")} data-testid="typing">
                 <span className="sr-only">{t("chat.typing")}</span>
                 {[0, 1, 2].map((i) => <span key={i} aria-hidden className="w-2 h-2 rounded-full bg-ink/60 animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />)}

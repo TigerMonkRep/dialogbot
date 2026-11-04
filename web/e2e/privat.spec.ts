@@ -277,8 +277,14 @@ for (const width of [375, 1440]) {
       await chat(page).getByRole("button", { name: "Del", exact: true }).click();
       await page.getByRole("dialog").getByRole("button", { name: "Lav invitationslink" }).click();
       await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
+      // Each simulated step saves to sessionStorage after a short delay: wait until it is saved, or the next step (and the
+      // reload) runs too early – the bonus then never lands (seen in CI).
+      const saved = (key: "annaJoined" | "annaRewarded") => expect.poll(() => page.evaluate(
+        (k) => JSON.parse(sessionStorage.getItem("dialogbot-privat-fake") ?? "{}")?.ref?.[k] === true, key)).toBe(true);
       await chat(page).getByRole("button", { name: /Anna tilføjer noget/ }).click();
+      await saved("annaJoined");
       await chat(page).getByRole("button", { name: /Anna laver sin første egen opgave/ }).click();
+      await saved("annaRewarded");
       await page.goto("/privat/konto");
       await expect(page.getByTestId("ledger").getByText("Invitationsbonus: Anna lavede sin første opgave")).toBeVisible();
       await expect.poll(() => credits(page)).toBe(6);

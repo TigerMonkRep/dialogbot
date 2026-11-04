@@ -356,7 +356,7 @@
       "description": "Pas de formulaire, pas d’inscription. Dites au chat le nom de votre entreprise et votre activité – Dialogbot vous appelle et vous accueille comme votre propre réceptionniste.",
       "ogTitle": "Essayez Dialogbot – il vous appelle | Dialogbot"
     },
-    "eyebrow": "Étape 0 · avant de configurer quoi que ce soit",
+    "eyebrow": "Essayez Dialogbot gratuitement",
     "title": "Discutez avec lui. Il vous appelle – comme votre propre réceptionniste.",
     "lead": "Pas de formulaire, pas d’inscription. Dites au chat le nom de votre entreprise et votre activité. Dialogbot vous appelle alors et vous accueille comme si vous étiez un client.",
     "chat": {
@@ -444,7 +444,6 @@
     },
     "skip": "Aller au contenu",
     "badge": "Aperçu privé",
-    "eyebrow": "Étape 0 · Avant de configurer",
     "title": "Déverrouillez avec votre code d’accès",
     "lead": "Dialogbot est un réceptionniste IA pour le téléphone, le chat web et le suivi client. Nous peaufinons les derniers détails avant l’ouverture publique. Saisissez le code d’invitation que vous avez reçu pour voir la page d’accueil et créer un compte.",
     "codesBefore": "Les codes sont remis aux entreprises pilotes et à des partenaires sélectionnés. Si vous avez déjà un compte, ",

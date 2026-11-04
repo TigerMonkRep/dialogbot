@@ -356,7 +356,7 @@
       "description": "Nessun modulo, nessuna registrazione. Dica alla chat come si chiama la sua azienda e di cosa vi occupate: Dialogbot la richiama e la accoglie come il suo receptionist.",
       "ogTitle": "Provi Dialogbot – la richiama lui | Dialogbot"
     },
-    "eyebrow": "Passaggio 0 · prima di configurare qualsiasi cosa",
+    "eyebrow": "Prova Dialogbot gratis",
     "title": "Ci parli. Poi la richiama, come il suo receptionist.",
     "lead": "Nessun modulo, nessuna registrazione. Dica alla chat come si chiama la sua azienda e di cosa vi occupate. Dialogbot la richiama e la accoglie come se fosse un cliente.",
     "chat": {
@@ -444,7 +444,6 @@
     },
     "skip": "Vai al contenuto",
     "badge": "Anteprima privata",
-    "eyebrow": "Passaggio 0 · Prima di configurare",
     "title": "Sblocchi con il codice di accesso anticipato",
     "lead": "Dialogbot è un receptionist AI per telefono, webchat e follow-up, che parla la lingua dei suoi clienti. Stiamo perfezionando i dettagli prima dell'apertura al pubblico. Inserisca il codice di invito ricevuto per vedere la home page e creare un account.",
     "codesBefore": "I codici vengono assegnati alle aziende pilota e a partner selezionati. Se ha già un account, ",

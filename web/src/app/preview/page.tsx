@@ -4,7 +4,6 @@ import { getT } from "@/i18n/server";
 import { redirect } from "next/navigation";
 import { COMPANY } from "@/components/legal-page";
 import { LogoMark } from "@/components/site-chrome";
-import { StepNumber } from "@/components/lego";
 import { gateEnabled } from "@/lib/preview-gate";
 import { safeNext } from "@/lib/safe-next";
 import { UnlockForm, WaitlistForm } from "./forms";
@@ -33,13 +32,7 @@ export default async function PreviewPage({ searchParams }: { searchParams: Prom
             <span className="inline-flex items-center gap-2.5 text-ink"><LogoMark size={36} /><span className="font-display font-extrabold tracking-[-0.3px] text-[22px]">Dialogbot</span></span>
             <span className="inline-flex items-center min-h-6 px-2.5 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">{t("preview.badge")}</span>
           </div>
-          <div className="flex items-center gap-3.5">
-            <StepNumber value="0" />
-            <div className="flex flex-col gap-1">
-              <span className="eyebrow">{t("preview.eyebrow")}</span>
-              <h1 id="laas-op" className="m-0 font-display font-extrabold text-[clamp(24px,3vw,30px)] leading-[1.1] tracking-[-0.5px]">{t("preview.title")}</h1>
-            </div>
-          </div>
+          <h1 id="laas-op" className="m-0 font-display font-extrabold text-[clamp(24px,3vw,30px)] leading-[1.1] tracking-[-0.5px]">{t("preview.title")}</h1>
           <p className="m-0 text-[15px] leading-normal text-ink-soft">{t("preview.lead")}</p>
           <UnlockForm next={target} />
           <p className="m-0 text-[13px] leading-normal text-muted">{t("preview.codesBefore")}<Link href="/login" className="text-accent font-semibold underline underline-offset-4">{t("preview.codesLink")}</Link>{t("preview.codesAfter")}</p>

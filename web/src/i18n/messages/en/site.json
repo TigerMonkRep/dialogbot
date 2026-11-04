@@ -356,7 +356,7 @@
       "description": "No form, no sign-up. Tell the chat your business name and what you do – and Dialogbot calls you and greets you as your own receptionist.",
       "ogTitle": "Try Dialogbot – it calls you | Dialogbot"
     },
-    "eyebrow": "Step 0 · before you build anything",
+    "eyebrow": "Try Dialogbot for free",
     "title": "Chat with it. Then it calls you – as your own receptionist.",
     "lead": "No form, no sign-up. Tell the chat your business name and what you do. Dialogbot will then call you and greet you as if you were a customer.",
     "chat": {
@@ -444,7 +444,6 @@
     },
     "skip": "Skip to content",
     "badge": "Private preview",
-    "eyebrow": "Step 0 · Before you build",
     "title": "Unlock with an access code",
     "lead": "Dialogbot is an AI receptionist for phone, web chat and follow-up. We're polishing the details before the public launch. Enter the invitation code you received to see the front page and create an account.",
     "codesBefore": "Codes are given to pilot businesses and selected partners. If you already have an account, ",

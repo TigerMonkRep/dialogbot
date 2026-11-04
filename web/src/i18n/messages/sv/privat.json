@@ -212,7 +212,8 @@
     "soon": "Snart",
     "next": "Nästa steg: {next}",
     "myTasks": "Mina uppgifter",
-    "accountBtn": "Konto och krediter"
+    "accountBtn": "Konto och krediter",
+    "welcomeFunnel": "Peter har ordnat din dag – tryck Ja, ring för att ta det första samtalet"
   },
   "shortcuts": {
     "remind": {
@@ -894,5 +895,169 @@
     "paywallCallTextNone": "Med Basis, Plus eller Familie ingår samtal. Du kan också köpa extra samtal.",
     "paywallDigitalPlan": "Med en plan är listor och påminnelser obegränsade.",
     "endTrial": "Avsluta provperioden"
+  },
+  "funnel": {
+    "entry": "Prova på 2 minuter",
+    "meta": {
+      "title": "Peter ordnar din dag på 2 minuter",
+      "description": "Svara på fyra frågor, så gör Peter dina listor, påminnelser och det första samtalet – klart när du loggar in. Gratis i 14 dagar, utan kort.",
+      "stepTitle": "Dialogbot Privat – steg {n}"
+    },
+    "s1": {
+      "hooks": {
+        "stige": "Du har stått på stegen hela dagen",
+        "1605": "Kl. 16.05 – och du har fortfarande inte ringt",
+        "telefonsvarer": "Du la på vid telefonsvararen igen"
+      },
+      "title": "Vad har du skjutit upp?",
+      "help": "Välj allt som ligger och väntar. Peter gör en uppgift av varje.",
+      "postponed": {
+        "dentist": "Tandläkaren",
+        "bike": "Cykeln på service",
+        "car_inspection": "Bilbesiktning",
+        "gift": "En present",
+        "doctor": "Läkaren",
+        "hairdresser": "Frisören",
+        "insurance": "Försäkringen",
+        "landlord": "Hyresvärd / bostadsförening"
+      }
+    },
+    "s2": {
+      "title": "Vilka är ni hemma?",
+      "help": "Så får du rätt listor från början.",
+      "household": {
+        "alone": {
+          "label": "Jag själv",
+          "hint": "Inköpslista"
+        },
+        "couple": {
+          "label": "Vi två",
+          "hint": "Gemensam inköpslista"
+        },
+        "kids": {
+          "label": "Familj med barn",
+          "hint": "Inköp + packlista"
+        },
+        "parents": {
+          "label": "Familj med föräldrar vi hjälper",
+          "hint": "Inköp + födelsedagar"
+        }
+      }
+    },
+    "s3": {
+      "title": "Vad hatar du mest att ringa om?",
+      "help": "Peter ringer åt dig – men aldrig förrän du har sagt ja. Se hur han gör.",
+      "hate": {
+        "health": "Läkare och tandläkare",
+        "workshop": "Verkstaden",
+        "municipality": "Kommunen",
+        "restaurant": "Bordsbokning"
+      },
+      "exampleAria": "Exempel på Peters samtal",
+      "exampleRole": "ringer åt dig",
+      "exampleNote": "Exempel. Peter säger alltid att han ringer för din räkning och avtalar bara det du har sagt ja till.",
+      "examples": {
+        "health": [
+          {
+            "who": "peter",
+            "text": "Hej, jag ringer för Mette Jensens räkning. Hon vill gärna ha en tid för tandkontroll – helst en förmiddag."
+          },
+          {
+            "who": "them",
+            "text": "Vi har tisdag kl. 9 eller onsdag kl. 10.30."
+          },
+          {
+            "who": "peter",
+            "text": "Tack. Jag får inte välja åt henne, så jag skickar båda tiderna till Mette, och hon bekräftar själv."
+          }
+        ],
+        "workshop": [
+          {
+            "who": "peter",
+            "text": "Hej, jag ringer för Mette Jensen. Hennes bil ska besiktas – har ni en tid nästa vecka, och vad kostar det?"
+          },
+          {
+            "who": "them",
+            "text": "Torsdag förmiddag, 650 kronor."
+          },
+          {
+            "who": "peter",
+            "text": "Tack. Jag meddelar Mette, och hon bekräftar tiden själv."
+          }
+        ],
+        "municipality": [
+          {
+            "who": "peter",
+            "text": "Hej, jag ringer för Mette Jensens räkning om hennes ärende med nummer 24-118. Hon undrar om det saknas något från henne."
+          },
+          {
+            "who": "them",
+            "text": "Vi saknar ett kvitto – det kan skickas via e-Boks."
+          },
+          {
+            "who": "peter",
+            "text": "Tack. Jag skriver det till Mette, så skickar hon det."
+          }
+        ],
+        "restaurant": [
+          {
+            "who": "peter",
+            "text": "Hej, jag vill gärna boka bord för fyra på fredag kl. 19 i Mette Jensens namn."
+          },
+          {
+            "who": "them",
+            "text": "Kl. 19 är fullt – kl. 19.30 går bra."
+          },
+          {
+            "who": "peter",
+            "text": "Det frågar jag Mette om innan jag säger ja. Jag ringer tillbaka."
+          }
+        ]
+      }
+    },
+    "s4": {
+      "title": "När ska Peter påminna dig?",
+      "help": "En påminnelse om dagen – inte fler.",
+      "remind": {
+        "morning": {
+          "label": "På morgonen",
+          "hint": "kl. 08"
+        },
+        "lunch": {
+          "label": "Vid lunch",
+          "hint": "kl. 12"
+        },
+        "evening": {
+          "label": "På kvällen",
+          "hint": "kl. 19"
+        }
+      }
+    },
+    "s5": {
+      "title": "Peter ordnar din dag …",
+      "help": "Inget har ringts eller skickats. Uppgifterna väntar på dig när du är inloggad.",
+      "rows": {
+        "tasks": "Dina uppgifter",
+        "lists": "Dina listor",
+        "firstCall": "Det första samtalet"
+      },
+      "detail": {
+        "tasks": "{n|en uppgift|# uppgifter}",
+        "lists": "{n|en lista|# listor}",
+        "noCall": "Inget samtal ännu – du kan be Peter ringa senare"
+      },
+      "summary": {
+        "tasks": "{n|1 uppgift|# uppgifter}",
+        "lists": "{n|1 lista|# listor}",
+        "call": "{n} samtal Peter vill ta"
+      },
+      "cta": "Se min dag"
+    },
+    "s6": {
+      "title": "Vem ska Peter hjälpa?",
+      "lead": "Namn, mobil och e-post – så skickar vi en kod, och din dag står klar.",
+      "consent": "Ja tack, skapa ett Dialogbot Privat-konto åt mig med min e-post och skicka mig en SMS-kod. Provperioden på 14 dagar börjar nu och kräver inget kort. Peter ringer aldrig någon förrän jag har sagt ja.",
+      "codeTitle": "Ange koden från SMS:et"
+    }
   }
 }

@@ -539,5 +539,205 @@
     "accept": "Ja, einverstanden",
     "decline": "Nein, danke",
     "settings": "Cookie-Einstellungen"
+  },
+  "funnel": {
+    "entry": "In 2 Minuten ausprobieren",
+    "shell": {
+      "skip": "Zum Inhalt springen",
+      "back": "Zurück",
+      "home": "Startseite",
+      "stepOf": "Schritt {n} von {total}",
+      "simulated": "Simuliert",
+      "footer": "Dialogbot · Aarhus",
+      "privacy": "Datenschutz"
+    },
+    "actions": {
+      "next": "Weiter",
+      "wait": "Bitte warten …"
+    },
+    "common": {
+      "loading": "Lädt …",
+      "errorTitle": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+      "choose": "Eins auswählen",
+      "chooseMany": "Eins oder mehrere auswählen",
+      "startOver": "Von vorn beginnen"
+    },
+    "places": {
+      "label": "Name des Unternehmens",
+      "placeholder": "z. B. Fjordgulv ApS",
+      "google": "Daten von Google",
+      "none": "Keine Vorschläge – Namen eingeben und weiter.",
+      "searching": "Suche …"
+    },
+    "estimate": {
+      "about": "ca.",
+      "perWeek": "Anrufe pro Woche",
+      "source": "Quelle: {source}",
+      "edit": "ändere die Zahl, wenn du es besser weißt"
+    },
+    "build": {
+      "pending": "In Arbeit …",
+      "stillPending": "Dauert etwas länger – wir machen es im Hintergrund fertig",
+      "done": "Fertig",
+      "skipped": "Übersprungen",
+      "default": "Standard"
+    },
+    "gate": {
+      "name": "Name",
+      "namePh": "Dein Name",
+      "nameHint": "Damit wir wissen, mit wem wir sprechen.",
+      "phone": "Mobil",
+      "phonePh": "12 34 56 78",
+      "phoneHint": "Wir schicken dir einen Code per SMS. Kein Anruf, bevor du ihn eingegeben hast.",
+      "email": "E-Mail",
+      "emailPh": "du@firma.de",
+      "emailHint": "Hierhin schicken wir den Link zu deinem Konto.",
+      "consent": "Einwilligung",
+      "next": "Weiter",
+      "send": "Code senden",
+      "sending": "Wird gesendet …",
+      "back": "Zurück",
+      "edit": "Ändern",
+      "editAria": "{field} ändern",
+      "errName": "Gib deinen Namen ein (mindestens 2 Zeichen).",
+      "errPhone": "Gib eine dänische Mobilnummer mit 8 Ziffern ein.",
+      "errEmail": "Gib eine gültige E-Mail-Adresse ein.",
+      "errConsent": "Setze das Häkchen, um fortzufahren.",
+      "consentPrivacyBefore": "Mehr in unserer ",
+      "consentPrivacyLink": "Datenschutzerklärung",
+      "consentPrivacyAfter": "."
+    },
+    "code": {
+      "lead": "Wir haben einen 6-stelligen Code an {phone} geschickt.",
+      "label": "Code aus der SMS",
+      "hint": "Der Code gilt 10 Minuten.",
+      "verifying": "Code wird geprüft …",
+      "resent": "Neuer Code gesendet.",
+      "resend": "Code erneut senden",
+      "resendIn": "Erneut senden in {s} s",
+      "wrongNumber": "Falsche Nummer?",
+      "noGate": "Wir haben noch keinen Code gesendet.",
+      "toGate": "Deine Angaben eingeben"
+    },
+    "erhverv": {
+      "meta": {
+        "title": "Dialogbot in 2 Minuten ausprobieren – sie ruft dich an",
+        "description": "Beantworte fünf Fragen, dann bauen wir eine Rezeptionistin für euer Unternehmen und rufen dich an, damit du sie hörst. Keine Anmeldung, bevor du es willst.",
+        "stepTitle": "Dialogbot ausprobieren – Schritt {n}"
+      },
+      "hooks": {
+        "default": {
+          "eyebrow": "",
+          "title": "Was macht ihr?",
+          "help": "Dann weiß die Rezeptionistin, wie sie eure Kunden empfängt."
+        },
+        "stige": {
+          "eyebrow": "Du stehst auf der Leiter",
+          "title": "Das Telefon klingelt. Wer geht ran?",
+          "help": "Beantworte fünf Fragen, dann ruft sie dich in 2 Minuten an. Was macht ihr?"
+        },
+        "1605": {
+          "eyebrow": "16.05 Uhr",
+          "title": "Der Kunde ruft an, nachdem ihr Feierabend habt. Wer geht ran?",
+          "help": "Beantworte fünf Fragen, dann ruft sie dich in 2 Minuten an. Was macht ihr?"
+        },
+        "telefonsvarer": {
+          "eyebrow": "Der Anrufbeantworter",
+          "title": "Der Kunde legt beim Anrufbeantworter auf. Was, wenn jemand ranginge?",
+          "help": "Beantworte fünf Fragen, dann ruft sie dich in 2 Minuten an. Was macht ihr?"
+        }
+      },
+      "industries": {
+        "haandvaerker": "Handwerker",
+        "klinik": "Klinik",
+        "salon": "Friseur / Salon",
+        "vaerksted": "Werkstatt",
+        "raadgiver": "Berater",
+        "restaurant": "Restaurant"
+      },
+      "s2": {
+        "title": "Wie heißt das Unternehmen?",
+        "help": "Wir schlagen euch nach, damit sie Adresse, Öffnungszeiten und Website kennt."
+      },
+      "s3": {
+        "title": "Wann geht ihr nicht ans Telefon?",
+        "help": "Wähle alles, was zutrifft.",
+        "missed": {
+          "lunch": "In der Mittagspause",
+          "after16": "Nach 16 Uhr",
+          "driving": "Wenn wir unterwegs sind",
+          "weekend": "Am Wochenende",
+          "never_free": "Wir haben selten die Hände frei"
+        }
+      },
+      "s4": {
+        "title": "Was soll sie können?",
+        "help": "Wähle eins oder mehrere – den Rest könnt ihr später einschalten.",
+        "wants": {
+          "book": {
+            "label": "Termine buchen",
+            "hint": "Direkt in euren Kalender"
+          },
+          "message": {
+            "label": "Nachrichten annehmen",
+            "hint": "Ihr bekommt eine SMS zu jedem Anruf"
+          },
+          "prices": {
+            "label": "Preise beantworten",
+            "hint": "Anhand eurer Website"
+          }
+        }
+      },
+      "s5": {
+        "title": "Wir bauen eure Rezeptionistin …",
+        "titleNamed": "Wir bauen die Rezeptionistin für {company} …",
+        "help": "Das dauert unter einer Minute. Noch wurde nichts gesendet oder angerufen.",
+        "rows": {
+          "knowledge": "Wissen von eurer Website",
+          "voice": "Stimme für die Branche",
+          "hours": "Öffnungszeiten",
+          "number": "Nummer zum Anrufen"
+        },
+        "detail": {
+          "knowledgeSkipped": "Keine Website gefunden – ihr könnt Wissen später hinzufügen",
+          "hoursDefault": "Standard Mo–Fr 08–16 – später anpassen",
+          "hoursDone": "Von Google: {hours}"
+        },
+        "cta": "Jetzt anhören"
+      },
+      "s6": {
+        "title": "Wen soll sie anrufen?",
+        "lead": "Name, Mobil und E-Mail – dann schicken wir einen Code, und sie ruft dich an.",
+        "consent": "Ja, die digitale Rezeptionistin von Dialogbot darf mich einmal unter dieser Nummer anrufen und zeigen, wie sie für uns ans Telefon geht. Dialogbot darf mir einen SMS-Code schicken und mit meiner E-Mail ein Konto für mich anlegen. Der Anruf wird protokolliert, und ein Mitarbeiter von Dialogbot darf mich danach zu dem Gespräch kontaktieren."
+      },
+      "s7": {
+        "title": "Code aus der SMS eingeben"
+      },
+      "klar": {
+        "metaTitle": "Sie ruft jetzt an",
+        "title": "Sie ruft jetzt {phone} an",
+        "titleNoPhone": "Sie ruft jetzt an",
+        "lead": "Geh ran und frag, was ein Kunde {company} fragen würde.",
+        "hours": "Sie ruft nur werktags zwischen {from} und {to} Uhr an.",
+        "closed": "Das ist außerhalb der Anrufzeiten (werktags {from}–{to} Uhr). Sie ruft an, sobald sie beginnen.",
+        "hoursFallback": "Sie ruft nur werktags innerhalb der Öffnungszeiten an.",
+        "waiting": "Der Anruf ist unterwegs",
+        "inProgress": "Das Gespräch läuft …",
+        "waitedOut": "Wir haben keine Antwort auf den Anruf erhalten",
+        "doneTitle": "So lief das Gespräch",
+        "duration": "{s} Sekunden",
+        "noSummary": "Das Gespräch ist beendet. Die Zusammenfassung kommt in euren Posteingang.",
+        "noCallBefore": "Hat es nicht geklingelt? Ruf uns an unter ",
+        "noCallAfter": ", dann zeigen wir es live.",
+        "makeHers": "Mach sie zu eurer",
+        "again": "Noch einmal anhören",
+        "note": "Dein Konto ist angelegt – wir haben dir einen Link zum Wählen eines Passworts geschickt.",
+        "noDraft": "Wir konnten deinen Entwurf nicht finden.",
+        "startOver": "Von vorn beginnen",
+        "notLoggedIn": "Melde dich an, um zu sehen, wie der Anruf lief.",
+        "login": "Anmelden",
+        "statusAria": "Status des Anrufs"
+      }
+    }
   }
 }

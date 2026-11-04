@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useT } from "@/i18n/client";
 import { ADDON, type Task, type TaskStatus } from "@/lib/privat/api";
 import { isDanishMobile } from "@/lib/privat/fake";
@@ -268,6 +269,7 @@ export function DayPage() {
           <p className="m-0 text-[16px] text-ink-soft hidden xl:block">{t("day2.lead")}</p>
         </div>
         {mode === "loading" && <p className="m-0 text-[14px] text-muted" role="status">{t("common.loading")}</p>}
+        <Suspense><WelcomeBanner /></Suspense>
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-6 items-start">
           <ChatCard />
           <YourTurn />
@@ -277,6 +279,21 @@ export function DayPage() {
         <TasksSection />
         <RoomCard />
       </div>
+    </div>
+  );
+}
+
+/** One-time banner after the Privat funnel (/privat/dag?velkommen=1): Peter has set the day up – the first call waits
+ *  in «Din tur». Closing it is local; the query is not re-read. */
+function WelcomeBanner() {
+  const t = useT("privat");
+  const params = useSearchParams();
+  const [open, setOpen] = useState(params.get("velkommen") === "1");
+  if (!open) return null;
+  return (
+    <div role="status" data-welcome className="flex items-center gap-2 rounded-xl border-[1.5px] border-ink bg-highlight pl-3 pr-1 py-1">
+      <span className="flex-1 min-h-[44px] inline-flex items-center text-[15px] font-semibold">{t("day.welcomeFunnel")}</span>
+      <button type="button" onClick={() => setOpen(false)} aria-label={t("list.welcomeDismiss")} className="w-11 h-11 inline-flex items-center justify-center shrink-0"><Ico name="close" size={18} /></button>
     </div>
   );
 }

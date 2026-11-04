@@ -212,7 +212,8 @@
     "soon": "Bientôt",
     "next": "Prochaine étape : {next}",
     "myTasks": "Mes tâches",
-    "accountBtn": "Compte et crédits"
+    "accountBtn": "Compte et crédits",
+    "welcomeFunnel": "Peter a organisé votre journée – appuyez sur Oui, appelle pour passer le premier appel"
   },
   "shortcuts": {
     "remind": {
@@ -894,5 +895,169 @@
     "paywallCallTextNone": "Avec Basis, Plus ou Familie, les appels sont inclus. Vous pouvez aussi acheter des appels supplémentaires.",
     "paywallDigitalPlan": "Avec un forfait, listes et rappels sont illimités.",
     "endTrial": "Terminer l’essai"
+  },
+  "funnel": {
+    "entry": "Essayer en 2 minutes",
+    "meta": {
+      "title": "Peter organise votre journée en 2 minutes",
+      "description": "Répondez à quatre questions et Peter crée vos listes, vos rappels et le premier appel – prêts à votre connexion. 14 jours gratuits, sans carte.",
+      "stepTitle": "Dialogbot Privat – étape {n}"
+    },
+    "s1": {
+      "hooks": {
+        "stige": "Vous avez passé la journée sur l'échelle",
+        "1605": "16 h 05 – et vous n'avez toujours pas appelé",
+        "telefonsvarer": "Vous avez encore raccroché sur le répondeur"
+      },
+      "title": "Qu'avez-vous remis à plus tard ?",
+      "help": "Cochez tout ce qui attend. Peter transforme chaque chose en tâche.",
+      "postponed": {
+        "dentist": "Le dentiste",
+        "bike": "La révision du vélo",
+        "car_inspection": "Le contrôle technique",
+        "gift": "Un cadeau",
+        "doctor": "Le médecin",
+        "hairdresser": "Le coiffeur",
+        "insurance": "L'assurance",
+        "landlord": "Propriétaire / syndic"
+      }
+    },
+    "s2": {
+      "title": "Qui vit chez vous ?",
+      "help": "Pour avoir les bonnes listes dès le départ.",
+      "household": {
+        "alone": {
+          "label": "Moi seul(e)",
+          "hint": "Liste de courses"
+        },
+        "couple": {
+          "label": "Nous deux",
+          "hint": "Liste de courses partagée"
+        },
+        "kids": {
+          "label": "Famille avec enfants",
+          "hint": "Courses + liste de valise"
+        },
+        "parents": {
+          "label": "Famille avec des parents que nous aidons",
+          "hint": "Courses + anniversaires"
+        }
+      }
+    },
+    "s3": {
+      "title": "Quel appel détestez-vous le plus ?",
+      "help": "Peter appelle pour vous – mais jamais avant votre accord. Voyez comment il fait.",
+      "hate": {
+        "health": "Médecin et dentiste",
+        "workshop": "Le garage",
+        "municipality": "La mairie",
+        "restaurant": "Réserver une table"
+      },
+      "exampleAria": "Exemple de conversation de Peter",
+      "exampleRole": "appelle pour vous",
+      "exampleNote": "Exemple. Peter dit toujours qu'il appelle de votre part et ne convient que de ce que vous avez accepté.",
+      "examples": {
+        "health": [
+          {
+            "who": "peter",
+            "text": "Bonjour, j'appelle de la part de Mette Jensen. Elle souhaite un rendez-vous pour un contrôle dentaire – de préférence le matin."
+          },
+          {
+            "who": "them",
+            "text": "Nous avons mardi à 9 h ou mercredi à 10 h 30."
+          },
+          {
+            "who": "peter",
+            "text": "Merci. Je ne peux pas choisir pour elle, j'envoie donc les deux créneaux à Mette et elle confirme elle-même."
+          }
+        ],
+        "workshop": [
+          {
+            "who": "peter",
+            "text": "Bonjour, j'appelle pour Mette Jensen. Sa voiture doit passer le contrôle – avez-vous un créneau la semaine prochaine, et à quel prix ?"
+          },
+          {
+            "who": "them",
+            "text": "Jeudi matin, 650 couronnes."
+          },
+          {
+            "who": "peter",
+            "text": "Merci. Je préviens Mette et elle confirme le créneau."
+          }
+        ],
+        "municipality": [
+          {
+            "who": "peter",
+            "text": "Bonjour, j'appelle de la part de Mette Jensen au sujet de son dossier numéro 24-118. Elle veut savoir s'il manque quelque chose de sa part."
+          },
+          {
+            "who": "them",
+            "text": "Il nous manque un reçu – il peut être envoyé via e-Boks."
+          },
+          {
+            "who": "peter",
+            "text": "Merci. Je l'écris à Mette pour qu'elle l'envoie."
+          }
+        ],
+        "restaurant": [
+          {
+            "who": "peter",
+            "text": "Bonjour, je voudrais réserver une table pour quatre vendredi à 19 h au nom de Mette Jensen."
+          },
+          {
+            "who": "them",
+            "text": "19 h est complet – 19 h 30 est possible."
+          },
+          {
+            "who": "peter",
+            "text": "Je demande à Mette avant de dire oui. Je vous rappelle."
+          }
+        ]
+      }
+    },
+    "s4": {
+      "title": "Quand Peter doit-il vous le rappeler ?",
+      "help": "Un rappel par jour – pas plus.",
+      "remind": {
+        "morning": {
+          "label": "Le matin",
+          "hint": "8 h"
+        },
+        "lunch": {
+          "label": "À midi",
+          "hint": "12 h"
+        },
+        "evening": {
+          "label": "Le soir",
+          "hint": "19 h"
+        }
+      }
+    },
+    "s5": {
+      "title": "Peter organise votre journée …",
+      "help": "Rien n'a été appelé ni envoyé. Les tâches vous attendent une fois connecté(e).",
+      "rows": {
+        "tasks": "Vos tâches",
+        "lists": "Vos listes",
+        "firstCall": "Le premier appel"
+      },
+      "detail": {
+        "tasks": "{n|une tâche|# tâches}",
+        "lists": "{n|une liste|# listes}",
+        "noCall": "Pas encore d'appel – vous pourrez demander à Peter d'appeler plus tard"
+      },
+      "summary": {
+        "tasks": "{n|1 tâche|# tâches}",
+        "lists": "{n|1 liste|# listes}",
+        "call": "{n} appel que Peter passera"
+      },
+      "cta": "Voir ma journée"
+    },
+    "s6": {
+      "title": "Qui Peter doit-il aider ?",
+      "lead": "Nom, mobile et e-mail – nous envoyons un code, et votre journée est prête.",
+      "consent": "Oui, créez-moi un compte Dialogbot Privat avec mon e-mail et envoyez-moi un code par SMS. L'essai de 14 jours commence maintenant et ne demande pas de carte. Peter n'appelle jamais personne avant mon accord.",
+      "codeTitle": "Saisissez le code reçu par SMS"
+    }
   }
 }

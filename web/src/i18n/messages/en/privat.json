@@ -212,7 +212,8 @@
     "soon": "Coming up",
     "next": "Next step: {next}",
     "myTasks": "My tasks",
-    "accountBtn": "Account and credits"
+    "accountBtn": "Account and credits",
+    "welcomeFunnel": "Peter has set up your day – tap Yes, call to take the first call"
   },
   "shortcuts": {
     "remind": {
@@ -894,5 +895,169 @@
     "paywallCallTextNone": "With Basis, Plus or Familie calls are included. You can also buy extra calls.",
     "paywallDigitalPlan": "With a plan, lists and reminders are unlimited.",
     "endTrial": "End the trial"
+  },
+  "funnel": {
+    "entry": "Try it in 2 minutes",
+    "meta": {
+      "title": "Peter sets up your day in 2 minutes",
+      "description": "Answer four questions and Peter makes your lists, reminders and the first call – ready when you log in. Free for 14 days, no card.",
+      "stepTitle": "Dialogbot Privat – step {n}"
+    },
+    "s1": {
+      "hooks": {
+        "stige": "You have been up the ladder all day",
+        "1605": "4.05 pm – and you still have not called",
+        "telefonsvarer": "You hung up on the voicemail again"
+      },
+      "title": "What have you been putting off?",
+      "help": "Choose everything that is waiting. Peter turns each one into a task.",
+      "postponed": {
+        "dentist": "The dentist",
+        "bike": "Bike service",
+        "car_inspection": "Car inspection",
+        "gift": "A gift",
+        "doctor": "The doctor",
+        "hairdresser": "The hairdresser",
+        "insurance": "The insurance",
+        "landlord": "Landlord / housing association"
+      }
+    },
+    "s2": {
+      "title": "Who is at home?",
+      "help": "So you get the right lists from the start.",
+      "household": {
+        "alone": {
+          "label": "Just me",
+          "hint": "Shopping list"
+        },
+        "couple": {
+          "label": "The two of us",
+          "hint": "Shared shopping list"
+        },
+        "kids": {
+          "label": "Family with children",
+          "hint": "Shopping + packing list"
+        },
+        "parents": {
+          "label": "Family with parents we help",
+          "hint": "Shopping + birthdays"
+        }
+      }
+    },
+    "s3": {
+      "title": "What do you hate calling about most?",
+      "help": "Peter calls for you – but never before you have said yes. See how he does it.",
+      "hate": {
+        "health": "Doctor and dentist",
+        "workshop": "The workshop",
+        "municipality": "The municipality",
+        "restaurant": "Table bookings"
+      },
+      "exampleAria": "Example of Peter's conversation",
+      "exampleRole": "calls for you",
+      "exampleNote": "Example. Peter always says he is calling on your behalf and only agrees to what you have said yes to.",
+      "examples": {
+        "health": [
+          {
+            "who": "peter",
+            "text": "Hello, I am calling on behalf of Mette Jensen. She would like an appointment for a dental check-up – a morning if possible."
+          },
+          {
+            "who": "them",
+            "text": "We have Tuesday at 9 or Wednesday at 10.30."
+          },
+          {
+            "who": "peter",
+            "text": "Thank you. I may not choose for her, so I send both times to Mette and she confirms herself."
+          }
+        ],
+        "workshop": [
+          {
+            "who": "peter",
+            "text": "Hello, I am calling for Mette Jensen. Her car needs an inspection – do you have a slot next week, and what does it cost?"
+          },
+          {
+            "who": "them",
+            "text": "Thursday morning, 650 kr."
+          },
+          {
+            "who": "peter",
+            "text": "Thank you. I let Mette know and she confirms the time herself."
+          }
+        ],
+        "municipality": [
+          {
+            "who": "peter",
+            "text": "Hello, I am calling on behalf of Mette Jensen about her case number 24-118. She wants to know if anything is missing from her."
+          },
+          {
+            "who": "them",
+            "text": "We are missing a receipt – it can be sent via e-Boks."
+          },
+          {
+            "who": "peter",
+            "text": "Thank you. I write that to Mette so she sends it."
+          }
+        ],
+        "restaurant": [
+          {
+            "who": "peter",
+            "text": "Hello, I would like to book a table for four on Friday at 7 pm in Mette Jensen's name."
+          },
+          {
+            "who": "them",
+            "text": "7 pm is full – 7.30 pm we can do."
+          },
+          {
+            "who": "peter",
+            "text": "I ask Mette about that before I say yes. I will call back."
+          }
+        ]
+      }
+    },
+    "s4": {
+      "title": "When should Peter remind you?",
+      "help": "One reminder a day – no more.",
+      "remind": {
+        "morning": {
+          "label": "In the morning",
+          "hint": "8 am"
+        },
+        "lunch": {
+          "label": "At lunch",
+          "hint": "12 noon"
+        },
+        "evening": {
+          "label": "In the evening",
+          "hint": "7 pm"
+        }
+      }
+    },
+    "s5": {
+      "title": "Peter is setting up your day …",
+      "help": "Nothing has been called or sent. The tasks wait for you once you are logged in.",
+      "rows": {
+        "tasks": "Your tasks",
+        "lists": "Your lists",
+        "firstCall": "The first call"
+      },
+      "detail": {
+        "tasks": "{n|one task|# tasks}",
+        "lists": "{n|one list|# lists}",
+        "noCall": "No call yet – you can ask Peter to call later"
+      },
+      "summary": {
+        "tasks": "{n|1 task|# tasks}",
+        "lists": "{n|1 list|# lists}",
+        "call": "{n} call Peter will make"
+      },
+      "cta": "See my day"
+    },
+    "s6": {
+      "title": "Who should Peter help?",
+      "lead": "Name, mobile and e-mail – then we send a code, and your day is ready.",
+      "consent": "Yes, create a Dialogbot Privat account for me with my e-mail and send me a text code. The 14-day trial starts now and needs no card. Peter never calls anyone before I have said yes.",
+      "codeTitle": "Enter the code from the text message"
+    }
   }
 }

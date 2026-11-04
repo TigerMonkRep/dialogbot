@@ -212,7 +212,8 @@
     "soon": "Snart",
     "next": "Næste skridt: {next}",
     "myTasks": "Mine opgaver",
-    "accountBtn": "Konto og credits"
+    "accountBtn": "Konto og credits",
+    "welcomeFunnel": "Peter har sat din dag op – tryk Ja, ring for at tage det første opkald"
   },
   "shortcuts": {
     "remind": {
@@ -894,5 +895,169 @@
     "paywallCallTextNone": "Med Basis, Plus eller Familie er opkald med i prisen. Du kan også købe ekstra opkald.",
     "paywallDigitalPlan": "Med en plan er lister og påmindelser ubegrænsede.",
     "endTrial": "Afslut prøveperioden"
+  },
+  "funnel": {
+    "entry": "Prøv på 2 minutter",
+    "meta": {
+      "title": "Peter sætter din dag op på 2 minutter",
+      "description": "Svar på fire spørgsmål, så laver Peter dine lister, påmindelser og det første opkald – klar, når du logger ind. Gratis i 14 dage, uden kort.",
+      "stepTitle": "Dialogbot Privat – trin {n}"
+    },
+    "s1": {
+      "hooks": {
+        "stige": "Du har stået på stigen hele dagen",
+        "1605": "Kl. 16.05 – og du har stadig ikke ringet",
+        "telefonsvarer": "Du lagde på ved telefonsvareren igen"
+      },
+      "title": "Hvad har du udsat?",
+      "help": "Vælg alt det, der ligger og venter. Peter laver en opgave af hvert.",
+      "postponed": {
+        "dentist": "Tandlægen",
+        "bike": "Cyklen til eftersyn",
+        "car_inspection": "Bilsyn",
+        "gift": "En gave",
+        "doctor": "Lægen",
+        "hairdresser": "Frisøren",
+        "insurance": "Forsikringen",
+        "landlord": "Udlejer / boligforening"
+      }
+    },
+    "s2": {
+      "title": "Hvem er I derhjemme?",
+      "help": "Så får du de rigtige lister fra start.",
+      "household": {
+        "alone": {
+          "label": "Mig selv",
+          "hint": "Indkøbsliste"
+        },
+        "couple": {
+          "label": "Os to",
+          "hint": "Fælles indkøbsliste"
+        },
+        "kids": {
+          "label": "Familie med børn",
+          "hint": "Indkøb + pakkeliste"
+        },
+        "parents": {
+          "label": "Familie med forældre, vi hjælper",
+          "hint": "Indkøb + fødselsdage"
+        }
+      }
+    },
+    "s3": {
+      "title": "Hvad hader du mest at ringe om?",
+      "help": "Peter ringer for dig – men aldrig, før du har sagt ja. Se, hvordan han gør.",
+      "hate": {
+        "health": "Læge og tandlæge",
+        "workshop": "Værkstedet",
+        "municipality": "Kommunen",
+        "restaurant": "Bordbestilling"
+      },
+      "exampleAria": "Eksempel på Peters samtale",
+      "exampleRole": "ringer for dig",
+      "exampleNote": "Eksempel. Peter siger altid, at han ringer på dine vegne, og aftaler kun det, du har sagt ja til.",
+      "examples": {
+        "health": [
+          {
+            "who": "peter",
+            "text": "Hej, jeg ringer på vegne af Mette Jensen. Hun vil gerne have en tid til tandeftersyn – gerne en formiddag."
+          },
+          {
+            "who": "them",
+            "text": "Vi har tirsdag kl. 9 eller onsdag kl. 10.30."
+          },
+          {
+            "who": "peter",
+            "text": "Tak. Jeg må ikke vælge for hende, så jeg sender begge tider til Mette, og hun bekræfter selv."
+          }
+        ],
+        "workshop": [
+          {
+            "who": "peter",
+            "text": "Hej, jeg ringer for Mette Jensen. Hendes bil skal til syn – har I en tid i næste uge, og hvad koster det?"
+          },
+          {
+            "who": "them",
+            "text": "Torsdag formiddag, 650 kr."
+          },
+          {
+            "who": "peter",
+            "text": "Tak. Jeg giver Mette besked, og hun bekræfter selv tiden."
+          }
+        ],
+        "municipality": [
+          {
+            "who": "peter",
+            "text": "Hej, jeg ringer på vegne af Mette Jensen om hendes sag med nummer 24-118. Hun vil høre, om der mangler noget fra hende."
+          },
+          {
+            "who": "them",
+            "text": "Vi mangler en kvittering – den kan sendes i e-Boks."
+          },
+          {
+            "who": "peter",
+            "text": "Tak. Jeg skriver det til Mette, så hun sender den."
+          }
+        ],
+        "restaurant": [
+          {
+            "who": "peter",
+            "text": "Hej, jeg vil gerne bestille bord til fire på fredag kl. 19 i Mette Jensens navn."
+          },
+          {
+            "who": "them",
+            "text": "Kl. 19 er fuldt – kl. 19.30 kan vi."
+          },
+          {
+            "who": "peter",
+            "text": "Det spørger jeg Mette om, før jeg siger ja. Jeg ringer tilbage."
+          }
+        ]
+      }
+    },
+    "s4": {
+      "title": "Hvornår skal Peter minde dig?",
+      "help": "Én påmindelse om dagen – ikke flere.",
+      "remind": {
+        "morning": {
+          "label": "Om morgenen",
+          "hint": "kl. 08"
+        },
+        "lunch": {
+          "label": "Til frokost",
+          "hint": "kl. 12"
+        },
+        "evening": {
+          "label": "Om aftenen",
+          "hint": "kl. 19"
+        }
+      }
+    },
+    "s5": {
+      "title": "Peter sætter din dag op …",
+      "help": "Intet er ringet eller sendt. Opgaverne venter på dig, når du er logget ind.",
+      "rows": {
+        "tasks": "Dine opgaver",
+        "lists": "Dine lister",
+        "firstCall": "Det første opkald"
+      },
+      "detail": {
+        "tasks": "{n|én opgave|# opgaver}",
+        "lists": "{n|én liste|# lister}",
+        "noCall": "Intet opkald endnu – du kan bede Peter ringe senere"
+      },
+      "summary": {
+        "tasks": "{n|1 opgave|# opgaver}",
+        "lists": "{n|1 liste|# lister}",
+        "call": "{n} opkald Peter vil tage"
+      },
+      "cta": "Se min dag"
+    },
+    "s6": {
+      "title": "Hvem skal Peter hjælpe?",
+      "lead": "Navn, mobil og e-mail – så sender vi en kode, og din dag står klar.",
+      "consent": "Ja tak, opret en Dialogbot Privat-konto til mig med min e-mail, og send mig en SMS-kode. Prøveperioden på 14 dage starter nu og kræver ikke kort. Peter ringer aldrig til nogen, før jeg har sagt ja.",
+      "codeTitle": "Tast koden fra SMS'en"
+    }
   }
 }

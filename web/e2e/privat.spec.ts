@@ -82,16 +82,23 @@ async function where(page: Page) {
   await expect(chat(page).getByTestId("business-results")).toBeVisible();
 }
 
+/** The plan badge in the header carries the numbers as data attributes (the visible text depends on the plan). */
 const chip = (page: Page) => page.getByTestId("balance-chip");
-const freeLeft = async (page: Page) => Number((await chip(page).getAttribute("aria-label"))!.match(/og (\d+) gratis/)![1]);
-const credits = async (page: Page) => Number((await chip(page).getAttribute("aria-label"))!.match(/^(\d+) credits/)![1]);
+const freeLeft = async (page: Page) => Number(await chip(page).getAttribute("data-free"));
+const credits = async (page: Page) => Number(await chip(page).getAttribute("data-credits"));
+const callsLeft = async (page: Page) => Number(await chip(page).getAttribute("data-calls-left"));
 async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 }
-async function gotoTab(page: Page, name: "Opgaver" | "Konto" | "Samtale" | "Min dag") {
+/** Phone: the bottom tabs (Min dag · Opgaver · Butikken · Folk · Konto). Desktop: the header's pill navigation and the
+ *  plan badge. The conversation has no tab of its own any more – it opens when you send from Min dag, or by URL. */
+async function gotoTab(page: Page, name: "Opgaver" | "Konto" | "Samtale" | "Min dag" | "Butikken") {
+  if (name === "Samtale") { await page.goto("/privat/samtale"); await expect(page.locator("[data-busy]")).toHaveAttribute("data-busy", "false"); return; }
   const desk = (page.viewportSize()?.width ?? 0) >= 1280;
   if (!desk) { await page.getByRole("navigation", { name: "Hovedmenu" }).getByRole("link", { name }).click(); return; }
-  if (name === "Opgaver") await page.getByRole("button", { name: "Mine opgaver" }).first().click();
+  if (name === "Opgaver") await page.getByRole("navigation", { name: "Sider" }).getByRole("button", { name: "Mine opgaver" }).click();
+  if (name === "Butikken") await page.getByRole("navigation", { name: "Sider" }).getByRole("button", { name: "Butikken" }).click();
+  if (name === "Min dag") await page.getByRole("navigation", { name: "Sider" }).getByRole("button", { name: "Min dag" }).click();
   if (name === "Konto") await page.getByTestId("balance-chip").click();
 }
 /** Live card in the conversation for the last task. */
@@ -101,21 +108,25 @@ for (const width of [375, 1440]) {
   test.describe(`${width}px`, () => {
     test.use({ viewport: { width, height: width > 1000 ? 900 : 812 } });
 
-    test("liste: oprettes, tilføj æbler → én liste med 3 punkter, gratis-tæller uændret", async ({ page }) => {
+    test("liste: oprettes, tilføj æbler → én liste med 3 punkter, gratis-tæller uændret (prøveperiode = ubegrænset)", async ({ page }) => {
       await open(page, "/privat/dag", { login: false });
       await expect.poll(() => freeLeft(page)).toBe(2);
+      await expect(page.getByTestId("day-chat-card")).toBeVisible();
+      await expect(page.getByTestId("your-turn")).toBeVisible();
+      await expect(page.getByTestId("room-card")).toBeVisible();
       await say(page, "Lav en indkøbsliste med mælk og rugbrød");
       const sheet = page.getByRole("dialog", { name: "Gem din opgave" });
       await expect(sheet).toBeVisible();
       await expect(sheet.getByRole("link", { name: "Opret privat konto" })).toHaveAttribute("href", /\/signup\?next=/);
       await sheet.getByRole("button", { name: /Fortsæt som testbruger/ }).click();
       await expect(chat(page).getByRole("heading", { name: "Indkøbsliste" })).toBeVisible();
-      await expect.poll(() => freeLeft(page)).toBe(1);
+      // Lists and reminders are unlimited with the trial: the free counter does not move.
+      await expect.poll(() => freeLeft(page)).toBe(2);
       await say(page, "Tilføj æbler");
       const card = chat(page).getByRole("heading", { name: "Indkøbsliste" }).locator("xpath=ancestor::div[contains(@class,'rounded-[18px]')][1]");
       await expect(card.getByRole("button", { name: "Æbler" })).toBeVisible();
       await expect(card.locator("button[aria-pressed]")).toHaveCount(3);
-      await expect.poll(() => freeLeft(page)).toBe(1);
+      await expect.poll(() => freeLeft(page)).toBe(2);
       await gotoTab(page, "Opgaver");
       await expect(page.getByRole("region", { name: "Mine opgaver" }).getByText("Indkøbsliste", { exact: true })).toHaveCount(1);
       await noOverflow(page);
@@ -136,7 +147,7 @@ for (const width of [375, 1440]) {
       await expect(tasks.getByText(/Påmindelse i morgen kl\. 17\.00/)).toBeVisible();
     });
 
-    test("opkald: Cykelmageren → bekræft nummer → godkend → svarer → bekræftet", async ({ page }) => {
+    test("opkald: Cykelmageren → bekræft nummer → godkend → svarer → bekræftet (tæller på planen, ikke credits)", async ({ page }) => {
       await open(page);
       await say(page, "Ring til cykelværkstedet og aftal aflevering torsdag efter kl. 15");
       await where(page);
@@ -148,16 +159,21 @@ for (const width of [375, 1440]) {
       await chat(page).getByLabel("Kode fra SMS").fill("123456");
       await chat(page).getByRole("button", { name: "Bekræft", exact: true }).click();
       await expect(chat(page).getByText("Ringer til Cykelmageren …")).toBeVisible();
-      await expect.poll(() => credits(page)).toBe(0);
+      // The trial's Plus quota pays: credits untouched, the call counts when it is answered.
+      await expect(chat(page).getByText("1 af 10 opkald i Plus")).toBeVisible();
+      await expect.poll(() => credits(page)).toBe(3);
+      await expect.poll(() => callsLeft(page)).toBe(10);
       await chat(page).getByRole("button", { name: "Værkstedet svarer" }).click();
       await expect(chat(page).getByRole("heading", { name: "Torsdag kl. 15.30 er bekræftet" })).toBeVisible();
       await expect(chat(page).getByText("Bekræftet af værkstedet")).toBeVisible();
       await expect(chat(page).getByText(/450 kr\. for et almindeligt eftersyn/)).toBeVisible();
-      await expect(chat(page).getByText("3 credits · 2 min. 10 sek.")).toBeVisible();
+      await expect(chat(page).getByText("1 af 10 opkald i Plus · 2 min. 10 sek.")).toBeVisible();
+      await expect.poll(() => callsLeft(page)).toBe(9);
+      await expect.poll(() => credits(page)).toBe(3);
       await noOverflow(page);
     });
 
-    test("opkald uden svar → credits frigivet", async ({ page }) => {
+    test("opkald uden svar → tæller ikke på planen", async ({ page }) => {
       await open(page);
       await say(page, "Ring til cykelværkstedet og aftal aflevering torsdag efter kl. 15");
       await where(page);
@@ -167,9 +183,10 @@ for (const width of [375, 1440]) {
       await chat(page).getByRole("button", { name: "Send kode" }).click();
       await chat(page).getByLabel("Kode fra SMS").fill("123456");
       await chat(page).getByRole("button", { name: "Bekræft", exact: true }).click();
-      await expect.poll(() => credits(page)).toBe(0);
+      await expect.poll(() => callsLeft(page)).toBe(10);
       await chat(page).getByRole("button", { name: "Ingen svarer" }).click();
-      await expect(chat(page).getByRole("heading", { name: "Ingen tog telefonen – dine 3 credits er frigivet" })).toBeVisible();
+      await expect(chat(page).getByRole("heading", { name: "Ingen tog telefonen – opkaldet tæller ikke" })).toBeVisible();
+      await expect.poll(() => callsLeft(page)).toBe(10);
       await expect.poll(() => credits(page)).toBe(3);
     });
 
@@ -182,8 +199,10 @@ for (const width of [375, 1440]) {
       await expect(page.getByRole("heading", { name: "Vælg tid hos Tandlæge Holm", level: 2 })).toBeVisible();
     });
 
-    test("10/10 brugt → ny opgave bliver udkast → brug 1 credit → aktiv", async ({ page }) => {
+    test("uden plan: 10/10 brugt → ny opgave bliver udkast → brug 1 credit → aktiv", async ({ page }) => {
       await open(page, "/privat/konto");
+      await page.getByRole("button", { name: "Afslut prøveperioden" }).click();
+      await expect(page.getByTestId("subscription-card")).toContainText("Prøveperiode slut");
       await page.getByRole("button", { name: "Sæt forbrug til 10/10" }).click();
       await expect.poll(() => freeLeft(page)).toBe(0);
       await gotoTab(page, "Samtale");
@@ -191,6 +210,7 @@ for (const width of [375, 1440]) {
       const sheet = page.getByRole("dialog", { name: "Månedens 10 gratis opgaver er brugt" });
       await expect(sheet).toBeVisible();
       await expect(sheet.getByRole("button", { name: /Se et sponsorindslag/ })).toBeVisible();
+      await expect(sheet.getByRole("button", { name: "Vælg plan" })).toBeVisible();
       await sheet.getByRole("button", { name: "Brug 1 credit · du har 3" }).click();
       await expect(sheet).toBeHidden();
       await expect(chat(page).getByText("Opgaven er aktiv nu.", { exact: false })).toBeVisible();
@@ -198,11 +218,15 @@ for (const width of [375, 1440]) {
       await expect.poll(() => credits(page)).toBe(2);
     });
 
-    test("tilføjelser: slå Ring for mig fra → chip væk, kort i chatten → slå til → opkald virker", async ({ page }) => {
+    test("butikken: slå Ring for mig fra → chip væk, kort i chatten → slå til → opkald virker", async ({ page }) => {
       await open(page, "/privat/tilfoejelser");
+      await expect(page).toHaveURL(/\/privat\/butik$/);
+      await page.getByRole("button", { name: "Åbn Ring for mig" }).click();
       await page.getByRole("button", { name: "Slå fra: Ring for mig" }).click();
       await page.getByRole("dialog", { name: "Slå Ring for mig fra?" }).getByRole("button", { name: "Slå fra" }).click();
-      await expect(page.getByRole("button", { name: "Slå til: Ring for mig" })).toBeVisible();
+      await page.getByRole("button", { name: "Åbn Ring for mig" }).click();
+      await expect(page.getByRole("button", { name: "Installér: Ring for mig" })).toBeVisible();
+      await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
       await page.goto("/privat/dag");
       await expect(page.locator("button:visible", { hasText: "Lav en liste" })).toHaveCount(1);
       await expect(page.getByRole("button", { name: "Ring for mig", exact: true })).toHaveCount(0);
@@ -403,9 +427,55 @@ for (const width of [375, 1440]) {
       await expect(approve).toBeEnabled();
     });
 
+    test("butikken: app-ark med «Hvad den gør», trin og «Start opsætningen»; uden plan → «Med i Plus»", async ({ page }) => {
+      await open(page, "/privat/butik");
+      await expect(page.getByRole("heading", { name: "Installeret" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Alle apps" })).toBeVisible();
+      await page.getByRole("button", { name: "Åbn Fødselsdage" }).click();
+      const sheet = page.getByRole("dialog", { name: "Fødselsdage" });
+      await expect(sheet.getByText("Hvad den gør")).toBeVisible();
+      await expect(sheet.getByText("«Mormor fylder 80 den 3. marts.»")).toBeVisible();
+      await sheet.getByRole("button", { name: "Installér: Fødselsdage" }).click();
+      await expect(sheet.getByTestId("addon-setup")).toContainText("Opsætning · 3 trin");
+      await sheet.getByRole("button", { name: "Start opsætningen: Fødselsdage" }).click();
+      await expect(sheet).toBeHidden();
+      await page.getByRole("button", { name: "Åbn Fødselsdage" }).click();
+      await expect(page.getByRole("dialog").getByRole("button", { name: "Åbn: Fødselsdage" })).toBeVisible();
+      await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
+      // Kommer snart is disabled; without rights the plan offer replaces the button.
+      await page.getByRole("button", { name: "Åbn Pakker" }).click();
+      await expect(page.getByRole("dialog").getByRole("button", { name: "Kommer snart: Pakker" })).toBeDisabled();
+      await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
+      await page.goto("/privat/konto");
+      await page.getByRole("button", { name: "Afslut prøveperioden" }).click();
+      await page.goto("/privat/butik");
+      await page.getByRole("button", { name: "Åbn Kalender" }).click();
+      await expect(page.getByRole("dialog").getByTestId("needs-plan")).toContainText("Med i Plus");
+      await page.getByRole("dialog").getByRole("button", { name: "Vælg plan" }).click();
+      await expect(page).toHaveURL(/\/privat\/konto/);
+    });
+
+    test("abonnement: Vælg plan → Plus (årligt) → retur fra betaling → «Dit abonnement er aktivt»", async ({ page }) => {
+      await open(page, "/privat/konto");
+      const card = page.getByTestId("subscription-card");
+      await expect(card).toContainText("Prøveperiode");
+      await card.getByRole("button", { name: "Vælg plan" }).click();
+      const picker = page.getByTestId("plan-picker");
+      await picker.getByRole("button", { name: "Årligt · spar 20 %" }).click();
+      await expect(picker.getByTestId("plan-plus")).toContainText("Anbefalet");
+      await expect(picker.getByTestId("plan-plus")).toContainText("79 kr./md.");
+      await picker.getByTestId("plan-plus").getByRole("button", { name: "Vælg Plus" }).click();
+      await expect(page).toHaveURL(/\/privat\/konto$/);
+      await expect(page.getByTestId("account-note")).toHaveText("Dit abonnement er aktivt.");
+      await expect(chip(page)).toHaveAttribute("data-plan", "plus");
+      await expect(card).toContainText("Plus");
+      await expect(card.getByRole("button", { name: "Administrér abonnement" })).toBeVisible();
+      await expect(page.getByTestId("ledger")).toContainText("Plus valgt · 948 kr./år");
+    });
+
     test("ingen vandret scroll på hovedsiderne", async ({ page }) => {
       await open(page);
-      for (const p of ["/privat", "/privat/dag", "/privat/samtale", "/privat/opgaver", "/privat/opgaver/e2", "/privat/konto", "/privat/tilfoejelser", "/privat/folk"]) {
+      for (const p of ["/privat", "/privat/dag", "/privat/samtale", "/privat/opgaver", "/privat/opgaver/e2", "/privat/konto", "/privat/butik", "/privat/folk"]) {
         await page.goto(p);
         await page.waitForLoadState("networkidle");
         await noOverflow(page);

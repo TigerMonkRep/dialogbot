@@ -1,10 +1,4 @@
-import type { Metadata } from "next";
-import { getT } from "@/i18n/server";
+import { permanentRedirect } from "next/navigation";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getT("privat");
-  return { title: t("meta.addons"), robots: { index: false } };
-}
-
-/** Rendered by the Privat shell in the layout (it reads the path). */
-export default function Page() { return null; }
+/** The add-on shop moved to /privat/butik («Butikken»). */
+export default function Page() { permanentRedirect("/privat/butik"); }

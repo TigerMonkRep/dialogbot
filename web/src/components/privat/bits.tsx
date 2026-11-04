@@ -10,7 +10,7 @@ export const BIG = "min-h-[52px] text-[16px] border-2 border-ink";
 export const LINK = "inline-flex items-center min-h-[44px] text-accent text-[15px] font-semibold underline underline-offset-[3px] hover:text-accent-deep self-start";
 export const ROW = "w-full flex items-start gap-3 text-left rounded-[14px] border-[1.5px] border-ink bg-paper px-3.5 py-3 text-ink hover:bg-panel";
 
-const TONE: Record<TaskStatus, string> = {
+export const TONE: Record<TaskStatus, string> = {
   awaiting_user: "bg-highlight border-ink text-ink",
   draft: "bg-paper border-ink border-dashed text-ink",
   in_progress: "bg-accent-soft border-accent text-ink",

@@ -56,7 +56,7 @@ function purpose(task: Task, t: (k: string) => string): string {
 export function TaskDetail({ id }: { id: string }) {
   const t = useT("privat");
   const f = useFmt();
-  const { task, go, talk, openSheet, run, mode, simulated, error } = usePrivat();
+  const { task, go, talk, openSheet, run, mode, simulated, error, entitled } = usePrivat();
   const params = useSearchParams();
   const [banner, setBanner] = useState(params.get("velkommen") === "1");
   const x = task(id);
@@ -88,13 +88,13 @@ export function TaskDetail({ id }: { id: string }) {
           <Eyebrow className="!text-success">{t("call.outcomeConfirmed")}</Eyebrow>
           {c.business_reply && <p className="m-0 text-[15px] leading-normal">«{c.business_reply}»</p>}
           <Kv rows={[[t("call.agreement"), c.confirmed_text], [t("call.priceAt"), c.business_price_text ?? "–"],
-            [t("call.theCall"), <span key="u">{t("call.callUsage", { n: c.max_credits, duration: f.duration(c.duration_seconds) })} {simulated && <Sim />}</span>]]} />
+            [t("call.theCall"), <span key="u">{x.usage_text || t("call.callUsage", { n: c.max_credits, duration: f.duration(c.duration_seconds) })} {simulated && <Sim />}</span>]]} />
         </div>
       )}
       {c && c.result === "no_answer" && x.status === "awaiting_user" && (
         <div className="rounded-[18px] border-2 border-ink bg-panel p-4 flex flex-col gap-2">
           <Eyebrow>{t("call.outcomeLabel")}</Eyebrow>
-          <p className="m-0 text-[15px] font-semibold">{t("call.noAnswerTitle", { n: c.max_credits })}</p>
+          <p className="m-0 text-[15px] font-semibold">{entitled ? t("day2.noAnswerPlan") : t("call.noAnswerTitle", { n: c.max_credits })}</p>
           <div className="flex gap-2 flex-wrap">
             <Button className={BIG} onClick={() => run((a) => a.retryCall(x.id)).then(() => talk(x.id))}>{t("call.retry")}</Button>
             <Button variant="outline" onClick={() => run((a) => a.declineCall(x.id))}>{t("call.cancelShort")}</Button>

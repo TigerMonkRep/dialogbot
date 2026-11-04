@@ -628,6 +628,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       const c = t.call!;
       if (!c.phone_e164) fail(409, "no_number", "Skriv virksomhedens nummer først");
       if ((c.is_mobile ?? isDanishMobile(c.phone_e164)) && !body.confirm_business) fail(409, "confirm_business", "Bekræft, at det er en virksomhed");
+      if (c.open_now === false && !body.at_next_open) fail(409, "business_closed", `Virksomheden har lukket. Jeg kan ringe ${c.next_open_text}, når de åbner.`);
       if (body.window && body.window !== c.window) {
         const swap = (x: string) => x.split(c.window).join(body.window);
         t.title = swap(t.title); c.may_ask = swap(c.may_ask); c.may_agree = swap(c.may_agree); c.window = body.window;

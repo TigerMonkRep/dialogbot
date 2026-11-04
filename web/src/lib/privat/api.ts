@@ -99,8 +99,9 @@ export type ChatMessage = {
 export type Day = { awaiting: Task[]; today: Task[]; soon: Task[] };
 export type LedgerEntry = { id: string; kind: string; amount: number; text: string; created_at: string };
 export type SendResult = { messages: ChatMessage[]; balance: Balance };
-/** confirm_business: the user ticked «Det er en virksomhed» for a mobile-looking number. */
-export type ApproveBody = { window: string; share_phone: boolean; confirm_business?: boolean };
+/** confirm_business: the user ticked «Det er en virksomhed» for a mobile-looking number.
+ *  at_next_open: the business is closed now – call at its next opening time (without it the API answers 409 business_closed). */
+export type ApproveBody = { window: string; share_phone: boolean; confirm_business?: boolean; at_next_open?: boolean };
 /** short_code/short_url: 8 chars (A–Z, 2–9 without look-alikes) for the SMS text, served by /i/[code] → /privat/invitation/[code].
  *  Optional until the backend has them; GET /privat/invites/{token} must accept the short code as the token. */
 export type ShareResult = { invite_url: string; token: string; expires_at: string; short_code?: string; short_url?: string;
@@ -322,6 +323,8 @@ export const isShortCode = (s: string) => /^[A-HJ-NP-Z2-9]{8}$/.test(s);
 export const CONFLICT = { needsPhone: "needs_phone", insufficientCredits: "insufficient_credits", outsideHours: "outside_hours", sponsorLimit: "sponsor_limit", addonDisabled: "addon_disabled", comingSoon: "coming_soon",
   demoBusiness: "demo_business", sharingPaused: "sharing_paused", accountMissing: "privat_account_missing",
   emailNotVerified: "email_not_verified", viewAsNotAllowed: "view_as_not_allowed",
+  needsBusinessPhone: "needs_business_phone", businessClosed: "business_closed", confirmBusiness: "confirm_business",
+  rateLimited: "rate_limited",
   /** 409 from /addons/{key}/enable and /calls/{id}/approve: needs trial/Plus/Familie. */
   needsPlan: "needs_plan", notConfigured: "not_configured" } as const;
 

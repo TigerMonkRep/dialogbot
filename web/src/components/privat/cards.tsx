@@ -309,7 +309,10 @@ export function CallCard({ task }: { task: Task }) {
     if (!phoneJustVerified && balance && !balance.phone_verified) { setNeedPhone(true); return; }
     if (!viaPlan && credits < c.max_credits) { openSheet({ kind: "paywall", taskId: task.id }); return; }
     setBusy(true);
-    try { await api.approveCall(task.id, { window: win, share_phone: share, ...(mobile ? { confirm_business: isBusiness } : {}) }); setNeedPhone(false); await refresh(); }
+    try {
+      await api.approveCall(task.id, { window: win, share_phone: share, ...(mobile ? { confirm_business: isBusiness } : {}), ...(closed ? { at_next_open: true } : {}) });
+      setNeedPhone(false); await refresh();
+    }
     catch (e) {
       const x = e as ClientApiError;
       if (x.code === CONFLICT.needsPhone) setNeedPhone(true);
@@ -317,6 +320,10 @@ export function CallCard({ task }: { task: Task }) {
       else if (x.code === CONFLICT.needsPlan) openSheet({ kind: "needsPlan", taskId: task.id });
       else if (x.code === CONFLICT.addonDisabled) openSheet({ kind: "addon", addonKey: ADDON.call });
       else if (x.code === CONFLICT.demoBusiness) setErr(t("call.demoBusiness"));
+      // The card was stale (no number yet / just closed / mobile number): refresh so it shows the right step, and say why.
+      else if (x.code === CONFLICT.needsBusinessPhone) { setErr(t("call.askNumber")); await refresh(); }
+      else if (x.code === CONFLICT.businessClosed) { setErr(x.message || t("call.outsideHours")); await refresh(); }
+      else if (x.code === CONFLICT.confirmBusiness) setErr(t("call.isBusinessHint"));
       else setErr(x.code === CONFLICT.outsideHours ? t("call.outsideHours") : x.message);
     } finally { setBusy(false); }
   };

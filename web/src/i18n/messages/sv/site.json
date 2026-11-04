@@ -539,5 +539,205 @@
     "accept": "Ja, det går bra",
     "decline": "Nej tack",
     "settings": "Cookieinställningar"
+  },
+  "funnel": {
+    "entry": "Prova på 2 minuter",
+    "shell": {
+      "skip": "Hoppa till innehåll",
+      "back": "Tillbaka",
+      "home": "Startsida",
+      "stepOf": "Steg {n} av {total}",
+      "simulated": "Simulerat",
+      "footer": "Dialogbot · Aarhus",
+      "privacy": "Integritet"
+    },
+    "actions": {
+      "next": "Vidare",
+      "wait": "Vänta …"
+    },
+    "common": {
+      "loading": "Hämtar …",
+      "errorTitle": "Något gick fel. Försök igen.",
+      "choose": "Välj ett",
+      "chooseMany": "Välj ett eller flera",
+      "startOver": "Börja om"
+    },
+    "places": {
+      "label": "Företagets namn",
+      "placeholder": "T.ex. Fjordgulv ApS",
+      "google": "Data från Google",
+      "none": "Inga förslag – skriv namnet och gå vidare.",
+      "searching": "Söker …"
+    },
+    "estimate": {
+      "about": "ca",
+      "perWeek": "samtal i veckan",
+      "source": "Källa: {source}",
+      "edit": "ändra siffran om du vet bättre"
+    },
+    "build": {
+      "pending": "Pågår …",
+      "stillPending": "Tar lite längre – vi gör klart i bakgrunden",
+      "done": "Klar",
+      "skipped": "Hoppade över",
+      "default": "Standard"
+    },
+    "gate": {
+      "name": "Namn",
+      "namePh": "Ditt namn",
+      "nameHint": "Så vet vi vem vi pratar med.",
+      "phone": "Mobil",
+      "phonePh": "12 34 56 78",
+      "phoneHint": "Vi skickar en kod via SMS. Inget samtal förrän du har angett den.",
+      "email": "E-post",
+      "emailPh": "du@foretag.se",
+      "emailHint": "Hit skickar vi länken till ditt konto.",
+      "consent": "Samtycke",
+      "next": "Vidare",
+      "send": "Skicka kod",
+      "sending": "Skickar …",
+      "back": "Tillbaka",
+      "edit": "Ändra",
+      "editAria": "Ändra {field}",
+      "errName": "Skriv ditt namn (minst 2 tecken).",
+      "errPhone": "Skriv ett danskt mobilnummer med 8 siffror.",
+      "errEmail": "Skriv en giltig e-postadress.",
+      "errConsent": "Kryssa i för att fortsätta.",
+      "consentPrivacyBefore": "Läs mer i vår ",
+      "consentPrivacyLink": "integritetspolicy",
+      "consentPrivacyAfter": "."
+    },
+    "code": {
+      "lead": "Vi har skickat en 6-siffrig kod till {phone}.",
+      "label": "Kod från SMS",
+      "hint": "Koden gäller i 10 minuter.",
+      "verifying": "Kontrollerar koden …",
+      "resent": "Ny kod skickad.",
+      "resend": "Skicka koden igen",
+      "resendIn": "Skicka igen om {s} sek.",
+      "wrongNumber": "Fel nummer?",
+      "noGate": "Vi har inte skickat någon kod ännu.",
+      "toGate": "Ange dina uppgifter"
+    },
+    "erhverv": {
+      "meta": {
+        "title": "Prova Dialogbot på 2 minuter – hon ringer dig",
+        "description": "Svara på fem frågor, så bygger vi en receptionist till ert företag och ringer dig så att du kan höra henne. Ingen registrering förrän du vill.",
+        "stepTitle": "Prova Dialogbot – steg {n}"
+      },
+      "hooks": {
+        "default": {
+          "eyebrow": "",
+          "title": "Vad gör ni?",
+          "help": "Då vet receptionisten hur hon tar emot era kunder."
+        },
+        "stige": {
+          "eyebrow": "Du står på stegen",
+          "title": "Telefonen ringer. Vem svarar?",
+          "help": "Svara på fem frågor, så ringer hon dig om 2 minuter. Vad gör ni?"
+        },
+        "1605": {
+          "eyebrow": "Kl. 16.05",
+          "title": "Kunden ringer efter att ni gått hem. Vem svarar?",
+          "help": "Svara på fem frågor, så ringer hon dig om 2 minuter. Vad gör ni?"
+        },
+        "telefonsvarer": {
+          "eyebrow": "Telefonsvararen",
+          "title": "Kunden lägger på vid telefonsvararen. Tänk om någon svarade?",
+          "help": "Svara på fem frågor, så ringer hon dig om 2 minuter. Vad gör ni?"
+        }
+      },
+      "industries": {
+        "haandvaerker": "Hantverkare",
+        "klinik": "Klinik",
+        "salon": "Frisör / salong",
+        "vaerksted": "Verkstad",
+        "raadgiver": "Rådgivare",
+        "restaurant": "Restaurang"
+      },
+      "s2": {
+        "title": "Vad heter företaget?",
+        "help": "Vi slår upp er så att hon känner till adress, öppettider och webbplats."
+      },
+      "s3": {
+        "title": "När svarar ni inte i telefon?",
+        "help": "Välj allt som stämmer.",
+        "missed": {
+          "lunch": "Vid lunch",
+          "after16": "Efter kl. 16",
+          "driving": "När vi kör",
+          "weekend": "På helgen",
+          "never_free": "Vi har sällan händerna fria"
+        }
+      },
+      "s4": {
+        "title": "Vad ska hon kunna?",
+        "help": "Välj ett eller flera – resten kan ni slå på senare.",
+        "wants": {
+          "book": {
+            "label": "Boka tider",
+            "hint": "Direkt i er kalender"
+          },
+          "message": {
+            "label": "Ta emot meddelanden",
+            "hint": "Ni får ett SMS om varje samtal"
+          },
+          "prices": {
+            "label": "Svara på priser",
+            "hint": "Utifrån er webbplats"
+          }
+        }
+      },
+      "s5": {
+        "title": "Vi bygger er receptionist …",
+        "titleNamed": "Vi bygger receptionisten till {company} …",
+        "help": "Det tar under en minut. Inget har skickats eller ringts ännu.",
+        "rows": {
+          "knowledge": "Kunskap från er webbplats",
+          "voice": "Röst för branschen",
+          "hours": "Öppettider",
+          "number": "Nummer att ringa från"
+        },
+        "detail": {
+          "knowledgeSkipped": "Ingen webbplats hittades – ni kan lägga till kunskap efteråt",
+          "hoursDefault": "Standard mån–fre 08–16 – ändra efteråt",
+          "hoursDone": "Från Google: {hours}"
+        },
+        "cta": "Hör henne nu"
+      },
+      "s6": {
+        "title": "Vem ska hon ringa?",
+        "lead": "Namn, mobil och e-post – så skickar vi en kod, och hon ringer dig.",
+        "consent": "Ja tack, Dialogbots digitala receptionist får ringa mig på det här numret en gång och visa hur hon svarar i telefon åt oss. Dialogbot får skicka mig en SMS-kod och skapa ett konto åt mig med min e-post. Samtalet skrivs ned, och en medarbetare från Dialogbot får kontakta mig efteråt om det vi pratade om."
+      },
+      "s7": {
+        "title": "Ange koden från SMS:et"
+      },
+      "klar": {
+        "metaTitle": "Hon ringer nu",
+        "title": "Hon ringer nu till {phone}",
+        "titleNoPhone": "Hon ringer nu",
+        "lead": "Svara och fråga som en kund skulle fråga {company}.",
+        "hours": "Hon ringer bara på vardagar kl. {from}–{to}.",
+        "closed": "Det är utanför ringtiden (vardagar kl. {from}–{to}). Hon ringer så snart den öppnar.",
+        "hoursFallback": "Hon ringer bara på vardagar inom öppettiderna.",
+        "waiting": "Samtalet är på väg",
+        "inProgress": "Samtalet pågår …",
+        "waitedOut": "Vi fick inget svar på samtalet",
+        "doneTitle": "Så gick samtalet",
+        "duration": "{s} sekunder",
+        "noSummary": "Samtalet är slut. Sammanfattningen kommer i er inkorg.",
+        "noCallBefore": "Ringde det inte? Ring oss på ",
+        "noCallAfter": ", så visar vi det live.",
+        "makeHers": "Gör henne till er",
+        "again": "Hör det igen",
+        "note": "Ditt konto är skapat – vi har skickat en länk för att välja lösenord.",
+        "noDraft": "Vi hittade inte ditt utkast.",
+        "startOver": "Börja om",
+        "notLoggedIn": "Logga in för att se hur samtalet gick.",
+        "login": "Logga in",
+        "statusAria": "Status för samtalet"
+      }
+    }
   }
 }

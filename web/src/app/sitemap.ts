@@ -24,6 +24,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...page("/ambassador/bliv", 0.6, "monthly"),
     ...plain("/signup", 0.5, "yearly"),
     ...plain("/privat", 0.8, "monthly"),
+    // The quiz-funnels (language = cookie, like /privat); their numbered steps are noindex.
+    ...plain("/start", 0.8, "monthly"),
+    ...plain("/privat/start", 0.7, "monthly"),
     ...page("/om", 0.5, "monthly"),
     ...page("/gdpr", 0.6, "monthly"),
     ...page("/kontakt", 0.4, "yearly"),

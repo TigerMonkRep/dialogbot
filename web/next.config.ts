@@ -56,6 +56,10 @@ const nextConfig: NextConfig = {
       { source: "/:l([a-z0-9])", destination: "/?utm_source=heycatch&utm_campaign=:l", permanent: false },
       // Back from the calendar provider's consent screen: while the person is in trin 2, the integrations page hands them back to it.
       { source: "/app/settings/integrationer", has: [{ type: "cookie" as const, key: "db_setup_return" }], destination: "/opsaetning/2", permanent: false },
+      // The quiz-funnels: the ad/sitemap URL is the funnel itself; step 1 is where it starts. The query (b=, h=, utm_*)
+      // is carried over automatically.
+      { source: "/start", destination: "/start/1", permanent: false },
+      { source: "/privat/start", destination: "/privat/start/1", permanent: false },
       ...MOVED.map(([source, destination]) => ({ source, destination, permanent: true })),
     ];
   },

@@ -539,5 +539,205 @@
     "accept": "Yes, that's fine",
     "decline": "No thanks",
     "settings": "Cookie settings"
+  },
+  "funnel": {
+    "entry": "Try it in 2 minutes",
+    "shell": {
+      "skip": "Skip to content",
+      "back": "Back",
+      "home": "Home",
+      "stepOf": "Step {n} of {total}",
+      "simulated": "Simulated",
+      "footer": "Dialogbot · Aarhus",
+      "privacy": "Privacy"
+    },
+    "actions": {
+      "next": "Next",
+      "wait": "Please wait …"
+    },
+    "common": {
+      "loading": "Loading …",
+      "errorTitle": "Something went wrong. Please try again.",
+      "choose": "Choose one",
+      "chooseMany": "Choose one or more",
+      "startOver": "Start over"
+    },
+    "places": {
+      "label": "Company name",
+      "placeholder": "E.g. Fjordgulv ApS",
+      "google": "Data from Google",
+      "none": "No suggestions – type the name and continue.",
+      "searching": "Searching …"
+    },
+    "estimate": {
+      "about": "approx.",
+      "perWeek": "calls a week",
+      "source": "Source: {source}",
+      "edit": "change the number if you know better"
+    },
+    "build": {
+      "pending": "In progress …",
+      "stillPending": "Taking a little longer – we finish it in the background",
+      "done": "Ready",
+      "skipped": "Skipped",
+      "default": "Default"
+    },
+    "gate": {
+      "name": "Name",
+      "namePh": "Your name",
+      "nameHint": "So we know who we are talking to.",
+      "phone": "Mobile",
+      "phonePh": "12 34 56 78",
+      "phoneHint": "We text you a code. No call before you have entered it.",
+      "email": "E-mail",
+      "emailPh": "you@company.com",
+      "emailHint": "This is where we send the link to your account.",
+      "consent": "Consent",
+      "next": "Next",
+      "send": "Send code",
+      "sending": "Sending …",
+      "back": "Back",
+      "edit": "Edit",
+      "editAria": "Edit {field}",
+      "errName": "Enter your name (at least 2 characters).",
+      "errPhone": "Enter a Danish mobile number with 8 digits.",
+      "errEmail": "Enter a valid e-mail address.",
+      "errConsent": "Tick the box to continue.",
+      "consentPrivacyBefore": "Read more in our ",
+      "consentPrivacyLink": "privacy policy",
+      "consentPrivacyAfter": "."
+    },
+    "code": {
+      "lead": "We sent a 6-digit code to {phone}.",
+      "label": "Code from the text message",
+      "hint": "The code is valid for 10 minutes.",
+      "verifying": "Checking the code …",
+      "resent": "New code sent.",
+      "resend": "Send the code again",
+      "resendIn": "Send again in {s} s",
+      "wrongNumber": "Wrong number?",
+      "noGate": "We have not sent a code yet.",
+      "toGate": "Enter your details"
+    },
+    "erhverv": {
+      "meta": {
+        "title": "Try Dialogbot in 2 minutes – she calls you",
+        "description": "Answer five questions and we build a receptionist for your business and call you so you can hear her. No sign-up until you want one.",
+        "stepTitle": "Try Dialogbot – step {n}"
+      },
+      "hooks": {
+        "default": {
+          "eyebrow": "",
+          "title": "What do you do?",
+          "help": "So the receptionist knows how to greet your customers."
+        },
+        "stige": {
+          "eyebrow": "You are up the ladder",
+          "title": "The phone rings. Who picks up?",
+          "help": "Answer five questions and she calls you in 2 minutes. What do you do?"
+        },
+        "1605": {
+          "eyebrow": "4.05 pm",
+          "title": "The customer calls after you have gone home. Who picks up?",
+          "help": "Answer five questions and she calls you in 2 minutes. What do you do?"
+        },
+        "telefonsvarer": {
+          "eyebrow": "The voicemail",
+          "title": "The customer hangs up on the voicemail. What if someone answered?",
+          "help": "Answer five questions and she calls you in 2 minutes. What do you do?"
+        }
+      },
+      "industries": {
+        "haandvaerker": "Tradesperson",
+        "klinik": "Clinic",
+        "salon": "Hairdresser / salon",
+        "vaerksted": "Workshop",
+        "raadgiver": "Consultant",
+        "restaurant": "Restaurant"
+      },
+      "s2": {
+        "title": "What is the company called?",
+        "help": "We look you up so she knows your address, opening hours and website."
+      },
+      "s3": {
+        "title": "When do you not pick up the phone?",
+        "help": "Choose everything that applies.",
+        "missed": {
+          "lunch": "At lunch",
+          "after16": "After 4 pm",
+          "driving": "When we drive",
+          "weekend": "At the weekend",
+          "never_free": "Our hands are rarely free"
+        }
+      },
+      "s4": {
+        "title": "What should she be able to do?",
+        "help": "Choose one or more – the rest can be switched on later.",
+        "wants": {
+          "book": {
+            "label": "Book appointments",
+            "hint": "Straight into your calendar"
+          },
+          "message": {
+            "label": "Take messages",
+            "hint": "You get a text about every call"
+          },
+          "prices": {
+            "label": "Answer price questions",
+            "hint": "From your website"
+          }
+        }
+      },
+      "s5": {
+        "title": "We are building your receptionist …",
+        "titleNamed": "We are building the receptionist for {company} …",
+        "help": "It takes less than a minute. Nothing has been sent or called yet.",
+        "rows": {
+          "knowledge": "Knowledge from your website",
+          "voice": "Voice for your line of business",
+          "hours": "Opening hours",
+          "number": "Number to call from"
+        },
+        "detail": {
+          "knowledgeSkipped": "No website found – you can add knowledge afterwards",
+          "hoursDefault": "Default Mon–Fri 08–16 – change it afterwards",
+          "hoursDone": "From Google: {hours}"
+        },
+        "cta": "Hear her now"
+      },
+      "s6": {
+        "title": "Who should she call?",
+        "lead": "Name, mobile and e-mail – then we send a code, and she calls you.",
+        "consent": "Yes, Dialogbot's digital receptionist may call me once on this number and show how she answers the phone for us. Dialogbot may send me a text code and create an account for me with my e-mail. The call is written down, and a Dialogbot employee may contact me afterwards about what we discussed."
+      },
+      "s7": {
+        "title": "Enter the code from the text message"
+      },
+      "klar": {
+        "metaTitle": "She is calling now",
+        "title": "She is calling {phone} now",
+        "titleNoPhone": "She is calling now",
+        "lead": "Pick up and ask what a customer would ask {company}.",
+        "hours": "She only calls on weekdays between {from} and {to}.",
+        "closed": "This is outside calling hours (weekdays {from}–{to}). She calls as soon as they open.",
+        "hoursFallback": "She only calls on weekdays during opening hours.",
+        "waiting": "The call is on its way",
+        "inProgress": "The conversation is in progress …",
+        "waitedOut": "We got no answer on the call",
+        "doneTitle": "How the conversation went",
+        "duration": "{s} seconds",
+        "noSummary": "The call has ended. The summary arrives in your inbox.",
+        "noCallBefore": "Did it not ring? Call us on ",
+        "noCallAfter": " and we show it live.",
+        "makeHers": "Make her yours",
+        "again": "Hear it again",
+        "note": "Your account has been created – we sent you a link to choose a password.",
+        "noDraft": "We could not find your draft.",
+        "startOver": "Start over",
+        "notLoggedIn": "Log in to see how the call went.",
+        "login": "Log in",
+        "statusAria": "Call status"
+      }
+    }
   }
 }

@@ -98,6 +98,7 @@ export default async function Home() {
             <p className="m-0 text-[18px] sm:text-[19px] leading-[1.55] text-ink-soft max-w-[540px]">{t("home.hero.lead")}</p>
             <div className="flex flex-wrap gap-3">
               <Link href="/proev" className={btnPrimary}>{t("home.hero.cta")}<ArrowIcon size={18} /></Link>
+              <Link href="/start" className={btnOutline} data-funnel-entry>{t("funnel.entry")}</Link>
               <div className="hidden sm:block"><ExplainerVideo variant="button" /></div>
             </div>
             <p className="m-0 text-sm text-muted">{t("home.hero.note")}</p>

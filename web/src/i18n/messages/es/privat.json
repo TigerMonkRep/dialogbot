@@ -212,7 +212,8 @@
     "soon": "Próximamente",
     "next": "Siguiente paso: {next}",
     "myTasks": "Mis tareas",
-    "accountBtn": "Cuenta y créditos"
+    "accountBtn": "Cuenta y créditos",
+    "welcomeFunnel": "Peter ha organizado tu día: pulsa Sí, llama para hacer la primera llamada"
   },
   "shortcuts": {
     "remind": {
@@ -894,5 +895,169 @@
     "paywallCallTextNone": "Con Basis, Plus o Familie las llamadas están incluidas. También puedes comprar llamadas extra.",
     "paywallDigitalPlan": "Con un plan, listas y recordatorios son ilimitados.",
     "endTrial": "Terminar la prueba"
+  },
+  "funnel": {
+    "entry": "Pruébalo en 2 minutos",
+    "meta": {
+      "title": "Peter organiza tu día en 2 minutos",
+      "description": "Responde cuatro preguntas y Peter crea tus listas, recordatorios y la primera llamada, listos cuando inicies sesión. Gratis 14 días, sin tarjeta.",
+      "stepTitle": "Dialogbot Privat – paso {n}"
+    },
+    "s1": {
+      "hooks": {
+        "stige": "Llevas todo el día en la escalera",
+        "1605": "16.05 y todavía no has llamado",
+        "telefonsvarer": "Otra vez colgaste al contestador"
+      },
+      "title": "¿Qué has ido posponiendo?",
+      "help": "Elige todo lo que está pendiente. Peter convierte cada cosa en una tarea.",
+      "postponed": {
+        "dentist": "El dentista",
+        "bike": "Revisión de la bici",
+        "car_inspection": "La ITV",
+        "gift": "Un regalo",
+        "doctor": "El médico",
+        "hairdresser": "La peluquería",
+        "insurance": "El seguro",
+        "landlord": "Casero / comunidad"
+      }
+    },
+    "s2": {
+      "title": "¿Quiénes vivís en casa?",
+      "help": "Así tienes las listas correctas desde el principio.",
+      "household": {
+        "alone": {
+          "label": "Solo yo",
+          "hint": "Lista de la compra"
+        },
+        "couple": {
+          "label": "Nosotros dos",
+          "hint": "Lista de la compra compartida"
+        },
+        "kids": {
+          "label": "Familia con niños",
+          "hint": "Compra + lista de equipaje"
+        },
+        "parents": {
+          "label": "Familia con padres a los que ayudamos",
+          "hint": "Compra + cumpleaños"
+        }
+      }
+    },
+    "s3": {
+      "title": "¿Qué es lo que más odias llamar?",
+      "help": "Peter llama por ti, pero nunca antes de que digas que sí. Mira cómo lo hace.",
+      "hate": {
+        "health": "Médico y dentista",
+        "workshop": "El taller",
+        "municipality": "El ayuntamiento",
+        "restaurant": "Reservar mesa"
+      },
+      "exampleAria": "Ejemplo de conversación de Peter",
+      "exampleRole": "llama por ti",
+      "exampleNote": "Ejemplo. Peter siempre dice que llama en tu nombre y solo acuerda lo que tú has aprobado.",
+      "examples": {
+        "health": [
+          {
+            "who": "peter",
+            "text": "Hola, llamo de parte de Mette Jensen. Quiere una cita para una revisión dental, mejor por la mañana."
+          },
+          {
+            "who": "them",
+            "text": "Tenemos martes a las 9 o miércoles a las 10.30."
+          },
+          {
+            "who": "peter",
+            "text": "Gracias. No puedo elegir por ella, así que le envío las dos horas a Mette y ella confirma."
+          }
+        ],
+        "workshop": [
+          {
+            "who": "peter",
+            "text": "Hola, llamo de parte de Mette Jensen. Su coche necesita la inspección: ¿tenéis hueco la semana que viene y cuánto cuesta?"
+          },
+          {
+            "who": "them",
+            "text": "Jueves por la mañana, 650 coronas."
+          },
+          {
+            "who": "peter",
+            "text": "Gracias. Se lo digo a Mette y ella confirma la hora."
+          }
+        ],
+        "municipality": [
+          {
+            "who": "peter",
+            "text": "Hola, llamo de parte de Mette Jensen por su expediente número 24-118. Quiere saber si falta algo por su parte."
+          },
+          {
+            "who": "them",
+            "text": "Nos falta un recibo; se puede enviar por e-Boks."
+          },
+          {
+            "who": "peter",
+            "text": "Gracias. Se lo escribo a Mette para que lo envíe."
+          }
+        ],
+        "restaurant": [
+          {
+            "who": "peter",
+            "text": "Hola, quisiera reservar mesa para cuatro el viernes a las 19 a nombre de Mette Jensen."
+          },
+          {
+            "who": "them",
+            "text": "A las 19 está lleno; a las 19.30 sí podemos."
+          },
+          {
+            "who": "peter",
+            "text": "Se lo pregunto a Mette antes de decir que sí. Vuelvo a llamar."
+          }
+        ]
+      }
+    },
+    "s4": {
+      "title": "¿Cuándo debe recordártelo Peter?",
+      "help": "Un recordatorio al día, no más.",
+      "remind": {
+        "morning": {
+          "label": "Por la mañana",
+          "hint": "a las 8"
+        },
+        "lunch": {
+          "label": "A mediodía",
+          "hint": "a las 12"
+        },
+        "evening": {
+          "label": "Por la tarde",
+          "hint": "a las 19"
+        }
+      }
+    },
+    "s5": {
+      "title": "Peter está organizando tu día …",
+      "help": "No se ha llamado ni enviado nada. Las tareas te esperan cuando inicies sesión.",
+      "rows": {
+        "tasks": "Tus tareas",
+        "lists": "Tus listas",
+        "firstCall": "La primera llamada"
+      },
+      "detail": {
+        "tasks": "{n|una tarea|# tareas}",
+        "lists": "{n|una lista|# listas}",
+        "noCall": "Aún sin llamadas: puedes pedir a Peter que llame más tarde"
+      },
+      "summary": {
+        "tasks": "{n|1 tarea|# tareas}",
+        "lists": "{n|1 lista|# listas}",
+        "call": "{n} llamada que hará Peter"
+      },
+      "cta": "Ver mi día"
+    },
+    "s6": {
+      "title": "¿A quién debe ayudar Peter?",
+      "lead": "Nombre, móvil y correo; te enviamos un código y tu día queda listo.",
+      "consent": "Sí, cread una cuenta de Dialogbot Privat con mi correo y enviadme un código por SMS. La prueba de 14 días empieza ahora y no requiere tarjeta. Peter nunca llama a nadie antes de que yo diga que sí.",
+      "codeTitle": "Introduce el código del SMS"
+    }
   }
 }

@@ -51,6 +51,35 @@ const btnOutline = "inline-flex items-center justify-center gap-2.5 min-h-[52px]
 const stepNo = "inline-flex w-14 h-14 rounded-[14px] bg-highlight items-center justify-center font-display font-extrabold text-[30px] shrink-0";
 const tile = "inline-flex w-12 h-12 rounded-xl bg-accent items-center justify-center shrink-0";
 
+/** Three check points under a dashed rule – the same on all three price cards. */
+function Points({ items }: { items: string[] }) {
+  return (
+    <ul className="m-0 p-0 list-none flex flex-col gap-2 pt-1 border-t-2 border-dashed border-ink/30">
+      {items.map((x) => (
+        <li key={x} className="flex items-start gap-2.5 text-[15px] pt-2"><span className="mt-0.5 inline-flex w-5 h-5 shrink-0 rounded-full bg-success text-white items-center justify-center"><CheckIcon size={12} /></span><span>{x}</span></li>
+      ))}
+    </ul>
+  );
+}
+
+/** The two add-on price cards (campaign calls, specialist setup): icon tile + «Tilvalg» stamp, the price, three
+ *  check points and an outline door – so they carry as much as the subscription card instead of a bare number. */
+function PriceAddon({ k, price, icon, href, points, t }: { k: "campaign" | "setup"; price: string; icon: React.ReactNode; href: string; points: string[]; t: T }) {
+  return (
+    <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
+      <span className="flex items-center gap-3">
+        <span className={tile}>{icon}</span>
+        <span className="ml-auto inline-flex items-center min-h-6 px-2.5 rounded-full border-[1.5px] border-ink bg-panel text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">{t(`home.price.${k}.badge`)}</span>
+      </span>
+      <span className="font-display font-bold text-xl">{t(`home.price.${k}.name`)}</span>
+      <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">{price}</span><span className="text-lg font-semibold text-ink-soft">{t(`home.price.${k}.unit`)}</span></div>
+      <span className="text-[15px] text-ink-soft">{t(`home.price.${k}.text`)}</span>
+      <Points items={points} />
+      <Link href={href} className={`${btnOutline} mt-auto`}>{t(`home.price.${k}.cta`)}<ArrowIcon size={18} /></Link>
+    </article>
+  );
+}
+
 function Bubble({ who, initial, children }: { who: "D" | "K"; initial: string; children: React.ReactNode }) {
   const bot = who === "D";
   return (
@@ -194,26 +223,31 @@ export default async function Home() {
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
             <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block">
-              <span className="flex items-center gap-3 flex-wrap"><span className="font-display font-bold text-xl">{t("home.price.subscription.name")}</span><span className="inline-flex items-center min-h-6 px-2.5 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">{t("home.price.subscription.badge")}</span></span>
+              <span className="flex items-center gap-3"><span className={tile}><PhoneIcon size={22} /></span><span className="ml-auto inline-flex items-center min-h-6 px-2.5 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">{t("home.price.subscription.badge")}</span></span>
+              <span className="font-display font-bold text-xl">{t("home.price.subscription.name")}</span>
               <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">{t("prices.monthly")}</span><span className="text-lg font-semibold text-ink-soft">{t("home.price.subscription.unit")}</span></div>
               <span className="text-[15px] text-ink-soft">{t("home.price.subscription.text")}</span>
+              <Points items={raw<string[]>("site.home.price.subscription.points")} />
               <span className="text-[15px] text-ink-soft">{t("home.price.subscription.compare")}</span>
               <Link href="/proev" className={`${btnPrimary} mt-auto`}>{t("home.price.subscription.cta")}<ArrowIcon size={18} /></Link>
             </article>
-            <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
-              <span className="font-display font-bold text-xl">{t("home.price.campaign.name")}</span>
-              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">{t("prices.perCall")}</span><span className="text-lg font-semibold text-ink-soft">{t("home.price.campaign.unit")}</span></div>
-              <span className="text-[15px] text-ink-soft">{t("home.price.campaign.text")}</span>
-            </article>
-            <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
-              <span className="font-display font-bold text-xl">{t("home.price.setup.name")}</span>
-              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">{t("prices.setup")}</span><span className="text-lg font-semibold text-ink-soft">{t("home.price.setup.unit")}</span></div>
-              <span className="text-[15px] text-ink-soft">{t("home.price.setup.text")}</span>
-            </article>
+            <PriceAddon k="campaign" price={t("prices.perCall")} icon={<SendIcon size={22} />} href="/kontakt" points={raw<string[]>("site.home.price.campaign.points")} t={t} />
+            <PriceAddon k="setup" price={t("prices.setup")} icon={<CalendarIcon size={22} />} href="/kontakt" points={raw<string[]>("site.home.price.setup.points")} t={t} />
           </div>
           <div className="flex flex-col gap-2 max-w-[720px]">
             <h3 className="m-0 font-display font-bold text-[22px] leading-tight">{t("home.price.whyTitle")}</h3>
             <p className="m-0 text-[16px] leading-[1.55] text-ink-soft">{t("home.price.whyText")}</p>
+          </div>
+          {/* CTA row: the price should end in a door, not a paragraph. */}
+          <div className="rounded-[20px] bg-ink text-white p-6 sm:p-8 flex flex-col md:flex-row md:items-center gap-5 md:gap-8">
+            <div className="flex-1 flex flex-col gap-1.5">
+              <span className="font-display font-extrabold text-[24px] leading-tight">{t("home.price.bottom.title")}</span>
+              <span className="text-[16px] text-white/80">{t("home.price.bottom.text")}</span>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+              <Link href="/proev" className={btnPrimary}><PhoneIcon size={18} />{t("home.price.bottom.primary")}</Link>
+              <Link href="/byggevejledning" className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-white text-ink no-underline font-semibold text-[17px] hover:bg-panel">{t("home.price.bottom.secondary")}<ArrowIcon size={18} /></Link>
+            </div>
           </div>
           <Link href="/priser" className="self-start text-[15px] font-semibold text-ink underline underline-offset-4 inline-flex items-center min-h-11">{t("home.price.allDetails")}</Link>
         </div>

@@ -93,21 +93,46 @@
         "unit": "kr./md.",
         "text": "Hele prisen: telefon, booking og webchat er med – inkl. 300 minutters indgående opkald om måneden. Ingen binding. Gør-det-selv-opsætning er med.",
         "compare": "Prisen på en telefonpasning – men en receptionist, der også booker tiderne i jeres kalender.",
-        "cta": "Vælg her – hør den først"
+        "cta": "Vælg her – hør den først",
+        "points": [
+          "Telefon, booking og webchat – alt er med",
+          "300 minutters indgående opkald om måneden",
+          "Ingen binding – opsigelse måned til måned"
+        ]
       },
       "campaign": {
         "name": "Udgående kampagneopkald",
         "unit": "kr. pr. opkald + 2 kr. pr. minut",
-        "text": "Kun hvis I vil have Dialogbot til at ringe ud. Ubesvaret: 4 kr. Tre minutters samtale: 10 kr. I ser den højeste pris, før I starter."
+        "text": "Kun hvis I vil have Dialogbot til at ringe ud. Ubesvaret: 4 kr. Tre minutters samtale: 10 kr. I ser den højeste pris, før I starter.",
+        "badge": "Tilvalg",
+        "points": [
+          "Betaling kun pr. opkald – intet ekstra abonnement",
+          "I godkender manuskriptet, før den ringer til nogen",
+          "Maks-prisen vises, før kampagnen starter"
+        ],
+        "cta": "Planlæg en kampagne"
       },
       "setup": {
         "name": "Opsætning fra vores specialister",
         "unit": "kr. én gang",
-        "text": "Skræddersyet opsætning og integration til jeres egne systemer – kalender, CRM, bookingsystem. Kun hvis I ikke vil gøre det selv."
+        "text": "Skræddersyet opsætning og integration til jeres egne systemer – kalender, CRM, bookingsystem. Kun hvis I ikke vil gøre det selv.",
+        "badge": "Tilvalg · én gang",
+        "points": [
+          "Kalender, CRM og bookingsystem koblet på",
+          "Receptionsmanuskript skrevet sammen med jer",
+          "I godkender alt, før den tager det første opkald"
+        ],
+        "cta": "Book opsætning"
       },
       "whyTitle": "Hvorfor vi koster mere end en chatbot",
       "whyText": "En billig chatbot svarer med det, den har lært af internettet. Dialogbot svarer kun ud fra viden, I selv har godkendt, og viser jer hver ændring først: før → efter, «Godkend?». Den kan også booke, flytte og aflyse tider i jeres kalender og sende SMS-bekræftelse – og I får en besked om hvert opkald. Det er derfor, den koster mere end en telefonsvarer.",
-      "allDetails": "Alle detaljer om prisen →"
+      "allDetails": "Alle detaljer om prisen →",
+      "bottom": {
+        "title": "Klar til at høre den?",
+        "text": "Peter ringer dig op på under et minut – gratis og uden tilmelding.",
+        "primary": "Hør den først",
+        "secondary": "Byg den selv på 30 min."
+      }
     },
     "start": {
       "eyebrow": "Kom i gang",

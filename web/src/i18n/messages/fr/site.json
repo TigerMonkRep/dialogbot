@@ -93,21 +93,46 @@
         "unit": "kr./mois",
         "text": "Prix tout compris : téléphone, prise de rendez-vous et chat web – avec 300 minutes d’appels entrants par mois. Sans engagement. Configuration en autonomie incluse.",
         "compare": "Le prix d’une permanence téléphonique – mais un réceptionniste qui prend aussi les rendez-vous dans votre agenda.",
-        "cta": "Choisir – écoutez-le d’abord"
+        "cta": "Choisir – écoutez-le d’abord",
+        "points": [
+          "Téléphone, réservation et chat web – tout inclus",
+          "300 minutes d'appels entrants par mois",
+          "Sans engagement – résiliable chaque mois"
+        ]
       },
       "campaign": {
         "name": "Appels sortants de campagne",
         "unit": "kr. par appel + 2 kr. par minute",
-        "text": "Uniquement si vous voulez que Dialogbot passe des appels. Sans réponse : 4 kr. Trois minutes de conversation : 10 kr. Vous voyez le prix maximal avant de lancer."
+        "text": "Uniquement si vous voulez que Dialogbot passe des appels. Sans réponse : 4 kr. Trois minutes de conversation : 10 kr. Vous voyez le prix maximal avant de lancer.",
+        "badge": "Option",
+        "points": [
+          "Paiement à l'appel uniquement – pas d'abonnement en plus",
+          "Vous validez le script avant tout appel",
+          "Le prix maximum est affiché avant le lancement"
+        ],
+        "cta": "Planifier une campagne"
       },
       "setup": {
         "name": "Mise en service par nos spécialistes",
         "unit": "kr. une fois",
-        "text": "Configuration sur mesure et intégration à vos propres outils – agenda, CRM, logiciel de réservation. Uniquement si vous ne voulez pas le faire vous-même."
+        "text": "Configuration sur mesure et intégration à vos propres outils – agenda, CRM, logiciel de réservation. Uniquement si vous ne voulez pas le faire vous-même.",
+        "badge": "Option · une fois",
+        "points": [
+          "Agenda, CRM et système de réservation connectés",
+          "Script d'accueil rédigé avec vous",
+          "Vous validez tout avant le premier appel"
+        ],
+        "cta": "Réserver la mise en place"
       },
       "whyTitle": "Pourquoi nous coûtons plus qu’un chatbot",
       "whyText": "Un chatbot bon marché répond avec ce qu’il a appris sur Internet. Dialogbot répond uniquement à partir des connaissances que vous avez validées, et vous montre chaque modification d’abord : avant → après, « Valider ? ». Il peut aussi prendre, déplacer et annuler des rendez-vous dans votre agenda et envoyer une confirmation par SMS – et vous recevez un message après chaque appel. C’est pour cela qu’il coûte plus cher qu’un répondeur.",
-      "allDetails": "Tous les détails sur le tarif →"
+      "allDetails": "Tous les détails sur le tarif →",
+      "bottom": {
+        "title": "Prêt à l'entendre ?",
+        "text": "Peter vous rappelle en moins d'une minute – gratuit, sans inscription.",
+        "primary": "L'entendre d'abord",
+        "secondary": "La construire vous-même en 30 min."
+      }
     },
     "start": {
       "eyebrow": "Commencer",

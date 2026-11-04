@@ -93,21 +93,46 @@
         "unit": "kr./month",
         "text": "The full price: phone, booking and web chat included – with 300 minutes of incoming calls a month. No lock-in. Do-it-yourself setup included.",
         "compare": "The price of a call-answering service – but a receptionist that also books appointments in your calendar.",
-        "cta": "Choose this – hear it first"
+        "cta": "Choose this – hear it first",
+        "points": [
+          "Phone, booking and web chat – all included",
+          "300 minutes of incoming calls a month",
+          "No lock-in – cancel month to month"
+        ]
       },
       "campaign": {
         "name": "Outbound campaign calls",
         "unit": "kr. per call + 2 kr. per minute",
-        "text": "Only if you want Dialogbot to make calls. Unanswered: 4 kr. A three-minute conversation: 10 kr. You see the maximum price before you start."
+        "text": "Only if you want Dialogbot to make calls. Unanswered: 4 kr. A three-minute conversation: 10 kr. You see the maximum price before you start.",
+        "badge": "Add-on",
+        "points": [
+          "Pay per call only – no extra subscription",
+          "You approve the script before it calls anyone",
+          "The maximum price is shown before the campaign starts"
+        ],
+        "cta": "Plan a campaign"
       },
       "setup": {
         "name": "Setup by our specialists",
         "unit": "kr. one-off",
-        "text": "Tailored setup and integration with your own systems – calendar, CRM, booking system. Only if you'd rather not do it yourself."
+        "text": "Tailored setup and integration with your own systems – calendar, CRM, booking system. Only if you'd rather not do it yourself.",
+        "badge": "Add-on · one-off",
+        "points": [
+          "Calendar, CRM and booking system connected",
+          "Reception script written together with you",
+          "You approve everything before the first call"
+        ],
+        "cta": "Book setup"
       },
       "whyTitle": "Why we cost more than a chatbot",
       "whyText": "A cheap chatbot answers with whatever it picked up from the internet. Dialogbot only answers from knowledge you have approved, and shows you every change first: before → after, “Approve?”. It can also book, move and cancel appointments in your calendar and send SMS confirmations – and you get a message about every call. That's why it costs more than an answering machine.",
-      "allDetails": "Full pricing details →"
+      "allDetails": "Full pricing details →",
+      "bottom": {
+        "title": "Ready to hear it?",
+        "text": "Peter calls you back in under a minute – free, no sign-up.",
+        "primary": "Hear it first",
+        "secondary": "Build it yourself in 30 min."
+      }
     },
     "start": {
       "eyebrow": "Get started",

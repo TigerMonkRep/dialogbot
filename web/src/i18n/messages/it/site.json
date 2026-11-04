@@ -93,21 +93,46 @@
         "unit": "kr./mese",
         "text": "Prezzo tutto incluso: telefono, prenotazioni e webchat, con 300 minuti di chiamate in entrata al mese. Nessun vincolo. La configurazione fai da te è inclusa.",
         "compare": "Il prezzo di un servizio di segreteria telefonica, ma con un receptionist che prenota anche gli appuntamenti nel vostro calendario.",
-        "cta": "Scelga qui: prima lo ascolti"
+        "cta": "Scelga qui: prima lo ascolti",
+        "points": [
+          "Telefono, prenotazioni e chat web – tutto incluso",
+          "300 minuti di chiamate in entrata al mese",
+          "Nessun vincolo – disdici mese per mese"
+        ]
       },
       "campaign": {
         "name": "Chiamate in uscita delle campagne",
         "unit": "kr. a chiamata + 2 kr. al minuto",
-        "text": "Solo se volete che Dialogbot effettui chiamate. Senza risposta: 4 kr. Tre minuti di conversazione: 10 kr. Vedete il prezzo massimo prima di iniziare."
+        "text": "Solo se volete che Dialogbot effettui chiamate. Senza risposta: 4 kr. Tre minuti di conversazione: 10 kr. Vedete il prezzo massimo prima di iniziare.",
+        "badge": "Opzionale",
+        "points": [
+          "Paghi solo per chiamata – nessun abbonamento extra",
+          "Approvi il copione prima che chiami qualcuno",
+          "Il prezzo massimo è mostrato prima dell'avvio"
+        ],
+        "cta": "Pianifica una campagna"
       },
       "setup": {
         "name": "Configurazione a cura dei nostri specialisti",
         "unit": "kr. una tantum",
-        "text": "Configurazione su misura e integrazione con i vostri sistemi: calendario, CRM, sistema di prenotazione. Solo se non volete farlo da soli."
+        "text": "Configurazione su misura e integrazione con i vostri sistemi: calendario, CRM, sistema di prenotazione. Solo se non volete farlo da soli.",
+        "badge": "Opzionale · una tantum",
+        "points": [
+          "Calendario, CRM e sistema di prenotazione collegati",
+          "Copione di accoglienza scritto insieme a voi",
+          "Approvate tutto prima della prima chiamata"
+        ],
+        "cta": "Prenota la configurazione"
       },
       "whyTitle": "Perché costiamo più di un chatbot",
       "whyText": "Un chatbot economico risponde con ciò che ha imparato da internet. Dialogbot risponde solo in base a conoscenze approvate da voi e vi mostra prima ogni modifica: prima → dopo, «Approvare?». Sa anche prenotare, spostare e annullare appuntamenti nel vostro calendario e inviare conferme via SMS, e voi ricevete un messaggio per ogni chiamata. Ecco perché costa più di una segreteria telefonica.",
-      "allDetails": "Tutti i dettagli sul prezzo →"
+      "allDetails": "Tutti i dettagli sul prezzo →",
+      "bottom": {
+        "title": "Pronto ad ascoltarla?",
+        "text": "Peter ti richiama in meno di un minuto – gratis, senza registrazione.",
+        "primary": "Ascoltala prima",
+        "secondary": "Costruiscila da solo in 30 min."
+      }
     },
     "start": {
       "eyebrow": "Inizia ora",

@@ -93,21 +93,46 @@
         "unit": "kr./mes",
         "text": "Todo incluido: teléfono, reservas y chat web, con 300 minutos de llamadas entrantes al mes. Sin permanencia. La configuración por su cuenta está incluida.",
         "compare": "El precio de un servicio de atención telefónica, pero con un recepcionista que además reserva las citas en su calendario.",
-        "cta": "Elija aquí: escúchelo primero"
+        "cta": "Elija aquí: escúchelo primero",
+        "points": [
+          "Teléfono, reservas y chat web – todo incluido",
+          "300 minutos de llamadas entrantes al mes",
+          "Sin permanencia – cancela mes a mes"
+        ]
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
         "unit": "kr. por llamada + 2 kr. por minuto",
-        "text": "Solo si quiere que Dialogbot haga llamadas. Sin respuesta: 4 kr. Conversación de tres minutos: 10 kr. Verá el precio máximo antes de empezar."
+        "text": "Solo si quiere que Dialogbot haga llamadas. Sin respuesta: 4 kr. Conversación de tres minutos: 10 kr. Verá el precio máximo antes de empezar.",
+        "badge": "Opcional",
+        "points": [
+          "Pago solo por llamada – sin suscripción extra",
+          "Apruebas el guion antes de que llame a nadie",
+          "El precio máximo se muestra antes de empezar"
+        ],
+        "cta": "Planificar una campaña"
       },
       "setup": {
         "name": "Configuración por nuestros especialistas",
         "unit": "kr. pago único",
-        "text": "Configuración a medida e integración con sus propios sistemas: calendario, CRM, sistema de reservas. Solo si no quiere hacerlo usted mismo."
+        "text": "Configuración a medida e integración con sus propios sistemas: calendario, CRM, sistema de reservas. Solo si no quiere hacerlo usted mismo.",
+        "badge": "Opcional · pago único",
+        "points": [
+          "Calendario, CRM y sistema de reservas conectados",
+          "Guion de recepción escrito contigo",
+          "Apruebas todo antes de la primera llamada"
+        ],
+        "cta": "Reservar configuración"
       },
       "whyTitle": "Por qué cuesta más que un chatbot",
       "whyText": "Un chatbot barato responde con lo que ha aprendido de internet. Dialogbot solo responde con información que usted ha aprobado y le muestra cada cambio primero: antes → después, «¿Aprobar?». Además puede reservar, cambiar y cancelar citas en su calendario y enviar confirmaciones por SMS, y usted recibe un aviso de cada llamada. Por eso cuesta más que un contestador automático.",
-      "allDetails": "Todos los detalles del precio →"
+      "allDetails": "Todos los detalles del precio →",
+      "bottom": {
+        "title": "¿Listo para escucharla?",
+        "text": "Peter te llama en menos de un minuto – gratis y sin registro.",
+        "primary": "Escúchala primero",
+        "secondary": "Constrúyela tú en 30 min."
+      }
     },
     "start": {
       "eyebrow": "Empezar",

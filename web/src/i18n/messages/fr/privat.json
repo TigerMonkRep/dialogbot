@@ -954,6 +954,9 @@
       "title": "Qui vit chez vous ?",
       "help": "Pour avoir les bonnes listes dès le départ.",
       "household": {
+    "photoAdd": "Ajouter une photo du reçu",
+    "photoReplace": "Remplacer la photo",
+    "photoOpen": "Voir la photo",
         "alone": {
           "label": "Moi seul(e)",
           "hint": "Liste de courses"

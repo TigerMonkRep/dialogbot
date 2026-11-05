@@ -156,7 +156,7 @@ def test_expenses_settle_with_fewest_transfers_and_a_branded_summary(api, pv):
     assert "Bo betaler 500 kr. til Mette" in text and "Anna betaler 200 kr. til Mette" in text
     assert "Sendt med Dialogbot" in text
     item = api.get(tok, "/privat/apps/faelles-udgifter/overview").json()["items"][0]
-    assert item["text"] == "sommerhuset" or item["text"].lower() == "sommerhuset" and "Dialogbot" in item["share_text"]
+    assert item["text"] == "sommerhuset" and "Dialogbot" in item["share_text"]
 
 
 def test_settle_unit_rounds_to_the_øre():
@@ -340,3 +340,100 @@ def test_operator_sees_the_lead_ledger(api, pv, db, monkeypatch):
     items = api.get(api.operator(), "/operator/privat/business-referrals").json()["items"]
     assert items[0] == {**items[0], "business_name": "Maler Jensen", "asked": 1, "chosen": 1}
     assert {i["business_name"] for i in items} == {"Maler Jensen", "Farve & Co"}
+
+
+# --------------------------------------------------------------------------- round 2: the testers' suggestions
+
+PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
+
+
+def test_receipt_photo_is_private_and_checked(api, pv, client, tmp_path, monkeypatch):
+    monkeypatch.setenv("VOICE_STORAGE_DIR", str(tmp_path))
+    get_settings.cache_clear()
+    tok = pv.account("mette@testmail.dk")
+    _on(api, tok, "garanti")
+    pv.say(tok, "Jeg købte en vaskemaskine i Elgiganten den 2025-11-20 til 4.999 kr.")
+    item = api.get(tok, "/privat/apps/garanti/overview").json()["items"][0]
+    assert item["photo"] is True and item["photo_url"] is None
+    h = {"Authorization": f"Bearer {tok}", "content-type": "image/png"}
+    url = f"/api/v1/privat/apps/garanti/items/{item['id']}/photo"
+    assert client.post(url, content=b"not an image", headers=h).status_code == 422
+    assert client.post(url, content=PNG, headers=h).status_code == 200
+    item = api.get(tok, "/privat/apps/garanti/overview").json()["items"][0]
+    assert item["photo_url"].startswith("local://privat-files/") and "/garanti/" in item["photo_url"]
+    ole = pv.account("ole@testmail.dk", name="Ole Berg")
+    _on(api, ole, "garanti")
+    assert client.post(url, content=PNG, headers={"Authorization": f"Bearer {ole}"}).status_code == 404   # not his
+    assert client.post("/api/v1/privat/apps/fest/items/x/photo", content=PNG, headers=h).status_code in (403, 404)
+    get_settings.cache_clear()
+
+
+def test_shopping_list_carries_the_grocery_partner(api, pv, partners):
+    tok = pv.account("mette@testmail.dk")
+    out = pv.say(tok, "Lav en indkøbsliste med mælk og brød")
+    tid = next(m["task_id"] for m in out["messages"] if m["kind"] == "task")
+    t = pv.task(tok, tid).json()
+    assert t["list_type"] == "shopping" and t["partner"]["name"] == "Testkøb" and "Annonce" in t["partner"]["note"]
+
+
+def test_expenses_live_on_a_list_friends_can_add_to(api, pv, db):
+    tok = pv.account("mette@testmail.dk")
+    _on(api, tok, "faelles-udgifter")
+    out = pv.say(tok, "Jeg betalte 1.200 kr. for mad i sommerhuset – vi er Anna, Bo og mig")
+    assert "Del listen «Udgifter: sommerhuset»" in _last(out)
+    g = app_kit.items(db, pv.ws(tok), "faelles-udgifter")[0]
+    t = pv.task(tok, g["task_id"]).json()
+    assert [i["text"] for i in t["items"]] == ["Mette: 1.200 kr. – mad"]
+    # a friend (or the user) adds a line by hand – with or without a name
+    api.post(tok, f"/privat/tasks/{g['task_id']}/items", {"text": "Bo: 300 kr. – vin"})
+    api.post(tok, f"/privat/tasks/{g['task_id']}/items", {"text": "husk kvitteringerne"})          # not an expense
+    text = _last(pv.say(tok, "Hvem skylder hvem?"))
+    assert "1.500 kr. i alt" in text and "Anna betaler 500 kr. til Mette" in text and "Bo betaler 200 kr. til Mette" in text
+
+
+def test_expense_line_parser():
+    assert expenses.LINE.match("Bo: 250 kr – pizza").group("name") == "Bo"
+    m = expenses.LINE.match("250 kr pizza")
+    assert m.group("name") is None and m.group("amt") == "250" and m.group("text") == "pizza"
+
+
+def test_mobilepay_number_only_when_verified_and_owed(db, pv, api):
+    tok = pv.account("mette@testmail.dk")
+    g = {"name": "x", "people": ["Mette", "Bo"], "expenses": [{"payer": "Mette", "amount_minor": 1000, "among": None}]}
+    assert expenses.mobilepay_for(db, pv.ws(tok), "Mette") == {}                       # not verified: no number
+    pv.verify_phone(tok)
+    db.expire_all()
+    mp = expenses.mobilepay_for(db, pv.ws(tok), "Mette")
+    assert "Bo betaler 5 kr. til Mette (MobilePay 20 30 40 50)" in expenses.summary_text(g, mobilepay=mp)
+
+
+def test_moving_checklist_includes_the_other_apps(api, pv):
+    tok = pv.account("mette@testmail.dk")
+    for k in ("flytning", "abonnementer", "hus-og-vedligehold"):
+        _on(api, tok, k)
+    pv.say(tok, "Jeg har Norlys til 299 kr. om måneden")
+    out = pv.say(tok, "Vi flytter til Odense den 2027-01-04")
+    tid = next(m["task_id"] for m in out["messages"] if m["kind"] == "task")
+    texts = [i["text"] for i in pv.task(tok, tid).json()["items"]]
+    assert "Flyt eller opsig Norlys (5. december 2026)" in texts
+    assert any(x.startswith("Vælg de faste opgaver i det nye hjem") for x in texts)
+
+
+def test_house_profile_picks_the_jobs(db, pv):
+    tok = pv.account("mette@testmail.dk")
+    ws = pv.ws(tok)
+    home.save_profile(db, ws, home="lejlighed", heating="fjernvarme")
+    names = [j["name"] for j in home.add(db, ws, names=["alle"], today=date(2026, 11, 4))]
+    assert "Rens tagrenderne" not in names and "Service på fyr eller varmepumpe" not in names
+    assert "Test røgalarmerne" in names
+
+
+def test_complaint_remedy_and_chip_and_streak():
+    row = {"id": "a", "name": "TV", "bought": "2026-06-01"}
+    assert "at hæve købet" in warranty.complaint(row, "skærmen er sort", "Mette", date(2026, 11, 4), remedy="refund")
+    from app.modules.privat import fitness, pets
+
+    assert "chip" not in pets.line({"name": "Bella"}) and "chip 208123456789012" in pets.line({"name": "Bella", "chip": "208123456789012"})
+    data = {"items": [{"day": "mandag", "activity": "Løb"}],
+            "log": [{"date": "2026-10-26", "activity": "Løb"}, {"date": "2026-10-19", "activity": "Løb"}]}
+    assert fitness.streak(data, date(2026, 11, 4)) == 2

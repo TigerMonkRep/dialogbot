@@ -954,6 +954,9 @@
       "title": "Chi c'è a casa?",
       "help": "Così hai le liste giuste fin dall'inizio.",
       "household": {
+    "photoAdd": "Aggiungi foto dello scontrino",
+    "photoReplace": "Sostituisci foto",
+    "photoOpen": "Vedi foto",
         "alone": {
           "label": "Solo io",
           "hint": "Lista della spesa"

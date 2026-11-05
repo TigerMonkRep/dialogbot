@@ -954,6 +954,9 @@
       "title": "Vilka är ni hemma?",
       "help": "Så får du rätt listor från början.",
       "household": {
+    "photoAdd": "Lägg till foto av kvittot",
+    "photoReplace": "Byt foto",
+    "photoOpen": "Visa foto",
         "alone": {
           "label": "Jag själv",
           "hint": "Inköpslista"

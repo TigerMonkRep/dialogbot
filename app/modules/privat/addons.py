@@ -554,9 +554,10 @@ register(Addon(
         "request_quotes",
         "Find op til 3 lokale virksomheder og foreslå et opkald til hver for at få et tilbud. job: opgaven med brugerens "
         "egne ord (fx «male stuen, ca. 30 m²»), trade: søgeord for virksomheden (fx «maler», «flyttefirma»), city: by "
-        "eller postnummer. Der ringes ALDRIG før brugeren godkender hvert opkald.",
+        "eller postnummer. address: KUN hvis brugeren selv har skrevet adressen og sagt, at håndværkerne må få den (til "
+        "en besigtigelse). Der ringes ALDRIG før brugeren godkender hvert opkald.",
         _obj({"job": {"type": "string"}, "trade": {"type": "string"}, "city": {"type": "string"},
-              "window": {"type": "string"}}, ["job", "trade"]),
+              "window": {"type": "string"}, "address": {"type": "string"}}, ["job", "trade"]),
         _H + "tool_request_quotes"),
         AddonTool("compare_quotes", "Vis tilbuddene side om side (seneste opgave, eller den med job).",
                   _obj({"job": {"type": "string"}}), _H + "tool_compare_quotes"),
@@ -611,8 +612,12 @@ register(Addon(
         _H + "tool_add_purchase"),
         AddonTool("purchases_overview", "Vis de gemte køb og hvor længe der er reklamationsret.", _obj({}),
                   _H + "tool_purchases_overview"),
-        AddonTool("write_complaint", "Skriv en reklamation til butikken om en gemt ting: product og problem (fejlen).",
-                  _obj({"product": {"type": "string"}, "problem": {"type": "string"}}, ["product", "problem"]),
+        AddonTool("write_complaint",
+                  "Skriv en reklamation til butikken om en gemt ting: product og problem (fejlen med brugerens ord). "
+                  "remedy kun hvis brugeren har sagt, hvad de vil have: repair, replace, refund eller discount.",
+                  _obj({"product": {"type": "string"}, "problem": {"type": "string"},
+                        "remedy": {"type": "string", "enum": ["repair", "replace", "refund", "discount"]}},
+                       ["product", "problem"]),
                   _H + "tool_write_complaint")),
 ))
 
@@ -642,7 +647,9 @@ register(Addon(
                         "status": {"type": "string", "enum": ["yes", "no", "maybe"]}, "bring": {"type": "string"},
                         "diet": {"type": "string"}}, ["name"]),
                   _H + "tool_update_guest"),
-        AddonTool("party_status", "Vis festen: hvem kommer, hvem tager hvad med, allergier.",
+        AddonTool("party_status",
+                  "Vis festen: hvem kommer, hvem tager hvad med, allergier. Vil brugeren have maden til festen, så brug "
+                  "save_meal_plan (appen Madplan) med people = antal, der kommer, og respektér allergierne.",
                   _obj({"party": {"type": "string"}}), _H + "tool_party_status"),
         AddonTool("write_invitation", "Skriv invitationen til festen, som brugeren selv sender. note: ekstra tekst.",
                   _obj({"party": {"type": "string"}, "note": {"type": "string"}}), _H + "tool_write_invitation")),
@@ -690,7 +697,8 @@ register(Addon(
         "flea_every_months, last_treatment (YYYY-MM-DD). Gæt aldrig en dato.",
         _obj({"name": {"type": "string"}, "kind": {"type": "string"}, "vaccination_due": {"type": "string"},
               "insurance_renews": {"type": "string"}, "worming_every_months": {"type": "integer"},
-              "flea_every_months": {"type": "integer"}, "last_treatment": {"type": "string"}}, ["name"]),
+              "flea_every_months": {"type": "integer"}, "last_treatment": {"type": "string"},
+              "chip": {"type": "string", "description": "Chipnummeret (15 cifre), kun som brugeren skrev det"}}, ["name"]),
         _H + "tool_save_pet"),
         AddonTool("save_vet", "Gem dyrlægen: navn og det nummer, brugeren selv har skrevet.",
                   _obj({"name": {"type": "string"}, "phone": {"type": "string"}}, ["name", "phone"]),
@@ -719,10 +727,13 @@ register(Addon(
     keywords=("røgalarm", "tagrende", "emhætte", "vedligehold", "fyr", "varmepumpe", "skorsten"),
     tools=(AddonTool(
         "add_home_tasks",
-        "Tilføj faste opgaver i hjemmet. names: standardopgaver (fx «røgalarm», «tagrender», «fyr», eller «alle»). "
-        "custom + every_months (+ next_due YYYY-MM-DD): en egen opgave.",
+        "Tilføj faste opgaver i hjemmet. names: standardopgaver (fx «røgalarm», «tagrender», «fyr», eller «alle» – så "
+        "vælges dem, der passer til boligen). custom + every_months (+ next_due YYYY-MM-DD): en egen opgave. Boligen, "
+        "hvis brugeren har fortalt om den: home (hus/lejlighed/rækkehus/sommerhus), heating (fyr/varmepumpe/fjernvarme/"
+        "elvarme), chimney (true/false).",
         _obj({"names": _STR_LIST, "custom": {"type": "string"}, "every_months": {"type": "integer"},
-              "next_due": {"type": "string"}}),
+              "next_due": {"type": "string"}, "home": {"type": "string"}, "heating": {"type": "string"},
+              "chimney": {"type": "boolean"}}),
         _H + "tool_add_home_tasks"),
         AddonTool("home_task_done", "Brugeren har gjort en opgave: ryk den til næste gang.",
                   _obj({"name": {"type": "string"}}, ["name"]), _H + "tool_home_task_done"),

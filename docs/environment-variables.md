@@ -106,6 +106,7 @@
 | `PRIVAT_DEFAULT_ADDONS` | nej | API | — | Tilføjelser slået til for nye private konti. Standard `ring-for-mig,delte-lister,oenskelister`. |
 | `TRACK17_API_KEY` | nej | API + worker | 17TRACK → API → Security key | Pakker-appen (pakkesporing). Uden den er appen «Kommer snart». Kun forsendelsesnummeret sendes til 17TRACK. **Server-only.** |
 | `DUFFEL_ACCESS_TOKEN` | nej | API | Duffel dashboard → Developers → Access tokens | Rejser-appen: flytilbud med priser. **Server-only.** |
+| `PRIVAT_FILES_BUCKET` | nej (standard `privat-files`) | API | Navnet på en PRIVAT bucket i Supabase Storage | Brugerens billeder (kvitteringer i Garanti). Bruger `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY`. |
 | `PRIVAT_PARTNER_LINKS` | nej | API | JSON fra jeres affiliate-aftaler, fx `{"mobil": {"name": "…", "url": "https://…", "text": "Find et billigere mobilabonnement"}}` | Partnerlinks i Privat-apps, altid mærket «Annonce». Tom = intet vises. Se `docs/sales/privat-revenue.md`. |
 | `TRAVELPAYOUTS_TOKEN` / `TRAVELPAYOUTS_MARKER` | nej | API | Travelpayouts → Profile → API token / Partner ID (marker) | Rejser-appen: billigste priser og affiliate-links til booking. Uden Duffel og Travelpayouts er appen «Kommer snart». **Server-only.** |
 | `PRIVAT_SHORT_URL_BASE`, `PRIVAT_GROUP_URL_BASE` | nej | API | — | Korte links i SMS-tekster. Standard `https://dialogbot.app/i/` og `/g/`. |

@@ -954,6 +954,9 @@
       "title": "Who is at home?",
       "help": "So you get the right lists from the start.",
       "household": {
+    "photoAdd": "Add a photo of the receipt",
+    "photoReplace": "Replace photo",
+    "photoOpen": "View photo",
         "alone": {
           "label": "Just me",
           "hint": "Shopping list"

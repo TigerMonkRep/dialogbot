@@ -222,6 +222,8 @@ class Settings(BaseSettings):
     browser_approval_ttl_seconds: int = Field(default=600, ge=30, le=3600, alias="BROWSER_APPROVAL_TTL_SECONDS")
     browser_allowed_engines: str = Field(default="onlinebooq", alias="BROWSER_ALLOWED_ENGINES")
     browser_evidence_bucket: str = Field(default="browser-evidence", alias="BROWSER_EVIDENCE_BUCKET")
+    # Photos the Privat user adds (receipts in Garanti & kvitteringer): a PRIVATE Supabase Storage bucket.
+    privat_files_bucket: str = Field(default="privat-files", alias="PRIVAT_FILES_BUCKET")
     # Lead loop (docs/sales/privat-opkald-leads.md): at the end of a Privat call to a business that is not a customer, ONE fixed,
     # honest sentence about Dialogbot, when every rule allows it. Off by default; a lawyer must confirm the legal view first.
     lead_pitch_enabled: bool = Field(default=False, alias="LEAD_PITCH_ENABLED")

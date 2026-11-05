@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session as OrmSession
 
@@ -277,6 +277,27 @@ def app_overview(key: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSessio
     addons.require(db, ctx.ws_id, key)
     o = mod.overview(db, ctx.ws_id)
     return {**o, "summary": naming.personalize(o["summary"], naming.of(ctx.profile), naming.pronoun_of(ctx.profile))}
+
+
+@router.post("/apps/{key}/items/{item_id}/photo")
+async def app_item_photo(key: str, item_id: str, request: Request, ctx: PrivateCtx = Depends(private_ctx),
+                         db: OrmSession = Depends(get_db)):
+    """The raw image as the request body (image/jpeg, png, webp, heic; ≤ 6 MB). Only apps with photos (Garanti)."""
+    from app.core.errors import NotFound
+    from app.modules.privat import app_kit, files
+
+    mod = app_kit.module(key)
+    addons.require(db, ctx.ws_id, key)
+    if not hasattr(mod, "add_photo"):
+        raise NotFound("Appen tager ikke billeder")
+    data = await request.body()
+    if len(data) > files.MAX_BYTES:
+        from app.core.errors import ValidationFailed
+
+        raise ValidationFailed("Billedet er for stort (højst 6 MB)", field_errors=[{"field": "file"}])
+    mod.add_photo(db, ctx.ws_id, item_id[:40], data)
+    db.commit()
+    return {"ok": True}
 
 
 @router.delete("/apps/{key}/items/{item_id}", status_code=204)

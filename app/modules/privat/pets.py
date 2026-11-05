@@ -30,7 +30,7 @@ EVERY = {"worming": "ormekur", "flea": "loppemiddel"}
 
 def save_pet(db: OrmSession, ws_id: uuid.UUID, *, name: str, kind: str = "", vaccination_due=None,
              insurance_renews=None, worming_every_months: int | None = None, flea_every_months: int | None = None,
-             last_treatment=None) -> dict:
+             last_treatment=None, chip: str | None = None) -> dict:
     name = kit.clean(name, 40)
     if not name:
         raise ValidationFailed("Hvad hedder dyret?", field_errors=[{"field": "name"}])
@@ -41,6 +41,11 @@ def save_pet(db: OrmSession, ws_id: uuid.UUID, *, name: str, kind: str = "", vac
         rows.append(p)
     if kind:
         p["kind"] = kit.clean(kind, 30).lower()
+    if chip:
+        digits = "".join(ch for ch in str(chip) if ch.isdigit())
+        if len(digits) != 15:
+            raise ValidationFailed("Et chipnummer har 15 cifre", field_errors=[{"field": "chip"}])
+        p["chip"] = digits
     for k, v in (("vaccination_due", vaccination_due), ("insurance_renews", insurance_renews)):
         if (d := kit.parse_date(v, k)):
             p[k] = d
@@ -80,6 +85,8 @@ def line(p: dict, today: date | None = None) -> str:
             bits.append(f"{label} {kit.date_text(next_treatment(p[k], today).isoformat())}")
     if p.get("insurance_renews"):
         bits.append(f"forsikring fornyes {kit.date_text(p['insurance_renews'])}")
+    if p.get("chip"):
+        bits.append(f"chip {p['chip']}")
     return ", ".join(bits)
 
 

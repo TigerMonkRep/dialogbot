@@ -954,6 +954,9 @@
       "title": "Hvem er dere hjemme?",
       "help": "Så får du de riktige listene fra start.",
       "household": {
+    "photoAdd": "Legg til bilde av kvitteringen",
+    "photoReplace": "Bytt bilde",
+    "photoOpen": "Se bilde",
         "alone": {
           "label": "Meg selv",
           "hint": "Handleliste"

@@ -954,6 +954,9 @@
       "title": "Hvem er I derhjemme?",
       "help": "Så får du de rigtige lister fra start.",
       "household": {
+    "photoAdd": "Tilføj foto af kvittering",
+    "photoReplace": "Skift foto",
+    "photoOpen": "Se foto",
         "alone": {
           "label": "Mig selv",
           "hint": "Indkøbsliste"

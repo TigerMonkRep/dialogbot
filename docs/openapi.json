@@ -16942,6 +16942,72 @@
         ]
       }
     },
+    "/api/v1/privat/apps/{key}/items/{item_id}/photo": {
+      "post": {
+        "description": "The raw image as the request body (image/jpeg, png, webp, heic; ≤ 6 MB). Only apps with photos (Garanti).",
+        "operationId": "app_item_photo_api_v1_privat_apps__key__items__item_id__photo_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "App Item Photo",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
     "/api/v1/privat/apps/{key}/overview": {
       "get": {
         "description": "{summary, items: [{id, text, sub, share_text?}], partner: {name, url, text, note} | null}. A partner is always\nan advertisement (note: «Annonce …»).",

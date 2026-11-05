@@ -50,12 +50,29 @@ def plan(db: OrmSession, ctx, *, moving_day: str, to: str = "") -> tuple[Private
         raise ValidationFailed("Flyttedagen ligger i fortiden", field_errors=[{"field": "moving_day"}])
     to = kit.clean(to, 100)
     items = [f"{text} ({kit.date_text((day - timedelta(days=n)).isoformat())})" for n, text, _ in CHECKLIST]
+    items += _from_other_apps(db, ctx.ws_id, day)
     task = service.create_digital(db, ctx, kind="list", title=f"Flytning{': ' + to if to else ''}"[:300], items=items,
                                   list_type="todo")
     task.next_step = f"Flyttedag {kit.date_text(d)}"
     move = {"id": kit.new_id(), "day": d, "to": to, "task_id": str(task.id)}
     kit.save_items(db, ctx.ws_id, ADDON, [move])   # one move at a time
     return task, move
+
+
+def _from_other_apps(db: OrmSession, ws_id: uuid.UUID, day: date) -> list[str]:
+    """The move touches the other apps: the subscriptions tied to the address (Abonnementer) and the home's jobs."""
+    from app.modules.privat import addons, subs_app
+
+    out = []
+    if addons.is_enabled(db, ws_id, subs_app.ADDON):
+        tied = [r["name"] for r in kit.items(db, ws_id, subs_app.ADDON)
+                if r.get("status") != "cancelled" and r.get("category") in ("internet", "el", "forsikring")]
+        if tied:
+            out.append(f"Flyt eller opsig {', '.join(tied[:6])} ({kit.date_text((day - timedelta(days=30)).isoformat())})")
+    if addons.is_enabled(db, ws_id, "hus-og-vedligehold"):
+        out.append(f"Vælg de faste opgaver i det nye hjem i Hus & vedligehold "
+                   f"({kit.date_text((day + timedelta(days=7)).isoformat())})")
+    return out
 
 
 def partner_lines() -> list[str]:

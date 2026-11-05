@@ -2,6 +2,26 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 39 — 6. november 2026 (testerens forslag bygget)
+
+| Del | Status | Bevis |
+|---|---|---|
+| Garanti: foto af kvitteringen (privat bucket `PRIVAT_FILES_BUCKET`, 5-min. link, kun billeder ≤ 6 MB, typen læses af filen; webben skalerer til 1600 px) | testet lokalt (lokalt lager) | `tests/test_privat_household.py` |
+| Indkøbslister viser dagligvare-partneren («Annonce») | testet | samme |
+| Fælles udgifter på en almindelig liste, som vennerne kan få delt og selv skrive udlæg på («Bo: 250 kr. – pizza»); gamle grupper tæller stadig | testet | samme |
+| Opgørelsen viser brugerens eget MobilePay-nummer, når brugeren har penge til gode og nummeret er bekræftet | testet | samme |
+| Flytning → abonnementer på adressen (internet, el, forsikring) og Hus-opgaverne i det nye hjem | testet | samme |
+| Hus: boligprofil (hus/lejlighed, varme, skorsten) bestemmer «alle» | testet | samme |
+| Håndværker: adressen må gives ved besigtigelse, kun når brugeren selv skrev den | tool | — |
+| Garanti: ønsket afhjælpning (reparation/ombytning/hæve/afslag) + henvisning til forbrug.dk | testet | samme |
+| Kæledyr: chipnummer (15 cifre); Fitness: uger i træk; Fest → Madplan til antallet, der kommer; Madplan → del med familien | testet/tekst | samme |
+
+**Ikke bygget (og hvorfor):** foto af opgaven til håndværkeren (virksomheden kan ikke se det i et opkald – kræver sms/mail-link
+til virksomheden), invitation som link med «kommer/kommer ikke» (kræver en ny offentlig side uden login – næste skridt),
+import fra kontoudtog/e-Boks (ingen API; CSV-import kan komme senere), CVR/Trustpilot-tjek, Aula.
+**Kræver handling:** opret den private bucket `privat-files` i Supabase (som `browser-evidence`), ellers kan der ikke
+gemmes billeder i produktion.
+
 ## Checkpoint 38 — 6. november 2026 (rettelser efter testrapporten for de nye apps)
 
 | Rettelse | Bevis |

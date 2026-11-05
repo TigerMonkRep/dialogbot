@@ -954,6 +954,9 @@
       "title": "¿Quiénes vivís en casa?",
       "help": "Así tienes las listas correctas desde el principio.",
       "household": {
+    "photoAdd": "Añadir foto del recibo",
+    "photoReplace": "Cambiar foto",
+    "photoOpen": "Ver foto",
         "alone": {
           "label": "Solo yo",
           "hint": "Lista de la compra"

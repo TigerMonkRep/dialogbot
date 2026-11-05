@@ -3,8 +3,8 @@
 Saved (`private_app_data` «garanti», `items`): product, shop, purchase date, price and any extra warranty the user
 mentions. Danish consumers have 2 years' reklamationsret (købeloven § 83) from delivery; a shop's own warranty can be
 longer. Reminder: 30 days before the reklamationsret (and an extra warranty) runs out – «does it still work?». When
-something breaks, Peter writes the complaint to the shop (with Dialogbot's footer); the user sends it.
-Photos of receipts are not stored yet – the user keeps the receipt (said in the app).
+something breaks, Peter writes the complaint to the shop (with Dialogbot's footer); the user sends it. A photo of the
+receipt can be added in the app (files.py: a private bucket, shown through a 5-minute link).
 """
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.core.errors import ValidationFailed
 from app.modules.privat import app_kit as kit
-from app.modules.privat import brand
+from app.modules.privat import brand, files
 
 ADDON, PATH = "garanti", "/privat/apps/garanti"
 
@@ -63,7 +63,11 @@ def line(row: dict, today: date | None = None) -> str:
     return ", ".join(bits)
 
 
-def complaint(row: dict, problem: str, user_name: str, today: date | None = None) -> str:
+REMEDIES = {"repair": "at reparere varen", "replace": "at ombytte varen til en ny",
+            "refund": "at hæve købet og tilbagebetale købesummen", "discount": "et forholdsmæssigt afslag i prisen"}
+
+
+def complaint(row: dict, problem: str, user_name: str, today: date | None = None, remedy: str | None = None) -> str:
     today = today or _today()
     inside = reklamation_until(row) >= today or ((w := warranty_until(row)) is not None and w >= today)
     basis = ("Jeg gør hermed min reklamationsret gældende efter købeloven § 83, da varen er købt for mindre end 2 år siden"
@@ -76,8 +80,8 @@ def complaint(row: dict, problem: str, user_name: str, today: date | None = None
     return brand.branded(
         f"Emne: Reklamation – {row['name']}\n\nHej {row.get('shop') or 'butikken'}\n\n"
         f"Jeg købte {row['name']} hos jer den {kit.date_text(row['bought'])}.\n\nFejlen: {_problem(problem)}\n\n"
-        f"{basis}.{proof} Jeg beder jer om at reparere eller ombytte varen og vende tilbage med, hvordan jeg sender "
-        f"eller afleverer den.\n\nKvitteringen er vedlagt.\n\nVenlig hilsen\n{user_name}")
+        f"{basis}.{proof} Jeg beder jer om {REMEDIES.get(remedy or '', 'at reparere eller ombytte varen')} og vende "
+        f"tilbage med, hvordan jeg sender eller afleverer den.\n\nKvitteringen er vedlagt.\n\nVenlig hilsen\n{user_name}")
 
 
 def _problem(raw: str) -> str:
@@ -95,14 +99,37 @@ def overview(db: OrmSession, ws_id: uuid.UUID) -> dict:
     rows = kit.items(db, ws_id, ADDON)
     today = _today()
     active = [r for r in rows if reklamation_until(r) >= today or (warranty_until(r) or today) > today]
-    return {"summary": (f"{len(rows)} ting gemt – {len(active)} kan du stadig reklamere over. Gem selv kvitteringen."
+    return {"summary": (f"{len(rows)} ting gemt – {len(active)} kan du stadig reklamere over. Tilføj et foto af "
+                        "kvitteringen ved hver ting."
                         if rows else "Ingen ting gemt endnu. Sig fx «Jeg købte en vaskemaskine i Elgiganten den 3. maj»."),
-            "items": [{"id": r["id"], "text": r["name"], "sub": line(r, today)} for r in rows],
+            "items": [{"id": r["id"], "text": r["name"], "sub": line(r, today), "photo": True,
+                       "photo_url": files.sign(r.get("photo"))} for r in rows],
             "partner": brand.offer("garanti")}
 
 
 def remove(db: OrmSession, ws_id: uuid.UUID, item_id: str) -> bool:
+    row = next((r for r in kit.items(db, ws_id, ADDON) if r.get("id") == item_id), None)
+    if row is not None:
+        files.delete(row.get("photo"))
     return kit.remove_item(db, ws_id, ADDON, item_id)
+
+
+def add_photo(db: OrmSession, ws_id: uuid.UUID, item_id: str, data: bytes) -> dict:
+    """The receipt photo for one purchase (replaces an earlier one)."""
+    from app.core.errors import NotFound
+
+    rows = kit.items(db, ws_id, ADDON)
+    row = next((r for r in rows if r.get("id") == item_id), None)
+    if row is None:
+        raise NotFound("Findes ikke")
+    ext, ctype = files.sniff(data)
+    key = files.key_for(ws_id, ADDON, item_id, ext)
+    if row.get("photo") and row["photo"] != key:
+        files.delete(row["photo"])
+    files.put(key, data, ctype)
+    row["photo"] = key
+    kit.save_items(db, ws_id, ADDON, rows)
+    return row
 
 
 def due(data: dict, today: date) -> list[tuple[str, str]]:

@@ -476,7 +476,15 @@ def task_out(db: OrmSession, task: PrivateTask, viewer_id: uuid.UUID) -> dict:
         "list_type": task.list_type, "shared": task.share_mode is not None, "share_mode": task.share_mode,
         "my_role": role, "members": sharing.members_out(db, task, viewer_id) if task.share_mode else [],
         "appointment": _appointment_ref(db, task) if is_owner and task.kind == "call" else None,
+        # a shopping list can be ordered from a grocery partner (always shown as «Annonce»; none until configured)
+        "partner": _grocery_partner() if task.list_type == "shopping" else None,
     }
+
+
+def _grocery_partner() -> dict | None:
+    from app.modules.privat import brand
+
+    return brand.offer("dagligvarer")
 
 
 def _appointment_ref(db: OrmSession, task: PrivateTask) -> dict | None:

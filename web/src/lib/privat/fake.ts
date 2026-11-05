@@ -995,6 +995,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     async latestTrips() { await wait(); return { search: null }; },
     async appOverview() { await wait(); return { summary: "", items: [], partner: null }; },
     async removeAppItem() { await wait(); },
+    async uploadAppPhoto() { await wait(); return fail(409, "demo", "Billeder gemmes kun med en rigtig konto"); },
 
     // ---------- simulation-only tools ----------
     async simulateMember(taskId) {

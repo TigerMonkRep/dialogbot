@@ -30,6 +30,11 @@ export function HouseholdPanel({ appKey, name }: { appKey: string; name: string 
     setErr(null);
     try { await api.removeAppItem(appKey, id); await load(); } catch (e) { setErr((e as ApiError).message); }
   };
+  const photo = async (id: string, f: File | undefined) => {
+    if (!f) return;
+    setErr(null);
+    try { await api.uploadAppPhoto(appKey, id, await shrink(f)); await load(); } catch (e) { setErr((e as ApiError).message); }
+  };
   const copy = async (id: string, text: string) => {
     try { await navigator.clipboard.writeText(text); setCopied(id); } catch { setErr(t("household.copyFailed")); }
   };
@@ -48,6 +53,13 @@ export function HouseholdPanel({ appKey, name }: { appKey: string; name: string 
                 {copied === i.id ? t("household.copied") : t("household.copy")}
               </Button>
             )}
+            {i.photo && (
+              <label className="inline-flex items-center min-h-[44px] px-4 rounded-full border-2 border-ink text-[15px] font-semibold cursor-pointer">
+                {i.photo_url ? t("household.photoReplace") : t("household.photoAdd")}
+                <input type="file" accept="image/*" capture="environment" className="sr-only" onChange={(e) => void photo(i.id, e.target.files?.[0])} />
+              </label>
+            )}
+            {i.photo_url && <a href={i.photo_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center min-h-[44px] text-[14px] text-accent underline">{t("household.photoOpen")}</a>}
             <Button variant="outline" className="rounded-full border-2" onClick={() => void remove(i.id)}>{t("moreApps.remove")}</Button>
           </span>
         </div>
@@ -64,4 +76,20 @@ export function HouseholdPanel({ appKey, name }: { appKey: string; name: string 
       <p className="m-0 text-[13px] text-muted">{t("household.hint")}</p>
     </section>
   );
+}
+
+/** A phone photo is often 4–8 MB: scale it to at most 1600 px as JPEG before upload (the web proxy takes ~4 MB).
+ *  Formats the browser cannot draw (HEIC outside Safari) go up as they are. */
+async function shrink(f: File): Promise<Blob> {
+  try {
+    const bmp = await createImageBitmap(f);
+    const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    c.getContext("2d")?.drawImage(bmp, 0, 0, c.width, c.height);
+    const out = await new Promise<Blob | null>((res) => c.toBlob(res, "image/jpeg", 0.85));
+    return out ?? f;
+  } catch {
+    return f;
+  }
 }

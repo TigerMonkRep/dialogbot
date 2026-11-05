@@ -954,6 +954,9 @@
       "title": "Wer wohnt bei euch?",
       "help": "Damit du von Anfang an die richtigen Listen bekommst.",
       "household": {
+    "photoAdd": "Foto vom Beleg hinzufügen",
+    "photoReplace": "Foto ersetzen",
+    "photoOpen": "Foto ansehen",
         "alone": {
           "label": "Nur ich",
           "hint": "Einkaufsliste"

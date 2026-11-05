@@ -90,7 +90,7 @@
     },
     "label": "Privacy",
     "title": "How we process personal data",
-    "updated": "Updated 6 October 2026.",
+    "updated": "Updated 5 November 2026.",
     "intro": "Here you can see what information Dialogbot processes, why, for how long and who helps us with it. This page covers customers, customers' own customers, ambassadors and visitors.",
     "sections": [
       {
@@ -141,6 +141,14 @@
         ]
       },
       {
+        "title": "Dialogbot Privat (your personal assistant)",
+        "body": [
+          { "type": "p", "text": "If you use Dialogbot Privat, we process what you give us yourself: your lists, reminders and conversations with the assistant, the mobile number you confirm and – when you approve a call or a booking – the business's name and number and what you have allowed the assistant to say. The purpose is to do what you ask. The legal basis is our agreement with you (GDPR Art. 6(1)(b)). Here Dialogbot is the controller." },
+          { "type": "p", "parts": [{ "b": "Calendar." }, " If you switch on the Calendar app, we store the appointments you have approved (time, place and what was agreed). If you connect Google Calendar or Outlook, we store encrypted access keys and use them only to create, move and delete the appointments Dialogbot itself put in your calendar. We do not read your other appointments. You can disconnect at any time in the app; we then revoke the access and delete the keys. If you make a private calendar link, anyone with the link can see your appointments from Dialogbot; you can stop the link in the app."] },
+          { "type": "p", "parts": [{ "b": "Google user data." }, " Dialogbot's use and transfer to any other app of information received from Google APIs will adhere to the ", { "href": "https://developers.google.com/terms/api-services-user-data-policy", "text": "Google API Services User Data Policy" }, ", including the Limited Use requirements. We do not sell data from Google, do not use it for advertising and do not use it to train AI models. People at Dialogbot read it only if you ask us to, for security reasons or because the law requires it."] }
+        ]
+      },
+      {
         "title": "Who helps us? (sub-processors)",
         "body": [
           { "type": "p", "text": "We use these suppliers, which process data on our behalf under data processing agreements:" },
@@ -157,7 +165,8 @@
               "Deepgram and ElevenLabs – speech to text and text to speech"
             ]
           },
-          { "type": "p", "text": "Some of them may process data in the USA. Transfers take place on the basis of the EU-U.S. Data Privacy Framework or the European Commission's standard contractual clauses." }
+          { "type": "p", "text": "Some of them may process data in the USA. Transfers take place on the basis of the EU-U.S. Data Privacy Framework or the European Commission's standard contractual clauses." },
+          { "type": "p", "text": "If you connect Google Calendar or Outlook yourself in Dialogbot Privat, we send your approved appointments to Google or Microsoft. They are then not our sub-processors but recipients at your request, and their own privacy terms apply." }
         ]
       },
       {

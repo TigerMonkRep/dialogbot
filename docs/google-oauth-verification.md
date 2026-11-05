@@ -12,7 +12,7 @@ er forberedt, så det kun skal indsættes.
 | # | Hvad | Status |
 |---|---|---|
 | 1 | `dialogbot.dk` er verificeret i Google Search Console under den samme Google-konto, som ejer Cloud-projektet | tjek selv |
-| 2 | Privatlivspolitikken (`https://dialogbot.dk/privatliv`) nævner Dialogbot Privat, Google-kalenderdata og Limited Use – **mangler**, se udkast i §4 | kræver din (og gerne advokatens) godkendelse |
+| 2 | Privatlivspolitikken (`https://dialogbot.dk/privatliv`) nævner Dialogbot Privat, Google-kalenderdata og Limited Use (afsnittet i §4, på 8 sprog) | lagt på siden 5/11 2026 efter ejerens ja; gerne set af en advokat |
 | 3 | Forsiden `https://dialogbot.dk` beskriver produktet og linker til privatlivspolitikken | ok |
 | 4 | Login-forløbet virker i produktion fra Privat (Apps → Kalender → Forbind Google) | efter deploy af checkpoint 32 |
 | 5 | Redirect-URI i OAuth-klienten: `https://api.dialogbot.dk/api/v1/integrations/oauth/google_calendar/callback` | tjek, at den står der præcis sådan |

@@ -24,7 +24,7 @@ export type BuildErhverv = { knowledge: "pending" | "done" | "skipped"; voice: "
 export type BuildPrivat = { tasks: number; lists: number; first_call: { title: string } | null };
 export type Answers = Record<string, unknown> & {
   industry?: Industry; company_name?: string; place_id?: string | null; missed?: string[]; missed_per_week?: number; wants?: string[];
-  postponed?: string[]; household?: string; hate_calls?: string; remind_at?: string;
+  postponed?: string[]; household?: string; hate_calls?: string; remind_at?: string; assistant_name?: string;
 };
 export type Draft = {
   id: string; kind: FunnelKind; hook: string | null; step: number; answers: Answers;

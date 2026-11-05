@@ -14,6 +14,7 @@
     "birthdays": "Födelsedagar",
     "bills": "Räkningar",
     "car": "Bil & besiktning",
+    "app": "App",
     "parcels": "Paket",
     "travel": "Resor"
   },
@@ -934,6 +935,8 @@
         "1605": "Kl. 16.05 – och du har fortfarande inte ringt",
         "telefonsvarer": "Du la på vid telefonsvararen igen"
       },
+      "nameLabel": "Vad ska din assistent heta? (valfritt)",
+      "nameHint": "Lämna tomt så heter den Peter. Du kan alltid ändra det under Konto.",
       "title": "Vad har du skjutit upp?",
       "help": "Välj allt som ligger och väntar. Peter gör en uppgift av varje.",
       "postponed": {
@@ -1167,6 +1170,17 @@
       "yearly": "varje år",
       "once": "en gång"
     }
+  },
+  "assistantName": {
+    "label": "Assistentens namn",
+    "hint": "Bara i appen och chatten – när assistenten ringer eller skriver säger den «Dialogbot»."
+  },
+  "household": {
+    "ad": "Annons",
+    "copy": "Kopiera",
+    "copied": "Kopierat",
+    "copyFailed": "Kunde inte kopiera – markera texten och kopiera den själv.",
+    "hint": "Resten sköter du i chatten – skriv bara till din assistent."
   },
   "moreApps": {
     "save": "Spara",

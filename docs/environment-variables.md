@@ -106,6 +106,7 @@
 | `PRIVAT_DEFAULT_ADDONS` | nej | API | — | Tilføjelser slået til for nye private konti. Standard `ring-for-mig,delte-lister,oenskelister`. |
 | `TRACK17_API_KEY` | nej | API + worker | 17TRACK → API → Security key | Pakker-appen (pakkesporing). Uden den er appen «Kommer snart». Kun forsendelsesnummeret sendes til 17TRACK. **Server-only.** |
 | `DUFFEL_ACCESS_TOKEN` | nej | API | Duffel dashboard → Developers → Access tokens | Rejser-appen: flytilbud med priser. **Server-only.** |
+| `PRIVAT_PARTNER_LINKS` | nej | API | JSON fra jeres affiliate-aftaler, fx `{"mobil": {"name": "…", "url": "https://…", "text": "Find et billigere mobilabonnement"}}` | Partnerlinks i Privat-apps, altid mærket «Annonce». Tom = intet vises. Se `docs/sales/privat-revenue.md`. |
 | `TRAVELPAYOUTS_TOKEN` / `TRAVELPAYOUTS_MARKER` | nej | API | Travelpayouts → Profile → API token / Partner ID (marker) | Rejser-appen: billigste priser og affiliate-links til booking. Uden Duffel og Travelpayouts er appen «Kommer snart». **Server-only.** |
 | `PRIVAT_SHORT_URL_BASE`, `PRIVAT_GROUP_URL_BASE` | nej | API | — | Korte links i SMS-tekster. Standard `https://dialogbot.app/i/` og `/g/`. |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | ved push | API, worker | `python -m scripts.generate_vapid` | Web Push for Dialogbot Privat. Privatnøglen er en hemmelighed – aldrig i git. Uden nøglerne går beskeder som e-mail. Skifter man nøglepar, skal alle browsere abonnere igen. |

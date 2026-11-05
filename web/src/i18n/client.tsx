@@ -13,6 +13,24 @@ export function I18nProvider({ locale, messages, fallback, children }: Ctx & { c
   return <I18n.Provider value={value}>{children}</I18n.Provider>;
 }
 
+const PETER = /\bPeter(?=s?\b)/g;
+
+function renamed(x: unknown, name: string): unknown {
+  if (typeof x === "string") return x.replace(PETER, name);
+  if (Array.isArray(x)) return x.map((v) => renamed(v, name));
+  if (x && typeof x === "object") return Object.fromEntries(Object.entries(x).map(([k, v]) => [k, renamed(v, name)]));
+  return x;
+}
+
+/** Dialogbot Privat: the user named the assistant something other than «Peter» – every text below says that name. */
+export function AssistantNameProvider({ name, children }: { name: string | null | undefined; children: React.ReactNode }) {
+  const c = useCtx();
+  const value = useMemo(() => (!name || name === "Peter" ? c : {
+    ...c, messages: renamed(c.messages, name) as Ctx["messages"], fallback: renamed(c.fallback, name) as Ctx["fallback"],
+  }), [c, name]);
+  return <I18n.Provider value={value}>{children}</I18n.Provider>;
+}
+
 function useCtx(): Ctx {
   const c = useContext(I18n);
   if (!c) throw new Error("I18nProvider mangler");

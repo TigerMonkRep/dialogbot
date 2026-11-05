@@ -229,7 +229,7 @@ def test_privat_full_path(client, api, funnel, db, pv):
     assert r.status_code == 201
     did = r.json()["id"]
     assert r.json()["build"] == {"tasks": 0, "lists": 0, "first_call": None, "items": []}
-    d = _patch(client, did, 1, {"postponed": ["dentist", "gift", "nonsense"]})
+    d = _patch(client, did, 1, {"postponed": ["dentist", "gift", "nonsense"], "assistant_name": " ida "})
     assert d["answers"]["postponed"] == ["dentist", "gift", "nonsense"]
     d = _patch(client, did, 2, {"household": "kids"})
     d = _patch(client, did, 3, {"hate_calls": "health"})
@@ -244,6 +244,7 @@ def test_privat_full_path(client, api, funnel, db, pv):
     tok = out["session_token"]
     me = api.get(tok, "/privat/me").json()
     assert me["phone_verified"] is True and me["phone_display"] == "20 30 40 50" and me["plan_status"] == "none"
+    assert me["assistant_name"] == "Ida"                    # the name chosen on the first screen
     # everything the quiz built waits as drafts until the trial (card first) is in
     tasks = api.get(tok, "/privat/tasks").json()
     assert sorted(t["status"] for t in tasks) == ["awaiting_user", "draft", "draft", "draft"]

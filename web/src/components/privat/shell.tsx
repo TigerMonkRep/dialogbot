@@ -3,7 +3,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogoMark } from "@/components/ui";
-import { useT } from "@/i18n/client";
+import { AssistantNameProvider, useT } from "@/i18n/client";
 import { AccountPane } from "./account";
 import { StorePage } from "./addons";
 import { PeoplePage } from "./people";
@@ -20,9 +20,15 @@ import { TaskDetail, TasksPane } from "./tasks";
 export function PrivatApp({ session }: { session: Session }) {
   return (
     <PrivatProvider session={session}>
-      <Shell />
+      <Named><Shell /></Named>
     </PrivatProvider>
   );
+}
+
+/** The texts say the name the user gave the assistant (Konto → «Assistentens navn», or the first signup screen). */
+function Named({ children }: { children: React.ReactNode }) {
+  const { balance } = usePrivat();
+  return <AssistantNameProvider name={balance?.assistant_name}>{children}</AssistantNameProvider>;
 }
 
 function Shell() {

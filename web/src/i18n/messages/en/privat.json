@@ -14,6 +14,7 @@
     "birthdays": "Birthdays",
     "bills": "Bills",
     "car": "Car",
+    "app": "App",
     "parcels": "Parcels",
     "travel": "Travel"
   },
@@ -934,6 +935,8 @@
         "1605": "4.05 pm – and you still have not called",
         "telefonsvarer": "You hung up on the voicemail again"
       },
+      "nameLabel": "What should your assistant be called? (optional)",
+      "nameHint": "Leave it empty and it is called Peter. You can always change it under Account.",
       "title": "What have you been putting off?",
       "help": "Choose everything that is waiting. Peter turns each one into a task.",
       "postponed": {
@@ -1167,6 +1170,17 @@
       "yearly": "every year",
       "once": "once"
     }
+  },
+  "assistantName": {
+    "label": "Assistant's name",
+    "hint": "Only in the app and the chat – when the assistant calls or writes, it says «Dialogbot»."
+  },
+  "household": {
+    "ad": "Advertisement",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyFailed": "Could not copy – select the text and copy it yourself.",
+    "hint": "Everything else you do in the chat – just write to your assistant."
   },
   "moreApps": {
     "save": "Save",

@@ -95,6 +95,7 @@ from app.models.privat import (  # noqa: F401, E402
     PrivateAppointment,
     PrivateBill,
     PrivateBirthday,
+    PrivateBusinessReferral,
     PrivateBusinessSearch,
     PrivateCall,
     PrivateGroup,

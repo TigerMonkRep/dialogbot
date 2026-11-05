@@ -290,6 +290,19 @@
         "title": "ApproveIn",
         "type": "object"
       },
+      "AssistantNameIn": {
+        "properties": {
+          "name": {
+            "default": "",
+            "description": "Empty = the default «Peter»",
+            "maxLength": 40,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "title": "AssistantNameIn",
+        "type": "object"
+      },
       "BasisIn": {
         "properties": {
           "channel": {
@@ -16790,6 +16803,123 @@
         ]
       }
     },
+    "/api/v1/privat/apps/{key}/items/{item_id}": {
+      "delete": {
+        "operationId": "app_remove_item_api_v1_privat_apps__key__items__item_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "App Remove Item",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
+    "/api/v1/privat/apps/{key}/overview": {
+      "get": {
+        "description": "{summary, items: [{id, text, sub, share_text?}], partner: {name, url, text, note} | null}. A partner is always\nan advertisement (note: «Annonce …»).",
+        "operationId": "app_overview_api_v1_privat_apps__key__overview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "App Overview",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
     "/api/v1/privat/bills": {
       "get": {
         "description": "Every bill by next due date, plus this month's overview (total of the known amounts).",
@@ -19022,6 +19152,64 @@
           }
         },
         "summary": "Me",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/me/assistant": {
+      "patch": {
+        "description": "What the assistant is called in the app and the chat (calls and e-mails still say «Dialogbot»).",
+        "operationId": "set_assistant_name_api_v1_privat_me_assistant_patch",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssistantNameIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Assistant Name",
         "tags": [
           "privat"
         ]

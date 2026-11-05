@@ -22,7 +22,7 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.core.errors import ApiError, NotFound
 from app.models import AiUsage, PrivateMessage, PrivateProfile, PrivateTask, PrivateTaskItem, PrivateTaskMember
-from app.modules.privat import addons, links, rules, service, sharing
+from app.modules.privat import addons, links, naming, rules, service, sharing
 
 PROMPT_VERSION = "privat-v1"
 MAX_TOOL_ROUNDS = 4
@@ -38,7 +38,7 @@ FIXTURES = (
 )
 
 SYSTEM = """PRIVAT_ASSISTANT
-Du er Dialogbot, en personlig dansk assistent for {name}. Du hjælper med lister, påmindelser{call_part}.
+Du er {bot}, en personlig dansk assistent fra Dialogbot for {name}. Du hedder {bot}. Du hjælper med lister, påmindelser{call_part}.
 Nu er det {now} (Europe/Copenhagen, {weekday}).
 
 Regler:
@@ -151,7 +151,7 @@ def _system(db: OrmSession, ctx, about: PrivateTask | None) -> str:
             about_txt += "Punkter: " + ", ".join(i["text"] for i in items) + "\n"
     on = addons.enabled_keys(db, ctx.ws_id)
     addons_txt = "\nTilføjelser slået til: " + (", ".join(sorted(on)) or "ingen") + "\n"
-    return SYSTEM.format(name=ctx.user.display_name, call_part=" og opkald til virksomheder" if "ring-for-mig" in on
+    return SYSTEM.format(name=ctx.user.display_name, bot=naming.of(ctx.profile), call_part=" og opkald til virksomheder" if "ring-for-mig" in on
                          else "", now=now.strftime("%Y-%m-%dT%H:%M"), weekday=rules.WEEKDAYS[now.weekday()],
                          search=SEARCH_RULE if links.enabled() else NO_SEARCH_RULE,
                          lists=lists_txt, about=about_txt, addons=addons_txt)
@@ -946,11 +946,17 @@ def tool_save_meal_plan(turn: Turn, a: dict) -> str:
     if not re.search(r"\b(ja|jo|gem|gemme|ok|okay|gerne|fint|godt|perfekt|super|lyder godt|yes)\b", turn.text.lower()):
         return ("Ikke gemt: brugeren har ikke sagt ja endnu. Skriv forslaget (dag og ret) i en kort tekst og spørg, "
                 "om den skal gemmes med indkøbsliste.")
+    from app.modules.privat import brand
+
+    people = a.get("people") if isinstance(a.get("people"), int) and 1 <= a["people"] <= 20 else \
+        meals.preferences(turn.db, turn.ctx.ws_id).get("people")
     plan, shop = meals.save_plan(turn.db, turn.ctx, title=str(a.get("title") or "Madplan").strip(), days=days,
-                                 shopping=a.get("shopping_list") is not False)
-    text = f"Madplanen er gemt med {len(days)} retter."
+                                 shopping=a.get("shopping_list") is not False, people=people)
+    text = f"Madplanen er gemt med {len(days)} retter{f' til {people} personer' if people else ''}. Tryk på en dag for " \
+           "at se ingredienserne."
     if shop is not None:
-        text += f" Indkøbslisten har {len(meals.merge_ingredients(days))} varer – del den med husstanden, hvis I handler sammen."
+        text += (f" Indkøbslisten har {len(meals.merge_ingredients(days, people))} varer – del den med husstanden, "
+                 "hvis I handler sammen." + brand.offer_line("dagligvarer"))
     _created(turn, plan, text)
     if shop is not None:
         turn.say("task", shop.title, task_id=shop.id)
@@ -1085,3 +1091,368 @@ def tool_search_trips(turn: Turn, a: dict) -> str:
         text += " Du finder «Book» under Apps → Rejser."
     turn.say("text", text)
     return f"{len(result['offers'])} rejser vist (søgning {result['id']})."
+
+
+# --------------------------------------------------------------------------- household apps (app_kit.py)
+
+def _first_name(turn: Turn) -> str:
+    return (turn.ctx.user.display_name or "").split(" ")[0] or "Mig"
+
+
+def _vf(fn):
+    """A ValidationFailed from the app becomes a short answer for the model (it asks the user)."""
+    from functools import wraps
+
+    from app.core.errors import ValidationFailed
+
+    @wraps(fn)
+    def run(turn: Turn, a: dict) -> str:
+        try:
+            return fn(turn, a)
+        except ValidationFailed as e:
+            return f"Ikke gjort: {e.message}. Spørg brugeren kort."
+    return run
+
+
+@_vf
+def tool_add_subscriptions(turn: Turn, a: dict) -> str:
+    from app.modules.privat import subs_app
+
+    lines = []
+    for it in [x for x in (a.get("items") or []) if isinstance(x, dict)][:20]:
+        row, _ = subs_app.add(turn.db, turn.ctx.ws_id, name=str(it.get("name") or ""), price=it.get("price"),
+                              period=str(it.get("period") or "monthly"), category=it.get("category"),
+                              binding_until=it.get("binding_until"), notice_days=it.get("notice_days"),
+                              renews_on=it.get("renews_on"))
+        lines.append(subs_app.line(row))
+    if not lines:
+        return "Ingen abonnementer at gemme."
+    o = subs_app.overview(turn.db, turn.ctx.ws_id)
+    turn.say("text", "Gemt: " + "; ".join(lines) + f". {o['summary']} Jeg minder dig om den sidste dag at opsige.")
+    return "Gemt."
+
+
+def tool_subscriptions_overview(turn: Turn, a: dict) -> str:
+    from app.modules.privat import subs_app
+
+    turn.say("text", subs_app.overview_text(turn.db, turn.ctx.ws_id))
+    return "Vist."
+
+
+def tool_remove_subscription(turn: Turn, a: dict) -> str:
+    from app.modules.privat import app_kit, subs_app
+
+    row = app_kit.find(app_kit.items(turn.db, turn.ctx.ws_id, subs_app.ADDON), str(a.get("name") or ""))
+    if row is None:
+        return "Det abonnement findes ikke i oversigten."
+    subs_app.remove(turn.db, turn.ctx.ws_id, row["id"])
+    turn.say("text", f"«{row['name']}» er fjernet fra oversigten. Husk, at det ikke er en opsigelse.")
+    return "Fjernet."
+
+
+def tool_cancel_subscription(turn: Turn, a: dict) -> str:
+    from app.modules.privat import app_kit, brand, subs_app
+
+    row = app_kit.find(app_kit.items(turn.db, turn.ctx.ws_id, subs_app.ADDON), str(a.get("name") or ""))
+    if row is None:
+        row, _ = subs_app.add(turn.db, turn.ctx.ws_id, name=str(a.get("name") or ""))
+    if a.get("how") == "call":
+        phone = _typed_phone(turn, a.get("phone"))
+        if phone is None:
+            turn.say("text", f"Hvilket nummer skal jeg ringe til hos {row['name']}? Skriv det, så laver jeg et forslag. "
+                             "Eller sig «skriv opsigelsen», så får du den klar til at sende.")
+            return "Mangler nummer, som brugeren selv skriver."
+        subs_app.mark_cancelling(turn.db, turn.ctx.ws_id, row["id"])
+        return _propose(turn, name=row["name"], phone=phone, source="user",
+                        data={"purpose": f"Opsige mit abonnement hos {row['name']}",
+                              "may_ask": "Hvornår abonnementet stopper, og om de sender en skriftlig bekræftelse",
+                              "may_agree": "At abonnementet opsiges til første mulige dato",
+                              "may_not": "Sige ja til tilbud om at blive, en ny binding, et andet abonnement eller betale"})
+    letter = subs_app.cancellation_letter(row, turn.ctx.user.display_name,
+                                          str(a.get("customer_no") or "").strip()[:40] or None)
+    subs_app.mark_cancelling(turn.db, turn.ctx.ws_id, row["id"])
+    turn.say("text", f"Her er opsigelsen af {row['name']}. Send den fra din egen mail eller via deres "
+                     f"kontaktformular, og gem bekræftelsen:\n\n{letter}{brand.offer_line(row.get('category'))}")
+    return "Opsigelsen er skrevet."
+
+
+@_vf
+def tool_request_quotes(turn: Turn, a: dict) -> str:
+    from app.core.errors import Conflict
+    from app.modules.privat import quotes
+
+    try:
+        entry, found = quotes.request(turn.db, turn.ctx, job=str(a.get("job") or ""), trade=str(a.get("trade") or ""),
+                                      city=a.get("city"), window=str(a.get("window") or ""))
+    except Conflict as e:
+        if e.code == "needs_location":
+            turn.say("clarify", "Hvor skal jeg lede?", options=LOCATION_OPTIONS)
+            return "Brugeren skal give en by eller sin position."
+        raise
+    if not entry["quotes"]:
+        turn.say("text", f"Jeg fandt ingen {a.get('trade')} med et telefonnummer i nærheden. Prøv en anden by – eller "
+                         "skriv navn og nummer på dem, du kender.")
+        return "Ingen fundet."
+    names = _join_names([q["name"] for q in entry["quotes"]])
+    turn.say("text", f"Jeg har fundet {len(entry['quotes'])}: {names}. Godkend opkaldene herunder – jeg spørger om "
+                     f"pris og hvornår de kan {entry['job']}, og siger aldrig ja til noget. Svarene samler jeg side om "
+                     "side under Apps → Håndværker & tilbud.")
+    for q in entry["quotes"]:
+        turn.say("call_proposal", f"Forslag: opkald til {q['name']} om et tilbud.", task_id=uuid.UUID(q["task_id"]))
+    return f"{len(entry['quotes'])} forslag oprettet. Der er IKKE ringet; brugeren skal godkende hvert opkald."
+
+
+def tool_compare_quotes(turn: Turn, a: dict) -> str:
+    from app.modules.privat import quotes
+
+    entry = quotes.latest(turn.db, turn.ctx.ws_id, str(a.get("job") or "") or None)
+    if entry is None:
+        return "Der er ingen tilbud endnu. Spørg hvad der skal laves, og hvor."
+    turn.say("text", quotes.compare_text(turn.db, entry))
+    return "Vist."
+
+
+@_vf
+def tool_choose_quote(turn: Turn, a: dict) -> str:
+    from app.modules.privat import quotes
+
+    entry = quotes.latest(turn.db, turn.ctx.ws_id, str(a.get("job") or "") or None)
+    if entry is None:
+        return "Der er ingen tilbud at vælge imellem."
+    task = quotes.choose(turn.db, turn.ctx, entry, str(a.get("business") or ""))
+    turn.say("call_proposal", "Godt valg. Skal jeg ringe og sige ja tak og bede dem kontakte dig? Jeg aftaler ikke pris "
+                              "eller noget endeligt – det gør du selv med dem. Jeg ringer først, når du godkender.",
+             task_id=task.id)
+    return "Valgt; forslag til opkald oprettet. Der er IKKE ringet."
+
+
+@_vf
+def tool_add_expense(turn: Turn, a: dict) -> str:
+    from app.modules.privat import app_kit, expenses
+
+    g, e = expenses.add_expense(turn.db, turn.ctx.ws_id, me=_first_name(turn), group=a.get("group") or None,
+                                paid_by=str(a.get("paid_by") or ""), amount=a.get("amount"), text=str(a.get("text") or ""),
+                                among=_str_list(a.get("among")), people=_str_list(a.get("people")))
+    turn.say("text", f"Gemt i «{g['name']}»: {e['payer']} betalte {app_kit.money(e['amount_minor'])}"
+                     f"{' for ' + e['text'] if e['text'] else ''}.\n{expenses.summary_text(g)}")
+    return "Gemt."
+
+
+def tool_expenses_balance(turn: Turn, a: dict) -> str:
+    from app.modules.privat import app_kit, expenses
+
+    g = expenses.group_for(app_kit.items(turn.db, turn.ctx.ws_id, expenses.ADDON), str(a.get("group") or "") or None)
+    if g is None:
+        return "Der er ingen fælles udgifter endnu."
+    if a.get("share"):
+        turn.say("text", "Her er opgørelsen – kopiér den og send den til de andre:\n\n"
+                 + expenses.summary_text(g, share=True))
+    else:
+        turn.say("text", expenses.summary_text(g))
+    return "Vist."
+
+
+@_vf
+def tool_add_purchase(turn: Turn, a: dict) -> str:
+    from app.modules.privat import warranty
+
+    row = warranty.add(turn.db, turn.ctx.ws_id, product=str(a.get("product") or ""), bought=a.get("bought"),
+                       shop=str(a.get("shop") or ""), price=a.get("price"), warranty_years=a.get("warranty_years"))
+    turn.say("text", f"Gemt: {warranty.line(row)}. Jeg minder dig om det en måned før. Gem selv kvitteringen.")
+    return "Gemt."
+
+
+def tool_purchases_overview(turn: Turn, a: dict) -> str:
+    from app.modules.privat import warranty
+
+    o = warranty.overview(turn.db, turn.ctx.ws_id)
+    turn.say("text", "\n".join([o["summary"]] + [f"- {i['sub']}" for i in o["items"][:20]]))
+    return "Vist."
+
+
+def tool_write_complaint(turn: Turn, a: dict) -> str:
+    from app.modules.privat import app_kit, warranty
+
+    row = app_kit.find(app_kit.items(turn.db, turn.ctx.ws_id, warranty.ADDON), str(a.get("product") or ""))
+    if row is None:
+        return "Tingen er ikke gemt. Spørg hvor og hvornår den er købt, og gem den med add_purchase først."
+    text = warranty.complaint(row, str(a.get("problem") or "Den virker ikke"), turn.ctx.user.display_name)
+    turn.say("text", f"Her er reklamationen til {row.get('shop') or 'butikken'}. Send den sammen med kvitteringen:\n\n{text}")
+    return "Skrevet."
+
+
+@_vf
+def tool_save_party(turn: Turn, a: dict) -> str:
+    from app.modules.privat import party
+
+    p, created = party.save(turn.db, turn.ctx.ws_id, title=str(a.get("title") or ""), when=a.get("date"),
+                            time=str(a.get("time") or ""), place=str(a.get("place") or ""), guests=_str_list(a.get("guests")))
+    turn.say("text", ("Festen er oprettet. " if created else "Festen er rettet. ") + party.status_text(p)
+             + " Sig «skriv invitationen», så får du den klar til at sende.")
+    return "Gemt."
+
+
+@_vf
+def tool_update_guest(turn: Turn, a: dict) -> str:
+    from app.modules.privat import party
+
+    p, g = party.update_guest(turn.db, turn.ctx.ws_id, party=a.get("party") or None, name=str(a.get("name") or ""),
+                              status=a.get("status"), bring=a.get("bring"), diet=a.get("diet"))
+    turn.say("text", f"{g['name']}: {party.STATUS[g['status']]}"
+                     f"{', tager ' + g['bring'] + ' med' if g.get('bring') else ''}"
+                     f"{', ' + g['diet'] if g.get('diet') else ''}.\n" + party.status_text(p))
+    return "Gemt."
+
+
+def tool_party_status(turn: Turn, a: dict) -> str:
+    from app.modules.privat import app_kit, party
+
+    rows = app_kit.items(turn.db, turn.ctx.ws_id, party.ADDON)
+    p = app_kit.find(rows, str(a.get("party") or ""), "title") if a.get("party") else (rows[0] if rows else None)
+    if p is None:
+        return "Der er ingen fest. Spørg hvad det er for en fest, hvornår og hvem der skal med."
+    turn.say("text", party.status_text(p))
+    return "Vist."
+
+
+def tool_write_invitation(turn: Turn, a: dict) -> str:
+    from app.modules.privat import app_kit, brand, party
+
+    rows = app_kit.items(turn.db, turn.ctx.ws_id, party.ADDON)
+    p = app_kit.find(rows, str(a.get("party") or ""), "title") if a.get("party") else (rows[0] if rows else None)
+    if p is None:
+        return "Der er ingen fest. Opret den først med save_party."
+    text = party.invitation(p, _first_name(turn), str(a.get("note") or ""))
+    turn.say("text", f"Her er invitationen – kopiér den og send den på sms, Messenger eller mail:\n\n{text}"
+             + brand.offer_line("fest"))
+    return "Skrevet."
+
+
+@_vf
+def tool_plan_move(turn: Turn, a: dict) -> str:
+    from app.modules.privat import app_kit, moving
+
+    task, move = moving.plan(turn.db, turn.ctx, moving_day=a.get("moving_day"), to=str(a.get("to") or ""))
+    partners = moving.partner_lines()
+    _created(turn, task, f"Flyttedag {app_kit.date_text(move['day'])}. Her er tjeklisten med datoer – jeg minder dig om "
+                         "hvert punkt. Adresseændringen laver du selv på borger.dk. Skal jeg hente tilbud fra 3 "
+                         "flyttefirmaer?" + ("\n\n" + "\n".join(partners) if partners else ""))
+    return f"Flyttetjekliste oprettet (id {task.id})."
+
+
+def tool_moving_status(turn: Turn, a: dict) -> str:
+    from app.modules.privat import moving
+
+    o = moving.overview(turn.db, turn.ctx.ws_id)
+    turn.say("text", o["summary"] + ("\n" + o["items"][0]["sub"] if o["items"] and o["items"][0]["sub"] else ""))
+    return "Vist."
+
+
+@_vf
+def tool_save_pet(turn: Turn, a: dict) -> str:
+    from app.modules.privat import brand, pets
+
+    p = pets.save_pet(turn.db, turn.ctx.ws_id, name=str(a.get("name") or ""), kind=str(a.get("kind") or ""),
+                      vaccination_due=a.get("vaccination_due"), insurance_renews=a.get("insurance_renews"),
+                      worming_every_months=a.get("worming_every_months"), flea_every_months=a.get("flea_every_months"),
+                      last_treatment=a.get("last_treatment"))
+    turn.say("text", f"Gemt: {pets.line(p)}. Jeg minder dig om det i god tid." + brand.offer_line("dyreforsikring"))
+    return "Gemt."
+
+
+def tool_save_vet(turn: Turn, a: dict) -> str:
+    from app.modules.privat import pets
+
+    phone = _typed_phone(turn, a.get("phone"))
+    if phone is None:
+        return "Nummeret er ikke skrevet af brugeren. Spørg efter det; opfind det aldrig."
+    name = str(a.get("name") or "").strip() or "Dyrlægen"
+    pets.save_vet(turn.db, turn.ctx.ws_id, name=name, phone_e164=phone)
+    turn.say("text", f"Dyrlægen er gemt: {name}, {rules.phone_display(phone)}. Sig til, når jeg skal finde en tid.")
+    return "Gemt."
+
+
+def tool_book_vet(turn: Turn, a: dict) -> str:
+    from app.modules.privat import pets
+
+    v = pets.vet(turn.db, turn.ctx.ws_id)
+    if not v:
+        return "Der er ingen gemt dyrlæge. Spørg efter navn og nummer."
+    pet = str(a.get("pet") or "").strip()[:40]
+    purpose = str(a.get("purpose") or "").strip()[:300] or "Bestille en tid"
+    data = {"purpose": f"{purpose}{' til ' + pet if pet and pet.lower() not in purpose.lower() else ''}",
+            "window": str(a.get("window") or "").strip()[:200]}
+    return _propose(turn, name=v["name"], phone=v["phone"], source="user", data=data)
+
+
+def tool_pets_status(turn: Turn, a: dict) -> str:
+    from app.modules.privat import pets
+
+    o = pets.overview(turn.db, turn.ctx.ws_id)
+    turn.say("text", "\n".join([o["summary"]] + [f"- {i['sub']}" for i in o["items"]]))
+    return "Vist."
+
+
+@_vf
+def tool_add_home_tasks(turn: Turn, a: dict) -> str:
+    from app.modules.privat import home
+
+    added = home.add(turn.db, turn.ctx.ws_id, names=_str_list(a.get("names")), custom=a.get("custom") or None,
+                     every_months=a.get("every_months"), next_due=a.get("next_due"))
+    if not added:
+        turn.say("text", "Det har jeg allerede – eller jeg kender ikke opgaven. Vælg fx røgalarm, emhætte, afløb, "
+                         "ventilation, tagrender, fyr, skorsten, tag eller udendørs vandhaner – eller sig din egen.")
+        return "Intet nyt."
+    turn.say("text", "Tilføjet:\n" + "\n".join(f"- {home.line(j)}" for j in added) + "\nJeg minder dig om dem til tiden.")
+    return "Tilføjet."
+
+
+def tool_home_task_done(turn: Turn, a: dict) -> str:
+    from app.modules.privat import home
+
+    j = home.mark_done(turn.db, turn.ctx.ws_id, str(a.get("name") or ""))
+    if j is None:
+        return "Den opgave findes ikke."
+    turn.say("text", f"Godt klaret. {home.line(j)}.")
+    return "Rykket."
+
+
+def tool_home_status(turn: Turn, a: dict) -> str:
+    from app.modules.privat import home
+
+    o = home.overview(turn.db, turn.ctx.ws_id)
+    turn.say("text", "\n".join([o["summary"]] + [f"- {i['text']}: {i['sub']}" for i in o["items"]]))
+    return "Vist."
+
+
+@_vf
+def tool_plan_workouts(turn: Turn, a: dict) -> str:
+    from app.modules.privat import appdata, brand, fitness
+
+    if a.get("goal"):
+        fitness.set_goal(turn.db, turn.ctx.ws_id, str(a["goal"]))
+    added = fitness.plan(turn.db, turn.ctx.ws_id, [w for w in (a.get("workouts") or []) if isinstance(w, dict)],
+                         replace=a.get("replace") is True)
+    data = appdata.get(turn.db, turn.ctx.ws_id, fitness.ADDON)
+    head = "Planen er gemt. " if added else ("Målet er gemt. " if a.get("goal") else "")
+    turn.say("text", head + fitness.status_text(data) + "\nJeg minder dig om det på dagen." + brand.offer_line("fitness"))
+    return "Gemt."
+
+
+@_vf
+def tool_log_workout(turn: Turn, a: dict) -> str:
+    from app.modules.privat import appdata, fitness
+
+    e = fitness.log(turn.db, turn.ctx.ws_id, activity=str(a.get("activity") or ""),
+                    minutes=a.get("minutes") if isinstance(a.get("minutes"), int) else None, when=a.get("date"))
+    data = appdata.get(turn.db, turn.ctx.ws_id, fitness.ADDON)
+    mins = f", {e['minutes']} min" if e["minutes"] else ""
+    turn.say("text", f"Noteret: {e['activity']}{mins}. " + fitness.status_text(data).split("\n")[1])
+    return "Noteret."
+
+
+def tool_fitness_status(turn: Turn, a: dict) -> str:
+    from app.modules.privat import appdata, fitness
+
+    turn.say("text", fitness.status_text(appdata.get(turn.db, turn.ctx.ws_id, fitness.ADDON)))
+    return "Vist."

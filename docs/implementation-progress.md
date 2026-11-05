@@ -2,6 +2,30 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 37 — 6. november 2026 (9 nye Privat-apps, Madplan med mængder, assistentens navn)
+
+Abonnementer & opsigelse, Håndværker & tilbud, Fælles udgifter, Garanti & kvitteringer, Fest & invitationer, Flytning,
+Kæledyr, Hus & vedligehold og Fitness & sundhed. Indtjening er bygget ind: leads til virksomheder, mærkede
+partnerlinks («Annonce») og Dialogbots navn på alt, der sendes videre. Se `docs/privat-api.md` «Husstandens apps» og
+`docs/sales/privat-revenue.md`.
+
+| Del | Status | Bevis |
+|---|---|---|
+| 9 apps i butikken; data i `private_app_data`; én oversigt + «Fjern» pr. app (`/privat/apps/{key}/…`) | testet | `tests/test_privat_household.py` |
+| Påmindelser (én pr. dato, fra kl. 8, kun når appen er slået til) for abonnementer, garanti, fest, flytning, dyr, hus, træning | testet | samme |
+| Håndværker & tilbud: op til 3 opkaldsforslag, svar side om side, valg → «ja tak»-forslag; aldrig ringet uden godkendelse | testet (søgning erstattet) | samme |
+| Lead-regnskab `private_business_referrals` (spurgt → valgt / ikke valgt) | testet | samme; migration `d1f6b3a8e4c9` |
+| Partnerlinks fra `PRIVAT_PARTNER_LINKS`, kun https, altid «Annonce – Dialogbot kan få provision» | testet | samme |
+| Opsigelse, reklamation, invitation og opgørelse med Dialogbot-fodlinje | testet | samme |
+| Madplan: mængder pr. antal personer, lagt sammen på indkøbslisten; ingredienser på hver dag; link til dagligvarepartner | testet | samme |
+| Assistentens navn: første skærm på /privat/start og Konto; chat, butik og app-tekster følger; opkald/mails siger «Dialogbot» | testet | samme + `tests/test_funnel.py` |
+| Web: fælles app-panel, ikoner, `/privat/apps/{key}`, 8 sprog | tsc + i18n-check | — |
+
+**Ikke eksternt verificeret:** ingen partneraftaler findes endnu (`PRIVAT_PARTNER_LINKS` er tom → intet vises); en
+indkøbskurv med ét klik kræver en aftale med en dagligvarebutik (ingen åben kurv-API i Danmark); betaling pr. lead
+kræver aftale med virksomhederne og juridisk gennemgang; kvitteringsfotos gemmes ikke; Fitness gemmer bevidst ingen
+helbredsdata.
+
 ## Checkpoint 36 — 5. november 2026 (Privat-appen «Rejser», trin 1)
 
 Rejseforslag med rigtige priser fra Duffel og/eller Travelpayouts; «Book» åbner udbyderens side. Se `docs/privat-api.md` «Rejser».

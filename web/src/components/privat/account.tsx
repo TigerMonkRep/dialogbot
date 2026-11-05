@@ -204,7 +204,7 @@ export function AccountPane() {
         <PushPrompt moment="account" />
       </section>
 
-      {mode !== "demo" && <CityRow />}
+      {mode !== "demo" && <><CityRow /><AssistantNameRow /></>}
 
       <InviteFriends />
 
@@ -361,6 +361,40 @@ function CityRow() {
           <label htmlFor="city-input" className="sr-only">{t("location.label")}</label>
           <input id="city-input" autoFocus value={v} onChange={(e) => setV(e.target.value)} placeholder={t("location.placeholder")} className="flex-1 min-w-0 min-h-[48px] rounded-[14px] border-2 border-ink px-3.5 text-[16px]" />
           <Button type="submit" className="border-2 border-ink">{t("location.save")}</Button>
+        </form>
+      )}
+    </section>
+  );
+}
+
+/** «Assistentens navn: Peter · Ret» (PATCH /privat/me/assistant). Calls and e-mails still say «Dialogbot». */
+function AssistantNameRow() {
+  const t = useT("privat");
+  const { balance, run } = usePrivat();
+  const [edit, setEdit] = useState(false);
+  const [v, setV] = useState("");
+  const save = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = await run((a) => a.setAssistantName(v.trim()));
+    if (r) setEdit(false);
+  };
+  return (
+    <section className="flex flex-col gap-2" aria-label={t("assistantName.label")}>
+      {!edit ? (
+        <p className="m-0 text-[15px] flex items-center gap-2 flex-wrap" data-testid="assistant-name-row">
+          <span><span className="text-muted">{t("assistantName.label")}:</span> <b>{balance?.assistant_name ?? "Peter"}</b></span>
+          <span aria-hidden>·</span>
+          <button type="button" className={LINK} onClick={() => { setV(balance?.assistant_name ?? ""); setEdit(true); }}>{t("location.edit")}</button>
+        </p>
+      ) : (
+        <form onSubmit={save} className="flex flex-col gap-1.5">
+          <div className="flex gap-2">
+            <label htmlFor="assistant-name-input" className="sr-only">{t("assistantName.label")}</label>
+            <input id="assistant-name-input" autoFocus value={v} maxLength={20} onChange={(e) => setV(e.target.value)}
+              placeholder="Peter" className="flex-1 min-w-0 min-h-[48px] rounded-[14px] border-2 border-ink px-3.5 text-[16px]" />
+            <Button type="submit" className="border-2 border-ink">{t("location.save")}</Button>
+          </div>
+          <p className="m-0 text-[12px] text-muted">{t("assistantName.hint")}</p>
         </form>
       )}
     </section>

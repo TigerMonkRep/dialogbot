@@ -30,7 +30,7 @@ from app.models import (
     PrivateTaskMember,
     User,
 )
-from app.modules.privat import ledger, rules, sharing
+from app.modules.privat import ledger, naming, rules, sharing
 
 ACTIVE_STATUSES = ("planned", "in_progress", "awaiting_business")
 LIST_TYPES = ("shopping", "wishlist", "todo")
@@ -67,7 +67,7 @@ def balance_out(db: OrmSession, ctx) -> dict:
             "sponsor_left_today": max(0, rules.SPONSOR_PER_DAY - ledger.sponsor_used_today(db, ctx.ws_id)),
             "phone_display": rules.phone_display(p.phone_e164) if p.phone_verified_at else None,
             "phone_verified": p.phone_verified_at is not None, "push_enabled": _push_enabled(db, ctx.user_id),
-            "location_city": p.location_city,
+            "location_city": p.location_city, "assistant_name": naming.of(p),
             # the subscription (docs/privat-api.md): trial counts as Plus; credits are "ekstra opkald" beyond the quota
             "plan": ent["plan"], "plan_status": ent["status"], "trial_days_left": ent["trial_days_left"],
             "calls_quota": ent["calls_quota"], "calls_used": ent["calls_used"], "calls_left": ent["calls_left"],

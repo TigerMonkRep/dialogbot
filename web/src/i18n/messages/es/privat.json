@@ -14,6 +14,7 @@
     "birthdays": "Cumpleaños",
     "bills": "Facturas",
     "car": "Coche e ITV",
+    "app": "App",
     "parcels": "Paquetes",
     "travel": "Viajes"
   },
@@ -934,6 +935,8 @@
         "1605": "16.05 y todavía no has llamado",
         "telefonsvarer": "Otra vez colgaste al contestador"
       },
+      "nameLabel": "¿Cómo se llamará tu asistente? (opcional)",
+      "nameHint": "Déjalo vacío y se llamará Peter. Puedes cambiarlo cuando quieras en Cuenta.",
       "title": "¿Qué has ido posponiendo?",
       "help": "Elige todo lo que está pendiente. Peter convierte cada cosa en una tarea.",
       "postponed": {
@@ -1167,6 +1170,17 @@
       "yearly": "cada año",
       "once": "una vez"
     }
+  },
+  "assistantName": {
+    "label": "Nombre del asistente",
+    "hint": "Solo en la app y el chat: cuando llama o escribe, dice «Dialogbot»."
+  },
+  "household": {
+    "ad": "Anuncio",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "copyFailed": "No se pudo copiar: selecciona el texto y cópialo tú.",
+    "hint": "Todo lo demás lo haces en el chat: escribe a tu asistente."
   },
   "moreApps": {
     "save": "Guardar",

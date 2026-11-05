@@ -636,6 +636,20 @@ def set_location(body: LocationIn, ctx: PrivateCtx = Depends(private_ctx), db: O
     return service.balance_out(db, ctx)
 
 
+class AssistantNameIn(BaseModel):
+    name: str = Field(default="", max_length=40, description="Empty = the default «Peter»")
+
+
+@router.patch("/me/assistant")
+def set_assistant_name(body: AssistantNameIn, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """What the assistant is called in the app and the chat (calls and e-mails still say «Dialogbot»)."""
+    from app.modules.privat import naming
+
+    ctx.profile.assistant_name = naming.clean(body.name)
+    db.commit()
+    return service.balance_out(db, ctx)
+
+
 # --------------------------------------------------------------------------- web push
 
 class PushKeys(BaseModel):

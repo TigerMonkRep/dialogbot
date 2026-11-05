@@ -262,3 +262,31 @@ def search_trips(body: TripSearchIn, ctx: PrivateCtx = Depends(private_ctx), db:
 def latest_trip_search(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
     addons.require(db, ctx.ws_id, travel.ADDON)
     return {"search": travel.latest(db, ctx.ws_id)}
+
+
+# --------------------------------------------------------------------------- household apps (app_kit.py)
+# One overview and one remove per app; everything else happens in the chat.
+
+@router.get("/apps/{key}/overview")
+def app_overview(key: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """{summary, items: [{id, text, sub, share_text?}], partner: {name, url, text, note} | null}. A partner is always
+    an advertisement (note: «Annonce …»)."""
+    from app.modules.privat import app_kit, naming
+
+    mod = app_kit.module(key)
+    addons.require(db, ctx.ws_id, key)
+    o = mod.overview(db, ctx.ws_id)
+    return {**o, "summary": naming.personalize(o["summary"], naming.of(ctx.profile))}
+
+
+@router.delete("/apps/{key}/items/{item_id}", status_code=204)
+def app_remove_item(key: str, item_id: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    from app.core.errors import NotFound
+    from app.modules.privat import app_kit
+
+    mod = app_kit.module(key)
+    addons.require(db, ctx.ws_id, key)
+    if not mod.remove(db, ctx.ws_id, item_id[:40]):
+        raise NotFound("Findes ikke")
+    db.commit()
+    return Response(status_code=204)

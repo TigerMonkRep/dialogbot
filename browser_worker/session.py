@@ -32,6 +32,7 @@ from .errors import ApprovalRequired, FallbackPhone, RunFailed, ToolError
 VIEWPORT = {"width": 1280, "height": 720}
 NAV_TIMEOUT_MS = 15_000
 ACTION_TIMEOUT_MS = 8_000
+CLICK_SETTLE_MS = 300   # how long a click may take to start a navigation (session.click)
 MAX_WAIT_MS = 5_000
 MAX_TYPE_CHARS = 500
 TOOL_NAMES = ("navigate", "read_page", "click", "type", "select", "wait", "screenshot")
@@ -265,11 +266,32 @@ class BrowserSession:
                 self.commits_used += 1
             if facts["disabled"]:
                 raise ToolError("disabled", "Elementet er deaktiveret.")
+            navs: list = []
+
+            def on_request(req) -> None:  # a navigation of this page that the click started
+                if req.is_navigation_request() and req.frame == self.page.main_frame:
+                    navs.append(req)
+
+            page = self.page
+            page.on("request", on_request)
             try:
                 loc.click()
+                # A link's navigation may start a moment after click() returns: give it CLICK_SETTLE_MS to show up,
+                # then wait for it, so a target the allow-list aborts is never reported as «OK».
+                if not navs:
+                    page.wait_for_timeout(CLICK_SETTLE_MS)
                 self.page.wait_for_load_state("domcontentloaded")
             except PlaywrightError as e:
                 self._navigation_error(e)
+            finally:
+                page.remove_listener("request", on_request)
+            if navs and navs[-1].failure is not None and not netguard.url_allowed(navs[-1].url, self.allowed_domains):
+                self._on_block(navs[-1].url)
+                if self.page.url.startswith("chrome-error:"):
+                    self._after_navigation()   # goes back and raises blocked_by_allowlist (or captcha)
+                if any(limits.is_captcha_url(u) for u in self.blocked):
+                    raise FallbackPhone("captcha", "CAPTCHA fundet")
+                raise ToolError("blocked_by_allowlist", "Linket peger uden for de godkendte domæner.")
             self._after_navigation()
             if not hit:
                 self._check_unexpected_commit(step)

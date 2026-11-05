@@ -101,6 +101,19 @@ def test_allowlist_blocks_foreign_requests_and_redirects(site, workdir):
         assert "Vælg ydelse" in s.read_page()
 
 
+def test_a_link_that_navigates_a_moment_after_the_click_is_still_blocked(site, workdir):
+    """The navigation can start after click() returns (a slow runner, or a page that navigates from a timer). The
+    click must still end in blocked_by_allowlist, never in «OK» on the old page."""
+    with session(site, workdir) as s:
+        s.navigate(site.url + "/booking-evil/ydelse.html")
+        s.read_page()
+        with pytest.raises(ToolError) as e:
+            s.click(s.find("link", "Vis mere"))
+        assert e.value.code == "blocked_by_allowlist"
+        assert any("evil.invalid/later" in u for u in s.blocked)
+        assert s.page.url.startswith(site.url)
+
+
 def test_redirect_to_other_ip_never_reaches_the_network(site, workdir):
     """Playwright's route() is not called for redirect hops; the browser-level layer must stop this one."""
     with session(site, workdir) as s:

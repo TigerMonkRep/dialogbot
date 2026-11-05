@@ -2,6 +2,22 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 33 — 5. november 2026 (Privat-appen «Fødselsdage»)
+
+Anden af de otte apps. Se `docs/privat-api.md` «Fødselsdage». Appen er nu `available` (Plus og Familie).
+
+| Del | Status | Bevis |
+|---|---|---|
+| `private_birthdays` (migration `a7c3e9f2b4d6`, navngivne constraints, unik pr. navn, op/ned/op) | testet | `alembic check` rent |
+| Datolæsning («14. marts», «14.03.1946», ISO), umulige datoer afvist, 29. februar, alder | testet | `tests/test_privat_birthdays.py` |
+| Påmindelse én gang pr. år, tidligst kl. 08, misset påmindelse indhentes, kun med appen slået til; push eller e-mail | testet | samme (også via `run_schedules`) |
+| Chat: gem flere på én gang, ret dato, vis kommende, fjern; tilbud om appen, når den er slået fra | testet med testmodellen | samme |
+| API med isolation mellem konti | testet | samme |
+| Web: panel i app-arket og `/privat/foedselsdage`, 8 sprog | typecheck + i18n-paritet | `npx tsc`, `scripts/i18n-check.mjs` |
+
+**Ikke eksternt verificeret:** påmindelsen er ikke set modtaget som push på en rigtig telefon; gaveforslag er ikke automatiske
+(påmindelsen siger, at man kan bede Peter om idéer).
+
 ## Checkpoint 32 — 5. november 2026 (Privat-appen «Kalender»)
 
 Første af de otte «kommer snart»-apps. Se `docs/privat-api.md` «Kalender». Godkendte aftaler (bekræftede opkald, bekræftede

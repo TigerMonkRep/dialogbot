@@ -368,6 +368,57 @@
         "title": "BasisIn",
         "type": "object"
       },
+      "BirthdayIn": {
+        "properties": {
+          "date": {
+            "description": "«14. marts», «14.03.1946» or «1946-03-14»",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Date",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "remind_days_before": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remind Days Before"
+          }
+        },
+        "required": [
+          "name",
+          "date"
+        ],
+        "title": "BirthdayIn",
+        "type": "object"
+      },
+      "BirthdayPatch": {
+        "properties": {
+          "remind_days_before": {
+            "maximum": 60.0,
+            "minimum": 0.0,
+            "title": "Remind Days Before",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "remind_days_before"
+        ],
+        "title": "BirthdayPatch",
+        "type": "object"
+      },
       "BlobIn": {
         "properties": {
           "blob": {
@@ -16420,6 +16471,226 @@
         "summary": "Appointment Ics",
         "tags": [
           "privat-calendar"
+        ]
+      }
+    },
+    "/api/v1/privat/birthdays": {
+      "get": {
+        "operationId": "list_birthdays_api_v1_privat_birthdays_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Birthdays",
+        "tags": [
+          "privat-apps"
+        ]
+      },
+      "post": {
+        "description": "Adds the birthday, or changes the date of the person with the same name.",
+        "operationId": "add_birthday_api_v1_privat_birthdays_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BirthdayIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Birthday",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
+    "/api/v1/privat/birthdays/{birthday_id}": {
+      "delete": {
+        "operationId": "delete_birthday_api_v1_privat_birthdays__birthday_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "birthday_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Birthday Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Birthday",
+        "tags": [
+          "privat-apps"
+        ]
+      },
+      "patch": {
+        "operationId": "update_birthday_api_v1_privat_birthdays__birthday_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "birthday_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Birthday Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BirthdayPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Birthday",
+        "tags": [
+          "privat-apps"
         ]
       }
     },

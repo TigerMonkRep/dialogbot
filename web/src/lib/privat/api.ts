@@ -240,7 +240,18 @@ export interface PrivatApi {
   connectCalendar(provider: CalendarProvider): Promise<{ url: string }>;
   disconnectCalendar(provider: CalendarProvider): Promise<void>;
   removeAppointment(id: string): Promise<Appointment>;
+  // Fødselsdage app
+  birthdays(): Promise<{ items: Birthday[] }>;
+  addBirthday(body: { name: string; date: string; remind_days_before?: number }): Promise<Birthday & { created: boolean }>;
+  updateBirthday(id: string, body: { remind_days_before: number }): Promise<Birthday>;
+  removeBirthday(id: string): Promise<void>;
 }
+
+// ---------- Fødselsdage ----------
+export type Birthday = {
+  id: string; name: string; month: number; day: number; year: number | null; date_text: string;
+  next_date: string; days_until: number; turns: number | null; remind_days_before: number;
+};
 
 // ---------- Kalender ----------
 export type CalendarProvider = "google" | "microsoft";
@@ -344,6 +355,10 @@ export const realPrivat: PrivatApi = {
   connectCalendar: (provider) => api(`${P}/calendar/connect/${enc(provider)}`, json({})),
   disconnectCalendar: (provider) => api(`${P}/calendar/connect/${enc(provider)}`, { method: "DELETE" }),
   removeAppointment: (id) => api(`${P}/appointments/${enc(id)}`, { method: "DELETE" }),
+  birthdays: () => api(`${P}/birthdays`),
+  addBirthday: (body) => api(`${P}/birthdays`, json(body)),
+  updateBirthday: (id, body) => api(`${P}/birthdays/${enc(id)}`, { method: "PATCH", body: JSON.stringify(body) }),
+  removeBirthday: (id) => api(`${P}/birthdays/${enc(id)}`, { method: "DELETE" }),
 };
 
 /** The Privat API is not there (not merged/deployed) or switched off: the UI falls back to the simulation. */

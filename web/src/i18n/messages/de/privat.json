@@ -10,7 +10,8 @@
     "people": "Meine Leute",
     "invite": "Einladung",
     "groupJoin": "Der Gruppe beitreten",
-    "calendar": "Kalender"
+    "calendar": "Kalender",
+    "birthdays": "Geburtstage"
   },
   "brand": {
     "privat": "Privat",
@@ -1112,5 +1113,25 @@
     "addToCalendar": "Zum Kalender hinzufügen",
     "remove": "Aus dem Kalender entfernen",
     "removeNote": "«Aus dem Kalender entfernen» sagt den Termin beim Unternehmen nicht ab."
+  },
+  "birthdays": {
+    "title": "Kommende Geburtstage",
+    "loading": "Geburtstage werden geladen …",
+    "none": "Noch keine Geburtstage. Schreib Peter zum Beispiel «Mamas Geburtstag ist am 14. März» oder füge hier einen hinzu.",
+    "today": "heute",
+    "tomorrow": "morgen",
+    "inDays": "in {n} Tagen",
+    "turns": "wird {n}",
+    "remind": "Erinnerung",
+    "onTheDay": "am Tag",
+    "daysBefore": "{n} Tage vorher",
+    "remove": "Entfernen",
+    "add": "Geburtstag hinzufügen",
+    "name": "Name",
+    "namePlaceholder": "Name, z. B. Mama",
+    "date": "Datum",
+    "datePlaceholder": "Datum, z. B. 14. März oder 14.03.1946",
+    "save": "Speichern",
+    "hint": "Mit Jahr sagt dir Peter auch, wie alt die Person wird."
   }
 }

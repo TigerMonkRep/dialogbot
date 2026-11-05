@@ -247,8 +247,8 @@ register(Addon(
 
 register(Addon(
     key="foedselsdage", name="Fødselsdage", tagline="Glem aldrig en fødselsdag igen",
-    description="Peter husker familiens og vennernes fødselsdage og minder dig om dem i god tid – med et forslag til en gave.",
-    icon="cake", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    description="Peter husker familiens og vennernes fødselsdage og minder dig om dem i god tid.",
+    icon="cake", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
     what="Fortæl Peter, hvem der har fødselsdag hvornår. Han minder dig om det nogle dage før, så du kan nå at købe "
          "en gave eller sende en hilsen.",
     example="«Mors fødselsdag er den 14. marts – mind mig om det en uge før»",
@@ -257,6 +257,23 @@ register(Addon(
            "Peter minder dig om det hvert år"),
     included_in=("plus", "familie"),
     permissions=("Gemmer navne og fødselsdatoer, du giver assistenten",), keywords=("fødselsdag", "fylder år"),
+    tools=(AddonTool(
+        "add_birthdays",
+        "Gem en eller flere fødselsdage, brugeren har fortalt om. date er fx «14. marts», «14.03.1946» eller "
+        "«1946-03-14» – kun det brugeren skrev; gæt aldrig et år. Samme navn igen retter datoen.",
+        _obj({"items": {"type": "array", "items": _obj(
+            {"name": {"type": "string"}, "date": {"type": "string"},
+             "remind_days_before": {"type": "integer", "description": "Kun hvis brugeren sagde det (0 = på dagen)"}},
+            ["name", "date"])}}, ["items"]),
+        "app.modules.privat.chat:tool_add_birthdays"),
+        AddonTool(
+            "list_birthdays",
+            "Vis de kommende fødselsdage (de næste 45 dage, ellers den næste).",
+            _obj({}), "app.modules.privat.chat:tool_list_birthdays"),
+        AddonTool(
+            "remove_birthday",
+            "Fjern en gemt fødselsdag (navnet som brugeren skrev det).",
+            _obj({"name": {"type": "string"}}, ["name"]), "app.modules.privat.chat:tool_remove_birthday")),
 ))
 
 register(Addon(

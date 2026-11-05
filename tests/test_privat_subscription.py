@@ -228,9 +228,10 @@ def test_addon_enable_needs_plan(api, pv):
     assert cat["kalender"]["included"] is True and cat["kalender"]["included_in"] == ["plus", "familie"]
     for key in ("foedselsdage", "madplan", "bil-og-syn", "regninger", "laege-og-tandlaege", "pakkeliste"):
         a = cat[key]
-        assert a["status"] == "coming_soon" and a["what"] and a["example"] and len(a["steps"]) >= 2
+        assert a["status"] in ("coming_soon", "available") and a["what"] and a["example"] and len(a["steps"]) >= 2
         assert a["included_in"] == ["plus", "familie"]
-        assert api.post(tok, f"/privat/addons/{key}/enable").json()["code"] == "coming_soon"
+        if a["status"] == "coming_soon":
+            assert api.post(tok, f"/privat/addons/{key}/enable").json()["code"] == "coming_soon"
     assert all(a["what"] and a["example"] and a["steps"] for a in cat.values())
     # trial over: plan apps are locked, free ones are not
     pv.expire_trial(tok)

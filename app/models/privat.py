@@ -7,11 +7,12 @@ resolve the caller's own (app/modules/privat/deps.py).
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
+    Date,
     DateTime,
     Float,
     ForeignKey,
@@ -495,5 +496,32 @@ class PrivateAppointment(Base):
     sequence: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     # {"google_calendar": {"event_id": "...", "sequence": 2, "error": null}, ...}
     external: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict, server_default="{}")
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = ts_now()
+
+
+class PrivateBirthday(Base):
+    """Fødselsdage app: a birthday the user told the assistant. Reminded `remind_days_before` days before (0 = on the
+    day), once a year (`last_reminded_for` is the birthday date the last reminder was about)."""
+
+    __tablename__ = "private_birthdays"
+    __table_args__ = (
+        CheckConstraint("month between 1 and 12", name="ck_private_birthdays_month"),
+        CheckConstraint("day between 1 and 31", name="ck_private_birthdays_day"),
+        CheckConstraint("year is null or year between 1900 and 2100", name="ck_private_birthdays_year"),
+        CheckConstraint("remind_days_before between 0 and 60", name="ck_private_birthdays_remind"),
+        UniqueConstraint("workspace_id", "name_key", name="uq_private_birthdays_name"),
+        Index("ix_private_birthdays_ws_month_day", "workspace_id", "month", "day"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    name_key: Mapped[str] = mapped_column(String(100), nullable=False)   # lower-case, single spaces: one per person
+    month: Mapped[int] = mapped_column(Integer, nullable=False)
+    day: Mapped[int] = mapped_column(Integer, nullable=False)
+    year: Mapped[int | None] = mapped_column(Integer)                     # only when the user gave it (for the age)
+    remind_days_before: Mapped[int] = mapped_column(Integer, nullable=False, default=7, server_default="7")
+    last_reminded_for: Mapped[date | None] = mapped_column(Date)
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = ts_now()

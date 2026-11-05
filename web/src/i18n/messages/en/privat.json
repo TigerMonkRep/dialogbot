@@ -10,7 +10,8 @@
     "people": "My people",
     "invite": "Invitation",
     "groupJoin": "Join the group",
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "birthdays": "Birthdays"
   },
   "brand": {
     "privat": "Privat",
@@ -1112,5 +1113,25 @@
     "addToCalendar": "Add to calendar",
     "remove": "Remove from calendar",
     "removeNote": "«Remove from calendar» does not cancel the time with the business."
+  },
+  "birthdays": {
+    "title": "Upcoming birthdays",
+    "loading": "Loading birthdays …",
+    "none": "No birthdays yet. Tell Peter for example «Mum's birthday is 14 March», or add one here.",
+    "today": "today",
+    "tomorrow": "tomorrow",
+    "inDays": "in {n} days",
+    "turns": "turns {n}",
+    "remind": "Reminder",
+    "onTheDay": "on the day",
+    "daysBefore": "{n} days before",
+    "remove": "Remove",
+    "add": "Add birthday",
+    "name": "Name",
+    "namePlaceholder": "Name, e.g. Mum",
+    "date": "Date",
+    "datePlaceholder": "Date, e.g. 14 March or 14.03.1946",
+    "save": "Save",
+    "hint": "If you include the year, Peter also tells you how old they turn."
   }
 }

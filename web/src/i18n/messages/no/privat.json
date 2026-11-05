@@ -10,7 +10,8 @@
     "people": "Mine folk",
     "invite": "Invitasjon",
     "groupJoin": "Bli med i gruppen",
-    "calendar": "Kalender"
+    "calendar": "Kalender",
+    "birthdays": "Bursdager"
   },
   "brand": {
     "privat": "Privat",
@@ -1112,5 +1113,25 @@
     "addToCalendar": "Legg til i kalender",
     "remove": "Fjern fra kalender",
     "removeNote": "«Fjern fra kalender» avlyser ikke timen hos bedriften."
+  },
+  "birthdays": {
+    "title": "Kommende bursdager",
+    "loading": "Henter bursdager …",
+    "none": "Ingen bursdager ennå. Skriv for eksempel «Mammas bursdag er 14. mars» til Peter, eller legg til en her.",
+    "today": "i dag",
+    "tomorrow": "i morgen",
+    "inDays": "om {n} dager",
+    "turns": "fyller {n}",
+    "remind": "Påminnelse",
+    "onTheDay": "på dagen",
+    "daysBefore": "{n} dager før",
+    "remove": "Fjern",
+    "add": "Legg til bursdag",
+    "name": "Navn",
+    "namePlaceholder": "Navn, f.eks. Mamma",
+    "date": "Dato",
+    "datePlaceholder": "Dato, f.eks. 14. mars eller 14.03.1946",
+    "save": "Lagre",
+    "hint": "Skriver du året, forteller Peter også hvor gammel personen blir."
   }
 }

@@ -10,7 +10,8 @@
     "people": "Mina personer",
     "invite": "Inbjudan",
     "groupJoin": "Gå med i gruppen",
-    "calendar": "Kalender"
+    "calendar": "Kalender",
+    "birthdays": "Födelsedagar"
   },
   "brand": {
     "privat": "Privat",
@@ -1112,5 +1113,25 @@
     "addToCalendar": "Lägg till i kalendern",
     "remove": "Ta bort från kalendern",
     "removeNote": "«Ta bort från kalendern» avbokar inte tiden hos företaget."
+  },
+  "birthdays": {
+    "title": "Kommande födelsedagar",
+    "loading": "Hämtar födelsedagar …",
+    "none": "Inga födelsedagar än. Skriv till exempel «Mammas födelsedag är den 14 mars» till Peter, eller lägg till en här.",
+    "today": "i dag",
+    "tomorrow": "i morgon",
+    "inDays": "om {n} dagar",
+    "turns": "fyller {n}",
+    "remind": "Påminnelse",
+    "onTheDay": "på dagen",
+    "daysBefore": "{n} dagar före",
+    "remove": "Ta bort",
+    "add": "Lägg till födelsedag",
+    "name": "Namn",
+    "namePlaceholder": "Namn, t.ex. Mamma",
+    "date": "Datum",
+    "datePlaceholder": "Datum, t.ex. 14 mars eller 14.03.1946",
+    "save": "Spara",
+    "hint": "Skriver du året berättar Peter också hur gammal personen fyller."
   }
 }

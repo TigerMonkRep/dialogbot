@@ -10,7 +10,8 @@
     "people": "Le mie persone",
     "invite": "Invito",
     "groupJoin": "Entra nel gruppo",
-    "calendar": "Calendario"
+    "calendar": "Calendario",
+    "birthdays": "Compleanni"
   },
   "brand": {
     "privat": "Privat",
@@ -1112,5 +1113,25 @@
     "addToCalendar": "Aggiungi al calendario",
     "remove": "Rimuovi dal calendario",
     "removeNote": "«Rimuovi dal calendario» non disdice l'appuntamento con l'azienda."
+  },
+  "birthdays": {
+    "title": "Prossimi compleanni",
+    "loading": "Caricamento compleanni …",
+    "none": "Ancora nessun compleanno. Scrivi a Peter, per esempio, «Il compleanno della mamma è il 14 marzo», o aggiungine uno qui.",
+    "today": "oggi",
+    "tomorrow": "domani",
+    "inDays": "tra {n} giorni",
+    "turns": "compie {n} anni",
+    "remind": "Promemoria",
+    "onTheDay": "il giorno stesso",
+    "daysBefore": "{n} giorni prima",
+    "remove": "Rimuovi",
+    "add": "Aggiungi compleanno",
+    "name": "Nome",
+    "namePlaceholder": "Nome, es. Mamma",
+    "date": "Data",
+    "datePlaceholder": "Data, es. 14 marzo o 14.03.1946",
+    "save": "Salva",
+    "hint": "Se scrivi l'anno, Peter ti dice anche quanti anni compie."
   }
 }

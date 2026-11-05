@@ -969,6 +969,11 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     async connectCalendar() { await wait(); return fail(409, "demo", "Kalenderen kan kun forbindes med en rigtig konto"); },
     async disconnectCalendar() { await wait(); },
     async removeAppointment() { await wait(); return fail(404, "not_found", "Aftalen findes ikke"); },
+    // ---------- Fødselsdage (the demo saves nothing) ----------
+    async birthdays() { await wait(); return { items: [] }; },
+    async addBirthday() { await wait(); return fail(409, "demo", "Fødselsdage gemmes kun med en rigtig konto"); },
+    async updateBirthday() { await wait(); return fail(404, "not_found", "Fødselsdagen findes ikke"); },
+    async removeBirthday() { await wait(); },
 
     // ---------- simulation-only tools ----------
     async simulateMember(taskId) {

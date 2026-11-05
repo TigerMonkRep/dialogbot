@@ -204,11 +204,13 @@ def test_addon_gating(api, pv, monkeypatch):
     monkeypatch.setattr(campaigns, "create_call", lambda p: called.append(p) or {"id": "x"})
     tok = pv.account("mette@testmail.dk")
     cat = {a["key"]: a for a in api.get(tok, "/privat/addons").json()}
-    assert {k: (a["status"], a["enabled"]) for k, a in cat.items() if a["status"] != "coming_soon"} == {
-        "ring-for-mig": ("available", True), "delte-lister": ("available", True), "oenskelister": ("available", True),
-        "kalender": ("available", False)}
-    assert {k for k, a in cat.items() if a["status"] == "coming_soon"} >= {"pakker"}
-    assert api.post(tok, "/privat/addons/pakker/enable").json()["code"] == "coming_soon"
+    live = {k: (a["status"], a["enabled"]) for k, a in cat.items() if a["status"] != "coming_soon"}
+    defaults = {"ring-for-mig", "delte-lister", "oenskelister"}
+    assert {k: live[k] for k in defaults} == {k: ("available", True) for k in defaults}
+    assert all(v == ("available", False) for k, v in live.items() if k not in defaults)   # the other apps: off until chosen
+    soon = [k for k, a in cat.items() if a["status"] == "coming_soon"]
+    for k in soon:
+        assert api.post(tok, f"/privat/addons/{k}/enable").json()["code"] == "coming_soon"
     out = pv.say(tok, "Ring til cykelværkstedet og find en tid torsdag efter klokken tre")
     clar = out["messages"][-1]
     tid = api.post(tok, f"/privat/messages/{clar['id']}/options/{clar['options'][0]['id']}").json()["messages"][-1]["task_id"]

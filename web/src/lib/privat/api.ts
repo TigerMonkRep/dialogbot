@@ -53,6 +53,8 @@ export type Balance = {
   push_enabled?: boolean; location_city?: string | null;
   /** What the assistant is called (default «Peter»). */
   assistant_name?: string;
+  /** How the texts refer to it: han | hun | den. */
+  assistant_pronoun?: "han" | "hun" | "den";
   // Subscription summary (privat-abonnement-brief): the same numbers as GET /privat/subscription, so the header and
   // the paywall need only /me. Optional until the backend sends them.
   plan?: SubscriptionPlan; plan_status?: SubscriptionStatus; trial_days_left?: number;
@@ -202,7 +204,7 @@ export interface PrivatApi {
   /** One request for everything the shell shows (GET /privat/bootstrap). */
   bootstrap(): Promise<Bootstrap>;
   setLocation(body: LocationBody): Promise<Balance>;
-  setAssistantName(name: string): Promise<Balance>;
+  setAssistantName(name: string, pronoun?: "han" | "hun" | "den"): Promise<Balance>;
   /** The app language, saved on the user (PATCH /auth/me) so e-mails and other devices follow it. */
   setLocale(locale: string): Promise<unknown>;
   pushPublicKey(): Promise<{ public_key: string }>;
@@ -385,7 +387,7 @@ export const realPrivat: PrivatApi = {
   },
   bootstrap: () => api(`${P}/bootstrap`),
   setLocation: (body) => api(`${P}/me/location`, { method: "PATCH", body: JSON.stringify(body) }),
-  setAssistantName: (name) => api(`${P}/me/assistant`, { method: "PATCH", body: JSON.stringify({ name }) }),
+  setAssistantName: (name, pronoun) => api(`${P}/me/assistant`, { method: "PATCH", body: JSON.stringify({ name, pronoun: pronoun ?? null }) }),
   setLocale: (locale) => api("/auth/me", { method: "PATCH", body: JSON.stringify({ locale }) }),
   pushPublicKey: () => api(`${P}/push/public-key`),
   pushSubscribe: (body) => api(`${P}/push/subscriptions`, json(body)),

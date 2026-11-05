@@ -71,6 +71,9 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
                 <span className={`flex-1 min-w-0 [overflow-wrap:anywhere] ${it.done ? "line-through text-muted" : ""}`}>{it.text}</span>
               </button>
             )}
+            {/* A meal plan's day carries its ingredients; any list item can carry a note or a link. */}
+            {!wish && it.note && <span className="pl-10 -mt-1 pb-1 text-[13px] text-ink-soft [overflow-wrap:anywhere]">{it.note}</span>}
+            {!wish && it.link && <a href={it.link} target="_blank" rel="noopener noreferrer nofollow" className="pl-10 -mt-1 pb-1 text-[13px] text-accent underline [overflow-wrap:anywhere]">{t("list.openLink")}</a>}
             {(it.added_by_name || it.done_by_name) && (
               <span className="pl-10 -mt-1 pb-1 text-[12px] text-muted">
                 {[it.added_by_name ? t("list.addedBy", { name: it.added_by_name, item: it.text.toLowerCase() }) : null, it.done && it.done_by_name ? t("list.doneBy", { name: it.done_by_name }) : null].filter(Boolean).join(" · ")}

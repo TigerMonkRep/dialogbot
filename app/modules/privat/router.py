@@ -526,9 +526,9 @@ def referral_summary(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = De
 
 @router.post("/referrals/link")
 def referral_link(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
-    """«Inviter venner»: a link to Dialogbot itself, with the same short link and suggested SMS text."""
-    inv, raw = invites.create(db, ctx, addon_key=None)
-    out = invites.invite_out(db, inv, raw, ctx.user.display_name)
+    """«Inviter venner»: a link to Dialogbot itself, with the same short link and suggested SMS text. ONE link per user:
+    while it is valid for at least another week the same one comes back (Konto made a new invitation on every visit)."""
+    out = invites.general_link(db, ctx)
     db.commit()
     return out
 
@@ -537,6 +537,28 @@ def referral_link(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depen
 def growth(days: int | None = Query(default=None, ge=1, le=3650), db: OrmSession = Depends(get_db),
            principal: Principal = Depends(operator)):
     return referrals.growth(db, days)
+
+
+@operator_router.get("/business-referrals")
+def business_referrals(days: int | None = Query(default=None, ge=1, le=3650), db: OrmSession = Depends(get_db),
+                       principal: Principal = Depends(operator)):
+    """The lead ledger (docs/sales/privat-revenue.md): per business, how often Privat users asked it for a quote through
+    Dialogbot and how often they chose it – the sales argument «we sent you N customers». Business side only."""
+    from datetime import timedelta
+
+    from sqlalchemy import func, select
+
+    from app.models import PrivateBusinessReferral as R
+    from app.modules.privat import rules as _rules
+
+    q = select(R.business_name, R.business_phone_e164, func.count().label("asked"),
+               func.count().filter(R.status == "chosen").label("chosen"), func.max(R.created_at).label("last"))
+    if days:
+        q = q.where(R.created_at >= _rules.now() - timedelta(days=days))
+    rows = db.execute(q.group_by(R.business_name, R.business_phone_e164)
+                      .order_by(func.count().filter(R.status == "chosen").desc(), func.count().desc()).limit(500)).all()
+    return {"items": [{"business_name": r.business_name, "phone": r.business_phone_e164, "asked": r.asked,
+                       "chosen": r.chosen, "last_at": r.last.isoformat()} for r in rows]}
 
 
 # --------------------------------------------------------------------------- chat
@@ -638,6 +660,7 @@ def set_location(body: LocationIn, ctx: PrivateCtx = Depends(private_ctx), db: O
 
 class AssistantNameIn(BaseModel):
     name: str = Field(default="", max_length=40, description="Empty = the default «Peter»")
+    pronoun: str | None = Field(default=None, max_length=4, description="han | hun | den; empty = han for Peter, den otherwise")
 
 
 @router.patch("/me/assistant")
@@ -646,6 +669,7 @@ def set_assistant_name(body: AssistantNameIn, ctx: PrivateCtx = Depends(private_
     from app.modules.privat import naming
 
     ctx.profile.assistant_name = naming.clean(body.name)
+    ctx.profile.assistant_pronoun = naming.clean_pronoun(body.pronoun)
     db.commit()
     return service.balance_out(db, ctx)
 

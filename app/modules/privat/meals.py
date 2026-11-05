@@ -49,6 +49,18 @@ def _key(s: str) -> str:
     return re.sub(r"\s+", " ", s.strip().lower())
 
 
+def _item_key(name: str) -> str:
+    """«2 peberfrugt» and «2 peberfrugter», «tomat» and «tomater», «æble» and «æbler» are one line: the last word
+    without its plural ending."""
+    words = _key(name).split(" ")
+    w = words[-1]
+    for end in ("er", "r", "e"):
+        if len(w) > len(end) + 2 and w.endswith(end):
+            w = w[: -len(end)]
+            break
+    return " ".join(words[:-1] + [w])
+
+
 UNITS = {"g": ("g", 1), "gram": ("g", 1), "kg": ("g", 1000), "ml": ("ml", 1), "cl": ("ml", 10), "dl": ("ml", 100),
          "l": ("ml", 1000), "liter": ("ml", 1000), "stk": ("stk", 1), "stk.": ("stk", 1), "spsk": ("spsk", 1),
          "spsk.": ("spsk", 1), "tsk": ("tsk", 1), "tsk.": ("tsk", 1), "dåse": ("dåse", 1), "dåser": ("dåse", 1),
@@ -74,7 +86,12 @@ def parse_ingredient(raw) -> tuple[float | None, str, str]:
     return n * factor, base, m.group(3)
 
 
+COUNTABLE = ("", "stk", "dåse", "pakke", "fed", "bundt")
+
+
 def _fmt(amount: float, unit: str, name: str) -> str:
+    if unit in COUNTABLE:   # things you buy whole: ½ løg is fine, 2,7 dåser → 3 (rounded after adding up)
+        amount = max(1, int(amount * 2 + 0.5) / 2 if amount < 3 else int(amount + 0.5))
     if unit == "g" and amount >= 1000:
         amount, unit = amount / 1000, "kg"
     elif unit == "ml" and amount >= 1000:
@@ -91,11 +108,7 @@ def _fmt(amount: float, unit: str, name: str) -> str:
 
 def scaled(raw, factor: float) -> tuple[float | None, str, str]:
     n, unit, name = parse_ingredient(raw)
-    if n is not None:
-        n = n * factor
-        if unit in ("", "stk", "dåse", "pakke", "fed", "bundt"):
-            n = max(1, round(n * 2) / 2 if n < 3 else round(n))   # ½ løg ok; 2,7 dåser → 3
-    return n, unit, name
+    return (n * factor if n is not None else None), unit, name
 
 
 def _factor(d: dict, people: int | None) -> float:
@@ -121,10 +134,12 @@ def merge_ingredients(days: list[dict], people: int | None = None) -> list[str]:
             n, unit, name = scaled(i, f)
             if not name.strip():
                 continue
-            k = (_key(name), unit)
+            k = (_item_key(name), unit)
             if k in seen:
                 if n is not None and seen[k][0] is not None:
                     seen[k][0] += n
+                if len(name) > len(seen[k][2]):   # «peberfrugter» over «peberfrugt»: the plural reads right for 2+
+                    seen[k][2] = name
             else:
                 seen[k] = [n, unit, name]
     out = [(_fmt(n, u, name) if n is not None else name) for n, u, name in seen.values()]

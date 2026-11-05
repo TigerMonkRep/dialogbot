@@ -928,7 +928,8 @@ def tool_save_food_preferences(turn: Turn, a: dict) -> str:
     p = meals.save_preferences(turn.db, turn.ctx.ws_id, people=int(people) if isinstance(people, int | float) else None,
                                avoid=str(a.get("avoid") or "") or None, likes=str(a.get("likes") or "") or None)
     turn.say("text", f"Gemt: {meals.preferences_text(p)}. Det bruger jeg, når jeg laver madplaner.")
-    return "Gemt."
+    return ("Gemt. Bad brugeren i samme besked også om en madplan, så skriv forslaget NU i en kort tekst (dag og ret, "
+            "med det husstanden ikke spiser respekteret) og spørg, om den skal gemmes med indkøbsliste.")
 
 
 def tool_get_food_preferences(turn: Turn, a: dict) -> str:
@@ -952,8 +953,8 @@ def tool_save_meal_plan(turn: Turn, a: dict) -> str:
         meals.preferences(turn.db, turn.ctx.ws_id).get("people")
     plan, shop = meals.save_plan(turn.db, turn.ctx, title=str(a.get("title") or "Madplan").strip(), days=days,
                                  shopping=a.get("shopping_list") is not False, people=people)
-    text = f"Madplanen er gemt med {len(days)} retter{f' til {people} personer' if people else ''}. Tryk på en dag for " \
-           "at se ingredienserne."
+    text = f"Madplanen er gemt med {len(days)} retter{f' til {people} personer' if people else ''}. Ingredienserne står " \
+           "under hver dag."
     if shop is not None:
         text += (f" Indkøbslisten har {len(meals.merge_ingredients(days, people))} varer – del den med husstanden, "
                  "hvis I handler sammen." + brand.offer_line("dagligvarer"))
@@ -1116,7 +1117,7 @@ def _vf(fn):
 
 @_vf
 def tool_add_subscriptions(turn: Turn, a: dict) -> str:
-    from app.modules.privat import subs_app
+    from app.modules.privat import app_kit, subs_app
 
     lines = []
     for it in [x for x in (a.get("items") or []) if isinstance(x, dict)][:20]:
@@ -1124,7 +1125,8 @@ def tool_add_subscriptions(turn: Turn, a: dict) -> str:
                               period=str(it.get("period") or "monthly"), category=it.get("category"),
                               binding_until=it.get("binding_until"), notice_days=it.get("notice_days"),
                               renews_on=it.get("renews_on"))
-        lines.append(subs_app.line(row))
+        last = subs_app.last_notice_day(row)
+        lines.append(subs_app.line(row) + (f" (sidste dag at opsige: {app_kit.date_text(last.isoformat())})" if last else ""))
     if not lines:
         return "Ingen abonnementer at gemme."
     o = subs_app.overview(turn.db, turn.ctx.ws_id)
@@ -1162,7 +1164,7 @@ def tool_cancel_subscription(turn: Turn, a: dict) -> str:
             turn.say("text", f"Hvilket nummer skal jeg ringe til hos {row['name']}? Skriv det, så laver jeg et forslag. "
                              "Eller sig «skriv opsigelsen», så får du den klar til at sende.")
             return "Mangler nummer, som brugeren selv skriver."
-        subs_app.mark_cancelling(turn.db, turn.ctx.ws_id, row["id"])
+        # the status changes only when the user sends the letter or the call is made – not on a proposal they may decline
         return _propose(turn, name=row["name"], phone=phone, source="user",
                         data={"purpose": f"Opsige mit abonnement hos {row['name']}",
                               "may_ask": "Hvornår abonnementet stopper, og om de sender en skriftlig bekræftelse",
@@ -1287,7 +1289,8 @@ def tool_save_party(turn: Turn, a: dict) -> str:
 
     p, created = party.save(turn.db, turn.ctx.ws_id, title=str(a.get("title") or ""), when=a.get("date"),
                             time=str(a.get("time") or ""), place=str(a.get("place") or ""), guests=_str_list(a.get("guests")))
-    turn.say("text", ("Festen er oprettet. " if created else "Festen er rettet. ") + party.status_text(p)
+    ask_place = "" if p.get("place") else " Hvor skal festen være? Så kommer stedet med i invitationen."
+    turn.say("text", ("Festen er oprettet. " if created else "Festen er rettet. ") + party.status_text(p) + ask_place
              + " Sig «skriv invitationen», så får du den klar til at sende.")
     return "Gemt."
 

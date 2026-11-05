@@ -85,8 +85,12 @@ def try_activate(db: OrmSession, user_id: uuid.UUID) -> bool:
 
 
 def summary(db: OrmSession, ctx) -> dict:
-    invited = db.scalar(select(func.count()).select_from(PrivateInvite)
-                        .where(PrivateInvite.inviter_user_id == ctx.user_id)) or 0
+    # «Inviteret»: each shared list/app invitation once, plus the people who used the standing «Inviter venner» link
+    # (that link is reused, so counting the rows would say nothing).
+    invited = (db.scalar(select(func.count()).select_from(PrivateInvite).where(
+        PrivateInvite.inviter_user_id == ctx.user_id, PrivateInvite.resource_type != "dialogbot")) or 0) + \
+        (db.scalar(select(func.coalesce(func.sum(PrivateInvite.accepted_count), 0)).where(
+            PrivateInvite.inviter_user_id == ctx.user_id, PrivateInvite.resource_type == "dialogbot")) or 0)
     joined = db.scalar(select(func.count()).select_from(PrivateReferral)
                        .where(PrivateReferral.inviter_user_id == ctx.user_id)) or 0
     activated = db.scalar(select(func.count()).select_from(PrivateReferral).where(

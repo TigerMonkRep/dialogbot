@@ -914,7 +914,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       s.location = body.city?.trim() || (body.postcode ? `${body.postcode.trim()}${body.postcode.trim() === "8000" ? " Aarhus C" : ""}` : body.lat != null ? "din position" : null);
       return done(balance());
     },
-    async setAssistantName(name) { await wait(); return done({ ...balance(), assistant_name: name.trim() || "Peter" }); },
+    async setAssistantName(name, pronoun) { await wait(); return done({ ...balance(), assistant_name: name.trim() || "Peter", assistant_pronoun: pronoun ?? (name.trim() ? "den" : "han") }); },
     async pushPublicKey() { await wait(); return { public_key: "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U" }; },
     async pushSubscribe(body) { await wait(); if (!s.push.includes(body.endpoint)) s.push.push(body.endpoint); save(); return { id: `push-${s.push.length}` }; },
     async pushUnsubscribe(endpoint) { await wait(); s.push = s.push.filter((x) => x !== endpoint); save(); },

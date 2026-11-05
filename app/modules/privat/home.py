@@ -38,10 +38,11 @@ STANDARD = (
 
 
 def _next(today: date, month: int | None) -> date:
-    if month is None:
+    """The first date: today, or the 1st of the job's best month – never in the past (this month = today)."""
+    if month is None or month == today.month:
         return today
     d = date(today.year, month, 1)
-    return d if d >= date(today.year, today.month, 1) else date(today.year + 1, month, 1)
+    return d if d > today else date(today.year + 1, month, 1)
 
 
 def add(db: OrmSession, ws_id: uuid.UUID, *, names: list[str] | None = None, custom: str | None = None,

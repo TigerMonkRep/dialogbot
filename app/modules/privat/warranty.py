@@ -75,9 +75,20 @@ def complaint(row: dict, problem: str, user_name: str, today: date | None = None
              else "")
     return brand.branded(
         f"Emne: Reklamation – {row['name']}\n\nHej {row.get('shop') or 'butikken'}\n\n"
-        f"Jeg købte {row['name']} hos jer den {kit.date_text(row['bought'])}. {kit.clean(problem, 400).rstrip('.')}.\n\n"
+        f"Jeg købte {row['name']} hos jer den {kit.date_text(row['bought'])}.\n\nFejlen: {_problem(problem)}\n\n"
         f"{basis}.{proof} Jeg beder jer om at reparere eller ombytte varen og vende tilbage med, hvordan jeg sender "
         f"eller afleverer den.\n\nKvitteringen er vedlagt.\n\nVenlig hilsen\n{user_name}")
+
+
+def _problem(raw: str) -> str:
+    """«den lækker vand» / «lækker vand» → «Den lækker vand.» – a whole sentence in the letter."""
+    p = kit.clean(raw, 400).strip(" .–-")
+    if not p:
+        return "Den virker ikke."
+    if not p.lower().startswith(("den ", "det ", "de ", "han ", "hun ", "jeg ", "skærmen", "maskinen")) and \
+            len(p.split()) <= 4 and p.split()[0].endswith(("er", "r")):
+        p = "den " + p              # «lækker vand» → «den lækker vand»
+    return p[:1].upper() + p[1:] + "."
 
 
 def overview(db: OrmSession, ws_id: uuid.UUID) -> dict:

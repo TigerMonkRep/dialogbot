@@ -325,7 +325,7 @@ register(Addon(
         AddonTool(
             "save_meal_plan",
             "Gem en madplan, når brugeren har sagt ja til dit forslag (foreslå den først i tekst). days: én pr. dag med "
-            "retten, servings (hvor mange personer mængderne er til) og ingredienserne med mængde og enhed først (fx "
+            "retten, servings (ALTID: hvor mange personer netop dine mængder er til – også krydderier, smør og grønt) og ingredienserne med mængde og enhed først (fx "
             "«500 g hakket oksekød», «1 dåse hakkede tomater», «2 løg»). people: hvor mange planen er til (brugerens "
             "tal, ellers husstandens) – mængderne regnes om og lægges sammen på indkøbslisten. Respekter altid det, "
             "husstanden ikke spiser. shopping_list: lav indkøbslisten (standard ja).",
@@ -333,7 +333,7 @@ register(Addon(
                   "people": {"type": "integer"},
                   "days": {"type": "array", "items": _obj(
                       {"day": {"type": "string"}, "dish": {"type": "string"}, "servings": {"type": "integer"},
-                       "ingredients": {"type": "array", "items": {"type": "string"}}}, ["dish"])},
+                       "ingredients": {"type": "array", "items": {"type": "string"}}}, ["dish", "servings"])},
                   "shopping_list": {"type": "boolean"}}, ["days"]),
             "app.modules.privat.chat:tool_save_meal_plan")),
 ))
@@ -800,25 +800,31 @@ def included(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None
 
 
 def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> dict:
+    """The shop card. Its texts say the name (and han/hun/den) the user gave the assistant."""
+    from app.models import PrivateProfile
+    from app.modules.privat import naming
+
+    prof = db.get(PrivateProfile, ws_id)
+    name, pron = naming.of(prof), naming.pronoun_of(prof)
+
+    def p(x):
+        return naming.personalize(x, name, pron)
+
     row = db.get(PrivateAddonEnabled, (ws_id, a.key))
     on = row is not None and a.live_status != "coming_soon"
-    return {"key": a.key, "name": a.name, "tagline": a.tagline, "description": a.description, "icon": a.icon,
+    return {"key": a.key, "name": a.name, "tagline": p(a.tagline), "description": p(a.description), "icon": a.icon,
             "category": a.category, "price_text": a.price_text, "pricing": a.pricing,
-            "monthly_price_minor": a.monthly_price_minor, "status": a.live_status, "permissions": list(a.permissions),
+            "monthly_price_minor": a.monthly_price_minor, "status": a.live_status, "permissions": p(list(a.permissions)),
             "requires": list(a.requires), "enabled": on, "enabled_at": row.enabled_at.isoformat() if on else None,
-            "what": a.what, "example": a.example, "steps": list(a.steps), "included_in": list(a.included_in),
+            "what": p(a.what), "example": p(a.example), "steps": p(list(a.steps)), "included_in": list(a.included_in),
             "included": included(db, ws_id, a, ent), "requires_plan": bool(a.included_in)}
 
 
 def catalog_out(db: OrmSession, ws_id: uuid.UUID) -> list[dict]:
-    from app.models import PrivateProfile
-    from app.modules.privat import naming, subscriptions
+    from app.modules.privat import subscriptions
 
     ent = subscriptions.entitlements(db, ws_id)
-    name = naming.of(db.get(PrivateProfile, ws_id))
-    keys = ("tagline", "description", "what", "example", "steps", "permissions", "price_text")
-    return [{**o, **{k: naming.personalize(o[k], name) for k in keys}}
-            for o in (out(db, ws_id, a, ent) for a in CATALOG.values())]
+    return [out(db, ws_id, a, ent) for a in CATALOG.values()]
 
 
 def enable(db: OrmSession, ws_id: uuid.UUID, key: str) -> Addon:

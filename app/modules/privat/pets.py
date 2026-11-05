@@ -44,10 +44,13 @@ def save_pet(db: OrmSession, ws_id: uuid.UUID, *, name: str, kind: str = "", vac
     for k, v in (("vaccination_due", vaccination_due), ("insurance_renews", insurance_renews)):
         if (d := kit.parse_date(v, k)):
             p[k] = d
-    start = kit.parse_date(last_treatment, "last_treatment") or _today().isoformat()
+    last = kit.parse_date(last_treatment, "last_treatment")
     for k, months in (("worming", worming_every_months), ("flea", flea_every_months)):
         if months:
-            p[k] = {"every": max(1, min(int(months), 24)), "from": start}
+            every = max(1, min(int(months), 24))
+            # the first time is one interval after the last treatment – or after today, when the user did not say
+            start = kit.add_months(date.fromisoformat(last) if last else _today(), every).isoformat()
+            p[k] = {"every": every, "from": start}
     kit.save_items(db, ws_id, ADDON, rows[:20])
     return p
 

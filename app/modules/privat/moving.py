@@ -28,17 +28,17 @@ def _today() -> date:
     return rules.local().date()
 # (days before the move – negative = after, text, partner category)
 CHECKLIST = (
-    (60, "Opsig lejemålet eller sæt boligen til salg", None),
+    (90, "Opsig lejemålet (typisk 3 måneders varsel) eller sæt boligen til salg", None),
     (45, "Få tilbud fra flyttefirmaer – eller book en trailer", "flyttefirma"),
     (30, "Flyt eller opsig internet og tv", "internet"),
     (30, "Giv institution, skole og arbejde besked", None),
     (21, "Flyt el-aftalen til den nye adresse", "el"),
     (21, "Flyt indboforsikringen", "forsikring"),
     (14, "Bestil flyttekasser og pakkemateriale", None),
-    (7, "Meld flytning på borger.dk (senest 5 dage efter)", None),
     (7, "Giv bank, læge, tandlæge og abonnementer den nye adresse", None),
     (2, "Pak en kasse med det, I skal bruge den første nat", None),
     (0, "Aflæs el, vand og varme i begge boliger – tag billeder", None),
+    (-1, "Meld flytning på borger.dk (fra flyttedagen og senest 5 dage efter)", None),
     (-3, "Tjek at posten kommer frem på den nye adresse", None),
 )
 

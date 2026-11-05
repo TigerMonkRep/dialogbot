@@ -298,6 +298,19 @@
             "maxLength": 40,
             "title": "Name",
             "type": "string"
+          },
+          "pronoun": {
+            "anyOf": [
+              {
+                "maxLength": 4,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "han | hun | den; empty = han for Peter, den otherwise",
+            "title": "Pronoun"
           }
         },
         "title": "AssistantNameIn",
@@ -9987,6 +10000,72 @@
         "summary": "Write Page",
         "tags": [
           "pages-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/privat/business-referrals": {
+      "get": {
+        "description": "The lead ledger (docs/sales/privat-revenue.md): per business, how often Privat users asked it for a quote through\nDialogbot and how often they chose it – the sales argument «we sent you N customers». Business side only.",
+        "operationId": "business_referrals_api_v1_operator_privat_business_referrals_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 3650,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Days"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Business Referrals",
+        "tags": [
+          "privat"
         ]
       }
     },
@@ -20203,7 +20282,7 @@
     },
     "/api/v1/privat/referrals/link": {
       "post": {
-        "description": "«Inviter venner»: a link to Dialogbot itself, with the same short link and suggested SMS text.",
+        "description": "«Inviter venner»: a link to Dialogbot itself, with the same short link and suggested SMS text. ONE link per user:\nwhile it is valid for at least another week the same one comes back (Konto made a new invitation on every visit).",
         "operationId": "referral_link_api_v1_privat_referrals_link_post",
         "parameters": [
           {

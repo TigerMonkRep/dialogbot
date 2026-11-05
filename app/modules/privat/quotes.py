@@ -87,6 +87,8 @@ def compare_text(db: OrmSession, entry: dict) -> str:
     lines = [f"Tilbud på {entry['job']}:"] + [f"{i}. {quote_line(db, q)}" for i, q in enumerate(entry["quotes"], 1)]
     if entry.get("chosen"):
         lines.append(f"Du valgte {entry['chosen']}.")
+    elif not any((c := _call(db, q)) is not None and (c.business_reply or c.business_price_text) for q in entry["quotes"]):
+        lines.append("Ingen har svaret endnu – godkend opkaldene, så ringer jeg.")
     else:
         lines.append("Sig hvem du vælger, så ringer jeg og siger ja tak – når du har godkendt det.")
     return "\n".join(lines)

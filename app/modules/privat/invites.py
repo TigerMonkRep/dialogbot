@@ -107,6 +107,22 @@ def create(db: OrmSession, ctx, *, addon_key: str | None, resource_id: uuid.UUID
     raise ApiError("Kunne ikke lave en invitationskode. Prøv igen.", code="short_code_exhausted", status_code=503)
 
 
+def general_link(db: OrmSession, ctx) -> dict:
+    """The user's standing «Inviter venner» link: the newest valid one, else a new one. Only a hash of the long token is
+    kept, so a reused invitation is shared by its short link (which opens the same invitation)."""
+    inv = db.scalar(select(PrivateInvite).where(
+        PrivateInvite.inviter_user_id == ctx.user_id, PrivateInvite.resource_type == TRY_RESOURCE,
+        PrivateInvite.addon_key.is_(None), PrivateInvite.revoked_at.is_(None),
+        PrivateInvite.expires_at > rules.now() + timedelta(days=7)).order_by(PrivateInvite.created_at.desc()).limit(1))
+    if inv is None:
+        inv, raw = create(db, ctx, addon_key=None)
+        return invite_out(db, inv, raw, ctx.user.display_name)
+    text = suggested_text(inv, ctx.user.display_name, None)
+    link = short_url(inv.short_code)
+    return {"invite_url": link, "token": "", "short_code": inv.short_code, "short_url": link,
+            "expires_at": inv.expires_at.isoformat(), "suggested_text": text, "share_text": text}
+
+
 def invite_out(db: OrmSession, inv: PrivateInvite, raw: str, inviter_name: str, to_name: str | None = None) -> dict:
     """What the web needs to open the user's own SMS app with the text prefilled. Nothing is sent by Dialogbot."""
     from app.models import PrivateTask

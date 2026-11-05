@@ -102,7 +102,7 @@ def invitation(p: dict, host: str, note: str = "") -> str:
 
 def overview(db: OrmSession, ws_id: uuid.UUID) -> dict:
     rows = kit.items(db, ws_id, ADDON)
-    return {"summary": f"{len(rows)} fester." if rows else
+    return {"summary": (f"{len(rows)} {'fest' if len(rows) == 1 else 'fester'}.") if rows else
             "Ingen fester endnu. Sig fx «Lav en fest: Idas 10-års fødselsdag lørdag den 6. marts kl. 14 med Emma, Noah og Alma».",
             "items": [{"id": p["id"], "text": p["title"] + (f" · {when_text(p)}" if p.get("date") else ""),
                        "sub": status_text(p).split("\n", 1)[1] if p["guests"] else "Ingen gæster endnu"} for p in rows],

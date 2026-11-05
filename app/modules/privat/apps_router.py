@@ -276,7 +276,7 @@ def app_overview(key: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSessio
     mod = app_kit.module(key)
     addons.require(db, ctx.ws_id, key)
     o = mod.overview(db, ctx.ws_id)
-    return {**o, "summary": naming.personalize(o["summary"], naming.of(ctx.profile))}
+    return {**o, "summary": naming.personalize(o["summary"], naming.of(ctx.profile), naming.pronoun_of(ctx.profile))}
 
 
 @router.delete("/apps/{key}/items/{item_id}", status_code=204)

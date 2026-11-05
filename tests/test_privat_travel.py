@@ -105,3 +105,32 @@ def test_duffel_asks_for_the_cheapest_offers_only_never_the_whole_list(monkeypat
     assert "return_offers=false" in calls[0][1]
     assert calls[1][2] == {"offer_request_id": "orq_1", "limit": travel.Duffel.MAX_OFFERS, "sort": "total_amount"}
     assert len(offers) == 1 and offers[0]["airline"] == "Testair" and offers[0]["total_dkk"] == 1234
+
+
+def test_flexible_dates_passengers_in_the_link_and_airline_names():
+    p = travel.validate({"origin": "CPH", "destinations": ["BCN"], "depart_date": "2026-12-03", "nights": 7,
+                         "adults": 2, "children": 2}, TODAY)
+    assert travel._fits("2026-12-05T08:00:00+01:00", "2026-12-12", p)          # 2 days later, 7 nights
+    assert not travel._fits("2026-12-09", "2026-12-16", p)                     # 6 days later
+    assert not travel._fits("2026-12-03", "2026-12-20", p)                     # a much longer stay
+    assert travel._with_passengers("/search/CPH0312BCN10121?t=abc", p) == "/search/CPH0312BCN101222?t=abc"
+    assert travel._with_passengers("/odd/link", p) == "/odd/link"
+    o = travel._offer("x", "BCN", 1000.0, "DKK", airline="FR", p=p)
+    assert o["airline"] == "Ryanair" and o["total_dkk"] == 1000
+
+
+def test_foreign_currency_is_converted_with_the_ecb_rate_or_not_shown(monkeypatch):
+    p = travel.validate({"origin": "CPH", "destinations": ["BCN"], "month": "2027-02"}, TODAY)
+    monkeypatch.setattr(travel, "_rates", lambda: {"EUR": 1.0, "DKK": 7.46, "GBP": 0.85})
+    o = travel._offer("duffel", "BCN", 100.0, "GBP", p=p)
+    assert o["total_dkk"] == round(100 / 0.85 * 7.46) and "omregnet fra GBP" in o["price_note"]
+    monkeypatch.setattr(travel, "_rates", lambda: {})
+    assert travel._offer("duffel", "BCN", 100.0, "GBP", p=p)["total_dkk"] is None    # no rate: no price, never a guess
+
+
+def test_empty_destination_gets_a_danish_message(api, pv, fake_travel):
+    tok = pv.account("mette@testmail.dk")
+    api.post(tok, "/privat/addons/rejser/enable")
+    r = api.post(tok, "/privat/trips/search", {"origin": "CPH", "destinations": [], "month": "2027-02"})
+    assert r.status_code == 422 and "Hvorhen" in r.text
+

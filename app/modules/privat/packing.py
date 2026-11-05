@@ -6,6 +6,7 @@ copies the newest one's items into a new list with nothing ticked off.
 """
 from __future__ import annotations
 
+import re
 import uuid
 
 from sqlalchemy import select
@@ -50,4 +51,6 @@ def reuse(db: OrmSession, ctx, *, trip: str | None = None) -> PrivateTask | None
     if prev is None:
         return None
     old, items = prev
-    return create(db, ctx, trip=trip or old.title.removeprefix("Pakkeliste: "), items=items)
+    base = trip or re.sub(r" · \d{1,2}/\d{1,2}$", "", old.title.removeprefix("Pakkeliste: "))
+    today = rules.local()
+    return create(db, ctx, trip=f"{base} · {today.day}/{today.month}", items=items)

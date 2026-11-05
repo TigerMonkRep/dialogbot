@@ -1199,7 +1199,9 @@
       "label": "What is it? (optional)",
       "follow": "Follow parcel",
       "stop": "Stop",
-      "hint": "You are told when the parcel is on its way, ready for pickup and delivered. Only the number is sent to the tracking service."
+      "hint": "You are told when the parcel is on its way, ready for pickup and delivered. Only the number is sent to the tracking service.",
+      "refresh": "Update now",
+      "slow": "New parcels can take a few hours before the carrier reports them – I check again every 15 minutes."
     }
   },
   "travel": {

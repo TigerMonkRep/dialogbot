@@ -1199,7 +1199,9 @@
       "label": "¿Qué es? (opcional)",
       "follow": "Seguir paquete",
       "stop": "Parar",
-      "hint": "Te avisamos cuando el paquete esté en camino, listo para recoger y entregado. Solo se envía el número al servicio de seguimiento."
+      "hint": "Te avisamos cuando el paquete esté en camino, listo para recoger y entregado. Solo se envía el número al servicio de seguimiento.",
+      "refresh": "Actualizar ahora",
+      "slow": "Un paquete nuevo puede tardar unas horas en aparecer en el transportista: vuelvo a comprobar cada 15 minutos."
     }
   },
   "travel": {

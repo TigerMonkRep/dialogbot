@@ -943,6 +943,9 @@ def tool_save_meal_plan(turn: Turn, a: dict) -> str:
     days = [d for d in (a.get("days") or []) if isinstance(d, dict) and str(d.get("dish") or "").strip()]
     if not days:
         return "Madplanen mangler retter."
+    if not re.search(r"\b(ja|jo|gem|gemme|ok|okay|gerne|fint|godt|perfekt|super|lyder godt|yes)\b", turn.text.lower()):
+        return ("Ikke gemt: brugeren har ikke sagt ja endnu. Skriv forslaget (dag og ret) i en kort tekst og spørg, "
+                "om den skal gemmes med indkøbsliste.")
     plan, shop = meals.save_plan(turn.db, turn.ctx, title=str(a.get("title") or "Madplan").strip(), days=days,
                                  shopping=a.get("shopping_list") is not False)
     text = f"Madplanen er gemt med {len(days)} retter."

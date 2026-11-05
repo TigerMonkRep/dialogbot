@@ -192,6 +192,7 @@ class ParcelIn(BaseModel):
 
 def _parcel_out(p: dict) -> dict:
     return {"number": p["number"], "label": p.get("label"), "status": p.get("status"), "text": parcels.text_of(p),
+            "updated_at": p.get("updated_at"),
             "event": p.get("event") or "", "carrier": p.get("carrier") or "", "done": bool(p.get("done"))}
 
 
@@ -205,6 +206,19 @@ def list_parcels(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depend
 def add_parcel(body: ParcelIn, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
     addons.require(db, ctx.ws_id, parcels.ADDON)
     p = parcels.add(db, ctx.ws_id, number=body.number, label=body.label)
+    db.commit()
+    return _parcel_out(p)
+
+
+@router.post("/parcels/{number}/refresh")
+def refresh_parcel(number: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """«Opdater nu»: ask the tracking service again (at most every 10 minutes per parcel)."""
+    addons.require(db, ctx.ws_id, parcels.ADDON)
+    p = parcels.refresh(db, ctx.ws_id, number)
+    if p is None:
+        from app.core.errors import NotFound
+
+        raise NotFound("Pakken findes ikke")
     db.commit()
     return _parcel_out(p)
 
@@ -224,7 +238,7 @@ def delete_parcel(number: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSe
 
 class TripSearchIn(BaseModel):
     origin: str = Field(min_length=3, max_length=3, description="IATA airport code, e.g. CPH")
-    destinations: list[str] = Field(min_length=1, max_length=5)
+    destinations: list[str] = Field(default_factory=list, max_length=5)   # empty → a plain Danish «Hvorhen?»
     depart_date: str | None = Field(default=None, max_length=10)
     month: str | None = Field(default=None, max_length=7)
     nights: int | None = Field(default=None, ge=1, le=60)

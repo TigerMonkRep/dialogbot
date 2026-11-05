@@ -1199,7 +1199,9 @@
       "label": "Cos'è? (facoltativo)",
       "follow": "Segui il pacco",
       "stop": "Ferma",
-      "hint": "Ricevi un avviso quando il pacco è in viaggio, pronto per il ritiro e consegnato. Al servizio di tracciamento viene inviato solo il numero."
+      "hint": "Ricevi un avviso quando il pacco è in viaggio, pronto per il ritiro e consegnato. Al servizio di tracciamento viene inviato solo il numero.",
+      "refresh": "Aggiorna ora",
+      "slow": "Un nuovo pacco può richiedere qualche ora prima che il corriere lo segnali: ricontrollo ogni 15 minuti."
     }
   },
   "travel": {

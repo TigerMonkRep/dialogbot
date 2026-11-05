@@ -421,7 +421,7 @@ export function CallCard({ task }: { task: Task }) {
       <Eyebrow>{t("call.proposal")}</Eyebrow>
       <h3 className="m-0 font-display font-bold text-[20px] [overflow-wrap:anywhere]">{t("call.ask", { name: c.business_name })}</h3>
       <Kv rows={[
-        [t("call.recipient"), `${c.business_name}, ${c.address}`],
+        [t("call.recipient"), [c.business_name, c.address].filter(Boolean).join(", ")],
         [t("call.number"), noNumber ? <span key="n" className="text-muted">{t("call.noNumber")}</span> : <span key="n">{c.phone_display} {(mode !== "real" || c.source === "demo") && <Ex label={t("brand.exampleNumber")} />}</span>],
         [t("call.window"), win],
         [t("call.mayAsk"), swap(c.may_ask)],

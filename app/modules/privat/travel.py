@@ -97,16 +97,69 @@ class Provider(Protocol):
     def search(self, p: dict, dest: str) -> list[dict]: ...
 
 
+# Common airlines by IATA code (the providers answer with codes); anything else is shown as the code.
+AIRLINES = {"SK": "SAS", "DY": "Norwegian", "D8": "Norwegian", "DX": "DAT", "FR": "Ryanair", "RK": "Ryanair UK",
+            "U2": "easyJet", "EC": "easyJet Europe", "W6": "Wizz Air", "W4": "Wizz Air Malta", "LH": "Lufthansa",
+            "LX": "Swiss", "OS": "Austrian", "SN": "Brussels Airlines", "EW": "Eurowings", "KL": "KLM", "AF": "Air France",
+            "BA": "British Airways", "IB": "Iberia", "VY": "Vueling", "I2": "Iberia Express", "UX": "Air Europa",
+            "TP": "TAP Air Portugal", "AY": "Finnair", "LO": "LOT", "TK": "Turkish Airlines", "PC": "Pegasus",
+            "AZ": "ITA Airways", "A3": "Aegean", "EI": "Aer Lingus", "FI": "Icelandair", "BT": "airBaltic",
+            "EK": "Emirates", "QR": "Qatar Airways", "EY": "Etihad", "DE": "Condor", "X3": "TUI fly", "BY": "TUI Airways",
+            "HV": "Transavia", "TO": "Transavia France", "LS": "Jet2", "V7": "Volotea", "ZB": "Air Albania",
+            "ZZ": "Duffel Airways (test)"}
+
+# EUR per unit, from the ECB's daily reference rates; refreshed at most every 12 hours. Used ONLY to show a price a
+# provider gave in another currency in kroner (marked «omregnet»); never to make a price up.
+_FX: dict = {"at": None, "rates": {}}
+
+
+def _rates() -> dict[str, float]:
+    import xml.etree.ElementTree as ET
+
+    import httpx
+
+    now = rules.now()
+    if _FX["at"] and now - _FX["at"] < timedelta(hours=12) and _FX["rates"]:
+        return _FX["rates"]
+    try:
+        r = httpx.get("https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", timeout=10.0)
+        root = ET.fromstring(r.text)
+        rates = {"EUR": 1.0}
+        for el in root.iter():
+            if el.get("currency") and el.get("rate"):
+                rates[el.get("currency")] = float(el.get("rate"))
+        if "DKK" in rates:
+            _FX.update(at=now, rates=rates)
+    except Exception:  # noqa: BLE001 – no rate means the foreign price is not shown, never guessed
+        pass
+    return _FX["rates"]
+
+
+def to_dkk(amount: float, currency: str) -> float | None:
+    cur = currency.upper()
+    if cur == "DKK":
+        return amount
+    rates = _rates()
+    if cur not in rates or "DKK" not in rates:
+        return None
+    return amount / rates[cur] * rates["DKK"]
+
+
 def _offer(provider: str, dest: str, total: float | None, currency: str, *, airline: str = "", depart_at: str = "",
            return_at: str = "", stops: int | None = None, book_url: str = "", per_person: bool = False, p: dict) -> dict:
     travellers = p["adults"] + p["children"]
-    total_dkk = None
-    if total is not None and currency.upper() == "DKK":
-        total_dkk = round(total * travellers) if per_person else round(total)
+    total_dkk, note = None, "pris pr. person × antal rejsende (cache)" if per_person else "samlet pris for alle rejsende"
+    if total is not None and currency:
+        dkk = to_dkk(total * travellers if per_person else total, currency)
+        if dkk is not None:
+            total_dkk = round(dkk)
+            if currency.upper() != "DKK":
+                note += f", omregnet fra {currency.upper()} (ECB-kurs)"
+    code = (airline or "").strip()
     return {"id": uuid.uuid4().hex[:10], "provider": provider, "origin": p["origin"], "destination": dest,
-            "total_dkk": total_dkk, "currency": currency.upper(), "airline": airline[:80], "depart_at": depart_at[:25],
-            "return_at": return_at[:25], "stops": stops, "book_url": book_url[:1000],
-            "price_note": "pris pr. person × antal rejsende (cache)" if per_person else "samlet pris for alle rejsende"}
+            "total_dkk": total_dkk, "currency": currency.upper(), "airline": AIRLINES.get(code.upper(), code)[:80],
+            "depart_at": depart_at[:25], "return_at": return_at[:25], "stops": stops, "book_url": book_url[:1000],
+            "price_note": note}
 
 
 class Duffel:
@@ -169,12 +222,15 @@ class Travelpayouts:
     def search(self, p: dict, dest: str) -> list[dict]:
         import httpx
 
-        q = {"origin": p["origin"], "destination": dest, "currency": "dkk", "sorting": "price", "limit": 5,
-             "one_way": "false" if (p["nights"] or p["month"]) else "true", "direct": str(p["direct_only"]).lower(),
-             "departure_at": p["depart_date"] or p["month"], "token": self.token}
-        ret = _return_date(p)
-        if ret:
-            q["return_at"] = ret
+        # The fare cache rarely has the exact day: ask for the month and keep fares within FLEX_DAYS of the chosen
+        # date (the user sees the real date of each fare). The stay length is kept by the nights filter below.
+        month = (p["depart_date"] or "")[:7] or p["month"]
+        q = {"origin": p["origin"], "destination": dest, "currency": "dkk", "sorting": "price", "limit": 30,
+             "one_way": "false" if p["nights"] else "true", "direct": str(p["direct_only"]).lower(),
+             "departure_at": month, "token": self.token}
+        if p["nights"]:
+            q["return_at"] = month if not p["depart_date"] else \
+                (date.fromisoformat(p["depart_date"]) + timedelta(days=p["nights"])).isoformat()[:7]
         try:
             r = httpx.get(f"{self.BASE}/aviasales/v3/prices_for_dates", params=q, timeout=20.0)
         except httpx.HTTPError as e:
@@ -182,14 +238,47 @@ class Travelpayouts:
         if r.status_code >= 400:
             raise TravelError(f"Travelpayouts svarede {r.status_code}")
         out = []
-        for x in (r.json().get("data") or [])[:5]:
-            link = x.get("link") or ""
+        for x in r.json().get("data") or []:
+            if not _fits(x.get("departure_at"), x.get("return_at"), p):
+                continue
+            link = _with_passengers(x.get("link") or "", p)
             url = f"https://www.aviasales.com{link}{'&' if '?' in link else '?'}marker={quote(self.marker)}" if link else ""
             out.append(_offer("travelpayouts", dest, float(x["price"]) if x.get("price") is not None else None, "DKK",
                               airline=x.get("airline") or "", depart_at=x.get("departure_at") or "",
                               return_at=x.get("return_at") or "", stops=x.get("transfers"), book_url=url,
                               per_person=True, p=p))
         return out
+
+
+FLEX_DAYS = 3
+
+
+def _fits(depart: str | None, ret: str | None, p: dict) -> bool:
+    """A cached fare fits when it leaves within FLEX_DAYS of the chosen date and stays about the chosen nights."""
+    try:
+        d = date.fromisoformat(str(depart)[:10])
+    except ValueError:
+        return False
+    if p["depart_date"] and abs((d - date.fromisoformat(p["depart_date"])).days) > FLEX_DAYS:
+        return False
+    if p["nights"] and ret:
+        try:
+            stay = (date.fromisoformat(str(ret)[:10]) - d).days
+        except ValueError:
+            return False
+        if abs(stay - p["nights"]) > 2:
+            return False
+    return True
+
+
+def _with_passengers(link: str, p: dict) -> str:
+    """Aviasales search paths end with the passenger digits (adults, children): «/search/CPH0312BCN10121» is one adult.
+    Put the travellers of this search there, so «Book» opens the same trip for the whole party."""
+    m = re.match(r"^(/search/[A-Z]{3}\d{4}[A-Z]{3}(?:\d{4})?)(\d{1,3})(\?.*)?$", link)
+    if not m:
+        return link
+    pax = f"{p['adults']}{p['children']}" if p["children"] else f"{p['adults']}"
+    return f"{m.group(1)}{pax}{m.group(3) or ''}"
 
 
 class FakeProvider:

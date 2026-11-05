@@ -204,12 +204,20 @@ def _in_month(b: PrivateBill, year: int, month: int) -> list[date]:
 
 
 def month_overview(db: OrmSession, ws_id: uuid.UUID, today: date | None = None) -> dict:
-    """This month's bills (from the next due date on): items, total of the known amounts, and how many have none."""
+    """The bills still to pay this month – or, when none are left this month, next month's: items, the total of the
+    known amounts, and how many have no amount."""
     today = today or rules.local().date()
-    rows = [(b, d) for b in all_for(db, ws_id) for d in _in_month(b, today.year, today.month)]
+    bills = all_for(db, ws_id)
+    today_month = today
+    rows = [(b, d) for b in bills for d in _in_month(b, today.year, today.month)]
+    if not rows and bills:
+        nxt = _add_months(date(today.year, today.month, 1), 1, 1)
+        later = [(b, d) for b in bills for d in _in_month(b, nxt.year, nxt.month)]
+        if later:
+            rows, today_month = later, nxt
     rows.sort(key=lambda x: (x[1], x[0].name_key))
     total = sum(b.amount_minor or 0 for b, _ in rows)
-    return {"month": f"{MONTH_NAMES[today.month - 1]} {today.year}", "total_minor": total, "total_text": money(total) or "0 kr.",
+    return {"month": f"{MONTH_NAMES[today_month.month - 1]} {today_month.year}", "total_minor": total, "total_text": money(total) or "0 kr.",
             "without_amount": sum(1 for b, _ in rows if b.amount_minor is None),
             "items": [{**out(b, today), "due_in_month": d.isoformat()} for b, d in rows]}
 
@@ -220,8 +228,9 @@ def overview_text(db: OrmSession, ws_id: uuid.UUID) -> str:
         rows = all_for(db, ws_id)
         if not rows:
             return "Du har ikke gemt nogen regninger endnu."
-        b = rows[0]
-        return f"Ingen regninger resten af {ov['month'].split()[0]}. Den næste: {b.name} {date_text(b.next_due)}."
+        lines = [f"- {b.name}: {date_text(b.next_due)}" + (f", {money(b.amount_minor)}" if b.amount_minor else "")
+                 for b in rows[:10]]
+        return "De næste regninger:\n" + "\n".join(lines)
     lines = [f"- {i['name']}: {i['due_text']}" + (f", {i['amount_text']}" if i["amount_text"] else "") for i in ov["items"]]
     tail = f"I alt {ov['total_text']}" + (f" (+ {ov['without_amount']} uden beløb)" if ov["without_amount"] else "")
     return f"Regninger i {ov['month']}:\n" + "\n".join(lines) + f"\n{tail.rstrip('.')}."

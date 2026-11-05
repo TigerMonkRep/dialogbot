@@ -26,6 +26,8 @@ from app.modules.privat import addons, appdata, rules
 ADDON = "pakker"
 BASE = "https://api.17track.net/track/v2.2"
 POLL_MINUTES = 120
+POLL_NEW_MINUTES = 15      # not found yet (the carrier has not reported it to 17TRACK): ask more often
+REFRESH_MINUTES = 10       # «Opdater nu» at most this often per parcel
 MAX_PARCELS = 30
 STATUS_TEXT = {"NotFound": "ikke registreret hos fragtfirmaet endnu", "InfoReceived": "afsenderen har meldt den",
                "InTransit": "på vej", "OutForDelivery": "ude til levering", "AvailableForPickup": "klar til afhentning",
@@ -177,7 +179,8 @@ def poll(db: OrmSession, now: datetime | None = None) -> int:
         items, changed = list(row.data.get("parcels", [])), False
         owner = None
         for i, p in enumerate(items):
-            if p.get("done") or now - datetime.fromisoformat(p["updated_at"]) < timedelta(minutes=POLL_MINUTES):
+            wait = POLL_NEW_MINUTES if p.get("status") in (None, "NotFound", "InfoReceived") else POLL_MINUTES
+            if p.get("done") or now - datetime.fromisoformat(p["updated_at"]) < timedelta(minutes=wait):
                 continue
             try:
                 info = t.info(p["number"])
@@ -200,3 +203,23 @@ def poll(db: OrmSession, now: datetime | None = None) -> int:
         if changed:
             appdata.put(db, row.workspace_id, ADDON, {**row.data, "parcels": items})
     return n
+
+
+def refresh(db: OrmSession, ws_id: uuid.UUID, number: str) -> dict | None:
+    """«Opdater nu»: ask 17TRACK for one parcel, at most every REFRESH_MINUTES. None if the user does not follow it."""
+    items = parcels(db, ws_id)
+    num = clean_number(number)
+    i = next((k for k, p in enumerate(items) if p["number"] == num), None)
+    if i is None:
+        return None
+    p = items[i]
+    now = rules.now()
+    if now - datetime.fromisoformat(p["updated_at"]) < timedelta(minutes=REFRESH_MINUTES):
+        return p
+    try:
+        info = tracker().info(p["number"])
+    except TrackError as e:
+        raise ValidationFailed(f"Status kunne ikke hentes: {e}") from e
+    items[i] = {**p, **info, "updated_at": now.isoformat(), "done": info["status"] in FINAL}
+    _save(db, ws_id, items)
+    return items[i]

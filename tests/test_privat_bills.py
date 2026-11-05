@@ -116,3 +116,16 @@ def test_reminder_once_per_due_date_and_moves_on(api, pv, db):
     assert db.query(PrivateBill).filter_by(name="Forsikring").one().next_due == date(2026, 12, 6)
     assert api.post(tok, "/privat/addons/regninger/disable").status_code == 200
     assert bills.send_due(db, datetime(2026, 11, 26, 9, 0, tzinfo=UTC)) == 0      # app off: nothing
+
+
+def test_overview_shows_next_month_when_this_month_is_done(api, pv):
+    tok = pv.account("mette@testmail.dk")
+    _enable(api, tok)
+    api.post(tok, "/privat/bills", {"name": "Forsikring", "due_day": 1, "amount": "640"})
+    api.post(tok, "/privat/bills", {"name": "Husleje", "due_day": 1, "amount": "8.500"})
+    month = api.get(tok, "/privat/bills").json()["month"]
+    assert month["month"] == "december 2026" and month["total_minor"] == 914000 and len(month["items"]) == 2
+    out = pv.say(tok, "Hvilke regninger skal jeg betale?")
+    text = out["messages"][-1]["text"]
+    assert text.startswith("Regninger i december 2026:") and "Forsikring" in text and "Husleje" in text
+

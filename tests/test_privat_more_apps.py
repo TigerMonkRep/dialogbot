@@ -49,6 +49,8 @@ def test_packing_list_is_a_list_and_can_be_reused_unticked(api, pv, db):
 def test_meal_plan_makes_the_plan_and_one_merged_shopping_list(api, pv, db):
     tok = pv.account("mette@testmail.dk")
     _enable(api, tok, "madplan")
+    out = pv.say(tok, "Lav en madplan for næste uge")                 # no yes yet: nothing is saved
+    assert not [m for m in out["messages"] if m["kind"] == "task"]
     out = pv.say(tok, "Vi er 4 og børnene spiser ikke fisk")
     assert _texts(out)[-1] == "Gemt: 4 personer; spiser ikke: fisk. Det bruger jeg, når jeg laver madplaner."
     assert api.get(tok, "/privat/meals/preferences").json() == {"people": 4, "avoid": "fisk", "likes": ""}
@@ -143,17 +145,20 @@ def test_parcel_tracked_and_user_told_when_it_moves(api, pv, db, tracking):
     out = pv.say(tok, "Følg pakken med nummer 00340434123456789")
     assert _texts(out)[-1] == "Jeg følger pakken. 00340434123456789: afsenderen har meldt den. Du får besked, når den rykker sig."
     assert tracking.registered == ["00340434123456789"]
-    assert parcels.poll(db, WED_10 + timedelta(minutes=30)) == 0               # not again before 2 hours
-    assert parcels.poll(db, WED_10 + timedelta(hours=3)) == 1                  # ready for pickup
+    assert parcels.poll(db, WED_10 + timedelta(minutes=10)) == 0               # a new parcel: again after 15 minutes
+    assert parcels.poll(db, WED_10 + timedelta(minutes=30)) == 1               # ready for pickup
     db.commit()
     [ev] = db.query(OutboxEvent).filter(OutboxEvent.dedupe_key.like("privat-notify:parcel:%")).all()
     assert "klar til afhentning (Netto, Nørregade)" in str(ev.payload["email"])
-    assert parcels.poll(db, WED_10 + timedelta(hours=6)) == 1                  # delivered
+    assert parcels.poll(db, WED_10 + timedelta(hours=1)) == 0                  # known parcel: not before 2 hours
+    assert parcels.poll(db, WED_10 + timedelta(hours=3)) == 1                  # delivered
     db.commit()
     assert parcels.poll(db, WED_10 + timedelta(hours=9)) == 0                  # done: no more polling
     items = api.get(tok, "/privat/parcels").json()["items"]
     assert items[0]["status"] == "Delivered" and items[0]["done"] is True
     assert api.post(tok, "/privat/parcels", {"number": "x!"}).status_code == 422
+    assert api.post(tok, "/privat/parcels/00340434123456789/refresh").status_code == 200
+    assert api.post(tok, "/privat/parcels/UNKNOWN12345/refresh").status_code == 404
     assert api.delete(tok, "/privat/parcels/00340434123456789").status_code == 204
     assert api.get(tok, "/privat/parcels").json()["items"] == []
 

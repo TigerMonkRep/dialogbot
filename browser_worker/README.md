@@ -125,6 +125,17 @@ planned ─▶ running ─▶ awaiting_approval ─▶ approved ─▶ running �
 - **DNS-rebinding:** før start slås hver tilladt vært op med `safe_fetch.resolve_checked`; en intern adresse giver `unsafe_target`, og de kontrollerede adresser pinnes i
   Chromium (`--host-resolver-rules`). Underdomæner kontrolleres første gang, de bruges. Kør containeren uden adgang til cloud-metadata.
 
+## Opsætning på Render
+
+Render-tjenesten `dialogbot-browser-worker-staging` oprettes af blueprint'et (`infra/render.yaml`) og er **slukket**, indtil `BROWSER_WORKER_ENABLED=true`. En
+slukket worker kræver ingen andre indstillinger: den starter, skriver `browser_worker.disabled` og venter. (Tidligere læste den indstillingerne først og
+crash-loopede uden `DATABASE_URL`; det er rettet og dækket af `tests/test_runner_idle.py`.)
+
+Slås den til, skal disse være sat på tjenesten i Render-dashboardet (alle er `sync: false` i blueprint'et, så ingen af dem ligger i git):
+`DATABASE_URL` (runtime-rollen, samme værdi som på `dialogbot-worker-staging`), `SECRET_KEY` (≥ 32 tegn), `SUPABASE_URL` og `SUPABASE_SERVICE_ROLE_KEY`
+(privat bevis-bucket `browser-evidence`), `AI_PROVIDER` + `ANTHROPIC_API_KEY` (LLM-fallback), og `EMAIL_ADAPTER`/`RESEND_API_KEY`/`EMAIL_FROM`/`FRONTEND_BASE_URL` (mails og
+push om godkendelse). Mangler en af dem, nægter processen at starte og navngiver den. Tjenesten kører på planen `standard` (Chromium), også mens den er slukket.
+
 ## Kør tests (ingen netværk)
 
 ```bash

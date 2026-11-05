@@ -6,6 +6,7 @@ live Playwright session while it waits for the user's yes. Run exactly ONE insta
 """
 from __future__ import annotations
 
+import os
 import threading
 import time
 import uuid
@@ -97,14 +98,27 @@ def sweep() -> None:
         db.commit()
 
 
+def enabled_in_env(env: dict | None = None) -> bool:
+    """BROWSER_WORKER_ENABLED as the settings read it (pydantic's true-words), but WITHOUT loading the settings."""
+    return (env if env is not None else os.environ).get("BROWSER_WORKER_ENABLED", "").strip().lower() in (
+        "1", "true", "t", "yes", "y", "on")
+
+
+def idle_forever() -> None:
+    configure_logging(os.environ.get("LOG_LEVEL", "INFO"))
+    log.warning("browser_worker.disabled", hint="set BROWSER_WORKER_ENABLED=true (and the settings it needs) to run")
+    while True:  # idle instead of exiting, so the platform does not restart-loop a deliberately disabled worker
+        time.sleep(300)
+
+
 def main() -> None:
+    # A disabled worker needs NOTHING else: no database, no secrets. The settings are only loaded (and validated) once the
+    # worker is switched on, so a Render service created from the blueprint stays healthy until someone enables it.
+    if not enabled_in_env():
+        idle_forever()
     s = get_settings()
     configure_logging(s.log_level)
     wid = outbox_runner._worker_id()
-    if not s.browser_worker_enabled:
-        log.warning("browser_worker.disabled", hint="set BROWSER_WORKER_ENABLED=true to run")
-        while True:  # idle instead of exiting, so the platform does not restart-loop a deliberately disabled worker
-            time.sleep(300)
     log.info("browser_worker.start", worker_id=wid, env=s.app_env, engines=sorted(s.browser_engines))
     next_sweep = 0.0
     while True:

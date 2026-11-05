@@ -254,6 +254,8 @@ class PrivateCall(Base):
         CheckConstraint("status in ('proposed','approved','scheduled','dialling','in_progress','unknown','answered',"
                         "'no_answer','failed','declined')", name="ck_private_calls_status"),
         CheckConstraint("paid_via is null or paid_via in ('credits','plan')", name="ck_private_calls_paid_via"),
+        CheckConstraint("pitch_outcome is null or pitch_outcome in ('interested','declined','skipped','not_asked')",
+                        name="ck_private_calls_pitch_outcome"),
         Index("ix_private_calls_task", "task_id", "created_at"),
         Index("ix_private_calls_ws_approved", "workspace_id", "approved_at"),
         Index("ix_private_calls_business_phone", "business_phone_e164", "expires_at"),
@@ -292,6 +294,11 @@ class PrivateCall(Base):
     approved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     dialled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Lead loop (app/modules/privat/lead_pitch.py): what happened to the fixed closing line. NULL = the feature was off.
+    pitch_outcome: Mapped[str | None] = mapped_column(String(16))     # interested | declined | skipped | not_asked
+    pitch_skipped_reason: Mapped[str | None] = mapped_column(String(60))
+    pitch_transcript_excerpt: Mapped[str | None] = mapped_column(String(500))  # only the closing line and the answer, never more
+    pitch_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # A call back from this business to a pool number is matched to this call until then (dialled + 14 days).
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # Google place id (the only Places field that may be stored indefinitely); null for a number the user typed.

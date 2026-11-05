@@ -383,46 +383,6 @@
         "title": "BlobIn",
         "type": "object"
       },
-      "BlockIn": {
-        "properties": {
-          "kind": {
-            "enum": [
-              "phone",
-              "domain",
-              "cvr"
-            ],
-            "title": "Kind",
-            "type": "string"
-          },
-          "reason": {
-            "default": "",
-            "maxLength": 300,
-            "title": "Reason",
-            "type": "string"
-          },
-          "source": {
-            "default": "manual",
-            "enum": [
-              "manual",
-              "dispute"
-            ],
-            "title": "Source",
-            "type": "string"
-          },
-          "value": {
-            "maxLength": 200,
-            "minLength": 2,
-            "title": "Value",
-            "type": "string"
-          }
-        },
-        "required": [
-          "kind",
-          "value"
-        ],
-        "title": "BlockIn",
-        "type": "object"
-      },
       "Body_linden_replay_api_v1_operator_telephony_linden_replay_post": {
         "properties": {
           "file": {
@@ -5395,6 +5355,46 @@
         "title": "SettingsIn",
         "type": "object"
       },
+      "app__modules__sales__channel_router__BlockIn": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "phone",
+              "domain",
+              "cvr"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Reason",
+            "type": "string"
+          },
+          "source": {
+            "default": "manual",
+            "enum": [
+              "manual",
+              "dispute"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "value": {
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "value"
+        ],
+        "title": "BlockIn",
+        "type": "object"
+      },
       "app__modules__sales__channel_router__ContactIn": {
         "properties": {
           "email": {
@@ -5509,6 +5509,18 @@
           "accepted_max_net_minor"
         ],
         "title": "StartIn",
+        "type": "object"
+      },
+      "app__modules__sales__privat_leads__BlockIn": {
+        "properties": {
+          "reason": {
+            "default": "Spærret af en sælger",
+            "maxLength": 300,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "title": "BlockIn",
         "type": "object"
       },
       "app__modules__setup__router__AssignIn": {
@@ -9881,6 +9893,179 @@
         ]
       }
     },
+    "/api/v1/operator/sales/privat-leads": {
+      "get": {
+        "operationId": "list_privat_leads_api_v1_operator_sales_privat_leads_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Privat Leads",
+        "tags": [
+          "sales-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/sales/privat-leads/{contact_id}/block": {
+      "post": {
+        "description": "Never contact this business again: block list (phone + CVR), and the stored address and consent are dropped.",
+        "operationId": "block_business_api_v1_operator_sales_privat_leads__contact_id__block_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contact_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Contact Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/app__modules__sales__privat_leads__BlockIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Block Business",
+        "tags": [
+          "sales-operator"
+        ]
+      }
+    },
+    "/api/v1/operator/sales/privat-leads/{contact_id}/intro-mail": {
+      "post": {
+        "description": "One fixed mail (email_templates.intro_mail) through the normal outbox. Only to an address given with an explicit yes, once.",
+        "operationId": "send_intro_mail_api_v1_operator_sales_privat_leads__contact_id__intro_mail_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contact_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Contact Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Send Intro Mail",
+        "tags": [
+          "sales-operator"
+        ]
+      }
+    },
     "/api/v1/operator/salg": {
       "get": {
         "description": "Status (what works, what is missing) and the overview tiles. Works in every mode, also `off`.",
@@ -10066,7 +10251,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BlockIn"
+                "$ref": "#/components/schemas/app__modules__sales__channel_router__BlockIn"
               }
             }
           },

@@ -498,3 +498,25 @@ dansk tid, med push eller – uden push-abonnement – e-mail, ét link til `/pr
 den 28. februar i andre år. Slået appen fra, sendes intet; data beholdes.
 
 **Assistentens værktøjer:** `add_birthdays(items[{name, date, remind_days_before?}])`, `list_birthdays()`, `remove_birthday(name)`.
+
+## Regninger (tilføjelsen «Regninger»)
+
+Faste regninger, brugeren selv fortæller om. Kode: `app/modules/privat/bills.py`, endpoints i `app/modules/privat/apps_router.py`.
+Med i Plus og Familie. **Dialogbot betaler aldrig og har ingen adgang til banken.** Gemt: navn, beløb (kun når brugeren siger det),
+hyppighed og næste forfaldsdato.
+
+| Metode | Sti | Svar |
+|---|---|---|
+| GET | `/privat/bills` | `{items: [Bill], month: {month, total_minor, total_text, without_amount, items}}` – månedens regninger og summen af de kendte beløb |
+| POST | `/privat/bills` | `{name, amount?, frequency?, due_date? \| due_day?, remind_days_before?}` → `Bill + {created}`. Samme navn retter regningen. `frequency`: `monthly`, `quarterly`, `half_yearly`, `yearly`, `once`. 422 uden dato eller ved et beløb, der ikke kan læses |
+| PATCH | `/privat/bills/{id}` | `{remind_days_before: 0–30}` |
+| DELETE | `/privat/bills/{id}` | 204 |
+
+`Bill`: `{id, name, amount_minor, amount_text, frequency, frequency_text, next_due, due_text, days_until, remind_days_before}`.
+
+**Påmindelsen** (hovedworkerens faste job, sammen med Fødselsdage): `remind_days_before` dage før (standard 3), tidligst kl. 08,
+push eller e-mail, én gang pr. forfaldsdato. Når datoen er passeret, rykker en fast regning videre (`anchor_day` holder «den 31.»
+på månedens sidste dag i korte måneder); en engangsregning bliver stående, til brugeren fjerner den.
+
+**Assistentens værktøjer:** `add_bills(items[{name, amount?, frequency?, due_day?, due_date?, remind_days_before?}])`,
+`bills_overview()`, `remove_bill(name)`.

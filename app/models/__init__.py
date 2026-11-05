@@ -92,6 +92,7 @@ from app.models.privat import (  # noqa: F401, E402
     CreditLedger,
     PrivateAddonEnabled,
     PrivateAppointment,
+    PrivateBill,
     PrivateBirthday,
     PrivateBusinessSearch,
     PrivateCall,

@@ -6,6 +6,7 @@ import type { T } from "@/i18n/translate";
 import { CONFLICT, type Addon } from "@/lib/privat/api";
 import type { ApiError } from "@/lib/client";
 import { BIG, Eyebrow, Pill } from "./bits";
+import { BillsPanel } from "./bills";
 import { BirthdaysPanel } from "./birthdays";
 import { CalendarPanel } from "./calendar";
 import { Ico, Tile, iconFor } from "./icons";
@@ -62,7 +63,7 @@ export function AppTile({ a, size = 62 }: { a: Addon; size?: number }) {
 }
 
 /** App pages that open their app sheet (the backend links to them). */
-const APP_PATHS: Record<string, string> = { "/privat/kalender": "kalender", "/privat/foedselsdage": "foedselsdage" };
+const APP_PATHS: Record<string, string> = { "/privat/kalender": "kalender", "/privat/foedselsdage": "foedselsdage", "/privat/regninger": "regninger" };
 
 /** Butikken (/privat/butik): icon grid with «Installeret» and «Alle apps»; a tap opens the app sheet. */
 export function StorePage() {
@@ -187,6 +188,7 @@ export function AddonDetail({ a }: { a: Addon }) {
         <>
           {a.key === "kalender" && mode !== "demo" && <CalendarPanel />}
           {a.key === "foedselsdage" && mode !== "demo" && <BirthdaysPanel />}
+          {a.key === "regninger" && mode !== "demo" && <BillsPanel />}
           <Button className={`${BIG} rounded-full`} onClick={open} aria-label={`${t("store.open")}: ${name}`}>{t("store.open")}</Button>
           <Button variant="outline" className="rounded-full border-2" onClick={() => openSheet({ kind: "addonOff", addonKey: a.key })} aria-label={`${t("addons.disable")}: ${name}`}>{t("addons.disable")}</Button>
         </>

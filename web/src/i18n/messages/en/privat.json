@@ -11,7 +11,8 @@
     "invite": "Invitation",
     "groupJoin": "Join the group",
     "calendar": "Calendar",
-    "birthdays": "Birthdays"
+    "birthdays": "Birthdays",
+    "bills": "Bills"
   },
   "brand": {
     "privat": "Privat",
@@ -1133,5 +1134,35 @@
     "datePlaceholder": "Date, e.g. 14 March or 14.03.1946",
     "save": "Save",
     "hint": "If you include the year, Peter also tells you how old they turn."
+  },
+  "bills": {
+    "title": "Your bills",
+    "loading": "Loading bills …",
+    "none": "No bills yet. Tell Peter for example «Remind me about the insurance on the 1st every month – it's 640 kr.», or add one here.",
+    "month": "Bills in {month}",
+    "withoutAmount": "+ {n} without amount",
+    "today": "today",
+    "tomorrow": "tomorrow",
+    "inDays": "in {n} days",
+    "remind": "Reminder",
+    "onTheDay": "on the day",
+    "daysBefore": "{n} days before",
+    "remove": "Remove",
+    "add": "Add bill",
+    "name": "Name",
+    "namePlaceholder": "Name, e.g. Rent",
+    "amount": "Amount",
+    "amountPlaceholder": "Amount (optional), e.g. 640",
+    "nextDue": "Next due date",
+    "how": "How often",
+    "save": "Save",
+    "never": "Peter never pays anything himself and has no access to your bank.",
+    "freq": {
+      "monthly": "every month",
+      "quarterly": "every quarter",
+      "half_yearly": "every six months",
+      "yearly": "every year",
+      "once": "once"
+    }
   }
 }

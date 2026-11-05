@@ -842,3 +842,52 @@ def tool_remove_birthday(turn: Turn, a: dict) -> str:
     birthdays.remove(turn.db, b)
     turn.say("text", f"{name}s fødselsdag er fjernet.")
     return "Fjernet."
+
+
+# --------------------------------------------------------------------------- Regninger (app/modules/privat/bills.py)
+
+def tool_add_bills(turn: Turn, a: dict) -> str:
+    from app.core.errors import ValidationFailed
+    from app.modules.privat import bills
+
+    saved, bad = [], []
+    for it in (a.get("items") or [])[:50]:
+        if not isinstance(it, dict):
+            continue
+        days = it.get("remind_days_before")
+        try:
+            b, _ = bills.save(turn.db, turn.ctx.ws_id, name=str(it.get("name") or ""), amount=it.get("amount"),
+                              frequency=str(it.get("frequency") or "monthly"), due_date=it.get("due_date"),
+                              due_day=it.get("due_day") if isinstance(it.get("due_day"), int) else None,
+                              remind_days_before=int(days) if isinstance(days, int | float) else None)
+            saved.append(b)
+        except ValidationFailed as e:
+            bad.append(f"{it.get('name') or '?'} ({e.message})")
+    if not saved:
+        return "Ingen regning kunne gemmes: " + "; ".join(bad) + ". Spørg efter datoen."
+    lines = [f"{b.name}: {bills.FREQ_TEXT[b.frequency]}, næste gang {bills.date_text(b.next_due)}"
+             + (f", {bills.money(b.amount_minor)}" if b.amount_minor else "") for b in saved]
+    text = "Gemt: " + "; ".join(lines).rstrip(".") + ". Jeg minder dig om det inden – jeg betaler aldrig selv."
+    if bad:
+        text += " Ikke gemt: " + "; ".join(bad) + "."
+    turn.say("text", text)
+    return f"{len(saved)} gemt, {len(bad)} ikke gemt."
+
+
+def tool_bills_overview(turn: Turn, a: dict) -> str:
+    from app.modules.privat import bills
+
+    turn.say("text", bills.overview_text(turn.db, turn.ctx.ws_id))
+    return "Vist."
+
+
+def tool_remove_bill(turn: Turn, a: dict) -> str:
+    from app.modules.privat import bills
+
+    b = bills.find(turn.db, turn.ctx.ws_id, str(a.get("name") or ""))
+    if b is None:
+        return "Den regning findes ikke. Spørg brugeren hvilken."
+    name = b.name
+    bills.remove(turn.db, b)
+    turn.say("text", f"Regningen «{name}» er fjernet.")
+    return "Fjernet."

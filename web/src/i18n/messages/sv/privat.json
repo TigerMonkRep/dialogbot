@@ -11,7 +11,8 @@
     "invite": "Inbjudan",
     "groupJoin": "Gå med i gruppen",
     "calendar": "Kalender",
-    "birthdays": "Födelsedagar"
+    "birthdays": "Födelsedagar",
+    "bills": "Räkningar"
   },
   "brand": {
     "privat": "Privat",
@@ -1133,5 +1134,35 @@
     "datePlaceholder": "Datum, t.ex. 14 mars eller 14.03.1946",
     "save": "Spara",
     "hint": "Skriver du året berättar Peter också hur gammal personen fyller."
+  },
+  "bills": {
+    "title": "Dina räkningar",
+    "loading": "Hämtar räkningar …",
+    "none": "Inga räkningar än. Skriv till exempel «Påminn mig om försäkringen den 1 varje månad – den är 640 kr.» till Peter, eller lägg till en här.",
+    "month": "Räkningar i {month}",
+    "withoutAmount": "+ {n} utan belopp",
+    "today": "i dag",
+    "tomorrow": "i morgon",
+    "inDays": "om {n} dagar",
+    "remind": "Påminnelse",
+    "onTheDay": "på dagen",
+    "daysBefore": "{n} dagar före",
+    "remove": "Ta bort",
+    "add": "Lägg till räkning",
+    "name": "Namn",
+    "namePlaceholder": "Namn, t.ex. Hyra",
+    "amount": "Belopp",
+    "amountPlaceholder": "Belopp (valfritt), t.ex. 640",
+    "nextDue": "Nästa förfallodag",
+    "how": "Hur ofta",
+    "save": "Spara",
+    "never": "Peter betalar aldrig själv och har ingen tillgång till din bank.",
+    "freq": {
+      "monthly": "varje månad",
+      "quarterly": "varje kvartal",
+      "half_yearly": "varje halvår",
+      "yearly": "varje år",
+      "once": "en gång"
+    }
   }
 }

@@ -525,3 +525,32 @@ class PrivateBirthday(Base):
     last_reminded_for: Mapped[date | None] = mapped_column(Date)
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = ts_now()
+
+
+class PrivateBill(Base):
+    """Regninger app: a bill the user told the assistant about – reminded before it is due. Dialogbot never pays and
+    never sees the bank. `next_due` moves on by `frequency` once the due date has passed (`anchor_day` keeps «the 31st»)."""
+
+    __tablename__ = "private_bills"
+    __table_args__ = (
+        CheckConstraint("frequency in ('monthly','quarterly','half_yearly','yearly','once')",
+                        name="ck_private_bills_frequency"),
+        CheckConstraint("anchor_day between 1 and 31", name="ck_private_bills_anchor_day"),
+        CheckConstraint("amount_minor is null or amount_minor >= 0", name="ck_private_bills_amount"),
+        CheckConstraint("remind_days_before between 0 and 30", name="ck_private_bills_remind"),
+        UniqueConstraint("workspace_id", "name_key", name="uq_private_bills_name"),
+        Index("ix_private_bills_ws_next_due", "workspace_id", "next_due"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    name_key: Mapped[str] = mapped_column(String(100), nullable=False)
+    amount_minor: Mapped[int | None] = mapped_column(Integer)          # øre; only when the user said the amount
+    frequency: Mapped[str] = mapped_column(String(16), nullable=False, default="monthly")
+    anchor_day: Mapped[int] = mapped_column(Integer, nullable=False)
+    next_due: Mapped[date] = mapped_column(Date, nullable=False)
+    remind_days_before: Mapped[int] = mapped_column(Integer, nullable=False, default=3, server_default="3")
+    last_reminded_for: Mapped[date | None] = mapped_column(Date)
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = ts_now()

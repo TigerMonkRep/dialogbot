@@ -11,7 +11,8 @@
     "invite": "Invito",
     "groupJoin": "Entra nel gruppo",
     "calendar": "Calendario",
-    "birthdays": "Compleanni"
+    "birthdays": "Compleanni",
+    "bills": "Bollette"
   },
   "brand": {
     "privat": "Privat",
@@ -1133,5 +1134,35 @@
     "datePlaceholder": "Data, es. 14 marzo o 14.03.1946",
     "save": "Salva",
     "hint": "Se scrivi l'anno, Peter ti dice anche quanti anni compie."
+  },
+  "bills": {
+    "title": "Le tue bollette",
+    "loading": "Caricamento bollette …",
+    "none": "Ancora nessuna bolletta. Scrivi a Peter, per esempio, «Ricordami l'assicurazione il 1° di ogni mese – sono 640 kr.», o aggiungine una qui.",
+    "month": "Bollette di {month}",
+    "withoutAmount": "+ {n} senza importo",
+    "today": "oggi",
+    "tomorrow": "domani",
+    "inDays": "tra {n} giorni",
+    "remind": "Promemoria",
+    "onTheDay": "il giorno stesso",
+    "daysBefore": "{n} giorni prima",
+    "remove": "Rimuovi",
+    "add": "Aggiungi bolletta",
+    "name": "Nome",
+    "namePlaceholder": "Nome, es. Affitto",
+    "amount": "Importo",
+    "amountPlaceholder": "Importo (facoltativo), es. 640",
+    "nextDue": "Prossima scadenza",
+    "how": "Ogni quanto",
+    "save": "Salva",
+    "never": "Peter non paga mai da solo e non ha accesso alla tua banca.",
+    "freq": {
+      "monthly": "ogni mese",
+      "quarterly": "ogni trimestre",
+      "half_yearly": "ogni semestre",
+      "yearly": "ogni anno",
+      "once": "una volta"
+    }
   }
 }

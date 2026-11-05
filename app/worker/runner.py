@@ -386,13 +386,13 @@ def run_schedules() -> None:
             db.rollback()
             log.warning("privat.sweep_failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
-        try:  # Fødselsdage: once per birthday per year, from 08:00 Copenhagen time
-            from app.modules.privat.birthdays import send_due
+        try:  # Fødselsdage and Regninger: once per birthday / due date, from 08:00 Copenhagen time
+            from app.modules.privat import bills, birthdays
 
-            n = send_due(db)
+            n = birthdays.send_due(db) + bills.send_due(db)
             db.commit()
             if n:
-                log.info("privat.birthday_reminders", count=n)
+                log.info("privat.app_reminders", count=n)
         except Exception as exc:  # noqa: BLE001
             db.rollback()
             log.warning("privat.birthdays_failed", error=f"{type(exc).__name__}: {exc}")

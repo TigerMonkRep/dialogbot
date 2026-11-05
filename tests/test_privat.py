@@ -41,7 +41,7 @@ def test_account_is_personal_idempotent_and_flagged(api, pv, db, monkeypatch):
     # a fresh account is the free tier: no rights until the 14-day trial starts at Stripe Checkout, with a card
     assert pv.me(tok) == {"free_used": 0, "free_limit": 0, "credits": 3, "reserved": 0, "sponsor_left_today": 2,
                           "phone_display": None, "phone_verified": False, "push_enabled": False,
-                          "location_city": None,
+                          "location_city": None, "assistant_name": "Peter",
                           "plan": "none", "plan_status": "none", "trial_days_left": 0, "calls_quota": 0,
                           "calls_used": 0, "calls_left": 0, "entitled": False}
     pv.start_trial(tok)  # … as the webhook mirrors it after the checkout

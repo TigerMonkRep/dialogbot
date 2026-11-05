@@ -75,3 +75,33 @@ def test_no_provider_price_means_no_offer(api, pv, fake_travel):
     api.post(tok, "/privat/addons/rejser/enable")
     body = api.post(tok, "/privat/trips/search", {"origin": "CPH", "destinations": ["NRT"], "month": "2027-03"}).json()
     assert body["offers"] == [] and "ingen rejser" in travel.summary(body)
+
+
+def test_duffel_asks_for_the_cheapest_offers_only_never_the_whole_list(monkeypatch):
+    """A Duffel offer request answered with every offer is tens of MB of JSON; parsing it took the API down (OOM).
+    The provider creates the request without offers and lists only the cheapest few."""
+    import httpx
+
+    calls: list[tuple[str, str, dict | None]] = []
+
+    def fake_post(url, json=None, headers=None, timeout=None):
+        calls.append(("POST", url, json))
+        return httpx.Response(201, json={"data": {"id": "orq_1"}})
+
+    def fake_get(url, params=None, headers=None, timeout=None):
+        calls.append(("GET", url, params))
+        return httpx.Response(200, json={"data": [
+            {"total_amount": "1234.50", "total_currency": "DKK", "owner": {"name": "Testair"},
+             "slices": [{"segments": [{"departing_at": "2026-12-03T07:00:00"}]},
+                        {"segments": [{"departing_at": "2026-12-10T18:00:00"}]}]}]})
+
+    monkeypatch.setattr(httpx, "post", fake_post)
+    monkeypatch.setattr(httpx, "get", fake_get)
+    p = travel.validate({"origin": "CPH", "destinations": ["BCN"], "depart_date": "2026-12-03", "nights": 7,
+                         "adults": 2, "children": 0}, WED_10.date())
+    offers = travel.Duffel("tok").search(p, "BCN")
+
+    assert [c[0] for c in calls] == ["POST", "GET"]
+    assert "return_offers=false" in calls[0][1]
+    assert calls[1][2] == {"offer_request_id": "orq_1", "limit": travel.Duffel.MAX_OFFERS, "sort": "total_amount"}
+    assert len(offers) == 1 and offers[0]["airline"] == "Testair" and offers[0]["total_dkk"] == 1234

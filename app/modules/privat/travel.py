@@ -112,6 +112,7 @@ def _offer(provider: str, dest: str, total: float | None, currency: str, *, airl
 class Duffel:
     name = "duffel"
     BASE = "https://api.duffel.com"
+    MAX_OFFERS = 20  # cheapest first; the search keeps at most MAX_RESULTS across destinations anyway
 
     def __init__(self, token: str):
         self.token = token
@@ -128,16 +129,24 @@ class Duffel:
         pax = [{"type": "adult"}] * p["adults"] + [{"age": 10}] * p["children"]
         body = {"data": {"slices": slices, "passengers": pax, "cabin_class": "economy",
                          **({"max_connections": 0} if p["direct_only"] else {})}}
+        headers = {"Authorization": f"Bearer {self.token}", "Duffel-Version": "v2",
+                   "Accept": "application/json", "Content-Type": "application/json"}
+        # Two calls on purpose: an offer request *with* `return_offers=true` answers with every offer Duffel found
+        # (routinely hundreds, tens of MB of JSON with every segment), which the API box cannot hold in memory.
+        # Creating the request without offers and then listing the cheapest few keeps the response small.
         try:
-            r = httpx.post(f"{self.BASE}/air/offer_requests?return_offers=true&supplier_timeout=15000", json=body,
-                           headers={"Authorization": f"Bearer {self.token}", "Duffel-Version": "v2",
-                                    "Accept": "application/json", "Content-Type": "application/json"}, timeout=30.0)
+            r = httpx.post(f"{self.BASE}/air/offer_requests?return_offers=false&supplier_timeout=15000", json=body,
+                           headers=headers, timeout=30.0)
+            if r.status_code < 400:
+                req_id = (r.json().get("data") or {}).get("id")
+                r = httpx.get(f"{self.BASE}/air/offers", headers=headers, timeout=30.0,
+                              params={"offer_request_id": req_id, "limit": self.MAX_OFFERS, "sort": "total_amount"})
         except httpx.HTTPError as e:
             raise TravelError("Duffel kunne ikke nås") from e
         if r.status_code >= 400:
             raise TravelError(f"Duffel svarede {r.status_code}")
         out = []
-        for o in (r.json().get("data") or {}).get("offers") or []:
+        for o in (r.json().get("data") or [])[:self.MAX_OFFERS]:
             segs = (o.get("slices") or [{}])[0].get("segments") or []
             back = (o.get("slices") or [{}, {}])[-1].get("segments") or [] if ret else []
             route = "https://www.google.com/travel/flights?q=" + quote(

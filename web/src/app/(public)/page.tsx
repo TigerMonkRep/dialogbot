@@ -1,5 +1,6 @@
 import Link from "@/i18n/link";
 import { cookies } from "next/headers";
+import Script from "next/script";
 import type { Metadata } from "next";
 import { COMPANY } from "@/components/legal-page";
 import { SiteChrome } from "@/components/site-chrome";
@@ -91,6 +92,17 @@ function Bubble({ who, initial, children }: { who: "D" | "K"; initial: string; c
   );
 }
 
+// Travelpayouts Drive: the partner programme's site script. Travelpayouts checks for it on the website before the
+// partner account stays active; it only acts on travel content. It runs on the front page only – never in the app,
+// the Privat assistant, login or the legal pages – so no third-party script sees what users do there.
+const TRAVELPAYOUTS_DRIVE = `(function () {
+var script = document.createElement("script");
+script.async = 1;
+script.setAttribute("data-cmp-ab","2");
+script.src = 'https://emrldtp.cc/NTk2Mjc3.js?t=596277';
+document.head.appendChild(script);
+})();`;
+
 export default async function Home() {
   const rec = await recommender();
   const t = await getT("site");
@@ -103,6 +115,7 @@ export default async function Home() {
   const K = t("demoCall.customerInitial");
   return (
     <SiteChrome compactFooter={false}>
+      <Script id="travelpayouts-drive" strategy="afterInteractive" data-cmp-ab="2">{TRAVELPAYOUTS_DRIVE}</Script>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(t, HTML_LANG[locale], locale)) }} />
       {rec && (
         <section aria-label={t("home.referral.label")} className="bg-highlight border-b-2 border-ink">

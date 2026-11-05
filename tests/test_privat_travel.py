@@ -105,6 +105,8 @@ def test_duffel_asks_for_the_cheapest_offers_only_never_the_whole_list(monkeypat
     assert "return_offers=false" in calls[0][1]
     assert calls[1][2] == {"offer_request_id": "orq_1", "limit": travel.Duffel.MAX_OFFERS, "sort": "total_amount"}
     assert len(offers) == 1 and offers[0]["airline"] == "Testair" and offers[0]["total_dkk"] == 1234
+    # «Book» opens the same journey: both dates and the passengers, not only the route
+    assert "returning%202026-12-10" in offers[0]["book_url"] and "for%202%20adults" in offers[0]["book_url"]
 
 
 def test_flexible_dates_passengers_in_the_link_and_airline_names():
@@ -134,3 +136,12 @@ def test_empty_destination_gets_a_danish_message(api, pv, fake_travel):
     r = api.post(tok, "/privat/trips/search", {"origin": "CPH", "destinations": [], "month": "2027-02"})
     assert r.status_code == 422 and "Hvorhen" in r.text
 
+
+
+def test_the_same_flight_is_shown_once(api, pv, fake_travel):
+    """Same route, dates, airline and price from several fares (or both providers) is one line, not four."""
+    tok = pv.account("mette@testmail.dk")
+    api.post(tok, "/privat/addons/rejser/enable")
+    fake_travel.prices = {"LIS": [9900, 9900, 9900, 9900, 10500]}
+    body = api.post(tok, "/privat/trips/search", {"origin": "BLL", "destinations": ["LIS"], "month": "2027-02"}).json()
+    assert [o["total_dkk"] for o in body["offers"]] == [9900, 10500]

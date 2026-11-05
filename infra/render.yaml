@@ -78,9 +78,9 @@ services:
         sync: false
       - key: CREDENTIALS_KEY      # also encrypts TikTok's rotating refresh token (same value in API and worker)
         sync: false
-      - key: SUPABASE_URL         # project dialogbot-prod-fra; private bucket "browser-evidence" for browser-run evidence
-        value: https://dmnbphhocnmjiqtcjddg.supabase.co
-      - key: SUPABASE_SERVICE_ROLE_KEY   # Supabase → Project Settings → API keys → service_role (dashboard only)
+      - key: SUPABASE_URL         # dashboard-managed; private bucket "browser-evidence" holds browser-run evidence
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY   # dashboard-managed (service_role key)
         sync: false
       - key: BROWSER_WORKER_ENABLED   # dashboard-managed; the API only starts browser runs when "true" (needs the two above)
         sync: false
@@ -188,9 +188,9 @@ services:
       - key: ANTHROPIC_API_KEY
         fromService: {type: web, name: dialogbot-api-staging, envVarKey: ANTHROPIC_API_KEY}
       - key: SUPABASE_URL
-        value: https://dmnbphhocnmjiqtcjddg.supabase.co
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: SUPABASE_URL}
       - key: SUPABASE_SERVICE_ROLE_KEY
-        sync: false
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: SUPABASE_SERVICE_ROLE_KEY}
       - key: BROWSER_WORKER_ENABLED   # dashboard-managed; "false" keeps the worker idle
         sync: false
       - key: BROWSER_EVIDENCE_BUCKET

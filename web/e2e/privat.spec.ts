@@ -479,10 +479,10 @@ for (const width of [375, 1440]) {
       await sheet.getByRole("button", { name: "Installér: Fødselsdage" }).click();
       await expect(sheet.getByTestId("addon-setup")).toContainText("Opsætning · 3 trin");
       await sheet.getByRole("button", { name: "Start opsætningen: Fødselsdage" }).click();
-      await expect(sheet).toBeHidden();
-      await page.getByRole("button", { name: "Åbn Fødselsdage" }).click();
+      // An app with a panel stays open after the setup, so it can be used right away.
       await expect(page.getByRole("dialog").getByRole("button", { name: "Åbn: Fødselsdage" })).toBeVisible();
       await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
+      await expect(page.getByRole("dialog")).toBeHidden();
       // Kommer snart is disabled; without rights the plan offer replaces the button.
       await page.getByRole("button", { name: "Åbn Pakker" }).click();
       await expect(page.getByRole("dialog").getByRole("button", { name: "Kommer snart: Pakker" })).toBeDisabled();

@@ -127,7 +127,11 @@ export function ParcelsPanel() {
         <div key={p.number} className={CARD}>
           <span className="font-semibold text-[15px] [overflow-wrap:anywhere]">{p.text}</span>
           {(p.event || p.carrier) && <span className="text-[13px] text-ink-soft">{[p.carrier, p.event].filter(Boolean).join(" · ")}</span>}
-          <Button variant="outline" className="rounded-full border-2 self-start" onClick={() => void run(() => api.removeParcel(p.number))}>{t("moreApps.parcels.stop")}</Button>
+          <span className="flex gap-2 flex-wrap">
+            {!p.done && <Button variant="outline" className="rounded-full border-2" onClick={() => void run(() => api.refreshParcel(p.number))}>{t("moreApps.parcels.refresh")}</Button>}
+            <Button variant="outline" className="rounded-full border-2" onClick={() => void run(() => api.removeParcel(p.number))}>{t("moreApps.parcels.stop")}</Button>
+          </span>
+          {p.status === "NotFound" && <span className="text-[13px] text-muted">{t("moreApps.parcels.slow")}</span>}
         </div>
       ))}
       <form className="rounded-[18px] border-[1.5px] border-ink bg-panel p-3.5 flex flex-col gap-2"

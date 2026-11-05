@@ -4551,7 +4551,6 @@
               "type": "string"
             },
             "maxItems": 5,
-            "minItems": 1,
             "title": "Destinations",
             "type": "array"
           },
@@ -4606,8 +4605,7 @@
           }
         },
         "required": [
-          "origin",
-          "destinations"
+          "origin"
         ],
         "title": "TripSearchIn",
         "type": "object"
@@ -19538,6 +19536,63 @@
           }
         },
         "summary": "Delete Parcel",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
+    "/api/v1/privat/parcels/{number}/refresh": {
+      "post": {
+        "description": "«Opdater nu»: ask the tracking service again (at most every 10 minutes per parcel).",
+        "operationId": "refresh_parcel_api_v1_privat_parcels__number__refresh_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Refresh Parcel",
         "tags": [
           "privat-apps"
         ]

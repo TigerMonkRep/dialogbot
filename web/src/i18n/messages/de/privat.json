@@ -1199,7 +1199,9 @@
       "label": "Was ist es? (optional)",
       "follow": "Paket verfolgen",
       "stop": "Stopp",
-      "hint": "Du bekommst Bescheid, wenn das Paket unterwegs, abholbereit und zugestellt ist. Nur die Nummer geht an den Tracking-Dienst."
+      "hint": "Du bekommst Bescheid, wenn das Paket unterwegs, abholbereit und zugestellt ist. Nur die Nummer geht an den Tracking-Dienst.",
+      "refresh": "Jetzt aktualisieren",
+      "slow": "Neue Pakete können ein paar Stunden brauchen, bis der Versender sie meldet – ich prüfe alle 15 Minuten erneut."
     }
   },
   "travel": {

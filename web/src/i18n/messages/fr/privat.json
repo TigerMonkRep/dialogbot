@@ -1199,7 +1199,9 @@
       "label": "Qu'est-ce que c'est ? (facultatif)",
       "follow": "Suivre le colis",
       "stop": "Arrêter",
-      "hint": "Vous êtes prévenu quand le colis est en route, disponible au retrait et livré. Seul le numéro est envoyé au service de suivi."
+      "hint": "Vous êtes prévenu quand le colis est en route, disponible au retrait et livré. Seul le numéro est envoyé au service de suivi.",
+      "refresh": "Actualiser",
+      "slow": "Un nouveau colis peut mettre quelques heures avant d'être signalé par le transporteur – je revérifie toutes les 15 minutes."
     }
   },
   "travel": {

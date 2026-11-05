@@ -1199,7 +1199,9 @@
       "label": "Hvad er det? (valgfrit)",
       "follow": "Følg pakken",
       "stop": "Stop",
-      "hint": "Du får besked, når pakken er på vej, klar til afhentning og leveret. Kun nummeret sendes til sporingstjenesten."
+      "hint": "Du får besked, når pakken er på vej, klar til afhentning og leveret. Kun nummeret sendes til sporingstjenesten.",
+      "refresh": "Opdater nu",
+      "slow": "Nye pakker kan tage op til et par timer, før fragtfirmaet melder dem – jeg tjekker igen hvert kvarter."
     }
   },
   "travel": {

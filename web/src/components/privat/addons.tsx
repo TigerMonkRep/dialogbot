@@ -64,6 +64,9 @@ export function AppTile({ a, size = 62 }: { a: Addon; size?: number }) {
   return <Tile name={iconFor(a.icon)} size={size} className={`${appTile(a.key)} rounded-[18px] border-2 border-ink ${a.status === "coming_soon" ? "opacity-60 border-dashed" : "shadow-block-sm"}`} />;
 }
 
+/** Apps whose sheet shows a panel once they are on. */
+const PANEL_APPS = new Set(["kalender", "foedselsdage", "regninger", "madplan", "laege-og-tandlaege", "bil-og-syn", "pakker", "rejser"]);
+
 /** App pages that open their app sheet (the backend links to them). */
 const APP_PATHS: Record<string, string> = { "/privat/kalender": "kalender", "/privat/foedselsdage": "foedselsdage", "/privat/regninger": "regninger", "/privat/bil": "bil-og-syn", "/privat/pakker": "pakker" };
 
@@ -146,7 +149,8 @@ export function AddonDetail({ a }: { a: Addon }) {
   const included = addonIncluded(a, p.entitled);
   const enable = async () => {
     setErr(null);
-    try { await api.enableAddon(a.key); await refresh(); closeSheet(); }
+    // Apps with a panel stay open after «Start opsætningen», so the setup continues right there.
+    try { await api.enableAddon(a.key); await refresh(); if (!PANEL_APPS.has(a.key)) closeSheet(); }
     catch (e) {
       const x = e as ApiError;
       if (x.code === CONFLICT.needsPlan) openSheet({ kind: "needsPlan", addonKey: a.key });
@@ -167,11 +171,11 @@ export function AddonDetail({ a }: { a: Addon }) {
       {a.example && (
         <div className="rounded-[18px] border-[1.5px] border-ink bg-paper p-3.5 flex flex-col gap-1">
           <Eyebrow>{t("store.say")}</Eyebrow>
-          <p className="m-0 text-[16px] font-semibold leading-normal">«{a.example}»</p>
+          <p className="m-0 text-[16px] font-semibold leading-normal">«{a.example.replace(/^«|»$/g, "")}»</p>
         </div>
       )}
       {a.permissions.length > 0 && (
-        <details className="text-[14px]">
+        <details className="text-[14px]" open>
           <summary className="cursor-pointer font-semibold min-h-[44px] flex items-center">{t("addons.permissions")}</summary>
           <ul className="m-0 mt-1 p-0 list-none flex flex-col gap-1.5">
             {a.permissions.map((x) => <li key={x} className="flex gap-2 text-[14px]"><span className="text-accent mt-0.5"><Ico name="check" size={16} /></span><span className="min-w-0">{x}</span></li>)}

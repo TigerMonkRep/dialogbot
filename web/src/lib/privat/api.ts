@@ -260,6 +260,7 @@ export interface PrivatApi {
   parcels(): Promise<{ items: Parcel[] }>;
   addParcel(body: { number: string; label?: string }): Promise<Parcel>;
   removeParcel(number: string): Promise<void>;
+  refreshParcel(number: string): Promise<Parcel>;
   // Rejser
   searchTrips(body: TripSearch): Promise<TripResult>;
   latestTrips(): Promise<{ search: TripResult | null }>;
@@ -283,7 +284,7 @@ export type CarInfo = {
   plate: string | null; inspection_due: string | null; service_due: string | null; tire_reminders: boolean; summary: string;
   workshop: { name: string; phone_display: string } | null;
 };
-export type Parcel = { number: string; label: string | null; status: string | null; text: string; event: string; carrier: string; done: boolean };
+export type Parcel = { number: string; label: string | null; status: string | null; text: string; event: string; carrier: string; done: boolean; updated_at?: string };
 
 // ---------- Regninger ----------
 export type BillFrequency = "monthly" | "quarterly" | "half_yearly" | "yearly" | "once";
@@ -418,6 +419,7 @@ export const realPrivat: PrivatApi = {
   parcels: () => api(`${P}/parcels`),
   addParcel: (body) => api(`${P}/parcels`, json(body)),
   removeParcel: (number) => api(`${P}/parcels/${enc(number)}`, { method: "DELETE" }),
+  refreshParcel: (number) => api(`${P}/parcels/${enc(number)}/refresh`, json({})),
   searchTrips: (body) => api(`${P}/trips/search`, json(body)),
   latestTrips: () => api(`${P}/trips/latest`),
 };

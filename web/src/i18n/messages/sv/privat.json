@@ -1199,7 +1199,9 @@
       "label": "Vad är det? (valfritt)",
       "follow": "Följ paketet",
       "stop": "Stoppa",
-      "hint": "Du får besked när paketet är på väg, kan hämtas och är levererat. Bara numret skickas till spårningstjänsten."
+      "hint": "Du får besked när paketet är på väg, kan hämtas och är levererat. Bara numret skickas till spårningstjänsten.",
+      "refresh": "Uppdatera nu",
+      "slow": "Nya paket kan ta några timmar innan transportören rapporterar dem – jag kollar igen var 15:e minut."
     }
   },
   "travel": {

@@ -10,7 +10,7 @@ import { Composer, Shortcuts } from "./day";
 import { Ico } from "./icons";
 import { useFmt, usePrivat } from "./store";
 
-const BOT = "self-start max-w-[90%] bg-panel rounded-[16px_16px_16px_4px] px-3.5 py-2.5 text-[16px] leading-[1.45] [overflow-wrap:anywhere]";
+const BOT = "self-start max-w-[90%] bg-panel rounded-[16px_16px_16px_4px] px-3.5 py-2.5 text-[16px] leading-[1.45] [overflow-wrap:anywhere] whitespace-pre-line";
 const CARD_KINDS = new Set(["task", "call_proposal", "draft", "share_proposal"]);
 
 function TaskCardFor({ task }: { task: Task }) {

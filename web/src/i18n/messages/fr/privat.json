@@ -286,6 +286,12 @@
     "after": "Maintenant",
     "note": "Il n'y a toujours qu'un seul rappel. La modification n'a coûté aucune tâche."
   },
+  "browser": {
+    "label": "Réservation sur le site · en attente de votre accord",
+    "before": "Actuellement",
+    "after": "Proposition",
+    "note": "Rien n'est réservé tant que vous n'avez pas approuvé."
+  },
   "call": {
     "proposal": "Proposition · attend votre oui",
     "ask": "Dois-je appeler {name} ?",

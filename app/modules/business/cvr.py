@@ -71,3 +71,40 @@ def lookup(cvr: str) -> dict:
     if not hits:
         raise NotFound("CVR-nummeret findes ikke i CVR-registret", code="cvr_not_found")
     return parse(hits[0])
+
+
+# --- search by name (used by the Privat assistant's booking, app/modules/browser/lookup.py) -----------------------------
+# NOT externally verified: the query shape follows the register's documented Elasticsearch fields (the same paths the
+# lookup above and app/modules/social/prospects.py read); run against the real register before relying on it.
+SEARCH_SOURCE = [*SOURCE, "Vrvirksomhed.virksomhedMetadata.nyesteKontaktoplysninger"]
+
+
+def search_by_name(name: str, city: str | None = None, size: int = 5) -> list[dict]:
+    """Active-looking candidates whose name matches every word of `name` (optionally in the given city). Each hit is the
+    parsed company plus `contacts` (the register's list of phone numbers, e-mails and websites)."""
+    import httpx
+
+    name = " ".join((name or "").split())[:120]
+    if not name:
+        raise ValidationFailed("Skriv virksomhedens navn", field_errors=[{"field": "name"}])
+    if not configured():
+        raise NotImplementedYet("CVR-opslag kræver adgang til CVR-registret (CVR_USERNAME/CVR_PASSWORD)",
+                                code="cvr_not_configured")
+    s = get_settings()
+    must = [{"match": {"Vrvirksomhed.virksomhedMetadata.nyesteNavn.navn": {"query": name, "operator": "and"}}}]
+    if city and city.strip():
+        must.append({"match": {"Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse.postdistrikt": city.strip()[:60]}})
+    body = {"_source": SEARCH_SOURCE, "size": size, "query": {"bool": {"must": must}}}
+    try:
+        r = httpx.post(s.cvr_url, json=body, auth=(s.cvr_username, s.cvr_password), timeout=15.0)
+    except httpx.HTTPError as e:
+        raise ApiError("CVR-registret svarede ikke", code="cvr_unavailable", status_code=502) from e
+    if r.status_code >= 400:
+        raise ApiError(f"CVR-registret afviste opslaget ({r.status_code})", code="cvr_unavailable", status_code=502)
+    out = []
+    for h in ((r.json() or {}).get("hits") or {}).get("hits") or []:
+        p = parse(h)
+        meta = (((h.get("_source") or {}).get("Vrvirksomhed") or {}).get("virksomhedMetadata")) or {}
+        p["contacts"] = [str(c) for c in (meta.get("nyesteKontaktoplysninger") or [])]
+        out.append(p)
+    return out

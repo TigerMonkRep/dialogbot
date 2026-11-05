@@ -5,6 +5,7 @@ import { Button } from "@/components/ui";
 import { useRaw, useT } from "@/i18n/client";
 import { ADDON, CONFLICT, type Task } from "@/lib/privat/api";
 import type { ApiError, ApiError as ClientApiError } from "@/lib/client";
+import type { ChatMessage } from "@/lib/privat/api";
 import { FAKE_SMS_CODE } from "@/lib/privat/fake";
 import { Avatars, BIG, CheckBox, CHIP, Eyebrow, Ex, Kv, LINK, Pill, Sim, SR } from "./bits";
 import { Ico, Tile } from "./icons";
@@ -492,6 +493,33 @@ export function DraftCard({ task }: { task: Task }) {
           <Button className={`${BIG} self-start`} onClick={() => openSheet({ kind: "paywall", taskId: task.id })}>{t("draft.choose")}</Button>
         </>
       ) : <p className="m-0 text-[14px] text-success font-semibold">{t("draft.active", { usage: task.usage_text })}</p>}
+    </div>
+  );
+}
+
+/** A booking on a business's own website, filled in but NOT confirmed: the yes is the user's (docs/ADR-004-browser-worker.md).
+ *  Its own message kind ("booking_proposal"), so it can never be mistaken for a quota draft (which opens the paywall). */
+export function BrowserApprovalCard({ m, task, open }: { m: ChatMessage; task: Task | undefined; open: boolean }) {
+  const t = useT("privat");
+  const { pick, busy } = usePrivat();
+  return (
+    <div className={PROPOSAL} data-testid="browser-approval">
+      <Eyebrow>{t("browser.label")}</Eyebrow>
+      {task && <h3 className="m-0 font-display font-bold text-[19px] [overflow-wrap:anywhere]">{task.title}</h3>}
+      <p className="m-0 text-[15px] text-ink-soft [overflow-wrap:anywhere]">{m.text}</p>
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 items-center">
+        <div className="border-[1.5px] border-line rounded-xl p-2.5"><span className="eyebrow text-[11px]">{t("browser.before")}</span><div className="text-[15px] text-muted [overflow-wrap:anywhere]">{m.before}</div></div>
+        <Ico name="arrow" size={22} stroke={2.4} />
+        <div className="border-2 border-ink rounded-xl p-2.5"><span className="eyebrow text-[11px]">{t("browser.after")}</span><div className="text-[15px] font-bold [overflow-wrap:anywhere]">{m.after}</div></div>
+      </div>
+      {open ? (
+        <div role="group" className="flex flex-wrap gap-2">
+          {(m.options ?? []).map((o, i) => (
+            <Button key={o.id} className={BIG} variant={i === 0 ? undefined : "secondary"} disabled={busy} onClick={() => pick(m.id, o.id)}>{o.label}</Button>
+          ))}
+        </div>
+      ) : null}
+      <p className="m-0 text-[13px] text-muted">{t("browser.note")}</p>
     </div>
   );
 }

@@ -286,6 +286,12 @@
     "after": "Jetzt",
     "note": "Es gibt weiterhin nur eine Erinnerung. Die Änderung hat keine Aufgabe gekostet."
   },
+  "browser": {
+    "label": "Buchung auf der Webseite · wartet auf dein Ja",
+    "before": "Jetzt",
+    "after": "Vorschlag",
+    "note": "Es wird nichts gebucht, bevor du zustimmst."
+  },
   "call": {
     "proposal": "Vorschlag · wartet auf dein Ja",
     "ask": "Soll ich {name} anrufen?",

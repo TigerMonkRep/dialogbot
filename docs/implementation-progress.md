@@ -2,6 +2,31 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 30 — 4. november 2026 (A: browser-worker – tøjlet browser-agent til booking på eksterne hjemmesider)
+
+Se `docs/ADR-004-browser-worker.md` og `browser_worker/README.md`. Branch `feat/browser-worker`; ingen af delene er slået til eller deployet (`BROWSER_WORKER_ENABLED=false`).
+
+| Del | Status | Bevis |
+|---|---|---|
+| Tøjlet session: de syv værktøjer, trinlog med screenshot, netværks-allow-liste i to lag (Chromium-bypass-liste + `route`), forbudte felter/klik, CAPTCHA/login → telefon, budget. Allow-listen dækker også omdirigeringer (Playwrights `route()` kaldes ikke for dem – målt) | testet (lokal klon) | `browser_worker/tests/test_session.py` |
+| Sikkerhedsnet `unexpected_commit`: et klik med uskyldig label, der alligevel booker, fanges bagefter | testet | samme, `test_playbook_onlinebooq.py`, `tests/test_browser_orchestrator.py` |
+| OnlineBooq-playbook (selectors i én konfigurationsblok) og motor-genkendelse; `browser_runs`, `business_booking_profiles` (Alembic `b7c1d4e8f2a3`) | testet mod klon | `test_playbook_onlinebooq.py`, `test_engine_detect.py`, `tests/test_browser_models.py` |
+| Godkendelsesgate: `booking_proposal` (egen beskedtype, Alembic `c2d6e9f1a4b8`), Godkend/Afvis idempotent, session holdt i live i TTL, playbook-replay efter udløb kun ved identisk slot, LLM-kørsel kan ikke genafspilles, compare-and-set (højst én bekræftelse) | testet | `tests/test_browser_api.py`, `tests/test_browser_orchestrator.py` |
+| Endpoints `GET …/browser`, `POST …/approve|decline`; evidence som signerede, kortlivede links til privat bucket; 404 på tværs af arbejdsrum | testet (stub for Supabase) | `tests/test_browser_api.py` |
+| Worker-proces via den eksisterende outbox (hovedworkeren henter aldrig `privat.browser_*`); Render-tjeneste, CI-job med PostgreSQL | testet; ikke deployet | `tests/test_browser_orchestrator.py`, `infra/render.yaml` |
+| LLM-fallback (samme værktøjer og grænser, `ai_usage`, omkostning i `cost_cents`) og telefon-fallback (opgavens opkaldsforslag med det fundne) | testet (scriptet model) | `tests/test_browser_orchestrator.py`, `test_browser_api.py` |
+| DNS-rebinding: opslag via `safe_fetch.resolve_checked` før start (`unsafe_target`), adresser pinnet i Chromium, underdomæner kontrolleret ved brug | testet (simuleret resolver, pinning mod lokal server) | `tests/test_browser_orchestrator.py` |
+| Video klippet til `BROWSER_MAX_SECONDS` før upload (aldrig uklippet), lokale filer slettes | testet | samme |
+| A5 – kørsel fra chatten: værktøjerne `find_business`, `start_booking`, `switch_to_phone`; sporregler 1–4 i kode; opslag i CVR + Google Places gemt i `external_business_contacts` (Alembic `d3e7a2b5c9f1`); 1 credit reserveret/brugt/frigivet; «ring i stedet» | testet (fakes) | `tests/test_browser_assistant.py` |
+
+**Ikke eksternt verificeret:**
+- **Ingen rigtig bookingside.** Alt er testet mod en lokal HTML-klon bygget efter OnlineBooqs offentlige flow. Selectors, motor-signaturer og tekstmønstre er gæt ud fra flowets form.
+- **Ingen rigtig AI-udbyder, ingen rigtig Supabase Storage, ingen rigtig Vapi-samtale** (opkaldsforslaget er det eksisterende, simulerede), **ingen rigtig CVR- eller Google Places-forespørgsel.** Forespørgslen i CVR på navn følger de dokumenterede felter, men er ikke kørt mod registret.
+- **Juridisk vurdering ikke gennemgået:** at en agent handler på brugerens vegne på en tredjeparts bookingside (vilkår pr. motor, adgang til data), og opbevaring af evidens med navn/telefon. Skal gennemgås af en jurist, før `BROWSER_WORKER_ENABLED` sættes i prod.
+- Netværksindstillingen uden adgang til cloud-metadata på Render er ikke sat; Render-tjenesten er ikke deployet. Underdomæner kan ikke pinnes mod DNS-rebinding (restrisiko, se ADR).
+- Videoen viser kun de første `BROWSER_MAX_SECONDS` af optagelsen; forslagsbillede, slutbillede og kvitterings-PDF dækker resten.
+- Afgjort ikke: om en plans opkaldskvote skal gælde for browser-bookinger (nu 1 credit for alle).
+
 ## Checkpoint 29 — 30. september 2026 (Ambassadørprogrammet)
 
 Se `docs/ambassadors/program.md`.

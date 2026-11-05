@@ -286,6 +286,12 @@
     "after": "Nu",
     "note": "Der er stadig kun én påmindelse. Ændringen kostede ingen opgave."
   },
+  "browser": {
+    "label": "Booking på hjemmesiden · afventer dit ja",
+    "before": "Nu",
+    "after": "Forslag",
+    "note": "Intet er booket, før du godkender."
+  },
   "call": {
     "proposal": "Forslag · afventer dit ja",
     "ask": "Skal jeg ringe til {name}?",

@@ -669,6 +669,10 @@ def answer_option(db: OrmSession, ctx, message_id: uuid.UUID, option_id: str) ->
         _propose(turn, name=opt["label"], phone=opt.get("phone"), source=opt.get("source") or "google",
                  address=opt.get("address") or "", place_id=opt.get("place_id"), next_open_at=opt.get("next_open_at"),
                  data=opt)
+    elif act in ("browser_approve", "browser_decline"):
+        from app.modules.browser import service as browser
+
+        (browser.approve if act == "browser_approve" else browser.decline)(db, ctx, about.id if about else uuid.UUID(int=0))
     elif act == "expired":
         turn.say("text", "Det forslag er for gammelt. Skriv igen, hvem jeg skal ringe til.")
     elif act == "share_group":

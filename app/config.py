@@ -19,6 +19,10 @@ AppEnv = Literal["dev", "test", "staging", "prod"]
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
+    @property
+    def browser_engines(self) -> set[str]:
+        return {e.strip().lower() for e in self.browser_allowed_engines.split(",") if e.strip()}
+
     app_env: AppEnv = Field(default="dev", alias="APP_ENV")
     database_url: str = Field(alias="DATABASE_URL")
     # Application schema. On Supabase the app lives in its own schema, kept out of the Data API.
@@ -209,6 +213,15 @@ class Settings(BaseSettings):
     voice_bucket: str = Field(default="voice-private", alias="VOICE_BUCKET")
     supabase_url: str | None = Field(default=None, alias="SUPABASE_URL")
     supabase_service_role_key: str | None = Field(default=None, alias="SUPABASE_SERVICE_ROLE_KEY")
+    # Browser worker (browser_worker/, docs/ADR-004-browser-worker.md): books on external public booking pages after a
+    # human yes in the Privat app. Off by default. Evidence (screenshots, video, receipt PDF) goes to a PRIVATE bucket
+    # in the Supabase project above and is only ever handed out as short-lived signed links.
+    browser_worker_enabled: bool = Field(default=False, alias="BROWSER_WORKER_ENABLED")
+    browser_max_steps: int = Field(default=25, ge=1, le=100, alias="BROWSER_MAX_STEPS")
+    browser_max_seconds: int = Field(default=180, ge=10, le=900, alias="BROWSER_MAX_SECONDS")
+    browser_approval_ttl_seconds: int = Field(default=600, ge=30, le=3600, alias="BROWSER_APPROVAL_TTL_SECONDS")
+    browser_allowed_engines: str = Field(default="onlinebooq", alias="BROWSER_ALLOWED_ENGINES")
+    browser_evidence_bucket: str = Field(default="browser-evidence", alias="BROWSER_EVIDENCE_BUCKET")
     voice_preview_daily_limit: int = Field(default=40, alias="VOICE_PREVIEW_DAILY_LIMIT")
     voice_preview_max_chars: int = Field(default=200, alias="VOICE_PREVIEW_MAX_CHARS")
     voice_call_daily_char_limit: int = Field(default=400_000, alias="VOICE_CALL_DAILY_CHAR_LIMIT")
@@ -307,6 +320,10 @@ class Settings(BaseSettings):
             raise ValueError("TTS_ENGINE=http requires TTS_SERVICE_URL and TTS_SERVICE_TOKEN")
         if self.voice_storage == "supabase" and not (self.supabase_url and self.supabase_service_role_key):
             raise ValueError("VOICE_STORAGE=supabase requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
+        if self.browser_worker_enabled and self.app_env in ("staging", "prod") and not (
+                self.supabase_url and self.supabase_service_role_key):
+            raise ValueError("BROWSER_WORKER_ENABLED=true requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY "
+                             "(private evidence bucket) when APP_ENV is staging or prod")
         if self.allow_private_fetch and self.app_env not in ("dev", "test"):
             raise ValueError(f"ALLOW_PRIVATE_FETCH is for local tests only and is not allowed when APP_ENV={self.app_env}")
         if self.sales_recording_storage == "supabase" and not (self.supabase_url and self.supabase_service_role_key):

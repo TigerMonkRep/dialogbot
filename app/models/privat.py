@@ -203,7 +203,7 @@ class PrivateMessage(Base):
     __table_args__ = (
         CheckConstraint("role in ('user','assistant')", name="ck_private_messages_role"),
         CheckConstraint("kind in ('text','task','move','clarify','call_proposal','draft','waiting','addon',"
-                        "'share_proposal')",
+                        "'share_proposal','booking_proposal')",
                         name="ck_private_messages_kind"),
         Index("ix_private_messages_ws_created", "workspace_id", "created_at"),
     )

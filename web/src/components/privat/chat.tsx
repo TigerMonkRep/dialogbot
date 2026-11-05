@@ -5,7 +5,7 @@ import { useT } from "@/i18n/client";
 import { LOCATION_OPTION, isDemoPlace, isPlaceOption, type ChatMessage, type Task } from "@/lib/privat/api";
 import { useState } from "react";
 import { CHIP, ROW, SR, StatusBadge } from "./bits";
-import { AddonCard, CallCard, DraftCard, ListCard, MoveCard, ReminderCard, ShareProposalCard } from "./cards";
+import { AddonCard, BrowserApprovalCard, CallCard, DraftCard, ListCard, MoveCard, ReminderCard, ShareProposalCard } from "./cards";
 import { Composer, Shortcuts } from "./day";
 import { Ico } from "./icons";
 import { useFmt, usePrivat } from "./store";
@@ -44,6 +44,8 @@ function Message({ m, latestCard, open, prevUser }: { m: ChatMessage; latestCard
       </div>
     );
   }
+  // A booking on a business's own website, filled in and waiting for the user's yes (its own kind: never a quota draft).
+  if (m.kind === "booking_proposal") return <BrowserApprovalCard m={m} task={tk} open={!m.answered_option_id} />;
   if (CARD_KINDS.has(m.kind) && tk) {
     if (!latestCard) return <Earlier task={tk} />;
     if (m.kind === "draft") return <DraftCard task={tk} />;

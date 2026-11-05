@@ -286,6 +286,12 @@
     "after": "Now",
     "note": "There is still only one reminder. The change did not cost a task."
   },
+  "browser": {
+    "label": "Booking on the website · waiting for your yes",
+    "before": "Now",
+    "after": "Proposal",
+    "note": "Nothing is booked until you approve."
+  },
   "call": {
     "proposal": "Proposal · waiting for your yes",
     "ask": "Shall I call {name}?",

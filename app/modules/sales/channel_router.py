@@ -875,7 +875,9 @@ def stats(date_from: date | None = Query(default=None, alias="from"), date_to: d
           campaign: uuid.UUID | None = None, db: OrmSession = Depends(get_db)):
     from app.modules.sales import stats as sales_stats
 
-    today = datetime.now(UTC).date()
+    # «today» in Copenhagen, like the periods (stats._bounds): with a UTC date, anything done between midnight and 01:00
+    # (02:00 in summer) Danish time fell outside the default window.
+    today = datetime.now(sales_stats.TZ).date()
     d_to = date_to or today
     d_from = date_from or d_to - timedelta(days=29)
     if d_from > d_to:

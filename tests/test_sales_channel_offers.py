@@ -210,3 +210,35 @@ def test_statistics_leave_out_tests_and_say_what_they_count(api, ring, db):
     assert tiles["offers_open"] == 1
     plain = api.user("almindelig@testmail.dk")
     assert api.get(plain, "/operator/salg/stats").status_code == 403
+
+
+def test_statistics_default_window_is_copenhagen_days(api, ring, db, monkeypatch):
+    """Between midnight and 01:00 Danish time the default window ended «yesterday» (a UTC date) and left out what was
+    just done – the CI run at 23:13 UTC found 0 offers sent."""
+    from app.models import SalesOffer
+    from app.modules.sales import channel_router
+
+    op = ring["op"]
+    o = _offer(api, op, ring["company"].id, "diy")
+    api.post(op, f"/operator/salg/offers/{o['id']}/send", {"channel": "email", "destination": "c@example.invalid"})
+    runner.drain()
+    late = datetime(2026, 11, 5, 23, 30, tzinfo=UTC)          # 00:30 on 6 November in Copenhagen
+    db.expire_all()
+    db.get(SalesOffer, offers_uuid(o["id"])).sent_at = late
+    db.commit()
+
+    class Late(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return late.astimezone(tz) if tz else late.replace(tzinfo=None)
+
+    monkeypatch.setattr(channel_router, "datetime", Late)
+    body = api.get(op, "/operator/salg/stats").json()
+    assert body["to"] == "2026-11-06"
+    assert {x["key"]: x for x in body["metrics"]}["offers_sent"]["value"] == 1
+
+
+def offers_uuid(s: str):
+    import uuid
+
+    return uuid.UUID(s)

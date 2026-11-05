@@ -554,3 +554,16 @@ class PrivateBill(Base):
     last_reminded_for: Mapped[date | None] = mapped_column(Date)
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = ts_now()
+
+
+class PrivateAppData(Base):
+    """Small per-app settings of a personal workspace, as JSON: Pakkeliste (its lists), Madplan (household and food
+    habits), Læge & tandlæge (the saved practices), Bil & syn (the car, dates, the workshop), Pakker (tracked parcels).
+    Only what the user gave; deleted with the account."""
+
+    __tablename__ = "private_app_data"
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    app_key: Mapped[str] = mapped_column(String(40), primary_key=True)
+    data: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict, server_default="{}")
+    updated_at: Mapped[datetime] = ts_now()

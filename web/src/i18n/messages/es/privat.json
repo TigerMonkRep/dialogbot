@@ -12,7 +12,9 @@
     "groupJoin": "Unirse al grupo",
     "calendar": "Calendario",
     "birthdays": "Cumpleaños",
-    "bills": "Facturas"
+    "bills": "Facturas",
+    "car": "Coche e ITV",
+    "parcels": "Paquetes"
   },
   "brand": {
     "privat": "Privat",
@@ -1163,6 +1165,40 @@
       "half_yearly": "cada semestre",
       "yearly": "cada año",
       "once": "una vez"
+    }
+  },
+  "moreApps": {
+    "save": "Guardar",
+    "remove": "Quitar",
+    "meals": {
+      "title": "Vuestros hábitos",
+      "people": "¿Cuántos sois?",
+      "avoid": "¿Qué no coméis (alergias)?",
+      "likes": "¿Qué os gusta?",
+      "hint": "Pide a Peter un menú semanal en el chat: usa lo que pone aquí."
+    },
+    "health": {
+      "title": "Tu médico y dentista",
+      "none": "Nada guardado aún. Escribe a Peter, por ejemplo, «Guarda mi dentista: Clínica Dental Norte, 86 12 34 56».",
+      "hint": "Peter solo llama cuando apruebas la llamada y solo dice lo que tú escribiste."
+    },
+    "car": {
+      "title": "Tu coche",
+      "workshop": "Taller",
+      "plate": "Matrícula",
+      "inspection": "Próxima ITV",
+      "service": "Próximo servicio",
+      "tyres": "Recordarme el cambio de neumáticos (octubre y marzo)",
+      "hint": "Peter te recuerda la ITV 30 días antes y el servicio 14 días antes, y puede llamar al taller cuando lo apruebes."
+    },
+    "parcels": {
+      "title": "Paquetes que sigues",
+      "none": "No sigues ningún paquete. Pega un número de seguimiento abajo.",
+      "number": "Número de seguimiento",
+      "label": "¿Qué es? (opcional)",
+      "follow": "Seguir paquete",
+      "stop": "Parar",
+      "hint": "Te avisamos cuando el paquete esté en camino, listo para recoger y entregado. Solo se envía el número al servicio de seguimiento."
     }
   }
 }

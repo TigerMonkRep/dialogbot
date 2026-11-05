@@ -66,6 +66,14 @@ class Addon:
     resource_type: str | None = None
     resource_hooks: str | None = None
     extra: dict = field(default_factory=dict)
+    # A setting (Settings attribute) the app needs to work, e.g. an API key. Without it the app is «coming_soon».
+    needs_setting: str | None = None
+
+    @property
+    def live_status(self) -> str:
+        if self.needs_setting and not getattr(get_settings(), self.needs_setting, None):
+            return "coming_soon"
+        return self.status
 
 
 CATALOG: dict[str, Addon] = {}
@@ -235,14 +243,27 @@ register(Addon(
 register(Addon(
     key="pakker", name="Pakker", tagline="Følg dine forsendelser",
     description="Få besked, når en pakke er på vej, og hvor du kan hente den.",
-    icon="package", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    icon="package", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
+    needs_setting="track17_api_key",
     what="Giv Peter dit track-and-trace-nummer, så holder han øje med pakken og siger til, når den er klar til "
          "afhentning – og hvor.",
     example="«Følg pakken med nummer 00340434…»",
     steps=("Sig eller indsæt forsendelsesnummeret til Peter", "Peter følger pakken hos fragtfirmaet",
            "Du får besked, når den er på vej og kan hentes"),
     included_in=("plus", "familie"),
-    permissions=("Læser forsendelsesnumre, du giver assistenten",), keywords=("pakke", "forsendelse"),
+    permissions=("Læser forsendelsesnumre, du giver assistenten",
+                 "Sender kun forsendelsesnummeret til sporingstjenesten 17TRACK"),
+    keywords=("pakke", "forsendelse", "track", "sporing"),
+    tools=(AddonTool(
+        "track_parcel",
+        "Følg en pakke: number er track-and-trace-nummeret, præcis som brugeren skrev det; label er hvad det er "
+        "(fx «nye sko»), hvis brugeren sagde det.",
+        _obj({"number": {"type": "string"}, "label": {"type": "string"}}, ["number"]),
+        "app.modules.privat.chat:tool_track_parcel"),
+        AddonTool("parcels_status", "Vis status for de pakker, brugeren følger.", _obj({}),
+                  "app.modules.privat.chat:tool_parcels_status"),
+        AddonTool("stop_tracking", "Stop med at følge en pakke (nummer eller label).",
+                  _obj({"number": {"type": "string"}}, ["number"]), "app.modules.privat.chat:tool_stop_tracking")),
 ))
 
 register(Addon(
@@ -279,7 +300,7 @@ register(Addon(
 register(Addon(
     key="madplan", name="Madplan", tagline="Ugens aftensmad – og indkøbslisten følger med",
     description="Peter laver en madplan for ugen ud fra det, I kan lide, og skriver indkøbslisten til den.",
-    icon="utensils", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    icon="utensils", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
     what="Sig hvor mange I er, og hvad I kan lide, så foreslår Peter aftensmad for ugen. Siger du ja, bliver "
          "ingredienserne til en indkøbsliste, du kan dele med husstanden.",
     example="«Lav en madplan for næste uge – vi er fire, og børnene spiser ikke fisk»",
@@ -288,20 +309,60 @@ register(Addon(
            "Sig ja – indkøbslisten laves automatisk"),
     included_in=("plus", "familie"),
     permissions=("Gemmer jeres madvaner og allergier, som du selv skriver dem",), keywords=("madplan", "aftensmad"),
+    tools=(AddonTool(
+        "save_food_preferences",
+        "Gem husstandens madvaner, som brugeren selv har skrevet dem: antal personer, hvad de ikke spiser (allergier, "
+        "fx fisk eller nødder) og hvad de kan lide.",
+        _obj({"people": {"type": "integer"}, "avoid": {"type": "string"}, "likes": {"type": "string"}}),
+        "app.modules.privat.chat:tool_save_food_preferences"),
+        AddonTool(
+            "get_food_preferences", "Hent husstandens gemte madvaner, før du foreslår en madplan.", _obj({}),
+            "app.modules.privat.chat:tool_get_food_preferences"),
+        AddonTool(
+            "save_meal_plan",
+            "Gem en madplan, når brugeren har sagt ja til dit forslag (foreslå den først i tekst). days: én pr. dag med "
+            "retten og ingredienserne til en almindelig dansk indkøbsliste (mængder i teksten, fx «500 g hakket oksekød»). "
+            "Respekter altid det, husstanden ikke spiser. shopping_list: lav indkøbslisten (standard ja).",
+            _obj({"title": {"type": "string", "description": "Fx «Madplan uge 46»"},
+                  "days": {"type": "array", "items": _obj(
+                      {"day": {"type": "string"}, "dish": {"type": "string"},
+                       "ingredients": {"type": "array", "items": {"type": "string"}}}, ["dish"])},
+                  "shopping_list": {"type": "boolean"}}, ["days"]),
+            "app.modules.privat.chat:tool_save_meal_plan")),
 ))
 
 register(Addon(
     key="bil-og-syn", name="Bil & syn", tagline="Syn, service og dæk – Peter holder styr på bilen",
     description="Peter husker, hvornår bilen skal til syn og service, og ringer til værkstedet og aftaler en tid, når det er ved at være tid.",
-    icon="car", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
-    what="Giv Peter bilens nummerplade, så kender han næste synsdato. Han minder dig om syn, service og skift til "
+    icon="car", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
+    what="Fortæl Peter, hvornår bilen skal til syn og service. Han minder dig om det i god tid og om skift til "
          "vinterdæk – og kan ringe til dit værksted og aftale tiden for dig.",
     example="«Bilen skal til syn i maj – find en tid hos mit værksted i uge 18»",
-    steps=("Sig nummerpladen til Peter", "Vælg dit værksted (eller lad Peter foreslå et i nærheden)",
+    steps=("Sig nummerpladen og datoen for næste syn til Peter", "Gem dit værksted (navn og nummer)",
            "Peter minder dig om syn og service og aftaler tiden, når du siger ja"),
     included_in=("plus", "familie"),
-    permissions=("Slår bilens synsdato op på nummerpladen", "Ringer til dit værksted, når du har godkendt det"),
+    permissions=("Gemmer nummerplade og datoer for syn og service, som du selv skriver dem",
+                 "Ringer til dit værksted, når du har godkendt det"),
     keywords=("bil", "syn", "værksted", "dæk"),
+    requires=("ring-for-mig",),
+    tools=(AddonTool(
+        "save_car",
+        "Gem bilens oplysninger, som brugeren selv har skrevet dem: nummerplade, næste syn og service (YYYY-MM-DD) og om "
+        "brugeren vil mindes om dækskifte. Slå aldrig noget op og gæt aldrig en dato.",
+        _obj({"plate": {"type": "string"}, "inspection_due": {"type": "string"}, "service_due": {"type": "string"},
+              "tire_reminders": {"type": "boolean"}}),
+        "app.modules.privat.chat:tool_save_car"),
+        AddonTool(
+            "save_workshop", "Gem brugerens værksted: navn og det nummer, brugeren selv har skrevet.",
+            _obj({"name": {"type": "string"}, "phone": {"type": "string"}}, ["name", "phone"]),
+            "app.modules.privat.chat:tool_save_workshop"),
+        AddonTool(
+            "book_workshop",
+            "Foreslå et opkald til det gemte værksted for at booke syn, service eller dækskifte. Der ringes ALDRIG før "
+            "brugeren godkender. window: hvornår brugeren kan.",
+            _obj({"purpose": {"type": "string"}, "window": {"type": "string"}}, ["purpose"]),
+            "app.modules.privat.chat:tool_book_workshop"),
+        AddonTool("car_status", "Vis de gemte oplysninger om bilen.", _obj({}), "app.modules.privat.chat:tool_car_status")),
 ))
 
 register(Addon(
@@ -337,7 +398,7 @@ register(Addon(
 register(Addon(
     key="laege-og-tandlaege", name="Læge & tandlæge", tagline="Tider hos læge og tandlæge – uden at hænge i telefonen",
     description="Peter ringer til lægen eller tandlægen og booker tiden for dig, og minder dig om det årlige tandeftersyn.",
-    icon="heart", category="aftaler", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    icon="heart", category="aftaler", price_text="Med i Plus og Familie", pricing="free",
     what="Sig hvad det drejer sig om, og hvornår du kan, så ringer Peter til din læge eller tandlæge, når de åbner, "
          "og aftaler en tid. Han fortæller aldrig mere, end du har sagt god for.",
     example="«Book et tandeftersyn hos min tandlæge – helst en morgen i næste måned»",
@@ -345,14 +406,29 @@ register(Addon(
            "Godkend opkaldet – Peter ringer og lægger tiden i din kalender"),
     included_in=("plus", "familie"),
     permissions=("Ringer til din læge eller tandlæge, når du har godkendt det",
-                 "Siger kun dit navn og det, du selv har skrevet"),
+                 "Siger kun dit navn og det, du selv har skrevet", "Gemmer kun klinikkens navn og nummer – ikke helbredsoplysninger"),
+    requires=("ring-for-mig",),
+    tools=(AddonTool(
+        "save_health_contact",
+        "Gem brugerens læge eller tandlæge: kind (laege | tandlaege), navn og det nummer, brugeren selv har skrevet.",
+        _obj({"kind": {"type": "string", "enum": ["laege", "tandlaege"]}, "name": {"type": "string"},
+              "phone": {"type": "string"}}, ["kind", "name", "phone"]),
+        "app.modules.privat.chat:tool_save_health_contact"),
+        AddonTool(
+            "book_health_appointment",
+            "Foreslå et opkald til brugerens gemte læge eller tandlæge for at få en tid. Der ringes ALDRIG før brugeren "
+            "godkender. purpose: kun det, brugeren selv har skrevet (fx «tandeftersyn»); window: hvornår brugeren kan. "
+            "Til en årlig påmindelse bruger du create_reminder.",
+            _obj({"kind": {"type": "string", "enum": ["laege", "tandlaege"]}, "purpose": {"type": "string"},
+                  "window": {"type": "string"}}, ["kind", "purpose"]),
+            "app.modules.privat.chat:tool_book_health_appointment")),
     keywords=("læge", "tandlæge", "tandeftersyn", "lægetid"),
 ))
 
 register(Addon(
     key="pakkeliste", name="Pakkeliste", tagline="Pakkelister til rejser og ture, der kan genbruges",
     description="Peter laver en pakkeliste til turen – ud fra vejret, hvor længe I er væk, og hvem der skal med – og husker den til næste gang.",
-    icon="suitcase", category="lister", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    icon="suitcase", category="lister", price_text="Med i Plus og Familie", pricing="free",
     what="Sig hvor I skal hen, hvor længe, og hvem der skal med, så skriver Peter en pakkeliste, som I krydser af. "
          "Næste gang starter han fra den, I brugte sidst.",
     example="«Lav en pakkeliste til en uge i sommerhus med to børn»",
@@ -360,6 +436,17 @@ register(Addon(
            "Kryds af, mens I pakker"),
     included_in=("plus", "familie"),
     permissions=("Gemmer dine pakkelister til næste tur",), keywords=("pakkeliste", "pakke til", "rejse", "ferie"),
+    tools=(AddonTool(
+        "create_packing_list",
+        "Lav en pakkeliste til en tur: trip er turen (fx «uge i sommerhus»), items de ting, der skal med – tilpasset "
+        "sted, længde, årstid og hvem der skal med. Vil brugeren starte fra sidst, så brug reuse_packing_list.",
+        _obj({"trip": {"type": "string"}, "items": {"type": "array", "items": {"type": "string"}}}, ["trip", "items"]),
+        "app.modules.privat.chat:tool_create_packing_list"),
+        AddonTool(
+            "reuse_packing_list",
+            "Lav en ny pakkeliste ud fra den, brugeren brugte sidst (alt er ikke krydset af igen).",
+            _obj({"trip": {"type": "string", "description": "Den nye tur, hvis brugeren nævnte den"}}),
+            "app.modules.privat.chat:tool_reuse_packing_list")),
 ))
 
 # Which add-on a shared list needs, per share mode.
@@ -370,7 +457,7 @@ SHARE_MODE_ADDON = {"group": "delte-lister", "wishlist": "oenskelister"}
 
 def enabled_keys(db: OrmSession, ws_id: uuid.UUID) -> set[str]:
     keys = set(db.scalars(select(PrivateAddonEnabled.key).where(PrivateAddonEnabled.workspace_id == ws_id)))
-    return {k for k in keys if k in CATALOG and CATALOG[k].status != "coming_soon"}
+    return {k for k in keys if k in CATALOG and CATALOG[k].live_status != "coming_soon"}
 
 
 def is_enabled(db: OrmSession, ws_id: uuid.UUID, key: str) -> bool:
@@ -402,10 +489,10 @@ def included(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None
 
 def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> dict:
     row = db.get(PrivateAddonEnabled, (ws_id, a.key))
-    on = row is not None and a.status != "coming_soon"
+    on = row is not None and a.live_status != "coming_soon"
     return {"key": a.key, "name": a.name, "tagline": a.tagline, "description": a.description, "icon": a.icon,
             "category": a.category, "price_text": a.price_text, "pricing": a.pricing,
-            "monthly_price_minor": a.monthly_price_minor, "status": a.status, "permissions": list(a.permissions),
+            "monthly_price_minor": a.monthly_price_minor, "status": a.live_status, "permissions": list(a.permissions),
             "requires": list(a.requires), "enabled": on, "enabled_at": row.enabled_at.isoformat() if on else None,
             "what": a.what, "example": a.example, "steps": list(a.steps), "included_in": list(a.included_in),
             "included": included(db, ws_id, a, ent), "requires_plan": bool(a.included_in)}
@@ -420,7 +507,7 @@ def catalog_out(db: OrmSession, ws_id: uuid.UUID) -> list[dict]:
 
 def enable(db: OrmSession, ws_id: uuid.UUID, key: str) -> Addon:
     a = get(key)
-    if a.status == "coming_soon":
+    if a.live_status == "coming_soon":
         raise Conflict(f"«{a.name}» kommer snart", code="coming_soon", extra={"addon": key})
     if not included(db, ws_id, a):
         names = [n for n in ("Plus", "Familie", "Basis") if n.lower() in a.included_in]
@@ -453,7 +540,7 @@ def enable_defaults(db: OrmSession, ws_id: uuid.UUID) -> None:
     """The default add-ons – those the account's rights allow. Called at account creation (the free tier gets the
     free ones) and again when the trial or a plan arrives from Stripe (then the plan's ones come on)."""
     for key in (k.strip() for k in get_settings().privat_default_addons.split(",")):
-        if key in CATALOG and CATALOG[key].status != "coming_soon" and included(db, ws_id, CATALOG[key]):
+        if key in CATALOG and CATALOG[key].live_status != "coming_soon" and included(db, ws_id, CATALOG[key]):
             enable(db, ws_id, key)
 
 
@@ -465,7 +552,7 @@ def tools_for(db: OrmSession, ws_id: uuid.UUID) -> list[AddonTool]:
 def offerable(db: OrmSession, ws_id: uuid.UUID) -> list[Addon]:
     """Add-ons the user could switch on (available, not on): what the chat may offer instead of doing it."""
     keys = enabled_keys(db, ws_id)
-    return [a for a in CATALOG.values() if a.status != "coming_soon" and a.key not in keys]
+    return [a for a in CATALOG.values() if a.live_status != "coming_soon" and a.key not in keys]
 
 
 def tool_owner(name: str) -> str | None:

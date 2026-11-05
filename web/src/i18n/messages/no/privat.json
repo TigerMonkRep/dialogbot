@@ -12,7 +12,9 @@
     "groupJoin": "Bli med i gruppen",
     "calendar": "Kalender",
     "birthdays": "Bursdager",
-    "bills": "Regninger"
+    "bills": "Regninger",
+    "car": "Bil & EU-kontroll",
+    "parcels": "Pakker"
   },
   "brand": {
     "privat": "Privat",
@@ -1163,6 +1165,40 @@
       "half_yearly": "hvert halvår",
       "yearly": "hvert år",
       "once": "én gang"
+    }
+  },
+  "moreApps": {
+    "save": "Lagre",
+    "remove": "Fjern",
+    "meals": {
+      "title": "Matvanene deres",
+      "people": "Hvor mange er dere?",
+      "avoid": "Hva spiser dere ikke (allergier)?",
+      "likes": "Hva liker dere?",
+      "hint": "Be Peter om en middagsplan i chatten – han bruker det som står her."
+    },
+    "health": {
+      "title": "Legen og tannlegen din",
+      "none": "Ingen lagret ennå. Skriv for eksempel «Lagre tannlegen min: Tannklinikken Nord, 86 12 34 56» til Peter.",
+      "hint": "Peter ringer først når du har godkjent samtalen, og sier bare det du selv har skrevet."
+    },
+    "car": {
+      "title": "Bilen din",
+      "workshop": "Verksted",
+      "plate": "Registreringsnummer",
+      "inspection": "Neste EU-kontroll",
+      "service": "Neste service",
+      "tyres": "Minn meg på dekkskift (oktober og mars)",
+      "hint": "Peter minner deg 30 dager før kontrollen og 14 dager før service – og kan ringe verkstedet når du godkjenner."
+    },
+    "parcels": {
+      "title": "Pakker du følger",
+      "none": "Du følger ingen pakker. Lim inn et sporingsnummer nedenfor.",
+      "number": "Sporingsnummer",
+      "label": "Hva er det? (valgfritt)",
+      "follow": "Følg pakken",
+      "stop": "Stopp",
+      "hint": "Du får beskjed når pakken er på vei, klar for henting og levert. Bare nummeret sendes til sporingstjenesten."
     }
   }
 }

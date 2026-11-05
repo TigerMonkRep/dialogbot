@@ -153,8 +153,7 @@ def test_privat_code_is_mirrored_to_stripe_and_applied_on_checkout(api, pv, db, 
     assert coupon["percent_off"] == 10 and coupon["duration"] == "repeating" and coupon["duration_in_months"] == 3
     assert coupon["max_redemptions"] == 100 and coupon["redeem_by"] == int(datetime(2027, 1, 1, tzinfo=UTC).timestamp())
     promo = next(d for m, p, d in sent if p == "/promotion_codes")
-    assert promo == {"promotion": {"type": "coupon", "coupon": "cpn_1"}, "code": "HEJ10", "active": True,
-                     "metadata": {"dialogbot_discount_code": r.json()["id"]}}
+    assert promo == {"coupon": "cpn_1", "code": "HEJ10", "active": True, "metadata": {"dialogbot_discount_code": r.json()["id"]}}
     row = db.scalar(select(DiscountCode).where(DiscountCode.code == "HEJ10"))
     assert (row.stripe_coupon_id, row.stripe_promotion_code_id) == ("cpn_1", "promo_1")
 

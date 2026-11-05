@@ -12,7 +12,9 @@
     "groupJoin": "Join the group",
     "calendar": "Calendar",
     "birthdays": "Birthdays",
-    "bills": "Bills"
+    "bills": "Bills",
+    "car": "Car",
+    "parcels": "Parcels"
   },
   "brand": {
     "privat": "Privat",
@@ -1163,6 +1165,40 @@
       "half_yearly": "every six months",
       "yearly": "every year",
       "once": "once"
+    }
+  },
+  "moreApps": {
+    "save": "Save",
+    "remove": "Remove",
+    "meals": {
+      "title": "Your food habits",
+      "people": "How many are you?",
+      "avoid": "What don't you eat (allergies)?",
+      "likes": "What do you like?",
+      "hint": "Ask Peter for a meal plan in the chat – he uses what is here."
+    },
+    "health": {
+      "title": "Your doctor and dentist",
+      "none": "None saved yet. Tell Peter for example «Save my dentist: North Dental Clinic, 86 12 34 56».",
+      "hint": "Peter only calls once you have approved the call, and only says what you wrote yourself."
+    },
+    "car": {
+      "title": "Your car",
+      "workshop": "Workshop",
+      "plate": "Number plate",
+      "inspection": "Next inspection",
+      "service": "Next service",
+      "tyres": "Remind me to change tyres (October and March)",
+      "hint": "Peter reminds you of the inspection 30 days before and the service 14 days before – and can call the workshop when you approve."
+    },
+    "parcels": {
+      "title": "Parcels you follow",
+      "none": "You are not following any parcels. Paste a tracking number below.",
+      "number": "Tracking number",
+      "label": "What is it? (optional)",
+      "follow": "Follow parcel",
+      "stop": "Stop",
+      "hint": "You are told when the parcel is on its way, ready for pickup and delivered. Only the number is sent to the tracking service."
     }
   }
 }

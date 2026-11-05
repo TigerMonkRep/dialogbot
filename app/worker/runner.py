@@ -387,9 +387,12 @@ def run_schedules() -> None:
             log.warning("privat.sweep_failed", error=f"{type(exc).__name__}: {exc}")
     with get_session_factory()() as db:
         try:  # Fødselsdage and Regninger: once per birthday / due date, from 08:00 Copenhagen time
-            from app.modules.privat import bills, birthdays
+            from app.modules.privat import bills, birthdays, car
 
-            n = birthdays.send_due(db) + bills.send_due(db)
+            n = birthdays.send_due(db) + bills.send_due(db) + car.send_due(db)
+            from app.modules.privat import parcels
+
+            n += parcels.poll(db)  # Pakker: each parcel at most every 2 hours
             db.commit()
             if n:
                 log.info("privat.app_reminders", count=n)

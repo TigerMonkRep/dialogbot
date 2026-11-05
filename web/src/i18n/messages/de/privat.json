@@ -12,7 +12,9 @@
     "groupJoin": "Der Gruppe beitreten",
     "calendar": "Kalender",
     "birthdays": "Geburtstage",
-    "bills": "Rechnungen"
+    "bills": "Rechnungen",
+    "car": "Auto & TÜV",
+    "parcels": "Pakete"
   },
   "brand": {
     "privat": "Privat",
@@ -1163,6 +1165,40 @@
       "half_yearly": "jedes halbe Jahr",
       "yearly": "jedes Jahr",
       "once": "einmal"
+    }
+  },
+  "moreApps": {
+    "save": "Speichern",
+    "remove": "Entfernen",
+    "meals": {
+      "title": "Eure Essgewohnheiten",
+      "people": "Wie viele seid ihr?",
+      "avoid": "Was esst ihr nicht (Allergien)?",
+      "likes": "Was mögt ihr?",
+      "hint": "Bitte Peter im Chat um einen Essensplan – er nutzt, was hier steht."
+    },
+    "health": {
+      "title": "Dein Arzt und Zahnarzt",
+      "none": "Noch nichts gespeichert. Schreib Peter zum Beispiel «Speichere meinen Zahnarzt: Zahnklinik Nord, 86 12 34 56».",
+      "hint": "Peter ruft erst an, wenn du den Anruf freigegeben hast, und sagt nur, was du selbst geschrieben hast."
+    },
+    "car": {
+      "title": "Dein Auto",
+      "workshop": "Werkstatt",
+      "plate": "Kennzeichen",
+      "inspection": "Nächste Hauptuntersuchung",
+      "service": "Nächster Service",
+      "tyres": "Erinnere mich an den Reifenwechsel (Oktober und März)",
+      "hint": "Peter erinnert dich 30 Tage vor der Untersuchung und 14 Tage vor dem Service – und kann die Werkstatt anrufen, wenn du zustimmst."
+    },
+    "parcels": {
+      "title": "Pakete, die du verfolgst",
+      "none": "Du verfolgst keine Pakete. Füge unten eine Sendungsnummer ein.",
+      "number": "Sendungsnummer",
+      "label": "Was ist es? (optional)",
+      "follow": "Paket verfolgen",
+      "stop": "Stopp",
+      "hint": "Du bekommst Bescheid, wenn das Paket unterwegs, abholbereit und zugestellt ist. Nur die Nummer geht an den Tracking-Dienst."
     }
   }
 }

@@ -12,7 +12,9 @@
     "groupJoin": "Kom med i gruppen",
     "calendar": "Kalender",
     "birthdays": "Fødselsdage",
-    "bills": "Regninger"
+    "bills": "Regninger",
+    "car": "Bil & syn",
+    "parcels": "Pakker"
   },
   "brand": {
     "privat": "Privat",
@@ -1163,6 +1165,40 @@
       "half_yearly": "hvert halve år",
       "yearly": "hvert år",
       "once": "én gang"
+    }
+  },
+  "moreApps": {
+    "save": "Gem",
+    "remove": "Fjern",
+    "meals": {
+      "title": "Jeres madvaner",
+      "people": "Hvor mange er I?",
+      "avoid": "Hvad spiser I ikke (allergier)?",
+      "likes": "Hvad kan I lide?",
+      "hint": "Bed Peter om en madplan i chatten – han bruger det, der står her."
+    },
+    "health": {
+      "title": "Din læge og tandlæge",
+      "none": "Ingen gemt endnu. Skriv fx «Gem min tandlæge: Tandklinikken Nord, 86 12 34 56» til Peter.",
+      "hint": "Peter ringer først, når du har godkendt opkaldet, og siger kun det, du selv har skrevet."
+    },
+    "car": {
+      "title": "Din bil",
+      "workshop": "Værksted",
+      "plate": "Nummerplade",
+      "inspection": "Næste syn",
+      "service": "Næste service",
+      "tyres": "Mind mig om dækskifte (oktober og marts)",
+      "hint": "Peter minder dig om syn 30 dage før og service 14 dage før – og kan ringe til værkstedet, når du godkender."
+    },
+    "parcels": {
+      "title": "Pakker du følger",
+      "none": "Du følger ingen pakker. Indsæt et track-and-trace-nummer herunder.",
+      "number": "Track-and-trace-nummer",
+      "label": "Hvad er det? (valgfrit)",
+      "follow": "Følg pakken",
+      "stop": "Stop",
+      "hint": "Du får besked, når pakken er på vej, klar til afhentning og leveret. Kun nummeret sendes til sporingstjenesten."
     }
   }
 }

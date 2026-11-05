@@ -101,10 +101,7 @@ def _mirror_to_stripe(row: DiscountCode) -> None:
         coupon["redeem_by"] = int(row.ends_at.timestamp())
     cp = stripe_api.request("POST", "/coupons", coupon, idempotency_key=f"dialogbot-coupon-{row.id}")
     row.stripe_coupon_id = cp["id"]
-    # Stripe API 2025-10+: a promotion code points at `promotion` ({type, coupon}); the old top-level `coupon`
-    # parameter is rejected ("Received unknown parameter: coupon").
-    pc = stripe_api.request("POST", "/promotion_codes", {"promotion": {"type": "coupon", "coupon": cp["id"]},
-                                                        "code": row.code, "active": True,
+    pc = stripe_api.request("POST", "/promotion_codes", {"coupon": cp["id"], "code": row.code, "active": True,
                                                         "metadata": {"dialogbot_discount_code": str(row.id)}},
                             idempotency_key=f"dialogbot-promo-{row.id}")
     row.stripe_promotion_code_id = pc["id"]

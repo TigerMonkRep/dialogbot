@@ -2,6 +2,25 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 35 — 5. november 2026 (Privat-apps: Pakkeliste, Madplan, Læge & tandlæge, Bil & syn, Pakker)
+
+De sidste fem af de otte «kommer snart»-apps. Se `docs/privat-api.md`. Fire er nu `available`; Pakker bliver det, når
+`TRACK17_API_KEY` er sat.
+
+| Del | Status | Bevis |
+|---|---|---|
+| `private_app_data` (migration `c9e5a2b7d3f8`, op/ned/op) | testet | `alembic check` rent |
+| Pakkeliste: ny liste og «fra sidst» uden afkrydsninger | testet | `tests/test_privat_more_apps.py` |
+| Madplan: madvaner, plan + én flettet indkøbsliste | testet med testmodellen | samme |
+| Læge & tandlæge: kun selvskrevet nummer gemmes; booking er kun et forslag, intet opkald | testet | samme |
+| Bil & syn: datoer, påmindelser (syn, service, dæk) én gang hver, værksted, booking som forslag | testet | samme |
+| Pakker: 17TRACK-klient bag nøgle, testdobbelt, besked ved statusskift, ingen polling efter levering | testet med testdobbelt | samme |
+| App-status afhænger af nødvendig nøgle (`needs_setting`) | testet | samme |
+| Web: paneler i app-arket, `/privat/bil`, `/privat/pakker`, 8 sprog | typecheck + i18n-paritet | `npx tsc`, `scripts/i18n-check.mjs` |
+
+**Ikke eksternt verificeret:** 17TRACK er ikke kaldt med en rigtig nøgle (svarformatet er fra dokumentationen); ingen påmindelse er
+set modtaget på en rigtig telefon; madplanens kvalitet afhænger af den rigtige model (testene bruger testmodellen).
+
 ## Checkpoint 34 — 5. november 2026 (Privat-appen «Regninger»)
 
 Tredje af de otte apps. Se `docs/privat-api.md` «Regninger». Appen er nu `available` (Plus og Familie). Dialogbot betaler aldrig.

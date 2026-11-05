@@ -12,7 +12,9 @@
     "groupJoin": "Gå med i gruppen",
     "calendar": "Kalender",
     "birthdays": "Födelsedagar",
-    "bills": "Räkningar"
+    "bills": "Räkningar",
+    "car": "Bil & besiktning",
+    "parcels": "Paket"
   },
   "brand": {
     "privat": "Privat",
@@ -1163,6 +1165,40 @@
       "half_yearly": "varje halvår",
       "yearly": "varje år",
       "once": "en gång"
+    }
+  },
+  "moreApps": {
+    "save": "Spara",
+    "remove": "Ta bort",
+    "meals": {
+      "title": "Era matvanor",
+      "people": "Hur många är ni?",
+      "avoid": "Vad äter ni inte (allergier)?",
+      "likes": "Vad tycker ni om?",
+      "hint": "Be Peter om en matsedel i chatten – han använder det som står här."
+    },
+    "health": {
+      "title": "Din läkare och tandläkare",
+      "none": "Inget sparat än. Skriv till exempel «Spara min tandläkare: Tandkliniken Nord, 86 12 34 56» till Peter.",
+      "hint": "Peter ringer först när du har godkänt samtalet och säger bara det du själv har skrivit."
+    },
+    "car": {
+      "title": "Din bil",
+      "workshop": "Verkstad",
+      "plate": "Registreringsnummer",
+      "inspection": "Nästa besiktning",
+      "service": "Nästa service",
+      "tyres": "Påminn mig om däckbyte (oktober och mars)",
+      "hint": "Peter påminner dig 30 dagar före besiktningen och 14 dagar före servicen – och kan ringa verkstaden när du godkänner."
+    },
+    "parcels": {
+      "title": "Paket du följer",
+      "none": "Du följer inga paket. Klistra in ett spårningsnummer nedan.",
+      "number": "Spårningsnummer",
+      "label": "Vad är det? (valfritt)",
+      "follow": "Följ paketet",
+      "stop": "Stoppa",
+      "hint": "Du får besked när paketet är på väg, kan hämtas och är levererat. Bara numret skickas till spårningstjänsten."
     }
   }
 }

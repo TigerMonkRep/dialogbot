@@ -891,3 +891,177 @@ def tool_remove_bill(turn: Turn, a: dict) -> str:
     bills.remove(turn.db, b)
     turn.say("text", f"Regningen «{name}» er fjernet.")
     return "Fjernet."
+
+
+# --------------------------------------------------------------------------- Pakkeliste and Madplan
+
+def _str_list(raw) -> list[str]:
+    return [str(x) for x in (raw or []) if isinstance(x, str | int | float) and str(x).strip()]
+
+
+def tool_create_packing_list(turn: Turn, a: dict) -> str:
+    from app.modules.privat import packing
+
+    items = _str_list(a.get("items"))
+    if not items:
+        return "Pakkelisten mangler punkter."
+    task = packing.create(turn.db, turn.ctx, trip=str(a.get("trip") or ""), items=items)
+    _created(turn, task, f"Her er pakkelisten til {task.title.removeprefix('Pakkeliste: ')} med {len(items)} ting. "
+                         "Jeg gemmer den til næste gang.")
+    return f"Pakkeliste oprettet (id {task.id}, status {task.status})."
+
+
+def tool_reuse_packing_list(turn: Turn, a: dict) -> str:
+    from app.modules.privat import packing
+
+    task = packing.reuse(turn.db, turn.ctx, trip=str(a.get("trip") or "").strip() or None)
+    if task is None:
+        return "Der er ingen tidligere pakkeliste. Lav en ny med create_packing_list."
+    _created(turn, task, "Her er pakkelisten fra sidst – intet er krydset af. Ret den til, hvis noget er anderledes denne gang.")
+    return f"Pakkeliste oprettet ud fra sidst (id {task.id})."
+
+
+def tool_save_food_preferences(turn: Turn, a: dict) -> str:
+    from app.modules.privat import meals
+
+    people = a.get("people")
+    p = meals.save_preferences(turn.db, turn.ctx.ws_id, people=int(people) if isinstance(people, int | float) else None,
+                               avoid=str(a.get("avoid") or "") or None, likes=str(a.get("likes") or "") or None)
+    turn.say("text", f"Gemt: {meals.preferences_text(p)}. Det bruger jeg, når jeg laver madplaner.")
+    return "Gemt."
+
+
+def tool_get_food_preferences(turn: Turn, a: dict) -> str:
+    from app.modules.privat import meals
+
+    return meals.preferences_text(meals.preferences(turn.db, turn.ctx.ws_id))
+
+
+def tool_save_meal_plan(turn: Turn, a: dict) -> str:
+    from app.modules.privat import meals
+
+    days = [d for d in (a.get("days") or []) if isinstance(d, dict) and str(d.get("dish") or "").strip()]
+    if not days:
+        return "Madplanen mangler retter."
+    plan, shop = meals.save_plan(turn.db, turn.ctx, title=str(a.get("title") or "Madplan").strip(), days=days,
+                                 shopping=a.get("shopping_list") is not False)
+    text = f"Madplanen er gemt med {len(days)} retter."
+    if shop is not None:
+        text += f" Indkøbslisten har {len(meals.merge_ingredients(days))} varer – del den med husstanden, hvis I handler sammen."
+    _created(turn, plan, text)
+    if shop is not None:
+        turn.say("task", shop.title, task_id=shop.id)
+    return f"Madplan gemt (id {plan.id})" + (f", indkøbsliste {shop.id}." if shop else ".")
+
+
+# --------------------------------------------------------------------------- Læge & tandlæge, Bil & syn
+
+def _typed_phone(turn: Turn, raw) -> str | None:
+    """A number the user typed themselves (never one the model made up), as E.164."""
+    from app.modules.campaigns.service import normalize_phone
+
+    phone = normalize_phone(str(raw or ""))
+    return phone if phone and _user_wrote(turn, phone) else None
+
+
+def tool_save_health_contact(turn: Turn, a: dict) -> str:
+    from app.modules.privat import health
+
+    kind = str(a.get("kind") or "")
+    if kind not in health.KINDS:
+        return "Er det lægen eller tandlægen?"
+    phone = _typed_phone(turn, a.get("phone"))
+    if phone is None:
+        return "Nummeret er ikke skrevet af brugeren. Spørg efter det; opfind det aldrig."
+    name = str(a.get("name") or "").strip() or health.KINDS[kind].capitalize()
+    health.save_contact(turn.db, turn.ctx.ws_id, kind=kind, name=name, phone_e164=phone)
+    turn.say("text", f"Din {health.KINDS[kind]} er gemt: {name}, {rules.phone_display(phone)}. "
+                     f"Sig til, når jeg skal ringe og finde en tid – jeg ringer først, når du godkender.")
+    return "Gemt."
+
+
+def tool_book_health_appointment(turn: Turn, a: dict) -> str:
+    from app.modules.privat import health
+
+    kind = str(a.get("kind") or "")
+    c = health.contacts(turn.db, turn.ctx.ws_id).get(kind)
+    if c is None:
+        return f"Der er ingen gemt {health.KINDS.get(kind, 'læge')}. Spørg efter klinikkens navn og nummer."
+    data = {"purpose": str(a.get("purpose") or "").strip()[:300], "window": str(a.get("window") or "").strip()[:200],
+            "may_not": "Fortæl ikke andet om mit helbred end det, der står i formålet."}
+    return _propose(turn, name=c["name"], phone=c["phone"], source="user", data=data)
+
+
+def tool_save_car(turn: Turn, a: dict) -> str:
+    from app.core.errors import ValidationFailed
+    from app.modules.privat import car
+
+    try:
+        data = car.save_car(turn.db, turn.ctx.ws_id, plate=a.get("plate") or None, inspection_due=a.get("inspection_due"),
+                            service_due=a.get("service_due"),
+                            tire_reminders=a.get("tire_reminders") if isinstance(a.get("tire_reminders"), bool) else None)
+    except ValidationFailed as e:
+        return f"Ikke gemt: {e.message}"
+    turn.say("text", "Gemt. " + car.status_text(data) + " Jeg minder dig om det i god tid.")
+    return "Gemt."
+
+
+def tool_save_workshop(turn: Turn, a: dict) -> str:
+    from app.modules.privat import car
+
+    phone = _typed_phone(turn, a.get("phone"))
+    if phone is None:
+        return "Nummeret er ikke skrevet af brugeren. Spørg efter det; opfind det aldrig."
+    name = str(a.get("name") or "").strip() or "Værkstedet"
+    car.save_workshop(turn.db, turn.ctx.ws_id, name=name, phone_e164=phone)
+    turn.say("text", f"Værkstedet er gemt: {name}, {rules.phone_display(phone)}.")
+    return "Gemt."
+
+
+def tool_book_workshop(turn: Turn, a: dict) -> str:
+    from app.modules.privat import car
+
+    w = car.get(turn.db, turn.ctx.ws_id).get("workshop")
+    if not w:
+        return "Der er intet gemt værksted. Spørg efter værkstedets navn og nummer."
+    data = {"purpose": str(a.get("purpose") or "").strip()[:300], "window": str(a.get("window") or "").strip()[:200]}
+    return _propose(turn, name=w["name"], phone=w["phone"], source="user", data=data)
+
+
+def tool_car_status(turn: Turn, a: dict) -> str:
+    from app.modules.privat import car
+
+    turn.say("text", car.status_text(car.get(turn.db, turn.ctx.ws_id)))
+    return "Vist."
+
+
+# --------------------------------------------------------------------------- Pakker
+
+def tool_track_parcel(turn: Turn, a: dict) -> str:
+    from app.core.errors import ValidationFailed
+    from app.modules.privat import parcels
+
+    try:
+        p = parcels.add(turn.db, turn.ctx.ws_id, number=str(a.get("number") or ""), label=str(a.get("label") or "") or None)
+    except ValidationFailed as e:
+        return f"Ikke fulgt: {e.message}"
+    turn.say("text", f"Jeg følger pakken. {parcels.text_of(p)}. Du får besked, når den rykker sig.")
+    return "Fulgt."
+
+
+def tool_parcels_status(turn: Turn, a: dict) -> str:
+    from app.modules.privat import parcels
+
+    items = [p for p in parcels.parcels(turn.db, turn.ctx.ws_id)]
+    turn.say("text", "\n".join(f"- {parcels.text_of(p)}" for p in items[:15]) if items else "Du følger ingen pakker.")
+    return "Vist."
+
+
+def tool_stop_tracking(turn: Turn, a: dict) -> str:
+    from app.modules.privat import parcels
+
+    hit = parcels.remove(turn.db, turn.ctx.ws_id, str(a.get("number") or ""))
+    if hit is None:
+        return "Den pakke følger brugeren ikke. Spørg hvilken."
+    turn.say("text", f"Jeg følger ikke længere {hit.get('label') or hit['number']}.")
+    return "Stoppet."

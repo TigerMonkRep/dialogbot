@@ -979,6 +979,16 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     async addBill() { await wait(); return fail(409, "demo", "Regninger gemmes kun med en rigtig konto"); },
     async updateBill() { await wait(); return fail(404, "not_found", "Regningen findes ikke"); },
     async removeBill() { await wait(); },
+    // ---------- Madplan, Læge & tandlæge, Bil & syn, Pakker (the demo saves nothing) ----------
+    async foodPreferences() { await wait(); return { people: null, avoid: "", likes: "" }; },
+    async saveFoodPreferences() { await wait(); return fail(409, "demo", "Gemmes kun med en rigtig konto"); },
+    async healthContacts() { await wait(); return { items: [] }; },
+    async removeHealthContact() { await wait(); },
+    async car() { await wait(); return { plate: null, inspection_due: null, service_due: null, tire_reminders: false, summary: "", workshop: null }; },
+    async saveCar() { await wait(); return fail(409, "demo", "Gemmes kun med en rigtig konto"); },
+    async parcels() { await wait(); return { items: [] }; },
+    async addParcel() { await wait(); return fail(409, "demo", "Pakker følges kun med en rigtig konto"); },
+    async removeParcel() { await wait(); },
 
     // ---------- simulation-only tools ----------
     async simulateMember(taskId) {

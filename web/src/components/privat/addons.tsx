@@ -9,6 +9,7 @@ import { BIG, Eyebrow, Pill } from "./bits";
 import { BillsPanel } from "./bills";
 import { BirthdaysPanel } from "./birthdays";
 import { CalendarPanel } from "./calendar";
+import { CarPanel, HealthPanel, MealsPanel, ParcelsPanel } from "./more-apps";
 import { Ico, Tile, iconFor } from "./icons";
 import { usePlan, usePrivat } from "./store";
 
@@ -63,7 +64,7 @@ export function AppTile({ a, size = 62 }: { a: Addon; size?: number }) {
 }
 
 /** App pages that open their app sheet (the backend links to them). */
-const APP_PATHS: Record<string, string> = { "/privat/kalender": "kalender", "/privat/foedselsdage": "foedselsdage", "/privat/regninger": "regninger" };
+const APP_PATHS: Record<string, string> = { "/privat/kalender": "kalender", "/privat/foedselsdage": "foedselsdage", "/privat/regninger": "regninger", "/privat/bil": "bil-og-syn", "/privat/pakker": "pakker" };
 
 /** Butikken (/privat/butik): icon grid with «Installeret» and «Alle apps»; a tap opens the app sheet. */
 export function StorePage() {
@@ -189,6 +190,10 @@ export function AddonDetail({ a }: { a: Addon }) {
           {a.key === "kalender" && mode !== "demo" && <CalendarPanel />}
           {a.key === "foedselsdage" && mode !== "demo" && <BirthdaysPanel />}
           {a.key === "regninger" && mode !== "demo" && <BillsPanel />}
+          {a.key === "madplan" && mode !== "demo" && <MealsPanel />}
+          {a.key === "laege-og-tandlaege" && mode !== "demo" && <HealthPanel />}
+          {a.key === "bil-og-syn" && mode !== "demo" && <CarPanel />}
+          {a.key === "pakker" && mode !== "demo" && <ParcelsPanel />}
           <Button className={`${BIG} rounded-full`} onClick={open} aria-label={`${t("store.open")}: ${name}`}>{t("store.open")}</Button>
           <Button variant="outline" className="rounded-full border-2" onClick={() => openSheet({ kind: "addonOff", addonKey: a.key })} aria-label={`${t("addons.disable")}: ${name}`}>{t("addons.disable")}</Button>
         </>

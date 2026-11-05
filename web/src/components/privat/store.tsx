@@ -29,7 +29,7 @@ export function screenOf(path: string): { screen: Screen; taskId: string | null 
   if (m) return { screen: "task", taskId: decodeURIComponent(m[1]) };
   if (path.startsWith("/privat/opgaver")) return { screen: "tasks", taskId: null };
   if (path.startsWith("/privat/konto")) return { screen: "account", taskId: null };
-  if (path.startsWith("/privat/butik") || path.startsWith("/privat/tilfoejelser")) return { screen: "store", taskId: null };
+  if (path.startsWith("/privat/butik") || path.startsWith("/privat/tilfoejelser") || path.startsWith("/privat/kalender")) return { screen: "store", taskId: null };
   if (path.startsWith("/privat/folk")) return { screen: "people", taskId: null };
   if (path.startsWith("/privat/samtale")) return { screen: "chat", taskId: null };
   return { screen: "day", taskId: null };

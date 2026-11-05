@@ -204,16 +204,32 @@ register(Addon(
 ))
 
 register(Addon(
-    key="kalender", name="Kalender", tagline="Læg aftaler i din Google- eller Outlook-kalender",
-    description="Aftaler, assistenten laver for dig, kommer automatisk i din egen kalender.",
-    icon="calendar", category="aftaler", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
-    what="De tider, Peter aftaler for dig, lander automatisk i din egen Google- eller Outlook-kalender – med adresse "
-         "og det, I aftalte.",
+    key="kalender", name="Kalender", tagline="Læg aftaler i din Google-, Outlook- eller iPhone-kalender",
+    description="Aftaler, du har godkendt, kommer automatisk i din egen kalender.",
+    icon="calendar", category="aftaler", price_text="Med i Plus og Familie", pricing="free",
+    what="De tider, Peter aftaler for dig, og dem du selv fortæller ham, lander i din egen kalender – med adresse og "
+         "det, I aftalte. Google og Outlook får dem med det samme; alle andre kalendere via et privat link.",
     example="«Læg tiden hos frisøren i min kalender»",
-    steps=("Forbind din Google- eller Outlook-kalender", "Vælg hvilken kalender aftaler skal i",
-           "Peter skriver aftalerne ind, når de er bekræftet"),
+    steps=("Forbind Google eller Outlook – eller abonnér på dit private kalenderlink (iPhone og alle andre)",
+           "Peter lægger aftaler ind, når de er bekræftet, og når du selv fortæller ham om en tid",
+           "Flyttes eller fjernes en aftale, opdateres din kalender også"),
     included_in=("plus", "familie"),
-    permissions=("Skriver aftaler i din kalender",), keywords=("kalender",),
+    permissions=("Skriver aftaler, du har godkendt, i din kalender", "Læser ikke dine andre aftaler"),
+    keywords=("kalender", "kalenderen", "google kalender", "outlook"),
+    tools=(AddonTool(
+        "add_to_calendar",
+        "Læg en aftale, brugeren selv har fortalt om, i brugerens kalender (fx «tandlæge tirsdag kl. 9»). Brug kun en "
+        "tid, brugeren selv har skrevet; gæt aldrig. Aftaler fra opkald og bookinger lægges i kalenderen af sig selv.",
+        _obj({"title": {"type": "string"}, "starts_at": {"type": "string", "description": "Lokal tid, fx 2026-11-12T09:00"},
+              "minutes": {"type": "integer", "description": "Varighed, hvis brugeren sagde den"},
+              "location": {"type": "string"}}, ["title", "starts_at"]),
+        "app.modules.privat.chat:tool_add_to_calendar"),
+        AddonTool(
+            "calendar_status",
+            "Fortæl om brugerens kalender: hvilke kalendere der er forbundet, og hvordan man forbinder Google, Outlook "
+            "eller iPhone. Brug den, når brugeren beder om at få sin kalender tilføjet eller forbundet.",
+            _obj({}),
+            "app.modules.privat.chat:tool_calendar_status")),
 ))
 
 register(Addon(

@@ -9,7 +9,8 @@
     "addons": "Modules",
     "people": "Mes proches",
     "invite": "Invitation",
-    "groupJoin": "Rejoindre le groupe"
+    "groupJoin": "Rejoindre le groupe",
+    "calendar": "Agenda"
   },
   "brand": {
     "privat": "Privat",
@@ -688,7 +689,7 @@
     },
     "kalender": {
       "name": "Calendrier",
-      "tagline": "Ajoutez vos rendez-vous à votre agenda Google ou Outlook",
+      "tagline": "Ajoutez vos rendez-vous à votre agenda Google, Outlook ou iPhone",
       "description": "Les rendez-vous pris par l'assistant arrivent directement dans votre agenda."
     },
     "pakker": {
@@ -1078,5 +1079,38 @@
       "consent": "Oui, créez-moi un compte Dialogbot Privat avec mon e-mail et envoyez-moi un code SMS. Je choisis l'essai de 14 jours ensuite. Peter n'appelle jamais personne avant que j'aie dit oui.",
       "codeTitle": "Saisissez le code reçu par SMS"
     }
+  },
+  "calendar": {
+    "loading": "Chargement de votre agenda …",
+    "connected": "Votre agenda est connecté. Vos rendez-vous vont apparaître dans un instant.",
+    "connectFailed": "L'agenda n'a pas été connecté. Réessayez.",
+    "direct": "Directement dans votre agenda",
+    "directText": "Les rendez-vous sont ajoutés tout de suite, puis déplacés ou supprimés s'ils changent.",
+    "google": "Google Agenda",
+    "outlook": "Outlook",
+    "isConnected": "Connecté",
+    "connect": "Connecter",
+    "disconnect": "Déconnecter",
+    "notYet": "Bientôt",
+    "feed": "Lien d'agenda privé",
+    "feedText": "Pour l'iPhone et tous les autres agendas : abonnez-vous à votre lien privé, les rendez-vous arrivent tout seuls.",
+    "feedLink": "Votre lien d'agenda privé",
+    "copy": "Copier le lien",
+    "copied": "Copié",
+    "openApple": "Ouvrir sur iPhone ou Mac",
+    "feedOnce": "Le lien n'est affiché que maintenant. Ne le partagez pas : toute personne qui l'a voit vos rendez-vous. Si vous le perdez, créez-en simplement un nouveau.",
+    "howTo": "Comment s'abonner",
+    "howIphone": "iPhone/Mac : touchez «Ouvrir sur iPhone ou Mac» puis S'abonner.",
+    "howGoogle": "Google Agenda : Autres agendas → + → À partir de l'URL → collez le lien. Google met à jour jusqu'à une fois par jour.",
+    "howOutlook": "Outlook : Ajouter un calendrier → S'abonner à partir du web → collez le lien.",
+    "feedActive": "Actif",
+    "feedNew": "Nouveau lien",
+    "feedMake": "Créer un lien privé",
+    "feedStop": "Arrêter le lien",
+    "upcoming": "Rendez-vous à venir",
+    "none": "Pas encore de rendez-vous. Quand Peter obtient une heure confirmée, ou que vous lui demandez d'en ajouter une, elle apparaît ici.",
+    "addToCalendar": "Ajouter à l'agenda",
+    "remove": "Retirer de l'agenda",
+    "removeNote": "«Retirer de l'agenda» n'annule pas le rendez-vous auprès de l'entreprise."
   }
 }

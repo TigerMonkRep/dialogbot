@@ -9,7 +9,8 @@
     "addons": "Componenti aggiuntivi",
     "people": "Le mie persone",
     "invite": "Invito",
-    "groupJoin": "Entra nel gruppo"
+    "groupJoin": "Entra nel gruppo",
+    "calendar": "Calendario"
   },
   "brand": {
     "privat": "Privat",
@@ -688,7 +689,7 @@
     },
     "kalender": {
       "name": "Calendario",
-      "tagline": "Metti gli appuntamenti nel tuo calendario Google o Outlook",
+      "tagline": "Metti gli appuntamenti nel tuo calendario Google, Outlook o iPhone",
       "description": "Gli appuntamenti fissati dall'assistente finiscono direttamente nel tuo calendario."
     },
     "pakker": {
@@ -1078,5 +1079,38 @@
       "consent": "Sì, crea un account Dialogbot Privat con la mia e-mail e inviami un codice SMS. Scelgo la prova di 14 giorni dopo. Peter non chiama mai nessuno prima che io abbia detto sì.",
       "codeTitle": "Inserisci il codice dell'SMS"
     }
+  },
+  "calendar": {
+    "loading": "Caricamento del calendario …",
+    "connected": "Il calendario è collegato. I tuoi appuntamenti arriveranno tra un momento.",
+    "connectFailed": "Il calendario non è stato collegato. Riprova.",
+    "direct": "Direttamente nel tuo calendario",
+    "directText": "Gli appuntamenti vengono inseriti subito e spostati o rimossi se cambiano.",
+    "google": "Google Calendar",
+    "outlook": "Outlook",
+    "isConnected": "Collegato",
+    "connect": "Collega",
+    "disconnect": "Scollega",
+    "notYet": "In arrivo",
+    "feed": "Link privato del calendario",
+    "feedText": "Per iPhone e ogni altro calendario: iscriviti al tuo link privato e gli appuntamenti arriveranno da soli.",
+    "feedLink": "Il tuo link privato del calendario",
+    "copy": "Copia link",
+    "copied": "Copiato",
+    "openApple": "Apri su iPhone o Mac",
+    "feedOnce": "Il link viene mostrato solo ora. Non condividerlo: chiunque abbia il link vede i tuoi appuntamenti. Se lo perdi, creane uno nuovo.",
+    "howTo": "Come iscriversi",
+    "howIphone": "iPhone/Mac: tocca «Apri su iPhone o Mac» e scegli Iscriviti.",
+    "howGoogle": "Google Calendar: Altri calendari → + → Da URL → incolla il link. Google aggiorna fino a una volta al giorno.",
+    "howOutlook": "Outlook: Aggiungi calendario → Sottoscrivi dal Web → incolla il link.",
+    "feedActive": "Attivo",
+    "feedNew": "Crea nuovo link",
+    "feedMake": "Crea link privato",
+    "feedStop": "Ferma il link",
+    "upcoming": "Prossimi appuntamenti",
+    "none": "Ancora nessun appuntamento. Quando Peter ottiene un orario confermato, o gli chiedi di inserirne uno, compare qui.",
+    "addToCalendar": "Aggiungi al calendario",
+    "remove": "Rimuovi dal calendario",
+    "removeNote": "«Rimuovi dal calendario» non disdice l'appuntamento con l'azienda."
   }
 }

@@ -116,6 +116,7 @@ HANDLERS = {
     "privat.reminder": lambda db, ev: _privat_reminder(db, ev),
     "privat.call_due": lambda db, ev: _privat("handle_call_due", db, ev),
     "privat.call_ask": lambda db, ev: _privat("handle_call_ask", db, ev),
+    "privat.calendar_sync": lambda db, ev: _privat_calendar(db, ev),
     "push.send": lambda db, ev: _push_send(db, ev),
 }
 
@@ -124,6 +125,12 @@ def _privat(name: str, db: OrmSession, ev: OutboxEvent) -> None:
     from app.modules.privat import calls
 
     getattr(calls, name)(db, ev)
+
+
+def _privat_calendar(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.privat.appointments import handle_sync
+
+    handle_sync(db, ev)
 
 
 def _push_send(db: OrmSession, ev: OutboxEvent) -> None:

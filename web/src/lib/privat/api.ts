@@ -43,6 +43,8 @@ export type Task = {
   // Shared lists (contract: «Tilføjelse: delte lister»). Optional so a backend without them still type-checks.
   list_type?: ListType | null; shared?: boolean; share_mode?: ShareMode | null; my_role?: MemberRole;
   members?: Member[]; updated_at?: string;
+  /** Kalender app: the agreed time saved from this task (call or booking), when there is one. */
+  appointment?: { id: string; when_text: string; ics_path: string } | null;
 };
 export type Balance = {
   free_used: number; free_limit: number; credits: number; reserved: number; sponsor_left_today: number;
@@ -231,7 +233,34 @@ export interface PrivatApi {
   addons(): Promise<Addon[]>;
   enableAddon(key: string): Promise<Addon>;
   disableAddon(key: string): Promise<Addon>;
+  // Kalender app (docs/privat-api.md «Kalender»)
+  calendar(): Promise<CalendarState>;
+  newCalendarFeed(): Promise<{ url: string; webcal_url: string }>;
+  dropCalendarFeed(): Promise<void>;
+  connectCalendar(provider: CalendarProvider): Promise<{ url: string }>;
+  disconnectCalendar(provider: CalendarProvider): Promise<void>;
+  removeAppointment(id: string): Promise<Appointment>;
 }
+
+// ---------- Kalender ----------
+export type CalendarProvider = "google" | "microsoft";
+export type Appointment = {
+  id: string; task_id: string | null; source: "call" | "browser" | "manual"; title: string; location: string; notes: string;
+  starts_at: string; ends_at: string; status: "confirmed" | "cancelled"; when_text: string;
+  /** /api/v1/privat/appointments/{id}.ics – fetch through the BFF as /api/backend/privat/appointments/{id}.ics */
+  ics_path: string;
+  sync: Record<string, { synced: boolean; error: string | null }>;
+};
+export type CalendarProviderState = { available: boolean; connected: boolean; status: string; account_label: string; error: string | null };
+export type CalendarState = {
+  enabled: boolean;
+  /** The secret subscription link is shown only once (newCalendarFeed); here only whether it exists. */
+  feed: { active: boolean; created_at: string | null };
+  providers: Record<CalendarProvider, CalendarProviderState>;
+  appointments: Appointment[];
+};
+/** Same-origin download link for an appointment's .ics file (the BFF adds the login). */
+export const icsHref = (a: { ics_path: string }) => `/api/backend${a.ics_path.replace(/^\/api\/v1/, "")}`;
 
 const P = "/privat";
 const json = (body: unknown): RequestInit => ({ method: "POST", body: JSON.stringify(body ?? {}) });
@@ -309,6 +338,12 @@ export const realPrivat: PrivatApi = {
   addons: () => api(`${P}/addons`),
   enableAddon: (key) => api(`${P}/addons/${enc(key)}/enable`, json({})),
   disableAddon: (key) => api(`${P}/addons/${enc(key)}/disable`, json({})),
+  calendar: () => api(`${P}/calendar`),
+  newCalendarFeed: () => api(`${P}/calendar/feed`, json({})),
+  dropCalendarFeed: () => api(`${P}/calendar/feed`, { method: "DELETE" }),
+  connectCalendar: (provider) => api(`${P}/calendar/connect/${enc(provider)}`, json({})),
+  disconnectCalendar: (provider) => api(`${P}/calendar/connect/${enc(provider)}`, { method: "DELETE" }),
+  removeAppointment: (id) => api(`${P}/appointments/${enc(id)}`, { method: "DELETE" }),
 };
 
 /** The Privat API is not there (not merged/deployed) or switched off: the UI falls back to the simulation. */

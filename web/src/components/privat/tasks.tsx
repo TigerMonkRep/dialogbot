@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button, ErrorBox } from "@/components/ui";
 import { useT } from "@/i18n/client";
-import type { Task, TaskStatus } from "@/lib/privat/api";
+import { icsHref, type Task, type TaskStatus } from "@/lib/privat/api";
 import { BIG, Eyebrow, Ex, KindLabel, Kv, LINK, ROW, Sim, StatusBadge } from "./bits";
 import { ListBody } from "./cards";
 import { Ico } from "./icons";
@@ -93,6 +93,12 @@ export function TaskDetail({ id }: { id: string }) {
           <Kv rows={[[t("call.agreement"), c.confirmed_text], [t("call.priceAt"), c.business_price_text ?? "–"],
             [t("call.theCall"), <span key="u">{x.usage_text || t("call.callUsage", { n: c.max_credits, duration: f.duration(c.duration_seconds) })} {simulated && <Sim />}</span>]]} />
         </div>
+      )}
+      {x.appointment && (
+        <a href={icsHref(x.appointment)} download data-testid="task-ics"
+          className="self-start inline-flex items-center gap-2 min-h-[44px] px-4 rounded-full border-2 border-ink font-semibold text-[15px] hover:bg-panel">
+          <Ico name="calendar" size={18} />{t("calendar.addToCalendar")} · {x.appointment.when_text}
+        </a>
       )}
       {c && c.result === "no_answer" && x.status === "awaiting_user" && (
         <div className="rounded-[18px] border-2 border-ink bg-panel p-4 flex flex-col gap-2">

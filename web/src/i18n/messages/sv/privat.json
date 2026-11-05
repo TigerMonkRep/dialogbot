@@ -9,7 +9,8 @@
     "addons": "Tillägg",
     "people": "Mina personer",
     "invite": "Inbjudan",
-    "groupJoin": "Gå med i gruppen"
+    "groupJoin": "Gå med i gruppen",
+    "calendar": "Kalender"
   },
   "brand": {
     "privat": "Privat",
@@ -688,7 +689,7 @@
     },
     "kalender": {
       "name": "Kalender",
-      "tagline": "Lägg avtal i din Google- eller Outlook-kalender",
+      "tagline": "Lägg in bokningar i din Google-, Outlook- eller iPhone-kalender",
       "description": "Avtal som assistenten gör hamnar direkt i din kalender."
     },
     "pakker": {
@@ -1078,5 +1079,38 @@
       "consent": "Ja tack, skapa ett Dialogbot Privat-konto åt mig med min e-post och skicka en SMS-kod. Provperioden på 14 dagar väljer jag efteråt. Peter ringer aldrig någon innan jag har sagt ja.",
       "codeTitle": "Ange koden från SMS:et"
     }
+  },
+  "calendar": {
+    "loading": "Hämtar din kalender …",
+    "connected": "Kalendern är ansluten. Dina bokningar dyker upp om en stund.",
+    "connectFailed": "Kalendern anslöts inte. Försök igen.",
+    "direct": "Direkt i din kalender",
+    "directText": "Bokningar läggs in direkt och flyttas eller tas bort om de ändras.",
+    "google": "Google Kalender",
+    "outlook": "Outlook",
+    "isConnected": "Ansluten",
+    "connect": "Anslut",
+    "disconnect": "Koppla från",
+    "notYet": "Kommer snart",
+    "feed": "Privat kalenderlänk",
+    "feedText": "För iPhone och alla andra kalendrar: prenumerera på din privata länk så kommer bokningarna in av sig själva.",
+    "feedLink": "Din privata kalenderlänk",
+    "copy": "Kopiera länk",
+    "copied": "Kopierad",
+    "openApple": "Öppna på iPhone eller Mac",
+    "feedOnce": "Länken visas bara nu. Dela den inte – alla med länken kan se dina bokningar. Tappar du bort den gör du bara en ny.",
+    "howTo": "Så prenumererar du",
+    "howIphone": "iPhone/Mac: tryck «Öppna på iPhone eller Mac» och välj Prenumerera.",
+    "howGoogle": "Google Kalender: Andra kalendrar → + → Från webbadress → klistra in länken. Google uppdaterar upp till en gång per dygn.",
+    "howOutlook": "Outlook: Lägg till kalender → Prenumerera från webben → klistra in länken.",
+    "feedActive": "Aktiv",
+    "feedNew": "Gör ny länk",
+    "feedMake": "Gör privat länk",
+    "feedStop": "Stoppa länken",
+    "upcoming": "Kommande bokningar",
+    "none": "Inga bokningar än. När Peter får en tid bekräftad, eller du ber honom lägga in en, dyker den upp här.",
+    "addToCalendar": "Lägg till i kalendern",
+    "remove": "Ta bort från kalendern",
+    "removeNote": "«Ta bort från kalendern» avbokar inte tiden hos företaget."
   }
 }

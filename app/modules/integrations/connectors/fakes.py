@@ -63,12 +63,12 @@ class FakeCalendarClient:
         return [(e["start"], e["end"]) for e in WORLD.events.values()
                 if e["calendar"] == self.calendar and e["end"] > frm and e["start"] < to]
 
-    def create_event(self, *, title: str, start: datetime, end: datetime, description: str = "") -> str:
+    def create_event(self, *, title: str, start: datetime, end: datetime, description: str = "", location: str = "") -> str:
         WORLD._maybe_fail("calendar")
         with WORLD.lock:
             eid = f"fake-ev-{next(WORLD.seq)}"
             WORLD.events[eid] = {"calendar": self.calendar, "start": start, "end": end, "title": title,
-                                 "description": description, "created_at": datetime.now(UTC)}
+                                 "description": description, "location": location, "created_at": datetime.now(UTC)}
         return eid
 
     def update_event(self, event_id: str, *, start: datetime, end: datetime) -> None:

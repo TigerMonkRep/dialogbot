@@ -431,3 +431,48 @@ Sporregler, i rækkefølge (kode i `app/modules/browser/routing.py`; modellen v�
 ellers telefon med forklaring; 2. ønsket er ikke `book` → telefon; 3. hjemmeside fundet + kendt og tilladt motor + bookingadresse + brugerens navn og bekræftede mobil på profilen
 (+ workeren slået til + 1 credit) → browser; 4. ellers telefon. Er ydelse eller tidsramme ikke konkret, spørger assistenten; der startes intet.
 En browser-booking koster **1 credit** (reserveres, bruges ved booking, frigives ellers). Kørslen får kun brugerens eget navn og mobilnummer.
+
+## Kalender (tilføjelsen «Kalender»)
+
+Aftaler, brugeren har godkendt, kommer i brugerens egen kalender. Kode: `app/modules/privat/appointments.py`,
+`app/modules/privat/calendar_router.py`. Tilføjelsen er med i Plus og Familie (`included_in`), som før.
+
+**Hvornår der bliver en aftale** (tabellen `private_appointments`, én pr. ærinde via `source_ref`):
+
+| Kilde | Hvornår | Tidspunkt |
+|---|---|---|
+| `call` | Opkaldet er besvaret, og virksomheden bekræftede en tid (`outcome=confirmed`) – også ved et tilbageopkald | Modellens `starts_at` (lokal ISO), hvis den er plausibel; ellers læses `confirmed_text` («torsdag kl. 15.30», «12. november kl. 9») ud fra datoen for opkaldet |
+| `browser` | Brugeren sagde ja, og bookingen er bekræftet (`finish_done`) | Sidens dato + tid (`before_after`/`summary`) |
+| `manual` | Brugeren fortæller assistenten en tid (`add_to_calendar`) | Den tid, brugeren selv skrev |
+
+Er tidspunktet ikke sikkert (intet klokkeslæt, ingen dag, i fortiden, mere end 400 dage frem), laves **ingen** aftale; opgaven
+beholder teksten. Varighed: det virksomheden sagde (`duration_minutes`), ellers 60 minutter. Aftalen gemmes, også når appen er slået
+fra; den synkroniseres først, når appen er slået til. Beskeden siger kun «Tiden er lagt i din kalender», når appen er til, og Google/Outlook
+er forbundet eller kalenderlinket findes.
+
+**Endpoints** (alle kræver appen slået til → ellers `403 addon_disabled`, undtagen `GET /calendar` og frakobling):
+
+| Metode | Sti | Svar |
+|---|---|---|
+| GET | `/privat/calendar` | `{enabled, feed: {active, created_at}, providers: {google, microsoft}: {available, connected, status, account_label, error}, appointments: [...]}` |
+| POST | `/privat/calendar/feed` | `{url, webcal_url}` – et **nyt** hemmeligt link; det gamle holder op med at virke. Vises kun her, kun en SHA-256 gemmes |
+| DELETE | `/privat/calendar/feed` | 204 – linket stopper |
+| POST | `/privat/calendar/connect/{google\|microsoft}` | `{url}` – send brugeren dertil. Samme OAuth-klient og callback som erhvervsdelen; callbacken ser det personlige arbejdsrum og sender tilbage til `/privat/kalender?connected=…` (eller `?error=…`) og lægger de kommende aftaler i kø |
+| DELETE | `/privat/calendar/connect/{provider}` | 204 – adgangen tilbagekaldes hos udbyderen (bedste forsøg), nøglerne slettes |
+| GET | `/privat/appointments` | `{items: [Appointment]}` – kommende, bekræftede |
+| GET | `/privat/appointments/{id}.ics` | `text/calendar`-fil («Tilføj til kalender») |
+| DELETE | `/privat/appointments/{id}` | Aftalen fjernes fra brugerens kalendere (`status=cancelled`). **Aflyser intet hos virksomheden** |
+| GET | `/privat/calendar/feed/{token}.ics` | Offentlig (kalender-apps kan ikke logge ind). 404 ved ukendt token, eller når appen er slået fra. Aftaler fra 60 dage tilbage og frem; aflyste med `STATUS:CANCELLED` |
+
+`Appointment`: `{id, task_id, source, title, location, notes, starts_at, ends_at, status, when_text, ics_path, sync: {<connector>: {synced, error}}}`.
+`Task.appointment` (ejer, opkaldsopgaver, appen slået til): `{id, when_text, ics_path}`.
+
+**Synkronisering.** Hver ændring er en outbox-hændelse `privat.calendar_sync` (dedupe pr. aftale og `sequence`), som hovedworkeren
+udfører: opret / flyt / slet i hver forbundet kalender. En midlertidig fejl prøves igen; ved sidste forsøg gemmes fejlen på aftalen
+(`sync.<connector>.error`), og appen viser den. En udløbet adgang markerer forbindelsen `error`.
+
+**Hemmeligheden i linket.** Tokenet står kun i stien; `app/core/logging.py` erstatter det med `***` i request-loggen, og API'ets
+`uvicorn` kører med `--no-access-log`. Renders egen HTTP-log ved kanten kan stadig indeholde stien (ikke styret af os).
+
+**Assistentens værktøjer** (tilføjelsen «Kalender»): `add_to_calendar(title, starts_at, minutes?, location?)` – kun en tid, brugeren selv
+skrev; `calendar_status()` – fortæller, hvad der er forbundet, og hvordan man forbinder (Apps → Kalender).

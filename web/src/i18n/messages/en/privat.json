@@ -9,7 +9,8 @@
     "addons": "Add-ons",
     "people": "My people",
     "invite": "Invitation",
-    "groupJoin": "Join the group"
+    "groupJoin": "Join the group",
+    "calendar": "Calendar"
   },
   "brand": {
     "privat": "Privat",
@@ -688,7 +689,7 @@
     },
     "kalender": {
       "name": "Calendar",
-      "tagline": "Put appointments in your Google or Outlook calendar",
+      "tagline": "Put appointments in your Google, Outlook or iPhone calendar",
       "description": "Appointments the assistant makes go straight into your calendar."
     },
     "pakker": {
@@ -1078,5 +1079,38 @@
       "consent": "Yes please, create a Dialogbot Privat account for me with my e-mail and send me an SMS code. I choose the 14-day trial afterwards. Peter never calls anyone before I have said yes.",
       "codeTitle": "Enter the code from the text message"
     }
+  },
+  "calendar": {
+    "loading": "Loading your calendar …",
+    "connected": "Your calendar is connected. Your appointments will appear in a moment.",
+    "connectFailed": "The calendar was not connected. Please try again.",
+    "direct": "Straight into your calendar",
+    "directText": "Appointments are added at once, and moved or removed if they change.",
+    "google": "Google Calendar",
+    "outlook": "Outlook",
+    "isConnected": "Connected",
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "notYet": "Coming soon",
+    "feed": "Private calendar link",
+    "feedText": "For iPhone and every other calendar: subscribe to your private link and appointments appear by themselves.",
+    "feedLink": "Your private calendar link",
+    "copy": "Copy link",
+    "copied": "Copied",
+    "openApple": "Open on iPhone or Mac",
+    "feedOnce": "The link is only shown now. Don't share it – anyone with the link can see your appointments. If you lose it, just make a new one.",
+    "howTo": "How to subscribe",
+    "howIphone": "iPhone/Mac: tap «Open on iPhone or Mac» and choose Subscribe.",
+    "howGoogle": "Google Calendar: Other calendars → + → From URL → paste the link. Google refreshes up to once a day.",
+    "howOutlook": "Outlook: Add calendar → Subscribe from web → paste the link.",
+    "feedActive": "Active",
+    "feedNew": "Make new link",
+    "feedMake": "Make private link",
+    "feedStop": "Stop the link",
+    "upcoming": "Upcoming appointments",
+    "none": "No appointments yet. When Peter gets a time confirmed, or you ask him to add one, it shows up here.",
+    "addToCalendar": "Add to calendar",
+    "remove": "Remove from calendar",
+    "removeNote": "«Remove from calendar» does not cancel the time with the business."
   }
 }

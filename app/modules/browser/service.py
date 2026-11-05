@@ -57,6 +57,8 @@ def validate_goal(goal: dict) -> dict:
            "contact": {k: str(contact[k])[:200] for k in ("name", "phone", "mail") if contact.get(k)}}
     if goal.get("business_name"):
         out["business_name"] = str(goal["business_name"])[:200]
+    if goal.get("business_address"):  # the location of the appointment in the user's calendar (Kalender app)
+        out["business_address"] = str(goal["business_address"])[:300]
     return out
 
 
@@ -269,6 +271,16 @@ def finish_done(db: OrmSession, run: BrowserRun, result: dict) -> None:
     privat_service.touch(task)
     text = f"Booket hos {_business(run, task)}: {confirmed}." + (f" Pris: {price}." if price else "") \
         + (f" Bookingnummer: {result['reference']}." if result.get("reference") else "")
+    from app.modules.privat import appointments
+    from app.modules.privat import rules as privat_rules
+
+    appt = appointments.from_browser(db, run, task, service=s.get("service") or ba.get("service"),
+                                     date_text=s.get("date") or ba.get("date"), time_text=s.get("time") or ba.get("time"),
+                                     business=_business(run, task), price=price, agreed_at=_now())
+    if appt is not None:
+        privat_service.event(db, task, f"Aftale gemt: {privat_rules.when_text(appt.starts_at)}")
+        if appointments.lands_in_calendar(db, task.workspace_id):
+            text += " Tiden er lagt i din kalender."
     _owner_message(db, run, task, text=text)
     privat_service.notify_owner(db, task, subject=f"Booket hos {_business(run, task)}", text=text,
                                 dedupe=f"browser:{run.id}:done")

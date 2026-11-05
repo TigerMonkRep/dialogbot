@@ -9,7 +9,8 @@
     "addons": "Tilføjelser",
     "people": "Mine folk",
     "invite": "Invitation",
-    "groupJoin": "Kom med i gruppen"
+    "groupJoin": "Kom med i gruppen",
+    "calendar": "Kalender"
   },
   "brand": {
     "privat": "Privat",
@@ -688,7 +689,7 @@
     },
     "kalender": {
       "name": "Kalender",
-      "tagline": "Læg aftaler i din Google- eller Outlook-kalender",
+      "tagline": "Læg aftaler i din Google-, Outlook- eller iPhone-kalender",
       "description": "Aftaler, assistenten laver, kommer direkte i din kalender."
     },
     "pakker": {
@@ -1078,5 +1079,38 @@
       "consent": "Ja tak, opret en Dialogbot Privat-konto til mig med min e-mail, og send mig en SMS-kode. Jeg vælger prøveperioden på 14 dage bagefter. Peter ringer aldrig til nogen, før jeg har sagt ja.",
       "codeTitle": "Tast koden fra SMS'en"
     }
+  },
+  "calendar": {
+    "loading": "Henter din kalender …",
+    "connected": "Kalenderen er forbundet. Dine aftaler kommer ind om et øjeblik.",
+    "connectFailed": "Kalenderen blev ikke forbundet. Prøv igen.",
+    "direct": "Direkte i din kalender",
+    "directText": "Aftaler lægges ind med det samme, og flyttes eller fjernes, hvis de ændres.",
+    "google": "Google Kalender",
+    "outlook": "Outlook",
+    "isConnected": "Forbundet",
+    "connect": "Forbind",
+    "disconnect": "Afbryd",
+    "notYet": "Kommer snart",
+    "feed": "Privat kalenderlink",
+    "feedText": "Til iPhone og alle andre kalendere: abonnér på dit private link, så kommer aftalerne ind af sig selv.",
+    "feedLink": "Dit private kalenderlink",
+    "copy": "Kopiér link",
+    "copied": "Kopieret",
+    "openApple": "Åbn på iPhone eller Mac",
+    "feedOnce": "Linket vises kun nu. Del det ikke – alle med linket kan se dine aftaler. Mister du det, laver du bare et nyt.",
+    "howTo": "Sådan abonnerer du",
+    "howIphone": "iPhone/Mac: tryk «Åbn på iPhone eller Mac» og vælg Abonnér.",
+    "howGoogle": "Google Kalender: Andre kalendere → + → Fra webadresse → indsæt linket. Google opdaterer op til én gang i døgnet.",
+    "howOutlook": "Outlook: Tilføj kalender → Abonner fra internettet → indsæt linket.",
+    "feedActive": "Aktivt",
+    "feedNew": "Lav nyt link",
+    "feedMake": "Lav privat link",
+    "feedStop": "Stop linket",
+    "upcoming": "Kommende aftaler",
+    "none": "Ingen aftaler endnu. Når Peter får en tid bekræftet, eller du beder ham lægge en tid ind, kommer den her.",
+    "addToCalendar": "Tilføj til kalender",
+    "remove": "Fjern fra kalender",
+    "removeNote": "«Fjern fra kalender» aflyser ikke tiden hos virksomheden."
   }
 }

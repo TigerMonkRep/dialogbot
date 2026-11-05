@@ -91,6 +91,7 @@ from app.models.identity import (  # noqa: F401
 from app.models.privat import (  # noqa: F401, E402
     CreditLedger,
     PrivateAddonEnabled,
+    PrivateAppointment,
     PrivateBusinessSearch,
     PrivateCall,
     PrivateGroup,

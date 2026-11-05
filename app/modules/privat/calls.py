@@ -20,7 +20,7 @@ import hashlib
 import json
 import re
 import uuid
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session as OrmSession
@@ -43,10 +43,13 @@ Du får udskriften af et opkald, som en digital assistent har foretaget til en v
 Vurder resultatet og svar med ét JSON-objekt og intet andet:
 {"outcome": "confirmed" | "callback" | "declined" | "info",
  "confirmed_text": "den aftalte tid kort, fx 'Torsdag kl. 15.30'" eller null,
+ "starts_at": "den aftalte starttid som lokal tid i ISO-format, fx '2026-11-12T15:30'" eller null,
+ "duration_minutes": hvor mange minutter aftalen varer, hvis virksomheden sagde det, ellers null,
  "price_text": "en pris virksomheden nævnte, fx '450 kr. for et eftersyn'" eller null,
  "summary": "1-2 sætninger på dansk om hvad virksomheden svarede"}
 confirmed = en konkret tid/aftale blev bekræftet; callback = virksomheden ringer tilbage; declined = de kunne ikke/ville ikke;
-info = andet svar."""
+info = andet svar.
+starts_at regnes ud fra datoen for opkaldet nederst; er dato eller klokkeslæt ikke helt sikkert, så null."""
 
 
 def _now():
@@ -426,15 +429,17 @@ def _release(db: OrmSession, c: PrivateCall, task: PrivateTask, *, result: str, 
     service.notify_owner(db, task, subject=f"Opkald til {c.business_name}", text=f"{text}.", dedupe=f"call:{c.id}:release")
 
 
-def classify(db: OrmSession, ws: Workspace, transcript: str, summary: str) -> dict:
+def classify(db: OrmSession, ws: Workspace, transcript: str, summary: str, when: datetime | None = None) -> dict:
     from app.modules.ai.provider import get_provider
     from app.modules.ai.service import log_call
 
     data: dict = {}
+    loc = rules.local(when or _now())
+    dated = f"\n\nDato for opkaldet: {loc:%Y-%m-%d} ({rules.WEEKDAYS[loc.weekday()]}), klokken {loc:%H:%M}."
     try:
         comp, _row = log_call(db, ws, get_provider(), user_id=None, purpose="privat_call_outcome", system=OUTCOME_SYSTEM,
-                              messages=[{"role": "user", "content": (transcript or summary)[:12000]}],
-                              prompt_version="privat-outcome-v1", revision=0, max_tokens=400)
+                              messages=[{"role": "user", "content": (transcript or summary)[:12000] + dated}],
+                              prompt_version="privat-outcome-v2", revision=0, max_tokens=450)
         t = comp.text
         data = json.loads(t[t.find("{"):t.rfind("}") + 1]) if "{" in t else {}
     except (ApiError, ValueError):
@@ -518,7 +523,7 @@ def on_report(db: OrmSession, message: dict) -> str | None:
                    text=f"Opkald til {c.business_name} · besvaret{_dur(c.duration_seconds)}")
         charged = "3 credits trukket"
         task.usage_text = f"3 credits · besvaret opkald{_dur(c.duration_seconds)}"
-    data = classify(db, db.get(Workspace, c.workspace_id), transcript, summary)
+    data = classify(db, db.get(Workspace, c.workspace_id), transcript, summary, when=c.dialled_at)
     lead_pitch.finalize(db, c, answered=True, ended_reason=reason, closing=closing, has_transcript=bool(transcript or closing))
     c.business_reply = str(data.get("summary") or summary or "")[:4000] or None
     if data.get("price_text"):
@@ -527,6 +532,7 @@ def on_report(db: OrmSession, message: dict) -> str | None:
         c.confirmed_text = str(data["confirmed_text"])[:300]
         task.status, task.next_step, task.who = "done", c.confirmed_text, f"{c.business_name} har bekræftet"
         text = f"Opkaldet er slut. {c.business_name} har bekræftet {rules.lower_first(c.confirmed_text)}."
+        text += _appointment_note(db, c, task, data, c.dialled_at or c.ended_at)
     elif data["outcome"] == "callback":
         task.status, task.next_step, task.who = "awaiting_business", f"{c.business_name} ringer tilbage", c.business_name
         text = f"Opkaldet er slut. {c.business_name} ringer tilbage – du får besked."
@@ -539,6 +545,22 @@ def on_report(db: OrmSession, message: dict) -> str | None:
     service.add_message(db, c.workspace_id, kind="text", text=text, task_id=task.id)
     service.notify_owner(db, task, subject=f"Opkald til {c.business_name}", text=text, dedupe=f"call:{c.id}:answered")
     return "applied"
+
+
+def _appointment_note(db: OrmSession, c: PrivateCall, task: PrivateTask, data: dict, agreed_at: datetime | None) -> str:
+    """Save the confirmed time as an appointment (Kalender app) and say where it went. Empty when the time is unclear."""
+    from app.modules.privat import appointments
+
+    minutes = data.get("duration_minutes")
+    a = appointments.from_call(db, c, task, starts_iso=data.get("starts_at"),
+                               minutes=int(minutes) if isinstance(minutes, int | float) else None,
+                               agreed_at=agreed_at or _now())
+    if a is None:
+        return ""
+    service.event(db, task, f"Aftale gemt: {rules.when_text(a.starts_at)}")
+    if appointments.lands_in_calendar(db, c.workspace_id):
+        return " Tiden er lagt i din kalender."
+    return ""
 
 
 def _dur(seconds: int | None) -> str:
@@ -678,12 +700,14 @@ def on_callback_report(db: OrmSession, message: dict, meta: dict) -> str:
     data = classify(db, db.get(Workspace, c.workspace_id), transcript, summary)
     reply = str(data.get("summary") or summary or "")[:4000]
     c.business_reply = reply or c.business_reply
+    note = ""
     if data["outcome"] == "confirmed" and data.get("confirmed_text"):
         c.confirmed_text = str(data["confirmed_text"])[:300]
         task.status, task.next_step, task.who = "done", c.confirmed_text, f"{c.business_name} har bekræftet"
+        note = _appointment_note(db, c, task, data, _now())
     elif task.status == "awaiting_business":
         task.status, task.next_step = "done", "Se svaret fra virksomheden"
-    text = f"{c.business_name} ringede tilbage: {reply or 'se opgaven'}"
+    text = f"{c.business_name} ringede tilbage: {reply or 'se opgaven'}" + note
     service.event(db, task, text)
     service.touch(task)
     service.add_message(db, c.workspace_id, kind="text", text=text, task_id=task.id)

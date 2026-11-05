@@ -78,6 +78,12 @@ services:
         sync: false
       - key: CREDENTIALS_KEY      # also encrypts TikTok's rotating refresh token (same value in API and worker)
         sync: false
+      - key: SUPABASE_URL         # project dialogbot-prod-fra; private bucket "browser-evidence" for browser-run evidence
+        value: https://dmnbphhocnmjiqtcjddg.supabase.co
+      - key: SUPABASE_SERVICE_ROLE_KEY   # Supabase → Project Settings → API keys → service_role (dashboard only)
+        sync: false
+      - key: BROWSER_WORKER_ENABLED   # dashboard-managed; the API only starts browser runs when "true" (needs the two above)
+        sync: false
       - key: LOG_LEVEL
         value: INFO
 
@@ -160,28 +166,29 @@ services:
         value: staging
       - key: ENABLE_DEV_TOOLS
         value: "false"
+      # Secrets are copied from the API service (fromService), so they are never typed twice or committed.
       - key: DATABASE_URL
-        sync: false
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: DATABASE_URL}
       - key: SECRET_KEY
-        sync: false
+        generateValue: true    # any >=32-char value; it need not match the API
       - key: DB_SCHEMA
         value: dialogbot
       - key: EMAIL_ADAPTER
-        sync: false
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: EMAIL_ADAPTER}
       - key: RESEND_API_KEY
-        sync: false
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: RESEND_API_KEY}
       - key: EMAIL_FROM
-        sync: false
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: EMAIL_FROM}
       - key: FRONTEND_BASE_URL
-        sync: false
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: FRONTEND_BASE_URL}
       - key: AI_PROVIDER
-        sync: false
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: AI_PROVIDER}
       - key: AI_MODEL_ID
         value: claude-opus-5
       - key: ANTHROPIC_API_KEY
-        sync: false
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: ANTHROPIC_API_KEY}
       - key: SUPABASE_URL
-        sync: false
+        value: https://dmnbphhocnmjiqtcjddg.supabase.co
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
       - key: BROWSER_WORKER_ENABLED   # dashboard-managed; "false" keeps the worker idle

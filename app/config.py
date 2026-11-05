@@ -222,6 +222,10 @@ class Settings(BaseSettings):
     browser_approval_ttl_seconds: int = Field(default=600, ge=30, le=3600, alias="BROWSER_APPROVAL_TTL_SECONDS")
     browser_allowed_engines: str = Field(default="onlinebooq", alias="BROWSER_ALLOWED_ENGINES")
     browser_evidence_bucket: str = Field(default="browser-evidence", alias="BROWSER_EVIDENCE_BUCKET")
+    # Lead loop (docs/sales/privat-opkald-leads.md): at the end of a Privat call to a business that is not a customer, ONE fixed,
+    # honest sentence about Dialogbot, when every rule allows it. Off by default; a lawyer must confirm the legal view first.
+    lead_pitch_enabled: bool = Field(default=False, alias="LEAD_PITCH_ENABLED")
+    lead_pitch_cooldown_days: int = Field(default=90, ge=1, le=3650, alias="LEAD_PITCH_COOLDOWN_DAYS")
     voice_preview_daily_limit: int = Field(default=40, alias="VOICE_PREVIEW_DAILY_LIMIT")
     voice_preview_max_chars: int = Field(default=200, alias="VOICE_PREVIEW_MAX_CHARS")
     voice_call_daily_char_limit: int = Field(default=400_000, alias="VOICE_CALL_DAILY_CHAR_LIMIT")

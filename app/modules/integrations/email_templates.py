@@ -264,6 +264,22 @@ def new_lead(workspace: str, contact_name: str, need: str, link: str, lang: str 
         footer_reason=t(lang, "lead_footer", workspace=workspace), lang=lang)
 
 
+def intro_mail(business: str) -> Email:
+    """The one fixed mail a business gets after it said yes to «send en mail» in a Privat call (docs/sales/privat-opkald-leads.md).
+    Fixed text on purpose: verified facts only, no prices, no comparisons; it says why they get it and how to stop it."""
+    return Email(
+        subject="Kort om Dialogbot – som du bad om i telefonen",
+        preheader="En digital telefonassistent, der tager telefonen, når I ikke kan.",
+        heading="Tak for en kort snak",
+        paragraphs=[f"Hej {business}. I sagde ja til en mail, da vi ringede til jer på vegne af en kunde. Her er den.",
+                    "Dialogbot er en digital telefonassistent til små virksomheder. Den tager telefonen, når I ikke kan, "
+                    "svarer ud fra det, I selv har godkendt, og giver jer besked om det, den som ringede, ville have.",
+                    "Vil I høre mere, så svar på denne mail, eller ring til os på 93 70 34 33. Vil I ikke høre fra os igen, så "
+                    "svar »nej tak«. Så skriver vi ikke mere."],
+        button_label="Se Dialogbot", button_url="https://www.dialogbot.dk",
+        footer_reason="Du får denne e-mail, fordi I sagde ja til den i en telefonsamtale.")
+
+
 # The label of the internal AI counter in every language: that line stays in the app, never in the mail.
 _AI_LABELS = tuple({TEXTS[x]["report_ai_label"] for x in TEXTS})
 
@@ -412,6 +428,7 @@ def samples() -> dict[str, Email]:
         "social_drafts_waiting": social_drafts_waiting(
             [("Facebook · i dag kl. 15.30", "Booking"), ("Instagram · i dag kl. 16.15", "Booking"),
              ("TikTok · i dag kl. 19.00", "Booking")], "https://www.dialogbot.dk/app/operator/social"),
+        "intro_mail": intro_mail("Salon Test"),
         "from_plain": from_plain("Gammel besked", "Hej Mads\n\nTekst her.\n\nSe det her: https://www.dialogbot.dk/x\n\n"
                                                   "Venlig hilsen\nDialogbot"),
     }

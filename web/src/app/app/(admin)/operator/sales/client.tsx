@@ -83,3 +83,49 @@ export function SellerDemoCall({ info, calls }: { info: SalesInfo; calls: DemoRo
     </div>
   );
 }
+
+export type PrivatLead = {
+  id: string; source: string; name: string; phone: string | null; cvr: string | null; booking_engine: string | null;
+  outcome: "interested" | "declined" | "skipped" | "not_asked"; last_pitch_at: string | null; cooldown_until: string | null;
+  pitch_count: number; blocklisted: boolean; blocklist_reason: string | null; consent_to_email: boolean; email: string | null;
+  lead_id: string | null; intro_mail_sent: boolean;
+};
+const PITCH: Record<string, string> = { interested: "Ja til en mail", declined: "Nej tak", skipped: "Sprunget over", not_asked: "Ikke spurgt" };
+
+/** Businesses that heard the closing line in a Privat call (docs/sales/privat-opkald-leads.md). Only admin/owner of the sales workspace. */
+export function PrivatLeads({ items, cooldownDays }: { items: PrivatLead[]; cooldownDays: number }) {
+  const router = useRouter();
+  const [msg, setMsg] = useState<string | null>(null);
+  const act = useSubmit(async (id: string, what: "intro-mail" | "block") => {
+    const r = await api<{ sent?: boolean; already_sent?: boolean }>(`/operator/sales/privat-leads/${id}/${what}`, { method: "POST", body: JSON.stringify(what === "block" ? { reason: "Spærret af en sælger" } : {}) });
+    setMsg(what === "block" ? "Virksomheden er spærret. Adressen er slettet." : r.already_sent ? "Intro-mailen er allerede sendt." : "Intro-mailen er sendt.");
+    router.refresh();
+  });
+  return (
+    <div className="rounded-2xl bg-surface-container-lowest border-2 border-ink p-space-md flex flex-col gap-space-sm min-w-0">
+      <h2 className="font-title-md text-title-md text-primary font-bold">Kilde: Privat-opkald</h2>
+      <p className="font-body-sm text-body-sm text-on-surface-variant max-w-3xl">Virksomheder, der har hørt afslutningslinjen i et opkald, en privatkunde bad om. Kun dem, der sagde ja til en mail og gav adressen, er leads. Samme virksomhed hører linjen igen tidligst efter {cooldownDays} dage.</p>
+      <ErrorBox error={act.error} />
+      {msg && !act.error && <Alert kind="ok">{msg}</Alert>}
+      {items.length === 0 ? <p className="font-body-sm text-body-sm text-on-surface-variant">Ingen endnu.</p> : (
+        <div className="overflow-x-auto">
+          <table className="w-full font-body-sm text-body-sm">
+            <thead><tr className="text-left text-on-surface-variant"><th className="pr-3">Virksomhed</th><th className="pr-3">Kilde</th><th className="pr-3">Udfald</th><th className="pr-3">Cooldown til</th><th>Handling</th></tr></thead>
+            <tbody>{items.map((r) => (
+              <tr key={r.id} className="align-top border-t border-outline-variant/40">
+                <td className="pr-3 py-1">{r.name}<br /><span className="tabular-nums text-on-surface-variant">{r.phone ?? "–"}{r.booking_engine ? ` · ${r.booking_engine}` : ""}</span>{r.lead_id ? <><br /><a className="text-primary underline" href={`/app/leads/${r.lead_id}`}>Henvendelse</a></> : null}</td>
+                <td className="pr-3 py-1 whitespace-nowrap">{r.source}</td>
+                <td className="pr-3 py-1">{r.blocklisted ? "Spærret" : PITCH[r.outcome] ?? r.outcome}{r.consent_to_email && r.email ? <><br /><span className="text-on-surface-variant">{r.email}</span></> : null}</td>
+                <td className="pr-3 py-1 tabular-nums whitespace-nowrap">{r.cooldown_until ? new Date(r.cooldown_until).toLocaleDateString("da-DK") : "–"}</td>
+                <td className="py-1"><div className="flex flex-wrap gap-space-sm">
+                  <Button type="button" variant="secondary" disabled={act.pending || r.blocklisted || !r.consent_to_email || r.intro_mail_sent} onClick={() => act.run(r.id, "intro-mail")}>{r.intro_mail_sent ? "Intro-mail sendt" : "Send intro-mail"}</Button>
+                  <Button type="button" variant="danger" disabled={act.pending || r.blocklisted} onClick={() => act.run(r.id, "block")}>Spær</Button>
+                </div></td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}

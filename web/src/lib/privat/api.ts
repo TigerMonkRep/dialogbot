@@ -240,7 +240,31 @@ export interface PrivatApi {
   connectCalendar(provider: CalendarProvider): Promise<{ url: string }>;
   disconnectCalendar(provider: CalendarProvider): Promise<void>;
   removeAppointment(id: string): Promise<Appointment>;
+  // Fødselsdage app
+  birthdays(): Promise<{ items: Birthday[] }>;
+  addBirthday(body: { name: string; date: string; remind_days_before?: number }): Promise<Birthday & { created: boolean }>;
+  updateBirthday(id: string, body: { remind_days_before: number }): Promise<Birthday>;
+  removeBirthday(id: string): Promise<void>;
+  // Regninger app
+  bills(): Promise<{ items: Bill[]; month: BillsMonth }>;
+  addBill(body: { name: string; amount?: string; frequency?: BillFrequency; due_date?: string; due_day?: number; remind_days_before?: number }): Promise<Bill & { created: boolean }>;
+  updateBill(id: string, body: { remind_days_before: number }): Promise<Bill>;
+  removeBill(id: string): Promise<void>;
 }
+
+// ---------- Regninger ----------
+export type BillFrequency = "monthly" | "quarterly" | "half_yearly" | "yearly" | "once";
+export type Bill = {
+  id: string; name: string; amount_minor: number | null; amount_text: string; frequency: BillFrequency; frequency_text: string;
+  next_due: string; due_text: string; days_until: number; remind_days_before: number;
+};
+export type BillsMonth = { month: string; total_minor: number; total_text: string; without_amount: number; items: (Bill & { due_in_month: string })[] };
+
+// ---------- Fødselsdage ----------
+export type Birthday = {
+  id: string; name: string; month: number; day: number; year: number | null; date_text: string;
+  next_date: string; days_until: number; turns: number | null; remind_days_before: number;
+};
 
 // ---------- Kalender ----------
 export type CalendarProvider = "google" | "microsoft";
@@ -344,6 +368,14 @@ export const realPrivat: PrivatApi = {
   connectCalendar: (provider) => api(`${P}/calendar/connect/${enc(provider)}`, json({})),
   disconnectCalendar: (provider) => api(`${P}/calendar/connect/${enc(provider)}`, { method: "DELETE" }),
   removeAppointment: (id) => api(`${P}/appointments/${enc(id)}`, { method: "DELETE" }),
+  birthdays: () => api(`${P}/birthdays`),
+  addBirthday: (body) => api(`${P}/birthdays`, json(body)),
+  updateBirthday: (id, body) => api(`${P}/birthdays/${enc(id)}`, { method: "PATCH", body: JSON.stringify(body) }),
+  removeBirthday: (id) => api(`${P}/birthdays/${enc(id)}`, { method: "DELETE" }),
+  bills: () => api(`${P}/bills`),
+  addBill: (body) => api(`${P}/bills`, json(body)),
+  updateBill: (id, body) => api(`${P}/bills/${enc(id)}`, { method: "PATCH", body: JSON.stringify(body) }),
+  removeBill: (id) => api(`${P}/bills/${enc(id)}`, { method: "DELETE" }),
 };
 
 /** The Privat API is not there (not merged/deployed) or switched off: the UI falls back to the simulation. */

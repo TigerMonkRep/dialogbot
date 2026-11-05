@@ -476,3 +476,47 @@ udfører: opret / flyt / slet i hver forbundet kalender. En midlertidig fejl pr�
 
 **Assistentens værktøjer** (tilføjelsen «Kalender»): `add_to_calendar(title, starts_at, minutes?, location?)` – kun en tid, brugeren selv
 skrev; `calendar_status()` – fortæller, hvad der er forbundet, og hvordan man forbinder (Apps → Kalender).
+
+## Fødselsdage (tilføjelsen «Fødselsdage»)
+
+Fødselsdage, brugeren selv fortæller om. Kode: `app/modules/privat/birthdays.py`, endpoints i `app/modules/privat/apps_router.py`.
+Med i Plus og Familie. Kun navn, dag og måned gemmes – og året, når brugeren selv siger det (så siges alderen).
+
+| Metode | Sti | Svar |
+|---|---|---|
+| GET | `/privat/birthdays` | `{items: [Birthday]}` i den rækkefølge, de kommer |
+| POST | `/privat/birthdays` | `{name, date, remind_days_before?}` → `Birthday + {created}`. Samme navn (store/små bogstaver ligegyldigt) retter datoen. `date`: «14. marts», «14.03.1946», «1946-03-14». 422 ved en dato, der ikke findes |
+| PATCH | `/privat/birthdays/{id}` | `{remind_days_before: 0–60}` |
+| DELETE | `/privat/birthdays/{id}` | 204 |
+
+`Birthday`: `{id, name, month, day, year, date_text, next_date, days_until, turns, remind_days_before}`. Alle kræver appen slået til
+(`403 addon_disabled`).
+
+**Påmindelsen** sendes af hovedworkerens faste job: `remind_days_before` dage før (standard 7, 0 = på dagen), tidligst kl. 08
+dansk tid, med push eller – uden push-abonnement – e-mail, ét link til `/privat/foedselsdage`. Én gang pr. fødselsdag pr. år
+(`last_reminded_for`); en påmindelse, der blev misset (worker nede), kommer stadig, frem til selve dagen. 29. februar mindes
+den 28. februar i andre år. Slået appen fra, sendes intet; data beholdes.
+
+**Assistentens værktøjer:** `add_birthdays(items[{name, date, remind_days_before?}])`, `list_birthdays()`, `remove_birthday(name)`.
+
+## Regninger (tilføjelsen «Regninger»)
+
+Faste regninger, brugeren selv fortæller om. Kode: `app/modules/privat/bills.py`, endpoints i `app/modules/privat/apps_router.py`.
+Med i Plus og Familie. **Dialogbot betaler aldrig og har ingen adgang til banken.** Gemt: navn, beløb (kun når brugeren siger det),
+hyppighed og næste forfaldsdato.
+
+| Metode | Sti | Svar |
+|---|---|---|
+| GET | `/privat/bills` | `{items: [Bill], month: {month, total_minor, total_text, without_amount, items}}` – månedens regninger og summen af de kendte beløb |
+| POST | `/privat/bills` | `{name, amount?, frequency?, due_date? \| due_day?, remind_days_before?}` → `Bill + {created}`. Samme navn retter regningen. `frequency`: `monthly`, `quarterly`, `half_yearly`, `yearly`, `once`. 422 uden dato eller ved et beløb, der ikke kan læses |
+| PATCH | `/privat/bills/{id}` | `{remind_days_before: 0–30}` |
+| DELETE | `/privat/bills/{id}` | 204 |
+
+`Bill`: `{id, name, amount_minor, amount_text, frequency, frequency_text, next_due, due_text, days_until, remind_days_before}`.
+
+**Påmindelsen** (hovedworkerens faste job, sammen med Fødselsdage): `remind_days_before` dage før (standard 3), tidligst kl. 08,
+push eller e-mail, én gang pr. forfaldsdato. Når datoen er passeret, rykker en fast regning videre (`anchor_day` holder «den 31.»
+på månedens sidste dag i korte måneder); en engangsregning bliver stående, til brugeren fjerner den.
+
+**Assistentens værktøjer:** `add_bills(items[{name, amount?, frequency?, due_day?, due_date?, remind_days_before?}])`,
+`bills_overview()`, `remove_bill(name)`.

@@ -250,7 +250,7 @@ def test_a_provider_error_is_shown_and_retried(api, client, pv, db, monkeypatch)
 def test_chat_offers_the_app_then_explains_how_to_connect(api, pv):
     tok = pv.account("mette@testmail.dk")
     out = pv.say(tok, "Kan du tilføje min google kalender")
-    assert any(m["kind"] == "addon_offer" or "Kalender" in (m.get("text") or "") for m in out["messages"]), out
+    assert any(m["kind"] == "addon" and m.get("addon_key") == "kalender" for m in out["messages"]), out
     _enable(api, tok)
     out = pv.say(tok, "Kan du tilføje min google kalender")
     assert any("Apps → Kalender" in (m.get("text") or "") for m in out["messages"]), out

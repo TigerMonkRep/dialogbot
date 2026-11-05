@@ -10,7 +10,9 @@
     "people": "Meine Leute",
     "invite": "Einladung",
     "groupJoin": "Der Gruppe beitreten",
-    "calendar": "Kalender"
+    "calendar": "Kalender",
+    "birthdays": "Geburtstage",
+    "bills": "Rechnungen"
   },
   "brand": {
     "privat": "Privat",
@@ -1112,5 +1114,55 @@
     "addToCalendar": "Zum Kalender hinzufügen",
     "remove": "Aus dem Kalender entfernen",
     "removeNote": "«Aus dem Kalender entfernen» sagt den Termin beim Unternehmen nicht ab."
+  },
+  "birthdays": {
+    "title": "Kommende Geburtstage",
+    "loading": "Geburtstage werden geladen …",
+    "none": "Noch keine Geburtstage. Schreib Peter zum Beispiel «Mamas Geburtstag ist am 14. März» oder füge hier einen hinzu.",
+    "today": "heute",
+    "tomorrow": "morgen",
+    "inDays": "in {n} Tagen",
+    "turns": "wird {n}",
+    "remind": "Erinnerung",
+    "onTheDay": "am Tag",
+    "daysBefore": "{n} Tage vorher",
+    "remove": "Entfernen",
+    "add": "Geburtstag hinzufügen",
+    "name": "Name",
+    "namePlaceholder": "Name, z. B. Mama",
+    "date": "Datum",
+    "datePlaceholder": "Datum, z. B. 14. März oder 14.03.1946",
+    "save": "Speichern",
+    "hint": "Mit Jahr sagt dir Peter auch, wie alt die Person wird."
+  },
+  "bills": {
+    "title": "Deine Rechnungen",
+    "loading": "Rechnungen werden geladen …",
+    "none": "Noch keine Rechnungen. Schreib Peter zum Beispiel «Erinnere mich an die Versicherung am 1. jeden Monats – 640 kr.» oder füge hier eine hinzu.",
+    "month": "Rechnungen im {month}",
+    "withoutAmount": "+ {n} ohne Betrag",
+    "today": "heute",
+    "tomorrow": "morgen",
+    "inDays": "in {n} Tagen",
+    "remind": "Erinnerung",
+    "onTheDay": "am Tag",
+    "daysBefore": "{n} Tage vorher",
+    "remove": "Entfernen",
+    "add": "Rechnung hinzufügen",
+    "name": "Name",
+    "namePlaceholder": "Name, z. B. Miete",
+    "amount": "Betrag",
+    "amountPlaceholder": "Betrag (optional), z. B. 640",
+    "nextDue": "Nächste Fälligkeit",
+    "how": "Wie oft",
+    "save": "Speichern",
+    "never": "Peter bezahlt nie selbst und hat keinen Zugang zu deiner Bank.",
+    "freq": {
+      "monthly": "jeden Monat",
+      "quarterly": "jedes Quartal",
+      "half_yearly": "jedes halbe Jahr",
+      "yearly": "jedes Jahr",
+      "once": "einmal"
+    }
   }
 }

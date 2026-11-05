@@ -794,3 +794,100 @@ def tool_calendar_status(turn: Turn, a: dict) -> str:
                 "link, som iPhone og alle andre kalendere kan abonnere på. Derefter kommer dine aftaler ind af sig selv.")
     turn.say("text", text)
     return "Status vist."
+
+
+# --------------------------------------------------------------------------- Fødselsdage (app/modules/privat/birthdays.py)
+
+def tool_add_birthdays(turn: Turn, a: dict) -> str:
+    from app.core.errors import ValidationFailed
+    from app.modules.privat import birthdays
+
+    saved, bad = [], []
+    for it in (a.get("items") or [])[:50]:
+        if not isinstance(it, dict):
+            continue
+        days = it.get("remind_days_before")
+        try:
+            b, _ = birthdays.save(turn.db, turn.ctx.ws_id, name=str(it.get("name") or ""), when=str(it.get("date") or ""),
+                                  remind_days_before=int(days) if isinstance(days, int | float) else None)
+            saved.append(b)
+        except ValidationFailed:
+            bad.append(str(it.get("name") or "?"))
+    if not saved:
+        return "Ingen fødselsdag kunne gemmes. Spørg efter dag og måned."
+    lines = [f"{b.name}: {birthdays.date_text(b)}" for b in saved]
+    days = {b.remind_days_before for b in saved}
+    when = ("på dagen" if days == {0} else f"{days.pop()} dage før") if len(days) == 1 else "før hver fødselsdag"
+    text = ("Gemt: " + "; ".join(lines) + f". Jeg minder dig om det {when}.")
+    if bad:
+        text += " Jeg kunne ikke læse datoen for " + ", ".join(bad) + " – skriv fx 14. marts."
+    turn.say("text", text)
+    return f"{len(saved)} gemt, {len(bad)} ikke læst."
+
+
+def tool_list_birthdays(turn: Turn, a: dict) -> str:
+    from app.modules.privat import birthdays
+
+    turn.say("text", birthdays.upcoming_text(turn.db, turn.ctx.ws_id))
+    return "Vist."
+
+
+def tool_remove_birthday(turn: Turn, a: dict) -> str:
+    from app.modules.privat import birthdays
+
+    b = birthdays.find(turn.db, turn.ctx.ws_id, str(a.get("name") or ""))
+    if b is None:
+        return "Den fødselsdag findes ikke. Spørg brugeren hvem."
+    name = b.name
+    birthdays.remove(turn.db, b)
+    turn.say("text", f"{name}s fødselsdag er fjernet.")
+    return "Fjernet."
+
+
+# --------------------------------------------------------------------------- Regninger (app/modules/privat/bills.py)
+
+def tool_add_bills(turn: Turn, a: dict) -> str:
+    from app.core.errors import ValidationFailed
+    from app.modules.privat import bills
+
+    saved, bad = [], []
+    for it in (a.get("items") or [])[:50]:
+        if not isinstance(it, dict):
+            continue
+        days = it.get("remind_days_before")
+        try:
+            b, _ = bills.save(turn.db, turn.ctx.ws_id, name=str(it.get("name") or ""), amount=it.get("amount"),
+                              frequency=str(it.get("frequency") or "monthly"), due_date=it.get("due_date"),
+                              due_day=it.get("due_day") if isinstance(it.get("due_day"), int) else None,
+                              remind_days_before=int(days) if isinstance(days, int | float) else None)
+            saved.append(b)
+        except ValidationFailed as e:
+            bad.append(f"{it.get('name') or '?'} ({e.message})")
+    if not saved:
+        return "Ingen regning kunne gemmes: " + "; ".join(bad) + ". Spørg efter datoen."
+    lines = [f"{b.name}: {bills.FREQ_TEXT[b.frequency]}, næste gang {bills.date_text(b.next_due)}"
+             + (f", {bills.money(b.amount_minor)}" if b.amount_minor else "") for b in saved]
+    text = "Gemt: " + "; ".join(lines).rstrip(".") + ". Jeg minder dig om det inden – jeg betaler aldrig selv."
+    if bad:
+        text += " Ikke gemt: " + "; ".join(bad) + "."
+    turn.say("text", text)
+    return f"{len(saved)} gemt, {len(bad)} ikke gemt."
+
+
+def tool_bills_overview(turn: Turn, a: dict) -> str:
+    from app.modules.privat import bills
+
+    turn.say("text", bills.overview_text(turn.db, turn.ctx.ws_id))
+    return "Vist."
+
+
+def tool_remove_bill(turn: Turn, a: dict) -> str:
+    from app.modules.privat import bills
+
+    b = bills.find(turn.db, turn.ctx.ws_id, str(a.get("name") or ""))
+    if b is None:
+        return "Den regning findes ikke. Spørg brugeren hvilken."
+    name = b.name
+    bills.remove(turn.db, b)
+    turn.say("text", f"Regningen «{name}» er fjernet.")
+    return "Fjernet."

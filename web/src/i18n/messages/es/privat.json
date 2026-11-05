@@ -10,7 +10,9 @@
     "people": "Mi gente",
     "invite": "Invitación",
     "groupJoin": "Unirse al grupo",
-    "calendar": "Calendario"
+    "calendar": "Calendario",
+    "birthdays": "Cumpleaños",
+    "bills": "Facturas"
   },
   "brand": {
     "privat": "Privat",
@@ -1112,5 +1114,55 @@
     "addToCalendar": "Añadir al calendario",
     "remove": "Quitar del calendario",
     "removeNote": "«Quitar del calendario» no cancela la cita con la empresa."
+  },
+  "birthdays": {
+    "title": "Próximos cumpleaños",
+    "loading": "Cargando cumpleaños …",
+    "none": "Aún no hay cumpleaños. Escribe a Peter, por ejemplo, «El cumpleaños de mamá es el 14 de marzo», o añade uno aquí.",
+    "today": "hoy",
+    "tomorrow": "mañana",
+    "inDays": "en {n} días",
+    "turns": "cumple {n}",
+    "remind": "Recordatorio",
+    "onTheDay": "el mismo día",
+    "daysBefore": "{n} días antes",
+    "remove": "Quitar",
+    "add": "Añadir cumpleaños",
+    "name": "Nombre",
+    "namePlaceholder": "Nombre, p. ej. Mamá",
+    "date": "Fecha",
+    "datePlaceholder": "Fecha, p. ej. 14 de marzo o 14.03.1946",
+    "save": "Guardar",
+    "hint": "Si escribes el año, Peter también te dice cuántos años cumple."
+  },
+  "bills": {
+    "title": "Tus facturas",
+    "loading": "Cargando facturas …",
+    "none": "Aún no hay facturas. Escribe a Peter, por ejemplo, «Recuérdame el seguro el día 1 de cada mes: son 640 kr.», o añade una aquí.",
+    "month": "Facturas de {month}",
+    "withoutAmount": "+ {n} sin importe",
+    "today": "hoy",
+    "tomorrow": "mañana",
+    "inDays": "en {n} días",
+    "remind": "Recordatorio",
+    "onTheDay": "el mismo día",
+    "daysBefore": "{n} días antes",
+    "remove": "Quitar",
+    "add": "Añadir factura",
+    "name": "Nombre",
+    "namePlaceholder": "Nombre, p. ej. Alquiler",
+    "amount": "Importe",
+    "amountPlaceholder": "Importe (opcional), p. ej. 640",
+    "nextDue": "Próximo vencimiento",
+    "how": "Frecuencia",
+    "save": "Guardar",
+    "never": "Peter nunca paga nada por sí mismo y no tiene acceso a tu banco.",
+    "freq": {
+      "monthly": "cada mes",
+      "quarterly": "cada trimestre",
+      "half_yearly": "cada semestre",
+      "yearly": "cada año",
+      "once": "una vez"
+    }
   }
 }

@@ -10,7 +10,9 @@
     "people": "Mes proches",
     "invite": "Invitation",
     "groupJoin": "Rejoindre le groupe",
-    "calendar": "Agenda"
+    "calendar": "Agenda",
+    "birthdays": "Anniversaires",
+    "bills": "Factures"
   },
   "brand": {
     "privat": "Privat",
@@ -1112,5 +1114,55 @@
     "addToCalendar": "Ajouter à l'agenda",
     "remove": "Retirer de l'agenda",
     "removeNote": "«Retirer de l'agenda» n'annule pas le rendez-vous auprès de l'entreprise."
+  },
+  "birthdays": {
+    "title": "Anniversaires à venir",
+    "loading": "Chargement des anniversaires …",
+    "none": "Pas encore d'anniversaires. Écrivez par exemple à Peter « L'anniversaire de maman est le 14 mars », ou ajoutez-en un ici.",
+    "today": "aujourd'hui",
+    "tomorrow": "demain",
+    "inDays": "dans {n} jours",
+    "turns": "aura {n} ans",
+    "remind": "Rappel",
+    "onTheDay": "le jour même",
+    "daysBefore": "{n} jours avant",
+    "remove": "Supprimer",
+    "add": "Ajouter un anniversaire",
+    "name": "Nom",
+    "namePlaceholder": "Nom, par ex. Maman",
+    "date": "Date",
+    "datePlaceholder": "Date, par ex. 14 mars ou 14.03.1946",
+    "save": "Enregistrer",
+    "hint": "Avec l'année, Peter vous dit aussi l'âge que la personne aura."
+  },
+  "bills": {
+    "title": "Vos factures",
+    "loading": "Chargement des factures …",
+    "none": "Pas encore de factures. Écrivez par exemple à Peter « Rappelle-moi l'assurance le 1er de chaque mois – 640 kr. », ou ajoutez-en une ici.",
+    "month": "Factures en {month}",
+    "withoutAmount": "+ {n} sans montant",
+    "today": "aujourd'hui",
+    "tomorrow": "demain",
+    "inDays": "dans {n} jours",
+    "remind": "Rappel",
+    "onTheDay": "le jour même",
+    "daysBefore": "{n} jours avant",
+    "remove": "Supprimer",
+    "add": "Ajouter une facture",
+    "name": "Nom",
+    "namePlaceholder": "Nom, par ex. Loyer",
+    "amount": "Montant",
+    "amountPlaceholder": "Montant (facultatif), par ex. 640",
+    "nextDue": "Prochaine échéance",
+    "how": "Fréquence",
+    "save": "Enregistrer",
+    "never": "Peter ne paie jamais lui-même et n'a pas accès à votre banque.",
+    "freq": {
+      "monthly": "chaque mois",
+      "quarterly": "chaque trimestre",
+      "half_yearly": "chaque semestre",
+      "yearly": "chaque année",
+      "once": "une fois"
+    }
   }
 }

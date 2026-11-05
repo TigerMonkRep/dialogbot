@@ -6,6 +6,8 @@ import type { T } from "@/i18n/translate";
 import { CONFLICT, type Addon } from "@/lib/privat/api";
 import type { ApiError } from "@/lib/client";
 import { BIG, Eyebrow, Pill } from "./bits";
+import { BillsPanel } from "./bills";
+import { BirthdaysPanel } from "./birthdays";
 import { CalendarPanel } from "./calendar";
 import { Ico, Tile, iconFor } from "./icons";
 import { usePlan, usePrivat } from "./store";
@@ -60,15 +62,21 @@ export function AppTile({ a, size = 62 }: { a: Addon; size?: number }) {
   return <Tile name={iconFor(a.icon)} size={size} className={`${appTile(a.key)} rounded-[18px] border-2 border-ink ${a.status === "coming_soon" ? "opacity-60 border-dashed" : "shadow-block-sm"}`} />;
 }
 
+/** App pages that open their app sheet (the backend links to them). */
+const APP_PATHS: Record<string, string> = { "/privat/kalender": "kalender", "/privat/foedselsdage": "foedselsdage", "/privat/regninger": "regninger" };
+
 /** Butikken (/privat/butik): icon grid with «Installeret» and «Alle apps»; a tap opens the app sheet. */
 export function StorePage() {
   const t = useT("privat");
   const { addons, openSheet, mode } = usePrivat();
-  // /privat/kalender (also where Google/Microsoft send the user back): open the Kalender app straight away.
-  const hasCalendar = !!addons?.some((a) => a.key === "kalender");
+  // /privat/kalender (also where Google/Microsoft send the user back), /privat/foedselsdage (the reminder's link):
+  // open that app straight away.
+  const loaded = addons !== null && addons !== undefined;
   useEffect(() => {
-    if (hasCalendar && window.location.pathname.startsWith("/privat/kalender")) openSheet({ kind: "addon", addonKey: "kalender" });
-  }, [hasCalendar, openSheet]);
+    if (!loaded) return;
+    const key = Object.entries(APP_PATHS).find(([p]) => window.location.pathname.startsWith(p))?.[1];
+    if (key) openSheet({ kind: "addon", addonKey: key });
+  }, [loaded, openSheet]);
   const p = usePlan();
   const all = addons ?? [];
   const installed = all.filter((a) => a.enabled);
@@ -179,6 +187,8 @@ export function AddonDetail({ a }: { a: Addon }) {
       ) : a.enabled ? (
         <>
           {a.key === "kalender" && mode !== "demo" && <CalendarPanel />}
+          {a.key === "foedselsdage" && mode !== "demo" && <BirthdaysPanel />}
+          {a.key === "regninger" && mode !== "demo" && <BillsPanel />}
           <Button className={`${BIG} rounded-full`} onClick={open} aria-label={`${t("store.open")}: ${name}`}>{t("store.open")}</Button>
           <Button variant="outline" className="rounded-full border-2" onClick={() => openSheet({ kind: "addonOff", addonKey: a.key })} aria-label={`${t("addons.disable")}: ${name}`}>{t("addons.disable")}</Button>
         </>

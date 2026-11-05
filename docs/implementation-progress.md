@@ -2,6 +2,37 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 34 — 5. november 2026 (Privat-appen «Regninger»)
+
+Tredje af de otte apps. Se `docs/privat-api.md` «Regninger». Appen er nu `available` (Plus og Familie). Dialogbot betaler aldrig.
+
+| Del | Status | Bevis |
+|---|---|---|
+| `private_bills` (migration `b8d4f1a6c2e7`, navngivne constraints, unik pr. navn, op/ned/op) | testet | `alembic check` rent |
+| Beløb («640 kr.», «1.250,50»), forfald pr. dag i måneden eller dato, hyppigheder, «den 31.» i korte måneder, engangsregninger | testet | `tests/test_privat_bills.py` |
+| Påmindelse én gang pr. forfaldsdato, tidligst kl. 08, rykker videre efter forfald, kun med appen slået til | testet | samme |
+| Månedsoverblik med sum af kendte beløb; chat: gem, overblik, fjern; tilbud om appen | testet med testmodellen | samme |
+| Web: panel i app-arket og `/privat/regninger`, 8 sprog | typecheck + i18n-paritet | `npx tsc`, `scripts/i18n-check.mjs` |
+
+**Ikke eksternt verificeret:** påmindelsen er ikke set modtaget som push på en rigtig telefon. Månedsoverblikket står i appen og i
+chatten, ikke på «Min dag» (som butiksteksten tidligere lovede – teksten er rettet).
+
+## Checkpoint 33 — 5. november 2026 (Privat-appen «Fødselsdage»)
+
+Anden af de otte apps. Se `docs/privat-api.md` «Fødselsdage». Appen er nu `available` (Plus og Familie).
+
+| Del | Status | Bevis |
+|---|---|---|
+| `private_birthdays` (migration `a7c3e9f2b4d6`, navngivne constraints, unik pr. navn, op/ned/op) | testet | `alembic check` rent |
+| Datolæsning («14. marts», «14.03.1946», ISO), umulige datoer afvist, 29. februar, alder | testet | `tests/test_privat_birthdays.py` |
+| Påmindelse én gang pr. år, tidligst kl. 08, misset påmindelse indhentes, kun med appen slået til; push eller e-mail | testet | samme (også via `run_schedules`) |
+| Chat: gem flere på én gang, ret dato, vis kommende, fjern; tilbud om appen, når den er slået fra | testet med testmodellen | samme |
+| API med isolation mellem konti | testet | samme |
+| Web: panel i app-arket og `/privat/foedselsdage`, 8 sprog | typecheck + i18n-paritet | `npx tsc`, `scripts/i18n-check.mjs` |
+
+**Ikke eksternt verificeret:** påmindelsen er ikke set modtaget som push på en rigtig telefon; gaveforslag er ikke automatiske
+(påmindelsen siger, at man kan bede Peter om idéer).
+
 ## Checkpoint 32 — 5. november 2026 (Privat-appen «Kalender»)
 
 Første af de otte «kommer snart»-apps. Se `docs/privat-api.md` «Kalender». Godkendte aftaler (bekræftede opkald, bekræftede

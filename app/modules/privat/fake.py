@@ -82,6 +82,43 @@ def respond(model: str, system: str, messages: list[dict], tools: list[dict] | N
             return _call(model, "share_list", {"with_name": who.group(1) if who else "",
                                                **({"mode": "wishlist"} if "ønske" in low else {})})
         return suggest("oenskelister" if "ønske" in low else "delte-lister") or _done(model, "Det kan jeg ikke endnu.")
+    if re.search(r"\bregning|\bforfald", low):
+        if "add_bills" not in names:
+            return suggest("regninger") or _done(model, "Regninger er ikke slået til.")
+        if re.search(r"\b(fjern|slet)\b", low):
+            who = re.search(r"\b(?:fjern|slet)\s+(?:regningen\s+)?(?:for\s+)?(.+?)\s*[.!]?$", text, re.I)
+            return _call(model, "remove_bill", {"name": (who.group(1) if who else "").strip("«»")})
+        m = re.search(r"(?:regning(?:en)?\s+(?:for|til)\s+)?([A-ZÆØÅ][\wæøåÆØÅ-]*(?:\s+[a-zæøå][\wæøå-]*)?)\s+"
+                      r"(?:den|d\.)\s+(\d{1,2})\.?\s+(hver måned|hvert kvartal|hvert år)", text)
+        if not m:
+            return _call(model, "bills_overview", {})
+        freq = {"hver måned": "monthly", "hvert kvartal": "quarterly", "hvert år": "yearly"}[m.group(3)]
+        item: dict = {"name": m.group(1), "due_day": int(m.group(2)), "frequency": freq}
+        amt = re.search(r"(\d[\d.]*(?:,\d{1,2})?)\s*kr", text)
+        if amt:
+            item["amount"] = amt.group(1) + " kr."
+        return _call(model, "add_bills", {"items": [item]})
+    if re.search(r"fødselsdag|fylder\s+\d|fylder år", low):
+        if "add_birthdays" not in names:
+            return suggest("foedselsdage") or _done(model, "Fødselsdage er ikke slået til.")
+        if re.search(r"\b(fjern|slet)\b", low):
+            who = re.search(r"\b(?:fjern|slet)\s+(.+?)(?:s)?\s+fødselsdag", text, re.I)
+            return _call(model, "remove_birthday", {"name": who.group(1) if who else ""})
+        date_rx = (r"(\d{1,2}\.?\s*(?:januar|februar|marts|april|maj|juni|juli|august|september|oktober|november|december)"
+                   r"(?:\s+\d{4})?|\d{1,2}[./]\d{1,2}(?:[./]\d{4})?)")
+        items = []
+        for m in re.finditer(r"([A-ZÆØÅ][\wæøåÆØÅ]*(?:\s+[A-ZÆØÅ][\wæøåÆØÅ]*)?)(?:s\s+fødselsdag\s+er|\s+har\s+fødselsdag|\s+fylder\s+\d+)"
+                             r"\s+(?:den\s+|d\.\s*)?" + date_rx, text):
+            items.append({"name": m.group(1), "date": m.group(2)})
+        if not items:
+            return _call(model, "list_birthdays", {})
+        uge = 7 if "en uge før" in low else None
+        n = re.search(r"(\d+)\s+dage\s+før", low)
+        days = int(n.group(1)) if n else uge
+        for it in items:
+            if days is not None:
+                it["remind_days_before"] = days
+        return _call(model, "add_birthdays", {"items": items})
     if "kalender" in low:
         if re.search(r"\blæg\b", low) and re.search(r"kl\.?\s*\d", low) and "add_to_calendar" in names:
             what = re.sub(r"^.*?\blæg\s+(?:tiden\s+)?(?:hos\s+)?", "", text, flags=re.I)

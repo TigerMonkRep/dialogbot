@@ -247,8 +247,8 @@ register(Addon(
 
 register(Addon(
     key="foedselsdage", name="Fødselsdage", tagline="Glem aldrig en fødselsdag igen",
-    description="Peter husker familiens og vennernes fødselsdage og minder dig om dem i god tid – med et forslag til en gave.",
-    icon="cake", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    description="Peter husker familiens og vennernes fødselsdage og minder dig om dem i god tid.",
+    icon="cake", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
     what="Fortæl Peter, hvem der har fødselsdag hvornår. Han minder dig om det nogle dage før, så du kan nå at købe "
          "en gave eller sende en hilsen.",
     example="«Mors fødselsdag er den 14. marts – mind mig om det en uge før»",
@@ -257,6 +257,23 @@ register(Addon(
            "Peter minder dig om det hvert år"),
     included_in=("plus", "familie"),
     permissions=("Gemmer navne og fødselsdatoer, du giver assistenten",), keywords=("fødselsdag", "fylder år"),
+    tools=(AddonTool(
+        "add_birthdays",
+        "Gem en eller flere fødselsdage, brugeren har fortalt om. date er fx «14. marts», «14.03.1946» eller "
+        "«1946-03-14» – kun det brugeren skrev; gæt aldrig et år. Samme navn igen retter datoen.",
+        _obj({"items": {"type": "array", "items": _obj(
+            {"name": {"type": "string"}, "date": {"type": "string"},
+             "remind_days_before": {"type": "integer", "description": "Kun hvis brugeren sagde det (0 = på dagen)"}},
+            ["name", "date"])}}, ["items"]),
+        "app.modules.privat.chat:tool_add_birthdays"),
+        AddonTool(
+            "list_birthdays",
+            "Vis de kommende fødselsdage (de næste 45 dage, ellers den næste).",
+            _obj({}), "app.modules.privat.chat:tool_list_birthdays"),
+        AddonTool(
+            "remove_birthday",
+            "Fjern en gemt fødselsdag (navnet som brugeren skrev det).",
+            _obj({"name": {"type": "string"}}, ["name"]), "app.modules.privat.chat:tool_remove_birthday")),
 ))
 
 register(Addon(
@@ -290,15 +307,31 @@ register(Addon(
 register(Addon(
     key="regninger", name="Regninger", tagline="Bliv mindet om regninger, før de forfalder",
     description="Peter husker faste regninger og abonnementer og minder dig om dem, før de skal betales – så du undgår rykkere.",
-    icon="receipt", category="hverdag", price_text="Med i Plus og Familie", pricing="free", status="coming_soon",
+    icon="receipt", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
     what="Fortæl Peter om dine faste regninger – husleje, forsikring, streaming – og hvornår de forfalder. Han "
          "minder dig om dem i tide og viser dig månedens overblik. Peter betaler aldrig noget selv.",
     example="«Mind mig om bilforsikringen den 1. hver måned – den er 640 kr.»",
     steps=("Sig regningerne og deres dato til Peter", "Vælg hvor mange dage før, du vil have besked",
-           "Se månedens regninger samlet på Min dag"),
+           "Se månedens regninger samlet i appen – eller spørg Peter"),
     included_in=("plus", "familie"),
     permissions=("Gemmer regningernes navn, beløb og dato, som du selv skriver dem", "Har aldrig adgang til din bank"),
     keywords=("regning", "regninger", "abonnement", "forfalder"),
+    tools=(AddonTool(
+        "add_bills",
+        "Gem en eller flere faste regninger, brugeren har fortalt om. Peter betaler ALDRIG selv. Send due_day (dag i "
+        "måneden, fx 1) eller due_date (næste forfaldsdato, YYYY-MM-DD), amount kun hvis brugeren sagde beløbet, og "
+        "frequency: monthly | quarterly | half_yearly | yearly | once. Samme navn igen retter regningen.",
+        _obj({"items": {"type": "array", "items": _obj(
+            {"name": {"type": "string"}, "amount": {"type": "string", "description": "Fx «640 kr.»"},
+             "frequency": {"type": "string", "enum": ["monthly", "quarterly", "half_yearly", "yearly", "once"]},
+             "due_day": {"type": "integer"}, "due_date": {"type": "string"},
+             "remind_days_before": {"type": "integer", "description": "Kun hvis brugeren sagde det"}},
+            ["name"])}}, ["items"]),
+        "app.modules.privat.chat:tool_add_bills"),
+        AddonTool("bills_overview", "Vis månedens regninger med datoer og samlet beløb.", _obj({}),
+                  "app.modules.privat.chat:tool_bills_overview"),
+        AddonTool("remove_bill", "Fjern en gemt regning (navnet som brugeren skrev det).",
+                  _obj({"name": {"type": "string"}}, ["name"]), "app.modules.privat.chat:tool_remove_bill")),
 ))
 
 register(Addon(

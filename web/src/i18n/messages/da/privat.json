@@ -10,7 +10,9 @@
     "people": "Mine folk",
     "invite": "Invitation",
     "groupJoin": "Kom med i gruppen",
-    "calendar": "Kalender"
+    "calendar": "Kalender",
+    "birthdays": "Fødselsdage",
+    "bills": "Regninger"
   },
   "brand": {
     "privat": "Privat",
@@ -1112,5 +1114,55 @@
     "addToCalendar": "Tilføj til kalender",
     "remove": "Fjern fra kalender",
     "removeNote": "«Fjern fra kalender» aflyser ikke tiden hos virksomheden."
+  },
+  "birthdays": {
+    "title": "Kommende fødselsdage",
+    "loading": "Henter fødselsdage …",
+    "none": "Ingen fødselsdage endnu. Skriv fx «Mors fødselsdag er den 14. marts» til Peter, eller tilføj én her.",
+    "today": "i dag",
+    "tomorrow": "i morgen",
+    "inDays": "om {n} dage",
+    "turns": "fylder {n}",
+    "remind": "Påmindelse",
+    "onTheDay": "på dagen",
+    "daysBefore": "{n} dage før",
+    "remove": "Fjern",
+    "add": "Tilføj fødselsdag",
+    "name": "Navn",
+    "namePlaceholder": "Navn, fx Mor",
+    "date": "Dato",
+    "datePlaceholder": "Dato, fx 14. marts eller 14.03.1946",
+    "save": "Gem",
+    "hint": "Skriver du året, fortæller Peter også, hvor gammel personen bliver."
+  },
+  "bills": {
+    "title": "Dine regninger",
+    "loading": "Henter regninger …",
+    "none": "Ingen regninger endnu. Skriv fx «Mind mig om forsikringen den 1. hver måned – den er 640 kr.» til Peter, eller tilføj én her.",
+    "month": "Regninger i {month}",
+    "withoutAmount": "+ {n} uden beløb",
+    "today": "i dag",
+    "tomorrow": "i morgen",
+    "inDays": "om {n} dage",
+    "remind": "Påmindelse",
+    "onTheDay": "på dagen",
+    "daysBefore": "{n} dage før",
+    "remove": "Fjern",
+    "add": "Tilføj regning",
+    "name": "Navn",
+    "namePlaceholder": "Navn, fx Husleje",
+    "amount": "Beløb",
+    "amountPlaceholder": "Beløb (valgfrit), fx 640",
+    "nextDue": "Næste forfaldsdato",
+    "how": "Hvor ofte",
+    "save": "Gem",
+    "never": "Peter betaler aldrig selv og har ikke adgang til din bank.",
+    "freq": {
+      "monthly": "hver måned",
+      "quarterly": "hvert kvartal",
+      "half_yearly": "hvert halve år",
+      "yearly": "hvert år",
+      "once": "én gang"
+    }
   }
 }

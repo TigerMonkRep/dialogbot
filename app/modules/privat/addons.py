@@ -325,7 +325,7 @@ register(Addon(
         AddonTool(
             "save_meal_plan",
             "Gem en madplan, når brugeren har sagt ja til dit forslag (foreslå den først i tekst). days: én pr. dag med "
-            "retten, servings (hvor mange personer mængderne er til) og ingredienserne med mængde og enhed først (fx "
+            "retten, servings (ALTID: hvor mange personer netop dine mængder er til – også krydderier, smør og grønt) og ingredienserne med mængde og enhed først (fx "
             "«500 g hakket oksekød», «1 dåse hakkede tomater», «2 løg»). people: hvor mange planen er til (brugerens "
             "tal, ellers husstandens) – mængderne regnes om og lægges sammen på indkøbslisten. Respekter altid det, "
             "husstanden ikke spiser. shopping_list: lav indkøbslisten (standard ja).",
@@ -333,7 +333,7 @@ register(Addon(
                   "people": {"type": "integer"},
                   "days": {"type": "array", "items": _obj(
                       {"day": {"type": "string"}, "dish": {"type": "string"}, "servings": {"type": "integer"},
-                       "ingredients": {"type": "array", "items": {"type": "string"}}}, ["dish"])},
+                       "ingredients": {"type": "array", "items": {"type": "string"}}}, ["dish", "servings"])},
                   "shopping_list": {"type": "boolean"}}, ["days"]),
             "app.modules.privat.chat:tool_save_meal_plan")),
 ))
@@ -554,9 +554,10 @@ register(Addon(
         "request_quotes",
         "Find op til 3 lokale virksomheder og foreslå et opkald til hver for at få et tilbud. job: opgaven med brugerens "
         "egne ord (fx «male stuen, ca. 30 m²»), trade: søgeord for virksomheden (fx «maler», «flyttefirma»), city: by "
-        "eller postnummer. Der ringes ALDRIG før brugeren godkender hvert opkald.",
+        "eller postnummer. address: KUN hvis brugeren selv har skrevet adressen og sagt, at håndværkerne må få den (til "
+        "en besigtigelse). Der ringes ALDRIG før brugeren godkender hvert opkald.",
         _obj({"job": {"type": "string"}, "trade": {"type": "string"}, "city": {"type": "string"},
-              "window": {"type": "string"}}, ["job", "trade"]),
+              "window": {"type": "string"}, "address": {"type": "string"}}, ["job", "trade"]),
         _H + "tool_request_quotes"),
         AddonTool("compare_quotes", "Vis tilbuddene side om side (seneste opgave, eller den med job).",
                   _obj({"job": {"type": "string"}}), _H + "tool_compare_quotes"),
@@ -611,8 +612,12 @@ register(Addon(
         _H + "tool_add_purchase"),
         AddonTool("purchases_overview", "Vis de gemte køb og hvor længe der er reklamationsret.", _obj({}),
                   _H + "tool_purchases_overview"),
-        AddonTool("write_complaint", "Skriv en reklamation til butikken om en gemt ting: product og problem (fejlen).",
-                  _obj({"product": {"type": "string"}, "problem": {"type": "string"}}, ["product", "problem"]),
+        AddonTool("write_complaint",
+                  "Skriv en reklamation til butikken om en gemt ting: product og problem (fejlen med brugerens ord). "
+                  "remedy kun hvis brugeren har sagt, hvad de vil have: repair, replace, refund eller discount.",
+                  _obj({"product": {"type": "string"}, "problem": {"type": "string"},
+                        "remedy": {"type": "string", "enum": ["repair", "replace", "refund", "discount"]}},
+                       ["product", "problem"]),
                   _H + "tool_write_complaint")),
 ))
 
@@ -642,7 +647,9 @@ register(Addon(
                         "status": {"type": "string", "enum": ["yes", "no", "maybe"]}, "bring": {"type": "string"},
                         "diet": {"type": "string"}}, ["name"]),
                   _H + "tool_update_guest"),
-        AddonTool("party_status", "Vis festen: hvem kommer, hvem tager hvad med, allergier.",
+        AddonTool("party_status",
+                  "Vis festen: hvem kommer, hvem tager hvad med, allergier. Vil brugeren have maden til festen, så brug "
+                  "save_meal_plan (appen Madplan) med people = antal, der kommer, og respektér allergierne.",
                   _obj({"party": {"type": "string"}}), _H + "tool_party_status"),
         AddonTool("write_invitation", "Skriv invitationen til festen, som brugeren selv sender. note: ekstra tekst.",
                   _obj({"party": {"type": "string"}, "note": {"type": "string"}}), _H + "tool_write_invitation")),
@@ -690,7 +697,8 @@ register(Addon(
         "flea_every_months, last_treatment (YYYY-MM-DD). Gæt aldrig en dato.",
         _obj({"name": {"type": "string"}, "kind": {"type": "string"}, "vaccination_due": {"type": "string"},
               "insurance_renews": {"type": "string"}, "worming_every_months": {"type": "integer"},
-              "flea_every_months": {"type": "integer"}, "last_treatment": {"type": "string"}}, ["name"]),
+              "flea_every_months": {"type": "integer"}, "last_treatment": {"type": "string"},
+              "chip": {"type": "string", "description": "Chipnummeret (15 cifre), kun som brugeren skrev det"}}, ["name"]),
         _H + "tool_save_pet"),
         AddonTool("save_vet", "Gem dyrlægen: navn og det nummer, brugeren selv har skrevet.",
                   _obj({"name": {"type": "string"}, "phone": {"type": "string"}}, ["name", "phone"]),
@@ -719,10 +727,13 @@ register(Addon(
     keywords=("røgalarm", "tagrende", "emhætte", "vedligehold", "fyr", "varmepumpe", "skorsten"),
     tools=(AddonTool(
         "add_home_tasks",
-        "Tilføj faste opgaver i hjemmet. names: standardopgaver (fx «røgalarm», «tagrender», «fyr», eller «alle»). "
-        "custom + every_months (+ next_due YYYY-MM-DD): en egen opgave.",
+        "Tilføj faste opgaver i hjemmet. names: standardopgaver (fx «røgalarm», «tagrender», «fyr», eller «alle» – så "
+        "vælges dem, der passer til boligen). custom + every_months (+ next_due YYYY-MM-DD): en egen opgave. Boligen, "
+        "hvis brugeren har fortalt om den: home (hus/lejlighed/rækkehus/sommerhus), heating (fyr/varmepumpe/fjernvarme/"
+        "elvarme), chimney (true/false).",
         _obj({"names": _STR_LIST, "custom": {"type": "string"}, "every_months": {"type": "integer"},
-              "next_due": {"type": "string"}}),
+              "next_due": {"type": "string"}, "home": {"type": "string"}, "heating": {"type": "string"},
+              "chimney": {"type": "boolean"}}),
         _H + "tool_add_home_tasks"),
         AddonTool("home_task_done", "Brugeren har gjort en opgave: ryk den til næste gang.",
                   _obj({"name": {"type": "string"}}, ["name"]), _H + "tool_home_task_done"),
@@ -800,25 +811,31 @@ def included(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None
 
 
 def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> dict:
+    """The shop card. Its texts say the name (and han/hun/den) the user gave the assistant."""
+    from app.models import PrivateProfile
+    from app.modules.privat import naming
+
+    prof = db.get(PrivateProfile, ws_id)
+    name, pron = naming.of(prof), naming.pronoun_of(prof)
+
+    def p(x):
+        return naming.personalize(x, name, pron)
+
     row = db.get(PrivateAddonEnabled, (ws_id, a.key))
     on = row is not None and a.live_status != "coming_soon"
-    return {"key": a.key, "name": a.name, "tagline": a.tagline, "description": a.description, "icon": a.icon,
+    return {"key": a.key, "name": a.name, "tagline": p(a.tagline), "description": p(a.description), "icon": a.icon,
             "category": a.category, "price_text": a.price_text, "pricing": a.pricing,
-            "monthly_price_minor": a.monthly_price_minor, "status": a.live_status, "permissions": list(a.permissions),
+            "monthly_price_minor": a.monthly_price_minor, "status": a.live_status, "permissions": p(list(a.permissions)),
             "requires": list(a.requires), "enabled": on, "enabled_at": row.enabled_at.isoformat() if on else None,
-            "what": a.what, "example": a.example, "steps": list(a.steps), "included_in": list(a.included_in),
+            "what": p(a.what), "example": p(a.example), "steps": p(list(a.steps)), "included_in": list(a.included_in),
             "included": included(db, ws_id, a, ent), "requires_plan": bool(a.included_in)}
 
 
 def catalog_out(db: OrmSession, ws_id: uuid.UUID) -> list[dict]:
-    from app.models import PrivateProfile
-    from app.modules.privat import naming, subscriptions
+    from app.modules.privat import subscriptions
 
     ent = subscriptions.entitlements(db, ws_id)
-    name = naming.of(db.get(PrivateProfile, ws_id))
-    keys = ("tagline", "description", "what", "example", "steps", "permissions", "price_text")
-    return [{**o, **{k: naming.personalize(o[k], name) for k in keys}}
-            for o in (out(db, ws_id, a, ent) for a in CATALOG.values())]
+    return [out(db, ws_id, a, ent) for a in CATALOG.values()]
 
 
 def enable(db: OrmSession, ws_id: uuid.UUID, key: str) -> Addon:

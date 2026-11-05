@@ -41,6 +41,8 @@ export type Task = {
   /** History, newest last. */
   events: TaskEvent[];
   // Shared lists (contract: «Tilføjelse: delte lister»). Optional so a backend without them still type-checks.
+  /** A shopping list's grocery partner (always an advertisement), or null. */
+  partner?: AppPartner | null;
   list_type?: ListType | null; shared?: boolean; share_mode?: ShareMode | null; my_role?: MemberRole;
   members?: Member[]; updated_at?: string;
   /** Kalender app: the agreed time saved from this task (call or booking), when there is one. */
@@ -53,6 +55,8 @@ export type Balance = {
   push_enabled?: boolean; location_city?: string | null;
   /** What the assistant is called (default «Peter»). */
   assistant_name?: string;
+  /** How the texts refer to it: han | hun | den. */
+  assistant_pronoun?: "han" | "hun" | "den";
   // Subscription summary (privat-abonnement-brief): the same numbers as GET /privat/subscription, so the header and
   // the paywall need only /me. Optional until the backend sends them.
   plan?: SubscriptionPlan; plan_status?: SubscriptionStatus; trial_days_left?: number;
@@ -202,7 +206,7 @@ export interface PrivatApi {
   /** One request for everything the shell shows (GET /privat/bootstrap). */
   bootstrap(): Promise<Bootstrap>;
   setLocation(body: LocationBody): Promise<Balance>;
-  setAssistantName(name: string): Promise<Balance>;
+  setAssistantName(name: string, pronoun?: "han" | "hun" | "den"): Promise<Balance>;
   /** The app language, saved on the user (PATCH /auth/me) so e-mails and other devices follow it. */
   setLocale(locale: string): Promise<unknown>;
   pushPublicKey(): Promise<{ public_key: string }>;
@@ -270,13 +274,14 @@ export interface PrivatApi {
   // The household apps (Abonnementer, Håndværker & tilbud, Fælles udgifter, Garanti, Fest, Flytning, Kæledyr, Hus, Fitness)
   appOverview(key: string): Promise<AppOverview>;
   removeAppItem(key: string, id: string): Promise<void>;
+  uploadAppPhoto(key: string, id: string, file: Blob): Promise<{ ok: boolean }>;
 }
 
 // ---------- Household apps (one generic overview) ----------
 export type AppPartner = { category: string; name: string; url: string; text: string; note: string };
 export type AppOverview = {
   summary: string;
-  items: { id: string; text: string; sub: string; share_text?: string }[];
+  items: { id: string; text: string; sub: string; share_text?: string; photo?: boolean; photo_url?: string | null }[];
   partner: AppPartner | null;
 };
 
@@ -385,7 +390,7 @@ export const realPrivat: PrivatApi = {
   },
   bootstrap: () => api(`${P}/bootstrap`),
   setLocation: (body) => api(`${P}/me/location`, { method: "PATCH", body: JSON.stringify(body) }),
-  setAssistantName: (name) => api(`${P}/me/assistant`, { method: "PATCH", body: JSON.stringify({ name }) }),
+  setAssistantName: (name, pronoun) => api(`${P}/me/assistant`, { method: "PATCH", body: JSON.stringify({ name, pronoun: pronoun ?? null }) }),
   setLocale: (locale) => api("/auth/me", { method: "PATCH", body: JSON.stringify({ locale }) }),
   pushPublicKey: () => api(`${P}/push/public-key`),
   pushSubscribe: (body) => api(`${P}/push/subscriptions`, json(body)),
@@ -437,6 +442,8 @@ export const realPrivat: PrivatApi = {
   refreshParcel: (number) => api(`${P}/parcels/${enc(number)}/refresh`, json({})),
   appOverview: (key) => api(`${P}/apps/${enc(key)}/overview`),
   removeAppItem: (key, id) => api(`${P}/apps/${enc(key)}/items/${enc(id)}`, { method: "DELETE" }),
+  uploadAppPhoto: (key, id, file) => api(`${P}/apps/${enc(key)}/items/${enc(id)}/photo`,
+    { method: "POST", body: file, headers: { "content-type": file.type || "application/octet-stream" } }),
   searchTrips: (body) => api(`${P}/trips/search`, json(body)),
   latestTrips: () => api(`${P}/trips/latest`),
 };

@@ -68,6 +68,7 @@ def balance_out(db: OrmSession, ctx) -> dict:
             "phone_display": rules.phone_display(p.phone_e164) if p.phone_verified_at else None,
             "phone_verified": p.phone_verified_at is not None, "push_enabled": _push_enabled(db, ctx.user_id),
             "location_city": p.location_city, "assistant_name": naming.of(p),
+            "assistant_pronoun": naming.pronoun_of(p),
             # the subscription (docs/privat-api.md): trial counts as Plus; credits are "ekstra opkald" beyond the quota
             "plan": ent["plan"], "plan_status": ent["status"], "trial_days_left": ent["trial_days_left"],
             "calls_quota": ent["calls_quota"], "calls_used": ent["calls_used"], "calls_left": ent["calls_left"],
@@ -475,7 +476,15 @@ def task_out(db: OrmSession, task: PrivateTask, viewer_id: uuid.UUID) -> dict:
         "list_type": task.list_type, "shared": task.share_mode is not None, "share_mode": task.share_mode,
         "my_role": role, "members": sharing.members_out(db, task, viewer_id) if task.share_mode else [],
         "appointment": _appointment_ref(db, task) if is_owner and task.kind == "call" else None,
+        # a shopping list can be ordered from a grocery partner (always shown as «Annonce»; none until configured)
+        "partner": _grocery_partner() if task.list_type == "shopping" else None,
     }
+
+
+def _grocery_partner() -> dict | None:
+    from app.modules.privat import brand
+
+    return brand.offer("dagligvarer")
 
 
 def _appointment_ref(db: OrmSession, task: PrivateTask) -> dict | None:

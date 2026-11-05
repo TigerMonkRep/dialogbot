@@ -311,8 +311,8 @@
     "cost": "Chiamata dell'assistente: massimo {n} crediti",
     "costTime": "(fino a 3 min.)",
     "refund": "Se nessuno risponde, è occupato o risponde la segreteria, riavrai i tuoi crediti.",
-    "price": "Il prezzo dell'officina è un'altra cosa – non lo concordo io, ma ti riferisco cosa dicono.",
-    "shareQ": "L'officina può avere il tuo numero?",
+    "price": "Il prezzo dell'azienda è un'altra cosa – non lo concordo io, ma ti riferisco cosa dicono.",
+    "shareQ": "L'azienda può avere il tuo numero?",
     "shareHint": "Così possono chiamarti se qualcosa cambia.",
     "needCredits": "Hai {have} crediti. La chiamata ne richiede {need}.",
     "phoneStep": "Prima conferma il tuo numero di cellulare",
@@ -332,15 +332,15 @@
     "saveEdit": "Salva la modifica",
     "simulatedCall": "Chiamata simulata",
     "calling": "Sto chiamando {name} …",
-    "reserved": "{n} crediti sono riservati. Vengono addebitati solo se l'officina risponde.",
+    "reserved": "{n} crediti sono riservati. Vengono addebitati solo se l'azienda risponde.",
     "realWait": "Ti avviseremo qui quando la chiamata sarà finita.",
     "chooseOutcome": "Simulazione: scegli l'esito",
-    "outcomeAnswered": "L'officina risponde",
+    "outcomeAnswered": "L'azienda risponde",
     "outcomeNoAnswer": "Nessuno risponde",
-    "confirmedBy": "Confermato dall'officina",
+    "confirmedBy": "Confermato dall'azienda",
     "isConfirmed": "{text} è confermato",
-    "reply": "Risposta dell'officina:",
-    "priceAt": "Prezzo dell'officina",
+    "reply": "Risposta dell'azienda:",
+    "priceAt": "Prezzo dell'azienda",
     "priceNote": "(indicato nella chiamata)",
     "assistantCall": "Chiamata dell'assistente",
     "callUsage": "{n} crediti · {duration}",
@@ -356,7 +356,7 @@
     "outsideHours": "L'azienda ora è chiusa. Riprova durante l'orario di apertura.",
     "seeProposal": "Vedi la proposta e approva",
     "outcomeLabel": "Esito",
-    "outcomeConfirmed": "Esito · confermato dall'officina",
+    "outcomeConfirmed": "Esito · confermato dall'azienda",
     "agreement": "Accordo",
     "theCall": "La chiamata",
     "plannedTitle": "Chiamerò {name} {when}, quando aprono",
@@ -954,6 +954,9 @@
       "title": "Chi c'è a casa?",
       "help": "Così hai le liste giuste fin dall'inizio.",
       "household": {
+    "photoAdd": "Aggiungi foto dello scontrino",
+    "photoReplace": "Sostituisci foto",
+    "photoOpen": "Vedi foto",
         "alone": {
           "label": "Solo io",
           "hint": "Lista della spesa"
@@ -1172,6 +1175,7 @@
     }
   },
   "assistantName": {
+    "pronoun": "Pronome (testi danesi)",
     "label": "Nome dell'assistente",
     "hint": "Solo nell'app e nella chat: quando chiama o scrive, dice «Dialogbot»."
   },

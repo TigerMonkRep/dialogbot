@@ -555,3 +555,13 @@ def test_public_lookups_are_rate_limited(api, pv, db):
         assert get(good[0], "10.5.5.5").status_code == 429
     finally:
         lookup_limits.GLOBAL_MISSES_PER_HOUR = old
+
+
+def test_konto_reuses_one_invite_link(api, pv, db):
+    """Konto asked for the link on every visit and made a new invitation each time («Inviteret» 7 → 9 → 11)."""
+    mette = pv.account("mette@testmail.dk")
+    first = api.post(mette, "/privat/referrals/link").json()
+    again = api.post(mette, "/privat/referrals/link").json()
+    assert again["short_code"] == first["short_code"] and again["short_url"] == first["short_url"]
+    assert db.query(PrivateInvite).filter_by(resource_type="dialogbot").count() == 1
+    assert api.get(mette, "/privat/referrals").json()["invited"] == 0

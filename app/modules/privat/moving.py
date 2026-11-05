@@ -28,17 +28,17 @@ def _today() -> date:
     return rules.local().date()
 # (days before the move – negative = after, text, partner category)
 CHECKLIST = (
-    (60, "Opsig lejemålet eller sæt boligen til salg", None),
+    (90, "Opsig lejemålet (typisk 3 måneders varsel) eller sæt boligen til salg", None),
     (45, "Få tilbud fra flyttefirmaer – eller book en trailer", "flyttefirma"),
     (30, "Flyt eller opsig internet og tv", "internet"),
     (30, "Giv institution, skole og arbejde besked", None),
     (21, "Flyt el-aftalen til den nye adresse", "el"),
     (21, "Flyt indboforsikringen", "forsikring"),
     (14, "Bestil flyttekasser og pakkemateriale", None),
-    (7, "Meld flytning på borger.dk (senest 5 dage efter)", None),
     (7, "Giv bank, læge, tandlæge og abonnementer den nye adresse", None),
     (2, "Pak en kasse med det, I skal bruge den første nat", None),
     (0, "Aflæs el, vand og varme i begge boliger – tag billeder", None),
+    (-1, "Meld flytning på borger.dk (fra flyttedagen og senest 5 dage efter)", None),
     (-3, "Tjek at posten kommer frem på den nye adresse", None),
 )
 
@@ -50,12 +50,29 @@ def plan(db: OrmSession, ctx, *, moving_day: str, to: str = "") -> tuple[Private
         raise ValidationFailed("Flyttedagen ligger i fortiden", field_errors=[{"field": "moving_day"}])
     to = kit.clean(to, 100)
     items = [f"{text} ({kit.date_text((day - timedelta(days=n)).isoformat())})" for n, text, _ in CHECKLIST]
+    items += _from_other_apps(db, ctx.ws_id, day)
     task = service.create_digital(db, ctx, kind="list", title=f"Flytning{': ' + to if to else ''}"[:300], items=items,
                                   list_type="todo")
     task.next_step = f"Flyttedag {kit.date_text(d)}"
     move = {"id": kit.new_id(), "day": d, "to": to, "task_id": str(task.id)}
     kit.save_items(db, ctx.ws_id, ADDON, [move])   # one move at a time
     return task, move
+
+
+def _from_other_apps(db: OrmSession, ws_id: uuid.UUID, day: date) -> list[str]:
+    """The move touches the other apps: the subscriptions tied to the address (Abonnementer) and the home's jobs."""
+    from app.modules.privat import addons, subs_app
+
+    out = []
+    if addons.is_enabled(db, ws_id, subs_app.ADDON):
+        tied = [r["name"] for r in kit.items(db, ws_id, subs_app.ADDON)
+                if r.get("status") != "cancelled" and r.get("category") in ("internet", "el", "forsikring")]
+        if tied:
+            out.append(f"Flyt eller opsig {', '.join(tied[:6])} ({kit.date_text((day - timedelta(days=30)).isoformat())})")
+    if addons.is_enabled(db, ws_id, "hus-og-vedligehold"):
+        out.append(f"Vælg de faste opgaver i det nye hjem i Hus & vedligehold "
+                   f"({kit.date_text((day + timedelta(days=7)).isoformat())})")
+    return out
 
 
 def partner_lines() -> list[str]:

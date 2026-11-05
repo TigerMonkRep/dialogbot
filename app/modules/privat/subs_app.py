@@ -104,7 +104,8 @@ def overview(db: OrmSession, ws_id: uuid.UUID) -> dict:
     return {"summary": (f"{len(active)} abonnementer – {kit.money(total)} om måneden, {kit.money(total * 12)} om året."
                         if active else "Ingen abonnementer endnu. Fortæl Peter, hvad I betaler for."),
             "items": [{"id": r["id"], "text": line(r), "sub": (f"Sidste dag at opsige: {kit.date_text(last_notice_day(r).isoformat())}"
-                                                                 if last_notice_day(r) else r.get("category", ""))}
+                                                                 if last_notice_day(r) else
+                                                                 ("" if r.get("category") == "andet" else r.get("category", "").capitalize()))}
                       for r in sorted(active, key=lambda r: -monthly_minor(r))],
             "partner": partner}
 

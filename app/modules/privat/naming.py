@@ -9,6 +9,8 @@ import re
 from app.core.errors import ValidationFailed
 
 DEFAULT = "Peter"
+PRONOUNS = {"han": ("han", "ham", "hans"), "hun": ("hun", "hende", "hendes"), "den": ("den", "den", "dens")}
+_HAN = re.compile(r"\b(han|ham|hans)\b", re.I)
 _OK = re.compile(r"[A-Za-zÆØÅæøåÄÖÜäöüÉéÈèÁáÍíÓóÚúÑñ' -]{1,20}")
 _PETER = re.compile(r"\bPeter(?=s?\b)")
 # Names the assistant may not take: it would pretend to be the company, a public authority or a person in charge.
@@ -30,14 +32,36 @@ def of(profile) -> str:
     return (getattr(profile, "assistant_name", None) or DEFAULT) if profile is not None else DEFAULT
 
 
-def personalize(text: str, name: str):
-    """«Peter» (and «Peters») in a text, list or dict → the user's name."""
-    if name == DEFAULT or not text:
+def pronoun_of(profile) -> str:
+    p = getattr(profile, "assistant_pronoun", None) if profile is not None else None
+    if p in PRONOUNS:
+        return p
+    return "han" if of(profile) == DEFAULT else "den"   # a chosen name never gets a guessed gender
+
+
+def clean_pronoun(raw: str | None) -> str | None:
+    if raw in (None, ""):
+        return None
+    if raw not in PRONOUNS:
+        raise ValidationFailed("Vælg han, hun eller den", field_errors=[{"field": "pronoun"}])
+    return raw
+
+
+def _swap_pronoun(m: re.Match, pronoun: str) -> str:
+    word = m.group(1)
+    new = PRONOUNS[pronoun][("han", "ham", "hans").index(word.lower())]
+    return new.capitalize() if word[0].isupper() else new
+
+
+def personalize(text, name: str, pronoun: str = "han"):
+    """«Peter» (and «Peters») → the user's name, and han/ham/hans → the chosen pronoun, in a text, list or dict."""
+    if (name == DEFAULT and pronoun == "han") or not text:
         return text
     if isinstance(text, str):
-        return _PETER.sub(name, text)
+        out = _PETER.sub(name, text)
+        return _HAN.sub(lambda m: _swap_pronoun(m, pronoun), out) if pronoun != "han" else out
     if isinstance(text, list):
-        return [personalize(x, name) for x in text]
+        return [personalize(x, name, pronoun) for x in text]
     if isinstance(text, dict):
-        return {k: personalize(v, name) for k, v in text.items()}
+        return {k: personalize(v, name, pronoun) for k, v in text.items()}
     return text

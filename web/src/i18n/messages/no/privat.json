@@ -311,8 +311,8 @@
     "cost": "Assistentens samtale: maks {n} kreditter",
     "costTime": "(opptil 3 min.)",
     "refund": "Svarer ingen, er det opptatt eller en telefonsvarer, får du kredittene tilbake.",
-    "price": "Prisen hos verkstedet er noe annet – den avtaler jeg ikke, men jeg forteller deg hva de sier.",
-    "shareQ": "Kan verkstedet få nummeret ditt?",
+    "price": "Prisen hos bedriften er noe annet – den avtaler jeg ikke, men jeg forteller deg hva de sier.",
+    "shareQ": "Kan bedriften få nummeret ditt?",
     "shareHint": "Da kan de ringe deg hvis noe endrer seg.",
     "needCredits": "Du har {have} kreditter. Samtalen krever {need}.",
     "phoneStep": "Bekreft mobilnummeret ditt først",
@@ -332,15 +332,15 @@
     "saveEdit": "Lagre endringen",
     "simulatedCall": "Simulert samtale",
     "calling": "Ringer {name} …",
-    "reserved": "{n} kreditter er reservert. De trekkes bare hvis verkstedet svarer.",
+    "reserved": "{n} kreditter er reservert. De trekkes bare hvis bedriften svarer.",
     "realWait": "Du får beskjed her når samtalen er ferdig.",
     "chooseOutcome": "Simulering: velg utfall",
-    "outcomeAnswered": "Verkstedet svarer",
+    "outcomeAnswered": "Bedriften svarer",
     "outcomeNoAnswer": "Ingen svarer",
-    "confirmedBy": "Bekreftet av verkstedet",
+    "confirmedBy": "Bekreftet av bedriften",
     "isConfirmed": "{text} er bekreftet",
-    "reply": "Verkstedets svar:",
-    "priceAt": "Pris hos verkstedet",
+    "reply": "Bedriftens svar:",
+    "priceAt": "Pris hos bedriften",
     "priceNote": "(oppgitt i samtalen)",
     "assistantCall": "Assistentens samtale",
     "callUsage": "{n} kreditter · {duration}",
@@ -356,7 +356,7 @@
     "outsideHours": "Bedriften er stengt akkurat nå. Prøv igjen i åpningstiden.",
     "seeProposal": "Se forslaget og godkjenn",
     "outcomeLabel": "Utfall",
-    "outcomeConfirmed": "Utfall · bekreftet av verkstedet",
+    "outcomeConfirmed": "Utfall · bekreftet av bedriften",
     "agreement": "Avtale",
     "theCall": "Samtalen",
     "plannedTitle": "Jeg ringer {name} {when}, når de åpner",
@@ -954,6 +954,9 @@
       "title": "Hvem er dere hjemme?",
       "help": "Så får du de riktige listene fra start.",
       "household": {
+    "photoAdd": "Legg til bilde av kvitteringen",
+    "photoReplace": "Bytt bilde",
+    "photoOpen": "Se bilde",
         "alone": {
           "label": "Meg selv",
           "hint": "Handleliste"
@@ -1172,6 +1175,7 @@
     }
   },
   "assistantName": {
+    "pronoun": "Kall den",
     "label": "Assistentens navn",
     "hint": "Bare i appen og chatten – når assistenten ringer eller skriver, sier den «Dialogbot»."
   },

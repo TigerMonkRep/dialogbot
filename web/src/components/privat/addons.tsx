@@ -138,7 +138,7 @@ export function StorePage() {
 export const AddonsPage = StorePage;
 
 /** Body of the app sheet: icon, name, tag, «Hvad den gør», «Sådan siger du det til Peter», then Installér (→ the setup
- *  steps + «Start opsætningen» = enable) or Åbn. Without rights the «Med i Plus» offer replaces the button. */
+ *  app is switched on at once, then the setup steps guide the user) or Åbn. Without rights the «Med i Plus» offer replaces the button. */
 export function AddonDetail({ a }: { a: Addon }) {
   const t = useT("privat");
   const { addons, openSheet, closeSheet, setDraft, go, mode, api, refresh } = usePrivat();
@@ -152,8 +152,9 @@ export function AddonDetail({ a }: { a: Addon }) {
   const included = addonIncluded(a, p.entitled);
   const enable = async () => {
     setErr(null);
-    // Apps with a panel stay open after «Start opsætningen», so the setup continues right there.
-    try { await api.enableAddon(a.key); await refresh(); if (!PANEL_APPS.has(a.key)) closeSheet(); }
+    // «Installér» switches the app on right away (testers closed the sheet before «Start opsætningen» and thought it
+    // was on). The setup steps are then shown as a guide; apps with a panel or steps stay open.
+    try { await api.enableAddon(a.key); await refresh(); if (steps.length) setSetup(true); else if (!PANEL_APPS.has(a.key)) closeSheet(); }
     catch (e) {
       const x = e as ApiError;
       if (x.code === CONFLICT.needsPlan) openSheet({ kind: "needsPlan", addonKey: a.key });
@@ -195,6 +196,19 @@ export function AddonDetail({ a }: { a: Addon }) {
         </>
       ) : a.enabled ? (
         <>
+          {setup && steps.length > 0 && (
+            <div className="flex flex-col gap-3" data-testid="addon-setup">
+              <div className="flex flex-col gap-0.5"><Eyebrow>{t("store.setup", { n: steps.length })}</Eyebrow><p className="m-0 text-[14px] text-ink-soft">{t("store.setupText")}</p></div>
+              <ol className="m-0 p-0 list-none flex flex-col gap-2">
+                {steps.map((st, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <span className={`w-7 h-7 rounded-full border-2 border-ink inline-flex items-center justify-center font-display font-extrabold text-[13px] shrink-0 ${i === steps.length - 1 ? "bg-success-soft text-ink" : "bg-accent text-white"}`}>{i + 1}</span>
+                    <span className="text-[15px] [overflow-wrap:anywhere]">{st}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
           {a.key === "kalender" && mode !== "demo" && <CalendarPanel />}
           {a.key === "foedselsdage" && mode !== "demo" && <BirthdaysPanel />}
           {a.key === "regninger" && mode !== "demo" && <BillsPanel />}
@@ -211,21 +225,8 @@ export function AddonDetail({ a }: { a: Addon }) {
         <p className="m-0 text-[14px] text-muted">{t("store.demoInstall")}</p>
       ) : !included ? (
         <NeedsPlanOffer name={name} />
-      ) : !setup || steps.length === 0 ? (
-        <Button className={`${BIG} rounded-full`} onClick={() => (steps.length ? setSetup(true) : void enable())} aria-label={`${t("store.install")}: ${name}`}>{t("store.install")}</Button>
       ) : (
-        <div className="flex flex-col gap-3" data-testid="addon-setup">
-          <div className="flex flex-col gap-0.5"><Eyebrow>{t("store.setup", { n: steps.length })}</Eyebrow><p className="m-0 text-[14px] text-ink-soft">{t("store.setupText")}</p></div>
-          <ol className="m-0 p-0 list-none flex flex-col gap-2">
-            {steps.map((st, i) => (
-              <li key={i} className="flex items-center gap-3">
-                <span className={`w-7 h-7 rounded-full border-2 border-ink inline-flex items-center justify-center font-display font-extrabold text-[13px] shrink-0 ${i === steps.length - 1 ? "bg-success-soft text-ink" : "bg-accent text-white"}`}>{i + 1}</span>
-                <span className="text-[15px] [overflow-wrap:anywhere]">{st}</span>
-              </li>
-            ))}
-          </ol>
-          <Button className={`${BIG} rounded-full`} onClick={() => void enable()} aria-label={`${t("store.start")}: ${name}`}>{t("store.start")}</Button>
-        </div>
+        <Button className={`${BIG} rounded-full`} onClick={() => void enable()} aria-label={`${t("store.install")}: ${name}`}>{t("store.install")}</Button>
       )}
     </>
   );

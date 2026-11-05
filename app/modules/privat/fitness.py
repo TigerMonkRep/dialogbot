@@ -73,6 +73,18 @@ def week_tally(data: dict, monday: date) -> tuple[int, int, int]:
     return len(done), sum(e.get("minutes") or 0 for e in done), len(data.get("items", []))
 
 
+def streak(data: dict, today: date) -> int:
+    """Whole weeks in a row (before this one) where every planned workout was done."""
+    planned = len(data.get("items", []))
+    if not planned:
+        return 0
+    n, monday = 0, today - timedelta(days=today.weekday() + 7)
+    while n < 52 and week_tally(data, monday)[0] >= planned:
+        n += 1
+        monday -= timedelta(days=7)
+    return n
+
+
 def line(r: dict) -> str:
     bits = [f"{r['day'].capitalize()}: {r['activity']}"]
     if r.get("time"):
@@ -88,6 +100,8 @@ def status_text(data: dict, today: date | None = None) -> str:
     n, mins, planned = week_tally(data, monday)
     lines = [f"Mål: {data['goal']}" if data.get("goal") else "Intet mål endnu."]
     lines.append(f"Denne uge: {n} træninger{f' ({mins} min)' if mins else ''}" + (f" af {planned} planlagte." if planned else "."))
+    if (s := streak(data, today)) >= 2:
+        lines[-1] += f" {s} uger i træk med hele planen!"
     lines += [f"- {line(r)}" for r in data.get("items", [])]
     return "\n".join(lines)
 

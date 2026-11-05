@@ -95,6 +95,8 @@ def test_cancel_by_call_is_a_proposal_with_a_number_the_user_typed(api, pv, db):
     assert out["messages"][-1]["kind"] == "call_proposal"
     c = db.query(PrivateCall).one()
     assert c.status == "proposed" and c.business_phone_e164 == "+4570203040" and "binding" in c.may_not
+    # a proposal is not a cancellation: the subscription stays active until the call is made
+    assert "under opsigelse" not in api.get(tok, "/privat/apps/abonnementer/overview").json()["items"][0]["text"]
 
 
 def test_subscription_unit():
@@ -130,6 +132,7 @@ def test_quotes_are_proposals_and_the_choice_is_the_lead(api, pv, db, monkeypatc
     db.commit()
     text = _last(pv.say(tok, "Vis tilbuddene"))
     assert "1. Maler Jensen: Kan i uge 48 Pris: ca. 9.000 kr." in text and "2. Farve & Co: tog ikke telefonen" in text
+    assert "Sig hvem du vælger" in text
     out = pv.say(tok, "Jeg vælger tilbuddet fra Maler Jensen")
     assert out["messages"][-1]["kind"] == "call_proposal"
     db.expire_all()
@@ -153,7 +156,7 @@ def test_expenses_settle_with_fewest_transfers_and_a_branded_summary(api, pv):
     assert "Bo betaler 500 kr. til Mette" in text and "Anna betaler 200 kr. til Mette" in text
     assert "Sendt med Dialogbot" in text
     item = api.get(tok, "/privat/apps/faelles-udgifter/overview").json()["items"][0]
-    assert item["text"] == "sommerhuset" or item["text"].lower() == "sommerhuset" and "Dialogbot" in item["share_text"]
+    assert item["text"] == "sommerhuset" and "Dialogbot" in item["share_text"]
 
 
 def test_settle_unit_rounds_to_the_øre():
@@ -170,7 +173,7 @@ def test_purchase_complaint_and_reminder(api, pv, db):
     out = pv.say(tok, "Jeg købte en vaskemaskine i Elgiganten den 2024-11-20 til 4.999 kr.")
     assert "reklamationsret til 20. november 2026" in _last(out)
     text = _last(pv.say(tok, "Skriv en reklamation på vaskemaskinen – den lækker vand"))
-    assert "købeloven § 83" in text and "Den lækker vand" in text or "den lækker vand" in text
+    assert "købeloven § 83" in text and "Fejlen: Den lækker vand." in text
     assert "Sendt med Dialogbot" in text
     assert app_kit.send_due(db, WED_10) == 1                   # 16 days left of the 2 years
     db.commit()
@@ -208,7 +211,7 @@ def test_moving_checklist_with_dates_and_partners(api, pv, db, partners):
     tid = next(m["task_id"] for m in out["messages"] if m["kind"] == "task")
     t = pv.task(tok, tid).json()
     assert t["title"] == "Flytning: Odense" and len(t["items"]) == 12
-    assert t["items"][7]["text"] == "Meld flytning på borger.dk (senest 5 dage efter) (27. november 2026)"
+    assert t["items"][10]["text"] == "Meld flytning på borger.dk (fra flyttedagen og senest 5 dage efter) (5. december 2026)"
     assert app_kit.send_due(db, WED_10) == 2                   # 30 days before: internet, and institution/work
 
 
@@ -218,12 +221,12 @@ def test_pet_vet_and_reminders(api, pv, db):
     tok = pv.account("mette@testmail.dk")
     _on(api, tok, "kaeledyr")
     out = pv.say(tok, "Vores hund Bella skal vaccineres 2026-11-12 og have ormekur hver 3. måned")
-    assert "vaccination 12. november 2026" in _last(out) and "ormekur 4. november 2026" in _last(out)
+    assert "vaccination 12. november 2026" in _last(out) and "ormekur 4. februar 2027" in _last(out)   # never today
     pv.say(tok, "Gem dyrlægen: Dyreklinikken Syd, nummer 86 33 44 55")
     out = pv.say(tok, "Book dyrlægen til Bella")
     assert out["messages"][-1]["kind"] == "call_proposal"
     assert db.query(PrivateCall).one().business_phone_e164 == "+4586334455"
-    assert app_kit.send_due(db, WED_10) == 2                   # vaccination in 8 days, worming today
+    assert app_kit.send_due(db, WED_10) == 1                   # vaccination in 8 days
 
 
 # --------------------------------------------------------------------------- Hus & vedligehold
@@ -232,7 +235,7 @@ def test_home_jobs_remind_and_roll_on(api, pv, db):
     tok = pv.account("mette@testmail.dk")
     _on(api, tok, "hus-og-vedligehold")
     out = pv.say(tok, "Tilføj alle de faste opgaver i huset")
-    assert "Rens tagrenderne: næste gang 1. november 2026" in _last(out)
+    assert "Rens tagrenderne: næste gang 4. november 2026" in _last(out)       # its month is now: today, not the 1st
     assert app_kit.send_due(db, WED_10) >= 1
     db.commit()
     out = pv.say(tok, "Jeg har testet røgalarmerne")
@@ -240,7 +243,8 @@ def test_home_jobs_remind_and_roll_on(api, pv, db):
 
 
 def test_home_unit():
-    assert home._next(date(2026, 11, 4), 9) == date(2027, 9, 1) and home._next(date(2026, 11, 4), 11) == date(2026, 11, 1)
+    assert home._next(date(2026, 11, 4), 9) == date(2027, 9, 1) and home._next(date(2026, 11, 4), 11) == date(2026, 11, 4)
+    assert home._next(date(2026, 11, 4), 12) == date(2026, 12, 1)
 
 
 # --------------------------------------------------------------------------- Fitness & sundhed
@@ -262,6 +266,8 @@ def test_meal_amounts_scale_and_add_up():
     days = [{"dish": "Lasagne", "servings": 4, "ingredients": ["500 g hakket oksekød", "1 dåse tomater", "Lasagneplader"]},
             {"dish": "Chili", "servings": 4, "ingredients": ["250 g hakket oksekød", "1 ds. tomater", "2 løg"]}]
     assert meals.merge_ingredients(days) == ["750 g hakket oksekød", "2 dåser tomater", "Lasagneplader", "2 løg"]
+    assert meals.merge_ingredients([{"dish": "a", "ingredients": ["2 peberfrugt", "1 tomat"]},
+                                    {"dish": "b", "ingredients": ["2 peberfrugter", "2 tomater"]}]) == ["4 peberfrugter", "3 tomater"]
     assert meals.merge_ingredients(days, 8) == ["1,5 kg hakket oksekød", "4 dåser tomater", "Lasagneplader", "4 løg"]
     assert meals.dish_ingredients(days[0], 2) == ["250 g hakket oksekød", "1 dåse tomater", "Lasagneplader"]
     assert meals.parse_ingredient("2 store løg") == (2, "", "store løg") and meals.parse_ingredient("Salt") == (None, "", "Salt")
@@ -300,6 +306,13 @@ def test_the_assistant_can_be_renamed_and_the_texts_follow(api, pv):
     assert "Peter" not in car["what"] + car["tagline"] + " ".join(car["steps"]) and "Ida" in car["what"]
     _on(api, tok, "abonnementer")
     assert "Fortæl Ida" in api.get(tok, "/privat/apps/abonnementer/overview").json()["summary"]
+    r = api.patch(tok, "/privat/me/assistant", {"name": "Ida", "pronoun": "hun"})
+    assert r.json()["assistant_pronoun"] == "hun"
+    car = next(a for a in api.get(tok, "/privat/addons").json() if a["key"] == "bil-og-syn")
+    assert "Han " not in car["what"] and "han " not in car["what"] and ("Hun " in car["what"] or "hun " in car["what"])
+    api.patch(tok, "/privat/me/assistant", {"name": "Max"})          # no pronoun given: never a guessed gender
+    assert api.get(tok, "/privat/me").json()["assistant_pronoun"] == "den"
+    assert api.patch(tok, "/privat/me/assistant", {"name": "Max", "pronoun": "it"}).status_code == 422
     for bad in ("Dialogbot", "x" * 21, "Bob<script>", "Politiet"):
         assert api.patch(tok, "/privat/me/assistant", {"name": bad}).status_code == 422, bad
     assert api.patch(tok, "/privat/me/assistant", {"name": ""}).json()["assistant_name"] == "Peter"
@@ -315,3 +328,112 @@ def test_the_chat_model_is_told_its_name(db, pv, api, monkeypatch):
     api.patch(tok, "/privat/me/assistant", {"name": "Max"})
     pv.say(tok, "Lav en liste med mælk")
     assert seen and seen[-1] == "Max"
+
+
+def test_operator_sees_the_lead_ledger(api, pv, db, monkeypatch):
+    monkeypatch.setattr(places, "search", lambda db, ctx, q, city=None, **k: FOUND)
+    tok = pv.account("mette@testmail.dk")
+    _on(api, tok, "haandvaerker")
+    pv.say(tok, "Find 3 malere i Aarhus og hent tilbud på at male stuen")
+    pv.say(tok, "Jeg vælger tilbuddet fra Maler Jensen")
+    assert api.get(tok, "/operator/privat/business-referrals").status_code == 403          # not for users
+    items = api.get(api.operator(), "/operator/privat/business-referrals").json()["items"]
+    assert items[0] == {**items[0], "business_name": "Maler Jensen", "asked": 1, "chosen": 1}
+    assert {i["business_name"] for i in items} == {"Maler Jensen", "Farve & Co"}
+
+
+# --------------------------------------------------------------------------- round 2: the testers' suggestions
+
+PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
+
+
+def test_receipt_photo_is_private_and_checked(api, pv, client, tmp_path, monkeypatch):
+    monkeypatch.setenv("VOICE_STORAGE_DIR", str(tmp_path))
+    get_settings.cache_clear()
+    tok = pv.account("mette@testmail.dk")
+    _on(api, tok, "garanti")
+    pv.say(tok, "Jeg købte en vaskemaskine i Elgiganten den 2025-11-20 til 4.999 kr.")
+    item = api.get(tok, "/privat/apps/garanti/overview").json()["items"][0]
+    assert item["photo"] is True and item["photo_url"] is None
+    h = {"Authorization": f"Bearer {tok}", "content-type": "image/png"}
+    url = f"/api/v1/privat/apps/garanti/items/{item['id']}/photo"
+    assert client.post(url, content=b"not an image", headers=h).status_code == 422
+    assert client.post(url, content=PNG, headers=h).status_code == 200
+    item = api.get(tok, "/privat/apps/garanti/overview").json()["items"][0]
+    assert item["photo_url"].startswith("local://privat-files/") and "/garanti/" in item["photo_url"]
+    ole = pv.account("ole@testmail.dk", name="Ole Berg")
+    _on(api, ole, "garanti")
+    assert client.post(url, content=PNG, headers={"Authorization": f"Bearer {ole}"}).status_code == 404   # not his
+    assert client.post("/api/v1/privat/apps/fest/items/x/photo", content=PNG, headers=h).status_code in (403, 404)
+    get_settings.cache_clear()
+
+
+def test_shopping_list_carries_the_grocery_partner(api, pv, partners):
+    tok = pv.account("mette@testmail.dk")
+    out = pv.say(tok, "Lav en indkøbsliste med mælk og brød")
+    tid = next(m["task_id"] for m in out["messages"] if m["kind"] == "task")
+    t = pv.task(tok, tid).json()
+    assert t["list_type"] == "shopping" and t["partner"]["name"] == "Testkøb" and "Annonce" in t["partner"]["note"]
+
+
+def test_expenses_live_on_a_list_friends_can_add_to(api, pv, db):
+    tok = pv.account("mette@testmail.dk")
+    _on(api, tok, "faelles-udgifter")
+    out = pv.say(tok, "Jeg betalte 1.200 kr. for mad i sommerhuset – vi er Anna, Bo og mig")
+    assert "Del listen «Udgifter: sommerhuset»" in _last(out)
+    g = app_kit.items(db, pv.ws(tok), "faelles-udgifter")[0]
+    t = pv.task(tok, g["task_id"]).json()
+    assert [i["text"] for i in t["items"]] == ["Mette: 1.200 kr. – mad"]
+    # a friend (or the user) adds a line by hand – with or without a name
+    api.post(tok, f"/privat/tasks/{g['task_id']}/items", {"text": "Bo: 300 kr. – vin"})
+    api.post(tok, f"/privat/tasks/{g['task_id']}/items", {"text": "husk kvitteringerne"})          # not an expense
+    text = _last(pv.say(tok, "Hvem skylder hvem?"))
+    assert "1.500 kr. i alt" in text and "Anna betaler 500 kr. til Mette" in text and "Bo betaler 200 kr. til Mette" in text
+
+
+def test_expense_line_parser():
+    assert expenses.LINE.match("Bo: 250 kr – pizza").group("name") == "Bo"
+    m = expenses.LINE.match("250 kr pizza")
+    assert m.group("name") is None and m.group("amt") == "250" and m.group("text") == "pizza"
+
+
+def test_mobilepay_number_only_when_verified_and_owed(db, pv, api):
+    tok = pv.account("mette@testmail.dk")
+    g = {"name": "x", "people": ["Mette", "Bo"], "expenses": [{"payer": "Mette", "amount_minor": 1000, "among": None}]}
+    assert expenses.mobilepay_for(db, pv.ws(tok), "Mette") == {}                       # not verified: no number
+    pv.verify_phone(tok)
+    db.expire_all()
+    mp = expenses.mobilepay_for(db, pv.ws(tok), "Mette")
+    assert "Bo betaler 5 kr. til Mette (MobilePay 20 30 40 50)" in expenses.summary_text(g, mobilepay=mp)
+
+
+def test_moving_checklist_includes_the_other_apps(api, pv):
+    tok = pv.account("mette@testmail.dk")
+    for k in ("flytning", "abonnementer", "hus-og-vedligehold"):
+        _on(api, tok, k)
+    pv.say(tok, "Jeg har Norlys til 299 kr. om måneden")
+    out = pv.say(tok, "Vi flytter til Odense den 2027-01-04")
+    tid = next(m["task_id"] for m in out["messages"] if m["kind"] == "task")
+    texts = [i["text"] for i in pv.task(tok, tid).json()["items"]]
+    assert "Flyt eller opsig Norlys (5. december 2026)" in texts
+    assert any(x.startswith("Vælg de faste opgaver i det nye hjem") for x in texts)
+
+
+def test_house_profile_picks_the_jobs(db, pv):
+    tok = pv.account("mette@testmail.dk")
+    ws = pv.ws(tok)
+    home.save_profile(db, ws, home="lejlighed", heating="fjernvarme")
+    names = [j["name"] for j in home.add(db, ws, names=["alle"], today=date(2026, 11, 4))]
+    assert "Rens tagrenderne" not in names and "Service på fyr eller varmepumpe" not in names
+    assert "Test røgalarmerne" in names
+
+
+def test_complaint_remedy_and_chip_and_streak():
+    row = {"id": "a", "name": "TV", "bought": "2026-06-01"}
+    assert "at hæve købet" in warranty.complaint(row, "skærmen er sort", "Mette", date(2026, 11, 4), remedy="refund")
+    from app.modules.privat import fitness, pets
+
+    assert "chip" not in pets.line({"name": "Bella"}) and "chip 208123456789012" in pets.line({"name": "Bella", "chip": "208123456789012"})
+    data = {"items": [{"day": "mandag", "activity": "Løb"}],
+            "log": [{"date": "2026-10-26", "activity": "Løb"}, {"date": "2026-10-19", "activity": "Løb"}]}
+    assert fitness.streak(data, date(2026, 11, 4)) == 2

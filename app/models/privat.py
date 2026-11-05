@@ -61,6 +61,8 @@ class PrivateProfile(Base):
     calendar_feed_created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # What the assistant is called (app/modules/privat/naming.py). Null = «Peter».
     assistant_name: Mapped[str | None] = mapped_column(String(30))
+    # How the texts refer to it: han | hun | den. Null = «han» for Peter, «den» for any other name (never guessed).
+    assistant_pronoun: Mapped[str | None] = mapped_column(String(4))
     created_at: Mapped[datetime] = ts_now()
 
 

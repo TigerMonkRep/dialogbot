@@ -578,7 +578,9 @@ Alt sker i chatten; appens panel viser en oversigt. Data ligger i `private_app_d
 |---|---|
 | `GET /privat/apps/{key}/overview` | `{summary, items: [{id, text, sub, share_text?}], partner: {category, name, url, text, note} \| null}`. 403 `addon_disabled` når appen er slået fra, 404 for en ukendt app. |
 | `DELETE /privat/apps/{key}/items/{id}` | 204; 404 når den ikke findes. |
-| `PATCH /privat/me/assistant` `{name}` | Assistentens navn (1–20 bogstaver; tomt = «Peter»). Svarer som `GET /privat/me`, der nu har `assistant_name`. |
+| `POST /privat/apps/{key}/items/{id}/photo` | Billedet som rå body (JPEG/PNG/WebP/HEIC, ≤ 6 MB). Kun Garanti. Oversigten giver `photo_url` (5 min.). |
+| `PATCH /privat/me/assistant` `{name, pronoun?}` | Assistentens navn (1–20 bogstaver; tomt = «Peter») og `pronoun` han/hun/den (tomt = han for Peter, den for alle andre navne – aldrig gættet). Svarer som `GET /privat/me`, der har `assistant_name` og `assistant_pronoun`. |
+| `GET /operator/privat/business-referrals?days=` | Kun operatør: lead-regnskabet pr. virksomhed `{items: [{business_name, phone, asked, chosen, last_at}]}`. |
 
 `key`: `abonnementer`, `haandvaerker`, `faelles-udgifter`, `garanti`, `fest`, `flytning`, `kaeledyr`,
 `hus-og-vedligehold`, `fitness-og-sundhed`. Funnel-svaret `assistant_name` (skærm 1 på /privat/start) bliver

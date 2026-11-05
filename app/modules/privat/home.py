@@ -38,22 +38,52 @@ STANDARD = (
 
 
 def _next(today: date, month: int | None) -> date:
-    if month is None:
+    """The first date: today, or the 1st of the job's best month – never in the past (this month = today)."""
+    if month is None or month == today.month:
         return today
     d = date(today.year, month, 1)
-    return d if d >= date(today.year, today.month, 1) else date(today.year + 1, month, 1)
+    return d if d > today else date(today.year + 1, month, 1)
+
+
+# The house profile decides which standard jobs «alle» means: no boiler service with district heating, no gutters in a flat.
+NOT_FOR = {"Service på fyr eller varmepumpe": lambda p: p.get("heating") in ("fjernvarme", "elvarme"),
+           "Skorstensfejning": lambda p: p.get("chimney") is False,
+           "Rens tagrenderne": lambda p: p.get("home") == "lejlighed",
+           "Tjek tag og fuger": lambda p: p.get("home") == "lejlighed",
+           "Luk for udendørs vandhaner": lambda p: p.get("home") == "lejlighed"}
+HEATING = ("fyr", "varmepumpe", "fjernvarme", "elvarme")
+
+
+def save_profile(db: OrmSession, ws_id: uuid.UUID, *, home: str | None = None, heating: str | None = None,
+                 chimney: bool | None = None) -> dict:
+    from app.modules.privat import appdata
+
+    data = appdata.get(db, ws_id, ADDON)
+    prof = dict(data.get("profile") or {})
+    if home in ("hus", "lejlighed", "rækkehus", "sommerhus"):
+        prof["home"] = home
+    if heating in HEATING:
+        prof["heating"] = heating
+    if isinstance(chimney, bool):
+        prof["chimney"] = chimney
+    appdata.put(db, ws_id, ADDON, {**data, "profile": prof})
+    return prof
 
 
 def add(db: OrmSession, ws_id: uuid.UUID, *, names: list[str] | None = None, custom: str | None = None,
         every_months: int | None = None, next_due=None, today: date | None = None) -> list[dict]:
-    """Standard jobs by name (or «alle»), or one custom job. Returns the jobs added."""
+    """Standard jobs by name (or «alle» – those that fit the house profile), or one custom job. Returns the jobs added."""
+    from app.modules.privat import appdata
+
     today = today or _today()
     rows = kit.items(db, ws_id, ADDON)
+    prof = appdata.get(db, ws_id, ADDON).get("profile") or {}
     added = []
     wanted = [kit.key_of(n) for n in names or []]
     for name, every, month, trade in STANDARD:
-        if ("alle" in wanted or any(w and (w in kit.key_of(name) or kit.key_of(name) in w) for w in wanted)) \
-                and kit.find(rows, name) is None:
+        fits = not NOT_FOR.get(name, lambda p: False)(prof)
+        if (("alle" in wanted and fits) or any(w and w != "alle" and (w in kit.key_of(name) or kit.key_of(name) in w)
+                                                for w in wanted)) and kit.find(rows, name) is None:
             added.append({"id": kit.new_id(), "name": name, "every": every, "next": _next(today, month).isoformat(),
                           **({"trade": trade} if trade else {})})
     if custom:

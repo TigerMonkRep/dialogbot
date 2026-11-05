@@ -311,8 +311,8 @@
     "cost": "Anruf des Assistenten: höchstens {n} Credits",
     "costTime": "(bis zu 3 Min.)",
     "refund": "Wenn niemand antwortet, besetzt ist oder ein Anrufbeantworter drangeht, bekommst du deine Credits zurück.",
-    "price": "Der Preis in der Werkstatt ist etwas anderes – den vereinbare ich nicht, aber ich sage dir, was sie sagen.",
-    "shareQ": "Darf die Werkstatt deine Nummer bekommen?",
+    "price": "Der Preis beim Unternehmen ist etwas anderes – den vereinbare ich nicht, aber ich sage dir, was sie sagen.",
+    "shareQ": "Darf das Unternehmen deine Nummer bekommen?",
     "shareHint": "Dann können sie dich anrufen, falls sich etwas ändert.",
     "needCredits": "Du hast {have} Credits. Der Anruf braucht {need}.",
     "phoneStep": "Bestätige zuerst deine Handynummer",
@@ -332,15 +332,15 @@
     "saveEdit": "Änderung speichern",
     "simulatedCall": "Simulierter Anruf",
     "calling": "Rufe {name} an …",
-    "reserved": "{n} Credits sind reserviert. Sie werden nur abgebucht, wenn die Werkstatt antwortet.",
+    "reserved": "{n} Credits sind reserviert. Sie werden nur abgebucht, wenn das Unternehmen antwortet.",
     "realWait": "Du bekommst hier Bescheid, wenn der Anruf vorbei ist.",
     "chooseOutcome": "Simulation: Ergebnis wählen",
-    "outcomeAnswered": "Die Werkstatt antwortet",
+    "outcomeAnswered": "Das Unternehmen antwortet",
     "outcomeNoAnswer": "Niemand antwortet",
-    "confirmedBy": "Von der Werkstatt bestätigt",
+    "confirmedBy": "Vom Unternehmen bestätigt",
     "isConfirmed": "{text} ist bestätigt",
-    "reply": "Antwort der Werkstatt:",
-    "priceAt": "Preis in der Werkstatt",
+    "reply": "Antwort des Unternehmens:",
+    "priceAt": "Preis beim Unternehmen",
     "priceNote": "(im Anruf genannt)",
     "assistantCall": "Anruf des Assistenten",
     "callUsage": "{n} Credits · {duration}",
@@ -356,7 +356,7 @@
     "outsideHours": "Das Unternehmen hat gerade geschlossen. Versuch es während der Öffnungszeiten.",
     "seeProposal": "Vorschlag ansehen und freigeben",
     "outcomeLabel": "Ergebnis",
-    "outcomeConfirmed": "Ergebnis · von der Werkstatt bestätigt",
+    "outcomeConfirmed": "Ergebnis · vom Unternehmen bestätigt",
     "agreement": "Vereinbarung",
     "theCall": "Der Anruf",
     "plannedTitle": "Ich rufe {name} {when} an, wenn geöffnet ist",
@@ -954,6 +954,9 @@
       "title": "Wer wohnt bei euch?",
       "help": "Damit du von Anfang an die richtigen Listen bekommst.",
       "household": {
+    "photoAdd": "Foto vom Beleg hinzufügen",
+    "photoReplace": "Foto ersetzen",
+    "photoOpen": "Foto ansehen",
         "alone": {
           "label": "Nur ich",
           "hint": "Einkaufsliste"
@@ -1172,6 +1175,7 @@
     }
   },
   "assistantName": {
+    "pronoun": "Pronomen (Dänisch)",
     "label": "Name des Assistenten",
     "hint": "Nur in der App und im Chat – bei Anrufen und E-Mails heißt er «Dialogbot»."
   },

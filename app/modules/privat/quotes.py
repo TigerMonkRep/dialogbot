@@ -32,7 +32,7 @@ def _purpose(job: str) -> str:
 
 
 def request(db: OrmSession, ctx, *, job: str, trade: str, city: str | None = None, window: str = "",
-            app_key: str = ADDON) -> tuple[dict, list[dict]]:
+            app_key: str = ADDON, address: str | None = None) -> tuple[dict, list[dict]]:
     """Find up to 3 businesses and make one call proposal each. Returns (job, the businesses). Raises Conflict
     needs_location from places.search when there is no city or position."""
     from app.modules.privat import calls, places
@@ -47,9 +47,10 @@ def request(db: OrmSession, ctx, *, job: str, trade: str, city: str | None = Non
         task = calls.propose(db, ctx, business_name=r["name"], phone=r["phone_e164"], address=r.get("address") or "",
                              price_text=None, purpose=_purpose(job), window=entry["window"],
                              may_ask="Hvad opgaven cirka koster, om de skal se den først, og hvornår de kan gå i gang",
-                             may_agree="Kun at de sender et tilbud eller ringer tilbage – ingen aftale om selve arbejdet",
-                             may_not="Sige ja til opgaven, aftale en pris eller en besigtigelse, betale eller give "
-                                     "adresse og andre oplysninger end navnet",
+                             may_agree=("Kun at de sender et tilbud eller ringer tilbage – ingen aftale om selve arbejdet"
+                                        + (f". Vil de se opgaven først, må du give adressen: {address}" if address else "")),
+                             may_not=("Sige ja til opgaven, aftale en pris eller et tidspunkt for besigtigelse, betale "
+                                      "eller give andre oplysninger end navnet" + ("" if address else " (heller ikke adressen)")),
                              place_id=r.get("place_id"), next_open_at=None, phone_source=r.get("source"))
         call = db.scalar(select(PrivateCall).where(PrivateCall.task_id == task.id))
         ref = PrivateBusinessReferral(workspace_id=ctx.ws_id, app_key=app_key, job=job, trade=trade,
@@ -87,6 +88,8 @@ def compare_text(db: OrmSession, entry: dict) -> str:
     lines = [f"Tilbud på {entry['job']}:"] + [f"{i}. {quote_line(db, q)}" for i, q in enumerate(entry["quotes"], 1)]
     if entry.get("chosen"):
         lines.append(f"Du valgte {entry['chosen']}.")
+    elif not any((c := _call(db, q)) is not None and (c.business_reply or c.business_price_text) for q in entry["quotes"]):
+        lines.append("Ingen har svaret endnu – godkend opkaldene, så ringer jeg.")
     else:
         lines.append("Sig hvem du vælger, så ringer jeg og siger ja tak – når du har godkendt det.")
     return "\n".join(lines)

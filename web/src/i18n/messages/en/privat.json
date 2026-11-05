@@ -311,8 +311,8 @@
     "cost": "The assistant's call: at most {n} credits",
     "costTime": "(up to 3 min.)",
     "refund": "If nobody answers, the line is busy or it goes to voicemail, you get your credits back.",
-    "price": "The shop's own price is something else – I do not agree to it, but I tell you what they say.",
-    "shareQ": "May the shop have your number?",
+    "price": "The business's own price is something else – I do not agree to it, but I tell you what they say.",
+    "shareQ": "May the business have your number?",
     "shareHint": "Then they can call you if something changes.",
     "needCredits": "You have {have} credits. The call needs {need}.",
     "phoneStep": "Confirm your mobile number first",
@@ -332,15 +332,15 @@
     "saveEdit": "Save the change",
     "simulatedCall": "Simulated call",
     "calling": "Calling {name} …",
-    "reserved": "{n} credits are reserved. They are only charged if the shop answers.",
+    "reserved": "{n} credits are reserved. They are only charged if the business answers.",
     "realWait": "You will be told here when the call is over.",
     "chooseOutcome": "Simulation: choose the outcome",
-    "outcomeAnswered": "The shop answers",
+    "outcomeAnswered": "The business answers",
     "outcomeNoAnswer": "Nobody answers",
-    "confirmedBy": "Confirmed by the shop",
+    "confirmedBy": "Confirmed by the business",
     "isConfirmed": "{text} is confirmed",
-    "reply": "The shop's answer:",
-    "priceAt": "Price at the shop",
+    "reply": "The business's answer:",
+    "priceAt": "Price at the business",
     "priceNote": "(stated in the call)",
     "assistantCall": "The assistant's call",
     "callUsage": "{n} credits · {duration}",
@@ -356,7 +356,7 @@
     "outsideHours": "The business is closed right now. Try again during their opening hours.",
     "seeProposal": "See the proposal and approve",
     "outcomeLabel": "Outcome",
-    "outcomeConfirmed": "Outcome · confirmed by the shop",
+    "outcomeConfirmed": "Outcome · confirmed by the business",
     "agreement": "Agreement",
     "theCall": "The call",
     "plannedTitle": "I will call {name} {when}, when they open",
@@ -954,6 +954,9 @@
       "title": "Who is at home?",
       "help": "So you get the right lists from the start.",
       "household": {
+    "photoAdd": "Add a photo of the receipt",
+    "photoReplace": "Replace photo",
+    "photoOpen": "View photo",
         "alone": {
           "label": "Just me",
           "hint": "Shopping list"
@@ -1172,6 +1175,7 @@
     }
   },
   "assistantName": {
+    "pronoun": "Pronoun (Danish texts)",
     "label": "Assistant's name",
     "hint": "Only in the app and the chat – when the assistant calls or writes, it says «Dialogbot»."
   },

@@ -373,10 +373,18 @@ function AssistantNameRow() {
   const { balance, run } = usePrivat();
   const [edit, setEdit] = useState(false);
   const [v, setV] = useState("");
+  const [pron, setPron] = useState<"han" | "hun" | "den">("den");
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    const r = await run((a) => a.setAssistantName(v.trim()));
+    const r = await run((a) => a.setAssistantName(v.trim(), v.trim() ? pron : undefined));
     if (r) setEdit(false);
+  };
+  // The field starts empty when the name is the default (testers typed «Ida» after the prefilled «Peter»).
+  const startEdit = () => {
+    const n = balance?.assistant_name;
+    setV(n && n !== "Peter" ? n : "");
+    setPron(balance?.assistant_pronoun && n !== "Peter" ? balance.assistant_pronoun : "den");
+    setEdit(true);
   };
   return (
     <section className="flex flex-col gap-2" aria-label={t("assistantName.label")}>
@@ -384,7 +392,7 @@ function AssistantNameRow() {
         <p className="m-0 text-[15px] flex items-center gap-2 flex-wrap" data-testid="assistant-name-row">
           <span><span className="text-muted">{t("assistantName.label")}:</span> <b>{balance?.assistant_name ?? "Peter"}</b></span>
           <span aria-hidden>·</span>
-          <button type="button" className={LINK} onClick={() => { setV(balance?.assistant_name ?? ""); setEdit(true); }}>{t("location.edit")}</button>
+          <button type="button" className={LINK} onClick={startEdit}>{t("location.edit")}</button>
         </p>
       ) : (
         <form onSubmit={save} className="flex flex-col gap-1.5">
@@ -394,6 +402,14 @@ function AssistantNameRow() {
               placeholder="Peter" className="flex-1 min-w-0 min-h-[48px] rounded-[14px] border-2 border-ink px-3.5 text-[16px]" />
             <Button type="submit" className="border-2 border-ink">{t("location.save")}</Button>
           </div>
+          <fieldset className="m-0 p-0 border-0 flex items-center gap-2 flex-wrap">
+            <legend className="sr-only">{t("assistantName.pronoun")}</legend>
+            <span className="text-[13px] text-muted">{t("assistantName.pronoun")}</span>
+            {(["hun", "han", "den"] as const).map((x) => (
+              <button key={x} type="button" aria-pressed={pron === x} onClick={() => setPron(x)}
+                className={`min-h-[36px] px-3 rounded-full border-2 border-ink text-[14px] font-semibold ${pron === x ? "bg-ink text-paper" : "bg-paper text-ink"}`}>{x}</button>
+            ))}
+          </fieldset>
           <p className="m-0 text-[12px] text-muted">{t("assistantName.hint")}</p>
         </form>
       )}

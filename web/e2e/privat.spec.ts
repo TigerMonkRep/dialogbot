@@ -175,9 +175,9 @@ for (const width of [375, 1440]) {
       await expect(chat(page).getByText("1 af 10 opkald i Plus")).toBeVisible();
       await expect.poll(() => credits(page)).toBe(3);
       await expect.poll(() => callsLeft(page)).toBe(10);
-      await chat(page).getByRole("button", { name: "Værkstedet svarer" }).click();
+      await chat(page).getByRole("button", { name: "Virksomheden svarer" }).click();
       await expect(chat(page).getByRole("heading", { name: "Torsdag kl. 15.30 er bekræftet" })).toBeVisible();
-      await expect(chat(page).getByText("Bekræftet af værkstedet")).toBeVisible();
+      await expect(chat(page).getByText("Bekræftet af virksomheden")).toBeVisible();
       await expect(chat(page).getByText(/450 kr\. for et almindeligt eftersyn/)).toBeVisible();
       await expect(chat(page).getByText("1 af 10 opkald i Plus · 2 min. 10 sek.")).toBeVisible();
       await expect.poll(() => callsLeft(page)).toBe(9);
@@ -468,7 +468,7 @@ for (const width of [375, 1440]) {
       await expect(approve).toBeEnabled();
     });
 
-    test("butikken: app-ark med «Hvad den gør», trin og «Start opsætningen»; uden plan → «Med i Plus»", async ({ page }) => {
+    test("butikken: app-ark med «Hvad den gør»; «Installér» slår appen til og viser trinene; uden plan → «Med i Plus»", async ({ page }) => {
       await open(page, "/privat/butik");
       await expect(page.getByRole("heading", { name: "Installeret" })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Alle apps" })).toBeVisible();
@@ -477,9 +477,8 @@ for (const width of [375, 1440]) {
       await expect(sheet.getByText("Hvad den gør")).toBeVisible();
       await expect(sheet.getByText("«Mormor fylder 80 den 3. marts.»")).toBeVisible();
       await sheet.getByRole("button", { name: "Installér: Fødselsdage" }).click();
-      await expect(sheet.getByTestId("addon-setup")).toContainText("Opsætning · 3 trin");
-      await sheet.getByRole("button", { name: "Start opsætningen: Fødselsdage" }).click();
-      // An app with a panel stays open after the setup, so it can be used right away.
+      // «Installér» switches it on at once; the steps guide the setup and the sheet stays open to use it right away.
+      await expect(page.getByRole("dialog").getByTestId("addon-setup")).toContainText("Opsætning · 3 trin");
       await expect(page.getByRole("dialog").getByRole("button", { name: "Åbn: Fødselsdage" })).toBeVisible();
       await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
       await expect(page.getByRole("dialog")).toBeHidden();

@@ -46,6 +46,14 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
       )}
       {wish && owner && <p className="m-0 text-[13px] text-muted">{t("list.ownerNote")}</p>}
       {task.items.length === 0 && <p className="m-0 text-[14px] text-muted">{t("list.emptyItems")}</p>}
+      {task.partner && task.items.length > 0 && (
+        <a href={task.partner.url} target="_blank" rel="sponsored noopener noreferrer" data-testid="grocery-partner"
+          className="rounded-[14px] border-[1.5px] border-dashed border-ink-soft p-3 flex flex-col gap-0.5 no-underline text-ink">
+          <span className="text-[11px] uppercase tracking-wide text-muted">{t("household.ad")}</span>
+          <span className="font-semibold text-[15px]">{task.partner.text}</span>
+          <span className="text-[12px] text-muted">{task.partner.name} · {task.partner.note}</span>
+        </a>
+      )}
       <ul className="list-none m-0 p-0 flex flex-col gap-0.5">
         {task.items.map((it) => (
           <li key={it.id} className="flex flex-col">
@@ -71,6 +79,9 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
                 <span className={`flex-1 min-w-0 [overflow-wrap:anywhere] ${it.done ? "line-through text-muted" : ""}`}>{it.text}</span>
               </button>
             )}
+            {/* A meal plan's day carries its ingredients; any list item can carry a note or a link. */}
+            {!wish && it.note && <span className="pl-10 -mt-1 pb-1 text-[13px] text-ink-soft [overflow-wrap:anywhere]">{it.note}</span>}
+            {!wish && it.link && <a href={it.link} target="_blank" rel="noopener noreferrer nofollow" className="pl-10 -mt-1 pb-1 text-[13px] text-accent underline [overflow-wrap:anywhere]">{t("list.openLink")}</a>}
             {(it.added_by_name || it.done_by_name) && (
               <span className="pl-10 -mt-1 pb-1 text-[12px] text-muted">
                 {[it.added_by_name ? t("list.addedBy", { name: it.added_by_name, item: it.text.toLowerCase() }) : null, it.done && it.done_by_name ? t("list.doneBy", { name: it.done_by_name }) : null].filter(Boolean).join(" · ")}

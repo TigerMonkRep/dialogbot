@@ -311,8 +311,8 @@
     "cost": "Appel de l'assistant : {n} crédits maximum",
     "costTime": "(jusqu'à 3 min)",
     "refund": "Si personne ne répond, si c'est occupé ou si c'est un répondeur, vous récupérez vos crédits.",
-    "price": "Le prix de l'atelier est autre chose – je ne le négocie pas, mais je vous dis ce qu'ils disent.",
-    "shareQ": "L'atelier peut-il avoir votre numéro ?",
+    "price": "Le prix de l'entreprise est autre chose – je ne le négocie pas, mais je vous dis ce qu'ils disent.",
+    "shareQ": "L'entreprise peut-il avoir votre numéro ?",
     "shareHint": "Ainsi, ils peuvent vous appeler si quelque chose change.",
     "needCredits": "Vous avez {have} crédits. L'appel en demande {need}.",
     "phoneStep": "Confirmez d'abord votre numéro de portable",
@@ -332,15 +332,15 @@
     "saveEdit": "Enregistrer la modification",
     "simulatedCall": "Appel simulé",
     "calling": "Appel de {name} …",
-    "reserved": "{n} crédits sont réservés. Ils ne sont débités que si l'atelier répond.",
+    "reserved": "{n} crédits sont réservés. Ils ne sont débités que si l'entreprise répond.",
     "realWait": "Vous serez prévenu ici à la fin de l'appel.",
     "chooseOutcome": "Simulation : choisissez le résultat",
-    "outcomeAnswered": "L'atelier répond",
+    "outcomeAnswered": "L'entreprise répond",
     "outcomeNoAnswer": "Personne ne répond",
-    "confirmedBy": "Confirmé par l'atelier",
+    "confirmedBy": "Confirmé par l'entreprise",
     "isConfirmed": "{text} est confirmé",
-    "reply": "Réponse de l'atelier :",
-    "priceAt": "Prix à l'atelier",
+    "reply": "Réponse de l'entreprise :",
+    "priceAt": "Prix chez l'entreprise",
     "priceNote": "(indiqué pendant l'appel)",
     "assistantCall": "Appel de l'assistant",
     "callUsage": "{n} crédits · {duration}",
@@ -356,7 +356,7 @@
     "outsideHours": "L'entreprise est fermée pour le moment. Réessayez pendant ses horaires d'ouverture.",
     "seeProposal": "Voir la proposition et approuver",
     "outcomeLabel": "Résultat",
-    "outcomeConfirmed": "Résultat · confirmé par l'atelier",
+    "outcomeConfirmed": "Résultat · confirmé par l'entreprise",
     "agreement": "Accord",
     "theCall": "L'appel",
     "plannedTitle": "J'appellerai {name} {when}, à l'ouverture",
@@ -954,6 +954,9 @@
       "title": "Qui vit chez vous ?",
       "help": "Pour avoir les bonnes listes dès le départ.",
       "household": {
+    "photoAdd": "Ajouter une photo du reçu",
+    "photoReplace": "Remplacer la photo",
+    "photoOpen": "Voir la photo",
         "alone": {
           "label": "Moi seul(e)",
           "hint": "Liste de courses"
@@ -1172,6 +1175,7 @@
     }
   },
   "assistantName": {
+    "pronoun": "Pronom (textes danois)",
     "label": "Nom de l'assistant",
     "hint": "Seulement dans l'app et la conversation – quand l'assistant appelle ou écrit, il dit «Dialogbot»."
   },

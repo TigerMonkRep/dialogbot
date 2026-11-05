@@ -28,7 +28,7 @@ export function PrivatApp({ session }: { session: Session }) {
 /** The texts say the name the user gave the assistant (Konto → «Assistentens navn», or the first signup screen). */
 function Named({ children }: { children: React.ReactNode }) {
   const { balance } = usePrivat();
-  return <AssistantNameProvider name={balance?.assistant_name}>{children}</AssistantNameProvider>;
+  return <AssistantNameProvider name={balance?.assistant_name} pronoun={balance?.assistant_pronoun}>{children}</AssistantNameProvider>;
 }
 
 function Shell() {

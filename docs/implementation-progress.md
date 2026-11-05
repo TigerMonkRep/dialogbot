@@ -2,6 +2,40 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 39 — 6. november 2026 (testerens forslag bygget)
+
+| Del | Status | Bevis |
+|---|---|---|
+| Garanti: foto af kvitteringen (privat bucket `PRIVAT_FILES_BUCKET`, 5-min. link, kun billeder ≤ 6 MB, typen læses af filen; webben skalerer til 1600 px) | testet lokalt (lokalt lager) | `tests/test_privat_household.py` |
+| Indkøbslister viser dagligvare-partneren («Annonce») | testet | samme |
+| Fælles udgifter på en almindelig liste, som vennerne kan få delt og selv skrive udlæg på («Bo: 250 kr. – pizza»); gamle grupper tæller stadig | testet | samme |
+| Opgørelsen viser brugerens eget MobilePay-nummer, når brugeren har penge til gode og nummeret er bekræftet | testet | samme |
+| Flytning → abonnementer på adressen (internet, el, forsikring) og Hus-opgaverne i det nye hjem | testet | samme |
+| Hus: boligprofil (hus/lejlighed, varme, skorsten) bestemmer «alle» | testet | samme |
+| Håndværker: adressen må gives ved besigtigelse, kun når brugeren selv skrev den | tool | — |
+| Garanti: ønsket afhjælpning (reparation/ombytning/hæve/afslag) + henvisning til forbrug.dk | testet | samme |
+| Kæledyr: chipnummer (15 cifre); Fitness: uger i træk; Fest → Madplan til antallet, der kommer; Madplan → del med familien | testet/tekst | samme |
+
+**Ikke bygget (og hvorfor):** foto af opgaven til håndværkeren (virksomheden kan ikke se det i et opkald – kræver sms/mail-link
+til virksomheden), invitation som link med «kommer/kommer ikke» (kræver en ny offentlig side uden login – næste skridt),
+import fra kontoudtog/e-Boks (ingen API; CSV-import kan komme senere), CVR/Trustpilot-tjek, Aula.
+**Kræver handling:** opret den private bucket `privat-files` i Supabase (som `browser-evidence`), ellers kan der ikke
+gemmes billeder i produktion.
+
+## Checkpoint 38 — 6. november 2026 (rettelser efter testrapporten for de nye apps)
+
+| Rettelse | Bevis |
+|---|---|
+| «Installér» slår appen til med det samme; trinene vises bagefter som guide (før: kun «Start opsætningen» gemte) | `web/e2e/privat.spec.ts` (butikken) |
+| «Inviter venner» genbruger ét link (før: ny invitation ved hvert besøg på Konto); «Inviteret» tæller rigtige invitationer | `tests/test_privat_sharing.py` |
+| Madplan: forslag i samme svar som madvanerne; ingredienser vises under hver dag; ental/flertal lægges sammen; mængder afrundes efter sammenlægning; `servings` påkrævet | `tests/test_privat_household.py` |
+| Assistentens navn: tomt felt ved redigering; han/hun/den (aldrig gættet – et valgt navn er «den», til brugeren vælger); butikskort følger også ved slå til/fra | samme; migration `e2a7c4d9f1b3` |
+| Opkaldskort siger «virksomheden» (ikke «værkstedet») i alle 8 sprog | i18n-check |
+| Et afvist opsigelsesopkald ændrer ikke abonnementet; sidste opsigelsesdag nævnes i chatten | `tests/test_privat_household.py` |
+| Datoer aldrig i fortiden: Hus (denne måned = i dag), Kæledyr (første behandling efter ét interval), Flytning (borger.dk efter flyttedagen; lejemål 3 mdr. før) | samme |
+| Reklamation: «Fejlen: Den lækker vand.»; Fest spørger om stedet; «1 fest» | samme |
+| Operatør: `GET /operator/privat/business-referrals` – lead-regnskabet pr. virksomhed (spurgt/valgt) | samme |
+
 ## Checkpoint 37 — 6. november 2026 (9 nye Privat-apps, Madplan med mængder, assistentens navn)
 
 Abonnementer & opsigelse, Håndværker & tilbud, Fælles udgifter, Garanti & kvitteringer, Fest & invitationer, Flytning,

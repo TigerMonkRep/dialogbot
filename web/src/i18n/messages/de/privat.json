@@ -14,7 +14,8 @@
     "birthdays": "Geburtstage",
     "bills": "Rechnungen",
     "car": "Auto & TÜV",
-    "parcels": "Pakete"
+    "parcels": "Pakete",
+    "travel": "Reisen"
   },
   "brand": {
     "privat": "Privat",
@@ -1200,5 +1201,27 @@
       "stop": "Stopp",
       "hint": "Du bekommst Bescheid, wenn das Paket unterwegs, abholbereit und zugestellt ist. Nur die Nummer geht an den Tracking-Dienst."
     }
+  },
+  "travel": {
+    "search": "Reise finden",
+    "origin": "Von (Flughafen)",
+    "destinations": "Nach (z. B. BCN, LIS)",
+    "date": "Abreise",
+    "orMonth": "…oder ein Monat",
+    "nights": "Nächte",
+    "budget": "Gesamtbudget (DKK)",
+    "adults": "Erwachsene",
+    "children": "Kinder",
+    "direct": "Nur Direktflüge",
+    "find": "Reisen finden",
+    "searching": "Suche …",
+    "typeHint": "Unsicher wohin? Schreib Peter z. B. «Finde einen Strandurlaub im Februar» – er wählt die Ziele.",
+    "results": "Vorschläge",
+    "none": "Keine Reisen mit Preis für diese Suche. Versuche andere Daten oder Ziele.",
+    "directShort": "direkt",
+    "stops": "{n} Umstiege",
+    "book": "Buchen",
+    "overBudget": "{n} Reisen lagen über dem Budget.",
+    "disclaimer": "Die Preise kommen direkt von den Anbietern und können sich ändern. Du buchst und zahlst beim Anbieter – Dialogbot bucht nicht."
   }
 }

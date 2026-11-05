@@ -547,3 +547,23 @@ opkaldsforslag til det gemte værksted.
 `{number, label?}`, `DELETE /privat/parcels/{number}`. Kun forsendelsesnummeret sendes til 17TRACK. Workeren spørger højst hver 2.
 time for pakker, der ikke er leveret, og giver besked ved på vej / ude til levering / klar til afhentning / leveret / problem.
 17TRACK-kaldene er ikke prøvet mod en rigtig nøgle.
+
+## Rejser (trin 1: forslag med rigtige priser, booking hos udbyderen)
+
+Kode: `app/modules/privat/travel.py`. Med i Plus og Familie. Kræver mindst én prisudbyder, ellers «Kommer snart»:
+`DUFFEL_ACCESS_TOKEN` (Duffel: flytilbud på præcise datoer, samlet pris) og/eller `TRAVELPAYOUTS_TOKEN` + `TRAVELPAYOUTS_MARKER`
+(Travelpayouts/Aviasales: billigste cachede priser pr. rute og måned, med affiliate-link). **Peter opfinder aldrig en pris**:
+et forslag uden pris fra en udbyder vises ikke.
+
+| Metode | Sti | Svar |
+|---|---|---|
+| POST | `/privat/trips/search` | `{origin, destinations[≤5], depart_date? \| month?, nights?, adults, children, budget_dkk?, trip_type?, direct_only?}` (IATA-koder) → `{id, params, offers[], over_budget, errors[]}`. Billigst først, inden for det samlede budget |
+| GET | `/privat/trips/latest` | `{search}` – den seneste søgning (de 5 seneste gemmes) |
+
+`offer`: `{id, provider, origin, destination, total_dkk, airline, depart_at, return_at, stops, book_url, price_note}`.
+**«Book»** åbner udbyderens side (Travelpayouts-link med Dialogbots marker; for Duffel-tilbud en flysøgning for samme rute og dato).
+Der bookes og betales intet i Dialogbot i trin 1. Trin 2 (booking i Dialogbot via Duffel) kræver juridisk afklaring
+(Rejsegarantifonden ved pakkerejser) og er ikke bygget.
+
+**Assistentens værktøj:** `search_trips(...)` – nævner brugeren en rejsetype i stedet for et sted, vælger modellen 3-5 destinationer.
+Udbyder-API'erne er ikke kaldt med rigtige nøgler (svarformatet er fra dokumentationen).

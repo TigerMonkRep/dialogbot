@@ -4506,6 +4506,112 @@
         "title": "TokenIn",
         "type": "object"
       },
+      "TripSearchIn": {
+        "properties": {
+          "adults": {
+            "default": 1,
+            "maximum": 9.0,
+            "minimum": 1.0,
+            "title": "Adults",
+            "type": "integer"
+          },
+          "budget_dkk": {
+            "anyOf": [
+              {
+                "minimum": 100.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Dkk"
+          },
+          "children": {
+            "default": 0,
+            "maximum": 8.0,
+            "minimum": 0.0,
+            "title": "Children",
+            "type": "integer"
+          },
+          "depart_date": {
+            "anyOf": [
+              {
+                "maxLength": 10,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Depart Date"
+          },
+          "destinations": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Destinations",
+            "type": "array"
+          },
+          "direct_only": {
+            "default": false,
+            "title": "Direct Only",
+            "type": "boolean"
+          },
+          "month": {
+            "anyOf": [
+              {
+                "maxLength": 7,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Month"
+          },
+          "nights": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nights"
+          },
+          "origin": {
+            "description": "IATA airport code, e.g. CPH",
+            "maxLength": 3,
+            "minLength": 3,
+            "title": "Origin",
+            "type": "string"
+          },
+          "trip_type": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trip Type"
+          }
+        },
+        "required": [
+          "origin",
+          "destinations"
+        ],
+        "title": "TripSearchIn",
+        "type": "object"
+      },
       "Turn": {
         "properties": {
           "role": {
@@ -21243,6 +21349,111 @@
         "summary": "Share Revoke",
         "tags": [
           "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/trips/latest": {
+      "get": {
+        "operationId": "latest_trip_search_api_v1_privat_trips_latest_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Latest Trip Search",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
+    "/api/v1/privat/trips/search": {
+      "post": {
+        "description": "Real prices from the configured providers, cheapest first, within the total budget. Nothing is booked.",
+        "operationId": "search_trips_api_v1_privat_trips_search_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripSearchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Trips",
+        "tags": [
+          "privat-apps"
         ]
       }
     },

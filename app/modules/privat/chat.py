@@ -1065,3 +1065,20 @@ def tool_stop_tracking(turn: Turn, a: dict) -> str:
         return "Den pakke følger brugeren ikke. Spørg hvilken."
     turn.say("text", f"Jeg følger ikke længere {hit.get('label') or hit['number']}.")
     return "Stoppet."
+
+
+# --------------------------------------------------------------------------- Rejser
+
+def tool_search_trips(turn: Turn, a: dict) -> str:
+    from app.core.errors import ValidationFailed
+    from app.modules.privat import travel
+
+    try:
+        result = travel.search(turn.db, turn.ctx.ws_id, a)
+    except ValidationFailed as e:
+        return f"Mangler: {e.message}. Spørg brugeren kort."
+    text = travel.summary(result)
+    if result["offers"]:
+        text += " Du finder «Book» under Apps → Rejser."
+    turn.say("text", text)
+    return f"{len(result['offers'])} rejser vist (søgning {result['id']})."

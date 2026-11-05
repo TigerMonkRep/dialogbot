@@ -14,7 +14,8 @@
     "birthdays": "Fødselsdage",
     "bills": "Regninger",
     "car": "Bil & syn",
-    "parcels": "Pakker"
+    "parcels": "Pakker",
+    "travel": "Rejser"
   },
   "brand": {
     "privat": "Privat",
@@ -1200,5 +1201,27 @@
       "stop": "Stop",
       "hint": "Du får besked, når pakken er på vej, klar til afhentning og leveret. Kun nummeret sendes til sporingstjenesten."
     }
+  },
+  "travel": {
+    "search": "Find en rejse",
+    "origin": "Fra (lufthavn)",
+    "destinations": "Til (fx BCN, LIS)",
+    "date": "Afrejse",
+    "orMonth": "…eller en måned",
+    "nights": "Nætter",
+    "budget": "Budget i alt (kr.)",
+    "adults": "Voksne",
+    "children": "Børn",
+    "direct": "Kun direkte fly",
+    "find": "Find rejser",
+    "searching": "Søger …",
+    "typeHint": "Ved ikke hvor? Skriv til Peter, fx «Find en strandferie i februar» – så vælger han destinationerne.",
+    "results": "Forslag",
+    "none": "Ingen rejser med pris for den søgning. Prøv andre datoer eller destinationer.",
+    "directShort": "direkte",
+    "stops": "{n} skift",
+    "book": "Book",
+    "overBudget": "{n} rejser lå over budgettet.",
+    "disclaimer": "Priserne kommer direkte fra udbyderne og kan ændre sig. Du bestiller og betaler hos udbyderen – Dialogbot booker ikke."
   }
 }

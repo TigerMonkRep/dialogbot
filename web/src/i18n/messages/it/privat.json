@@ -14,7 +14,8 @@
     "birthdays": "Compleanni",
     "bills": "Bollette",
     "car": "Auto e revisione",
-    "parcels": "Pacchi"
+    "parcels": "Pacchi",
+    "travel": "Viaggi"
   },
   "brand": {
     "privat": "Privat",
@@ -1200,5 +1201,27 @@
       "stop": "Ferma",
       "hint": "Ricevi un avviso quando il pacco è in viaggio, pronto per il ritiro e consegnato. Al servizio di tracciamento viene inviato solo il numero."
     }
+  },
+  "travel": {
+    "search": "Trova un viaggio",
+    "origin": "Da (aeroporto)",
+    "destinations": "A (es. BCN, LIS)",
+    "date": "Partenza",
+    "orMonth": "…o un mese",
+    "nights": "Notti",
+    "budget": "Budget totale (DKK)",
+    "adults": "Adulti",
+    "children": "Bambini",
+    "direct": "Solo voli diretti",
+    "find": "Trova viaggi",
+    "searching": "Ricerca …",
+    "typeHint": "Non sai dove? Scrivi a Peter, es. «Trova una vacanza al mare a febbraio»: sceglie lui le mete.",
+    "results": "Proposte",
+    "none": "Nessun viaggio con prezzo per questa ricerca. Prova altre date o mete.",
+    "directShort": "diretto",
+    "stops": "{n} scali",
+    "book": "Prenota",
+    "overBudget": "{n} viaggi superavano il budget.",
+    "disclaimer": "I prezzi arrivano direttamente dai fornitori e possono cambiare. Prenoti e paghi presso il fornitore: Dialogbot non prenota."
   }
 }

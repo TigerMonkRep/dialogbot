@@ -128,6 +128,23 @@ def respond(model: str, system: str, messages: list[dict], tools: list[dict] | N
         if "calendar_status" in names:
             return _call(model, "calendar_status", {})
         return suggest("kalender") or _done(model, "Kalender er ikke slået til.")
+    if re.search(r"(rejse|ferie\b|fly til|flybillet)", low) and "pakkeliste" not in low:
+        if "search_trips" not in names:
+            return suggest("rejser") or _done(model, "Rejser er ikke slået til.")
+        origin = re.search(r"\bfra\s+([A-ZÆØÅ]{3})\b", text)
+        dests = re.findall(r"\btil\s+([A-ZÆØÅ]{3})\b", text) or (["BCN", "LIS", "AGP"] if "strand" in low else [])
+        month = re.search(r"(20\d\d-\d\d)(?!-)", text)
+        dd = re.search(r"(20\d\d-\d\d-\d\d)", text)
+        budget = re.search(r"højst\s+([\d.]+)\s*kr", low)
+        adults = re.search(r"(\d+)\s+voksne", low)
+        kids = re.search(r"(\d+)\s+børn", low)
+        nights = re.search(r"(\d+)\s+nætter", low)
+        args = {"origin": origin.group(1) if origin else "", "destinations": dests,
+                **({"depart_date": dd.group(1)} if dd else {"month": month.group(1)} if month else {}),
+                **({"budget_dkk": int(budget.group(1).replace(".", ""))} if budget else {}),
+                **({"adults": int(adults.group(1))} if adults else {}), **({"children": int(kids.group(1))} if kids else {}),
+                **({"nights": int(nights.group(1))} if nights else {}), **({"direct_only": True} if "direkte" in low else {})}
+        return _call(model, "search_trips", args)
     if "pakkeliste" in low:
         if "create_packing_list" not in names:
             return suggest("pakkeliste") or _done(model, "Pakkeliste er ikke slået til.")

@@ -86,6 +86,12 @@ services:
         sync: false
       - key: TRACK17_API_KEY      # Pakker app (17TRACK); empty = the app stays «Kommer snart». Same value on the worker.
         sync: false
+      - key: DUFFEL_ACCESS_TOKEN  # Rejser app: flight prices (dashboard-managed)
+        sync: false
+      - key: TRAVELPAYOUTS_TOKEN  # Rejser app: fares + affiliate booking links (dashboard-managed)
+        sync: false
+      - key: TRAVELPAYOUTS_MARKER
+        sync: false
       - key: LOG_LEVEL
         value: INFO
 

@@ -2,6 +2,21 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 36 — 5. november 2026 (Privat-appen «Rejser», trin 1)
+
+Rejseforslag med rigtige priser fra Duffel og/eller Travelpayouts; «Book» åbner udbyderens side. Se `docs/privat-api.md` «Rejser».
+
+| Del | Status | Bevis |
+|---|---|---|
+| Søgning: hvorfra, destinationer eller rejsetype, dato eller måned, nætter, voksne/børn, samlet budget, kun direkte | testet | `tests/test_privat_travel.py` |
+| Kun priser fra udbydere; billigst først; budgetfilter; søgninger gemmes til «Book» | testet med testdobbelt | samme |
+| Appen er «Kommer snart» uden udbydernøgle | testet | samme |
+| Chat: strandferie → destinationer vælges, svar med priser og henvisning til «Book» | testet med testmodellen | samme |
+| Web: søgeformular og resultater med «Book» i app-arket, 8 sprog | typecheck + i18n-paritet | `npx tsc` |
+
+**Ikke eksternt verificeret:** Duffel og Travelpayouts er ikke kaldt med rigtige nøgler. Booking i Dialogbot (trin 2) er ikke bygget
+og kræver juridisk afklaring (Rejsegarantifonden). Hoteller er ikke med endnu (kun fly).
+
 ## Checkpoint 35 — 5. november 2026 (Privat-apps: Pakkeliste, Madplan, Læge & tandlæge, Bil & syn, Pakker)
 
 De sidste fem af de otte «kommer snart»-apps. Se `docs/privat-api.md`. Fire er nu `available`; Pakker bliver det, når

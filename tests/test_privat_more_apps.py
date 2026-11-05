@@ -161,4 +161,4 @@ def test_parcel_tracked_and_user_told_when_it_moves(api, pv, db, tracking):
 def test_every_shop_app_is_now_available_or_waits_for_its_key(api, pv):
     tok = pv.account("mette@testmail.dk")
     cat = {a["key"]: a["status"] for a in api.get(tok, "/privat/addons").json()}
-    assert {k for k, v in cat.items() if v == "coming_soon"} == {"pakker"}
+    assert {k for k, v in cat.items() if v == "coming_soon"} == {"pakker", "rejser"}   # both wait for their API key

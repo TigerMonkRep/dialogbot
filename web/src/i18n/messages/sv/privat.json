@@ -14,7 +14,8 @@
     "birthdays": "Födelsedagar",
     "bills": "Räkningar",
     "car": "Bil & besiktning",
-    "parcels": "Paket"
+    "parcels": "Paket",
+    "travel": "Resor"
   },
   "brand": {
     "privat": "Privat",
@@ -1200,5 +1201,27 @@
       "stop": "Stoppa",
       "hint": "Du får besked när paketet är på väg, kan hämtas och är levererat. Bara numret skickas till spårningstjänsten."
     }
+  },
+  "travel": {
+    "search": "Hitta en resa",
+    "origin": "Från (flygplats)",
+    "destinations": "Till (t.ex. BCN, LIS)",
+    "date": "Avresa",
+    "orMonth": "…eller en månad",
+    "nights": "Nätter",
+    "budget": "Total budget (kr)",
+    "adults": "Vuxna",
+    "children": "Barn",
+    "direct": "Bara direktflyg",
+    "find": "Hitta resor",
+    "searching": "Söker …",
+    "typeHint": "Vet du inte vart? Skriv till Peter, t.ex. «Hitta en strandsemester i februari» – så väljer han resmålen.",
+    "results": "Förslag",
+    "none": "Inga resor med pris för den sökningen. Prova andra datum eller resmål.",
+    "directShort": "direkt",
+    "stops": "{n} byten",
+    "book": "Boka",
+    "overBudget": "{n} resor låg över budget.",
+    "disclaimer": "Priserna kommer direkt från leverantörerna och kan ändras. Du bokar och betalar hos leverantören – Dialogbot bokar inte."
   }
 }

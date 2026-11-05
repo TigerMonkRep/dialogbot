@@ -260,7 +260,21 @@ export interface PrivatApi {
   parcels(): Promise<{ items: Parcel[] }>;
   addParcel(body: { number: string; label?: string }): Promise<Parcel>;
   removeParcel(number: string): Promise<void>;
+  // Rejser
+  searchTrips(body: TripSearch): Promise<TripResult>;
+  latestTrips(): Promise<{ search: TripResult | null }>;
 }
+
+// ---------- Rejser ----------
+export type TripSearch = {
+  origin: string; destinations: string[]; depart_date?: string; month?: string; nights?: number;
+  adults: number; children: number; budget_dkk?: number; trip_type?: string; direct_only?: boolean;
+};
+export type TripOffer = {
+  id: string; provider: string; origin: string; destination: string; total_dkk: number; airline: string;
+  depart_at: string; return_at: string; stops: number | null; book_url: string; price_note: string;
+};
+export type TripResult = { id: string; at: string; params: TripSearch; offers: TripOffer[]; over_budget: number; errors: string[] };
 
 // ---------- Madplan, Læge & tandlæge, Bil & syn, Pakker ----------
 export type FoodPreferences = { people: number | null; avoid: string; likes: string };
@@ -404,6 +418,8 @@ export const realPrivat: PrivatApi = {
   parcels: () => api(`${P}/parcels`),
   addParcel: (body) => api(`${P}/parcels`, json(body)),
   removeParcel: (number) => api(`${P}/parcels/${enc(number)}`, { method: "DELETE" }),
+  searchTrips: (body) => api(`${P}/trips/search`, json(body)),
+  latestTrips: () => api(`${P}/trips/latest`),
 };
 
 /** The Privat API is not there (not merged/deployed) or switched off: the UI falls back to the simulation. */

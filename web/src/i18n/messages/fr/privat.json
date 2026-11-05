@@ -14,7 +14,8 @@
     "birthdays": "Anniversaires",
     "bills": "Factures",
     "car": "Voiture & contrôle",
-    "parcels": "Colis"
+    "parcels": "Colis",
+    "travel": "Voyages"
   },
   "brand": {
     "privat": "Privat",
@@ -1200,5 +1201,27 @@
       "stop": "Arrêter",
       "hint": "Vous êtes prévenu quand le colis est en route, disponible au retrait et livré. Seul le numéro est envoyé au service de suivi."
     }
+  },
+  "travel": {
+    "search": "Trouver un voyage",
+    "origin": "Départ (aéroport)",
+    "destinations": "Destination (ex. BCN, LIS)",
+    "date": "Départ le",
+    "orMonth": "…ou un mois",
+    "nights": "Nuits",
+    "budget": "Budget total (DKK)",
+    "adults": "Adultes",
+    "children": "Enfants",
+    "direct": "Vols directs uniquement",
+    "find": "Trouver des voyages",
+    "searching": "Recherche …",
+    "typeHint": "Vous ne savez pas où ? Écrivez à Peter, par ex. « Trouve des vacances à la plage en février » – il choisit les destinations.",
+    "results": "Suggestions",
+    "none": "Aucun voyage avec prix pour cette recherche. Essayez d'autres dates ou destinations.",
+    "directShort": "direct",
+    "stops": "{n} escales",
+    "book": "Réserver",
+    "overBudget": "{n} voyages dépassaient le budget.",
+    "disclaimer": "Les prix viennent directement des fournisseurs et peuvent changer. Vous réservez et payez chez le fournisseur – Dialogbot ne réserve pas."
   }
 }

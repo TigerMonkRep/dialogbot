@@ -67,12 +67,15 @@ class Addon:
     resource_hooks: str | None = None
     extra: dict = field(default_factory=dict)
     # A setting (Settings attribute) the app needs to work, e.g. an API key. Without it the app is «coming_soon».
-    needs_setting: str | None = None
+    # A tuple means: at least one of them.
+    needs_setting: str | tuple[str, ...] | None = None
 
     @property
     def live_status(self) -> str:
-        if self.needs_setting and not getattr(get_settings(), self.needs_setting, None):
-            return "coming_soon"
+        if self.needs_setting:
+            names = (self.needs_setting,) if isinstance(self.needs_setting, str) else self.needs_setting
+            if not any(getattr(get_settings(), n, None) for n in names):
+                return "coming_soon"
         return self.status
 
 
@@ -447,6 +450,37 @@ register(Addon(
             "Lav en ny pakkeliste ud fra den, brugeren brugte sidst (alt er ikke krydset af igen).",
             _obj({"trip": {"type": "string", "description": "Den nye tur, hvis brugeren nævnte den"}}),
             "app.modules.privat.chat:tool_reuse_packing_list")),
+))
+
+register(Addon(
+    key="rejser", name="Rejser", tagline="Rejseforslag med rigtige priser – og book hos udbyderen",
+    description="Peter finder rejser ud fra budget, antal personer, hvor I vil hen og hvilken slags rejse, med priser "
+                "direkte fra flyselskaber og rejsesider.",
+    icon="plane", category="aftaler", price_text="Med i Plus og Familie", pricing="free",
+    needs_setting=("duffel_access_token", "travelpayouts_token"),
+    what="Sig hvor I rejser fra, hvor mange I er, hvad det må koste, og hvad slags rejse I drømmer om – eller hvor I "
+         "vil hen. Peter finder flyrejser med rigtige priser, billigst først, og med «Book» bestiller du hos udbyderen.",
+    example="«Find en strandferie i februar til to voksne og to børn fra Billund for højst 12.000 kr.»",
+    steps=("Fortæl Peter om rejsen – eller udfyld søgningen i appen",
+           "Se forslagene med priser for hele selskabet, billigst først",
+           "Tryk «Book» – du bestiller og betaler hos udbyderen"),
+    included_in=("plus", "familie"),
+    permissions=("Sender kun rejsens fra, til, datoer og antal personer til prisudbyderne",
+                 "Booker og betaler aldrig noget i Dialogbot"),
+    keywords=("rejse", "rejser", "ferie", "fly", "flybillet", "storbyferie", "strandferie", "skiferie"),
+    tools=(AddonTool(
+        "search_trips",
+        "Find flyrejser med RIGTIGE priser (fra Duffel/Travelpayouts – opfind aldrig en pris). origin og destinations er "
+        "IATA-lufthavnskoder (fx CPH, BLL, AAL; BCN, LIS, CDG). Nævner brugeren ikke et sted, men en rejsetype "
+        "(strand, storby, ski, natur …), så vælg selv 3-5 passende destinationer, der kan nås fra origin. depart_date "
+        "(YYYY-MM-DD) eller month (YYYY-MM), nights, adults, children, budget_dkk (samlet for alle) og direct_only kun "
+        "hvis brugeren sagde det. Spørg kort, hvis hvorfra eller hvornår mangler.",
+        _obj({"origin": {"type": "string"}, "destinations": {"type": "array", "items": {"type": "string"}},
+              "depart_date": {"type": "string"}, "month": {"type": "string"}, "nights": {"type": "integer"},
+              "adults": {"type": "integer"}, "children": {"type": "integer"}, "budget_dkk": {"type": "integer"},
+              "trip_type": {"type": "string"}, "direct_only": {"type": "boolean"}, "wishes": {"type": "string"}},
+             ["origin", "destinations"]),
+        "app.modules.privat.chat:tool_search_trips"),),
 ))
 
 # Which add-on a shared list needs, per share mode.

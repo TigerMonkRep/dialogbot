@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session as OrmSession
 
 from app.db import get_db
-from app.modules.privat import addons, bills, birthdays, car, health, meals, parcels
+from app.modules.privat import addons, bills, birthdays, car, health, meals, parcels, travel
 from app.modules.privat.deps import PrivateCtx, private_ctx
 
 router = APIRouter(prefix="/privat", tags=["privat-apps"])
@@ -218,3 +218,33 @@ def delete_parcel(number: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSe
         raise NotFound("Pakken findes ikke")
     db.commit()
     return Response(status_code=204)
+
+
+# --------------------------------------------------------------------------- Rejser
+
+class TripSearchIn(BaseModel):
+    origin: str = Field(min_length=3, max_length=3, description="IATA airport code, e.g. CPH")
+    destinations: list[str] = Field(min_length=1, max_length=5)
+    depart_date: str | None = Field(default=None, max_length=10)
+    month: str | None = Field(default=None, max_length=7)
+    nights: int | None = Field(default=None, ge=1, le=60)
+    adults: int = Field(default=1, ge=1, le=9)
+    children: int = Field(default=0, ge=0, le=8)
+    budget_dkk: int | None = Field(default=None, ge=100)
+    trip_type: str | None = Field(default=None, max_length=30)
+    direct_only: bool = False
+
+
+@router.post("/trips/search")
+def search_trips(body: TripSearchIn, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """Real prices from the configured providers, cheapest first, within the total budget. Nothing is booked."""
+    addons.require(db, ctx.ws_id, travel.ADDON)
+    result = travel.search(db, ctx.ws_id, body.model_dump())
+    db.commit()
+    return result
+
+
+@router.get("/trips/latest")
+def latest_trip_search(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    addons.require(db, ctx.ws_id, travel.ADDON)
+    return {"search": travel.latest(db, ctx.ws_id)}

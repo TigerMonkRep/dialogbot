@@ -989,6 +989,8 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     async parcels() { await wait(); return { items: [] }; },
     async addParcel() { await wait(); return fail(409, "demo", "Pakker følges kun med en rigtig konto"); },
     async removeParcel() { await wait(); },
+    async searchTrips() { await wait(); return fail(409, "demo", "Rejser søges kun med en rigtig konto"); },
+    async latestTrips() { await wait(); return { search: null }; },
 
     // ---------- simulation-only tools ----------
     async simulateMember(taskId) {

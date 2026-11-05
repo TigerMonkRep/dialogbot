@@ -10,6 +10,7 @@ import { BillsPanel } from "./bills";
 import { BirthdaysPanel } from "./birthdays";
 import { CalendarPanel } from "./calendar";
 import { CarPanel, HealthPanel, MealsPanel, ParcelsPanel } from "./more-apps";
+import { TravelPanel } from "./travel";
 import { Ico, Tile, iconFor } from "./icons";
 import { usePlan, usePrivat } from "./store";
 
@@ -194,6 +195,7 @@ export function AddonDetail({ a }: { a: Addon }) {
           {a.key === "laege-og-tandlaege" && mode !== "demo" && <HealthPanel />}
           {a.key === "bil-og-syn" && mode !== "demo" && <CarPanel />}
           {a.key === "pakker" && mode !== "demo" && <ParcelsPanel />}
+          {a.key === "rejser" && mode !== "demo" && <TravelPanel />}
           <Button className={`${BIG} rounded-full`} onClick={open} aria-label={`${t("store.open")}: ${name}`}>{t("store.open")}</Button>
           <Button variant="outline" className="rounded-full border-2" onClick={() => openSheet({ kind: "addonOff", addonKey: a.key })} aria-label={`${t("addons.disable")}: ${name}`}>{t("addons.disable")}</Button>
         </>

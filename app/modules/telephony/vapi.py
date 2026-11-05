@@ -423,6 +423,10 @@ def tool_calls(db: OrmSession, message: dict) -> dict:
     call_id = str(_dig(message, "call", "id") or "") or None
     sales_cc = sales_tools.contact_for_call(db, call_id)  # Dialogbot's own sales call: Peter's tools, looked up by call id
     calls = message.get("toolCallList") or [x.get("toolCall") for x in message.get("toolWithToolCallList") or []] or []
+    from app.modules.privat import lead_pitch
+
+    privat_call = lead_pitch.private_call_for(db, message) if any(
+        ((tc or {}).get("function") or {}).get("name") in (lead_pitch.TOOL_PITCH, lead_pitch.TOOL_REPLY) for tc in calls) else None
     results = []
     for tc in calls:
         tc = tc or {}
@@ -434,7 +438,10 @@ def tool_calls(db: OrmSession, message: dict) -> dict:
             except ValueError:
                 args = {}
         result = "Handlingen er ikke tilgængelig på dette nummer. Tilbyd i stedet, at en medarbejder ringer tilbage."
-        if sales_cc is not None and name:
+        if privat_call is not None and name in (lead_pitch.TOOL_PITCH, lead_pitch.TOOL_REPLY):
+            result = lead_pitch.execute_tool(db, privat_call, str(name), args if isinstance(args, dict) else {})
+            db.commit()
+        elif sales_cc is not None and name:
             result = sales_tools.execute(db, sales_cc, str(name), args if isinstance(args, dict) else {}, call_id)
             db.commit()
         elif number is not None and number.active and name:

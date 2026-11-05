@@ -2,6 +2,26 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 31 — 5. november 2026 (B: lead-loop – afslutningslinje ved Privat-opkald)
+
+Se `docs/sales/privat-opkald-leads.md`. Branch `feat/lead-pitch`, bygget oven på `feat/browser-worker` (checkpoint 30), fordi `external_business_contacts` oprettes dér.
+**Slået fra** (`LEAD_PITCH_ENABLED=false`).
+
+| Del | Status | Bevis |
+|---|---|---|
+| Fast skabelon i én konstant (`PITCH_LINE`), ordlyden låst, ingen priser/procenter/superlativer; samme for svarlinjerne og intro-mailen | testet | `tests/test_lead_pitch.py` |
+| Regler i kode, tjekket to gange (ved opsætning og når linjen bedes om): Privat-bruger, ærindet afsluttet, ikke Dialogbot-kunde (CVR/telefon), ikke på spærrelisten, cooldown (`LEAD_PITCH_COOLDOWN_DAYS`), ikke reklamebeskyttet (ukendt = beskyttet), rolig virksomhed; aldrig ved ikke-besvaret/modparten lagde på | testet (simuleret Vapi) | samme |
+| Telefoni: værktøjerne `end_call_pitch`/`pitch_reply` kun i Privat-assistenten og kun når reglerne holder; `tool-calls`-gren i webhooken; afslutningen klippes af udskriften før ærindet vurderes, så linjen aldrig kan ændre `confirmed_text`; en omskrevet linje trækker samtykket tilbage | testet | samme |
+| Datamodel: `private_calls.pitch_outcome/pitch_skipped_reason/pitch_transcript_excerpt (≤ 500)/pitch_started_at`; `external_business_contacts.consent_to_email/consent_at/lead_id` (Alembic `e4f8b1c6d2a9`; tabellen kom i `d3e7a2b5c9f1`) | testet | `alembic check`, ned og op |
+| Lead i salgsarbejdsrummet (kilde `privat_call`): kategori (aldrig navn), bookingmotor, uddrag, «Send intro-mail»; dedup på lead-id/telefon; kun efter ja + gyldig adresse; ved nej kun spærring + dato | testet | samme |
+| Operatørflade `/app/operator/sales`: kilde, udfald, cooldown, «Send intro-mail» (fast mail via outbox, én gang), «Spær»; kun admin/owner i salgsarbejdsrummet (404 for andre, 403 under admin) | testet; ikke browserafprøvet | samme, `tsc` |
+
+**Ikke eksternt verificeret:**
+- **Ingen rigtig Vapi-samtale.** Værktøjskaldene og webhook-formatet er bygget efter Vapis dokumenterede format og testet med simulerede beskeder. Om modellen siger teksten ordret, er ikke målt; kun at det opdages bagefter (`line_not_verbatim`).
+- **Intet rigtigt CVR-opslag**, og forespørgslen på navn er ikke kørt mod registret. Uden adgang er reklamebeskyttelsen ukendt, og linjen springes over.
+- **Juridisk vurdering ikke gennemgået:** markedsføringslovens § 10 og reklamebeskyttelse. En jurist skal bekræfte, før flaget sættes i prod.
+- Operatørsiden er typetjekket, men ikke afprøvet i en browser. Intro-mailens tekst er ikke gennemgået af en jurist.
+
 ## Checkpoint 30 — 4. november 2026 (A: browser-worker – tøjlet browser-agent til booking på eksterne hjemmesider)
 
 Se `docs/ADR-004-browser-worker.md` og `browser_worker/README.md`. Branch `feat/browser-worker`; ingen af delene er slået til eller deployet (`BROWSER_WORKER_ENABLED=false`).

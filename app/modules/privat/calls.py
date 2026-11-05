@@ -343,14 +343,17 @@ Regler:
 
 
 def assistant_for(db: OrmSession, c: PrivateCall, user: User) -> dict:
+    from app.modules.privat import lead_pitch
     from app.modules.telephony import vapi
 
     s = get_settings()
     first, system = script(c, user)
+    pitch_tools, pitch_prompt = lead_pitch.vapi_tools(db, c)   # empty unless every rule of the closing line is met (and the flag is on)
     assistant: dict = {
         "firstMessage": first,
         "model": {"provider": s.vapi_model_provider, "model": vapi.phone_model(s),
-                  "messages": [{"role": "system", "content": system}], "tools": [vapi.END_CALL_TOOL]},
+                  "messages": [{"role": "system", "content": system + pitch_prompt}],
+                  "tools": [vapi.END_CALL_TOOL, *pitch_tools]},
         "transcriber": vapi.transcriber_for(db, None, extra=[c.business_name, *user.display_name.split()]),
         "maxDurationSeconds": MAX_SECONDS,
         "voicemailDetection": {"provider": "vapi"},
@@ -492,12 +495,16 @@ def on_report(db: OrmSession, message: dict) -> str | None:
         c.vapi_call_id = call_id[:100]
     reason = str(message.get("endedReason") or "")
     visitor_lines, transcript = _lines(message)
+    from app.modules.privat import lead_pitch
+
+    transcript, closing = lead_pitch.split_transcript(transcript)   # the errand is judged WITHOUT the closing line (confirmed_text)
     duration = message.get("durationSeconds")
     summary = str(_dig(message, "analysis", "summary") or message.get("summary") or "")[:4000]
     answered = visitor_lines > 0 and not any(reason.startswith(r) for r in NO_ANSWER_REASONS)
     if not answered:
         no_answer = any(reason.startswith(r) for r in NO_ANSWER_REASONS) or visitor_lines == 0
         _release(db, c, task, result="no_answer" if no_answer else "failed", reason=reason)
+        lead_pitch.finalize(db, c, answered=False, ended_reason=reason, closing=closing)
         return "applied"
     c.status, c.result, c.ended_reason, c.ended_at = "answered", "answered", reason[:100] or None, _now()
     c.duration_seconds = int(duration) if isinstance(duration, int | float) else None
@@ -512,6 +519,7 @@ def on_report(db: OrmSession, message: dict) -> str | None:
         charged = "3 credits trukket"
         task.usage_text = f"3 credits · besvaret opkald{_dur(c.duration_seconds)}"
     data = classify(db, db.get(Workspace, c.workspace_id), transcript, summary)
+    lead_pitch.finalize(db, c, answered=True, ended_reason=reason, closing=closing, has_transcript=bool(transcript or closing))
     c.business_reply = str(data.get("summary") or summary or "")[:4000] or None
     if data.get("price_text"):
         c.business_price_text = str(data["price_text"])[:300]

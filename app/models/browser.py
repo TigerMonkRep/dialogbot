@@ -109,6 +109,11 @@ class ExternalBusinessContact(Base):
     pitch_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     last_outcome: Mapped[str] = mapped_column(String(16), nullable=False, default="not_asked", server_default="not_asked")
     email: Mapped[str | None] = mapped_column(String(320))
+    # The yes behind `email`: set together with it, only after the business said «ja, send en mail» and gave the address.
+    consent_to_email: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # The lead in the sales workspace (one per business: a repeat updates it, it never makes a second)
+    lead_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("leads.id", ondelete="SET NULL", name="fk_external_business_contacts_lead_id"))
     # --- lookup cache (A5) ---
     lookup_key: Mapped[str | None] = mapped_column(String(300), unique=True)   # «navn|by», normalised
     address: Mapped[str | None] = mapped_column(String(300))

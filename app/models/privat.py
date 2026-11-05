@@ -54,6 +54,10 @@ class PrivateProfile(Base):
     location_postcode: Mapped[str | None] = mapped_column(String(10))
     location_lat: Mapped[float | None] = mapped_column(Float)
     location_lng: Mapped[float | None] = mapped_column(Float)
+    # The private calendar subscription link (Kalender app): only a SHA-256 of the secret token is kept; the link is
+    # shown once when made and a new one replaces it. Null = no link.
+    calendar_feed_token_hash: Mapped[str | None] = mapped_column(String(64), unique=True)
+    calendar_feed_created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = ts_now()
 
 
@@ -460,3 +464,36 @@ class PushSubscription(Base):
     created_at: Mapped[datetime] = ts_now()
     last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     failures: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+
+
+class PrivateAppointment(Base):
+    """An agreed time the user approved: a call where the business confirmed a time, a confirmed browser booking, or a
+    time the user told the assistant themselves. It is what the Kalender app puts in the user's own calendar (.ics,
+    the subscription link, and Google/Outlook when connected). `external` holds the event ids per connected calendar."""
+
+    __tablename__ = "private_appointments"
+    __table_args__ = (
+        CheckConstraint("source in ('call','browser','manual')", name="ck_private_appointments_source"),
+        CheckConstraint("status in ('confirmed','cancelled')", name="ck_private_appointments_status"),
+        CheckConstraint("ends_at > starts_at", name="ck_private_appointments_range"),
+        Index("ix_private_appointments_ws_starts", "workspace_id", "starts_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    task_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("private_tasks.id", ondelete="SET NULL"))
+    source: Mapped[str] = mapped_column(String(16), nullable=False)
+    # call:<id> | browser:<id> | manual:<uuid> – one appointment per approved errand, whatever is retried.
+    source_ref: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
+    title: Mapped[str] = mapped_column(String(300), nullable=False)
+    location: Mapped[str] = mapped_column(String(300), nullable=False, default="", server_default="")
+    notes: Mapped[str] = mapped_column(Text, nullable=False, default="", server_default="")
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    ends_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="confirmed", server_default="confirmed")
+    # iCalendar SEQUENCE: bumped on every change so calendars replace the old version.
+    sequence: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    # {"google_calendar": {"event_id": "...", "sequence": 2, "error": null}, ...}
+    external: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict, server_default="{}")
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = ts_now()

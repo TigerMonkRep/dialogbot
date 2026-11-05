@@ -41,7 +41,7 @@ class CalendarClient(Protocol):
 
     def info(self) -> dict: ...
     def busy(self, frm: datetime, to: datetime) -> list[tuple[datetime, datetime]]: ...
-    def create_event(self, *, title: str, start: datetime, end: datetime, description: str = "") -> str: ...
+    def create_event(self, *, title: str, start: datetime, end: datetime, description: str = "", location: str = "") -> str: ...
     def update_event(self, event_id: str, *, start: datetime, end: datetime) -> None: ...
     def delete_event(self, event_id: str) -> None: ...
 
@@ -97,9 +97,9 @@ class GoogleCalendarClient:
         periods = ((out.get("calendars") or {}).get(self.calendar_id) or {}).get("busy") or []
         return [(_parse(p["start"]), _parse(p["end"])) for p in periods if p.get("start") and p.get("end")]
 
-    def create_event(self, *, title: str, start: datetime, end: datetime, description: str = "") -> str:
+    def create_event(self, *, title: str, start: datetime, end: datetime, description: str = "", location: str = "") -> str:
         ev = _http("POST", f"{self.BASE}/calendars/{self.calendar_id}/events", self._token,
-                   json={"summary": title, "description": description,
+                   json={"summary": title, "description": description, **({"location": location} if location else {}),
                          "start": {"dateTime": _iso(start)}, "end": {"dateTime": _iso(end)}})
         return str(ev.get("id") or "")
 
@@ -144,9 +144,10 @@ class MicrosoftCalendarClient:
             res.append((_parse(ev["start"]["dateTime"]), _parse(ev["end"]["dateTime"])))
         return res
 
-    def create_event(self, *, title: str, start: datetime, end: datetime, description: str = "") -> str:
+    def create_event(self, *, title: str, start: datetime, end: datetime, description: str = "", location: str = "") -> str:
         ev = _http("POST", f"{self.BASE}{self._cal()}/events", self._token,
                    json={"subject": title, "body": {"contentType": "text", "content": description},
+                         **({"location": {"displayName": location}} if location else {}),
                          "start": {"dateTime": _iso(start), "timeZone": "UTC"},
                          "end": {"dateTime": _iso(end), "timeZone": "UTC"}})
         return str(ev.get("id") or "")

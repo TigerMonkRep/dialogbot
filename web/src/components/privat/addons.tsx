@@ -1,11 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui";
 import { useT } from "@/i18n/client";
 import type { T } from "@/i18n/translate";
 import { CONFLICT, type Addon } from "@/lib/privat/api";
 import type { ApiError } from "@/lib/client";
 import { BIG, Eyebrow, Pill } from "./bits";
+import { CalendarPanel } from "./calendar";
 import { Ico, Tile, iconFor } from "./icons";
 import { usePlan, usePrivat } from "./store";
 
@@ -63,6 +64,11 @@ export function AppTile({ a, size = 62 }: { a: Addon; size?: number }) {
 export function StorePage() {
   const t = useT("privat");
   const { addons, openSheet, mode } = usePrivat();
+  // /privat/kalender (also where Google/Microsoft send the user back): open the Kalender app straight away.
+  const hasCalendar = !!addons?.some((a) => a.key === "kalender");
+  useEffect(() => {
+    if (hasCalendar && window.location.pathname.startsWith("/privat/kalender")) openSheet({ kind: "addon", addonKey: "kalender" });
+  }, [hasCalendar, openSheet]);
   const p = usePlan();
   const all = addons ?? [];
   const installed = all.filter((a) => a.enabled);
@@ -172,6 +178,7 @@ export function AddonDetail({ a }: { a: Addon }) {
         </>
       ) : a.enabled ? (
         <>
+          {a.key === "kalender" && mode !== "demo" && <CalendarPanel />}
           <Button className={`${BIG} rounded-full`} onClick={open} aria-label={`${t("store.open")}: ${name}`}>{t("store.open")}</Button>
           <Button variant="outline" className="rounded-full border-2" onClick={() => openSheet({ kind: "addonOff", addonKey: a.key })} aria-label={`${t("addons.disable")}: ${name}`}>{t("addons.disable")}</Button>
         </>

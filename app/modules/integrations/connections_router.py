@@ -22,7 +22,7 @@ from app.core.auth import WorkspaceContext, require_capability
 from app.core.errors import ApiError, Conflict, ValidationFailed
 from app.core.idempotency import IdempotencyGuard
 from app.db import get_db
-from app.models import IntegrationConnection
+from app.models import IntegrationConnection, Workspace
 from app.modules.integrations import actions, connectors, credentials, oauth
 from app.modules.integrations.connectors import webhook
 from app.modules.integrations.connectors.base import ActionError, RunContext
@@ -173,6 +173,9 @@ def oauth_callback(key: str, state: str = Query(default=""), code: str = Query(d
             raise ApiError("Ikke en OAuth-connector", code="not_oauth")
         row, verifier = oauth.consume_state(db, state, key)
         db.flush()
+        personal = getattr(db.get(Workspace, row.workspace_id), "kind", "business") == "personal"
+        if personal:  # Dialogbot Privat's Kalender app uses the same OAuth client and callback
+            back = f"{get_settings().frontend_base_url.rstrip('/')}/privat/kalender"
         if error or not code:
             db.commit()
             return RedirectResponse(f"{back}?error=oauth_denied&connector={key}", status_code=303)
@@ -202,6 +205,10 @@ def oauth_callback(key: str, state: str = Query(default=""), code: str = Query(d
         record_audit(db, workspace_id=row.workspace_id, actor_user_id=row.user_id, action="integrations.connected",
                      object_type="integration", object_id=row.workspace_id, after={"connector": key, "simulated": simulated},
                      request_id=None)
+        if personal:
+            from app.modules.privat import appointments
+
+            appointments.backfill(db, row.workspace_id)
         db.commit()
         return RedirectResponse(f"{back}?connected={key}", status_code=303)
     except ApiError as e:

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import sys
 import uuid
 
@@ -34,12 +35,21 @@ def configure_logging(level: str = "INFO") -> None:
 log = structlog.get_logger("dialogbot")
 
 
+# Paths whose last part is a secret (the private calendar subscription link): never written to the log.
+_SECRET_PATHS = re.compile(r"(/privat/calendar/feed/)[^/]+")
+
+
+def redact_path(path: str) -> str:
+    return _SECRET_PATHS.sub(r"\1***", path)
+
+
 class RequestIdMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         request_id = request.headers.get("x-request-id") or uuid.uuid4().hex
         request.state.request_id = request_id
         structlog.contextvars.clear_contextvars()
-        structlog.contextvars.bind_contextvars(request_id=request_id, path=request.url.path, method=request.method)
+        structlog.contextvars.bind_contextvars(request_id=request_id, path=redact_path(request.url.path),
+                                               method=request.method)
         response = await call_next(request)
         response.headers["X-Request-ID"] = request_id
         log.info("request", status=response.status_code)

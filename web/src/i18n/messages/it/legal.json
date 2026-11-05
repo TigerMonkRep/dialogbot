@@ -90,7 +90,7 @@
     },
     "label": "Privacy",
     "title": "Come trattiamo i dati personali",
-    "updated": "Aggiornato il 6 ottobre 2026.",
+    "updated": "Aggiornato il 5 novembre 2026.",
     "intro": "Qui può vedere quali dati tratta Dialogbot, perché, per quanto tempo e chi ci aiuta a farlo. La pagina riguarda i clienti, i clienti dei clienti, gli ambassador e i visitatori.",
     "sections": [
       {
@@ -141,6 +141,14 @@
         ]
       },
       {
+        "title": "Dialogbot Privat (il tuo assistente personale)",
+        "body": [
+          { "type": "p", "text": "Se usi Dialogbot Privat, trattiamo ciò che ci fornisci tu: le tue liste, i promemoria e le conversazioni con l'assistente, il numero di cellulare che confermi e – quando approvi una chiamata o una prenotazione – il nome e il numero dell'azienda e ciò che hai autorizzato l'assistente a dire. Lo scopo è fare ciò che chiedi. La base giuridica è il contratto con te (art. 6, par. 1, lett. b, GDPR). Qui Dialogbot è titolare del trattamento." },
+          { "type": "p", "parts": [{ "b": "Calendario." }, " Se attivi l'app Calendario, salviamo gli appuntamenti che hai approvato (orario, luogo e cosa è stato concordato). Se colleghi Google Calendar o Outlook, salviamo chiavi di accesso crittografate e le usiamo solo per creare, spostare ed eliminare gli appuntamenti che Dialogbot stesso ha inserito nel tuo calendario. Non leggiamo i tuoi altri appuntamenti. Puoi scollegare in qualsiasi momento nell'app; in tal caso revochiamo l'accesso ed eliminiamo le chiavi. Se crei un link privato del calendario, chiunque abbia il link può vedere i tuoi appuntamenti di Dialogbot; puoi fermare il link nell'app."] },
+          { "type": "p", "parts": [{ "b": "Dati utente di Google." }, " L'uso da parte di Dialogbot delle informazioni ricevute dalle API di Google, e il loro trasferimento ad altre app, rispetta la ", { "href": "https://developers.google.com/terms/api-services-user-data-policy", "text": "Google API Services User Data Policy" }, ", inclusi i requisiti di utilizzo limitato (Limited Use). Non vendiamo dati di Google, non li usiamo per la pubblicità né per addestrare modelli di IA. Le persone di Dialogbot li leggono solo se ce lo chiedi, per motivi di sicurezza o perché la legge lo richiede."] }
+        ]
+      },
+      {
         "title": "Chi ci aiuta? (sub-responsabili del trattamento)",
         "body": [
           { "type": "p", "text": "Ci avvaliamo dei seguenti fornitori, che trattano dati per nostro conto in base ad accordi sul trattamento dei dati:" },
@@ -157,7 +165,8 @@
               "Deepgram ed ElevenLabs – sintesi e riconoscimento vocale"
             ]
           },
-          { "type": "p", "text": "Alcuni di essi possono trattare dati negli Stati Uniti. Il trasferimento avviene sulla base dell'EU-U.S. Data Privacy Framework o delle clausole contrattuali tipo della Commissione europea." }
+          { "type": "p", "text": "Alcuni di essi possono trattare dati negli Stati Uniti. Il trasferimento avviene sulla base dell'EU-U.S. Data Privacy Framework o delle clausole contrattuali tipo della Commissione europea." },
+          { "type": "p", "text": "Se colleghi tu stesso Google Calendar o Outlook in Dialogbot Privat, inviamo i tuoi appuntamenti approvati a Google o Microsoft. In tal caso non sono nostri sub-responsabili, ma destinatari su tua richiesta, e si applicano le loro condizioni sulla privacy." }
         ]
       },
       {

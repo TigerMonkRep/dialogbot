@@ -90,7 +90,7 @@
     },
     "label": "Personvern",
     "title": "Slik behandler vi personopplysninger",
-    "updated": "Oppdatert 6. oktober 2026.",
+    "updated": "Oppdatert 5. november 2026.",
     "intro": "Her kan du se hvilke opplysninger Dialogbot behandler, hvorfor, hvor lenge og hvem som hjelper oss med det. Siden dekker kunder, kundenes egne kunder, ambassadører og besøkende.",
     "sections": [
       {
@@ -141,6 +141,14 @@
         ]
       },
       {
+        "title": "Dialogbot Privat (din personlige assistent)",
+        "body": [
+          { "type": "p", "text": "Bruker du Dialogbot Privat, behandler vi det du selv gir oss: listene, påminnelsene og samtalene dine med assistenten, mobilnummeret du bekrefter, og – når du godkjenner en samtale eller en booking – bedriftens navn og nummer og det du har gitt assistenten lov til å si. Formålet er å gjøre det du ber om. Grunnlaget er avtalen med deg (GDPR art. 6 nr. 1 bokstav b). Her er Dialogbot behandlingsansvarlig." },
+          { "type": "p", "parts": [{ "b": "Kalender." }, " Slår du på appen Kalender, lagrer vi avtalene du har godkjent (tidspunkt, sted og hva som ble avtalt). Kobler du til Google Kalender eller Outlook, lagrer vi krypterte tilgangsnøkler og bruker dem bare til å opprette, flytte og slette avtalene Dialogbot selv har lagt i kalenderen din. Vi leser ikke de andre avtalene dine. Du kan koble fra når som helst i appen; da tilbakekaller vi tilgangen og sletter nøklene. Lager du en privat kalenderlenke, kan alle med lenken se avtalene dine fra Dialogbot; du kan stoppe lenken i appen."] },
+          { "type": "p", "parts": [{ "b": "Googles brukerdata." }, " Dialogbots bruk og overføring til andre apper av informasjon mottatt fra Google-API-er følger ", { "href": "https://developers.google.com/terms/api-services-user-data-policy", "text": "Google API Services User Data Policy" }, ", inkludert kravene om begrenset bruk (Limited Use). Vi selger ikke data fra Google, bruker dem ikke til reklame og ikke til å trene KI-modeller. Mennesker hos Dialogbot leser dem bare hvis du ber oss om det, av sikkerhetshensyn eller fordi loven krever det."] }
+        ]
+      },
+      {
         "title": "Hvem hjelper oss? (underdatabehandlere)",
         "body": [
           { "type": "p", "text": "Vi bruker disse leverandørene, som behandler data på våre vegne under databehandleravtaler:" },
@@ -157,7 +165,8 @@
               "Deepgram og ElevenLabs – tale til tekst og tekst til tale"
             ]
           },
-          { "type": "p", "text": "Noen av dem kan behandle data i USA. Overføringen skjer på grunnlag av EU-U.S. Data Privacy Framework eller EU-kommisjonens standardkontrakter." }
+          { "type": "p", "text": "Noen av dem kan behandle data i USA. Overføringen skjer på grunnlag av EU-U.S. Data Privacy Framework eller EU-kommisjonens standardkontrakter." },
+          { "type": "p", "text": "Kobler du selv til Google Kalender eller Outlook i Dialogbot Privat, sender vi de godkjente avtalene dine til Google eller Microsoft. De er da ikke våre underdatabehandlere, men mottakere etter ditt ønske, og deres egne personvernvilkår gjelder." }
         ]
       },
       {

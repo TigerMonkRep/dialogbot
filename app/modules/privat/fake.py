@@ -82,6 +82,15 @@ def respond(model: str, system: str, messages: list[dict], tools: list[dict] | N
             return _call(model, "share_list", {"with_name": who.group(1) if who else "",
                                                **({"mode": "wishlist"} if "ønske" in low else {})})
         return suggest("oenskelister" if "ønske" in low else "delte-lister") or _done(model, "Det kan jeg ikke endnu.")
+    if "kalender" in low:
+        if re.search(r"\blæg\b", low) and re.search(r"kl\.?\s*\d", low) and "add_to_calendar" in names:
+            what = re.sub(r"^.*?\blæg\s+(?:tiden\s+)?(?:hos\s+)?", "", text, flags=re.I)
+            what = re.sub(r"\s*(i morgen|i dag|på \w+dag|\w+dag|kl\.?|i min kalender).*$", "", what, flags=re.I).strip()
+            return _call(model, "add_to_calendar", {"title": (what[:1].upper() + what[1:]) or "Aftale",
+                                                    "starts_at": _when(low, now).isoformat(timespec="minutes")})
+        if "calendar_status" in names:
+            return _call(model, "calendar_status", {})
+        return suggest("kalender") or _done(model, "Kalender er ikke slået til.")
     if re.search(r"tilføj|husk også|sæt .+ på", low) and "liste med" not in low:
         raw = re.sub(r"^.*?(tilføj|husk også|sæt)\s*", "", text, flags=re.I)
         raw = re.sub(r"\s*(på listen|til listen|på)\s*[.!]?$", "", raw, flags=re.I)

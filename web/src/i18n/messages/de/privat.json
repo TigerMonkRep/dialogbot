@@ -9,7 +9,8 @@
     "addons": "Erweiterungen",
     "people": "Meine Leute",
     "invite": "Einladung",
-    "groupJoin": "Der Gruppe beitreten"
+    "groupJoin": "Der Gruppe beitreten",
+    "calendar": "Kalender"
   },
   "brand": {
     "privat": "Privat",
@@ -688,7 +689,7 @@
     },
     "kalender": {
       "name": "Kalender",
-      "tagline": "Termine in deinen Google- oder Outlook-Kalender eintragen",
+      "tagline": "Termine in deinen Google-, Outlook- oder iPhone-Kalender eintragen",
       "description": "Termine, die der Assistent vereinbart, landen direkt in deinem Kalender."
     },
     "pakker": {
@@ -1078,5 +1079,38 @@
       "consent": "Ja bitte, lege ein Dialogbot-Privat-Konto mit meiner E-Mail an und schick mir einen SMS-Code. Die 14-tägige Testphase wähle ich danach. Peter ruft nie jemanden an, bevor ich Ja gesagt habe.",
       "codeTitle": "Code aus der SMS eingeben"
     }
+  },
+  "calendar": {
+    "loading": "Dein Kalender wird geladen …",
+    "connected": "Der Kalender ist verbunden. Deine Termine erscheinen gleich.",
+    "connectFailed": "Der Kalender wurde nicht verbunden. Bitte versuche es erneut.",
+    "direct": "Direkt in deinen Kalender",
+    "directText": "Termine werden sofort eingetragen und verschoben oder entfernt, wenn sie sich ändern.",
+    "google": "Google Kalender",
+    "outlook": "Outlook",
+    "isConnected": "Verbunden",
+    "connect": "Verbinden",
+    "disconnect": "Trennen",
+    "notYet": "Kommt bald",
+    "feed": "Privater Kalenderlink",
+    "feedText": "Für iPhone und alle anderen Kalender: Abonniere deinen privaten Link, dann erscheinen die Termine von selbst.",
+    "feedLink": "Dein privater Kalenderlink",
+    "copy": "Link kopieren",
+    "copied": "Kopiert",
+    "openApple": "Auf iPhone oder Mac öffnen",
+    "feedOnce": "Der Link wird nur jetzt angezeigt. Teile ihn nicht – jeder mit dem Link sieht deine Termine. Verlierst du ihn, erstelle einfach einen neuen.",
+    "howTo": "So abonnierst du",
+    "howIphone": "iPhone/Mac: Tippe auf «Auf iPhone oder Mac öffnen» und wähle Abonnieren.",
+    "howGoogle": "Google Kalender: Weitere Kalender → + → Per URL → Link einfügen. Google aktualisiert bis zu einmal täglich.",
+    "howOutlook": "Outlook: Kalender hinzufügen → Aus dem Internet abonnieren → Link einfügen.",
+    "feedActive": "Aktiv",
+    "feedNew": "Neuen Link erstellen",
+    "feedMake": "Privaten Link erstellen",
+    "feedStop": "Link stoppen",
+    "upcoming": "Kommende Termine",
+    "none": "Noch keine Termine. Wenn Peter eine Zeit bestätigt bekommt oder du ihn bittest, eine einzutragen, erscheint sie hier.",
+    "addToCalendar": "Zum Kalender hinzufügen",
+    "remove": "Aus dem Kalender entfernen",
+    "removeNote": "«Aus dem Kalender entfernen» sagt den Termin beim Unternehmen nicht ab."
   }
 }

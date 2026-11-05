@@ -2,6 +2,31 @@
 
 Vedligeholdes ved hvert checkpoint. Statusord: implementeret · testet lokalt/CI · deployet · eksternt verificeret.
 
+## Checkpoint 32 — 5. november 2026 (Privat-appen «Kalender»)
+
+Første af de otte «kommer snart»-apps. Se `docs/privat-api.md` «Kalender». Godkendte aftaler (bekræftede opkald, bekræftede
+browser-bookinger, tider brugeren selv fortæller) kommer i brugerens egen kalender: `.ics`-fil, privat abonnementslink, og
+Google Kalender/Outlook via OAuth. Appen er nu `available` (med i Plus og Familie, som før).
+
+| Del | Status | Bevis |
+|---|---|---|
+| `private_appointments` + feed-hash på `private_profiles` (migration `f5a9c2d7e3b1`, navngivne constraints, op/ned/op) | testet | `alembic check` rent |
+| Dansk tidslæsning («torsdag kl. 15.30», «12. november kl. 9», «i morgen», dd.mm, ISO) mod datoen for aftalen; usikker tid = ingen aftale | testet | `tests/test_privat_calendar.py` (17 tilfælde) |
+| Opkald → aftale (modellens `starts_at` hvis plausibel, ellers teksten); én aftale pr. opkald | testet | samme |
+| Browser-booking → aftale med virksomhedens adresse | testet | samme |
+| `.ics` efter RFC 5545 (CRLF, foldning ≤75 oktetter, escaping, UID/SEQUENCE, alarm 1 time før) | testet | samme |
+| Hemmeligt abonnementslink: kun hash gemt, vises én gang, nyt link dræber det gamle, lukket når appen er slået fra; token redigeret ud af loggen | testet | samme |
+| Google/Outlook: forbind (samme OAuth-klient og callback som erhverv), backfill, opret/flyt/slet via outbox, fejl vises og prøves igen | testet med falske connectorer | samme |
+| Chat: «Kan du tilføje min google kalender» tilbyder appen / forklarer forbindelsen; «Læg … i min kalender» gemmer tiden | testet med testmodellen | samme |
+| Web: Kalender-panel i app-arket og `/privat/kalender`, «Tilføj til kalender» på opgaven, 8 sprog | typecheck + i18n-paritet | `npx tsc`, `scripts/i18n-check.mjs` |
+
+**Ikke eksternt verificeret:**
+- Ingen rigtig Google- eller Microsoft-konto er forbundet fra Privat. Google kræver OAuth-verificering for `calendar.events`; indtil da
+  højst 100 testbrugere (se `docs/google-oauth-verification.md`).
+- Abonnement på linket er ikke prøvet i rigtige Apple-, Google- og Outlook-kalendere.
+- Modellens `starts_at` på rigtige opkald er ikke målt; testene bruger testmodellen og teksten.
+- Renders kant-log kan indeholde feed-stien (tokenet).
+
 ## Checkpoint 31 — 5. november 2026 (B: lead-loop – afslutningslinje ved Privat-opkald)
 
 Se `docs/sales/privat-opkald-leads.md`. Branch `feat/lead-pitch`, bygget oven på `feat/browser-worker` (checkpoint 30), fordi `external_business_contacts` oprettes dér.

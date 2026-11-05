@@ -15,7 +15,7 @@ import json
 import re
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
@@ -751,3 +751,46 @@ def tool_create_group(turn: Turn, a: dict) -> str:
          "people": people},
         {"id": "no", "label": "Nej tak", "sub": "", "action": "text", "text": "Fint, der er ikke gemt noget."}])
     return "Brugeren skal sige ja, før gruppen gemmes."
+
+
+# --------------------------------------------------------------------------- Kalender (app/modules/privat/appointments.py)
+
+def tool_add_to_calendar(turn: Turn, a: dict) -> str:
+    from app.modules.privat import appointments
+
+    when = _parse_when(a.get("starts_at"))
+    if when is None or when <= rules.now():
+        return "Tidspunktet mangler eller er i fortiden. Spørg brugeren hvornår."
+    title = _cap(str(a.get("title") or "").strip())[:300] or "Aftale"
+    minutes = a.get("minutes")
+    appt = appointments.record(turn.db, turn.ctx.ws_id, source="manual", source_ref=f"manual:{uuid.uuid4()}", title=title,
+                               starts_at=when.astimezone(UTC), minutes=int(minutes) if isinstance(minutes, int | float) else None,
+                               location=str(a.get("location") or "").strip()[:300])
+    st = appointments.connection_status(turn.db, turn.ctx.ws_id)
+    where = [n for p, n in (("google", "Google Kalender"), ("microsoft", "Outlook")) if st[p]["connected"]]
+    has_feed = turn.ctx.profile.calendar_feed_token_hash is not None
+    if where:
+        tail = f"Den kommer i {' og '.join(where)} om et øjeblik."
+    elif has_feed:
+        tail = "Den kommer i din kalender via dit kalenderlink (Google kan være op til et døgn om det)."
+    else:
+        tail = "Forbind din kalender under Apps → Kalender, så kommer den også dér."
+    turn.say("text", f"{title} {rules.lower_first(rules.when_text(appt.starts_at))} er gemt. {tail}")
+    return f"Aftale gemt (id {appt.id})."
+
+
+def tool_calendar_status(turn: Turn, a: dict) -> str:
+    from app.modules.privat import appointments
+
+    st = appointments.connection_status(turn.db, turn.ctx.ws_id)
+    where = [n for p, n in (("google", "Google Kalender"), ("microsoft", "Outlook")) if st[p]["connected"]]
+    has_feed = turn.ctx.profile.calendar_feed_token_hash is not None
+    if where or has_feed:
+        parts = ([f"Dine aftaler kommer i {' og '.join(where)}."] if where else []) + \
+                (["Dit private kalenderlink er aktivt."] if has_feed else [])
+        text = " ".join(parts) + " Du kan ændre det under Apps → Kalender."
+    else:
+        text = ("Åbn Apps → Kalender. Dér forbinder du Google Kalender eller Outlook med ét tryk, eller får et privat "
+                "link, som iPhone og alle andre kalendere kan abonnere på. Derefter kommer dine aftaler ind af sig selv.")
+    turn.say("text", text)
+    return "Status vist."

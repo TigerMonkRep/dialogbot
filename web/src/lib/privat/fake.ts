@@ -180,13 +180,13 @@ const CATALOG: CatalogEntry[] = [
     steps: ["Hent fødselsdage fra dine kontakter (valgfrit)", "Vælg hvor mange dage før du vil have besked", "Færdig"],
     price_text: PLAN_APP, pricing: "monthly", monthly_price_minor: null, status: "available", requires_plan: true,
     permissions: ["Gemmer de datoer, du giver den", "Læser kun kontakter, du selv vælger"], requires: [] },
-  { key: "kalender", name: "Kalender", tagline: "Læg aftaler i din Google- eller Apple-kalender", icon: "calendar", category: "Hverdag",
-    description: "Aftaler, Peter laver, kommer direkte i din kalender.",
-    what: "Peter lægger aftaler direkte i din Google- eller Apple-kalender, når han har booket noget for dig.",
-    example: "Læg frisøren i min kalender.",
-    steps: ["Vælg Google eller Apple", "Giv Dialogbot adgang til én kalender", "Peter tester med en prøveaftale – færdig"],
+  { key: "kalender", name: "Kalender", tagline: "Læg aftaler i din Google-, Outlook- eller iPhone-kalender", icon: "calendar", category: "Hverdag",
+    description: "Aftaler, du har godkendt, kommer automatisk i din egen kalender.",
+    what: "De tider, Peter aftaler for dig, og dem du selv fortæller ham, lander i din egen kalender – med adresse og det, I aftalte.",
+    example: "Læg tiden hos frisøren i min kalender",
+    steps: ["Forbind Google eller Outlook – eller abonnér på dit private kalenderlink", "Peter lægger aftaler ind, når de er bekræftet", "Flyttes eller fjernes en aftale, opdateres din kalender også"],
     price_text: PLAN_APP, pricing: "monthly", monthly_price_minor: null, status: "available", requires_plan: true,
-    permissions: ["Læser ledige tider i din kalender", "Opretter aftaler, du har godkendt"], requires: [] },
+    permissions: ["Skriver aftaler, du har godkendt, i din kalender", "Læser ikke dine andre aftaler"], requires: [] },
   { key: "madplan", name: "Madplan", tagline: "Ugens aftensmad på én side", icon: "utensils", category: "Hverdag",
     description: "Peter foreslår retter, og indkøbslisten laver sig selv ud fra planen.",
     what: "Ugens aftensmad på én side. Peter foreslår retter, og indkøbslisten laver sig selv ud fra planen.",
@@ -957,6 +957,18 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       s.addons[key] = false; save();
       return { ...projectAddon(a), enabled: false, enabled_at: null };
     },
+
+    // ---------- Kalender (the demo never connects anything real) ----------
+    async calendar() {
+      await wait();
+      const off = { available: false, connected: false, status: "not_connected", account_label: "", error: null };
+      return { enabled: !!s.addons.kalender, feed: { active: false, created_at: null }, providers: { google: off, microsoft: off }, appointments: [] };
+    },
+    async newCalendarFeed() { await wait(); return fail(409, "demo", "Kalenderlinket virker kun med en rigtig konto"); },
+    async dropCalendarFeed() { await wait(); },
+    async connectCalendar() { await wait(); return fail(409, "demo", "Kalenderen kan kun forbindes med en rigtig konto"); },
+    async disconnectCalendar() { await wait(); },
+    async removeAppointment() { await wait(); return fail(404, "not_found", "Aftalen findes ikke"); },
 
     // ---------- simulation-only tools ----------
     async simulateMember(taskId) {

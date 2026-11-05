@@ -156,7 +156,7 @@
     },
     "label": "Confidentialité",
     "title": "Comment nous traitons les données personnelles",
-    "updated": "Mise à jour le 6 octobre 2026.",
+    "updated": "Mise à jour le 5 novembre 2026.",
     "intro": "Vous trouverez ici les données que Dialogbot traite, pourquoi, pendant combien de temps et qui nous aide à le faire. Cette page concerne les clients, les propres clients de nos clients, les ambassadeurs et les visiteurs.",
     "sections": [
       {
@@ -280,6 +280,14 @@
         ]
       },
       {
+        "title": "Dialogbot Privat (votre assistant personnel)",
+        "body": [
+          { "type": "p", "text": "Si vous utilisez Dialogbot Privat, nous traitons ce que vous nous fournissez vous-même : vos listes, rappels et conversations avec l'assistant, le numéro de mobile que vous confirmez et – lorsque vous approuvez un appel ou une réservation – le nom et le numéro de l'entreprise et ce que vous avez autorisé l'assistant à dire. La finalité est de faire ce que vous demandez. La base juridique est notre contrat avec vous (art. 6, par. 1, point b) du RGPD). Ici, Dialogbot est responsable du traitement." },
+          { "type": "p", "parts": [{ "b": "Agenda." }, " Si vous activez l'app Agenda, nous enregistrons les rendez-vous que vous avez approuvés (heure, lieu et ce qui a été convenu). Si vous connectez Google Agenda ou Outlook, nous enregistrons des clés d'accès chiffrées et ne les utilisons que pour créer, déplacer et supprimer les rendez-vous que Dialogbot a lui-même ajoutés à votre agenda. Nous ne lisons pas vos autres rendez-vous. Vous pouvez vous déconnecter à tout moment dans l'app ; nous révoquons alors l'accès et supprimons les clés. Si vous créez un lien d'agenda privé, toute personne disposant du lien peut voir vos rendez-vous Dialogbot ; vous pouvez arrêter le lien dans l'app."] },
+          { "type": "p", "parts": [{ "b": "Données utilisateur Google." }, " L'utilisation par Dialogbot des informations reçues des API Google, et leur transfert vers d'autres applications, respectent la ", { "href": "https://developers.google.com/terms/api-services-user-data-policy", "text": "Google API Services User Data Policy" }, ", y compris les exigences d'utilisation limitée (Limited Use). Nous ne vendons pas les données de Google, ne les utilisons pas à des fins publicitaires et ne les utilisons pas pour entraîner des modèles d'IA. Les personnes chez Dialogbot ne les lisent que si vous nous le demandez, pour des raisons de sécurité ou parce que la loi l'exige."] }
+        ]
+      },
+      {
         "title": "Qui nous aide ? (sous-traitants ultérieurs)",
         "body": [
           {
@@ -302,7 +310,8 @@
           {
             "type": "p",
             "text": "Certains d’entre eux peuvent traiter des données aux États-Unis. Le transfert s’effectue sur la base du EU-U.S. Data Privacy Framework ou des clauses contractuelles types de la Commission européenne."
-          }
+          },
+          { "type": "p", "text": "Si vous connectez vous-même Google Agenda ou Outlook dans Dialogbot Privat, nous envoyons vos rendez-vous approuvés à Google ou Microsoft. Ils ne sont alors pas nos sous-traitants ultérieurs mais des destinataires à votre demande, et leurs propres conditions de confidentialité s'appliquent." }
         ]
       },
       {

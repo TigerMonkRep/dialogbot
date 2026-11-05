@@ -474,7 +474,18 @@ def task_out(db: OrmSession, task: PrivateTask, viewer_id: uuid.UUID) -> dict:
         "events": [{"at": e.at.isoformat(), "text": e.text} for e in evs] if is_owner or task.share_mode == "group" else [],
         "list_type": task.list_type, "shared": task.share_mode is not None, "share_mode": task.share_mode,
         "my_role": role, "members": sharing.members_out(db, task, viewer_id) if task.share_mode else [],
+        "appointment": _appointment_ref(db, task) if is_owner and task.kind == "call" else None,
     }
+
+
+def _appointment_ref(db: OrmSession, task: PrivateTask) -> dict | None:
+    """The agreed time saved from this task, for «Tilføj til kalender» (only while the Kalender app is on)."""
+    from app.modules.privat import appointments
+
+    a = appointments.for_task(db, task.id)
+    if a is None or not appointments.enabled(db, task.workspace_id):
+        return None
+    return {"id": str(a.id), "when_text": rules.when_text(a.starts_at), "ics_path": f"/api/v1/privat/appointments/{a.id}.ics"}
 
 
 # --------------------------------------------------------------------------- chat messages

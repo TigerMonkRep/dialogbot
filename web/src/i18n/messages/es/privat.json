@@ -9,7 +9,8 @@
     "addons": "Complementos",
     "people": "Mi gente",
     "invite": "Invitación",
-    "groupJoin": "Unirse al grupo"
+    "groupJoin": "Unirse al grupo",
+    "calendar": "Calendario"
   },
   "brand": {
     "privat": "Privat",
@@ -688,7 +689,7 @@
     },
     "kalender": {
       "name": "Calendario",
-      "tagline": "Añade citas a tu calendario de Google u Outlook",
+      "tagline": "Pon tus citas en tu calendario de Google, Outlook o iPhone",
       "description": "Las citas que acuerda el asistente van directamente a tu calendario."
     },
     "pakker": {
@@ -1078,5 +1079,38 @@
       "consent": "Sí, crea una cuenta Dialogbot Privat con mi correo y envíame un código por SMS. Elijo la prueba de 14 días después. Peter nunca llama a nadie antes de que yo haya dicho que sí.",
       "codeTitle": "Introduce el código del SMS"
     }
+  },
+  "calendar": {
+    "loading": "Cargando tu calendario …",
+    "connected": "Tu calendario está conectado. Tus citas aparecerán en un momento.",
+    "connectFailed": "No se conectó el calendario. Inténtalo de nuevo.",
+    "direct": "Directo a tu calendario",
+    "directText": "Las citas se añaden al momento y se mueven o eliminan si cambian.",
+    "google": "Google Calendar",
+    "outlook": "Outlook",
+    "isConnected": "Conectado",
+    "connect": "Conectar",
+    "disconnect": "Desconectar",
+    "notYet": "Próximamente",
+    "feed": "Enlace de calendario privado",
+    "feedText": "Para iPhone y cualquier otro calendario: suscríbete a tu enlace privado y las citas aparecerán solas.",
+    "feedLink": "Tu enlace de calendario privado",
+    "copy": "Copiar enlace",
+    "copied": "Copiado",
+    "openApple": "Abrir en iPhone o Mac",
+    "feedOnce": "El enlace solo se muestra ahora. No lo compartas: cualquiera con el enlace ve tus citas. Si lo pierdes, crea uno nuevo.",
+    "howTo": "Cómo suscribirte",
+    "howIphone": "iPhone/Mac: toca «Abrir en iPhone o Mac» y elige Suscribirse.",
+    "howGoogle": "Google Calendar: Otros calendarios → + → Desde URL → pega el enlace. Google actualiza hasta una vez al día.",
+    "howOutlook": "Outlook: Agregar calendario → Suscribirse desde la web → pega el enlace.",
+    "feedActive": "Activo",
+    "feedNew": "Crear enlace nuevo",
+    "feedMake": "Crear enlace privado",
+    "feedStop": "Detener el enlace",
+    "upcoming": "Próximas citas",
+    "none": "Aún no hay citas. Cuando Peter consiga una hora confirmada, o le pidas que añada una, aparecerá aquí.",
+    "addToCalendar": "Añadir al calendario",
+    "remove": "Quitar del calendario",
+    "removeNote": "«Quitar del calendario» no cancela la cita con la empresa."
   }
 }

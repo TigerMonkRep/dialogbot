@@ -84,6 +84,14 @@ services:
         sync: false
       - key: BROWSER_WORKER_ENABLED   # dashboard-managed; the API only starts browser runs when "true" (needs the two above)
         sync: false
+      - key: TRACK17_API_KEY      # Pakker app (17TRACK); empty = the app stays «Kommer snart». Same value on the worker.
+        sync: false
+      - key: DUFFEL_ACCESS_TOKEN  # Rejser app: flight prices (dashboard-managed)
+        sync: false
+      - key: TRAVELPAYOUTS_TOKEN  # Rejser app: fares + affiliate booking links (dashboard-managed)
+        sync: false
+      - key: TRAVELPAYOUTS_MARKER
+        sync: false
       - key: LOG_LEVEL
         value: INFO
 
@@ -142,6 +150,8 @@ services:
       - key: CVR_USERNAME         # "Profiler at følge": the worker's daily batch comes from the CVR register
         sync: false
       - key: CVR_PASSWORD
+        sync: false
+      - key: TRACK17_API_KEY      # Pakker app: the worker polls 17TRACK for followed parcels
         sync: false
       - key: WORKER_LEASE_SECONDS
         value: "60"

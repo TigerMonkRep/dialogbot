@@ -285,6 +285,15 @@ class Settings(BaseSettings):
     vapid_subject: str = Field(default="mailto:info@dialogbot.dk", alias="VAPID_SUBJECT")
     # Add-ons (app/modules/privat/addons.py) switched on when a private account is created.
     privat_default_addons: str = Field(default="ring-for-mig,delte-lister,oenskelister", alias="PRIVAT_DEFAULT_ADDONS")
+    # Pakker app (app/modules/privat/parcels.py): 17TRACK tracking API key (api.17track.net). Without it the app is
+    # «Kommer snart». Only the tracking number is sent to 17TRACK.
+    track17_api_key: str | None = Field(default=None, alias="TRACK17_API_KEY")
+    # Rejser app (app/modules/privat/travel.py): real prices only. Duffel (flight offers, later booking) and/or
+    # Travelpayouts (cached fares + affiliate booking links; the marker is Dialogbot's partner id). Without either the
+    # app is «Kommer snart».
+    duffel_access_token: str | None = Field(default=None, alias="DUFFEL_ACCESS_TOKEN")
+    travelpayouts_token: str | None = Field(default=None, alias="TRAVELPAYOUTS_TOKEN")
+    travelpayouts_marker: str | None = Field(default=None, alias="TRAVELPAYOUTS_MARKER")
 
     # Dev tooling: the simulated mailbox and test identities are gated on this.
     enable_dev_tools: bool = Field(default=False, alias="ENABLE_DEV_TOOLS")

@@ -12,7 +12,10 @@
     "groupJoin": "Rejoindre le groupe",
     "calendar": "Agenda",
     "birthdays": "Anniversaires",
-    "bills": "Factures"
+    "bills": "Factures",
+    "car": "Voiture & contrôle",
+    "parcels": "Colis",
+    "travel": "Voyages"
   },
   "brand": {
     "privat": "Privat",
@@ -1164,5 +1167,61 @@
       "yearly": "chaque année",
       "once": "une fois"
     }
+  },
+  "moreApps": {
+    "save": "Enregistrer",
+    "remove": "Supprimer",
+    "meals": {
+      "title": "Vos habitudes alimentaires",
+      "people": "Combien êtes-vous ?",
+      "avoid": "Que ne mangez-vous pas (allergies) ?",
+      "likes": "Qu'aimez-vous ?",
+      "hint": "Demandez un menu de la semaine à Peter dans le chat – il utilise ce qui est ici."
+    },
+    "health": {
+      "title": "Votre médecin et dentiste",
+      "none": "Rien d'enregistré. Écrivez par exemple à Peter « Enregistre mon dentiste : Clinique dentaire Nord, 86 12 34 56 ».",
+      "hint": "Peter n'appelle qu'après votre accord et ne dit que ce que vous avez écrit."
+    },
+    "car": {
+      "title": "Votre voiture",
+      "workshop": "Garage",
+      "plate": "Plaque d'immatriculation",
+      "inspection": "Prochain contrôle technique",
+      "service": "Prochaine révision",
+      "tyres": "Me rappeler de changer les pneus (octobre et mars)",
+      "hint": "Peter vous rappelle le contrôle 30 jours avant et la révision 14 jours avant – et peut appeler le garage avec votre accord."
+    },
+    "parcels": {
+      "title": "Colis suivis",
+      "none": "Vous ne suivez aucun colis. Collez un numéro de suivi ci-dessous.",
+      "number": "Numéro de suivi",
+      "label": "Qu'est-ce que c'est ? (facultatif)",
+      "follow": "Suivre le colis",
+      "stop": "Arrêter",
+      "hint": "Vous êtes prévenu quand le colis est en route, disponible au retrait et livré. Seul le numéro est envoyé au service de suivi."
+    }
+  },
+  "travel": {
+    "search": "Trouver un voyage",
+    "origin": "Départ (aéroport)",
+    "destinations": "Destination (ex. BCN, LIS)",
+    "date": "Départ le",
+    "orMonth": "…ou un mois",
+    "nights": "Nuits",
+    "budget": "Budget total (DKK)",
+    "adults": "Adultes",
+    "children": "Enfants",
+    "direct": "Vols directs uniquement",
+    "find": "Trouver des voyages",
+    "searching": "Recherche …",
+    "typeHint": "Vous ne savez pas où ? Écrivez à Peter, par ex. « Trouve des vacances à la plage en février » – il choisit les destinations.",
+    "results": "Suggestions",
+    "none": "Aucun voyage avec prix pour cette recherche. Essayez d'autres dates ou destinations.",
+    "directShort": "direct",
+    "stops": "{n} escales",
+    "book": "Réserver",
+    "overBudget": "{n} voyages dépassaient le budget.",
+    "disclaimer": "Les prix viennent directement des fournisseurs et peuvent changer. Vous réservez et payez chez le fournisseur – Dialogbot ne réserve pas."
   }
 }

@@ -250,7 +250,7 @@ def send_due(db: OrmSession, now: datetime | None = None) -> int:
     from app.modules.integrations import email_templates as tpl
     from app.modules.privat import push
 
-    if addons.CATALOG.get(ADDON) is None or addons.CATALOG[ADDON].status == "coming_soon":
+    if addons.CATALOG.get(ADDON) is None or addons.CATALOG[ADDON].live_status == "coming_soon":
         return 0
     today = rules.local(now).date()
     url = f"{get_settings().frontend_base_url.rstrip('/')}/privat/regninger"

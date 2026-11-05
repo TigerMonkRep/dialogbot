@@ -520,3 +520,50 @@ på månedens sidste dag i korte måneder); en engangsregning bliver stående, t
 
 **Assistentens værktøjer:** `add_bills(items[{name, amount?, frequency?, due_day?, due_date?, remind_days_before?}])`,
 `bills_overview()`, `remove_bill(name)`.
+
+## Pakkeliste, Madplan, Læge & tandlæge, Bil & syn, Pakker
+
+Fælles: indstillinger pr. app i `private_app_data` (JSON, kun det brugeren selv gav). Alle med i Plus og Familie; alle endpoints
+kræver appen slået til (`403 addon_disabled`). Kode: `app/modules/privat/{packing,meals,health,car,parcels}.py`, endpoints i
+`app/modules/privat/apps_router.py`.
+
+**Pakkeliste.** En pakkeliste er en almindelig liste («Pakkeliste: <tur>»); appen husker hvilke. Værktøjer:
+`create_packing_list(trip, items[])`, `reuse_packing_list(trip?)` – kopierer den seneste, intet krydset af.
+
+**Madplan.** `GET/PUT /privat/meals/preferences` `{people, avoid, likes}`. Værktøjer: `save_food_preferences`,
+`get_food_preferences`, `save_meal_plan(title, days[{day, dish, ingredients[]}], shopping_list?)` – først når brugeren har sagt ja;
+giver en liste med retterne og én indkøbsliste, hvor samme vare kun står én gang.
+
+**Læge & tandlæge** (kræver «Ring for mig», som slås til med). `GET /privat/health-contacts`, `DELETE /privat/health-contacts/{kind}`.
+Gemmer kun klinikkens navn og det nummer, brugeren selv skrev – aldrig helbredsoplysninger. `book_health_appointment` laver et
+almindeligt opkaldsforslag (der ringes aldrig uden godkendelse) med «Fortæl ikke andet om mit helbred end det, der står i formålet».
+
+**Bil & syn** (kræver «Ring for mig»). `GET/PUT /privat/car` `{plate, inspection_due, service_due, tire_reminders}` (+ `workshop`,
+`summary`). Datoerne skrives af brugeren – intet opslag på nummerpladen. Påmindelser (hovedworkerens faste job, tidligst kl. 08,
+hver én gang): syn 30 dage før, service 14 dage før, vinterdæk fra 15. oktober og sommerdæk fra 25. marts. `book_workshop` er et
+opkaldsforslag til det gemte værksted.
+
+**Pakker.** Kræver `TRACK17_API_KEY` (17TRACK); uden den er appen «Kommer snart» (`Addon.needs_setting`). `GET/POST /privat/parcels`
+`{number, label?}`, `DELETE /privat/parcels/{number}`. Kun forsendelsesnummeret sendes til 17TRACK. Workeren spørger højst hver 2.
+time for pakker, der ikke er leveret, og giver besked ved på vej / ude til levering / klar til afhentning / leveret / problem.
+17TRACK-kaldene er ikke prøvet mod en rigtig nøgle.
+
+## Rejser (trin 1: forslag med rigtige priser, booking hos udbyderen)
+
+Kode: `app/modules/privat/travel.py`. Med i Plus og Familie. Kræver mindst én prisudbyder, ellers «Kommer snart»:
+`DUFFEL_ACCESS_TOKEN` (Duffel: flytilbud på præcise datoer, samlet pris) og/eller `TRAVELPAYOUTS_TOKEN` + `TRAVELPAYOUTS_MARKER`
+(Travelpayouts/Aviasales: billigste cachede priser pr. rute og måned, med affiliate-link). **Peter opfinder aldrig en pris**:
+et forslag uden pris fra en udbyder vises ikke.
+
+| Metode | Sti | Svar |
+|---|---|---|
+| POST | `/privat/trips/search` | `{origin, destinations[≤5], depart_date? \| month?, nights?, adults, children, budget_dkk?, trip_type?, direct_only?}` (IATA-koder) → `{id, params, offers[], over_budget, errors[]}`. Billigst først, inden for det samlede budget |
+| GET | `/privat/trips/latest` | `{search}` – den seneste søgning (de 5 seneste gemmes) |
+
+`offer`: `{id, provider, origin, destination, total_dkk, airline, depart_at, return_at, stops, book_url, price_note}`.
+**«Book»** åbner udbyderens side (Travelpayouts-link med Dialogbots marker; for Duffel-tilbud en flysøgning for samme rute og dato).
+Der bookes og betales intet i Dialogbot i trin 1. Trin 2 (booking i Dialogbot via Duffel) kræver juridisk afklaring
+(Rejsegarantifonden ved pakkerejser) og er ikke bygget.
+
+**Assistentens værktøj:** `search_trips(...)` – nævner brugeren en rejsetype i stedet for et sted, vælger modellen 3-5 destinationer.
+Udbyder-API'erne er ikke kaldt med rigtige nøgler (svarformatet er fra dokumentationen).

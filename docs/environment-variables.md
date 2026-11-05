@@ -104,6 +104,9 @@
 | `PRIVAT_STRIPE_PRICE_ID` | nej | API | Stripe → Products | Pris for 10 credits («ekstra opkald», 29,00 kr. inkl. moms). Tom = inline-pris 2900 øre. |
 | `PRIVAT_STRIPE_PRICE_BASIS_MONTH`, `PRIVAT_STRIPE_PRICE_BASIS_YEAR`, `PRIVAT_STRIPE_PRICE_PLUS_MONTH`, `PRIVAT_STRIPE_PRICE_PLUS_YEAR`, `PRIVAT_STRIPE_PRICE_FAMILIE_MONTH`, `PRIVAT_STRIPE_PRICE_FAMILIE_YEAR` | nej | API | Stripe → Products (recurring) | Faste Stripe Price-id'er for Dialogbot Privat-abonnementerne (docs/pricing.md). Tom = inline `price_data` med beløbene fra `prices.PRIVAT_PLANS` (inkl. moms). Webhooken skal også sende `customer.subscription.*`. |
 | `PRIVAT_DEFAULT_ADDONS` | nej | API | — | Tilføjelser slået til for nye private konti. Standard `ring-for-mig,delte-lister,oenskelister`. |
+| `TRACK17_API_KEY` | nej | API + worker | 17TRACK → API → Security key | Pakker-appen (pakkesporing). Uden den er appen «Kommer snart». Kun forsendelsesnummeret sendes til 17TRACK. **Server-only.** |
+| `DUFFEL_ACCESS_TOKEN` | nej | API | Duffel dashboard → Developers → Access tokens | Rejser-appen: flytilbud med priser. **Server-only.** |
+| `TRAVELPAYOUTS_TOKEN` / `TRAVELPAYOUTS_MARKER` | nej | API | Travelpayouts → Profile → API token / Partner ID (marker) | Rejser-appen: billigste priser og affiliate-links til booking. Uden Duffel og Travelpayouts er appen «Kommer snart». **Server-only.** |
 | `PRIVAT_SHORT_URL_BASE`, `PRIVAT_GROUP_URL_BASE` | nej | API | — | Korte links i SMS-tekster. Standard `https://dialogbot.app/i/` og `/g/`. |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | ved push | API, worker | `python -m scripts.generate_vapid` | Web Push for Dialogbot Privat. Privatnøglen er en hemmelighed – aldrig i git. Uden nøglerne går beskeder som e-mail. Skifter man nøglepar, skal alle browsere abonnere igen. |
 | `VAPID_SUBJECT` | nej | API, worker | — | `mailto:`/`https:`-kontakt til push-tjenesterne. Standard `mailto:info@dialogbot.dk`. |

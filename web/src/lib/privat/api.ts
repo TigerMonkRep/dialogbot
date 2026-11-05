@@ -250,7 +250,40 @@ export interface PrivatApi {
   addBill(body: { name: string; amount?: string; frequency?: BillFrequency; due_date?: string; due_day?: number; remind_days_before?: number }): Promise<Bill & { created: boolean }>;
   updateBill(id: string, body: { remind_days_before: number }): Promise<Bill>;
   removeBill(id: string): Promise<void>;
+  // Madplan, Læge & tandlæge, Bil & syn, Pakker
+  foodPreferences(): Promise<FoodPreferences>;
+  saveFoodPreferences(body: Partial<FoodPreferences>): Promise<FoodPreferences>;
+  healthContacts(): Promise<{ items: HealthContact[] }>;
+  removeHealthContact(kind: string): Promise<void>;
+  car(): Promise<CarInfo>;
+  saveCar(body: { plate?: string; inspection_due?: string; service_due?: string; tire_reminders?: boolean }): Promise<CarInfo>;
+  parcels(): Promise<{ items: Parcel[] }>;
+  addParcel(body: { number: string; label?: string }): Promise<Parcel>;
+  removeParcel(number: string): Promise<void>;
+  // Rejser
+  searchTrips(body: TripSearch): Promise<TripResult>;
+  latestTrips(): Promise<{ search: TripResult | null }>;
 }
+
+// ---------- Rejser ----------
+export type TripSearch = {
+  origin: string; destinations: string[]; depart_date?: string; month?: string; nights?: number;
+  adults: number; children: number; budget_dkk?: number; trip_type?: string; direct_only?: boolean;
+};
+export type TripOffer = {
+  id: string; provider: string; origin: string; destination: string; total_dkk: number; airline: string;
+  depart_at: string; return_at: string; stops: number | null; book_url: string; price_note: string;
+};
+export type TripResult = { id: string; at: string; params: TripSearch; offers: TripOffer[]; over_budget: number; errors: string[] };
+
+// ---------- Madplan, Læge & tandlæge, Bil & syn, Pakker ----------
+export type FoodPreferences = { people: number | null; avoid: string; likes: string };
+export type HealthContact = { kind: "laege" | "tandlaege"; label: string; name: string; phone_display: string };
+export type CarInfo = {
+  plate: string | null; inspection_due: string | null; service_due: string | null; tire_reminders: boolean; summary: string;
+  workshop: { name: string; phone_display: string } | null;
+};
+export type Parcel = { number: string; label: string | null; status: string | null; text: string; event: string; carrier: string; done: boolean };
 
 // ---------- Regninger ----------
 export type BillFrequency = "monthly" | "quarterly" | "half_yearly" | "yearly" | "once";
@@ -376,6 +409,17 @@ export const realPrivat: PrivatApi = {
   addBill: (body) => api(`${P}/bills`, json(body)),
   updateBill: (id, body) => api(`${P}/bills/${enc(id)}`, { method: "PATCH", body: JSON.stringify(body) }),
   removeBill: (id) => api(`${P}/bills/${enc(id)}`, { method: "DELETE" }),
+  foodPreferences: () => api(`${P}/meals/preferences`),
+  saveFoodPreferences: (body) => api(`${P}/meals/preferences`, { method: "PUT", body: JSON.stringify(body) }),
+  healthContacts: () => api(`${P}/health-contacts`),
+  removeHealthContact: (kind) => api(`${P}/health-contacts/${enc(kind)}`, { method: "DELETE" }),
+  car: () => api(`${P}/car`),
+  saveCar: (body) => api(`${P}/car`, { method: "PUT", body: JSON.stringify(body) }),
+  parcels: () => api(`${P}/parcels`),
+  addParcel: (body) => api(`${P}/parcels`, json(body)),
+  removeParcel: (number) => api(`${P}/parcels/${enc(number)}`, { method: "DELETE" }),
+  searchTrips: (body) => api(`${P}/trips/search`, json(body)),
+  latestTrips: () => api(`${P}/trips/latest`),
 };
 
 /** The Privat API is not there (not merged/deployed) or switched off: the UI falls back to the simulation. */

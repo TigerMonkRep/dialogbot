@@ -12,7 +12,10 @@
     "groupJoin": "Entra nel gruppo",
     "calendar": "Calendario",
     "birthdays": "Compleanni",
-    "bills": "Bollette"
+    "bills": "Bollette",
+    "car": "Auto e revisione",
+    "parcels": "Pacchi",
+    "travel": "Viaggi"
   },
   "brand": {
     "privat": "Privat",
@@ -1164,5 +1167,61 @@
       "yearly": "ogni anno",
       "once": "una volta"
     }
+  },
+  "moreApps": {
+    "save": "Salva",
+    "remove": "Rimuovi",
+    "meals": {
+      "title": "Le vostre abitudini",
+      "people": "Quanti siete?",
+      "avoid": "Cosa non mangiate (allergie)?",
+      "likes": "Cosa vi piace?",
+      "hint": "Chiedi a Peter un menù settimanale in chat: usa quello che c'è qui."
+    },
+    "health": {
+      "title": "Il tuo medico e dentista",
+      "none": "Ancora nulla salvato. Scrivi a Peter, per esempio, «Salva il mio dentista: Studio Dentistico Nord, 86 12 34 56».",
+      "hint": "Peter chiama solo dopo la tua approvazione e dice solo ciò che hai scritto tu."
+    },
+    "car": {
+      "title": "La tua auto",
+      "workshop": "Officina",
+      "plate": "Targa",
+      "inspection": "Prossima revisione",
+      "service": "Prossimo tagliando",
+      "tyres": "Ricordami il cambio gomme (ottobre e marzo)",
+      "hint": "Peter ti ricorda la revisione 30 giorni prima e il tagliando 14 giorni prima, e può chiamare l'officina quando approvi."
+    },
+    "parcels": {
+      "title": "Pacchi che segui",
+      "none": "Non segui nessun pacco. Incolla un numero di tracciamento qui sotto.",
+      "number": "Numero di tracciamento",
+      "label": "Cos'è? (facoltativo)",
+      "follow": "Segui il pacco",
+      "stop": "Ferma",
+      "hint": "Ricevi un avviso quando il pacco è in viaggio, pronto per il ritiro e consegnato. Al servizio di tracciamento viene inviato solo il numero."
+    }
+  },
+  "travel": {
+    "search": "Trova un viaggio",
+    "origin": "Da (aeroporto)",
+    "destinations": "A (es. BCN, LIS)",
+    "date": "Partenza",
+    "orMonth": "…o un mese",
+    "nights": "Notti",
+    "budget": "Budget totale (DKK)",
+    "adults": "Adulti",
+    "children": "Bambini",
+    "direct": "Solo voli diretti",
+    "find": "Trova viaggi",
+    "searching": "Ricerca …",
+    "typeHint": "Non sai dove? Scrivi a Peter, es. «Trova una vacanza al mare a febbraio»: sceglie lui le mete.",
+    "results": "Proposte",
+    "none": "Nessun viaggio con prezzo per questa ricerca. Prova altre date o mete.",
+    "directShort": "diretto",
+    "stops": "{n} scali",
+    "book": "Prenota",
+    "overBudget": "{n} viaggi superavano il budget.",
+    "disclaimer": "I prezzi arrivano direttamente dai fornitori e possono cambiare. Prenoti e paghi presso il fornitore: Dialogbot non prenota."
   }
 }

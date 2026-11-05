@@ -38,7 +38,7 @@ export function iconFor(key: string | null | undefined): string {
   const k = (key ?? "").toLowerCase();
   const alias: Record<string, string> = { call: "phone", telephone: "phone", group: "users", shared: "users", wishlist: "gift", box: "package", parcel: "package",
     birthday: "cake", birthdays: "cake", food: "utensils", meal: "utensils", mealplan: "utensils", fork: "utensils", vehicle: "car", auto: "car", bill: "receipt", bills: "receipt", invoice: "receipt",
-    doctor: "stethoscope", heart: "stethoscope", health: "stethoscope", medical: "stethoscope", travel: "suitcase", luggage: "suitcase", packing: "suitcase", trip: "suitcase", reminder: "bell", lists: "list", store: "shop" };
+    doctor: "stethoscope", heart: "stethoscope", health: "stethoscope", medical: "stethoscope", travel: "suitcase", plane: "suitcase", flight: "suitcase", luggage: "suitcase", packing: "suitcase", trip: "suitcase", reminder: "bell", lists: "list", store: "shop" };
   return P[k] ? k : alias[k] && P[alias[k]] ? alias[k] : "puzzle";
 }
 

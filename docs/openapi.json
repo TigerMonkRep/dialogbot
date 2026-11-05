@@ -782,6 +782,59 @@
         "title": "CaptionIn",
         "type": "object"
       },
+      "CarIn": {
+        "properties": {
+          "inspection_due": {
+            "anyOf": [
+              {
+                "maxLength": 10,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspection Due"
+          },
+          "plate": {
+            "anyOf": [
+              {
+                "maxLength": 12,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plate"
+          },
+          "service_due": {
+            "anyOf": [
+              {
+                "maxLength": 10,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service Due"
+          },
+          "tire_reminders": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tire Reminders"
+          }
+        },
+        "title": "CarIn",
+        "type": "object"
+      },
       "CategoryIn": {
         "properties": {
           "is_primary": {
@@ -1548,6 +1601,49 @@
           }
         },
         "title": "ExtraIn",
+        "type": "object"
+      },
+      "FoodPrefsIn": {
+        "properties": {
+          "avoid": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avoid"
+          },
+          "likes": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Likes"
+          },
+          "people": {
+            "anyOf": [
+              {
+                "maximum": 20.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "People"
+          }
+        },
+        "title": "FoodPrefsIn",
         "type": "object"
       },
       "GateIn": {
@@ -2889,6 +2985,33 @@
           "reference"
         ],
         "title": "PaidIn",
+        "type": "object"
+      },
+      "ParcelIn": {
+        "properties": {
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "number": {
+            "maxLength": 60,
+            "minLength": 6,
+            "title": "Number",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number"
+        ],
+        "title": "ParcelIn",
         "type": "object"
       },
       "ParentIn": {
@@ -4381,6 +4504,112 @@
           "token"
         ],
         "title": "TokenIn",
+        "type": "object"
+      },
+      "TripSearchIn": {
+        "properties": {
+          "adults": {
+            "default": 1,
+            "maximum": 9.0,
+            "minimum": 1.0,
+            "title": "Adults",
+            "type": "integer"
+          },
+          "budget_dkk": {
+            "anyOf": [
+              {
+                "minimum": 100.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Dkk"
+          },
+          "children": {
+            "default": 0,
+            "maximum": 8.0,
+            "minimum": 0.0,
+            "title": "Children",
+            "type": "integer"
+          },
+          "depart_date": {
+            "anyOf": [
+              {
+                "maxLength": 10,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Depart Date"
+          },
+          "destinations": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Destinations",
+            "type": "array"
+          },
+          "direct_only": {
+            "default": false,
+            "title": "Direct Only",
+            "type": "boolean"
+          },
+          "month": {
+            "anyOf": [
+              {
+                "maxLength": 7,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Month"
+          },
+          "nights": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nights"
+          },
+          "origin": {
+            "description": "IATA airport code, e.g. CPH",
+            "maxLength": 3,
+            "minLength": 3,
+            "title": "Origin",
+            "type": "string"
+          },
+          "trip_type": {
+            "anyOf": [
+              {
+                "maxLength": 30,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trip Type"
+          }
+        },
+        "required": [
+          "origin",
+          "destinations"
+        ],
+        "title": "TripSearchIn",
         "type": "object"
       },
       "Turn": {
@@ -17639,6 +17868,108 @@
         ]
       }
     },
+    "/api/v1/privat/car": {
+      "get": {
+        "operationId": "get_car_api_v1_privat_car_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Car",
+        "tags": [
+          "privat-apps"
+        ]
+      },
+      "put": {
+        "operationId": "put_car_api_v1_privat_car_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CarIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Car",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
     "/api/v1/privat/credits/checkout": {
       "post": {
         "description": "Stripe Checkout (mode=payment): 10 credits, 29 kr. incl. moms. Credits arrive with the webhook.",
@@ -18311,6 +18642,104 @@
         ]
       }
     },
+    "/api/v1/privat/health-contacts": {
+      "get": {
+        "operationId": "get_health_contacts_api_v1_privat_health_contacts_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Health Contacts",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
+    "/api/v1/privat/health-contacts/{kind}": {
+      "delete": {
+        "operationId": "delete_health_contact_api_v1_privat_health_contacts__kind__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Health Contact",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
     "/api/v1/privat/invites/by-code/{code}": {
       "get": {
         "description": "Public (no login): the short link /i/{code}. Same preview as by token; nothing personal beyond first name.\nRate limited per IP, misses (unknown codes) much more strictly (429 rate_limited).",
@@ -18658,6 +19087,108 @@
         ]
       }
     },
+    "/api/v1/privat/meals/preferences": {
+      "get": {
+        "operationId": "get_food_preferences_api_v1_privat_meals_preferences_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Food Preferences",
+        "tags": [
+          "privat-apps"
+        ]
+      },
+      "put": {
+        "operationId": "put_food_preferences_api_v1_privat_meals_preferences_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FoodPrefsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Food Preferences",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
     "/api/v1/privat/messages": {
       "get": {
         "operationId": "list_messages_api_v1_privat_messages_get",
@@ -18856,6 +19387,159 @@
         "summary": "Answer Option",
         "tags": [
           "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/parcels": {
+      "get": {
+        "operationId": "list_parcels_api_v1_privat_parcels_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Parcels",
+        "tags": [
+          "privat-apps"
+        ]
+      },
+      "post": {
+        "operationId": "add_parcel_api_v1_privat_parcels_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParcelIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Parcel",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
+    "/api/v1/privat/parcels/{number}": {
+      "delete": {
+        "operationId": "delete_parcel_api_v1_privat_parcels__number__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Parcel",
+        "tags": [
+          "privat-apps"
         ]
       }
     },
@@ -20665,6 +21349,111 @@
         "summary": "Share Revoke",
         "tags": [
           "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/trips/latest": {
+      "get": {
+        "operationId": "latest_trip_search_api_v1_privat_trips_latest_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Latest Trip Search",
+        "tags": [
+          "privat-apps"
+        ]
+      }
+    },
+    "/api/v1/privat/trips/search": {
+      "post": {
+        "description": "Real prices from the configured providers, cheapest first, within the total budget. Nothing is booked.",
+        "operationId": "search_trips_api_v1_privat_trips_search_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripSearchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Trips",
+        "tags": [
+          "privat-apps"
         ]
       }
     },

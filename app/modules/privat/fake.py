@@ -128,6 +128,80 @@ def respond(model: str, system: str, messages: list[dict], tools: list[dict] | N
         if "calendar_status" in names:
             return _call(model, "calendar_status", {})
         return suggest("kalender") or _done(model, "Kalender er ikke slået til.")
+    if re.search(r"(rejse|ferie\b|fly til|flybillet)", low) and "pakkeliste" not in low:
+        if "search_trips" not in names:
+            return suggest("rejser") or _done(model, "Rejser er ikke slået til.")
+        origin = re.search(r"\bfra\s+([A-ZÆØÅ]{3})\b", text)
+        dests = re.findall(r"\btil\s+([A-ZÆØÅ]{3})\b", text) or (["BCN", "LIS", "AGP"] if "strand" in low else [])
+        month = re.search(r"(20\d\d-\d\d)(?!-)", text)
+        dd = re.search(r"(20\d\d-\d\d-\d\d)", text)
+        budget = re.search(r"højst\s+([\d.]+)\s*kr", low)
+        adults = re.search(r"(\d+)\s+voksne", low)
+        kids = re.search(r"(\d+)\s+børn", low)
+        nights = re.search(r"(\d+)\s+nætter", low)
+        args = {"origin": origin.group(1) if origin else "", "destinations": dests,
+                **({"depart_date": dd.group(1)} if dd else {"month": month.group(1)} if month else {}),
+                **({"budget_dkk": int(budget.group(1).replace(".", ""))} if budget else {}),
+                **({"adults": int(adults.group(1))} if adults else {}), **({"children": int(kids.group(1))} if kids else {}),
+                **({"nights": int(nights.group(1))} if nights else {}), **({"direct_only": True} if "direkte" in low else {})}
+        return _call(model, "search_trips", args)
+    if "pakkeliste" in low:
+        if "create_packing_list" not in names:
+            return suggest("pakkeliste") or _done(model, "Pakkeliste er ikke slået til.")
+        if "sidst" in low:
+            return _call(model, "reuse_packing_list", {})
+        trip = re.search(r"pakkeliste\s+til\s+(?:en\s+|et\s+)?(.+?)(?:\s+med\s+|[.!]?$)", text, re.I)
+        m = re.search(r"\smed\s(.+)$", text, re.I)
+        return _call(model, "create_packing_list", {"trip": trip.group(1) if trip else "turen",
+                                                    "items": _items(m.group(1)) if m else ["Tandbørste", "Opladere", "Regntøj"]})
+    if "madplan" in low or re.search(r"spiser ikke|vi er \d", low):
+        if "save_meal_plan" not in names:
+            return suggest("madplan") or _done(model, "Madplan er ikke slået til.")
+        if re.search(r"spiser ikke|vi er \d", low) and "madplan" not in low:
+            ppl = re.search(r"vi er (\d+)", low)
+            avoid = re.search(r"spiser ikke ([^.,]+)", low)
+            return _call(model, "save_food_preferences", {**({"people": int(ppl.group(1))} if ppl else {}),
+                                                          **({"avoid": avoid.group(1).strip()} if avoid else {})})
+        return _call(model, "save_meal_plan", {"title": "Madplan", "days": [
+            {"day": "mandag", "dish": "Lasagne", "ingredients": ["500 g hakket oksekød", "Lasagneplader", "Tomatsauce"]},
+            {"day": "tirsdag", "dish": "Kylling i karry", "ingredients": ["Kyllingebryst", "Ris", "tomatsauce"]}]})
+    phone_m = re.search(r"(\+?\d[\d ]{7,13}\d)", text)
+    if re.search(r"\b(læge|tandlæge)", low) and ("gem" in low or "book" in low):
+        if "book_health_appointment" not in names:
+            return suggest("laege-og-tandlaege") or _done(model, "Læge & tandlæge er ikke slået til.")
+        kind = "tandlaege" if "tandlæge" in low else "laege"
+        if "gem" in low and phone_m:
+            nm = re.search(r"(?:hedder|er)\s+([A-ZÆØÅ][\wæøåÆØÅ ]+?)(?:,|\s+på|\s+nummer|\s+tlf)", text)
+            return _call(model, "save_health_contact", {"kind": kind, "name": nm.group(1) if nm else "", "phone": phone_m.group(1)})
+        return _call(model, "book_health_appointment", {"kind": kind, "purpose": "tandeftersyn" if kind == "tandlaege" else "lægetid",
+                                                        "window": "en morgen i næste uge"})
+    car_shop = re.search(r"\bværksted", low) and re.search(r"\b(gem|book)\b", low)
+    if re.search(r"\bsyn\b|nummerplade|\bbilen\b", low) or car_shop:
+        if "save_car" not in names:
+            return suggest("bil-og-syn") or _done(model, "Bil & syn er ikke slået til.")
+        if "værksted" in low and "gem" in low and phone_m:
+            nm = re.search(r"værksted(?:et)?\s+(?:hedder|er)\s+([A-ZÆØÅ][\wæøåÆØÅ ]+?)(?:,|\s+på|\s+nummer)", text)
+            return _call(model, "save_workshop", {"name": nm.group(1) if nm else "Værkstedet", "phone": phone_m.group(1)})
+        if "book" in low:
+            return _call(model, "book_workshop", {"purpose": "syn", "window": "uge 18"})
+        plate = re.search(r"\b([A-ZÆØÅ]{2}\s?\d{2}\s?\d{3})\b", text)
+        due = re.search(r"(20\d\d-\d\d-\d\d)", text)
+        if plate or due:
+            return _call(model, "save_car", {**({"plate": plate.group(1)} if plate else {}),
+                                             **({"inspection_due": due.group(1)} if due else {}),
+                                             **({"tire_reminders": True} if "dæk" in low else {})})
+        return _call(model, "car_status", {})
+    parcel_num = re.search(r"\b([A-Z0-9]{8,40})\b", text)
+    if re.search(r"\bpakke|forsendelse", low) and "pakkeliste" not in low and "mind mig" not in low \
+            and (parcel_num or re.search(r"\b(følg|spor|mine pakker)", low)):
+        if "track_parcel" not in names:
+            return suggest("pakker") or _done(model, "Pakker er ikke slået til.")
+        num = re.search(r"\b([A-Z0-9]{8,40})\b", text)
+        if "stop" in low and num:
+            return _call(model, "stop_tracking", {"number": num.group(1)})
+        if num:
+            return _call(model, "track_parcel", {"number": num.group(1)})
+        return _call(model, "parcels_status", {})
     if re.search(r"tilføj|husk også|sæt .+ på", low) and "liste med" not in low:
         raw = re.sub(r"^.*?(tilføj|husk også|sæt)\s*", "", text, flags=re.I)
         raw = re.sub(r"\s*(på listen|til listen|på)\s*[.!]?$", "", raw, flags=re.I)

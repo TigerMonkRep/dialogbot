@@ -202,14 +202,37 @@ class Duffel:
         for o in (r.json().get("data") or [])[:self.MAX_OFFERS]:
             segs = (o.get("slices") or [{}])[0].get("segments") or []
             back = (o.get("slices") or [{}, {}])[-1].get("segments") or [] if ret else []
-            route = "https://www.google.com/travel/flights?q=" + quote(
-                f"Flights from {p['origin']} to {dest} on {p['depart_date']}")
+            route = _google_flights(p, dest, ret)
             out.append(_offer("duffel", dest, float(o["total_amount"]) if o.get("total_amount") else None,
                               o.get("total_currency") or "", airline=(o.get("owner") or {}).get("name") or "",
                               depart_at=segs[0].get("departing_at", "") if segs else "",
                               return_at=back[0].get("departing_at", "") if back else "",
                               stops=max(len(segs) - 1, 0), book_url=route, p=p))
         return out
+
+
+def _google_flights(p: dict, dest: str, ret: str | None) -> str:
+    """Duffel has no public booking page, so «Book» opens the same trip in Google Flights: route, both dates and
+    the passengers, so the seller's page shows the same journey the price was for."""
+    q = f"Flights from {p['origin']} to {dest} on {p['depart_date']}"
+    if ret:
+        q += f" returning {ret}"
+    q += f" for {p['adults']} adult{'s' if p['adults'] != 1 else ''}"
+    if p["children"]:
+        q += f" and {p['children']} child{'ren' if p['children'] != 1 else ''}"
+    return "https://www.google.com/travel/flights?q=" + quote(q)
+
+
+def _dedupe(offers: list[dict]) -> list[dict]:
+    """The same flight often comes back more than once (several fares, or both providers): one line per route,
+    dates, airline and price. `offers` is sorted cheapest first, so the one kept is the best of its kind."""
+    seen, out = set(), []
+    for o in offers:
+        key = (o["destination"], o["depart_at"][:16], o["return_at"][:16], (o.get("airline") or "").lower(), o["total_dkk"])
+        if key not in seen:
+            seen.add(key)
+            out.append(o)
+    return out
 
 
 class Travelpayouts:
@@ -325,6 +348,7 @@ def search(db, ws_id: uuid.UUID, params: dict) -> dict:
     priced = [o for o in offers if o["total_dkk"] is not None and o["book_url"]]
     within = [o for o in priced if p["budget_dkk"] is None or o["total_dkk"] <= p["budget_dkk"]]
     within.sort(key=lambda o: (o["total_dkk"], o["stops"] if o["stops"] is not None else 9))
+    within = _dedupe(within)
     result = {"id": uuid.uuid4().hex[:12], "at": rules.now().isoformat(), "params": p, "offers": within[:MAX_RESULTS],
               "over_budget": len(priced) - len(within), "errors": sorted(set(errors))}
     data = appdata.get(db, ws_id, ADDON)

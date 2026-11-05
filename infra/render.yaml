@@ -5,7 +5,7 @@ services:
     name: dialogbot-api-staging
     runtime: python
     region: frankfurt
-    plan: starter
+    plan: standard            # 2 workers + the travel searches need more than 512 MB
     rootDir: .
     buildCommand: pip install -r requirements.lock
     # Migrations run as an explicit pre-deploy step with the migration role, not at app startup.

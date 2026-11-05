@@ -92,6 +92,8 @@ services:
         sync: false
       - key: TRAVELPAYOUTS_MARKER
         sync: false
+      - key: PRIVAT_PARTNER_LINKS # partner links in the Privat apps, always marked «Annonce»; empty = none (dashboard-managed)
+        sync: false
       - key: LOG_LEVEL
         value: INFO
 

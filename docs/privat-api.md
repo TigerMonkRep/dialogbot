@@ -567,3 +567,34 @@ Der bookes og betales intet i Dialogbot i trin 1. Trin 2 (booking i Dialogbot vi
 
 **Assistentens værktøj:** `search_trips(...)` – nævner brugeren en rejsetype i stedet for et sted, vælger modellen 3-5 destinationer.
 Udbyder-API'erne er ikke kaldt med rigtige nøgler (svarformatet er fra dokumentationen).
+
+
+## Husstandens apps (Abonnementer, Håndværker & tilbud, Fælles udgifter, Garanti, Fest, Flytning, Kæledyr, Hus, Fitness)
+
+Alt sker i chatten; appens panel viser en oversigt. Data ligger i `private_app_data` under appens nøgle
+(`app/modules/privat/app_kit.py`).
+
+| Endpoint | Svar |
+|---|---|
+| `GET /privat/apps/{key}/overview` | `{summary, items: [{id, text, sub, share_text?}], partner: {category, name, url, text, note} \| null}`. 403 `addon_disabled` når appen er slået fra, 404 for en ukendt app. |
+| `DELETE /privat/apps/{key}/items/{id}` | 204; 404 når den ikke findes. |
+| `PATCH /privat/me/assistant` `{name}` | Assistentens navn (1–20 bogstaver; tomt = «Peter»). Svarer som `GET /privat/me`, der nu har `assistant_name`. |
+
+`key`: `abonnementer`, `haandvaerker`, `faelles-udgifter`, `garanti`, `fest`, `flytning`, `kaeledyr`,
+`hus-og-vedligehold`, `fitness-og-sundhed`. Funnel-svaret `assistant_name` (skærm 1 på /privat/start) bliver
+kontoens navn, når kontoen oprettes.
+
+Regler, der ligger i koden:
+- Dialogbot ringer aldrig uden godkendelse og siger aldrig ja til en pris, en aftale, en ny binding eller betaling.
+- Numre bruges kun, når brugeren selv har skrevet dem (dyrlæge, opsigelse pr. telefon) – eller fra virksomhedssøgningen
+  (Håndværker & tilbud).
+- Partnerlinks vises kun med «Annonce – Dialogbot kan få provision», kun over https, og aldrig ved siden af de
+  virksomheder, brugeren har bedt om tilbud fra.
+- Tekster, brugeren sender videre (opsigelse, reklamation, invitation, opgørelse), slutter med Dialogbots fodlinje.
+- Fitness & sundhed gemmer aldrig vægt, sygdom, skader, medicin eller andre helbredsoplysninger.
+- Påmindelser: én pr. dato og app, fra kl. 8 dansk tid, push eller e-mail, kun mens appen er slået til; linket går til
+  `/privat/apps/{key}`.
+
+Madplan (udvidet): `save_meal_plan` tager `people` og pr. ret `servings`; mængderne regnes om og lægges sammen på
+indkøbslisten («500 g» + «250 g hakket oksekød» = «750 g hakket oksekød»), og hver dags ingredienser står som note på
+dagen.

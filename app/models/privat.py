@@ -59,6 +59,8 @@ class PrivateProfile(Base):
     # shown once when made and a new one replaces it. Null = no link.
     calendar_feed_token_hash: Mapped[str | None] = mapped_column(String(64), unique=True)
     calendar_feed_created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # What the assistant is called (app/modules/privat/naming.py). Null = «Peter».
+    assistant_name: Mapped[str | None] = mapped_column(String(30))
     created_at: Mapped[datetime] = ts_now()
 
 
@@ -567,3 +569,30 @@ class PrivateAppData(Base):
     app_key: Mapped[str] = mapped_column(String(40), primary_key=True)
     data: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict, server_default="{}")
     updated_at: Mapped[datetime] = ts_now()
+
+
+class PrivateBusinessReferral(Base):
+    """A business a Privat user asked for a quote through Dialogbot (Håndværker & tilbud, Flytning, Hus & vedligehold),
+    and whether the user chose it. The basis for Dialogbot's lead revenue: «we sent you N customers». It keeps only the
+    business side and a short job title; the workspace is set to NULL when the account is deleted."""
+
+    __tablename__ = "private_business_referrals"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="SET NULL"))
+    app_key: Mapped[str] = mapped_column(String(40), nullable=False)
+    job: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    trade: Mapped[str] = mapped_column(String(80), nullable=False, default="")
+    business_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    business_phone_e164: Mapped[str | None] = mapped_column(String(20))
+    place_id: Mapped[str | None] = mapped_column(String(300))
+    call_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("private_calls.id", ondelete="SET NULL"))
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="asked")  # asked | chosen | not_chosen
+    created_at: Mapped[datetime] = ts_now()
+    chosen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        CheckConstraint("status IN ('asked','chosen','not_chosen')", name="ck_private_business_referrals_status"),
+        Index("ix_private_business_referrals_phone", "business_phone_e164"),
+        Index("ix_private_business_referrals_ws", "workspace_id"),
+    )

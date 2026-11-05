@@ -10,6 +10,7 @@ import { BillsPanel } from "./bills";
 import { BirthdaysPanel } from "./birthdays";
 import { CalendarPanel } from "./calendar";
 import { CarPanel, HealthPanel, MealsPanel, ParcelsPanel } from "./more-apps";
+import { HOUSEHOLD_APPS, HouseholdPanel } from "./household";
 import { TravelPanel } from "./travel";
 import { Ico, Tile, iconFor } from "./icons";
 import { usePlan, usePrivat } from "./store";
@@ -65,7 +66,7 @@ export function AppTile({ a, size = 62 }: { a: Addon; size?: number }) {
 }
 
 /** Apps whose sheet shows a panel once they are on. */
-const PANEL_APPS = new Set(["kalender", "foedselsdage", "regninger", "madplan", "laege-og-tandlaege", "bil-og-syn", "pakker", "rejser"]);
+const PANEL_APPS = new Set(["kalender", "foedselsdage", "regninger", "madplan", "laege-og-tandlaege", "bil-og-syn", "pakker", "rejser", ...HOUSEHOLD_APPS]);
 
 /** App pages that open their app sheet (the backend links to them). */
 const APP_PATHS: Record<string, string> = { "/privat/kalender": "kalender", "/privat/foedselsdage": "foedselsdage", "/privat/regninger": "regninger", "/privat/bil": "bil-og-syn", "/privat/pakker": "pakker" };
@@ -79,7 +80,9 @@ export function StorePage() {
   const loaded = addons !== null && addons !== undefined;
   useEffect(() => {
     if (!loaded) return;
-    const key = Object.entries(APP_PATHS).find(([p]) => window.location.pathname.startsWith(p))?.[1];
+    const path = window.location.pathname;
+    const key = Object.entries(APP_PATHS).find(([p]) => path.startsWith(p))?.[1]
+      ?? (path.startsWith("/privat/apps/") ? decodeURIComponent(path.split("/")[3] ?? "") || undefined : undefined);
     if (key) openSheet({ kind: "addon", addonKey: key });
   }, [loaded, openSheet]);
   const p = usePlan();
@@ -200,6 +203,7 @@ export function AddonDetail({ a }: { a: Addon }) {
           {a.key === "bil-og-syn" && mode !== "demo" && <CarPanel />}
           {a.key === "pakker" && mode !== "demo" && <ParcelsPanel />}
           {a.key === "rejser" && mode !== "demo" && <TravelPanel />}
+          {HOUSEHOLD_APPS.has(a.key) && mode !== "demo" && <HouseholdPanel appKey={a.key} name={a.name} />}
           <Button className={`${BIG} rounded-full`} onClick={open} aria-label={`${t("store.open")}: ${name}`}>{t("store.open")}</Button>
           <Button variant="outline" className="rounded-full border-2" onClick={() => openSheet({ kind: "addonOff", addonKey: a.key })} aria-label={`${t("addons.disable")}: ${name}`}>{t("addons.disable")}</Button>
         </>

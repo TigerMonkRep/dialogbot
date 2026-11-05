@@ -30,6 +30,13 @@ const P: Record<string, React.ReactNode> = {
   sparkle: <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" />,
   shop: <><path d="M4 9l1.5-5h13L20 9" /><path d="M4 9a2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0 2 2 0 0 0 4 0" /><path d="M5 11v9h14v-9M10 20v-5h4v5" /></>,
   home: <><path d="M4 11l8-7 8 7" /><path d="M6 10v10h12V10" /><path d="M10 20v-6h4v6" /></>,
+  wrench: <path d="M14.5 5.5a4 4 0 0 0 5 5L12 18a2.1 2.1 0 0 1-3-3l7.5-7.5a4 4 0 0 0-5-5l2.5 2.5-1 2-2 1z" />,
+  repeat: <><path d="M4 11V9a3 3 0 0 1 3-3h12l-3-3M20 13v2a3 3 0 0 1-3 3H5l3 3" /></>,
+  shield: <><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" /><path d="M9 12l2 2 4-4" /></>,
+  balloon: <><path d="M12 3a5.5 5.5 0 0 1 5.5 5.5c0 3.5-3 7-5.5 7s-5.5-3.5-5.5-7A5.5 5.5 0 0 1 12 3z" /><path d="M12 15.5l-1 2h2l-1-2M12 17.5c0 2-2 2-2 4" /></>,
+  truck: <><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7" /><circle cx="7" cy="17.5" r="1.8" /><circle cx="17" cy="17.5" r="1.8" /></>,
+  paw: <><circle cx="7" cy="10" r="1.6" /><circle cx="10.5" cy="6.5" r="1.6" /><circle cx="14.5" cy="6.5" r="1.6" /><circle cx="18" cy="10" r="1.6" /><path d="M12 12c-3 0-5 3-5 5a2 2 0 0 0 2.5 2c1-.3 1.7-.5 2.5-.5s1.5.2 2.5.5A2 2 0 0 0 17 17c0-2-2-5-5-5z" /></>,
+  dumbbell: <path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12" />,
   user: <><circle cx="12" cy="8" r="4" /><path d="M4.5 21a7.5 7.5 0 0 1 15 0" /></>,
 };
 

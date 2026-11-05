@@ -14,6 +14,7 @@
     "birthdays": "Fødselsdage",
     "bills": "Regninger",
     "car": "Bil & syn",
+    "app": "App",
     "parcels": "Pakker",
     "travel": "Rejser"
   },
@@ -934,6 +935,8 @@
         "1605": "Kl. 16.05 – og du har stadig ikke ringet",
         "telefonsvarer": "Du lagde på ved telefonsvareren igen"
       },
+      "nameLabel": "Hvad skal din assistent hedde? (valgfrit)",
+      "nameHint": "Lad feltet stå tomt, så hedder den Peter. Du kan altid ændre det under Konto.",
       "title": "Hvad har du udsat?",
       "help": "Vælg alt det, der ligger og venter. Peter laver en opgave af hvert.",
       "postponed": {
@@ -1167,6 +1170,17 @@
       "yearly": "hvert år",
       "once": "én gang"
     }
+  },
+  "assistantName": {
+    "label": "Assistentens navn",
+    "hint": "Kun i appen og chatten – når assistenten ringer eller skriver, siger den «Dialogbot»."
+  },
+  "household": {
+    "ad": "Annonce",
+    "copy": "Kopiér",
+    "copied": "Kopieret",
+    "copyFailed": "Kunne ikke kopiere – markér teksten og kopiér den selv.",
+    "hint": "Resten klarer du i samtalen – skriv bare til din assistent."
   },
   "moreApps": {
     "save": "Gem",

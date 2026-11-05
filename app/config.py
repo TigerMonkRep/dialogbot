@@ -294,6 +294,11 @@ class Settings(BaseSettings):
     duffel_access_token: str | None = Field(default=None, alias="DUFFEL_ACCESS_TOKEN")
     travelpayouts_token: str | None = Field(default=None, alias="TRAVELPAYOUTS_TOKEN")
     travelpayouts_marker: str | None = Field(default=None, alias="TRAVELPAYOUTS_MARKER")
+    # Partner links shown in the Privat apps (app/modules/privat/brand.py), always marked «Annonce». JSON:
+    # {"mobil": {"name": "…", "url": "https://…", "text": "Find et billigere mobilabonnement"}, …}. Categories:
+    # mobil, internet, el, streaming, forsikring, dyreforsikring, flyttefirma, fest, hjem, garanti, dagligvarer,
+    # fitness. Empty = none shown.
+    privat_partner_links: str = Field(default="", alias="PRIVAT_PARTNER_LINKS")
 
     # Dev tooling: the simulated mailbox and test identities are gated on this.
     enable_dev_tools: bool = Field(default=False, alias="ENABLE_DEV_TOOLS")

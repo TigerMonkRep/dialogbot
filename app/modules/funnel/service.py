@@ -73,7 +73,7 @@ CONSENT_TEXT_PRIVAT = ("Ja tak, Dialogbot må oprette en privat konto til mig me
 # Privat: the account has no rights until the 14-day trial starts at Stripe (card) – Konto opens the checkout at
 # once, and the lists and reminders the quiz built wait as drafts until the trial is in.
 NEXT = {"erhverv": "/start/klar", "privat": "/privat/konto?plan=plus&velkommen=1"}
-PRIVAT_PATHS = {"postponed": list, "household": str, "hate_calls": str, "remind_at": str}
+PRIVAT_PATHS = {"postponed": list, "household": str, "hate_calls": str, "remind_at": str, "assistant_name": str}
 ERHVERV_PATHS = {"industry": str, "company_name": str, "place_id": str, "missed": list, "missed_per_week": int,
                  "wants": list}
 
@@ -614,6 +614,13 @@ def _finish_privat(db: OrmSession, d: FunnelDraft, user: User) -> None:
     if profile.phone_verified_at is None:
         profile.phone_e164, profile.phone_verified_at = d.gate["phone_e164"], _now()
     d.workspace_id = profile.workspace_id
+    if created:
+        from app.modules.privat import naming
+
+        try:
+            profile.assistant_name = naming.clean((d.answers or {}).get("assistant_name"))
+        except ValidationFailed:
+            profile.assistant_name = None   # an odd name never stops the account; it can be set under Konto
     ctx = deps._ctx(db, Principal(user=user, session=None), profile)
     made = privat_seed.create(db, ctx, d.answers or {})
     d.build = {**(d.build or {}), "created": made | {"account_created": created}}

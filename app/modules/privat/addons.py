@@ -304,8 +304,9 @@ register(Addon(
     key="madplan", name="Madplan", tagline="Ugens aftensmad – og indkøbslisten følger med",
     description="Peter laver en madplan for ugen ud fra det, I kan lide, og skriver indkøbslisten til den.",
     icon="utensils", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
-    what="Sig hvor mange I er, og hvad I kan lide, så foreslår Peter aftensmad for ugen. Siger du ja, bliver "
-         "ingredienserne til en indkøbsliste, du kan dele med husstanden.",
+    what="Sig hvor mange I er, og hvad I kan lide, så foreslår Peter aftensmad for ugen – med ingredienser til hver "
+         "ret. Siger du ja, bliver mængderne regnet om til jeres antal og lagt sammen på én indkøbsliste, du kan dele "
+         "med husstanden.",
     example="«Lav en madplan for næste uge – vi er fire, og børnene spiser ikke fisk»",
     steps=("Fortæl Peter, hvor mange I er, og hvad I ikke spiser",
            "Få et forslag til ugen og ret det, der ikke passer",
@@ -324,11 +325,14 @@ register(Addon(
         AddonTool(
             "save_meal_plan",
             "Gem en madplan, når brugeren har sagt ja til dit forslag (foreslå den først i tekst). days: én pr. dag med "
-            "retten og ingredienserne til en almindelig dansk indkøbsliste (mængder i teksten, fx «500 g hakket oksekød»). "
-            "Respekter altid det, husstanden ikke spiser. shopping_list: lav indkøbslisten (standard ja).",
+            "retten, servings (hvor mange personer mængderne er til) og ingredienserne med mængde og enhed først (fx "
+            "«500 g hakket oksekød», «1 dåse hakkede tomater», «2 løg»). people: hvor mange planen er til (brugerens "
+            "tal, ellers husstandens) – mængderne regnes om og lægges sammen på indkøbslisten. Respekter altid det, "
+            "husstanden ikke spiser. shopping_list: lav indkøbslisten (standard ja).",
             _obj({"title": {"type": "string", "description": "Fx «Madplan uge 46»"},
+                  "people": {"type": "integer"},
                   "days": {"type": "array", "items": _obj(
-                      {"day": {"type": "string"}, "dish": {"type": "string"},
+                      {"day": {"type": "string"}, "dish": {"type": "string"}, "servings": {"type": "integer"},
                        "ingredients": {"type": "array", "items": {"type": "string"}}}, ["dish"])},
                   "shopping_list": {"type": "boolean"}}, ["days"]),
             "app.modules.privat.chat:tool_save_meal_plan")),
@@ -379,7 +383,7 @@ register(Addon(
            "Se månedens regninger samlet i appen – eller spørg Peter"),
     included_in=("plus", "familie"),
     permissions=("Gemmer regningernes navn, beløb og dato, som du selv skriver dem", "Har aldrig adgang til din bank"),
-    keywords=("regning", "regninger", "abonnement", "forfalder"),
+    keywords=("regning", "regninger", "forfalder"),
     tools=(AddonTool(
         "add_bills",
         "Gem en eller flere faste regninger, brugeren har fortalt om. Peter betaler ALDRIG selv. Send due_day (dag i "
@@ -483,6 +487,280 @@ register(Addon(
         "app.modules.privat.chat:tool_search_trips"),),
 ))
 
+# --------------------------------------------------------------------------- household apps (app_kit.py)
+# Revenue is designed in: leads to businesses (Håndværker & tilbud, and Flytning/Hus & vedligehold through it), disclosed
+# partner links (brand.offer, «Annonce»), and Dialogbot's name on every call, letter, invitation and summary
+# (brand.footer). Fælles udgifter and Fest & invitationer are free: every summary and invitation reaches new people.
+
+_H = "app.modules.privat.chat:"
+
+register(Addon(
+    key="abonnementer", name="Abonnementer & opsigelse", tagline="Se hvad I betaler for – og opsig det, I ikke bruger",
+    description="Peter holder styr på streaming, mobil, internet, fitness og forsikringer: hvad det koster, hvornår "
+                "bindingen slutter – og skriver opsigelsen eller ringer, når du vil ud.",
+    icon="repeat", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
+    what="Fortæl Peter, hvad I betaler for. Han viser, hvad det koster om måneden og året, minder dig om den sidste "
+         "dag at opsige, før en binding fornyes – og skriver opsigelsen eller ringer for dig, når du siger til.",
+    example="«Jeg har Netflix til 139 kr. om måneden og Telia til 199 kr. med binding til 1. marts»",
+    steps=("Sig dine abonnementer og hvad de koster", "Peter minder dig om den sidste dag at opsige",
+           "Sig «opsig Netflix» – du får opsigelsen klar til at sende, eller Peter ringer, når du godkender"),
+    included_in=("plus", "familie"),
+    permissions=("Gemmer abonnementer, priser og datoer, som du selv skriver dem", "Har aldrig adgang til din bank",
+                 "Opsiger kun, når du selv sender opsigelsen eller godkender opkaldet"),
+    keywords=("abonnement", "abonnementer", "opsig", "opsige", "binding", "streaming"),
+    requires=("ring-for-mig",),
+    tools=(AddonTool(
+        "add_subscriptions",
+        "Gem abonnementer, som brugeren selv har nævnt: name, price (fx «139 kr.»), period monthly/quarterly/yearly, "
+        "category (streaming, mobil, internet, el, forsikring, fitness, avis, andet), binding_until og renews_on "
+        "(YYYY-MM-DD), notice_days (opsigelsesvarsel i dage). Gæt aldrig en pris eller dato.",
+        _obj({"items": {"type": "array", "items": _obj({
+            "name": {"type": "string"}, "price": {"type": "string"},
+            "period": {"type": "string", "enum": ["monthly", "quarterly", "yearly"]}, "category": {"type": "string"},
+            "binding_until": {"type": "string"}, "renews_on": {"type": "string"}, "notice_days": {"type": "integer"}},
+            ["name"])}}, ["items"]),
+        _H + "tool_add_subscriptions"),
+        AddonTool("subscriptions_overview", "Vis brugerens abonnementer og hvad de koster i alt.", _obj({}),
+                  _H + "tool_subscriptions_overview"),
+        AddonTool("remove_subscription", "Fjern et abonnement fra oversigten (ikke en opsigelse).",
+                  _obj({"name": {"type": "string"}}, ["name"]), _H + "tool_remove_subscription"),
+        AddonTool(
+            "cancel_subscription",
+            "Hjælp med at opsige et abonnement. how=letter: skriv opsigelsen, brugeren selv sender. how=call: foreslå "
+            "et opkald til firmaet (kun med et nummer, brugeren selv har skrevet) – der ringes ALDRIG før brugeren "
+            "godkender. customer_no kun hvis brugeren skrev det.",
+            _obj({"name": {"type": "string"}, "how": {"type": "string", "enum": ["letter", "call"]},
+                  "phone": {"type": "string"}, "customer_no": {"type": "string"}}, ["name"]),
+            _H + "tool_cancel_subscription")),
+))
+
+register(Addon(
+    key="haandvaerker", name="Håndværker & tilbud", tagline="Peter henter 3 tilbud – du vælger",
+    description="Sig hvad der skal laves, og hvor. Peter finder tre lokale håndværkere, ringer og spørger om pris og "
+                "hvornår de kan – og viser svarene side om side.",
+    icon="wrench", category="opkald", price_text="Med i Plus og Familie – opkald som i Ring for mig", pricing="free",
+    what="Peter finder op til tre håndværkere i nærheden, ringer og spørger om pris og hvornår de kan, og viser "
+         "svarene side om side. Du vælger – så ringer Peter og siger ja tak. Han siger aldrig ja til en pris selv.",
+    example="«Find 3 malere i Aarhus og hent tilbud på at male stuen»",
+    steps=("Sig hvad der skal laves, og hvor", "Godkend opkaldene – Peter spørger om pris og tid",
+           "Se tilbuddene side om side og vælg – Peter siger ja tak for dig"),
+    included_in=("plus", "familie"),
+    permissions=("Ringer kun til håndværkere, du har godkendt", "Siger dit navn og opgaven – aldrig din adresse",
+                 "Siger aldrig ja til en pris eller en aftale"),
+    keywords=("håndværker", "tilbud", "tømrer", "maler", "elektriker", "vvs", "murer", "flyttefirma", "gartner",
+              "rengøring"),
+    requires=("ring-for-mig",),
+    tools=(AddonTool(
+        "request_quotes",
+        "Find op til 3 lokale virksomheder og foreslå et opkald til hver for at få et tilbud. job: opgaven med brugerens "
+        "egne ord (fx «male stuen, ca. 30 m²»), trade: søgeord for virksomheden (fx «maler», «flyttefirma»), city: by "
+        "eller postnummer. Der ringes ALDRIG før brugeren godkender hvert opkald.",
+        _obj({"job": {"type": "string"}, "trade": {"type": "string"}, "city": {"type": "string"},
+              "window": {"type": "string"}}, ["job", "trade"]),
+        _H + "tool_request_quotes"),
+        AddonTool("compare_quotes", "Vis tilbuddene side om side (seneste opgave, eller den med job).",
+                  _obj({"job": {"type": "string"}}), _H + "tool_compare_quotes"),
+        AddonTool("choose_quote",
+                  "Brugeren vælger en af virksomhederne: gem valget og foreslå et opkald, hvor Peter siger ja tak og "
+                  "beder dem kontakte brugeren. Der ringes ALDRIG før brugeren godkender.",
+                  _obj({"business": {"type": "string"}, "job": {"type": "string"}}, ["business"]),
+                  _H + "tool_choose_quote")),
+))
+
+register(Addon(
+    key="faelles-udgifter", name="Fælles udgifter", tagline="Hvem lagde ud – og hvem skylder hvem",
+    description="Til ferien, sommerhuset eller bofællesskabet: skriv hvem der betalte hvad, og Peter regner ud, hvem "
+                "der skal betale hvem – med færrest mulige overførsler.",
+    icon="coin", category="lister", price_text="Gratis", pricing="free",
+    what="Sig hvem der lagde ud for hvad, og Peter regner ud, hvem der skylder hvem – med færrest mulige "
+         "overførsler. Du får en opgørelse, du kan sende til de andre. Peter flytter aldrig penge.",
+    example="«Jeg betalte 1.200 kr. for mad i sommerhuset – vi er Anna, Bo og mig»",
+    steps=("Sig hvem der er med, og hvem der betalte hvad", "Se hvem der skylder hvem",
+           "Send opgørelsen til de andre – de betaler med MobilePay"),
+    permissions=("Gemmer fornavne og beløb, som du selv skriver dem", "Flytter aldrig penge"),
+    keywords=("lagde ud", "skylder", "dele regningen", "fælles udgifter", "udlæg", "betalte"),
+    tools=(AddonTool(
+        "add_expense",
+        "Gem en udgift: group (fx «Sommerhus»), paid_by (fornavn, eller «mig»), amount (fx «1.200 kr.»), text (hvad), "
+        "among (hvem den deles mellem – tom = alle i gruppen), people (alle i gruppen, hvis brugeren nævnte dem).",
+        _obj({"group": {"type": "string"}, "paid_by": {"type": "string"}, "amount": {"type": "string"},
+              "text": {"type": "string"}, "among": _STR_LIST, "people": _STR_LIST}, ["amount"]),
+        _H + "tool_add_expense"),
+        AddonTool("expenses_balance", "Vis hvem der skylder hvem i en gruppe. share=true: en opgørelse til at sende.",
+                  _obj({"group": {"type": "string"}, "share": {"type": "boolean"}}), _H + "tool_expenses_balance")),
+))
+
+register(Addon(
+    key="garanti", name="Garanti & kvitteringer", tagline="Husk reklamationsretten – og få hjælp, når noget går i stykker",
+    description="Peter husker, hvad du har købt og hvor, og hvornår reklamationsretten udløber – og skriver "
+                "reklamationen til butikken, når noget går i stykker.",
+    icon="shield", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
+    what="Fortæl Peter, når du køber noget dyrt. Han husker butik og dato, minder dig om det, før de 2 års "
+         "reklamationsret udløber, og skriver reklamationen, når noget går i stykker. Gem selv kvitteringen.",
+    example="«Jeg købte en vaskemaskine i Elgiganten den 3. maj til 4.999 kr.»",
+    steps=("Sig hvad du købte, hvor og hvornår", "Peter minder dig om det, før reklamationsretten udløber",
+           "Går noget i stykker, skriver Peter reklamationen til butikken"),
+    included_in=("plus", "familie"),
+    permissions=("Gemmer ting, butik, dato og pris, som du selv skriver dem", "Gemmer ikke billeder af kvitteringer"),
+    keywords=("garanti", "kvittering", "reklamation", "reklamere", "gået i stykker", "virker ikke"),
+    tools=(AddonTool(
+        "add_purchase",
+        "Gem et køb: product, shop, bought (YYYY-MM-DD), price, warranty_years (kun en ekstra garanti, brugeren nævner).",
+        _obj({"product": {"type": "string"}, "shop": {"type": "string"}, "bought": {"type": "string"},
+              "price": {"type": "string"}, "warranty_years": {"type": "integer"}}, ["product", "bought"]),
+        _H + "tool_add_purchase"),
+        AddonTool("purchases_overview", "Vis de gemte køb og hvor længe der er reklamationsret.", _obj({}),
+                  _H + "tool_purchases_overview"),
+        AddonTool("write_complaint", "Skriv en reklamation til butikken om en gemt ting: product og problem (fejlen).",
+                  _obj({"product": {"type": "string"}, "problem": {"type": "string"}}, ["product", "problem"]),
+                  _H + "tool_write_complaint")),
+))
+
+register(Addon(
+    key="fest", name="Fest & invitationer", tagline="Gæsteliste, svar, hvem tager hvad med – og allergier",
+    description="Planlæg festen med Peter: han skriver invitationen, holder styr på hvem der kommer, hvem der tager "
+                "hvad med, og hvem der ikke tåler hvad.",
+    icon="balloon", category="lister", price_text="Gratis", pricing="free",
+    what="Sig hvad det er for en fest, hvornår og hvem der skal med. Peter skriver invitationen, holder styr på "
+         "svarene, hvem der tager hvad med og allergier – og minder dig om dem, der ikke har svaret.",
+    example="«Lav en fest: Idas 10-års fødselsdag den 6. marts kl. 14 med Emma, Noah og Alma»",
+    steps=("Sig festen, datoen og gæsterne", "Send invitationen, Peter har skrevet",
+           "Fortæl Peter svarene – han holder styr på resten"),
+    permissions=("Gemmer gæsternes fornavne, svar og allergier, som du selv skriver dem",
+                 "Sender intet – du sender selv invitationen"),
+    keywords=("fest", "invitation", "invitere", "gæster", "gæsteliste", "fødselsdagsfest", "kommer"),
+    tools=(AddonTool(
+        "save_party",
+        "Opret eller ret en fest: title, date (YYYY-MM-DD), time (fx 14:00), place, guests (fornavne).",
+        _obj({"title": {"type": "string"}, "date": {"type": "string"}, "time": {"type": "string"},
+              "place": {"type": "string"}, "guests": _STR_LIST}, ["title"]),
+        _H + "tool_save_party"),
+        AddonTool("update_guest",
+                  "Ret en gæst: name, status (yes/no/maybe), bring (hvad de tager med), diet (allergier/kost). party: "
+                  "festens titel (tom = den nyeste).",
+                  _obj({"party": {"type": "string"}, "name": {"type": "string"},
+                        "status": {"type": "string", "enum": ["yes", "no", "maybe"]}, "bring": {"type": "string"},
+                        "diet": {"type": "string"}}, ["name"]),
+                  _H + "tool_update_guest"),
+        AddonTool("party_status", "Vis festen: hvem kommer, hvem tager hvad med, allergier.",
+                  _obj({"party": {"type": "string"}}), _H + "tool_party_status"),
+        AddonTool("write_invitation", "Skriv invitationen til festen, som brugeren selv sender. note: ekstra tekst.",
+                  _obj({"party": {"type": "string"}, "note": {"type": "string"}}), _H + "tool_write_invitation")),
+))
+
+register(Addon(
+    key="flytning", name="Flytning", tagline="Flyttetjeklisten med datoer – og hjælp til opkaldene",
+    description="Sig hvornår I flytter, og Peter laver tjeklisten med datoer: opsigelse, el, internet, forsikring, "
+                "flyttefirma og adresseændring – og minder dig om hvert punkt i tide.",
+    icon="truck", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
+    what="Sig flyttedagen, og Peter laver tjeklisten med datoer – fra opsigelse og flyttefirma til el, internet og "
+         "adresseændring – og minder dig om hvert punkt. Flyttefirmaer kan han hente tilbud fra.",
+    example="«Vi flytter til Odense den 1. april»",
+    steps=("Sig flyttedagen og hvor I flytter hen", "Få tjeklisten med datoer – del den med dem, I flytter med",
+           "Peter minder dig om hvert punkt og kan hente tilbud fra flyttefirmaer"),
+    included_in=("plus", "familie"),
+    permissions=("Gemmer flyttedagen og byen, som du selv skriver dem",
+                 "Melder aldrig flytning for dig – det gør du selv på borger.dk"),
+    keywords=("flytte", "flytning", "flytter", "flyttedag", "ny adresse"),
+    tools=(AddonTool(
+        "plan_move", "Lav flyttetjeklisten: moving_day (YYYY-MM-DD) og to (by/adresse, som brugeren skrev).",
+        _obj({"moving_day": {"type": "string"}, "to": {"type": "string"}}, ["moving_day"]),
+        _H + "tool_plan_move"),
+        AddonTool("moving_status", "Vis flytningen og hvad der mangler.", _obj({}), _H + "tool_moving_status")),
+))
+
+register(Addon(
+    key="kaeledyr", name="Kæledyr", tagline="Dyrlæge, vaccinationer, ormekur og forsikring",
+    description="Peter husker vaccinationer, ormekur, loppemiddel og forsikring for jeres dyr – og ringer til "
+                "dyrlægen og finder en tid, når du siger til.",
+    icon="paw", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
+    what="Fortæl Peter om jeres dyr og datoerne. Han minder dig om vaccination, ormekur, loppemiddel og forsikring – "
+         "og kan ringe til dyrlægen og finde en tid, når du godkender.",
+    example="«Vores hund Bella skal vaccineres 1. marts og have ormekur hver 3. måned»",
+    steps=("Sig dyrets navn og datoerne", "Gem dyrlægen (navn og nummer)",
+           "Peter minder dig om det – og booker dyrlægen, når du siger ja"),
+    included_in=("plus", "familie"),
+    permissions=("Gemmer dyrenes navne og datoer, som du selv skriver dem",
+                 "Ringer til din dyrlæge, når du har godkendt det"),
+    keywords=("hund", "kat", "kæledyr", "dyrlæge", "ormekur", "loppe", "vaccin"),
+    requires=("ring-for-mig",),
+    tools=(AddonTool(
+        "save_pet",
+        "Gem et dyr: name, kind (hund, kat …), vaccination_due og insurance_renews (YYYY-MM-DD), worming_every_months og "
+        "flea_every_months, last_treatment (YYYY-MM-DD). Gæt aldrig en dato.",
+        _obj({"name": {"type": "string"}, "kind": {"type": "string"}, "vaccination_due": {"type": "string"},
+              "insurance_renews": {"type": "string"}, "worming_every_months": {"type": "integer"},
+              "flea_every_months": {"type": "integer"}, "last_treatment": {"type": "string"}}, ["name"]),
+        _H + "tool_save_pet"),
+        AddonTool("save_vet", "Gem dyrlægen: navn og det nummer, brugeren selv har skrevet.",
+                  _obj({"name": {"type": "string"}, "phone": {"type": "string"}}, ["name", "phone"]),
+                  _H + "tool_save_vet"),
+        AddonTool("book_vet",
+                  "Foreslå et opkald til den gemte dyrlæge for at booke en tid. Der ringes ALDRIG før brugeren "
+                  "godkender. pet: dyrets navn, purpose: hvad, window: hvornår brugeren kan.",
+                  _obj({"pet": {"type": "string"}, "purpose": {"type": "string"}, "window": {"type": "string"}},
+                       ["purpose"]),
+                  _H + "tool_book_vet"),
+        AddonTool("pets_status", "Vis dyrene og deres datoer.", _obj({}), _H + "tool_pets_status")),
+))
+
+register(Addon(
+    key="hus-og-vedligehold", name="Hus & vedligehold", tagline="Røgalarm, filtre, tagrender og fyr – til tiden",
+    description="Peter husker de små faste opgaver i hjemmet – røgalarmen, emhættefilteret, tagrenderne, service på "
+                "fyret – og finder en håndværker, når der skal en til.",
+    icon="home", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
+    what="Vælg de faste opgaver i hjemmet – eller tilføj dine egne. Peter minder dig om dem til tiden, og når der "
+         "skal en håndværker til, henter han tilbud.",
+    example="«Tilføj alle de faste opgaver i huset»",
+    steps=("Vælg opgaverne, eller sig dine egne og hvor tit", "Peter minder dig om dem til tiden",
+           "Sig «færdig» – så rykker opgaven til næste gang"),
+    included_in=("plus", "familie"),
+    permissions=("Gemmer kun de opgaver og datoer, du vælger",),
+    keywords=("røgalarm", "tagrende", "emhætte", "vedligehold", "fyr", "varmepumpe", "skorsten"),
+    tools=(AddonTool(
+        "add_home_tasks",
+        "Tilføj faste opgaver i hjemmet. names: standardopgaver (fx «røgalarm», «tagrender», «fyr», eller «alle»). "
+        "custom + every_months (+ next_due YYYY-MM-DD): en egen opgave.",
+        _obj({"names": _STR_LIST, "custom": {"type": "string"}, "every_months": {"type": "integer"},
+              "next_due": {"type": "string"}}),
+        _H + "tool_add_home_tasks"),
+        AddonTool("home_task_done", "Brugeren har gjort en opgave: ryk den til næste gang.",
+                  _obj({"name": {"type": "string"}}, ["name"]), _H + "tool_home_task_done"),
+        AddonTool("home_status", "Vis hjemmets faste opgaver og hvornår de skal gøres.", _obj({}),
+                  _H + "tool_home_status")),
+))
+
+register(Addon(
+    key="fitness-og-sundhed", name="Fitness & sundhed", tagline="Ugens træning, en enkel log – og et puf på dagen",
+    description="Sig hvornår du vil træne, og hvad dit mål er. Peter minder dig om det på dagen, noterer hvad du har "
+                "nået og viser ugen – og kan ringe og booke et hold, en PT eller fysioterapeuten.",
+    icon="dumbbell", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
+    what="Fortæl Peter dit mål og hvornår du vil træne. Han minder dig om det på dagen, noterer det, du har nået, og "
+         "viser hver mandag, hvordan ugen gik. Han kan også ringe og booke et hold eller en tid, når du godkender.",
+    example="«Jeg vil løbe tirsdag og torsdag kl. 17 og styrketræne lørdag – målet er 5 km i maj»",
+    steps=("Sig dit mål og dine træningsdage", "Få et puf på dagen – sig «færdig med løb», så noterer Peter det",
+           "Se hver mandag, hvordan ugen gik"),
+    included_in=("plus", "familie"),
+    permissions=("Gemmer dit mål, din træningsplan og hvad du har trænet",
+                 "Gemmer aldrig vægt, sygdom, skader, medicin eller andre helbredsoplysninger"),
+    keywords=("træne", "træning", "løbe", "løb", "fitness", "motion", "styrketræning", "yoga", "cykle"),
+    tools=(AddonTool(
+        "plan_workouts",
+        "Gem træningsplanen: workouts med day (mandag…søndag), activity, time (fx 17:00) og minutes. goal: brugerens mål "
+        "med egne ord. replace=true erstatter hele planen. Gem ALDRIG vægt, sygdom, skader, medicin eller andre "
+        "helbredsoplysninger – heller ikke hvis brugeren nævner dem.",
+        _obj({"workouts": {"type": "array", "items": _obj({"day": {"type": "string"}, "activity": {"type": "string"},
+                                                           "time": {"type": "string"}, "minutes": {"type": "integer"}},
+                                                          ["day", "activity"])},
+              "goal": {"type": "string"}, "replace": {"type": "boolean"}}),
+        _H + "tool_plan_workouts"),
+        AddonTool("log_workout", "Notér en træning, brugeren har lavet: activity, minutes, date (YYYY-MM-DD, standard i dag).",
+                  _obj({"activity": {"type": "string"}, "minutes": {"type": "integer"}, "date": {"type": "string"}},
+                       ["activity"]),
+                  _H + "tool_log_workout"),
+        AddonTool("fitness_status", "Vis målet, ugens træning og planen.", _obj({}), _H + "tool_fitness_status")),
+))
+
 # Which add-on a shared list needs, per share mode.
 SHARE_MODE_ADDON = {"group": "delte-lister", "wishlist": "oenskelister"}
 
@@ -533,10 +811,14 @@ def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> 
 
 
 def catalog_out(db: OrmSession, ws_id: uuid.UUID) -> list[dict]:
-    from app.modules.privat import subscriptions
+    from app.models import PrivateProfile
+    from app.modules.privat import naming, subscriptions
 
     ent = subscriptions.entitlements(db, ws_id)
-    return [out(db, ws_id, a, ent) for a in CATALOG.values()]
+    name = naming.of(db.get(PrivateProfile, ws_id))
+    keys = ("tagline", "description", "what", "example", "steps", "permissions", "price_text")
+    return [{**o, **{k: naming.personalize(o[k], name) for k in keys}}
+            for o in (out(db, ws_id, a, ent) for a in CATALOG.values())]
 
 
 def enable(db: OrmSession, ws_id: uuid.UUID, key: str) -> Addon:

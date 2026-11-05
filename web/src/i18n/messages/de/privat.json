@@ -14,6 +14,7 @@
     "birthdays": "Geburtstage",
     "bills": "Rechnungen",
     "car": "Auto & TÜV",
+    "app": "App",
     "parcels": "Pakete",
     "travel": "Reisen"
   },
@@ -934,6 +935,8 @@
         "1605": "16.05 Uhr – und du hast immer noch nicht angerufen",
         "telefonsvarer": "Du hast wieder beim Anrufbeantworter aufgelegt"
       },
+      "nameLabel": "Wie soll dein Assistent heißen? (optional)",
+      "nameHint": "Leer lassen, dann heißt er Peter. Du kannst es jederzeit unter Konto ändern.",
       "title": "Was hast du aufgeschoben?",
       "help": "Wähle alles, was liegen bleibt. Peter macht aus jedem Punkt eine Aufgabe.",
       "postponed": {
@@ -1167,6 +1170,17 @@
       "yearly": "jedes Jahr",
       "once": "einmal"
     }
+  },
+  "assistantName": {
+    "label": "Name des Assistenten",
+    "hint": "Nur in der App und im Chat – bei Anrufen und E-Mails heißt er «Dialogbot»."
+  },
+  "household": {
+    "ad": "Anzeige",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "copyFailed": "Kopieren fehlgeschlagen – markiere den Text und kopiere ihn selbst.",
+    "hint": "Alles andere erledigst du im Chat – schreib einfach deinem Assistenten."
   },
   "moreApps": {
     "save": "Speichern",

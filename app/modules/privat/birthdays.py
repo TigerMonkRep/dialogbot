@@ -225,7 +225,7 @@ def send_due(db: OrmSession, now: datetime | None = None) -> int:
             continue
         text = summary(b, today) + "."
         mail = tpl.Email(subject=f"Fødselsdag: {b.name}", heading=text,
-                         paragraphs=["Skriv til Peter, hvis du vil have idéer til en gave eller en påmindelse om at ringe."],
+                         paragraphs=["Skriv til din assistent i Dialogbot, hvis du vil have idéer til en gave eller en påmindelse om at ringe."],
                          button_label="Se fødselsdage", button_url=url,
                          footer_reason="Du får denne e-mail, fordi du har slået Fødselsdage til i Dialogbot.")
         push.notify(db, owner.id, title="Fødselsdag", body=text, url=url, dedupe=f"birthday:{b.id}:{nxt.isoformat()}",

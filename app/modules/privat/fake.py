@@ -82,6 +82,9 @@ def respond(model: str, system: str, messages: list[dict], tools: list[dict] | N
             return _call(model, "share_list", {"with_name": who.group(1) if who else "",
                                                **({"mode": "wishlist"} if "ønske" in low else {})})
         return suggest("oenskelister" if "ønske" in low else "delte-lister") or _done(model, "Det kan jeg ikke endnu.")
+    h = _household(model, text, low, names, suggest)
+    if h is not None:
+        return h
     if re.search(r"\bregning|\bforfald", low):
         if "add_bills" not in names:
             return suggest("regninger") or _done(model, "Regninger er ikke slået til.")
@@ -230,6 +233,123 @@ def respond(model: str, system: str, messages: list[dict], tools: list[dict] | N
                                            "options": [{"label": "Mind mig om …", "sub": "En besked på et bestemt tidspunkt"},
                                                        {"label": "Lav en liste", "sub": "Med punkter, du kan krydse af"},
                                                        {"label": "Ring for mig", "sub": "Du godkender, før jeg ringer"}]})
+
+
+def _household(model: str, text: str, low: str, names: set, suggest) -> Completion | None:
+    """The household apps (app_kit.py): one or two phrasings each, enough for the tests and the demo."""
+    def need(tool: str, key: str) -> Completion | None:
+        return None if tool in names else (suggest(key) or _done(model, "Den app er ikke slået til."))
+
+    iso = re.search(r"(20\d\d-\d\d-\d\d)", text)
+    phone_m = re.search(r"(\+?\d[\d ]{7,13}\d)", text)
+    if re.search(r"\babonnement|\bopsig|kr\.? om (måneden|året)|med binding", low):
+        if (r := need("add_subscriptions", "abonnementer")):
+            return r
+        if "opsig" in low:
+            nm = re.search(r"[Oo]psig\w*\s+(?:mit\s+|abonnementet\s+(?:hos|på)\s+)?([A-ZÆØÅ][\w+]*)", text)
+            return _call(model, "cancel_subscription", {"name": nm.group(1) if nm else "",
+                                                        **({"how": "call", "phone": phone_m.group(1)} if "ring" in low else {})})
+        items = [{"name": m.group(1), "price": m.group(2) + " kr.",
+                  "period": "yearly" if (m.group(3) or "").endswith("året") else "monthly",
+                  **({"binding_until": m.group(4)} if m.group(4) else {})}
+                 for m in re.finditer(r"([A-ZÆØÅ][\w+]*)\s+til\s+(\d[\d.]*)\s*kr\.?(\s+om\s+(?:måneden|året))?"
+                                      r"(?:\s+med\s+binding\s+til\s+(20\d\d-\d\d-\d\d))?", text)]
+        return _call(model, "add_subscriptions", {"items": items}) if items else _call(model, "subscriptions_overview", {})
+    if re.search(r"tilbud|håndværker", low):
+        if (r := need("request_quotes", "haandvaerker")):
+            return r
+        ch = re.search(r"[Vv]ælg(?:er)?\s+(?:tilbuddet\s+fra\s+)?([A-ZÆØÅ][\wæøåÆØÅ ]+?)\s*[.!]?$", text)
+        if ch:
+            return _call(model, "choose_quote", {"business": ch.group(1)})
+        f = re.search(r"[Ff]ind\s+(?:\d\s+)?(\w+?)(?:e|ne|re)?\s+i\s+([A-ZÆØÅ]\w+).*?tilbud\s+på\s+(.+?)\s*[.!]?$", text)
+        if f:
+            return _call(model, "request_quotes", {"trade": f.group(1), "city": f.group(2), "job": f.group(3)})
+        return _call(model, "compare_quotes", {})
+    if re.search(r"lagde ud|skylder|\bbetalte\b", low):
+        if (r := need("add_expense", "faelles-udgifter")):
+            return r
+        if "skylder" in low:
+            return _call(model, "expenses_balance", {"share": "send" in low})
+        m = re.search(r"(\w+)\s+(?:betalte|lagde ud)\s+(?:for\s+)?([\d.]+(?:,\d+)?)\s*kr\.?(?:\s+for\s+([\wæøå ]+?))?"
+                      r"(?:\s+i\s+([\wæøå]+))?(?:\s*[–-]|[.!]?$)", text)
+        ppl = re.search(r"vi er\s+(.+?)\s*[.!]?$", text, re.I)
+        if m:
+            return _call(model, "add_expense", {"paid_by": "mig" if m.group(1).lower() == "jeg" else m.group(1),
+                                                "amount": m.group(2), "text": (m.group(3) or "").strip(),
+                                                **({"group": m.group(4)} if m.group(4) else {}),
+                                                **({"people": _items(ppl.group(1))} if ppl else {})})
+    if re.search(r"reklam|\bkøbte\b", low):
+        if (r := need("add_purchase", "garanti")):
+            return r
+        if "reklam" in low:
+            m = re.search(r"reklamation\s+(?:på|om)\s+(\w+?)(?:en|et)?\s*[–-]\s*(.+?)\s*[.!]?$", text)
+            return _call(model, "write_complaint", {"product": m.group(1) if m else "", "problem": m.group(2) if m else ""})
+        m = re.search(r"købte\s+(?:en|et)?\s*(.+?)\s+(?:i|hos)\s+([A-ZÆØÅ]\w+)", text)
+        price = re.search(r"til\s+([\d.]+(?:,\d+)?)\s*kr", text)
+        return _call(model, "add_purchase", {"product": m.group(1) if m else "", "shop": m.group(2) if m else "",
+                                             "bought": iso.group(1) if iso else "",
+                                             **({"price": price.group(1) + " kr."} if price else {})})
+    if re.search(r"\bfest\b|festen|invitation", low):
+        if (r := need("save_party", "fest")):
+            return r
+        if "invitation" in low:
+            return _call(model, "write_invitation", {})
+        g = re.search(r"^([A-ZÆØÅ]\w+)\s+(kommer ikke|kommer måske|kommer)(?:.*?tager\s+(.+?)\s+med)?", text)
+        if g:
+            st = {"kommer ikke": "no", "kommer måske": "maybe", "kommer": "yes"}[g.group(2)]
+            return _call(model, "update_guest", {"name": g.group(1), "status": st,
+                                                 **({"bring": g.group(3)} if g.group(3) else {})})
+        m = re.search(r"fest:\s*(.+?)\s+den\s+", text)
+        if m:
+            t = re.search(r"kl\.?\s*(\d{1,2}(?:[.:]\d\d)?)", low)
+            guests = re.search(r"\smed\s(.+)$", text)
+            return _call(model, "save_party", {"title": m.group(1), "date": iso.group(1) if iso else "",
+                                               **({"time": t.group(1)} if t else {}),
+                                               **({"guests": _items(guests.group(1))} if guests else {})})
+        return _call(model, "party_status", {})
+    if re.search(r"\bvi flytter|\bjeg flytter|flytning", low):
+        if (r := need("plan_move", "flytning")):
+            return r
+        to = re.search(r"flytter\s+til\s+([A-ZÆØÅ][\wæøå]+)", text)
+        if iso:
+            return _call(model, "plan_move", {"moving_day": iso.group(1), **({"to": to.group(1)} if to else {})})
+        return _call(model, "moving_status", {})
+    if re.search(r"\bhund\b|\bkat\b|dyrlæge|ormekur", low):
+        if (r := need("save_pet", "kaeledyr")):
+            return r
+        if "dyrlæge" in low and "gem" in low and phone_m:
+            nm = re.search(r"dyrlægen?:?\s+([A-ZÆØÅ][\wæøåÆØÅ ]+?)(?:,|\s+nummer)", text)
+            return _call(model, "save_vet", {"name": nm.group(1) if nm else "", "phone": phone_m.group(1)})
+        if "book" in low:
+            pet = re.search(r"til\s+([A-ZÆØÅ]\w+)", text)
+            return _call(model, "book_vet", {"purpose": "vaccination", **({"pet": pet.group(1)} if pet else {})})
+        nm = re.search(r"(?:hund|kat)\s+([A-ZÆØÅ]\w+)", text)
+        worm = re.search(r"ormekur hver (\d+)", low)
+        if nm:
+            return _call(model, "save_pet", {"name": nm.group(1), "kind": "hund" if "hund" in low else "kat",
+                                             **({"vaccination_due": iso.group(1)} if iso else {}),
+                                             **({"worming_every_months": int(worm.group(1))} if worm else {})})
+        return _call(model, "pets_status", {})
+    if re.search(r"røgalarm|tagrend|emhætte|faste opgaver i huset", low):
+        if (r := need("add_home_tasks", "hus-og-vedligehold")):
+            return r
+        if re.search(r"\b(har|er)\b.*\b(testet|renset|gjort|færdig)", low):
+            return _call(model, "home_task_done", {"name": "røgalarm" if "røgalarm" in low else "tagrender"})
+        return _call(model, "add_home_tasks", {"names": ["alle"] if "alle" in low else
+                                               [w for w in ("røgalarm", "tagrender", "emhætte") if w[:6] in low]})
+    if re.search(r"\btræne\b|\bløbe\b|styrketræn|færdig med", low):
+        if (r := need("plan_workouts", "fitness-og-sundhed")):
+            return r
+        done = re.search(r"færdig med\s+([a-zæøå]+)(?:\s+(\d+)\s*min)?", low)
+        if done:
+            return _call(model, "log_workout", {"activity": done.group(1),
+                                                **({"minutes": int(done.group(2))} if done.group(2) else {})})
+        t = re.search(r"kl\.?\s*(\d{1,2})", low)
+        workouts = [{"day": d, "activity": "løb" if "løbe" in low else "træning", **({"time": f"{t.group(1)}:00"} if t else {})}
+                    for d in DAYS if re.search(rf"\b{d}\b", low)]
+        goal = re.search(r"målet er\s+(.+?)\s*[.!]?$", low)
+        return _call(model, "plan_workouts", {"workouts": workouts, **({"goal": goal.group(1)} if goal else {})})
+    return None
 
 
 def _call_args(text: str, low: str) -> dict:

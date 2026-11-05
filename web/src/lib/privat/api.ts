@@ -51,6 +51,8 @@ export type Balance = {
   phone_display: string | null; phone_verified: boolean;
   /** «Tilføjelse 6» */
   push_enabled?: boolean; location_city?: string | null;
+  /** What the assistant is called (default «Peter»). */
+  assistant_name?: string;
   // Subscription summary (privat-abonnement-brief): the same numbers as GET /privat/subscription, so the header and
   // the paywall need only /me. Optional until the backend sends them.
   plan?: SubscriptionPlan; plan_status?: SubscriptionStatus; trial_days_left?: number;
@@ -200,6 +202,7 @@ export interface PrivatApi {
   /** One request for everything the shell shows (GET /privat/bootstrap). */
   bootstrap(): Promise<Bootstrap>;
   setLocation(body: LocationBody): Promise<Balance>;
+  setAssistantName(name: string): Promise<Balance>;
   /** The app language, saved on the user (PATCH /auth/me) so e-mails and other devices follow it. */
   setLocale(locale: string): Promise<unknown>;
   pushPublicKey(): Promise<{ public_key: string }>;
@@ -264,7 +267,18 @@ export interface PrivatApi {
   // Rejser
   searchTrips(body: TripSearch): Promise<TripResult>;
   latestTrips(): Promise<{ search: TripResult | null }>;
+  // The household apps (Abonnementer, Håndværker & tilbud, Fælles udgifter, Garanti, Fest, Flytning, Kæledyr, Hus, Fitness)
+  appOverview(key: string): Promise<AppOverview>;
+  removeAppItem(key: string, id: string): Promise<void>;
 }
+
+// ---------- Household apps (one generic overview) ----------
+export type AppPartner = { category: string; name: string; url: string; text: string; note: string };
+export type AppOverview = {
+  summary: string;
+  items: { id: string; text: string; sub: string; share_text?: string }[];
+  partner: AppPartner | null;
+};
 
 // ---------- Rejser ----------
 export type TripSearch = {
@@ -371,6 +385,7 @@ export const realPrivat: PrivatApi = {
   },
   bootstrap: () => api(`${P}/bootstrap`),
   setLocation: (body) => api(`${P}/me/location`, { method: "PATCH", body: JSON.stringify(body) }),
+  setAssistantName: (name) => api(`${P}/me/assistant`, { method: "PATCH", body: JSON.stringify({ name }) }),
   setLocale: (locale) => api("/auth/me", { method: "PATCH", body: JSON.stringify({ locale }) }),
   pushPublicKey: () => api(`${P}/push/public-key`),
   pushSubscribe: (body) => api(`${P}/push/subscriptions`, json(body)),
@@ -420,6 +435,8 @@ export const realPrivat: PrivatApi = {
   addParcel: (body) => api(`${P}/parcels`, json(body)),
   removeParcel: (number) => api(`${P}/parcels/${enc(number)}`, { method: "DELETE" }),
   refreshParcel: (number) => api(`${P}/parcels/${enc(number)}/refresh`, json({})),
+  appOverview: (key) => api(`${P}/apps/${enc(key)}/overview`),
+  removeAppItem: (key, id) => api(`${P}/apps/${enc(key)}/items/${enc(id)}`, { method: "DELETE" }),
   searchTrips: (body) => api(`${P}/trips/search`, json(body)),
   latestTrips: () => api(`${P}/trips/latest`),
 };

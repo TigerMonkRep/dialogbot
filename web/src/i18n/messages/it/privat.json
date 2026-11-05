@@ -14,6 +14,7 @@
     "birthdays": "Compleanni",
     "bills": "Bollette",
     "car": "Auto e revisione",
+    "app": "App",
     "parcels": "Pacchi",
     "travel": "Viaggi"
   },
@@ -934,6 +935,8 @@
         "1605": "Ore 16.05 e non hai ancora chiamato",
         "telefonsvarer": "Hai riattaccato di nuovo alla segreteria"
       },
+      "nameLabel": "Come si chiamerà il tuo assistente? (facoltativo)",
+      "nameHint": "Lascia vuoto e si chiamerà Peter. Puoi cambiarlo quando vuoi in Account.",
       "title": "Cosa hai rimandato?",
       "help": "Scegli tutto ciò che è in sospeso. Peter trasforma ogni cosa in un'attività.",
       "postponed": {
@@ -1167,6 +1170,17 @@
       "yearly": "ogni anno",
       "once": "una volta"
     }
+  },
+  "assistantName": {
+    "label": "Nome dell'assistente",
+    "hint": "Solo nell'app e nella chat: quando chiama o scrive, dice «Dialogbot»."
+  },
+  "household": {
+    "ad": "Annuncio",
+    "copy": "Copia",
+    "copied": "Copiato",
+    "copyFailed": "Impossibile copiare: seleziona il testo e copialo tu.",
+    "hint": "Tutto il resto lo fai in chat: scrivi al tuo assistente."
   },
   "moreApps": {
     "save": "Salva",

@@ -50,13 +50,14 @@ function Step1() {
   const t = useT("privat.funnel.s1");
   const { draft, hook, answer, next } = useFunnel();
   const [chosen, setChosen] = useState<string[]>(draft?.answers.postponed ?? []);
+  const [name, setName] = useState<string>(draft?.answers.assistant_name ?? "");
   const [busy, setBusy] = useState(false);
   const h = hook && (HOOKS as readonly string[]).includes(hook) ? hook : "default";
   const options: Option[] = POSTPONED.map((k) => ({ key: k, label: t(`postponed.${k}`), icon: ICON[k] }));
   const go = async () => {
     if (!chosen.length || busy) return;
     setBusy(true);
-    await answer(1, { postponed: chosen });
+    await answer(1, { postponed: chosen, assistant_name: name.trim() });
     setBusy(false);
     next();
   };
@@ -64,6 +65,12 @@ function Step1() {
     <>
       <Question eyebrow={h === "default" ? undefined : t(`hooks.${h}`)} title={t("title")} help={t("help")} />
       <Choice options={options} value={chosen} onChange={(v) => setChosen(v as string[])} multi columns={2} />
+      <label className="flex flex-col gap-1 text-[14px] text-ink-soft">
+        {t("nameLabel")}
+        <input value={name} maxLength={20} onChange={(e) => setName(e.target.value)} placeholder="Peter" data-testid="assistant-name"
+          className="min-h-[48px] rounded-[14px] border-2 border-ink bg-paper px-3.5 text-[16px] text-ink" />
+        <span className="text-[12px] text-muted">{t("nameHint")}</span>
+      </label>
       <NextButton onClick={() => void go()} disabled={!chosen.length} busy={busy} />
     </>
   );

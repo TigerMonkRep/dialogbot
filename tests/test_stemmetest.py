@@ -529,7 +529,8 @@ def test_batch_all_expands_to_every_case_with_audio_and_a_profile_without_access
 def test_profiles_cover_the_baseline_and_the_addendum_and_say_who_owns_the_turn():
     ids = [p.id for p in profiles.PROFILES]
     assert ids == ["A", "B", "C", "D", "E", "F"]
-    assert profiles.BY_ID["D"].model == "linden-1" and profiles.BY_ID["E"].model == "stt-rt-v5"
+    assert profiles.BY_ID["D"].model == "linden-1" and profiles.BY_ID["E"].model is None  # E follows the bridge
+    assert profiles.effective_model(profiles.BY_ID["E"]) == "stt-rt-v5"
     assert profiles.BY_ID["F"].model == "scribe_v2_realtime" and profiles.BY_ID["C"].model == "enhanced"
     assert all(p.turn_owner for p in profiles.PROFILES)
     assert profiles.BY_ID["A"].adapter is None and profiles.BY_ID["B"].adapter is None  # no invented Vapi replay
@@ -944,3 +945,27 @@ def test_soniox_model_comes_from_settings_and_agent_text_only_from_v6(monkeypatc
         monkeypatch.delenv("SONIOX_MODEL")
         get_settings.cache_clear()
     assert adapters.Soniox(_cfg(), "k").start_message()["model"] == "stt-rt-v5"
+
+
+
+def test_profile_e_replays_with_the_bridges_model_and_the_test_only_override_never_reaches_the_bridge(monkeypatch):
+    """E must measure what the phone runs (SONIOX_MODEL, else v5). STEMMETEST_SONIOX_MODEL changes the replay only."""
+    e = profiles.BY_ID["E"]
+    monkeypatch.delenv("SONIOX_MODEL", raising=False)
+    monkeypatch.delenv("STEMMETEST_SONIOX_MODEL", raising=False)
+    get_settings.cache_clear()
+    assert profiles.effective_model(e) == "stt-rt-v5"
+    monkeypatch.setenv("SONIOX_MODEL", "stt-rt-v6")
+    get_settings.cache_clear()
+    assert profiles.effective_model(e) == "stt-rt-v6" and profiles.describe(e)["model"] == "stt-rt-v6"
+    monkeypatch.setenv("SONIOX_MODEL", "stt-rt-v5")
+    monkeypatch.setenv("STEMMETEST_SONIOX_MODEL", "stt-rt-v6")
+    get_settings.cache_clear()
+    assert profiles.effective_model(e) == "stt-rt-v6"
+    # the bridge builds its own adapter config without a model: it sees SONIOX_MODEL only
+    assert adapters.Soniox(adapters.AdapterConfig(), "k").requested_model == "stt-rt-v5"
+    cfg = adapters.AdapterConfig(model=profiles.effective_model(e))
+    assert adapters.Soniox(cfg, "k").start_message()["model"] == "stt-rt-v6"
+    monkeypatch.delenv("SONIOX_MODEL")
+    monkeypatch.delenv("STEMMETEST_SONIOX_MODEL")
+    get_settings.cache_clear()

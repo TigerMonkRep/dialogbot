@@ -71,12 +71,14 @@ PROFILES: tuple[Profile, ...] = (
                       V + " (vad | external, ForceEndOfUtterance)", V + " (labels S1/S2 er sessionslokale)",
                       V + " (som C: eu2 som standard, SPEECHMATICS_RT_URL overstyrer)", "TranscriptionConfig + TurnConfig; ikke max_delay",
                       "speechmatics-agent-stt 0.3.0; docs.speechmatics.com/speech-to-text/agent-stt")),
-    Profile("E", "E · Direkte Soniox", "Soniox stt-rt-v5 med dansk og kontekst/ordliste",
-            "soniox", "stt-rt-v5", "Soniox (semantisk endpoint, <end>) / replay-finalize",
+    Profile("E", "E · Direkte Soniox", "Soniox (samme model som telefonbroen: SONIOX_MODEL, ellers stt-rt-v5) med dansk og kontekst/ordliste",
+            "soniox", None, "Soniox (semantisk endpoint, <end>) / replay-finalize",
             needs=("soniox_api_key",), live="Gennem broen med ?stt=soniox (Vapi lukker turen)",
             notes="<end> og <fin> er kontroltokens og kommer aldrig i kundens tekst. Aggressiv endpointing kan koste "
-                  "nøjagtighed (Soniox' egen advarsel); standardværdier bruges, intet tunes uden måling.",
-            matrix=_m("stt-rt-v5 (alias stt-rt-v4 peger på v5)", V + " (language_hints=[da])", V + " (context.terms, op til 8000 tokens)",
+                  "nøjagtighed (Soniox' egen advarsel); standardværdier bruges, intet tunes uden måling. Modellen er "
+                  "den, broen kører (SONIOX_MODEL, ellers stt-rt-v5); STEMMETEST_SONIOX_MODEL overstyrer KUN replayet "
+                  "(test af fx stt-rt-v6 uden at røre opkald). Den anmodede model står på hver kørsel.",
+            matrix=_m("SONIOX_MODEL, ellers stt-rt-v5 (v5 udfases 15/12 2026 iflg. docs.soniox.com/stt/models); v6 via STEMMETEST_SONIOX_MODEL", V + " (language_hints=[da])", V + " (context.terms, op til 8000 tokens)",
                       V + " (final/non-final tokens)", V + " (enable_endpoint_detection → <end>; finalize → <fin>)",
                       V + " (enable_speaker_diarization; ikke brugt)", T + " (Soniox data residency er ikke undersøgt)",
                       "start-besked + control-beskeder", "docs.soniox.com/stt/api-reference/websocket-api (3/11 2026)")),
@@ -110,8 +112,19 @@ def access(p: Profile) -> dict:
     return {"status": "klar", "missing": [], "reason": ""}
 
 
+def effective_model(p: Profile) -> str | None:
+    """The model a replay of this profile requests right now. E follows the bridge (SONIOX_MODEL, else stt-rt-v5)
+    unless STEMMETEST_SONIOX_MODEL overrides it for the test alone."""
+    if p.adapter == "soniox":
+        from app.config import get_settings
+
+        s = get_settings()
+        return s.stemmetest_soniox_model or s.soniox_model or "stt-rt-v5"
+    return p.model
+
+
 def describe(p: Profile) -> dict:
-    return {"id": p.id, "label": p.label, "purpose": p.purpose, "adapter": p.adapter, "model": p.model,
+    return {"id": p.id, "label": p.label, "purpose": p.purpose, "adapter": p.adapter, "model": effective_model(p),
             "turn_owner": p.turn_owner, "live": p.live, "notes": p.notes, "capabilities": p.matrix, "access": access(p)}
 
 

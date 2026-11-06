@@ -21,7 +21,7 @@ from collections.abc import Callable
 from app.config import get_settings
 from app.modules.stt import adapters, metrics
 from app.modules.stt.events import SttEvent, TurnAssembler
-from app.modules.stt.profiles import Profile
+from app.modules.stt.profiles import Profile, effective_model
 
 CHUNK_S = 0.1
 CONTROL_SILENCE_S = 0.2   # Soniox: finalize only after ~200 ms of silence following speech
@@ -41,7 +41,7 @@ async def run_audio(profile: Profile, pcm: bytes, rate: int, *, reference: str, 
                     settle_s: float = SETTLE_S, reference_alts: list[str] | None = None) -> dict:
     """Run one recording; always returns a result dict (never raises for provider trouble)."""
     cfg = adapters.AdapterConfig(sample_rate=rate, vocabulary=vocabulary, controlled=(mode == "controlled"),
-                                 model=profile.model)
+                                 model=effective_model(profile))
     assembler = TurnAssembler()
     closed_at: dict[int, float] = {}
 

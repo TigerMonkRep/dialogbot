@@ -55,7 +55,7 @@ def create_run(db: OrmSession, *, user_id: uuid.UUID | None, profile_id: str, mo
                      channel="replay", mode=mode, case_id=case["id"] if case else None,
                      split=case["split"] if case else None, source="manifest" if case else "upload",
                      reference=reference, status="kører",
-                     config={"profile": p.id, "model": p.model, "turn_owner": p.turn_owner, "mode": mode,
+                     config={"profile": p.id, "model": profiles.effective_model(p), "turn_owner": p.turn_owner, "mode": mode,
                              "synthetic": bool(case and manifest.is_synthetic(case)), "expected": expected or [],
                              "reference_alts": reference_alts,
                              "workspace": str(workspace_id) if workspace_id else None})
@@ -240,7 +240,7 @@ def summary(db: OrmSession, split: str | None, mode: str | None) -> list[dict]:
         if mode:
             q = q.where(SttTestRun.mode == mode)
         runs = [run_out(r) for r in db.scalars(q)]
-        row = {"profile": p.id, "label": p.label, "model": p.model, "turn_owner": p.turn_owner, "access": acc}
+        row = {"profile": p.id, "label": p.label, "model": profiles.effective_model(p), "turn_owner": p.turn_owner, "access": acc}
         if runs:
             real = [r for r in runs if not r["synthetic"]]
             row["measured"] = metrics.aggregate(runs)

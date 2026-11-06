@@ -109,6 +109,9 @@ class Settings(BaseSettings):
     soniox_api_key: str | None = Field(default=None, alias="SONIOX_API_KEY")
     # Soniox real-time model for every use (bridge, own engine, Stemmetest), e.g. "stt-rt-v6". Unset = stt-rt-v5.
     soniox_model: str | None = Field(default=None, alias="SONIOX_MODEL")
+    # TEST-ONLY: the Soniox model the Stemmetest's profile E replays with (e.g. "stt-rt-v6" to measure v6 before
+    # SONIOX_MODEL is changed for real calls). Only the replay reads it; the bridge and the engine never do.
+    stemmetest_soniox_model: str | None = Field(default=None, alias="STEMMETEST_SONIOX_MODEL")
     stemmetest_audio_dir: str | None = Field(default=None, alias="STEMMETEST_AUDIO_DIR")  # human recordings per case
     # Optional USD per audio hour per recogniser, e.g. {"soniox": 0.12}: filled in from the provider's own price page.
     # Unset = the run reports audio seconds and says "pris ikke angivet" rather than guessing a price.

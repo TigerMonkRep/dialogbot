@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – un asistente que atiende el teléfono: para su empresa y para usted",
-    "description": "Dialogbot responde en danés, las 24 horas, reserva citas en su calendario y llama por usted cuando se lo pide. Usted aprueba todo antes de que entre en vigor. Para empresas desde 2.495 DKK/mes – para usted en casa desde 49 DKK/mes.",
+    "description": "Dialogbot responde en español, las 24 horas, reserva citas en su calendario y llama por usted cuando se lo pide. Usted aprueba todo antes de que entre en vigor. Para empresas desde 2.495 DKK/mes – para usted en casa desde 49 DKK/mes.",
     "ogTitle": "Un asistente que atiende el teléfono – para su empresa y para usted"
   },
   "nav": {
@@ -22,7 +22,7 @@
       "mark": "atiende el teléfono",
       "after": " – para su empresa y para usted."
     },
-    "lead": "Dialogbot responde en danés, las 24 horas, reserva citas en su calendario y llama por usted cuando se lo pide. Usted aprueba todo antes de que entre en vigor.",
+    "lead": "Dialogbot responde en español, las 24 horas, reserva citas en su calendario y llama por usted cuando se lo pide. Usted aprueba todo antes de que entre en vigor.",
     "cta": "Pruébelo – le llama a usted",
     "watch": "Vea cómo",
     "note": "2 minutos. Sin registro, sin tarjeta.",
@@ -50,7 +50,7 @@
     "label": "Lo que recibe",
     "facts": [
       {
-        "title": "En danés",
+        "title": "En español",
         "text": "Con una voz que elige usted"
       },
       {
@@ -171,7 +171,7 @@
     "tiles": [
       {
         "title": "Atiende el teléfono",
-        "text": "Las 24 horas, en danés. Dice con honestidad que es un asistente digital si el cliente lo pregunta."
+        "text": "Las 24 horas, en español. Dice con honestidad que es un asistente digital si el cliente lo pregunta."
       },
       {
         "title": "Reserva citas",

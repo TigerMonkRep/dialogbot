@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – un assistant qui répond au téléphone : pour votre entreprise et pour vous",
-    "description": "Dialogbot répond en danois, jour et nuit, réserve des rendez-vous dans votre agenda et passe des appels pour vous quand vous le demandez. Vous validez tout avant que cela ne s'applique. Pour les entreprises à partir de 2 495 DKK/mois – pour vous à la maison à partir de 49 DKK/mois.",
+    "description": "Dialogbot répond en français, jour et nuit, réserve des rendez-vous dans votre agenda et passe des appels pour vous quand vous le demandez. Vous validez tout avant que cela ne s'applique. Pour les entreprises à partir de 2 495 DKK/mois – pour vous à la maison à partir de 49 DKK/mois.",
     "ogTitle": "Un assistant qui répond au téléphone – pour votre entreprise et pour vous"
   },
   "nav": {
@@ -22,7 +22,7 @@
       "mark": "répond au téléphone",
       "after": " – pour votre entreprise et pour vous."
     },
-    "lead": "Dialogbot répond en danois, jour et nuit, réserve des rendez-vous dans votre agenda et passe des appels pour vous quand vous le demandez. Vous validez tout avant que cela ne s'applique.",
+    "lead": "Dialogbot répond en français, jour et nuit, réserve des rendez-vous dans votre agenda et passe des appels pour vous quand vous le demandez. Vous validez tout avant que cela ne s'applique.",
     "cta": "Essayez-le – il vous appelle",
     "watch": "Voir comment",
     "note": "2 minutes. Sans inscription, sans carte.",
@@ -50,7 +50,7 @@
     "label": "Ce que vous obtenez",
     "facts": [
       {
-        "title": "En danois",
+        "title": "En français",
         "text": "Avec une voix que vous choisissez"
       },
       {
@@ -171,7 +171,7 @@
     "tiles": [
       {
         "title": "Répond au téléphone",
-        "text": "Jour et nuit, en danois. Dit honnêtement qu'il est un assistant numérique si le client le demande."
+        "text": "Jour et nuit, en français. Dit honnêtement qu'il est un assistant numérique si le client le demande."
       },
       {
         "title": "Réserve des rendez-vous",

@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – én assistent som tar telefonen: for bedriften din og for deg",
-    "description": "Dialogbot svarer på dansk, døgnet rundt, booker timer i kalenderen din og ringer for deg når du ber om det. Du godkjenner alt før det gjelder. For bedrifter fra 2 495 DKK/md. – for deg hjemme fra 49 DKK/md.",
+    "description": "Dialogbot svarer på norsk, døgnet rundt, booker timer i kalenderen din og ringer for deg når du ber om det. Du godkjenner alt før det gjelder. For bedrifter fra 2 495 DKK/md. – for deg hjemme fra 49 DKK/md.",
     "ogTitle": "Én assistent som tar telefonen – for bedriften din og for deg"
   },
   "nav": {
@@ -22,7 +22,7 @@
       "mark": "tar telefonen",
       "after": " – for bedriften din og for deg."
     },
-    "lead": "Dialogbot svarer på dansk, døgnet rundt, booker timer i kalenderen din og ringer for deg når du ber om det. Du godkjenner alt før det gjelder.",
+    "lead": "Dialogbot svarer på norsk, døgnet rundt, booker timer i kalenderen din og ringer for deg når du ber om det. Du godkjenner alt før det gjelder.",
     "cta": "Prøv den – den ringer til deg",
     "watch": "Se hvordan",
     "note": "2 minutter. Ingen registrering, ingen kort.",
@@ -50,7 +50,7 @@
     "label": "Det får du",
     "facts": [
       {
-        "title": "På dansk",
+        "title": "På norsk",
         "text": "Med en stemme du velger selv"
       },
       {
@@ -171,7 +171,7 @@
     "tiles": [
       {
         "title": "Tar telefonen",
-        "text": "Døgnet rundt, på dansk. Sier ærlig at den er en digital assistent hvis kunden spør."
+        "text": "Døgnet rundt, på norsk. Sier ærlig at den er en digital assistent hvis kunden spør."
       },
       {
         "title": "Booker avtaler",

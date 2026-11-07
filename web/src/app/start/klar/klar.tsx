@@ -9,6 +9,7 @@ import { Alert, Button } from "@/components/ui";
 import { Ico } from "@/components/privat/icons";
 import { FunnelShell, FunnelState, Question, useFunnel } from "@/components/funnel";
 import { isDone, type Call } from "@/lib/funnel/api";
+import { InstallStep } from "@/components/install-step";
 
 /** Calling hours from GET /demo-call (the same source as /proev); null when the endpoint is not there. */
 type Info = { available: boolean; open_now: boolean; hours: { from: string; to: string } };
@@ -98,6 +99,7 @@ export function Klar() {
               )}
               {err && err.status !== 401 && <Alert>{err.message}</Alert>}
             </section>
+            {done && <InstallStep audience="erhverv" />}
             <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/opsaetning/1" className="inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-2xl bg-accent text-on-accent font-semibold text-[16px] no-underline hover:bg-accent-deep" data-make-hers>
                 {t("makeHers")}<Ico name="arrow" size={18} stroke={2.8} />

@@ -9,16 +9,20 @@ import { SiteFooter } from "@/components/site-chrome";
 import { ArrowIcon, CalendarIcon, ChatIcon, CheckIcon, CloseIcon, MenuIcon, PhoneIcon, PlusIcon, SendIcon, SmsIcon } from "@/components/site-icons";
 import { LogoMark } from "@/components/ui";
 import { CUSTOMER_QUOTES } from "@/lib/proof";
-import { PLANS, TRIAL_DAYS } from "@/lib/privat/plans";
+import { TRIAL_DAYS } from "@/lib/privat/plans";
+import { market, schemaPrice } from "@/lib/markets";
 import { SITE_NAME, SITE_URL, alternatesFor, openGraphFor } from "@/lib/site";
 import { HTML_LANG } from "@/i18n/config";
 import { getLocale, getRaw, getT } from "@/i18n/server";
+import type { Locale } from "@/i18n/config";
+import type { T } from "@/i18n/translate";
 import s from "./entry.module.css";
 
 /** The entry page ("/"): one assistant, two doors. Hear it first (hero with the looping call transcript), then
  *  Trin 2 – choose Erhverv (/erhverv) or Privat (/privat). Opening a door sets the `db_aud` cookie (src/proxy.ts),
  *  after which "/" sends the visitor straight to that door; "/?aud=reset" shows the entry again.
- *  Design: out/canvas/preview.html. Texts: messages/<locale>/entry.json; prices from site.json / lib/privat/plans.ts.
+ *  Design: out/canvas/preview.html. Texts: messages/<locale>/entry.json; prices are the language's market
+ *  (lib/markets.ts → {p…} tokens in the copy).
  *  Accent layer: one marker (h1), thin ink lines under the h2 keywords, the ring around 2.495 – nothing on body
  *  text, buttons or the footer. */
 const PATH = "/";
@@ -67,8 +71,7 @@ export default async function Entry() {
   const priPoints = raw<string[]>("entry.pricing.private.points");
   const faq = raw<{ q: string; a: string }[]>("entry.faq.items");
   const monthly = ts("prices.monthly");
-  const setup = ts("prices.setup");
-  const privateFrom = String(Math.min(...PLANS.map((p) => p.monthly)));
+  const privateFrom = t("pricing.private.amount");
   const quote = CUSTOMER_QUOTES[0];
   const nav: [string, string][] = [["#saadan", t("nav.how")], ["#erhverv", t("nav.business")], ["#privat", t("nav.private")], ["#priser", t("nav.pricing")]];
   const tileIcons = [<PhoneGlyph key="p" size={22} />, <CalendarIcon key="c" size={22} stroke="#FFFFFF" />, <ChatIcon key="w" size={22} stroke="#FFFFFF" />,
@@ -77,7 +80,7 @@ export default async function Entry() {
   return (
     <div className="min-h-dvh flex flex-col bg-white text-ink">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-ink focus:text-white">{tc("chrome.skip")}</a>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(lang)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(lang, locale, t)) }} />
 
       {/* NAV: sticky; on a phone it collapses to logo + Prøv den + menu */}
       <header className={s.nav}>
@@ -316,7 +319,7 @@ export default async function Entry() {
                   <summary className="flex items-center justify-between gap-6 py-[22px] cursor-pointer font-display font-bold text-[18px] sm:text-[21px] tracking-[-0.01em]">
                     {f.q}<span className={`${s.plus} inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-[10px] border-2 border-ink`} aria-hidden="true"><PlusIcon size={16} /></span>
                   </summary>
-                  <p className={`${para} pb-6 sm:pr-14 max-w-[36em]`}>{t(`faq.items.${i}.a`, { setup })}</p>
+                  <p className={`${para} pb-6 sm:pr-14 max-w-[36em]`}>{t(`faq.items.${i}.a`)}</p>
                 </details>
               ))}
             </div>
@@ -384,13 +387,23 @@ const BrickArrow = ({ className = "" }: { className?: string }) => (
   <svg viewBox="0 0 40 26" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={`text-ink ${className}`}><path d="M4 13h32M28 5l8 8-8 8" /></svg>
 );
 
-/** schema.org for the entry: the company and the site (the product with its offers lives on /erhverv). */
-function structuredData(lang: string) {
+/** schema.org for the entry: the company, the site and the two doors' entry prices in the language's market
+ *  (Erhverv excl. VAT, Privat incl. VAT; the full Erhverv offer lives on /erhverv). */
+function structuredData(lang: string, locale: Locale, t: T) {
+  const m = market(locale);
+  const privatFrom = Math.min(m.privat.basis.monthly, m.privat.plus.monthly, m.privat.familie.monthly);
   return [
     { "@context": "https://schema.org", "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL,
       logo: `${SITE_URL}/icon.png`, email: COMPANY.email, telephone: "+4593703433", vatID: `DK${COMPANY.cvr}`,
       address: { "@type": "PostalAddress", streetAddress: "Abildgade 18", postalCode: "8200", addressLocality: "Aarhus", addressCountry: "DK" } },
     { "@context": "https://schema.org", "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: SITE_URL, name: SITE_NAME, inLanguage: lang,
       publisher: { "@id": `${SITE_URL}/#organization` } },
+    { "@context": "https://schema.org", "@type": "Product", name: SITE_NAME, description: t("meta.description"), brand: { "@id": `${SITE_URL}/#organization` },
+      offers: [
+        { "@type": "Offer", name: t("pricing.business.name"), price: schemaPrice(m.erhverv.monthly), priceCurrency: m.currency, url: `${SITE_URL}/${locale}/erhverv`,
+          priceSpecification: { "@type": "UnitPriceSpecification", price: schemaPrice(m.erhverv.monthly), priceCurrency: m.currency, unitCode: "MON", valueAddedTaxIncluded: false } },
+        { "@type": "Offer", name: t("pricing.private.name"), price: schemaPrice(privatFrom), priceCurrency: m.currency, url: `${SITE_URL}/privat`,
+          priceSpecification: { "@type": "UnitPriceSpecification", price: schemaPrice(privatFrom), priceCurrency: m.currency, unitCode: "MON", valueAddedTaxIncluded: true } },
+      ] },
   ];
 }

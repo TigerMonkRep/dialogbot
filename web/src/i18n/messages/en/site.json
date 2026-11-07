@@ -1,8 +1,8 @@
 {
   "prices": {
-    "monthly": "2,495",
-    "setup": "5,000",
-    "perCall": "4"
+    "monthly": "{pMonthly}",
+    "setup": "{pSetup}",
+    "perCall": "{pCall}"
   },
   "demoCall": {
     "label": "Call · Carpentry firm (example)",
@@ -19,7 +19,7 @@
   "home": {
     "meta": {
       "title": "Dialogbot – an AI receptionist that answers your phone around the clock",
-      "description": "Dialogbot answers the phone when you can't: an AI receptionist that picks up around the clock, books appointments in your calendar and sends you a message about every call. 2,495 kr./month.",
+      "description": "Dialogbot answers the phone when you can't: an AI receptionist that picks up around the clock, books appointments in your calendar and sends you a message about every call. {pMonthly}/month.",
       "ogTitle": "Dialogbot answers the phone when you can't"
     },
     "referral": {
@@ -35,7 +35,7 @@
         "mark": "answers the phone",
         "after": " when you can't."
       },
-      "lead": "An AI receptionist that answers around the clock, books appointments in your calendar and sends you a message about every call. You keep your number. 2,495 kr./month excl. VAT.",
+      "lead": "An AI receptionist that answers around the clock, books appointments in your calendar and sends you a message about every call. You keep your number. {pMonthly}/month excl. VAT.",
       "cta": "Try it – it calls you",
       "note": "2 minutes, no sign-up. Ask it anything a customer would."
     },
@@ -84,7 +84,7 @@
         },
         {
           "title": "Calls customers",
-          "text": "Follows up on quotes or sends service reminders – only to customers who have said yes. 4 kr. per call + 2 kr. per minute."
+          "text": "Follows up on quotes or sends service reminders – only to customers who have said yes. {pCall} per call + {pMinute} per minute."
         }
       ],
       "note": "Everything it says is based on knowledge you have approved – and it shows you every change first: before → after, “Approve?”."
@@ -106,7 +106,7 @@
       "subscription": {
         "name": "Subscription",
         "badge": "Recommended",
-        "unit": "kr./month",
+        "unit": "/month",
         "text": "The full price: phone, booking and web chat included – with 300 minutes of incoming calls a month. No lock-in. Do-it-yourself setup included.",
         "compare": "The price of a call-answering service – but a receptionist that also books appointments in your calendar.",
         "cta": "Choose this – hear it first",
@@ -118,8 +118,8 @@
       },
       "campaign": {
         "name": "Outbound campaign calls",
-        "unit": "kr. per call + 2 kr. per minute",
-        "text": "Only if you want Dialogbot to make calls. Unanswered: 4 kr. A three-minute conversation: 10 kr. You see the maximum price before you start.",
+        "unit": "per call + {pMinute} per minute",
+        "text": "Only if you want Dialogbot to make calls. Unanswered: {pCall}. A three-minute conversation: {pCall3Min}. You see the maximum price before you start.",
         "badge": "Add-on",
         "points": [
           "Pay per call only – no extra subscription",
@@ -130,7 +130,7 @@
       },
       "setup": {
         "name": "Setup by our specialists",
-        "unit": "kr. one-off",
+        "unit": "one-off",
         "text": "Tailored setup and integration with your own systems – calendar, CRM, booking system. Only if you'd rather not do it yourself.",
         "badge": "Add-on · one-off",
         "points": [
@@ -169,7 +169,7 @@
         "text": "The build guide shows you step by step what you need and what happens – no tech, no code.",
         "cta": "Open the build guide"
       },
-      "specialists": "Would you rather have it done for you? Our specialists set it up for 5,000 kr. excl. VAT, tailored to your systems."
+      "specialists": "Would you rather have it done for you? Our specialists set it up for {pSetup} excl. VAT, tailored to your systems."
     },
     "ld": {
       "appDescription": "Dialogbot is an AI receptionist from Denmark that answers the phone and the chat for your business around the clock – replying from your own knowledge, booking appointments and collecting enquiries. We guide you through the whole setup.",
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Outbound campaign calls",
-        "description": "Per outbound call excl. VAT, plus 2 kr. per started minute of conversation"
+        "description": "Per outbound call excl. VAT, plus {pMinute} per started minute of conversation"
       },
       "setup": {
         "name": "Setup by Dialogbot's specialists",
@@ -190,7 +190,7 @@
   "guide": {
     "meta": {
       "title": "Build your AI receptionist in 3 steps – build guide",
-      "description": "The Dialogbot build guide: what you need, what it does, what it costs – and the 3 steps to your own AI receptionist. 2,495 kr./month.",
+      "description": "The Dialogbot build guide: what you need, what it does, what it costs – and the 3 steps to your own AI receptionist. {pMonthly}/month.",
       "ogTitle": "Build your AI receptionist in 3 steps | Dialogbot"
     },
     "breadcrumb": "Build guide",
@@ -227,7 +227,7 @@
       "lead": "Dialogbot answers the phone, replies on web chat and books appointments for your business – around the clock. You follow the guide; we put the bricks together with you.",
       "cta": "Try it now – it calls you",
       "listen": "Hear Dialogbot answer the phone",
-      "price": "2,495 kr./month · excl. VAT"
+      "price": "{pMonthly}/month · excl. VAT"
     },
     "heroCard": {
       "step": "Step 1 of 3",
@@ -348,11 +348,11 @@
     "pricing": {
       "eyebrow": "Price",
       "title": "One set. One price, no surprises.",
-      "lead": "All prices exclude VAT. You can do the setup yourself in about 30 minutes – it's included. If you'd like it tailored by our specialists, it costs 5,000 kr. one-off.",
+      "lead": "All prices exclude VAT. You can do the setup yourself in about 30 minutes – it's included. If you'd like it tailored by our specialists, it costs {pSetup} one-off.",
       "subscription": {
         "name": "Subscription",
         "from": "From",
-        "unit": "kr./month",
+        "unit": "/month",
         "points": [
           "Phone, chat and booking included",
           "No charge per enquiry",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Outbound campaign calls",
-        "unit": "kr. per outbound call",
+        "unit": "per outbound call",
         "points": [
           "Only if you want Dialogbot to make calls",
           "Contacts have agreed to be called",
@@ -371,7 +371,7 @@
       },
       "setup": {
         "name": "Setup by our specialists",
-        "unit": "kr. one-off",
+        "unit": "one-off",
         "points": [
           "Only if you'd rather not do it yourself – the three steps are included in the subscription",
           "Tailored setup and integration with your own systems and needs",
@@ -433,7 +433,7 @@
       "chipPrice": "What does it cost?",
       "askCompany": "Great. What's your business called?",
       "answerWhat": "I answer the phone around the clock, reply to the questions customers ask most often, book appointments in your calendar and send you a message if there's something I can't handle.\n\nWould you like to hear it for yourself?",
-      "answerPrice": "One subscription at 2,495 kr. a month, excl. VAT. You can do the setup yourself – that's included. If you'd like our specialists to tailor it to your systems, it costs 5,000 kr. one-off.\n\nShall I call you and show you what you get?",
+      "answerPrice": "One subscription at {pMonthly} a month, excl. VAT. You can do the setup yourself – that's included. If you'd like our specialists to tailor it to your systems, it costs {pSetup} one-off.\n\nShall I call you and show you what you get?",
       "askOther": "Briefly tell me what you do – then I'll know how to greet your customers.",
       "askNumber": "Right, I'm the receptionist for {company} from now on. Which number should I call?",
       "helloCompany": "Hi {company}. What do you do?",

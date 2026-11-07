@@ -81,6 +81,9 @@ export type Subscription = {
   /** This calendar month (Europe/Copenhagen). */
   calls_quota: number; calls_used: number; calls_left: number;
   people_limit: number; apps_included: boolean;
+  /** The currency of `plans` (and of the customer's subscription once paying): DKK, SEK, NOK or EUR. Older backends
+   *  leave it out – then the plans are in DKK. */
+  currency?: string;
   plans: Plan[];
 };
 /** Business lookup (Google Places; DemoPlaces without a key – never callable). Show «Data fra Google» with results. */
@@ -181,11 +184,13 @@ export interface PrivatApi {
   retryCall(taskId: string): Promise<Task>;
   phoneStart(phone: string): Promise<{ sent: true }>;
   phoneVerify(code: string): Promise<Balance>;
-  checkout(): Promise<{ url: string }>;
+  /** Credit pack checkout; `locale` picks the market's price (da → DKK, sv → SEK, no → NOK, others → EUR). */
+  checkout(body?: { locale?: string }): Promise<{ url: string }>;
   ledger(): Promise<LedgerEntry[]>;
   // Subscription (privat-abonnement-brief). sessionId = Stripe Checkout session on return (synchronises first).
-  subscription(sessionId?: string): Promise<Subscription>;
-  subscriptionCheckout(body: { plan: PlanKey; interval: BillingInterval; code?: string }): Promise<{ url: string }>;
+  /** `currency` = the market of the page's language: the plans come back in it (a paying customer keeps their own). */
+  subscription(sessionId?: string, currency?: string): Promise<Subscription>;
+  subscriptionCheckout(body: { plan: PlanKey; interval: BillingInterval; code?: string; locale?: string }): Promise<{ url: string }>;
   /** Stripe Billing Portal (501 not_configured when Stripe is missing). */
   subscriptionPortal(): Promise<{ url: string }>;
   sponsorClaim(taskId: string): Promise<Task>;
@@ -364,9 +369,12 @@ export const realPrivat: PrivatApi = {
   retryCall: (taskId) => api(`${P}/calls/${enc(taskId)}/retry`, json({})),
   phoneStart: (phone) => api(`${P}/phone/start`, json({ phone })),
   phoneVerify: (code) => api(`${P}/phone/verify`, json({ code })),
-  checkout: () => api(`${P}/credits/checkout`, json({})),
+  checkout: (body) => api(`${P}/credits/checkout`, json(body ?? {})),
   ledger: () => api(`${P}/ledger`),
-  subscription: (sessionId) => api(`${P}/subscription${sessionId ? `?session_id=${enc(sessionId)}` : ""}`),
+  subscription: (sessionId, currency) => {
+    const q = [sessionId ? `session_id=${enc(sessionId)}` : "", currency ? `currency=${enc(currency)}` : ""].filter(Boolean).join("&");
+    return api(`${P}/subscription${q ? `?${q}` : ""}`);
+  },
   subscriptionCheckout: (body) => api(`${P}/subscription/checkout`, json(body)),
   subscriptionPortal: () => api(`${P}/subscription/portal`, json({})),
   sponsorClaim: (taskId) => api(`${P}/sponsor/claim`, json({ task_id: taskId })),

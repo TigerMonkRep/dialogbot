@@ -172,9 +172,9 @@ export function StartCampaign({ wsId, c, checklist }: { wsId: string; c: Campaig
   return (
     <div className="bg-highlight rounded-2xl p-4 md:p-5 border-2 border-ink flex flex-col gap-2">
       <span className="eyebrow !text-ink">{t("campaigns.start.before")}</span>
-      <h2 className="font-display font-extrabold text-[20px] text-ink">{c.status === "paused" ? t("campaigns.start.resumeTitle") : t("campaigns.start.heading", { n: pending, max: kr(c.max_cost.net_minor, lang) })}</h2>
+      <h2 className="font-display font-extrabold text-[20px] text-ink">{c.status === "paused" ? t("campaigns.start.resumeTitle") : t("campaigns.start.heading", { n: pending, max: kr(c.max_cost.net_minor, lang, c.pricing.currency) })}</h2>
       {c.outbound_problem && <Alert kind="warn">{c.outbound_problem}</Alert>}
-      <p className="text-body-md">{t("campaigns.start.body", { n: pending, max: kr(c.max_cost.net_minor, lang), gross: kr(c.max_cost.gross_minor, lang), call: kr(c.pricing.call_net_minor, lang), minute: kr(c.pricing.minute_net_minor, lang), attempts: c.pricing.max_attempts, minutes: Math.round(c.pricing.max_connected_seconds / 60) })}</p>
+      <p className="text-body-md">{t("campaigns.start.body", { n: pending, max: kr(c.max_cost.net_minor, lang, c.pricing.currency), gross: kr(c.max_cost.gross_minor, lang, c.pricing.currency), call: kr(c.pricing.call_net_minor, lang, c.pricing.currency), minute: kr(c.pricing.minute_net_minor, lang, c.pricing.currency), attempts: c.pricing.max_attempts, minutes: Math.round(c.pricing.max_connected_seconds / 60) })}</p>
       <fieldset className="flex flex-col gap-1">
         <legend className="text-label-md font-semibold mb-1">{t("campaigns.start.confirm")}</legend>
         {checklist.map((item, i) => (

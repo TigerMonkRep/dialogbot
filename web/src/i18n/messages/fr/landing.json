@@ -58,35 +58,35 @@
     "ctaText": "Dites au chat le nom de votre entreprise et votre activité : l’assistant vous appelle et vous montre comment il répondrait au téléphone pour vous.",
     "callMe": "Appelez-moi maintenant",
     "orWrite": "Ou écrivez à ",
-    "priceLine": ". 2.495 kr./mois · HT. Sans engagement."
+    "priceLine": ". {pMonthly}/mois · HT. Sans engagement."
   },
   "compareTable": {
     "difference": "Différence"
   },
   "pricing": {
     "meta": {
-      "title": "Tarifs – réceptionniste IA à 2.495 kr. par mois",
-      "description": "Découvrez le tarif de Dialogbot : un seul abonnement à 2.495 kr. par mois HT avec 300 minutes d’appels entrants. Téléphone, chat, prise de rendez-vous et configuration personnalisée inclus. Les appels sortants de campagne coûtent 4 kr. par appel.",
+      "title": "Tarifs – réceptionniste IA à {pMonthly} par mois",
+      "description": "Découvrez le tarif de Dialogbot : un seul abonnement à {pMonthly} par mois HT avec 300 minutes d’appels entrants. Téléphone, chat, prise de rendez-vous et configuration personnalisée inclus. Les appels sortants de campagne coûtent {pCall} par appel.",
       "ogTitle": "Tarifs du réceptionniste IA | Dialogbot"
     },
     "kicker": "Tarifs",
-    "title": "Un seul abonnement – 2.495 kr. par mois",
+    "title": "Un seul abonnement – {pMonthly} par mois",
     "lead": "Un seul prix pour tout Dialogbot : réceptionniste IA au téléphone, chatbot sur votre site, prise de rendez-vous et résumé de chaque demande. Tous les prix sont HT.",
     "points": [
-      "2.495 kr. par mois – un seul abonnement",
+      "{pMonthly} par mois – un seul abonnement",
       "Aucun prix par demande",
       "300 minutes d’appels entrants par mois incluses",
-      "Appels sortants de campagne : 4 kr. par appel + 2 kr. par minute",
+      "Appels sortants de campagne : {pCall} par appel + {pMinute} par minute",
       "Sans engagement",
-      "Configuration en autonomie incluse – mise en service par un spécialiste 5.000 kr."
+      "Configuration en autonomie incluse – mise en service par un spécialiste {pSetup}"
     ],
     "sections": {
       "subscription": {
         "title": "L’abonnement",
-        "p1Price": "2.495 kr. par mois",
+        "p1Price": "{pMonthly} par mois",
         "p1a": " HT. Aucun prix par demande, et ",
         "p1Minutes": "300 minutes d’appels entrants par mois sont incluses",
-        "p1b": " – de quoi couvrir la plupart des petites entreprises. Si vos clients parlent davantage avec l’assistant, chaque minute entamée au-delà coûte 1,50 kr. Vous pouvez toujours suivre votre consommation dans Dialogbot.",
+        "p1b": " – de quoi couvrir la plupart des petites entreprises. Si vos clients parlent davantage avec l’assistant, chaque minute entamée au-delà coûte {pExtraMinute}. Vous pouvez toujours suivre votre consommation dans Dialogbot.",
         "p2": "Le prix d’une permanence téléphonique – mais un réceptionniste qui prend aussi les rendez-vous dans votre agenda et vous envoie un message après chaque appel.",
         "p3a": "Idéal pour les entreprises dont le téléphone sonne quand on est débordé : artisans, cabinets, salons, ateliers et conseillers. Pour l’écouter d’abord, vous pouvez ",
         "p3Link": "laisser Dialogbot vous appeler",
@@ -94,7 +94,7 @@
       },
       "whyMore": {
         "title": "Pourquoi nous coûtons plus qu’un chatbot",
-        "p1": "Il existe des solutions moins chères, à partir d’environ 400 kr. par mois. Beaucoup facturent à la minute ou à la demande, si bien que la facture peut varier d’un mois à l’autre.",
+        "p1": "Il existe des solutions moins chères, à partir d’environ 50 € par mois. Beaucoup facturent à la minute ou à la demande, si bien que la facture peut varier d’un mois à l’autre.",
         "p2a": "Dialogbot répond ",
         "p2Strong": "uniquement à partir des connaissances que vous avez validées",
         "p2b": ", et vous montre chaque modification d’abord : avant → après, « Valider ? ». Il prend, déplace et annule les rendez-vous dans Google Agenda ou Microsoft 365, envoie une confirmation par SMS, vous prévient après chaque appel et vous envoie un rapport quotidien. C’est pour cela qu’il coûte plus cher – et vous connaissez le montant de la facture à l’avance. Voir aussi ",
@@ -114,20 +114,20 @@
         ]
       },
       "specialists": {
-        "title": "Mise en service par nos spécialistes – 5.000 kr.",
+        "title": "Mise en service par nos spécialistes – {pSetup}",
         "p1a": "Vous pouvez configurer Dialogbot vous-même – les trois étapes du guide sont incluses dans l’abonnement. Si vous préférez qu’on s’en charge, nos propres spécialistes le configurent pour ",
-        "p1Price": "5.000 kr.",
+        "p1Price": "{pSetup}",
         "p1b": " HT, payés une seule fois.",
         "p2": "Vous bénéficiez alors d’une configuration sur mesure et d’une intégration à vos propres outils et besoins : nous connectons l’agenda, le CRM ou le logiciel de réservation, saisissons vos connaissances et vos tarifs, entraînons la voix sur vos noms et testons tout avec vous avant l’activation."
       },
       "outbound": {
         "title": "Appels sortants de campagne",
         "p1a": "Si vous voulez que l’assistant appelle des contacts qui ont eux-mêmes accepté d’être appelés, cela coûte ",
-        "p1Call": "4 kr. par appel sortant",
+        "p1Call": "{pCall} par appel sortant",
         "p1b": " plus ",
-        "p1Minute": "2 kr. par minute de conversation entamée",
+        "p1Minute": "{pMinute} par minute de conversation entamée",
         "p1c": " HT – comme une facture de téléphone.",
-        "p2": "Chaque appel passé compte – y compris une nouvelle tentative. Un appel sans réponse coûte donc 4 kr., et une conversation de 3 minutes 10 kr. Un contact est appelé 2 fois maximum et parle 3 minutes maximum au total, et vous voyez le prix maximal avant d’appuyer sur Démarrer."
+        "p2": "Chaque appel passé compte – y compris une nouvelle tentative. Un appel sans réponse coûte donc {pCall}, et une conversation de 3 minutes {pCall3Min}. Un contact est appelé 2 fois maximum et parle 3 minutes maximum au total, et vous voyez le prix maximal avant d’appuyer sur Démarrer."
       },
       "start": {
         "title": "Commencer",
@@ -146,8 +146,8 @@
         "Non. Il n’y a aucun engagement. Vous pouvez résilier pour la fin du mois en cours."
       ],
       [
-        "Les 2.495 kr. correspondent-ils au prix total ?",
-        "Oui, c’est le prix total de l’abonnement, HT. Il n’y a qu’un seul abonnement et aucun supplément par demande. Ce n’est que si vous dépassez 300 minutes entrantes par mois que chaque minute supplémentaire coûte 1,50 kr."
+        "Les {pMonthly} correspondent-ils au prix total ?",
+        "Oui, c’est le prix total de l’abonnement, HT. Il n’y a qu’un seul abonnement et aucun supplément par demande. Ce n’est que si vous dépassez 300 minutes entrantes par mois que chaque minute supplémentaire coûte {pExtraMinute}"
       ],
       [
         "Puis-je l’essayer avant d’acheter ?",
@@ -159,22 +159,22 @@
       ],
       [
         "Combien coûtent les appels sortants de campagne ?",
-        "4 kr. par appel sortant plus 2 kr. par minute de conversation entamée, HT. Un appel sans réponse coûte 4 kr., une conversation de 3 minutes 10 kr. Les contacts doivent avoir accepté au préalable d’être appelés, et une campagne ne démarre que lorsque vous appuyez vous-même sur Démarrer."
+        "{pCall} par appel sortant plus {pMinute} par minute de conversation entamée, HT. Un appel sans réponse coûte {pCall}, une conversation de 3 minutes {pCall3Min}. Les contacts doivent avoir accepté au préalable d’être appelés, et une campagne ne démarre que lorsque vous appuyez vous-même sur Démarrer."
       ],
       [
         "Que se passe-t-il si nous recevons beaucoup d’appels entrants ?",
-        "300 minutes d’appels entrants par mois sont incluses dans l’abonnement. Au-delà, chaque minute entamée coûte 1,50 kr. HT – elle apparaît sur une ligne distincte de la facture, et vous pouvez suivre la consommation en continu dans Dialogbot."
+        "300 minutes d’appels entrants par mois sont incluses dans l’abonnement. Au-delà, chaque minute entamée coûte {pExtraMinute}. HT – elle apparaît sur une ligne distincte de la facture, et vous pouvez suivre la consommation en continu dans Dialogbot."
       ],
       [
         "La configuration est-elle payante ?",
-        "Pas si vous la faites vous-même : les trois étapes du guide sont incluses dans l’abonnement et prennent environ une demi-heure. La mise en service par nos spécialistes coûte 5.000 kr. HT, une seule fois, et vous offre une configuration sur mesure et une intégration à vos propres outils et besoins."
+        "Pas si vous la faites vous-même : les trois étapes du guide sont incluses dans l’abonnement et prennent environ une demi-heure. La mise en service par nos spécialistes coûte {pSetup}. HT, une seule fois, et vous offre une configuration sur mesure et une intégration à vos propres outils et besoins."
       ]
     ]
   },
   "receptionist": {
     "meta": {
       "title": "Réceptionniste IA pour TPE et PME – répond au téléphone 24 h/24",
-      "description": "Dialogbot est un réceptionniste IA qui répond au téléphone quand vous êtes occupé ou fermé, en français ou dans la langue de vos clients. Il répond à partir de vos propres connaissances, prend des rendez-vous et vous transmet chaque demande. 2.495 kr./mois.",
+      "description": "Dialogbot est un réceptionniste IA qui répond au téléphone quand vous êtes occupé ou fermé, en français ou dans la langue de vos clients. Il répond à partir de vos propres connaissances, prend des rendez-vous et vous transmet chaque demande. {pMonthly}/mois.",
       "ogTitle": "Réceptionniste IA pour TPE et PME | Dialogbot"
     },
     "kicker": "Réceptionniste IA",
@@ -226,9 +226,9 @@
       "price": {
         "title": "Tarif et configuration",
         "p1a": "Il n’y a qu’un seul abonnement : ",
-        "p1Price": "2.495 kr. par mois",
-        "p1b": ", sans prix par demande et avec 300 minutes d’appels entrants par mois. Les appels sortants de campagne coûtent 4 kr. par appel plus 2 kr. par minute de conversation. Tous les prix sont HT.",
-        "p2a": "Aucune compétence technique n’est nécessaire. Vous configurez vous-même l’assistant en suivant les trois étapes du guide, en une demi-heure environ – c’est inclus dans l’abonnement. Si vous avez un site web, Dialogbot récupère l’essentiel automatiquement, et vous pouvez tester l’assistant avant qu’il ne prenne un seul vrai appel. Si vous préférez qu’on s’en charge, nos propres spécialistes le configurent pour 5.000 kr. HT, une seule fois – sur mesure et intégré à vos propres outils et besoins. Découvrez aussi le ",
+        "p1Price": "{pMonthly} par mois",
+        "p1b": ", sans prix par demande et avec 300 minutes d’appels entrants par mois. Les appels sortants de campagne coûtent {pCall} par appel plus {pMinute} par minute de conversation. Tous les prix sont HT.",
+        "p2a": "Aucune compétence technique n’est nécessaire. Vous configurez vous-même l’assistant en suivant les trois étapes du guide, en une demi-heure environ – c’est inclus dans l’abonnement. Si vous avez un site web, Dialogbot récupère l’essentiel automatiquement, et vous pouvez tester l’assistant avant qu’il ne prenne un seul vrai appel. Si vous préférez qu’on s’en charge, nos propres spécialistes le configurent pour {pSetup}. HT, une seule fois – sur mesure et intégré à vos propres outils et besoins. Découvrez aussi le ",
         "p2Phone": "répondeur IA",
         "p2b": " et le ",
         "p2Chatbot": "chatbot pour site web",
@@ -238,7 +238,7 @@
     "faq": [
       [
         "Combien coûte un réceptionniste IA chez Dialogbot ?",
-        "Un seul abonnement à 2.495 kr. par mois, sans prix par demande et avec 300 minutes d’appels entrants par mois. Les appels sortants de campagne coûtent 4 kr. par appel plus 2 kr. par minute de conversation. Les prix sont HT."
+        "Un seul abonnement à {pMonthly} par mois, sans prix par demande et avec 300 minutes d’appels entrants par mois. Les appels sortants de campagne coûtent {pCall} par appel plus {pMinute} par minute de conversation. Les prix sont HT."
       ],
       [
         "Que deviennent les données des clients – est-ce conforme au RGPD ?",
@@ -258,7 +258,7 @@
       ],
       [
         "Combien de temps prend la configuration ?",
-        "Si vous la faites vous-même, les trois étapes du guide prennent environ une demi-heure, et l’assistant vous guide en cours de route. Si vous choisissez la mise en service par nos spécialistes (5.000 kr. HT), nous convenons d’un rendez-vous et le configurons sur mesure pour vos outils."
+        "Si vous la faites vous-même, les trois étapes du guide prennent environ une demi-heure, et l’assistant vous guide en cours de route. Si vous choisissez la mise en service par nos spécialistes ({pSetup}. HT), nous convenons d’un rendez-vous et le configurons sur mesure pour vos outils."
       ]
     ]
   },
@@ -315,8 +315,8 @@
       "price": {
         "title": "Tarif",
         "a": "Un seul abonnement à ",
-        "price": "2.495 kr. par mois",
-        "b": " – HT et sans prix par demande. Vous faites la configuration vous-même en suivant le guide – ou confiez-la à nos spécialistes, sur mesure, pour 5.000 kr. une fois. Voir aussi ",
+        "price": "{pMonthly} par mois",
+        "b": " – HT et sans prix par demande. Vous faites la configuration vous-même en suivant le guide – ou confiez-la à nos spécialistes, sur mesure, pour {pSetup} une fois. Voir aussi ",
         "receptionistLink": "réceptionniste IA",
         "c": " et ",
         "chatbotLink": "chatbot pour site web",
@@ -338,7 +338,7 @@
       ],
       [
         "Combien ça coûte ?",
-        "Un seul abonnement à 2.495 kr. par mois HT. Aucun prix par demande."
+        "Un seul abonnement à {pMonthly} par mois HT. Aucun prix par demande."
       ],
       [
         "Puis-je l’écouter avant d’acheter ?",
@@ -404,8 +404,8 @@
       "price": {
         "title": "Tarif",
         "a": "Le chatbot fait partie de Dialogbot : un seul abonnement à ",
-        "price": "2.495 kr. par mois",
-        "b": " – HT et sans prix par demande. Vous faites la configuration vous-même en suivant le guide – ou confiez-la à nos spécialistes, sur mesure, pour 5.000 kr. une fois."
+        "price": "{pMonthly} par mois",
+        "b": " – HT et sans prix par demande. Vous faites la configuration vous-même en suivant le guide – ou confiez-la à nos spécialistes, sur mesure, pour {pSetup} une fois."
       }
     },
     "faq": [
@@ -427,7 +427,7 @@
       ],
       [
         "Combien coûte le chatbot ?",
-        "Il fait partie de Dialogbot : un seul abonnement à 2.495 kr. par mois HT."
+        "Il fait partie de Dialogbot : un seul abonnement à {pMonthly} par mois HT."
       ]
     ]
   },
@@ -550,7 +550,7 @@
     "scenarioEnd": ".",
     "priceTitle": "Tarif et configuration",
     "priceA": "Un seul abonnement à ",
-    "price": "2.495 kr. par mois",
+    "price": "{pMonthly} par mois",
     "priceB": " – HT et sans prix par demande. Un membre de l’équipe Dialogbot le configure avec vous en une demi-heure environ. Tous les détails sur la ",
     "priceLink": "page tarifs",
     "priceC": ".",
@@ -558,7 +558,7 @@
     "faq": [
       [
         "Combien ça coûte ?",
-        "Un seul abonnement à 2.495 kr. par mois HT. Aucun prix par demande."
+        "Un seul abonnement à {pMonthly} par mois HT. Aucun prix par demande."
       ],
       [
         "Pouvons-nous garder notre numéro de téléphone ?",

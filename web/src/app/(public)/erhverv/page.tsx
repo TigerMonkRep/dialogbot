@@ -15,6 +15,7 @@ import { SITE_NAME, SITE_URL, alternatesFor, openGraphFor } from "@/lib/site";
 import { getLocale, getRaw, getT } from "@/i18n/server";
 import { HTML_LANG, type Locale } from "@/i18n/config";
 import type { T } from "@/i18n/translate";
+import { market, schemaPrice } from "@/lib/markets";
 
 /** The Erhverv landing (/erhverv – the entry page at "/" sends business visitors here): one story, read top to
  *  bottom. What Dialogbot is (one sentence + the 70-second video), how it works (3 steps), what it does (4 tiles),
@@ -276,6 +277,10 @@ export default async function Home() {
 /** schema.org data for Google: the company, the site and the product with its two list prices. `t` is the "site"
  *  translator, `lang` the page's BCP-47 language. */
 function structuredData(t: T, lang: string, locale: Locale) {
+  const m = market(locale);
+  const offer = (k: "subscription" | "campaign" | "setup", minor: number) => ({ "@type": "Offer", name: t(`home.ld.${k}.name`),
+    price: schemaPrice(minor), priceCurrency: m.currency, description: t(`home.ld.${k}.description`),
+    priceSpecification: { "@type": "PriceSpecification", price: schemaPrice(minor), priceCurrency: m.currency, valueAddedTaxIncluded: false } });
   const org = { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL,
     logo: `${SITE_URL}/icon.png`, email: COMPANY.email, telephone: "+4593703433", vatID: `DK${COMPANY.cvr}`,
     address: { "@type": "PostalAddress", streetAddress: "Abildgade 18", postalCode: "8200", addressLocality: "Aarhus", addressCountry: "DK" } };
@@ -287,9 +292,9 @@ function structuredData(t: T, lang: string, locale: Locale) {
       operatingSystem: "Web", description: t("home.ld.appDescription"), inLanguage: lang, url: `${SITE_URL}${PATH}`,
       publisher: { "@id": `${SITE_URL}/#organization` },
       offers: [
-        { "@type": "Offer", name: t("home.ld.subscription.name"), price: "2495", priceCurrency: "DKK", description: t("home.ld.subscription.description") },
-        { "@type": "Offer", name: t("home.ld.campaign.name"), price: "4", priceCurrency: "DKK", description: t("home.ld.campaign.description") },
-        { "@type": "Offer", name: t("home.ld.setup.name"), price: "5000", priceCurrency: "DKK", description: t("home.ld.setup.description") },
+        offer("subscription", m.erhverv.monthly),
+        offer("campaign", m.erhverv.call),
+        offer("setup", m.erhverv.setup),
       ] },
     { "@context": "https://schema.org", ...videoStructuredData(SITE_URL, t, locale, lang) },
   ];

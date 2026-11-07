@@ -1,8 +1,8 @@
 {
   "prices": {
-    "monthly": "2.495",
-    "setup": "5.000",
-    "perCall": "4"
+    "monthly": "{pMonthlyNum}",
+    "setup": "{pSetupNum}",
+    "perCall": "{pCallNum}"
   },
   "demoCall": {
     "label": "Appel · Menuiserie (exemple)",
@@ -19,7 +19,7 @@
   "home": {
     "meta": {
       "title": "Dialogbot – le réceptionniste IA qui répond au téléphone 24 h/24, en français",
-      "description": "Dialogbot répond au téléphone quand vous ne pouvez pas : un réceptionniste IA qui parle la langue de vos clients, répond 24 h/24, prend les rendez-vous dans votre agenda et vous envoie un message après chaque appel. 2.495 kr./mois.",
+      "description": "Dialogbot répond au téléphone quand vous ne pouvez pas : un réceptionniste IA qui parle la langue de vos clients, répond 24 h/24, prend les rendez-vous dans votre agenda et vous envoie un message après chaque appel. {pMonthly}/mois.",
       "ogTitle": "Dialogbot répond au téléphone quand vous ne pouvez pas"
     },
     "referral": {
@@ -35,7 +35,7 @@
         "mark": "répond au téléphone",
         "after": " quand vous ne pouvez pas."
       },
-      "lead": "Un réceptionniste IA qui parle la langue de vos clients, répond 24 h/24, prend les rendez-vous dans votre agenda et vous envoie un message après chaque appel. Vous gardez votre numéro. 2.495 kr./mois HT.",
+      "lead": "Un réceptionniste IA qui parle la langue de vos clients, répond 24 h/24, prend les rendez-vous dans votre agenda et vous envoie un message après chaque appel. Vous gardez votre numéro. {pMonthly}/mois HT.",
       "cta": "Essayez-le – il vous appelle",
       "note": "2 minutes, sans inscription. Posez-lui vos questions comme le ferait un client."
     },
@@ -84,7 +84,7 @@
         },
         {
           "title": "Appelle vos clients",
-          "text": "Relance vos devis ou rappelle les entretiens – uniquement auprès des clients qui ont dit oui. 4 kr. par appel + 2 kr. par minute."
+          "text": "Relance vos devis ou rappelle les entretiens – uniquement auprès des clients qui ont dit oui. {pCall} par appel + {pMinute} par minute."
         }
       ],
       "note": "Tout ce qu’il dit repose sur des connaissances que vous avez validées – et il vous montre chaque modification d’abord : avant → après, « Valider ? »."
@@ -106,7 +106,7 @@
       "subscription": {
         "name": "Abonnement",
         "badge": "Recommandé",
-        "unit": "kr./mois",
+        "unit": "{pCur}/mois",
         "text": "Prix tout compris : téléphone, prise de rendez-vous et chat web – avec 300 minutes d’appels entrants par mois. Sans engagement. Configuration en autonomie incluse.",
         "compare": "Le prix d’une permanence téléphonique – mais un réceptionniste qui prend aussi les rendez-vous dans votre agenda.",
         "cta": "Choisir – écoutez-le d’abord",
@@ -118,8 +118,8 @@
       },
       "campaign": {
         "name": "Appels sortants de campagne",
-        "unit": "kr. par appel + 2 kr. par minute",
-        "text": "Uniquement si vous voulez que Dialogbot passe des appels. Sans réponse : 4 kr. Trois minutes de conversation : 10 kr. Vous voyez le prix maximal avant de lancer.",
+        "unit": "{pCur} par appel + {pMinute} par minute",
+        "text": "Uniquement si vous voulez que Dialogbot passe des appels. Sans réponse : {pCall}. Trois minutes de conversation : {pCall3Min}. Vous voyez le prix maximal avant de lancer.",
         "badge": "Option",
         "points": [
           "Paiement à l'appel uniquement – pas d'abonnement en plus",
@@ -130,7 +130,7 @@
       },
       "setup": {
         "name": "Mise en service par nos spécialistes",
-        "unit": "kr. une fois",
+        "unit": "{pCur} une fois",
         "text": "Configuration sur mesure et intégration à vos propres outils – agenda, CRM, logiciel de réservation. Uniquement si vous ne voulez pas le faire vous-même.",
         "badge": "Option · une fois",
         "points": [
@@ -169,7 +169,7 @@
         "text": "Le guide de configuration vous montre étape par étape ce dont vous avez besoin et ce qui se passe – sans technique, sans code.",
         "cta": "Ouvrir le guide de configuration"
       },
-      "specialists": "Vous préférez qu’on s’en charge ? Nos spécialistes le configurent pour 5.000 kr. HT, sur mesure pour vos outils."
+      "specialists": "Vous préférez qu’on s’en charge ? Nos spécialistes le configurent pour {pSetup}. HT, sur mesure pour vos outils."
     },
     "ld": {
       "appDescription": "Dialogbot est un réceptionniste IA qui gère le téléphone et le chat de votre entreprise 24 h/24, dans la langue de vos clients – il répond à partir de vos propres connaissances, prend des rendez-vous et centralise les demandes. Nous vous accompagnons tout au long de la configuration.",
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Appels sortants de campagne",
-        "description": "Par appel sortant HT, plus 2 kr. par minute de conversation entamée"
+        "description": "Par appel sortant HT, plus {pMinute} par minute de conversation entamée"
       },
       "setup": {
         "name": "Mise en service par les spécialistes de Dialogbot",
@@ -190,7 +190,7 @@
   "guide": {
     "meta": {
       "title": "Créez votre réceptionniste IA en 3 étapes – guide de configuration",
-      "description": "Le guide de configuration de Dialogbot : ce dont vous avez besoin, ce qu’il sait faire, ce qu’il coûte – et les 3 étapes pour créer votre propre réceptionniste IA, en français. 2.495 kr./mois.",
+      "description": "Le guide de configuration de Dialogbot : ce dont vous avez besoin, ce qu’il sait faire, ce qu’il coûte – et les 3 étapes pour créer votre propre réceptionniste IA, en français. {pMonthly}/mois.",
       "ogTitle": "Créez votre réceptionniste IA en 3 étapes | Dialogbot"
     },
     "breadcrumb": "Guide de configuration",
@@ -227,7 +227,7 @@
       "lead": "Dialogbot répond au téléphone, au chat web et prend les rendez-vous pour votre entreprise – en français, 24 h/24. Vous suivez le guide, nous assemblons les briques avec vous.",
       "cta": "Essayez-le maintenant – il vous appelle",
       "listen": "Écoutez Dialogbot répondre au téléphone",
-      "price": "2.495 kr./mois · HT"
+      "price": "{pMonthly}/mois · HT"
     },
     "heroCard": {
       "step": "Étape 1 sur 3",
@@ -348,11 +348,11 @@
     "pricing": {
       "eyebrow": "Tarif",
       "title": "Un seul kit. Un seul prix, sans surprise.",
-      "lead": "Tous les prix sont HT. Vous pouvez faire la configuration vous-même en 30 minutes environ – elle est incluse. Si vous la voulez sur mesure par nos spécialistes, elle coûte 5.000 kr. une fois.",
+      "lead": "Tous les prix sont HT. Vous pouvez faire la configuration vous-même en 30 minutes environ – elle est incluse. Si vous la voulez sur mesure par nos spécialistes, elle coûte {pSetup} une fois.",
       "subscription": {
         "name": "Abonnement",
         "from": "À partir de",
-        "unit": "kr./mois",
+        "unit": "{pCur}/mois",
         "points": [
           "Téléphone, chat et prise de rendez-vous inclus",
           "Aucun prix par demande",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Appels sortants de campagne",
-        "unit": "kr. par appel sortant",
+        "unit": "{pCur} par appel sortant",
         "points": [
           "Uniquement si vous voulez que Dialogbot passe des appels",
           "Les contacts ont eux-mêmes accepté d’être appelés",
@@ -371,7 +371,7 @@
       },
       "setup": {
         "name": "Mise en service par nos spécialistes",
-        "unit": "kr. une fois",
+        "unit": "{pCur} une fois",
         "points": [
           "Uniquement si vous ne voulez pas le faire vous-même – les trois étapes sont incluses dans l’abonnement",
           "Configuration sur mesure et intégration à vos propres outils et besoins",
@@ -433,7 +433,7 @@
       "chipPrice": "Combien ça coûte ?",
       "askCompany": "Super. Comment s’appelle votre entreprise ?",
       "answerWhat": "Je réponds au téléphone 24 h/24, je réponds aux questions les plus fréquentes de vos clients, je prends les rendez-vous dans votre agenda et je vous envoie un message s’il y a quelque chose que je ne peux pas traiter.\n\nVous voulez l’entendre vous-même ?",
-      "answerPrice": "Un seul abonnement à 2.495 kr. par mois HT. Vous pouvez faire la configuration vous-même – elle est incluse. Si vous voulez que nos spécialistes l’adaptent sur mesure à vos outils, cela coûte 5.000 kr. une fois.\n\nJe vous appelle pour vous montrer ce que vous obtenez ?",
+      "answerPrice": "Un seul abonnement à {pMonthly} par mois HT. Vous pouvez faire la configuration vous-même – elle est incluse. Si vous voulez que nos spécialistes l’adaptent sur mesure à vos outils, cela coûte {pSetup} une fois.\n\nJe vous appelle pour vous montrer ce que vous obtenez ?",
       "askOther": "Décrivez brièvement votre activité – je saurai ainsi comment accueillir vos clients.",
       "askNumber": "Je suis donc désormais le réceptionniste de {company}. À quel numéro dois-je appeler ?",
       "helloCompany": "Bonjour {company}. Quelle est votre activité ?",

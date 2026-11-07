@@ -52,6 +52,10 @@ jobs:
         run: |
           python -m scripts.export_public_openapi /tmp/public-openapi.json
           cmp docs/public-openapi.json /tmp/public-openapi.json
+      - name: Market price table for the website matches markets.py
+        run: |
+          python -m scripts.export_prices /tmp/prices.json
+          cmp web/src/lib/prices.json /tmp/prices.json
 
   voice-services:
     # The TTS service and the voice pipeline run outside the API image; their mechanics are tested here with the

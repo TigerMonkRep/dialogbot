@@ -234,7 +234,7 @@ export function RoomCard() {
               <Bar value={p.trialDays} max={p.trialTotal} label={t("day2.room.trialAria", { n: p.trialDays, total: p.trialTotal })} />
             </div>
           )}
-          <p className="m-0 text-[13px] text-muted leading-normal">{p.status === "trial" ? t("day2.room.noteTrial", { plan: p.rightsName, price: p.monthlyKr(p.rightsKey) }) : t("day2.room.notePlan")}</p>
+          <p className="m-0 text-[13px] text-muted leading-normal">{p.status === "trial" ? t("day2.room.noteTrial", { plan: p.rightsName, price: p.monthlyText(p.rightsKey) }) : t("day2.room.notePlan")}</p>
           <button type="button" className={`${p.plan === "none" ? PRIMARY : OUTLINE} self-start`} onClick={choosePlan}>{p.plan === "none" ? t("day2.room.choosePlan") : t("day2.room.changePlan")}</button>
         </>
       ) : (

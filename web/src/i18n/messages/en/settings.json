@@ -59,7 +59,7 @@
       "title": "Campaigns",
       "sub": "Call your own customers",
       "outbound": "Outbound calls",
-      "chosen": "Selected – DKK 4 per call + DKK 2 per minute excl. VAT",
+      "chosen": "Selected – {pCall} per call + {pMinute} per minute excl. VAT",
       "notChosen": "Not selected"
     },
     "systems": {
@@ -77,7 +77,7 @@
       "team": "Team",
       "teamValue": "{n} with access",
       "billing": "Subscription and invoices",
-      "billingValue": "From DKK 2,495/mo. excl. VAT"
+      "billingValue": "From {pMonthly}/mo. excl. VAT"
     },
     "tech": {
       "title": "Technical",

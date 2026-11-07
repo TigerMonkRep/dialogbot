@@ -77,7 +77,7 @@
               ],
               [
                 "Prix",
-                "2.495 kr./mois HT, aucun prix par demande",
+                "{pMonthly}/mois HT, aucun prix par demande",
                 "Généralement à l’appel ou au mois"
               ],
               [
@@ -149,7 +149,7 @@
       ],
       [
         "Qu’est-ce qui coûte le moins cher : une permanence téléphonique ou Dialogbot ?",
-        "La permanence téléphonique est généralement facturée à l’appel ou au mois. Dialogbot est un abonnement unique à 2.495 kr. par mois HT, avec 300 minutes d’appels entrants et aucun prix par demande. Voir aussi /viden/dialogbot-vs-vocalis."
+        "La permanence téléphonique est généralement facturée à l’appel ou au mois. Dialogbot est un abonnement unique à {pMonthly} par mois HT, avec 300 minutes d’appels entrants et aucun prix par demande. Voir aussi /viden/dialogbot-vs-vocalis."
       ],
       [
         "Puis-je garder mon numéro ?",
@@ -170,7 +170,7 @@
       "Chatbot : écrit sur le site web",
       "Dialogbot : téléphone, chat et rendez-vous avec les mêmes connaissances",
       "Dialogbot ne devine jamais – uniquement des connaissances validées",
-      "Un seul abonnement : 2.495 kr./mois"
+      "Un seul abonnement : {pMonthly}/mois"
     ],
     "sections": [
       {
@@ -207,8 +207,8 @@
               ],
               [
                 "Prix",
-                "2.495 kr./mois – aucun prix par demande",
-                "À partir de quelques centaines de kr./mois"
+                "{pMonthly}/mois – aucun prix par demande",
+                "À partir de quelques dizaines d’euros par mois"
               ]
             ]
           }
@@ -271,7 +271,7 @@
       ],
       [
         "Combien ça coûte ?",
-        "2.495 kr. par mois HT avec 300 minutes d’appels entrants. Sans engagement."
+        "{pMonthly} par mois HT avec 300 minutes d’appels entrants. Sans engagement."
       ]
     ]
   },
@@ -285,8 +285,8 @@
     "title": "Dialogbot ou Vocalis – prix fixe ou forfaits de minutes ?",
     "lead": "Tous deux créent des employés IA pour les TPE et PME. La différence tient surtout à la façon dont vous payez et dont vous démarrez.",
     "points": [
-      "Dialogbot : 2.495 kr./mois, 300 minutes incluses, puis 1,50 kr./min",
-      "Vocalis : à partir de 899 kr./mois pour 100 minutes, puis des forfaits de minutes",
+      "Dialogbot : {pMonthly}/mois, 300 minutes incluses, puis {pExtraMinute}/min",
+      "Vocalis : à partir de DKK 899/mois pour 100 minutes, puis des forfaits de minutes",
       "Dialogbot : uniquement des connaissances validées – et vous validez chaque modification",
       "Dialogbot : écoutez-le d’abord, sans inscription"
     ],
@@ -300,13 +300,13 @@
             "rows": [
               [
                 "Prix mensuel (HT)",
-                "2.495 kr. – un seul abonnement",
-                "À partir de 899 kr. pour 100 minutes (Basis)"
+                "{pMonthly} – un seul abonnement",
+                "À partir de DKK 899 pour 100 minutes (Basis)"
               ],
               [
                 "Une fois les minutes épuisées",
-                "1,50 kr. par minute entamée au-delà des 300 incluses",
-                "Forfaits de minutes automatiques jusqu’à 3.995 kr./mois"
+                "{pExtraMinute} par minute entamée au-delà des 300 incluses",
+                "Forfaits de minutes automatiques jusqu’à DKK 3.995/mois"
               ],
               [
                 "Base des réponses",
@@ -337,7 +337,7 @@
         "body": [
           {
             "type": "p",
-            "text": "Vocalis démarre plus bas, mais le prix suit la consommation : au-delà des 100 minutes, des forfaits sont ajoutés automatiquement. Dialogbot coûte plus cher au départ, mais 300 minutes sont incluses et les minutes supplémentaires coûtent 1,50 kr. La facture est prévisible et vous pouvez toujours suivre votre consommation."
+            "text": "Vocalis démarre plus bas, mais le prix suit la consommation : au-delà des 100 minutes, des forfaits sont ajoutés automatiquement. Dialogbot coûte plus cher au départ, mais 300 minutes sont incluses et les minutes supplémentaires coûtent {pExtraMinute}. La facture est prévisible et vous pouvez toujours suivre votre consommation."
           },
           {
             "type": "p",
@@ -380,7 +380,7 @@
     "faq": [
       [
         "Dialogbot est-il plus cher que Vocalis ?",
-        "Au départ, oui : 2.495 kr. par mois contre 899 kr. pour 100 minutes. En revanche, 300 minutes sont incluses et le prix ne s’envole pas si vous recevez plus d’appels."
+        "Au départ, oui : {pMonthly} par mois contre DKK 899 pour 100 minutes. En revanche, 300 minutes sont incluses et le prix ne s’envole pas si vous recevez plus d’appels."
       ],
       [
         "Puis-je passer de Vocalis à Dialogbot ?",
@@ -548,7 +548,7 @@
       ],
       [
         "Combien coûte un réceptionniste IA ?",
-        "Chez Dialogbot, il y a un seul abonnement à 2.495 kr. par mois HT. Aucun prix par demande."
+        "Chez Dialogbot, il y a un seul abonnement à {pMonthly} par mois HT. Aucun prix par demande."
       ]
     ]
   },

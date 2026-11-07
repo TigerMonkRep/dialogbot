@@ -99,7 +99,7 @@
         "phone": { "title": "Atender el teléfono", "sub": "cuando usted no pueda, o siempre" },
         "booking": { "title": "Reservar citas", "sub": "directamente en su calendario" },
         "web": { "title": "Responder en su web", "sub": "chat web: una línea de código" },
-        "outbound": { "title": "Llamar a clientes", "sub": "campañas · 4 kr. por llamada, IVA no incluido" }
+        "outbound": { "title": "Llamar a clientes", "sub": "campañas · {pCall} por llamada, IVA no incluido" }
       },
       "langAria": "Idioma",
       "speaks": "Habla",
@@ -293,7 +293,7 @@
     "turningOn": "Activando…",
     "turnOn": "Activar Dialogbot",
     "managersOnly": "Solo los propietarios y administradores pueden activarlo.",
-    "subscriptionNote": "La suscripción es desde 2.495 kr./mes, IVA no incluido, y las llamadas salientes de campaña cuestan 4 kr. por llamada, IVA no incluido.",
+    "subscriptionNote": "La suscripción es desde {pMonthly}/mes, IVA no incluido, y las llamadas salientes de campaña cuestan {pCall} por llamada, IVA no incluido.",
     "confirmSubscription": "Confirmar suscripción",
     "findAgain": "Lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes."
   },

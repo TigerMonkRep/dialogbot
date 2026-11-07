@@ -129,7 +129,7 @@
     "noAppointments": "No hay próximas citas.",
     "weekAppointments": "Ver las citas de la semana",
     "campaigns": "Campañas",
-    "campaignsSub": "Llame a sus propios clientes: 4 kr. por llamada + 2 kr. por minuto de conversación, IVA no incluido.",
+    "campaignsSub": "Llame a sus propios clientes: {pCall} por llamada + {pMinute} por minuto de conversación, IVA no incluido.",
     "openCampaigns": "Abrir campañas",
     "allActivity": "Toda la actividad de los últimos 14 días",
     "power": {
@@ -210,7 +210,7 @@
   "common": {
     "save": "Guardar",
     "saved": "Guardado",
-    "kr": "{amount} kr.",
+    "kr": "{amount}",
     "saving": "Guardando…",
     "cancel": "Cancelar"
   },
@@ -274,7 +274,7 @@
       "title": "Lo que costó la semana",
       "extra": "{amount} adicionales",
       "calls": "{n} llamadas de campaña",
-      "note": "La suscripción incluye 300 minutos de llamadas entrantes al mes. Llamadas de campaña de la semana: {n} (4 kr. por llamada saliente + 2 kr. por minuto de conversación, IVA no incluido).",
+      "note": "La suscripción incluye 300 minutos de llamadas entrantes al mes. Llamadas de campaña de la semana: {n} ({pCall} por llamada saliente + {pMinute} por minuto de conversación, IVA no incluido).",
       "billing": "Ver suscripción y facturas"
     }
   },
@@ -484,7 +484,7 @@
       "consent": "consentimiento",
       "noConsent": "Falta consentimiento: no se le llamará",
       "attempts": "{n} intentos",
-      "priceNote": "{price} kr. por llamada, IVA no incluido. Solo paga las llamadas que se realizan. Puede detenerla en cualquier momento."
+      "priceNote": "{price} por llamada, IVA no incluido. Solo paga las llamadas que se realizan. Puede detenerla en cualquier momento."
     },
     "new": {
       "title": "Nueva campaña",
@@ -660,12 +660,12 @@
       "answer": "Así responde a «{q}»"
     },
     "service": {
-      "badPrice": "Escriba el precio con cifras, por ejemplo «desde 1.200 kr.» o «850 kr. por m²».",
+      "badPrice": "Escriba el precio con cifras, por ejemplo «desde 1.200» o «850 por m²».",
       "priceLine": "Precio: {price}.",
       "add": "Añadir un servicio",
       "new": "Nuevo servicio · 3 campos",
       "price": "Precio (tal como debe oírlo el cliente)",
-      "pricePlaceholder": "desde 1.200 kr.",
+      "pricePlaceholder": "desde 1.200",
       "notePlaceholder": "Ej.: Concertamos una visita de valoración",
       "saveAndShow": "Guardar y enseñarme cómo lo dice"
     },
@@ -789,6 +789,16 @@
       "withoutCard": "Sin tarjeta, el mes no se factura.",
       "onlyOwner": "Solo el propietario puede cambiar la tarjeta de pago."
     },
+    "vat": {
+      "label": "Número de IVA",
+      "optional": "opcional",
+      "placeholder": "p. ej. ESB12345678",
+      "hint": "A las empresas de un país de la UE distinto de Dinamarca se les factura sin IVA (inversión del sujeto pasivo). Escriba el número de IVA con el código de país, p. ej. ESB12345678.",
+      "hintOptional": "Aparece en la factura. A las empresas noruegas se les factura sin IVA danés.",
+      "required": "Escriba su número de IVA antes de guardar la tarjeta: a las empresas de un país de la UE distinto de Dinamarca se les factura sin IVA y necesitan un número de IVA válido.",
+      "save": "Guardar número de IVA",
+      "saved": "El número de IVA está guardado."
+    },
     "invoices": {
       "title": "Facturas",
       "soFar": "{month} hasta ahora:",
@@ -894,7 +904,7 @@
       },
       "billing": {
         "q": "Facturación",
-        "a": "Hay una sola suscripción desde 2.495 kr. al mes, IVA no incluido, con 300 minutos de llamadas entrantes (después, 1,50 kr. por minuto). Las llamadas salientes de campaña cuestan 4 kr. por llamada más 2 kr. por minuto de conversación iniciado. Cuenta muestra la vista previa del mes."
+        "a": "Hay una sola suscripción desde {pMonthly} al mes, IVA no incluido, con 300 minutos de llamadas entrantes (después, {pExtraMinute} por minuto). Las llamadas salientes de campaña cuestan {pCall} por llamada más {pMinute} por minuto de conversación iniciado. Cuenta muestra la vista previa del mes."
       }
     },
     "team": {

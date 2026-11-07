@@ -179,6 +179,12 @@ def redeem_erhverv(db: OrmSession, ws_id: uuid.UUID, code: str) -> DiscountRedem
     if erhverv_redemption(db, ws_id) is not None:
         raise Conflict("I har allerede brugt en rabatkode", code="discount_already_used")
     row = lookup(db, code, audience="erhverv")
+    if row.percent_off is None:
+        from app.modules.billing.customer_market import currency_of
+
+        if currency_of(db, ws_id) != "DKK":
+            raise ValidationFailed("Rabatkoden er et beløb i danske kroner og kan ikke bruges i jeres valuta",
+                                   code="discount_currency_mismatch", field_errors=[{"field": "code"}])
     r = DiscountRedemption(code_id=row.id, workspace_id=ws_id, audience="erhverv", source="erhverv_konto")
     db.add(r)
     db.flush()
@@ -206,12 +212,24 @@ def _add_months(m: date, n: int) -> date:
     return date(m.year + k // 12, k % 12 + 1, 1)
 
 
-def erhverv_line(db: OrmSession, ws_id: uuid.UUID, month: date, tz: str, lines: list[dict]) -> dict | None:
-    """The statement's negative line for the workspace's code in this month, or None."""
+def describe_en(row: DiscountCode) -> str:
+    """English for statements in other currencies than DKK: «20 % for 3 months», «10 % always»."""
+    value = f"{row.percent_off} %" if row.percent_off is not None else f"DKK {row.amount_off_minor / 100:,.2f}"
+    when = ("once" if row.duration == "once" else "always" if row.duration == "forever"
+            else f"for {row.duration_months} month{'s' if row.duration_months != 1 else ''}")
+    return f"{value} {when}"
+
+
+def erhverv_line(db: OrmSession, ws_id: uuid.UUID, month: date, tz: str, lines: list[dict], *,
+                 currency: str = "DKK") -> dict | None:
+    """The statement's negative line for the workspace's code in this month, or None. An amount-off code is in DKK,
+    so it only applies to a DKK statement (redeem_erhverv refuses it for other currencies)."""
     r = erhverv_redemption(db, ws_id)
     if r is None:
         return None
     row = db.get(DiscountCode, r.code_id)
+    if row.percent_off is None and currency != "DKK":
+        return None
     first = _month_of(r.redeemed_at, tz)
     month = month.replace(day=1)
     if month < first:
@@ -226,7 +244,8 @@ def erhverv_line(db: OrmSession, ws_id: uuid.UUID, month: date, tz: str, lines: 
     off = positive * row.percent_off // 100 if row.percent_off is not None else min(positive, row.amount_off_minor)
     if off <= 0:
         return None
-    return {"kind": LINE_KIND, "code": row.code, "description": f"Rabatkode {row.code}: {describe(row)}", "net_minor": -off}
+    text = f"Rabatkode {row.code}: {describe(row)}" if currency == "DKK" else f"Discount code {row.code}: {describe_en(row)}"
+    return {"kind": LINE_KIND, "code": row.code, "description": text, "net_minor": -off}
 
 
 # --------------------------------------------------------------------------- Privat

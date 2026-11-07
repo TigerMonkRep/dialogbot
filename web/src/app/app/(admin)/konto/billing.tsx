@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { api, fieldError } from "@/lib/client";
+import { useEffect, useRef, useState } from "react";
+import { api, fieldError, type ApiError } from "@/lib/client";
 import { ErrorBox, inputCls, useSubmit } from "@/components/ui";
 import { useT } from "@/i18n/client";
 
@@ -15,14 +15,68 @@ export function ConfirmSubscription({ wsId, label }: { wsId: string; label: stri
   return <div className="flex flex-col gap-1"><button type="button" className={BTN_PRIMARY + " self-start"} disabled={c.pending} onClick={() => c.run()}>{label}</button><ErrorBox error={c.error} /></div>;
 }
 
-/** Opens Stripe Checkout (setup mode) where the owner saves a card. Nothing is charged there. */
-export function AddCard({ wsId, hasCard }: { wsId: string; hasCard: boolean }) {
+/** Opens Stripe Checkout (setup mode) where the owner saves a card. Nothing is charged there. An EU company outside
+ *  Denmark must give its VAT number first: the backend answers 409 `vat_number_required`, and `onVatRequired` moves
+ *  the owner to the VAT number field. */
+export function AddCard({ wsId, hasCard, onVatRequired }: { wsId: string; hasCard: boolean; onVatRequired?: () => void }) {
   const t = useT("app");
   const go = useSubmit(async () => {
-    const r = await api<{ url: string }>(`/workspaces/${wsId}/billing/card/checkout`, { method: "POST", body: "{}" });
-    window.location.assign(r.url);
+    try {
+      const r = await api<{ url: string }>(`/workspaces/${wsId}/billing/card/checkout`, { method: "POST", body: "{}" });
+      window.location.assign(r.url);
+    } catch (e) {
+      const err = e as ApiError;
+      if (err?.status === 409 && err.code === VAT_REQUIRED && onVatRequired) { onVatRequired(); return; }
+      throw e;
+    }
   });
   return <div className="flex flex-col gap-1"><button type="button" className={hasCard ? BTN : BTN_PRIMARY + " self-start"} onClick={() => go.run()} disabled={go.pending}>{go.pending ? t("account.card.opening") : hasCard ? t("account.card.change") : t("account.card.add")}</button><ErrorBox error={go.error} /></div>;
+}
+
+const VAT_REQUIRED = "vat_number_required";
+
+/** The card plus – for a company outside Denmark – its VAT number (PUT …/billing/vat-number). Shown when the account's
+ *  country is an EU country other than DK (required: invoiced without VAT, reverse charge) or Norway (optional), and
+ *  always after the backend refused a card with 409 `vat_number_required`. */
+export function CardAndVat({ wsId, hasCard, canManage, vatNumber, vatMode }: {
+  wsId: string; hasCard: boolean; canManage: boolean; vatNumber: string | null; vatMode: "required" | "optional" | null;
+}) {
+  const t = useT("app");
+  const router = useRouter();
+  const [value, setValue] = useState(vatNumber ?? "");
+  const [forced, setForced] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const ref = useRef<HTMLInputElement>(null);
+  const save = useSubmit(async () => {
+    await api(`/workspaces/${wsId}/billing/vat-number`, { method: "PUT", body: JSON.stringify({ vat_number: value.trim() }) });
+    setSaved(true); setForced(false); router.refresh();
+  });
+  useEffect(() => { if (forced) { ref.current?.focus(); ref.current?.scrollIntoView({ block: "center" }); } }, [forced]);
+  const show = vatMode !== null || forced;
+  const required = vatMode === "required" || forced;
+  const fieldErr = fieldError(save.error, "vat_number");
+  const hintId = "vat-number-hint";
+  return (
+    <div className="flex flex-col gap-3">
+      {show && (
+        <form onSubmit={(e) => { e.preventDefault(); setSaved(false); save.run(); }} className={`flex flex-wrap items-end gap-3 rounded-xl border-[1.5px] p-4 ${forced ? "border-danger bg-danger-soft" : "border-dashed border-ink"}`} data-testid="vat-number">
+          <div className="flex-1 min-w-[200px]">
+            <label htmlFor="vat-number" className="block text-[13px] font-semibold mb-1">{t("account.vat.label")}{!required && <span className="font-normal text-muted"> · {t("account.vat.optional")}</span>}</label>
+            <input id="vat-number" ref={ref} className={`${inputCls} uppercase`} value={value} onChange={(e) => setValue(e.target.value)} placeholder={t("account.vat.placeholder")}
+              autoCapitalize="characters" spellCheck={false} autoComplete="off" required={required} disabled={!canManage}
+              aria-invalid={forced || !!fieldErr || undefined} aria-describedby={hintId} />
+            <p id={hintId} role={forced || fieldErr ? "alert" : undefined} className={`text-[13px] mt-1 ${forced || fieldErr ? "text-danger font-semibold" : "text-muted"}`}>
+              {fieldErr ?? (forced ? t("account.vat.required") : required ? t("account.vat.hint") : t("account.vat.hintOptional"))}
+            </p>
+            {saved && !save.error && <p role="status" className="text-[13px] text-success font-semibold mt-1">{t("account.vat.saved")}</p>}
+          </div>
+          {canManage && <button type="submit" className={BTN} disabled={save.pending || !value.trim()}>{save.pending ? t("common.saving") : t("account.vat.save")}</button>}
+          {!fieldErr && <ErrorBox error={save.error} />}
+        </form>
+      )}
+      {canManage ? <AddCard wsId={wsId} hasCard={hasCard} onVatRequired={() => setForced(true)} /> : null}
+    </div>
+  );
 }
 
 export function InvoiceMonth({ wsId, month, label }: { wsId: string; month: string; label: string }) {

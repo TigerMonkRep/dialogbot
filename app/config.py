@@ -280,6 +280,18 @@ class Settings(BaseSettings):
     privat_stripe_price_plus_year: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_PLUS_YEAR")
     privat_stripe_price_familie_month: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_FAMILIE_MONTH")
     privat_stripe_price_familie_year: str | None = Field(default=None, alias="PRIVAT_STRIPE_PRICE_FAMILIE_YEAR")
+    # VAT on Privat (B2C) sales to EU consumers outside Denmark (docs/markets.md): "danish" = 25 % Danish VAT (allowed
+    # while cross-border B2C sales in the EU stay under 10.000 EUR a year); "destination" = the consumer's own
+    # country's rate (needs OSS registration at Skattestyrelsen first).
+    privat_eu_vat_mode: Literal["danish", "destination"] = Field(default="danish", alias="PRIVAT_EU_VAT_MODE")
+    # True once Dialogbot is VOEC-registered in Norway (required above 50.000 NOK a year to Norwegian consumers):
+    # Privat checkouts for Norway then carry 25 % Norwegian VAT. False = no VAT on Norwegian consumers.
+    no_voec_registered: bool = Field(default=False, alias="NO_VOEC_REGISTERED")
+    # Stripe Tax (Stripe's automatic tax) decides all VAT when true: Erhverv invoices and Privat checkouts are sent with
+    # automatic_tax and SaaS tax codes, and no tax rates of our own. False = the manual rules in
+    # app/modules/billing/markets.py with fixed Stripe tax rates. Turn on only after Stripe Tax is activated in the
+    # Stripe account (docs/markets.md, "Stripe Tax setup") – Stripe rejects automatic_tax otherwise.
+    stripe_tax_enabled: bool = Field(default=False, alias="STRIPE_TAX_ENABLED")
     # Short invitation links people text from their own phone: <base><code>, resolved by the web route /i/{code}.
     privat_short_url_base: str = Field(default="https://dialogbot.app/i/", alias="PRIVAT_SHORT_URL_BASE")
     privat_group_url_base: str = Field(default="https://dialogbot.app/g/", alias="PRIVAT_GROUP_URL_BASE")

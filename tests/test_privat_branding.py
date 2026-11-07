@@ -26,6 +26,7 @@ def test_subscription_and_credit_checkouts_carry_the_privat_branding(api, pv, mo
     monkeypatch.setattr(stripe_api, "request", fake)
     assert api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month"}).status_code == 200
     assert api.post(tok, "/privat/credits/checkout").status_code in (200, 201)
+    sent = [x for x in sent if x[0] == "/checkout/sessions"]  # (the VAT tax rate is looked up first, once)
     assert len(sent) == 2
     for p, d, k in sent:
         assert p == "/checkout/sessions" and k["version"] == "2025-09-30.clover"

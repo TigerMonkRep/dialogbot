@@ -9,7 +9,12 @@ import { PublicPlans } from "@/components/privat/plans-public";
 import { InstallApp } from "@/components/install-app";
 import { Mark, Tilted } from "@/components/mark";
 import { AudienceMemory } from "@/components/audience-memory";
-import { getRaw, getT } from "@/i18n/server";
+import { getLocale, getRaw, getT } from "@/i18n/server";
+import { HTML_LANG, type Locale } from "@/i18n/config";
+import { market, schemaPrice } from "@/lib/markets";
+import { plansFor } from "@/lib/privat/plans";
+import { SITE_URL } from "@/lib/site";
+import type { T } from "@/i18n/translate";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getT("privat");
@@ -28,6 +33,7 @@ export default async function PrivatLanding() {
   const t = await getT("privat");
   const tc = await getT("common");
   const raw = await getRaw();
+  const locale = await getLocale();
   const three = raw<{ title: string; text: string }[]>("privat.landing.three.items");
   const steps = raw<string[]>("privat.landing.control.steps");
   const apps = raw<Record<string, string>>("privat.landing.store.apps");
@@ -47,6 +53,7 @@ export default async function PrivatLanding() {
   return (
     <div data-theme="privat" className="min-h-dvh flex flex-col bg-paper text-ink">
       <AudienceMemory audience="privat" />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(t, locale)) }} />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-full focus:bg-ink focus:text-white">{tc("chrome.skip")}</a>
       <header className="border-b-2 border-ink bg-paper">
         <div className={`${WRAP} min-h-[72px] py-3 flex flex-wrap items-center gap-3`}>
@@ -196,4 +203,17 @@ export default async function PrivatLanding() {
       </footer>
     </div>
   );
+}
+
+/** schema.org for /privat: the three plans with the monthly price of the language's market (consumer prices, incl. VAT). */
+function structuredData(t: T, locale: Locale) {
+  const m = market(locale);
+  return {
+    "@context": "https://schema.org", "@type": "Product", name: "Dialogbot Privat", description: t("landing.metaDescription"),
+    inLanguage: HTML_LANG[locale], url: `${SITE_URL}/privat`, brand: { "@id": `${SITE_URL}/#organization` },
+    offers: plansFor(m.currency).map((p) => ({
+      "@type": "Offer", name: `Dialogbot Privat ${p.name}`, price: schemaPrice(p.monthlyMinor), priceCurrency: m.currency, url: `${SITE_URL}/privat`,
+      priceSpecification: { "@type": "UnitPriceSpecification", price: schemaPrice(p.monthlyMinor), priceCurrency: m.currency, unitCode: "MON", valueAddedTaxIncluded: true },
+    })),
+  };
 }

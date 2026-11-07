@@ -44,7 +44,7 @@
               ["Who answers", "AI in your customers' language, only from knowledge you have approved", "A person who doesn't always know your services"],
               ["Opening hours", "Around the clock", "Usually normal working hours"],
               ["Booking", "Directly in your calendar, with SMS confirmation", "Usually a message you follow up on yourselves"],
-              ["Price", "2.495 kr./month excl. VAT, no price per enquiry", "Usually per call or per month"],
+              ["Price", "{pMonthly}/month excl. VAT, no price per enquiry", "Usually per call or per month"],
               ["Message to you", "Written summary of every conversation and a daily report", "One message per call"]
             ]
           }
@@ -73,7 +73,7 @@
     "faq": [
       ["Can an AI answering machine replace a call answering service?", "For most routine enquiries, yes: it answers, clarifies the need and books. Complex matters are passed on to you."],
       ["Is an AI answering machine available at night?", "Yes, Dialogbot answers the phone around the clock."],
-      ["Which is cheaper: a call answering service or Dialogbot?", "A call answering service is usually billed per call or per month. Dialogbot is one subscription at 2.495 kr. per month excl. VAT, with 300 minutes of incoming calls and no price per enquiry. See also /viden/dialogbot-vs-vocalis."],
+      ["Which is cheaper: a call answering service or Dialogbot?", "A call answering service is usually billed per call or per month. Dialogbot is one subscription at {pMonthly} per month excl. VAT, with 300 minutes of incoming calls and no price per enquiry. See also /viden/dialogbot-vs-vocalis."],
       ["Can I keep my number?", "Yes. You forward your number to Dialogbot when you are busy or closed."]
     ]
   },
@@ -90,7 +90,7 @@
       "Chatbot: writes on the website",
       "Dialogbot: phone, chat and booking with the same knowledge",
       "Dialogbot never guesses – approved knowledge only",
-      "One subscription: 2.495 kr./month"
+      "One subscription: {pMonthly}/month"
     ],
     "sections": [
       {
@@ -105,7 +105,7 @@
               ["What it answers from", "Only knowledge you have approved yourselves – and you see every change first", "Varies: some answer freely from an AI model"],
               ["When it can't answer", "It says so and takes a message for you", "Varies"],
               ["Message to you", "Name, number and what it was about – and a report every day", "Varies"],
-              ["Price", "2.495 kr./month – no price per enquiry", "From a few hundred kr./month and up"]
+              ["Price", "{pMonthly}/month – no price per enquiry", "From a few dozen euros a month and up"]
             ]
           }
         ]
@@ -132,7 +132,7 @@
     "faq": [
       ["Can Dialogbot also just be a chatbot?", "Yes. The web chat is included in the subscription and uses the same approved knowledge as the phone. It's one line of code on your website."],
       ["Does Dialogbot guess if it doesn't know the answer?", "No. It only answers from approved knowledge and takes a message for you if it can't answer."],
-      ["What does it cost?", "2.495 kr. per month excl. VAT with 300 minutes of incoming calls. No commitment."]
+      ["What does it cost?", "{pMonthly} per month excl. VAT with 300 minutes of incoming calls. No commitment."]
     ]
   },
   "dialogbot-vs-vocalis": {
@@ -145,8 +145,8 @@
     "title": "Dialogbot or Vocalis – fixed price or minute packages?",
     "lead": "Both build AI employees for Danish businesses. The main differences are how you pay and how you get started.",
     "points": [
-      "Dialogbot: 2.495 kr./month, 300 minutes included, then 1,50 kr./min.",
-      "Vocalis: from 899 kr./month for 100 minutes, then minute packages",
+      "Dialogbot: {pMonthly}/month, 300 minutes included, then {pExtraMinute}/min.",
+      "Vocalis: from DKK 899/month for 100 minutes, then minute packages",
       "Dialogbot: approved knowledge only – and you approve every change",
       "Dialogbot: hear it first, no sign-up"
     ],
@@ -158,8 +158,8 @@
             "type": "table",
             "other": "Vocalis",
             "rows": [
-              ["Price per month (excl. VAT)", "2.495 kr. – one subscription", "From 899 kr. for 100 minutes (Basis)"],
-              ["When the minutes are used up", "1,50 kr. per started minute after the 300 included", "Automatic minute packages up to 3.995 kr./month"],
+              ["Price per month (excl. VAT)", "{pMonthly} – one subscription", "From DKK 899 for 100 minutes (Basis)"],
+              ["When the minutes are used up", "{pExtraMinute} per started minute after the 300 included", "Automatic minute packages up to DKK 3.995/month"],
               ["Answers from", "Knowledge you have approved yourselves – and you see every change first (before → after, «Approve?»)", "See Vocalis' own description"],
               ["Booking", "Google Calendar or Microsoft 365, with SMS confirmation", "See Vocalis' own description"],
               ["How you get started", "Hear it first: it calls you, no sign-up. Set it up yourself in about half an hour", "Free consultation and callback"],
@@ -171,7 +171,7 @@
       {
         "title": "Price: fixed or metered",
         "body": [
-          { "type": "p", "text": "Vocalis starts lower, but the price follows usage: if you go over the 100 minutes, packages are added automatically. Dialogbot costs more to begin with, but 300 minutes are included, and minutes beyond that cost 1,50 kr. The bill is predictable, and you can always see your usage." },
+          { "type": "p", "text": "Vocalis starts lower, but the price follows usage: if you go over the 100 minutes, packages are added automatically. Dialogbot costs more to begin with, but 300 minutes are included, and minutes beyond that cost {pExtraMinute}. The bill is predictable, and you can always see your usage." },
           { "type": "p", "parts": ["If you only get a few calls a month, a lower starting price may suit you better. If the phone rings all day, a fixed price is the safe choice. See ", { "link": "/priser", "text": "all prices" }, "."] }
         ]
       },
@@ -189,7 +189,7 @@
       }
     ],
     "faq": [
-      ["Is Dialogbot more expensive than Vocalis?", "To begin with, yes: 2.495 kr. per month versus from 899 kr. for 100 minutes. On the other hand, 300 minutes are included, and the price doesn't jump if you get more calls."],
+      ["Is Dialogbot more expensive than Vocalis?", "To begin with, yes: {pMonthly} per month versus from DKK 899 for 100 minutes. On the other hand, 300 minutes are included, and the price doesn't jump if you get more calls."],
       ["Can I switch from Vocalis to Dialogbot?", "Yes. You keep your current phone number and forward it to Dialogbot, and there is no commitment."],
       ["Where can I see Vocalis' current prices?", "At Vocalis itself. The prices here are the published list prices at the time this page was written, and they may have changed."]
     ]
@@ -265,7 +265,7 @@
     "faq": [
       ["Is an AI receptionist the same as a chatbot?", "Not quite. A chatbot writes; an AI receptionist talks on the phone. Dialogbot does both with the same knowledge."],
       ["Does an AI receptionist sound like a robot?", "Modern voices sound natural. Dialogbot speaks 8 languages, including English, and always says honestly that it is a digital assistant if the caller asks."],
-      ["What does an AI receptionist cost?", "At Dialogbot there is one subscription at 2.495 kr. per month, excl. VAT. There is no price per enquiry."]
+      ["What does an AI receptionist cost?", "At Dialogbot there is one subscription at {pMonthly} per month, excl. VAT. There is no price per enquiry."]
     ]
   },
   "viderestil-telefonen": {

@@ -99,7 +99,7 @@
         "phone": { "title": "Tage telefonen", "sub": "når I ikke kan – eller altid" },
         "booking": { "title": "Booke aftaler", "sub": "direkte i jeres kalender" },
         "web": { "title": "Svare på hjemmesiden", "sub": "webchat – én kodelinje" },
-        "outbound": { "title": "Ringe kunder op", "sub": "kampagner · 4 kr. pr. opkald ekskl. moms" }
+        "outbound": { "title": "Ringe kunder op", "sub": "kampagner · {pCall} pr. opkald ekskl. moms" }
       },
       "langAria": "Sprog",
       "speaks": "Den taler",
@@ -293,7 +293,7 @@
     "turningOn": "Tænder …",
     "turnOn": "Tænd Dialogbot",
     "managersOnly": "Kun ejere og administratorer kan tænde.",
-    "subscriptionNote": "Abonnementet er fra 2.495 kr./md. ekskl. moms, og udgående kampagneopkald koster 4 kr. pr. opkald ekskl. moms.",
+    "subscriptionNote": "Abonnementet er fra {pMonthly}/md. ekskl. moms, og udgående kampagneopkald koster {pCall} pr. opkald ekskl. moms.",
     "confirmSubscription": "Bekræft abonnement",
     "findAgain": "Du finder alt igen under profil-ikonet → Alle indstillinger."
   },

@@ -55,3 +55,14 @@ tjenesten → Environment for at se værdierne.
 5. `.github/workflows/deploy-check.yml` kører hver time (og på forlangende) og fejler, hvis den kørende API ikke står på samme
    Alembic-head som commit'en (`scripts/check_live_schema.py`). `tests/test_schema_head.py` fejler, hvis der er mere end ét head
    eller databasen efter migration ikke står på kodens head.
+
+## Moms og valuta (markeder)
+
+Tre miljøvariabler styrer momsen; de skal stå ens på API og worker (workeren laver månedsfakturaerne). Regler og
+opsætning: `docs/markets.md`.
+
+| Variabel | Standard | Betydning |
+|---|---|---|
+| `STRIPE_TAX_ENABLED` | `false` | `true`: Stripe Tax afgør al moms (Erhverv-fakturaer og Privat Checkout får `automatic_tax` og SaaS-skattekoder). Sæt først efter Stripe Tax er aktiveret i Stripe-kontoen (afsnittet «Stripe Tax setup» i `docs/markets.md`) – ellers afviser Stripe kaldene. |
+| `PRIVAT_EU_VAT_MODE` | `danish` | Uden Stripe Tax: `danish` = 25 % dansk moms til alle EU-forbrugere (under 10.000 EUR/år); `destination` = forbrugerens lands sats (kræver OSS-registrering). |
+| `NO_VOEC_REGISTERED` | `false` | Uden Stripe Tax: `true` = 25 % norsk moms på norske forbrugere (efter VOEC-registrering, påkrævet over 50.000 NOK/år). |

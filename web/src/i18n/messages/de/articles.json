@@ -44,7 +44,7 @@
               ["Wer antwortet", "KI in der Sprache Ihrer Kunden, nur auf Grundlage von Wissen, das Sie bestätigt haben", "Ein Mensch, der Ihre Leistungen nicht immer kennt"],
               ["Erreichbarkeit", "Rund um die Uhr", "Meist zu den üblichen Geschäftszeiten"],
               ["Buchung", "Direkt in Ihren Kalender, mit SMS-Bestätigung", "Meist eine Nachricht, der Sie selbst nachgehen"],
-              ["Preis", "2.495 kr./Monat zzgl. MwSt., kein Preis pro Anfrage", "Meist pro Anruf oder pro Monat"],
+              ["Preis", "{pMonthly}/Monat zzgl. MwSt., kein Preis pro Anfrage", "Meist pro Anruf oder pro Monat"],
               ["Nachricht an Sie", "Schriftliche Zusammenfassung jedes Gesprächs und ein Tagesbericht", "Eine Nachricht pro Anruf"]
             ]
           }
@@ -73,7 +73,7 @@
     "faq": [
       ["Kann ein KI-Anrufbeantworter einen Telefonservice ersetzen?", "Für die meisten Routineanfragen ja: Er antwortet, klärt das Anliegen und bucht. Komplexe Fälle werden an Sie weitergeleitet."],
       ["Ist ein KI-Anrufbeantworter auch nachts erreichbar?", "Ja, Dialogbot geht rund um die Uhr ans Telefon."],
-      ["Was ist günstiger: Telefonservice oder Dialogbot?", "Ein Telefonservice wird meist pro Anruf oder pro Monat abgerechnet. Dialogbot ist ein Abonnement für 2.495 kr. im Monat zzgl. MwSt. mit 300 Minuten eingehender Anrufe und ohne Preis pro Anfrage. Siehe auch /viden/dialogbot-vs-vocalis."],
+      ["Was ist günstiger: Telefonservice oder Dialogbot?", "Ein Telefonservice wird meist pro Anruf oder pro Monat abgerechnet. Dialogbot ist ein Abonnement für {pMonthly} im Monat zzgl. MwSt. mit 300 Minuten eingehender Anrufe und ohne Preis pro Anfrage. Siehe auch /viden/dialogbot-vs-vocalis."],
       ["Kann ich meine Nummer behalten?", "Ja. Sie leiten Ihre Nummer auf Dialogbot um, wenn Sie besetzt oder geschlossen sind."]
     ]
   },
@@ -90,7 +90,7 @@
       "Chatbot: schreibt auf der Website",
       "Dialogbot: Telefon, Chat und Buchung mit demselben Wissen",
       "Dialogbot rät nie – nur bestätigtes Wissen",
-      "Ein Abonnement: 2.495 kr./Monat"
+      "Ein Abonnement: {pMonthly}/Monat"
     ],
     "sections": [
       {
@@ -105,7 +105,7 @@
               ["Worauf er seine Antworten stützt", "Nur auf Wissen, das Sie selbst bestätigt haben – und Sie sehen jede Änderung zuerst", "Unterschiedlich: manche antworten frei auf Basis eines KI-Modells"],
               ["Wenn er nicht antworten kann", "Er sagt es und nimmt eine Nachricht für Sie auf", "Unterschiedlich"],
               ["Nachricht an Sie", "Name, Nummer und worum es ging – und jeden Tag ein Bericht", "Unterschiedlich"],
-              ["Preis", "2.495 kr./Monat – kein Preis pro Anfrage", "Ab wenigen hundert kr./Monat aufwärts"]
+              ["Preis", "{pMonthly}/Monat – kein Preis pro Anfrage", "Ab einigen Dutzend Euro im Monat aufwärts"]
             ]
           }
         ]
@@ -132,7 +132,7 @@
     "faq": [
       ["Kann Dialogbot auch einfach nur ein Chatbot sein?", "Ja. Der Webchat ist im Abonnement enthalten und nutzt dasselbe bestätigte Wissen wie das Telefon. Es ist eine einzige Codezeile auf der Website."],
       ["Rät Dialogbot, wenn er die Antwort nicht kennt?", "Nein. Er antwortet nur auf Grundlage bestätigten Wissens und nimmt eine Nachricht für Sie auf, wenn er nicht antworten kann."],
-      ["Was kostet das?", "2.495 kr. im Monat zzgl. MwSt. mit 300 Minuten eingehender Anrufe. Keine Mindestlaufzeit."]
+      ["Was kostet das?", "{pMonthly} im Monat zzgl. MwSt. mit 300 Minuten eingehender Anrufe. Keine Mindestlaufzeit."]
     ]
   },
   "dialogbot-vs-vocalis": {
@@ -145,8 +145,8 @@
     "title": "Dialogbot oder Vocalis – Festpreis oder Minutenpakete?",
     "lead": "Beide entwickeln KI-Mitarbeiter für Unternehmen. Der Unterschied liegt vor allem darin, wie Sie bezahlen und wie Sie starten.",
     "points": [
-      "Dialogbot: 2.495 kr./Monat, 300 Minuten inklusive, danach 1,50 kr./Min.",
-      "Vocalis: ab 899 kr./Monat für 100 Minuten, danach Minutenpakete",
+      "Dialogbot: {pMonthly}/Monat, 300 Minuten inklusive, danach {pExtraMinute}/Min.",
+      "Vocalis: ab DKK 899/Monat für 100 Minuten, danach Minutenpakete",
       "Dialogbot: nur bestätigtes Wissen – und Sie bestätigen jede Änderung",
       "Dialogbot: erst anhören, ohne Anmeldung"
     ],
@@ -158,8 +158,8 @@
             "type": "table",
             "other": "Vocalis",
             "rows": [
-              ["Preis pro Monat (zzgl. MwSt.)", "2.495 kr. – ein Abonnement", "Ab 899 kr. für 100 Minuten (Basis)"],
-              ["Wenn die Minuten aufgebraucht sind", "1,50 kr. pro angefangener Minute nach den 300 inklusiven", "Automatische Minutenpakete bis 3.995 kr./Monat"],
+              ["Preis pro Monat (zzgl. MwSt.)", "{pMonthly} – ein Abonnement", "Ab DKK 899 für 100 Minuten (Basis)"],
+              ["Wenn die Minuten aufgebraucht sind", "{pExtraMinute} pro angefangener Minute nach den 300 inklusiven", "Automatische Minutenpakete bis DKK 3.995/Monat"],
               ["Antworten auf Grundlage von", "Wissen, das Sie selbst bestätigt haben – und Sie sehen jede Änderung zuerst (vorher → nachher, «Bestätigen?»)", "Siehe Vocalis' eigene Beschreibung"],
               ["Buchung", "Google Kalender oder Microsoft 365, mit SMS-Bestätigung", "Siehe Vocalis' eigene Beschreibung"],
               ["So starten Sie", "Erst anhören: Er ruft Sie an, ohne Anmeldung. Selbst einrichten in ca. einer halben Stunde", "Kostenlose Beratung und Rückruf"],
@@ -171,7 +171,7 @@
       {
         "title": "Preis: fest oder nach Verbrauch",
         "body": [
-          { "type": "p", "text": "Vocalis startet günstiger, aber der Preis folgt dem Verbrauch: Überschreiten Sie die 100 Minuten, werden automatisch Pakete hinzugebucht. Dialogbot kostet zunächst mehr, aber 300 Minuten sind inklusive, und jede weitere Minute kostet 1,50 kr. Die Rechnung ist vorhersehbar, und Sie sehen Ihren Verbrauch jederzeit." },
+          { "type": "p", "text": "Vocalis startet günstiger, aber der Preis folgt dem Verbrauch: Überschreiten Sie die 100 Minuten, werden automatisch Pakete hinzugebucht. Dialogbot kostet zunächst mehr, aber 300 Minuten sind inklusive, und jede weitere Minute kostet {pExtraMinute}. Die Rechnung ist vorhersehbar, und Sie sehen Ihren Verbrauch jederzeit." },
           { "type": "p", "parts": ["Gibt es nur wenige Anrufe im Monat, kann ein niedrigerer Einstiegspreis besser passen. Klingelt das Telefon den ganzen Tag, ist ein Festpreis die sichere Wahl. Siehe ", { "link": "/priser", "text": "alle Preise" }, "."] }
         ]
       },
@@ -189,7 +189,7 @@
       }
     ],
     "faq": [
-      ["Ist Dialogbot teurer als Vocalis?", "Zunächst ja: 2.495 kr. im Monat gegenüber ab 899 kr. für 100 Minuten. Dafür sind 300 Minuten inklusive, und der Preis springt nicht, wenn Sie mehr Anrufe bekommen."],
+      ["Ist Dialogbot teurer als Vocalis?", "Zunächst ja: {pMonthly} im Monat gegenüber ab DKK 899 für 100 Minuten. Dafür sind 300 Minuten inklusive, und der Preis springt nicht, wenn Sie mehr Anrufe bekommen."],
       ["Kann ich von Vocalis zu Dialogbot wechseln?", "Ja. Sie behalten Ihre bisherige Telefonnummer und leiten auf Dialogbot um, und es gibt keine Mindestlaufzeit."],
       ["Wo finde ich die aktuellen Preise von Vocalis?", "Bei Vocalis selbst. Die Preise hier sind die veröffentlichten Listenpreise zum Zeitpunkt der Erstellung dieser Seite und können sich geändert haben."]
     ]
@@ -265,7 +265,7 @@
     "faq": [
       ["Ist ein KI-Rezeptionist dasselbe wie ein Chatbot?", "Nicht ganz. Ein Chatbot schreibt, ein KI-Rezeptionist spricht am Telefon. Dialogbot macht beides mit demselben Wissen."],
       ["Klingt ein KI-Rezeptionist wie ein Roboter?", "Moderne Stimmen klingen natürlich. Dialogbot spricht in der Sprache Ihrer Kunden und sagt immer ehrlich, dass er ein digitaler Assistent ist, wenn der Kunde fragt."],
-      ["Was kostet ein KI-Rezeptionist?", "Bei Dialogbot gibt es ein Abonnement für 2.495 kr. im Monat, zzgl. MwSt. Es gibt keinen Preis pro Anfrage."]
+      ["Was kostet ein KI-Rezeptionist?", "Bei Dialogbot gibt es ein Abonnement für {pMonthly} im Monat, zzgl. MwSt. Es gibt keinen Preis pro Anfrage."]
     ]
   },
   "viderestil-telefonen": {

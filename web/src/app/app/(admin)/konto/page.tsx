@@ -2,7 +2,8 @@ import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { kr as krDa } from "../leads/format";
-import { AddCard, ConfirmSubscription, DiscountCode, InvoiceMonth, ReferralCode } from "./billing";
+import { CardAndVat, ConfirmSubscription, DiscountCode, InvoiceMonth, ReferralCode } from "./billing";
+import { EU_COUNTRIES } from "@/lib/markets";
 import { InstallApp, InstallCapture } from "@/components/install-app";
 import { PushSettings } from "@/components/push-ask";
 import { InvitationRow, InviteForm, MemberRow } from "./team";
@@ -16,10 +17,13 @@ type Member = { id: string; user_id: string; email: string; display_name: string
 type Inv = { id: string; email: string; role: string; status: string; expires_at: string };
 type Me = { id: string; email: string; display_name: string; email_verified: boolean; is_platform_operator?: boolean };
 type Session = { id: string; created_at: string; last_seen_at: string; user_agent: string | null; current: boolean };
-type Agreement = { current: { version: number; model: string; created_at: string; monthly: { net_minor: number } } | null; plan: { monthly_net_minor: number; campaign_call_net_minor: number; campaign_minute_net_minor: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number } };
-type Statement = { month: string; lines: { kind: string; calls?: number; minutes?: number; included_minutes?: number; extra_minutes?: number; net_minor: number }[]; totals: { net_minor: number; tax_minor: number; gross_minor: number } };
-type Account = { configured: boolean; card: { brand: string; last4: string; exp: string | null } | null; can_manage: boolean };
-type Invoice = { id: string; month: string; status: string; number: string | null; gross_minor: number; hosted_invoice_url: string | null; invoice_pdf: string | null };
+/** `currency` (DKK, SEK, NOK, EUR) is the agreement's/statement's own; older backends leave it out → DKK. */
+type Agreement = { current: { version: number; model: string; created_at: string; monthly: { net_minor: number } } | null; plan: { monthly_net_minor: number; campaign_call_net_minor: number; campaign_minute_net_minor: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number }; currency?: string };
+type Statement = { month: string; lines: { kind: string; calls?: number; minutes?: number; included_minutes?: number; extra_minutes?: number; net_minor: number }[]; totals: { net_minor: number; tax_minor: number; gross_minor: number }; currency?: string };
+type Vat = { kind: "domestic" | "reverse_charge" | "outside_eu" | "vat_number_required"; rate_bp: number; country: string | null; note: string | null };
+type Account = { configured: boolean; card: { brand: string; last4: string; exp: string | null } | null; can_manage: boolean;
+  country?: string | null; currency?: string; vat_number?: string | null; vat?: Vat | null };
+type Invoice = { id: string; month: string; status: string; number: string | null; gross_minor: number; hosted_invoice_url: string | null; invoice_pdf: string | null; currency?: string };
 type Referral = { referred: boolean; ambassador_first_name?: string | null; customer_discount_bp?: number; can_add_code: boolean };
 type Discount = { code: string | null; text?: string; from_month?: string; to_month?: string | null; can_add: boolean; can_manage: boolean };
 
@@ -42,7 +46,6 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
   const ws = await requireWorkspace();
   const t = await getT("app");
   const lang = HTML_LANG[await getLocale()];
-  const kr = (minor: number) => krDa(minor, lang);
   const admin = ws.role === "owner" || ws.role === "admin";
   const owner = ws.role === "owner";
   const { card } = await searchParams;
@@ -67,6 +70,13 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
   const campaignNet = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + l.net_minor, 0) ?? 0;
   const campaignMinutes = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + (l.minutes ?? 0), 0) ?? 0;
   const inbound = st?.lines.find((l) => l.kind === "inbound_minutes");
+  // Amounts in the agreement's / statement's own currency (DKK when the backend does not say).
+  const kr = (minor: number) => krDa(minor, lang, agr?.currency ?? acc?.currency);
+  const krSt = (minor: number) => krDa(minor, lang, st?.currency ?? agr?.currency ?? acc?.currency);
+  const country = (acc?.country ?? "").toUpperCase();
+  const vatMode = acc?.vat?.kind === "vat_number_required" || (country && country !== "DK" && EU_COUNTRIES.includes(country)) ? "required"
+    : country === "NO" ? "optional" : null;
+  const vatNote = acc?.vat && (acc.vat.kind === "reverse_charge" || acc.vat.kind === "outside_eu") ? acc.vat.note : null;
   const previous = shift(month, -1);
   const initials = me.display_name.split(/\s+/).map((s) => s[0]).join("").slice(0, 2).toUpperCase();
   return (
@@ -121,7 +131,8 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
                   <>
                     <p className="text-[15px] font-semibold text-ink">{acc.card ? <>{t("account.pay.card")} <span className="capitalize">{acc.card.brand}</span> •••• {acc.card.last4}{acc.card.exp ? ` · ${t("account.pay.expires", { exp: acc.card.exp })}` : ""}</> : t("account.pay.noCard")}</p>
                     <p className="text-[14px] text-ink-soft">{acc.card ? t("account.pay.withCard") : t("account.pay.withoutCard")}</p>
-                    {acc.can_manage ? <AddCard wsId={ws.id} hasCard={!!acc.card} /> : <p className="text-[13px] text-muted">{t("account.pay.onlyOwner")}</p>}
+                    <CardAndVat wsId={ws.id} hasCard={!!acc.card} canManage={acc.can_manage} vatNumber={acc.vat_number ?? null} vatMode={vatMode} />
+                    {!acc.can_manage && <p className="text-[13px] text-muted">{t("account.pay.onlyOwner")}</p>}
                     {acc.can_manage && acc.card && !invoices.items.some((i) => i.month === previous) && <InvoiceMonth wsId={ws.id} month={previous} label={monthLabel(lang, previous).toLowerCase()} />}
                   </>
                 )}
@@ -138,7 +149,8 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
             <section id="fakturaer" className={BOX} aria-labelledby="konto-3">
               <Head n={3} id="konto-3" title={t("account.invoices.title")} />
               <div className="rounded-xl border-[1.5px] border-line px-4 py-3 text-[14px] text-ink-soft">
-                <b className="text-ink">{t("account.invoices.soFar", { month: monthLabel(lang, st.month) })}</b> {t("account.invoices.totals", { net: kr(st.totals.net_minor), tax: kr(st.totals.tax_minor), gross: kr(st.totals.gross_minor) })} {acc.configured ? t("account.invoices.billedEnd") : t("account.invoices.billedEndCard")}
+                <b className="text-ink">{t("account.invoices.soFar", { month: monthLabel(lang, st.month) })}</b> {t("account.invoices.totals", { net: krSt(st.totals.net_minor), tax: krSt(st.totals.tax_minor), gross: krSt(st.totals.gross_minor) })} {acc.configured ? t("account.invoices.billedEnd") : t("account.invoices.billedEndCard")}
+                {vatNote && <span className="block mt-1.5 text-[13px] text-muted" data-testid="vat-note">{vatNote}</span>}
               </div>
               {invoices.items.length === 0 ? <p className="text-[14px] text-ink-soft">{t("account.invoices.none")}</p> : (
                 <div className="overflow-x-auto">
@@ -148,7 +160,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
                       <tr key={i.id} className="border-t-[1.5px] border-line text-[14px]">
                         <td className="py-3 pr-3 font-semibold text-ink">{monthLabel(lang, i.month)}{i.number && <span className="font-normal text-muted"> · {i.number}</span>}</td>
                         <td data-label={t("account.invoices.status")} className="py-3 pr-3 text-ink-soft">{INV_STATUS.includes(i.status) ? t(`account.invoiceStatus.${i.status}`) : i.status}</td>
-                        <td data-label={t("account.invoices.total")} className="py-3 pr-3 tabular-nums text-ink">{kr(i.gross_minor)}</td>
+                        <td data-label={t("account.invoices.total")} className="py-3 pr-3 tabular-nums text-ink">{krDa(i.gross_minor, lang, i.currency ?? st.currency ?? agr.currency)}</td>
                         <td className="py-3 text-right whitespace-nowrap">
                           {i.hosted_invoice_url && <a href={i.hosted_invoice_url} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent hover:underline">{t("account.invoices.open")}</a>}
                           {i.invoice_pdf && <a href={i.invoice_pdf} target="_blank" rel="noopener noreferrer" className="ml-3 font-semibold text-accent hover:underline">{t("account.invoices.pdf")}</a>}

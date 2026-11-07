@@ -40,9 +40,9 @@ POST /privat/calls/{task_id}/decline          → Task
 POST /privat/calls/{task_id}/retry            → Task (tilbage til awaiting_user med nyt forslag)
 POST /privat/phone/start {phone}              → {sent: true}          // SMS-kode, 6 cifre, 10 min
 POST /privat/phone/verify {code}              → Balance
-POST /privat/credits/checkout                 → {url}                 // Stripe Checkout mode=payment, 10 credits («ekstra opkald»), 29,00 kr. inkl. moms
-GET  /privat/subscription                     → Subscription          // ?session_id=cs_… synkroniserer først fra Stripe Checkout-sessionen
-POST /privat/subscription/checkout {plan, interval} → {url}           // Stripe Checkout mode=subscription
+POST /privat/credits/checkout {locale?}       → {url}                 // Stripe Checkout mode=payment, 10 credits («ekstra opkald»), 29,00 kr. inkl. moms (eller valutaens pris)
+GET  /privat/subscription                     → Subscription          // ?session_id=cs_… synkroniserer først fra Stripe Checkout-sessionen; ?currency=DKK|SEK|NOK|EUR (en kunde beholder sin)
+POST /privat/subscription/checkout {plan, interval, code?, locale?} → {url}  // Stripe Checkout mode=subscription; locale: da|en|de|es|fr|it|no|sv (docs/markets.md)
 POST /privat/subscription/portal              → {url}                 // Stripe Billing Portal; 501 not_configured uden Stripe/kunde
 GET  /privat/ledger                           → [{id, kind, amount, text, created_at}]
 POST /privat/sponsor/claim {task_id}          → Task                  // pilot: simuleret indslag, max 2/dag
@@ -84,9 +84,10 @@ Subscription = {
   entitled: bool,
   calls_quota: int, calls_used: int, calls_left: int,                 // denne kalendermåned
   people_limit: int, apps_included: bool,
-  plans: Plan[]                                                       // kataloget (frontend hardcoder ingen priser)
+  currency: "DKK"|"SEK"|"NOK"|"EUR"                                   // rækkens valuta, ellers ?currency=, ellers DKK
+  plans: Plan[]                                                       // kataloget i `currency` (frontend hardcoder ingen priser)
 }
-Plan = {key, name, monthly_minor, yearly_monthly_minor, yearly_total_minor, calls, people, apps_included, recommended: bool, features: string[]}
+Plan = {key, name, currency, monthly_minor, yearly_monthly_minor, yearly_total_minor, calls, people, apps_included, recommended: bool, features: string[]}
 POST /privat/subscription/checkout {plan: "basis"|"plus"|"familie", interval: "month"|"year"} → {url}   (422 ved ukendt plan)
 ```
 Fejlkoder: 409 `needs_plan` (add-on kræver plan; `extra {addon, plans}`), 501 `not_configured` (portal uden Stripe eller uden kunde),

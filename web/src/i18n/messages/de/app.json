@@ -129,7 +129,7 @@
     "noAppointments": "Keine anstehenden Termine.",
     "weekAppointments": "Termine der Woche ansehen",
     "campaigns": "Kampagnen",
-    "campaignsSub": "Rufen Sie Ihre eigenen Kunden an – 4 kr. pro Anruf + 2 kr. pro Gesprächsminute zzgl. MwSt.",
+    "campaignsSub": "Rufen Sie Ihre eigenen Kunden an – {pCall} pro Anruf + {pMinute} pro Gesprächsminute zzgl. MwSt.",
     "openCampaigns": "Kampagnen öffnen",
     "allActivity": "Alle Aktivitäten der letzten 14 Tage",
     "power": {
@@ -210,7 +210,7 @@
   "common": {
     "save": "Speichern",
     "saved": "Gespeichert",
-    "kr": "{amount} kr.",
+    "kr": "{amount}",
     "saving": "Wird gespeichert …",
     "cancel": "Abbrechen"
   },
@@ -274,7 +274,7 @@
       "title": "Das hat die Woche gekostet",
       "extra": "{amount} zusätzlich",
       "calls": "{n} Kampagnenanrufe",
-      "note": "300 Minuten eingehender Anrufe pro Monat sind im Abonnement enthalten. Kampagnenanrufe in dieser Woche: {n} (4 kr. pro ausgehendem Anruf + 2 kr. pro Gesprächsminute, zzgl. MwSt.).",
+      "note": "300 Minuten eingehender Anrufe pro Monat sind im Abonnement enthalten. Kampagnenanrufe in dieser Woche: {n} ({pCall} pro ausgehendem Anruf + {pMinute} pro Gesprächsminute, zzgl. MwSt.).",
       "billing": "Abonnement und Rechnungen ansehen"
     }
   },
@@ -484,7 +484,7 @@
       "consent": "Einwilligung",
       "noConsent": "Einwilligung fehlt – wird nicht angerufen",
       "attempts": "{n} Versuche",
-      "priceNote": "{price} kr. pro Anruf zzgl. MwSt. Sie zahlen nur für Anrufe, die tatsächlich rausgehen. Jederzeit stoppbar."
+      "priceNote": "{price} pro Anruf zzgl. MwSt. Sie zahlen nur für Anrufe, die tatsächlich rausgehen. Jederzeit stoppbar."
     },
     "new": {
       "title": "Neue Kampagne",
@@ -660,12 +660,12 @@
       "answer": "So antwortet er auf «{q}»"
     },
     "service": {
-      "badPrice": "Schreiben Sie den Preis mit Zahlen, z. B. «ab 1.200 kr.» oder «850 kr. pro m²».",
+      "badPrice": "Schreiben Sie den Preis mit Zahlen, z. B. «ab 1.200» oder «850 pro m²».",
       "priceLine": "Preis: {price}.",
       "add": "Leistung hinzufügen",
       "new": "Neue Leistung · 3 Felder",
       "price": "Preis (so, wie der Kunde ihn hören soll)",
-      "pricePlaceholder": "ab 1.200 kr.",
+      "pricePlaceholder": "ab 1.200",
       "notePlaceholder": "z. B.: Wir vereinbaren einen Besichtigungstermin",
       "saveAndShow": "Speichern – und mir zeigen, wie er es sagt"
     },
@@ -789,6 +789,16 @@
       "withoutCard": "Ohne Karte wird der Monat nicht abgerechnet.",
       "onlyOwner": "Nur der Inhaber kann die Zahlungskarte ändern."
     },
+    "vat": {
+      "label": "USt-IdNr.",
+      "optional": "optional",
+      "placeholder": "z. B. DE123456789",
+      "hint": "Unternehmen in einem anderen EU-Land als Dänemark erhalten die Rechnung ohne MwSt. (Reverse-Charge-Verfahren). Geben Sie die USt-IdNr. mit Ländercode ein, z. B. DE123456789.",
+      "hintOptional": "Erscheint auf der Rechnung. Norwegische Unternehmen erhalten die Rechnung ohne dänische MwSt.",
+      "required": "Geben Sie Ihre USt-IdNr. ein, bevor die Karte gespeichert wird: Unternehmen in einem anderen EU-Land als Dänemark erhalten die Rechnung ohne MwSt. und brauchen eine gültige USt-IdNr.",
+      "save": "USt-IdNr. speichern",
+      "saved": "Die USt-IdNr. ist gespeichert."
+    },
     "invoices": {
       "title": "Rechnungen",
       "soFar": "{month} bisher:",
@@ -894,7 +904,7 @@
       },
       "billing": {
         "q": "Abrechnung",
-        "a": "Es gibt ein Abonnement ab 2.495 kr. im Monat zzgl. MwSt., inkl. 300 Minuten eingehender Anrufe (danach 1,50 kr. pro Minute). Ausgehende Kampagnenanrufe kosten 4 kr. pro Anruf plus 2 kr. pro angefangener Gesprächsminute. Unter Konto sehen Sie die Vorschau des Monats."
+        "a": "Es gibt ein Abonnement ab {pMonthly} im Monat zzgl. MwSt., inkl. 300 Minuten eingehender Anrufe (danach {pExtraMinute} pro Minute). Ausgehende Kampagnenanrufe kosten {pCall} pro Anruf plus {pMinute} pro angefangener Gesprächsminute. Unter Konto sehen Sie die Vorschau des Monats."
       }
     },
     "team": {

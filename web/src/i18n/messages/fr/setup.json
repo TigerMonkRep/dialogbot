@@ -144,7 +144,7 @@
         },
         "outbound": {
           "title": "Appeler vos clients",
-          "sub": "campagnes · 4 kr. par appel HT"
+          "sub": "campagnes · {pCall} par appel HT"
         }
       },
       "langAria": "Langue",
@@ -370,7 +370,7 @@
     "turningOn": "Activation …",
     "turnOn": "Activer Dialogbot",
     "managersOnly": "Seuls les propriétaires et administrateurs peuvent l’activer.",
-    "subscriptionNote": "L’abonnement démarre à 2.495 kr./mois HT, et les appels sortants de campagne coûtent 4 kr. par appel HT.",
+    "subscriptionNote": "L’abonnement démarre à {pMonthly}/mois HT, et les appels sortants de campagne coûtent {pCall} par appel HT.",
     "confirmSubscription": "Confirmer l’abonnement",
     "findAgain": "Vous retrouverez tout via l’icône de profil → Tous les paramètres."
   },

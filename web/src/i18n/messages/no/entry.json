@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – én assistent som tar telefonen: for bedriften din og for deg",
-    "description": "Dialogbot svarer på norsk, døgnet rundt, booker timer i kalenderen din og ringer for deg når du ber om det. Du godkjenner alt før det gjelder. For bedrifter fra 2 495 DKK/md. – for deg hjemme fra 49 DKK/md.",
+    "description": "Dialogbot svarer på norsk, døgnet rundt, booker timer i kalenderen din og ringer for deg når du ber om det. Du godkjenner alt før det gjelder. For bedrifter fra {pMonthly}/md. – for deg hjemme fra {pPrivatFrom}/md.",
     "ogTitle": "Én assistent som tar telefonen – for bedriften din og for deg"
   },
   "nav": {
@@ -118,7 +118,7 @@
         }
       ],
       "cta": "For bedrifter",
-      "price": "Fra {price} DKK/md."
+      "price": "Fra {pMonthly}/md."
     },
     "private": {
       "kick": "Privat",
@@ -201,7 +201,7 @@
     "from": "fra",
     "business": {
       "name": "Bedrift",
-      "unit": "DKK/md. ekskl. mva.",
+      "unit": "{pCur}/md. ekskl. mva.",
       "points": [
         "Telefon, booking og nettchat – alt er med",
         "300 minutter innkommende samtaler i måneden",
@@ -211,7 +211,8 @@
     },
     "private": {
       "name": "Privat",
-      "unit": "DKK/md. · {days} dager gratis",
+      "unit": "{pCur}/md. · {days} dager gratis",
+      "amount": "{pPrivatFromNum}",
       "points": [
         "Lister og påminnelser – ubegrenset",
         "Peter ringer for deg innenfor rammene dine",
@@ -238,7 +239,7 @@
       },
       {
         "q": "Hva koster oppsett?",
-        "a": "Ingenting hvis dere gjør det selv – det tar omtrent 30 minutter med Peter i chatten. Vil dere at spesialistene våre skal koble på kalender, CRM eller bookingsystem, koster det {setup} DKK én gang."
+        "a": "Ingenting hvis dere gjør det selv – det tar omtrent 30 minutter med Peter i chatten. Vil dere at spesialistene våre skal koble på kalender, CRM eller bookingsystem, koster det {pSetup} én gang."
       },
       {
         "q": "Kan jeg si opp?",

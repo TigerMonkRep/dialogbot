@@ -43,7 +43,7 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     c = _campaign(api, t)
-    assert c["pricing"] == {"call_net_minor": 400, "minute_net_minor": 200, "max_attempts": 2, "max_connected_seconds": 180}  # 4 kr. per call + 2 kr. per started minute
+    assert c["pricing"] == {"currency": "DKK", "call_net_minor": 400, "minute_net_minor": 200, "max_attempts": 2, "max_connected_seconds": 180}  # 4 kr. per call + 2 kr. per started minute
     assert api.post(tok, f"/workspaces/{ws}/do-not-call", {"phone": "21222324", "reason": "Bad os lade være"}).status_code == 201
     r = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import", {"csv": CSV, "kind": "business", "consent_source": "Bad om opkald på messen, marts 2026"}).json()
     assert (r["added"], r["duplicates"], r["blocked"], r["invalid_count"]) == (1, 1, 1, 1)

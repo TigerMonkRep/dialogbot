@@ -10,18 +10,18 @@ from datetime import UTC, datetime, timedelta
 
 from app.config import get_settings
 from app.models import CreditLedger, PrivateCall, PrivateSubscription, PrivateTask
-from app.modules.billing import prices
+from app.modules.billing import markets, prices
 from app.modules.billing import stripe as stripe_api
 from app.modules.campaigns import service as campaigns
 from app.modules.privat import subscriptions
 from tests.privat_fixtures import WED_10
 from tests.test_privat import _propose, _report
 
-PLAN_KEYS = {"key", "name", "monthly_minor", "yearly_monthly_minor", "yearly_total_minor", "calls", "people",
+PLAN_KEYS = {"key", "name", "currency", "monthly_minor", "yearly_monthly_minor", "yearly_total_minor", "calls", "people",
              "apps_included", "recommended", "features"}
 SUB_KEYS = {"plan", "status", "interval", "trial_ends_at", "trial_days_left", "current_period_end",
             "cancel_at_period_end", "entitled", "calls_quota", "calls_used", "calls_left", "people_limit",
-            "apps_included", "plans"}
+            "apps_included", "currency", "plans"}
 
 
 def _stripe_event(client, event: dict, secret="whsec_privat") -> dict:
@@ -256,23 +256,42 @@ def test_addon_enable_needs_plan(api, pv):
 
 # --------------------------------------------------------------------------- Stripe
 
-def test_checkout_payload(api, pv, monkeypatch):
+def _fake_checkout(monkeypatch):
+    """A fake Stripe: tax rates (listed empty, then created as txr_<metadata>) and Checkout sessions."""
+    sent = []
+
+    def fake(m, p, d=None, **k):
+        sent.append((m, p, d))
+        if p == "/tax_rates":
+            return {"data": []} if m == "GET" else {"id": f"txr_{d['metadata']['dialogbot']}"}
+        return {"id": "cs_sub_1", "url": "https://checkout.stripe.com/c/pay/cs_sub_1"}
+
+    monkeypatch.setattr(stripe_api, "request", fake)
+    return sent
+
+
+def _sessions(sent) -> list[dict]:
+    return [d for m, p, d in sent if (m, p) == ("POST", "/checkout/sessions")]
+
+
+def test_checkout_payload(api, pv, db, monkeypatch):
     tok = pv.account("mette@testmail.dk", trial=False)  # a fresh sign-up: the trial starts here, with the card
     ws = pv.ws(tok)
     _stripe_env(monkeypatch)
-    sent = []
-    monkeypatch.setattr(stripe_api, "request", lambda m, p, d=None, **k: sent.append((m, p, d)) or
-                        {"id": "cs_sub_1", "url": "https://checkout.stripe.com/c/pay/cs_sub_1"})
+    sent = _fake_checkout(monkeypatch)
     r = api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month"})
     assert r.json() == {"url": "https://checkout.stripe.com/c/pay/cs_sub_1"}
-    m, p, d = sent[0]
-    assert (m, p) == ("POST", "/checkout/sessions") and d["mode"] == "subscription" and d["locale"] == "da"
+    d = _sessions(sent)[0]
+    assert d["mode"] == "subscription" and d["locale"] == "da"
     line = d["line_items"][0]
     assert line["price_data"] == {"currency": "dkk", "unit_amount": 9900, "tax_behavior": "inclusive",
                                   "recurring": {"interval": "month"},
                                   "product_data": {"name": "Dialogbot Privat – Plus",
-                                                   "description": "99 kr. pr. måned inkl. 25 % moms · 10 opkald om måneden"}}
-    meta = {"kind": "privat_subscription", "workspace_id": str(ws), "plan": "plus", "interval": "month"}
+                                                   "description": "99\u00a0kr. pr. måned inkl. 25 % moms · 10 opkald om måneden"}}
+    assert line["tax_rates"] == ["txr_dk_vat_2500_incl"]  # 25 % Danish VAT, included in the price
+    created = next(x for x in sent if x[:2] == ("POST", "/tax_rates"))[2]
+    assert (created["percentage"], created["inclusive"], created["country"]) == (25, True, "DK")
+    meta = {"kind": "privat_subscription", "workspace_id": str(ws), "plan": "plus", "interval": "month", "currency": "DKK"}
     assert d["metadata"] == meta and d["subscription_data"]["metadata"] == meta
     assert d["subscription_data"]["trial_period_days"] == 14  # 14 days free, the card is given now
     assert d["payment_method_collection"] == "always" and d["billing_address_collection"] == "required"
@@ -280,21 +299,169 @@ def test_checkout_payload(api, pv, monkeypatch):
     assert d["customer_email"] == "mette@testmail.dk" and d["client_reference_id"] == str(ws)
     assert d["success_url"] == "http://frontend.test/privat/konto?abonnement=ok&session_id={CHECKOUT_SESSION_ID}"
     assert d["cancel_url"] == "http://frontend.test/privat/konto?abonnement=annulleret"
+    assert db.get(PrivateSubscription, ws).currency == "DKK"
     # yearly: the yearly total, interval year. After a trial (expired or running at Stripe): never a second one.
     pv.start_trial(tok)
     pv.expire_trial(tok)
     api.post(tok, "/privat/subscription/checkout", {"plan": "familie", "interval": "year"})
-    d = sent[1][2]
+    d = _sessions(sent)[1]
     assert d["line_items"][0]["price_data"]["unit_amount"] == 162000
     assert d["line_items"][0]["price_data"]["recurring"] == {"interval": "year"}
     assert "trial_period_days" not in d["subscription_data"] and "trial_end" not in d["subscription_data"]
-    # a fixed Stripe price id replaces price_data
+    # a fixed Stripe price id replaces price_data (it is a DKK price)
     monkeypatch.setenv("PRIVAT_STRIPE_PRICE_BASIS_MONTH", "price_basis_m")
     get_settings.cache_clear()
     api.post(tok, "/privat/subscription/checkout", {"plan": "basis", "interval": "month"})
-    assert sent[2][2]["line_items"][0] == {"price": "price_basis_m", "quantity": 1}
+    assert _sessions(sent)[2]["line_items"][0] == {"price": "price_basis_m", "quantity": 1,
+                                                  "tax_rates": ["txr_dk_vat_2500_incl"]}
     assert api.post(tok, "/privat/subscription/checkout", {"plan": "gold", "interval": "month"}).status_code == 422
+    assert api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "locale": "xx"}).status_code == 422
     assert prices.PRIVAT_PLANS[0]["monthly_minor"] == 4900
+
+
+def test_checkout_in_the_visitors_currency_and_language(api, pv, db, monkeypatch):
+    _stripe_env(monkeypatch)
+    sent = _fake_checkout(monkeypatch)
+    # German: EUR, Stripe locale de, English text, 25 % Danish VAT in the default «danish» mode
+    tok = pv.account("hans@testmail.dk", trial=False)
+    ws = pv.ws(tok)
+    assert api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "year", "locale": "de"}).status_code == 200
+    d = _sessions(sent)[-1]
+    pd = d["line_items"][0]["price_data"]
+    assert (d["locale"], pd["currency"], pd["unit_amount"]) == ("de", "eur", markets.PRIVAT["EUR"]["plus"]["yearly_total"])
+    assert pd["product_data"]["description"] == "€129.48 per year (€10.79/month) incl. 25 % VAT · 10 calls a month"
+    assert d["line_items"][0]["tax_rates"] == ["txr_dk_vat_2500_incl"] and d["metadata"]["currency"] == "EUR"
+    assert db.get(PrivateSubscription, ws).currency == "EUR"
+    # the customer keeps EUR, whatever language it comes back in, and is shown EUR even if DKK is asked for
+    api.post(tok, "/privat/subscription/checkout", {"plan": "basis", "interval": "month", "locale": "da"})
+    d = _sessions(sent)[-1]
+    assert (d["locale"], d["line_items"][0]["price_data"]["currency"]) == ("da", "eur")
+    sub = api.get(tok, "/privat/subscription?currency=DKK").json()
+    assert sub["currency"] == "EUR" and {p["currency"] for p in sub["plans"]} == {"EUR"}
+    # «destination» mode: the consumer's own country's rate (Germany 19 %)
+    monkeypatch.setenv("PRIVAT_EU_VAT_MODE", "destination")
+    get_settings.cache_clear()
+    api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "de"})
+    d = _sessions(sent)[-1]
+    assert d["line_items"][0]["tax_rates"] == ["txr_de_vat_1900_incl"]
+    assert "incl. 19 % VAT" in d["line_items"][0]["price_data"]["product_data"]["description"]
+    monkeypatch.delenv("PRIVAT_EU_VAT_MODE")
+    get_settings.cache_clear()
+    # Swedish: SEK, locale sv
+    tok2 = pv.account("sven@testmail.dk", trial=False)
+    api.post(tok2, "/privat/subscription/checkout", {"plan": "familie", "interval": "month", "locale": "sv"})
+    d = _sessions(sent)[-1]
+    pd = d["line_items"][0]["price_data"]
+    assert (d["locale"], pd["currency"], pd["unit_amount"]) == ("sv", "sek", 24900)
+    assert d["line_items"][0]["tax_rates"] == ["txr_dk_vat_2500_incl"]
+    # Norwegian: NOK, Stripe's nb; no VAT before VOEC registration, 25 % Norwegian VAT after
+    tok3 = pv.account("ola@testmail.dk", trial=False)
+    api.post(tok3, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "no"})
+    d = _sessions(sent)[-1]
+    assert (d["locale"], d["line_items"][0]["price_data"]["currency"]) == ("nb", "nok")
+    assert "tax_rates" not in d["line_items"][0] and "VAT" not in d["line_items"][0]["price_data"]["product_data"]["description"]
+    monkeypatch.setenv("NO_VOEC_REGISTERED", "true")
+    get_settings.cache_clear()
+    api.post(tok3, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "no"})
+    assert _sessions(sent)[-1]["line_items"][0]["tax_rates"] == ["txr_no_vat_2500_incl"]
+    # a fixed (DKK) Stripe price id is never used for another currency
+    monkeypatch.setenv("PRIVAT_STRIPE_PRICE_PLUS_MONTH", "price_plus_m")
+    get_settings.cache_clear()
+    api.post(tok3, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "no"})
+    assert "price" not in _sessions(sent)[-1]["line_items"][0]
+
+
+def test_checkout_with_stripe_tax(api, pv, db, monkeypatch):
+    """STRIPE_TAX_ENABLED: automatic_tax and the SaaS personal-use tax code, no tax rates of ours, the address is
+    collected (and may be saved on an existing customer)."""
+    _stripe_env(monkeypatch)
+    monkeypatch.setenv("STRIPE_TAX_ENABLED", "true")
+    get_settings.cache_clear()
+    sent = _fake_checkout(monkeypatch)
+    tok = pv.account("hans@testmail.dk", trial=False)
+    ws = pv.ws(tok)
+    api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "de"})
+    d = _sessions(sent)[-1]
+    line = d["line_items"][0]
+    assert d["automatic_tax"] == {"enabled": True} and d["billing_address_collection"] == "required"
+    assert line["price_data"]["tax_behavior"] == "inclusive" and "tax_rates" not in line
+    assert line["price_data"]["product_data"]["tax_code"] == "txcd_10103000"
+    assert line["price_data"]["product_data"]["description"] == "€13.49 per month incl. VAT · 10 calls a month"
+    assert "customer_update" not in d and not [x for x in sent if x[1] == "/tax_rates"]
+    row = db.get(PrivateSubscription, ws)
+    row.stripe_customer_id = "cus_hans"
+    db.commit()
+    api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "de"})
+    d = _sessions(sent)[-1]
+    assert d["customer"] == "cus_hans" and d["customer_update"] == {"address": "auto", "name": "auto"}
+    api.post(tok, "/privat/credits/checkout", {"locale": "da"})
+    d = _sessions(sent)[-1]
+    assert d["mode"] == "payment" and d["automatic_tax"] == {"enabled": True}
+    assert d["line_items"][0]["price_data"]["product_data"]["tax_code"] == "txcd_10103000"
+    assert "tax_rates" not in d["line_items"][0] and d["billing_address_collection"] == "required"
+    assert d["line_items"][0]["price_data"]["product_data"]["description"] == "€3.99 inkl. moms"  # the row is EUR now
+
+
+def test_a_dkk_customer_stays_dkk(api, pv, db, monkeypatch):
+    _stripe_env(monkeypatch)
+    sent = _fake_checkout(monkeypatch)
+    tok = pv.account("mette@testmail.dk", trial=False)
+    ws = pv.ws(tok)
+    db.get(PrivateSubscription, ws).currency = "DKK"
+    db.commit()
+    api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "de"})
+    d = _sessions(sent)[-1]
+    assert d["line_items"][0]["price_data"]["currency"] == "dkk" and d["line_items"][0]["price_data"]["unit_amount"] == 9900
+    assert d["locale"] == "de"  # the page is still in the visitor's language
+    assert api.get(tok, "/privat/subscription?currency=EUR").json()["currency"] == "DKK"
+    api.post(tok, "/privat/credits/checkout", {"locale": "sv"})
+    pd = _sessions(sent)[-1]["line_items"][0]["price_data"]
+    assert (pd["currency"], pd["unit_amount"]) == ("dkk", 2900)
+
+
+def test_plans_and_subscription_per_currency(api, pv):
+    for cur in markets.CURRENCIES:
+        plans = subscriptions.plans_out(cur)
+        assert [p["key"] for p in plans] == ["basis", "plus", "familie"]
+        for p in plans:
+            a = markets.PRIVAT[cur][p["key"]]
+            assert p["currency"] == cur and (p["monthly_minor"], p["yearly_monthly_minor"], p["yearly_total_minor"]) == (
+                a["monthly"], a["yearly_monthly"], a["yearly_total"])
+    assert subscriptions.plans_out()[1]["monthly_minor"] == 9900  # DKK by default
+    tok = pv.account("mette@testmail.dk", trial=False)
+    assert api.get(tok, "/privat/subscription").json()["currency"] == "DKK"
+    sub = api.get(tok, "/privat/subscription?currency=eur").json()
+    assert sub["currency"] == "EUR" and sub["plans"][0]["monthly_minor"] == 649
+    assert api.get(tok, "/privat/subscription?currency=USD").status_code == 422
+
+
+def test_credit_pack_checkout_and_webhook_per_currency(api, client, pv, db, monkeypatch):
+    _stripe_env(monkeypatch)
+    sent = _fake_checkout(monkeypatch)
+    tok = pv.account("hans@testmail.dk", trial=False)
+    ws = pv.ws(tok)
+    assert api.post(tok, "/privat/credits/checkout", {"locale": "de"}).status_code == 200
+    d = _sessions(sent)[-1]
+    pd = d["line_items"][0]["price_data"]
+    assert (d["locale"], pd["currency"], pd["unit_amount"]) == ("de", "eur", 399)
+    assert pd["product_data"]["description"] == "€3.99 incl. 25 % VAT" and d["metadata"]["currency"] == "EUR"
+    assert d["line_items"][0]["tax_rates"] == ["txr_dk_vat_2500_incl"]
+    # no body: Danish, DKK, the old text
+    api.post(tok, "/privat/credits/checkout")
+    d = _sessions(sent)[-1]
+    assert d["locale"] == "da" and d["line_items"][0]["price_data"]["product_data"]["description"] == \
+        "29\u00a0kr. inkl. 25 % moms (23,20\u00a0kr. + 5,80\u00a0kr. moms)"
+    # the webhook grants a EUR pack paid with 3,99 EUR (it used to compare with 2900 øre and ignore it)
+    before = db.query(CreditLedger).filter_by(workspace_id=ws).count()
+    obj = {"id": "cs_eur_1", "mode": "payment", "payment_status": "paid", "currency": "eur", "amount_total": 399,
+           "metadata": {"kind": "privat_credits", "workspace_id": str(ws), "credits": "10", "currency": "EUR"}}
+    out = _stripe_event(client, {"id": "evt_eur_1", "type": "checkout.session.completed", "data": {"object": obj}})
+    assert out["outcome"] == "applied"
+    rows = db.query(CreditLedger).filter_by(workspace_id=ws).order_by(CreditLedger.created_at).all()
+    assert len(rows) == before + 1 and rows[-1].amount == 10 and "€3.99" in rows[-1].text
+    short = obj | {"id": "cs_eur_2", "amount_total": 300}
+    assert _stripe_event(client, {"id": "evt_eur_2", "type": "checkout.session.completed",
+                                  "data": {"object": short}})["outcome"] == "ignored"
 
 
 def test_webhook_upserts_subscription(api, client, pv, db, monkeypatch):

@@ -165,6 +165,20 @@ Alle ruter kræver `is_platform_operator` (403 `operator_only`). Kundernes `/wor
 | `GET /public/offers/{token}` | Offentlig tilbudsvisning (pris ekskl./inkl. moms, opsætning, vilkår, status). 404 ved ukendt/erstattet link. |
 | `POST /public/offers/{token}/accept` `{confirm, workspace_id?, workspace_name?}` | Kræver login og bekræftet e-mail. Opretter/bruger arbejdsrum, aftale med tilbuddets snapshot, returnerer `checkout_url` (Stripe) eller `next`. 409 `offer_not_open`/`offer_already_accepted`. |
 
+## Fakturering og markeder (valuta, moms)
+
+Regler, prisliste og moms pr. land: `docs/markets.md`. Kilde: `app/modules/billing/markets.py`.
+
+| Metode og sti | Beskrivelse |
+|---|---|
+| `GET /workspaces/{ws}/billing/account` | `billing.read`. `{configured, card, billing_email, can_manage, country, currency, vat_number, vat: {kind, rate_bp, country, note}}`. `kind`: `domestic` \| `reverse_charge` \| `outside_eu` \| `vat_number_required`. `currency` er låst, når arbejdsrummet har en aftale. |
+| `PUT /workspaces/{ws}/billing/vat-number` `{vat_number}` | `billing.manage`. Normaliserer og tjekker præfikset mod landet (EL for Grækenland); tom streng fjerner. Svarer som `GET /billing/account`. `422 invalid_vat_number`, `422 vat_number_country_mismatch`. Audit `billing.vat_number_changed`. |
+| `GET /workspaces/{ws}/billing/statement?month=` | Har nu `currency` og `vat: {kind, rate_bp, country, note, source: "estimate"}`; `totals` er i den valuta og med den sats. Linjetekster på engelsk for andre valutaer end DKK. |
+| `POST /workspaces/{ws}/billing/card/checkout` | `409 vat_number_required` for et EU-firma uden for Danmark uden momsnummer. Checkout i arbejdsrummets valuta og sprog. |
+| `GET/POST /workspaces/{ws}/billing/invoices` | Fakturaen har `currency` og `tax_source` (`stripe_tax` \| `manual` \| `null`). `409 vat_number_required` som ovenfor. |
+| `GET/POST /workspaces/{ws}/agreement` | Aftalen tager landets valuta og listepris; senere versioner beholder valutaen. Har nu også `campaign_minute` og `inbound_extra_minute`. |
+| `GET/POST /workspaces/{ws}/campaigns` | `pricing.currency` (liste og kampagne); `max_cost` i den valuta med arbejdsrummets momssats. |
+
 ## Integrationer, drift, dev
 
 | Metode og sti | Beskrivelse |

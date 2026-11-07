@@ -23,9 +23,9 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.errors import NotFound, NotImplementedYet, ValidationFailed
 from app.models import PrivateCall, PrivateProfile, PrivateSubscription, Workspace
-from app.modules.billing import prices
+from app.modules.billing import markets, prices
 from app.modules.billing import stripe as stripe_api
-from app.modules.privat import branding, rules
+from app.modules.privat import branding, market, rules
 
 KIND = "privat_subscription"
 PLANS: dict[str, dict] = {p["key"]: dict(p) for p in prices.PRIVAT_PLANS}
@@ -44,16 +44,18 @@ FEATURES = {
 }
 
 
-def plan_out(key: str) -> dict:
+def plan_out(key: str, currency: str = "DKK") -> dict:
+    """One plan with its amounts (incl. VAT, minor units) in `currency` (markets.PRIVAT)."""
     p = PLANS[key]
-    return {"key": p["key"], "name": p["name"], "monthly_minor": p["monthly_minor"],
-            "yearly_monthly_minor": p["yearly_monthly_minor"], "yearly_total_minor": p["yearly_total_minor"],
+    a = markets.privat_plan(currency, key)
+    return {"key": p["key"], "name": p["name"], "currency": currency, "monthly_minor": a["monthly"],
+            "yearly_monthly_minor": a["yearly_monthly"], "yearly_total_minor": a["yearly_total"],
             "calls": p["calls"], "people": p["people"], "apps_included": p["apps_included"],
             "recommended": p["recommended"], "features": list(FEATURES[key])}
 
 
-def plans_out() -> list[dict]:
-    return [plan_out(k) for k in PLANS]
+def plans_out(currency: str = "DKK") -> list[dict]:
+    return [plan_out(k, currency) for k in PLANS]
 
 
 # --------------------------------------------------------------------------- the row
@@ -158,8 +160,17 @@ def entitlements(db: OrmSession, ws_id: uuid.UUID) -> dict:
     }
 
 
-def subscription_out(db: OrmSession, ws_id: uuid.UUID) -> dict:
-    return entitlements(db, ws_id) | {"plans": plans_out()}
+def display_currency(row: PrivateSubscription | None, asked: str | None = None) -> str:
+    """The row's currency if set (a customer keeps theirs), else the one asked for (?currency=), else DKK."""
+    if row is not None and row.currency in markets.CURRENCIES:
+        return row.currency
+    return asked if asked in markets.CURRENCIES else "DKK"
+
+
+def subscription_out(db: OrmSession, ws_id: uuid.UUID, currency: str | None = None) -> dict:
+    ent = entitlements(db, ws_id)
+    cur = display_currency(get(db, ws_id), currency)
+    return ent | {"currency": cur, "plans": plans_out(cur)}
 
 
 def plan_label(ent: dict) -> str:
@@ -178,10 +189,22 @@ def price_id(plan: str, interval: str) -> str | None:
     return getattr(get_settings(), f"privat_stripe_price_{plan}_{interval}", None) or None
 
 
-def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None = None) -> str:
+def _line_text(p: dict, interval: str, currency: str, locale: str, rate_bp: int | None) -> str:
+    """The product description on the Checkout page, in the visitor's language (Danish for da, English otherwise)."""
+    a = markets.privat_plan(currency, p["key"])
+    amount = a["monthly"] if interval == "month" else a["yearly_total"]
+    if market.norm_locale(locale) == "da":
+        per = "pr. måned" if interval == "month" else f"pr. år ({markets.fmt(a['yearly_monthly'], currency)}/md.)"
+        return f"{markets.fmt(amount, currency)} {per}{market.vat_text(rate_bp, locale)} · {p['calls']} opkald om måneden"
+    per = "per month" if interval == "month" else f"per year ({markets.fmt(a['yearly_monthly'], currency)}/month)"
+    return f"{markets.fmt(amount, currency)} {per}{market.vat_text(rate_bp, locale)} · {p['calls']} calls a month"
+
+
+def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None = None, locale: str | None = None) -> str:
     """A Stripe Checkout page (mode=subscription). The subscription itself arrives with the webhook / sync.
     `code`: a discount code the customer typed (or ?kode=) – applied on the Stripe page; without one the page shows
-    Stripe's own field for a code."""
+    Stripe's own field for a code. `locale` (da, en, de, es, fr, it, no, sv): the page's language and, for a customer
+    without a currency yet, the currency (privat/market.py); the row keeps that currency from now on."""
     from app.modules.billing import discounts
 
     if plan not in PLANS:
@@ -192,16 +215,20 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
     base = s.frontend_base_url.rstrip("/")
     p = PLANS[plan]
     row = ensure(db, ctx.ws_id)
-    meta = {"kind": KIND, "workspace_id": str(ctx.ws_id), "plan": plan, "interval": interval}
-    if pid := price_id(plan, interval):
+    currency = market.currency(row.currency, locale)
+    if row.currency != currency:
+        row.currency = currency  # a customer keeps the currency of its first Checkout
+    meta = {"kind": KIND, "workspace_id": str(ctx.ws_id), "plan": plan, "interval": interval, "currency": currency}
+    if currency == "DKK" and (pid := price_id(plan, interval)):  # the fixed Stripe prices are DKK prices
         line = {"price": pid, "quantity": 1}
     else:
-        amount = p["monthly_minor"] if interval == "month" else p["yearly_total_minor"]
-        per = "pr. måned" if interval == "month" else f"pr. år ({prices.kr(p['yearly_monthly_minor'])} kr./md.)"
+        a = markets.privat_plan(currency, plan)
+        amount = a["monthly"] if interval == "month" else a["yearly_total"]
         line = {"quantity": 1, "price_data": {
-            "currency": "dkk", "unit_amount": amount, "tax_behavior": "inclusive", "recurring": {"interval": interval},
+            "currency": currency.lower(), "unit_amount": amount, "tax_behavior": "inclusive",
+            "recurring": {"interval": interval},
             "product_data": {"name": f"Dialogbot Privat – {p['name']}",
-                             "description": f"{prices.kr(amount)} kr. {per} inkl. 25 % moms · {p['calls']} opkald om måneden"}}}
+                             "description": _line_text(p, interval, currency, locale, market.text_rate(locale))}}}
     sub_data: dict = {"metadata": meta}
     if trial_available(row):
         # «Prøv gratis i 14 dage»: the card is given now, nothing is charged until the trial is over, and Stripe
@@ -211,7 +238,8 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
             and row.trial_ends_at - rules.now() > timedelta(hours=48):
         sub_data["trial_end"] = int(row.trial_ends_at.timestamp())  # an old card-less trial keeps its remaining days
     payload: dict = {
-        "mode": "subscription", "line_items": [line], "locale": "da", "client_reference_id": str(ctx.ws_id),
+        "mode": "subscription", "line_items": [line], "locale": market.stripe_locale(locale),
+        "client_reference_id": str(ctx.ws_id),
         "metadata": meta, "subscription_data": sub_data, "payment_method_collection": "always",
         # Name, address and phone are collected by Stripe on the same page (they are never stored by us).
         "billing_address_collection": "required", "phone_number_collection": {"enabled": True},
@@ -221,6 +249,7 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
         payload["customer"] = row.stripe_customer_id
     else:
         payload["customer_email"] = ctx.user.email
+    market.apply_tax(payload, line, locale)
     applied = discounts.privat_checkout_discounts(db, code)
     if applied:
         payload["discounts"] = applied  # Stripe allows either a fixed discount or its code field, not both
@@ -302,6 +331,9 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
         row.trial_ends_at = _ts(obj.get("trial_end")) or row.trial_ends_at or (rules.now() + timedelta(days=prices.PRIVAT_TRIAL_DAYS))
     row.plan = plan or row.plan
     row.interval = interval or row.interval
+    cur = str(obj.get("currency") or meta.get("currency") or "").upper()
+    if cur in markets.CURRENCIES:
+        row.currency = cur  # what Stripe actually charges in
     cust = obj.get("customer")
     if isinstance(cust, dict):
         cust = cust.get("id")

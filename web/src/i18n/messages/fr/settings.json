@@ -59,7 +59,7 @@
       "title": "Campagnes",
       "sub": "Appelez vos propres clients",
       "outbound": "Appels sortants",
-      "chosen": "Choisi – 4 kr. par appel + 2 kr. par minute HT",
+      "chosen": "Choisi – {pCall} par appel + {pMinute} par minute HT",
       "notChosen": "Non choisi"
     },
     "systems": {
@@ -77,7 +77,7 @@
       "team": "Équipe",
       "teamValue": "{n} avec accès",
       "billing": "Abonnement et factures",
-      "billingValue": "À partir de 2.495 kr./mois HT"
+      "billingValue": "À partir de {pMonthly}/mois HT"
     },
     "tech": {
       "title": "Technique",

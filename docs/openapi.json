@@ -1334,6 +1334,25 @@
         "title": "CreateIn",
         "type": "object"
       },
+      "CreditsCheckoutIn": {
+        "properties": {
+          "locale": {
+            "anyOf": [
+              {
+                "pattern": "^(da|en|de|es|fr|it|no|sv)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "sidens sprog: Checkout-sprog og valuta (kundens abonnementsvaluta vinder)",
+            "title": "Locale"
+          }
+        },
+        "title": "CreditsCheckoutIn",
+        "type": "object"
+      },
       "DataRequestIn": {
         "properties": {
           "confirm": {
@@ -4532,6 +4551,19 @@
             "title": "Interval",
             "type": "string"
           },
+          "locale": {
+            "anyOf": [
+              {
+                "pattern": "^(da|en|de|es|fr|it|no|sv)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "sidens sprog (da, en, de, es, fr, it, no, sv): Checkout-sprog og – for en kunde uden valuta endnu – valutaen. Tom = da.",
+            "title": "Locale"
+          },
           "plan": {
             "pattern": "^(basis|plus|familie)$",
             "title": "Plan",
@@ -5086,6 +5118,21 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "VatNumberIn": {
+        "properties": {
+          "vat_number": {
+            "description": "Momsnummer, fx SE556677889901 eller DE123456789. Tom = fjern.",
+            "maxLength": 40,
+            "title": "Vat Number",
+            "type": "string"
+          }
+        },
+        "required": [
+          "vat_number"
+        ],
+        "title": "VatNumberIn",
         "type": "object"
       },
       "VerifyIn": {
@@ -18789,7 +18836,7 @@
     },
     "/api/v1/privat/credits/checkout": {
       "post": {
-        "description": "Stripe Checkout (mode=payment): 10 credits, 29 kr. incl. moms. Credits arrive with the webhook.",
+        "description": "Stripe Checkout (mode=payment): 10 credits, 29 kr. incl. moms (or the currency's price, markets.PRIVAT_CREDIT_PACK).\nCredits arrive with the webhook.",
         "operationId": "credits_checkout_api_v1_privat_credits_checkout_post",
         "parameters": [
           {
@@ -18809,6 +18856,23 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/CreditsCheckoutIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "content": {
@@ -20998,7 +21062,7 @@
     },
     "/api/v1/privat/subscription": {
       "get": {
-        "description": "The trial / plan and this month's call quota. With ?session_id= (back from Stripe Checkout) the session is read\nfrom Stripe first, so the page is right before the webhook lands.",
+        "description": "The trial / plan and this month's call quota. With ?session_id= (back from Stripe Checkout) the session is read\nfrom Stripe first, so the page is right before the webhook lands. `currency` and `plans` are in the customer's\ncurrency if it has one, else ?currency=, else DKK.",
         "operationId": "subscription_api_v1_privat_subscription_get",
         "parameters": [
           {
@@ -21016,6 +21080,25 @@
                 }
               ],
               "title": "Session Id"
+            }
+          },
+          {
+            "description": "DKK, SEK, NOK eller EUR: planernes priser for en kunde uden valuta endnu (en kunde beholder sin)",
+            "in": "query",
+            "name": "currency",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 3,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "DKK, SEK, NOK eller EUR: planernes priser for en kunde uden valuta endnu (en kunde beholder sin)",
+              "title": "Currency"
             }
           },
           {
@@ -25010,6 +25093,7 @@
     },
     "/api/v1/workspaces/{workspace_id}/billing/account": {
       "get": {
+        "description": "Card, billing e-mail and the market: country, currency (locked once there is an agreement), VAT number and the\nVAT the invoices carry ({kind: domestic|reverse_charge|outside_eu|vat_number_required, rate_bp, country, note}).",
         "operationId": "get_account_api_v1_workspaces__workspace_id__billing_account_get",
         "parameters": [
           {
@@ -25441,6 +25525,74 @@
           }
         },
         "summary": "Get Statement",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/billing/vat-number": {
+      "put": {
+        "description": "The company's VAT number (normalised; it must fit the company's country – EL for Greece). Empty clears it. An EU\ncompany outside Denmark is invoiced without VAT (reverse charge) only with one. The Stripe customer's tax id\nfollows it.",
+        "operationId": "put_vat_number_api_v1_workspaces__workspace_id__billing_vat_number_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VatNumberIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Vat Number",
         "tags": [
           "billing"
         ]

@@ -13,7 +13,8 @@ import { DayPage } from "./day";
 import { Ico } from "./icons";
 import { Sheets } from "./sheets";
 import { InstallCapture } from "@/components/install-app";
-import { registerSw } from "@/lib/privat/push";
+import { SwUpdate } from "@/components/sw-update";
+import { StandaloneBack, StandaloneChrome } from "@/components/standalone";
 import { PrivatProvider, initials, usePlan, usePrivat, type Screen, type Session } from "./store";
 import { TaskDetail, TasksPane } from "./tasks";
 
@@ -32,8 +33,7 @@ function Named({ children }: { children: React.ReactNode }) {
 }
 
 function Shell() {
-  // The push service worker (public/sw.js) is registered for the /privat pages; asking for permission comes later.
-  useEffect(() => { void registerSw(); }, []);
+  // public/sw.js (push + app shell, scope /privat/) is registered by <SwUpdate>; asking for push permission comes later.
   const t = useT("privat");
   const { screen, routeTaskId, busy, mode } = usePrivat();
   // Min dag is its own page. Every other screen keeps the conversation on a wide screen: Samtale on the left and
@@ -69,6 +69,8 @@ function Shell() {
       )}
       <Tabs />
       <Sheets />
+      <StandaloneChrome />
+      <SwUpdate audience="privat" />
     </div>
   );
 }
@@ -101,6 +103,7 @@ function Header() {
   const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialBadgeShort", { plan: p.rightsName, n: p.trialDays }) : p.entitled ? p.rightsName : balance ? (p.status === "none" ? t("header.noPlanBadgeShort") : t("header.credits", { n: balance.credits })) : "";
   return (
     <header className="flex-none flex items-center gap-2.5 px-4 py-3 min-h-16 border-b-2 border-ink bg-paper pt-safe">
+      <StandaloneBack roots={["/privat/dag", "/privat/samtale", "/privat/opgaver", "/privat/butik", "/privat/folk", "/privat/konto"]} />
       <Link href="/privat/dag" aria-label={t("header.homeAria")} className="flex items-center gap-2.5 min-w-0 min-h-[44px]">
         <LogoMark size={36} />
         <span className="font-display font-extrabold text-[22px] tracking-[-0.3px] hidden min-[380px]:inline">Dialogbot</span>

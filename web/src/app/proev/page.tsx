@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SiteChrome } from "@/components/site-chrome";
+import { InstallCapture } from "@/components/install-app";
 import { ProevChat } from "./proev-chat";
 import { getT } from "@/i18n/server";
 
@@ -28,6 +29,8 @@ export default async function Page() {
         </div>
         <ProevChat />
       </div>
+      {/* Catches the install prompt on load, so the install step after the demo call is one tap. */}
+      <InstallCapture />
     </SiteChrome>
   );
 }

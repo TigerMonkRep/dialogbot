@@ -21,12 +21,13 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: { type: "website", locale: OG_LOCALE[locale], siteName: SITE_NAME, url: SITE_URL, title, description },
     twitter: { card: "summary_large_image", title, description },
     verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
-    appleWebApp: { title: "Dialogbot", capable: true, statusBarStyle: "black-translucent" },
+    appleWebApp: { title: "Dialogbot", capable: true, statusBarStyle: "default" },
     manifest: "/manifest.webmanifest",
   };
 }
 
-export const viewport: Viewport = { themeColor: "#2456F6" };
+// viewportFit: cover makes env(safe-area-inset-*) real in the installed app (pt-safe/pb-safe in the shells).
+export const viewport: Viewport = { themeColor: "#2456F6", viewportFit: "cover" };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();

@@ -8,6 +8,8 @@ import { AssistantDock } from "./assistant";
 import { getT } from "@/i18n/server";
 import { Avatar, BottomTabs, TabNav, ViewAsBanner, WorkspaceChip, type NavItem } from "./shell.client";
 import { InstallCapture } from "@/components/install-app";
+import { SwUpdate } from "@/components/sw-update";
+import { StandaloneBack, StandaloneChrome } from "@/components/standalone";
 
 type Ws = { id: string; name: string; role: string; product_intent: string };
 type Me = { display_name: string; email: string; email_verified: boolean; is_platform_operator?: boolean };
@@ -66,6 +68,7 @@ async function Shell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-30 bg-paper border-b-2 border-ink pt-safe">
         <div className="max-w-[1280px] mx-auto px-4 md:px-6 min-h-16 flex items-center gap-3 md:gap-6">
           <div className="flex items-center gap-3 min-w-0">
+            <StandaloneBack roots={MAIN.flatMap((it) => [it.href, ...(it.also ?? [])]).concat(["/app/konto", "/app/indstillinger", "/app/hjaelp", "/app/leads"])} />
             <Link href="/app" className="flex items-center gap-2.5 shrink-0" aria-label={t("shell.homeAria")}>
               <LogoMark size={32} />
               <span className="font-display font-extrabold text-[20px] tracking-[-0.3px] text-ink">Dialogbot</span>
@@ -99,6 +102,9 @@ async function Shell({ children }: { children: React.ReactNode }) {
       </footer>
       <BottomTabs items={nav} />
       <InstallCapture />
+      <StandaloneChrome />
+      {/* Registers public/sw-app.js (scope /app/) and shows «Ny version klar» when a new build is waiting. */}
+      <SwUpdate audience="erhverv" />
     </div>
   );
 }

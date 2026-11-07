@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
+import { PushAsk } from "@/components/push-ask";
 import { Icon } from "@/components/ui";
 import { AutoRefresh, CreateLeadButton, ReplyBox, ResolveButton } from "./client";
 import { getLocale, getT } from "@/i18n/server";
@@ -92,6 +93,8 @@ export async function OpkaldView({ selected, f = "all", q = "", days = 30 }: { s
           <label htmlFor="opkald-q" className="sr-only">{t("calls.search")}</label>
           <input id="opkald-q" name="q" defaultValue={q} placeholder={t("calls.search")} className="w-full min-h-[46px] px-4 rounded-xl bg-paper border-2 border-ink text-[15px] text-ink placeholder:text-muted focus:outline-none focus:ring-[3px] focus:ring-accent focus:ring-offset-2" />
         </form>
+        {/* First visit to Opkald: «Skal jeg give dig besked på telefonen?» – asked here, never on login. */}
+        <PushAsk workspaceId={ws.id} />
         <div className="rounded-2xl border-2 border-ink bg-paper p-3 md:p-4 flex flex-col gap-4">
           {feed.items.length === 0 ? (
             <p className="px-3 py-6 text-[15px] text-ink-soft">{q || f !== "all" ? t("calls.noMatch") : t("calls.empty")}</p>

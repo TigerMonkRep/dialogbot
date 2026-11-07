@@ -166,6 +166,20 @@
 @utility border-ink { border-color: var(--color-ink); }
 @utility eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
 
+/* Accent kit (components/mark.tsx): marker / thin line / ring behind a headline word. The span opens its own stacking
+   context (z-index: 0) and the SVG sits at z-index: -1 – under the glyphs, over the section background. Em-based,
+   so the mark scales with the font. No animation. */
+.mk { position: relative; display: inline-block; white-space: nowrap; z-index: 0; }
+.mk > svg { position: absolute; z-index: -1; pointer-events: none; display: block; }
+.mk-marker > svg { left: -0.06em; width: calc(100% + 0.14em); bottom: 0.1em; height: 0.34em; opacity: 0.85; transform: rotate(-2deg); }
+.mk-underline > svg { position: static; width: 100%; height: 6px; margin-top: 2px; transform: rotate(-0.8deg); transform-origin: left; }
+.mk-ring > svg { left: -0.3em; top: -0.22em; width: calc(100% + 0.6em); height: calc(100% + 0.36em); transform: rotate(-6deg); }
+/* A longer phrase (`long`) may wrap on a phone; the mark is then dropped so the headline never overflows. */
+@media (max-width: 639.98px) {
+  .mk-long { white-space: normal; }
+  .mk-long > svg { display: none; }
+}
+
 html { background: var(--color-paper); color: var(--color-ink); }
 body { font-family: var(--font-body); min-height: 100dvh; }
 @layer base { h1, h2, h3 { font-family: var(--font-display); font-weight: 800; } }

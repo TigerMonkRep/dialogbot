@@ -1,21 +1,23 @@
 from __future__ import annotations
 
+import logging
 import re
-from datetime import date
+from datetime import UTC, date, datetime
 
 from fastapi import APIRouter, Depends, Query, Request, Response
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.audit import record_audit
 from app.core.auth import WorkspaceContext, require_capability
-from app.core.errors import Conflict, ValidationFailed
+from app.core.errors import ApiError, Conflict, ValidationFailed
 from app.db import get_db
-from app.modules.billing import stripe
+from app.modules.billing import customer_market, stripe
 from app.modules.billing.statement import statement
 from app.modules.reports.service import local_today, tz_of
 
+log = logging.getLogger(__name__)
 router = APIRouter(prefix="/workspaces/{workspace_id}/billing", tags=["billing"])
 
 
@@ -41,14 +43,50 @@ def _month(value: str) -> date:
     return date(int(value[:4]), int(value[5:]), 1)
 
 
-@router.get("/account")
-def get_account(ctx: WorkspaceContext = Depends(require_capability("billing.read")), db: OrmSession = Depends(get_db)):
+def _account_out(db: OrmSession, ctx: WorkspaceContext) -> dict:
     from app.models import BillingAccount
 
     a = db.get(BillingAccount, ctx.workspace.id)
     card = {"brand": a.card_brand, "last4": a.card_last4, "exp": a.card_exp} if a and a.payment_method_id else None
     return {"configured": stripe.configured(), "card": card, "billing_email": a.billing_email if a else None,
-            "can_manage": ctx.can("billing.manage")}
+            "can_manage": ctx.can("billing.manage")} | customer_market.account_market(db, ctx.workspace.id)
+
+
+@router.get("/account")
+def get_account(ctx: WorkspaceContext = Depends(require_capability("billing.read")), db: OrmSession = Depends(get_db)):
+    """Card, billing e-mail and the market: country, currency (locked once there is an agreement), VAT number and the
+    VAT the invoices carry ({kind: domestic|reverse_charge|outside_eu|vat_number_required, rate_bp, country, note})."""
+    return _account_out(db, ctx)
+
+
+class VatNumberIn(BaseModel):
+    vat_number: str = Field(max_length=40, description="Momsnummer, fx SE556677889901 eller DE123456789. Tom = fjern.")
+
+
+@router.put("/vat-number")
+def put_vat_number(body: VatNumberIn, request: Request,
+                   ctx: WorkspaceContext = Depends(require_capability("billing.manage")), db: OrmSession = Depends(get_db)):
+    """The company's VAT number (normalised; it must fit the company's country – EL for Greece). Empty clears it. An EU
+    company outside Denmark is invoiced without VAT (reverse charge) only with one. The Stripe customer's tax id
+    follows it."""
+    country = customer_market.country_of(db, ctx.workspace.id)
+    number = customer_market.normalize_vat_number(body.vat_number, country)
+    a = stripe.account(db, ctx.workspace.id, lock=True)
+    before = a.vat_number
+    if number != before:
+        a.vat_number = number
+        a.updated_at = datetime.now(UTC)
+        record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="billing.vat_number_changed",
+                     object_type="billing_account", object_id=ctx.workspace.id, before={"vat_number": before},
+                     after={"vat_number": number}, request_id=request.state.request_id)
+        db.flush()
+        if a.stripe_customer_id and stripe.configured():
+            try:
+                stripe.sync_customer(db, a)
+            except ApiError:  # the number is saved; the customer is synced again before the next invoice / card
+                log.warning("billing: could not sync the Stripe tax id for %s", ctx.workspace.id, exc_info=True)
+    db.commit()
+    return _account_out(db, ctx)
 
 
 @router.post("/card/checkout")

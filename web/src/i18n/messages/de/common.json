@@ -97,6 +97,9 @@
       "erhvervInstall": "Dialogbot – die App auf den Startbildschirm legen",
       "privatDay": "Dialogbot Privat – Mein Tag",
       "privatInstall": "Dialogbot Privat – die App auf den Startbildschirm legen"
-    }
+    },
+    "pushOff": "Benachrichtigungen sind auf diesem Gerät ausgeschaltet.",
+    "pushDisable": "Benachrichtigungen ausschalten",
+    "pushIosHome": "Auf dem iPhone funktionieren Benachrichtigungen nur aus der App auf dem Startbildschirm – leg sie zuerst dorthin (Download app oben)."
   }
 }

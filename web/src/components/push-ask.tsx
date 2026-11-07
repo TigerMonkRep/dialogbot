@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useT } from "@/i18n/client";
-import { alreadyAsked, currentPushState, enablePush, markAsked, type PushState } from "@/lib/push";
+import { alreadyAsked, currentPushState, disablePush, enablePush, markAsked, type PushState } from "@/lib/push";
 
 /** «Skal jeg give dig besked på telefonen?» – the permission card on the first visit to Opkald (never on login).
  *  One tap asks the browser; «Ikke nu» hides it for good on this device (Konto can still turn notifications on).
@@ -53,5 +53,35 @@ export function PushAsk({ workspaceId }: { workspaceId: string }) {
         <button type="button" onClick={later} className="inline-flex items-center justify-center min-h-[44px] px-4 rounded-xl border-2 border-ink bg-paper text-ink text-[15px] font-semibold hover:bg-panel">{t("pwa.pushLater")}</button>
       </div>
     </section>
+  );
+}
+
+/** Konto → «Dialogbot på din telefon»: the state of notifications on this device and the one button that flips it.
+ *  This is where someone who tapped «Ikke nu» on Opkald turns them on later. */
+export function PushSettings({ workspaceId }: { workspaceId: string }) {
+  const t = useT("common");
+  const [state, setState] = useState<PushState | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(false);
+  useEffect(() => { currentPushState().then(setState); }, []);
+  if (!state || state === "unsupported") return null;
+  const flip = async () => {
+    setBusy(true); setError(false);
+    try {
+      if (state === "on") { await disablePush(); setState("default"); }
+      else setState(await enablePush(workspaceId));
+    } catch { setError(true); } finally { setBusy(false); }
+  };
+  const label = state === "on" ? t("pwa.pushOn") : state === "denied" ? t("pwa.pushDenied") : state === "ios-home" ? t("pwa.pushIosHome") : t("pwa.pushOff");
+  return (
+    <div className="flex flex-col gap-2" data-testid="push-settings" data-push-state={state}>
+      <p className="m-0 text-[14px] text-ink-soft">{label}</p>
+      {error && <p className="m-0 text-[13px] text-danger" role="alert">{t("pwa.pushFailed")}</p>}
+      {(state === "on" || state === "default") && (
+        <button type="button" onClick={flip} disabled={busy} className={`self-start inline-flex items-center justify-center min-h-[44px] px-4 rounded-full border-2 border-ink text-[14px] font-semibold ${state === "on" ? "bg-paper text-ink hover:bg-panel" : "bg-accent text-on-accent hover:bg-accent-deep"} disabled:opacity-60`}>
+          {busy ? t("pwa.pushBusy") : state === "on" ? t("pwa.pushDisable") : t("pwa.pushEnable")}
+        </button>
+      )}
+    </div>
   );
 }

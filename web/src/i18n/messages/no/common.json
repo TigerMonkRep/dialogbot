@@ -97,6 +97,9 @@
       "erhvervInstall": "Dialogbot – legg appen på hjemskjermen",
       "privatDay": "Dialogbot Privat – Min dag",
       "privatInstall": "Dialogbot Privat – legg appen på hjemskjermen"
-    }
+    },
+    "pushOff": "Varsler er slått av på denne enheten.",
+    "pushDisable": "Slå av varsler",
+    "pushIosHome": "På iPhone virker varsler bare fra appen på hjemskjermen – legg den der først (Download app ovenfor)."
   }
 }

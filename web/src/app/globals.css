@@ -218,11 +218,11 @@ body { overscroll-behavior: none; }
 
 /* PWA: installed app (display-mode: standalone) on an /app or /privat route – <StandaloneChrome> sets
    html[data-standalone]. The public header/footer (components/site-chrome.tsx: a plain <header> right before
-   main#main and the <footer class="mt-auto"> right after it) are hidden there; the two app shells keep their own
-   headers (sticky / inside the h-dvh column) and tabs. */
+   main#main and the <footer> right after it) are hidden there; the two app shells keep their own headers (sticky /
+   inside the h-dvh column), tabs and the Erhverv desktop footer (hidden sm:block). */
 @media (display-mode: standalone) {
   html[data-standalone] header:not(.sticky):has(+ main#main),
-  html[data-standalone] main#main + footer.mt-auto { display: none; }
+  html[data-standalone] main#main + footer:not(.sm\:block) { display: none; }
 }
 
 /* «Ny version klar» toast: slides up; stays put when motion is reduced. */

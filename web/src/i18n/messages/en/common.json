@@ -97,6 +97,9 @@
       "erhvervInstall": "Dialogbot – put the app on your home screen",
       "privatDay": "Dialogbot Privat – My day",
       "privatInstall": "Dialogbot Privat – put the app on your home screen"
-    }
+    },
+    "pushOff": "Notifications are off on this device.",
+    "pushDisable": "Turn off notifications",
+    "pushIosHome": "On iPhone, notifications only work from the home-screen app – put it there first (Download app above)."
   }
 }

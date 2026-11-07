@@ -97,6 +97,9 @@
       "erhvervInstall": "Dialogbot – lägg appen på hemskärmen",
       "privatDay": "Dialogbot Privat – Min dag",
       "privatInstall": "Dialogbot Privat – lägg appen på hemskärmen"
-    }
+    },
+    "pushOff": "Aviseringar är av på den här enheten.",
+    "pushDisable": "Stäng av aviseringar",
+    "pushIosHome": "På iPhone fungerar aviseringar bara från appen på hemskärmen – lägg den där först (Download app ovan)."
   }
 }

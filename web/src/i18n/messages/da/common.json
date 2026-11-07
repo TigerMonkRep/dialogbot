@@ -97,6 +97,9 @@
       "erhvervInstall": "Dialogbot – læg appen på hjemmeskærmen",
       "privatDay": "Dialogbot Privat – Min dag",
       "privatInstall": "Dialogbot Privat – læg appen på hjemmeskærmen"
-    }
+    },
+    "pushOff": "Notifikationer er slået fra på denne enhed.",
+    "pushDisable": "Slå notifikationer fra",
+    "pushIosHome": "På iPhone virker notifikationer kun fra appen på hjemmeskærmen – læg den dér først (Download app ovenfor)."
   }
 }

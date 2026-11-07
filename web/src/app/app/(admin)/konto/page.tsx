@@ -4,6 +4,7 @@ import { requireWorkspace } from "@/lib/workspace.server";
 import { kr as krDa } from "../leads/format";
 import { AddCard, ConfirmSubscription, DiscountCode, InvoiceMonth, ReferralCode } from "./billing";
 import { InstallApp, InstallCapture } from "@/components/install-app";
+import { PushSettings } from "@/components/push-ask";
 import { InvitationRow, InviteForm, MemberRow } from "./team";
 import { LogoutButton } from "./logout";
 import { LanguageSection } from "./language";
@@ -188,6 +189,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
         <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">
           <span className="eyebrow">{t("account.install.title")}</span>
           <InstallApp audience="erhverv" />
+          <PushSettings workspaceId={ws.id} />
         </div>
         <LanguageSection />
         <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">

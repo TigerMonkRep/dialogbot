@@ -329,7 +329,8 @@ class Settings(BaseSettings):
                 raise ValueError(f"SECRET_KEY (>=32 chars) is required when APP_ENV={self.app_env}")
             if self.enable_dev_tools:
                 raise ValueError(f"ENABLE_DEV_TOOLS must be false when APP_ENV={self.app_env}")
-        if self.app_env == "prod" and self.email_adapter == "simulated":
+        if self.app_env == "prod" and self.email_adapter == "simulated" and self.app_surface != "public":
+            # The public API process sends no mail (deliveries run in the worker), so it needs no mail adapter.
             raise ValueError("EMAIL_ADAPTER=simulated is not allowed in prod; prod cannot claim mail delivery")
         if self.email_adapter == "resend" and not self.resend_api_key:
             raise ValueError("EMAIL_ADAPTER=resend requires RESEND_API_KEY")

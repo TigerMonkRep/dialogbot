@@ -112,6 +112,10 @@
 | `PRIVAT_SHORT_URL_BASE`, `PRIVAT_GROUP_URL_BASE` | nej | API | — | Korte links i SMS-tekster. Standard `https://dialogbot.app/i/` og `/g/`. |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | ved push | API, worker | `python -m scripts.generate_vapid` | Web Push for Dialogbot Privat. Privatnøglen er en hemmelighed – aldrig i git. Uden nøglerne går beskeder som e-mail. Skifter man nøglepar, skal alle browsere abonnere igen. |
 | `VAPID_SUBJECT` | nej | API, worker | — | `mailto:`/`https:`-kontakt til push-tjenesterne. Standard `mailto:info@dialogbot.dk`. |
+| `APP_SURFACE` | nej | API | — | `internal` (kun `/api/v1`), `public` (kun den offentlige API på `/v1`, tjenesten `dialogbot-public-api`) eller `all` (standard; dev og tests). Se `docs/public-api.md`. |
+| `PUBLIC_API_BASE_URL` | nej | public API | — | Standard `https://api.dialogbot.app`; bruges i OpenAPI-dokumentets `servers`. |
+| `PUBLIC_API_READ_RPM`, `PUBLIC_API_WRITE_RPM` | nej | public API | — | Rate limit pr. API-nøgle pr. minut; 600 / 60. |
+| `PUBLIC_API_WEBHOOK_DISABLE_AFTER` | nej | worker | — | Et webhook-endpoint slås fra efter så mange fejlede leveringer i træk; 20. |
 | `SEED_DEMO_PASSWORD` | nej | manuel kørsel (kun dev/staging) | — | Seed nægter `prod`. |
 | `TEST_DATABASE_URL` | CI/lokal test | pytest | — | Separat database; skemaet droppes ved hver kørsel. |
 

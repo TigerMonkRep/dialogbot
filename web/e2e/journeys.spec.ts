@@ -13,11 +13,27 @@ test("1 · A01→A03→A06: tilmelding med bevaret hensigt, bekræftelse og før
   await expect(page.getByText("Koden er ikke gyldig.", { exact: false })).toBeVisible();
   await page.getByLabel("Invitationskode").fill(PREVIEW_CODE.toLowerCase());
   await page.getByRole("button", { name: "Lås op og se forsiden" }).click();
-  // Indgang: two doors – hear it (/proev) or read how it is built (/byggevejledning).
-  await expect(page.getByRole("heading", { name: "Dialogbot tager telefonen, når I ikke kan." })).toBeVisible();
+  // Indgang ("/"): one assistant, two doors – Erhverv (/erhverv) or Privat (/privat). No audience cookie yet, so the
+  // entry page is shown; opening a door remembers it (db_aud) and "/" goes straight there next time.
+  await expect(page).toHaveURL(/\/da$/);
+  await expect(page.getByRole("heading", { level: 1, name: /Én assistent, der tager telefonen/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Til dig derhjemme/ })).toHaveAttribute("href", "/privat");
+  await shot(page, info, "p00-indgang");
+  await page.getByRole("link", { name: /Til virksomheder/ }).click();
+  await expect(page).toHaveURL(/\/da\/erhverv$/);
+  expect((await page.context().cookies()).find((c) => c.name === "db_aud")?.value).toBe("erhverv");
+  // Erhverv: two doors – hear it (/proev) or read how it is built (/byggevejledning).
+  await expect(page.getByRole("heading", { level: 1, name: "Dialogbot tager telefonen, når I ikke kan." })).toBeVisible();
   await expect(page.getByRole("link", { name: /Prøv den – den ringer til dig/ }).first()).toHaveAttribute("href", "/da/proev"); // marketing pages carry the language
   await expect(page.getByRole("link", { name: /Byg den selv/ }).first()).toHaveAttribute("href", "/da/byggevejledning"); // the price section carries a second door
   await shot(page, info, "p01-indgang");
+  // With the door remembered, "/" lands on /erhverv; "?aud=reset" shows the entry again.
+  await page.goto("/");
+  await expect(page).toHaveURL(/\/da\/erhverv$/);
+  await page.goto("/?aud=reset");
+  await expect(page).toHaveURL(/\/da\?aud=reset$/);
+  await expect(page.getByRole("heading", { level: 1, name: /Én assistent, der tager telefonen/ })).toBeVisible();
+  await page.goto("/da/erhverv");
   // Vej A: the chat on /proev asks the backend first and is honest – no sales workspace is configured in CI, so it
   // cannot ring anyone and says so instead of pretending a call was placed.
   const demoInfo = page.waitForResponse((r) => r.url().includes("/demo-call") && r.request().method() === "GET");

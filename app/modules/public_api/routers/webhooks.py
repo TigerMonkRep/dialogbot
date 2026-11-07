@@ -64,11 +64,10 @@ def create_webhook(body: v1.WebhookEndpointIn, request: Request, response: Respo
     if count >= MAX_ENDPOINTS:
         raise Conflict(f"Højst {MAX_ENDPOINTS} webhook-endpoints pr. arbejdsrum", code="webhook_limit")
     secret = wd.new_secret()
-    w = WebhookEndpoint(workspace_id=ws_id, url=body.url.strip(), description=body.description.strip(), events=events,
-                        created_by_key_id=principal.key.id)
+    w = WebhookEndpoint(id=uuid.uuid4(), workspace_id=ws_id, url=body.url.strip(), description=body.description.strip(),
+                        events=events, created_by_key_id=principal.key.id)
+    wd.put_secret(w, secret)  # bound to the endpoint id and workspace (AAD), so the id is set first
     db.add(w)
-    db.flush()
-    wd.put_secret(w, secret)
     db.flush()
     record_audit(db, workspace_id=ws_id, actor_user_id=None, action="webhook_endpoint.created", object_type="webhook_endpoint",
                  object_id=w.id, after={"url": w.url, "events": events, "api_key_id": str(principal.key.id)},

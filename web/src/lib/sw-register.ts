@@ -54,24 +54,33 @@ export function watchSwUpdates(audience: SwAudience, onReady: (apply: () => void
     reloading = true;
     window.location.reload();
   };
-  const onVisible = () => { if (document.visibilityState === "visible") reg?.update().catch(() => {}); };
-  const hadController = !!navigator.serviceWorker.controller;
-  navigator.serviceWorker.addEventListener("message", onMessage);
-  navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+  const onVisible = () => { if (document.visibilityState === "visible") reg?.update?.().catch?.(() => {}); };
+  const container = navigator.serviceWorker;
+  // Partial implementations (and the e2e mock) expose register/getRegistration only – never let the update watcher
+  // throw inside a React effect and take the shell down with it.
+  const canListen = typeof container.addEventListener === "function";
+  const hadController = !!container.controller;
+  if (canListen) {
+    container.addEventListener("message", onMessage);
+    container.addEventListener("controllerchange", onControllerChange);
+  }
   document.addEventListener("visibilitychange", onVisible);
   void registerSw(audience).then((r) => {
     if (!r) return;
     reg = r;
-    if (r.waiting && navigator.serviceWorker.controller) announce();
+    if (r.waiting && container.controller) announce();
+    if (typeof r.addEventListener !== "function") return;
     r.addEventListener("updatefound", () => {
       const w = r.installing;
       if (!w) return;
-      w.addEventListener("statechange", () => { if (w.state === "installed" && navigator.serviceWorker.controller) announce(); });
+      w.addEventListener("statechange", () => { if (w.state === "installed" && container.controller) announce(); });
     });
-  });
+  }).catch(() => {});
   return () => {
-    navigator.serviceWorker.removeEventListener("message", onMessage);
-    navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+    if (canListen) {
+      container.removeEventListener("message", onMessage);
+      container.removeEventListener("controllerchange", onControllerChange);
+    }
     document.removeEventListener("visibilitychange", onVisible);
   };
 }

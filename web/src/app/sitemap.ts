@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     [{ url: `${SITE_URL}${path}`, lastModified: now, changeFrequency, priority }];
   return [
     ...page("/", 1, "weekly"),
+    ...page("/erhverv", 0.95, "weekly"),
     ...page("/proev", 0.9, "monthly"),
     ...page("/byggevejledning", 0.9, "monthly"),
     ...LANDING_PAGES.flatMap((p) => page(p.href, 0.9, "monthly")),

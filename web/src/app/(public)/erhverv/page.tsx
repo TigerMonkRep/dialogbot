@@ -1,5 +1,4 @@
 import Link from "@/i18n/link";
-import { cookies } from "next/headers";
 import Script from "next/script";
 import type { Metadata } from "next";
 import { COMPANY } from "@/components/legal-page";
@@ -7,40 +6,30 @@ import { SiteChrome } from "@/components/site-chrome";
 import { ExplainerVideo } from "@/components/explainer-video";
 import { videoStructuredData } from "@/lib/video";
 import { ArrowIcon, CalendarIcon, ChatIcon, CheckIcon, PhoneIcon, PlayIcon, SendIcon, SmsIcon } from "@/components/site-icons";
-import { API_BASE_URL, KNOWN_ACCOUNT_COOKIE, REFERRAL_COOKIE, SESSION_COOKIE } from "@/lib/config";
 import { ApprovalScreenshot } from "@/components/approval-screenshot";
 import { ProofSection } from "@/components/proof-section";
-import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { ReferralBanner } from "@/components/referral-banner";
+import { Mark, ShortArrow, Tilted } from "@/components/mark";
+import { SITE_NAME, SITE_URL, alternatesFor, openGraphFor } from "@/lib/site";
 import { getLocale, getRaw, getT } from "@/i18n/server";
 import { HTML_LANG, type Locale } from "@/i18n/config";
 import type { T } from "@/i18n/translate";
 
-/** The front page: one story, read top to bottom. What Dialogbot is (one sentence + the 70-second video), how it
- *  works (3 steps), what it does (4 tiles), a real call to listen to, the price, and at the end the two ways in:
- *  try it (/proev) or build it yourself (/byggevejledning). No "Vej A / Vej B" jargon: visitors did not understand it.
- *  No claims beyond the list prices; the ambassador banner is kept. */
-type Recommender = { first_name: string; headline: string; code: string; customer_discount_bp: number };
-
-/** The ambassador who sent this visitor (cookie set by /a/{slug}); null when none or no longer active, and
- *  never for someone who already has an account (logged in now, or has logged in from this browser before). */
-async function recommender(): Promise<Recommender | null> {
-  const store = await cookies();
-  if (store.get(SESSION_COOKIE)?.value || store.get(KNOWN_ACCOUNT_COOKIE)?.value) return null;
-  const ref = store.get(REFERRAL_COOKIE)?.value;
-  if (!ref) return null;
-  try {
-    const r = await fetch(`${API_BASE_URL}/api/v1/public/ambassadors/${encodeURIComponent(ref)}`, { cache: "no-store" });
-    return r.ok ? ((await r.json()) as Recommender) : null;
-  } catch { return null; }
-}
+/** The Erhverv landing (/erhverv – the entry page at "/" sends business visitors here): one story, read top to
+ *  bottom. What Dialogbot is (one sentence + the 70-second video), how it works (3 steps), what it does (4 tiles),
+ *  a real call to listen to, the price, and at the end the two ways in: try it (/proev) or build it yourself
+ *  (/byggevejledning). No "Vej A / Vej B" jargon: visitors did not understand it. No claims beyond the list prices;
+ *  the ambassador banner is kept. The accent layer (Mark/Tilted/ShortArrow) follows docs/brand.md: one marker per
+ *  viewport, thin ink lines under the h2 keyword, nothing on body text, buttons or the footer. */
+const PATH = "/erhverv";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getT("site");
+  const [t, locale] = await Promise.all([getT("site"), getLocale()]);
   return {
     title: { absolute: t("home.meta.title") },
     description: t("home.meta.description"),
-    alternates: { canonical: "/" },
-    openGraph: { url: "/", title: t("home.meta.ogTitle"), images: ["/opengraph-image.png"] },
+    alternates: alternatesFor(PATH, locale),
+    openGraph: openGraphFor(PATH, locale, t("home.meta.ogTitle")),
   };
 }
 
@@ -104,7 +93,6 @@ document.head.appendChild(script);
 })();`;
 
 export default async function Home() {
-  const rec = await recommender();
   const t = await getT("site");
   const raw = await getRaw();
   const locale = await getLocale();
@@ -117,31 +105,20 @@ export default async function Home() {
     <SiteChrome compactFooter={false}>
       <Script id="travelpayouts-drive" strategy="afterInteractive" data-cmp-ab="2">{TRAVELPAYOUTS_DRIVE}</Script>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(t, HTML_LANG[locale], locale)) }} />
-      {rec && (
-        <section aria-label={t("home.referral.label")} className="bg-highlight border-b-2 border-ink">
-          <div className="max-w-[1180px] mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-            <span className="w-10 h-10 rounded-full bg-ink text-highlight flex items-center justify-center font-display font-extrabold text-lg shrink-0" aria-hidden>{rec.first_name.slice(0, 1)}</span>
-            <div className="flex-1 min-w-0 text-ink">
-              <p className="font-semibold text-[15px]">{t("home.referral.offer", { name: rec.first_name, pct: rec.customer_discount_bp / 100 })}</p>
-              {rec.headline && <p className="text-sm">&ldquo;{rec.headline}&rdquo;</p>}
-              <p className="text-xs text-ink-soft">{t("home.referral.bonus", { name: rec.first_name })}</p>
-            </div>
-            <Link href="/signup" className="inline-flex items-center justify-center gap-2 min-h-11 bg-ink text-white font-semibold text-[15px] px-5 rounded-xl no-underline">{t("home.referral.cta")}<ArrowIcon size={16} /></Link>
-          </div>
-        </section>
-      )}
+      <ReferralBanner />
 
       {/* 1. HERO: what it is, in one sentence – and the video that explains it */}
       <section className="bg-white">
         <div className={`${container} pt-10 sm:pt-16 pb-12 sm:pb-16 flex flex-wrap gap-10 lg:gap-14 items-center`}>
           <div className="flex-[1_1_380px] min-w-0 flex flex-col gap-5">
             <span className={eyebrow}>{t("home.hero.eyebrow")}</span>
-            <h1 className="m-0 font-display font-extrabold text-[clamp(38px,5vw,64px)] leading-[1.02] tracking-[-1.6px]">{t("home.hero.title")}</h1>
+            <h1 className="m-0 font-display font-extrabold text-[clamp(38px,5vw,64px)] leading-[1.02] tracking-[-1.6px]">{t("home.hero.title.before")}<Mark kind="marker">{t("home.hero.title.mark")}</Mark>{t("home.hero.title.after")}</h1>
             <p className="m-0 text-[18px] sm:text-[19px] leading-[1.55] text-ink-soft max-w-[540px]">{t("home.hero.lead")}</p>
             <div className="flex flex-wrap gap-3">
               <Link href="/proev" className={btnPrimary}>{t("home.hero.cta")}<ArrowIcon size={18} /></Link>
               <Link href="/start" className={btnOutline} data-funnel-entry>{t("funnel.entry")}</Link>
               <div className="hidden sm:block"><ExplainerVideo variant="button" /></div>
+              <ShortArrow className="hidden lg:inline-flex ml-auto mr-2 self-center" />
             </div>
             <p className="m-0 text-sm text-muted">{t("home.hero.note")}</p>
           </div>
@@ -154,7 +131,7 @@ export default async function Home() {
         <div className={`${container} py-14 sm:py-20 flex flex-col gap-9`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
             <span className={eyebrow}>{t("home.how.eyebrow")}</span>
-            <h2 className={h2}>{t("home.how.title")}</h2>
+            <h2 className={h2}>{t("home.how.title.before")}<Mark kind="underline">{t("home.how.title.mark")}</Mark>{t("home.how.title.after")}</h2>
             <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("home.how.lead")}</p>
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
@@ -165,7 +142,7 @@ export default async function Home() {
             ].map(([n, title, text, icon]) => (
               <article key={n as string} className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink">
                 <div className="flex items-center gap-4">
-                  <span className={stepNo}>{n as string}</span>
+                  {n === "1" ? <Tilted deg={5}><span className={stepNo}>{n as string}</span></Tilted> : <span className={stepNo}>{n as string}</span>}
                   <span className={tile}>{icon}</span>
                 </div>
                 <h3 className="m-0 font-display font-extrabold text-[24px] leading-[1.1] tracking-[-0.4px]">{title as string}</h3>
@@ -181,7 +158,7 @@ export default async function Home() {
         <div className={`${container} py-14 sm:py-20 flex flex-col gap-9`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
             <span className={eyebrow}>{t("home.features.eyebrow")}</span>
-            <h2 className={h2}>{t("home.features.title")}</h2>
+            <h2 className={h2}>{t("home.features.title.before")}<Mark kind="underline">{t("home.features.title.mark")}</Mark>{t("home.features.title.after")}</h2>
           </div>
           <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr))]">
             {[
@@ -231,14 +208,14 @@ export default async function Home() {
         <div className={`${container} py-14 sm:py-20 flex flex-col gap-9`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
             <span className={eyebrow}>{t("home.price.eyebrow")}</span>
-            <h2 className={h2}>{t("home.price.title")}</h2>
+            <h2 className={h2}>{t("home.price.title.before")}<Mark kind="marker" long>{t("home.price.title.mark")}</Mark>{t("home.price.title.after")}</h2>
             <p className="m-0 text-[17px] leading-[1.55] text-ink-soft">{t("home.price.lead")}</p>
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
             <article className="flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block">
               <span className="flex items-center gap-3"><span className={tile}><PhoneIcon size={22} /></span><span className="ml-auto inline-flex items-center min-h-6 px-2.5 rounded-full bg-highlight text-ink text-[11px] font-semibold uppercase tracking-[0.12em]">{t("home.price.subscription.badge")}</span></span>
               <span className="font-display font-bold text-xl">{t("home.price.subscription.name")}</span>
-              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none">{t("prices.monthly")}</span><span className="text-lg font-semibold text-ink-soft">{t("home.price.subscription.unit")}</span></div>
+              <div className="flex items-baseline gap-2 flex-wrap"><span className="font-display font-extrabold text-[48px] tracking-[-1.5px] leading-none"><Mark kind="ring">{t("prices.monthly")}</Mark></span><span className="text-lg font-semibold text-ink-soft">{t("home.price.subscription.unit")}</span></div>
               <span className="text-[15px] text-ink-soft">{t("home.price.subscription.text")}</span>
               <Points items={raw<string[]>("site.home.price.subscription.points")} />
               <span className="text-[15px] text-ink-soft">{t("home.price.subscription.compare")}</span>
@@ -271,7 +248,7 @@ export default async function Home() {
         <div className={`${container} py-14 sm:py-20 flex flex-col gap-8`}>
           <div className="flex flex-col gap-3 max-w-[640px]">
             <span className={eyebrow}>{t("home.start.eyebrow")}</span>
-            <h2 className={h2}>{t("home.start.title")}</h2>
+            <h2 className={h2}>{t("home.start.title.before")}<Mark kind="underline">{t("home.start.title.mark")}</Mark>{t("home.start.title.after")}</h2>
           </div>
           <div className="grid gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))]">
             <Link href="/proev" className="group flex flex-col gap-4 p-6 sm:p-7 rounded-[20px] bg-white border-2 border-ink shadow-block text-ink no-underline">
@@ -305,7 +282,7 @@ function structuredData(t: T, lang: string, locale: Locale) {
     { "@context": "https://schema.org", "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: SITE_URL, name: SITE_NAME,
       inLanguage: lang, publisher: { "@id": `${SITE_URL}/#organization` } },
     { "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Dialogbot", applicationCategory: "BusinessApplication",
-      operatingSystem: "Web", description: t("home.ld.appDescription"), inLanguage: lang, url: SITE_URL,
+      operatingSystem: "Web", description: t("home.ld.appDescription"), inLanguage: lang, url: `${SITE_URL}${PATH}`,
       publisher: { "@id": `${SITE_URL}/#organization` },
       offers: [
         { "@type": "Offer", name: t("home.ld.subscription.name"), price: "2495", priceCurrency: "DKK", description: t("home.ld.subscription.description") },

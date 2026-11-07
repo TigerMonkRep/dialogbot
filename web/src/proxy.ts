@@ -7,7 +7,15 @@ import {
 } from "@/i18n/config";
 
 // Public pages hidden behind the temporary preview page while PREVIEW_GATE=on.
-const GATED = new Set(["/", "/proev", "/byggevejledning", "/signup"]);
+const GATED = new Set(["/", "/erhverv", "/proev", "/byggevejledning", "/signup"]);
+
+/** The door a visitor chose. Set (1 year, lax, readable by the page) when they open /erhverv or /privat – also when
+ *  they click a Trin-2 panel on the entry page, since the panels link to those two pages. While it is set, "/" sends
+ *  them straight to their door. "/?aud=reset" clears it and shows the entry page again (bots and first-time visitors
+ *  have no cookie and always see the entry). Not a secret, not personal data: one of two words. */
+export const AUDIENCE_COOKIE = "db_aud";
+const AUDIENCES = new Set(["erhverv", "privat"]);
+const AUDIENCE_RESET = "reset";
 
 // The main domain. Every other host we own (dialogbot.dk, www.*) is sent here with the path kept.
 const MAIN_HOST = "dialogbot.app";
@@ -27,6 +35,35 @@ function preferred(req: NextRequest): Locale {
 
 function remember(res: NextResponse, locale: Locale): NextResponse {
   res.cookies.set(LOCALE_COOKIE, locale, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
+  return res;
+}
+
+function rememberAudience(res: NextResponse, audience: "erhverv" | "privat"): NextResponse {
+  res.cookies.set(AUDIENCE_COOKIE, audience, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
+  return res;
+}
+
+/** "/" (any language): the remembered door, or null to show the entry page. `?aud=reset` clears the memory. */
+function audienceDoor(req: NextRequest, locale: Locale): NextResponse | null {
+  const aud = req.nextUrl.searchParams.get("aud");
+  if (aud === AUDIENCE_RESET) return null;
+  const chosen = req.cookies.get(AUDIENCE_COOKIE)?.value;
+  if (!chosen || !AUDIENCES.has(chosen)) return null;
+  const url = new URL(chosen === "privat" ? "/privat" : `/${locale}/erhverv`, req.url);
+  // The ambassador welcome (/a/{slug} → /?anbefalet=…) and campaign parameters travel with the visitor.
+  req.nextUrl.searchParams.forEach((v, k) => url.searchParams.set(k, v));
+  const res = NextResponse.redirect(url, 307);
+  res.headers.set("vary", "cookie, accept-language");
+  res.headers.set("cache-control", "private, no-store");
+  return res;
+}
+
+/** The response for "/" when the entry page is shown: never shared-cached (it depends on the cookie) and, after
+ *  `?aud=reset`, the memory is cleared. */
+function entryResponse(req: NextRequest, res: NextResponse): NextResponse {
+  res.headers.set("vary", "cookie, accept-language");
+  res.headers.set("cache-control", "private, no-store");
+  if (req.nextUrl.searchParams.get("aud") === AUDIENCE_RESET) res.cookies.set(AUDIENCE_COOKIE, "", { path: "/", maxAge: 0 });
   return res;
 }
 
@@ -51,16 +88,27 @@ export async function proxy(req: NextRequest) {
     }
     const gate = await gateFor(req, rest, search);
     if (gate) return gate;
+    if (rest === "/") {
+      const door = audienceDoor(req, urlLocale);
+      if (door) return remember(door, urlLocale);
+    }
     const h = new Headers(req.headers);
     h.set(LOCALE_HEADER, urlLocale);
-    const res = NextResponse.rewrite(new URL(rest + search, req.url), { request: { headers: h } });
+    let res = NextResponse.rewrite(new URL(rest + search, req.url), { request: { headers: h } });
     if (gateEnabled() && GATED.has(rest)) res.headers.set("cache-control", "private, no-store");
+    if (rest === "/") res = entryResponse(req, res);
+    if (rest === "/erhverv") rememberAudience(res, "erhverv");
     return remember(res, urlLocale);
   }
 
-  // 3. A marketing page without a language: send the visitor to their language's version.
+  // 3. A marketing page without a language: send the visitor to their language's version ("/" goes straight to a
+  //    remembered door, so the visitor is not bounced twice).
   if (isPublicPage(pathname)) {
     const l = preferred(req);
+    if (pathname === "/") {
+      const door = audienceDoor(req, l);
+      if (door) return door;
+    }
     const res = NextResponse.redirect(new URL(`/${l}${pathname === "/" ? "" : pathname}${search}`, req.url), 307);
     res.headers.set("vary", "cookie, accept-language");
     return res;
@@ -89,6 +137,7 @@ export async function proxy(req: NextRequest) {
   // redirected to /login. They are not localized marketing pages (language = cookie). Pages that depend on the
   // session are never cached by a shared cache.
   if (isPrivatPath(pathname) && pathname !== "/privat") res.headers.set("cache-control", "no-store, private");
+  if (pathname === "/privat") rememberAudience(res, "privat");
   // Gated pages vary by cookie; never let a shared cache serve them to someone without access.
   if (gateEnabled() && GATED.has(pathname)) res.headers.set("cache-control", "private, no-store");
   return res;
@@ -117,4 +166,4 @@ function isPrivatPath(pathname: string): boolean {
 // Everything except Next's own files, API routes and files with an extension (images, robots.txt, sitemap.xml …).
 export const config = { matcher: ["/((?!_next/|api/|a/|.*\\.[a-zA-Z0-9]+$).*)"] };
 
-export const _test = { isPublicPage, splitLocale, LOCALES, isPrivatPath };
+export const _test = { isPublicPage, splitLocale, LOCALES, isPrivatPath, AUDIENCE_COOKIE };

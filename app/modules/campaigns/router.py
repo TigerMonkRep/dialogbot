@@ -14,7 +14,7 @@ from app.core.auth import WorkspaceContext, get_scoped, require_capability
 from app.core.errors import Conflict, NotFound, NotImplementedYet, ValidationFailed
 from app.db import get_db
 from app.models import Campaign, CampaignContact, DoNotCall, PhoneNumber
-from app.modules.billing.agreements import TAX_BASIS_POINTS
+from app.modules.billing import customer_market, markets
 from app.modules.billing.money import Money
 from app.modules.campaigns import service
 
@@ -33,14 +33,23 @@ def _own(db: OrmSession, campaign_id, ws_id) -> Campaign:
     return c
 
 
-def campaign_out(db: OrmSession, c: Campaign) -> dict:
+def _pricing(db: OrmSession, ws_id) -> tuple[str, int, int]:
+    """(currency, call, minute) for a new customer campaign: the workspace's currency (the agreement's, else the
+    country's) and the list prices in it (markets.ERHVERV), snapshotted on the campaign."""
+    currency = customer_market.currency_of(db, ws_id)
+    return currency, markets.erhverv_price(currency, "call"), markets.erhverv_price(currency, "minute")
+
+
+def campaign_out(db: OrmSession, c: Campaign, currency: str | None = None) -> dict:
+    currency = currency or customer_market.currency_of(db, c.workspace_id)
+    vat_bp = customer_market.vat_of(db, c.workspace_id)["rate_bp"]
     return {"id": str(c.id), "name": c.name, "status": c.status, "version": c.version, "purpose": c.purpose,
             "opening": c.opening, "questions": list(c.questions or []), "success": c.success,
             "phone_number_id": str(c.phone_number_id) if c.phone_number_id else None,
             "call_days": list(c.call_days or []), "call_from": c.call_from, "call_to": c.call_to,
-            "pricing": {"call_net_minor": c.call_net_minor, "minute_net_minor": c.minute_net_minor,
+            "pricing": {"currency": currency, "call_net_minor": c.call_net_minor, "minute_net_minor": c.minute_net_minor,
                         "max_attempts": c.max_attempts, "max_connected_seconds": c.max_connected_seconds},
-            "counts": service.counts(db, c), "max_cost": Money("DKK", service.max_cost_net_minor(db, c), TAX_BASIS_POINTS).snapshot(),
+            "counts": service.counts(db, c), "max_cost": Money(currency, service.max_cost_net_minor(db, c), vat_bp).snapshot(),
             "outbound_problem": service.outbound_problem(db, c), "legal_confirmation": c.legal_confirmation,
             "created_at": c.created_at.isoformat(), "started_at": c.started_at.isoformat() if c.started_at else None,
             "completed_at": c.completed_at.isoformat() if c.completed_at else None}
@@ -79,8 +88,9 @@ def _apply(db: OrmSession, c: Campaign, body: CampaignIn, ws_id) -> None:
 @router.get("/campaigns")
 def list_campaigns(ctx: WorkspaceContext = Depends(require_capability("campaigns.read")), db: OrmSession = Depends(get_db)):
     rows = db.scalars(select(Campaign).where(Campaign.workspace_id == ctx.workspace.id, Campaign.kind == "customer").order_by(Campaign.created_at.desc()))
-    return {"items": [campaign_out(db, c) for c in rows],
-            "pricing": {"call_net_minor": service.CALL_NET_MINOR, "minute_net_minor": service.MINUTE_NET_MINOR,
+    currency, call, minute = _pricing(db, ctx.workspace.id)
+    return {"items": [campaign_out(db, c, currency) for c in rows],
+            "pricing": {"currency": currency, "call_net_minor": call, "minute_net_minor": minute,
                         "max_attempts": service.MAX_ATTEMPTS, "max_connected_seconds": service.MAX_CONNECTED_SECONDS},
             "legal_checklist": list(service.LEGAL_CHECKLIST)}
 
@@ -88,8 +98,9 @@ def list_campaigns(ctx: WorkspaceContext = Depends(require_capability("campaigns
 @router.post("/campaigns", status_code=201)
 def create_campaign(body: CampaignIn, request: Request, ctx: WorkspaceContext = Depends(require_capability("campaigns.manage")),
                     db: OrmSession = Depends(get_db)):
+    _currency, call, minute = _pricing(db, ctx.workspace.id)
     c = Campaign(workspace_id=ctx.workspace.id, name=body.name, created_by=ctx.user_id,
-                 call_net_minor=service.CALL_NET_MINOR, minute_net_minor=service.MINUTE_NET_MINOR,
+                 call_net_minor=call, minute_net_minor=minute,
                  max_attempts=service.MAX_ATTEMPTS, max_connected_seconds=service.MAX_CONNECTED_SECONDS)
     if body.phone_number_id is None:  # default: the workspace's first number approved as caller ID
         n = db.scalar(select(PhoneNumber).where(PhoneNumber.workspace_id == ctx.workspace.id, PhoneNumber.active,

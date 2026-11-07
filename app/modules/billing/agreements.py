@@ -2,7 +2,15 @@
 price in `prices.py`; choosing it creates a new immutable version that snapshots the price.
 
 Older agreements stay as they were (an old "model B" agreement, per approved enquiry, keeps its fee snapshot and its
-statement lines), but no new model-B agreement can be made."""
+statement lines), but no new model-B agreement can be made.
+
+Currency (docs/markets.md): the first agreement takes the currency of the company's country (BusinessProfile.country →
+markets.currency_for_country) and the list price in that currency (markets.ERHVERV). From then on the workspace's
+currency is LOCKED: every later version keeps the currency of the one before, even if the country changes. An
+agreement from an accepted SalesOffer (Dialogbot's own Danish sales) is always DKK.
+
+`tax_basis_points` is kept on the row (25 % for Danish companies, the rate that applied when it was made otherwise),
+but the VAT an invoice actually carries is decided when the statement / invoice is made (markets.erhverv_vat)."""
 from __future__ import annotations
 
 import uuid
@@ -11,8 +19,8 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.errors import ValidationFailed
-from app.models import ReceptionAgreement
-from app.modules.billing import prices
+from app.models import BillingAccount, BusinessProfile, ReceptionAgreement
+from app.modules.billing import markets, prices
 from app.modules.billing.money import Money
 
 TAX_BASIS_POINTS = prices.TAX_BASIS_POINTS
@@ -31,15 +39,33 @@ def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid
         raise ValidationFailed("Betaling pr. henvendelse findes ikke længere. Der er ét abonnement.",
                                field_errors=[{"field": "model", "message": "Kun abonnement"}], code="plan_discontinued")
     last = db.scalar(select(func.max(ReceptionAgreement.version)).where(ReceptionAgreement.workspace_id == workspace_id))
-    a = ReceptionAgreement(workspace_id=workspace_id, version=(last or 0) + 1, model="A", currency="DKK",
-                           monthly_net_minor=offer.monthly_net_minor if offer else prices.SUBSCRIPTION_MONTHLY_NET_MINOR,
-                           lead_fee_net_minor=0,
-                           tax_basis_points=offer.tax_basis_points if offer else TAX_BASIS_POINTS,
+    previous = current(db, workspace_id)
+    if offer is not None:
+        currency = "DKK"  # Dialogbot's own sales are Danish and priced in DKK
+    elif previous is not None:
+        currency = previous.currency  # locked: a later country change does not move the currency
+    else:
+        p = db.get(BusinessProfile, workspace_id)
+        currency = markets.currency_for_country(p.country if p else None)
+    tax_bp = offer.tax_basis_points if offer is not None else _vat_bp_now(db, workspace_id)
+    a = ReceptionAgreement(workspace_id=workspace_id, version=(last or 0) + 1, model="A", currency=currency,
+                           monthly_net_minor=offer.monthly_net_minor if offer else markets.erhverv_price(currency, "monthly"),
+                           lead_fee_net_minor=0, tax_basis_points=tax_bp,
                            setup_net_minor=offer.setup_net_minor if offer else 0,
                            sales_offer_id=offer.id if offer else None, created_by=created_by)
     db.add(a)
     db.flush()
     return a
+
+
+def _vat_bp_now(db: OrmSession, workspace_id: uuid.UUID) -> int:
+    """The VAT rate an invoice to the company would carry today (informational on the row; 0 if unknown yet)."""
+    p = db.get(BusinessProfile, workspace_id)
+    acc = db.get(BillingAccount, workspace_id)
+    try:
+        return markets.erhverv_vat(p.country if p else None, acc.vat_number if acc else None).rate_bp
+    except markets.VatNumberRequired:
+        return 0
 
 
 def lead_fee(a: ReceptionAgreement) -> Money:
@@ -53,7 +79,10 @@ def out(a: ReceptionAgreement | None) -> dict | None:
     return {"id": str(a.id), "version": a.version, "model": a.model, "currency": a.currency,
             "monthly": Money(a.currency, a.monthly_net_minor, a.tax_basis_points).snapshot(),
             "lead_fee": lead_fee(a).snapshot(),
-            "campaign_call": Money(a.currency, prices.CAMPAIGN_CALL_NET_MINOR, a.tax_basis_points).snapshot(),
+            "campaign_call": Money(a.currency, markets.erhverv_price(a.currency, "call"), a.tax_basis_points).snapshot(),
+            "campaign_minute": Money(a.currency, markets.erhverv_price(a.currency, "minute"), a.tax_basis_points).snapshot(),
+            "inbound_extra_minute": Money(a.currency, markets.erhverv_price(a.currency, "extra_minute"),
+                                          a.tax_basis_points).snapshot(),
             "setup": Money(a.currency, a.setup_net_minor or 0, a.tax_basis_points).snapshot(),
             "created_at": a.created_at.isoformat(),
             "invoicing": "not_implemented"}

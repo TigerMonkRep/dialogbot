@@ -2,9 +2,10 @@
 /** Web Push for Dialogbot Privat. Permission is asked only at the right moments (first reminder, first call approval,
  *  or Konto → Notifikationer). On iPhone, push only works from the home-screen app (iOS 16.4+), so a short guide comes first. */
 import type { PrivatApi } from "./api";
+import { registerSw as registerAudienceSw, SW } from "@/lib/sw-register";
 
-export const SW_URL = "/sw.js";
-export const SW_SCOPE = "/privat/";
+export const SW_URL = SW.privat.url;
+export const SW_SCOPE = SW.privat.scope;
 const ASKED_KEY = "dialogbot-privat-push-asked";
 
 export function isIos(ua: string): boolean {
@@ -22,9 +23,9 @@ export function pushSupported(): boolean {
   return typeof window !== "undefined" && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
 }
 
-export async function registerSw(): Promise<ServiceWorkerRegistration | null> {
-  if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return null;
-  try { return await navigator.serviceWorker.register(SW_URL, { scope: SW_SCOPE }); } catch { return null; }
+/** The Privat worker (public/sw.js, scope /privat/) – registered through the shared helper (lib/sw-register.ts). */
+export function registerSw(): Promise<ServiceWorkerRegistration | null> {
+  return registerAudienceSw("privat");
 }
 
 function keyBytes(base64url: string): Uint8Array {

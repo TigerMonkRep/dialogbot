@@ -364,7 +364,7 @@
         "body": [
           {
             "type": "p",
-            "text": "Tous les prix sont en couronnes danoises HT. La TVA (25 %) est ajoutée sur la facture."
+            "text": "Tous les prix s’entendent HT. Les entreprises au Danemark paient en couronnes danoises (DKK), en Suède en couronnes suédoises (SEK), en Norvège en couronnes norvégiennes (NOK) et partout ailleurs en euros (EUR). Les entreprises danoises se voient facturer la TVA danoise (25 %). Les entreprises situées ailleurs dans l’UE sont facturées sans TVA selon le mécanisme d’autoliquidation et doivent indiquer leur numéro de TVA ; aucune TVA danoise n’est facturée aux entreprises hors UE."
           },
           {
             "type": "ul",
@@ -373,19 +373,19 @@
                 {
                   "b": "Abonnement :"
                 },
-                " à partir de 2.495 kr. par mois. Aucun prix par demande."
+                " à partir de {pMonthly} par mois. Aucun prix par demande."
               ],
               [
                 {
                   "b": "Campagnes (appels sortants) :"
                 },
-                " 4 kr. par appel sortant plus 2 kr. par minute de conversation entamée. Chaque appel passé compte, y compris une nouvelle tentative (2 tentatives maximum et 3 minutes de conversation maximum par contact). Le prix maximal possible est affiché avant le lancement d’une campagne."
+                " {pCall} par appel sortant plus {pMinute} par minute de conversation entamée. Chaque appel passé compte, y compris une nouvelle tentative (2 tentatives maximum et 3 minutes de conversation maximum par contact). Le prix maximal possible est affiché avant le lancement d’une campagne."
               ],
               [
                 {
                   "b": "Appels entrants :"
                 },
-                " un numéro de téléphone danois pour l’assistant et 300 minutes de conversation entamées par mois civil sont inclus. Les minutes supplémentaires coûtent 1,50 kr. par minute entamée et sont facturées sur la facture du mois. La consommation peut être suivie en continu dans Dialogbot."
+                " un numéro de téléphone danois pour l’assistant et 300 minutes de conversation entamées par mois civil sont inclus. Les minutes supplémentaires coûtent {pExtraMinute} par minute entamée et sont facturées sur la facture du mois. La consommation peut être suivie en continu dans Dialogbot."
               ]
             ]
           },
@@ -424,7 +424,7 @@
         "body": [
           {
             "type": "p",
-            "text": "Le contrat court jusqu’à sa résiliation. Vous pouvez résilier pour la fin du mois en cours en nous écrivant. Nous pouvons résilier moyennant un préavis de 30 jours. Il n’y a aucun engagement. La mise en service est incluse lorsque vous la faites vous-même ; la mise en service par les spécialistes de Dialogbot coûte 5.000 kr. HT, payable une seule fois avant le début des travaux."
+            "text": "Le contrat court jusqu’à sa résiliation. Vous pouvez résilier pour la fin du mois en cours en nous écrivant. Nous pouvons résilier moyennant un préavis de 30 jours. Il n’y a aucun engagement. La mise en service est incluse lorsque vous la faites vous-même ; la mise en service par les spécialistes de Dialogbot coûte {pSetup}. HT, payable une seule fois avant le début des travaux."
           },
           {
             "type": "p",

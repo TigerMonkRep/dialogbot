@@ -129,7 +129,7 @@
     "noAppointments": "Inga kommande bokningar.",
     "weekAppointments": "Se veckans bokningar",
     "campaigns": "Kampanjer",
-    "campaignsSub": "Ring era egna kunder – 4 kr. per samtal + 2 kr. per samtalsminut exkl. moms.",
+    "campaignsSub": "Ring era egna kunder – {pCall} per samtal + {pMinute} per samtalsminut exkl. moms.",
     "openCampaigns": "Öppna kampanjer",
     "allActivity": "All aktivitet de senaste 14 dagarna",
     "power": {
@@ -210,7 +210,7 @@
   "common": {
     "save": "Spara",
     "saved": "Sparat",
-    "kr": "{amount} kr.",
+    "kr": "{amount}",
     "saving": "Sparar…",
     "cancel": "Avbryt"
   },
@@ -274,7 +274,7 @@
       "title": "Det här kostade veckan",
       "extra": "{amount} extra",
       "calls": "{n} kampanjsamtal",
-      "note": "300 minuter inkommande samtal per månad ingår i abonnemanget. Kampanjsamtal under veckan: {n} (4 kr. per utgående samtal + 2 kr. per samtalsminut, exkl. moms).",
+      "note": "300 minuter inkommande samtal per månad ingår i abonnemanget. Kampanjsamtal under veckan: {n} ({pCall} per utgående samtal + {pMinute} per samtalsminut, exkl. moms).",
       "billing": "Se abonnemang och fakturor"
     }
   },
@@ -484,7 +484,7 @@
       "consent": "samtycke",
       "noConsent": "Samtycke saknas – rings inte upp",
       "attempts": "{n} försök",
-      "priceNote": "{price} kr. per samtal exkl. moms. Du betalar bara för de samtal som går ut. Stoppa när som helst."
+      "priceNote": "{price} per samtal exkl. moms. Du betalar bara för de samtal som går ut. Stoppa när som helst."
     },
     "new": {
       "title": "Ny kampanj",
@@ -789,6 +789,16 @@
       "withoutCard": "Utan kort faktureras inte månaden.",
       "onlyOwner": "Endast ägaren kan ändra betalkortet."
     },
+    "vat": {
+      "label": "Momsregistreringsnummer",
+      "optional": "valfritt",
+      "placeholder": "t.ex. SE556677889901",
+      "hint": "Företag i ett annat EU-land än Danmark faktureras utan moms (omvänd skattskyldighet). Skriv momsregistreringsnumret med landskod, t.ex. SE556677889901.",
+      "hintOptional": "Visas på fakturan. Norska företag faktureras utan dansk moms.",
+      "required": "Skriv ert momsregistreringsnummer innan kortet sparas: företag i ett annat EU-land än Danmark faktureras utan moms och behöver ett giltigt momsregistreringsnummer.",
+      "save": "Spara momsregistreringsnummer",
+      "saved": "Momsregistreringsnumret är sparat."
+    },
     "invoices": {
       "title": "Fakturor",
       "soFar": "{month} hittills:",
@@ -894,7 +904,7 @@
       },
       "billing": {
         "q": "Avräkning",
-        "a": "Det finns ett abonnemang från 2.495 kr. i månaden exkl. moms, inkl. 300 minuter inkommande samtal (därefter 1,50 kr. per minut). Utgående kampanjsamtal kostar 4 kr. per samtal plus 2 kr. per påbörjad samtalsminut. Konto visar månadens förhandsvisning."
+        "a": "Det finns ett abonnemang från {pMonthly} i månaden exkl. moms, inkl. 300 minuter inkommande samtal (därefter {pExtraMinute} per minut). Utgående kampanjsamtal kostar {pCall} per samtal plus {pMinute} per påbörjad samtalsminut. Konto visar månadens förhandsvisning."
       }
     },
     "team": {

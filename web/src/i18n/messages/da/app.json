@@ -129,7 +129,7 @@
     "noAppointments": "Ingen kommende aftaler.",
     "weekAppointments": "Se ugens aftaler",
     "campaigns": "Kampagner",
-    "campaignsSub": "Ring til jeres egne kunder – 4 kr. pr. opkald + 2 kr. pr. samtaleminut ekskl. moms.",
+    "campaignsSub": "Ring til jeres egne kunder – {pCall} pr. opkald + {pMinute} pr. samtaleminut ekskl. moms.",
     "openCampaigns": "Åbn kampagner",
     "allActivity": "Al aktivitet de seneste 14 dage",
     "power": {
@@ -210,7 +210,7 @@
   "common": {
     "save": "Gem",
     "saved": "Gemt",
-    "kr": "{amount} kr.",
+    "kr": "{amount}",
     "saving": "Gemmer…",
     "cancel": "Annuller"
   },
@@ -274,7 +274,7 @@
       "title": "Det kostede ugen",
       "extra": "{amount} ekstra",
       "calls": "{n} kampagneopkald",
-      "note": "300 minutters indgående opkald om måneden er med i abonnementet. Kampagneopkald i ugen: {n} (4 kr. pr. udgående opkald + 2 kr. pr. samtaleminut, ekskl. moms).",
+      "note": "300 minutters indgående opkald om måneden er med i abonnementet. Kampagneopkald i ugen: {n} ({pCall} pr. udgående opkald + {pMinute} pr. samtaleminut, ekskl. moms).",
       "billing": "Se abonnement og fakturaer"
     }
   },
@@ -484,7 +484,7 @@
       "consent": "samtykke",
       "noConsent": "Mangler samtykke – ringes ikke op",
       "attempts": "{n} forsøg",
-      "priceNote": "{price} kr. pr. opkald ekskl. moms. Du betaler kun for de opkald, der går ud. Stop når som helst."
+      "priceNote": "{price} pr. opkald ekskl. moms. Du betaler kun for de opkald, der går ud. Stop når som helst."
     },
     "new": {
       "title": "Ny kampagne",
@@ -789,6 +789,16 @@
       "withoutCard": "Uden kort bliver måneden ikke faktureret.",
       "onlyOwner": "Kun ejeren kan ændre betalingskortet."
     },
+    "vat": {
+      "label": "Momsnummer",
+      "optional": "valgfrit",
+      "placeholder": "fx DE123456789",
+      "hint": "Virksomheder i et andet EU-land end Danmark faktureres uden moms (omvendt betalingspligt). Skriv momsnummeret med landekode, fx DE123456789.",
+      "hintOptional": "Kommer med på fakturaen. Norske virksomheder faktureres uden dansk moms.",
+      "required": "Skriv jeres momsnummer, før kortet gemmes: virksomheder i et andet EU-land end Danmark faktureres uden moms og skal have et gyldigt momsnummer.",
+      "save": "Gem momsnummer",
+      "saved": "Momsnummeret er gemt."
+    },
     "invoices": {
       "title": "Fakturaer",
       "soFar": "{month} indtil videre:",
@@ -894,7 +904,7 @@
       },
       "billing": {
         "q": "Afregning",
-        "a": "Der er ét abonnement fra 2.495 kr. om måneden ekskl. moms, inkl. 300 minutters indgående opkald (derefter 1,50 kr. pr. minut). Udgående kampagneopkald koster 4 kr. pr. opkald plus 2 kr. pr. påbegyndt samtaleminut. Konto viser månedens forhåndsvisning."
+        "a": "Der er ét abonnement fra {pMonthly} om måneden ekskl. moms, inkl. 300 minutters indgående opkald (derefter {pExtraMinute} pr. minut). Udgående kampagneopkald koster {pCall} pr. opkald plus {pMinute} pr. påbegyndt samtaleminut. Konto viser månedens forhåndsvisning."
       }
     },
     "team": {

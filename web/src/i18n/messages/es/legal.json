@@ -197,13 +197,13 @@
       {
         "title": "2. Precios",
         "body": [
-          { "type": "p", "text": "Todos los precios se expresan en coronas danesas, IVA no incluido. El IVA (25 %) se añade en la factura." },
+          { "type": "p", "text": "Todos los precios son sin IVA. Las empresas de Dinamarca pagan en coronas danesas (DKK), las de Suecia en coronas suecas (SEK), las de Noruega en coronas noruegas (NOK) y las del resto de países en euros (EUR). A las empresas danesas se les factura el IVA danés (25 %). A las empresas del resto de la UE se les factura sin IVA por inversión del sujeto pasivo y deben indicar su número de IVA; a las empresas de fuera de la UE no se les factura IVA danés." },
           {
             "type": "ul",
             "items": [
-              [{ "b": "Suscripción:" }, " desde 2.495 kr. al mes. No hay precio por contacto."],
-              [{ "b": "Campañas (llamadas salientes):" }, " 4 kr. por llamada saliente más 2 kr. por minuto de conversación iniciado. Cada llamada realizada cuenta, también un nuevo intento (máximo 2 intentos y máximo 3 minutos de conversación por contacto). El precio máximo posible se muestra antes de iniciar una campaña."],
-              [{ "b": "Llamadas entrantes:" }, " se incluyen un número de teléfono danés para el asistente y 300 minutos de conversación iniciados por mes natural. Los minutos adicionales cuestan 1,50 kr. por minuto iniciado y se facturan en la factura del mes. El consumo puede seguirse en todo momento en Dialogbot."]
+              [{ "b": "Suscripción:" }, " desde {pMonthly} al mes. No hay precio por contacto."],
+              [{ "b": "Campañas (llamadas salientes):" }, " {pCall} por llamada saliente más {pMinute} por minuto de conversación iniciado. Cada llamada realizada cuenta, también un nuevo intento (máximo 2 intentos y máximo 3 minutos de conversación por contacto). El precio máximo posible se muestra antes de iniciar una campaña."],
+              [{ "b": "Llamadas entrantes:" }, " se incluyen un número de teléfono danés para el asistente y 300 minutos de conversación iniciados por mes natural. Los minutos adicionales cuestan {pExtraMinute} por minuto iniciado y se facturan en la factura del mes. El consumo puede seguirse en todo momento en Dialogbot."]
             ]
           },
           { "type": "p", "text": "Si llegan a través de un embajador, obtienen un 50 % de descuento en su primer mes facturado. Podemos modificar los precios con un preaviso mínimo de 30 días por correo electrónico; el cambio se aplica a partir del primer mes completo posterior al preaviso." }
@@ -220,7 +220,7 @@
       {
         "title": "4. Inicio, duración y resolución",
         "body": [
-          { "type": "p", "text": "El contrato se mantiene vigente hasta que se resuelva. Ustedes pueden darse de baja con efecto al final del mes en curso escribiéndonos. Nosotros podemos resolverlo con un preaviso de 30 días. No hay permanencia. La configuración está incluida cuando la hacen ustedes mismos; la configuración por los especialistas de Dialogbot cuesta 5.000 kr., IVA no incluido, y se paga una sola vez antes de empezar el trabajo." },
+          { "type": "p", "text": "El contrato se mantiene vigente hasta que se resuelva. Ustedes pueden darse de baja con efecto al final del mes en curso escribiéndonos. Nosotros podemos resolverlo con un preaviso de 30 días. No hay permanencia. La configuración está incluida cuando la hacen ustedes mismos; la configuración por los especialistas de Dialogbot cuesta {pSetup}, IVA no incluido, y se paga una sola vez antes de empezar el trabajo." },
           { "type": "p", "text": "En caso de incumplimiento grave, por ejemplo uso indebido del servicio o impago, podemos cerrar el acceso sin preaviso." }
         ]
       },

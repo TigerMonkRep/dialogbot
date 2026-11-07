@@ -129,7 +129,7 @@
     "noAppointments": "Nessun appuntamento in programma.",
     "weekAppointments": "Vedi gli appuntamenti della settimana",
     "campaigns": "Campagne",
-    "campaignsSub": "Chiamate i vostri clienti: 4 kr. a chiamata + 2 kr. per minuto di conversazione, IVA esclusa.",
+    "campaignsSub": "Chiamate i vostri clienti: {pCall} a chiamata + {pMinute} per minuto di conversazione, IVA esclusa.",
     "openCampaigns": "Apri le campagne",
     "allActivity": "Tutta l'attività degli ultimi 14 giorni",
     "power": {
@@ -210,7 +210,7 @@
   "common": {
     "save": "Salva",
     "saved": "Salvato",
-    "kr": "{amount} kr.",
+    "kr": "{amount}",
     "saving": "Salvataggio…",
     "cancel": "Annulla"
   },
@@ -274,7 +274,7 @@
       "title": "Quanto è costata la settimana",
       "extra": "{amount} in più",
       "calls": "{n} chiamate delle campagne",
-      "note": "L'abbonamento include 300 minuti di chiamate in entrata al mese. Chiamate delle campagne nella settimana: {n} (4 kr. per chiamata in uscita + 2 kr. per minuto di conversazione, IVA esclusa).",
+      "note": "L'abbonamento include 300 minuti di chiamate in entrata al mese. Chiamate delle campagne nella settimana: {n} ({pCall} per chiamata in uscita + {pMinute} per minuto di conversazione, IVA esclusa).",
       "billing": "Vedi abbonamento e fatture"
     }
   },
@@ -484,7 +484,7 @@
       "consent": "consenso",
       "noConsent": "Consenso mancante: non verrà chiamato",
       "attempts": "{n} tentativi",
-      "priceNote": "{price} kr. a chiamata IVA esclusa. Paga solo le chiamate effettuate. Può interrompere in qualsiasi momento."
+      "priceNote": "{price} a chiamata IVA esclusa. Paga solo le chiamate effettuate. Può interrompere in qualsiasi momento."
     },
     "new": {
       "title": "Nuova campagna",
@@ -660,12 +660,12 @@
       "answer": "Ecco come risponde a «{q}»"
     },
     "service": {
-      "badPrice": "Scriva il prezzo in cifre, ad es. «da 1.200 kr.» oppure «850 kr. al m²».",
+      "badPrice": "Scriva il prezzo in cifre, ad es. «da 1.200» oppure «850 al m²».",
       "priceLine": "Prezzo: {price}.",
       "add": "Aggiungi un servizio",
       "new": "Nuovo servizio · 3 campi",
       "price": "Prezzo (come deve sentirlo il cliente)",
-      "pricePlaceholder": "da 1.200 kr.",
+      "pricePlaceholder": "da 1.200",
       "notePlaceholder": "Ad es.: Fissiamo un appuntamento per il sopralluogo",
       "saveAndShow": "Salva e mostrami come lo dice"
     },
@@ -789,6 +789,16 @@
       "withoutCard": "Senza carta il mese non viene fatturato.",
       "onlyOwner": "Solo il proprietario può cambiare la carta di pagamento."
     },
+    "vat": {
+      "label": "Partita IVA",
+      "optional": "facoltativa",
+      "placeholder": "es. IT12345678901",
+      "hint": "Le aziende di un paese UE diverso dalla Danimarca ricevono la fattura senza IVA (inversione contabile). Inserisca la partita IVA con il codice paese, es. IT12345678901.",
+      "hintOptional": "Compare in fattura. Le aziende norvegesi ricevono la fattura senza IVA danese.",
+      "required": "Inserisca la partita IVA prima di salvare la carta: le aziende di un paese UE diverso dalla Danimarca ricevono la fattura senza IVA e hanno bisogno di una partita IVA valida.",
+      "save": "Salva partita IVA",
+      "saved": "La partita IVA è salvata."
+    },
     "invoices": {
       "title": "Fatture",
       "soFar": "{month} finora:",
@@ -894,7 +904,7 @@
       },
       "billing": {
         "q": "Fatturazione",
-        "a": "C'è un solo abbonamento da 2.495 kr. al mese IVA esclusa, con 300 minuti di chiamate in entrata inclusi (poi 1,50 kr. al minuto). Le chiamate in uscita delle campagne costano 4 kr. a chiamata più 2 kr. per minuto di conversazione iniziato. In Account trovate l'anteprima del mese."
+        "a": "C'è un solo abbonamento da {pMonthly} al mese IVA esclusa, con 300 minuti di chiamate in entrata inclusi (poi {pExtraMinute} al minuto). Le chiamate in uscita delle campagne costano {pCall} a chiamata più {pMinute} per minuto di conversazione iniziato. In Account trovate l'anteprima del mese."
       }
     },
     "team": {

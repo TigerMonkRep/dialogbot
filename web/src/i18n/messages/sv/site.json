@@ -1,8 +1,8 @@
 {
   "prices": {
-    "monthly": "2.495",
-    "setup": "5.000",
-    "perCall": "4"
+    "monthly": "{pMonthlyNum}",
+    "setup": "{pSetupNum}",
+    "perCall": "{pCallNum}"
   },
   "demoCall": {
     "label": "Samtal · Snickerifirma (exempel)",
@@ -19,7 +19,7 @@
   "home": {
     "meta": {
       "title": "Dialogbot – AI-receptionist som svarar i telefon dygnet runt, på svenska",
-      "description": "Dialogbot svarar i telefon när ni inte kan: en AI-receptionist som svarar dygnet runt på svenska och på kundernas eget språk, bokar tider i er kalender och skickar ett meddelande om varje samtal. 2.495 kr./mån.",
+      "description": "Dialogbot svarar i telefon när ni inte kan: en AI-receptionist som svarar dygnet runt på svenska och på kundernas eget språk, bokar tider i er kalender och skickar ett meddelande om varje samtal. {pMonthly}/mån.",
       "ogTitle": "Dialogbot svarar i telefon när ni inte kan"
     },
     "referral": {
@@ -35,7 +35,7 @@
         "mark": "svarar i telefon",
         "after": " när ni inte kan."
       },
-      "lead": "En AI-receptionist som svarar på svenska – och på era kunders språk – dygnet runt, bokar tider i er kalender och skickar ett meddelande om varje samtal. Ni behåller ert nummer. 2.495 kr./mån. exkl. moms.",
+      "lead": "En AI-receptionist som svarar på svenska – och på era kunders språk – dygnet runt, bokar tider i er kalender och skickar ett meddelande om varje samtal. Ni behåller ert nummer. {pMonthly}/mån. exkl. moms.",
       "cta": "Testa den – den ringer upp dig",
       "note": "2 minuter, ingen registrering. Fråga den som en kund skulle göra."
     },
@@ -84,7 +84,7 @@
         },
         {
           "title": "Ringer upp kunder",
-          "text": "Följer upp offerter eller påminner om service – bara till kunder som har sagt ja. 4 kr. per samtal + 2 kr. per minut."
+          "text": "Följer upp offerter eller påminner om service – bara till kunder som har sagt ja. {pCall} per samtal + {pMinute} per minut."
         }
       ],
       "note": "Allt den säger bygger på kunskap ni själva har godkänt – och varje ändring visar den er först: före → efter, «Godkänna?»."
@@ -106,7 +106,7 @@
       "subscription": {
         "name": "Abonnemang",
         "badge": "Rekommenderas",
-        "unit": "kr./mån.",
+        "unit": "{pCur}/mån.",
         "text": "Hela priset: telefon, bokning och webbchatt ingår – inkl. 300 minuter inkommande samtal per månad. Ingen bindningstid. Konfiguration på egen hand ingår.",
         "compare": "Priset för en telefonpassning – men en receptionist som också bokar tiderna i er kalender.",
         "cta": "Välj här – lyssna på den först",
@@ -118,8 +118,8 @@
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
-        "unit": "kr. per samtal + 2 kr. per minut",
-        "text": "Bara om ni vill att Dialogbot ska ringa ut. Obesvarat: 4 kr. Tre minuters samtal: 10 kr. Ni ser det högsta priset innan ni startar.",
+        "unit": "{pCur} per samtal + {pMinute} per minut",
+        "text": "Bara om ni vill att Dialogbot ska ringa ut. Obesvarat: {pCall}. Tre minuters samtal: {pCall3Min}. Ni ser det högsta priset innan ni startar.",
         "badge": "Tillval",
         "points": [
           "Betalning endast per samtal – inget extra abonnemang",
@@ -130,7 +130,7 @@
       },
       "setup": {
         "name": "Konfiguration av våra specialister",
-        "unit": "kr. engångsavgift",
+        "unit": "{pCur} engångsavgift",
         "text": "Skräddarsydd konfiguration och integration med era egna system – kalender, CRM, bokningssystem. Bara om ni inte vill göra det själva.",
         "badge": "Tillval · en gång",
         "points": [
@@ -169,7 +169,7 @@
         "text": "Bygganvisningen visar steg för steg vad du behöver och vad som händer – ingen teknik, ingen kod.",
         "cta": "Öppna bygganvisningen"
       },
-      "specialists": "Vill ni hellre att någon gör det åt er? Våra specialister konfigurerar den för 5.000 kr. exkl. moms, skräddarsytt för era system."
+      "specialists": "Vill ni hellre att någon gör det åt er? Våra specialister konfigurerar den för {pSetup} exkl. moms, skräddarsytt för era system."
     },
     "ld": {
       "appDescription": "Dialogbot är en AI-receptionist som svarar i telefon och chatt åt ditt företag dygnet runt – på svenska och på kundernas eget språk – utifrån er egen kunskap, bokar tider och samlar in ärenden. Vi guidar er genom hela konfigurationen.",
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
-        "description": "Per utgående samtal exkl. moms, plus 2 kr. per påbörjad samtalsminut"
+        "description": "Per utgående samtal exkl. moms, plus {pMinute} per påbörjad samtalsminut"
       },
       "setup": {
         "name": "Konfiguration av Dialogbots specialister",
@@ -190,7 +190,7 @@
   "guide": {
     "meta": {
       "title": "Bygg din AI-receptionist i 3 steg – bygganvisning",
-      "description": "Bygganvisningen för Dialogbot: vad du behöver, vad den kan, vad den kostar – och de 3 stegen till din egen AI-receptionist som svarar på svenska. 2.495 kr./mån.",
+      "description": "Bygganvisningen för Dialogbot: vad du behöver, vad den kan, vad den kostar – och de 3 stegen till din egen AI-receptionist som svarar på svenska. {pMonthly}/mån.",
       "ogTitle": "Bygg din AI-receptionist i 3 steg | Dialogbot"
     },
     "breadcrumb": "Bygganvisning",
@@ -227,7 +227,7 @@
       "lead": "Dialogbot svarar i telefon, svarar i webbchatten och bokar möten åt ditt företag – på svenska och på kundernas språk, dygnet runt. Du följer anvisningen, vi sätter ihop klossarna tillsammans med dig.",
       "cta": "Testa den nu – den ringer upp dig",
       "listen": "Hör Dialogbot svara i telefon",
-      "price": "2.495 kr./mån. · exkl. moms"
+      "price": "{pMonthly}/mån. · exkl. moms"
     },
     "heroCard": {
       "step": "Steg 1 av 3",
@@ -348,11 +348,11 @@
     "pricing": {
       "eyebrow": "Pris",
       "title": "En byggsats. Ett pris, inga överraskningar.",
-      "lead": "Alla priser är exkl. moms. Konfigurationen kan ni göra själva på ca 30 minuter – den ingår. Vill ni ha den skräddarsydd av våra specialister kostar det 5.000 kr. en gång.",
+      "lead": "Alla priser är exkl. moms. Konfigurationen kan ni göra själva på ca 30 minuter – den ingår. Vill ni ha den skräddarsydd av våra specialister kostar det {pSetup} en gång.",
       "subscription": {
         "name": "Abonnemang",
         "from": "Från",
-        "unit": "kr./mån.",
+        "unit": "{pCur}/mån.",
         "points": [
           "Telefon, chatt och bokning ingår",
           "Inget pris per ärende",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
-        "unit": "kr. per utgående samtal",
+        "unit": "{pCur} per utgående samtal",
         "points": [
           "Bara om ni vill att Dialogbot ska ringa ut",
           "Kontakterna har själva sagt ja till att bli uppringda",
@@ -371,7 +371,7 @@
       },
       "setup": {
         "name": "Konfiguration av våra specialister",
-        "unit": "kr. engångsavgift",
+        "unit": "{pCur} engångsavgift",
         "points": [
           "Bara om ni inte vill göra det själva – de tre stegen ingår i abonnemanget",
           "Skräddarsydd konfiguration och integration med era egna system och behov",
@@ -433,7 +433,7 @@
       "chipPrice": "Vad kostar det?",
       "askCompany": "Toppen. Vad heter ditt företag?",
       "answerWhat": "Jag svarar i telefon dygnet runt, svarar på det kunderna oftast frågar om, bokar tider i din kalender och skickar ett meddelande till dig om det är något jag inte klarar.\n\nVill du höra det själv?",
-      "answerPrice": "Ett abonnemang för 2.495 kr. i månaden, exkl. moms. Konfigurationen kan ni göra själva – den ingår. Vill ni att våra specialister skräddarsyr den för era system kostar det 5.000 kr. en gång.\n\nSka jag ringa och visa vad du får?",
+      "answerPrice": "Ett abonnemang för {pMonthly} i månaden, exkl. moms. Konfigurationen kan ni göra själva – den ingår. Vill ni att våra specialister skräddarsyr den för era system kostar det {pSetup} en gång.\n\nSka jag ringa och visa vad du får?",
       "askOther": "Skriv kort vad ni gör – så vet jag hur jag ska ta emot kunderna.",
       "askNumber": "Då är jag receptionist för {company} från och med nu. Vilket nummer ska jag ringa?",
       "helloCompany": "Hej {company}. Vad gör ni?",

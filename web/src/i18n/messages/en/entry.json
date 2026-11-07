@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – one assistant that answers the phone: for your business and for you",
-    "description": "Dialogbot answers in English, around the clock, books appointments in your calendar and makes calls for you when you ask. You approve everything before it takes effect. For businesses from DKK 2,495/month – for you at home from DKK 49/month.",
+    "description": "Dialogbot answers in English, around the clock, books appointments in your calendar and makes calls for you when you ask. You approve everything before it takes effect. For businesses from {pMonthly}/month – for you at home from {pPrivatFrom}/month.",
     "ogTitle": "One assistant that answers the phone – for your business and for you"
   },
   "nav": {
@@ -118,7 +118,7 @@
         }
       ],
       "cta": "For businesses",
-      "price": "From DKK {price}/month"
+      "price": "From {pMonthly}/month"
     },
     "private": {
       "kick": "Personal",
@@ -201,7 +201,7 @@
     "from": "from",
     "business": {
       "name": "Business",
-      "unit": "DKK/month excl. VAT",
+      "unit": "/month excl. VAT",
       "points": [
         "Phone, booking and web chat – all included",
         "300 minutes of incoming calls per month",
@@ -211,7 +211,8 @@
     },
     "private": {
       "name": "Personal",
-      "unit": "DKK/month · {days} days free",
+      "unit": "/month · {days} days free",
+      "amount": "{pPrivatFrom}",
       "points": [
         "Lists and reminders – unlimited",
         "Peter calls for you within your limits",
@@ -238,7 +239,7 @@
       },
       {
         "q": "What does setup cost?",
-        "a": "Nothing if you do it yourself – it takes about 30 minutes with Peter in the chat. If you want our specialists to connect your calendar, CRM or booking system, it costs DKK {setup} once."
+        "a": "Nothing if you do it yourself – it takes about 30 minutes with Peter in the chat. If you want our specialists to connect your calendar, CRM or booking system, it costs {pSetup} once."
       },
       {
         "q": "Can I cancel?",

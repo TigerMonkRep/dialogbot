@@ -46,28 +46,28 @@
     "ctaText": "Fortæl chatten, hvad din virksomhed hedder og hvad I laver, så ringer assistenten dig op og viser, hvordan den ville tage telefonen for jer.",
     "callMe": "Ring mig op nu",
     "orWrite": "Eller skriv til ",
-    "priceLine": ". 2.495 kr./md. · ekskl. moms. Ingen binding."
+    "priceLine": ". {pMonthly}/md. · ekskl. moms. Ingen binding."
   },
   "compareTable": {
     "difference": "Forskel"
   },
   "pricing": {
     "meta": {
-      "title": "Priser – AI-receptionist til 2.495 kr. om måneden",
-      "description": "Se prisen på Dialogbot: ét abonnement til 2.495 kr. om måneden ekskl. moms med 300 minutters indgående opkald. Telefon, chat, booking og personlig opsætning er med. Udgående kampagneopkald koster 4 kr. pr. opkald.",
+      "title": "Priser – AI-receptionist til {pMonthly} om måneden",
+      "description": "Se prisen på Dialogbot: ét abonnement til {pMonthly} om måneden ekskl. moms med 300 minutters indgående opkald. Telefon, chat, booking og personlig opsætning er med. Udgående kampagneopkald koster {pCall} pr. opkald.",
       "ogTitle": "Priser på AI-receptionist | Dialogbot"
     },
     "kicker": "Priser",
-    "title": "Ét abonnement – 2.495 kr. om måneden",
+    "title": "Ét abonnement – {pMonthly} om måneden",
     "lead": "Én pris, den fulde Dialogbot: AI-receptionist på telefonen, chatbot på hjemmesiden, booking og en opsummering af hver henvendelse. Alle priser er ekskl. moms.",
-    "points": ["2.495 kr. om måneden – ét abonnement", "Ingen pris pr. henvendelse", "300 minutters indgående opkald om måneden er med", "Udgående kampagneopkald: 4 kr. pr. opkald + 2 kr. pr. minut", "Ingen binding", "Gør-det-selv-opsætning er med – specialist-opsætning 5.000 kr."],
+    "points": ["{pMonthly} om måneden – ét abonnement", "Ingen pris pr. henvendelse", "300 minutters indgående opkald om måneden er med", "Udgående kampagneopkald: {pCall} pr. opkald + {pMinute} pr. minut", "Ingen binding", "Gør-det-selv-opsætning er med – specialist-opsætning {pSetup}"],
     "sections": {
       "subscription": {
         "title": "Abonnementet",
-        "p1Price": "2.495 kr. om måneden",
+        "p1Price": "{pMonthly} om måneden",
         "p1a": " ekskl. moms. Der er ingen pris pr. henvendelse, og ",
         "p1Minutes": "300 minutters indgående opkald om måneden er med",
-        "p1b": " – det rækker til de fleste små virksomheder. Taler jeres kunder mere med assistenten end det, koster hvert påbegyndt minut derudover 1,50 kr. I kan altid se jeres forbrug i Dialogbot.",
+        "p1b": " – det rækker til de fleste små virksomheder. Taler jeres kunder mere med assistenten end det, koster hvert påbegyndt minut derudover {pExtraMinute} I kan altid se jeres forbrug i Dialogbot.",
         "p2": "Prisen på en telefonpasning – men en receptionist, der også booker tiderne i jeres kalender og sender en besked om hvert opkald.",
         "p3a": "Passer til virksomheder, hvor telefonen ringer, mens I har travlt: håndværkere, klinikker, saloner, værksteder og rådgivere. Vil I høre den først, kan I ",
         "p3Link": "lade Dialogbot ringe til jer",
@@ -89,20 +89,20 @@
         "items": ["AI-receptionist og AI-telefonsvarer på dansk – døgnet rundt", "Chatbot til hjemmesiden med samme viden", "Booking, flytning og aflysning af tider samt SMS-bekræftelse", "Opsummering af hver henvendelse, opgaver og daglig rapport", "Gør-det-selv-opsætning: byggevejledningens tre trin, cirka en halv time, med assistenten ved hånden"]
       },
       "specialists": {
-        "title": "Opsætning fra vores specialister – 5.000 kr.",
+        "title": "Opsætning fra vores specialister – {pSetup}",
         "p1a": "I kan sætte Dialogbot op selv – byggevejledningens tre trin er med i abonnementet. Vil I hellere have det gjort, sætter vores egne specialister den op for ",
-        "p1Price": "5.000 kr.",
+        "p1Price": "{pSetup}",
         "p1b": " ekskl. moms, betalt én gang.",
         "p2": "Så får I en skræddersyet opsætning og integration til jeres egne systemer og behov: vi kobler kalender, CRM eller bookingsystem på, lægger jeres viden og priser ind, træner stemmen på jeres navne og tester det hele sammen med jer, før den tændes."
       },
       "outbound": {
         "title": "Udgående kampagneopkald",
         "p1a": "Vil I have assistenten til at ringe ud til kontakter, der selv har sagt ja til at blive ringet op, koster det ",
-        "p1Call": "4 kr. pr. udgående opkald",
+        "p1Call": "{pCall} pr. udgående opkald",
         "p1b": " plus ",
-        "p1Minute": "2 kr. pr. påbegyndt samtaleminut",
+        "p1Minute": "{pMinute} pr. påbegyndt samtaleminut",
         "p1c": " ekskl. moms – ligesom en telefonregning.",
-        "p2": "Hvert opkald, der ringes, tæller – også et nyt forsøg. Et ubesvaret opkald koster derfor 4 kr., og en samtale på 3 minutter 10 kr. En kontakt ringes højst 2 gange og taler højst 3 minutter i alt, og I ser den højeste pris, før I trykker Start."
+        "p2": "Hvert opkald, der ringes, tæller – også et nyt forsøg. Et ubesvaret opkald koster derfor {pCall}, og en samtale på 3 minutter {pCall3Min} En kontakt ringes højst 2 gange og taler højst 3 minutter i alt, og I ser den højeste pris, før I trykker Start."
       },
       "start": {
         "title": "Kom i gang",
@@ -117,18 +117,18 @@
     },
     "faq": [
       ["Er der binding?", "Nej. Der er ingen binding. I kan opsige til udgangen af den løbende måned."],
-      ["Er 2.495 kr. hele prisen?", "Ja, det er hele prisen for abonnementet, ekskl. moms. Der er kun ét abonnement og ingen ekstra pris pr. henvendelse. Kun hvis I bruger mere end 300 indgående minutter om måneden, koster hvert minut derudover 1,50 kr."],
+      ["Er {pMonthly} hele prisen?", "Ja, det er hele prisen for abonnementet, ekskl. moms. Der er kun ét abonnement og ingen ekstra pris pr. henvendelse. Kun hvis I bruger mere end 300 indgående minutter om måneden, koster hvert minut derudover {pExtraMinute}"],
       ["Kan jeg prøve den, før jeg køber?", "Ja. Dialogbot ringer til jer og tager imod jer, som var I en kunde – det tager to minutter og kræver ingen tilmelding. Og der er ingen binding."],
       ["Hvor bliver mine kunders oplysninger af?", "Det står i en kort, almindelig tekst på siden om GDPR og data: hvad der gemmes, hvor, og hvordan databehandleraftalen fungerer."],
-      ["Hvad koster udgående kampagneopkald?", "4 kr. pr. udgående opkald plus 2 kr. pr. påbegyndt samtaleminut, ekskl. moms. Et ubesvaret opkald koster 4 kr., en samtale på 3 minutter 10 kr. Kontakterne skal på forhånd have sagt ja til at blive ringet op, og en kampagne ringer først, når I selv trykker Start."],
-      ["Hvad sker der, hvis vi får mange indgående opkald?", "300 minutters indgående opkald om måneden er med i abonnementet. Derudover koster hvert påbegyndt minut 1,50 kr. ekskl. moms – det står på fakturaen som en særskilt linje, og I kan følge forbruget løbende i Dialogbot."],
-      ["Koster opsætningen noget?", "Ikke hvis I gør det selv: byggevejledningens tre trin er med i abonnementet og tager cirka en halv time. Opsætning fra vores specialister koster 5.000 kr. ekskl. moms én gang og giver jer en skræddersyet opsætning og integration til jeres egne systemer og behov."]
+      ["Hvad koster udgående kampagneopkald?", "{pCall} pr. udgående opkald plus {pMinute} pr. påbegyndt samtaleminut, ekskl. moms. Et ubesvaret opkald koster {pCall}, en samtale på 3 minutter {pCall3Min} Kontakterne skal på forhånd have sagt ja til at blive ringet op, og en kampagne ringer først, når I selv trykker Start."],
+      ["Hvad sker der, hvis vi får mange indgående opkald?", "300 minutters indgående opkald om måneden er med i abonnementet. Derudover koster hvert påbegyndt minut {pExtraMinute} ekskl. moms – det står på fakturaen som en særskilt linje, og I kan følge forbruget løbende i Dialogbot."],
+      ["Koster opsætningen noget?", "Ikke hvis I gør det selv: byggevejledningens tre trin er med i abonnementet og tager cirka en halv time. Opsætning fra vores specialister koster {pSetup} ekskl. moms én gang og giver jer en skræddersyet opsætning og integration til jeres egne systemer og behov."]
     ]
   },
   "receptionist": {
     "meta": {
       "title": "AI-receptionist til danske virksomheder – tager telefonen døgnet rundt",
-      "description": "Dialogbot er en dansk AI-receptionist, der tager telefonen, når I er optaget eller har lukket. Den svarer ud fra jeres egen viden, booker tider og sender jer hver henvendelse. 2.495 kr./md.",
+      "description": "Dialogbot er en dansk AI-receptionist, der tager telefonen, når I er optaget eller har lukket. Den svarer ud fra jeres egen viden, booker tider og sender jer hver henvendelse. {pMonthly}/md.",
       "ogTitle": "AI-receptionist til danske virksomheder | Dialogbot"
     },
     "kicker": "AI-receptionist",
@@ -159,9 +159,9 @@
       "price": {
         "title": "Pris og opsætning",
         "p1a": "Der er ét abonnement: ",
-        "p1Price": "2.495 kr. om måneden",
-        "p1b": ", uden pris pr. henvendelse og med 300 minutters indgående opkald om måneden. Udgående kampagneopkald koster 4 kr. pr. opkald plus 2 kr. pr. samtaleminut. Alle priser er ekskl. moms.",
-        "p2a": "I skal ikke kunne noget teknisk. I sætter selv assistenten op efter byggevejledningens tre trin på cirka en halv time – det er med i abonnementet. Har I en hjemmeside, henter Dialogbot det meste automatisk, og I kan prøve assistenten af, før den tager et eneste rigtigt opkald. Vil I hellere have det gjort, sætter vores egne specialister den op for 5.000 kr. ekskl. moms én gang – skræddersyet og integreret med jeres egne systemer og behov. Læs også om ",
+        "p1Price": "{pMonthly} om måneden",
+        "p1b": ", uden pris pr. henvendelse og med 300 minutters indgående opkald om måneden. Udgående kampagneopkald koster {pCall} pr. opkald plus {pMinute} pr. samtaleminut. Alle priser er ekskl. moms.",
+        "p2a": "I skal ikke kunne noget teknisk. I sætter selv assistenten op efter byggevejledningens tre trin på cirka en halv time – det er med i abonnementet. Har I en hjemmeside, henter Dialogbot det meste automatisk, og I kan prøve assistenten af, før den tager et eneste rigtigt opkald. Vil I hellere have det gjort, sætter vores egne specialister den op for {pSetup} ekskl. moms én gang – skræddersyet og integreret med jeres egne systemer og behov. Læs også om ",
         "p2Phone": "AI-telefonsvareren",
         "p2b": " og ",
         "p2Chatbot": "chatbotten til hjemmesiden",
@@ -169,12 +169,12 @@
       }
     },
     "faq": [
-      ["Hvad koster en AI-receptionist hos Dialogbot?", "Ét abonnement til 2.495 kr. om måneden, uden pris pr. henvendelse og med 300 minutters indgående opkald om måneden. Udgående kampagneopkald koster 4 kr. pr. opkald plus 2 kr. pr. samtaleminut. Priserne er ekskl. moms."],
+      ["Hvad koster en AI-receptionist hos Dialogbot?", "Ét abonnement til {pMonthly} om måneden, uden pris pr. henvendelse og med 300 minutters indgående opkald om måneden. Udgående kampagneopkald koster {pCall} pr. opkald plus {pMinute} pr. samtaleminut. Priserne er ekskl. moms."],
       ["Hvad sker der med kundernes oplysninger – er det GDPR-sikkert?", "Opkald og beskeder behandles som databehandler på jeres vegne, databasen ligger i EU, og I får en databehandleraftale som en del af vilkårene. Læs det hele i almindeligt dansk på siden om GDPR og data: /gdpr."],
       ["Lyder den som en robot?", "Dialogbot taler naturligt dansk med en stemme, I selv vælger, fx Camilla eller Peter. Den siger altid ærligt, at den er en digital assistent, hvis kunden spørger."],
       ["Kan jeg beholde mit telefonnummer?", "Ja. I viderestiller jeres nuværende nummer til Dialogbot, når I er optaget eller har lukket, og beholder jeres teleudbyder."],
       ["Hvad sker der, hvis assistenten ikke kender svaret?", "Den gætter ikke. Den svarer kun ud fra godkendt viden og lover, at en medarbejder vender tilbage, og I får henvendelsen med det samme."],
-      ["Hvor lang tid tager opsætningen?", "Gør I det selv, tager byggevejledningens tre trin cirka en halv time, og assistenten guider jer undervejs. Vælger I opsætning fra vores specialister (5.000 kr. ekskl. moms), aftaler vi et møde og sætter den op skræddersyet til jeres systemer."]
+      ["Hvor lang tid tager opsætningen?", "Gør I det selv, tager byggevejledningens tre trin cirka en halv time, og assistenten guider jer undervejs. Vælger I opsætning fra vores specialister ({pSetup} ekskl. moms), aftaler vi et møde og sætter den op skræddersyet til jeres systemer."]
     ]
   },
   "phone": {
@@ -212,8 +212,8 @@
       "price": {
         "title": "Pris",
         "a": "Ét abonnement til ",
-        "price": "2.495 kr. om måneden",
-        "b": " – ekskl. moms og uden pris pr. henvendelse. Opsætningen gør I selv efter byggevejledningen – eller lad vores specialister skræddersy den for 5.000 kr. én gang. Se også ",
+        "price": "{pMonthly} om måneden",
+        "b": " – ekskl. moms og uden pris pr. henvendelse. Opsætningen gør I selv efter byggevejledningen – eller lad vores specialister skræddersy den for {pSetup} én gang. Se også ",
         "receptionistLink": "AI-receptionist",
         "c": " og ",
         "chatbotLink": "chatbot til hjemmesiden",
@@ -224,7 +224,7 @@
       ["Hvad er forskellen på en AI-telefonsvarer og en almindelig telefonsvarer?", "En almindelig telefonsvarer optager en besked. En AI-telefonsvarer taler med kunden, svarer på spørgsmål ud fra jeres viden, afklarer behovet og kan booke en tid – og I får en skrevet opsummering."],
       ["Kan jeg bruge mit eget nummer?", "Ja. I viderestiller jeres nuværende nummer til Dialogbot, når I er optaget eller har lukket. I kan også få et nyt Dialogbot-nummer."],
       ["Forstår den dansk med dialekt?", "Dialogbot er bygget til dansk tale og bruger jeres egne fagord og navne fra den viden, I godkender, så den bedre genkender dem."],
-      ["Hvad koster det?", "Ét abonnement til 2.495 kr. om måneden, ekskl. moms. Der er ingen pris pr. henvendelse."],
+      ["Hvad koster det?", "Ét abonnement til {pMonthly} om måneden, ekskl. moms. Der er ingen pris pr. henvendelse."],
       ["Kan jeg høre den, før jeg køber?", "Ja. Skriv dit nummer på forsiden, vælg en stemme og din branche, så ringer Dialogbot dig op og viser det."]
     ]
   },
@@ -265,8 +265,8 @@
       "price": {
         "title": "Pris",
         "a": "Chatbotten er en del af Dialogbot: ét abonnement til ",
-        "price": "2.495 kr. om måneden",
-        "b": " – ekskl. moms og uden pris pr. henvendelse. Opsætningen gør I selv efter byggevejledningen – eller lad vores specialister skræddersy den for 5.000 kr. én gang."
+        "price": "{pMonthly} om måneden",
+        "b": " – ekskl. moms og uden pris pr. henvendelse. Opsætningen gør I selv efter byggevejledningen – eller lad vores specialister skræddersy den for {pSetup} én gang."
       }
     },
     "faq": [
@@ -274,7 +274,7 @@
       ["Kan en medarbejder overtage samtalen?", "Ja. En medarbejder kan svare kunden direkte i samtalen, og assistenten holder pause imens."],
       ["Finder chatbotten selv på svar?", "Nej. Den svarer kun ud fra den viden, I har godkendt, og siger ærligt, når noget ikke fremgår."],
       ["Kan den både chatte og tage telefonen?", "Ja. Dialogbot bruger den samme viden i chatten og på telefonen."],
-      ["Hvad koster chatbotten?", "Den er en del af Dialogbot: ét abonnement til 2.495 kr. om måneden, ekskl. moms."]
+      ["Hvad koster chatbotten?", "Den er en del af Dialogbot: ét abonnement til {pMonthly} om måneden, ekskl. moms."]
     ]
   },
   "about": {
@@ -384,13 +384,13 @@
     "scenarioEnd": ".",
     "priceTitle": "Pris og opsætning",
     "priceA": "Ét abonnement til ",
-    "price": "2.495 kr. om måneden",
+    "price": "{pMonthly} om måneden",
     "priceB": " – ekskl. moms og uden pris pr. henvendelse. En fra Dialogbot sætter det op sammen med jer på cirka en halv time. Se alle detaljer på ",
     "priceLink": "prissiden",
     "priceC": ".",
     "othersTitle": "Dialogbot til andre brancher",
     "faq": [
-      ["Hvad koster det?", "Ét abonnement til 2.495 kr. om måneden, ekskl. moms. Der er ingen pris pr. henvendelse."],
+      ["Hvad koster det?", "Ét abonnement til {pMonthly} om måneden, ekskl. moms. Der er ingen pris pr. henvendelse."],
       ["Kan vi beholde vores telefonnummer?", "Ja. I viderestiller jeres nummer til Dialogbot, når I er optaget eller har lukket."]
     ]
   },

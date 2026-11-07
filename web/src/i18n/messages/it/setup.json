@@ -99,7 +99,7 @@
         "phone": { "title": "Rispondere al telefono", "sub": "quando voi non potete, o sempre" },
         "booking": { "title": "Prenotare appuntamenti", "sub": "direttamente nel vostro calendario" },
         "web": { "title": "Rispondere sul sito web", "sub": "webchat – una riga di codice" },
-        "outbound": { "title": "Chiamare i clienti", "sub": "campagne · 4 kr. a chiamata IVA esclusa" }
+        "outbound": { "title": "Chiamare i clienti", "sub": "campagne · {pCall} a chiamata IVA esclusa" }
       },
       "langAria": "Lingua",
       "speaks": "Parla",
@@ -293,7 +293,7 @@
     "turningOn": "Attivazione …",
     "turnOn": "Attiva Dialogbot",
     "managersOnly": "Solo proprietari e amministratori possono attivarlo.",
-    "subscriptionNote": "L'abbonamento parte da 2.495 kr./mese IVA esclusa e le chiamate in uscita delle campagne costano 4 kr. a chiamata IVA esclusa.",
+    "subscriptionNote": "L'abbonamento parte da {pMonthly}/mese IVA esclusa e le chiamate in uscita delle campagne costano {pCall} a chiamata IVA esclusa.",
     "confirmSubscription": "Conferma l'abbonamento",
     "findAgain": "Ritrova tutto sotto l'icona del profilo → Tutte le impostazioni."
   },

@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – ein Assistent, der ans Telefon geht: für Ihr Unternehmen und für Sie",
-    "description": "Dialogbot antwortet auf Deutsch, rund um die Uhr, bucht Termine in Ihrem Kalender und ruft für Sie an, wenn Sie es wünschen. Sie geben alles frei, bevor es gilt. Für Unternehmen ab 2.495 DKK/Monat – für Sie zu Hause ab 49 DKK/Monat.",
+    "description": "Dialogbot antwortet auf Deutsch, rund um die Uhr, bucht Termine in Ihrem Kalender und ruft für Sie an, wenn Sie es wünschen. Sie geben alles frei, bevor es gilt. Für Unternehmen ab {pMonthly}/Monat – für Sie zu Hause ab {pPrivatFrom}/Monat.",
     "ogTitle": "Ein Assistent, der ans Telefon geht – für Ihr Unternehmen und für Sie"
   },
   "nav": {
@@ -118,7 +118,7 @@
         }
       ],
       "cta": "Für Unternehmen",
-      "price": "Ab {price} DKK/Monat"
+      "price": "Ab {pMonthly}/Monat"
     },
     "private": {
       "kick": "Privat",
@@ -201,7 +201,7 @@
     "from": "ab",
     "business": {
       "name": "Unternehmen",
-      "unit": "DKK/Monat zzgl. MwSt.",
+      "unit": "{pCur}/Monat zzgl. MwSt.",
       "points": [
         "Telefon, Buchung und Webchat – alles inklusive",
         "300 Minuten eingehende Anrufe pro Monat",
@@ -211,7 +211,8 @@
     },
     "private": {
       "name": "Privat",
-      "unit": "DKK/Monat · {days} Tage kostenlos",
+      "unit": "{pCur}/Monat · {days} Tage kostenlos",
+      "amount": "{pPrivatFromNum}",
       "points": [
         "Listen und Erinnerungen – unbegrenzt",
         "Peter ruft für Sie an, in Ihrem Rahmen",
@@ -238,7 +239,7 @@
       },
       {
         "q": "Was kostet die Einrichtung?",
-        "a": "Nichts, wenn Sie es selbst machen – es dauert etwa 30 Minuten mit Peter im Chat. Sollen unsere Spezialisten Kalender, CRM oder Buchungssystem anbinden, kostet das einmalig {setup} DKK."
+        "a": "Nichts, wenn Sie es selbst machen – es dauert etwa 30 Minuten mit Peter im Chat. Sollen unsere Spezialisten Kalender, CRM oder Buchungssystem anbinden, kostet das einmalig {pSetup}."
       },
       {
         "q": "Kann ich kündigen?",

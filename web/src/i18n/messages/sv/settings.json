@@ -59,7 +59,7 @@
       "title": "Kampanjer",
       "sub": "Ring era egna kunder",
       "outbound": "Utgående samtal",
-      "chosen": "Valt – 4 kr. per samtal + 2 kr. per minut exkl. moms",
+      "chosen": "Valt – {pCall} per samtal + {pMinute} per minut exkl. moms",
       "notChosen": "Inte valt"
     },
     "systems": {
@@ -77,7 +77,7 @@
       "team": "Team",
       "teamValue": "{n} med åtkomst",
       "billing": "Abonnemang och fakturor",
-      "billingValue": "Från 2.495 kr./mån. exkl. moms"
+      "billingValue": "Från {pMonthly}/mån. exkl. moms"
     },
     "tech": {
       "title": "Teknik",

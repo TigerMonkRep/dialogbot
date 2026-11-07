@@ -59,7 +59,7 @@
       "title": "Kampanjer",
       "sub": "Ring deres egne kunder",
       "outbound": "Utgående anrop",
-      "chosen": "Valgt – 4 kr. per anrop + 2 kr. per minutt eks. mva.",
+      "chosen": "Valgt – {pCall} per anrop + {pMinute} per minutt eks. mva.",
       "notChosen": "Ikke valgt"
     },
     "systems": {
@@ -77,7 +77,7 @@
       "team": "Team",
       "teamValue": "{n} med tilgang",
       "billing": "Abonnement og fakturaer",
-      "billingValue": "Fra 2.495 kr./mnd. eks. mva."
+      "billingValue": "Fra {pMonthly}/mnd. eks. mva."
     },
     "tech": {
       "title": "Teknikk",

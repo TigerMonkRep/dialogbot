@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – un assistant qui répond au téléphone : pour votre entreprise et pour vous",
-    "description": "Dialogbot répond en français, jour et nuit, réserve des rendez-vous dans votre agenda et passe des appels pour vous quand vous le demandez. Vous validez tout avant que cela ne s'applique. Pour les entreprises à partir de 2 495 DKK/mois – pour vous à la maison à partir de 49 DKK/mois.",
+    "description": "Dialogbot répond en français, jour et nuit, réserve des rendez-vous dans votre agenda et passe des appels pour vous quand vous le demandez. Vous validez tout avant que cela ne s'applique. Pour les entreprises à partir de {pMonthly}/mois – pour vous à la maison à partir de {pPrivatFrom}/mois.",
     "ogTitle": "Un assistant qui répond au téléphone – pour votre entreprise et pour vous"
   },
   "nav": {
@@ -118,7 +118,7 @@
         }
       ],
       "cta": "Pour les entreprises",
-      "price": "À partir de {price} DKK/mois"
+      "price": "À partir de {pMonthly}/mois"
     },
     "private": {
       "kick": "Particuliers",
@@ -201,7 +201,7 @@
     "from": "à partir de",
     "business": {
       "name": "Entreprises",
-      "unit": "DKK/mois HT",
+      "unit": "{pCur}/mois HT",
       "points": [
         "Téléphone, réservation et chat web – tout est inclus",
         "300 minutes d'appels entrants par mois",
@@ -211,7 +211,8 @@
     },
     "private": {
       "name": "Particuliers",
-      "unit": "DKK/mois · {days} jours gratuits",
+      "unit": "{pCur}/mois · {days} jours gratuits",
+      "amount": "{pPrivatFromNum}",
       "points": [
         "Listes et rappels – illimités",
         "Peter appelle pour vous dans vos limites",
@@ -238,7 +239,7 @@
       },
       {
         "q": "Combien coûte la configuration ?",
-        "a": "Rien si vous la faites vous-même – cela prend environ 30 minutes avec Peter dans le chat. Si vous voulez que nos spécialistes connectent l'agenda, le CRM ou le système de réservation, cela coûte {setup} DKK une seule fois."
+        "a": "Rien si vous la faites vous-même – cela prend environ 30 minutes avec Peter dans le chat. Si vous voulez que nos spécialistes connectent l'agenda, le CRM ou le système de réservation, cela coûte {pSetup} une seule fois."
       },
       {
         "q": "Puis-je résilier ?",

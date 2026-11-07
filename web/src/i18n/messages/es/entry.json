@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – un asistente que atiende el teléfono: para su empresa y para usted",
-    "description": "Dialogbot responde en español, las 24 horas, reserva citas en su calendario y llama por usted cuando se lo pide. Usted aprueba todo antes de que entre en vigor. Para empresas desde 2.495 DKK/mes – para usted en casa desde 49 DKK/mes.",
+    "description": "Dialogbot responde en español, las 24 horas, reserva citas en su calendario y llama por usted cuando se lo pide. Usted aprueba todo antes de que entre en vigor. Para empresas desde {pMonthly}/mes – para usted en casa desde {pPrivatFrom}/mes.",
     "ogTitle": "Un asistente que atiende el teléfono – para su empresa y para usted"
   },
   "nav": {
@@ -118,7 +118,7 @@
         }
       ],
       "cta": "Para empresas",
-      "price": "Desde {price} DKK/mes"
+      "price": "Desde {pMonthly}/mes"
     },
     "private": {
       "kick": "Particulares",
@@ -201,7 +201,7 @@
     "from": "desde",
     "business": {
       "name": "Empresas",
-      "unit": "DKK/mes sin IVA",
+      "unit": "{pCur}/mes sin IVA",
       "points": [
         "Teléfono, reservas y chat web – todo incluido",
         "300 minutos de llamadas entrantes al mes",
@@ -211,7 +211,8 @@
     },
     "private": {
       "name": "Particulares",
-      "unit": "DKK/mes · {days} días gratis",
+      "unit": "{pCur}/mes · {days} días gratis",
+      "amount": "{pPrivatFromNum}",
       "points": [
         "Listas y recordatorios – sin límite",
         "Peter llama por ti dentro de tus límites",
@@ -238,7 +239,7 @@
       },
       {
         "q": "¿Cuánto cuesta la configuración?",
-        "a": "Nada si lo hace usted mismo – lleva unos 30 minutos con Peter en el chat. Si quiere que nuestros especialistas conecten el calendario, el CRM o el sistema de reservas, cuesta {setup} DKK una sola vez."
+        "a": "Nada si lo hace usted mismo – lleva unos 30 minutos con Peter en el chat. Si quiere que nuestros especialistas conecten el calendario, el CRM o el sistema de reservas, cuesta {pSetup} una sola vez."
       },
       {
         "q": "¿Puedo cancelar?",

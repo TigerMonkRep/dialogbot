@@ -199,7 +199,7 @@ def test_payment_signal_twice(api, client, pv, db, monkeypatch):
     monkeypatch.setattr(stripe, "request", lambda m, p, d=None, **k: sent.append((p, d)) or
                         {"id": "cs_test_1", "url": "https://checkout.stripe.com/c/pay/cs_test_1"})
     assert api.post(tok, "/privat/credits/checkout").json() == {"url": "https://checkout.stripe.com/c/pay/cs_test_1"}
-    data = sent[0][1]
+    data = next(d for p, d in sent if p == "/checkout/sessions")  # (the VAT tax rate is looked up first)
     assert data["mode"] == "payment" and data["metadata"]["workspace_id"] == str(ws)
     assert data["line_items"][0]["price_data"]["unit_amount"] == 2900
     session = {"id": "cs_test_1", "object": "checkout.session", "mode": "payment", "payment_status": "paid",

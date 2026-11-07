@@ -30,14 +30,22 @@
     },
     "hero": {
       "eyebrow": "For tradespeople, clinics and salons · around the clock",
-      "title": "Dialogbot answers the phone when you can't.",
+      "title": {
+        "before": "Dialogbot ",
+        "mark": "answers the phone",
+        "after": " when you can't."
+      },
       "lead": "An AI receptionist that answers around the clock, books appointments in your calendar and sends you a message about every call. You keep your number. 2,495 kr./month excl. VAT.",
       "cta": "Try it – it calls you",
       "note": "2 minutes, no sign-up. Ask it anything a customer would."
     },
     "how": {
       "eyebrow": "How it works",
-      "title": "The customer calls. Dialogbot answers. You get the message.",
+      "title": {
+        "before": "The customer calls. Dialogbot answers. ",
+        "mark": "You get the message",
+        "after": "."
+      },
       "lead": "A missed call is a lost customer – most never call back. That's the feeling Dialogbot takes away: standing on a ladder or with a client in the chair, hearing the phone ring and not being able to pick up.",
       "steps": [
         {
@@ -56,7 +64,11 @@
     },
     "features": {
       "eyebrow": "What it does",
-      "title": "Four jobs, one receptionist",
+      "title": {
+        "before": "Four jobs, ",
+        "mark": "one receptionist",
+        "after": ""
+      },
       "items": [
         {
           "title": "Answers the phone",
@@ -85,7 +97,11 @@
     },
     "price": {
       "eyebrow": "Price",
-      "title": "One subscription. No charge per enquiry.",
+      "title": {
+        "before": "One subscription. ",
+        "mark": "No charge per enquiry",
+        "after": "."
+      },
       "lead": "All prices exclude VAT. No lock-in – cancel month to month.",
       "subscription": {
         "name": "Subscription",
@@ -136,7 +152,11 @@
     },
     "start": {
       "eyebrow": "Get started",
-      "title": "Hear it first – or build it yourself in 30 minutes",
+      "title": {
+        "before": "Hear it first – or build it yourself in ",
+        "mark": "30 minutes",
+        "after": ""
+      },
       "try": {
         "badge": "2 min · no sign-up",
         "title": "Try it – it calls you",

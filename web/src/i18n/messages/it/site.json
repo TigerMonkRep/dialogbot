@@ -30,14 +30,22 @@
     },
     "hero": {
       "eyebrow": "Per artigiani, studi medici e saloni · in italiano · 24 ore su 24",
-      "title": "Dialogbot risponde al telefono quando voi non potete.",
+      "title": {
+        "before": "Dialogbot ",
+        "mark": "risponde al telefono",
+        "after": " quando voi non potete."
+      },
       "lead": "Un receptionist AI che parla la lingua dei vostri clienti, risponde 24 ore su 24, prenota appuntamenti nel vostro calendario e vi invia un messaggio per ogni chiamata. Mantenete il vostro numero. 2.495 kr./mese IVA esclusa.",
       "cta": "Lo provi: la richiama lui",
       "note": "2 minuti, nessuna registrazione. Gli faccia le domande che farebbe un cliente."
     },
     "how": {
       "eyebrow": "Come funziona",
-      "title": "Il cliente chiama. Dialogbot risponde. Lei riceve un messaggio.",
+      "title": {
+        "before": "Il cliente chiama. Dialogbot risponde. ",
+        "mark": "Lei riceve un messaggio",
+        "after": "."
+      },
       "lead": "Una chiamata persa è un cliente perso: la maggior parte non richiama più. È proprio questa sensazione che Dialogbot le toglie: essere in cima a una scala o avere un cliente in poltrona e sentire il telefono squillare senza poter rispondere.",
       "steps": [
         {
@@ -56,7 +64,11 @@
     },
     "features": {
       "eyebrow": "Cosa sa fare",
-      "title": "Quattro funzioni, un solo receptionist",
+      "title": {
+        "before": "Quattro funzioni, ",
+        "mark": "un solo receptionist",
+        "after": ""
+      },
       "items": [
         {
           "title": "Risponde al telefono",
@@ -85,7 +97,11 @@
     },
     "price": {
       "eyebrow": "Prezzo",
-      "title": "Un solo abbonamento. Nessun costo per contatto.",
+      "title": {
+        "before": "Un solo abbonamento. ",
+        "mark": "Nessun costo per contatto",
+        "after": "."
+      },
       "lead": "Tutti i prezzi sono IVA esclusa. Nessun vincolo: disdetta di mese in mese.",
       "subscription": {
         "name": "Abbonamento",
@@ -136,7 +152,11 @@
     },
     "start": {
       "eyebrow": "Inizia ora",
-      "title": "Prima lo ascolti, oppure lo configuri da solo in 30 minuti",
+      "title": {
+        "before": "Prima lo ascolti, oppure lo configuri da solo in ",
+        "mark": "30 minuti",
+        "after": ""
+      },
       "try": {
         "badge": "2 min · nessuna registrazione",
         "title": "Lo provi: la richiama lui",

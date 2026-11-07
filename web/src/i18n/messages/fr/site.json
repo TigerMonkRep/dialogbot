@@ -30,14 +30,22 @@
     },
     "hero": {
       "eyebrow": "Pour les artisans, cabinets et salons · en français · 24 h/24",
-      "title": "Dialogbot répond au téléphone quand vous ne pouvez pas.",
+      "title": {
+        "before": "Dialogbot ",
+        "mark": "répond au téléphone",
+        "after": " quand vous ne pouvez pas."
+      },
       "lead": "Un réceptionniste IA qui parle la langue de vos clients, répond 24 h/24, prend les rendez-vous dans votre agenda et vous envoie un message après chaque appel. Vous gardez votre numéro. 2.495 kr./mois HT.",
       "cta": "Essayez-le – il vous appelle",
       "note": "2 minutes, sans inscription. Posez-lui vos questions comme le ferait un client."
     },
     "how": {
       "eyebrow": "Comment ça marche",
-      "title": "Le client appelle. Dialogbot répond. Vous êtes prévenu.",
+      "title": {
+        "before": "Le client appelle. Dialogbot répond. ",
+        "mark": "Vous êtes prévenu",
+        "after": "."
+      },
       "lead": "Un appel manqué, c’est un client perdu – la plupart ne rappellent jamais. C’est ce sentiment que Dialogbot vous enlève : être sur l’échelle ou avec un client et entendre le téléphone sonner sans pouvoir décrocher.",
       "steps": [
         {
@@ -56,7 +64,11 @@
     },
     "features": {
       "eyebrow": "Ce qu’il sait faire",
-      "title": "Quatre missions, un seul réceptionniste",
+      "title": {
+        "before": "Quatre missions, ",
+        "mark": "un seul réceptionniste",
+        "after": ""
+      },
       "items": [
         {
           "title": "Répond au téléphone",
@@ -85,7 +97,11 @@
     },
     "price": {
       "eyebrow": "Tarif",
-      "title": "Un seul abonnement. Aucun prix par demande.",
+      "title": {
+        "before": "Un seul abonnement. ",
+        "mark": "Aucun prix par demande",
+        "after": "."
+      },
       "lead": "Tous les prix sont HT. Sans engagement – résiliable de mois en mois.",
       "subscription": {
         "name": "Abonnement",
@@ -136,7 +152,11 @@
     },
     "start": {
       "eyebrow": "Commencer",
-      "title": "Écoutez-le d’abord – ou configurez-le vous-même en 30 minutes",
+      "title": {
+        "before": "Écoutez-le d’abord – ou configurez-le vous-même en ",
+        "mark": "30 minutes",
+        "after": ""
+      },
       "try": {
         "badge": "2 min · sans inscription",
         "title": "Essayez-le – il vous appelle",

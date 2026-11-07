@@ -31,7 +31,11 @@
     "metaTitle": "Dialogbot Privat – il tuo assistente personale",
     "metaDescription": "Scrivi o detta un compito. Peter crea liste, ti ricorda le cose e chiama per te – ma mai prima che tu abbia detto sì. Prova gratis per 14 giorni.",
     "eyebrow": "Il tuo assistente personale",
-    "title": "Cosa posso sistemare per te?",
+    "title": {
+      "before": "Cosa posso sistemare ",
+      "mark": "per te",
+      "after": "?"
+    },
     "lead": "Scrivi o detta un compito. Peter tiene liste, ti ricorda le cose – e chiama il parrucchiere, l'officina o il ristorante per te. Non chiama mai prima che tu abbia detto sì.",
     "cta": "Prova gratis per 14 giorni",
     "note": "14 giorni gratis. Disdici quando vuoi.",
@@ -54,7 +58,11 @@
       "done": "Fatto: Cykelkælderen giovedì alle 15.30. Aggiunto al tuo calendario."
     },
     "three": {
-      "title": "Tre cose che Peter fa per te",
+      "title": {
+        "before": "Tre cose che ",
+        "mark": "Peter fa per te",
+        "after": ""
+      },
       "included": "Incluso in tutti gli abbonamenti",
       "includedTrial": "Incluso in tutti gli abbonamenti – prova 14 giorni gratis",
       "items": [
@@ -73,7 +81,11 @@
       ]
     },
     "control": {
-      "title": "Decidi tu. Sempre.",
+      "title": {
+        "before": "Decidi tu. ",
+        "mark": "Sempre.",
+        "after": ""
+      },
       "text": "Peter propone prima cosa farà e aspetta il tuo sì. Dice sempre di essere un assistente che chiama per conto tuo – e non può usare la tua carta né il tuo MitID.",
       "steps": [
         "Dici cosa va sistemato",
@@ -83,7 +95,11 @@
     },
     "store": {
       "eyebrow": "Il negozio",
-      "title": "Peter impara qualcosa di nuovo ogni mese",
+      "title": {
+        "before": "Peter impara qualcosa di nuovo ",
+        "mark": "ogni mese",
+        "after": ""
+      },
       "text": "Ogni app è una cosa in cui Peter può aiutare. Tocca, leggi cosa fa e installala – poi la configura insieme a te. Tutte le app sono incluse in Plus e Familie.",
       "cta": "Vedi tutte le app",
       "apps": {
@@ -98,7 +114,11 @@
       }
     },
     "pricing": {
-      "title": "14 giorni gratis. Poi scegli tu.",
+      "title": {
+        "before": "",
+        "mark": "14 giorni",
+        "after": " gratis. Poi scegli tu."
+      },
       "text": "Prova tutto per 14 giorni. Ti registri con una carta, addebitata solo alla fine della prova – disdici prima e non paghi nulla. Prezzi IVA inclusa.",
       "intervalLabel": "Fatturazione",
       "monthly": "Mensile",
@@ -954,9 +974,9 @@
       "title": "Chi c'è a casa?",
       "help": "Così hai le liste giuste fin dall'inizio.",
       "household": {
-    "photoAdd": "Aggiungi foto dello scontrino",
-    "photoReplace": "Sostituisci foto",
-    "photoOpen": "Vedi foto",
+        "photoAdd": "Aggiungi foto dello scontrino",
+        "photoReplace": "Sostituisci foto",
+        "photoOpen": "Vedi foto",
         "alone": {
           "label": "Solo io",
           "hint": "Lista della spesa"

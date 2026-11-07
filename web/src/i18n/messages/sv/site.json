@@ -30,14 +30,22 @@
     },
     "hero": {
       "eyebrow": "För hantverkare, kliniker och salonger · på svenska · dygnet runt",
-      "title": "Dialogbot svarar i telefon när ni inte kan.",
+      "title": {
+        "before": "Dialogbot ",
+        "mark": "svarar i telefon",
+        "after": " när ni inte kan."
+      },
       "lead": "En AI-receptionist som svarar på svenska – och på era kunders språk – dygnet runt, bokar tider i er kalender och skickar ett meddelande om varje samtal. Ni behåller ert nummer. 2.495 kr./mån. exkl. moms.",
       "cta": "Testa den – den ringer upp dig",
       "note": "2 minuter, ingen registrering. Fråga den som en kund skulle göra."
     },
     "how": {
       "eyebrow": "Så fungerar det",
-      "title": "Kunden ringer. Dialogbot svarar. Du får besked.",
+      "title": {
+        "before": "Kunden ringer. Dialogbot svarar. ",
+        "mark": "Du får besked",
+        "after": "."
+      },
       "lead": "Ett obesvarat samtal är en förlorad kund – de flesta ringer aldrig igen. Det är den känslan Dialogbot tar ifrån dig: att stå på stegen eller ha en kund i stolen och höra telefonen ringa utan att kunna svara.",
       "steps": [
         {
@@ -56,7 +64,11 @@
     },
     "features": {
       "eyebrow": "Det här kan den",
-      "title": "Fyra saker, en receptionist",
+      "title": {
+        "before": "Fyra saker, ",
+        "mark": "en receptionist",
+        "after": ""
+      },
       "items": [
         {
           "title": "Svarar i telefon",
@@ -85,7 +97,11 @@
     },
     "price": {
       "eyebrow": "Pris",
-      "title": "Ett abonnemang. Inget pris per ärende.",
+      "title": {
+        "before": "Ett abonnemang. ",
+        "mark": "Inget pris per ärende",
+        "after": "."
+      },
       "lead": "Alla priser är exkl. moms. Ingen bindningstid – uppsägning månad för månad.",
       "subscription": {
         "name": "Abonnemang",
@@ -136,7 +152,11 @@
     },
     "start": {
       "eyebrow": "Kom igång",
-      "title": "Lyssna på den först – eller bygg den själv på 30 minuter",
+      "title": {
+        "before": "Lyssna på den först – eller bygg den själv på ",
+        "mark": "30 minuter",
+        "after": ""
+      },
       "try": {
         "badge": "2 min · ingen registrering",
         "title": "Testa den – den ringer upp dig",

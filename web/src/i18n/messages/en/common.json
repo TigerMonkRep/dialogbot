@@ -52,5 +52,51 @@
     "iosStep3Privat": "Open Dialogbot from the home screen and tap “Turn on notifications”.",
     "iosNote": "Apple does not let a page install itself – it takes these two taps.",
     "close": "Close"
+  },
+  "pwa": {
+    "manifestErhverv": "AI reception, callbacks and campaigns for Danish businesses",
+    "offlinePill": "Offline",
+    "offlineTitle": "No connection",
+    "offlineErhverv": "The last thing you saw is kept here. Dialogbot still answers the phone – only your view is waiting.",
+    "offlinePrivat": "The last thing you saw is kept here. Only your view is waiting – write again when the network is back.",
+    "retry": "Try again",
+    "lastSeen": "Show what I saw last",
+    "offlineNote": "We try again by ourselves when the network is back.",
+    "updateReady": "New version ready",
+    "updateButton": "Update",
+    "updating": "Updating…",
+    "pushEyebrow": "Ask permission",
+    "pushTitle": "Should I notify you on your phone?",
+    "pushTextErhverv": "Even when the app is closed: new calls, bookings and messages for you. One notification, when it matters.",
+    "pushEnable": "Turn on notifications",
+    "pushLater": "Not now",
+    "pushBusy": "Asking…",
+    "pushOn": "Notifications are on for this device.",
+    "pushDenied": "Notifications are blocked in the browser. Allow them in the site settings (the lock next to the address) and try again.",
+    "pushFailed": "Notifications could not be turned on. Try again in a moment.",
+    "stepOf": "Step {n} of {total}",
+    "lastStep": "Last step",
+    "installStepTitle": "Put the app on your home screen",
+    "needs": "You need",
+    "needPhone": "phone",
+    "needBrowser": "Safari or Chrome",
+    "installStepTextErhverv": "One tap from the home screen to calls, bookings and enquiries. No App Store – the app is the page you are on.",
+    "installStepTextPrivat": "One tap from the home screen to your day and your tasks – and a notification when something happens. No App Store – the app is the page you are on.",
+    "dismiss": "Not now",
+    "back": "Back",
+    "shortcuts": {
+      "calls": "Calls",
+      "appointments": "Bookings",
+      "campaigns": "Campaigns",
+      "day": "My day",
+      "newTask": "New task",
+      "tasks": "Tasks"
+    },
+    "screens": {
+      "erhvervToday": "Dialogbot – Today: status, calls and bookings",
+      "erhvervInstall": "Dialogbot – put the app on your home screen",
+      "privatDay": "Dialogbot Privat – My day",
+      "privatInstall": "Dialogbot Privat – put the app on your home screen"
+    }
   }
 }

@@ -52,5 +52,51 @@
     "iosStep3Privat": "Abre Dialogbot desde la pantalla de inicio y toca «Activar notificaciones».",
     "iosNote": "Apple no permite que una página se instale sola: son estos dos toques.",
     "close": "Cerrar"
+  },
+  "pwa": {
+    "manifestErhverv": "Recepción con IA, devolución de llamadas y campañas para empresas danesas",
+    "offlinePill": "Sin conexión",
+    "offlineTitle": "Sin conexión",
+    "offlineErhverv": "Lo último que viste está guardado aquí. Dialogbot sigue contestando el teléfono – solo tu vista espera.",
+    "offlinePrivat": "Lo último que viste está guardado aquí. Solo tu vista espera – vuelve a escribir cuando vuelva la red.",
+    "retry": "Intentar de nuevo",
+    "lastSeen": "Mostrar lo último que vi",
+    "offlineNote": "Lo intentamos de nuevo por nuestra cuenta cuando vuelva la red.",
+    "updateReady": "Nueva versión lista",
+    "updateButton": "Actualizar",
+    "updating": "Actualizando…",
+    "pushEyebrow": "Pedir permiso",
+    "pushTitle": "¿Te aviso en el teléfono?",
+    "pushTextErhverv": "También con la app cerrada: nuevas llamadas, citas y mensajes para ti. Un aviso, cuando importa.",
+    "pushEnable": "Activar notificaciones",
+    "pushLater": "Ahora no",
+    "pushBusy": "Preguntando…",
+    "pushOn": "Las notificaciones están activadas en este dispositivo.",
+    "pushDenied": "Las notificaciones están bloqueadas en el navegador. Permítelas en los ajustes del sitio (el candado junto a la dirección) e inténtalo de nuevo.",
+    "pushFailed": "No se pudieron activar las notificaciones. Inténtalo de nuevo en un momento.",
+    "stepOf": "Paso {n} de {total}",
+    "lastStep": "Último paso",
+    "installStepTitle": "Pon la app en la pantalla de inicio",
+    "needs": "Necesitas",
+    "needPhone": "teléfono",
+    "needBrowser": "Safari o Chrome",
+    "installStepTextErhverv": "Un toque desde la pantalla de inicio a llamadas, citas y consultas. Sin App Store – la app es la página en la que estás.",
+    "installStepTextPrivat": "Un toque desde la pantalla de inicio a tu día y tus tareas – y un aviso cuando pase algo. Sin App Store – la app es la página en la que estás.",
+    "dismiss": "Ahora no",
+    "back": "Atrás",
+    "shortcuts": {
+      "calls": "Llamadas",
+      "appointments": "Citas",
+      "campaigns": "Campañas",
+      "day": "Mi día",
+      "newTask": "Nueva tarea",
+      "tasks": "Tareas"
+    },
+    "screens": {
+      "erhvervToday": "Dialogbot – Hoy: estado, llamadas y citas",
+      "erhvervInstall": "Dialogbot – pon la app en la pantalla de inicio",
+      "privatDay": "Dialogbot Privat – Mi día",
+      "privatInstall": "Dialogbot Privat – pon la app en la pantalla de inicio"
+    }
   }
 }

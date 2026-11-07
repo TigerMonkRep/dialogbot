@@ -52,5 +52,51 @@
     "iosStep3Privat": "Åbn Dialogbot fra hjemmeskærmen, og tryk «Slå notifikationer til».",
     "iosNote": "Apple tillader ikke, at en side installerer sig selv – det er de to tryk, der skal til.",
     "close": "Luk"
+  },
+  "pwa": {
+    "manifestErhverv": "AI-reception, callback og kampagner for danske virksomheder",
+    "offlinePill": "Offline",
+    "offlineTitle": "Ingen forbindelse",
+    "offlineErhverv": "Det sidste, du så, er gemt her. Dialogbot tager stadig telefonen – det er kun din visning, der venter.",
+    "offlinePrivat": "Det sidste, du så, er gemt her. Det er kun din visning, der venter – skriv igen, når nettet er tilbage.",
+    "retry": "Prøv igen",
+    "lastSeen": "Vis det sidste, jeg så",
+    "offlineNote": "Vi prøver selv igen, når nettet er tilbage.",
+    "updateReady": "Ny version klar",
+    "updateButton": "Opdater",
+    "updating": "Opdaterer…",
+    "pushEyebrow": "Spørg om lov",
+    "pushTitle": "Skal jeg give dig besked på telefonen?",
+    "pushTextErhverv": "Også når appen er lukket: nye opkald, aftaler og beskeder til dig. Én besked, når det betyder noget.",
+    "pushEnable": "Slå notifikationer til",
+    "pushLater": "Ikke nu",
+    "pushBusy": "Spørger…",
+    "pushOn": "Notifikationer er slået til på denne enhed.",
+    "pushDenied": "Notifikationer er blokeret i browseren. Slå dem til i sidens indstillinger (låsen ved adressen), og prøv igen.",
+    "pushFailed": "Det lykkedes ikke at slå notifikationer til. Prøv igen om lidt.",
+    "stepOf": "Trin {n} af {total}",
+    "lastStep": "Sidste trin",
+    "installStepTitle": "Læg appen på hjemmeskærmen",
+    "needs": "Du skal bruge",
+    "needPhone": "telefon",
+    "needBrowser": "Safari eller Chrome",
+    "installStepTextErhverv": "Ét tryk fra hjemmeskærmen til opkald, aftaler og henvendelser. Ingen App Store – appen er siden, du står på.",
+    "installStepTextPrivat": "Ét tryk fra hjemmeskærmen til din dag og dine opgaver – og besked, når der sker noget. Ingen App Store – appen er siden, du står på.",
+    "dismiss": "Ikke nu",
+    "back": "Tilbage",
+    "shortcuts": {
+      "calls": "Opkald",
+      "appointments": "Aftaler",
+      "campaigns": "Kampagner",
+      "day": "Min dag",
+      "newTask": "Ny opgave",
+      "tasks": "Opgaver"
+    },
+    "screens": {
+      "erhvervToday": "Dialogbot – I dag: status, opkald og aftaler",
+      "erhvervInstall": "Dialogbot – læg appen på hjemmeskærmen",
+      "privatDay": "Dialogbot Privat – Min dag",
+      "privatInstall": "Dialogbot Privat – læg appen på hjemmeskærmen"
+    }
   }
 }

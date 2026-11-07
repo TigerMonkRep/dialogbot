@@ -172,7 +172,7 @@ _SYMBOL = {"DKK": "kr.", "SEK": "kr", "NOK": "kr", "EUR": "€"}
 
 
 def fmt(minor: int, currency: str) -> str:
-    """Plain display for invoice lines and texts: "2.495 kr." · "3 695 kr" · "€329" · "€0,55" (decimals only when
+    """Plain display for invoice lines and texts: "2.495 kr." · "3 695 kr" · "€329" · "€0.55" (decimals only when
     needed; Danish separators for DKK, Scandinavian for SEK/NOK, English-style € for EUR)."""
     c = _cur(currency)
     whole, cents = divmod(abs(minor), 100)

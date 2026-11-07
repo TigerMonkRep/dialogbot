@@ -459,9 +459,14 @@ class PushSubscription(Base):
     """A Web Push subscription (VAPID) of one browser/device. Deleted when the push service answers 404/410."""
 
     __tablename__ = "push_subscriptions"
+    __table_args__ = (CheckConstraint("audience in ('privat','erhverv')", name="ck_push_subscriptions_audience"),)
 
     id: Mapped[uuid.UUID] = uuid_pk()
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    # Which app subscribed: privat (Dialogbot Privat) or erhverv (the business PWA, bound to one workspace). The
+    # same browser endpoint can only belong to one of them; re-subscribing from the other app moves it.
+    audience: Mapped[str] = mapped_column(String(16), nullable=False, default="privat", server_default="privat")
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"))
     endpoint: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     p256dh: Mapped[str] = mapped_column(String(200), nullable=False)
     auth: Mapped[str] = mapped_column(String(100), nullable=False)

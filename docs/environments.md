@@ -6,6 +6,7 @@ Sidst verificeret 2026-11-04. Det der **ikke** kan læses (miljøvariablers vær
 |---|---|---|---|
 | `dialogbot-api-staging` | API (FastAPI) og kører `alembic upgrade head` som pre-deploy | **Supabase `dialogbot-prod-fra`** (`dmnbphhocnmjiqtcjddg`, eu-central-1/Frankfurt, skema `dialogbot`) | Flyttet 2026-11-04 kl. 20.21 UTC (se nedenfor); `pg_stat_activity` i det nye projekt viser `dialogbot_app`/`dialogbot_migrate` fra Render. |
 | `dialogbot-worker-staging` | Worker (`python -m app.worker.runner`): outbox + planlagte jobs hvert minut | Samme produktionsdatabase | Workerens fejl `column … does not exist` kom fra produktionsskemaet; kladderne i `social_posts` ligger i prod |
+| `dialogbot-public-api` (i `infra/render.yaml`, ikke oprettet endnu) | Den offentlige API `api.dialogbot.app/v1` (`APP_SURFACE=public`, `docs/public-api.md`) | Samme produktionsdatabase (`DATABASE_URL` kopieres fra API-tjenesten); ingen egen migration – `/health/ready` svarer 503 indtil databasen står på buildets head | Blueprint; DNS `api.dialogbot.app` → tjenesten (CNAME til Render) skal oprettes, når tjenesten er |
 | – | – | Supabase `dialogbot-staging` (`zofdupmpcokvcvstsozm`) | **Ubrugt/forældet**: Alembic `3c1d29602dcc`, 65 tabeller, ingen `social_*`-tabeller. Ingen tjeneste skriver til den. Må ikke bruges til at teste migrationer, før den er migreret frem. |
 
 ## Flytningen til Frankfurt (2026-11-04)

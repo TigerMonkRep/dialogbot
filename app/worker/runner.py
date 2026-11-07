@@ -101,8 +101,15 @@ def handle_webhook_deliver(db: OrmSession, ev: OutboxEvent) -> None:
     handle_deliver(db, ev)
 
 
+def handle_public_webhook(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.public_api.webhook_delivery import handle_deliver
+
+    handle_deliver(db, ev)
+
+
 HANDLERS = {
     "webhook.deliver": handle_webhook_deliver,
+    "public_webhook.deliver": handle_public_webhook,  # public API webhooks (app/modules/public_api)
     "email.invitation": handle_invitation,
     "email.verify_address": handle_verify,
     "email.password_reset": handle_reset,

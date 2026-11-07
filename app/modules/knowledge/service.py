@@ -224,6 +224,13 @@ def approve(db: OrmSession, ctx: WorkspaceContext, version_id: uuid.UUID, reques
     enqueue(db, event_type="knowledge.version_approved", dedupe_key=f"knowledge-approved:{v.id}",
             workspace_id=ctx.workspace.id, payload={"version_id": str(v.id), "item_id": str(v.item_id),
                                                     "knowledge_revision": ws.knowledge_revision})
+    from app.modules.integrations import events
+
+    item = db.get(KnowledgeItem, v.item_id)
+    events.emit(db, ctx.workspace.id, "knowledge.version_approved",
+                {"version_id": str(v.id), "item_id": str(v.item_id), "kind": item.kind if item else None,
+                 "title": v.title, "version_no": v.version_no, "knowledge_revision": ws.knowledge_revision},
+                key=str(v.id))
     invalidate_checks(db, ctx.workspace.id, changed_area="knowledge",
                       reason=f"Viden blev godkendt (revision {ws.knowledge_revision})")
     return v

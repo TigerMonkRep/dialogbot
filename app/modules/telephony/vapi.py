@@ -16,6 +16,7 @@ import hashlib
 import hmac
 import json
 import re
+import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -627,18 +628,37 @@ def end_of_call(db: OrmSession, message: dict) -> str:
                 {"conversation_id": str(conv.id), "channel": "phone", "from": caller, "to": number.e164,
                  "duration_seconds": int(duration) if duration is not None else None, "summary": summary,
                  "ended_reason": call.ended_reason}, key=call_id)
+    outcome = _after_report(db, message, call_id=call_id, conv=conv, duration=duration, visitor_lines=visitor_lines,
+                            transcript="\n".join(lines), summary=summary, ws_id=ws_id, caller=caller, now=now)
+    # Last, so campaign/sales processing above has set direction and outcome on the call.
+    db.flush()
+    events.emit(db, ws_id, "call.completed",
+                {"call_id": str(call.id), "direction": call.direction, "from_number": caller, "to_number": number.e164,
+                 "started_at": started.isoformat() if started else None, "ended_at": ended.isoformat() if ended else None,
+                 "duration_seconds": call.duration_seconds, "ended_reason": call.ended_reason, "outcome": call.outcome,
+                 "summary": summary, "conversation_id": str(conv.id)}, key=str(call.id))
+    from app.modules.push import service as push_service
+
+    push_service.notify_call_completed(db, call)
+    return outcome
+
+
+def _after_report(db: OrmSession, message: dict, *, call_id: str, conv: Conversation, duration, visitor_lines: int,
+                  transcript: str, summary: str, ws_id: uuid.UUID, caller: str | None, now: datetime) -> str:
+    """What the call means for the workspace: a campaign outcome, a sales demo outcome, the booking made in the call,
+    or a call-back lead with a task."""
     from app.modules.campaigns import service as campaigns
 
     if campaigns.on_report(db, message, call_id=call_id, conv=conv, duration=duration, visitor_lines=visitor_lines,
-                           transcript="\n".join(lines), summary=summary):
+                           transcript=transcript, summary=summary):
         from app.modules.sales import outbound
 
-        outbound.on_report(db, message, call_id=call_id, conv=conv, transcript="\n".join(lines))
+        outbound.on_report(db, message, call_id=call_id, conv=conv, transcript=transcript)
         return "applied"  # an outbound campaign call: its contact gets the outcome, not a generic callback lead
     from app.modules.sales import service as sales
 
     if sales.on_report(db, message, call_id=call_id, conv=conv, visitor_lines=visitor_lines,
-                       transcript="\n".join(lines), summary=summary):
+                       transcript=transcript, summary=summary):
         return "applied"  # a demo call from the sales workspace: outcome on the demo call, lead only when relevant
     booked = db.scalar(select(Booking).where(Booking.workspace_id == ws_id, Booking.source == "phone",
                                              Booking.provider_call_id == call_id)) if call_id else None

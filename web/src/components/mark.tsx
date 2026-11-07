@@ -1,7 +1,8 @@
 /** Accent kit (design: out/mockups2/accent-system.html, docs/brand.md). Three hand-drawn-looking marks that sit
- *  behind or under a word in a headline: a Trin-gul marker stroke, a thin ink line and an ellipse ring. Inline SVG
- *  with fixed coordinates, `aria-hidden`, placed with CSS (globals.css → ".mk"): the span is `position: relative;
- *  z-index: 0`, the SVG `absolute; z-index: -1`, so the mark lies under the glyphs but over the section background.
+ *  behind or under a word in a headline: a Trin-gul marker stroke, a thin ink line and an ellipse ring. Drawn by
+ *  CSS (globals.css → ".mk"): the span is `position: relative; z-index: 0` and its ::before is an absolutely placed
+ *  mask (fixed SVG coordinates) in the tone colour at z-index −1, so the mark lies under the glyphs but over the
+ *  section background. No child element, so the headline's accessible name stays exactly the sentence.
  *  Em-based sizes, so it follows the font size from phone to desktop. No motion by default; reduced-motion safe.
  *
  *  Rules: marker = yellow on both audiences, max one per viewport; line = ink on Erhverv, orange on Privat; ring and
@@ -18,17 +19,8 @@ export function Mark({ kind, tone, long = false, className = "", children }: {
 }) {
   const c = COLOR[tone ?? (kind === "marker" ? "yellow" : "ink")];
   return (
-    <span className={`mk mk-${kind} ${long ? "mk-long" : ""} ${className}`}>
+    <span className={`mk mk-${kind} ${long ? "mk-long" : ""} ${className}`} style={{ "--mk-c": c } as React.CSSProperties}>
       {children}
-      {kind === "marker" && (
-        <svg viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M2 1 L100 0 L98 20 L0 20 Z" fill={c} /></svg>
-      )}
-      {kind === "underline" && (
-        <svg viewBox="0 0 100 6" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M2 3 L96 3" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" vectorEffect="non-scaling-stroke" /></svg>
-      )}
-      {kind === "ring" && (
-        <svg viewBox="0 0 125 100" preserveAspectRatio="none" aria-hidden="true" focusable="false"><ellipse cx="62.5" cy="50" rx="60" ry="47" pathLength="360" strokeDasharray="340 20" strokeDashoffset="-20" fill="none" stroke={c} strokeWidth="3" strokeLinecap="round" vectorEffect="non-scaling-stroke" /></svg>
-      )}
     </span>
   );
 }

@@ -197,13 +197,13 @@
       {
         "title": "2. Preise",
         "body": [
-          { "type": "p", "text": "Alle Preise verstehen sich in dänischen Kronen zzgl. MwSt. Die MwSt. (25 %) wird auf der Rechnung hinzugerechnet." },
+          { "type": "p", "text": "Alle Preise verstehen sich zzgl. MwSt. Unternehmen in Dänemark zahlen in Dänischen Kronen (DKK), in Schweden in Schwedischen Kronen (SEK), in Norwegen in Norwegischen Kronen (NOK) und überall sonst in Euro (EUR). Dänischen Unternehmen wird die dänische MwSt. (25 %) auf der Rechnung berechnet. Unternehmen im übrigen EU-Ausland erhalten die Rechnung ohne MwSt. im Reverse-Charge-Verfahren und müssen ihre USt-IdNr. angeben; Unternehmen außerhalb der EU wird keine dänische MwSt. berechnet." },
           {
             "type": "ul",
             "items": [
-              [{ "b": "Abonnement:" }, " ab 2.495 kr. pro Monat. Es gibt keinen Preis pro Anfrage."],
-              [{ "b": "Kampagnen (ausgehende Anrufe):" }, " 4 kr. pro ausgehendem Anruf plus 2 kr. pro angefangener Gesprächsminute. Jeder getätigte Anruf zählt, auch ein erneuter Versuch (höchstens 2 Versuche und höchstens 3 Gesprächsminuten pro Kontakt). Der höchstmögliche Preis wird angezeigt, bevor eine Kampagne gestartet wird."],
-              [{ "b": "Eingehende Anrufe:" }, " eine dänische Telefonnummer für den Assistenten und 300 angefangene Gesprächsminuten pro Kalendermonat sind inbegriffen. Weitere Minuten kosten 1,50 kr. pro angefangener Minute und werden auf der Monatsrechnung abgerechnet. Der Verbrauch kann laufend in Dialogbot verfolgt werden."]
+              [{ "b": "Abonnement:" }, " ab {pMonthly} pro Monat. Es gibt keinen Preis pro Anfrage."],
+              [{ "b": "Kampagnen (ausgehende Anrufe):" }, " {pCall} pro ausgehendem Anruf plus {pMinute} pro angefangener Gesprächsminute. Jeder getätigte Anruf zählt, auch ein erneuter Versuch (höchstens 2 Versuche und höchstens 3 Gesprächsminuten pro Kontakt). Der höchstmögliche Preis wird angezeigt, bevor eine Kampagne gestartet wird."],
+              [{ "b": "Eingehende Anrufe:" }, " eine dänische Telefonnummer für den Assistenten und 300 angefangene Gesprächsminuten pro Kalendermonat sind inbegriffen. Weitere Minuten kosten {pExtraMinute} pro angefangener Minute und werden auf der Monatsrechnung abgerechnet. Der Verbrauch kann laufend in Dialogbot verfolgt werden."]
             ]
           },
           { "type": "p", "text": "Kommen Sie über einen Botschafter, erhalten Sie 50 % Rabatt auf Ihren ersten abgerechneten Monat. Wir können die Preise mit einer Frist von mindestens 30 Tagen per E-Mail ändern; die Änderung gilt ab dem ersten vollen Monat nach der Ankündigung." }
@@ -220,7 +220,7 @@
       {
         "title": "4. Beginn, Laufzeit und Kündigung",
         "body": [
-          { "type": "p", "text": "Der Vertrag läuft, bis er gekündigt wird. Sie können zum Ende des laufenden Monats kündigen, indem Sie uns schreiben. Wir können mit einer Frist von 30 Tagen kündigen. Es gibt keine Mindestlaufzeit. Die Einrichtung ist inbegriffen, wenn Sie sie selbst vornehmen; die Einrichtung durch die Spezialisten von Dialogbot kostet 5.000 kr. zzgl. MwSt. und wird einmalig gezahlt, bevor die Arbeit beginnt." },
+          { "type": "p", "text": "Der Vertrag läuft, bis er gekündigt wird. Sie können zum Ende des laufenden Monats kündigen, indem Sie uns schreiben. Wir können mit einer Frist von 30 Tagen kündigen. Es gibt keine Mindestlaufzeit. Die Einrichtung ist inbegriffen, wenn Sie sie selbst vornehmen; die Einrichtung durch die Spezialisten von Dialogbot kostet {pSetup} zzgl. MwSt. und wird einmalig gezahlt, bevor die Arbeit beginnt." },
           { "type": "p", "text": "Bei wesentlicher Vertragsverletzung – z. B. Missbrauch des Dienstes oder Nichtzahlung – können wir den Zugang ohne Vorankündigung sperren." }
         ]
       },

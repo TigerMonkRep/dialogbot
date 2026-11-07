@@ -129,7 +129,7 @@
     "noAppointments": "No upcoming appointments.",
     "weekAppointments": "See this week's appointments",
     "campaigns": "Campaigns",
-    "campaignsSub": "Call your own customers – 4 kr. per call + 2 kr. per minute of conversation, excl. VAT.",
+    "campaignsSub": "Call your own customers – {pCall} per call + {pMinute} per minute of conversation, excl. VAT.",
     "openCampaigns": "Open campaigns",
     "allActivity": "All activity in the last 14 days",
     "power": {
@@ -210,7 +210,7 @@
   "common": {
     "save": "Save",
     "saved": "Saved",
-    "kr": "{amount} kr.",
+    "kr": "{amount}",
     "saving": "Saving…",
     "cancel": "Cancel"
   },
@@ -274,7 +274,7 @@
       "title": "What the week cost",
       "extra": "{amount} extra",
       "calls": "{n} campaign calls",
-      "note": "300 minutes of incoming calls per month are included in the subscription. Campaign calls this week: {n} (4 kr. per outgoing call + 2 kr. per minute of conversation, excl. VAT).",
+      "note": "300 minutes of incoming calls per month are included in the subscription. Campaign calls this week: {n} ({pCall} per outgoing call + {pMinute} per minute of conversation, excl. VAT).",
       "billing": "See subscription and invoices"
     }
   },
@@ -484,7 +484,7 @@
       "consent": "consent",
       "noConsent": "Missing consent – won't be called",
       "attempts": "{n} attempts",
-      "priceNote": "{price} kr. per call excl. VAT. You only pay for the calls that go out. Stop at any time."
+      "priceNote": "{price} per call excl. VAT. You only pay for the calls that go out. Stop at any time."
     },
     "new": {
       "title": "New campaign",
@@ -660,12 +660,12 @@
       "answer": "How it answers «{q}»"
     },
     "service": {
-      "badPrice": "Write the price with numbers, e.g. «from 1,200 kr.» or «850 kr. per m²».",
+      "badPrice": "Write the price with numbers, e.g. «from 1,200» or «850 per m²».",
       "priceLine": "Price: {price}.",
       "add": "Add a service",
       "new": "New service · 3 fields",
       "price": "Price (as the customer should hear it)",
-      "pricePlaceholder": "from 1,200 kr.",
+      "pricePlaceholder": "from 1,200",
       "notePlaceholder": "E.g.: We'll book a time for an inspection",
       "saveAndShow": "Save – and show me how it says it"
     },
@@ -789,6 +789,16 @@
       "withoutCard": "Without a card, the month isn't invoiced.",
       "onlyOwner": "Only the owner can change the payment card."
     },
+    "vat": {
+      "label": "VAT number",
+      "optional": "optional",
+      "placeholder": "e.g. DE123456789",
+      "hint": "Companies in an EU country other than Denmark are invoiced without VAT (reverse charge). Enter the VAT number with its country code, e.g. DE123456789.",
+      "hintOptional": "Shown on the invoice. Norwegian companies are invoiced without Danish VAT.",
+      "required": "Enter your VAT number before saving the card: companies in an EU country other than Denmark are invoiced without VAT and need a valid VAT number.",
+      "save": "Save VAT number",
+      "saved": "The VAT number is saved."
+    },
     "invoices": {
       "title": "Invoices",
       "soFar": "{month} so far:",
@@ -896,7 +906,7 @@
       },
       "billing": {
         "q": "Billing",
-        "a": "There's one subscription from 2.495 kr. per month excl. VAT, including 300 minutes of incoming calls (then 1,50 kr. per minute). Outgoing campaign calls cost 4 kr. per call plus 2 kr. per started minute of conversation. Account shows the month's preview."
+        "a": "There's one subscription from {pMonthly} per month excl. VAT, including 300 minutes of incoming calls (then {pExtraMinute} per minute). Outgoing campaign calls cost {pCall} per call plus {pMinute} per started minute of conversation. Account shows the month's preview."
       }
     },
     "team": {

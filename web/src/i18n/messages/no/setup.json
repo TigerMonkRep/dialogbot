@@ -99,7 +99,7 @@
         "phone": { "title": "Ta telefonen", "sub": "når dere ikke rekker det – eller alltid" },
         "booking": { "title": "Booke avtaler", "sub": "rett i kalenderen deres" },
         "web": { "title": "Svare på nettsiden", "sub": "nettchat – én kodelinje" },
-        "outbound": { "title": "Ringe kunder", "sub": "kampanjer · 4 kr. per anrop eks. mva." }
+        "outbound": { "title": "Ringe kunder", "sub": "kampanjer · {pCall} per anrop eks. mva." }
       },
       "langAria": "Språk",
       "speaks": "Den snakker",
@@ -293,7 +293,7 @@
     "turningOn": "Slår på …",
     "turnOn": "Slå på Dialogbot",
     "managersOnly": "Bare eiere og administratorer kan slå på.",
-    "subscriptionNote": "Abonnementet koster fra 2.495 kr./mnd. eks. mva., og utgående kampanjeanrop koster 4 kr. per anrop eks. mva.",
+    "subscriptionNote": "Abonnementet koster fra {pMonthly}/mnd. eks. mva., og utgående kampanjeanrop koster {pCall} per anrop eks. mva.",
     "confirmSubscription": "Bekreft abonnement",
     "findAgain": "Du finner alt igjen under profilikonet → Alle innstillinger."
   },

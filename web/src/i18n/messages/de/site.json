@@ -1,8 +1,8 @@
 {
   "prices": {
-    "monthly": "2.495",
-    "setup": "5.000",
-    "perCall": "4"
+    "monthly": "{pMonthlyNum}",
+    "setup": "{pSetupNum}",
+    "perCall": "{pCallNum}"
   },
   "demoCall": {
     "label": "Anruf · Tischlerei (Beispiel)",
@@ -19,7 +19,7 @@
   "home": {
     "meta": {
       "title": "Dialogbot – KI-Rezeptionist, der rund um die Uhr ans Telefon geht – auf Deutsch",
-      "description": "Dialogbot geht ans Telefon, wenn Sie es nicht können: ein KI-Rezeptionist, der rund um die Uhr auf Deutsch antwortet, Termine in Ihrem Kalender bucht und Sie über jeden Anruf informiert. 2.495 kr./Monat.",
+      "description": "Dialogbot geht ans Telefon, wenn Sie es nicht können: ein KI-Rezeptionist, der rund um die Uhr auf Deutsch antwortet, Termine in Ihrem Kalender bucht und Sie über jeden Anruf informiert. {pMonthly}/Monat.",
       "ogTitle": "Dialogbot geht ans Telefon, wenn Sie es nicht können"
     },
     "referral": {
@@ -35,7 +35,7 @@
         "mark": "geht ans Telefon",
         "after": ", wenn Sie es nicht können."
       },
-      "lead": "Ein KI-Rezeptionist, der rund um die Uhr auf Deutsch antwortet, Termine in Ihrem Kalender bucht und Sie über jeden Anruf informiert. Sie behalten Ihre Nummer. 2.495 kr./Monat zzgl. MwSt.",
+      "lead": "Ein KI-Rezeptionist, der rund um die Uhr auf Deutsch antwortet, Termine in Ihrem Kalender bucht und Sie über jeden Anruf informiert. Sie behalten Ihre Nummer. {pMonthly}/Monat zzgl. MwSt.",
       "cta": "Testen Sie ihn – er ruft Sie an",
       "note": "2 Minuten, keine Anmeldung. Fragen Sie ihn, wie es ein Kunde tun würde."
     },
@@ -84,7 +84,7 @@
         },
         {
           "title": "Ruft Kunden an",
-          "text": "Fasst bei Angeboten nach oder erinnert an den Service – nur bei Kunden, die zugestimmt haben. 4 kr. pro Anruf + 2 kr. pro Minute."
+          "text": "Fasst bei Angeboten nach oder erinnert an den Service – nur bei Kunden, die zugestimmt haben. {pCall} pro Anruf + {pMinute} pro Minute."
         }
       ],
       "note": "Alles, was er sagt, beruht auf Wissen, das Sie selbst bestätigt haben – und jede Änderung zeigt er Ihnen zuerst: vorher → nachher, «Bestätigen?»."
@@ -106,7 +106,7 @@
       "subscription": {
         "name": "Abonnement",
         "badge": "Empfohlen",
-        "unit": "kr./Monat",
+        "unit": "{pCur}/Monat",
         "text": "Der volle Preis: Telefon, Buchung und Webchat sind enthalten – inkl. 300 Minuten eingehender Anrufe pro Monat. Keine Mindestlaufzeit. Die Einrichtung in Eigenregie ist inklusive.",
         "compare": "Der Preis eines Telefonservice – aber ein Empfang, der auch die Termine in Ihrem Kalender bucht.",
         "cta": "Hier wählen – vorher anhören",
@@ -118,8 +118,8 @@
       },
       "campaign": {
         "name": "Ausgehende Kampagnenanrufe",
-        "unit": "kr. pro Anruf + 2 kr. pro Minute",
-        "text": "Nur wenn Dialogbot für Sie anrufen soll. Unbeantwortet: 4 kr. Drei Minuten Gespräch: 10 kr. Sie sehen den Höchstpreis, bevor Sie starten.",
+        "unit": "{pCur} pro Anruf + {pMinute} pro Minute",
+        "text": "Nur wenn Dialogbot für Sie anrufen soll. Unbeantwortet: {pCall}. Drei Minuten Gespräch: {pCall3Min}. Sie sehen den Höchstpreis, bevor Sie starten.",
         "badge": "Zusatzoption",
         "points": [
           "Bezahlung nur pro Anruf – kein zusätzliches Abo",
@@ -130,7 +130,7 @@
       },
       "setup": {
         "name": "Einrichtung durch unsere Spezialisten",
-        "unit": "kr. einmalig",
+        "unit": "{pCur} einmalig",
         "text": "Maßgeschneiderte Einrichtung und Integration in Ihre eigenen Systeme – Kalender, CRM, Buchungssystem. Nur wenn Sie es nicht selbst machen möchten.",
         "badge": "Zusatzoption · einmalig",
         "points": [
@@ -169,7 +169,7 @@
         "text": "Der Einrichtungsleitfaden zeigt Schritt für Schritt, was Sie brauchen und was passiert – ohne Technik, ohne Code.",
         "cta": "Einrichtungsleitfaden öffnen"
       },
-      "specialists": "Lieber einrichten lassen? Unsere Spezialisten richten ihn für 5.000 kr. zzgl. MwSt. ein, maßgeschneidert für Ihre Systeme."
+      "specialists": "Lieber einrichten lassen? Unsere Spezialisten richten ihn für {pSetup} zzgl. MwSt. ein, maßgeschneidert für Ihre Systeme."
     },
     "ld": {
       "appDescription": "Dialogbot ist ein KI-Rezeptionist, der rund um die Uhr Telefon und Chat für Ihr Unternehmen übernimmt – in der Sprache Ihrer Kunden, auf Grundlage Ihres eigenen Wissens, mit Terminbuchung und gesammelten Anfragen. Wir begleiten Sie durch die gesamte Einrichtung.",
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Ausgehende Kampagnenanrufe",
-        "description": "Pro ausgehendem Anruf zzgl. MwSt., plus 2 kr. pro angefangener Gesprächsminute"
+        "description": "Pro ausgehendem Anruf zzgl. MwSt., plus {pMinute} pro angefangener Gesprächsminute"
       },
       "setup": {
         "name": "Einrichtung durch die Spezialisten von Dialogbot",
@@ -190,7 +190,7 @@
   "guide": {
     "meta": {
       "title": "Ihren KI-Rezeptionisten in 3 Schritten einrichten – Einrichtungsleitfaden",
-      "description": "Der Einrichtungsleitfaden für Dialogbot: was Sie brauchen, was er kann, was er kostet – und die 3 Schritte zu Ihrem eigenen KI-Rezeptionisten, der auf Deutsch antwortet. 2.495 kr./Monat.",
+      "description": "Der Einrichtungsleitfaden für Dialogbot: was Sie brauchen, was er kann, was er kostet – und die 3 Schritte zu Ihrem eigenen KI-Rezeptionisten, der auf Deutsch antwortet. {pMonthly}/Monat.",
       "ogTitle": "Ihren KI-Rezeptionisten in 3 Schritten einrichten | Dialogbot"
     },
     "breadcrumb": "Einrichtungsleitfaden",
@@ -227,7 +227,7 @@
       "lead": "Dialogbot geht ans Telefon, antwortet im Webchat und bucht Termine für Ihr Unternehmen – auf Deutsch, rund um die Uhr. Sie folgen dem Leitfaden, wir setzen die Bausteine mit Ihnen zusammen.",
       "cta": "Jetzt testen – er ruft Sie an",
       "listen": "Hören Sie, wie Dialogbot ans Telefon geht",
-      "price": "2.495 kr./Monat · zzgl. MwSt."
+      "price": "{pMonthly}/Monat · zzgl. MwSt."
     },
     "heroCard": {
       "step": "Schritt 1 von 3",
@@ -348,11 +348,11 @@
     "pricing": {
       "eyebrow": "Preis",
       "title": "Ein Set. Ein Preis, keine Überraschungen.",
-      "lead": "Alle Preise zzgl. MwSt. Die Einrichtung können Sie in ca. 30 Minuten selbst erledigen – sie ist inklusive. Möchten Sie sie von unseren Spezialisten maßschneidern lassen, kostet das einmalig 5.000 kr.",
+      "lead": "Alle Preise zzgl. MwSt. Die Einrichtung können Sie in ca. 30 Minuten selbst erledigen – sie ist inklusive. Möchten Sie sie von unseren Spezialisten maßschneidern lassen, kostet das einmalig {pSetup}",
       "subscription": {
         "name": "Abonnement",
         "from": "Ab",
-        "unit": "kr./Monat",
+        "unit": "{pCur}/Monat",
         "points": [
           "Telefon, Chat und Buchung inklusive",
           "Kein Preis pro Anfrage",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Ausgehende Kampagnenanrufe",
-        "unit": "kr. pro ausgehendem Anruf",
+        "unit": "{pCur} pro ausgehendem Anruf",
         "points": [
           "Nur wenn Dialogbot für Sie anrufen soll",
           "Die Kontakte haben selbst zugestimmt, angerufen zu werden",
@@ -371,7 +371,7 @@
       },
       "setup": {
         "name": "Einrichtung durch unsere Spezialisten",
-        "unit": "kr. einmalig",
+        "unit": "{pCur} einmalig",
         "points": [
           "Nur wenn Sie es nicht selbst machen möchten – die drei Schritte sind im Abonnement enthalten",
           "Maßgeschneiderte Einrichtung und Integration in Ihre eigenen Systeme und Abläufe",
@@ -433,7 +433,7 @@
       "chipPrice": "Was kostet das?",
       "askCompany": "Super. Wie heißt Ihr Unternehmen?",
       "answerWhat": "Ich gehe rund um die Uhr ans Telefon, beantworte die häufigsten Kundenfragen, buche Termine in Ihrem Kalender und schicke Ihnen eine Nachricht, wenn ich etwas nicht klären kann.\n\nMöchten Sie es selbst hören?",
-      "answerPrice": "Ein Abonnement für 2.495 kr. pro Monat zzgl. MwSt. Die Einrichtung können Sie selbst erledigen – sie ist inklusive. Sollen unsere Spezialisten sie auf Ihre Systeme zuschneiden, kostet das einmalig 5.000 kr.\n\nSoll ich Sie anrufen und Ihnen zeigen, was Sie bekommen?",
+      "answerPrice": "Ein Abonnement für {pMonthly} pro Monat zzgl. MwSt. Die Einrichtung können Sie selbst erledigen – sie ist inklusive. Sollen unsere Spezialisten sie auf Ihre Systeme zuschneiden, kostet das einmalig {pSetup}.\n\nSoll ich Sie anrufen und Ihnen zeigen, was Sie bekommen?",
       "askOther": "Schreiben Sie kurz, was Sie tun – dann weiß ich, wie ich Ihre Kunden empfangen soll.",
       "askNumber": "Dann bin ich ab jetzt der Empfang von {company}. Unter welcher Nummer soll ich Sie anrufen?",
       "helloCompany": "Hallo {company}. Was machen Sie?",

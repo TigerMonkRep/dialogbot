@@ -129,7 +129,7 @@
     "noAppointments": "Aucun rendez-vous à venir.",
     "weekAppointments": "Voir les rendez-vous de la semaine",
     "campaigns": "Campagnes",
-    "campaignsSub": "Appelez vos propres clients – 4 kr. par appel + 2 kr. par minute de conversation HT.",
+    "campaignsSub": "Appelez vos propres clients – {pCall} par appel + {pMinute} par minute de conversation HT.",
     "openCampaigns": "Ouvrir les campagnes",
     "allActivity": "Toute l’activité des 14 derniers jours",
     "power": {
@@ -210,7 +210,7 @@
   "common": {
     "save": "Enregistrer",
     "saved": "Enregistré",
-    "kr": "{amount} kr.",
+    "kr": "{amount}",
     "saving": "Enregistrement…",
     "cancel": "Annuler"
   },
@@ -274,7 +274,7 @@
       "title": "Coût de la semaine",
       "extra": "{amount} en supplément",
       "calls": "{n} appels de campagne",
-      "note": "300 minutes d’appels entrants par mois sont incluses dans l’abonnement. Appels de campagne cette semaine : {n} (4 kr. par appel sortant + 2 kr. par minute de conversation, HT).",
+      "note": "300 minutes d’appels entrants par mois sont incluses dans l’abonnement. Appels de campagne cette semaine : {n} ({pCall} par appel sortant + {pMinute} par minute de conversation, HT).",
       "billing": "Voir l’abonnement et les factures"
     }
   },
@@ -484,7 +484,7 @@
       "consent": "consentement",
       "noConsent": "Consentement manquant – ne sera pas appelé",
       "attempts": "{n} tentatives",
-      "priceNote": "{price} kr. par appel HT. Vous ne payez que les appels passés. Arrêtez à tout moment."
+      "priceNote": "{price} par appel HT. Vous ne payez que les appels passés. Arrêtez à tout moment."
     },
     "new": {
       "title": "Nouvelle campagne",
@@ -660,12 +660,12 @@
       "answer": "Voici comment il répond à « {q} »"
     },
     "service": {
-      "badPrice": "Indiquez le prix en chiffres, par ex. « à partir de 1.200 kr. » ou « 850 kr. par m² ».",
+      "badPrice": "Indiquez le prix en chiffres, par ex. « à partir de 1.200 » ou « 850 par m² ».",
       "priceLine": "Prix : {price}.",
       "add": "Ajouter une prestation",
       "new": "Nouvelle prestation · 3 champs",
       "price": "Prix (tel que le client doit l’entendre)",
-      "pricePlaceholder": "à partir de 1.200 kr.",
+      "pricePlaceholder": "à partir de 1.200",
       "notePlaceholder": "Par ex. : nous convenons d’une date pour la visite technique",
       "saveAndShow": "Enregistrer – et me montrer comment il le dit"
     },
@@ -789,6 +789,16 @@
       "withoutCard": "Sans carte, le mois n’est pas facturé.",
       "onlyOwner": "Seul le propriétaire peut modifier la carte de paiement."
     },
+    "vat": {
+      "label": "Numéro de TVA",
+      "optional": "facultatif",
+      "placeholder": "ex. FR12345678901",
+      "hint": "Les entreprises d’un pays de l’UE autre que le Danemark sont facturées sans TVA (autoliquidation). Indiquez le numéro de TVA avec le code pays, ex. FR12345678901.",
+      "hintOptional": "Figure sur la facture. Les entreprises norvégiennes sont facturées sans TVA danoise.",
+      "required": "Indiquez votre numéro de TVA avant d’enregistrer la carte : les entreprises d’un pays de l’UE autre que le Danemark sont facturées sans TVA et ont besoin d’un numéro de TVA valide.",
+      "save": "Enregistrer le numéro de TVA",
+      "saved": "Le numéro de TVA est enregistré."
+    },
     "invoices": {
       "title": "Factures",
       "soFar": "{month} jusqu’à présent :",
@@ -894,7 +904,7 @@
       },
       "billing": {
         "q": "Facturation",
-        "a": "Il y a un seul abonnement à partir de 2.495 kr. par mois HT, avec 300 minutes d’appels entrants (puis 1,50 kr. par minute). Les appels sortants de campagne coûtent 4 kr. par appel plus 2 kr. par minute de conversation entamée. La page Compte affiche l’aperçu du mois."
+        "a": "Il y a un seul abonnement à partir de {pMonthly} par mois HT, avec 300 minutes d’appels entrants (puis {pExtraMinute} par minute). Les appels sortants de campagne coûtent {pCall} par appel plus {pMinute} par minute de conversation entamée. La page Compte affiche l’aperçu du mois."
       }
     },
     "team": {

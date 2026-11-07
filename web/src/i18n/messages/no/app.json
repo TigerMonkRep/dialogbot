@@ -129,7 +129,7 @@
     "noAppointments": "Ingen kommende avtaler.",
     "weekAppointments": "Se ukens avtaler",
     "campaigns": "Kampanjer",
-    "campaignsSub": "Ring deres egne kunder – 4 kr. per anrop + 2 kr. per samtaleminutt eks. mva.",
+    "campaignsSub": "Ring deres egne kunder – {pCall} per anrop + {pMinute} per samtaleminutt eks. mva.",
     "openCampaigns": "Åpne kampanjer",
     "allActivity": "All aktivitet de siste 14 dagene",
     "power": {
@@ -210,7 +210,7 @@
   "common": {
     "save": "Lagre",
     "saved": "Lagret",
-    "kr": "{amount} kr.",
+    "kr": "{amount}",
     "saving": "Lagrer …",
     "cancel": "Avbryt"
   },
@@ -274,7 +274,7 @@
       "title": "Dette kostet uken",
       "extra": "{amount} ekstra",
       "calls": "{n} kampanjeanrop",
-      "note": "300 minutter innkommende anrop i måneden er inkludert i abonnementet. Kampanjeanrop denne uken: {n} (4 kr. per utgående anrop + 2 kr. per samtaleminutt, eks. mva.).",
+      "note": "300 minutter innkommende anrop i måneden er inkludert i abonnementet. Kampanjeanrop denne uken: {n} ({pCall} per utgående anrop + {pMinute} per samtaleminutt, eks. mva.).",
       "billing": "Se abonnement og fakturaer"
     }
   },
@@ -484,7 +484,7 @@
       "consent": "samtykke",
       "noConsent": "Mangler samtykke – blir ikke ringt",
       "attempts": "{n} forsøk",
-      "priceNote": "{price} kr. per anrop eks. mva. Du betaler bare for anropene som går ut. Stopp når som helst."
+      "priceNote": "{price} per anrop eks. mva. Du betaler bare for anropene som går ut. Stopp når som helst."
     },
     "new": {
       "title": "Ny kampanje",
@@ -789,6 +789,16 @@
       "withoutCard": "Uten kort blir måneden ikke fakturert.",
       "onlyOwner": "Bare eieren kan endre betalingskortet."
     },
+    "vat": {
+      "label": "Mva.-nummer",
+      "optional": "valgfritt",
+      "placeholder": "f.eks. NO123456789MVA",
+      "hint": "Bedrifter i et annet EU-land enn Danmark faktureres uten mva. (omvendt avgiftsplikt). Skriv mva.-nummeret med landskode.",
+      "hintOptional": "Vises på fakturaen. Norske bedrifter faktureres uten dansk mva.",
+      "required": "Skriv mva.-nummeret før kortet lagres: bedrifter i et annet EU-land enn Danmark faktureres uten mva. og trenger et gyldig mva.-nummer.",
+      "save": "Lagre mva.-nummer",
+      "saved": "Mva.-nummeret er lagret."
+    },
     "invoices": {
       "title": "Fakturaer",
       "soFar": "{month} så langt:",
@@ -894,7 +904,7 @@
       },
       "billing": {
         "q": "Avregning",
-        "a": "Det er ett abonnement fra 2.495 kr. i måneden eks. mva., inkl. 300 minutter innkommende anrop (deretter 1,50 kr. per minutt). Utgående kampanjeanrop koster 4 kr. per anrop pluss 2 kr. per påbegynt samtaleminutt. Konto viser månedens forhåndsvisning."
+        "a": "Det er ett abonnement fra {pMonthly} i måneden eks. mva., inkl. 300 minutter innkommende anrop (deretter {pExtraMinute} per minutt). Utgående kampanjeanrop koster {pCall} per anrop pluss {pMinute} per påbegynt samtaleminutt. Konto viser månedens forhåndsvisning."
       }
     },
     "team": {

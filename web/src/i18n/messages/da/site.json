@@ -1,8 +1,8 @@
 {
   "prices": {
-    "monthly": "2.495",
-    "setup": "5.000",
-    "perCall": "4"
+    "monthly": "{pMonthlyNum}",
+    "setup": "{pSetupNum}",
+    "perCall": "{pCallNum}"
   },
   "demoCall": {
     "label": "Opkald · Tømrerfirma (eksempel)",
@@ -19,7 +19,7 @@
   "home": {
     "meta": {
       "title": "Dialogbot – AI-receptionist på dansk, der tager telefonen døgnet rundt",
-      "description": "Dialogbot tager telefonen, når I ikke kan: en AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. 2.495 kr./md.",
+      "description": "Dialogbot tager telefonen, når I ikke kan: en AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. {pMonthly}/md.",
       "ogTitle": "Dialogbot tager telefonen, når I ikke kan"
     },
     "referral": {
@@ -35,7 +35,7 @@
         "mark": "tager telefonen",
         "after": ", når I ikke kan."
       },
-      "lead": "En AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. I beholder jeres nummer. 2.495 kr./md. ekskl. moms.",
+      "lead": "En AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. I beholder jeres nummer. {pMonthly}/md. ekskl. moms.",
       "cta": "Prøv den – den ringer til dig",
       "note": "2 minutter, ingen tilmelding. Spørg den, som en kunde ville gøre."
     },
@@ -84,7 +84,7 @@
         },
         {
           "title": "Ringer kunder op",
-          "text": "Følger op på tilbud eller minder om service – kun til kunder, der har sagt ja. 4 kr. pr. opkald + 2 kr. pr. minut."
+          "text": "Følger op på tilbud eller minder om service – kun til kunder, der har sagt ja. {pCall} pr. opkald + {pMinute} pr. minut."
         }
       ],
       "note": "Alt, den siger, bygger på viden I selv har godkendt – og enhver ændring viser den jer først: før → efter, «Godkend?»."
@@ -106,7 +106,7 @@
       "subscription": {
         "name": "Abonnement",
         "badge": "Anbefalet",
-        "unit": "kr./md.",
+        "unit": "{pCur}/md.",
         "text": "Hele prisen: telefon, booking og webchat er med – inkl. 300 minutters indgående opkald om måneden. Ingen binding. Gør-det-selv-opsætning er med.",
         "compare": "Prisen på en telefonpasning – men en receptionist, der også booker tiderne i jeres kalender.",
         "cta": "Vælg her – hør den først",
@@ -118,8 +118,8 @@
       },
       "campaign": {
         "name": "Udgående kampagneopkald",
-        "unit": "kr. pr. opkald + 2 kr. pr. minut",
-        "text": "Kun hvis I vil have Dialogbot til at ringe ud. Ubesvaret: 4 kr. Tre minutters samtale: 10 kr. I ser den højeste pris, før I starter.",
+        "unit": "{pCur} pr. opkald + {pMinute} pr. minut",
+        "text": "Kun hvis I vil have Dialogbot til at ringe ud. Ubesvaret: {pCall} Tre minutters samtale: {pCall3Min} I ser den højeste pris, før I starter.",
         "badge": "Tilvalg",
         "points": [
           "Betaling kun pr. opkald – intet ekstra abonnement",
@@ -130,7 +130,7 @@
       },
       "setup": {
         "name": "Opsætning fra vores specialister",
-        "unit": "kr. én gang",
+        "unit": "{pCur} én gang",
         "text": "Skræddersyet opsætning og integration til jeres egne systemer – kalender, CRM, bookingsystem. Kun hvis I ikke vil gøre det selv.",
         "badge": "Tilvalg · én gang",
         "points": [
@@ -169,7 +169,7 @@
         "text": "Byggevejledningen viser trin for trin, hvad du skal bruge, og hvad der sker – ingen teknik, ingen kode.",
         "cta": "Åbn byggevejledningen"
       },
-      "specialists": "Vil I hellere have det gjort? Vores specialister sætter den op for 5.000 kr. ekskl. moms, skræddersyet til jeres systemer."
+      "specialists": "Vil I hellere have det gjort? Vores specialister sætter den op for {pSetup} ekskl. moms, skræddersyet til jeres systemer."
     },
     "ld": {
       "appDescription": "Dialogbot er en dansk AI-receptionist, der tager telefonen og chatten for din virksomhed døgnet rundt – svarer ud fra jeres egen viden, booker tider og samler henvendelser. Vi guider jer gennem hele opsætningen.",
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Udgående kampagneopkald",
-        "description": "Pr. udgående opkald ekskl. moms, plus 2 kr. pr. påbegyndt samtaleminut"
+        "description": "Pr. udgående opkald ekskl. moms, plus {pMinute} pr. påbegyndt samtaleminut"
       },
       "setup": {
         "name": "Opsætning fra Dialogbots specialister",
@@ -190,7 +190,7 @@
   "guide": {
     "meta": {
       "title": "Byg din AI-receptionist i 3 trin – byggevejledning",
-      "description": "Byggevejledningen til Dialogbot: hvad du skal bruge, hvad den kan, hvad den koster – og de 3 trin til din egen AI-receptionist på dansk. 2.495 kr./md.",
+      "description": "Byggevejledningen til Dialogbot: hvad du skal bruge, hvad den kan, hvad den koster – og de 3 trin til din egen AI-receptionist på dansk. {pMonthly}/md.",
       "ogTitle": "Byg din AI-receptionist i 3 trin | Dialogbot"
     },
     "breadcrumb": "Byggevejledning",
@@ -227,7 +227,7 @@
       "lead": "Dialogbot tager telefonen, svarer på webchat og booker aftaler for din virksomhed – på dansk, døgnet rundt. Du følger vejledningen, vi sætter klodserne sammen med dig.",
       "cta": "Prøv den nu – den ringer til dig",
       "listen": "Hør Dialogbot tage telefonen",
-      "price": "2.495 kr./md. · ekskl. moms"
+      "price": "{pMonthly}/md. · ekskl. moms"
     },
     "heroCard": {
       "step": "Trin 1 af 3",
@@ -348,11 +348,11 @@
     "pricing": {
       "eyebrow": "Pris",
       "title": "Ét sæt. Én pris, ingen overraskelser.",
-      "lead": "Alle priser er ekskl. moms. Opsætningen kan I gøre selv på ca. 30 minutter – den er med. Vil I have den skræddersyet af vores specialister, koster det 5.000 kr. én gang.",
+      "lead": "Alle priser er ekskl. moms. Opsætningen kan I gøre selv på ca. 30 minutter – den er med. Vil I have den skræddersyet af vores specialister, koster det {pSetup} én gang.",
       "subscription": {
         "name": "Abonnement",
         "from": "Fra",
-        "unit": "kr./md.",
+        "unit": "{pCur}/md.",
         "points": [
           "Telefon, chat og booking er med",
           "Ingen pris pr. henvendelse",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Udgående kampagneopkald",
-        "unit": "kr. pr. udgående opkald",
+        "unit": "{pCur} pr. udgående opkald",
         "points": [
           "Kun hvis I vil have Dialogbot til at ringe ud",
           "Kontakterne har selv sagt ja til at blive ringet op",
@@ -371,7 +371,7 @@
       },
       "setup": {
         "name": "Opsætning fra vores specialister",
-        "unit": "kr. én gang",
+        "unit": "{pCur} én gang",
         "points": [
           "Kun hvis I ikke vil gøre det selv – de tre trin er med i abonnementet",
           "Skræddersyet opsætning og integration til jeres egne systemer og behov",
@@ -433,7 +433,7 @@
       "chipPrice": "Hvad koster det?",
       "askCompany": "Super. Hvad hedder din virksomhed?",
       "answerWhat": "Jeg tager telefonen døgnet rundt, svarer på det, kunderne oftest spørger om, booker tider i din kalender og sender dig en besked, hvis der er noget, jeg ikke kan klare.\n\nVil du høre det selv?",
-      "answerPrice": "Ét abonnement til 2.495 kr. om måneden, ekskl. moms. Opsætningen kan I gøre selv – det er med. Vil I have vores specialister til at skræddersy den til jeres systemer, koster det 5.000 kr. én gang.\n\nSkal jeg ringe og vise dig, hvad du får?",
+      "answerPrice": "Ét abonnement til {pMonthly} om måneden, ekskl. moms. Opsætningen kan I gøre selv – det er med. Vil I have vores specialister til at skræddersy den til jeres systemer, koster det {pSetup} én gang.\n\nSkal jeg ringe og vise dig, hvad du får?",
       "askOther": "Skriv kort, hvad I laver – så ved jeg, hvordan jeg skal tage imod kunderne.",
       "askNumber": "Så er jeg receptionist for {company} fra nu af. Hvilket nummer skal jeg ringe til?",
       "helloCompany": "Hej {company}. Hvad laver I?",

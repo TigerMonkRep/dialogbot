@@ -10,7 +10,8 @@
  *  example data – for visitors who are not logged in. Content text is Danish, like the backend's. State lives in
  *  sessionStorage so it survives navigation and reloads in the tab. */
 import { bareLink, prettyPhone } from "./sms";
-import { PLANS, TRIAL_DAYS } from "./plans";
+import { PLANS, TRIAL_DAYS, apiPlans } from "./plans";
+import { creditPackPrice, currencyFor, currencyOr, formatPrice, type Currency } from "@/lib/markets";
 import { ADDON, type Addon, type ApproveBody, type Balance, type BillingInterval, type ChatMessage, type ChatOption, type Day, type InvitePreview, type LedgerEntry, type ListType,
   type Member, type Plan, type PlanKey, type PrivatApi, type Referrals, type Group, type GroupMember, type InviteStatus, type ShareGroupResult, type Subscription, type SubscriptionPlan, type SubscriptionStatus,
   type SuggestedPerson, type SendResult, type Task, type TaskItem, type TaskStatus } from "./api";
@@ -45,9 +46,9 @@ type Pending = { status: TaskStatus; next: string; intro: string };
 /** Simulated subscription: a 14-day trial with Plus rights from the first use; checkout activates the chosen plan
  *  after a fake redirect (the session id carries plan and interval). Calls count per calendar month. */
 type Sub = { plan: SubscriptionPlan; status: SubscriptionStatus; interval: BillingInterval | null; trialStart: string | null; periodEnd: string | null; cancelAtPeriodEnd: boolean;
-  callsMonth: string; callsUsed: number; checkouts: Record<string, { plan: PlanKey; interval: BillingInterval }> };
+  callsMonth: string; callsUsed: number; checkouts: Record<string, { plan: PlanKey; interval: BillingInterval; currency?: Currency }>; currency?: Currency };
 type State = {
-  v: 8; sub: Sub; quotaCalls: Record<string, true>; location: string | null; push: string[]; joinLinks: Record<string, string>; groups: Group[]; status: Record<string, (InviteStatus & { key: string })[]>; ref: { invited: number; joined: number; activated: number; credits_earned: number; viaInvite: string | null; selfRewarded: boolean; annaJoined: boolean; annaRewarded: boolean };
+  v: 8; sub: Sub; packCurrency?: Currency; quotaCalls: Record<string, true>; location: string | null; push: string[]; joinLinks: Record<string, string>; groups: Group[]; status: Record<string, (InviteStatus & { key: string })[]>; ref: { invited: number; joined: number; activated: number; credits_earned: number; viaInvite: string | null; selfRewarded: boolean; annaJoined: boolean; annaRewarded: boolean };
   addons: Record<string, boolean>; invites: Record<string, string>; reservations: Record<string, "me" | "other">;
   invitable: Record<string, Task>; n: number; freeUsed: number; credits: number; reserved: number; sponsorDay: string; sponsorUsed: number;
   phone: string | null; phoneVerified: boolean; phonePending: string | null;
@@ -230,8 +231,6 @@ const CATALOG: CatalogEntry[] = [
     price_text: "Gratis", pricing: "free", monthly_price_minor: null, status: "coming_soon", requires_plan: false,
     permissions: ["Slår dine sporingsnumre op hos fragtfirmaet"], requires: [] },
 ];
-const PLAN_API: Plan[] = PLANS.map((p) => ({ key: p.key, name: p.name, monthly_minor: p.monthly * 100, yearly_monthly_minor: p.yearlyMonthly * 100, yearly_total_minor: p.yearlyTotal * 100,
-  calls: p.calls, people: p.people, apps_included: p.appsIncluded, recommended: p.recommended, features: p.features }));
 const monthKey = (d = new Date()) => `${d.getFullYear()}-${d.getMonth()}`;
 const addDays = (iso: string, n: number) => { const d = new Date(iso); d.setDate(d.getDate() + n); return d.toISOString(); };
 
@@ -292,8 +291,10 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
   });
   function rollSponsorDay() { const k = dayKey(new Date()); if (s.sponsorDay !== k) { s.sponsorDay = k; s.sponsorUsed = 0; } }
   // ---------- subscription ----------
-  function subscription(): Subscription {
+  /** The plans' currency: the subscription's own once chosen (the market it was bought in), else the asked one. */
+  function subscription(asked?: string): Subscription {
     const sb = s.sub;
+    const currency: Currency = sb.plan !== "none" && sb.currency ? sb.currency : currencyOr(asked);
     if (sb.callsMonth !== monthKey()) { sb.callsMonth = monthKey(); sb.callsUsed = 0; }
     // No trial started yet (a fresh account, or one that only reads shared lists): status «none» – the trial starts
     // with the card at the checkout, as on the real site.
@@ -311,7 +312,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     return { plan: sb.plan, status, interval: sb.interval, trial_ends_at: status === "trial" ? trialEnd : null, trial_days_left: status === "trial" ? trialLeft : 0,
       current_period_end: sb.periodEnd, cancel_at_period_end: sb.cancelAtPeriodEnd, entitled,
       calls_quota: quota, calls_used: sb.callsUsed, calls_left: Math.max(0, quota - sb.callsUsed),
-      people_limit: entitled ? spec.people : 1, apps_included: entitled && spec.appsIncluded, plans: PLAN_API };
+      people_limit: entitled ? spec.people : 1, apps_included: entitled && spec.appsIncluded, currency, plans: apiPlans(currency) as Plan[] };
   }
   const isEntitled = () => subscription().entitled;
   /** Usage line on a call proposal: the plan quota while it lasts, otherwise credits. */
@@ -695,8 +696,8 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       s.phone = s.phonePending; s.phonePending = null; s.phoneVerified = true;
       return done(balance());
     },
-    async checkout() { await wait(); return { url: "#simuleret-betaling" }; },
-    async subscription(sessionId) {
+    async checkout(body) { await wait(); s.packCurrency = currencyFor(body?.locale); save(); return { url: "#simuleret-betaling" }; },
+    async subscription(sessionId, currency) {
       await wait();
       if (sessionId) {
         // Return from the (simulated) Stripe Checkout: the session id says which plan was chosen.
@@ -705,7 +706,7 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
           const sb = s.sub; const before = subscription();
           if (!sb.trialStart) sb.trialStart = new Date().toISOString();  // the card is in: the 14 days start now
           const cur = before.status === "none" ? { ...before, status: "trial" as const, trial_days_left: TRIAL_DAYS, trial_ends_at: addDays(sb.trialStart, TRIAL_DAYS) } : before;
-          sb.plan = co.plan; sb.interval = co.interval; sb.cancelAtPeriodEnd = false;
+          sb.plan = co.plan; sb.interval = co.interval; sb.cancelAtPeriodEnd = false; sb.currency = co.currency ?? "DKK";
           delete sb.checkouts[sessionId];
           // Every draft that waited for the plan comes alive, paid by it.
           for (const t of s.tasks) if (t.status === "draft" && s.pending[t.id]) s.msgs.push(...activate(t, "Med i prøveperioden"));
@@ -713,17 +714,18 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
           const d = new Date(start); if (co.interval === "year") d.setFullYear(d.getFullYear() + 1); else d.setMonth(d.getMonth() + 1);
           sb.periodEnd = d.toISOString();
           sb.status = cur.status === "trial" && cur.trial_days_left > 2 ? "trial" : "active";
-          const spec = PLANS.find((p) => p.key === co.plan)!;
-          ledger("subscription", 0, `${spec.name} valgt · ${co.interval === "year" ? `${spec.yearlyTotal} kr./år` : `${spec.monthly} kr./md.`} inkl. moms · ${sessionId}`);
+          const spec = apiPlans(sb.currency).find((p) => p.key === co.plan)!;
+          const fmt = (m: number) => formatPrice(m, sb.currency ?? "DKK", "da");
+          ledger("subscription", 0, `${spec.name} valgt · ${co.interval === "year" ? `${fmt(spec.yearly_total_minor)}/år` : `${fmt(spec.monthly_minor)}/md.`} inkl. moms · ${sessionId}`);
         }
       }
-      return done(subscription());
+      return done(subscription(currency));
     },
     async subscriptionCheckout(body) {
       await wait();
       if (!PLANS.some((p) => p.key === body.plan)) fail(422, "validation_error", "Ukendt plan");
       const id = `cs_fake_${++s.paySeq}`;
-      s.sub.checkouts[id] = { plan: body.plan, interval: body.interval };
+      s.sub.checkouts[id] = { plan: body.plan, interval: body.interval, currency: currencyFor(body.locale) };
       save();
       return { url: `/privat/konto?abonnement=ok&session_id=${id}` };
     },
@@ -1062,7 +1064,8 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     async completePurchase(draftTaskId) {
       await wait();
       s.paySeq += 1; const ref = `PAY-${s.paySeq}`; s.lastPay = ref;
-      s.credits += 10; ledger("purchase", 10, `Købt 10 credits · 29 kr. inkl. moms · ${ref}`);
+      s.credits += 10; const packCur = s.packCurrency ?? "DKK";
+      ledger("purchase", 10, `Købt 10 credits · ${formatPrice(creditPackPrice(packCur), packCur, "da")} inkl. moms · ${ref}`);
       const t = draftTaskId ? s.tasks.find((x) => x.id === draftTaskId) : undefined;
       let activated = false;
       if (t && t.status === "draft") {

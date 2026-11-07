@@ -22,13 +22,13 @@ export function messagesFor(locale: Locale): Messages {
 /** `const t = await getT("site")` → t("home.title"). Without a namespace, keys are "ns.key". */
 export async function getT(ns?: string): Promise<T> {
   const locale = await getLocale();
-  return makeT(messagesFor(locale), messagesFor(DEFAULT_LOCALE), ns);
+  return makeT(messagesFor(locale), messagesFor(DEFAULT_LOCALE), ns, locale);
 }
 
 /** Non-string values (arrays of features, FAQ lists …): `const raw = await getRaw(); raw<string[]>("site.home.points")`. */
 export async function getRaw() {
   const locale = await getLocale();
-  return makeRaw(messagesFor(locale), messagesFor(DEFAULT_LOCALE));
+  return makeRaw(messagesFor(locale), messagesFor(DEFAULT_LOCALE), locale);
 }
 
 /** Path for the current language: lp("/priser") → "/en/priser". Only for public pages; app paths stay unprefixed. */

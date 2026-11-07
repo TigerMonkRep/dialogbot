@@ -59,7 +59,7 @@
       "title": "Campagne",
       "sub": "Chiamate i vostri clienti",
       "outbound": "Chiamate in uscita",
-      "chosen": "Selezionato – 4 kr. a chiamata + 2 kr. al minuto IVA esclusa",
+      "chosen": "Selezionato – {pCall} a chiamata + {pMinute} al minuto IVA esclusa",
       "notChosen": "Non selezionato"
     },
     "systems": {
@@ -77,7 +77,7 @@
       "team": "Team",
       "teamValue": "{n} con accesso",
       "billing": "Abbonamento e fatture",
-      "billingValue": "Da 2.495 kr./mese IVA esclusa"
+      "billingValue": "Da {pMonthly}/mese IVA esclusa"
     },
     "tech": {
       "title": "Tecnica",

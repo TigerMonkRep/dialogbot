@@ -44,7 +44,7 @@
               ["Vem svarar", "AI på svenska och kundens språk, bara utifrån kunskap ni har godkänt", "En människa som inte alltid känner till era tjänster"],
               ["Öppettider", "Dygnet runt", "Oftast vanlig kontorstid"],
               ["Bokning", "Direkt i er kalender, med sms-bekräftelse", "Oftast ett meddelande som ni själva följer upp"],
-              ["Pris", "2.495 kr./mån. exkl. moms, inget pris per ärende", "Oftast per samtal eller per månad"],
+              ["Pris", "{pMonthly}/mån. exkl. moms, inget pris per ärende", "Oftast per samtal eller per månad"],
               ["Meddelande till er", "Skriftlig sammanfattning av varje samtal och en daglig rapport", "Ett meddelande per samtal"]
             ]
           }
@@ -73,7 +73,7 @@
     "faq": [
       ["Kan en AI-telefonsvarare ersätta telefonpassning?", "För de flesta standardärenden ja: den svarar, reder ut behovet och bokar. Komplexa ärenden skickas vidare till er."],
       ["Är en AI-telefonsvarare tillgänglig på natten?", "Ja, Dialogbot svarar i telefon dygnet runt."],
-      ["Vad är billigast: telefonpassning eller Dialogbot?", "Telefonpassning debiteras oftast per samtal eller per månad. Dialogbot är ett abonnemang för 2.495 kr. i månaden exkl. moms med 300 minuter inkommande samtal och inget pris per ärende. Se även /viden/dialogbot-vs-vocalis."],
+      ["Vad är billigast: telefonpassning eller Dialogbot?", "Telefonpassning debiteras oftast per samtal eller per månad. Dialogbot är ett abonnemang för {pMonthly} i månaden exkl. moms med 300 minuter inkommande samtal och inget pris per ärende. Se även /viden/dialogbot-vs-vocalis."],
       ["Kan jag behålla mitt nummer?", "Ja. Du vidarekopplar ditt nummer till Dialogbot när du är upptagen eller har stängt."]
     ]
   },
@@ -90,7 +90,7 @@
       "Chattbot: skriver på webbplatsen",
       "Dialogbot: telefon, chatt och bokning med samma kunskap",
       "Dialogbot gissar aldrig – bara godkänd kunskap",
-      "Ett abonnemang: 2.495 kr./mån."
+      "Ett abonnemang: {pMonthly}/mån."
     ],
     "sections": [
       {
@@ -105,7 +105,7 @@
               ["Vad den svarar utifrån", "Bara kunskap ni själva har godkänt – och ni ser varje ändring först", "Varierar: vissa svarar fritt utifrån en AI-modell"],
               ["När den inte kan svara", "Den säger det och tar ett meddelande åt er", "Varierar"],
               ["Meddelande till er", "Namn, nummer och vad det gällde – och en rapport varje dag", "Varierar"],
-              ["Pris", "2.495 kr./mån. – inget pris per ärende", "Från några hundra kr./mån. och uppåt"]
+              ["Pris", "{pMonthly}/mån. – inget pris per ärende", "Från några hundra kr./mån. och uppåt"]
             ]
           }
         ]
@@ -132,7 +132,7 @@
     "faq": [
       ["Kan Dialogbot också vara bara en chattbot?", "Ja. Webbchatten ingår i abonnemanget och använder samma godkända kunskap som telefonen. Det är en kodrad på webbplatsen."],
       ["Gissar Dialogbot om den inte vet svaret?", "Nej. Den svarar bara utifrån godkänd kunskap och tar ett meddelande åt er om den inte kan svara."],
-      ["Vad kostar det?", "2.495 kr. i månaden exkl. moms med 300 minuter inkommande samtal. Ingen bindningstid."]
+      ["Vad kostar det?", "{pMonthly} i månaden exkl. moms med 300 minuter inkommande samtal. Ingen bindningstid."]
     ]
   },
   "dialogbot-vs-vocalis": {
@@ -145,8 +145,8 @@
     "title": "Dialogbot eller Vocalis – fast pris eller minutpaket?",
     "lead": "Båda bygger AI-medarbetare för företag. Skillnaden ligger framför allt i hur ni betalar och hur ni kommer igång.",
     "points": [
-      "Dialogbot: 2.495 kr./mån., 300 minuter ingår, därefter 1,50 kr./min.",
-      "Vocalis: från 899 kr./mån. för 100 minuter, därefter minutpaket",
+      "Dialogbot: {pMonthly}/mån., 300 minuter ingår, därefter {pExtraMinute}/min.",
+      "Vocalis: från DKK 899/mån. för 100 minuter, därefter minutpaket",
       "Dialogbot: bara godkänd kunskap – och ni godkänner varje ändring",
       "Dialogbot: lyssna på den först, utan registrering"
     ],
@@ -158,8 +158,8 @@
             "type": "table",
             "other": "Vocalis",
             "rows": [
-              ["Pris per månad (exkl. moms)", "2.495 kr. – ett abonnemang", "Från 899 kr. för 100 minuter (Basis)"],
-              ["När minuterna är slut", "1,50 kr. per påbörjad minut efter de 300 som ingår", "Automatiska minutpaket upp till 3.995 kr./mån."],
+              ["Pris per månad (exkl. moms)", "{pMonthly} – ett abonnemang", "Från DKK 899 för 100 minuter (Basis)"],
+              ["När minuterna är slut", "{pExtraMinute} per påbörjad minut efter de 300 som ingår", "Automatiska minutpaket upp till DKK 3.995/mån."],
               ["Svarar utifrån", "Kunskap ni själva har godkänt – och ni ser varje ändring först (före → efter, «Godkänna?»)", "Se Vocalis egen beskrivning"],
               ["Bokning", "Google Kalender eller Microsoft 365, med sms-bekräftelse", "Se Vocalis egen beskrivning"],
               ["Så kommer ni igång", "Lyssna på den först: den ringer upp er, utan registrering. Konfigurera själva på ca en halvtimme", "Kostnadsfri konsultation och återuppringning"],
@@ -171,7 +171,7 @@
       {
         "title": "Pris: fast eller mätt",
         "body": [
-          { "type": "p", "text": "Vocalis börjar lägre, men priset följer förbrukningen: går ni över de 100 minuterna köps paket till automatiskt. Dialogbot kostar mer från början, men 300 minuter ingår och minuter därutöver kostar 1,50 kr. Räkningen går att förutse, och ni kan alltid se er förbrukning." },
+          { "type": "p", "text": "Vocalis börjar lägre, men priset följer förbrukningen: går ni över de 100 minuterna köps paket till automatiskt. Dialogbot kostar mer från början, men 300 minuter ingår och minuter därutöver kostar {pExtraMinute}. Räkningen går att förutse, och ni kan alltid se er förbrukning." },
           { "type": "p", "parts": ["Har ni bara några få samtal i månaden kan ett lägre startpris passa bättre. Ringer telefonen hela dagen är ett fast pris det trygga valet. Se ", { "link": "/priser", "text": "alla priser" }, "."] }
         ]
       },
@@ -189,7 +189,7 @@
       }
     ],
     "faq": [
-      ["Är Dialogbot dyrare än Vocalis?", "I grunden ja: 2.495 kr. i månaden mot från 899 kr. för 100 minuter. Å andra sidan ingår 300 minuter, och priset rusar inte om ni får fler samtal."],
+      ["Är Dialogbot dyrare än Vocalis?", "I grunden ja: {pMonthly} i månaden mot från DKK 899 för 100 minuter. Å andra sidan ingår 300 minuter, och priset rusar inte om ni får fler samtal."],
       ["Kan jag byta från Vocalis till Dialogbot?", "Ja. Ni behåller ert nuvarande telefonnummer och vidarekopplar till Dialogbot, och det finns ingen bindningstid."],
       ["Var kan jag se Vocalis aktuella priser?", "Hos Vocalis själva. Priserna här är de publicerade listpriserna när sidan skrevs, och de kan ha ändrats."]
     ]
@@ -265,7 +265,7 @@
     "faq": [
       ["Är en AI-receptionist samma sak som en chattbot?", "Inte riktigt. En chattbot skriver, en AI-receptionist pratar i telefon. Dialogbot gör båda med samma kunskap."],
       ["Låter en AI-receptionist som en robot?", "Moderna röster låter naturliga. Dialogbot talar svenska och kundens eget språk och säger alltid ärligt att den är en digital assistent om kunden frågar."],
-      ["Vad kostar en AI-receptionist?", "Hos Dialogbot finns ett abonnemang för 2.495 kr. i månaden, exkl. moms. Det finns inget pris per ärende."]
+      ["Vad kostar en AI-receptionist?", "Hos Dialogbot finns ett abonnemang för {pMonthly} i månaden, exkl. moms. Det finns inget pris per ärende."]
     ]
   },
   "viderestil-telefonen": {

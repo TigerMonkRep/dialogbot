@@ -197,13 +197,13 @@
       {
         "title": "2. Priser",
         "body": [
-          { "type": "p", "text": "Alla priser anges i danska kronor exkl. moms. Moms (25 %) läggs till på fakturan." },
+          { "type": "p", "text": "Alla priser anges exkl. moms. Företag i Danmark betalar i danska kronor (DKK), i Sverige i svenska kronor (SEK), i Norge i norska kronor (NOK) och i övriga länder i euro (EUR). Danska företag debiteras dansk moms (25 %) på fakturan. Företag i övriga EU faktureras utan moms enligt omvänd skattskyldighet och måste uppge sitt momsregistreringsnummer; företag utanför EU debiteras ingen dansk moms." },
           {
             "type": "ul",
             "items": [
-              [{ "b": "Abonnemang:" }, " från 2.495 kr. per månad. Det finns inget pris per ärende."],
-              [{ "b": "Kampanjer (utgående samtal):" }, " 4 kr. per utgående samtal plus 2 kr. per påbörjad samtalsminut. Varje samtal som rings räknas, även ett nytt försök (högst 2 försök och högst 3 samtalsminuter per kontakt). Det högsta möjliga priset visas innan en kampanj startas."],
-              [{ "b": "Inkommande samtal:" }, " ett danskt telefonnummer till assistenten och 300 påbörjade samtalsminuter per kalendermånad ingår. Minuter därutöver kostar 1,50 kr. per påbörjad minut och debiteras på månadens faktura. Förbrukningen kan följas löpande i Dialogbot."]
+              [{ "b": "Abonnemang:" }, " från {pMonthly} per månad. Det finns inget pris per ärende."],
+              [{ "b": "Kampanjer (utgående samtal):" }, " {pCall} per utgående samtal plus {pMinute} per påbörjad samtalsminut. Varje samtal som rings räknas, även ett nytt försök (högst 2 försök och högst 3 samtalsminuter per kontakt). Det högsta möjliga priset visas innan en kampanj startas."],
+              [{ "b": "Inkommande samtal:" }, " ett danskt telefonnummer till assistenten och 300 påbörjade samtalsminuter per kalendermånad ingår. Minuter därutöver kostar {pExtraMinute} per påbörjad minut och debiteras på månadens faktura. Förbrukningen kan följas löpande i Dialogbot."]
             ]
           },
           { "type": "p", "text": "Kommer ni via en ambassadör får ni 50 % rabatt på er första fakturerade månad. Vi kan ändra priserna med minst 30 dagars varsel via e-post; ändringen gäller från den första hela månaden efter varslet." }
@@ -220,7 +220,7 @@
       {
         "title": "4. Start, avtalstid och uppsägning",
         "body": [
-          { "type": "p", "text": "Avtalet löper tills det sägs upp. Ni kan säga upp till slutet av innevarande månad genom att skriva till oss. Vi kan säga upp med 30 dagars varsel. Det finns ingen bindningstid. Konfiguration ingår när ni gör den själva; konfiguration av Dialogbots specialister kostar 5.000 kr. exkl. moms och betalas en gång innan arbetet påbörjas." },
+          { "type": "p", "text": "Avtalet löper tills det sägs upp. Ni kan säga upp till slutet av innevarande månad genom att skriva till oss. Vi kan säga upp med 30 dagars varsel. Det finns ingen bindningstid. Konfiguration ingår när ni gör den själva; konfiguration av Dialogbots specialister kostar {pSetup} exkl. moms och betalas en gång innan arbetet påbörjas." },
           { "type": "p", "text": "Vid väsentligt avtalsbrott – t.ex. missbruk av tjänsten eller utebliven betalning – kan vi stänga åtkomsten utan varsel." }
         ]
       },

@@ -5,10 +5,11 @@ import { ReportSettingsForm } from "./client";
 import { getLocale, getRaw, getT } from "@/i18n/server";
 import { HTML_LANG } from "@/i18n/config";
 import type { T } from "@/i18n/translate";
+import { currencyOr, formatPrice } from "@/lib/markets";
 
 type Week = {
   start: string; end: string; timezone: string; answered: number; phone: number; to_you: number; bookings: number; bookings_prev_week: number;
-  response_seconds: number | null; days: { date: string; answered: number; to_you: number }[]; campaign_calls: number; campaign_net_minor?: number;
+  response_seconds: number | null; days: { date: string; answered: number; to_you: number }[]; campaign_calls: number; campaign_net_minor?: number; currency?: string;
 };
 type Topic = { topic: string; count: number; booked: number; could_answer: boolean; to_you: number };
 
@@ -24,7 +25,7 @@ const isoWeek = (s: string) => {
 };
 const short = (lang: string, s: string) => at(s).toLocaleDateString(lang, { day: "numeric", month: "short", timeZone: "UTC" }).replace(".", "").toUpperCase();
 const secs = (n: number | null) => (n === null ? "–" : n < 1 ? "<1 s" : n < 60 ? `${Math.round(n)} s` : `${Math.round(n / 60)} min`);
-const kr = (t: T, lang: string, minor: number) => t("common.kr", { amount: (minor / 100).toLocaleString(lang, { minimumFractionDigits: minor % 100 ? 2 : 0, maximumFractionDigits: 2 }) });
+const kr = (t: T, lang: string, minor: number, currency?: string) => t("common.kr", { amount: formatPrice(minor, currencyOr(currency), lang) });
 
 /** «Ugen»: what Dialogbot did last week, in four numbers, a bar per day and the questions customers asked. */
 export default async function UgenPage({ searchParams }: { searchParams: Promise<{ uge?: string; date?: string }> }) {
@@ -141,7 +142,7 @@ export default async function UgenPage({ searchParams }: { searchParams: Promise
         {(isAdmin || ws.role === "staff") && (
           <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">
             <span className="eyebrow">{tr("week.cost.title")}</span>
-            <p className="font-display font-extrabold text-[30px] leading-none text-ink">{w.campaign_net_minor !== undefined ? tr("week.cost.extra", { amount: kr(tr, lang, w.campaign_net_minor) }) : tr("week.cost.calls", { n: w.campaign_calls })}</p>
+            <p className="font-display font-extrabold text-[30px] leading-none text-ink">{w.campaign_net_minor !== undefined ? tr("week.cost.extra", { amount: kr(tr, lang, w.campaign_net_minor, w.currency) }) : tr("week.cost.calls", { n: w.campaign_calls })}</p>
             <p className="text-[14px] text-ink-soft">{tr("week.cost.note", { n: w.campaign_calls })}</p>
             {isAdmin && <Link href="/app/konto/fakturering" className="text-[14px] font-semibold text-accent hover:underline">{tr("week.cost.billing")} →</Link>}
           </div>

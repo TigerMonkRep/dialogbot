@@ -197,13 +197,13 @@
       {
         "title": "2. Priser",
         "body": [
-          { "type": "p", "text": "Alle priser er i danske kroner eks. mva. Mva. (25 %) legges til på fakturaen." },
+          { "type": "p", "text": "Alle priser er eks. mva. Bedrifter i Danmark betaler i danske kroner (DKK), i Sverige i svenske kroner (SEK), i Norge i norske kroner (NOK) og ellers i euro (EUR). Danske bedrifter faktureres dansk mva. (25 %). Bedrifter ellers i EU faktureres uten mva. etter reglene om omvendt avgiftsplikt og må oppgi sitt mva.-nummer; bedrifter utenfor EU faktureres ikke dansk mva." },
           {
             "type": "ul",
             "items": [
-              [{ "b": "Abonnement:" }, " fra 2.495 kr. per måned. Det er ingen pris per henvendelse."],
-              [{ "b": "Kampanjer (utgående anrop):" }, " 4 kr. per utgående anrop pluss 2 kr. per påbegynt samtaleminutt. Hvert anrop som ringes, teller, også et nytt forsøk (høyst 2 forsøk og høyst 3 samtaleminutter per kontakt). Høyest mulig pris vises før en kampanje startes."],
-              [{ "b": "Innkommende anrop:" }, " et dansk telefonnummer til assistenten og 300 påbegynte samtaleminutter per kalendermåned er inkludert. Minutter utover dette koster 1,50 kr. per påbegynt minutt og avregnes på månedens faktura. Forbruket kan følges løpende i Dialogbot."]
+              [{ "b": "Abonnement:" }, " fra {pMonthly} per måned. Det er ingen pris per henvendelse."],
+              [{ "b": "Kampanjer (utgående anrop):" }, " {pCall} per utgående anrop pluss {pMinute} per påbegynt samtaleminutt. Hvert anrop som ringes, teller, også et nytt forsøk (høyst 2 forsøk og høyst 3 samtaleminutter per kontakt). Høyest mulig pris vises før en kampanje startes."],
+              [{ "b": "Innkommende anrop:" }, " et dansk telefonnummer til assistenten og 300 påbegynte samtaleminutter per kalendermåned er inkludert. Minutter utover dette koster {pExtraMinute} per påbegynt minutt og avregnes på månedens faktura. Forbruket kan følges løpende i Dialogbot."]
             ]
           },
           { "type": "p", "text": "Kommer dere via en ambassadør, får dere 50 % rabatt på den første fakturerte måneden. Vi kan endre prisene med minst 30 dagers varsel på e-post; endringen gjelder fra den første hele måneden etter varselet." }
@@ -220,7 +220,7 @@
       {
         "title": "4. Oppstart, løpetid og oppsigelse",
         "body": [
-          { "type": "p", "text": "Avtalen løper til den sies opp. Dere kan si opp til utgangen av inneværende måned ved å skrive til oss. Vi kan si opp med 30 dagers varsel. Det er ingen bindingstid. Oppsett er inkludert når dere gjør det selv; oppsett utført av Dialogbots spesialister koster 5.000 kr. eks. mva. og betales én gang før arbeidet starter." },
+          { "type": "p", "text": "Avtalen løper til den sies opp. Dere kan si opp til utgangen av inneværende måned ved å skrive til oss. Vi kan si opp med 30 dagers varsel. Det er ingen bindingstid. Oppsett er inkludert når dere gjør det selv; oppsett utført av Dialogbots spesialister koster {pSetup} eks. mva. og betales én gang før arbeidet starter." },
           { "type": "p", "text": "Ved vesentlig mislighold – f.eks. misbruk av tjenesten eller manglende betaling – kan vi stenge tilgangen uten varsel." }
         ]
       },

@@ -4,7 +4,8 @@ import { requireWorkspace } from "@/lib/workspace.server";
 import { Breadcrumb } from "@/components/ui";
 import { CampaignEditor, ImportContacts, Num, RemoveContact, StartCampaign } from "../client";
 import { STATUS, contactLabel, type Campaign, type Contact, type PhoneNumber } from "../format";
-import { getT } from "@/i18n/server";
+import { getLocale, getT } from "@/i18n/server";
+import { currencyOr, formatPrice } from "@/lib/markets";
 
 /** C02: one campaign – script, contacts, start/pause and results. */
 export default async function CampaignPage({ params }: { params: Promise<{ id: string }> }) {
@@ -63,7 +64,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
       </section>
       <aside className="flex-[1_1_300px] min-w-0 max-w-[440px] flex flex-col gap-5 lg:sticky lg:top-[88px]">
         {canManage && <StartCampaign wsId={ws.id} c={c} checklist={list.legal_checklist} />}
-        <p className="text-[13px] text-muted">{t("campaigns.detail.priceNote", { price: c.pricing.call_net_minor / 100 })}</p>
+        <p className="text-[13px] text-muted">{t("campaigns.detail.priceNote", { price: formatPrice(c.pricing.call_net_minor, currencyOr(c.pricing.currency), await getLocale()) })}</p>
       </aside>
     </div>
   );

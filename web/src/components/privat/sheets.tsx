@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui";
-import { useT } from "@/i18n/client";
+import { useLocale, useT } from "@/i18n/client";
+import { priceVars } from "@/lib/markets";
 import { ADDON, type ShareGroupResult, type ShareMode, type ShareResult, type SmsQueueItem } from "@/lib/privat/api";
 import type { ApiError } from "@/lib/client";
 import { SMS_LIMIT, bareLink, contactPickerAvailable, hasEmoji, pickContacts, platformOf, smsHref, whatsappHref, type Platform } from "@/lib/privat/sms";
@@ -147,6 +148,8 @@ function BuySheet({ onClose }: { onClose: () => void }) {
   const t = useT("privat");
   const { sheet, simulated, mode, fake, run, api, openSheet, setNote, setError, go, isDesk } = usePrivat();
   const [busy, setBusy] = useState(false);
+  const locale = useLocale();
+  const pack = priceVars(locale);
   const pay = async () => {
     setBusy(true);
     if (simulated && fake) {
@@ -155,15 +158,15 @@ function BuySheet({ onClose }: { onClose: () => void }) {
       setBusy(false);
       return;
     }
-    try { const { url } = await api.checkout(); window.location.href = url; }
+    try { const { url } = await api.checkout({ locale }); window.location.href = url; }
     catch (e) { setError(e as ApiError); setBusy(false); }
   };
   void go; void isDesk;
   return (
     <Sheet title={t("buy.title")} onClose={onClose}>
       <div className="rounded-[18px] border-2 border-ink p-4 flex flex-col gap-1.5">
-        <div className="flex justify-between text-[16px]"><span>{t("buy.item")}</span><b>29 kr.</b></div>
-        <div className="flex justify-between text-[13px] text-muted"><span>{t("buy.vat")}</span><span>5,80 kr.</span></div>
+        <div className="flex justify-between text-[16px]"><span>{t("buy.item")}</span><b>{pack.pCredits}</b></div>
+        <div className="flex justify-between text-[13px] text-muted"><span>{t("buy.vat")}</span><span>{pack.pCreditsVat}</span></div>
         <p className="m-0 mt-1 text-[13px] text-muted">{t("buy.note")}</p>
       </div>
       <Button className={BIG} onClick={pay} disabled={busy || mode === "demo"}>{simulated ? <>{t("buy.pay")} <Sim label={t("buy.simulatedBuy")} /></> : busy ? t("buy.redirecting") : t("buy.payReal")}</Button>

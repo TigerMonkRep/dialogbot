@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – en assistent som svarar i telefon: för ditt företag och för dig",
-    "description": "Dialogbot svarar på svenska, dygnet runt, bokar tider i din kalender och ringer åt dig när du ber om det. Du godkänner allt innan det gäller. För företag från 2 495 DKK/mån – för dig hemma från 49 DKK/mån.",
+    "description": "Dialogbot svarar på svenska, dygnet runt, bokar tider i din kalender och ringer åt dig när du ber om det. Du godkänner allt innan det gäller. För företag från {pMonthly}/mån – för dig hemma från {pPrivatFrom}/mån.",
     "ogTitle": "En assistent som svarar i telefon – för ditt företag och för dig"
   },
   "nav": {
@@ -118,7 +118,7 @@
         }
       ],
       "cta": "För företag",
-      "price": "Från {price} DKK/mån"
+      "price": "Från {pMonthly}/mån"
     },
     "private": {
       "kick": "Privat",
@@ -201,7 +201,7 @@
     "from": "från",
     "business": {
       "name": "Företag",
-      "unit": "DKK/mån exkl. moms",
+      "unit": "{pCur}/mån exkl. moms",
       "points": [
         "Telefon, bokning och webbchatt – allt ingår",
         "300 minuter inkommande samtal per månad",
@@ -211,7 +211,8 @@
     },
     "private": {
       "name": "Privat",
-      "unit": "DKK/mån · {days} dagar gratis",
+      "unit": "{pCur}/mån · {days} dagar gratis",
+      "amount": "{pPrivatFromNum}",
       "points": [
         "Listor och påminnelser – obegränsat",
         "Peter ringer åt dig inom dina ramar",
@@ -238,7 +239,7 @@
       },
       {
         "q": "Vad kostar installationen?",
-        "a": "Ingenting om ni gör det själva – det tar ungefär 30 minuter med Peter i chatten. Vill ni att våra specialister kopplar på kalender, CRM eller bokningssystem kostar det {setup} DKK en gång."
+        "a": "Ingenting om ni gör det själva – det tar ungefär 30 minuter med Peter i chatten. Vill ni att våra specialister kopplar på kalender, CRM eller bokningssystem kostar det {pSetup} en gång."
       },
       {
         "q": "Kan jag säga upp?",

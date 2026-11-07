@@ -7,7 +7,8 @@ import { CONFLICT, isUnavailable, realPrivat, type Addon, type Balance, type Cha
 import { createFakePrivat, type FakePrivat } from "@/lib/privat/fake";
 import { useLocale, useT } from "@/i18n/client";
 import { HTML_LANG } from "@/i18n/config";
-import { PLANS, TRIAL_DAYS } from "@/lib/privat/plans";
+import { TRIAL_DAYS, apiPlans } from "@/lib/privat/plans";
+import { currencyFor, currencyOr, formatPrice, type Currency } from "@/lib/markets";
 
 /** fake = full simulation (NEXT_PUBLIC_PRIVAT_FAKE=1, or the real API is missing); demo = visitor without login looking at
  *  example data (creating something asks for login); real = the Privat API. */
@@ -85,6 +86,7 @@ export function usePrivat(): Ctx { const c = useContext(C); if (!c) throw new Er
 
 export function PrivatProvider({ session, children }: { session: Session; children: React.ReactNode }) {
   const router = useRouter();
+  const locale = useLocale();
   const path = usePathname();
   const isDesk = useIsDesk();
   const { screen, taskId: routeTaskId } = screenOf(path);
@@ -172,9 +174,9 @@ export function PrivatProvider({ session, children }: { session: Session; childr
   const choosePlan = useCallback(() => router.push("/privat/konto?planer=1"), [router]);
   const startTrial = useCallback(async () => {
     if (!loggedIn) { setSheet({ kind: "login" }); return; }
-    const r = await run((a) => a.subscriptionCheckout({ plan: "plus", interval: "month" }));
+    const r = await run((a) => a.subscriptionCheckout({ plan: "plus", interval: "month", locale }));
     if (r?.url) window.location.href = r.url;
-  }, [loggedIn, run]);
+  }, [loggedIn, run, locale]);
   const talk = useCallback((id: string) => { setFocus(id); if (!isDesk) router.push("/privat/samtale"); }, [isDesk, router]);
 
   const afterMessages = useCallback((msgs: ChatMessage[]) => {
@@ -272,15 +274,28 @@ export type PlanView = {
   /** The plan whose rights apply («Plus» during the trial) and its name. */
   rightsKey: PlanKey; rightsName: string;
   plans: Plan[]; interval: BillingInterval | null; periodEnd: string | null; cancelAtPeriodEnd: boolean;
-  /** kr. per month for a plan key (monthly billing). */
-  monthlyKr(key: PlanKey): number;
+  /** The currency of `plans`: the subscription's own (a paying customer), else the market of the page's language. */
+  currency: Currency;
+  /** Minor units → "99 kr." / "€13.49" in `currency` and the page's language. */
+  fmt(minor: number): string;
+  /** The formatted monthly price of a plan key (monthly billing), e.g. "99 kr.". */
+  monthlyText(key: PlanKey): string;
 };
 /** One view of the subscription for the UI: GET /subscription when loaded, else the plan fields on /me, else nothing. */
 export function usePlan(): PlanView {
   const { subscription: sb, balance: b } = usePrivat();
+  const locale = useLocale();
   return useMemo(() => {
-    const plans: Plan[] = sb?.plans?.length ? sb.plans : PLANS.map((p) => ({ key: p.key, name: p.name, monthly_minor: p.monthly * 100, yearly_monthly_minor: p.yearlyMonthly * 100,
-      yearly_total_minor: p.yearlyTotal * 100, calls: p.calls, people: p.people, apps_included: p.appsIncluded, recommended: p.recommended, features: p.features }));
+    // A paying customer (a chosen plan) sees the backend's plans in the subscription's own currency – they keep the
+    // market they bought in. Everyone else sees the market of the page's language; the backend's plans are used then
+    // only when they are in that currency (an older backend without `currency` sends DKK).
+    const market = currencyFor(locale);
+    const sbCurrency = sb?.plans?.length ? currencyOr(sb.currency) : null;
+    const paying = !!sb && sb.plan !== "none" && !!sb.currency;
+    const useApi = !!sbCurrency && (paying || sbCurrency === market);
+    const currency: Currency = useApi && sbCurrency ? sbCurrency : market;
+    const plans: Plan[] = useApi ? sb!.plans : apiPlans(market) as Plan[];
+    const fmt = (minor: number) => formatPrice(minor, currency, locale);
     const plan: SubscriptionPlan = sb?.plan ?? b?.plan ?? "none";
     const status: SubscriptionStatus = sb?.status ?? b?.plan_status ?? "none";
     const entitled = sb ? sb.entitled : !!b?.entitled;
@@ -290,9 +305,9 @@ export function usePlan(): PlanView {
       plan, status, entitled, trialDays: sb?.trial_days_left ?? b?.trial_days_left ?? 0, trialTotal: TRIAL_DAYS,
       callsQuota: sb?.calls_quota ?? b?.calls_quota ?? 0, callsUsed: sb?.calls_used ?? b?.calls_used ?? 0, callsLeft: sb?.calls_left ?? b?.calls_left ?? 0,
       rightsKey, rightsName, plans, interval: sb?.interval ?? null, periodEnd: sb?.current_period_end ?? null, cancelAtPeriodEnd: !!sb?.cancel_at_period_end,
-      monthlyKr: (key) => Math.round((plans.find((p) => p.key === key)?.monthly_minor ?? 0) / 100),
+      currency, fmt, monthlyText: (key) => fmt(plans.find((p) => p.key === key)?.monthly_minor ?? 0),
     };
-  }, [sb, b]);
+  }, [sb, b, locale]);
 }
 
 // ---------- formatting (Europe/Copenhagen wall clock of the browser) ----------

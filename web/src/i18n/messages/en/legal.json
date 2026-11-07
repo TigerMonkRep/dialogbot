@@ -197,13 +197,13 @@
       {
         "title": "2. Prices",
         "body": [
-          { "type": "p", "text": "All prices are in Danish kroner excl. VAT. VAT (25 %) is added on the invoice." },
+          { "type": "p", "text": "All prices are excl. VAT. Companies in Denmark pay in Danish kroner (DKK), in Sweden in Swedish kronor (SEK), in Norway in Norwegian kroner (NOK) and everywhere else in euros (EUR). Danish companies are charged 25 % Danish VAT on the invoice. Companies elsewhere in the EU are invoiced without VAT under the reverse charge rule and must give their VAT number; companies outside the EU are not charged Danish VAT." },
           {
             "type": "ul",
             "items": [
-              [{ "b": "Subscription:" }, " from 2.495 kr. per month. There is no price per enquiry."],
-              [{ "b": "Campaigns (outbound calls):" }, " 4 kr. per outbound call plus 2 kr. per started minute of conversation. Every call placed counts, including a retry (at most 2 attempts and at most 3 minutes of conversation per contact). The highest possible price is shown before a campaign is started."],
-              [{ "b": "Inbound calls:" }, " a Danish phone number for the assistant and 300 started minutes of conversation per calendar month are included. Minutes beyond that cost 1,50 kr. per started minute and are charged on the month's invoice. Usage can be followed continuously in Dialogbot."]
+              [{ "b": "Subscription:" }, " from {pMonthly} per month. There is no price per enquiry."],
+              [{ "b": "Campaigns (outbound calls):" }, " {pCall} per outbound call plus {pMinute} per started minute of conversation. Every call placed counts, including a retry (at most 2 attempts and at most 3 minutes of conversation per contact). The highest possible price is shown before a campaign is started."],
+              [{ "b": "Inbound calls:" }, " a Danish phone number for the assistant and 300 started minutes of conversation per calendar month are included. Minutes beyond that cost {pExtraMinute} per started minute and are charged on the month's invoice. Usage can be followed continuously in Dialogbot."]
             ]
           },
           { "type": "p", "text": "If you come via an ambassador, you get a 50 % discount on your first invoiced month. We may change the prices with at least 30 days' notice by email; the change applies from the first full month after the notice." }
@@ -220,7 +220,7 @@
       {
         "title": "4. Start, term and cancellation",
         "body": [
-          { "type": "p", "text": "The agreement runs until it is cancelled. You can cancel with effect from the end of the current month by writing to us. We can cancel with 30 days' notice. There is no commitment. Setup is included when you do it yourselves; setup by Dialogbot's specialists costs 5.000 kr. excl. VAT and is paid once, before the work begins." },
+          { "type": "p", "text": "The agreement runs until it is cancelled. You can cancel with effect from the end of the current month by writing to us. We can cancel with 30 days' notice. There is no commitment. Setup is included when you do it yourselves; setup by Dialogbot's specialists costs {pSetup} excl. VAT and is paid once, before the work begins." },
           { "type": "p", "text": "In the event of material breach – e.g. misuse of the service or non-payment – we may close access without notice." }
         ]
       },

@@ -46,28 +46,28 @@
     "ctaText": "Sagen Sie dem Chat, wie Ihr Unternehmen heißt und was Sie tun, dann ruft der Assistent Sie an und zeigt Ihnen, wie er für Sie ans Telefon gehen würde.",
     "callMe": "Jetzt anrufen lassen",
     "orWrite": "Oder schreiben Sie an ",
-    "priceLine": ". 2.495 kr./Monat · zzgl. MwSt. Keine Mindestlaufzeit."
+    "priceLine": ". {pMonthly}/Monat · zzgl. MwSt. Keine Mindestlaufzeit."
   },
   "compareTable": {
     "difference": "Unterschied"
   },
   "pricing": {
     "meta": {
-      "title": "Preise – KI-Rezeptionist für 2.495 kr. im Monat",
-      "description": "Der Preis von Dialogbot: ein Abonnement für 2.495 kr. im Monat zzgl. MwSt. mit 300 Minuten eingehender Anrufe. Telefon, Chat, Buchung und persönliche Einrichtung sind inklusive. Ausgehende Kampagnenanrufe kosten 4 kr. pro Anruf.",
+      "title": "Preise – KI-Rezeptionist für {pMonthly} im Monat",
+      "description": "Der Preis von Dialogbot: ein Abonnement für {pMonthly} im Monat zzgl. MwSt. mit 300 Minuten eingehender Anrufe. Telefon, Chat, Buchung und persönliche Einrichtung sind inklusive. Ausgehende Kampagnenanrufe kosten {pCall} pro Anruf.",
       "ogTitle": "Preise für den KI-Rezeptionisten | Dialogbot"
     },
     "kicker": "Preise",
-    "title": "Ein Abonnement – 2.495 kr. im Monat",
+    "title": "Ein Abonnement – {pMonthly} im Monat",
     "lead": "Ein Preis, der volle Dialogbot: KI-Rezeptionist am Telefon, Chatbot auf der Website, Terminbuchung und eine Zusammenfassung jeder Anfrage. Alle Preise zzgl. MwSt.",
-    "points": ["2.495 kr. im Monat – ein Abonnement", "Kein Preis pro Anfrage", "300 Minuten eingehender Anrufe pro Monat inklusive", "Ausgehende Kampagnenanrufe: 4 kr. pro Anruf + 2 kr. pro Minute", "Keine Mindestlaufzeit", "Einrichtung in Eigenregie inklusive – Einrichtung durch Spezialisten 5.000 kr."],
+    "points": ["{pMonthly} im Monat – ein Abonnement", "Kein Preis pro Anfrage", "300 Minuten eingehender Anrufe pro Monat inklusive", "Ausgehende Kampagnenanrufe: {pCall} pro Anruf + {pMinute} pro Minute", "Keine Mindestlaufzeit", "Einrichtung in Eigenregie inklusive – Einrichtung durch Spezialisten {pSetup}"],
     "sections": {
       "subscription": {
         "title": "Das Abonnement",
-        "p1Price": "2.495 kr. im Monat",
+        "p1Price": "{pMonthly} im Monat",
         "p1a": " zzgl. MwSt. Es gibt keinen Preis pro Anfrage, und ",
         "p1Minutes": "300 Minuten eingehender Anrufe pro Monat sind inklusive",
-        "p1b": " – das reicht für die meisten kleinen Unternehmen. Sprechen Ihre Kunden länger mit dem Assistenten, kostet jede weitere angefangene Minute 1,50 kr. Ihren Verbrauch sehen Sie jederzeit in Dialogbot.",
+        "p1b": " – das reicht für die meisten kleinen Unternehmen. Sprechen Ihre Kunden länger mit dem Assistenten, kostet jede weitere angefangene Minute {pExtraMinute}. Ihren Verbrauch sehen Sie jederzeit in Dialogbot.",
         "p2": "Der Preis eines Telefonservice – aber ein Empfang, der auch die Termine in Ihrem Kalender bucht und Sie über jeden Anruf informiert.",
         "p3a": "Ideal für Unternehmen, bei denen das Telefon klingelt, während viel los ist: Handwerksbetriebe, Praxen, Salons, Werkstätten und Berater. Möchten Sie ihn zuerst hören, können Sie ",
         "p3Link": "sich von Dialogbot anrufen lassen",
@@ -75,7 +75,7 @@
       },
       "whyMore": {
         "title": "Warum wir mehr kosten als ein Chatbot",
-        "p1": "Es gibt günstigere Lösungen ab etwa 400 kr. im Monat. Viele davon rechnen nach Minuten oder Anfragen ab, sodass die Rechnung von Monat zu Monat schwanken kann.",
+        "p1": "Es gibt günstigere Lösungen ab etwa 50 € im Monat. Viele davon rechnen nach Minuten oder Anfragen ab, sodass die Rechnung von Monat zu Monat schwanken kann.",
         "p2a": "Dialogbot antwortet ",
         "p2Strong": "nur auf Grundlage von Wissen, das Sie selbst bestätigt haben",
         "p2b": ", und zeigt Ihnen jede Änderung zuerst: vorher → nachher, «Bestätigen?». Er bucht, verschiebt und storniert Termine in Google Kalender oder Microsoft 365, sendet SMS-Bestätigungen und informiert Sie über jeden Anruf, dazu täglich ein Bericht. Deshalb kostet er mehr – und Sie wissen im Voraus, wie hoch die Rechnung wird. Siehe auch ",
@@ -89,20 +89,20 @@
         "items": ["KI-Rezeptionist und KI-Anrufbeantworter in der Sprache Ihrer Kunden – rund um die Uhr", "Chatbot für die Website mit demselben Wissen", "Buchen, Verschieben und Stornieren von Terminen sowie SMS-Bestätigung", "Zusammenfassung jeder Anfrage, Aufgaben und Tagesbericht", "Einrichtung in Eigenregie: die drei Schritte des Einrichtungsleitfadens, etwa eine halbe Stunde, mit dem Assistenten an Ihrer Seite"]
       },
       "specialists": {
-        "title": "Einrichtung durch unsere Spezialisten – 5.000 kr.",
+        "title": "Einrichtung durch unsere Spezialisten – {pSetup}",
         "p1a": "Sie können Dialogbot selbst einrichten – die drei Schritte des Einrichtungsleitfadens sind im Abonnement enthalten. Möchten Sie es lieber erledigen lassen, richten unsere eigenen Spezialisten ihn für ",
-        "p1Price": "5.000 kr.",
+        "p1Price": "{pSetup}",
         "p1b": " zzgl. MwSt. ein, einmalig zu zahlen.",
         "p2": "Dann erhalten Sie eine maßgeschneiderte Einrichtung und Integration in Ihre eigenen Systeme und Abläufe: Wir binden Kalender, CRM oder Buchungssystem an, pflegen Ihr Wissen und Ihre Preise ein, trainieren die Stimme auf Ihre Namen und testen alles gemeinsam mit Ihnen, bevor er eingeschaltet wird."
       },
       "outbound": {
         "title": "Ausgehende Kampagnenanrufe",
         "p1a": "Soll der Assistent Kontakte anrufen, die selbst zugestimmt haben, angerufen zu werden, kostet das ",
-        "p1Call": "4 kr. pro ausgehendem Anruf",
+        "p1Call": "{pCall} pro ausgehendem Anruf",
         "p1b": " plus ",
-        "p1Minute": "2 kr. pro angefangener Gesprächsminute",
+        "p1Minute": "{pMinute} pro angefangener Gesprächsminute",
         "p1c": " zzgl. MwSt. – wie eine Telefonrechnung.",
-        "p2": "Jeder getätigte Anruf zählt – auch ein erneuter Versuch. Ein unbeantworteter Anruf kostet daher 4 kr., ein Gespräch von 3 Minuten 10 kr. Ein Kontakt wird höchstens 2-mal angerufen und spricht insgesamt höchstens 3 Minuten, und Sie sehen den Höchstpreis, bevor Sie auf Start drücken."
+        "p2": "Jeder getätigte Anruf zählt – auch ein erneuter Versuch. Ein unbeantworteter Anruf kostet daher {pCall}, ein Gespräch von 3 Minuten {pCall3Min}. Ein Kontakt wird höchstens 2-mal angerufen und spricht insgesamt höchstens 3 Minuten, und Sie sehen den Höchstpreis, bevor Sie auf Start drücken."
       },
       "start": {
         "title": "Jetzt starten",
@@ -117,18 +117,18 @@
     },
     "faq": [
       ["Gibt es eine Mindestlaufzeit?", "Nein. Es gibt keine Mindestlaufzeit. Sie können zum Ende des laufenden Monats kündigen."],
-      ["Sind 2.495 kr. der volle Preis?", "Ja, das ist der volle Preis für das Abonnement, zzgl. MwSt. Es gibt nur ein Abonnement und keinen Aufpreis pro Anfrage. Nur wenn Sie mehr als 300 eingehende Minuten im Monat nutzen, kostet jede weitere Minute 1,50 kr."],
+      ["Sind {pMonthly} der volle Preis?", "Ja, das ist der volle Preis für das Abonnement, zzgl. MwSt. Es gibt nur ein Abonnement und keinen Aufpreis pro Anfrage. Nur wenn Sie mehr als 300 eingehende Minuten im Monat nutzen, kostet jede weitere Minute {pExtraMinute}"],
       ["Kann ich ihn vor dem Kauf testen?", "Ja. Dialogbot ruft Sie an und empfängt Sie, als wären Sie ein Kunde – das dauert zwei Minuten und erfordert keine Anmeldung. Und es gibt keine Mindestlaufzeit."],
       ["Wo landen die Daten meiner Kunden?", "Das steht in einem kurzen, verständlichen Text auf der Seite zu DSGVO und Daten: was gespeichert wird, wo, und wie der Auftragsverarbeitungsvertrag funktioniert."],
-      ["Was kosten ausgehende Kampagnenanrufe?", "4 kr. pro ausgehendem Anruf plus 2 kr. pro angefangener Gesprächsminute, zzgl. MwSt. Ein unbeantworteter Anruf kostet 4 kr., ein Gespräch von 3 Minuten 10 kr. Die Kontakte müssen vorab zugestimmt haben, angerufen zu werden, und eine Kampagne startet erst, wenn Sie selbst auf Start drücken."],
-      ["Was passiert, wenn wir viele eingehende Anrufe bekommen?", "300 Minuten eingehender Anrufe pro Monat sind im Abonnement enthalten. Darüber hinaus kostet jede angefangene Minute 1,50 kr. zzgl. MwSt. – das steht als eigene Zeile auf der Rechnung, und Sie können den Verbrauch laufend in Dialogbot verfolgen."],
-      ["Kostet die Einrichtung etwas?", "Nicht, wenn Sie es selbst machen: Die drei Schritte des Einrichtungsleitfadens sind im Abonnement enthalten und dauern etwa eine halbe Stunde. Die Einrichtung durch unsere Spezialisten kostet einmalig 5.000 kr. zzgl. MwSt. und bietet Ihnen eine maßgeschneiderte Einrichtung und Integration in Ihre eigenen Systeme und Abläufe."]
+      ["Was kosten ausgehende Kampagnenanrufe?", "{pCall} pro ausgehendem Anruf plus {pMinute} pro angefangener Gesprächsminute, zzgl. MwSt. Ein unbeantworteter Anruf kostet {pCall}, ein Gespräch von 3 Minuten {pCall3Min}. Die Kontakte müssen vorab zugestimmt haben, angerufen zu werden, und eine Kampagne startet erst, wenn Sie selbst auf Start drücken."],
+      ["Was passiert, wenn wir viele eingehende Anrufe bekommen?", "300 Minuten eingehender Anrufe pro Monat sind im Abonnement enthalten. Darüber hinaus kostet jede angefangene Minute {pExtraMinute} zzgl. MwSt. – das steht als eigene Zeile auf der Rechnung, und Sie können den Verbrauch laufend in Dialogbot verfolgen."],
+      ["Kostet die Einrichtung etwas?", "Nicht, wenn Sie es selbst machen: Die drei Schritte des Einrichtungsleitfadens sind im Abonnement enthalten und dauern etwa eine halbe Stunde. Die Einrichtung durch unsere Spezialisten kostet einmalig {pSetup} zzgl. MwSt. und bietet Ihnen eine maßgeschneiderte Einrichtung und Integration in Ihre eigenen Systeme und Abläufe."]
     ]
   },
   "receptionist": {
     "meta": {
       "title": "KI-Rezeptionist für Unternehmen – geht rund um die Uhr ans Telefon",
-      "description": "Dialogbot ist ein KI-Rezeptionist, der ans Telefon geht, wenn Sie besetzt oder geschlossen sind. Er antwortet auf Grundlage Ihres eigenen Wissens, bucht Termine und leitet Ihnen jede Anfrage weiter. 2.495 kr./Monat.",
+      "description": "Dialogbot ist ein KI-Rezeptionist, der ans Telefon geht, wenn Sie besetzt oder geschlossen sind. Er antwortet auf Grundlage Ihres eigenen Wissens, bucht Termine und leitet Ihnen jede Anfrage weiter. {pMonthly}/Monat.",
       "ogTitle": "KI-Rezeptionist für Unternehmen | Dialogbot"
     },
     "kicker": "KI-Rezeptionist",
@@ -159,9 +159,9 @@
       "price": {
         "title": "Preis und Einrichtung",
         "p1a": "Es gibt ein Abonnement: ",
-        "p1Price": "2.495 kr. im Monat",
-        "p1b": ", ohne Preis pro Anfrage und mit 300 Minuten eingehender Anrufe pro Monat. Ausgehende Kampagnenanrufe kosten 4 kr. pro Anruf plus 2 kr. pro Gesprächsminute. Alle Preise zzgl. MwSt.",
-        "p2a": "Sie brauchen keinerlei technische Kenntnisse. Sie richten den Assistenten in etwa einer halben Stunde selbst nach den drei Schritten des Einrichtungsleitfadens ein – das ist im Abonnement enthalten. Haben Sie eine Website, übernimmt Dialogbot das meiste automatisch, und Sie können den Assistenten testen, bevor er einen einzigen echten Anruf entgegennimmt. Möchten Sie es lieber erledigen lassen, richten unsere eigenen Spezialisten ihn einmalig für 5.000 kr. zzgl. MwSt. ein – maßgeschneidert und integriert in Ihre eigenen Systeme und Abläufe. Lesen Sie auch über ",
+        "p1Price": "{pMonthly} im Monat",
+        "p1b": ", ohne Preis pro Anfrage und mit 300 Minuten eingehender Anrufe pro Monat. Ausgehende Kampagnenanrufe kosten {pCall} pro Anruf plus {pMinute} pro Gesprächsminute. Alle Preise zzgl. MwSt.",
+        "p2a": "Sie brauchen keinerlei technische Kenntnisse. Sie richten den Assistenten in etwa einer halben Stunde selbst nach den drei Schritten des Einrichtungsleitfadens ein – das ist im Abonnement enthalten. Haben Sie eine Website, übernimmt Dialogbot das meiste automatisch, und Sie können den Assistenten testen, bevor er einen einzigen echten Anruf entgegennimmt. Möchten Sie es lieber erledigen lassen, richten unsere eigenen Spezialisten ihn einmalig für {pSetup} zzgl. MwSt. ein – maßgeschneidert und integriert in Ihre eigenen Systeme und Abläufe. Lesen Sie auch über ",
         "p2Phone": "den KI-Anrufbeantworter",
         "p2b": " und ",
         "p2Chatbot": "den Chatbot für die Website",
@@ -169,12 +169,12 @@
       }
     },
     "faq": [
-      ["Was kostet ein KI-Rezeptionist bei Dialogbot?", "Ein Abonnement für 2.495 kr. im Monat, ohne Preis pro Anfrage und mit 300 Minuten eingehender Anrufe pro Monat. Ausgehende Kampagnenanrufe kosten 4 kr. pro Anruf plus 2 kr. pro Gesprächsminute. Die Preise verstehen sich zzgl. MwSt."],
+      ["Was kostet ein KI-Rezeptionist bei Dialogbot?", "Ein Abonnement für {pMonthly} im Monat, ohne Preis pro Anfrage und mit 300 Minuten eingehender Anrufe pro Monat. Ausgehende Kampagnenanrufe kosten {pCall} pro Anruf plus {pMinute} pro Gesprächsminute. Die Preise verstehen sich zzgl. MwSt."],
       ["Was passiert mit den Daten der Kunden – ist das DSGVO-konform?", "Anrufe und Nachrichten werden in Ihrem Auftrag als Auftragsverarbeiter verarbeitet, die Datenbank liegt in der EU, und Sie erhalten einen Auftragsverarbeitungsvertrag als Teil der Bedingungen. Alles in verständlicher Sprache auf der Seite zu DSGVO und Daten: /gdpr."],
       ["Klingt er wie ein Roboter?", "Dialogbot spricht natürlich in der Sprache Ihrer Kunden, mit einer Stimme, die Sie selbst wählen, z. B. Camilla oder Peter. Er sagt immer ehrlich, dass er ein digitaler Assistent ist, wenn der Kunde fragt."],
       ["Kann ich meine Telefonnummer behalten?", "Ja. Sie leiten Ihre bisherige Nummer auf Dialogbot um, wenn Sie besetzt oder geschlossen sind, und behalten Ihren Telefonanbieter."],
       ["Was passiert, wenn der Assistent die Antwort nicht kennt?", "Er rät nicht. Er antwortet nur auf Grundlage bestätigten Wissens und verspricht, dass sich ein Mitarbeiter meldet, und Sie erhalten die Anfrage sofort."],
-      ["Wie lange dauert die Einrichtung?", "Wenn Sie es selbst machen, dauern die drei Schritte des Einrichtungsleitfadens etwa eine halbe Stunde, und der Assistent führt Sie dabei. Wählen Sie die Einrichtung durch unsere Spezialisten (5.000 kr. zzgl. MwSt.), vereinbaren wir einen Termin und richten ihn maßgeschneidert für Ihre Systeme ein."]
+      ["Wie lange dauert die Einrichtung?", "Wenn Sie es selbst machen, dauern die drei Schritte des Einrichtungsleitfadens etwa eine halbe Stunde, und der Assistent führt Sie dabei. Wählen Sie die Einrichtung durch unsere Spezialisten ({pSetup} zzgl. MwSt.), vereinbaren wir einen Termin und richten ihn maßgeschneidert für Ihre Systeme ein."]
     ]
   },
   "phone": {
@@ -212,8 +212,8 @@
       "price": {
         "title": "Preis",
         "a": "Ein Abonnement für ",
-        "price": "2.495 kr. im Monat",
-        "b": " – zzgl. MwSt. und ohne Preis pro Anfrage. Die Einrichtung erledigen Sie selbst nach dem Einrichtungsleitfaden – oder lassen sie von unseren Spezialisten für einmalig 5.000 kr. maßschneidern. Siehe auch ",
+        "price": "{pMonthly} im Monat",
+        "b": " – zzgl. MwSt. und ohne Preis pro Anfrage. Die Einrichtung erledigen Sie selbst nach dem Einrichtungsleitfaden – oder lassen sie von unseren Spezialisten für einmalig {pSetup} maßschneidern. Siehe auch ",
         "receptionistLink": "KI-Rezeptionist",
         "c": " und ",
         "chatbotLink": "Chatbot für die Website",
@@ -224,7 +224,7 @@
       ["Was ist der Unterschied zwischen einem KI-Anrufbeantworter und einem gewöhnlichen Anrufbeantworter?", "Ein gewöhnlicher Anrufbeantworter zeichnet eine Nachricht auf. Ein KI-Anrufbeantworter spricht mit dem Kunden, beantwortet Fragen auf Grundlage Ihres Wissens, klärt das Anliegen und kann einen Termin buchen – und Sie erhalten eine schriftliche Zusammenfassung."],
       ["Kann ich meine eigene Nummer verwenden?", "Ja. Sie leiten Ihre bisherige Nummer auf Dialogbot um, wenn Sie besetzt oder geschlossen sind. Sie können auch eine neue Dialogbot-Nummer erhalten."],
       ["Versteht er auch Dialekt?", "Dialogbot ist für gesprochene Sprache gebaut und nutzt Ihre eigenen Fachbegriffe und Namen aus dem Wissen, das Sie bestätigen, sodass er sie besser erkennt."],
-      ["Was kostet das?", "Ein Abonnement für 2.495 kr. im Monat, zzgl. MwSt. Es gibt keinen Preis pro Anfrage."],
+      ["Was kostet das?", "Ein Abonnement für {pMonthly} im Monat, zzgl. MwSt. Es gibt keinen Preis pro Anfrage."],
       ["Kann ich ihn vor dem Kauf hören?", "Ja. Geben Sie auf der Startseite Ihre Nummer ein, wählen Sie eine Stimme und Ihre Branche, dann ruft Dialogbot Sie an und zeigt es Ihnen."]
     ]
   },
@@ -265,8 +265,8 @@
       "price": {
         "title": "Preis",
         "a": "Der Chatbot ist Teil von Dialogbot: ein Abonnement für ",
-        "price": "2.495 kr. im Monat",
-        "b": " – zzgl. MwSt. und ohne Preis pro Anfrage. Die Einrichtung erledigen Sie selbst nach dem Einrichtungsleitfaden – oder lassen sie von unseren Spezialisten für einmalig 5.000 kr. maßschneidern."
+        "price": "{pMonthly} im Monat",
+        "b": " – zzgl. MwSt. und ohne Preis pro Anfrage. Die Einrichtung erledigen Sie selbst nach dem Einrichtungsleitfaden – oder lassen sie von unseren Spezialisten für einmalig {pSetup} maßschneidern."
       }
     },
     "faq": [
@@ -274,7 +274,7 @@
       ["Kann ein Mitarbeiter das Gespräch übernehmen?", "Ja. Ein Mitarbeiter kann dem Kunden direkt im Gespräch antworten, und der Assistent pausiert so lange."],
       ["Erfindet der Chatbot selbst Antworten?", "Nein. Er antwortet nur auf Grundlage des Wissens, das Sie bestätigt haben, und sagt ehrlich, wenn etwas nicht daraus hervorgeht."],
       ["Kann er sowohl chatten als auch ans Telefon gehen?", "Ja. Dialogbot nutzt im Chat und am Telefon dasselbe Wissen."],
-      ["Was kostet der Chatbot?", "Er ist Teil von Dialogbot: ein Abonnement für 2.495 kr. im Monat, zzgl. MwSt."]
+      ["Was kostet der Chatbot?", "Er ist Teil von Dialogbot: ein Abonnement für {pMonthly} im Monat, zzgl. MwSt."]
     ]
   },
   "about": {
@@ -384,13 +384,13 @@
     "scenarioEnd": ".",
     "priceTitle": "Preis und Einrichtung",
     "priceA": "Ein Abonnement für ",
-    "price": "2.495 kr. im Monat",
+    "price": "{pMonthly} im Monat",
     "priceB": " – zzgl. MwSt. und ohne Preis pro Anfrage. Jemand von Dialogbot richtet es gemeinsam mit Ihnen in etwa einer halben Stunde ein. Alle Details finden Sie auf der ",
     "priceLink": "Preisseite",
     "priceC": ".",
     "othersTitle": "Dialogbot für andere Branchen",
     "faq": [
-      ["Was kostet das?", "Ein Abonnement für 2.495 kr. im Monat, zzgl. MwSt. Es gibt keinen Preis pro Anfrage."],
+      ["Was kostet das?", "Ein Abonnement für {pMonthly} im Monat, zzgl. MwSt. Es gibt keinen Preis pro Anfrage."],
       ["Können wir unsere Telefonnummer behalten?", "Ja. Sie leiten Ihre Nummer auf Dialogbot um, wenn Sie besetzt oder geschlossen sind."]
     ]
   },

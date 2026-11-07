@@ -59,7 +59,7 @@
       "title": "Kampagner",
       "sub": "Ring til jeres egne kunder",
       "outbound": "Udgående opkald",
-      "chosen": "Valgt – 4 kr. pr. opkald + 2 kr. pr. minut ekskl. moms",
+      "chosen": "Valgt – {pCall} pr. opkald + {pMinute} pr. minut ekskl. moms",
       "notChosen": "Ikke valgt"
     },
     "systems": {
@@ -77,7 +77,7 @@
       "team": "Team",
       "teamValue": "{n} med adgang",
       "billing": "Abonnement og fakturaer",
-      "billingValue": "Fra 2.495 kr./md. ekskl. moms"
+      "billingValue": "Fra {pMonthly}/md. ekskl. moms"
     },
     "tech": {
       "title": "Teknik",

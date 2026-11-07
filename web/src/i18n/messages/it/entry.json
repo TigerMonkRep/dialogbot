@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – un assistente che risponde al telefono: per la tua azienda e per te",
-    "description": "Dialogbot risponde in italiano, 24 ore su 24, prenota appuntamenti nel tuo calendario e telefona per te quando glielo chiedi. Approvi tutto prima che entri in vigore. Per le aziende da 2.495 DKK/mese – per te a casa da 49 DKK/mese.",
+    "description": "Dialogbot risponde in italiano, 24 ore su 24, prenota appuntamenti nel tuo calendario e telefona per te quando glielo chiedi. Approvi tutto prima che entri in vigore. Per le aziende da {pMonthly}/mese – per te a casa da {pPrivatFrom}/mese.",
     "ogTitle": "Un assistente che risponde al telefono – per la tua azienda e per te"
   },
   "nav": {
@@ -118,7 +118,7 @@
         }
       ],
       "cta": "Per le aziende",
-      "price": "Da {price} DKK/mese"
+      "price": "Da {pMonthly}/mese"
     },
     "private": {
       "kick": "Privati",
@@ -201,7 +201,7 @@
     "from": "da",
     "business": {
       "name": "Aziende",
-      "unit": "DKK/mese IVA esclusa",
+      "unit": "{pCur}/mese IVA esclusa",
       "points": [
         "Telefono, prenotazioni e chat web – tutto incluso",
         "300 minuti di chiamate in entrata al mese",
@@ -211,7 +211,8 @@
     },
     "private": {
       "name": "Privati",
-      "unit": "DKK/mese · {days} giorni gratis",
+      "unit": "{pCur}/mese · {days} giorni gratis",
+      "amount": "{pPrivatFromNum}",
       "points": [
         "Liste e promemoria – illimitati",
         "Peter chiama per te entro i tuoi limiti",
@@ -238,7 +239,7 @@
       },
       {
         "q": "Quanto costa la configurazione?",
-        "a": "Niente se la fate da soli – ci vogliono circa 30 minuti con Peter in chat. Se volete che i nostri specialisti colleghino calendario, CRM o sistema di prenotazione, costa {setup} DKK una tantum."
+        "a": "Niente se la fate da soli – ci vogliono circa 30 minuti con Peter in chat. Se volete che i nostri specialisti colleghino calendario, CRM o sistema di prenotazione, costa {pSetup} una tantum."
       },
       {
         "q": "Posso disdire?",

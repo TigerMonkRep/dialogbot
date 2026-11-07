@@ -46,28 +46,28 @@
     "ctaText": "Dica alla chat come si chiama la sua azienda e di cosa vi occupate: l'assistente la richiama e le mostra come risponderebbe al telefono per voi.",
     "callMe": "Richiamatemi ora",
     "orWrite": "Oppure scriva a ",
-    "priceLine": ". 2.495 kr./mese · IVA esclusa. Nessun vincolo."
+    "priceLine": ". {pMonthly}/mese · IVA esclusa. Nessun vincolo."
   },
   "compareTable": {
     "difference": "Differenza"
   },
   "pricing": {
     "meta": {
-      "title": "Prezzi – receptionist AI a 2.495 kr. al mese",
-      "description": "Scopra il prezzo di Dialogbot: un abbonamento da 2.495 kr. al mese IVA esclusa con 300 minuti di chiamate in entrata. Telefono, chat, prenotazioni e configurazione personale inclusi. Le chiamate in uscita delle campagne costano 4 kr. a chiamata.",
+      "title": "Prezzi – receptionist AI a {pMonthly} al mese",
+      "description": "Scopra il prezzo di Dialogbot: un abbonamento da {pMonthly} al mese IVA esclusa con 300 minuti di chiamate in entrata. Telefono, chat, prenotazioni e configurazione personale inclusi. Le chiamate in uscita delle campagne costano {pCall} a chiamata.",
       "ogTitle": "Prezzi del receptionist AI | Dialogbot"
     },
     "kicker": "Prezzi",
-    "title": "Un solo abbonamento: 2.495 kr. al mese",
+    "title": "Un solo abbonamento: {pMonthly} al mese",
     "lead": "Un unico prezzo per tutto Dialogbot: receptionist AI al telefono, chatbot sul sito web, prenotazioni e un riepilogo di ogni richiesta. Tutti i prezzi sono IVA esclusa.",
-    "points": ["2.495 kr. al mese: un solo abbonamento", "Nessun costo per contatto", "300 minuti di chiamate in entrata al mese inclusi", "Chiamate in uscita delle campagne: 4 kr. a chiamata + 2 kr. al minuto", "Nessun vincolo", "Configurazione fai da te inclusa – configurazione a cura degli specialisti 5.000 kr."],
+    "points": ["{pMonthly} al mese: un solo abbonamento", "Nessun costo per contatto", "300 minuti di chiamate in entrata al mese inclusi", "Chiamate in uscita delle campagne: {pCall} a chiamata + {pMinute} al minuto", "Nessun vincolo", "Configurazione fai da te inclusa – configurazione a cura degli specialisti {pSetup}"],
     "sections": {
       "subscription": {
         "title": "L'abbonamento",
-        "p1Price": "2.495 kr. al mese",
+        "p1Price": "{pMonthly} al mese",
         "p1a": " IVA esclusa. Non c'è alcun costo per contatto e ",
         "p1Minutes": "sono inclusi 300 minuti di chiamate in entrata al mese",
-        "p1b": ": bastano alla maggior parte delle piccole imprese. Se i vostri clienti parlano con l'assistente più a lungo, ogni minuto iniziato oltre la soglia costa 1,50 kr. Potete sempre vedere i vostri consumi in Dialogbot.",
+        "p1b": ": bastano alla maggior parte delle piccole imprese. Se i vostri clienti parlano con l'assistente più a lungo, ogni minuto iniziato oltre la soglia costa {pExtraMinute}. Potete sempre vedere i vostri consumi in Dialogbot.",
         "p2": "Il prezzo di un servizio di segreteria telefonica, ma con un receptionist che prenota anche gli appuntamenti nel vostro calendario e vi invia un messaggio per ogni chiamata.",
         "p3a": "Ideale per le aziende in cui il telefono squilla mentre siete occupati: artigiani, studi medici, saloni, officine e consulenti. Se volete prima ascoltarlo, potete ",
         "p3Link": "farvi chiamare da Dialogbot",
@@ -75,7 +75,7 @@
       },
       "whyMore": {
         "title": "Perché costiamo più di un chatbot",
-        "p1": "Esistono soluzioni più economiche a partire da circa 400 kr. al mese. Molte applicano tariffe a minuto o a contatto, quindi la fattura può variare da un mese all'altro.",
+        "p1": "Esistono soluzioni più economiche a partire da circa 50 € al mese. Molte applicano tariffe a minuto o a contatto, quindi la fattura può variare da un mese all'altro.",
         "p2a": "Dialogbot risponde ",
         "p2Strong": "solo in base a conoscenze approvate da voi",
         "p2b": " e vi mostra prima ogni modifica: prima → dopo, «Approvare?». Prenota, sposta e annulla appuntamenti in Google Calendar o Microsoft 365, invia conferme via SMS e vi manda un messaggio per ogni chiamata e un report ogni giorno. Ecco perché costa di più, e sapete in anticipo quanto pagherete. Vedi anche ",
@@ -89,20 +89,20 @@
         "items": ["Receptionist AI e segreteria telefonica AI nella lingua dei vostri clienti, 24 ore su 24", "Chatbot per il sito web con le stesse conoscenze", "Prenotazione, spostamento e annullamento di appuntamenti, con conferma via SMS", "Riepilogo di ogni richiesta, attività e report giornaliero", "Configurazione fai da te: i tre passaggi della guida alla configurazione, circa mezz'ora, con l'assistente sempre a disposizione"]
       },
       "specialists": {
-        "title": "Configurazione a cura dei nostri specialisti – 5.000 kr.",
+        "title": "Configurazione a cura dei nostri specialisti – {pSetup}",
         "p1a": "Potete configurare Dialogbot da soli: i tre passaggi della guida alla configurazione sono inclusi nell'abbonamento. Se preferite che ci pensi qualcun altro, i nostri specialisti lo configurano per ",
-        "p1Price": "5.000 kr.",
+        "p1Price": "{pSetup}",
         "p1b": " IVA esclusa, una tantum.",
         "p2": "Ottenete così una configurazione su misura e l'integrazione con i vostri sistemi ed esigenze: colleghiamo calendario, CRM o sistema di prenotazione, inseriamo le vostre conoscenze e i vostri prezzi, addestriamo la voce sui vostri nomi e testiamo tutto insieme a voi prima dell'attivazione."
       },
       "outbound": {
         "title": "Chiamate in uscita delle campagne",
         "p1a": "Se volete che l'assistente chiami contatti che hanno dato il consenso a essere chiamati, il costo è di ",
-        "p1Call": "4 kr. per chiamata in uscita",
+        "p1Call": "{pCall} per chiamata in uscita",
         "p1b": " più ",
-        "p1Minute": "2 kr. per minuto di conversazione iniziato",
+        "p1Minute": "{pMinute} per minuto di conversazione iniziato",
         "p1c": " IVA esclusa, proprio come una bolletta telefonica.",
-        "p2": "Ogni chiamata effettuata conta, anche un nuovo tentativo. Una chiamata senza risposta costa quindi 4 kr., una conversazione di 3 minuti 10 kr. Un contatto viene chiamato al massimo 2 volte e parla al massimo 3 minuti in totale, e vedete il prezzo massimo prima di premere Avvia."
+        "p2": "Ogni chiamata effettuata conta, anche un nuovo tentativo. Una chiamata senza risposta costa quindi {pCall}, una conversazione di 3 minuti {pCall3Min}. Un contatto viene chiamato al massimo 2 volte e parla al massimo 3 minuti in totale, e vedete il prezzo massimo prima di premere Avvia."
       },
       "start": {
         "title": "Inizia ora",
@@ -117,18 +117,18 @@
     },
     "faq": [
       ["C'è un vincolo?", "No. Non c'è alcun vincolo. Potete disdire con effetto dalla fine del mese in corso."],
-      ["2.495 kr. è il prezzo completo?", "Sì, è il prezzo completo dell'abbonamento, IVA esclusa. C'è un solo abbonamento e nessun costo aggiuntivo per contatto. Solo se usate più di 300 minuti in entrata al mese, ogni minuto aggiuntivo costa 1,50 kr."],
+      ["{pMonthly} è il prezzo completo?", "Sì, è il prezzo completo dell'abbonamento, IVA esclusa. C'è un solo abbonamento e nessun costo aggiuntivo per contatto. Solo se usate più di 300 minuti in entrata al mese, ogni minuto aggiuntivo costa {pExtraMinute}"],
       ["Posso provarlo prima di acquistarlo?", "Sì. Dialogbot vi chiama e vi accoglie come se foste un cliente: bastano due minuti e non serve alcuna registrazione. E non c'è alcun vincolo."],
       ["Dove finiscono i dati dei miei clienti?", "È spiegato in un testo breve e chiaro nella pagina su GDPR e dati: cosa viene conservato, dove e come funziona l'accordo sul trattamento dei dati."],
-      ["Quanto costano le chiamate in uscita delle campagne?", "4 kr. per chiamata in uscita più 2 kr. per minuto di conversazione iniziato, IVA esclusa. Una chiamata senza risposta costa 4 kr., una conversazione di 3 minuti 10 kr. I contatti devono aver dato in anticipo il consenso a essere chiamati, e una campagna parte solo quando premete voi Avvia."],
-      ["Cosa succede se riceviamo molte chiamate in entrata?", "L'abbonamento include 300 minuti di chiamate in entrata al mese. Oltre questa soglia ogni minuto iniziato costa 1,50 kr. IVA esclusa: compare in fattura come voce separata e potete seguire i consumi in tempo reale in Dialogbot."],
-      ["La configurazione ha un costo?", "No, se la fate da soli: i tre passaggi della guida alla configurazione sono inclusi nell'abbonamento e richiedono circa mezz'ora. La configurazione a cura dei nostri specialisti costa 5.000 kr. IVA esclusa una tantum e vi offre una configurazione su misura e l'integrazione con i vostri sistemi ed esigenze."]
+      ["Quanto costano le chiamate in uscita delle campagne?", "{pCall} per chiamata in uscita più {pMinute} per minuto di conversazione iniziato, IVA esclusa. Una chiamata senza risposta costa {pCall}, una conversazione di 3 minuti {pCall3Min}. I contatti devono aver dato in anticipo il consenso a essere chiamati, e una campagna parte solo quando premete voi Avvia."],
+      ["Cosa succede se riceviamo molte chiamate in entrata?", "L'abbonamento include 300 minuti di chiamate in entrata al mese. Oltre questa soglia ogni minuto iniziato costa {pExtraMinute}. IVA esclusa: compare in fattura come voce separata e potete seguire i consumi in tempo reale in Dialogbot."],
+      ["La configurazione ha un costo?", "No, se la fate da soli: i tre passaggi della guida alla configurazione sono inclusi nell'abbonamento e richiedono circa mezz'ora. La configurazione a cura dei nostri specialisti costa {pSetup}. IVA esclusa una tantum e vi offre una configurazione su misura e l'integrazione con i vostri sistemi ed esigenze."]
     ]
   },
   "receptionist": {
     "meta": {
       "title": "Receptionist AI per PMI – risponde al telefono 24 ore su 24",
-      "description": "Dialogbot è un receptionist AI che risponde al telefono quando siete occupati o chiusi, in italiano e nella lingua dei vostri clienti. Risponde in base alle vostre conoscenze, prenota appuntamenti e vi inoltra ogni richiesta. 2.495 kr./mese.",
+      "description": "Dialogbot è un receptionist AI che risponde al telefono quando siete occupati o chiusi, in italiano e nella lingua dei vostri clienti. Risponde in base alle vostre conoscenze, prenota appuntamenti e vi inoltra ogni richiesta. {pMonthly}/mese.",
       "ogTitle": "Receptionist AI per PMI | Dialogbot"
     },
     "kicker": "Receptionist AI",
@@ -159,9 +159,9 @@
       "price": {
         "title": "Prezzo e configurazione",
         "p1a": "C'è un solo abbonamento: ",
-        "p1Price": "2.495 kr. al mese",
-        "p1b": ", senza costi per contatto e con 300 minuti di chiamate in entrata al mese. Le chiamate in uscita delle campagne costano 4 kr. a chiamata più 2 kr. per minuto di conversazione. Tutti i prezzi sono IVA esclusa.",
-        "p2a": "Non servono competenze tecniche. Configurate l'assistente da soli seguendo i tre passaggi della guida alla configurazione in circa mezz'ora: è incluso nell'abbonamento. Se avete un sito web, Dialogbot ne recupera automaticamente la maggior parte dei contenuti, e potete provare l'assistente prima che risponda a una sola chiamata reale. Se preferite che ci pensi qualcun altro, i nostri specialisti lo configurano per 5.000 kr. IVA esclusa una tantum, su misura e integrato con i vostri sistemi ed esigenze. Scopra anche la ",
+        "p1Price": "{pMonthly} al mese",
+        "p1b": ", senza costi per contatto e con 300 minuti di chiamate in entrata al mese. Le chiamate in uscita delle campagne costano {pCall} a chiamata più {pMinute} per minuto di conversazione. Tutti i prezzi sono IVA esclusa.",
+        "p2a": "Non servono competenze tecniche. Configurate l'assistente da soli seguendo i tre passaggi della guida alla configurazione in circa mezz'ora: è incluso nell'abbonamento. Se avete un sito web, Dialogbot ne recupera automaticamente la maggior parte dei contenuti, e potete provare l'assistente prima che risponda a una sola chiamata reale. Se preferite che ci pensi qualcun altro, i nostri specialisti lo configurano per {pSetup}. IVA esclusa una tantum, su misura e integrato con i vostri sistemi ed esigenze. Scopra anche la ",
         "p2Phone": "segreteria telefonica AI",
         "p2b": " e il ",
         "p2Chatbot": "chatbot per il sito web",
@@ -169,12 +169,12 @@
       }
     },
     "faq": [
-      ["Quanto costa un receptionist AI con Dialogbot?", "Un abbonamento da 2.495 kr. al mese, senza costi per contatto e con 300 minuti di chiamate in entrata al mese. Le chiamate in uscita delle campagne costano 4 kr. a chiamata più 2 kr. per minuto di conversazione. I prezzi sono IVA esclusa."],
+      ["Quanto costa un receptionist AI con Dialogbot?", "Un abbonamento da {pMonthly} al mese, senza costi per contatto e con 300 minuti di chiamate in entrata al mese. Le chiamate in uscita delle campagne costano {pCall} a chiamata più {pMinute} per minuto di conversazione. I prezzi sono IVA esclusa."],
       ["Cosa succede ai dati dei clienti? È conforme al GDPR?", "Chiamate e messaggi vengono trattati in qualità di responsabile del trattamento per vostro conto, il database si trova nell'UE e ricevete un accordo sul trattamento dei dati come parte delle condizioni. Trova tutto, spiegato in modo semplice, nella pagina su GDPR e dati: /gdpr."],
       ["Sembra un robot?", "Dialogbot parla in modo naturale nella lingua di chi chiama, con una voce scelta da voi, ad esempio Camilla o Peter. Se il cliente lo chiede, dice sempre onestamente di essere un assistente digitale."],
       ["Posso mantenere il mio numero di telefono?", "Sì. Inoltrate il vostro numero attuale a Dialogbot quando siete occupati o chiusi e mantenete il vostro operatore telefonico."],
       ["Cosa succede se l'assistente non conosce la risposta?", "Non tira a indovinare. Risponde solo in base a conoscenze approvate e promette che un collaboratore ricontatterà il cliente, e voi ricevete subito la richiesta."],
-      ["Quanto tempo richiede la configurazione?", "Se la fate da soli, i tre passaggi della guida alla configurazione richiedono circa mezz'ora e l'assistente vi guida lungo il percorso. Se scegliete la configurazione a cura dei nostri specialisti (5.000 kr. IVA esclusa), fissiamo un incontro e la configuriamo su misura per i vostri sistemi."]
+      ["Quanto tempo richiede la configurazione?", "Se la fate da soli, i tre passaggi della guida alla configurazione richiedono circa mezz'ora e l'assistente vi guida lungo il percorso. Se scegliete la configurazione a cura dei nostri specialisti ({pSetup}. IVA esclusa), fissiamo un incontro e la configuriamo su misura per i vostri sistemi."]
     ]
   },
   "phone": {
@@ -212,8 +212,8 @@
       "price": {
         "title": "Prezzo",
         "a": "Un solo abbonamento da ",
-        "price": "2.495 kr. al mese",
-        "b": ", IVA esclusa e senza costi per contatto. La configurazione la fate da soli seguendo la guida, oppure la affidate ai nostri specialisti per 5.000 kr. una tantum. Vedi anche ",
+        "price": "{pMonthly} al mese",
+        "b": ", IVA esclusa e senza costi per contatto. La configurazione la fate da soli seguendo la guida, oppure la affidate ai nostri specialisti per {pSetup} una tantum. Vedi anche ",
         "receptionistLink": "receptionist AI",
         "c": " e ",
         "chatbotLink": "chatbot per il sito web",
@@ -224,7 +224,7 @@
       ["Qual è la differenza tra una segreteria telefonica AI e una normale segreteria telefonica?", "Una normale segreteria registra un messaggio. Una segreteria telefonica AI parla con il cliente, risponde alle domande in base alle vostre conoscenze, chiarisce l'esigenza e può prenotare un appuntamento, e voi ricevete un riepilogo scritto."],
       ["Posso usare il mio numero?", "Sì. Inoltrate il vostro numero attuale a Dialogbot quando siete occupati o chiusi. Potete anche avere un nuovo numero Dialogbot."],
       ["Capisce l'italiano con accenti regionali?", "Dialogbot è progettato per il parlato in 8 lingue, italiano compreso, e usa i vostri termini tecnici e i vostri nomi presi dalle conoscenze che approvate, così li riconosce meglio."],
-      ["Quanto costa?", "Un abbonamento da 2.495 kr. al mese, IVA esclusa. Non ci sono costi per contatto."],
+      ["Quanto costa?", "Un abbonamento da {pMonthly} al mese, IVA esclusa. Non ci sono costi per contatto."],
       ["Posso ascoltarlo prima di acquistare?", "Sì. Scriva il suo numero sulla home page, scelga una voce e il suo settore: Dialogbot la richiama e glielo mostra."]
     ]
   },
@@ -265,8 +265,8 @@
       "price": {
         "title": "Prezzo",
         "a": "Il chatbot fa parte di Dialogbot: un solo abbonamento da ",
-        "price": "2.495 kr. al mese",
-        "b": ", IVA esclusa e senza costi per contatto. La configurazione la fate da soli seguendo la guida, oppure la affidate ai nostri specialisti per 5.000 kr. una tantum."
+        "price": "{pMonthly} al mese",
+        "b": ", IVA esclusa e senza costi per contatto. La configurazione la fate da soli seguendo la guida, oppure la affidate ai nostri specialisti per {pSetup} una tantum."
       }
     },
     "faq": [
@@ -274,7 +274,7 @@
       ["Un collaboratore può subentrare nella conversazione?", "Sì. Un collaboratore può rispondere al cliente direttamente nella conversazione e nel frattempo l'assistente si mette in pausa."],
       ["Il chatbot si inventa le risposte?", "No. Risponde solo in base alle conoscenze che avete approvato e dice onestamente quando qualcosa non risulta."],
       ["Può sia chattare sia rispondere al telefono?", "Sì. Dialogbot usa le stesse conoscenze in chat e al telefono."],
-      ["Quanto costa il chatbot?", "Fa parte di Dialogbot: un solo abbonamento da 2.495 kr. al mese, IVA esclusa."]
+      ["Quanto costa il chatbot?", "Fa parte di Dialogbot: un solo abbonamento da {pMonthly} al mese, IVA esclusa."]
     ]
   },
   "about": {
@@ -384,13 +384,13 @@
     "scenarioEnd": ".",
     "priceTitle": "Prezzo e configurazione",
     "priceA": "Un solo abbonamento da ",
-    "price": "2.495 kr. al mese",
+    "price": "{pMonthly} al mese",
     "priceB": ", IVA esclusa e senza costi per contatto. Una persona di Dialogbot lo configura insieme a voi in circa mezz'ora. Tutti i dettagli nella ",
     "priceLink": "pagina dei prezzi",
     "priceC": ".",
     "othersTitle": "Dialogbot per altri settori",
     "faq": [
-      ["Quanto costa?", "Un abbonamento da 2.495 kr. al mese, IVA esclusa. Non ci sono costi per contatto."],
+      ["Quanto costa?", "Un abbonamento da {pMonthly} al mese, IVA esclusa. Non ci sono costi per contatto."],
       ["Possiamo mantenere il nostro numero di telefono?", "Sì. Inoltrate il vostro numero a Dialogbot quando siete occupati o chiusi."]
     ]
   },

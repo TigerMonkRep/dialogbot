@@ -1,8 +1,8 @@
 {
   "prices": {
-    "monthly": "2.495",
-    "setup": "5.000",
-    "perCall": "4"
+    "monthly": "{pMonthlyNum}",
+    "setup": "{pSetupNum}",
+    "perCall": "{pCallNum}"
   },
   "demoCall": {
     "label": "Llamada · Carpintería (ejemplo)",
@@ -19,7 +19,7 @@
   "home": {
     "meta": {
       "title": "Dialogbot – recepcionista con IA en español que atiende el teléfono las 24 horas",
-      "description": "Dialogbot atiende el teléfono cuando usted no puede: un recepcionista con IA que responde en el idioma de sus clientes las 24 horas, reserva citas en su calendario y le avisa de cada llamada. 2.495 kr./mes.",
+      "description": "Dialogbot atiende el teléfono cuando usted no puede: un recepcionista con IA que responde en el idioma de sus clientes las 24 horas, reserva citas en su calendario y le avisa de cada llamada. {pMonthly}/mes.",
       "ogTitle": "Dialogbot atiende el teléfono cuando usted no puede"
     },
     "referral": {
@@ -35,7 +35,7 @@
         "mark": "atiende el teléfono",
         "after": " cuando usted no puede."
       },
-      "lead": "Un recepcionista con IA que habla el idioma de sus clientes, responde las 24 horas, reserva citas en su calendario y le avisa de cada llamada. Conserva su número. 2.495 kr./mes, IVA no incluido.",
+      "lead": "Un recepcionista con IA que habla el idioma de sus clientes, responde las 24 horas, reserva citas en su calendario y le avisa de cada llamada. Conserva su número. {pMonthly}/mes, IVA no incluido.",
       "cta": "Pruébelo: le llamará",
       "note": "2 minutos, sin registro. Pregúntele lo que le preguntaría un cliente."
     },
@@ -84,7 +84,7 @@
         },
         {
           "title": "Llama a sus clientes",
-          "text": "Hace seguimiento de presupuestos o recuerda revisiones, solo a clientes que han dado su consentimiento. 4 kr. por llamada + 2 kr. por minuto."
+          "text": "Hace seguimiento de presupuestos o recuerda revisiones, solo a clientes que han dado su consentimiento. {pCall} por llamada + {pMinute} por minuto."
         }
       ],
       "note": "Todo lo que dice se basa en información que usted ha aprobado, y cualquier cambio se lo muestra primero: antes → después, «¿Aprobar?»."
@@ -106,7 +106,7 @@
       "subscription": {
         "name": "Suscripción",
         "badge": "Recomendado",
-        "unit": "kr./mes",
+        "unit": "{pCur}/mes",
         "text": "Todo incluido: teléfono, reservas y chat web, con 300 minutos de llamadas entrantes al mes. Sin permanencia. La configuración por su cuenta está incluida.",
         "compare": "El precio de un servicio de atención telefónica, pero con un recepcionista que además reserva las citas en su calendario.",
         "cta": "Elija aquí: escúchelo primero",
@@ -118,8 +118,8 @@
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
-        "unit": "kr. por llamada + 2 kr. por minuto",
-        "text": "Solo si quiere que Dialogbot haga llamadas. Sin respuesta: 4 kr. Conversación de tres minutos: 10 kr. Verá el precio máximo antes de empezar.",
+        "unit": "{pCur} por llamada + {pMinute} por minuto",
+        "text": "Solo si quiere que Dialogbot haga llamadas. Sin respuesta: {pCall}. Conversación de tres minutos: {pCall3Min}. Verá el precio máximo antes de empezar.",
         "badge": "Opcional",
         "points": [
           "Pago solo por llamada – sin suscripción extra",
@@ -130,7 +130,7 @@
       },
       "setup": {
         "name": "Configuración por nuestros especialistas",
-        "unit": "kr. pago único",
+        "unit": "{pCur} pago único",
         "text": "Configuración a medida e integración con sus propios sistemas: calendario, CRM, sistema de reservas. Solo si no quiere hacerlo usted mismo.",
         "badge": "Opcional · pago único",
         "points": [
@@ -169,7 +169,7 @@
         "text": "La guía de construcción le muestra paso a paso qué necesita y qué ocurre: sin tecnicismos, sin código.",
         "cta": "Abrir la guía de construcción"
       },
-      "specialists": "¿Prefiere que se lo hagamos? Nuestros especialistas lo configuran por 5.000 kr., IVA no incluido, a medida de sus sistemas."
+      "specialists": "¿Prefiere que se lo hagamos? Nuestros especialistas lo configuran por {pSetup}, IVA no incluido, a medida de sus sistemas."
     },
     "ld": {
       "appDescription": "Dialogbot es un recepcionista con IA que atiende el teléfono y el chat de su empresa las 24 horas, en el idioma de sus clientes: responde con su propia información, reserva citas y reúne todas las consultas. Le guiamos durante toda la configuración.",
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
-        "description": "Por llamada saliente, IVA no incluido, más 2 kr. por minuto de conversación iniciado"
+        "description": "Por llamada saliente, IVA no incluido, más {pMinute} por minuto de conversación iniciado"
       },
       "setup": {
         "name": "Configuración por los especialistas de Dialogbot",
@@ -190,7 +190,7 @@
   "guide": {
     "meta": {
       "title": "Construya su recepcionista con IA en 3 pasos – guía de construcción",
-      "description": "La guía de construcción de Dialogbot: qué necesita, qué hace, cuánto cuesta y los 3 pasos para tener su propio recepcionista con IA en español. 2.495 kr./mes.",
+      "description": "La guía de construcción de Dialogbot: qué necesita, qué hace, cuánto cuesta y los 3 pasos para tener su propio recepcionista con IA en español. {pMonthly}/mes.",
       "ogTitle": "Construya su recepcionista con IA en 3 pasos | Dialogbot"
     },
     "breadcrumb": "Guía de construcción",
@@ -227,7 +227,7 @@
       "lead": "Dialogbot atiende el teléfono, responde en el chat web y reserva citas para su empresa, en español y las 24 horas. Usted sigue la guía y nosotros montamos las piezas con usted.",
       "cta": "Pruébelo ahora: le llamará",
       "listen": "Escuche a Dialogbot atender el teléfono",
-      "price": "2.495 kr./mes · IVA no incluido"
+      "price": "{pMonthly}/mes · IVA no incluido"
     },
     "heroCard": {
       "step": "Paso 1 de 3",
@@ -348,11 +348,11 @@
     "pricing": {
       "eyebrow": "Precio",
       "title": "Un kit. Un precio, sin sorpresas.",
-      "lead": "Todos los precios sin IVA. La configuración puede hacerla usted mismo en unos 30 minutos, y está incluida. Si la quiere a medida por nuestros especialistas, cuesta 5.000 kr. en un único pago.",
+      "lead": "Todos los precios sin IVA. La configuración puede hacerla usted mismo en unos 30 minutos, y está incluida. Si la quiere a medida por nuestros especialistas, cuesta {pSetup} en un único pago.",
       "subscription": {
         "name": "Suscripción",
         "from": "Desde",
-        "unit": "kr./mes",
+        "unit": "{pCur}/mes",
         "points": [
           "Teléfono, chat y reservas incluidos",
           "Sin precio por contacto",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
-        "unit": "kr. por llamada saliente",
+        "unit": "{pCur} por llamada saliente",
         "points": [
           "Solo si quiere que Dialogbot haga llamadas",
           "Los contactos han aceptado expresamente que se les llame",
@@ -371,7 +371,7 @@
       },
       "setup": {
         "name": "Configuración por nuestros especialistas",
-        "unit": "kr. pago único",
+        "unit": "{pCur} pago único",
         "points": [
           "Solo si no quiere hacerlo usted mismo: los tres pasos están incluidos en la suscripción",
           "Configuración a medida e integración con sus propios sistemas y necesidades",
@@ -433,7 +433,7 @@
       "chipPrice": "¿Cuánto cuesta?",
       "askCompany": "Perfecto. ¿Cómo se llama su empresa?",
       "answerWhat": "Atiendo el teléfono las 24 horas, respondo a lo que más preguntan los clientes, reservo citas en su calendario y le envío un aviso si hay algo que no puedo resolver.\n\n¿Quiere oírlo usted mismo?",
-      "answerPrice": "Una suscripción de 2.495 kr. al mes, IVA no incluido. La configuración puede hacerla usted mismo y está incluida. Si quiere que nuestros especialistas la adapten a sus sistemas, cuesta 5.000 kr. en un único pago.\n\n¿Le llamo y le enseño lo que obtiene?",
+      "answerPrice": "Una suscripción de {pMonthly} al mes, IVA no incluido. La configuración puede hacerla usted mismo y está incluida. Si quiere que nuestros especialistas la adapten a sus sistemas, cuesta {pSetup} en un único pago.\n\n¿Le llamo y le enseño lo que obtiene?",
       "askOther": "Escriba brevemente a qué se dedican, así sabré cómo atender a sus clientes.",
       "askNumber": "Desde ahora soy el recepcionista de {company}. ¿A qué número le llamo?",
       "helloCompany": "Hola, {company}. ¿A qué se dedican?",

@@ -59,7 +59,7 @@
       "title": "Kampagnen",
       "sub": "Rufen Sie Ihre eigenen Kunden an",
       "outbound": "Ausgehende Anrufe",
-      "chosen": "Gewählt – 4 kr. pro Anruf + 2 kr. pro Minute zzgl. MwSt.",
+      "chosen": "Gewählt – {pCall} pro Anruf + {pMinute} pro Minute zzgl. MwSt.",
       "notChosen": "Nicht gewählt"
     },
     "systems": {
@@ -77,7 +77,7 @@
       "team": "Team",
       "teamValue": "{n} mit Zugang",
       "billing": "Abonnement und Rechnungen",
-      "billingValue": "Ab 2.495 kr./Monat zzgl. MwSt."
+      "billingValue": "Ab {pMonthly}/Monat zzgl. MwSt."
     },
     "tech": {
       "title": "Technik",

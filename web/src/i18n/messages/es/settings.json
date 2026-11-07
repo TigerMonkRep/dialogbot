@@ -59,7 +59,7 @@
       "title": "Campañas",
       "sub": "Llame a sus propios clientes",
       "outbound": "Llamadas salientes",
-      "chosen": "Elegido: 4 kr. por llamada + 2 kr. por minuto, IVA no incluido",
+      "chosen": "Elegido: {pCall} por llamada + {pMinute} por minuto, IVA no incluido",
       "notChosen": "No elegido"
     },
     "systems": {
@@ -77,7 +77,7 @@
       "team": "Equipo",
       "teamValue": "{n} con acceso",
       "billing": "Suscripción y facturas",
-      "billingValue": "Desde 2.495 kr./mes, IVA no incluido"
+      "billingValue": "Desde {pMonthly}/mes, IVA no incluido"
     },
     "tech": {
       "title": "Técnico",

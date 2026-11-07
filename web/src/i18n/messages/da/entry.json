@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – én assistent, der tager telefonen: for din virksomhed og for dig",
-    "description": "Dialogbot svarer på dansk, døgnet rundt, booker tider i din kalender og ringer for dig, når du beder om det. Du godkender alt, før det gælder. Til virksomheder fra 2.495 kr./md. – til dig derhjemme fra 49 kr./md.",
+    "description": "Dialogbot svarer på dansk, døgnet rundt, booker tider i din kalender og ringer for dig, når du beder om det. Du godkender alt, før det gælder. Til virksomheder fra {pMonthly}/md. – til dig derhjemme fra {pPrivatFrom}/md.",
     "ogTitle": "Én assistent, der tager telefonen – for din virksomhed og for dig"
   },
   "nav": {
@@ -74,7 +74,7 @@
         { "time": "13:25", "name": "Jonas Friis", "status": "Besked til jer", "tone": "yellow" }
       ],
       "cta": "Til virksomheder",
-      "price": "Fra {price} kr./md."
+      "price": "Fra {pMonthly}/md."
     },
     "private": {
       "kick": "Privat",
@@ -118,13 +118,14 @@
     "from": "fra",
     "business": {
       "name": "Erhverv",
-      "unit": "kr./md. ekskl. moms",
+      "unit": "{pCur}/md. ekskl. moms",
       "points": ["Telefon, booking og webchat – alt er med", "300 minutters indgående opkald om måneden", "Opsigelse måned til måned"],
       "cta": "Hør den først"
     },
     "private": {
       "name": "Privat",
-      "unit": "kr./md. · {days} dage gratis",
+      "unit": "{pCur}/md. · {days} dage gratis",
+      "amount": "{pPrivatFromNum}",
       "points": ["Lister og påmindelser – ubegrænset", "Peter ringer for dig inden for dine rammer", "Opsig når som helst"],
       "cta": "Start {days} dage gratis"
     },
@@ -136,7 +137,7 @@
       { "q": "Hvem svarer, når kunden ringer?", "a": "Dialogbot – med jeres virksomhedsnavn og en stemme, I selv har valgt. Spørger kunden, siger den ærligt, at den er en digital assistent." },
       { "q": "Hvad hvis vi selv tager telefonen?", "a": "Så gør I det. Dialogbot tager kun de opkald, I ikke når – eller alle opkald uden for åbningstid. I bestemmer reglen." },
       { "q": "Kan den booke i vores kalender?", "a": "Ja. Google Kalender og Microsoft 365 er med. Den finder en ledig tid, booker og sender kunden en sms-bekræftelse." },
-      { "q": "Hvad koster opsætning?", "a": "Ingenting, hvis I gør det selv – det tager omkring 30 minutter med Peter i chatten. Vil I have vores specialister til at koble kalender, CRM eller bookingsystem på, koster det {setup} kr. én gang." },
+      { "q": "Hvad koster opsætning?", "a": "Ingenting, hvis I gør det selv – det tager omkring 30 minutter med Peter i chatten. Vil I have vores specialister til at koble kalender, CRM eller bookingsystem på, koster det {pSetup} én gang." },
       { "q": "Kan jeg opsige?", "a": "Ja, måned til måned. Ingen binding, ingen gebyr. Privat kan opsiges når som helst i appen." }
     ]
   },

@@ -52,13 +52,13 @@ function useCtx(): Ctx {
 
 /** `const t = useT("app")` → t("calls.title"). */
 export function useT(ns?: string): T {
-  const { messages, fallback } = useCtx();
-  return useMemo(() => makeT(messages, fallback, ns), [messages, fallback, ns]);
+  const { messages, fallback, locale } = useCtx();
+  return useMemo(() => makeT(messages, fallback, ns, locale), [messages, fallback, ns, locale]);
 }
 
 export function useRaw() {
-  const { messages, fallback } = useCtx();
-  return useMemo(() => makeRaw(messages, fallback), [messages, fallback]);
+  const { messages, fallback, locale } = useCtx();
+  return useMemo(() => makeRaw(messages, fallback, locale), [messages, fallback, locale]);
 }
 
 export function useLocale(): Locale {

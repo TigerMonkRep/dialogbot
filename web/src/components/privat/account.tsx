@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui";
-import { useT } from "@/i18n/client";
+import { useLocale, useT } from "@/i18n/client";
+import { currencyFor } from "@/lib/markets";
 import { BIG, Eyebrow, LINK, Pill, Sim } from "./bits";
 import { PhoneVerify } from "./cards";
 import { PushPrompt } from "./push";
@@ -23,6 +24,7 @@ export function AccountPane() {
   const f = useFmt();
   const { balance, ledger, session, mode, simulated, fake, run, note, setNote, openSheet, go, loggedIn, api, refresh, setSubscription, setError } = usePrivat();
   const p = usePlan();
+  const locale = useLocale();
   const params = useSearchParams();
   const router = useRouter();
   const [changing, setChanging] = useState(false);
@@ -48,7 +50,7 @@ export function AccountPane() {
     if (ab === "ok") {
       handled.current = key;
       (async () => {
-        try { const sb = await api.subscription(sid ?? undefined); setSubscription(sb); await refresh(); setNote(t("plan.activated")); }
+        try { const sb = await api.subscription(sid ?? undefined, currencyFor(locale)); setSubscription(sb); await refresh(); setNote(t("plan.activated")); }
         catch (e) { setError(e as ApiError); }
         clean();
       })();
@@ -74,7 +76,7 @@ export function AccountPane() {
     if (!loggedIn) { openSheet({ kind: "login" }); return; }
     setRedirecting(true); setError(null);
     const kode = (code ?? params.get("kode") ?? "").trim();
-    try { const { url } = await api.subscriptionCheckout({ plan, interval, ...(kode ? { code: kode } : {}) }); window.location.href = url; }
+    try { const { url } = await api.subscriptionCheckout({ plan, interval, locale, ...(kode ? { code: kode } : {}) }); window.location.href = url; }
     catch (e) { setError(e as ApiError); setRedirecting(false); }
   };
   // Without a plan (the trial included) the three plans are open from the start – one tap to the payment; the button
@@ -118,7 +120,7 @@ export function AccountPane() {
           </div>
           <Pill tone={p.status === "active" ? "ok" : p.status === "trial" ? "highlight" : p.status === "past_due" ? "beta" : "plain"}>{t(`plan.status.${p.status}`)}</Pill>
         </div>
-        {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays })} <span className="text-ink-soft">{p.plan === "none" ? t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyKr(p.rightsKey) })}</span></p>}
+        {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays })} <span className="text-ink-soft">{p.plan === "none" ? t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyText(p.rightsKey) })}</span></p>}
         {p.status === "expired" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.expiredLine")}</p>}
         {p.status === "none" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.noneLine")}</p>}
         {p.status === "past_due" && <p className="m-0 text-[15px] text-danger font-semibold">{t("plan.pastDue")}</p>}
@@ -253,7 +255,6 @@ function PlanPicker({ onPick, busy }: { onPick: (plan: PlanKey, interval: Billin
   const [code, setCode] = useState(params.get("kode") ?? "");
   const [codeOpen, setCodeOpen] = useState(!!params.get("kode"));
   const codeError = error?.field_errors?.find((f) => f.field === "code") ? error.message : null;
-  const kr = (minor: number) => Math.round(minor / 100).toLocaleString("da-DK");
   return (
     <div className="flex flex-col gap-3 pt-2 border-t-[1.5px] border-line" data-testid="plan-picker">
       <p className="m-0 font-display font-bold text-[18px]">{t("plan.pickerTitle")}</p>
@@ -274,8 +275,8 @@ function PlanPicker({ onPick, busy }: { onPick: (plan: PlanKey, interval: Billin
                 <span className="font-display font-extrabold text-[20px]">{pl.name}</span>
                 {current && <Pill tone="ok">{t("plan.currentPlan")}</Pill>}
               </div>
-              <div className="flex flex-col"><span className="font-display font-extrabold text-[28px] leading-none">{t("plan.perMonth", { price: kr(price) })}</span>
-                <span className="text-[12px] text-muted">{interval === "year" ? t("plan.yearlyNote", { total: kr(pl.yearly_total_minor) }) : t("plan.monthlyNote")}</span></div>
+              <div className="flex flex-col"><span className="font-display font-extrabold text-[28px] leading-none">{t("plan.perMonth", { price: p.fmt(price) })}</span>
+                <span className="text-[12px] text-muted">{interval === "year" ? t("plan.yearlyNote", { total: p.fmt(pl.yearly_total_minor) }) : t("plan.monthlyNote")}</span></div>
               <ul className="m-0 p-0 list-none flex flex-col gap-1">
                 {pl.features.map((x) => <li key={x} className="flex gap-2 text-[14px]"><span className="text-accent mt-0.5"><Ico name="check" size={16} /></span><span>{featureText(t, x, pl)}</span></li>)}
               </ul>

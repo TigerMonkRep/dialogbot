@@ -2,8 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useLocale, useT } from "@/i18n/client";
-import { numberFormat } from "@/i18n/translate";
-import { PLANS, planCheckoutHref, type Plan, type PlanInterval } from "@/lib/privat/plans";
+import { currencyFor, formatAmount, formatPrice } from "@/lib/markets";
+import { plansFor, planCheckoutHref, type Plan, type PlanInterval } from "@/lib/privat/plans";
 import { Mark } from "@/components/mark";
 
 const Check = () => (
@@ -11,14 +11,16 @@ const Check = () => (
 );
 
 /** Monthly/yearly toggle and the three plan cards on the public /privat page (section "14 dage gratis. Så vælger du
- *  selv."). Reads the catalogue from lib/privat/plans.ts; every CTA goes to /privat/konto?plan=…&interval=…, where the
+ *  selv."). Reads the catalogue of the language's market from lib/privat/plans.ts (DKK, SEK, NOK or EUR); every CTA goes to /privat/konto?plan=…&interval=…, where the
  *  app handles login and Stripe Checkout. Texts: privat.json → landing.pricing.*. */
 export function PublicPlans() {
   const t = useT("privat");
   const locale = useLocale();
   const [interval, setInterval] = useState<PlanInterval>("month");
   const yearly = interval === "year";
-  const nf = numberFormat(locale);
+  const plans = plansFor(currencyFor(locale));
+  const fmt = (minor: number) => formatPrice(minor, plans[0].currency, locale);
+  const num = (minor: number) => formatAmount(minor, locale);
   const seg = (v: PlanInterval, label: string) => {
     const active = interval === v;
     return (
@@ -41,15 +43,15 @@ export function PublicPlans() {
         </div>
       </div>
       <div className="grid gap-6 pt-3 md:grid-cols-3 text-ink">
-        {PLANS.map((p) => <PlanCard key={p.key} plan={p} yearly={yearly} t={t} nf={nf} />)}
+        {plans.map((p) => <PlanCard key={p.key} plan={p} yearly={yearly} t={t} fmt={fmt} num={num} />)}
       </div>
       <p className="m-0 text-[13px] opacity-70">{t("landing.pricing.note")}</p>
     </div>
   );
 }
 
-function PlanCard({ plan, yearly, t, nf }: { plan: Plan; yearly: boolean; t: ReturnType<typeof useT>; nf: Intl.NumberFormat }) {
-  const price = yearly ? plan.yearlyMonthly : plan.monthly;
+function PlanCard({ plan, yearly, t, fmt, num }: { plan: Plan; yearly: boolean; t: ReturnType<typeof useT>; fmt: (m: number) => string; num: (m: number) => string }) {
+  const price = yearly ? plan.yearlyMonthlyMinor : plan.monthlyMinor;
   const rec = plan.recommended;
   const feature = (key: string) => {
     if (key === "calls") return t("landing.pricing.features.calls", { n: plan.calls });
@@ -66,11 +68,11 @@ function PlanCard({ plan, yearly, t, nf }: { plan: Plan; yearly: boolean; t: Ret
       <h3 className="m-0 text-[22px] leading-tight">{plan.name}</h3>
       <p className="m-0 text-[14px] text-ink-soft min-h-[42px]">{t(`landing.pricing.tagline.${plan.key}`)}</p>
       <div className="flex items-baseline gap-1">
-        <span className="font-display font-extrabold text-[40px] leading-none tracking-[-0.02em]">{nf.format(price)}</span>
+        <span className="font-display font-extrabold text-[40px] leading-none tracking-[-0.02em]">{t("landing.pricing.price", { num: num(price), price: fmt(price) })}</span>
         <span className="text-[14px] text-muted">{t("landing.pricing.perMonth")}</span>
       </div>
       <span className="text-[12px] text-muted min-h-4">
-        {yearly ? t("landing.pricing.billedYearly", { amount: nf.format(plan.yearlyTotal) }) : t("landing.pricing.billedMonthly")}
+        {yearly ? t("landing.pricing.billedYearly", { amount: fmt(plan.yearlyTotalMinor) }) : t("landing.pricing.billedMonthly")}
       </span>
       <ul className="m-0 p-0 list-none flex flex-col gap-2 text-[14px]">
         {plan.features.map((f) => <li key={f} className="flex gap-2 items-start"><Check /><span>{feature(f)}</span></li>)}

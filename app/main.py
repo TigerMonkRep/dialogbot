@@ -37,6 +37,8 @@ from app.modules.privat.calendar_router import router as privat_calendar_router
 from app.modules.privat.router import operator_router as privat_operator_router
 from app.modules.privat.router import public_router as privat_public_router
 from app.modules.privat.router import router as privat_router
+from app.modules.public_api.management_router import router as api_keys_router
+from app.modules.push.router import router as push_router
 from app.modules.reception.router import router as reception_router
 from app.modules.reports.router import router as reports_router
 from app.modules.sales.channel_router import router as sales_channel_router
@@ -66,8 +68,12 @@ API_PREFIX = "/api/v1"
 
 
 def create_app() -> FastAPI:
+    """APP_SURFACE decides what this process serves: `internal` = /api/v1 for the apps, `public` = only the public
+    API at /v1 (api.dialogbot.app, its own Render service), `all` = both (dev, tests). /health is always there."""
     settings = get_settings()
     configure_logging(settings.log_level)
+    internal = settings.app_surface in ("internal", "all")
+    public = settings.app_surface in ("public", "all")
     app = FastAPI(
         title="Dialogbot API",
         version="0.1.0",
@@ -75,12 +81,19 @@ def create_app() -> FastAPI:
             "Etape 1: identitet, arbejdsrum, rettigheder, virksomhedsprofil, manuel viden med godkendelse "
             "og personlig opsætningsplan. Reception, booking, kampagner og afregning er ikke implementeret."
         ),
-        openapi_url=f"{API_PREFIX}/openapi.json",
-        docs_url=f"{API_PREFIX}/docs",
+        openapi_url=f"{API_PREFIX}/openapi.json" if internal else None,
+        docs_url=f"{API_PREFIX}/docs" if internal else None,
+        redoc_url=f"{API_PREFIX}/redoc" if internal else None,
     )
     app.add_middleware(RequestIdMiddleware)
     install_error_handlers(app)
     app.include_router(health_router)
+    if public:
+        from app.modules.public_api.app import create_public_app
+
+        app.mount("/v1", create_public_app())
+    if not internal:
+        return app
     for r in (identity_router, workspaces_router, business_router, knowledge_router, setup_router, integrations_router,
               webhooks_router, ai_router, waitlist_router, pages_public_router, pages_operator_router, analytics_router,
               webchat_router, webchat_public_router, leads_router,
@@ -92,7 +105,7 @@ def create_app() -> FastAPI:
               voice_tts_router, social_operator_router, social_public_router, sales_channel_router,
               sales_offers_public_router, privat_router, privat_public_router, privat_operator_router,
               browser_router, privat_leads_router, funnel_router, privat_calendar_router,
-              privat_calendar_public_router, privat_apps_router):
+              privat_calendar_public_router, privat_apps_router, api_keys_router, push_router):
         app.include_router(r, prefix=API_PREFIX)
     if settings.dev_tools_enabled:
         from app.modules.devtools.router import router as dev_router

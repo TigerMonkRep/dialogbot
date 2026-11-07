@@ -305,6 +305,17 @@ class Settings(BaseSettings):
     # fitness. Empty = none shown.
     privat_partner_links: str = Field(default="", alias="PRIVAT_PARTNER_LINKS")
 
+    # Which HTTP surface this process serves (docs/public-api.md). internal = /api/v1 for the apps; public = only
+    # api.dialogbot.app/v1 (API keys, no sessions, no provider webhooks); all = both (dev, tests, a single-process setup).
+    app_surface: Literal["internal", "public", "all"] = Field(default="all", alias="APP_SURFACE")
+    public_api_base_url: str = Field(default="https://api.dialogbot.app", alias="PUBLIC_API_BASE_URL")
+    # Per API key, per minute. In-process token buckets (one bucket per key and class per process); a shared backend
+    # can replace app/modules/public_api/ratelimit.LIMITER without touching the routes.
+    public_api_read_rpm: int = Field(default=600, ge=1, alias="PUBLIC_API_READ_RPM")
+    public_api_write_rpm: int = Field(default=60, ge=1, alias="PUBLIC_API_WRITE_RPM")
+    # A webhook endpoint is switched off after this many consecutive failed deliveries (re-enabled by the customer).
+    public_api_webhook_disable_after: int = Field(default=20, ge=1, alias="PUBLIC_API_WEBHOOK_DISABLE_AFTER")
+
     # Dev tooling: the simulated mailbox and test identities are gated on this.
     enable_dev_tools: bool = Field(default=False, alias="ENABLE_DEV_TOOLS")
 
@@ -321,7 +332,8 @@ class Settings(BaseSettings):
                 raise ValueError(f"SECRET_KEY (>=32 chars) is required when APP_ENV={self.app_env}")
             if self.enable_dev_tools:
                 raise ValueError(f"ENABLE_DEV_TOOLS must be false when APP_ENV={self.app_env}")
-        if self.app_env == "prod" and self.email_adapter == "simulated":
+        if self.app_env == "prod" and self.email_adapter == "simulated" and self.app_surface != "public":
+            # The public API process sends no mail (deliveries run in the worker), so it needs no mail adapter.
             raise ValueError("EMAIL_ADAPTER=simulated is not allowed in prod; prod cannot claim mail delivery")
         if self.email_adapter == "resend" and not self.resend_api_key:
             raise ValueError("EMAIL_ADAPTER=resend requires RESEND_API_KEY")

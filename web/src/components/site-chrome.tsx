@@ -8,7 +8,7 @@ import { CookieSettingsLink } from "./site-analytics";
 import { ChatIcon, MenuIcon, PlayIcon } from "./site-icons";
 import { LANDING_PAGES } from "@/lib/site";
 import { INDUSTRIES } from "@/lib/industries";
-import { AudienceSwitch } from "./audience-switch";
+import { AudienceSwitch, type Audience } from "./audience-switch";
 export { AudienceSwitch } from "./audience-switch";
 export type { Audience } from "./audience-switch";
 
@@ -96,7 +96,8 @@ export async function SiteHeader({ current, nav, phone = true, badge, navAlways 
   );
 }
 
-export async function SiteFooter({ compact = false }: { compact?: boolean }) {
+/** `audience`: which door the footer's Erhverv | Privat switch shows as current (null on the entry page). */
+export async function SiteFooter({ compact = false, audience = "erhverv" }: { compact?: boolean; audience?: Audience | null }) {
   const t = await getT("common");
   const tl = await getT("landing");
   const link = "text-ink no-underline hover:text-accent inline-flex items-center min-h-10 sm:min-h-8 text-[14px]";
@@ -114,7 +115,7 @@ export async function SiteFooter({ compact = false }: { compact?: boolean }) {
             <a href={PHONE_TEL} className={link}>{PHONE_INTL}</a>
             <a href={`mailto:${EMAIL}`} className={link}>{EMAIL}</a>
           </address>
-          <div><AudienceSwitch current="erhverv" size="sm" /></div>
+          <div><AudienceSwitch current={audience ?? undefined} size="sm" /></div>
         </div>
         {!compact && (
           <>

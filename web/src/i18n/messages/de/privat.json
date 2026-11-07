@@ -31,7 +31,11 @@
     "metaTitle": "Dialogbot Privat – dein persönlicher Assistent",
     "metaDescription": "Schreib oder diktiere eine Aufgabe. Peter macht Listen, erinnert dich und ruft für dich an – aber nie, bevor du Ja gesagt hast. 14 Tage gratis testen.",
     "eyebrow": "Dein persönlicher Assistent",
-    "title": "Was soll ich für dich erledigen?",
+    "title": {
+      "before": "Was soll ich ",
+      "mark": "für dich",
+      "after": " erledigen?"
+    },
     "lead": "Schreib oder sprich eine Aufgabe. Peter führt Listen, erinnert dich an Dinge – und ruft für dich beim Friseur, in der Werkstatt oder im Restaurant an. Er ruft nie an, bevor du Ja gesagt hast.",
     "cta": "14 Tage kostenlos testen",
     "note": "14 Tage gratis. Jederzeit kündbar.",
@@ -54,7 +58,11 @@
       "done": "Erledigt: Cykelkælderen Donnerstag 15.30 Uhr. In deinem Kalender eingetragen."
     },
     "three": {
-      "title": "Drei Dinge, die Peter für dich tut",
+      "title": {
+        "before": "Drei Dinge, die ",
+        "mark": "Peter für dich tut",
+        "after": ""
+      },
       "included": "In allen Abos enthalten",
       "includedTrial": "In allen Abos enthalten – 14 Tage kostenlos testen",
       "items": [
@@ -73,7 +81,11 @@
       ]
     },
     "control": {
-      "title": "Du entscheidest. Immer.",
+      "title": {
+        "before": "Du entscheidest. ",
+        "mark": "Immer.",
+        "after": ""
+      },
       "text": "Peter schlägt zuerst vor, was er tun will, und wartet auf dein Ja. Er sagt immer, dass er ein Assistent ist, der in deinem Namen anruft – und er kann weder deine Karte noch dein MitID benutzen.",
       "steps": [
         "Du sagst, was erledigt werden soll",
@@ -83,7 +95,11 @@
     },
     "store": {
       "eyebrow": "Der Shop",
-      "title": "Peter lernt jeden Monat Neues",
+      "title": {
+        "before": "Peter lernt ",
+        "mark": "jeden Monat",
+        "after": " Neues"
+      },
       "text": "Jede App ist eine Sache, bei der Peter helfen kann. Tippen, lesen, was sie tut, und installieren – dann richtet er sie mit dir ein. Alle Apps sind in Plus und Familie enthalten.",
       "cta": "Alle Apps ansehen",
       "apps": {
@@ -98,7 +114,11 @@
       }
     },
     "pricing": {
-      "title": "14 Tage kostenlos. Dann wählst du selbst.",
+      "title": {
+        "before": "",
+        "mark": "14 Tage",
+        "after": " kostenlos. Dann wählst du selbst."
+      },
       "text": "Teste 14 Tage alles. Du meldest dich mit Karte an, belastet wird sie erst nach der Testphase – kündige vorher, und du zahlst nichts. Preise inkl. MwSt.",
       "intervalLabel": "Abrechnung",
       "monthly": "Monatlich",
@@ -954,9 +974,9 @@
       "title": "Wer wohnt bei euch?",
       "help": "Damit du von Anfang an die richtigen Listen bekommst.",
       "household": {
-    "photoAdd": "Foto vom Beleg hinzufügen",
-    "photoReplace": "Foto ersetzen",
-    "photoOpen": "Foto ansehen",
+        "photoAdd": "Foto vom Beleg hinzufügen",
+        "photoReplace": "Foto ersetzen",
+        "photoOpen": "Foto ansehen",
         "alone": {
           "label": "Nur ich",
           "hint": "Einkaufsliste"

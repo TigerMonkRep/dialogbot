@@ -97,6 +97,50 @@ services:
       - key: LOG_LEVEL
         value: INFO
 
+  # Public API (docs/public-api.md): the same code, APP_SURFACE=public, so only /v1 (API keys) and /health are served
+  # – no sessions, no provider webhooks, no Stripe/Vapi/Twilio secrets in this process. Webhook deliveries are made by
+  # the worker above (outbox), so this service needs only the database and the credentials key (webhook secrets).
+  # DNS: api.dialogbot.app → this service (CNAME to Render; the internal API keeps api.dialogbot.dk).
+  - type: web
+    name: dialogbot-public-api
+    runtime: python
+    region: frankfurt
+    plan: starter
+    rootDir: .
+    buildCommand: pip install -r requirements.lock
+    # No preDeployCommand: migrations run once, from dialogbot-api-staging's pre-deploy step. /health/ready answers
+    # 503 until the database is on this build's Alembic head, so a deploy ahead of the migration never goes live.
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 2 --no-access-log
+    healthCheckPath: /health/ready
+    autoDeployTrigger: checksPass
+    domains:
+      - api.dialogbot.app
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: APP_ENV
+        value: staging
+      - key: APP_SURFACE
+        value: public
+      - key: ENABLE_DEV_TOOLS
+        value: "false"
+      - key: DATABASE_URL       # runtime role (limited), same database as the internal API
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: DATABASE_URL}
+      - key: SECRET_KEY
+        generateValue: true    # any >=32-char value; API keys are opaque DB digests so it need not match the API
+      - key: DB_SCHEMA
+        value: dialogbot
+      - key: CREDENTIALS_KEY      # encrypts webhook signing secrets; must equal the worker's (it decrypts them)
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: CREDENTIALS_KEY}
+      - key: PUBLIC_API_BASE_URL
+        value: https://api.dialogbot.app
+      - key: PUBLIC_API_READ_RPM
+        value: "600"
+      - key: PUBLIC_API_WRITE_RPM
+        value: "60"
+      - key: LOG_LEVEL
+        value: INFO
+
   - type: worker
     name: dialogbot-worker-staging
     runtime: python

@@ -42,17 +42,19 @@ def public_key() -> str:
 
 
 def subscribe(db: OrmSession, user_id: uuid.UUID, *, endpoint: str, p256dh: str, auth: str,
-              user_agent: str | None) -> PushSubscription:
-    """One row per endpoint: subscribing the same browser again updates it (also when another user logs in there)."""
+              user_agent: str | None, audience: str = "privat", workspace_id: uuid.UUID | None = None) -> PushSubscription:
+    """One row per endpoint: subscribing the same browser again updates it (also when another user logs in there,
+    or when the other app – privat/erhverv – subscribes the same browser)."""
     if not endpoint.startswith("https://"):
         raise ValidationFailed("Ugyldigt push-endpoint", field_errors=[{"field": "endpoint"}])
     sub = db.scalar(select(PushSubscription).where(PushSubscription.endpoint == endpoint).with_for_update())
     if sub is None:
         sub = PushSubscription(user_id=user_id, endpoint=endpoint, p256dh=p256dh, auth=auth,
-                               user_agent=(user_agent or "")[:400] or None)
+                               user_agent=(user_agent or "")[:400] or None, audience=audience, workspace_id=workspace_id)
         db.add(sub)
     else:
         sub.user_id, sub.p256dh, sub.auth, sub.failures = user_id, p256dh, auth, 0
+        sub.audience, sub.workspace_id = audience, workspace_id
         sub.user_agent = (user_agent or "")[:400] or sub.user_agent
     db.flush()
     return sub
@@ -67,10 +69,16 @@ def unsubscribe(db: OrmSession, user_id: uuid.UUID, endpoint: str) -> bool:
     return True
 
 
-def subscriptions(db: OrmSession, user_id: uuid.UUID) -> list[PushSubscription]:
+def subscriptions(db: OrmSession, user_id: uuid.UUID, *, audience: str = "privat",
+                  workspace_id: uuid.UUID | None = None) -> list[PushSubscription]:
+    """The user's subscriptions of one app. Dialogbot Privat's notifications go to its own subscriptions only; the
+    business PWA's (app/modules/push) to those of one workspace."""
     if not configured():
         return []
-    return list(db.scalars(select(PushSubscription).where(PushSubscription.user_id == user_id)))
+    q = select(PushSubscription).where(PushSubscription.user_id == user_id, PushSubscription.audience == audience)
+    if workspace_id is not None:
+        q = q.where(PushSubscription.workspace_id == workspace_id)
+    return list(db.scalars(q))
 
 
 def has_subscriptions(db: OrmSession, user_id: uuid.UUID) -> bool:

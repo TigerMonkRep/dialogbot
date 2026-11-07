@@ -166,6 +166,20 @@
 @utility border-ink { border-color: var(--color-ink); }
 @utility eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
 
+/* Accent kit (components/mark.tsx): marker / thin line / ring behind a headline word. The span opens its own stacking
+   context (z-index: 0) and the SVG sits at z-index: -1 – under the glyphs, over the section background. Em-based,
+   so the mark scales with the font. No animation. */
+.mk { position: relative; display: inline-block; white-space: nowrap; z-index: 0; }
+.mk > svg { position: absolute; z-index: -1; pointer-events: none; display: block; }
+.mk-marker > svg { left: -0.06em; width: calc(100% + 0.14em); bottom: 0.1em; height: 0.34em; opacity: 0.85; transform: rotate(-2deg); }
+.mk-underline > svg { position: static; width: 100%; height: 6px; margin-top: 2px; transform: rotate(-0.8deg); transform-origin: left; }
+.mk-ring > svg { left: -0.3em; top: -0.22em; width: calc(100% + 0.6em); height: calc(100% + 0.36em); transform: rotate(-6deg); }
+/* A longer phrase (`long`) may wrap on a phone; the mark is then dropped so the headline never overflows. */
+@media (max-width: 639.98px) {
+  .mk-long { white-space: normal; }
+  .mk-long > svg { display: none; }
+}
+
 html { background: var(--color-paper); color: var(--color-ink); }
 body { font-family: var(--font-body); min-height: 100dvh; }
 @layer base { h1, h2, h3 { font-family: var(--font-display); font-weight: 800; } }
@@ -215,6 +229,23 @@ body { overscroll-behavior: none; }
 @utility pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
 @utility pt-safe { padding-top: env(safe-area-inset-top, 0px); }
 @utility no-scrollbar { scrollbar-width: none; &::-webkit-scrollbar { display: none; } }
+
+/* PWA: installed app (display-mode: standalone) on an /app or /privat route – <StandaloneChrome> sets
+   html[data-standalone]. The public header/footer (components/site-chrome.tsx: a plain <header> right before
+   main#main and the <footer> right after it) are hidden there; the two app shells keep their own headers (sticky /
+   inside the h-dvh column), tabs and the Erhverv desktop footer (hidden sm:block). */
+@media (display-mode: standalone) {
+  html[data-standalone] header:not(.sticky):has(+ main#main),
+  html[data-standalone] main#main + footer:not(.sm\:block) { display: none; }
+}
+
+/* «Ny version klar» toast: slides up; stays put when motion is reduced. */
+@keyframes toast-in {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.toast-in { animation: toast-in 240ms cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+@media (prefers-reduced-motion: reduce) { .toast-in { animation: none; } }
 
 /* Knowledge approval stamp (K05): lands like a rubber stamp. */
 @keyframes stamp-in {

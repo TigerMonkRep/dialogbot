@@ -3,6 +3,7 @@ import da_app from "./da/app.json";
 import da_articles from "./da/articles.json";
 import da_auth from "./da/auth.json";
 import da_common from "./da/common.json";
+import da_entry from "./da/entry.json";
 import da_landing from "./da/landing.json";
 import da_legal from "./da/legal.json";
 import da_privat from "./da/privat.json";
@@ -14,6 +15,7 @@ import de_app from "./de/app.json";
 import de_articles from "./de/articles.json";
 import de_auth from "./de/auth.json";
 import de_common from "./de/common.json";
+import de_entry from "./de/entry.json";
 import de_landing from "./de/landing.json";
 import de_legal from "./de/legal.json";
 import de_privat from "./de/privat.json";
@@ -25,6 +27,7 @@ import en_app from "./en/app.json";
 import en_articles from "./en/articles.json";
 import en_auth from "./en/auth.json";
 import en_common from "./en/common.json";
+import en_entry from "./en/entry.json";
 import en_landing from "./en/landing.json";
 import en_legal from "./en/legal.json";
 import en_privat from "./en/privat.json";
@@ -36,6 +39,7 @@ import es_app from "./es/app.json";
 import es_articles from "./es/articles.json";
 import es_auth from "./es/auth.json";
 import es_common from "./es/common.json";
+import es_entry from "./es/entry.json";
 import es_landing from "./es/landing.json";
 import es_legal from "./es/legal.json";
 import es_privat from "./es/privat.json";
@@ -47,6 +51,7 @@ import fr_app from "./fr/app.json";
 import fr_articles from "./fr/articles.json";
 import fr_auth from "./fr/auth.json";
 import fr_common from "./fr/common.json";
+import fr_entry from "./fr/entry.json";
 import fr_landing from "./fr/landing.json";
 import fr_legal from "./fr/legal.json";
 import fr_privat from "./fr/privat.json";
@@ -58,6 +63,7 @@ import it_app from "./it/app.json";
 import it_articles from "./it/articles.json";
 import it_auth from "./it/auth.json";
 import it_common from "./it/common.json";
+import it_entry from "./it/entry.json";
 import it_landing from "./it/landing.json";
 import it_legal from "./it/legal.json";
 import it_privat from "./it/privat.json";
@@ -69,6 +75,7 @@ import no_app from "./no/app.json";
 import no_articles from "./no/articles.json";
 import no_auth from "./no/auth.json";
 import no_common from "./no/common.json";
+import no_entry from "./no/entry.json";
 import no_landing from "./no/landing.json";
 import no_legal from "./no/legal.json";
 import no_privat from "./no/privat.json";
@@ -80,6 +87,7 @@ import sv_app from "./sv/app.json";
 import sv_articles from "./sv/articles.json";
 import sv_auth from "./sv/auth.json";
 import sv_common from "./sv/common.json";
+import sv_entry from "./sv/entry.json";
 import sv_landing from "./sv/landing.json";
 import sv_legal from "./sv/legal.json";
 import sv_privat from "./sv/privat.json";
@@ -94,6 +102,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     articles: da_articles,
     auth: da_auth,
     common: da_common,
+    entry: da_entry,
     landing: da_landing,
     legal: da_legal,
     privat: da_privat,
@@ -107,6 +116,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     articles: de_articles,
     auth: de_auth,
     common: de_common,
+    entry: de_entry,
     landing: de_landing,
     legal: de_legal,
     privat: de_privat,
@@ -120,6 +130,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     articles: en_articles,
     auth: en_auth,
     common: en_common,
+    entry: en_entry,
     landing: en_landing,
     legal: en_legal,
     privat: en_privat,
@@ -133,6 +144,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     articles: es_articles,
     auth: es_auth,
     common: es_common,
+    entry: es_entry,
     landing: es_landing,
     legal: es_legal,
     privat: es_privat,
@@ -146,6 +158,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     articles: fr_articles,
     auth: fr_auth,
     common: fr_common,
+    entry: fr_entry,
     landing: fr_landing,
     legal: fr_legal,
     privat: fr_privat,
@@ -159,6 +172,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     articles: it_articles,
     auth: it_auth,
     common: it_common,
+    entry: it_entry,
     landing: it_landing,
     legal: it_legal,
     privat: it_privat,
@@ -172,6 +186,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     articles: no_articles,
     auth: no_auth,
     common: no_common,
+    entry: no_entry,
     landing: no_landing,
     legal: no_legal,
     privat: no_privat,
@@ -185,6 +200,7 @@ export const MESSAGES: Record<string, Record<string, Record<string, unknown>>> =
     articles: sv_articles,
     auth: sv_auth,
     common: sv_common,
+    entry: sv_entry,
     landing: sv_landing,
     legal: sv_legal,
     privat: sv_privat,

@@ -30,14 +30,22 @@
     },
     "hero": {
       "eyebrow": "For håndværkere, klinikker og saloner · på dansk · døgnet rundt",
-      "title": "Dialogbot tager telefonen, når I ikke kan.",
+      "title": {
+        "before": "Dialogbot ",
+        "mark": "tager telefonen",
+        "after": ", når I ikke kan."
+      },
       "lead": "En AI-receptionist på dansk, der svarer døgnet rundt, booker tider i jeres kalender og sender jer en besked om hvert opkald. I beholder jeres nummer. 2.495 kr./md. ekskl. moms.",
       "cta": "Prøv den – den ringer til dig",
       "note": "2 minutter, ingen tilmelding. Spørg den, som en kunde ville gøre."
     },
     "how": {
       "eyebrow": "Sådan virker det",
-      "title": "Kunden ringer. Dialogbot svarer. Du får besked.",
+      "title": {
+        "before": "Kunden ringer. Dialogbot svarer. ",
+        "mark": "Du får besked",
+        "after": "."
+      },
       "lead": "Et ubesvaret opkald er en tabt kunde – de fleste ringer aldrig igen. Det er den følelse, Dialogbot tager fra dig: at stå på stigen eller med en kunde i stolen og høre telefonen ringe uden at kunne tage den.",
       "steps": [
         {
@@ -56,7 +64,11 @@
     },
     "features": {
       "eyebrow": "Det kan den",
-      "title": "Fire ting, én receptionist",
+      "title": {
+        "before": "Fire ting, ",
+        "mark": "én receptionist",
+        "after": ""
+      },
       "items": [
         {
           "title": "Tager telefonen",
@@ -85,7 +97,11 @@
     },
     "price": {
       "eyebrow": "Pris",
-      "title": "Ét abonnement. Ingen pris pr. henvendelse.",
+      "title": {
+        "before": "Ét abonnement. ",
+        "mark": "Ingen pris pr. henvendelse",
+        "after": "."
+      },
       "lead": "Alle priser er ekskl. moms. Ingen binding – opsigelse måned til måned.",
       "subscription": {
         "name": "Abonnement",
@@ -136,7 +152,11 @@
     },
     "start": {
       "eyebrow": "Kom i gang",
-      "title": "Hør den først – eller byg den selv på 30 minutter",
+      "title": {
+        "before": "Hør den først – eller byg den selv på ",
+        "mark": "30 minutter",
+        "after": ""
+      },
       "try": {
         "badge": "2 min · ingen tilmelding",
         "title": "Prøv den – den ringer til dig",

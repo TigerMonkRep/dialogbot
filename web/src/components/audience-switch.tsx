@@ -5,8 +5,9 @@ export type Audience = "erhverv" | "privat";
 
 /** The small two-door pill that sits next to the logo on both sites: «Erhverv | Privat». Same shape as the path
  *  switch (rounded-full, 2 px ink), the active door filled with ink; each door carries its colour dot (Klods-blå
- *  square for Erhverv, Hjemme-orange dot for Privat). Server component – texts from common.json ("audience.*"). */
-export async function AudienceSwitch({ current, size = "md" }: { current: Audience; size?: "sm" | "md" }) {
+ *  square for Erhverv, Hjemme-orange dot for Privat). On the entry page neither door is current. Server component –
+ *  texts from common.json ("audience.*"). */
+export async function AudienceSwitch({ current, size = "md" }: { current?: Audience; size?: "sm" | "md" }) {
   const t = await getT("common");
   const h = size === "sm" ? "min-h-8 px-3 text-[12px]" : "min-h-9 px-3.5 text-[13px]";
   const seg = `inline-flex items-center gap-2 ${h} rounded-full font-semibold leading-none no-underline whitespace-nowrap`;
@@ -21,7 +22,7 @@ export async function AudienceSwitch({ current, size = "md" }: { current: Audien
   };
   return (
     <nav aria-label={t("audience.label")} className="inline-flex p-1 rounded-full border-2 border-ink bg-white shrink-0">
-      {door("erhverv", "/", t("audience.businessShort"), t("audience.business"))}
+      {door("erhverv", "/erhverv", t("audience.businessShort"), t("audience.business"))}
       {door("privat", "/privat", t("audience.privateShort"), t("audience.private"))}
     </nav>
   );

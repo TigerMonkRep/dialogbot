@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLocale, useT } from "@/i18n/client";
 import { numberFormat } from "@/i18n/translate";
 import { PLANS, planCheckoutHref, type Plan, type PlanInterval } from "@/lib/privat/plans";
+import { Mark } from "@/components/mark";
 
 const Check = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="shrink-0 mt-px text-success"><path d="M5 12l5 5L20 7" /></svg>
@@ -31,7 +32,7 @@ export function PublicPlans() {
     <div className="flex flex-col gap-7">
       <div className="flex flex-wrap items-end justify-between gap-5">
         <div className="flex flex-col gap-2.5 max-w-[620px]">
-          <h2 className="m-0 text-[clamp(28px,3.2vw,40px)] leading-[1.05] tracking-[-0.02em]">{t("landing.pricing.title")}</h2>
+          <h2 className="m-0 text-[clamp(28px,3.2vw,40px)] leading-[1.05] tracking-[-0.02em]">{t("landing.pricing.title.before")}<Mark kind="ring" tone="yellow">{t("landing.pricing.title.mark")}</Mark>{t("landing.pricing.title.after")}</h2>
           <p className="m-0 text-[16px] leading-normal opacity-85">{t("landing.pricing.text")}</p>
         </div>
         <div role="radiogroup" aria-label={t("landing.pricing.intervalLabel")} className="inline-flex gap-1 p-1 rounded-full border-2 border-white bg-white/5">

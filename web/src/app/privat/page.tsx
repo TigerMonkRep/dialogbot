@@ -7,6 +7,8 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { Ico } from "@/components/privat/icons";
 import { PublicPlans } from "@/components/privat/plans-public";
 import { InstallApp } from "@/components/install-app";
+import { Mark, Tilted } from "@/components/mark";
+import { AudienceMemory } from "@/components/audience-memory";
 import { getRaw, getT } from "@/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -44,6 +46,7 @@ export default async function PrivatLanding() {
 
   return (
     <div data-theme="privat" className="min-h-dvh flex flex-col bg-paper text-ink">
+      <AudienceMemory audience="privat" />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-full focus:bg-ink focus:text-white">{tc("chrome.skip")}</a>
       <header className="border-b-2 border-ink bg-paper">
         <div className={`${WRAP} min-h-[72px] py-3 flex flex-wrap items-center gap-3`}>
@@ -63,7 +66,7 @@ export default async function PrivatLanding() {
         <section className={`${WRAP} py-12 lg:py-14 flex flex-wrap items-center gap-10`}>
           <div className="flex-[1_1_320px] lg:flex-[1_1_420px] flex flex-col gap-[18px]">
             <p className="m-0 text-[12px] font-semibold uppercase tracking-[0.1em] text-accent">{t("landing.eyebrow")}</p>
-            <h1 className="m-0 text-[clamp(40px,5.5vw,68px)] leading-[1.02] tracking-[-0.025em]">{t("landing.title")}</h1>
+            <h1 className="m-0 text-[clamp(40px,5.5vw,68px)] leading-[1.02] tracking-[-0.025em]">{t("landing.title.before")}<Mark kind="marker">{t("landing.title.mark")}</Mark>{t("landing.title.after")}</h1>
             <p className="m-0 text-[18px] leading-normal text-ink-soft max-w-[520px]">{t("landing.lead")}</p>
             <div className="flex flex-wrap items-center gap-3 mt-1.5">
               <Link href={tryHref} className={PILL_CTA}>{t("landing.cta")}</Link>
@@ -109,13 +112,15 @@ export default async function PrivatLanding() {
         {/* Tre ting */}
         <section className="bg-panel border-y-2 border-ink py-14">
           <div className={`${WRAP} flex flex-col gap-7`}>
-            <h2 className={H2}>{t("landing.three.title")}</h2>
+            <h2 className={H2}>{t("landing.three.title.before")}<Mark kind="underline" tone="orange">{t("landing.three.title.mark")}</Mark>{t("landing.three.title.after")}</h2>
             <div className="grid gap-5 md:grid-cols-3">
               {three.map((item, i) => (
                 <article key={item.title} className="flex flex-col gap-2.5 rounded-[24px] border-2 border-ink bg-paper p-[22px]">
-                  <span className={`inline-flex items-center justify-center w-11 h-11 rounded-full border-2 border-ink ${i === 2 ? "bg-accent text-on-accent" : "bg-white text-ink"}`} aria-hidden="true">
-                    <Ico name={i === 0 ? "list" : i === 1 ? "bell" : "phone"} size={22} stroke={2.4} />
-                  </span>
+                  <Tilted deg={i === 0 ? 4 : 0} className="self-start">
+                    <span className={`inline-flex items-center justify-center w-11 h-11 rounded-full border-2 border-ink ${i === 2 ? "bg-accent text-on-accent" : "bg-white text-ink"}`} aria-hidden="true">
+                      <Ico name={i === 0 ? "list" : i === 1 ? "bell" : "phone"} size={22} stroke={2.4} />
+                    </span>
+                  </Tilted>
                   <h3 className="m-0 text-[20px] font-bold">{item.title}</h3>
                   <p className="m-0 text-[15px] leading-normal text-ink-soft">{item.text}</p>
                   <span className={`text-[13px] font-semibold ${i === 2 ? "text-accent" : "text-success"}`}>{i === 2 ? t("landing.three.includedTrial") : t("landing.three.included")}</span>
@@ -128,13 +133,13 @@ export default async function PrivatLanding() {
         {/* Du bestemmer */}
         <section className={`${WRAP} py-14 flex flex-wrap items-center gap-10`}>
           <div className="flex-[1_1_300px] lg:flex-[1_1_360px] flex flex-col gap-3.5">
-            <h2 className={H2}>{t("landing.control.title")}</h2>
+            <h2 className={H2}>{t("landing.control.title.before")}<Mark kind="marker">{t("landing.control.title.mark")}</Mark>{t("landing.control.title.after")}</h2>
             <p className="m-0 text-[17px] leading-normal text-ink-soft">{t("landing.control.text")}</p>
           </div>
           <ol className="flex-[1_1_300px] lg:flex-[1_1_380px] m-0 p-0 list-none flex flex-col gap-3">
             {steps.map((s, i) => (
               <li key={s} className="flex items-center gap-3.5 rounded-full border-2 border-ink bg-white py-2.5 pl-2.5 pr-[18px]">
-                <span className={`inline-grid place-items-center w-9 h-9 shrink-0 rounded-full border-2 border-ink font-display font-extrabold ${i === 2 ? "bg-success-soft text-ink" : "bg-accent text-on-accent"}`}>{i + 1}</span>
+                <Tilted deg={i === 1 ? -5 : 0}><span className={`inline-grid place-items-center w-9 h-9 shrink-0 rounded-full border-2 border-ink font-display font-extrabold ${i === 2 ? "bg-success-soft text-ink" : "bg-accent text-on-accent"}`}>{i + 1}</span></Tilted>
                 <span className="text-[16px] font-semibold">{s}</span>
               </li>
             ))}
@@ -146,7 +151,7 @@ export default async function PrivatLanding() {
           <div className={`${WRAP} flex flex-wrap items-center gap-9`}>
             <div className="flex-[1_1_300px] lg:flex-[1_1_340px] flex flex-col gap-3">
               <p className="m-0 text-[12px] font-semibold uppercase tracking-[0.1em] text-accent">{t("landing.store.eyebrow")}</p>
-              <h2 className={H2}>{t("landing.store.title")}</h2>
+              <h2 className={H2}>{t("landing.store.title.before")}<Mark kind="underline" tone="orange">{t("landing.store.title.mark")}</Mark>{t("landing.store.title.after")}</h2>
               <p className="m-0 text-[17px] leading-normal text-ink-soft">{t("landing.store.text")}</p>
               <Link href="/privat/butik" className="self-start inline-flex items-center gap-1.5 min-h-12 px-[22px] rounded-full border-2 border-ink bg-white text-[15px] font-semibold text-ink no-underline hover:bg-panel">{t("landing.store.cta")} <Ico name="arrow" size={16} stroke={2.6} /></Link>
             </div>
@@ -184,7 +189,7 @@ export default async function PrivatLanding() {
       <footer className="border-t-2 border-ink py-5">
         <div className={`${WRAP} flex flex-wrap justify-center gap-x-7 gap-y-3 text-[13px] text-muted`}>
           <span className="inline-flex items-center min-h-8">{t("landing.footer.brand")}</span>
-          <SiteLink href="/" className="inline-flex items-center gap-1 min-h-8 font-semibold text-ink no-underline hover:text-accent">{t("landing.footer.business")} <Ico name="arrow" size={14} stroke={2.6} /></SiteLink>
+          <SiteLink href="/erhverv" className="inline-flex items-center gap-1 min-h-8 font-semibold text-ink no-underline hover:text-accent">{t("landing.footer.business")} <Ico name="arrow" size={14} stroke={2.6} /></SiteLink>
           <SiteLink href="/privatliv" className="inline-flex items-center min-h-8 text-ink no-underline hover:text-accent">{t("landing.footer.privacy")}</SiteLink>
           <SiteLink href="/vilkaar" className="inline-flex items-center min-h-8 text-ink no-underline hover:text-accent">{t("landing.footer.terms")}</SiteLink>
         </div>

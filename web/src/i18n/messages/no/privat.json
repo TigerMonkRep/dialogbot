@@ -31,7 +31,11 @@
     "metaTitle": "Dialogbot Privat – din egen personlige assistent",
     "metaDescription": "Skriv eller les inn en oppgave. Peter lager lister, minner deg på ting og ringer for deg – men aldri før du har sagt ja. Prøv gratis i 14 dager.",
     "eyebrow": "Din egen personlige assistent",
-    "title": "Hva skal jeg ordne for deg?",
+    "title": {
+      "before": "Hva skal jeg ordne ",
+      "mark": "for deg",
+      "after": "?"
+    },
     "lead": "Skriv eller si en oppgave. Peter lager lister, minner deg på ting – og ringer frisøren, verkstedet eller restauranten for deg. Han ringer aldri før du har sagt ja.",
     "cta": "Prøv gratis i 14 dager",
     "note": "14 dager gratis. Si opp når som helst.",
@@ -54,7 +58,11 @@
       "done": "Ordnet: Cykelkælderen torsdag kl. 15.30. Lagt i kalenderen din."
     },
     "three": {
-      "title": "Tre ting Peter gjør for deg",
+      "title": {
+        "before": "Tre ting ",
+        "mark": "Peter gjør for deg",
+        "after": ""
+      },
       "included": "Med i alle abonnementer",
       "includedTrial": "Med i alle abonnementer – prøv 14 dager gratis",
       "items": [
@@ -73,7 +81,11 @@
       ]
     },
     "control": {
-      "title": "Du bestemmer. Alltid.",
+      "title": {
+        "before": "Du bestemmer. ",
+        "mark": "Alltid.",
+        "after": ""
+      },
       "text": "Peter foreslår først hva han vil gjøre, og venter på ditt ja. Han sier alltid at han er en assistent som ringer på dine vegne – og han kan ikke bruke kortet ditt eller din MitID.",
       "steps": [
         "Du sier hva du vil ha ordnet",
@@ -83,7 +95,11 @@
     },
     "store": {
       "eyebrow": "Butikken",
-      "title": "Peter lærer noe nytt hver måned",
+      "title": {
+        "before": "Peter lærer noe nytt ",
+        "mark": "hver måned",
+        "after": ""
+      },
       "text": "Hver app er én ting Peter kan hjelpe med. Trykk, les hva den gjør, og installer – så setter han den opp sammen med deg. Alle apper er med i Plus og Familie.",
       "cta": "Se alle apper",
       "apps": {
@@ -98,7 +114,11 @@
       }
     },
     "pricing": {
-      "title": "14 dager gratis. Så velger du selv.",
+      "title": {
+        "before": "",
+        "mark": "14 dager",
+        "after": " gratis. Så velger du selv."
+      },
       "text": "Prøv alt i 14 dager. Du registrerer deg med kort, og det trekkes først når prøveperioden er over – si opp før, så betaler du ingenting. Priser inkl. mva.",
       "intervalLabel": "Betaling",
       "monthly": "Månedlig",
@@ -954,9 +974,9 @@
       "title": "Hvem er dere hjemme?",
       "help": "Så får du de riktige listene fra start.",
       "household": {
-    "photoAdd": "Legg til bilde av kvitteringen",
-    "photoReplace": "Bytt bilde",
-    "photoOpen": "Se bilde",
+        "photoAdd": "Legg til bilde av kvitteringen",
+        "photoReplace": "Bytt bilde",
+        "photoOpen": "Se bilde",
         "alone": {
           "label": "Meg selv",
           "hint": "Handleliste"

@@ -30,14 +30,22 @@
     },
     "hero": {
       "eyebrow": "Für Handwerk, Praxen und Salons · in der Sprache Ihrer Kunden · rund um die Uhr",
-      "title": "Dialogbot geht ans Telefon, wenn Sie es nicht können.",
+      "title": {
+        "before": "Dialogbot ",
+        "mark": "geht ans Telefon",
+        "after": ", wenn Sie es nicht können."
+      },
       "lead": "Ein KI-Rezeptionist, der rund um die Uhr auf Deutsch antwortet, Termine in Ihrem Kalender bucht und Sie über jeden Anruf informiert. Sie behalten Ihre Nummer. 2.495 kr./Monat zzgl. MwSt.",
       "cta": "Testen Sie ihn – er ruft Sie an",
       "note": "2 Minuten, keine Anmeldung. Fragen Sie ihn, wie es ein Kunde tun würde."
     },
     "how": {
       "eyebrow": "So funktioniert es",
-      "title": "Der Kunde ruft an. Dialogbot antwortet. Sie werden informiert.",
+      "title": {
+        "before": "Der Kunde ruft an. Dialogbot antwortet. ",
+        "mark": "Sie werden informiert",
+        "after": "."
+      },
       "lead": "Ein unbeantworteter Anruf ist ein verlorener Kunde – die meisten rufen nie wieder an. Genau dieses Gefühl nimmt Dialogbot Ihnen ab: auf der Leiter zu stehen oder einen Kunden im Stuhl zu haben und das Telefon klingeln zu hören, ohne rangehen zu können.",
       "steps": [
         {
@@ -56,7 +64,11 @@
     },
     "features": {
       "eyebrow": "Das kann er",
-      "title": "Vier Aufgaben, ein Empfang",
+      "title": {
+        "before": "Vier Aufgaben, ",
+        "mark": "ein Empfang",
+        "after": ""
+      },
       "items": [
         {
           "title": "Geht ans Telefon",
@@ -85,7 +97,11 @@
     },
     "price": {
       "eyebrow": "Preis",
-      "title": "Ein Abonnement. Kein Preis pro Anfrage.",
+      "title": {
+        "before": "Ein Abonnement. ",
+        "mark": "Kein Preis pro Anfrage",
+        "after": "."
+      },
       "lead": "Alle Preise zzgl. MwSt. Keine Mindestlaufzeit – monatlich kündbar.",
       "subscription": {
         "name": "Abonnement",
@@ -136,7 +152,11 @@
     },
     "start": {
       "eyebrow": "Jetzt starten",
-      "title": "Erst anhören – oder in 30 Minuten selbst einrichten",
+      "title": {
+        "before": "Erst anhören – oder in ",
+        "mark": "30 Minuten",
+        "after": " selbst einrichten"
+      },
       "try": {
         "badge": "2 Min. · keine Anmeldung",
         "title": "Testen Sie ihn – er ruft Sie an",

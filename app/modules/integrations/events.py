@@ -18,6 +18,8 @@ from app.models import IntegrationConnection, OutboxEvent
 
 EVENT_TYPE = "webhook.deliver"
 SINKS = ("webhook", "zapier", "make")
+# What the connector sinks receive (connectors/webhook.EVENTS); other events only reach public-API webhooks.
+SINK_EVENTS = ("lead.created", "booking.created", "booking.cancelled", "action.completed", "conversation.ended", "test.ping")
 
 
 def sinks(db: OrmSession, workspace_id: uuid.UUID) -> list[IntegrationConnection]:
@@ -27,14 +29,18 @@ def sinks(db: OrmSession, workspace_id: uuid.UUID) -> list[IntegrationConnection
 
 
 def emit(db: OrmSession, workspace_id: uuid.UUID, event: str, data: dict, *, key: str) -> int:
-    """Queue `event` for every connected sink. `key` makes the delivery idempotent per business object."""
+    """Queue `event` for every connected sink and every public-API webhook endpoint subscribed to it
+    (app/modules/public_api/webhook_delivery). `key` makes the delivery idempotent per business object."""
     n = 0
     occurred = datetime.now(UTC).isoformat()
-    for conn in sinks(db, workspace_id):
+    for conn in sinks(db, workspace_id) if event in SINK_EVENTS else ():
         enqueue(db, event_type=EVENT_TYPE, dedupe_key=f"webhook:{conn.id}:{event}:{key}",
                 payload={"connection_id": str(conn.id), "event": event, "occurred_at": occurred, "data": data},
                 workspace_id=workspace_id)
         n += 1
+    from app.modules.public_api import webhook_delivery
+
+    n += webhook_delivery.fan_out(db, workspace_id, event, data, key=key)
     return n
 
 

@@ -6,6 +6,7 @@ import { requireWorkspace } from "@/lib/workspace.server";
 import { setupStatus } from "@/lib/setup.server";
 import { Icon } from "@/components/ui";
 import { PowerToggle, type TelephonyCode } from "./client";
+import { InstallBanner } from "@/components/install-step";
 import { getLocale, getT } from "@/i18n/server";
 import { HTML_LANG } from "@/i18n/config";
 
@@ -69,6 +70,9 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
             <span className="inline-flex items-center gap-1 text-[14px] font-semibold text-ink">{t("overview.continue")}<Icon name="arrow_forward" size={18} /></span>
           </Link>
         )}
+
+        {/* First open after the login (once-dismissible): the app on the home screen. Hidden in the installed app. */}
+        <InstallBanner audience="erhverv" />
 
         {/* 1. Status */}
         <div className="flex flex-wrap items-center gap-4 md:gap-6 px-6 py-5 rounded-2xl bg-paper border-2 border-ink">

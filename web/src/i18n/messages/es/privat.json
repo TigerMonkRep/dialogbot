@@ -31,7 +31,11 @@
     "metaTitle": "Dialogbot Privat – tu asistente personal",
     "metaDescription": "Escribe o dicta una tarea. Peter hace listas, te recuerda cosas y llama por ti – pero nunca antes de que hayas dicho que sí. Prueba gratis 14 días.",
     "eyebrow": "Tu asistente personal",
-    "title": "¿Qué quieres que resuelva por ti?",
+    "title": {
+      "before": "¿Qué quieres que resuelva ",
+      "mark": "por ti",
+      "after": "?"
+    },
     "lead": "Escribe o dicta una tarea. Peter lleva listas, te recuerda cosas y llama a la peluquería, al taller o al restaurante por ti. Nunca llama antes de que hayas dicho sí.",
     "cta": "Prueba gratis 14 días",
     "note": "14 días gratis. Cancela cuando quieras.",
@@ -54,7 +58,11 @@
       "done": "Hecho: Cykelkælderen el jueves a las 15.30. Añadido a tu calendario."
     },
     "three": {
-      "title": "Tres cosas que Peter hace por ti",
+      "title": {
+        "before": "Tres cosas que ",
+        "mark": "Peter hace por ti",
+        "after": ""
+      },
       "included": "Incluido en todos los planes",
       "includedTrial": "Incluido en todos los planes – prueba 14 días gratis",
       "items": [
@@ -73,7 +81,11 @@
       ]
     },
     "control": {
-      "title": "Tú decides. Siempre.",
+      "title": {
+        "before": "Tú decides. ",
+        "mark": "Siempre.",
+        "after": ""
+      },
       "text": "Peter propone primero lo que va a hacer y espera tu sí. Siempre dice que es un asistente que llama en tu nombre, y no puede usar tu tarjeta ni tu MitID.",
       "steps": [
         "Dices qué hay que resolver",
@@ -83,7 +95,11 @@
     },
     "store": {
       "eyebrow": "La tienda",
-      "title": "Peter aprende algo nuevo cada mes",
+      "title": {
+        "before": "Peter aprende algo nuevo ",
+        "mark": "cada mes",
+        "after": ""
+      },
       "text": "Cada app es una cosa con la que Peter puede ayudar. Toca, lee qué hace e instálala; él la configura contigo. Todas las apps están incluidas en Plus y Familie.",
       "cta": "Ver todas las apps",
       "apps": {
@@ -98,7 +114,11 @@
       }
     },
     "pricing": {
-      "title": "14 días gratis. Después eliges tú.",
+      "title": {
+        "before": "",
+        "mark": "14 días",
+        "after": " gratis. Después eliges tú."
+      },
       "text": "Prueba todo durante 14 días. Te registras con tarjeta y solo se cobra cuando termina la prueba – cancela antes y no pagas nada. Precios con IVA.",
       "intervalLabel": "Facturación",
       "monthly": "Mensual",
@@ -954,9 +974,9 @@
       "title": "¿Quiénes vivís en casa?",
       "help": "Así tienes las listas correctas desde el principio.",
       "household": {
-    "photoAdd": "Añadir foto del recibo",
-    "photoReplace": "Cambiar foto",
-    "photoOpen": "Ver foto",
+        "photoAdd": "Añadir foto del recibo",
+        "photoReplace": "Cambiar foto",
+        "photoOpen": "Ver foto",
         "alone": {
           "label": "Solo yo",
           "hint": "Lista de la compra"

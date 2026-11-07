@@ -76,6 +76,7 @@ PERMISSIONS: dict[str, str] = {
     "campaigns.manage": "admin",
     "reports.costs": "admin",
     "reports.manage": "admin",
+    "api_keys.manage": "admin",  # public API keys (app/modules/public_api): issue, list, revoke
     "agreements.edit": "owner",  # reserved for the billing stage
 }
 

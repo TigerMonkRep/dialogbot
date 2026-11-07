@@ -20,7 +20,7 @@ export const OG_LOCALE: Record<Locale, string> = {
 };
 
 /** Message namespaces – one JSON file per namespace per locale (messages/<locale>/<ns>.json). */
-export const NAMESPACES = ["common", "site", "landing", "articles", "legal", "auth", "setup", "app", "settings", "widget", "privat"] as const;
+export const NAMESPACES = ["common", "site", "landing", "articles", "legal", "auth", "setup", "app", "settings", "widget", "privat", "entry"] as const;
 export type Namespace = (typeof NAMESPACES)[number];
 
 export function isLocale(v: unknown): v is Locale {
@@ -44,7 +44,7 @@ export function fromAcceptLanguage(header: string | null | undefined): Locale | 
 
 /** Marketing pages: they exist once per language under /<locale>/… (the files themselves are unprefixed). App, login,
  *  setup and API paths have no prefix – their language is the user's choice (cookie). */
-const PUBLIC_EXACT = new Set(["/", "/priser", "/ai-receptionist", "/ai-telefonsvarer", "/chatbot", "/viden", "/om",
+const PUBLIC_EXACT = new Set(["/", "/erhverv", "/priser", "/ai-receptionist", "/ai-telefonsvarer", "/chatbot", "/viden", "/om",
   "/kontakt", "/gdpr", "/privatliv", "/vilkaar", "/proev", "/byggevejledning", "/ambassador/bliv"]);
 const PUBLIC_PREFIX = ["/viden/", "/ai-receptionist/"];
 

@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "@/i18n/link";
+import { InstallStep } from "@/components/install-step";
 import { useRaw, useT } from "@/i18n/client";
 import { api, type ApiError } from "@/lib/client";
 import { EMAIL, PHONE_DISPLAY, PHONE_TEL } from "@/lib/contact";
@@ -264,6 +265,7 @@ export function ProevChat({ embedded = false, onClose }: { embedded?: boolean; o
               )}
             </form>
           )}
+          {done && <InstallStep audience="erhverv" />}
           {done && (
             <div className="flex flex-wrap gap-2.5">
               <Link href="/signup" className="inline-flex items-center gap-2.5 min-h-12 px-5 rounded-xl bg-accent hover:bg-accent-deep text-white no-underline font-semibold text-[15px]">{c("buildNow")}</Link>

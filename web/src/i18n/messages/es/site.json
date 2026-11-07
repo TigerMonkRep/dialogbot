@@ -30,14 +30,22 @@
     },
     "hero": {
       "eyebrow": "Para oficios, clínicas y salones · en español · las 24 horas",
-      "title": "Dialogbot atiende el teléfono cuando usted no puede.",
+      "title": {
+        "before": "Dialogbot ",
+        "mark": "atiende el teléfono",
+        "after": " cuando usted no puede."
+      },
       "lead": "Un recepcionista con IA que habla el idioma de sus clientes, responde las 24 horas, reserva citas en su calendario y le avisa de cada llamada. Conserva su número. 2.495 kr./mes, IVA no incluido.",
       "cta": "Pruébelo: le llamará",
       "note": "2 minutos, sin registro. Pregúntele lo que le preguntaría un cliente."
     },
     "how": {
       "eyebrow": "Cómo funciona",
-      "title": "El cliente llama. Dialogbot responde. Usted recibe el aviso.",
+      "title": {
+        "before": "El cliente llama. Dialogbot responde. ",
+        "mark": "Usted recibe el aviso",
+        "after": "."
+      },
       "lead": "Una llamada sin atender es un cliente perdido: la mayoría no vuelve a llamar. Esa es la sensación de la que le libra Dialogbot: estar subido a una escalera o con un cliente en la silla y oír el teléfono sin poder cogerlo.",
       "steps": [
         {
@@ -56,7 +64,11 @@
     },
     "features": {
       "eyebrow": "Lo que hace",
-      "title": "Cuatro funciones, un recepcionista",
+      "title": {
+        "before": "Cuatro funciones, ",
+        "mark": "un recepcionista",
+        "after": ""
+      },
       "items": [
         {
           "title": "Atiende el teléfono",
@@ -85,7 +97,11 @@
     },
     "price": {
       "eyebrow": "Precio",
-      "title": "Una suscripción. Sin precio por contacto.",
+      "title": {
+        "before": "Una suscripción. ",
+        "mark": "Sin precio por contacto",
+        "after": "."
+      },
       "lead": "Todos los precios sin IVA. Sin permanencia: cancelación mes a mes.",
       "subscription": {
         "name": "Suscripción",
@@ -136,7 +152,11 @@
     },
     "start": {
       "eyebrow": "Empezar",
-      "title": "Escúchelo primero, o constrúyalo usted mismo en 30 minutos",
+      "title": {
+        "before": "Escúchelo primero, o constrúyalo usted mismo en ",
+        "mark": "30 minutos",
+        "after": ""
+      },
       "try": {
         "badge": "2 min · sin registro",
         "title": "Pruébelo: le llamará",

@@ -21,15 +21,13 @@ from app.modules.privat import branding, ledger, market
 KIND = "privat_credits"
 
 
-def _description(amount: int, currency: str, locale: str | None, rate_bp: int) -> str:
+def _description(amount: int, currency: str, locale: str | None, rate_bp: int | None) -> str:
     if currency == "DKK" and rate_bp == prices.TAX_BASIS_POINTS and market.norm_locale(locale) == "da" \
             and amount == prices.PRIVAT_CREDIT_PACK_GROSS_MINOR:
         net = prices.PRIVAT_CREDIT_PACK_NET_MINOR
         return (f"{markets.fmt(amount, currency)} inkl. 25 % moms ({markets.fmt(net, currency)} + "
                 f"{markets.fmt(amount - net, currency)} moms)")
-    if market.norm_locale(locale) == "da":
-        return markets.fmt(amount, currency) + (f" inkl. {market.pct(rate_bp, 'da')} % moms" if rate_bp else "")
-    return markets.fmt(amount, currency) + (f" incl. {market.pct(rate_bp, 'en')} % VAT" if rate_bp else "")
+    return markets.fmt(amount, currency) + market.vat_text(rate_bp, locale)
 
 
 def checkout(db: OrmSession, ctx, locale: str | None = None) -> str:
@@ -46,14 +44,14 @@ def checkout(db: OrmSession, ctx, locale: str | None = None) -> str:
         line = {"quantity": 1, "price_data": {
             "currency": currency.lower(), "unit_amount": amount, "tax_behavior": "inclusive",
             "product_data": {"name": f"{prices.PRIVAT_CREDIT_PACK_CREDITS} credits – Dialogbot Privat",
-                             "description": _description(amount, currency, locale, market.vat(locale).rate_bp)}}}
-    if rates := market.tax_rates(locale):
-        line["tax_rates"] = rates
-    sess = branding.create_checkout_session({
+                             "description": _description(amount, currency, locale, market.text_rate(locale))}}}
+    payload = {
         "mode": "payment", "line_items": [line], "locale": market.stripe_locale(locale), "customer_email": ctx.user.email,
         "allow_promotion_codes": True,
         "client_reference_id": str(ctx.ws_id), "metadata": meta, "payment_intent_data": {"metadata": meta},
-        "success_url": f"{base}/privat/konto?betaling=ok", "cancel_url": f"{base}/privat/konto?betaling=annulleret"})
+        "success_url": f"{base}/privat/konto?betaling=ok", "cancel_url": f"{base}/privat/konto?betaling=annulleret"}
+    market.apply_tax(payload, line, locale)
+    sess = branding.create_checkout_session(payload)
     return sess["url"]
 
 

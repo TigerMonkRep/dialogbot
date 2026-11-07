@@ -1131,6 +1131,9 @@ class Invoice(Base):
     hosted_invoice_url: Mapped[str | None] = mapped_column(Text)
     invoice_pdf: Mapped[str | None] = mapped_column(Text)
     note: Mapped[str | None] = mapped_column(String(300))
+    # Who decided the VAT: "stripe_tax" (Stripe Tax, amounts from the finalized Stripe invoice) or "manual" (our own
+    # rules in billing/markets.py with fixed tax rates). Null on invoices from before markets.
+    tax_source: Mapped[str | None] = mapped_column(String(16))
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = ts_now()
 

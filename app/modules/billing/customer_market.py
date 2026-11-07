@@ -23,6 +23,9 @@ VAT_NUMBER_REQUIRED_MESSAGE = ("Angiv virksomhedens momsnummer (VAT-nummer) før
                                "Danmark faktureres uden dansk moms (omvendt betalingspligt), og det kræver momsnummeret.")
 # Stripe's languages (Checkout `locale`, customer `preferred_locales`) by company country; others get English.
 STRIPE_LOCALE = {"DK": "da", "SE": "sv", "NO": "nb", "DE": "de", "AT": "de", "FR": "fr", "ES": "es", "IT": "it"}
+# Stripe Tax product tax codes (https://docs.stripe.com/tax/tax-codes): SaaS for business / personal use.
+TAX_CODE_ERHVERV = "txcd_10103001"
+TAX_CODE_PRIVAT = "txcd_10103000"
 # The VAT number's prefix differs from the ISO country code for Greece.
 VAT_PREFIX = {"GR": "EL"}
 
@@ -43,6 +46,23 @@ def currency_of(db: OrmSession, ws_id: uuid.UUID) -> str:
     if a is not None:
         return a.currency
     return markets.currency_for_country(country_of(db, ws_id))
+
+
+def stripe_tax_enabled() -> bool:
+    from app.config import get_settings
+
+    return bool(get_settings().stripe_tax_enabled)
+
+
+def stripe_address(db: OrmSession, ws_id: uuid.UUID) -> dict:
+    """The company's address for the Stripe customer (Stripe Tax needs at least the country)."""
+    p = db.get(BusinessProfile, ws_id)
+    out = {"country": country_of(db, ws_id)}
+    if p is not None:
+        for key, value in (("line1", p.address_line), ("postal_code", p.postal_code), ("city", p.city)):
+            if value:
+                out[key] = value
+    return out
 
 
 def stripe_locale(country: str | None) -> str:

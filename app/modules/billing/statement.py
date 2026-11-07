@@ -69,7 +69,8 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
                           .order_by(ReceptionAgreement.version.desc()).limit(1))
     currency = agreement.currency if agreement is not None else customer_market.currency_of(db, workspace_id)
     da = currency == "DKK"
-    vat = customer_market.vat_of(db, workspace_id)
+    # Our estimate; with Stripe Tax on, the invoice's VAT is Stripe's (invoices.tax_source = "stripe_tax").
+    vat = customer_market.vat_of(db, workspace_id) | {"source": "estimate"}
     lines: list[dict] = []
     if agreement is not None and agreement.model == "A":
         lines.append({"kind": "subscription",

@@ -189,17 +189,15 @@ def price_id(plan: str, interval: str) -> str | None:
     return getattr(get_settings(), f"privat_stripe_price_{plan}_{interval}", None) or None
 
 
-def _line_text(p: dict, interval: str, currency: str, locale: str, rate_bp: int) -> str:
+def _line_text(p: dict, interval: str, currency: str, locale: str, rate_bp: int | None) -> str:
     """The product description on the Checkout page, in the visitor's language (Danish for da, English otherwise)."""
     a = markets.privat_plan(currency, p["key"])
     amount = a["monthly"] if interval == "month" else a["yearly_total"]
     if market.norm_locale(locale) == "da":
         per = "pr. måned" if interval == "month" else f"pr. år ({markets.fmt(a['yearly_monthly'], currency)}/md.)"
-        vat = f" inkl. {market.pct(rate_bp, locale)} % moms" if rate_bp else ""
-        return f"{markets.fmt(amount, currency)} {per}{vat} · {p['calls']} opkald om måneden"
+        return f"{markets.fmt(amount, currency)} {per}{market.vat_text(rate_bp, locale)} · {p['calls']} opkald om måneden"
     per = "per month" if interval == "month" else f"per year ({markets.fmt(a['yearly_monthly'], currency)}/month)"
-    vat = f" incl. {market.pct(rate_bp, locale)} % VAT" if rate_bp else ""
-    return f"{markets.fmt(amount, currency)} {per}{vat} · {p['calls']} calls a month"
+    return f"{markets.fmt(amount, currency)} {per}{market.vat_text(rate_bp, locale)} · {p['calls']} calls a month"
 
 
 def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None = None, locale: str | None = None) -> str:
@@ -230,9 +228,7 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
             "currency": currency.lower(), "unit_amount": amount, "tax_behavior": "inclusive",
             "recurring": {"interval": interval},
             "product_data": {"name": f"Dialogbot Privat – {p['name']}",
-                             "description": _line_text(p, interval, currency, locale, market.vat(locale).rate_bp)}}}
-    if rates := market.tax_rates(locale):
-        line["tax_rates"] = rates
+                             "description": _line_text(p, interval, currency, locale, market.text_rate(locale))}}}
     sub_data: dict = {"metadata": meta}
     if trial_available(row):
         # «Prøv gratis i 14 dage»: the card is given now, nothing is charged until the trial is over, and Stripe
@@ -253,6 +249,7 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
         payload["customer"] = row.stripe_customer_id
     else:
         payload["customer_email"] = ctx.user.email
+    market.apply_tax(payload, line, locale)
     applied = discounts.privat_checkout_discounts(db, code)
     if applied:
         payload["discounts"] = applied  # Stripe allows either a fixed discount or its code field, not both

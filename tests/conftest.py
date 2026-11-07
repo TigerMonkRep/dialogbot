@@ -56,6 +56,7 @@ def clean_tables():
     from app.modules.billing import stripe as stripe_api
 
     stripe_api._tax_rate_ids.clear()  # Stripe tax rate ids cached per (country, bp, inclusive) by a test's fake Stripe
+    get_settings.cache_clear()  # settings a test built from monkeypatched env (restored by now) must not leak
 
 
 @pytest.fixture(scope="session")

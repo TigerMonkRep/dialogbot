@@ -1,4 +1,4 @@
-"""markets: the company's VAT number and the Privat subscription's currency
+"""markets: the company's VAT number, the Privat subscription's currency, the invoice's tax source
 
 Revision ID: c7d2e9a4b1f6
 Revises: f3a9c1d5e7b2
@@ -8,6 +8,7 @@ Additive, both nullable (app/modules/billing/markets.py, docs/markets.md):
 - billing_accounts.vat_number: an EU company outside Denmark is invoiced without VAT (reverse charge) only with one.
 - private_subscriptions.currency: set at the first Checkout from the visitor's language; existing rows stay null and
   are read as DKK (every existing Privat customer paid in DKK).
+- invoices.tax_source: "stripe_tax" (Stripe Tax decided the VAT; amounts from Stripe's finalized invoice) or "manual".
 """
 import sqlalchemy as sa
 
@@ -22,8 +23,10 @@ depends_on = None
 def upgrade() -> None:
     op.add_column('billing_accounts', sa.Column('vat_number', sa.String(length=32), nullable=True))
     op.add_column('private_subscriptions', sa.Column('currency', sa.String(length=3), nullable=True))
+    op.add_column('invoices', sa.Column('tax_source', sa.String(length=16), nullable=True))
 
 
 def downgrade() -> None:
+    op.drop_column('invoices', 'tax_source')
     op.drop_column('private_subscriptions', 'currency')
     op.drop_column('billing_accounts', 'vat_number')

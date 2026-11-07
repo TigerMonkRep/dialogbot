@@ -9,6 +9,9 @@
   the current Checkout API and never supported Norway; and in the default "danish" mode every EU consumer pays the
   Danish rate, which an address-matched DK rate would not give a German address. So a fixed `tax_rates` entry is used.
   A rate of 0 (Norway before VOEC, countries outside the EU) means no tax rate on the line.
+- STRIPE_TAX_ENABLED=true: Stripe Tax decides instead (from the billing address Checkout collects): the session has
+  automatic_tax, the inline product the SaaS personal-use tax code, the price stays tax_behavior inclusive, and no
+  tax rates of ours are sent. The rules above then only shape the texts.
 """
 from __future__ import annotations
 
@@ -35,6 +38,41 @@ def currency(row_currency: str | None, locale: str | None) -> str:
     if row_currency in markets.CURRENCIES:
         return row_currency
     return markets.currency_for_locale(norm_locale(locale))
+
+
+TAX_CODE = "txcd_10103000"  # Stripe Tax: Software as a service (SaaS) - personal use
+
+
+def stripe_tax() -> bool:
+    return bool(get_settings().stripe_tax_enabled)
+
+
+def apply_tax(payload: dict, line: dict, locale: str | None) -> None:
+    """Put the VAT on a Checkout payload and its one line: Stripe Tax (automatic_tax + tax code) when enabled,
+    otherwise our one inclusive tax rate (if any)."""
+    if stripe_tax():
+        payload["automatic_tax"] = {"enabled": True}
+        payload.setdefault("billing_address_collection", "required")  # Stripe Tax needs the address
+        if "price_data" in line:
+            line["price_data"]["product_data"]["tax_code"] = TAX_CODE
+        if payload.get("customer"):
+            payload["customer_update"] = {"address": "auto", "name": "auto"}  # Checkout may save the address
+    elif rates := tax_rates(locale):
+        line["tax_rates"] = rates
+
+
+def text_rate(locale: str | None) -> int | None:
+    """The VAT rate the product text names; None with Stripe Tax (the rate is Stripe's: «inkl. moms» only)."""
+    return None if stripe_tax() else vat(locale).rate_bp
+
+
+def vat_text(rate_bp: int | None, locale: str | None) -> str:
+    da = norm_locale(locale) == "da"
+    if rate_bp is None:
+        return " inkl. moms" if da else " incl. VAT"
+    if not rate_bp:
+        return ""
+    return f" inkl. {pct(rate_bp, 'da')} % moms" if da else f" incl. {pct(rate_bp, 'en')} % VAT"
 
 
 def vat(locale: str | None) -> markets.Vat:

@@ -287,6 +287,11 @@ class Settings(BaseSettings):
     # True once Dialogbot is VOEC-registered in Norway (required above 50.000 NOK a year to Norwegian consumers):
     # Privat checkouts for Norway then carry 25 % Norwegian VAT. False = no VAT on Norwegian consumers.
     no_voec_registered: bool = Field(default=False, alias="NO_VOEC_REGISTERED")
+    # Stripe Tax (Stripe's automatic tax) decides all VAT when true: Erhverv invoices and Privat checkouts are sent with
+    # automatic_tax and SaaS tax codes, and no tax rates of our own. False = the manual rules in
+    # app/modules/billing/markets.py with fixed Stripe tax rates. Turn on only after Stripe Tax is activated in the
+    # Stripe account (docs/markets.md, "Stripe Tax setup") – Stripe rejects automatic_tax otherwise.
+    stripe_tax_enabled: bool = Field(default=False, alias="STRIPE_TAX_ENABLED")
     # Short invitation links people text from their own phone: <base><code>, resolved by the web route /i/{code}.
     privat_short_url_base: str = Field(default="https://dialogbot.app/i/", alias="PRIVAT_SHORT_URL_BASE")
     privat_group_url_base: str = Field(default="https://dialogbot.app/g/", alias="PRIVAT_GROUP_URL_BASE")

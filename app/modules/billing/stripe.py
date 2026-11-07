@@ -9,6 +9,9 @@
   company outside the EU no tax rate and the outside-EU note (footer + custom field). The Stripe customer carries the
   company's language and its VAT number as a customer tax id (eu_vat / no_vat), so Stripe prints it on the invoice.
   An EU company outside Denmark without a VAT number cannot save a card or be invoiced (409 vat_number_required).
+- STRIPE_TAX_ENABLED=true: Stripe Tax decides the VAT instead – the invoice has automatic_tax, every item the SaaS
+  business tax code and tax_behavior exclusive, no tax rates and no note of ours (Stripe prints reverse charge itself
+  from the customer's address and tax id); the Invoice row takes net/tax/gross from Stripe's finalized invoice.
 - Stripe webhooks (signed) move our invoice row to paid / payment_failed / void.
 - Payment never starts calls: nothing in campaigns or telephony reads payment state.
 
@@ -121,7 +124,7 @@ def ensure_customer(db: OrmSession, ws: Workspace, email: str | None) -> Billing
         p = db.get(BusinessProfile, ws.id)
         data: dict = {"name": (p.legal_name if p and p.legal_name else ws.name)[:200],
                       "email": a.billing_email or email, "preferred_locales": [customer_market.stripe_locale(country)],
-                      "metadata": {"workspace_id": str(ws.id)}}
+                      "address": customer_market.stripe_address(db, ws.id), "metadata": {"workspace_id": str(ws.id)}}
         if tax_id := customer_market.stripe_tax_id(country, a.vat_number):
             data["tax_id_data"] = [tax_id]
         c = request("POST", "/customers", data, idempotency_key=f"dialogbot-customer-{ws.id}")
@@ -135,12 +138,14 @@ def ensure_customer(db: OrmSession, ws: Workspace, email: str | None) -> Billing
 
 def sync_customer(db: OrmSession, a: BillingAccount) -> None:
     """Idempotent: the customer's preferred language follows the company's country, and its VAT customer tax id is
-    exactly the account's VAT number (an old eu_vat/no_vat id is removed when the number changes or is cleared)."""
+    exactly the account's VAT number (an old eu_vat/no_vat id is removed when the number changes or is cleared), and
+    its address is the company's (Stripe Tax needs it)."""
     if not a.stripe_customer_id:
         return
     country = customer_market.country_of(db, a.workspace_id)
     cid = a.stripe_customer_id
-    request("POST", f"/customers/{cid}", {"preferred_locales": [customer_market.stripe_locale(country)]})
+    request("POST", f"/customers/{cid}", {"preferred_locales": [customer_market.stripe_locale(country)],
+                                          "address": customer_market.stripe_address(db, a.workspace_id)})
     want = customer_market.stripe_tax_id(country, a.vat_number)
     have = False
     for t in request("GET", f"/customers/{cid}/tax_ids", {"limit": 100}).get("data") or []:
@@ -249,28 +254,54 @@ def create_invoice(db: OrmSession, ws: Workspace, month: date, tz: str) -> Invoi
                   tax_minor=st["totals"]["tax_minor"], gross_minor=st["totals"]["gross_minor"], lines=st["lines"])
     db.add(inv)
     db.flush()  # the unique (workspace, month) row reserves the month before Stripe is called
-    if vat["kind"] != "domestic":
-        sync_customer(db, a)  # the VAT number (customer tax id) must be on the customer before the invoice is final
+    auto_tax = customer_market.stripe_tax_enabled()
+    if auto_tax or vat["kind"] != "domestic":
+        sync_customer(db, a)  # address and VAT number (customer tax id) on the customer before the invoice is final
     key = f"dialogbot-invoice-{ws.id}-{month:%Y-%m}"
     label = st["month"]
     data: dict = {
         "customer": a.stripe_customer_id, "collection_method": "charge_automatically", "auto_advance": True,
         "currency": currency.lower(), "pending_invoice_items_behavior": "exclude",
         "description": f"Dialogbot {label}", "footer": INVOICE_FOOTER, "metadata": {"workspace_id": str(ws.id), "month": label}}
-    if vat["rate_bp"] > 0:
+    if auto_tax:
+        data["automatic_tax"] = {"enabled": True}  # Stripe Tax: rate, reverse charge and its note are Stripe's
+    elif vat["rate_bp"] > 0:
         data["default_tax_rates"] = [tax_rate_id(vat["country"], vat["rate_bp"], False)]
-    if vat.get("note"):  # reverse charge / outside the EU: no VAT, and the invoice must say why
+    if vat.get("note") and not auto_tax:  # reverse charge / outside the EU: no VAT, and the invoice must say why
         data["footer"] = f"{INVOICE_FOOTER}\n{vat['note']}"
         data["custom_fields"] = [{"name": "VAT", "value": vat["note"][:140]}]
     si = request("POST", "/invoices", data, idempotency_key=key)
     for i, line in enumerate(st["lines"]):
-        request("POST", "/invoiceitems", {"customer": a.stripe_customer_id, "invoice": si["id"], "currency": currency.lower(),
-                                          "amount": line["net_minor"], "description": line["description"][:500],
-                                          "metadata": {"kind": line["kind"]}},
-                idempotency_key=f"{key}-line-{i}")
+        item = {"customer": a.stripe_customer_id, "invoice": si["id"], "currency": currency.lower(),
+                "amount": line["net_minor"], "description": line["description"][:500], "metadata": {"kind": line["kind"]}}
+        if auto_tax:
+            item |= {"tax_code": customer_market.TAX_CODE_ERHVERV, "tax_behavior": "exclusive"}
+        request("POST", "/invoiceitems", item, idempotency_key=f"{key}-line-{i}")
     fin = request("POST", f"/invoices/{si['id']}/finalize", {"auto_advance": True}, idempotency_key=f"{key}-finalize")
+    inv.tax_source = "stripe_tax" if auto_tax else "manual"
+    if auto_tax:
+        _amounts_from_stripe(inv, fin)
     apply_stripe_invoice(inv, fin)
     return inv
+
+
+def _amounts_from_stripe(inv: Invoice, obj: dict) -> None:
+    """With Stripe Tax the charged amounts are Stripe's: net = total_excluding_tax, tax = Σ total_taxes (older API
+    versions: `tax`), gross = total."""
+    total = obj.get("total")
+    if total is None:
+        return
+    taxes = obj.get("total_taxes")
+    if isinstance(taxes, list):
+        tax = sum(int(t.get("amount") or 0) for t in taxes)
+    elif obj.get("tax") is not None:
+        tax = int(obj["tax"])
+    else:
+        tax = int(total) - int(obj.get("total_excluding_tax") or total)
+    net = obj.get("total_excluding_tax")
+    inv.gross_minor = int(total)
+    inv.tax_minor = tax
+    inv.net_minor = int(net) if net is not None else int(total) - tax
 
 
 STATUS = {"draft": "creating", "open": "open", "paid": "paid", "void": "void", "uncollectible": "failed"}
@@ -405,6 +436,6 @@ def _commission(db: OrmSession, inv: Invoice, was: str, kind: str, obj: dict) ->
 
 def invoice_out(i: Invoice) -> dict:
     return {"id": str(i.id), "month": i.month.strftime("%Y-%m"), "status": i.status, "number": i.number,
-            "currency": i.currency, "net_minor": i.net_minor, "tax_minor": i.tax_minor, "gross_minor": i.gross_minor,
+            "currency": i.currency, "tax_source": i.tax_source, "net_minor": i.net_minor, "tax_minor": i.tax_minor, "gross_minor": i.gross_minor,
             "hosted_invoice_url": i.hosted_invoice_url, "invoice_pdf": i.invoice_pdf, "note": i.note,
             "created_at": i.created_at.isoformat()}

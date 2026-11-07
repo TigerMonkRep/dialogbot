@@ -371,6 +371,37 @@ def test_checkout_in_the_visitors_currency_and_language(api, pv, db, monkeypatch
     assert "price" not in _sessions(sent)[-1]["line_items"][0]
 
 
+def test_checkout_with_stripe_tax(api, pv, db, monkeypatch):
+    """STRIPE_TAX_ENABLED: automatic_tax and the SaaS personal-use tax code, no tax rates of ours, the address is
+    collected (and may be saved on an existing customer)."""
+    _stripe_env(monkeypatch)
+    monkeypatch.setenv("STRIPE_TAX_ENABLED", "true")
+    get_settings.cache_clear()
+    sent = _fake_checkout(monkeypatch)
+    tok = pv.account("hans@testmail.dk", trial=False)
+    ws = pv.ws(tok)
+    api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "de"})
+    d = _sessions(sent)[-1]
+    line = d["line_items"][0]
+    assert d["automatic_tax"] == {"enabled": True} and d["billing_address_collection"] == "required"
+    assert line["price_data"]["tax_behavior"] == "inclusive" and "tax_rates" not in line
+    assert line["price_data"]["product_data"]["tax_code"] == "txcd_10103000"
+    assert line["price_data"]["product_data"]["description"] == "€13.49 per month incl. VAT · 10 calls a month"
+    assert "customer_update" not in d and not [x for x in sent if x[1] == "/tax_rates"]
+    row = db.get(PrivateSubscription, ws)
+    row.stripe_customer_id = "cus_hans"
+    db.commit()
+    api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "locale": "de"})
+    d = _sessions(sent)[-1]
+    assert d["customer"] == "cus_hans" and d["customer_update"] == {"address": "auto", "name": "auto"}
+    api.post(tok, "/privat/credits/checkout", {"locale": "da"})
+    d = _sessions(sent)[-1]
+    assert d["mode"] == "payment" and d["automatic_tax"] == {"enabled": True}
+    assert d["line_items"][0]["price_data"]["product_data"]["tax_code"] == "txcd_10103000"
+    assert "tax_rates" not in d["line_items"][0] and d["billing_address_collection"] == "required"
+    assert d["line_items"][0]["price_data"]["product_data"]["description"] == "€3.99 inkl. moms"  # the row is EUR now
+
+
 def test_a_dkk_customer_stays_dkk(api, pv, db, monkeypatch):
     _stripe_env(monkeypatch)
     sent = _fake_checkout(monkeypatch)

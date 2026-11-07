@@ -84,7 +84,7 @@ def test_card_invoice_and_webhooks(api, client, two_workspaces, db, monkeypatch)
     fake = FakeStripe()
     fake.ws = ws
     monkeypatch.setattr(stripe, "request", fake)
-    monkeypatch.setattr(stripe, "_tax_rate_id", None)
+    monkeypatch.setattr(stripe, "_tax_rate_ids", {})
     # only the owner handles cards; admins can read
     admin = api.add_member(tok, ws, "admin-bill@testmail.dk", "admin")
     assert api.post(admin, f"/workspaces/{ws}/billing/card/checkout").status_code == 403

@@ -125,7 +125,7 @@ def test_inbound_minutes_above_the_included_300_are_charged(api, two_workspaces,
     inbound = [x for x in sep["lines"] if x["kind"] == "inbound_minutes"][0]
     assert (inbound["minutes"], inbound["extra_minutes"]) == (303, 3)
     assert inbound["net_minor"] == 3 * prices.INBOUND_EXTRA_MINUTE_NET_MINOR == 450  # 1,50 kr. per extra minute
-    assert "3 min ekstra à 1,50 kr." in inbound["description"]
+    assert "3 min ekstra à 1,50\u00a0kr." in inbound["description"]  # markets.fmt: a no-break space before kr.
     assert sep["totals"]["net_minor"] == 249_500 + 450
     # a month without inbound calls has no inbound line at all
     oct_lines = api.get(tok, f"/workspaces/{ws}/billing/statement?month=2026-10").json()["lines"]

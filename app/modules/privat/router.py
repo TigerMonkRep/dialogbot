@@ -10,9 +10,10 @@ from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
 from app.core.auth import Principal, get_current_principal
-from app.core.errors import NotFound, Unauthenticated
+from app.core.errors import NotFound, Unauthenticated, ValidationFailed
 from app.core.idempotency import IdempotencyGuard, scope_for
 from app.db import get_db
+from app.modules.billing import markets
 from app.modules.privat import (
     addons,
     calls,
@@ -22,6 +23,7 @@ from app.modules.privat import (
     invites,
     ledger,
     lookup_limits,
+    market,
     payments,
     phone,
     places,
@@ -72,6 +74,14 @@ class SubscriptionCheckoutIn(BaseModel):
     plan: str = Field(pattern="^(basis|plus|familie)$")
     interval: str = Field(default="month", pattern="^(month|year)$")
     code: str | None = Field(default=None, max_length=40, description="rabatkode (valgfri)")
+    locale: str | None = Field(default=None, pattern=market.LOCALE_PATTERN,
+                               description="sidens sprog (da, en, de, es, fr, it, no, sv): Checkout-sprog og – for en "
+                                           "kunde uden valuta endnu – valutaen. Tom = da.")
+
+
+class CreditsCheckoutIn(BaseModel):
+    locale: str | None = Field(default=None, pattern=market.LOCALE_PATTERN,
+                               description="sidens sprog: Checkout-sprog og valuta (kundens abonnementsvaluta vinder)")
 
 
 class ItemIn(BaseModel):
@@ -142,13 +152,19 @@ def bootstrap(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(g
 # --------------------------------------------------------------------------- subscription
 
 @router.get("/subscription")
-def subscription(session_id: str | None = Query(default=None, max_length=200), ctx: PrivateCtx = Depends(private_ctx),
-                 db: OrmSession = Depends(get_db)):
+def subscription(session_id: str | None = Query(default=None, max_length=200),
+                 currency: str | None = Query(default=None, max_length=3,
+                                              description="DKK, SEK, NOK eller EUR: planernes priser for en kunde uden "
+                                                          "valuta endnu (en kunde beholder sin)"),
+                 ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
     """The trial / plan and this month's call quota. With ?session_id= (back from Stripe Checkout) the session is read
-    from Stripe first, so the page is right before the webhook lands."""
+    from Stripe first, so the page is right before the webhook lands. `currency` and `plans` are in the customer's
+    currency if it has one, else ?currency=, else DKK."""
+    if currency is not None and currency.upper() not in markets.CURRENCIES:
+        raise ValidationFailed("Ukendt valuta", field_errors=[{"field": "currency", "message": "DKK, SEK, NOK eller EUR"}])
     if session_id:
         subscriptions.sync_from_session(db, ctx, session_id)
-    out = subscriptions.subscription_out(db, ctx.ws_id)
+    out = subscriptions.subscription_out(db, ctx.ws_id, currency.upper() if currency else None)
     db.commit()
     return out
 
@@ -157,7 +173,7 @@ def subscription(session_id: str | None = Query(default=None, max_length=200), c
 def subscription_checkout(body: SubscriptionCheckoutIn, ctx: PrivateCtx = Depends(private_ctx),
                           db: OrmSession = Depends(get_db)):
     """Stripe Checkout (mode=subscription). The plan becomes active through the webhook / the return sync."""
-    url = subscriptions.checkout(db, ctx, plan=body.plan, interval=body.interval, code=body.code)
+    url = subscriptions.checkout(db, ctx, plan=body.plan, interval=body.interval, code=body.code, locale=body.locale)
     db.commit()
     return {"url": url}
 
@@ -739,6 +755,8 @@ def phone_verify(body: PhoneVerifyIn, ctx: PrivateCtx = Depends(private_ctx), db
 
 
 @router.post("/credits/checkout")
-def credits_checkout(ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
-    """Stripe Checkout (mode=payment): 10 credits, 29 kr. incl. moms. Credits arrive with the webhook."""
-    return {"url": payments.checkout(db, ctx)}
+def credits_checkout(body: CreditsCheckoutIn | None = None, ctx: PrivateCtx = Depends(private_ctx),
+                     db: OrmSession = Depends(get_db)):
+    """Stripe Checkout (mode=payment): 10 credits, 29 kr. incl. moms (or the currency's price, markets.PRIVAT_CREDIT_PACK).
+    Credits arrive with the webhook."""
+    return {"url": payments.checkout(db, ctx, locale=body.locale if body else None)}

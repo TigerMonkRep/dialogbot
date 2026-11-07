@@ -8,6 +8,7 @@ import { Ico } from "@/components/privat/icons";
 import { PublicPlans } from "@/components/privat/plans-public";
 import { InstallApp } from "@/components/install-app";
 import { Mark, Tilted } from "@/components/mark";
+import { AudienceMemory } from "@/components/audience-memory";
 import { getRaw, getT } from "@/i18n/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -45,6 +46,7 @@ export default async function PrivatLanding() {
 
   return (
     <div data-theme="privat" className="min-h-dvh flex flex-col bg-paper text-ink">
+      <AudienceMemory audience="privat" />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-full focus:bg-ink focus:text-white">{tc("chrome.skip")}</a>
       <header className="border-b-2 border-ink bg-paper">
         <div className={`${WRAP} min-h-[72px] py-3 flex flex-wrap items-center gap-3`}>

@@ -9,7 +9,7 @@ import {
 // Public pages hidden behind the temporary preview page while PREVIEW_GATE=on.
 const GATED = new Set(["/", "/erhverv", "/proev", "/byggevejledning", "/signup"]);
 
-/** The door a visitor chose. Set (1 year, lax, readable by the page) when they open /erhverv or /privat – also when
+/** The door a visitor chose. Set (1 year, lax, readable by the page) when they open /erhverv or /privat (full loads here, client navigations via <AudienceMemory/>) – also when
  *  they click a Trin-2 panel on the entry page, since the panels link to those two pages. While it is set, "/" sends
  *  them straight to their door. "/?aud=reset" clears it and shows the entry page again (bots and first-time visitors
  *  have no cookie and always see the entry). Not a secret, not personal data: one of two words. */
@@ -38,7 +38,18 @@ function remember(res: NextResponse, locale: Locale): NextResponse {
   return res;
 }
 
-function rememberAudience(res: NextResponse, audience: "erhverv" | "privat"): NextResponse {
+/** A link prefetch is not a visit: the entry page prefetches both doors, and the last prefetch to land must not become
+ *  the remembered audience. Next strips its `rsc`/`next-router-prefetch` headers before the proxy runs, so the only
+ *  reliable signal is the browser's own: a full document load has `sec-fetch-dest: document`; prefetches and client
+ *  navigations are `empty`. Those are remembered by <AudienceMemory/> on the page itself, which only runs once the page
+ *  is actually shown. Requests without the header (bots, curl) count as visits. */
+function isDocumentLoad(req: NextRequest): boolean {
+  const dest = req.headers.get("sec-fetch-dest");
+  return dest === null || dest === "document";
+}
+
+function rememberAudience(req: NextRequest, res: NextResponse, audience: "erhverv" | "privat"): NextResponse {
+  if (!isDocumentLoad(req)) return res;
   res.cookies.set(AUDIENCE_COOKIE, audience, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
   return res;
 }
@@ -97,7 +108,7 @@ export async function proxy(req: NextRequest) {
     let res = NextResponse.rewrite(new URL(rest + search, req.url), { request: { headers: h } });
     if (gateEnabled() && GATED.has(rest)) res.headers.set("cache-control", "private, no-store");
     if (rest === "/") res = entryResponse(req, res);
-    if (rest === "/erhverv") rememberAudience(res, "erhverv");
+    if (rest === "/erhverv") rememberAudience(req, res, "erhverv");
     return remember(res, urlLocale);
   }
 
@@ -137,7 +148,7 @@ export async function proxy(req: NextRequest) {
   // redirected to /login. They are not localized marketing pages (language = cookie). Pages that depend on the
   // session are never cached by a shared cache.
   if (isPrivatPath(pathname) && pathname !== "/privat") res.headers.set("cache-control", "no-store, private");
-  if (pathname === "/privat") rememberAudience(res, "privat");
+  if (pathname === "/privat") rememberAudience(req, res, "privat");
   // Gated pages vary by cookie; never let a shared cache serve them to someone without access.
   if (gateEnabled() && GATED.has(pathname)) res.headers.set("cache-control", "private, no-store");
   return res;

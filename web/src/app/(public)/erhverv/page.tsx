@@ -9,6 +9,7 @@ import { ArrowIcon, CalendarIcon, ChatIcon, CheckIcon, PhoneIcon, PlayIcon, Send
 import { ApprovalScreenshot } from "@/components/approval-screenshot";
 import { ProofSection } from "@/components/proof-section";
 import { ReferralBanner } from "@/components/referral-banner";
+import { AudienceMemory } from "@/components/audience-memory";
 import { Mark, ShortArrow, Tilted } from "@/components/mark";
 import { SITE_NAME, SITE_URL, alternatesFor, openGraphFor } from "@/lib/site";
 import { getLocale, getRaw, getT } from "@/i18n/server";
@@ -105,6 +106,7 @@ export default async function Home() {
     <SiteChrome compactFooter={false}>
       <Script id="travelpayouts-drive" strategy="afterInteractive" data-cmp-ab="2">{TRAVELPAYOUTS_DRIVE}</Script>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(t, HTML_LANG[locale], locale)) }} />
+      <AudienceMemory audience="erhverv" />
       <ReferralBanner />
 
       {/* 1. HERO: what it is, in one sentence – and the video that explains it */}

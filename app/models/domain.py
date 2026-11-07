@@ -1046,6 +1046,9 @@ class BillingAccount(Base):
     card_last4: Mapped[str | None] = mapped_column(String(4))
     card_exp: Mapped[str | None] = mapped_column(String(5))
     billing_email: Mapped[str | None] = mapped_column(String(320))
+    # The company's VAT number, normalised ("SE556677889901", "EL123456789", "123456789MVA"). An EU company outside
+    # Denmark is invoiced without VAT (reverse charge) only with one (app/modules/billing/markets.py).
+    vat_number: Mapped[str | None] = mapped_column(String(32))
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = ts_now()
 

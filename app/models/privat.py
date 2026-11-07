@@ -343,6 +343,9 @@ class PrivateSubscription(Base):
     trial_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     current_period_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     cancel_at_period_end: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    # DKK / SEK / NOK / EUR: set at the first Checkout (from the visitor's language) and kept from then on – a
+    # customer keeps the currency it subscribed in. Null = never been to Checkout (shown in DKK unless asked).
+    currency: Mapped[str | None] = mapped_column(String(3))
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = ts_now()
 

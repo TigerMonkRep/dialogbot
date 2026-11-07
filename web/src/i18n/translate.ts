@@ -1,4 +1,5 @@
 import type { Locale } from "./config";
+import { priceVars } from "@/lib/markets";
 
 export type Messages = Record<string, unknown>;
 export type Vars = Record<string, string | number>;
@@ -24,19 +25,38 @@ export function format(template: string, vars?: Vars): string {
   });
 }
 
+/** The default variables of a language: the market's price tokens ({pMonthly}, {pBasis} …, see lib/markets.ts). */
+export function defaultVars(locale?: Locale): Vars | undefined {
+  return locale ? priceVars(locale) : undefined;
+}
+
 /** A translator over `messages` (the current locale) with Danish as fallback; a missing key shows the key itself so
- *  it is visible, never an empty string. */
-export function makeT(messages: Messages, fallback: Messages, prefix?: string): T {
+ *  it is visible, never an empty string. With a `locale`, the market's price tokens are filled in automatically
+ *  (variables passed by the caller win). */
+export function makeT(messages: Messages, fallback: Messages, prefix?: string, locale?: Locale): T {
+  const defaults = defaultVars(locale);
   return (key, vars) => {
     const full = prefix ? `${prefix}.${key}` : key;
     const v = lookup(messages, full) ?? lookup(fallback, full);
-    return typeof v === "string" ? format(v, vars) : full;
+    return typeof v === "string" ? format(v, defaults ? { ...defaults, ...vars } : vars) : full;
   };
 }
 
-/** Raw (non-string) values: arrays and objects such as lists of features. */
-export function makeRaw(messages: Messages, fallback: Messages) {
-  return <V = unknown>(key: string): V => (lookup(messages, key) ?? lookup(fallback, key)) as V;
+function formatDeep(x: unknown, vars: Vars): unknown {
+  if (typeof x === "string") return x.includes("{") ? format(x, vars) : x;
+  if (Array.isArray(x)) return x.map((v) => formatDeep(v, vars));
+  if (x && typeof x === "object") return Object.fromEntries(Object.entries(x).map(([k, v]) => [k, formatDeep(v, vars)]));
+  return x;
+}
+
+/** Raw (non-string) values: arrays and objects such as lists of features. With a `locale`, price tokens inside the
+ *  strings are filled in too. */
+export function makeRaw(messages: Messages, fallback: Messages, locale?: Locale) {
+  const defaults = defaultVars(locale);
+  return <V = unknown>(key: string): V => {
+    const v = lookup(messages, key) ?? lookup(fallback, key);
+    return (defaults ? formatDeep(v, defaults) : v) as V;
+  };
 }
 
 export function numberFormat(locale: Locale) {

@@ -8,6 +8,7 @@ export type Lead = {
 export type TaskItem = { id: string; lead_id: string | null; title: string; status: string; due_at: string | null; assignee_user_id: string | null; created_at: string; completed_at: string | null };
 
 import type { T } from "@/i18n/translate";
+import { currencyOr, formatMoney } from "@/lib/markets";
 
 /** Status → pill class; labels are `app.leads.qual.<k>`, `app.leads.pipe.<k>`, `app.leads.bill.<k>`, `app.leads.source.<k>`. */
 export const QUAL: Record<string, string> = {
@@ -24,8 +25,9 @@ export const BILL: Record<string, string> = {
 const SOURCES = ["webchat", "phone", "manual", "campaign"];
 export const sourceLabel = (t: T, s: string) => (SOURCES.includes(s) ? t(`leads.source.${s}`) : s);
 
-/** Whole øre → "4,00 kr." (number in the viewer's language; the currency stays kr.). `lang` is a BCP-47 tag (HTML_LANG). */
-export const kr = (minor: number, lang = "da") => `${(minor / 100).toLocaleString(lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kr.`;
+/** Minor units → "4,00 kr." (da/DKK) · "€0.55" (en/EUR): the viewer's language, the agreement's currency (DKK when the
+ *  backend does not say). `lang` is a BCP-47 tag (HTML_LANG). */
+export const kr = (minor: number, lang = "da", currency?: string | null) => formatMoney(minor, currencyOr(currency), lang);
 export const when = (iso: string, lang = "da") => new Date(iso).toLocaleString(lang, { dateStyle: "short", timeStyle: "short" });
 
 /** "tirsdag 29.9. kl. 08.00–12.00" in the viewer's locale time zone. */

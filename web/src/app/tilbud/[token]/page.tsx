@@ -6,11 +6,14 @@ import { isLoggedIn } from "@/lib/api.server";
 import { Icon } from "@/components/ui";
 import { AuthFrame } from "@/components/auth-frame";
 import { AcceptOffer } from "./accept";
+import { currencyOr, formatPrice } from "@/lib/markets";
 
 type Offer = {
   company: string; package: string; setup_kind: string; setup_text: string; status: string; valid_until: string; terms_version: string; notice: string;
   monthly_net_minor: number; monthly_vat_minor: number; setup_net_minor: number; setup_vat_minor: number;
   campaign_call_net_minor: number; campaign_minute_net_minor: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number;
+  /** The offer's currency (DKK when the backend does not say). */
+  currency?: string;
 };
 const STATUSES = new Set(["accepted", "expired", "cancelled", "draft"]);
 
@@ -19,9 +22,9 @@ export default async function OfferPage({ params }: { params: Promise<{ token: s
   const { token } = await params;
   const t = await getT("auth");
   const lang = HTML_LANG[await getLocale()];
-  const kr = (minor: number) => `${(minor / 100).toLocaleString(lang, { minimumFractionDigits: minor % 100 ? 2 : 0, maximumFractionDigits: 2 })} kr.`;
   const r = await fetch(`${API_BASE_URL}/api/v1/public/offers/${encodeURIComponent(token)}`, { cache: "no-store" });
   const o: Offer | null = r.ok ? await r.json() : null;
+  const kr = (minor: number) => formatPrice(minor, currencyOr(o?.currency), lang);
   const loggedIn = await isLoggedIn();
   const next = `/tilbud/${token}`;
   return (

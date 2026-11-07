@@ -27,6 +27,11 @@ export const PRIVAT_TRIAL_DAYS = P.privatTrialDays;
 /** Danish VAT, included in every Privat price (prices.py TAX_BASIS_POINTS). */
 export const PRIVAT_VAT_BP = 2500;
 
+/** EU member states (ISO 3166-1 alpha-2), as in markets.py EU_VAT_BP. An Erhverv customer in one of these other than
+ *  DK is invoiced without VAT (reverse charge) and must give a VAT number. */
+export const EU_COUNTRIES: readonly string[] = ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE",
+  "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK"];
+
 export function isCurrency(v: unknown): v is Currency {
   return typeof v === "string" && (CURRENCIES as readonly string[]).includes(v);
 }
@@ -70,6 +75,12 @@ function house(s: string, lang: string): string {
 export function formatPrice(minor: number, currency: Currency, locale: Locale | string = "da"): string {
   const lang = langOf(locale);
   return house(nf(lang, currency, minor % 100 !== 0).format(minor / 100), lang);
+}
+
+/** Statements and invoices: always two decimals – "4,00 kr." (da/DKK) · "€0.55" (en/EUR) · "3 695,00 kr" (sv/SEK). */
+export function formatMoney(minor: number, currency: Currency, locale: Locale | string = "da"): string {
+  const lang = langOf(locale);
+  return house(nf(lang, currency, true).format(minor / 100), lang);
 }
 
 /** The amount without the currency: 249500 → "2.495" (da) · "2,495" (en). For big price figures with the unit beside. */

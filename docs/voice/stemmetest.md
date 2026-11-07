@@ -35,7 +35,7 @@ Direkte genkendelse på afspillet lyd kører gennem de samme adaptere (`app/modu
 | B | Vapi + Speechmatics (native) | ukendt, Vapi vælger | Vapi |
 | C | Direkte Realtime, model eksplicit | `enhanced` | Speechmatics `EndOfUtterance` / replay (`ForceEndOfUtterance`) |
 | D | Direkte Agent STT | `linden-1` | Speechmatics VAD `EndOfTurn` / replay (`external`) |
-| E | Direkte Soniox | `stt-rt-v5` | Soniox `<end>` / replay (`finalize` → `<fin>`) |
+| E | Direkte Soniox | som broen: `SONIOX_MODEL`, ellers `stt-rt-v5` (`STEMMETEST_SONIOX_MODEL` overstyrer kun replayet) | Soniox `<end>` / replay (`finalize` → `<fin>`) |
 | F | Direkte ElevenLabs STT | `scribe_v2_realtime` | lokal regel (VAD-commit) / replay (manuel commit) |
 
 **C+ er ikke en separat profil:** C sender allerede `enhanced` eksplicit med samme opsætning (SDK'ens standard er desuden `enhanced`), så C+ ville være en dobbeltkørsel. Det anmodede og det af udbyderen rapporterede modelnavn gemmes i hver kørsel; hvor udbyderen intet rapporterer (Speechmatics, Soniox), står den bagvedliggende version som *ukendt*.

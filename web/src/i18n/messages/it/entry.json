@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – un assistente che risponde al telefono: per la tua azienda e per te",
-    "description": "Dialogbot risponde in danese, 24 ore su 24, prenota appuntamenti nel tuo calendario e telefona per te quando glielo chiedi. Approvi tutto prima che entri in vigore. Per le aziende da 2.495 DKK/mese – per te a casa da 49 DKK/mese.",
+    "description": "Dialogbot risponde in italiano, 24 ore su 24, prenota appuntamenti nel tuo calendario e telefona per te quando glielo chiedi. Approvi tutto prima che entri in vigore. Per le aziende da 2.495 DKK/mese – per te a casa da 49 DKK/mese.",
     "ogTitle": "Un assistente che risponde al telefono – per la tua azienda e per te"
   },
   "nav": {
@@ -22,7 +22,7 @@
       "mark": "risponde al telefono",
       "after": " – per la tua azienda e per te."
     },
-    "lead": "Dialogbot risponde in danese, 24 ore su 24, prenota appuntamenti nel tuo calendario e telefona per te quando glielo chiedi. Approvi tutto prima che entri in vigore.",
+    "lead": "Dialogbot risponde in italiano, 24 ore su 24, prenota appuntamenti nel tuo calendario e telefona per te quando glielo chiedi. Approvi tutto prima che entri in vigore.",
     "cta": "Provalo – ti chiama lui",
     "watch": "Guarda come",
     "note": "2 minuti. Nessuna registrazione, nessuna carta.",
@@ -50,7 +50,7 @@
     "label": "Cosa ottieni",
     "facts": [
       {
-        "title": "In danese",
+        "title": "In italiano",
         "text": "Con una voce che scegli tu"
       },
       {
@@ -171,7 +171,7 @@
     "tiles": [
       {
         "title": "Risponde al telefono",
-        "text": "24 ore su 24, in danese. Dice onestamente di essere un assistente digitale se il cliente lo chiede."
+        "text": "24 ore su 24, in italiano. Dice onestamente di essere un assistente digitale se il cliente lo chiede."
       },
       {
         "title": "Prenota appuntamenti",

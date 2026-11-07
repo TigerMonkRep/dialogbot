@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – en assistent som svarar i telefon: för ditt företag och för dig",
-    "description": "Dialogbot svarar på danska, dygnet runt, bokar tider i din kalender och ringer åt dig när du ber om det. Du godkänner allt innan det gäller. För företag från 2 495 DKK/mån – för dig hemma från 49 DKK/mån.",
+    "description": "Dialogbot svarar på svenska, dygnet runt, bokar tider i din kalender och ringer åt dig när du ber om det. Du godkänner allt innan det gäller. För företag från 2 495 DKK/mån – för dig hemma från 49 DKK/mån.",
     "ogTitle": "En assistent som svarar i telefon – för ditt företag och för dig"
   },
   "nav": {
@@ -22,7 +22,7 @@
       "mark": "svarar i telefon",
       "after": " – för ditt företag och för dig."
     },
-    "lead": "Dialogbot svarar på danska, dygnet runt, bokar tider i din kalender och ringer åt dig när du ber om det. Du godkänner allt innan det gäller.",
+    "lead": "Dialogbot svarar på svenska, dygnet runt, bokar tider i din kalender och ringer åt dig när du ber om det. Du godkänner allt innan det gäller.",
     "cta": "Prova den – den ringer dig",
     "watch": "Se hur",
     "note": "2 minuter. Ingen registrering, inget kort.",
@@ -50,7 +50,7 @@
     "label": "Det får du",
     "facts": [
       {
-        "title": "På danska",
+        "title": "På svenska",
         "text": "Med en röst du väljer själv"
       },
       {
@@ -171,7 +171,7 @@
     "tiles": [
       {
         "title": "Svarar i telefon",
-        "text": "Dygnet runt, på danska. Säger ärligt att den är en digital assistent om kunden frågar."
+        "text": "Dygnet runt, på svenska. Säger ärligt att den är en digital assistent om kunden frågar."
       },
       {
         "title": "Bokar tider",

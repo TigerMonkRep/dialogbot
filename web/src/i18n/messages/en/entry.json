@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Dialogbot – one assistant that answers the phone: for your business and for you",
-    "description": "Dialogbot answers in Danish, around the clock, books appointments in your calendar and makes calls for you when you ask. You approve everything before it takes effect. For businesses from DKK 2,495/month – for you at home from DKK 49/month.",
+    "description": "Dialogbot answers in English, around the clock, books appointments in your calendar and makes calls for you when you ask. You approve everything before it takes effect. For businesses from DKK 2,495/month – for you at home from DKK 49/month.",
     "ogTitle": "One assistant that answers the phone – for your business and for you"
   },
   "nav": {
@@ -22,7 +22,7 @@
       "mark": "answers the phone",
       "after": " – for your business and for you."
     },
-    "lead": "Dialogbot answers in Danish, around the clock, books appointments in your calendar and makes calls for you when you ask. You approve everything before it takes effect.",
+    "lead": "Dialogbot answers in English, around the clock, books appointments in your calendar and makes calls for you when you ask. You approve everything before it takes effect.",
     "cta": "Try it – it calls you",
     "watch": "See how",
     "note": "2 minutes. No sign-up, no card.",
@@ -50,7 +50,7 @@
     "label": "What you get",
     "facts": [
       {
-        "title": "In Danish",
+        "title": "In English",
         "text": "With a voice you choose yourself"
       },
       {
@@ -171,7 +171,7 @@
     "tiles": [
       {
         "title": "Answers the phone",
-        "text": "Around the clock, in Danish. Says honestly that it is a digital assistant if the customer asks."
+        "text": "Around the clock, in English. Says honestly that it is a digital assistant if the customer asks."
       },
       {
         "title": "Books appointments",

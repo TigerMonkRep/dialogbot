@@ -286,11 +286,13 @@ export function usePlan(): PlanView {
   const { subscription: sb, balance: b } = usePrivat();
   const locale = useLocale();
   return useMemo(() => {
-    // The backend's plans when it says which currency they are in; an older backend (no `currency`) sends DKK, which
-    // only fits the Danish market – everyone else gets their market's list prices.
+    // A paying customer (a chosen plan) sees the backend's plans in the subscription's own currency – they keep the
+    // market they bought in. Everyone else sees the market of the page's language; the backend's plans are used then
+    // only when they are in that currency (an older backend without `currency` sends DKK).
     const market = currencyFor(locale);
-    const sbCurrency = sb?.currency ? currencyOr(sb.currency) : sb?.plans?.length ? "DKK" : null;
-    const useApi = !!sb?.plans?.length && (sb.currency ? true : sbCurrency === market);
+    const sbCurrency = sb?.plans?.length ? currencyOr(sb.currency) : null;
+    const paying = !!sb && sb.plan !== "none" && !!sb.currency;
+    const useApi = !!sbCurrency && (paying || sbCurrency === market);
     const currency: Currency = useApi && sbCurrency ? sbCurrency : market;
     const plans: Plan[] = useApi ? sb!.plans : apiPlans(market) as Plan[];
     const fmt = (minor: number) => formatPrice(minor, currency, locale);

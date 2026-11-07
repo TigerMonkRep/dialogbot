@@ -114,6 +114,7 @@ from app.models.privat import (  # noqa: F401, E402
     PrivateTaskMember,
     PushSubscription,
 )
+from app.models.public_api import KEY_PREFIXES, ApiKey, WebhookEndpoint  # noqa: F401
 from app.models.sales import (  # noqa: F401
     CallRecording,
     SalesBlockList,

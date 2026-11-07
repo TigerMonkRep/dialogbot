@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "title": "Dialogbot – en assistent som svarar i telefon: för ditt företag och för dig",
+    "description": "Dialogbot svarar på danska, dygnet runt, bokar tider i din kalender och ringer åt dig när du ber om det. Du godkänner allt innan det gäller. För företag från 2 495 DKK/mån – för dig hemma från 49 DKK/mån.",
+    "ogTitle": "En assistent som svarar i telefon – för ditt företag och för dig"
+  },
+  "nav": {
+    "pages": "Sidor",
+    "how": "Så fungerar det",
+    "business": "Företag",
+    "private": "Privat",
+    "pricing": "Priser",
+    "login": "Logga in",
+    "try": "Prova den",
+    "menu": "Meny",
+    "close": "Stäng menyn"
+  },
+  "hero": {
+    "step": "Hör den först",
+    "title": {
+      "before": "En assistent som ",
+      "mark": "svarar i telefon",
+      "after": " – för ditt företag och för dig."
+    },
+    "lead": "Dialogbot svarar på danska, dygnet runt, bokar tider i din kalender och ringer åt dig när du ber om det. Du godkänner allt innan det gäller.",
+    "cta": "Prova den – den ringer dig",
+    "watch": "Se hur",
+    "note": "2 minuter. Ingen registrering, inget kort.",
+    "listen": "Så låter den"
+  },
+  "phone": {
+    "alt": "Exempel på ett samtal som Dialogbot tar för en snickare: kunden ringer, Dialogbot svarar, hittar en tid tisdag kl. 9 och bokar den.",
+    "time": "09:41",
+    "live": "Live",
+    "caller": "Mette Larsen",
+    "callerSub": "Inkommande · Snickare Hansen",
+    "decline": "Avvisa",
+    "answer": "Dialogbot svarar",
+    "timer": "00:12",
+    "lines": [
+      "Snickare Hansen, du talar med Dialogbot. Vad kan jag hjälpa till med?",
+      "Hej. Jag behöver byta ett fönster – kan ni komma och titta?",
+      "Ja. Jag har tisdag kl. 9 eller onsdag kl. 13. Vad passar bäst?",
+      "Tisdag kl. 9.",
+      "Då är det bokat. Du får ett sms direkt."
+    ],
+    "chip": "Tid bokad · tisdag kl. 9"
+  },
+  "proof": {
+    "label": "Det får du",
+    "facts": [
+      {
+        "title": "På danska",
+        "text": "Med en röst du väljer själv"
+      },
+      {
+        "title": "Dygnet runt",
+        "text": "Även söndag kl. 22"
+      },
+      {
+        "title": "Du godkänner allt",
+        "text": "Före → efter, sedan «Godkänn?»"
+      },
+      {
+        "title": "Ingen bindningstid",
+        "text": "Säg upp månad för månad"
+      }
+    ]
+  },
+  "choose": {
+    "step": "Steg 2",
+    "title": {
+      "before": "Vem ska den ",
+      "mark": "hjälpa",
+      "after": "?"
+    },
+    "lead": "Samma assistent, två världar. Välj den som liknar din vardag.",
+    "business": {
+      "kick": "Företag",
+      "kickText": "Hantverkare, kliniker och salonger",
+      "title": "Svarar i telefon när ni inte kan.",
+      "text": "Svarar utifrån de tjänster och öppettider ni själva har godkänt. Bokar i er kalender och skickar er ett meddelande om varje samtal. Ni behåller ert nummer.",
+      "uiLabel": "Exempel på dagens översikt",
+      "today": "I dag · torsdag",
+      "company": "Snickare Hansen",
+      "kpis": [
+        {
+          "n": "14",
+          "label": "samtal"
+        },
+        {
+          "n": "3",
+          "label": "tider bokade"
+        },
+        {
+          "n": "1",
+          "label": "meddelande till er"
+        }
+      ],
+      "rows": [
+        {
+          "time": "09:41",
+          "name": "Mette Larsen",
+          "status": "Bokad",
+          "tone": "ok"
+        },
+        {
+          "time": "11:08",
+          "name": "Okänt nr",
+          "status": "Pris på fönster",
+          "tone": "plain"
+        },
+        {
+          "time": "13:25",
+          "name": "Jonas Friis",
+          "status": "Meddelande till er",
+          "tone": "yellow"
+        }
+      ],
+      "cta": "För företag",
+      "price": "Från {price} DKK/mån"
+    },
+    "private": {
+      "kick": "Privat",
+      "kickText": "Din egen assistent – Peter",
+      "title": "Ringer runt, så du slipper.",
+      "text": "Skriv eller tala in en uppgift. Peter gör listor, påminner dig om det viktiga och ringer frisören, verkstaden eller läkaren åt dig. Aldrig innan du har sagt ja.",
+      "uiLabel": "Exempel på ett samtal med Peter",
+      "who": "Peter",
+      "ask": "Ska jag ringa Cykelkælderen och boka torsdag kl. 15.30?",
+      "yes": "Ja, ring",
+      "done": "Klart – torsdag 15.30. Inlagt i din kalender.",
+      "cta": "För dig hemma",
+      "trial": "{days} dagar gratis"
+    }
+  },
+  "how": {
+    "title": {
+      "before": "Kunden ringer. Dialogbot svarar. ",
+      "mark": "Du får besked",
+      "after": "."
+    },
+    "lead": "Tre klossar, så rullar det. Inga menyer att lära sig – det tunga ligger bakom assistenten.",
+    "bricks": [
+      "Samtal",
+      "Kalender",
+      "Meddelande"
+    ],
+    "steps": [
+      {
+        "title": "Kunden ringer – som alltid",
+        "text": "På ert eget nummer. Är ni upptagna eller har stängt tar Dialogbot samtalet inom två sekunder och presenterar sig som er receptionist."
+      },
+      {
+        "title": "Den svarar och bokar",
+        "text": "Utifrån tjänster, priser och öppettider ni själva har godkänt. Den gissar aldrig. Behöver kunden en tid hittar den en ledig i kalendern och skickar sms."
+      },
+      {
+        "title": "Du får ett meddelande",
+        "text": "Namn, nummer och vad det gällde – som sms eller mejl direkt, och en samlad rapport varje dag."
+      }
+    ]
+  },
+  "can": {
+    "title": {
+      "before": "Det kan ",
+      "mark": "den",
+      "after": ""
+    },
+    "lead": "Sex saker, en assistent. Allt bygger på kunskap du själv har godkänt.",
+    "tiles": [
+      {
+        "title": "Svarar i telefon",
+        "text": "Dygnet runt, på danska. Säger ärligt att den är en digital assistent om kunden frågar."
+      },
+      {
+        "title": "Bokar tider",
+        "text": "Hittar lediga tider i Google Kalender eller Microsoft 365, bokar, flyttar och avbokar."
+      },
+      {
+        "title": "Svarar på hemsidan",
+        "text": "Samma kunskap som webbchatt. En kodrad, så är den igång – även på kvällen."
+      },
+      {
+        "title": "Skickar sms och mejl",
+        "text": "Bekräftelse till kunden, meddelande till er. Kort, utan utropstecken, från ert namn."
+      },
+      {
+        "title": "Ringer upp kunder",
+        "text": "Följer upp offerter eller påminner om service – bara till kunder som har sagt ja."
+      },
+      {
+        "title": "Peter – för dig hemma",
+        "text": "Listor, påminnelser och samtal till tandläkaren eller verkstaden. Du säger ja först."
+      }
+    ]
+  },
+  "pricing": {
+    "title": "Ett abonnemang. Inget pris per ärende.",
+    "lead": "Ingen bindningstid. Gör-det-själv-installation ingår i priset.",
+    "from": "från",
+    "business": {
+      "name": "Företag",
+      "unit": "DKK/mån exkl. moms",
+      "points": [
+        "Telefon, bokning och webbchatt – allt ingår",
+        "300 minuter inkommande samtal per månad",
+        "Uppsägning månad för månad"
+      ],
+      "cta": "Hör den först"
+    },
+    "private": {
+      "name": "Privat",
+      "unit": "DKK/mån · {days} dagar gratis",
+      "points": [
+        "Listor och påminnelser – obegränsat",
+        "Peter ringer åt dig inom dina ramar",
+        "Säg upp när som helst"
+      ],
+      "cta": "Starta {days} dagar gratis"
+    },
+    "all": "Alla priser"
+  },
+  "faq": {
+    "title": "Det folk frågar om",
+    "items": [
+      {
+        "q": "Vem svarar när kunden ringer?",
+        "a": "Dialogbot – med ert företagsnamn och en röst ni själva har valt. Frågar kunden säger den ärligt att den är en digital assistent."
+      },
+      {
+        "q": "Vad händer om vi svarar själva?",
+        "a": "Då gör ni det. Dialogbot tar bara de samtal ni inte hinner – eller alla samtal utanför öppettiderna. Ni bestämmer regeln."
+      },
+      {
+        "q": "Kan den boka i vår kalender?",
+        "a": "Ja. Google Kalender och Microsoft 365 ingår. Den hittar en ledig tid, bokar och skickar kunden en sms-bekräftelse."
+      },
+      {
+        "q": "Vad kostar installationen?",
+        "a": "Ingenting om ni gör det själva – det tar ungefär 30 minuter med Peter i chatten. Vill ni att våra specialister kopplar på kalender, CRM eller bokningssystem kostar det {setup} DKK en gång."
+      },
+      {
+        "q": "Kan jag säga upp?",
+        "a": "Ja, månad för månad. Ingen bindningstid, ingen avgift. Privat kan sägas upp när som helst i appen."
+      }
+    ]
+  },
+  "band": {
+    "title": "Redo att höra den?",
+    "text": "Peter ringer upp dig på under en minut – gratis och utan registrering. Vill du hellre bygga själv tar det 30 minuter.",
+    "primary": "Hör den först",
+    "secondary": "Bygg den själv"
+  }
+}

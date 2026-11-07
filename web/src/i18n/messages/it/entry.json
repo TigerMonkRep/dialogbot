@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "title": "Dialogbot – un assistente che risponde al telefono: per la tua azienda e per te",
+    "description": "Dialogbot risponde in danese, 24 ore su 24, prenota appuntamenti nel tuo calendario e telefona per te quando glielo chiedi. Approvi tutto prima che entri in vigore. Per le aziende da 2.495 DKK/mese – per te a casa da 49 DKK/mese.",
+    "ogTitle": "Un assistente che risponde al telefono – per la tua azienda e per te"
+  },
+  "nav": {
+    "pages": "Pagine",
+    "how": "Come funziona",
+    "business": "Aziende",
+    "private": "Privati",
+    "pricing": "Prezzi",
+    "login": "Accedi",
+    "try": "Provalo",
+    "menu": "Menu",
+    "close": "Chiudi il menu"
+  },
+  "hero": {
+    "step": "Prima ascoltalo",
+    "title": {
+      "before": "Un assistente che ",
+      "mark": "risponde al telefono",
+      "after": " – per la tua azienda e per te."
+    },
+    "lead": "Dialogbot risponde in danese, 24 ore su 24, prenota appuntamenti nel tuo calendario e telefona per te quando glielo chiedi. Approvi tutto prima che entri in vigore.",
+    "cta": "Provalo – ti chiama lui",
+    "watch": "Guarda come",
+    "note": "2 minuti. Nessuna registrazione, nessuna carta.",
+    "listen": "Ecco come suona"
+  },
+  "phone": {
+    "alt": "Esempio di una chiamata che Dialogbot gestisce per un falegname: il cliente chiama, Dialogbot risponde, trova un orario martedì alle 9 e lo prenota.",
+    "time": "09:41",
+    "live": "Live",
+    "caller": "Mette Larsen",
+    "callerSub": "In arrivo · Falegnameria Hansen",
+    "decline": "Rifiuta",
+    "answer": "Dialogbot risponde",
+    "timer": "00:12",
+    "lines": [
+      "Falegnameria Hansen, parla con Dialogbot. Come posso aiutarla?",
+      "Salve. Devo sostituire una finestra – potete venire a dare un'occhiata?",
+      "Sì. Ho martedì alle 9 o mercoledì alle 13. Cosa preferisce?",
+      "Martedì alle 9.",
+      "Prenotato. Riceve subito un SMS."
+    ],
+    "chip": "Appuntamento prenotato · martedì ore 9"
+  },
+  "proof": {
+    "label": "Cosa ottieni",
+    "facts": [
+      {
+        "title": "In danese",
+        "text": "Con una voce che scegli tu"
+      },
+      {
+        "title": "24 ore su 24",
+        "text": "Anche la domenica alle 22"
+      },
+      {
+        "title": "Approvi tutto",
+        "text": "Prima → dopo, poi «Approvare?»"
+      },
+      {
+        "title": "Nessun vincolo",
+        "text": "Disdici mese per mese"
+      }
+    ]
+  },
+  "choose": {
+    "step": "Passo 2",
+    "title": {
+      "before": "Chi deve ",
+      "mark": "aiutare",
+      "after": "?"
+    },
+    "lead": "Lo stesso assistente, due mondi. Scegli quello che assomiglia alla tua quotidianità.",
+    "business": {
+      "kick": "Aziende",
+      "kickText": "Artigiani, studi e saloni",
+      "title": "Risponde al telefono quando voi non potete.",
+      "text": "Risponde in base ai servizi e agli orari che avete approvato voi stessi. Prenota nel vostro calendario e vi invia un messaggio per ogni chiamata. Mantenete il vostro numero.",
+      "uiLabel": "Esempio della panoramica di oggi",
+      "today": "Oggi · giovedì",
+      "company": "Falegnameria Hansen",
+      "kpis": [
+        {
+          "n": "14",
+          "label": "chiamate"
+        },
+        {
+          "n": "3",
+          "label": "appuntamenti prenotati"
+        },
+        {
+          "n": "1",
+          "label": "messaggio per voi"
+        }
+      ],
+      "rows": [
+        {
+          "time": "09:41",
+          "name": "Mette Larsen",
+          "status": "Prenotato",
+          "tone": "ok"
+        },
+        {
+          "time": "11:08",
+          "name": "N. sconosciuto",
+          "status": "Prezzo finestra",
+          "tone": "plain"
+        },
+        {
+          "time": "13:25",
+          "name": "Jonas Friis",
+          "status": "Messaggio per voi",
+          "tone": "yellow"
+        }
+      ],
+      "cta": "Per le aziende",
+      "price": "Da {price} DKK/mese"
+    },
+    "private": {
+      "kick": "Privati",
+      "kickText": "Il tuo assistente personale – Peter",
+      "title": "Telefona lui, così non devi farlo tu.",
+      "text": "Scrivi o detta un'attività. Peter crea liste, ti ricorda le cose importanti e chiama il parrucchiere, l'officina o il medico per te. Mai prima che tu abbia detto sì.",
+      "uiLabel": "Esempio di una conversazione con Peter",
+      "who": "Peter",
+      "ask": "Chiamo Cykelkælderen e fisso giovedì alle 15.30?",
+      "yes": "Sì, chiama",
+      "done": "Fatto – giovedì 15.30. Inserito nel tuo calendario.",
+      "cta": "Per te a casa",
+      "trial": "{days} giorni gratis"
+    }
+  },
+  "how": {
+    "title": {
+      "before": "Il cliente chiama. Dialogbot risponde. ",
+      "mark": "Ricevi un messaggio",
+      "after": "."
+    },
+    "lead": "Tre mattoncini e funziona. Nessun menu da imparare – il lavoro pesante sta dietro l'assistente.",
+    "bricks": [
+      "Chiamata",
+      "Calendario",
+      "Messaggio"
+    ],
+    "steps": [
+      {
+        "title": "Il cliente chiama – come sempre",
+        "text": "Sul vostro numero. Se siete occupati o chiusi, Dialogbot risponde entro due secondi e si presenta come la vostra receptionist."
+      },
+      {
+        "title": "Risponde e prenota",
+        "text": "In base a servizi, prezzi e orari che avete approvato voi stessi. Non tira mai a indovinare. Se il cliente ha bisogno di un appuntamento, trova uno spazio libero nel calendario e invia un SMS."
+      },
+      {
+        "title": "Ricevi un messaggio",
+        "text": "Nome, numero e di cosa si trattava – subito via SMS o e-mail, e un rapporto riepilogativo ogni giorno."
+      }
+    ]
+  },
+  "can": {
+    "title": {
+      "before": "Cosa ",
+      "mark": "sa fare",
+      "after": ""
+    },
+    "lead": "Sei cose, un assistente. Tutto si basa su conoscenze che hai approvato tu.",
+    "tiles": [
+      {
+        "title": "Risponde al telefono",
+        "text": "24 ore su 24, in danese. Dice onestamente di essere un assistente digitale se il cliente lo chiede."
+      },
+      {
+        "title": "Prenota appuntamenti",
+        "text": "Trova spazi liberi in Google Calendar o Microsoft 365, prenota, sposta e disdice."
+      },
+      {
+        "title": "Risponde sul sito web",
+        "text": "Le stesse conoscenze come chat web. Una riga di codice ed è attivo – anche di sera."
+      },
+      {
+        "title": "Invia SMS ed e-mail",
+        "text": "Conferma al cliente, messaggio per voi. Breve, senza punti esclamativi, a vostro nome."
+      },
+      {
+        "title": "Richiama i clienti",
+        "text": "Dà seguito ai preventivi o ricorda la manutenzione – solo ai clienti che hanno detto sì."
+      },
+      {
+        "title": "Peter – per te a casa",
+        "text": "Liste, promemoria e chiamate al dentista o all'officina. Dici sì tu per primo."
+      }
+    ]
+  },
+  "pricing": {
+    "title": "Un solo abbonamento. Nessun costo per contatto.",
+    "lead": "Nessun vincolo. La configurazione fai-da-te è inclusa nel prezzo.",
+    "from": "da",
+    "business": {
+      "name": "Aziende",
+      "unit": "DKK/mese IVA esclusa",
+      "points": [
+        "Telefono, prenotazioni e chat web – tutto incluso",
+        "300 minuti di chiamate in entrata al mese",
+        "Disdetta mese per mese"
+      ],
+      "cta": "Prima ascoltalo"
+    },
+    "private": {
+      "name": "Privati",
+      "unit": "DKK/mese · {days} giorni gratis",
+      "points": [
+        "Liste e promemoria – illimitati",
+        "Peter chiama per te entro i tuoi limiti",
+        "Disdici quando vuoi"
+      ],
+      "cta": "Inizia {days} giorni gratis"
+    },
+    "all": "Tutti i prezzi"
+  },
+  "faq": {
+    "title": "Le domande più frequenti",
+    "items": [
+      {
+        "q": "Chi risponde quando chiama il cliente?",
+        "a": "Dialogbot – con il nome della vostra azienda e una voce che avete scelto voi. Se il cliente lo chiede, dice onestamente di essere un assistente digitale."
+      },
+      {
+        "q": "E se rispondiamo noi al telefono?",
+        "a": "Allora lo fate voi. Dialogbot prende solo le chiamate a cui non riuscite a rispondere – oppure tutte le chiamate fuori orario. La regola la decidete voi."
+      },
+      {
+        "q": "Può prenotare nel nostro calendario?",
+        "a": "Sì. Google Calendar e Microsoft 365 sono inclusi. Trova uno spazio libero, prenota e invia al cliente una conferma via SMS."
+      },
+      {
+        "q": "Quanto costa la configurazione?",
+        "a": "Niente se la fate da soli – ci vogliono circa 30 minuti con Peter in chat. Se volete che i nostri specialisti colleghino calendario, CRM o sistema di prenotazione, costa {setup} DKK una tantum."
+      },
+      {
+        "q": "Posso disdire?",
+        "a": "Sì, mese per mese. Nessun vincolo, nessuna penale. Privati si può disdire in qualsiasi momento dall'app."
+      }
+    ]
+  },
+  "band": {
+    "title": "Pronto ad ascoltarlo?",
+    "text": "Peter ti richiama in meno di un minuto – gratis e senza registrazione. Se preferisci configurarlo da solo, ci vogliono 30 minuti.",
+    "primary": "Prima ascoltalo",
+    "secondary": "Configuralo da solo"
+  }
+}

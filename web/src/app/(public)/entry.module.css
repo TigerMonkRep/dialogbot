@@ -1,0 +1,71 @@
+/* The entry page (/) – only what Tailwind utilities cannot say: the sticky nav's blur, the <details> mobile menu,
+   and the phone's looping transcript (design: out/canvas/preview.html). The loop is 16 s: call card (0–2.8 s),
+   "Dialogbot svarer" bar, five bubbles, the booked chip, fade. With prefers-reduced-motion the finished transcript
+   is shown at once, nothing moves. */
+
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--color-ink);
+}
+
+/* Mobile menu: a <details> element – works without JavaScript, the summary is the 44 px button. */
+.menu > summary { list-style: none; }
+.menu > summary::-webkit-details-marker { display: none; }
+.menu > summary .close { display: none; }
+.menu[open] > summary .open { display: none; }
+.menu[open] > summary .close { display: inline-flex; }
+.menuPanel {
+  position: absolute; left: 0; right: 0; top: 100%;
+  border-bottom: 2px solid var(--color-ink); background: var(--color-paper);
+}
+
+/* Phone */
+.phone {
+  position: relative; width: 330px; max-width: 100%; height: 660px;
+  border: 2px solid var(--color-ink); border-radius: 44px; background: var(--color-panel);
+  box-shadow: 8px 8px 0 var(--color-ink); overflow: hidden; display: flex; flex-direction: column;
+}
+.liveDot { animation: blink 1.6s ease-in-out infinite; }
+.callcard { opacity: 0; animation: callcard 16s linear infinite; }
+.ringPulse { position: absolute; inset: -6px; border: 2px solid var(--color-accent); border-radius: 20px; animation: ringpulse 1.2s ease-out infinite; }
+.livebar { opacity: 0; animation: livebar 16s linear infinite; }
+.tb { opacity: 0; animation-duration: 16s; animation-timing-function: ease-out; animation-iteration-count: infinite; }
+.b1 { animation-name: b1; }
+.b2 { animation-name: b2; }
+.b3 { animation-name: b3; }
+.b4 { animation-name: b4; }
+.b5 { animation-name: b5; }
+.chip { opacity: 0; animation: chip 16s ease-out infinite; }
+
+@keyframes callcard { 0%, 1.88% { opacity: 0; transform: translateY(10px); } 3.75% { opacity: 1; transform: none; } 15% { opacity: 1; transform: none; } 17.5%, 100% { opacity: 0; transform: translateY(-6px); } }
+@keyframes livebar { 0%, 16.88% { opacity: 0; } 19.06% { opacity: 1; } 95% { opacity: 1; } 98.12%, 100% { opacity: 0; } }
+@keyframes chip { 0%, 76.25% { opacity: 0; transform: translateY(10px) scale(0.98); } 78.44% { opacity: 1; transform: none; } 95% { opacity: 1; transform: none; } 98.12%, 100% { opacity: 0; transform: none; } }
+@keyframes ringpulse { 0%, 100% { transform: scale(1); opacity: 0.35; } 50% { transform: scale(1.35); opacity: 0; } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+@keyframes b1 { 0%, 18.75% { opacity: 0; transform: translateY(10px) scale(0.98); } 20.94% { opacity: 1; transform: none; } 95% { opacity: 1; transform: none; } 98.12%, 100% { opacity: 0; transform: none; } }
+@keyframes b2 { 0%, 31.25% { opacity: 0; transform: translateY(10px) scale(0.98); } 33.44% { opacity: 1; transform: none; } 95% { opacity: 1; transform: none; } 98.12%, 100% { opacity: 0; transform: none; } }
+@keyframes b3 { 0%, 45% { opacity: 0; transform: translateY(10px) scale(0.98); } 47.19% { opacity: 1; transform: none; } 95% { opacity: 1; transform: none; } 98.12%, 100% { opacity: 0; transform: none; } }
+@keyframes b4 { 0%, 57.5% { opacity: 0; transform: translateY(10px) scale(0.98); } 59.69% { opacity: 1; transform: none; } 95% { opacity: 1; transform: none; } 98.12%, 100% { opacity: 0; transform: none; } }
+@keyframes b5 { 0%, 65% { opacity: 0; transform: translateY(10px) scale(0.98); } 67.19% { opacity: 1; transform: none; } 95% { opacity: 1; transform: none; } 98.12%, 100% { opacity: 0; transform: none; } }
+
+@media (max-width: 559.98px) { .phone { height: 620px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .liveDot, .callcard, .ringPulse, .livebar, .tb, .chip { animation: none !important; }
+  .callcard { display: none; }
+  .livebar, .tb, .chip { opacity: 1 !important; transform: none !important; }
+}
+
+/* Feature tiles lift on hover (no motion with reduced-motion). */
+.tile { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.tile:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--color-ink); }
+@media (prefers-reduced-motion: reduce) { .tile { transition: none; } .tile:hover { transform: none; box-shadow: none; } }
+
+/* FAQ: plain <details>, the plus turns into a cross when open. */
+.faq > summary { list-style: none; }
+.faq > summary::-webkit-details-marker { display: none; }
+.faq > summary .plus { transition: transform 0.2s ease; }
+.faq[open] > summary .plus { transform: rotate(45deg); background: var(--color-highlight); }
+@media (prefers-reduced-motion: reduce) { .faq > summary .plus { transition: none; } }

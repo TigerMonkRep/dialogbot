@@ -1,0 +1,149 @@
+{
+  "meta": {
+    "title": "Dialogbot – én assistent, der tager telefonen: for din virksomhed og for dig",
+    "description": "Dialogbot svarer på dansk, døgnet rundt, booker tider i din kalender og ringer for dig, når du beder om det. Du godkender alt, før det gælder. Til virksomheder fra 2.495 kr./md. – til dig derhjemme fra 49 kr./md.",
+    "ogTitle": "Én assistent, der tager telefonen – for din virksomhed og for dig"
+  },
+  "nav": {
+    "pages": "Sider",
+    "how": "Sådan virker det",
+    "business": "Erhverv",
+    "private": "Privat",
+    "pricing": "Priser",
+    "login": "Log ind",
+    "try": "Prøv den",
+    "menu": "Menu",
+    "close": "Luk menuen"
+  },
+  "hero": {
+    "step": "Hør den først",
+    "title": { "before": "Én assistent, der ", "mark": "tager telefonen", "after": " – for din virksomhed og for dig." },
+    "lead": "Dialogbot svarer på dansk, døgnet rundt, booker tider i din kalender og ringer for dig, når du beder om det. Du godkender alt, før det gælder.",
+    "cta": "Prøv den – den ringer til dig",
+    "watch": "Se hvordan",
+    "note": "2 minutter. Ingen tilmelding, intet kort.",
+    "listen": "Sådan lyder den"
+  },
+  "phone": {
+    "alt": "Eksempel på et opkald, Dialogbot tager for en tømrer: kunden ringer, Dialogbot svarer, finder en tid tirsdag kl. 9 og booker den.",
+    "time": "09:41",
+    "live": "Live",
+    "caller": "Mette Larsen",
+    "callerSub": "Indgående · Tømrer Hansen",
+    "decline": "Afvis",
+    "answer": "Dialogbot svarer",
+    "timer": "00:12",
+    "lines": [
+      "Tømrer Hansen, du taler med Dialogbot. Hvad kan jeg hjælpe med?",
+      "Hej. Jeg skal have skiftet et vindue – kan I komme og kigge?",
+      "Ja. Jeg har tirsdag kl. 9 eller onsdag kl. 13. Hvad passer bedst?",
+      "Tirsdag kl. 9.",
+      "Så er det booket. Du får en sms med det samme."
+    ],
+    "chip": "Aftale booket · tirsdag kl. 9"
+  },
+  "proof": {
+    "label": "Det får du",
+    "facts": [
+      { "title": "På dansk", "text": "Med en stemme, du selv vælger" },
+      { "title": "Døgnet rundt", "text": "Også søndag kl. 22" },
+      { "title": "Du godkender alt", "text": "Før → efter, så «Godkend?»" },
+      { "title": "Ingen binding", "text": "Opsig måned til måned" }
+    ]
+  },
+  "choose": {
+    "step": "Trin 2",
+    "title": { "before": "Hvem skal den ", "mark": "hjælpe", "after": "?" },
+    "lead": "Samme assistent, to verdener. Vælg den, der ligner din hverdag.",
+    "business": {
+      "kick": "Erhverv",
+      "kickText": "Håndværkere, klinikker og saloner",
+      "title": "Tager telefonen, når I ikke kan.",
+      "text": "Svarer ud fra de ydelser og åbningstider, I selv har godkendt. Booker i jeres kalender og sender jer en besked om hvert opkald. I beholder jeres nummer.",
+      "uiLabel": "Eksempel på dagens overblik",
+      "today": "I dag · torsdag",
+      "company": "Tømrer Hansen",
+      "kpis": [
+        { "n": "14", "label": "opkald" },
+        { "n": "3", "label": "aftaler booket" },
+        { "n": "1", "label": "besked til jer" }
+      ],
+      "rows": [
+        { "time": "09:41", "name": "Mette Larsen", "status": "Booket", "tone": "ok" },
+        { "time": "11:08", "name": "Ukendt nr.", "status": "Pris på vindue", "tone": "plain" },
+        { "time": "13:25", "name": "Jonas Friis", "status": "Besked til jer", "tone": "yellow" }
+      ],
+      "cta": "Til virksomheder",
+      "price": "Fra {price} kr./md."
+    },
+    "private": {
+      "kick": "Privat",
+      "kickText": "Din egen assistent – Peter",
+      "title": "Ringer rundt, så du slipper.",
+      "text": "Skriv eller indtal en opgave. Peter laver lister, minder dig om det vigtige og ringer til frisøren, værkstedet eller lægen for dig. Aldrig før du har sagt ja.",
+      "uiLabel": "Eksempel på en samtale med Peter",
+      "who": "Peter",
+      "ask": "Skal jeg ringe til Cykelkælderen og aftale torsdag kl. 15.30?",
+      "yes": "Ja, ring",
+      "done": "Ordnet – torsdag 15.30. Lagt i din kalender.",
+      "cta": "Til dig derhjemme",
+      "trial": "{days} dage gratis"
+    }
+  },
+  "how": {
+    "title": { "before": "Kunden ringer. Dialogbot svarer. ", "mark": "Du får besked", "after": "." },
+    "lead": "Tre klodser, og det kører. Ingen menuer at lære – det tunge ligger bag assistenten.",
+    "bricks": ["Opkald", "Kalender", "Besked"],
+    "steps": [
+      { "title": "Kunden ringer – som altid", "text": "På jeres eget nummer. Er I optaget eller har lukket, tager Dialogbot den inden for to sekunder og præsenterer sig som jeres receptionist." },
+      { "title": "Den svarer og booker", "text": "Ud fra ydelser, priser og åbningstider, I selv har godkendt. Den gætter aldrig. Skal kunden have en tid, finder den en ledig i kalenderen og sender sms." },
+      { "title": "Du får en besked", "text": "Navn, nummer og hvad det drejede sig om – som sms eller mail med det samme, og en samlet rapport hver dag." }
+    ]
+  },
+  "can": {
+    "title": { "before": "Det kan ", "mark": "den", "after": "" },
+    "lead": "Seks ting, én assistent. Alt bygger på viden, du selv har godkendt.",
+    "tiles": [
+      { "title": "Tager telefonen", "text": "Døgnet rundt, på dansk. Siger ærligt, at den er en digital assistent, hvis kunden spørger." },
+      { "title": "Booker aftaler", "text": "Finder ledige tider i Google Kalender eller Microsoft 365, booker, flytter og aflyser." },
+      { "title": "Svarer på hjemmesiden", "text": "Samme viden som webchat. Én kodelinje, så er den på – også om aftenen." },
+      { "title": "Sender sms og mail", "text": "Bekræftelse til kunden, besked til jer. Kort, uden udråbstegn, fra jeres navn." },
+      { "title": "Ringer kunder op", "text": "Følger op på tilbud eller minder om service – kun til kunder, der har sagt ja." },
+      { "title": "Peter – til dig derhjemme", "text": "Lister, påmindelser og opkald til tandlægen eller værkstedet. Du siger ja først." }
+    ]
+  },
+  "pricing": {
+    "title": "Ét abonnement. Ingen pris pr. henvendelse.",
+    "lead": "Ingen binding. Gør-det-selv-opsætning er med i prisen.",
+    "from": "fra",
+    "business": {
+      "name": "Erhverv",
+      "unit": "kr./md. ekskl. moms",
+      "points": ["Telefon, booking og webchat – alt er med", "300 minutters indgående opkald om måneden", "Opsigelse måned til måned"],
+      "cta": "Hør den først"
+    },
+    "private": {
+      "name": "Privat",
+      "unit": "kr./md. · {days} dage gratis",
+      "points": ["Lister og påmindelser – ubegrænset", "Peter ringer for dig inden for dine rammer", "Opsig når som helst"],
+      "cta": "Start {days} dage gratis"
+    },
+    "all": "Alle priser"
+  },
+  "faq": {
+    "title": "Det spørger folk om",
+    "items": [
+      { "q": "Hvem svarer, når kunden ringer?", "a": "Dialogbot – med jeres virksomhedsnavn og en stemme, I selv har valgt. Spørger kunden, siger den ærligt, at den er en digital assistent." },
+      { "q": "Hvad hvis vi selv tager telefonen?", "a": "Så gør I det. Dialogbot tager kun de opkald, I ikke når – eller alle opkald uden for åbningstid. I bestemmer reglen." },
+      { "q": "Kan den booke i vores kalender?", "a": "Ja. Google Kalender og Microsoft 365 er med. Den finder en ledig tid, booker og sender kunden en sms-bekræftelse." },
+      { "q": "Hvad koster opsætning?", "a": "Ingenting, hvis I gør det selv – det tager omkring 30 minutter med Peter i chatten. Vil I have vores specialister til at koble kalender, CRM eller bookingsystem på, koster det {setup} kr. én gang." },
+      { "q": "Kan jeg opsige?", "a": "Ja, måned til måned. Ingen binding, ingen gebyr. Privat kan opsiges når som helst i appen." }
+    ]
+  },
+  "band": {
+    "title": "Klar til at høre den?",
+    "text": "Peter ringer dig op på under et minut – gratis og uden tilmelding. Vil du hellere bygge selv, tager det 30 minutter.",
+    "primary": "Hør den først",
+    "secondary": "Byg den selv"
+  }
+}

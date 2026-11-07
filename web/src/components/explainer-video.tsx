@@ -11,7 +11,8 @@ import { videoFor } from "@/lib/video";
  *  video ends on is pixels, so when it ends we lay a real CTA card over it (and the same links always sit under the
  *  video for people who skip). Captions are burned in; the VTT track is there for screen readers but off by default. */
 
-export function ExplainerVideo({ variant = "chip" }: { variant?: "chip" | "button" | "poster" }) {
+/** `label`: the button variant's own text (the length comes from video.short); `ghost`: borderless, as on the entry page. */
+export function ExplainerVideo({ variant = "chip", label, ghost = false }: { variant?: "chip" | "button" | "poster"; label?: string; ghost?: boolean }) {
   const t = useT("site");
   const locale = useLocale();
   const VIDEO = videoFor(locale);
@@ -65,8 +66,8 @@ export function ExplainerVideo({ variant = "chip" }: { variant?: "chip" | "butto
         </button>
       ) : (
         <button type="button" onClick={() => setOpen(true)}
-          className="inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] bg-white border-2 border-ink text-ink font-semibold text-[17px] cursor-pointer hover:bg-panel">
-          <PlayIcon size={18} />{title} · {t("video.short")}
+          className={`inline-flex items-center justify-center gap-2.5 min-h-[52px] px-[22px] rounded-[14px] text-ink font-semibold cursor-pointer hover:bg-panel ${ghost ? "bg-transparent border-2 border-transparent text-[16px]" : "bg-white border-2 border-ink text-[17px]"}`}>
+          <PlayIcon size={18} />{label ?? title} · {t("video.short")}
         </button>
       )}
 

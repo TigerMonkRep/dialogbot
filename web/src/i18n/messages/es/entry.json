@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "title": "Dialogbot – un asistente que atiende el teléfono: para su empresa y para usted",
+    "description": "Dialogbot responde en danés, las 24 horas, reserva citas en su calendario y llama por usted cuando se lo pide. Usted aprueba todo antes de que entre en vigor. Para empresas desde 2.495 DKK/mes – para usted en casa desde 49 DKK/mes.",
+    "ogTitle": "Un asistente que atiende el teléfono – para su empresa y para usted"
+  },
+  "nav": {
+    "pages": "Páginas",
+    "how": "Cómo funciona",
+    "business": "Empresas",
+    "private": "Particulares",
+    "pricing": "Precios",
+    "login": "Iniciar sesión",
+    "try": "Pruébelo",
+    "menu": "Menú",
+    "close": "Cerrar el menú"
+  },
+  "hero": {
+    "step": "Escúchelo primero",
+    "title": {
+      "before": "Un asistente que ",
+      "mark": "atiende el teléfono",
+      "after": " – para su empresa y para usted."
+    },
+    "lead": "Dialogbot responde en danés, las 24 horas, reserva citas en su calendario y llama por usted cuando se lo pide. Usted aprueba todo antes de que entre en vigor.",
+    "cta": "Pruébelo – le llama a usted",
+    "watch": "Vea cómo",
+    "note": "2 minutos. Sin registro, sin tarjeta.",
+    "listen": "Así suena"
+  },
+  "phone": {
+    "alt": "Ejemplo de una llamada que Dialogbot atiende para un carpintero: el cliente llama, Dialogbot responde, encuentra una hora el martes a las 9 y la reserva.",
+    "time": "09:41",
+    "live": "En directo",
+    "caller": "Mette Larsen",
+    "callerSub": "Entrante · Carpintería Hansen",
+    "decline": "Rechazar",
+    "answer": "Dialogbot responde",
+    "timer": "00:12",
+    "lines": [
+      "Carpintería Hansen, habla con Dialogbot. ¿En qué puedo ayudarle?",
+      "Hola. Necesito cambiar una ventana, ¿pueden venir a verla?",
+      "Sí. Tengo el martes a las 9 o el miércoles a las 13. ¿Qué le viene mejor?",
+      "El martes a las 9.",
+      "Queda reservado. Recibirá un SMS ahora mismo."
+    ],
+    "chip": "Cita reservada · martes a las 9"
+  },
+  "proof": {
+    "label": "Lo que recibe",
+    "facts": [
+      {
+        "title": "En danés",
+        "text": "Con una voz que elige usted"
+      },
+      {
+        "title": "Las 24 horas",
+        "text": "También el domingo a las 22"
+      },
+      {
+        "title": "Usted aprueba todo",
+        "text": "Antes → después, y «¿Aprobar?»"
+      },
+      {
+        "title": "Sin permanencia",
+        "text": "Cancele mes a mes"
+      }
+    ]
+  },
+  "choose": {
+    "step": "Paso 2",
+    "title": {
+      "before": "¿A quién debe ",
+      "mark": "ayudar",
+      "after": "?"
+    },
+    "lead": "El mismo asistente, dos mundos. Elija el que se parezca a su día a día.",
+    "business": {
+      "kick": "Empresas",
+      "kickText": "Oficios, clínicas y salones",
+      "title": "Atiende el teléfono cuando usted no puede.",
+      "text": "Responde según los servicios y horarios que usted ha aprobado. Reserva en su calendario y le envía un mensaje por cada llamada. Usted conserva su número.",
+      "uiLabel": "Ejemplo del resumen del día",
+      "today": "Hoy · jueves",
+      "company": "Carpintería Hansen",
+      "kpis": [
+        {
+          "n": "14",
+          "label": "llamadas"
+        },
+        {
+          "n": "3",
+          "label": "citas reservadas"
+        },
+        {
+          "n": "1",
+          "label": "mensaje para usted"
+        }
+      ],
+      "rows": [
+        {
+          "time": "09:41",
+          "name": "Mette Larsen",
+          "status": "Reservada",
+          "tone": "ok"
+        },
+        {
+          "time": "11:08",
+          "name": "N.º desconocido",
+          "status": "Precio de ventana",
+          "tone": "plain"
+        },
+        {
+          "time": "13:25",
+          "name": "Jonas Friis",
+          "status": "Mensaje para usted",
+          "tone": "yellow"
+        }
+      ],
+      "cta": "Para empresas",
+      "price": "Desde {price} DKK/mes"
+    },
+    "private": {
+      "kick": "Particulares",
+      "kickText": "Tu propio asistente – Peter",
+      "title": "Llama por ti, para que no tengas que hacerlo.",
+      "text": "Escribe o dicta una tarea. Peter hace listas, te recuerda lo importante y llama a la peluquería, al taller o al médico por ti. Nunca antes de que digas que sí.",
+      "uiLabel": "Ejemplo de una conversación con Peter",
+      "who": "Peter",
+      "ask": "¿Llamo a Cykelkælderen y reservo el jueves a las 15.30?",
+      "yes": "Sí, llama",
+      "done": "Hecho – jueves 15.30. Añadido a tu calendario.",
+      "cta": "Para ti en casa",
+      "trial": "{days} días gratis"
+    }
+  },
+  "how": {
+    "title": {
+      "before": "El cliente llama. Dialogbot responde. ",
+      "mark": "Usted recibe el aviso",
+      "after": "."
+    },
+    "lead": "Tres piezas y ya funciona. Sin menús que aprender – lo pesado queda detrás del asistente.",
+    "bricks": [
+      "Llamada",
+      "Calendario",
+      "Mensaje"
+    ],
+    "steps": [
+      {
+        "title": "El cliente llama – como siempre",
+        "text": "A su propio número. Si está ocupado o cerrado, Dialogbot contesta en dos segundos y se presenta como su recepcionista."
+      },
+      {
+        "title": "Responde y reserva",
+        "text": "Según los servicios, precios y horarios que usted ha aprobado. Nunca adivina. Si el cliente necesita una cita, encuentra un hueco libre en el calendario y envía un SMS."
+      },
+      {
+        "title": "Usted recibe un mensaje",
+        "text": "Nombre, número y de qué se trataba – por SMS o correo al momento, y un informe resumido cada día."
+      }
+    ]
+  },
+  "can": {
+    "title": {
+      "before": "Lo que ",
+      "mark": "sabe hacer",
+      "after": ""
+    },
+    "lead": "Seis cosas, un asistente. Todo se basa en conocimiento que usted ha aprobado.",
+    "tiles": [
+      {
+        "title": "Atiende el teléfono",
+        "text": "Las 24 horas, en danés. Dice con honestidad que es un asistente digital si el cliente lo pregunta."
+      },
+      {
+        "title": "Reserva citas",
+        "text": "Encuentra huecos libres en Google Calendar o Microsoft 365, reserva, mueve y cancela."
+      },
+      {
+        "title": "Responde en la web",
+        "text": "El mismo conocimiento como chat web. Una línea de código y está listo – también por la noche."
+      },
+      {
+        "title": "Envía SMS y correos",
+        "text": "Confirmación al cliente, mensaje para usted. Breve, sin exclamaciones, desde su nombre."
+      },
+      {
+        "title": "Llama a los clientes",
+        "text": "Hace seguimiento de presupuestos o recuerda revisiones – solo a clientes que han dicho que sí."
+      },
+      {
+        "title": "Peter – para ti en casa",
+        "text": "Listas, recordatorios y llamadas al dentista o al taller. Tú dices que sí primero."
+      }
+    ]
+  },
+  "pricing": {
+    "title": "Una suscripción. Sin precio por contacto.",
+    "lead": "Sin permanencia. La configuración por su cuenta está incluida en el precio.",
+    "from": "desde",
+    "business": {
+      "name": "Empresas",
+      "unit": "DKK/mes sin IVA",
+      "points": [
+        "Teléfono, reservas y chat web – todo incluido",
+        "300 minutos de llamadas entrantes al mes",
+        "Cancelación mes a mes"
+      ],
+      "cta": "Escúchelo primero"
+    },
+    "private": {
+      "name": "Particulares",
+      "unit": "DKK/mes · {days} días gratis",
+      "points": [
+        "Listas y recordatorios – sin límite",
+        "Peter llama por ti dentro de tus límites",
+        "Cancela cuando quieras"
+      ],
+      "cta": "Empieza {days} días gratis"
+    },
+    "all": "Todos los precios"
+  },
+  "faq": {
+    "title": "Lo que pregunta la gente",
+    "items": [
+      {
+        "q": "¿Quién responde cuando llama el cliente?",
+        "a": "Dialogbot – con el nombre de su empresa y una voz que usted ha elegido. Si el cliente lo pregunta, dice con honestidad que es un asistente digital."
+      },
+      {
+        "q": "¿Y si atendemos el teléfono nosotros mismos?",
+        "a": "Entonces lo hacen ustedes. Dialogbot solo atiende las llamadas que no alcanzan a contestar – o todas las llamadas fuera del horario. Usted fija la regla."
+      },
+      {
+        "q": "¿Puede reservar en nuestro calendario?",
+        "a": "Sí. Google Calendar y Microsoft 365 están incluidos. Encuentra un hueco libre, reserva y envía al cliente una confirmación por SMS."
+      },
+      {
+        "q": "¿Cuánto cuesta la configuración?",
+        "a": "Nada si lo hace usted mismo – lleva unos 30 minutos con Peter en el chat. Si quiere que nuestros especialistas conecten el calendario, el CRM o el sistema de reservas, cuesta {setup} DKK una sola vez."
+      },
+      {
+        "q": "¿Puedo cancelar?",
+        "a": "Sí, mes a mes. Sin permanencia, sin comisión. Particulares se puede cancelar en cualquier momento desde la app."
+      }
+    ]
+  },
+  "band": {
+    "title": "¿Listo para escucharlo?",
+    "text": "Peter le llama en menos de un minuto – gratis y sin registro. Si prefiere configurarlo usted mismo, lleva 30 minutos.",
+    "primary": "Escúchelo primero",
+    "secondary": "Configúrelo usted mismo"
+  }
+}

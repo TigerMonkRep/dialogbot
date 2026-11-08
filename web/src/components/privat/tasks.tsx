@@ -6,6 +6,7 @@ import { useT } from "@/i18n/client";
 import { icsHref, type Task, type TaskStatus } from "@/lib/privat/api";
 import { BIG, Eyebrow, Ex, KindLabel, Kv, LINK, ROW, Sim, StatusBadge } from "./bits";
 import { ListBody } from "./cards";
+import { WishCover } from "./wish-design";
 import { Ico } from "./icons";
 import { Composer } from "./day";
 import { useFmt, usePrivat } from "./store";
@@ -77,7 +78,9 @@ export function TaskDetail({ id }: { id: string }) {
       <button type="button" className={LINK} onClick={() => go("tasks")}>{t("tasks.back")}</button>
       <ErrorBox error={error} />
       <div className="flex gap-1.5 items-center flex-wrap"><StatusBadge task={x} /><KindLabel task={x} />{x.is_example && <Ex />}</div>
-      <h2 className="m-0 font-display font-extrabold text-[26px] leading-[1.15] tracking-[-0.4px] [overflow-wrap:anywhere]">{x.title}</h2>
+      {x.list_type === "wishlist" && x.design ? <WishCover title={x.title} design={x.design} /> : (
+        <h2 className="m-0 font-display font-extrabold text-[26px] leading-[1.15] tracking-[-0.4px] [overflow-wrap:anywhere]">{x.title}</h2>
+      )}
       <div className="rounded-[18px] border-2 border-ink bg-paper p-4 shadow-block flex flex-col gap-2.5">
         <Eyebrow>{t("tasks.next")}</Eyebrow>
         <p className="m-0 text-[17px] font-semibold [overflow-wrap:anywhere]">{x.next_step}</p>
@@ -85,7 +88,11 @@ export function TaskDetail({ id }: { id: string }) {
         {x.status === "draft" && <Button className={BIG} onClick={() => openSheet({ kind: "paywall", taskId: x.id })}>{t("draft.choose")}</Button>}
         {proposal && <Button className={BIG} onClick={() => talk(x.id)}>{t("call.seeProposal")}</Button>}
       </div>
-      {x.kind === "list" && <div className="rounded-[18px] border-2 border-ink bg-paper p-4"><ListBody task={x} withAdd /></div>}
+      {x.kind === "list" && (
+        <div className="rounded-[18px] border-2 border-ink bg-paper p-4" style={x.list_type === "wishlist" && x.design?.customized ? { background: x.design.background, color: x.design.text } : undefined}>
+          <ListBody task={x} withAdd />
+        </div>
+      )}
       {c && x.status === "done" && c.result === "answered" && c.confirmed_text && (
         <div className="rounded-[18px] border-2 border-success bg-success-soft p-4 flex flex-col gap-2">
           <Eyebrow className="!text-success">{t("call.outcomeConfirmed")}</Eyebrow>

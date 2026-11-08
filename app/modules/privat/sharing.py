@@ -80,7 +80,10 @@ def remove_member(db: OrmSession, task: PrivateTask, me: PrivateTaskMember, memb
         raise Conflict("Ejeren kan ikke forlade sin egen liste", code="owner_cannot_leave")
     if me.role != "owner" and target.id != me.id:
         raise Forbidden("Kun ejeren kan fjerne andre", code="owner_only")
-    # their reservations go with them (the owner never sees that either)
+    # their reservations and open pledges go with them (the owner never sees that either)
+    from app.modules.privat import group_gifts
+
+    group_gifts.on_member_removed(db, task, target.user_id)
     db.execute(update(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id,
                                              PrivateTaskItem.reserved_by_user_id == target.user_id)
                .values(reserved_by_user_id=None))
@@ -95,11 +98,16 @@ def reserve(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, item_id: uu
         raise Forbidden("Ejeren af en ønskeliste kan ikke reservere", code="owner_cannot_reserve")
     item = db.scalar(select(PrivateTaskItem).where(PrivateTaskItem.id == item_id, PrivateTaskItem.task_id == task.id)
                      .with_for_update())
-    if item is None:
+    if item is None or item.archived_at is not None:
         raise NotFound("Ønsket findes ikke")
     if on:
+        from app.modules.privat import group_gifts
+
         if item.reserved_by_user_id not in (None, m.user_id):
             raise Conflict("En anden har allerede reserveret dette ønske", code="already_reserved")
+        if item.reserved_by_user_id is None and group_gifts.blocks_reservation(db, item):
+            raise Conflict("Flere er gået sammen om dette ønske som fællesgave – vær med i gaven i stedet",
+                           code="group_gift_active")
         item.reserved_by_user_id = m.user_id
     else:
         if item.reserved_by_user_id != m.user_id:
@@ -143,8 +151,18 @@ def preview(db: OrmSession, inv: PrivateInvite) -> dict:
     task = db.get(PrivateTask, inv.resource_id) if inv.resource_id else None
     if task is None or sharing_paused(db, task):
         raise NotFound("Invitationen er ugyldig eller udløbet", code="invite_invalid")
-    n = db.scalar(select(func.count()).select_from(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id)) or 0
-    return {"title": task.title, "list_type": task.list_type, "item_count": n, "share_mode": task.share_mode}
+    live = (PrivateTaskItem.task_id == task.id, PrivateTaskItem.archived_at.is_(None))
+    n = db.scalar(select(func.count()).select_from(PrivateTaskItem).where(*live)) or 0
+    gg = db.scalar(select(func.count()).select_from(PrivateTaskItem).where(*live, PrivateTaskItem.group_gift_enabled)) or 0
+    out = {"title": task.title, "list_type": task.list_type, "item_count": n, "share_mode": task.share_mode,
+           "group_gift_count": gg}
+    if task.list_type == "wishlist":
+        from app.modules.privat import wish_design
+
+        d = wish_design.resolved(task.design)
+        # the look only – never the cover photo (a personal picture) on a page anyone with the link can open
+        out["design"] = {k: d[k] for k in ("theme", "accent", "background", "text", "font", "decorations")}
+    return out
 
 
 def accept(db: OrmSession, inv: PrivateInvite, ctx) -> tuple[dict, bool]:

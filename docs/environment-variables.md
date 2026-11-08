@@ -22,7 +22,7 @@
 | `AI_MODEL_ID` | nej | API | Anthropic → Models | Standard `claude-opus-5`. Logges pr. kald i `ai_usage`. |
 | `PRIVAT_AI_MODEL_ID` | nej | API | Anthropic → Models | Modellen i Dialogbot Privats chat (en person venter med telefonen i hånden – vælg en hurtig model, fx `claude-sonnet-5`). Tom = `AI_MODEL_ID`. |
 | `PRIVAT_AI_EFFORT` | nej | API | — | `low` (standard), `medium` eller `high` for Privat-chatten. Lav = korte, hurtige svar. |
-| `PRIVAT_WEB_SEARCH` | nej | API | — | `true` (standard): købslink-finderen (`privat/links.py`) må søge på nettet (Anthropics web_search i et separat, lille modelkald) efter en produktside, hvor et punkt på listen kan købes; siden hentes og skal være en rigtig købsside, før linket sættes. `false` slår det fra. |
+| `PRIVAT_WEB_SEARCH` | nej | API | — | `true` (standard): købslink-finderen (`privat/links.py`) må søge på nettet (Anthropics web_search i et separat, lille modelkald) efter en produktside, hvor et punkt på listen kan købes; siden hentes og skal være en rigtig købsside, før linket sættes. `false` slår det fra. Samme søgning driver «Søg efter produkt» på ønskesedler (`privat/wishes.py`); den kræver desuden `AI_PROVIDER=anthropic` og `ANTHROPIC_API_KEY`. Mangler det, svarer søgningen `503 search_unavailable`, og appen tilbyder «Indsæt link» / «Opret selv». |
 | `ANTHROPIC_API_KEY` | ved anthropic | API | Anthropic Console → API Keys (sæt månedligt forbrugsloft) | Uden nøgle nægter processen at starte med `AI_PROVIDER=anthropic`. |
 | `AI_EFFORT` | nej | API | — | `low` / `medium` (standard) / `high`. |
 | `AI_MAX_OUTPUT_TOKENS` | nej | API | — | Standard 2048 (inkl. tænkning). |
@@ -110,7 +110,7 @@
 | `PRIVAT_DEFAULT_ADDONS` | nej | API | — | Tilføjelser slået til for nye private konti. Standard `ring-for-mig,delte-lister,oenskelister`. |
 | `TRACK17_API_KEY` | nej | API + worker | 17TRACK → API → Security key | Pakker-appen (pakkesporing). Uden den er appen «Kommer snart». Kun forsendelsesnummeret sendes til 17TRACK. **Server-only.** |
 | `DUFFEL_ACCESS_TOKEN` | nej | API | Duffel dashboard → Developers → Access tokens | Rejser-appen: flytilbud med priser. **Server-only.** |
-| `PRIVAT_FILES_BUCKET` | nej (standard `privat-files`) | API | Navnet på en PRIVAT bucket i Supabase Storage | Brugerens billeder (kvitteringer i Garanti). Bruger `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY`. |
+| `PRIVAT_FILES_BUCKET` | nej (standard `privat-files`) | API | Navnet på en PRIVAT bucket i Supabase Storage | Brugerens billeder (kvitteringer i Garanti, ønskers produktbilleder og egne fotos, ønskesedlers coverbilleder – `oensker-lg/-sm`, `cover-lg/-sm`). Bruger `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY`. Uden dem kan staging/prod ikke gemme billeder (502 `storage_failed`); ønsker kan stadig gemmes uden billede. |
 | `PRIVAT_PARTNER_LINKS` | nej | API | JSON fra jeres affiliate-aftaler, fx `{"mobil": {"name": "…", "url": "https://…", "text": "Find et billigere mobilabonnement"}}` | Partnerlinks i Privat-apps, altid mærket «Annonce». Tom = intet vises. Se `docs/sales/privat-revenue.md`. |
 | `TRAVELPAYOUTS_TOKEN` / `TRAVELPAYOUTS_MARKER` | nej | API | Travelpayouts → Profile → API token / Partner ID (marker) | Rejser-appen: billigste priser og affiliate-links til booking. Uden Duffel og Travelpayouts er appen «Kommer snart». **Server-only.** |
 | `PRIVAT_SHORT_URL_BASE`, `PRIVAT_GROUP_URL_BASE` | nej | API | — | Korte links i SMS-tekster. Standard `https://dialogbot.app/i/` og `/g/`. |

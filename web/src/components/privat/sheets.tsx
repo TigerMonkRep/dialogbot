@@ -36,7 +36,7 @@ export function Sheet({ title, onClose, children }: { title: string; onClose: ()
   return (
     <div className="fixed inset-0 z-50 bg-ink/55 flex items-end sm:items-center sm:justify-center" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div ref={ref} role="dialog" aria-modal="true" aria-label={title}
-        className="bg-paper border-2 border-ink flex flex-col gap-3 px-[18px] pt-[18px] pb-[calc(22px+env(safe-area-inset-bottom))] max-h-[92dvh] overflow-y-auto w-full rounded-t-[20px] sm:w-[480px] sm:rounded-[20px] sm:shadow-block">
+        className="bg-paper text-ink border-2 border-ink flex flex-col gap-3 px-[18px] pt-[18px] pb-[calc(22px+env(safe-area-inset-bottom))] max-h-[92dvh] overflow-y-auto w-full rounded-t-[20px] sm:w-[480px] sm:rounded-[20px] sm:shadow-block">
         <div className="flex items-start gap-2">
           <h2 className="m-0 flex-1 min-w-0 font-display font-extrabold text-[22px] [overflow-wrap:anywhere]">{title}</h2>
           <button type="button" onClick={onClose} aria-label={t("sheet.close")} className="w-11 h-11 -mt-2 -mr-2 inline-flex items-center justify-center rounded-xl hover:bg-panel"><Ico name="close" /></button>

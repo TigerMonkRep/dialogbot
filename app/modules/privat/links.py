@@ -113,12 +113,12 @@ def parse_candidates(text: str) -> list[dict]:
 # --------------------------------------------------------------------------- 2. verify
 
 def fetch(url: str) -> tuple[int, str, str]:
-    """(status, final_url, html[:300k]) – replaced in tests."""
-    import httpx
+    """(status, final_url, html[:300k]) – replaced in tests. Through the SSRF-safe fetcher: the URL comes from a model,
+    so every hop must be a public http(s) address."""
+    from app.modules.privat import safe_fetch
 
-    with httpx.Client(follow_redirects=True, timeout=FETCH_TIMEOUT, headers={"user-agent": UA, "accept-language": "da,en;q=0.7"}) as c:
-        r = c.get(url)
-        return r.status_code, str(r.url), r.text[:300_000]
+    f = safe_fetch.fetch(url, max_bytes=1_000_000)
+    return f.status, f.url, f.text[:300_000]
 
 
 def looks_like_search(url: str) -> bool:

@@ -10,6 +10,7 @@ import uuid
 from datetime import date, datetime
 
 from sqlalchemy import (
+    BigInteger,
     Boolean,
     CheckConstraint,
     Date,
@@ -104,6 +105,9 @@ class PrivateTask(Base):
     # Shared lists: group (everyone adds and ticks, attributed) | wishlist (members reserve; the owner never sees it).
     # Null = not shared. Access ALWAYS goes through private_task_members, never through workspace_id.
     share_mode: Mapped[str | None] = mapped_column(String(16))
+    # Wishlists: the list's own look («Design ønskeseddel», wish_design.py): theme key plus the owner's overrides.
+    # Null = the default theme. Never HTML/CSS – only validated keys, #RRGGBB colours and a stored cover image.
+    design: Mapped[dict | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = ts_now()
     updated_at: Mapped[datetime] = ts_now()
 
@@ -124,7 +128,82 @@ class PrivateTaskItem(Base):
     done_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     # Wishlists: who said "Jeg køber den". Never shown to the list's owner, and to other members only as "Reserveret".
     reserved_by_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    # ---- wish details (wishes.py). `text` is the title, `note` the personal note, `link` the product link (kept
+    # verbatim, variant parameters included). All optional: an experience or a homemade gift has none of them.
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default="1")
+    price_minor: Mapped[int | None] = mapped_column(BigInteger)  # in the currency's smallest unit (øre)
+    currency: Mapped[str | None] = mapped_column(String(3))
+    # "shop": read from the shop's structured data at price_fetched_at; "user": typed by the owner. Never live.
+    price_source: Mapped[str | None] = mapped_column(String(8))
+    price_fetched_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    shop: Mapped[str | None] = mapped_column(String(120))
+    size: Mapped[str | None] = mapped_column(String(80))
+    color: Mapped[str | None] = mapped_column(String(80))
+    variant: Mapped[str | None] = mapped_column(String(120))
+    # The stored image (private bucket, wish_images.py): key of the large WebP; the small one sits beside it.
+    image_key: Mapped[str | None] = mapped_column(String(200))
+    image_origin: Mapped[str | None] = mapped_column(String(8))  # "shop" (imported) | "upload" (the owner's own photo)
+    # What the shop's page said, as data: brand, sku, availability, description and the variants it offers.
+    details: Mapped[dict | None] = mapped_column(JSONB)
+    # «Tillad fællesgave» (the owner's setting). The agreement itself – with its own, frozen target – is
+    # private_group_gifts; it belongs to the givers and is never shown to the owner.
+    group_gift_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    group_gift_target_minor: Mapped[int | None] = mapped_column(BigInteger)
+    # Deleted by the owner while givers had an agreement on it: hidden from the owner, kept for those givers.
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = ts_now()
+
+
+class PrivateGroupGift(Base):
+    """«Deles om en gave»: the givers' agreement on one wish. Coordination of PLEDGES only – no money moves. One
+    currency; the target is copied from the wish when the first pledge arrives and never follows later edits.
+    status: open | bought (set by the coordinator, never by the sum) | cancelled (the owner removed the wish or
+    switched the group gift off; pledges are kept so the givers see what happened). «Fuldt tilsagn» is derived."""
+
+    __tablename__ = "private_group_gifts"
+    __table_args__ = (
+        CheckConstraint("status in ('open','bought','cancelled')", name="ck_private_group_gifts_status"),
+        CheckConstraint("target_minor > 0", name="ck_private_group_gifts_target"),
+        Index("uq_private_group_gifts_live_item", "item_id", unique=True,
+              postgresql_where="status <> 'cancelled'"),
+        Index("ix_private_group_gifts_task", "task_id"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    item_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("private_task_items.id", ondelete="CASCADE"), nullable=False)
+    task_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("private_tasks.id", ondelete="CASCADE"), nullable=False)
+    target_minor: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="open")
+    cancel_reason: Mapped[str | None] = mapped_column(String(32))  # wish_removed | disabled
+    coordinator_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    # A handover offered by the coordinator; the role moves only when this person accepts.
+    pending_coordinator_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    bought_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = ts_now()
+
+
+class PrivateGiftPledge(Base):
+    """One giver's pledge on a group gift: at most one row per person (a retry or a double click updates it, never
+    adds one). Cancelled pledges keep their row (status) so a later re-join is the same row."""
+
+    __tablename__ = "private_gift_pledges"
+    __table_args__ = (
+        UniqueConstraint("gift_id", "user_id", name="uq_private_gift_pledges_gift_user"),
+        CheckConstraint("amount_minor > 0", name="ck_private_gift_pledges_amount"),
+        CheckConstraint("status in ('active','cancelled')", name="ck_private_gift_pledges_status"),
+        Index("ix_private_gift_pledges_user", "user_id"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    gift_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("private_group_gifts.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    amount_minor: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="active")
+    created_at: Mapped[datetime] = ts_now()
+    updated_at: Mapped[datetime] = ts_now()
 
 
 class PrivateTaskMember(Base):

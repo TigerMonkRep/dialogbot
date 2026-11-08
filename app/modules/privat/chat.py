@@ -326,7 +326,7 @@ def _apply_links(turn: Turn, task: PrivateTask, rich: list[tuple[str, str | None
     for text, link, note in rich:
         if not link and not note:
             continue
-        row = turn.db.scalar(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id,
+        row = turn.db.scalar(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id, PrivateTaskItem.archived_at.is_(None),
                                                             func.lower(PrivateTaskItem.text) == text.lower())
                              .order_by(PrivateTaskItem.created_at.desc()).limit(1))
         if row is None:
@@ -384,7 +384,7 @@ def _find_links(turn: Turn, task: PrivateTask, items: list[str]) -> list[links.B
 
 def _item_named(turn: Turn, task: PrivateTask, wanted: str) -> PrivateTaskItem | None:
     w = wanted.strip().lower()
-    rows = list(turn.db.scalars(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id)
+    rows = list(turn.db.scalars(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id, PrivateTaskItem.archived_at.is_(None))
                                 .order_by(PrivateTaskItem.position, PrivateTaskItem.created_at)))
     return next((r for r in rows if r.text.lower() == w), None) or \
         next((r for r in rows if w and (w in r.text.lower() or r.text.lower() in w)), None)
@@ -428,7 +428,7 @@ def h_set_item_link(turn: Turn, a: dict) -> str:
     if not link.startswith(("https://", "http://")):
         return "Linket skal starte med https://. Søg efter et rigtigt link først."
     wanted = str(a.get("item") or "").strip().lower()
-    rows = list(turn.db.scalars(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id)
+    rows = list(turn.db.scalars(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id, PrivateTaskItem.archived_at.is_(None))
                                 .order_by(PrivateTaskItem.position, PrivateTaskItem.created_at)))
     row = next((r for r in rows if r.text.lower() == wanted), None) or \
         next((r for r in rows if wanted and (wanted in r.text.lower() or r.text.lower() in wanted)), None)

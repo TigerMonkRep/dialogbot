@@ -1,0 +1,71 @@
+{
+  "_comment": "Mirrors app/modules/privat/wish_design.py THEMES/FONTS (tests/test_privat_wishes.py keeps them equal).",
+  "themes": {
+    "jul": {
+      "accent": "#B3261E",
+      "background": "#FBF6EE",
+      "text": "#1F2A24",
+      "font": "serif"
+    },
+    "foedselsdag": {
+      "accent": "#C2185B",
+      "background": "#FFF8EC",
+      "text": "#2A2233",
+      "font": "rounded"
+    },
+    "bryllup": {
+      "accent": "#7A5C2E",
+      "background": "#FAF7F2",
+      "text": "#2E2A26",
+      "font": "serif"
+    },
+    "konfirmation": {
+      "accent": "#2F5D9E",
+      "background": "#F3F6FB",
+      "text": "#1E2A3A",
+      "font": "outfit"
+    },
+    "barnedaab": {
+      "accent": "#2F7470",
+      "background": "#F1F7F6",
+      "text": "#22343A",
+      "font": "rounded"
+    },
+    "babyshower": {
+      "accent": "#6A4FB0",
+      "background": "#F7F4FC",
+      "text": "#2D2740",
+      "font": "rounded"
+    },
+    "student": {
+      "accent": "#B0102A",
+      "background": "#F5F6F8",
+      "text": "#14213D",
+      "font": "outfit"
+    },
+    "jubilaeum": {
+      "accent": "#7D6214",
+      "background": "#F8F5EC",
+      "text": "#2B2618",
+      "font": "serif"
+    },
+    "indflytning": {
+      "accent": "#3F6B2E",
+      "background": "#F3F5EF",
+      "text": "#24301F",
+      "font": "inter"
+    },
+    "neutral": {
+      "accent": "#2456F6",
+      "background": "#FFFFFF",
+      "text": "#1A1A1A",
+      "font": "outfit"
+    }
+  },
+  "fonts": [
+    "outfit",
+    "inter",
+    "serif",
+    "rounded"
+  ]
+}

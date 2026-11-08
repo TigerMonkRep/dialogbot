@@ -15,6 +15,57 @@ export type TaskItem = {
   /** Wishlists: null for the owner (never sees reservations); others see whether someone reserved it. */
   reserved?: boolean | null; reserved_by_me?: boolean;
   note?: string | null; link?: string | null;
+  // ---- Wishes (docs/privat-api.md «Ønsker, fællesgaver og design»). Optional so older backends still type-check.
+  quantity?: number; price_minor?: number | null; currency?: string | null;
+  /** "shop": read from the shop's page at price_fetched_at (never updated live); "user": typed by the owner. */
+  price_source?: "shop" | "user" | null; price_fetched_at?: string | null;
+  shop?: string | null; size?: string | null; color?: string | null; variant?: string | null;
+  /** Our stored copy (signed, short-lived links): url = large, url_sm = card size. */
+  image?: { url: string; url_sm: string } | null; image_origin?: "shop" | "upload" | null;
+  details?: WishDetails | null;
+  /** Owner: their setting only. Givers: the agreement (never shown to the owner). null = no group gift. */
+  group_gift?: OwnerGroupGift | GiverGroupGift | null;
+  /** Removed by the owner while you had a pledge on it (givers only). */
+  archived?: boolean;
+};
+export type WishOptions = { sizes: string[]; colors: string[]; variants: { name?: string; size?: string; color?: string; sku?: string; price_minor?: number; currency?: string; availability?: string; url?: string }[] };
+export type WishDetails = { brand?: string; sku?: string; description?: string; availability?: string; source_url?: string; options?: WishOptions };
+export type OwnerGroupGift = { enabled: boolean; target_minor: number | null; currency: string | null };
+export type GiftStatus = "open" | "full" | "bought" | "cancelled";
+export type GiverGroupGift = {
+  enabled: true; status: GiftStatus; target_minor: number; currency: string; pledged_minor: number; remaining_minor: number;
+  participants: number; my_pledge_minor: number | null; coordinator: { name: string | null; is_me: boolean } | null;
+  pending_coordinator_is_me: boolean; pending_coordinator_name?: string | null; is_coordinator: boolean;
+  cancel_reason: "wish_removed" | "disabled" | null; can_join: boolean; reserved_by_me: boolean;
+  /** Only for the coordinator (to hand the role over): the other participants' first names, never amounts. */
+  participant_names: { user_ref: string; name: string }[] | null;
+};
+export const isGiverGift = (g: TaskItem["group_gift"]): g is GiverGroupGift => !!g && "status" in g;
+/** The wish form's body – one model for search, link and «Opret selv». */
+export type WishBody = {
+  text: string; note?: string | null; link?: string | null; quantity?: number; price_minor?: number | null; currency?: string | null;
+  price_source?: "shop" | "user" | null; price_fetched_at?: string | null; shop?: string | null; size?: string | null; color?: string | null;
+  variant?: string | null; image_key?: string | null; image_origin?: "shop" | "upload" | null; details?: WishDetails | null;
+  group_gift_enabled?: boolean; group_gift_target_minor?: number | null;
+};
+/** POST /privat/wishes/import: what the shop's page declares. readable=false keeps the link for a manual wish. */
+export type WishImport = {
+  link: string; readable: boolean; reason: "blocked" | "unreachable" | "not_a_page" | "no_product_data" | null; fetched_at: string;
+  title?: string | null; price_minor?: number | null; currency?: string | null; shop?: string | null; size?: string | null;
+  color?: string | null; variant?: string | null; details?: WishDetails | null; options?: WishOptions | null;
+  image_key?: string | null; image?: { url: string; url_sm: string } | null;
+};
+export type WishSearchResult = { link: string; title: string; image_url: string | null; price_minor: number | null; currency: string | null; shop: string | null; availability: string | null; options: WishOptions | null };
+export type WishDesign = {
+  theme: string; accent: string; background: string; text: string; font: string; decorations: boolean;
+  subtitle: string | null; date: string | null;
+  /** key: the stored cover (already part of its signed link), sent back on «Gem design» to keep it. */
+  cover: { key?: string; url: string; url_sm: string; zoom: number; x: number; y: number } | null;
+  overrides?: string[]; customized?: boolean;
+};
+export type WishDesignBody = {
+  theme: string; accent?: string | null; background?: string | null; text?: string | null; font?: string | null; decorations?: boolean;
+  subtitle?: string | null; date?: string | null; cover?: { key: string; zoom: number; x: number; y: number } | null;
 };
 export type ListType = "shopping" | "wishlist" | "todo";
 export type ShareMode = "group" | "wishlist";
@@ -45,6 +96,8 @@ export type Task = {
   partner?: AppPartner | null;
   list_type?: ListType | null; shared?: boolean; share_mode?: ShareMode | null; my_role?: MemberRole;
   members?: Member[]; updated_at?: string;
+  /** Wishlists: the list's look («Design ønskeseddel»), the same for the owner and everyone it is shared with. */
+  design?: WishDesign | null;
   /** Kalender app: the agreed time saved from this task (call or booking), when there is one. */
   appointment?: { id: string; when_text: string; ics_path: string } | null;
 };
@@ -125,6 +178,9 @@ export type InvitePreview = {
   title: string; owner_first_name: string; list_type: ListType | null; item_count: number; share_mode: ShareMode;
   // «Tilføjelse 3»: one generic invite mechanism for every shareable add-on.
   inviter_first_name?: string; resource_type?: string; addon_key?: string | null; cta_text?: string | null;
+  /** Wishlists: how many wishes allow a group gift, and the list's look (never the cover photo). */
+  group_gift_count?: number;
+  design?: Pick<WishDesign, "theme" | "accent" | "background" | "text" | "font" | "decorations"> | null;
 };
 // «Tilføjelse 4: Grupper» – Mine folk. Only the owner sees a group; numbers are used only when the user shares from
 // their own phone and to recognise people already on Dialogbot.
@@ -280,6 +336,20 @@ export interface PrivatApi {
   appOverview(key: string): Promise<AppOverview>;
   removeAppItem(key: string, id: string): Promise<void>;
   uploadAppPhoto(key: string, id: string, file: Blob): Promise<{ ok: boolean }>;
+  // Wishes, group gifts and design (docs/privat-api.md «Ønsker, fællesgaver og design»)
+  /** 503 search_unavailable when product search is not configured – then offer link/manual. */
+  searchWishes(q: string): Promise<{ results: WishSearchResult[] }>;
+  importWish(link: string): Promise<WishImport>;
+  uploadWishImage(file: Blob): Promise<{ image_key: string; image: { url: string; url_sm: string } | null }>;
+  addWish(taskId: string, body: WishBody): Promise<Task>;
+  editWish(taskId: string, itemId: string, body: Partial<WishBody>): Promise<Task>;
+  /** Join/change my pledge (minor units). 409 pledge_exceeds_remaining carries remaining_minor. */
+  pledge(taskId: string, itemId: string, amountMinor: number, key: string): Promise<Task>;
+  withdrawPledge(taskId: string, itemId: string): Promise<Task>;
+  giftCoordinator(taskId: string, itemId: string, action: "take" | "transfer" | "accept" | "decline" | "cancel_transfer" | "release", to?: string): Promise<Task>;
+  giftBought(taskId: string, itemId: string, bought: boolean): Promise<Task>;
+  saveDesign(taskId: string, body: { title?: string; design: WishDesignBody | null }): Promise<Task>;
+  uploadCover(taskId: string, file: Blob): Promise<{ key: string; image: { url: string; url_sm: string } | null; width: number; height: number }>;
 }
 
 // ---------- Household apps (one generic overview) ----------
@@ -452,6 +522,18 @@ export const realPrivat: PrivatApi = {
   removeAppItem: (key, id) => api(`${P}/apps/${enc(key)}/items/${enc(id)}`, { method: "DELETE" }),
   uploadAppPhoto: (key, id, file) => api(`${P}/apps/${enc(key)}/items/${enc(id)}/photo`,
     { method: "POST", body: file, headers: { "content-type": file.type || "application/octet-stream" } }),
+  searchWishes: (q) => api(`${P}/wishes/search?q=${enc(q)}`),
+  importWish: (link) => api(`${P}/wishes/import`, json({ link })),
+  uploadWishImage: (file) => api(`${P}/wishes/images`, { method: "POST", body: file, headers: { "content-type": file.type || "application/octet-stream" } }),
+  addWish: (taskId, body) => api(`${P}/tasks/${enc(taskId)}/wishes`, json(body)),
+  editWish: (taskId, itemId, body) => api(`${P}/tasks/${enc(taskId)}/wishes/${enc(itemId)}`, { method: "PATCH", body: JSON.stringify(body) }),
+  pledge: (taskId, itemId, amount_minor, key) => api(`${P}/tasks/${enc(taskId)}/items/${enc(itemId)}/gift/pledge`,
+    { method: "PUT", body: JSON.stringify({ amount_minor }), headers: { "idempotency-key": key } }),
+  withdrawPledge: (taskId, itemId) => api(`${P}/tasks/${enc(taskId)}/items/${enc(itemId)}/gift/pledge`, { method: "DELETE" }),
+  giftCoordinator: (taskId, itemId, action, to) => api(`${P}/tasks/${enc(taskId)}/items/${enc(itemId)}/gift/coordinator`, json({ action, to })),
+  giftBought: (taskId, itemId, bought) => api(`${P}/tasks/${enc(taskId)}/items/${enc(itemId)}/gift/bought`, json({ bought })),
+  saveDesign: (taskId, body) => api(`${P}/tasks/${enc(taskId)}/design`, { method: "PUT", body: JSON.stringify(body) }),
+  uploadCover: (taskId, file) => api(`${P}/tasks/${enc(taskId)}/design/cover`, { method: "POST", body: file, headers: { "content-type": file.type || "application/octet-stream" } }),
   searchTrips: (body) => api(`${P}/trips/search`, json(body)),
   latestTrips: () => api(`${P}/trips/latest`),
 };

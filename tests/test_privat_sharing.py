@@ -248,7 +248,10 @@ def test_addon_catalog_extensible(api, pv, dummy_addon):
                  "description": "Bevis for, at ét objekt er nok.", "icon": "star", "category": "test",
                  "price_text": "Gratis", "pricing": "free", "monthly_price_minor": None, "status": "available",
                  "permissions": ["Ingen"], "requires": [], "enabled": False, "enabled_at": None,
-                 "what": "", "example": "", "steps": [], "included_in": [], "included": True, "requires_plan": False}
+                 "what": "", "example": "", "steps": [], "included_in": [], "included": True, "requires_plan": False,
+                 # «Mine apps» (app_status.py): nothing saved, never switched off, no setup steps
+                 "needs": [], "summary_line": None, "setup": {"done": 0, "total": 0}, "disabled_at": None,
+                 "notify_requested": False, "data_deletable": True}
     assert api.post(tok, "/privat/addons/test-tilfoejelse/enable").json()["enabled"] is True
 
 

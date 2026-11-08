@@ -14,6 +14,8 @@ import { addonIncluded, addonText } from "./addons";
 import { PushPrompt } from "./push";
 import { isDanishMobile } from "@/lib/privat/fake";
 import { platformOf, smsHref } from "@/lib/privat/sms";
+import { WishList } from "./wishes";
+import { DesignButton, WishCover } from "./wish-design";
 
 const CARD = "rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5";
 const PROPOSAL = "rounded-[18px] border-2 border-dashed border-ink bg-paper p-4 flex flex-col gap-3";
@@ -45,7 +47,7 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
         </div>
       )}
       {wish && owner && <p className="m-0 text-[13px] text-muted">{t("list.ownerNote")}</p>}
-      {task.items.length === 0 && <p className="m-0 text-[14px] text-muted">{t("list.emptyItems")}</p>}
+      {!wish && task.items.length === 0 && <p className="m-0 text-[14px] text-muted">{t("list.emptyItems")}</p>}
       {task.partner && task.items.length > 0 && (
         <a href={task.partner.url} target="_blank" rel="sponsored noopener noreferrer" data-testid="grocery-partner"
           className="rounded-[14px] border-[1.5px] border-dashed border-ink-soft p-3 flex flex-col gap-0.5 no-underline text-ink">
@@ -54,7 +56,8 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
           <span className="text-[12px] text-muted">{task.partner.name} · {task.partner.note}</span>
         </a>
       )}
-      <ul className="list-none m-0 p-0 flex flex-col gap-0.5">
+      {wish && <WishList task={task} withAdd={withAdd && canEdit && owner} />}
+      {!wish && <ul className="list-none m-0 p-0 flex flex-col gap-0.5">
         {task.items.map((it) => (
           <li key={it.id} className="flex flex-col">
             {wish ? (
@@ -89,10 +92,11 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
             )}
           </li>
         ))}
-      </ul>
-      {withAdd && canEdit && (owner || !wish) && <AddItem task={task} wish={wish} />}
+      </ul>}
+      {withAdd && canEdit && !wish && <AddItem task={task} wish={wish} />}
       {!withAdd && <span className="text-[13px] text-muted">{t("list.count", { n: task.items.length, done: doneCount })}</span>}
       <div className="flex flex-wrap gap-2 items-center">
+        {wish && owner && withAdd && task.list_type === "wishlist" && <DesignButton task={task} />}
         {canShare && (
           <Button variant="outline" icon={undefined} onClick={() => openSheet({ kind: "share", taskId: task.id })} className="gap-2">
             <Ico name="share" size={18} />{task.shared ? t("list.shareManage") : t("list.share")}
@@ -191,6 +195,7 @@ export function ListCard({ task }: { task: Task }) {
   const { talk } = usePrivat();
   return (
     <div className={CARD}>
+      {task.design && isWish(task) && task.design.customized && <WishCover title={task.title} design={task.design} compact />}
       <div className="flex items-center gap-2.5">
         <Tile name={isWish(task) ? "gift" : "list"} />
         <div className="flex-1 min-w-0">

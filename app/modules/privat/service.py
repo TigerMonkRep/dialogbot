@@ -139,7 +139,9 @@ def create_digital(db: OrmSession, ctx, *, kind: str, title: str, items: list[st
 
 
 def _add_item(db: OrmSession, task: PrivateTask, text: str, user_id: uuid.UUID, *, position: int | None = None,
-              note: str | None = None, link: str | None = None) -> PrivateTaskItem:
+              note: str | None = None, link: str | None = None, wish: dict | None = None) -> PrivateTaskItem:
+    if wish is not None:
+        return _add_wish(db, task, user_id, wish, position=position)
     text = (text or "").strip()[:300]
     if not text:
         raise ValidationFailed("Punktet må ikke være tomt", field_errors=[{"field": "text"}])
@@ -155,6 +157,46 @@ def _add_item(db: OrmSession, task: PrivateTask, text: str, user_id: uuid.UUID, 
     return it
 
 
+def _add_wish(db: OrmSession, task: PrivateTask, user_id: uuid.UUID, data: dict, *,
+              position: int | None = None) -> PrivateTaskItem:
+    """A wish with product fields (wishes.apply_fields) – from search, a link or typed by hand: one model."""
+    from app.modules.privat import group_gifts, wishes
+
+    if position is None:
+        position = (db.scalar(select(func.max(PrivateTaskItem.position)).where(PrivateTaskItem.task_id == task.id))
+                    or 0) + 1
+    it = PrivateTaskItem(task_id=task.id, workspace_id=task.workspace_id, text="-", position=position,
+                         added_by_user_id=user_id, quantity=1)
+    wishes.apply_fields(it, data, ws_id=task.workspace_id, partial=False)
+    db.add(it)
+    db.flush()
+    if data.get("group_gift_enabled"):
+        group_gifts.on_owner_settings(db, it, enabled=True, target_minor=data.get("group_gift_target_minor"),
+                                      currency=it.currency or "DKK")
+        it.currency = it.currency or "DKK"
+    return it
+
+
+def update_wish(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, item_id: uuid.UUID, data: dict) -> PrivateTaskItem:
+    """The owner edits a wish (partial). Never touches reservations or a running group gift's frozen target."""
+    from app.modules.privat import group_gifts, wishes
+
+    can_add(task, m)
+    it = db.scalar(select(PrivateTaskItem).where(PrivateTaskItem.id == item_id, PrivateTaskItem.task_id == task.id,
+                                                 PrivateTaskItem.archived_at.is_(None)).with_for_update())
+    if it is None:
+        raise NotFound("Ønsket findes ikke")
+    wishes.apply_fields(it, data, ws_id=task.workspace_id, partial=True)
+    if "group_gift_enabled" in data or "group_gift_target_minor" in data:
+        enabled = bool(data.get("group_gift_enabled", it.group_gift_enabled))
+        target = data.get("group_gift_target_minor", it.group_gift_target_minor)
+        group_gifts.on_owner_settings(db, it, enabled=enabled, target_minor=target, currency=it.currency or "DKK")
+        if enabled:
+            it.currency = it.currency or "DKK"
+    touch(task)
+    return it
+
+
 def can_add(task: PrivateTask, m: PrivateTaskMember) -> None:
     if task.kind != "list":
         raise Conflict("Kun lister har punkter", code="not_a_list")
@@ -165,11 +207,14 @@ def can_add(task: PrivateTask, m: PrivateTaskMember) -> None:
 
 
 def add_items(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, texts: list[str], *, note: str | None = None,
-              link: str | None = None) -> list[PrivateTaskItem]:
-    """Free: editing an existing list never uses a task."""
+              link: str | None = None, wish: dict | None = None) -> list[PrivateTaskItem]:
+    """Free: editing an existing list never uses a task. `wish`: the product fields of ONE wish (wishes.py)."""
     can_add(task, m)
-    out = [_add_item(db, task, t, m.user_id, note=note if len(texts) == 1 else None,
-                     link=link if len(texts) == 1 else None) for t in texts if (t or "").strip()]
+    if wish is not None:
+        out = [_add_item(db, task, "", m.user_id, wish=wish)]
+    else:
+        out = [_add_item(db, task, t, m.user_id, note=note if len(texts) == 1 else None,
+                         link=link if len(texts) == 1 else None) for t in texts if (t or "").strip()]
     if not out:
         raise ValidationFailed("Skriv mindst ét punkt", field_errors=[{"field": "text"}])
     db.flush()
@@ -201,11 +246,24 @@ def toggle_item(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, item_id
 
 
 def delete_item(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, item_id: uuid.UUID) -> None:
+    """A wish that givers have an agreement on (pledges, or a gift marked bought) is archived, not deleted: the owner
+    sees it disappear exactly like any other, the givers keep their agreement with the status «Annulleret»."""
+    from app.modules.privat import group_gifts, wish_images
+
     can_add(task, m)
-    it = db.scalar(select(PrivateTaskItem).where(PrivateTaskItem.id == item_id, PrivateTaskItem.task_id == task.id))
+    it = db.scalar(select(PrivateTaskItem).where(PrivateTaskItem.id == item_id, PrivateTaskItem.task_id == task.id,
+                                                 PrivateTaskItem.archived_at.is_(None)).with_for_update())
     if it is None:
         raise NotFound("Punktet findes ikke")
-    db.delete(it)
+    gift = group_gifts.live_gift(db, it.id)
+    if gift is not None and (gift.status == "bought" or group_gifts.has_active_pledges(db, gift)):
+        group_gifts.cancel(db, it, reason="wish_removed")
+        it.archived_at = rules.now()
+    else:
+        key = it.image_key
+        db.delete(it)
+        db.flush()
+        wish_images.delete(key)
     touch(task)
 
 
@@ -438,21 +496,38 @@ def _names(db: OrmSession, ids: set) -> dict:
 
 
 def items_out(db: OrmSession, task: PrivateTask, viewer_id: uuid.UUID, role: str) -> list[dict]:
+    from app.modules.privat import group_gifts, wishes
+
     rows = list(db.scalars(select(PrivateTaskItem).where(PrivateTaskItem.task_id == task.id)
                            .order_by(PrivateTaskItem.position, PrivateTaskItem.created_at)))
     names = _names(db, {i.added_by_user_id for i in rows} | {i.done_by_user_id for i in rows})
-    wishlist_owner = task.share_mode == "wishlist" and role == "owner"
+    is_owner = role == "owner"
+    wishlist_owner = task.share_mode == "wishlist" and is_owner
+    giver = task.share_mode == "wishlist" and not is_owner
     out = []
     for i in rows:
+        gift = group_gifts.out_for_giver(db, i, viewer_id) if giver else None
+        if i.archived_at is not None and gift is None:
+            continue  # removed by the owner: only givers with an agreement on it still see it
         x = {"id": str(i.id), "text": i.text, "done": i.done, "note": i.note, "link": i.link,
              "added_by_name": names.get(i.added_by_user_id) if task.share_mode else None,
-             "done_by_name": names.get(i.done_by_user_id) if task.share_mode and i.done else None}
+             "done_by_name": names.get(i.done_by_user_id) if task.share_mode and i.done else None,
+             "archived": i.archived_at is not None, **wishes.wish_out(i)}
         if task.share_mode == "wishlist":
             # The owner never learns anything about reservations; others see that it is taken, not by whom.
             x["reserved"] = None if wishlist_owner else i.reserved_by_user_id is not None
             x["reserved_by_me"] = (not wishlist_owner) and i.reserved_by_user_id == viewer_id
         else:
             x["reserved"], x["reserved_by_me"] = None, False
+        if is_owner:
+            # The owner's SETTING only – never the agreement, totals, status or who takes part.
+            x["group_gift"] = ({"enabled": True, "target_minor": i.group_gift_target_minor,
+                                "currency": i.currency or "DKK"} if i.group_gift_enabled else
+                               {"enabled": False, "target_minor": i.group_gift_target_minor, "currency": i.currency})
+        elif gift is not None:
+            x["group_gift"] = {"enabled": True, **gift}
+        else:
+            x["group_gift"] = None
         out.append(x)
     return out
 
@@ -474,11 +549,20 @@ def task_out(db: OrmSession, task: PrivateTask, viewer_id: uuid.UUID) -> dict:
         "call": call_out(latest_call(db, task.id)) if task.kind == "call" else None,
         "events": [{"at": e.at.isoformat(), "text": e.text} for e in evs] if is_owner or task.share_mode == "group" else [],
         "list_type": task.list_type, "shared": task.share_mode is not None, "share_mode": task.share_mode,
+        "design": _design(task),
         "my_role": role, "members": sharing.members_out(db, task, viewer_id) if task.share_mode else [],
         "appointment": _appointment_ref(db, task) if is_owner and task.kind == "call" else None,
         # a shopping list can be ordered from a grocery partner (always shown as «Annonce»; none until configured)
         "partner": _grocery_partner() if task.list_type == "shopping" else None,
     }
+
+
+def _design(task: PrivateTask) -> dict | None:
+    if task.kind != "list" or task.list_type != "wishlist":
+        return None
+    from app.modules.privat import wish_design
+
+    return wish_design.resolved(task.design)
 
 
 def _grocery_partner() -> dict | None:

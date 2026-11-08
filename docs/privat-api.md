@@ -601,3 +601,72 @@ Regler, der ligger i koden:
 Madplan (udvidet): `save_meal_plan` tager `people` og pr. ret `servings`; mængderne regnes om og lægges sammen på
 indkøbslisten («500 g» + «250 g hakket oksekød» = «750 g hakket oksekød»), og hver dags ingredienser står som note på
 dagen.
+
+## Ønsker, fællesgaver og design (tilføjelsen «Ønskelister»)
+
+Bygget oven på de delte ønskelister (samme `private_tasks`/`private_task_items`, samme medlemskab, invitationer og hemmelige
+reservationer) – ingen parallelle systemer. Moduler: `wishes.py` (felter, import, søgning), `product_meta.py` (læser
+butikkens strukturerede data), `safe_fetch.py` (SSRF-sikker hentning), `wish_images.py` (billeder), `group_gifts.py`
+(fællesgaver), `wish_design.py` (design); ruter i `wishes_router.py`. Migration `d8e4a1c6f2b9` er rent additiv.
+
+### Et ønske – én datamodel
+
+`TaskItem` har nu (alle valgfrie, gamle punkter er uændrede): `quantity` (standard 1), `price_minor` (valutaens mindste
+enhed) + `currency` (ISO, standard `DKK` når der er en pris), `price_source` (`shop` = læst fra butikkens side ved
+`price_fetched_at`, `user` = skrevet af ejeren – priser opdateres aldrig løbende), `shop`, `size`, `color`, `variant`,
+`image` (`{url, url_sm}`, signerede 5-minutters links til vores egen kopi), `image_origin` (`shop`|`upload`),
+`details` (`brand`, `sku`, `availability`, `description`, `options` = de varianter siden selv oplyser), `group_gift`
+(se nedenfor) og `archived` (kun for gavegivere med en aftale på et ønske, ejeren har slettet). `Task.design` er
+ønskesedlens udseende.
+
+| Metode | Sti | Hvem | Hvad |
+|---|---|---|---|
+| GET | `/privat/wishes/search?q=` | alle | «Søg efter produkt»: rigtige produktsider (websøgning + hver sides egne strukturerede data). `503 search_unavailable` uden websøgning. 30/time (429). |
+| POST | `/privat/wishes/import` `{link}` | alle | «Indsæt link»: `{link, readable, reason, fetched_at, title, price_minor, currency, shop, size, color, variant, details, options, image_key, image}`. Kan siden ikke læses: `readable:false` + linket. Interne/ulovlige adresser: 422. 60/time. Gemmer intet på listen. |
+| POST | `/privat/wishes/images` (rå JPEG/PNG/WebP ≤ 6 MB) | alle | Eget billede → `{image_key, image}` til formularen. |
+| POST | `/privat/tasks/{id}/wishes` | ejer (ønskeliste) | Opret ønske (`WishIn`: `text` + felterne ovenfor + `image_key`, `group_gift_enabled`, `group_gift_target_minor`). |
+| PATCH | `/privat/tasks/{id}/wishes/{item}` | ejer | Ret ønske (kun de sendte felter). |
+| DELETE | `/privat/tasks/{id}/items/{item}` | ejer | Som før. Har gavegivere en aftale (tilsagn eller «Købt»), arkiveres ønsket i stedet: ejeren ser det forsvinde, gavegiverne ser «Annulleret» og får besked. |
+| PUT | `/privat/tasks/{id}/items/{item}/gift/pledge` `{amount_minor}` (+ `Idempotency-Key`) | gavegiver | Meld dig til / ret dit beløb. Over restbeløbet: `409 pledge_exceeds_remaining` med `remaining_minor` (aldrig lydløst ændret). Fuld: `409 gift_full`. Købt: `409 gift_bought`. Reserveret separat: `409 already_reserved`. |
+| DELETE | `/privat/tasks/{id}/items/{item}/gift/pledge` | gavegiver | Annuller eget tilsagn (idempotent). |
+| POST | `/privat/tasks/{id}/items/{item}/gift/coordinator` `{action, to?}` | deltager | `take` (kun når ingen har rollen), `transfer` (koordinator → anden deltager, `to` = `user_ref`), `accept`/`decline` (modtageren), `cancel_transfer`, `release`. |
+| POST | `/privat/tasks/{id}/items/{item}/gift/bought` `{bought}` | koordinator | Markér som købt (eller fortryd). Summen markerer aldrig noget som købt. |
+| PUT | `/privat/tasks/{id}/design` `{title?, design}` | ejer | Gem design; `design: null` = standardtemaet. Påvirker kun designet. |
+| POST | `/privat/tasks/{id}/design/cover` (rå billede) | ejer | Upload cover → `{key, image}`; bruges først ved «Gem design». |
+
+### Fællesgave («Deles om en gave») – koordinering af tilsagn, ingen betaling
+
+- Ejeren slår «Tillad fællesgave» til og foreslår et målbeløb (standard: prisen). Ejeren ser **kun** sin indstilling:
+  `group_gift: {enabled, target_minor, currency}` – aldrig aftalen, status, beløb, deltagere eller koordinator. Alle
+  gavegiver-ruter svarer ejeren `403 owner_cannot_give` uanset tilstand. Ingen events, `updated_at`, chat eller
+  notifikationer til ejeren.
+- Gavegivere er medlemmer af den delte ønskeliste (login + personlig invitation). De ser `group_gift: {enabled, status
+  (open|full|bought|cancelled), target_minor, currency, pledged_minor, remaining_minor, participants, my_pledge_minor,
+  coordinator {name, is_me}, pending_coordinator_is_me, is_coordinator, can_join, reserved_by_me, participant_names
+  (kun koordinatoren, ingen beløb)}`. Ingen ser andres beløb.
+- Aftalens mål kopieres fra ønsket ved første tilsagn og ligger derefter fast. Én valuta pr. aftale. Alle skrivninger
+  låser ønskets række (`SELECT … FOR UPDATE`), så samtidige tilsagn aldrig overtegner målet; ét tilsagn pr. person
+  (unik), så dobbeltklik/genforsøg opdaterer samme række.
+- Ejeren slår fællesgave fra / sletter ønsket: en åben aftale annulleres (tilsagnene gemmes), deltagerne får
+  push/e-mail. En reservation og en aktiv fællesgave udelukker hinanden (`409 group_gift_active` / `already_reserved`).
+- Forlader en gavegiver listen, ophører vedkommendes åbne tilsagn og roller.
+- Offentligt invitations-preview viser kun `group_gift_count` (ejerens indstilling) og temaets farver – aldrig cover,
+  ønsker, beløb eller personer.
+
+### Design
+
+`design: {theme, accent, background, text, font, decorations, subtitle, date, cover {key, url, url_sm, zoom, x, y},
+overrides, customized}`. Ti temaer (`jul`, `foedselsdag`, `bryllup`, `konfirmation`, `barnedaab`, `babyshower`,
+`student`, `jubilaeum`, `indflytning`, `neutral`), fire skrifter (`outfit`, `inter`, `serif`, `rounded`). Serveren
+accepterer kun disse nøgler, `#RRGGBB` og egne cover-nøgler, og kræver WCAG-kontrast (tekst/baggrund ≥ 4,5, hvid
+knaptekst på accent ≥ 4,5, accent/baggrund ≥ 3). Paletten spejles i `web/src/lib/privat/wish-themes.json` (en test holder
+dem ens).
+
+### Sikkerhed ved hentning (SSRF)
+
+Kun http/https på port 80/443, ingen brugernavn/kode i URL'en; alle DNS-svar skal være offentlige adresser (ingen
+loopback, private net, link-local/metadata, CGNAT, multicast, IPv4-mappede varianter); forbindelsen går til den
+kontrollerede IP (værtsnavnet kun i Host/SNI), så DNS-rebinding ikke virker; omdirigeringer følges manuelt (højst 4) og
+kontrolleres hver gang; 8 s timeout; 2 MB HTML / 6 MB billede. Indholdet behandles som data (ingen scripts køres).
+`links.py` («Hvor kan den købes?») bruger nu samme fetcher.
+

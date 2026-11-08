@@ -14,7 +14,8 @@ import { PLANS, TRIAL_DAYS, apiPlans } from "./plans";
 import { creditPackPrice, currencyFor, currencyOr, formatPrice, type Currency } from "@/lib/markets";
 import { ADDON, type Addon, type ApproveBody, type Balance, type BillingInterval, type ChatMessage, type ChatOption, type Day, type InvitePreview, type LedgerEntry, type ListType,
   type Member, type Plan, type PlanKey, type PrivatApi, type Referrals, type Group, type GroupMember, type InviteStatus, type ShareGroupResult, type Subscription, type SubscriptionPlan, type SubscriptionStatus,
-  type SuggestedPerson, type SendResult, type Task, type TaskItem, type TaskStatus } from "./api";
+  type SuggestedPerson, type SendResult, type Task, type TaskItem, type TaskStatus, type GiverGroupGift, type OwnerGroupGift, type WishBody, type WishDesign } from "./api";
+import WISH_THEMES from "./wish-themes.json";
 
 export const FAKE_SMS_CODE = "123456";
 const FREE_LIMIT = 0; // no free tasks any more: without a plan the account only reads lists shared with it
@@ -50,11 +51,15 @@ type Sub = { plan: SubscriptionPlan; status: SubscriptionStatus; interval: Billi
 type State = {
   v: 8; sub: Sub; packCurrency?: Currency; quotaCalls: Record<string, true>; location: string | null; push: string[]; joinLinks: Record<string, string>; groups: Group[]; status: Record<string, (InviteStatus & { key: string })[]>; ref: { invited: number; joined: number; activated: number; credits_earned: number; viaInvite: string | null; selfRewarded: boolean; annaJoined: boolean; annaRewarded: boolean };
   addons: Record<string, boolean>; invites: Record<string, string>; reservations: Record<string, "me" | "other">;
+  /** Simulated group gifts on wishes others shared with me: the others' pledges are one simulated sum. */
+  gifts?: Record<string, FakeGift>;
   invitable: Record<string, Task>; n: number; freeUsed: number; credits: number; reserved: number; sponsorDay: string; sponsorUsed: number;
   phone: string | null; phoneVerified: boolean; phonePending: string | null;
   tasks: Task[]; msgs: ChatMessage[]; ledger: LedgerEntry[]; paySeq: number; lastPay: string | null;
   meta: Record<string, Meta>; pending: Record<string, Pending>; prices: Record<string, string>;
 };
+
+type FakeGift = { target: number; currency: string; others: number; othersCount: number; mine: number | null; status: "open" | "bought" | "cancelled"; coordinator: "me" | "other" | null; pendingMe: boolean };
 
 type FakeError = { status: number; code: string; message: string };
 const fail = (status: number, code: string, message: string): never => { throw { status, code, message } as FakeError; };
@@ -130,9 +135,10 @@ function sharedExamples(): { joined: Task[]; invitable: Record<string, Task> } {
   const meEditor: Member = { ...ME, role: "editor" };
   const wish: Task = { ...base, id: "s1", kind: "list", list_type: "wishlist", share_mode: "wishlist", my_role: "editor", title: "Annas ønskeliste",
     status: "in_progress", next_step: "Vælg en gave", who: FAKE_OTHER, usage_text: "Gratis – delt med dig",
-    items: [item("s1a", "Bluetooth-højttaler", { note: "Gerne en lille en til badeværelset", added_by_name: FAKE_OTHER }),
-      item("s1b", "Strikkebog", { link: "https://example.com/strikkebog", added_by_name: FAKE_OTHER }),
-      item("s1c", "Brætspillet Azul", { added_by_name: FAKE_OTHER })],
+    items: [item("s1a", "Bluetooth-højttaler", { note: "Gerne en lille en til badeværelset", added_by_name: FAKE_OTHER, price_minor: 129900, currency: "DKK", price_source: "user", color: "Sort", quantity: 1 }),
+      item("s1b", "Strikkebog", { link: "https://example.com/strikkebog", added_by_name: FAKE_OTHER, price_minor: 24995, currency: "DKK", price_source: "user", shop: "example.com", quantity: 1 }),
+      item("s1c", "Brætspillet Azul", { added_by_name: FAKE_OTHER, quantity: 1 }),
+      item("s1d", "Weekend i sommerhus", { note: "En oplevelse sammen – vi går gerne sammen om den", added_by_name: FAKE_OTHER, quantity: 1, price_minor: 300000, currency: "DKK", price_source: "user" })],
     members: [anna, meEditor, { id: "jonas", name: "Jonas", role: "editor", is_me: false }],
     events: [{ at: atDay(-3, 12), text: "Anna delte sin ønskeliste med dig" }] };
   const party: Task = { ...base, is_example: false, id: "s2", kind: "list", list_type: "shopping", share_mode: "group", my_role: "editor",
@@ -240,6 +246,7 @@ function fresh(): State {
     v: 8, sub: { plan: "none", status: "trial", interval: null, trialStart: new Date().toISOString(), periodEnd: null, cancelAtPeriodEnd: false, callsMonth: monthKey(), callsUsed: 0, checkouts: {} },
     quotaCalls: {}, location: null, push: [], joinLinks: {}, groups: [], status: {}, ref: { invited: 0, joined: 0, activated: 0, credits_earned: 0, viaInvite: null, selfRewarded: false, annaJoined: false, annaRewarded: false },
     addons: { [ADDON.call]: true, [ADDON.sharedLists]: true, [ADDON.wishlists]: true }, invites: {}, reservations: { s1c: "other" },
+    gifts: { s1d: { target: 300000, currency: "DKK", others: 125000, othersCount: 2, mine: null, status: "open", coordinator: "other", pendingMe: false } },
     invitable: sh.invitable, n: 1000, freeUsed: 0, credits: 3, reserved: 0, sponsorDay: dayKey(new Date()), sponsorUsed: 0,
     phone: null, phoneVerified: false, phonePending: null,
     tasks: [...examples(), ...sh.joined], msgs: [],
@@ -331,10 +338,73 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     const ownerOfWish = t.share_mode === "wishlist" ? t.my_role === "owner" : t.list_type === "wishlist";
     t.items = t.items.map((it) => {
       const r = s.reservations[it.id];
-      return ownerOfWish ? { ...it, reserved: null, reserved_by_me: false } : t.list_type === "wishlist" || t.share_mode === "wishlist"
-        ? { ...it, reserved: !!r, reserved_by_me: r === "me" } : it;
-    });
+      const base: TaskItem = { quantity: 1, ...it };
+      if (ownerOfWish) return { ...base, reserved: null, reserved_by_me: false, group_gift: base.group_gift ?? { enabled: false, target_minor: null, currency: null } };
+      if (t.list_type === "wishlist" || t.share_mode === "wishlist") return { ...base, reserved: !!r, reserved_by_me: r === "me", group_gift: giverGift(it) };
+      return base;
+    }).filter((it) => !it.archived || (it.group_gift && "status" in it.group_gift));
+    if (t.list_type === "wishlist") t.design = resolveDesign((t as Task & { designRaw?: Record<string, unknown> | null }).designRaw ?? null, t.design?.cover ?? null);
     return t;
+  }
+  /** A wish shared with me: the simulated agreement (others = one sum), never shown to the owner. */
+  function giverGift(it: TaskItem): GiverGroupGift | null {
+    const own = it.group_gift as OwnerGroupGift | undefined;
+    const g = (s.gifts ??= {})[it.id];
+    if (!g && !(own?.enabled && own.target_minor)) return null;
+    const x: FakeGift = g ?? { target: own!.target_minor!, currency: own!.currency ?? "DKK", others: 0, othersCount: 0, mine: null, status: "open", coordinator: null, pendingMe: false };
+    const pledged = x.others + (x.mine ?? 0);
+    const status = x.status === "open" && pledged >= x.target ? "full" : x.status;
+    return { enabled: true, status, target_minor: x.target, currency: x.currency, pledged_minor: pledged, remaining_minor: Math.max(0, x.target - pledged),
+      participants: x.othersCount + (x.mine ? 1 : 0), my_pledge_minor: x.mine, coordinator: x.coordinator ? { name: x.coordinator === "me" ? FAKE_ME : FAKE_OTHER, is_me: x.coordinator === "me" } : null,
+      pending_coordinator_is_me: x.pendingMe, is_coordinator: x.coordinator === "me", cancel_reason: x.status === "cancelled" ? "wish_removed" : null,
+      can_join: x.status === "open" && (x.mine != null || pledged < x.target) && !s.reservations[it.id], reserved_by_me: s.reservations[it.id] === "me",
+      participant_names: x.coordinator === "me" && x.othersCount ? [{ user_ref: "anna", name: FAKE_OTHER }] : null };
+  }
+  function resolveDesign(raw: Record<string, unknown> | null, cover: WishDesign["cover"]): WishDesign {
+    const themes = WISH_THEMES.themes as Record<string, { accent: string; background: string; text: string; font: string }>;
+    const theme = typeof raw?.theme === "string" && themes[raw.theme] ? raw.theme : "neutral";
+    const b = themes[theme];
+    const pick = (k: "accent" | "background" | "text" | "font") => (typeof raw?.[k] === "string" && raw[k] ? raw[k] as string : b[k]);
+    return { theme, accent: pick("accent"), background: pick("background"), text: pick("text"), font: pick("font"),
+      decorations: typeof raw?.decorations === "boolean" ? raw.decorations : true, subtitle: (raw?.subtitle as string) || null, date: (raw?.date as string) || null,
+      cover: raw?.cover ? cover : null, customized: !!raw };
+  }
+  function giftOf(taskId: string, itemId: string): { t: Task; g: FakeGift } {
+    const t = find(taskId);
+    if (mine(t)) fail(403, "owner_cannot_give", "Fællesgaven tilhører gavegiverne");
+    const it = t.items.find((x) => x.id === itemId) ?? fail(404, "not_found", "Ønsket findes ikke");
+    const own = it.group_gift as OwnerGroupGift | undefined;
+    s.gifts ??= {};
+    if (!s.gifts[itemId]) {
+      if (!own?.enabled || !own.target_minor) fail(409, "group_gift_off", "Dette ønske er ikke en fællesgave");
+      s.gifts[itemId] = { target: own!.target_minor!, currency: own!.currency ?? "DKK", others: 0, othersCount: 0, mine: null, status: "open", coordinator: null, pendingMe: false };
+    }
+    return { t, g: s.gifts[itemId] };
+  }
+  function wishItem(body: Partial<WishBody>, base: TaskItem): TaskItem {
+    const x: TaskItem = { ...base };
+    if (body.text !== undefined) x.text = cap(body.text);
+    for (const k of ["note", "link", "shop", "size", "color", "variant", "currency", "price_fetched_at"] as const) if (k in body) (x as Record<string, unknown>)[k] = body[k] || null;
+    if ("quantity" in body) x.quantity = body.quantity ?? 1;
+    if ("price_minor" in body) { x.price_minor = body.price_minor ?? null; x.price_source = body.price_minor == null ? null : body.price_source === "shop" ? "shop" : "user"; }
+    if (x.price_minor != null && !x.currency) x.currency = "DKK";
+    if ("details" in body) x.details = body.details ?? null;
+    if ("image_key" in body) { x.image = body.image_key ? images[body.image_key] ?? x.image ?? null : null; x.image_origin = body.image_key ? body.image_origin ?? "upload" : null; }
+    if ("group_gift_enabled" in body || "group_gift_target_minor" in body) {
+      const prev = (x.group_gift as OwnerGroupGift | null) ?? { enabled: false, target_minor: null, currency: null };
+      const enabled = body.group_gift_enabled ?? prev.enabled;
+      const target = body.group_gift_target_minor !== undefined ? body.group_gift_target_minor : prev.target_minor;
+      if (enabled && (!target || target <= 0)) fail(422, "validation_failed", "Skriv et målbeløb over 0");
+      x.group_gift = { enabled, target_minor: target ?? null, currency: x.currency || "DKK" };
+    }
+    return x;
+  }
+  /** Simulated uploads: kept as small data URLs in the tab (the real API stores them in the private bucket). */
+  const images: Record<string, { url: string; url_sm: string }> = {};
+  async function asDataUrl(file: Blob): Promise<string> {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) fail(422, "validation_failed", "Brug et billede i JPEG, PNG eller WebP");
+    if (file.size > 1_500_000) fail(422, "validation_failed", "I simuleringen kan billeder højst være 1,5 MB");
+    return await new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = () => rej(r.error); r.readAsDataURL(file); });
   }
   function walk(v: unknown): unknown {
     if (Array.isArray(v)) return v.map(walk);
@@ -998,6 +1068,95 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
     async appOverview() { await wait(); return { summary: "", items: [], partner: null }; },
     async removeAppItem() { await wait(); },
     async uploadAppPhoto() { await wait(); return fail(409, "demo", "Billeder gemmes kun med en rigtig konto"); },
+
+    // ---------- wishes, group gifts and design (simulated) ----------
+    async searchWishes() { await wait(); return fail(503, "search_unavailable", "Produktsøgning findes ikke i simuleringen. Indsæt et link, eller opret ønsket selv."); },
+    async importWish(link) {
+      await wait();
+      const l = /^https?:\/\//i.test(link.trim()) ? link.trim() : `https://${link.trim()}`;
+      let host = ""; try { host = new URL(l).hostname.replace(/^www\./, ""); } catch { fail(422, "validation_failed", "Linket ser ikke ud som en webadresse"); }
+      // The simulation cannot read web pages: the honest answer is «could not be read», with the link kept.
+      return { link: l, readable: false, reason: "unreachable", fetched_at: new Date().toISOString(), shop: host };
+    },
+    async uploadWishImage(file) {
+      await wait();
+      const url = await asDataUrl(file);
+      const key = nid("img");
+      images[key] = { url, url_sm: url };
+      return { image_key: key, image: images[key] };
+    },
+    async addWish(taskId, body) {
+      await wait();
+      const t = find(taskId);
+      if (!mine(t) && t.share_mode === "wishlist") fail(403, "owner_only", "Kun ejeren tilføjer ønsker");
+      if (!body.text?.trim()) fail(422, "validation_failed", "Giv ønsket en titel");
+      t.items.push(wishItem(body, item(nid("i"), "", { quantity: 1 })));
+      t.updated_at = new Date().toISOString();
+      event(t, `Tilføjet: ${body.text.trim().toLowerCase()}`);
+      return done(t);
+    },
+    async editWish(taskId, itemId, body) {
+      await wait();
+      const t = find(taskId);
+      if (!mine(t)) fail(403, "owner_only", "Kun ejeren retter ønsker");
+      t.items = t.items.map((x) => x.id === itemId ? wishItem(body, x) : x);
+      return done(t);
+    },
+    async pledge(taskId, itemId, amount) {
+      await wait();
+      const { t, g } = giftOf(taskId, itemId);
+      if (g.status === "bought") fail(409, "gift_bought", "Gaven er markeret som købt");
+      if (g.status === "cancelled") fail(409, "group_gift_off", "Fællesgaven er annulleret");
+      if (s.reservations[itemId]) fail(409, "already_reserved", "Ønsket er reserveret");
+      if (!Number.isInteger(amount) || amount <= 0) fail(422, "validation_failed", "Skriv et beløb over 0");
+      const remaining = g.target - g.others;
+      if (amount > remaining) throw { status: 409, code: remaining <= 0 ? "gift_full" : "pledge_exceeds_remaining", message: "Beløbet er højere end det, der mangler", remaining_minor: Math.max(0, remaining), currency: g.currency };
+      g.mine = amount;
+      return done(t);
+    },
+    async withdrawPledge(taskId, itemId) {
+      await wait();
+      const { t, g } = giftOf(taskId, itemId);
+      if (g.status === "bought") fail(409, "gift_bought", "Gaven er markeret som købt");
+      g.mine = null; if (g.coordinator === "me") g.coordinator = null; g.pendingMe = false;
+      return done(t);
+    },
+    async giftCoordinator(taskId, itemId, action) {
+      await wait();
+      const { t, g } = giftOf(taskId, itemId);
+      if (!g.mine) fail(403, "not_a_participant", "Kun deltagere i fællesgaven kan det");
+      if (action === "take") { if (g.coordinator === "other") fail(409, "has_coordinator", "Der er allerede en koordinator"); g.coordinator = "me"; }
+      else if (action === "transfer") { if (g.coordinator !== "me") fail(403, "not_coordinator", "Kun koordinatoren kan overdrage rollen"); g.coordinator = "other"; }
+      else if (action === "accept") { if (!g.pendingMe) fail(409, "no_handover", "Der er ingen overdragelse til dig"); g.coordinator = "me"; g.pendingMe = false; }
+      else if (action === "decline") g.pendingMe = false;
+      else if (action === "release" && g.coordinator === "me") g.coordinator = null;
+      return done(t);
+    },
+    async giftBought(taskId, itemId, bought) {
+      await wait();
+      const { t, g } = giftOf(taskId, itemId);
+      if (g.coordinator !== "me") fail(403, "not_coordinator", "Kun gavens koordinator kan markere den som købt");
+      g.status = bought ? "bought" : "open";
+      return done(t);
+    },
+    async saveDesign(taskId, body) {
+      await wait();
+      const t = find(taskId) as Task & { designRaw?: Record<string, unknown> | null };
+      if (!mine(t)) fail(403, "read_only", "Kun ejeren kan ændre designet");
+      if (body.title !== undefined) { if (!body.title.trim()) fail(422, "validation_failed", "Ønskesedlen skal have en titel"); t.title = body.title.trim(); }
+      t.designRaw = body.design ? { ...body.design } : null;
+      const c = body.design?.cover;
+      const keep = c && t.design?.cover && t.design.cover.key === c.key ? t.design.cover : null;
+      t.design = { ...(t.design ?? resolveDesign(null, null)), cover: c && images[c.key] ? { ...images[c.key], key: c.key, zoom: c.zoom, x: c.x, y: c.y } : keep ? { ...keep, zoom: c!.zoom, x: c!.x, y: c!.y } : null };
+      return done(t);
+    },
+    async uploadCover(_taskId, file) {
+      await wait();
+      const url = await asDataUrl(file);
+      const key = nid("cover");
+      images[key] = { url, url_sm: url };
+      return { key, image: images[key], width: 0, height: 0 };
+    },
 
     // ---------- simulation-only tools ----------
     async simulateMember(taskId) {

@@ -161,7 +161,8 @@ def test_invite_preview_leaks_nothing(api, pv):
     inv = _share(api, mette, tid, mode="wishlist")
     p = api.c.get(f"/api/v1/privat/invites/{inv['token']}").json()
     assert set(p) == {"title", "owner_first_name", "list_type", "item_count", "share_mode", "inviter_first_name",
-                      "resource_type", "addon_key", "cta_text"}
+                      "resource_type", "addon_key", "cta_text", "group_gift_count", "design"}
+    assert set(p["design"]) == {"theme", "accent", "background", "text", "font", "decorations"}  # never the cover
     assert (p["owner_first_name"], p["item_count"], p["list_type"], p["addon_key"]) == ("Mette", 3, "wishlist",
                                                                                           "oenskelister")
     blob = json.dumps(p, ensure_ascii=False).lower()

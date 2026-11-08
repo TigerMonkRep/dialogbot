@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { LogoMark } from "@/components/ui";
 import { AssistantNameProvider, useT } from "@/i18n/client";
 import { AccountPane } from "./account";
-import { StorePage } from "./addons";
+import { AppPage, MyAppsPage, ShopItemPage, ShopPage, Toast } from "./apps";
 import { PeoplePage } from "./people";
 import { Sim } from "./bits";
 import { ChatPane } from "./chat";
@@ -15,7 +15,7 @@ import { Sheets } from "./sheets";
 import { InstallCapture } from "@/components/install-app";
 import { SwUpdate } from "@/components/sw-update";
 import { StandaloneBack, StandaloneChrome } from "@/components/standalone";
-import { PrivatProvider, initials, usePlan, usePrivat, type Screen, type Session } from "./store";
+import { APP_SCREENS, PrivatProvider, initials, usePlan, usePrivat, type Screen, type Session } from "./store";
 import { TaskDetail, TasksPane } from "./tasks";
 
 export function PrivatApp({ session }: { session: Session }) {
@@ -35,7 +35,8 @@ function Named({ children }: { children: React.ReactNode }) {
 function Shell() {
   // public/sw.js (push + app shell, scope /privat/) is registered by <SwUpdate>; asking for push permission comes later.
   const t = useT("privat");
-  const { screen, routeTaskId, busy, mode } = usePrivat();
+  const { screen, routeTaskId, routeAppKey, busy, mode } = usePrivat();
+  const appsScreen = APP_SCREENS.includes(screen);
   // Min dag is its own page. Every other screen keeps the conversation on a wide screen: Samtale on the left and
   // Opgaver (or the task, Konto, Butikken, Folk) on the right; on a phone one of them fills the screen.
   const right: Screen = screen === "chat" ? "tasks" : screen;
@@ -49,6 +50,16 @@ function Shell() {
       <AccountNotice />
       {screen === "day" ? (
         <main id="privat-main" aria-label={t("day.title")} className="flex-1 min-h-0 overflow-y-auto bg-paper"><DayPage /></main>
+      ) : appsScreen ? (
+        // Apps, Butikken and an app's page are full-width pages (like Min dag), not the panel beside the conversation.
+        <main id="privat-main" aria-label={t("apps.tab")} className="flex-1 min-h-0 overflow-y-auto bg-paper">
+          <Suspense>
+            {screen === "apps" && <MyAppsPage />}
+            {(screen === "store" || screen === "addons") && <ShopPage />}
+            {screen === "storeItem" && routeAppKey && <ShopItemPage key={routeAppKey} appKey={routeAppKey} />}
+            {screen === "app" && routeAppKey && <AppPage key={routeAppKey} appKey={routeAppKey} />}
+          </Suspense>
+        </main>
       ) : (
         <div id="privat-main" className="flex-1 min-h-0 relative xl:grid xl:grid-cols-[minmax(0,1fr)_480px]">
           <section aria-label={t("chat.label")} className={`${pane(screen === "chat")} flex-col absolute inset-0 xl:static min-h-0 xl:border-r-2 xl:border-ink`}>
@@ -60,7 +71,6 @@ function Shell() {
                 {right === "tasks" && <TasksPane />}
                 {right === "task" && routeTaskId && <TaskDetail key={routeTaskId} id={routeTaskId} />}
                 {right === "account" && <AccountPane />}
-                {(right === "store" || right === "addons") && <StorePage />}
                 {right === "people" && <PeoplePage />}
               </Suspense>
             </div>
@@ -69,6 +79,7 @@ function Shell() {
       )}
       <Tabs />
       <Sheets />
+      <Toast />
       <StandaloneChrome />
       <SwUpdate audience="privat" />
     </div>
@@ -94,8 +105,8 @@ function Header() {
   const { balance, go, mode, simulated, loggedIn, session, screen } = usePrivat();
   const p = usePlan();
   const free = balance ? Math.max(0, balance.free_limit - balance.free_used) : null;
-  const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : screen === "addons" ? "store" : screen;
-  const nav: [Screen, string][] = [["day", "nav.day"], ["tasks", "nav.tasks"], ["store", "nav.store"]];
+  const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : APP_SCREENS.includes(screen) ? "apps" : screen;
+  const nav: [Screen, string][] = [["day", "nav.day"], ["tasks", "nav.tasks"], ["apps", "apps.tab"]];
   // The badge: «Plus · prøveperiode, 9 dage tilbage», the plan name, or (without rights) credits and free tasks.
   const badge = p.entitled
     ? (p.status === "trial" ? t("nav.trialBadge", { plan: p.rightsName, n: p.trialDays }) : t("nav.planBadge", { plan: p.rightsName }))
@@ -103,7 +114,7 @@ function Header() {
   const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialBadgeShort", { plan: p.rightsName, n: p.trialDays }) : p.entitled ? p.rightsName : balance ? (p.status === "none" ? t("header.noPlanBadgeShort") : t("header.credits", { n: balance.credits })) : "";
   return (
     <header className="flex-none flex items-center gap-2.5 px-4 py-3 min-h-16 border-b-2 border-ink bg-paper pt-safe">
-      <StandaloneBack roots={["/privat/dag", "/privat/samtale", "/privat/opgaver", "/privat/butik", "/privat/folk", "/privat/konto"]} />
+      <StandaloneBack roots={["/privat/dag", "/privat/samtale", "/privat/opgaver", "/privat/apps", "/privat/butik", "/privat/folk", "/privat/konto"]} />
       <Link href="/privat/dag" aria-label={t("header.homeAria")} className="flex items-center gap-2.5 min-w-0 min-h-[44px]">
         <LogoMark size={36} />
         <span className="font-display font-extrabold text-[22px] tracking-[-0.3px] hidden min-[380px]:inline">Dialogbot</span>
@@ -174,7 +185,6 @@ function AccountMenu({ session }: { session: Session }) {
             </div>
           )}
           <button type="button" role="menuitem" className={item} onClick={() => { setOpen(false); go("account"); }}><Ico name="coin" size={18} />{t("header.account")}</button>
-          <button type="button" role="menuitem" className={item} onClick={() => { setOpen(false); go("store"); }}><Ico name="shop" size={18} />{t("nav.store")}</button>
           <button type="button" role="menuitem" className={item} onClick={() => { setOpen(false); go("people"); }}><Ico name="users" size={18} />{t("header.people")}</button>
           <button type="button" role="menuitem" className={item} onClick={logout}><Ico name="arrow" size={18} />{t("header.logout")}</button>
         </div>
@@ -187,8 +197,8 @@ function AccountMenu({ session }: { session: Session }) {
 function Tabs() {
   const t = useT("privat");
   const { screen } = usePrivat();
-  const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : screen === "addons" ? "store" : screen;
-  const tabs: [Screen, string, string, string][] = [["day", "/privat/dag", "nav.day", "home"], ["tasks", "/privat/opgaver", "tabs.tasks", "list"], ["store", "/privat/butik", "nav.store", "shop"], ["people", "/privat/folk", "nav.people", "users"], ["account", "/privat/konto", "nav.account", "user"]];
+  const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : APP_SCREENS.includes(screen) ? "apps" : screen;
+  const tabs: [Screen, string, string, string][] = [["day", "/privat/dag", "nav.day", "home"], ["tasks", "/privat/opgaver", "tabs.tasks", "list"], ["apps", "/privat/apps", "apps.tab", "grid"], ["people", "/privat/folk", "nav.people", "users"], ["account", "/privat/konto", "nav.account", "user"]];
   return (
     <nav aria-label={t("tabs.label")} className="xl:hidden flex-none flex border-t-2 border-ink bg-paper pb-safe">
       {tabs.map(([k, href, label, icon]) => (

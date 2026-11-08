@@ -4597,6 +4597,22 @@
         "title": "SessionOut",
         "type": "object"
       },
+      "SetupIn": {
+        "properties": {
+          "done": {
+            "description": "Antal færdige opsætningstrin (0 … len(steps))",
+            "maximum": 20.0,
+            "minimum": 0.0,
+            "title": "Done",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "done"
+        ],
+        "title": "SetupIn",
+        "type": "object"
+      },
       "ShareGroupIn": {
         "properties": {
           "group_id": {
@@ -4757,6 +4773,19 @@
       },
       "SubscriptionCheckoutIn": {
         "properties": {
+          "app": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "appen (nøgle), der krævede planen: slås til, når planen er på plads",
+            "title": "App"
+          },
           "code": {
             "anyOf": [
               {
@@ -17562,6 +17591,63 @@
         ]
       }
     },
+    "/api/v1/privat/addons/{key}/data": {
+      "delete": {
+        "description": "Delete what a switched-off app has saved (409 addon_enabled while it is on; 409 not_deletable for apps whose\nthings are lists and tasks). Cannot be undone.",
+        "operationId": "addon_delete_data_api_v1_privat_addons__key__data_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Addon Delete Data",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
     "/api/v1/privat/addons/{key}/disable": {
       "post": {
         "description": "Data is kept; shared lists I own are paused (members cannot open them; invite links stop working).",
@@ -17737,6 +17823,130 @@
           }
         },
         "summary": "Addon Invite",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/addons/{key}/notify": {
+      "post": {
+        "description": "«Giv mig besked»: remembered on the account (a «Kommer snart» app).",
+        "operationId": "addon_notify_api_v1_privat_addons__key__notify_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Addon Notify",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/addons/{key}/setup": {
+      "put": {
+        "description": "«Trin 2 af 3»: how far the user got in the app's setup (shown on Mine apps and Min dag until it is done).",
+        "operationId": "addon_setup_api_v1_privat_addons__key__setup_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetupIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Addon Setup",
         "tags": [
           "privat"
         ]

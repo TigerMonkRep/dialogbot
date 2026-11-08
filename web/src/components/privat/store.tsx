@@ -17,7 +17,12 @@ export type Mode = "loading" | "fake" | "demo" | "real";
 export type SheetKind = "login" | "mic" | "paywall" | "buy" | "sponsor" | "share" | "addon" | "addonOff" | "needsPlan";
 export type Sheet = { kind: SheetKind; taskId?: string | null; addonKey?: string; groupId?: string } | null;
 /** "store" = Butikken (/privat/butik); "addons" is kept as an alias for the old name. */
-export type Screen = "day" | "chat" | "tasks" | "task" | "account" | "store" | "addons" | "people";
+export type Screen = "day" | "chat" | "tasks" | "task" | "account" | "store" | "addons" | "people" | "apps" | "app" | "storeItem";
+/** Old app paths (bookmarks, reminder e-mails, the calendar providers' return URL) → the app's key. */
+export const LEGACY_APP_PATHS: Record<string, string> = { "/privat/kalender": "kalender", "/privat/foedselsdage": "foedselsdage", "/privat/regninger": "regninger", "/privat/bil": "bil-og-syn", "/privat/pakker": "pakker" };
+/** The screens that belong to the Apps tab (full-width pages, like Min dag). */
+export const APP_SCREENS: Screen[] = ["apps", "app", "store", "storeItem", "addons"];
+export type Toast = { text: string; actionLabel?: string; action?: () => void | Promise<void> };
 export type Session = { loggedIn: boolean; name: string | null; email: string | null; businessWsId: string | null };
 
 export const FORCE_FAKE = process.env.NEXT_PUBLIC_PRIVAT_FAKE === "1";
@@ -25,12 +30,19 @@ const FAKE_LOGIN_KEY = "dialogbot-privat-fake-login";
 const PENDING_KEY = "dialogbot-privat-pending";
 export const FAKE_KEY = "dialogbot-privat-fake";
 
-export function screenOf(path: string): { screen: Screen; taskId: string | null } {
+export function screenOf(path: string): { screen: Screen; taskId: string | null; appKey?: string | null } {
   const m = path.match(/^\/privat\/opgaver\/([^/]+)/);
   if (m) return { screen: "task", taskId: decodeURIComponent(m[1]) };
   if (path.startsWith("/privat/opgaver")) return { screen: "tasks", taskId: null };
   if (path.startsWith("/privat/konto")) return { screen: "account", taskId: null };
-  if (path.startsWith("/privat/butik") || path.startsWith("/privat/tilfoejelser") || path.startsWith("/privat/kalender") || path.startsWith("/privat/foedselsdage") || path.startsWith("/privat/regninger") || path.startsWith("/privat/bil") || path.startsWith("/privat/pakker") || path.startsWith("/privat/apps/")) return { screen: "store", taskId: null };
+  const app = path.match(/^\/privat\/apps\/([^/]+)/);
+  if (app) return { screen: "app", taskId: null, appKey: decodeURIComponent(app[1]) };
+  if (path === "/privat/apps" || path.startsWith("/privat/apps?")) return { screen: "apps", taskId: null };
+  const item = path.match(/^\/privat\/butik\/([^/]+)/);
+  if (item) return { screen: "storeItem", taskId: null, appKey: decodeURIComponent(item[1]) };
+  const legacy = Object.entries(LEGACY_APP_PATHS).find(([p]) => path.startsWith(p));
+  if (legacy) return { screen: "app", taskId: null, appKey: legacy[1] };
+  if (path.startsWith("/privat/butik") || path.startsWith("/privat/tilfoejelser")) return { screen: "store", taskId: null };
   if (path.startsWith("/privat/folk")) return { screen: "people", taskId: null };
   if (path.startsWith("/privat/samtale")) return { screen: "chat", taskId: null };
   return { screen: "day", taskId: null };
@@ -74,7 +86,9 @@ type Ctx = {
   saveLocation(body: { city?: string; postcode?: string; lat?: number; lng?: number }): Promise<void>;
   pick(messageId: string, optionId: string): Promise<void>;
   simulatedLogin(): Promise<void>;
-  screen: Screen; routeTaskId: string | null; isDesk: boolean;
+  screen: Screen; routeTaskId: string | null; routeAppKey: string | null; isDesk: boolean;
+  /** A short message at the bottom of the screen («Bil & syn er slået fra» + Fortryd). */
+  toast: Toast | null; showToast(t: Toast | null): void;
   openTask(id: string): void; talk(id: string): void; go(s: Screen): void;
   /** Konto with the plan picker open («Vælg plan» everywhere). */
   choosePlan(): void;
@@ -89,7 +103,15 @@ export function PrivatProvider({ session, children }: { session: Session; childr
   const locale = useLocale();
   const path = usePathname();
   const isDesk = useIsDesk();
-  const { screen, taskId: routeTaskId } = screenOf(path);
+  const { screen, taskId: routeTaskId, appKey } = screenOf(path);
+  const routeAppKey = appKey ?? null;
+  const [toast, setToastState] = useState<Toast | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showToast = useCallback((x: Toast | null) => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToastState(x);
+    if (x) toastTimer.current = setTimeout(() => setToastState(null), 8000);
+  }, []);
   const [mode, setMode] = useState<Mode>("loading");
   const apiRef = useRef<PrivatApi>(realPrivat);
   const fakeRef = useRef<FakePrivat | null>(null);
@@ -167,7 +189,7 @@ export function PrivatProvider({ session, children }: { session: Session; childr
   }, [refresh]);
 
   const go = useCallback((s: Screen) => {
-    const href = { day: "/privat/dag", chat: "/privat/samtale", tasks: "/privat/opgaver", task: "/privat/opgaver", account: "/privat/konto", store: "/privat/butik", addons: "/privat/butik", people: "/privat/folk" }[s];
+    const href = { day: "/privat/dag", chat: "/privat/samtale", tasks: "/privat/opgaver", task: "/privat/opgaver", account: "/privat/konto", store: "/privat/butik", addons: "/privat/butik", people: "/privat/folk", apps: "/privat/apps", app: "/privat/apps", storeItem: "/privat/butik" }[s];
     router.push(href);
   }, [router]);
   const openTask = useCallback((id: string) => router.push(`/privat/opgaver/${encodeURIComponent(id)}`), [router]);
@@ -260,9 +282,10 @@ export function PrivatProvider({ session, children }: { session: Session; childr
     // Without a catalog (API not there yet) nothing is hidden.
     addonOn: (key) => !addons || addons.length === 0 || !!addons.find((a) => a.key === key)?.enabled || !addons.some((a) => a.key === key),
     draft, setDraft, focusId, setFocus, sheet, openSheet: setSheet, closeSheet, note, setNote, busy, error, setError,
-    refresh, run, send, sendAbout, saveLocation, pick, simulatedLogin, screen, routeTaskId, isDesk, openTask, talk, go, choosePlan, startTrial,
+    refresh, run, send, sendAbout, saveLocation, pick, simulatedLogin, screen, routeTaskId, routeAppKey, isDesk, openTask, talk, go, choosePlan, startTrial,
+    toast, showToast,
   }), [sendAbout, saveLocation, mode, session, loggedIn, balance, tasks, day, messages, ledger, addons, referrals, groups, subscription, draft, focusId, sheet, closeSheet, note, busy, error,
-    refresh, run, send, pick, simulatedLogin, screen, routeTaskId, isDesk, openTask, talk, go, choosePlan, startTrial]);
+    refresh, run, send, pick, simulatedLogin, screen, routeTaskId, routeAppKey, isDesk, openTask, talk, go, choosePlan, startTrial, toast, showToast]);
 
   return <C.Provider value={value}>{children}</C.Provider>;
 }

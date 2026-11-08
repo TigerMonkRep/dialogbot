@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui";
 import { useLocale, useT } from "@/i18n/client";
 import { priceVars } from "@/lib/markets";
@@ -10,7 +11,8 @@ import { SMS_LIMIT, bareLink, contactPickerAvailable, hasEmoji, pickContacts, pl
 import { FAKE_ME } from "@/lib/privat/fake";
 import { Avatars, BIG, Eyebrow, LINK, SR, Sim } from "./bits";
 import { Ico } from "./icons";
-import { AddonDetail, NeedsPlanOffer, addonText } from "./addons";
+import { addonText } from "./addons";
+import { DisableSheet, PlanSheet, appHref } from "./apps";
 import { useFmt, usePlan, usePrivat } from "./store";
 
 /** Bottom sheet on a phone, centred dialog on a wide screen. Escape and the X close it; focus moves in and back. */
@@ -320,40 +322,27 @@ function Members({ onClose }: { onClose: () => void }) {
   );
 }
 
+/** The chat's «Se appen» / an app that must be on first: the app has a page now – go there. */
 function AddonSheet({ onClose }: { onClose: () => void }) {
-  const t = useT("privat");
   const { sheet, addons } = usePrivat();
+  const router = useRouter();
   const a = addons?.find((x) => x.key === sheet?.addonKey);
-  if (!a) return null;
-  return <Sheet title={addonText(t, a, "name")} onClose={onClose}><AddonDetail a={a} /></Sheet>;
+  useEffect(() => { onClose(); router.push(a ? appHref(a) : "/privat/butik"); }, [a, onClose, router]);
+  return null;
 }
 
-/** «Med i Plus – start 14 dage gratis / Vælg plan» for an app (addonKey) or a call (taskId). */
+/** An app (addonKey) or a call (taskId) needs a plan: choose Plus or Familie; the app comes on with the plan. */
 function NeedsPlanSheet({ onClose }: { onClose: () => void }) {
-  const t = useT("privat");
   const { sheet, addons } = usePrivat();
   const a = addons?.find((x) => x.key === sheet?.addonKey);
-  return (
-    <Sheet title={a ? addonText(t, a, "name") : t("store.needsPlan.callTitle")} onClose={onClose}>
-      <NeedsPlanOffer name={a ? addonText(t, a, "name") : undefined} call={!a} />
-      <button type="button" className={`${LINK} self-center`} onClick={onClose}>{t("store.needsPlan.later")}</button>
-    </Sheet>
-  );
+  return <PlanSheet a={a} call={!a} onClose={onClose} />;
 }
 
 function AddonOffSheet({ onClose }: { onClose: () => void }) {
-  const t = useT("privat");
-  const { sheet, addons, run } = usePrivat();
+  const { sheet, addons } = usePrivat();
   const a = addons?.find((x) => x.key === sheet?.addonKey);
   if (!a) return null;
-  const name = addonText(t, a, "name");
-  return (
-    <Sheet title={t("addons.confirmDisableTitle", { name })} onClose={onClose}>
-      <p className="m-0 text-[15px] leading-normal text-ink-soft">{t("addons.confirmDisableText")}</p>
-      <Button className={`${BIG} bg-paper !text-ink hover:!bg-panel`} variant="outline" onClick={async () => { await run((x) => x.disableAddon(a.key)); onClose(); }}>{t("addons.disable")}</Button>
-      <Button className={BIG} onClick={onClose}>{t("addons.keep")}</Button>
-    </Sheet>
-  );
+  return <DisableSheet a={a} onClose={onClose} />;
 }
 
 const QUEUE_KEY = "dialogbot-privat-queue";

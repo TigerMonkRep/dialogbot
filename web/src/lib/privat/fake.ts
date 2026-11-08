@@ -16,6 +16,7 @@ import { ADDON, type Addon, type ApproveBody, type Balance, type BillingInterval
   type Member, type Plan, type PlanKey, type PrivatApi, type Referrals, type Group, type GroupMember, type InviteStatus, type ShareGroupResult, type Subscription, type SubscriptionPlan, type SubscriptionStatus,
   type SuggestedPerson, type SendResult, type Task, type TaskItem, type TaskStatus, type GiverGroupGift, type OwnerGroupGift, type WishBody, type WishDesign } from "./api";
 import WISH_THEMES from "./wish-themes.json";
+import CATALOG_JSON from "./addons-catalog.json";
 
 export const FAKE_SMS_CODE = "123456";
 const FREE_LIMIT = 0; // no free tasks any more: without a plan the account only reads lists shared with it
@@ -47,12 +48,14 @@ type Pending = { status: TaskStatus; next: string; intro: string };
 /** Simulated subscription: a 14-day trial with Plus rights from the first use; checkout activates the chosen plan
  *  after a fake redirect (the session id carries plan and interval). Calls count per calendar month. */
 type Sub = { plan: SubscriptionPlan; status: SubscriptionStatus; interval: BillingInterval | null; trialStart: string | null; periodEnd: string | null; cancelAtPeriodEnd: boolean;
-  callsMonth: string; callsUsed: number; checkouts: Record<string, { plan: PlanKey; interval: BillingInterval; currency?: Currency }>; currency?: Currency };
+  callsMonth: string; callsUsed: number; checkouts: Record<string, { plan: PlanKey; interval: BillingInterval; currency?: Currency; app?: string }>; currency?: Currency };
 type State = {
   v: 8; sub: Sub; packCurrency?: Currency; quotaCalls: Record<string, true>; location: string | null; push: string[]; joinLinks: Record<string, string>; groups: Group[]; status: Record<string, (InviteStatus & { key: string })[]>; ref: { invited: number; joined: number; activated: number; credits_earned: number; viaInvite: string | null; selfRewarded: boolean; annaJoined: boolean; annaRewarded: boolean };
   addons: Record<string, boolean>; invites: Record<string, string>; reservations: Record<string, "me" | "other">;
   /** Simulated group gifts on wishes others shared with me: the others' pledges are one simulated sum. */
   gifts?: Record<string, FakeGift>;
+  /** Per-app state for «Mine apps»: setup progress, switched off (data kept), «Giv mig besked». */
+  appState?: Record<string, AppState>;
   invitable: Record<string, Task>; n: number; freeUsed: number; credits: number; reserved: number; sponsorDay: string; sponsorUsed: number;
   phone: string | null; phoneVerified: boolean; phonePending: string | null;
   tasks: Task[]; msgs: ChatMessage[]; ledger: LedgerEntry[]; paySeq: number; lastPay: string | null;
@@ -155,88 +158,17 @@ const SUGGESTED: SuggestedPerson[] = [
   { name: "Peter", has_dialogbot: true, user_id: "u-peter", phone_e164: null },
 ];
 
-/** The shop catalogue (Butikken). `requires_plan` apps need trial/Plus/Familie; `included` is computed per user. */
+/** The shop catalogue (Butikken): the backend's own catalog (app/modules/privat/addons.py), exported to
+ *  addons-catalog.json by scripts/export_privat_catalog.py (CI keeps them equal) – same keys, texts and plan rules. */
 type CatalogEntry = Omit<Addon, "enabled" | "enabled_at" | "included"> & { requires_plan: boolean; what: string; example: string; steps: string[] };
-const PLAN_APP = "Med i Plus og Familie";
-const CATALOG: CatalogEntry[] = [
-  { key: ADDON.call, name: "Ring for mig", tagline: "Peter ringer til virksomheder for dig", icon: "phone", category: "Hverdag",
-    description: "Når du beder om det, foreslår Peter et opkald – hvem, hvad han må aftale, og hvad det højst koster. Der ringes først, når du har godkendt.",
-    what: "Peter ringer til værkstedet, lægen eller frisøren og aftaler en tid – inden for det, du har sagt ja til. Du godkender altid først.",
-    example: "Ring til cykelværkstedet og aftal aflevering torsdag efter kl. 15.",
-    steps: ["Bekræft dit mobilnummer", "Vælg om Peter må give dit nummer videre", "Færdig – Peter spørger, før han ringer"],
-    price_text: "Med i alle planer · ellers 3 credits pr. opkald", pricing: "credits", monthly_price_minor: null, status: "available", requires_plan: false,
-    permissions: ["Ringer kun til virksomheder, du godkender", "Må give dit nummer videre, hvis du siger ja", "Gemmer et referat af opkaldet"], requires: [] },
-  { key: ADDON.sharedLists, name: "Delte lister", tagline: "Fælles lister – alle kan tilføje og krydse af", icon: "users", category: "Lister",
-    description: "Del en liste via et link. Dem, du inviterer, kan tilføje og krydse af, og du kan se, hvem der gjorde hvad.",
-    what: "Indkøb, pakkeliste eller gøremål, som flere kan se og strege ud. Peter holder listen opdateret, uanset hvem der siger noget.",
-    example: "Del indkøbslisten med Mette.",
-    steps: ["Vælg hvem du vil dele med", "Peter laver en SMS-invitation, du sender fra dit nummer", "Listen er fælles – færdig"],
-    price_text: "Gratis", pricing: "free", monthly_price_minor: null, status: "available", requires_plan: false,
-    permissions: ["Deler en liste via link", "Viser medlemmernes fornavne på listen"], requires: [] },
-  { key: ADDON.wishlists, name: "Ønskeseddel", tagline: "Del ønsker – de andre reserverer i hemmelighed", icon: "gift", category: "Lister",
-    description: "Lav en ønskeseddel og del den. De andre kan skrive «Jeg køber den», så to ikke køber det samme – du ser aldrig, hvad der er reserveret.",
-    what: "Lav en ønskeseddel og del den. Familien kan reservere en gave, uden at du kan se hvad – så overraskelsen holder.",
-    example: "Lav en ønskeseddel til min fødselsdag.",
-    steps: ["Opret din første ønskeseddel", "Vælg hvem der må se den", "Peter laver invitationer, du sender fra dit nummer", "Reservationer er skjult for dig – færdig"],
-    price_text: PLAN_APP, pricing: "monthly", monthly_price_minor: null, status: "available", requires_plan: true,
-    permissions: ["Deler en liste via link", "Holder reservationer skjult for dig"], requires: [] },
-  { key: "foedselsdage", name: "Fødselsdage", tagline: "Peter husker mærkedage og siger til i god tid", icon: "cake", category: "Hverdag",
-    description: "Peter husker fødselsdage og mærkedage og siger til i god tid – med forslag til gave fra personens ønskeseddel.",
-    what: "Peter husker fødselsdage og mærkedage og siger til i god tid – med forslag til gave fra personens ønskeseddel.",
-    example: "Mormor fylder 80 den 3. marts.",
-    steps: ["Hent fødselsdage fra dine kontakter (valgfrit)", "Vælg hvor mange dage før du vil have besked", "Færdig"],
-    price_text: PLAN_APP, pricing: "monthly", monthly_price_minor: null, status: "available", requires_plan: true,
-    permissions: ["Gemmer de datoer, du giver den", "Læser kun kontakter, du selv vælger"], requires: [] },
-  { key: "kalender", name: "Kalender", tagline: "Læg aftaler i din Google-, Outlook- eller iPhone-kalender", icon: "calendar", category: "Hverdag",
-    description: "Aftaler, du har godkendt, kommer automatisk i din egen kalender.",
-    what: "De tider, Peter aftaler for dig, og dem du selv fortæller ham, lander i din egen kalender – med adresse og det, I aftalte.",
-    example: "Læg tiden hos frisøren i min kalender",
-    steps: ["Forbind Google eller Outlook – eller abonnér på dit private kalenderlink", "Peter lægger aftaler ind, når de er bekræftet", "Flyttes eller fjernes en aftale, opdateres din kalender også"],
-    price_text: PLAN_APP, pricing: "monthly", monthly_price_minor: null, status: "available", requires_plan: true,
-    permissions: ["Skriver aftaler, du har godkendt, i din kalender", "Læser ikke dine andre aftaler"], requires: [] },
-  { key: "madplan", name: "Madplan", tagline: "Ugens aftensmad på én side", icon: "utensils", category: "Hverdag",
-    description: "Peter foreslår retter, og indkøbslisten laver sig selv ud fra planen.",
-    what: "Ugens aftensmad på én side. Peter foreslår retter, og indkøbslisten laver sig selv ud fra planen.",
-    example: "Lav en madplan til næste uge – ikke fisk om fredagen.",
-    steps: ["Fortæl Peter hvor mange I er, og hvad I ikke spiser", "Vælg hvilken dag ugen starter", "Færdig"],
-    price_text: PLAN_APP, pricing: "monthly", monthly_price_minor: null, status: "available", requires_plan: true,
-    permissions: ["Gemmer jeres madpræferencer"], requires: [] },
-  { key: "bil", name: "Bil & syn", tagline: "Syn, service og dæk – Peter holder styr på det", icon: "car", category: "Hverdag",
-    description: "Peter holder styr på syn, service og dæk – og ringer til værkstedet og booker tiden, når du siger ja.",
-    what: "Peter holder styr på syn, service og dæk – og ringer til værkstedet og booker tiden, når du siger ja.",
-    example: "Min bil skal til syn i november.",
-    steps: ["Indtast nummerplade", "Peter finder synsfristen", "Vælg dit faste værksted (valgfrit) – færdig"],
-    price_text: PLAN_APP, pricing: "monthly", monthly_price_minor: null, status: "available", requires_plan: true,
-    permissions: ["Slår nummerpladen op i Motorregistret"], requires: [ADDON.call] },
-  { key: "regninger", name: "Regninger", tagline: "Faste regninger og opsigelsesfrister", icon: "receipt", category: "Hverdag",
-    description: "Peter minder dig om faste regninger og opsigelsesfrister, så du ikke betaler for noget, du ikke bruger.",
-    what: "Peter minder dig om faste regninger og opsigelsesfrister, så du ikke betaler for noget, du ikke bruger.",
-    example: "Husk mig på at opsige fitness inden den 20.",
-    steps: ["Sig hvilke regninger Peter skal huske", "Vælg hvor mange dage før du vil mindes", "Færdig"],
-    price_text: PLAN_APP, pricing: "monthly", monthly_price_minor: null, status: "available", requires_plan: true,
-    permissions: ["Gemmer kun de regninger, du nævner – ingen bankadgang"], requires: [] },
-  { key: "laege", name: "Læge & tandlæge", tagline: "Peter bestiller og flytter tider for dig", icon: "stethoscope", category: "Hverdag",
-    description: "Peter ringer og bestiller eller flytter tider hos lægen, tandlægen eller fysioterapeuten – inden for de tider, du har givet ham.",
-    what: "Peter ringer og bestiller eller flytter tider hos lægen, tandlægen eller fysioterapeuten – inden for de tider, du har givet ham.",
-    example: "Flyt min tandlægetid til næste uge, eftermiddag.",
-    steps: ["Indtast dine faste behandlere", "Vælg hvornår Peter må booke", "Færdig"],
-    price_text: PLAN_APP, pricing: "monthly", monthly_price_minor: null, status: "available", requires_plan: true,
-    permissions: ["Ringer kun til behandlere, du har indtastet", "Deler aldrig helbredsoplysninger"], requires: [ADDON.call] },
-  { key: "pakkeliste", name: "Pakkeliste", tagline: "Peter pakker listen – og husker det, I glemte sidst", icon: "suitcase", category: "Lister",
-    description: "Sig hvor I skal hen og hvor længe – Peter laver pakkelisten og husker det, I glemte sidst.",
-    what: "Sig hvor I skal hen og hvor længe – Peter laver pakkelisten og husker det, I glemte sidst.",
-    example: "Vi skal en uge i sommerhus med to børn.",
-    steps: ["Fortæl Peter om turen", "Ret listen til – Peter husker rettelserne", "Færdig"],
-    price_text: PLAN_APP, pricing: "monthly", monthly_price_minor: null, status: "available", requires_plan: true,
-    permissions: ["Gemmer dine pakkelister"], requires: [] },
-  { key: "pakker", name: "Pakker", tagline: "Følg dine forsendelser ét sted", icon: "package", category: "Hverdag",
-    description: "Send et sporingsnummer, så holder Peter øje og siger til, når pakken er klar.",
-    what: "Send et sporingsnummer, så holder Peter øje og siger til, når pakken er klar til afhentning.",
-    example: "Hold øje med pakken med nummer 00340434…",
-    steps: ["Send Peter et sporingsnummer", "Færdig"],
-    price_text: "Gratis", pricing: "free", monthly_price_minor: null, status: "coming_soon", requires_plan: false,
-    permissions: ["Slår dine sporingsnumre op hos fragtfirmaet"], requires: [] },
-];
+const CATALOG: CatalogEntry[] = (CATALOG_JSON as unknown as CatalogEntry[]).map((a) => ({ ...a, name: a.name, monthly_price_minor: a.monthly_price_minor ?? null }));
+/** What a few apps «hold» in the demo (the real backend reads the app's own data). */
+const DEMO_LINES: Record<string, string> = {
+  "ring-for-mig": "7 af 10 opkald tilbage i denne måned", "delte-lister": "1 delt liste", "oenskelister": "1 delt ønskeliste",
+  "bil-og-syn": "Syn om 34 dage · 12. dec.", regninger: "3 regninger i november · 1.718 kr.", foedselsdage: "Mormor fylder 80 om 12 dage",
+  kaeledyr: "Bella: ormekur fredag 14. nov.", madplan: "Til 4 personer",
+};
+type AppState = { done: number; disabledAt: string | null; notify: boolean };
 const monthKey = (d = new Date()) => `${d.getFullYear()}-${d.getMonth()}`;
 const addDays = (iso: string, n: number) => { const d = new Date(iso); d.setDate(d.getDate() + n); return d.toISOString(); };
 
@@ -419,7 +351,17 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
   const on = (key: string) => !!s.addons[key];
   const addonName = (key: string) => CATALOG.find((a) => a.key === key)?.name ?? key;
   const addonIncluded = (a: CatalogEntry) => !a.requires_plan || isEntitled();
-  const projectAddon = (a: CatalogEntry): Addon => ({ ...a, included: addonIncluded(a), enabled: on(a.key), enabled_at: on(a.key) ? atDay(-3, 9) : null });
+  const appState = (key: string): AppState => ((s.appState ??= {})[key] ??= { done: 0, disabledAt: null, notify: false });
+  const projectAddon = (a: CatalogEntry): Addon => {
+    const st = s.appState?.[a.key];
+    const live = a.status !== "coming_soon" && on(a.key);
+    return { ...a, included: addonIncluded(a), enabled: live, enabled_at: live ? atDay(-3, 9) : null,
+      summary_line: live ? DEMO_LINES[a.key] ?? null : null,
+      // The default apps were switched on for the user: no setup prompt for them.
+      setup: { done: Math.min(st?.done ?? ((([ADDON.call, ADDON.sharedLists, ADDON.wishlists] as string[]).includes(a.key)) ? a.steps.length : 0), a.steps.length), total: a.steps.length },
+      disabled_at: !live && st?.disabledAt ? st.disabledAt : null, notify_requested: !!st?.notify,
+      data_deletable: !["ring-for-mig", "delte-lister", "oenskelister", "kalender", "rejser"].includes(a.key) };
+  };
   const addonMsg = (key: string) => msg({ kind: "addon", addon_key: key, text: `${addonName(key)} er ikke slået til.` });
   const gate = (key: string) => { if (!on(key)) fail(403, "addon_disabled", `${addonName(key)} er ikke slået til`); };
   const mine = (t: Task) => !t.my_role || t.my_role === "owner";
@@ -778,6 +720,8 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
           const cur = before.status === "none" ? { ...before, status: "trial" as const, trial_days_left: TRIAL_DAYS, trial_ends_at: addDays(sb.trialStart, TRIAL_DAYS) } : before;
           sb.plan = co.plan; sb.interval = co.interval; sb.cancelAtPeriodEnd = false; sb.currency = co.currency ?? "DKK";
           delete sb.checkouts[sessionId];
+          // «Kræver plan» from an app: it comes on with the plan (like the backend's checkout metadata).
+          if (co.app && CATALOG.some((a) => a.key === co.app && a.status !== "coming_soon")) { s.addons[co.app] = true; appState(co.app).disabledAt = null; }
           // Every draft that waited for the plan comes alive, paid by it.
           for (const t of s.tasks) if (t.status === "draft" && s.pending[t.id]) s.msgs.push(...activate(t, "Med i prøveperioden"));
           const start = cur.status === "trial" && cur.trial_days_left > 2 ? cur.trial_ends_at! : new Date().toISOString();
@@ -795,9 +739,9 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       await wait();
       if (!PLANS.some((p) => p.key === body.plan)) fail(422, "validation_error", "Ukendt plan");
       const id = `cs_fake_${++s.paySeq}`;
-      s.sub.checkouts[id] = { plan: body.plan, interval: body.interval, currency: currencyFor(body.locale) };
+      s.sub.checkouts[id] = { plan: body.plan, interval: body.interval, currency: currencyFor(body.locale), app: body.app };
       save();
-      return { url: `/privat/konto?abonnement=ok&session_id=${id}` };
+      return { url: `/privat/konto?abonnement=ok&session_id=${id}${body.app ? `&app=${encodeURIComponent(body.app)}` : ""}` };
     },
     async subscriptionPortal() { await wait(); return { url: "/privat/konto?portal=simuleret" }; },
     async ledger() { await wait(); return done(s.ledger); },
@@ -1021,14 +965,37 @@ export function createFakePrivat(storageKey = "dialogbot-privat-fake"): FakePriv
       const a = CATALOG.find((x) => x.key === key) ?? fail(404, "not_found", "Tilføjelsen findes ikke");
       if (a.status === "coming_soon") fail(409, "coming_soon", "Tilføjelsen kommer snart");
       if (!addonIncluded(a)) fail(409, "needs_plan", `${a.name} er med i Plus og Familie`);
-      s.addons[key] = true; save();
+      for (const dep of a.requires) s.addons[dep] = true;
+      s.addons[key] = true; appState(key).disabledAt = null; save();
       return { ...projectAddon(a), enabled: true, enabled_at: new Date().toISOString() };
     },
     async disableAddon(key) {
       await wait();
       const a = CATALOG.find((x) => x.key === key) ?? fail(404, "not_found", "Tilføjelsen findes ikke");
-      s.addons[key] = false; save();
-      return { ...projectAddon(a), enabled: false, enabled_at: null };
+      for (const other of CATALOG) if (other.requires.includes(key) && s.addons[other.key]) { s.addons[other.key] = false; appState(other.key).disabledAt = new Date().toISOString(); }
+      s.addons[key] = false; appState(key).disabledAt = new Date().toISOString(); save();
+      return projectAddon(a);
+    },
+    async addonSetup(key, done) {
+      await wait();
+      const a = CATALOG.find((x) => x.key === key) ?? fail(404, "not_found", "Appen findes ikke");
+      if (!s.addons[key]) fail(409, "addon_disabled", `Slå «${a.name}» til først`);
+      if (done < 0 || done > a.steps.length) fail(422, "validation_failed", "Ugyldigt trin");
+      appState(key).done = done; save();
+      return projectAddon(a);
+    },
+    async addonNotify(key) {
+      await wait();
+      const a = CATALOG.find((x) => x.key === key) ?? fail(404, "not_found", "Appen findes ikke");
+      appState(key).notify = true; save();
+      return projectAddon(a);
+    },
+    async deleteAddonData(key) {
+      await wait();
+      const a = CATALOG.find((x) => x.key === key) ?? fail(404, "not_found", "Appen findes ikke");
+      if (s.addons[key]) fail(409, "addon_enabled", `Slå «${a.name}» fra, før du sletter dens data`);
+      const st = appState(key); st.done = 0; st.disabledAt = null; save();
+      return { deleted: 0, addon: projectAddon(a) };
     },
 
     // ---------- Kalender (the demo never connects anything real) ----------

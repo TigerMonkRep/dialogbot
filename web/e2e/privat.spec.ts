@@ -253,15 +253,20 @@ for (const width of [375, 1440]) {
       await expect.poll(() => credits(page)).toBe(2);
     });
 
-    test("butikken: slå Ring for mig fra → chip væk, kort i chatten → slå til → opkald virker", async ({ page }) => {
+    test("apps: slå Ring for mig fra på appens side (det stopper / det gemmes) → chip væk → kort i chatten → slå til → opkald virker", async ({ page }) => {
       await open(page, "/privat/tilfoejelser");
       await expect(page).toHaveURL(/\/privat\/butik$/);
-      await page.getByRole("button", { name: "Åbn Ring for mig" }).click();
-      await page.getByRole("button", { name: "Slå fra: Ring for mig" }).click();
-      await page.getByRole("dialog", { name: "Slå Ring for mig fra?" }).getByRole("button", { name: "Slå fra" }).click();
-      await page.getByRole("button", { name: "Åbn Ring for mig" }).click();
-      await expect(page.getByRole("button", { name: "Installér: Ring for mig" })).toBeVisible();
-      await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
+      await page.goto("/privat/apps");
+      await page.getByTestId("app-row-ring-for-mig").click();
+      await expect(page).toHaveURL(/\/privat\/apps\/ring-for-mig$/);
+      await page.getByTestId("disable-app").click();
+      const off = page.getByRole("dialog", { name: "Slå Ring for mig fra?" });
+      await expect(off.getByText("Det stopper")).toBeVisible();
+      await expect(off.getByText("Det bliver gemt")).toBeVisible();
+      await off.getByTestId("disable-confirm").click();
+      await expect(page).toHaveURL(/\/privat\/apps$/);
+      await expect(page.getByTestId("toast")).toContainText("Ring for mig er slået fra");
+      await expect(page.getByRole("heading", { name: "Slået fra · dine data er gemt" })).toBeVisible();
       await page.goto("/privat/dag");
       await expect(page.locator("button:visible", { hasText: "Lav en liste" })).toHaveCount(1);
       await expect(page.getByRole("button", { name: "Ring for mig", exact: true })).toHaveCount(0);
@@ -468,32 +473,45 @@ for (const width of [375, 1440]) {
       await expect(approve).toBeEnabled();
     });
 
-    test("butikken: app-ark med «Hvad den gør»; «Installér» slår appen til og viser trinene; uden plan → «Med i Plus»", async ({ page }) => {
+    test("apps: Butikken → appens side → Slå til (samtykke) → trin 1 → Mine apps og Min dag; kommer snart; uden plan → planvalg → appen slås til", async ({ page }) => {
       await open(page, "/privat/butik");
-      await expect(page.getByRole("heading", { name: "Installeret" })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Alle apps" })).toBeVisible();
-      await page.getByRole("button", { name: "Åbn Fødselsdage" }).click();
-      const sheet = page.getByRole("dialog", { name: "Fødselsdage" });
-      await expect(sheet.getByText("Hvad den gør")).toBeVisible();
-      await expect(sheet.getByText("«Mormor fylder 80 den 3. marts.»")).toBeVisible();
-      await sheet.getByRole("button", { name: "Installér: Fødselsdage" }).click();
-      // «Installér» switches it on at once; the steps guide the setup and the sheet stays open to use it right away.
-      await expect(page.getByRole("dialog").getByTestId("addon-setup")).toContainText("Opsætning · 3 trin");
-      await expect(page.getByRole("dialog").getByRole("button", { name: "Åbn: Fødselsdage" })).toBeVisible();
-      await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
-      await expect(page.getByRole("dialog")).toBeHidden();
-      // Kommer snart is disabled; without rights the plan offer replaces the button.
-      await page.getByRole("button", { name: "Åbn Pakker" }).click();
-      await expect(page.getByRole("dialog").getByRole("button", { name: "Kommer snart: Pakker" })).toBeDisabled();
-      await page.getByRole("dialog").getByRole("button", { name: "Luk" }).click();
+      await expect(page.getByRole("heading", { name: "Butikken", level: 1 })).toBeVisible();
+      await expect(page.getByTestId("app-row-foedselsdage")).toContainText("Plus · Familie");
+      await page.getByTestId("app-row-foedselsdage").click();
+      await expect(page).toHaveURL(/\/privat\/butik\/foedselsdage$/);
+      await expect(page.getByText("Hvad den gør")).toBeVisible();
+      await page.getByTestId("enable-app").click();
+      const ask = page.getByRole("dialog", { name: "Slå Fødselsdage til?" });
+      await expect(ask.getByText("Den får lov til")).toBeVisible();
+      await ask.getByTestId("enable-confirm").click();
+      const done = page.getByRole("dialog", { name: "Fødselsdage er slået til" });
+      await expect(done.getByText(/Trin 1 af \d/)).toBeVisible();
+      await done.getByRole("button", { name: "Start trin 1" }).click();
+      await expect(page).toHaveURL(/\/privat\/apps\/foedselsdage$/);
+      await expect(page.getByTestId("app-setup")).toContainText(/Trin 1 af \d/);
+      await page.getByTestId("step-done").click();
+      await expect(page.getByTestId("app-setup")).toContainText(/Trin 2 af \d/);
+      await page.goto("/privat/apps");
+      await expect(page.getByTestId("setup-card")).toContainText("Fødselsdage · trin 2");
+      await page.goto("/privat/dag");
+      await expect(page.getByTestId("day-apps")).toContainText("Fødselsdage");
+      // Kommer snart: no switch, but «Giv mig besked» is remembered.
+      await page.goto("/privat/butik/pakker");
+      await expect(page.getByText("Kommer snart").first()).toBeVisible();
+      await page.getByTestId("notify-me").click();
+      await expect(page.getByTestId("notify-me")).toContainText("Vi giver dig besked");
+      // Without rights: the plan choice; the app comes on with the plan and the user lands on it.
       await page.goto("/privat/konto");
       await page.getByRole("button", { name: "Afslut prøveperioden" }).click();
       await expect(page.getByTestId("subscription-card")).toContainText("Prøveperiode slut");
-      await page.goto("/privat/butik");
-      await page.getByRole("button", { name: "Åbn Kalender" }).click();
-      await expect(page.getByRole("dialog").getByTestId("needs-plan")).toContainText("Med i Plus");
-      await page.getByRole("dialog").getByRole("button", { name: "Vælg plan" }).click();
-      await expect(page).toHaveURL(/\/privat\/konto/);
+      await page.goto("/privat/butik/kalender");
+      await page.getByTestId("needs-plan").click();
+      const plan = page.getByRole("dialog", { name: "Kalender kræver Plus" });
+      await expect(plan.getByRole("radio", { name: /Plus/ })).toHaveAttribute("aria-checked", "true");
+      await expect(plan.getByText("Når planen er valgt, slår vi Kalender til for dig.")).toBeVisible();
+      await plan.getByTestId("plan-go").click();
+      await expect(page).toHaveURL(/\/privat\/apps\/kalender$/, { timeout: 20000 });
+      await expect(page.getByTestId("app-page")).toBeVisible();
     });
 
     test("abonnement: Vælg plan → Plus (årligt) → retur fra betaling → «Dit abonnement er aktivt»", async ({ page }) => {

@@ -49,6 +49,8 @@ class Addon:
     what: str = ""
     example: str = ""
     steps: tuple[str, ...] = ()
+    # «Du skal bruge»: the few things the user needs at hand to get going (shown on the app's shop page).
+    needs: tuple[str, ...] = ()
     # Plans whose rights include this app (the trial counts as Plus). Empty = free for everyone, plan or not.
     # Non-empty: enable() answers 409 needs_plan unless the account is entitled to one of them.
     included_in: tuple[str, ...] = ()
@@ -103,6 +105,7 @@ _STR_LIST = {"type": "array", "items": {"type": "string"}}
 
 register(Addon(
     key="ring-for-mig", name="Ring for mig", tagline="Assistenten ringer til virksomheder for dig",
+    needs=("Virksomhedens navn eller nummer", "Dit mobilnummer, hvis de skal kunne ringe tilbage"),
     description="Bed assistenten ringe til fx værkstedet, frisøren eller boligforeningen. Du godkender hvert opkald, "
                 "før der bliver ringet, og ser præcis hvad assistenten må spørge om og sige ja til. Opkald er med i "
                 "din plan (prøveperioden tæller som Plus); ud over månedens opkald koster et ekstra opkald 3 credits, "
@@ -216,6 +219,7 @@ register(Addon(
 
 register(Addon(
     key="kalender", name="Kalender", tagline="Læg aftaler i din Google-, Outlook- eller iPhone-kalender",
+    needs=("En Google- eller Outlook-konto", "– eller bare din iPhone-kalender"),
     description="Aftaler, du har godkendt, kommer automatisk i din egen kalender.",
     icon="calendar", category="aftaler", price_text="Med i Plus og Familie", pricing="free",
     what="De tider, Peter aftaler for dig, og dem du selv fortæller ham, lander i din egen kalender – med adresse og "
@@ -271,6 +275,7 @@ register(Addon(
 
 register(Addon(
     key="foedselsdage", name="Fødselsdage", tagline="Glem aldrig en fødselsdag igen",
+    needs=("Navne og datoer",),
     description="Peter husker familiens og vennernes fødselsdage og minder dig om dem i god tid.",
     icon="cake", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
     what="Fortæl Peter, hvem der har fødselsdag hvornår. Han minder dig om det nogle dage før, så du kan nå at købe "
@@ -302,6 +307,7 @@ register(Addon(
 
 register(Addon(
     key="madplan", name="Madplan", tagline="Ugens aftensmad – og indkøbslisten følger med",
+    needs=("Hvor mange I er", "Det, I ikke spiser"),
     description="Peter laver en madplan for ugen ud fra det, I kan lide, og skriver indkøbslisten til den.",
     icon="utensils", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
     what="Sig hvor mange I er, og hvad I kan lide, så foreslår Peter aftensmad for ugen – med ingredienser til hver "
@@ -340,6 +346,7 @@ register(Addon(
 
 register(Addon(
     key="bil-og-syn", name="Bil & syn", tagline="Syn, service og dæk – Peter holder styr på bilen",
+    needs=("Nummerpladen", "Datoen for næste syn"),
     description="Peter husker, hvornår bilen skal til syn og service, og ringer til værkstedet og aftaler en tid, når det er ved at være tid.",
     icon="car", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
     what="Fortæl Peter, hvornår bilen skal til syn og service. Han minder dig om det i god tid og om skift til "
@@ -374,6 +381,7 @@ register(Addon(
 
 register(Addon(
     key="regninger", name="Regninger", tagline="Bliv mindet om regninger, før de forfalder",
+    needs=("Navn, beløb og forfaldsdag",),
     description="Peter husker faste regninger og abonnementer og minder dig om dem, før de skal betales – så du undgår rykkere.",
     icon="receipt", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
     what="Fortæl Peter om dine faste regninger – husleje, forsikring, streaming – og hvornår de forfalder. Han "
@@ -404,6 +412,7 @@ register(Addon(
 
 register(Addon(
     key="laege-og-tandlaege", name="Læge & tandlæge", tagline="Tider hos læge og tandlæge – uden at hænge i telefonen",
+    needs=("Klinikkens navn og nummer",),
     description="Peter ringer til lægen eller tandlægen og booker tiden for dig, og minder dig om det årlige tandeftersyn.",
     icon="heart", category="aftaler", price_text="Med i Plus og Familie", pricing="free",
     what="Sig hvad det drejer sig om, og hvornår du kan, så ringer Peter til din læge eller tandlæge, når de åbner, "
@@ -821,9 +830,16 @@ def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> 
     def p(x):
         return naming.personalize(x, name, pron)
 
+    from app.modules.privat import app_status
+
     row = db.get(PrivateAddonEnabled, (ws_id, a.key))
     on = row is not None and a.live_status != "coming_soon"
-    return {"key": a.key, "name": a.name, "tagline": p(a.tagline), "description": p(a.description), "icon": a.icon,
+    st = app_status.state(db, ws_id, a.key)
+    return {"needs": p(list(a.needs)), "summary_line": app_status.summary_line(db, ws_id, a.key) if on else None,
+            "setup": {"done": min(st.setup_done if st else 0, len(a.steps)), "total": len(a.steps)},
+            "disabled_at": st.disabled_at.isoformat() if st and st.disabled_at and not on else None,
+            "notify_requested": bool(st and st.notify_requested_at), "data_deletable": app_status.deletable(a.key),
+            "key": a.key, "name": a.name, "tagline": p(a.tagline), "description": p(a.description), "icon": a.icon,
             "category": a.category, "price_text": a.price_text, "pricing": a.pricing,
             "monthly_price_minor": a.monthly_price_minor, "status": a.live_status, "permissions": p(list(a.permissions)),
             "requires": list(a.requires), "enabled": on, "enabled_at": row.enabled_at.isoformat() if on else None,
@@ -852,6 +868,9 @@ def enable(db: OrmSession, ws_id: uuid.UUID, key: str) -> Addon:
     if db.get(PrivateAddonEnabled, (ws_id, key)) is None:
         db.add(PrivateAddonEnabled(workspace_id=ws_id, key=key, enabled_at=rules.now()))
         db.flush()
+        from app.modules.privat import app_status
+
+        app_status.on_enabled(db, ws_id, key)
     return a
 
 
@@ -864,6 +883,9 @@ def disable(db: OrmSession, ws_id: uuid.UUID, key: str) -> Addon:
     if row is not None:
         db.delete(row)
         db.flush()
+        from app.modules.privat import app_status
+
+        app_status.on_disabled(db, ws_id, key)
         if a.on_disable:
             _call(a.on_disable)(db, ws_id)
     return a
@@ -874,7 +896,12 @@ def enable_defaults(db: OrmSession, ws_id: uuid.UUID) -> None:
     free ones) and again when the trial or a plan arrives from Stripe (then the plan's ones come on)."""
     for key in (k.strip() for k in get_settings().privat_default_addons.split(",")):
         if key in CATALOG and CATALOG[key].live_status != "coming_soon" and included(db, ws_id, CATALOG[key]):
+            was_on = db.get(PrivateAddonEnabled, (ws_id, key)) is not None
             enable(db, ws_id, key)
+            if not was_on:  # switched on for the user, not by them: no «Trin 1 af 3» prompt on Mine apps
+                from app.modules.privat import app_status
+
+                app_status.set_setup(db, ws_id, key, len(CATALOG[key].steps))
 
 
 def tools_for(db: OrmSession, ws_id: uuid.UUID) -> list[AddonTool]:

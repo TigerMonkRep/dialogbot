@@ -1,0 +1,649 @@
+[
+  {
+    "key": "ring-for-mig",
+    "name": "Ring for mig",
+    "tagline": "Assistenten ringer til virksomheder for dig",
+    "description": "Bed assistenten ringe til fx værkstedet, frisøren eller boligforeningen. Du godkender hvert opkald, før der bliver ringet, og ser præcis hvad assistenten må spørge om og sige ja til. Opkald er med i din plan (prøveperioden tæller som Plus); ud over månedens opkald koster et ekstra opkald 3 credits, som du får igen, hvis ingen tager telefonen.",
+    "icon": "phone",
+    "category": "opkald",
+    "price_text": "Med i alle planer – ekstra opkald for 3 credits",
+    "pricing": "credits",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Peter ringer til værkstedet, frisøren eller lægen for dig og aftaler en tid. Du godkender hvert opkald, før der bliver ringet, og ser bagefter, hvad virksomheden svarede.",
+    "example": "«Ring til cykelværkstedet og find en tid torsdag efter klokken tre»",
+    "steps": [
+      "Bekræft dit mobilnummer, så Peter kan sige, hvem han ringer for",
+      "Fortæl Peter, hvem han skal ringe til, og hvad han må sige ja til",
+      "Godkend forslaget – først da ringer Peter"
+    ],
+    "needs": [
+      "Virksomhedens navn eller nummer",
+      "Dit mobilnummer, hvis de skal kunne ringe tilbage"
+    ],
+    "permissions": [
+      "Ringer til virksomheder, du har godkendt",
+      "Siger dit navn til virksomheden",
+      "Deler kun dit mobilnummer, hvis du siger ja"
+    ],
+    "requires": [],
+    "included_in": [
+      "basis",
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "delte-lister",
+    "name": "Delte lister",
+    "tagline": "Fælles lister, hvor alle kan tilføje",
+    "description": "Del en indkøbsliste eller to-do-liste med familien. Alle kan tilføje og krydse af, og I kan se, hvem der gjorde hvad.",
+    "icon": "users",
+    "category": "lister",
+    "price_text": "Gratis",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Del en indkøbs- eller to-do-liste med dem, du bor med. Alle kan tilføje og krydse af fra deres egen telefon, og I kan se, hvem der gjorde hvad.",
+    "example": "«Del indkøbslisten med Anna»",
+    "steps": [
+      "Lav en liste, eller vælg en du har",
+      "Bed Peter dele den – du får et link",
+      "Send linket fra din egen telefon; de andre er med, når de trykker"
+    ],
+    "needs": [],
+    "permissions": [
+      "Deler en liste via et link, du selv sender",
+      "Viser dit fornavn for dem, du deler med"
+    ],
+    "requires": [],
+    "included_in": [],
+    "requires_plan": false
+  },
+  {
+    "key": "oenskelister",
+    "name": "Ønskelister",
+    "tagline": "Del ønsker – andre reserverer i hemmelighed",
+    "description": "Del din ønskeliste. Dem, du deler med, kan skrive «Jeg køber den», så to ikke køber det samme – og du ser aldrig, hvad der er reserveret. Overraskelsen holdes.",
+    "icon": "gift",
+    "category": "lister",
+    "price_text": "Gratis",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Lav en ønskeliste og del den. Dem, du deler med, kan reservere en gave i hemmelighed, så to ikke køber det samme – og du ser aldrig, hvad der er taget.",
+    "example": "«Lav en ønskeliste med en ny cykelhjelm og den bog, jeg talte om»",
+    "steps": [
+      "Sig dine ønsker til Peter – han samler dem på en liste",
+      "Del listen med familien eller vennerne via et link",
+      "De reserverer i hemmelighed; du får bare gaverne"
+    ],
+    "needs": [],
+    "permissions": [
+      "Deler en ønskeliste via et link, du selv sender",
+      "Viser dit fornavn for dem, du deler med"
+    ],
+    "requires": [],
+    "included_in": [],
+    "requires_plan": false
+  },
+  {
+    "key": "kalender",
+    "name": "Kalender",
+    "tagline": "Læg aftaler i din Google-, Outlook- eller iPhone-kalender",
+    "description": "Aftaler, du har godkendt, kommer automatisk i din egen kalender.",
+    "icon": "calendar",
+    "category": "aftaler",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "De tider, Peter aftaler for dig, og dem du selv fortæller ham, lander i din egen kalender – med adresse og det, I aftalte. Google og Outlook får dem med det samme; alle andre kalendere via et privat link.",
+    "example": "«Læg tiden hos frisøren i min kalender»",
+    "steps": [
+      "Forbind Google eller Outlook – eller abonnér på dit private kalenderlink (iPhone og alle andre)",
+      "Peter lægger aftaler ind, når de er bekræftet, og når du selv fortæller ham om en tid",
+      "Flyttes eller fjernes en aftale, opdateres din kalender også"
+    ],
+    "needs": [
+      "En Google- eller Outlook-konto",
+      "– eller bare din iPhone-kalender"
+    ],
+    "permissions": [
+      "Skriver aftaler, du har godkendt, i din kalender",
+      "Læser ikke dine andre aftaler"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "pakker",
+    "name": "Pakker",
+    "tagline": "Følg dine forsendelser",
+    "description": "Få besked, når en pakke er på vej, og hvor du kan hente den.",
+    "icon": "package",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "coming_soon",
+    "what": "Giv Peter dit track-and-trace-nummer, så holder han øje med pakken og siger til, når den er klar til afhentning – og hvor.",
+    "example": "«Følg pakken med nummer 00340434…»",
+    "steps": [
+      "Sig eller indsæt forsendelsesnummeret til Peter",
+      "Peter følger pakken hos fragtfirmaet",
+      "Du får besked, når den er på vej og kan hentes"
+    ],
+    "needs": [],
+    "permissions": [
+      "Læser forsendelsesnumre, du giver assistenten",
+      "Sender kun forsendelsesnummeret til sporingstjenesten 17TRACK"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "foedselsdage",
+    "name": "Fødselsdage",
+    "tagline": "Glem aldrig en fødselsdag igen",
+    "description": "Peter husker familiens og vennernes fødselsdage og minder dig om dem i god tid.",
+    "icon": "cake",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Fortæl Peter, hvem der har fødselsdag hvornår. Han minder dig om det nogle dage før, så du kan nå at købe en gave eller sende en hilsen.",
+    "example": "«Mors fødselsdag er den 14. marts – mind mig om det en uge før»",
+    "steps": [
+      "Sig navnene og datoerne til Peter – én ad gangen eller mange på én gang",
+      "Vælg hvor mange dage før, du vil mindes om det",
+      "Peter minder dig om det hvert år"
+    ],
+    "needs": [
+      "Navne og datoer"
+    ],
+    "permissions": [
+      "Gemmer navne og fødselsdatoer, du giver assistenten"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "madplan",
+    "name": "Madplan",
+    "tagline": "Ugens aftensmad – og indkøbslisten følger med",
+    "description": "Peter laver en madplan for ugen ud fra det, I kan lide, og skriver indkøbslisten til den.",
+    "icon": "utensils",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Sig hvor mange I er, og hvad I kan lide, så foreslår Peter aftensmad for ugen – med ingredienser til hver ret. Siger du ja, bliver mængderne regnet om til jeres antal og lagt sammen på én indkøbsliste, du kan dele med husstanden.",
+    "example": "«Lav en madplan for næste uge – vi er fire, og børnene spiser ikke fisk»",
+    "steps": [
+      "Fortæl Peter, hvor mange I er, og hvad I ikke spiser",
+      "Få et forslag til ugen og ret det, der ikke passer",
+      "Sig ja – indkøbslisten laves automatisk"
+    ],
+    "needs": [
+      "Hvor mange I er",
+      "Det, I ikke spiser"
+    ],
+    "permissions": [
+      "Gemmer jeres madvaner og allergier, som du selv skriver dem"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "bil-og-syn",
+    "name": "Bil & syn",
+    "tagline": "Syn, service og dæk – Peter holder styr på bilen",
+    "description": "Peter husker, hvornår bilen skal til syn og service, og ringer til værkstedet og aftaler en tid, når det er ved at være tid.",
+    "icon": "car",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Fortæl Peter, hvornår bilen skal til syn og service. Han minder dig om det i god tid og om skift til vinterdæk – og kan ringe til dit værksted og aftale tiden for dig.",
+    "example": "«Bilen skal til syn i maj – find en tid hos mit værksted i uge 18»",
+    "steps": [
+      "Sig nummerpladen og datoen for næste syn til Peter",
+      "Gem dit værksted (navn og nummer)",
+      "Peter minder dig om syn og service og aftaler tiden, når du siger ja"
+    ],
+    "needs": [
+      "Nummerpladen",
+      "Datoen for næste syn"
+    ],
+    "permissions": [
+      "Gemmer nummerplade og datoer for syn og service, som du selv skriver dem",
+      "Ringer til dit værksted, når du har godkendt det"
+    ],
+    "requires": [
+      "ring-for-mig"
+    ],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "regninger",
+    "name": "Regninger",
+    "tagline": "Bliv mindet om regninger, før de forfalder",
+    "description": "Peter husker faste regninger og abonnementer og minder dig om dem, før de skal betales – så du undgår rykkere.",
+    "icon": "receipt",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Fortæl Peter om dine faste regninger – husleje, forsikring, streaming – og hvornår de forfalder. Han minder dig om dem i tide og viser dig månedens overblik. Peter betaler aldrig noget selv.",
+    "example": "«Mind mig om bilforsikringen den 1. hver måned – den er 640 kr.»",
+    "steps": [
+      "Sig regningerne og deres dato til Peter",
+      "Vælg hvor mange dage før, du vil have besked",
+      "Se månedens regninger samlet i appen – eller spørg Peter"
+    ],
+    "needs": [
+      "Navn, beløb og forfaldsdag"
+    ],
+    "permissions": [
+      "Gemmer regningernes navn, beløb og dato, som du selv skriver dem",
+      "Har aldrig adgang til din bank"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "laege-og-tandlaege",
+    "name": "Læge & tandlæge",
+    "tagline": "Tider hos læge og tandlæge – uden at hænge i telefonen",
+    "description": "Peter ringer til lægen eller tandlægen og booker tiden for dig, og minder dig om det årlige tandeftersyn.",
+    "icon": "heart",
+    "category": "aftaler",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Sig hvad det drejer sig om, og hvornår du kan, så ringer Peter til din læge eller tandlæge, når de åbner, og aftaler en tid. Han fortæller aldrig mere, end du har sagt god for.",
+    "example": "«Book et tandeftersyn hos min tandlæge – helst en morgen i næste måned»",
+    "steps": [
+      "Gem din læge og tandlæge (navn og nummer)",
+      "Sig til Peter, hvad du skal, og hvornår du kan",
+      "Godkend opkaldet – Peter ringer og lægger tiden i din kalender"
+    ],
+    "needs": [
+      "Klinikkens navn og nummer"
+    ],
+    "permissions": [
+      "Ringer til din læge eller tandlæge, når du har godkendt det",
+      "Siger kun dit navn og det, du selv har skrevet",
+      "Gemmer kun klinikkens navn og nummer – ikke helbredsoplysninger"
+    ],
+    "requires": [
+      "ring-for-mig"
+    ],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "pakkeliste",
+    "name": "Pakkeliste",
+    "tagline": "Pakkelister til rejser og ture, der kan genbruges",
+    "description": "Peter laver en pakkeliste til turen – ud fra vejret, hvor længe I er væk, og hvem der skal med – og husker den til næste gang.",
+    "icon": "suitcase",
+    "category": "lister",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Sig hvor I skal hen, hvor længe, og hvem der skal med, så skriver Peter en pakkeliste, som I krydser af. Næste gang starter han fra den, I brugte sidst.",
+    "example": "«Lav en pakkeliste til en uge i sommerhus med to børn»",
+    "steps": [
+      "Fortæl Peter om turen – sted, længde og hvem",
+      "Ret listen til, og del den med rejsefællerne",
+      "Kryds af, mens I pakker"
+    ],
+    "needs": [],
+    "permissions": [
+      "Gemmer dine pakkelister til næste tur"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "rejser",
+    "name": "Rejser",
+    "tagline": "Rejseforslag med rigtige priser – og book hos udbyderen",
+    "description": "Peter finder rejser ud fra budget, antal personer, hvor I vil hen og hvilken slags rejse, med priser direkte fra flyselskaber og rejsesider.",
+    "icon": "plane",
+    "category": "aftaler",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "coming_soon",
+    "what": "Sig hvor I rejser fra, hvor mange I er, hvad det må koste, og hvad slags rejse I drømmer om – eller hvor I vil hen. Peter finder flyrejser med rigtige priser, billigst først, og med «Book» bestiller du hos udbyderen.",
+    "example": "«Find en strandferie i februar til to voksne og to børn fra Billund for højst 12.000 kr.»",
+    "steps": [
+      "Fortæl Peter om rejsen – eller udfyld søgningen i appen",
+      "Se forslagene med priser for hele selskabet, billigst først",
+      "Tryk «Book» – du bestiller og betaler hos udbyderen"
+    ],
+    "needs": [],
+    "permissions": [
+      "Sender kun rejsens fra, til, datoer og antal personer til prisudbyderne",
+      "Booker og betaler aldrig noget i Dialogbot"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "abonnementer",
+    "name": "Abonnementer & opsigelse",
+    "tagline": "Se hvad I betaler for – og opsig det, I ikke bruger",
+    "description": "Peter holder styr på streaming, mobil, internet, fitness og forsikringer: hvad det koster, hvornår bindingen slutter – og skriver opsigelsen eller ringer, når du vil ud.",
+    "icon": "repeat",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Fortæl Peter, hvad I betaler for. Han viser, hvad det koster om måneden og året, minder dig om den sidste dag at opsige, før en binding fornyes – og skriver opsigelsen eller ringer for dig, når du siger til.",
+    "example": "«Jeg har Netflix til 139 kr. om måneden og Telia til 199 kr. med binding til 1. marts»",
+    "steps": [
+      "Sig dine abonnementer og hvad de koster",
+      "Peter minder dig om den sidste dag at opsige",
+      "Sig «opsig Netflix» – du får opsigelsen klar til at sende, eller Peter ringer, når du godkender"
+    ],
+    "needs": [],
+    "permissions": [
+      "Gemmer abonnementer, priser og datoer, som du selv skriver dem",
+      "Har aldrig adgang til din bank",
+      "Opsiger kun, når du selv sender opsigelsen eller godkender opkaldet"
+    ],
+    "requires": [
+      "ring-for-mig"
+    ],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "haandvaerker",
+    "name": "Håndværker & tilbud",
+    "tagline": "Peter henter 3 tilbud – du vælger",
+    "description": "Sig hvad der skal laves, og hvor. Peter finder tre lokale håndværkere, ringer og spørger om pris og hvornår de kan – og viser svarene side om side.",
+    "icon": "wrench",
+    "category": "opkald",
+    "price_text": "Med i Plus og Familie – opkald som i Ring for mig",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Peter finder op til tre håndværkere i nærheden, ringer og spørger om pris og hvornår de kan, og viser svarene side om side. Du vælger – så ringer Peter og siger ja tak. Han siger aldrig ja til en pris selv.",
+    "example": "«Find 3 malere i Aarhus og hent tilbud på at male stuen»",
+    "steps": [
+      "Sig hvad der skal laves, og hvor",
+      "Godkend opkaldene – Peter spørger om pris og tid",
+      "Se tilbuddene side om side og vælg – Peter siger ja tak for dig"
+    ],
+    "needs": [],
+    "permissions": [
+      "Ringer kun til håndværkere, du har godkendt",
+      "Siger dit navn og opgaven – aldrig din adresse",
+      "Siger aldrig ja til en pris eller en aftale"
+    ],
+    "requires": [
+      "ring-for-mig"
+    ],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "faelles-udgifter",
+    "name": "Fælles udgifter",
+    "tagline": "Hvem lagde ud – og hvem skylder hvem",
+    "description": "Til ferien, sommerhuset eller bofællesskabet: skriv hvem der betalte hvad, og Peter regner ud, hvem der skal betale hvem – med færrest mulige overførsler.",
+    "icon": "coin",
+    "category": "lister",
+    "price_text": "Gratis",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Sig hvem der lagde ud for hvad, og Peter regner ud, hvem der skylder hvem – med færrest mulige overførsler. Du får en opgørelse, du kan sende til de andre. Peter flytter aldrig penge.",
+    "example": "«Jeg betalte 1.200 kr. for mad i sommerhuset – vi er Anna, Bo og mig»",
+    "steps": [
+      "Sig hvem der er med, og hvem der betalte hvad",
+      "Se hvem der skylder hvem",
+      "Send opgørelsen til de andre – de betaler med MobilePay"
+    ],
+    "needs": [],
+    "permissions": [
+      "Gemmer fornavne og beløb, som du selv skriver dem",
+      "Flytter aldrig penge"
+    ],
+    "requires": [],
+    "included_in": [],
+    "requires_plan": false
+  },
+  {
+    "key": "garanti",
+    "name": "Garanti & kvitteringer",
+    "tagline": "Husk reklamationsretten – og få hjælp, når noget går i stykker",
+    "description": "Peter husker, hvad du har købt og hvor, og hvornår reklamationsretten udløber – og skriver reklamationen til butikken, når noget går i stykker.",
+    "icon": "shield",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Fortæl Peter, når du køber noget dyrt. Han husker butik og dato, minder dig om det, før de 2 års reklamationsret udløber, og skriver reklamationen, når noget går i stykker. Gem selv kvitteringen.",
+    "example": "«Jeg købte en vaskemaskine i Elgiganten den 3. maj til 4.999 kr.»",
+    "steps": [
+      "Sig hvad du købte, hvor og hvornår",
+      "Peter minder dig om det, før reklamationsretten udløber",
+      "Går noget i stykker, skriver Peter reklamationen til butikken"
+    ],
+    "needs": [],
+    "permissions": [
+      "Gemmer ting, butik, dato og pris, som du selv skriver dem",
+      "Gemmer ikke billeder af kvitteringer"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "fest",
+    "name": "Fest & invitationer",
+    "tagline": "Gæsteliste, svar, hvem tager hvad med – og allergier",
+    "description": "Planlæg festen med Peter: han skriver invitationen, holder styr på hvem der kommer, hvem der tager hvad med, og hvem der ikke tåler hvad.",
+    "icon": "balloon",
+    "category": "lister",
+    "price_text": "Gratis",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Sig hvad det er for en fest, hvornår og hvem der skal med. Peter skriver invitationen, holder styr på svarene, hvem der tager hvad med og allergier – og minder dig om dem, der ikke har svaret.",
+    "example": "«Lav en fest: Idas 10-års fødselsdag den 6. marts kl. 14 med Emma, Noah og Alma»",
+    "steps": [
+      "Sig festen, datoen og gæsterne",
+      "Send invitationen, Peter har skrevet",
+      "Fortæl Peter svarene – han holder styr på resten"
+    ],
+    "needs": [],
+    "permissions": [
+      "Gemmer gæsternes fornavne, svar og allergier, som du selv skriver dem",
+      "Sender intet – du sender selv invitationen"
+    ],
+    "requires": [],
+    "included_in": [],
+    "requires_plan": false
+  },
+  {
+    "key": "flytning",
+    "name": "Flytning",
+    "tagline": "Flyttetjeklisten med datoer – og hjælp til opkaldene",
+    "description": "Sig hvornår I flytter, og Peter laver tjeklisten med datoer: opsigelse, el, internet, forsikring, flyttefirma og adresseændring – og minder dig om hvert punkt i tide.",
+    "icon": "truck",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Sig flyttedagen, og Peter laver tjeklisten med datoer – fra opsigelse og flyttefirma til el, internet og adresseændring – og minder dig om hvert punkt. Flyttefirmaer kan han hente tilbud fra.",
+    "example": "«Vi flytter til Odense den 1. april»",
+    "steps": [
+      "Sig flyttedagen og hvor I flytter hen",
+      "Få tjeklisten med datoer – del den med dem, I flytter med",
+      "Peter minder dig om hvert punkt og kan hente tilbud fra flyttefirmaer"
+    ],
+    "needs": [],
+    "permissions": [
+      "Gemmer flyttedagen og byen, som du selv skriver dem",
+      "Melder aldrig flytning for dig – det gør du selv på borger.dk"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "kaeledyr",
+    "name": "Kæledyr",
+    "tagline": "Dyrlæge, vaccinationer, ormekur og forsikring",
+    "description": "Peter husker vaccinationer, ormekur, loppemiddel og forsikring for jeres dyr – og ringer til dyrlægen og finder en tid, når du siger til.",
+    "icon": "paw",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Fortæl Peter om jeres dyr og datoerne. Han minder dig om vaccination, ormekur, loppemiddel og forsikring – og kan ringe til dyrlægen og finde en tid, når du godkender.",
+    "example": "«Vores hund Bella skal vaccineres 1. marts og have ormekur hver 3. måned»",
+    "steps": [
+      "Sig dyrets navn og datoerne",
+      "Gem dyrlægen (navn og nummer)",
+      "Peter minder dig om det – og booker dyrlægen, når du siger ja"
+    ],
+    "needs": [],
+    "permissions": [
+      "Gemmer dyrenes navne og datoer, som du selv skriver dem",
+      "Ringer til din dyrlæge, når du har godkendt det"
+    ],
+    "requires": [
+      "ring-for-mig"
+    ],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "hus-og-vedligehold",
+    "name": "Hus & vedligehold",
+    "tagline": "Røgalarm, filtre, tagrender og fyr – til tiden",
+    "description": "Peter husker de små faste opgaver i hjemmet – røgalarmen, emhættefilteret, tagrenderne, service på fyret – og finder en håndværker, når der skal en til.",
+    "icon": "home",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Vælg de faste opgaver i hjemmet – eller tilføj dine egne. Peter minder dig om dem til tiden, og når der skal en håndværker til, henter han tilbud.",
+    "example": "«Tilføj alle de faste opgaver i huset»",
+    "steps": [
+      "Vælg opgaverne, eller sig dine egne og hvor tit",
+      "Peter minder dig om dem til tiden",
+      "Sig «færdig» – så rykker opgaven til næste gang"
+    ],
+    "needs": [],
+    "permissions": [
+      "Gemmer kun de opgaver og datoer, du vælger"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  },
+  {
+    "key": "fitness-og-sundhed",
+    "name": "Fitness & sundhed",
+    "tagline": "Ugens træning, en enkel log – og et puf på dagen",
+    "description": "Sig hvornår du vil træne, og hvad dit mål er. Peter minder dig om det på dagen, noterer hvad du har nået og viser ugen – og kan ringe og booke et hold, en PT eller fysioterapeuten.",
+    "icon": "dumbbell",
+    "category": "hverdag",
+    "price_text": "Med i Plus og Familie",
+    "pricing": "free",
+    "monthly_price_minor": null,
+    "status": "available",
+    "what": "Fortæl Peter dit mål og hvornår du vil træne. Han minder dig om det på dagen, noterer det, du har nået, og viser hver mandag, hvordan ugen gik. Han kan også ringe og booke et hold eller en tid, når du godkender.",
+    "example": "«Jeg vil løbe tirsdag og torsdag kl. 17 og styrketræne lørdag – målet er 5 km i maj»",
+    "steps": [
+      "Sig dit mål og dine træningsdage",
+      "Få et puf på dagen – sig «færdig med løb», så noterer Peter det",
+      "Se hver mandag, hvordan ugen gik"
+    ],
+    "needs": [],
+    "permissions": [
+      "Gemmer dit mål, din træningsplan og hvad du har trænet",
+      "Gemmer aldrig vægt, sygdom, skader, medicin eller andre helbredsoplysninger"
+    ],
+    "requires": [],
+    "included_in": [
+      "plus",
+      "familie"
+    ],
+    "requires_plan": true
+  }
+]

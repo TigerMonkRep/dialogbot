@@ -19,7 +19,7 @@ services:
       - key: PYTHON_VERSION
         value: "3.12"
       - key: APP_ENV
-        value: staging         # same hardening as prod; simulated mail still allowed until Resend is verified
+        value: prod            # production (set 9 Nov 2026); the service names still say «staging», see docs/environments.md
       - key: ENABLE_DEV_TOOLS
         value: "false"
       - key: DATABASE_URL       # runtime role (limited), Supabase session pooler or direct
@@ -119,7 +119,7 @@ services:
       - key: PYTHON_VERSION
         value: "3.12"
       - key: APP_ENV
-        value: staging
+        value: prod
       - key: APP_SURFACE
         value: public
       - key: ENABLE_DEV_TOOLS
@@ -154,7 +154,7 @@ services:
       - key: PYTHON_VERSION
         value: "3.12"
       - key: APP_ENV
-        value: staging
+        value: prod
       - key: ENABLE_DEV_TOOLS
         value: "false"
       - key: DATABASE_URL
@@ -219,7 +219,7 @@ services:
     autoDeployTrigger: checksPass
     envVars:
       - key: APP_ENV
-        value: staging
+        value: prod
       - key: ENABLE_DEV_TOOLS
         value: "false"
       # Secrets are copied from the API service (fromService), so they are never typed twice or committed.

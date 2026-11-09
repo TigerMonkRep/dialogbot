@@ -205,7 +205,21 @@
     "makeAppointment": "Concertar una cita",
     "openLead": "Abrir consulta",
     "takenOver": "Un empleado ha tomado el control de la conversación: Dialogbot no responde hasta que se le devuelva.",
-    "wrongAnswer": "¿La respuesta era incorrecta? Díganselo al asistente en «Lo que sabe» y se corregirá."
+    "wrongAnswer": "¿La respuesta era incorrecta? Díganselo al asistente en «Lo que sabe» y se corregirá.",
+    "recording": {
+      "title": "Grabación",
+      "listen": "Escuchar la llamada",
+      "until": "Se guarda hasta el {date}",
+      "deleteAsk": "Eliminar la grabación",
+      "confirm": "¿Eliminar el audio? La transcripción se mantiene.",
+      "delete": "Sí, eliminar",
+      "cancel": "Cancelar",
+      "status": {
+        "pending": "Se está obteniendo la grabación; inténtalo de nuevo en un momento.",
+        "deleted": "La grabación se ha eliminado. La transcripción sigue aquí.",
+        "failed": "No se pudo obtener la grabación."
+      }
+    }
   },
   "common": {
     "save": "Guardar",

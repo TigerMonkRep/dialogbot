@@ -9,7 +9,43 @@ import { HTML_LANG, LOCALES, LOCALE_NAMES } from "@/i18n/config";
 
 export type PhoneNumber = {
   id: string; e164: string; status: string; label: string; active: boolean; greeting: string; speaking_style: string;
+  record_calls?: boolean; recording_retention_days?: number; recording_available?: boolean;
 };
+
+const RETENTION = [7, 30, 90, 180, 365];
+
+/** «Optag opkald»: off by default. When on, callers hear it in the greeting and the team can listen under «Opkald». */
+function Recording({ wsId, number }: { wsId: string; number: PhoneNumber }) {
+  const router = useRouter();
+  const tr = useT("settings");
+  const [on, setOn] = useState(!!number.record_calls);
+  const [days, setDays] = useState(number.recording_retention_days ?? 90);
+  const save = useSubmit(async (next: { record_calls: boolean; recording_retention_days: number }) => {
+    await api(`/workspaces/${wsId}/phone-numbers/${number.id}`, { method: "PATCH", body: JSON.stringify(next) });
+    setOn(next.record_calls); setDays(next.recording_retention_days); router.refresh();
+  });
+  const off = number.recording_available === false;
+  return (
+    <div data-testid="record-calls" className="flex flex-col gap-2 rounded-lg bg-panel p-3">
+      <label className="flex items-start gap-3 cursor-pointer">
+        <input type="checkbox" className="mt-1 h-5 w-5" checked={on} disabled={off || save.pending}
+          onChange={(e) => save.run({ record_calls: e.target.checked, recording_retention_days: days })} />
+        <span className="flex flex-col gap-0.5">
+          <span className="text-label-lg">{tr("telephony.recording.title")}</span>
+          <span className="text-body-sm text-ink-soft">{off ? tr("telephony.recording.unavailable") : tr("telephony.recording.hint")}</span>
+        </span>
+      </label>
+      {on && (
+        <Field label={tr("telephony.recording.keep")}>
+          <Select value={days} disabled={save.pending} onChange={(e) => save.run({ record_calls: true, recording_retention_days: Number(e.target.value) })}>
+            {RETENTION.map((d) => <option key={d} value={d}>{tr("telephony.recording.days", { n: d })}</option>)}
+          </Select>
+        </Field>
+      )}
+      <ErrorBox error={save.error} />
+    </div>
+  );
+}
 type Missing = { key: string; text: string };
 export type Telephony = {
   status: { code: "not_started" | "awaiting_info" | "provisioning" | "ready_for_test" | "test_failed" | "active" | "paused";
@@ -203,6 +239,7 @@ function Answering({ t, number, wsId, canManage }: { t: Telephony; number: Phone
           <Link href={a[k].href} className="text-body-sm text-ink underline">{hint}</Link>
         </li>
       ))}</ul>
+      {number && canManage && <Recording wsId={wsId} number={number} />}
       {number && canManage && (
         <details className="rounded-lg bg-panel p-2">
           <summary className="text-label-lg cursor-pointer">{tr("telephony.answering.special")}</summary>

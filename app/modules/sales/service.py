@@ -186,6 +186,7 @@ def assistant(db: OrmSession, ws: Workspace, d: DemoCall, number: PhoneNumber) -
     s = get_settings()
     out: dict = {
         "firstMessage": first_message(d),
+        "artifactPlan": vapi.NO_RECORDING,
         "model": {"provider": s.vapi_model_provider, "model": vapi.phone_model(s),
                   "messages": [{"role": "system", "content": system_prompt(db, ws, d)}]},
         "transcriber": vapi.transcriber_for(db, ws, extra=[d.company, d.name, *(d.name or "").split()]),

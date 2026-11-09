@@ -188,7 +188,22 @@ def get_conversation(conversation_id: uuid.UUID, ctx: WorkspaceContext = Depends
     return {"id": str(conv.id), "channel": conv.channel, "origin": conv.origin, "status": conv.status, "mode": conv.mode,
             "created_at": conv.created_at.isoformat(),
             "messages": [service.message_out(m) for m in service.messages_of(db, conv)],
-            "actions": [actions.run_out(r) for r in actions.runs_for_conversation(db, conv.id)]}
+            "actions": [actions.run_out(r) for r in actions.runs_for_conversation(db, conv.id)],
+            "call": _call_of(db, conv)}
+
+
+def _call_of(db: OrmSession, conv: Conversation) -> dict | None:
+    """A phone conversation's call: its duration and whether there is audio to listen to."""
+    if conv.channel != "phone":
+        return None
+    from app.models import Call
+    from app.modules.telephony import call_recordings
+
+    call = db.scalar(select(Call).where(Call.conversation_id == conv.id, Call.workspace_id == conv.workspace_id))
+    if call is None:
+        return None
+    return {"id": str(call.id), "from_number": call.from_number, "to_number": call.to_number,
+            "duration_seconds": call.duration_seconds, "recording": call_recordings.out(db, call)}
 
 
 class ReplyIn(BaseModel):

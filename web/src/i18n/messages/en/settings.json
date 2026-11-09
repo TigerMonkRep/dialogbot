@@ -409,6 +409,13 @@
       "step3": "How we should answer",
       "step4": "Test the connection",
       "step5": "Activate"
+    },
+    "recording": {
+      "title": "Record calls",
+      "hint": "Callers are told in the greeting that the call is recorded. You can listen to the call under Calls.",
+      "unavailable": "Recording isn't enabled for Dialogbot yet.",
+      "keep": "Keep recordings for",
+      "days": "{n} days"
     }
   },
   "webchat": {

@@ -3,7 +3,7 @@ import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { PushAsk } from "@/components/push-ask";
 import { Icon } from "@/components/ui";
-import { AutoRefresh, CreateLeadButton, ReplyBox, ResolveButton } from "./client";
+import { AutoRefresh, CreateLeadButton, RecordingPlayer, ReplyBox, ResolveButton } from "./client";
 import { getLocale, getT } from "@/i18n/server";
 import { HTML_LANG } from "@/i18n/config";
 import type { T } from "@/i18n/translate";
@@ -15,7 +15,8 @@ type Item = {
 type Feed = { counts: { all: number; to_you: number; booked: number; done: number; webchat: number }; items: Item[]; total: number };
 type Msg = { id: string; role: string; text: string; created_at: string };
 type Run = { id: string; label: string; status: "ok" | "failed" | "refused"; error: string | null; simulated: boolean };
-type Detail = { id: string; messages: Msg[]; actions?: Run[] };
+type Recording = { status: "AVAILABLE" | "PENDING" | "FAILED" | "DELETED" | "NOT_RECORDED"; duration_seconds: number | null; delete_after: string | null };
+type Detail = { id: string; messages: Msg[]; actions?: Run[]; call?: { id: string; recording: Recording } | null };
 
 const TZ = "Europe/Copenhagen";
 /** Filter key → count key; labels are `app.calls.filters.<key>`. */
@@ -136,6 +137,11 @@ export async function OpkaldView({ selected, f = "all", q = "", days = 30 }: { s
             </div>
             <span className={`inline-flex px-2.5 py-1 rounded-full text-[12px] font-semibold ${TAG[item.outcome]}`}>{t(`outcome.${item.outcome}`)}</span>
           </div>
+
+          {detail.call && detail.call.recording.status !== "NOT_RECORDED" && (
+            <RecordingPlayer wsId={ws.id} callId={detail.call.id} status={detail.call.recording.status}
+              deleteAfter={detail.call.recording.delete_after} canDelete={ws.role === "owner" || ws.role === "admin"} />
+          )}
 
           <ol className="flex flex-col gap-2.5" aria-label={t("calls.transcript")}>
             {detail.messages.length === 0 && <li className="text-[14px] text-ink-soft">{t("calls.noTranscript")}</li>}

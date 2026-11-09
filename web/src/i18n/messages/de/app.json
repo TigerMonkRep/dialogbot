@@ -205,7 +205,21 @@
     "makeAppointment": "Termin vereinbaren",
     "openLead": "Anfrage öffnen",
     "takenOver": "Ein Mitarbeiter hat das Gespräch übernommen – Dialogbot antwortet erst wieder, wenn es zurückgegeben wird.",
-    "wrongAnswer": "War die Antwort falsch? Schreiben Sie es dem Assistenten unter «Das weiß er» – dann korrigiert er sich."
+    "wrongAnswer": "War die Antwort falsch? Schreiben Sie es dem Assistenten unter «Das weiß er» – dann korrigiert er sich.",
+    "recording": {
+      "title": "Aufnahme",
+      "listen": "Anruf anhören",
+      "until": "Gespeichert bis {date}",
+      "deleteAsk": "Aufnahme löschen",
+      "confirm": "Audio löschen? Das Transkript bleibt.",
+      "delete": "Ja, löschen",
+      "cancel": "Abbrechen",
+      "status": {
+        "pending": "Die Aufnahme wird geladen – versuchen Sie es gleich noch einmal.",
+        "deleted": "Die Aufnahme wurde gelöscht. Das Transkript ist noch da.",
+        "failed": "Die Aufnahme konnte nicht geladen werden."
+      }
+    }
   },
   "common": {
     "save": "Speichern",

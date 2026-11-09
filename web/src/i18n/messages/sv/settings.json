@@ -409,6 +409,13 @@
       "step3": "Så ska vi svara",
       "step4": "Testa anslutningen",
       "step5": "Aktivera"
+    },
+    "recording": {
+      "title": "Spela in samtal",
+      "hint": "Den som ringer får veta i hälsningen att samtalet spelas in. Ni kan lyssna på samtalet under Samtal.",
+      "unavailable": "Inspelning är inte aktiverat för Dialogbot ännu.",
+      "keep": "Spara inspelningar i",
+      "days": "{n} dagar"
     }
   },
   "webchat": {

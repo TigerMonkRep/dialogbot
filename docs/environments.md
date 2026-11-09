@@ -31,6 +31,11 @@ det ikke skal bruges mere (ellers ~10 USD/md. for compute). Ingen tjeneste skriv
 Tjenesternes *navne* siger "staging", men de **er** produktion. Omdøbning er en bevidst, separat beslutning (URL'er, DNS og
 Vercel-miljøvariabler peger på dem).
 
+Siden 9. november 2026 kører alle fire Dialogbot-tjenester (`dialogbot-api-staging`, `dialogbot-worker-staging`,
+`dialogbot-browser-worker-staging`, `dialogbot-public-api`) med `APP_ENV=prod` – før stod de på `staging`, og admin viste
+derfor «STAGING». Prod kræver det samme som staging (`SECRET_KEY`, ingen dev-værktøjer) og desuden rigtig e-mail
+(`EMAIL_ADAPTER=resend`, som har været sat siden 6. oktober).
+
 Det kan ikke verificeres fra kode eller via Render-/Supabase-forbindelserne, hvilken præcis `DATABASE_URL`/`MIGRATION_DATABASE_URL`
 tjenesterne har – værdierne er hemmeligheder og læses ikke. Beviset ovenfor er indirekte (skema og data). Åbn Render →
 tjenesten → Environment for at se værdierne.

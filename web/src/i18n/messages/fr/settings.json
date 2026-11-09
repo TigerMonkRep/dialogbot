@@ -409,6 +409,13 @@
       "step3": "Comment répondre",
       "step4": "Tester la connexion",
       "step5": "Activer"
+    },
+    "recording": {
+      "title": "Enregistrer les appels",
+      "hint": "L'accueil indique à l'appelant que l'appel est enregistré. Vous pouvez l'écouter dans Appels.",
+      "unavailable": "L'enregistrement n'est pas encore activé pour Dialogbot.",
+      "keep": "Conserver les enregistrements",
+      "days": "{n} jours"
     }
   },
   "webchat": {

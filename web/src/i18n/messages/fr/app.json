@@ -205,7 +205,21 @@
     "makeAppointment": "Prendre rendez-vous",
     "openLead": "Ouvrir la demande",
     "takenOver": "Un collaborateur a repris la conversation – Dialogbot ne répond plus tant qu’on ne lui rend pas la main.",
-    "wrongAnswer": "La réponse était fausse ? Dites-le à l’assistant sous « Ce qu’il sait » – il se corrigera."
+    "wrongAnswer": "La réponse était fausse ? Dites-le à l’assistant sous « Ce qu’il sait » – il se corrigera.",
+    "recording": {
+      "title": "Enregistrement",
+      "listen": "Écouter l'appel",
+      "until": "Conservé jusqu'au {date}",
+      "deleteAsk": "Supprimer l'enregistrement",
+      "confirm": "Supprimer l'audio ? La transcription reste.",
+      "delete": "Oui, supprimer",
+      "cancel": "Annuler",
+      "status": {
+        "pending": "L'enregistrement est en cours de récupération – réessayez dans un instant.",
+        "deleted": "L'enregistrement a été supprimé. La transcription est toujours là.",
+        "failed": "L'enregistrement n'a pas pu être récupéré."
+      }
+    }
   },
   "common": {
     "save": "Enregistrer",

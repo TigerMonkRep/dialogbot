@@ -409,6 +409,13 @@
       "step3": "Cómo debemos responder",
       "step4": "Probar la conexión",
       "step5": "Activar"
+    },
+    "recording": {
+      "title": "Grabar llamadas",
+      "hint": "En el saludo se informa de que la llamada se graba. Podéis escuchar la llamada en Llamadas.",
+      "unavailable": "La grabación aún no está activada para Dialogbot.",
+      "keep": "Guardar grabaciones durante",
+      "days": "{n} días"
     }
   },
   "webchat": {

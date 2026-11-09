@@ -120,6 +120,7 @@ HANDLERS = {
     "email.branded": handle_branded,  # any mail built where it is queued (tpl.to_payload)
     "sales.message": lambda db, ev: _sales_message(db, ev),
     "sales.recording_fetch": lambda db, ev: _sales_recording(db, ev),
+    "calls.recording_fetch": lambda db, ev: _call_recording(db, ev),
     "privat.reminder": lambda db, ev: _privat_reminder(db, ev),
     "privat.call_due": lambda db, ev: _privat("handle_call_due", db, ev),
     "privat.call_ask": lambda db, ev: _privat("handle_call_ask", db, ev),
@@ -154,6 +155,12 @@ def _privat_reminder(db: OrmSession, ev: OutboxEvent) -> None:
 
 def _sales_recording(db: OrmSession, ev: OutboxEvent) -> None:
     from app.modules.sales.recordings import handle_fetch
+
+    handle_fetch(db, ev)
+
+
+def _call_recording(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.telephony.call_recordings import handle_fetch
 
     handle_fetch(db, ev)
 
@@ -371,6 +378,9 @@ def run_schedules() -> None:
             local = datetime.now(ZoneInfo("Europe/Copenhagen"))
             if local.hour >= 3 and _RETENTION_RAN.get("day") != local.date():
                 run_retention(db)
+                from app.modules.telephony.call_recordings import run_retention as calls_retention
+
+                calls_retention(db)  # customers' own recordings, after their number's retention
                 _RETENTION_RAN["day"] = local.date()
         except Exception as exc:  # noqa: BLE001
             db.rollback()

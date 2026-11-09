@@ -205,7 +205,21 @@
     "makeAppointment": "Boka en tid",
     "openLead": "Öppna ärende",
     "takenOver": "En medarbetare har tagit över samtalet – Dialogbot svarar inte förrän det lämnas tillbaka.",
-    "wrongAnswer": "Var svaret fel? Skriv det till assistenten under «Det här vet den» – så rättar den sig."
+    "wrongAnswer": "Var svaret fel? Skriv det till assistenten under «Det här vet den» – så rättar den sig.",
+    "recording": {
+      "title": "Inspelning",
+      "listen": "Lyssna på samtalet",
+      "until": "Sparas till {date}",
+      "deleteAsk": "Radera inspelningen",
+      "confirm": "Radera ljudet? Transkriptionen finns kvar.",
+      "delete": "Ja, radera",
+      "cancel": "Avbryt",
+      "status": {
+        "pending": "Inspelningen hämtas – försök igen om en stund.",
+        "deleted": "Inspelningen är raderad. Transkriptionen finns kvar.",
+        "failed": "Inspelningen kunde inte hämtas."
+      }
+    }
   },
   "common": {
     "save": "Spara",

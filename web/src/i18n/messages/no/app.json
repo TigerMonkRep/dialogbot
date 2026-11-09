@@ -205,7 +205,21 @@
     "makeAppointment": "Lag en avtale",
     "openLead": "Åpne henvendelse",
     "takenOver": "En medarbeider har overtatt samtalen – Dialogbot svarer ikke før den blir gitt tilbake.",
-    "wrongAnswer": "Var svaret feil? Skriv det til assistenten under «Dette vet den» – så retter den seg."
+    "wrongAnswer": "Var svaret feil? Skriv det til assistenten under «Dette vet den» – så retter den seg.",
+    "recording": {
+      "title": "Opptak",
+      "listen": "Lytt til samtalen",
+      "until": "Lagres til {date}",
+      "deleteAsk": "Slett opptaket",
+      "confirm": "Slette lyden? Transkripsjonen blir.",
+      "delete": "Ja, slett",
+      "cancel": "Avbryt",
+      "status": {
+        "pending": "Opptaket hentes – prøv igjen om et øyeblikk.",
+        "deleted": "Opptaket er slettet. Transkripsjonen er her fortsatt.",
+        "failed": "Opptaket kunne ikke hentes."
+      }
+    }
   },
   "common": {
     "save": "Lagre",

@@ -205,7 +205,21 @@
     "makeAppointment": "Make an appointment",
     "openLead": "Open enquiry",
     "takenOver": "A staff member has taken over the conversation – Dialogbot won't reply until it's handed back.",
-    "wrongAnswer": "Was the answer wrong? Tell the assistant under «What it knows» – and it will correct itself."
+    "wrongAnswer": "Was the answer wrong? Tell the assistant under «What it knows» – and it will correct itself.",
+    "recording": {
+      "title": "Recording",
+      "listen": "Listen to the call",
+      "until": "Kept until {date}",
+      "deleteAsk": "Delete the recording",
+      "confirm": "Delete the audio? The transcript stays.",
+      "delete": "Yes, delete",
+      "cancel": "Cancel",
+      "status": {
+        "pending": "The recording is being fetched – try again in a moment.",
+        "deleted": "The recording has been deleted. The transcript is still here.",
+        "failed": "The recording could not be fetched."
+      }
+    }
   },
   "common": {
     "save": "Save",

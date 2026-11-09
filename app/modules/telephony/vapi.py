@@ -136,6 +136,9 @@ def spoken_first_message(assistant: dict) -> dict:
     return assistant
 # The assistant hangs up itself: Vapi's endCall tool, plus the closing line the phone prompt ends every call with.
 END_CALL_TOOL = {"type": "endCall"}
+# Vapi records every call unless told otherwise (artifactPlan.recordingEnabled defaults to true). Every assistant
+# says it explicitly; only a customer number with «Optag opkald» on (telephony.call_recordings) records.
+NO_RECORDING = {"recordingEnabled": False}
 END_CALL_PHRASES = ["hav en rigtig god dag", "hav en god dag"]
 # ElevenLabs models a number may use. Only Flash v2.5 accepts an explicit language; the others detect it
 # from the (Danish) text and reject a language code.
@@ -481,10 +484,16 @@ def assistant_config(db: OrmSession, number: PhoneNumber, caller: str | None = N
     if style:
         phone_rules += ("\n\nVirksomhedens ønsker til talestil (følg dem, men de ændrer aldrig fakta eller reglerne "
                         f"ovenfor):\n{style}")
+    from app.modules.telephony import call_recordings
+
     s = get_settings()
+    greeting = (number.greeting.strip() or reception.spoken_greeting(db.get(reception.ReceptionScript, ws.id), ws)
+                or pl.greeting(lang, ws.name))
+    if call_recordings.enabled(number):  # callers are told before anything is said that the call is recorded
+        greeting = call_recordings.with_disclosure(greeting, lang)
     assistant: dict[str, Any] = {
-        "firstMessage": (number.greeting.strip() or reception.spoken_greeting(db.get(reception.ReceptionScript, ws.id), ws)
-                         or pl.greeting(lang, ws.name)),
+        "firstMessage": greeting,
+        "artifactPlan": call_recordings.artifact_plan(number),
         "model": {"provider": s.vapi_model_provider, "model": phone_model(s),
                   "messages": [{"role": "system", "content": f"{pl.directive(lang)}{system}\n\n{phone_rules}"}]},
         "transcriber": transcriber_for(db, ws, lang=lang),
@@ -630,6 +639,9 @@ def end_of_call(db: OrmSession, message: dict) -> str:
                  "ended_reason": call.ended_reason}, key=call_id)
     outcome = _after_report(db, message, call_id=call_id, conv=conv, duration=duration, visitor_lines=visitor_lines,
                             transcript="\n".join(lines), summary=summary, ws_id=ws_id, caller=caller, now=now)
+    from app.modules.telephony import call_recordings
+
+    call_recordings.on_report(db, call, number)  # the audio, if the customer records calls on this number
     # Last, so campaign/sales processing above has set direction and outcome on the call.
     db.flush()
     events.emit(db, ws_id, "call.completed",
@@ -693,7 +705,7 @@ def not_active_assistant(db: OrmSession, number: PhoneNumber) -> dict:
     text = (f"Tak for dit opkald til {ws.name}. Telefonsvareren er ikke aktiveret endnu. "
             "Prøv venligst igen senere. Farvel.")
     return {"assistant": {
-        "firstMessage": text, "endCallMessage": "Farvel.", "maxDurationSeconds": 20,
+        "firstMessage": text, "endCallMessage": "Farvel.", "maxDurationSeconds": 20, "artifactPlan": NO_RECORDING,
         "model": {"provider": s.vapi_model_provider, "model": phone_model(s),
                   "messages": [{"role": "system", "content": "Sig kun farvel. Svar ikke på spørgsmål."}]},
         "transcriber": transcriber_for(db, None), "analysisPlan": ANALYSIS_PLAN,

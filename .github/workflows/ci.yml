@@ -56,6 +56,10 @@ jobs:
         run: |
           python -m scripts.export_prices /tmp/prices.json
           cmp web/src/lib/prices.json /tmp/prices.json
+      - name: Privat app catalog for the web's simulation matches addons.py
+        run: |
+          python -m scripts.export_privat_catalog /tmp/addons-catalog.json
+          cmp web/src/lib/privat/addons-catalog.json /tmp/addons-catalog.json
 
   voice-services:
     # The TTS service and the voice pipeline run outside the API image; their mechanics are tested here with the

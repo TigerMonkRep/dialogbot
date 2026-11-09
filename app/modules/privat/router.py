@@ -77,6 +77,8 @@ class SubscriptionCheckoutIn(BaseModel):
     locale: str | None = Field(default=None, pattern=market.LOCALE_PATTERN,
                                description="sidens sprog (da, en, de, es, fr, it, no, sv): Checkout-sprog og – for en "
                                            "kunde uden valuta endnu – valutaen. Tom = da.")
+    app: str | None = Field(default=None, max_length=40,
+                            description="appen (nøgle), der krævede planen: slås til, når planen er på plads")
 
 
 class CreditsCheckoutIn(BaseModel):
@@ -173,7 +175,8 @@ def subscription(session_id: str | None = Query(default=None, max_length=200),
 def subscription_checkout(body: SubscriptionCheckoutIn, ctx: PrivateCtx = Depends(private_ctx),
                           db: OrmSession = Depends(get_db)):
     """Stripe Checkout (mode=subscription). The plan becomes active through the webhook / the return sync."""
-    url = subscriptions.checkout(db, ctx, plan=body.plan, interval=body.interval, code=body.code, locale=body.locale)
+    url = subscriptions.checkout(db, ctx, plan=body.plan, interval=body.interval, code=body.code, locale=body.locale,
+                                 app=body.app)
     db.commit()
     return {"url": url}
 
@@ -523,6 +526,41 @@ def addon_disable(key: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSessi
     a = addons.disable(db, ctx.ws_id, key)
     db.commit()
     return addons.out(db, ctx.ws_id, a)
+
+
+class SetupIn(BaseModel):
+    done: int = Field(ge=0, le=20, description="Antal færdige opsætningstrin (0 … len(steps))")
+
+
+@router.put("/addons/{key}/setup")
+def addon_setup(key: str, body: SetupIn, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """«Trin 2 af 3»: how far the user got in the app's setup (shown on Mine apps and Min dag until it is done)."""
+    from app.modules.privat import app_status
+
+    app_status.set_setup(db, ctx.ws_id, key, body.done)
+    db.commit()
+    return addons.out(db, ctx.ws_id, addons.get(key))
+
+
+@router.post("/addons/{key}/notify")
+def addon_notify(key: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """«Giv mig besked»: remembered on the account (a «Kommer snart» app)."""
+    from app.modules.privat import app_status
+
+    app_status.request_notify(db, ctx.ws_id, key)
+    db.commit()
+    return addons.out(db, ctx.ws_id, addons.get(key))
+
+
+@router.delete("/addons/{key}/data")
+def addon_delete_data(key: str, ctx: PrivateCtx = Depends(private_ctx), db: OrmSession = Depends(get_db)):
+    """Delete what a switched-off app has saved (409 addon_enabled while it is on; 409 not_deletable for apps whose
+    things are lists and tasks). Cannot be undone."""
+    from app.modules.privat import app_status
+
+    n = app_status.delete_data(db, ctx.ws_id, key)
+    db.commit()
+    return {"deleted": n, "addon": addons.out(db, ctx.ws_id, addons.get(key))}
 
 
 @router.post("/addons/{key}/invites")

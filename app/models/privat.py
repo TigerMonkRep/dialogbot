@@ -440,6 +440,21 @@ class PrivateAddonEnabled(Base):
     enabled_at: Mapped[datetime] = ts_now()
 
 
+class PrivateAddonState(Base):
+    """What the app shell remembers about an add-on per account, beside whether it is on (PrivateAddonEnabled):
+    how far the user got in its setup steps, when it was last switched off (its data is kept – «Slået fra · dine data
+    er gemt») and whether the user asked to hear when a «Kommer snart» app arrives."""
+
+    __tablename__ = "private_addon_state"
+
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True)
+    key: Mapped[str] = mapped_column(String(40), primary_key=True)
+    setup_done: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+    disabled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    notify_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = ts_now()
+
+
 class PrivateGroup(Base):
     """A saved group («Mine folk»). Only its owner can ever read it. Phone numbers in it are used ONLY to give them back
     to the owner (to text from their own phone) and to recognise people already on Dialogbot – never to contact anyone."""

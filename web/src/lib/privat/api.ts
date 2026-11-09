@@ -219,6 +219,20 @@ export type Addon = {
   included?: boolean;
   /** Needs trial/Plus/Familie – POST /enable answers 409 needs_plan otherwise. */
   requires_plan?: boolean;
+  /** Plans whose rights include it (empty = free for everyone). */
+  included_in?: string[];
+  // «Mine apps» (docs/privat-api.md «Apps: Mine apps og Butikken»). Optional so older backends still type-check.
+  /** «Du skal bruge»: what to have at hand. */
+  needs?: string[];
+  /** What the app holds for the user right now («Syn om 34 dage · 8. dec.»), only while it is on. */
+  summary_line?: string | null;
+  /** Setup progress: done of total steps. */
+  setup?: { done: number; total: number };
+  /** Switched off earlier – its data is kept. Null while on, or never used. */
+  disabled_at?: string | null;
+  notify_requested?: boolean;
+  /** Its saved things can be deleted from the app (others live in lists and tasks). */
+  data_deletable?: boolean;
 };
 /** Add-on keys the UI reacts to (shortcuts, share button). Unknown keys still show in the shop. */
 export const ADDON = { call: "ring-for-mig", sharedLists: "delte-lister", wishlists: "oenskelister" } as const;
@@ -246,7 +260,8 @@ export interface PrivatApi {
   // Subscription (privat-abonnement-brief). sessionId = Stripe Checkout session on return (synchronises first).
   /** `currency` = the market of the page's language: the plans come back in it (a paying customer keeps their own). */
   subscription(sessionId?: string, currency?: string): Promise<Subscription>;
-  subscriptionCheckout(body: { plan: PlanKey; interval: BillingInterval; code?: string; locale?: string }): Promise<{ url: string }>;
+  /** `app`: the app that needed the plan – switched on by the backend once the plan is there. */
+  subscriptionCheckout(body: { plan: PlanKey; interval: BillingInterval; code?: string; locale?: string; app?: string }): Promise<{ url: string }>;
   /** Stripe Billing Portal (501 not_configured when Stripe is missing). */
   subscriptionPortal(): Promise<{ url: string }>;
   sponsorClaim(taskId: string): Promise<Task>;
@@ -301,6 +316,12 @@ export interface PrivatApi {
   addons(): Promise<Addon[]>;
   enableAddon(key: string): Promise<Addon>;
   disableAddon(key: string): Promise<Addon>;
+  /** How many setup steps are done («Trin 2 af 3»). */
+  addonSetup(key: string, done: number): Promise<Addon>;
+  /** «Giv mig besked» for a «Kommer snart» app (stored on the account). */
+  addonNotify(key: string): Promise<Addon>;
+  /** Delete a switched-off app's saved data (409 addon_enabled / not_deletable). */
+  deleteAddonData(key: string): Promise<{ deleted: number; addon: Addon }>;
   // Kalender app (docs/privat-api.md «Kalender»)
   calendar(): Promise<CalendarState>;
   newCalendarFeed(): Promise<{ url: string; webcal_url: string }>;
@@ -494,6 +515,9 @@ export const realPrivat: PrivatApi = {
   addons: () => api(`${P}/addons`),
   enableAddon: (key) => api(`${P}/addons/${enc(key)}/enable`, json({})),
   disableAddon: (key) => api(`${P}/addons/${enc(key)}/disable`, json({})),
+  addonSetup: (key, done) => api(`${P}/addons/${enc(key)}/setup`, { method: "PUT", body: JSON.stringify({ done }) }),
+  addonNotify: (key) => api(`${P}/addons/${enc(key)}/notify`, json({})),
+  deleteAddonData: (key) => api(`${P}/addons/${enc(key)}/data`, { method: "DELETE" }),
   calendar: () => api(`${P}/calendar`),
   newCalendarFeed: () => api(`${P}/calendar/feed`, json({})),
   dropCalendarFeed: () => api(`${P}/calendar/feed`, { method: "DELETE" }),

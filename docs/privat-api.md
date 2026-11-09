@@ -670,3 +670,36 @@ kontrollerede IP (værtsnavnet kun i Host/SNI), så DNS-rebinding ikke virker; o
 kontrolleres hver gang; 8 s timeout; 2 MB HTML / 6 MB billede. Indholdet behandles som data (ingen scripts køres).
 `links.py` («Hvor kan den købes?») bruger nu samme fetcher.
 
+## Apps: Mine apps og Butikken
+
+Fanen «Apps» har to sider: **Mine apps** (`/privat/apps`) og **Butikken** (`/privat/butik`). En app har en butiksside
+(`/privat/butik/<key>`, før den er slået til) og sin egen side (`/privat/apps/<key>`, når den er – eller har været – slået
+til). De gamle stier (`/privat/kalender`, `/privat/foedselsdage`, `/privat/regninger`, `/privat/bil`, `/privat/pakker`)
+åbner appens egen side. Ark bruges kun til bekræftelser: «Slå X til?» (samtykke til «Den får lov til»), «X kræver Plus»
+(planvalg) og «Slå X fra?» (hvad stopper, hvad gemmes, hvilke apps der også slås fra) – med «Fortryd» bagefter.
+
+`Addon` har nu også (alle valgfrie for ældre klienter):
+
+| Felt | Betydning |
+|---|---|
+| `needs` | «Du skal bruge» (katalogfeltet `needs`) |
+| `summary_line` | Hvad appen holder for brugeren lige nu («Syn om 34 dage · 8. dec.»), kun mens den er slået til; ellers `null` → tagline (`app_status.py`) |
+| `setup` | `{done, total}` – opsætningstrin klaret; standard-apps (`PRIVAT_DEFAULT_ADDONS`) starter som færdige |
+| `disabled_at` | Slået fra – data gemt («Slået fra · dine data er gemt»); `null` mens den er slået til, eller hvis den aldrig er brugt |
+| `notify_requested` | «Giv mig besked» for en «Kommer snart»-app |
+| `data_deletable` | Appens egne data kan slettes fra appen (ikke lister/opgaver/opkald) |
+
+| Metode | Sti | Hvad |
+|---|---|---|
+| PUT | `/privat/addons/{key}/setup` `{done}` | Opsætningsfremskridt (409 `addon_disabled`, 422 uden for 0…len(steps)) |
+| POST | `/privat/addons/{key}/notify` | «Giv mig besked» gemmes på kontoen |
+| DELETE | `/privat/addons/{key}/data` | Slet en slået-fra apps data (409 `addon_enabled` / `not_deletable`). Kan ikke fortrydes. |
+| POST | `/privat/subscription/checkout` `{…, app}` | `app`: appen, der krævede planen – den slås til, når planen er på plads (Checkout-metadata), og brugeren lander på `/privat/apps/<key>` |
+
+Tabellen `private_addon_state` (migration `e3b7c9d1a5f4`, additiv) holder fremskridt, `disabled_at` og «Giv mig besked».
+Om en app er slået til er stadig `private_addon_enabled`. En app, der var slået til, da planen sluttede, kører videre
+(«Once on, it stays on»); slås den fra, kræver det planen at slå den til igen.
+
+Webbens simulering (`web/src/lib/privat/fake.ts`) læser det samme katalog: `web/src/lib/privat/addons-catalog.json`,
+genereret med `python -m scripts.export_privat_catalog` (CI fejler, hvis filen afviger fra `addons.py`).
+

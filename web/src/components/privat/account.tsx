@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui";
 import { useLocale, useT } from "@/i18n/client";
@@ -22,7 +23,7 @@ const isPlanKey = (v: string | null): v is PlanKey => !!v && (PLAN_KEYS as strin
 export function AccountPane() {
   const t = useT("privat");
   const f = useFmt();
-  const { balance, ledger, session, mode, simulated, fake, run, note, setNote, openSheet, go, loggedIn, api, refresh, setSubscription, setError } = usePrivat();
+  const { balance, ledger, session, mode, simulated, fake, run, note, setNote, openSheet, go, loggedIn, api, refresh, setSubscription, setError, addons } = usePrivat();
   const p = usePlan();
   const locale = useLocale();
   const params = useSearchParams();
@@ -50,9 +51,11 @@ export function AccountPane() {
     if (ab === "ok") {
       handled.current = key;
       (async () => {
+        const app = params.get("app");
         try { const sb = await api.subscription(sid ?? undefined, currencyFor(locale)); setSubscription(sb); await refresh(); setNote(t("plan.activated")); }
         catch (e) { setError(e as ApiError); }
-        clean();
+        // «Kræver plan» from an app: the backend switched that app on with the plan – land on it.
+        if (app && /^[a-z0-9-]{2,40}$/.test(app)) router.replace(`/privat/apps/${app}`); else clean();
       })();
     } else if (ab === "annulleret") { handled.current = key; setNote(t("plan.cancelled")); clean(); }
     else if (params.get("portal") === "simuleret") { handled.current = key; setNote(t("plan.portalSimulated")); clean(); }
@@ -210,14 +213,11 @@ export function AccountPane() {
 
       <InviteFriends />
 
-      <section className="rounded-[20px] border-2 border-ink bg-panel p-4 flex items-start gap-3">
-        <Tile name="shop" className="bg-accent text-white rounded-[12px] border-2 border-ink" />
-        <div className="flex-1 min-w-0 flex flex-col gap-2">
-          <h3 className="m-0 font-display font-bold text-[19px]">{t("store.title")}</h3>
-          <p className="m-0 text-[14px] text-ink-soft">{t("store.intro")}</p>
-          <Button variant="outline" className="self-start border-2 rounded-full" onClick={() => go("store")}>{t("store.title")}</Button>
-        </div>
-      </section>
+      <Link href="/privat/apps" className="rounded-[20px] border-2 border-ink bg-paper p-4 flex items-center gap-3 no-underline text-ink hover:bg-panel" data-testid="account-apps">
+        <Tile name="grid" className="bg-accent text-white rounded-[12px] border-2 border-ink" />
+        <span className="flex-1 min-w-0 text-[16px] font-semibold">{t("apps.accountLine", { n: (addons ?? []).filter((a) => a.enabled).length })}</span>
+        <span className="text-[15px] font-semibold text-accent whitespace-nowrap">{t("apps.mine")} →</span>
+      </Link>
 
       {simulated && fake && (
         <div className="rounded-[14px] border-[1.5px] border-dashed border-ink bg-panel p-3 flex flex-col gap-2">

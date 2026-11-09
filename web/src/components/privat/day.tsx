@@ -7,6 +7,7 @@ import { isDanishMobile } from "@/lib/privat/fake";
 import { CHIP, Ex, SR, TONE } from "./bits";
 import { Ico, Tile } from "./icons";
 import { useFmt, usePlan, usePrivat } from "./store";
+import { AppsStrip } from "./apps";
 import { Button } from "@/components/ui";
 import { currentPushState, enablePush } from "@/lib/privat/push";
 import { isStandalone, takeNotifyPending } from "@/lib/install";
@@ -214,10 +215,9 @@ function Bar({ value, max, label }: { value: number; max: number; label: string 
 /** «Dit råderum»: calls left, trial days left (or the plan), «Vælg plan». Without rights: the free quota and credits. */
 export function RoomCard() {
   const t = useT("privat");
-  const { balance, addons, openSheet, choosePlan, startTrial } = usePrivat();
+  const { balance, choosePlan, startTrial } = usePrivat();
   const p = usePlan();
   const eyebrow = p.status === "trial" ? t("day2.room.trialEyebrow", { plan: p.rightsName }) : p.entitled ? t("day2.room.planEyebrow", { plan: p.rightsName, status: t(`plan.status.${p.status}`) }) : t("day2.room.freeEyebrow");
-  const fresh = addons?.find((a) => !a.enabled && a.status !== "coming_soon" && a.requires_plan);
   return (
     <aside className={`${DAY_CARD} shadow-block-sm`} aria-labelledby="room-h" data-testid="room-card">
       <span className="eyebrow">{eyebrow}</span>
@@ -246,12 +246,6 @@ export function RoomCard() {
             : <button type="button" className={`${PRIMARY} self-start`} onClick={choosePlan}>{t("day2.room.choosePlan")}</button>}
         </>
       )}
-      {fresh && (
-        <button type="button" onClick={() => openSheet({ kind: "addon", addonKey: fresh.key })} className="mt-1 flex items-center gap-3 text-left rounded-[18px] border-[1.5px] border-ink bg-panel px-3 py-2.5 hover:bg-panel-deep">
-          <span className="flex-1 min-w-0 flex flex-col"><span className="eyebrow text-[11px]">{t("day2.room.newInStore")}</span><span className="font-semibold text-[15px]">{fresh.name}</span><span className="text-[13px] text-ink-soft line-clamp-1">{fresh.tagline}</span></span>
-          <span className="text-[14px] font-semibold text-accent whitespace-nowrap">{t("day2.room.see")}</span>
-        </button>
-      )}
     </aside>
   );
 }
@@ -277,6 +271,7 @@ export function DayPage() {
           <YourTurn />
         </div>
       </section>
+      <AppsStrip />
       <div className="grid grid-cols-[minmax(0,1fr)] gap-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-6 items-start">
         <TasksSection />
         <RoomCard />

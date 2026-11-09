@@ -200,7 +200,8 @@ def _line_text(p: dict, interval: str, currency: str, locale: str, rate_bp: int 
     return f"{markets.fmt(amount, currency)} {per}{market.vat_text(rate_bp, locale)} · {p['calls']} calls a month"
 
 
-def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None = None, locale: str | None = None) -> str:
+def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None = None, locale: str | None = None,
+             app: str | None = None) -> str:
     """A Stripe Checkout page (mode=subscription). The subscription itself arrives with the webhook / sync.
     `code`: a discount code the customer typed (or ?kode=) – applied on the Stripe page; without one the page shows
     Stripe's own field for a code. `locale` (da, en, de, es, fr, it, no, sv): the page's language and, for a customer
@@ -219,6 +220,10 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
     if row.currency != currency:
         row.currency = currency  # a customer keeps the currency of its first Checkout
     meta = {"kind": KIND, "workspace_id": str(ctx.ws_id), "plan": plan, "interval": interval, "currency": currency}
+    from app.modules.privat import addons
+
+    if app and app in addons.CATALOG:
+        meta["app"] = app  # the app the user wanted when the plan was needed: switched on once the plan is there
     if currency == "DKK" and (pid := price_id(plan, interval)):  # the fixed Stripe prices are DKK prices
         line = {"price": pid, "quantity": 1}
     else:
@@ -243,7 +248,8 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
         "metadata": meta, "subscription_data": sub_data, "payment_method_collection": "always",
         # Name, address and phone are collected by Stripe on the same page (they are never stored by us).
         "billing_address_collection": "required", "phone_number_collection": {"enabled": True},
-        "success_url": f"{base}/privat/konto?abonnement=ok&session_id={{CHECKOUT_SESSION_ID}}",
+        "success_url": f"{base}/privat/konto?abonnement=ok&session_id={{CHECKOUT_SESSION_ID}}"
+                       + (f"&app={meta['app']}" if meta.get("app") else ""),
         "cancel_url": f"{base}/privat/konto?abonnement=annulleret"}
     if row.stripe_customer_id:
         payload["customer"] = row.stripe_customer_id
@@ -348,6 +354,14 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
 
         addons.enable_defaults(db, ws_id)  # the plan's default add-ons («Ring for mig» …) come on with the rights
         service.activate_drafts_with_plan(db, ws_id)  # what waited for the plan (the funnel's lists …) goes live
+        wanted = meta.get("app")
+        if wanted in addons.CATALOG and not addons.is_enabled(db, ws_id, wanted):
+            from app.core.errors import ApiError
+
+            try:
+                addons.enable(db, ws_id, wanted)  # «Kræver plan» → the app the user asked for comes on with the plan
+            except ApiError:
+                pass  # not in this plan / coming soon: the plan still applies
     return "applied"
 
 

@@ -144,7 +144,9 @@
    resolve to var(--color-*), so they follow this override without per-component changes. The logo (LogoMark,
    bg-accent) becomes orange automatically. Trin-gul (highlight) is kept. */
 [data-theme="privat"] {
-  --color-accent: #E0521A;
+  /* #C4461A, not the brand sheet's #E0521A: white button text and orange links need ≥ 4.5:1 (WCAG AA) – 4.96 on white,
+     4.81 on paper, 4.56 on panel. Marketing pages and the browser theme colour keep #E0521A. */
+  --color-accent: #C4461A;
   --color-accent-deep: #B8400F;
   --color-accent-soft: #FFE1D2;
   --color-on-accent: #FFFFFF;

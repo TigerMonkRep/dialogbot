@@ -82,6 +82,8 @@ services:
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY   # dashboard-managed (service_role key)
         sync: false
+      - key: SALES_RECORDING_STORAGE    # customers' call recordings go to the private bucket "sales-recordings"
+        value: supabase
       - key: BROWSER_WORKER_ENABLED   # dashboard-managed; the API only starts browser runs when "true" (needs the two above)
         sync: false
       - key: TRACK17_API_KEY      # Pakker app (17TRACK); empty = the app stays «Kommer snart». Same value on the worker.
@@ -199,6 +201,14 @@ services:
         sync: false
       - key: TRACK17_API_KEY      # Pakker app: the worker polls 17TRACK for followed parcels
         sync: false
+      # Call recordings: the worker fetches the audio from Vapi and stores it in the private "sales-recordings" bucket,
+      # and asks Vapi to delete its copy after retention. Same values as the API service.
+      - key: SUPABASE_URL
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: SUPABASE_URL}
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: SUPABASE_SERVICE_ROLE_KEY}
+      - key: VAPI_API_KEY
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: VAPI_API_KEY}
       - key: WORKER_LEASE_SECONDS
         value: "60"
       - key: WORKER_MAX_ATTEMPTS

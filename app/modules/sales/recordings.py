@@ -147,8 +147,9 @@ def on_report(db: OrmSession, call: Call, campaign: Campaign, campaign_contact_i
             payload={"call_id": str(call.id)})
 
 
-def fetch(db: OrmSession, call_id: uuid.UUID) -> CallRecording | None:
-    """Worker: download from Vapi (302 → signed URL) and store privately. Raises on a retryable failure."""
+def fetch(db: OrmSession, call_id: uuid.UUID, prefix: str = "sales/calls") -> CallRecording | None:
+    """Worker: download from Vapi (302 → signed URL) and store privately under `<prefix>/<call_id>.<ext>`. Raises on a
+    retryable failure. Customers' own calls use their own prefix (telephony.call_recordings)."""
     call = db.get(Call, call_id)
     rec = db.scalar(select(CallRecording).where(CallRecording.call_id == call_id))
     if call is None or rec is None or rec.status != "PENDING":
@@ -166,7 +167,7 @@ def fetch(db: OrmSession, call_id: uuid.UUID) -> CallRecording | None:
         rec.delete_reason = "Tom eller for stor lydfil"
         return rec
     ctype = (r.headers.get("content-type") or "audio/wav").split(";")[0].strip().lower()
-    key = f"sales/calls/{call.id}.{EXT.get(ctype, 'wav')}"
+    key = f"{prefix}/{call.id}.{EXT.get(ctype, 'wav')}"
     backend().put(key, data, ctype if ctype in EXT else "audio/wav")
     rec.status, rec.storage_key, rec.bytes, rec.content_type = "AVAILABLE", key, len(data), ctype
     rec.duration_seconds, rec.available_at = call.duration_seconds, datetime.now(UTC)

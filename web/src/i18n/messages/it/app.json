@@ -205,7 +205,21 @@
     "makeAppointment": "Fissa un appuntamento",
     "openLead": "Apri richiesta",
     "takenOver": "Un collaboratore ha preso in mano la conversazione: Dialogbot non risponde finché non gli viene restituita.",
-    "wrongAnswer": "La risposta era sbagliata? Lo scriva all'assistente in «Cosa sa» e si correggerà."
+    "wrongAnswer": "La risposta era sbagliata? Lo scriva all'assistente in «Cosa sa» e si correggerà.",
+    "recording": {
+      "title": "Registrazione",
+      "listen": "Ascolta la chiamata",
+      "until": "Conservata fino al {date}",
+      "deleteAsk": "Elimina la registrazione",
+      "confirm": "Eliminare l'audio? La trascrizione resta.",
+      "delete": "Sì, elimina",
+      "cancel": "Annulla",
+      "status": {
+        "pending": "La registrazione è in arrivo: riprova tra un momento.",
+        "deleted": "La registrazione è stata eliminata. La trascrizione è ancora qui.",
+        "failed": "Non è stato possibile recuperare la registrazione."
+      }
+    }
   },
   "common": {
     "save": "Salva",

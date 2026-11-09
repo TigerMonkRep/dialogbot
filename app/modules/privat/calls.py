@@ -354,6 +354,7 @@ def assistant_for(db: OrmSession, c: PrivateCall, user: User) -> dict:
     pitch_tools, pitch_prompt = lead_pitch.vapi_tools(db, c)   # empty unless every rule of the closing line is met (and the flag is on)
     assistant: dict = {
         "firstMessage": first,
+        "artifactPlan": vapi.NO_RECORDING,
         "model": {"provider": s.vapi_model_provider, "model": vapi.phone_model(s),
                   "messages": [{"role": "system", "content": system + pitch_prompt}],
                   "tools": [vapi.END_CALL_TOOL, *pitch_tools]},
@@ -628,7 +629,8 @@ def callback_assistant(db: OrmSession, message: dict) -> dict:
     raw = vapi._dig(message, "call", "customer", "number") or vapi._dig(message, "customer", "number")
     caller = normalize_phone(str(raw)) if raw else None
     calls = open_calls_from(db, caller) if caller else []
-    base = {"model": {"provider": s.vapi_model_provider, "model": vapi.phone_model(s), "tools": [vapi.END_CALL_TOOL]},
+    base = {"artifactPlan": vapi.NO_RECORDING,
+            "model": {"provider": s.vapi_model_provider, "model": vapi.phone_model(s), "tools": [vapi.END_CALL_TOOL]},
             "transcriber": vapi.transcriber_for(db, None), "stopSpeakingPlan": vapi.STOP_SPEAKING_PLAN,
             "startSpeakingPlan": vapi.START_SPEAKING_PLAN, "endCallPhrases": vapi.END_CALL_PHRASES}
     if (voice := vapi._json_setting(s.vapi_voice_json)) is not None:

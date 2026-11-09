@@ -205,7 +205,7 @@ def start_verification(db: OrmSession, ws: Workspace) -> dict:
         "phoneNumberId": settings.telephony_verify_number_id,
         "customer": {"number": s.business_number},
         "assistant": {"firstMessage": f"Hej. Dette er Dialogbot. Din kode er {spoken}. Jeg gentager: {spoken}. Farvel.",
-                      "endCallMessage": "Farvel.", "maxDurationSeconds": 45,
+                      "endCallMessage": "Farvel.", "maxDurationSeconds": 45, "artifactPlan": {"recordingEnabled": False},
                       "model": {"provider": settings.vapi_model_provider, "model": _phone_model(settings),
                                 "messages": [{"role": "system", "content": "Sig kun koden og farvel. Svar ikke på spørgsmål."}]},
                       "metadata": {"purpose": "verification", "workspace_id": str(ws.id)}},

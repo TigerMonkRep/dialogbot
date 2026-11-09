@@ -612,6 +612,9 @@ class PhoneNumber(Base):
     # May this number be used as caller ID for callbacks/campaigns? Only when the provider allows it for this
     # customer; set by an operator. Inbound forwarding never implies it.
     outbound_allowed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    # The customer's choice: record calls on this number (callers are told in the greeting) and keep the audio N days.
+    record_calls: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    recording_retention_days: Mapped[int] = mapped_column(Integer, nullable=False, default=90, server_default="90")
     created_at: Mapped[datetime] = ts_now()
 
 

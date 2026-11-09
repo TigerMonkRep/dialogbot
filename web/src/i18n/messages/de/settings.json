@@ -409,6 +409,13 @@
       "step3": "So sollen wir antworten",
       "step4": "Verbindung testen",
       "step5": "Aktivieren"
+    },
+    "recording": {
+      "title": "Anrufe aufzeichnen",
+      "hint": "Anrufer erfahren in der Begrüßung, dass das Gespräch aufgezeichnet wird. Sie können den Anruf unter Anrufe anhören.",
+      "unavailable": "Die Aufzeichnung ist für Dialogbot noch nicht aktiviert.",
+      "keep": "Aufnahmen speichern für",
+      "days": "{n} Tage"
     }
   },
   "webchat": {

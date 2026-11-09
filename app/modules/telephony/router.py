@@ -16,7 +16,7 @@ from app.core.errors import ApiError, ValidationFailed
 from app.db import get_db
 from app.models import Call, PhoneNumber, WebhookEvent
 from app.modules.setup.checks import invalidate_checks
-from app.modules.telephony import vapi
+from app.modules.telephony import call_recordings, vapi
 
 webhook_router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 router = APIRouter(prefix="/workspaces/{workspace_id}", tags=["telephony"])
@@ -191,6 +191,8 @@ class NumberPatch(BaseModel):
     voice_id: str | None = Field(default=None, max_length=64)
     voice_model: str | None = Field(default=None, max_length=40)
     speaking_style: str | None = Field(default=None, max_length=1000)
+    record_calls: bool | None = None
+    recording_retention_days: int | None = None
 
 
 def _check_voice(voice_id: str | None, voice_model: str | None) -> None:
@@ -206,7 +208,8 @@ def number_out(n: PhoneNumber) -> dict:
     return {"id": str(n.id), "e164": n.e164, "status": n.status, "outbound_allowed": n.outbound_allowed,
             "label": n.label, "active": n.active, "greeting": n.greeting, "voice_id": n.voice_id,
             "voice_model": n.voice_model, "speaking_style": n.speaking_style, "voice": vapi.voice_config(n),
-            "created_at": n.created_at.isoformat()}
+            "record_calls": n.record_calls, "recording_retention_days": n.recording_retention_days,
+            "recording_available": call_recordings.recordings.storage_on(), "created_at": n.created_at.isoformat()}
 
 
 @router.get("/phone-numbers")
@@ -222,6 +225,10 @@ def update_number(number_id: uuid.UUID, body: NumberPatch, request: Request,
                   ctx: WorkspaceContext = Depends(require_capability("telephony.manage")), db: OrmSession = Depends(get_db)):
     n = get_scoped(db, PhoneNumber, number_id, ctx.workspace.id)
     _check_voice(body.voice_id, body.voice_model)
+    if body.recording_retention_days is not None and body.recording_retention_days not in call_recordings.RETENTION_CHOICES:
+        raise ValidationFailed("Vælg hvor længe optagelser gemmes", field_errors=[{"field": "recording_retention_days"}])
+    if body.record_calls and not call_recordings.recordings.storage_on():
+        raise ApiError("Optagelse af opkald er ikke sat op endnu", code="recording_not_configured", status_code=409)
     before = number_out(n)
     for k, v in body.model_dump(exclude_unset=True).items():
         if v is not None:
@@ -265,4 +272,30 @@ def list_calls(limit: int = 50, ctx: WorkspaceContext = Depends(require_capabili
     return {"items": [{"id": str(c.id), "from_number": c.from_number, "to_number": c.to_number,
                        "started_at": c.started_at.isoformat() if c.started_at else None,
                        "duration_seconds": c.duration_seconds, "ended_reason": c.ended_reason, "summary": c.summary,
+                       "recording_status": c.recording_status or "NOT_RECORDED",
                        "conversation_id": str(c.conversation_id) if c.conversation_id else None} for c in rows]}
+
+
+@router.get("/calls/{call_id}/recording")
+def call_recording(call_id: uuid.UUID, download: bool = False,
+                   ctx: WorkspaceContext = Depends(require_capability("conversations.read")),
+                   db: OrmSession = Depends(get_db)):
+    """A short-lived link to the call's audio (10 minutes). Whoever may read the transcript may listen; each play or
+    download is logged."""
+    call = get_scoped(db, Call, call_id, ctx.workspace.id)
+    out = call_recordings.play_url(db, call, ctx.user_id, download=download)
+    db.commit()
+    return out
+
+
+@router.delete("/calls/{call_id}/recording")
+def delete_call_recording(call_id: uuid.UUID, request: Request,
+                          ctx: WorkspaceContext = Depends(require_capability("telephony.manage")),
+                          db: OrmSession = Depends(get_db)):
+    """Delete the audio now (the transcript stays). Vapi is asked to delete its copy too."""
+    call = get_scoped(db, Call, call_id, ctx.workspace.id)
+    call_recordings.delete(db, call, "customer")
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="telephony.recording_deleted",
+                 object_type="call", object_id=call.id, before=None, after=None, request_id=request.state.request_id)
+    db.commit()
+    return call_recordings.out(db, call)

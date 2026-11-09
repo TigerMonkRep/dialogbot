@@ -409,6 +409,13 @@
       "step3": "Come dobbiamo rispondere",
       "step4": "Testate il collegamento",
       "step5": "Attivate"
+    },
+    "recording": {
+      "title": "Registra le chiamate",
+      "hint": "Nel saluto chi chiama viene informato che la chiamata è registrata. Potete ascoltarla in Chiamate.",
+      "unavailable": "La registrazione non è ancora attiva per Dialogbot.",
+      "keep": "Conserva le registrazioni per",
+      "days": "{n} giorni"
     }
   },
   "webchat": {

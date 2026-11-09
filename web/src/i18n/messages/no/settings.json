@@ -409,6 +409,13 @@
       "step3": "Slik skal vi svare",
       "step4": "Test tilkoblingen",
       "step5": "Aktiver"
+    },
+    "recording": {
+      "title": "Ta opp samtaler",
+      "hint": "Innringeren får beskjed i velkomsten om at samtalen tas opp. Dere kan lytte til samtalen under Samtaler.",
+      "unavailable": "Opptak er ikke slått på for Dialogbot ennå.",
+      "keep": "Lagre opptak i",
+      "days": "{n} dager"
     }
   },
   "webchat": {

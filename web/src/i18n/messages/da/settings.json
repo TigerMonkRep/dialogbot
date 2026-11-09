@@ -409,6 +409,13 @@
       "step3": "Sådan skal vi svare",
       "step4": "Test forbindelsen",
       "step5": "Aktivér"
+    },
+    "recording": {
+      "title": "Optag opkald",
+      "hint": "Kunderne får at vide i velkomsten, at samtalen bliver optaget. I kan lytte til opkaldet under Opkald.",
+      "unavailable": "Optagelse er ikke slået til for Dialogbot endnu.",
+      "keep": "Gem optagelser i",
+      "days": "{n} dage"
     }
   },
   "webchat": {

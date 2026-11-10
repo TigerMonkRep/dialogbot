@@ -1,0 +1,56 @@
+[
+  {
+    "project": "desktop-1440",
+    "kind": "price",
+    "locale": "es",
+    "route": "/priser",
+    "currency": "EUR",
+    "expected": {
+      "erhvervMonthlyMoney": "329 €",
+      "erhvervMonthlyAmount": "329",
+      "callMoney": "0,55 €",
+      "privatBasis": "6,49 €",
+      "privatBasisAmount": "6,49"
+    },
+    "hasErhverv": true,
+    "hasPrivat": false,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  },
+  {
+    "project": "desktop-1440",
+    "kind": "price",
+    "locale": "es",
+    "route": "/erhverv",
+    "currency": "EUR",
+    "expected": {
+      "erhvervMonthlyMoney": "329 €",
+      "erhvervMonthlyAmount": "329",
+      "callMoney": "0,55 €",
+      "privatBasis": "6,49 €",
+      "privatBasisAmount": "6,49"
+    },
+    "hasErhverv": true,
+    "hasPrivat": false,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  },
+  {
+    "project": "desktop-1440",
+    "kind": "price",
+    "locale": "es",
+    "route": "/privat",
+    "currency": "EUR",
+    "expected": {
+      "erhvervMonthlyMoney": "329 €",
+      "erhvervMonthlyAmount": "329",
+      "callMoney": "0,55 €",
+      "privatBasis": "6,49 €",
+      "privatBasisAmount": "6,49"
+    },
+    "hasErhverv": false,
+    "hasPrivat": true,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  }
+]

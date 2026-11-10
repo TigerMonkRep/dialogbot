@@ -1,0 +1,1223 @@
+......F.....F........F..FF.F..F..FF                                      [100%]
+=================================== FAILURES ===================================
+_ test_register_with_overlong_interface_language_is_a_validation_error_not_500 _
+
+self = <sqlalchemy.engine.base.Connection object at 0x7fdc9462b350>
+dialect = <sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg object at 0x7fdc98bf42f0>
+context = <sqlalchemy.dialects.postgresql.psycopg.PGExecutionContext_psycopg object at 0x7fdc98bbf8a0>
+statement = <sqlalchemy.dialects.postgresql.psycopg.PGCompiler_psycopg object at 0x7fdc97f0fc50>
+parameters = [{'id': UUID('f93a7afc-c702-4ac8-8eac-f7814fae718e'), 'email': 'a01-lang@testmail.dk', 'email_normalized': 'a01-lang@testmail.dk', 'email_verified_at': None, ...}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Unpack[TupleAny]]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        evt_handled: bool = False
+        try:
+            if self._has_events or self.engine._has_events:
+                for fn in self.dispatch.before_cursor_execute:
+                    str_statement, effective_parameters = fn(
+                        self,
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                        context.executemany,
+                    )
+    
+            if self._echo:
+                self._log_info(str_statement)
+    
+                stats = context._get_cache_stats()
+    
+                if not self.engine.hide_parameters:
+                    self._log_info(
+                        "[%s] %r",
+                        stats,
+                        sql_util._repr_params(
+                            effective_parameters,
+                            batches=10,
+                            ismulti=context.executemany,
+                        ),
+                    )
+                else:
+                    self._log_info(
+                        "[%s] [SQL parameters hidden due to "
+                        "hide_parameters=True]",
+                        stats,
+                    )
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1943: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:1180: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=postgres database=qa_erh1) at 0x7fdc9462b4d0>
+query = 'INSERT INTO users (id, email, email_normalized, email_verified_at, phone_verified_at, password_hash, display_name, in...::VARCHAR, %(is_active)s, %(is_platform_operator)s, %(can_export_media)s) RETURNING users.created_at, users.updated_at'
+params = {'id': UUID('f93a7afc-c702-4ac8-8eac-f7814fae718e'), 'email': 'a01-lang@testmail.dk', 'email_normalized': 'a01-lang@testmail.dk', 'email_verified_at': None, ...}
+prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.StringDataRightTruncation: value too long for type character varying(16)
+
+../venv/lib/python3.13/site-packages/psycopg/cursor.py:117: StringDataRightTruncation
+
+The above exception was the direct cause of the following exception:
+
+api = <tests.conftest.Api object at 0x7fdc94635d00>
+db = <sqlalchemy.orm.session.Session object at 0x7fdc946a5d60>
+
+    def test_register_with_overlong_interface_language_is_a_validation_error_not_500(api, db):
+        """RegisterIn.interface_language has no max_length; users.interface_language is String(16)."""
+>       r = api.c.post("/api/v1/auth/register", json={"email": "a01-lang@testmail.dk", "password": "CorrectHorse!42",
+                                                       "display_name": "Sprog", "signup_intent": "reception",
+                                                       "interface_language": "x" * 40})
+
+tests/qa/test_qa_A01.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../venv/lib/python3.13/site-packages/httpx2/_client.py:1204: in post
+    return self.request(
+../venv/lib/python3.13/site-packages/starlette/testclient.py:463: in request
+    return super().request(
+../venv/lib/python3.13/site-packages/httpx2/_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/httpx2/_client.py:980: in send
+    response = self._send_handling_auth(
+../venv/lib/python3.13/site-packages/httpx2/_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+../venv/lib/python3.13/site-packages/httpx2/_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/httpx2/_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/starlette/testclient.py:360: in handle_request
+    raise exc
+../venv/lib/python3.13/site-packages/starlette/testclient.py:357: in handle_request
+    portal.call(self.app, scope, receive, send)
+../venv/lib/python3.13/site-packages/anyio/from_thread.py:340: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.13/concurrent/futures/_base.py:460: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.13/concurrent/futures/_base.py:402: in __get_result
+    raise self._exception
+../venv/lib/python3.13/site-packages/anyio/from_thread.py:265: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/fastapi/applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+../venv/lib/python3.13/site-packages/starlette/applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+../venv/lib/python3.13/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+../venv/lib/python3.13/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+../venv/lib/python3.13/site-packages/starlette/middleware/base.py:197: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/core/logging.py:53: in dispatch
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/starlette/middleware/base.py:173: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../venv/lib/python3.13/site-packages/starlette/middleware/base.py:149: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+../venv/lib/python3.13/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../venv/lib/python3.13/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+../venv/lib/python3.13/site-packages/starlette/routing.py:676: in __call__
+    await self.middleware_stack(scope, receive, send)
+../venv/lib/python3.13/site-packages/fastapi/routing.py:2734: in app
+    await route.handle(scope, receive, send)
+../venv/lib/python3.13/site-packages/fastapi/routing.py:1780: in handle
+    await self.original_router.handle(scope, receive, send)
+../venv/lib/python3.13/site-packages/fastapi/routing.py:2789: in handle
+    await included_router._handle_selected(scope, receive, send)
+../venv/lib/python3.13/site-packages/fastapi/routing.py:1800: in _handle_selected
+    await original_route.handle(scope, receive, send)
+../venv/lib/python3.13/site-packages/fastapi/routing.py:1279: in handle
+    await app(scope, receive, send)
+../venv/lib/python3.13/site-packages/fastapi/routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+../venv/lib/python3.13/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../venv/lib/python3.13/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../venv/lib/python3.13/site-packages/fastapi/routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/fastapi/routing.py:706: in app
+    raw_response = await run_endpoint_function(
+../venv/lib/python3.13/site-packages/fastapi/routing.py:354: in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/starlette/concurrency.py:34: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/anyio/to_thread.py:65: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+../venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py:2706: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py:1100: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+app/modules/identity/router.py:78: in register
+    user = service.register(db, email=body.email, password=body.password, display_name=body.display_name,
+app/modules/identity/service.py:38: in register
+    db.flush()
+../venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py:4536: in flush
+    self._flush(objects)
+<sqlalchemy generated warned() wrapper for sqlalchemy.orm.session.Session._flush>:2: in _flush
+    return target(fn, self, objects=objects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py:4679: in _flush
+    with util.safe_reraise():
+         ^^^^^^^^^^^^^^^^^^^
+../venv/lib/python3.13/site-packages/sqlalchemy/util/langhelpers.py:166: in __exit__
+    raise exc_value.with_traceback(exc_tb)
+../venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py:4640: in _flush
+    flush_context.execute()
+../venv/lib/python3.13/site-packages/sqlalchemy/orm/unitofwork.py:467: in execute
+    rec.execute(self)
+../venv/lib/python3.13/site-packages/sqlalchemy/orm/unitofwork.py:643: in execute
+    util.preloaded.orm_persistence._save_obj(
+../venv/lib/python3.13/site-packages/sqlalchemy/orm/persistence.py:92: in _save_obj
+    _emit_insert_statements(
+../venv/lib/python3.13/site-packages/sqlalchemy/orm/persistence.py:1237: in _emit_insert_statements
+    result = connection.execute(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1448: in execute
+    return meth(
+../venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py:533: in _execute_on_connection
+    return connection._execute_clauseelement(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1668: in _execute_clauseelement
+    ret = self._execute_context(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1822: in _execute_context
+    return self._exec_single_context(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1962: in _exec_single_context
+    self._handle_dbapi_exception(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:2332: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1943: in _exec_single_context
+    self.dialect.do_execute(
+../venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:1180: in do_execute
+    cursor.execute(statement, parameters)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <psycopg.Cursor [closed] [IDLE] (host=localhost user=postgres database=qa_erh1) at 0x7fdc9462b4d0>
+query = 'INSERT INTO users (id, email, email_normalized, email_verified_at, phone_verified_at, password_hash, display_name, in...::VARCHAR, %(is_active)s, %(is_platform_operator)s, %(can_export_media)s) RETURNING users.created_at, users.updated_at'
+params = {'id': UUID('f93a7afc-c702-4ac8-8eac-f7814fae718e'), 'email': 'a01-lang@testmail.dk', 'email_normalized': 'a01-lang@testmail.dk', 'email_verified_at': None, ...}
+prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           sqlalchemy.exc.DataError: (psycopg.errors.StringDataRightTruncation) value too long for type character varying(16)
+E           [SQL: INSERT INTO users (id, email, email_normalized, email_verified_at, phone_verified_at, password_hash, display_name, interface_language, signup_intent, signup_source, is_active, is_platform_operator, can_export_media) VALUES (%(id)s::UUID, %(email)s::VARCHAR, %(email_normalized)s::VARCHAR, %(email_verified_at)s::TIMESTAMP WITH TIME ZONE, %(phone_verified_at)s::TIMESTAMP WITH TIME ZONE, %(password_hash)s::VARCHAR, %(display_name)s::VARCHAR, %(interface_language)s::VARCHAR, %(signup_intent)s::VARCHAR, %(signup_source)s::VARCHAR, %(is_active)s, %(is_platform_operator)s, %(can_export_media)s) RETURNING users.created_at, users.updated_at]
+E           [parameters: {'id': UUID('f93a7afc-c702-4ac8-8eac-f7814fae718e'), 'email': 'a01-lang@testmail.dk', 'email_normalized': 'a01-lang@testmail.dk', 'email_verified_at': None, 'phone_verified_at': None, 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$B99Eft14Qq/CNRyKQUtL7A$YKnIaJ5Sp2N+VQXXcy3A1d1vjH3Z6yCXaMBeaWHZK6A', 'display_name': 'Sprog', 'interface_language': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'signup_intent': 'reception', 'signup_source': None, 'is_active': True, 'is_platform_operator': False, 'can_export_media': False}]
+E           (Background on this error at: https://sqlalche.me/e/21/9h9h)
+
+../venv/lib/python3.13/site-packages/psycopg/cursor.py:117: DataError
+___________ test_list_invitations_reports_expired_pending_as_expired ___________
+
+api = <tests.conftest.Api object at 0x7fdc946ef150>
+two_workspaces = {'tok_a': 'BGIoJHY4_2moyjLkynHViVEeNExI-Pk35EReRlinhhc', 'ws_a': 'c154553c-4aa7-4c63-99bd-0b7ef1633aee', 'tok_b': 'AZ0sZW-0rCkjLEdEg3ZNV2E9ptBCEeJ1lWA3oVb0Utk', 'ws_b': '456f4236-523c-4fc9-9acc-62315b50265b'}
+db = <sqlalchemy.orm.session.Session object at 0x7fdc946e1d60>
+
+    def test_list_invitations_reports_expired_pending_as_expired(api, two_workspaces, db):
+        """The team page filters status == 'pending'. An invitation past expires_at is still 'pending' in the list
+        response, so the UI offers «Send igen» which the backend then refuses (409)."""
+        t = two_workspaces
+        owner, ws = t["tok_a"], t["ws_a"]
+        inv = api.invite(owner, ws, "stale@testmail.dk", "staff").json()
+        row = db.get(Invitation, inv["id"])
+        row.expires_at = datetime.now(UTC) - timedelta(minutes=1)
+        db.commit()
+        listed = {i["id"]: i for i in api.get(owner, f"/workspaces/{ws}/invitations").json()}
+>       assert listed[inv["id"]]["status"] == "expired", listed[inv["id"]]
+E       AssertionError: {'id': '6936a552-7f13-4d06-bb8f-b15c83042267', 'email': 'stale@testmail.dk', 'role': 'staff', 'status': 'pending', ...}
+E       assert 'pending' == 'expired'
+E         
+E         - expired
+E         + pending
+
+tests/qa/test_qa_A05.py:116: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "a54d492fa4974834b464c0a04c314150", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:43.222639Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "635e82e30f6f4c01946e8dd2b4208196", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:44.094966Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "ed16b5ad95c14bb3ae220543cb99116d", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:44.195825Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "38f767d7bed04ecf8de0b4b09350ab32", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:44.240891Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "55d6c010c1f443bf8de0e46c608c83dd", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:44.265182Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "74c74bc75d8d4312be4960f8276c4556", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:44.690915Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "270a203ca4724c908b56bd0bb54ba740", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:44.957788Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "89116937fcb04e7080e2c38e00ad757c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:44.997984Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "69e4810ccf364e1681b103a6b4a526bd", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:45.014679Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "99374fe98e6041fb9da1d77e38db7b86", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:45.033183Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/c154553c-4aa7-4c63-99bd-0b7ef1633aee/invitations", "request_id": "14273c31d9c34082a54d9d04849538b5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:45.081779Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/c154553c-4aa7-4c63-99bd-0b7ef1633aee/invitations", "request_id": "bf0b54edab42480d853e5c908881dfe2", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:45.117163Z"}
+________________ test_resend_is_audited_like_create_and_revoke _________________
+
+api = <tests.conftest.Api object at 0x7fdc8f274d40>
+two_workspaces = {'tok_a': 'er8HxNgTiIxKLc76n2eW7RhntTQd-90Q5BaI47PCEQc', 'ws_a': '17a7b0f6-af9a-49ab-9480-0b79d941b033', 'tok_b': 'bQBZZTOInKEXJuy8QAQzZIlMT19n4-GyMt3kovtog6k', 'ws_b': '416e29a1-1526-476e-922d-580e85712eab'}
+db = <sqlalchemy.orm.session.Session object at 0x7fdc946a4230>
+
+    def test_resend_is_audited_like_create_and_revoke(api, two_workspaces, db):
+        """create_invitation and revoke_invitation write an audit row; resend_invitation (a new token is minted and a
+        mail is sent) writes none."""
+        t = two_workspaces
+        owner, ws = t["tok_a"], t["ws_a"]
+        inv = api.invite(owner, ws, "res@testmail.dk", "staff").json()
+        assert api.post(owner, f"/workspaces/{ws}/invitations/{inv['id']}/resend").status_code == 200
+        actions = [a["action"] for a in api.get(owner, f"/workspaces/{ws}/audit").json()["items"]]
+>       assert any("resen" in a for a in actions), actions
+E       AssertionError: ['invitation.created', 'workspace.created']
+E       assert False
+E        +  where False = any(<generator object test_resend_is_audited_like_create_and_revoke.<locals>.<genexpr> at 0x7fdc941fbc60>)
+
+tests/qa/test_qa_S02.py:105: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "fa684ba1654a46a18c4a06945b519bad", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:19.539068Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "3f8428a5b7d948cea8e4c59820dcbcac", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:19.870607Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "dc9e8cc7418141609793a494a286cf64", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:19.914766Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "f6e25bd6f4d74b819925bcd180e57073", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:19.936451Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "3aa8797880864caba4d210d8f543bd7a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:19.955161Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "b655082c369843f08a3fc1714fc3f793", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:20.584178Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "bca43b66d37844dbb15496d491c8392d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:20.943442Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "794a66c3aa64447792cbc5f02ca122b2", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:20.997343Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "af4e24a9713f45afba70df78e56d0898", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:21.016345Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "260f6767af60423ebe3af3ff692939e0", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:21.039900Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/17a7b0f6-af9a-49ab-9480-0b79d941b033/invitations", "request_id": "8d264e955baf4d279503cd14e13eb6e5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:21.072001Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/17a7b0f6-af9a-49ab-9480-0b79d941b033/invitations/b9a94743-5f47-432f-99c7-9a428ced54ce/resend", "request_id": "f462539dd8014cef98d0dc2c1489f432", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:21.090627Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/17a7b0f6-af9a-49ab-9480-0b79d941b033/audit", "request_id": "5f9ab11536524fad9924d29e9ebc82a4", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:21.114946Z"}
+____________ test_view_as_session_is_scoped_to_the_chosen_workspace ____________
+
+api = <tests.conftest.Api object at 0x7fdc8daa9710>
+two_workspaces = {'tok_a': 'nndIYvVI2ucOd7QBmIalJnz441vx3aq7wZnT3RC7P4c', 'ws_a': '6886177b-487c-4380-84fc-64a7a9a71524', 'tok_b': 'IpfS0bCRdAAoVsP8BzoFiZ_j3eV6uJGk9Z12Z51ybVc', 'ws_b': '4ed48bb5-30cf-48ac-9c0c-37cf54224813'}
+db = <sqlalchemy.orm.session.Session object at 0x7fdc8f2e36b0>
+
+    def test_view_as_session_is_scoped_to_the_chosen_workspace(api, two_workspaces, db):
+        """Operator opens «Se som» for owner B *in workspace A* (B is a reader there). The resulting support session
+        should only see workspace A – not the user's other workspace B."""
+        t = two_workspaces
+        assert api.invite(t["tok_a"], t["ws_a"], "owner-b@testmail.dk", "reader").status_code == 201
+        raw = api.invite_link(t["tok_b"])
+        assert api.c.post("/api/v1/invitations/accept", json={"token": raw}, headers=api.h(t["tok_b"])).status_code == 200
+        op = api.operator()
+        v = api.post(op, "/operator/admin/view-as", json={"user_id": _uid(db, "owner-b@testmail.dk"), "workspace_id": t["ws_a"]})
+        assert v.status_code == 200, v.text
+        tok = v.json()["token"]
+        assert api.get(tok, f"/workspaces/{t['ws_a']}").status_code == 200
+        seen = [w["id"] for w in api.get(tok, "/workspaces").json()]
+>       assert seen == [t["ws_a"]], f"view-as scoped to A also lists {seen}"
+E       AssertionError: view-as scoped to A also lists ['6886177b-487c-4380-84fc-64a7a9a71524', '4ed48bb5-30cf-48ac-9c0c-37cf54224813']
+E       assert ['6886177b-48...37cf54224813'] == ['6886177b-48...64a7a9a71524']
+E         
+E         Left contains one more item: '4ed48bb5-30cf-48ac-9c0c-37cf54224813'
+E         Use -v to get more diff
+
+tests/qa/test_qa_M02.py:57: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "bdd057a1d02348b1b2119d4aa6a4a56b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:28.328381Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "9282f306f32445d2b59188dd841ce762", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:29.193504Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "98202682d53143e99477f8a4e09e517b", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:29.274860Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "d6a6be8392f7409693d03f5be773ca8b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:29.294839Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "decc501c9875481eabb6523215838213", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:29.314864Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "7e0a0c4dcaba4a46aba83b5c78dddd8e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:29.684968Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "932bbd573a2243d89b18b8b344ddb365", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:29.994769Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "bf7585ff4af447c8be1fd3166e2d140d", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:30.034333Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "5e9fa54028e14536a444545b7718ac18", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:30.041880Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "a0b003d767504f8fa6044314a6f90090", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:30.061011Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/6886177b-487c-4380-84fc-64a7a9a71524/invitations", "request_id": "dbebb8a450924b9285d172b4d4d76d08", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:30.087231Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "ddd99d8cb4914a9bad1c77e1a0f5085d", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:30.132899Z"}
+{"status": 200, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "0be8be28b6124ffaa4a34f5192e1edeb", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:30.166108Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "eae652938c874309b5b59efeac958fe8", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:30.440280Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "558093608798466c9003702d8ab02d1e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:30.658926Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "43e2efdb9566490d9da17c96603c68ed", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:30.714390Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "5e8bbe72554d428ba8763ea9191c5c73", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:30.723331Z"}
+{"status": 200, "event": "request", "path": "/api/v1/operator/admin/view-as", "request_id": "adc96b43b2c04db599ab7ab48cbf4341", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:30.744669Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/6886177b-487c-4380-84fc-64a7a9a71524", "request_id": "5e8e2fd6119a474f81e6535590f46c5e", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:30.752724Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces", "request_id": "5b5029802b104f74bcd4bc59af9124a2", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:30.768832Z"}
+_______________ test_view_as_dies_when_operator_grant_is_revoked _______________
+
+api = <tests.conftest.Api object at 0x7fdc8e79d7f0>
+two_workspaces = {'tok_a': 'Z6X7S-jDXhwZtGf5qeDVQcaix1xeX7XOKnjMJpuOFDU', 'ws_a': '608fed5e-29be-429b-bbd2-9b6ffd3181e0', 'tok_b': 'TATC7w3bAdXl-EeO_fWeybVVXiyLSdUZ8TS_as4MVQs', 'ws_b': '506dce7b-8fbe-4a30-86f5-34dbabba83e6'}
+db = <sqlalchemy.orm.session.Session object at 0x7fdc946e3200>
+
+    def test_view_as_dies_when_operator_grant_is_revoked(api, two_workspaces, db):
+        """DB-013: 'expired operator grant denied'. Revoking the operator flag (scripts/grant_operator.py revoke) must
+        end the support sessions that operator opened."""
+        op = api.operator()
+        tok = api.post(op, "/operator/admin/view-as", json={"user_id": _uid(db, "owner-a@testmail.dk")}).json()["token"]
+        assert api.get(tok, "/auth/me").status_code == 200
+        u = db.scalar(select(User).where(User.email_normalized == "operator@testmail.dk"))
+        u.is_platform_operator = False
+        db.commit()
+        assert api.get(op, "/operator/admin/customers").status_code == 403           # the operator himself: denied
+        r = api.get(tok, f"/workspaces/{two_workspaces['ws_a']}/members")
+>       assert r.status_code == 401, f"view-as session opened by a revoked operator still works: {r.status_code}"
+E       AssertionError: view-as session opened by a revoked operator still works: 200
+E       assert 200 == 401
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/qa/test_qa_M02.py:72: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "bcc001ee811441f996fd81df199b5b22", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:33.105507Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "f010e8221afe40919d468c843e5b5b60", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:33.655097Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "c0bd29e2a15c46439a4c7edd688e42c4", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:33.733480Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "e3a730091c8d46af8360aa6619ed96c7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:33.762016Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "54884c8cb6a044749f84ac8be93e2afd", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:33.790755Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "2228b2b669d04c92b99fb078eb199567", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:34.004579Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "e0efe066109b4180bbbe88bd118d8929", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:34.642891Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "ea03bbadad82438fbf816660fa97e757", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:34.675938Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "4f1abe00da5b49989d696ff27f738079", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:34.689343Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "88e6e911937a42d9a63c0048cb73aef5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:34.764926Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "7138838c5b0e44489ea89c98bec7dfd6", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:35.719434Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "aa1872779d094a3aabeb3658e45a4172", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:36.127753Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "c67ea18a24a84e5d84df770fad7ec0bf", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:36.161302Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "e300fe079be9432498107c7e1e030e5d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:36.174015Z"}
+{"status": 200, "event": "request", "path": "/api/v1/operator/admin/view-as", "request_id": "f8467b4e6b8a403ba488f8d6c618d368", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:36.194816Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "684f2ef238084c5fa40081f0491af413", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:36.200199Z"}
+{"status": 403, "event": "request", "path": "/api/v1/operator/admin/customers", "request_id": "d3ae81c5cb124bcdae149ea688b5f02e", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:36.209772Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/608fed5e-29be-429b-bbd2-9b6ffd3181e0/members", "request_id": "099e513d206d419abc933d5563aae9cb", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:36.223117Z"}
+__________________ test_entitlements_and_readiness_in_detail ___________________
+
+api = <tests.conftest.Api object at 0x7fdc8f2d74d0>
+two_workspaces = {'tok_a': 'mCGKI9dQ0WAsuTC_u8NHNA4XZx0551Qa3cFNoCHLvrM', 'ws_a': '54698fdc-b51c-4c14-80b8-c9fb420bfab9', 'tok_b': 'pmFgmL8FupQBhronOcDzO33NLB_EIF_Og2W_voNuH6U', 'ws_b': '24a120c1-453e-4112-8e7f-5a9b3a8ce07e'}
+db = <sqlalchemy.orm.session.Session object at 0x7fdc946a59a0>
+
+    def test_entitlements_and_readiness_in_detail(api, two_workspaces, db):
+        """M02 asks for entitlements and goal-specific setup/channel/booking readiness on the workspace detail."""
+        op = api.operator()
+        d = api.get(op, f"/operator/admin/customers/{two_workspaces['ws_a']}").json()
+        missing = [k for k in ("entitlements", "readiness") if k not in d]
+>       assert not missing, f"not implemented: {missing}; keys = {sorted(d)}"
+E       AssertionError: not implemented: ['entitlements', 'readiness']; keys = ['advanced', 'ambassador', 'audit', 'billing', 'calls', 'campaigns', 'created_at', 'id', 'invoices', 'members', 'name', 'product_intent', 'status', 'telephony']
+E       assert not ['entitlements', 'readiness']
+
+tests/qa/test_qa_M02.py:92: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "afe1519645094344a2f8983143e98466", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:45.020267Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "faec90f23d324bf683b9096a4e00db4d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:45.678719Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "e1b55f8be3124271ab7d6d7793290f6a", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:45.763190Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "1b5f2abddd5843aa9e12823e645e1d79", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:45.772268Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "443902dd25334ee4959903c42ca15315", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:45.786039Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "7396926243db4dcda2360d45212c0701", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:46.247674Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "a1e2a59c0e84436c98a09402d06edddb", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:46.422412Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "0c652b725b2c492bb69cc0e29c724586", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:46.453663Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "faa754c176c64e7ab0f2716c8aaf6253", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:46.464893Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "1745f02a25e44eca86e93f92bf6abf83", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:46.481409Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "05c16b27fb0443bfaea3b88a2c7fdf02", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:46.671074Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "6ca596123f1c422bbee8f4c8e9279637", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:46.999042Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "99979b67922a40eebd67993514344bb9", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:47.033801Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "877b2ed8f1a4458ea01c8dab7d7daeb6", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:47.054549Z"}
+{"status": 200, "event": "request", "path": "/api/v1/operator/admin/customers/54698fdc-b51c-4c14-80b8-c9fb420bfab9", "request_id": "b0db0c72f71a4aed8e8043e31fccb5b6", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:47.115110Z"}
+____________________ test_controlled_retry_endpoint_exists _____________________
+
+api = <tests.conftest.Api object at 0x7fdc8f7f9850>
+two_workspaces = {'tok_a': '7KbTfoGqWXILWqGgAwHoJWP_CdliSCdlq7iaMJgcAnY', 'ws_a': '984bfe83-50fb-46f1-9c8e-043c23863219', 'tok_b': '6S7TBqqESaCR6cR80NwT2XlUOVPukMHUJxsGUFpPivM', 'ws_b': 'd4c3d9e6-f252-4304-8e58-d625688c0ced'}
+db = <sqlalchemy.orm.session.Session object at 0x7fdc8f2999a0>
+
+    def test_controlled_retry_endpoint_exists(api, two_workspaces, db):
+        """M03 requires a controlled retry from the operations screen. There is no operator endpoint for it."""
+        op = api.operator()
+        probes = [api.post(op, f"/operator/admin/operations/jobs/{'0' * 8}-0000-0000-0000-{'0' * 12}/retry"),
+                  api.post(op, "/operator/admin/operations/retry", json={})]
+>       assert any(r.status_code not in (404, 405) for r in probes), [r.status_code for r in probes]
+E       AssertionError: [404, 404]
+E       assert False
+E        +  where False = any(<generator object test_controlled_retry_endpoint_exists.<locals>.<genexpr> at 0x7fdc8d19b850>)
+
+tests/qa/test_qa_M03.py:54: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "306fcacab242459b99ed36e0eb59192a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:54.414050Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "07455160323848d0950148acd9ba8b0a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:54.760617Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "4476f85c25bd47d48476f3593a1345fa", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:54.824704Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "b1ea4f7d5b8748a08eb130255e8a899c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:54.840574Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "f82a6728923e4d2e85d9afe9841fef37", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:54.877994Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "ff286fa999d44802821867ff66070d0e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:55.099771Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "cf08093e9ba649aba9185de2b8aca43a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:55.263122Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "4adbb16ed74843f69e58a8e99bc1a91c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:55.300195Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "b6c8479e80134bf0ad6b40e14f2500d9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:55.313487Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "332fe2b88cd14f7faafb9da887def1cf", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:55.331476Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "a1bf9a12a1404eeabcd987c0f42c5750", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:55.655793Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "92cd111ceab84ec6a98d6cd0cbadc759", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:56.253263Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "c9e6689fb10e47388b8f80854869f75c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:56.288205Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "09131475c9f741daa78fc5fa68db188f", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:56.297972Z"}
+{"status": 404, "event": "request", "path": "/api/v1/operator/admin/operations/jobs/00000000-0000-0000-0000-000000000000/retry", "request_id": "e87ccacd7aea4bf8862f5bddc5667a74", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:56.308540Z"}
+{"status": 404, "event": "request", "path": "/api/v1/operator/admin/operations/retry", "request_id": "5489a66bd0094a03a8bfdd33a321b73e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:56.313228Z"}
+__________ test_operator_internal_note_is_not_visible_to_the_customer __________
+
+api = <tests.conftest.Api object at 0x7fdc8f7fb0b0>
+two_workspaces = {'tok_a': 'KUameAk5fi6ltlGkf9SWtsX8V_bMlw4mzcOIgAQ7H-c', 'ws_a': 'ec424d6c-8165-43cc-bf4c-2b7c5185c3f6', 'tok_b': '2zTDqTIyZmJCvApEKB_YltkeY5pK4kurpQdeSi_2BfU', 'ws_b': '8b65bf96-4057-4061-a80a-8dcee07b6863'}
+db = <sqlalchemy.orm.session.Session object at 0x7fdc8f299f40>
+
+    def test_operator_internal_note_is_not_visible_to_the_customer(api, two_workspaces, db):
+        """An operator's internal note on a customer's wish (/app/operator/oensker) must stay internal. The change is
+        audited on the customer's workspace with before/after, and GET /workspaces/{id}/audit (owner/admin, shown in
+        «Aktivitetslog») returns before/after verbatim."""
+        t = two_workspaces
+        uid = db.scalar(select(User.id).where(User.email_normalized == "owner-a@testmail.dk"))
+        wish = AssistantRequest(workspace_id=t["ws_a"], user_id=uid, text="Kan I sende SMS til mine kunder?",
+                                summary="SMS til kunder", category="campaigns", status="new", admin_note="", times_asked=1)
+        db.add(wish)
+        db.commit()
+        op = api.operator()
+        secret = "INTERN: kunden er dårlig betaler, prioritér lavt"
+        r = api.patch(op, f"/operator/assistant/requests/{wish.id}", {"status": "declined", "admin_note": secret})
+        assert r.status_code == 200, r.text
+        audit = api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/audit")
+        assert audit.status_code == 200
+>       assert secret not in audit.text, "operator's internal note is returned to the customer by the audit log"
+E       AssertionError: operator's internal note is returned to the customer by the audit log
+E       assert 'INTERN: kun...ioritér lavt' not in '{"items":[{...,"offset":0}'
+E         
+E         'INTERN: kunden er ...ler, prioritér lavt' is contained here:
+E           in_note":"INTERN: kunden er dårlig betaler, prioritér lavt"},"request_id":"ce6545db5aef41ef8f75c4a57301dec4","created_at":"2026-11-10T11:13:05.051653Z"},{"id":"c9472fb3-2b4f-438e-95b0-75e98bb7458e","actor_user_id":"0aacfaa4-dd02-47ad-934a-f401b52e49e3","action":"workspace.created","object_type":"workspace","object_id":"ec424d6c-8165-43cc-bf4c-2b7c5185c3f6","before":null,"after":{"name":"Fjord Gulvservice ApS","product_intent":"reception"},"request_id":"718e1def98ac4e7cb81027e473758207","created_at":"2026-11-...
+E         
+E         ...Full output truncated (2 lines hidden), use '-vv' to show
+
+tests/qa/test_qa_H01.py:64: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "552874824ddb453c85174028293336b4", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:03.559282Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "004cea5513de4920a4a424bbcdc5f130", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:03.763269Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "b9c6db0577de42118e89218a9307c8fd", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:03.802435Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "9d78e1746f004e6d9cee8c38b2a6a8c8", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:03.824433Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "718e1def98ac4e7cb81027e473758207", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:03.854554Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "fe3fd437c9cb4b96b74acc999524ce23", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:04.073014Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "75b9fd49680049c78c1d0fbcb11baeab", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:04.290862Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "f4a21b9b8e5c4f2a9390f065ac1ffb1f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:04.330935Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "978f0089a5b54a118e7f2e83ad95b26f", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:04.341830Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "b9eae733cc5d48a0bf87acef6b33d6fe", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:04.369636Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "0820cd4b33084cb1ac86889bb81c03fa", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:04.694867Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "521c5d1b022042f1b2f2afe65bad37bb", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:04.987049Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "2c92f15ab2004f779c37c3e5cb6f20a6", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:05.027254Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "1329063aea404b52903e1d929f2639b7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:05.038823Z"}
+{"status": 200, "event": "request", "path": "/api/v1/operator/assistant/requests/83c442ec-2fbb-4e65-9cda-2399255dd29c", "request_id": "ce6545db5aef41ef8f75c4a57301dec4", "method": "PATCH", "level": "info", "timestamp": "2026-11-10T11:13:05.069757Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/ec424d6c-8165-43cc-bf4c-2b7c5185c3f6/audit", "request_id": "5e77f88bc55c43e2b40fd59826225fb2", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:05.086845Z"}
+________________________ test_support_ticket_api_exists ________________________
+
+api = <tests.conftest.Api object at 0x7fdc8f7f94f0>
+two_workspaces = {'tok_a': '-prfp4CsiE4G7qAcOUcieGyY-WxpcQFyGp0bmBZlTok', 'ws_a': '89bb4287-9d24-4b69-9514-edf7b99ef0ff', 'tok_b': 'cOAa6GWan7z8GspT46y5omLRhcQXsuJ6GKFd2NxmGNc', 'ws_b': 'b97d7d87-ac0a-4a8c-96c3-509af9fb20dd'}
+
+    def test_support_ticket_api_exists(api, two_workspaces):
+        """H01/M06: support requests (with attachments, status, thread) and an operator queue."""
+        t = two_workspaces
+        codes = [api.get(t["tok_a"], f"/workspaces/{t['ws_a']}/support/tickets").status_code,
+                 api.get(api.operator(), "/operator/support/tickets").status_code]
+>       assert all(c == 200 for c in codes), f"not implemented: {codes}"
+E       AssertionError: not implemented: [404, 404]
+E       assert False
+E        +  where False = all(<generator object test_support_ticket_api_exists.<locals>.<genexpr> at 0x7fdc8d199e50>)
+
+tests/qa/test_qa_H01.py:72: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "ffb35431c1c24454885f6007dd6f97ba", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:05.933182Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "17b57f9dbc604ab7911dd2c5e87e42ee", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:06.285121Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "8d3798bd34184fce892b53d7caa83f46", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:06.335389Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "034e53ac0e694cdf996133a6023bd614", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:06.360547Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "0e8e9979969a43f5a2b763708ea4dcd2", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:06.385215Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "9d984a89c42b4a20a2a40a36e47d1ef7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:06.683671Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "18b993787c694846b8ae13d60d55da53", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:06.947022Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "59d6213527514777800e809cfb702329", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:06.979040Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "f039ffd93a2b46d3b42db9e37f93de61", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:06.988780Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "97a1e5fbfa954502ad76c3202574b89a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:07.006166Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/89bb4287-9d24-4b69-9514-edf7b99ef0ff/support/tickets", "request_id": "2dae0734e836448c917cbfa03c41df24", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:07.013372Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "eb341932347d482fb3916768192d4c07", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:07.323051Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "89909dd7f7234ddf84d83c0cd906431e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:07.587131Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "6f5fe78be3f848b68a85447d768f9a6d", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:07.641776Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "c0e6be1bc3c147ca884119bcd8ad7f31", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:07.658939Z"}
+{"status": 404, "event": "request", "path": "/api/v1/operator/support/tickets", "request_id": "6964e6c5c4744d22a5beedd0675fd40b", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:07.673666Z"}
+==================================== PASSES ====================================
+____ test_intent_survives_signup_verify_and_first_workspace[reception-True] ____
+---------------------------- Captured stderr setup -----------------------------
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 94af55693109, stage1 foundation
+INFO  [alembic.runtime.migration] Running upgrade 94af55693109 -> 773ead23336e, resend webhook events and provider delivery status
+INFO  [alembic.runtime.migration] Running upgrade 773ead23336e -> 43c189532412, ai usage log
+INFO  [alembic.runtime.migration] Running upgrade 43c189532412 -> c432350c7efd, waitlist signups
+INFO  [alembic.runtime.migration] Running upgrade c432350c7efd -> 501a6eb0eaeb, webchat conversations
+INFO  [alembic.runtime.migration] Running upgrade 501a6eb0eaeb -> 477adf47202c, leads tasks agreements
+INFO  [alembic.runtime.migration] Running upgrade 477adf47202c -> 5a2d1bff4ed7, daily reports
+INFO  [alembic.runtime.migration] Running upgrade 5a2d1bff4ed7 -> 46c794fe9e35, phone numbers and calls
+INFO  [alembic.runtime.migration] Running upgrade 46c794fe9e35 -> 19a35ecb7df3, conversation mode and staff author
+INFO  [alembic.runtime.migration] Running upgrade 19a35ecb7df3 -> c89e73f71c6d, lead callback window
+INFO  [alembic.runtime.migration] Running upgrade c89e73f71c6d -> 24414f5bd46b, phone number voice settings
+INFO  [alembic.runtime.migration] Running upgrade 24414f5bd46b -> f4681fd5e00d, source imports
+INFO  [alembic.runtime.migration] Running upgrade f4681fd5e00d -> c9febc48ca3b, source import profile suggestion
+INFO  [alembic.runtime.migration] Running upgrade c9febc48ca3b -> 299f641c5b3f, reception script
+INFO  [alembic.runtime.migration] Running upgrade 299f641c5b3f -> 5c59c508ecf8, notification reads
+INFO  [alembic.runtime.migration] Running upgrade 5c59c508ecf8 -> 06fa18c2fcfa, bookings
+INFO  [alembic.runtime.migration] Running upgrade 06fa18c2fcfa -> f8c8153ccbb0, campaigns
+INFO  [alembic.runtime.migration] Running upgrade f8c8153ccbb0 -> 7769c9d94fe1, billing_stripe
+INFO  [alembic.runtime.migration] Running upgrade 7769c9d94fe1 -> a8a4f6f5ffaf, voice_library
+INFO  [alembic.runtime.migration] Running upgrade a8a4f6f5ffaf -> 527c5e36aced, voice designed and origin, own voice recordings
+INFO  [alembic.runtime.migration] Running upgrade 527c5e36aced -> e668ed509035, platform managed telephony
+INFO  [alembic.runtime.migration] Running upgrade e668ed509035 -> 94e8251b64e2, demo calls
+INFO  [alembic.runtime.migration] Running upgrade 94e8251b64e2 -> 6abbbb75fde5, integration connections, oauth states, action runs
+INFO  [alembic.runtime.migration] Running upgrade 6abbbb75fde5 -> 3c1d29602dcc, ambassador programme
+INFO  [alembic.runtime.migration] Running upgrade 3c1d29602dcc -> bcc6a80d2f06, standard voice per workspace
+INFO  [alembic.runtime.migration] Running upgrade bcc6a80d2f06 -> a7d3c1e9b2f4, demo calls: chosen voice and industry
+INFO  [alembic.runtime.migration] Running upgrade a7d3c1e9b2f4 -> b3e8f0a4c6d2, demo calls: the visitor's own industry text
+INFO  [alembic.runtime.migration] Running upgrade b3e8f0a4c6d2 -> 6f6d583caceb, social media posts
+INFO  [alembic.runtime.migration] Running upgrade 6f6d583caceb -> 3da6b0abc2dc, social account snapshots and post metrics
+INFO  [alembic.runtime.migration] Running upgrade 3da6b0abc2dc -> 793d6de4d9bb, social prospects
+INFO  [alembic.runtime.migration] Running upgrade 793d6de4d9bb -> 2944b6976e59, social posts extra flag
+INFO  [alembic.runtime.migration] Running upgrade 2944b6976e59 -> 1e8e65047603, campaign calls priced per call
+INFO  [alembic.runtime.migration] Running upgrade 1e8e65047603 -> 64a2ddcb9a74, social post design version and reminder
+INFO  [alembic.runtime.migration] Running upgrade 64a2ddcb9a74 -> 5b7e1c9a3d42, session impersonator for read only view as
+INFO  [alembic.runtime.migration] Running upgrade 5b7e1c9a3d42 -> 7c4e9b1a5d30, assistant proposals
+INFO  [alembic.runtime.migration] Running upgrade 7c4e9b1a5d30 -> a1b2c3d4e5f6, site documents
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> b7d2e4f6a8c0, campaign calls priced per call plus started minute
+INFO  [alembic.runtime.migration] Running upgrade b7d2e4f6a8c0 -> b3c5d7e9f1a2, sales channel phase 1
+INFO  [alembic.runtime.migration] Running upgrade b3c5d7e9f1a2 -> c4d6e8f0a2b4, sales channel phase 2
+INFO  [alembic.runtime.migration] Running upgrade c4d6e8f0a2b4 -> d5e7f9a1b3c6, sales channel phase 3
+INFO  [alembic.runtime.migration] Running upgrade d5e7f9a1b3c6 -> e6f8a0b2c4d7, sales channel phase 4
+INFO  [alembic.runtime.migration] Running upgrade e6f8a0b2c4d7 -> a7c3e9d1f5b2, stemmetest runs
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9d1f5b2 -> b8d4f0a2c6e1, calls.recording_url: the provider's recording of the call (Vapi end-of-call report)
+INFO  [alembic.runtime.migration] Running upgrade b8d4f0a2c6e1 -> c3e5a7f9b1d4, assistant requests («ønsker»)
+INFO  [alembic.runtime.migration] Running upgrade c3e5a7f9b1d4 -> d4f6b8a0c2e7, dialogbot privat
+INFO  [alembic.runtime.migration] Running upgrade d4f6b8a0c2e7 -> e7c9a1b3d5f2, privat: lookup rate limits, business search, opening-hours scheduling, web push
+INFO  [alembic.runtime.migration] Running upgrade e7c9a1b3d5f2 -> e5a7c9d1b3f6, privat subscriptions
+INFO  [alembic.runtime.migration] Running upgrade e5a7c9d1b3f6 -> f1a2b3c4d5e6, quiz-funnel drafts
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> a3d7e1f9c2b4, discount codes
+INFO  [alembic.runtime.migration] Running upgrade a3d7e1f9c2b4 -> b4e8f2a6c1d3, privat: the trial starts at Stripe with a card; accounts begin without rights
+INFO  [alembic.runtime.migration] Running upgrade b4e8f2a6c1d3 -> b7c1d4e8f2a3, browser runs and booking profiles
+INFO  [alembic.runtime.migration] Running upgrade b7c1d4e8f2a3 -> c2d6e9f1a4b8, chat message kind booking_proposal
+INFO  [alembic.runtime.migration] Running upgrade c2d6e9f1a4b8 -> d3e7a2b5c9f1, external business contacts
+INFO  [alembic.runtime.migration] Running upgrade d3e7a2b5c9f1 -> e4f8b1c6d2a9, lead pitch
+INFO  [alembic.runtime.migration] Running upgrade e4f8b1c6d2a9 -> f5a9c2d7e3b1, private appointments
+INFO  [alembic.runtime.migration] Running upgrade f5a9c2d7e3b1 -> a7c3e9f2b4d6, private birthdays
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9f2b4d6 -> b8d4f1a6c2e7, private bills
+INFO  [alembic.runtime.migration] Running upgrade b8d4f1a6c2e7 -> c9e5a2b7d3f8, private app data
+INFO  [alembic.runtime.migration] Running upgrade c9e5a2b7d3f8 -> d1f6b3a8e4c9, private business referrals and assistant name
+INFO  [alembic.runtime.migration] Running upgrade d1f6b3a8e4c9 -> e2a7c4d9f1b3, assistant pronoun
+INFO  [alembic.runtime.migration] Running upgrade e2a7c4d9f1b3 -> f3a9c1d5e7b2, public api: api keys, webhook endpoints, push subscription audience
+INFO  [alembic.runtime.migration] Running upgrade f3a9c1d5e7b2 -> c7d2e9a4b1f6, markets: the company's VAT number, the Privat subscription's currency, the invoice's tax source
+INFO  [alembic.runtime.migration] Running upgrade c7d2e9a4b1f6 -> d8e4a1c6f2b9, wishes: product details on wishlist items, group gifts («Deles om en gave») and a design per wishlist
+INFO  [alembic.runtime.migration] Running upgrade d8e4a1c6f2b9 -> e3b7c9d1a5f4, privat apps: per-app state for «Mine apps» (setup progress, switched off with data kept, «Giv mig besked»)
+INFO  [alembic.runtime.migration] Running upgrade e3b7c9d1a5f4 -> a7c3e9f1b2d4, telephony: customers choose per number whether calls are recorded, and for how long the audio is kept
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "d47a013d5303405989510a3719292302", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:10:57.035941Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "771a1e0e3a4844f3814b81075cc610b2", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:10:57.578372Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "91db4d7c3c8a457eb0ba7fd302929409", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:10:57.610393Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "c0911d21239849dbac2c26ebf768a297", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:00.374106Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "73123fff198a4389a83d1f706f889591", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:00.527837Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "6b7e181bdbd345829d9b58982c89dc6b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:00.612164Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/a8a3d8ae-946f-43df-b014-84259f7eece5/goals", "request_id": "0df8f0d42f4044e79808a4befbd3cc6f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:00.684025Z"}
+___ test_intent_survives_signup_verify_and_first_workspace[campaigns-False] ____
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "918cf47305fd4622b14e0ace03079342", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:03.861515Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "6b3fcded88ce4a29a8095f4852bdb90b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:04.526594Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "56104e85bf324cabb84f271445ab3f32", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:04.535278Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "1a8dbc680ed74f6b8ee7c6b02815fc1b", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:04.657689Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "bf09b055f84546e28c542ec96dda3a74", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:04.798110Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "45b2b1da7df5436fba53cd2e9c63bfd7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:04.857158Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/b2d79b77-27e8-44ec-9325-3dfe646ab11c/goals", "request_id": "a8675ea8c22d4fdbb20369f00aad47ab", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:04.875626Z"}
+______ test_intent_survives_signup_verify_and_first_workspace[both-True] _______
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "74fa18ac3985438ba18229922cf59c23", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:07.403573Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "e89642d41dc04f7e855c61e39236dec9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:07.968552Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "a38eeaab699d450cac5e3b60863d99fa", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:07.977779Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "749963f4b2344cc894a025bd2ebd210b", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:08.094945Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "f478eed52d0140a4bccaf532fe59e7a3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:08.157793Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "5b33284a7034400fa10207d9103df1f6", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:08.194510Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/1df628db-7bb7-413d-ae2a-f0b0f1fd2639/goals", "request_id": "82f9e0cef6bc49c9baec416105337650", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:08.213813Z"}
+___ test_signup_rejects_unknown_intent_and_duplicate_email_case_insensitive ____
+----------------------------- Captured stdout call -----------------------------
+{"status": 422, "event": "request", "path": "/api/v1/auth/register", "request_id": "a35e05e45b634b778e75bd5390d727e7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:09.451060Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "9e1cb4a8e74f4cdcbe70c18e8a20647d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:10.343502Z"}
+{"status": 409, "event": "request", "path": "/api/v1/auth/register", "request_id": "2144eb74ba134873aac937b8514f76b0", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:10.353985Z"}
+_________________ test_unverified_user_cannot_create_workspace _________________
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "dbad6c60cf3d4408985ce488f3939f17", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:12.404979Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "ee88f58d3e514ccb9d84b13d18f31257", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:12.966894Z"}
+{"status": 403, "event": "request", "path": "/api/v1/workspaces", "request_id": "401aa1d50ee6496b9f4d40737e3ffd87", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:12.975991Z"}
+______________ test_short_password_rejected_without_creating_user ______________
+----------------------------- Captured stdout call -----------------------------
+{"status": 422, "event": "request", "path": "/api/v1/auth/register", "request_id": "0e1d7a142ac1450cb3b01779ab2d3fb4", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:14.121490Z"}
+_ test_existing_user_with_own_workspace_joins_the_right_workspace_and_nothing_is_billed _
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "86faed25baa44f4d9ee11cbd31550ec9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:19.028990Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "b48edf67723c4af4b819b89e8500c0f3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:19.248160Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "c22570d72a704908a5e290fc7d1699c2", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:19.283136Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "f2600f972c1f4496ada19798b855dd5b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:19.292792Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "061fbb502729497083aa4704d13013f3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:19.306884Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "359a6a037da447a2815f2677fba272f5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:19.852117Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "13a38795704c42f89c8a19f6a130960f", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:20.225186Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "a10d5cb0560c4e09875892a775fb7433", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:20.282564Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "9004064be5474e598096eefbf1caa42c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:20.295748Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "5a2902e806a84029bd6d45a679acbe58", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:20.310987Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/a496fa01-3f56-44e3-b8f6-be9a9d134eee/invitations", "request_id": "dd3b3eea50ee42d4aeaa004d50cd0488", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:20.354930Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "1408347cfaf349fe9662a212d3153848", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:20.384831Z"}
+{"status": 200, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "6df9ea73977a46429cb1217bf3a09723", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:20.399347Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces", "request_id": "d6d6bbadc6c44631a2e4612e06308816", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:20.415117Z"}
+{"status": 403, "event": "request", "path": "/api/v1/workspaces/a496fa01-3f56-44e3-b8f6-be9a9d134eee/invitations", "request_id": "aa24a853a3cd41d99b415b8acb4bb3e6", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:20.423736Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/6439388d-e46e-46ad-85b7-76543a8a9e53/invitations", "request_id": "4235a0c8bfc34fb69b957fb43a96ead3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:20.449846Z"}
+_ test_new_user_can_accept_before_verifying_and_lands_only_in_inviting_workspace _
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "c8e6521a3c0e4dcd8313f3a39e53c37e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:22.906984Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "3e74d251137f48c0a3a28fde105b4455", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:23.914752Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "f412de51197f44418a5328a3562bc33e", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:24.014218Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "78bd78dcb76047fa8bb900dc0b7bf4d6", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:24.028166Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "bfa787d1b07641f685314961327c2175", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:24.051037Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "1441d10935e34ee4bc915233f072cb6e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:24.921120Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "5afd99aa7a69424eb0ee704de86a5519", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:25.634666Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "dddca05c1c2e4a79900a535e795e2814", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:25.712059Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "2a90a22839c2434eb9eaf950e1cf34db", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:25.766747Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "cccfc492b7904fae86e1fd5ecfa121f4", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:25.793580Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/5e9a3813-6d3d-437f-ba2f-b2ea15d61f88/invitations", "request_id": "c781475314b045dab1716e355ea5ff44", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:25.878945Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "e32f781b395a4bf6acd79aad4aea887e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:26.625341Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "540e7215e6e1465f95b659f9b2e6f0db", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:26.990213Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "febc612fd011440585a9d33c6583adc8", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:27.057547Z"}
+{"status": 200, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "736c70f98467486a9454940030a14e02", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:27.077919Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces", "request_id": "fe3164f5aa6748ab909684290a5ef2df", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:27.093728Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/0a3f784d-111b-49cb-b990-43adf71ef743", "request_id": "9a53dd970ba748289f3ef180b404bb1f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:27.108709Z"}
+_______ test_preview_and_accept_states_expired_revoked_used_and_unknown ________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "61c5fe7ae3cc435f896e196186f8b26d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:29.560168Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "5114a0c540634f46ad1c4eadf1da836c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:30.073322Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "afa7cea255064687ac6b8891d264a34a", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:30.110385Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "0168132d324f4dff982c5aee317a7315", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:30.119647Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "ba78e26b70c6425096ce29d56d22fde8", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:30.137906Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "2757b089d55448b99c86e4a2eefe6741", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:30.337953Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "1e7e433df9ce43a6a3e382cbea91dfad", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:30.596241Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "713be3855810432f99b5a87f81110734", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:30.655689Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "a3a27c62962a4bbbb3dc2e4e2e613a28", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:30.723529Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "fd431ef18c454c579fbecf6b5eb144c9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:30.765191Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 404, "event": "request", "path": "/api/v1/invitations/not-a-real-token-123", "request_id": "843d1888bf71474b89e54974d1158e98", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:30.783718Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/a4715894-1abb-495c-83c1-48fbfd4f52fa/invitations", "request_id": "ca4680cb9a4049f08de5f7fbbbb601ff", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:30.832944Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "17cdd81c37094f5f99a877a9de4d0306", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:31.523262Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "792310bc7c854341897973012b0e74f4", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:32.235055Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "0ecf2b0314314404bb25861f59f03e2b", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:32.295444Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "27a8edb37bfc4e63a1a44da8ec1d4ac7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:32.305264Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "d0541d157f71424f84a7b3d141a62cb7", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:32.324143Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/a4715894-1abb-495c-83c1-48fbfd4f52fa/invitations/298c8799-6ef5-4e41-8f29-42ea6ced38de/revoke", "request_id": "02053b43cb2b45548836e2248f5d6eab", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:32.346198Z"}
+{"status": 200, "event": "request", "path": "/api/v1/invitations/i2iYw4ysNuMg7-dtI0Yi3X5U3sbti_7b4qpbwxgztdQ", "request_id": "ec466c2cc9a545c8b2f372fb85cb7550", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:32.350368Z"}
+{"status": 409, "event": "request", "path": "/api/v1/workspaces/a4715894-1abb-495c-83c1-48fbfd4f52fa/invitations/298c8799-6ef5-4e41-8f29-42ea6ced38de/revoke", "request_id": "de3d296f9d494bfcad255a0185fe28b1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:32.366589Z"}
+{"status": 409, "event": "request", "path": "/api/v1/workspaces/a4715894-1abb-495c-83c1-48fbfd4f52fa/invitations/298c8799-6ef5-4e41-8f29-42ea6ced38de/resend", "request_id": "29879a3ff2e94f1fb27c326f85b26c4c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:32.382415Z"}
+{"status": 409, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "beea04a3f86a405c91eff8675ba84c0b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:32.393714Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces", "request_id": "bcc8ca19b539483db3be76e532c12f5f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:32.404281Z"}
+____________ test_resend_rotates_token_old_link_dead_new_link_works ____________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "79b622cf41fa4578b5391c2f8956abcd", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:35.039048Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "3e9e4886ce554637a8fe1ba784ab285f", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:35.417985Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "cb67fc9e989046689d324495d80e736e", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:35.496207Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "333d8a4151a747898afa2e03fffd7b02", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:35.508397Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "ce4c6a24563f43e9984a2a3ccd9c61d4", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:35.548709Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "c14ad302a6dc4c239f07b8ab8a0ebde3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:35.814444Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "cdd4c31104854bcfbaa1a60b546475cf", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:36.026020Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "404345898f5f49e8848c66255230d34c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:36.074728Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "c0af28c26cfb4c52b0770b2fcc368a90", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:36.085872Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "79302e2647f9410393c354194fdc0687", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:36.101571Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/0536bcb6-8973-46bd-aa62-aed433a65c11/invitations", "request_id": "3fe8b51d29654eb086c133c5f2e935d5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:36.128039Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "c5fc4b4bfbb944cd95929a1a50915d9a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:36.509862Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "8184e3920f254fbabf0db9398b7fa52a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:36.790535Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "bc821e2194cf4ff3a7224b1c9d89fc21", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:36.854645Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "2cd7b6f47bc348cc964ad8eca96c1053", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:36.885703Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "c18053914fa247d9a7b6ecfa2663e275", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:36.902557Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/0536bcb6-8973-46bd-aa62-aed433a65c11/invitations/c721eb9a-69a1-4030-88c3-4df92d2bb2d2/resend", "request_id": "dc16ed9f34bc4374b438c452f33f7967", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:36.916227Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "446ac3d5c59b48249fca919e7fdeff16", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:36.952611Z"}
+{"status": 404, "event": "request", "path": "/api/v1/invitations/Y1Iqcd6iG4h9RoK8Lhm5QovOEhJ1YdN7WyVoliwG5LE", "request_id": "aaf87ee6ce604b539588c8cc71ad0b90", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:36.957866Z"}
+{"status": 200, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "280b9366e91341d4ae9fda1903134722", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:36.983501Z"}
+________ test_expired_invitation_can_be_reissued_and_old_one_stays_dead ________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "98012650fdc94feb811e9e96808c7744", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:39.195903Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "e3667de9cd6845be84538f07481a8827", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:39.380052Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "fb339b47ce8848249bff86bfb9a2c106", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:39.409410Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "e11ce67ce03345679a0ef400cb4dc8d3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:39.419259Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "fd8def4ee7854150942c5c5e44646888", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:39.435676Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "d9fcccdc3b01437dbe072beb8ca230d6", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:39.638719Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "5ca6031cab7e4e6fa1ca6c208866c8ee", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:40.025983Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "588d639ca64c472aa7e556b186b8e00d", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:40.084049Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "f76018e6848b403e97fc64b91c9e8a5c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:40.097031Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "9feea1b4c60e4c9ba48d6ec10a9a5abf", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:40.117489Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/149e925a-2e4b-4368-9e22-e459e7ef80da/invitations", "request_id": "e48eab83e322497aa9be65e8f8a92ec5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:40.163141Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "3420745bbbf643c9a297e3442fb209dc", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:40.436551Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "62e987726ff741738a0a644d01cf5cd9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:40.609897Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "7132ef7053674425ad2a0e9c53791413", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:40.686015Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "ac284b94653842aebf274dd44ce729d7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:40.702884Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "72737aaac24141c5bcd30ec5d7438225", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:40.716891Z"}
+{"status": 409, "event": "request", "path": "/api/v1/workspaces/149e925a-2e4b-4368-9e22-e459e7ef80da/invitations/ce931a53-4aa3-4380-b988-6595161cfe5b/resend", "request_id": "b737e5aee1b541118d8780e5ba19d720", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:40.747182Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/149e925a-2e4b-4368-9e22-e459e7ef80da/invitations", "request_id": "5f4459b1089b4afbaab17d6ac0dedcc9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:40.778363Z"}
+{"status": 409, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "749152e89ebd495fbbe06841e2d60ea7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:40.785270Z"}
+_________________ test_removed_member_loses_access_immediately _________________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "59962640da7d46bfb7946d4a240ebe5d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:45.864360Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "177e04ca43a84f0697b6290683be5ee3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:46.045706Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "0825e3e3d89346018ef22a8d3bce796c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:46.105355Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "8b079307d5eb46cdab875f4adfdc2474", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:46.117858Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "0c3cd25b57974985aac5f05b18a3e041", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:46.162991Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "c28feef2845747c2ac02b2f255a44ec9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:46.510748Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "a414f7169534402b8e1024eaa0388326", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:46.918638Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "7c5a28eb72c3462d9e86cc139e4af4ac", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:46.953003Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "3ce6214a5af7400fa66902d55041c023", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:46.962672Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "d1f0ca15ed0745e49975514bb6361b75", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:46.988048Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/985071eb-f65c-4170-ba49-70b6b4ccc8eb/invitations", "request_id": "ada2e2144edb4e5a9bf351e2bc1d514c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:47.023232Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "af5ab64827d64ace8783b86478e46374", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:47.236485Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "d5b61b5a82cd4ef3891ac85166f223f8", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:47.643405Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "52dcabebac76425a85ec9709b28ce3a5", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:47.772259Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "9bc21fd857c74cdb83406f949d48dbb9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:47.830794Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "d50b446752ae4c0084388c9acb885f26", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:47.853922Z"}
+{"status": 200, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "d6f738a554a24fbc8969f6d7f4172d7a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:47.872593Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/985071eb-f65c-4170-ba49-70b6b4ccc8eb", "request_id": "9b615ca588cb4c378b0ca2f661e4ac63", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:47.884855Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/985071eb-f65c-4170-ba49-70b6b4ccc8eb/members", "request_id": "9f9b60af855a4be884e37928e64f8f5d", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:47.899623Z"}
+{"status": 204, "event": "request", "path": "/api/v1/workspaces/985071eb-f65c-4170-ba49-70b6b4ccc8eb/members/efeeb765-23a9-49e1-8703-a24fd7d4c8b9", "request_id": "415c84bbac2641e0b475dc3fe14537c9", "method": "DELETE", "level": "info", "timestamp": "2026-11-10T11:11:47.922738Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/985071eb-f65c-4170-ba49-70b6b4ccc8eb", "request_id": "c1ebf37a5f8f4a7e955841d1bcc670d0", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:47.946343Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/985071eb-f65c-4170-ba49-70b6b4ccc8eb/members", "request_id": "95a81bbd241b4622b6feacb852859620", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:47.953707Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces", "request_id": "eba16f662d3842d9b851c6908b99ec90", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:47.971286Z"}
+______ test_create_with_explicit_intent_overrides_signup_and_is_persisted ______
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "fc8a18bd928541b8a8644f08dd5b5c4a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:48.479729Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "691be175d6b24e88bf4dddeb14e2a8e6", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:48.966034Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "c7381301545f490d9f4f4f6ee17a1ef6", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:48.997538Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "3d1abf9ddfcf475da5545656154c539a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:49.011764Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "6420f1737f3e4adca48947c271b4e94e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:49.031893Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/0b6c3efc-7e2e-4d52-8ba1-81d321bf5848", "request_id": "7b7bd0e566bf4dc5b817357a1d729301", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:49.045804Z"}
+{"status": 422, "event": "request", "path": "/api/v1/workspaces", "request_id": "2ee9f1b2d93e492faf805328df0aab5b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:49.058912Z"}
+{"status": 422, "event": "request", "path": "/api/v1/workspaces", "request_id": "3d6cea6f5bd24033affbb51c557ae8de", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:49.064152Z"}
+__________ test_choose_existing_lists_only_own_memberships_with_role ___________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "60def757af544806ac150ef21d7ce60b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:49.797398Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "b218375cd43f4ac89d445a6571616f93", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:50.198590Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "64f921a8aa654f5da6013890513c86cf", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:50.236759Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "221f5fab36f64ab3a69a86e1f27f8d4d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:50.246686Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "4f51e295ca8842c4bdd7f2bd146255d3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:50.262839Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "aaac9689b1844f72b3f241ba7de395fa", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:50.479229Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "3ddb6d86d6ec40bcac6f7c20326e1fea", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:50.722600Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "f6ffe470016446ba9901a8670ec145ef", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:50.761903Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "7bfd378b5be24b6788d21a33b7ee05b7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:50.771040Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "09902ffaa6f34b3c929985d4a4719902", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:50.790993Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "b69407bcd39d44a9baa6ac62fe49c2bb", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:50.885064Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces", "request_id": "2e2f76b44d9e4d39bca8552d7c4f7405", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:50.899607Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/d03b2af8-9f09-4d45-98e4-f2003022eca1", "request_id": "a1c641e133004dfc93390a8f66fe5e21", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:50.907441Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/00000000-0000-0000-0000-000000000000", "request_id": "14c111160aee40aeb1e43ec606decdf0", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:50.919929Z"}
+________________ test_goal_intent_change_is_saved_and_isolated _________________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "b336af3357e344878bd0e738768d0149", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:51.934811Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "c18956b46f1f4486b53c4cf744463722", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:52.249669Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "86e5c16d9d9d4b62bc2b6739e768e136", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:52.275830Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "2ac50c6496bf44dca07db4f0b1b59699", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:52.287133Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "3486dc59112647b78363f97d966e1037", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:52.306069Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "6b8c29e1d4224eff9ba4eaa806b785ec", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:52.499430Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "9be4008b0b004b4ea0791c5801755407", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:52.690556Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "138460dd2b61440794c6d0afcec92c4a", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:52.732131Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "03a5c78f3e0e4160b46b79b0c830f852", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:52.743799Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "6806d493b02346eeab4514c67e8573fb", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:52.766990Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/6c21b9fb-d382-42f0-90d7-4fbfbbc98413/goals", "request_id": "7a45c074eb74435e99107ee4dbae7437", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:52.786566Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/6c21b9fb-d382-42f0-90d7-4fbfbbc98413/goals", "request_id": "177978a0fd6d41fb8f362fa337c8d7af", "method": "PUT", "level": "info", "timestamp": "2026-11-10T11:11:52.809160Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/6c21b9fb-d382-42f0-90d7-4fbfbbc98413/goals", "request_id": "63fb6ce9f8164a5380a1a642d4857e9b", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:52.820415Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/6c21b9fb-d382-42f0-90d7-4fbfbbc98413/goals", "request_id": "e91bd59cc1444cfda733aa94122cad1c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:52.831782Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/6c21b9fb-d382-42f0-90d7-4fbfbbc98413/goals", "request_id": "583d61b87a2a49bdbf7d39f71709de89", "method": "PUT", "level": "info", "timestamp": "2026-11-10T11:11:52.840434Z"}
+___________ test_two_workspace_isolation_for_members_and_invitations ___________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "bb8e51d877e243818de2134711308010", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:54.006344Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "ff14dacf41424ac2b6d173d46c887afa", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:54.516649Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "bf01cc03ec394ef9bacdfdf3acf74529", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:54.702579Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "3e155bae94c04a40ae3bf363ff7adae5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:54.714047Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "92b75290b4d8414bba526418db4d3625", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:54.736510Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "44c2085985d242048098ef773d4c5fda", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:55.191156Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "9edabf31fd15450ba656871b4a6c4ae5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:55.797231Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "07dfb87465fe48a0819a88befc7f9a3e", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:55.837877Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "037fa323cbd447b8bae2ea1b5c85f1b0", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:55.859709Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "2c605c4565114982ae92781445b24257", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:55.881810Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/1451a794-4e3c-41bb-b471-e0043c6b0699/invitations", "request_id": "067153375a65440c95320af2a7342c4f", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:55.909841Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/1451a794-4e3c-41bb-b471-e0043c6b0699/members", "request_id": "6f8e3ca9c87644a3ab09a45bc5423421", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:55.928208Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/1451a794-4e3c-41bb-b471-e0043c6b0699/members", "request_id": "5da07f071641440fb0adb55ec097e196", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:55.941368Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/1451a794-4e3c-41bb-b471-e0043c6b0699/invitations", "request_id": "ce9313a85cad489d97805673c19b7a96", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:55.948743Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/2e2cf92e-317d-4ce2-9f56-0c355bbccdb8/members/72bc812f-701e-4e20-81c2-99157149814d/role", "request_id": "d1c4b84a34244a838abdd42b6895c2af", "method": "PUT", "level": "info", "timestamp": "2026-11-10T11:11:55.958037Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/2e2cf92e-317d-4ce2-9f56-0c355bbccdb8/members/72bc812f-701e-4e20-81c2-99157149814d", "request_id": "90d6389a319847dd85a034b632be763f", "method": "DELETE", "level": "info", "timestamp": "2026-11-10T11:11:55.967005Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/2e2cf92e-317d-4ce2-9f56-0c355bbccdb8/invitations/09dd1de8-95e4-4023-a7c3-c5629b9e38ab/revoke", "request_id": "46969445bc7e45c9a2c9dd0504c28ab1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:55.980636Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/2e2cf92e-317d-4ce2-9f56-0c355bbccdb8/invitations/09dd1de8-95e4-4023-a7c3-c5629b9e38ab/resend", "request_id": "58cca685fdaa48a5aed8f38ce034184e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:55.990731Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/1451a794-4e3c-41bb-b471-e0043c6b0699/members/72bc812f-701e-4e20-81c2-99157149814d/role", "request_id": "c9b5c05683cf46198b5d3db843c7e387", "method": "PUT", "level": "info", "timestamp": "2026-11-10T11:11:55.999058Z"}
+{"status": 404, "event": "request", "path": "/api/v1/workspaces/1451a794-4e3c-41bb-b471-e0043c6b0699/invitations", "request_id": "ac46d754a2004c14b53a280515978a73", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:56.011732Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/1451a794-4e3c-41bb-b471-e0043c6b0699/members", "request_id": "808bc0bccc8e4fd0a28d1c292725b1b8", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:56.022737Z"}
+__________________ test_permission_matrix_staff_reader_admin ___________________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "b68624f0ae5b42278d7e2c87d51462f0", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:58.166125Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "50fe4dbf59454bde96444f0e511b3572", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:58.985636Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "1bec2fff20824c52b2a30c8011e03170", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:59.129808Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "b8b99272e40c46298da266286de33a05", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:59.142883Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "66b439ee4e1a4bfdaf3adc1c613244cb", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:59.184604Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "348ab6f73e10457ea89ddca2dd232461", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:59.715659Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "f127a764463a49619a0089f2e02f995a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:59.912763Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "ba6905d02c5c4a719380428264d090dc", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:11:59.939428Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "bbc60c50929049608fcbd1e112f9695b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:59.949462Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "84b2c927f78949579b33f7b073a24dba", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:59.968225Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/invitations", "request_id": "1e6b0dece6cc4e0cb4599b6bdbb47545", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:11:59.988616Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "0ca7fb6048f446179220868872dbae8c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:00.195197Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "f479e26e1bd64853b8a2f9c04794bec9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:01.105643Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "1f19577a7a3548de84efca3380676b33", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:01.227019Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "1584fcf7e432423184283ef501e5987b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:01.237944Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "572bbefd3aee4c22957d61860e9a7145", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:01.248744Z"}
+{"status": 200, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "22222e4be5074c96a170dd61327faccd", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:01.265643Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/invitations", "request_id": "dff7afd064b842208ea0ebb59b92594a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:01.282797Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "92d313ad882a49da8593208bd941fed1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:01.481134Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "acb599e064b34531b894bf84a57a5569", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:02.116730Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "1cc89f69e3c348a2ac54b259ce3f5393", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:02.543699Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "67d94f99feda44f4831d438bca913bc3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:02.559407Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "fadef77d28dc464f9b89904acd4be8af", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:02.572058Z"}
+{"status": 200, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "f9caff662a7c485db9893f64b62b5016", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:02.584890Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/invitations", "request_id": "0d787241299f496387922e86209281ca", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:02.600680Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "e30590a38f7b4fa191b7be5e233d5dd4", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:03.364248Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "d76873872a9144f09663ee01b1370860", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:04.529454Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "f7275f0e55d04422baf4fa7414efae56", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:04.675486Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "da977360eaa44c5ba03211919a22615a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:04.844426Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "517d2743509e4106aabdf225b57340e4", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:04.955024Z"}
+{"status": 200, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "7d15a59e8d4d4717955b19e2b816efbd", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:05.002443Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members", "request_id": "4cc63cabc7ef4b51929b7e58d7678ae8", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:05.096704Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members", "request_id": "71756b032d2e4ee5a46cf6dc34c262e9", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:05.106880Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members", "request_id": "e7d299ba3eef47ccaab964480a193840", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:05.129834Z"}
+{"status": 403, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/invitations", "request_id": "eb83fdde16a74420a7f9e8b42e2588a6", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:05.138421Z"}
+{"status": 403, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/invitations", "request_id": "b2d675e39af642daadcf784a5bde1aec", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:05.156994Z"}
+{"status": 403, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members/b7605ddd-59d3-4827-86de-b4ac0250d257/role", "request_id": "b341cb093d404c9e876c1f4cec4686a4", "method": "PUT", "level": "info", "timestamp": "2026-11-10T11:12:05.166985Z"}
+{"status": 403, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members/b7605ddd-59d3-4827-86de-b4ac0250d257", "request_id": "6d95887924be450eaaa86604b85b9eee", "method": "DELETE", "level": "info", "timestamp": "2026-11-10T11:12:05.176656Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members", "request_id": "70a7d403fa6648e5a864852e311f1d02", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:05.196666Z"}
+{"status": 403, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/invitations", "request_id": "552ef311902343d8989ed87a4464c3a1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:05.204933Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/invitations", "request_id": "e7ae7d7b54d242b1bc42a917cb0abe13", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:05.242823Z"}
+{"status": 422, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/invitations", "request_id": "59dc0035839543f1a9f02be12dace7f6", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:05.254535Z"}
+{"status": 403, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members/b7605ddd-59d3-4827-86de-b4ac0250d257/role", "request_id": "6a25d8b7dd634a92832cd0034a3124d9", "method": "PUT", "level": "info", "timestamp": "2026-11-10T11:12:05.265447Z"}
+{"status": 403, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members/15415f53-a097-4e64-89b7-ea4cbb657266/role", "request_id": "470f3aec78024a19a2b8fbe615a92e2a", "method": "PUT", "level": "info", "timestamp": "2026-11-10T11:12:05.275280Z"}
+{"status": 403, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members/15415f53-a097-4e64-89b7-ea4cbb657266", "request_id": "1167c10c909e43dc87fd608e9ec1f31a", "method": "DELETE", "level": "info", "timestamp": "2026-11-10T11:12:05.287672Z"}
+{"status": 204, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members/b7605ddd-59d3-4827-86de-b4ac0250d257", "request_id": "03cbce5155cc447596b001d107ea65cd", "method": "DELETE", "level": "info", "timestamp": "2026-11-10T11:12:05.306836Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members", "request_id": "05f3cee5f25048c595a856a35984393c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:05.334437Z"}
+{"status": 422, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members/9af6df06-f43c-494f-90f9-5ec24f159c15/role", "request_id": "16c0835164d74e74944860450375d71e", "method": "PUT", "level": "info", "timestamp": "2026-11-10T11:12:05.343007Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members", "request_id": "ac2d8fcd7480404f98594410c444d9ff", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:05.356757Z"}
+{"status": 204, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members/9af6df06-f43c-494f-90f9-5ec24f159c15", "request_id": "7253231231fd4bd1a72be895cfd2257d", "method": "DELETE", "level": "info", "timestamp": "2026-11-10T11:12:05.368780Z"}
+{"status": 409, "event": "request", "path": "/api/v1/workspaces/0f939baa-92db-413c-a5f2-fcec9e7fef89/members/15415f53-a097-4e64-89b7-ea4cbb657266", "request_id": "cb087594264440388bb2befeb3e33e41", "method": "DELETE", "level": "info", "timestamp": "2026-11-10T11:12:05.437895Z"}
+________________ test_invite_double_submit_and_existing_member _________________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "2bb8b54b36b546e08177e6022d072df1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:08.967136Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "c5178099d81f49f48d5c1db6b6be99e8", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:09.725440Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "7f9dcbba7140451983bae539322cc91b", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:09.764175Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "3a5b3691f57d450087d1d6b009a72120", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:09.778508Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "0bf624aa10e94c25a5f5321ddfeef879", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:09.806013Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "d39eb69d776247d681afd76b6a6645e4", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:10.383091Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "d143b4e6ff174327a3fec3fe4ec4bad4", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:11.208236Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "295b9ff613a5435baed6386fbc0a4fb1", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:11.269804Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "9665ec4387224014879777cdf11b0237", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:11.278864Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "6d784101855147619c24d4d6cadc3881", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:11.304225Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/5557ef67-b305-4f8a-a69c-6e361483b224/invitations", "request_id": "0745e6abb289498e88ce57b160584755", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:11.441669Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/5557ef67-b305-4f8a-a69c-6e361483b224/invitations", "request_id": "36916f1f66204509901d753ac531db9e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:11.491054Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/5557ef67-b305-4f8a-a69c-6e361483b224/invitations", "request_id": "e53c4581dd9243ca80fb4af599df6387", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:11.593183Z"}
+{"status": 409, "event": "request", "path": "/api/v1/workspaces/5557ef67-b305-4f8a-a69c-6e361483b224/invitations", "request_id": "998fdd331e304d11944a85bd3749f0fe", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:11.628702Z"}
+___________________ test_role_change_and_remove_are_audited ____________________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "f71e29d6eac7453faf13d28d21391b13", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:15.259135Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "ee8c4b3bda0e4e88a4cb7289db856131", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:15.844456Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "7fe170e466ba43f5817de67cb2b2ee48", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:15.901412Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "f9483bf68aff40f8b8c9f7e99fdedf97", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:15.922050Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "a7e3d76ff39343799137092363c508e1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:15.958693Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "d948dd3b02c74696af059cd4ba7f7266", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:16.391509Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "2c774b7a954d4291a7fbdfeb734e6ec8", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:16.983535Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "8a383dd7c9c6449e897d622e7b98ca9c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:17.048628Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "a334785e253e421db6c7f42582c34b45", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:17.063393Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "c26a32f1cb3e446ab1dc8f375720492d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:17.220105Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/workspaces/df319ba2-555b-4e78-a90c-c99f73d3bae8/invitations", "request_id": "edb33575dfe041cd9626c79fed2701e9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:17.314660Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "a9f9d82e3f32477bac5135d933bb78a6", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:17.704045Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "7cbb82642bff439080f6708c8d552d5c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:17.901570Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "6eb5c757fc0d438a9df8879badd3a74f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:17.955658Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "218e5ae325764d5fb71d068c8aec6ecf", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:17.964252Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "097e77b7c5744b2a96d46bf5065f458b", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:17.975213Z"}
+{"status": 200, "event": "request", "path": "/api/v1/invitations/accept", "request_id": "9f72e7ebec8a45ae8795b1fbabdef6cb", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:18.027696Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/df319ba2-555b-4e78-a90c-c99f73d3bae8/members", "request_id": "040fd2d70a2245e58d51d38c41105d0a", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:18.038770Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/df319ba2-555b-4e78-a90c-c99f73d3bae8/members/a76321ff-7c00-4e3a-9246-041466094740/role", "request_id": "bd37aa4262e24dd09861fd0af332a799", "method": "PUT", "level": "info", "timestamp": "2026-11-10T11:12:18.066540Z"}
+{"status": 204, "event": "request", "path": "/api/v1/workspaces/df319ba2-555b-4e78-a90c-c99f73d3bae8/members/a76321ff-7c00-4e3a-9246-041466094740", "request_id": "f0738a3e502b4f97a424603166c3d172", "method": "DELETE", "level": "info", "timestamp": "2026-11-10T11:12:18.126221Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/df319ba2-555b-4e78-a90c-c99f73d3bae8/audit", "request_id": "111e8c7592af4176afc2b8013c0a044c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:18.142508Z"}
+_________ test_search_by_name_email_and_member_detail_is_operator_only _________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "2ef51c4e90334b389d5fd63cecd55b5c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:22.226794Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "a0f2861090504bc8ac03dfd6bf074cab", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:22.436976Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "842a651f71444c7d954c103fb90cafee", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:22.501727Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "80117e94318b44f8a5e343801f8b7466", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:22.513441Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "e72779b1b8d64d139c870932d6543fd5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:22.554669Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "a9ec910a763c4c5f81ac506729032c11", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:22.754762Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "f1b7216c41b440f696661e5077f34c1b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:22.950038Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "ebd54993a15a48eba69e6b8dc55e1555", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:22.976128Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "644b5c7e97b348b2ada54ebab3f470fc", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:22.986042Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "f1aa3e904a92452a94d418e3c3fe0df8", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:23.012165Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "d354967f16054a42b070383df53c61ed", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:23.386462Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "1a0614cfe65b4f3ea679c751c6392a3a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:23.684865Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "24de34cc88a54be2ad9a8247c7311f91", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:23.722545Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "34fb46b2e8ca494f874bbf3dd856ea1d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:23.735853Z"}
+{"status": 200, "event": "request", "path": "/api/v1/operator/admin/customers", "request_id": "cb95d5209d60489ba0a5e2a04a3dc48f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:23.763916Z"}
+{"status": 200, "event": "request", "path": "/api/v1/operator/admin/customers", "request_id": "b0d6e75d620d43eda72cea6dba4aeea7", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:23.780766Z"}
+{"status": 200, "event": "request", "path": "/api/v1/operator/admin/customers", "request_id": "ae98a9505f4f4abb92bc047070bb4250", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:23.791564Z"}
+{"status": 404, "event": "request", "path": "/api/v1/operator/admin/customers/56498cc2-41a8-4af9-8898-fe789d1d0c29", "request_id": "1e2ff814a9024bd58085a817a0a03c59", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:23.803684Z"}
+{"status": 403, "event": "request", "path": "/api/v1/operator/admin/customers", "request_id": "1502d96a1296408ab531a7b84720f9e4", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:23.810775Z"}
+{"status": 403, "event": "request", "path": "/api/v1/operator/admin/customers/00036c0e-6751-4821-8eef-240bca88f4ac", "request_id": "600d5e64e9584c41a51b452201048e27", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:23.817798Z"}
+{"status": 403, "event": "request", "path": "/api/v1/operator/admin/customers", "request_id": "f89ba3c40d374778ba4771dc7b8f3964", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:23.827355Z"}
+{"status": 403, "event": "request", "path": "/api/v1/operator/admin/customers/00036c0e-6751-4821-8eef-240bca88f4ac", "request_id": "765bdb73077d4e44a84adfbdcf11c6a6", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:23.833753Z"}
+________________________ test_detail_exposes_no_secrets ________________________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "5980285eedc74c3d9d226a46e1ae6015", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:24.253804Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "98f5ac62b50b44cf8aa13e29a1c8ff89", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:24.417114Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "f3602fd467b74752bebe60900cbe729d", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:24.471337Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "18c4899bef05441e8b6827416de8cb6d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:24.481181Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "f7dd042431c14885be3bd9339e5f6672", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:24.501719Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "81d1ccb66c4e45fbbdc0f77a6679f089", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:24.727133Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "f1fb1668c1fa41578ed849c51417123e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:24.921623Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "e28e6be9470e4f78b4d7e35fce2b6f6f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:24.958345Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "91557086c9da4821aeaf418facf40a1b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:24.972883Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "3974b555f9f8481fb14c25be7942c352", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:24.993384Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "3bbcfaea9b7047138f643d3828fb7923", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:25.372068Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "c5291020859f47d2bf7b5b7c9c6ec923", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:25.812919Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "9bac4cfa44104ede971c9398fee8b806", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:25.874632Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "05c4efbc9bbb43e4beface98d2deca47", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:25.892341Z"}
+{"status": 200, "event": "request", "path": "/api/v1/operator/admin/customers/26822413-c14a-460f-a362-901af80093be", "request_id": "573d81079c574eb48948cfa137fca942", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:26.044490Z"}
+____________________ test_view_as_expires_after_its_window _____________________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "027a83ea63a3476fa4a4bf2c05efd859", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:38.335523Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "13dbef88f15d490cbb629a0e718d01fe", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:38.770285Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "0bab3082a746407bae256720328f0095", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:38.825159Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "f2c7637590624603ab3fce6d7337701e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:38.843257Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "978c69396e924e42898dc28ee11a4139", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:38.895049Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "e6ed320aca0f45e0a243bc75db4371af", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:39.593197Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "736ef24bc29c4cf7a89959f60e0a652a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:39.913069Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "e55915cd91c34663bc2bbb41f9fa2600", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:39.988132Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "f0807a70322540398a7eafc9028c8af9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:40.006982Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "dc43ee619b274933a4068a1e97f17f17", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:40.031023Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "93b03579b800402ab4a86c0e861fe8fb", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:40.710622Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "0381b6d2e5a14dc7b56d9b22661e72e0", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:41.586918Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "512eeed8edf34ef89131c52a79565f7f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:41.647619Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "c715d61bec5d44aba9760bc607bfad2c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:41.675165Z"}
+{"status": 200, "event": "request", "path": "/api/v1/operator/admin/view-as", "request_id": "431d7692c9a34c77a0e7b8ec19305d28", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:41.776109Z"}
+{"status": 401, "event": "request", "path": "/api/v1/auth/me", "request_id": "22e84c4f0b20407c8e35bcc09c5e3686", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:41.794862Z"}
+_______ test_failed_job_is_visible_to_operators_only_and_without_secrets _______
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "e9811510d2504c75b50fb3cc09149a2d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:49.001268Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "93120c097baa413cae23e1a790a8b877", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:49.166994Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "624405f4a99f4e35ad694e0bf3dc602d", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:49.220603Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "cf0aaedc9ba145899d51c80ed84c3567", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:49.239137Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "a292f86117074dd89cc79808bf7098ae", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:49.259422Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "2b9078d8ec864d9d9b1e3d3b40227909", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:49.559878Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "1d5766f7b5a8487f90af063b3e192b3d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:49.974108Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "a63a55e3b64d49198714d70d9ff444e1", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:50.059008Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "2b4598310fad4f6c926e0247133324a9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:50.090646Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "dc598479747e40e190f5a280631b9972", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:50.128212Z"}
+----------------------------- Captured stdout call -----------------------------
+{"event_id": "56c8c7fb-b38a-450f-b4be-9cfbd2404465", "event_type": "qa.m03.always_fails", "error": "HandlerError: simulated failure", "event": "outbox.handler_failed", "level": "warning", "timestamp": "2026-11-10T11:12:50.161127Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "c3bad4656de044b4941c408c2d1e1869", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:50.869025Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "2ad11ebe1c9b4661a302b079e5e7c151", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:51.203363Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "ca9f7eca4d9a440f947d9a47918e0e17", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:51.258031Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "e593ae10f17f458cab93542b6d192d5c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:51.269819Z"}
+{"status": 200, "event": "request", "path": "/api/v1/operator/admin/operations", "request_id": "3cd0f88762d54e7ca8939b3fd71a9adc", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:51.308818Z"}
+{"status": 403, "event": "request", "path": "/api/v1/operator/admin/operations", "request_id": "4f1ee67a19274e22ad8e6701b79a5eb7", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:51.323367Z"}
+________________ test_outbox_dedupe_key_prevents_duplicate_jobs ________________
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "936bab87e477486184bba23ee48836d9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:52.442990Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "6d003c78bc0a4e38a6f4a9972e9821ff", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:52.648086Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "c316d9f260b841059fbdfbaf503f965e", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:52.675287Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "ef06cd9cc8af42f89a01f0159537e4cf", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:52.685213Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "d4915447efbe4979bd0281692cb117ca", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:52.703988Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "4cae4070486d4df89decb0d8a8bc4b45", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:53.278625Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "0cbad32e2718403680da45a50a605ec5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:53.715563Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "da811011dcee4eb4a18a1d3d3f64bdf7", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:53.755562Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "a78688b7d0d745dc90c6aba4b72421a4", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:53.763935Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "b6bfe86ccbc04e2caad801fa9ff27528", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:53.779019Z"}
+_____________________ test_wrong_purpose_tokens_are_denied _____________________
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "bfdec8d9721840108baed8e8448c490b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:57.435296Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "eb9883da9d6846768c670feaa464e2c9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:57.603293Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "e29357462c574be09edb0d8aa923e18a", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:57.642591Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "0ae98057f4204f89a81df019c81792c2", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:57.655760Z"}
+{"status": 202, "event": "request", "path": "/api/v1/auth/password/forgot", "request_id": "38f5d7cf948541619ef53ba2dda631d1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:57.677453Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "993a8ca7d7e541b2a465410367c18f7c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:57.719367Z"}
+{"status": 422, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "1171f190bf8c455eaa8a683b4bae6136", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:57.727009Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/password/reset", "request_id": "f643f4df082a45c28f8f5483b2d2cbc0", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:58.011241Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "94dd24f3b23e4166a268bf6477fe9569", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:58.398496Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "5209f94746f64890908d1421a67a4ac6", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:58.817948Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "36426d19b8ed4bb28745f79d6edee0a3", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:12:58.940008Z"}
+{"status": 422, "event": "request", "path": "/api/v1/auth/password/reset", "request_id": "2b4197113caf49f1a3f3ca5914bea161", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:12:58.946218Z"}
+__________________ test_expired_verification_token_is_denied ___________________
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "e494f17aeb434d26810dd0078500094c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:00.960139Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "3fe7f5ffc70b4b9189e275c2cbf02961", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:01.819212Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "e3f75a3c81074a3fa9f2b78004513ec6", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:01.864821Z"}
+{"status": 422, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "ebd2f963226b4068b6d7444617253fc5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:13:01.886871Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "978e7b42cf6b43cb8802a294fe425133", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:13:01.898708Z"}
+=========================== short test summary info ============================
+PASSED tests/qa/test_qa_A01.py::test_intent_survives_signup_verify_and_first_workspace[reception-True]
+PASSED tests/qa/test_qa_A01.py::test_intent_survives_signup_verify_and_first_workspace[campaigns-False]
+PASSED tests/qa/test_qa_A01.py::test_intent_survives_signup_verify_and_first_workspace[both-True]
+PASSED tests/qa/test_qa_A01.py::test_signup_rejects_unknown_intent_and_duplicate_email_case_insensitive
+PASSED tests/qa/test_qa_A01.py::test_unverified_user_cannot_create_workspace
+PASSED tests/qa/test_qa_A01.py::test_short_password_rejected_without_creating_user
+PASSED tests/qa/test_qa_A05.py::test_existing_user_with_own_workspace_joins_the_right_workspace_and_nothing_is_billed
+PASSED tests/qa/test_qa_A05.py::test_new_user_can_accept_before_verifying_and_lands_only_in_inviting_workspace
+PASSED tests/qa/test_qa_A05.py::test_preview_and_accept_states_expired_revoked_used_and_unknown
+PASSED tests/qa/test_qa_A05.py::test_resend_rotates_token_old_link_dead_new_link_works
+PASSED tests/qa/test_qa_A05.py::test_expired_invitation_can_be_reissued_and_old_one_stays_dead
+PASSED tests/qa/test_qa_A05.py::test_removed_member_loses_access_immediately
+PASSED tests/qa/test_qa_A06.py::test_create_with_explicit_intent_overrides_signup_and_is_persisted
+PASSED tests/qa/test_qa_A06.py::test_choose_existing_lists_only_own_memberships_with_role
+PASSED tests/qa/test_qa_A06.py::test_goal_intent_change_is_saved_and_isolated
+PASSED tests/qa/test_qa_S02.py::test_two_workspace_isolation_for_members_and_invitations
+PASSED tests/qa/test_qa_S02.py::test_permission_matrix_staff_reader_admin
+PASSED tests/qa/test_qa_S02.py::test_invite_double_submit_and_existing_member
+PASSED tests/qa/test_qa_S02.py::test_role_change_and_remove_are_audited
+PASSED tests/qa/test_qa_M02.py::test_search_by_name_email_and_member_detail_is_operator_only
+PASSED tests/qa/test_qa_M02.py::test_detail_exposes_no_secrets
+PASSED tests/qa/test_qa_M02.py::test_view_as_expires_after_its_window
+PASSED tests/qa/test_qa_M03.py::test_failed_job_is_visible_to_operators_only_and_without_secrets
+PASSED tests/qa/test_qa_M03.py::test_outbox_dedupe_key_prevents_duplicate_jobs
+PASSED tests/qa/test_qa_H01.py::test_wrong_purpose_tokens_are_denied
+PASSED tests/qa/test_qa_H01.py::test_expired_verification_token_is_denied
+FAILED tests/qa/test_qa_A01.py::test_register_with_overlong_interface_language_is_a_validation_error_not_500
+FAILED tests/qa/test_qa_A05.py::test_list_invitations_reports_expired_pending_as_expired
+FAILED tests/qa/test_qa_S02.py::test_resend_is_audited_like_create_and_revoke
+FAILED tests/qa/test_qa_M02.py::test_view_as_session_is_scoped_to_the_chosen_workspace
+FAILED tests/qa/test_qa_M02.py::test_view_as_dies_when_operator_grant_is_revoked
+FAILED tests/qa/test_qa_M02.py::test_entitlements_and_readiness_in_detail - A...
+FAILED tests/qa/test_qa_M03.py::test_controlled_retry_endpoint_exists - Asser...
+FAILED tests/qa/test_qa_H01.py::test_operator_internal_note_is_not_visible_to_the_customer
+FAILED tests/qa/test_qa_H01.py::test_support_ticket_api_exists - AssertionErr...

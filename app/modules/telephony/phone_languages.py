@@ -112,6 +112,21 @@ def greeting(lang: str, name: str) -> str:
     return GREETING.get(lang, GREETING[DEFAULT]).format(name=name)
 
 
+# Said before the greeting when the owner's own test call is answered.
+TEST_PREFIX = {"da": "Dette er et prøveopkald.", "en": "This is a test call.", "de": "Dies ist ein Testanruf.",
+               "es": "Esta es una llamada de prueba.", "fr": "Ceci est un appel test.", "it": "Questa è una chiamata di prova.",
+               "no": "Dette er en testsamtale.", "sv": "Det här är ett testsamtal."}
+
+
+def test_prefix(lang: str) -> str:
+    return TEST_PREFIX.get(lang, TEST_PREFIX[DEFAULT])
+
+
+def default_language(db: OrmSession, workspace_id) -> str:
+    """The business's default conversation language (the one its written greetings are in)."""
+    return call_language(db, workspace_id, None)
+
+
 def summary_instruction(lang: str) -> str:
     """Appended to the Danish summary prompt when the business reads its reports in another language."""
     return "" if lang == DEFAULT else f" Skriv resuméet på {NAME_EN[lang]} (write the summary in {NAME_EN[lang]})."

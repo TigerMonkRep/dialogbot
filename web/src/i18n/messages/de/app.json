@@ -303,7 +303,9 @@
       "call": "Anrufen",
       "conversation": "Das Gespräch",
       "lead": "Anfrage",
-      "cancel": "Stornieren"
+      "cancel": "Stornieren",
+      "syncFailed": "Nicht im Kalender",
+      "syncFailedDetail": "Der Termin konnte nicht in den verbundenen Kalender geschrieben werden: {error}"
     },
     "book": {
       "noSlotsError": "Es gibt keine freien Zeiten. Prüfen Sie Öffnungszeiten und Kalender.",
@@ -329,12 +331,20 @@
       "notConnected": "Nicht verbunden",
       "lastRead": "Zuletzt gelesen {at} · {n} belegte Zeiträume. Dialogbot sieht nur, wann Sie belegt sind.",
       "without": "Ohne Kalender kennt Dialogbot nur die Öffnungszeiten und die Termine, die er selbst gebucht hat.",
-      "change": "Kalender verbinden oder wechseln"
+      "change": "Kalender verbinden oder wechseln",
+      "linked": "{name} ist verbunden. Neue Termine werden in den Kalender geschrieben, und belegte Zeiten dort werden blockiert.",
+      "linkedError": "{name} ist verbunden, aber der letzte Aufruf ist fehlgeschlagen: {error}",
+      "syncFailedN": "{n} Termine konnten nicht in den Kalender geschrieben werden. Sie sind mit „Nicht im Kalender“ markiert – prüfen Sie die Zeit im Kalender selbst.",
+      "simulated": "simuliert",
+      "provider": {
+        "google_calendar": "Google Kalender",
+        "microsoft_calendar": "Outlook-Kalender (Microsoft 365)"
+      }
     },
     "staffOnly": "Termine können von Mitarbeitern, Administratoren und Inhabern eingesehen werden.",
     "eyebrow": "Heute → Termine",
     "title": "Termine, die Dialogbot gebucht hat",
-    "intro": "Hier verschieben oder stornieren. Belegte Zeiten in Ihrem Kalender werden blockiert, und jede Buchung wird zu einer Anfrage mit einer Aufgabe.",
+    "intro": "Hier stornieren. Belegte Zeiten in Ihrem Kalender werden blockiert, und jede Buchung wird zu einer Anfrage mit einer Aufgabe.",
     "prevWeek": "Vorherige Woche",
     "nextWeek": "Nächste Woche",
     "noHours": {
@@ -554,7 +564,7 @@
       "pause": "Pausieren",
       "before": "Bevor sie startet",
       "resumeTitle": "Kampagne fortsetzen",
-      "heading": "{n} Anrufe · höchstens {max} zzgl. MwSt.",
+      "heading": "{n} Kontakte · höchstens {max} zzgl. MwSt.",
       "body": "{n} Kontakte warten. Höchstens {max} + MwSt. ({gross} inkl. MwSt.) – {call} + MwSt. pro ausgehendem Anruf und {minute} + MwSt. pro angefangener Gesprächsminute, höchstens {attempts} Versuche und {minutes} Minuten Gespräch pro Kontakt. Eine Zahlung startet niemals Anrufe.",
       "confirm": "Regeln für Anrufe bestätigen",
       "starting": "Wird gestartet …",
@@ -782,7 +792,7 @@
       "confirmed": "Bestätigt · Vereinbarung v{v}. Einrichtung in Eigenregie ist inklusive.",
       "notConfirmed": "Einrichtung in Eigenregie ist inklusive. Noch nicht bestätigt.",
       "campaign": "Kampagnenanrufe",
-      "campaignPrice": "pro Anruf + {minute} pro Minute zzgl. MwSt.",
+      "campaignPrice": "pro Anruf + {minute} pro angefangener Minute zzgl. MwSt.",
       "campaignMonth": "Diesen Monat: {calls} Anrufe, {minutes} Gesprächsminuten · {amount} zzgl. MwSt.",
       "inbound": "Eingehende Anrufe",
       "inboundUsed": "von {n} inklusiven Minuten diesen Monat verbraucht",
@@ -796,6 +806,7 @@
     "pay": {
       "title": "Zahlung",
       "notConfigured": "Die Kartenzahlung ist noch nicht eingerichtet. Bis dahin ist die Übersicht nur eine Vorschau, und es wird nichts abgebucht.",
+      "testMode": "Testmodus – es wird nichts von der Karte abgebucht",
       "card": "Karte",
       "expires": "läuft ab {exp}",
       "noCard": "Keine Zahlungskarte",

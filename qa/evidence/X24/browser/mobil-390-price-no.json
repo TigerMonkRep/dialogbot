@@ -1,0 +1,56 @@
+[
+  {
+    "project": "mobil-390",
+    "kind": "price",
+    "locale": "no",
+    "route": "/priser",
+    "currency": "NOK",
+    "expected": {
+      "erhvervMonthlyMoney": "3 995 kr",
+      "erhvervMonthlyAmount": "3 995",
+      "callMoney": "6,30 kr",
+      "privatBasis": "79 kr",
+      "privatBasisAmount": "79"
+    },
+    "hasErhverv": true,
+    "hasPrivat": false,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  },
+  {
+    "project": "mobil-390",
+    "kind": "price",
+    "locale": "no",
+    "route": "/erhverv",
+    "currency": "NOK",
+    "expected": {
+      "erhvervMonthlyMoney": "3 995 kr",
+      "erhvervMonthlyAmount": "3 995",
+      "callMoney": "6,30 kr",
+      "privatBasis": "79 kr",
+      "privatBasisAmount": "79"
+    },
+    "hasErhverv": true,
+    "hasPrivat": false,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  },
+  {
+    "project": "mobil-390",
+    "kind": "price",
+    "locale": "no",
+    "route": "/privat",
+    "currency": "NOK",
+    "expected": {
+      "erhvervMonthlyMoney": "3 995 kr",
+      "erhvervMonthlyAmount": "3 995",
+      "callMoney": "6,30 kr",
+      "privatBasis": "79 kr",
+      "privatBasisAmount": "79"
+    },
+    "hasErhverv": false,
+    "hasPrivat": true,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  }
+]

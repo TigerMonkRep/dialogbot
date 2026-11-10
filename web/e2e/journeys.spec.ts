@@ -508,8 +508,17 @@ test("14 · S03: ny kunde sætter telefonen op uden leverandørkonti – nummer,
   await page.goto("/app/operator/telephony");
   await expect(page.getByRole("heading", { name: "Telefoni: leverandører, klargøring og numre" })).toBeVisible();
   await shot(page, info, "operator-telefoni");
+  // The test call itself makes no lead or task (DB-018, QA F-VQ-07-R02). A real call after activation does.
+  const realId = `call_real_${info.project.name}_${Date.now()}`;
+  expect((await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: { type: "assistant-request", call: { id: realId, customer: { number: "+4520304050" } }, phoneNumber: { number: dest } } } })).ok()).toBeTruthy();
+  const real = await page.request.post(`${api}/api/v1/webhooks/vapi`, { headers: auth, data: { message: {
+    type: "end-of-call-report", endedReason: "customer-ended-call", analysis: { summary: "Ønsker tilbud på afslibning af stuegulvet." },
+    phoneNumber: { number: dest },
+    call: { id: realId, customer: { number: "+4520304050" }, startedAt: new Date(Date.now() - 65_000).toISOString(), endedAt: new Date().toISOString() },
+    artifact: { messages: [{ role: "bot", message: "Hej, du har ringet til os." }, { role: "user", message: "Hvad koster afslibning?" }] } } } });
+  expect(real.ok()).toBeTruthy();
   await page.goto("/app/opkald");
-  await page.getByRole("link", { name: /Vil have tilbud på afslibning/ }).click();
+  await page.getByRole("link", { name: /Ønsker tilbud på afslibning af stuegulvet/ }).click();
   await expect(page.getByRole("listitem").filter({ hasText: "Hvad koster afslibning?" }).first()).toBeVisible();   // the transcript
   await page.getByRole("link", { name: "Åbn henvendelse" }).click();
   await expect(page.getByText("Ring tilbage til +4520304050")).toBeVisible();

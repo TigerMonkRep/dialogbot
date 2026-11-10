@@ -1,6 +1,6 @@
 "use client";
 import { useId } from "react";
-import { useT } from "@/i18n/client";
+import { useLocale, useT } from "@/i18n/client";
 import type { ApiError } from "@/lib/client";
 import { Ico } from "@/components/privat/icons";
 import { Alert, Button } from "@/components/ui";
@@ -68,9 +68,10 @@ export function NextButton({ children, onClick, disabled, busy, type = "button",
   );
 }
 
-/** «ca. 11 opkald om ugen» – the number is an input the person can correct; the source of the estimate is shown.
+/** «ca. 11 opkald om ugen» – the number is an input the person can correct; the source of the estimate is shown
+ *  (from the page's own messages: the backend's `source` text is Danish).
  *  No fake precision: it is an average for the line of business, and it says so. */
-export function Estimate({ value, onChange, source }: { value: number; onChange: (n: number) => void; source: string }) {
+export function Estimate({ value, onChange }: { value: number; onChange: (n: number) => void }) {
   const t = useT("site.funnel.estimate");
   const id = useId();
   return (
@@ -82,19 +83,36 @@ export function Estimate({ value, onChange, source }: { value: number; onChange:
           className="w-[84px] min-h-[44px] px-2 rounded-xl border-2 border-ink bg-white text-center font-display font-extrabold text-[26px] text-ink focus:outline-none focus:ring-[3px] focus:ring-accent" />
         <span>{t("perWeek")}</span>
       </label>
-      <p className="m-0 text-[13px] text-ink-soft">{t("source", { source })} · {t("edit")}</p>
+      <p className="m-0 text-[13px] text-ink-soft">{t("source")} · {t("edit")}</p>
     </div>
   );
 }
 export type { EstimateT };
 
+const ERROR_CODES = ["rate_limited", "draft_not_found", "draft_expired", "draft_verified", "search_failed", "too_soon", "sms_failed",
+  "privat_not_enabled", "code_expired", "too_many_attempts", "user_inactive"];
+
+/** A funnel error on the page's language: translated from the backend's `code` (the backend writes Danish). A wrong SMS
+ *  code is a field error on `code`. Unknown errors keep the backend text on Danish pages, a generic line elsewhere. */
+export function useFunnelError(): (err: ApiError | null | undefined) => string {
+  const t = useT("site.funnel.common");
+  const locale = useLocale();
+  return (err) => {
+    if (!err) return t("errorTitle");
+    if (ERROR_CODES.includes(err.code)) return t(`errors.${err.code}`);
+    if (err.field_errors?.some((f) => f.field === "code")) return t("errors.wrong_code");
+    return locale === "da" && err.message ? err.message : t("errors.generic");
+  };
+}
+
 /** While the draft loads / when it could not be loaded. */
 export function FunnelState({ status, error, onRetry }: { status: "loading" | "error"; error: ApiError | null; onRetry?: () => void }) {
   const t = useT("site.funnel.common");
+  const say = useFunnelError();
   if (status === "loading") return <p role="status" className="m-0 text-[15px] text-muted">{t("loading")}</p>;
   return (
     <div className="flex flex-col gap-3">
-      <Alert>{error?.message ?? t("errorTitle")}</Alert>
+      <Alert>{error ? say(error) : t("errorTitle")}</Alert>
       {onRetry && <Button variant="outline" onClick={onRetry} className="self-start">{t("startOver")}</Button>}
     </div>
   );

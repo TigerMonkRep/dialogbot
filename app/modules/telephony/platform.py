@@ -176,6 +176,7 @@ def set_business_number(db: OrmSession, ws_id: uuid.UUID, *, e164: str, subscrip
     if num != s.business_number:
         s.business_number, s.business_number_verified_at, s.business_number_verified_by = num, None, None
         s.verify_code_hash, s.verify_attempts = None, 0
+        s.last_test_id = None  # the old number's test call proves nothing about the new one
     s.subscription_type, s.carrier, s.forwarding_mode = subscription_type, carrier.strip()[:80], forwarding_mode
     s.wants_new_number = wants_new_number
     s.version += 1
@@ -455,6 +456,12 @@ def mark_test_call(db: OrmSession, number: PhoneNumber, provider_call_id: str | 
         t.provider_call_id = provider_call_id[:100]
 
 
+def is_test_call(db: OrmSession, provider_call_id: str | None) -> bool:
+    """The call was answered in test mode («Dette er et prøveopkald»; mark_test_call stored its id on the test)."""
+    return bool(provider_call_id) and db.scalar(
+        select(TelephonyTest.id).where(TelephonyTest.provider_call_id == provider_call_id[:100]).limit(1)) is not None
+
+
 def evaluate_test(db: OrmSession, call: Call, message: dict) -> None:
     """After a call's end-of-call report: pass or fail the open test for that workspace."""
     from app.modules.telephony.vapi import _dig
@@ -501,6 +508,8 @@ def activate(db: OrmSession, ws_id: uuid.UUID, user_id: uuid.UUID) -> TelephonyS
     t = last_test(db, s)
     if destination(db, s) is None:
         raise Conflict("Jeres Dialogbot-nummer er ikke klar endnu", code="telephony_not_ready")
+    if s.business_number and s.business_number_verified_at is None:
+        raise Conflict("Bekræft først jeres nummer med koden fra kontrolopkaldet", code="telephony_number_unverified")
     if t is None or t.status != "passed":
         raise Conflict("Aktivér først efter et bestået prøveopkald", code="telephony_test_required")
     if agreement(db, ws_id) is None:

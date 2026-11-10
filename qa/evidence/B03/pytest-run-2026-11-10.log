@@ -1,0 +1,345 @@
+...........F.FF.............x.FFF.FF..x......FF                          [100%]
+=================================== FAILURES ===================================
+_____ test_b06_a_late_payment_failed_event_must_not_reopen_a_paid_invoice ______
+
+api = <tests.conftest.Api object at 0x7f3f32092330>
+two_workspaces = {'tok_a': 'L6PvSrQi3jHUzrZIElmgI6OD_j5klRxyZaVP1hBPQ6I', 'ws_a': 'cf0c2232-b245-4d5f-ba89-e434a61f6401', 'tok_b': 'sv4oKh51jRIK99MObeJ2P_ppvOXAT-nYDSeSr5KQ4XM', 'ws_b': '245d845c-fb23-48f0-9559-cccd09ef7e88'}
+db = <sqlalchemy.orm.session.Session object at 0x7f3f35b6dd60>
+wh = <function wh.<locals>.send at 0x7f3f320de8e0>
+
+    def test_b06_a_late_payment_failed_event_must_not_reopen_a_paid_invoice(api, two_workspaces, db, wh):
+        """Stripe does not guarantee order: the failed first attempt's invoice.payment_failed (created earlier) can arrive
+        after invoice.paid (the retry succeeded). The invoice is paid."""
+        tok, ws = two_workspaces["tok_a"], two_workspaces["ws_a"]
+        inv = _invoice(db, ws, "in_qa_order")
+        t0 = int(time.time()) - 600
+        wh("evt_b06_o2", "invoice.paid", {"id": "in_qa_order", "status": "paid", "total": GROSS}, created=t0 + 300)
+        wh("evt_b06_o1", "invoice.payment_failed", {"id": "in_qa_order", "status": "open", "total": GROSS}, created=t0)
+>       assert _status(api, tok, ws)[str(inv.id)]["status"] == "paid"
+E       AssertionError: assert 'payment_failed' == 'paid'
+E         
+E         - paid
+E         + payment_failed
+
+tests/qa/test_qa_billing_b06.py:92: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "b0602b9648fc4a858096e0404f4a0691", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:16.557331Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "87f5ca2264514fa8aeb900e194bcd8c9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:17.694912Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "24b5a39a875743ff9f83cb3e499cf304", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:03:17.868266Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "982f42647cb14bbf866ec237cd1f5aa3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:17.941300Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "ec5f5a5582d64588867643e364ab2ade", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:18.004214Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "02611a49c1c54812a6d19c7eb5125ce1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:19.335563Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "9a9063fecc4e45faabd6415ff4b8a0c9", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:20.166982Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "a385f76cb07a47419621ef279f7aa851", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:03:20.265726Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "810aa68c52f54af98cef79d355deb4d1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:20.288275Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "500fb372cf3b4d73baa7b43fe5e735b8", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:20.324001Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "47ed31d04e9245798c5b971cfd21c952", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:20.417268Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "f76629b3b81d465fb4426e12bf6557bd", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:20.509318Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/cf0c2232-b245-4d5f-ba89-e434a61f6401/billing/invoices", "request_id": "4f1acf8c9d6c4cd6b22036756a00e310", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:03:20.606033Z"}
+__ test_b06_two_partial_refunds_reduce_commission_by_the_refunded_share_once ___
+
+api = <tests.conftest.Api object at 0x7f3f322edd00>
+two_workspaces = {'tok_a': 'Sh_0RDlpzhhX-6JQ6qDkdSQEew_UvY5tUIYgXTMT_aw', 'ws_a': 'bc548232-4e11-4980-ba2a-fdba7954c12b', 'tok_b': 'wenJz5IWfmAMiK-jysT-KyGnZs8Wa8Fvjnjp_6pPnVM', 'ws_b': 'dce7e568-0a6f-4195-93fe-d3cd1eace0bd'}
+db = <sqlalchemy.orm.session.Session object at 0x7f3f35f619a0>
+wh = <function wh.<locals>.send at 0x7f3f32157ba0>
+
+    def test_b06_two_partial_refunds_reduce_commission_by_the_refunded_share_once(api, two_workspaces, db, wh):
+        """Commission 10 % of 2.495 kr. = 249,50 kr. Refund 20 % (623,75 kr.), later another 20 %: Stripe's charge.refunded
+        carries the CUMULATIVE amount_refunded (1.247,50 kr. = 40 %). Expected remaining: 60 % × 24.950 = 14.970 øre."""
+        sid = _commission_setup(api, two_workspaces, db)
+        wh("evt_b06_r1", "charge.refunded", {"id": "ch_qa_1", "invoice": "in_qa_refund", "amount_refunded": 62_375})
+        db.expire_all()
+        assert db.get(CommissionEntry, sid).amount_minor == 19_960
+        wh("evt_b06_r2", "charge.refunded", {"id": "ch_qa_1", "invoice": "in_qa_refund", "amount_refunded": 124_750})
+        db.expire_all()
+>       assert db.get(CommissionEntry, sid).amount_minor == 14_970
+E       AssertionError: assert 11976 == 14970
+E        +  where 11976 = <app.models.domain.CommissionEntry object at 0x7f3f35777100>.amount_minor
+E        +    where <app.models.domain.CommissionEntry object at 0x7f3f35777100> = get(CommissionEntry, UUID('cf5253a5-badf-453d-a1c1-ae19a281d0ee'))
+E        +      where get = <sqlalchemy.orm.session.Session object at 0x7f3f35f619a0>.get
+
+tests/qa/test_qa_billing_b06.py:138: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "84222770bcc3448dad99184de778f897", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:25.640702Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "64ba07b545414abf8e3b1189f759d0f4", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:26.691078Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "a067542efebc4774a9a0881d32677925", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:03:26.823455Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "1d1699872cfe49878e7c78d59dc65c55", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:26.844070Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "0d143e8081eb43bbb7e40f968bb64e1a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:26.861329Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "4e1cc820523d416a872ac9a51f5ebf8a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:27.402621Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "634baf3c3b524fc4a4c22ca03ad40498", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:28.190550Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "1afcb5de5fd24d59bd1ae1a4c64c6910", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:03:28.289351Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "79a469ad03304a88a6d72f4e45874e0e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:28.310209Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "db51d0df90214739a3b19be4dc826eb2", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:28.365810Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "646b3f33ff2b4637a16151d88906e023", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:03:28.452719Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "99d62095699849ba95b67781ce3aa082", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:28.627549Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "d2d46fa5fb6c401881e01ee941e98356", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:28.737529Z"}
+______ test_b06_one_refund_reported_as_refund_and_credit_note_counts_once ______
+
+api = <tests.conftest.Api object at 0x7f3f322eead0>
+two_workspaces = {'tok_a': 'Oh9lGsFvhkTayBaCrJvICHDehM9A3mDsoVGL7wewAXo', 'ws_a': 'd425bacd-464f-487d-8719-44c1c198b884', 'tok_b': 'LZ_yMLlyIEW4kVj-Ihdpa0uZURw-XWxaI3vmIdfBBF0', 'ws_b': '4ad44103-a591-4633-9829-5ebf8e067cb3'}
+db = <sqlalchemy.orm.session.Session object at 0x7f3f321655e0>
+wh = <function wh.<locals>.send at 0x7f3f31f4fce0>
+
+    def test_b06_one_refund_reported_as_refund_and_credit_note_counts_once(api, two_workspaces, db, wh):
+        """A refund made through a credit note emits credit_note.created AND charge.refunded for the same 20 %."""
+        sid = _commission_setup(api, two_workspaces, db)
+        wh("evt_b06_cn", "credit_note.created", {"id": "cn_qa_1", "invoice": "in_qa_refund", "total": 62_375})
+        wh("evt_b06_ch", "charge.refunded", {"id": "ch_qa_2", "invoice": "in_qa_refund", "amount_refunded": 62_375})
+        db.expire_all()
+>       assert db.get(CommissionEntry, sid).amount_minor == 19_960
+E       AssertionError: assert 15968 == 19960
+E        +  where 15968 = <app.models.domain.CommissionEntry object at 0x7f3f320e4550>.amount_minor
+E        +    where <app.models.domain.CommissionEntry object at 0x7f3f320e4550> = get(CommissionEntry, UUID('cbaba2e0-e2a4-4018-99cf-e62d153abbe3'))
+E        +      where get = <sqlalchemy.orm.session.Session object at 0x7f3f321655e0>.get
+
+tests/qa/test_qa_billing_b06.py:147: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "90f520f64d5c436cad3aaed316471fb1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:31.291200Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "94106264ae954759b782fa28534009b0", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:31.972749Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "f9fb8733634646f8879242a58919520e", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:03:32.109341Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "0c5d46f2fefc4673a64e562df7f2900d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:32.120685Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "513de8a96767461c85c996849bfd84f5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:32.267729Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "3dc6f4cddeaa467f9a75af3e978855ad", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:32.911070Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "f59248a31fea442a976df0b3ea67d44a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:33.492588Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "e2dc59b780224634bdb3b04d6865795f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:03:33.532067Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "850e88701507422db33fc4f3356dc80a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:33.552236Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "32449954f4a646bca29e394887bb21f5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:33.580975Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "7dff9415ee7e496888a1ab976d6791db", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:03:33.632646Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "721d60db897f45ca945fcf0d14b756e3", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:33.672223Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "457d2d7016a0425ca5e3ffe715c64ce7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:03:33.687630Z"}
+_ test_x08_subscription_ended_for_non_payment_has_no_rights_for_the_unpaid_period _
+
+api = <tests.conftest.Api object at 0x7f3f31fe27b0>
+client = <starlette.testclient.TestClient object at 0x7f3f31e8a890>
+pv = <tests.privat_fixtures.Pv object at 0x7f3f31e88e50>
+db = <sqlalchemy.orm.session.Session object at 0x7f3f35f62120>, stripe_env = []
+
+    def test_x08_subscription_ended_for_non_payment_has_no_rights_for_the_unpaid_period(api, client, pv, db, stripe_env):
+        """Renewal on 4/11 failed; Stripe's retries end 18/11 and it cancels the subscription. The period 4/11–4/12 was
+        never paid, so no rights must remain ("canceled: the paid period still runs out" – it was not paid)."""
+        tok = pv.account("x08-unpaid@qa-bill.dk", trial=False)
+        ws = pv.ws(tok)
+        unpaid_end = WED_10 + timedelta(days=30)
+        _event(client, _ev("evt_x08_u1", "updated", _sub(ws, status="past_due", plan="plus", period_end=unpaid_end)))
+        pv.clock.at = WED_10 + timedelta(days=14)
+        _event(client, _ev("evt_x08_u2", "deleted", _sub(ws, status="canceled", plan="plus", period_end=unpaid_end,
+                                                         extra={"ended_at": int(pv.clock.at.timestamp()),
+                                                                "cancellation_details": {"reason": "payment_failed"}})))
+        s = pv.subscription(tok)
+        assert s["status"] == "canceled"
+>       assert s["entitled"] is False, f"unpaid period still grants {s['plan']} with {s['calls_quota']} calls"
+E       AssertionError: unpaid period still grants plus with 10 calls
+E       assert True is False
+
+tests/qa/test_qa_billing_x08.py:203: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "5e3b426086064d7a9926946595d35582", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:47.962648Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "25b4dfa2f8784b7ba7f9ee5b7f7b55ee", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:48.188733Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "17709a343d1c4f369865ddd40b0b2492", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:48.234845Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "583e5d4a0bdf4534bf7bae666532702b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:48.247668Z"}
+{"status": 200, "event": "request", "path": "/api/v1/privat/account", "request_id": "e10632d000c94ef0a452b9f508df2397", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:48.346537Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "d6f060752308492aa926067e2df48804", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:48.358099Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "bc417a2047014af6b0b1617ab3d6be0c", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:48.398899Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "802c19731a5344679d320208475f591b", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:48.431994Z"}
+{"status": 200, "event": "request", "path": "/api/v1/privat/subscription", "request_id": "a99f430123b84450bb2d3eeb6e257b3b", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:48.451137Z"}
+____________ test_x08_plan_change_in_portal_follows_the_price_paid _____________
+
+api = <tests.conftest.Api object at 0x7f3f32105ed0>
+client = <starlette.testclient.TestClient object at 0x7f3f31e5e430>
+pv = <tests.privat_fixtures.Pv object at 0x7f3f31e5e510>
+db = <sqlalchemy.orm.session.Session object at 0x7f3f35b6f5c0>, stripe_env = []
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3f31fe2d50>
+
+    def test_x08_plan_change_in_portal_follows_the_price_paid(api, client, pv, db, stripe_env, monkeypatch):
+        """Basis → Familie in the Stripe Billing Portal: Stripe swaps the item's price; the subscription METADATA (set once at
+        Checkout) still says basis. The customer pays 169 kr. and must get Familie (25 calls, 5 people) – and the reverse
+        (Familie → Basis) must not keep Familie rights at the Basis price."""
+        monkeypatch.setenv("PRIVAT_STRIPE_PRICE_BASIS_MONTH", "price_basis_m")
+        monkeypatch.setenv("PRIVAT_STRIPE_PRICE_FAMILIE_MONTH", "price_familie_m")
+        get_settings.cache_clear()
+        tok = pv.account("x08-portal@qa-bill.dk", trial=False)
+        ws = pv.ws(tok)
+        _event(client, _ev("evt_x08_pc1", "created", _sub(ws, plan="basis", price_id="price_basis_m")))
+        assert pv.subscription(tok)["plan"] == "basis"
+        _event(client, _ev("evt_x08_pc2", "updated", _sub(ws, plan="basis", price_id="price_familie_m")))
+        s = pv.subscription(tok)
+>       assert (s["plan"], s["calls_quota"], s["people_limit"]) == ("familie", 25, 5)
+E       AssertionError: assert ('basis', 3, 1) == ('familie', 25, 5)
+E         
+E         At index 0 diff: 'basis' != 'familie'
+E         Use -v to get more diff
+
+tests/qa/test_qa_billing_x08.py:221: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "102cf9e66a17477998ba0602cf9c5bbf", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:49.933979Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "dbb0d385c10b4490b06795c841006b70", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:50.174999Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "f2d43044837546f7be572d0679ff266c", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:50.212618Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "03581478ddbc4820a5f8694a8968f8e1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:50.222630Z"}
+{"status": 200, "event": "request", "path": "/api/v1/privat/account", "request_id": "88ac56bfe6c24912a16722c5b9821aa0", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:50.260134Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "7d23d91166dc4e3f9d344193ddcc1cab", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:50.264339Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "203351901d0e46be9ed3535423288ad7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:50.287872Z"}
+{"status": 200, "event": "request", "path": "/api/v1/privat/subscription", "request_id": "a3c610f2c97d449591c28fbe42f488e1", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:50.305886Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "9319524c3c284465bb2df36f553a49ba", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:50.344013Z"}
+{"status": 200, "event": "request", "path": "/api/v1/privat/subscription", "request_id": "1040ecda0e214b77ab3e130b8d20f090", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:50.369687Z"}
+____________ test_x08_month_to_year_in_portal_updates_the_interval _____________
+
+api = <tests.conftest.Api object at 0x7f3f321043d0>
+client = <starlette.testclient.TestClient object at 0x7f3f31e88210>
+pv = <tests.privat_fixtures.Pv object at 0x7f3f31e5ba00>
+db = <sqlalchemy.orm.session.Session object at 0x7f3f32166e40>, stripe_env = []
+
+    def test_x08_month_to_year_in_portal_updates_the_interval(api, client, pv, db, stripe_env):
+        tok = pv.account("x08-interval@qa-bill.dk", trial=False)
+        ws = pv.ws(tok)
+        _event(client, _ev("evt_x08_i1", "created", _sub(ws, plan="plus", interval="month")))
+        assert pv.subscription(tok)["interval"] == "month"
+        _event(client, _ev("evt_x08_i2", "updated", _sub(ws, plan="plus", interval="month", item_interval="year",
+                                                         period_end=WED_10 + timedelta(days=365))))
+>       assert pv.subscription(tok)["interval"] == "year"
+E       AssertionError: assert 'month' == 'year'
+E         
+E         - year
+E         + month
+
+tests/qa/test_qa_billing_x08.py:231: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "f22dbb94e2ba48feb8eee9eb16251964", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:51.110742Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "a9d1c41cf85745f3b73eb72730fd18be", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:51.303841Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "db4b1f52a9fd4cc29a9bce079505890a", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:51.350200Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "68938912063a4a5593f3f200bcc66113", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:51.365621Z"}
+{"status": 200, "event": "request", "path": "/api/v1/privat/account", "request_id": "47e73cfdc1314dafa78329cd18d1161e", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:51.410204Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "55b460201d874be6acac6665a47f15d4", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:51.417355Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "d23d3d25906f4f3c9894659623b51b13", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:51.462719Z"}
+{"status": 200, "event": "request", "path": "/api/v1/privat/subscription", "request_id": "bb5285f5e03e469c857c225136ac06ad", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:51.485759Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "91c5c709d7c2466c801ed6013a1c7e35", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:51.517287Z"}
+{"status": 200, "event": "request", "path": "/api/v1/privat/subscription", "request_id": "888e036706e24cd6b4f929564a0e2a1f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:51.535040Z"}
+_ test_x08_out_of_order_stale_trialing_event_does_not_lock_out_a_paying_customer _
+
+api = <tests.conftest.Api object at 0x7f3f31e51b70>
+client = <starlette.testclient.TestClient object at 0x7f3f3203faf0>
+pv = <tests.privat_fixtures.Pv object at 0x7f3f31f34e90>
+db = <sqlalchemy.orm.session.Session object at 0x7f3f31f67200>, stripe_env = []
+
+    def test_x08_out_of_order_stale_trialing_event_does_not_lock_out_a_paying_customer(api, client, pv, db, stripe_env):
+        """Stripe does not guarantee event order. The trial→active update (created later) arrives first, then the older
+        trialing update. The customer has paid and must stay active."""
+        tok = pv.account("x08-order@qa-bill.dk", trial=False)
+        ws = pv.ws(tok)
+        t_end = WED_10 + timedelta(days=14)
+        t_old, t_new = int(WED_10.timestamp()), int((t_end + timedelta(minutes=5)).timestamp())
+        pv.clock.at = t_end + timedelta(hours=1)
+        _event(client, _ev("evt_x08_o_new", "updated", _sub(ws, status="active", plan="plus",
+                                                             period_end=t_end + timedelta(days=30)), created=t_new))
+        _event(client, _ev("evt_x08_o_old", "updated", _sub(ws, status="trialing", plan="plus", trial_end=t_end,
+                                                             period_end=t_end), created=t_old))
+        s = pv.subscription(tok)
+>       assert (s["status"], s["entitled"]) == ("active", True), s
+E       AssertionError: {'plan': 'none', 'status': 'expired', 'interval': None, 'trial_ends_at': '2026-11-18T09:00:00+00:00', ...}
+E       assert ('expired', False) == ('active', True)
+E         
+E         At index 0 diff: 'expired' != 'active'
+E         Use -v to get more diff
+
+tests/qa/test_qa_billing_x08.py:257: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "b1701a2bbeba43e1aa20c263e6b3eabd", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:53.352866Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "e3175c0225574886a2765fb1f2ad1325", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:53.577627Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "235329ff5423492bbfd69eefc0e7e4bd", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:53.606142Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "66cea96d360c41d0a06b2367a175d76d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:53.619450Z"}
+{"status": 200, "event": "request", "path": "/api/v1/privat/account", "request_id": "66d706fa71ca480abc62a95ffec1d21a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:53.675472Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/me", "request_id": "ff35d5cc7a064a8aaa475073fdf390c2", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:53.683287Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "922f1d005687475da7d0367ff1a3f614", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:53.727769Z"}
+{"status": 200, "event": "request", "path": "/api/v1/webhooks/stripe", "request_id": "6fed671a4c92470bbb1d04cb256a7ec5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:04:53.749950Z"}
+{"status": 200, "event": "request", "path": "/api/v1/privat/subscription", "request_id": "0fddbf171eb5490281fe189ca9fa7929", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:04:53.767580Z"}
+_____ test_x08_paywall_trial_note_names_the_price_charged_after_the_trial ______
+
+    def test_x08_paywall_trial_note_names_the_price_charged_after_the_trial():
+        """The paywall's «Prøv 14 dage» button checks out Plus MONTHLY (store.tsx startTrial). The note under it must name
+        that price (99 kr./md.), not the yearly per-month price (79 kr./md.) that the customer is not signing up for."""
+        store = (ROOT / "web/src/components/privat/store.tsx").read_text()
+        assert 'subscriptionCheckout({ plan: "plus", interval: "month"' in store       # what startTrial buys
+        prices_json = json.loads((ROOT / "web/src/lib/prices.json").read_text())["privat"]["DKK"]["plus"]
+        charged = prices_json["monthly"]                                                # 9900 after the trial
+        for loc in ("da", "en", "de", "sv", "no"):
+            note = json.loads((ROOT / f"web/src/i18n/messages/{loc}/privat.json").read_text())["paywall"]["trialNote"]
+            names = "{pPlus}" if "{pPlus}" in note else "{pPlusYear}" if "{pPlusYear}" in note else None
+            shown = {"{pPlus}": prices_json["monthly"], "{pPlusYear}": prices_json["yearly_monthly"]}.get(names)
+>           assert shown == charged, f"{loc}: paywall says {shown} øre/md after the trial, checkout charges {charged}"
+E           AssertionError: da: paywall says 7900 øre/md after the trial, checkout charges 9900
+E           assert 7900 == 9900
+
+tests/qa/test_qa_billing_x08.py:273: AssertionError
+_________ test_x28_agreement_plan_prices_are_in_the_workspace_currency _________
+
+api = <tests.conftest.Api object at 0x7f3f31e91250>
+two_workspaces = {'tok_a': '9mpjoPobtPNDqn_ey1OH8RSa5IBKWu-lWrr8IchSSEg', 'ws_a': '1420bb52-2029-4fd0-9f24-71df3182f7f3', 'tok_b': 'ZU-9qzVr7FbrSWuiQ-dxKdKVkQtUYO23XgW7sTS3k-Y', 'ws_b': 'f7a4be7a-1b1b-4435-af33-f612143e7923'}
+db = <sqlalchemy.orm.session.Session object at 0x7f3f31e68320>
+
+    def test_x28_agreement_plan_prices_are_in_the_workspace_currency(api, two_workspaces, db):
+        """/app/konto shows the subscription, call, minute and extra-minute prices from GET /agreement → plan, formatted in
+        the account's currency. A Swedish company is charged the SEK list prices (markets.ERHVERV['SEK']: 3.695 kr/md,
+        5,90 kr per call, 2,95 kr per minute, 2,20 kr per extra minute) and must be shown them – not the DKK numbers."""
+        from app.models import BusinessProfile
+    
+        tok, ws = two_workspaces["tok_a"], two_workspaces["ws_a"]
+        p = db.get(BusinessProfile, uuid.UUID(ws))
+        p.country = "SE"
+        db.commit()
+        acc = api.get(tok, f"/workspaces/{ws}/billing/account").json()
+        assert acc["currency"] == "SEK"
+        plan = api.get(tok, f"/workspaces/{ws}/agreement").json()["plan"]
+        shown = (plan["monthly_net_minor"], plan["campaign_call_net_minor"], plan["campaign_minute_net_minor"],
+                 plan["inbound_extra_minute_net_minor"])
+>       assert shown == (369_500, 590, 295, 220), f"konto would show {shown} as SEK"
+E       AssertionError: konto would show (249500, 400, 200, 150) as SEK
+E       assert (249500, 400, 200, 150) == (369500, 590, 295, 220)
+E         
+E         At index 0 diff: 249500 != 369500
+E         Use -v to get more diff
+
+tests/qa/test_qa_billing_x28.py:258: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "0eae3ad2d4ee47f99bb495c280246d7d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:05:36.068252Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "0a656078e86d405f9b6f734f473c92d2", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:05:37.523038Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "f872d792bad645ee91d7c0590e0d0424", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:05:37.634333Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "1aaef6a740de4310aa63b2447da044c7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:05:37.656651Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "2556551bc99a4c7faa1a14991f5407ba", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:05:37.696378Z"}
+{"status": 201, "event": "request", "path": "/api/v1/auth/register", "request_id": "2d9cfdcf64d04e5c8feb5b5496f2516a", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:05:38.531712Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/login", "request_id": "be96e03bba3b42619fa94653de90b8c7", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:05:39.523925Z"}
+{"status": 200, "event": "request", "path": "/api/v1/dev/mailbox", "request_id": "71a648e2496749c0bb96e2095dcd5224", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:05:39.616804Z"}
+{"status": 200, "event": "request", "path": "/api/v1/auth/verify-email", "request_id": "8c474c9513ae450b8c3bd6372080b4d5", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:05:39.713768Z"}
+{"status": 201, "event": "request", "path": "/api/v1/workspaces", "request_id": "9dd007dfea77422492f2c4a250f4f43d", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:05:39.756635Z"}
+----------------------------- Captured stdout call -----------------------------
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/1420bb52-2029-4fd0-9f24-71df3182f7f3/billing/account", "request_id": "a9ecd427c7384ed9ac0a282b95b60195", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:05:39.893249Z"}
+{"status": 200, "event": "request", "path": "/api/v1/workspaces/1420bb52-2029-4fd0-9f24-71df3182f7f3/agreement", "request_id": "97b8a40a759640ba9b42e27de5f0760f", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:05:39.928002Z"}
+_ test_x28_konto_text_says_started_minute_for_campaign_calls_like_for_inbound __
+
+    def test_x28_konto_text_says_started_minute_for_campaign_calls_like_for_inbound():
+        """The price rule is 2 kr. per STARTED minute; the inbound line already says «pr. påbegyndt minut»."""
+        import json
+        from pathlib import Path
+    
+        acc = json.loads((Path(__file__).resolve().parents[2] / "web/src/i18n/messages/da/app.json").read_text())["account"]["sub"]
+        assert "påbegyndt minut" in acc["inboundExtra"] and "påbegyndt minut" in acc["inboundPrice"]
+>       assert "påbegyndt minut" in acc["campaignPrice"], acc["campaignPrice"]
+E       AssertionError: pr. opkald + {minute} pr. minut ekskl. moms
+E       assert 'påbegyndt minut' in 'pr. opkald + {minute} pr. minut ekskl. moms'
+
+tests/qa/test_qa_billing_x28.py:268: AssertionError
+=========================== short test summary info ============================
+FAILED tests/qa/test_qa_billing_b06.py::test_b06_a_late_payment_failed_event_must_not_reopen_a_paid_invoice
+FAILED tests/qa/test_qa_billing_b06.py::test_b06_two_partial_refunds_reduce_commission_by_the_refunded_share_once
+FAILED tests/qa/test_qa_billing_b06.py::test_b06_one_refund_reported_as_refund_and_credit_note_counts_once
+FAILED tests/qa/test_qa_billing_x08.py::test_x08_subscription_ended_for_non_payment_has_no_rights_for_the_unpaid_period
+FAILED tests/qa/test_qa_billing_x08.py::test_x08_plan_change_in_portal_follows_the_price_paid
+FAILED tests/qa/test_qa_billing_x08.py::test_x08_month_to_year_in_portal_updates_the_interval
+FAILED tests/qa/test_qa_billing_x08.py::test_x08_out_of_order_stale_trialing_event_does_not_lock_out_a_paying_customer
+FAILED tests/qa/test_qa_billing_x08.py::test_x08_paywall_trial_note_names_the_price_charged_after_the_trial
+FAILED tests/qa/test_qa_billing_x28.py::test_x28_agreement_plan_prices_are_in_the_workspace_currency
+FAILED tests/qa/test_qa_billing_x28.py::test_x28_konto_text_says_started_minute_for_campaign_calls_like_for_inbound
+XFAIL tests/qa/test_qa_billing_x08.py::test_x08_immediate_cancel_in_trial_ends_rights - F-BQ-005-X08 needs-decision: an immediately canceled trial keeps Plus/plan rights until the original trial end
+XFAIL tests/qa/test_qa_billing_x28.py::test_x28_fractional_second_past_a_minute_is_a_started_minute - F-BQ-001-X28 needs-decision: fractional seconds are truncated before rounding up (60.4 s billed as 1 started minute)
+Totals (from progress line, 47 tests): 35 passed, 10 failed, 2 xfailed

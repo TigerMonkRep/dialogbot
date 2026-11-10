@@ -291,4 +291,5 @@ def booking_out(b: Booking, tz: str) -> dict:
             "status": b.status, "source": b.source, "contact_name": b.contact_name, "contact_phone": b.contact_phone,
             "contact_email": b.contact_email, "note": b.note, "lead_id": str(b.lead_id) if b.lead_id else None,
             "conversation_id": str(b.conversation_id) if b.conversation_id else None,
-            "calendar_connector": b.calendar_connector, "calendar_event_id": b.calendar_event_id}
+            "calendar_connector": b.calendar_connector, "calendar_event_id": b.calendar_event_id,
+            "calendar_sync": b.calendar_sync, "calendar_sync_error": b.calendar_sync_error}

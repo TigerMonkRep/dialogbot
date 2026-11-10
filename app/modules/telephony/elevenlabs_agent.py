@@ -78,7 +78,10 @@ def initiation(db: OrmSession, body: dict) -> dict:
         cfg = vapi.assistant_config(db, number, caller=vapi.normalize_e164(str(raw_caller)) if raw_caller else None)["assistant"]
         system = cfg["model"]["messages"][0]["content"]
         if mode == "test":
-            cfg["firstMessage"] = "Dette er et prøveopkald. " + cfg.get("firstMessage", "")
+            from app.modules.telephony import phone_languages as pl
+
+            lang_t = pl.call_language(db, number.workspace_id, vapi.normalize_e164(str(raw_caller)) if raw_caller else None)
+            cfg["firstMessage"] = pl.test_prefix(lang_t) + " " + cfg.get("firstMessage", "")
             platform.mark_test_call(db, number, f"el_{body.get('conversation_id') or call_sid}")
             db.commit()
     caller = vapi.normalize_e164(str(body.get("caller_id"))) if body.get("caller_id") else None
@@ -86,7 +89,26 @@ def initiation(db: OrmSession, body: dict) -> dict:
         system += (f"\n\nKunden ringer fra {caller}. Du kender altså allerede deres nummer: spørg ikke efter det, "
                    "men bekræft gerne, at en medarbejder kan ringe tilbage på det nummer, de ringer fra. Læs aldrig "
                    "nummeret op, medmindre kunden beder om det.")
-    agent: dict[str, Any] = {"first_message": cfg.get("firstMessage", ""), "language": "da",
+    from app.modules.telephony import phone_languages as pl
+
+    # ElevenLabs uses `language` for both speech recognition and the voice: it follows the call language, as on Vapi
+    lang = pl.call_language(db, number.workspace_id, caller) if mode not in ("loop", "not_active") else "da"
+    # The workspace's pronunciation dictionary (Vapi applies it to every sentence via voice.chunkPlan): the agent's
+    # text is what the voice reads, so the model is told to write the pronunciation spelling itself.
+    from app.models import WorkspaceVoiceSettings
+    from app.modules.voices.standard import DEFAULT_PRONUNCIATIONS
+
+    vs = db.get(WorkspaceVoiceSettings, number.workspace_id)
+    own = [e for e in (vs.pronunciations if vs else []) if isinstance(e, dict)]
+    taken = {str(e.get("term", "")).strip().lower() for e in own}
+    own += [e for e in (DEFAULT_PRONUNCIATIONS if lang == "da" else ()) if e["term"].lower() not in taken]
+    reps = [(str(e.get("term", "")).strip(), str(e.get("say", "")).strip()) for e in own]
+    reps = [(k, v) for k, v in reps if k and v and mode not in ("loop", "not_active")]
+    if reps:
+        system += ("\n\nUdtale (din tekst læses højt af stemmen): skriv altid "
+                   + "; ".join(f"\"{v}\" i stedet for \"{k}\"" for k, v in reps)
+                   + " – også midt i en sætning, men ikke når du staver et ord bogstav for bogstav.")
+    agent: dict[str, Any] = {"first_message": cfg.get("firstMessage", ""), "language": lang,
                              "prompt": {"prompt": system}}
     # The voice is the agent's own (chosen in the ElevenLabs dashboard): a Voice Library voice is only usable there
     # once it is added to that account, so overriding it per call could make the call fail.

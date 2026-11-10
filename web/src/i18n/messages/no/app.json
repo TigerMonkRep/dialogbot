@@ -303,7 +303,9 @@
       "call": "Ring",
       "conversation": "Samtalen",
       "lead": "Henvendelse",
-      "cancel": "Avlys"
+      "cancel": "Avlys",
+      "syncFailed": "Ikke i kalenderen",
+      "syncFailedDetail": "Avtalen kunne ikke skrives i den tilkoblede kalenderen: {error}"
     },
     "book": {
       "noSlotsError": "Det er ingen ledige tider. Sjekk åpningstider og kalender.",
@@ -329,12 +331,20 @@
       "notConnected": "Ikke tilkoblet",
       "lastRead": "Sist lest {at} · {n} opptatte perioder. Dialogbot ser bare når dere er opptatt.",
       "without": "Uten kalender kjenner Dialogbot bare åpningstidene og avtalene den har booket selv.",
-      "change": "Koble til eller bytt kalender"
+      "change": "Koble til eller bytt kalender",
+      "linked": "{name} er tilkoblet. Nye avtaler skrives i kalenderen, og opptatt tid derfra blokkeres.",
+      "linkedError": "{name} er tilkoblet, men det siste kallet feilet: {error}",
+      "syncFailedN": "{n} avtaler kunne ikke skrives i kalenderen. De er merket «Ikke i kalenderen» – sjekk tiden i selve kalenderen.",
+      "simulated": "simulert",
+      "provider": {
+        "google_calendar": "Google Kalender",
+        "microsoft_calendar": "Outlook-kalender (Microsoft 365)"
+      }
     },
     "staffOnly": "Avtaler kan ses av medarbeidere, administratorer og eiere.",
     "eyebrow": "I dag → Avtaler",
     "title": "Avtaler Dialogbot har booket",
-    "intro": "Flytt eller avlys her. Opptatt tid i kalenderen deres blokkeres, og hver booking blir en henvendelse med en oppgave.",
+    "intro": "Avlys her. Opptatt tid i kalenderen deres blokkeres, og hver booking blir en henvendelse med en oppgave.",
     "prevWeek": "Forrige uke",
     "nextWeek": "Neste uke",
     "noHours": {
@@ -554,7 +564,7 @@
       "pause": "Sett på pause",
       "before": "Før den starter",
       "resumeTitle": "Gjenoppta kampanjen",
-      "heading": "{n} anrop · høyst {max} eks. mva.",
+      "heading": "{n} kontakter · høyst {max} eks. mva.",
       "body": "{n} kontakter venter. Høyst {max} + mva. ({gross} inkl. mva.) – {call} + mva. per utgående anrop og {minute} + mva. per påbegynt samtaleminutt, høyst {attempts} forsøk og {minutes} minutters samtale per kontakt. Betaling starter aldri anrop.",
       "confirm": "Bekreft reglene for anrop",
       "starting": "Starter …",
@@ -782,7 +792,7 @@
       "confirmed": "Bekreftet · avtale v{v}. Gjør-det-selv-oppsett er inkludert.",
       "notConfirmed": "Gjør-det-selv-oppsett er inkludert. Ikke bekreftet ennå.",
       "campaign": "Kampanjeanrop",
-      "campaignPrice": "per anrop + {minute} per minutt eks. mva.",
+      "campaignPrice": "per anrop + {minute} per påbegynt minutt eks. mva.",
       "campaignMonth": "Denne måneden: {calls} anrop, {minutes} samtaleminutter · {amount} eks. mva.",
       "inbound": "Innkommende anrop",
       "inboundUsed": "av {n} inkluderte minutter brukt denne måneden",
@@ -796,6 +806,7 @@
     "pay": {
       "title": "Betaling",
       "notConfigured": "Kortbetaling er ikke satt opp ennå. Inntil da er oversikten bare en forhåndsvisning, og det trekkes ingen betaling.",
+      "testMode": "Testmodus – ingenting trekkes fra kortet",
       "card": "Kort",
       "expires": "utløper {exp}",
       "noCard": "Ingen betalingskort",

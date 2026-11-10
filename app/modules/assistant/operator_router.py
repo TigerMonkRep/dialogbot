@@ -92,9 +92,11 @@ def update_request(request_id: uuid.UUID, body: RequestPatch, request: Request, 
         row.category = body.category
     after = {"status": row.status, "admin_note": row.admin_note, "category": row.category}
     if after != before:
-        record_audit(db, workspace_id=row.workspace_id, actor_user_id=principal.user.id, action="assistant.request_updated",
-                     object_type="assistant_request", object_id=row.id, before=before, after=after,
-                     request_id=request.state.request_id)
+        # Operator scope (workspace_id=None): the admin_note is internal (DB-016) and the operator is not a member of
+        # the customer's workspace, so the change does not belong in the customer's own activity log.
+        record_audit(db, workspace_id=None, actor_user_id=principal.user.id, action="assistant.request_updated",
+                     object_type="assistant_request", object_id=row.id, before=before,
+                     after=after | {"workspace_id": str(row.workspace_id)}, request_id=request.state.request_id)
     db.commit()
     db.refresh(row)
     ws = db.get(Workspace, row.workspace_id)

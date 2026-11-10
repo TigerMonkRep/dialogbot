@@ -605,7 +605,22 @@
       "errorTitle": "Qualcosa è andato storto. Riprova.",
       "choose": "Scegline una",
       "chooseMany": "Scegline una o più",
-      "startOver": "Ricomincia"
+      "startOver": "Ricomincia",
+      "errors": {
+        "rate_limited": "Sono state inviate molte richieste dalla sua connessione. Attenda un momento e riprovi.",
+        "draft_not_found": "Non abbiamo trovato le sue risposte. Ricominci.",
+        "draft_expired": "Le sue risposte sono scadute. Ricominci.",
+        "draft_verified": "L'account è già stato creato. Acceda.",
+        "search_failed": "La ricerca non funziona al momento. Scriva il nome e prosegua.",
+        "too_soon": "Attenda un momento prima di chiedere un nuovo codice.",
+        "sms_failed": "Non è stato possibile inviare l'SMS. Riprovi tra poco.",
+        "privat_not_enabled": "Dialogbot Privato non è ancora aperto per lei.",
+        "code_expired": "Il codice è scaduto. Ne chieda uno nuovo.",
+        "too_many_attempts": "Troppi tentativi. Chieda un nuovo codice.",
+        "user_inactive": "L'account è disattivato.",
+        "wrong_code": "Il codice non corrisponde.",
+        "generic": "Qualcosa è andato storto. Riprovi tra poco."
+      }
     },
     "places": {
       "label": "Nome dell'azienda",
@@ -617,7 +632,7 @@
     "estimate": {
       "about": "circa",
       "perWeek": "chiamate a settimana",
-      "source": "Fonte: {source}",
+      "source": "Fonte: stima di Dialogbot per il settore",
       "edit": "correggi il numero se lo conosci meglio"
     },
     "build": {

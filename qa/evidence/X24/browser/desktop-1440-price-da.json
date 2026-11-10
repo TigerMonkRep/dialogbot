@@ -1,0 +1,56 @@
+[
+  {
+    "project": "desktop-1440",
+    "kind": "price",
+    "locale": "da",
+    "route": "/priser",
+    "currency": "DKK",
+    "expected": {
+      "erhvervMonthlyMoney": "2.495 kr.",
+      "erhvervMonthlyAmount": "2.495",
+      "callMoney": "4 kr.",
+      "privatBasis": "49 kr.",
+      "privatBasisAmount": "49"
+    },
+    "hasErhverv": true,
+    "hasPrivat": true,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  },
+  {
+    "project": "desktop-1440",
+    "kind": "price",
+    "locale": "da",
+    "route": "/erhverv",
+    "currency": "DKK",
+    "expected": {
+      "erhvervMonthlyMoney": "2.495 kr.",
+      "erhvervMonthlyAmount": "2.495",
+      "callMoney": "4 kr.",
+      "privatBasis": "49 kr.",
+      "privatBasisAmount": "49"
+    },
+    "hasErhverv": true,
+    "hasPrivat": true,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  },
+  {
+    "project": "desktop-1440",
+    "kind": "price",
+    "locale": "da",
+    "route": "/privat",
+    "currency": "DKK",
+    "expected": {
+      "erhvervMonthlyMoney": "2.495 kr.",
+      "erhvervMonthlyAmount": "2.495",
+      "callMoney": "4 kr.",
+      "privatBasis": "49 kr.",
+      "privatBasisAmount": "49"
+    },
+    "hasErhverv": false,
+    "hasPrivat": true,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  }
+]

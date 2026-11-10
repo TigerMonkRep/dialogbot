@@ -1,0 +1,67 @@
+# X16 – names: an unknown name is confirmed by SPELLING, then said at most once more; pronunciation spellings
+# (Berle → Bærle) come from Stemmer → Udtale (WorkspaceVoiceSettings.pronunciations), never from code.
+# Model-in-the-loop runs need the dialogue model (network) or a live call: blocked in wave 1. The offline proof is
+# tests/qa/test_qa_voice_X16.py (prompt + configuration on every phone path) plus these cases' reference transcripts.
+cases:
+  - id: X16-01
+    title: Ukendt firmanavn staves tilbage og nævnes derefter højst én gang
+    path: vapi_inbound  # telephony.vapi.assistant_config; same prompt via ElevenLabs init
+    setup:
+      workspace_pronunciations: [{term: Berle, say: Bærle}]
+      caller: "+4520304050"
+    caller_turns:
+      - "Hej, jeg ringer fra Berle Pool, vi vil gerne have et tilbud på afslibning."
+      - "Ja, det er rigtigt."
+      - "Det er cirka 60 kvadratmeter."
+      - "Ja, ring bare på det nummer."
+      - "Nej, det var det. Tak."
+    expect:
+      language: da
+      name: Berle
+      spell_back: "B, E, R, L, E"
+      spell_first: true
+      max_mentions_after_confirmation: 1
+    forbid: [Berligt, Perle, Bernie]
+    reference_transcripts:
+      pass:
+        - - {role: assistant, text: "Hej, du har ringet til Fjord Gulvservice. Hvad kan jeg hjælpe med?"}
+          - {role: user, text: "Hej, jeg ringer fra Berle Pool, vi vil gerne have et tilbud på afslibning."}
+          - {role: assistant, text: "Det kan jeg godt hjælpe med. Firmanavnet – B, E, R, L, E – Pool, er det rigtigt?"}
+          - {role: user, text: "Ja, det er rigtigt."}
+          - {role: assistant, text: "Tak. Hvor mange kvadratmeter drejer det sig om?"}
+          - {role: user, text: "Det er cirka 60 kvadratmeter."}
+          - {role: assistant, text: "Godt. Skal vi ringe på det nummer, du ringer fra – det, der ender på fyrre halvtreds?"}
+          - {role: user, text: "Ja, ring bare på det nummer."}
+          - {role: assistant, text: "Så ringer en medarbejder tilbage til Berle Pool. Hav en god dag."}
+      fail:
+        - - {role: assistant, text: "Hej, du har ringet til Fjord Gulvservice. Hvad kan jeg hjælpe med?"}
+          - {role: user, text: "Hej, jeg ringer fra Berle Pool."}
+          - {role: assistant, text: "Tak, Berligt Pool. Hvad kan jeg gøre for Berle Pool?"}
+          - {role: assistant, text: "Berle – B, E, R, L, E – Pool, er det rigtigt?"}
+          - {role: assistant, text: "Fint, Berle Pool. Berle Pool får et tilbud. Hav en god dag, Berle Pool."}
+
+  - id: X16-02
+    title: Personnavn der rettes – det bekræftede navn ændres aldrig senere
+    path: vapi_inbound
+    setup: {caller: "+4520304050"}
+    caller_turns:
+      - "Det er André Kjeldsen."
+      - "Nej, André med accent – A, N, D, R, E med accent."
+      - "Ja."
+    expect:
+      language: da
+      name: André
+      spell_back: "A, N, D, R, É"
+      max_mentions_after_confirmation: 1
+    forbid: [Andreas]
+    reference_transcripts:
+      pass:
+        - - {role: user, text: "Det er André Kjeldsen."}
+          - {role: assistant, text: "Tak, André. Vil du stave fornavnet for mig?"}
+          - {role: user, text: "A, N, D, R, E med accent."}
+          - {role: assistant, text: "A, N, D, R, É – er det rigtigt?"}
+          - {role: assistant, text: "Tak, så ringer en medarbejder tilbage. Hav en god dag."}
+      fail:
+        - - {role: user, text: "Det er André Kjeldsen."}
+          - {role: assistant, text: "Tak, Andreas."}
+          - {role: assistant, text: "A, N, D, R, É – er det rigtigt?"}

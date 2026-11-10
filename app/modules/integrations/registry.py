@@ -12,7 +12,7 @@ from typing import Literal
 
 from app.config import get_settings
 
-CapabilityStatus = Literal["available", "simulated", "not_implemented"]
+CapabilityStatus = Literal["available", "test_mode", "simulated", "not_implemented"]
 
 
 @dataclass(frozen=True)
@@ -22,6 +22,12 @@ class Capability:
     status: CapabilityStatus
     environment: str
     note: str
+
+
+def stripe_test_mode() -> bool:
+    """Stripe test mode (sk_test_/rk_test_ key): real Stripe sandbox, nothing is charged."""
+    key = get_settings().stripe_secret_key or ""
+    return key.startswith(("sk_test_", "rk_test_"))
 
 
 def capabilities() -> list[Capability]:
@@ -37,12 +43,14 @@ def capabilities() -> list[Capability]:
                    ("Simuleret adapter gemmer beskeder i databasen." if s.email_adapter == "simulated"
                     else "Resend-adapter: 'sent' = accepteret af udbyder; levering/bounce/klage kommer via signeret webhook.")),
         Capability("telephony.inbound", "Indgående telefoni / viderestilling",
-                   "available" if s.vapi_server_secret else "not_implemented", s.app_env,
+                   ("simulated" if s.telephony_provider == "fake" else "available")
+                   if s.vapi_server_secret else "not_implemented", s.app_env,
                    "Dialogbot står for telefonforbindelsen. I viderestiller jeres eget nummer; assistenten svarer kun ud "
                    "fra godkendt viden. Om jeres telefon er aktiv, står under Indstillinger → Telefoni."
                    if s.vapi_server_secret else "Telefoni er ikke sat op hos Dialogbot endnu. Intet nummer er forbundet."),
         Capability("telephony.outbound", "Udgående kampagneopkald",
-                   "available" if (s.vapi_api_key and s.vapi_server_secret) else "not_implemented", s.app_env,
+                   ("simulated" if s.telephony_provider == "fake" else "available")
+                   if (s.vapi_api_key and s.vapi_server_secret) else "not_implemented", s.app_env,
                    "Assistenten ringer op fra et afsendernummer, som Dialogbot har godkendt for jer, inden for kampagnens "
                    "tidsrum. Betaling starter aldrig opkald – kun en administrator kan starte en kampagne."
                    if (s.vapi_api_key and s.vapi_server_secret)
@@ -56,10 +64,14 @@ def capabilities() -> list[Capability]:
         Capability("calendar", "Kalender og online booking", "available", s.app_env,
                    "Ledige tider ud fra godkendte åbningstider. Jeres Google/Outlook-kalender kobles på med dens hemmelige "
                    "iCal-adresse (optaget tid blokerer), og bookinger vises i kalenderen via et iCal-abonnement."),
-        Capability("payment", "Kortbetaling og fakturaer", "available" if s.stripe_secret_key else "not_implemented", s.app_env,
-                   ("Stripe" + (" (testtilstand)" if (s.stripe_secret_key or "").startswith("sk_test_") else "") +
+        Capability("payment", "Kortbetaling og fakturaer",
+                   # both keys are needed: without the webhook secret a card saved in Checkout never reaches Dialogbot
+                   ("test_mode" if stripe_test_mode() else "available")
+                   if (s.stripe_secret_key and s.stripe_webhook_secret) else "not_implemented", s.app_env,
+                   ("Stripe" + (" (testtilstand – intet trækkes rigtigt)" if stripe_test_mode() else "") +
                     ": kort gemmes hos Stripe, og hver måned faktureres bagud automatisk. Betaling starter aldrig opkald.")
-                   if s.stripe_secret_key else "Kræver STRIPE_SECRET_KEY og STRIPE_WEBHOOK_SECRET på serveren."),
+                   if (s.stripe_secret_key and s.stripe_webhook_secret)
+                   else "Kræver STRIPE_SECRET_KEY og STRIPE_WEBHOOK_SECRET på serveren."),
         Capability("ai.assistant_preview", "AI-assistent: intern forhåndsvisning", ai_status, s.app_env,
                    ai_note),
         Capability("ai.conversation", "AI-samtale med kunder", ai_status, s.app_env,

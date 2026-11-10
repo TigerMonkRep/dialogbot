@@ -1,0 +1,272 @@
+...F                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_recipient_without_subscription_cannot_make_own_tasks_live_through_the_api _
+
+api = <tests.conftest.Api object at 0x7f161ce40d60>
+pv = <tests.privat_fixtures.Pv object at 0x7f161ce415b0>
+db = <sqlalchemy.orm.session.Session object at 0x7f1620787980>
+
+    def test_recipient_without_subscription_cannot_make_own_tasks_live_through_the_api(api, pv, db):
+        """The web hides «Brug 1 credit» and «Se et sponsorindslag» from an account without a plan (status none) and says
+        «Uden plan kan du se og reservere på lister, andre deler med dig – egne opgaver, lister og opkald kræver en plan»
+        (privat.json account.freeNote / plan.noteNone). The API must hold the same line, or the paywall is a UI-only gate."""
+        _mette, ole, _anna, _tid, _other, _inv = _setup(api, pv)
+        out = pv.say(ole, "Lav en liste med kaffe og te")
+        d1 = next(m["task_id"] for m in out["messages"] if m.get("task_id"))
+        out = pv.say(ole, "Lav en liste med mælk")
+        d2 = next(m["task_id"] for m in out["messages"] if m.get("task_id"))
+        r1 = api.post(ole, f"/privat/tasks/{d1}/activate", {"method": "credit"})
+        r2 = api.post(ole, "/privat/sponsor/claim", {"task_id": d2})
+        db.expire_all()
+        live = db.query(PrivateTask).filter(PrivateTask.workspace_id == pv.ws(ole), PrivateTask.status != "draft").count()
+>       assert (r1.status_code, r2.status_code, live) == (409, 409, 0), \
+            f"credit → {r1.status_code} {r1.json().get('usage_text')}; sponsor → {r2.status_code} {r2.json().get('usage_text')}"
+E       AssertionError: credit → 200 1 credit; sponsor → 200 Sponsorindslag (+1 opgave)
+E       assert (200, 200, 2) == (409, 409, 0)
+E         
+E         At index 0 diff: 200 != 409
+E         Use -v to get more diff
+
+tests/qa/test_qa_privat_x09.py:199: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "33a8ca6f0ac64fd4a8c846951831cddb", "level": "info", "timestamp": "2026-11-10T11:17:23.866104Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "39b837fe5fd34af190c41bced48b766d", "level": "info", "timestamp": "2026-11-10T11:17:24.195329Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "b8745fece91b4ae79521bbe7b53d0e42", "level": "info", "timestamp": "2026-11-10T11:17:24.257917Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "83a98ca1eac34febba23b3fc4f9c91f5", "level": "info", "timestamp": "2026-11-10T11:17:24.272476Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/account", "request_id": "57f9885be7554a449f3de5f2f77aa2b8", "level": "info", "timestamp": "2026-11-10T11:17:24.353097Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/auth/me", "request_id": "6b575e915d5a410aa710774c65619d0d", "level": "info", "timestamp": "2026-11-10T11:17:24.364539Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "f17cad967de84ddeb2eef0e0d91226b1", "level": "info", "timestamp": "2026-11-10T11:17:24.472891Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/fd8bcd05-2df0-42e5-8199-d6f1de63b063/wishes", "request_id": "ad8e39740cf7423e9e86364930db5444", "level": "info", "timestamp": "2026-11-10T11:17:24.505668Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "a5e26f0004df47558add872846997059", "level": "info", "timestamp": "2026-11-10T11:17:24.595874Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/fd8bcd05-2df0-42e5-8199-d6f1de63b063/share", "request_id": "bcd1cfb251eb41f0b925ee2c44b28466", "level": "info", "timestamp": "2026-11-10T11:17:24.635056Z"}
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "364a1cc383cd49049ee8dd8c2519433b", "level": "info", "timestamp": "2026-11-10T11:17:24.913161Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "af4faffa5c5449f391565f581a267fb9", "level": "info", "timestamp": "2026-11-10T11:17:25.146318Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "9b244ba4071a446cac98ffb2e944d84f", "level": "info", "timestamp": "2026-11-10T11:17:25.185752Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "e4d3a2291f2d41c494fc7c51cb7c9c76", "level": "info", "timestamp": "2026-11-10T11:17:25.195892Z"}
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "da628ae09e1d44e29464c96cad8c54e4", "level": "info", "timestamp": "2026-11-10T11:17:25.495584Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "3bd5982385ed4677b382f618a638ab70", "level": "info", "timestamp": "2026-11-10T11:17:25.683443Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "d16826e4d9424d26b99cfdcaa5a00267", "level": "info", "timestamp": "2026-11-10T11:17:25.724339Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "0f44ae30f4284235a36f5e71d5ed474d", "level": "info", "timestamp": "2026-11-10T11:17:25.738580Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/invites/CLm3fTSe2knuYfnW6fgU6L5gGH2MQR6h2atbmFvX3Vk/accept", "request_id": "5dded46d81434787af6d44b0575bfc98", "level": "info", "timestamp": "2026-11-10T11:17:25.865880Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/invites/CLm3fTSe2knuYfnW6fgU6L5gGH2MQR6h2atbmFvX3Vk/accept", "request_id": "400a92d7fb9148c094e868c61f370200", "level": "info", "timestamp": "2026-11-10T11:17:25.958022Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "93641eb683dd4f56b0d4a862be5f8d6b", "level": "info", "timestamp": "2026-11-10T11:17:26.011115Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "4bde704b74054cce9fc74a2b819f3b30", "level": "info", "timestamp": "2026-11-10T11:17:26.059348Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/a516ccca-18f5-42f2-9c65-9f826b7d8117/activate", "request_id": "07e6166fa7924d3098f2ca87a7796b03", "level": "info", "timestamp": "2026-11-10T11:17:26.112922Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/sponsor/claim", "request_id": "a84f93d2f3eb449f8b1739285c4d3881", "level": "info", "timestamp": "2026-11-10T11:17:26.174003Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/auth/me", "request_id": "1dabb1adff6d492a8294203f8d928c25", "level": "info", "timestamp": "2026-11-10T11:17:26.182597Z"}
+==================================== PASSES ====================================
+__________ test_owner_learns_nothing_from_any_endpoint_outbox_or_mail __________
+---------------------------- Captured stderr setup -----------------------------
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 94af55693109, stage1 foundation
+INFO  [alembic.runtime.migration] Running upgrade 94af55693109 -> 773ead23336e, resend webhook events and provider delivery status
+INFO  [alembic.runtime.migration] Running upgrade 773ead23336e -> 43c189532412, ai usage log
+INFO  [alembic.runtime.migration] Running upgrade 43c189532412 -> c432350c7efd, waitlist signups
+INFO  [alembic.runtime.migration] Running upgrade c432350c7efd -> 501a6eb0eaeb, webchat conversations
+INFO  [alembic.runtime.migration] Running upgrade 501a6eb0eaeb -> 477adf47202c, leads tasks agreements
+INFO  [alembic.runtime.migration] Running upgrade 477adf47202c -> 5a2d1bff4ed7, daily reports
+INFO  [alembic.runtime.migration] Running upgrade 5a2d1bff4ed7 -> 46c794fe9e35, phone numbers and calls
+INFO  [alembic.runtime.migration] Running upgrade 46c794fe9e35 -> 19a35ecb7df3, conversation mode and staff author
+INFO  [alembic.runtime.migration] Running upgrade 19a35ecb7df3 -> c89e73f71c6d, lead callback window
+INFO  [alembic.runtime.migration] Running upgrade c89e73f71c6d -> 24414f5bd46b, phone number voice settings
+INFO  [alembic.runtime.migration] Running upgrade 24414f5bd46b -> f4681fd5e00d, source imports
+INFO  [alembic.runtime.migration] Running upgrade f4681fd5e00d -> c9febc48ca3b, source import profile suggestion
+INFO  [alembic.runtime.migration] Running upgrade c9febc48ca3b -> 299f641c5b3f, reception script
+INFO  [alembic.runtime.migration] Running upgrade 299f641c5b3f -> 5c59c508ecf8, notification reads
+INFO  [alembic.runtime.migration] Running upgrade 5c59c508ecf8 -> 06fa18c2fcfa, bookings
+INFO  [alembic.runtime.migration] Running upgrade 06fa18c2fcfa -> f8c8153ccbb0, campaigns
+INFO  [alembic.runtime.migration] Running upgrade f8c8153ccbb0 -> 7769c9d94fe1, billing_stripe
+INFO  [alembic.runtime.migration] Running upgrade 7769c9d94fe1 -> a8a4f6f5ffaf, voice_library
+INFO  [alembic.runtime.migration] Running upgrade a8a4f6f5ffaf -> 527c5e36aced, voice designed and origin, own voice recordings
+INFO  [alembic.runtime.migration] Running upgrade 527c5e36aced -> e668ed509035, platform managed telephony
+INFO  [alembic.runtime.migration] Running upgrade e668ed509035 -> 94e8251b64e2, demo calls
+INFO  [alembic.runtime.migration] Running upgrade 94e8251b64e2 -> 6abbbb75fde5, integration connections, oauth states, action runs
+INFO  [alembic.runtime.migration] Running upgrade 6abbbb75fde5 -> 3c1d29602dcc, ambassador programme
+INFO  [alembic.runtime.migration] Running upgrade 3c1d29602dcc -> bcc6a80d2f06, standard voice per workspace
+INFO  [alembic.runtime.migration] Running upgrade bcc6a80d2f06 -> a7d3c1e9b2f4, demo calls: chosen voice and industry
+INFO  [alembic.runtime.migration] Running upgrade a7d3c1e9b2f4 -> b3e8f0a4c6d2, demo calls: the visitor's own industry text
+INFO  [alembic.runtime.migration] Running upgrade b3e8f0a4c6d2 -> 6f6d583caceb, social media posts
+INFO  [alembic.runtime.migration] Running upgrade 6f6d583caceb -> 3da6b0abc2dc, social account snapshots and post metrics
+INFO  [alembic.runtime.migration] Running upgrade 3da6b0abc2dc -> 793d6de4d9bb, social prospects
+INFO  [alembic.runtime.migration] Running upgrade 793d6de4d9bb -> 2944b6976e59, social posts extra flag
+INFO  [alembic.runtime.migration] Running upgrade 2944b6976e59 -> 1e8e65047603, campaign calls priced per call
+INFO  [alembic.runtime.migration] Running upgrade 1e8e65047603 -> 64a2ddcb9a74, social post design version and reminder
+INFO  [alembic.runtime.migration] Running upgrade 64a2ddcb9a74 -> 5b7e1c9a3d42, session impersonator for read only view as
+INFO  [alembic.runtime.migration] Running upgrade 5b7e1c9a3d42 -> 7c4e9b1a5d30, assistant proposals
+INFO  [alembic.runtime.migration] Running upgrade 7c4e9b1a5d30 -> a1b2c3d4e5f6, site documents
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> b7d2e4f6a8c0, campaign calls priced per call plus started minute
+INFO  [alembic.runtime.migration] Running upgrade b7d2e4f6a8c0 -> b3c5d7e9f1a2, sales channel phase 1
+INFO  [alembic.runtime.migration] Running upgrade b3c5d7e9f1a2 -> c4d6e8f0a2b4, sales channel phase 2
+INFO  [alembic.runtime.migration] Running upgrade c4d6e8f0a2b4 -> d5e7f9a1b3c6, sales channel phase 3
+INFO  [alembic.runtime.migration] Running upgrade d5e7f9a1b3c6 -> e6f8a0b2c4d7, sales channel phase 4
+INFO  [alembic.runtime.migration] Running upgrade e6f8a0b2c4d7 -> a7c3e9d1f5b2, stemmetest runs
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9d1f5b2 -> b8d4f0a2c6e1, calls.recording_url: the provider's recording of the call (Vapi end-of-call report)
+INFO  [alembic.runtime.migration] Running upgrade b8d4f0a2c6e1 -> c3e5a7f9b1d4, assistant requests («ønsker»)
+INFO  [alembic.runtime.migration] Running upgrade c3e5a7f9b1d4 -> d4f6b8a0c2e7, dialogbot privat
+INFO  [alembic.runtime.migration] Running upgrade d4f6b8a0c2e7 -> e7c9a1b3d5f2, privat: lookup rate limits, business search, opening-hours scheduling, web push
+INFO  [alembic.runtime.migration] Running upgrade e7c9a1b3d5f2 -> e5a7c9d1b3f6, privat subscriptions
+INFO  [alembic.runtime.migration] Running upgrade e5a7c9d1b3f6 -> f1a2b3c4d5e6, quiz-funnel drafts
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> a3d7e1f9c2b4, discount codes
+INFO  [alembic.runtime.migration] Running upgrade a3d7e1f9c2b4 -> b4e8f2a6c1d3, privat: the trial starts at Stripe with a card; accounts begin without rights
+INFO  [alembic.runtime.migration] Running upgrade b4e8f2a6c1d3 -> b7c1d4e8f2a3, browser runs and booking profiles
+INFO  [alembic.runtime.migration] Running upgrade b7c1d4e8f2a3 -> c2d6e9f1a4b8, chat message kind booking_proposal
+INFO  [alembic.runtime.migration] Running upgrade c2d6e9f1a4b8 -> d3e7a2b5c9f1, external business contacts
+INFO  [alembic.runtime.migration] Running upgrade d3e7a2b5c9f1 -> e4f8b1c6d2a9, lead pitch
+INFO  [alembic.runtime.migration] Running upgrade e4f8b1c6d2a9 -> f5a9c2d7e3b1, private appointments
+INFO  [alembic.runtime.migration] Running upgrade f5a9c2d7e3b1 -> a7c3e9f2b4d6, private birthdays
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9f2b4d6 -> b8d4f1a6c2e7, private bills
+INFO  [alembic.runtime.migration] Running upgrade b8d4f1a6c2e7 -> c9e5a2b7d3f8, private app data
+INFO  [alembic.runtime.migration] Running upgrade c9e5a2b7d3f8 -> d1f6b3a8e4c9, private business referrals and assistant name
+INFO  [alembic.runtime.migration] Running upgrade d1f6b3a8e4c9 -> e2a7c4d9f1b3, assistant pronoun
+INFO  [alembic.runtime.migration] Running upgrade e2a7c4d9f1b3 -> f3a9c1d5e7b2, public api: api keys, webhook endpoints, push subscription audience
+INFO  [alembic.runtime.migration] Running upgrade f3a9c1d5e7b2 -> c7d2e9a4b1f6, markets: the company's VAT number, the Privat subscription's currency, the invoice's tax source
+INFO  [alembic.runtime.migration] Running upgrade c7d2e9a4b1f6 -> d8e4a1c6f2b9, wishes: product details on wishlist items, group gifts («Deles om en gave») and a design per wishlist
+INFO  [alembic.runtime.migration] Running upgrade d8e4a1c6f2b9 -> e3b7c9d1a5f4, privat apps: per-app state for «Mine apps» (setup progress, switched off with data kept, «Giv mig besked»)
+INFO  [alembic.runtime.migration] Running upgrade e3b7c9d1a5f4 -> a7c3e9f1b2d4, telephony: customers choose per number whether calls are recorded, and for how long the audio is kept
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "b9f320d885574f26a18d549ddc93137f", "level": "info", "timestamp": "2026-11-10T11:17:10.203255Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "e37a2b3522a74d14b1adfdc9e3e4ec53", "level": "info", "timestamp": "2026-11-10T11:17:10.512559Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "2541e3d7d8eb492eb8201e0c288dbac7", "level": "info", "timestamp": "2026-11-10T11:17:11.706339Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "7aa8ae594c1e4346a0b2668bf783e731", "level": "info", "timestamp": "2026-11-10T11:17:11.732309Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/account", "request_id": "4351b424b7894c01a1bbb4102a0ed6db", "level": "info", "timestamp": "2026-11-10T11:17:11.812894Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/auth/me", "request_id": "b7f5eeec1e8b4ccc8bca4f32a650346b", "level": "info", "timestamp": "2026-11-10T11:17:11.823496Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "ffb31dc45e8246038febe750571f74a5", "level": "info", "timestamp": "2026-11-10T11:17:11.943638Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/wishes", "request_id": "40b8c928036f4d0684f4004ff1557881", "level": "info", "timestamp": "2026-11-10T11:17:11.988086Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "82854d66615241ac93496b90432ebaa9", "level": "info", "timestamp": "2026-11-10T11:17:12.051101Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/share", "request_id": "33e118925b1746b1bfd1a9bbebc77fab", "level": "info", "timestamp": "2026-11-10T11:17:12.094967Z"}
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "fc619ee6e926479785680bb0ffb36427", "level": "info", "timestamp": "2026-11-10T11:17:12.487246Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "e2b0b067cacc47d6a24ce6dedb41f927", "level": "info", "timestamp": "2026-11-10T11:17:12.859699Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "b8a5548ad6bd4fbeb9fd6327fb49530c", "level": "info", "timestamp": "2026-11-10T11:17:12.897078Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "f26273e83bbd420e9792025ed89a845d", "level": "info", "timestamp": "2026-11-10T11:17:12.909484Z"}
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "31f1cd07566d466f802c56c1e61813fb", "level": "info", "timestamp": "2026-11-10T11:17:13.188921Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "8443718dd3c3458e82a2b76177b37cd2", "level": "info", "timestamp": "2026-11-10T11:17:13.405089Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "fd6dde30668b4ff3b25999e514a8485c", "level": "info", "timestamp": "2026-11-10T11:17:13.445901Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "dbdbdd6d5c43491baf6b6dc1e6d687c2", "level": "info", "timestamp": "2026-11-10T11:17:13.457493Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/invites/3qsXNbAs7-pVhNRT8ytEfDl_HwaprKF50zNCyrwZKyc/accept", "request_id": "d4ed4b8856774257860ef5ed2bb14d74", "level": "info", "timestamp": "2026-11-10T11:17:13.619632Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/invites/3qsXNbAs7-pVhNRT8ytEfDl_HwaprKF50zNCyrwZKyc/accept", "request_id": "e99d6be9c1a6457aa2563785b6e57bfa", "level": "info", "timestamp": "2026-11-10T11:17:13.732102Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/auth/me", "request_id": "9d609abc1c6044688c1ce3bcdc006704", "level": "info", "timestamp": "2026-11-10T11:17:13.744250Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/bootstrap", "request_id": "3b2093c837424363b03e9df449835122", "level": "info", "timestamp": "2026-11-10T11:17:13.944478Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/me", "request_id": "25e292e6c0da4fc2884d83e571b98fe3", "level": "info", "timestamp": "2026-11-10T11:17:13.976491Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/day", "request_id": "58324f721d99424c8386c62cd1f42230", "level": "info", "timestamp": "2026-11-10T11:17:14.002430Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks", "request_id": "03a62c3dbce84f50b05a294031efb71d", "level": "info", "timestamp": "2026-11-10T11:17:14.046797Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks", "request_id": "c8176c5892d84b4aa9efc74f8990a038", "level": "info", "timestamp": "2026-11-10T11:17:14.066112Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5", "request_id": "49c9dc8f9d4940d9b72b93f00cd9ceff", "level": "info", "timestamp": "2026-11-10T11:17:14.084895Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/messages", "request_id": "5a7961dd261c4584b66dd7aff92fdf46", "level": "info", "timestamp": "2026-11-10T11:17:14.096540Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/messages", "request_id": "df16f6c931414950886212d36b66e764", "level": "info", "timestamp": "2026-11-10T11:17:14.119279Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/ledger", "request_id": "b6323e14ac814f78ad2d980ab7146b2a", "level": "info", "timestamp": "2026-11-10T11:17:14.133062Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/members", "request_id": "77b0bad1f93b45aca7b1fd2b36b9ea58", "level": "info", "timestamp": "2026-11-10T11:17:14.146032Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/invite-status", "request_id": "ecdc7b7914bf4abbae5e9e1f8a3f1a13", "level": "info", "timestamp": "2026-11-10T11:17:14.162988Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/subscription", "request_id": "2f4c64fae8034950bdc429f7032da060", "level": "info", "timestamp": "2026-11-10T11:17:14.184966Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/addons", "request_id": "d59d2d6d8b3d4e9981b2b9aa82ed6bae", "level": "info", "timestamp": "2026-11-10T11:17:14.250759Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/referrals", "request_id": "40ab9e0725424697b50d0a6f754c1fa2", "level": "info", "timestamp": "2026-11-10T11:17:14.273707Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/groups", "request_id": "19933e04bafc48e1893ed5309712b398", "level": "info", "timestamp": "2026-11-10T11:17:14.290722Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "221014df73e74659a07da5fd0de9cdca", "level": "info", "timestamp": "2026-11-10T11:17:14.329749Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5", "request_id": "5db2d56282a94461a45767a5aaa79f4e", "level": "info", "timestamp": "2026-11-10T11:17:14.375111Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/4726e435-d653-4e83-82d6-233bfa73474b/reserve", "request_id": "b7a897cfe11445c98ed43c8ade702494", "level": "info", "timestamp": "2026-11-10T11:17:14.406005Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/71f8bc1a-95bb-46bc-9083-823438fbd730/reserve", "request_id": "d51204f9b05c430a8cebf0be844cbb80", "level": "info", "timestamp": "2026-11-10T11:17:14.451109Z"}
+{"status": 200, "event": "request", "method": "PUT", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/cf7a8075-f13b-4ce9-8208-7df413d85c63/gift/pledge", "request_id": "e82f51ba2aec43dca1f1043c0854b9d8", "level": "info", "timestamp": "2026-11-10T11:17:14.505026Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/71f8bc1a-95bb-46bc-9083-823438fbd730/unreserve", "request_id": "c26bd1c67e974a24987df7f1a17aef76", "level": "info", "timestamp": "2026-11-10T11:17:14.538816Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/71f8bc1a-95bb-46bc-9083-823438fbd730/reserve", "request_id": "f52f383ddb734207b2310e613a2e11e1", "level": "info", "timestamp": "2026-11-10T11:17:14.585141Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5", "request_id": "cb6ec9c173fa42959ca8d4a1ebe2a7c0", "level": "info", "timestamp": "2026-11-10T11:17:14.616007Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/bootstrap", "request_id": "cefdca2c8caf4be29285d27bd9ece90f", "level": "info", "timestamp": "2026-11-10T11:17:14.736657Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/me", "request_id": "8e63a17275c440f49f2636de21d3104f", "level": "info", "timestamp": "2026-11-10T11:17:14.765661Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/day", "request_id": "c4986886955d4f3b87e63eee528a3199", "level": "info", "timestamp": "2026-11-10T11:17:14.800392Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks", "request_id": "535f999a2e4d4dadbab62693219cb4ff", "level": "info", "timestamp": "2026-11-10T11:17:14.832670Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks", "request_id": "33137ec9b45d43759fd4977d8117fab5", "level": "info", "timestamp": "2026-11-10T11:17:14.856358Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5", "request_id": "667ca9a82328498a8c6a149a978d37b9", "level": "info", "timestamp": "2026-11-10T11:17:14.872310Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/messages", "request_id": "ca78f8cfb89745c2b3c95fb434d021d7", "level": "info", "timestamp": "2026-11-10T11:17:14.883173Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/messages", "request_id": "f0dfb8401d6d4441880d94f90b59a8f1", "level": "info", "timestamp": "2026-11-10T11:17:14.894527Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/ledger", "request_id": "11ea5c238b344c00b74d8a6859a9d3f3", "level": "info", "timestamp": "2026-11-10T11:17:14.905978Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/members", "request_id": "2637168c00de4b089fefce3a05bc720e", "level": "info", "timestamp": "2026-11-10T11:17:14.917218Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/invite-status", "request_id": "1ce9ff7f331b4c2c86cc3a2fa1db5b42", "level": "info", "timestamp": "2026-11-10T11:17:14.936092Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/subscription", "request_id": "dbd5caa332d74dd6a492d9ab4523aaf2", "level": "info", "timestamp": "2026-11-10T11:17:14.958494Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/addons", "request_id": "3a953bce5e0442bd9c6b3f72297a065e", "level": "info", "timestamp": "2026-11-10T11:17:15.040144Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/referrals", "request_id": "3cc5d6133d864a308cf43b1989e93c5f", "level": "info", "timestamp": "2026-11-10T11:17:15.071311Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/groups", "request_id": "4c280ee961ff4aa8acd293d201507a1a", "level": "info", "timestamp": "2026-11-10T11:17:15.084201Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "9c13c1bff6924588affbe85dfa33b8ab", "level": "info", "timestamp": "2026-11-10T11:17:15.094784Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "bef660aa290041839d6f83d3afdfa152", "level": "info", "timestamp": "2026-11-10T11:17:15.199923Z"}
+{"status": 403, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/4726e435-d653-4e83-82d6-233bfa73474b/reserve", "request_id": "0d35cb6fa8ac425783037c03865a7bce", "level": "info", "timestamp": "2026-11-10T11:17:15.214155Z"}
+{"status": 403, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/4726e435-d653-4e83-82d6-233bfa73474b/unreserve", "request_id": "36a0e4deb440424d81429dfe66444270", "level": "info", "timestamp": "2026-11-10T11:17:15.234708Z"}
+{"status": 403, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/cf7a8075-f13b-4ce9-8208-7df413d85c63/reserve", "request_id": "be907bad0dc545c6863070f3a3deb469", "level": "info", "timestamp": "2026-11-10T11:17:15.265312Z"}
+{"status": 403, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/cf7a8075-f13b-4ce9-8208-7df413d85c63/unreserve", "request_id": "a766df9db88f4427ba697670d0efda0e", "level": "info", "timestamp": "2026-11-10T11:17:15.281874Z"}
+{"status": 403, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/71f8bc1a-95bb-46bc-9083-823438fbd730/reserve", "request_id": "93bc7bf14cd04d7b80d98315aa4ae6c0", "level": "info", "timestamp": "2026-11-10T11:17:15.299325Z"}
+{"status": 403, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/71f8bc1a-95bb-46bc-9083-823438fbd730/unreserve", "request_id": "b32e0acd14e842e2b387a9749cd6c8f0", "level": "info", "timestamp": "2026-11-10T11:17:15.315568Z"}
+{"status": 200, "event": "request", "method": "DELETE", "path": "/api/v1/privat/tasks/903015ba-c427-4495-8566-0479028ea0f5/items/4726e435-d653-4e83-82d6-233bfa73474b", "request_id": "8df5b79d02ea4b77a86c5cf1dbf2d262", "level": "info", "timestamp": "2026-11-10T11:17:15.367465Z"}
+_ test_recipient_without_subscription_can_open_and_reserve_and_almost_nothing_else _
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "a3971b9f75d74196aac39bda351ec635", "level": "info", "timestamp": "2026-11-10T11:17:16.933927Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "0cd9753969454c4ea1c6b209ed152bed", "level": "info", "timestamp": "2026-11-10T11:17:17.166479Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "2dd5e27a936a4d1ba9c84c1969f5b33e", "level": "info", "timestamp": "2026-11-10T11:17:17.202188Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "2455e2e8887b4ed88adabdaf446ac7a5", "level": "info", "timestamp": "2026-11-10T11:17:17.212014Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/account", "request_id": "b6d088ed33704baabf7f40a6d4bdceb2", "level": "info", "timestamp": "2026-11-10T11:17:17.259825Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/auth/me", "request_id": "f2892354daed4b75967e81e91a1495df", "level": "info", "timestamp": "2026-11-10T11:17:17.268119Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "b149758d551b4978b55e384bccda66c4", "level": "info", "timestamp": "2026-11-10T11:17:17.357797Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/wishes", "request_id": "ab4da897eb1143c7b81a3b34cf5af880", "level": "info", "timestamp": "2026-11-10T11:17:17.387116Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "f366e4485aec4e3794b2d656b059bd4b", "level": "info", "timestamp": "2026-11-10T11:17:17.444568Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/share", "request_id": "6d35b5e27cf44876893303341d0056b4", "level": "info", "timestamp": "2026-11-10T11:17:17.472255Z"}
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "aa5e843de4e3420cb1e1f9ef5a2d34f3", "level": "info", "timestamp": "2026-11-10T11:17:17.717182Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "f26d64a7664e45bb83bf045f6a2536e2", "level": "info", "timestamp": "2026-11-10T11:17:18.089069Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "8e68d0ab8c4f40dcbf4030891c3729f8", "level": "info", "timestamp": "2026-11-10T11:17:18.147308Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "471c12f931e146278047c593da6fc82b", "level": "info", "timestamp": "2026-11-10T11:17:18.164453Z"}
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "4146440fdb014e38b8952a801e1a78e7", "level": "info", "timestamp": "2026-11-10T11:17:18.459503Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "83678024d7064a9b97c3ce5612a2a48a", "level": "info", "timestamp": "2026-11-10T11:17:18.712580Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "5f6d0def68cd40eea222262e274d7ece", "level": "info", "timestamp": "2026-11-10T11:17:18.763444Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "7880ab7781ce4cfba1afda93f5c85b39", "level": "info", "timestamp": "2026-11-10T11:17:18.777838Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/invites/YgNx9x9dpe24oSUP88TH0BxrJf2WhMig_Mcxz0AyGzs/accept", "request_id": "8278a17240a1407691f4a6f10dd1ca3c", "level": "info", "timestamp": "2026-11-10T11:17:18.872613Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/invites/YgNx9x9dpe24oSUP88TH0BxrJf2WhMig_Mcxz0AyGzs/accept", "request_id": "ec285f56a54949e994243803b90a3412", "level": "info", "timestamp": "2026-11-10T11:17:18.980276Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/me", "request_id": "2f9d1c750950444ab4fbc65161305a97", "level": "info", "timestamp": "2026-11-10T11:17:18.997688Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d", "request_id": "c418373a9e894358aac5aa9a955e7e8c", "level": "info", "timestamp": "2026-11-10T11:17:19.021734Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/items/1e08c3c7-128d-4b45-87b7-ac6c9078ed95/reserve", "request_id": "13c33b9059af4ff7b8465ab7fdc5f9e2", "level": "info", "timestamp": "2026-11-10T11:17:19.054526Z"}
+{"status": 404, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/18b47b4a-adf0-4b31-a0b0-de33246df760", "request_id": "a3755b13a0924cb39edc362904a9589e", "level": "info", "timestamp": "2026-11-10T11:17:19.074212Z"}
+{"status": 404, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/6d614ff2-de19-4285-8366-498d584a7d31", "request_id": "3cb010eb4ed247a6a30b3c4079c18045", "level": "info", "timestamp": "2026-11-10T11:17:19.104661Z"}
+{"status": 403, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/items", "request_id": "219aeefa0167481d889dc447cdd32e1c", "level": "info", "timestamp": "2026-11-10T11:17:19.129246Z"}
+{"status": 403, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/wishes", "request_id": "f5ebbbbf93354a05baf5b12c135f6ed4", "level": "info", "timestamp": "2026-11-10T11:17:19.158731Z"}
+{"status": 403, "event": "request", "method": "PATCH", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/wishes/1e08c3c7-128d-4b45-87b7-ac6c9078ed95", "request_id": "331cdf6b0b424cbd9bc8022e15f6528b", "level": "info", "timestamp": "2026-11-10T11:17:19.174017Z"}
+{"status": 403, "event": "request", "method": "DELETE", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/items/1e08c3c7-128d-4b45-87b7-ac6c9078ed95", "request_id": "22599a17d9cc4cabac688c6f9e6149e9", "level": "info", "timestamp": "2026-11-10T11:17:19.186349Z"}
+{"status": 403, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/share", "request_id": "f07c4d1c5ecb43aea281186a7f99aefa", "level": "info", "timestamp": "2026-11-10T11:17:19.203153Z"}
+{"status": 403, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/share/revoke", "request_id": "0eec11ccc1564f47aa1791827c2e22e6", "level": "info", "timestamp": "2026-11-10T11:17:19.217346Z"}
+{"status": 403, "event": "request", "method": "PUT", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/design", "request_id": "e857d917a4ae4a72b915008c45f717a3", "level": "info", "timestamp": "2026-11-10T11:17:19.234521Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/members", "request_id": "c1f166238400452ba928de738f087469", "level": "info", "timestamp": "2026-11-10T11:17:19.247441Z"}
+{"status": 403, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/1acb66e6-84d0-471b-9192-548db4f2b52d/invite-status", "request_id": "aa0197be54144011ae7e884a594f3759", "level": "info", "timestamp": "2026-11-10T11:17:19.258959Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "61203abcff4a4b77a583ffe4446e72c4", "level": "info", "timestamp": "2026-11-10T11:17:19.301944Z"}
+{"status": 409, "event": "request", "method": "POST", "path": "/api/v1/privat/addons/kalender/enable", "request_id": "39f46fb88f774ea092d09399f91d8723", "level": "info", "timestamp": "2026-11-10T11:17:19.312510Z"}
+{"status": 409, "event": "request", "method": "POST", "path": "/api/v1/privat/addons/foedselsdage/enable", "request_id": "fe859cc1a8744028928b52d2f3efb8a0", "level": "info", "timestamp": "2026-11-10T11:17:19.322212Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/auth/me", "request_id": "d4755d9b6cb842018424102f56b83dd3", "level": "info", "timestamp": "2026-11-10T11:17:19.331072Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/auth/me", "request_id": "38b3a6275f3e403b89c366994468e5d2", "level": "info", "timestamp": "2026-11-10T11:17:19.355094Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "2dcc9755f3cf41fb807178000c8f1025", "level": "info", "timestamp": "2026-11-10T11:17:19.410958Z"}
+{"status": 409, "event": "request", "method": "POST", "path": "/api/v1/privat/addons/ring-for-mig/enable", "request_id": "a91a6d70292847669d8269c5eacd63eb", "level": "info", "timestamp": "2026-11-10T11:17:19.423109Z"}
+____ test_shared_link_preview_is_public_but_shows_no_wishes_or_reservations ____
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "2b5b8834ba1b42d6ac60d063216163d8", "level": "info", "timestamp": "2026-11-10T11:17:20.674187Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "f9b99232940a4f9793da0265585e862a", "level": "info", "timestamp": "2026-11-10T11:17:20.900033Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "de69017993614d1c9d7a495685b7f125", "level": "info", "timestamp": "2026-11-10T11:17:20.947361Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "9998f71ecb974d05931ed068f66a0280", "level": "info", "timestamp": "2026-11-10T11:17:20.958829Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/account", "request_id": "014fe5a5ac4844fa8d2dd952ce5c63e9", "level": "info", "timestamp": "2026-11-10T11:17:21.039113Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/auth/me", "request_id": "5cb74163de2c4039969f10d264bab3e3", "level": "info", "timestamp": "2026-11-10T11:17:21.047801Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "e16a56a2a3754c78b68d3b621255d6e7", "level": "info", "timestamp": "2026-11-10T11:17:21.164945Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/7d6064f3-b68e-4d91-8084-b469e23f5757/wishes", "request_id": "98c5e6d0323a4a2b9f52b5751478479d", "level": "info", "timestamp": "2026-11-10T11:17:21.207269Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/messages", "request_id": "d7559091df2f4febae4588630e7a2411", "level": "info", "timestamp": "2026-11-10T11:17:21.279177Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/7d6064f3-b68e-4d91-8084-b469e23f5757/share", "request_id": "3423497fc7a4489184291412571f0930", "level": "info", "timestamp": "2026-11-10T11:17:21.318598Z"}
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "46b7409dbf91442e95ad887b37f567d6", "level": "info", "timestamp": "2026-11-10T11:17:21.512552Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "e24b6aa61c9b494d945d34f3c2e7856d", "level": "info", "timestamp": "2026-11-10T11:17:21.704469Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "15531bd335fe4b77a664ea98b9a42429", "level": "info", "timestamp": "2026-11-10T11:17:21.738810Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "4fe4092ed2c54395939351dcd13fc9c4", "level": "info", "timestamp": "2026-11-10T11:17:21.754651Z"}
+{"status": 201, "event": "request", "method": "POST", "path": "/api/v1/auth/register", "request_id": "df256a85828d4cf1a042d7eb424c7a54", "level": "info", "timestamp": "2026-11-10T11:17:21.906849Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/login", "request_id": "f6c991dde60e41979d940c1c6de14d86", "level": "info", "timestamp": "2026-11-10T11:17:22.131726Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/dev/mailbox", "request_id": "e40c13a6ea594ad6ba6dabedde82864e", "level": "info", "timestamp": "2026-11-10T11:17:22.185561Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/auth/verify-email", "request_id": "501371321faa4e11a5c2edf1cbbe2260", "level": "info", "timestamp": "2026-11-10T11:17:22.204790Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/invites/zVBY1s1rjkogJ3QAH1qxJecMfQ6tWF8I7Ohbi_Sv6t4/accept", "request_id": "6303167347ae4784b3bd90ccb99292af", "level": "info", "timestamp": "2026-11-10T11:17:22.305445Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/invites/zVBY1s1rjkogJ3QAH1qxJecMfQ6tWF8I7Ohbi_Sv6t4/accept", "request_id": "0ae8e032e5d040f592c19878064d32b4", "level": "info", "timestamp": "2026-11-10T11:17:22.410601Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/7d6064f3-b68e-4d91-8084-b469e23f5757", "request_id": "65bbb6d8db634cefa9b6be924b83ce21", "level": "info", "timestamp": "2026-11-10T11:17:22.435716Z"}
+{"status": 200, "event": "request", "method": "POST", "path": "/api/v1/privat/tasks/7d6064f3-b68e-4d91-8084-b469e23f5757/items/ab3cf176-717c-4787-b860-bbcefae33b80/reserve", "request_id": "8cab642c61f6445a9deacfa2ffaa8993", "level": "info", "timestamp": "2026-11-10T11:17:22.467110Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/invites/zVBY1s1rjkogJ3QAH1qxJecMfQ6tWF8I7Ohbi_Sv6t4", "request_id": "b0a4a2d5e4564b57a20709066eaf1106", "level": "info", "timestamp": "2026-11-10T11:17:22.494639Z"}
+{"status": 200, "event": "request", "method": "GET", "path": "/api/v1/privat/invites/by-code/H86WDEH4", "request_id": "c9d7f8c697ae4244b68d9ab00f9f2e47", "level": "info", "timestamp": "2026-11-10T11:17:22.512240Z"}
+{"status": 401, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/7d6064f3-b68e-4d91-8084-b469e23f5757", "request_id": "711ec2f1c02a4086a1c189dd5eda1472", "level": "info", "timestamp": "2026-11-10T11:17:22.517628Z"}
+{"status": 401, "event": "request", "method": "GET", "path": "/api/v1/privat/bootstrap", "request_id": "a8bacca6df0743a1b3f852537656a73f", "level": "info", "timestamp": "2026-11-10T11:17:22.521336Z"}
+{"status": 401, "event": "request", "method": "GET", "path": "/api/v1/privat/tasks/7d6064f3-b68e-4d91-8084-b469e23f5757/members", "request_id": "a198439e621140058533343b9ded93a3", "level": "info", "timestamp": "2026-11-10T11:17:22.525852Z"}
+=========================== short test summary info ============================
+PASSED tests/qa/test_qa_privat_x09.py::test_owner_learns_nothing_from_any_endpoint_outbox_or_mail
+PASSED tests/qa/test_qa_privat_x09.py::test_recipient_without_subscription_can_open_and_reserve_and_almost_nothing_else
+PASSED tests/qa/test_qa_privat_x09.py::test_shared_link_preview_is_public_but_shows_no_wishes_or_reservations
+FAILED tests/qa/test_qa_privat_x09.py::test_recipient_without_subscription_cannot_make_own_tasks_live_through_the_api

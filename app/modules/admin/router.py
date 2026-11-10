@@ -296,7 +296,7 @@ def view_as(body: ViewAsIn, request: Request, db: OrmSession = Depends(get_db), 
     raw_token = new_token()
     exp = _now() + timedelta(minutes=VIEW_AS_MINUTES)
     db.add(Session(user_id=target.id, token_hash=token_digest(raw_token), expires_at=exp,
-                   user_agent="se-som-kunde", impersonator_user_id=principal.user.id))
+                   user_agent="se-som-kunde", impersonator_user_id=principal.user.id, scope_workspace_id=body.workspace_id))
     record_audit(db, workspace_id=body.workspace_id, actor_user_id=principal.user.id, action="admin.view_as.start", object_type="user",
                  object_id=target.id, after={"email": target.email, "expires_at": exp.isoformat()}, request_id=request.state.request_id)
     db.commit()

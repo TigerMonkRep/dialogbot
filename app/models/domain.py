@@ -756,6 +756,7 @@ class Booking(Base):
     __table_args__ = (
         CheckConstraint("status in ('confirmed','cancelled')", name="ck_bookings_status"),
         CheckConstraint("ends_at > starts_at", name="ck_bookings_range"),
+        CheckConstraint("calendar_sync is null or calendar_sync in ('synced','failed')", name="ck_bookings_calendar_sync"),
         Index("ix_bookings_workspace_starts", "workspace_id", "starts_at"),
     )
 
@@ -777,6 +778,10 @@ class Booking(Base):
     # When the workspace's calendar is connected (OAuth), the booking is mirrored as an event there.
     calendar_connector: Mapped[str | None] = mapped_column(String(40))
     calendar_event_id: Mapped[str | None] = mapped_column(String(200))
+    # Honest mirror state: NULL = no connected calendar, 'synced' = the calendar has the current time,
+    # 'failed' = the last write to the calendar failed (shown to the owner; the calendar may disagree).
+    calendar_sync: Mapped[str | None] = mapped_column(String(16))
+    calendar_sync_error: Mapped[str | None] = mapped_column(String(300))
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -1129,6 +1134,9 @@ class Invoice(Base):
     tax_minor: Mapped[int] = mapped_column(BigInteger, nullable=False)
     gross_minor: Mapped[int] = mapped_column(BigInteger, nullable=False)
     lines: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)  # statement lines snapshot
+    # Refunds seen from Stripe (billing/stripe.py _refund_delta): charges → cumulative amount_refunded, credit notes →
+    # total, applied_minor → refunded amount already taken off the ambassador commission.
+    refunds: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict, server_default="{}")
     stripe_invoice_id: Mapped[str | None] = mapped_column(String(64), unique=True)
     number: Mapped[str | None] = mapped_column(String(64))
     hosted_invoice_url: Mapped[str | None] = mapped_column(Text)

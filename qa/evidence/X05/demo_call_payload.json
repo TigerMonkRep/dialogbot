@@ -1,0 +1,16 @@
+{
+ "customer": {
+  "number": "+4520304050"
+ },
+ "firstMessage": "Hej, det er Peter fra Dialogbot. Jeg er en digital assistent, og du bad om at blive ringet op fra vores hjemmeside. Har du tre minutter, så viser jeg, hvordan jeg ville tage telefonen for Hansen VVS?",
+ "voice": {
+  "provider": "11labs",
+  "voiceId": "qhEux886xDKbOdF7jkFP",
+  "model": "eleven_v4_turbo",
+  "language": "da"
+ },
+ "maxDurationSeconds": 420,
+ "artifactPlan": {
+  "recordingEnabled": false
+ }
+}

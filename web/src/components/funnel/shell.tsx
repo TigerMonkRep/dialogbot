@@ -24,7 +24,7 @@ export function FunnelShell({ step: forced, children, brand = "Dialogbot", home 
           <button type="button" onClick={f.back} aria-label={t("back")} className="w-11 h-11 rounded-xl inline-flex items-center justify-center text-ink hover:bg-panel cursor-pointer">
             <Ico name="arrow" size={22} className="-scale-x-100" stroke={2.6} />
           </button>
-          <Link href={homeHref} className="inline-flex items-center gap-2 min-h-11 text-ink no-underline" aria-label={t("home")}>
+          <Link href={homeHref} className="inline-flex items-center gap-2 min-h-11 text-ink no-underline" aria-label={`${brand} – ${t("home")}`}>
             <LogoMark size={30} />
             <span className="font-display font-extrabold text-[18px] tracking-[-0.3px] hidden min-[360px]:inline">{brand}</span>
           </Link>

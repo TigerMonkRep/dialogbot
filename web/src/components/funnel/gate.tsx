@@ -2,12 +2,12 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useT } from "@/i18n/client";
-import { fieldError, type ApiError } from "@/lib/client";
+import type { ApiError } from "@/lib/client";
 import { track } from "@/components/site-analytics";
 import { Alert, Button, inputCls } from "@/components/ui";
 import { Ico } from "@/components/privat/icons";
 import type { GateBody } from "@/lib/funnel/api";
-import { Question } from "./parts";
+import { Question, useFunnelError } from "./parts";
 import { useFunnel } from "./provider";
 
 type FieldKey = "name" | "phone" | "email" | "consent";
@@ -39,7 +39,11 @@ export function Gate({ title, lead, consent, onCodeSent }: { title: string; lead
     if (k === "email") return EMAIL.test(form.email.trim()) ? null : t("errEmail");
     return form.consent ? null : t("errConsent");
   };
-  const apiErr = (k: FieldKey) => fieldError(error, k);
+  const say = useFunnelError();
+  // the backend's field errors are Danish (or empty): show our own text for the field instead
+  const FIELD_TEXT: Record<FieldKey, string> = { name: t("errName"), phone: t("errPhone"), email: t("errEmail"), consent: t("errConsent") };
+  const hasField = (err: ApiError | null, k: FieldKey) => !!err?.field_errors?.some((f) => f.field === k);
+  const apiErr = (k: FieldKey) => (hasField(error, k) ? FIELD_TEXT[k] : undefined);
   const shown = (k: FieldKey) => (touched[k] ? problem(k) : null) ?? apiErr(k);
 
   const forward = async () => {
@@ -57,7 +61,7 @@ export function Gate({ title, lead, consent, onCodeSent }: { title: string; lead
     } catch (e) {
       const err = e as ApiError;
       setError(err);
-      const bad = ORDER.findIndex((k) => fieldError(err, k));
+      const bad = ORDER.findIndex((k) => hasField(err, k));
       if (bad >= 0) setAt(bad);
     } finally { setBusy(false); }
   };
@@ -73,7 +77,7 @@ export function Gate({ title, lead, consent, onCodeSent }: { title: string; lead
   return (
     <form onSubmit={(e) => { e.preventDefault(); void forward(); }} className="flex flex-col gap-5" data-gate={current} noValidate>
       <Question title={title} help={lead} />
-      {error && !ORDER.some((k) => fieldError(error, k)) && <Alert>{error.message}</Alert>}
+      {error && !ORDER.some((k) => hasField(error, k)) && <Alert>{say(error)}</Alert>}
       {at > 0 && <div className="flex flex-col gap-2">{ORDER.slice(0, at).filter((k) => k !== "consent").map((k) => summary(k, ORDER.indexOf(k)))}</div>}
 
       {/* Honeypot: people never see it; a bot that fills it gets the same answer and no SMS. */}
@@ -119,6 +123,7 @@ export function Gate({ title, lead, consent, onCodeSent }: { title: string; lead
  *  load, so the server sees the new session. */
 export function CodeStep({ title, lead, gateStep, onBack }: { title: string; lead?: string; gateStep: number; onBack?: () => void }) {
   const t = useT("site.funnel.code");
+  const say = useFunnelError();
   const { api, draft, kind, hook, gate, setGate, go } = useFunnel();
   const toGate = onBack ?? (() => go(gateStep));
   const [code, setCode] = useState("");
@@ -182,7 +187,7 @@ export function CodeStep({ title, lead, gateStep, onBack }: { title: string; lea
           aria-invalid={!!error} aria-describedby="code-hint" disabled={busy} name="code"
           className={`${inputCls} min-h-[60px] text-center font-display font-extrabold text-[30px] tracking-[0.4em] pl-[0.4em]`} />
         <span id="code-hint" role={error ? "alert" : "status"} className={`text-[13px] ${error ? "text-danger font-semibold" : "text-muted"}`}>
-          {error ? (fieldError(error, "code") ?? error.message) : busy ? t("verifying") : resent ? t("resent") : t("hint")}
+          {error ? say(error) : busy ? t("verifying") : resent ? t("resent") : t("hint")}
         </span>
       </label>
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">

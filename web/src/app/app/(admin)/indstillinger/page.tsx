@@ -18,7 +18,7 @@ type Tel = { status: { code: string; label: string; next_step: string }; busines
 type Web = { enabled: boolean; available: boolean; allowed_origins: string[] };
 type Book = { enabled: boolean; lead_time_hours: number; horizon_days: number; buffer_minutes: number; types: { active: boolean }[]; busy_ics_url: string | null; has_opening_hours: boolean };
 type Goals = { callback: boolean; booking: boolean; inbound_phone: boolean; webchat: boolean };
-type Cat = { items: { key: string; label: string; status: string; account_label: string }[] };
+type Cat = { items: { key: string; label: string; status: string; account_label: string; simulated?: boolean }[] };
 type Voices = { settings: { standard_voice: string | null; standard_default: string; default_profile_id: string | null } };
 
 /** «Alle indstillinger»: everything Dialogbot knows and does, as eight chapters of tiles. Simple values go through the assistant; forms open as sheets. */
@@ -28,7 +28,7 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
   const sp = await searchParams;
   const staff = ws.role !== "reader";
   const settle = async <T,>(p: Promise<T>) => p.catch(() => null);
-  const [tel, web, book, goals, know, cat, members, script, voices] = await Promise.all([
+  const [tel, web, book, goals, know, cat, members, script, voices, acc] = await Promise.all([
     staff ? settle(backend<Tel>(`/workspaces/${ws.id}/telephony`)) : null,
     staff ? settle(backend<Web>(`/workspaces/${ws.id}/webchat`)) : null,
     staff ? settle(backend<Book>(`/workspaces/${ws.id}/bookings/settings`)) : null,
@@ -38,7 +38,11 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
     settle(backend<unknown[]>(`/workspaces/${ws.id}/members`)),
     staff ? settle(backend<{ greeting: string }>(`/workspaces/${ws.id}/reception/script`)) : null,
     staff ? settle(backend<Voices>(`/workspaces/${ws.id}/voices`)) : null,
+    settle(backend<{ configured: boolean; test_mode?: boolean }>(`/workspaces/${ws.id}/billing/account`)),
   ]);
+  // «Klar» means it works now: a simulated connection says so, and the two tiles below follow the real state
+  const sim = (c: { label: string; account_label?: string; simulated?: boolean }, text: string) => (c.simulated ? `${text} (${t("overview.simulated")})` : text);
+  const hooks = cat?.items.filter((i) => ["webhook", "zapier", "make"].includes(i.key) && i.status === "connected") ?? [];
   const calendar = cat?.items.find((i) => i.key.includes("calendar") && i.status === "connected");
   const connected = cat?.items.filter((i) => i.status === "connected") ?? [];
   const row = (r: Row) => r;
@@ -65,16 +69,16 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
       row({ label: t("overview.campaigns.outbound"), value: goals?.callback ? t("overview.campaigns.chosen") : t("overview.campaigns.notChosen"), status: goals?.callback ? "ready" : "off", href: "/app/kampagner" }),
     ] },
     { n: 6, title: t("overview.systems.title"), sub: t("overview.systems.sub"), rows: [
-      row({ label: t("overview.systems.calendar"), value: calendar ? calendar.account_label || calendar.label : book?.busy_ics_url ? t("overview.systems.ical") : t("overview.systems.notConnected"), status: calendar || book?.busy_ics_url ? "ready" : "off", ark: "integrationer" }),
-      row({ label: t("overview.systems.connected"), value: connected.length ? connected.map((c) => c.label).join(", ") : t("overview.systems.none"), status: connected.length ? "ready" : "off", ark: "integrationer" }),
+      row({ label: t("overview.systems.calendar"), value: calendar ? sim(calendar, calendar.account_label || calendar.label) : book?.busy_ics_url ? t("overview.systems.ical") : t("overview.systems.notConnected"), status: calendar || book?.busy_ics_url ? "ready" : "off", ark: "integrationer" }),
+      row({ label: t("overview.systems.connected"), value: connected.length ? connected.map((c) => sim(c, c.label)).join(", ") : t("overview.systems.none"), status: connected.length ? "ready" : "off", ark: "integrationer" }),
     ] },
     { n: 7, title: t("overview.team.title"), sub: t("overview.team.sub"), rows: [
       row({ label: t("overview.team.team"), value: members ? t("overview.team.teamValue", { n: members.length }) : "–", status: "ready", href: "/app/konto" }),
-      row({ label: t("overview.team.billing"), value: t("overview.team.billingValue"), status: "ready", href: "/app/konto" }),
+      row({ label: t("overview.team.billing"), value: t("overview.team.billingValue"), status: acc?.configured ? "ready" : "off", href: "/app/konto" }),
     ] },
     { n: 8, title: t("overview.tech.title"), sub: t("overview.tech.sub"), rows: [
       row({ label: t("overview.tech.embed"), value: t("overview.tech.embedValue"), status: web?.enabled ? "ready" : "off", ark: "webchat", tech: true }),
-      row({ label: t("overview.tech.webhooks"), value: t("overview.tech.webhooksValue"), status: "ready", ark: "integrationer", tech: true }),
+      row({ label: t("overview.tech.webhooks"), value: t("overview.tech.webhooksValue"), status: hooks.length ? (hooks.some((h) => h.simulated) ? "soon" : "ready") : "off", ark: "integrationer", tech: true }),
       row({ label: t("overview.tech.log"), value: t("overview.tech.logValue"), status: "ready", ark: "log", tech: true }),
     ] },
   ];

@@ -175,7 +175,7 @@ def test_privat_code_is_mirrored_to_stripe_and_applied_on_checkout(api, pv, db, 
     monkeypatch.setattr(stripe_api, "request", lambda m, p, d=None, **k: fake(m, p, d) if not p.startswith("/checkout/sessions/") else {
         "id": "cs_1", "mode": "subscription", "subscription": "sub_1",
         "metadata": {"kind": "privat_subscription", "workspace_id": str(ws), "plan": "plus", "interval": "month"},
-        "discounts": [{"coupon": "cpn_1", "promotion_code": "promo_1"}]})
+        "discounts": [{"coupon": "cpn_1", "promotion_code": "promo_1"}], "status": "complete"})
     assert api.get(tok, "/privat/subscription?session_id=cs_1").json()["plan"] == "plus"
     api.get(tok, "/privat/subscription?session_id=cs_1")
     reds = db.scalars(select(DiscountRedemption).where(DiscountRedemption.code_id == row.id)).all()

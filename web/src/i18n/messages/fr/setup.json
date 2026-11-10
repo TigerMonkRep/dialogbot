@@ -149,7 +149,7 @@
       },
       "langAria": "Langue",
       "speaks": "Il parle",
-      "alwaysDanish": "Les rapports et cette page s’affichent toujours en français."
+      "alwaysDanish": "Les rapports et cette page suivent la langue de votre compte."
     },
     "status": {
       "saving": "Enregistrement …",

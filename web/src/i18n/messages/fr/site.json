@@ -605,7 +605,22 @@
       "errorTitle": "Un problème est survenu. Réessayez.",
       "choose": "Choisissez une option",
       "chooseMany": "Choisissez une ou plusieurs options",
-      "startOver": "Recommencer"
+      "startOver": "Recommencer",
+      "errors": {
+        "rate_limited": "Trop de demandes depuis votre connexion. Patientez un instant et réessayez.",
+        "draft_not_found": "Nous n’avons pas trouvé vos réponses. Recommencez.",
+        "draft_expired": "Vos réponses ont expiré. Recommencez.",
+        "draft_verified": "Le compte est déjà créé. Connectez-vous.",
+        "search_failed": "La recherche ne fonctionne pas pour le moment. Saisissez le nom et continuez.",
+        "too_soon": "Patientez un instant avant de demander un nouveau code.",
+        "sms_failed": "Le SMS n’a pas pu être envoyé. Réessayez dans un instant.",
+        "privat_not_enabled": "Dialogbot Privé n’est pas encore ouvert pour vous.",
+        "code_expired": "Le code a expiré. Demandez-en un nouveau.",
+        "too_many_attempts": "Trop de tentatives. Demandez un nouveau code.",
+        "user_inactive": "Le compte est désactivé.",
+        "wrong_code": "Le code ne correspond pas.",
+        "generic": "Une erreur s’est produite. Réessayez dans un instant."
+      }
     },
     "places": {
       "label": "Nom de l'entreprise",
@@ -617,7 +632,7 @@
     "estimate": {
       "about": "env.",
       "perWeek": "appels par semaine",
-      "source": "Source : {source}",
+      "source": "Source : estimation de Dialogbot pour le secteur",
       "edit": "corrigez le chiffre si vous le connaissez mieux"
     },
     "build": {

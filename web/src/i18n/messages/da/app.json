@@ -303,7 +303,9 @@
       "call": "Ring",
       "conversation": "Samtalen",
       "lead": "Henvendelse",
-      "cancel": "Aflys"
+      "cancel": "Aflys",
+      "syncFailed": "Ikke i kalenderen",
+      "syncFailedDetail": "Aftalen kunne ikke skrives i den forbundne kalender: {error}"
     },
     "book": {
       "noSlotsError": "Der er ingen ledige tider. Tjek åbningstider og kalender.",
@@ -329,12 +331,20 @@
       "notConnected": "Ikke forbundet",
       "lastRead": "Sidst læst {at} · {n} optagne perioder. Dialogbot ser kun, hvornår I er optaget.",
       "without": "Uden kalender kender Dialogbot kun åbningstiderne og de aftaler, den selv har booket.",
-      "change": "Forbind eller skift kalender"
+      "change": "Forbind eller skift kalender",
+      "linked": "{name} er forbundet. Nye aftaler skrives i kalenderen, og optaget tid derfra blokeres.",
+      "linkedError": "{name} er forbundet, men det seneste kald fejlede: {error}",
+      "syncFailedN": "{n} aftaler kunne ikke skrives i kalenderen. De er markeret «Ikke i kalenderen» – tjek tiden i kalenderen selv.",
+      "simulated": "simuleret",
+      "provider": {
+        "google_calendar": "Google Kalender",
+        "microsoft_calendar": "Outlook-kalender (Microsoft 365)"
+      }
     },
     "staffOnly": "Aftaler kan ses af medarbejdere, administratorer og ejere.",
     "eyebrow": "I dag → Aftaler",
     "title": "Aftaler, Dialogbot har booket",
-    "intro": "Flyt eller aflys her. Optaget tid i jeres kalender blokeres, og hver booking bliver en henvendelse med en opgave.",
+    "intro": "Aflys her. Optaget tid i jeres kalender blokeres, og hver booking bliver en henvendelse med en opgave.",
     "prevWeek": "Forrige uge",
     "nextWeek": "Næste uge",
     "noHours": {
@@ -554,7 +564,7 @@
       "pause": "Sæt på pause",
       "before": "Før den starter",
       "resumeTitle": "Genoptag kampagnen",
-      "heading": "{n} opkald · højst {max} ekskl. moms",
+      "heading": "{n} kontakter · højst {max} ekskl. moms",
       "body": "{n} kontakter venter. Højst {max} + moms ({gross} inkl. moms) – {call} + moms pr. udgående opkald og {minute} + moms pr. påbegyndt samtaleminut, højst {attempts} forsøg og {minutes} minutters samtale pr. kontakt. Betaling starter aldrig opkald.",
       "confirm": "Bekræft reglerne for opkald",
       "starting": "Starter…",
@@ -782,7 +792,7 @@
       "confirmed": "Bekræftet · aftale v{v}. Gør-det-selv-opsætning er med.",
       "notConfirmed": "Gør-det-selv-opsætning er med. Ikke bekræftet endnu.",
       "campaign": "Kampagneopkald",
-      "campaignPrice": "pr. opkald + {minute} pr. minut ekskl. moms",
+      "campaignPrice": "pr. opkald + {minute} pr. påbegyndt minut ekskl. moms",
       "campaignMonth": "Denne måned: {calls} opkald, {minutes} samtaleminutter · {amount} ekskl. moms",
       "inbound": "Indgående opkald",
       "inboundUsed": "af {n} inkluderede minutter brugt denne måned",
@@ -796,6 +806,7 @@
     "pay": {
       "title": "Betaling",
       "notConfigured": "Kortbetaling er ikke sat op endnu. Indtil da er oversigten kun en forhåndsvisning, og der trækkes ingen betaling.",
+      "testMode": "Testtilstand – intet trækkes på kortet",
       "card": "Kort",
       "expires": "udløber {exp}",
       "noCard": "Intet betalingskort",

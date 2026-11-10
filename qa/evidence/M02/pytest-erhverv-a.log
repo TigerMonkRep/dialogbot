@@ -1,0 +1,6 @@
+PASSED tests/qa/test_qa_M02.py::test_search_by_name_email_and_member_detail_is_operator_only
+PASSED tests/qa/test_qa_M02.py::test_detail_exposes_no_secrets
+PASSED tests/qa/test_qa_M02.py::test_view_as_expires_after_its_window
+FAILED tests/qa/test_qa_M02.py::test_view_as_session_is_scoped_to_the_chosen_workspace
+FAILED tests/qa/test_qa_M02.py::test_view_as_dies_when_operator_grant_is_revoked
+FAILED tests/qa/test_qa_M02.py::test_entitlements_and_readiness_in_detail - A...

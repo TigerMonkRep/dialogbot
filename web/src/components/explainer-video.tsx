@@ -38,7 +38,7 @@ export function ExplainerVideo({ variant = "chip", label, ghost = false }: { var
   return (
     <>
       {variant === "poster" ? (
-        <button type="button" onClick={() => setOpen(true)} aria-label={t("video.playAria", { title })}
+        <button type="button" onClick={() => setOpen(true)} aria-label={`${title} · ${t("video.short")}`}
           className="group relative block w-full max-w-full aspect-video rounded-[20px] overflow-hidden border-2 border-ink bg-panel shadow-block text-left cursor-pointer p-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={VIDEO.thumb} srcSet={`${VIDEO.thumb} 640w, ${VIDEO.poster} 1920w`} sizes="(min-width: 1024px) 640px, 100vw" alt={t("video.posterAlt")} width={1920} height={1080} fetchPriority="high" decoding="async" className="block w-full h-full object-cover" />

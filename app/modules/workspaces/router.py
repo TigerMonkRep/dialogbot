@@ -8,6 +8,7 @@ from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
+from app.core.audit import record_audit
 from app.core.auth import Principal, WorkspaceContext, get_current_principal, get_workspace_context, require_capability
 from app.core.idempotency import IdempotencyGuard, scope_for
 from app.core.pagination import PageParams, page
@@ -70,7 +71,12 @@ class InvitationOut(BaseModel):
 
 
 def inv_out(i) -> InvitationOut:
-    return InvitationOut(id=i.id, email=i.email, role=i.role, status=i.status, expires_at=i.expires_at,
+    from datetime import UTC
+    from datetime import datetime as _dt
+
+    # a pending invitation past its expiry is shown as expired (it can neither be accepted nor resent)
+    st = "expired" if i.status == "pending" and i.expires_at <= _dt.now(UTC) else i.status
+    return InvitationOut(id=i.id, email=i.email, role=i.role, status=st, expires_at=i.expires_at,
                          created_at=i.created_at)
 
 
@@ -114,7 +120,9 @@ def create_workspace(body: WorkspaceCreateIn, request: Request, principal: Princ
 
 @router.get("/workspaces", response_model=list[WorkspaceOut])
 def list_workspaces(principal: Principal = Depends(get_current_principal), db: OrmSession = Depends(get_db)):
-    return [ws_out(w, m.role) for w, m in service.list_workspaces_for_user(db, principal.user.id)]
+    scope = principal.session.scope_workspace_id  # «Se som» for one workspace lists only that one
+    return [ws_out(w, m.role) for w, m in service.list_workspaces_for_user(db, principal.user.id)
+            if scope is None or w.id == scope]
 
 
 @router.get("/workspaces/{workspace_id}", response_model=WorkspaceOut)
@@ -185,9 +193,12 @@ def revoke_invitation(invitation_id: uuid.UUID, request: Request,
 
 
 @router.post("/workspaces/{workspace_id}/invitations/{invitation_id}/resend", response_model=InvitationOut)
-def resend_invitation(invitation_id: uuid.UUID, ctx: WorkspaceContext = Depends(get_workspace_context),
+def resend_invitation(invitation_id: uuid.UUID, request: Request, ctx: WorkspaceContext = Depends(get_workspace_context),
                       db: OrmSession = Depends(get_db)):
     inv = service.resend_invitation(db, ctx, invitation_id)
+    record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="invitation.resent",
+                 object_type="invitation", object_id=inv.id, after={"email": inv.email, "role": inv.role},
+                 request_id=request.state.request_id)
     db.commit()
     return inv_out(inv)
 
@@ -217,6 +228,16 @@ def accept_invitation(body: AcceptIn, request: Request, principal: Principal = D
     return ws_out(ws, m.role)
 
 
+# Operator-only fields that must never reach a customer, also if an older audit row carries them (DB-016).
+INTERNAL_AUDIT_KEYS = frozenset({"admin_note", "internal_note", "operator_note"})
+
+
+def _customer_safe(d: dict | None) -> dict | None:
+    if not isinstance(d, dict):
+        return d
+    return {k: v for k, v in d.items() if k not in INTERNAL_AUDIT_KEYS}
+
+
 @router.get("/workspaces/{workspace_id}/audit")
 def list_audit(p: PageParams = Depends(), ctx: WorkspaceContext = Depends(require_capability("audit.read")),
                db: OrmSession = Depends(get_db)):
@@ -224,6 +245,6 @@ def list_audit(p: PageParams = Depends(), ctx: WorkspaceContext = Depends(requir
     total = db.scalar(select(func.count()).select_from(q.subquery())) or 0
     rows = db.scalars(q.order_by(AuditLog.created_at.desc()).limit(p.limit).offset(p.offset))
     items = [AuditOut(id=a.id, actor_user_id=a.actor_user_id, action=a.action, object_type=a.object_type,
-                      object_id=a.object_id, before=a.before, after=a.after, request_id=a.request_id,
-                      created_at=a.created_at).model_dump(mode="json") for a in rows]
+                      object_id=a.object_id, before=_customer_safe(a.before), after=_customer_safe(a.after),
+                      request_id=a.request_id, created_at=a.created_at).model_dump(mode="json") for a in rows]
     return page(items, total, p)

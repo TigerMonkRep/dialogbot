@@ -1,0 +1,338 @@
+[
+  {
+    "project": "desktop-1440",
+    "locale": "da",
+    "route": "/",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "count": 4,
+        "nodes": [
+          {
+            "target": "#privat > .text-\\[14px\\] > .mr-2\\.5.py-\\[5px\\].inline-block",
+            "html": "<span class=\"inline-block mr-2.5 px-2.5 py-[5px] rounded-full bg-[#E0521A] text-white font-bold text-[13px]\">Privat</span>",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 9.8pt (13px), font weight: bold). Expected contrast ratio "
+          },
+          {
+            "target": ".self-end.max-w-\\[88\\%\\].rounded-br-md",
+            "html": "<div class=\"self-end max-w-[88%] px-3.5 py-[11px] rounded-[20px] rounded-br-md bg-[#E0521A] text-white text-[14.5px] leading-[1.42]\">Ja, ring</div>",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 10.9pt (14.5px), font weight: normal). Expected contrast r"
+          },
+          {
+            "target": ".flex-wrap.gap-3 > .border-\\[\\#E0521A\\].hover\\:bg-\\[\\#B8400F\\].hover\\:border-\\[\\#B8400F\\]",
+            "html": "<a class=\"inline-flex items-center justify-center gap-2.5 min-h-[52px] px-6 rounded-[14px] border-2 font-semibold text-[16px] leading-none whitespace-nowrap no-",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 12.0pt (16px), font weight: normal). Expected contrast rat"
+          },
+          {
+            "target": ".rounded-\\[28px\\] > .border-\\[\\#E0521A\\].hover\\:bg-\\[\\#B8400F\\].hover\\:border-\\[\\#B8400F\\]",
+            "html": "<a class=\"inline-flex items-ce...\" href=\"/privat/start\">",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 12.0pt (16px), font weight: normal). Expected contrast rat"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "da",
+    "route": "/erhverv",
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "count": 2,
+        "nodes": [
+          {
+            "target": ".max-w-full",
+            "html": "<button type=\"button\" aria-label=\"Se, hvad Dialogbot kan – afspil videoen (90 sekunder)\" class=\"group relative block w-full max-w-full aspect-video rounded-[20p",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          },
+          {
+            "target": ".fixed",
+            "html": "<button type=\"button\" aria-label=\"Åbn chatten\" aria-expanded=\"false\" class=\"fixed right-4 bottom...\">",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "da",
+    "route": "/privat",
+    "violations": []
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "da",
+    "route": "/proev",
+    "violations": []
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "da",
+    "route": "/start",
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "count": 1,
+        "nodes": [
+          {
+            "target": "a[aria-label=\"Forside\"]",
+            "html": "<a class=\"inline-flex items-center gap-2 min-h-11 text-ink no-underline\" aria-label=\"Forside\" href=\"/\">",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "da",
+    "route": "/privat/start",
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "count": 1,
+        "nodes": [
+          {
+            "target": "a[aria-label=\"Forside\"]",
+            "html": "<a class=\"inline-flex items-center gap-2 min-h-11 text-ink no-underline\" aria-label=\"Forside\" href=\"/privat\">",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "en",
+    "route": "/",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "count": 4,
+        "nodes": [
+          {
+            "target": "#privat > .text-\\[14px\\] > .mr-2\\.5.py-\\[5px\\].inline-block",
+            "html": "<span class=\"inline-block mr-2.5 px-2.5 py-[5px] rounded-full bg-[#E0521A] text-white font-bold text-[13px]\">Personal</span>",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 9.8pt (13px), font weight: bold). Expected contrast ratio "
+          },
+          {
+            "target": ".self-end.max-w-\\[88\\%\\].rounded-br-md",
+            "html": "<div class=\"self-end max-w-[88%] px-3.5 py-[11px] rounded-[20px] rounded-br-md bg-[#E0521A] text-white text-[14.5px] leading-[1.42]\">Yes, call</div>",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 10.9pt (14.5px), font weight: normal). Expected contrast r"
+          },
+          {
+            "target": ".flex-wrap.gap-3 > .border-\\[\\#E0521A\\].hover\\:bg-\\[\\#B8400F\\].hover\\:border-\\[\\#B8400F\\]",
+            "html": "<a class=\"inline-flex items-center justify-center gap-2.5 min-h-[52px] px-6 rounded-[14px] border-2 font-semibold text-[16px] leading-none whitespace-nowrap no-",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 12.0pt (16px), font weight: normal). Expected contrast rat"
+          },
+          {
+            "target": ".rounded-\\[28px\\] > .border-\\[\\#E0521A\\].hover\\:bg-\\[\\#B8400F\\].hover\\:border-\\[\\#B8400F\\]",
+            "html": "<a class=\"inline-flex items-ce...\" href=\"/privat/start\">",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 12.0pt (16px), font weight: normal). Expected contrast rat"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "en",
+    "route": "/erhverv",
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "count": 2,
+        "nodes": [
+          {
+            "target": ".max-w-full",
+            "html": "<button type=\"button\" aria-label=\"See what Dialogbot can do – play the video (90 seconds)\" class=\"group relative block w-full max-w-full aspect-video rounded-[2",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          },
+          {
+            "target": ".fixed",
+            "html": "<button type=\"button\" aria-label=\"Open the chat\" aria-expanded=\"false\" class=\"fixed right-4 bottom...\">",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "en",
+    "route": "/privat",
+    "violations": []
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "en",
+    "route": "/proev",
+    "violations": []
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "en",
+    "route": "/start",
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "count": 1,
+        "nodes": [
+          {
+            "target": "a[aria-label=\"Home\"]",
+            "html": "<a class=\"inline-flex items-center gap-2 min-h-11 text-ink no-underline\" aria-label=\"Home\" href=\"/\">",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "en",
+    "route": "/privat/start",
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "count": 1,
+        "nodes": [
+          {
+            "target": "a[aria-label=\"Home\"]",
+            "html": "<a class=\"inline-flex items-center gap-2 min-h-11 text-ink no-underline\" aria-label=\"Home\" href=\"/privat\">",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "de",
+    "route": "/",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "count": 4,
+        "nodes": [
+          {
+            "target": "#privat > .text-\\[14px\\] > .mr-2\\.5.py-\\[5px\\].inline-block",
+            "html": "<span class=\"inline-block mr-2.5 px-2.5 py-[5px] rounded-full bg-[#E0521A] text-white font-bold text-[13px]\">Privat</span>",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 9.8pt (13px), font weight: bold). Expected contrast ratio "
+          },
+          {
+            "target": ".self-end.max-w-\\[88\\%\\].rounded-br-md",
+            "html": "<div class=\"self-end max-w-[88%] px-3.5 py-[11px] rounded-[20px] rounded-br-md bg-[#E0521A] text-white text-[14.5px] leading-[1.42]\">Ja, anrufen</div>",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 10.9pt (14.5px), font weight: normal). Expected contrast r"
+          },
+          {
+            "target": ".flex-wrap.gap-3 > .border-\\[\\#E0521A\\].hover\\:bg-\\[\\#B8400F\\].hover\\:border-\\[\\#B8400F\\]",
+            "html": "<a class=\"inline-flex items-center justify-center gap-2.5 min-h-[52px] px-6 rounded-[14px] border-2 font-semibold text-[16px] leading-none whitespace-nowrap no-",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 12.0pt (16px), font weight: normal). Expected contrast rat"
+          },
+          {
+            "target": ".rounded-\\[28px\\] > .border-\\[\\#E0521A\\].hover\\:bg-\\[\\#B8400F\\].hover\\:border-\\[\\#B8400F\\]",
+            "html": "<a class=\"inline-flex items-ce...\" href=\"/privat/start\">",
+            "why": "Fix any of the following:\n  Element has insufficient color contrast of 3.89 (foreground color: #ffffff, background color: #e0521a, font size: 12.0pt (16px), font weight: normal). Expected contrast rat"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "de",
+    "route": "/erhverv",
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "count": 2,
+        "nodes": [
+          {
+            "target": ".max-w-full",
+            "html": "<button type=\"button\" aria-label=\"Sehen Sie, was Dialogbot kann – Video abspielen (90 Sekunden)\" class=\"group relative block w-full max-w-full aspect-video roun",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          },
+          {
+            "target": ".fixed",
+            "html": "<button type=\"button\" aria-label=\"Chat öffnen\" aria-expanded=\"false\" class=\"fixed right-4 bottom...\">",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "de",
+    "route": "/privat",
+    "violations": []
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "de",
+    "route": "/proev",
+    "violations": []
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "de",
+    "route": "/start",
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "count": 1,
+        "nodes": [
+          {
+            "target": "a[aria-label=\"Startseite\"]",
+            "html": "<a class=\"inline-flex items-center gap-2 min-h-11 text-ink no-underline\" aria-label=\"Startseite\" href=\"/\">",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project": "desktop-1440",
+    "locale": "de",
+    "route": "/privat/start",
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "count": 1,
+        "nodes": [
+          {
+            "target": "a[aria-label=\"Startseite\"]",
+            "html": "<a class=\"inline-flex items-center gap-2 min-h-11 text-ink no-underline\" aria-label=\"Startseite\" href=\"/privat\">",
+            "why": "Fix any of the following:\n  Text inside the element is not included in the accessible name"
+          }
+        ]
+      }
+    ]
+  }
+]

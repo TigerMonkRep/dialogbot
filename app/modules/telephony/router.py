@@ -139,7 +139,10 @@ async def vapi_webhook(request: Request, db: OrmSession = Depends(get_db),
             raw_caller = ((message.get("call") or {}).get("customer") or {}).get("number") or (message.get("customer") or {}).get("number")
             out = vapi.assistant_config(db, number, caller=vapi.normalize_e164(str(raw_caller)) if raw_caller else None)
             if mode == "test":
-                out["assistant"]["firstMessage"] = "Dette er et prøveopkald. " + out["assistant"].get("firstMessage", "")
+                from app.modules.telephony import phone_languages as pl
+
+                lang = pl.call_language(db, number.workspace_id, vapi.normalize_e164(str(raw_caller)) if raw_caller else None)
+                out["assistant"]["firstMessage"] = pl.test_prefix(lang) + " " + out["assistant"].get("firstMessage", "")
                 out["assistant"]["metadata"]["telephony_test"] = True
                 platform.mark_test_call(db, number, str((message.get("call") or {}).get("id") or "") or None)
                 db.commit()

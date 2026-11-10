@@ -40,7 +40,17 @@ export function AccountPane() {
     if (c === "cancel") setNote(t("account.purchaseCancelled"));
   }, [params, setNote, t]);
   useEffect(() => {
-    if (mode === "loading" || mode === "demo") return;
+    if (mode === "loading") return;
+    if (mode === "demo") {
+      // An anonymous visitor (demo account) who came to pay (?plan= from «Prøv gratis i 14 dage» or a plan card):
+      // sign up first, then back here to the checkout. Without ?plan= the demo stays as it is (QA F-PQ-02-X07).
+      const key = params.toString();
+      if (isPlanKey(params.get("plan")) && handled.current !== `signup:${key}`) {
+        handled.current = `signup:${key}`;
+        window.location.assign(`/signup?next=${encodeURIComponent(`/privat/konto?${key}`)}`);
+      }
+      return;
+    }
     const key = params.toString();
     if (!key || handled.current === key) return;
     const ab = params.get("abonnement");
@@ -52,7 +62,9 @@ export function AccountPane() {
       handled.current = key;
       (async () => {
         const app = params.get("app");
-        try { const sb = await api.subscription(sid ?? undefined, currencyFor(locale)); setSubscription(sb); await refresh(); setNote(t("plan.activated")); }
+        // «aktivt» only when the backend says the plan's rights are there (it read the session from Stripe): a declined
+        // card, an abandoned checkout or a bookmarked success link lands here too
+        try { const sb = await api.subscription(sid ?? undefined, currencyFor(locale)); setSubscription(sb); await refresh(); setNote(sb.entitled ? t("plan.activated") : t("plan.notCompleted")); }
         catch (e) { setError(e as ApiError); }
         // «Kræver plan» from an app: the backend switched that app on with the plan – land on it.
         if (app && /^[a-z0-9-]{2,40}$/.test(app)) router.replace(`/privat/apps/${app}`); else clean();

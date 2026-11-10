@@ -303,6 +303,29 @@ def _interval_of(obj: dict) -> str | None:
     return rec.get("interval") if rec.get("interval") in INTERVALS else None
 
 
+def _plan_of_price(obj: dict) -> tuple[str | None, str | None]:
+    """(plan, interval) of the price the subscription is billed at now – what the Billing Portal changes. Known from
+    the fixed DKK prices (PRIVAT_STRIPE_PRICE_<PLAN>_<INTERVAL>) or a lookup_key `privat_<plan>_<interval>`.
+    Price_data prices (other currencies) have neither; then the metadata from Checkout applies."""
+    items = ((obj.get("items") or {}).get("data") or [])
+    price = (items[0].get("price") or {}) if items else {}
+    pid, lookup = price.get("id"), str(price.get("lookup_key") or "")
+    for plan in PLANS:
+        for interval in INTERVALS:
+            if (pid and pid == price_id(plan, interval)) or lookup == f"privat_{plan}_{interval}":
+                return plan, interval
+    return None, None
+
+
+def _ended_unpaid(obj: dict, row: PrivateSubscription) -> bool:
+    """The subscription ended (or stopped) because a renewal was never paid: the last period was not paid for."""
+    if str(obj.get("status")) == "unpaid":
+        return True
+    if (obj.get("cancellation_details") or {}).get("reason") == "payment_failed":
+        return True
+    return row.status == "past_due" and row.stripe_subscription_id == str(obj.get("id") or "")
+
+
 def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: dict | None = None) -> str:
     """Mirror one Stripe subscription object into private_subscriptions. Idempotent (same object → same row).
     Returns applied | ignored | unmatched."""
@@ -324,13 +347,20 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
     status = STRIPE_STATUS.get(str(obj.get("status") or ""))
     if status is None:
         return "ignored"
-    plan = meta.get("plan") if meta.get("plan") in PLANS else None
-    interval = meta.get("interval") if meta.get("interval") in INTERVALS else _interval_of(obj)
+    # The price billed now wins over the metadata written once at Checkout (plan/interval changes in the portal).
+    price_plan, price_interval = _plan_of_price(obj)
+    plan = price_plan or (meta.get("plan") if meta.get("plan") in PLANS else None)
+    interval = _interval_of(obj) or price_interval or (meta.get("interval") if meta.get("interval") in INTERVALS else None)
     row = get(db, ws_id, lock=True) or start_free(db, ws_id)
     if row.stripe_subscription_id and row.stripe_subscription_id != sid and status == "canceled":
         return "ignored"  # an older subscription ending must not touch the one that replaced it
     if plan is None and row.stripe_subscription_id != sid:
         return "unmatched"  # a subscription we cannot place on a plan
+    if row.stripe_subscription_id == sid and status == "trial" and row.status in ("active", "past_due", "canceled"):
+        # Stripe does not deliver events in order, and a subscription never goes back to trialing once the trial is
+        # over: this is a stale event from before (it would lock a paying customer out as "expired").
+        return "ignored"
+    unpaid_end = status == "canceled" and _ended_unpaid(obj, row)
     row.stripe_subscription_id = sid
     row.status = status
     if status == "trial":
@@ -346,6 +376,9 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
     if cust:
         row.stripe_customer_id = str(cust)[:100]
     row.current_period_end = _period_end(obj) or row.current_period_end
+    if unpaid_end:
+        # "canceled until the PAID period ends": the period after the failed renewal was never paid → no rights left
+        row.current_period_end = min(row.current_period_end or rules.now(), _ts(obj.get("ended_at")) or rules.now())
     row.cancel_at_period_end = bool(obj.get("cancel_at_period_end"))
     row.updated_at = rules.now()
     db.flush()
@@ -407,4 +440,6 @@ def sync_from_session(db: OrmSession, ctx, session_id: str) -> str:
     meta = sess.get("metadata") or {}
     if meta.get("kind") != KIND or meta.get("workspace_id") != str(ctx.ws_id):
         raise NotFound("Betalingen hører ikke til din konto", code="session_not_yours")
+    if sess.get("status") != "complete":
+        return "ignored"  # declined card / abandoned checkout: the session is still open (or expired) – nothing to mirror
     return on_checkout_completed(db, sess) or "ignored"

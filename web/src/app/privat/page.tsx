@@ -6,6 +6,7 @@ import { AudienceSwitch } from "@/components/audience-switch";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Ico } from "@/components/privat/icons";
 import { PublicPlans } from "@/components/privat/plans-public";
+import { planCheckoutHref } from "@/lib/privat/plans";
 import { InstallApp } from "@/components/install-app";
 import { Mark, Tilted } from "@/components/mark";
 import { AudienceMemory } from "@/components/audience-memory";
@@ -37,7 +38,10 @@ export default async function PrivatLanding() {
   const three = raw<{ title: string; text: string }[]>("privat.landing.three.items");
   const steps = raw<string[]>("privat.landing.control.steps");
   const apps = raw<Record<string, string>>("privat.landing.store.apps");
-  const tryHref = "/privat/dag";
+  // «Prøv gratis i 14 dage» goes straight to the trial checkout (Plus, monthly – the same as the paywall), via sign-up
+  // or login when needed (handled on /privat/konto). Fürster's decision 4 Nov 2026 (QA F-PQ-02-X07).
+  const tryHref = planCheckoutHref("plus", "month");
+  const appHref = "/privat/dag";
   const appTiles: { key: string; bg: string; fg: string }[] = [
     { key: "sharedLists", bg: "bg-accent", fg: "text-on-accent" },
     { key: "wishlist", bg: "bg-success-soft", fg: "text-ink" },
@@ -64,7 +68,7 @@ export default async function PrivatLanding() {
           <AudienceSwitch current="privat" size="sm" />
           <span className="flex-1" />
           <LanguageSwitcher compact />
-          <Link href={`/login?next=${encodeURIComponent(tryHref)}`} className="inline-flex items-center min-h-11 px-[18px] rounded-full border-2 border-ink bg-paper text-[15px] font-semibold text-ink no-underline hover:bg-panel">{t("landing.login")}</Link>
+          <Link href={`/login?next=${encodeURIComponent(appHref)}`} className="inline-flex items-center min-h-11 px-[18px] rounded-full border-2 border-ink bg-paper text-[15px] font-semibold text-ink no-underline hover:bg-panel">{t("landing.login")}</Link>
         </div>
       </header>
 
@@ -107,7 +111,7 @@ export default async function PrivatLanding() {
               <label htmlFor="privat-demo" className="sr-only">{t("landing.demo.inputLabel")}</label>
               <input id="privat-demo" type="text" readOnly placeholder={t("landing.demo.placeholder")} className="flex-1 min-w-0 bg-transparent border-0 outline-0 text-[14px] text-ink placeholder:text-muted" />
               <span className="inline-flex items-center justify-center w-[38px] h-[38px] rounded-full border-2 border-ink bg-white text-ink shrink-0" aria-hidden="true"><Ico name="mic" size={18} /></span>
-              <Link href={tryHref} className="inline-flex items-center gap-1 min-h-[38px] px-4 rounded-full border-2 border-ink bg-accent text-on-accent text-[14px] font-semibold no-underline hover:bg-accent-deep">{t("landing.demo.send")} <Ico name="arrow" size={16} stroke={2.6} /></Link>
+              <Link href={appHref} className="inline-flex items-center gap-1 min-h-[38px] px-4 rounded-full border-2 border-ink bg-accent text-on-accent text-[14px] font-semibold no-underline hover:bg-accent-deep">{t("landing.demo.send")} <Ico name="arrow" size={16} stroke={2.6} /></Link>
             </div>
             <div className="flex items-center gap-2.5 rounded-[20px] border-2 border-ink bg-success-soft px-4 py-3 text-[15px] font-semibold">
               <Ico name="check" size={20} stroke={3} />

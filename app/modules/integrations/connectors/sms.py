@@ -128,8 +128,29 @@ def send(db: OrmSession, ws: Workspace, *, sender: str, to: str, body: str, simu
     try:
         out = twilio._req("POST", f"/Accounts/{sid}/Messages.json", data={"From": sender, "To": to, "Body": body[:MAX_SMS_CHARS]})
     except ProviderError as e:
-        raise ActionError(f"SMS kunne ikke sendes: {e.message}", code="provider_rejected", retryable=e.retryable) from e
+        # 401/403: the credentials are refused – provider_unauthorized flips the connection to `error` (note_failure)
+        raise ActionError(f"SMS kunne ikke sendes: {e.message}",
+                          code="provider_unauthorized" if e.unauthorized else "provider_rejected", retryable=e.retryable) from e
     return str(out.get("sid") or "")
+
+
+def verify(db: OrmSession, ws: Workspace) -> None:
+    """A read-only Twilio call on the account the SMS are sent from: proves the platform credentials work."""
+    from app.modules.telephony.providers import ProviderError, providers
+
+    pv = providers()
+    if pv is None:
+        raise ActionError("SMS er ikke sat op hos Dialogbot", code="sms_not_configured")
+    twilio = pv[0]
+    acct = db.scalar(select(TelephonyAccount).where(TelephonyAccount.workspace_id == ws.id,
+                                                    TelephonyAccount.provider == "twilio"))
+    sid = acct.external_id if acct is not None else twilio.account_sid
+    try:
+        twilio._req("GET", f"/Accounts/{sid}.json")
+    except ProviderError as e:
+        raise ActionError(f"Twilio kunne ikke bekræfte forbindelsen: {e.message}",
+                          code="provider_unauthorized" if e.unauthorized else "provider_unavailable",
+                          retryable=e.retryable) from e
 
 
 class SmsAdapter:
@@ -141,6 +162,8 @@ class SmsAdapter:
     def test_connection(self) -> dict:
         if not SENDER_RE.match(self.sender):
             raise ActionError("Afsendernavnet skal være 1–11 bogstaver/tal eller et nummer i formatet +45…", code="bad_sender")
+        if not self.simulated:
+            verify(self.db, self.ws)  # a real (read-only) call before anything is called «Forbundet»
         return {"sender": self.sender, "templates": list(TEMPLATES)}
 
     def run(self, action: str, data: dict, ctx: RunContext) -> ActionResult:

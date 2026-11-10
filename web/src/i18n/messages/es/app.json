@@ -303,7 +303,9 @@
       "call": "Llamar",
       "conversation": "La conversación",
       "lead": "Consulta",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "syncFailed": "No está en el calendario",
+      "syncFailedDetail": "La cita no se pudo escribir en el calendario conectado: {error}"
     },
     "book": {
       "noSlotsError": "No hay horas libres. Revise el horario y el calendario.",
@@ -329,12 +331,20 @@
       "notConnected": "No conectado",
       "lastRead": "Última lectura {at} · {n} periodos ocupados. Dialogbot solo ve cuándo están ocupados.",
       "without": "Sin calendario, Dialogbot solo conoce el horario y las citas que él mismo ha reservado.",
-      "change": "Conectar o cambiar de calendario"
+      "change": "Conectar o cambiar de calendario",
+      "linked": "{name} está conectado. Las nuevas citas se escriben en el calendario y el tiempo ocupado allí se bloquea.",
+      "linkedError": "{name} está conectado, pero la última llamada falló: {error}",
+      "syncFailedN": "{n} citas no se pudieron escribir en el calendario. Están marcadas «No está en el calendario»: compruebe la hora en el propio calendario.",
+      "simulated": "simulado",
+      "provider": {
+        "google_calendar": "Google Calendar",
+        "microsoft_calendar": "Calendario de Outlook (Microsoft 365)"
+      }
     },
     "staffOnly": "Las citas pueden verlas empleados, administradores y propietarios.",
     "eyebrow": "Hoy → Citas",
     "title": "Citas reservadas por Dialogbot",
-    "intro": "Cambie o cancele aquí. El tiempo ocupado en su calendario se bloquea, y cada reserva se convierte en una consulta con una tarea.",
+    "intro": "Cancele aquí. El tiempo ocupado en su calendario se bloquea, y cada reserva se convierte en una consulta con una tarea.",
     "prevWeek": "Semana anterior",
     "nextWeek": "Semana siguiente",
     "noHours": {
@@ -554,7 +564,7 @@
       "pause": "Poner en pausa",
       "before": "Antes de empezar",
       "resumeTitle": "Reanudar la campaña",
-      "heading": "{n} llamadas · máximo {max} sin IVA",
+      "heading": "{n} contactos · máximo {max} sin IVA",
       "body": "{n} contactos en espera. Máximo {max} + IVA ({gross} con IVA): {call} + IVA por llamada saliente y {minute} + IVA por minuto de conversación iniciado, máximo {attempts} intentos y {minutes} minutos de conversación por contacto. El pago nunca inicia llamadas.",
       "confirm": "Confirme las reglas de las llamadas",
       "starting": "Iniciando…",
@@ -782,7 +792,7 @@
       "confirmed": "Confirmada · contrato v{v}. La configuración por su cuenta está incluida.",
       "notConfirmed": "La configuración por su cuenta está incluida. Aún no confirmada.",
       "campaign": "Llamadas de campaña",
-      "campaignPrice": "por llamada + {minute} por minuto, IVA no incluido",
+      "campaignPrice": "por llamada + {minute} por minuto iniciado, IVA no incluido",
       "campaignMonth": "Este mes: {calls} llamadas, {minutes} minutos de conversación · {amount} sin IVA",
       "inbound": "Llamadas entrantes",
       "inboundUsed": "de {n} minutos incluidos usados este mes",
@@ -796,6 +806,7 @@
     "pay": {
       "title": "Pago",
       "notConfigured": "El pago con tarjeta aún no está configurado. Hasta entonces, el resumen es solo una vista previa y no se realiza ningún cobro.",
+      "testMode": "Modo de prueba: no se cobra nada en la tarjeta",
       "card": "Tarjeta",
       "expires": "caduca {exp}",
       "noCard": "Sin tarjeta de pago",

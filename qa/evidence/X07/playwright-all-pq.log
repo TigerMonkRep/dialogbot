@@ -1,0 +1,279 @@
+
+Running 12 tests using 1 worker
+
+  ✘   1 [desktop-1440] › e2e/qa/privat/X07.spec.ts:43:5 › forsidens «Prøv gratis i 14 dage» fører en logget-ind bruger uden plan direkte til checkout (13.7s)
+  ✘   2 [desktop-1440] › e2e/qa/privat/X07.spec.ts:53:5 › anonym besøgende: «Prøv gratis i 14 dage» fører til oprettelse (ikke til en demo med «Prøveperiode · Plus») (11.7s)
+  ✓   3 [desktop-1440] › e2e/qa/privat/X07.spec.ts:61:5 › trial-checkout: afbrudt, afvist, ingen dækning, 3DS afvist → ingen adgang; 3DS godkendt → 14 dages Plus (9.5s)
+  ✘   4 [desktop-1440] › e2e/qa/privat/X07.spec.ts:130:5 › tilbage fra checkout uden gennemført betaling: Konto må ikke sige «Dit abonnement er aktivt» (14.9s)
+  ✓   5 [desktop-1440] › e2e/qa/privat/X09.spec.ts:26:5 › ønskeliste: modtager uden plan reserverer via linket; ejeren ser intet i UI eller JSON; modtageren når intet andet (9.4s)
+  ✓   6 [desktop-1440] › e2e/qa/privat/X11.spec.ts:39:5 › forslag, reload og «Afvis» ringer aldrig; dobbelt-klik på «Godkend opkald» ringer én gang (11.9s)
+  ✘   7 [mobil-390] › e2e/qa/privat/X07.spec.ts:43:5 › forsidens «Prøv gratis i 14 dage» fører en logget-ind bruger uden plan direkte til checkout (12.3s)
+  ✘   8 [mobil-390] › e2e/qa/privat/X07.spec.ts:53:5 › anonym besøgende: «Prøv gratis i 14 dage» fører til oprettelse (ikke til en demo med «Prøveperiode · Plus») (12.1s)
+  ✓   9 [mobil-390] › e2e/qa/privat/X07.spec.ts:61:5 › trial-checkout: afbrudt, afvist, ingen dækning, 3DS afvist → ingen adgang; 3DS godkendt → 14 dages Plus (8.7s)
+  ✘  10 [mobil-390] › e2e/qa/privat/X07.spec.ts:130:5 › tilbage fra checkout uden gennemført betaling: Konto må ikke sige «Dit abonnement er aktivt» (14.2s)
+  ✓  11 [mobil-390] › e2e/qa/privat/X09.spec.ts:26:5 › ønskeliste: modtager uden plan reserverer via linket; ejeren ser intet i UI eller JSON; modtageren når intet andet (7.4s)
+  ✓  12 [mobil-390] › e2e/qa/privat/X11.spec.ts:39:5 › forslag, reload og «Afvis» ringer aldrig; dobbelt-klik på «Godkend opkald» ringer én gang (11.9s)
+
+
+  1) [desktop-1440] › e2e/qa/privat/X07.spec.ts:43:5 › forsidens «Prøv gratis i 14 dage» fører en logget-ind bruger uden plan direkte til checkout 
+
+    Error: landede på http://localhost:3100/privat/dag
+
+    [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByTestId('fake-stripe')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - landede på http://localhost:3100/privat/dag with timeout 10000ms[22m
+    [2m  - waiting for getByTestId('fake-stripe')[22m
+
+
+      48 |   await evidence(page, info, "X07", "cta-landing");
+      49 |   // Krav X07 / agentdefinition: «"Prøv gratis i 14 dage" leads straight to checkout (name, address, phone, e-mail, card)».
+    > 50 |   await expect(page.getByTestId("fake-stripe"), `landede på ${page.url()}`).toBeVisible({ timeout: 10_000 });
+         |                                                                             ^
+      51 | });
+      52 |
+      53 | test("anonym besøgende: «Prøv gratis i 14 dage» fører til oprettelse (ikke til en demo med «Prøveperiode · Plus»)", async ({ page }, info) => {
+        at /home/claude/dialogbot/web/e2e/qa/privat/X07.spec.ts:50:77
+
+    attachment #1: cta-landing (image/png) ─────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-forsidens-«P-daaa6-n-plan-direkte-til-checkout-desktop-1440/attachments/cta-landing-7dae9d1d5ebc5cc8038834fed91aab43ca423b6a.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-forsidens-«P-daaa6-n-plan-direkte-til-checkout-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/qa-privat-X07-forsidens-«P-daaa6-n-plan-direkte-til-checkout-desktop-1440/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-forsidens-«P-daaa6-n-plan-direkte-til-checkout-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/qa-privat-X07-forsidens-«P-daaa6-n-plan-direkte-til-checkout-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop-1440] › e2e/qa/privat/X07.spec.ts:53:5 › anonym besøgende: «Prøv gratis i 14 dage» fører til oprettelse (ikke til en demo med «Prøveperiode · Plus») 
+
+    Error: landede på http://localhost:3100/privat/dag
+
+    [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected pattern: [32m/\/(signup|login)|__qa\/stripe\/pay\//[39m
+    Received string:  [31m"http://localhost:3100/privat/dag"[39m
+    Timeout: 10000ms
+
+    Call log:
+    [2m  - landede på http://localhost:3100/privat/dag with timeout 10000ms[22m
+    [2m    14 × unexpected value "http://localhost:3100/privat/dag"[22m
+
+
+      56 |   await page.waitForLoadState("networkidle");
+      57 |   await evidence(page, info, "X07", "cta-anonymous");
+    > 58 |   await expect(page, `landede på ${page.url()}`).toHaveURL(/\/(signup|login)|__qa\/stripe\/pay\//);
+         |                                                  ^
+      59 | });
+      60 |
+      61 | test("trial-checkout: afbrudt, afvist, ingen dækning, 3DS afvist → ingen adgang; 3DS godkendt → 14 dages Plus", async ({ page }, info) => {
+        at /home/claude/dialogbot/web/e2e/qa/privat/X07.spec.ts:58:50
+
+    attachment #1: cta-anonymous (image/png) ───────────────────────────────────────────────────────
+    test-results/qa-privat-X07-anonym-besøg-7b898--med-«Prøveperiode-·-Plus»--desktop-1440/attachments/cta-anonymous-d4d3f05095a75cca848c3b2e0f64fc94f89e79cf.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-anonym-besøg-7b898--med-«Prøveperiode-·-Plus»--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/qa-privat-X07-anonym-besøg-7b898--med-«Prøveperiode-·-Plus»--desktop-1440/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-anonym-besøg-7b898--med-«Prøveperiode-·-Plus»--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/qa-privat-X07-anonym-besøg-7b898--med-«Prøveperiode-·-Plus»--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop-1440] › e2e/qa/privat/X07.spec.ts:130:5 › tilbage fra checkout uden gennemført betaling: Konto må ikke sige «Dit abonnement er aktivt» 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByText('Dit abonnement er aktivt.').filter({ visible: true })
+    Expected: [32m0[39m
+    Received: [31m2[39m
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 10000ms[22m
+    [2m  - waiting for getByText('Dit abonnement er aktivt.').filter({ visible: true })[22m
+    [2m    14 × locator resolved to 2 elements[22m
+    [2m       - unexpected value "2"[22m
+
+
+      140 |   expect([s.status, s.entitled]).toEqual(["none", false]);  // the backend holds
+      141 |   await expect(page.getByTestId("balance-chip").filter({ visible: true }).first()).toHaveAttribute("data-status", "none");
+    > 142 |   await expect(page.getByText("Dit abonnement er aktivt.").filter({ visible: true })).toHaveCount(0);  // … and the page must not claim otherwise
+          |                                                                                       ^
+      143 | });
+      144 |
+        at /home/claude/dialogbot/web/e2e/qa/privat/X07.spec.ts:142:87
+
+    attachment #1: success-url-without-payment (image/png) ─────────────────────────────────────────
+    test-results/qa-privat-X07-tilbage-fra--c529a--«Dit-abonnement-er-aktivt»-desktop-1440/attachments/success-url-without-payment-a1f3ce7b70aaf4c8f6f66e05a10ea0f4530ff533.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-tilbage-fra--c529a--«Dit-abonnement-er-aktivt»-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/qa-privat-X07-tilbage-fra--c529a--«Dit-abonnement-er-aktivt»-desktop-1440/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-tilbage-fra--c529a--«Dit-abonnement-er-aktivt»-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/qa-privat-X07-tilbage-fra--c529a--«Dit-abonnement-er-aktivt»-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [mobil-390] › e2e/qa/privat/X07.spec.ts:43:5 › forsidens «Prøv gratis i 14 dage» fører en logget-ind bruger uden plan direkte til checkout 
+
+    Error: landede på http://localhost:3100/privat/dag
+
+    [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByTestId('fake-stripe')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - landede på http://localhost:3100/privat/dag with timeout 10000ms[22m
+    [2m  - waiting for getByTestId('fake-stripe')[22m
+
+
+      48 |   await evidence(page, info, "X07", "cta-landing");
+      49 |   // Krav X07 / agentdefinition: «"Prøv gratis i 14 dage" leads straight to checkout (name, address, phone, e-mail, card)».
+    > 50 |   await expect(page.getByTestId("fake-stripe"), `landede på ${page.url()}`).toBeVisible({ timeout: 10_000 });
+         |                                                                             ^
+      51 | });
+      52 |
+      53 | test("anonym besøgende: «Prøv gratis i 14 dage» fører til oprettelse (ikke til en demo med «Prøveperiode · Plus»)", async ({ page }, info) => {
+        at /home/claude/dialogbot/web/e2e/qa/privat/X07.spec.ts:50:77
+
+    attachment #1: cta-landing (image/png) ─────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-forsidens-«P-daaa6-n-plan-direkte-til-checkout-mobil-390/attachments/cta-landing-33062d0b51aae2d31dcbb6230e71bec58a54f00d.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-forsidens-«P-daaa6-n-plan-direkte-til-checkout-mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/qa-privat-X07-forsidens-«P-daaa6-n-plan-direkte-til-checkout-mobil-390/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-forsidens-«P-daaa6-n-plan-direkte-til-checkout-mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/qa-privat-X07-forsidens-«P-daaa6-n-plan-direkte-til-checkout-mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [mobil-390] › e2e/qa/privat/X07.spec.ts:53:5 › anonym besøgende: «Prøv gratis i 14 dage» fører til oprettelse (ikke til en demo med «Prøveperiode · Plus») 
+
+    Error: landede på http://localhost:3100/privat/dag
+
+    [2mexpect([22m[31mpage[39m[2m).[22mtoHaveURL[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Expected pattern: [32m/\/(signup|login)|__qa\/stripe\/pay\//[39m
+    Received string:  [31m"http://localhost:3100/privat/dag"[39m
+    Timeout: 10000ms
+
+    Call log:
+    [2m  - landede på http://localhost:3100/privat/dag with timeout 10000ms[22m
+    [2m    14 × unexpected value "http://localhost:3100/privat/dag"[22m
+
+
+      56 |   await page.waitForLoadState("networkidle");
+      57 |   await evidence(page, info, "X07", "cta-anonymous");
+    > 58 |   await expect(page, `landede på ${page.url()}`).toHaveURL(/\/(signup|login)|__qa\/stripe\/pay\//);
+         |                                                  ^
+      59 | });
+      60 |
+      61 | test("trial-checkout: afbrudt, afvist, ingen dækning, 3DS afvist → ingen adgang; 3DS godkendt → 14 dages Plus", async ({ page }, info) => {
+        at /home/claude/dialogbot/web/e2e/qa/privat/X07.spec.ts:58:50
+
+    attachment #1: cta-anonymous (image/png) ───────────────────────────────────────────────────────
+    test-results/qa-privat-X07-anonym-besøg-7b898--med-«Prøveperiode-·-Plus»--mobil-390/attachments/cta-anonymous-84b2eb7015c2b776e4021cd5b2b33b54b37d2147.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-anonym-besøg-7b898--med-«Prøveperiode-·-Plus»--mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/qa-privat-X07-anonym-besøg-7b898--med-«Prøveperiode-·-Plus»--mobil-390/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-anonym-besøg-7b898--med-«Prøveperiode-·-Plus»--mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/qa-privat-X07-anonym-besøg-7b898--med-«Prøveperiode-·-Plus»--mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [mobil-390] › e2e/qa/privat/X07.spec.ts:130:5 › tilbage fra checkout uden gennemført betaling: Konto må ikke sige «Dit abonnement er aktivt» 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveCount[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator:  getByText('Dit abonnement er aktivt.').filter({ visible: true })
+    Expected: [32m0[39m
+    Received: [31m1[39m
+    Timeout:  10000ms
+
+    Call log:
+    [2m  - Expect "toHaveCount" with timeout 10000ms[22m
+    [2m  - waiting for getByText('Dit abonnement er aktivt.').filter({ visible: true })[22m
+    [2m    14 × locator resolved to 1 element[22m
+    [2m       - unexpected value "1"[22m
+
+
+      140 |   expect([s.status, s.entitled]).toEqual(["none", false]);  // the backend holds
+      141 |   await expect(page.getByTestId("balance-chip").filter({ visible: true }).first()).toHaveAttribute("data-status", "none");
+    > 142 |   await expect(page.getByText("Dit abonnement er aktivt.").filter({ visible: true })).toHaveCount(0);  // … and the page must not claim otherwise
+          |                                                                                       ^
+      143 | });
+      144 |
+        at /home/claude/dialogbot/web/e2e/qa/privat/X07.spec.ts:142:87
+
+    attachment #1: success-url-without-payment (image/png) ─────────────────────────────────────────
+    test-results/qa-privat-X07-tilbage-fra--c529a--«Dit-abonnement-er-aktivt»-mobil-390/attachments/success-url-without-payment-351cbf5d2ec0fe60455395acb7f3e39df72ecc53.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-tilbage-fra--c529a--«Dit-abonnement-er-aktivt»-mobil-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/qa-privat-X07-tilbage-fra--c529a--«Dit-abonnement-er-aktivt»-mobil-390/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/qa-privat-X07-tilbage-fra--c529a--«Dit-abonnement-er-aktivt»-mobil-390/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/qa-privat-X07-tilbage-fra--c529a--«Dit-abonnement-er-aktivt»-mobil-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6 failed
+    [desktop-1440] › e2e/qa/privat/X07.spec.ts:43:5 › forsidens «Prøv gratis i 14 dage» fører en logget-ind bruger uden plan direkte til checkout 
+    [desktop-1440] › e2e/qa/privat/X07.spec.ts:53:5 › anonym besøgende: «Prøv gratis i 14 dage» fører til oprettelse (ikke til en demo med «Prøveperiode · Plus») 
+    [desktop-1440] › e2e/qa/privat/X07.spec.ts:130:5 › tilbage fra checkout uden gennemført betaling: Konto må ikke sige «Dit abonnement er aktivt» 
+    [mobil-390] › e2e/qa/privat/X07.spec.ts:43:5 › forsidens «Prøv gratis i 14 dage» fører en logget-ind bruger uden plan direkte til checkout 
+    [mobil-390] › e2e/qa/privat/X07.spec.ts:53:5 › anonym besøgende: «Prøv gratis i 14 dage» fører til oprettelse (ikke til en demo med «Prøveperiode · Plus») 
+    [mobil-390] › e2e/qa/privat/X07.spec.ts:130:5 › tilbage fra checkout uden gennemført betaling: Konto må ikke sige «Dit abonnement er aktivt» 
+  6 passed (2.5m)

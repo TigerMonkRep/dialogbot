@@ -71,12 +71,20 @@ class Addon:
     # A setting (Settings attribute) the app needs to work, e.g. an API key. Without it the app is «coming_soon».
     # A tuple means: at least one of them.
     needs_setting: str | tuple[str, ...] | None = None
+    # "module:function" returning whether the app is really set up (when one setting alone does not decide it).
+    needs_check: str | None = None
 
     @property
     def live_status(self) -> str:
         if self.needs_setting:
             names = (self.needs_setting,) if isinstance(self.needs_setting, str) else self.needs_setting
             if not any(getattr(get_settings(), n, None) for n in names):
+                return "coming_soon"
+        if self.needs_check:
+            import importlib
+
+            mod, fn = self.needs_check.split(":")
+            if not getattr(importlib.import_module(mod), fn)():
                 return "coming_soon"
         return self.status
 
@@ -471,6 +479,7 @@ register(Addon(
                 "direkte fra flyselskaber og rejsesider.",
     icon="plane", category="aftaler", price_text="Med i Plus og Familie", pricing="free",
     needs_setting=("duffel_access_token", "travelpayouts_token"),
+    needs_check="app.modules.privat.travel:configured",  # Travelpayouts needs the token AND the marker
     what="Sig hvor I rejser fra, hvor mange I er, hvad det må koste, og hvad slags rejse I drømmer om – eller hvor I "
          "vil hen. Peter finder flyrejser med rigtige priser, billigst først, og med «Book» bestiller du hos udbyderen.",
     example="«Find en strandferie i februar til to voksne og to børn fra Billund for højst 12.000 kr.»",

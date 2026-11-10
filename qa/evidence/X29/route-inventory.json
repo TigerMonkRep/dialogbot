@@ -1,0 +1,2033 @@
+{
+ "counts": {
+  "anonymous": 54,
+  "public_api": 25,
+  "user": 27,
+  "workspace": 161,
+  "operator": 132,
+  "privat": 105,
+  "excluded": 1
+ },
+ "routes": [
+  {
+   "route": "GET /health/live",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /health/ready",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /v1/me",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/calls",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/calls/{call_id}",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/conversations",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/conversations/{conversation_id}",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/conversations/{conversation_id}/messages",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/booking-types",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/bookings",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/bookings/{booking_id}",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/leads",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/leads/{lead_id}",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/knowledge",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/knowledge/{item_id}",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/campaigns",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/do-not-call",
+   "class": "public_api"
+  },
+  {
+   "route": "POST /v1/workspaces/{workspace_id}/do-not-call",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/reports/daily",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/reports/daily/{report_date}",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/webhooks/events",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/webhooks",
+   "class": "public_api"
+  },
+  {
+   "route": "POST /v1/workspaces/{workspace_id}/webhooks",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/webhooks/{endpoint_id}",
+   "class": "public_api"
+  },
+  {
+   "route": "PATCH /v1/workspaces/{workspace_id}/webhooks/{endpoint_id}",
+   "class": "public_api"
+  },
+  {
+   "route": "DELETE /v1/workspaces/{workspace_id}/webhooks/{endpoint_id}",
+   "class": "public_api"
+  },
+  {
+   "route": "GET /v1/workspaces/{workspace_id}/webhooks/{endpoint_id}/deliveries",
+   "class": "public_api"
+  },
+  {
+   "route": "POST /api/v1/auth/register",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/auth/login",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/auth/logout",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/auth/me",
+   "class": "user"
+  },
+  {
+   "route": "PATCH /api/v1/auth/me",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/auth/verify-email",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/auth/verify-email/resend",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/auth/password/forgot",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/auth/password/reset",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/auth/sessions",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/workspaces",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/members",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/members/{membership_id}/role",
+   "class": "workspace"
+  },
+  {
+   "route": "DELETE /api/v1/workspaces/{workspace_id}/members/{membership_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/invitations",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/invitations",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/invitations/{invitation_id}/revoke",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/invitations/{invitation_id}/resend",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/invitations/{token}",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/invitations/accept",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/audit",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/profile",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/profile",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/categories/suggested",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/categories",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/categories",
+   "class": "workspace"
+  },
+  {
+   "route": "DELETE /api/v1/workspaces/{workspace_id}/categories/{category_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/goals",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/goals",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/goals/suggestions",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/languages",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/languages",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/cvr/{cvr}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/knowledge/items",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/knowledge/items",
+   "class": "workspace"
+  },
+  {
+   "route": "DELETE /api/v1/workspaces/{workspace_id}/knowledge/items/{item_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/knowledge/items/{item_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/knowledge/items/{item_id}/versions",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/knowledge/items/{item_id}/drafts",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/knowledge/versions/{version_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/knowledge/versions/{version_id}/submit",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/knowledge/versions/{version_id}/approve",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/knowledge/versions/{version_id}/reject",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/knowledge/review-queue",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/assistant/knowledge",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/knowledge/offers/{item_id}/eligibility",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/knowledge/import",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/knowledge/imports/latest",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/setup/plan",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/setup/tasks/{task_key}",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/setup/tasks/{task_key}/skip",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/setup/tasks/{task_key}/unskip",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/setup/tasks/{task_key}/assignee",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/setup/checks/{check_key}/run",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/setup/checks/run-all",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/setup/checks/history",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/setup/activate/reception",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/setup/activate/campaigns",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/integrations/capabilities",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/webhooks/resend",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/webhooks/stripe",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/assistant/preview",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/ai/usage",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/waitlist",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/pages/{slug}",
+   "class": "anonymous"
+  },
+  {
+   "route": "PUT /api/v1/operator/pages/{slug}",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/analytics/website",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/webchat",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/webchat",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/webchat/rotate-key",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/conversations/feed",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/conversations/{conversation_id}/summary",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/conversations/{conversation_id}/resolve",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/conversations",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/conversations/{conversation_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/conversations/{conversation_id}/reply",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/conversations/{conversation_id}/mode",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/public/webchat/loader.js",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/webchat/assets/{name}",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/webchat/{key}/status",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/webchat/{key}/frame",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/webchat/{key}/conversations",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/webchat/{key}/conversations/{conversation_id}/messages",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/webchat/{key}/conversations/{conversation_id}/messages",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/webchat/{key}/conversations/{conversation_id}/contact",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/webchat/{key}/callback-windows",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/agreement",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/agreement",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/leads",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/leads",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/leads/{lead_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "PATCH /api/v1/workspaces/{workspace_id}/leads/{lead_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/leads/{lead_id}/approve",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/leads/{lead_id}/reject",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/conversations/{conversation_id}/lead",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/tasks",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/tasks",
+   "class": "workspace"
+  },
+  {
+   "route": "PATCH /api/v1/workspaces/{workspace_id}/tasks/{task_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/reports",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/reports/settings",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/reports/settings",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/reports/week",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/reports/topics",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/reports/{day}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/phone-numbers",
+   "class": "workspace"
+  },
+  {
+   "route": "PATCH /api/v1/workspaces/{workspace_id}/phone-numbers/{number_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/phone-numbers/{number_id}/voice-preview",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/calls",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/calls/{call_id}/recording",
+   "class": "workspace"
+  },
+  {
+   "route": "DELETE /api/v1/workspaces/{workspace_id}/calls/{call_id}/recording",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/webhooks/elevenlabs/init",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/webhooks/elevenlabs/tools/{name}",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/webhooks/elevenlabs/post-call",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/webhooks/vapi",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/billing/statement",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/billing/account",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/billing/vat-number",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/billing/card/checkout",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/billing/discount",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/billing/discount",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/billing/invoices",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/billing/invoices",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/reception/script",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/reception/script",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/reception/script/suggestions",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/reception/overview",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/notifications",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/notifications/seen",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/overview",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/bookings/settings",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/bookings/settings",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/bookings/calendar/sync",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/bookings/types",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/bookings/types/{type_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/bookings/slots",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/bookings",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/bookings",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/bookings/{booking_id}/cancel",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/public/calendar/{token}.ics",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/webchat/{key}/booking",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/webchat/{key}/conversations/{conversation_id}/booking",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/campaigns",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/campaigns",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/campaigns/script-suggestions",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}/start",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}/pause",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}/contacts/import",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}/contacts",
+   "class": "workspace"
+  },
+  {
+   "route": "DELETE /api/v1/workspaces/{workspace_id}/campaigns/{campaign_id}/contacts/{contact_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/do-not-call",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/do-not-call",
+   "class": "workspace"
+  },
+  {
+   "route": "DELETE /api/v1/workspaces/{workspace_id}/do-not-call/{entry_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/voices",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/voices/{profile_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/voices/standard/{key}/sample",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/voices/{profile_id}/preview",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/voices/settings",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/voices/assignments/phone-numbers/{number_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/voices/assignments/campaigns/{campaign_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/operator/voice-rights",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/voice-rights",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/voice-rights/{rights_id}/review",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/voices",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/voices",
+   "class": "operator"
+  },
+  {
+   "route": "PATCH /api/v1/operator/voices/{profile_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/voices/{profile_id}/references",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/voices/{profile_id}/versions",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/voice-versions/{version_id}/checks/run",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/voice-versions/{version_id}/checks/{name}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/voice-versions/{version_id}/{action}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/voices/{profile_id}/rollback",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/voice-versions/{version_id}/synthesize",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/own-voices/manuscripts/{kind}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/own-voices",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/own-voices",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/own-voices/{project_id}/recordings/{sentence_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/own-voices/{project_id}/recordings/{sentence_id}/audio",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/own-voices/{project_id}/submit",
+   "class": "workspace"
+  },
+  {
+   "route": "DELETE /api/v1/workspaces/{workspace_id}/own-voices/{project_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/telephony",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/telephony/business-number",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/telephony/verify",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/telephony/verify/confirm",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/telephony/company",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/telephony/documents",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/telephony/connect",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/telephony/tests",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/telephony/activate",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/telephony/pause",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/operator/telephony",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/telephony/workspaces/{ws_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/telephony/workspaces/{ws_id}/verify-manually",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/telephony/workspaces/{ws_id}/documents/review",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/telephony/workspaces/{ws_id}/documents",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/telephony/workspaces/{ws_id}/jobs/run",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/telephony/workspaces/{ws_id}/numbers",
+   "class": "operator"
+  },
+  {
+   "route": "PATCH /api/v1/operator/telephony/numbers/{number_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/telephony/numbers/{number_id}/inbound",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/telephony/linden/capture.wav",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/telephony/linden/replay",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/telephony/tests/expire",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/telephony/jobs",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/stemmetest",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/stemmetest/summary",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/stemmetest/runs",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/stemmetest/runs/{run_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/stemmetest/runs",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/stemmetest/batch",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/stemmetest/runs/upload",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/demo-call",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/demo-call",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/demo-call/chat",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/demo-call/voices/{key}/sample",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/operator/sales",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/sales/cvr/{cvr}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/sales/demo-calls",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/sales/demo-calls",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/integrations",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/integrations/{key}/connect",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/integrations/{key}",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/integrations/{key}/test",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/integrations/{key}/run",
+   "class": "workspace"
+  },
+  {
+   "route": "DELETE /api/v1/workspaces/{workspace_id}/integrations/{key}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/integrations/actions",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/integrations/oauth/{key}/callback",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/ambassadors/program",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/ambassadors/{ref}",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/ambassadors/{ref}/visit",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/public/ambassadors/parent-consent/{token}",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/ambassadors/parent-consent",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/ambassador/me",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/ambassador/apply",
+   "class": "user"
+  },
+  {
+   "route": "PUT /api/v1/ambassador/me",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/ambassador/me/parent-consent/resend",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/ambassador/me/customers",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/ambassador/me/ledger",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/ambassador/me/payouts",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/ambassador/me/payouts/{payout_id}",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/referral",
+   "class": "workspace"
+  },
+  {
+   "route": "PUT /api/v1/workspaces/{workspace_id}/referral",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/operator/ambassadors",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/ambassadors/payouts",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/ambassadors/payouts",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/ambassadors/payouts/{payout_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/ambassadors/payouts/{payout_id}/paid",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/ambassadors/payouts/{payout_id}/cancel",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/ambassadors/b-income.csv",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/ambassadors/{ambassador_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/ambassadors/{ambassador_id}/reveal",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/ambassadors/{ambassador_id}/approve",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/ambassadors/{ambassador_id}/reject",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/ambassadors/{ambassador_id}/suspend",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/ambassadors/{ambassador_id}/reactivate",
+   "class": "operator"
+  },
+  {
+   "route": "PUT /api/v1/operator/ambassadors/{ambassador_id}/terms",
+   "class": "operator"
+  },
+  {
+   "route": "PUT /api/v1/operator/ambassadors/referrals/{workspace_id}",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/overview",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/customers",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/customers/{workspace_id}",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/users",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/users/{user_id}",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/operations",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/view-as",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/rabatkoder",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/rabatkoder",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/rabatkoder/{code_id}/deaktiver",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/assistant/changes",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/assistant/changes/{proposal_id}/apply",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/assistant/changes/{proposal_id}/decline",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/operator/assistant/requests",
+   "class": "operator"
+  },
+  {
+   "route": "PATCH /api/v1/operator/assistant/requests/{request_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/voice/vapi/{session_id}",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/operator/social/dashboard",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/social/metrics/refresh",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/social/prospects",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/social/prospects/discover",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/social/prospects/{prospect_id}/done",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/social/prospects/{prospect_id}/skip",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/social",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/social/posts",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/social/posts/{post_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/social/plan",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/social/extra",
+   "class": "operator"
+  },
+  {
+   "route": "PATCH /api/v1/operator/social/posts/{post_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/social/posts/{post_id}/approve",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/social/posts/{post_id}/cancel",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/social/posts/{post_id}/publish-now",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/social/media/{filename}",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/operator/salg",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/industries",
+   "class": "operator"
+  },
+  {
+   "route": "PUT /api/v1/operator/salg/industries",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/search-jobs",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/search-jobs",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/search-jobs/{job_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/search-jobs/{job_id}/cancel",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/search-jobs/{job_id}/resume",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/companies/import",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/companies",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/companies/{company_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/companies/{company_id}/research",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/companies/{company_id}/profile",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/companies/{company_id}/scripts",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/scripts/{script_id}/approve",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/companies/{company_id}/simulate",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/integrations",
+   "class": "operator"
+  },
+  {
+   "route": "PUT /api/v1/operator/salg/integrations",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/knowledge",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/companies/{company_id}/contacts",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/contacts/{contact_id}/basis",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/basis/{basis_id}/withdraw",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/contacts/{contact_id}/check",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/block-list",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/block-list",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/campaigns",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/campaigns",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/campaigns/{campaign_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/campaigns/{campaign_id}/members",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/campaigns/{campaign_id}/start",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/campaigns/{campaign_id}/{action}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/test-calls",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/calls",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/calls/{campaign_contact_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/companies/{company_id}/advertising-check",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/companies/{company_id}/offers",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/offers/{offer_id}",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/offers/{offer_id}/send",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/offers/{offer_id}/cancel",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/messages/{request_id}/send",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/meetings/{meeting_id}",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/stats",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/calls/{campaign_contact_id}/audio",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/salg/data-requests",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/data-requests",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/salg/data-requests/{request_id}",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/public/offers/{token}",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/public/offers/{token}/accept",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/privat/account",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/privat/me",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/bootstrap",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/subscription",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/subscription/checkout",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/subscription/portal",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/day",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/ledger",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/tasks",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/tasks/{task_id}",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/items",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/tasks/{task_id}/items/{item_id}",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/items/{item_id}/toggle",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/items/{item_id}/reserve",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/items/{item_id}/unreserve",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/activate",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/sponsor/claim",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/share",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/share/revoke",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/tasks/{task_id}/members",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/tasks/{task_id}/members/{member_id}",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/invites/by-code/{code}/accept",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/privat/invites/{token}/accept",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/privat/groups",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/groups",
+   "class": "privat"
+  },
+  {
+   "route": "PATCH /api/v1/privat/groups/{group_id}",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/groups/{group_id}",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/groups/{group_id}/members",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/groups/{group_id}/members/{member_id}",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/groups/{group_id}/join-link",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/groups/{group_id}/join-link/revoke",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/people/suggested",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/share-group",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/tasks/{task_id}/invite-status",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/addons",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/addons/{key}/enable",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/addons/{key}/disable",
+   "class": "privat"
+  },
+  {
+   "route": "PUT /api/v1/privat/addons/{key}/setup",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/addons/{key}/notify",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/addons/{key}/data",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/addons/{key}/invites",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/referrals",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/referrals/link",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/messages",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/messages",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/messages/{message_id}/options/{option_id}",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/calls/{task_id}/approve",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/calls/{task_id}/decline",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/calls/{task_id}/retry",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/businesses/search",
+   "class": "privat"
+  },
+  {
+   "route": "PATCH /api/v1/privat/me/location",
+   "class": "privat"
+  },
+  {
+   "route": "PATCH /api/v1/privat/me/assistant",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/push/public-key",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/push/subscriptions",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/push/subscriptions",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/push/test",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/phone/start",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/phone/verify",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/credits/checkout",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/invites/by-code/{code}",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/privat/invites/{token}",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/privat/group-invites/by-code/{code}",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/privat/group-invites/by-code/{code}/join",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/operator/privat/growth",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/privat/business-referrals",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/privat/tasks/{task_id}/browser",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/browser/approve",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/browser/decline",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/operator/sales/privat-leads",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/sales/privat-leads/{contact_id}/intro-mail",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/sales/privat-leads/{contact_id}/block",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/funnel/industries",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/funnel/drafts",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/funnel/drafts/{draft_id}",
+   "class": "anonymous"
+  },
+  {
+   "route": "PATCH /api/v1/funnel/drafts/{draft_id}",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/funnel/places",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/funnel/drafts/{draft_id}/gate",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/funnel/consent",
+   "class": "anonymous"
+  },
+  {
+   "route": "POST /api/v1/funnel/drafts/{draft_id}/verify",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/funnel/drafts/{draft_id}/reveal",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/privat/calendar",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/calendar/feed",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/calendar/feed",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/calendar/connect/{provider}",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/calendar/connect/{provider}",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/appointments",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/appointments/{appointment_id}.ics",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/appointments/{appointment_id}",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/calendar/feed/{token}.ics",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/privat/birthdays",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/birthdays",
+   "class": "privat"
+  },
+  {
+   "route": "PATCH /api/v1/privat/birthdays/{birthday_id}",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/birthdays/{birthday_id}",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/bills",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/bills",
+   "class": "privat"
+  },
+  {
+   "route": "PATCH /api/v1/privat/bills/{bill_id}",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/bills/{bill_id}",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/meals/preferences",
+   "class": "privat"
+  },
+  {
+   "route": "PUT /api/v1/privat/meals/preferences",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/health-contacts",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/health-contacts/{kind}",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/car",
+   "class": "privat"
+  },
+  {
+   "route": "PUT /api/v1/privat/car",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/parcels",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/parcels",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/parcels/{number}/refresh",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/parcels/{number}",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/trips/search",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/trips/latest",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/apps/{key}/overview",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/apps/{key}/items/{item_id}/photo",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/apps/{key}/items/{item_id}",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/wishes/search",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/wishes/import",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/wishes/images",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/wishes",
+   "class": "privat"
+  },
+  {
+   "route": "PATCH /api/v1/privat/tasks/{task_id}/wishes/{item_id}",
+   "class": "privat"
+  },
+  {
+   "route": "PUT /api/v1/privat/tasks/{task_id}/items/{item_id}/gift/pledge",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/tasks/{task_id}/items/{item_id}/gift/pledge",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/items/{item_id}/gift/coordinator",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/items/{item_id}/gift/bought",
+   "class": "privat"
+  },
+  {
+   "route": "PUT /api/v1/privat/tasks/{task_id}/design",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/tasks/{task_id}/design/cover",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/dev-files",
+   "class": "anonymous"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/api-keys/scopes",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/api-keys",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/api-keys",
+   "class": "workspace"
+  },
+  {
+   "route": "DELETE /api/v1/workspaces/{workspace_id}/api-keys/{key_id}",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/privat/api-keys/scopes",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/privat/api-keys",
+   "class": "privat"
+  },
+  {
+   "route": "POST /api/v1/privat/api-keys",
+   "class": "privat"
+  },
+  {
+   "route": "DELETE /api/v1/privat/api-keys/{key_id}",
+   "class": "privat"
+  },
+  {
+   "route": "GET /api/v1/push/public-key",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/push/subscriptions",
+   "class": "user"
+  },
+  {
+   "route": "DELETE /api/v1/push/subscriptions",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/dev/mailbox",
+   "class": "user"
+  },
+  {
+   "route": "GET /api/v1/dev/outbox",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/dev/operator/self",
+   "class": "excluded"
+  },
+  {
+   "route": "GET /api/v1/dev/telephony/verification-code",
+   "class": "user"
+  }
+ ]
+}

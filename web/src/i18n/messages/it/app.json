@@ -303,7 +303,9 @@
       "call": "Chiama",
       "conversation": "La conversazione",
       "lead": "Richiesta",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "syncFailed": "Non nel calendario",
+      "syncFailedDetail": "L'appuntamento non è stato scritto nel calendario collegato: {error}"
     },
     "book": {
       "noSlotsError": "Non ci sono orari liberi. Controlli orari di apertura e calendario.",
@@ -329,12 +331,20 @@
       "notConnected": "Non collegato",
       "lastRead": "Ultima lettura {at} · {n} periodi occupati. Dialogbot vede solo quando siete occupati.",
       "without": "Senza calendario, Dialogbot conosce solo gli orari di apertura e gli appuntamenti che ha prenotato lui stesso.",
-      "change": "Collega o cambia calendario"
+      "change": "Collega o cambia calendario",
+      "linked": "{name} è collegato. I nuovi appuntamenti vengono scritti nel calendario e gli orari occupati lì vengono bloccati.",
+      "linkedError": "{name} è collegato, ma l'ultima chiamata non è riuscita: {error}",
+      "syncFailedN": "{n} appuntamenti non sono stati scritti nel calendario. Sono contrassegnati «Non nel calendario»: controlli l'orario nel calendario stesso.",
+      "simulated": "simulato",
+      "provider": {
+        "google_calendar": "Google Calendar",
+        "microsoft_calendar": "Calendario Outlook (Microsoft 365)"
+      }
     },
     "staffOnly": "Gli appuntamenti sono visibili a collaboratori, amministratori e proprietari.",
     "eyebrow": "Oggi → Appuntamenti",
     "title": "Appuntamenti prenotati da Dialogbot",
-    "intro": "Sposti o annulli qui. Gli orari occupati nel vostro calendario vengono bloccati e ogni prenotazione diventa una richiesta con un'attività.",
+    "intro": "Annulli qui. Gli orari occupati nel vostro calendario vengono bloccati e ogni prenotazione diventa una richiesta con un'attività.",
     "prevWeek": "Settimana precedente",
     "nextWeek": "Settimana successiva",
     "noHours": {
@@ -554,7 +564,7 @@
       "pause": "Metti in pausa",
       "before": "Prima dell'avvio",
       "resumeTitle": "Riprendi la campagna",
-      "heading": "{n} chiamate · al massimo {max} IVA esclusa",
+      "heading": "{n} contatti · al massimo {max} IVA esclusa",
       "body": "{n} contatti in attesa. Al massimo {max} + IVA ({gross} IVA inclusa): {call} + IVA per chiamata in uscita e {minute} + IVA per minuto di conversazione iniziato, al massimo {attempts} tentativi e {minutes} minuti di conversazione per contatto. Il pagamento non avvia mai le chiamate.",
       "confirm": "Conferma le regole per le chiamate",
       "starting": "Avvio…",
@@ -782,7 +792,7 @@
       "confirmed": "Confermato · contratto v{v}. La configurazione fai da te è inclusa.",
       "notConfirmed": "La configurazione fai da te è inclusa. Non ancora confermato.",
       "campaign": "Chiamate delle campagne",
-      "campaignPrice": "a chiamata + {minute} al minuto IVA esclusa",
+      "campaignPrice": "a chiamata + {minute} per minuto iniziato IVA esclusa",
       "campaignMonth": "Questo mese: {calls} chiamate, {minutes} minuti di conversazione · {amount} IVA esclusa",
       "inbound": "Chiamate in entrata",
       "inboundUsed": "dei {n} minuti inclusi usati questo mese",
@@ -796,6 +806,7 @@
     "pay": {
       "title": "Pagamento",
       "notConfigured": "Il pagamento con carta non è ancora configurato. Fino ad allora il riepilogo è solo un'anteprima e non viene addebitato nulla.",
+      "testMode": "Modalità di prova: non viene addebitato nulla sulla carta",
       "card": "Carta",
       "expires": "scade {exp}",
       "noCard": "Nessuna carta di pagamento",

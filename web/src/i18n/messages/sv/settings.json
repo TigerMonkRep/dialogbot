@@ -10,6 +10,7 @@
       "log": "Historik"
     },
     "back": "← Tillbaka till Idag",
+    "simulated": "simulerad",
     "eyebrow": "Längst bak i häftet",
     "title": "Alla inställningar",
     "intro": "Allt Dialogbot vet och gör – på ett ställe, i klarspråk. «Ändra» på ett enkelt värde skickar det till assistenten, som visar ändringen innan den gäller. Större formulär öppnas som ett blad.",
@@ -270,7 +271,7 @@
     "zapierUrl": "Adress från Zapiers \"Catch Hook\"",
     "makeUrl": "Adress från Makes \"Custom webhook\"",
     "webhookUrl": "Webhook-adress (https)",
-    "webhookPlaceholder": "https://jeres-system.dk/dialogbot",
+    "webhookPlaceholder": "https://ert-system.se/dialogbot",
     "sender": "Avsändarnamn (valfritt)",
     "senderHint": "Högst 11 bokstäver eller siffror. Tomt = företagets namn.",
     "connecting": "Ansluter…",

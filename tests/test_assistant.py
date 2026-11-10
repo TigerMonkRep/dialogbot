@@ -324,7 +324,10 @@ def test_operators_list_filter_and_update_wishes_and_nobody_else_can(api, two_wo
     assert api.c.patch(url, json={"status": "maybe"}, headers=api.h(op)).status_code == 422
     assert api.c.patch(f"{base}/{__import__('uuid').uuid4()}", json={"status": "done"}, headers=api.h(op)).status_code == 404
     audit = [a for a in db.scalars(select(AuditLog).where(AuditLog.action == "assistant.request_updated"))]
-    assert len(audit) == 1 and str(audit[0].workspace_id) == t["ws_a"]
+    # operator scope: the internal admin_note never lands in the customer's own activity log (QA F-EA-01-H01)
+    assert len(audit) == 1 and audit[0].workspace_id is None and audit[0].after["workspace_id"] == t["ws_a"]
+    customer_log = api.c.get(f"/api/v1/workspaces/{t['ws_a']}/audit", headers=api.h(t["tok_a"])).json()["items"]
+    assert not [x for x in customer_log if x["action"] == "assistant.request_updated"]
 
 
 def test_the_guide_states_todays_prices_and_every_link_in_it_is_a_known_page():

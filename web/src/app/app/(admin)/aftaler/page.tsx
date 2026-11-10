@@ -40,6 +40,8 @@ export default async function AftalerPage({ searchParams }: { searchParams: Prom
   const canChange = ws.role !== "reader";
   const activeTypes = s.types.filter((x) => x.active);
   const isNow = start === monday(today);
+  const cal = s.calendar_connection;
+  const calName = cal ? `${t(`bookings.calendar.provider.${cal.connector}`)}${cal.simulated ? ` (${t("bookings.calendar.simulated")})` : ""}` : "";
   const hours = Object.entries(s.opening_hours).map(([d, rows]) => `${DA_DAY[DAYS.indexOf(d)]} ${rows.join(", ")}`).join(" · ");
   return (
     <div className="flex flex-wrap gap-6 items-start">
@@ -82,11 +84,23 @@ export default async function AftalerPage({ searchParams }: { searchParams: Prom
         </div>
         <div className="flex flex-col gap-2 px-5 py-5 rounded-2xl bg-paper border-2 border-ink">
           <span className="eyebrow">{t("bookings.calendar.title")}</span>
-          <p className="text-[15px] font-semibold text-ink">{s.busy_ics_url ? (s.busy_error ? t("bookings.calendar.error") : t("bookings.calendar.connected")) : t("bookings.calendar.notConnected")}</p>
-          <p className="text-[14px] text-ink-soft">
-            {s.busy_ics_url ? (s.busy_error ? s.busy_error : t("bookings.calendar.lastRead", { at: s.busy_synced_at ? new Date(s.busy_synced_at).toLocaleString(lang, { dateStyle: "short", timeStyle: "short", timeZone: tz }) : "–", n: s.busy_blocks }))
-              : t("bookings.calendar.without")}
-          </p>
+          {cal ? (
+            <>
+              <p className="text-[15px] font-semibold text-ink">{cal.status === "error" ? t("bookings.calendar.error") : t("bookings.calendar.connected")}</p>
+              <p className="text-[14px] text-ink-soft">
+                {cal.status === "error" ? t("bookings.calendar.linkedError", { name: calName, error: cal.error ?? "–" }) : t("bookings.calendar.linked", { name: calName })}
+              </p>
+              {cal.sync_failed > 0 && <p role="status" className="text-[14px] font-semibold text-danger">{t("bookings.calendar.syncFailedN", { n: cal.sync_failed })}</p>}
+            </>
+          ) : (
+            <>
+              <p className="text-[15px] font-semibold text-ink">{s.busy_ics_url ? (s.busy_error ? t("bookings.calendar.error") : t("bookings.calendar.connected")) : t("bookings.calendar.notConnected")}</p>
+              <p className="text-[14px] text-ink-soft">
+                {s.busy_ics_url ? (s.busy_error ? s.busy_error : t("bookings.calendar.lastRead", { at: s.busy_synced_at ? new Date(s.busy_synced_at).toLocaleString(lang, { dateStyle: "short", timeStyle: "short", timeZone: tz }) : "–", n: s.busy_blocks }))
+                  : t("bookings.calendar.without")}
+              </p>
+            </>
+          )}
           {canChange && <CalendarTools wsId={ws.id} feedUrl={s.feed_url} hasIcs={!!s.busy_ics_url} />}
           <Link href="/app/indstillinger?ark=integrationer" className="text-[14px] font-semibold text-accent hover:underline">{t("bookings.calendar.change")} →</Link>
         </div>

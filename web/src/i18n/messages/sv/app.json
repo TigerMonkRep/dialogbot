@@ -303,7 +303,9 @@
       "call": "Ring",
       "conversation": "Samtalet",
       "lead": "Ärende",
-      "cancel": "Avboka"
+      "cancel": "Avboka",
+      "syncFailed": "Inte i kalendern",
+      "syncFailedDetail": "Bokningen kunde inte skrivas i den anslutna kalendern: {error}"
     },
     "book": {
       "noSlotsError": "Det finns inga lediga tider. Kontrollera öppettider och kalender.",
@@ -329,12 +331,20 @@
       "notConnected": "Inte ansluten",
       "lastRead": "Senast läst {at} · {n} upptagna perioder. Dialogbot ser bara när ni är upptagna.",
       "without": "Utan kalender känner Dialogbot bara till öppettiderna och de tider den själv har bokat.",
-      "change": "Anslut eller byt kalender"
+      "change": "Anslut eller byt kalender",
+      "linked": "{name} är ansluten. Nya bokningar skrivs i kalendern, och upptagen tid där blockeras.",
+      "linkedError": "{name} är ansluten, men det senaste anropet misslyckades: {error}",
+      "syncFailedN": "{n} bokningar kunde inte skrivas i kalendern. De är markerade ”Inte i kalendern” – kontrollera tiden i själva kalendern.",
+      "simulated": "simulerad",
+      "provider": {
+        "google_calendar": "Google Kalender",
+        "microsoft_calendar": "Outlook-kalender (Microsoft 365)"
+      }
     },
     "staffOnly": "Bokningar kan ses av medarbetare, administratörer och ägare.",
     "eyebrow": "Idag → Bokningar",
     "title": "Tider som Dialogbot har bokat",
-    "intro": "Flytta eller avboka här. Upptagen tid i er kalender blockeras, och varje bokning blir ett ärende med en uppgift.",
+    "intro": "Avboka här. Upptagen tid i er kalender blockeras, och varje bokning blir ett ärende med en uppgift.",
     "prevWeek": "Föregående vecka",
     "nextWeek": "Nästa vecka",
     "noHours": {
@@ -554,7 +564,7 @@
       "pause": "Pausa",
       "before": "Innan den startar",
       "resumeTitle": "Återuppta kampanjen",
-      "heading": "{n} samtal · högst {max} exkl. moms",
+      "heading": "{n} kontakter · högst {max} exkl. moms",
       "body": "{n} kontakter väntar. Högst {max} + moms ({gross} inkl. moms) – {call} + moms per utgående samtal och {minute} + moms per påbörjad samtalsminut, högst {attempts} försök och {minutes} minuters samtal per kontakt. Betalning startar aldrig samtal.",
       "confirm": "Bekräfta reglerna för samtal",
       "starting": "Startar…",
@@ -782,7 +792,7 @@
       "confirmed": "Bekräftat · avtal v{v}. Konfiguration på egen hand ingår.",
       "notConfirmed": "Konfiguration på egen hand ingår. Inte bekräftat än.",
       "campaign": "Kampanjsamtal",
-      "campaignPrice": "per samtal + {minute} per minut exkl. moms",
+      "campaignPrice": "per samtal + {minute} per påbörjad minut exkl. moms",
       "campaignMonth": "Den här månaden: {calls} samtal, {minutes} samtalsminuter · {amount} exkl. moms",
       "inbound": "Inkommande samtal",
       "inboundUsed": "av {n} inkluderade minuter använda den här månaden",
@@ -796,6 +806,7 @@
     "pay": {
       "title": "Betalning",
       "notConfigured": "Kortbetalning är inte konfigurerad än. Fram till dess är översikten bara en förhandsvisning, och ingen betalning dras.",
+      "testMode": "Testläge – inget dras från kortet",
       "card": "Kort",
       "expires": "går ut {exp}",
       "noCard": "Inget betalkort",

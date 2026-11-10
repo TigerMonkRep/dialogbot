@@ -40,7 +40,7 @@ export function ChatWidget({ defaultOpen = false }: { defaultOpen?: boolean }) {
           <ProevChat embedded onClose={() => setOpen(false)} />
         </div>
       )}
-      <button type="button" onClick={() => setOpen((o) => !o)} aria-label={open ? t("closeAria") : t("openAria")} aria-expanded={open}
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open}
         className={`fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-50 items-center gap-2.5 min-h-14 pl-4 pr-5 rounded-full bg-ink text-white border-2 border-ink shadow-block-highlight font-display font-bold text-base cursor-pointer ${open ? "hidden sm:inline-flex" : "inline-flex"}`}>
         <ChatIcon size={22} />
         {open ? t("close") : t("launcher")}

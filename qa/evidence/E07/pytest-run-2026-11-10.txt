@@ -1,0 +1,3 @@
+PASSED tests/qa/test_qa_integ_E07.py::test_e07_inventory_of_booking_messages
+PASSED tests/qa/test_qa_integ_E07.py::test_e07_delivery_failure_and_owner_attention
+XFAIL tests/qa/test_qa_integ_E07.py::test_e07_requirement_all_booking_message_variants_exist - E07 not implemented: only the on-demand SMS 'booking' template exists

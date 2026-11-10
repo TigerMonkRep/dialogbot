@@ -140,6 +140,10 @@ def get_current_principal(
         raise Unauthenticated("Brugeren er deaktiveret", code="user_inactive")
     request.state.user_id = str(user.id)
     if sess.impersonator_user_id is not None:
+        # The support access lives only as long as the operator's own: re-checked on every request (DB-013).
+        operator = db.get(User, sess.impersonator_user_id)
+        if operator is None or not operator.is_active or not operator.is_platform_operator:
+            raise Unauthenticated("Visningen er afsluttet – operatørens adgang er fjernet", code="session_invalid")
         # An operator looking at the account as this user: nothing may change. Two independent guards – the HTTP
         # method (logout excepted, it only ends the viewing session) and a read-only database transaction.
         if request.method not in ("GET", "HEAD", "OPTIONS") and not request.url.path.endswith("/auth/logout"):
@@ -157,10 +161,11 @@ def get_workspace_context(
     principal: Principal = Depends(get_current_principal),
     db: OrmSession = Depends(get_db),
 ) -> WorkspaceContext:
+    scope = principal.session.scope_workspace_id
     membership = db.scalar(
         select(Membership).where(Membership.workspace_id == workspace_id, Membership.user_id == principal.user.id)
     )
-    if membership is None:
+    if membership is None or (scope is not None and scope != workspace_id):
         # Not a member: respond as if the workspace does not exist.
         raise NotFound("Arbejdsrummet findes ikke")
     workspace = db.get(Workspace, workspace_id)

@@ -303,7 +303,9 @@
       "call": "Appeler",
       "conversation": "La conversation",
       "lead": "Demande",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "syncFailed": "Absent de l’agenda",
+      "syncFailedDetail": "Le rendez-vous n’a pas pu être écrit dans l’agenda connecté : {error}"
     },
     "book": {
       "noSlotsError": "Aucun créneau disponible. Vérifiez les horaires d’ouverture et l’agenda.",
@@ -329,12 +331,20 @@
       "notConnected": "Non connecté",
       "lastRead": "Dernière lecture {at} · {n} périodes occupées. Dialogbot voit uniquement quand vous êtes occupé.",
       "without": "Sans agenda, Dialogbot ne connaît que les horaires d’ouverture et les rendez-vous qu’il a lui-même pris.",
-      "change": "Connecter ou changer d’agenda"
+      "change": "Connecter ou changer d’agenda",
+      "linked": "{name} est connecté. Les nouveaux rendez-vous sont écrits dans l’agenda, et les créneaux occupés y sont bloqués.",
+      "linkedError": "{name} est connecté, mais le dernier appel a échoué : {error}",
+      "syncFailedN": "{n} rendez-vous n’ont pas pu être écrits dans l’agenda. Ils sont marqués « Absent de l’agenda » – vérifiez l’heure dans l’agenda lui-même.",
+      "simulated": "simulé",
+      "provider": {
+        "google_calendar": "Google Agenda",
+        "microsoft_calendar": "Agenda Outlook (Microsoft 365)"
+      }
     },
     "staffOnly": "Les rendez-vous sont visibles par les collaborateurs, administrateurs et propriétaires.",
     "eyebrow": "Aujourd’hui → Rendez-vous",
     "title": "Rendez-vous pris par Dialogbot",
-    "intro": "Déplacez ou annulez ici. Les créneaux occupés de votre agenda sont bloqués, et chaque réservation devient une demande avec une tâche.",
+    "intro": "Annulez ici. Les créneaux occupés de votre agenda sont bloqués, et chaque réservation devient une demande avec une tâche.",
     "prevWeek": "Semaine précédente",
     "nextWeek": "Semaine suivante",
     "noHours": {
@@ -554,7 +564,7 @@
       "pause": "Mettre en pause",
       "before": "Avant le lancement",
       "resumeTitle": "Reprendre la campagne",
-      "heading": "{n} appels · {max} HT maximum",
+      "heading": "{n} contacts · {max} HT maximum",
       "body": "{n} contacts en attente. {max} + TVA maximum ({gross} TTC) – {call} + TVA par appel sortant et {minute} + TVA par minute de conversation entamée, {attempts} tentatives et {minutes} minutes de conversation maximum par contact. Le paiement ne déclenche jamais d’appel.",
       "confirm": "Confirmer les règles d’appel",
       "starting": "Lancement…",
@@ -782,7 +792,7 @@
       "confirmed": "Confirmé · contrat v{v}. Configuration en autonomie incluse.",
       "notConfirmed": "Configuration en autonomie incluse. Pas encore confirmé.",
       "campaign": "Appels de campagne",
-      "campaignPrice": "par appel + {minute} par minute HT",
+      "campaignPrice": "par appel + {minute} par minute entamée HT",
       "campaignMonth": "Ce mois-ci : {calls} appels, {minutes} minutes de conversation · {amount} HT",
       "inbound": "Appels entrants",
       "inboundUsed": "sur {n} minutes incluses utilisées ce mois-ci",
@@ -796,6 +806,7 @@
     "pay": {
       "title": "Paiement",
       "notConfigured": "Le paiement par carte n’est pas encore configuré. D’ici là, le récapitulatif n’est qu’un aperçu, et aucun prélèvement n’est effectué.",
+      "testMode": "Mode test – rien n’est débité sur la carte",
       "card": "Carte",
       "expires": "expire {exp}",
       "noCard": "Aucune carte de paiement",

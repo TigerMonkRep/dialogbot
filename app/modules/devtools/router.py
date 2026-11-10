@@ -8,19 +8,21 @@ address (so one developer cannot read another's tokens).
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.core.auth import Principal, get_current_principal
 from app.db import get_db
-from app.models import EmailDelivery, OutboxEvent
+from app.models import EmailDelivery, Membership, OutboxEvent
 
 router = APIRouter(prefix="/dev", tags=["dev (simulated)"])
 
 
 @router.get("/mailbox")
 def mailbox(principal: Principal = Depends(get_current_principal), db: OrmSession = Depends(get_db)):
-    rows = db.scalars(select(EmailDelivery).where(EmailDelivery.to_email.ilike(principal.user.email))
+    # exact match on the normalised address – never LIKE/ILIKE: "_" and "%" are legal in an e-mail address and would
+    # match other people's mail (QA F-SQ-01-X20)
+    rows = db.scalars(select(EmailDelivery).where(func.lower(EmailDelivery.to_email) == principal.user.email_normalized)
                       .order_by(EmailDelivery.created_at.desc()).limit(50))
     return {"adapter": "simulated", "warning": "Simuleret postkasse. Intet er sendt.",
             "items": [{"id": str(r.id), "to": r.to_email, "subject": r.subject, "body_text": r.body_text,
@@ -29,7 +31,9 @@ def mailbox(principal: Principal = Depends(get_current_principal), db: OrmSessio
 
 @router.get("/outbox")
 def outbox(principal: Principal = Depends(get_current_principal), db: OrmSession = Depends(get_db)):
-    rows = db.scalars(select(OutboxEvent).order_by(OutboxEvent.created_at.desc()).limit(100))
+    mine = select(Membership.workspace_id).where(Membership.user_id == principal.user.id)  # own workspaces only
+    rows = db.scalars(select(OutboxEvent).where(OutboxEvent.workspace_id.in_(mine))
+                      .order_by(OutboxEvent.created_at.desc()).limit(100))
     return {"items": [{"id": str(r.id), "event_type": r.event_type, "status": r.status, "attempts": r.attempts,
                        "next_attempt_at": r.next_attempt_at.isoformat(), "last_error": r.last_error,
                        "created_at": r.created_at.isoformat(),

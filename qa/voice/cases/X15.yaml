@@ -1,0 +1,34 @@
+# X15 – language: a call from a Danish number is answered in Danish; otherwise the business's chosen language;
+# the voice follows the language. Offline proof: tests/qa/test_qa_voice_X15.py (assistant-request and ElevenLabs
+# initiation payloads). Spoken-language behaviour of the model/voice itself needs a live call (blocked in wave 1).
+cases:
+  - id: X15-01
+    title: Dansk nummer til virksomhed med engelsk standard og dansk slået til
+    path: vapi_inbound
+    setup: {default_conversation_language: en, enabled_conversation_languages: [en, da], caller: "+4520304050"}
+    caller_turns: ["Hej, har I åbent på lørdag?", "Tak, så ringer jeg igen."]
+    expect: {language: da, first_words_language: da}
+    forbid: ["hello", "you've reached"]
+    reference_transcripts:
+      pass:
+        - - {role: assistant, text: "Hej, du har ringet til Fjord Gulvservice. Hvad kan jeg hjælpe med?"}
+          - {role: assistant, text: "Ja, vi har åbent på lørdag fra ti til to. Hav en god dag."}
+      fail:
+        - - {role: assistant, text: "Hello, you have reached Fjord Floors. How can I help?"}
+          - {role: assistant, text: "Ja, vi har åbent på lørdag. Hav en god dag."}
+
+  - id: X15-02
+    title: Britisk nummer til dansk virksomhed med engelsk slået til og egen dansk hilsen (F-VQ-01)
+    path: vapi_inbound
+    setup: {default_conversation_language: da, enabled_conversation_languages: [da, en], caller: "+447700900123",
+            number_greeting: "Goddag, du har ringet til Fjord Gulvservice. Hvad kan jeg hjælpe med?"}
+    caller_turns: ["Hi, are you open on Saturday?"]
+    expect: {language: en, first_words_language: en}
+    forbid: ["goddag", "du har ringet"]
+    reference_transcripts:
+      pass:
+        - - {role: assistant, text: "Hello, you've reached Fjord Gulvservice. How can I help?"}
+          - {role: assistant, text: "Yes, we are open on Saturday from ten to two. Have a good day."}
+      fail:
+        - - {role: assistant, text: "Goddag, du har ringet til Fjord Gulvservice. Hvad kan jeg hjælpe med?"}
+          - {role: assistant, text: "Yes, we are open on Saturday. Have a good day."}

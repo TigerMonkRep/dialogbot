@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { backend } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
@@ -33,10 +34,16 @@ export function NotOperator() {
   return <p className="bg-surface-container-lowest rounded-2xl p-space-lg border-2 border-ink font-body-md text-body-md text-on-surface-variant">Admin er kun for Dialogbot-operatører.</p>;
 }
 
-/** Fetch an operator endpoint; null when the caller is not an operator (or the call fails). */
+/** Fetch an operator endpoint; null ONLY when the caller is not an operator (401/403). An unknown customer (404) or a
+ *  backend failure is thrown, so the page shows «findes ikke» / the error page instead of «kun for operatører». */
 export async function load<T>(path: string): Promise<T | null> {
   await requireWorkspace();
-  try { return await backend<T>(path); } catch { return null; }
+  try { return await backend<T>(path); } catch (e) {
+    const status = (e as { status?: number }).status;
+    if (status === 401 || status === 403 || status === 501) return null;  // not an operator / feature switched off
+    if (status === 404) notFound();
+    throw e;
+  }
 }
 
 export const dt = (iso?: string | null) => (iso ? new Date(iso).toLocaleString("da-DK", { dateStyle: "short", timeStyle: "short", timeZone: "Europe/Copenhagen" }) : "–");

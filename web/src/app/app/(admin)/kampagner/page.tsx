@@ -61,7 +61,7 @@ export default async function KampagnerPage() {
             <ul className="flex flex-col">
               {list.items.map((c) => {
                 const o = c.counts.by_outcome;
-                const answered = c.counts.by_status.done ?? 0;
+                const answered = c.counts.answered;
                 return (
                   <li key={c.id} className="border-t-[1.5px] border-line first:border-0">
                     <Link href={`/app/kampagner/${c.id}`} className="flex flex-col gap-0.5 py-3 hover:bg-panel -mx-2 px-2 rounded-lg">

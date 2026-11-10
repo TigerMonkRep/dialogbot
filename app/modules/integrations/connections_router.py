@@ -135,16 +135,23 @@ def connect(key: str, body: ConnectIn, request: Request, ctx: WorkspaceContext =
             raise ValidationFailed("Udfyld " + ", ".join(missing), field_errors=[{"field": f} for f in missing])
         secret = {f: body.secrets[f] for f in sp.secret_fields}
     adapter = connectors.build_adapter(db, ctx.workspace.id, key, secret, config, simulated)
+    failed: ActionError | None = None
     try:
         facts = adapter.test_connection()
     except ActionError as e:
-        raise ApiError(f"Forbindelsen kunne ikke bekræftes: {e.message}", code="connection_test_failed", status_code=502) from e
+        if sp.auth_kind != "builtin":
+            raise ApiError(f"Forbindelsen kunne ikke bekræftes: {e.message}", code="connection_test_failed", status_code=502) from e
+        # Built-in connectors run on Dialogbot's own provider account (no customer secret to correct): the owner's
+        # choice is kept, but honestly in `error` until a real call succeeds (never a green «Forbundet»).
+        failed, facts = e, {}
     conn = _upsert(db, ctx, key, auth_kind=sp.auth_kind, secret=secret, config=config,
-                   account_label=str(facts.get("name") or facts.get("sender") or facts.get("url") or "")[:200],
+                   account_label=str(facts.get("name") or facts.get("sender") or facts.get("url") or config.get("sender") or "")[:200],
                    scopes=[], expires_at=None, simulated=simulated)
-    _audit(db, request, ctx, "integrations.connected", key, {"simulated": simulated})
-    out = {"status": "connected", "connector": key, "simulated": simulated, "account_label": conn.account_label,
-           "version": conn.version, "facts": facts}
+    if failed is not None:
+        credentials.mark_error(conn, f"Forbindelsen kunne ikke bekræftes: {failed.message}")
+    _audit(db, request, ctx, "integrations.connected", key, {"simulated": simulated, "ok": failed is None})
+    out = {"status": conn.status, "connector": key, "simulated": simulated, "account_label": conn.account_label,
+           "version": conn.version, "facts": facts, **({"error": conn.error} if failed is not None else {})}
     guard.store(200, out)  # the stored replay never contains the signing secret
     db.commit()
     return out | shown
@@ -192,6 +199,8 @@ def oauth_callback(key: str, state: str = Query(default=""), code: str = Query(d
         # Verify with a real call before claiming "connected".
         adapter = connectors.build_adapter(db, row.workspace_id, key, secret, {}, simulated)
         facts = adapter.test_connection()
+        if not simulated:
+            _require_scopes(key, str(tok.get("scope") or ""))
 
         class _Ctx:  # minimal context for _upsert/audit
             workspace = type("W", (), {"id": row.workspace_id})()
@@ -217,6 +226,26 @@ def oauth_callback(key: str, state: str = Query(default=""), code: str = Query(d
     except ActionError as e:
         db.rollback()
         return RedirectResponse(f"{back}?error={e.code}&connector={key}", status_code=303)
+
+
+# The scopes a calendar connection cannot work without: writing events (book/move/cancel) and reading busy time.
+# Google's granular consent lets the customer untick one; then the connection is refused honestly.
+REQUIRED_SCOPES = {
+    "google_calendar": ("https://www.googleapis.com/auth/calendar.events",
+                        "https://www.googleapis.com/auth/calendar.freebusy"),
+    "microsoft_calendar": ("Calendars.ReadWrite",),
+}
+
+
+def _require_scopes(key: str, granted: str) -> None:
+    need = REQUIRED_SCOPES.get(key)
+    if not need or not granted.strip():
+        return  # the provider did not report scopes: the verification call above is the proof
+    have = {g.rsplit("/", 1)[-1].lower() for g in granted.split()}
+    missing = [n for n in need if n.rsplit("/", 1)[-1].lower() not in have]
+    if missing:
+        raise ApiError("Giv Dialogbot lov til at oprette og se aftaler i kalenderen, og forbind igen",
+                       code="oauth_scope_missing", status_code=400)
 
 
 class SettingsIn(BaseModel):

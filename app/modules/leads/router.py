@@ -31,12 +31,17 @@ class AgreementIn(BaseModel):
 
 @router.get("/agreement")
 def get_agreement(ctx: WorkspaceContext = Depends(require_capability("agreements.read")), db: OrmSession = Depends(get_db)):
-    return {"current": agreements.out(agreements.current(db, ctx.workspace.id)),
-            "plan": {"monthly_net_minor": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "lead_fee_net_minor": 0,
-                     "campaign_call_net_minor": prices.CAMPAIGN_CALL_NET_MINOR,
-                     "campaign_minute_net_minor": prices.CAMPAIGN_MINUTE_NET_MINOR,
+    from app.modules.billing import markets
+    from app.modules.billing.customer_market import currency_of
+
+    # The list prices in the currency the workspace is (or will be) charged in – the same that POST /agreement uses.
+    cur = currency_of(db, ctx.workspace.id)
+    return {"current": agreements.out(agreements.current(db, ctx.workspace.id)), "currency": cur,
+            "plan": {"currency": cur, "monthly_net_minor": markets.erhverv_price(cur, "monthly"), "lead_fee_net_minor": 0,
+                     "campaign_call_net_minor": markets.erhverv_price(cur, "call"),
+                     "campaign_minute_net_minor": markets.erhverv_price(cur, "minute"),
                      "inbound_included_minutes": prices.INBOUND_INCLUDED_MINUTES,
-                     "inbound_extra_minute_net_minor": prices.INBOUND_EXTRA_MINUTE_NET_MINOR}}
+                     "inbound_extra_minute_net_minor": markets.erhverv_price(cur, "extra_minute")}}
 
 
 @router.post("/agreement", status_code=status.HTTP_201_CREATED)

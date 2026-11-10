@@ -605,7 +605,22 @@
       "errorTitle": "Något gick fel. Försök igen.",
       "choose": "Välj ett",
       "chooseMany": "Välj ett eller flera",
-      "startOver": "Börja om"
+      "startOver": "Börja om",
+      "errors": {
+        "rate_limited": "Många förfrågningar har skickats från din anslutning. Vänta en stund och försök igen.",
+        "draft_not_found": "Vi hittade inte dina svar. Börja om.",
+        "draft_expired": "Dina svar har gått ut. Börja om.",
+        "draft_verified": "Kontot är redan skapat. Logga in.",
+        "search_failed": "Sökningen fungerar inte just nu. Skriv namnet och gå vidare.",
+        "too_soon": "Vänta en stund innan du ber om en ny kod.",
+        "sms_failed": "Sms:et kunde inte skickas just nu. Försök igen om en stund.",
+        "privat_not_enabled": "Dialogbot Privat är inte öppet för dig ännu.",
+        "code_expired": "Koden har gått ut. Be om en ny.",
+        "too_many_attempts": "För många försök. Be om en ny kod.",
+        "user_inactive": "Kontot är inaktiverat.",
+        "wrong_code": "Koden stämmer inte.",
+        "generic": "Något gick fel. Försök igen om en stund."
+      }
     },
     "places": {
       "label": "Företagets namn",
@@ -617,7 +632,7 @@
     "estimate": {
       "about": "ca",
       "perWeek": "samtal i veckan",
-      "source": "Källa: {source}",
+      "source": "Källa: Dialogbots uppskattning för branschen",
       "edit": "ändra siffran om du vet bättre"
     },
     "build": {

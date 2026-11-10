@@ -605,7 +605,22 @@
       "errorTitle": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
       "choose": "Eins auswählen",
       "chooseMany": "Eins oder mehrere auswählen",
-      "startOver": "Von vorn beginnen"
+      "startOver": "Von vorn beginnen",
+      "errors": {
+        "rate_limited": "Von Ihrer Verbindung wurden viele Anfragen gesendet. Warten Sie kurz und versuchen Sie es erneut.",
+        "draft_not_found": "Wir konnten Ihre Antworten nicht finden. Beginnen Sie von vorn.",
+        "draft_expired": "Ihre Antworten sind abgelaufen. Beginnen Sie von vorn.",
+        "draft_verified": "Das Konto wurde bereits erstellt. Melden Sie sich an.",
+        "search_failed": "Die Suche funktioniert gerade nicht. Geben Sie den Namen ein und fahren Sie fort.",
+        "too_soon": "Warten Sie einen Moment, bevor Sie einen neuen Code anfordern.",
+        "sms_failed": "Die SMS konnte gerade nicht gesendet werden. Versuchen Sie es gleich noch einmal.",
+        "privat_not_enabled": "Dialogbot Privat ist für Sie noch nicht geöffnet.",
+        "code_expired": "Der Code ist abgelaufen. Fordern Sie einen neuen an.",
+        "too_many_attempts": "Zu viele Versuche. Fordern Sie einen neuen Code an.",
+        "user_inactive": "Das Konto ist deaktiviert.",
+        "wrong_code": "Der Code stimmt nicht.",
+        "generic": "Etwas ist schiefgelaufen. Versuchen Sie es gleich noch einmal."
+      }
     },
     "places": {
       "label": "Name des Unternehmens",
@@ -617,8 +632,8 @@
     "estimate": {
       "about": "ca.",
       "perWeek": "Anrufe pro Woche",
-      "source": "Quelle: {source}",
-      "edit": "ändere die Zahl, wenn du es besser weißt"
+      "source": "Quelle: Schätzung von Dialogbot für die Branche",
+      "edit": "ändern Sie die Zahl, wenn Sie es besser wissen"
     },
     "build": {
       "pending": "In Arbeit …",

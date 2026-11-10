@@ -21,7 +21,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
     backend<{ items: PhoneNumber[] }>(`/workspaces/${ws.id}/phone-numbers`).catch(() => ({ items: [] as PhoneNumber[] })),
   ]);
   const o = c.counts.by_outcome;
-  const stats: [string, number][] = [[t("campaigns.stats.contacts"), c.counts.total], [t("campaigns.stats.answered"), c.counts.by_status.done ?? 0], [t("campaigns.stats.interested"), o.interested ?? 0],
+  const stats: [string, number][] = [[t("campaigns.stats.contacts"), c.counts.total], [t("campaigns.stats.answered"), c.counts.answered], [t("campaigns.stats.interested"), o.interested ?? 0],
     [t("campaigns.stats.callback"), o.callback ?? 0], [t("campaigns.stats.noAnswer"), c.counts.by_status.no_answer ?? 0], [t("campaigns.stats.left"), c.counts.open]];
   const hasCount = c.counts.total;
   return (

@@ -1279,6 +1279,7 @@
     "directShort": "direkte",
     "stops": "{n} bytter",
     "book": "Bestill",
+    "sponsored": "Annonse · Dialogbot får provisjon",
     "overBudget": "{n} reiser var over budsjettet.",
     "disclaimer": "Prisene kommer rett fra leverandørene og kan endre seg. Du bestiller og betaler hos leverandøren – Dialogbot bestiller ikke."
   },

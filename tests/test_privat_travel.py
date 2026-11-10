@@ -145,3 +145,28 @@ def test_the_same_flight_is_shown_once(api, pv, fake_travel):
     fake_travel.prices = {"LIS": [9900, 9900, 9900, 9900, 10500]}
     body = api.post(tok, "/privat/trips/search", {"origin": "BLL", "destinations": ["LIS"], "month": "2027-02"}).json()
     assert [o["total_dkk"] for o in body["offers"]] == [9900, 10500]
+
+
+def test_affiliate_booking_link_is_marked_as_an_ad(monkeypatch):
+    """F-PX-04 (Fürster 2026-11-10): a Travelpayouts link carries Dialogbot's affiliate marker – the offer says
+    `sponsored`, so the web shows «Annonce · Dialogbot får provision» and rel="sponsored". Duffel/fake: not sponsored."""
+    from datetime import datetime as _dt
+
+    import httpx
+
+    from app.modules.privat import travel
+
+    class R:
+        status_code = 200
+
+        def json(self):
+            return {"success": True, "data": [{"price": 700, "airline": "FR", "departure_at": "2027-03-10T07:00:00+01:00",
+                                               "transfers": 0, "link": "/search/CPH1003BCN1?t=x"}]}
+
+    monkeypatch.setattr(httpx, "get", lambda *a, **k: R())
+    p = travel.validate({"origin": "CPH", "destinations": ["BCN"], "month": "2027-03"}, _dt(2026, 11, 10).date())
+    o = travel.Travelpayouts("tok", "M123").search(p, "BCN")[0]
+    assert o["sponsored"] is True and "marker=M123" in o["book_url"]
+    assert travel._offer("duffel", "BCN", 900.0, "DKK", book_url="https://x", p=p)["sponsored"] is False
+    src = open("web/src/components/privat/travel.tsx", encoding="utf-8").read()
+    assert 'rel={o.sponsored ? "sponsored noopener noreferrer"' in src and 't("travel.sponsored")' in src

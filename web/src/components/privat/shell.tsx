@@ -100,6 +100,14 @@ function AccountNotice() {
   return null;
 }
 
+/** A guest = logged in, no plan, and nothing of their own – only lists others shared (ux-audit #5, brief: «kan åbne
+ *  listen, men ikke meget andet»). A guest gets Min dag · Opgaver · Konto; Apps and Folk come with a plan. */
+function useGuest(): boolean {
+  const { tasks, loggedIn, mode } = usePrivat();
+  const p = usePlan();
+  return loggedIn && mode === "real" && !p.entitled && p.status === "none" && tasks.length > 0 && tasks.every((x) => !!x.my_role && x.my_role !== "owner");
+}
+
 /** Header: logo + PRIVAT pill, the pill navigation (wide screens), the plan badge and the account avatar. */
 function Header() {
   const t = useT("privat");
@@ -107,7 +115,9 @@ function Header() {
   const p = usePlan();
   const free = balance ? Math.max(0, balance.free_limit - balance.free_used) : null;
   const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : APP_SCREENS.includes(screen) ? "apps" : screen;
-  const nav: [Screen, string][] = [["day", "nav.day"], ["tasks", "nav.tasks"], ["apps", "apps.tab"], ["people", "nav.people"], ["account", "nav.account"]];
+  const guest = useGuest();
+  const nav: [Screen, string][] = ([["day", "nav.day"], ["tasks", "nav.tasks"], ["apps", "apps.tab"], ["people", "nav.people"], ["account", "nav.account"]] as [Screen, string][])
+    .filter(([k]) => !guest || (k !== "apps" && k !== "people"));
   // The badge: «Plus · prøveperiode, 9 dage tilbage», the plan name, or (without rights) credits and free tasks.
   const badge = p.entitled
     ? (p.status === "trial" ? t("nav.trialBadge", { plan: p.rightsName, n: p.trialDays }) : t("nav.planBadge", { plan: p.rightsName }))
@@ -202,7 +212,9 @@ function Tabs() {
   const t = useT("privat");
   const { screen } = usePrivat();
   const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : APP_SCREENS.includes(screen) ? "apps" : screen;
-  const tabs: [Screen, string, string, string][] = [["day", "/privat/dag", "nav.day", "home"], ["tasks", "/privat/opgaver", "tabs.tasks", "list"], ["apps", "/privat/apps", "apps.tab", "grid"], ["people", "/privat/folk", "nav.people", "users"], ["account", "/privat/konto", "nav.account", "user"]];
+  const guest = useGuest();
+  const tabs = ([["day", "/privat/dag", "nav.day", "home"], ["tasks", "/privat/opgaver", "tabs.tasks", "list"], ["apps", "/privat/apps", "apps.tab", "grid"], ["people", "/privat/folk", "nav.people", "users"], ["account", "/privat/konto", "nav.account", "user"]] as [Screen, string, string, string][])
+    .filter(([k]) => !guest || (k !== "apps" && k !== "people"));
   return (
     <nav aria-label={t("tabs.label")} className="xl:hidden flex-none flex border-t-2 border-ink bg-paper pb-safe">
       {tabs.map(([k, href, label, icon]) => (

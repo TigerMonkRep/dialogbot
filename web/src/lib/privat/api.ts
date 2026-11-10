@@ -388,7 +388,7 @@ export type TripSearch = {
 };
 export type TripOffer = {
   id: string; provider: string; origin: string; destination: string; total_dkk: number; airline: string;
-  depart_at: string; return_at: string; stops: number | null; book_url: string; price_note: string;
+  depart_at: string; return_at: string; stops: number | null; book_url: string; price_note: string; sponsored?: boolean;
 };
 export type TripResult = { id: string; at: string; params: TripSearch; offers: TripOffer[]; over_budget: number; errors: string[] };
 

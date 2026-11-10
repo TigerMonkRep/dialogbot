@@ -1279,6 +1279,7 @@
     "directShort": "direkt",
     "stops": "{n} Umstiege",
     "book": "Buchen",
+    "sponsored": "Anzeige · Dialogbot erhält eine Provision",
     "overBudget": "{n} Reisen lagen über dem Budget.",
     "disclaimer": "Die Preise kommen direkt von den Anbietern und können sich ändern. Du buchst und zahlst beim Anbieter – Dialogbot bucht nicht."
   },

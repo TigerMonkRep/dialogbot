@@ -10,7 +10,9 @@ import { useFmt, usePlan, usePrivat } from "./store";
 import { Button } from "@/components/ui";
 import { currentPushState, enablePush } from "@/lib/privat/push";
 import { isStandalone, takeNotifyPending } from "@/lib/install";
-import { InstallBanner } from "@/components/install-step";
+import { InstallApp } from "@/components/install-app";
+
+const INSTALL_SEEN = "dialogbot-privat-install-seen";
 
 /** Pill button (Privat: rounded-full everywhere). */
 const PILL = "inline-flex items-center justify-center gap-2 rounded-full font-semibold border-2 border-ink min-h-[44px] px-4 text-[15px]";
@@ -297,12 +299,29 @@ function InstalledBanner() {
   );
 }
 
-/** The first open of Min dag with a login (the funnel ends here – its last step is the app on the home screen):
- *  the install step, once-dismissible, never in the installed app and never for a visitor looking at example data. */
+/** The install step on Min dag, Privat only (ux-audit #3): after the first own task, one thin line – title, the
+ *  compact install button (it carries the platform guide) and «Ikke nu». Never in the installed app, never for demo
+ *  data; dismissed once, it stays away (same key as the old card). */
 function FirstOpenInstall() {
+  const t = useT("common");
   const { api, refresh, loggedIn, mode } = usePrivat();
-  if (!loggedIn || mode === "loading" || mode === "demo") return null;
-  return <InstallBanner audience="privat" enableNotifications={() => enablePush(api).then(() => refresh())} />;
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    if (isStandalone()) return;
+    try { if (localStorage.getItem(INSTALL_SEEN) === "1") return; } catch { return; }
+    setShow(true);
+  }, []);
+  if (!loggedIn || mode === "loading" || mode === "demo" || !show) return null;
+  const dismiss = () => { try { localStorage.setItem(INSTALL_SEEN, "1"); } catch { /* optional */ } setShow(false); };
+  return (
+    <section className="flex flex-col gap-2 rounded-[14px] border-[1.5px] border-ink bg-panel px-3.5 py-3" aria-labelledby="install-line-h" data-testid="install-line">
+      <div className="flex items-center gap-2">
+        <h2 id="install-line-h" className="m-0 flex-1 font-body font-semibold text-[15px]">{t("pwa.installStepTitle")}</h2>
+        <button type="button" onClick={dismiss} className="min-h-[44px] px-1 text-[14px] font-semibold text-muted underline underline-offset-2 hover:text-ink">{t("pwa.dismiss")}</button>
+      </div>
+      <InstallApp audience="privat" compact enableNotifications={() => enablePush(api).then(() => refresh())} />
+    </section>
+  );
 }
 
 /** Old name, kept for imports. */

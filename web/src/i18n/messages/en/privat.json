@@ -1279,6 +1279,7 @@
     "directShort": "direct",
     "stops": "{n} stops",
     "book": "Book",
+    "sponsored": "Ad · Dialogbot earns a commission",
     "overBudget": "{n} trips were over budget.",
     "disclaimer": "Prices come straight from the providers and may change. You book and pay with the provider – Dialogbot does not book."
   },

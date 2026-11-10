@@ -1276,6 +1276,17 @@
         "title": "CompanyIn",
         "type": "object"
       },
+      "ConfirmIn": {
+        "properties": {
+          "override_conflict": {
+            "default": false,
+            "title": "Override Conflict",
+            "type": "boolean"
+          }
+        },
+        "title": "ConfirmIn",
+        "type": "object"
+      },
       "ConnectIn": {
         "properties": {
           "config": {
@@ -27943,6 +27954,91 @@
           }
         },
         "summary": "Cancel",
+        "tags": [
+          "bookings"
+        ]
+      }
+    },
+    "/api/v1/workspaces/{workspace_id}/bookings/{booking_id}/confirm": {
+      "post": {
+        "description": "A staff member confirms a booking «afventer bekræftelse» (made while the connected calendar could not be read).\nIt is then written to the calendar through the shared mirror path; a write failure shows as «Ikke i kalenderen».",
+        "operationId": "confirm_api_v1_workspaces__workspace_id__bookings__booking_id__confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "booking_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Booking Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "workspace_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Workspace Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ConfirmIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Confirm",
         "tags": [
           "bookings"
         ]

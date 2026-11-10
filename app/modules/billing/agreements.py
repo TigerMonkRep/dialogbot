@@ -33,8 +33,9 @@ def current(db: OrmSession, workspace_id: uuid.UUID) -> ReceptionAgreement | Non
 
 def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid.UUID, *,
            offer=None) -> ReceptionAgreement:
-    """`offer` (an accepted SalesOffer) snapshots the offer's monthly price, VAT and setup fee instead of the list
-    price; its amounts were themselves copied from prices.py when the offer was created."""
+    """`offer` (an accepted SalesOffer) snapshots the offer's monthly price, VAT, setup fee and package (included
+    inbound minutes, overage price) instead of the list price; its amounts were themselves copied from prices.py when
+    the offer was created. Without an offer the package is the list price in the agreement's currency."""
     if model != "A":
         raise ValidationFailed("Betaling pr. henvendelse findes ikke længere. Der er ét abonnement.",
                                field_errors=[{"field": "model", "message": "Kun abonnement"}], code="plan_discontinued")
@@ -52,6 +53,10 @@ def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid
                            monthly_net_minor=offer.monthly_net_minor if offer else markets.erhverv_price(currency, "monthly"),
                            lead_fee_net_minor=0, tax_basis_points=tax_bp,
                            setup_net_minor=offer.setup_net_minor if offer else 0,
+                           inbound_included_minutes=(offer.inbound_included_minutes if offer
+                                                     else prices.INBOUND_INCLUDED_MINUTES),
+                           inbound_extra_minute_net_minor=(offer.inbound_extra_minute_net_minor if offer
+                                                           else markets.erhverv_price(currency, "extra_minute")),
                            sales_offer_id=offer.id if offer else None, created_by=created_by)
     db.add(a)
     db.flush()
@@ -81,8 +86,8 @@ def out(a: ReceptionAgreement | None) -> dict | None:
             "lead_fee": lead_fee(a).snapshot(),
             "campaign_call": Money(a.currency, markets.erhverv_price(a.currency, "call"), a.tax_basis_points).snapshot(),
             "campaign_minute": Money(a.currency, markets.erhverv_price(a.currency, "minute"), a.tax_basis_points).snapshot(),
-            "inbound_extra_minute": Money(a.currency, markets.erhverv_price(a.currency, "extra_minute"),
-                                          a.tax_basis_points).snapshot(),
+            "inbound_included_minutes": a.inbound_included_minutes,
+            "inbound_extra_minute": Money(a.currency, a.inbound_extra_minute_net_minor, a.tax_basis_points).snapshot(),
             "setup": Money(a.currency, a.setup_net_minor or 0, a.tax_basis_points).snapshot(),
             "created_at": a.created_at.isoformat(),
             "invoicing": "not_implemented"}

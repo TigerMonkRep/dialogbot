@@ -101,15 +101,19 @@ def test_mp_package_terms_are_snapshotted_per_agreement_not_read_from_the_list_p
     assert (after["included_minutes"], after["extra_minutes"], after["net_minor"]) == (300, 10, 1_500), after
 
 
-def test_mp_agreement_row_has_no_column_for_the_package_terms():
-    """Root cause of F-BQ-011, stated as a schema fact: the sales offer snapshots inbound_included_minutes and
-    inbound_extra_minute_net_minor, the agreement made from it drops them."""
+def test_mp_agreement_row_snapshots_the_package_terms_like_the_offer(api, two_workspaces, db):
+    """F-BQ-011 fixed: the agreement carries the same package columns as the sales offer, filled when it is made
+    (list price in its currency without an offer)."""
     from app.models.sales import SalesOffer
 
     offer_cols = set(SalesOffer.__table__.columns.keys())
     agr_cols = set(ReceptionAgreement.__table__.columns.keys())
-    assert {"inbound_included_minutes", "inbound_extra_minute_net_minor"} <= offer_cols
-    assert not ({"inbound_included_minutes", "inbound_extra_minute_net_minor"} & agr_cols)
+    assert {"inbound_included_minutes", "inbound_extra_minute_net_minor"} <= offer_cols & agr_cols
+    ws = uuid.UUID(two_workspaces["ws_a"])
+    db.add(ReceptionAgreement(workspace_id=ws, version=1, model="A", currency="SEK", monthly_net_minor=369_500))
+    db.commit()
+    a = db.query(ReceptionAgreement).filter_by(workspace_id=ws).one()
+    assert (a.inbound_included_minutes, a.inbound_extra_minute_net_minor) == (INCLUDED, 220)  # 2,20 SEK
 
 
 # --------------------------------------------------------------------------- month close / reconciliation (defect)

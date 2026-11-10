@@ -90,7 +90,7 @@ export function Estimate({ value, onChange }: { value: number; onChange: (n: num
 export type { EstimateT };
 
 const ERROR_CODES = ["rate_limited", "draft_not_found", "draft_expired", "draft_verified", "search_failed", "too_soon", "sms_failed",
-  "privat_not_enabled", "code_expired", "too_many_attempts", "user_inactive"];
+  "privat_not_enabled", "code_expired", "too_many_attempts", "user_inactive", "account_exists"];
 
 /** A funnel error on the page's language: translated from the backend's `code` (the backend writes Danish). A wrong SMS
  *  code is a field error on `code`. Unknown errors keep the backend text on Danish pages, a generic line elsewhere. */

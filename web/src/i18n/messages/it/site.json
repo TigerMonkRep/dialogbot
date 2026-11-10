@@ -618,6 +618,7 @@
         "code_expired": "Il codice è scaduto. Ne chieda uno nuovo.",
         "too_many_attempts": "Troppi tentativi. Chieda un nuovo codice.",
         "user_inactive": "L'account è disattivato.",
+        "account_exists": "Esiste già un account con questa e-mail. Acceda per continuare.",
         "wrong_code": "Il codice non corrisponde.",
         "generic": "Qualcosa è andato storto. Riprovi tra poco."
       }
@@ -677,7 +678,8 @@
       "resendIn": "Invia di nuovo tra {s} s",
       "wrongNumber": "Numero sbagliato?",
       "noGate": "Non abbiamo ancora inviato un codice.",
-      "toGate": "Inserisci i tuoi dati"
+      "toGate": "Inserisci i tuoi dati",
+      "toLogin": "Accedi"
     },
     "erhverv": {
       "meta": {

@@ -436,23 +436,27 @@ def _welcome(db: OrmSession, user: User, kind: str) -> None:
             payload={"user_id": str(user.id), "to_email": user.email, "email": tpl.to_payload(mail)})
 
 
-def _user_for(db: OrmSession, d: FunnelDraft, request_id: str | None) -> tuple[User, bool]:
+def _existing_account(db: OrmSession, d: FunnelDraft, request_id: str | None) -> None:
+    """F-P2-01-X04: the SMS code proves only that the person holds the number THEY typed at the gate – never that they
+    own the account behind the typed e-mail (the user row keeps no phone to compare with). So verify never opens an
+    existing account: no session, nothing on the account changes, no workspace. The person logs in the ordinary way.
+    Saying «an account exists» is no more than POST /auth/register already answers (409 email_taken) without any code."""
+    user = db.scalar(select(User).where(User.email_normalized == normalize_email(d.gate["email"])))
+    if user is None:
+        return
+    record_audit(db, workspace_id=None, actor_user_id=None, action="funnel.account_exists", object_type="funnel_draft",
+                 object_id=d.id, after={"kind": d.kind, "user_id": str(user.id), "phone": d.gate["phone_e164"]},
+                 request_id=request_id)
+    db.commit()  # the code is used up and the attempt is on record, even though the request fails
+    raise Conflict("Der findes allerede en konto med den e-mail. Log ind for at fortsætte.", code="account_exists")
+
+
+def _new_user(db: OrmSession, d: FunnelDraft, request_id: str | None) -> User:
     g = d.gate
     norm = normalize_email(g["email"])
-    now = _now()
-    user = db.scalar(select(User).where(User.email_normalized == norm).with_for_update())
-    if user is not None:
-        if not user.is_active:
-            raise Forbidden("Kontoen er deaktiveret", code="user_inactive")
-        if user.phone_verified_at is None:
-            user.phone_verified_at = now
-        record_audit(db, workspace_id=None, actor_user_id=user.id, action="user.funnel_login", object_type="user",
-                     object_id=user.id, after={"draft_id": str(d.id), "kind": d.kind, "phone": g["phone_e164"],
-                                               "proof": "sms_code"}, request_id=request_id)
-        return user, False
     user = User(email=g["email"].strip(), email_normalized=norm, password_hash=hash_password(new_token()),
                 display_name=g["name"], signup_intent="reception" if d.kind == "erhverv" else None,
-                interface_language="da", phone_verified_at=now,
+                interface_language="da", phone_verified_at=_now(),
                 signup_source=f"funnel:{d.kind}" + (f":{d.hook}" if d.hook else ""))
     db.add(user)
     db.flush()
@@ -460,7 +464,7 @@ def _user_for(db: OrmSession, d: FunnelDraft, request_id: str | None) -> tuple[U
                  object_id=user.id, after={"email": norm, "signup_intent": user.signup_intent, "source": "funnel",
                                            "kind": d.kind, "proof": "sms_code"}, request_id=request_id)
     _welcome(db, user, d.kind)
-    return user, True
+    return user
 
 
 def verify(db: OrmSession, d: FunnelDraft, *, code: str, user_agent: str | None,
@@ -474,7 +478,8 @@ def verify(db: OrmSession, d: FunnelDraft, *, code: str, user_agent: str | None,
     _check_code(db, d, code)
     if d.kind == "privat":
         _check_privat_allowed(d.gate["email"])
-    user, created = _user_for(db, d, request_id)
+    _existing_account(db, d, request_id)  # never a session for an account the code does not prove (F-P2-01-X04)
+    user, created = _new_user(db, d, request_id), True
     now = _now()
     d.user_id = user.id
     d.gate = {**d.gate, "verified_at": now.isoformat()}

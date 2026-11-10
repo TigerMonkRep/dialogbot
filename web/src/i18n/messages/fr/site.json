@@ -618,6 +618,7 @@
         "code_expired": "Le code a expiré. Demandez-en un nouveau.",
         "too_many_attempts": "Trop de tentatives. Demandez un nouveau code.",
         "user_inactive": "Le compte est désactivé.",
+        "account_exists": "Un compte existe déjà avec cette adresse e-mail. Connectez-vous pour continuer.",
         "wrong_code": "Le code ne correspond pas.",
         "generic": "Une erreur s’est produite. Réessayez dans un instant."
       }
@@ -677,7 +678,8 @@
       "resendIn": "Renvoyer dans {s} s",
       "wrongNumber": "Mauvais numéro ?",
       "noGate": "Nous n'avons pas encore envoyé de code.",
-      "toGate": "Saisir vos coordonnées"
+      "toGate": "Saisir vos coordonnées",
+      "toLogin": "Se connecter"
     },
     "erhverv": {
       "meta": {

@@ -196,6 +196,10 @@ export function CodeStep({ title, lead, gateStep, onBack }: { title: string; lea
         </button>
         <button type="button" onClick={toGate} className="min-h-11 text-[14px] font-semibold text-ink underline underline-offset-2 bg-transparent border-0 cursor-pointer">{t("wrongNumber")}</button>
       </div>
+      {/* F-P2-01-X04: the code never opens an existing account – the owner logs in the ordinary way */}
+      {error?.code === "account_exists" && (
+        <Link href={kind === "privat" ? "/login?next=%2Fprivat" : "/login"} className="self-start inline-flex items-center justify-center rounded-xl min-h-[44px] px-4 py-2 font-body text-[15px] font-semibold leading-tight bg-accent text-white hover:bg-accent-deep no-underline" data-login>{t("toLogin")}</Link>
+      )}
     </form>
   );
 }

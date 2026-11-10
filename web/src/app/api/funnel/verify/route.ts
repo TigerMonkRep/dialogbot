@@ -5,7 +5,7 @@ import { API_BASE_URL, COOKIE_OPTS, CSRF_HEADER, CSRF_VALUE, KNOWN_ACCOUNT_COOKI
 import { safeNext } from "@/lib/safe-next";
 import { visitorIp } from "@/lib/visitor-ip";
 
-/** The funnel's SMS-code check. POST /api/v1/funnel/drafts/{id}/verify creates (or finds) the user and returns a
+/** The funnel's SMS-code check. POST /api/v1/funnel/drafts/{id}/verify creates the user (an existing e-mail gets 409 account_exists, no session) and returns a
  *  session like POST /auth/login does; this route stores it in the httpOnly cookie – exactly as /api/auth/login – and
  *  hands the browser only `next` (the token never reaches JavaScript). Body: {draft_id, code}. */
 export async function POST(req: NextRequest) {

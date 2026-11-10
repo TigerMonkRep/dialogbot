@@ -745,3 +745,17 @@ class PrivateDataExport(Base):
     ready_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     downloaded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class PrivateTrialCard(Base):
+    """One free trial per CARD (decision Fürster 2026-11-10, F-PBQ-02): Stripe's card fingerprint (a hash Stripe makes
+    of the card number – never card data) for every card that has started a Privat trial. A new account whose card is
+    already here gets no trial (subscriptions.upsert_from_stripe_subscription ends it at once). Kept when the account
+    is deleted (workspace_id → NULL), or deleting and re-signing up would buy a new trial."""
+
+    __tablename__ = "private_trial_cards"
+
+    fingerprint: Mapped[str] = mapped_column(String(64), primary_key=True)
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="SET NULL"))
+    stripe_subscription_id: Mapped[str | None] = mapped_column(String(100))
+    first_trial_at: Mapped[datetime] = ts_now()

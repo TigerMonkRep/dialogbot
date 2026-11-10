@@ -181,7 +181,8 @@
       "account": "Account and credits",
       "addons": "Add-ons",
       "people": "My people"
-    }
+    },
+    "homeSuffix": " – My day"
   },
   "tabs": {
     "label": "Main menu",
@@ -741,7 +742,8 @@
     "verifyLink": "Confirm e-mail",
     "viewAs": "Private tasks cannot be viewed in «View as customer».",
     "notEnabled": "Dialogbot Privat is not open for your account yet. Nothing you do here is saved or carried out.",
-    "unavailable": "Dialogbot Privat can't be reached right now. Try again in a moment – nothing has been saved or carried out."
+    "unavailable": "Dialogbot Privat can't be reached right now. Try again in a moment – nothing has been saved or carried out.",
+    "generic": "Something went wrong. Please try again."
   },
   "location": {
     "useMine": "Use my location",
@@ -789,7 +791,8 @@
     "planBadge": "{plan}",
     "noPlan": "No plan",
     "trialDaysShort": "{n} d",
-    "trialDaysLeft": "{n|1 day|# days} left"
+    "trialDaysLeft": "{n|1 day|# days} left",
+    "planAriaShort": "open account"
   },
   "day2": {
     "eyebrow": "Your own personal assistant",
@@ -1160,7 +1163,10 @@
     "none": "No appointments yet. When Peter gets a time confirmed, or you ask him to add one, it shows up here.",
     "addToCalendar": "Add to calendar",
     "remove": "Remove from calendar",
-    "removeNote": "«Remove from calendar» does not cancel the time with the business."
+    "removeNote": "«Remove from calendar» does not cancel the time with the business.",
+    "whichTitle": "Which calendar do you use?",
+    "iphoneOther": "iPhone or another",
+    "connectName": "Connect {name}"
   },
   "birthdays": {
     "title": "Upcoming birthdays",
@@ -1210,7 +1216,8 @@
       "half_yearly": "every six months",
       "yearly": "every year",
       "once": "once"
-    }
+    },
+    "removeYes": "Yes, remove"
   },
   "assistantName": {
     "pronoun": "Pronoun (Danish texts)",
@@ -1606,7 +1613,14 @@
     "stripStep": "Step {n} of {total} – continue the setup",
     "accountLine": "{n|1 app on|# apps on}",
     "allOn": "You have every app. New ones arrive regularly.",
-    "sayLike": "Say, e.g., “{example}”"
+    "sayLike": "Say, e.g., “{example}”",
+    "about": "About the app",
+    "planIncludedAll": "Included in every plan.",
+    "planTextTrialAll": "{name} is included in every plan. Try it free for 14 days – your card is only charged when the trial ends.",
+    "planTextEndedAll": "{name} is included in every plan. Choose a plan to use it.",
+    "planTextBasis": "You have Basis. {name} is included in Plus and Family.",
+    "onInMine": "{n|1 app is on|# apps are on} – see My apps",
+    "yourThings": "Your things here ({n})"
   },
   "familyHousehold": {
     "title": "Household",

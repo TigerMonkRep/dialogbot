@@ -3,7 +3,7 @@ id: F-PB-03-PC-APP-REGNINGER-05
 scenario: PC-APP-REGNINGER-05
 reported_by: e2e-privat (PB)
 severity: S2
-status: new
+status: fixed
 owner_fix: ui-ux-engineer (apps.tsx) / fix-engineer
 related: [PC-APP-MADPLAN-05, PC-APP-KALENDER-05, PC-APP-KAELEDYR-05, PC-APP-LAEGE-OG-TANDLAEGE-05, PC-APP-OENSKELISTER-05, F-UX-04]
 ---
@@ -33,6 +33,7 @@ Render EnableSheet uden for `!a.enabled`-grenen (som `DisableSheet` i den slåed
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
+- ui-ux-engineer (fase 2, punkt 2): apps.tsx – EnableSheet husker «slået fra med data» ved åbning og vises også efter skiftet til den aktive gren (AppPage), så «Alt, den havde gemt, er her igen» ses
 - Filer:
 - Commit:
 

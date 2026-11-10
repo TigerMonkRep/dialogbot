@@ -181,7 +181,8 @@
       "account": "Account e crediti",
       "addons": "Componenti aggiuntivi",
       "people": "Le mie persone"
-    }
+    },
+    "homeSuffix": " – La mia giornata"
   },
   "tabs": {
     "label": "Menu principale",
@@ -741,7 +742,8 @@
     "verifyLink": "Conferma e-mail",
     "viewAs": "Le attività private non sono visibili in «Vedi come cliente».",
     "notEnabled": "Dialogbot Privat non è ancora aperto per il tuo account. Niente di ciò che fai qui viene salvato o eseguito.",
-    "unavailable": "Al momento Dialogbot Privat non è raggiungibile. Riprova tra poco – niente è stato salvato o eseguito."
+    "unavailable": "Al momento Dialogbot Privat non è raggiungibile. Riprova tra poco – niente è stato salvato o eseguito.",
+    "generic": "Qualcosa è andato storto. Riprova."
   },
   "location": {
     "useMine": "Usa la mia posizione",
@@ -789,7 +791,8 @@
     "planBadge": "{plan}",
     "noPlan": "Nessun piano",
     "trialDaysShort": "{n} g",
-    "trialDaysLeft": "{n|1 giorno|# giorni} rimasti"
+    "trialDaysLeft": "{n|1 giorno|# giorni} rimasti",
+    "planAriaShort": "apri account"
   },
   "day2": {
     "eyebrow": "Il tuo assistente personale",
@@ -1160,7 +1163,10 @@
     "none": "Ancora nessun appuntamento. Quando Peter ottiene un orario confermato, o gli chiedi di inserirne uno, compare qui.",
     "addToCalendar": "Aggiungi al calendario",
     "remove": "Rimuovi dal calendario",
-    "removeNote": "«Rimuovi dal calendario» non disdice l'appuntamento con l'azienda."
+    "removeNote": "«Rimuovi dal calendario» non disdice l'appuntamento con l'azienda.",
+    "whichTitle": "Quale calendario usi?",
+    "iphoneOther": "iPhone o un altro",
+    "connectName": "Collega {name}"
   },
   "birthdays": {
     "title": "Prossimi compleanni",
@@ -1210,7 +1216,8 @@
       "half_yearly": "ogni semestre",
       "yearly": "ogni anno",
       "once": "una volta"
-    }
+    },
+    "removeYes": "Sì, rimuovi"
   },
   "assistantName": {
     "pronoun": "Pronome (testi danesi)",
@@ -1606,7 +1613,14 @@
     "stripStep": "Passo {n} di {total} – continua la configurazione",
     "accountLine": "{n|1 app attiva|# app attive}",
     "allOn": "Hai tutte le app. Ne arrivano di nuove regolarmente.",
-    "sayLike": "Di’ ad esempio «{example}»"
+    "sayLike": "Di’ ad esempio «{example}»",
+    "about": "Info sull’app",
+    "planIncludedAll": "Inclusa in tutti i piani.",
+    "planTextTrialAll": "{name} è inclusa in tutti i piani. Provala gratis per 14 giorni: la carta viene addebitata solo alla fine della prova.",
+    "planTextEndedAll": "{name} è inclusa in tutti i piani. Scegli un piano per usarla.",
+    "planTextBasis": "Hai Basis. {name} è inclusa in Plus e Famiglia.",
+    "onInMine": "{n|1 app attiva|# app attive} – vedi Le mie app",
+    "yourThings": "Le tue cose qui ({n})"
   },
   "familyHousehold": {
     "title": "Nucleo familiare",

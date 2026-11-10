@@ -287,8 +287,11 @@ def test_referral_once(api, pv, db):
     _accept(api, nina, i1["token"])  # replay
     pv.start_trial(nina)  # own lists need the trial (card at Stripe)
     pv.make_list(nina, "Lav en liste med æg")
-    pv.make_list(nina, "Lav en liste med mel")
     nid = pv.uid(nina)
+    # a trial is not a paid period: no referral reward yet (Fürster 2026-11-10, F-PBQ-02/F-PQ-03)
+    assert _referral_ledger(db, pv.ws(nina)) == [] and _referral_ledger(db, pv.ws(mette)) == []
+    pv.set_plan(nina, "plus")  # the first real period is paid
+    pv.make_list(nina, "Lav en liste med mel")
     assert _referral_ledger(db, pv.ws(nina)) == [(3, f"referral:{nid}:invitee")]
     assert _referral_ledger(db, pv.ws(mette)) == [(3, f"referral:{nid}:inviter")]
     assert db.query(PrivateReferral).count() == 1
@@ -308,7 +311,10 @@ def test_referral_needs_activation(api, pv, db):
     assert _referral_ledger(db, pv.ws(nina)) == [] and _referral_ledger(db, pv.ws(mette)) == []
     pv.say(nina, "Mind mig om at ringe til mor i morgen kl 10")  # free tier: a draft, not an own task
     assert _referral_ledger(db, pv.ws(nina)) == []
-    pv.start_trial(nina)  # the trial activates the draft – and that counts
+    pv.start_trial(nina)  # the trial activates the draft – an own task, but nothing is paid yet
+    assert _referral_ledger(db, pv.ws(nina)) == [] and _referral_ledger(db, pv.ws(mette)) == []
+    pv.set_plan(nina, "plus")
+    pv.say(nina, "Mind mig om at købe ind i morgen kl 9")
     assert len(_referral_ledger(db, pv.ws(nina))) == 1 and len(_referral_ledger(db, pv.ws(mette))) == 1
 
 
@@ -318,7 +324,7 @@ def test_referral_monthly_cap(api, pv, db):
     for i in range(11):
         tok = pv.user(f"ny{i}@testmail.dk", f"Ny{i} Person")
         _accept(api, tok, link["token"])
-        pv.start_trial(tok)
+        pv.set_plan(tok, "plus")  # rewards need a paid period (F-PBQ-02)
         pv.make_list(tok, f"Lav en liste med ting{i}")
         assert len(_referral_ledger(db, pv.ws(tok))) == 1  # every invitee is rewarded
     assert len(_referral_ledger(db, pv.ws(mette))) == 10

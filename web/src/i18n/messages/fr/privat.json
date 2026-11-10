@@ -181,7 +181,8 @@
       "account": "Compte et crédits",
       "addons": "Modules",
       "people": "Mes proches"
-    }
+    },
+    "homeSuffix": " – Ma journée"
   },
   "tabs": {
     "label": "Menu principal",
@@ -741,7 +742,8 @@
     "verifyLink": "Confirmer l'e-mail",
     "viewAs": "Les tâches privées ne sont pas visibles en « Voir comme le client ».",
     "notEnabled": "Dialogbot Privat n'est pas encore ouvert pour ton compte. Rien de ce que tu fais ici n'est enregistré ni exécuté.",
-    "unavailable": "Dialogbot Privat est injoignable pour le moment. Réessaie dans un instant – rien n'a été enregistré ni exécuté."
+    "unavailable": "Dialogbot Privat est injoignable pour le moment. Réessaie dans un instant – rien n'a été enregistré ni exécuté.",
+    "generic": "Une erreur s’est produite. Veuillez réessayer."
   },
   "location": {
     "useMine": "Utiliser ma position",
@@ -789,7 +791,8 @@
     "planBadge": "{plan}",
     "noPlan": "Sans forfait",
     "trialDaysShort": "{n} j",
-    "trialDaysLeft": "{n|1 jour|# jours} restants"
+    "trialDaysLeft": "{n|1 jour|# jours} restants",
+    "planAriaShort": "ouvrir le compte"
   },
   "day2": {
     "eyebrow": "Votre assistant personnel",
@@ -1160,7 +1163,10 @@
     "none": "Pas encore de rendez-vous. Quand Peter obtient une heure confirmée, ou que vous lui demandez d'en ajouter une, elle apparaît ici.",
     "addToCalendar": "Ajouter à l'agenda",
     "remove": "Retirer de l'agenda",
-    "removeNote": "«Retirer de l'agenda» n'annule pas le rendez-vous auprès de l'entreprise."
+    "removeNote": "«Retirer de l'agenda» n'annule pas le rendez-vous auprès de l'entreprise.",
+    "whichTitle": "Quel calendrier utilisez-vous ?",
+    "iphoneOther": "iPhone ou un autre",
+    "connectName": "Connecter {name}"
   },
   "birthdays": {
     "title": "Anniversaires à venir",
@@ -1210,7 +1216,8 @@
       "half_yearly": "chaque semestre",
       "yearly": "chaque année",
       "once": "une fois"
-    }
+    },
+    "removeYes": "Oui, retirer"
   },
   "assistantName": {
     "pronoun": "Pronom (textes danois)",
@@ -1606,7 +1613,14 @@
     "stripStep": "Étape {n} sur {total} – continuer la configuration",
     "accountLine": "{n|1 app activée|# apps activées}",
     "allOn": "Vous avez toutes les apps. De nouvelles arrivent régulièrement.",
-    "sayLike": "Dites par exemple « {example} »"
+    "sayLike": "Dites par exemple « {example} »",
+    "about": "À propos de l’app",
+    "planIncludedAll": "Inclus dans tous les forfaits.",
+    "planTextTrialAll": "{name} est inclus dans tous les forfaits. Essayez gratuitement 14 jours – la carte n’est débitée qu’à la fin de l’essai.",
+    "planTextEndedAll": "{name} est inclus dans tous les forfaits. Choisissez un forfait pour l’utiliser.",
+    "planTextBasis": "Vous avez Basis. {name} est inclus dans Plus et Famille.",
+    "onInMine": "{n|1 app activée|# apps activées} – voir Mes apps",
+    "yourThings": "Vos éléments ici ({n})"
   },
   "familyHousehold": {
     "title": "Foyer",

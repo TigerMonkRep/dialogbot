@@ -3,7 +3,7 @@ id: F-PBQ-04-PC-SUB-13
 scenario: PC-SUB-13
 reported_by: billing-qa
 severity: S2
-status: confirmed
+status: fixed
 owner_fix: ui-ux-engineer
 related: []
 ---

@@ -91,7 +91,8 @@ export function TaskDetail({ id }: { id: string }) {
         <div className="rounded-[18px] border-2 border-ink bg-paper p-4 shadow-block flex flex-col gap-2.5">
           <Eyebrow>{t("tasks.next")}</Eyebrow>
           <p className="m-0 text-[17px] font-semibold [overflow-wrap:anywhere]">{x.next_step}</p>
-          <Kv rows={[[t("tasks.purpose"), purpose(x, t)], [t("tasks.when"), f.when(x.remind_at ?? x.due_at) || "–"], [t("tasks.usage"), x.usage_text || "–"]]} />
+          {/* Empty rows are left out – «Tidspunkt: –» read as if Peter had not heard the time (notes-PB 11). */}
+          <Kv rows={([[t("tasks.purpose"), purpose(x, t)], [t("tasks.when"), f.when(x.remind_at ?? x.due_at)], [t("tasks.usage"), x.usage_text]] as [string, string | null | undefined][]).filter((r): r is [string, string] => !!r[1])} />
           {x.status === "draft" && <Button className={`${BIG} rounded-full`} onClick={() => openSheet({ kind: "paywall", taskId: x.id })}>{t("draft.choose")}</Button>}
           {proposal && <Button className={`${BIG} rounded-full`} onClick={() => talk(x.id)}>{t("call.seeProposal")}</Button>}
         </div>

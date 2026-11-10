@@ -2,7 +2,7 @@
 /** App panels for Madplan (household habits), Læge & tandlæge (saved practices), Bil & syn (the car and its dates) and
  *  Pakker (followed parcels). Shown in the app sheet when the app is on. Pakkeliste needs no panel: its lists are
  *  ordinary lists under Opgaver. Peter does all of it in the chat as well. */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui";
 import { useT } from "@/i18n/client";
 import type { ApiError } from "@/lib/client";
@@ -83,8 +83,13 @@ export function CarPanel() {
   const fn = useCallback(() => api.car(), [api]);
   const { data, err, run } = useLoad<CarInfo>(fn);
   const [form, setForm] = useState({ plate: "", inspection_due: "", service_due: "", tire_reminders: false });
+  // Fill the form from the server once – typing before the first load answered must not be wiped (notes-PA 17).
+  const filled = useRef(false);
   useEffect(() => {
-    if (data) setForm({ plate: data.plate ?? "", inspection_due: data.inspection_due ?? "", service_due: data.service_due ?? "", tire_reminders: data.tire_reminders });
+    if (!data || filled.current) return;
+    filled.current = true;
+    setForm((f) => (f.plate || f.inspection_due || f.service_due ? f
+      : { plate: data.plate ?? "", inspection_due: data.inspection_due ?? "", service_due: data.service_due ?? "", tire_reminders: data.tire_reminders }));
   }, [data]);
   return (
     <form className="rounded-[18px] border-[1.5px] border-ink bg-panel p-3.5 flex flex-col gap-2" data-testid="car-panel"

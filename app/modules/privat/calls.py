@@ -393,7 +393,10 @@ def dial(db: OrmSession, call_id: uuid.UUID) -> None:
                "assistant": assistant, "metadata": {"private_call_id": str(c.id), "private_task_id": str(c.task_id)}}
     try:
         out = campaigns.create_call(payload)
-    except ApiError as e:
+    except Exception as e:  # noqa: BLE001 - any failure at Vapi (also a non-ApiError 500) must never leave «dialling»
+        if not isinstance(e, ApiError):
+            e = ApiError("Telefontjenesten fejlede", code="provider_error", status_code=502)
+        db.rollback()
         c = db.scalar(select(PrivateCall).where(PrivateCall.id == call_id).with_for_update())
         task = db.get(PrivateTask, c.task_id)
         if (e.extra or {}).get("no_response"):

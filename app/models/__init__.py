@@ -117,6 +117,7 @@ from app.models.privat import (  # noqa: F401, E402
     PrivateTaskEvent,
     PrivateTaskItem,
     PrivateTaskMember,
+    PrivateTrialCard,
     PushSubscription,
 )
 from app.models.public_api import KEY_PREFIXES, ApiKey, WebhookEndpoint  # noqa: F401

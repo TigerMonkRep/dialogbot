@@ -181,7 +181,8 @@
       "account": "Cuenta y créditos",
       "addons": "Complementos",
       "people": "Mi gente"
-    }
+    },
+    "homeSuffix": " – Mi día"
   },
   "tabs": {
     "label": "Menú principal",
@@ -741,7 +742,8 @@
     "verifyLink": "Confirmar correo",
     "viewAs": "Las tareas privadas no se pueden ver en «Ver como cliente».",
     "notEnabled": "Dialogbot Privat aún no está abierto para tu cuenta. Nada de lo que hagas aquí se guarda ni se ejecuta.",
-    "unavailable": "Ahora mismo no se puede acceder a Dialogbot Privat. Inténtalo de nuevo en un momento: no se ha guardado ni ejecutado nada."
+    "unavailable": "Ahora mismo no se puede acceder a Dialogbot Privat. Inténtalo de nuevo en un momento: no se ha guardado ni ejecutado nada.",
+    "generic": "Algo salió mal. Inténtalo de nuevo."
   },
   "location": {
     "useMine": "Usar mi ubicación",
@@ -789,7 +791,8 @@
     "planBadge": "{plan}",
     "noPlan": "Sin plan",
     "trialDaysShort": "{n} d",
-    "trialDaysLeft": "{n|1 día|# días} restantes"
+    "trialDaysLeft": "{n|1 día|# días} restantes",
+    "planAriaShort": "abrir cuenta"
   },
   "day2": {
     "eyebrow": "Tu asistente personal",
@@ -1160,7 +1163,10 @@
     "none": "Aún no hay citas. Cuando Peter consiga una hora confirmada, o le pidas que añada una, aparecerá aquí.",
     "addToCalendar": "Añadir al calendario",
     "remove": "Quitar del calendario",
-    "removeNote": "«Quitar del calendario» no cancela la cita con la empresa."
+    "removeNote": "«Quitar del calendario» no cancela la cita con la empresa.",
+    "whichTitle": "¿Qué calendario usas?",
+    "iphoneOther": "iPhone u otro",
+    "connectName": "Conectar {name}"
   },
   "birthdays": {
     "title": "Próximos cumpleaños",
@@ -1210,7 +1216,8 @@
       "half_yearly": "cada semestre",
       "yearly": "cada año",
       "once": "una vez"
-    }
+    },
+    "removeYes": "Sí, quitar"
   },
   "assistantName": {
     "pronoun": "Pronombre (textos daneses)",
@@ -1606,7 +1613,14 @@
     "stripStep": "Paso {n} de {total} – continuar la configuración",
     "accountLine": "{n|1 app activada|# apps activadas}",
     "allOn": "Tienes todas las apps. Llegan nuevas con frecuencia.",
-    "sayLike": "Di, por ejemplo, «{example}»"
+    "sayLike": "Di, por ejemplo, «{example}»",
+    "about": "Sobre la app",
+    "planIncludedAll": "Incluida en todos los planes.",
+    "planTextTrialAll": "{name} está incluida en todos los planes. Pruébala gratis 14 días: la tarjeta se cobra cuando termina la prueba.",
+    "planTextEndedAll": "{name} está incluida en todos los planes. Elige un plan para usarla.",
+    "planTextBasis": "Tienes Basis. {name} está incluida en Plus y Familia.",
+    "onInMine": "{n|1 app activada|# apps activadas} – ver Mis apps",
+    "yourThings": "Lo tuyo aquí ({n})"
   },
   "familyHousehold": {
     "title": "Hogar",

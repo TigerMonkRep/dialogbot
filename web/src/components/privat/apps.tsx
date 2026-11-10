@@ -180,6 +180,7 @@ export function ShopPage() {
             </section>
           ))}
           {avail.length === 0 && mode !== "loading" && <p className="m-0 text-[15px] text-ink-soft" data-testid="shop-all-on">{t("apps.allOn")}</p>}
+          {on > 0 && cat === "alle" && <Link href="/privat/apps" className={LINK} data-testid="shop-on-link">{t("apps.onInMine", { n: on })}</Link>}
           {others.length > 0 && cat === "alle" && (
             <ul className="m-0 p-0 list-none grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5">{others.map((a) => <AppRow key={a.key} a={a} />)}</ul>
           )}
@@ -302,7 +303,8 @@ export function ShopItemPage({ appKey }: { appKey: string }) {
           <div className="flex flex-col gap-1.5 min-w-0">
             <h1 className="m-0 font-display font-extrabold text-[30px] leading-tight [overflow-wrap:anywhere]">{name}</h1>
             <p className="m-0 text-[16px] text-ink-soft">{addonText(t, a, "tagline")}</p>
-            <span className="flex gap-1.5 flex-wrap"><AppBadge a={a} />{CATEGORIES.includes(a.category as (typeof CATEGORIES)[number]) && <Pill>{t(`apps.cat.${a.category}`)}</Pill>}</span>
+            {/* One plan statement per page: the sticky bottom says it, so the header only marks «Kommer snart» (PB 2). */}
+            <span className="flex gap-1.5 flex-wrap">{a.status === "coming_soon" && <AppBadge a={a} />}{CATEGORIES.includes(a.category as (typeof CATEGORIES)[number]) && <Pill>{t(`apps.cat.${a.category}`)}</Pill>}</span>
           </div>
         </header>
         <AboutApp a={a} />
@@ -331,6 +333,7 @@ function AboutApp({ a, compact = false }: { a: Addon; compact?: boolean }) {
           <ol className="m-0 p-0 list-none flex flex-col gap-2.5">
             {steps.map((s, i) => <li key={i} className="flex items-center gap-3"><StepSquare n={i + 1} /><span className="text-[16px] [overflow-wrap:anywhere]">{s}</span></li>)}
           </ol>
+          {a.example && <p className="m-0 text-[15px] text-ink-soft">{t("apps.sayLike", { example: a.example.replace(/^«|»$/g, "") })}</p>}
         </section>
       )}
       {a.permissions.length > 0 && <Permissions a={a} name={name} />}
@@ -338,14 +341,22 @@ function AboutApp({ a, compact = false }: { a: Addon; compact?: boolean }) {
   );
 }
 
-/** «Hvad må den?» – folded; a chevron shows it opens. Permissions plus the data note (an icon, never a glyph). */
-function Permissions({ a, name }: { a: Addon; name: string }) {
+/** «Den får lov til» – folded; a chevron shows it opens. Permissions plus the data note (an icon, never a glyph). On an
+ *  app's own page it is «Om appen» and also says «Hvad den gør» – every app icon leads to what it does (F-PB-04). */
+function Permissions({ a, name, about = false }: { a: Addon; name: string; about?: boolean }) {
   const t = useT("privat");
   return (
-    <details className="group rounded-[18px] border-[1.5px] border-ink bg-paper px-4">
+    <details className="group rounded-[18px] border-[1.5px] border-ink bg-paper px-4" data-testid={about ? "app-about" : undefined}>
       <summary className="cursor-pointer list-none font-semibold text-[15px] min-h-[52px] flex items-center gap-2 [&::-webkit-details-marker]:hidden">
-        <span className="flex-1">{t("apps.permissions")}</span><Ico name="chevron" size={18} className="rotate-90 group-open:-rotate-90 transition-transform motion-reduce:transition-none" />
+        <span className="flex-1">{about ? t("apps.about") : t("apps.permissions")}</span><Ico name="chevron" size={18} className="rotate-90 group-open:-rotate-90 transition-transform motion-reduce:transition-none" />
       </summary>
+      {about && (
+        <div className="flex flex-col gap-1 pb-3">
+          <Eyebrow>{t("store.what")}</Eyebrow>
+          <p className="m-0 text-[15px] leading-normal text-ink-soft">{a.what || addonText(t, a, "description")}</p>
+          {a.permissions.length > 0 && <Eyebrow className="pt-2">{t("apps.permissions")}</Eyebrow>}
+        </div>
+      )}
       <ul className="m-0 pb-4 p-0 list-none flex flex-col gap-2">
         {a.permissions.map((x) => <li key={x} className="flex gap-2.5 text-[15px]"><span className="text-accent mt-0.5"><Ico name="check" size={18} stroke={2.6} /></span><span className="min-w-0">{x}</span></li>)}
         <li className="flex gap-2.5 text-[15px] text-ink-soft"><span className="mt-0.5"><Ico name="shield" size={18} /></span><span className="min-w-0">{t("apps.dataKept", { name })}</span></li>
@@ -391,14 +402,14 @@ function ShopAction({ a }: { a: Addon }) {
   } else if (mode === "demo") {
     body = <><p className="m-0 text-[14px] text-ink-soft text-center">{t("store.demoInstall")}</p><button type="button" className={PRIMARY} onClick={() => openSheet({ kind: "login" })}>{t("apps.loginToEnable")}</button></>;
   } else if (!included) {
-    body = <><p className="m-0 text-[14px] text-center"><strong>{t("apps.planIncluded")}</strong> {p.status === "none" ? t("apps.trialDays") : ""}</p><button type="button" className={PRIMARY} onClick={() => setPlan(true)} data-testid="needs-plan">{p.status === "none" ? t("apps.tryFree") : t("apps.choosePlan")}</button></>;
+    const allPlans = (a.included_in ?? []).includes("basis");
+    body = <><p className="m-0 text-[14px] text-center"><strong>{allPlans ? t("apps.planIncludedAll") : t("apps.planIncluded")}</strong> {p.status === "none" ? t("apps.trialDays") : ""}</p><button type="button" className={PRIMARY} onClick={() => setPlan(true)} data-testid="needs-plan">{p.status === "none" ? t("apps.tryFree") : t("apps.choosePlan")}</button></>;
   } else {
     body = <><p className="m-0 text-[14px] text-ink-soft text-center">{priceLine}</p><button type="button" className={PRIMARY} onClick={() => setOn(true)} data-testid="enable-app">{t("apps.enableName", { name })}</button></>;
   }
   return (
     <>
       <div className="fixed xl:sticky inset-x-0 bottom-[calc(64px+env(safe-area-inset-bottom))] xl:bottom-auto xl:top-5 z-30 border-t-2 xl:border-2 border-ink bg-paper px-4 py-3 xl:p-5 xl:rounded-[20px] xl:shadow-block flex flex-col gap-2">
-        {(a.needs?.length ?? 0) > 0 && <div className="hidden xl:block"><Needs a={a} /></div>}
         {body}
       </div>
       {on && <EnableSheet a={a} onClose={() => setOn(false)} />}
@@ -418,6 +429,8 @@ export function EnableSheet({ a, onClose }: { a: Addon; onClose: () => void }) {
   const [state, setState] = useState<"ask" | "busy" | "done">("ask");
   const [err, setErr] = useState<string | null>(null);
   const [needPlan, setNeedPlan] = useState(false);
+  // Was it switched off with data kept? Read once: after «Slå til» the app no longer has disabled_at (F-PB-03).
+  const [kept] = useState(!!a.disabled_at);
   const name = addonText(t, a, "name");
   const steps = a.steps ?? [];
   const go = () => { onClose(); router.push(`/privat/apps/${encodeURIComponent(a.key)}`); };
@@ -432,7 +445,6 @@ export function EnableSheet({ a, onClose }: { a: Addon; onClose: () => void }) {
   };
   if (needPlan) return <PlanSheet a={a} onClose={onClose} />;
   if (state === "done") {
-    const kept = !!a.disabled_at;
     return (
       <Sheet title={t("apps.enabledTitle", { name })} onClose={go}>
         <div className="flex items-start gap-3" role="status">
@@ -485,7 +497,13 @@ export function PlanSheet({ a, onClose, call = false }: { a?: Addon; onClose: ()
   return (
     <Sheet title={a ? t("apps.planTitle", { name }) : t("store.needsPlan.callTitle")} onClose={onClose}>
       <Eyebrow>{t("apps.planEyebrow")}</Eyebrow>
-      <p className="m-0 text-[15px] leading-normal">{p.status === "none" ? t("apps.planTextTrial", { name: name || t("apps.calls") }) : t("apps.planTextEnded", { name: name || t("apps.calls") })}</p>
+      <p className="m-0 text-[15px] leading-normal">{(() => {
+        const n = name || t("apps.calls");
+        const all = call || (a?.included_in ?? []).includes("basis");
+        if (p.status === "none") return all ? t("apps.planTextTrialAll", { name: n }) : t("apps.planTextTrial", { name: n });
+        if (p.entitled && p.plan === "basis") return t("apps.planTextBasis", { name: n });
+        return all ? t("apps.planTextEndedAll", { name: n }) : t("apps.planTextEnded", { name: n });
+      })()}</p>
       <div role="radiogroup" aria-label={t("apps.planChoice")} className="flex flex-col gap-2.5">
         {choices.map((x) => (
           <button key={x.key} type="button" role="radio" aria-checked={plan === x.key} onClick={() => setPlan(x.key)}
@@ -577,9 +595,13 @@ export function AppPage({ appKey }: { appKey: string }) {
   const t = useT("privat");
   const f = useFmt();
   const router = useRouter();
-  const { addons, mode, api, refresh, setDraft, go } = usePrivat();
+  const { addons, mode, api, refresh, setDraft, go, tasks, openTask } = usePrivat();
   const p = usePlan();
   const a = useApp(appKey);
+  // Apps without a panel keep their things as tasks: one line to them (notes-PB 5).
+  const mine = (tasks ?? []).filter((x) => !x.is_example && (appKey === ADDON.wishlists ? x.list_type === "wishlist"
+    : appKey === ADDON.sharedLists ? x.kind === "list" && x.list_type !== "wishlist" && !!x.shared
+    : appKey === ADDON.call ? x.kind === "call" : false));
   const [off, setOff] = useState(false);
   const [enable, setEnable] = useState(false);
   const [plan, setPlan] = useState(false);
@@ -679,7 +701,10 @@ export function AppPage({ appKey }: { appKey: string }) {
             <h2 id="settings-h" className="sr-only">{t("apps.settings")}</h2>
             {panel!()}
           </section>
-          <Button variant="outline" className="rounded-full self-start" onClick={() => ask(a.example)}>{t("apps.ask")}</Button>
+          <div className="flex flex-col gap-1">
+            <Button variant="outline" className="rounded-full self-start" onClick={() => ask(a.example)}>{t("apps.ask")}</Button>
+            {a.example && <p className="m-0 text-[14px] text-ink-soft">{t("apps.sayLike", { example: a.example.replace(/^«|»$/g, "") })}</p>}
+          </div>
         </>
       ) : setupLeftNow ? (
         <section className="rounded-[20px] border-2 border-ink bg-paper shadow-block p-4 flex flex-col gap-3" aria-labelledby="setup-h" data-testid="app-setup">
@@ -697,8 +722,16 @@ export function AppPage({ appKey }: { appKey: string }) {
           {a.example && <p className="m-0 text-[14px] text-ink-soft">{t("apps.sayLike", { example: a.example.replace(/^«|»$/g, "") })}</p>}
         </section>
       )}
+      {!hasPanel && mine.length > 0 && (
+        <button type="button" onClick={() => (mine.length === 1 ? openTask(mine[0].id) : go("tasks"))} data-testid="app-things"
+          className="w-full flex items-center gap-3 rounded-[18px] border-2 border-ink bg-paper px-4 min-h-[56px] text-left text-ink hover:bg-panel">
+          <span className="flex-1 min-w-0 font-semibold text-[16px]">{t("apps.yourThings", { n: mine.length })}</span><Ico name="chevron" size={18} />
+        </button>
+      )}
       {err && <p role="alert" className="m-0 text-[14px] text-danger font-semibold">{err}</p>}
-      {a.permissions.length > 0 && <Permissions a={a} name={name} />}
+      {/* «Slå til igen» on the kept page flips this page to the enabled branch – the sheet's «er her igen» lives on here. */}
+      {enable && <EnableSheet a={a} onClose={() => setEnable(false)} />}
+      <Permissions a={a} name={name} about />
       {mode !== "demo" && (
         <div className="flex items-center gap-3 flex-wrap border-t-[1.5px] border-line pt-4">
           <p className="m-0 flex-1 min-w-[12rem] text-[14px] text-ink-soft">{t("apps.offText")}</p>

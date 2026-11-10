@@ -21,6 +21,8 @@ export function BillsPanel() {
   const [due, setDue] = useState("");
   const [freq, setFreq] = useState<BillFrequency>("monthly");
   const [err, setErr] = useState<string | null>(null);
+  // «Fjern» asks once (notes-PB 7): on 390 px it sits next to the reminder picker, and a removed bill cannot be undone.
+  const [confirm, setConfirm] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try { setData(await api.bills()); } catch (e) { setErr((e as ApiError).message); }
@@ -70,7 +72,12 @@ export function BillsPanel() {
                       ))}
                     </select>
                   </label>
-                  <Button variant="outline" className="rounded-full border-2" onClick={() => void run(() => api.removeBill(b.id))} aria-label={`${t("bills.remove")}: ${b.name}`}>{t("bills.remove")}</Button>
+                  {confirm === b.id ? (
+                    <span className="flex items-center gap-2 flex-wrap" role="group" aria-label={`${t("bills.remove")}: ${b.name}`}>
+                      <Button variant="danger" className="rounded-full" onClick={() => { setConfirm(null); void run(() => api.removeBill(b.id)); }}>{t("bills.removeYes")}</Button>
+                      <Button variant="outline" className="rounded-full border-2" onClick={() => setConfirm(null)}>{t("wish.cancel")}</Button>
+                    </span>
+                  ) : <Button variant="outline" className="rounded-full border-2" onClick={() => setConfirm(b.id)} aria-label={`${t("bills.remove")}: ${b.name}`}>{t("bills.remove")}</Button>}
                 </span>
               </li>
             ))}

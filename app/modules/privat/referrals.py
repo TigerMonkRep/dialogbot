@@ -1,5 +1,7 @@
-"""Referral reward: a NEW user who joins through an invite and becomes active (verified e-mail + first OWN task) gives
-+3 credits to the invitee and +3 to the inviter (at most 10 inviter rewards per Copenhagen month).
+"""Referral reward: a NEW user who joins through an invite and becomes active (verified e-mail + first OWN task) AND
+has paid a first real period (subscription active – not a trial; decision Fürster 2026-11-10, F-PQ-03/F-PBQ-02:
+no reward for alt accounts) gives +3 credits to the invitee and +3 to the inviter (at most 10 inviter rewards per
+Copenhagen month). Tried after every own task and when the subscription turns active.
 
 - "New" = the account was created after the invite (an existing user never earns anything), and not a self-invite.
 - One referral row per invitee for life (unique invitee_user_id) and ledger source_refs referral:<invitee>:invitee /
@@ -59,6 +61,17 @@ def has_own_task(db: OrmSession, user_id: uuid.UUID) -> bool:
                             PrivateTask.status != "draft").limit(1)) is not None  # a free-tier draft is not activity
 
 
+def paid_once(db: OrmSession, ws_id: uuid.UUID) -> bool:
+    """The invitee has paid a first real period: their Stripe subscription is (or was, until now) active."""
+    from app.models import PrivateSubscription
+
+    row = db.get(PrivateSubscription, ws_id)
+    return row is not None and row.stripe_subscription_id is not None and row.status in ("active", "past_due") \
+        or (row is not None and row.status == "canceled" and row.current_period_end is not None
+            and row.stripe_subscription_id is not None and row.trial_ends_at is not None
+            and row.current_period_end > row.trial_ends_at)
+
+
 def try_activate(db: OrmSession, user_id: uuid.UUID) -> bool:
     """Reward once when the invitee is active. Safe to call after every own task; True when it rewarded now."""
     r = db.scalar(select(PrivateReferral).where(PrivateReferral.invitee_user_id == user_id,
@@ -70,7 +83,7 @@ def try_activate(db: OrmSession, user_id: uuid.UUID) -> bool:
         return False
     me = db.scalar(select(PrivateProfile).where(PrivateProfile.user_id == user_id))
     inviter = db.scalar(select(PrivateProfile).where(PrivateProfile.user_id == r.inviter_user_id))
-    if me is None:
+    if me is None or not paid_once(db, me.workspace_id):
         return False
     now = rules.now()
     r.activated_at = r.activated_at or now

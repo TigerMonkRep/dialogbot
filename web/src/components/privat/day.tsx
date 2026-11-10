@@ -42,7 +42,15 @@ export function Composer({ withSend = true, id = "privat-ask", quiet = false }: 
   const t = useT("privat");
   const { draft, setDraft, send, openSheet, focusId, task, busy } = usePrivat();
   return (
-    <form onSubmit={(e) => { e.preventDefault(); void send(); }} className="flex gap-2 items-center">
+    // F-PX-09: after Enter the keyboard/screen-reader user stays in the field (the conversation's field, when sending from
+    // Min dag opened it). Only with a fine pointer – on a phone, re-focusing would pop the keyboard back up.
+    <form onSubmit={(e) => {
+      e.preventDefault();
+      void send().then(() => {
+        if (!window.matchMedia("(pointer: fine)").matches) return;
+        requestAnimationFrame(() => { const el = [id, "privat-ask"].map((x) => document.getElementById(x)).find((x) => x?.offsetParent); el?.focus(); });
+      });
+    }} className="flex gap-2 items-center">
       <label htmlFor={id} className={SR}>{t("day2.inputLabel")}</label>
       <input id={id} value={draft} onChange={(e) => setDraft(e.target.value)} autoComplete="off" enterKeyHint="send"
         placeholder={focusId && task(focusId) ? t("day.placeholderFocus") : t("day.placeholder")}

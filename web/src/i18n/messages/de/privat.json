@@ -181,7 +181,8 @@
       "account": "Konto und Credits",
       "addons": "Erweiterungen",
       "people": "Meine Leute"
-    }
+    },
+    "homeSuffix": " – Mein Tag"
   },
   "tabs": {
     "label": "Hauptmenü",
@@ -741,7 +742,8 @@
     "verifyLink": "E-Mail bestätigen",
     "viewAs": "Private Aufgaben sind in «Als Kunde ansehen» nicht sichtbar.",
     "notEnabled": "Dialogbot Privat ist für dein Konto noch nicht freigeschaltet. Nichts, was du hier tust, wird gespeichert oder ausgeführt.",
-    "unavailable": "Dialogbot Privat ist gerade nicht erreichbar. Versuch es gleich noch einmal – nichts wurde gespeichert oder ausgeführt."
+    "unavailable": "Dialogbot Privat ist gerade nicht erreichbar. Versuch es gleich noch einmal – nichts wurde gespeichert oder ausgeführt.",
+    "generic": "Etwas ist schiefgelaufen. Bitte versuch es noch einmal."
   },
   "location": {
     "useMine": "Meinen Standort verwenden",
@@ -789,7 +791,8 @@
     "planBadge": "{plan}",
     "noPlan": "Kein Plan",
     "trialDaysShort": "{n} T",
-    "trialDaysLeft": "{n|1 Tag|# Tage} übrig"
+    "trialDaysLeft": "{n|1 Tag|# Tage} übrig",
+    "planAriaShort": "Konto öffnen"
   },
   "day2": {
     "eyebrow": "Dein persönlicher Assistent",
@@ -1160,7 +1163,10 @@
     "none": "Noch keine Termine. Wenn Peter eine Zeit bestätigt bekommt oder du ihn bittest, eine einzutragen, erscheint sie hier.",
     "addToCalendar": "Zum Kalender hinzufügen",
     "remove": "Aus dem Kalender entfernen",
-    "removeNote": "«Aus dem Kalender entfernen» sagt den Termin beim Unternehmen nicht ab."
+    "removeNote": "«Aus dem Kalender entfernen» sagt den Termin beim Unternehmen nicht ab.",
+    "whichTitle": "Welchen Kalender nutzt du?",
+    "iphoneOther": "iPhone oder ein anderer",
+    "connectName": "{name} verbinden"
   },
   "birthdays": {
     "title": "Kommende Geburtstage",
@@ -1210,7 +1216,8 @@
       "half_yearly": "jedes halbe Jahr",
       "yearly": "jedes Jahr",
       "once": "einmal"
-    }
+    },
+    "removeYes": "Ja, entfernen"
   },
   "assistantName": {
     "pronoun": "Pronomen (Dänisch)",
@@ -1606,7 +1613,14 @@
     "stripStep": "Schritt {n} von {total} – Einrichtung fortsetzen",
     "accountLine": "{n|1 App an|# Apps an}",
     "allOn": "Du hast alle Apps. Neue kommen laufend dazu.",
-    "sayLike": "Sag z. B. „{example}“"
+    "sayLike": "Sag z. B. „{example}“",
+    "about": "Über die App",
+    "planIncludedAll": "In allen Plänen enthalten.",
+    "planTextTrialAll": "{name} ist in allen Plänen enthalten. Teste 14 Tage gratis – die Karte wird erst nach der Testphase belastet.",
+    "planTextEndedAll": "{name} ist in allen Plänen enthalten. Wähle einen Plan, um sie zu nutzen.",
+    "planTextBasis": "Du hast Basis. {name} ist in Plus und Familie enthalten.",
+    "onInMine": "{n|1 App ist aktiv|# Apps sind aktiv} – siehe Meine Apps",
+    "yourThings": "Deine Einträge hier ({n})"
   },
   "familyHousehold": {
     "title": "Haushalt",

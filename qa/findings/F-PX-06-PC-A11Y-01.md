@@ -3,7 +3,7 @@ id: F-PX-06-PC-A11Y-01
 scenario: PC-A11Y-01
 reported_by: i18n-a11y-qa (PX)
 severity: S2
-status: new
+status: fixing
 owner_fix: ui-ux-engineer
 related: []
 ---

@@ -608,3 +608,79 @@ def test_no_second_checkout_while_a_subscription_runs(api, pv, db, monkeypatch):
     row.status, row.current_period_end = "canceled", None  # ended: a new subscription is allowed again
     db.commit()
     assert api.post(tok, "/privat/subscription/checkout", {"plan": "basis", "interval": "month"}).status_code == 200
+
+
+def test_one_trial_per_card(api, client, pv, db, monkeypatch):
+    """F-PBQ-02 (Fürster 2026-11-10): ÉT KORT = ÉN PRØVEPERIODE. A second account whose card (Stripe fingerprint) has
+    already started a Privat trial gets no trial: the trial is ended at once (Stripe charges now), the account is told,
+    and only the fingerprint – never card data – is kept. The Checkout page says so before the card is given."""
+    from app.models import PrivateTrialCard
+
+    _stripe_env(monkeypatch)
+    trial_end = int((WED_10 + timedelta(days=14)).timestamp())
+    calls = []
+
+    def fake(m, p, d=None, **k):
+        calls.append((m, p, d))
+        if p.startswith("/payment_methods/"):
+            return {"id": p.rsplit("/", 1)[1], "card": {"fingerprint": "fp_SAMECARD", "last4": "4242"}}
+        if m == "POST" and p.startswith("/subscriptions/"):
+            sid = p.rsplit("/", 1)[1]
+            return _sub_obj(ws_of[sid], sid=sid, status="active") | {"default_payment_method": "pm_x"}
+        raise AssertionError((m, p))
+
+    monkeypatch.setattr(stripe_api, "request", fake)
+    ws_of = {}
+    for i, email in enumerate(("kort-a@testmail.dk", "kort-b@testmail.dk")):
+        tok = pv.account(email, trial=False)
+        ws = pv.ws(tok)
+        sid = f"sub_card_{i}"
+        ws_of[sid] = ws
+        sub = _sub_obj(ws, sid=sid, status="trialing") | {"trial_end": trial_end, "default_payment_method": f"pm_{i}"}
+        assert _stripe_event(client, {"id": f"evt_card_{i}", "type": "customer.subscription.created",
+                                      "data": {"object": sub}})["outcome"] == "applied"
+    db.expire_all()
+    first, second = (db.get(PrivateSubscription, ws_of[f"sub_card_{i}"]) for i in range(2))
+    assert first.status == "trial"  # the card's first trial
+    assert second.status == "active"  # same card: no second trial
+    assert [(m, p, d) for m, p, d in calls if m == "POST"] == [
+        ("POST", "/subscriptions/sub_card_1", {"trial_end": "now", "proration_behavior": "none"})]
+    rows = db.query(PrivateTrialCard).all()
+    assert [(r.fingerprint, r.workspace_id) for r in rows] == [("fp_SAMECARD", ws_of["sub_card_0"])]
+    tok_b = pv.account("kort-c@testmail.dk", trial=False)
+    sent = _fake_checkout(monkeypatch)
+    api.post(tok_b, "/privat/subscription/checkout", {"plan": "plus", "interval": "month"})
+    assert "Én prøveperiode pr. kort" in _sessions(sent)[0]["custom_text"]["submit"]["message"]
+
+
+def test_privat_sends_its_own_billing_mails(api, client, pv, db, monkeypatch):
+    """F-PBQ-08 (Fürster 2026-11-10): Privat sends Dialogbot's own branded mails (Privat orange): trial ends in 3 days,
+    receipt, failed payment (dunning) and refund confirmed – once per Stripe object, in the user's language."""
+    from app.models import OutboxEvent
+
+    _stripe_env(monkeypatch)
+    tok = pv.account("mails@testmail.dk")  # in the trial (card at Stripe, customer cus_test)
+    ws = pv.ws(tok)
+    row = db.get(PrivateSubscription, ws)
+    sub = _sub_obj(ws, sid=row.stripe_subscription_id, status="trialing", customer="cus_test") | {
+        "trial_end": int((WED_10 + timedelta(days=3)).timestamp())}
+    events = [("customer.subscription.trial_will_end", sub),
+              ("invoice.paid", {"id": "in_p1", "customer": "cus_test", "amount_paid": 9900, "currency": "dkk"}),
+              ("invoice.paid", {"id": "in_p0", "customer": "cus_test", "amount_paid": 0, "currency": "dkk"}),
+              ("invoice.payment_failed", {"id": "in_p2", "customer": "cus_test", "amount_due": 9900, "currency": "dkk",
+                                          "attempt_count": 1}),
+              ("charge.refunded", {"id": "ch_1", "customer": "cus_test", "amount_refunded": 9900, "currency": "dkk"})]
+    for i, (kind, obj) in enumerate(events):
+        _stripe_event(client, {"id": f"evt_mail_{i}", "type": kind, "data": {"object": obj}})
+    _stripe_event(client, {"id": "evt_mail_again", "type": "invoice.paid", "data": {"object": events[1][1]}})  # replay
+    db.expire_all()
+    mails = [e.payload for e in db.query(OutboxEvent).filter_by(event_type="email.branded")
+             if e.dedupe_key.startswith("billing-mail:")]
+    subjects = [m["email"]["subject"] for m in mails]
+    assert subjects == ["Din prøveperiode slutter om 3 dage", "Kvittering: 99 kr. er betalt",
+                        "Betalingen på 99 kr. gik ikke igennem", "Refusion: 99 kr. er sendt tilbage"], subjects
+    assert {m["to_email"] for m in mails} == {"mails@testmail.dk"} and {m["email"]["audience"] for m in mails} == {"privat"}
+    from app.modules.integrations import email_templates as tpl
+
+    html = tpl.from_payload(mails[1]).html()
+    assert "#C4461A" in html and "Dialogbot Privat" in html and "/privat/konto" in html

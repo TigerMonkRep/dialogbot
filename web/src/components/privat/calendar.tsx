@@ -7,7 +7,7 @@ import { Button } from "@/components/ui";
 import { useT } from "@/i18n/client";
 import type { ApiError } from "@/lib/client";
 import { icsHref, type CalendarProvider, type CalendarState } from "@/lib/privat/api";
-import { Eyebrow, Pill } from "./bits";
+import { BIG, Eyebrow, Pill } from "./bits";
 import { Ico } from "./icons";
 import { usePrivat } from "./store";
 
@@ -21,6 +21,7 @@ export function CalendarPanel() {
   const [copied, setCopied] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
+  const [choice, setChoice] = useState<CalendarProvider | "feed">("feed");
 
   const load = useCallback(async () => {
     try { setSt(await api.calendar()); } catch (e) { setErr((e as ApiError).message); }
@@ -41,12 +42,32 @@ export function CalendarPanel() {
   const makeLink = () => run(async () => { setCopied(false); setLink(await api.newCalendarFeed()); });
   const copy = async () => { if (!link) return; try { await navigator.clipboard.writeText(link.url); setCopied(true); } catch { /* the field can be selected by hand */ } };
 
+  const fresh = !!st && !link && !st.feed.active && !Object.values(st.providers).some((x) => x.connected);
+  const options: [CalendarProvider | "feed", string, boolean][] = st
+    ? [...PROVIDERS.map(([k, l]) => [k, l, !!st.providers[k]?.available] as [CalendarProvider, string, boolean]), ["feed", "calendar.iphoneOther", true]]
+    : [];
   if (!st) return err ? <p role="alert" className="m-0 text-[14px] text-danger font-semibold">{err}</p> : <p className="m-0 text-[14px] text-muted">{t("calendar.loading")}</p>;
   return (
     <div className="flex flex-col gap-4" data-testid="calendar-panel">
       {note && <p role="status" className="m-0 text-[14px] font-semibold text-success">{note}</p>}
       {err && <p role="alert" className="m-0 text-[14px] text-danger font-semibold">{err}</p>}
 
+      {fresh ? (
+        /* Nothing set up yet (ux-audit #16): one question, three answers, one button. */
+        <fieldset className="m-0 p-0 border-0 flex flex-col gap-2" data-testid="calendar-choice">
+          <legend className="m-0 mb-2 font-display font-bold text-[18px]">{t("calendar.whichTitle")}</legend>
+          {options.map(([k, label, ok]) => (
+            <label key={k} className={`flex items-center gap-3 min-h-[52px] rounded-[14px] border-2 px-3 ${ok ? "cursor-pointer" : "opacity-60"} ${choice === k ? "border-ink bg-accent-soft" : "border-ink bg-paper"}`}>
+              <input type="radio" name="cal-choice" className="w-5 h-5 accent-[var(--color-accent)]" checked={choice === k} disabled={!ok} onChange={() => setChoice(k)} />
+              <span className="flex-1 font-semibold text-[16px]">{t(label)}</span>
+              {!ok && <Pill tone="soon">{t("calendar.notYet")}</Pill>}
+            </label>
+          ))}
+          <Button className={`${BIG} rounded-full mt-1`} onClick={() => void (choice === "feed" ? makeLink() : connect(choice))}>
+            {choice === "feed" ? t("calendar.feedMake") : t("calendar.connectName", { name: t(PROVIDERS.find(([k]) => k === choice)![1]) })}
+          </Button>
+        </fieldset>
+      ) : <>
       <section className="rounded-[18px] border-[1.5px] border-ink bg-panel p-3.5 flex flex-col gap-2.5" aria-labelledby="cal-direct">
         <Eyebrow><span id="cal-direct">{t("calendar.direct")}</span></Eyebrow>
         <p className="m-0 text-[14px] text-ink-soft">{t("calendar.directText")}</p>
@@ -103,6 +124,8 @@ export function CalendarPanel() {
         )}
       </section>
 
+      </>}
+
       <section className="flex flex-col gap-2" aria-labelledby="cal-upcoming">
         <h3 id="cal-upcoming" className="m-0 text-[15px] font-semibold font-body">{t("calendar.upcoming")}</h3>
         {st.appointments.length === 0 ? <p className="m-0 text-[14px] text-muted">{t("calendar.none")}</p> : (
@@ -112,7 +135,7 @@ export function CalendarPanel() {
                 <span className="font-semibold text-[15px] [overflow-wrap:anywhere]">{a.title}</span>
                 <span className="text-[14px] text-ink-soft">{a.when_text}{a.location ? ` · ${a.location}` : ""}</span>
                 <span className="flex gap-2 flex-wrap mt-1">
-                  <a href={icsHref(a)} download className="inline-flex items-center gap-1.5 min-h-[40px] px-3 rounded-full border-2 border-ink text-[14px] font-semibold hover:bg-panel">
+                  <a href={icsHref(a)} download className="inline-flex items-center gap-1.5 min-h-[44px] px-3 rounded-full border-2 border-ink text-[14px] font-semibold hover:bg-panel">
                     <Ico name="calendar" size={16} />{t("calendar.addToCalendar")}
                   </a>
                   <Button variant="outline" className="rounded-full border-2" onClick={() => void run(() => api.removeAppointment(a.id))}>{t("calendar.remove")}</Button>

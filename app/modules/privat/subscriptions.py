@@ -255,10 +255,15 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
             "product_data": {"name": f"Dialogbot Privat – {p['name']}",
                              "description": _line_text(p, interval, currency, locale, market.text_rate(locale))}}}
     sub_data: dict = {"metadata": meta}
+    trial_note = None
     if trial_available(row):
         # «Prøv gratis i 14 dage»: the card is given now, nothing is charged until the trial is over, and Stripe
-        # turns the subscription active by itself. One trial per account.
+        # turns the subscription active by itself. One trial per account – and per card (F-PBQ-02): said on the page.
         sub_data["trial_period_days"] = prices.PRIVAT_TRIAL_DAYS
+        trial_note = ("Én prøveperiode pr. kort: har kortet haft en prøveperiode hos Dialogbot Privat før, starter "
+                      "abonnementet med det samme." if market.norm_locale(locale) == "da" else
+                      "One trial per card: if this card has had a Dialogbot Privat trial before, the subscription "
+                      "starts right away.")
     elif row.status == "trial" and row.trial_ends_at is not None and row.stripe_subscription_id is None \
             and row.trial_ends_at - rules.now() > timedelta(hours=48):
         sub_data["trial_end"] = int(row.trial_ends_at.timestamp())  # an old card-less trial keeps its remaining days
@@ -271,6 +276,8 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
         "success_url": f"{base}/privat/konto?abonnement=ok&session_id={{CHECKOUT_SESSION_ID}}"
                        + (f"&app={meta['app']}" if meta.get("app") else ""),
         "cancel_url": f"{base}/privat/konto?abonnement=annulleret"}
+    if trial_note:
+        payload["custom_text"] = {"submit": {"message": trial_note}}
     if row.stripe_customer_id:
         payload["customer"] = row.stripe_customer_id
     else:
@@ -388,6 +395,10 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
         # Stripe does not deliver events in order, and a subscription never goes back to trialing once the trial is
         # over: this is a stale event from before (it would lock a paying customer out as "expired").
         return "ignored"
+    if status == "trial" and row.stripe_subscription_id != sid:
+        ended = _one_trial_per_card(db, obj, ws_id)
+        if ended is not None:  # the card already had a trial: the subscription runs (and is paid) from now
+            obj, status = ended, STRIPE_STATUS.get(str(ended.get("status") or "")) or "active"
     unpaid_end = status == "canceled" and _ended_unpaid(obj, row)
     row.stripe_subscription_id = sid
     row.status = status
@@ -410,6 +421,13 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
     row.cancel_at_period_end = bool(obj.get("cancel_at_period_end"))
     row.updated_at = rules.now()
     db.flush()
+    if status == "active":
+        # a first real period is paid: a referral waiting for that is rewarded now (F-PBQ-02 / F-PQ-03)
+        from app.modules.privat import referrals
+
+        uid = db.scalar(select(PrivateProfile.user_id).where(PrivateProfile.workspace_id == ws_id))
+        if uid is not None:
+            referrals.try_activate(db, uid)
     if status in ENTITLED_STATUSES:
         from app.modules.privat import addons, service
 
@@ -424,6 +442,56 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
             except ApiError:
                 pass  # not in this plan / coming soon: the plan still applies
     return "applied"
+
+
+def _card_fingerprint(obj: dict) -> str | None:
+    """Stripe's fingerprint of the subscription's card (never card data). None when Stripe does not tell us."""
+    pm = obj.get("default_payment_method")
+    if isinstance(pm, dict):
+        return ((pm.get("card") or {}).get("fingerprint")) or None
+    if not pm:
+        return None
+    try:
+        got = stripe_api.request("GET", f"/payment_methods/{pm}")
+    except Exception:  # noqa: BLE001 - no fingerprint: the trial stands (fail-open; logged)
+        import structlog
+
+        structlog.get_logger("dialogbot.privat.subscriptions").warning("privat.card_fingerprint_unavailable")
+        return None
+    return ((got or {}).get("card") or {}).get("fingerprint") or None
+
+
+def _one_trial_per_card(db: OrmSession, obj: dict, ws_id: uuid.UUID) -> dict | None:
+    """ONE free trial per card (decision Fürster 2026-11-10, F-PBQ-02). A new trialing subscription whose card has
+    already started a Privat trial for ANOTHER account has its trial ended at once (Stripe charges the first period
+    now) – returns Stripe's updated object; the user is told why. Otherwise the card is remembered; returns None."""
+    from app.models import PrivateTrialCard
+
+    fp = _card_fingerprint(obj)
+    if not fp:
+        return None
+    sid = str(obj.get("id") or "")
+    seen = db.get(PrivateTrialCard, fp[:64])
+    if seen is None:
+        db.add(PrivateTrialCard(fingerprint=fp[:64], workspace_id=ws_id, stripe_subscription_id=sid[:100]))
+        db.flush()
+        return None
+    if seen.workspace_id == ws_id and seen.stripe_subscription_id == sid:
+        return None  # the same subscription again (a replayed event)
+    try:
+        ended = stripe_api.request("POST", f"/subscriptions/{sid}", {"trial_end": "now", "proration_behavior": "none"},
+                                   idempotency_key=f"privat-trial-card-{sid}")
+    except Exception:  # noqa: BLE001 - leave the trial; a person must look at it
+        import structlog
+
+        structlog.get_logger("dialogbot.privat.subscriptions").error("privat.trial_card_not_ended", subscription=sid)
+        return None
+    from app.modules.privat import service
+
+    service.add_message(db, ws_id, kind="text",
+                        text="Kortet har allerede haft en prøveperiode, så dit abonnement er startet nu og betalt fra "
+                             "i dag. Du har alle rettighederne med det samme.")
+    return ended
 
 
 def _cancel_duplicate(obj: dict, ws_id: uuid.UUID, kept: str) -> None:
@@ -482,12 +550,82 @@ def on_checkout_completed(db: OrmSession, obj: dict) -> str | None:
 
 
 def on_subscription_event(db: OrmSession, kind: str, obj: dict) -> str | None:
-    """customer.subscription.created|updated|deleted. None = not ours."""
+    """customer.subscription.created|updated|deleted|trial_will_end. None = not ours."""
     if not kind.startswith("customer.subscription."):
         return None
     if (obj.get("metadata") or {}).get("kind") != KIND:
         return None
-    return upsert_from_stripe_subscription(db, obj)
+    out = upsert_from_stripe_subscription(db, obj)
+    if kind == "customer.subscription.trial_will_end" and out == "applied":
+        _trial_ending_mail(db, obj)
+    return out
+
+
+def _owner_of(db: OrmSession, ws_id: uuid.UUID):
+    from app.models import User
+
+    uid = db.scalar(select(PrivateProfile.user_id).where(PrivateProfile.workspace_id == ws_id))
+    return db.get(User, uid) if uid else None
+
+
+def _row_for_customer(db: OrmSession, obj: dict) -> PrivateSubscription | None:
+    cust = obj.get("customer")
+    if isinstance(cust, dict):
+        cust = cust.get("id")
+    if not cust:
+        return None
+    return db.scalar(select(PrivateSubscription).where(PrivateSubscription.stripe_customer_id == str(cust)))
+
+
+def _trial_ending_mail(db: OrmSession, obj: dict) -> None:
+    """Stripe sends trial_will_end 3 days before: say what will be charged, and when (F-PBQ-08)."""
+    from app.modules.billing import customer_mails
+
+    try:
+        ws_id = uuid.UUID(str((obj.get("metadata") or {}).get("workspace_id")))
+    except ValueError:
+        return
+    row, user = db.get(PrivateSubscription, ws_id), _owner_of(db, ws_id)
+    if row is None or user is None or row.cancel_at_period_end:
+        return  # cancelled in the trial: nothing will be charged, nothing to warn about
+    plan = row.plan if row.plan in PLANS else TRIAL_PLAN
+    a = markets.privat_plan(row.currency or "DKK", plan)
+    amount = a["monthly"] if (row.interval or "month") == "month" else a["yearly_total"]
+    customer_mails.send(db, kind="trial_ending", to_email=user.email, lang=user.interface_language, audience="privat",
+                        dedupe=f"{obj.get('id')}:{obj.get('trial_end')}", amount_minor=amount,
+                        currency=row.currency or "DKK", workspace_id=ws_id, date=_ts(obj.get("trial_end")),
+                        plan=PLANS[plan]["name"])
+
+
+def on_billing_event(db: OrmSession, kind: str, obj: dict) -> str | None:
+    """Privat's own billing mails (F-PBQ-08): invoice.paid → receipt, invoice.payment_failed → dunning, charge.refunded
+    → refund confirmed. Matched on the Privat Stripe customer; None = not a Privat customer (Erhverv goes on)."""
+    from app.modules.billing import customer_mails
+
+    if kind not in ("invoice.paid", "invoice.payment_failed", "charge.refunded"):
+        return None
+    row = _row_for_customer(db, obj)
+    if row is None:
+        return None
+    user = _owner_of(db, row.workspace_id)
+    if user is None:
+        return "unmatched"
+    cur = str(obj.get("currency") or row.currency or "DKK").upper()
+    common = {"to_email": user.email, "lang": user.interface_language, "audience": "privat",
+              "workspace_id": row.workspace_id, "currency": cur}
+    if kind == "invoice.paid":
+        if int(obj.get("amount_paid") or 0) <= 0:
+            return "ignored"  # the trial's 0 kr. invoice
+        customer_mails.send(db, kind="receipt", dedupe=str(obj.get("id")), amount_minor=int(obj["amount_paid"]), **common)
+    elif kind == "invoice.payment_failed":
+        customer_mails.send(db, kind="payment_failed", dedupe=f"{obj.get('id')}:{obj.get('attempt_count') or 1}",
+                            amount_minor=int(obj.get("amount_due") or 0), **common)
+    else:
+        refunded = int(obj.get("amount_refunded") or 0)
+        if refunded <= 0:
+            return "ignored"
+        customer_mails.send(db, kind="refund", dedupe=f"{obj.get('id')}:{refunded}", amount_minor=refunded, **common)
+    return "applied"
 
 
 def sync_from_session(db: OrmSession, ctx, session_id: str) -> str:

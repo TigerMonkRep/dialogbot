@@ -27,7 +27,8 @@ function useMoney(): Fmt {
 }
 
 /** Every error from the API arrives in Danish with a code; the field it belongs to is in field_errors. */
-function errText(e: unknown): string { return (e as ApiError)?.message || "Noget gik galt. Prøv igen."; }
+/** The API's own (translated) message, else the generic one in the user's language (F-PX: no hard-coded Danish). */
+function errText(e: unknown, t: (k: string) => string): string { return (e as ApiError)?.message || t("errors.generic"); }
 
 // ---------------------------------------------------------------- the list
 
@@ -261,7 +262,7 @@ function GiftPanel({ task, item, gift, onJoin }: { task: Task; item: TaskItem; g
   const [to, setTo] = useState("");
   const act = async (fn: () => Promise<unknown>) => {
     setBusy(true); setErr(null);
-    try { await fn(); await refresh(); } catch (e) { setErr(errText(e)); } finally { setBusy(false); }
+    try { await fn(); await refresh(); } catch (e) { setErr(errText(e, t)); } finally { setBusy(false); }
   };
   const mine = gift.my_pledge_minor != null;
   return (
@@ -344,7 +345,7 @@ function PledgeSheet({ task, item, gift, onClose }: { task: Task; item: TaskItem
       const x = e as ApiError & { remaining_minor?: number };
       key.current = newKey();
       if (x.code === "pledge_exceeds_remaining" && x.remaining_minor) { setProposal(x.remaining_minor); setErr(null); }
-      else setErr(errText(e));
+      else setErr(errText(e, t));
       await refresh().catch(() => {});
     } finally { setBusy(false); }
   };
@@ -434,12 +435,12 @@ function SearchStep({ onPick, onFallback }: { onPick: (imp: WishImport) => void;
     if (q.trim().length < 2) return;
     setState("loading"); setErr("");
     try { const r = await api.searchWishes(q.trim()); setRows(r.results); setState("done"); }
-    catch (x) { const a = x as ApiError; if (a.code === "search_unavailable") setState("unavailable"); else { setErr(errText(x)); setState("error"); } }
+    catch (x) { const a = x as ApiError; if (a.code === "search_unavailable") setState("unavailable"); else { setErr(errText(x, t)); setState("error"); } }
   };
   const pick = async (r: WishSearchResult) => {
     setState("picking");
     try { onPick(await api.importWish(r.link)); }
-    catch (x) { setErr(errText(x)); setState("error"); }
+    catch (x) { setErr(errText(x, t)); setState("error"); }
   };
   if (state === "unavailable") {
     return (
@@ -502,7 +503,7 @@ function LinkStep({ onDone, onManual }: { onDone: (imp: WishImport) => void; onM
     if (!link.trim()) return;
     setBusy(true); setErr("");
     try { onDone(await api.importWish(link.trim())); }
-    catch (x) { setErr(errText(x)); }
+    catch (x) { setErr(errText(x, t)); }
     finally { setBusy(false); }
   };
   return (
@@ -591,14 +592,14 @@ function WishForm({ task, item, imported, linkOnly, onDone, onBack }: { task: Ta
       setOffers(offer);
       if (imp.price_minor != null && !offer.price) setPriceFromShop({ at: imp.fetched_at });
       if (!imp.readable) setErr({ msg: t("wish.couldNotRead") });
-    } catch (x) { setErr({ field: "link", msg: errText(x) }); }
+    } catch (x) { setErr({ field: "link", msg: errText(x, t) }); }
     finally { setFetching(false); }
   };
   const upload = async (file: File | undefined) => {
     if (!file) return;
     setUploading(true); setErr(null);
     try { const r = await api.uploadWishImage(file); setV((x) => ({ ...x, imageKey: r.image_key, image: r.image, imageOrigin: "upload" })); }
-    catch (x) { setErr({ field: "image", msg: errText(x) }); }
+    catch (x) { setErr({ field: "image", msg: errText(x, t) }); }
     finally { setUploading(false); if (fileRef.current) fileRef.current.value = ""; }
   };
   const save = async (e: React.FormEvent) => {
@@ -628,7 +629,7 @@ function WishForm({ task, item, imported, linkOnly, onDone, onBack }: { task: Ta
       onDone();
     } catch (x) {
       const a = x as ApiError;
-      setErr({ field: a.field_errors?.[0]?.field, msg: a.field_errors?.[0]?.message || errText(x) });
+      setErr({ field: a.field_errors?.[0]?.field, msg: a.field_errors?.[0]?.message || errText(x, t) });
     } finally { setBusy(false); }
   };
   const fe = (k: string) => (err?.field === k ? err.msg : null);

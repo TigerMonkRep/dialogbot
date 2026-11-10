@@ -459,3 +459,20 @@ def test_failed_tool_is_explained(api, pv):
     tok = pv.account("mette@testmail.dk")
     out = pv.say(tok, "Tilføj æbler")  # there is no list yet
     assert out["messages"][-1]["text"] == "Jeg fandt ingen åben liste"
+
+
+def test_provider_crash_never_leaves_the_call_dialling(api, pv, db, monkeypatch):
+    """PB (harness 500): any failure while asking Vapi for the call – also a non-ApiError – ends honestly as failed,
+    the credits come back, and the user can try again (never stuck in «dialling»)."""
+    def boom(p):
+        raise RuntimeError("harness 500")
+
+    monkeypatch.setattr(campaigns, "create_call", boom)
+    tok = pv.account("mette@testmail.dk")
+    pv.expire_trial(tok)
+    pv.verify_phone(tok)
+    tid = _propose(pv, tok)
+    t = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False}).json()
+    assert t["status"] == "awaiting_user" and t["call"]["status"] == "failed", t
+    assert pv.me(tok)["reserved"] == 0
+    assert api.post(tok, f"/privat/calls/{tid}/retry").status_code == 200

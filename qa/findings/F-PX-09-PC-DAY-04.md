@@ -3,7 +3,7 @@ id: F-PX-09-PC-DAY-04
 scenario: PC-DAY-04
 reported_by: i18n-a11y-qa (PX)
 severity: S3
-status: new
+status: fixed
 owner_fix: ui-ux-engineer
 related: []
 ---

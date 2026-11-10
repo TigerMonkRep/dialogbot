@@ -181,7 +181,8 @@
       "account": "Konto og credits",
       "addons": "Tilføjelser",
       "people": "Mine folk"
-    }
+    },
+    "homeSuffix": " – Min dag"
   },
   "tabs": {
     "label": "Hovedmenu",
@@ -741,7 +742,8 @@
     "verifyLink": "Bekræft e-mail",
     "viewAs": "Private opgaver kan ikke ses i «Se som kunde».",
     "notEnabled": "Dialogbot Privat er ikke åbnet for din konto endnu. Intet af det, du gør her, bliver gemt eller udført.",
-    "unavailable": "Dialogbot Privat kan ikke nås lige nu. Prøv igen om lidt – intet er gemt eller udført."
+    "unavailable": "Dialogbot Privat kan ikke nås lige nu. Prøv igen om lidt – intet er gemt eller udført.",
+    "generic": "Noget gik galt. Prøv igen."
   },
   "location": {
     "useMine": "Brug min position",
@@ -789,7 +791,8 @@
     "planBadge": "{plan}",
     "noPlan": "Ingen plan",
     "trialDaysShort": "{n} d",
-    "trialDaysLeft": "{n|1 dag|# dage} tilbage"
+    "trialDaysLeft": "{n|1 dag|# dage} tilbage",
+    "planAriaShort": "åbn konto"
   },
   "day2": {
     "eyebrow": "Din egen personlige assistent",
@@ -1160,7 +1163,10 @@
     "none": "Ingen aftaler endnu. Når Peter får en tid bekræftet, eller du beder ham lægge en tid ind, kommer den her.",
     "addToCalendar": "Tilføj til kalender",
     "remove": "Fjern fra kalender",
-    "removeNote": "«Fjern fra kalender» aflyser ikke tiden hos virksomheden."
+    "removeNote": "«Fjern fra kalender» aflyser ikke tiden hos virksomheden.",
+    "whichTitle": "Hvilken kalender bruger du?",
+    "iphoneOther": "iPhone eller en anden",
+    "connectName": "Forbind {name}"
   },
   "birthdays": {
     "title": "Kommende fødselsdage",
@@ -1210,7 +1216,8 @@
       "half_yearly": "hvert halve år",
       "yearly": "hvert år",
       "once": "én gang"
-    }
+    },
+    "removeYes": "Ja, fjern"
   },
   "assistantName": {
     "pronoun": "Kald den",
@@ -1606,7 +1613,14 @@
     "stripStep": "Trin {n} af {total} – fortsæt opsætningen",
     "accountLine": "{n|1 app slået til|# apps slået til}",
     "allOn": "Du har alle apps. Nye kommer løbende.",
-    "sayLike": "Sig fx «{example}»"
+    "sayLike": "Sig fx «{example}»",
+    "about": "Om appen",
+    "planIncludedAll": "Med i alle planer.",
+    "planTextTrialAll": "{name} er med i alle planer. Prøv gratis i 14 dage – kortet trækkes først, når prøveperioden er slut.",
+    "planTextEndedAll": "{name} er med i alle planer. Vælg en plan for at bruge den.",
+    "planTextBasis": "Du har Basis. {name} er med i Plus og Familie.",
+    "onInMine": "{n|1 app er slået til|# apps er slået til} – se Mine apps",
+    "yourThings": "Dine ting her ({n})"
   },
   "familyHousehold": {
     "title": "Husstand",

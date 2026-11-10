@@ -3,7 +3,7 @@ id: F-PB-04-PC-APP-OENSKELISTER-01
 scenario: PC-APP-OENSKELISTER-01
 reported_by: e2e-privat (PB)
 severity: S2
-status: new
+status: fixed
 owner_fix: ui-ux-engineer (apps.tsx) – evt. needs-decision (Fürster)
 related: [PC-APP-RING-FOR-MIG-01, PC-APP-DELTE-LISTER-01]
 ---
@@ -31,5 +31,6 @@ Vis `what` øverst på app-siden (én linje), eller behold slåede-til apps i Bu
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
+- ui-ux-engineer (fase 2, punkt 2): apps.tsx – app-siden har «Om appen»-fold med «Hvad den gør» + «Den får lov til» for ALLE apps; Butikken linker «N apps er slået til – se Mine apps»
 - Filer:
 - Commit:

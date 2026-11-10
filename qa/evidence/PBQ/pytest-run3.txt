@@ -1,0 +1,104 @@
+.....x....F.F........................................................F.. [ 77%]
+...........x.....x...                                                    [100%]
+=================================== FAILURES ===================================
+______________ test_pc_sub_12_ent_04_chat_05_expired_local_trial _______________
+
+api = <tests.conftest.Api object at 0x7ff7bf5cfc50>
+client = <starlette.testclient.TestClient object at 0x7ff7bfdefb60>
+pv = <tests.privat_fixtures.Pv object at 0x7ff7bf5ced50>
+db = <sqlalchemy.orm.session.Session object at 0x7ff7bf5cda90>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7ff7b7d0de10>
+
+    def test_pc_sub_12_ent_04_chat_05_expired_local_trial(api, client, pv, db, monkeypatch):
+        tok = pv.account("pbq12@testmail.dk")
+        pv.verify_phone(tok)
+        with db.begin_nested():
+            row = db.get(PrivateSubscription, pv.ws(tok))
+            row.status, row.trial_ends_at, row.stripe_subscription_id = "trial", WED_10 - timedelta(seconds=1), None
+        db.commit()
+        s = pv.subscription(tok)
+        assert (s["status"], s["plan"], s["entitled"], s["calls_quota"], s["people_limit"]) == ("expired", "none", False, 0, 1)
+        # CHAT-05: a new task is a draft waiting for the plan
+        out = pv.say(tok, "Lav en indkøbsliste med smør")
+        tid = next(m["task_id"] for m in out["messages"] if m["kind"] in ("task", "draft"))
+        assert [m["kind"] for m in out["messages"]][-1] == "draft"
+        t = db.get(PrivateTask, uuid.UUID(tid))
+        assert (t.status, t.paid_by, t.usage_text) == ("draft", "none", "Ikke betalt endnu")
+        # ENT-04: a call needs 3 credits (the 3 welcome credits)
+        from tests.test_privat_subscription import _approve_plan
+    
+>       _tid, t2, called = _approve_plan(api, pv, tok, monkeypatch, "call_pbq12")
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/qa/test_qa_pd_billing.py:365: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_privat_subscription.py:154: in _approve_plan
+    tid = _propose(pv, tok)
+          ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+pv = <tests.privat_fixtures.Pv object at 0x7ff7bf5ced50>
+tok = 'GIZuM7nOE-awxIBT3C_JMHxcfS4YPBC8n4f3FtoJU-Q'
+
+    def _propose(pv, tok) -> str:
+        out = pv.say(tok, "Ring til cykelværkstedet og find en tid torsdag efter klokken tre")
+        clar = out["messages"][-1]
+>       assert clar["kind"] == "clarify" and [o["label"] for o in clar["options"]] == ["Cykelmageren", "Østbyens Cykler",
+                                                                                         "En anden"]
+E       AssertionError: assert ('addon' == 'clarify'
+E         
+E         - clarify
+E         + addon)
+
+tests/test_privat.py:224: AssertionError
+----------------------------- Captured stdout call -----------------------------
+_________ test_pc_sub_13_ui_trial_canceled_does_not_promise_the_charge _________
+
+    def test_pc_sub_13_ui_trial_canceled_does_not_promise_the_charge():
+        """F-PBQ-04-PC-SUB-13 (S2): Konto in a canceled trial still says «Derefter Plus til 99 kr./md.» – the trial line
+        must respect cancelAtPeriodEnd («Opsagt – slutter <dato>»)."""
+        src = (ROOT / "web/src/components/privat/account.tsx").read_text()
+        line = next(x for x in src.splitlines() if 'p.status === "trial" && <p' in x)
+>       assert "cancelAtPeriodEnd" in line, line.strip()[:200]
+E       AssertionError: {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays, plan: p.rightsName })} <span className="text-ink-soft">{p.plan === "none" ? t("plan.trialThenNone") : t("
+E       assert 'cancelAtPeriodEnd' in '        {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays, plan: p.rights... t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyText(p.rightsKey) })}</span></p>}'
+
+tests/qa/test_qa_pd_billing.py:401: AssertionError
+________________ test_credit_pack_refund_takes_the_credits_back ________________
+
+api = <tests.conftest.Api object at 0x7ff7bfdd2e70>
+client = <starlette.testclient.TestClient object at 0x7ff7be557a10>
+pv = <tests.privat_fixtures.Pv object at 0x7ff7bfdd18b0>
+stripe = <test_qa_pd_billing.FakeStripe object at 0x7ff7bfdd08f0>
+db = <sqlalchemy.orm.session.Session object at 0x7ff7b7d6df40>
+
+    def test_credit_pack_refund_takes_the_credits_back(api, client, pv, stripe, db):
+        """F-PBQ-05-PC-SUB-21 (S2): a refunded credit pack (charge.refunded) changes nothing in the ledger."""
+        tok = pv.account("pbq21refund@testmail.dk", trial=False)
+        api.post(tok, "/privat/credits/checkout", {})
+        d = stripe.payload()
+        sid = list(stripe.sessions)[-1]
+        _event(client, _evt("checkout.session.completed", {"id": sid, "mode": "payment", "currency": "dkk",
+                                                            "amount_total": 2900, "payment_status": "paid",
+                                                            "payment_intent": "pi_pbq", "metadata": d["metadata"]}))
+        refund = {"id": "ch_pbq", "object": "charge", "payment_intent": "pi_pbq", "amount": 2900, "amount_refunded": 2900,
+                  "refunded": True, "metadata": d["metadata"]}
+        try:
+            _event(client, _evt("charge.refunded", refund))
+        except AssertionError:
+            pass  # the fake has no /invoice_payments – the handler looks for an Erhverv invoice
+        db.expire_all()
+        bal = sum(r.amount for r in db.query(CreditLedger).filter_by(workspace_id=pv.ws(tok)))
+>       assert bal == 3, f"after a full refund the balance is {bal} (3 welcome + 10 refunded pack)"
+E       AssertionError: after a full refund the balance is 13 (3 welcome + 10 refunded pack)
+E       assert 13 == 3
+
+tests/qa/test_qa_pd_billing.py:604: AssertionError
+----------------------------- Captured stdout call -----------------------------
+=========================== short test summary info ============================
+FAILED tests/qa/test_qa_pd_billing.py::test_pc_sub_12_ent_04_chat_05_expired_local_trial
+FAILED tests/qa/test_qa_pd_billing.py::test_pc_sub_13_ui_trial_canceled_does_not_promise_the_charge
+FAILED tests/qa/test_qa_pd_billing.py::test_credit_pack_refund_takes_the_credits_back
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_sub_06_new_email_same_card_is_refused_a_second_trial - F-PBQ-02-PC-SUB-06: needs-decision – a new e-mail with the same card gets a new 14-day trial (one trial per ACCOUNT, no card-fingerprint check)
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_ent_07_free_account_cannot_activate_drafts - F-PQ-03-X09 (open, needs-decision): a free account activates drafts via welcome credit / simulated sponsor – regression only, no duplicate
+XFAIL tests/qa/test_qa_pd_billing.py::test_pc_inv_08_self_referral_farm_without_any_plan - F-PQ-03-X09 consequence (no duplicate): via welcome-credit activation a FREE alt-account becomes an 'active invitee' and pays the inviter +3 credits

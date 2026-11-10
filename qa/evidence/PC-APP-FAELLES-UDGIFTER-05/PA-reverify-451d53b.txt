@@ -1,0 +1,7 @@
+live :8400 (451d53b)
+before: ['Flytning: Odense', 'Udgifter: sommerhuset']
+delete faelles-udgifter 2
+delete flytning 2
+after: []
+F-PA-03 overview after letter: ['Telia, 199 kr. pr. md., binding til 10. december 2026']
+F-PA-02 garanti rows: 2

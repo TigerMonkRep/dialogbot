@@ -3,7 +3,7 @@ id: F-PA-01-PC-APP-FAELLES-UDGIFTER-05
 scenario: PC-APP-FAELLES-UDGIFTER-05
 reported_by: e2e-privat (PA)
 severity: S1
-status: confirmed
+status: fixed
 owner_fix: fix-engineer
 related: [PC-APP-FLYTNING-05, PC-ACC-02]
 ---
@@ -39,7 +39,7 @@ Enten sletter `delete_data` også de opgaver, appen har oprettet (task_id i appd
 - Commit:
 
 ## Verifikation (udfyldes af verifier)
-- Gentest:
+- Gentest (e2e-privat PA, 2026-11-10): pytest qa_pd2 grøn; live :8400 på 451d53b – qa/evidence/PC-APP-FAELLES-UDGIFTER-05/PA-reverify-451d53b.txt: efter slet data er begge lister væk (deleted=2 pr. app). Browser-genkørsel afventer, at :3400 serverer sine chunks (500 kl. 23:04).
 - Fejler testen uden rettelsen? ja/nej
 - Naboscenarier kørt:
 - Dom: closed | reopened

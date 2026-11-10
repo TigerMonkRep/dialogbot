@@ -538,9 +538,13 @@ def task_out(db: OrmSession, task: PrivateTask, viewer_id: uuid.UUID) -> dict:
     evs = db.scalars(select(PrivateTaskEvent).where(PrivateTaskEvent.task_id == task.id)
                      .order_by(PrivateTaskEvent.at, PrivateTaskEvent.id))
     is_owner = role == "owner"
+    # A wishlist guest never gets the owner's bookkeeping (next step «Del ønskelisten», «Hvem gør noget: Dig», due
+    # date) – only the wishes and «Jeg køber den» (F-UX-02).
+    guest = task.share_mode == "wishlist" and not is_owner
     return {
-        "id": str(task.id), "kind": task.kind, "title": task.title, "status": task.status, "next_step": task.next_step,
-        "due_at": task.due_at.isoformat() if task.due_at else None, "who": task.who,
+        "id": str(task.id), "kind": task.kind, "title": task.title, "status": task.status,
+        "next_step": "" if guest else task.next_step,
+        "due_at": task.due_at.isoformat() if task.due_at and not guest else None, "who": "" if guest else task.who,
         "usage_text": task.usage_text if is_owner else "Delt med dig – koster dig ingenting",
         "is_example": task.is_example, "created_at": task.created_at.isoformat(),
         "updated_at": task.updated_at.isoformat(),

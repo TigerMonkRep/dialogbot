@@ -139,7 +139,7 @@ Valuta er klæbende: første checkout (sv → SEK), anden checkout med de → st
 | Afbrudt/unpaid session | +0 | +0 | ja | samme |
 | Betalt, webhook x 2 (replay) | +10 én gang | +10, `duplicate: true` | ja | samme |
 | Samme session via `async_payment_succeeded` | ingen ekstra | ignored | ja | samme |
-| Betalt 1.450 med gyldig 50 %-kode (kodefelt vises) | +10 (eller intet kodefelt) | **0 credits, pengene trukket** | **nej – F-PBQ-03 (S0)** | sub_21_paid_with_a_promotion_code… |
+| Betalt 1.450 med gyldig 50 %-kode (kodefelt vises) | +10 (eller intet kodefelt) | 0 credits, pengene trukket → efter rettelse: intet kodefelt (live :8400 bekræftet) | nej → **ja efter rettelse** | sub_21_paid_with_a_promotion_code… |
 | Fuld refusion 2.900 | saldo 3 (velkomst) | **13** | **nej – F-PBQ-05 (S2)** | credit_pack_refund… |
 
 ### Abonnement – livscyklus
@@ -153,7 +153,7 @@ Valuta er klæbende: første checkout (sv → SEK), anden checkout med de → st
 | Aktiv kunde starter ny checkout | 409 | 409 `subscription_exists` (fix 21:12) | ja |
 | To åbne checkouts gennemført | højst 1 live abonnement | **2 live, 14.800 øre/md. efter trial** | **nej – F-PBQ-01 (S0)** |
 | – efter rettelsen 21:49 (`dup_canceled`), med trial | 1 live, intet trukket | 1 live | ja (07b grøn, afventer verifier) |
-| – tilbagevendende kunde, ingen trial (begge betalt med det samme) | 1 live + dublettens 9.900 refunderet | 1 live, **ingen refusion** | **nej – F-PBQ-09 (S0)** |
+| – tilbagevendende kunde, ingen trial (begge betalt med det samme) | 1 live + dublettens 9.900 refunderet | 1 live, **ingen refusion** → efter rettelse: POST /refunds | nej → **ja efter 451d53b** (07c grøn) |
 | Trial → active (Familie), replay, sen trialing | active/familie/25, duplicate, sen trialing ignored | som forventet | ja |
 | Lokal trial udløbet uden webhook | expired, kladde, opkald = 3 credits, derefter 409 needs_plan | som forventet | ja |
 | Opsig i trial | adgang til trial_end, derefter intet, ingen faktura | backend ja · UI siger «Derefter Plus til 99 kr./md.» | **UI nej – F-PBQ-04 (S2)** |
@@ -185,3 +185,14 @@ Basis 3 opkald: ubesvaret og fejlet tæller ikke. 4. opkald = 3 credits reserver
 | 100 kr. delt på 3 | 6.666 / −3.333 / −3.333, sum 0, 2 overførsler | som forventet | ja |
 | Udlæg 0 / negativt | afvist (422) | afvist | ja |
 | Fællesgave 1.000 kr.: 0/negativ, 400,01 over rest | 422; 409 `pledge_exceeds_remaining`, remaining 40.000 | som forventet | ja |
+
+### Gentest efter 451d53b (22:3x)
+
+| Fund | Gentest | Resultat |
+|---|---|---|
+| F-PBQ-01 dobbelt abonnement | pytest 07/07b + live :8400 (DELETE på dubletten, 3. checkout 409) | rettet, afventer verifier |
+| F-PBQ-09 betalt dublet | pytest 07c (POST /refunds) | rettet, afventer verifier |
+| F-PBQ-03 rabatkode på kreditpakke | pytest sub_21_no_promotion_codes + live (ingen allow_promotion_codes, 2.900) | rettet (ingen koder på pakken); underbetaling logges |
+| F-PBQ-06 plan-apps efter udløb | ENT-02/03: gate afviser, data bevares, påmindelser stopper, kommer igen med plan | beslutning A implementeret |
+| F-PBQ-07 Familie 5 personer | husstand: 4 medlemmer + ejer, 6. → household_full, fælles kvote 25, rettigheder følger ejerens plan | bygget |
+| F-PBQ-04 / 05 / 02 / 08 | uændret | åbne |

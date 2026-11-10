@@ -90,121 +90,79 @@
   "/privat/dag": {
     "axe": [
       {
-        "id": "label-content-name-mismatch",
+        "id": "document-title",
         "impact": "serious",
-        "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
         "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
+          "#__next_error__"
         ],
         "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
         ]
       }
     ],
-    "small_targets": [
-      {
-        "tag": "button",
-        "text": "Min dag",
-        "w": 88,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Mine opgaver",
-        "w": 127,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Apps",
-        "w": 68,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Folk",
-        "w": 61,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Konto",
-        "w": 73,
-        "h": 38
-      }
-    ],
-    "small_target_count": 5,
-    "small_text": {
-      "small": 0,
-      "total": 1,
-      "ex": []
-    },
-    "fold": {
-      "words": 45,
-      "primary": 1
-    },
-    "hscroll": false
-  },
-  "/privat/samtale": {
-    "axe": [
-      {
-        "id": "label-content-name-mismatch",
-        "impact": "serious",
-        "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
-        "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
-        ],
-        "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
-        ]
-      }
-    ],
-    "small_targets": [
-      {
-        "tag": "button",
-        "text": "Min dag",
-        "w": 88,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Mine opgaver",
-        "w": 127,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Apps",
-        "w": 68,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Folk",
-        "w": 61,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Konto",
-        "w": 73,
-        "h": 38
-      }
-    ],
-    "small_target_count": 5,
+    "small_targets": [],
+    "small_target_count": 0,
     "small_text": {
       "small": 0,
       "total": 0,
       "ex": []
     },
     "fold": {
-      "words": 104,
+      "words": 13,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/samtale": {
+    "axe": [
+      {
+        "id": "document-title",
+        "impact": "serious",
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
       "primary": 0
     },
     "hscroll": false
@@ -212,60 +170,39 @@
   "/privat/opgaver": {
     "axe": [
       {
-        "id": "label-content-name-mismatch",
+        "id": "document-title",
         "impact": "serious",
-        "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
         "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
+          "#__next_error__"
         ],
         "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
         ]
       }
     ],
-    "small_targets": [
-      {
-        "tag": "button",
-        "text": "Min dag",
-        "w": 88,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Mine opgaver",
-        "w": 127,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Apps",
-        "w": 68,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Folk",
-        "w": 61,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Konto",
-        "w": 73,
-        "h": 38
-      }
-    ],
-    "small_target_count": 5,
+    "small_targets": [],
+    "small_target_count": 0,
     "small_text": {
       "small": 0,
       "total": 0,
       "ex": []
     },
     "fold": {
-      "words": 104,
+      "words": 13,
       "primary": 0
     },
     "hscroll": false
@@ -273,66 +210,39 @@
   "/privat/apps": {
     "axe": [
       {
-        "id": "label-content-name-mismatch",
+        "id": "document-title",
         "impact": "serious",
-        "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
         "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
+          "#__next_error__"
         ],
         "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
         ]
       }
     ],
-    "small_targets": [
-      {
-        "tag": "button",
-        "text": "Min dag",
-        "w": 88,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Mine opgaver",
-        "w": 127,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Apps",
-        "w": 68,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Folk",
-        "w": 61,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Konto",
-        "w": 73,
-        "h": 38
-      }
-    ],
-    "small_target_count": 5,
+    "small_targets": [],
+    "small_target_count": 0,
     "small_text": {
-      "small": 10,
-      "total": 11,
-      "ex": [
-        "15px: Ring for mig\n10 af 10 opkald tilbage i november",
-        "15px: Ring for mig\n10 af 10 opkald tilbage i november",
-        "14px: 10 af 10 opkald tilbage i november",
-        "15px: Delte lister\nFælles lister – alle kan tilføje og k",
-        "15px: Delte lister\nFælles lister – alle kan tilføje og k"
-      ]
+      "small": 0,
+      "total": 0,
+      "ex": []
     },
     "fold": {
-      "words": 90,
+      "words": 13,
       "primary": 0
     },
     "hscroll": false
@@ -343,145 +253,12 @@
         "id": "label-content-name-mismatch",
         "impact": "serious",
         "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
+        "n": 1,
         "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
+          "a[aria-label=\"Dialogbot Privat – Min dag\"]"
         ],
         "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
-        ]
-      }
-    ],
-    "small_targets": [
-      {
-        "tag": "button",
-        "text": "Min dag",
-        "w": 88,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Mine opgaver",
-        "w": 127,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Apps",
-        "w": 68,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Folk",
-        "w": 61,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Konto",
-        "w": 73,
-        "h": 38
-      }
-    ],
-    "small_target_count": 5,
-    "small_text": {
-      "small": 59,
-      "total": 60,
-      "ex": [
-        "14px: Alle apps er med i din prøveperiode – 14 dage tilb",
-        "15px: FORSLAG TIL DIG\n\nKalender",
-        "15px: FORSLAG TIL DIG\n\nKalender",
-        "15px: De tider, Peter aftaler for dig, og dem du selv fo",
-        "15px: «Læg tiden hos frisøren i min kalender»"
-      ]
-    },
-    "fold": {
-      "words": 187,
-      "primary": 0
-    },
-    "hscroll": false
-  },
-  "/privat/butik/ring-for-mig": {
-    "axe": [
-      {
-        "id": "label-content-name-mismatch",
-        "impact": "serious",
-        "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
-        "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
-        ],
-        "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
-        ]
-      }
-    ],
-    "small_targets": [
-      {
-        "tag": "button",
-        "text": "Min dag",
-        "w": 88,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Mine opgaver",
-        "w": 127,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Apps",
-        "w": 68,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Folk",
-        "w": 61,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Konto",
-        "w": 73,
-        "h": 38
-      }
-    ],
-    "small_target_count": 5,
-    "small_text": {
-      "small": 2,
-      "total": 3,
-      "ex": [
-        "14px: Sig fx «Ring til cykelværkstedet og find en tid to",
-        "14px: Peter holder op med at bruge den. Dine data bliver"
-      ]
-    },
-    "fold": {
-      "words": 103,
-      "primary": 1
-    },
-    "hscroll": false
-  },
-  "/privat/butik/pakker": {
-    "axe": [
-      {
-        "id": "label-content-name-mismatch",
-        "impact": "serious",
-        "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
-        "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
-        ],
-        "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
+          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">"
         ]
       }
     ],
@@ -520,13 +297,112 @@
     "small_target_count": 5,
     "small_text": {
       "small": 1,
-      "total": 1,
+      "total": 2,
       "ex": [
-        "15px: Den app findes ikke. Den er måske fjernet fra Buti"
+        "14px: Skriv det til Peter. Ønsker lander hos os som udvi"
       ]
     },
     "fold": {
-      "words": 21,
+      "words": 53,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/butik/ring-for-mig": {
+    "axe": [
+      {
+        "id": "document-title",
+        "impact": "serious",
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
+        ]
+      }
+    ],
+    "small_targets": [],
+    "small_target_count": 0,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
+      "primary": 0
+    },
+    "hscroll": false
+  },
+  "/privat/butik/pakker": {
+    "axe": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "n": 1,
+        "targets": [
+          "a[aria-label=\"Dialogbot Privat – Min dag\"]"
+        ],
+        "html": [
+          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">"
+        ]
+      }
+    ],
+    "small_targets": [
+      {
+        "tag": "button",
+        "text": "Min dag",
+        "w": 88,
+        "h": 38
+      },
+      {
+        "tag": "button",
+        "text": "Mine opgaver",
+        "w": 127,
+        "h": 38
+      },
+      {
+        "tag": "button",
+        "text": "Apps",
+        "w": 68,
+        "h": 38
+      },
+      {
+        "tag": "button",
+        "text": "Folk",
+        "w": 61,
+        "h": 38
+      },
+      {
+        "tag": "button",
+        "text": "Konto",
+        "w": 73,
+        "h": 38
+      }
+    ],
+    "small_target_count": 5,
+    "small_text": {
+      "small": 0,
+      "total": 0,
+      "ex": []
+    },
+    "fold": {
+      "words": 13,
       "primary": 0
     },
     "hscroll": false
@@ -537,14 +413,12 @@
         "id": "label-content-name-mismatch",
         "impact": "serious",
         "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
+        "n": 1,
         "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
+          "a[aria-label=\"Dialogbot Privat – Min dag\"]"
         ],
         "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
+          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">"
         ]
       }
     ],
@@ -587,7 +461,7 @@
       "ex": []
     },
     "fold": {
-      "words": 126,
+      "words": 86,
       "primary": 0
     },
     "hscroll": false
@@ -595,74 +469,39 @@
   "/privat/konto": {
     "axe": [
       {
-        "id": "color-contrast",
+        "id": "document-title",
         "impact": "serious",
-        "help": "Elements must meet minimum color contrast ratio thresholds",
-        "n": 2,
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
         "targets": [
-          ".flex-wrap.gap-2:nth-child(4) > .transition-colors.disabled\\:cursor-not-allowed.font-body:nth-child(1)",
-          ".min-h-\\[52px\\].transition-colors.disabled\\:cursor-not-allowed"
+          "#__next_error__"
         ],
         "html": [
-          "<button class=\"inline-flex items-ce...\" aria-expanded=\"false\">",
-          "<button class=\"inline-flex items-ce...\">"
+          "<html id=\"__next_error__\">"
         ]
       },
       {
-        "id": "label-content-name-mismatch",
+        "id": "html-has-lang",
         "impact": "serious",
-        "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
         "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
+          "#__next_error__"
         ],
         "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
+          "<html id=\"__next_error__\">"
         ]
       }
     ],
-    "small_targets": [
-      {
-        "tag": "button",
-        "text": "Min dag",
-        "w": 88,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Mine opgaver",
-        "w": 127,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Apps",
-        "w": 68,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Folk",
-        "w": 61,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Konto",
-        "w": 73,
-        "h": 38
-      }
-    ],
-    "small_target_count": 5,
+    "small_targets": [],
+    "small_target_count": 0,
     "small_text": {
       "small": 0,
       "total": 0,
       "ex": []
     },
     "fold": {
-      "words": 187,
+      "words": 13,
       "primary": 0
     },
     "hscroll": false
@@ -670,62 +509,39 @@
   "/privat/kalender": {
     "axe": [
       {
-        "id": "label-content-name-mismatch",
+        "id": "document-title",
         "impact": "serious",
-        "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
+        "help": "Documents must have <title> element to aid in navigation",
+        "n": 1,
         "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
+          "#__next_error__"
         ],
         "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
+          "<html id=\"__next_error__\">"
+        ]
+      },
+      {
+        "id": "html-has-lang",
+        "impact": "serious",
+        "help": "<html> element must have a lang attribute",
+        "n": 1,
+        "targets": [
+          "#__next_error__"
+        ],
+        "html": [
+          "<html id=\"__next_error__\">"
         ]
       }
     ],
-    "small_targets": [
-      {
-        "tag": "button",
-        "text": "Min dag",
-        "w": 88,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Mine opgaver",
-        "w": 127,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Apps",
-        "w": 68,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Folk",
-        "w": 61,
-        "h": 38
-      },
-      {
-        "tag": "button",
-        "text": "Konto",
-        "w": 73,
-        "h": 38
-      }
-    ],
-    "small_target_count": 5,
+    "small_targets": [],
+    "small_target_count": 0,
     "small_text": {
-      "small": 1,
-      "total": 1,
-      "ex": [
-        "15px: Den app findes ikke. Den er måske fjernet fra Buti"
-      ]
+      "small": 0,
+      "total": 0,
+      "ex": []
     },
     "fold": {
-      "words": 22,
+      "words": 13,
       "primary": 0
     },
     "hscroll": false
@@ -736,14 +552,12 @@
         "id": "label-content-name-mismatch",
         "impact": "serious",
         "help": "Elements must have their visible text as part of their accessible name",
-        "n": 2,
+        "n": 1,
         "targets": [
-          "a[aria-label=\"Dialogbot Privat – Min dag\"]",
-          ".w-11"
+          "a[aria-label=\"Dialogbot Privat – Min dag\"]"
         ],
         "html": [
-          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">",
-          "<button type=\"button\" aria-haspopup=\"menu\" aria-expanded=\"false\" aria-label=\"Kontomenu\" class=\"w-11 h-11 rounded-full inline-flex items-center justify-center\">"
+          "<a aria-label=\"Dialogbot Privat – Min dag\" class=\"flex items-center gap-2 shrink-0 min-h-[44px]\" href=\"/privat/dag\">"
         ]
       }
     ],
@@ -781,16 +595,13 @@
     ],
     "small_target_count": 5,
     "small_text": {
-      "small": 2,
-      "total": 3,
-      "ex": [
-        "14px: Sig fx «Ring til cykelværkstedet og find en tid to",
-        "14px: Peter holder op med at bruge den. Dine data bliver"
-      ]
+      "small": 0,
+      "total": 0,
+      "ex": []
     },
     "fold": {
-      "words": 103,
-      "primary": 1
+      "words": 14,
+      "primary": 0
     },
     "hscroll": false
   }

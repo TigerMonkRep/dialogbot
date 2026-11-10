@@ -112,13 +112,7 @@ def test_px_call_02_needs_phone_then_dials_with_snapshot(api, pv, db, dialler):
 def test_px_call_03_double_approve_parallel(api, client, pv, db, dialler, same_key):
     """PC-CALL-03: dobbeltklik på Godkend (parallelt, samme og forskellig Idempotency-Key) → ét opkald, én reservation."""
     tok = pv.account(f"px-call03-{same_key}@example.com")
-    pv.expire_trial(tok)  # credits-stien: reservationen er synlig i ledgeren
-    pv.verify_phone(tok)
-    ws = pv.ws(tok)
-    from app.models import CreditLedger as CL
-
-    db.add(CL(workspace_id=ws, kind="grant", amount=6, source_ref="px:grant", text="test"))
-    db.commit()
+    pv.verify_phone(tok)   # plan path (Plus trial): one approval = one of the month's plan calls
     tid = _propose(pv, tok)
     results = []
 
@@ -131,9 +125,9 @@ def test_px_call_03_double_approve_parallel(api, client, pv, db, dialler, same_k
     [t.start() for t in th]
     [t.join() for t in th]
     assert len(dialler.calls) == 1, (results, len(dialler.calls))
+    assert pv.me(tok)["calls_used"] == 1
     db.expire_all()
-    res = [r for r in db.query(CreditLedger).filter_by(workspace_id=ws) if r.kind == "reserve"]
-    assert len(res) == 1, [(r.kind, r.amount) for r in res]
+    assert db.query(PrivateCall).filter(PrivateCall.task_id == uuid.UUID(tid)).count() == 1
 
 
 def test_px_call_05_outside_hours_schedule_and_cancel(api, pv, db, dialler):

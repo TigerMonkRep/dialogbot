@@ -903,7 +903,7 @@
       "expired": "Essai terminé",
       "none": "Sans forfait"
     },
-    "trialLine": "{n|1 jour|# jours} d’essai restants · droits Plus",
+    "trialLine": "{n|1 jour|# jours} d’essai restants · droits {plan}",
     "trialThen": "Ensuite {plan} à {price}/mois",
     "trialThenNone": "Choisissez un forfait avant la fin – sinon vous continuez sans forfait.",
     "expiredLine": "Votre essai est terminé. Choisissez un forfait pour retrouver les appels et toutes les apps.",

@@ -903,7 +903,7 @@
       "expired": "Prova terminata",
       "none": "Nessun piano"
     },
-    "trialLine": "{n|1 giorno|# giorni} di prova rimasti · diritti Plus",
+    "trialLine": "{n|1 giorno|# giorni} di prova rimasti · diritti {plan}",
     "trialThen": "Poi {plan} a {price}/mese",
     "trialThenNone": "Scegli un piano prima che finisca – altrimenti continui senza piano.",
     "expiredLine": "La tua prova è finita. Scegli un piano per riavere chiamate e tutte le app.",

@@ -612,8 +612,6 @@ def _all_apps_on(api, tok) -> set[str]:
     return {a["key"] for a in api.get(tok, "/privat/addons").json() if a["enabled"]}
 
 
-@pytest.mark.xfail(strict=True, reason="F-PBQ-06-PC-ENT-02: needs-decision (Fürster) – plan apps keep working after the "
-                                       "plan ends: addons.require() checks enabled only (addons.py:9-10, 808-812)")
 def test_pc_ent_02_plan_apps_stop_when_the_plan_ends(api, client, pv, stripe, db):
     tok = pv.account("pbq-ent02@testmail.dk", trial=False)
     _checkout(api, tok)
@@ -629,37 +627,34 @@ def test_pc_ent_02_plan_apps_stop_when_the_plan_ends(api, client, pv, stripe, db
         assert api.get(tok, path).status_code in (402, 403, 409), path
 
 
-def test_pc_ent_02_status_quo_what_still_works_after_the_trial(api, client, pv, stripe, db):
-    """Documents F-PBQ-06 (needs-decision): after a canceled 14-day trial every plan app is still on and usable."""
+def test_pc_ent_02_plan_apps_pause_but_keep_data_after_the_trial(api, client, pv, stripe, db):
+    """F-PBQ-06 decided (option A, commit 451d53b): after the plan ends the plan apps stay «on» with their data kept,
+    but the gate refuses them until a plan is active again."""
+    from app.core.errors import ApiError
+
     tok = pv.account("pbq-ent02b@testmail.dk", trial=False)
     ws = pv.ws(tok)
     _checkout(api, tok)
     sub_id = _complete_via_webhook(client, stripe, pv)
-    on = _all_apps_on(api, tok)
+    _all_apps_on(api, tok)
+    api.post(tok, "/privat/bills", {"name": "Vand", "amount": "450", "frequency": "quarterly", "due_day": 15})
     _event(client, _evt("customer.subscription.deleted", stripe.subs[sub_id] | {"status": "canceled",
                                                                                 "ended_at": int(pv.clock().timestamp())}))
     pv.clock.at = WED_10 + timedelta(days=20)
     assert pv.subscription(tok)["entitled"] is False
-    still = {a["key"] for a in api.get(tok, "/privat/addons").json() if a["enabled"]}
-    assert set(PLAN_APPS) <= on and set(PLAN_APPS) <= still
     for key in PLAN_APPS:
-        addons.require(db, ws, key)  # no exception: every plan app passes the gate
-    # the apps' own data endpoints answer
-    from app.modules.privat import birthdays
+        with pytest.raises(ApiError):
+            addons.require(db, ws, key)
+    for path in ("/privat/bills", "/privat/birthdays", "/privat/car", "/privat/health-contacts"):
+        assert api.get(tok, path).status_code in (402, 403, 409), path
+    db.expire_all()
+    from app.models import PrivateBill
 
-    birthdays.save(db, ws, name="Mormor", when="2026-11-25", remind_days_before=7)
-    bills.save(db, ws, name="El", amount="640", frequency="monthly", due_day=25, remind_days_before=3)
-    db.commit()
-    assert api.get(tok, "/privat/addons").status_code == 200
-    for path in ("/privat/bills", "/privat/birthdays", "/privat/car", "/privat/health-contacts",
-                 "/privat/apps/garanti/overview", "/privat/apps/flytning/overview"):
-        assert api.get(tok, path).status_code == 200, path
-    assert api.post(tok, "/privat/bills", {"name": "Vand", "amount": "450", "frequency": "quarterly",
-                                           "due_day": 15}).status_code in (200, 201)
+    assert db.query(PrivateBill).filter_by(workspace_id=ws).count() == 1  # data kept
 
 
-def test_pc_ent_03_reminders_from_plan_apps_continue_after_expiry(api, client, pv, stripe, db):
-    """F-PBQ-06 (needs-decision) evidence: birthday and bill reminders go out to an account without a plan."""
+def test_pc_ent_03_no_reminders_from_plan_apps_after_expiry(api, client, pv, stripe, db):
+    """F-PBQ-06 decided (option A): birthday and bill reminders stop when the plan has ended."""
     from app.modules.privat import birthdays
 
     tok = pv.account("pbq-ent03@testmail.dk")
@@ -671,11 +666,10 @@ def test_pc_ent_03_reminders_from_plan_apps_continue_after_expiry(api, client, p
     birthdays.save(db, ws, name="Mormor", when="2026-11-08", remind_days_before=7)
     bills.save(db, ws, name="El", amount="640", frequency="monthly", due_day=6, remind_days_before=3)
     db.commit()
+    assert birthdays.send_due(db, WED_10) == 0 and bills.send_due(db, WED_10) == 0
+    # with a plan again they come back
+    pv.set_plan(tok, "plus")
     assert birthdays.send_due(db, WED_10) == 1 and bills.send_due(db, WED_10) == 1
-    db.commit()
-    evs = [e for e in db.query(OutboxEvent).all() if "birthday:" in (e.dedupe_key or "") or "bill:" in (e.dedupe_key or "")
-           or str(e.payload).find("Mormor") >= 0 or str(e.payload).find("El skal betales") >= 0]
-    assert evs, "expected the reminders to be queued (status quo)"
 
 
 def test_pc_ent_05_call_09_basis_quota_unanswered_failed_and_replay(api, client, pv, db, monkeypatch):
@@ -917,3 +911,39 @@ def test_pc_acc_04_invoices_only_through_the_stripe_portal(api, client, pv, stri
                 and "warranty" not in p and "garanti" not in p and "expense" not in p]
     da = json.loads((ROOT / "web/src/i18n/messages/da/privat.json").read_text())
     assert not re.search(r"[Ff]aktura|[Kk]vittering for", json.dumps(da.get("plan", {}), ensure_ascii=False))
+
+
+def test_pc_ent_08_household_limit_shared_quota_and_end_of_plan(api, client, pv, db):
+    """F-PBQ-07 retest (household built, 451d53b): 5 people incl. owner, members get Familie rights live from the owner,
+    the 25 calls are the household's, and the rights stop with the owner's plan."""
+    owner = pv.account("pbq-hh-owner@testmail.dk")
+    pv.set_plan(owner, "familie")
+    toks = []
+    for i in range(4):
+        inv = api.post(owner, "/privat/household/invites")
+        assert inv.status_code == 200, inv.text
+        m = pv.user(f"pbq-hh-{i}@testmail.dk", f"Medlem{i} Hansen")
+        api.post(m, "/privat/account")
+        r = api.post(m, f"/privat/invites/{inv.json()['token']}/accept")
+        assert r.status_code == 200, r.text
+        toks.append(m)
+    r = api.post(owner, "/privat/household/invites")
+    assert r.status_code == 409 and r.json()["code"] == "household_full"
+    s = pv.subscription(toks[0])
+    assert (s["entitled"], s["plan"], s["calls_quota"]) == (True, "familie", 25)
+    # shared quota: an answered plan call by a member counts for everybody
+    tid = pv.make_list(toks[1])
+    db.add(PrivateCall(workspace_id=pv.ws(toks[1]), task_id=uuid.UUID(tid), business_name="T", status="answered",
+                       result="answered", paid_via="plan", approved_at=pv.clock()))
+    db.commit()
+    assert pv.subscription(owner)["calls_used"] == 1 and pv.subscription(toks[2])["calls_left"] == 24
+    # owner downgrades to Plus → members lose rights at once
+    pv.set_plan(owner, "plus")
+    assert pv.subscription(toks[0])["entitled"] is False
+    pv.set_plan(owner, "familie")
+    assert pv.subscription(toks[0])["entitled"] is True
+    pv.clock.at = WED_10 + timedelta(days=31)  # owner's period over, nothing renewed
+    with db.begin_nested():
+        db.get(PrivateSubscription, pv.ws(owner)).status = "canceled"
+    db.commit()
+    assert pv.subscription(toks[3])["entitled"] is False

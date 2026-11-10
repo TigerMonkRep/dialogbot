@@ -8,6 +8,8 @@ import { currencyFor } from "@/lib/markets";
 import { BIG, Eyebrow, LINK, Pill, Sim } from "./bits";
 import { PhoneVerify } from "./cards";
 import { PushPrompt } from "./push";
+import { HouseholdCard } from "./account-household";
+import { MyDataSection } from "./account-data";
 import { InstallApp } from "@/components/install-app";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { enablePush } from "@/lib/privat/push";
@@ -135,7 +137,7 @@ export function AccountPane() {
           </div>
           <Pill tone={p.status === "active" ? "ok" : p.status === "trial" ? "highlight" : p.status === "past_due" ? "beta" : "plain"}>{t(`plan.status.${p.status}`)}</Pill>
         </div>
-        {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays })} <span className="text-ink-soft">{p.plan === "none" ? t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyText(p.rightsKey) })}</span></p>}
+        {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays, plan: p.rightsName })} <span className="text-ink-soft">{p.plan === "none" ? t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyText(p.rightsKey) })}</span></p>}
         {p.status === "expired" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.expiredLine")}</p>}
         {p.status === "none" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.noneLine")}</p>}
         {p.status === "past_due" && <p className="m-0 text-[15px] text-danger font-semibold">{t("plan.pastDue")}</p>}
@@ -159,6 +161,8 @@ export function AccountPane() {
         </div>
         {pickerOpen && <PlanPicker onPick={startCheckout} busy={redirecting} />}
       </section>
+
+      <HouseholdCard />
 
       {!p.entitled && (
         <div className="rounded-[20px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" data-testid="free-tier">
@@ -230,6 +234,8 @@ export function AccountPane() {
         <span className="flex-1 min-w-0 text-[16px] font-semibold">{t("apps.accountLine", { n: (addons ?? []).filter((a) => a.enabled).length })}</span>
         <span className="text-[15px] font-semibold text-accent whitespace-nowrap">{t("apps.mine")} →</span>
       </Link>
+
+      <MyDataSection />
 
       {simulated && fake && (
         <div className="rounded-[14px] border-[1.5px] border-dashed border-ink bg-panel p-3 flex flex-col gap-2">

@@ -231,7 +231,7 @@ function ShareSheet({ onClose }: { onClose: () => void }) {
   const suggested = res ? `${t(kind === "wishlist" ? "share.smsWishlist" : "share.smsGroup", { link })}${sign.trim() ? ` - ${sign.trim()}` : ""}` : "";
   useEffect(() => { if (!edited) setText(suggested); }, [suggested, edited]);
   if (!tk) return null;
-  const create = async () => { if (!kind) return; const r = await run((a) => a.share(tk.id, { mode: kind, role: "editor" })); if (r) { setRes(r); setEdited(false); } };
+  const create = async () => { if (!kind) return; const r = await run((a) => a.share(tk.id, { mode: kind, role: kind === "wishlist" ? "viewer" : "editor" })); if (r) { setRes(r); setEdited(false); } };
   const saveSign = (v: string) => { setSign(v); try { localStorage.setItem(SIGN_KEY, v); } catch { /* ignore */ } };
   const body = text || suggested;
   const copy = async () => { try { await navigator.clipboard.writeText(res!.short_url ?? res!.invite_url); setCopied(true); setTimeout(() => setCopied(false), 2500); } catch { /* ignore */ } };

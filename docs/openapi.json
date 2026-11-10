@@ -1507,6 +1507,22 @@
         "title": "DecisionIn",
         "type": "object"
       },
+      "DeleteIn": {
+        "properties": {
+          "confirm_email": {
+            "description": "Brugerens e-mail, skrevet igen",
+            "maxLength": 320,
+            "minLength": 3,
+            "title": "Confirm Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirm_email"
+        ],
+        "title": "DeleteIn",
+        "type": "object"
+      },
       "DesignBody": {
         "properties": {
           "accent": {
@@ -4126,7 +4142,7 @@
                 "type": "null"
               }
             ],
-            "description": "reception | campaigns | both (A01)",
+            "description": "reception | campaigns | both (A01), or privat (a Dialogbot Privat sign-up: Privat verify mail)",
             "title": "Signup Intent"
           }
         },
@@ -17587,6 +17603,64 @@
         ]
       }
     },
+    "/api/v1/privat/account/delete": {
+      "post": {
+        "description": "«Slet min konto»: cancels a live subscription, deletes all Privat data and the login (unless it is also used\noutside Privat: login_kept). Irreversible.",
+        "operationId": "account_delete_api_v1_privat_account_delete_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Account Delete",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
     "/api/v1/privat/addons": {
       "get": {
         "operationId": "addon_list_api_v1_privat_addons_get",
@@ -19815,6 +19889,157 @@
         ]
       }
     },
+    "/api/v1/privat/data-export": {
+      "get": {
+        "operationId": "data_export_status_api_v1_privat_data_export_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Data Export Status",
+        "tags": [
+          "privat"
+        ]
+      },
+      "post": {
+        "description": "Queue «Eksportér mine data»: the worker e-mails a link (7 days, login needed). 429 after 3 a day.",
+        "operationId": "data_export_request_api_v1_privat_data_export_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Data Export Request",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/data-export/download": {
+      "get": {
+        "operationId": "data_export_download_api_v1_privat_data_export_download_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 10,
+              "title": "Token",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Data Export Download",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
     "/api/v1/privat/day": {
       "get": {
         "operationId": "day_api_v1_privat_day_get",
@@ -20595,6 +20820,197 @@
         "summary": "Delete Health Contact",
         "tags": [
           "privat-apps"
+        ]
+      }
+    },
+    "/api/v1/privat/household": {
+      "get": {
+        "description": "role owner|member|null, active (rights flow now), can_invite, limit (5), count, first names only.",
+        "operationId": "household_get_api_v1_privat_household_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Household Get",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/household/invites": {
+      "post": {
+        "description": "A link for the owner to text from their own phone (suggested_text). 409 needs_plan | household_full |\nhousehold_member.",
+        "operationId": "household_invite_api_v1_privat_household_invites_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Household Invite",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/household/leave": {
+      "post": {
+        "operationId": "household_leave_api_v1_privat_household_leave_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Household Leave",
+        "tags": [
+          "privat"
+        ]
+      }
+    },
+    "/api/v1/privat/household/members/{member_id}": {
+      "delete": {
+        "description": "The owner takes a person out: their Familie rights stop at once; their own data stays theirs.",
+        "operationId": "household_remove_api_v1_privat_household_members__member_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "member_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Member Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Household Remove",
+        "tags": [
+          "privat"
         ]
       }
     },

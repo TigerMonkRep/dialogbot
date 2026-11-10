@@ -16,19 +16,16 @@
     "leaks": []
   },
   "en:/privat/butik": {
-    "lang": "en",
+    "lang": "",
     "leaks": []
   },
   "en:/privat/butik/ring-for-mig": {
-    "lang": "en",
+    "lang": "",
     "leaks": []
   },
   "en:/privat/butik/pakker": {
-    "lang": "en",
-    "leaks": [
-      "Giv Peter dit track-and-trace-nummer, så holder han øje med pakken og siger til, når den er klar til afhentning – og hvor.",
-      "Du får besked, når den er på vej og kan hentes"
-    ]
+    "lang": "",
+    "leaks": []
   },
   "en:/privat/folk": {
     "lang": "en",
@@ -39,18 +36,15 @@
     "leaks": []
   },
   "en:/privat/kalender": {
-    "lang": "en",
-    "leaks": [
-      "De tider, Peter aftaler for dig, og dem du selv fortæller ham, lander i din egen kalender – med adresse og det, I aftalte. Google og Outlook får dem med det samme; alle andre kalendere via et privat link.",
-      "Peter lægger aftaler ind, når de er bekræftet, og når du selv fortæller ham om en tid"
-    ]
+    "lang": "",
+    "leaks": []
   },
   "en:/privat/apps/ring-for-mig": {
     "lang": "en",
     "leaks": []
   },
   "de:/privat/dag": {
-    "lang": "de",
+    "lang": "",
     "leaks": []
   },
   "de:/privat/samtale": {
@@ -67,34 +61,18 @@
   },
   "de:/privat/butik": {
     "lang": "de",
-    "leaks": [
-      "De tider, Peter aftaler for dig, og dem du selv fortæller ham, lander i din egen kalender – med adresse og det, I aftalte. Google og Outlook får dem med det samme; alle andre kalendere via et privat link.",
-      "Glem aldrig en fødselsdag igen",
-      "Ugens aftensmad – og indkøbslisten følger med",
-      "Syn, service og dæk – Peter holder styr på bilen",
-      "Se hvad I betaler for – og opsig det, I ikke bruger",
-      "Husk reklamationsretten – og få hjælp, når noget går i stykker",
-      "Flyttetjeklisten med datoer – og hjælp til opkaldene",
-      "Dyrlæge, vaccinationer, ormekur og forsikring",
-      "Røgalarm, filtre, tagrender og fyr – til tiden",
-      "Ugens træning, en enkel log – og et puf på dagen"
-    ]
+    "leaks": []
   },
   "de:/privat/butik/ring-for-mig": {
-    "lang": "de",
-    "leaks": [
-      "Sag z. B. „Ring til cykelværkstedet og find en tid torsdag efter klokken tre“"
-    ]
+    "lang": "",
+    "leaks": []
   },
   "de:/privat/butik/pakker": {
     "lang": "de",
-    "leaks": [
-      "Giv Peter dit track-and-trace-nummer, så holder han øje med pakken og siger til, når den er klar til afhentning – og hvor.",
-      "Du får besked, når den er på vej og kan hentes"
-    ]
+    "leaks": []
   },
   "de:/privat/folk": {
-    "lang": "de",
+    "lang": "",
     "leaks": []
   },
   "de:/privat/konto": {
@@ -103,10 +81,7 @@
   },
   "de:/privat/kalender": {
     "lang": "de",
-    "leaks": [
-      "De tider, Peter aftaler for dig, og dem du selv fortæller ham, lander i din egen kalender – med adresse og det, I aftalte. Google og Outlook får dem med det samme; alle andre kalendere via et privat link.",
-      "Peter lægger aftaler ind, når de er bekræftet, og når du selv fortæller ham om en tid"
-    ]
+    "leaks": []
   },
   "de:/privat/apps/ring-for-mig": {
     "lang": "de",

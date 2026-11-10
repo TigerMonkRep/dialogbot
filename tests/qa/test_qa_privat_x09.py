@@ -132,7 +132,7 @@ def test_recipient_without_subscription_can_open_and_reserve_and_almost_nothing_
     assert me["entitled"] is False and me["plan_status"] == "none"
     # CAN: open the shared list, reserve and give
     t = pv.task(ole, tid).json()
-    assert t["my_role"] == "editor" and t["share_mode"] == "wishlist"
+    assert t["my_role"] == "viewer" and t["share_mode"] == "wishlist"  # «kan reservere» (F-UX-03)
     assert t["usage_text"] == "Delt med dig – koster dig ingenting"
     assert t["events"] == []  # the owner's history is not the giver's business
     helm = _item(t, "Cykelhjelm")["id"]

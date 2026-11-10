@@ -49,7 +49,7 @@ test("PC-CALL-01/02/03 · forslag ringer ikke; needs_phone; parallel Godkend →
   expect(await dialledFor(page, tid), "PC-CALL-01: intet ringet ved forslag").toEqual([]);
   // the UI card
   await go(page, `/privat/opgaver/${tid}`);
-  await expect(page.getByRole("button", { name: /godkend/i }).filter({ visible: true }).first()).toBeVisible();
+  await expect(page.getByText(/Se forslaget og godkend|Godkend/).filter({ visible: true }).first()).toBeVisible();
   const r = await page.request.post(`/api/backend/privat/calls/${tid}/approve`, { headers: CSRF, data: { share_phone: false } });
   expect(r.status()).toBe(409);
   expect((await r.json()).code).toBe("needs_phone");

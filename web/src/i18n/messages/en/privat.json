@@ -903,7 +903,7 @@
       "expired": "Trial ended",
       "none": "No plan"
     },
-    "trialLine": "{n|1 day|# days} left of the trial · Plus rights",
+    "trialLine": "{n|1 day|# days} left of the trial · {plan} rights",
     "trialThen": "Then {plan} at {price}/mo.",
     "trialThenNone": "Choose a plan before it ends – otherwise you continue without one.",
     "expiredLine": "Your trial is over. Choose a plan to get calls and all apps back.",

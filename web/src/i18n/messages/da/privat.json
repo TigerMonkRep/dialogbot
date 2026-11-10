@@ -903,7 +903,7 @@
       "expired": "Prøveperiode slut",
       "none": "Ingen plan"
     },
-    "trialLine": "{n|1 dag|# dage} tilbage af prøveperioden · Plus-rettigheder",
+    "trialLine": "{n|1 dag|# dage} tilbage af prøveperioden · {plan}-rettigheder",
     "trialThen": "Derefter {plan} til {price}/md.",
     "trialThenNone": "Vælg en plan, før den slutter – ellers fortsætter du uden plan.",
     "expiredLine": "Din prøveperiode er slut. Vælg en plan for at få opkald og alle apps igen.",

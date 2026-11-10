@@ -903,7 +903,7 @@
       "expired": "Testphase beendet",
       "none": "Kein Plan"
     },
-    "trialLine": "Noch {n|1 Tag|# Tage} Testphase · Plus-Rechte",
+    "trialLine": "Noch {n|1 Tag|# Tage} Testphase · {plan}-Rechte",
     "trialThen": "Danach {plan} für {price}/Monat",
     "trialThenNone": "Wähle vorher einen Plan – sonst geht es ohne Plan weiter.",
     "expiredLine": "Deine Testphase ist vorbei. Wähle einen Plan, um Anrufe und alle Apps zurückzubekommen.",

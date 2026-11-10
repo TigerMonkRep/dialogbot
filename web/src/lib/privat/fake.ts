@@ -136,7 +136,7 @@ function sharedExamples(): { joined: Task[]; invitable: Record<string, Task> } {
   const base = { is_example: true, created_at: atDay(-3, 12), remind_at: null, call: null, due_at: null, shared: true, updated_at: atDay(-1, 20) };
   const anna: Member = { id: "anna", name: FAKE_OTHER, role: "owner", is_me: false };
   const meEditor: Member = { ...ME, role: "editor" };
-  const wish: Task = { ...base, id: "s1", kind: "list", list_type: "wishlist", share_mode: "wishlist", my_role: "editor", title: "Annas ønskeliste",
+  const wish: Task = { ...base, id: "s1", kind: "list", list_type: "wishlist", share_mode: "wishlist", my_role: "viewer", title: "Annas ønskeliste",
     status: "in_progress", next_step: "Vælg en gave", who: FAKE_OTHER, usage_text: "Gratis – delt med dig",
     items: [item("s1a", "Bluetooth-højttaler", { note: "Gerne en lille en til badeværelset", added_by_name: FAKE_OTHER, price_minor: 129900, currency: "DKK", price_source: "user", color: "Sort", quantity: 1 }),
       item("s1b", "Strikkebog", { link: "https://example.com/strikkebog", added_by_name: FAKE_OTHER, price_minor: 24995, currency: "DKK", price_source: "user", shop: "example.com", quantity: 1 }),

@@ -306,7 +306,9 @@
     "simulateReserve": "{name} reserves a wish",
     "simulateActivated": "{name} creates her first own task",
     "welcomeBanner": "Try it yourself: What can I take care of for you?",
-    "welcomeDismiss": "Close"
+    "welcomeDismiss": "Close",
+    "open": "Open",
+    "shareWish": "Share the wishlist"
   },
   "move": {
     "label": "The reminder has been moved",
@@ -423,8 +425,8 @@
     "orLink": "Or send a link",
     "signWith": "Sign with:",
     "message": "The message (you can edit it)",
-    "smsWishlist": "Hi! I have made a wishlist – see it and reserve here: {link}",
-    "smsGroup": "Hi! I have made a shared list – see it and add here: {link}",
+    "smsWishlist": "Hi! I have made a wishlist - see it and reserve here: {link}",
+    "smsGroup": "Hi! I have made a shared list - see it and add here: {link}",
     "remindWishlist": "Hi! Have you seen my wishlist «{title}»? The link is in my previous message.",
     "remindGroup": "Hi! Have you seen the list «{title}»? The link is in my previous message.",
     "chars": "{n} of {max} characters",
@@ -464,7 +466,8 @@
     "queueNext": "Sent? Next: {name} ({i} of {n})",
     "queueBack": "Welcome back. Tap when you are ready for the next one.",
     "queueDone": "All {n} have been invited.",
-    "done": "Done"
+    "done": "Done",
+    "roleWishGuest": "can reserve"
   },
   "people": {
     "title": "My people",
@@ -627,7 +630,8 @@
     "purposeReminder": "Be reminded in time",
     "purposeWishlist": "Share wishes without spoiling the surprise",
     "talk": "Talk about the task",
-    "history": "History"
+    "history": "History",
+    "fromOwner": "From {name}"
   },
   "account": {
     "title": "Account and credits",
@@ -731,7 +735,9 @@
   "errors": {
     "emailNotVerified": "Confirm your e-mail to use Dialogbot Privat.",
     "verifyLink": "Confirm e-mail",
-    "viewAs": "Private tasks cannot be viewed in «View as customer»."
+    "viewAs": "Private tasks cannot be viewed in «View as customer».",
+    "notEnabled": "Dialogbot Privat is not open for your account yet. Nothing you do here is saved or carried out.",
+    "unavailable": "Dialogbot Privat can't be reached right now. Try again in a moment – nothing has been saved or carried out."
   },
   "location": {
     "useMine": "Use my location",
@@ -777,7 +783,8 @@
     "trialBadge": "{plan} · trial, {n|1 day|# days} left",
     "trialBadgeShort": "{plan} · {n|1 day|# days}",
     "planBadge": "{plan}",
-    "noPlan": "No plan"
+    "noPlan": "No plan",
+    "trialDaysShort": "{n} d"
   },
   "day2": {
     "eyebrow": "Your own personal assistant",
@@ -842,7 +849,10 @@
       "newInStore": "New in the Store",
       "see": "See →"
     },
-    "noAnswerPlan": "Nobody answered – the call does not count"
+    "noAnswerPlan": "Nobody answered – the call does not count",
+    "greetingShort": "I can remind you, make lists and make calls for you. What have you been putting off?",
+    "yourTurnOf": "Your turn · 1 of {n}",
+    "allTasks": "All tasks"
   },
   "store": {
     "metaTitle": "The Store",
@@ -1587,6 +1597,43 @@
     "yourApps": "Your apps",
     "all": "All {n}",
     "stripStep": "Step {n} of {total} – continue the setup",
-    "accountLine": "{n|1 app on|# apps on}"
+    "accountLine": "{n|1 app on|# apps on}",
+    "allOn": "You have every app. New ones arrive regularly.",
+    "sayLike": "Say, e.g., “{example}”"
+  },
+  "familyHousehold": {
+    "title": "Household",
+    "count": "{count} of {limit} people",
+    "ownerText": "Family covers up to {limit} people. Everyone has their own account – nobody sees the others' things.",
+    "invite": "Invite to the household",
+    "smsText": "You are in my Dialogbot Family - join here: {link}",
+    "me": "you",
+    "remove": "Remove",
+    "removeConfirm": "Remove {name} from the household? {name} loses Family at once but keeps their own things.",
+    "memberLine": "You are in {name}'s Family.",
+    "leave": "Leave the household",
+    "leaveConfirm": "Leave the household? You lose Family at once. Your things stay.",
+    "left": "You have left the household.",
+    "paused": "The household is paused – it needs Family.",
+    "full": "The household is full.",
+    "inviteTitle": "Join {name}'s Family",
+    "inviteText": "You get the Family plan on your own account. {name} cannot see your things.",
+    "join": "Join",
+    "joined": "You are in the household."
+  },
+  "myData": {
+    "title": "Your data",
+    "exportText": "Get everything we keep about you by e-mail.",
+    "export": "Export my data",
+    "queued": "We are gathering your data. You will get an e-mail with a link.",
+    "ready": "Your data is ready.",
+    "download": "Download your data",
+    "expired": "The link has expired. Ask for your data again.",
+    "delete": "Delete my account",
+    "deleteText": "Everything in Dialogbot Privat is deleted and your subscription stops. This cannot be undone.",
+    "deleteLabel": "Type your e-mail to confirm",
+    "deleteConfirm": "Delete everything for good",
+    "cancel": "Cancel",
+    "deleting": "Deleting …"
   }
 }

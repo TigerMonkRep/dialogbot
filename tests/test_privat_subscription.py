@@ -532,7 +532,7 @@ def test_webhook_for_an_account_without_a_row(api, client, pv, db, monkeypatch):
 
 
 def test_checkout_completed_and_session_sync(api, client, pv, db, monkeypatch):
-    tok = pv.account("mette@testmail.dk")
+    tok = pv.account("mette@testmail.dk", trial=False)  # no running subscription yet (PC-SUB-07)
     ws = pv.ws(tok)
     _stripe_env(monkeypatch)
     meta = {"kind": "privat_subscription", "workspace_id": str(ws), "plan": "basis", "interval": "year"}
@@ -591,3 +591,20 @@ def test_portal(api, pv, monkeypatch):
                         {"url": "https://billing.stripe.com/p/session/x"})
     assert api.post(tok, "/privat/subscription/portal").json() == {"url": "https://billing.stripe.com/p/session/x"}
     assert sent == [("POST", "/billing_portal/sessions", {"customer": "cus_test", "return_url": "http://frontend.test/privat/konto"})]
+
+
+def test_no_second_checkout_while_a_subscription_runs(api, pv, db, monkeypatch):
+    """PC-SUB-07: with a running Stripe subscription (here the card trial) a new Checkout would start a second
+    subscription. 409 subscription_exists → the web sends the customer to the Billing Portal instead."""
+    tok = pv.account("mette@testmail.dk")  # trial via Checkout: a Stripe subscription exists
+    _stripe_env(monkeypatch)
+    sent = _fake_checkout(monkeypatch)
+    r = api.post(tok, "/privat/subscription/checkout", {"plan": "familie", "interval": "year"})
+    assert r.status_code == 409 and r.json()["code"] == "subscription_exists" and r.json()["portal"] is True
+    assert _sessions(sent) == []
+    pv.set_plan(tok, "plus")  # active
+    assert api.post(tok, "/privat/subscription/checkout", {"plan": "basis", "interval": "month"}).status_code == 409
+    row = db.get(PrivateSubscription, pv.ws(tok))
+    row.status, row.current_period_end = "canceled", None  # ended: a new subscription is allowed again
+    db.commit()
+    assert api.post(tok, "/privat/subscription/checkout", {"plan": "basis", "interval": "month"}).status_code == 200

@@ -306,7 +306,9 @@
     "simulateReserve": "{name} reserverer et ønske",
     "simulateActivated": "{name} lager sin første egne oppgave",
     "welcomeBanner": "Prøv selv: Hva kan jeg ordne for deg?",
-    "welcomeDismiss": "Lukk"
+    "welcomeDismiss": "Lukk",
+    "open": "Åpne",
+    "shareWish": "Del ønskelisten"
   },
   "move": {
     "label": "Påminnelsen er flyttet",
@@ -423,8 +425,8 @@
     "orLink": "Eller send en lenke",
     "signWith": "Signer med:",
     "message": "Meldingen (du kan endre den)",
-    "smsWishlist": "Hei! Jeg har laget en ønskeliste – se den og reserver her: {link}",
-    "smsGroup": "Hei! Jeg har laget en felles liste – se den og legg til her: {link}",
+    "smsWishlist": "Hei! Jeg har laget en ønskeliste - se den og reserver her: {link}",
+    "smsGroup": "Hei! Jeg har laget en felles liste - se den og legg til her: {link}",
     "remindWishlist": "Hei! Har du sett ønskelisten min «{title}»? Lenken står i forrige melding.",
     "remindGroup": "Hei! Har du sett listen «{title}»? Lenken står i forrige melding.",
     "chars": "{n} av {max} tegn",
@@ -464,7 +466,8 @@
     "queueNext": "Sendt? Neste: {name} ({i} av {n})",
     "queueBack": "Velkommen tilbake. Trykk når du er klar for den neste.",
     "queueDone": "Alle {n} er invitert.",
-    "done": "Ferdig"
+    "done": "Ferdig",
+    "roleWishGuest": "kan reservere"
   },
   "people": {
     "title": "Mine folk",
@@ -627,7 +630,8 @@
     "purposeReminder": "Bli minnet på det i tide",
     "purposeWishlist": "Dele ønsker uten å ødelegge overraskelsen",
     "talk": "Snakk om oppgaven",
-    "history": "Historikk"
+    "history": "Historikk",
+    "fromOwner": "Fra {name}"
   },
   "account": {
     "title": "Konto og kreditter",
@@ -731,7 +735,9 @@
   "errors": {
     "emailNotVerified": "Bekreft e-posten din for å bruke Dialogbot Privat.",
     "verifyLink": "Bekreft e-post",
-    "viewAs": "Private oppgaver kan ikke ses i «Se som kunde»."
+    "viewAs": "Private oppgaver kan ikke ses i «Se som kunde».",
+    "notEnabled": "Dialogbot Privat er ikke åpnet for kontoen din ennå. Ingenting du gjør her, blir lagret eller utført.",
+    "unavailable": "Dialogbot Privat kan ikke nås akkurat nå. Prøv igjen om litt – ingenting er lagret eller utført."
   },
   "location": {
     "useMine": "Bruk posisjonen min",
@@ -777,7 +783,8 @@
     "trialBadge": "{plan} · prøveperiode, {n|1 dag|# dager} igjen",
     "trialBadgeShort": "{plan} · {n|1 dag|# dager}",
     "planBadge": "{plan}",
-    "noPlan": "Ingen plan"
+    "noPlan": "Ingen plan",
+    "trialDaysShort": "{n} d"
   },
   "day2": {
     "eyebrow": "Din egen personlige assistent",
@@ -842,7 +849,10 @@
       "newInStore": "Nytt i Butikken",
       "see": "Se →"
     },
-    "noAnswerPlan": "Ingen tok telefonen – anropet teller ikke"
+    "noAnswerPlan": "Ingen tok telefonen – anropet teller ikke",
+    "greetingShort": "Jeg kan minne deg på ting, lage lister og ringe for deg. Hva har du utsatt?",
+    "yourTurnOf": "Din tur · 1 av {n}",
+    "allTasks": "Alle oppgaver"
   },
   "store": {
     "metaTitle": "Butikken",
@@ -1587,6 +1597,43 @@
     "yourApps": "Appene dine",
     "all": "Alle {n}",
     "stripStep": "Trinn {n} av {total} – fortsett oppsettet",
-    "accountLine": "{n|1 app slått på|# apper slått på}"
+    "accountLine": "{n|1 app slått på|# apper slått på}",
+    "allOn": "Du har alle appene. Nye kommer fortløpende.",
+    "sayLike": "Si for eksempel «{example}»"
+  },
+  "familyHousehold": {
+    "title": "Husstand",
+    "count": "{count} av {limit} personer",
+    "ownerText": "Familie gjelder for opptil {limit} personer. Alle har sin egen konto – ingen ser de andres ting.",
+    "invite": "Inviter til husstanden",
+    "smsText": "Du er med i min Dialogbot Familie - bli med her: {link}",
+    "me": "deg",
+    "remove": "Fjern",
+    "removeConfirm": "Fjerne {name} fra husstanden? {name} mister Familie med en gang, men beholder sine egne ting.",
+    "memberLine": "Du er med i Familie hos {name}.",
+    "leave": "Forlat husstanden",
+    "leaveConfirm": "Forlate husstanden? Du mister Familie med en gang. Tingene dine blir.",
+    "left": "Du har forlatt husstanden.",
+    "paused": "Husstanden er satt på pause – den krever Familie.",
+    "full": "Husstanden er full.",
+    "inviteTitle": "Bli med i Familie hos {name}",
+    "inviteText": "Du får Familie-planen på din egen konto. {name} kan ikke se tingene dine.",
+    "join": "Bli med",
+    "joined": "Du er med i husstanden."
+  },
+  "myData": {
+    "title": "Dine data",
+    "exportText": "Få alt vi har lagret om deg, sendt på e-post.",
+    "export": "Eksporter dataene mine",
+    "queued": "Vi samler dataene dine. Du får en e-post med en lenke.",
+    "ready": "Dataene dine er klare.",
+    "download": "Last ned dataene dine",
+    "expired": "Lenken har utløpt. Be om dataene dine igjen.",
+    "delete": "Slett kontoen min",
+    "deleteText": "Alt i Dialogbot Privat slettes, og abonnementet ditt stopper. Det kan ikke angres.",
+    "deleteLabel": "Skriv e-posten din for å bekrefte",
+    "deleteConfirm": "Slett alt for godt",
+    "cancel": "Avbryt",
+    "deleting": "Sletter …"
   }
 }

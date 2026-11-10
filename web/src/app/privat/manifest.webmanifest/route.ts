@@ -22,7 +22,7 @@ export async function GET() {
     orientation: "portrait",
     // Splash: cream paper with the orange icon (the icon's own surface is the orange).
     background_color: "#FFFBF5",
-    theme_color: "#E0521A",
+    theme_color: "#C4461A",
     icons: [  // the orange Privat mark – opaque, so no launcher paints the corners black
       { src: "/icons/privat-icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
       { src: "/icons/privat-icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },

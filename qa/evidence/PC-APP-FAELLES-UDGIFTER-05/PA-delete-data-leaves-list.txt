@@ -1,0 +1,15 @@
+stack: web :3400 -> API :8400 (qa_privdeep_stack); user qa-pa-ev1-1794341628
+enable 200
+chat Gemt i «sommerhuset»: Mette betalte 1.200 kr. for mad.
+sommerhuset: 1.200 kr. i alt fordelt på 3 personer.
+- Anna betaler 400 kr. til Mette
+- Bo betaler 400 kr. til Mette
+Del listen «Udgifter: sommerhuset» med de andre, så kan de selv skrive deres udlæg – fx «Bo: 250 kr. – pizza».
+disable 200
+DELETE /privat/addons/faelles-udgifter/data -> 200 deleted= 1
+STILL THERE: Udgifter: sommerhuset ['Mette: 1.200 kr. – mad']
+enable flytning 200
+chat Flytning: Odense
+DELETE /privat/addons/flytning/data -> 200 deleted= 1
+STILL THERE: Flytning: Odense 12 items, e.g. ['Opsig lejemålet (typisk 3 måneders varsel) eller sæt boligen til salg (1. januar 2027)', 'Få tilbud fra flyttefirmaer – eller book en trailer (15. februar 2027)']
+STILL THERE: Udgifter: sommerhuset 1 items, e.g. ['Mette: 1.200 kr. – mad']

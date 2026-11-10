@@ -26,7 +26,7 @@ def save(db: OrmSession, ws_id: uuid.UUID, *, title: str, when: str | None = Non
     if not title:
         raise ValidationFailed("Hvad er det for en fest?", field_errors=[{"field": "title"}])
     rows = kit.items(db, ws_id, ADDON)
-    p = kit.find(rows, title, "title")
+    p = kit.find(rows, title, "title", exact=True)
     created = p is None
     if p is None:
         p = {"id": kit.new_id(), "title": title[:1].upper() + title[1:], "guests": [], "bring": []}

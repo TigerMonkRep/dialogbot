@@ -306,7 +306,9 @@
     "simulateReserve": "{name} reserva un deseo",
     "simulateActivated": "{name} crea su primera tarea propia",
     "welcomeBanner": "Pruébalo tú: ¿qué puedo resolver por ti?",
-    "welcomeDismiss": "Cerrar"
+    "welcomeDismiss": "Cerrar",
+    "open": "Abrir",
+    "shareWish": "Compartir la lista de deseos"
   },
   "move": {
     "label": "El recordatorio se ha movido",
@@ -464,7 +466,8 @@
     "queueNext": "¿Enviado? Siguiente: {name} ({i} de {n})",
     "queueBack": "Bienvenido de nuevo. Pulsa cuando estés listo para el siguiente.",
     "queueDone": "Los {n} están invitados.",
-    "done": "Listo"
+    "done": "Listo",
+    "roleWishGuest": "puede reservar"
   },
   "people": {
     "title": "Mi gente",
@@ -627,7 +630,8 @@
     "purposeReminder": "Recibir el recordatorio a tiempo",
     "purposeWishlist": "Compartir deseos sin estropear la sorpresa",
     "talk": "Hablar de la tarea",
-    "history": "Historial"
+    "history": "Historial",
+    "fromOwner": "De {name}"
   },
   "account": {
     "title": "Cuenta y créditos",
@@ -731,7 +735,9 @@
   "errors": {
     "emailNotVerified": "Confirma tu correo electrónico para usar Dialogbot Privat.",
     "verifyLink": "Confirmar correo",
-    "viewAs": "Las tareas privadas no se pueden ver en «Ver como cliente»."
+    "viewAs": "Las tareas privadas no se pueden ver en «Ver como cliente».",
+    "notEnabled": "Dialogbot Privat aún no está abierto para tu cuenta. Nada de lo que hagas aquí se guarda ni se ejecuta.",
+    "unavailable": "Ahora mismo no se puede acceder a Dialogbot Privat. Inténtalo de nuevo en un momento: no se ha guardado ni ejecutado nada."
   },
   "location": {
     "useMine": "Usar mi ubicación",
@@ -777,7 +783,8 @@
     "trialBadge": "{plan} · prueba, {n|1 día|# días} restantes",
     "trialBadgeShort": "{plan} · {n|1 día|# días}",
     "planBadge": "{plan}",
-    "noPlan": "Sin plan"
+    "noPlan": "Sin plan",
+    "trialDaysShort": "{n} d"
   },
   "day2": {
     "eyebrow": "Tu asistente personal",
@@ -842,7 +849,10 @@
       "newInStore": "Nuevo en la Tienda",
       "see": "Ver →"
     },
-    "noAnswerPlan": "Nadie contestó – la llamada no cuenta"
+    "noAnswerPlan": "Nadie contestó – la llamada no cuenta",
+    "greetingShort": "Puedo recordarte cosas, hacer listas y llamar por ti. ¿Qué has ido dejando para después?",
+    "yourTurnOf": "Tu turno · 1 de {n}",
+    "allTasks": "Todas las tareas"
   },
   "store": {
     "metaTitle": "La Tienda",
@@ -1587,6 +1597,43 @@
     "yourApps": "Tus apps",
     "all": "Todas ({n})",
     "stripStep": "Paso {n} de {total} – continuar la configuración",
-    "accountLine": "{n|1 app activada|# apps activadas}"
+    "accountLine": "{n|1 app activada|# apps activadas}",
+    "allOn": "Tienes todas las apps. Llegan nuevas con frecuencia.",
+    "sayLike": "Di, por ejemplo, «{example}»"
+  },
+  "familyHousehold": {
+    "title": "Hogar",
+    "count": "{count} de {limit} personas",
+    "ownerText": "Familia cubre hasta {limit} personas. Cada una tiene su propia cuenta: nadie ve las cosas de los demás.",
+    "invite": "Invitar al hogar",
+    "smsText": "Estas en mi Dialogbot Familia - unete aqui: {link}",
+    "me": "tú",
+    "remove": "Quitar",
+    "removeConfirm": "¿Quitar a {name} del hogar? {name} pierde Familia al instante, pero conserva sus cosas.",
+    "memberLine": "Estás en la Familia de {name}.",
+    "leave": "Salir del hogar",
+    "leaveConfirm": "¿Salir del hogar? Pierdes Familia al instante. Tus cosas se quedan.",
+    "left": "Has salido del hogar.",
+    "paused": "El hogar está en pausa: necesita Familia.",
+    "full": "El hogar está completo.",
+    "inviteTitle": "Únete a la Familia de {name}",
+    "inviteText": "Recibes el plan Familia en tu propia cuenta. {name} no puede ver tus cosas.",
+    "join": "Unirme",
+    "joined": "Estás en el hogar."
+  },
+  "myData": {
+    "title": "Tus datos",
+    "exportText": "Recibe por e-mail todo lo que guardamos sobre ti.",
+    "export": "Exportar mis datos",
+    "queued": "Estamos reuniendo tus datos. Recibirás un e-mail con un enlace.",
+    "ready": "Tus datos están listos.",
+    "download": "Descargar tus datos",
+    "expired": "El enlace ha caducado. Vuelve a pedir tus datos.",
+    "delete": "Eliminar mi cuenta",
+    "deleteText": "Se elimina todo en Dialogbot Privat y tu suscripción se detiene. No se puede deshacer.",
+    "deleteLabel": "Escribe tu e-mail para confirmar",
+    "deleteConfirm": "Eliminar todo para siempre",
+    "cancel": "Cancelar",
+    "deleting": "Eliminando…"
   }
 }

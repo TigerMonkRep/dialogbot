@@ -33,15 +33,14 @@ const OUTLINE = "inline-flex items-center justify-center gap-2 rounded-full font
 export const appHref = (a: Addon) => (a.enabled || a.disabled_at ? `/privat/apps/${encodeURIComponent(a.key)}` : `/privat/butik/${encodeURIComponent(a.key)}`);
 const setupLeft = (a: Addon) => !!a.setup && a.setup.total > 0 && a.setup.done < a.setup.total;
 
-/** Tile colours per app (designer's choice: the app keeps its own colour everywhere), 2 px outline + block shadow. */
-const TILES = ["bg-accent text-white", "bg-ink text-paper", "bg-success-soft text-ink", "bg-highlight text-ink", "bg-panel-deep text-ink"];
-export function appTile(key: string): string {
-  let h = 0; for (const ch of key) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  return TILES[h % TILES.length];
+/** One tile for every app: white icon on the accent (brand.md «ikoner: hvide på accent-flise»; ux-audit #9). The icon
+ *  tells the apps apart, not a colour – yellow stays «her er du». */
+export function appTile(_key: string): string {
+  return "bg-accent text-white";
 }
 export function AppTile({ a, size = 48 }: { a: Addon; size?: number }) {
   const soon = a.status === "coming_soon";
-  return <Tile name={iconFor(a.icon)} size={size} className={`${soon ? "bg-panel text-ink border-dashed" : appTile(a.key)} rounded-[14px] border-2 border-ink ${soon ? "" : "shadow-block-sm"}`} />;
+  return <Tile name={iconFor(a.icon)} size={size} className={`${soon ? "bg-panel text-ink border-dashed" : appTile(a.key)} rounded-[14px] border-2 border-ink`} />;
 }
 
 /** The one label per app: Slået til · Gratis · Med i alle planer · Plus · Familie · Kommer snart. */
@@ -95,6 +94,9 @@ function AppRow({ a, line, variant = "shop" }: { a: Addon; line?: string | null;
   const t = useT("privat");
   const name = addonText(t, a, "name");
   const kept = variant === "kept";
+  // In the shop the plan badge only shows when the plan does NOT cover the app – «Plus · Familie» on every row of a
+  // Plus trial was noise (ux-audit #9).
+  const included = addonIncluded(a, usePlan().entitled);
   return (
     <li className="min-w-0">
       <Link href={appHref(a)} data-testid={`app-row-${a.key}`}
@@ -103,8 +105,7 @@ function AppRow({ a, line, variant = "shop" }: { a: Addon; line?: string | null;
         <span className="flex-1 min-w-0 flex flex-col gap-1">
           <span className="font-semibold text-[16px] leading-tight [overflow-wrap:anywhere]">{name}</span>
           <span className="text-[14px] text-ink-soft leading-snug line-clamp-2 [overflow-wrap:anywhere]">{line ?? addonText(t, a, "tagline")}</span>
-          {variant === "shop" && <span className="flex gap-1.5 flex-wrap"><AppBadge a={a} /></span>}
-          {variant === "mine" && setupLeft(a) && <span><Pill tone="highlight">{t("apps.stepPill", { n: (a.setup?.done ?? 0) + 1 })}</Pill></span>}
+          {variant === "shop" && (a.status === "coming_soon" || !included) && <span className="flex gap-1.5 flex-wrap"><AppBadge a={a} /></span>}
           {kept && <span><Pill tone="soon">{t("apps.keptPill")}</Pill></span>}
         </span>
         <Ico name="chevron" size={18} className="text-ink-soft" />
@@ -137,9 +138,11 @@ export function ShopPage() {
   const [cat, setCat] = useState<string>("alle");
   const all = addons ?? [];
   const on = all.filter((a) => a.enabled).length;
-  const groups = CATEGORIES.map((c) => ({ c, apps: all.filter((a) => a.category === c).sort((x, y) => Number(x.status === "coming_soon") - Number(y.status === "coming_soon")) }))
+  // Butikken shows what you do not have yet; what is on (or switched off with data kept) lives in Mine apps.
+  const avail = all.filter((a) => !a.enabled && !a.disabled_at);
+  const groups = CATEGORIES.map((c) => ({ c, apps: avail.filter((a) => a.category === c).sort((x, y) => Number(x.status === "coming_soon") - Number(y.status === "coming_soon")) }))
     .filter((g) => g.apps.length > 0 && (cat === "alle" || g.c === cat));
-  const others = all.filter((a) => !CATEGORIES.includes(a.category as (typeof CATEGORIES)[number]));
+  const others = avail.filter((a) => !CATEGORIES.includes(a.category as (typeof CATEGORIES)[number]));
   const pick = all.find((a) => !a.enabled && !a.disabled_at && a.status !== "coming_soon" && a.requires_plan);
   return (
     <div className={PAGE} aria-labelledby="shop-h">
@@ -153,10 +156,10 @@ export function ShopPage() {
         <>
           <PlanLine all={all} />
           <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1" role="group" aria-label={t("apps.filterLabel")}>
-            {["alle", ...CATEGORIES].map((c) => (
+            {["alle", ...CATEGORIES.filter((c) => avail.some((a) => a.category === c))].map((c) => (
               <button key={c} type="button" aria-pressed={cat === c} onClick={() => setCat(c)}
                 className={`${CHIP} shrink-0 ${cat === c ? "!bg-ink !text-paper" : ""}`}>
-                {t(`apps.cat.${c}`)}{c === "alle" && <span className="text-[12px] opacity-80">{all.length}</span>}
+                {t(`apps.cat.${c}`)}{c === "alle" && <span className="text-[12px] opacity-80">{avail.length}</span>}
               </button>
             ))}
           </div>
@@ -172,10 +175,11 @@ export function ShopPage() {
             <section key={g.c} className="flex flex-col gap-2.5" aria-labelledby={`cat-${g.c}`}>
               <h2 id={`cat-${g.c}`} className="m-0 text-[17px] font-display font-bold flex items-baseline gap-2">{t(`apps.cat.${g.c}`)} <span className="text-[13px] font-body font-semibold text-muted">{t("apps.count", { n: g.apps.length })}</span></h2>
               <ul className="m-0 p-0 list-none grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5">
-                {g.apps.map((a) => <AppRow key={a.key} a={a} line={a.enabled ? a.summary_line : null} />)}
+                {g.apps.map((a) => <AppRow key={a.key} a={a} />)}
               </ul>
             </section>
           ))}
+          {avail.length === 0 && mode !== "loading" && <p className="m-0 text-[15px] text-ink-soft" data-testid="shop-all-on">{t("apps.allOn")}</p>}
           {others.length > 0 && cat === "alle" && (
             <ul className="m-0 p-0 list-none grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5">{others.map((a) => <AppRow key={a.key} a={a} />)}</ul>
           )}
@@ -308,23 +312,19 @@ export function ShopItemPage({ appKey }: { appKey: string }) {
   );
 }
 
-/** Hvad den gør → Sig det til Peter → Sådan virker den → Du skal bruge → Den får lov til → Dine data. */
+/** Byggevejledning order: Hvad den gør (one short paragraph) → Du skal bruge → Sådan virker den (3 steps) → «Hvad må
+ *  den?» folded (permissions + what is kept). The example sentence for Peter lives on the app's own page. */
 function AboutApp({ a, compact = false }: { a: Addon; compact?: boolean }) {
   const t = useT("privat");
   const name = addonText(t, a, "name");
   const steps = a.steps ?? [];
   return (
     <>
-      <div className="rounded-[18px] border-[1.5px] border-ink bg-panel p-4 flex flex-col gap-1">
+      <section className="flex flex-col gap-1" aria-label={t("store.what")}>
         <Eyebrow>{t("store.what")}</Eyebrow>
-        <p className="m-0 text-[16px] leading-normal">{a.what || addonText(t, a, "description")}</p>
-      </div>
-      {a.example && !compact && (
-        <div className="rounded-[18px] border-[1.5px] border-ink bg-paper p-4 flex flex-col gap-1">
-          <Eyebrow>{t("apps.sayTo")}</Eyebrow>
-          <p className="m-0 text-[17px] font-semibold leading-normal">«{a.example.replace(/^«|»$/g, "")}»</p>
-        </div>
-      )}
+        <p className="m-0 text-[17px] leading-normal text-ink-soft max-w-[40rem]">{a.what || addonText(t, a, "description")}</p>
+      </section>
+      {(a.needs?.length ?? 0) > 0 && !compact && <Needs a={a} />}
       {steps.length > 0 && !compact && (
         <section className="flex flex-col gap-2.5" aria-labelledby={`how-${a.key}`}>
           <h2 id={`how-${a.key}`} className="m-0 eyebrow">{t("apps.how")}</h2>
@@ -333,17 +333,24 @@ function AboutApp({ a, compact = false }: { a: Addon; compact?: boolean }) {
           </ol>
         </section>
       )}
-      {(a.needs?.length ?? 0) > 0 && !compact && <Needs a={a} />}
-      {a.permissions.length > 0 && (
-        <section className="flex flex-col gap-2" aria-labelledby={`perm-${a.key}`}>
-          <h2 id={`perm-${a.key}`} className="m-0 eyebrow">{t("apps.permissions")}</h2>
-          <ul className="m-0 p-0 list-none flex flex-col gap-2">
-            {a.permissions.map((x) => <li key={x} className="flex gap-2.5 text-[15px]"><span className="text-accent mt-0.5"><Ico name="check" size={18} stroke={2.6} /></span><span className="min-w-0">{x}</span></li>)}
-            <li className="flex gap-2.5 text-[15px] text-ink-soft"><span className="mt-0.5 font-bold" aria-hidden>‖</span><span className="min-w-0">{t("apps.dataKept", { name })}</span></li>
-          </ul>
-        </section>
-      )}
+      {a.permissions.length > 0 && <Permissions a={a} name={name} />}
     </>
+  );
+}
+
+/** «Hvad må den?» – folded; a chevron shows it opens. Permissions plus the data note (an icon, never a glyph). */
+function Permissions({ a, name }: { a: Addon; name: string }) {
+  const t = useT("privat");
+  return (
+    <details className="group rounded-[18px] border-[1.5px] border-ink bg-paper px-4">
+      <summary className="cursor-pointer list-none font-semibold text-[15px] min-h-[52px] flex items-center gap-2 [&::-webkit-details-marker]:hidden">
+        <span className="flex-1">{t("apps.permissions")}</span><Ico name="chevron" size={18} className="rotate-90 group-open:-rotate-90 transition-transform motion-reduce:transition-none" />
+      </summary>
+      <ul className="m-0 pb-4 p-0 list-none flex flex-col gap-2">
+        {a.permissions.map((x) => <li key={x} className="flex gap-2.5 text-[15px]"><span className="text-accent mt-0.5"><Ico name="check" size={18} stroke={2.6} /></span><span className="min-w-0">{x}</span></li>)}
+        <li className="flex gap-2.5 text-[15px] text-ink-soft"><span className="mt-0.5"><Ico name="shield" size={18} /></span><span className="min-w-0">{t("apps.dataKept", { name })}</span></li>
+      </ul>
+    </details>
   );
 }
 
@@ -605,7 +612,7 @@ export function AppPage({ appKey }: { appKey: string }) {
       <div className="flex flex-col gap-1 min-w-0">
         <h1 className="m-0 font-display font-extrabold text-[30px] leading-tight [overflow-wrap:anywhere]">{name}</h1>
         <span className="flex items-center gap-2 flex-wrap text-[14px] text-ink-soft">
-          {a.enabled ? <><AppBadge a={a} />{a.enabled_at && <span>{t("apps.since", { date: f.date(a.enabled_at) })}</span>}</> : <Pill tone="soon">{t("apps.keptPill")}</Pill>}
+          {a.enabled ? <AppBadge a={a} /> : <Pill tone="soon">{t("apps.keptPill")}</Pill>}
         </span>
       </div>
     </header>
@@ -647,57 +654,57 @@ export function AppPage({ appKey }: { appKey: string }) {
   }
   const steps = a.steps ?? [];
   const done = a.setup?.done ?? steps.length;
+  const hasPanel = !!panel && mode !== "demo";
+  const setupLeftNow = done < steps.length;
+  const stepActions = (
+    <div className="flex items-center gap-x-4 gap-y-1 flex-wrap">
+      <button type="button" className={LINK} disabled={busy} onClick={() => void step(done + 1)} data-testid="step-done">{done + 1 === steps.length ? t("apps.stepFinish") : t("apps.stepDone")}</button>
+      <button type="button" className={`${LINK} !text-ink-soft`} onClick={() => void step(steps.length)} disabled={busy}>{t("apps.skipSetup")}</button>
+    </div>
+  );
+  // ux-audit #7: an app with a panel shows YOUR things first and the setup as one yellow line; an app without a panel
+  // keeps the step card. One orange button per screen: «Spørg Peter» on the step card, otherwise the panel's own.
   return (
-    <div className={`${PAGE} xl:grid xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:gap-8 xl:items-start`} data-testid="app-page">
-      <div className="flex flex-col gap-5 min-w-0">
-        {back}{head}
-        {done < steps.length ? (
-          <section className="rounded-[20px] border-2 border-ink bg-paper shadow-block p-4 flex flex-col gap-3" aria-labelledby="setup-h" data-testid="app-setup">
-            <div className="flex items-start gap-3"><StepSquare n={done + 1} size={48} /><span className="flex flex-col"><Eyebrow>{t("apps.stepOf", { n: done + 1, total: steps.length })}</Eyebrow><span id="setup-h" className="font-display font-bold text-[19px] leading-snug">{steps[done]}</span></span></div>
-            {done === 0 && (a.needs?.length ?? 0) > 0 && <Needs a={a} />}
-            <div className="flex flex-wrap gap-2">
-              <button type="button" className={PRIMARY} onClick={() => ask(a.example)}>{t("apps.ask")}</button>
-              <Button variant="outline" className="border-2 rounded-full min-h-[52px]" disabled={busy} onClick={() => void step(done + 1)} data-testid="step-done">{done + 1 === steps.length ? t("apps.stepFinish") : t("apps.stepDone")}</Button>
-            </div>
-            <button type="button" className={`${LINK} text-[14px]`} onClick={() => void step(steps.length)} disabled={busy}>{t("apps.skipSetup")}</button>
+    <div className="w-full max-w-[760px] mx-auto px-4 pt-5 pb-28 xl:pb-10 flex flex-col gap-5" data-testid="app-page">
+      {back}{head}
+      {hasPanel ? (
+        <>
+          {setupLeftNow && (
+            <section className="rounded-[14px] border-[1.5px] border-ink bg-highlight px-3.5 py-2.5 flex flex-col gap-1" aria-labelledby="setup-h" data-testid="app-setup">
+              <p id="setup-h" className="m-0 text-[15px] leading-snug"><b>{t("apps.stepOf", { n: done + 1, total: steps.length })}:</b> {steps[done]}</p>
+              {stepActions}
+            </section>
+          )}
+          <section className="flex flex-col gap-3" aria-labelledby="settings-h">
+            <h2 id="settings-h" className="sr-only">{t("apps.settings")}</h2>
+            {panel!()}
           </section>
-        ) : (
-          <section className="rounded-[20px] border-2 border-ink bg-paper shadow-block p-4 flex flex-col gap-2.5" aria-labelledby="next-h" data-testid="app-next">
-            <Eyebrow>{t("apps.next")}</Eyebrow>
-            <p id="next-h" className="m-0 font-display font-extrabold text-[24px] leading-tight [overflow-wrap:anywhere]">{a.summary_line ?? addonText(t, a, "tagline")}</p>
-            <button type="button" className={PRIMARY} onClick={() => ask(a.example)}>{t("apps.ask")}</button>
-            <p className="m-0 text-[13px] text-ink-soft">{t("apps.nextHelp")}</p>
-          </section>
-        )}
-        {a.example && (
-          <section className="flex flex-col gap-2" aria-labelledby="say-h">
-            <h2 id="say-h" className="m-0 eyebrow">{t("apps.sayTo")}</h2>
-            <button type="button" className={`${CHIP} self-start !whitespace-normal max-w-full text-left !h-auto py-2`} onClick={() => ask(a.example)}>«{a.example.replace(/^«|»$/g, "")}»</button>
-          </section>
-        )}
-        {err && <p role="alert" className="m-0 text-[14px] text-danger font-semibold">{err}</p>}
-      </div>
-      <div className="flex flex-col gap-5 min-w-0">
-        {panel && mode !== "demo" && (
-          <section className="rounded-[20px] border-2 border-ink bg-panel p-4 flex flex-col gap-3" aria-labelledby="settings-h">
-            <h2 id="settings-h" className="m-0 eyebrow">{t("apps.settings")}</h2>
-            {panel()}
-          </section>
-        )}
-        {a.permissions.length > 0 && (
-          <details className="rounded-[18px] border-[1.5px] border-ink p-3.5">
-            <summary className="cursor-pointer font-semibold min-h-[44px] flex items-center">{t("apps.permissions")}</summary>
-            <ul className="m-0 mt-1 p-0 list-none flex flex-col gap-2">{a.permissions.map((x) => <li key={x} className="flex gap-2.5 text-[15px]"><span className="text-accent mt-0.5"><Ico name="check" size={18} stroke={2.6} /></span>{x}</li>)}</ul>
-          </details>
-        )}
-        {mode !== "demo" && (
-          <section className="flex flex-col gap-2 border-t-[1.5px] border-line pt-4" aria-labelledby="off-h">
-            <h2 id="off-h" className="m-0 text-[16px] font-semibold">{t("apps.offTitle", { name })}</h2>
-            <p className="m-0 text-[14px] text-ink-soft">{t("apps.offText")}</p>
-            <Button variant="outline" className="self-start border-2 rounded-full" onClick={() => setOff(true)} data-testid="disable-app">{t("addons.disable")}</Button>
-          </section>
-        )}
-      </div>
+          <Button variant="outline" className="rounded-full self-start" onClick={() => ask(a.example)}>{t("apps.ask")}</Button>
+        </>
+      ) : setupLeftNow ? (
+        <section className="rounded-[20px] border-2 border-ink bg-paper shadow-block p-4 flex flex-col gap-3" aria-labelledby="setup-h" data-testid="app-setup">
+          <div className="flex items-start gap-3"><StepSquare n={done + 1} size={48} /><span className="flex flex-col"><Eyebrow>{t("apps.stepOf", { n: done + 1, total: steps.length })}</Eyebrow><span id="setup-h" className="font-display font-bold text-[19px] leading-snug">{steps[done]}</span></span></div>
+          {done === 0 && (a.needs?.length ?? 0) > 0 && <Needs a={a} />}
+          <Button className={`${BIG} rounded-full`} onClick={() => ask(a.example)}>{t("apps.ask")}</Button>
+          {a.example && <p className="m-0 text-[14px] text-ink-soft">{t("apps.sayLike", { example: a.example.replace(/^«|»$/g, "") })}</p>}
+          {stepActions}
+        </section>
+      ) : (
+        <section className="rounded-[20px] border-2 border-ink bg-paper shadow-block p-4 flex flex-col gap-2.5" aria-labelledby="next-h" data-testid="app-next">
+          <Eyebrow>{t("apps.next")}</Eyebrow>
+          <p id="next-h" className="m-0 font-display font-extrabold text-[24px] leading-tight [overflow-wrap:anywhere]">{a.summary_line ?? addonText(t, a, "tagline")}</p>
+          <Button className={`${BIG} rounded-full`} onClick={() => ask(a.example)}>{t("apps.ask")}</Button>
+          {a.example && <p className="m-0 text-[14px] text-ink-soft">{t("apps.sayLike", { example: a.example.replace(/^«|»$/g, "") })}</p>}
+        </section>
+      )}
+      {err && <p role="alert" className="m-0 text-[14px] text-danger font-semibold">{err}</p>}
+      {a.permissions.length > 0 && <Permissions a={a} name={name} />}
+      {mode !== "demo" && (
+        <div className="flex items-center gap-3 flex-wrap border-t-[1.5px] border-line pt-4">
+          <p className="m-0 flex-1 min-w-[12rem] text-[14px] text-ink-soft">{t("apps.offText")}</p>
+          <Button variant="outline" className="border-2 rounded-full" onClick={() => setOff(true)} data-testid="disable-app">{t("addons.disable")}</Button>
+        </div>
+      )}
       {off && <DisableSheet a={a} onClose={() => setOff(false)} />}
     </div>
   );

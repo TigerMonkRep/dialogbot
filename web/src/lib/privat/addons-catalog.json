@@ -479,7 +479,7 @@
     "pricing": "free",
     "monthly_price_minor": null,
     "status": "available",
-    "what": "Fortæl Peter, når du køber noget dyrt. Han husker butik og dato, minder dig om det, før de 2 års reklamationsret udløber, og skriver reklamationen, når noget går i stykker. Gem selv kvitteringen.",
+    "what": "Fortæl Peter, når du køber noget dyrt. Han husker butik og dato, minder dig om det, før de 2 års reklamationsret udløber, og skriver reklamationen, når noget går i stykker. Tilføj gerne et foto af kvitteringen ved tingen.",
     "example": "«Jeg købte en vaskemaskine i Elgiganten den 3. maj til 4.999 kr.»",
     "steps": [
       "Sig hvad du købte, hvor og hvornår",
@@ -489,7 +489,7 @@
     "needs": [],
     "permissions": [
       "Gemmer ting, butik, dato og pris, som du selv skriver dem",
-      "Gemmer ikke billeder af kvitteringer"
+      "Gemmer et foto af kvitteringen, hvis du selv tilføjer ét – det slettes med tingen eller appens data"
     ],
     "requires": [],
     "included_in": [

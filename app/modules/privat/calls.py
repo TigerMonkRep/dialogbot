@@ -740,11 +740,44 @@ def handle_call_due(db: OrmSession, ev) -> None:
     task = db.get(PrivateTask, c.task_id)
     if task is None or task.status in ("declined", "done"):
         return
+    # The approval was given hours or days ago: check again, right before dialling, that it still holds (PC-CALL-06).
+    if (why := _still_allowed(db, c)) is not None:
+        _not_dialled(db, c, task, why)
+        db.commit()
+        return
     c.status = "approved"
     task.status, task.next_step = "in_progress", "Assistenten ringer op"
     service.event(db, task, "Virksomheden har åbnet – assistenten ringer nu")
     db.commit()
     dial(db, c.id)
+
+
+def _still_allowed(db: OrmSession, c: PrivateCall) -> str | None:
+    """Why a scheduled call may no longer be made (None = go): «Ring for mig» switched off, the user's mobile no longer
+    verified, or – for a call paid by the plan – the plan (or trial) has ended."""
+    if not addons.is_enabled(db, c.workspace_id, ADDON):
+        return "«Ring for mig» er slået fra"
+    profile = db.scalar(select(PrivateProfile).where(PrivateProfile.workspace_id == c.workspace_id))
+    if profile is None or profile.phone_verified_at is None or not profile.phone_e164:
+        return "dit mobilnummer er ikke bekræftet"
+    if c.paid_via == "plan" and not subscriptions.entitlements(db, c.workspace_id)["entitled"]:
+        return "dit abonnement er udløbet"
+    return None
+
+
+def _not_dialled(db: OrmSession, c: PrivateCall, task: PrivateTask, why: str) -> None:
+    """A scheduled call that will not be made: nothing dialled, nothing used (credits released), the user decides."""
+    c.status, c.result, c.ended_reason, c.ended_at = "failed", "failed", why[:100], _now()  # failed: never counted
+    if c.paid_via != "plan":
+        ledger.add(db, c.workspace_id, kind="release", amount=rules.CALL_CREDITS, source_ref=f"call:{c.id}:release",
+                   task_id=task.id, text="Planlagt opkald ikke foretaget – reservation frigivet")
+    text = f"Jeg ringede ikke til {c.business_name}: {why}. Der er ikke brugt noget"
+    task.status, task.next_step, task.who, task.usage_text, task.due_at = "awaiting_user", "Prøv igen eller annullér", \
+        "Dig", "Intet forbrug", None
+    service.event(db, task, text)
+    service.touch(task)
+    service.add_message(db, c.workspace_id, kind="text", text=f"{text}.", task_id=task.id)
+    service.notify_owner(db, task, subject=f"Opkald til {c.business_name}", text=f"{text}.", dedupe=f"call:{c.id}:not-dialled")
 
 
 def handle_call_ask(db: OrmSession, ev) -> None:

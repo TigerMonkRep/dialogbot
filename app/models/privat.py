@@ -700,3 +700,48 @@ class PrivateBusinessReferral(Base):
         Index("ix_private_business_referrals_phone", "business_phone_e164"),
         Index("ix_private_business_referrals_ws", "workspace_id"),
     )
+
+
+class PrivateHouseholdMember(Base):
+    """Familie (app/modules/privat/household.py): one person in the household of a Familie subscriber – at most 4
+    members besides the owner («Op til 5 personer»). Membership lends the owner's plan rights (apps, the household's
+    shared call quota); it NEVER gives access to anybody's data: each person keeps their own personal workspace.
+    A person is in at most one household (unique member). Rights are derived live from the owner's subscription, so
+    removal, leaving, a downgrade or a cancellation takes effect at once; the row stays through a downgrade (the
+    household is paused) and is deleted on removal, leaving or account deletion."""
+
+    __tablename__ = "private_household_members"
+    __table_args__ = (
+        CheckConstraint("owner_workspace_id <> member_workspace_id", name="ck_private_household_members_self"),
+        Index("ix_private_household_members_owner", "owner_workspace_id", "joined_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    owner_workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"),
+                                                          nullable=False)
+    member_workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"),
+                                                           nullable=False, unique=True)
+    invite_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("private_invites.id", ondelete="SET NULL"))
+    joined_at: Mapped[datetime] = ts_now()
+
+
+class PrivateDataExport(Base):
+    """«Eksportér mine data» (app/modules/privat/gdpr.py): built by the worker, fetched with a link from an e-mail.
+    Only the SHA-256 of the link's token is kept; the content is wiped when the link expires (or the account is
+    deleted – the row cascades with the user)."""
+
+    __tablename__ = "private_data_exports"
+    __table_args__ = (
+        CheckConstraint("status in ('queued','ready','expired','failed')", name="ck_private_data_exports_status"),
+        Index("ix_private_data_exports_user", "user_id", "requested_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="queued")
+    token_hash: Mapped[str | None] = mapped_column(String(64), unique=True)
+    data: Mapped[dict | None] = mapped_column(JSONB)
+    requested_at: Mapped[datetime] = ts_now()
+    ready_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    downloaded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

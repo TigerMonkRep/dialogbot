@@ -1,0 +1,20 @@
+{
+  "open": true,
+  "codes": [
+    200,
+    200,
+    200,
+    200
+  ],
+  "status": "in_progress",
+  "events": [
+    "Forslag til opkald oprettet",
+    "Du godkendte opkaldet. Opkald 1 af 10 i Plus."
+  ],
+  "dialled": [
+    {
+      "to": "+4586123456",
+      "first": "Hej, jeg ringer fra Dialogbot på vegne af Mette Hansen. Jeg er en digital assistent. Det drejer sig om: aflever cyklen torsdag efter kl. 15. Har du et øjeblik?"
+    }
+  ]
+}

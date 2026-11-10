@@ -1,0 +1,6 @@
+2 x POST /privat/subscription/checkout (parallel, as a double-tap): [200, 200]
+pay cs_test_qa_ccfea5bebb1242c6bc0b -> 303
+pay cs_test_qa_c67a278ba77d4ab3acca -> 303
+fake Stripe sessions for this user: [('cs_test_qa_ccfea5bebb1242c6bc0b', 'complete', 'sub_qa_b0a9d4e2ee1e', 14), ('cs_test_qa_c67a278ba77d4ab3acca', 'complete', 'sub_qa_0e6e38f58237', 14)]
+private_subscriptions row: [('trial', 'plus', 'sub_qa_0e6e38f58237')]
+3rd checkout after both complete: 200 {"url":"http://localhost:8400/__qa/stripe/pay/cs_test_qa_f89d0d3c93864b2ab287"}

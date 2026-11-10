@@ -4,10 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { useT } from "@/i18n/client";
 import { ADDON, type Task, type TaskStatus } from "@/lib/privat/api";
 import { isDanishMobile } from "@/lib/privat/fake";
-import { CHIP, Ex, SR, TONE } from "./bits";
+import { BIG, CHIP, Ex, LINK, SR, TONE } from "./bits";
 import { Ico, Tile } from "./icons";
 import { useFmt, usePlan, usePrivat } from "./store";
-import { AppsStrip } from "./apps";
 import { Button } from "@/components/ui";
 import { currentPushState, enablePush } from "@/lib/privat/push";
 import { isStandalone, takeNotifyPending } from "@/lib/install";
@@ -37,7 +36,7 @@ export function Shortcuts() {
 }
 
 /** Text field + mic (+ send). One draft is shared by Min dag and Samtale; sending from Min dag opens the conversation. */
-export function Composer({ withSend = true, id = "privat-ask" }: { withSend?: boolean; id?: string }) {
+export function Composer({ withSend = true, id = "privat-ask", quiet = false }: { withSend?: boolean; id?: string; quiet?: boolean }) {
   const t = useT("privat");
   const { draft, setDraft, send, openSheet, focusId, task, busy } = usePrivat();
   return (
@@ -50,31 +49,27 @@ export function Composer({ withSend = true, id = "privat-ask" }: { withSend?: bo
         className="inline-flex items-center justify-center w-[52px] h-[52px] rounded-full border-2 border-ink bg-paper hover:bg-panel shrink-0"><Ico name="mic" size={22} /></button>
       {withSend ? (
         <button type="submit" aria-label={t("day.sendAria")} disabled={busy}
-          className="inline-flex items-center justify-center h-[52px] min-w-[52px] px-0 sm:px-5 rounded-full border-2 border-ink bg-accent text-white hover:bg-accent-deep shrink-0 disabled:opacity-60 font-semibold text-[15px]">
+          className={`inline-flex items-center justify-center h-[52px] min-w-[52px] px-0 sm:px-5 rounded-full border-2 border-ink shrink-0 disabled:opacity-60 font-semibold text-[15px] ${quiet ? "bg-paper text-ink hover:bg-panel" : "bg-accent text-white hover:bg-accent-deep"}`}>
           <span className="hidden sm:inline">{t("day2.send")}</span><Ico name="send" size={22} stroke={2.4} /></button>
       ) : <button type="submit" className={SR}>{t("day.sendAria")}</button>}
     </form>
   );
 }
 
-/** «Hvad skal jeg klare for dig?» – Peter's card with greeting, chips and the composer. */
-function ChatCard() {
+/** Peter at the bottom of Min dag (thumb zone, sticky over the tabs on a phone). Empty day: Peter's greeting and the
+ *  three shortcuts; otherwise only the composer. Its send button is quiet when «Din tur» holds the screen's one primary. */
+function AskDock({ empty, quiet }: { empty: boolean; quiet: boolean }) {
   const t = useT("privat");
   const { mode } = usePrivat();
   return (
-    <div className={`${DAY_CARD} shadow-block`} data-testid="day-chat-card">
-      <div className="flex items-center gap-3">
-        <span className="w-11 h-11 rounded-full bg-accent text-white border-2 border-ink font-display font-extrabold text-[18px] inline-flex items-center justify-center shrink-0" aria-hidden>P</span>
-        <span className="flex flex-col min-w-0"><span className="font-display font-bold text-[17px]">{t("day2.peter")}</span><span className="text-[13px] text-muted">{t("day2.peterRole")}</span></span>
-        <span className="flex-1" />
-        <span className="inline-flex items-center gap-1.5 min-h-6 px-2.5 rounded-full border-[1.5px] border-success bg-success-soft text-success text-[11px] font-semibold uppercase tracking-[0.06em]"><span className="w-2 h-2 rounded-full bg-success" aria-hidden />{t("day2.ready")}</span>
-      </div>
-      <div className="flex items-start gap-2.5">
-        <span className="w-7 h-7 rounded-full bg-panel-deep border-[1.5px] border-ink font-display font-extrabold text-[12px] inline-flex items-center justify-center shrink-0 mt-0.5" aria-hidden>P</span>
-        <p className="m-0 bg-panel rounded-[18px_18px_18px_6px] px-4 py-3 text-[16px] leading-[1.45] [overflow-wrap:anywhere]">{mode === "demo" ? t("day2.greetingDemo") : t("day2.greeting")}</p>
-      </div>
-      <Shortcuts />
-      <Composer id="privat-ask-day" />
+    <div className="sticky bottom-0 z-10 -mx-4 px-4 pt-3 pb-3 bg-paper border-t-2 border-ink xl:static xl:mx-0 xl:px-0 xl:pb-0 xl:border-t-0 flex flex-col gap-3" data-testid="day-chat-card">
+      {(empty || mode === "demo") && (
+        <>
+          <p className="m-0 self-start max-w-[34rem] bg-panel rounded-[18px_18px_18px_6px] px-4 py-3 text-[16px] leading-[1.45] [overflow-wrap:anywhere]">{mode === "demo" ? t("day2.greetingDemo") : t("day2.greetingShort")}</p>
+          <Shortcuts />
+        </>
+      )}
+      <Composer id="privat-ask-day" quiet={quiet} />
     </div>
   );
 }
@@ -102,33 +97,20 @@ function YourTurn() {
     finally { setBusy(false); }
   };
   const usage = x ? (plan.entitled && plan.callsQuota > 0 && x.kind === "call" ? t("day2.callQuota", { used: plan.callsUsed + 1, quota: plan.callsQuota, plan: plan.rightsName }) : x.usage_text) : "";
+  if (!x) return null;
   return (
-    <div className={`${DAY_CARD} bg-panel`} data-testid="your-turn">
-      <div className="flex items-center gap-2">
-        <span className="w-8 h-8 rounded-full bg-highlight border-2 border-ink inline-flex items-center justify-center" aria-hidden><Ico name="bell" size={16} /></span>
-        <span className="eyebrow">{t("day2.yourTurn")}</span>
-        <span className="flex-1" />
-        <span className="text-[13px] font-semibold text-muted">{t("day2.yourTurnCount", { n: aw.length })}</span>
+    <section className={`${DAY_CARD} shadow-block`} data-testid="your-turn" aria-labelledby="your-turn-h">
+      <span className="eyebrow">{aw.length > 1 ? t("day2.yourTurnOf", { n: aw.length }) : t("day2.yourTurn")}</span>
+      <h2 id="your-turn-h" className="m-0 font-display font-extrabold text-[21px] leading-tight [overflow-wrap:anywhere]">{x.title}{x.is_example && <> <Ex /></>}</h2>
+      <p className="m-0 text-[15px] leading-[1.45] text-ink-soft [overflow-wrap:anywhere]">{proposal && c ? t("call.ask", { name: c.business_name }) : x.next_step}</p>
+      {proposal ? <Button className={`${BIG} rounded-full w-full sm:w-auto sm:self-start`} disabled={busy} onClick={quick}>{t("day2.yesCall")}</Button>
+        : x.status === "draft" ? <Button className={`${BIG} rounded-full w-full sm:w-auto sm:self-start`} onClick={() => openSheet({ kind: "paywall", taskId: x.id })}>{t("day2.chooseHow")}</Button>
+        : <Button className={`${BIG} rounded-full w-full sm:w-auto sm:self-start`} onClick={() => talk(x.id)}>{t("day2.answer")}</Button>}
+      <div className="flex items-center gap-4 flex-wrap">
+        <button type="button" onClick={() => talk(x.id)} className={LINK}>{t("day2.editPlan")}</button>
+        {usage && <span className="text-[13px] text-muted">{usage}</span>}
       </div>
-      {x ? (
-        <>
-          <h2 className="m-0 font-display font-extrabold text-[22px] leading-tight">{t("day2.awaiting")}</h2>
-          <p className="m-0 text-[16px] leading-[1.45] [overflow-wrap:anywhere]"><b>{x.title}.</b> {proposal && c ? t("call.ask", { name: c.business_name }) : x.next_step}{x.is_example && <> <Ex /></>}</p>
-          <div className="flex gap-2 flex-wrap">
-            {proposal ? <button type="button" className={PRIMARY} disabled={busy} onClick={quick}>{t("day2.yesCall")}</button>
-              : x.status === "draft" ? <button type="button" className={PRIMARY} onClick={() => openSheet({ kind: "paywall", taskId: x.id })}>{t("day2.chooseHow")}</button>
-              : <button type="button" className={PRIMARY} onClick={() => talk(x.id)}>{t("day2.answer")}</button>}
-            <button type="button" className={OUTLINE} onClick={() => talk(x.id)}>{t("day2.editPlan")}</button>
-          </div>
-          {usage && <span className="text-[13px] text-muted">{usage}</span>}
-        </>
-      ) : (
-        <>
-          <h2 className="m-0 font-display font-extrabold text-[22px] leading-tight">{t("day2.nothingWaiting")}</h2>
-          <p className="m-0 text-[15px] text-ink-soft">{t("day2.nothingWaitingText")}</p>
-        </>
-      )}
-    </div>
+    </section>
   );
 }
 
@@ -165,39 +147,28 @@ function TaskRow({ task }: { task: Task }) {
           <span className="font-semibold text-[15px] line-clamp-1 [overflow-wrap:anywhere]">{task.title}</span>
           <span className="text-[13px] text-ink-soft line-clamp-1 [overflow-wrap:anywhere]" suppressHydrationWarning>{sub.filter(Boolean).join(" · ")}{task.is_example && <> <Ex /></>}</span>
         </span>
-        <DayPill task={task} />
       </button>
     </li>
   );
 }
 
-/** «Dine opgaver» with the filter chips. Shows the first eight; «Se alle →» opens Mine opgaver. */
-function TasksSection() {
+/** «Dine opgaver»: at most three open tasks (what waits for the user is in «Din tur»), nearest first, and «Alle opgaver».
+ *  Hidden when there is nothing open. */
+function TodaySection() {
   const t = useT("privat");
-  const f = useFmt();
-  const { tasks, go, mode } = usePrivat();
-  const [filter, setFilter] = useState<Filter>("all");
-  const st = FILTERS[filter];
-  const list = tasks.filter((x) => !st || st.includes(x.status)).sort((a, b) => ORDER[a.status] - ORDER[b.status] || (a.due_at ?? "9").localeCompare(b.due_at ?? "9"));
+  const { tasks, go } = usePrivat();
+  const open = tasks.filter((x) => ["planned", "in_progress", "awaiting_business"].includes(x.status))
+    .sort((a, b) => (a.remind_at ?? a.due_at ?? "9").localeCompare(b.remind_at ?? b.due_at ?? "9") || ORDER[a.status] - ORDER[b.status]);
+  if (open.length === 0) return null;
   return (
-    <section className="flex flex-col gap-3" aria-labelledby="day-tasks">
-      <div className="flex items-end gap-3">
-        <div className="flex flex-col gap-0.5 min-w-0">
-          <span className="eyebrow" suppressHydrationWarning>{f.dateLabel()}</span>
-          <h2 id="day-tasks" className="m-0 font-display font-extrabold text-[24px] tracking-[-0.4px]">{t("day2.tasksTitle")}</h2>
-        </div>
+    <section className="flex flex-col gap-2.5" aria-labelledby="day-tasks">
+      <div className="flex items-center gap-3">
+        <h2 id="day-tasks" className="m-0 font-display font-extrabold text-[20px] tracking-[-0.3px]">{t("day2.tasksTitle")}</h2>
         <span className="flex-1" />
-        <button type="button" onClick={() => go("tasks")} className="min-h-[44px] text-[15px] font-semibold text-accent underline underline-offset-[3px] hover:text-accent-deep whitespace-nowrap">{t("day2.seeAll")}</button>
+        <button type="button" onClick={() => go("tasks")} className={`${LINK} whitespace-nowrap`}>{t("day2.allTasks")}</button>
       </div>
-      <div className="flex gap-2 flex-wrap" role="group" aria-label={t("day2.tasksTitle")}>
-        {(Object.keys(FILTERS) as Filter[]).map((k) => (
-          <button key={k} type="button" aria-pressed={filter === k} onClick={() => setFilter(k)}
-            className={`${CHIP} min-h-[40px] ${filter === k ? "!bg-ink !text-paper" : ""}`}>{t(`day2.filter.${k}`)}</button>
-        ))}
-      </div>
-      {mode !== "loading" && list.length === 0 && <p className="m-0 text-[15px] text-muted">{filter === "all" ? t("day2.emptyAll") : t("day2.empty")}</p>}
       <ul className="m-0 p-0 list-none flex flex-col gap-2">
-        {list.slice(0, 8).map((x) => <TaskRow key={x.id} task={x} />)}
+        {open.slice(0, 3).map((x) => <TaskRow key={x.id} task={x} />)}
       </ul>
     </section>
   );
@@ -250,32 +221,26 @@ export function RoomCard() {
   );
 }
 
-/** Min dag (/privat/dag): the question with Peter's card, «Din tur», «Dine opgaver» and «Dit råderum». */
+/** Min dag (/privat/dag): the question, «Din tur» (only when something waits – the screen's one primary), «I dag»
+ *  (≤ 3 rows) and Peter at the bottom. The plan meter lives on Konto, the apps on the Apps tab (ux-audit #2). The
+ *  install step comes after the first own task, never on first paint. */
 export function DayPage() {
   const t = useT("privat");
-  const { mode } = usePrivat();
+  const { mode, tasks, day } = usePrivat();
+  // «Own» = made by this user – a list someone shared with a guest does not earn the install step (ux-audit #3).
+  const own = tasks.some((x) => !x.is_example && (!x.my_role || x.my_role === "owner"));
+  const waiting = (day?.awaiting ?? tasks.filter((x) => x.status === "awaiting_user" || x.status === "draft")).length > 0;
   return (
-    <div className="w-full max-w-[1160px] mx-auto px-4 pt-5 pb-8 flex flex-col gap-7">
-      <section className="flex flex-col gap-4" aria-labelledby="day-ask">
-        <div className="flex flex-col gap-1.5">
-          <p className="eyebrow m-0 hidden xl:block">{t("day2.eyebrow")}</p>
-          <h1 id="day-ask" className="m-0 font-display font-extrabold text-[30px] xl:text-[40px] leading-[1.08] tracking-[-0.6px]">{t("day.ask")}</h1>
-          <p className="m-0 text-[16px] text-ink-soft hidden xl:block">{t("day2.lead")}</p>
-        </div>
-        {mode === "loading" && <p className="m-0 text-[14px] text-muted" role="status">{t("common.loading")}</p>}
-        <Suspense><WelcomeBanner /></Suspense>
-        <InstalledBanner />
-        <FirstOpenInstall />
-        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-6 items-start">
-          <ChatCard />
-          <YourTurn />
-        </div>
-      </section>
-      <AppsStrip />
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-6 items-start">
-        <TasksSection />
-        <RoomCard />
-      </div>
+    <div className="w-full max-w-[760px] mx-auto px-4 pt-5 min-h-full flex flex-col gap-5">
+      <h1 id="day-ask" className="m-0 font-display font-extrabold text-[30px] xl:text-[40px] leading-[1.08] tracking-[-0.6px]">{t("day.ask")}</h1>
+      {mode === "loading" && <p className="m-0 text-[14px] text-muted" role="status">{t("common.loading")}</p>}
+      <Suspense><WelcomeBanner /></Suspense>
+      <InstalledBanner />
+      <YourTurn />
+      <TodaySection />
+      {own && <FirstOpenInstall />}
+      <span className="flex-1" />
+      <AskDock empty={mode !== "loading" && tasks.length === 0} quiet={waiting} />
     </div>
   );
 }

@@ -1,0 +1,14 @@
+{
+  "da": {
+    "money": "1.234,50 kr.",
+    "wd": "torsdag"
+  },
+  "en": {
+    "money": "DKK 1,234.50",
+    "wd": "Thursday"
+  },
+  "de": {
+    "money": "1.234,50 DKK",
+    "wd": "Donnerstag"
+  }
+}

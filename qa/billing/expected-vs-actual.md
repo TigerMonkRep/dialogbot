@@ -91,3 +91,97 @@ Stripe: kun lokale fakes (ingen netværkskald). DB: `qa_bill`. Log: `qa/evidence
 | Fakturér oktober 310 min (fake Stripe) | linjer 249.500 + 1.500; 251.000 / 62.750 / 313.750; linjer frosset | samme | ja | mp::overage_reaches_the_stripe_invoice |
 | Sen rapport: opkald 31/10 22:58Z, 5 min, efter fakturaen | 2.250 i alt (faktura + efterregistrering) | 1.500; 750 øre faktureres aldrig | **nej** F-BQ-012 | mp::usage_reported_after_the_month_was_invoiced |
 | Faktureret periodes linjer i app / operatørens forbrugsvisning / tvist pr. opkald | – | ikke bygget | not-implemented | mp::… (xfail strict) |
+
+## Privat-dybderunde fase 2 (PBQ, 2026-11-10) – `tests/qa/test_qa_pd_billing.py`, DB `qa_pd6`, kun fake Stripe
+
+Forventet = uafhængige tabeller i testfilen (`EXPECTED_PLANS`, `EXPECTED_PACK`, `EXPECTED_LOCALE`, `EXPECTED_QUOTA`). Faktisk = `GET /privat/subscription?currency=`, `web/src/lib/prices.json` og Checkout-linjen sendt til Stripe. Øre inkl. moms.
+
+### Planpriser – alle 4 valutaer × 3 planer (API = web-katalog = Stripe-linje)
+
+| Valuta | Plan | Måned | År/md. | År i alt (=12×år/md.) | Rabat vs. måned | Opkald / personer | OK |
+|---|---|---|---|---|---|---|---|
+| DKK | Basis | 4.900 | 3.900 | 46.800 | 20,4 % | 3 / 1 | ja |
+| DKK | Plus (Anbefalet) | 9.900 | 7.900 | 94.800 | 20,2 % | 10 / 1 | ja |
+| DKK | Familie | 16.900 | 13.500 | 162.000 | 20,1 % | 25 / 5 (*F-PBQ-07*) | beløb ja · «5 personer» findes ikke |
+| SEK | Basis / Plus / Familie | 6.900 / 14.900 / 24.900 | 5.500 / 11.900 / 19.900 | 66.000 / 142.800 / 238.800 | 20,3 / 20,1 / 20,1 % | som DKK | ja |
+| NOK | Basis / Plus / Familie | 7.900 / 15.900 / 26.900 | 6.300 / 12.700 / 21.500 | 75.600 / 152.400 / 258.000 | 20,3 / 20,1 / 20,1 % | som DKK | ja |
+| EUR | Basis / Plus / Familie | 649 / 1.349 / 2.249 | 519 / 1.079 / 1.799 | 6.228 / 12.948 / 21.588 | 20,0 / 20,0 / 20,0 % | som DKK | ja |
+
+Præcis én «Anbefalet» (Plus) i alle valutaer. «Spar 20 %» er sandt (≥ 20,0 %) for alle 12. Stripe-testkataloget kan ikke nås fra sandkassen. DKK med `PRIVAT_STRIPE_PRICE_*` sætter `price`-id på linjen, og beløbet bag id'et skal tjekkes manuelt i Stripe Dashboard (test) mod tabellen.
+
+### Checkout-linje pr. sprog (8 sprog × 3 planer × 2 intervaller = 48 kombinationer)
+
+| Sprog | Valuta | Stripe-locale | Momssats på linjen (mode «danish») | unit_amount | OK |
+|---|---|---|---|---|---|
+| da | DKK | da | txr DK 25 % inkl. | måned eller år i alt fra tabellen | ja |
+| en, de, es, fr, it | EUR | samme | txr DK 25 % inkl. | EUR-tabel | ja |
+| sv | SEK | sv | txr DK 25 % inkl. | SEK-tabel | ja |
+| no | NOK | **nb** | ingen (VOEC ikke registreret), tekst uden «moms» | NOK-tabel | ja |
+| STRIPE_TAX_ENABLED=true (da, Familie år) | DKK | da | `automatic_tax.enabled`, tax_code txcd_10103000, ingen tax_rates, inclusive | 162.000 | ja |
+
+Valuta er klæbende: første checkout (sv → SEK), anden checkout med de → stadig SEK. *Bemærk:* valutaen låses allerede ved **oprettet** checkout, ikke ved betaling, så en dansk bruger med engelsk UI låses til EUR (ikke indberettet, notér til qa-lead).
+
+### Moms-split (inkl. 25 %, Stripes afrunding: moms = afrund(brutto × 0,25/1,25))
+
+| Beløb | Netto | Moms | Eksakt? |
+|---|---|---|---|
+| Alle DKK/SEK/NOK planbeløb (18 stk.) | brutto/1,25 | brutto/5 | ja, eksakt i hele øre |
+| EUR 649 / 1.349 / 2.249 | 519 / 1.079 / 1.799 | 130 / 270 / 450 | nej, afrundet (129,8 / 269,8 / 449,8) |
+| EUR årsbeløb 6.228 / 12.948 / 21.588 | 4.982 / 10.358 / 17.270 | 1.246 / 2.590 / 4.318 | nej, afrundet |
+| Kreditpakke DKK 2.900 | 2.320 | 580 | ja (= `PRIVAT_CREDIT_PACK_NET_MINOR`) |
+| Kreditpakke EUR 399 | 319 | 80 | nej, afrundet (79,8) |
+
+### Kreditpakke (10 credits)
+
+| Tilfælde | Forventet | Faktisk | OK | Test |
+|---|---|---|---|---|
+| Pris DKK / SEK / NOK / EUR | 2.900 / 4.500 / 4.500 / 399 | 2.900 / 4.500 / 4.500 / 399 | ja | sub_21_credit_pack_once… |
+| Afbrudt/unpaid session | +0 | +0 | ja | samme |
+| Betalt, webhook x 2 (replay) | +10 én gang | +10, `duplicate: true` | ja | samme |
+| Samme session via `async_payment_succeeded` | ingen ekstra | ignored | ja | samme |
+| Betalt 1.450 med gyldig 50 %-kode (kodefelt vises) | +10 (eller intet kodefelt) | **0 credits, pengene trukket** | **nej – F-PBQ-03 (S0)** | sub_21_paid_with_a_promotion_code… |
+| Fuld refusion 2.900 | saldo 3 (velkomst) | **13** | **nej – F-PBQ-05 (S2)** | credit_pack_refund… |
+
+### Abonnement – livscyklus
+
+| Tilfælde | Forventet | Faktisk | OK |
+|---|---|---|---|
+| Checkout-payload | kort altid, adresse required, telefon, trial 14, metadata | som forventet | ja |
+| Åben session (0002 / 9995 / 3DS afvist) | status none, 409 needs_plan, ingen velkomstmail | som forventet | ja |
+| 2. checkout på samme konto efter brugt trial | ingen trial_period_days/trial_end, samme customer | som forventet | ja |
+| Ny e-mail + samme kort | uafklaret | ny 14-dages trial | **needs-decision F-PBQ-02** |
+| Aktiv kunde starter ny checkout | 409 | 409 `subscription_exists` (fix 21:12) | ja |
+| To åbne checkouts gennemført | højst 1 live abonnement | **2 live, 14.800 øre/md. efter trial** | **nej – F-PBQ-01 (S0)** |
+| – efter rettelsen 21:49 (`dup_canceled`), med trial | 1 live, intet trukket | 1 live | ja (07b grøn, afventer verifier) |
+| – tilbagevendende kunde, ingen trial (begge betalt med det samme) | 1 live + dublettens 9.900 refunderet | 1 live, **ingen refusion** | **nej – F-PBQ-09 (S0)** |
+| Trial → active (Familie), replay, sen trialing | active/familie/25, duplicate, sen trialing ignored | som forventet | ja |
+| Lokal trial udløbet uden webhook | expired, kladde, opkald = 3 credits, derefter 409 needs_plan | som forventet | ja |
+| Opsig i trial | adgang til trial_end, derefter intet, ingen faktura | backend ja · UI siger «Derefter Plus til 99 kr./md.» | **UI nej – F-PBQ-04 (S2)** |
+| past_due → canceled (payment_failed) | adgang i dunning, slut ved ended_at | som forventet (regression F-BQ-003) | ja |
+| Basis → Plus md → Plus år → Familie år → Basis md | kvote 3/10/10/25/3, personer 1/1/1/5/1 | som forventet | ja · plan-apps forbliver (F-PBQ-06) |
+
+### Kvote ved månedsskifte (Europe/Copenhagen)
+
+| Godkendt (UTC) | Lokal | Ur (UTC) | Forventet calls_used | Faktisk | OK |
+|---|---|---|---|---|---|
+| 31/10 22:30 | 31/10 23:30 CET | 31/10 22:45 | 1 | 1 | ja |
+| 31/10 22:30 | 31/10 23:30 CET | 31/10 23:00 (= 1/11 00:00 lokal) | 0 (nulstillet) | 0 | ja |
+| 31/10 23:30 | 1/11 00:30 CET | 1/11 09:00 | 1 (november) | 1 | ja |
+| 31/10 23:30 | 1/11 00:30 CET | 31/10 22:59 | 0 (oktober) | 0 | ja |
+| 25/10 00:30 og 01:30 (DST-natten, 02:30 CEST/CET) | 25/10 | 30/10 | 1 hver | 1 | ja |
+| 31/3/2027 21:30 | 23:30 CEST | 21:45 / 22:00 | 1 / 0 | 1 / 0 | ja |
+| 31/3/2027 22:30 | 1/4 00:30 CEST | 1/4 08:00 | 1 (april) | 1 | ja |
+
+Basis 3 opkald: ubesvaret og fejlet tæller ikke. 4. opkald = 3 credits reserveret. Replay af slutrapport ændrer intet (ledger netto 0 efter capture).
+
+### Henvisninger / regninger / udgifter / fællesgave
+
+| Tilfælde | Forventet | Faktisk | OK |
+|---|---|---|---|
+| Selvinvitation, samme invitee x 2, 11 nye med trial | 0, én gang, maks. 10 × 3 = 30 credits/md. | som forventet | ja |
+| 3 gratis alt-konti (alias-e-mail) via F-PQ-03-aktivering | 0 | **+9 credits til inviter** | nej – konsekvens af F-PQ-03 (ingen dublet) |
+| `parse_amount` «1.234,50 kr.» / «640» / «1.250» / «-5» | 123.450 / 64.000 / 125.000 / None | som forventet | ja |
+| Forfald den 31. i feb 2027 / 2028; kvartal, halvår, år, once | 28/2, 29/2; rul korrekt; once ruller ikke | som forventet | ja |
+| 100 kr. delt på 3 | 6.666 / −3.333 / −3.333, sum 0, 2 overførsler | som forventet | ja |
+| Udlæg 0 / negativt | afvist (422) | afvist | ja |
+| Fællesgave 1.000 kr.: 0/negativ, 400,01 over rest | 422; 409 `pledge_exceeds_remaining`, remaining 40.000 | som forventet | ja |

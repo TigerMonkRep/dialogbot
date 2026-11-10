@@ -35,8 +35,11 @@ def configure_logging(level: str = "INFO") -> None:
 log = structlog.get_logger("dialogbot")
 
 
-# Paths whose last part is a secret (the private calendar subscription link): never written to the log.
-_SECRET_PATHS = re.compile(r"(/privat/calendar/feed/)[^/]+")
+# Path parts that are bearer secrets – whoever has one gets in (the private calendar feed, Privat list invitations by
+# token or short code, group join links, team invitations, sales offers): never written to the log (F-PS-04).
+_SECRET_PATHS = re.compile(
+    r"(/privat/calendar/feed/|/privat/invites/by-code/|/privat/invites/(?!by-code/)|/privat/group-invites/by-code/"
+    r"|/invitations/|/public/offers/)[^/]+")
 
 
 def redact_path(path: str) -> str:

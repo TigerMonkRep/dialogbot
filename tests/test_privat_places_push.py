@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from app.config import get_settings
-from app.models import EmailDelivery, OutboxEvent, PrivateCall, PushSubscription
+from app.models import EmailDelivery, OutboxEvent, PrivateCall, PrivateProfile, PushSubscription
 from app.modules.campaigns import service as campaigns
 from app.modules.privat import push
 from app.modules.sales import places as gp
@@ -341,3 +341,37 @@ def test_shared_list_push_is_batched(api, pv, db, vapid):
     # reserving on a wishlist never notifies anyone (the owner must not learn of it)
     assert db.query(OutboxEvent).filter(OutboxEvent.event_type == "push.send",
                                         OutboxEvent.payload["body"].astext.like("%reserv%")).count() == 0
+
+
+@pytest.mark.parametrize("change", ["addon_off", "phone_gone", "trial_over"])
+def test_scheduled_call_checks_again_right_before_dialling(api, pv, db, fake_places, dial, change):
+    """PC-CALL-06: a call approved «ved næste åbningstid» is dialled only if the approval still holds at that moment:
+    «Ring for mig» on, mobile verified and – when the plan pays – the plan/trial still active. Otherwise nothing is
+    dialled, nothing is used, and the user is told."""
+    fake_places([{"id": "fona-1", "name": "Fona", "phone": "+4586112233", "periods": _periods([4])}])
+    tok = pv.account("mette@testmail.dk")
+    api.c.patch("/api/v1/privat/me/location", json={"city": "Aarhus"}, headers=api.h(tok))
+    pv.verify_phone(tok)
+    _clar, msgs = _pick(api, pv, tok)
+    tid = msgs[-1]["task_id"]
+    t = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False, "at_next_open": True}).json()
+    assert t["call"]["status"] == "scheduled"
+    if change == "addon_off":
+        assert api.post(tok, "/privat/addons/ring-for-mig/disable").status_code == 200
+    elif change == "phone_gone":
+        p = db.query(PrivateProfile).filter_by(workspace_id=pv.ws(tok)).one()
+        p.phone_verified_at = None
+        db.commit()
+    else:
+        pv.expire_trial(tok)
+    pv.clock.at = THU_9 + timedelta(minutes=1)
+    db.query(OutboxEvent).filter(OutboxEvent.event_type.in_(("privat.call_due", "privat.call_ask"))).update(
+        {"next_attempt_at": datetime.now(UTC)}, synchronize_session=False)
+    db.commit()
+    runner.drain()
+    assert dial == []
+    db.expire_all()
+    c = db.query(PrivateCall).one()
+    assert c.status == "failed" and c.result == "failed"
+    msgs = api.get(tok, f"/privat/messages?task_id={tid}").json()
+    assert msgs[-1]["text"].startswith("Jeg ringede ikke til Fona")

@@ -306,7 +306,9 @@
     "simulateReserve": "{name} reserviert einen Wunsch",
     "simulateActivated": "{name} erstellt ihre erste eigene Aufgabe",
     "welcomeBanner": "Probier es selbst: Was soll ich für dich erledigen?",
-    "welcomeDismiss": "Schließen"
+    "welcomeDismiss": "Schließen",
+    "open": "Öffnen",
+    "shareWish": "Wunschliste teilen"
   },
   "move": {
     "label": "Die Erinnerung wurde verschoben",
@@ -423,8 +425,8 @@
     "orLink": "Oder einen Link senden",
     "signWith": "Unterschreiben mit:",
     "message": "Die Nachricht (du kannst sie ändern)",
-    "smsWishlist": "Hallo! Ich habe eine Wunschliste gemacht – schau sie dir an und reserviere hier: {link}",
-    "smsGroup": "Hallo! Ich habe eine gemeinsame Liste gemacht – schau sie dir an und füg hier etwas hinzu: {link}",
+    "smsWishlist": "Hallo! Ich habe eine Wunschliste gemacht - schau sie dir an und reserviere hier: {link}",
+    "smsGroup": "Hallo! Ich habe eine gemeinsame Liste gemacht - schau sie dir an und füg hier etwas hinzu: {link}",
     "remindWishlist": "Hallo! Hast du meine Wunschliste «{title}» gesehen? Der Link steht in meiner letzten Nachricht.",
     "remindGroup": "Hallo! Hast du die Liste «{title}» gesehen? Der Link steht in meiner letzten Nachricht.",
     "chars": "{n} von {max} Zeichen",
@@ -464,7 +466,8 @@
     "queueNext": "Gesendet? Als Nächstes: {name} ({i} von {n})",
     "queueBack": "Willkommen zurück. Tipp, wenn du für die nächste Person bereit bist.",
     "queueDone": "Alle {n} sind eingeladen.",
-    "done": "Fertig"
+    "done": "Fertig",
+    "roleWishGuest": "kann reservieren"
   },
   "people": {
     "title": "Meine Leute",
@@ -627,7 +630,8 @@
     "purposeReminder": "Rechtzeitig erinnert werden",
     "purposeWishlist": "Wünsche teilen, ohne die Überraschung zu verderben",
     "talk": "Über die Aufgabe sprechen",
-    "history": "Verlauf"
+    "history": "Verlauf",
+    "fromOwner": "Von {name}"
   },
   "account": {
     "title": "Konto und Credits",
@@ -731,7 +735,9 @@
   "errors": {
     "emailNotVerified": "Bestätige deine E-Mail, um Dialogbot Privat zu nutzen.",
     "verifyLink": "E-Mail bestätigen",
-    "viewAs": "Private Aufgaben sind in «Als Kunde ansehen» nicht sichtbar."
+    "viewAs": "Private Aufgaben sind in «Als Kunde ansehen» nicht sichtbar.",
+    "notEnabled": "Dialogbot Privat ist für dein Konto noch nicht freigeschaltet. Nichts, was du hier tust, wird gespeichert oder ausgeführt.",
+    "unavailable": "Dialogbot Privat ist gerade nicht erreichbar. Versuch es gleich noch einmal – nichts wurde gespeichert oder ausgeführt."
   },
   "location": {
     "useMine": "Meinen Standort verwenden",
@@ -777,7 +783,8 @@
     "trialBadge": "{plan} · Testphase, noch {n|1 Tag|# Tage}",
     "trialBadgeShort": "{plan} · {n|1 Tag|# Tage}",
     "planBadge": "{plan}",
-    "noPlan": "Kein Plan"
+    "noPlan": "Kein Plan",
+    "trialDaysShort": "{n} T"
   },
   "day2": {
     "eyebrow": "Dein persönlicher Assistent",
@@ -842,7 +849,10 @@
       "newInStore": "Neu im Shop",
       "see": "Ansehen →"
     },
-    "noAnswerPlan": "Niemand hat abgenommen – der Anruf zählt nicht"
+    "noAnswerPlan": "Niemand hat abgenommen – der Anruf zählt nicht",
+    "greetingShort": "Ich erinnere dich, schreibe Listen und rufe für dich an. Was schiebst du vor dir her?",
+    "yourTurnOf": "Du bist dran · 1 von {n}",
+    "allTasks": "Alle Aufgaben"
   },
   "store": {
     "metaTitle": "Der Shop",
@@ -1587,6 +1597,43 @@
     "yourApps": "Deine Apps",
     "all": "Alle {n}",
     "stripStep": "Schritt {n} von {total} – Einrichtung fortsetzen",
-    "accountLine": "{n|1 App an|# Apps an}"
+    "accountLine": "{n|1 App an|# Apps an}",
+    "allOn": "Du hast alle Apps. Neue kommen laufend dazu.",
+    "sayLike": "Sag z. B. „{example}“"
+  },
+  "familyHousehold": {
+    "title": "Haushalt",
+    "count": "{count} von {limit} Personen",
+    "ownerText": "Familie gilt für bis zu {limit} Personen. Jede Person hat ein eigenes Konto – niemand sieht die Sachen der anderen.",
+    "invite": "In den Haushalt einladen",
+    "smsText": "Du bist in meiner Dialogbot Familie - mach hier mit: {link}",
+    "me": "du",
+    "remove": "Entfernen",
+    "removeConfirm": "{name} aus dem Haushalt entfernen? {name} verliert Familie sofort, behält aber die eigenen Sachen.",
+    "memberLine": "Du bist in der Familie von {name}.",
+    "leave": "Haushalt verlassen",
+    "leaveConfirm": "Haushalt verlassen? Du verlierst Familie sofort. Deine Sachen bleiben.",
+    "left": "Du hast den Haushalt verlassen.",
+    "paused": "Der Haushalt ist pausiert – er braucht Familie.",
+    "full": "Der Haushalt ist voll.",
+    "inviteTitle": "Mach mit in der Familie von {name}",
+    "inviteText": "Du bekommst den Familie-Plan auf deinem eigenen Konto. {name} sieht deine Sachen nicht.",
+    "join": "Mitmachen",
+    "joined": "Du bist im Haushalt."
+  },
+  "myData": {
+    "title": "Deine Daten",
+    "exportText": "Erhalte alles, was wir über dich speichern, per E-Mail.",
+    "export": "Meine Daten exportieren",
+    "queued": "Wir sammeln deine Daten. Du bekommst eine E-Mail mit einem Link.",
+    "ready": "Deine Daten sind bereit.",
+    "download": "Daten herunterladen",
+    "expired": "Der Link ist abgelaufen. Fordere deine Daten erneut an.",
+    "delete": "Mein Konto löschen",
+    "deleteText": "Alles in Dialogbot Privat wird gelöscht, und dein Abo endet. Das kann nicht rückgängig gemacht werden.",
+    "deleteLabel": "Gib zur Bestätigung deine E-Mail ein",
+    "deleteConfirm": "Alles endgültig löschen",
+    "cancel": "Abbrechen",
+    "deleting": "Wird gelöscht …"
   }
 }

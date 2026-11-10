@@ -306,7 +306,9 @@
     "simulateReserve": "{name} réserve un souhait",
     "simulateActivated": "{name} crée sa première tâche",
     "welcomeBanner": "Essayez vous-même : que puis-je faire pour vous ?",
-    "welcomeDismiss": "Fermer"
+    "welcomeDismiss": "Fermer",
+    "open": "Ouvrir",
+    "shareWish": "Partager la liste de souhaits"
   },
   "move": {
     "label": "Le rappel a été déplacé",
@@ -423,8 +425,8 @@
     "orLink": "Ou envoyez un lien",
     "signWith": "Signer :",
     "message": "Le message (modifiable)",
-    "smsWishlist": "Coucou ! J'ai fait une liste de souhaits – regarde et réserve ici : {link}",
-    "smsGroup": "Coucou ! J'ai fait une liste partagée – regarde et ajoute ici : {link}",
+    "smsWishlist": "Coucou ! J'ai fait une liste de souhaits - regarde et réserve ici : {link}",
+    "smsGroup": "Coucou ! J'ai fait une liste partagée - regarde et ajoute ici : {link}",
     "remindWishlist": "Coucou ! As-tu vu ma liste de souhaits « {title} » ? Le lien est dans mon message précédent.",
     "remindGroup": "Coucou ! As-tu vu la liste « {title} » ? Le lien est dans mon message précédent.",
     "chars": "{n} sur {max} caractères",
@@ -464,7 +466,8 @@
     "queueNext": "Envoyé ? Suivant : {name} ({i} sur {n})",
     "queueBack": "Bon retour. Appuyez quand vous êtes prêt pour le suivant.",
     "queueDone": "Les {n} sont invités.",
-    "done": "Terminé"
+    "done": "Terminé",
+    "roleWishGuest": "peut réserver"
   },
   "people": {
     "title": "Mes proches",
@@ -627,7 +630,8 @@
     "purposeReminder": "Être rappelé à temps",
     "purposeWishlist": "Partager des souhaits sans gâcher la surprise",
     "talk": "Parler de la tâche",
-    "history": "Historique"
+    "history": "Historique",
+    "fromOwner": "De la part de {name}"
   },
   "account": {
     "title": "Compte et crédits",
@@ -731,7 +735,9 @@
   "errors": {
     "emailNotVerified": "Confirmez votre e-mail pour utiliser Dialogbot Privat.",
     "verifyLink": "Confirmer l'e-mail",
-    "viewAs": "Les tâches privées ne sont pas visibles en « Voir comme le client »."
+    "viewAs": "Les tâches privées ne sont pas visibles en « Voir comme le client ».",
+    "notEnabled": "Dialogbot Privat n'est pas encore ouvert pour ton compte. Rien de ce que tu fais ici n'est enregistré ni exécuté.",
+    "unavailable": "Dialogbot Privat est injoignable pour le moment. Réessaie dans un instant – rien n'a été enregistré ni exécuté."
   },
   "location": {
     "useMine": "Utiliser ma position",
@@ -777,7 +783,8 @@
     "trialBadge": "{plan} · essai, {n|1 jour|# jours} restants",
     "trialBadgeShort": "{plan} · {n|1 jour|# jours}",
     "planBadge": "{plan}",
-    "noPlan": "Sans forfait"
+    "noPlan": "Sans forfait",
+    "trialDaysShort": "{n} j"
   },
   "day2": {
     "eyebrow": "Votre assistant personnel",
@@ -842,7 +849,10 @@
       "newInStore": "Nouveau dans la Boutique",
       "see": "Voir →"
     },
-    "noAnswerPlan": "Personne n’a répondu – l’appel ne compte pas"
+    "noAnswerPlan": "Personne n’a répondu – l’appel ne compte pas",
+    "greetingShort": "Je peux vous rappeler des choses, faire des listes et appeler pour vous. Qu’avez-vous remis à plus tard ?",
+    "yourTurnOf": "À vous · 1 sur {n}",
+    "allTasks": "Toutes les tâches"
   },
   "store": {
     "metaTitle": "La Boutique",
@@ -1587,6 +1597,43 @@
     "yourApps": "Vos apps",
     "all": "Toutes ({n})",
     "stripStep": "Étape {n} sur {total} – continuer la configuration",
-    "accountLine": "{n|1 app activée|# apps activées}"
+    "accountLine": "{n|1 app activée|# apps activées}",
+    "allOn": "Vous avez toutes les apps. De nouvelles arrivent régulièrement.",
+    "sayLike": "Dites par exemple « {example} »"
+  },
+  "familyHousehold": {
+    "title": "Foyer",
+    "count": "{count} sur {limit} personnes",
+    "ownerText": "Famille couvre jusqu'à {limit} personnes. Chacun a son propre compte – personne ne voit les affaires des autres.",
+    "invite": "Inviter dans le foyer",
+    "smsText": "Tu fais partie de ma Dialogbot Famille - rejoins-nous ici : {link}",
+    "me": "toi",
+    "remove": "Retirer",
+    "removeConfirm": "Retirer {name} du foyer ? {name} perd Famille tout de suite mais garde ses affaires.",
+    "memberLine": "Tu fais partie de la Famille de {name}.",
+    "leave": "Quitter le foyer",
+    "leaveConfirm": "Quitter le foyer ? Tu perds Famille tout de suite. Tes affaires restent.",
+    "left": "Tu as quitté le foyer.",
+    "paused": "Le foyer est en pause – il faut Famille.",
+    "full": "Le foyer est complet.",
+    "inviteTitle": "Rejoins la Famille de {name}",
+    "inviteText": "Tu as le forfait Famille sur ton propre compte. {name} ne voit pas tes affaires.",
+    "join": "Rejoindre",
+    "joined": "Tu fais partie du foyer."
+  },
+  "myData": {
+    "title": "Tes données",
+    "exportText": "Reçois par e-mail tout ce que nous gardons sur toi.",
+    "export": "Exporter mes données",
+    "queued": "Nous rassemblons tes données. Tu recevras un e-mail avec un lien.",
+    "ready": "Tes données sont prêtes.",
+    "download": "Télécharger tes données",
+    "expired": "Le lien a expiré. Redemande tes données.",
+    "delete": "Supprimer mon compte",
+    "deleteText": "Tout est supprimé dans Dialogbot Privat et ton abonnement s'arrête. C'est définitif.",
+    "deleteLabel": "Saisis ton e-mail pour confirmer",
+    "deleteConfirm": "Tout supprimer définitivement",
+    "cancel": "Annuler",
+    "deleting": "Suppression…"
   }
 }

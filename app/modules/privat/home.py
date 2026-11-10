@@ -83,14 +83,14 @@ def add(db: OrmSession, ws_id: uuid.UUID, *, names: list[str] | None = None, cus
     for name, every, month, trade in STANDARD:
         fits = not NOT_FOR.get(name, lambda p: False)(prof)
         if (("alle" in wanted and fits) or any(w and w != "alle" and (w in kit.key_of(name) or kit.key_of(name) in w)
-                                                for w in wanted)) and kit.find(rows, name) is None:
+                                                for w in wanted)) and kit.find(rows, name, exact=True) is None:
             added.append({"id": kit.new_id(), "name": name, "every": every, "next": _next(today, month).isoformat(),
                           **({"trade": trade} if trade else {})})
     if custom:
         name = kit.clean(custom, 100)
         if not every_months:
             raise ValidationFailed("Hvor tit skal det gøres?", field_errors=[{"field": "every_months"}])
-        if kit.find(rows, name) is None:
+        if kit.find(rows, name, exact=True) is None:
             added.append({"id": kit.new_id(), "name": name[:1].upper() + name[1:],
                           "every": max(1, min(int(every_months), 120)),
                           "next": kit.parse_date(next_due, "next_due") or today.isoformat()})

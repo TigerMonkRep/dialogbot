@@ -29,7 +29,8 @@ const isOwner = (t: Task) => !t.my_role || t.my_role === "owner";
 
 /** A list in all its shapes: own list, shared group list (who added / ticked off), wishlist for the owner (never any
  *  reservation info) and wishlist for the others («Jeg køber den» / «Fortryd» / «Reserveret»). */
-export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: boolean }) {
+/** `compact` (the card in the conversation): a wishlist shows its count, not the cards – the task page has them. */
+export function ListBody({ task, withAdd = false, compact = false }: { task: Task; withAdd?: boolean; compact?: boolean }) {
   const t = useT("privat");
   const { run, simulated, fake, addonOn, openSheet } = usePrivat();
   const wish = isWish(task);
@@ -40,11 +41,16 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
   const others = (task.members ?? []).filter((m) => !m.is_me);
   return (
     <div className="flex flex-col gap-2.5">
-      {task.shared && (task.members?.length ?? 0) > 0 && (
+      {task.shared && (task.members?.length ?? 0) > 0 && (!owner || others.length > 0) && (
         <div className="flex items-center gap-2.5 flex-wrap">
           <Avatars names={(task.members ?? []).map((m) => m.name)} />
           <span className="text-[13px] text-ink-soft min-w-0">{owner ? t("list.sharedWith", { names: others.map((m) => m.name).join(", ") || "–" }) : t("list.sharedBy", { name: task.members?.find((m) => m.role === "owner")?.name ?? "" })}</span>
         </div>
+      )}
+      {canShare && withAdd && !task.shared && (
+        <Button className={`${BIG} rounded-full self-start gap-2`} onClick={() => openSheet({ kind: "share", taskId: task.id })} data-testid="share-first">
+          <Ico name="share" size={18} />{wish ? t("list.shareWish") : t("list.share")}
+        </Button>
       )}
       {wish && owner && <p className="m-0 text-[13px] text-muted">{t("list.ownerNote")}</p>}
       {!wish && task.items.length === 0 && <p className="m-0 text-[14px] text-muted">{t("list.emptyItems")}</p>}
@@ -56,7 +62,7 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
           <span className="text-[12px] text-muted">{task.partner.name} · {task.partner.note}</span>
         </a>
       )}
-      {wish && <WishList task={task} withAdd={withAdd && canEdit && owner} />}
+      {wish && !compact && <WishList task={task} withAdd={withAdd && canEdit && owner} />}
       {!wish && <ul className="list-none m-0 p-0 flex flex-col gap-0.5">
         {task.items.map((it) => (
           <li key={it.id} className="flex flex-col">
@@ -85,7 +91,7 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
             {/* A meal plan's day carries its ingredients; any list item can carry a note or a link. */}
             {!wish && it.note && <span className="pl-10 -mt-1 pb-1 text-[13px] text-ink-soft [overflow-wrap:anywhere]">{it.note}</span>}
             {!wish && it.link && <a href={it.link} target="_blank" rel="noopener noreferrer nofollow" className="pl-10 -mt-1 pb-1 text-[13px] text-accent underline [overflow-wrap:anywhere]">{t("list.openLink")}</a>}
-            {(it.added_by_name || it.done_by_name) && (
+            {task.shared && (it.added_by_name || it.done_by_name) && (
               <span className="pl-10 -mt-1 pb-1 text-[12px] text-muted">
                 {[it.added_by_name ? t("list.addedBy", { name: it.added_by_name, item: it.text.toLowerCase() }) : null, it.done && it.done_by_name ? t("list.doneBy", { name: it.done_by_name }) : null].filter(Boolean).join(" · ")}
               </span>
@@ -97,7 +103,7 @@ export function ListBody({ task, withAdd = false }: { task: Task; withAdd?: bool
       {!withAdd && <span className="text-[13px] text-muted">{t("list.count", { n: task.items.length, done: doneCount })}</span>}
       <div className="flex flex-wrap gap-2 items-center">
         {wish && owner && withAdd && task.list_type === "wishlist" && <DesignButton task={task} />}
-        {canShare && (
+        {canShare && (task.shared || !withAdd) && (
           <Button variant="outline" icon={undefined} onClick={() => openSheet({ kind: "share", taskId: task.id })} className="gap-2">
             <Ico name="share" size={18} />{task.shared ? t("list.shareManage") : t("list.share")}
           </Button>
@@ -192,7 +198,7 @@ function AddItem({ task, wish }: { task: Task; wish: boolean }) {
 
 export function ListCard({ task }: { task: Task }) {
   const t = useT("privat");
-  const { talk } = usePrivat();
+  const { talk, openTask } = usePrivat();
   return (
     <div className={CARD}>
       {task.design && isWish(task) && task.design.customized && <WishCover title={task.title} design={task.design} compact />}
@@ -204,7 +210,8 @@ export function ListCard({ task }: { task: Task }) {
         </div>
         {task.is_example && <Ex />}
       </div>
-      <ListBody task={task} />
+      <ListBody task={task} compact />
+      {isWish(task) && <Button variant="outline" className="rounded-full self-start" onClick={() => openTask(task.id)}>{t("list.open")}</Button>}
       <button type="button" className={LINK} onClick={() => talk(task.id)}>{t("list.talk")}</button>
     </div>
   );
@@ -225,7 +232,6 @@ export function ReminderCard({ task }: { task: Task }) {
         </div>
       </div>
       <PushPrompt moment="reminder" />
-      <span className="text-[13px] text-muted">{task.usage_text}</span>
     </div>
   );
 }

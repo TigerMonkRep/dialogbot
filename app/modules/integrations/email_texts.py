@@ -36,6 +36,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_body": "Tak, fordi du har oprettet en konto. Bekræft din e-mailadresse, så kan du komme i gang med at "
                        "sætte din AI-receptionist op.",
         "verify_button": "Bekræft min e-mail",
+        "verify_heading_privat": "Velkommen til Dialogbot Privat",
+        "verify_body_privat": "Tak, fordi du har oprettet en konto. Bekræft din e-mailadresse, så kan du starte din prøveperiode på Dialogbot Privat.",
         "verify_note": "Linket virker i 48 timer. Har du ikke oprettet en konto hos Dialogbot, kan du se bort fra denne "
                        "e-mail.",
         "verify_footer": "Du får denne e-mail, fordi nogen har oprettet en konto hos Dialogbot med din adresse.",
@@ -151,6 +153,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_body": "Thank you for creating an account. Confirm your e-mail address and you can start setting up your "
                        "AI receptionist.",
         "verify_button": "Confirm my e-mail",
+        "verify_heading_privat": "Welcome to Dialogbot Privat",
+        "verify_body_privat": "Thank you for creating an account. Confirm your e-mail address, and you can start your Dialogbot Privat trial.",
         "verify_note": "The link is valid for 48 hours. If you did not create an account with Dialogbot, you can ignore "
                        "this e-mail.",
         "verify_footer": "You are receiving this e-mail because someone created a Dialogbot account with your address.",
@@ -264,6 +268,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_body": "Vielen Dank, dass Sie ein Konto erstellt haben. Bestätigen Sie Ihre E-Mail-Adresse, dann können "
                        "Sie mit der Einrichtung Ihrer KI-Rezeption beginnen.",
         "verify_button": "E-Mail-Adresse bestätigen",
+        "verify_heading_privat": "Willkommen bei Dialogbot Privat",
+        "verify_body_privat": "Danke, dass du ein Konto erstellt hast. Bestätige deine E-Mail-Adresse, dann kannst du deine Testphase von Dialogbot Privat starten.",
         "verify_note": "Der Link ist 48 Stunden gültig. Wenn Sie kein Konto bei Dialogbot erstellt haben, können Sie diese "
                        "E-Mail ignorieren.",
         "verify_footer": "Sie erhalten diese E-Mail, weil jemand mit Ihrer Adresse ein Konto bei Dialogbot erstellt hat.",
@@ -378,6 +384,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_body": "Gracias por crear una cuenta. Confirme su dirección de correo electrónico y podrá empezar a "
                        "configurar su recepcionista con IA.",
         "verify_button": "Confirmar mi correo",
+        "verify_heading_privat": "Bienvenido a Dialogbot Privat",
+        "verify_body_privat": "Gracias por crear una cuenta. Confirma tu dirección de correo electrónico y podrás empezar tu prueba de Dialogbot Privat.",
         "verify_note": "El enlace es válido durante 48 horas. Si no ha creado una cuenta en Dialogbot, puede ignorar este "
                        "correo.",
         "verify_footer": "Recibe este correo electrónico porque alguien ha creado una cuenta en Dialogbot con su dirección.",
@@ -493,6 +501,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_body": "Merci d'avoir créé un compte. Confirmez votre adresse e-mail pour commencer à configurer votre "
                        "réceptionniste IA.",
         "verify_button": "Confirmer mon adresse e-mail",
+        "verify_heading_privat": "Bienvenue sur Dialogbot Privat",
+        "verify_body_privat": "Merci d'avoir créé un compte. Confirme ton adresse e-mail pour commencer ton essai de Dialogbot Privat.",
         "verify_note": "Le lien est valable 48 heures. Si vous n'avez pas créé de compte chez Dialogbot, vous pouvez "
                        "ignorer cet e-mail.",
         "verify_footer": "Vous recevez cet e-mail parce que quelqu'un a créé un compte Dialogbot avec votre adresse.",
@@ -609,6 +619,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_body": "Grazie per aver creato un account. Confermi il Suo indirizzo e-mail per iniziare a configurare il "
                        "Suo receptionist IA.",
         "verify_button": "Conferma il mio indirizzo e-mail",
+        "verify_heading_privat": "Benvenuto in Dialogbot Privat",
+        "verify_body_privat": "Grazie per aver creato un account. Conferma il tuo indirizzo e-mail per iniziare la prova di Dialogbot Privat.",
         "verify_note": "Il link è valido per 48 ore. Se non ha creato un account su Dialogbot, può ignorare questa e-mail.",
         "verify_footer": "Riceve questa e-mail perché qualcuno ha creato un account su Dialogbot con il Suo indirizzo.",
         "reset_subject": "Reimposti la Sua password di Dialogbot",
@@ -720,6 +732,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_body": "Takk for at du har opprettet en konto. Bekreft e-postadressen din, så kan du begynne å sette opp "
                        "AI-resepsjonisten din.",
         "verify_button": "Bekreft e-postadressen min",
+        "verify_heading_privat": "Velkommen til Dialogbot Privat",
+        "verify_body_privat": "Takk for at du har opprettet en konto. Bekreft e-postadressen din, så kan du starte prøveperioden på Dialogbot Privat.",
         "verify_note": "Lenken er gyldig i 48 timer. Har du ikke opprettet en konto hos Dialogbot, kan du se bort fra denne "
                        "e-posten.",
         "verify_footer": "Du får denne e-posten fordi noen har opprettet en konto hos Dialogbot med adressen din.",
@@ -830,6 +844,8 @@ TEXTS: dict[str, dict[str, str]] = {
         "verify_body": "Tack för att du har skapat ett konto. Bekräfta din e-postadress, så kan du börja ställa in din "
                        "AI-receptionist.",
         "verify_button": "Bekräfta min e-postadress",
+        "verify_heading_privat": "Välkommen till Dialogbot Privat",
+        "verify_body_privat": "Tack för att du har skapat ett konto. Bekräfta din e-postadress, så kan du starta din provperiod på Dialogbot Privat.",
         "verify_note": "Länken gäller i 48 timmar. Om du inte har skapat ett konto hos Dialogbot kan du bortse från det här "
                        "mejlet.",
         "verify_footer": "Du får det här mejlet eftersom någon har skapat ett konto hos Dialogbot med din adress.",

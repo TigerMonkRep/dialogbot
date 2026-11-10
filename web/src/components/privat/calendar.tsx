@@ -61,7 +61,7 @@ export function CalendarPanel() {
                   <Button variant="outline" className="rounded-full border-2" onClick={() => void run(() => api.disconnectCalendar(p))}>{t("calendar.disconnect")}</Button>
                 </>
               ) : s.available ? (
-                <Button className="rounded-full" onClick={() => void connect(p)}>{t("calendar.connect")}</Button>
+                <Button variant="outline" className="rounded-full border-2" onClick={() => void connect(p)}>{t("calendar.connect")}</Button>
               ) : (
                 <Pill tone="soon">{t("calendar.notYet")}</Pill>
               )}

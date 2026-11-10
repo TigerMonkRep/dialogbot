@@ -4,7 +4,7 @@ import { StandaloneChrome } from "@/components/standalone";
 
 /** Everything under /privat (the landing page, the funnel and the app) is Dialogbot Privat: its own manifest (start_url
  *  /privat/dag) and the orange home-screen icon, so «Føj til hjemmeskærm» from any Privat page gives the Privat app. */
-export const viewport: Viewport = { themeColor: "#E0521A", viewportFit: "cover" };
+export const viewport: Viewport = { themeColor: "#C4461A", viewportFit: "cover" };
 
 export const metadata: Metadata = {
   manifest: "/privat/manifest.webmanifest",

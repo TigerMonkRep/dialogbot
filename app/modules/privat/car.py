@@ -126,6 +126,7 @@ def send_due(db: OrmSession, now: datetime | None = None) -> int:
     rows = list(db.scalars(select(PrivateAppData).join(
         PrivateAddonEnabled, (PrivateAddonEnabled.workspace_id == PrivateAppData.workspace_id)
         & (PrivateAddonEnabled.key == ADDON)).where(PrivateAppData.app_key == ADDON)))
+    rows = addons.running_rows(db, rows, ADDON)  # a plan app whose plan has lapsed sends nothing (PC-ENT-02)
     n = 0
     for row in rows:
         data = dict(row.data)

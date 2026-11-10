@@ -120,3 +120,41 @@ def delete(key: str | None) -> None:
         httpx.request("DELETE", url, json={"prefixes": [key]}, headers=h, timeout=30.0)
     except httpx.HTTPError:
         pass
+
+
+def delete_workspace(ws_id) -> int:
+    """Every file under one workspace's prefix (account deletion, gdpr.py). Best effort for the remote bucket: what is
+    left is listed in the log so a person can remove it. Returns the number of files removed."""
+    import shutil
+
+    import structlog
+
+    prefix = str(ws_id)
+    if not re.fullmatch(r"[0-9a-f-]{36}", prefix):
+        return 0
+    if not _remote():
+        root = Path(get_settings().voice_storage_dir).resolve() / "privat-files" / prefix
+        if not root.exists():
+            return 0
+        n = sum(1 for p in root.rglob("*") if p.is_file())
+        shutil.rmtree(root, ignore_errors=True)
+        return n
+    import httpx
+
+    s = get_settings()
+    keys: list[str] = []
+    try:
+        folders = [prefix]
+        while folders:  # Supabase lists one level at a time: folders come back without an id
+            folder = folders.pop()
+            url, h = _sb(f"object/list/{s.privat_files_bucket}")
+            r = httpx.post(url, json={"prefix": folder, "limit": 1000}, headers=h, timeout=30.0)
+            for o in (r.json() if r.status_code < 400 else []):
+                path = f"{folder}/{o.get('name')}"
+                (keys if o.get("id") else folders).append(path)
+        for i in range(0, len(keys), 500):
+            url, h = _sb(f"object/{s.privat_files_bucket}")
+            httpx.request("DELETE", url, json={"prefixes": keys[i:i + 500]}, headers=h, timeout=30.0)
+    except (httpx.HTTPError, ValueError):
+        structlog.get_logger("dialogbot.privat.files").error("privat.files_not_deleted", workspace_id=prefix)
+    return len(keys)

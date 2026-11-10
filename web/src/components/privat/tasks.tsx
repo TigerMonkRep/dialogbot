@@ -39,9 +39,8 @@ export function TasksPane() {
           {g.items.map((x) => (
             <button key={x.id} type="button" className={ROW} onClick={() => openTask(x.id)}>
               <span className="flex-1 min-w-0 flex flex-col gap-[5px]">
-                <span className="flex gap-1.5 items-center flex-wrap"><StatusBadge task={x} /><KindLabel task={x} />{x.is_example && <Ex />}</span>
-                <span className="font-semibold text-[15px] line-clamp-2 [overflow-wrap:anywhere]">{x.title}</span>
-                <span className="text-[13px] text-ink-soft [overflow-wrap:anywhere]" suppressHydrationWarning>{[x.next_step, f.when(x.remind_at ?? x.due_at), x.who].filter(Boolean).join(" · ")}</span>
+                <span className="font-semibold text-[15px] line-clamp-2 [overflow-wrap:anywhere]">{x.title}{x.is_example && <> <Ex /></>}</span>
+                <span className="text-[13px] text-ink-soft [overflow-wrap:anywhere]" suppressHydrationWarning><KindLabel task={x} />{" · "}{f.when(x.remind_at ?? x.due_at) || x.next_step}</span>
               </span>
             </button>
           ))}
@@ -67,6 +66,11 @@ export function TaskDetail({ id }: { id: string }) {
   if (!x) return <div className="px-4 pt-5"><button type="button" className={LINK} onClick={() => go("tasks")}>{t("tasks.back")}</button><p className="text-muted">{mode === "loading" ? t("common.loading") : t("tasks.notFound")}</p></div>;
   const c = x.call;
   const proposal = x.kind === "call" && x.status === "awaiting_user" && c && !c.result && !x.is_example;
+  // F-UX-02 / ux-audit #5: someone a list is shared WITH sees the list – not the owner's next step, usage or history.
+  const guest = sharedWithMe(x);
+  const ownerName = x.members?.find((m) => m.role === "owner")?.name?.split(" ")[0];
+  // The «next step» card only where it carries a decision: a call, a draft that needs a plan, a proposal.
+  const nextCard = !guest && (x.kind === "call" || x.status === "draft" || !!proposal);
   return (
     <div className="px-4 pt-4 pb-7 flex flex-col gap-4" aria-label={t("tasks.detailAria")}>
       {banner && (
@@ -77,17 +81,21 @@ export function TaskDetail({ id }: { id: string }) {
       )}
       <button type="button" className={LINK} onClick={() => go("tasks")}>{t("tasks.back")}</button>
       <ErrorBox error={error} />
-      <div className="flex gap-1.5 items-center flex-wrap"><StatusBadge task={x} /><KindLabel task={x} />{x.is_example && <Ex />}</div>
+      {guest ? (ownerName && <Eyebrow>{t("tasks.fromOwner", { name: ownerName })}</Eyebrow>)
+        : <div className="flex gap-1.5 items-center flex-wrap"><StatusBadge task={x} /><KindLabel task={x} />{x.is_example && <Ex />}</div>}
       {x.list_type === "wishlist" && x.design ? <WishCover title={x.title} design={x.design} /> : (
         <h2 className="m-0 font-display font-extrabold text-[26px] leading-[1.15] tracking-[-0.4px] [overflow-wrap:anywhere]">{x.title}</h2>
       )}
-      <div className="rounded-[18px] border-2 border-ink bg-paper p-4 shadow-block flex flex-col gap-2.5">
-        <Eyebrow>{t("tasks.next")}</Eyebrow>
-        <p className="m-0 text-[17px] font-semibold [overflow-wrap:anywhere]">{x.next_step}</p>
-        <Kv rows={[[t("tasks.purpose"), purpose(x, t)], [t("tasks.when"), f.when(x.remind_at ?? x.due_at) || "–"], [t("tasks.who"), x.who || "–"], [t("tasks.usage"), x.usage_text || "–"]]} />
-        {x.status === "draft" && <Button className={BIG} onClick={() => openSheet({ kind: "paywall", taskId: x.id })}>{t("draft.choose")}</Button>}
-        {proposal && <Button className={BIG} onClick={() => talk(x.id)}>{t("call.seeProposal")}</Button>}
-      </div>
+      {!guest && x.kind === "reminder" && (x.remind_at || x.due_at) && <p className="m-0 text-[16px] font-semibold" suppressHydrationWarning>{f.when(x.remind_at ?? x.due_at)}</p>}
+      {nextCard && (
+        <div className="rounded-[18px] border-2 border-ink bg-paper p-4 shadow-block flex flex-col gap-2.5">
+          <Eyebrow>{t("tasks.next")}</Eyebrow>
+          <p className="m-0 text-[17px] font-semibold [overflow-wrap:anywhere]">{x.next_step}</p>
+          <Kv rows={[[t("tasks.purpose"), purpose(x, t)], [t("tasks.when"), f.when(x.remind_at ?? x.due_at) || "–"], [t("tasks.usage"), x.usage_text || "–"]]} />
+          {x.status === "draft" && <Button className={`${BIG} rounded-full`} onClick={() => openSheet({ kind: "paywall", taskId: x.id })}>{t("draft.choose")}</Button>}
+          {proposal && <Button className={`${BIG} rounded-full`} onClick={() => talk(x.id)}>{t("call.seeProposal")}</Button>}
+        </div>
+      )}
       {x.kind === "list" && (
         <div className="rounded-[18px] border-2 border-ink bg-paper p-4" style={x.list_type === "wishlist" && x.design?.customized ? { background: x.design.background, color: x.design.text } : undefined}>
           <ListBody task={x} withAdd />
@@ -117,15 +125,15 @@ export function TaskDetail({ id }: { id: string }) {
           </div>
         </div>
       )}
-      <Button variant="outline" className="self-start border-2" onClick={() => talk(x.id)}>{t("tasks.talk")}</Button>
-      <section className="flex flex-col gap-2" aria-label={t("tasks.history")}>
-        <h3 className="m-0 font-body text-[15px] font-semibold">{t("tasks.history")}</h3>
+      {(!guest || entitled) && <Button variant="outline" className="self-start border-2 rounded-full" onClick={() => talk(x.id)}>{t("tasks.talk")}</Button>}
+      {!guest && x.events.length > 0 && <details className="group" aria-label={t("tasks.history")}>
+        <summary className="cursor-pointer list-none min-h-[44px] inline-flex items-center gap-2 font-body text-[15px] font-semibold [&::-webkit-details-marker]:hidden">{t("tasks.history")} <Ico name="chevron" size={16} className="rotate-90 group-open:-rotate-90 transition-transform motion-reduce:transition-none" /></summary>
         <ol className="list-none m-0 pl-3 border-l-2 border-line flex flex-col gap-1.5">
           {[...x.events].reverse().map((e, i) => (
             <li key={i} className="text-[14px] flex gap-2.5"><span className="text-muted min-w-[72px]" suppressHydrationWarning>{f.stamp(e.at)}</span><span className="[overflow-wrap:anywhere] min-w-0">{e.text}</span></li>
           ))}
         </ol>
-      </section>
+      </details>}
     </div>
   );
 }

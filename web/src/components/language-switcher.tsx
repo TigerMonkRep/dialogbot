@@ -34,7 +34,7 @@ export function LanguageSwitcher({ className = "", onSaved, compact = false }: {
   if (compact) {
     // A small "DA ▾" pill; the real (invisible) select lies on top, so the phone's own picker opens with full names.
     return (
-      <label className={`relative inline-flex items-center min-h-10 px-2.5 rounded-lg border-2 border-ink bg-white text-sm font-semibold text-ink ${className}`}>
+      <label className={`relative inline-flex items-center min-h-11 px-2.5 rounded-lg border-2 border-ink bg-white text-sm font-semibold text-ink ${className}`}>
         <span aria-hidden="true">{locale.toUpperCase()} ▾</span>
         {select("absolute inset-0 w-full h-full opacity-0 cursor-pointer")}
       </label>
@@ -43,7 +43,7 @@ export function LanguageSwitcher({ className = "", onSaved, compact = false }: {
   return (
     <label className={`inline-flex items-center gap-2 text-sm ${className}`}>
       <span className="sr-only">{t("language")}</span>
-      {select("min-h-10 rounded-lg border-2 border-ink bg-white px-2 text-sm font-semibold text-ink")}
+      {select("min-h-11 rounded-lg border-2 border-ink bg-white px-2 text-sm font-semibold text-ink")}
     </label>
   );
 }

@@ -44,7 +44,7 @@ export function WishList({ task, withAdd }: { task: Task; withAdd: boolean }) {
   return (
     <div className="@container flex flex-col gap-3">
       {owner && withAdd && (
-        <Button className={`${BIG} self-start gap-2`} onClick={() => setAdding(true)} data-testid="add-wish"><Ico name="plus" size={18} />{t("wish.add")}</Button>
+        <Button variant="outline" className="self-start gap-2 rounded-full" onClick={() => setAdding(true)} data-testid="add-wish"><Ico name="plus" size={18} />{t("wish.add")}</Button>
       )}
       {items.length === 0 && <p className="m-0 text-[14px] text-muted">{t("list.emptyItems")}</p>}
       <ul className="list-none m-0 p-0 grid grid-cols-1 @lg:grid-cols-2 gap-3" data-testid="wish-grid">
@@ -64,7 +64,7 @@ export function WishList({ task, withAdd }: { task: Task; withAdd: boolean }) {
 }
 
 /** The product picture: never cropped (object-contain on a calm panel), a neutral placeholder without a photo. */
-function WishImage({ item, size = "sm", className = "" }: { item: TaskItem; size?: "sm" | "lg"; className?: string }) {
+function WishImage({ item, size = "sm", className = "", iconSize = 44 }: { item: TaskItem; size?: "sm" | "lg"; className?: string; iconSize?: number }) {
   const t = useT("privat");
   const src = imgSrc(size === "sm" ? item.image?.url_sm : item.image?.url);
   const [failed, setFailed] = useState(false);
@@ -76,7 +76,7 @@ function WishImage({ item, size = "sm", className = "" }: { item: TaskItem; size
           className="absolute inset-0 w-full h-full object-contain p-2" />
       ) : (
         <span className="flex flex-col items-center gap-1 text-muted" role="img" aria-label={t("wish.noImage")}>
-          <Ico name="gift" size={44} stroke={1.6} />
+          <Ico name="gift" size={iconSize} stroke={1.6} />
         </span>
       )}
     </div>
@@ -105,17 +105,22 @@ function WishCard({ task, item, owner, onDetails, onJoin }: { task: Task; item: 
   const ownerGift = !giverGift && g && (g as OwnerGroupGift).enabled;
   return (
     <article className="h-full rounded-[18px] border-2 border-ink bg-paper text-ink p-3 flex flex-col gap-2" data-testid="wish-card" aria-label={item.text}>
-      <button type="button" onClick={onDetails} className="block w-full text-left rounded-[14px] focus-visible:outline-2" aria-label={t("wish.detailsOf", { title: item.text })}>
-        <WishImage item={item} />
-      </button>
-      <div className="flex flex-wrap gap-1.5">
-        {(giverGift || ownerGift) && <Pill tone="highlight">{t("wish.groupGift")}</Pill>}
-        {item.archived && <Pill>{t("wish.removedByOwner")}</Pill>}
+      {/* Compact (ux-audit #6): a thumbnail beside the title – no 200 px empty placeholder; the sheet shows it large. */}
+      <div className="flex items-start gap-3">
+        <button type="button" onClick={onDetails} className="shrink-0 w-[72px] rounded-[12px] focus-visible:outline-2" aria-label={t("wish.detailsOf", { title: item.text })}>
+          <WishImage item={item} className="!aspect-square !rounded-[12px]" iconSize={28} />
+        </button>
+        <div className="flex-1 min-w-0 flex flex-col gap-1">
+          <h4 className="m-0 font-display font-bold text-[17px] leading-tight [overflow-wrap:anywhere]">{item.text}</h4>
+          <PriceLine item={item} className="!text-[15px]" />
+          {(giverGift || ownerGift || item.archived) && <div className="flex flex-wrap gap-1.5">
+            {(giverGift || ownerGift) && <Pill tone="highlight">{t("wish.groupGift")}</Pill>}
+            {item.archived && <Pill>{t("wish.removedByOwner")}</Pill>}
+          </div>}
+          {facts(item, t).length > 0 && <p className="m-0 text-[13px] text-ink-soft [overflow-wrap:anywhere]">{facts(item, t).join(" · ")}</p>}
+          {item.note && <p className="m-0 text-[13px] text-ink-soft line-clamp-2 [overflow-wrap:anywhere]">{item.note}</p>}
+        </div>
       </div>
-      <h4 className="m-0 font-display font-bold text-[17px] leading-tight [overflow-wrap:anywhere]">{item.text}</h4>
-      <PriceLine item={item} />
-      {facts(item, t).length > 0 && <p className="m-0 text-[13px] text-ink-soft [overflow-wrap:anywhere]">{facts(item, t).join(" · ")}</p>}
-      {item.note && <p className="m-0 text-[13px] text-ink-soft line-clamp-2 [overflow-wrap:anywhere]">{item.note}</p>}
       {giverGift && <GiftProgress gift={giverGift} compact />}
       <div className="mt-auto flex flex-wrap gap-2 pt-1">
         {item.link && (

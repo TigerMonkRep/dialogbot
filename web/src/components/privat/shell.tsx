@@ -107,21 +107,23 @@ function Header() {
   const p = usePlan();
   const free = balance ? Math.max(0, balance.free_limit - balance.free_used) : null;
   const active: Screen = screen === "task" ? "tasks" : screen === "chat" ? "day" : APP_SCREENS.includes(screen) ? "apps" : screen;
-  const nav: [Screen, string][] = [["day", "nav.day"], ["tasks", "nav.tasks"], ["apps", "apps.tab"]];
+  const nav: [Screen, string][] = [["day", "nav.day"], ["tasks", "nav.tasks"], ["apps", "apps.tab"], ["people", "nav.people"], ["account", "nav.account"]];
   // The badge: «Plus · prøveperiode, 9 dage tilbage», the plan name, or (without rights) credits and free tasks.
   const badge = p.entitled
     ? (p.status === "trial" ? t("nav.trialBadge", { plan: p.rightsName, n: p.trialDays }) : t("nav.planBadge", { plan: p.rightsName }))
     : balance ? (p.status === "none" ? t("header.noPlanBadge") : t("header.credits", { n: balance.credits })) : "";
-  const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialBadgeShort", { plan: p.rightsName, n: p.trialDays }) : p.entitled ? p.rightsName : balance ? (p.status === "none" ? t("header.noPlanBadgeShort") : t("header.credits", { n: balance.credits })) : "";
+  // Phone: as short as possible, so the logo and the PRIVAT mark are never covered (F-UX-05); the aria-label says it all.
+  const badgeShort = p.entitled && p.status === "trial" ? t("nav.trialDaysShort", { n: p.trialDays }) : p.entitled ? p.rightsName : balance ? (p.status === "none" ? t("header.noPlanBadgeShort") : t("header.credits", { n: balance.credits })) : "";
   return (
-    <header className="flex-none flex items-center gap-2.5 px-4 py-3 min-h-16 border-b-2 border-ink bg-paper pt-safe">
+    <header className="flex-none flex items-center gap-2 sm:gap-2.5 px-4 py-3 min-h-16 border-b-2 border-ink bg-paper pt-safe">
       <StandaloneBack roots={["/privat/dag", "/privat/samtale", "/privat/opgaver", "/privat/apps", "/privat/butik", "/privat/folk", "/privat/konto"]} />
-      <Link href="/privat/dag" aria-label={t("header.homeAria")} className="flex items-center gap-2.5 min-w-0 min-h-[44px]">
+      <Link href="/privat/dag" aria-label={t("header.homeAria")} className="flex items-center gap-2 shrink-0 min-h-[44px]">
         <LogoMark size={36} />
-        <span className="font-display font-extrabold text-[22px] tracking-[-0.3px] hidden min-[380px]:inline">Dialogbot</span>
+        <span className={`font-display font-extrabold text-[22px] tracking-[-0.3px] hidden ${simulated || (balance && !p.entitled) ? "min-[420px]:inline" : "min-[380px]:inline"}`}>Dialogbot</span>
         <span className="text-[11px] font-bold tracking-[0.08em] uppercase text-accent border-[1.5px] border-accent rounded-full px-2 py-0.5">{t("brand.privat")}</span>
       </Link>
-      {simulated && <span className="hidden sm:inline-flex"><Sim /></span>}
+      {/* Simulated data is said on every width (F-PS-07); on a phone the wordmark gives way (the mark stays). */}
+      {simulated && <span className="inline-flex shrink-0"><Sim /></span>}
       <nav aria-label={t("nav.primary")} className="hidden xl:flex items-center gap-1 ml-4 p-1 rounded-full border-2 border-ink bg-paper">
         {nav.map(([k, label]) => (
           <button key={k} type="button" onClick={() => go(k)} aria-current={active === k ? "page" : undefined}
@@ -132,8 +134,8 @@ function Header() {
       {balance && (
         <button type="button" onClick={() => go("account")} aria-label={p.entitled ? t("nav.planAria", { text: badge }) : (p.status === "none" ? t("header.noPlanAria") : t("header.balanceAria", { credits: balance.credits }))}
           data-credits={balance.credits} data-free={free ?? 0} data-plan={p.plan} data-status={p.status} data-calls-left={p.callsLeft}
-          className={`inline-flex items-center gap-2 min-h-[44px] px-3.5 rounded-full border-2 border-ink text-[14px] font-semibold whitespace-nowrap ${p.entitled ? "bg-accent-soft hover:bg-panel-deep" : "bg-paper hover:bg-panel"}`} data-testid="balance-chip">
-          <span className={`w-2.5 h-2.5 rounded-full border-[1.5px] border-ink ${p.entitled ? "bg-accent" : "bg-highlight"}`} aria-hidden />
+          className={`inline-flex items-center gap-1.5 sm:gap-2 min-h-[44px] shrink-0 px-3 sm:px-3.5 rounded-full border-2 border-ink text-[14px] font-semibold whitespace-nowrap ${p.entitled ? "bg-accent-soft hover:bg-panel-deep" : "bg-paper hover:bg-panel"}`} data-testid="balance-chip">
+          <span className={`hidden min-[400px]:inline-block w-2.5 h-2.5 rounded-full border-[1.5px] border-ink ${p.entitled ? "bg-accent" : "bg-highlight"}`} aria-hidden />
           <span className="hidden sm:inline">{badge}</span><span className="sm:hidden">{badgeShort}</span>
         </button>
       )}

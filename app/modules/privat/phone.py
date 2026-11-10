@@ -40,8 +40,13 @@ def _simulated() -> bool:
 def start(db: OrmSession, ctx, raw_phone: str) -> None:
     from app.modules.campaigns.service import normalize_phone
     from app.modules.integrations.connectors import sms
+    from app.modules.sales.service import danish_number
 
     phone = normalize_phone(raw_phone or "")
+    try:  # Danish numbers only (+45, 8 digits, not 90xx): no verification SMS abroad (F-PS-01)
+        phone = danish_number(raw_phone or "") if phone else None
+    except ValidationFailed:
+        phone = None
     if phone is None:
         raise ValidationFailed("Skriv dit mobilnummer med 8 cifre", field_errors=[{"field": "phone"}])
     p = db.scalar(select(PrivateProfile).where(PrivateProfile.workspace_id == ctx.ws_id).with_for_update())

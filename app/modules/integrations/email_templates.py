@@ -213,14 +213,16 @@ def from_plain(subject: str, body: str, footer_reason: str | None = None, lang: 
 # --------------------------------------------------------------------------- the emails
 # Every builder takes `lang` (app/core/languages.py; Danish is the source). The texts live in email_texts.py.
 
-def verify(link: str, lang: str = "da") -> Email:
+def verify(link: str, lang: str = "da", *, privat: bool = False) -> Email:
+    """`privat`: the sign-up came from Dialogbot Privat – its own words (no «AI-receptionist»), F-PK-04."""
     lang = normalize(lang)
+    sfx = "_privat" if privat else ""
     return Email(
         subject=t(lang, "verify_subject"),
         preheader=t(lang, "verify_preheader"),
-        heading=t(lang, "verify_heading"),
+        heading=t(lang, "verify_heading" + sfx),
         step=1,
-        paragraphs=[t(lang, "verify_body")],
+        paragraphs=[t(lang, "verify_body" + sfx)],
         button_label=t(lang, "verify_button"), button_url=link,
         note=t(lang, "verify_note"),
         footer_reason=t(lang, "verify_footer"), lang=lang)

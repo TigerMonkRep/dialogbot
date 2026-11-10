@@ -1,0 +1,28 @@
+[
+ {
+  "user": "Vores kat Misser skal vaccineres 2027-03-01",
+  "assistant": [
+   "Gemt: Misser (kat), vaccination 1. marts 2027. Jeg minder dig om det i god tid."
+  ]
+ },
+ {
+  "user": "Vores kat Mis skal vaccineres 2027-06-15",
+  "assistant": [
+   "Gemt: Misser (kat), vaccination 15. juni 2027. Jeg minder dig om det i god tid."
+  ]
+ },
+ {
+  "overview": {
+   "summary": "1 dyr.",
+   "items": [
+    {
+     "id": "ae271e3454",
+     "text": "Misser",
+     "sub": "Misser (kat), vaccination 15. juni 2027"
+    }
+   ],
+   "partner": null
+  },
+  "db": "{\"items\": [{\"id\": \"ae271e3454\", \"kind\": \"kat\", \"name\": \"Misser\", \"vaccination_due\": \"2027-06-15\"}]}"
+ }
+]

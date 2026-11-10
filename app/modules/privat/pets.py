@@ -35,7 +35,7 @@ def save_pet(db: OrmSession, ws_id: uuid.UUID, *, name: str, kind: str = "", vac
     if not name:
         raise ValidationFailed("Hvad hedder dyret?", field_errors=[{"field": "name"}])
     rows = kit.items(db, ws_id, ADDON)
-    p = kit.find(rows, name)
+    p = kit.find(rows, name, exact=True)
     if p is None:
         p = {"id": kit.new_id(), "name": name[:1].upper() + name[1:], "kind": ""}
         rows.append(p)

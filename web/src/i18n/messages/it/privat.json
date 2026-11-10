@@ -306,7 +306,9 @@
     "simulateReserve": "{name} prenota un desiderio",
     "simulateActivated": "{name} crea la sua prima attività",
     "welcomeBanner": "Prova tu: cosa posso sbrigare per te?",
-    "welcomeDismiss": "Chiudi"
+    "welcomeDismiss": "Chiudi",
+    "open": "Apri",
+    "shareWish": "Condividi la lista dei desideri"
   },
   "move": {
     "label": "Il promemoria è stato spostato",
@@ -423,8 +425,8 @@
     "orLink": "Oppure invia un link",
     "signWith": "Firma come:",
     "message": "Il messaggio (puoi modificarlo)",
-    "smsWishlist": "Ciao! Ho fatto una lista dei desideri – guardala e prenota qui: {link}",
-    "smsGroup": "Ciao! Ho fatto una lista comune – guardala e aggiungi qui: {link}",
+    "smsWishlist": "Ciao! Ho fatto una lista dei desideri - guardala e prenota qui: {link}",
+    "smsGroup": "Ciao! Ho fatto una lista comune - guardala e aggiungi qui: {link}",
     "remindWishlist": "Ciao! Hai visto la mia lista dei desideri «{title}»? Il link è nel mio messaggio precedente.",
     "remindGroup": "Ciao! Hai visto la lista «{title}»? Il link è nel mio messaggio precedente.",
     "chars": "{n} di {max} caratteri",
@@ -464,7 +466,8 @@
     "queueNext": "Inviato? Prossimo: {name} ({i} di {n})",
     "queueBack": "Bentornato. Tocca quando sei pronto per il prossimo.",
     "queueDone": "Tutti i {n} sono invitati.",
-    "done": "Fatto"
+    "done": "Fatto",
+    "roleWishGuest": "può prenotare"
   },
   "people": {
     "title": "Le mie persone",
@@ -627,7 +630,8 @@
     "purposeReminder": "Ricevere il promemoria in tempo",
     "purposeWishlist": "Condividere desideri senza rovinare la sorpresa",
     "talk": "Parla dell'attività",
-    "history": "Cronologia"
+    "history": "Cronologia",
+    "fromOwner": "Da {name}"
   },
   "account": {
     "title": "Account e crediti",
@@ -731,7 +735,9 @@
   "errors": {
     "emailNotVerified": "Conferma la tua e-mail per usare Dialogbot Privat.",
     "verifyLink": "Conferma e-mail",
-    "viewAs": "Le attività private non sono visibili in «Vedi come cliente»."
+    "viewAs": "Le attività private non sono visibili in «Vedi come cliente».",
+    "notEnabled": "Dialogbot Privat non è ancora aperto per il tuo account. Niente di ciò che fai qui viene salvato o eseguito.",
+    "unavailable": "Al momento Dialogbot Privat non è raggiungibile. Riprova tra poco – niente è stato salvato o eseguito."
   },
   "location": {
     "useMine": "Usa la mia posizione",
@@ -777,7 +783,8 @@
     "trialBadge": "{plan} · prova, {n|1 giorno|# giorni} rimasti",
     "trialBadgeShort": "{plan} · {n|1 giorno|# giorni}",
     "planBadge": "{plan}",
-    "noPlan": "Nessun piano"
+    "noPlan": "Nessun piano",
+    "trialDaysShort": "{n} g"
   },
   "day2": {
     "eyebrow": "Il tuo assistente personale",
@@ -842,7 +849,10 @@
       "newInStore": "Novità nel Negozio",
       "see": "Vedi →"
     },
-    "noAnswerPlan": "Nessuno ha risposto – la chiamata non conta"
+    "noAnswerPlan": "Nessuno ha risposto – la chiamata non conta",
+    "greetingShort": "Posso ricordarti le cose, fare liste e chiamare per te. Cosa stai rimandando?",
+    "yourTurnOf": "Tocca a te · 1 di {n}",
+    "allTasks": "Tutte le attività"
   },
   "store": {
     "metaTitle": "Il Negozio",
@@ -1587,6 +1597,43 @@
     "yourApps": "Le tue app",
     "all": "Tutte ({n})",
     "stripStep": "Passo {n} di {total} – continua la configurazione",
-    "accountLine": "{n|1 app attiva|# app attive}"
+    "accountLine": "{n|1 app attiva|# app attive}",
+    "allOn": "Hai tutte le app. Ne arrivano di nuove regolarmente.",
+    "sayLike": "Di’ ad esempio «{example}»"
+  },
+  "familyHousehold": {
+    "title": "Nucleo familiare",
+    "count": "{count} di {limit} persone",
+    "ownerText": "Famiglia vale per fino a {limit} persone. Ognuno ha il proprio account: nessuno vede le cose degli altri.",
+    "invite": "Invita nel nucleo",
+    "smsText": "Sei nella mia Dialogbot Famiglia - unisciti qui: {link}",
+    "me": "tu",
+    "remove": "Rimuovi",
+    "removeConfirm": "Rimuovere {name} dal nucleo? {name} perde Famiglia subito, ma tiene le proprie cose.",
+    "memberLine": "Sei nella Famiglia di {name}.",
+    "leave": "Lascia il nucleo",
+    "leaveConfirm": "Lasciare il nucleo? Perdi Famiglia subito. Le tue cose restano.",
+    "left": "Hai lasciato il nucleo.",
+    "paused": "Il nucleo è in pausa: serve Famiglia.",
+    "full": "Il nucleo è completo.",
+    "inviteTitle": "Entra nella Famiglia di {name}",
+    "inviteText": "Ricevi il piano Famiglia sul tuo account. {name} non vede le tue cose.",
+    "join": "Entra",
+    "joined": "Sei nel nucleo."
+  },
+  "myData": {
+    "title": "I tuoi dati",
+    "exportText": "Ricevi via e-mail tutto ciò che conserviamo su di te.",
+    "export": "Esporta i miei dati",
+    "queued": "Stiamo raccogliendo i tuoi dati. Riceverai un'e-mail con un link.",
+    "ready": "I tuoi dati sono pronti.",
+    "download": "Scarica i tuoi dati",
+    "expired": "Il link è scaduto. Richiedi di nuovo i tuoi dati.",
+    "delete": "Elimina il mio account",
+    "deleteText": "Tutto in Dialogbot Privat viene eliminato e l'abbonamento si ferma. Non si può annullare.",
+    "deleteLabel": "Scrivi la tua e-mail per confermare",
+    "deleteConfirm": "Elimina tutto per sempre",
+    "cancel": "Annulla",
+    "deleting": "Eliminazione…"
   }
 }

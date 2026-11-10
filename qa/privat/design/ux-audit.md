@@ -182,7 +182,7 @@ Fase 2-ejer: **UX** = ui-ux-engineer (layout/komponenter/tekst), **FIX** = fix-e
 
 ---
 
-## 3. Privat design-principper (10 regler til testere og fix-engineer)
+## 3. Privat design-principper (11 regler til testere og fix-engineer)
 
 1. **Én orange knap pr. skærm.** Alt andet er en blæk-kontur eller et link. Test: tæl elementer med `bg-accent` over folden. Mere end 1 er en fejl.
 2. **Peter først.** På Min dag er composeren det første interaktive element. På mobil sidder den i tommelfingerzonen (bunden).
@@ -194,6 +194,7 @@ Fase 2-ejer: **UX** = ui-ux-engineer (layout/komponenter/tekst), **FIX** = fix-e
 8. **Privat er orange, altid.** Ingen #2456F6 eller #EEF4FB i Privat-flader. Logo og PRIVAT-mærke må aldrig dækkes eller klippes. Én blok-skygge pr. skærm.
 9. **Ét ord pr. ting.** «Apps» (fanen) med «Mine» og «Butik» inde i den. «Opkald» (ikke «credits») i brugertekst. «Plan» (ikke «abonnement» og «råderum» på skift).
 10. **Ærlige tilstande.** Tom = én sætning plus ét eksempel at sige til Peter. «Kommer snart» = «Giv mig besked», aldrig «Slå til». Ingen grøn status for noget, der ikke er forbundet. Mål ≥ 44 px, og tekst ≥ 4,5:1 (`#C4461A` på papir er 4,81).
+11. **Kun komponenter og tokens.** I produktkoden: altid `Button` (og de andre komponenter) fra `web/src/components/ui.tsx` og konstanterne i `components/privat/bits.tsx` (`BIG`, `LINK`, `CHIP`) med tokens fra `globals.css` – ingen håndskrevne knap- eller typografi-klasser. Knap = Inter (font-body) 600 15 px, min. 44 px (52 px for den ene primære via `BIG`). I mockups: de præcise tokens, og fontene (Inter/Outfit Variable) indlejret, så intet falder tilbage til serif.
 
 ---
 

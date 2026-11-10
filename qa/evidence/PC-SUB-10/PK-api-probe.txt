@@ -1,0 +1,4 @@
+'abc' 422 {"code":"validation_failed","message":"Ugyldig Stripe-session","field_errors":[{"field":"session_id"}],"request_id":"e35998c10ad94b3ea28f3a434dc4f85a"}
+'cs_xxxxxxxxxxxxxxxxx' 422 {"code":"validation_failed","message":"Ugyldigt input","field_errors":[{"field":"session_id","message":"String should have at most 200 characters"}],"request_id
+'' 200 {"plan":"plus","status":"trial","interval":"month","trial_ends_at":"2026-11-25T10:07:19+00:00","trial_days_left":14,"current_period_end":"2026-11-25T10:07:19+00
+'cs_test_findes_ikke' 502 {"code":"stripe_failed","message":"Stripe afviste kaldet: No such checkout.session","field_errors":[],"request_id":"50437d5b271347d5a6e120f75504c99a"}

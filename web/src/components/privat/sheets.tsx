@@ -205,7 +205,9 @@ function ShareSheet({ onClose }: { onClose: () => void }) {
   const { sheet, task, addonOn, run, session, mode } = usePrivat();
   const tk = task(sheet?.taskId);
   const wish = tk?.list_type === "wishlist";
-  const kinds: ShareMode[] = [...(addonOn(ADDON.sharedLists) ? ["group" as const] : []), ...(addonOn(ADDON.wishlists) ? ["wishlist" as const] : [])];
+  // The list decides how it is shared (ux-audit #14 / F-UX-03): a wishlist is always shared as a wishlist – never switched
+  // to a shared list, which would let others tick and edit – and a plain list as a shared list.
+  const kinds: ShareMode[] = wish ? (addonOn(ADDON.wishlists) ? ["wishlist"] : []) : (addonOn(ADDON.sharedLists) ? ["group"] : []);
   const [kind, setKind] = useState<ShareMode | null>(tk?.share_mode ?? (wish && kinds.includes("wishlist") ? "wishlist" : kinds[0] ?? null));
   const [res, setRes] = useState<ShareResult | null>(null);
   const [platform, setPlatform] = useState<Platform>("other");
@@ -226,7 +228,7 @@ function ShareSheet({ onClose }: { onClose: () => void }) {
     setSign(s || (session.name ?? "").split(" ")[0] || (mode === "fake" ? FAKE_ME : ""));
   }, [session.name, mode]);
   const link = res ? bareLink(res.short_url ?? res.invite_url) : "";
-  const suggested = res ? `${t(kind === "wishlist" ? "share.smsWishlist" : "share.smsGroup", { link })}${sign.trim() ? ` – ${sign.trim()}` : ""}` : "";
+  const suggested = res ? `${t(kind === "wishlist" ? "share.smsWishlist" : "share.smsGroup", { link })}${sign.trim() ? ` - ${sign.trim()}` : ""}` : "";
   useEffect(() => { if (!edited) setText(suggested); }, [suggested, edited]);
   if (!tk) return null;
   const create = async () => { if (!kind) return; const r = await run((a) => a.share(tk.id, { mode: kind, role: "editor" })); if (r) { setRes(r); setEdited(false); } };
@@ -243,7 +245,9 @@ function ShareSheet({ onClose }: { onClose: () => void }) {
       {!res && !groupActive && (
         <>
           {kinds.length > 0 && owner && <Eyebrow className="pt-1">{t("share.orLink")}</Eyebrow>}
-          {kinds.length === 0 ? <p className="m-0 text-[15px] text-ink-soft">{t("share.noKinds")}</p> : (
+          {kinds.length === 0 ? <p className="m-0 text-[15px] text-ink-soft">{t("share.noKinds")}</p> : kinds.length === 1 ? (
+            <p className="m-0 text-[15px] text-ink-soft">{t(`share.${kinds[0]}Sub`)}</p>
+          ) : (
             <fieldset className="m-0 p-0 border-0 flex flex-col gap-2">
               <legend className="text-[15px] font-semibold mb-2">{t("share.chooseKind")}</legend>
               {kinds.map((k) => (
@@ -312,7 +316,7 @@ function Members({ onClose }: { onClose: () => void }) {
         {(tk.members ?? []).map((m) => (
           <li key={m.id} className="flex items-center gap-3 min-h-[48px]">
             <Avatars names={[m.name]} size={30} />
-            <span className="flex-1 min-w-0 text-[15px]">{m.name}{m.is_me ? ` ${t("share.you")}` : ""}<span className="text-muted text-[13px]"> · {t(`share.role.${m.role}`)}</span></span>
+            <span className="flex-1 min-w-0 text-[15px]">{m.name}{m.is_me ? ` ${t("share.you")}` : ""}<span className="text-muted text-[13px]"> · {tk.list_type === "wishlist" && m.role !== "owner" ? t("share.roleWishGuest") : t(`share.role.${m.role}`)}</span></span>
             {owner && !m.is_me && <button type="button" className="min-h-[44px] px-2 text-[14px] font-semibold text-accent underline" aria-label={t("share.removeAria", { name: m.name })} onClick={() => run((a) => a.removeMember(tk.id, m.id))}>{t("share.remove")}</button>}
             {!owner && m.is_me && <button type="button" className="min-h-[44px] px-2 text-[14px] font-semibold text-accent underline" onClick={async () => { await run((a) => a.removeMember(tk.id, m.id)); onClose(); go("tasks"); }}>{t("share.leave")}</button>}
           </li>

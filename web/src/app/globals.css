@@ -145,7 +145,7 @@
    bg-accent) becomes orange automatically. Trin-gul (highlight) is kept. */
 [data-theme="privat"] {
   /* #C4461A, not the brand sheet's #E0521A: white button text and orange links need ≥ 4.5:1 (WCAG AA) – 4.96 on white,
-     4.81 on paper, 4.56 on panel. Marketing pages and the browser theme colour keep #E0521A. */
+     4.81 on paper, 4.56 on panel. Marketing pages keep #E0521A; the Privat browser theme colour and manifest use #C4461A (docs/brand.md, PC-BRAND-02). */
   --color-accent: #C4461A;
   --color-accent-deep: #B8400F;
   --color-accent-soft: #FFE1D2;

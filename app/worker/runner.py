@@ -65,7 +65,7 @@ def handle_invitation(db: OrmSession, ev: OutboxEvent) -> None:
 
 def handle_verify(db: OrmSession, ev: OutboxEvent) -> None:
     lang = ev.payload.get("lang") or user_language(db, ev.payload.get("user_id"))
-    _send_mail(db, ev, tpl.verify(ev.payload["link"], lang=lang))
+    _send_mail(db, ev, tpl.verify(ev.payload["link"], lang=lang, privat=ev.payload.get("audience") == "privat"))
 
 
 def handle_reset(db: OrmSession, ev: OutboxEvent) -> None:
@@ -125,6 +125,7 @@ HANDLERS = {
     "privat.call_due": lambda db, ev: _privat("handle_call_due", db, ev),
     "privat.call_ask": lambda db, ev: _privat("handle_call_ask", db, ev),
     "privat.calendar_sync": lambda db, ev: _privat_calendar(db, ev),
+    "privat.data_export": lambda db, ev: _privat_export(db, ev),
     "push.send": lambda db, ev: _push_send(db, ev),
 }
 
@@ -133,6 +134,12 @@ def _privat(name: str, db: OrmSession, ev: OutboxEvent) -> None:
     from app.modules.privat import calls
 
     getattr(calls, name)(db, ev)
+
+
+def _privat_export(db: OrmSession, ev: OutboxEvent) -> None:
+    from app.modules.privat.gdpr import handle_export
+
+    handle_export(db, ev)
 
 
 def _privat_calendar(db: OrmSession, ev: OutboxEvent) -> None:
@@ -391,6 +398,9 @@ def run_schedules() -> None:
             from app.modules.privat.lookup_limits import prune
 
             prune(db)  # rate-limit rows older than two days
+            from app.modules.privat.gdpr import purge_expired as purge_exports
+
+            purge_exports(db)  # «Eksportér mine data»: expired links lose their content
             from app.modules.browser.lookup import scrub_expired
             from app.modules.privat.places import scrub_cached
 

@@ -125,7 +125,7 @@ for (const width of [375, 1440]) {
       await expect(chip(page)).toHaveAttribute("data-status", "trial");
       await expect(page.getByTestId("day-chat-card")).toBeVisible();
       await expect(page.getByTestId("your-turn")).toBeVisible();
-      await expect(page.getByTestId("room-card")).toBeVisible();
+      await expect(page.getByTestId("room-card")).toHaveCount(0);  // the plan meter lives on Konto (ux-audit #2)
       await say(page, "Lav en indkøbsliste med mælk og rugbrød");
       const sheet = page.getByRole("dialog", { name: "Gem din opgave" });
       await expect(sheet).toBeVisible();
@@ -233,7 +233,7 @@ for (const width of [375, 1440]) {
       await expect(chat(page).getByText("Opgaven er aktiv nu.", { exact: false })).toBeVisible();
       await expect(chat(page).getByText("Med i prøveperioden").first()).toBeVisible();
       await gotoTab(page, "Opgaver");
-      await expect(page.getByRole("region", { name: "Mine opgaver" }).getByRole("button", { name: /^I gang Liste/ })).toBeVisible();
+      await expect(page.getByRole("region", { name: "I gang" }).getByRole("button", { name: /Liste/ })).toBeVisible();
     });
 
     test("prøveperiode slut: ny opgave bliver udkast → brug 1 credit → aktiv", async ({ page }) => {
@@ -299,7 +299,7 @@ for (const width of [375, 1440]) {
       await say(page, "Lav en ønskeliste med cykelhjelm og bog");
       await chat(page).getByRole("button", { name: "Del", exact: true }).click();
       const sheet = page.getByRole("dialog", { name: "Del «Ønskeliste»" });
-      await expect(sheet.getByLabel(/Ønskeliste/)).toBeChecked();
+      await expect(sheet.getByText("De andre kan reservere – du ser ikke hvad")).toBeVisible();  // a wishlist is shared as a wishlist, no choice
       await sheet.getByRole("button", { name: "Lav invitationslink" }).click();
       await sheet.getByRole("button", { name: "Luk" }).click();
       await chat(page).getByRole("button", { name: /Anna reserverer et ønske/ }).click();
@@ -493,8 +493,9 @@ for (const width of [375, 1440]) {
       await expect(page.getByTestId("app-setup")).toContainText(/Trin 2 af \d/);
       await page.goto("/privat/apps");
       await expect(page.getByTestId("setup-card")).toContainText("Fødselsdage · trin 2");
-      await page.goto("/privat/dag");
-      await expect(page.getByTestId("day-apps")).toContainText("Fødselsdage");
+      // The app strip left Min dag (ux-audit #2): an app on is in Mine apps, no longer in Butikken.
+      await page.goto("/privat/butik");
+      await expect(page.getByTestId("app-row-foedselsdage")).toHaveCount(0);
       // Kommer snart: no switch, but «Giv mig besked» is remembered.
       await page.goto("/privat/butik/pakker");
       await expect(page.getByText("Kommer snart").first()).toBeVisible();

@@ -55,7 +55,9 @@ def suggested_text(inv: PrivateInvite, inviter_name: str, list_type: str | None,
     at most 160 characters, no emoji."""
     link = short_url(inv.short_code).split("://", 1)[-1]
     name = _gsm(rules.first_name(inviter_name))[:20].strip()
-    if inv.mode == "wishlist" or list_type == "wishlist":
+    if inv.resource_type == "household":
+        body = f"Hej! Du er med i min Dialogbot Familie - kom med her: {link}"
+    elif inv.mode == "wishlist" or list_type == "wishlist":
         body = f"Hej! Jeg har lavet en ønskeliste - se den og reservér her: {link}"
     elif list_type == "shopping":
         body = f"Hej! Jeg har delt vores indkøbsliste - tilføj det, du mangler: {link}"
@@ -166,6 +168,10 @@ def preview(db: OrmSession, raw: str | None = None, *, code: str | None = None) 
         h = addons.hooks(a)
         if h is not None and hasattr(h, "preview"):
             out.update(h.preview(db, inv))
+    elif inv.resource_type == "household":
+        from app.modules.privat import household
+
+        out.update(household.preview(db, inv))  # «Familie», how many of the 5 places are taken – never names
     inv.opened_count += 1
     return out | {"inviter_first_name": first, "resource_type": inv.resource_type, "addon_key": inv.addon_key,
                   "cta_text": CTA_TEXT.format(name=first)}
@@ -187,6 +193,10 @@ def accept(db: OrmSession, principal, raw: str | None = None, *, code: str | Non
         h = addons.hooks(addons.CATALOG[inv.addon_key])
         if h is not None and hasattr(h, "accept") and inv.inviter_user_id != user.id:
             result, joined = h.accept(db, inv, ctx)
+    elif inv.resource_type == "household":
+        from app.modules.privat import household
+
+        result, joined = household.accept(db, inv, ctx)  # Familie: the owner's plan rights, never their data
     if joined and inv.inviter_user_id != user.id:
         inv.accepted_count += 1
         _notify_inviter(db, inv, user)

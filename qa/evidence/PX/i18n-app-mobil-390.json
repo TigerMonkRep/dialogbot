@@ -1,0 +1,90 @@
+{
+  "en:/privat/dag": {
+    "lang": "en",
+    "leaks": []
+  },
+  "en:/privat/samtale": {
+    "lang": "en",
+    "leaks": []
+  },
+  "en:/privat/opgaver": {
+    "lang": "en",
+    "leaks": []
+  },
+  "en:/privat/apps": {
+    "lang": "en",
+    "leaks": []
+  },
+  "en:/privat/butik": {
+    "lang": "en",
+    "leaks": []
+  },
+  "en:/privat/butik/ring-for-mig": {
+    "lang": "en",
+    "leaks": []
+  },
+  "en:/privat/butik/pakker": {
+    "lang": "en",
+    "leaks": []
+  },
+  "en:/privat/folk": {
+    "lang": "en",
+    "leaks": []
+  },
+  "en:/privat/konto": {
+    "lang": "en",
+    "leaks": []
+  },
+  "en:/privat/kalender": {
+    "lang": "en",
+    "leaks": []
+  },
+  "en:/privat/apps/ring-for-mig": {
+    "lang": "en",
+    "leaks": []
+  },
+  "de:/privat/dag": {
+    "lang": "de",
+    "leaks": []
+  },
+  "de:/privat/samtale": {
+    "lang": "de",
+    "leaks": []
+  },
+  "de:/privat/opgaver": {
+    "lang": "de",
+    "leaks": []
+  },
+  "de:/privat/apps": {
+    "lang": "de",
+    "leaks": []
+  },
+  "de:/privat/butik": {
+    "lang": "de",
+    "leaks": []
+  },
+  "de:/privat/butik/ring-for-mig": {
+    "lang": "de",
+    "leaks": []
+  },
+  "de:/privat/butik/pakker": {
+    "lang": "de",
+    "leaks": []
+  },
+  "de:/privat/folk": {
+    "lang": "de",
+    "leaks": []
+  },
+  "de:/privat/konto": {
+    "lang": "de",
+    "leaks": []
+  },
+  "de:/privat/kalender": {
+    "lang": "de",
+    "leaks": []
+  },
+  "de:/privat/apps/ring-for-mig": {
+    "lang": "de",
+    "leaks": []
+  }
+}

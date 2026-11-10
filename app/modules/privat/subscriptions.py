@@ -21,7 +21,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
-from app.core.errors import NotFound, NotImplementedYet, ValidationFailed
+from app.core.errors import Conflict, NotFound, NotImplementedYet, ValidationFailed
 from app.models import PrivateCall, PrivateProfile, PrivateSubscription, Workspace
 from app.modules.billing import markets, prices
 from app.modules.billing import stripe as stripe_api
@@ -104,19 +104,24 @@ def _month_bounds(at: datetime | None = None) -> tuple[datetime, datetime]:
 
 
 def calls_used(db: OrmSession, ws_id: uuid.UUID, at: datetime | None = None) -> int:
-    """Approved plan calls this Copenhagen month that were not lost to no answer / failure."""
+    """Approved plan calls this Copenhagen month that were not lost to no answer / failure. In a Familie household the
+    quota is the household's: the calls of everyone drawing on it count (household.quota_workspaces)."""
+    from app.modules.privat import household
+
     start, end = _month_bounds(at)
     return int(db.scalar(select(func.count()).select_from(PrivateCall).where(
-        PrivateCall.workspace_id == ws_id, PrivateCall.paid_via == "plan",
+        PrivateCall.workspace_id.in_(household.quota_workspaces(db, ws_id)), PrivateCall.paid_via == "plan",
         PrivateCall.approved_at >= start, PrivateCall.approved_at < end,
         PrivateCall.result.is_(None) | PrivateCall.result.not_in(("no_answer", "failed")))) or 0)
 
 
 def plan_call_index(db: OrmSession, c: PrivateCall) -> int:
     """"Opkald N af M": this call's number among the month's counting plan calls (by approval order)."""
+    from app.modules.privat import household
+
     start, end = _month_bounds(c.approved_at)
     return int(db.scalar(select(func.count()).select_from(PrivateCall).where(
-        PrivateCall.workspace_id == c.workspace_id, PrivateCall.paid_via == "plan",
+        PrivateCall.workspace_id.in_(household.quota_workspaces(db, c.workspace_id)), PrivateCall.paid_via == "plan",
         PrivateCall.approved_at >= start, PrivateCall.approved_at < end, PrivateCall.approved_at <= c.approved_at,
         PrivateCall.id != c.id,
         PrivateCall.result.is_(None) | PrivateCall.result.not_in(("no_answer", "failed")))) or 0) + 1
@@ -143,6 +148,16 @@ def entitlements(db: OrmSession, ws_id: uuid.UUID) -> dict:
     row = ensure(db, ws_id)
     now = rules.now()
     status, plan, entitled = _state(row, now)
+    lent = None
+    if not entitled:
+        from app.modules.privat import household
+
+        # A member of a Familie household (household.py): the owner's plan rights, live – removed, left, downgraded or
+        # cancelled means gone on the next request. A member's own plan, when they have one, always wins.
+        lent = household.lent_row(db, ws_id)
+        if lent is not None:
+            row = lent
+            status, plan, entitled = _state(lent, now)
     p = PLANS.get(plan)
     quota = p["calls"] if (entitled and p) else 0
     used = calls_used(db, ws_id) if entitled else 0
@@ -150,10 +165,10 @@ def entitlements(db: OrmSession, ws_id: uuid.UUID) -> dict:
     if status == "trial":
         days_left = max(0, math.ceil((row.trial_ends_at - now).total_seconds() / 86400))
     return {
-        "plan": plan, "status": status, "interval": row.interval if entitled else None,
+        "plan": plan, "status": status, "interval": row.interval if (entitled and lent is None) else None,
         "trial_ends_at": row.trial_ends_at.isoformat() if row.trial_ends_at else None, "trial_days_left": days_left,
         "current_period_end": row.current_period_end.isoformat() if row.current_period_end else None,
-        "cancel_at_period_end": bool(row.cancel_at_period_end) if entitled else False,
+        "cancel_at_period_end": bool(row.cancel_at_period_end) if (entitled and lent is None) else False,
         "entitled": entitled, "calls_quota": quota, "calls_used": used, "calls_left": max(0, quota - used),
         "people_limit": p["people"] if (entitled and p) else 1,
         "apps_included": bool(p["apps_included"]) if (entitled and p) else False,
@@ -216,6 +231,11 @@ def checkout(db: OrmSession, ctx, *, plan: str, interval: str, code: str | None 
     base = s.frontend_base_url.rstrip("/")
     p = PLANS[plan]
     row = ensure(db, ctx.ws_id)
+    if row.stripe_subscription_id and _state(row, rules.now())[2]:
+        # One subscription per account (PC-SUB-07): a running Stripe subscription (trial, active, past_due, or cancelled
+        # but still paid up) is changed in the Billing Portal – a second Checkout would start a second subscription.
+        raise Conflict("Du har allerede et abonnement. Skift plan eller betaling under «Administrér abonnement».",
+                       code="subscription_exists", extra={"portal": True})
     currency = market.currency(row.currency, locale)
     if row.currency != currency:
         row.currency = currency  # a customer keeps the currency of its first Checkout
@@ -354,6 +374,14 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
     row = get(db, ws_id, lock=True) or start_free(db, ws_id)
     if row.stripe_subscription_id and row.stripe_subscription_id != sid and status == "canceled":
         return "ignored"  # an older subscription ending must not touch the one that replaced it
+    if (row.stripe_subscription_id and row.stripe_subscription_id != sid and status in ENTITLED_STATUSES
+            and _state(row, rules.now())[2]):
+        # A SECOND live subscription for an account that already has one (two Checkouts opened before either was
+        # completed – two tabs, the plan sheet and Konto …): one subscription per account, so the newcomer is
+        # cancelled at Stripe at once – nothing is charged after its trial – and the row keeps the first (F-PBQ-01,
+        # F-PK-01). Checkout itself refuses a second one once the first has arrived (PC-SUB-07).
+        _cancel_duplicate(obj, ws_id, row.stripe_subscription_id)
+        return "dup_canceled"  # ≤ 16 chars: webhook_events.outcome
     if plan is None and row.stripe_subscription_id != sid:
         return "unmatched"  # a subscription we cannot place on a plan
     if row.stripe_subscription_id == sid and status == "trial" and row.status in ("active", "past_due", "canceled"):
@@ -396,6 +424,38 @@ def upsert_from_stripe_subscription(db: OrmSession, obj: dict, *, session_meta: 
             except ApiError:
                 pass  # not in this plan / coming soon: the plan still applies
     return "applied"
+
+
+def _cancel_duplicate(obj: dict, ws_id: uuid.UUID, kept: str) -> None:
+    """Cancel the duplicate at Stripe; without a trial its first invoice is already paid – refund it in full
+    (idempotent per subscription), so the customer never pays for a subscription they do not get (F-PBQ-09)."""
+    import structlog
+
+    log = structlog.get_logger("dialogbot.privat.subscriptions")
+    sid = str(obj.get("id") or "")
+    try:
+        stripe_api.request("DELETE", f"/subscriptions/{sid}")
+        log.warning("privat.duplicate_subscription_canceled", workspace_id=str(ws_id), canceled=sid, kept=kept)
+    except Exception:  # noqa: BLE001 - already cancelled, or Stripe down: alert so a person cancels it
+        log.error("privat.duplicate_subscription_not_canceled", workspace_id=str(ws_id), subscription=sid, kept=kept)
+    if str(obj.get("status")) == "trialing":
+        return  # nothing was charged
+    inv_id = obj.get("latest_invoice")
+    if isinstance(inv_id, dict):
+        inv_id = inv_id.get("id")
+    try:
+        inv = stripe_api.request("GET", f"/invoices/{inv_id}") if inv_id else None
+        pi = (inv or {}).get("payment_intent")
+        if isinstance(pi, dict):
+            pi = pi.get("id")
+        if inv and inv.get("status") == "paid" and int(inv.get("amount_paid") or 0) > 0 and pi:
+            stripe_api.request("POST", "/refunds", {"payment_intent": pi, "metadata": {
+                "kind": KIND, "reason": "duplicate_subscription", "subscription": sid, "workspace_id": str(ws_id)}},
+                idempotency_key=f"privat-dup-refund-{sid}")
+            log.warning("privat.duplicate_subscription_refunded", workspace_id=str(ws_id), subscription=sid,
+                        amount=int(inv.get("amount_paid") or 0))
+    except Exception:  # noqa: BLE001 - a person must refund by hand; never silently
+        log.error("privat.duplicate_subscription_not_refunded", workspace_id=str(ws_id), subscription=sid)
 
 
 def on_checkout_completed(db: OrmSession, obj: dict) -> str | None:

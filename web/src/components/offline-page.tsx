@@ -53,7 +53,7 @@ async function ErhvervTabs() {
 
 async function PrivatTabs() {
   const t = await getT("privat");
-  const tabs: [string, string, string][] = [["/privat/dag", "nav.day", "home"], ["/privat/opgaver", "tabs.tasks", "list"], ["/privat/butik", "nav.store", "shop"], ["/privat/folk", "nav.people", "users"], ["/privat/konto", "nav.account", "user"]];
+  const tabs: [string, string, string][] = [["/privat/dag", "nav.day", "home"], ["/privat/opgaver", "tabs.tasks", "list"], ["/privat/apps", "apps.tab", "grid"], ["/privat/folk", "nav.people", "users"], ["/privat/konto", "nav.account", "user"]];
   return (
     <nav aria-label={t("tabs.label")} className="xl:hidden flex-none flex border-t-2 border-ink bg-paper pb-safe">
       {tabs.map(([href, label, icon]) => (

@@ -158,7 +158,7 @@ def test_privat_code_is_mirrored_to_stripe_and_applied_on_checkout(api, pv, db, 
     row = db.scalar(select(DiscountCode).where(DiscountCode.code == "HEJ10"))
     assert (row.stripe_coupon_id, row.stripe_promotion_code_id) == ("cpn_1", "promo_1")
 
-    tok = pv.account("mette@testmail.dk")
+    tok = pv.account("mette@testmail.dk", trial=False)  # no running subscription (PC-SUB-07)
     ws = pv.ws(tok)
     self_ws[0] = str(ws)
     # without a code: Stripe's own field; with a code: the discount is fixed on the session
@@ -184,4 +184,6 @@ def test_privat_code_is_mirrored_to_stripe_and_applied_on_checkout(api, pv, db, 
     # deactivating stops it at Stripe too
     api.post(op, f"/operator/admin/rabatkoder/{row.id}/deaktiver")
     assert sent[-1][1] == "/promotion_codes/promo_1" and sent[-1][2] == {"active": False}
-    assert api.post(tok, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "code": "HEJ10"}).status_code == 422
+    # (a customer without a running subscription – Mette has one now, and a second checkout is 409, PC-SUB-07)
+    other = pv.account("ole@testmail.dk", trial=False)
+    assert api.post(other, "/privat/subscription/checkout", {"plan": "plus", "interval": "month", "code": "HEJ10"}).status_code == 422

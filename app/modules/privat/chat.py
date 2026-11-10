@@ -1174,7 +1174,8 @@ def tool_cancel_subscription(turn: Turn, a: dict) -> str:
                               "may_not": "Sige ja til tilbud om at blive, en ny binding, et andet abonnement eller betale"})
     letter = subs_app.cancellation_letter(row, turn.ctx.user.display_name,
                                           str(a.get("customer_no") or "").strip()[:40] or None)
-    subs_app.mark_cancelling(turn.db, turn.ctx.ws_id, row["id"])
+    # Only a letter so far – the user still has to send it. The subscription stays «active», so the «sidste dag at
+    # opsige» reminder keeps running until they have (F-PA-03; «the status changes only when the user sends …»).
     turn.say("text", f"Her er opsigelsen af {row['name']}. Send den fra din egen mail eller via deres "
                      f"kontaktformular, og gem bekræftelsen:\n\n{letter}{brand.offer_line(row.get('category'))}")
     return "Opsigelsen er skrevet."
@@ -1274,7 +1275,7 @@ def tool_add_purchase(turn: Turn, a: dict) -> str:
 
     row = warranty.add(turn.db, turn.ctx.ws_id, product=str(a.get("product") or ""), bought=a.get("bought"),
                        shop=str(a.get("shop") or ""), price=a.get("price"), warranty_years=a.get("warranty_years"))
-    turn.say("text", f"Gemt: {warranty.line(row)}. Jeg minder dig om det en måned før. Gem selv kvitteringen.")
+    turn.say("text", f"Gemt: {warranty.line(row)}. Jeg minder dig om det en måned før. Tilføj gerne et foto af kvitteringen under Garanti.")
     return "Gemt."
 
 

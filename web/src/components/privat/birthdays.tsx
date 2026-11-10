@@ -53,7 +53,7 @@ export function BirthdaysPanel() {
                   <label className="text-[13px] text-muted flex items-center gap-1.5">
                     {t("birthdays.remind")}
                     <select value={b.remind_days_before} onChange={(e) => void run(() => api.updateBirthday(b.id, { remind_days_before: Number(e.target.value) }))}
-                      className="min-h-[40px] rounded-xl border-2 border-ink bg-paper px-2 text-[14px]">
+                      className="min-h-[44px] rounded-xl border-2 border-ink bg-paper px-2 text-[14px]">
                       {Array.from(new Set([...DAYS, b.remind_days_before])).sort((x, y) => x - y).map((d) => (
                         <option key={d} value={d}>{d === 0 ? t("birthdays.onTheDay") : t("birthdays.daysBefore", { n: d })}</option>
                       ))}

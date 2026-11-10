@@ -615,12 +615,15 @@ register(Addon(
                 "reklamationen til butikken, når noget går i stykker.",
     icon="shield", category="hverdag", price_text="Med i Plus og Familie", pricing="free",
     what="Fortæl Peter, når du køber noget dyrt. Han husker butik og dato, minder dig om det, før de 2 års "
-         "reklamationsret udløber, og skriver reklamationen, når noget går i stykker. Gem selv kvitteringen.",
+         "reklamationsret udløber, og skriver reklamationen, når noget går i stykker. Tilføj gerne et foto af "
+         "kvitteringen ved tingen.",
     example="«Jeg købte en vaskemaskine i Elgiganten den 3. maj til 4.999 kr.»",
     steps=("Sig hvad du købte, hvor og hvornår", "Peter minder dig om det, før reklamationsretten udløber",
            "Går noget i stykker, skriver Peter reklamationen til butikken"),
     included_in=("plus", "familie"),
-    permissions=("Gemmer ting, butik, dato og pris, som du selv skriver dem", "Gemmer ikke billeder af kvitteringer"),
+    # PC-APP-01: the app DOES keep a receipt photo when the user adds one (POST apps/garanti/items/{id}/photo).
+    permissions=("Gemmer ting, butik, dato og pris, som du selv skriver dem",
+                 "Gemmer et foto af kvitteringen, hvis du selv tilføjer ét – det slettes med tingen eller appens data"),
     keywords=("garanti", "kvittering", "reklamation", "reklamere", "gået i stykker", "virker ikke"),
     tools=(AddonTool(
         "add_purchase",
@@ -797,8 +800,39 @@ SHARE_MODE_ADDON = {"group": "delte-lister", "wishlist": "oenskelister"}
 # --------------------------------------------------------------------------- state
 
 def enabled_keys(db: OrmSession, ws_id: uuid.UUID) -> set[str]:
+    """The apps that RUN: switched on, live, and – for an app that needs a plan – the plan still applies. Decision
+    Fürster 2026-11-10 (PC-ENT-02/03): when the plan lapses (period over after cancelling, trial ended, unpaid) such an
+    app stops – no tools, no reminders, no scheduled calls – but stays switched on with its data kept, and runs again
+    the moment the plan is back. Free apps are never affected."""
     keys = set(db.scalars(select(PrivateAddonEnabled.key).where(PrivateAddonEnabled.workspace_id == ws_id)))
-    return {k for k in keys if k in CATALOG and CATALOG[k].live_status != "coming_soon"}
+    keys = {k for k in keys if k in CATALOG and CATALOG[k].live_status != "coming_soon"}
+    if any(CATALOG[k].included_in for k in keys):
+        from app.modules.privat import subscriptions
+
+        ent = subscriptions.entitlements(db, ws_id)
+        keys = {k for k in keys if not CATALOG[k].included_in or subscriptions.covers(ent, CATALOG[k].included_in)}
+    return keys
+
+
+def needs_plan_again(db: OrmSession, ws_id: uuid.UUID, key: str, ent: dict | None = None) -> bool:
+    """Switched on, but stopped because its plan no longer applies (data kept; «Kræver plan»)."""
+    a = CATALOG.get(key)
+    if a is None or not a.included_in or db.get(PrivateAddonEnabled, (ws_id, key)) is None:
+        return False
+    return not included(db, ws_id, a, ent)
+
+
+def running_rows(db: OrmSession, rows: list, key: str) -> list:
+    """Worker jobs: keep only the rows (with a workspace_id) whose app runs for that workspace right now."""
+    cache: dict = {}
+    out = []
+    for r in rows:
+        ws = r.workspace_id
+        if ws not in cache:
+            cache[ws] = key in enabled_keys(db, ws)
+        if cache[ws]:
+            out.append(r)
+    return out
 
 
 def is_enabled(db: OrmSession, ws_id: uuid.UUID, key: str) -> bool:
@@ -808,6 +842,11 @@ def is_enabled(db: OrmSession, ws_id: uuid.UUID, key: str) -> bool:
 def require(db: OrmSession, ws_id: uuid.UUID, key: str) -> None:
     if not is_enabled(db, ws_id, key):
         a = CATALOG.get(key)
+        if needs_plan_again(db, ws_id, key):
+            names = [n for n in ("Plus", "Familie", "Basis") if n.lower() in a.included_in]
+            raise Forbidden(f"«{a.name}» kræver {' eller '.join(names[:2]) if names else 'et abonnement'} – dine data "
+                            "er gemt og kommer tilbage, når planen er aktiv igen", code="needs_plan",
+                            extra={"addon": key, "plans": list(a.included_in)})
         raise Forbidden(f"Slå tilføjelsen «{a.name if a else key}» til først", code="addon_disabled",
                         extra={"addon": key})
 
@@ -853,7 +892,9 @@ def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> 
             "monthly_price_minor": a.monthly_price_minor, "status": a.live_status, "permissions": p(list(a.permissions)),
             "requires": list(a.requires), "enabled": on, "enabled_at": row.enabled_at.isoformat() if on else None,
             "what": p(a.what), "example": p(a.example), "steps": p(list(a.steps)), "included_in": list(a.included_in),
-            "included": included(db, ws_id, a, ent), "requires_plan": bool(a.included_in)}
+            "included": included(db, ws_id, a, ent), "requires_plan": bool(a.included_in),
+            # switched on, data kept, but stopped until the plan is back (PC-ENT-02/03) – the card says «Kræver plan»
+            "needs_plan": bool(on and a.included_in and not included(db, ws_id, a, ent))}
 
 
 def catalog_out(db: OrmSession, ws_id: uuid.UUID) -> list[dict]:

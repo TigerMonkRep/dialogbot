@@ -202,7 +202,7 @@
             "type": "ul",
             "items": [
               [{ "b": "Subscription:" }, " from {pMonthly} per month. There is no price per enquiry."],
-              [{ "b": "Campaigns (outbound calls):" }, " {pCall} per outbound call plus {pMinute} per started minute of conversation. Every call placed counts, including a retry (at most 2 attempts and at most 3 minutes of conversation per contact). The highest possible price is shown before a campaign is started."],
+              [{ "b": "Campaigns (outbound calls):" }, " {pTermsV1Call} per outbound call plus {pMinute} per started minute of conversation. Every call placed counts, including a retry (at most 2 attempts and at most 3 minutes of conversation per contact). The highest possible price is shown before a campaign is started."],
               [{ "b": "Inbound calls:" }, " a Danish phone number for the assistant and 300 started minutes of conversation per calendar month are included. Minutes beyond that cost {pExtraMinute} per started minute and are charged on the month's invoice. Usage can be followed continuously in Dialogbot."]
             ]
           },

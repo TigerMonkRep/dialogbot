@@ -7,10 +7,12 @@ Rules (product and Danish law, markedsføringsloven § 10):
   neither the Robinson list nor CVR's advertising protection is enough to call someone who has not asked for it.
 - Numbers on the workspace's do-not-call list are never called; "ring ikke igen" in a call adds the
   number to it.
-- Every outbound call costs 4 kr. excl. VAT for dialling plus 2 kr. per started minute of conversation
-  (billing/prices.py). The dialling price is recorded in `campaign_calls` when Vapi accepts the call, the minutes
-  when the end-of-call report arrives. Each contact is dialled at most `max_attempts` times and talks at most
-  `max_connected_seconds` in total, which is what bounds the cost of a campaign.
+- Pricing (Fürster's decision 2026-11-10, billing/prices.py): a customer campaign's minutes draw on the workspace's
+  monthly package of 300 minutes, shared with inbound calls; every started minute above it costs 2 kr. excl. VAT.
+  There is no fee for dialling: an unanswered call costs nothing. A call is recorded in `campaign_calls` when Vapi
+  accepts it and its minutes when the end-of-call report arrives; the monthly statement allocates the package.
+  (Internal sales campaigns keep their own spend estimate per attempt.) Each contact is dialled at most
+  `max_attempts` times and talks at most `max_connected_seconds` in total, which is what bounds the cost.
 - Payment never starts calls. Only an admin's explicit start command sets a campaign running, and
   the worker only dials inside the campaign's calling window in the workspace's time zone.
 - The assistant always says it is a digital assistent, who it calls from, and why.
@@ -31,10 +33,7 @@ from sqlalchemy.orm import Session as OrmSession
 from app.config import get_settings
 from app.core.errors import ApiError, NotImplementedYet, ValidationFailed
 from app.models import Campaign, CampaignCall, CampaignContact, DoNotCall, PhoneNumber, Workspace
-from app.modules.billing import prices
 
-CALL_NET_MINOR = prices.CAMPAIGN_CALL_NET_MINOR      # 4 kr. excl. VAT per outbound call dialled
-MINUTE_NET_MINOR = prices.CAMPAIGN_MINUTE_NET_MINOR  # 2 kr. excl. VAT per started minute of conversation
 MAX_ATTEMPTS = 2
 MAX_CONNECTED_SECONDS = 180
 RETRY_AFTER = timedelta(hours=3)
@@ -182,7 +181,44 @@ def started_minutes(seconds: int | float | None) -> int:
     return -(-int(seconds or 0) // 60)
 
 
+def _before_shared_pool(db: OrmSession, workspace_id: uuid.UUID, at: datetime) -> bool:
+    """Was `at` in a month billed before the shared package (local calendar month of the workspace)?"""
+    from app.modules.billing import prices, statement
+    from app.modules.reports.service import tz_of
+
+    return at < statement.month_bounds(prices.SHARED_POOL_FROM, tz_of(db, workspace_id))[0]
+
+
+def max_minutes(db: OrmSession, c: Campaign) -> int:
+    """The most conversation minutes the campaign can still use: every attempt left at the full talk allowance."""
+    pending = db.execute(select(CampaignContact.attempts).where(CampaignContact.campaign_id == c.id,
+                                                                  CampaignContact.status == "pending")).scalars().all()
+    return sum(max(0, c.max_attempts - a) for a in pending) * started_minutes(c.max_connected_seconds)
+
+
+def max_cost(db: OrmSession, c: Campaign, now: datetime | None = None) -> dict:
+    """What a customer campaign can cost from now, honestly: its minutes first use what is left of this month's
+    package (shared with inbound calls), every minute above it costs the agreement's outbound minute price.
+    `net_minor` is the true maximum (if other calls use up the package first) – the amount the owner accepts;
+    `with_package_net_minor` is the most it costs with the package minutes left right now."""
+    from app.modules.billing import agreements, customer_market, statement
+    from app.modules.reports.service import tz_of
+
+    now = now or _now()
+    tz = tz_of(db, c.workspace_id)
+    month = now.astimezone(ZoneInfo(tz)).date().replace(day=1)
+    start, end = statement.month_bounds(month, tz)
+    terms = statement.package_terms(agreements.current(db, c.workspace_id), customer_market.currency_of(db, c.workspace_id))
+    package = statement.allocate(statement.usage_events(db, c.workspace_id, start, end), terms)
+    minutes = max_minutes(db, c)
+    price = terms["outbound"]
+    return {"minutes": minutes, "minute_net_minor": price, "package_included": package["included"],
+            "package_remaining": package["remaining"], "net_minor": minutes * price,
+            "with_package_net_minor": max(0, minutes - package["remaining"]) * price}
+
+
 def max_cost_net_minor(db: OrmSession, c: Campaign) -> int:
+    """Internal sales campaigns: Dialogbot's own spend estimate per attempt (its snapshot on the campaign)."""
     """The most the campaign can cost from now: every contact still callable, dialled as often as the limit allows,
     plus the minutes it could talk (every attempt priced as if it used the whole conversation allowance)."""
     pending = db.execute(select(CampaignContact.attempts).where(CampaignContact.campaign_id == c.id,
@@ -354,7 +390,9 @@ def dial(db: OrmSession, c: Campaign, contact: CampaignContact, now: datetime) -
         if vs is not None:
             vs.provider_call_id = contact.provider_call_id
     db.add(CampaignCall(workspace_id=c.workspace_id, campaign_id=c.id, contact_id=contact.id,
-                        provider_call_id=contact.provider_call_id, dialled_at=now, net_minor=c.call_net_minor))
+                        provider_call_id=contact.provider_call_id, dialled_at=now,
+                        # customer campaigns: no fee for dialling (since 2026-11; minutes are allocated by the statement)
+                        net_minor=0 if c.kind == "customer" else c.call_net_minor))
 
 
 def dispatch(db: OrmSession, now: datetime | None = None, max_calls: int = 20) -> int:
@@ -470,7 +508,10 @@ def on_report(db: OrmSession, message: dict, *, call_id: str, conv, duration: fl
     call = db.scalar(select(CampaignCall).where(CampaignCall.provider_call_id == call_id).order_by(CampaignCall.dialled_at.desc()))
     if call is not None and call.connected_seconds is None:  # price the conversation minutes once, from the report
         call.connected_seconds = int(duration or 0) if answered else 0
-        call.minutes_net_minor = started_minutes(call.connected_seconds) * c.minute_net_minor
+        # customer campaigns from 2026-11: the minutes are priced by the monthly statement (shared package, then
+        # 2 kr./min); a call dialled in an earlier month keeps that month's model (priced per call, as invoiced)
+        pooled = c.kind == "customer" and not _before_shared_pool(db, c.workspace_id, call.dialled_at)
+        call.minutes_net_minor = 0 if pooled else started_minutes(call.connected_seconds) * c.minute_net_minor
     if answered and duration:
         contact.connected_seconds += int(duration)
     if not answered:

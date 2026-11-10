@@ -204,7 +204,7 @@
       "unit": "{pCur}/Monat zzgl. MwSt.",
       "points": [
         "Telefon, Buchung und Webchat – alles inklusive",
-        "300 Minuten eingehende Anrufe pro Monat",
+        "{pIncluded} Minuten pro Monat für ein- und ausgehende Anrufe",
         "Monatlich kündbar"
       ],
       "cta": "Erst anhören"

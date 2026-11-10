@@ -34,22 +34,31 @@ def _own(db: OrmSession, campaign_id, ws_id) -> Campaign:
 
 
 def _pricing(db: OrmSession, ws_id) -> tuple[str, int, int]:
-    """(currency, call, minute) for a new customer campaign: the workspace's currency (the agreement's, else the
-    country's) and the list prices in it (markets.ERHVERV), snapshotted on the campaign."""
+    """(currency, call, minute) for a new customer campaign: no fee per call, and the outbound minute above the
+    package – the agreement's snapshot, else the list price in the workspace's currency (markets.ERHVERV)."""
+    from app.modules.billing import agreements
+
     currency = customer_market.currency_of(db, ws_id)
-    return currency, markets.erhverv_price(currency, "call"), markets.erhverv_price(currency, "minute")
+    a = agreements.current(db, ws_id)
+    minute = a.outbound_extra_minute_net_minor if a is not None else markets.erhverv_price(currency, "outbound_extra_minute")
+    return currency, 0, minute
 
 
 def campaign_out(db: OrmSession, c: Campaign, currency: str | None = None) -> dict:
     currency = currency or customer_market.currency_of(db, c.workspace_id)
     vat_bp = customer_market.vat_of(db, c.workspace_id)["rate_bp"]
+    cost = service.max_cost(db, c)
     return {"id": str(c.id), "name": c.name, "status": c.status, "version": c.version, "purpose": c.purpose,
             "opening": c.opening, "questions": list(c.questions or []), "success": c.success,
             "phone_number_id": str(c.phone_number_id) if c.phone_number_id else None,
             "call_days": list(c.call_days or []), "call_from": c.call_from, "call_to": c.call_to,
-            "pricing": {"currency": currency, "call_net_minor": c.call_net_minor, "minute_net_minor": c.minute_net_minor,
+            "pricing": {"currency": currency, "call_net_minor": 0, "minute_net_minor": cost["minute_net_minor"],
                         "max_attempts": c.max_attempts, "max_connected_seconds": c.max_connected_seconds},
-            "counts": service.counts(db, c), "max_cost": Money(currency, service.max_cost_net_minor(db, c), vat_bp).snapshot(),
+            "counts": service.counts(db, c), "max_cost": Money(currency, cost["net_minor"], vat_bp).snapshot(),
+            # the honest maximum: minutes first use what is left of the shared package now (inbound calls use it too)
+            "max_minutes": cost["minutes"], "package": {"included": cost["package_included"],
+                                                         "remaining": cost["package_remaining"]},
+            "max_cost_with_package": Money(currency, cost["with_package_net_minor"], vat_bp).snapshot(),
             "outbound_problem": service.outbound_problem(db, c), "legal_confirmation": c.legal_confirmation,
             "created_at": c.created_at.isoformat(), "started_at": c.started_at.isoformat() if c.started_at else None,
             "completed_at": c.completed_at.isoformat() if c.completed_at else None}
@@ -177,7 +186,7 @@ def start_campaign(campaign_id: uuid.UUID, body: StartIn, request: Request,
         raise ValidationFailed("Skriv formålet med opkaldet", field_errors=[{"field": "purpose"}])
     if not service.counts(db, c)["by_status"].get("pending"):
         raise ValidationFailed("Tilføj kontakter, der kan ringes op", field_errors=[{"field": "contacts"}])
-    maximum = service.max_cost_net_minor(db, c)
+    maximum = service.max_cost(db, c)["net_minor"]
     if body.accept_max_net_minor < maximum:
         raise Conflict("Prisen er ændret, siden du så den. Genindlæs og bekræft igen.", code="price_changed",
                        extra={"max_net_minor": maximum})

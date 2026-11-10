@@ -204,7 +204,7 @@
       "unit": "{pCur}/mes sin IVA",
       "points": [
         "Teléfono, reservas y chat web – todo incluido",
-        "300 minutos de llamadas entrantes al mes",
+        "{pIncluded} minutos al mes para llamadas entrantes y salientes",
         "Cancelación mes a mes"
       ],
       "cta": "Escúchelo primero"

@@ -129,7 +129,7 @@
     "noAppointments": "Aucun rendez-vous à venir.",
     "weekAppointments": "Voir les rendez-vous de la semaine",
     "campaigns": "Campagnes",
-    "campaignsSub": "Appelez vos propres clients – {pCall} par appel + {pMinute} par minute de conversation HT.",
+    "campaignsSub": "Appelez vos propres clients – les minutes sont prises sur les {pIncluded} minutes de l’abonnement, puis {pMinute} par minute HT. Aucun prix par appel.",
     "openCampaigns": "Ouvrir les campagnes",
     "allActivity": "Toute l’activité des 14 derniers jours",
     "power": {
@@ -288,7 +288,7 @@
       "title": "Coût de la semaine",
       "extra": "{amount} en supplément",
       "calls": "{n} appels de campagne",
-      "note": "300 minutes d’appels entrants par mois sont incluses dans l’abonnement. Appels de campagne cette semaine : {n} ({pCall} par appel sortant + {pMinute} par minute de conversation, HT).",
+      "note": "{pIncluded} minutes par mois sont incluses dans l’abonnement – pour les appels entrants comme pour les campagnes. Appels de campagne cette semaine : {n}. Au-delà, {pExtraMinute} par minute entrante et {pMinute} par minute sortante, HT.",
       "billing": "Voir l’abonnement et les factures"
     }
   },
@@ -479,15 +479,15 @@
     "eyebrow": "Aujourd’hui → Campagnes",
     "enable": {
       "title": "Vous voulez aussi passer des appels ?",
-      "body": "Dialogbot peut appeler vos propres clients avec un message – par exemple une offre – et vous transmettre les personnes intéressées. Cela coûte {price} par appel sortant HT. Aucun appel n’est passé avant votre validation.",
+      "body": "Dialogbot peut appeler vos propres clients avec un message – par exemple une offre – et vous transmettre les personnes intéressées. Les minutes sont prises sur les {included} minutes de l’abonnement ; au-delà, chaque minute entamée coûte {price} HT. Un appel sans réponse ne coûte rien. Aucun appel ne part avant votre accord.",
       "onlyAdmins": "Seuls les propriétaires et administrateurs peuvent activer les appels sortants.",
       "ask": "Vous pouvez aussi le demander à l’assistant.",
       "pending": "Activation…",
       "button": "Oui, activer les appels sortants"
     },
-    "eyebrowPrice": "Aujourd’hui → Campagnes · appels sortants · {price} par appel HT",
+    "eyebrowPrice": "Aujourd’hui → Campagnes · appels sortants · minutes du forfait, puis {price}/min HT",
     "title": "Appelez vos clients – une campagne à la fois",
-    "intro": "Trois étapes : vous choisissez qui appeler, écoutez ce qu’il dira, et validez le prix avant le premier appel. Le prix est de {price} + TVA par appel sortant – chaque appel compte, y compris une nouvelle tentative. {attempts} tentatives maximum et {minutes} minutes de conversation au total par contact. Dialogbot n’appelle jamais une personne inscrite sur la liste d’opposition.",
+    "intro": "Trois étapes : vous choisissez qui appeler, écoutez ce qu’il dit et approuvez le prix avant le premier appel. Les minutes sont prises sur les {included} minutes de l’abonnement (partagées avec les appels entrants) ; au-delà, {price} HT par minute entamée. Un appel sans réponse ne coûte rien. Au maximum {attempts} tentatives et {minutes} minutes de conversation au total par contact. Dialogbot n’appelle jamais personne de la liste d’opposition.",
     "salesCalls": "Appels commerciaux : laisser l’IA appeler (Dialogbot uniquement)",
     "need": {
       "title": "Il vous faut",
@@ -515,7 +515,7 @@
       "consent": "consentement",
       "noConsent": "Consentement manquant – ne sera pas appelé",
       "attempts": "{n} tentatives",
-      "priceNote": "{price} par appel HT. Vous ne payez que les appels passés. Arrêtez à tout moment."
+      "priceNote": "Aucun prix par appel : les minutes sont prises sur le forfait, puis {price} par minute HT. Arrêtez quand vous voulez."
     },
     "new": {
       "title": "Nouvelle campagne",
@@ -572,7 +572,7 @@
       "before": "Avant le lancement",
       "resumeTitle": "Reprendre la campagne",
       "heading": "{n} contacts · {max} HT maximum",
-      "body": "{n} contacts en attente. {max} + TVA maximum ({gross} TTC) – {call} + TVA par appel sortant et {minute} + TVA par minute de conversation entamée, {attempts} tentatives et {minutes} minutes de conversation maximum par contact. Le paiement ne déclenche jamais d’appel.",
+      "body": "{n} contacts en attente : au maximum {maxMinutes} minutes de conversation ({attempts} tentatives et {minutes} minutes par contact). Il reste {remaining} des {included} minutes du forfait ce mois-ci – avec elles, la campagne coûte au maximum {withPackage} HT. Si d’autres appels épuisent d’abord le forfait, le prix est au maximum {max} HT ({gross} TTC), {minute} HT par minute entamée. Les appels sans réponse ne coûtent rien. Un paiement ne lance jamais d’appels.",
       "confirm": "Confirmer les règles d’appel",
       "starting": "Lancement…",
       "resume": "Reprendre",
@@ -799,12 +799,12 @@
       "confirmed": "Confirmé · contrat v{v}. Configuration en autonomie incluse.",
       "notConfirmed": "Configuration en autonomie incluse. Pas encore confirmé.",
       "campaign": "Appels de campagne",
-      "campaignPrice": "par appel + {minute} par minute entamée HT",
+      "campaignPrice": "par minute entamée au-delà du forfait HT – aucun prix par appel",
       "campaignMonth": "Ce mois-ci : {calls} appels, {minutes} minutes de conversation · {amount} HT",
-      "inbound": "Appels entrants",
-      "inboundUsed": "sur {n} minutes incluses utilisées ce mois-ci",
-      "inboundExtra": "{n} minutes au-delà du forfait inclus · {amount} HT ({price} par minute entamée).",
-      "inboundPrice": "Les minutes au-delà des {n} coûtent {price} par minute entamée HT.",
+      "package": "Forfait de minutes – appels entrants et sortants",
+      "packageUsed": "sur {n} minutes utilisées ce mois-ci",
+      "packageExtra": "{n} minutes entamées au-delà du forfait · {amount} HT.",
+      "packagePrice": "Au-delà des {n} minutes : {inPrice} par minute entamée en entrant et {outPrice} par minute entamée en sortant HT.",
       "confirm": "Confirmer l’abonnement",
       "ownerMustConfirm": "Le propriétaire doit confirmer l’abonnement.",
       "older": "Ancien contrat – confirmez l’abonnement pour passer à l’abonnement actuel.",
@@ -936,7 +936,7 @@
       },
       "billing": {
         "q": "Facturation",
-        "a": "Il y a un seul abonnement à partir de {pMonthly} par mois HT, avec 300 minutes d’appels entrants (puis {pExtraMinute} par minute). Les appels sortants de campagne coûtent {pCall} par appel plus {pMinute} par minute de conversation entamée. La page Compte affiche l’aperçu du mois."
+        "a": "Il y a un seul abonnement à partir de {pMonthly} par mois HT, avec 300 minutes d’appels entrants et sortants (puis {pExtraMinute} par minute entrante et {pMinute} par minute sortante). Aucun prix par appel. La page Compte affiche l’aperçu du mois."
       }
     },
     "team": {

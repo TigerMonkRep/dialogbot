@@ -6,14 +6,17 @@ import PRICES from "./prices.json";
 import { HTML_LANG, type Locale } from "@/i18n/config";
 
 export type Currency = "DKK" | "SEK" | "NOK" | "EUR";
-export type ErhvervItem = "monthly" | "call" | "minute" | "extra_minute" | "setup";
+/** extra_minute = inbound minute above the package, outbound_extra_minute = outbound (campaign) minute above it.
+ *  No price per call (decision 2026-11-10). */
+export type ErhvervItem = "monthly" | "extra_minute" | "outbound_extra_minute" | "setup";
 export type PrivatPlanKey = "basis" | "plus" | "familie";
 export type PrivatPrice = { monthly: number; yearly_monthly: number; yearly_total: number };
 
 type PriceTable = {
   currencies: Currency[];
   localeCurrency: Record<string, Currency>;
-  inboundIncludedMinutes: number;
+  includedMinutes: number;
+  termsV1Call: Record<Currency, number>;
   privatTrialDays: number;
   erhverv: Record<Currency, Record<ErhvervItem, number>>;
   privat: Record<Currency, Record<PrivatPlanKey, PrivatPrice>>;
@@ -22,7 +25,8 @@ type PriceTable = {
 const P = PRICES as unknown as PriceTable;
 
 export const CURRENCIES: readonly Currency[] = P.currencies;
-export const INBOUND_INCLUDED_MINUTES = P.inboundIncludedMinutes;
+/** The package: minutes a month that inbound and outbound calls share. */
+export const INCLUDED_MINUTES = P.includedMinutes;
 export const PRIVAT_TRIAL_DAYS = P.privatTrialDays;
 /** Danish VAT, included in every Privat price (prices.py TAX_BASIS_POINTS). */
 export const PRIVAT_VAT_BP = 2500;
@@ -136,8 +140,8 @@ export function market(locale: Locale | string) {
  *  lives in one place: «Fra {pMonthly}/md.» → «Fra 2.495 kr./md.» (da) · «From €329/month» (en).
  *  …Num = the amount without currency (for big figures with the unit beside); pCur = the currency sign. */
 export const PRICE_TOKENS = [
-  "pMonthly", "pCall", "pMinute", "pExtraMinute", "pSetup", "pCall3Min",
-  "pMonthlyNum", "pCallNum", "pSetupNum",
+  "pMonthly", "pMinute", "pExtraMinute", "pSetup",
+  "pMonthlyNum", "pMinuteNum", "pSetupNum", "pTermsV1Call",
   "pIncluded", "pCur",
   "pBasis", "pPlus", "pFamilie", "pBasisYear", "pPlusYear", "pFamilieYear",
   "pBasisYearTotal", "pPlusYearTotal", "pFamilieYearTotal",
@@ -158,10 +162,11 @@ export function priceVars(locale: Locale | string): Record<PriceToken, string | 
   const n = (m: number) => formatAmount(m, locale);
   const from = Math.min(pv.basis.monthly, pv.plus.monthly, pv.familie.monthly);
   const v: Record<PriceToken, string | number> = {
-    pMonthly: f(e.monthly), pCall: f(e.call), pMinute: f(e.minute), pExtraMinute: f(e.extra_minute), pSetup: f(e.setup),
-    pCall3Min: f(e.call + 3 * e.minute),
-    pMonthlyNum: n(e.monthly), pCallNum: n(e.call), pSetupNum: n(e.setup),
-    pIncluded: INBOUND_INCLUDED_MINUTES, pCur: currencySymbol(c, locale),
+    // pMinute = outbound minute above the package, pExtraMinute = inbound minute above it
+    pMonthly: f(e.monthly), pMinute: f(e.outbound_extra_minute), pExtraMinute: f(e.extra_minute), pSetup: f(e.setup),
+    pMonthlyNum: n(e.monthly), pMinuteNum: n(e.outbound_extra_minute), pSetupNum: n(e.setup),
+    pTermsV1Call: f(P.termsV1Call[c]),  // only the published terms v1 (legal.json) – no longer charged
+    pIncluded: INCLUDED_MINUTES, pCur: currencySymbol(c, locale),
     pBasis: f(pv.basis.monthly), pPlus: f(pv.plus.monthly), pFamilie: f(pv.familie.monthly),
     pBasisYear: f(pv.basis.yearly_monthly), pPlusYear: f(pv.plus.yearly_monthly), pFamilieYear: f(pv.familie.yearly_monthly),
     pBasisYearTotal: f(pv.basis.yearly_total), pPlusYearTotal: f(pv.plus.yearly_total), pFamilieYearTotal: f(pv.familie.yearly_total),

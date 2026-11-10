@@ -60,7 +60,7 @@
       "title": "Campaigns",
       "sub": "Call your own customers",
       "outbound": "Outbound calls",
-      "chosen": "Selected – {pCall} per call + {pMinute} per minute excl. VAT",
+      "chosen": "Selected – minutes from the package, then {pMinute} per minute excl. VAT",
       "notChosen": "Not selected"
     },
     "systems": {

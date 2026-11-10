@@ -13,10 +13,12 @@ Priserne står også i `app/modules/billing/prices.py` og `docs/pricing.md`; de 
 
 ## Priser (alle ekskl. moms; 25 % moms lægges på fakturaen)
 - Abonnement: 2.495 kr. om måneden. Telefon, webchat, booking og opsummeringer er med. Ingen pris pr. henvendelse.
-- 300 påbegyndte minutters indgående opkald pr. kalendermåned er med. Derudover 1,50 kr. pr. påbegyndt minut.
-  Forbruget ses under Konto.
-- Udgående kampagneopkald: 4 kr. pr. udgående opkald + 2 kr. pr. påbegyndt samtaleminut. Ubesvaret = 4 kr.,
-  3 minutters samtale = 10 kr. En kontakt ringes højst 2 gange og taler højst 3 minutter.
+- 300 påbegyndte minutter pr. kalendermåned er med – én pulje til både indgående opkald og udgående
+  kampagneopkald, brugt i den rækkefølge opkaldene sker. Derudover 1,50 kr. pr. påbegyndt indgående minut og 2 kr.
+  pr. påbegyndt udgående minut. Forbruget ses under Konto.
+- Udgående kampagneopkald: ingen pris pr. opkald – et ubesvaret opkald koster intet. Samtaleminutterne trækker på
+  pakken. En kontakt ringes højst 2 gange og taler højst 3 minutter; før start vises den højeste mulige pris.
+- Minutter krediteres kun, når kunden klager over et opkald (ingen automatisk kreditering).
 - Opsætning: gør-det-selv er med (tre trin, ca. 30 minutter). Skræddersyet opsætning fra Dialogbots specialister
   koster 5.000 kr. én gang (valgfrit).
 - Ingen binding. Opsigelse til udgangen af måneden: skriv det til assistenten (så sendes det til Dialogbot-teamet)

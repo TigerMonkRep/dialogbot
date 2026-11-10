@@ -129,7 +129,7 @@
     "noAppointments": "No hay próximas citas.",
     "weekAppointments": "Ver las citas de la semana",
     "campaigns": "Campañas",
-    "campaignsSub": "Llame a sus propios clientes: {pCall} por llamada + {pMinute} por minuto de conversación, IVA no incluido.",
+    "campaignsSub": "Llame a sus propios clientes: los minutos salen de los {pIncluded} minutos de la suscripción y después {pMinute} por minuto sin IVA. Sin precio por llamada.",
     "openCampaigns": "Abrir campañas",
     "allActivity": "Toda la actividad de los últimos 14 días",
     "power": {
@@ -288,7 +288,7 @@
       "title": "Lo que costó la semana",
       "extra": "{amount} adicionales",
       "calls": "{n} llamadas de campaña",
-      "note": "La suscripción incluye 300 minutos de llamadas entrantes al mes. Llamadas de campaña de la semana: {n} ({pCall} por llamada saliente + {pMinute} por minuto de conversación, IVA no incluido).",
+      "note": "La suscripción incluye {pIncluded} minutos al mes, para llamadas entrantes y de campaña. Llamadas de campaña esta semana: {n}. Después, {pExtraMinute} por minuto entrante y {pMinute} por minuto saliente, sin IVA.",
       "billing": "Ver suscripción y facturas"
     }
   },
@@ -479,15 +479,15 @@
     "eyebrow": "Hoy → Campañas",
     "enable": {
       "title": "¿También quieren hacer llamadas?",
-      "body": "Dialogbot puede llamar a sus propios clientes con un mensaje, por ejemplo una oferta, y pasarles a ustedes los interesados. Cuesta {price} por llamada saliente, IVA no incluido. No se llama hasta que ustedes lo aprueben.",
+      "body": "Dialogbot puede llamar a sus propios clientes con un mensaje –por ejemplo, una oferta– y pasarle los interesados. Los minutos salen de los {included} minutos de la suscripción; después, cada minuto iniciado cuesta {price} sin IVA. Una llamada sin respuesta no cuesta nada. No se llama hasta que usted lo aprueba.",
       "onlyAdmins": "Solo los propietarios y administradores pueden activar las llamadas salientes.",
       "ask": "También puede decírselo al asistente.",
       "pending": "Activando…",
       "button": "Sí, activar las llamadas salientes"
     },
-    "eyebrowPrice": "Hoy → Campañas · llamadas salientes · {price} por llamada, IVA no incluido",
+    "eyebrowPrice": "Hoy → Campañas · llamadas salientes · minutos del paquete, después {price}/min sin IVA",
     "title": "Llame a sus clientes: una campaña cada vez",
-    "intro": "Tres pasos: usted elige a quién llamar, escucha lo que dice y aprueba el precio antes de que salga la primera llamada. El precio es {price} + IVA por llamada saliente: cada llamada cuenta, también un nuevo intento. Máximo {attempts} intentos y {minutes} minutos de conversación en total por contacto. Dialogbot nunca llama a nadie que esté en la lista de exclusión.",
+    "intro": "Tres pasos: usted elige a quién llamar, escucha lo que dice y aprueba el precio antes de la primera llamada. Los minutos salen de los {included} minutos de la suscripción (compartidos con las llamadas entrantes); después, {price} + IVA por minuto iniciado. Una llamada sin respuesta no cuesta nada. Como máximo {attempts} intentos y {minutes} minutos de conversación en total por contacto. Dialogbot nunca llama a nadie de la lista de exclusión.",
     "salesCalls": "Llamadas comerciales: que llame la IA (solo Dialogbot)",
     "need": {
       "title": "Necesitará",
@@ -515,7 +515,7 @@
       "consent": "consentimiento",
       "noConsent": "Falta consentimiento: no se le llamará",
       "attempts": "{n} intentos",
-      "priceNote": "{price} por llamada, IVA no incluido. Solo paga las llamadas que se realizan. Puede detenerla en cualquier momento."
+      "priceNote": "Sin precio por llamada: los minutos salen del paquete y después {price} por minuto sin IVA. Puede parar cuando quiera."
     },
     "new": {
       "title": "Nueva campaña",
@@ -572,7 +572,7 @@
       "before": "Antes de empezar",
       "resumeTitle": "Reanudar la campaña",
       "heading": "{n} contactos · máximo {max} sin IVA",
-      "body": "{n} contactos en espera. Máximo {max} + IVA ({gross} con IVA): {call} + IVA por llamada saliente y {minute} + IVA por minuto de conversación iniciado, máximo {attempts} intentos y {minutes} minutos de conversación por contacto. El pago nunca inicia llamadas.",
+      "body": "{n} contactos en espera: como máximo {maxMinutes} minutos de conversación ({attempts} intentos y {minutes} minutos por contacto). Quedan {remaining} de {included} minutos en el paquete este mes; con ellos la campaña cuesta como máximo {withPackage} + IVA. Si otras llamadas agotan antes el paquete, el precio es como máximo {max} + IVA ({gross} con IVA), {minute} + IVA por minuto iniciado. Las llamadas sin respuesta no cuestan nada. Un pago nunca inicia llamadas.",
       "confirm": "Confirme las reglas de las llamadas",
       "starting": "Iniciando…",
       "resume": "Reanudar",
@@ -799,12 +799,12 @@
       "confirmed": "Confirmada · contrato v{v}. La configuración por su cuenta está incluida.",
       "notConfirmed": "La configuración por su cuenta está incluida. Aún no confirmada.",
       "campaign": "Llamadas de campaña",
-      "campaignPrice": "por llamada + {minute} por minuto iniciado, IVA no incluido",
+      "campaignPrice": "por minuto iniciado fuera del paquete sin IVA – sin precio por llamada",
       "campaignMonth": "Este mes: {calls} llamadas, {minutes} minutos de conversación · {amount} sin IVA",
-      "inbound": "Llamadas entrantes",
-      "inboundUsed": "de {n} minutos incluidos usados este mes",
-      "inboundExtra": "{n} minutos por encima de los incluidos · {amount} sin IVA ({price} por minuto iniciado).",
-      "inboundPrice": "Los minutos por encima de {n} cuestan {price} por minuto iniciado, IVA no incluido.",
+      "package": "Paquete de minutos – llamadas entrantes y salientes",
+      "packageUsed": "de {n} minutos usados este mes",
+      "packageExtra": "{n} minutos iniciados fuera del paquete · {amount} sin IVA.",
+      "packagePrice": "Fuera de los {n} minutos: {inPrice} por minuto iniciado entrante y {outPrice} por minuto iniciado saliente sin IVA.",
       "confirm": "Confirmar suscripción",
       "ownerMustConfirm": "El propietario debe confirmar la suscripción.",
       "older": "Contrato anterior: confirme la suscripción para cambiar a la suscripción actual.",
@@ -936,7 +936,7 @@
       },
       "billing": {
         "q": "Facturación",
-        "a": "Hay una sola suscripción desde {pMonthly} al mes, IVA no incluido, con 300 minutos de llamadas entrantes (después, {pExtraMinute} por minuto). Las llamadas salientes de campaña cuestan {pCall} por llamada más {pMinute} por minuto de conversación iniciado. Cuenta muestra la vista previa del mes."
+        "a": "Hay una sola suscripción desde {pMonthly} al mes, IVA no incluido, con 300 minutos para llamadas entrantes y salientes (después, {pExtraMinute} por minuto entrante y {pMinute} por minuto saliente). No hay precio por llamada. Cuenta muestra la vista previa del mes."
       }
     },
     "team": {

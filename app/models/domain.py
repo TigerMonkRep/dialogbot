@@ -472,6 +472,12 @@ def _list_extra_minute(ctx) -> int:
     return markets.erhverv_price(ctx.get_current_parameters().get("currency") or "DKK", "extra_minute")
 
 
+def _list_outbound_extra_minute(ctx) -> int:
+    from app.modules.billing import markets
+
+    return markets.erhverv_price(ctx.get_current_parameters().get("currency") or "DKK", "outbound_extra_minute")
+
+
 class ReceptionAgreement(Base):
     """Versioned reception price agreement (append-only; the newest version applies).
 
@@ -492,10 +498,13 @@ class ReceptionAgreement(Base):
     tax_basis_points: Mapped[int] = mapped_column(Integer, nullable=False, default=2500)
     # One-off setup fee from an accepted sales offer (specialist setup), billed on the first invoice. 0 = none.
     setup_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
-    # The package, snapshotted like the monthly price (QA F-BQ-011): inbound minutes included per month and the price
-    # per started minute above them. Default = the list price in the agreement's currency when the row is made.
+    # The package, snapshotted like the monthly price (QA F-BQ-011): minutes included per month – since 2026-11 one
+    # pool for inbound and outbound minutes together (the column name is from when it was inbound only) – and the
+    # price per started minute above it, per direction. Default = the list price in the agreement's currency.
     inbound_included_minutes: Mapped[int] = mapped_column(Integer, nullable=False, default=_list_included_minutes)
     inbound_extra_minute_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=_list_extra_minute)
+    outbound_extra_minute_net_minor: Mapped[int] = mapped_column(Integer, nullable=False,
+                                                                 default=_list_outbound_extra_minute)
     sales_offer_id: Mapped[uuid.UUID | None] = mapped_column()  # the accepted sales_offers row (no FK: avoids a cycle)
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
@@ -895,7 +904,9 @@ class ActionRun(Base):
 class Campaign(Base):
     """An outbound calling campaign: script, caller number, calling window, contacts.
 
-    Every outbound call is billed at `call_net_minor` (4 kr. excl. VAT) plus `minute_net_minor` per started minute of
+    Pricing snapshot: `call_net_minor` per call dialled (4 kr. on campaigns made before 2026-11-10, 0 since – the fee
+    was removed) and `minute_net_minor` per started minute (since 2026-11 only above the shared package; the monthly
+    statement allocates the package). Before: every outbound call is billed at `call_net_minor` plus `minute_net_minor` per started minute of
     conversation (2 kr.), both snapshotted when the campaign is created and
     recorded per call in `campaign_calls`); each contact is dialled at most `max_attempts` times and talks at most
     `max_connected_seconds` in total. Payment never starts calls: a campaign only calls after an admin's explicit
@@ -989,7 +1000,8 @@ class CampaignContact(Base):
 
 
 class CampaignCall(Base):
-    """One outbound campaign call that Vapi accepted: the unit the customer pays for – 4 kr. for dialling plus 2 kr. per
+    """One outbound campaign call that Vapi accepted (until 2026-10 billed per call, since then its minutes draw on the
+    package – see billing/statement.py): the unit the customer paid for – 4 kr. for dialling plus 2 kr. per
     started minute of conversation (excl. VAT). Both prices are snapshotted here, so a later price change never alters
     an earlier month."""
 
@@ -1002,7 +1014,7 @@ class CampaignCall(Base):
     contact_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("campaign_contacts.id", ondelete="CASCADE"), nullable=False)
     provider_call_id: Mapped[str | None] = mapped_column(String(100))
     dialled_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
-    net_minor: Mapped[int] = mapped_column(Integer, nullable=False)  # the price for dialling (4 kr.)
+    net_minor: Mapped[int] = mapped_column(Integer, nullable=False)  # the price for dialling (4 kr. before 2026-11, now 0)
     connected_seconds: Mapped[int | None] = mapped_column(Integer)  # set from the end-of-call report; None = no report yet
     minutes_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")  # started minutes × price
 

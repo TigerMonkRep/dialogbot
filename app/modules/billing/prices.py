@@ -1,27 +1,33 @@
 """Dialogbot's list prices: the one place a price is written in code.
 
-There is ONE offer (excl. VAT):
-- the subscription, "Fra 2.495 kr./md." (whole øre below);
-- outbound campaign calls: 4 kr. per call that is dialled (retries included) + 2 kr. per started minute of
-  conversation, so an unanswered attempt costs 4 kr. and a 3-minute conversation 10 kr. – the minutes are what cost
-  us money (telephony, speech, voice and model);
-- inbound calls: 300 minutes a month are included in the subscription, every started minute above that costs 1,50 kr.;
+There is ONE offer (excl. VAT) – Fürster's decision 2026-11-10:
+- the subscription, "Fra 2.495 kr./md." (whole øre below), with a package of 300 minutes a month that inbound calls
+  AND outbound campaign calls draw on together (one shared pool, used in the order the calls happen);
+- above the package: 1,50 kr. per started inbound minute and 2 kr. per started outbound (campaign) minute;
+- no fee per outbound call: an unanswered campaign call costs nothing (the old 4 kr. per call is gone);
 - 5.000 kr. once for setup by Dialogbot's own specialists (tailored setup and integration with the customer's own
   systems); doing it yourself through the three-step building guide is included in the subscription.
-There is no fee per approved enquiry any more and no binding.
+There is no fee per approved enquiry any more and no binding. Minutes are only credited when the customer complains
+about a call (no automatic credit for failed calls).
 
 The website, the sales script, the social posts and the invoices all read these numbers (or are tested against them),
-so a price changes here first. Agreements snapshot the price they were made at, so an old agreement keeps its price.
+so a price changes here first. Agreements snapshot the price and the package they were made at, so an old agreement
+keeps its price; months invoiced before SHARED_POOL_FROM keep the model they were invoiced under (statement.py).
 """
 from __future__ import annotations
 
+from datetime import date
+
 SUBSCRIPTION_MONTHLY_NET_MINOR = 249_500  # 2.495 kr. per month, excl. VAT
-CAMPAIGN_CALL_NET_MINOR = 400             # 4 kr. per outbound campaign call dialled, excl. VAT
-CAMPAIGN_MINUTE_NET_MINOR = 200           # 2 kr. per started minute of conversation on a campaign call, excl. VAT
-INBOUND_INCLUDED_MINUTES = 300            # inbound call minutes included in the subscription each month
-INBOUND_EXTRA_MINUTE_NET_MINOR = 150      # 1,50 kr. per started inbound minute above the included ones, excl. VAT
+INCLUDED_MINUTES = 300                    # the package: minutes a month, inbound and outbound together
+INBOUND_INCLUDED_MINUTES = INCLUDED_MINUTES  # (name kept: offers and agreements store it under this name)
+INBOUND_EXTRA_MINUTE_NET_MINOR = 150      # 1,50 kr. per started inbound minute above the package, excl. VAT
+OUTBOUND_EXTRA_MINUTE_NET_MINOR = 200     # 2 kr. per started outbound (campaign) minute above the package, excl. VAT
 SPECIALIST_SETUP_NET_MINOR = 500_000      # 5.000 kr. once, setup by our specialists, excl. VAT (self-setup is included)
 TAX_BASIS_POINTS = 2500                   # 25 % Danish VAT
+# First month billed with the shared package (inbound + outbound) and without the per-call fee. Earlier months keep
+# the model they were billed under: inbound-only package, campaign calls at 4 kr. + 2 kr./min snapshotted per call.
+SHARED_POOL_FROM = date(2026, 11, 1)
 
 
 def kr(minor: int) -> str:

@@ -57,6 +57,9 @@ def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid
                                                      else prices.INBOUND_INCLUDED_MINUTES),
                            inbound_extra_minute_net_minor=(offer.inbound_extra_minute_net_minor if offer
                                                            else markets.erhverv_price(currency, "extra_minute")),
+                           # an offer's campaign minute price is the outbound minute (above the package since 2026-11)
+                           outbound_extra_minute_net_minor=(offer.campaign_minute_net_minor if offer
+                                                            else markets.erhverv_price(currency, "outbound_extra_minute")),
                            sales_offer_id=offer.id if offer else None, created_by=created_by)
     db.add(a)
     db.flush()
@@ -84,9 +87,10 @@ def out(a: ReceptionAgreement | None) -> dict | None:
     return {"id": str(a.id), "version": a.version, "model": a.model, "currency": a.currency,
             "monthly": Money(a.currency, a.monthly_net_minor, a.tax_basis_points).snapshot(),
             "lead_fee": lead_fee(a).snapshot(),
-            "campaign_call": Money(a.currency, markets.erhverv_price(a.currency, "call"), a.tax_basis_points).snapshot(),
-            "campaign_minute": Money(a.currency, markets.erhverv_price(a.currency, "minute"), a.tax_basis_points).snapshot(),
+            # one package for inbound and outbound minutes; above it, priced per direction; no fee per call
+            "included_minutes": a.inbound_included_minutes,
             "inbound_included_minutes": a.inbound_included_minutes,
+            "outbound_extra_minute": Money(a.currency, a.outbound_extra_minute_net_minor, a.tax_basis_points).snapshot(),
             "inbound_extra_minute": Money(a.currency, a.inbound_extra_minute_net_minor, a.tax_basis_points).snapshot(),
             "setup": Money(a.currency, a.setup_net_minor or 0, a.tax_basis_points).snapshot(),
             "created_at": a.created_at.isoformat(),

@@ -5,7 +5,11 @@ export type Campaign = {
   id: string; name: string; status: "draft" | "running" | "paused" | "completed"; version: number; purpose: string; opening: string;
   questions: string[]; success: string; phone_number_id: string | null; call_days: string[]; call_from: string; call_to: string;
   pricing: { call_net_minor: number; minute_net_minor: number; max_attempts: number; max_connected_seconds: number; currency?: string }; counts: Counts;
+  /** max_cost: the true maximum (if other calls use up the package first); max_cost_with_package: with the package
+   *  minutes left now. Minutes come out of the shared monthly package, no price per call. */
   max_cost: { net_minor: number; tax_minor: number; gross_minor: number }; outbound_problem: string | null;
+  max_minutes: number; package: { included: number; remaining: number };
+  max_cost_with_package: { net_minor: number; tax_minor: number; gross_minor: number };
   legal_confirmation: { at: string; accepted_max_net_minor: number } | null; started_at: string | null; completed_at: string | null;
 };
 export type Contact = {

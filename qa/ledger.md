@@ -34,3 +34,4 @@
 | 18:55 | qa-lead → Fürster | verdict | bølge 1 | GO: 0 åbne S0/S1, 51 fund lukket, CI grøn – merger PR #176 |
 | 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | beslutninger | F-EB-05-BK15 beslutning B (afventer bekræftelse, migration e7a2c5d9f1b3), F-VQ-05-X05 wont-fix; ikke committet |
 | 2026-11-10 | fix-engineer → qa-lead | fix-ready | billing 1 | F-BQ-012-M04 (efterregistreret forbrug på næste faktura), F-BQ-011-B05 (pakke snapshot på aftalen, migration f3b8d1e6a4c2); ikke committet |
+| 2026-11-10 | fix-engineer → qa-lead | fix-ready | prismodel A | Fælles minutpakke 300 min ind+ud, ingen opkaldsgebyr, overforbrug 1,50 ind / 2 kr. ud; migration a9c4e2f7b5d1; vilkår v1 uændret (needs-decision); ikke committet |

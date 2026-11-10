@@ -2,7 +2,7 @@
   "prices": {
     "monthly": "{pMonthlyNum}",
     "setup": "{pSetupNum}",
-    "perCall": "{pCallNum}"
+    "perMinute": "{pMinuteNum}"
   },
   "demoCall": {
     "label": "Llamada · Carpintería (ejemplo)",
@@ -84,7 +84,7 @@
         },
         {
           "title": "Llama a sus clientes",
-          "text": "Hace seguimiento de presupuestos o recuerda revisiones, solo a clientes que han dado su consentimiento. {pCall} por llamada + {pMinute} por minuto."
+          "text": "Hace seguimiento de presupuestos o recuerda el servicio, solo a clientes que han dicho que sí. Los minutos salen del paquete, sin precio por llamada."
         }
       ],
       "note": "Todo lo que dice se basa en información que usted ha aprobado, y cualquier cambio se lo muestra primero: antes → después, «¿Aprobar?»."
@@ -107,22 +107,22 @@
         "name": "Suscripción",
         "badge": "Recomendado",
         "unit": "{pCur}/mes",
-        "text": "Todo incluido: teléfono, reservas y chat web, con 300 minutos de llamadas entrantes al mes. Sin permanencia. La configuración por su cuenta está incluida.",
+        "text": "Todo incluido: teléfono, reservas y chat web, con 300 minutos para llamadas entrantes y salientes al mes. Sin permanencia. La configuración por su cuenta está incluida.",
         "compare": "El precio de un servicio de atención telefónica, pero con un recepcionista que además reserva las citas en su calendario.",
         "cta": "Elija aquí: escúchelo primero",
         "points": [
           "Teléfono, reservas y chat web – todo incluido",
-          "300 minutos de llamadas entrantes al mes",
+          "{pIncluded} minutos al mes – llamadas entrantes y salientes",
           "Sin permanencia – cancela mes a mes"
         ]
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
-        "unit": "{pCur} por llamada + {pMinute} por minuto",
-        "text": "Solo si quiere que Dialogbot haga llamadas. Sin respuesta: {pCall}. Conversación de tres minutos: {pCall3Min}. Verá el precio máximo antes de empezar.",
+        "unit": "{pCur} por minuto fuera del paquete",
+        "text": "Solo si quiere que Dialogbot haga llamadas. Los minutos salen de los {pIncluded} minutos de la suscripción y una llamada sin respuesta no cuesta nada. Verá el precio máximo antes de empezar.",
         "badge": "Opcional",
         "points": [
-          "Pago solo por llamada – sin suscripción extra",
+          "Sin precio por llamada – sin suscripción adicional",
           "Apruebas el guion antes de que llame a nadie",
           "El precio máximo se muestra antes de empezar"
         ],
@@ -175,11 +175,11 @@
       "appDescription": "Dialogbot es un recepcionista con IA que atiende el teléfono y el chat de su empresa las 24 horas, en el idioma de sus clientes: responde con su propia información, reserva citas y reúne todas las consultas. Le guiamos durante toda la configuración.",
       "subscription": {
         "name": "Suscripción",
-        "description": "Al mes, IVA no incluido, con 300 minutos de llamadas entrantes. Sin permanencia."
+        "description": "Al mes sin IVA, con {pIncluded} minutos para llamadas entrantes y salientes. Sin permanencia."
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
-        "description": "Por llamada saliente, IVA no incluido, más {pMinute} por minuto de conversación iniciado"
+        "description": "Por minuto saliente iniciado fuera de los {pIncluded} minutos de la suscripción, sin IVA. Sin precio por llamada."
       },
       "setup": {
         "name": "Configuración por los especialistas de Dialogbot",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
-        "unit": "{pCur} por llamada saliente",
+        "unit": "{pCur} por minuto fuera del paquete",
         "points": [
           "Solo si quiere que Dialogbot haga llamadas",
           "Los contactos han aceptado expresamente que se les llame",

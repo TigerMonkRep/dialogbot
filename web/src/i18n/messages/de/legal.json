@@ -202,7 +202,7 @@
             "type": "ul",
             "items": [
               [{ "b": "Abonnement:" }, " ab {pMonthly} pro Monat. Es gibt keinen Preis pro Anfrage."],
-              [{ "b": "Kampagnen (ausgehende Anrufe):" }, " {pCall} pro ausgehendem Anruf plus {pMinute} pro angefangener Gesprächsminute. Jeder getätigte Anruf zählt, auch ein erneuter Versuch (höchstens 2 Versuche und höchstens 3 Gesprächsminuten pro Kontakt). Der höchstmögliche Preis wird angezeigt, bevor eine Kampagne gestartet wird."],
+              [{ "b": "Kampagnen (ausgehende Anrufe):" }, " {pTermsV1Call} pro ausgehendem Anruf plus {pMinute} pro angefangener Gesprächsminute. Jeder getätigte Anruf zählt, auch ein erneuter Versuch (höchstens 2 Versuche und höchstens 3 Gesprächsminuten pro Kontakt). Der höchstmögliche Preis wird angezeigt, bevor eine Kampagne gestartet wird."],
               [{ "b": "Eingehende Anrufe:" }, " eine dänische Telefonnummer für den Assistenten und 300 angefangene Gesprächsminuten pro Kalendermonat sind inbegriffen. Weitere Minuten kosten {pExtraMinute} pro angefangener Minute und werden auf der Monatsrechnung abgerechnet. Der Verbrauch kann laufend in Dialogbot verfolgt werden."]
             ]
           },

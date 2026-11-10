@@ -99,7 +99,7 @@
         "phone": { "title": "Answer the phone", "sub": "when you can't – or always" },
         "booking": { "title": "Book appointments", "sub": "straight into your calendar" },
         "web": { "title": "Answer on your website", "sub": "web chat – one line of code" },
-        "outbound": { "title": "Call customers", "sub": "campaigns · {pCall} per call excl. VAT" }
+        "outbound": { "title": "Call customers", "sub": "campaigns · no charge per call" }
       },
       "langAria": "Languages",
       "speaks": "It speaks",
@@ -293,7 +293,7 @@
     "turningOn": "Switching on …",
     "turnOn": "Switch on Dialogbot",
     "managersOnly": "Only owners and administrators can switch it on.",
-    "subscriptionNote": "The subscription is from {pMonthly}/month excl. VAT, and outbound campaign calls cost {pCall} per call excl. VAT.",
+    "subscriptionNote": "The subscription is from {pMonthly}/month excl. VAT with {pIncluded} minutes for inbound and outbound calls; then {pExtraMinute} per minute in and {pMinute} per minute out.",
     "confirmSubscription": "Confirm subscription",
     "findAgain": "You'll find everything again under the profile icon → All settings."
   },

@@ -312,7 +312,7 @@ export default async function Page() {
                 <span className="font-display font-bold text-xl">{t("guide.pricing.campaign.name")}</span>
               </div>
               <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">{t("prices.perCall")}</span>
+                <span className="font-display font-extrabold text-[52px] tracking-[-1.5px] leading-none">{t("prices.perMinute")}</span>
                 <span className="text-lg font-semibold text-ink-soft">{t("guide.pricing.campaign.unit")}</span>
               </div>
               <ul className="m-0 p-0 list-none flex flex-col gap-2.5 text-[15px]">

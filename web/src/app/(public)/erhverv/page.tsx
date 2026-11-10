@@ -224,7 +224,7 @@ export default async function Home() {
               <span className="text-[15px] text-ink-soft">{t("home.price.subscription.compare")}</span>
               <Link href="/proev" className={`${btnPrimary} mt-auto`}>{t("home.price.subscription.cta")}<ArrowIcon size={18} /></Link>
             </article>
-            <PriceAddon k="campaign" price={t("prices.perCall")} icon={<SendIcon size={22} />} href="/kontakt" points={raw<string[]>("site.home.price.campaign.points")} t={t} />
+            <PriceAddon k="campaign" price={t("prices.perMinute")} icon={<SendIcon size={22} />} href="/kontakt" points={raw<string[]>("site.home.price.campaign.points")} t={t} />
             <PriceAddon k="setup" price={t("prices.setup")} icon={<CalendarIcon size={22} />} href="/kontakt" points={raw<string[]>("site.home.price.setup.points")} t={t} />
           </div>
           <div className="flex flex-col gap-2 max-w-[720px]">
@@ -293,7 +293,7 @@ function structuredData(t: T, lang: string, locale: Locale) {
       publisher: { "@id": `${SITE_URL}/#organization` },
       offers: [
         offer("subscription", m.erhverv.monthly),
-        offer("campaign", m.erhverv.call),
+        offer("campaign", m.erhverv.outbound_extra_minute),
         offer("setup", m.erhverv.setup),
       ] },
     { "@context": "https://schema.org", ...videoStructuredData(SITE_URL, t, locale, lang) },

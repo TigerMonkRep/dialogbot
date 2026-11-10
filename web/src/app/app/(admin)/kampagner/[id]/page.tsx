@@ -64,7 +64,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
       </section>
       <aside className="flex-[1_1_300px] min-w-0 max-w-[440px] flex flex-col gap-5 lg:sticky lg:top-[88px]">
         {canManage && <StartCampaign wsId={ws.id} c={c} checklist={list.legal_checklist} />}
-        <p className="text-[13px] text-muted">{t("campaigns.detail.priceNote", { price: formatPrice(c.pricing.call_net_minor, currencyOr(c.pricing.currency), await getLocale()) })}</p>
+        <p className="text-[13px] text-muted">{t("campaigns.detail.priceNote", { price: formatPrice(c.pricing.minute_net_minor, currencyOr(c.pricing.currency), await getLocale()) })}</p>
       </aside>
     </div>
   );

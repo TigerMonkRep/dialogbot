@@ -379,7 +379,7 @@
                 {
                   "b": "Campagnes (appels sortants) :"
                 },
-                " {pCall} par appel sortant plus {pMinute} par minute de conversation entamée. Chaque appel passé compte, y compris une nouvelle tentative (2 tentatives maximum et 3 minutes de conversation maximum par contact). Le prix maximal possible est affiché avant le lancement d’une campagne."
+                " {pTermsV1Call} par appel sortant plus {pMinute} par minute de conversation entamée. Chaque appel passé compte, y compris une nouvelle tentative (2 tentatives maximum et 3 minutes de conversation maximum par contact). Le prix maximal possible est affiché avant le lancement d’une campagne."
               ],
               [
                 {

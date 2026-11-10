@@ -129,7 +129,7 @@
     "noAppointments": "Ingen kommende aftaler.",
     "weekAppointments": "Se ugens aftaler",
     "campaigns": "Kampagner",
-    "campaignsSub": "Ring til jeres egne kunder – {pCall} pr. opkald + {pMinute} pr. samtaleminut ekskl. moms.",
+    "campaignsSub": "Ring til jeres egne kunder – samtaleminutterne trækker på abonnementets {pIncluded} minutter, derefter {pMinute} pr. minut ekskl. moms. Ingen pris pr. opkald.",
     "openCampaigns": "Åbn kampagner",
     "allActivity": "Al aktivitet de seneste 14 dage",
     "power": {
@@ -288,7 +288,7 @@
       "title": "Det kostede ugen",
       "extra": "{amount} ekstra",
       "calls": "{n} kampagneopkald",
-      "note": "300 minutters indgående opkald om måneden er med i abonnementet. Kampagneopkald i ugen: {n} ({pCall} pr. udgående opkald + {pMinute} pr. samtaleminut, ekskl. moms).",
+      "note": "{pIncluded} minutter om måneden er med i abonnementet – til både indgående opkald og kampagneopkald. Kampagneopkald i ugen: {n}. Derudover {pExtraMinute} pr. minut ind og {pMinute} pr. minut ud, ekskl. moms.",
       "billing": "Se abonnement og fakturaer"
     }
   },
@@ -479,15 +479,15 @@
     "eyebrow": "I dag → Kampagner",
     "enable": {
       "title": "Vil I også ringe ud?",
-      "body": "Dialogbot kan ringe til jeres egne kunder med et budskab – fx et tilbud – og sende de interesserede videre til jer. Det koster {price} pr. udgående opkald ekskl. moms. Der ringes først, når I har godkendt.",
+      "body": "Dialogbot kan ringe til jeres egne kunder med et budskab – fx et tilbud – og sende de interesserede videre til jer. Samtaleminutterne trækker på abonnementets {included} minutter; derudover koster et påbegyndt minut {price} ekskl. moms. Et ubesvaret opkald koster intet. Der ringes først, når I har godkendt.",
       "onlyAdmins": "Kun ejere og administratorer kan slå udgående opkald til.",
       "ask": "Du kan også sige det til assistenten.",
       "pending": "Slår til…",
       "button": "Ja, slå udgående opkald til"
     },
-    "eyebrowPrice": "I dag → Kampagner · udgående opkald · {price} pr. opkald ekskl. moms",
+    "eyebrowPrice": "I dag → Kampagner · udgående opkald · minutter fra pakken, derefter {price}/min ekskl. moms",
     "title": "Ring til jeres kunder – én kampagne ad gangen",
-    "intro": "Tre trin: du vælger, hvem den skal ringe til, hører hvad den siger, og godkender prisen, før første opkald går ud. Prisen er {price} + moms pr. udgående opkald – hvert opkald tæller, også et nyt forsøg. Højst {attempts} forsøg og i alt {minutes} minutters samtale pr. kontakt. Dialogbot ringer aldrig til nogen på spærrelisten.",
+    "intro": "Tre trin: du vælger, hvem den skal ringe til, hører hvad den siger, og godkender prisen, før første opkald går ud. Samtaleminutterne trækker på abonnementets {included} minutter (de samme som de indgående opkald); derudover {price} + moms pr. påbegyndt minut. Et ubesvaret opkald koster intet. Højst {attempts} forsøg og i alt {minutes} minutters samtale pr. kontakt. Dialogbot ringer aldrig til nogen på spærrelisten.",
     "salesCalls": "Salgsopkald: lad AI'en ringe op (kun Dialogbot)",
     "need": {
       "title": "Du skal bruge",
@@ -515,7 +515,7 @@
       "consent": "samtykke",
       "noConsent": "Mangler samtykke – ringes ikke op",
       "attempts": "{n} forsøg",
-      "priceNote": "{price} pr. opkald ekskl. moms. Du betaler kun for de opkald, der går ud. Stop når som helst."
+      "priceNote": "Ingen pris pr. opkald: minutterne trækker på pakken, derefter {price} pr. minut ekskl. moms. Stop når som helst."
     },
     "new": {
       "title": "Ny kampagne",
@@ -572,7 +572,7 @@
       "before": "Før den starter",
       "resumeTitle": "Genoptag kampagnen",
       "heading": "{n} kontakter · højst {max} ekskl. moms",
-      "body": "{n} kontakter venter. Højst {max} + moms ({gross} inkl. moms) – {call} + moms pr. udgående opkald og {minute} + moms pr. påbegyndt samtaleminut, højst {attempts} forsøg og {minutes} minutters samtale pr. kontakt. Betaling starter aldrig opkald.",
+      "body": "{n} kontakter venter: højst {maxMinutes} samtaleminutter ({attempts} forsøg og {minutes} minutter pr. kontakt). Der er {remaining} af {included} minutter tilbage i pakken denne måned – med dem koster kampagnen højst {withPackage} + moms. Bruger andre opkald pakken først, er prisen højst {max} + moms ({gross} inkl. moms), {minute} + moms pr. påbegyndt minut. Ubesvarede opkald koster intet. Betaling starter aldrig opkald.",
       "confirm": "Bekræft reglerne for opkald",
       "starting": "Starter…",
       "resume": "Genoptag",
@@ -799,12 +799,12 @@
       "confirmed": "Bekræftet · aftale v{v}. Gør-det-selv-opsætning er med.",
       "notConfirmed": "Gør-det-selv-opsætning er med. Ikke bekræftet endnu.",
       "campaign": "Kampagneopkald",
-      "campaignPrice": "pr. opkald + {minute} pr. påbegyndt minut ekskl. moms",
+      "campaignPrice": "pr. påbegyndt minut ud over pakken ekskl. moms – ingen pris pr. opkald",
       "campaignMonth": "Denne måned: {calls} opkald, {minutes} samtaleminutter · {amount} ekskl. moms",
-      "inbound": "Indgående opkald",
-      "inboundUsed": "af {n} inkluderede minutter brugt denne måned",
-      "inboundExtra": "{n} minutter ud over de inkluderede · {amount} ekskl. moms ({price} pr. påbegyndt minut).",
-      "inboundPrice": "Minutter ud over de {n} koster {price} pr. påbegyndt minut ekskl. moms.",
+      "package": "Minutpakke – indgående og udgående opkald",
+      "packageUsed": "af {n} minutter brugt denne måned",
+      "packageExtra": "{n} påbegyndte minutter ud over pakken · {amount} ekskl. moms.",
+      "packagePrice": "Ud over de {n} minutter: {inPrice} pr. påbegyndt minut ind og {outPrice} pr. påbegyndt minut ud ekskl. moms.",
       "confirm": "Bekræft abonnement",
       "ownerMustConfirm": "Ejeren skal bekræfte abonnementet.",
       "older": "Ældre aftale – bekræft abonnementet for at skifte til det nuværende abonnement.",
@@ -936,7 +936,7 @@
       },
       "billing": {
         "q": "Afregning",
-        "a": "Der er ét abonnement fra {pMonthly} om måneden ekskl. moms, inkl. 300 minutters indgående opkald (derefter {pExtraMinute} pr. minut). Udgående kampagneopkald koster {pCall} pr. opkald plus {pMinute} pr. påbegyndt samtaleminut. Konto viser månedens forhåndsvisning."
+        "a": "Der er ét abonnement fra {pMonthly} om måneden ekskl. moms, inkl. 300 minutter til ind- og udgående opkald (derefter {pExtraMinute} pr. minut ind og {pMinute} pr. minut ud). Der er ingen pris pr. opkald. opkald plus {pMinute} pr. påbegyndt samtaleminut. Konto viser månedens forhåndsvisning."
       }
     },
     "team": {

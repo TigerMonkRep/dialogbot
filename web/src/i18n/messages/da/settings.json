@@ -60,7 +60,7 @@
       "title": "Kampagner",
       "sub": "Ring til jeres egne kunder",
       "outbound": "Udgående opkald",
-      "chosen": "Valgt – {pCall} pr. opkald + {pMinute} pr. minut ekskl. moms",
+      "chosen": "Valgt – minutter fra pakken, derefter {pMinute} pr. minut ekskl. moms",
       "notChosen": "Ikke valgt"
     },
     "systems": {

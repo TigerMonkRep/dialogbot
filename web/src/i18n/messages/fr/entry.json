@@ -204,7 +204,7 @@
       "unit": "{pCur}/mois HT",
       "points": [
         "Téléphone, réservation et chat web – tout est inclus",
-        "300 minutes d'appels entrants par mois",
+        "{pIncluded} minutes par mois pour les appels entrants et sortants",
         "Résiliation mois par mois"
       ],
       "cta": "Écoutez-le d'abord"

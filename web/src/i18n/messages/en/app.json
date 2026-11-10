@@ -129,7 +129,7 @@
     "noAppointments": "No upcoming appointments.",
     "weekAppointments": "See this week's appointments",
     "campaigns": "Campaigns",
-    "campaignsSub": "Call your own customers – {pCall} per call + {pMinute} per minute of conversation, excl. VAT.",
+    "campaignsSub": "Call your own customers – the minutes come out of the subscription's {pIncluded} minutes, then {pMinute} per minute excl. VAT. No charge per call.",
     "openCampaigns": "Open campaigns",
     "allActivity": "All activity in the last 14 days",
     "power": {
@@ -288,7 +288,7 @@
       "title": "What the week cost",
       "extra": "{amount} extra",
       "calls": "{n} campaign calls",
-      "note": "300 minutes of incoming calls per month are included in the subscription. Campaign calls this week: {n} ({pCall} per outgoing call + {pMinute} per minute of conversation, excl. VAT).",
+      "note": "{pIncluded} minutes a month are included in the subscription – for both incoming and campaign calls. Campaign calls this week: {n}. Beyond that {pExtraMinute} per minute in and {pMinute} per minute out, excl. VAT.",
       "billing": "See subscription and invoices"
     }
   },
@@ -479,15 +479,15 @@
     "eyebrow": "Today → Campaigns",
     "enable": {
       "title": "Do you want to call out too?",
-      "body": "Dialogbot can call your own customers with a message – e.g. an offer – and pass the interested ones on to you. It costs {price} per outgoing call excl. VAT. Nothing is called until you've approved it.",
+      "body": "Dialogbot can call your own customers with a message – for example an offer – and pass the interested ones on to you. The minutes come out of the subscription's {included} minutes; beyond that each started minute costs {price} excl. VAT. An unanswered call costs nothing. No call goes out until you have approved.",
       "onlyAdmins": "Only owners and admins can turn on outgoing calls.",
       "ask": "You can also tell the assistant.",
       "pending": "Turning on…",
       "button": "Yes, turn on outgoing calls"
     },
-    "eyebrowPrice": "Today → Campaigns · outgoing calls · {price} per call excl. VAT",
+    "eyebrowPrice": "Today → Campaigns · outgoing calls · minutes from the package, then {price}/min excl. VAT",
     "title": "Call your customers – one campaign at a time",
-    "intro": "Three steps: choose who it should call, hear what it says, and approve the price before the first call goes out. The price is {price} + VAT per outgoing call – every call counts, including a new attempt. At most {attempts} attempts and {minutes} minutes of conversation in total per contact. Dialogbot never calls anyone on the block list.",
+    "intro": "Three steps: you choose who it should call, hear what it says, and approve the price before the first call goes out. The minutes come out of the subscription's {included} minutes (shared with incoming calls); beyond that {price} + VAT per started minute. An unanswered call costs nothing. At most {attempts} attempts and {minutes} minutes of conversation in total per contact. Dialogbot never calls anyone on the do-not-call list.",
     "salesCalls": "Sales calls: let the AI call (Dialogbot only)",
     "need": {
       "title": "You'll need",
@@ -515,7 +515,7 @@
       "consent": "consent",
       "noConsent": "Missing consent – won't be called",
       "attempts": "{n} attempts",
-      "priceNote": "{price} per call excl. VAT. You only pay for the calls that go out. Stop at any time."
+      "priceNote": "No charge per call: the minutes come out of the package, then {price} per minute excl. VAT. Stop at any time."
     },
     "new": {
       "title": "New campaign",
@@ -572,7 +572,7 @@
       "before": "Before it starts",
       "resumeTitle": "Resume the campaign",
       "heading": "{n} contacts · at most {max} excl. VAT",
-      "body": "{n} contacts waiting. At most {max} + VAT ({gross} incl. VAT) – {call} + VAT per outgoing call and {minute} + VAT per started minute of conversation, at most {attempts} attempts and {minutes} minutes of conversation per contact. Payment never starts calls.",
+      "body": "{n} contacts waiting: at most {maxMinutes} minutes of conversation ({attempts} attempts and {minutes} minutes per contact). {remaining} of {included} minutes are left in the package this month – with them the campaign costs at most {withPackage} + VAT. If other calls use the package first, the price is at most {max} + VAT ({gross} incl. VAT), {minute} + VAT per started minute. Unanswered calls cost nothing. Payment never starts calls.",
       "confirm": "Confirm the rules for calls",
       "starting": "Starting…",
       "resume": "Resume",
@@ -799,12 +799,12 @@
       "confirmed": "Confirmed · agreement v{v}. Do-it-yourself setup is included.",
       "notConfirmed": "Do-it-yourself setup is included. Not confirmed yet.",
       "campaign": "Campaign calls",
-      "campaignPrice": "per call + {minute} per started minute excl. VAT",
+      "campaignPrice": "per started minute beyond the package excl. VAT – no charge per call",
       "campaignMonth": "This month: {calls} calls, {minutes} minutes of conversation · {amount} excl. VAT",
-      "inbound": "Incoming calls",
-      "inboundUsed": "of {n} included minutes used this month",
-      "inboundExtra": "{n} minutes beyond the included ones · {amount} excl. VAT ({price} per started minute).",
-      "inboundPrice": "Minutes beyond the {n} cost {price} per started minute excl. VAT.",
+      "package": "Minute package – incoming and outgoing calls",
+      "packageUsed": "of {n} minutes used this month",
+      "packageExtra": "{n} started minutes beyond the package · {amount} excl. VAT.",
+      "packagePrice": "Beyond the {n} minutes: {inPrice} per started minute in and {outPrice} per started minute out excl. VAT.",
       "confirm": "Confirm subscription",
       "ownerMustConfirm": "The owner must confirm the subscription.",
       "older": "Older agreement – confirm the subscription to switch to the current subscription.",
@@ -938,7 +938,7 @@
       },
       "billing": {
         "q": "Billing",
-        "a": "There's one subscription from {pMonthly} per month excl. VAT, including 300 minutes of incoming calls (then {pExtraMinute} per minute). Outgoing campaign calls cost {pCall} per call plus {pMinute} per started minute of conversation. Account shows the month's preview."
+        "a": "There's one subscription from {pMonthly} per month excl. VAT, including 300 minutes for inbound and outbound calls (then {pExtraMinute} per minute in and {pMinute} per minute out). There is no charge per call. Account shows the month's preview."
       }
     },
     "team": {

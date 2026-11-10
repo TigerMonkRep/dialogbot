@@ -2,8 +2,8 @@
  "counts": {
   "anonymous": 54,
   "public_api": 25,
-  "user": 27,
-  "workspace": 161,
+  "user": 28,
+  "workspace": 162,
   "operator": 132,
   "privat": 105,
   "excluded": 1
@@ -671,6 +671,10 @@
   },
   {
    "route": "POST /api/v1/workspaces/{workspace_id}/bookings",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/bookings/{booking_id}/confirm",
    "class": "workspace"
   },
   {
@@ -2027,6 +2031,10 @@
   },
   {
    "route": "GET /api/v1/dev/telephony/verification-code",
+   "class": "user"
+  },
+  {
+   "route": "POST /api/v1/dev/fake-calendar/busy-down",
    "class": "user"
   }
  ]

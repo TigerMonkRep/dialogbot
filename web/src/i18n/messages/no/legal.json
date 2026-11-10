@@ -202,7 +202,7 @@
             "type": "ul",
             "items": [
               [{ "b": "Abonnement:" }, " fra {pMonthly} per måned. Det er ingen pris per henvendelse."],
-              [{ "b": "Kampanjer (utgående anrop):" }, " {pCall} per utgående anrop pluss {pMinute} per påbegynt samtaleminutt. Hvert anrop som ringes, teller, også et nytt forsøk (høyst 2 forsøk og høyst 3 samtaleminutter per kontakt). Høyest mulig pris vises før en kampanje startes."],
+              [{ "b": "Kampanjer (utgående anrop):" }, " {pTermsV1Call} per utgående anrop pluss {pMinute} per påbegynt samtaleminutt. Hvert anrop som ringes, teller, også et nytt forsøk (høyst 2 forsøk og høyst 3 samtaleminutter per kontakt). Høyest mulig pris vises før en kampanje startes."],
               [{ "b": "Innkommende anrop:" }, " et dansk telefonnummer til assistenten og 300 påbegynte samtaleminutter per kalendermåned er inkludert. Minutter utover dette koster {pExtraMinute} per påbegynt minutt og avregnes på månedens faktura. Forbruket kan følges løpende i Dialogbot."]
             ]
           },

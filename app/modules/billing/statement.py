@@ -3,10 +3,12 @@
 Rules (product rules; money in whole øre, 25 % VAT, half-up on the total):
 - Subscription: the monthly price of the agreement version in force at the end of the month ("Fra 2.495 kr./md.").
   Approved enquiries never change it; there is no fee per enquiry.
-- Campaign calls: every outbound call dialled in the month, at the prices snapshotted on the call: 4 kr. for dialling
-  plus 2 kr. per started minute of conversation (the minutes are priced when the end-of-call report arrives).
-- Inbound calls: 300 started minutes a month are included in the subscription; every started minute above that costs
-  1,50 kr. (list prices, billing/prices.py). Campaign and demo calls are not inbound.
+- From SHARED_POOL_FROM (2026-11, Fürster's decision 2026-11-10): ONE package of minutes a month (300) that inbound
+  calls and outbound campaign calls draw on together, in the order the calls happened (inbound by start, campaign calls
+  by dialling); every started minute above the package costs the agreement's price for its direction (1,50 kr. inbound,
+  2 kr. outbound). No fee per call: an unanswered campaign call costs nothing. Demo and test calls never count.
+- Months before that keep the model they were invoiced under: campaign calls at the prices snapshotted on the call
+  (4 kr. for dialling + 2 kr. per started minute), and the package for inbound minutes only.
 - Legacy, kept so old months and old agreements do not change: fee snapshots of leads approved under an old
   model-B agreement, and the old per-contact campaign packages (9 kr.) that were charged before per-call pricing.
 - Months are calendar months in the workspace's time zone. No proration in this stage.
@@ -103,7 +105,12 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
                       "description": (f"Kampagne \"{name}\": {n} kontaktpakke{'r' if n != 1 else ''}" if da
                                       else f"Campaign \"{name}\": {n} contact {_plural(n, 'package', 'packages')}"),
                       "net_minor": int(net or 0)})
-    lines += usage_lines(db, workspace_id, start, end, agreement, currency)
+    package = None
+    if shared_pool(month):
+        usage, package = _pool_lines(db, workspace_id, start, end, agreement, currency)
+    else:
+        usage = _legacy_usage_lines(db, workspace_id, start, end, agreement, currency)
+    lines += usage
     from app.modules.ambassadors.service import discount_line
 
     discount = discount_line(db, workspace_id, month, lines)
@@ -135,6 +142,8 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
         "month": month.strftime("%Y-%m"), "timezone": tz, "status": "preview", "invoicing": "not_implemented",
         "currency": currency, "vat": vat,
         "agreement": {"version": agreement.version, "model": agreement.model} if agreement else None,
+        # the minute package of the month (inbound + outbound together); None for months before the shared package
+        "package": package,
         "approved_leads": len(leads), "billable_leads": sum(1 for line in lines if line["kind"] == "lead" and line["net_minor"] > 0),
         "lines": lines, "totals": total.snapshot(),
     }
@@ -150,9 +159,108 @@ def _agreement_at(db: OrmSession, workspace_id: uuid.UUID, end: datetime) -> Rec
                      .order_by(ReceptionAgreement.version.desc()).limit(1))
 
 
+def shared_pool(month: date) -> bool:
+    return month.replace(day=1) >= prices.SHARED_POOL_FROM
+
+
+def package_terms(agreement: ReceptionAgreement | None, currency: str) -> dict:
+    """The package in force: the agreement's snapshot, the list price in the currency without an agreement."""
+    if agreement is not None:
+        return {"included": agreement.inbound_included_minutes, "inbound": agreement.inbound_extra_minute_net_minor,
+                "outbound": agreement.outbound_extra_minute_net_minor}
+    return {"included": prices.INCLUDED_MINUTES, "inbound": markets.erhverv_price(currency, "extra_minute"),
+            "outbound": markets.erhverv_price(currency, "outbound_extra_minute")}
+
+
+def usage_events(db: OrmSession, workspace_id: uuid.UUID, start: datetime, end: datetime) -> list[dict]:
+    """Every billable call of the window, oldest first: inbound calls (by start) and campaign calls (by dialling), with
+    their started minutes (a call without its end-of-call report yet counts 0 until the report arrives)."""
+    outbound = select(CampaignCall.provider_call_id).where(CampaignCall.provider_call_id.is_not(None))
+    demo = select(DemoCall.provider_call_id).where(DemoCall.provider_call_id.is_not(None))
+    tests = select(TelephonyTest.provider_call_id).where(TelephonyTest.provider_call_id.is_not(None))
+    events = [{"direction": "inbound", "id": str(cid), "at": at, "minutes": _minutes_of([sec]), "campaign_id": None}
+              for cid, at, sec in db.execute(select(Call.id, Call.started_at, Call.duration_seconds).where(
+                  Call.workspace_id == workspace_id, Call.started_at >= start, Call.started_at < end,
+                  Call.provider_call_id.not_in(outbound), Call.provider_call_id.not_in(demo),
+                  Call.provider_call_id.not_in(tests))).all()]
+    events += [{"direction": "outbound", "id": str(cid), "at": at, "minutes": _minutes_of([sec]), "campaign_id": camp}
+               for cid, at, sec, camp in db.execute(
+                   select(CampaignCall.id, CampaignCall.dialled_at, CampaignCall.connected_seconds, CampaignCall.campaign_id)
+                   .join(Campaign, Campaign.id == CampaignCall.campaign_id)
+                   .where(Campaign.workspace_id == workspace_id, CampaignCall.dialled_at >= start,
+                          CampaignCall.dialled_at < end)).all()]
+    return sorted(events, key=lambda e: (e["at"], e["id"]))
+
+
+def allocate(events: list[dict], terms: dict) -> dict:
+    """Use the package in call order; minutes above it are priced by direction. Mutates each event with
+    package_minutes / extra_minutes / net_minor and returns the package summary."""
+    left = terms["included"]
+    for e in events:
+        e["package_minutes"] = min(e["minutes"], left)
+        left -= e["package_minutes"]
+        e["extra_minutes"] = e["minutes"] - e["package_minutes"]
+        e["net_minor"] = e["extra_minutes"] * terms[e["direction"]]
+    used = sum(e["minutes"] for e in events)
+    return {"included": terms["included"], "used": used, "remaining": max(0, terms["included"] - used),
+            "over": sum(e["extra_minutes"] for e in events)}
+
+
+def _pool_lines(db: OrmSession, workspace_id: uuid.UUID, start: datetime, end: datetime,
+                agreement: ReceptionAgreement | None, currency: str) -> tuple[list[dict], dict]:
+    da = currency == "DKK"
+    terms = package_terms(agreement, currency)
+    events = usage_events(db, workspace_id, start, end)
+    package = allocate(events, terms)
+    lines: list[dict] = []
+    names = dict(db.execute(select(Campaign.id, Campaign.name).where(Campaign.workspace_id == workspace_id)).all())
+    by_campaign: dict = {}
+    for e in events:
+        if e["direction"] == "outbound":
+            by_campaign.setdefault(e["campaign_id"], []).append(e)
+    for cid, evs in sorted(by_campaign.items(), key=lambda kv: names.get(kv[0], "")):
+        n, minutes = len(evs), sum(e["minutes"] for e in evs)
+        extra = sum(e["extra_minutes"] for e in evs)
+        name = names.get(cid, "")
+        over = (f", {extra} min ud over pakken à {markets.fmt(terms['outbound'], currency)}" if da
+                else f", {extra} min above the package at {markets.fmt(terms['outbound'], currency)}") if extra else ""
+        lines.append({"kind": "campaign_calls", "campaign_id": str(cid), "calls": n, "minutes": minutes,
+                      "package_minutes": minutes - extra, "extra_minutes": extra,
+                      "description": (f"Kampagne \"{name}\": {n} udgående opkald, {minutes} samtaleminut"
+                                      f"{'ter' if minutes != 1 else ''} ({minutes - extra} min fra pakken{over})" if da else
+                                      f"Campaign \"{name}\": {n} outbound {_plural(n, 'call', 'calls')}, {minutes} "
+                                      f"{_plural(minutes, 'minute', 'minutes')} of conversation ({minutes - extra} min from "
+                                      f"the package{over})"),
+                      "net_minor": sum(e["net_minor"] for e in evs)})
+    inbound = [e for e in events if e["direction"] == "inbound"]
+    if inbound:
+        minutes, extra = sum(e["minutes"] for e in inbound), sum(e["extra_minutes"] for e in inbound)
+        if da:
+            text = (f"Indgående opkald: {minutes} min ({minutes - extra} min fra pakken på {terms['included']} min"
+                    + (f", {extra} min ekstra à {markets.fmt(terms['inbound'], currency)})" if extra else ")"))
+        else:
+            text = (f"Inbound calls: {minutes} min ({minutes - extra} min from the {terms['included']}-minute package"
+                    + (f", {extra} min extra at {markets.fmt(terms['inbound'], currency)})" if extra else ")"))
+        lines.append({"kind": "inbound_minutes", "calls": len(inbound), "minutes": minutes,
+                      "included_minutes": terms["included"], "package_minutes": minutes - extra, "extra_minutes": extra,
+                      "description": text, "net_minor": sum(e["net_minor"] for e in inbound)})
+    return lines, package
+
+
 def usage_lines(db: OrmSession, workspace_id: uuid.UUID, start: datetime, end: datetime,
-                agreement: ReceptionAgreement | None, currency: str) -> list[dict]:
-    """Campaign calls and inbound minutes of the window, priced by the agreement in force (its package snapshot)."""
+                agreement: ReceptionAgreement | None, currency: str, month: date | None = None) -> list[dict]:
+    """Campaign calls and inbound minutes of the month, priced by the agreement in force (its package snapshot) under
+    the model of that month (shared package from SHARED_POOL_FROM)."""
+    if month is None:
+        month = start.date()
+    if shared_pool(month):
+        return _pool_lines(db, workspace_id, start, end, agreement, currency)[0]
+    return _legacy_usage_lines(db, workspace_id, start, end, agreement, currency)
+
+
+def _legacy_usage_lines(db: OrmSession, workspace_id: uuid.UUID, start: datetime, end: datetime,
+                        agreement: ReceptionAgreement | None, currency: str) -> list[dict]:
+    """Before 2026-11: campaign calls at the per-call snapshot (4 kr. + 2 kr./min), the package for inbound only."""
     da = currency == "DKK"
     lines: list[dict] = []
     calls = db.execute(
@@ -207,20 +315,24 @@ def late_usage_lines(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: s
     for inv in invoices:
         period = inv.month.strftime("%Y-%m")
         s0, e0 = month_bounds(inv.month, tz)
-        recount = usage_lines(db, workspace_id, s0, e0, _agreement_at(db, workspace_id, e0), inv.currency)
-        for kind in USAGE_KINDS:
-            now = [x for x in recount if x["kind"] == kind]
-            billed = sum(int(x.get("net_minor") or 0) for x in (inv.lines or []) if x.get("kind") == kind) + sum(
+        recount = usage_lines(db, workspace_id, s0, e0, _agreement_at(db, workspace_id, e0), inv.currency, inv.month)
+        # one shared package: a late call can move package minutes between inbound and outbound, so the month is
+        # compared as a whole; before it, the two kinds were priced independently
+        for kind in (("package",) if shared_pool(inv.month) else USAGE_KINDS):
+            kinds = USAGE_KINDS if kind == "package" else (kind,)
+            now = [x for x in recount if x["kind"] in kinds]
+            billed = sum(int(x.get("net_minor") or 0) for x in (inv.lines or []) if x.get("kind") in kinds) + sum(
                 int(x.get("net_minor") or 0) for x in later_lines if x.get("period") == period and x.get("usage_kind") == kind)
             delta = sum(x["net_minor"] for x in now) - billed
             if delta <= 0:  # nothing new (late usage only ever adds; a smaller recount is not credited here)
                 continue
-            billed_minutes = sum(int(x.get("minutes") or 0) for x in (inv.lines or []) if x.get("kind") == kind) + sum(
+            billed_minutes = sum(int(x.get("minutes") or 0) for x in (inv.lines or []) if x.get("kind") in kinds) + sum(
                 int(x.get("minutes") or 0) for x in later_lines if x.get("period") == period and x.get("usage_kind") == kind)
             minutes = max(0, sum(int(x.get("minutes") or 0) for x in now) - billed_minutes)
             da = inv.currency == "DKK"
             what = {"inbound_minutes": ("indgående opkald", "inbound calls"),
-                    "campaign_calls": ("kampagneopkald", "campaign calls")}[kind]
+                    "campaign_calls": ("kampagneopkald", "campaign calls"),
+                    "package": ("ind- og udgående opkald", "inbound and outbound calls")}[kind]
             label = f"{MONTH_DA[inv.month.month - 1]} {inv.month.year}" if da else inv.month.strftime("%B %Y")
             out.append({"kind": LATE_KIND, "usage_kind": kind, "period": period, "minutes": minutes,
                         "description": (f"Efterregistreret forbrug {label} – {what[0]}: {minutes} min, registreret efter "

@@ -202,7 +202,7 @@
             "type": "ul",
             "items": [
               [{ "b": "Abonnement:" }, " fra {pMonthly} pr. måned. Der er ingen pris pr. henvendelse."],
-              [{ "b": "Kampagner (udgående opkald):" }, " {pCall} pr. udgående opkald plus {pMinute} pr. påbegyndt samtaleminut. Hvert opkald, der ringes, tæller, også et nyt forsøg (højst 2 forsøg og højst 3 samtaleminutter pr. kontakt). Den højeste mulige pris vises, før en kampagne startes."],
+              [{ "b": "Kampagner (udgående opkald):" }, " {pTermsV1Call} pr. udgående opkald plus {pMinute} pr. påbegyndt samtaleminut. Hvert opkald, der ringes, tæller, også et nyt forsøg (højst 2 forsøg og højst 3 samtaleminutter pr. kontakt). Den højeste mulige pris vises, før en kampagne startes."],
               [{ "b": "Indgående opkald:" }, " et dansk telefonnummer til assistenten og 300 påbegyndte samtaleminutter pr. kalendermåned er inkluderet. Minutter derudover koster {pExtraMinute} pr. påbegyndt minut og afregnes på månedens faktura. Forbruget kan følges løbende i Dialogbot."]
             ]
           },

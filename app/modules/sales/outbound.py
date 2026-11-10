@@ -38,11 +38,14 @@ from app.models import (
     SalesScript,
     Workspace,
 )
-from app.modules.billing import prices
 from app.modules.sales import companies, policy
 
 log = structlog.get_logger("dialogbot.sales.outbound")
 MAX_SECONDS = 600
+# Dialogbot's own sales calls are not billed to anyone: the spend cap estimates what an attempt can cost us (the former
+# customer list price, kept as the internal estimate when the customer per-call fee was removed on 2026-11-10).
+SPEND_PER_CALL_NET_MINOR = 400
+SPEND_PER_MINUTE_NET_MINOR = 200
 
 def sales_pronunciations() -> tuple[dict, ...]:
     """Peter's own defaults (a workspace entry under Stemmer → Udtale still wins). Danes say "AI" as the Danish letters;
@@ -182,8 +185,8 @@ def create_campaign(db: OrmSession, *, name: str, budget_net_minor: int | None, 
     c = Campaign(workspace_id=ws.id, name=name.strip()[:160], status="draft", kind="internal_sales", is_test=is_test,
                  purpose="Dialogbots eget salg: Peter ringer med et personligt manuskript pr. virksomhed.",
                  phone_number_id=number.id if number else None, call_days=call_days, call_from=call_from,
-                 call_to=call_to, call_net_minor=prices.CAMPAIGN_CALL_NET_MINOR,
-                 minute_net_minor=prices.CAMPAIGN_MINUTE_NET_MINOR, max_attempts=max(1, min(max_attempts, limit)),
+                 call_to=call_to, call_net_minor=SPEND_PER_CALL_NET_MINOR,
+                 minute_net_minor=SPEND_PER_MINUTE_NET_MINOR, max_attempts=max(1, min(max_attempts, limit)),
                  max_connected_seconds=MAX_SECONDS,
                  budget_net_minor=budget_net_minor, recording_enabled=recording_enabled, created_by=user_id)
     db.add(c)

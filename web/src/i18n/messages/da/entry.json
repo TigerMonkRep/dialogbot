@@ -119,7 +119,7 @@
     "business": {
       "name": "Erhverv",
       "unit": "{pCur}/md. ekskl. moms",
-      "points": ["Telefon, booking og webchat – alt er med", "300 minutters indgående opkald om måneden", "Opsigelse måned til måned"],
+      "points": ["Telefon, booking og webchat – alt er med", "{pIncluded} minutter om måneden til ind- og udgående opkald", "Opsigelse måned til måned"],
       "cta": "Hør den først"
     },
     "private": {

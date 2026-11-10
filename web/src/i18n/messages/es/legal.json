@@ -202,7 +202,7 @@
             "type": "ul",
             "items": [
               [{ "b": "Suscripción:" }, " desde {pMonthly} al mes. No hay precio por contacto."],
-              [{ "b": "Campañas (llamadas salientes):" }, " {pCall} por llamada saliente más {pMinute} por minuto de conversación iniciado. Cada llamada realizada cuenta, también un nuevo intento (máximo 2 intentos y máximo 3 minutos de conversación por contacto). El precio máximo posible se muestra antes de iniciar una campaña."],
+              [{ "b": "Campañas (llamadas salientes):" }, " {pTermsV1Call} por llamada saliente más {pMinute} por minuto de conversación iniciado. Cada llamada realizada cuenta, también un nuevo intento (máximo 2 intentos y máximo 3 minutos de conversación por contacto). El precio máximo posible se muestra antes de iniciar una campaña."],
               [{ "b": "Llamadas entrantes:" }, " se incluyen un número de teléfono danés para el asistente y 300 minutos de conversación iniciados por mes natural. Los minutos adicionales cuestan {pExtraMinute} por minuto iniciado y se facturan en la factura del mes. El consumo puede seguirse en todo momento en Dialogbot."]
             ]
           },

@@ -1,1 +1,1 @@
-Handlingen fejlede: Den nye tid (onsdag 11. november kl. 08.00) kunne ikke skrives i virksomhedens kalender (update_event: kalenderen svarede ikke (simuleret)). Lov ikke kunden den nye tid – sig at en medarbejder bekræfter tiden. Sig det ærligt, og tilbyd at en medarbejder følger op.
+Handlingen fejlede: Den nye tid (onsdag 11. november kl. 10.00) kunne ikke skrives i virksomhedens kalender (update_event: kalenderen svarede ikke (simuleret)). Lov ikke kunden den nye tid – sig at en medarbejder bekræfter tiden. Sig det ærligt, og tilbyd at en medarbejder følger op.

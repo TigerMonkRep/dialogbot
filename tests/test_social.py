@@ -49,10 +49,11 @@ def social(monkeypatch):
 def test_prices_in_the_facts_match_the_website():
     from app.modules.billing import prices
 
-    assert any("fra 2.495 kr. om måneden" in f for f in FACTS) and any("4 kr. pr. opkald" in f for f in FACTS)
-    assert ALLOWED_AMOUNTS == {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR), prices.kr(prices.CAMPAIGN_CALL_NET_MINOR),
-                               prices.kr(prices.CAMPAIGN_MINUTE_NET_MINOR), prices.kr(prices.INBOUND_EXTRA_MINUTE_NET_MINOR),
-                               prices.kr(prices.SPECIALIST_SETUP_NET_MINOR)}
+    assert any("fra 2.495 kr. om måneden" in f for f in FACTS) and any("ingen pris pr. opkald" in f.lower() for f in FACTS)
+    assert any("300 minutter om måneden er med – både indgående opkald og udgående kampagneopkald" in f for f in FACTS)
+    assert not any("4 kr." in f for f in FACTS)                                        # no per-call fee (2026-11-10)
+    assert ALLOWED_AMOUNTS == {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR), prices.kr(prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR),
+                               prices.kr(prices.INBOUND_EXTRA_MINUTE_NET_MINOR), prices.kr(prices.SPECIALIST_SETUP_NET_MINOR)}
     assert not any("149" in f or "1.495" in f for f in FACTS)                          # the old prices are gone
 
 
@@ -103,7 +104,7 @@ def test_guard_rejects_what_the_facts_do_not_support(over, needle):
 
 
 def test_guard_accepts_the_real_prices_and_clean_ai_copy():
-    d = _ai_draft(caption="Abonnementet er fra 2.495 kr. om måneden, og et udgående kampagneopkald koster 4 kr.")
+    d = _ai_draft(caption="Abonnementet er fra 2.495 kr. om måneden, og et udgående minut ud over pakken koster 2 kr.")
     assert d.errors == [] and d.generator == "ai" and d.model == "test-model"
     assert d.hashtags[0] == "dialogbot" and "telefonpasning" in d.hashtags      # cleaned, de-duplicated, topic tags added
     assert d.slides[0]["role"] == "hook" and d.slides[-1]["role"] == "cta" and d.slides[-1]["body"] == "dialogbot.dk"
@@ -827,7 +828,7 @@ def test_prices_are_text_only_never_on_an_image_and_no_gratis_or_certificate_cla
     t = TOPICS_BY_KEY["pricing"]
     for platform in PLATFORMS:
         d = content.template_draft(platform, t)
-        assert "2.495" in d.caption and "4 kr." in d.caption
+        assert "2.495" in d.caption and "2 kr." in d.caption and "4 kr." not in d.caption
         for s in d.slides:
             assert not any(ch.isdigit() for ch in f"{s.get('title', '')} {s.get('body', '')}")
     bad = content.template_draft("facebook", TOPICS_BY_KEY["pricing"])

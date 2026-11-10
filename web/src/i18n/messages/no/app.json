@@ -129,7 +129,7 @@
     "noAppointments": "Ingen kommende avtaler.",
     "weekAppointments": "Se ukens avtaler",
     "campaigns": "Kampanjer",
-    "campaignsSub": "Ring deres egne kunder – {pCall} per anrop + {pMinute} per samtaleminutt eks. mva.",
+    "campaignsSub": "Ring deres egne kunder – samtaleminuttene trekkes fra abonnementets {pIncluded} minutter, deretter {pMinute} per minutt eks. mva. Ingen pris per samtale.",
     "openCampaigns": "Åpne kampanjer",
     "allActivity": "All aktivitet de siste 14 dagene",
     "power": {
@@ -288,7 +288,7 @@
       "title": "Dette kostet uken",
       "extra": "{amount} ekstra",
       "calls": "{n} kampanjeanrop",
-      "note": "300 minutter innkommende anrop i måneden er inkludert i abonnementet. Kampanjeanrop denne uken: {n} ({pCall} per utgående anrop + {pMinute} per samtaleminutt, eks. mva.).",
+      "note": "{pIncluded} minutter i måneden er med i abonnementet – både til innkommende samtaler og kampanjesamtaler. Kampanjesamtaler denne uken: {n}. Deretter {pExtraMinute} per minutt inn og {pMinute} per minutt ut, eks. mva.",
       "billing": "Se abonnement og fakturaer"
     }
   },
@@ -479,15 +479,15 @@
     "eyebrow": "I dag → Kampanjer",
     "enable": {
       "title": "Vil dere også ringe ut?",
-      "body": "Dialogbot kan ringe deres egne kunder med et budskap – f.eks. et tilbud – og sende de interesserte videre til dere. Det koster {price} per utgående anrop eks. mva. Det ringes først når dere har godkjent.",
+      "body": "Dialogbot kan ringe deres egne kunder med et budskap – for eksempel et tilbud – og sende de interesserte videre til dere. Minuttene trekkes fra abonnementets {included} minutter; deretter koster hvert påbegynte minutt {price} eks. mva. En ubesvart samtale koster ingenting. Det ringes først når dere har godkjent.",
       "onlyAdmins": "Bare eiere og administratorer kan slå på utgående anrop.",
       "ask": "Du kan også si det til assistenten.",
       "pending": "Slår på …",
       "button": "Ja, slå på utgående anrop"
     },
-    "eyebrowPrice": "I dag → Kampanjer · utgående anrop · {price} per anrop eks. mva.",
+    "eyebrowPrice": "I dag → Kampanjer · utgående samtaler · minutter fra pakken, deretter {price}/min eks. mva.",
     "title": "Ring kundene deres – én kampanje om gangen",
-    "intro": "Tre trinn: du velger hvem den skal ringe, hører hva den sier, og godkjenner prisen før første anrop går ut. Prisen er {price} + mva. per utgående anrop – hvert anrop teller, også et nytt forsøk. Høyst {attempts} forsøk og totalt {minutes} minutters samtale per kontakt. Dialogbot ringer aldri noen på sperrelisten.",
+    "intro": "Tre trinn: du velger hvem den skal ringe til, hører hva den sier, og godkjenner prisen før første samtale går ut. Minuttene trekkes fra abonnementets {included} minutter (de samme som de innkommende samtalene); deretter {price} + mva. per påbegynte minutt. En ubesvart samtale koster ingenting. Høyst {attempts} forsøk og totalt {minutes} minutters samtale per kontakt. Dialogbot ringer aldri noen på sperrelisten.",
     "salesCalls": "Salgsanrop: la AI-en ringe (bare Dialogbot)",
     "need": {
       "title": "Du trenger",
@@ -515,7 +515,7 @@
       "consent": "samtykke",
       "noConsent": "Mangler samtykke – blir ikke ringt",
       "attempts": "{n} forsøk",
-      "priceNote": "{price} per anrop eks. mva. Du betaler bare for anropene som går ut. Stopp når som helst."
+      "priceNote": "Ingen pris per samtale: minuttene trekkes fra pakken, deretter {price} per minutt eks. mva. Stopp når som helst."
     },
     "new": {
       "title": "Ny kampanje",
@@ -572,7 +572,7 @@
       "before": "Før den starter",
       "resumeTitle": "Gjenoppta kampanjen",
       "heading": "{n} kontakter · høyst {max} eks. mva.",
-      "body": "{n} kontakter venter. Høyst {max} + mva. ({gross} inkl. mva.) – {call} + mva. per utgående anrop og {minute} + mva. per påbegynt samtaleminutt, høyst {attempts} forsøk og {minutes} minutters samtale per kontakt. Betaling starter aldri anrop.",
+      "body": "{n} kontakter venter: høyst {maxMinutes} samtaleminutter ({attempts} forsøk og {minutes} minutter per kontakt). Det er {remaining} av {included} minutter igjen i pakken denne måneden – med dem koster kampanjen høyst {withPackage} + mva. Bruker andre samtaler pakken først, er prisen høyst {max} + mva. ({gross} inkl. mva.), {minute} + mva. per påbegynte minutt. Ubesvarte samtaler koster ingenting. Betaling starter aldri samtaler.",
       "confirm": "Bekreft reglene for anrop",
       "starting": "Starter …",
       "resume": "Gjenoppta",
@@ -799,12 +799,12 @@
       "confirmed": "Bekreftet · avtale v{v}. Gjør-det-selv-oppsett er inkludert.",
       "notConfirmed": "Gjør-det-selv-oppsett er inkludert. Ikke bekreftet ennå.",
       "campaign": "Kampanjeanrop",
-      "campaignPrice": "per anrop + {minute} per påbegynt minutt eks. mva.",
+      "campaignPrice": "per påbegynte minutt utover pakken eks. mva. – ingen pris per samtale",
       "campaignMonth": "Denne måneden: {calls} anrop, {minutes} samtaleminutter · {amount} eks. mva.",
-      "inbound": "Innkommende anrop",
-      "inboundUsed": "av {n} inkluderte minutter brukt denne måneden",
-      "inboundExtra": "{n} minutter utover de inkluderte · {amount} eks. mva. ({price} per påbegynt minutt).",
-      "inboundPrice": "Minutter utover de {n} koster {price} per påbegynt minutt eks. mva.",
+      "package": "Minuttpakke – innkommende og utgående samtaler",
+      "packageUsed": "av {n} minutter brukt denne måneden",
+      "packageExtra": "{n} påbegynte minutter utover pakken · {amount} eks. mva.",
+      "packagePrice": "Utover de {n} minuttene: {inPrice} per påbegynte minutt inn og {outPrice} per påbegynte minutt ut eks. mva.",
       "confirm": "Bekreft abonnement",
       "ownerMustConfirm": "Eieren må bekrefte abonnementet.",
       "older": "Eldre avtale – bekreft abonnementet for å bytte til det nåværende abonnementet.",
@@ -936,7 +936,7 @@
       },
       "billing": {
         "q": "Avregning",
-        "a": "Det er ett abonnement fra {pMonthly} i måneden eks. mva., inkl. 300 minutter innkommende anrop (deretter {pExtraMinute} per minutt). Utgående kampanjeanrop koster {pCall} per anrop pluss {pMinute} per påbegynt samtaleminutt. Konto viser månedens forhåndsvisning."
+        "a": "Det er ett abonnement fra {pMonthly} i måneden eks. mva., inkl. 300 minutter til inn- og utgående anrop (deretter {pExtraMinute} per minutt inn og {pMinute} per minutt ut). Det er ingen pris per anrop. Konto viser månedens forhåndsvisning."
       }
     },
     "team": {

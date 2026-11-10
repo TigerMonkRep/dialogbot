@@ -6,6 +6,7 @@ import { DoNotCallList, EnableOutbound, NewCampaign } from "./client";
 import { STATUS, type Campaign, type Dnc } from "./format";
 import { getLocale, getT } from "@/i18n/server";
 import { HTML_LANG } from "@/i18n/config";
+import { INCLUDED_MINUTES } from "@/lib/markets";
 
 type List = { items: Campaign[]; pricing: { call_net_minor: number; minute_net_minor: number; max_attempts: number; max_connected_seconds: number; currency?: string } };
 type Goals = Record<string, unknown> & { version: number; callback: boolean };
@@ -29,7 +30,7 @@ export default async function KampagnerPage() {
       <div className="flex flex-col gap-4 max-w-[640px] rounded-2xl border-2 border-ink bg-paper px-6 py-6 shadow-block">
         <span className="eyebrow">{t("campaigns.eyebrow")}</span>
         <h1 className="font-display font-extrabold text-[28px] leading-[1.05] tracking-[-0.8px] text-ink">{t("campaigns.enable.title")}</h1>
-        <p className="text-[15px] leading-relaxed text-ink-soft">{t("campaigns.enable.body", { price: kr(p.call_net_minor, lang, p.currency) })}</p>
+        <p className="text-[15px] leading-relaxed text-ink-soft">{t("campaigns.enable.body", { price: kr(p.minute_net_minor, lang, p.currency), included: INCLUDED_MINUTES })}</p>
         {canManage ? <EnableOutbound wsId={ws.id} goals={goals} /> : <p className="text-[14px] text-muted">{t("campaigns.enable.onlyAdmins")}</p>}
         <p className="text-[14px] text-ink-soft">{t("campaigns.enable.ask")}</p>
       </div>
@@ -39,10 +40,10 @@ export default async function KampagnerPage() {
     <div className="flex flex-wrap gap-6 items-start">
       <section className="flex-[999_1_460px] min-w-0 flex flex-col gap-5">
         <div className="flex flex-col gap-1.5">
-          <span className="eyebrow">{t("campaigns.eyebrowPrice", { price: kr(p.call_net_minor, lang, p.currency) })}</span>
+          <span className="eyebrow">{t("campaigns.eyebrowPrice", { price: kr(p.minute_net_minor, lang, p.currency) })}</span>
           <h1 className="font-display font-extrabold text-[26px] sm:text-[28px] md:text-[34px] leading-[1.05] tracking-[-0.8px] text-ink">{t("campaigns.title")}</h1>
           <p className="text-[15px] leading-relaxed text-ink-soft max-w-[640px]">
-            {t("campaigns.intro", { price: kr(p.call_net_minor, lang, p.currency), attempts: p.max_attempts, minutes: p.max_connected_seconds / 60 })}
+            {t("campaigns.intro", { price: kr(p.minute_net_minor, lang, p.currency), included: INCLUDED_MINUTES, attempts: p.max_attempts, minutes: p.max_connected_seconds / 60 })}
           </p>
           {me.is_platform_operator && <Link href="/app/operator/sales" className="text-[14px] font-semibold text-accent hover:underline">{t("campaigns.salesCalls")} →</Link>}
         </div>

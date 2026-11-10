@@ -1,7 +1,8 @@
-"""One offer, written once: the subscription from 2.495 kr./md. (300 inbound minutes included, then 1,50 kr./min),
-4 kr. per outbound campaign call plus 2 kr. per started minute, and 5.000 kr. for specialist setup, all excl. VAT.
-These tests keep the old prices (1.495 kr., 149 kr. per approved enquiry, 9 kr. per contact) from creeping back into
-any text a customer, a visitor, a salesperson or an AI can read."""
+"""One offer, written once (Fürster's decision 2026-11-10): the subscription from 2.495 kr./md. with a package of 300
+minutes a month shared by inbound and outbound calls, then 1,50 kr. per started inbound minute and 2 kr. per started
+outbound minute – no price per call – and 5.000 kr. for specialist setup, all excl. VAT.
+These tests keep the old prices (1.495 kr., 149 kr. per approved enquiry, 9 kr. per contact, 4 kr. per outbound call,
+"300 minutes of inbound calls") from creeping back into any text a customer, a visitor, a salesperson or an AI can read."""
 from __future__ import annotations
 
 import json
@@ -25,6 +26,11 @@ SCANNED = ["app", "web/src", "web/public/materiale", "web/public/llms.txt", "des
            "docs/social-media.md", "docs/sales", "docs/ambassadors", "docs/telephony"]
 OLD = re.compile(r"1\.495|\b149 kr|\b149,00|pr\. godkendt henvendelse|[Mm]odel [AB]\b|kontaktpakke|9 kr\. pr\. kontakt|9,00 kr|[Gg]ratis (personlig )?opsætning|opsætning(en)? (koster )?0 kr|intet opstartsgebyr")
 SUFFIXES = {".py", ".ts", ".tsx", ".html", ".txt", ".md"}
+# The per-call fee and the inbound-only package, gone since 2026-11-10 (design-reference mock-ups are history; the
+# published terms v1 render the old fee through their own token, {pTermsV1Call}).
+OLD_CALL_FEE = re.compile(r"4 kr\. pr\. (udgående )?(kampagne)?opkald|\{pCall\}|\{pCall3Min\}|minutters indgående opkald|"
+                          r"300 indgående minutter")
+CALL_FEE_ALLOWED = ALLOWED | {"app/modules/sales/outbound.py"}
 
 
 def _files():
@@ -37,8 +43,9 @@ def _files():
 
 
 def test_list_prices():
-    assert prices.SUBSCRIPTION_MONTHLY_NET_MINOR == 249_500 and prices.CAMPAIGN_CALL_NET_MINOR == 400
-    assert prices.CAMPAIGN_MINUTE_NET_MINOR == 200 and prices.INBOUND_INCLUDED_MINUTES == 300 and prices.INBOUND_EXTRA_MINUTE_NET_MINOR == 150
+    assert prices.SUBSCRIPTION_MONTHLY_NET_MINOR == 249_500 and not hasattr(prices, "CAMPAIGN_CALL_NET_MINOR")  # no per-call fee
+    assert prices.INCLUDED_MINUTES == prices.INBOUND_INCLUDED_MINUTES == 300  # one package for inbound and outbound
+    assert prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR == 200 and prices.INBOUND_EXTRA_MINUTE_NET_MINOR == 150
     assert prices.kr(150) == "1,50" and prices.kr(200) == "2"
     assert prices.SPECIALIST_SETUP_NET_MINOR == 500_000
     assert (prices.kr(249_500), prices.kr(400), prices.kr(450), prices.kr(500_000)) == ("2.495", "4", "4,50", "5.000")
@@ -57,16 +64,28 @@ def test_the_old_prices_are_gone_everywhere_a_person_or_an_ai_can_read():
     assert not hits, "old price or price model found:\n" + "\n".join(hits)
 
 
+def test_the_per_call_fee_and_the_inbound_only_package_are_gone():
+    hits = []
+    for f in _files():
+        rel = f.relative_to(ROOT).as_posix()
+        if rel in CALL_FEE_ALLOWED or rel.startswith("design-reference/") or rel.endswith("/legal.json"):
+            continue
+        for n, line in enumerate(f.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+            if OLD_CALL_FEE.search(line):
+                hits.append(f"{rel}:{n}: {line.strip()[:110]}")
+    assert not hits, "per-call fee or inbound-only package found:\n" + "\n".join(hits)
+
+
 def _da_render(text: str) -> str:
     """The Danish site renders {p…} tokens with the DKK row of prices.json (web/src/lib/markets.ts); markets.fmt writes
     DKK as the site does ("2.495 kr.", "1,50 kr.", with a plain space on the site), so this mirrors what a Danish visitor reads."""
     e = markets.ERHVERV["DKK"]
-    values = {"pMonthly": e["monthly"], "pCall": e["call"], "pMinute": e["minute"], "pExtraMinute": e["extra_minute"],
-              "pSetup": e["setup"], "pCall3Min": e["call"] + 3 * e["minute"]}
-    out = text
+    values = {"pMonthly": e["monthly"], "pMinute": e["outbound_extra_minute"], "pExtraMinute": e["extra_minute"],
+              "pSetup": e["setup"]}
+    out = text.replace("{pIncluded}", str(markets.INCLUDED_MINUTES))
     for k, minor in values.items():
         out = out.replace("{" + k + "}", markets.fmt(minor, "DKK").replace("\u00a0", " "))  # the site: plain spaces
-    for k, minor in {"pMonthlyNum": e["monthly"], "pCallNum": e["call"], "pSetupNum": e["setup"]}.items():
+    for k, minor in {"pMonthlyNum": e["monthly"], "pMinuteNum": e["outbound_extra_minute"], "pSetupNum": e["setup"]}.items():
         out = out.replace("{" + k + "}", prices.kr(minor))
     return out.replace("{pCur}", "kr.").replace("{pIncluded}", str(markets.INBOUND_INCLUDED_MINUTES))
 
@@ -77,13 +96,14 @@ def test_the_public_pages_state_both_prices():
     pricing = (ROOT / "web/src/i18n/messages/da/landing.json").read_text(encoding="utf-8")
     site = (ROOT / "web/src/i18n/messages/da/site.json").read_text(encoding="utf-8")  # front page + build guide
     for text in (pricing, site):
-        assert "{pMonthly}" in text and "{pCall} pr." in text and "{pMinute} pr." in text and "{pSetup}" in text and "ekskl. moms" in text
+        assert "{pMonthly}" in text and ("{pMinute} pr." in text or "{pMinuteNum}" in text) and "{pSetup}" in text and "ekskl. moms" in text
+        assert "{pCall}" not in text and "ingen pris pr. opkald" in text.lower()
         assert not re.search(r"\d\s?kr\.", re.sub(r"(400|600) kr\.", "", text)), "a hard-coded amount in kroner"
-    assert "300 minutter" in pricing and "{pExtraMinute}" in pricing  # the included inbound minutes and the price above them
+    assert "{pIncluded} minutter" in pricing and "{pExtraMinute}" in pricing  # the package and the price above it
     # Rendered for a Danish visitor, the copy states the same amounts as always.
     rendered = _da_render(pricing)
-    assert "2.495 kr." in rendered and "4 kr. pr." in rendered and "2 kr. pr." in rendered and "5.000 kr." in rendered
-    assert "1,50 kr." in rendered
+    assert "2.495 kr." in rendered and "4 kr. pr." not in rendered and "2 kr. pr." in rendered and "5.000 kr." in rendered
+    assert "1,50 kr." in rendered and "300 minutter om måneden" in rendered and "ind- og udgående" in rendered
     # The big price figures on the front page: amount and unit side by side.
     site_json = json.loads(site)
     assert _da_render(site_json["prices"]["monthly"]) + " " + _da_render(site_json["home"]["price"]["subscription"]["unit"]) == "2.495 kr./md."
@@ -91,8 +111,9 @@ def test_the_public_pages_state_both_prices():
     assert "{pMonthly}/md." in site and "Fra {pMonthly}" not in site
     # llms.txt is static text, read by AI crawlers: it states the Danish prices literally.
     llms = (ROOT / "web/public/llms.txt").read_text(encoding="utf-8")
-    assert "2.495 kr." in llms and "4 kr. pr." in llms and "2 kr. pr." in llms and "5.000 kr." in llms and "ekskl. moms" in llms
-    assert "300 minutter" in llms and "1,50 kr." in llms
+    assert "2.495 kr." in llms and "4 kr. pr." not in llms and "2 kr. pr." in llms and "5.000 kr." in llms and "ekskl. moms" in llms
+    assert "300 minutter om måneden til både indgående opkald og udgående kampagneopkald" in llms and "1,50 kr." in llms
+    assert "ingen pris pr. opkald" in llms
 
 
 def test_the_website_price_table_is_the_markets_table():
@@ -100,13 +121,12 @@ def test_the_website_price_table_is_the_markets_table():
     table = json.loads((ROOT / "web/src/lib/prices.json").read_text(encoding="utf-8"))
     assert {k: v for k, v in table.items() if k != "_comment"} == {k: v for k, v in markets.export().items() if k != "_comment"}
     assert table["erhverv"]["DKK"] == {
-        "monthly": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "call": prices.CAMPAIGN_CALL_NET_MINOR,
-        "minute": prices.CAMPAIGN_MINUTE_NET_MINOR, "extra_minute": prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
-        "setup": prices.SPECIALIST_SETUP_NET_MINOR}
+        "monthly": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "extra_minute": prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
+        "outbound_extra_minute": prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR, "setup": prices.SPECIALIST_SETUP_NET_MINOR}
     assert table["privat"]["DKK"] == {p["key"]: {"monthly": p["monthly_minor"], "yearly_monthly": p["yearly_monthly_minor"],
                                                  "yearly_total": p["yearly_total_minor"]} for p in prices.PRIVAT_PLANS}
     assert table["privatCreditPack"]["DKK"] == prices.PRIVAT_CREDIT_PACK_GROSS_MINOR
-    assert table["inboundIncludedMinutes"] == prices.INBOUND_INCLUDED_MINUTES and table["privatTrialDays"] == prices.PRIVAT_TRIAL_DAYS
+    assert table["includedMinutes"] == prices.INCLUDED_MINUTES and table["privatTrialDays"] == prices.PRIVAT_TRIAL_DAYS
     assert table["localeCurrency"] == {"da": "DKK", "sv": "SEK", "no": "NOK", "en": "EUR", "de": "EUR", "es": "EUR", "fr": "EUR", "it": "EUR"}
 
 

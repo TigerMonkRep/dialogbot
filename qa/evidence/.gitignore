@@ -1,0 +1,7 @@
+# Heavy evidence stays out of git (kept on disk / delivered as zip): traces, screenshots, full sweep dumps.
+*.zip
+*.png
+*.webm
+pw/
+shots/
+sweep-results.json

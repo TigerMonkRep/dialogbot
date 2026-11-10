@@ -1,0 +1,7 @@
+PASSED tests/qa/test_qa_A01.py::test_intent_survives_signup_verify_and_first_workspace[reception-True]
+PASSED tests/qa/test_qa_A01.py::test_intent_survives_signup_verify_and_first_workspace[campaigns-False]
+PASSED tests/qa/test_qa_A01.py::test_intent_survives_signup_verify_and_first_workspace[both-True]
+PASSED tests/qa/test_qa_A01.py::test_signup_rejects_unknown_intent_and_duplicate_email_case_insensitive
+PASSED tests/qa/test_qa_A01.py::test_unverified_user_cannot_create_workspace
+PASSED tests/qa/test_qa_A01.py::test_short_password_rejected_without_creating_user
+FAILED tests/qa/test_qa_A01.py::test_register_with_overlong_interface_language_is_a_validation_error_not_500

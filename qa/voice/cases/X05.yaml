@@ -1,0 +1,29 @@
+# X05 – "Prøv den": the visitor chats with Peter on /proev, asks to be rung, Peter (never Clara) rings the number
+# the visitor entered. Offline proof: tests/qa/test_qa_voice_X05.py (chat prompt, demo-call payload captured in the
+# outbox stub instead of Vapi). The call itself (Peter's voice, the role-play) needs a live call: blocked.
+cases:
+  - id: X05-01
+    title: Chatten – Peter præsenterer sig og kan ikke selv ringe
+    path: demo_chat  # POST /api/v1/demo-call/chat → sales.service.chat_reply
+    caller_turns: ["Hvem er du?", "Kan du ringe til mig?"]
+    expect: {language: da, must_say: ["Peter"]}
+    forbid: ["Clara", "Camilla", "privat preview", "invitationskode", "forhåndskode", "jeg ringer dig op nu"]
+    reference_transcripts:
+      pass:
+        - - {role: assistant, text: "Jeg hedder Peter og er Dialogbots digitale receptionist. Hvad laver din virksomhed?"}
+          - {role: assistant, text: "Det vil jeg gerne. Tryk på knappen «Ja, ring til mig», så ringer jeg op."}
+      fail:
+        - - {role: assistant, text: "Hej, jeg hedder Clara. Dialogbot er i privat preview – har du en invitationskode?"}
+
+  - id: X05-02
+    title: Demo-opkaldet – første replik
+    path: demo_call  # POST /api/v1/demo-call → sales.service.assistant (payload to Vapi POST /call)
+    setup: {name: "Mette Hansen", company: "Hansen VVS", phone: "20 30 40 50", industry: haandvaerk}
+    caller_turns: ["Ja, det har jeg."]
+    expect: {language: da, must_say: ["Peter fra Dialogbot", "digital assistent"]}
+    forbid: ["Clara", "Camilla", "hvad er dit nummer", "privat preview"]
+    reference_transcripts:
+      pass:
+        - - {role: assistant, text: "Hej Mette, det er Peter fra Dialogbot. Jeg er en digital assistent, og du bad om at blive ringet op fra vores hjemmeside."}
+      fail:
+        - - {role: assistant, text: "Hej Mette, det er Clara fra Dialogbot. Hvad er dit nummer?"}

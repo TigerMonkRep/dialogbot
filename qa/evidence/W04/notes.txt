@@ -1,0 +1,1 @@
+not-implemented: webchat 'Bliv kontaktet' (app/modules/webchat/public.py contact) tager telefonnummer uden kodeverifikation; ingen OTP/resend/forsøgsgrænse. Tilbagekald er en manuel opgave (ingen automatisk opkald), så ikke et sikkerhedshul i dag. Widget påstår ikke verifikation (frame.js).

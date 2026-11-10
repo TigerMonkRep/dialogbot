@@ -1,0 +1,5 @@
+PASSED tests/qa/test_qa_S02.py::test_two_workspace_isolation_for_members_and_invitations
+PASSED tests/qa/test_qa_S02.py::test_permission_matrix_staff_reader_admin
+PASSED tests/qa/test_qa_S02.py::test_invite_double_submit_and_existing_member
+PASSED tests/qa/test_qa_S02.py::test_role_change_and_remove_are_audited
+FAILED tests/qa/test_qa_S02.py::test_resend_is_audited_like_create_and_revoke

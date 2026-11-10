@@ -1,0 +1,555 @@
+
+Running 17 tests using 1 worker
+
+[1A[2K[1/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · da: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider
+[1A[2K[2/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · en: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider
+[1A[2K  1) [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · en: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+
+    Error: en /start: danske tekster på en en-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    Error: en /privat/start: danske tekster på en en-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--c347a-ækage-på-de-6-indgangssider-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--c347a-ækage-på-de-6-indgangssider-desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--c347a-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--c347a-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[3/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · de: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider
+[1A[2K  2) [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · de: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+
+    Error: de /start: danske tekster på en de-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    Error: de /privat/start: danske tekster på en de-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--3d1fc-ækage-på-de-6-indgangssider-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--3d1fc-ækage-på-de-6-indgangssider-desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--3d1fc-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--3d1fc-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[4/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · es: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider
+[1A[2K  3) [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · es: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+
+    Error: es /start: danske tekster på en es-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    Error: es /privat/start: danske tekster på en es-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--5e766-ækage-på-de-6-indgangssider-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--5e766-ækage-på-de-6-indgangssider-desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--5e766-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--5e766-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[5/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · fr: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider
+[1A[2K  4) [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · fr: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+
+    Error: fr /start: danske tekster på en fr-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    Error: fr /privat/start: danske tekster på en fr-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--858cd-ækage-på-de-6-indgangssider-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--858cd-ækage-på-de-6-indgangssider-desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--858cd-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--858cd-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[6/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · it: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider
+[1A[2K  5) [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · it: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+
+    Error: it /start: danske tekster på en it-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    Error: it /privat/start: danske tekster på en it-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--7f72f-ækage-på-de-6-indgangssider-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--7f72f-ækage-på-de-6-indgangssider-desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--7f72f-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--7f72f-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[7/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · no: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider
+[1A[2K[8/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · sv: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider
+[1A[2K  6) [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · sv: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+
+    Error: sv /start: danske tekster på en sv-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    Error: sv /privat/start: danske tekster på en sv-side
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "Der er sendt mange forespørgsler fra din forbindelse. Vent lidt, og prøv igen.",[39m
+    [31m+ ][39m
+
+      119 |       expect.soft(row.danishClaims, `${l} ${route}: "dansk/Danish" som sprogpåstand på en ${l}-side`).toEqual([]);
+      120 |       expect.soft(foreignClaims, `${l} ${route}: påstand om et andet sprog end sidens`).toEqual([]);
+    > 121 |       expect.soft(leaks, `${l} ${route}: danske tekster på en ${l}-side`).toEqual([]);
+          |                                                                           ^
+      122 |       save(`${info.project.name}-lang-${l}`, results);
+      123 |       if (route === "/") expect.soft(own, `${l} /: indgangssiden siger "${OWN_CLAIM[l].source}"`).toBeTruthy();
+      124 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:121:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--b006c-ækage-på-de-6-indgangssider-desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--b006c-ækage-på-de-6-indgangssider-desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--b006c-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--b006c-ækage-på-de-6-indgangssider-desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[9/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · da: priser i markedets valuta og locale-format (/priser, /erhverv, /privat)
+[1A[2K[10/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · en: priser i markedets valuta og locale-format (/priser, /erhverv, /privat)
+[1A[2K[11/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · de: priser i markedets valuta og locale-format (/priser, /erhverv, /privat)
+[1A[2K[12/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · es: priser i markedets valuta og locale-format (/priser, /erhverv, /privat)
+[1A[2K[13/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · fr: priser i markedets valuta og locale-format (/priser, /erhverv, /privat)
+[1A[2K[14/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · it: priser i markedets valuta og locale-format (/priser, /erhverv, /privat)
+[1A[2K[15/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · no: priser i markedets valuta og locale-format (/priser, /erhverv, /privat)
+[1A[2K  7) [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · no: priser i markedets valuta og locale-format (/priser, /erhverv, /privat) 
+
+    Error: no /priser: forkert valuta for NOK-markedet
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 4[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   ", koster hvert påbegynte minutt utover dette 2,35 kr. Dere kan alltid se forbruket ",[39m
+    [31m+   "derfor 6,30 kr, og en samtale på 3 minutter 15,75 kr. En kontakt ringes høyst 2 gan",[39m
+    [31m+ ][39m
+
+      148 |       results.push({ project: info.project.name, kind: "price", locale: l, route, currency: cur, expected, hasErhverv, hasPrivat, wrongCurrency: ctx, foreignDaStyle });
+      149 |       save(`${info.project.name}-price-${l}`, results);
+    > 150 |       expect.soft(ctx, `${l} ${route}: forkert valuta for ${cur}-markedet`).toEqual([]);
+          |                                                                             ^
+      151 |       if (route !== "/privat") expect.soft(hasErhverv, `${l} ${route}: erhvervspris skrevet som ${expected.erhvervMonthlyMoney} / ${expected.erhvervMonthlyAmount}`).toBeTruthy();
+      152 |       else expect.soft(hasPrivat, `${l} /privat: privatpris skrevet som ${expected.privatBasis}`).toBeTruthy();
+      153 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:150:77
+
+    Error: no /erhverv: forkert valuta for NOK-markedet
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 4[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "re vil at Dialogbot skal ringe ut. Ubesvart: 6,30 kr. Tre minutters samtale: 15,75 ",[39m
+    [31m+   "kr. Dere ser høyeste pris før der",[39m
+    [31m+ ][39m
+
+      148 |       results.push({ project: info.project.name, kind: "price", locale: l, route, currency: cur, expected, hasErhverv, hasPrivat, wrongCurrency: ctx, foreignDaStyle });
+      149 |       save(`${info.project.name}-price-${l}`, results);
+    > 150 |       expect.soft(ctx, `${l} ${route}: forkert valuta for ${cur}-markedet`).toEqual([]);
+          |                                                                             ^
+      151 |       if (route !== "/privat") expect.soft(hasErhverv, `${l} ${route}: erhvervspris skrevet som ${expected.erhvervMonthlyMoney} / ${expected.erhvervMonthlyAmount}`).toBeTruthy();
+      152 |       else expect.soft(hasPrivat, `${l} /privat: privatpris skrevet som ${expected.privatBasis}`).toBeTruthy();
+      153 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:150:77
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--e6e18-rmat-priser-erhverv-privat--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--e6e18-rmat-priser-erhverv-privat--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--e6e18-rmat-priser-erhverv-privat--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--e6e18-rmat-priser-erhverv-privat--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[16/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · sv: priser i markedets valuta og locale-format (/priser, /erhverv, /privat)
+[1A[2K  8) [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · sv: priser i markedets valuta og locale-format (/priser, /erhverv, /privat) 
+
+    Error: sv /priser: forkert valuta for SEK-markedet
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 4[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "tenten kostar varje påbörjad minut därutöver 2,20 kr. Ni kan alltid se er förbrukni",[39m
+    [31m+   " därför 5,90 kr och ett samtal på 3 minuter 14,75 kr. En kontakt rings högst 2 gång",[39m
+    [31m+ ][39m
+
+      148 |       results.push({ project: info.project.name, kind: "price", locale: l, route, currency: cur, expected, hasErhverv, hasPrivat, wrongCurrency: ctx, foreignDaStyle });
+      149 |       save(`${info.project.name}-price-${l}`, results);
+    > 150 |       expect.soft(ctx, `${l} ${route}: forkert valuta for ${cur}-markedet`).toEqual([]);
+          |                                                                             ^
+      151 |       if (route !== "/privat") expect.soft(hasErhverv, `${l} ${route}: erhvervspris skrevet som ${expected.erhvervMonthlyMoney} / ${expected.erhvervMonthlyAmount}`).toBeTruthy();
+      152 |       else expect.soft(hasPrivat, `${l} /privat: privatpris skrevet som ${expected.privatBasis}`).toBeTruthy();
+      153 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:150:77
+
+    Error: sv /erhverv: forkert valuta for SEK-markedet
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   " vill att Dialogbot ska ringa ut. Obesvarat: 5,90 kr. Tre minuters samtal: 14,75 kr",[39m
+    [31m+ ][39m
+
+      148 |       results.push({ project: info.project.name, kind: "price", locale: l, route, currency: cur, expected, hasErhverv, hasPrivat, wrongCurrency: ctx, foreignDaStyle });
+      149 |       save(`${info.project.name}-price-${l}`, results);
+    > 150 |       expect.soft(ctx, `${l} ${route}: forkert valuta for ${cur}-markedet`).toEqual([]);
+          |                                                                             ^
+      151 |       if (route !== "/privat") expect.soft(hasErhverv, `${l} ${route}: erhvervspris skrevet som ${expected.erhvervMonthlyMoney} / ${expected.erhvervMonthlyAmount}`).toBeTruthy();
+      152 |       else expect.soft(hasPrivat, `${l} /privat: privatpris skrevet som ${expected.privatBasis}`).toBeTruthy();
+      153 |     }
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:150:77
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--fe321-rmat-priser-erhverv-privat--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--fe321-rmat-priser-erhverv-privat--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--fe321-rmat-priser-erhverv-privat--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--fe321-rmat-priser-erhverv-privat--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K[17/17] [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:157:5 › X24 · axe-core: alvorlige/kritiske overtrædelser på de 6 sider (da, en, de)
+[1A[2K  9) [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:157:5 › X24 · axe-core: alvorlige/kritiske overtrædelser på de 6 sider (da, en, de) 
+
+    Error: axe serious/critical
+
+    [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  -  1[39m
+    [31m+ Received  + 14[39m
+
+    [32m- Array [][39m
+    [31m+ Array [[39m
+    [31m+   "da /: color-contrast",[39m
+    [31m+   "da /erhverv: label-content-name-mismatch",[39m
+    [31m+   "da /start: label-content-name-mismatch",[39m
+    [31m+   "da /privat/start: label-content-name-mismatch",[39m
+    [31m+   "en /: color-contrast",[39m
+    [31m+   "en /erhverv: label-content-name-mismatch",[39m
+    [31m+   "en /start: label-content-name-mismatch",[39m
+    [31m+   "en /privat/start: label-content-name-mismatch",[39m
+    [31m+   "de /: color-contrast",[39m
+    [31m+   "de /erhverv: label-content-name-mismatch",[39m
+    [31m+   "de /start: label-content-name-mismatch",[39m
+    [31m+   "de /privat/start: label-content-name-mismatch",[39m
+    [31m+ ][39m
+
+      176 |   writeFileSync(join(EVIDENCE, `axe-${info.project.name}.json`), JSON.stringify(out, null, 2));
+      177 |   const flat = out.flatMap((o) => (o.violations as { id: string }[]).map((v) => `${o.locale} ${o.route}: ${v.id}`));
+    > 178 |   expect.soft(flat, "axe serious/critical").toEqual([]);
+          |                                             ^
+      179 | });
+      180 |
+      181 | test.beforeAll(() => { mkdirSync(join(EVIDENCE, "shots"), { recursive: true }); });
+        at /home/claude/dialogbot/web/e2e/qa/i18n/x24-locales.spec.ts:178:45
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--9880c-ser-på-de-6-sider-da-en-de--desktop-1440/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--9880c-ser-på-de-6-sider-da-en-de--desktop-1440/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--9880c-ser-på-de-6-sider-da-en-de--desktop-1440/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../qa-i18n-results/qa-i18n-x24-locales-X24-·--9880c-ser-på-de-6-sider-da-en-de--desktop-1440/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[1A[2K  9 failed
+    [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · en: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+    [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · de: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+    [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · es: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+    [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · fr: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+    [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · it: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+    [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:93:7 › X24 · sv: sprog, sprogpåstande og dansk-lækage på de 6 indgangssider 
+    [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · no: priser i markedets valuta og locale-format (/priser, /erhverv, /privat) 
+    [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:129:7 › X24 · sv: priser i markedets valuta og locale-format (/priser, /erhverv, /privat) 
+    [desktop-1440] › e2e/qa/i18n/x24-locales.spec.ts:157:5 › X24 · axe-core: alvorlige/kritiske overtrædelser på de 6 sider (da, en, de) 
+  8 passed (5.0m)

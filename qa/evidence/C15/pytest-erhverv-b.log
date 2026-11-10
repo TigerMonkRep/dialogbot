@@ -1,0 +1,348 @@
+..FF....FFFF..                                                           [100%]
+=================================== FAILURES ===================================
+_______________ test_c11_no_blind_redial_after_provider_timeout ________________
+
+api = <tests.conftest.Api object at 0x7f8879a05d10>
+two_workspaces = {'tok_a': 'RpEoJwNIumwxscUaSkJaM2BRJCL_z2yGDemUEup5BT0', 'ws_a': 'ea207915-0612-4103-a910-27d8244e872a', 'tok_b': 'Kq6RvD6Gz3F4gPu3Oo-vPHSsY6Xsg8sqnaREeqqBVfE', 'ws_b': '9ad39975-38b7-4833-b598-3b599f844bf6'}
+db = <sqlalchemy.orm.session.Session object at 0x7f887a39f5c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f887a3839b0>
+
+    def test_c11_no_blind_redial_after_provider_timeout(api, two_workspaces, db, monkeypatch):
+        """DB-007 (no blind new write after timeout) for outbound calls, and the campaign promise
+        'each contact is dialled at most max_attempts times' (campaigns/service.py docstring).
+    
+        When Vapi's POST /call times out, the call may well have been placed. The dialler must not treat that as
+        'nothing happened' and dial again and again: the number of dial requests sent for one contact must stay
+        within max_attempts (or the contact must be held for reconciliation)."""
+        t = two_workspaces
+        tok, ws = t["tok_a"], t["ws_a"]
+        _ready(api, t, monkeypatch, key=True)
+        c = _campaign(api, t)
+        r = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/start",
+                     {"expected_version": c["version"], "legal_confirmed": True, "accept_max_net_minor": c["max_cost"]["net_minor"]})
+        assert r.status_code == 200, r.text
+        requests = []
+    
+        def timeout(payload):
+            requests.append(payload["customer"]["number"])
+            raise service.OutboundFailed("Telefontjenesten svarede ikke", extra={"no_response": True})
+    
+        monkeypatch.setattr(service, "create_call", timeout)
+        now = datetime.combine(date.today(), time(8, 0), tzinfo=UTC)
+        for i in range(6):  # six dialler passes, 31 minutes apart (the retry delay is 30 minutes)
+            service.dispatch(db, now + timedelta(minutes=31 * i))
+        db.expire_all()
+        contact = db.query(CampaignContact).filter_by(phone="+4520304050").one()
+        camp = db.get(Campaign, contact.campaign_id)
+>       assert len(requests) <= camp.max_attempts, (
+            f"{len(requests)} dial requests sent to the same consumer/business after provider timeouts "
+            f"(max_attempts={camp.max_attempts}); attempts counter={contact.attempts}, status={contact.status}, "
+            f"campaign_calls={db.query(CampaignCall).filter_by(contact_id=contact.id).count()}")
+E       AssertionError: 6 dial requests sent to the same consumer/business after provider timeouts (max_attempts=2); attempts counter=0, status=pending, campaign_calls=0
+E       assert 6 <= 2
+E        +  where 6 = len(['+4520304050', '+4520304050', '+4520304050', '+4520304050', '+4520304050', '+4520304050'])
+E        +  and   2 = <app.models.domain.Campaign object at 0x7f8879a04e10>.max_attempts
+
+tests/qa/test_qa_c11.py:129: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+______________________ test_c15_counters_from_one_source _______________________
+
+api = <tests.conftest.Api object at 0x7f8881fe55b0>
+client = <starlette.testclient.TestClient object at 0x7f888238a2c0>
+two_workspaces = {'tok_a': '1zBuJSDnJlHfoOxoDziWQ1Vz67jAUUZSWY4iP1K7HrI', 'ws_a': 'e1f798b7-4336-4c32-ae4f-40ff9b576d3f', 'tok_b': 'TxOa8WA0Q6aW68WfADDk3nIp_9sfaPeFB-txk__rW6I', 'ws_b': '7e15a284-1432-4d67-851b-98dece929d86'}
+db = <sqlalchemy.orm.session.Session object at 0x7f887a39ec60>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f887a5e2e00>
+
+    def test_c15_counters_from_one_source(api, client, two_workspaces, db, monkeypatch):
+        """Contacts, attempts and answered calls shown on the campaign page (kampagner/[id]/page.tsx: stats) must
+        reconcile with the stored contacts and calls."""
+        t = two_workspaces
+        tok, ws = t["tok_a"], t["ws_a"]
+        c = _running(api, t, monkeypatch)
+        calls = []
+        monkeypatch.setattr(service, "create_call", lambda p: calls.append(p) or {"id": f"qa_out_{len(calls)}"})
+        now = datetime.combine(date.today(), time(8, 0), tzinfo=UTC)
+        monkeypatch.setattr(service, "_now", lambda: now)
+        # Mette: answers, interested. Ole: answers and opts out. Bo: no answer.
+        assert service.dispatch(db, now) == 1
+        assert _report(client, "qa_out_1", "+4520304050", [{"role": "bot", "message": "Hej"},
+                                                            {"role": "user", "message": "Ja, jeg er interesseret i et tilbud"}]).status_code == 200
+        assert service.dispatch(db, now) == 1
+        assert _report(client, "qa_out_2", "+4521222324", [{"role": "bot", "message": "Hej"},
+                                                            {"role": "user", "message": "Nej tak, ring ikke igen."}]).status_code == 200
+        assert service.dispatch(db, now) == 1
+        assert _report(client, "qa_out_3", "+4522334455", [{"role": "bot", "message": "Hej"}],
+                       reason="customer-did-not-answer", seconds=0).status_code == 200
+        db.expire_all()
+        out = api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}").json()
+        counts = out["counts"]
+        contacts = db.query(CampaignContact).filter(CampaignContact.campaign_id == __import__("uuid").UUID(c["id"])).all()
+        n_calls = db.query(CampaignCall).filter(CampaignCall.campaign_id == __import__("uuid").UUID(c["id"])).count()
+        # contacts vs attempts kept apart and consistent
+        assert counts["total"] == len(contacts) == 3
+        assert counts["calls"] == n_calls == sum(x.attempts for x in contacts) == 3
+        assert sum(counts["by_status"].values()) == counts["total"]
+        # "Besvaret" on the campaign page is counts.by_status.done. Two people answered (Mette and Ole); Ole's call
+        # was answered and ended with an opt-out. The answered counter must count both.
+        answered_contacts = sum(1 for x in contacts if x.connected_seconds > 0 or x.outcome in service.OUTCOMES)
+        assert answered_contacts == 2
+        ui_answered = counts["by_status"].get("done", 0)
+>       assert ui_answered == answered_contacts, (
+            f"Besvaret shows {ui_answered} but {answered_contacts} contacts answered (by_status={counts['by_status']})")
+E       AssertionError: Besvaret shows 1 but 2 contacts answered (by_status={'done': 1, 'opted_out': 1, 'pending': 1})
+E       assert 1 == 2
+
+tests/qa/test_qa_c15.py:81: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+______________ test_w12_widget_booking_reaches_connected_calendar ______________
+
+api = <tests.conftest.Api object at 0x7f887ae6f150>
+client = <starlette.testclient.TestClient object at 0x7f887ae6f050>
+two_workspaces = {'tok_a': 'PTy_lDU6GYXZ8uL51Zuu99r4vZlrh7UNOmtiQ_zph10', 'ws_a': '7cac146b-9ba3-4938-860a-87ab2dcc119d', 'tok_b': 'by7GjhlU0xSxo6HrAYKLQ6FI4zpESzGg6oy8lLW1e9s', 'ws_b': '8d06673b-3658-40dd-a65e-40cff4bb5d47'}
+fake = FakeWorld(events={}, sms=[], webhooks=[], fail_next=set(), fail_webhook_times=0, oauth_email='ejer@fjordgulv.example', seq=count(2), lock=<unlocked _thread.lock object at 0x7f8884b3be50>)
+db = <sqlalchemy.orm.session.Session object at 0x7f887adbf020>
+
+    def test_w12_widget_booking_reaches_connected_calendar(api, client, two_workspaces, fake, db):
+        """With Google Kalender connected (description: 'opretter, flytter og aflyser aftaler direkte i den'),
+        a booking the customer makes in the widget must end up in that calendar – or be shown as pending/failed.
+        It must not stay silently only in Dialogbot while the owner's own calendar shows the time as free."""
+        t = two_workspaces
+        type_id = _booking_ready(api, t)
+        _connect_google(api, client, t)
+        key, conv_id, h = _widget(api, client, t)
+        start = client.get(f"/api/v1/public/webchat/{key}/booking").json()["slots"][0]["start"]
+        r = client.post(f"/api/v1/public/webchat/{key}/conversations/{conv_id}/booking",
+                        json={"type_id": type_id, "start": start, "name": "Henrik Villumsen", "phone": "+4520304050", "consent": True},
+                        headers=h)
+        assert r.status_code == 201, r.text
+        db.expire_all()
+        b = db.query(Booking).filter(Booking.workspace_id == uuid.UUID(t["ws_a"])).one()
+        google_events = [e for e in WORLD.events.values() if e["calendar"].startswith("google_calendar")]
+>       assert b.calendar_event_id is not None and len(google_events) == 1, (
+            f"widget booking not written to connected Google calendar: calendar_connector={b.calendar_connector!r}, "
+            f"calendar_event_id={b.calendar_event_id!r}, events in fake Google={len(google_events)}")
+E       AssertionError: widget booking not written to connected Google calendar: calendar_connector=None, calendar_event_id=None, events in fake Google=0
+E       assert (None is not None)
+E        +  where None = <app.models.domain.Booking object at 0x7f887a5e2be0>.calendar_event_id
+
+tests/qa/test_qa_w12_bk15.py:136: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+______________ test_w12_manual_booking_reaches_connected_calendar ______________
+
+api = <tests.conftest.Api object at 0x7f88823cb650>
+client = <starlette.testclient.TestClient object at 0x7f887ae6e550>
+two_workspaces = {'tok_a': 'jmUYm6MSgGNEZT1zJ9-N-HpAlO_LKPGs4T60YKvKAY0', 'ws_a': 'a0fd73b9-0d7c-4d9c-b59f-7725cc9a6a69', 'tok_b': 'n9yIOXNjhS8Sm6MB6Enr42VNgakPd2IYaPh2d3bZduE', 'ws_b': 'cdcd9cd5-c166-4d25-83ac-00bd58a46f9d'}
+fake = FakeWorld(events={}, sms=[], webhooks=[], fail_next=set(), fail_webhook_times=0, oauth_email='ejer@fjordgulv.example', seq=count(3), lock=<unlocked _thread.lock object at 0x7f8884b3be50>)
+db = <sqlalchemy.orm.session.Session object at 0x7f887ae12120>
+
+    def test_w12_manual_booking_reaches_connected_calendar(api, client, two_workspaces, fake, db):
+        """Same rule for «Book for en kunde» on /app/aftaler (POST /bookings)."""
+        t = two_workspaces
+        tok, ws = t["tok_a"], t["ws_a"]
+        type_id = _booking_ready(api, t)
+        _connect_google(api, client, t)
+        start = api.get(tok, f"/workspaces/{ws}/bookings/slots?type_id={type_id}").json()["items"][0]["start"]
+        r = api.post(tok, f"/workspaces/{ws}/bookings", {"type_id": type_id, "start": start, "name": "Mette", "phone": "+4520304050"})
+        assert r.status_code == 201, r.text
+>       assert r.json()["calendar_event_id"] is not None, f"manual booking not written to Google: {r.json()}"
+E       AssertionError: manual booking not written to Google: {'id': '6c4814d8-6f3a-4859-ae11-af4917cb5112', 'type_id': '9fc64db2-c687-49a7-83ad-ea17820deccd', 'title': 'Besigtigelse: Mette', 'starts_at': '2026-11-10T11:00:00+00:00', 'ends_at': '2026-11-10T12:00:00+00:00', 'label': 'tirsdag 10. november kl. 12.00', 'status': 'confirmed', 'source': 'manual', 'contact_name': 'Mette', 'contact_phone': '+4520304050', 'contact_email': None, 'note': '', 'lead_id': '081f69c3-c4d2-4889-b0bf-593f3087e127', 'conversation_id': None, 'calendar_connector': None, 'calendar_event_id': None}
+E       assert None is not None
+
+tests/qa/test_qa_w12_bk15.py:150: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+____________ test_bk15_failed_external_move_is_not_reported_as_done ____________
+
+api = <tests.conftest.Api object at 0x7f887ad325d0>
+client = <starlette.testclient.TestClient object at 0x7f887ae37f20>
+two_workspaces = {'tok_a': 'MXfN78fjx2UP3OFmPbO3AlsvuxQiKiHFXYVaA3561Ns', 'ws_a': 'bc1f14d0-8b15-42eb-953a-4007d1ada93b', 'tok_b': 'akVvVjnBSO5fW-EdRjPiDCjeO2NQ6ax18TTYOQC7TmY', 'ws_b': 'ed660eee-cf26-4f6f-960f-3e1f2ec34b50'}
+fake = FakeWorld(events={'fake-ev-4': {'calendar': 'google_calendar:bc1f14d0-8b15-42eb-953a-4007d1ada93b', 'start': datetime....ook_times=0, oauth_email='ejer@fjordgulv.example', seq=count(5), lock=<unlocked _thread.lock object at 0x7f8884b3be50>)
+db = <sqlalchemy.orm.session.Session object at 0x7f887ad316d0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f887ad31400>
+
+    def test_bk15_failed_external_move_is_not_reported_as_done(api, client, two_workspaces, fake, db, monkeypatch):
+        """flyt_tid with the calendar provider failing: the customer must not be told 'Aftalen er flyttet' while the
+        external event still sits at the old time, and the action trail must not say ok (DB-007/DB-011)."""
+        t = two_workspaces
+        _booking_ready(api, t)
+        _connect_google(api, client, t)
+        ws = db.get(Workspace, uuid.UUID(t["ws_a"]))
+        ctx = RunContext(workspace_id=ws.id, channel="phone", caller_phone="+4520304050", provider_call_id="call-qa-eb")
+        free = actions.execute(db, ws, "ledige_tider", {}, ctx)[1].output["tider"]
+        _, booked = actions.execute(db, ws, "book_tid", {"start": free[0]["start"], "navn": "Bo", "bekraeftet": True}, ctx)
+        assert booked.status == "ok"
+        b = db.query(Booking).one()
+        old_start = WORLD.events[b.calendar_event_id]["start"]
+        from app.modules.integrations.connectors import fakes
+        from app.modules.integrations.connectors.base import ActionError
+    
+        def fail_update(self, event_id, *, start, end):
+            raise ActionError("calendar: leverandøren svarede ikke (simuleret)", code="provider_unavailable", retryable=True)
+    
+        monkeypatch.setattr(fakes.FakeCalendarClient, "update_event", fail_update)  # only the update fails
+        text, moved = actions.execute(db, ws, "flyt_tid", {"ny_start": free[3]["start"], "bekraeftet": True}, ctx)
+        db.commit()
+        db.refresh(b)
+        external_start = WORLD.events[b.calendar_event_id]["start"]
+        conn = db.query(IntegrationConnection).filter_by(connector="google_calendar").one()
+        assert conn.status == "error"  # recorded on the connection …
+        diverged = external_start == old_start and b.starts_at == datetime.fromisoformat(free[3]["start"])
+        assert diverged  # … but Dialogbot moved the booking while Google kept the old time
+>       assert moved.status != "ok" and "flyttet" not in text.lower(), (
+            f"action status={moved.status!r}, text to caller={text!r}; Dialogbot={b.starts_at.isoformat()}, "
+            f"Google={external_start.isoformat()}")
+E       AssertionError: action status='ok', text to caller='Aftalen er flyttet til tirsdag 10. november kl. 15.00. (simuleret)'; Dialogbot=2026-11-10T14:00:00+00:00, Google=2026-11-10T11:00:00+00:00
+E       assert ('ok' != 'ok')
+E        +  where 'ok' = <app.models.domain.ActionRun object at 0x7f887aeda850>.status
+
+tests/qa/test_qa_w12_bk15.py:183: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+___________ test_bk15_failed_external_create_is_not_reported_as_done ___________
+
+api = <tests.conftest.Api object at 0x7f887ae124e0>
+client = <starlette.testclient.TestClient object at 0x7f887ae12120>
+two_workspaces = {'tok_a': 'vvkjfiD_zTVuqIEmJ6NKKRGgsnLQ6IhV8hdyUc6eBww', 'ws_a': '19dd17c3-4de2-4991-a525-36e9765573d2', 'tok_b': '3zfIMqHcZ3moS631NgS7uduSOCEjox_k0nfF_3y21rg', 'ws_b': '6f72edf0-dac6-42d0-ae67-c3ef8c19ea5a'}
+fake = FakeWorld(events={}, sms=[], webhooks=[], fail_next=set(), fail_webhook_times=0, oauth_email='ejer@fjordgulv.example', seq=count(6), lock=<unlocked _thread.lock object at 0x7f8884b3be50>)
+db = <sqlalchemy.orm.session.Session object at 0x7f887adbcaa0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f887aedf230>
+
+    def test_bk15_failed_external_create_is_not_reported_as_done(api, client, two_workspaces, fake, db, monkeypatch):
+        t = two_workspaces
+        _booking_ready(api, t)
+        _connect_google(api, client, t)
+        ws = db.get(Workspace, uuid.UUID(t["ws_a"]))
+        ctx = RunContext(workspace_id=ws.id, channel="phone", caller_phone="+4520304050", provider_call_id="call-qa-eb2")
+        free = actions.execute(db, ws, "ledige_tider", {}, ctx)[1].output["tider"]
+        from app.modules.integrations.connectors import fakes
+        from app.modules.integrations.connectors.base import ActionError
+    
+        def fail_create(self, **kw):
+            raise ActionError("calendar: timeout (simuleret)", code="provider_unavailable", retryable=True)
+    
+        monkeypatch.setattr(fakes.FakeCalendarClient, "create_event", fail_create)  # only the create fails
+        text, run = actions.execute(db, ws, "book_tid", {"start": free[0]["start"], "navn": "Bo", "bekraeftet": True}, ctx)
+        db.commit()
+        b = db.query(Booking).one()
+        assert b.calendar_event_id is None and not WORLD.events
+>       assert run.status != "ok" or "kalender" in text.lower(), (
+            f"booking confirmed to caller ({text!r}, status={run.status}) though the Google write failed and no retry exists")
+E       AssertionError: booking confirmed to caller ('Booket: Besigtigelse tirsdag 10. november kl. 12.00. Bekræft tiden over for kunden. (simuleret)', status=ok) though the Google write failed and no retry exists
+E       assert ('ok' != 'ok' or 'kalender' in 'booket: besigtigelse tirsdag 10. november kl. 12.00. bekræft tiden over for kunden. (simuleret)')
+E        +  where 'ok' = <app.models.domain.ActionRun object at 0x7f8881fe50f0>.status
+E        +  and   'booket: besigtigelse tirsdag 10. november kl. 12.00. bekræft tiden over for kunden. (simuleret)' = <built-in method lower of str object at 0x7f887ad8e1f0>()
+E        +    where <built-in method lower of str object at 0x7f887ad8e1f0> = 'Booket: Besigtigelse tirsdag 10. november kl. 12.00. Bekræft tiden over for kunden. (simuleret)'.lower
+
+tests/qa/test_qa_w12_bk15.py:206: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+==================================== PASSES ====================================
+__________ test_c11_launch_needs_explicit_confirmation_and_capability __________
+---------------------------- Captured stdout setup -----------------------------
+---------------------------- Captured stderr setup -----------------------------
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 94af55693109, stage1 foundation
+INFO  [alembic.runtime.migration] Running upgrade 94af55693109 -> 773ead23336e, resend webhook events and provider delivery status
+INFO  [alembic.runtime.migration] Running upgrade 773ead23336e -> 43c189532412, ai usage log
+INFO  [alembic.runtime.migration] Running upgrade 43c189532412 -> c432350c7efd, waitlist signups
+INFO  [alembic.runtime.migration] Running upgrade c432350c7efd -> 501a6eb0eaeb, webchat conversations
+INFO  [alembic.runtime.migration] Running upgrade 501a6eb0eaeb -> 477adf47202c, leads tasks agreements
+INFO  [alembic.runtime.migration] Running upgrade 477adf47202c -> 5a2d1bff4ed7, daily reports
+INFO  [alembic.runtime.migration] Running upgrade 5a2d1bff4ed7 -> 46c794fe9e35, phone numbers and calls
+INFO  [alembic.runtime.migration] Running upgrade 46c794fe9e35 -> 19a35ecb7df3, conversation mode and staff author
+INFO  [alembic.runtime.migration] Running upgrade 19a35ecb7df3 -> c89e73f71c6d, lead callback window
+INFO  [alembic.runtime.migration] Running upgrade c89e73f71c6d -> 24414f5bd46b, phone number voice settings
+INFO  [alembic.runtime.migration] Running upgrade 24414f5bd46b -> f4681fd5e00d, source imports
+INFO  [alembic.runtime.migration] Running upgrade f4681fd5e00d -> c9febc48ca3b, source import profile suggestion
+INFO  [alembic.runtime.migration] Running upgrade c9febc48ca3b -> 299f641c5b3f, reception script
+INFO  [alembic.runtime.migration] Running upgrade 299f641c5b3f -> 5c59c508ecf8, notification reads
+INFO  [alembic.runtime.migration] Running upgrade 5c59c508ecf8 -> 06fa18c2fcfa, bookings
+INFO  [alembic.runtime.migration] Running upgrade 06fa18c2fcfa -> f8c8153ccbb0, campaigns
+INFO  [alembic.runtime.migration] Running upgrade f8c8153ccbb0 -> 7769c9d94fe1, billing_stripe
+INFO  [alembic.runtime.migration] Running upgrade 7769c9d94fe1 -> a8a4f6f5ffaf, voice_library
+INFO  [alembic.runtime.migration] Running upgrade a8a4f6f5ffaf -> 527c5e36aced, voice designed and origin, own voice recordings
+INFO  [alembic.runtime.migration] Running upgrade 527c5e36aced -> e668ed509035, platform managed telephony
+INFO  [alembic.runtime.migration] Running upgrade e668ed509035 -> 94e8251b64e2, demo calls
+INFO  [alembic.runtime.migration] Running upgrade 94e8251b64e2 -> 6abbbb75fde5, integration connections, oauth states, action runs
+INFO  [alembic.runtime.migration] Running upgrade 6abbbb75fde5 -> 3c1d29602dcc, ambassador programme
+INFO  [alembic.runtime.migration] Running upgrade 3c1d29602dcc -> bcc6a80d2f06, standard voice per workspace
+INFO  [alembic.runtime.migration] Running upgrade bcc6a80d2f06 -> a7d3c1e9b2f4, demo calls: chosen voice and industry
+INFO  [alembic.runtime.migration] Running upgrade a7d3c1e9b2f4 -> b3e8f0a4c6d2, demo calls: the visitor's own industry text
+INFO  [alembic.runtime.migration] Running upgrade b3e8f0a4c6d2 -> 6f6d583caceb, social media posts
+INFO  [alembic.runtime.migration] Running upgrade 6f6d583caceb -> 3da6b0abc2dc, social account snapshots and post metrics
+INFO  [alembic.runtime.migration] Running upgrade 3da6b0abc2dc -> 793d6de4d9bb, social prospects
+INFO  [alembic.runtime.migration] Running upgrade 793d6de4d9bb -> 2944b6976e59, social posts extra flag
+INFO  [alembic.runtime.migration] Running upgrade 2944b6976e59 -> 1e8e65047603, campaign calls priced per call
+INFO  [alembic.runtime.migration] Running upgrade 1e8e65047603 -> 64a2ddcb9a74, social post design version and reminder
+INFO  [alembic.runtime.migration] Running upgrade 64a2ddcb9a74 -> 5b7e1c9a3d42, session impersonator for read only view as
+INFO  [alembic.runtime.migration] Running upgrade 5b7e1c9a3d42 -> 7c4e9b1a5d30, assistant proposals
+INFO  [alembic.runtime.migration] Running upgrade 7c4e9b1a5d30 -> a1b2c3d4e5f6, site documents
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> b7d2e4f6a8c0, campaign calls priced per call plus started minute
+INFO  [alembic.runtime.migration] Running upgrade b7d2e4f6a8c0 -> b3c5d7e9f1a2, sales channel phase 1
+INFO  [alembic.runtime.migration] Running upgrade b3c5d7e9f1a2 -> c4d6e8f0a2b4, sales channel phase 2
+INFO  [alembic.runtime.migration] Running upgrade c4d6e8f0a2b4 -> d5e7f9a1b3c6, sales channel phase 3
+INFO  [alembic.runtime.migration] Running upgrade d5e7f9a1b3c6 -> e6f8a0b2c4d7, sales channel phase 4
+INFO  [alembic.runtime.migration] Running upgrade e6f8a0b2c4d7 -> a7c3e9d1f5b2, stemmetest runs
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9d1f5b2 -> b8d4f0a2c6e1, calls.recording_url: the provider's recording of the call (Vapi end-of-call report)
+INFO  [alembic.runtime.migration] Running upgrade b8d4f0a2c6e1 -> c3e5a7f9b1d4, assistant requests («ønsker»)
+INFO  [alembic.runtime.migration] Running upgrade c3e5a7f9b1d4 -> d4f6b8a0c2e7, dialogbot privat
+INFO  [alembic.runtime.migration] Running upgrade d4f6b8a0c2e7 -> e7c9a1b3d5f2, privat: lookup rate limits, business search, opening-hours scheduling, web push
+INFO  [alembic.runtime.migration] Running upgrade e7c9a1b3d5f2 -> e5a7c9d1b3f6, privat subscriptions
+INFO  [alembic.runtime.migration] Running upgrade e5a7c9d1b3f6 -> f1a2b3c4d5e6, quiz-funnel drafts
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> a3d7e1f9c2b4, discount codes
+INFO  [alembic.runtime.migration] Running upgrade a3d7e1f9c2b4 -> b4e8f2a6c1d3, privat: the trial starts at Stripe with a card; accounts begin without rights
+INFO  [alembic.runtime.migration] Running upgrade b4e8f2a6c1d3 -> b7c1d4e8f2a3, browser runs and booking profiles
+INFO  [alembic.runtime.migration] Running upgrade b7c1d4e8f2a3 -> c2d6e9f1a4b8, chat message kind booking_proposal
+INFO  [alembic.runtime.migration] Running upgrade c2d6e9f1a4b8 -> d3e7a2b5c9f1, external business contacts
+INFO  [alembic.runtime.migration] Running upgrade d3e7a2b5c9f1 -> e4f8b1c6d2a9, lead pitch
+INFO  [alembic.runtime.migration] Running upgrade e4f8b1c6d2a9 -> f5a9c2d7e3b1, private appointments
+INFO  [alembic.runtime.migration] Running upgrade f5a9c2d7e3b1 -> a7c3e9f2b4d6, private birthdays
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9f2b4d6 -> b8d4f1a6c2e7, private bills
+INFO  [alembic.runtime.migration] Running upgrade b8d4f1a6c2e7 -> c9e5a2b7d3f8, private app data
+INFO  [alembic.runtime.migration] Running upgrade c9e5a2b7d3f8 -> d1f6b3a8e4c9, private business referrals and assistant name
+INFO  [alembic.runtime.migration] Running upgrade d1f6b3a8e4c9 -> e2a7c4d9f1b3, assistant pronoun
+INFO  [alembic.runtime.migration] Running upgrade e2a7c4d9f1b3 -> f3a9c1d5e7b2, public api: api keys, webhook endpoints, push subscription audience
+INFO  [alembic.runtime.migration] Running upgrade f3a9c1d5e7b2 -> c7d2e9a4b1f6, markets: the company's VAT number, the Privat subscription's currency, the invoice's tax source
+INFO  [alembic.runtime.migration] Running upgrade c7d2e9a4b1f6 -> d8e4a1c6f2b9, wishes: product details on wishlist items, group gifts («Deles om en gave») and a design per wishlist
+INFO  [alembic.runtime.migration] Running upgrade d8e4a1c6f2b9 -> e3b7c9d1a5f4, privat apps: per-app state for «Mine apps» (setup progress, switched off with data kept, «Giv mig besked»)
+INFO  [alembic.runtime.migration] Running upgrade e3b7c9d1a5f4 -> a7c3e9f1b2d4, telephony: customers choose per number whether calls are recorded, and for how long the audio is kept
+----------------------------- Captured stdout call -----------------------------
+_________________ test_c11_confirmation_is_frozen_with_the_run _________________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+___________________ test_c15_packages_and_refunds_not_built ____________________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+______________ test_m04_billing_admin_not_built_and_operator_only ______________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+________________________ test_w12_widget_booking_states ________________________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+_________________ test_w12_concurrent_double_submit_books_once _________________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+________________________ test_w13_manage_link_not_built ________________________
+----------------------------- Captured stdout call -----------------------------
+________________________ test_bk06_catalogue_is_honest _________________________
+---------------------------- Captured stdout setup -----------------------------
+----------------------------- Captured stdout call -----------------------------
+=========================== short test summary info ============================
+PASSED tests/qa/test_qa_c11.py::test_c11_launch_needs_explicit_confirmation_and_capability
+PASSED tests/qa/test_qa_c11.py::test_c11_confirmation_is_frozen_with_the_run
+PASSED tests/qa/test_qa_c15.py::test_c15_packages_and_refunds_not_built
+PASSED tests/qa/test_qa_m04.py::test_m04_billing_admin_not_built_and_operator_only
+PASSED tests/qa/test_qa_w12_bk15.py::test_w12_widget_booking_states
+PASSED tests/qa/test_qa_w12_bk15.py::test_w12_concurrent_double_submit_books_once
+PASSED tests/qa/test_qa_w12_bk15.py::test_w13_manage_link_not_built
+PASSED tests/qa/test_qa_w12_bk15.py::test_bk06_catalogue_is_honest
+FAILED tests/qa/test_qa_c11.py::test_c11_no_blind_redial_after_provider_timeout
+FAILED tests/qa/test_qa_c15.py::test_c15_counters_from_one_source - Assertion...
+FAILED tests/qa/test_qa_w12_bk15.py::test_w12_widget_booking_reaches_connected_calendar
+FAILED tests/qa/test_qa_w12_bk15.py::test_w12_manual_booking_reaches_connected_calendar
+FAILED tests/qa/test_qa_w12_bk15.py::test_bk15_failed_external_move_is_not_reported_as_done
+FAILED tests/qa/test_qa_w12_bk15.py::test_bk15_failed_external_create_is_not_reported_as_done

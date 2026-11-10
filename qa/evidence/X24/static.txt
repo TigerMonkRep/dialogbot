@@ -1,0 +1,34 @@
+
+## A. Nøgle-paritet (mangler/ekstra/type): 0
+
+## A. Tomme oversættelser: 0
+
+## B. Uoversat dansk (identisk med da): 2
+   {"l":"no","f":"settings.json","key":"integrations.webhookPlaceholder","text":"https://jeres-system.dk/dialogbot"}
+   {"l":"sv","f":"settings.json","key":"integrations.webhookPlaceholder","text":"https://jeres-system.dk/dialogbot"}
+
+## B. Dansk prosa i andre sprog (ikke identisk): 0
+
+## C. Placeholder-forskelle: 0
+
+## C. (advarsel) Pris-token byttet om pr. marked – bevidst, tjekkes i browser: 14
+   {"l":"en","f":"entry.json","key":"pricing.business.unit","da":["pCur"],"en":[]}
+   {"l":"en","f":"entry.json","key":"pricing.private.unit","da":["days","pCur"],"en":["days"]}
+   {"l":"en","f":"entry.json","key":"pricing.private.amount","da":["pPrivatFromNum"],"en":["pPrivatFrom"]}
+   … 11 more
+
+## C. Flertalsform mistet i oversættelse: 0
+
+## D. Hårdkodet dansk i komponenter (uden for operator): 169 linjer i 10 filer
+    144  lib/privat/fake.ts
+     12  lib/funnel/fake.ts
+      4  lib/industries.ts
+      2  app/api/admin
+      2  lib/site.ts
+      1  app/ambassador/shared.ts
+      1  app/api/preview
+      1  app/app/(admin)
+      1  app/privat/invitation
+      1  components/privat/wishes.tsx
+
+qa-i18n-check: FEJL (2 hårde fund)

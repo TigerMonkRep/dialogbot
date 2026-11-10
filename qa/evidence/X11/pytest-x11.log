@@ -1,0 +1,208 @@
+.......                                                                  [100%]
+==================================== PASSES ====================================
+_________________ test_proposal_reload_and_chat_yes_never_dial _________________
+---------------------------- Captured stderr setup -----------------------------
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 94af55693109, stage1 foundation
+INFO  [alembic.runtime.migration] Running upgrade 94af55693109 -> 773ead23336e, resend webhook events and provider delivery status
+INFO  [alembic.runtime.migration] Running upgrade 773ead23336e -> 43c189532412, ai usage log
+INFO  [alembic.runtime.migration] Running upgrade 43c189532412 -> c432350c7efd, waitlist signups
+INFO  [alembic.runtime.migration] Running upgrade c432350c7efd -> 501a6eb0eaeb, webchat conversations
+INFO  [alembic.runtime.migration] Running upgrade 501a6eb0eaeb -> 477adf47202c, leads tasks agreements
+INFO  [alembic.runtime.migration] Running upgrade 477adf47202c -> 5a2d1bff4ed7, daily reports
+INFO  [alembic.runtime.migration] Running upgrade 5a2d1bff4ed7 -> 46c794fe9e35, phone numbers and calls
+INFO  [alembic.runtime.migration] Running upgrade 46c794fe9e35 -> 19a35ecb7df3, conversation mode and staff author
+INFO  [alembic.runtime.migration] Running upgrade 19a35ecb7df3 -> c89e73f71c6d, lead callback window
+INFO  [alembic.runtime.migration] Running upgrade c89e73f71c6d -> 24414f5bd46b, phone number voice settings
+INFO  [alembic.runtime.migration] Running upgrade 24414f5bd46b -> f4681fd5e00d, source imports
+INFO  [alembic.runtime.migration] Running upgrade f4681fd5e00d -> c9febc48ca3b, source import profile suggestion
+INFO  [alembic.runtime.migration] Running upgrade c9febc48ca3b -> 299f641c5b3f, reception script
+INFO  [alembic.runtime.migration] Running upgrade 299f641c5b3f -> 5c59c508ecf8, notification reads
+INFO  [alembic.runtime.migration] Running upgrade 5c59c508ecf8 -> 06fa18c2fcfa, bookings
+INFO  [alembic.runtime.migration] Running upgrade 06fa18c2fcfa -> f8c8153ccbb0, campaigns
+INFO  [alembic.runtime.migration] Running upgrade f8c8153ccbb0 -> 7769c9d94fe1, billing_stripe
+INFO  [alembic.runtime.migration] Running upgrade 7769c9d94fe1 -> a8a4f6f5ffaf, voice_library
+INFO  [alembic.runtime.migration] Running upgrade a8a4f6f5ffaf -> 527c5e36aced, voice designed and origin, own voice recordings
+INFO  [alembic.runtime.migration] Running upgrade 527c5e36aced -> e668ed509035, platform managed telephony
+INFO  [alembic.runtime.migration] Running upgrade e668ed509035 -> 94e8251b64e2, demo calls
+INFO  [alembic.runtime.migration] Running upgrade 94e8251b64e2 -> 6abbbb75fde5, integration connections, oauth states, action runs
+INFO  [alembic.runtime.migration] Running upgrade 6abbbb75fde5 -> 3c1d29602dcc, ambassador programme
+INFO  [alembic.runtime.migration] Running upgrade 3c1d29602dcc -> bcc6a80d2f06, standard voice per workspace
+INFO  [alembic.runtime.migration] Running upgrade bcc6a80d2f06 -> a7d3c1e9b2f4, demo calls: chosen voice and industry
+INFO  [alembic.runtime.migration] Running upgrade a7d3c1e9b2f4 -> b3e8f0a4c6d2, demo calls: the visitor's own industry text
+INFO  [alembic.runtime.migration] Running upgrade b3e8f0a4c6d2 -> 6f6d583caceb, social media posts
+INFO  [alembic.runtime.migration] Running upgrade 6f6d583caceb -> 3da6b0abc2dc, social account snapshots and post metrics
+INFO  [alembic.runtime.migration] Running upgrade 3da6b0abc2dc -> 793d6de4d9bb, social prospects
+INFO  [alembic.runtime.migration] Running upgrade 793d6de4d9bb -> 2944b6976e59, social posts extra flag
+INFO  [alembic.runtime.migration] Running upgrade 2944b6976e59 -> 1e8e65047603, campaign calls priced per call
+INFO  [alembic.runtime.migration] Running upgrade 1e8e65047603 -> 64a2ddcb9a74, social post design version and reminder
+INFO  [alembic.runtime.migration] Running upgrade 64a2ddcb9a74 -> 5b7e1c9a3d42, session impersonator for read only view as
+INFO  [alembic.runtime.migration] Running upgrade 5b7e1c9a3d42 -> 7c4e9b1a5d30, assistant proposals
+INFO  [alembic.runtime.migration] Running upgrade 7c4e9b1a5d30 -> a1b2c3d4e5f6, site documents
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> b7d2e4f6a8c0, campaign calls priced per call plus started minute
+INFO  [alembic.runtime.migration] Running upgrade b7d2e4f6a8c0 -> b3c5d7e9f1a2, sales channel phase 1
+INFO  [alembic.runtime.migration] Running upgrade b3c5d7e9f1a2 -> c4d6e8f0a2b4, sales channel phase 2
+INFO  [alembic.runtime.migration] Running upgrade c4d6e8f0a2b4 -> d5e7f9a1b3c6, sales channel phase 3
+INFO  [alembic.runtime.migration] Running upgrade d5e7f9a1b3c6 -> e6f8a0b2c4d7, sales channel phase 4
+INFO  [alembic.runtime.migration] Running upgrade e6f8a0b2c4d7 -> a7c3e9d1f5b2, stemmetest runs
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9d1f5b2 -> b8d4f0a2c6e1, calls.recording_url: the provider's recording of the call (Vapi end-of-call report)
+INFO  [alembic.runtime.migration] Running upgrade b8d4f0a2c6e1 -> c3e5a7f9b1d4, assistant requests («ønsker»)
+INFO  [alembic.runtime.migration] Running upgrade c3e5a7f9b1d4 -> d4f6b8a0c2e7, dialogbot privat
+INFO  [alembic.runtime.migration] Running upgrade d4f6b8a0c2e7 -> e7c9a1b3d5f2, privat: lookup rate limits, business search, opening-hours scheduling, web push
+INFO  [alembic.runtime.migration] Running upgrade e7c9a1b3d5f2 -> e5a7c9d1b3f6, privat subscriptions
+INFO  [alembic.runtime.migration] Running upgrade e5a7c9d1b3f6 -> f1a2b3c4d5e6, quiz-funnel drafts
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> a3d7e1f9c2b4, discount codes
+INFO  [alembic.runtime.migration] Running upgrade a3d7e1f9c2b4 -> b4e8f2a6c1d3, privat: the trial starts at Stripe with a card; accounts begin without rights
+INFO  [alembic.runtime.migration] Running upgrade b4e8f2a6c1d3 -> b7c1d4e8f2a3, browser runs and booking profiles
+INFO  [alembic.runtime.migration] Running upgrade b7c1d4e8f2a3 -> c2d6e9f1a4b8, chat message kind booking_proposal
+INFO  [alembic.runtime.migration] Running upgrade c2d6e9f1a4b8 -> d3e7a2b5c9f1, external business contacts
+INFO  [alembic.runtime.migration] Running upgrade d3e7a2b5c9f1 -> e4f8b1c6d2a9, lead pitch
+INFO  [alembic.runtime.migration] Running upgrade e4f8b1c6d2a9 -> f5a9c2d7e3b1, private appointments
+INFO  [alembic.runtime.migration] Running upgrade f5a9c2d7e3b1 -> a7c3e9f2b4d6, private birthdays
+INFO  [alembic.runtime.migration] Running upgrade a7c3e9f2b4d6 -> b8d4f1a6c2e7, private bills
+INFO  [alembic.runtime.migration] Running upgrade b8d4f1a6c2e7 -> c9e5a2b7d3f8, private app data
+INFO  [alembic.runtime.migration] Running upgrade c9e5a2b7d3f8 -> d1f6b3a8e4c9, private business referrals and assistant name
+INFO  [alembic.runtime.migration] Running upgrade d1f6b3a8e4c9 -> e2a7c4d9f1b3, assistant pronoun
+INFO  [alembic.runtime.migration] Running upgrade e2a7c4d9f1b3 -> f3a9c1d5e7b2, public api: api keys, webhook endpoints, push subscription audience
+INFO  [alembic.runtime.migration] Running upgrade f3a9c1d5e7b2 -> c7d2e9a4b1f6, markets: the company's VAT number, the Privat subscription's currency, the invoice's tax source
+INFO  [alembic.runtime.migration] Running upgrade c7d2e9a4b1f6 -> d8e4a1c6f2b9, wishes: product details on wishlist items, group gifts («Deles om en gave») and a design per wishlist
+INFO  [alembic.runtime.migration] Running upgrade d8e4a1c6f2b9 -> e3b7c9d1a5f4, privat apps: per-app state for «Mine apps» (setup progress, switched off with data kept, «Giv mig besked»)
+INFO  [alembic.runtime.migration] Running upgrade e3b7c9d1a5f4 -> a7c3e9f1b2d4, telephony: customers choose per number whether calls are recorded, and for how long the audio is kept
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "request_id": "de7a45a22dea405bbaca74f5da5ce808", "path": "/api/v1/auth/register", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:33.379044Z"}
+{"status": 200, "event": "request", "request_id": "ac38ae72426d48e797ff0d814edb53a5", "path": "/api/v1/auth/login", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:33.516648Z"}
+{"status": 200, "event": "request", "request_id": "360dcd7b2a74406da46a5165ec9d08c6", "path": "/api/v1/dev/mailbox", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.041363Z"}
+{"status": 200, "event": "request", "request_id": "e6d8e591c24b4b5b8032214c00d87379", "path": "/api/v1/auth/verify-email", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:34.053668Z"}
+{"status": 200, "event": "request", "request_id": "216ac1d79ecf4e3688e82196e4ca49d8", "path": "/api/v1/privat/account", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:34.110218Z"}
+{"status": 200, "event": "request", "request_id": "5203320825ee4ae08174c91d9f4b55a4", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.118200Z"}
+{"status": 200, "event": "request", "request_id": "a250bc5cbb924d9da3920d7a730235ed", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.150159Z"}
+{"status": 200, "event": "request", "request_id": "e2747e60dfe743deb1250091b3a16de6", "path": "/api/v1/privat/me/location", "method": "PATCH", "level": "info", "timestamp": "2026-11-10T11:17:34.182446Z"}
+{"status": 200, "event": "request", "request_id": "5d3d63c096924d70bcf019592de260c5", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:34.235242Z"}
+{"status": 200, "event": "request", "request_id": "fb87a1a39103463ea4e633c3c070ba19", "path": "/api/v1/privat/messages/f94a2097-3317-49a8-9829-1f7572e92a26/options/place:fona-1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:34.278113Z"}
+{"status": 200, "event": "request", "request_id": "b95ec7dc73064691984cd004ebce0e32", "path": "/api/v1/privat/tasks/f77bf2fa-a182-4c91-96b6-d5b2ccbbf7a8", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.311200Z"}
+{"status": 200, "event": "request", "request_id": "7c18064a610644b297a39a110feaa4a7", "path": "/api/v1/privat/bootstrap", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.403826Z"}
+{"status": 200, "event": "request", "request_id": "e6a8e8d8015b45999efc9f7e6cb4f233", "path": "/api/v1/privat/day", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.430620Z"}
+{"status": 200, "event": "request", "request_id": "7055d985a8e343abafb5cdeb1bcd11ca", "path": "/api/v1/privat/tasks/f77bf2fa-a182-4c91-96b6-d5b2ccbbf7a8", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.455432Z"}
+{"status": 200, "event": "request", "request_id": "1c0d38847f434eca87fa93e11f559ebb", "path": "/api/v1/privat/bootstrap", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.592331Z"}
+{"status": 200, "event": "request", "request_id": "81af7ee718a2412f8d8ce2e47472a70a", "path": "/api/v1/privat/day", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.618828Z"}
+{"status": 200, "event": "request", "request_id": "55047d0b23db495e823a408a96e74c6c", "path": "/api/v1/privat/tasks/f77bf2fa-a182-4c91-96b6-d5b2ccbbf7a8", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.643675Z"}
+{"status": 200, "event": "request", "request_id": "6ca5ea4bfadd4b5fa876f4d2667790f4", "path": "/api/v1/privat/bootstrap", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.750928Z"}
+{"status": 200, "event": "request", "request_id": "4917c6a6e6d9437fa0f407b6f9e687e6", "path": "/api/v1/privat/day", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.772195Z"}
+{"status": 200, "event": "request", "request_id": "3a4cfd232d4443fc80cc91a87bac4677", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:34.810040Z"}
+{"status": 200, "event": "request", "request_id": "f5c0643675644b4c8095ae1495c5ded3", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:34.846217Z"}
+{"status": 200, "event": "request", "request_id": "0a875faf2a7e44f48078b7d086c3f81d", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:34.878657Z"}
+{"status": 200, "event": "request", "request_id": "bd86bc56fe4d490dbed5f0ac9a98bc29", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:34.913153Z"}
+{"status": 200, "event": "request", "request_id": "f9fbba8bc7f7488a855370df1579dfa0", "path": "/api/v1/privat/tasks/f77bf2fa-a182-4c91-96b6-d5b2ccbbf7a8", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:34.958810Z"}
+_______ test_decline_then_approve_never_dials_and_others_cannot_approve ________
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "request_id": "7f80d16d79ef436689fe9bb636cb54c0", "path": "/api/v1/auth/register", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:35.459130Z"}
+{"status": 200, "event": "request", "request_id": "5c8353cb0263483393a0860977913808", "path": "/api/v1/auth/login", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:35.600619Z"}
+{"status": 200, "event": "request", "request_id": "aa1207d5b7b042d1b1912b49d9f49b0b", "path": "/api/v1/dev/mailbox", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:35.625808Z"}
+{"status": 200, "event": "request", "request_id": "4b498582826d48cf98fe2bcbbd71fb5b", "path": "/api/v1/auth/verify-email", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:35.633880Z"}
+{"status": 200, "event": "request", "request_id": "1434e6e24f5f4805a730b437aa7e2c44", "path": "/api/v1/privat/account", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:35.676647Z"}
+{"status": 200, "event": "request", "request_id": "ca4f58b7376548bd819b75ed7120a8a7", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:35.682356Z"}
+{"status": 200, "event": "request", "request_id": "626fe18809fb43dc80b432de7d6708a7", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:35.706310Z"}
+{"status": 200, "event": "request", "request_id": "751ddc9d8ae54ed6bf300c147b78d9e3", "path": "/api/v1/privat/me/location", "method": "PATCH", "level": "info", "timestamp": "2026-11-10T11:17:35.728667Z"}
+{"status": 200, "event": "request", "request_id": "b5b910a67222446ebb39032c55626521", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:35.765880Z"}
+{"status": 200, "event": "request", "request_id": "bf05244487e54725897493e715ad5c0d", "path": "/api/v1/privat/messages/2c00a97d-4950-411e-b2a3-818da37ad0e5/options/place:fona-1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:35.805560Z"}
+{"status": 201, "event": "request", "request_id": "080c24425487476b89e99ed07336032e", "path": "/api/v1/auth/register", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.003097Z"}
+{"status": 200, "event": "request", "request_id": "74554ba4da8f4208bd0fccf47612fb8e", "path": "/api/v1/auth/login", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.237021Z"}
+{"status": 200, "event": "request", "request_id": "93514390ca084aa28cb69e30e03a9d4a", "path": "/api/v1/dev/mailbox", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:36.261089Z"}
+{"status": 200, "event": "request", "request_id": "414695a944ad429aa02e341208f75e20", "path": "/api/v1/auth/verify-email", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.270146Z"}
+{"status": 200, "event": "request", "request_id": "c59744c8dbe24f64948310e951f7f2ca", "path": "/api/v1/privat/account", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.315734Z"}
+{"status": 200, "event": "request", "request_id": "c75f5acff44744f68f78454152107871", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:36.323717Z"}
+{"status": 200, "event": "request", "request_id": "4dd54e3223714dd1b8916b0892e037c4", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:36.364349Z"}
+{"status": 200, "event": "request", "request_id": "95403872dd0346039e4ea770a6434187", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.444724Z"}
+{"status": 200, "event": "request", "request_id": "daa8f1601393448f8c1fd27b5f170f4f", "path": "/api/v1/privat/tasks/82b44769-2dbd-4dcb-ac8e-d7b46fbe28ed/share", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.473818Z"}
+{"status": 200, "event": "request", "request_id": "01b49b17eae44e798b763d7d52a721ea", "path": "/api/v1/privat/invites/UwtqGU9BbbyQwpzrXtCpnhPMEeJiQjoL5lk22hWjJN0/accept", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.517127Z"}
+{"status": 404, "event": "request", "request_id": "65c5a902e9e84c569587a20c1198c353", "path": "/api/v1/privat/calls/65fbc579-fb9b-4de1-bc40-9bf53a03474d/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.545550Z"}
+{"status": 404, "event": "request", "request_id": "64a1ab04224747a0b7d96d634f8190e4", "path": "/api/v1/privat/calls/65fbc579-fb9b-4de1-bc40-9bf53a03474d/retry", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.557568Z"}
+{"status": 200, "event": "request", "request_id": "b0c18309dacc44748f75e608e94a76e7", "path": "/api/v1/privat/calls/65fbc579-fb9b-4de1-bc40-9bf53a03474d/decline", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.582625Z"}
+{"status": 200, "event": "request", "request_id": "a3ea6a97ee9d47d09d6cbe7fe0a636e4", "path": "/api/v1/privat/calls/65fbc579-fb9b-4de1-bc40-9bf53a03474d/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.621759Z"}
+{"status": 200, "event": "request", "request_id": "72a907e9f48143a584e62e98cb903efb", "path": "/api/v1/privat/calls/65fbc579-fb9b-4de1-bc40-9bf53a03474d/decline", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.646023Z"}
+{"status": 200, "event": "request", "request_id": "dc9c1266d1784aaa9569440231147e81", "path": "/api/v1/privat/calls/65fbc579-fb9b-4de1-bc40-9bf53a03474d/retry", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.708103Z"}
+{"status": 200, "event": "request", "request_id": "ee0af79119904e4a9d09f87f9643056e", "path": "/api/v1/privat/calls/65fbc579-fb9b-4de1-bc40-9bf53a03474d/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:36.758944Z"}
+______________ test_double_click_and_parallel_approvals_dial_once ______________
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "request_id": "34a5d3d4f3bd4bc7a0d168fe1bd70b1d", "path": "/api/v1/auth/register", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.205804Z"}
+{"status": 200, "event": "request", "request_id": "897a9d59573b483eb2bc41761d55d235", "path": "/api/v1/auth/login", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.341237Z"}
+{"status": 200, "event": "request", "request_id": "b54a7b81fe234f2ab926fb7d4af4061e", "path": "/api/v1/dev/mailbox", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:37.368923Z"}
+{"status": 200, "event": "request", "request_id": "05b11989613244da88af34c4ef9789ea", "path": "/api/v1/auth/verify-email", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.378760Z"}
+{"status": 200, "event": "request", "request_id": "b468b77ebbb4466b9bdcbdc933c04e3e", "path": "/api/v1/privat/account", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.417767Z"}
+{"status": 200, "event": "request", "request_id": "c55d053b64b84c46a8f6e69535937010", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:37.425175Z"}
+{"status": 200, "event": "request", "request_id": "5fc8dadc92074ef98898030d03881ef1", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:37.454983Z"}
+{"status": 200, "event": "request", "request_id": "fa7194ce94154db7a47f38be22d6455d", "path": "/api/v1/privat/me/location", "method": "PATCH", "level": "info", "timestamp": "2026-11-10T11:17:37.485710Z"}
+{"status": 200, "event": "request", "request_id": "604eb487cfcd4ec9970cf3a7616a035f", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.529276Z"}
+{"status": 200, "event": "request", "request_id": "43f02eb37a234b11bc58c01fae04367e", "path": "/api/v1/privat/messages/818af07a-2bdb-405c-a775-03a64160b381/options/place:fona-1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.573778Z"}
+{"status": 200, "event": "request", "request_id": "22f1d3166d9a45bebc22170c350a6427", "path": "/api/v1/privat/calls/504121f6-ebce-483d-a56d-b8f44ca5e7fc/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.676285Z"}
+{"status": 200, "event": "request", "request_id": "a3d73f8036af4fb7afd59d44b378094d", "path": "/api/v1/privat/calls/504121f6-ebce-483d-a56d-b8f44ca5e7fc/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.687141Z"}
+{"status": 200, "event": "request", "request_id": "e6f753ce13c9487eb0310ba43079e14a", "path": "/api/v1/privat/calls/504121f6-ebce-483d-a56d-b8f44ca5e7fc/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.703722Z"}
+{"status": 200, "event": "request", "request_id": "5585bcf3f88f476cb716dbe995e801b7", "path": "/api/v1/privat/calls/504121f6-ebce-483d-a56d-b8f44ca5e7fc/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.708726Z"}
+{"status": 200, "event": "request", "request_id": "76239602641d48acb4af29814f25a5cb", "path": "/api/v1/privat/calls/504121f6-ebce-483d-a56d-b8f44ca5e7fc/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.715561Z"}
+{"status": 200, "event": "request", "request_id": "12bf3afd8b934530a466b362db61ddae", "path": "/api/v1/privat/calls/504121f6-ebce-483d-a56d-b8f44ca5e7fc/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.734135Z"}
+{"status": 200, "event": "request", "request_id": "75849a57743d45ff9e4bcba26608d1b6", "path": "/api/v1/privat/calls/504121f6-ebce-483d-a56d-b8f44ca5e7fc/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.755927Z"}
+{"status": 200, "event": "request", "request_id": "eaad165323e84931813c32bfbec7c693", "path": "/api/v1/privat/calls/504121f6-ebce-483d-a56d-b8f44ca5e7fc/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.776490Z"}
+{"status": 200, "event": "request", "request_id": "59054afd30b1443f88dd3bcb076f4463", "path": "/api/v1/privat/calls/504121f6-ebce-483d-a56d-b8f44ca5e7fc/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:37.798541Z"}
+_____________________ test_refused_approvals_queue_nothing _____________________
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "request_id": "1b0c230c2488467ea0d0b98ca83302af", "path": "/api/v1/auth/register", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:38.607772Z"}
+{"status": 200, "event": "request", "request_id": "c507acc8f60a4e3e835217cc61996268", "path": "/api/v1/auth/login", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:38.776278Z"}
+{"status": 200, "event": "request", "request_id": "28dc330ed61a46d9ac5d205bb960be81", "path": "/api/v1/dev/mailbox", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:38.826727Z"}
+{"status": 200, "event": "request", "request_id": "8fc57e81372340e1ada8a589ff2e57ec", "path": "/api/v1/auth/verify-email", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:38.839384Z"}
+{"status": 200, "event": "request", "request_id": "010469c2d0b14e07907f21bdba20decf", "path": "/api/v1/privat/account", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:38.895857Z"}
+{"status": 200, "event": "request", "request_id": "c668085c63f54fd6acc987261a3b7817", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:38.906483Z"}
+{"status": 200, "event": "request", "request_id": "3ad0d9290627434fb7429c83e9389606", "path": "/api/v1/privat/me/location", "method": "PATCH", "level": "info", "timestamp": "2026-11-10T11:17:38.969465Z"}
+{"status": 200, "event": "request", "request_id": "43baccec74744e70a3cf839cc11f5237", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:39.016607Z"}
+{"status": 200, "event": "request", "request_id": "b4589d706a084b189469c38c23947034", "path": "/api/v1/privat/messages/1dedb52a-aee8-4d59-bc29-8e2db0595528/options/place:fona-1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:39.085014Z"}
+{"status": 409, "event": "request", "request_id": "820de5f4b21d4801b4187dd2345e6cee", "path": "/api/v1/privat/calls/2c50f07e-ee96-4e51-94c7-33d76b9b0f72/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:39.108802Z"}
+{"status": 200, "event": "request", "request_id": "2375fe148661480fbcc04168cd6afbef", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:39.118675Z"}
+{"status": 409, "event": "request", "request_id": "cdf86db879a2452892547c11b4ec60be", "path": "/api/v1/privat/calls/2c50f07e-ee96-4e51-94c7-33d76b9b0f72/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:39.149669Z"}
+___________ test_mobile_number_needs_explicit_business_confirmation ____________
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "request_id": "fd51a57115084fe7b459403eacb73766", "path": "/api/v1/auth/register", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:39.909925Z"}
+{"status": 200, "event": "request", "request_id": "74d865a980cb4e15bc16564b72d907c0", "path": "/api/v1/auth/login", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:40.079207Z"}
+{"status": 200, "event": "request", "request_id": "51386cca0f2043fbb15d49c7bc7326c3", "path": "/api/v1/dev/mailbox", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:40.123706Z"}
+{"status": 200, "event": "request", "request_id": "6f24c4a31ac2442da2ad7ee1d71f33c0", "path": "/api/v1/auth/verify-email", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:40.134516Z"}
+{"status": 200, "event": "request", "request_id": "68f6a7c9cbcd49719eb031ed6cc6e85b", "path": "/api/v1/privat/account", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:40.192329Z"}
+{"status": 200, "event": "request", "request_id": "6afaad7e512242939810f51c6a74a485", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:40.207210Z"}
+{"status": 200, "event": "request", "request_id": "f38a4da116154789a2441f59428963d8", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:40.251188Z"}
+{"status": 200, "event": "request", "request_id": "80d3fbf428ba4995a6b45bdb792a764e", "path": "/api/v1/privat/me/location", "method": "PATCH", "level": "info", "timestamp": "2026-11-10T11:17:40.286563Z"}
+{"status": 200, "event": "request", "request_id": "c31ab462d8784398a8ec6101d35654f9", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:40.334353Z"}
+{"status": 200, "event": "request", "request_id": "756c038e930a4d7d989ac549f9eb09d6", "path": "/api/v1/privat/messages/d08f20c3-16bf-4d28-8cd1-610ee7189fcc/options/place:fona-1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:40.395104Z"}
+{"status": 409, "event": "request", "request_id": "32c8e2a8a2f74750a57a238691bcb071", "path": "/api/v1/privat/calls/79decd1d-dbb9-4ec6-9a51-a490ac3b70fd/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:40.417389Z"}
+_______ test_closed_business_ask_again_and_cancelled_schedule_never_dial _______
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "request_id": "acba59e73b284e9d848f8e0a214a9dec", "path": "/api/v1/auth/register", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:41.132227Z"}
+{"status": 200, "event": "request", "request_id": "6b45bc0c53a14c5585851ad49f89fe41", "path": "/api/v1/auth/login", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:41.334874Z"}
+{"status": 200, "event": "request", "request_id": "51df6d78ecba458ca9fbf0c5d2f464f5", "path": "/api/v1/dev/mailbox", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:41.378728Z"}
+{"status": 200, "event": "request", "request_id": "9e583a785ffd4f3faf9afe653d620ae7", "path": "/api/v1/auth/verify-email", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:41.394711Z"}
+{"status": 200, "event": "request", "request_id": "3efe0ba589494567b65c79e9cd04e912", "path": "/api/v1/privat/account", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:41.439761Z"}
+{"status": 200, "event": "request", "request_id": "a7b610dac36747b787586dea964c7b59", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:41.446578Z"}
+{"status": 200, "event": "request", "request_id": "56d037766ca04267be53906414f6242a", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:41.488312Z"}
+{"status": 200, "event": "request", "request_id": "ad8f64636ba7419389dd51b907dc0e9f", "path": "/api/v1/privat/me/location", "method": "PATCH", "level": "info", "timestamp": "2026-11-10T11:17:41.517712Z"}
+{"status": 200, "event": "request", "request_id": "92c78a9b883c481fb7e5d286994a1a31", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:41.570864Z"}
+{"status": 200, "event": "request", "request_id": "99dec488e60f44a6a1497db7f976449f", "path": "/api/v1/privat/messages/1dfb1ba8-6890-4c5a-96cd-26b57485badb/options/place:fona-1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:41.619806Z"}
+________________ test_cancelled_scheduled_call_is_never_dialled ________________
+----------------------------- Captured stdout call -----------------------------
+{"status": 201, "event": "request", "request_id": "23c89b06544e499389e5c56db2052dd7", "path": "/api/v1/auth/register", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:42.484047Z"}
+{"status": 200, "event": "request", "request_id": "1086e56580a7414f9580ac465df6d998", "path": "/api/v1/auth/login", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:42.729302Z"}
+{"status": 200, "event": "request", "request_id": "d2529f1da8e345a7892e26ae4d180f66", "path": "/api/v1/dev/mailbox", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:42.761579Z"}
+{"status": 200, "event": "request", "request_id": "02758727fac24dbc87a4f4d19c70150c", "path": "/api/v1/auth/verify-email", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:42.772050Z"}
+{"status": 200, "event": "request", "request_id": "8a9cbb298f2d408eaa9d32fde5c5b00b", "path": "/api/v1/privat/account", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:42.822868Z"}
+{"status": 200, "event": "request", "request_id": "1461ab07b3674b0589a5c6fafb899c69", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:42.829344Z"}
+{"status": 200, "event": "request", "request_id": "3e7fa3a360b0497ea1b5ca7b9e04ab0e", "path": "/api/v1/auth/me", "method": "GET", "level": "info", "timestamp": "2026-11-10T11:17:42.862083Z"}
+{"status": 200, "event": "request", "request_id": "3eaac45ad3de470cb83b3ae825b66b92", "path": "/api/v1/privat/me/location", "method": "PATCH", "level": "info", "timestamp": "2026-11-10T11:17:42.889886Z"}
+{"status": 200, "event": "request", "request_id": "fd7caf94f6654181bb692f52c5c2031e", "path": "/api/v1/privat/messages", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:42.926796Z"}
+{"status": 200, "event": "request", "request_id": "6c635d5f42ff4c2a86278b823d4b82ff", "path": "/api/v1/privat/messages/d799d931-ee47-4a20-bd42-9f261facd366/options/place:fona-1", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:42.968061Z"}
+{"status": 200, "event": "request", "request_id": "0b1a44a0bd2246499788cca70c6c9f95", "path": "/api/v1/privat/calls/721b8fdc-2a7f-4f27-96a0-42a36e6457cb/approve", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:43.008643Z"}
+{"status": 200, "event": "request", "request_id": "8548b5b2b1e54fafa3cca3318a030441", "path": "/api/v1/privat/calls/721b8fdc-2a7f-4f27-96a0-42a36e6457cb/decline", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:43.054487Z"}
+{"status": 200, "event": "request", "request_id": "6cc5f5d280da443e9c6733376c15a57d", "path": "/api/v1/privat/calls/721b8fdc-2a7f-4f27-96a0-42a36e6457cb/retry", "method": "POST", "level": "info", "timestamp": "2026-11-10T11:17:43.111811Z"}
+=========================== short test summary info ============================
+PASSED tests/qa/test_qa_privat_x11.py::test_proposal_reload_and_chat_yes_never_dial
+PASSED tests/qa/test_qa_privat_x11.py::test_decline_then_approve_never_dials_and_others_cannot_approve
+PASSED tests/qa/test_qa_privat_x11.py::test_double_click_and_parallel_approvals_dial_once
+PASSED tests/qa/test_qa_privat_x11.py::test_refused_approvals_queue_nothing
+PASSED tests/qa/test_qa_privat_x11.py::test_mobile_number_needs_explicit_business_confirmation
+PASSED tests/qa/test_qa_privat_x11.py::test_closed_business_ask_again_and_cancelled_schedule_never_dial
+PASSED tests/qa/test_qa_privat_x11.py::test_cancelled_scheduled_call_is_never_dialled

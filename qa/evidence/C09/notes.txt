@@ -1,0 +1,1 @@
+not-implemented: ingen /app/kampagner/:id/checkout og ingen kampagnebetaling (kampagner er betaling pr. opkald, faktureres månedligt bagud). Start kræver eksplicit admin-kommando: tests/qa/test_qa_c11.py::test_c11_launch_needs_explicit_confirmation_and_capability (pass). Kildekode: app/modules/campaigns/router.py start_campaign.

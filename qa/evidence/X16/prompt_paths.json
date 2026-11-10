@@ -1,0 +1,32 @@
+{
+ "vapi_inbound": {
+  "chars": 5137,
+  "rules_found": [
+   "bed kunden stave det",
+   "bekræft ved at stave det tilbage",
+   "Et navn, kunden har bekræftet, ændrer du aldrig",
+   "bekræft det første gang ved at STAVE det, bogstav for bogstav",
+   "Når navnet er bekræftet, siger du det højst én gang mere i samtalen"
+  ]
+ },
+ "elevenlabs_inbound": {
+  "chars": 5370,
+  "rules_found": [
+   "bed kunden stave det",
+   "bekræft ved at stave det tilbage",
+   "Et navn, kunden har bekræftet, ændrer du aldrig",
+   "bekræft det første gang ved at STAVE det, bogstav for bogstav",
+   "Når navnet er bekræftet, siger du det højst én gang mere i samtalen"
+  ]
+ },
+ "vapi_inbound_en": {
+  "chars": 5798,
+  "rules_found": [
+   "bed kunden stave det",
+   "bekræft ved at stave det tilbage",
+   "Et navn, kunden har bekræftet, ændrer du aldrig",
+   "bekræft det første gang ved at STAVE det, bogstav for bogstav",
+   "Når navnet er bekræftet, siger du det højst én gang mere i samtalen"
+  ]
+ }
+}

@@ -1,0 +1,4 @@
+PASSED tests/qa/test_qa_H01.py::test_wrong_purpose_tokens_are_denied
+PASSED tests/qa/test_qa_H01.py::test_expired_verification_token_is_denied
+FAILED tests/qa/test_qa_H01.py::test_operator_internal_note_is_not_visible_to_the_customer
+FAILED tests/qa/test_qa_H01.py::test_support_ticket_api_exists - AssertionErr...

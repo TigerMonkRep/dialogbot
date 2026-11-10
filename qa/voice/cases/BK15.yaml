@@ -1,0 +1,27 @@
+# BK15 / F-EB-05 (handoff from qa-lead): the calendar tool fails during a booking or a move. Peter must not confirm
+# the time; he says honestly that it did not go through and that a colleague follows up.
+# Offline proof: tests/qa/test_qa_voice_calendar_failure.py scores the tool result Peter is handed (the model reads it
+# aloud almost verbatim: "Booket: … Bekræft tiden over for kunden."). Model-in-the-loop: blocked (network/live call).
+cases:
+  - id: BK15-01
+    title: Booking – kalenderen fejler
+    path: vapi_tool_calls  # book_tid
+    caller_turns: ["Kan jeg få en besigtigelse i morgen klokken ti?", "Ja, det er Mette Hansen."]
+    expect: {language: da}
+    forbid: ["booket", "bekræft tiden over for kunden", "så er du booket", "tiden er på plads"]
+    reference_transcripts:
+      pass:
+        - - {role: assistant, text: "Undskyld, jeg kunne ikke nå at få tiden lagt i kalenderen. En medarbejder ringer tilbage og bekræfter tiden."}
+      fail:
+        - - {role: assistant, text: "Booket: Besigtigelse fredag kl. 10. Bekræft tiden over for kunden."}
+  - id: BK15-02
+    title: Flyt – kalenderen fejler
+    path: vapi_tool_calls  # flyt_tid
+    caller_turns: ["Kan vi flytte min tid til torsdag?", "Ja."]
+    expect: {language: da}
+    forbid: ["er flyttet", "så er den flyttet"]
+    reference_transcripts:
+      pass:
+        - - {role: assistant, text: "Det lykkedes ikke at flytte tiden i kalenderen lige nu. En medarbejder ringer tilbage og ordner det."}
+      fail:
+        - - {role: assistant, text: "Aftalen er flyttet til torsdag kl. 10."}

@@ -1,0 +1,56 @@
+[
+  {
+    "project": "mobil-390",
+    "kind": "price",
+    "locale": "en",
+    "route": "/priser",
+    "currency": "EUR",
+    "expected": {
+      "erhvervMonthlyMoney": "€329",
+      "erhvervMonthlyAmount": "329",
+      "callMoney": "€0.55",
+      "privatBasis": "€6.49",
+      "privatBasisAmount": "6.49"
+    },
+    "hasErhverv": true,
+    "hasPrivat": false,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  },
+  {
+    "project": "mobil-390",
+    "kind": "price",
+    "locale": "en",
+    "route": "/erhverv",
+    "currency": "EUR",
+    "expected": {
+      "erhvervMonthlyMoney": "€329",
+      "erhvervMonthlyAmount": "329",
+      "callMoney": "€0.55",
+      "privatBasis": "€6.49",
+      "privatBasisAmount": "6.49"
+    },
+    "hasErhverv": true,
+    "hasPrivat": false,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  },
+  {
+    "project": "mobil-390",
+    "kind": "price",
+    "locale": "en",
+    "route": "/privat",
+    "currency": "EUR",
+    "expected": {
+      "erhvervMonthlyMoney": "€329",
+      "erhvervMonthlyAmount": "329",
+      "callMoney": "€0.55",
+      "privatBasis": "€6.49",
+      "privatBasisAmount": "6.49"
+    },
+    "hasErhverv": false,
+    "hasPrivat": true,
+    "wrongCurrency": [],
+    "foreignDaStyle": false
+  }
+]

@@ -1,0 +1,1 @@
+not-implemented: ingen kundevendt side til at aflyse tilbagekald eller styre kommunikationspræferencer/opt-out; ingen tokens. tests/qa/test_qa_w12_bk15.py::test_w13_manage_link_not_built (pass, dokumenterer 404).

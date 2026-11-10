@@ -1,0 +1,1012 @@
+{
+  "parity": [],
+  "empty": [],
+  "untranslated": [
+    {
+      "l": "no",
+      "f": "settings.json",
+      "key": "integrations.webhookPlaceholder",
+      "text": "https://jeres-system.dk/dialogbot"
+    },
+    {
+      "l": "sv",
+      "f": "settings.json",
+      "key": "integrations.webhookPlaceholder",
+      "text": "https://jeres-system.dk/dialogbot"
+    }
+  ],
+  "danishProse": [],
+  "placeholders": [],
+  "priceTokenSwap": [
+    {
+      "l": "en",
+      "f": "entry.json",
+      "key": "pricing.business.unit",
+      "da": [
+        "pCur"
+      ],
+      "en": []
+    },
+    {
+      "l": "en",
+      "f": "entry.json",
+      "key": "pricing.private.unit",
+      "da": [
+        "days",
+        "pCur"
+      ],
+      "en": [
+        "days"
+      ]
+    },
+    {
+      "l": "en",
+      "f": "entry.json",
+      "key": "pricing.private.amount",
+      "da": [
+        "pPrivatFromNum"
+      ],
+      "en": [
+        "pPrivatFrom"
+      ]
+    },
+    {
+      "l": "en",
+      "f": "privat.json",
+      "key": "landing.pricing.perMonth",
+      "da": [
+        "pCur"
+      ],
+      "en": []
+    },
+    {
+      "l": "en",
+      "f": "privat.json",
+      "key": "landing.pricing.price",
+      "da": [
+        "num"
+      ],
+      "en": [
+        "price"
+      ]
+    },
+    {
+      "l": "en",
+      "f": "site.json",
+      "key": "prices.monthly",
+      "da": [
+        "pMonthlyNum"
+      ],
+      "en": [
+        "pMonthly"
+      ]
+    },
+    {
+      "l": "en",
+      "f": "site.json",
+      "key": "prices.setup",
+      "da": [
+        "pSetupNum"
+      ],
+      "en": [
+        "pSetup"
+      ]
+    },
+    {
+      "l": "en",
+      "f": "site.json",
+      "key": "prices.perCall",
+      "da": [
+        "pCallNum"
+      ],
+      "en": [
+        "pCall"
+      ]
+    },
+    {
+      "l": "en",
+      "f": "site.json",
+      "key": "home.price.subscription.unit",
+      "da": [
+        "pCur"
+      ],
+      "en": []
+    },
+    {
+      "l": "en",
+      "f": "site.json",
+      "key": "home.price.campaign.unit",
+      "da": [
+        "pCur",
+        "pMinute"
+      ],
+      "en": [
+        "pMinute"
+      ]
+    },
+    {
+      "l": "en",
+      "f": "site.json",
+      "key": "home.price.setup.unit",
+      "da": [
+        "pCur"
+      ],
+      "en": []
+    },
+    {
+      "l": "en",
+      "f": "site.json",
+      "key": "guide.pricing.subscription.unit",
+      "da": [
+        "pCur"
+      ],
+      "en": []
+    },
+    {
+      "l": "en",
+      "f": "site.json",
+      "key": "guide.pricing.campaign.unit",
+      "da": [
+        "pCur"
+      ],
+      "en": []
+    },
+    {
+      "l": "en",
+      "f": "site.json",
+      "key": "guide.pricing.setup.unit",
+      "da": [
+        "pCur"
+      ],
+      "en": []
+    }
+  ],
+  "plural": [],
+  "hardcoded": [
+    {
+      "file": "app/ambassador/shared.ts",
+      "line": 40,
+      "text": "Sat på pause"
+    },
+    {
+      "file": "app/api/admin/view-as/route.ts",
+      "line": 10,
+      "text": "Afslut den nuværende visning først"
+    },
+    {
+      "file": "app/api/admin/view-as/route.ts",
+      "line": 12,
+      "text": "Login påkrævet"
+    },
+    {
+      "file": "app/api/preview/unlock/route.ts",
+      "line": 19,
+      "text": "Koden er ikke gyldig. Tjek stavningen, eller skriv dig på ventelisten."
+    },
+    {
+      "file": "app/app/(admin)/voices/own/client.tsx",
+      "line": 23,
+      "text": "meget_baggrundsstøj"
+    },
+    {
+      "file": "app/privat/invitation/[token]/opengraph-image.tsx",
+      "line": 25,
+      "text": "${name} har delt sin ønskeliste med dig"
+    },
+    {
+      "file": "components/privat/wishes.tsx",
+      "line": 30,
+      "text": "Noget gik galt. Prøv igen."
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 17,
+      "text": "Udkastet findes ikke længere"
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 22,
+      "text": "Søndergade 20, 8000 Aarhus C"
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 23,
+      "text": "Salon Klip & Krøl"
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 34,
+      "text": "Bestil tid hos tandlægen"
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 34,
+      "text": "Få cyklen til eftersyn"
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 34,
+      "text": "Bestil tid hos lægen"
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 100,
+      "text": "Åboulevarden 1, 8000 Aarhus C"
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 106,
+      "text": "Sæt kryds for at fortsætte"
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 116,
+      "text": "Udfyld dine oplysninger først"
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 117,
+      "text": "Koden passer ikke. Prøv igen."
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 126,
+      "text": "Log ind først"
+    },
+    {
+      "file": "lib/funnel/fake.ts",
+      "line": 131,
+      "text": "Kunden ringede til ${name} og spurgte om en tid i næste uge. Receptionisten tilbød torsdag kl. 10 og"
+    },
+    {
+      "file": "lib/industries.ts",
+      "line": 14,
+      "text": "Håndværkere"
+    },
+    {
+      "file": "lib/industries.ts",
+      "line": 16,
+      "text": "Frisører og saloner"
+    },
+    {
+      "file": "lib/industries.ts",
+      "line": 17,
+      "text": "Autoværksteder"
+    },
+    {
+      "file": "lib/industries.ts",
+      "line": 18,
+      "text": "Rådgivere og kontorer"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 30,
+      "text": "Østbyens Cykler"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 31,
+      "text": "Cykelhjørnet"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 31,
+      "text": "Jægergårdsgade 40, 8000 Aarhus C"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 33,
+      "text": "Fona Strøget"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 33,
+      "text": "Søndergade 42, 8000 Aarhus C"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 34,
+      "text": "Salon Klip & Krøl"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 84,
+      "text": "Søndag"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 84,
+      "text": "Lørdag"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 87,
+      "text": "I går"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 106,
+      "text": "Tandlæge Holm"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 106,
+      "text": "Søndergade 20, 8000 Aarhus C"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 107,
+      "text": "Ingenting, før du har valgt"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 113,
+      "text": "Boligforeningen Østparken"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 113,
+      "text": "Østparken 1, 8000 Aarhus C"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 114,
+      "text": "Aftale håndværkerbesøg"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 115,
+      "text": "Vi har modtaget klagen. Vi undersøger sagen og ringer tilbage inden fredag."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 116,
+      "text": "Opkald besvaret. De undersøger sagen og ringer tilbage."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 125,
+      "text": "Påmindelse sendt"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 140,
+      "text": "Vælg en gave"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 141,
+      "text": "Bluetooth-højttaler"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 141,
+      "text": "Gerne en lille en til badeværelset"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 143,
+      "text": "Brætspillet Azul"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 144,
+      "text": "En oplevelse sammen – vi går gerne sammen om den"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 146,
+      "text": "Anna delte sin ønskeliste med dig"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 148,
+      "text": "Sommerfest – fælles indkøb"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 148,
+      "text": "Tilføj det, du tager med"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 149,
+      "text": "Pølser"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 167,
+      "text": "7 af 10 opkald tilbage i denne måned"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 167,
+      "text": "1 delt ønskeliste"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 258,
+      "text": "Højst ${CALL_CREDITS} credits, når du godkender"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 306,
+      "text": "Fællesgaven tilhører gavegiverne"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 307,
+      "text": "Ønsket findes ikke"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 311,
+      "text": "Dette ønske er ikke en fællesgave"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 329,
+      "text": "Skriv et målbeløb over 0"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 338,
+      "text": "I simuleringen kan billeder højst være 1,5 MB"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 365,
+      "text": "${addonName(key)} er ikke slået til."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 366,
+      "text": "${addonName(key)} er ikke slået til"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 386,
+      "text": "Invitationsbonus: din første egen opgave (${FAKE_OTHER} får også ${REFERRAL})"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 390,
+      "text": "Med i ${planName()} · ubegrænset"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 394,
+      "text": "Venter på din plan"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 397,
+      "text": "Det kræver en plan. Prøv Dialogbot Privat gratis i 14 dage – kortet trækkes først, når prøveperioden"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 398,
+      "text": "Din prøveperiode er slut. Vælg en plan, eller brug 1 credit – udkastet venter, mens du vælger."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 414,
+      "text": "Hvilken tid vil du have hos Tandlæge Holm?"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 424,
+      "text": "Du har ingen liste at dele endnu. Lav en først – fx «Lav en indkøbsliste med mælk og rugbrød»."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 429,
+      "text": "Skal jeg dele «${target.title}» med ${group.name}? Dem, der har Dialogbot, kommer med med det samme "
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 434,
+      "text": "Du har ingen gruppe, der hedder ${name}. Skal jeg lave gruppen ${name} med ${names.slice(0, -1).join"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 440,
+      "text": "Skal jeg lave et invitationslink til «${target.title}»${who ?"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 440,
+      "text": ": \"\"}? Der sendes intet, før du selv deler linket."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 446,
+      "text": "Nummer tilføjet: ${focus.call.phone_display}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 452,
+      "text": "Én ting venter på dit svar:"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 452,
+      "text": "${w.length} ting venter på dit svar:"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 452,
+      "text": "Intet venter på dit svar lige nu."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 456,
+      "text": ").replace(/\\s*(på listen|til listen|på)\\s*[.!]?$/i,"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 459,
+      "text": "Tilføjet: ${its.join(\", \").toLowerCase()} (gratis rettelse)"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 460,
+      "text": "Tilføjet ${its.join(\" og \").toLowerCase()}. Det er stadig den samme liste, og en rettelse koster ing"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 470,
+      "text": "Påmindelse ${lower1(after)}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 480,
+      "text": "Ønskeliste"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 480,
+      "text": "Indkøbsliste"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 484,
+      "text": "Del listen, når du er klar"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 494,
+      "text": "Påmindelse ${lower1(when)}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 502,
+      "text": "Hvor skal jeg lede? Jeg bruger kun din position til denne søgning."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 503,
+      "text": "Kun når du trykker"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 515,
+      "text": "Åben nu"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 515,
+      "text": "Lukket – åbner ${x.next}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 517,
+      "text": "Jeg fandt ${ids.length} tæt på ${s.location}. Hvem mener du?"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 521,
+      "text": "Skal jeg lave en påmindelse, en liste eller ringe for dig?"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 522,
+      "text": "En besked på et bestemt tidspunkt"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 524,
+      "text": "Du godkender, før jeg ringer"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 585,
+      "text": "Ny opgave efter månedsgrænsen"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 607,
+      "text": "Skriv, hvad og hvornår – fx «Mind mig om at hente pakken i morgen kl. 16»."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 608,
+      "text": "Skriv punkterne – fx «Lav en indkøbsliste med mælk og rugbrød»."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 608,
+      "text": "Skriv, hvem jeg skal ringe til, og hvad det gælder – fx «Ring til cykelværkstedet og aftal afleverin"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 611,
+      "text": "Skriv byen eller postnummeret, så leder jeg der."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 617,
+      "text": "Gruppen ${g.name} er lavet. Skal jeg dele «${t.title}» med den? Der sendes intet, før du siger ja."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 621,
+      "text": "Klinikken bekræfter ${lower1(o.label)}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 621,
+      "text": "Tandlæge Holm"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 623,
+      "text": "Du valgte ${lower1(o.label)}. Afventer klinikkens bekræftelse."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 624,
+      "text": "Godt. Jeg giver Tandlæge Holm besked om ${lower1(o.label)} og siger til, når de har bekræftet."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 627,
+      "text": "Skriv navnet eller nummeret på virksomheden, så finder jeg den."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 634,
+      "text": "Sige ja til reparationer eller priser"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 638,
+      "text": "Skal jeg ringe til ${shop.name}?"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 645,
+      "text": "Bekræft dit telefonnummer først"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 649,
+      "text": "Opkaldet kræver ${t.call!.max_credits} credits"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 651,
+      "text": "Skriv virksomhedens nummer først"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 652,
+      "text": "Bekræft, at det er en virksomhed"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 653,
+      "text": "Virksomheden har lukket. Jeg kan ringe ${c.next_open_text}, når de åbner."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 670,
+      "text": "Ringer ${c.next_open_text}, når de åbner"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 671,
+      "text": "Du godkendte opkaldet. Jeg ringer ${c.next_open_text}, når de åbner. ${usage}."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 694,
+      "text": "Skal jeg ringe til ${t.call!.business_name} igen?"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 706,
+      "text": "Bed om en kode først"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 726,
+      "text": "Med i prøveperioden"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 764,
+      "text": "Du kan ikke tilføje til listen"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 768,
+      "text": "Tilføjet: ${body.text.trim().toLowerCase()}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 774,
+      "text": "Du kan ikke ændre listen"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 798,
+      "text": "Delt som ønskeliste"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 798,
+      "text": "Delt som fælles liste"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 801,
+      "text": "Hej! Jeg har lavet en ønskeliste – se den og reservér her: ${bareLink(short)} – ${FAKE_ME}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 802,
+      "text": "Hej! Jeg har lavet en fælles liste – se den og tilføj her: ${bareLink(short)} – ${FAKE_ME}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 811,
+      "text": "Deling stoppet – invitationslinks virker ikke længere"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 817,
+      "text": "Invitationen findes ikke eller er stoppet"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 829,
+      "text": "Invitationen findes ikke eller er stoppet"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 874,
+      "text": "en ønskeliste – se den og reservér her"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 874,
+      "text": "listen «${t.title}» – se den og tilføj her"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 913,
+      "text": "Tryk her for at komme med i ${g.name} på Dialogbot, så kan vi dele lister: ${bareLink(url)} – ${FAKE"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 918,
+      "text": "Linket findes ikke eller er stoppet"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 947,
+      "text": "Hej! Jeg bruger Dialogbot til lister og påmindelser – prøv den gratis her: ${bareLink(url)} – ${FAKE"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 952,
+      "text": "Linket findes ikke eller er stoppet"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 965,
+      "text": "Tilføjelsen findes ikke"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 966,
+      "text": "Tilføjelsen kommer snart"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 974,
+      "text": "Tilføjelsen findes ikke"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 982,
+      "text": "Slå «${a.name}» til først"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 996,
+      "text": "Slå «${a.name}» fra, før du sletter dens data"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1014,
+      "text": "Fødselsdage gemmes kun med en rigtig konto"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1015,
+      "text": "Fødselsdagen findes ikke"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1030,
+      "text": "Pakker følges kun med en rigtig konto"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1033,
+      "text": "Rejser søges kun med en rigtig konto"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1040,
+      "text": "Produktsøgning findes ikke i simuleringen. Indsæt et link, eller opret ønsket selv."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1058,
+      "text": "Kun ejeren tilføjer ønsker"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1059,
+      "text": "Giv ønsket en titel"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1062,
+      "text": "Tilføjet: ${body.text.trim().toLowerCase()}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1068,
+      "text": "Kun ejeren retter ønsker"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1075,
+      "text": "Gaven er markeret som købt"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1076,
+      "text": "Fællesgaven er annulleret"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1077,
+      "text": "Ønsket er reserveret"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1078,
+      "text": "Skriv et beløb over 0"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1080,
+      "text": "Beløbet er højere end det, der mangler"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1087,
+      "text": "Gaven er markeret som købt"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1094,
+      "text": "Kun deltagere i fællesgaven kan det"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1105,
+      "text": "Kun gavens koordinator kan markere den som købt"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1112,
+      "text": "Kun ejeren kan ændre designet"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1113,
+      "text": "Ønskesedlen skal have en titel"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1143,
+      "text": "${FAKE_OTHER} tilføjede ${name.toLowerCase()}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1158,
+      "text": "Vi kan godt tage cyklen ${lower1(conf.text)}. Et almindeligt eftersyn koster ${price.replace(/ for ."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1160,
+      "text": "${c!.business_name} har bekræftet"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1161,
+      "text": "Opkaldet blev besvaret. ${c!.business_name} bekræftede ${lower1(conf.text)}."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1166,
+      "text": "Opkald til ${c!.business_name} · ${sb.calls_used + 1} af ${sb.calls_quota} i ${planName()}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1173,
+      "text": "Opkaldet er slut. ${c!.business_name} har bekræftet ${lower1(conf.text)}. Jeg minder dig om det en t"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1176,
+      "text": "Prøv igen eller annullér"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1179,
+      "text": "Ingen tog telefonen. Opkaldet tæller ikke."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1180,
+      "text": "Ingen tog telefonen hos ${c!.business_name}. Opkaldet tæller ikke på din plan."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1185,
+      "text": "Ingen tog telefonen hos ${c!.business_name}. Du har fået dine ${c!.max_credits} credits igen."
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1194,
+      "text": "Købt 10 credits · ${formatPrice(creditPackPrice(packCur), packCur, \"da\")} inkl. moms · ${ref}"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1198,
+      "text": "Ny opgave efter månedsgrænsen"
+    },
+    {
+      "file": "lib/privat/fake.ts",
+      "line": 1209,
+      "text": "Invitationsbonus: ${FAKE_OTHER} lavede sin første opgave"
+    },
+    {
+      "file": "lib/site.ts",
+      "line": 9,
+      "text": "Dialogbot – AI-receptionist, AI-telefonsvarer og chatbot til danske virksomheder"
+    },
+    {
+      "file": "lib/site.ts",
+      "line": 12,
+      "text": "Dialogbot er en dansk AI-receptionist, der tager telefonen og chatten for din virksomhed døgnet rund"
+    }
+  ]
+}

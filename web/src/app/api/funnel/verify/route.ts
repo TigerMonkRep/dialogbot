@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getT } from "@/i18n/server";
 import { API_BASE_URL, COOKIE_OPTS, CSRF_HEADER, CSRF_VALUE, KNOWN_ACCOUNT_COOKIE, KNOWN_ACCOUNT_MAX_AGE, SESSION_COOKIE, WORKSPACE_COOKIE } from "@/lib/config";
 import { safeNext } from "@/lib/safe-next";
-import { visitorIp } from "@/lib/visitor-ip";
+import { visitorIpHeaders } from "@/lib/visitor-ip";
 
 /** The funnel's SMS-code check. POST /api/v1/funnel/drafts/{id}/verify creates the user (an existing e-mail gets 409 account_exists, no session) and returns a
  *  session like POST /auth/login does; this route stores it in the httpOnly cookie – exactly as /api/auth/login – and
@@ -16,9 +16,7 @@ export async function POST(req: NextRequest) {
   if (typeof draft_id !== "string" || !/^[\w-]{1,64}$/.test(draft_id) || typeof code !== "string" || !/^\d{4,8}$/.test(code)) {
     return NextResponse.json({ code: "validation_failed", message: "Ugyldig kode", field_errors: [{ field: "code", message: "Ugyldig kode" }] }, { status: 422 });
   }
-  const headers: Record<string, string> = { "content-type": "application/json", "user-agent": req.headers.get("user-agent") ?? "" };
-  const ip = visitorIp(req.headers);
-  if (ip) headers["x-forwarded-for"] = ip;
+  const headers: Record<string, string> = { "content-type": "application/json", "user-agent": req.headers.get("user-agent") ?? "", ...visitorIpHeaders(req.headers) };
   const r = await fetch(`${API_BASE_URL}/api/v1/funnel/drafts/${encodeURIComponent(draft_id)}/verify`, {
     method: "POST", headers, body: JSON.stringify({ code }), cache: "no-store",
   });

@@ -47,7 +47,9 @@ def checkout(db: OrmSession, ctx, locale: str | None = None) -> str:
                              "description": _description(amount, currency, locale, market.text_rate(locale))}}}
     payload = {
         "mode": "payment", "line_items": [line], "locale": market.stripe_locale(locale), "customer_email": ctx.user.email,
-        "allow_promotion_codes": True,
+        # No discount codes on credit packs (F-PBQ-03): the Privat codes are made for the plans (no applies_to), and a
+        # pack paid below its price was ignored by the webhook – paid, but no credits. Whether codes should give
+        # cheaper credits is Fürster's decision; until then the pack always costs its price.
         "client_reference_id": str(ctx.ws_id), "metadata": meta, "payment_intent_data": {"metadata": meta},
         "success_url": f"{base}/privat/konto?betaling=ok", "cancel_url": f"{base}/privat/konto?betaling=annulleret"}
     market.apply_tax(payload, line, locale)
@@ -76,6 +78,13 @@ def on_checkout_event(db: OrmSession, kind: str, obj: dict) -> str | None:
     if expected is None:
         return "ignored"
     if obj.get("amount_total") is not None and int(obj["amount_total"]) < expected:
+        # Paid, but less than the pack's price (should be impossible without codes): no credits, and a person must
+        # refund or grant by hand – never silently (F-PBQ-03).
+        import structlog
+
+        structlog.get_logger("dialogbot.privat.payments").error(
+            "privat.credit_pack_underpaid", session=str(obj.get("id") or ""), workspace_id=str(ws_id),
+            amount_total=int(obj["amount_total"]), expected=expected, currency=currency)
         return "ignored"
     sid = str(obj.get("id") or "")
     if not sid:

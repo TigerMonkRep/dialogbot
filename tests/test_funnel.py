@@ -294,22 +294,41 @@ def test_rate_limit_per_ip(client, funnel, monkeypatch):
     assert client.post("/api/v1/funnel/drafts", json={"kind": "privat"}, headers={"x-forwarded-for": "203.0.113.9"}).status_code == 201
 
 
-def test_existing_email_logs_in_and_is_audited(client, api, funnel, db):
+@pytest.mark.parametrize("kind", ["privat", "erhverv"])
+def test_existing_email_is_never_logged_in_by_a_funnel_code(client, api, funnel, db, kind):
+    """F-P2-01-X04 (S0): the SMS code proves only the number typed at the gate, not the account behind the typed
+    e-mail. verify must refuse with 409 account_exists: no session, nothing on the account changes, no workspace,
+    no private account, the draft stays unclaimed – the owner logs in the ordinary way."""
+    from app.models import Membership, PrivateProfile
+    from app.models import Session as UserSession
+
     api.user("mette@testmail.dk")
-    before = db.query(User).filter_by(email_normalized="mette@testmail.dk").one()
-    did = client.post("/api/v1/funnel/drafts", json={"kind": "privat"}).json()["id"]
-    _patch(client, did, 1, {"postponed": ["bike"]})
-    _gate(client, did, name="Mette H")
-    out = client.post(f"/api/v1/funnel/drafts/{did}/verify", json={"code": _code()}).json()
-    assert out["new_user"] is False and out["user"]["id"] == str(before.id) and out["user"]["display_name"] == "Test"
-    assert db.query(User).filter_by(email_normalized="mette@testmail.dk").count() == 1
     db.expire_all()
-    assert db.query(User).filter_by(email_normalized="mette@testmail.dk").one().phone_verified_at is not None
-    audit = db.scalars(select(AuditLog).where(AuditLog.action == "user.funnel_login")).one()
-    assert audit.actor_user_id == before.id and audit.after["phone"] == "+4520304050" and audit.after["proof"] == "sms_code"
-    assert db.query(OutboxEvent).filter_by(event_type="email.branded").count() == 0  # no welcome mail
-    assert api.get(out["session_token"], "/privat/tasks").status_code == 200
-    assert len(api.get(out["session_token"], "/privat/tasks").json()) == 1
+    victim = db.query(User).filter_by(email_normalized="mette@testmail.dk").one()
+    before = (victim.phone_verified_at, victim.display_name, victim.password_hash, victim.signup_source)
+    sessions = db.query(UserSession).filter_by(user_id=victim.id).count()
+    memberships = db.query(Membership).filter_by(user_id=victim.id).count()
+    did = client.post("/api/v1/funnel/drafts", json={"kind": kind}).json()["id"]
+    assert _gate(client, did, name="Attacker", phone="29 87 65 43").status_code == 202
+    assert WORLD.sms[-1]["to"] == "+4529876543"
+    r = client.post(f"/api/v1/funnel/drafts/{did}/verify", json={"code": _code()})
+    assert r.status_code == 409 and r.json()["code"] == "account_exists", r.text
+    assert "session_token" not in r.json() and "set-cookie" not in {k.lower() for k in r.headers}
+    db.expire_all()
+    v = db.get(User, victim.id)
+    assert (v.phone_verified_at, v.display_name, v.password_hash, v.signup_source) == before
+    assert db.query(UserSession).filter_by(user_id=victim.id).count() == sessions
+    assert db.query(Membership).filter_by(user_id=victim.id).count() == memberships
+    assert db.query(PrivateProfile).filter_by(user_id=victim.id).count() == 0
+    d = db.get(FunnelDraft, uuid.UUID(did))
+    assert d.user_id is None and d.workspace_id is None and "verified_at" not in (d.gate or {})
+    assert db.scalars(select(AuditLog).where(AuditLog.action == "user.funnel_login")).all() == []
+    audit = db.scalars(select(AuditLog).where(AuditLog.action == "funnel.account_exists")).one()
+    assert audit.actor_user_id is None and audit.after["user_id"] == str(victim.id) and audit.after["phone"] == "+4529876543"
+    assert db.query(OutboxEvent).filter_by(event_type="email.branded").count() == 0
+    # the code is used up: a replay is not a second try
+    again = client.post(f"/api/v1/funnel/drafts/{did}/verify", json={"code": "000000"})
+    assert again.status_code == 409 and again.json()["code"] == "code_expired"
 
 
 def test_expiry_and_cleanup(client, funnel, db, monkeypatch):

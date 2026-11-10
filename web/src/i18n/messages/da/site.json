@@ -618,6 +618,7 @@
         "code_expired": "Koden er udløbet. Bed om en ny.",
         "too_many_attempts": "For mange forsøg. Bed om en ny kode.",
         "user_inactive": "Kontoen er deaktiveret.",
+        "account_exists": "Der findes allerede en konto med den e-mail. Log ind for at fortsætte.",
         "wrong_code": "Koden passer ikke.",
         "generic": "Noget gik galt. Prøv igen om lidt."
       }
@@ -677,7 +678,8 @@
       "resendIn": "Send igen om {s} sek.",
       "wrongNumber": "Forkert nummer?",
       "noGate": "Vi har ikke sendt en kode endnu.",
-      "toGate": "Skriv dine oplysninger"
+      "toGate": "Skriv dine oplysninger",
+      "toLogin": "Log ind"
     },
     "erhverv": {
       "meta": {

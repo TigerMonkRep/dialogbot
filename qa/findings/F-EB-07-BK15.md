@@ -3,7 +3,7 @@ id: F-EB-07-BK15
 scenario: BK15
 reported_by: e2e-erhverv (B)
 severity: S2
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [W13]
 ---
@@ -36,3 +36,9 @@ web/src/i18n/messages/da/app.json:337 (bookings.intro) vs. web/src/app/app/(admi
 
 ## Testresultat
 - i18n:check ok. E2E `web/e2e/qa/erhverv-b/BK06.spec.ts` («lover Flyt eller aflys her») kræver rebuild – verifier.
+
+## Verifikation (udfyldes af verifier)
+- Gentest: pass 2/2 (run2–3; testen er ny efter run1) desktop-1440 + mobil-390: web/e2e/qa/erhverv-b/BK06.spec.ts «lover kun «Flyt», hvis en aftale kan flyttes» (testen omskrevet af verifier: den gamle asserterede både løftet «Flyt eller aflys her» og en Flyt-knap; rettelsen fjernede løftet, så nu testes ærlighed: intet Flyt-løfte uden Flyt-knap. Selve flyt-funktionen er en separat test.fail «BK15 move appointment in /app/aftaler: not-implemented»)
+- Fejler testen uden rettelsen? ja – pre-fix frontend (56f95ab bygget i /home/claude/wt-before, next start :3500 mod API :8000), /home/claude/verify-logs/e2e_before.log: begge: `promises «Flyt» (1) without a move button (0)`
+- Naboscenarier kørt: e2e P0-suite (web/e2e/qa uden privat) mod frisk Next-build af c3bed12 på :3300 (se note: :3000 kører stadig den gamle build), run2 102/102 og run3 102/102 (run1 98/100: kun den gamle BK06-«Flyt»-test, siden rettet); journeys.spec.ts 64: 61+3 fejl, alle forklaret (rapport); 
+- Dom: closed

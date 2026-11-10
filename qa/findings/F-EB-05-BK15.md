@@ -3,7 +3,7 @@ id: F-EB-05-BK15
 scenario: BK15
 reported_by: e2e-erhverv (B)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [DB-007, DB-011, W13]
 ---
@@ -53,3 +53,9 @@ app/modules/integrations/connectors/calendar.py:304-311 – `_mirror_update`/`_m
 ## Testresultat
 - Før: `test_bk15_failed_external_move_is_not_reported_as_done`, `test_bk15_failed_external_create_is_not_reported_as_done` FAILED.
 - Efter: pass (se F-EB-04-W12 for samlet kørsel).
+
+## Verifikation (udfyldes af verifier)
+- Gentest: pass på c3bed12 (db qa_verify_b og qa_verify): test_qa_w12_bk15.py::test_bk15_failed_external_move/create_is_not_reported_as_done, test_qa_voice_calendar_failure.py (2/2), test_qa_integ_E07.py (rettet af verifier: book_tid med fejlende kalender er nu `failed`, booking står med calendar_sync='failed')
+- Fejler testen uden rettelsen? ja – worktree 56f95ab (/home/claude/wt-before), db qa_verify_before: `action status='ok', text to caller='Aftalen er flyttet til tirsdag 10. november kl. 18.00. (simuleret)'; Dialogbot=…17:00, Google=…14:00`; `Peter is handed 'Booket: Besigtigelse …'`; E07-testen: `assert 'ok' == 'failed'`
+- Naboscenarier kørt: hele tests/qa + fuld `pytest` fra ren db qa_verify på c3bed12 (1610 passed, 18 xfailed, 5 skipped m. grund, 1 failed = F-VR-03, urelateret race); E07-inventar, test_booking_calendar_sync.py.
+- Dom: closed

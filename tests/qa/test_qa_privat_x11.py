@@ -39,7 +39,7 @@ def _state(db):
             db.query(OutboxEvent).filter(OutboxEvent.event_type == "privat.call_due").count())
 
 
-def _proposal(api, pv, tok, fake_places, *, open_now=True, phone="+4586112233"):
+def _proposal(api, pv, tok, fake_places, *, open_now=True, phone="+4586112233"):  # noqa: F811
     days = WEEK if open_now else [4]  # Wed 4 Nov 10:00 is «now»; [4] = Thursdays only → closed now
     fake_places([{"id": "fona-1", "name": "Fona", "phone": phone, "periods": _periods(days)}])
     api.c.patch("/api/v1/privat/me/location", json={"city": "Aarhus"}, headers=api.h(tok))
@@ -49,7 +49,7 @@ def _proposal(api, pv, tok, fake_places, *, open_now=True, phone="+4586112233"):
     return prop["task_id"]
 
 
-def test_proposal_reload_and_chat_yes_never_dial(api, pv, db, fake_places, dialled):
+def test_proposal_reload_and_chat_yes_never_dial(api, pv, db, fake_places, dialled):  # noqa: F811
     tok = pv.account("x11-a@testmail.dk")
     pv.verify_phone(tok)
     tid = _proposal(api, pv, tok, fake_places)
@@ -67,7 +67,7 @@ def test_proposal_reload_and_chat_yes_never_dial(api, pv, db, fake_places, diall
     assert t["status"] == "awaiting_user" and t["call"]["status"] == "proposed"
 
 
-def test_decline_then_approve_never_dials_and_others_cannot_approve(api, pv, db, fake_places, dialled):
+def test_decline_then_approve_never_dials_and_others_cannot_approve(api, pv, db, fake_places, dialled):  # noqa: F811
     mette = pv.account("x11-b@testmail.dk", "Mette Hansen")
     pv.verify_phone(mette)
     tid = _proposal(api, pv, mette, fake_places)
@@ -96,7 +96,7 @@ def test_decline_then_approve_never_dials_and_others_cannot_approve(api, pv, db,
     assert t["status"] == "in_progress" and len(dialled) == 1  # positive control: the approval does dial
 
 
-def test_double_click_and_parallel_approvals_dial_once(api, pv, db, app, fake_places, dialled):
+def test_double_click_and_parallel_approvals_dial_once(api, pv, db, app, fake_places, dialled):  # noqa: F811
     tok = pv.account("x11-c@testmail.dk")
     pv.verify_phone(tok)
     tid = _proposal(api, pv, tok, fake_places)
@@ -126,7 +126,7 @@ def test_double_click_and_parallel_approvals_dial_once(api, pv, db, app, fake_pl
     assert len(dialled) == 1 and db.query(PrivateCall).count() == 1
 
 
-def test_refused_approvals_queue_nothing(api, pv, db, fake_places, dialled):
+def test_refused_approvals_queue_nothing(api, pv, db, fake_places, dialled):  # noqa: F811
     tok = pv.account("x11-d@testmail.dk")
     tid = _proposal(api, pv, tok, fake_places)
     r = api.post(tok, f"/privat/calls/{tid}/approve", {"share_phone": False})
@@ -139,7 +139,7 @@ def test_refused_approvals_queue_nothing(api, pv, db, fake_places, dialled):
     assert dialled == [] and _state(db) == ([("proposed", False)], 0)
 
 
-def test_mobile_number_needs_explicit_business_confirmation(api, pv, db, fake_places, dialled):
+def test_mobile_number_needs_explicit_business_confirmation(api, pv, db, fake_places, dialled):  # noqa: F811
     tok = pv.account("x11-e@testmail.dk")
     pv.verify_phone(tok)
     tid = _proposal(api, pv, tok, fake_places, phone="+4520304099")
@@ -148,10 +148,10 @@ def test_mobile_number_needs_explicit_business_confirmation(api, pv, db, fake_pl
     assert dialled == [] and _state(db) == ([("proposed", False)], 0)
 
 
-def test_closed_business_ask_again_and_cancelled_schedule_never_dial(api, pv, db, fake_places, dialled):
+def test_closed_business_ask_again_and_cancelled_schedule_never_dial(api, pv, db, fake_places, dialled):  # noqa: F811
     tok = pv.account("x11-f@testmail.dk")
     pv.verify_phone(tok)
-    tid = _proposal(api, pv, tok, fake_places, open_now=False)
+    _proposal(api, pv, tok, fake_places, open_now=False)
     # the «ask again when they open» reminder is queued – it must never dial by itself
     assert _state(db) == ([("proposed", False)], 0)
     pv.clock.at = THU_9 + timedelta(minutes=1)
@@ -161,7 +161,7 @@ def test_closed_business_ask_again_and_cancelled_schedule_never_dial(api, pv, db
     assert dialled == [] and _state(db) == ([("proposed", False)], 0)
 
 
-def test_cancelled_scheduled_call_is_never_dialled(api, pv, db, fake_places, dialled):
+def test_cancelled_scheduled_call_is_never_dialled(api, pv, db, fake_places, dialled):  # noqa: F811
     tok = pv.account("x11-g@testmail.dk")
     pv.verify_phone(tok)
     tid = _proposal(api, pv, tok, fake_places, open_now=False)

@@ -4087,6 +4087,16 @@
           },
           "interface_language": {
             "default": "da",
+            "enum": [
+              "da",
+              "en",
+              "de",
+              "es",
+              "fr",
+              "it",
+              "no",
+              "sv"
+            ],
             "title": "Interface Language",
             "type": "string"
           },

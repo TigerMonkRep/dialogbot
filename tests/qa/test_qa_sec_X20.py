@@ -16,14 +16,12 @@ from pathlib import Path
 import httpx
 import pytest
 from fastapi.testclient import TestClient
+from qa_sec_helpers import all_routes, body_for, dep_names, fill, path_params, request_schema
 
 from app.db import get_session_factory
 from app.main import create_app
-from app.models import Session as DbSession
 from app.models import User
 from app.worker import runner
-
-from qa_sec_helpers import all_routes, body_for, dep_names, fill, path_params, request_schema
 
 EVIDENCE = Path(__file__).resolve().parents[2] / "qa" / "evidence" / "X20"
 OPERATOR_EMAIL = "rene@fyrster.dk"
@@ -134,7 +132,7 @@ def test_operator_email_lookalikes_do_not_inherit_the_role(api, client):
 
 
 def test_view_as_cannot_target_an_operator_or_be_nested(api, cast):
-    other_op = api.user("qasec-x20-op2@testmail.dk")
+    api.user("qasec-x20-op2@testmail.dk")
     with get_session_factory()() as db:
         u = db.query(User).filter_by(email_normalized="qasec-x20-op2@testmail.dk").one()
         u.is_platform_operator = True
@@ -155,7 +153,7 @@ def test_dev_operator_self_grant_is_not_mounted_outside_dev(monkeypatch):
     monkeypatch.setenv("APP_ENV", "prod")
     monkeypatch.setenv("ENABLE_DEV_TOOLS", "true")
     monkeypatch.setenv("SECRET_KEY", "x" * 40)
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):  # pydantic ValidationError
         Settings()
     monkeypatch.setenv("ENABLE_DEV_TOOLS", "false")
     monkeypatch.setenv("APP_ENV", "test")
@@ -267,3 +265,16 @@ def test_ui_operator_pages_by_direct_url_show_no_operator_data():
     EVIDENCE.mkdir(parents=True, exist_ok=True)
     (EVIDENCE / "ui-direct-url-matrix.txt").write_text("\n".join(out))
     assert not bad, "\n".join(bad)
+
+
+@pytest.mark.xfail(strict=True, reason="F-SQ-03-X20/M07 operator audit with access reasons: not-implemented")
+def test_m07_operator_audit_and_view_as_access_reason_exist():
+    """M07: «Operator actions, access reasons and filtered audit history» (/admin/audit). M02: «scoped support
+    context». Not built: no operator audit route and POST /operator/admin/view-as takes no reason (xfail strict –
+    turns red when built)."""
+    audit = [p for m, p, _r in _ALL if m == "GET" and "/operator/" in p and "audit" in p]
+    assert audit, "no operator audit route"
+    from app.modules.admin.router import ViewAsIn
+
+    props = set(ViewAsIn.model_fields)
+    assert props & {"reason", "access_reason", "begrundelse"}, f"view-as takes no access reason: {sorted(props)}"

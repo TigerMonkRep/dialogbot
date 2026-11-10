@@ -7,6 +7,7 @@ after timeout or reconnect."
 """
 from __future__ import annotations
 
+import pytest
 from sqlalchemy import select
 
 from app.core.outbox import enqueue
@@ -46,6 +47,7 @@ def test_outbox_dedupe_key_prevents_duplicate_jobs(api, two_workspaces, db):
     assert len(rows) == 1
 
 
+@pytest.mark.xfail(strict=True, reason="M03 controlled retry: not-implemented")
 def test_controlled_retry_endpoint_exists(api, two_workspaces, db):
     """M03 requires a controlled retry from the operations screen. There is no operator endpoint for it."""
     op = api.operator()

@@ -194,7 +194,7 @@ class RowFactory:
         except Exception as e:  # noqa: BLE001 - record and move on: coverage is reported, not assumed
             self.errors[table.name] = f"{type(e).__name__}: {str(e).splitlines()[0][:200]}"
 
-    def make_all(self, tables=None) -> "RowFactory":
+    def make_all(self, tables=None) -> RowFactory:
         tables = tables or [t for t in Base.metadata.sorted_tables if "workspace_id" in t.c]
         for _ in range(2):  # second pass picks up tables whose FK targets were made later in the first
             for t in tables:

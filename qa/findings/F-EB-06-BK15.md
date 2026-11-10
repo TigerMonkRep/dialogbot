@@ -3,7 +3,7 @@ id: F-EB-06-BK15
 scenario: BK15
 reported_by: e2e-erhverv (B)
 severity: S2
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [BK06]
 ---
@@ -39,3 +39,9 @@ web/src/app/app/(admin)/aftaler/page.tsx:85-88 ser kun på `s.busy_ics_url`; OAu
 
 ## Testresultat
 - Backend pass; tsc + i18n:check ok. E2E `web/e2e/qa/erhverv-b/BK06.spec.ts` («kalenderkortet viser den forbundne Google-kalender») kræver rebuild – verifier.
+
+## Verifikation (udfyldes af verifier)
+- Gentest: pass 3/3 (run1–3) desktop-1440 + mobil-390: web/e2e/qa/erhverv-b/BK06.spec.ts:38 + tests/test_booking_calendar_sync.py (3/3, pytest)
+- Fejler testen uden rettelsen? ja – pre-fix frontend (56f95ab bygget i /home/claude/wt-before, next start :3500 mod API :8000), /home/claude/verify-logs/e2e_before.log: e2e begge: «Ikke forbundet» i kalenderkortet (Received 1); pytest på 56f95ab: `KeyError: 'calendar_connection'`
+- Naboscenarier kørt: e2e P0-suite (web/e2e/qa uden privat) mod frisk Next-build af c3bed12 på :3300 (se note: :3000 kører stadig den gamle build), run2 102/102 og run3 102/102 (run1 98/100: kun den gamle BK06-«Flyt»-test, siden rettet); journeys.spec.ts 64: 61+3 fejl, alle forklaret (rapport); BK06.spec.ts:19, W12.spec.ts.
+- Dom: closed

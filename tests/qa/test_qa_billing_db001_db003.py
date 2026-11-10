@@ -9,7 +9,8 @@ from app.models import Campaign, CampaignCall, CampaignContact, ReceptionAgreeme
 
 
 def test_db001_model_a_ignores_leads_model_b_charges_them():
-    from app.modules.billing.money import CampaignPackageTerms, ReceptionAgreement as RA, calculator_total_net
+    from app.modules.billing.money import CampaignPackageTerms, calculator_total_net
+    from app.modules.billing.money import ReceptionAgreement as RA
 
     a = RA(model="A", monthly_net_minor=149_500)
     b = RA(model="B", lead_fee_net_minor=14_900)

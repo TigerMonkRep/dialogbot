@@ -10,6 +10,8 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pytest
+
 from app.models import Lead, ReceptionAgreement
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -88,8 +90,14 @@ def test_b03_db002_unbilled_dispute_rule_numbers():
             rj.next_invoice_addition_net_minor, rj.credit_note_created) == (15, 223_500, 14_900, 14_900, False)
 
 
-def test_b03_register_route_and_dispute_api_are_not_built(app):
-    """Evidence for status not-implemented (not a defect by itself): no /app/billing/leads page, no dispute API."""
-    paths = {getattr(r, "path", "") for r in app.routes}
-    assert not [p for p in paths if "dispute" in p or "/billing/leads" in p]
-    assert not (ROOT / "web/src/app/app/(admin)/billing").exists()
+@pytest.mark.xfail(strict=True, reason="B03 billable-lead register and dispute entry: needs-decision (not built)")
+def test_b03_register_route_and_dispute_api_exist(app):
+    """B03 requirement: a billable-lead register (/app/billing/leads) with dispute entry. Not built today, so this is
+    xfail(strict): it turns red the day it is built and the marker must go. Routes are walked with all_routes – a plain
+    app.routes no longer sees the routes inside include_router() (FastAPI >= 0.140)."""
+    from qa_sec_helpers import all_routes
+
+    paths = {p for _m, p, _r in all_routes(app)}
+    assert [p for p in paths if "/billing/leads" in p], "no billable-lead register route"
+    assert [p for p in paths if "dispute" in p], "no dispute API"
+    assert (ROOT / "web/src/app/app/(admin)/billing").exists(), "no /app/billing page"

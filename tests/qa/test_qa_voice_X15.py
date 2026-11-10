@@ -13,7 +13,6 @@ import pytest
 
 from app.config import get_settings
 from app.modules.voices.standard import LANGUAGE_VOICES, STANDARD_VOICES
-
 from tests.test_telephony import _post, _setup
 
 SECRET = "vapi-test-secret-0123456789abcdef"
@@ -138,8 +137,9 @@ def test_x15_an_english_written_greeting_is_not_said_to_a_danish_number(client, 
 
 def test_x15_reception_script_greeting_does_not_override_the_call_language(client, api, two_workspaces, configured, db):
     """Same rule for the greeting from the reception manuscript (R05), which is written once, in Danish."""
-    from app.models import ReceptionScript
     import uuid
+
+    from app.models import ReceptionScript
 
     t = two_workspaces
     _setup(api, t)

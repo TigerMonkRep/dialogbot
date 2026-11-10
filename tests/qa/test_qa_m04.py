@@ -7,13 +7,24 @@ reception and campaign data apart.
 """
 from __future__ import annotations
 
+import pytest
 
-def test_m04_billing_admin_not_built_and_operator_only(api, two_workspaces):
+M04_PATHS = ("/operator/admin/billing", "/operator/admin/prices", "/operator/admin/orders", "/operator/admin/disputes",
+             "/operator/admin/refunds")
+
+
+@pytest.mark.xfail(strict=True, reason="M04 operator billing admin (prices, orders, disputes, refunds): needs-decision")
+def test_m04_billing_admin_exists(api):
+    """M04 requirement: price catalogue, orders, disputes, reconciliation and refund review for operators. Not built
+    (xfail strict – turns red when built)."""
+    op = api.operator()
+    missing = [p for p in M04_PATHS if api.get(op, p).status_code in (404, 405)]
+    assert not missing, f"not built: {missing}"
+
+
+def test_m04_operator_customer_view_is_operator_only(api, two_workspaces):
     t = two_workspaces
     op = api.operator()
-    for path in ("/operator/admin/billing", "/operator/admin/prices", "/operator/admin/orders", "/operator/admin/disputes",
-                 "/operator/admin/refunds", "/admin/billing"):
-        assert api.get(op, path).status_code in (404, 405), path
     # what exists is operator-only (role: owner of a workspace is not enough)
     assert api.get(t["tok_a"], f"/operator/admin/customers/{t['ws_a']}").status_code in (401, 403)
     assert api.get(t["tok_a"], "/operator/admin/customers").status_code in (401, 403)

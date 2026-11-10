@@ -9,6 +9,8 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime
 
+import pytest
+
 from app.models import ReceptionAgreement
 
 
@@ -47,9 +49,13 @@ def test_b05_agreement_price_snapshot_is_immutable_under_a_list_price_change(api
     assert [x["net_minor"] for x in st["lines"] if x["kind"] == "subscription"] == [249_500]
 
 
-def test_b05_order_detail_is_not_built(app):
-    """Evidence for not-implemented: no order route, no order model."""
+@pytest.mark.xfail(strict=True, reason="B05 campaign order detail: not-implemented")
+def test_b05_order_detail_exists(app):
+    """B05 requirement: campaign order detail with price snapshot, package usage, invoice and refund history. Not built
+    today (xfail strict – turns red when built)."""
+    from qa_sec_helpers import all_routes
+
     import app.models as models
 
-    assert not [getattr(r, "path", "") for r in app.routes if "/orders" in getattr(r, "path", "")]
-    assert not [n for n in dir(models) if n.lower() in ("order", "campaignorder", "refund", "creditnote")]
+    assert [p for _m, p, _r in all_routes(app) if "/orders" in p], "no order route"
+    assert [n for n in dir(models) if n.lower() in ("order", "campaignorder")], "no order model"

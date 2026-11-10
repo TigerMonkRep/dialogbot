@@ -15,7 +15,6 @@ from sqlalchemy import select
 
 from app.db import get_session_factory
 from app.models import Call, Lead, Task, TelephonySetup, TelephonyTest
-
 from tests.test_telephony_platform import WORLD, _approve_docs, _code, _hook, _ready, _run_jobs, fake  # noqa: F401
 
 

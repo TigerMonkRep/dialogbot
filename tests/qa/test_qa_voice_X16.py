@@ -10,14 +10,12 @@ from __future__ import annotations
 import ast
 import importlib.util
 import json
-import uuid
 from pathlib import Path
 
 import pytest
 
 from app.config import get_settings
 from app.modules.telephony.vapi import spoken_first_message
-
 from tests.test_sales_demo_calls import _web, sales  # noqa: F401  (fixture)
 from tests.test_telephony import _post, _setup
 

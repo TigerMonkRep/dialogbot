@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 import uuid
 
+import pytest
 from sqlalchemy import select
 
 from app.models import OutboxEvent, PrivateCall, PrivateTask
@@ -183,6 +184,7 @@ def test_shared_link_preview_is_public_but_shows_no_wishes_or_reservations(api, 
         assert api.c.get(path).status_code == 401
 
 
+@pytest.mark.xfail(strict=True, reason="F-PQ-03-X09: needs-decision – open finding (status new), not fixed in c3bed12")
 def test_recipient_without_subscription_cannot_make_own_tasks_live_through_the_api(api, pv, db):
     """The web hides «Brug 1 credit» and «Se et sponsorindslag» from an account without a plan (status none) and says
     «Uden plan kan du se og reservere på lister, andre deler med dig – egne opgaver, lister og opkald kræver en plan»

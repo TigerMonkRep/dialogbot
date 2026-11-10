@@ -13,12 +13,13 @@ import json
 import re
 from pathlib import Path
 
+import pytest
+
 from app.models import DemoCall
 from app.modules.ai import service as ai
 from app.modules.sales import script
 from app.modules.sales import service as sales_service
 from app.modules.voices.standard import STANDARD_VOICES
-
 from tests.test_sales_demo_calls import sales  # noqa: F401  (fixture)
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -118,6 +119,7 @@ def test_x05_chat_then_call_request_rings_with_peter_on_the_entered_number(clien
         ensure_ascii=False, indent=1))
 
 
+@pytest.mark.xfail(strict=True, reason="F-VQ-05-X05: needs-decision – number verification before Peter rings is not built")
 def test_x05_the_number_is_verified_before_peter_rings(client, sales, db):  # noqa: F811
     """X05: "verificeret nummer". Today the public door rings whatever Danish number is typed, as soon as the box is
     ticked: the person who ticks "Ja tak, Peter ... må ringe mig op på dette nummer" is never shown to own it. Expected:

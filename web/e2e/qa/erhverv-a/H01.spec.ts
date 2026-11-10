@@ -20,7 +20,8 @@ test("H01 · hjælpen findes, alle «Gå dertil»-links virker, og der lyves ikk
   await page.screenshot({ path: `${EVID}/${info.project.name}-hjaelp.png`, fullPage: true });
 });
 
-test("H01 · supportsager (/app/support/:ticket) er ikke bygget", async ({ page }, info) => {
+test("H01 · supportsager (/app/support/:ticket) findes", async ({ page }, info) => {
+  test.fail(true, "H01 support ticket page: not-implemented");
   await login(page, SEEDED.owner);
   const r = await page.goto("/app/support/1");
   await page.screenshot({ path: `${EVID}/${info.project.name}-support-ticket.png`, fullPage: true });

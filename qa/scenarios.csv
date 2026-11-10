@@ -8,12 +8,12 @@ P06,P1,settings_public,/demo,e2e-erhverv,i18n-a11y-qa,"Clearly simulated chat, c
 P07,P1,settings_public,/help and /help/:article,e2e-erhverv,i18n-a11y-qa,"Searchable help centre, categories and readable article template; installation and campaign examples.",,handoff,todo,
 P08,P1,settings_public,/contact,e2e-erhverv,i18n-a11y-qa,"Sales/support contact form, validation, submission confirmation and failure state.",DB-006,handoff,todo,
 P09,P1,settings_public,/legal/:document,e2e-erhverv,i18n-a11y-qa,"Separate privacy, terms, data-processing and cookie-information views using a shared readable template. Mark unsupplied legal text as draft.",DB-009 DB-015,handoff,todo,
-A01,P0,identity_onboarding,/signup,e2e-erhverv,security-privacy,"Independent signup; preserve whether the visitor chose reception, campaigns or both.",DB-013,handoff,fail,"F-EA-06,F-EA-07"
+A01,P0,identity_onboarding,/signup,e2e-erhverv,security-privacy,"Independent signup; preserve whether the visitor chose reception, campaigns or both.",DB-013,handoff,pass,"F-EA-06,F-EA-07 → rettet+verificeret (c3bed12+)"
 A02,P1,identity_onboarding,/login,e2e-erhverv,security-privacy,"Login, remembered destination, validation and invalid-credential state.",,handoff,todo,
 A03,P1,identity_onboarding,/verify-email,e2e-erhverv,security-privacy,"Pending verification, resend, verified and expired-link states.",,handoff,todo,
 A04,P1,identity_onboarding,/password/forgot and /password/reset,e2e-erhverv,security-privacy,"Request reset, confirmation, new password, expired link and return to login.",,handoff,todo,
 A05,P0,identity_onboarding,/invite/:token,e2e-erhverv,security-privacy,Invite acceptance by an existing or new user; expired/revoked invite and correct workspace.,DB-013,handoff,pass,web/e2e/qa/erhverv-a/A05.spec.ts
-A06,P0,identity_onboarding,/onboarding/workspace,e2e-erhverv,security-privacy,Create the business workspace or choose an existing one; save selected product intent.,DB-013,handoff,fail,F-EA-03
+A06,P0,identity_onboarding,/onboarding/workspace,e2e-erhverv,security-privacy,Create the business workspace or choose an existing one; save selected product intent.,DB-013,handoff,pass,F-EA-03 → rettet+verificeret (c3bed12+)
 O01,P1,identity_onboarding,/onboarding/business,e2e-erhverv,security-privacy,"Name, description, optional URL/documents; dynamic multiple/custom categories; manual setup.",,handoff,todo,
 O02,P1,identity_onboarding,/onboarding/knowledge,e2e-erhverv,security-privacy,"Review extracted facts, services, products, prices, offers, hours and unknowns.",,handoff,todo,
 O03,P1,identity_onboarding,/onboarding/goals,e2e-erhverv,security-privacy,"Conversation goals, proposed questions, intent branches and owner editing.",,handoff,todo,
@@ -28,8 +28,8 @@ I03,P1,reception,/app/leads,voice-qa,e2e-erhverv,"Structured enquiries, status, 
 I04,P1,reception,/app/leads/:lead,voice-qa,e2e-erhverv,"Enquiry detail, related dialogues, qualification evidence, notes and follow-up history.",DB-004,handoff,todo,
 I05,P1,reception,/app/tasks,voice-qa,e2e-erhverv,"Follow-up tasks, due dates, assignment, completion and links to the originating enquiry/campaign.",,handoff,todo,
 R01,P1,reception,/app/reception,voice-qa,e2e-erhverv,"Per-channel status, setup progress, current published assistant and pause/resume controls.",,handoff,todo,
-R02,P0,reception,/app/reception/phone,voice-qa,e2e-erhverv,"Existing public number, carrier, forwarding destination/rules, outgoing identity, verification and test.",DB-018,handoff,fail,"F-VQ-06,F-VQ-07"
-R03,P0,reception,/app/reception/callback,voice-qa,e2e-erhverv,"Requested-callback configuration, offered time windows, verification and queue/results.",DB-018,handoff,fail,"F-VQ-08,F-VQ-09"
+R02,P0,reception,/app/reception/phone,voice-qa,e2e-erhverv,"Existing public number, carrier, forwarding destination/rules, outgoing identity, verification and test.",DB-018,handoff,pass,"F-VQ-06,F-VQ-07 → rettet+verificeret (c3bed12+)"
+R03,P0,reception,/app/reception/callback,voice-qa,e2e-erhverv,"Requested-callback configuration, offered time windows, verification and queue/results.",DB-018,handoff,pass-delvist,"F-VQ-08,F-VQ-09 → rettet+verificeret (c3bed12+)"
 R04,P1,reception,/app/reception/widget,voice-qa,e2e-erhverv,"Appearance, client branding, domain installation, snippet, preview and installation test.",,handoff,todo,
 R05,P1,reception,/app/reception/assistant,voice-qa,e2e-erhverv,"Reception script, voice/language configuration, branches, preview, version history, approval and publishing.",,handoff,todo,
 R06,P1,reception,/app/reception/test,voice-qa,e2e-erhverv,"Test suite, sample dialogue, failures, correction links and publish readiness.",,handoff,todo,
@@ -49,11 +49,11 @@ C07,P1,campaigns,/app/campaigns/:id/test,e2e-erhverv,billing-qa,"Simulated call 
 C08,P1,campaigns,/app/campaigns/:id/quote,e2e-erhverv,billing-qa,"Select eligible contacts, snapshot selection, package limits, clear total and terms.",DB-001,handoff,todo,
 C09,P0,campaigns,/app/campaigns/:id/checkout,e2e-erhverv,billing-qa,"Payment summary, processing, action required, success and failure; no automatic launch.",DB-018,handoff,not-implemented,needs-decision: afregning pr. opkald
 C10,P2,campaigns,/app/campaigns/:id/schedule,e2e-erhverv,billing-qa,"Date/time windows, time zone, retries, concurrency and verified outgoing identity.",,handoff,todo,
-C11,P0,campaigns,/app/campaigns/:id/review,e2e-erhverv,billing-qa,"Final readiness, frozen versions, paid order and explicit launch confirmation.",DB-018,handoff,fail,"F-EB-01,F-EB-03"
+C11,P0,campaigns,/app/campaigns/:id/review,e2e-erhverv,billing-qa,"Final readiness, frozen versions, paid order and explicit launch confirmation.",DB-018,handoff,pass,"F-EB-01,F-EB-03 → rettet+verificeret (c3bed12+)"
 C12,P1,campaigns,/app/campaigns/:id/live,e2e-erhverv,billing-qa,"Progress, outcomes, upcoming work, pause/resume, errors and cancel-remaining action.",DB-003,handoff,todo,
 C13,P1,campaigns,/app/campaigns/:id/results,e2e-erhverv,billing-qa,"Final outcomes, follow-up, export, final report and delivery status.",DB-003,handoff,todo,
 C14,P1,campaigns,/app/campaigns/:id/contacts/:contact,e2e-erhverv,billing-qa,"Contact history, attempts, result, permitted transcript, evidence and future-call suppression.",DB-003 DB-004,handoff,todo,
-C15,P0,campaigns,/app/campaigns/:id/reconciliation,e2e-erhverv,billing-qa,"Purchased/consumed/unused/pending packages, cancellation and pending/confirmed refunds.",DB-003 DB-012,handoff,fail,F-EB-02; pakker ikke bygget
+C15,P0,campaigns,/app/campaigns/:id/reconciliation,e2e-erhverv,billing-qa,"Purchased/consumed/unused/pending packages, cancellation and pending/confirmed refunds.",DB-003 DB-012,handoff,pass-delvist,F-EB-02; pakker ikke bygget → rettet+verificeret (c3bed12+)
 T01,P2,reports_notifications,/app/reports,integrations-qa,api-contract-qa,"Report archive, date/channel/campaign filters, actionable performance and delivery failures.",,handoff,todo,
 T02,P2,reports_notifications,/app/reports/daily/:report,integrations-qa,api-contract-qa,"Dated daily digest with interval, actions, enquiries, campaign results and usage.",,handoff,todo,
 T03,P2,reports_notifications,/app/reports/dialogue/:report,integrations-qa,api-contract-qa,"Individual report: preparing, ready, revised and delivery failed.",,handoff,todo,
@@ -63,10 +63,10 @@ B02,P1,billing,/app/billing/reception,billing-qa,api-contract-qa,"Select/change 
 B03,P0,billing,/app/billing/leads,billing-qa,api-contract-qa,"Billable-lead register, qualification evidence, duplicate status, review and dispute entry.",DB-002,handoff,not-implemented,needs-decision; DB-002 regler grønne
 B04,P0,billing,/app/billing/disputes/:id,billing-qa,api-contract-qa,"Dispute reason/evidence, pending review, decision and any invoice adjustment.",DB-002,handoff,not-implemented,DB-002 regler grønne
 B05,P0,billing,/app/billing/orders/:id,billing-qa,api-contract-qa,"Campaign order detail, immutable price snapshot, package usage, related invoice and refund history.",DB-012,handoff,not-implemented,DB-012 tal grønne
-B06,P0,billing,/app/billing/invoices/:id,billing-qa,api-contract-qa,"Invoice list/detail pattern, download, pending/paid/failed/adjusted states.",DB-012,handoff,fail,"F-BQ-007,F-BQ-008"
+B06,P0,billing,/app/billing/invoices/:id,billing-qa,api-contract-qa,"Invoice list/detail pattern, download, pending/paid/failed/adjusted states.",DB-012,handoff,pass,"F-BQ-007,F-BQ-008 → rettet+verificeret (c3bed12+)"
 B07,P1,billing,/app/billing/payment,billing-qa,api-contract-qa,"Billing identity, VAT fields, payment method, checkout-return states and payment recovery.",,handoff,todo,
 S01,P1,settings_public,/app/settings/business,e2e-erhverv,i18n-a11y-qa,"Business profile, editable categories, address, hours, primary language and time zone.",,handoff,todo,
-S02,P0,settings_public,/app/settings/team,e2e-erhverv,i18n-a11y-qa,"Members, invites, roles, permissions, resend/revoke and remove-member confirmation.",DB-013,handoff,fail,"F-EA-04,F-EA-09,F-EA-10"
+S02,P0,settings_public,/app/settings/team,e2e-erhverv,i18n-a11y-qa,"Members, invites, roles, permissions, resend/revoke and remove-member confirmation.",DB-013,handoff,pass-delvist,"F-EA-04,F-EA-09,F-EA-10 → rettet+verificeret (c3bed12+)"
 S03,P1,settings_public,/app/settings/integrations,e2e-erhverv,i18n-a11y-qa,"Connection directory with available, connected, limited, stale, disconnected and reconnect states; booking links use BK05/BK07.",,handoff,todo,
 S04,P1,settings_public,/app/settings/integrations/:id,e2e-erhverv,i18n-a11y-qa,"Configure supported API/database or delivery connection, scope, test and sync; calendar entries open canonical BK07 instead of a duplicate editor.",,handoff,todo,
 S05,P1,settings_public,/app/settings/api,e2e-erhverv,i18n-a11y-qa,"Developer access, masked example keys, scopes, webhooks, delivery log and revoke/rotate states.",,handoff,todo,
@@ -78,7 +78,7 @@ S10,P1,settings_public,/app/settings/suppression,e2e-erhverv,i18n-a11y-qa,"Do-no
 H01,P0,support_operations,/app/help and /app/support/:ticket,e2e-erhverv,security-privacy,"Contextual help, support request with attachments, status and thread.",DB-016,handoff,not-implemented,F-EA-01 (lækage fundet)
 X01,P1,settings_public,Shared states,e2e-erhverv,i18n-a11y-qa,"Notifications drawer, unsaved edits, session expiry, no permission, not found, offline and service unavailable.",DB-010,handoff,pass,web/e2e/qa/erhverv-a/X01.spec.ts
 M01,P2,support_operations,/admin,e2e-erhverv,security-privacy,"Service health, failed work, payment/report/calendar incidents and support queues.",,handoff,todo,
-M02,P0,support_operations,/admin/workspaces and /admin/workspaces/:id,e2e-erhverv,security-privacy,"Business search, entitlements, goal-specific setup/channel/booking readiness and scoped support context.",DB-009 DB-013,handoff,fail,"F-EA-02,F-EA-05,F-EA-08"
+M02,P0,support_operations,/admin/workspaces and /admin/workspaces/:id,e2e-erhverv,security-privacy,"Business search, entitlements, goal-specific setup/channel/booking readiness and scoped support context.",DB-009 DB-013,handoff,pass-delvist,"F-EA-02,F-EA-05,F-EA-08 → rettet+verificeret (c3bed12+)"
 M03,P0,support_operations,/admin/operations,e2e-erhverv,security-privacy,"Call/job/delivery/booking-sync status, dependency incidents, controlled retry and suspension states without duplicate calls or bookings.",DB-007 DB-009,handoff,not-implemented,tests/qa/test_qa_M03.py
 M04,P0,support_operations,/admin/billing,e2e-erhverv,security-privacy,"Price catalogue, orders, disputes, reconciliation and authorised refund review.",DB-002 DB-004 DB-006 DB-012,handoff,not-implemented,needs-decision
 M05,P1,support_operations,/admin/templates,e2e-erhverv,security-privacy,"Editable business taxonomy, question/script templates, versions and publishing status.",DB-009,handoff,todo,
@@ -113,11 +113,11 @@ BK11,P2,booking,/app/bookings/resources,e2e-erhverv,integrations-qa,"Locations a
 BK12,P2,booking,/app/bookings/availability,e2e-erhverv,integrations-qa,"Business/staff hours, exceptions, holidays, buffers, notice, horizon and timezone preview.",,handoff,todo,
 BK13,P2,booking,/app/bookings/rules,e2e-erhverv,integrations-qa,"Approval, cancellation/rescheduling rules, reminders, language and provider/Dialogbot sender ownership.",,handoff,todo,
 BK14,P2,booking,/app/bookings/test,e2e-erhverv,integrations-qa,"Guided availability/booking tests, readable results, conflict and outage simulations, fixes and retest.",,handoff,todo,
-BK15,P0,booking,/app/bookings/sync,e2e-erhverv,integrations-qa,"Sync health/history, external changes, duplicates, stale/uncertain actions and safe recovery.",DB-006 DB-007 DB-011,handoff,fail,"F-EB-05,F-EB-06,F-EB-07"
+BK15,P0,booking,/app/bookings/sync,e2e-erhverv,integrations-qa,"Sync health/history, external changes, duplicates, stale/uncertain actions and safe recovery.",DB-006 DB-007 DB-011,handoff,pass-delvist,"F-EB-05,F-EB-06,F-EB-07 → rettet+verificeret (c3bed12+)"
 BK16,P2,booking,/app/bookings/channels,e2e-erhverv,integrations-qa,Enable booking in selected chat/call/callback/campaign flows; readiness and deep links to script/widget editors.,,handoff,todo,
 W10,P1,booking,Widget booking / /book/:business,e2e-erhverv,voice-qa,"Client-branded service, location and optional staff choice; shared standalone-page variant.",,handoff,todo,
 W11,P1,booking,Widget/public slot selector,e2e-erhverv,voice-qa,"Date/slots/timezone, loading, no slots, limited availability, stale provider and alternatives.",,handoff,todo,
-W12,P0,booking,Widget/public booking review,e2e-erhverv,voice-qa,"Customer details, terms, edit, explicit submit, confirmed, pending, failed and slot-lost states.",DB-007,handoff,fail,F-EB-04
+W12,P0,booking,Widget/public booking review,e2e-erhverv,voice-qa,"Customer details, terms, edit, explicit submit, confirmed, pending, failed and slot-lost states.",DB-007,handoff,pass,F-EB-04 → rettet+verificeret (c3bed12+)
 W13,P0,booking,/booking/manage/:token,e2e-erhverv,voice-qa,"Secure appointment management, verification where needed, reschedule/cancel, policy restrictions and invalid/expired links.",DB-007 DB-011 DB-016,handoff,not-implemented,F-EB-05
 E07,P0,booking,Booking communication templates,integrations-qa,i18n-a11y-qa,"Request receipt, confirmed appointment, reminder, proposed change, rescheduled, cancelled and owner-attention variants; delivery failure.",DB-018,handoff,not-implemented,tests/qa/test_qa_integ_E07.py
 G01,P1,identity_onboarding,/app/setup,e2e-erhverv,security-privacy,"Personalised setup home, one next action, honest progress, dependencies, save/resume and repair states.",DB-014,handoff,todo,
@@ -134,27 +134,27 @@ X03,P1,funnel,/start,e2e-erhverv,api-contract-qa,Quiz-funnel Erhverv: spørgsmå
 X04,P1,funnel,/privat/start,e2e-privat,api-contract-qa,Quiz-funnel Privat: samme mekanik i orange tema; lead gemmes; reveal → prøveperiode,,post-handoff,todo,
 X05,P0,demo,/proev,voice-qa,e2e-erhverv,Prøv-den: chat → besøgende beder om opkald → Peter (ikke Clara) ringer; verificeret nummer; uden live-opkald i test (outbox/simulering),,post-handoff,fail,F-VQ-05
 X06,P1,privat,/privat,e2e-privat,i18n-a11y-qa,"Privat-landing: tydeligt anderledes end Erhverv (orange), samme logo, header-vælger Erhverv/Privat",,post-handoff,todo,
-X07,P0,privat-billing,/privat/checkout,e2e-privat,billing-qa,"""Prøv gratis i 14 dage"" → checkout (navn, adresse, telefon, e-mail, kort) → adgang først efter gennemført Stripe test-setup; 3DS, afvist kort",,post-handoff,fail,"F-PQ-01,F-PQ-02"
-X08,P0,privat-billing,/privat/konto,billing-qa,e2e-privat,"Basis/Plus/Familie måned↔år, opsigelse i prøveperiode, prøveperiodens udløb, fejlet fornyelse, Stripe Tax/moms",,post-handoff,fail,"F-BQ-002,003,004,006; F-BQ-005 needs-decision"
+X07,P0,privat-billing,/privat/checkout,e2e-privat,billing-qa,"""Prøv gratis i 14 dage"" → checkout (navn, adresse, telefon, e-mail, kort) → adgang først efter gennemført Stripe test-setup; 3DS, afvist kort",,post-handoff,pass,"F-PQ-01,F-PQ-02 → rettet+verificeret (c3bed12+)"
+X08,P0,privat-billing,/privat/konto,billing-qa,e2e-privat,"Basis/Plus/Familie måned↔år, opsigelse i prøveperiode, prøveperiodens udløb, fejlet fornyelse, Stripe Tax/moms",,post-handoff,pass-delvist,"F-BQ-002,003,004,006; F-BQ-005 needs-decision → rettet+verificeret (c3bed12+)"
 X09,P0,privat,/privat/ønskeliste,e2e-privat,security-privacy,"Ønskeliste: reservationer aldrig synlige for ejeren (UI, API, e-mail/SMS); modtager uden abonnement kan åbne listen og ellers næsten intet",,post-handoff,fail,F-PQ-03 (needs-decision); hemmelighed holder
 X10,P1,privat,/privat/lister,e2e-privat,api-contract-qa,"Delte lister, påmindelser, invitationer fra brugerens eget nummer (SMS i outbox), kontaktimport på iPhone",,post-handoff,todo,
 X11,P0,privat,/privat/opgaver,e2e-privat,voice-qa,Opkald til virksomheder på brugerens vegne sker kun efter eksplicit godkendelse; intet i outbox uden godkendelse,,post-handoff,pass,tests/qa/test_qa_privat_x11.py
 X12,P1,privat,/privat/butik,e2e-privat,api-contract-qa,"Butikken: hvert app-ikon → ""Hvad den gør"" → egen installér-flow; installér/afinstallér idempotent",,post-handoff,todo,
 X13,P2,privat-integrations,/privat/pakker,integrations-qa,e2e-privat,"17TRACK pakkesporing: gyldigt/ugyldigt nummer, provider nede, ærlig status",,post-handoff,todo,
 X14,P2,privat-integrations,/privat/fly,integrations-qa,e2e-privat,"Flypriser via Travelpayouts/Duffel test: rigtige priser, videresendelse til booking med marker, ingen live-booking",,post-handoff,todo,
-X15,P0,voice,reception,voice-qa,,Opkald fra dansk nummer besvares på dansk; virksomhedens valgte sprog bruges ellers; stemme følger sproget,,post-handoff,fail,"F-VQ-01,F-VQ-02,F-VQ-03"
+X15,P0,voice,reception,voice-qa,,Opkald fra dansk nummer besvares på dansk; virksomhedens valgte sprog bruges ellers; stemme følger sproget,,post-handoff,pass,"F-VQ-01,F-VQ-02,F-VQ-03 → rettet+verificeret (c3bed12+)"
 X16,P0,voice,reception,voice-qa,,Navne: ukendt navn bekræftes ved stavning og nævnes derefter højst én gang; udtalestavning (Berle→Bærle) fra konfiguration,,post-handoff,blocked,Vapi-sti pass; F-VQ-04; adfærd kræver live-test med Fürsters ja
 X17,P1,voice,reception,voice-qa,,"Peter svarer kun fra godkendt viden; ingen ""privat preview/invitationskode""; må nævne Dialogbot Privat; humor uden at gøre grin med kunden",,post-handoff,todo,
 X18,P1,voice,reception,voice-qa,integrations-qa,STT-sti: Soniox stt-rt-v6 konfigureret for alle virksomheder; replay af testoptagelser giver korrekte navne/tal/tider,,post-handoff,todo,
 X19,P1,in-app-chat,/app,e2e-erhverv,voice-qa,"In-app chatten guider og ændrer indstillinger ud fra almindelige ord; det den ikke kan, lander som kundeønske hos admin",,post-handoff,todo,
-X20,P0,admin,/admin/social,security-privacy,e2e-erhverv,Operatør-social-dashboard kun synligt/tilgængeligt for rene@fyrster.dk (UI + API + direkte URL); posts afventer godkendelse,,post-handoff,fail,"F-SQ-01,F-SQ-03"
+X20,P0,admin,/admin/social,security-privacy,e2e-erhverv,Operatør-social-dashboard kun synligt/tilgængeligt for rene@fyrster.dk (UI + API + direkte URL); posts afventer godkendelse,,post-handoff,pass-delvist,"F-SQ-01,F-SQ-03 → rettet+verificeret (c3bed12+)"
 X21,P1,admin,/admin/salg,voice-qa,security-privacy,"Intern salgskanal: Google-baseret søgning pr. branche/område, kun admin; testopkald kun til eget nummer efter ja",,post-handoff,todo,
 X22,P1,public-api,/v1,api-contract-qa,security-privacy,"Public API v1: nøgler, scopes, rate limit, paginering, webhooks-signatur, svar matcher docs/public-openapi.json",,post-handoff,todo,
 X23,P1,pwa,/,i18n-a11y-qa,,"PWA: manifest pr. målgruppe (blå/orange ikoner), install-prompt aldrig ved første visning, offlineside, opdaterings-toast, ingen cachede logged-in sider",,post-handoff,todo,
-X24,P0,i18n,*,i18n-a11y-qa,,"8 sprog: alle nøgler findes, ingen dansk i andre sprog, sprogpåstande følger sidens sprog (""På dansk""/""In English""), formatering pr. locale",,post-handoff,fail,F-LQ-01..05
+X24,P0,i18n,*,i18n-a11y-qa,,"8 sprog: alle nøgler findes, ingen dansk i andre sprog, sprogpåstande følger sidens sprog (""På dansk""/""In English""), formatering pr. locale",,post-handoff,pass,F-LQ-01..05 → rettet+verificeret (c3bed12+)
 X25,P1,platform,/app,e2e-erhverv,,"Ingen ""Staging""-mærkat i logged-in UI (APP_ENV=prod-adfærd)",,post-handoff,todo,
-X26,P0,integrations,/app/settings/integrations,integrations-qa,security-privacy,Ærlig integrationsstatus: live/test/adapter/ikke bygget – UI viser præcis det; aldrig grøn stub,,post-handoff,fail,F-IQ-01..08
+X26,P0,integrations,/app/settings/integrations,integrations-qa,security-privacy,Ærlig integrationsstatus: live/test/adapter/ikke bygget – UI viser præcis det; aldrig grøn stub,,post-handoff,pass,F-IQ-01..08 → rettet+verificeret (c3bed12+)
 X27,P1,integrations,/app/bookings/calendars,integrations-qa,e2e-erhverv,"Google Calendar OAuth (testing): forbind, afvist samtykke, refresh, tilbagekaldt token, scopes præcis som godkendt",,post-handoff,todo,
-X28,P0,billing,/app/billing,billing-qa,api-contract-qa,"Forbrug: 4 kr/udg. opkald + 2 kr/påbegyndt minut; 300 indg. min inkl., derefter 1,50 kr/min; grænser 0/1/59/60/61 s, månedsskifte, sommertid",,post-handoff,fail,"F-BQ-009,F-BQ-010; F-BQ-001 needs-decision"
+X28,P0,billing,/app/billing,billing-qa,api-contract-qa,"Forbrug: 4 kr/udg. opkald + 2 kr/påbegyndt minut; 300 indg. min inkl., derefter 1,50 kr/min; grænser 0/1/59/60/61 s, månedsskifte, sommertid",,post-handoff,pass-delvist,"F-BQ-009,F-BQ-010; F-BQ-001 needs-decision → rettet+verificeret (c3bed12+)"
 X29,P0,security,*,security-privacy,api-contract-qa,"Tenant-isolation på alle endpoints og ruter med to workspaces; ingen secrets i bundle, logs eller git-historik",,post-handoff,pass,tests/qa/test_qa_sec_X29.py (487/487); F-SQ-02 separat
 X30,P2,brand,*,i18n-a11y-qa,,"Byggevejledning-design: tokens fra brand.md, ingen gradienter/emoji/bløde skygger, én primær knap pr. skærm, ingen priser på cover-billeder",,post-handoff,todo,

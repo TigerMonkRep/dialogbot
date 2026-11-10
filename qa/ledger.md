@@ -22,3 +22,9 @@
 | 12:46 | qa-lead → fix-engineer | handoff | F-VQ-01..09 | batch 4 + create_call skal respektere TELEPHONY_PROVIDER=fake; F-VQ-05 needs-decision |
 | 12:38 | Fürster → qa-lead | info | F-IQ-08 | VAPI_SERVER_SECRET sat på dialogbot-worker-staging og redeployet (produktion) |
 | 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | batch 1–5 | 43 fund rettet/delvist (se fundfilerne: Rodårsag/Rettelse/Testresultat); 3 migrationer b4d8e2f6a1c3, c5e9f3a7b2d4, d6f1a4b8c3e5; ikke committet |
+| 13:05 | security-privacy → qa-lead | finding | X20 X29 | tenant-isolation pass (487/487 + 15.806 kald); 3 fund (2×S1) |
+| 13:08 | e2e-privat → qa-lead | finding | X07 X09 X11 | X11 pass, reservationer hemmelige; 3 fund; Privat slået fra på fælles stak → separat stak |
+| 15:10 | fix-engineer → qa-lead/verifier | fix-ready | 45 fund | batch 1-5 rettet; 3 migrationer; commit c3bed12 |
+| 15:15 | qa-lead → verifier | handoff | alle fixed | gentest, before/after-bevis for S0/S1, fuld suite, journeys, CI-checks |
+| 16:05 | verifier → qa-lead, fix-engineer | verdict | 48 fixed | 47 closed, 1 reopened (F-EA-07: docs/openapi.json ikke regenereret → CI rød); nye fund F-VR-01 (tidsafhængig test, rettet), F-VR-02 (needs-decision), F-VR-03 (idempotens-race → 500, flaky CI) |
+| 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | batch 6 | F-EA-07 (openapi regen), F-VR-03-X11 (insert-first idempotency, x11 10/10), F-PQ-02-X07 (hero-CTA → trial checkout); ikke committet |

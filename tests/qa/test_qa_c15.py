@@ -6,7 +6,9 @@ Business rule: campaign counters (contacts vs attempts) are derived from one sou
 """
 from __future__ import annotations
 
-from datetime import UTC, date, datetime, time, timedelta
+from datetime import UTC, date, datetime, time
+
+import pytest
 
 from app.config import get_settings
 from app.models import CampaignCall, CampaignContact
@@ -73,22 +75,36 @@ def test_c15_counters_from_one_source(api, client, two_workspaces, db, monkeypat
     assert counts["total"] == len(contacts) == 3
     assert counts["calls"] == n_calls == sum(x.attempts for x in contacts) == 3
     assert sum(counts["by_status"].values()) == counts["total"]
-    # "Besvaret" on the campaign page is counts.by_status.done. Two people answered (Mette and Ole); Ole's call
-    # was answered and ended with an opt-out. The answered counter must count both.
+    # "Talt med" on the campaign page and list is counts.answered (kampagner/[id]/page.tsx, kampagner/page.tsx –
+    # since c3bed12; before it was by_status.done). Two people answered (Mette and Ole); Ole's call was answered and
+    # ended with an opt-out, so his status stays opted_out (used by «Frabedt sig opkald»). The counter must count both.
     answered_contacts = sum(1 for x in contacts if x.connected_seconds > 0 or x.outcome in service.OUTCOMES)
     assert answered_contacts == 2
-    ui_answered = counts["by_status"].get("done", 0)
+    assert counts["by_status"].get("done", 0) == 1 and counts["by_status"].get("opted_out", 0) == 1
+    ui_answered = counts.get("answered", counts["by_status"].get("done", 0))
     assert ui_answered == answered_contacts, (
         f"Besvaret shows {ui_answered} but {answered_contacts} contacts answered (by_status={counts['by_status']})")
     get_settings.cache_clear()
 
 
-def test_c15_packages_and_refunds_not_built(api, two_workspaces):
-    """C15/DB-012: there is no package purchase, reconciliation or refund route for campaigns (pay per call,
-    billed monthly). Documented as not-implemented; the UI does not claim it exists."""
+def test_c15_campaign_does_not_claim_packages(api, two_workspaces):
+    """C15/DB-012: campaigns are pay per call, billed monthly – the campaign payload carries the max cost and does
+    not claim packages it does not have."""
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     c = api.post(tok, f"/workspaces/{ws}/campaigns", {"name": "QA-EB pakker"}).json()
-    for path in ("reconciliation", "checkout", "packages", "refunds", "order"):
-        assert api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}/{path}").status_code in (404, 405)
     assert "max_cost" in c and "packages" not in c
+
+
+@pytest.mark.xfail(strict=True, reason="C15/C09 campaign packages, checkout, reconciliation and refunds: needs-decision "
+                   "(pay per call replaced packages)")
+def test_c15_c09_packages_checkout_and_refunds_exist(api, two_workspaces):
+    """C15: «Purchased/consumed/unused/pending packages, cancellation and pending/confirmed refunds». C09
+    (/app/campaigns/:id/checkout): «Payment summary, processing, action required, success and failure». Not built
+    (xfail strict – turns red when built)."""
+    t = two_workspaces
+    tok, ws = t["tok_a"], t["ws_a"]
+    c = api.post(tok, f"/workspaces/{ws}/campaigns", {"name": "QA-EB pakker"}).json()
+    missing = [p for p in ("reconciliation", "checkout", "packages", "refunds", "order")
+               if api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}/{p}").status_code in (404, 405)]
+    assert not missing, f"not built: {missing}"

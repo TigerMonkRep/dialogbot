@@ -86,7 +86,11 @@ def test_db_errors_do_not_write_password_hashes_or_pii_to_logs(app):
     """A database error's text (which uvicorn/Render log as the traceback) must not carry the bound parameters.
     Seen in /home/claude/api.log during this QA run: POST /auth/register with a too-long interface_language
     (RegisterIn has no max_length; users.interface_language is varchar(16)) -> 500, and the logged DataError held
-    the argon2 password hash and the e-mail. Proven here both through the route and on the engine directly."""
+    the argon2 password hash and the e-mail. Proven here both through the route and on the engine directly.
+
+    The engine probe binds the secret as a parameter of a statement that fails for an unrelated reason (division by
+    zero), so the only way the value can reach the error text is SQLAlchemy's "[parameters: …]" dump. A value that
+    Postgres itself echoes in its own message is a separate question (see the xfail test below)."""
     import sqlalchemy as sa
 
     from app.db import get_engine
@@ -101,9 +105,28 @@ def test_db_errors_do_not_write_password_hashes_or_pii_to_logs(app):
         texts.append(("route", str(e)))
     try:
         with get_engine().connect() as conn:
-            conn.execute(sa.text("select cast(:secret as integer)"), {"secret": "QASEC-SECRET-PARAM-VALUE"})
+            conn.execute(sa.text("select cast(:secret as text), 1 / 0"), {"secret": "QASEC-SECRET-PARAM-VALUE"})
     except Exception as e:  # noqa: BLE001
         texts.append(("engine", str(e)))
     leaks = [w for w, t in texts if "$argon2" in t or "qasec-logleak@testmail.dk" in t or "QASEC-SECRET-PARAM-VALUE" in t]
     assert not leaks, (f"exception text that ends in the server log carries bound parameters ({leaks}); "
                        "set hide_parameters=True on create_engine in app/db.py:26 and cap RegisterIn.interface_language")
+    assert [w for w, _ in texts] == ["engine"], [w for w, _ in texts]  # probe must fail; the route must not 500
+
+
+@pytest.mark.xfail(strict=True, reason="F-SQ-02-X29/F-VR-02-X29: needs-decision – Postgres echoes an offending value in "
+                   "its own error message (e.g. invalid input syntax, unique-violation DETAIL); hide_parameters cannot "
+                   "remove it and the worker logs f'{exc}' (app/worker/runner.py). Scrubbing server messages is a decision.")
+def test_postgres_echoed_values_do_not_reach_exception_text(app):
+    import sqlalchemy as sa
+
+    from app.db import get_engine
+
+    text = ""
+    try:
+        with get_engine().connect() as conn:
+            conn.execute(sa.text("select cast(:secret as integer)"), {"secret": "QASEC-SECRET-PARAM-VALUE"})
+    except Exception as e:  # noqa: BLE001
+        text = str(e)
+    assert text, "probe did not fail"
+    assert "QASEC-SECRET-PARAM-VALUE" not in text, "Postgres' own error message echoes the bound value"

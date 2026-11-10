@@ -143,11 +143,14 @@ class _StubTwilio:
 
     def __init__(self):
         self.calls: list[tuple[str, str]] = []
+        self.accept_reads = False  # True: read-only GETs succeed (credentials valid until Twilio revokes them)
 
     def _req(self, method, path, **kw):
         from app.modules.telephony.providers import ProviderError
 
         self.calls.append((method, path))
+        if method == "GET" and self.accept_reads:
+            return {"sid": self.account_sid, "status": "active"}
         raise ProviderError("Twilio afviste (401): Authenticate", retryable=False)
 
 
@@ -173,8 +176,13 @@ def test_live_sms_connect_is_not_verified_against_twilio(api, live_sms):
 
 
 def test_live_sms_stays_connected_after_twilio_refuses_and_test_button_says_it_works(api, live_sms):
+    """Credentials Twilio accepts at connect time are later refused (revoked/rotated): every SMS fails with 401."""
     tok, ws = _owner(api, "x26-sms2")
+    live_sms.accept_reads = True  # valid at connect (since c3bed12 connect verifies with a read-only GET)
     assert api.post(tok, f"/workspaces/{ws}/integrations/twilio_sms/connect", {"config": {}, "secrets": {}}).status_code == 200
+    assert _items(_catalogue(api, tok, ws))["twilio_sms"]["status"] == "connected"
+    live_sms.accept_reads = False  # Twilio now refuses the credentials
+    live_sms.calls.clear()
     r = api.post(tok, f"/workspaces/{ws}/integrations/twilio_sms/run",
                  {"action": "send_sms_bekraeftelse", "input": {"skabelon": "ring_tilbage", "til": "+4512345678"}})
     assert r.status_code == 200, r.text

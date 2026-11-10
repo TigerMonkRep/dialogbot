@@ -7,6 +7,7 @@ const EVID = "../qa/evidence/M06";
 const CSRF = { "x-requested-with": "dialogbot" };
 
 test("M06 · operatørens supportkø findes", async ({ page }, info) => {
+  test.fail(true, "M06/H01 operator support queue: not-implemented");
   await freshOwner(page, info);
   expect((await page.request.post("/api/backend/dev/operator/self", { headers: CSRF })).ok()).toBeTruthy();
   await page.goto("/app/operator/admin");

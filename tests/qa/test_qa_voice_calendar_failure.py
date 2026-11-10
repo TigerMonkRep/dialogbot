@@ -9,10 +9,8 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
-from app.core.errors import ApiError
 from app.modules.integrations.connectors import fakes
 from app.modules.integrations.connectors.base import ActionError
-
 from tests.test_integrations_actions import SECRET, _booking_ready, _connect_google, fake  # noqa: F401
 
 ROOT = Path(__file__).resolve().parents[2]

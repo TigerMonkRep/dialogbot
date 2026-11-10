@@ -20,7 +20,7 @@ import pytest
 
 from app.config import get_settings
 from app.core import safe_fetch
-from app.models import ActionRun, Booking, IntegrationConnection, Workspace
+from app.models import Booking, IntegrationConnection, Workspace
 from app.modules.integrations import actions
 from app.modules.integrations.connectors.base import RunContext
 from app.modules.integrations.connectors.fakes import WORLD
@@ -207,11 +207,24 @@ def test_bk15_failed_external_create_is_not_reported_as_done(api, client, two_wo
         f"booking confirmed to caller ({text!r}, status={run.status}) though the Google write failed and no retry exists")
 
 
-def test_w13_manage_link_not_built(client):
-    """W13/W09/W04: no customer-facing management, preference or verification routes exist."""
-    for path in ("/api/v1/public/booking/manage/abc", "/api/v1/public/bookings/abc", "/api/v1/public/preferences/abc",
-                 "/api/v1/public/callback/abc/cancel"):
-        assert client.get(path).status_code == 404
+@pytest.mark.parametrize("req,pattern", [
+    pytest.param("W13", r"/public/.*(booking/manage|bookings/\{)", id="W13-booking-manage-link",
+                 marks=pytest.mark.xfail(strict=True, reason="W13 booking manage link: not-implemented")),
+    pytest.param("W09", r"/public/.*(preferences|callback.*cancel)", id="W09-preferences-and-callback-cancel",
+                 marks=pytest.mark.xfail(strict=True, reason="W09 customer preferences/callback cancel: not-implemented")),
+    pytest.param("W04", r"/public/webchat/.*contact.*(verif|code|otp)", id="W04-contact-number-verification",
+                 marks=pytest.mark.xfail(strict=True, reason="W04 number verification on webchat contact: not-implemented")),
+])
+def test_w13_w09_w04_customer_routes_exist(app, req, pattern):
+    """W13/W09/W04 requirements: a customer-facing booking management link, preference/opt-out and call-back cancel
+    views, and code verification of the number on «Bliv kontaktet». None exist today (xfail strict – turns red when
+    built). Routes are walked with all_routes (app.routes misses include_router() routes on FastAPI >= 0.140)."""
+    import re
+
+    from qa_sec_helpers import all_routes
+
+    paths = sorted({p for _m, p, _r in all_routes(app)})
+    assert [p for p in paths if re.search(pattern, p)], f"{req}: no route matching {pattern}"
 
 
 # --------------------------------------------------------------------------- BK06 (DB-018)

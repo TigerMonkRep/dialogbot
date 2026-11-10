@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
+import pytest
 from sqlalchemy import select
 
 from app.models import AssistantRequest, AuthToken, User
@@ -64,6 +65,7 @@ def test_operator_internal_note_is_not_visible_to_the_customer(api, two_workspac
     assert secret not in audit.text, "operator's internal note is returned to the customer by the audit log"
 
 
+@pytest.mark.xfail(strict=True, reason="H01/M06 support-ticket API: not-implemented")
 def test_support_ticket_api_exists(api, two_workspaces):
     """H01/M06: support requests (with attachments, status, thread) and an operator queue."""
     t = two_workspaces

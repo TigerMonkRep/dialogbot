@@ -137,9 +137,13 @@ def test_e07_delivery_failure_and_owner_attention(api, client, fake, db, monkeyp
     monkeypatch.setattr(fakes.FakeCalendarClient, "create_event", broken_create)
     before = _mail_subjects(api, tok)
     r = _call(db, ws, "book_tid", {"start": slots[0]["start"], "navn": "Jens Poulsen", "bekraeftet": True})
-    assert r["run"]["status"] == "ok"
+    # Since c3bed12 (F-EB-05): the action is reported as failed so the assistant does not promise the time, but the
+    # booking stands in Dialogbot, flagged calendar_sync='failed' for the owner.
+    assert r["run"]["status"] == "failed", r
+    assert "Booket" not in r["text"] and "kalender" in (r["run"]["error"] or "").lower(), r
     db.expire_all()
-    assert db.scalar(select(Booking).where(Booking.contact_phone == PHONE)).calendar_event_id is None
+    b = db.scalar(select(Booking).where(Booking.contact_phone == PHONE))
+    assert b is not None and b.calendar_event_id is None and b.calendar_sync == "failed", b
     g = {i["key"]: i for i in api.get(tok, f"/workspaces/{ws}/integrations").json()["items"]}["google_calendar"]
     assert g["status"] == "error" and "Kalenderen kunne ikke opdateres" in (g["error"] or "")
     owner_mails = [s for s in _mail_subjects(api, tok) if s not in before]
@@ -155,7 +159,7 @@ E07_VARIANTS = ("request_receipt", "confirmed", "reminder", "proposed_change", "
                 "owner_attention", "delivery_failure")
 
 
-@pytest.mark.xfail(strict=True, reason="E07 not implemented: only the on-demand SMS 'booking' template exists")
+@pytest.mark.xfail(strict=True, reason="E07: not-implemented – only the on-demand SMS 'booking' template exists")
 def test_e07_requirement_all_booking_message_variants_exist():
     from app.modules.integrations import email_templates, sms_templates
 

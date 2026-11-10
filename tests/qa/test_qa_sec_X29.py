@@ -17,7 +17,6 @@ Run: source /home/claude/qa-env.sh && export TEST_DATABASE_URL=postgresql+psycop
 from __future__ import annotations
 
 import json
-import os
 import socket
 import uuid
 from collections import defaultdict
@@ -27,6 +26,7 @@ from pathlib import Path
 import pytest
 import sqlalchemy as sa
 from fastapi.testclient import TestClient
+from qa_sec_helpers import RowFactory, all_routes, body_for, dep_names, fill, path_params, request_schema, snapshot
 from sqlalchemy import text
 
 from app.db import Base, get_engine, get_session_factory
@@ -34,9 +34,6 @@ from app.main import create_app
 from app.models import PrivateProfile, User
 from tests.conftest import Api
 from tests.privat_fixtures import Clock, Pv
-
-from qa_sec_helpers import (RowFactory, all_routes, body_for, dep_names, fill, path_params, request_schema,
-                            snapshot)
 
 EVIDENCE = Path(__file__).resolve().parents[2] / "qa" / "evidence" / "X29"
 MARK = {"A": "QASEC-AAA", "B": "QASEC-BBB", "P1": "QASEC-P1P1", "P2": "QASEC-P2P2"}
@@ -296,7 +293,7 @@ def test_object_swap_in_own_workspace(world, method, path):
     for fid in probes:
         variants = [{p: fid for p in params}] if params else [{}]
         if len(params) > 1:  # nested: own parent + foreign child, and foreign parent + own child
-            for i, p in enumerate(params):
+            for i, _p in enumerate(params):
                 variants.append({q: (fid if j == i else _own_value(w["ids_b"], q)) for j, q in enumerate(params)})
         for v in variants:
             r = _call(w, method, path, w["tok_b"], foreign_id=fid, foreign_ws=w["ws_a"],

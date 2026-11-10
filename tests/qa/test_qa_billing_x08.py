@@ -18,7 +18,6 @@ from pathlib import Path
 import pytest
 
 from app.config import get_settings
-from app.models import PrivateSubscription
 from app.modules.billing import stripe as stripe_api
 from tests.privat_fixtures import WED_10
 
@@ -164,7 +163,7 @@ def test_x08_trial_expiry_converts_to_paid_plan(api, client, pv, db, stripe_env)
     assert (s["status"], s["plan"], s["entitled"], s["calls_quota"], s["people_limit"]) == ("active", "familie", True, 25, 5)
 
 
-@pytest.mark.xfail(strict=True, reason="F-BQ-005-X08 needs-decision: an immediately canceled trial keeps Plus/plan "
+@pytest.mark.xfail(strict=True, reason="F-BQ-005-X08: needs-decision – an immediately canceled trial keeps Plus/plan "
                                        "rights until the original trial end")
 def test_x08_immediate_cancel_in_trial_ends_rights(api, client, pv, db, stripe_env):
     tok = pv.account("x08-cancelnow@qa-bill.dk", trial=False)

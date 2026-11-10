@@ -23,6 +23,7 @@ const roleOf = async (page: Page, wsId: string, email: string) =>
   ((await (await page.request.get(`/api/backend/workspaces/${wsId}/members`)).json()) as { email: string; role: string }[]).find((m) => m.email === email)?.role;
 
 test("S02 · «Kan ændre» betyder det samme ved invitation og ved rolleskift", async ({ page, browser }, info) => {
+  test.fail(true, "F-EA-04-S02: needs-decision – «Kan ændre» = staff ved invitation, admin ved rolleskift (open finding)");
   const { wsId } = await freshOwner(page, info);
   await page.goto("/app/settings/team");
   await expect(page).toHaveURL(/\/app\/konto$/);

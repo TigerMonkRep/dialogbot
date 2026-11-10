@@ -263,6 +263,9 @@ def test_browser_booking_becomes_an_appointment(api, pv, db, monkeypatch):
     monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
     monkeypatch.setenv("SUPABASE_SERVICE_ROLE_KEY", "test-service-role")
     get_settings.cache_clear()
+    # The run's finished_at is the reference «Tirsdag 10. november kl. 10:30» is read against. Pin the browser clock to
+    # the test clock (Wed 4 Nov) – with the wall clock the slot rolls a week on once 10:30 on 10 Nov has passed (F-VR-01).
+    monkeypatch.setattr(browser, "_now", pv.clock)
     tok = pv.account("mette@testmail.dk")
     _enable(api, tok)
     api.post(tok, "/privat/calendar/feed")

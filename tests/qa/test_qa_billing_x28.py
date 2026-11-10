@@ -90,7 +90,7 @@ def test_x28_campaign_call_minute_boundaries_0_1_59_60_61(api, two_workspaces, d
     at = datetime(2026, 9, 15, 10, tzinfo=UTC)
     # (seconds, expected started minutes) – by the rule, independent of the code
     cases = [(0, 0), (1, 1), (59, 1), (60, 1), (61, 2)]
-    for i, (sec, _) in enumerate(cases):
+    for i, (_sec, _) in enumerate(cases):
         _dial(db, ws, camp, f"x28_c{i}", at)
     _dial(db, ws, camp, "x28_noanswer", at)
     db.commit()
@@ -127,7 +127,7 @@ def test_x28_duplicate_end_of_call_report_is_priced_once(api, two_workspaces, db
     assert _line(_statement(api, two_workspaces["tok_a"], ws, "2026-09"), "campaign_calls")["net_minor"] == CALL + 3 * MIN
 
 
-@pytest.mark.xfail(strict=True, reason="F-BQ-001-X28 needs-decision: fractional seconds are truncated before rounding "
+@pytest.mark.xfail(strict=True, reason="F-BQ-001-X28: needs-decision – fractional seconds are truncated before rounding "
                                        "up (60.4 s billed as 1 started minute)")
 def test_x28_fractional_second_past_a_minute_is_a_started_minute(api, two_workspaces, db, no_llm):
     """Vapi reports durationSeconds as a float. 60.4 s has started the 2nd minute; the rule says 'per started minute'."""

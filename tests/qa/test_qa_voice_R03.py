@@ -10,12 +10,10 @@ import uuid
 from datetime import UTC, datetime
 from zoneinfo import ZoneInfo
 
-import pytest
 from sqlalchemy import select
 
 from app.models import Lead, Task
 from app.modules.telephony import vapi as vapi_mod
-
 from tests.test_telephony import _post, _setup, configured  # noqa: F401
 from tests.test_webchat import PUB, _say, _start, fake, live  # noqa: F401
 

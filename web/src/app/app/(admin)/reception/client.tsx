@@ -15,9 +15,13 @@ export function ScriptEditor({ wsId, script, canManage, aiReady }: { wsId: strin
   const [f, setF] = useState<Script>(script);
   const [collectText, setCollectText] = useState(script.collect.join("\n"));
   const [note, setNote] = useState<"suggested" | "saved" | null>(null);
-  useEffect(() => { setF(script); setCollectText(script.collect.join("\n")); }, [script.version]); // eslint-disable-line react-hooks/exhaustive-deps
+  // The version this editor last saw: the prop, or the answer to our own last save – the sheet is not re-rendered with
+  // a new prop after router.refresh(), and a second save with the old version looked like someone else's edit (F-E2B-02-O05).
+  const version = useRef(script.version);
+  useEffect(() => { version.current = Math.max(version.current, script.version); setF(script); setCollectText(script.collect.join("\n")); }, [script.version]); // eslint-disable-line react-hooks/exhaustive-deps
   const save = useSubmit(async () => {
-    await api(`/workspaces/${wsId}/reception/script`, { method: "PUT", body: JSON.stringify({ ...f, collect: collectText.split("\n"), expected_version: script.version }) });
+    const saved = await api<Script>(`/workspaces/${wsId}/reception/script`, { method: "PUT", body: JSON.stringify({ ...f, collect: collectText.split("\n"), expected_version: version.current }) });
+    version.current = saved.version;
     setNote("saved"); router.refresh();
   });
   const suggest = useSubmit(async () => {

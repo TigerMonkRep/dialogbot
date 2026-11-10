@@ -75,8 +75,10 @@ GET  /funnel/drafts/{id}/reveal               (Bearer-session for draftens bruge
 - **Ny e-mail** → User med tilfældig adgangskode, `users.phone_verified_at` sat, e-mail **ikke** verificeret, velkomstmail
   (`email.branded`) med «Vælg adgangskode»-link = det almindelige `/password/reset?token=…` (gyldigt `VERIFICATION_TTL_HOURS`).
   Audit `user.registered` (`source: "funnel"`, `proof: "sms_code"`).
-- **Kendt e-mail** → log ind på den eksisterende bruger (koden blev sendt til det nummer, de selv tastede); audit `user.funnel_login`
-  med nummeret; ingen velkomstmail; `phone_verified_at` sættes, hvis den manglede.
+- **Kendt e-mail** → **ingen session** og ingen ændring på kontoen: SMS-koden beviser kun ejerskab af det tastede nummer, ikke af
+  kontoen bag e-mailen. Svar `409 account_exists` («Der findes allerede en konto med den e-mail. Log ind for at fortsætte.»); audit
+  `funnel.account_exists` (user_id + det tastede nummer); intet arbejdsrum/privatkonto; kladden får ingen `user_id`. Web viser «Log ind»
+  (→ `/login`). Gælder også deaktiverede konti (afslører ikke deaktivering). (Hotfix #177, F-P2-01-X04/F-E2A-01-X03.)
 - Session: `start_session` som `POST /auth/login`; svaret bærer `session_token` **og** `access_token` (samme værdi) + `user`, så BFF'en
   sætter sin httpOnly-cookie præcis som `/api/auth/login`. `workspace_id` returneres, så web også kan sætte arbejdsrums-cookien.
 - Efter verify er draften låst (`409 draft_verified` på PATCH/gate/verify), men `GET` og `reveal` virker.

@@ -250,3 +250,22 @@ def test_connection_in_error_is_retried_and_recovers(api, client, two_workspaces
     b = api.post(tok, f"/workspaces/{ws}/bookings", {"type_id": type_id, "start": start, "name": "Mette"}).json()
     assert b["confirmation"] is None and b["calendar_sync"] == "synced"
     assert api.get(tok, f"/workspaces/{ws}/bookings/settings").json()["calendar_connection"]["status"] == "connected"
+
+
+def test_calendar_down_is_recorded_by_a_read_only_slot_lookup(api, client, two_workspaces, fake, monkeypatch):
+    """F-E2D-13-S03: a GET of free times (staff «Book for en kunde», the widget) never commits; the read error was
+    rolled back and Integrationer kept saying «Forbundet». The status must stick – and clear again on the next good read."""
+    t = two_workspaces
+    tok, ws = t["tok_a"], t["ws_a"]
+    type_id = _ready(api, client, t, connect=True)
+    key, _conv, _h = _widget(api, client, t)
+    with monkeypatch.context() as m:
+        _busy_down(m)
+        assert api.get(tok, f"/workspaces/{ws}/bookings/slots?type_id={type_id}").json()["items"]  # fail-open
+        cal = api.get(tok, f"/workspaces/{ws}/integrations").json()
+        g = next(i for i in (cal.get("items") or cal) if i.get("key", i.get("connector")) == "google_calendar")
+        assert g["status"] == "error", g
+    # the calendar answers again: the next look-up (the widget's, also a GET) clears it
+    assert client.get(f"/api/v1/public/webchat/{key}/booking").status_code == 200
+    s = api.get(tok, f"/workspaces/{ws}/bookings/settings").json()["calendar_connection"]
+    assert s["status"] == "connected" and not s["error"], s

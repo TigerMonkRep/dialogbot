@@ -492,9 +492,35 @@ def connected_busy(db: OrmSession, workspace_id: uuid.UUID, frm: datetime,
             client = connectors.calendar_client(db, workspace_id, key)
             busy = client.busy(frm - timedelta(hours=1), to + timedelta(hours=1))
         except ActionError as e:
-            credentials.mark_error(conn, f"{BUSY_ERROR_PREFIX}: {e.message}")
+            _record_status(db, conn, ok=False, message=f"{BUSY_ERROR_PREFIX}: {e.message}")
             return [], False
         if conn.status == "error" and (conn.error or "").startswith(BUSY_ERROR_PREFIX):
-            credentials.mark_ok(conn)  # the read that failed works again
+            _record_status(db, conn, ok=True)  # the read that failed works again
         return busy, True
     return None, True
+
+
+def _record_status(db: OrmSession, conn, *, ok: bool, message: str = "") -> None:
+    """Record the read's outcome on the connection so it sticks even when the caller never commits: slot look-ups are
+    GETs, whose session is rolled back on close – the error was lost and Integrationer kept saying «Forbundet»
+    (F-E2D-13-S03). Written in its own short transaction (never waits long on a row lock), then mirrored on the
+    caller's object so the rest of this request sees the same status."""
+    import structlog
+    from sqlalchemy import text, update
+    from sqlalchemy.orm import Session
+
+    from app.models import IntegrationConnection
+
+    # Same values as credentials.mark_ok / mark_error.
+    values = ({"status": "connected", "error": None, "last_ok_at": datetime.now(UTC)} if ok
+              else {"status": "error", "error": message[:300]})
+    try:
+        with Session(bind=db.get_bind()) as side:
+            side.execute(text("SET LOCAL lock_timeout = '2s'"))
+            side.execute(update(IntegrationConnection).where(IntegrationConnection.id == conn.id).values(**values))
+            side.commit()
+    except Exception:  # noqa: BLE001 - recording the status must never break the look-up (fail-open)
+        structlog.get_logger("dialogbot.calendar").warning("calendar_status_not_recorded", connection_id=str(conn.id))
+    with db.no_autoflush:
+        for k, v in values.items():
+            setattr(conn, k, v)

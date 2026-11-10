@@ -798,7 +798,8 @@
         "startOver": "Ricomincia",
         "notLoggedIn": "Accedi per vedere com'è andata la chiamata.",
         "login": "Accedi",
-        "statusAria": "Stato della chiamata"
+        "statusAria": "Stato della chiamata",
+        "noCallTitle": "Al momento non chiama"
       }
     }
   }

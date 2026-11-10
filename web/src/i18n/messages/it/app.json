@@ -563,7 +563,8 @@
       "consent": "Dove e quando hanno dato il consenso a essere chiamati?",
       "consentHint": "L'assistente chiama senza una persona in linea. Ai sensi del § 10 della legge danese sulle pratiche commerciali (markedsføringsloven), ciò richiede che il contatto lo abbia chiesto in anticipo, anche se si tratta di un'azienda. Non basta che non sia iscritto alla Robinsonliste o protetto dalla pubblicità nel registro CVR.",
       "consentPlaceholder": "Iscrizione sul sito web, marzo 2026",
-      "importing": "Importazione…"
+      "importing": "Importazione…",
+      "pauseFirst": "La campagna è in corso. Mettila in pausa per aggiungere contatti – quando riparti, confermi il nuovo numero."
     },
     "start": {
       "completed": "La campagna è conclusa: tutti i contatti sono stati chiamati.",

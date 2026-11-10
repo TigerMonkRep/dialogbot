@@ -27,6 +27,7 @@ export function Klar() {
   const f = useFunnel();
   const [info, setInfo] = useState<Info | null>(null);
   const [call, setCall] = useState<Call | null>(null);
+  const [problem, setProblem] = useState<string | null>(null);
   const [err, setErr] = useState<ApiError | null>(null);
   const [waitedOut, setWaitedOut] = useState(false);
   const started = useRef(Date.now());
@@ -44,6 +45,9 @@ export function Klar() {
         if (!alive) return;
         setErr(null);
         setCall(r.call);
+        // No call was placed (outside calling hours, already called today, not open yet …): stop polling, say so.
+        if (!r.call && r.call_problem) { setProblem(r.call_problem); return; }
+        setProblem(null);
         if (isDone(r.call)) {
           if (!reported.current) { reported.current = true; track("funnel_call_done", { kind: "erhverv", step: 8, hook: f.hook, industry: draft.answers.industry ?? null, status: r.call?.status }); }
           return;
@@ -79,6 +83,15 @@ export function Klar() {
           </div>
         ) : (
           <>
+            {problem ? (
+              <>
+                <Question title={t("noCallTitle")} />
+                <section aria-label={t("statusAria")} aria-live="polite" data-call="none" className="rounded-[22px] border-2 border-ink p-5 flex flex-col gap-3 bg-white">
+                  <p className="m-0 text-[16px] leading-normal text-ink" data-call-problem>{problem}</p>
+                  <p className="m-0 text-[14px] text-ink-soft">{t("noCallBefore")}<a href={PHONE_TEL} className="font-semibold text-ink">{PHONE_DISPLAY}</a>{t("noCallAfter")}</p>
+                </section>
+              </>
+            ) : (<>
             <Question title={phone ? t("title", { phone }) : t("titleNoPhone")} help={company ? t("lead", { company }) : undefined} />
             <section aria-label={t("statusAria")} aria-live="polite" data-call={done ? "done" : call?.status ?? "waiting"}
               className={`rounded-[22px] border-2 border-ink p-5 flex flex-col gap-3 ${done ? "bg-success-soft" : "bg-white"}`}>
@@ -101,6 +114,7 @@ export function Klar() {
               )}
               {err && err.status !== 401 && <Alert>{say(err)}</Alert>}
             </section>
+            </>)}
             {done && <InstallStep audience="erhverv" />}
             <div className="flex flex-col sm:flex-row gap-3">
               <Link href="/opsaetning/1" className="inline-flex items-center justify-center gap-2 min-h-[52px] px-6 rounded-2xl bg-accent text-on-accent font-semibold text-[16px] no-underline hover:bg-accent-deep" data-make-hers>

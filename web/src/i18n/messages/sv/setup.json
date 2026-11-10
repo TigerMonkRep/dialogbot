@@ -9,21 +9,55 @@
     "skipToContent": "Hoppa till innehållet",
     "home": "Dialogbot – Idag",
     "nav": "Konfiguration",
-    "steps": ["Företag", "Kalender & system", "Testa & slå på"],
+    "steps": [
+      "Företag",
+      "Kalender & system",
+      "Testa & slå på"
+    ],
     "stepAria": "Steg {n}: {label}",
     "skipped": " (överhoppat)",
     "laterNote": " – du hittar allt igen under profilikonen → Alla inställningar."
   },
   "hours": {
-    "days": ["mån", "tis", "ons", "tors", "fre", "lör", "sön"],
-    "dayNames": ["måndag", "tisdag", "onsdag", "torsdag", "fredag", "lördag", "söndag"],
+    "days": [
+      "mån",
+      "tis",
+      "ons",
+      "tors",
+      "fre",
+      "lör",
+      "sön"
+    ],
+    "dayNames": [
+      "måndag",
+      "tisdag",
+      "onsdag",
+      "torsdag",
+      "fredag",
+      "lördag",
+      "söndag"
+    ],
     "and": "och"
   },
   "step1Page": {
     "eyebrow": "Bygg din Dialogbot · steg 1 av 3 · ca 5 min",
     "title": "Vilka är ni – och vad ska den göra?",
     "intro": "Ett steg. Vi hämtar det mesta från er webbplats – du rättar bara det som är fel. Allt kan ändras senare genom att säga det till assistenten.",
-    "need": [["1×", "webbadress"], ["1×", "CVR-nummer", "eller bara namnet"], ["1×", "numret som kunderna ringer till"]]
+    "need": [
+      [
+        "1×",
+        "webbadress"
+      ],
+      [
+        "1×",
+        "CVR-nummer",
+        "eller bara namnet"
+      ],
+      [
+        "1×",
+        "numret som kunderna ringer till"
+      ]
+    ]
   },
   "step1": {
     "kind": {
@@ -96,10 +130,22 @@
       "title": "Vad ska den göra åt er?",
       "hint": "Välj det som passar. Det avgör vad steg 2 och 3 frågar om.",
       "cards": {
-        "phone": { "title": "Svara i telefon", "sub": "när ni inte kan – eller alltid" },
-        "booking": { "title": "Boka möten", "sub": "direkt i er kalender" },
-        "web": { "title": "Svara på webbplatsen", "sub": "webbchatt – en kodrad" },
-        "outbound": { "title": "Ringa upp kunder", "sub": "kampanjer · {pCall} per samtal exkl. moms" }
+        "phone": {
+          "title": "Svara i telefon",
+          "sub": "när ni inte kan – eller alltid"
+        },
+        "booking": {
+          "title": "Boka möten",
+          "sub": "direkt i er kalender"
+        },
+        "web": {
+          "title": "Svara på webbplatsen",
+          "sub": "webbchatt – en kodrad"
+        },
+        "outbound": {
+          "title": "Ringa upp kunder",
+          "sub": "kampanjer · {pCall} per samtal exkl. moms"
+        }
       },
       "langAria": "Språk",
       "speaks": "Den talar",
@@ -129,7 +175,16 @@
   "step2Page": {
     "eyebrow": "Steg 2 av 3",
     "title": "Var ska bokningarna hamna?",
-    "need": [["1×", "inloggning till din kalender"], ["2", "minuter"]],
+    "need": [
+      [
+        "1×",
+        "inloggning till din kalender"
+      ],
+      [
+        "2",
+        "minuter"
+      ]
+    ],
     "connector": {
       "google_calendar": "Google Kalender",
       "microsoft_calendar": "Microsoft 365-kalender"
@@ -165,7 +220,20 @@
     "writeUs": "Skriv till oss",
     "managersOnly": "Endast ägare och administratörer kan ansluta system.",
     "writesTitle": "Det här skriver Dialogbot i kalendern",
-    "writes": [["1×", "bokning med kundens namn, nummer och ärende"], ["1×", "bekräftelse till er med bokningens tid"], ["0×", "ändringar i era befintliga bokningar – dem rör den aldrig"]],
+    "writes": [
+      [
+        "1×",
+        "bokning med kundens namn, nummer och ärende"
+      ],
+      [
+        "1×",
+        "bekräftelse till er med bokningens tid"
+      ],
+      [
+        "0×",
+        "ändringar i era befintliga bokningar – dem rör den aldrig"
+      ]
+    ],
     "defaultsNote": "Tiderna följer era öppettider från steg 1. Som start: bokningar på 45 minuter, 15 minuters paus och tidigast i morgon. Det kan ändras under Bokningar.",
     "next": "Vidare till steg 3: testa & slå på",
     "skip": "Hoppa över – jag använder ingen kalender"
@@ -173,7 +241,16 @@
   "step3Page": {
     "eyebrow": "Steg 3 av 3 · sista steget",
     "title": "Välj röst, anslut telefonen – och slå på",
-    "need": [["1×", "en telefon att ringa från"], ["10", "sekunder för vidarekoppling"]]
+    "need": [
+      [
+        "1×",
+        "en telefon att ringa från"
+      ],
+      [
+        "10",
+        "sekunder för vidarekoppling"
+      ]
+    ]
   },
   "step3": {
     "failed": "Det gick inte. Försök igen.",
@@ -295,21 +372,45 @@
     "managersOnly": "Endast ägare och administratörer kan slå på.",
     "subscriptionNote": "Abonnemanget kostar från {pMonthly}/mån. exkl. moms, och utgående kampanjsamtal kostar {pCall} per samtal exkl. moms.",
     "confirmSubscription": "Bekräfta abonnemang",
-    "findAgain": "Du hittar allt igen under profilikonen → Alla inställningar."
+    "findAgain": "Du hittar allt igen under profilikonen → Alla inställningar.",
+    "readerTitle": "Ägaren konfigurerar Dialogbot",
+    "campaignsTitle": "Redo för er första kampanj",
+    "campaignsText": "Det finns inget att slå på: Dialogbot ringer först ut när ni har skapat och startat en kampanj.",
+    "campaignsCta": "Skapa er första kampanj",
+    "nothingTitle": "Välj vad Dialogbot ska göra",
+    "nothingText": "Inget är valt i steg 1, så det finns inget att slå på. Välj minst en sak."
   },
   "assistant": {
     "setupChips": {
       "1": [
-        { "label": "Öppettider", "fill": "Öppettider mån-fre 8-16" },
-        { "label": "Vad händer i steg 2?", "say": "I steg 2 ansluter du din kalender så att bokningarna hamnar där. Det är valfritt – du kan hoppa över det." }
+        {
+          "label": "Öppettider",
+          "fill": "Öppettider mån-fre 8-16"
+        },
+        {
+          "label": "Vad händer i steg 2?",
+          "say": "I steg 2 ansluter du din kalender så att bokningarna hamnar där. Det är valfritt – du kan hoppa över det."
+        }
       ],
       "2": [
-        { "label": "Vad skriver ni i kalendern?", "say": "En bokning med kundens namn, nummer och ärende – och en bekräftelse till er. Era befintliga bokningar rör jag aldrig." },
-        { "label": "Vad händer i steg 3?", "say": "I steg 3 väljer du röst, ansluter telefonen med en vidarekoppling och slår på Dialogbot." }
+        {
+          "label": "Vad skriver ni i kalendern?",
+          "say": "En bokning med kundens namn, nummer och ärende – och en bekräftelse till er. Era befintliga bokningar rör jag aldrig."
+        },
+        {
+          "label": "Vad händer i steg 3?",
+          "say": "I steg 3 väljer du röst, ansluter telefonen med en vidarekoppling och slår på Dialogbot."
+        }
       ],
       "3": [
-        { "label": "Hur vidarekopplar jag?", "say": "Slå koden i steg 3 på din telefon och tryck ring. Stäng av vidarekopplingen igen med koden under den." },
-        { "label": "Kan jag ångra mig?", "say": "Ja. Du kan pausa Dialogbot från Idag och stänga av vidarekopplingen på din telefon." }
+        {
+          "label": "Hur vidarekopplar jag?",
+          "say": "Slå koden i steg 3 på din telefon och tryck ring. Stäng av vidarekopplingen igen med koden under den."
+        },
+        {
+          "label": "Kan jag ångra mig?",
+          "say": "Ja. Du kan pausa Dialogbot från Idag och stänga av vidarekopplingen på din telefon."
+        }
       ]
     },
     "chips": {

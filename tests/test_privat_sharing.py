@@ -387,15 +387,44 @@ def test_group_isolation(api, pv, db):
 
 
 def _three_users_two_known(api, pv):
+    """Ole and Anna said yes to one of Mette's invitations before (so they are «known» = suggested, by user id);
+    Peter, Mor and Far are typed numbers. F-P2-02-X10: a typed number is never matched against users' phones."""
     mette = pv.account("mette@testmail.dk", "Mette Hansen")
     ole = pv.account("ole@testmail.dk", "Ole Berg")
     pv.verify_phone(ole, "+4540404040")
     anna = pv.account("anna@testmail.dk", "Anna Holm")
     pv.verify_phone(anna, "+4541414141")
-    g = _group(api, mette, members=[{"name": "Ole", "phone": "40404040"}, {"name": "Anna", "phone": "41414141"},
+    first = pv.make_list(mette, "Lav en liste med ting til sommerhuset: kul og tændvæske")
+    for tok in (ole, anna):
+        _accept(api, tok, _share(api, mette, first)["token"])
+    g = _group(api, mette, members=[{"name": "Ole", "user_id": str(pv.uid(ole))},
+                                    {"name": "Anna", "user_id": str(pv.uid(anna))},
                                     {"name": "Peter", "phone": "20000001"}, {"name": "Mor", "phone": "20000002"},
                                     {"name": "Far", "phone": "20000003"}])
     return mette, ole, anna, g
+
+
+def test_typed_number_of_a_dialogbot_user_is_invited_never_matched(api, pv, db):
+    """F-P2-02-X10: a number typed into a group is never matched against Dialogbot users – no has_dialogbot, no
+    direct enrolment, no real name. The person gets the same invitation as anyone else and joins only by accepting."""
+    mette = pv.account("mette@testmail.dk", "Mette Hansen")
+    bea = pv.account("bea@testmail.dk", "Birgitte Sørensen")
+    pv.verify_phone(bea, "+4531313131")
+    g = _group(api, mette, members=[{"name": "?", "phone": "31313131"}])
+    assert g["members"][0]["has_dialogbot"] is False and g["members"][0]["user_id"] is None
+    tid = pv.make_list(mette)
+    out = api.post(mette, f"/privat/tasks/{tid}/share-group",
+                   {"group_id": g["id"], "mode": "group", "style": "one_by_one"}).json()
+    assert out["added_in_app"] == [] and [x["name"] for x in out["sms_queue"]] == ["?"]
+    assert pv.task(bea, tid).status_code in (403, 404)
+    assert "Birgitte" not in api.get(mette, f"/privat/tasks/{tid}/members").text
+    assert api.get(bea, "/privat/messages").json() == [] or all(
+        "Mette" not in (m.get("text") or "") for m in api.get(bea, "/privat/messages").json())
+    # she says yes to her personal link → member, and recognised (by user id) next time
+    code = out["sms_queue"][0]["short_url"].rsplit("/", 1)[1]
+    assert api.post(bea, f"/privat/invites/by-code/{code}/accept").status_code == 200
+    assert pv.task(bea, tid).json()["my_role"] == "editor"
+    assert api.get(mette, "/privat/groups").json()[0]["members"][0]["has_dialogbot"] is True
 
 
 def test_share_group_mixed(api, pv):

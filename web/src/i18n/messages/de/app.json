@@ -563,7 +563,8 @@
       "consent": "Wo und wann haben sie zugestimmt, angerufen zu werden?",
       "consentHint": "Der Assistent ruft ohne einen Menschen am Hörer an. Nach § 10 des dänischen Marketinggesetzes (markedsføringsloven) setzt das voraus, dass der Kontakt dies vorher verlangt hat – auch wenn es sich um ein Unternehmen handelt. Es reicht nicht, dass er nicht auf der Robinsonliste steht oder im CVR-Register keine Werbesperre hat.",
       "consentPlaceholder": "Anmeldung auf der Website, März 2026",
-      "importing": "Wird importiert …"
+      "importing": "Wird importiert …",
+      "pauseFirst": "Die Kampagne läuft. Pausieren Sie sie, um Kontakte hinzuzufügen – beim erneuten Start bestätigen Sie die neue Anzahl."
     },
     "start": {
       "completed": "Die Kampagne ist abgeschlossen: Alle Kontakte wurden angerufen.",

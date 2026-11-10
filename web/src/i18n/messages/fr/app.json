@@ -563,7 +563,8 @@
       "consent": "Où et quand ont-ils accepté d’être appelés ?",
       "consentHint": "L’assistant appelle sans humain au bout du fil. Selon l’article 10 de la loi danoise sur les pratiques commerciales (markedsføringsloven), le contact doit l’avoir demandé au préalable – y compris lorsqu’il s’agit d’une entreprise. Il ne suffit pas qu’il ne figure pas sur la liste Robinson ou qu’il ne soit pas protégé contre la prospection dans le registre CVR.",
       "consentPlaceholder": "Inscription sur le site web, mars 2026",
-      "importing": "Importation…"
+      "importing": "Importation…",
+      "pauseFirst": "La campagne est en cours. Mettez-la en pause pour ajouter des contacts – au redémarrage, vous confirmez le nouveau nombre."
     },
     "start": {
       "completed": "La campagne est terminée : tous les contacts ont été appelés.",

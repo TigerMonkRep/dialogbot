@@ -8,7 +8,7 @@ import { getLocale, getT } from "@/i18n/server";
 import { HTML_LANG } from "@/i18n/config";
 
 type List = { items: Campaign[]; pricing: { call_net_minor: number; minute_net_minor: number; max_attempts: number; max_connected_seconds: number; currency?: string } };
-type Goals = Record<string, unknown> & { version: number; callback: boolean };
+type Goals = Record<string, unknown> & { version: number; product_intent: string };
 
 /** «Kampagner»: ring to your own customers, one campaign at a time. Shown when «ringe kunder op» is chosen in trin 1. */
 export default async function KampagnerPage() {
@@ -24,7 +24,9 @@ export default async function KampagnerPage() {
     backend<{ is_platform_operator?: boolean }>(`/auth/me`).catch(() => ({ is_platform_operator: false })),
   ]);
   const p = list.pricing;
-  if (!goals.callback && list.items.length === 0) {
+  // «Ringe kunder op» (trin 1) = product_intent campaigns/both. Not the reception's callback flag, which the API refuses
+  // for a campaigns-only workspace (F-E2C-01-C02).
+  if (goals.product_intent === "reception" && list.items.length === 0) {
     return (
       <div className="flex flex-col gap-4 max-w-[640px] rounded-2xl border-2 border-ink bg-paper px-6 py-6 shadow-block">
         <span className="eyebrow">{t("campaigns.eyebrow")}</span>

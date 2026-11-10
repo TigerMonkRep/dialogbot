@@ -36,15 +36,16 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
   const { taendt } = await searchParams;
   // The three setup steps come first. «Jeg gør resten senere» (cookie) lets people look around before they are done.
   const st = await setupStatus(ws.id, ws.role);
-  if (!taendt && !st.done && !(await cookies()).get("db_setup_later")) redirect(`/opsaetning/${st.next}`);
   const staff = ws.role !== "reader";
+  // Readers cannot do the setup (nor read the phone's status) – they look at I dag, never at the steps (F-E2B-04-G01).
+  if (staff && !taendt && !st.done && !(await cookies()).get("db_setup_later")) redirect(`/opsaetning/${st.next}`);
   const canManage = ws.role === "owner" || ws.role === "admin";
   const [ov, tel, calls, appts, goals] = await Promise.all([
     backend<Overview>(`/workspaces/${ws.id}/overview`),
     staff ? backend<Telephony>(`/workspaces/${ws.id}/telephony`).catch(() => null) : Promise.resolve(null),
     staff ? backend<{ items: Row[] }>(`/workspaces/${ws.id}/conversations/feed?limit=5`).catch(() => null) : Promise.resolve(null),
     staff ? backend<{ items: Appt[]; timezone: string }>(`/workspaces/${ws.id}/bookings?days=30`).catch(() => null) : Promise.resolve(null),
-    backend<{ callback: boolean }>(`/workspaces/${ws.id}/goals`).catch(() => null),
+    backend<{ product_intent: string }>(`/workspaces/${ws.id}/goals`).catch(() => null),
   ]);
   const nextAppts = appts?.items.filter((a) => new Date(a.starts_at) >= new Date()).slice(0, 3) ?? [];
   const k = ov.kpis;
@@ -56,7 +57,8 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
     <div className="flex flex-wrap gap-6 items-start">
       {/* LEFT: the three things you can SEE */}
       <section className="flex-[999_1_560px] min-w-0 flex flex-col gap-5">
-        {taendt && st.done && (
+        {/* Only when the phone really is on – campaigns-only or nothing chosen has nothing that «tager telefonen» (F-E2B-03-O07). */}
+        {taendt && st.done && on && (
           <div role="status" className="stamp-in flex items-center gap-3 px-5 py-4 rounded-2xl border-2 border-ink bg-highlight shadow-block-sm">
             <Icon name="power_settings_new" size={26} />
             <span className="font-display font-extrabold text-[20px] text-ink">{t("overview.turnedOn")}</span>
@@ -158,7 +160,7 @@ export default async function OverviewPage({ searchParams }: { searchParams: Pro
               )}
               <Link href="/app/aftaler" className="self-start text-[14px] font-semibold text-ink underline underline-offset-2">{t("overview.weekAppointments")}</Link>
             </div>
-            {goals?.callback && (
+            {goals && goals.product_intent !== "reception" && (
               <div className="flex flex-col gap-2.5 px-6 py-5 rounded-2xl bg-paper border-2 border-ink">
                 <h2 className="font-display font-extrabold text-[20px] text-ink">{t("overview.campaigns")}</h2>
                 <p className="text-[14px] text-ink-soft">{t("overview.campaignsSub")}</p>

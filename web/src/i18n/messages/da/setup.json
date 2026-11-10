@@ -9,21 +9,55 @@
     "skipToContent": "Spring til indhold",
     "home": "Dialogbot – I dag",
     "nav": "Opsætning",
-    "steps": ["Virksomhed", "Kalender & systemer", "Test & tænd"],
+    "steps": [
+      "Virksomhed",
+      "Kalender & systemer",
+      "Test & tænd"
+    ],
     "stepAria": "Trin {n}: {label}",
     "skipped": " (sprunget over)",
     "laterNote": " – du finder alt igen under profil-ikonet → Alle indstillinger."
   },
   "hours": {
-    "days": ["man", "tir", "ons", "tor", "fre", "lør", "søn"],
-    "dayNames": ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"],
+    "days": [
+      "man",
+      "tir",
+      "ons",
+      "tor",
+      "fre",
+      "lør",
+      "søn"
+    ],
+    "dayNames": [
+      "mandag",
+      "tirsdag",
+      "onsdag",
+      "torsdag",
+      "fredag",
+      "lørdag",
+      "søndag"
+    ],
     "and": "og"
   },
   "step1Page": {
     "eyebrow": "Byg din Dialogbot · trin 1 af 3 · ca. 5 min",
     "title": "Hvem er I – og hvad skal den gøre?",
     "intro": "Ét trin. Vi henter det meste fra jeres hjemmeside – du retter kun det, der er forkert. Det kan ændres senere ved at sige det til assistenten.",
-    "need": [["1×", "hjemmeside-adresse"], ["1×", "CVR-nummer", "eller bare navnet"], ["1×", "det nummer, kunderne ringer til"]]
+    "need": [
+      [
+        "1×",
+        "hjemmeside-adresse"
+      ],
+      [
+        "1×",
+        "CVR-nummer",
+        "eller bare navnet"
+      ],
+      [
+        "1×",
+        "det nummer, kunderne ringer til"
+      ]
+    ]
   },
   "step1": {
     "kind": {
@@ -96,10 +130,22 @@
       "title": "Hvad skal den gøre for jer?",
       "hint": "Vælg det, der passer. Det bestemmer, hvad trin 2 og 3 spørger om.",
       "cards": {
-        "phone": { "title": "Tage telefonen", "sub": "når I ikke kan – eller altid" },
-        "booking": { "title": "Booke aftaler", "sub": "direkte i jeres kalender" },
-        "web": { "title": "Svare på hjemmesiden", "sub": "webchat – én kodelinje" },
-        "outbound": { "title": "Ringe kunder op", "sub": "kampagner · {pCall} pr. opkald ekskl. moms" }
+        "phone": {
+          "title": "Tage telefonen",
+          "sub": "når I ikke kan – eller altid"
+        },
+        "booking": {
+          "title": "Booke aftaler",
+          "sub": "direkte i jeres kalender"
+        },
+        "web": {
+          "title": "Svare på hjemmesiden",
+          "sub": "webchat – én kodelinje"
+        },
+        "outbound": {
+          "title": "Ringe kunder op",
+          "sub": "kampagner · {pCall} pr. opkald ekskl. moms"
+        }
       },
       "langAria": "Sprog",
       "speaks": "Den taler",
@@ -129,7 +175,16 @@
   "step2Page": {
     "eyebrow": "Trin 2 af 3",
     "title": "Hvor skal aftalerne lande?",
-    "need": [["1×", "login til din kalender"], ["2", "minutter"]],
+    "need": [
+      [
+        "1×",
+        "login til din kalender"
+      ],
+      [
+        "2",
+        "minutter"
+      ]
+    ],
     "connector": {
       "google_calendar": "Google Kalender",
       "microsoft_calendar": "Microsoft 365-kalender"
@@ -165,7 +220,20 @@
     "writeUs": "Skriv til os",
     "managersOnly": "Kun ejere og administratorer kan forbinde systemer.",
     "writesTitle": "Det skriver Dialogbot i kalenderen",
-    "writes": [["1×", "aftale med kundens navn, nummer og ærinde"], ["1×", "bekræftelse til jer med aftalens tidspunkt"], ["0×", "ændringer i jeres eksisterende aftaler – dem rører den aldrig"]],
+    "writes": [
+      [
+        "1×",
+        "aftale med kundens navn, nummer og ærinde"
+      ],
+      [
+        "1×",
+        "bekræftelse til jer med aftalens tidspunkt"
+      ],
+      [
+        "0×",
+        "ændringer i jeres eksisterende aftaler – dem rører den aldrig"
+      ]
+    ],
     "defaultsNote": "Tiderne følger jeres åbningstider fra trin 1. Som start: aftaler på 45 minutter, 15 minutters pause og tidligst i morgen. Det kan ændres under Aftaler.",
     "next": "Videre til trin 3: test & tænd",
     "skip": "Spring over – jeg bruger ingen kalender"
@@ -173,7 +241,16 @@
   "step3Page": {
     "eyebrow": "Trin 3 af 3 · sidste trin",
     "title": "Vælg stemme, forbind telefonen – og tænd",
-    "need": [["1×", "en telefon at ringe fra"], ["10", "sekunder til viderestilling"]]
+    "need": [
+      [
+        "1×",
+        "en telefon at ringe fra"
+      ],
+      [
+        "10",
+        "sekunder til viderestilling"
+      ]
+    ]
   },
   "step3": {
     "failed": "Det lykkedes ikke. Prøv igen.",
@@ -295,21 +372,45 @@
     "managersOnly": "Kun ejere og administratorer kan tænde.",
     "subscriptionNote": "Abonnementet er fra {pMonthly}/md. ekskl. moms, og udgående kampagneopkald koster {pCall} pr. opkald ekskl. moms.",
     "confirmSubscription": "Bekræft abonnement",
-    "findAgain": "Du finder alt igen under profil-ikonet → Alle indstillinger."
+    "findAgain": "Du finder alt igen under profil-ikonet → Alle indstillinger.",
+    "readerTitle": "Ejeren sætter Dialogbot op",
+    "campaignsTitle": "Klar til jeres første kampagne",
+    "campaignsText": "Der er intet at tænde: Dialogbot ringer først ud, når I har oprettet og startet en kampagne.",
+    "campaignsCta": "Opret jeres første kampagne",
+    "nothingTitle": "Vælg hvad Dialogbot skal gøre",
+    "nothingText": "I trin 1 er der ikke valgt noget, så der er intet at tænde. Vælg mindst én ting."
   },
   "assistant": {
     "setupChips": {
       "1": [
-        { "label": "Åbningstider", "fill": "Åbningstider man-fre 8-16" },
-        { "label": "Hvad sker der i trin 2?", "say": "I trin 2 forbinder du din kalender, så aftaler lander dér. Det er valgfrit – du kan springe det over." }
+        {
+          "label": "Åbningstider",
+          "fill": "Åbningstider man-fre 8-16"
+        },
+        {
+          "label": "Hvad sker der i trin 2?",
+          "say": "I trin 2 forbinder du din kalender, så aftaler lander dér. Det er valgfrit – du kan springe det over."
+        }
       ],
       "2": [
-        { "label": "Hvad skriver I i kalenderen?", "say": "En aftale med kundens navn, nummer og ærinde – og en bekræftelse til jer. Jeres eksisterende aftaler rører jeg aldrig." },
-        { "label": "Hvad sker der i trin 3?", "say": "I trin 3 vælger du stemme, forbinder telefonen med en viderestilling og tænder Dialogbot." }
+        {
+          "label": "Hvad skriver I i kalenderen?",
+          "say": "En aftale med kundens navn, nummer og ærinde – og en bekræftelse til jer. Jeres eksisterende aftaler rører jeg aldrig."
+        },
+        {
+          "label": "Hvad sker der i trin 3?",
+          "say": "I trin 3 vælger du stemme, forbinder telefonen med en viderestilling og tænder Dialogbot."
+        }
       ],
       "3": [
-        { "label": "Hvordan viderestiller jeg?", "say": "Tast koden i trin 3 på din telefon og tryk ring. Slå viderestillingen fra igen med koden under den." },
-        { "label": "Kan jeg fortryde?", "say": "Ja. Du kan sætte Dialogbot på pause fra I dag, og slå viderestillingen fra på din telefon." }
+        {
+          "label": "Hvordan viderestiller jeg?",
+          "say": "Tast koden i trin 3 på din telefon og tryk ring. Slå viderestillingen fra igen med koden under den."
+        },
+        {
+          "label": "Kan jeg fortryde?",
+          "say": "Ja. Du kan sætte Dialogbot på pause fra I dag, og slå viderestillingen fra på din telefon."
+        }
       ]
     },
     "chips": {

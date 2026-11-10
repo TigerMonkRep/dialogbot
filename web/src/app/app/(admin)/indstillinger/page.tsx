@@ -17,7 +17,7 @@ const SHEETS = ["telefoni", "hilsen", "stemmer", "webchat", "booking", "integrat
 type Tel = { status: { code: string; label: string; next_step: string }; business_number: string | null };
 type Web = { enabled: boolean; available: boolean; allowed_origins: string[] };
 type Book = { enabled: boolean; lead_time_hours: number; horizon_days: number; buffer_minutes: number; types: { active: boolean }[]; busy_ics_url: string | null; has_opening_hours: boolean };
-type Goals = { callback: boolean; booking: boolean; inbound_phone: boolean; webchat: boolean };
+type Goals = { product_intent: string; callback: boolean; booking: boolean; inbound_phone: boolean; webchat: boolean };
 type Cat = { items: { key: string; label: string; status: string; account_label: string; simulated?: boolean }[] };
 type Voices = { settings: { standard_voice: string | null; standard_default: string; default_profile_id: string | null } };
 
@@ -46,6 +46,8 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
   const calendar = cat?.items.find((i) => i.key.includes("calendar") && i.status === "connected");
   const connected = cat?.items.filter((i) => i.status === "connected") ?? [];
   const row = (r: Row) => r;
+  // «Ringe kunder op» in trin 1 = product_intent campaigns/both – not the reception's «ring tilbage» (F-E2B-11-O03).
+  const outbound = Boolean(goals && goals.product_intent !== "reception");
   const chapters: Chapter[] = [
     { n: 1, title: t("overview.phone.title"), sub: t("overview.phone.sub"), rows: [
       row({ label: t("overview.phone.number"), value: tel ? `${tel.status.label}${tel.business_number ? ` · ${tel.business_number}` : ""}` : "–", status: tel?.status.code === "active" ? "ready" : tel && tel.status.code !== "not_started" ? "soon" : "off", ark: "telefoni" }),
@@ -66,7 +68,7 @@ export default async function IndstillingerPage({ searchParams }: { searchParams
       row({ label: t("overview.booking.appointments"), value: t("overview.booking.appointmentsValue"), status: "ready", href: "/app/aftaler" }),
     ] },
     { n: 5, title: t("overview.campaigns.title"), sub: t("overview.campaigns.sub"), rows: [
-      row({ label: t("overview.campaigns.outbound"), value: goals?.callback ? t("overview.campaigns.chosen") : t("overview.campaigns.notChosen"), status: goals?.callback ? "ready" : "off", href: "/app/kampagner" }),
+      row({ label: t("overview.campaigns.outbound"), value: outbound ? t("overview.campaigns.chosen") : t("overview.campaigns.notChosen"), status: outbound ? "ready" : "off", href: "/app/kampagner" }),
     ] },
     { n: 6, title: t("overview.systems.title"), sub: t("overview.systems.sub"), rows: [
       row({ label: t("overview.systems.calendar"), value: calendar ? sim(calendar, calendar.account_label || calendar.label) : book?.busy_ics_url ? t("overview.systems.ical") : t("overview.systems.notConnected"), status: calendar || book?.busy_ics_url ? "ready" : "off", ark: "integrationer" }),

@@ -9,21 +9,55 @@
     "skipToContent": "Vai al contenuto",
     "home": "Dialogbot – Oggi",
     "nav": "Configurazione",
-    "steps": ["Azienda", "Calendario e sistemi", "Test e attivazione"],
+    "steps": [
+      "Azienda",
+      "Calendario e sistemi",
+      "Test e attivazione"
+    ],
     "stepAria": "Passaggio {n}: {label}",
     "skipped": " (saltato)",
     "laterNote": " – ritrova tutto sotto l'icona del profilo → Tutte le impostazioni."
   },
   "hours": {
-    "days": ["lun", "mar", "mer", "gio", "ven", "sab", "dom"],
-    "dayNames": ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"],
+    "days": [
+      "lun",
+      "mar",
+      "mer",
+      "gio",
+      "ven",
+      "sab",
+      "dom"
+    ],
+    "dayNames": [
+      "lunedì",
+      "martedì",
+      "mercoledì",
+      "giovedì",
+      "venerdì",
+      "sabato",
+      "domenica"
+    ],
     "and": "e"
   },
   "step1Page": {
     "eyebrow": "Configuri il suo Dialogbot · passaggio 1 di 3 · circa 5 min",
     "title": "Chi siete e cosa deve fare?",
     "intro": "Un solo passaggio. Recuperiamo quasi tutto dal vostro sito web: lei corregge solo ciò che è sbagliato. Potrà modificarlo in seguito semplicemente dicendolo all'assistente.",
-    "need": [["1×", "indirizzo del sito web"], ["1×", "numero CVR", "o anche solo il nome"], ["1×", "il numero che chiamano i clienti"]]
+    "need": [
+      [
+        "1×",
+        "indirizzo del sito web"
+      ],
+      [
+        "1×",
+        "numero CVR",
+        "o anche solo il nome"
+      ],
+      [
+        "1×",
+        "il numero che chiamano i clienti"
+      ]
+    ]
   },
   "step1": {
     "kind": {
@@ -96,10 +130,22 @@
       "title": "Cosa deve fare per voi?",
       "hint": "Scelga ciò che fa al caso suo. Determina cosa le chiederanno i passaggi 2 e 3.",
       "cards": {
-        "phone": { "title": "Rispondere al telefono", "sub": "quando voi non potete, o sempre" },
-        "booking": { "title": "Prenotare appuntamenti", "sub": "direttamente nel vostro calendario" },
-        "web": { "title": "Rispondere sul sito web", "sub": "webchat – una riga di codice" },
-        "outbound": { "title": "Chiamare i clienti", "sub": "campagne · {pCall} a chiamata IVA esclusa" }
+        "phone": {
+          "title": "Rispondere al telefono",
+          "sub": "quando voi non potete, o sempre"
+        },
+        "booking": {
+          "title": "Prenotare appuntamenti",
+          "sub": "direttamente nel vostro calendario"
+        },
+        "web": {
+          "title": "Rispondere sul sito web",
+          "sub": "webchat – una riga di codice"
+        },
+        "outbound": {
+          "title": "Chiamare i clienti",
+          "sub": "campagne · {pCall} a chiamata IVA esclusa"
+        }
       },
       "langAria": "Lingua",
       "speaks": "Parla",
@@ -129,7 +175,16 @@
   "step2Page": {
     "eyebrow": "Passaggio 2 di 3",
     "title": "Dove devono finire gli appuntamenti?",
-    "need": [["1×", "accesso al suo calendario"], ["2", "minuti"]],
+    "need": [
+      [
+        "1×",
+        "accesso al suo calendario"
+      ],
+      [
+        "2",
+        "minuti"
+      ]
+    ],
     "connector": {
       "google_calendar": "Google Calendar",
       "microsoft_calendar": "Calendario Microsoft 365"
@@ -165,7 +220,20 @@
     "writeUs": "Ci scriva",
     "managersOnly": "Solo proprietari e amministratori possono collegare sistemi.",
     "writesTitle": "Cosa scrive Dialogbot nel calendario",
-    "writes": [["1×", "appuntamento con nome, numero e motivo del cliente"], ["1×", "conferma per voi con l'orario dell'appuntamento"], ["0×", "modifiche ai vostri appuntamenti esistenti: non li tocca mai"]],
+    "writes": [
+      [
+        "1×",
+        "appuntamento con nome, numero e motivo del cliente"
+      ],
+      [
+        "1×",
+        "conferma per voi con l'orario dell'appuntamento"
+      ],
+      [
+        "0×",
+        "modifiche ai vostri appuntamenti esistenti: non li tocca mai"
+      ]
+    ],
     "defaultsNote": "Gli orari seguono i vostri orari di apertura del passaggio 1. Per iniziare: appuntamenti di 45 minuti, 15 minuti di pausa e non prima di domani. Può modificarlo in Appuntamenti.",
     "next": "Avanti al passaggio 3: test e attivazione",
     "skip": "Salta: non uso un calendario"
@@ -173,7 +241,16 @@
   "step3Page": {
     "eyebrow": "Passaggio 3 di 3 · ultimo passaggio",
     "title": "Scelga la voce, colleghi il telefono e attivi",
-    "need": [["1×", "un telefono da cui chiamare"], ["10", "secondi per l'inoltro"]]
+    "need": [
+      [
+        "1×",
+        "un telefono da cui chiamare"
+      ],
+      [
+        "10",
+        "secondi per l'inoltro"
+      ]
+    ]
   },
   "step3": {
     "failed": "Non è riuscito. Riprovi.",
@@ -295,21 +372,45 @@
     "managersOnly": "Solo proprietari e amministratori possono attivarlo.",
     "subscriptionNote": "L'abbonamento parte da {pMonthly}/mese IVA esclusa e le chiamate in uscita delle campagne costano {pCall} a chiamata IVA esclusa.",
     "confirmSubscription": "Conferma l'abbonamento",
-    "findAgain": "Ritrova tutto sotto l'icona del profilo → Tutte le impostazioni."
+    "findAgain": "Ritrova tutto sotto l'icona del profilo → Tutte le impostazioni.",
+    "readerTitle": "Il titolare configura Dialogbot",
+    "campaignsTitle": "Pronti per la vostra prima campagna",
+    "campaignsText": "Non c'è nulla da accendere: Dialogbot chiama solo dopo che avete creato e avviato una campagna.",
+    "campaignsCta": "Crea la vostra prima campagna",
+    "nothingTitle": "Scegli cosa deve fare Dialogbot",
+    "nothingText": "Nel passo 1 non è stato scelto nulla, quindi non c'è nulla da accendere. Scegli almeno una cosa."
   },
   "assistant": {
     "setupChips": {
       "1": [
-        { "label": "Orari di apertura", "fill": "Orari di apertura lun-ven 8-16" },
-        { "label": "Cosa succede nel passaggio 2?", "say": "Nel passaggio 2 collega il suo calendario, così gli appuntamenti finiscono lì. È facoltativo: può saltarlo." }
+        {
+          "label": "Orari di apertura",
+          "fill": "Orari di apertura lun-ven 8-16"
+        },
+        {
+          "label": "Cosa succede nel passaggio 2?",
+          "say": "Nel passaggio 2 collega il suo calendario, così gli appuntamenti finiscono lì. È facoltativo: può saltarlo."
+        }
       ],
       "2": [
-        { "label": "Cosa scrivete nel calendario?", "say": "Un appuntamento con nome, numero e motivo del cliente, più una conferma per voi. Non tocco mai i vostri appuntamenti esistenti." },
-        { "label": "Cosa succede nel passaggio 3?", "say": "Nel passaggio 3 sceglie la voce, collega il telefono con un inoltro e attiva Dialogbot." }
+        {
+          "label": "Cosa scrivete nel calendario?",
+          "say": "Un appuntamento con nome, numero e motivo del cliente, più una conferma per voi. Non tocco mai i vostri appuntamenti esistenti."
+        },
+        {
+          "label": "Cosa succede nel passaggio 3?",
+          "say": "Nel passaggio 3 sceglie la voce, collega il telefono con un inoltro e attiva Dialogbot."
+        }
       ],
       "3": [
-        { "label": "Come attivo l'inoltro?", "say": "Digiti sul suo telefono il codice del passaggio 3 e prema chiama. Disattivi l'inoltro con il codice riportato sotto." },
-        { "label": "Posso tornare indietro?", "say": "Sì. Può mettere in pausa Dialogbot da Oggi e disattivare l'inoltro sul suo telefono." }
+        {
+          "label": "Come attivo l'inoltro?",
+          "say": "Digiti sul suo telefono il codice del passaggio 3 e prema chiama. Disattivi l'inoltro con il codice riportato sotto."
+        },
+        {
+          "label": "Posso tornare indietro?",
+          "say": "Sì. Può mettere in pausa Dialogbot da Oggi e disattivare l'inoltro sul suo telefono."
+        }
       ]
     },
     "chips": {

@@ -9,7 +9,8 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
@@ -87,7 +88,11 @@ def build_system_prompt(db: OrmSession, workspace: Workspace,
     Peter passes ("public", "customer_docs"); "internal" is refused here so it can never end in a prompt."""
     if "internal" in audiences or not set(audiences) <= set(PROMPT_AUDIENCES):
         raise ValueError("internal knowledge never goes into a prompt")
-    items = knowledge.active_knowledge(db, workspace.id, audiences)
+    from app.modules.reports.service import tz_of
+
+    now = datetime.now(ZoneInfo(tz_of(db, workspace.id)))
+    # An offer outside its dates is not something the assistant may give (DB-005: «1 Dec expired») – F-E2C-05-K04.
+    items = [i for i in knowledge.active_knowledge(db, workspace.id, audiences) if offer_current(i, now.date())]
     if not items:
         raise Conflict("Der er ingen godkendt viden endnu. Godkend mindst ét vidensemne, før assistenten kan svare.",
                        code="no_approved_knowledge")
@@ -96,7 +101,38 @@ def build_system_prompt(db: OrmSession, workspace: Workspace,
 
     prompt = INSTRUCTIONS.format(name=workspace.name, revision=workspace.knowledge_revision, knowledge=body)
     script = reception.prompt_section(db.get(reception.ReceptionScript, workspace.id))
-    return (f"{prompt}\n\n{script}" if script else prompt), workspace.knowledge_revision
+    prompt = f"{prompt}\n\n{script}" if script else prompt
+    return f"{prompt}\n\n{now_section(now)}", workspace.knowledge_revision
+
+
+def offer_current(item: dict, today: date) -> bool:
+    """False for an offer whose starts_on is in the future or whose ends_on_inclusive has passed (business's local date).
+    Every other kind, and offers without dates, are always current."""
+    c = item.get("content")
+    if item.get("kind") != "offer" or not isinstance(c, dict):
+        return True
+    try:
+        if c.get("starts_on") and today < date.fromisoformat(c["starts_on"]):
+            return False
+        if c.get("ends_on_inclusive") and today > date.fromisoformat(c["ends_on_inclusive"]):
+            return False
+    except (TypeError, ValueError):
+        return True
+    return True
+
+
+_WEEKDAYS = ("mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag")
+_MONTHS = ("januar", "februar", "marts", "april", "maj", "juni", "juli", "august", "september", "oktober", "november",
+           "december")
+NOW_OPEN, NOW_CLOSE = "<nu>", "</nu>"
+
+
+def now_section(now: datetime) -> str:
+    """Date, weekday and time in the business's time zone (F-V2-05-R07: «har I åbent nu?», «i morgen», fra_dato). Kept
+    in its own <nu> block at the end, so the provider can leave it out of the cached prefix (provider.split_now)."""
+    return (f"{NOW_OPEN}Lige nu er det {_WEEKDAYS[now.weekday()]} den {now.day}. {_MONTHS[now.month - 1]} {now.year}, "
+            f"klokken {now:%H.%M} ({now.tzinfo}); dato {now:%Y-%m-%d}. Brug det til åbningstider, datoer og tilbuds "
+            f"gyldighed.{NOW_CLOSE}")
 
 
 _ONES = ["nul", "en", "to", "tre", "fire", "fem", "seks", "syv", "otte", "ni", "ti", "elleve", "tolv", "tretten", "fjorten",

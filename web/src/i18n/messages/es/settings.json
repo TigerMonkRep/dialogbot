@@ -640,5 +640,30 @@
     "back": "Volver a las voces",
     "notice": "La voz propia se crea a partir de una grabación breve. El parecido con la persona que graba puede variar, sobre todo en voces muy distintas de las voces de entrenamiento del modelo. El parecido total requiere entrenamiento con el guion estándar, que Dialogbot ofrecerá más adelante.",
     "previous": "Grabaciones anteriores"
+  },
+  "apiKeys": {
+    "title": "Claves API",
+    "intro": "Para vuestros propios sistemas (CRM, Zapier, código propio) mediante la API de Dialogbot. Dale un nombre a cada clave y solo los permisos que necesita.",
+    "name": "Nombre",
+    "namePlaceholder": "P. ej. sincronización CRM",
+    "scopes": "Permisos",
+    "write": "puede modificar datos",
+    "create": "Crear clave",
+    "creating": "Creando…",
+    "onceTitle": "La clave «{name}»: cópiala ahora",
+    "onceNote": "Solo se muestra esta vez. Si la pierdes, revócala y crea una nueva.",
+    "copy": "Copiar",
+    "copied": "Copiada",
+    "saved": "La he guardado",
+    "listTitle": "Vuestras claves",
+    "none": "Todavía no hay claves.",
+    "created": "creada el {date}",
+    "lastUsed": "último uso {date}",
+    "neverUsed": "nunca usada",
+    "revoke": "Revocar",
+    "revokeConfirm": "¿Revocar «{name}»? Los sistemas que la usan pierden el acceso de inmediato.",
+    "revoked": "revocada el {date}",
+    "expired": "caducada",
+    "docs": "Cómo usarla: envíala como «Authorization: Bearer <clave>» a la API de Dialogbot (https://api.dialogbot.app/v1)."
   }
 }

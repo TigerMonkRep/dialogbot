@@ -30,3 +30,5 @@
 | 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | batch 6 | F-EA-07 (openapi regen), F-VR-03-X11 (insert-first idempotency, x11 10/10), F-PQ-02-X07 (hero-CTA → trial checkout); ikke committet |
 | 16:30 | verifier → qa-lead, fix-engineer | verdict | batch 6 | F-VR-03 closed (10/10, 680 idem-tests), F-EA-07 closed (openapi cmp ok), F-PQ-02 reopened (anonym CTA → demo, account.tsx:43); nyt F-VR-04 (S3 stale-overtagelse) |
 | 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | batch 7 | F-PQ-02 (demo + ?plan → signup), F-VR-04-X11 (atomisk overtagelse + tests/test_idempotency.py); ikke committet |
+| 17:05 | verifier → qa-lead | verdict | batch 7 | F-PQ-02 closed (X07 8/8 + anonym ?plan= → signup → checkout, uden ?plan= demo), F-VR-04 closed (test_idempotency 5×, trådet probe: én vinder) |
+| 18:55 | qa-lead → Fürster | verdict | bølge 1 | GO: 0 åbne S0/S1, 51 fund lukket, CI grøn – merger PR #176 |

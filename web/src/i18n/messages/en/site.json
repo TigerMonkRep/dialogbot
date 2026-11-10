@@ -2,7 +2,7 @@
   "prices": {
     "monthly": "{pMonthly}",
     "setup": "{pSetup}",
-    "perMinute": "{pMinuteNum}"
+    "perCall": "{pCallAnsweredNum}"
   },
   "demoCall": {
     "label": "Call · Carpentry firm (example)",
@@ -84,7 +84,7 @@
         },
         {
           "title": "Calls customers",
-          "text": "Follows up on quotes or sends service reminders – only to customers who have said yes. The minutes come out of the package, with no charge per call."
+          "text": "Follows up on quotes or sends service reminders – only to customers who have said yes. The minutes come out of the package; then {pCallAnswered} per answered call + {pMinute} per minute."
         }
       ],
       "note": "Everything it says is based on knowledge you have approved – and it shows you every change first: before → after, “Approve?”."
@@ -118,11 +118,11 @@
       },
       "campaign": {
         "name": "Outbound campaign calls",
-        "unit": "per minute beyond the package",
-        "text": "Only if you want Dialogbot to make calls. The minutes come out of the subscription's {pIncluded} minutes, and an unanswered call costs nothing. You see the maximum price before you start.",
+        "unit": "per answered call + {pMinute}/min after the package",
+        "text": "Only if you want Dialogbot to make calls. The minutes come out of the subscription's {pIncluded} minutes with no charge per call. Once the package is used, a call costs {pCallAnswered} (answered), {pCallVoicemail} (voicemail) or {pCallNoAnswer} (unanswered) plus {pMinute} per minute – at most {pContactMax} per contact. You see the maximum price before you start.",
         "badge": "Add-on",
         "points": [
-          "No charge per call – no extra subscription",
+          "No charge per call inside the package – no extra subscription",
           "You approve the script before it calls anyone",
           "The maximum price is shown before the campaign starts"
         ],
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Outbound campaign calls",
-        "description": "Per started outbound minute beyond the subscription's {pIncluded} minutes, excl. VAT. No charge per call."
+        "description": "Per answered outbound call after the subscription's {pIncluded} minutes, excl. VAT, plus {pMinute} per started minute (voicemail {pCallVoicemail}, unanswered {pCallNoAnswer})."
       },
       "setup": {
         "name": "Setup by Dialogbot's specialists",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Outbound campaign calls",
-        "unit": "per minute beyond the package",
+        "unit": "per answered call after the package",
         "points": [
           "Only if you want Dialogbot to make calls",
           "Contacts have agreed to be called",

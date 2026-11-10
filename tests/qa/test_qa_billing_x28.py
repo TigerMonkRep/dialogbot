@@ -243,8 +243,9 @@ def test_x28_campaign_calls_never_count_as_inbound_minutes(api, two_workspaces, 
 
 def test_x28_agreement_plan_prices_are_in_the_workspace_currency(api, two_workspaces, db):
     """/app/konto shows the subscription and the minute prices from GET /agreement → plan, formatted in the account's
-    currency. A Swedish company is charged the SEK list prices (markets.ERHVERV['SEK']: 3.695 kr/md, no price per call,
-    2,95 kr per outbound minute and 2,20 kr per inbound minute above the package) and must be shown them."""
+    currency. A Swedish company is charged the SEK list prices (markets.ERHVERV['SEK']: 3.695 kr/md, no call price inside the package,
+    2,95 kr per outbound minute and 2,20 kr per inbound minute above the package, 5,90 kr per answered call after it) and
+    must be shown them."""
     from app.models import BusinessProfile
 
     tok, ws = two_workspaces["tok_a"], two_workspaces["ws_a"]
@@ -256,7 +257,7 @@ def test_x28_agreement_plan_prices_are_in_the_workspace_currency(api, two_worksp
     plan = api.get(tok, f"/workspaces/{ws}/agreement").json()["plan"]
     shown = (plan["monthly_net_minor"], plan["campaign_call_net_minor"], plan["outbound_extra_minute_net_minor"],
              plan["inbound_extra_minute_net_minor"], plan["included_minutes"])
-    assert shown == (369_500, 0, 295, 220, 300), f"konto would show {shown} as SEK"
+    assert shown == (369_500, 590, 295, 220, 300), f"konto would show {shown} as SEK"  # 5,90 kr per answered call after the package
 
 
 def test_x28_konto_text_says_started_minute_for_campaign_calls_like_for_inbound():

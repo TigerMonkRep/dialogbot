@@ -23,24 +23,36 @@
       "monthly": 249500,
       "extra_minute": 150,
       "outbound_extra_minute": 200,
+      "call_answered": 400,
+      "call_voicemail": 100,
+      "call_no_answer": 25,
       "setup": 500000
     },
     "SEK": {
       "monthly": 369500,
       "extra_minute": 220,
       "outbound_extra_minute": 295,
+      "call_answered": 590,
+      "call_voicemail": 150,
+      "call_no_answer": 35,
       "setup": 729500
     },
     "NOK": {
       "monthly": 399500,
       "extra_minute": 235,
       "outbound_extra_minute": 315,
+      "call_answered": 630,
+      "call_voicemail": 160,
+      "call_no_answer": 40,
       "setup": 789500
     },
     "EUR": {
       "monthly": 32900,
       "extra_minute": 20,
       "outbound_extra_minute": 27,
+      "call_answered": 55,
+      "call_voicemail": 14,
+      "call_no_answer": 3,
       "setup": 66900
     }
   },

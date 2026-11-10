@@ -2,7 +2,7 @@
   "prices": {
     "monthly": "{pMonthlyNum}",
     "setup": "{pSetupNum}",
-    "perMinute": "{pMinuteNum}"
+    "perCall": "{pCallAnsweredNum}"
   },
   "demoCall": {
     "label": "Opkald · Tømrerfirma (eksempel)",
@@ -84,7 +84,7 @@
         },
         {
           "title": "Ringer kunder op",
-          "text": "Følger op på tilbud eller minder om service – kun til kunder, der har sagt ja. Minutterne trækker på pakken, og der er ingen pris pr. opkald."
+          "text": "Følger op på tilbud eller minder om service – kun til kunder, der har sagt ja. Minutterne trækker på pakken; derefter {pCallAnswered} pr. besvaret opkald + {pMinute} pr. minut."
         }
       ],
       "note": "Alt, den siger, bygger på viden I selv har godkendt – og enhver ændring viser den jer først: før → efter, «Godkend?»."
@@ -118,11 +118,11 @@
       },
       "campaign": {
         "name": "Udgående kampagneopkald",
-        "unit": "{pCur} pr. minut ud over pakken",
-        "text": "Kun hvis I vil have Dialogbot til at ringe ud. Samtaleminutterne trækker på abonnementets {pIncluded} minutter, og et ubesvaret opkald koster intet. I ser den højeste pris, før I starter.",
+        "unit": "{pCur} pr. besvaret opkald + {pMinute}/min efter pakken",
+        "text": "Kun hvis I vil have Dialogbot til at ringe ud. Samtaleminutterne trækker på abonnementets {pIncluded} minutter uden pris pr. opkald. Er pakken brugt, koster et opkald {pCallAnswered} (besvaret), {pCallVoicemail} (telefonsvarer) eller {pCallNoAnswer} (ubesvaret) plus {pMinute} pr. minut – højst {pContactMax} pr. kontakt. I ser den højeste pris, før I starter.",
         "badge": "Tilvalg",
         "points": [
-          "Ingen pris pr. opkald – intet ekstra abonnement",
+          "Inden for pakken ingen pris pr. opkald – intet ekstra abonnement",
           "I godkender manuskriptet, før den ringer til nogen",
           "Maks-prisen vises, før kampagnen starter"
         ],
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Udgående kampagneopkald",
-        "description": "Pr. påbegyndt udgående minut ud over abonnementets {pIncluded} minutter, ekskl. moms. Ingen pris pr. opkald."
+        "description": "Pr. besvaret udgående opkald efter abonnementets {pIncluded} minutter, ekskl. moms, plus {pMinute} pr. påbegyndt minut (telefonsvarer {pCallVoicemail}, ubesvaret {pCallNoAnswer})."
       },
       "setup": {
         "name": "Opsætning fra Dialogbots specialister",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Udgående kampagneopkald",
-        "unit": "{pCur} pr. minut ud over pakken",
+        "unit": "{pCur} pr. besvaret opkald efter pakken",
         "points": [
           "Kun hvis I vil have Dialogbot til at ringe ud",
           "Kontakterne har selv sagt ja til at blive ringet op",

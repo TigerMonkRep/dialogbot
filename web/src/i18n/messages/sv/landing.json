@@ -54,20 +54,20 @@
   "pricing": {
     "meta": {
       "title": "Priser – AI-receptionist för {pMonthly} i månaden",
-      "description": "Se priset för Dialogbot: ett abonnemang för {pMonthly} i månaden exkl. moms med 300 minuter för in- och utgående samtal. Telefon, chatt, bokning och personlig konfiguration ingår. Det finns inget pris per samtal.",
+      "description": "Se priset för Dialogbot: ett abonnemang för {pMonthly} i månaden exkl. moms med 300 minuter för in- och utgående samtal. Telefon, chatt, bokning och personlig konfiguration ingår. Inom paketet finns inget pris per samtal; när det är förbrukat kostar ett utgående samtal {pCallAnswered} (besvarat), {pCallVoicemail} (röstbrevlåda) eller {pCallNoAnswer} (obesvarat) plus {pMinute} per minut.",
       "ogTitle": "Priser för AI-receptionist | Dialogbot"
     },
     "kicker": "Priser",
     "title": "Ett abonnemang – {pMonthly} i månaden",
     "lead": "Ett pris, hela Dialogbot: AI-receptionist i telefon, chattbot på webbplatsen, bokning och en sammanfattning av varje ärende. Alla priser är exkl. moms.",
-    "points": ["{pMonthly} i månaden – ett abonnemang", "Inget pris per ärende", "{pIncluded} minuter per månad ingår – för in- och utgående samtal", "Därefter {pExtraMinute} per minut in och {pMinute} per minut ut – inget pris per samtal", "Ingen bindningstid", "Konfiguration på egen hand ingår – konfiguration av specialister {pSetup}"],
+    "points": ["{pMonthly} i månaden – ett abonnemang", "Inget pris per ärende", "{pIncluded} minuter per månad ingår – för in- och utgående samtal", "Därefter {pExtraMinute} per minut in; utgående {pCallAnswered} per besvarat samtal + {pMinute} per minut", "Ingen bindningstid", "Konfiguration på egen hand ingår – konfiguration av specialister {pSetup}"],
     "sections": {
       "subscription": {
         "title": "Abonnemanget",
         "p1Price": "{pMonthly} i månaden",
         "p1a": " exkl. moms. Det finns inget pris per ärende, och ",
         "p1Minutes": "{pIncluded} minuter per månad ingår – för både inkommande samtal och utgående kampanjsamtal",
-        "p1b": " – det räcker för de flesta små företag. Använder ni fler kostar varje påbörjad minut därutöver {pExtraMinute} för inkommande och {pMinute} för utgående samtal. Ni kan alltid se er förbrukning i Dialogbot.",
+        "p1b": " – det räcker för de flesta små företag. Inom paketet finns inget pris per samtal. Använder ni fler minuter kostar varje påbörjad inkommande minut {pExtraMinute}; utgående kampanjsamtal efter paketet beskrivs nedan. Ni kan alltid se er förbrukning per samtal i Dialogbot.",
         "p2": "Priset för en telefonpassning – men en receptionist som också bokar tiderna i er kalender och skickar ett meddelande om varje samtal.",
         "p3a": "Passar företag där telefonen ringer medan ni har fullt upp: hantverkare, kliniker, salonger, verkstäder och rådgivare. Vill ni höra den först kan ni ",
         "p3Link": "låta Dialogbot ringa upp er",
@@ -97,12 +97,12 @@
       },
       "outbound": {
         "title": "Utgående kampanjsamtal",
-        "p1a": "Vill ni att assistenten ska ringa kontakter som själva har sagt ja till att bli uppringda dras minuterna från samma minuter i abonnemanget. När paketet är förbrukat kostar det ",
-        "p1Call": "{pMinute} per påbörjad utgående minut",
-        "p1b": " – och ",
-        "p1Minute": "inget per samtal",
+        "p1a": "Vill ni att assistenten ska ringa kontakter som själva har sagt ja till att bli uppringda dras minuterna från samma minuter i abonnemanget – utan pris per samtal. När paketet är förbrukat kostar varje samtal som startar därefter ",
+        "p1Call": "{pCallAnswered} om personen svarar, {pCallVoicemail} vid röstbrevlåda och {pCallNoAnswer} vid obesvarat eller upptaget",
+        "p1b": " plus ",
+        "p1Minute": "{pMinute} per påbörjad samtalsminut",
         "p1c": ", exkl. moms.",
-        "p2": "Ett obesvarat samtal kostar ingenting. Paketet delas med de inkommande samtalen och används i den ordning samtalen sker. En kontakt rings högst 2 gånger och pratar högst 3 minuter totalt, och ni ser det högsta priset innan ni trycker på Start."
+        "p2": "Ett samtal som korsar gränsen delar bara sina minuter – det får inget samtalspris. Paketet delas med de inkommande samtalen och används i den ordning samtalen sker. En kontakt rings högst 2 gånger och pratar högst 3 minuter, så en kontakt kostar högst {pContactMax}, och ni ser det högsta priset innan ni trycker på Start."
       },
       "start": {
         "title": "Kom igång",
@@ -117,11 +117,11 @@
     },
     "faq": [
       ["Finns det någon bindningstid?", "Nej. Det finns ingen bindningstid. Ni kan säga upp till slutet av innevarande månad."],
-      ["Är {pMonthly} hela priset?", "Ja, det är hela priset för abonnemanget, exkl. moms. Det finns bara ett abonnemang och inget extra pris per ärende. Endast om ni använder mer än 300 minuter i månaden (in och ut tillsammans) kostar varje minut därutöver {pExtraMinute} in och {pMinute} ut"],
+      ["Är {pMonthly} hela priset?", "Ja, det är hela priset för abonnemanget, exkl. moms. Det finns bara ett abonnemang och inget extra pris per ärende. Endast om ni använder mer än 300 minuter i månaden (in och ut tillsammans) kostar varje minut därutöver {pExtraMinute} in och {pMinute} ut, och utgående samtal efter paketet kostar dessutom {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} per samtal beroende på utfall."],
       ["Kan jag testa den innan jag köper?", "Ja. Dialogbot ringer upp er och tar emot er som om ni vore en kund – det tar två minuter och kräver ingen registrering. Och det finns ingen bindningstid."],
       ["Vart tar mina kunders uppgifter vägen?", "Det står i en kort och begriplig text på sidan om GDPR och data: vad som sparas, var och hur personuppgiftsbiträdesavtalet fungerar."],
-      ["Vad kostar utgående kampanjsamtal?", "Det finns inget pris per samtal. Minuterna dras från abonnemangets {pIncluded} minuter, som delas med de inkommande samtalen; därutöver kostar varje påbörjad utgående minut {pMinute} exkl. moms. Ett obesvarat samtal kostar ingenting. Kontakterna måste i förväg ha sagt ja till att bli uppringda, och en kampanj ringer först när ni själva trycker på Start."],
-      ["Vad händer om vi får många inkommande samtal?", "{pIncluded} minuter per månad ingår i abonnemanget – för både in- och utgående samtal. Därutöver kostar varje påbörjad minut {pExtraMinute} för inkommande och {pMinute} för utgående samtal exkl. moms – det står som en separat rad på fakturan, och ni kan följa förbrukningen löpande i Dialogbot."],
+      ["Vad kostar utgående kampanjsamtal?", "Inom abonnemangets {pIncluded} minuter (som delas med de inkommande samtalen) finns inget pris per samtal. När paketet är förbrukat kostar ett utgående samtal som startar därefter {pCallAnswered} om personen svarar, {pCallVoicemail} vid röstbrevlåda och {pCallNoAnswer} vid obesvarat eller upptaget – plus {pMinute} per påbörjad samtalsminut, exkl. moms. Högst {pContactMax} per kontakt. Kontakterna måste i förväg ha sagt ja till att bli uppringda, och en kampanj ringer först när ni själva trycker på Start."],
+      ["Vad händer om vi får många inkommande samtal?", "{pIncluded} minuter per månad ingår i abonnemanget – för både in- och utgående samtal, utan pris per samtal. Därutöver kostar varje påbörjad inkommande minut {pExtraMinute}; utgående samtal kostar {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} beroende på utfall plus {pMinute} per minut, exkl. moms. Det står som separata rader på fakturan, och ni kan följa förbrukningen per samtal i Dialogbot."],
       ["Kostar konfigurationen något?", "Inte om ni gör det själva: bygganvisningens tre steg ingår i abonnemanget och tar ungefär en halvtimme. Konfiguration av våra specialister kostar {pSetup} exkl. moms som engångsavgift och ger er en skräddarsydd konfiguration och integration med era egna system och behov."]
     ]
   },
@@ -160,7 +160,7 @@
         "title": "Pris och konfiguration",
         "p1a": "Det finns ett abonnemang: ",
         "p1Price": "{pMonthly} i månaden",
-        "p1b": ", utan pris per ärende och med 300 minuter för in- och utgående samtal per månad. Det finns inget pris per samtal. Alla priser är exkl. moms.",
+        "p1b": ", utan pris per ärende och med 300 minuter för in- och utgående samtal per månad. Inom paketet finns inget pris per samtal; när det är förbrukat kostar ett utgående samtal {pCallAnswered} (besvarat), {pCallVoicemail} (röstbrevlåda) eller {pCallNoAnswer} (obesvarat) plus {pMinute} per minut. Alla priser är exkl. moms.",
         "p2a": "Ni behöver inga tekniska kunskaper. Ni konfigurerar assistenten själva enligt bygganvisningens tre steg på ungefär en halvtimme – det ingår i abonnemanget. Har ni en webbplats hämtar Dialogbot det mesta automatiskt, och ni kan testa assistenten innan den tar ett enda riktigt samtal. Vill ni hellre att någon gör det åt er konfigurerar våra egna specialister den för {pSetup} exkl. moms som engångsavgift – skräddarsytt och integrerat med era egna system och behov. Läs också om ",
         "p2Phone": "AI-telefonsvararen",
         "p2b": " och ",
@@ -169,7 +169,7 @@
       }
     },
     "faq": [
-      ["Vad kostar en AI-receptionist hos Dialogbot?", "Ett abonnemang för {pMonthly} i månaden, utan pris per ärende och med 300 minuter för in- och utgående samtal per månad. Det finns inget pris per samtal. Priserna är exkl. moms."],
+      ["Vad kostar en AI-receptionist hos Dialogbot?", "Ett abonnemang för {pMonthly} i månaden, utan pris per ärende och med 300 minuter för in- och utgående samtal per månad. Inom paketet finns inget pris per samtal; när det är förbrukat kostar ett utgående samtal {pCallAnswered} (besvarat), {pCallVoicemail} (röstbrevlåda) eller {pCallNoAnswer} (obesvarat) plus {pMinute} per minut. Priserna är exkl. moms."],
       ["Vad händer med kundernas uppgifter – är det GDPR-säkert?", "Samtal och meddelanden behandlas av oss som personuppgiftsbiträde för er räkning, databasen finns inom EU och ni får ett personuppgiftsbiträdesavtal som en del av villkoren. Läs allt i klarspråk på sidan om GDPR och data: /gdpr."],
       ["Låter den som en robot?", "Dialogbot talar naturlig svenska – och kundens eget språk – med en röst ni själva väljer, t.ex. Camilla eller Peter. Den säger alltid ärligt att den är en digital assistent om kunden frågar."],
       ["Kan jag behålla mitt telefonnummer?", "Ja. Ni vidarekopplar ert nuvarande nummer till Dialogbot när ni är upptagna eller har stängt och behåller er teleoperatör."],

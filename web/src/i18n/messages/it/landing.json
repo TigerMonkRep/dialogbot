@@ -54,20 +54,20 @@
   "pricing": {
     "meta": {
       "title": "Prezzi – receptionist AI a {pMonthly} al mese",
-      "description": "Scopra il prezzo di Dialogbot: un abbonamento da {pMonthly} al mese IVA esclusa con 300 minuti per chiamate in entrata e in uscita. Telefono, chat, prenotazioni e configurazione personale inclusi. Nessun prezzo per chiamata.",
+      "description": "Scopra il prezzo di Dialogbot: un abbonamento da {pMonthly} al mese IVA esclusa con 300 minuti per chiamate in entrata e in uscita. Telefono, chat, prenotazioni e configurazione personale inclusi. Nel pacchetto nessun prezzo per chiamata; una volta esaurito, una chiamata in uscita costa {pCallAnswered} (risposta), {pCallVoicemail} (segreteria) o {pCallNoAnswer} (senza risposta) più {pMinute} al minuto.",
       "ogTitle": "Prezzi del receptionist AI | Dialogbot"
     },
     "kicker": "Prezzi",
     "title": "Un solo abbonamento: {pMonthly} al mese",
     "lead": "Un unico prezzo per tutto Dialogbot: receptionist AI al telefono, chatbot sul sito web, prenotazioni e un riepilogo di ogni richiesta. Tutti i prezzi sono IVA esclusa.",
-    "points": ["{pMonthly} al mese: un solo abbonamento", "Nessun costo per contatto", "{pIncluded} minuti al mese inclusi – per chiamate in entrata e in uscita", "Poi {pExtraMinute} al minuto in entrata e {pMinute} al minuto in uscita – nessun prezzo per chiamata", "Nessun vincolo", "Configurazione fai da te inclusa – configurazione a cura degli specialisti {pSetup}"],
+    "points": ["{pMonthly} al mese: un solo abbonamento", "Nessun costo per contatto", "{pIncluded} minuti al mese inclusi – per chiamate in entrata e in uscita", "Poi {pExtraMinute} al minuto in entrata; in uscita {pCallAnswered} per chiamata con risposta + {pMinute} al minuto", "Nessun vincolo", "Configurazione fai da te inclusa – configurazione a cura degli specialisti {pSetup}"],
     "sections": {
       "subscription": {
         "title": "L'abbonamento",
         "p1Price": "{pMonthly} al mese",
         "p1a": " IVA esclusa. Non c'è alcun costo per contatto e ",
         "p1Minutes": "sono inclusi {pIncluded} minuti al mese, per chiamate in entrata e chiamate di campagna in uscita",
-        "p1b": ": bastano alla maggior parte delle piccole imprese. Se ne usa di più, ogni minuto iniziato in più costa {pExtraMinute} in entrata e {pMinute} in uscita. Può sempre vedere i consumi in Dialogbot.",
+        "p1b": ": bastano alla maggior parte delle piccole imprese. Nel pacchetto non c'è prezzo per chiamata. Se usate più minuti, ogni minuto in entrata iniziato costa {pExtraMinute}; le chiamate di campagna in uscita dopo il pacchetto sono descritte sotto. Potete sempre vedere i consumi per chiamata in Dialogbot.",
         "p2": "Il prezzo di un servizio di segreteria telefonica, ma con un receptionist che prenota anche gli appuntamenti nel vostro calendario e vi invia un messaggio per ogni chiamata.",
         "p3a": "Ideale per le aziende in cui il telefono squilla mentre siete occupati: artigiani, studi medici, saloni, officine e consulenti. Se volete prima ascoltarlo, potete ",
         "p3Link": "farvi chiamare da Dialogbot",
@@ -97,12 +97,12 @@
       },
       "outbound": {
         "title": "Chiamate in uscita delle campagne",
-        "p1a": "Se vuole che l'assistente chiami contatti che hanno accettato di essere chiamati, i minuti si scalano dagli stessi minuti dell'abbonamento. Esaurito il pacchetto, costa ",
-        "p1Call": "{pMinute} per minuto in uscita iniziato",
-        "p1b": " e ",
-        "p1Minute": "niente per chiamata",
+        "p1a": "Se vuole che l'assistente chiami contatti che hanno accettato di essere chiamati, i minuti si scalano dagli stessi minuti dell'abbonamento, senza prezzo per chiamata. Esaurito il pacchetto, ogni chiamata che inizia dopo costa ",
+        "p1Call": "{pCallAnswered} se la persona risponde, {pCallVoicemail} con la segreteria e {pCallNoAnswer} senza risposta o occupato",
+        "p1b": " più ",
+        "p1Minute": "{pMinute} per minuto di conversazione iniziato",
         "p1c": ", IVA esclusa.",
-        "p2": "Una chiamata senza risposta non costa nulla. Il pacchetto è condiviso con le chiamate in entrata e si consuma nell'ordine delle chiamate. Un contatto viene chiamato al massimo due volte e parla al massimo 3 minuti in totale, e vede il prezzo massimo prima di premere Avvia."
+        "p2": "Una chiamata che supera il limite divide solo i suoi minuti: non ha prezzo per chiamata. Il pacchetto è condiviso con le chiamate in entrata e si consuma nell'ordine delle chiamate. Un contatto viene chiamato al massimo due volte e parla al massimo 3 minuti, quindi costa al massimo {pContactMax}, e vede il prezzo massimo prima di premere Avvia."
       },
       "start": {
         "title": "Inizia ora",
@@ -117,11 +117,11 @@
     },
     "faq": [
       ["C'è un vincolo?", "No. Non c'è alcun vincolo. Potete disdire con effetto dalla fine del mese in corso."],
-      ["{pMonthly} è il prezzo completo?", "Sì, è il prezzo completo dell'abbonamento, IVA esclusa. C'è un solo abbonamento e nessun costo aggiuntivo per contatto. Solo se usate più di 300 minuti al mese (in entrata e in uscita insieme), ogni minuto aggiuntivo costa {pExtraMinute} in entrata e {pMinute} in uscita"],
+      ["{pMonthly} è il prezzo completo?", "Sì, è il prezzo completo dell'abbonamento, IVA esclusa. C'è un solo abbonamento e nessun costo aggiuntivo per contatto. Solo se usate più di 300 minuti al mese (in entrata e in uscita insieme), ogni minuto aggiuntivo costa {pExtraMinute} in entrata e {pMinute} in uscita, e le chiamate in uscita dopo il pacchetto costano inoltre {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} a chiamata a seconda dell'esito."],
       ["Posso provarlo prima di acquistarlo?", "Sì. Dialogbot vi chiama e vi accoglie come se foste un cliente: bastano due minuti e non serve alcuna registrazione. E non c'è alcun vincolo."],
       ["Dove finiscono i dati dei miei clienti?", "È spiegato in un testo breve e chiaro nella pagina su GDPR e dati: cosa viene conservato, dove e come funziona l'accordo sul trattamento dei dati."],
-      ["Quanto costano le chiamate in uscita delle campagne?", "Non c'è un prezzo per chiamata. I minuti si scalano dai {pIncluded} minuti dell'abbonamento, condivisi con le chiamate in entrata; oltre, ogni minuto in uscita iniziato costa {pMinute} IVA esclusa. Una chiamata senza risposta non costa nulla. I contatti devono aver accettato in anticipo di essere chiamati e una campagna chiama solo quando preme lei Avvia."],
-      ["Cosa succede se riceviamo molte chiamate in entrata?", "L'abbonamento include {pIncluded} minuti al mese, per chiamate in entrata e in uscita. Oltre, ogni minuto iniziato costa {pExtraMinute} in entrata e {pMinute} in uscita IVA esclusa: compare come riga separata in fattura e può seguire i consumi in Dialogbot."],
+      ["Quanto costano le chiamate in uscita delle campagne?", "Nei {pIncluded} minuti dell'abbonamento (condivisi con le chiamate in entrata) non c'è prezzo per chiamata. Esaurito il pacchetto, una chiamata in uscita che inizia dopo costa {pCallAnswered} se la persona risponde, {pCallVoicemail} con la segreteria e {pCallNoAnswer} senza risposta o occupato, più {pMinute} per minuto di conversazione iniziato, IVA esclusa. Al massimo {pContactMax} per contatto. I contatti devono aver accettato in anticipo di essere chiamati e una campagna chiama solo quando preme lei Avvia."],
+      ["Cosa succede se riceviamo molte chiamate in entrata?", "L'abbonamento include {pIncluded} minuti al mese, per chiamate in entrata e in uscita, senza prezzo per chiamata. Oltre, ogni minuto in entrata iniziato costa {pExtraMinute}; le chiamate in uscita costano {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} a seconda dell'esito più {pMinute} al minuto, IVA esclusa. Compaiono come righe separate in fattura e può seguire i consumi per chiamata in Dialogbot."],
       ["La configurazione ha un costo?", "No, se la fate da soli: i tre passaggi della guida alla configurazione sono inclusi nell'abbonamento e richiedono circa mezz'ora. La configurazione a cura dei nostri specialisti costa {pSetup}. IVA esclusa una tantum e vi offre una configurazione su misura e l'integrazione con i vostri sistemi ed esigenze."]
     ]
   },
@@ -160,7 +160,7 @@
         "title": "Prezzo e configurazione",
         "p1a": "C'è un solo abbonamento: ",
         "p1Price": "{pMonthly} al mese",
-        "p1b": ", senza costi per contatto e con 300 minuti per chiamate in entrata e in uscita al mese. Nessun prezzo per chiamata. Tutti i prezzi sono IVA esclusa.",
+        "p1b": ", senza costi per contatto e con 300 minuti per chiamate in entrata e in uscita al mese. Nel pacchetto nessun prezzo per chiamata; una volta esaurito, una chiamata in uscita costa {pCallAnswered} (risposta), {pCallVoicemail} (segreteria) o {pCallNoAnswer} (senza risposta) più {pMinute} al minuto. Tutti i prezzi sono IVA esclusa.",
         "p2a": "Non servono competenze tecniche. Configurate l'assistente da soli seguendo i tre passaggi della guida alla configurazione in circa mezz'ora: è incluso nell'abbonamento. Se avete un sito web, Dialogbot ne recupera automaticamente la maggior parte dei contenuti, e potete provare l'assistente prima che risponda a una sola chiamata reale. Se preferite che ci pensi qualcun altro, i nostri specialisti lo configurano per {pSetup}. IVA esclusa una tantum, su misura e integrato con i vostri sistemi ed esigenze. Scopra anche la ",
         "p2Phone": "segreteria telefonica AI",
         "p2b": " e il ",
@@ -169,7 +169,7 @@
       }
     },
     "faq": [
-      ["Quanto costa un receptionist AI con Dialogbot?", "Un abbonamento da {pMonthly} al mese, senza costi per contatto e con 300 minuti per chiamate in entrata e in uscita al mese. Nessun prezzo per chiamata. I prezzi sono IVA esclusa."],
+      ["Quanto costa un receptionist AI con Dialogbot?", "Un abbonamento da {pMonthly} al mese, senza costi per contatto e con 300 minuti per chiamate in entrata e in uscita al mese. Nel pacchetto nessun prezzo per chiamata; una volta esaurito, una chiamata in uscita costa {pCallAnswered} (risposta), {pCallVoicemail} (segreteria) o {pCallNoAnswer} (senza risposta) più {pMinute} al minuto. I prezzi sono IVA esclusa."],
       ["Cosa succede ai dati dei clienti? È conforme al GDPR?", "Chiamate e messaggi vengono trattati in qualità di responsabile del trattamento per vostro conto, il database si trova nell'UE e ricevete un accordo sul trattamento dei dati come parte delle condizioni. Trova tutto, spiegato in modo semplice, nella pagina su GDPR e dati: /gdpr."],
       ["Sembra un robot?", "Dialogbot parla in modo naturale nella lingua di chi chiama, con una voce scelta da voi, ad esempio Camilla o Peter. Se il cliente lo chiede, dice sempre onestamente di essere un assistente digitale."],
       ["Posso mantenere il mio numero di telefono?", "Sì. Inoltrate il vostro numero attuale a Dialogbot quando siete occupati o chiusi e mantenete il vostro operatore telefonico."],

@@ -47,6 +47,8 @@ FALLBACK_FEATURES = {
     "nummer": "kan tage opkaldene via viderestilling, så I beholder jeres nummer",
 }
 ALLOWED_AMOUNTS = {prices.kr(m) for m in (prices.SUBSCRIPTION_MONTHLY_NET_MINOR, prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR,
+                                          prices.OUTBOUND_CALL_ANSWERED_NET_MINOR, prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR,
+                                          prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR,
                                           prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
                                           prices.SPECIALIST_SETUP_NET_MINOR)}
 AMOUNT_RE = re.compile(r"(\d[\d.]*(?:,\d+)?)\s*(?:kr\b|kr\.|kroner)", re.I)
@@ -168,7 +170,7 @@ def build_body(db: OrmSession, company: SalesCompany, profile: SalesProfile) -> 
                         if booking else None),
         "offer": {"monthly_net_minor": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "setup_kind": "diy",
                   "setup_net_minor": prices.SPECIALIST_SETUP_NET_MINOR,
-                  "campaign_call_net_minor": 0,  # no fee per call (2026-11-10)
+                  "campaign_call_net_minor": prices.OUTBOUND_CALL_ANSWERED_NET_MINOR,  # answered, after the package
                   "campaign_minute_net_minor": prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR,
                   "inbound_included_minutes": prices.INBOUND_INCLUDED_MINUTES, "terms_version": TERMS_VERSION,
                   "package_text": "Dialogbot-receptionisten", "setup_text": setup, "terms": "uden binding"},
@@ -270,7 +272,7 @@ def validate(db: OrmSession, company: SalesCompany, body: dict, rendered: str) -
     if offer:
         if offer.get("monthly_net_minor") != prices.SUBSCRIPTION_MONTHLY_NET_MINOR \
                 or offer.get("setup_net_minor") not in (0, prices.SPECIALIST_SETUP_NET_MINOR) \
-                or offer.get("campaign_call_net_minor", 0) != 0 \
+                or offer.get("campaign_call_net_minor") != prices.OUTBOUND_CALL_ANSWERED_NET_MINOR \
                 or offer.get("campaign_minute_net_minor", prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR) != prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR:
             errors.append("Tilbuddets beløb svarer ikke til prislisten i billing/prices.py.")
     for system, status in (body.get("integration_status") or {}).items():

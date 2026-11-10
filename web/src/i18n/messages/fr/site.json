@@ -2,7 +2,7 @@
   "prices": {
     "monthly": "{pMonthlyNum}",
     "setup": "{pSetupNum}",
-    "perMinute": "{pMinuteNum}"
+    "perCall": "{pCallAnsweredNum}"
   },
   "demoCall": {
     "label": "Appel · Menuiserie (exemple)",
@@ -84,7 +84,7 @@
         },
         {
           "title": "Appelle vos clients",
-          "text": "Relance les devis ou rappelle l’entretien – uniquement aux clients qui ont dit oui. Les minutes sont prises sur le forfait, sans prix par appel."
+          "text": "Relance les devis ou rappelle l’entretien – uniquement aux clients qui ont dit oui. Les minutes sont prises sur le forfait ; ensuite {pCallAnswered} par appel décroché + {pMinute} par minute."
         }
       ],
       "note": "Tout ce qu’il dit repose sur des connaissances que vous avez validées – et il vous montre chaque modification d’abord : avant → après, « Valider ? »."
@@ -118,11 +118,11 @@
       },
       "campaign": {
         "name": "Appels sortants de campagne",
-        "unit": "{pCur} par minute au-delà du forfait",
-        "text": "Seulement si vous voulez que Dialogbot appelle. Les minutes sont prises sur les {pIncluded} minutes de l’abonnement, et un appel sans réponse ne coûte rien. Vous voyez le prix maximum avant de démarrer.",
+        "unit": "{pCur} par appel décroché + {pMinute}/min après le forfait",
+        "text": "Seulement si vous voulez que Dialogbot appelle. Les minutes sont prises sur les {pIncluded} minutes de l’abonnement, sans prix par appel. Une fois le forfait épuisé, un appel coûte {pCallAnswered} (décroché), {pCallVoicemail} (messagerie) ou {pCallNoAnswer} (sans réponse) plus {pMinute} par minute – au maximum {pContactMax} par contact. Vous voyez le prix maximum avant de démarrer.",
         "badge": "Option",
         "points": [
-          "Aucun prix par appel – pas d’abonnement en plus",
+          "Aucun prix par appel dans le forfait – pas d’abonnement en plus",
           "Vous validez le script avant tout appel",
           "Le prix maximum est affiché avant le lancement"
         ],
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Appels sortants de campagne",
-        "description": "Par minute sortante entamée au-delà des {pIncluded} minutes de l’abonnement, HT. Aucun prix par appel."
+        "description": "Par appel sortant décroché après les {pIncluded} minutes de l’abonnement, HT, plus {pMinute} par minute entamée (messagerie {pCallVoicemail}, sans réponse {pCallNoAnswer})."
       },
       "setup": {
         "name": "Mise en service par les spécialistes de Dialogbot",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Appels sortants de campagne",
-        "unit": "{pCur} par minute au-delà du forfait",
+        "unit": "{pCur} par appel décroché après le forfait",
         "points": [
           "Uniquement si vous voulez que Dialogbot passe des appels",
           "Les contacts ont eux-mêmes accepté d’être appelés",

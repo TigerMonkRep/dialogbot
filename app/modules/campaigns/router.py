@@ -34,14 +34,23 @@ def _own(db: OrmSession, campaign_id, ws_id) -> Campaign:
 
 
 def _pricing(db: OrmSession, ws_id) -> tuple[str, int, int]:
-    """(currency, call, minute) for a new customer campaign: no fee per call, and the outbound minute above the
-    package – the agreement's snapshot, else the list price in the workspace's currency (markets.ERHVERV)."""
+    """(currency, call, minute) for a new customer campaign: the answered-call price and the outbound minute after the
+    package – the agreement's snapshot, else the list price in the workspace's currency (markets.ERHVERV). Inside the
+    package there is no call price (billing/statement.py)."""
     from app.modules.billing import agreements
 
     currency = customer_market.currency_of(db, ws_id)
     a = agreements.current(db, ws_id)
     minute = a.outbound_extra_minute_net_minor if a is not None else markets.erhverv_price(currency, "outbound_extra_minute")
-    return currency, 0, minute
+    call = a.outbound_call_answered_net_minor if a is not None else markets.erhverv_price(currency, "call_answered")
+    return currency, call, minute
+
+
+def _call_prices(db: OrmSession, ws_id, currency: str) -> dict:
+    """The call prices after the package by outcome: the agreement's snapshot, else the list."""
+    from app.modules.billing import agreements, statement
+
+    return statement.package_terms(agreements.current(db, ws_id), currency)["call"]
 
 
 def campaign_out(db: OrmSession, c: Campaign, currency: str | None = None) -> dict:
@@ -52,7 +61,9 @@ def campaign_out(db: OrmSession, c: Campaign, currency: str | None = None) -> di
             "opening": c.opening, "questions": list(c.questions or []), "success": c.success,
             "phone_number_id": str(c.phone_number_id) if c.phone_number_id else None,
             "call_days": list(c.call_days or []), "call_from": c.call_from, "call_to": c.call_to,
-            "pricing": {"currency": currency, "call_net_minor": 0, "minute_net_minor": cost["minute_net_minor"],
+            "pricing": {"currency": currency, "call_net_minor": cost["call_prices"]["answered"],
+                        "call_prices": cost["call_prices"], "minute_net_minor": cost["minute_net_minor"],
+                        "per_contact_max_net_minor": cost["per_contact_net_minor"],
                         "max_attempts": c.max_attempts, "max_connected_seconds": c.max_connected_seconds},
             "counts": service.counts(db, c), "max_cost": Money(currency, cost["net_minor"], vat_bp).snapshot(),
             # the honest maximum: minutes first use what is left of the shared package now (inbound calls use it too)
@@ -100,6 +111,9 @@ def list_campaigns(ctx: WorkspaceContext = Depends(require_capability("campaigns
     currency, call, minute = _pricing(db, ctx.workspace.id)
     return {"items": [campaign_out(db, c, currency) for c in rows],
             "pricing": {"currency": currency, "call_net_minor": call, "minute_net_minor": minute,
+                        "call_prices": _call_prices(db, ctx.workspace.id, currency),
+                        "per_contact_max_net_minor": service.MAX_ATTEMPTS * call
+                        + service.started_minutes(service.MAX_CONNECTED_SECONDS) * minute,
                         "max_attempts": service.MAX_ATTEMPTS, "max_connected_seconds": service.MAX_CONNECTED_SECONDS},
             "legal_checklist": list(service.LEGAL_CHECKLIST)}
 

@@ -60,6 +60,11 @@ def create(db: OrmSession, workspace_id: uuid.UUID, model: str, created_by: uuid
                            # an offer's campaign minute price is the outbound minute (above the package since 2026-11)
                            outbound_extra_minute_net_minor=(offer.campaign_minute_net_minor if offer
                                                             else markets.erhverv_price(currency, "outbound_extra_minute")),
+                           # an offer's campaign call price is the answered call after the package
+                           outbound_call_answered_net_minor=(offer.campaign_call_net_minor if offer and offer.campaign_call_net_minor
+                                                             else markets.erhverv_price(currency, "call_answered")),
+                           outbound_call_voicemail_net_minor=markets.erhverv_price(currency, "call_voicemail"),
+                           outbound_call_no_answer_net_minor=markets.erhverv_price(currency, "call_no_answer"),
                            sales_offer_id=offer.id if offer else None, created_by=created_by)
     db.add(a)
     db.flush()
@@ -91,6 +96,9 @@ def out(a: ReceptionAgreement | None) -> dict | None:
             "included_minutes": a.inbound_included_minutes,
             "inbound_included_minutes": a.inbound_included_minutes,
             "outbound_extra_minute": Money(a.currency, a.outbound_extra_minute_net_minor, a.tax_basis_points).snapshot(),
+            # the price of an outbound call that starts after the package is used up, by outcome
+            "outbound_call": {k: Money(a.currency, getattr(a, f"outbound_call_{k}_net_minor"), a.tax_basis_points).snapshot()
+                              for k in ("answered", "voicemail", "no_answer")},
             "inbound_extra_minute": Money(a.currency, a.inbound_extra_minute_net_minor, a.tax_basis_points).snapshot(),
             "setup": Money(a.currency, a.setup_net_minor or 0, a.tax_basis_points).snapshot(),
             "created_at": a.created_at.isoformat(),

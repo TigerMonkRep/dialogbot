@@ -19,7 +19,7 @@ type Inv = { id: string; email: string; role: string; status: string; expires_at
 type Me = { id: string; email: string; display_name: string; email_verified: boolean; is_platform_operator?: boolean };
 type Session = { id: string; created_at: string; last_seen_at: string; user_agent: string | null; current: boolean };
 /** `currency` (DKK, SEK, NOK, EUR) is the agreement's/statement's own; older backends leave it out → DKK. */
-type Agreement = { current: { version: number; model: string; created_at: string; currency?: string; monthly: { net_minor: number }; included_minutes?: number; inbound_extra_minute?: { net_minor: number }; outbound_extra_minute?: { net_minor: number } } | null; plan: { currency?: string; monthly_net_minor: number; campaign_minute_net_minor: number; included_minutes: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number; outbound_extra_minute_net_minor: number }; currency?: string };
+type Agreement = { current: { version: number; model: string; created_at: string; currency?: string; monthly: { net_minor: number }; included_minutes?: number; inbound_extra_minute?: { net_minor: number }; outbound_extra_minute?: { net_minor: number }; outbound_call?: Record<"answered" | "voicemail" | "no_answer", { net_minor: number }> } | null; plan: { currency?: string; monthly_net_minor: number; campaign_minute_net_minor: number; included_minutes: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number; outbound_extra_minute_net_minor: number; outbound_call_net_minor: Record<"answered" | "voicemail" | "no_answer", number> }; currency?: string };
 type Statement = { month: string; package?: { included: number; used: number; remaining: number; over: number } | null; lines: { kind: string; calls?: number; minutes?: number; included_minutes?: number; extra_minutes?: number; net_minor: number }[]; totals: { net_minor: number; tax_minor: number; gross_minor: number }; currency?: string };
 type Vat = { kind: "domestic" | "reverse_charge" | "outside_eu" | "vat_number_required"; rate_bp: number; country: string | null; note: string | null };
 type Account = { configured: boolean; test_mode?: boolean; card: { brand: string; last4: string; exp: string | null } | null; can_manage: boolean;
@@ -74,6 +74,9 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
     included: cur?.included_minutes ?? agr.plan.included_minutes,
     inbound: cur?.inbound_extra_minute?.net_minor ?? agr.plan.inbound_extra_minute_net_minor,
     outbound: cur?.outbound_extra_minute?.net_minor ?? agr.plan.outbound_extra_minute_net_minor,
+    callAnswered: cur?.outbound_call?.answered.net_minor ?? agr.plan.outbound_call_net_minor.answered,
+    callVoicemail: cur?.outbound_call?.voicemail.net_minor ?? agr.plan.outbound_call_net_minor.voicemail,
+    callNoAnswer: cur?.outbound_call?.no_answer.net_minor ?? agr.plan.outbound_call_net_minor.no_answer,
   } : null;
   const campaignCalls = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + (l.calls ?? 0), 0) ?? 0;
   const campaignNet = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + l.net_minor, 0) ?? 0;
@@ -127,7 +130,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
                 </div>
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5">
                   <span className="eyebrow">{t("account.sub.campaign")}</span>
-                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(terms!.outbound)} <span className="text-[14px] font-semibold">{t("account.sub.campaignPrice")}</span></span>
+                  <span className="font-display font-extrabold text-[22px] text-ink">{kr(terms!.outbound)} <span className="text-[14px] font-semibold">{t("account.sub.campaignPrice", { answered: kr(terms!.callAnswered), voicemail: kr(terms!.callVoicemail), noAnswer: kr(terms!.callNoAnswer) })}</span></span>
                   <span className="text-[14px] text-ink-soft">{t("account.sub.campaignMonth", { calls: campaignCalls, minutes: campaignMinutes, amount: kr(campaignNet) })}</span>
                 </div>
                 <div className="flex flex-col gap-1 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5 md:col-span-2">

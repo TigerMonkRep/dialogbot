@@ -2,7 +2,7 @@
   "prices": {
     "monthly": "{pMonthlyNum}",
     "setup": "{pSetupNum}",
-    "perMinute": "{pMinuteNum}"
+    "perCall": "{pCallAnsweredNum}"
   },
   "demoCall": {
     "label": "Samtal · Snickerifirma (exempel)",
@@ -84,7 +84,7 @@
         },
         {
           "title": "Ringer upp kunder",
-          "text": "Följer upp offerter eller påminner om service – bara till kunder som har sagt ja. Minuterna dras från paketet, och det finns inget pris per samtal."
+          "text": "Följer upp offerter eller påminner om service – bara till kunder som har sagt ja. Minuterna dras från paketet; därefter {pCallAnswered} per besvarat samtal + {pMinute} per minut."
         }
       ],
       "note": "Allt den säger bygger på kunskap ni själva har godkänt – och varje ändring visar den er först: före → efter, «Godkänna?»."
@@ -118,11 +118,11 @@
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
-        "unit": "{pCur} per minut utöver paketet",
-        "text": "Bara om ni vill att Dialogbot ska ringa ut. Minuterna dras från abonnemangets {pIncluded} minuter, och ett obesvarat samtal kostar ingenting. Ni ser det högsta priset innan ni startar.",
+        "unit": "{pCur} per besvarat samtal + {pMinute}/min efter paketet",
+        "text": "Bara om ni vill att Dialogbot ska ringa ut. Minuterna dras från abonnemangets {pIncluded} minuter utan pris per samtal. När paketet är förbrukat kostar ett samtal {pCallAnswered} (besvarat), {pCallVoicemail} (röstbrevlåda) eller {pCallNoAnswer} (obesvarat) plus {pMinute} per minut – högst {pContactMax} per kontakt. Ni ser det högsta priset innan ni startar.",
         "badge": "Tillval",
         "points": [
-          "Inget pris per samtal – inget extra abonnemang",
+          "Inget pris per samtal inom paketet – inget extra abonnemang",
           "Ni godkänner manuset innan den ringer någon",
           "Maxpriset visas innan kampanjen startar"
         ],
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
-        "description": "Per påbörjad utgående minut utöver abonnemangets {pIncluded} minuter, exkl. moms. Inget pris per samtal."
+        "description": "Per besvarat utgående samtal efter abonnemangets {pIncluded} minuter, exkl. moms, plus {pMinute} per påbörjad minut (röstbrevlåda {pCallVoicemail}, obesvarat {pCallNoAnswer})."
       },
       "setup": {
         "name": "Konfiguration av Dialogbots specialister",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Utgående kampanjsamtal",
-        "unit": "{pCur} per minut utöver paketet",
+        "unit": "{pCur} per besvarat samtal efter paketet",
         "points": [
           "Bara om ni vill att Dialogbot ska ringa ut",
           "Kontakterna har själva sagt ja till att bli uppringda",

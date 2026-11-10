@@ -83,7 +83,7 @@ def test_the_terms_state_the_shared_package_in_every_language():
         assert terms["updated"].split()[1] == "2" and "2026" in terms["updated"], loc
         text = json.dumps(terms, ensure_ascii=False)
         assert "{pExtraMinute}" in text and "{pMinute}" in text and "300" in text, loc
-        assert "pCall" not in text and "pTermsV1Call" not in text, loc
+        assert "{pCall}" not in text and "pTermsV1Call" not in text and "{pCallAnswered}" in text, loc
     da = json.dumps(json.loads((ROOT / "web/src/i18n/messages/da/legal.json").read_text(encoding="utf-8"))["terms"],
                     ensure_ascii=False)
     assert "Version 2 · gældende fra 10. november 2026." in da and "ingen pris pr. opkald" in da
@@ -136,7 +136,9 @@ def test_the_website_price_table_is_the_markets_table():
     assert {k: v for k, v in table.items() if k != "_comment"} == {k: v for k, v in markets.export().items() if k != "_comment"}
     assert table["erhverv"]["DKK"] == {
         "monthly": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "extra_minute": prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
-        "outbound_extra_minute": prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR, "setup": prices.SPECIALIST_SETUP_NET_MINOR}
+        "outbound_extra_minute": prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR, "call_answered": prices.OUTBOUND_CALL_ANSWERED_NET_MINOR,
+        "call_voicemail": prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR, "call_no_answer": prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR,
+        "setup": prices.SPECIALIST_SETUP_NET_MINOR}
     assert table["privat"]["DKK"] == {p["key"]: {"monthly": p["monthly_minor"], "yearly_monthly": p["yearly_monthly_minor"],
                                                  "yearly_total": p["yearly_total_minor"]} for p in prices.PRIVAT_PLANS}
     assert table["privatCreditPack"]["DKK"] == prices.PRIVAT_CREDIT_PACK_GROSS_MINOR

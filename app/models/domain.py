@@ -472,6 +472,12 @@ def _list_extra_minute(ctx) -> int:
     return markets.erhverv_price(ctx.get_current_parameters().get("currency") or "DKK", "extra_minute")
 
 
+def _list(ctx, item: str) -> int:
+    from app.modules.billing import markets
+
+    return markets.erhverv_price(ctx.get_current_parameters().get("currency") or "DKK", item)
+
+
 def _list_outbound_extra_minute(ctx) -> int:
     from app.modules.billing import markets
 
@@ -505,6 +511,10 @@ class ReceptionAgreement(Base):
     inbound_extra_minute_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=_list_extra_minute)
     outbound_extra_minute_net_minor: Mapped[int] = mapped_column(Integer, nullable=False,
                                                                  default=_list_outbound_extra_minute)
+    # The price of an outbound call that starts after the package is used up, by outcome (Fürster 2026-11-10 20:28)
+    outbound_call_answered_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=lambda c: _list(c, "call_answered"))
+    outbound_call_voicemail_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=lambda c: _list(c, "call_voicemail"))
+    outbound_call_no_answer_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=lambda c: _list(c, "call_no_answer"))
     sales_offer_id: Mapped[uuid.UUID | None] = mapped_column()  # the accepted sales_offers row (no FK: avoids a cycle)
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     created_at: Mapped[datetime] = ts_now()
@@ -1006,7 +1016,9 @@ class CampaignCall(Base):
     an earlier month."""
 
     __tablename__ = "campaign_calls"
-    __table_args__ = (Index("ix_campaign_calls_workspace_dialled", "workspace_id", "dialled_at"),)
+    __table_args__ = (Index("ix_campaign_calls_workspace_dialled", "workspace_id", "dialled_at"),
+                      CheckConstraint("outcome_class is null or outcome_class in ('answered','voicemail','no_answer')",
+                                      name="ck_campaign_calls_outcome_class"))
 
     id: Mapped[uuid.UUID] = uuid_pk()
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
@@ -1017,6 +1029,9 @@ class CampaignCall(Base):
     net_minor: Mapped[int] = mapped_column(Integer, nullable=False)  # the price for dialling (4 kr. before 2026-11, now 0)
     connected_seconds: Mapped[int | None] = mapped_column(Integer)  # set from the end-of-call report; None = no report yet
     minutes_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")  # started minutes × price
+    # How the call ended, for the call price after the package: 'answered' | 'voicemail' | 'no_answer'; None = no
+    # end-of-call report yet (billed as the cheapest, 'no_answer'). Set from the report (campaigns/service.outcome_class).
+    outcome_class: Mapped[str | None] = mapped_column(String(12))
 
 
 class DoNotCall(Base):

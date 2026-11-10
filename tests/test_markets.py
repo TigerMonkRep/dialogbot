@@ -21,7 +21,10 @@ def test_every_currency_has_every_price_and_yearly_is_twelve_months():
     assert markets.CURRENCIES == ("DKK", "SEK", "NOK", "EUR")
     for cur in markets.CURRENCIES:
         # no per-call price (2026-11-10): the package (same everywhere) and the minute above it per direction
-        assert set(markets.ERHVERV[cur]) == {"monthly", "extra_minute", "outbound_extra_minute", "setup"}
+        assert set(markets.ERHVERV[cur]) == {"monthly", "extra_minute", "outbound_extra_minute", "call_answered",
+                                             "call_voicemail", "call_no_answer", "setup"}
+        e = markets.ERHVERV[cur]
+        assert e["call_answered"] > e["call_voicemail"] > e["call_no_answer"] > 0  # after the package, by outcome
         assert all(isinstance(v, int) and v > 0 for v in markets.ERHVERV[cur].values())
         assert set(markets.PRIVAT[cur]) == {"basis", "plus", "familie"}
         for plan, p in markets.PRIVAT[cur].items():
@@ -111,13 +114,14 @@ def test_customer_campaigns_snapshot_the_workspace_currency(api, two_workspaces,
     tok, ws = two_workspaces["tok_a"], two_workspaces["ws_a"]
     _country(db, ws, "NO")
     lst = api.get(tok, f"/workspaces/{ws}/campaigns").json()
-    assert lst["pricing"]["currency"] == "NOK" and lst["pricing"]["call_net_minor"] == 0  # no per-call price
+    assert lst["pricing"]["currency"] == "NOK" and lst["pricing"]["call_net_minor"] == 630  # answered, after the package
     c = api.post(tok, f"/workspaces/{ws}/campaigns", {"name": "Vår"}).json()
-    assert c["pricing"] == c["pricing"] | {"currency": "NOK", "call_net_minor": 0, "minute_net_minor": 315}
+    assert c["pricing"] == c["pricing"] | {"currency": "NOK", "call_net_minor": 630, "minute_net_minor": 315,
+                                           "call_prices": {"answered": 630, "voicemail": 160, "no_answer": 40}}
     assert c["max_cost"]["currency"] == "NOK" and c["max_cost"]["tax_basis_points"] == 0  # outside the EU
     tok_b, ws_b = two_workspaces["tok_b"], two_workspaces["ws_b"]
     d = api.post(tok_b, f"/workspaces/{ws_b}/campaigns", {"name": "Forår"}).json()
-    assert (d["pricing"]["currency"], d["pricing"]["call_net_minor"], d["pricing"]["minute_net_minor"]) == ("DKK", 0, 200)
+    assert (d["pricing"]["currency"], d["pricing"]["call_net_minor"], d["pricing"]["minute_net_minor"]) == ("DKK", 400, 200)
     assert d["max_cost"]["tax_basis_points"] == 2500
 
 

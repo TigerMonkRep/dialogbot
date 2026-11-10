@@ -69,8 +69,9 @@ def create(db: OrmSession, company: SalesCompany, *, setup_kind: str, contact_id
     o = SalesOffer(company_id=company.id, contact_id=contact_id, version=(last or 0) + 1, package="reception",
                    monthly_net_minor=prices.SUBSCRIPTION_MONTHLY_NET_MINOR, setup_kind=setup_kind,
                    setup_net_minor=prices.SPECIALIST_SETUP_NET_MINOR if setup_kind == "specialist" else 0,
-                   campaign_call_net_minor=0,  # no fee per outbound call (2026-11-10)
-                   campaign_minute_net_minor=prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR,  # outbound minute above the package
+                   # after the package: the answered-call price and the outbound minute (2026-11-10 20:28)
+                   campaign_call_net_minor=prices.OUTBOUND_CALL_ANSWERED_NET_MINOR,
+                   campaign_minute_net_minor=prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR,
                    inbound_included_minutes=prices.INBOUND_INCLUDED_MINUTES,
                    inbound_extra_minute_net_minor=prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
                    terms_version=TERMS_VERSION, tax_basis_points=prices.TAX_BASIS_POINTS,
@@ -106,9 +107,12 @@ def sentence(o: SalesOffer) -> str:
     """How Peter reads the offer aloud (amounts from the row, which came from prices.py)."""
     return (f"{PACKAGE_TEXT[o.package]} til {prices.kr(o.monthly_net_minor)} kroner om måneden ekskl. moms, med "
             f"{SETUP_TEXT[o.setup_kind]}. {o.inbound_included_minutes} minutter om måneden er med – både indgående "
-            f"opkald og udgående kampagneopkald. Derudover koster et påbegyndt minut "
-            f"{prices.kr(o.inbound_extra_minute_net_minor)} kr. for indgående og {prices.kr(o.campaign_minute_net_minor)} "
-            f"kr. for udgående opkald. Ingen pris pr. opkald og ingen binding.")
+            f"opkald og udgående kampagneopkald – og inden for dem er der ingen pris pr. opkald. Er minutterne brugt, "
+            f"koster et påbegyndt minut {prices.kr(o.inbound_extra_minute_net_minor)} kr. for indgående opkald, og et "
+            f"udgående kampagneopkald koster {prices.kr(o.campaign_call_net_minor)} kr., hvis personen tager telefonen, "
+            f"{prices.kr(prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR)} kr. ved telefonsvarer og "
+            f"{prices.kr(prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR)} kr. ved ubesvaret, plus "
+            f"{prices.kr(o.campaign_minute_net_minor)} kr. pr. påbegyndt minut. Ingen binding.")
 
 
 def out(db: OrmSession, o: SalesOffer) -> dict:

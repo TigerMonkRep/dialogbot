@@ -52,15 +52,22 @@ LOCALE_COUNTRY: dict[str, str | None] = {"da": "DK", "sv": "SE", "no": "NO", "de
                                          "it": "IT", "en": None}
 
 # --------------------------------------------------------------------------- Erhverv (excl. VAT, minor units)
-# monthly · inbound minute above the package · outbound (campaign) minute above the package · specialist setup
+# monthly · inbound minute · outbound minute (both above the package) · outbound call by outcome after the package · setup
 ERHVERV: dict[Currency, dict[str, int]] = {
-    # extra_minute = inbound minute above the package, outbound_extra_minute = campaign minute above it (the market's
-    # equivalent of 2 kr.); the package itself (INCLUDED_MINUTES) is the same everywhere. No fee per call.
+    # extra_minute = inbound minute above the package, outbound_extra_minute = campaign minute above it; call_* = the
+    # price of an outbound call that starts after the package is used up, by outcome. The package (INCLUDED_MINUTES)
+    # is the same everywhere. Other markets: the DKK price × the market's factor (SEK 1,475, NOK 1,575, EUR 0,135 –
+    # the factors of the minute prices), rounded to 5 öre / 5 øre / 1 cent.
     "DKK": {"monthly": prices.SUBSCRIPTION_MONTHLY_NET_MINOR, "extra_minute": prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
-            "outbound_extra_minute": prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR, "setup": prices.SPECIALIST_SETUP_NET_MINOR},
-    "SEK": {"monthly": 369_500, "extra_minute": 220, "outbound_extra_minute": 295, "setup": 729_500},
-    "NOK": {"monthly": 399_500, "extra_minute": 235, "outbound_extra_minute": 315, "setup": 789_500},
-    "EUR": {"monthly": 32_900, "extra_minute": 20, "outbound_extra_minute": 27, "setup": 66_900},
+            "outbound_extra_minute": prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR,
+            "call_answered": prices.OUTBOUND_CALL_ANSWERED_NET_MINOR, "call_voicemail": prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR,
+            "call_no_answer": prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR, "setup": prices.SPECIALIST_SETUP_NET_MINOR},
+    "SEK": {"monthly": 369_500, "extra_minute": 220, "outbound_extra_minute": 295, "call_answered": 590,
+            "call_voicemail": 150, "call_no_answer": 35, "setup": 729_500},
+    "NOK": {"monthly": 399_500, "extra_minute": 235, "outbound_extra_minute": 315, "call_answered": 630,
+            "call_voicemail": 160, "call_no_answer": 40, "setup": 789_500},
+    "EUR": {"monthly": 32_900, "extra_minute": 20, "outbound_extra_minute": 27, "call_answered": 55,
+            "call_voicemail": 14, "call_no_answer": 3, "setup": 66_900},
 }
 INBOUND_INCLUDED_MINUTES = prices.INBOUND_INCLUDED_MINUTES
 INCLUDED_MINUTES = prices.INCLUDED_MINUTES

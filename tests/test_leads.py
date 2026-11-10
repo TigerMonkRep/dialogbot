@@ -120,12 +120,14 @@ def test_approval_snapshots_the_agreement_and_is_idempotent(client, api, chat, d
     assert first_agreement["monthly"]["net_minor"] == 249500 and first_agreement["monthly"]["gross_minor"] == 311875
     assert first_agreement["lead_fee"]["net_minor"] == 0                                # no price per enquiry
     assert "campaign_call" not in first_agreement and first_agreement["included_minutes"] == 300  # one shared package
-    assert first_agreement["outbound_extra_minute"]["net_minor"] == 200                 # 2 kr. per minute above it
+    assert first_agreement["outbound_extra_minute"]["net_minor"] == 200                 # 2 kr. per minute after it
+    assert {k: v["net_minor"] for k, v in first_agreement["outbound_call"].items()} == {"answered": 400, "voicemail": 100, "no_answer": 25}
     # pay-per-enquiry no longer exists: there is one offer
     gone = api.post(tok, f"{base}/agreement", {"model": "B"})
     assert gone.status_code == 422 and gone.json()["code"] == "plan_discontinued"
     assert api.get(tok, f"{base}/agreement").json()["plan"] == {"currency": "DKK", "monthly_net_minor": 249500, "lead_fee_net_minor": 0,
-                                                                  "campaign_call_net_minor": 0, "campaign_minute_net_minor": 200,
+                                                                  "campaign_call_net_minor": 400, "campaign_minute_net_minor": 200,
+                                                                  "outbound_call_net_minor": {"answered": 400, "voicemail": 100, "no_answer": 25},
                                                                   "included_minutes": 300, "inbound_included_minutes": 300,
                                                                   "inbound_extra_minute_net_minor": 150,
                                                                   "outbound_extra_minute_net_minor": 200}

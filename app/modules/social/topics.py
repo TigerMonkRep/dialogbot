@@ -20,7 +20,7 @@ FACTS: tuple[str, ...] = (
     "Den booker, flytter og aflyser tider og sender SMS-bekræftelser.",
     "Den giver en kort opsummering af hver henvendelse.",
     "Pris ekskl. moms: ét abonnement fra 2.495 kr. om måneden. Der er ingen pris pr. henvendelse, og 300 minutter om måneden er med – både indgående opkald og udgående kampagneopkald.",
-    "Ud over de 300 minutter koster et påbegyndt minut 1,50 kr. for indgående og 2 kr. for udgående opkald ekskl. moms. Der er ingen pris pr. opkald.",
+    "Inden for de 300 minutter er der ingen pris pr. opkald. Er de brugt, koster et påbegyndt indgående minut 1,50 kr., og et udgående kampagneopkald koster 4 kr., hvis personen tager telefonen, 1 kr. ved telefonsvarer og 0,25 kr. ved ubesvaret – plus 2 kr. pr. påbegyndt samtaleminut. Alt ekskl. moms.",
     "Ingen binding.",
     "Opsætning: virksomheden kan selv sætte Dialogbot op efter byggevejledningens tre trin (med i abonnementet, cirka en halv time).",
     "Opsætning fra Dialogbots egne specialister koster 5.000 kr. ekskl. moms én gang og giver en skræddersyet opsætning og integration til virksomhedens egne systemer og behov.",
@@ -32,7 +32,7 @@ FACTS: tuple[str, ...] = (
 )
 
 # The only kroner amounts a post may mention (as written on the website).
-ALLOWED_AMOUNTS: frozenset[str] = frozenset({"2.495", "2", "1,50", "5.000"})  # no 4 kr. per call since 2026-11-10
+ALLOWED_AMOUNTS: frozenset[str] = frozenset({"2.495", "4", "2", "1", "1,50", "0,25", "5.000"})
 
 PLATFORMS = ("facebook", "instagram", "tiktok")
 
@@ -82,7 +82,7 @@ TOPICS: tuple[Topic, ...] = (
                 "Én minutpakke til ind- og udgående opkald",
                 "Ingen binding – gør-det-selv-opsætning er med"),
         proof="Se prisen på dialogbot.dk.", tags=("pris", "ingenbinding"),
-        caption_note="Fra 2.495 kr./md. ekskl. moms med 300 minutter om måneden til ind- og udgående opkald. Derudover 1,50 kr. pr. minut ind og 2 kr. pr. minut ud ekskl. moms."),
+        caption_note="Fra 2.495 kr./md. ekskl. moms med 300 min. til ind- og udgående opkald. Derefter 1,50 kr./min ind; ud 4 kr. pr. besvaret opkald + 2 kr./min."),
     Topic(
         key="approved_knowledge", path="/ai-receptionist", kicker="Du bestemmer",
         angle="Dialogbot svarer kun ud fra det, ejeren har godkendt, og gætter aldrig.",

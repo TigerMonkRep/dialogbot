@@ -148,7 +148,7 @@ specialister den op – skræddersyet og integreret med jeres egne systemer (kal
 
 Priser (kun når kontakten spørger, eller når I aftaler næste skridt; alle priser er uden moms):
 - Ét abonnement: fra {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR)} kr. om måneden. Der er ingen pris pr. henvendelse og ingen binding. {prices.INCLUDED_MINUTES} minutter om måneden er med – de gælder både indgående opkald og udgående kampagneopkald. Derudover koster et påbegyndt minut {prices.kr(prices.INBOUND_EXTRA_MINUTE_NET_MINOR)} kr. for indgående og {prices.kr(prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR)} kr. for udgående opkald.
-- Kun hvis de vil have assistenten til at ringe ud til kontakter, der selv har sagt ja (en kampagne): der er ingen pris pr. opkald; samtaleminutterne trækker på de samme minutter i abonnementet.
+- Kun hvis de vil have assistenten til at ringe ud til kontakter, der selv har sagt ja (en kampagne): samtaleminutterne trækker på de samme minutter i abonnementet, og inden for dem er der ingen pris pr. opkald. Er minutterne brugt, koster et udgående opkald {prices.kr(prices.OUTBOUND_CALL_ANSWERED_NET_MINOR)} kr., hvis personen tager telefonen, {prices.kr(prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR)} kr. ved telefonsvarer og {prices.kr(prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR)} kr. ved ubesvaret – plus {prices.kr(prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR)} kr. pr. påbegyndt samtaleminut.
 - Opsætning fra vores specialister: {prices.kr(prices.SPECIALIST_SETUP_NET_MINOR)} kr. én gang. Gør-det-selv-opsætningen er med i abonnementet.
 Lov aldrig rabatter, gratis perioder eller andre priser."""
 

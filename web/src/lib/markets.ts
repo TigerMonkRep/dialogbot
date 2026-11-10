@@ -8,7 +8,7 @@ import { HTML_LANG, type Locale } from "@/i18n/config";
 export type Currency = "DKK" | "SEK" | "NOK" | "EUR";
 /** extra_minute = inbound minute above the package, outbound_extra_minute = outbound (campaign) minute above it.
  *  No price per call (decision 2026-11-10). */
-export type ErhvervItem = "monthly" | "extra_minute" | "outbound_extra_minute" | "setup";
+export type ErhvervItem = "monthly" | "extra_minute" | "outbound_extra_minute" | "call_answered" | "call_voicemail" | "call_no_answer" | "setup";
 export type PrivatPlanKey = "basis" | "plus" | "familie";
 export type PrivatPrice = { monthly: number; yearly_monthly: number; yearly_total: number };
 
@@ -140,7 +140,7 @@ export function market(locale: Locale | string) {
  *  …Num = the amount without currency (for big figures with the unit beside); pCur = the currency sign. */
 export const PRICE_TOKENS = [
   "pMonthly", "pMinute", "pExtraMinute", "pSetup",
-  "pMonthlyNum", "pMinuteNum", "pSetupNum",
+  "pMonthlyNum", "pMinuteNum", "pSetupNum", "pCallAnswered", "pCallVoicemail", "pCallNoAnswer", "pCallAnsweredNum", "pContactMax",
   "pIncluded", "pCur",
   "pBasis", "pPlus", "pFamilie", "pBasisYear", "pPlusYear", "pFamilieYear",
   "pBasisYearTotal", "pPlusYearTotal", "pFamilieYearTotal",
@@ -164,6 +164,9 @@ export function priceVars(locale: Locale | string): Record<PriceToken, string | 
     // pMinute = outbound minute above the package, pExtraMinute = inbound minute above it
     pMonthly: f(e.monthly), pMinute: f(e.outbound_extra_minute), pExtraMinute: f(e.extra_minute), pSetup: f(e.setup),
     pMonthlyNum: n(e.monthly), pMinuteNum: n(e.outbound_extra_minute), pSetupNum: n(e.setup),
+    // outbound call after the package, by outcome; a contact at most (2 attempts answered + 3 minutes)
+    pCallAnswered: f(e.call_answered), pCallVoicemail: f(e.call_voicemail), pCallNoAnswer: f(e.call_no_answer),
+    pCallAnsweredNum: n(e.call_answered), pContactMax: f(2 * e.call_answered + 3 * e.outbound_extra_minute),
     pIncluded: INCLUDED_MINUTES, pCur: currencySymbol(c, locale),
     pBasis: f(pv.basis.monthly), pPlus: f(pv.plus.monthly), pFamilie: f(pv.familie.monthly),
     pBasisYear: f(pv.basis.yearly_monthly), pPlusYear: f(pv.plus.yearly_monthly), pFamilieYear: f(pv.familie.yearly_monthly),

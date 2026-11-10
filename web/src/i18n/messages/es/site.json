@@ -2,7 +2,7 @@
   "prices": {
     "monthly": "{pMonthlyNum}",
     "setup": "{pSetupNum}",
-    "perMinute": "{pMinuteNum}"
+    "perCall": "{pCallAnsweredNum}"
   },
   "demoCall": {
     "label": "Llamada · Carpintería (ejemplo)",
@@ -84,7 +84,7 @@
         },
         {
           "title": "Llama a sus clientes",
-          "text": "Hace seguimiento de presupuestos o recuerda el servicio, solo a clientes que han dicho que sí. Los minutos salen del paquete, sin precio por llamada."
+          "text": "Hace seguimiento de presupuestos o recuerda el servicio, solo a clientes que han dicho que sí. Los minutos salen del paquete; después {pCallAnswered} por llamada atendida + {pMinute} por minuto."
         }
       ],
       "note": "Todo lo que dice se basa en información que usted ha aprobado, y cualquier cambio se lo muestra primero: antes → después, «¿Aprobar?»."
@@ -118,11 +118,11 @@
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
-        "unit": "{pCur} por minuto fuera del paquete",
-        "text": "Solo si quiere que Dialogbot haga llamadas. Los minutos salen de los {pIncluded} minutos de la suscripción y una llamada sin respuesta no cuesta nada. Verá el precio máximo antes de empezar.",
+        "unit": "{pCur} por llamada atendida + {pMinute}/min tras el paquete",
+        "text": "Solo si quiere que Dialogbot haga llamadas. Los minutos salen de los {pIncluded} minutos de la suscripción sin precio por llamada. Agotado el paquete, una llamada cuesta {pCallAnswered} (atendida), {pCallVoicemail} (buzón de voz) o {pCallNoAnswer} (sin respuesta) más {pMinute} por minuto: como máximo {pContactMax} por contacto. Verá el precio máximo antes de empezar.",
         "badge": "Opcional",
         "points": [
-          "Sin precio por llamada – sin suscripción adicional",
+          "Sin precio por llamada dentro del paquete – sin suscripción adicional",
           "Apruebas el guion antes de que llame a nadie",
           "El precio máximo se muestra antes de empezar"
         ],
@@ -179,7 +179,7 @@
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
-        "description": "Por minuto saliente iniciado fuera de los {pIncluded} minutos de la suscripción, sin IVA. Sin precio por llamada."
+        "description": "Por llamada saliente atendida tras los {pIncluded} minutos de la suscripción, sin IVA, más {pMinute} por minuto iniciado (buzón de voz {pCallVoicemail}, sin respuesta {pCallNoAnswer})."
       },
       "setup": {
         "name": "Configuración por los especialistas de Dialogbot",
@@ -362,7 +362,7 @@
       },
       "campaign": {
         "name": "Llamadas salientes de campaña",
-        "unit": "{pCur} por minuto fuera del paquete",
+        "unit": "{pCur} por llamada atendida tras el paquete",
         "points": [
           "Solo si quiere que Dialogbot haga llamadas",
           "Los contactos han aceptado expresamente que se les llame",

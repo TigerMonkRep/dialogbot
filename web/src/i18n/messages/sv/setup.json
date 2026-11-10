@@ -99,7 +99,7 @@
         "phone": { "title": "Svara i telefon", "sub": "när ni inte kan – eller alltid" },
         "booking": { "title": "Boka möten", "sub": "direkt i er kalender" },
         "web": { "title": "Svara på webbplatsen", "sub": "webbchatt – en kodrad" },
-        "outbound": { "title": "Ringa upp kunder", "sub": "kampanjer · inget pris per samtal" }
+        "outbound": { "title": "Ringa upp kunder", "sub": "kampanjer · minuter från paketet" }
       },
       "langAria": "Språk",
       "speaks": "Den talar",
@@ -293,7 +293,7 @@
     "turningOn": "Slår på …",
     "turnOn": "Slå på Dialogbot",
     "managersOnly": "Endast ägare och administratörer kan slå på.",
-    "subscriptionNote": "Abonnemanget kostar från {pMonthly}/mån. exkl. moms med {pIncluded} minuter för in- och utgående samtal; därefter {pExtraMinute} per minut in och {pMinute} per minut ut.",
+    "subscriptionNote": "Abonnemanget kostar från {pMonthly}/mån. exkl. moms med {pIncluded} minuter för in- och utgående samtal; därefter {pExtraMinute} per minut in, och utgående {pCallAnswered} per besvarat samtal + {pMinute} per minut.",
     "confirmSubscription": "Bekräfta abonnemang",
     "findAgain": "Du hittar allt igen under profilikonen → Alla inställningar."
   },

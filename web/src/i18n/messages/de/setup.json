@@ -99,7 +99,7 @@
         "phone": { "title": "Ans Telefon gehen", "sub": "wenn Sie es nicht können – oder immer" },
         "booking": { "title": "Termine buchen", "sub": "direkt in Ihren Kalender" },
         "web": { "title": "Auf der Website antworten", "sub": "Webchat – eine Codezeile" },
-        "outbound": { "title": "Kunden anrufen", "sub": "Kampagnen · kein Preis pro Anruf" }
+        "outbound": { "title": "Kunden anrufen", "sub": "Kampagnen · Minuten aus dem Paket" }
       },
       "langAria": "Sprache",
       "speaks": "Er spricht",
@@ -293,7 +293,7 @@
     "turningOn": "Wird eingeschaltet …",
     "turnOn": "Dialogbot einschalten",
     "managersOnly": "Nur Inhaber und Administratoren können einschalten.",
-    "subscriptionNote": "Das Abonnement kostet ab {pMonthly}/Monat zzgl. MwSt. mit {pIncluded} Minuten für ein- und ausgehende Anrufe; danach {pExtraMinute} pro Minute eingehend und {pMinute} pro Minute ausgehend.",
+    "subscriptionNote": "Das Abonnement kostet ab {pMonthly}/Monat zzgl. MwSt. mit {pIncluded} Minuten für ein- und ausgehende Anrufe; danach {pExtraMinute} pro Minute eingehend und ausgehend {pCallAnswered} pro angenommenem Anruf + {pMinute} pro Minute.",
     "confirmSubscription": "Abonnement bestätigen",
     "findAgain": "Sie finden alles wieder unter dem Profilsymbol → Alle Einstellungen."
   },

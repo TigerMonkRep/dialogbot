@@ -189,18 +189,37 @@ def _before_shared_pool(db: OrmSession, workspace_id: uuid.UUID, at: datetime) -
     return at < statement.month_bounds(prices.SHARED_POOL_FROM, tz_of(db, workspace_id))[0]
 
 
+def outcome_class(ended_reason: str, answered: bool) -> str:
+    """The outcome a call is priced by after the package (documented in docs/pricing.md):
+    Vapi endedReason «voicemail» (Vapi's voicemail detection, enabled in the campaign assistant) → 'voicemail';
+    a conversation (the contact said something, and the reason is not a no-answer reason) → 'answered';
+    everything else – customer-did-not-answer, customer-busy, failed to connect, or picked up but silent → 'no_answer'.
+    A call without a report yet has no class and is billed as 'no_answer' (the cheapest)."""
+    if ended_reason.startswith("voicemail"):
+        return "voicemail"
+    return "answered" if answered else "no_answer"
+
+
+def _pending_contacts(db: OrmSession, c: Campaign) -> list[tuple[int, int]]:
+    return list(db.execute(select(CampaignContact.attempts, CampaignContact.connected_seconds).where(
+        CampaignContact.campaign_id == c.id, CampaignContact.status == "pending")).all())
+
+
 def max_minutes(db: OrmSession, c: Campaign) -> int:
-    """The most conversation minutes the campaign can still use: every attempt left at the full talk allowance."""
-    pending = db.execute(select(CampaignContact.attempts).where(CampaignContact.campaign_id == c.id,
-                                                                  CampaignContact.status == "pending")).scalars().all()
-    return sum(max(0, c.max_attempts - a) for a in pending) * started_minutes(c.max_connected_seconds)
+    """The most conversation minutes the campaign can still use: only an answered call has minutes, and an answered
+    call ends the contact – so per contact at most its remaining talk allowance."""
+    return sum(started_minutes(max(0, c.max_connected_seconds - (sec or 0)))
+               for a, sec in _pending_contacts(db, c) if c.max_attempts - a > 0)
 
 
 def max_cost(db: OrmSession, c: Campaign, now: datetime | None = None) -> dict:
-    """What a customer campaign can cost from now, honestly: its minutes first use what is left of this month's
-    package (shared with inbound calls), every minute above it costs the agreement's outbound minute price.
-    `net_minor` is the true maximum (if other calls use up the package first) – the amount the owner accepts;
-    `with_package_net_minor` is the most it costs with the package minutes left right now."""
+    """What a customer campaign can cost from now, honestly. Its minutes first use what is left of this month's
+    package (shared with inbound calls); every minute above it costs the agreement's outbound minute price, and every
+    call that starts after the package is used up costs a call price by outcome.
+    `net_minor` is the worst case – the amount the owner accepts: every attempt left answered after the package (the
+    answered price) plus all minutes at the minute price (with the default 2 attempts and 3 minutes: 2 × 4 kr. + 3 × 2
+    kr. = 14 kr. per contact, `per_contact_net_minor`). `with_package_net_minor` is the most it costs with the package
+    minutes left right now (0 when they cover every minute; the call prices only apply once the package is used up)."""
     from app.modules.billing import agreements, customer_market, statement
     from app.modules.reports.service import tz_of
 
@@ -210,11 +229,16 @@ def max_cost(db: OrmSession, c: Campaign, now: datetime | None = None) -> dict:
     start, end = statement.month_bounds(month, tz)
     terms = statement.package_terms(agreements.current(db, c.workspace_id), customer_market.currency_of(db, c.workspace_id))
     package = statement.allocate(statement.usage_events(db, c.workspace_id, start, end), terms)
+    contacts = [(a, sec) for a, sec in _pending_contacts(db, c) if c.max_attempts - a > 0]
+    attempts = sum(c.max_attempts - a for a, _sec in contacts)
     minutes = max_minutes(db, c)
-    price = terms["outbound"]
-    return {"minutes": minutes, "minute_net_minor": price, "package_included": package["included"],
-            "package_remaining": package["remaining"], "net_minor": minutes * price,
-            "with_package_net_minor": max(0, minutes - package["remaining"]) * price}
+    price, answered = terms["outbound"], terms["call"]["answered"]
+    worst = attempts * answered + minutes * price
+    with_package = 0 if minutes <= package["remaining"] else (minutes - package["remaining"]) * price + attempts * answered
+    return {"minutes": minutes, "attempts": attempts, "minute_net_minor": price, "call_prices": terms["call"],
+            "per_contact_net_minor": c.max_attempts * answered + started_minutes(c.max_connected_seconds) * price,
+            "package_included": package["included"], "package_remaining": package["remaining"], "net_minor": worst,
+            "with_package_net_minor": min(with_package, worst)}
 
 
 def max_cost_net_minor(db: OrmSession, c: Campaign) -> int:
@@ -508,6 +532,7 @@ def on_report(db: OrmSession, message: dict, *, call_id: str, conv, duration: fl
     call = db.scalar(select(CampaignCall).where(CampaignCall.provider_call_id == call_id).order_by(CampaignCall.dialled_at.desc()))
     if call is not None and call.connected_seconds is None:  # price the conversation minutes once, from the report
         call.connected_seconds = int(duration or 0) if answered else 0
+        call.outcome_class = outcome_class(reason, answered)
         # customer campaigns from 2026-11: the minutes are priced by the monthly statement (shared package, then
         # 2 kr./min); a call dialled in an earlier month keeps that month's model (priced per call, as invoiced)
         pooled = c.kind == "customer" and not _before_shared_pool(db, c.workspace_id, call.dialled_at)

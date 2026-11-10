@@ -43,8 +43,10 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     c = _campaign(api, t)
-    # no price per call; 2 kr. per started minute above the shared package (decision 2026-11-10)
-    assert c["pricing"] == {"currency": "DKK", "call_net_minor": 0, "minute_net_minor": 200, "max_attempts": 2, "max_connected_seconds": 180}
+    # inside the package no call price; after it 4/1/0,25 kr. per call by outcome + 2 kr. per started minute
+    assert c["pricing"] == {"currency": "DKK", "call_net_minor": 400, "minute_net_minor": 200, "max_attempts": 2,
+                            "max_connected_seconds": 180, "call_prices": {"answered": 400, "voicemail": 100, "no_answer": 25},
+                            "per_contact_max_net_minor": 1_400}
     # the honest maximum: 1 contact × 2 attempts × 3 minutes once imported; nothing used of the package yet
     assert c["package"] == {"included": 300, "remaining": 300} and c["max_cost_with_package"]["net_minor"] == 0
     assert api.post(tok, f"/workspaces/{ws}/do-not-call", {"phone": "21222324", "reason": "Bad os lade være"}).status_code == 201
@@ -59,9 +61,9 @@ def test_import_rules_and_do_not_call(api, two_workspaces):
     assert bad.status_code == 422
     ok = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import",
                   {"csv": "Bo;22334455", "kind": "consumer", "consent_source": "Tilmelding på hjemmesiden, marts 2026"}).json()
-    # the true maximum: 2 contacts × 2 attempts × 3 min × 2 kr. (if other calls used up the package); with the 300
-    # package minutes left now it costs nothing
-    assert ok["added"] == 1 and ok["campaign"]["max_cost"]["net_minor"] == 2400 and ok["campaign"]["max_minutes"] == 12
+    # the worst case: 2 contacts × (2 attempts answered after the package × 4 kr. + 3 min × 2 kr.) = 2 × 14 kr.; an
+    # answered call ends the contact, so 3 minutes per contact at most; with the 300 package minutes left it costs nothing
+    assert ok["added"] == 1 and ok["campaign"]["max_cost"]["net_minor"] == 2 * 1_400 and ok["campaign"]["max_minutes"] == 6
     assert ok["campaign"]["max_cost_with_package"]["net_minor"] == 0
     items = api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts").json()["items"]
     assert {x["kind"] for x in items} == {"business", "consumer"}
@@ -240,3 +242,17 @@ def test_create_call_never_dials_with_fake_telephony(monkeypatch):
         assert out["id"].startswith("fake-call-") and out["simulated"] is True
     finally:
         get_settings.cache_clear()
+
+
+def test_max_cost_is_the_worst_case_14_kr_per_contact(api, two_workspaces, db):
+    """A': every attempt answered after the package (4 kr.) + all minutes at 2 kr.: 2 × 4 + 3 × 2 = 14 kr. per contact
+    with the default 2 attempts and 3 minutes; with the package minutes left now it costs nothing."""
+    t = two_workspaces
+    tok, ws = t["tok_a"], t["ws_a"]
+    c = _campaign(api, t)
+    assert c["pricing"]["per_contact_max_net_minor"] == 1_400 and c["pricing"]["call_prices"] == {"answered": 400, "voicemail": 100, "no_answer": 25}
+    out = api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/contacts/import",
+                   {"csv": "A;20304050\nB;21222324\nC;22334455", "kind": "business", "consent_source": "Tilmelding"}).json()["campaign"]
+    assert (out["max_minutes"], out["max_cost"]["net_minor"], out["max_cost_with_package"]["net_minor"]) == (9, 3 * 1_400, 0)
+    lst = api.get(tok, f"/workspaces/{ws}/campaigns").json()["pricing"]
+    assert lst["per_contact_max_net_minor"] == 1_400 and lst["call_net_minor"] == 400

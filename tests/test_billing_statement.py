@@ -253,15 +253,18 @@ def test_shared_package_inbound_and_outbound_in_call_order(api, two_workspaces, 
     assert (out["calls"], out["minutes"], out["package_minutes"], out["extra_minutes"], out["net_minor"]) == (3, 60, 50, 10, 2_000)
     assert (inb["minutes"], inb["package_minutes"], inb["extra_minutes"], inb["net_minor"]) == (265, 250, 15, 2_250)
     assert "Kampagne \"Vinter\": 3 udgående opkald, 60 samtaleminutter (50 min fra pakken, 10 min ud over pakken à 2" in out["description"]
-    # 2.495 + 20 + 22,50 = 2.537,50 net; 25 % VAT
-    assert st["totals"]["net_minor"] == 249_500 + 2_000 + 2_250 and st["totals"]["gross_minor"] == 317_188
+    # the unanswered call (09:02) starts after the 20-minute call used up the package: 0,25 kr. (no report = cheapest)
+    fees = next(x for x in st["lines"] if x["kind"] == "campaign_call_fees")
+    assert (fees["calls"], fees["no_answer"], fees["net_minor"]) == (1, 1, 25)
+    # 2.495 + 20 + 0,25 + 22,50 = 2.537,75 net; 25 % VAT (634,4375 → 634,44)
+    assert st["totals"]["net_minor"] == 249_500 + 2_000 + 25 + 2_250 and st["totals"]["gross_minor"] == 317_219
 
 
-def test_unanswered_campaign_calls_cost_nothing_and_a_quiet_month_is_just_the_subscription(api, two_workspaces, db):
+def test_unanswered_campaign_calls_inside_the_package_cost_nothing_and_a_quiet_month_is_just_the_subscription(api, two_workspaces, db):
     ws, tok = uuid.UUID(two_workspaces["ws_a"]), two_workspaces["tok_a"]
     _agreement(db, ws, 1, "A", datetime(2026, 8, 1, tzinfo=UTC))
     camp, contact = _campaign(db, ws)
-    for i in range(5):  # five unanswered attempts (an old 4 kr. snapshot on the call is not charged any more)
+    for i in range(5):  # five unanswered attempts inside the package (an old 4 kr. snapshot on the call is not charged)
         db.add(CampaignCall(workspace_id=ws, campaign_id=camp.id, contact_id=contact.id, net_minor=400, connected_seconds=0,
                             dialled_at=datetime(2026, 11, 20, 9, i, tzinfo=UTC)))
     db.commit()
@@ -315,3 +318,70 @@ def test_late_usage_in_a_shared_package_month_is_compared_as_a_whole(api, two_wo
     db.commit()
     late = [x for x in get("2026-12")["lines"] if x["kind"] == "late_usage_adjustment"]
     assert [(x["usage_kind"], x["period"], x["minutes"], x["net_minor"]) for x in late] == [("package", "2026-11", 10, 2_000)]
+
+
+# --------------------------------------------------------------------------- call price after the package (A')
+# Fürster 2026-11-10 20:28: inside the package no call price; a campaign call that STARTS after the package is used
+# up costs 4 kr. answered / 1 kr. voicemail / 0,25 kr. unanswered-busy (unknown = 0,25 kr.) + 2 kr. per started
+# minute; a call that crosses the limit only splits its minutes.
+
+def test_call_price_by_outcome_only_for_calls_that_start_after_the_package(api, two_workspaces, db):
+    from app.models import Call
+
+    ws, tok = uuid.UUID(two_workspaces["ws_a"]), two_workspaces["tok_a"]
+    _agreement(db, ws, 1, "A", datetime(2026, 8, 1, tzinfo=UTC))
+    camp, contact = _campaign(db, ws)
+    db.add(Call(workspace_id=ws, provider="vapi", provider_call_id="ap_in", started_at=datetime(2026, 11, 2, 9, tzinfo=UTC),
+                duration_seconds=295 * 60))  # 295 of 300 minutes
+    calls = [  # (minute of 3/11 09:xx, seconds, outcome)
+        (0, 10 * 60, "answered"),   # crosses the limit: 5 in the package, 5 over – NO call price
+        (1, 2 * 60, "answered"),    # starts after the package: 4 kr. + 2 min × 2 kr.
+        (2, 0, "voicemail"),        # 1 kr.
+        (3, 0, "no_answer"),        # 0,25 kr.
+        (4, None, None),            # no report yet: billed as the cheapest, 0,25 kr.
+    ]
+    for m, sec, outcome in calls:
+        db.add(CampaignCall(workspace_id=ws, campaign_id=camp.id, contact_id=contact.id, net_minor=0, connected_seconds=sec,
+                            outcome_class=outcome, dialled_at=datetime(2026, 11, 3, 9, m, tzinfo=UTC)))
+    db.commit()
+    st = api.get(tok, f"/workspaces/{ws}/billing/statement?month=2026-11").json()
+    minutes = next(x for x in st["lines"] if x["kind"] == "campaign_calls")
+    fees = next(x for x in st["lines"] if x["kind"] == "campaign_call_fees")
+    assert (minutes["minutes"], minutes["package_minutes"], minutes["extra_minutes"], minutes["net_minor"]) == (12, 5, 7, 1_400)
+    assert (fees["calls"], fees["answered"], fees["voicemail"], fees["no_answer"], fees["net_minor"]) == (4, 1, 1, 2, 400 + 100 + 25 + 25)
+    assert "1 besvaret à 4" in fees["description"] and "1 telefonsvarer à 1" in fees["description"]
+    assert st["totals"]["net_minor"] == 249_500 + 1_400 + 550
+
+
+def test_no_call_price_inside_the_package(api, two_workspaces, db):
+    ws, tok = uuid.UUID(two_workspaces["ws_a"]), two_workspaces["tok_a"]
+    _agreement(db, ws, 1, "A", datetime(2026, 8, 1, tzinfo=UTC))
+    camp, contact = _campaign(db, ws)
+    for i, outcome in enumerate(("answered", "voicemail", "no_answer")):
+        db.add(CampaignCall(workspace_id=ws, campaign_id=camp.id, contact_id=contact.id, net_minor=0,
+                            connected_seconds=60 if outcome == "answered" else 0, outcome_class=outcome,
+                            dialled_at=datetime(2026, 11, 3, 9, i, tzinfo=UTC)))
+    db.commit()
+    st = api.get(tok, f"/workspaces/{ws}/billing/statement?month=2026-11").json()
+    assert not [x for x in st["lines"] if x["kind"] == "campaign_call_fees"] and st["totals"]["net_minor"] == 249_500
+
+
+def test_outcome_class_mapping():
+    from app.modules.campaigns.service import outcome_class
+
+    assert outcome_class("voicemail", False) == "voicemail"
+    assert outcome_class("customer-ended-call", True) == "answered"
+    for reason in ("customer-did-not-answer", "customer-busy", "twilio-failed-to-connect-call", "customer-ended-call"):
+        assert outcome_class(reason, False) == "no_answer", reason
+
+
+def test_call_prices_are_the_agreements_snapshot(api, two_workspaces, db, monkeypatch):
+    from app.modules.billing import agreements, markets
+
+    ws = uuid.UUID(two_workspaces["ws_a"])
+    a = agreements.create(db, ws, "A", None)
+    db.commit()
+    assert (a.outbound_call_answered_net_minor, a.outbound_call_voicemail_net_minor, a.outbound_call_no_answer_net_minor) == (400, 100, 25)
+    monkeypatch.setitem(markets.ERHVERV["DKK"], "call_answered", 999)
+    assert agreements.out(a)["outbound_call"]["answered"]["net_minor"] == 400
+    assert agreements.create(db, ws, "A", None).outbound_call_answered_net_minor == 999  # a new version takes the new list

@@ -37,7 +37,7 @@ export default async function OfferPage({ params }: { params: Promise<{ token: s
             <dt className="text-ink-soft">{t("offer.totalMonthly")}</dt><dd className="font-semibold tabular-nums text-right">{t("offer.inclVat", { amount: kr(o.monthly_net_minor + o.monthly_vat_minor) })}</dd>
             <dt className="text-ink-soft">{t("offer.setup")}</dt><dd className="text-right">{o.setup_net_minor ? t("offer.setupPaid", { amount: kr(o.setup_net_minor), total: kr(o.setup_net_minor + o.setup_vat_minor) }) : t("offer.setupDiy")}</dd>
             <dt className="text-ink-soft">{t("offer.inbound")}</dt><dd className="text-right">{t("offer.inboundValue", { minutes: o.inbound_included_minutes, price: kr(o.inbound_extra_minute_net_minor) })}</dd>
-            <dt className="text-ink-soft">{t("offer.outbound")}</dt><dd className="text-right">{t("offer.outboundValue", { minute: kr(o.campaign_minute_net_minor) })}</dd>
+            <dt className="text-ink-soft">{t("offer.outbound")}</dt><dd className="text-right">{t("offer.outboundValue", { call: kr(o.campaign_call_net_minor), minute: kr(o.campaign_minute_net_minor) })}</dd>
             <dt className="text-ink-soft">{t("offer.binding")}</dt><dd className="text-right">{o.notice}</dd>
             <dt className="text-ink-soft">{t("offer.validUntil")}</dt><dd className="text-right">{new Date(o.valid_until).toLocaleDateString(lang, { timeZone: "Europe/Copenhagen" })}</dd>
           </dl>

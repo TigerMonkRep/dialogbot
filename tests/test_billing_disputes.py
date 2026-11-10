@@ -202,4 +202,5 @@ def test_week_overview_campaign_amount_comes_from_the_package(api, two_workspace
                         dialled_at=datetime(2026, 11, 10, 9, tzinfo=UTC)))
     db.commit()
     w = service.week(db, ws, date(2026, 11, 9), "Europe/Copenhagen")
-    assert (w["campaign_calls"], w["campaign_net_minor"]) == (1, 5 * 200)  # all 5 minutes above the package
+    # all 5 minutes above the package, and the call started after it: + 0,25 kr. (no report yet = the cheapest)
+    assert (w["campaign_calls"], w["campaign_net_minor"]) == (1, 5 * 200 + 25)

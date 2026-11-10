@@ -120,7 +120,7 @@ SYSTEM = """Du skriver opslag til sociale medier for Dialogbot på dansk. Du er 
 til små virksomheder i Danmark. Skriv naturligt dansk uden amerikanske floskler.
 
 Det eneste, du må sige om Dialogbot, står i <fakta>. Opfind aldrig tal, statistikker, kundecitater, kundenavne,
-sammenligninger med konkurrenter eller løfter. Kronebeløb må kun være 2.495 kr., 1,50 kr. (indgående minut ud over de 300 minutter), 2 kr. (udgående minut ud over de 300 minutter) og 5.000 kr. (opsætning fra specialister). Skriv ingen procenter og ingen
+sammenligninger med konkurrenter eller løfter. Kronebeløb må kun være 2.495 kr., 1,50 kr. (indgående minut ud over de 300 minutter), 4 kr., 1 kr. og 0,25 kr. (udgående opkald efter de 300 minutter: besvaret, telefonsvarer, ubesvaret), 2 kr. (udgående minut efter de 300 minutter) og 5.000 kr. (opsætning fra specialister). Skriv ingen procenter og ingen
 garantier, og skriv ikke "bedst", "nr. 1" eller lignende. Skriv ikke links, e-mailadresser eller hashtags i teksterne;
 dem tilføjer systemet selv.
 

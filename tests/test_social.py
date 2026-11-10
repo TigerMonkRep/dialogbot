@@ -51,9 +51,12 @@ def test_prices_in_the_facts_match_the_website():
 
     assert any("fra 2.495 kr. om måneden" in f for f in FACTS) and any("ingen pris pr. opkald" in f.lower() for f in FACTS)
     assert any("300 minutter om måneden er med – både indgående opkald og udgående kampagneopkald" in f for f in FACTS)
-    assert not any("4 kr." in f for f in FACTS)                                        # no per-call fee (2026-11-10)
-    assert ALLOWED_AMOUNTS == {prices.kr(prices.SUBSCRIPTION_MONTHLY_NET_MINOR), prices.kr(prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR),
-                               prices.kr(prices.INBOUND_EXTRA_MINUTE_NET_MINOR), prices.kr(prices.SPECIALIST_SETUP_NET_MINOR)}
+    # after the package: 4 / 1 / 0,25 kr. per outbound call by outcome + 2 kr. per minute (2026-11-10 20:28)
+    assert any("4 kr., hvis personen tager telefonen, 1 kr. ved telefonsvarer og 0,25 kr. ved ubesvaret" in f for f in FACTS)
+    assert ALLOWED_AMOUNTS == {prices.kr(m) for m in (
+        prices.SUBSCRIPTION_MONTHLY_NET_MINOR, prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR, prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
+        prices.OUTBOUND_CALL_ANSWERED_NET_MINOR, prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR, prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR,
+        prices.SPECIALIST_SETUP_NET_MINOR)}
     assert not any("149" in f or "1.495" in f for f in FACTS)                          # the old prices are gone
 
 
@@ -828,7 +831,7 @@ def test_prices_are_text_only_never_on_an_image_and_no_gratis_or_certificate_cla
     t = TOPICS_BY_KEY["pricing"]
     for platform in PLATFORMS:
         d = content.template_draft(platform, t)
-        assert "2.495" in d.caption and "2 kr." in d.caption and "4 kr." not in d.caption
+        assert "2.495" in d.caption and "4 kr. pr. besvaret opkald" in d.caption and "2 kr./min" in d.caption
         for s in d.slides:
             assert not any(ch.isdigit() for ch in f"{s.get('title', '')} {s.get('body', '')}")
     bad = content.template_draft("facebook", TOPICS_BY_KEY["pricing"])

@@ -129,7 +129,7 @@
     "noAppointments": "Inga kommande bokningar.",
     "weekAppointments": "Se veckans bokningar",
     "campaigns": "Kampanjer",
-    "campaignsSub": "Ring era egna kunder – samtalsminuterna dras från abonnemangets {pIncluded} minuter, därefter {pMinute} per minut exkl. moms. Inget pris per samtal.",
+    "campaignsSub": "Ring era egna kunder – minuterna dras från abonnemangets {pIncluded} minuter. När de är förbrukade kostar ett besvarat samtal {pCallAnswered} plus {pMinute} per minut exkl. moms.",
     "openCampaigns": "Öppna kampanjer",
     "allActivity": "All aktivitet de senaste 14 dagarna",
     "power": {
@@ -288,7 +288,7 @@
       "title": "Det här kostade veckan",
       "extra": "{amount} extra",
       "calls": "{n} kampanjsamtal",
-      "note": "{pIncluded} minuter per månad ingår i abonnemanget – för både inkommande samtal och kampanjsamtal. Kampanjsamtal under veckan: {n}. Därutöver {pExtraMinute} per minut in och {pMinute} per minut ut, exkl. moms.",
+      "note": "{pIncluded} minuter per månad ingår – för både inkommande samtal och kampanjsamtal. Kampanjsamtal under veckan: {n}. Beloppet är vad veckans kampanjsamtal kostar efter paketet (samtalspris efter utfall + {pMinute} per minut), exkl. moms.",
       "billing": "Se abonnemang och fakturor"
     }
   },
@@ -479,15 +479,15 @@
     "eyebrow": "Idag → Kampanjer",
     "enable": {
       "title": "Vill ni också ringa ut?",
-      "body": "Dialogbot kan ringa era egna kunder med ett budskap – till exempel ett erbjudande – och skicka de intresserade vidare till er. Minuterna dras från abonnemangets {included} minuter; därutöver kostar varje påbörjad minut {price} exkl. moms. Ett obesvarat samtal kostar ingenting. Det ringes först när ni har godkänt.",
+      "body": "Dialogbot kan ringa era egna kunder med ett budskap – till exempel ett erbjudande – och skicka de intresserade vidare till er. Minuterna dras från abonnemangets {included} minuter, utan pris per samtal. När paketet är förbrukat kostar ett samtal {answered} (besvarat), {voicemail} (röstbrevlåda) eller {noAnswer} (obesvarat) plus {price} per påbörjad minut exkl. moms. Det ringes först när ni har godkänt.",
       "onlyAdmins": "Endast ägare och administratörer kan aktivera utgående samtal.",
       "ask": "Du kan också säga det till assistenten.",
       "pending": "Aktiverar…",
       "button": "Ja, aktivera utgående samtal"
     },
-    "eyebrowPrice": "I dag → Kampanjer · utgående samtal · minuter från paketet, därefter {price}/min exkl. moms",
+    "eyebrowPrice": "I dag → Kampanjer · utgående samtal · minuter från paketet, därefter {answered} per besvarat samtal + {price}/min exkl. moms",
     "title": "Ring era kunder – en kampanj i taget",
-    "intro": "Tre steg: du väljer vem den ska ringa, hör vad den säger och godkänner priset innan första samtalet går ut. Minuterna dras från abonnemangets {included} minuter (samma som de inkommande samtalen); därutöver {price} + moms per påbörjad minut. Ett obesvarat samtal kostar ingenting. Högst {attempts} försök och totalt {minutes} minuters samtal per kontakt. Dialogbot ringer aldrig någon på spärrlistan.",
+    "intro": "Tre steg: du väljer vem den ska ringa, hör vad den säger och godkänner priset innan första samtalet går ut. Minuterna dras från abonnemangets {included} minuter (samma som de inkommande samtalen), utan pris per samtal. När paketet är förbrukat kostar ett samtal {answered} (besvarat), {voicemail} (röstbrevlåda) eller {noAnswer} (obesvarat) plus {price} per påbörjad minut, exkl. moms. Högst {attempts} försök och totalt {minutes} minuters samtal per kontakt – högst {contactMax} per kontakt. Dialogbot ringer aldrig någon på spärrlistan.",
     "salesCalls": "Säljsamtal: låt AI:n ringa upp (endast Dialogbot)",
     "need": {
       "title": "Du behöver",
@@ -515,7 +515,7 @@
       "consent": "samtycke",
       "noConsent": "Samtycke saknas – rings inte upp",
       "attempts": "{n} försök",
-      "priceNote": "Inget pris per samtal: minuterna dras från paketet, därefter {price} per minut exkl. moms. Stoppa när som helst."
+      "priceNote": "Inget pris per samtal inom paketet. Därefter {answered} (besvarat), {voicemail} (röstbrevlåda) eller {noAnswer} (obesvarat) per samtal plus {price} per minut exkl. moms. Stoppa när som helst."
     },
     "new": {
       "title": "Ny kampanj",
@@ -572,7 +572,7 @@
       "before": "Innan den startar",
       "resumeTitle": "Återuppta kampanjen",
       "heading": "{n} kontakter · högst {max} exkl. moms",
-      "body": "{n} kontakter väntar: högst {maxMinutes} samtalsminuter ({attempts} försök och {minutes} minuter per kontakt). Det finns {remaining} av {included} minuter kvar i paketet denna månad – med dem kostar kampanjen högst {withPackage} + moms. Använder andra samtal paketet först är priset högst {max} + moms ({gross} inkl. moms), {minute} + moms per påbörjad minut. Obesvarade samtal kostar ingenting. Betalning startar aldrig samtal.",
+      "body": "{n} kontakter väntar: högst {attempts} försök och {minutes} samtalsminuter per kontakt, totalt högst {maxMinutes} minuter. Det finns {remaining} av {included} minuter kvar i paketet denna månad – med dem kostar kampanjen högst {withPackage} + moms. I värsta fall (andra samtal använder paketet först och varje försök besvaras: {answered} per samtal + {minute} per minut, högst {contactMax} per kontakt) är priset högst {max} + moms ({gross} inkl. moms). Betalning startar aldrig samtal.",
       "confirm": "Bekräfta reglerna för samtal",
       "starting": "Startar…",
       "resume": "Återuppta",
@@ -799,7 +799,7 @@
       "confirmed": "Bekräftat · avtal v{v}. Konfiguration på egen hand ingår.",
       "notConfirmed": "Konfiguration på egen hand ingår. Inte bekräftat än.",
       "campaign": "Kampanjsamtal",
-      "campaignPrice": "per påbörjad minut utöver paketet exkl. moms – inget pris per samtal",
+      "campaignPrice": "per påbörjad minut efter paketet + {answered}/{voicemail}/{noAnswer} per samtal (besvarat/röstbrevlåda/obesvarat), exkl. moms",
       "campaignMonth": "Den här månaden: {calls} samtal, {minutes} samtalsminuter · {amount} exkl. moms",
       "package": "Minutpaket – inkommande och utgående samtal",
       "packageUsed": "av {n} minuter använda denna månad",
@@ -959,7 +959,7 @@
       },
       "billing": {
         "q": "Avräkning",
-        "a": "Det finns ett abonnemang från {pMonthly} i månaden exkl. moms, inkl. 300 minuter för in- och utgående samtal (därefter {pExtraMinute} per minut in och {pMinute} per minut ut). Det finns inget pris per samtal. Konto visar månadens förhandsvisning."
+        "a": "Det finns ett abonnemang från {pMonthly} i månaden exkl. moms, inkl. 300 minuter för in- och utgående samtal (därefter {pExtraMinute} per minut in och {pMinute} per minut ut). Inom paketet finns inget pris per samtal; när det är förbrukat kostar ett utgående samtal {pCallAnswered} (besvarat), {pCallVoicemail} (röstbrevlåda) eller {pCallNoAnswer} (obesvarat) plus {pMinute} per minut. Konto visar månadens förhandsvisning."
       }
     },
     "team": {

@@ -102,7 +102,7 @@ def test_c15_c09_packages_checkout_and_refunds_exist(api, two_workspaces):
     t = two_workspaces
     tok, ws = t["tok_a"], t["ws_a"]
     c = api.post(tok, f"/workspaces/{ws}/campaigns", {"name": "QA-EB pakker"}).json()
-    assert c["package"] == {"included": 300, "remaining": 300} and c["pricing"]["call_net_minor"] == 0
+    assert c["package"] == {"included": 300, "remaining": 300} and c["pricing"]["call_prices"]["answered"] == 400
     assert {"max_cost", "max_cost_with_package", "max_minutes"} <= set(c)
     for p in ("checkout", "packages", "order"):  # no per-campaign purchase exists
         assert api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}/{p}").status_code in (404, 405)

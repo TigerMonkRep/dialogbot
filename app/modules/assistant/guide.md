@@ -16,8 +16,11 @@ Priserne står også i `app/modules/billing/prices.py` og `docs/pricing.md`; de 
 - 300 påbegyndte minutter pr. kalendermåned er med – én pulje til både indgående opkald og udgående
   kampagneopkald, brugt i den rækkefølge opkaldene sker. Derudover 1,50 kr. pr. påbegyndt indgående minut og 2 kr.
   pr. påbegyndt udgående minut. Forbruget ses under Konto.
-- Udgående kampagneopkald: ingen pris pr. opkald – et ubesvaret opkald koster intet. Samtaleminutterne trækker på
-  pakken. En kontakt ringes højst 2 gange og taler højst 3 minutter; før start vises den højeste mulige pris.
+- Udgående kampagneopkald: inden for pakken ingen pris pr. opkald – minutterne trækker bare på pakken. Er pakken
+  brugt op, koster et opkald, der starter derefter, 4 kr., hvis personen tager telefonen, 1 kr. ved telefonsvarer og
+  0,25 kr. ved ubesvaret/optaget – plus 2 kr. pr. påbegyndt samtaleminut. Et opkald, der krydser grænsen, deler kun
+  minutterne. En kontakt ringes højst 2 gange og taler højst 3 minutter (højst 14 kr. pr. kontakt); før start vises
+  den højeste mulige pris.
 - Minutter krediteres kun, når kunden klager over et opkald (ingen automatisk kreditering).
 - Opsætning: gør-det-selv er med (tre trin, ca. 30 minutter). Skræddersyet opsætning fra Dialogbots specialister
   koster 5.000 kr. én gang (valgfrit).

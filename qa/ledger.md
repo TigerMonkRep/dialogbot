@@ -36,3 +36,4 @@
 | 2026-11-10 | fix-engineer → qa-lead | fix-ready | billing 1 | F-BQ-012-M04 (efterregistreret forbrug på næste faktura), F-BQ-011-B05 (pakke snapshot på aftalen, migration f3b8d1e6a4c2); ikke committet |
 | 2026-11-10 | fix-engineer → qa-lead | fix-ready | prismodel A | Fælles minutpakke 300 min ind+ud, ingen opkaldsgebyr, overforbrug 1,50 ind / 2 kr. ud; migration a9c4e2f7b5d1; vilkår v1 uændret (needs-decision); ikke committet |
 | 2026-11-10 | fix-engineer → qa-lead | fix-ready | B+C | Klage → kreditering (call_disputes, migration b6d2f8a3c7e9), Konto forbrug pr. opkald, operatør-fakturering M04, Konto læser egen aftale, ugeoversigt fra opgørelsen; ikke committet |
+| 2026-11-10 | fix-engineer → qa-lead | fix-ready | prismodel A' | Opkaldspris efter pakken efter udfald (4/1/0,25 kr.) + 2 kr./min, migration c8e4a1f6d2b9, max_cost værste sag 14 kr./kontakt, tekster 8 sprog + vilkår v2; ikke committet |

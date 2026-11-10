@@ -54,20 +54,20 @@
   "pricing": {
     "meta": {
       "title": "Preise – KI-Rezeptionist für {pMonthly} im Monat",
-      "description": "Der Preis von Dialogbot: ein Abonnement für {pMonthly} im Monat zzgl. MwSt. mit 300 Minuten für ein- und ausgehende Anrufe. Telefon, Chat, Buchung und persönliche Einrichtung sind inklusive. Einen Preis pro Anruf gibt es nicht.",
+      "description": "Der Preis von Dialogbot: ein Abonnement für {pMonthly} im Monat zzgl. MwSt. mit 300 Minuten für ein- und ausgehende Anrufe. Telefon, Chat, Buchung und persönliche Einrichtung sind inklusive. Innerhalb des Pakets gibt es keinen Preis pro Anruf; ist es verbraucht, kostet ein ausgehender Anruf {pCallAnswered} (angenommen), {pCallVoicemail} (Mailbox) oder {pCallNoAnswer} (nicht angenommen) plus {pMinute} pro Minute.",
       "ogTitle": "Preise für den KI-Rezeptionisten | Dialogbot"
     },
     "kicker": "Preise",
     "title": "Ein Abonnement – {pMonthly} im Monat",
     "lead": "Ein Preis, der volle Dialogbot: KI-Rezeptionist am Telefon, Chatbot auf der Website, Terminbuchung und eine Zusammenfassung jeder Anfrage. Alle Preise zzgl. MwSt.",
-    "points": ["{pMonthly} im Monat – ein Abonnement", "Kein Preis pro Anfrage", "{pIncluded} Minuten pro Monat inklusive – für ein- und ausgehende Anrufe", "Danach {pExtraMinute} pro Minute eingehend und {pMinute} pro Minute ausgehend – kein Preis pro Anruf", "Keine Mindestlaufzeit", "Einrichtung in Eigenregie inklusive – Einrichtung durch Spezialisten {pSetup}"],
+    "points": ["{pMonthly} im Monat – ein Abonnement", "Kein Preis pro Anfrage", "{pIncluded} Minuten pro Monat inklusive – für ein- und ausgehende Anrufe", "Danach {pExtraMinute} pro Minute eingehend; ausgehend {pCallAnswered} pro angenommenem Anruf + {pMinute} pro Minute", "Keine Mindestlaufzeit", "Einrichtung in Eigenregie inklusive – Einrichtung durch Spezialisten {pSetup}"],
     "sections": {
       "subscription": {
         "title": "Das Abonnement",
         "p1Price": "{pMonthly} im Monat",
         "p1a": " zzgl. MwSt. Es gibt keinen Preis pro Anfrage, und ",
         "p1Minutes": "{pIncluded} Minuten pro Monat sind inklusive – für eingehende Anrufe und ausgehende Kampagnenanrufe",
-        "p1b": " – das reicht den meisten kleinen Unternehmen. Brauchen Sie mehr, kostet jede weitere angefangene Minute {pExtraMinute} eingehend und {pMinute} ausgehend. Ihren Verbrauch sehen Sie jederzeit in Dialogbot.",
+        "p1b": " – das reicht den meisten kleinen Unternehmen. Innerhalb des Pakets gibt es keinen Preis pro Anruf. Brauchen Sie mehr Minuten, kostet jede angefangene eingehende Minute {pExtraMinute}; ausgehende Kampagnenanrufe nach dem Paket sind unten beschrieben. Ihren Verbrauch pro Anruf sehen Sie jederzeit in Dialogbot.",
         "p2": "Der Preis eines Telefonservice – aber ein Empfang, der auch die Termine in Ihrem Kalender bucht und Sie über jeden Anruf informiert.",
         "p3a": "Ideal für Unternehmen, bei denen das Telefon klingelt, während viel los ist: Handwerksbetriebe, Praxen, Salons, Werkstätten und Berater. Möchten Sie ihn zuerst hören, können Sie ",
         "p3Link": "sich von Dialogbot anrufen lassen",
@@ -97,12 +97,12 @@
       },
       "outbound": {
         "title": "Ausgehende Kampagnenanrufe",
-        "p1a": "Soll der Assistent Kontakte anrufen, die einem Anruf zugestimmt haben, gehen die Minuten von denselben Minuten im Abonnement ab. Ist das Paket verbraucht, kostet es ",
-        "p1Call": "{pMinute} pro angefangener ausgehender Minute",
-        "p1b": " – und ",
-        "p1Minute": "nichts pro Anruf",
+        "p1a": "Soll der Assistent Kontakte anrufen, die einem Anruf zugestimmt haben, gehen die Minuten von denselben Minuten im Abonnement ab – ohne Preis pro Anruf. Ist das Paket verbraucht, kostet jeder danach beginnende Anruf ",
+        "p1Call": "{pCallAnswered}, wenn die Person abnimmt, {pCallVoicemail} bei Mailbox und {pCallNoAnswer} bei nicht angenommen oder besetzt",
+        "p1b": " plus ",
+        "p1Minute": "{pMinute} pro angefangener Gesprächsminute",
         "p1c": ", zzgl. MwSt.",
-        "p2": "Ein unbeantworteter Anruf kostet nichts. Das Paket wird mit den eingehenden Anrufen geteilt und in der Reihenfolge der Anrufe verbraucht. Ein Kontakt wird höchstens zweimal angerufen und spricht insgesamt höchstens 3 Minuten, und Sie sehen den Höchstpreis, bevor Sie auf Start drücken."
+        "p2": "Ein Anruf, der die Grenze überschreitet, teilt nur seine Minuten – er bekommt keinen Anrufpreis. Das Paket wird mit den eingehenden Anrufen geteilt und in der Reihenfolge der Anrufe verbraucht. Ein Kontakt wird höchstens zweimal angerufen und spricht höchstens 3 Minuten, ein Kontakt kostet also höchstens {pContactMax}, und Sie sehen den Höchstpreis, bevor Sie auf Start drücken."
       },
       "start": {
         "title": "Jetzt starten",
@@ -117,11 +117,11 @@
     },
     "faq": [
       ["Gibt es eine Mindestlaufzeit?", "Nein. Es gibt keine Mindestlaufzeit. Sie können zum Ende des laufenden Monats kündigen."],
-      ["Sind {pMonthly} der volle Preis?", "Ja, das ist der volle Preis für das Abonnement, zzgl. MwSt. Es gibt nur ein Abonnement und keinen Aufpreis pro Anfrage. Nur wenn Sie mehr als 300 Minuten im Monat (ein- und ausgehend zusammen) nutzen, kostet jede weitere Minute {pExtraMinute} eingehend und {pMinute} ausgehend"],
+      ["Sind {pMonthly} der volle Preis?", "Ja, das ist der volle Preis für das Abonnement, zzgl. MwSt. Es gibt nur ein Abonnement und keinen Aufpreis pro Anfrage. Nur wenn Sie mehr als 300 Minuten im Monat (ein- und ausgehend zusammen) nutzen, kostet jede weitere Minute {pExtraMinute} eingehend und {pMinute} ausgehend; ausgehende Anrufe nach dem Paket kosten zudem {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} pro Anruf je nach Ergebnis."],
       ["Kann ich ihn vor dem Kauf testen?", "Ja. Dialogbot ruft Sie an und empfängt Sie, als wären Sie ein Kunde – das dauert zwei Minuten und erfordert keine Anmeldung. Und es gibt keine Mindestlaufzeit."],
       ["Wo landen die Daten meiner Kunden?", "Das steht in einem kurzen, verständlichen Text auf der Seite zu DSGVO und Daten: was gespeichert wird, wo, und wie der Auftragsverarbeitungsvertrag funktioniert."],
-      ["Was kosten ausgehende Kampagnenanrufe?", "Es gibt keinen Preis pro Anruf. Die Minuten gehen von den {pIncluded} Minuten des Abonnements ab, die mit den eingehenden Anrufen geteilt werden; darüber hinaus kostet jede angefangene ausgehende Minute {pMinute} zzgl. MwSt. Ein unbeantworteter Anruf kostet nichts. Die Kontakte müssen vorher zugestimmt haben, und eine Kampagne ruft erst an, wenn Sie selbst auf Start drücken."],
-      ["Was passiert, wenn wir viele eingehende Anrufe bekommen?", "{pIncluded} Minuten pro Monat sind im Abonnement enthalten – für ein- und ausgehende Anrufe. Darüber hinaus kostet jede angefangene Minute {pExtraMinute} eingehend und {pMinute} ausgehend zzgl. MwSt. – das steht als eigene Zeile auf der Rechnung, und Sie können den Verbrauch laufend in Dialogbot verfolgen."],
+      ["Was kosten ausgehende Kampagnenanrufe?", "Innerhalb der {pIncluded} Minuten des Abonnements (geteilt mit den eingehenden Anrufen) gibt es keinen Preis pro Anruf. Ist das Paket verbraucht, kostet ein danach beginnender ausgehender Anruf {pCallAnswered}, wenn die Person abnimmt, {pCallVoicemail} bei Mailbox und {pCallNoAnswer} bei nicht angenommen oder besetzt – plus {pMinute} pro angefangener Gesprächsminute, zzgl. MwSt. Höchstens {pContactMax} pro Kontakt. Die Kontakte müssen vorher zugestimmt haben, und eine Kampagne ruft erst an, wenn Sie selbst auf Start drücken."],
+      ["Was passiert, wenn wir viele eingehende Anrufe bekommen?", "{pIncluded} Minuten pro Monat sind im Abonnement enthalten – für ein- und ausgehende Anrufe, ohne Preis pro Anruf. Darüber hinaus kostet jede angefangene eingehende Minute {pExtraMinute}; ausgehende Anrufe kosten je nach Ergebnis {pCallAnswered}/{pCallVoicemail}/{pCallNoAnswer} plus {pMinute} pro Minute, zzgl. MwSt. Das steht als eigene Zeilen auf der Rechnung, und Sie können den Verbrauch pro Anruf in Dialogbot verfolgen."],
       ["Kostet die Einrichtung etwas?", "Nicht, wenn Sie es selbst machen: Die drei Schritte des Einrichtungsleitfadens sind im Abonnement enthalten und dauern etwa eine halbe Stunde. Die Einrichtung durch unsere Spezialisten kostet einmalig {pSetup} zzgl. MwSt. und bietet Ihnen eine maßgeschneiderte Einrichtung und Integration in Ihre eigenen Systeme und Abläufe."]
     ]
   },
@@ -160,7 +160,7 @@
         "title": "Preis und Einrichtung",
         "p1a": "Es gibt ein Abonnement: ",
         "p1Price": "{pMonthly} im Monat",
-        "p1b": ", ohne Preis pro Anfrage und mit 300 Minuten für ein- und ausgehende Anrufe pro Monat. Einen Preis pro Anruf gibt es nicht. Alle Preise zzgl. MwSt.",
+        "p1b": ", ohne Preis pro Anfrage und mit 300 Minuten für ein- und ausgehende Anrufe pro Monat. Innerhalb des Pakets gibt es keinen Preis pro Anruf; ist es verbraucht, kostet ein ausgehender Anruf {pCallAnswered} (angenommen), {pCallVoicemail} (Mailbox) oder {pCallNoAnswer} (nicht angenommen) plus {pMinute} pro Minute. Alle Preise zzgl. MwSt.",
         "p2a": "Sie brauchen keinerlei technische Kenntnisse. Sie richten den Assistenten in etwa einer halben Stunde selbst nach den drei Schritten des Einrichtungsleitfadens ein – das ist im Abonnement enthalten. Haben Sie eine Website, übernimmt Dialogbot das meiste automatisch, und Sie können den Assistenten testen, bevor er einen einzigen echten Anruf entgegennimmt. Möchten Sie es lieber erledigen lassen, richten unsere eigenen Spezialisten ihn einmalig für {pSetup} zzgl. MwSt. ein – maßgeschneidert und integriert in Ihre eigenen Systeme und Abläufe. Lesen Sie auch über ",
         "p2Phone": "den KI-Anrufbeantworter",
         "p2b": " und ",
@@ -169,7 +169,7 @@
       }
     },
     "faq": [
-      ["Was kostet ein KI-Rezeptionist bei Dialogbot?", "Ein Abonnement für {pMonthly} im Monat, ohne Preis pro Anfrage und mit 300 Minuten für ein- und ausgehende Anrufe pro Monat. Einen Preis pro Anruf gibt es nicht. Die Preise verstehen sich zzgl. MwSt."],
+      ["Was kostet ein KI-Rezeptionist bei Dialogbot?", "Ein Abonnement für {pMonthly} im Monat, ohne Preis pro Anfrage und mit 300 Minuten für ein- und ausgehende Anrufe pro Monat. Innerhalb des Pakets gibt es keinen Preis pro Anruf; ist es verbraucht, kostet ein ausgehender Anruf {pCallAnswered} (angenommen), {pCallVoicemail} (Mailbox) oder {pCallNoAnswer} (nicht angenommen) plus {pMinute} pro Minute. Die Preise verstehen sich zzgl. MwSt."],
       ["Was passiert mit den Daten der Kunden – ist das DSGVO-konform?", "Anrufe und Nachrichten werden in Ihrem Auftrag als Auftragsverarbeiter verarbeitet, die Datenbank liegt in der EU, und Sie erhalten einen Auftragsverarbeitungsvertrag als Teil der Bedingungen. Alles in verständlicher Sprache auf der Seite zu DSGVO und Daten: /gdpr."],
       ["Klingt er wie ein Roboter?", "Dialogbot spricht natürlich in der Sprache Ihrer Kunden, mit einer Stimme, die Sie selbst wählen, z. B. Camilla oder Peter. Er sagt immer ehrlich, dass er ein digitaler Assistent ist, wenn der Kunde fragt."],
       ["Kann ich meine Telefonnummer behalten?", "Ja. Sie leiten Ihre bisherige Nummer auf Dialogbot um, wenn Sie besetzt oder geschlossen sind, und behalten Ihren Telefonanbieter."],

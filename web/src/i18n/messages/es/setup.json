@@ -99,7 +99,7 @@
         "phone": { "title": "Atender el teléfono", "sub": "cuando usted no pueda, o siempre" },
         "booking": { "title": "Reservar citas", "sub": "directamente en su calendario" },
         "web": { "title": "Responder en su web", "sub": "chat web: una línea de código" },
-        "outbound": { "title": "Llamar a clientes", "sub": "campañas · sin precio por llamada" }
+        "outbound": { "title": "Llamar a clientes", "sub": "campañas · minutos del paquete" }
       },
       "langAria": "Idioma",
       "speaks": "Habla",
@@ -293,7 +293,7 @@
     "turningOn": "Activando…",
     "turnOn": "Activar Dialogbot",
     "managersOnly": "Solo los propietarios y administradores pueden activarlo.",
-    "subscriptionNote": "La suscripción es desde {pMonthly}/mes sin IVA con {pIncluded} minutos para llamadas entrantes y salientes; después {pExtraMinute} por minuto entrante y {pMinute} por minuto saliente.",
+    "subscriptionNote": "La suscripción es desde {pMonthly}/mes sin IVA con {pIncluded} minutos para llamadas entrantes y salientes; después {pExtraMinute} por minuto entrante y, en salientes, {pCallAnswered} por llamada atendida + {pMinute} por minuto.",
     "confirmSubscription": "Confirmar suscripción",
     "findAgain": "Lo encontrará todo de nuevo en el icono de perfil → Todos los ajustes."
   },

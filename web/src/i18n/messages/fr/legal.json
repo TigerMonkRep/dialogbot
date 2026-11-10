@@ -379,13 +379,13 @@
                 {
                   "b": "Forfait de minutes :"
                 },
-                " un numéro de téléphone danois pour l’assistant et 300 minutes de conversation entamées par mois civil sont inclus. Les minutes forment une enveloppe commune aux appels entrants et aux appels de campagne sortants et sont consommées dans l’ordre des appels. Il n’y a aucun prix par appel – un appel sans réponse ne coûte rien. Dans les campagnes, un contact est appelé au plus deux fois et parle au plus 3 minutes, et le prix maximal possible est affiché avant le lancement d’une campagne."
+                " un numéro de téléphone danois pour l’assistant et 300 minutes de conversation entamées par mois civil sont inclus. Les minutes forment une enveloppe commune aux appels entrants et aux appels de campagne sortants et sont consommées dans l’ordre des appels. Dans le forfait, il n’y a aucun prix par appel. Dans les campagnes, un contact est appelé au plus deux fois et parle au plus 3 minutes, et le prix maximal possible est affiché avant le lancement d’une campagne."
               ],
               [
                 {
                   "b": "Minutes au-delà du forfait :"
                 },
-                " {pExtraMinute} par minute entrante entamée et {pMinute} par minute sortante entamée. Elles sont facturées sur la facture du mois, et la consommation par appel peut être suivie en continu dans Dialogbot. Les minutes ne sont créditées que lorsque vous contestez un appel précis et que nous acceptons la réclamation : si le mois n’a pas encore été facturé, les minutes reviennent dans le forfait ; s’il l’a été, le montant est crédité sur la facture suivante."
+                " {pExtraMinute} par minute entrante entamée. Un appel de campagne sortant qui commence après l’épuisement du forfait coûte {pCallAnswered} si la personne décroche, {pCallVoicemail} en cas de messagerie et {pCallNoAnswer} sans réponse, occupé ou d’issue inconnue – plus {pMinute} par minute de conversation entamée. Un appel qui franchit la limite ne fait que partager ses minutes et n’a pas de prix par appel. Elles sont facturées sur la facture du mois, et la consommation par appel peut être suivie en continu dans Dialogbot. Les minutes ne sont créditées que lorsque vous contestez un appel précis et que nous acceptons la réclamation : si le mois n’a pas encore été facturé, les minutes reviennent dans le forfait ; s’il l’a été, le montant est crédité sur la facture suivante."
               ]
             ]
           },

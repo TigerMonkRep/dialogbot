@@ -171,7 +171,8 @@ def month_usage(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -
         c = calls.get(e["id"])
         items.append({"kind": e["direction"], "id": e["id"], "at": e["at"].isoformat(), "minutes": e["minutes"],
                       "package_minutes": e.get("package_minutes"), "extra_minutes": e.get("extra_minutes"),
-                      "net_minor": e.get("net_minor"), "credited": e["credited"],
+                      "net_minor": e.get("net_minor"), "call_net_minor": e.get("call_net_minor"),
+                      "outcome": e.get("outcome"), "credited": e["credited"],
                       "label": (c.from_number if c is not None and c.from_number else None) if e["direction"] == "inbound"
                       else names.get(e["campaign_id"]),
                       "dispute": out(d) if d else None, "can_dispute": pooled and d is None})

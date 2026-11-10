@@ -192,7 +192,7 @@ def test_peter_rings_whatever_voice_is_asked_for_and_the_script_adapts(client, s
     assert "Håndværk & byg" in system and "Mester står på stigen" in system
     assert "Klinik & sundhed" not in system  # only the chosen playbook
     assert "byggevejledningens tre trin" in system.lower() and "specialister" in system.lower() \
-        and "2.495 kr." in system and "ingen pris pr. opkald" in system and "4 kr." not in system \
+        and "2.495 kr." in system and "ingen pris pr. opkald" in system and "4 kr., hvis personen tager telefonen" in system \
         and "5.000 kr. én gang" in system
     assert "1.495" not in system and "149 kr" not in system and "model B" not in system.lower()
     # Peter knows the number the visitor typed and confirms it for the specialist's call-back instead of asking for it

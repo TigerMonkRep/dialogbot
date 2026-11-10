@@ -336,9 +336,11 @@ def test_the_guide_states_todays_prices_and_every_link_in_it_is_a_known_page():
 
     g = service.guide()
     for minor in (prices.SUBSCRIPTION_MONTHLY_NET_MINOR, prices.INBOUND_EXTRA_MINUTE_NET_MINOR,
-                  prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR, prices.SPECIALIST_SETUP_NET_MINOR):
+                  prices.OUTBOUND_EXTRA_MINUTE_NET_MINOR, prices.OUTBOUND_CALL_ANSWERED_NET_MINOR,
+                  prices.OUTBOUND_CALL_VOICEMAIL_NET_MINOR, prices.OUTBOUND_CALL_NO_ANSWER_NET_MINOR, prices.SPECIALIST_SETUP_NET_MINOR):
         assert f"{prices.kr(minor)} kr." in g, prices.kr(minor)
-    assert f"{prices.INCLUDED_MINUTES} påbegyndte minutter" in g and "ingen pris pr. opkald" in g and "4 kr." not in g
+    assert f"{prices.INCLUDED_MINUTES} påbegyndte minutter" in g and "inden for pakken ingen pris pr. opkald" in g.lower()
+    assert "deler kun\n  minutterne" in g or "deler kun minutterne" in g.replace("\n  ", " ")
     for path in __import__("re").findall(r"\((/[a-z0-9/]+)\)", g):
         assert path in service.PAGE_BY_HREF, path
     for k in __import__("app.modules.assistant.kinds", fromlist=["KINDS"]).KINDS.values():

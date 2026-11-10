@@ -60,7 +60,7 @@
       "title": "Kampagnen",
       "sub": "Rufen Sie Ihre eigenen Kunden an",
       "outbound": "Ausgehende Anrufe",
-      "chosen": "Gewählt – Minuten aus dem Paket, danach {pMinute} pro Minute zzgl. MwSt.",
+      "chosen": "Gewählt – Minuten aus dem Paket, danach {pCallAnswered} pro angenommenem Anruf + {pMinute} pro Minute zzgl. MwSt.",
       "notChosen": "Nicht gewählt"
     },
     "systems": {

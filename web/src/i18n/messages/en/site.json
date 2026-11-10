@@ -605,7 +605,22 @@
       "errorTitle": "Something went wrong. Please try again.",
       "choose": "Choose one",
       "chooseMany": "Choose one or more",
-      "startOver": "Start over"
+      "startOver": "Start over",
+      "errors": {
+        "rate_limited": "Too many requests from your connection. Wait a moment and try again.",
+        "draft_not_found": "We couldn't find your answers. Start over.",
+        "draft_expired": "Your answers have expired. Start over.",
+        "draft_verified": "The account has already been created. Log in.",
+        "search_failed": "Search isn't working right now. Type the name and continue.",
+        "too_soon": "Wait a moment before asking for a new code.",
+        "sms_failed": "The text message couldn't be sent right now. Try again shortly.",
+        "privat_not_enabled": "Dialogbot Personal isn't open to you yet.",
+        "code_expired": "The code has expired. Ask for a new one.",
+        "too_many_attempts": "Too many attempts. Ask for a new code.",
+        "user_inactive": "The account has been deactivated.",
+        "wrong_code": "The code doesn't match.",
+        "generic": "Something went wrong. Try again shortly."
+      }
     },
     "places": {
       "label": "Company name",
@@ -617,7 +632,7 @@
     "estimate": {
       "about": "approx.",
       "perWeek": "calls a week",
-      "source": "Source: {source}",
+      "source": "Source: Dialogbot's estimate for the line of business",
       "edit": "change the number if you know better"
     },
     "build": {

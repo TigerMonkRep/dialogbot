@@ -30,10 +30,20 @@ class ProviderError(ApiError):
     status_code = 502
     code = "telephony_provider_failed"
 
-    def __init__(self, message: str, *, retryable: bool = True, timeout: bool = False):
+    def __init__(self, message: str, *, retryable: bool = True, timeout: bool = False, http_status: int | None = None):
         super().__init__(message)
         self.retryable = retryable
         self.timeout = timeout
+        self.http_status = http_status  # the provider's HTTP status, when it answered
+
+    @property
+    def unauthorized(self) -> bool:
+        """The provider refused our credentials (401/403)."""
+        import re
+
+        if self.http_status is not None:
+            return self.http_status in (401, 403)
+        return bool(re.search(r"\((401|403)\)", self.message or ""))
 
 
 class ProviderUnavailable(ApiError):
@@ -70,7 +80,7 @@ class TwilioClient:
             except ValueError:
                 msg = ""
             raise ProviderError(f"Twilio afviste ({r.status_code}): {msg[:200]}",
-                                retryable=r.status_code in (429,) or r.status_code >= 500)
+                                retryable=r.status_code in (429,) or r.status_code >= 500, http_status=r.status_code)
         return r.json() if r.content else {}
 
     def find_subaccount(self, friendly_name: str) -> str | None:
@@ -145,7 +155,7 @@ class VapiClient:
             raise ProviderError("Vapi kunne ikke nås") from e
         if r.status_code >= 400:
             raise ProviderError(f"Vapi afviste ({r.status_code}): {r.text[:200]}",
-                                retryable=r.status_code in (429,) or r.status_code >= 500)
+                                retryable=r.status_code in (429,) or r.status_code >= 500, http_status=r.status_code)
         return r.json() if r.content else {}
 
     def find_number(self, e164: str) -> str | None:

@@ -537,7 +537,7 @@ def test_checkout_completed_and_session_sync(api, client, pv, db, monkeypatch):
     _stripe_env(monkeypatch)
     meta = {"kind": "privat_subscription", "workspace_id": str(ws), "plan": "basis", "interval": "year"}
     session = {"id": "cs_sub_9", "object": "checkout.session", "mode": "subscription", "subscription": "sub_9",
-               "customer": "cus_9", "metadata": meta}
+               "customer": "cus_9", "metadata": meta, "status": "complete"}
     # the subscription object itself carries no metadata here: the session's is the fallback
     fetched = []
 
@@ -559,6 +559,14 @@ def test_checkout_completed_and_session_sync(api, client, pv, db, monkeypatch):
     s = api.get(tok, "/privat/subscription?session_id=cs_sub_9").json()
     assert s["status"] == "active" and s["plan"] == "basis" and fetched[-2:] == [("GET", "/checkout/sessions/cs_sub_9"),
                                                                                 ("GET", "/subscriptions/sub_9")]
+    # an open session (declined card / abandoned checkout) is never mirrored – only a complete one (QA batch 5)
+    from app.modules.privat import subscriptions as subs
+
+    n = len(fetched)
+    session["status"] = "open"
+    assert subs.sync_from_session(db, type("C", (), {"ws_id": ws})(), "cs_sub_9") == "ignored"
+    assert fetched[n:] == [("GET", "/checkout/sessions/cs_sub_9")]  # the subscription is not even fetched
+    session["status"] = "complete"
     # someone else's session is refused
     ole = pv.account("ole@testmail.dk", "Ole Berg")
     assert api.get(ole, "/privat/subscription?session_id=cs_sub_9").status_code == 404

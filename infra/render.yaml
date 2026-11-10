@@ -46,6 +46,34 @@ services:
         sync: false
       - key: VAPI_SERVER_SECRET   # voice webhook credential (Bearer); without it telephony is off
         sync: false
+      - key: VAPI_API_KEY         # outbound campaign calls (POST /call); the worker copies it (fromService)
+        sync: false
+      - key: TELEPHONY_PROVIDER   # dashboard-managed ("none" | "live"); also read by the worker (provisioning jobs, SMS)
+        sync: false
+      - key: TWILIO_ACCOUNT_SID   # Twilio main account (live telephony + SMS connector)
+        sync: false
+      - key: TWILIO_API_KEY_SID   # Twilio API key (or TWILIO_AUTH_TOKEN)
+        sync: false
+      - key: TWILIO_API_KEY_SECRET
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: STRIPE_SECRET_KEY    # card payment + monthly invoices; the worker copies it (invoice_due)
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET  # without it POST /webhooks/stripe answers 503 and a saved card never arrives
+        sync: false
+      - key: GOOGLE_OAUTH_CLIENT_ID      # Google Kalender connector; the worker refreshes tokens (fromService)
+        sync: false
+      - key: GOOGLE_OAUTH_CLIENT_SECRET
+        sync: false
+      - key: MICROSOFT_OAUTH_CLIENT_ID   # Microsoft 365 calendar connector; the worker refreshes tokens (fromService)
+        sync: false
+      - key: MICROSOFT_OAUTH_CLIENT_SECRET
+        sync: false
+      - key: SONIOX_API_KEY       # optional: Soniox speech-to-text (bridge, Stemmetest)
+        sync: false
+      - key: SONIOX_MODEL         # optional: Soniox model (default stt-rt-v5)
+        sync: false
       - key: CVR_USERNAME         # optional: CVR register lookup (free access from Erhvervsstyrelsen)
         sync: false
       - key: CVR_PASSWORD
@@ -209,6 +237,28 @@ services:
         fromService: {type: web, name: dialogbot-api-staging, envVarKey: SUPABASE_SERVICE_ROLE_KEY}
       - key: VAPI_API_KEY
         fromService: {type: web, name: dialogbot-api-staging, envVarKey: VAPI_API_KEY}
+      - key: VAPI_SERVER_SECRET   # campaign dispatch (outbound_problem) skips every campaign without it
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: VAPI_SERVER_SECRET}
+      - key: TELEPHONY_PROVIDER   # provisioning jobs and SMS run in the worker
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: TELEPHONY_PROVIDER}
+      - key: TWILIO_ACCOUNT_SID
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: TWILIO_ACCOUNT_SID}
+      - key: TWILIO_API_KEY_SID
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: TWILIO_API_KEY_SID}
+      - key: TWILIO_API_KEY_SECRET
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: TWILIO_API_KEY_SECRET}
+      - key: TWILIO_AUTH_TOKEN
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: TWILIO_AUTH_TOKEN}
+      - key: STRIPE_SECRET_KEY    # invoice_due (monthly invoices) runs in the worker
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: STRIPE_SECRET_KEY}
+      - key: GOOGLE_OAUTH_CLIENT_ID      # token refresh (privat.calendar_sync → oauth.refresh)
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: GOOGLE_OAUTH_CLIENT_ID}
+      - key: GOOGLE_OAUTH_CLIENT_SECRET
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: GOOGLE_OAUTH_CLIENT_SECRET}
+      - key: MICROSOFT_OAUTH_CLIENT_ID
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: MICROSOFT_OAUTH_CLIENT_ID}
+      - key: MICROSOFT_OAUTH_CLIENT_SECRET
+        fromService: {type: web, name: dialogbot-api-staging, envVarKey: MICROSOFT_OAUTH_CLIENT_SECRET}
       - key: WORKER_LEASE_SECONDS
         value: "60"
       - key: WORKER_MAX_ATTEMPTS

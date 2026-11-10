@@ -18,10 +18,10 @@ type Inv = { id: string; email: string; role: string; status: string; expires_at
 type Me = { id: string; email: string; display_name: string; email_verified: boolean; is_platform_operator?: boolean };
 type Session = { id: string; created_at: string; last_seen_at: string; user_agent: string | null; current: boolean };
 /** `currency` (DKK, SEK, NOK, EUR) is the agreement's/statement's own; older backends leave it out → DKK. */
-type Agreement = { current: { version: number; model: string; created_at: string; monthly: { net_minor: number } } | null; plan: { monthly_net_minor: number; campaign_call_net_minor: number; campaign_minute_net_minor: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number }; currency?: string };
+type Agreement = { current: { version: number; model: string; created_at: string; monthly: { net_minor: number } } | null; plan: { currency?: string; monthly_net_minor: number; campaign_call_net_minor: number; campaign_minute_net_minor: number; inbound_included_minutes: number; inbound_extra_minute_net_minor: number }; currency?: string };
 type Statement = { month: string; lines: { kind: string; calls?: number; minutes?: number; included_minutes?: number; extra_minutes?: number; net_minor: number }[]; totals: { net_minor: number; tax_minor: number; gross_minor: number }; currency?: string };
 type Vat = { kind: "domestic" | "reverse_charge" | "outside_eu" | "vat_number_required"; rate_bp: number; country: string | null; note: string | null };
-type Account = { configured: boolean; card: { brand: string; last4: string; exp: string | null } | null; can_manage: boolean;
+type Account = { configured: boolean; test_mode?: boolean; card: { brand: string; last4: string; exp: string | null } | null; can_manage: boolean;
   country?: string | null; currency?: string; vat_number?: string | null; vat?: Vat | null };
 type Invoice = { id: string; month: string; status: string; number: string | null; gross_minor: number; hosted_invoice_url: string | null; invoice_pdf: string | null; currency?: string };
 type Referral = { referred: boolean; ambassador_first_name?: string | null; customer_discount_bp?: number; can_add_code: boolean };
@@ -71,7 +71,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
   const campaignMinutes = st?.lines.filter((l) => l.kind === "campaign_calls").reduce((n, l) => n + (l.minutes ?? 0), 0) ?? 0;
   const inbound = st?.lines.find((l) => l.kind === "inbound_minutes");
   // Amounts in the agreement's / statement's own currency (DKK when the backend does not say).
-  const kr = (minor: number) => krDa(minor, lang, agr?.currency ?? acc?.currency);
+  const kr = (minor: number) => krDa(minor, lang, agr?.plan.currency ?? agr?.currency ?? acc?.currency);
   const krSt = (minor: number) => krDa(minor, lang, st?.currency ?? agr?.currency ?? acc?.currency);
   const country = (acc?.country ?? "").toUpperCase();
   const vatMode = acc?.vat?.kind === "vat_number_required" || (country && country !== "DK" && EU_COUNTRIES.includes(country)) ? "required"
@@ -127,6 +127,7 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
               {agr.current?.model === "B" && <p className="text-[14px] text-ink">{t("account.sub.older")}</p>}
               <div className="flex flex-col gap-2 rounded-xl border-[1.5px] border-ink bg-paper px-4 py-3.5">
                 <span className="eyebrow">{t("account.pay.title")}</span>
+                {acc.test_mode && <p role="note" className="self-start rounded-full border-[1.5px] border-ink bg-highlight px-3 py-1 text-[13px] font-semibold text-ink">{t("account.pay.testMode")}</p>}
                 {!acc.configured ? <p className="text-[14px] text-ink-soft">{t("account.pay.notConfigured")}</p> : (
                   <>
                     <p className="text-[15px] font-semibold text-ink">{acc.card ? <>{t("account.pay.card")} <span className="capitalize">{acc.card.brand}</span> •••• {acc.card.last4}{acc.card.exp ? ` · ${t("account.pay.expires", { exp: acc.card.exp })}` : ""}</> : t("account.pay.noCard")}</p>

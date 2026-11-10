@@ -171,6 +171,9 @@ def test_dialler_outcomes_and_billing(api, client, two_workspaces, db, monkeypat
     assert db.query(Task).filter_by(lead_id=lead.id).count() == 1
     ole = db.query(CampaignContact).filter_by(phone="+4521222324").one()
     assert (ole.status, ole.outcome) == ("opted_out", "opt_out")
+    # F-EB-02-C15: "Talt med" counts everyone who spoke with the assistant, also Ole who opted out
+    counts = api.get(tok, f"/workspaces/{ws}/campaigns/{c['id']}").json()["counts"]
+    assert counts["answered"] == 2 and counts["by_status"] == {"done": 1, "opted_out": 1}
     # nothing left to call: the campaign completes
     service.dispatch(db, later)
     assert db.get(Campaign, uuid.UUID(c["id"])).status == "completed"
@@ -210,3 +213,23 @@ def test_csv_headers_in_every_ui_language():
                  "Nom;Téléphone;Entreprise", "Name;Telefon;Unternehmen", "Navn;Telefon;Bedrift"):
         rows = service.parse_csv(f"{head}\nAnna Berg;20 30 40 50;Berg AS")
         assert len(rows) == 1 and rows[0]["name"] == "Anna Berg" and rows[0]["company"] == "Berg AS", head
+
+
+def test_create_call_never_dials_with_fake_telephony(monkeypatch):
+    """TELEPHONY_PROVIDER=fake (dev/test): campaigns.create_call – used by campaigns and demo calls – never reaches
+    Vapi, even with a real-looking VAPI_API_KEY in the environment (QA batch 4, voice)."""
+    import httpx
+
+    monkeypatch.setenv("TELEPHONY_PROVIDER", "fake")
+    monkeypatch.setenv("VAPI_API_KEY", "vapi-private-key-looks-real")
+    get_settings.cache_clear()
+
+    def boom(*a, **k):
+        raise AssertionError("a real HTTP call to Vapi was attempted")
+
+    monkeypatch.setattr(httpx, "post", boom)
+    try:
+        out = service.create_call({"customer": {"number": "+4520304050"}, "assistant": {}})
+        assert out["id"].startswith("fake-call-") and out["simulated"] is True
+    finally:
+        get_settings.cache_clear()

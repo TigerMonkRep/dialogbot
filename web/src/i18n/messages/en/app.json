@@ -303,7 +303,9 @@
       "call": "Call",
       "conversation": "Conversation",
       "lead": "Enquiry",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "syncFailed": "Not in calendar",
+      "syncFailedDetail": "The appointment could not be written to the connected calendar: {error}"
     },
     "book": {
       "noSlotsError": "There are no free times. Check opening hours and calendar.",
@@ -329,12 +331,20 @@
       "notConnected": "Not connected",
       "lastRead": "Last read {at} · {n} busy periods. Dialogbot only sees when you're busy.",
       "without": "Without a calendar, Dialogbot only knows the opening hours and the appointments it booked itself.",
-      "change": "Connect or change calendar"
+      "change": "Connect or change calendar",
+      "linked": "{name} is connected. New appointments are written to the calendar, and busy time there is blocked.",
+      "linkedError": "{name} is connected, but the last call failed: {error}",
+      "syncFailedN": "{n} appointments could not be written to the calendar. They are marked “Not in calendar” – check the time in the calendar itself.",
+      "simulated": "simulated",
+      "provider": {
+        "google_calendar": "Google Calendar",
+        "microsoft_calendar": "Outlook calendar (Microsoft 365)"
+      }
     },
     "staffOnly": "Appointments can be viewed by staff, admins and owners.",
     "eyebrow": "Today → Appointments",
     "title": "Appointments Dialogbot has booked",
-    "intro": "Move or cancel them here. Busy time in your calendar is blocked, and every booking becomes an enquiry with a task.",
+    "intro": "Cancel them here. Busy time in your calendar is blocked, and every booking becomes an enquiry with a task.",
     "prevWeek": "Previous week",
     "nextWeek": "Next week",
     "noHours": {
@@ -554,7 +564,7 @@
       "pause": "Pause",
       "before": "Before it starts",
       "resumeTitle": "Resume the campaign",
-      "heading": "{n} calls · at most {max} excl. VAT",
+      "heading": "{n} contacts · at most {max} excl. VAT",
       "body": "{n} contacts waiting. At most {max} + VAT ({gross} incl. VAT) – {call} + VAT per outgoing call and {minute} + VAT per started minute of conversation, at most {attempts} attempts and {minutes} minutes of conversation per contact. Payment never starts calls.",
       "confirm": "Confirm the rules for calls",
       "starting": "Starting…",
@@ -782,7 +792,7 @@
       "confirmed": "Confirmed · agreement v{v}. Do-it-yourself setup is included.",
       "notConfirmed": "Do-it-yourself setup is included. Not confirmed yet.",
       "campaign": "Campaign calls",
-      "campaignPrice": "per call + {minute} per minute excl. VAT",
+      "campaignPrice": "per call + {minute} per started minute excl. VAT",
       "campaignMonth": "This month: {calls} calls, {minutes} minutes of conversation · {amount} excl. VAT",
       "inbound": "Incoming calls",
       "inboundUsed": "of {n} included minutes used this month",
@@ -796,6 +806,7 @@
     "pay": {
       "title": "Payment",
       "notConfigured": "Card payment isn't set up yet. Until then the statement is only a preview, and no payment is taken.",
+      "testMode": "Test mode – nothing is charged to the card",
       "card": "Card",
       "expires": "expires {exp}",
       "noCard": "No payment card",

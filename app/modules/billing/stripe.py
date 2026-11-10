@@ -305,11 +305,16 @@ def _amounts_from_stripe(inv: Invoice, obj: dict) -> None:
 
 
 STATUS = {"draft": "creating", "open": "open", "paid": "paid", "void": "void", "uncollectible": "failed"}
+# Stripe does not deliver events in order: once an invoice is paid or void, a late event about an earlier state
+# (open, payment_failed, uncollectible) must not move it back. Refunds are handled separately (credit notes).
+TERMINAL = ("paid", "void")
 
 
 def apply_stripe_invoice(inv: Invoice, obj: dict) -> None:
     inv.stripe_invoice_id = obj.get("id") or inv.stripe_invoice_id
-    inv.status = STATUS.get(str(obj.get("status")), inv.status)
+    new = STATUS.get(str(obj.get("status")), inv.status)
+    if inv.status not in TERMINAL or new in TERMINAL:
+        inv.status = new
     inv.number = obj.get("number") or inv.number
     inv.hosted_invoice_url = obj.get("hosted_invoice_url") or inv.hosted_invoice_url
     inv.invoice_pdf = obj.get("invoice_pdf") or inv.invoice_pdf
@@ -387,7 +392,7 @@ def process_event(db: OrmSession, event: dict) -> str:
             return "unmatched"
         was = inv.status
         apply_stripe_invoice(inv, obj)
-        if kind == "invoice.payment_failed":
+        if kind == "invoice.payment_failed" and inv.status not in TERMINAL:
             inv.status = "payment_failed"
         _commission(db, inv, was, kind, obj)
         if inv.status == "paid" and was != "paid":
@@ -403,10 +408,33 @@ def process_event(db: OrmSession, event: dict) -> str:
             return "unmatched"
         from app.modules.ambassadors.service import reverse_for_invoice
 
-        taken = obj.get("amount_refunded") if kind == "charge.refunded" else obj.get("total")
-        reverse_for_invoice(db, inv, source_ref=str(obj.get("id") or kind), fraction=int(taken or 0) / inv.gross_minor)
+        delta, already = _refund_delta(inv, kind, obj)
+        if delta <= 0:
+            return "applied"  # the same refund seen again (other event type, or a repeat): no second effect
+        reverse_for_invoice(db, inv, source_ref=f"{obj.get('id') or kind}:{inv.refunds['applied_minor']}"[:64],
+                            fraction=delta / inv.gross_minor, already=already / inv.gross_minor)
         return "applied"
     return "ignored"
+
+
+def _refund_delta(inv: Invoice, kind: str, obj: dict) -> tuple[int, int]:
+    """(newly refunded amount, amount refunded before) for an invoice, in minor units.
+
+    charge.refunded carries the CUMULATIVE `amount_refunded` per charge; a refund made through a credit note is also
+    reported as credit_note.created for the same money. The invoice's refunded amount is therefore the larger of
+    Σ charges and Σ credit notes – never their sum – and only the growth since last time reduces the commission."""
+    r = dict(inv.refunds or {})
+    charges, notes = dict(r.get("charges") or {}), dict(r.get("credit_notes") or {})
+    ref = str(obj.get("id") or kind)
+    if kind == "charge.refunded":
+        charges[ref] = max(int(charges.get(ref) or 0), int(obj.get("amount_refunded") or 0))
+    else:
+        notes[ref] = int(obj.get("total") or 0)
+    already = int(r.get("applied_minor") or 0)
+    total = min(inv.gross_minor, max(sum(charges.values()), sum(notes.values())))
+    delta = max(0, total - already)
+    inv.refunds = {"charges": charges, "credit_notes": notes, "applied_minor": already + delta}
+    return delta, already
 
 
 def _refunded_invoice_id(kind: str, obj: dict) -> str | None:
@@ -431,7 +459,8 @@ def _commission(db: OrmSession, inv: Invoice, was: str, kind: str, obj: dict) ->
     if inv.status == "paid" and was != "paid":
         accrue_for_invoice(db, inv)
     elif inv.status == "void" and was == "paid":
-        reverse_for_invoice(db, inv, source_ref=f"void:{obj.get('id')}")
+        already = min(1.0, int((inv.refunds or {}).get("applied_minor") or 0) / inv.gross_minor) if inv.gross_minor else 0.0
+        reverse_for_invoice(db, inv, source_ref=f"void:{obj.get('id')}", fraction=1.0 - already, already=already)
 
 
 def invoice_out(i: Invoice) -> dict:

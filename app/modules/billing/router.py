@@ -48,7 +48,10 @@ def _account_out(db: OrmSession, ctx: WorkspaceContext) -> dict:
 
     a = db.get(BillingAccount, ctx.workspace.id)
     card = {"brand": a.card_brand, "last4": a.card_last4, "exp": a.card_exp} if a and a.payment_method_id else None
-    return {"configured": stripe.configured(), "card": card, "billing_email": a.billing_email if a else None,
+    from app.modules.integrations.registry import stripe_test_mode
+
+    # test_mode: Stripe's sandbox (sk_test_) – shown on Konto so nobody believes a real card was charged
+    return {"configured": stripe.configured(), "test_mode": stripe.configured() and stripe_test_mode(), "card": card, "billing_email": a.billing_email if a else None,
             "can_manage": ctx.can("billing.manage")} | customer_market.account_market(db, ctx.workspace.id)
 
 

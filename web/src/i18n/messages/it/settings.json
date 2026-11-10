@@ -10,6 +10,7 @@
       "log": "Cronologia"
     },
     "back": "← Torna a Oggi",
+    "simulated": "simulato",
     "eyebrow": "In fondo al quaderno",
     "title": "Tutte le impostazioni",
     "intro": "Tutto ciò che Dialogbot sa e fa, in un unico posto e in parole semplici. «Modifica» su un singolo valore lo invia all'assistente, che le mostra la modifica prima che diventi effettiva. I moduli più grandi si aprono in un pannello.",
@@ -496,7 +497,7 @@
     "standard": {
       "title": "Scegli la voce telefonica",
       "intro": "Voci pronte all'uso da subito. La scelta vale per tutti i vostri numeri di telefono e le campagne, e potete cambiarla in qualsiasi momento. Sentite la voce quando chiamate il vostro numero.",
-      "danish": "Multilingue",
+      "danish": "Danese",
       "inUse": "In uso",
       "stopAria": "Ferma l'anteprima di {name}",
       "loading": "Caricamento …",

@@ -27,7 +27,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
-from app.models import Call, Campaign, CampaignCall, CampaignContact, DemoCall, Lead, ReceptionAgreement
+from app.models import Call, Campaign, CampaignCall, CampaignContact, DemoCall, Lead, ReceptionAgreement, TelephonyTest
 from app.modules.billing import customer_market, markets, prices
 from app.modules.billing.money import Money
 
@@ -49,9 +49,11 @@ def inbound_minutes(db: OrmSession, workspace_id: uuid.UUID, start: datetime, en
     """Inbound call minutes in the window: every phone call that is neither a campaign call nor a demo call."""
     outbound = select(CampaignCall.provider_call_id).where(CampaignCall.provider_call_id.is_not(None))
     demo = select(DemoCall.provider_call_id).where(DemoCall.provider_call_id.is_not(None))
+    tests = select(TelephonyTest.provider_call_id).where(TelephonyTest.provider_call_id.is_not(None))  # owner's test calls
     rows = db.scalars(select(Call.duration_seconds).where(
         Call.workspace_id == workspace_id, Call.started_at >= start, Call.started_at < end,
-        Call.provider_call_id.not_in(outbound), Call.provider_call_id.not_in(demo))).all()
+        Call.provider_call_id.not_in(outbound), Call.provider_call_id.not_in(demo),
+        Call.provider_call_id.not_in(tests))).all()
     minutes = _minutes_of(rows)
     extra = max(0, minutes - prices.INBOUND_INCLUDED_MINUTES)
     return {"calls": len(rows), "minutes": minutes, "included": prices.INBOUND_INCLUDED_MINUTES, "extra": extra,

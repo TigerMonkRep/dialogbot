@@ -20,3 +20,5 @@
 | 12:20 | security-privacy → qa-lead | finding | X29 X20 | X29 IDOR-sweep 487/487 grøn (ingen krydslæsning/-skrivning); F-SQ-01 (dev-mailbox wildcard → operatør-overtagelse, S1), F-SQ-02 (DB-parametre inkl. argon2-hash i logs, S1), F-SQ-03 (M07 ikke bygget, S2) |
 | 12:45 | voice-qa → qa-lead | finding | R02 R03 X05 X15 X16 | 9 fund (3×S1); X16 kræver live-test med Fürsters ja; ingen «privat preview» i prompts |
 | 12:46 | qa-lead → fix-engineer | handoff | F-VQ-01..09 | batch 4 + create_call skal respektere TELEPHONY_PROVIDER=fake; F-VQ-05 needs-decision |
+| 12:38 | Fürster → qa-lead | info | F-IQ-08 | VAPI_SERVER_SECRET sat på dialogbot-worker-staging og redeployet (produktion) |
+| 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | batch 1–5 | 43 fund rettet/delvist (se fundfilerne: Rodårsag/Rettelse/Testresultat); 3 migrationer b4d8e2f6a1c3, c5e9f3a7b2d4, d6f1a4b8c3e5; ikke committet |

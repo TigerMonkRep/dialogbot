@@ -5,7 +5,7 @@ from datetime import UTC, date, datetime, timedelta
 
 from fastapi import APIRouter, Depends, Header, Query, Request, Response
 from pydantic import BaseModel, EmailStr, Field
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session as OrmSession
 
 from app.config import get_settings
@@ -15,6 +15,7 @@ from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db import get_db
 from app.models import Booking, BookingSettings, BookingType, Workspace
 from app.modules.bookings import service
+from app.modules.integrations.connectors import calendar
 from app.modules.setup.checks import invalidate_checks
 
 router = APIRouter(prefix="/workspaces/{workspace_id}/bookings", tags=["bookings"])
@@ -27,8 +28,22 @@ def _tz(db, ws_id) -> str:
     return tz_of(db, ws_id)
 
 
+def _connected_calendar(db: OrmSession, ws_id) -> dict | None:
+    """The OAuth calendar (Google/Microsoft) the bookings are mirrored to, with its honest status."""
+    from app.modules.integrations import credentials
+
+    key = calendar.connected_calendar(db, ws_id)
+    conn = credentials.connection(db, ws_id, key) if key else None
+    if conn is None:
+        return None
+    return {"connector": key, "status": conn.status, "error": conn.error, "simulated": bool(conn.simulated),
+            "last_ok_at": conn.last_ok_at.isoformat() if conn.last_ok_at else None,
+            "sync_failed": db.scalar(select(func.count()).where(Booking.workspace_id == ws_id, Booking.status == "confirmed",
+                                                                Booking.calendar_sync == "failed")) or 0}
+
+
 def settings_out(db: OrmSession, s: BookingSettings, ws_id) -> dict:
-    return {"version": s.version, "enabled": s.enabled, "lead_time_hours": s.lead_time_hours,
+    return {"version": s.version, "calendar_connection": _connected_calendar(db, ws_id), "enabled": s.enabled, "lead_time_hours": s.lead_time_hours,
             "horizon_days": s.horizon_days, "buffer_minutes": s.buffer_minutes, "busy_ics_url": s.busy_ics_url,
             "busy_synced_at": s.busy_synced_at.isoformat() if s.busy_synced_at else None, "busy_error": s.busy_error,
             "busy_blocks": len(s.busy_blocks or []),
@@ -160,6 +175,7 @@ def manual_booking(body: ManualIn, request: Request, ctx: WorkspaceContext = Dep
     b = service.book(db, ctx.workspace, type_id=body.type_id, start=body.start, name=body.name, phone=body.phone,
                      email=str(body.email) if body.email else None, note=body.note, source="manual", tz=tz,
                      created_by=ctx.user_id)
+    calendar.mirror_create(db, ctx.workspace.id, b)  # failure → calendar_sync='failed'
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="bookings.created",
                  object_type="booking", object_id=b.id, after={"starts_at": b.starts_at.isoformat()},
                  request_id=request.state.request_id)
@@ -172,6 +188,7 @@ def cancel(booking_id: uuid.UUID, request: Request, ctx: WorkspaceContext = Depe
            db: OrmSession = Depends(get_db)):
     b = get_scoped(db, Booking, booking_id, ctx.workspace.id)
     service.cancel(db, b)
+    calendar.mirror_cancel(db, ctx.workspace.id, b)
     record_audit(db, workspace_id=ctx.workspace.id, actor_user_id=ctx.user_id, action="bookings.cancelled",
                  object_type="booking", object_id=b.id, request_id=request.state.request_id)
     db.commit()
@@ -236,5 +253,6 @@ def visitor_book(key: str, conversation_id: uuid.UUID, body: VisitorBookingIn, o
     b = service.book(db, ws, type_id=body.type_id, start=body.start, name=body.name, phone=body.phone,
                      email=str(body.email) if body.email else None, note=body.note, source="webchat", tz=tz,
                      conversation=conv)
+    calendar.mirror_create(db, ws.id, b)  # the owner sees a failed write on the booking
     db.commit()
     return {"booked": True, "label": service.label(b.starts_at, tz), "title": b.title}

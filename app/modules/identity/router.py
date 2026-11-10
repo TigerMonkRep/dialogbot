@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+from typing import Literal
 
 from fastapi import APIRouter, Depends, Header, Request, Response, status
 from pydantic import BaseModel, EmailStr, Field
@@ -20,7 +21,8 @@ class RegisterIn(BaseModel):
     password: str = Field(min_length=10, max_length=200)
     display_name: str = Field(min_length=1, max_length=200)
     signup_intent: str | None = Field(default=None, description="reception | campaigns | both (A01)")
-    interface_language: str = "da"
+    # One of the 8 supported interface languages (app.core.languages.LANGUAGES); anything else is a 422, never a 500
+    interface_language: Literal["da", "en", "de", "es", "fr", "it", "no", "sv"] = "da"
 
 
 class UserOut(BaseModel):

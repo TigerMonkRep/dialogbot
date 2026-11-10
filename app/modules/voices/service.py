@@ -360,7 +360,7 @@ def rights_out(r: VoiceRightsRecord) -> dict:
 
 
 def vapi_voice(db: OrmSession, ws_id: uuid.UUID, *, channel: str, provider_voice: dict | None, number=None,
-               campaign=None) -> tuple[dict | None, VoiceSession | None]:
+               campaign=None, lang: str | None = None) -> tuple[dict | None, VoiceSession | None]:
     """Voice config for a Vapi assistant.
 
     - No Dialogbot voice chosen → (None, None): the existing provider voice is used unchanged.
@@ -372,6 +372,10 @@ def vapi_voice(db: OrmSession, ws_id: uuid.UUID, *, channel: str, provider_voice
 
     p, v, why = resolve(db, ws_id, number=number, campaign=campaign)
     if p is None and why == "none":
+        return None, None
+    if lang and p is not None and (p.language or "da").split("-")[0].lower() != lang.split("-")[0].lower():
+        # The chosen voice speaks another language than this call (a da-DK voice on an English call): the call
+        # language's standard voice is used instead (`provider_voice`, chosen per language).
         return None, None
     ws_settings = settings(db, ws_id)
     reserve = provider_voice if ws_settings.fallback == "provider_voice" else None

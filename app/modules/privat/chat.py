@@ -1080,13 +1080,15 @@ def tool_stop_tracking(turn: Turn, a: dict) -> str:
 # --------------------------------------------------------------------------- Rejser
 
 def tool_search_trips(turn: Turn, a: dict) -> str:
-    from app.core.errors import ValidationFailed
+    from app.core.errors import NotImplementedYet, ValidationFailed
     from app.modules.privat import travel
 
     try:
         result = travel.search(turn.db, turn.ctx.ws_id, a)
     except ValidationFailed as e:
         return f"Mangler: {e.message}. Spørg brugeren kort."
+    except NotImplementedYet as e:
+        return f"{e.message}. Sig det ærligt til brugeren; lov ikke rejser eller priser."
     text = travel.summary(result)
     if result["offers"]:
         text += " Du finder «Book» under Apps → Rejser."

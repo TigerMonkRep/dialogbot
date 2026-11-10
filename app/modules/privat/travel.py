@@ -338,8 +338,13 @@ def search(db, ws_id: uuid.UUID, params: dict) -> dict:
     """Ask every provider for every destination; keep only real prices, filter by the total budget, cheapest first.
     The search and its offers are kept (the latest 5) so «Book» can find the offer again."""
     p = validate(params, rules.local().date())
+    provs = providers()
+    if not provs:  # honest: «not set up», never «no trips found»
+        from app.core.errors import NotImplementedYet
+
+        raise NotImplementedYet("Rejser er ikke sat op hos Dialogbot endnu", code="travel_not_configured")
     offers, errors = [], []
-    for prov in providers():
+    for prov in provs:
         for dest in p["destinations"]:
             try:
                 offers += prov.search(p, dest)

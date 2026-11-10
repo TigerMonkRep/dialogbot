@@ -10,6 +10,7 @@
       "log": "Historikk"
     },
     "back": "← Tilbake til I dag",
+    "simulated": "simulert",
     "eyebrow": "Bakerst i heftet",
     "title": "Alle innstillinger",
     "intro": "Alt Dialogbot vet og gjør – på ett sted, på et klart språk. «Endre» på en enkeltverdi sender det til assistenten, som viser endringen før den gjelder. Større skjemaer åpnes som et ark.",
@@ -270,7 +271,7 @@
     "zapierUrl": "Adresse fra Zapiers «Catch Hook»",
     "makeUrl": "Adresse fra Makes «Custom webhook»",
     "webhookUrl": "Webhook-adresse (https)",
-    "webhookPlaceholder": "https://jeres-system.dk/dialogbot",
+    "webhookPlaceholder": "https://deres-system.no/dialogbot",
     "sender": "Avsendernavn (valgfritt)",
     "senderHint": "Høyst 11 bokstaver eller tall. Tomt = bedriftens navn.",
     "connecting": "Kobler til …",

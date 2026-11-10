@@ -605,7 +605,22 @@
       "errorTitle": "Algo salió mal. Inténtalo de nuevo.",
       "choose": "Elige una opción",
       "chooseMany": "Elige una o varias",
-      "startOver": "Empezar de nuevo"
+      "startOver": "Empezar de nuevo",
+      "errors": {
+        "rate_limited": "Se han enviado muchas solicitudes desde su conexión. Espere un momento y vuelva a intentarlo.",
+        "draft_not_found": "No hemos encontrado sus respuestas. Empiece de nuevo.",
+        "draft_expired": "Sus respuestas han caducado. Empiece de nuevo.",
+        "draft_verified": "La cuenta ya está creada. Inicie sesión.",
+        "search_failed": "La búsqueda no funciona ahora mismo. Escriba el nombre y continúe.",
+        "too_soon": "Espere un momento antes de pedir un código nuevo.",
+        "sms_failed": "No se ha podido enviar el SMS. Inténtelo de nuevo en un momento.",
+        "privat_not_enabled": "Dialogbot Privado aún no está abierto para usted.",
+        "code_expired": "El código ha caducado. Pida uno nuevo.",
+        "too_many_attempts": "Demasiados intentos. Pida un código nuevo.",
+        "user_inactive": "La cuenta está desactivada.",
+        "wrong_code": "El código no coincide.",
+        "generic": "Algo ha fallado. Inténtelo de nuevo en un momento."
+      }
     },
     "places": {
       "label": "Nombre de la empresa",
@@ -617,7 +632,7 @@
     "estimate": {
       "about": "aprox.",
       "perWeek": "llamadas a la semana",
-      "source": "Fuente: {source}",
+      "source": "Fuente: estimación de Dialogbot para el sector",
       "edit": "cambia la cifra si la conoces mejor"
     },
     "build": {

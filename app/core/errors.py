@@ -85,6 +85,18 @@ def install_error_handlers(app: FastAPI) -> None:
         ]
         return JSONResponse(status_code=422, content=_payload(request, "validation_failed", "Ugyldigt input", errors))
 
+    from sqlalchemy.exc import DBAPIError
+
+    @app.exception_handler(DBAPIError)
+    async def _db_error(request: Request, exc: DBAPIError):
+        # Never log the exception text: besides the SQL it can carry values (Postgres echoes an offending value,
+        # e.g. "invalid input syntax … "<value>""). The class and SQLSTATE are enough to find the bug (QA F-SQ-02-X29).
+        from app.core.logging import log
+
+        log.error("db.error", error=type(exc.orig or exc).__name__, sqlstate=getattr(exc.orig, "sqlstate", None),
+                  path=request.url.path, request_id=getattr(request.state, "request_id", None))
+        return JSONResponse(status_code=500, content=_payload(request, "internal_error", "Der skete en fejl hos os. Prøv igen."))
+
     @app.exception_handler(StarletteHTTPException)
     async def _http(request: Request, exc: StarletteHTTPException):
         code = {401: "unauthenticated", 403: "forbidden", 404: "not_found", 405: "method_not_allowed"}.get(

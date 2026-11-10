@@ -77,7 +77,12 @@ class Session(Base):
     user_agent: Mapped[str | None] = mapped_column(String(400))
     # Set when a platform operator is looking at the account as this user ("se som kunde"): the session is
     # read-only (no writes, enforced in app.core.auth) and short-lived. The value is the operator's user id.
-    impersonator_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    # CASCADE: deleting the operator ends the session (it must never become an ordinary session of the customer).
+    impersonator_user_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE", name="fk_sessions_impersonator_user_id"))
+    # A view-as session opened for one workspace sees only that workspace (enforced in app.core.auth).
+    scope_workspace_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("workspaces.id", ondelete="CASCADE", name="fk_sessions_scope_workspace_id"))
     created_at: Mapped[datetime] = ts_now()
     last_seen_at: Mapped[datetime] = ts_now()
 

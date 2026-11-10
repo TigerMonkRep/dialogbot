@@ -29,12 +29,14 @@ export function BookingCard({ wsId, b, tz, canChange }: { wsId: string; b: Booki
         <span className="font-display font-bold text-[15px] text-ink">{time}</span>
         <span className="text-[14px] font-semibold text-ink">{b.contact_name || b.title}</span>
         <span className="text-[13px] text-ink-soft">{b.title}</span>
+        {b.calendar_sync === "failed" && <span className="mt-1 self-start rounded-full border-[1.5px] border-danger px-2 py-0.5 text-[12px] font-semibold text-danger">{t("bookings.card.syncFailed")}</span>}
       </button>
       {open && (
         <div className="border-t-[1.5px] border-line px-3 py-3 flex flex-col gap-2 text-[14px] text-ink">
           <span><b>{b.label}</b> · {SOURCES.has(b.source) ? t(`bookings.source.${b.source}`) : b.source}</span>
           {(b.contact_phone || b.contact_email) && <span className="text-ink-soft">{[b.contact_phone, b.contact_email].filter(Boolean).join(" · ")}</span>}
           {b.note && <span className="text-ink-soft">{b.note}</span>}
+          {b.calendar_sync === "failed" && <span role="status" className="text-danger">{t("bookings.card.syncFailedDetail", { error: b.calendar_sync_error ?? "–" })}</span>}
           <div className="flex flex-wrap gap-2">
             {b.contact_phone && <a href={`tel:${b.contact_phone}`} className={BTN}>{t("bookings.card.call")}</a>}
             {b.conversation_id && <a href={`/app/opkald/${b.conversation_id}`} className={BTN}>{t("bookings.card.conversation")}</a>}

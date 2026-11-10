@@ -405,13 +405,17 @@ def accrue_for_invoice(db: OrmSession, inv: Invoice) -> list[CommissionEntry]:
     return made
 
 
-def reverse_for_invoice(db: OrmSession, inv: Invoice, *, source_ref: str, fraction: float = 1.0) -> int:
-    """Undo what an invoice earned (refund, credit note, void). `fraction` = refunded share of the invoice.
+def reverse_for_invoice(db: OrmSession, inv: Invoice, *, source_ref: str, fraction: float = 1.0,
+                        already: float = 0.0) -> int:
+    """Undo what an invoice earned (refund, credit note, void). `fraction` = share of the invoice refunded by THIS
+    event; `already` = share refunded (and reversed) before it.
 
-    Not yet paid out → the entry is reduced (or marked reversed when fully refunded). Already paid → a negative
-    `reversal` entry, payable immediately, that the next payout deducts. The bonus is only reversed on a full
-    refund. Idempotent per `source_ref`."""
-    fraction = max(0.0, min(1.0, fraction))
+    Not yet paid out → the entry is reduced (or marked reversed when fully refunded); its amount has already been
+    reduced by `already`, so the cut is taken of what is left. Already paid → a negative `reversal` entry, payable
+    immediately, that the next payout deducts. The bonus is only reversed on a full refund. Idempotent per
+    `source_ref`."""
+    already = max(0.0, min(1.0, already))
+    fraction = max(0.0, min(1.0 - already, fraction))
     if fraction <= 0 or db.scalar(select(CommissionEntry.id).where(CommissionEntry.invoice_id == inv.id,
                                                                    CommissionEntry.kind == "reversal",
                                                                    CommissionEntry.source_ref == source_ref)):
@@ -419,18 +423,21 @@ def reverse_for_invoice(db: OrmSession, inv: Invoice, *, source_ref: str, fracti
     entries = db.scalars(select(CommissionEntry).where(CommissionEntry.invoice_id == inv.id,
                                                        CommissionEntry.kind.in_(("bonus", "share")),
                                                        CommissionEntry.status != "reversed")).all()
-    full = fraction >= 0.999
+    full = already + fraction >= 0.999
     clawback = 0
     touched = 0
     amb: uuid.UUID | None = None
     for e in entries:
         if e.kind == "bonus" and not full:
             continue
-        cut = e.amount_minor if full else round(e.amount_minor * fraction)
+        unpaid = e.status in ("held", "payable") and e.payout_id is None
+        # an unpaid entry was already reduced by earlier refunds: take the share of what is left
+        share = fraction / (1.0 - already) if unpaid and already < 1.0 else fraction
+        cut = e.amount_minor if (full and unpaid) or e.kind == "bonus" else round(e.amount_minor * share)
         if cut <= 0:
             continue
         touched += 1
-        if e.status in ("held", "payable") and e.payout_id is None:
+        if unpaid:
             if cut >= e.amount_minor:
                 e.status = "reversed"
             else:

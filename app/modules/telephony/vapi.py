@@ -487,8 +487,11 @@ def assistant_config(db: OrmSession, number: PhoneNumber, caller: str | None = N
     from app.modules.telephony import call_recordings
 
     s = get_settings()
-    greeting = (number.greeting.strip() or reception.spoken_greeting(db.get(reception.ReceptionScript, ws.id), ws)
-                or pl.greeting(lang, ws.name))
+    # A written greeting (the number's or the reception script's) is in the business's default language: it is said
+    # only when the call is in that language; any other call language gets the standard greeting in that language.
+    written = (number.greeting.strip() or reception.spoken_greeting(db.get(reception.ReceptionScript, ws.id), ws)
+               ) if lang == pl.default_language(db, ws.id) else ""
+    greeting = written or pl.greeting(lang, ws.name)
     if call_recordings.enabled(number):  # callers are told before anything is said that the call is recorded
         greeting = call_recordings.with_disclosure(greeting, lang)
     assistant: dict[str, Any] = {
@@ -515,7 +518,7 @@ def assistant_config(db: OrmSession, number: PhoneNumber, caller: str | None = N
     provider_voice = standard.provider_voice(db, ws.id, number, lang)
 
     dialogbot_voice, session = voices.vapi_voice(db, ws.id, channel="inbound_phone", provider_voice=provider_voice,
-                                                 number=number)
+                                                 number=number, lang=lang)
     if dialogbot_voice is not None:
         assistant["voice"] = dialogbot_voice
         assistant["metadata"]["voice_session_id"] = str(session.id)
@@ -628,6 +631,10 @@ def end_of_call(db: OrmSession, message: dict) -> str:
 
     platform.record_call_cost(db, call, message)
     platform.evaluate_test(db, call, message)
+    if platform.is_test_call(db, call_id):
+        # The owner's own test call (DB-018: no real message from a test path): it stays in the inbox and passes or
+        # fails the test, but makes no lead or task, sends no webhooks or push, and is not billed (billing.statement).
+        return "applied"
     from app.models import ActionRun
     from app.modules.integrations import events
 
@@ -680,14 +687,77 @@ def _after_report(db: OrmSession, message: dict, *, call_id: str, conv: Conversa
         if lead is not None and lead.conversation_id is None:
             lead.conversation_id = conv.id
         return "applied"
-    if caller and visitor_lines:
+    # The number to ring: one the caller gave and confirmed in the call (a withheld number, or "ring hellere på …"),
+    # else the caller id. Without either there is nobody to ring back.
+    confirmed = confirmed_callback_number(transcript)
+    phone = confirmed or caller
+    if phone and visitor_lines:
+        from app.modules.leads import callback
         from app.modules.leads.service import create_lead, create_task
+        from app.modules.reports.service import tz_of
 
-        lead = create_lead(db, ws_id, source="phone", created_by=None, conversation=conv, contact_phone=caller,
-                           need_summary=summary or "Opkald – se samtalen")
-        create_task(db, ws_id, title=f"Ring tilbage til {caller}", created_by=None, lead=lead,
-                    due_at=now + timedelta(hours=4))
+        note = summary or "Opkald – se samtalen"
+        if confirmed and caller and confirmed != caller:
+            note = f"{note} (ringede fra {caller}; bad om at blive ringet op på {confirmed})"
+        lead = create_lead(db, ws_id, source="phone", created_by=None, conversation=conv, contact_phone=phone,
+                           need_summary=note)
+        # Due in the next call-back window (weekdays 8–12 / 12–16, the same windows the web widget offers), never at
+        # night: «en medarbejder ringer tilbage» said at 22:30 on a Friday means Monday morning.
+        title, due = f"Ring tilbage til {phone}", now + timedelta(hours=4)
+        try:
+            tz = tz_of(db, ws_id)
+            first = next((o["key"] for o in callback.options(tz, now) if o["key"] != "asap"), None)
+            window = callback.resolve(first, tz, now) if first else None
+        except ValueError:
+            window = None
+        if window is not None:
+            lead.callback_from, lead.callback_to = window[0], window[1]
+            due = window[0]  # the window itself is on the lead (callback_from/to), as for the web widget
+        create_task(db, ws_id, title=title, created_by=None, lead=lead, due_at=due)
     return "applied"
+
+
+def _digit_runs(text: str) -> list[str]:
+    """Phone digits read out in a turn: Danish number words in pairs ("enogtyve, nul syv, …") or digits."""
+    from app.modules.ai.service import _ONES, spoken_pair
+
+    words = {spoken_pair(n): f"{n:02d}" for n in range(10, 100)}
+    toks = re.sub(r"[^\wæøå+]+", " ", text.lower()).split()
+    runs, cur, i = [], "", 0
+    while i < len(toks):
+        tok = toks[i]
+        if tok == "nul" and i + 1 < len(toks) and toks[i + 1] in _ONES[:10]:
+            cur += "0" + str(_ONES.index(toks[i + 1]))
+            i += 2
+            continue
+        if tok in words:
+            cur += words[tok]
+        elif tok.isdigit():
+            cur += tok
+        else:
+            if cur:
+                runs.append(cur)
+            cur = ""
+        i += 1
+    if cur:
+        runs.append(cur)
+    return runs
+
+
+def confirmed_callback_number(transcript: str) -> str | None:
+    """The last 8-digit Danish number the assistant read back and the caller confirmed with «ja» in the next turn."""
+    lines = transcript.split("\n")
+    found = None
+    for i, line in enumerate(lines[:-1]):
+        if not line.startswith("Assistent:"):
+            continue
+        nxt = lines[i + 1]
+        if not nxt.startswith("Kontakt:") or not nxt[len("Kontakt:"):].strip().lower().startswith(("ja", "jo", "korrekt")):
+            continue
+        for run in _digit_runs(line[len("Assistent:"):]):
+            if len(run) == 8:
+                found = f"+45{run}"
+    return found
 
 
 def record_event(db: OrmSession, event_id: str, event_type: str, payload: dict, outcome: str) -> None:

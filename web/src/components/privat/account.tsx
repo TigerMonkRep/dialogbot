@@ -52,7 +52,9 @@ export function AccountPane() {
       handled.current = key;
       (async () => {
         const app = params.get("app");
-        try { const sb = await api.subscription(sid ?? undefined, currencyFor(locale)); setSubscription(sb); await refresh(); setNote(t("plan.activated")); }
+        // «aktivt» only when the backend says the plan's rights are there (it read the session from Stripe): a declined
+        // card, an abandoned checkout or a bookmarked success link lands here too
+        try { const sb = await api.subscription(sid ?? undefined, currencyFor(locale)); setSubscription(sb); await refresh(); setNote(sb.entitled ? t("plan.activated") : t("plan.notCompleted")); }
         catch (e) { setError(e as ApiError); }
         // «Kræver plan» from an app: the backend switched that app on with the plan – land on it.
         if (app && /^[a-z0-9-]{2,40}$/.test(app)) router.replace(`/privat/apps/${app}`); else clean();

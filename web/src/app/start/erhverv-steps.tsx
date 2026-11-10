@@ -96,7 +96,7 @@ function Step3() {
     <>
       <Question title={t("title")} help={t("help")} />
       <Choice options={options} value={missed} onChange={toggle} multi />
-      {missed.length > 0 && <Estimate value={value} onChange={setPerWeek} source={est.source} />}
+      {missed.length > 0 && <Estimate value={value} onChange={setPerWeek} />}
       <NextButton onClick={() => void go()} disabled={!missed.length} busy={busy} />
     </>
   );

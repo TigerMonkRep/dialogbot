@@ -23,8 +23,10 @@ def get_engine():
         connect_args = {}
         if s.db_schema != "public":
             connect_args["options"] = f"-csearch_path={s.db_schema},public"
+        # hide_parameters: a database error's text (logged as the traceback) never carries bound values – password
+        # hashes, e-mails, phone numbers, tokens (QA F-SQ-02-X29).
         _engine = create_engine(s.database_url, pool_pre_ping=True, future=True, pool_size=s.db_pool_size,
-                                max_overflow=s.db_max_overflow, connect_args=connect_args)
+                                max_overflow=s.db_max_overflow, connect_args=connect_args, hide_parameters=True)
     return _engine
 
 

@@ -46,6 +46,7 @@ AI_DISCLOSURE = re.compile(r"digital assistent|ai-assistent|kunstig intelligens|
 NO_ANSWER_REASONS = ("customer-did-not-answer", "customer-busy", "voicemail", "twilio-failed-to-connect-call",
                      "vonage-failed-to-connect-call", "customer-did-not-give-microphone-permission")
 LEGAL_TEXT_VERSION = "campaign-legal-v2"
+ANSWERED_STATUSES = ("done", "opted_out")  # contact statuses reached only after a conversation
 LEGAL_CHECKLIST = (
     "Alle kontakter – både virksomheder og privatpersoner – har på forhånd sagt ja til at blive ringet op af os, "
     "og vi kan dokumentere hvor og hvornår.",
@@ -170,7 +171,9 @@ def counts(db: OrmSession, c: Campaign) -> dict:
         CampaignContact.campaign_id == c.id, CampaignContact.outcome.is_not(None)).group_by(CampaignContact.outcome)).all())
     calls = db.scalar(select(func.count()).where(CampaignCall.campaign_id == c.id)) or 0
     total = sum(rows.values())
-    return {"total": total, "by_status": rows, "by_outcome": outcomes, "calls": calls,
+    # "Talt med": every contact who spoke with the assistant – an opt-out is an answered call too
+    answered = sum(rows.get(s, 0) for s in ANSWERED_STATUSES)
+    return {"total": total, "by_status": rows, "by_outcome": outcomes, "calls": calls, "answered": answered,
             "open": rows.get("pending", 0) + rows.get("calling", 0)}
 
 
@@ -297,6 +300,12 @@ def create_call(payload: dict) -> dict:
     s = get_settings()
     if not s.vapi_api_key:
         raise NotImplementedYet("VAPI_API_KEY mangler", code="outbound_not_configured")
+    if s.telephony_provider == "fake":
+        # dev/test (config refuses fake elsewhere): never a real call, even when a real VAPI_API_KEY is in the env
+        from app.core.logging import log
+
+        log.info("vapi.outbound_simulated", to_suffix=str((payload.get("customer") or {}).get("number") or "")[-2:])
+        return {"id": f"fake-call-{uuid.uuid4().hex[:16]}", "simulated": True}
     try:
         r = httpx.post(f"{s.vapi_api_url.rstrip('/')}/call", json=payload, timeout=20.0,
                        headers={"authorization": f"Bearer {s.vapi_api_key}"})
@@ -321,9 +330,17 @@ def dial(db: OrmSession, c: Campaign, contact: CampaignContact, now: datetime) -
     try:
         out = create_call(payload)
     except ApiError as e:
+        # Every dial request is an attempt, also when Vapi times out or answers 5xx/429: after a timeout
+        # (`no_response`) the call may well have been placed, so it must count against max_attempts and the
+        # contact must never be redialled sooner than after an ordinary unanswered attempt. Vapi's POST /call has
+        # no documented idempotency key, so an unknown outcome cannot be deduplicated at the provider.
+        extra = e.extra or {}
+        contact.attempts += 1
         contact.error = e.message[:300]
-        if (e.extra or {}).get("permanent"):
-            contact.status, contact.outcome = "failed", None
+        if extra.get("permanent") or contact.attempts >= c.max_attempts:
+            contact.status, contact.outcome, contact.next_attempt_at = "failed", None, None
+        elif extra.get("no_response"):
+            contact.status, contact.next_attempt_at = "pending", now + RETRY_AFTER
         else:
             contact.status, contact.next_attempt_at = "pending", now + timedelta(minutes=30)
         return

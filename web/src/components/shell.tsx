@@ -79,6 +79,9 @@ async function Shell({ children }: { children: React.ReactNode }) {
           <div className="hidden sm:flex items-center ml-auto"><TabNav items={nav} /></div>
           <div className="flex items-center ml-auto sm:ml-0 shrink-0"><Avatar me={me} /></div>
         </div>
+        {/* Phone: the same workspace chooser (and «Ny virksomhed») on its own row under the header – the header row
+            has no room for it next to the logo and the avatar. */}
+        {workspaces.length > 1 && <div className="md:hidden max-w-[1280px] mx-auto px-4 pb-1 -mt-1"><WorkspaceChip workspaces={workspaces} current={current} plain /></div>}
         <VerifyBanner me={me} />
       </header>
 

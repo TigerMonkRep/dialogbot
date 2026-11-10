@@ -1,6 +1,6 @@
 /** Campaign types and status labels (plain module: usable from server and client components). */
 import type { T } from "@/i18n/translate";
-export type Counts = { total: number; open: number; calls: number; by_status: Record<string, number>; by_outcome: Record<string, number> };
+export type Counts = { total: number; open: number; calls: number; answered: number; by_status: Record<string, number>; by_outcome: Record<string, number> };
 export type Campaign = {
   id: string; name: string; status: "draft" | "running" | "paused" | "completed"; version: number; purpose: string; opening: string;
   questions: string[]; success: string; phone_number_id: string | null; call_days: string[]; call_from: string; call_to: string;

@@ -11,6 +11,7 @@ import { PasswordField } from "@/components/password-field";
 
 /** ?next=/privat… means a Dialogbot Privat sign-up: the orange frame, no product choice (that is an Erhverv question)
  *  and the login link keeps `next`, so a plan picked on the landing page goes straight on to the payment after. */
+const INTENTS = ["reception", "campaigns", "both"];
 const isPrivat = (next: string | null) => !!next && next.startsWith("/privat");
 
 function SignupForm() {
@@ -18,7 +19,7 @@ function SignupForm() {
   const router = useRouter();
   const t = useT("auth");
   const privat = isPrivat(params.get("next"));
-  const [form, setForm] = useState({ email: "", password: "", display_name: "", signup_intent: params.get("intent") ?? "reception" });
+  const [form, setForm] = useState({ email: "", password: "", display_name: "", signup_intent: INTENTS.includes(params.get("intent") ?? "") ? params.get("intent")! : "reception" });
   const { run, pending, error } = useSubmit(async () => {
     await api("/auth/register", { method: "POST", body: JSON.stringify(privat ? { ...form, signup_intent: null } : form) });
     const r = await fetch("/api/auth/login", { method: "POST", headers: { "content-type": "application/json", "x-requested-with": "dialogbot" }, body: JSON.stringify({ email: form.email, password: form.password }) });

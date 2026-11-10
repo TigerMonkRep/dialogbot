@@ -4,8 +4,11 @@
 All three offer the same four actions – ledige_tider, book_tid, flyt_tid, aflys_tid – so the assistant's behaviour
 does not change with the customer's calendar. A booking is always a `bookings` row in Dialogbot (it creates the
 lead and the task, and it is what the inbox shows); when Google or Microsoft is connected, the booking is mirrored
-as an event there and their busy time replaces the iCal feed. If the mirror call fails, the booking stands and the
-connection shows the error – the customer in the call is never told a time is booked that is not.
+as an event there and their busy time replaces the iCal feed. Every booking path (assistant, webchat widget,
+«Book for en kunde») mirrors through `mirror_create`/`mirror_update`/`mirror_cancel`. If the mirror call fails, the
+booking stands in Dialogbot, is marked `calendar_sync='failed'` (shown to the owner) and the connection shows the
+error; the assistant's action is then reported as failed, so the customer is never told a time is booked or moved
+when the calendar does not have it.
 
 Provider endpoints (read 29/9 2026):
 - Google Calendar API v3: POST /freeBusy, POST/PATCH/DELETE /calendars/primary/events
@@ -294,8 +297,11 @@ class CalendarActions:
             except ApiError as e:
                 raise ActionRefused(e.message, code=e.code) from e
             b.provider_call_id = ctx.provider_call_id
-            self._mirror_create(b, bt.name)
             when = self.bookings.label(b.starts_at, tz)
+            if not self._mirror_create(b):
+                raise ActionError(f"Tiden {when} er noteret hos virksomheden, men kunne ikke skrives i virksomhedens "
+                                  f"kalender ({b.calendar_sync_error}). Lov ikke kunden, at tiden er bekræftet – sig at "
+                                  "en medarbejder bekræfter tiden.", code="calendar_sync_failed")
             return ActionResult({"booking_id": str(b.id), "type": bt.name, "tidspunkt": when,
                                  "besked": f"Booket: {bt.name} {when}. Bekræft tiden over for kunden."},
                                 provider_ref=b.calendar_event_id, simulated=self.simulated)
@@ -305,8 +311,11 @@ class CalendarActions:
                 self.bookings.move(self.db, self.ws, b, start=str(data["ny_start"]), tz=tz)
             except ApiError as e:
                 raise ActionRefused(e.message, code=e.code) from e
-            self._mirror_update(b)
             when = self.bookings.label(b.starts_at, tz)
+            if not self._mirror_update(b):
+                raise ActionError(f"Den nye tid ({when}) kunne ikke skrives i virksomhedens kalender "
+                                  f"({b.calendar_sync_error}). Lov ikke kunden den nye tid – sig at en medarbejder "
+                                  "bekræfter tiden.", code="calendar_sync_failed")
             return ActionResult({"booking_id": str(b.id), "tidspunkt": when, "besked": f"Aftalen er flyttet til {when}."},
                                 provider_ref=b.calendar_event_id, simulated=self.simulated)
         if action == "aflys_tid":
@@ -318,39 +327,117 @@ class CalendarActions:
                                 provider_ref=b.calendar_event_id, simulated=self.simulated)
         raise ActionRefused("Ukendt handling", code="unknown_action")
 
-    # -- mirroring (best effort; failures are recorded on the connection, never hidden from the owner)
-    def _mirror_create(self, b: Booking, type_name: str) -> None:
-        if self.client is None:
-            return
-        try:
-            eid = self.client.create_event(title=f"{type_name}: {b.contact_name or 'kunde'}", start=b.starts_at, end=b.ends_at,
-                                           description="\n".join(x for x in (b.contact_phone, b.note, "Booket via Dialogbot") if x))
-            b.calendar_connector, b.calendar_event_id = self.connector, eid or None
-        except ActionError as e:
-            self._note(e)
+    # -- mirroring (one shared path for every booking source; failures are visible on the booking and connection)
+    def _mirror_create(self, b: Booking) -> bool:
+        return mirror_create(self.db, self.ws.id, b, client=self.client, connector=self.connector)
 
-    def _mirror_update(self, b: Booking) -> None:
-        if self.client is None or not b.calendar_event_id:
-            return
-        try:
-            self.client.update_event(b.calendar_event_id, start=b.starts_at, end=b.ends_at)
-        except ActionError as e:
-            self._note(e)
+    def _mirror_update(self, b: Booking) -> bool:
+        return mirror_update(self.db, self.ws.id, b, client=self.client, connector=self.connector)
 
-    def _mirror_delete(self, b: Booking) -> None:
-        if self.client is None or not b.calendar_event_id:
-            return
-        try:
-            self.client.delete_event(b.calendar_event_id)
-        except ActionError as e:
-            self._note(e)
+    def _mirror_delete(self, b: Booking) -> bool:
+        return mirror_cancel(self.db, self.ws.id, b, client=self.client, connector=self.connector)
 
-    def _note(self, e: ActionError) -> None:
-        from app.modules.integrations import credentials
 
-        conn = credentials.connection(self.db, self.ws.id, self.connector)
-        if conn is not None:
-            credentials.mark_error(conn, f"Kalenderen kunne ikke opdateres: {e.message}")
+CALENDAR_CONNECTORS = ("google_calendar", "microsoft_calendar")
+
+
+def connected_calendar(db: OrmSession, workspace_id: uuid.UUID) -> str | None:
+    """The workspace's OAuth calendar connection (also one in `error`: its bookings must still be tried and, if the
+    write fails, flagged – never silently skipped)."""
+    from app.modules.integrations import credentials
+
+    for key in CALENDAR_CONNECTORS:
+        if credentials.connection(db, workspace_id, key) is not None:
+            return key
+    return None
+
+
+def _resolve(db: OrmSession, workspace_id: uuid.UUID, b: Booking, client: CalendarClient | None,
+             connector: str | None) -> tuple[CalendarClient | None, str | None]:
+    if client is not None and connector in CALENDAR_CONNECTORS:
+        return client, connector
+    key = b.calendar_connector if b.calendar_connector in CALENDAR_CONNECTORS else connected_calendar(db, workspace_id)
+    if key is None:
+        return None, None
+    from app.modules.integrations import connectors
+
+    try:
+        return connectors.calendar_client(db, workspace_id, key), key
+    except ActionError as e:
+        _failed(db, workspace_id, b, key, e)
+        return None, key
+
+
+def _failed(db: OrmSession, workspace_id: uuid.UUID, b: Booking, key: str, e: ActionError) -> None:
+    from app.modules.integrations import credentials
+
+    b.calendar_connector = b.calendar_connector or key
+    b.calendar_sync, b.calendar_sync_error = "failed", e.message[:300]
+    conn = credentials.connection(db, workspace_id, key)
+    if conn is not None:
+        credentials.mark_error(conn, f"Kalenderen kunne ikke opdateres: {e.message}")
+
+
+def _synced(b: Booking, key: str) -> None:
+    b.calendar_connector, b.calendar_sync, b.calendar_sync_error = key, "synced", None
+
+
+def mirror_create(db: OrmSession, workspace_id: uuid.UUID, b: Booking, *,
+                  client: CalendarClient | None = None, connector: str | None = None) -> bool:
+    """Write a new booking to the connected calendar. True when it is there (or no calendar is connected); False when
+    the write failed – then the booking is marked `calendar_sync='failed'`."""
+    client, key = _resolve(db, workspace_id, b, client, connector)
+    if key is None:
+        return True
+    if client is None:
+        return False
+    try:
+        eid = client.create_event(title=b.title, start=b.starts_at, end=b.ends_at,
+                                  description="\n".join(x for x in (b.contact_phone, b.note, "Booket via Dialogbot") if x))
+    except ActionError as e:
+        _failed(db, workspace_id, b, key, e)
+        return False
+    b.calendar_event_id = eid or None
+    _synced(b, key)
+    return True
+
+
+def mirror_update(db: OrmSession, workspace_id: uuid.UUID, b: Booking, *,
+                  client: CalendarClient | None = None, connector: str | None = None) -> bool:
+    """Move the booking's event. A booking whose event was never written gets it created now."""
+    client, key = _resolve(db, workspace_id, b, client, connector)
+    if key is None:
+        return True
+    if not b.calendar_event_id:
+        return mirror_create(db, workspace_id, b, client=client, connector=key) if client else False
+    if client is None:
+        return False
+    try:
+        client.update_event(b.calendar_event_id, start=b.starts_at, end=b.ends_at)
+    except ActionError as e:
+        _failed(db, workspace_id, b, key, e)
+        return False
+    _synced(b, key)
+    return True
+
+
+def mirror_cancel(db: OrmSession, workspace_id: uuid.UUID, b: Booking, *,
+                  client: CalendarClient | None = None, connector: str | None = None) -> bool:
+    """Delete the cancelled booking's event (nothing to do when it was never written)."""
+    if not b.calendar_event_id:
+        return True
+    client, key = _resolve(db, workspace_id, b, client, connector)
+    if key is None:
+        return True
+    if client is None:
+        return False
+    try:
+        client.delete_event(b.calendar_event_id)
+    except ActionError as e:
+        _failed(db, workspace_id, b, key, e)
+        return False
+    _synced(b, key)
+    return True
 
 
 def connected_busy(db: OrmSession, workspace_id: uuid.UUID, frm: datetime, to: datetime) -> list[tuple[datetime, datetime]] | None:

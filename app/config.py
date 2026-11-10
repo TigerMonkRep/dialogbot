@@ -359,6 +359,11 @@ class Settings(BaseSettings):
             raise ValueError(f"TELEPHONY_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
         if self.connectors_provider == "fake" and self.app_env not in ("dev", "test"):
             raise ValueError(f"CONNECTORS_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
+        for name, value in (("TRACK17_API_KEY", self.track17_api_key), ("DUFFEL_ACCESS_TOKEN", self.duffel_access_token),
+                            ("TRAVELPAYOUTS_TOKEN", self.travelpayouts_token)):
+            # the value "fake" switches in a test double (invented parcel statuses, «Testair» fares)
+            if (value or "").strip().lower() == "fake" and self.app_env not in ("dev", "test"):
+                raise ValueError(f"{name}=fake is a test double and is not allowed when APP_ENV={self.app_env}")
         if self.social_provider == "fake" and self.app_env not in ("dev", "test"):
             raise ValueError(f"SOCIAL_PROVIDER=fake is a test double and is not allowed when APP_ENV={self.app_env}")
         if self.social_provider == "live" and not (self.meta_page_access_token or self.tiktok_client_key):

@@ -605,7 +605,22 @@
       "errorTitle": "Noe gikk galt. Prøv igjen.",
       "choose": "Velg én",
       "chooseMany": "Velg én eller flere",
-      "startOver": "Start på nytt"
+      "startOver": "Start på nytt",
+      "errors": {
+        "rate_limited": "Det er sendt mange forespørsler fra tilkoblingen din. Vent litt, og prøv igjen.",
+        "draft_not_found": "Vi fant ikke svarene dine. Start på nytt.",
+        "draft_expired": "Svarene dine har utløpt. Start på nytt.",
+        "draft_verified": "Kontoen er allerede opprettet. Logg inn.",
+        "search_failed": "Søket virker ikke akkurat nå. Skriv navnet, og gå videre.",
+        "too_soon": "Vent et øyeblikk før du ber om en ny kode.",
+        "sms_failed": "SMS-en kunne ikke sendes akkurat nå. Prøv igjen om litt.",
+        "privat_not_enabled": "Dialogbot Privat er ikke åpnet for deg ennå.",
+        "code_expired": "Koden har utløpt. Be om en ny.",
+        "too_many_attempts": "For mange forsøk. Be om en ny kode.",
+        "user_inactive": "Kontoen er deaktivert.",
+        "wrong_code": "Koden stemmer ikke.",
+        "generic": "Noe gikk galt. Prøv igjen om litt."
+      }
     },
     "places": {
       "label": "Bedriftens navn",
@@ -617,7 +632,7 @@
     "estimate": {
       "about": "ca.",
       "perWeek": "anrop i uken",
-      "source": "Kilde: {source}",
+      "source": "Kilde: Dialogbots anslag for bransjen",
       "edit": "rett tallet hvis du vet bedre"
     },
     "build": {

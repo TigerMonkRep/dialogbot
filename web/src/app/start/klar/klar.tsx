@@ -8,6 +8,7 @@ import { track } from "@/components/site-analytics";
 import { Alert, Button } from "@/components/ui";
 import { Ico } from "@/components/privat/icons";
 import { FunnelShell, FunnelState, Question, useFunnel } from "@/components/funnel";
+import { useFunnelError } from "@/components/funnel/parts";
 import { isDone, type Call } from "@/lib/funnel/api";
 import { InstallStep } from "@/components/install-step";
 
@@ -22,6 +23,7 @@ const MAX_WAIT_MS = 150_000;
  *  only when the API gives an audio URL. */
 export function Klar() {
   const t = useT("site.funnel.erhverv.klar");
+  const say = useFunnelError();
   const f = useFunnel();
   const [info, setInfo] = useState<Info | null>(null);
   const [call, setCall] = useState<Call | null>(null);
@@ -97,7 +99,7 @@ export function Klar() {
               {(waitedOut || call?.status === "failed" || call?.status === "no_answer") && (
                 <p className="m-0 text-[14px] text-ink-soft">{t("noCallBefore")}<a href={PHONE_TEL} className="font-semibold text-ink">{PHONE_DISPLAY}</a>{t("noCallAfter")}</p>
               )}
-              {err && err.status !== 401 && <Alert>{err.message}</Alert>}
+              {err && err.status !== 401 && <Alert>{say(err)}</Alert>}
             </section>
             {done && <InstallStep audience="erhverv" />}
             <div className="flex flex-col sm:flex-row gap-3">

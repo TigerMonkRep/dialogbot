@@ -47,7 +47,8 @@ const sec = "py-16 lg:py-28";
 const secHead = "flex flex-col gap-4 max-w-[38em] mb-9 lg:mb-14";
 const btn = "inline-flex items-center justify-center gap-2.5 min-h-[52px] px-6 rounded-[14px] border-2 font-semibold text-[16px] leading-none whitespace-nowrap no-underline";
 const btnPri = `${btn} bg-accent border-accent text-white hover:bg-accent-deep hover:border-accent-deep hover:text-white`;
-const btnOra = `${btn} bg-[#E0521A] border-[#E0521A] text-white hover:bg-[#B8400F] hover:border-[#B8400F] hover:text-white`;
+// #C4461A (globals.css privat accent), not #E0521A: white text needs ≥ 4.5:1 (WCAG 1.4.3)
+const btnOra = `${btn} bg-[#C4461A] border-[#C4461A] text-white hover:bg-[#B8400F] hover:border-[#B8400F] hover:text-white`;
 const btnYel = `${btn} bg-highlight border-highlight text-ink hover:bg-highlight-deep hover:border-highlight-deep`;
 const btnInv = `${btn} bg-transparent border-white text-white hover:bg-white/10 hover:text-white`;
 const step = "inline-flex items-center justify-center shrink-0 w-14 h-14 rounded-[14px] bg-highlight text-ink font-display font-extrabold text-[30px] tracking-[-0.02em]";
@@ -200,13 +201,13 @@ export default async function Entry() {
               </article>
               {/* Privat */}
               <article id="privat" className="relative flex flex-col gap-6 p-7 lg:p-10 lg:min-h-[620px] rounded-[32px] border-2 border-ink bg-[#FFFBF5] scroll-mt-20">
-                <p className="m-0 text-[14px] font-semibold text-muted"><span className="inline-block mr-2.5 px-2.5 py-[5px] rounded-full bg-[#E0521A] text-white font-bold text-[13px]">{t("choose.private.kick")}</span>{t("choose.private.kickText")}</p>
+                <p className="m-0 text-[14px] font-semibold text-muted"><span className="inline-block mr-2.5 px-2.5 py-[5px] rounded-full bg-[#C4461A] text-white font-bold text-[13px]">{t("choose.private.kick")}</span>{t("choose.private.kickText")}</p>
                 <h3 className="m-0 font-display font-extrabold text-[28px] lg:text-[34px] leading-[1.05] tracking-[-0.02em]">{t("choose.private.title")}</h3>
                 <p className={`${para} max-w-[30em]`}>{t("choose.private.text")}</p>
                 <div className="mt-auto flex flex-col gap-2.5 p-[18px] rounded-3xl border-2 border-ink bg-white" role="img" aria-label={t("choose.private.uiLabel")}>
                   <div className="flex items-center gap-2 text-[12px] font-semibold text-muted"><span className="inline-flex items-center justify-center w-[22px] h-[22px] rounded-full bg-[#E0521A] text-white"><PersonIcon size={13} /></span>{t("choose.private.who")}</div>
                   <div className="self-start max-w-[88%] px-3.5 py-[11px] rounded-[20px] rounded-bl-md border-[1.5px] border-ink bg-[#FFF4E6] text-[14.5px] leading-[1.42]">{t("choose.private.ask")}</div>
-                  <div className="self-end max-w-[88%] px-3.5 py-[11px] rounded-[20px] rounded-br-md bg-[#E0521A] text-white text-[14.5px] leading-[1.42]">{t("choose.private.yes")}</div>
+                  <div className="self-end max-w-[88%] px-3.5 py-[11px] rounded-[20px] rounded-br-md bg-[#C4461A] text-white text-[14.5px] leading-[1.42]">{t("choose.private.yes")}</div>
                   <div className="self-start max-w-[88%] flex items-center gap-2 px-3.5 py-[11px] rounded-[20px] rounded-bl-md border-[1.5px] border-ink bg-white text-[14.5px] leading-[1.42]">
                     <span className="inline-flex items-center justify-center shrink-0 w-[22px] h-[22px] rounded-full bg-success text-white"><CheckIcon size={12} /></span>{t("choose.private.done")}
                   </div>

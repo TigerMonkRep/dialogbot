@@ -7,8 +7,7 @@ import { OfflineActions } from "./offline-page.client";
 
 /** «Ingen forbindelse» – the page the service worker shows for a navigation without net (precached on install).
  *  Static and self-contained (no backend, no session): standalone header with the «Offline» pill, the Trin-gul step
- *  mark, the copy from the app-shell mockup, «Prøv igen» and «Vis det sidste, jeg så», and the audience's tabs so the
- *  cached pages are one tap away. */
+ *  mark, the copy from the app-shell mockup, «Prøv igen», and the audience's tabs. */
 export async function OfflinePage({ audience }: { audience: "erhverv" | "privat" }) {
   const t = await getT("common");
   const privat = audience === "privat";
@@ -26,7 +25,7 @@ export async function OfflinePage({ audience }: { audience: "erhverv" | "privat"
         </span>
         <h1 className="m-0 font-display font-extrabold text-[28px] leading-[1.05] tracking-[-0.02em]">{t("pwa.offlineTitle")}</h1>
         <p className="m-0 text-[15px] leading-normal text-ink-soft">{t(privat ? "pwa.offlinePrivat" : "pwa.offlineErhverv")}</p>
-        <OfflineActions retry={t("pwa.retry")} back={t("pwa.lastSeen")} />
+        <OfflineActions retry={t("pwa.retry")} />
         <p className="m-0 text-[13px] text-muted">{t("pwa.offlineNote")}</p>
       </main>
       {privat ? <PrivatTabs /> : <ErhvervTabs />}

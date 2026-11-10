@@ -1,0 +1,10 @@
+E       AssertionError: the inbound prompt has no date, weekday or time
+E       AssertionError: the caller would hear the admin message: 'Der er ingen godkendt viden endnu. Godkend mindst ét vidensemne, før assistenten kan svare.'
+PASSED tests/qa/test_qa_voice_R01_R07.py::test_r01_per_channel_status_and_pause_resume_reach_the_call
+PASSED tests/qa/test_qa_voice_R01_R07.py::test_r04_widget_snippet_domains_and_install_check
+PASSED tests/qa/test_qa_voice_R01_R07.py::test_r05_saved_script_is_used_from_the_next_call_with_version_conflict_and_role
+PASSED tests/qa/test_qa_voice_R01_R07.py::test_r06_preview_answers_from_approved_knowledge_and_the_script
+PASSED tests/qa/test_qa_voice_R01_R07.py::test_r07_opening_hours_reach_the_call
+PASSED tests/qa/test_qa_voice_R01_R07.py::test_r07_hand_off_is_a_follow_up_task_and_never_a_transfer_promise
+FAILED tests/qa/test_qa_voice_R01_R07.py::test_r07_peter_knows_todays_date_weekday_and_time_in_the_business_timezone
+FAILED tests/qa/test_qa_voice_R01_R07.py::test_r07_fallback_when_knowledge_is_withdrawn_from_a_live_number

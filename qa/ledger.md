@@ -34,3 +34,4 @@
 | 18:55 | qa-lead → Fürster | verdict | bølge 1 | GO: 0 åbne S0/S1, 51 fund lukket, CI grøn – merger PR #176 |
 | 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | beslutninger | F-EB-05-BK15 beslutning B (afventer bekræftelse, migration e7a2c5d9f1b3), F-VQ-05-X05 wont-fix; ikke committet |
 | 2026-11-10 | fix-engineer → qa-lead | fix-ready | billing 1 | F-BQ-012-M04 (efterregistreret forbrug på næste faktura), F-BQ-011-B05 (pakke snapshot på aftalen, migration f3b8d1e6a4c2); ikke committet |
+| 2026-11-10 | e2e-erhverv (C) → qa-lead | finding | bølge 2 P1 | F-E2C-01..11 (S1: 01 kun-kampagner kan ikke oprette, 02 «nej tak» ikke spærret, 03 import i kørende kampagne ringes op, 05 udløbet tilbud i prompt); K01 pass; C02-C14/K04 delvist not-implemented |

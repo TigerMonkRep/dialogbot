@@ -15,7 +15,7 @@ def _env(monkeypatch, base="https://dialogbot.app"):
 
 
 def test_subscription_and_credit_checkouts_carry_the_privat_branding(api, pv, monkeypatch):
-    tok = pv.account("mette@testmail.dk")
+    tok = pv.account("mette@testmail.dk", trial=False)  # no running subscription: checkout allowed (PC-SUB-07)
     _env(monkeypatch)
     sent = []
 

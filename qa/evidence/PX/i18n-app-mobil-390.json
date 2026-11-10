@@ -21,7 +21,9 @@
   },
   "en:/privat/butik/ring-for-mig": {
     "lang": "en",
-    "leaks": []
+    "leaks": [
+      "Say, e.g., “Ring til cykelværkstedet og find en tid torsdag efter klokken tre”"
+    ]
   },
   "en:/privat/butik/pakker": {
     "lang": "en",
@@ -37,7 +39,10 @@
   },
   "en:/privat/kalender": {
     "lang": "en",
-    "leaks": []
+    "leaks": [
+      "De tider, Peter aftaler for dig, og dem du selv fortæller ham, lander i din egen kalender – med adresse og det, I aftalte. Google og Outlook får dem med det samme; alle andre kalendere via et privat link.",
+      "Peter lægger aftaler ind, når de er bekræftet, og når du selv fortæller ham om en tid"
+    ]
   },
   "en:/privat/apps/ring-for-mig": {
     "lang": "en",
@@ -61,7 +66,18 @@
   },
   "de:/privat/butik": {
     "lang": "de",
-    "leaks": []
+    "leaks": [
+      "De tider, Peter aftaler for dig, og dem du selv fortæller ham, lander i din egen kalender – med adresse og det, I aftalte. Google og Outlook får dem med det samme; alle andre kalendere via et privat link.",
+      "Glem aldrig en fødselsdag igen",
+      "Ugens aftensmad – og indkøbslisten følger med",
+      "Syn, service og dæk – Peter holder styr på bilen",
+      "Se hvad I betaler for – og opsig det, I ikke bruger",
+      "Husk reklamationsretten – og få hjælp, når noget går i stykker",
+      "Flyttetjeklisten med datoer – og hjælp til opkaldene",
+      "Dyrlæge, vaccinationer, ormekur og forsikring",
+      "Røgalarm, filtre, tagrender og fyr – til tiden",
+      "Ugens træning, en enkel log – og et puf på dagen"
+    ]
   },
   "de:/privat/butik/ring-for-mig": {
     "lang": "de",
@@ -69,7 +85,10 @@
   },
   "de:/privat/butik/pakker": {
     "lang": "de",
-    "leaks": []
+    "leaks": [
+      "Giv Peter dit track-and-trace-nummer, så holder han øje med pakken og siger til, når den er klar til afhentning – og hvor.",
+      "Du får besked, når den er på vej og kan hentes"
+    ]
   },
   "de:/privat/folk": {
     "lang": "de",
@@ -85,6 +104,8 @@
   },
   "de:/privat/apps/ring-for-mig": {
     "lang": "de",
-    "leaks": []
+    "leaks": [
+      "Sag z. B. „Ring til cykelværkstedet og find en tid torsdag efter klokken tre“"
+    ]
   }
 }

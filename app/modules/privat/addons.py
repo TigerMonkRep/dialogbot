@@ -806,18 +806,24 @@ def enabled_keys(db: OrmSession, ws_id: uuid.UUID) -> set[str]:
     the moment the plan is back. Free apps are never affected."""
     keys = set(db.scalars(select(PrivateAddonEnabled.key).where(PrivateAddonEnabled.workspace_id == ws_id)))
     keys = {k for k in keys if k in CATALOG and CATALOG[k].live_status != "coming_soon"}
-    if any(CATALOG[k].included_in for k in keys):
+    if any(_stops_without_plan(CATALOG[k]) for k in keys):
         from app.modules.privat import subscriptions
 
         ent = subscriptions.entitlements(db, ws_id)
-        keys = {k for k in keys if not CATALOG[k].included_in or subscriptions.covers(ent, CATALOG[k].included_in)}
+        keys = {k for k in keys if not _stops_without_plan(CATALOG[k]) or subscriptions.covers(ent, CATALOG[k].included_in)}
     return keys
+
+
+def _stops_without_plan(a: Addon) -> bool:
+    """Needs a plan to RUN. Not the free apps, and not a pay-per-use app («Ring for mig»: without a plan each call
+    reserves 3 credits – that path is the product, tests/test_privat.py credits path)."""
+    return bool(a.included_in) and a.pricing != "credits"
 
 
 def needs_plan_again(db: OrmSession, ws_id: uuid.UUID, key: str, ent: dict | None = None) -> bool:
     """Switched on, but stopped because its plan no longer applies (data kept; «Kræver plan»)."""
     a = CATALOG.get(key)
-    if a is None or not a.included_in or db.get(PrivateAddonEnabled, (ws_id, key)) is None:
+    if a is None or not _stops_without_plan(a) or db.get(PrivateAddonEnabled, (ws_id, key)) is None:
         return False
     return not included(db, ws_id, a, ent)
 
@@ -894,7 +900,7 @@ def out(db: OrmSession, ws_id: uuid.UUID, a: Addon, ent: dict | None = None) -> 
             "what": p(a.what), "example": p(a.example), "steps": p(list(a.steps)), "included_in": list(a.included_in),
             "included": included(db, ws_id, a, ent), "requires_plan": bool(a.included_in),
             # switched on, data kept, but stopped until the plan is back (PC-ENT-02/03) – the card says «Kræver plan»
-            "needs_plan": bool(on and a.included_in and not included(db, ws_id, a, ent))}
+            "needs_plan": bool(on and _stops_without_plan(a) and not included(db, ws_id, a, ent))}
 
 
 def catalog_out(db: OrmSession, ws_id: uuid.UUID) -> list[dict]:

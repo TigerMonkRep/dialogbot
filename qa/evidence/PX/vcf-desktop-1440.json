@@ -1,6 +1,10 @@
 {
-  "vcard": false,
-  "pickerBtn": 0,
-  "noPicker": "Spring til indholdet\nDialogbot\nPRIVAT\nMin dag\nMine opgaver\nApps\nFolk\nKonto\nMH\n\nTIRSDAG 10. NOVEMBER\n\nHvad skal jeg klare for dig?\nMind mig om\nLav en liste\nRing for mig\nHej. Skriv eller indtal, hvad jeg skal klare – en liste, en påmindelse eller et opkald. Jeg ringer aldrig, før du har sagt ja.\nSkriv din opgave\nSend\nMine folk\n\nGem dem, du ofte deler med – så deler du med alle på én gang.\n\nIngen grupper endnu.\n\nNy gruppe\n\nNumrene bruges kun, når du selv deler. Vi skriver aldrig til dem.",
-  "withPicker": "Spring til indholdet\nDialogbot\nPRIVAT\nMin dag\nMine opgaver\nApps\nFolk\nKonto\nMH\n\nTIRSDAG 10. NOVEMBER\n\nHvad skal jeg klare for dig?\nMind mig om\nLav en liste\nRing for mig\nHej. Skriv eller indtal, hvad jeg skal klare – en liste, en påmindelse eller et opkald. Jeg ringer aldrig, før du har sagt ja.\nSkriv din opgave\nSend\nMine folk\n\nGem dem, du ofte deler med – så deler du med alle på én gang.\n\nIngen grupper endnu.\n\nNy gruppe\n\nNumrene bruges kun, når du selv deler. Vi skriver aldrig til dem."
+  "iphone": {
+    "vcf": 1,
+    "pick": 0
+  },
+  "android": {
+    "vcf": 0,
+    "pick": 1
+  }
 }

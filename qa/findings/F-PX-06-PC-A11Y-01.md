@@ -22,6 +22,9 @@ axe (wcag2a/aa, 21, 22) finder «serious» på alle indloggede Privat-skærme (b
 - /privat/konto (desktop-1440): color-contrast på 2 knapper (`.flex-wrap.gap-2:nth-child(4) > button:nth-child(1)` med aria-expanded, og en `min-h-[52px]`-knap).
 Taleskyde-brugere («klik Dialogbot», «klik 14 d») rammer ikke elementerne.
 
+## Gentest på 451d53b (22:10Z)
+label-content-name-mismatch er stadig på alle 11 app-skærme (logo-link + kontomenu `.w-11`); color-contrast på /privat/konto er væk. Plan-chippen optræder ikke længere.
+
 ## Forventet
 PC-A11Y-01: axe 0 kritiske/alvorlige.
 

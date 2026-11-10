@@ -248,7 +248,7 @@ def test_addon_catalog_extensible(api, pv, dummy_addon):
                  "description": "Bevis for, at ét objekt er nok.", "icon": "star", "category": "test",
                  "price_text": "Gratis", "pricing": "free", "monthly_price_minor": None, "status": "available",
                  "permissions": ["Ingen"], "requires": [], "enabled": False, "enabled_at": None,
-                 "what": "", "example": "", "steps": [], "included_in": [], "included": True, "requires_plan": False,
+                 "what": "", "example": "", "steps": [], "included_in": [], "included": True, "requires_plan": False, "needs_plan": False,  # PC-ENT-02/03
                  # «Mine apps» (app_status.py): nothing saved, never switched off, no setup steps
                  "needs": [], "summary_line": None, "setup": {"done": 0, "total": 0}, "disabled_at": None,
                  "notify_requested": False, "data_deletable": True}
@@ -580,12 +580,14 @@ def test_public_lookups_are_rate_limited(api, pv, db):
     assert get(good[0], "10.7.7.7").status_code == 429
     # the IP itself is never stored
     assert "10.7.7.7" not in json.dumps([r.ip_hash for r in db.query(PrivateLookup).all()])
-    # a global ceiling on misses stops enumeration spread over many addresses
+    # a global ceiling on misses stops enumeration spread over many addresses: every address that has missed itself
+    # is refused – but an invitee with a valid link from a clean address is never locked out (F-PS-03)
     lookup_limits.GLOBAL_MISSES_PER_HOUR, old = 55, lookup_limits.GLOBAL_MISSES_PER_HOUR
     try:
         for i in range(5):
             get(bad[0], f"10.6.6.{i}")
-        assert get(good[0], "10.5.5.5").status_code == 429
+        assert get(good[0], "10.6.6.1").status_code == 429
+        assert get(good[0], "10.5.5.5").status_code == 200
     finally:
         lookup_limits.GLOBAL_MISSES_PER_HOUR = old
 

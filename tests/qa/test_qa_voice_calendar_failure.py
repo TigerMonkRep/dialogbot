@@ -81,3 +81,27 @@ def test_bk15_move_is_not_confirmed_when_the_calendar_fails(api, client, two_wor
     run, case = _case("BK15-02")
     ok, why = run.score(case, [{"role": "assistant", "text": result}])
     assert not _honest(result) and ok, f"Peter is handed {result!r}: {_honest(result) + why}"
+
+
+def test_bk15_busy_unreadable_booking_is_noted_not_confirmed(api, client, two_workspaces, fake, monkeypatch, db):  # noqa: F811
+    """Decision 2026-11-10 (F-EB-05-BK15): the calendar's busy time cannot be read → Peter still offers times from
+    opening hours, but book_tid hands him «noteret – en medarbejder bekræfter», never «Booket»."""
+    import re
+
+    from app.models import Booking
+
+    t = two_workspaces
+    _ready(api, client, t)
+
+    def down(self, frm, to):
+        raise ActionError("freeBusy: kalenderen svarede ikke (simuleret)", code="provider_unavailable", retryable=True)
+
+    monkeypatch.setattr(fakes.FakeCalendarClient, "busy", down)
+    start = re.search(r"start (\S+?)\)", _tool(client, "ledige_tider", {})).group(1)
+    result = _tool(client, "book_tid", {"start": start, "navn": "Mette Hansen", "bekraeftet": True})
+    (ROOT / "qa/evidence/R03/bk15_busy_unreadable_book_tool_result.txt").write_text(result, encoding="utf-8")
+    run, case = _case("BK15-03")
+    ok, why = run.score(case, [{"role": "assistant", "text": result}])
+    assert not _honest(result) and ok, f"Peter is handed {result!r}: {_honest(result) + why}"
+    db.expire_all()
+    assert db.query(Booking).one().confirmation == "pending"

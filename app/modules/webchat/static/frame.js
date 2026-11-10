@@ -146,7 +146,13 @@
     err.hidden = true;
     ensureConversation()
       .then(function (s) { return api("POST", "/conversations/" + s.id + "/booking", body); })
-      .then(function (j) { bookForm.hidden = true; bubble("system-ok", "Tak, " + body.name + "! Du er booket " + j.label + "."); })
+      .then(function (j) {
+        bookForm.hidden = true;
+        // "pending": the business's calendar could not be read – the time is noted, a staff member confirms it
+        bubble("system-ok", j.confirmation === "pending"
+          ? "Tak, " + body.name + "! Din tid " + j.label + " er noteret. En medarbejder bekræfter tiden."
+          : "Tak, " + body.name + "! Du er booket " + j.label + ".");
+      })
       .catch(function (x) {
         err.textContent = x.code === "slot_taken" ? "Tiden blev lige taget – vælg en anden." : x.status === 422 ? "Tjek telefon og e-mail." : (x.message || "Det lykkedes ikke. Prøv igen.");
         err.hidden = false;

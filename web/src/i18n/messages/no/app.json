@@ -305,7 +305,12 @@
       "lead": "Henvendelse",
       "cancel": "Avlys",
       "syncFailed": "Ikke i kalenderen",
-      "syncFailedDetail": "Avtalen kunne ikke skrives i den tilkoblede kalenderen: {error}"
+      "syncFailedDetail": "Avtalen kunne ikke skrives i den tilkoblede kalenderen: {error}",
+      "pending": "Venter på bekreftelse",
+      "pendingDetail": "Kalenderen kunne ikke leses da tiden ble booket. Kunden har fått beskjed om at en medarbeider bekrefter tiden. Sjekk kalenderen, og bekreft eller avlys.",
+      "confirm": "Bekreft",
+      "confirming": "Bekrefter…",
+      "confirmAnyway": "Bekreft likevel"
     },
     "book": {
       "noSlotsError": "Det er ingen ledige tider. Sjekk åpningstider og kalender.",
@@ -318,7 +323,8 @@
       "booked": "Booket {label}.",
       "booking": "Booker …",
       "submit": "Book",
-      "note": "Kunden får ingen SMS ennå – send en bekreftelse selv. «Første ledige» tar neste tid som åpningstider og kalender tillater."
+      "note": "Kunden får ingen SMS ennå – send en bekreftelse selv. «Første ledige» tar neste tid som åpningstider og kalender tillater.",
+      "pending": "Notert {label} – venter på bekreftelse fordi kalenderen ikke kunne leses."
     },
     "calendar": {
       "reading": "Leser …",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Kalender",
         "microsoft_calendar": "Outlook-kalender (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} avtaler venter på bekreftelse – kalenderen kunne ikke leses da de ble booket."
     },
     "staffOnly": "Avtaler kan ses av medarbeidere, administratorer og eiere.",
     "eyebrow": "I dag → Avtaler",

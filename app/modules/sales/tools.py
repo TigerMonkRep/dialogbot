@@ -212,7 +212,11 @@ def _book(db, ws, cc, args, pcid, now) -> str:
     b.provider_call_id = pcid
     db.add(SalesMeeting(company_id=company.id, contact_id=contact.id if contact else None, booking_id=b.id,
                         campaign_contact_id=cc.id, starts_at=b.starts_at, status="confirmed"))
-    return f"Mødet er booket: {bookings.label(b.starts_at, tz_of(db, ws.id))}. Gentag tiden for kunden."
+    when = bookings.label(b.starts_at, tz_of(db, ws.id))
+    if b.confirmation == "pending":  # the connected calendar could not be read (decision 2026-11-10, F-EB-05-BK15)
+        return (f"Mødetiden {when} er noteret, men ikke endeligt bekræftet: kalenderen kunne ikke læses lige nu. Sig "
+                "til kunden, at tiden er noteret, og at en medarbejder bekræfter den.")
+    return f"Mødet er booket: {when}. Gentag tiden for kunden."
 
 
 def _ordreudkast(db, ws, cc, args, pcid, now) -> str:

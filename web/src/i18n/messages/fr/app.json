@@ -305,7 +305,12 @@
       "lead": "Demande",
       "cancel": "Annuler",
       "syncFailed": "Absent de l’agenda",
-      "syncFailedDetail": "Le rendez-vous n’a pas pu être écrit dans l’agenda connecté : {error}"
+      "syncFailedDetail": "Le rendez-vous n’a pas pu être écrit dans l’agenda connecté : {error}",
+      "pending": "En attente de confirmation",
+      "pendingDetail": "L’agenda n’a pas pu être lu au moment de la réservation. Le client a été informé qu’un collaborateur confirmera l’heure. Vérifiez l’agenda, puis confirmez ou annulez.",
+      "confirm": "Confirmer",
+      "confirming": "Confirmation…",
+      "confirmAnyway": "Confirmer quand même"
     },
     "book": {
       "noSlotsError": "Aucun créneau disponible. Vérifiez les horaires d’ouverture et l’agenda.",
@@ -318,7 +323,8 @@
       "booked": "Réservé : {label}.",
       "booking": "Réservation…",
       "submit": "Réserver",
-      "note": "Le client ne reçoit pas encore de SMS – envoyez-lui vous-même une confirmation. « Premier créneau libre » prend le prochain horaire permis par les horaires d’ouverture et l’agenda."
+      "note": "Le client ne reçoit pas encore de SMS – envoyez-lui vous-même une confirmation. « Premier créneau libre » prend le prochain horaire permis par les horaires d’ouverture et l’agenda.",
+      "pending": "Noté : {label} – en attente de confirmation, car l’agenda n’a pas pu être lu."
     },
     "calendar": {
       "reading": "Lecture…",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Agenda",
         "microsoft_calendar": "Agenda Outlook (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} rendez-vous sont en attente de confirmation – l’agenda n’a pas pu être lu lors de leur réservation."
     },
     "staffOnly": "Les rendez-vous sont visibles par les collaborateurs, administrateurs et propriétaires.",
     "eyebrow": "Aujourd’hui → Rendez-vous",

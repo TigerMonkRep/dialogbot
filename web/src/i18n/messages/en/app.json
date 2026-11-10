@@ -305,7 +305,12 @@
       "lead": "Enquiry",
       "cancel": "Cancel",
       "syncFailed": "Not in calendar",
-      "syncFailedDetail": "The appointment could not be written to the connected calendar: {error}"
+      "syncFailedDetail": "The appointment could not be written to the connected calendar: {error}",
+      "pending": "Awaiting confirmation",
+      "pendingDetail": "The calendar could not be read when the time was booked. The customer was told that a staff member will confirm the time. Check the calendar, then confirm or cancel.",
+      "confirm": "Confirm",
+      "confirming": "Confirming…",
+      "confirmAnyway": "Confirm anyway"
     },
     "book": {
       "noSlotsError": "There are no free times. Check opening hours and calendar.",
@@ -318,7 +323,8 @@
       "booked": "Booked {label}.",
       "booking": "Booking…",
       "submit": "Book",
-      "note": "The customer doesn't get a text message yet – send a confirmation yourself. «First available» takes the next time that opening hours and calendar allow."
+      "note": "The customer doesn't get a text message yet – send a confirmation yourself. «First available» takes the next time that opening hours and calendar allow.",
+      "pending": "Noted {label} – awaiting confirmation because the calendar could not be read."
     },
     "calendar": {
       "reading": "Reading…",
@@ -339,7 +345,8 @@
       "provider": {
         "google_calendar": "Google Calendar",
         "microsoft_calendar": "Outlook calendar (Microsoft 365)"
-      }
+      },
+      "pendingN": "{n} appointments are awaiting confirmation – the calendar could not be read when they were booked."
     },
     "staffOnly": "Appointments can be viewed by staff, admins and owners.",
     "eyebrow": "Today → Appointments",

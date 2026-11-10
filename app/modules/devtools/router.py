@@ -72,3 +72,25 @@ def telephony_code(workspace_id: str, principal: Principal = Depends(get_current
             digits = re.findall(r"\d", call["assistant"]["firstMessage"])[:6]
             return {"code": "".join(digits), "warning": "Simuleret kontrolopkald. Intet opkald er foretaget."}
     raise NotFound("Intet kontrolopkald")
+
+
+@router.post("/fake-calendar/busy-down")
+def fake_calendar_busy_down(workspace_id: str, down: bool = True, principal: Principal = Depends(get_current_principal),
+                            db: OrmSession = Depends(get_db)):
+    """Dev/test only, fake connectors only: make the workspace's simulated Google/Microsoft calendar fail to return
+    busy time (a provider outage) until switched back – for end-to-end tests of «afventer bekræftelse». Scoped to one
+    workspace the caller is a member of, so parallel test runs are not affected."""
+    import uuid
+
+    from app.config import get_settings
+    from app.core.errors import Forbidden, NotFound
+    from app.modules.integrations.connectors.fakes import WORLD
+
+    if get_settings().connectors_provider != "fake":
+        raise NotFound("Kun med simulerede forbindelser")
+    if db.scalar(select(Membership.id).where(Membership.user_id == principal.user.id,
+                                             Membership.workspace_id == uuid.UUID(workspace_id))) is None:
+        raise Forbidden("Ikke medlem af arbejdsrummet")
+    for key in ("google_calendar", "microsoft_calendar"):
+        (WORLD.busy_down.add if down else WORLD.busy_down.discard)(f"{key}:{workspace_id}")
+    return {"down": down, "warning": "Simuleret kalendernedbrud. Kun udviklingsmiljø."}

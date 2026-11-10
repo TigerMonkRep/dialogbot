@@ -23,12 +23,25 @@ export function BookingCard({ wsId, b, tz, canChange }: { wsId: string; b: Booki
     await api(`/workspaces/${wsId}/bookings/${b.id}/cancel`, { method: "POST", body: "{}" });
     router.refresh();
   });
+  const pending = b.confirmation === "pending";
+  const [conflict, setConflict] = useState(false);
+  const confirm = useSubmit(async (override: boolean = false) => {
+    try {
+      await api(`/workspaces/${wsId}/bookings/${b.id}/confirm`, { method: "POST", body: JSON.stringify({ override_conflict: override }) });
+    } catch (e) {
+      if ((e as { code?: string })?.code === "calendar_conflict") setConflict(true);
+      throw e;
+    }
+    setConflict(false);
+    router.refresh();
+  });
   return (
     <li className="rounded-xl border-[1.5px] border-ink bg-paper">
       <button type="button" aria-expanded={open} className="w-full text-left px-3 py-2.5 min-h-[44px] flex flex-col" onClick={() => setOpen(!open)}>
         <span className="font-display font-bold text-[15px] text-ink">{time}</span>
         <span className="text-[14px] font-semibold text-ink">{b.contact_name || b.title}</span>
         <span className="text-[13px] text-ink-soft">{b.title}</span>
+        {pending && <span className="mt-1 self-start rounded-full border-[1.5px] border-ink bg-highlight px-2 py-0.5 text-[12px] font-semibold text-ink">{t("bookings.card.pending")}</span>}
         {b.calendar_sync === "failed" && <span className="mt-1 self-start rounded-full border-[1.5px] border-danger px-2 py-0.5 text-[12px] font-semibold text-danger">{t("bookings.card.syncFailed")}</span>}
       </button>
       {open && (
@@ -36,13 +49,16 @@ export function BookingCard({ wsId, b, tz, canChange }: { wsId: string; b: Booki
           <span><b>{b.label}</b> · {SOURCES.has(b.source) ? t(`bookings.source.${b.source}`) : b.source}</span>
           {(b.contact_phone || b.contact_email) && <span className="text-ink-soft">{[b.contact_phone, b.contact_email].filter(Boolean).join(" · ")}</span>}
           {b.note && <span className="text-ink-soft">{b.note}</span>}
+          {pending && <span role="status" className="text-ink">{t("bookings.card.pendingDetail")}</span>}
           {b.calendar_sync === "failed" && <span role="status" className="text-danger">{t("bookings.card.syncFailedDetail", { error: b.calendar_sync_error ?? "–" })}</span>}
           <div className="flex flex-wrap gap-2">
+            {pending && canChange && <button type="button" className={BTN_PRIMARY} disabled={confirm.pending} onClick={() => confirm.run(conflict)}>{confirm.pending ? t("bookings.card.confirming") : conflict ? t("bookings.card.confirmAnyway") : t("bookings.card.confirm")}</button>}
             {b.contact_phone && <a href={`tel:${b.contact_phone}`} className={BTN}>{t("bookings.card.call")}</a>}
             {b.conversation_id && <a href={`/app/opkald/${b.conversation_id}`} className={BTN}>{t("bookings.card.conversation")}</a>}
             {b.lead_id && <a href={`/app/opkald/henvendelser/${b.lead_id}`} className={BTN}>{t("bookings.card.lead")}</a>}
             {canChange && <button type="button" className={`${BTN} text-danger`} disabled={cancel.pending} onClick={() => cancel.run()}>{t("bookings.card.cancel")}</button>}
           </div>
+          <ErrorBox error={confirm.error} />
           <ErrorBox error={cancel.error} />
         </div>
       )}
@@ -61,14 +77,15 @@ export function BookForCustomer({ wsId, types, initialName = "", initialPhone = 
   const [when, setWhen] = useState("first");
   const [slots, setSlots] = useState<Slot[]>([]);
   const [done, setDone] = useState<string | null>(null);
+  const [donePending, setDonePending] = useState(false);
   useEffect(() => {
     api<{ items: Slot[] }>(`/workspaces/${wsId}/bookings/slots?type_id=${typeId}`).then((r) => setSlots(r.items)).catch(() => setSlots([]));
   }, [wsId, typeId, done]);
   const save = useSubmit(async () => {
     const start = when === "first" ? slots[0]?.start : when;
     if (!start) throw { status: 409, code: "no_slots", message: t("bookings.book.noSlotsError") };
-    const b = await api<{ label: string }>(`/workspaces/${wsId}/bookings`, { method: "POST", body: JSON.stringify({ type_id: typeId, start, name, phone: phone || null, email: null, note: "" }) });
-    setDone(b.label); setName(""); setPhone(""); setWhen("first"); router.refresh();
+    const b = await api<{ label: string; confirmation: Booking["confirmation"] }>(`/workspaces/${wsId}/bookings`, { method: "POST", body: JSON.stringify({ type_id: typeId, start, name, phone: phone || null, email: null, note: "" }) });
+    setDone(b.label); setDonePending(b.confirmation === "pending"); setName(""); setPhone(""); setWhen("first"); router.refresh();
   });
   return (
     <form className="flex flex-col gap-3" onSubmit={(e) => { e.preventDefault(); save.run(); }}>
@@ -84,7 +101,9 @@ export function BookForCustomer({ wsId, types, initialName = "", initialPhone = 
           {slots.slice(1, 40).map((s) => <option key={s.start} value={s.start}>{s.label}</option>)}
         </select></div>
       <ErrorBox error={save.error} />
-      {done && <p role="status" className="rounded-xl bg-success-soft px-3.5 py-2.5 text-[14px] font-semibold text-success">{t("bookings.book.booked", { label: done })}</p>}
+      {done && (donePending
+        ? <p role="status" className="rounded-xl bg-highlight px-3.5 py-2.5 text-[14px] font-semibold text-ink">{t("bookings.book.pending", { label: done })}</p>
+        : <p role="status" className="rounded-xl bg-success-soft px-3.5 py-2.5 text-[14px] font-semibold text-success">{t("bookings.book.booked", { label: done })}</p>)}
       <button type="submit" className={BTN_PRIMARY} disabled={save.pending || !name.trim() || slots.length === 0}>{save.pending ? t("bookings.book.booking") : t("bookings.book.submit")}</button>
       <p className="text-[13px] text-muted">{t("bookings.book.note")}</p>
     </form>

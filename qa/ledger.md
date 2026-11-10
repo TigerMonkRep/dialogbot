@@ -32,3 +32,4 @@
 | 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | batch 7 | F-PQ-02 (demo + ?plan → signup), F-VR-04-X11 (atomisk overtagelse + tests/test_idempotency.py); ikke committet |
 | 17:05 | verifier → qa-lead | verdict | batch 7 | F-PQ-02 closed (X07 8/8 + anonym ?plan= → signup → checkout, uden ?plan= demo), F-VR-04 closed (test_idempotency 5×, trådet probe: én vinder) |
 | 18:55 | qa-lead → Fürster | verdict | bølge 1 | GO: 0 åbne S0/S1, 51 fund lukket, CI grøn – merger PR #176 |
+| 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | beslutninger | F-EB-05-BK15 beslutning B (afventer bekræftelse, migration e7a2c5d9f1b3), F-VQ-05-X05 wont-fix; ikke committet |

@@ -25,6 +25,7 @@ class FakeWorld:
     webhooks: list[dict] = field(default_factory=list)  # delivered posts
     fail_next: set[str] = field(default_factory=set)  # op names that fail once: "calendar", "sms", "webhook", "oauth"
     fail_webhook_times: int = 0  # the next N webhook deliveries fail (retry tests)
+    busy_down: set[str] = field(default_factory=set)  # calendars whose free/busy read fails until removed (e2e)
     oauth_email: str = "ejer@fjordgulv.example"
     seq: itertools.count = field(default_factory=lambda: itertools.count(1))
     lock: threading.Lock = field(default_factory=threading.Lock)
@@ -35,6 +36,7 @@ class FakeWorld:
         self.webhooks.clear()
         self.fail_next.clear()
         self.fail_webhook_times = 0
+        self.busy_down.clear()
         self.oauth_email = "ejer@fjordgulv.example"
 
     def _maybe_fail(self, op: str) -> None:
@@ -60,6 +62,9 @@ class FakeCalendarClient:
 
     def busy(self, frm: datetime, to: datetime) -> list[tuple[datetime, datetime]]:
         WORLD._maybe_fail("calendar")
+        if self.calendar in WORLD.busy_down:
+            raise ActionError("calendar: optaget tid kunne ikke hentes (simuleret nedbrud)", code="provider_unavailable",
+                              retryable=True)
         return [(e["start"], e["end"]) for e in WORLD.events.values()
                 if e["calendar"] == self.calendar and e["end"] > frm and e["start"] < to]
 

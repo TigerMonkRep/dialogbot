@@ -198,7 +198,6 @@ def test_mp_usage_reported_after_the_month_was_invoiced_is_billed_somewhere(api,
 
 # --------------------------------------------------------------------------- visibility (not built)
 
-@pytest.mark.xfail(strict=True, reason="B05/minutpakke: invoice API does not expose the frozen period lines")
 def test_mp_customer_can_read_the_frozen_package_usage_of_an_invoiced_month(api, two_workspaces, db):
     from app.models import Invoice
 
@@ -213,7 +212,6 @@ def test_mp_customer_can_read_the_frozen_package_usage_of_an_invoiced_month(api,
     assert any(x.get("kind") == "inbound_minutes" and x.get("extra_minutes") == 10 for x in item.get("lines", []))
 
 
-@pytest.mark.xfail(strict=True, reason="M04/minutpakke: operator customer view has no package, usage or overage")
 def test_mp_operator_sees_package_usage_per_customer(api, two_workspaces, db):
     ws = uuid.UUID(two_workspaces["ws_a"])
     _agreement(db, ws)
@@ -223,7 +221,6 @@ def test_mp_operator_sees_package_usage_per_customer(api, two_workspaces, db):
     assert "agreement" in body and "usage" in body, sorted(body)
 
 
-@pytest.mark.xfail(strict=True, reason="B03/B04/minutpakke: no way to dispute/credit a failed inbound call's minutes")
 def test_mp_failed_call_minutes_can_be_disputed_or_credited(app):
     from qa_sec_helpers import all_routes
 

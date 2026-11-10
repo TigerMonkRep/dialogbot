@@ -467,4 +467,5 @@ def invoice_out(i: Invoice) -> dict:
     return {"id": str(i.id), "month": i.month.strftime("%Y-%m"), "status": i.status, "number": i.number,
             "currency": i.currency, "tax_source": i.tax_source, "net_minor": i.net_minor, "tax_minor": i.tax_minor, "gross_minor": i.gross_minor,
             "hosted_invoice_url": i.hosted_invoice_url, "invoice_pdf": i.invoice_pdf, "note": i.note,
+            "lines": i.lines or [],  # the frozen statement lines of the invoiced month (package usage included)
             "created_at": i.created_at.isoformat()}

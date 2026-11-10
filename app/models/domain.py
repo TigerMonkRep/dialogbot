@@ -1149,6 +1149,43 @@ class DiscountRedemption(Base):
     redeemed_at: Mapped[datetime] = ts_now()
 
 
+class CallDispute(Base):
+    """A customer's complaint about one billed call (Fürster 2026-11-10: minutes are credited ONLY when the customer
+    complains about a call). One per call. The operator approves or rejects it (billing/disputes.py):
+    - approved while the call's month is not invoiced: credit_mode 'pool' – the call's minutes leave the month's usage
+      and go back into the package (no credit note, DB-002);
+    - approved after the month was invoiced: credit_mode 'invoice' – what the call added to that invoice is credited as
+      a line on the next invoice (`credit_net_minor`, 0 when the call was within the package);
+    - rejected: nothing changes."""
+
+    __tablename__ = "call_disputes"
+    __table_args__ = (
+        CheckConstraint("(call_id is null) <> (campaign_call_id is null)", name="ck_call_disputes_one_call"),
+        CheckConstraint("status in ('open','approved','rejected')", name="ck_call_disputes_status"),
+        CheckConstraint("credit_mode is null or credit_mode in ('pool','invoice')", name="ck_call_disputes_credit_mode"),
+        UniqueConstraint("call_id", name="uq_call_disputes_call"),
+        UniqueConstraint("campaign_call_id", name="uq_call_disputes_campaign_call"),
+        Index("ix_call_disputes_workspace_status", "workspace_id", "status"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
+    call_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("calls.id", ondelete="CASCADE"))  # inbound
+    campaign_call_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("campaign_calls.id", ondelete="CASCADE"))
+    period: Mapped[date] = mapped_column(Date, nullable=False)  # first day of the call's billing month
+    call_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    minutes: Mapped[int] = mapped_column(Integer, nullable=False)  # started minutes of the call
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(10), nullable=False, default="open")
+    created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = ts_now()
+    decided_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    decision_note: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    credit_mode: Mapped[str | None] = mapped_column(String(8))
+    credit_net_minor: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
+
+
 class Invoice(Base):
     """One monthly invoice (in arrears) created at Stripe from the statement. Unique per workspace+month."""
 

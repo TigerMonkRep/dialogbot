@@ -124,9 +124,10 @@ def statement(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str) -> 
     code_discount = erhverv_line(db, workspace_id, month, tz, lines, currency=currency)
     if code_discount is not None:
         lines.append(code_discount)
-    # Usage of earlier, already invoiced months reported after their invoice (after the discounts: those cover this
-    # month, not an earlier period).
+    # Usage of earlier, already invoiced months reported after their invoice, and credits for complaints about calls
+    # in invoiced months (after the discounts: those cover this month, not an earlier period).
     lines += late_usage_lines(db, workspace_id, month, tz)
+    lines += dispute_credit_lines(db, workspace_id, month, tz, currency)
     # Specialist setup from an accepted sales offer: once, in the month the agreement was made (its first invoice).
     # Added after the ambassador discount, which covers the running subscription, not the one-off setup.
     setup = db.scalars(select(ReceptionAgreement).where(
@@ -172,23 +173,35 @@ def package_terms(agreement: ReceptionAgreement | None, currency: str) -> dict:
             "outbound": markets.erhverv_price(currency, "outbound_extra_minute")}
 
 
-def usage_events(db: OrmSession, workspace_id: uuid.UUID, start: datetime, end: datetime) -> list[dict]:
+def usage_events(db: OrmSession, workspace_id: uuid.UUID, start: datetime, end: datetime, *,
+                 include_pool_credited: bool = False, exclude: frozenset = frozenset()) -> list[dict]:
     """Every billable call of the window, oldest first: inbound calls (by start) and campaign calls (by dialling), with
-    their started minutes (a call without its end-of-call report yet counts 0 until the report arrives)."""
+    their started minutes (a call without its end-of-call report yet counts 0 until the report arrives).
+    A call whose complaint was approved before its month was invoiced (CallDispute credit_mode 'pool') is not usage:
+    its minutes are back in the package (listed only with include_pool_credited, marked `credited`). `exclude` leaves
+    out further calls by (direction, id) – used to value a complaint on an invoiced month."""
+    from app.models import CallDispute
+
+    pooled = (CallDispute.workspace_id == workspace_id) & (CallDispute.status == "approved") & (CallDispute.credit_mode == "pool")
+    pooled_in = set(db.scalars(select(CallDispute.call_id).where(pooled, CallDispute.call_id.is_not(None))))
+    pooled_out = set(db.scalars(select(CallDispute.campaign_call_id).where(pooled, CallDispute.campaign_call_id.is_not(None))))
     outbound = select(CampaignCall.provider_call_id).where(CampaignCall.provider_call_id.is_not(None))
     demo = select(DemoCall.provider_call_id).where(DemoCall.provider_call_id.is_not(None))
     tests = select(TelephonyTest.provider_call_id).where(TelephonyTest.provider_call_id.is_not(None))
-    events = [{"direction": "inbound", "id": str(cid), "at": at, "minutes": _minutes_of([sec]), "campaign_id": None}
+    events = [{"direction": "inbound", "id": str(cid), "at": at, "minutes": _minutes_of([sec]), "campaign_id": None,
+               "credited": cid in pooled_in}
               for cid, at, sec in db.execute(select(Call.id, Call.started_at, Call.duration_seconds).where(
                   Call.workspace_id == workspace_id, Call.started_at >= start, Call.started_at < end,
                   Call.provider_call_id.not_in(outbound), Call.provider_call_id.not_in(demo),
                   Call.provider_call_id.not_in(tests))).all()]
-    events += [{"direction": "outbound", "id": str(cid), "at": at, "minutes": _minutes_of([sec]), "campaign_id": camp}
+    events += [{"direction": "outbound", "id": str(cid), "at": at, "minutes": _minutes_of([sec]), "campaign_id": camp,
+                "credited": cid in pooled_out}
                for cid, at, sec, camp in db.execute(
                    select(CampaignCall.id, CampaignCall.dialled_at, CampaignCall.connected_seconds, CampaignCall.campaign_id)
                    .join(Campaign, Campaign.id == CampaignCall.campaign_id)
                    .where(Campaign.workspace_id == workspace_id, CampaignCall.dialled_at >= start,
                           CampaignCall.dialled_at < end)).all()]
+    events = [e for e in events if (include_pool_credited or not e["credited"]) and (e["direction"], e["id"]) not in exclude]
     return sorted(events, key=lambda e: (e["at"], e["id"]))
 
 
@@ -196,6 +209,7 @@ def allocate(events: list[dict], terms: dict) -> dict:
     """Use the package in call order; minutes above it are priced by direction. Mutates each event with
     package_minutes / extra_minutes / net_minor and returns the package summary."""
     left = terms["included"]
+    events = [e for e in events if not e.get("credited")]
     for e in events:
         e["package_minutes"] = min(e["minutes"], left)
         left -= e["package_minutes"]
@@ -245,6 +259,11 @@ def _pool_lines(db: OrmSession, workspace_id: uuid.UUID, start: datetime, end: d
                       "included_minutes": terms["included"], "package_minutes": minutes - extra, "extra_minutes": extra,
                       "description": text, "net_minor": sum(e["net_minor"] for e in inbound)})
     return lines, package
+
+
+def agreement_at(db: OrmSession, workspace_id: uuid.UUID, end: datetime) -> ReceptionAgreement | None:
+    """The agreement in force at the end of a month (the newest version made before `end`)."""
+    return _agreement_at(db, workspace_id, end)
 
 
 def usage_lines(db: OrmSession, workspace_id: uuid.UUID, start: datetime, end: datetime,
@@ -339,4 +358,35 @@ def late_usage_lines(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: s
                                         "fakturaen" if da else
                                         f"Usage reported after the invoice, {label} – {what[1]}: {minutes} min"),
                         "net_minor": delta})
+    return out
+
+
+CREDIT_KIND = "dispute_credit"
+
+
+def dispute_credit_lines(db: OrmSession, workspace_id: uuid.UUID, month: date, tz: str, currency: str) -> list[dict]:
+    """Complaints approved after their month was invoiced (CallDispute credit_mode 'invoice'): the amount the call
+    added to that invoice comes off the next invoice, once – a credit already on an earlier invoice is not repeated
+    (the frozen lines carry `dispute_id`). A credit of 0 (the call was within the package) gets no line."""
+    from app.models import CallDispute, Invoice
+
+    first = month.replace(day=1)
+    _start, end = month_bounds(first, tz)
+    done = {x.get("dispute_id") for lines in db.scalars(select(Invoice.lines).where(
+        Invoice.workspace_id == workspace_id, Invoice.month < first)) for x in (lines or []) if x.get("kind") == CREDIT_KIND}
+    out = []
+    for d in db.scalars(select(CallDispute).where(
+            CallDispute.workspace_id == workspace_id, CallDispute.status == "approved", CallDispute.credit_mode == "invoice",
+            CallDispute.period < first, CallDispute.decided_at < end, CallDispute.credit_net_minor > 0)
+            .order_by(CallDispute.decided_at)):
+        if str(d.id) in done:
+            continue
+        da = currency == "DKK"
+        label = f"{MONTH_DA[d.period.month - 1]} {d.period.year}" if da else d.period.strftime("%B %Y")
+        when = d.call_at.astimezone(ZoneInfo(tz))
+        out.append({"kind": CREDIT_KIND, "dispute_id": str(d.id), "period": d.period.strftime("%Y-%m"), "minutes": d.minutes,
+                    "description": (f"Kreditering efter klage: opkald {when.day}. {MONTH_DA[when.month - 1]} kl. "
+                                    f"{when:%H.%M} ({d.minutes} min) på fakturaen for {label}" if da else
+                                    f"Credit after a complaint: call on {when:%d %B %H:%M} ({d.minutes} min), invoice {label}"),
+                    "net_minor": -d.credit_net_minor})
     return out

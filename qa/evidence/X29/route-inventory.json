@@ -3,8 +3,8 @@
   "anonymous": 54,
   "public_api": 25,
   "user": 28,
-  "workspace": 162,
-  "operator": 132,
+  "workspace": 165,
+  "operator": 136,
   "privat": 105,
   "excluded": 1
  },
@@ -583,6 +583,18 @@
   },
   {
    "route": "GET /api/v1/workspaces/{workspace_id}/billing/statement",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/billing/usage",
+   "class": "workspace"
+  },
+  {
+   "route": "GET /api/v1/workspaces/{workspace_id}/billing/disputes",
+   "class": "workspace"
+  },
+  {
+   "route": "POST /api/v1/workspaces/{workspace_id}/billing/disputes",
    "class": "workspace"
   },
   {
@@ -2016,6 +2028,22 @@
   {
    "route": "DELETE /api/v1/push/subscriptions",
    "class": "user"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/billing",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/prices",
+   "class": "operator"
+  },
+  {
+   "route": "GET /api/v1/operator/admin/disputes",
+   "class": "operator"
+  },
+  {
+   "route": "POST /api/v1/operator/admin/disputes/{dispute_id}/decision",
+   "class": "operator"
   },
   {
    "route": "GET /api/v1/dev/mailbox",

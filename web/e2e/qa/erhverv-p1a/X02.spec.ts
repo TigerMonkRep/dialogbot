@@ -47,6 +47,7 @@ test("X02 · accentlag: gul markør højst én pr. skærmbillede; aldrig på kna
 });
 
 test("X02 · én primær knap pr. sektion", async ({ page }, info) => {
+  test.fail(true, "F-E2A-07-X02: S3 new – /erhverv: prissektionen har to primære (blå) knapper – «Vælg her – hør den først» og «Hør den …");
   await page.goto("/da/erhverv");
   const bad = await sectionsWithSeveralPrimaries(page);
   if (bad.length) {

@@ -19,6 +19,7 @@ test("W05 · tidsrummene i widgetten er de samme som API'ets, og «Ingen præfer
 });
 
 test("W05 · tidszonen forklares for den besøgende (tidsrummene er i virksomhedens lokale tid)", async ({ page, browser }, info) => {
+  test.fail(true, "W05: not-implemented – tidszone-forklaring for den besøgende");
   w = await widgetWorkspace(page, info);
   const { chat, close } = await visitor(browser, page);
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();
@@ -28,6 +29,7 @@ test("W05 · tidszonen forklares for den besøgende (tidsrummene er i virksomhed
 });
 
 test("W05 · tidsrummene følger virksomhedens åbningstider: lukket på hverdage = ingen hverdags-tidsrum", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-04-W05: S2 new – Tidsrummene for opringning ignorerer virksomhedens godkendte åbningstider: altid man–fre …");
   // Fjord Gulv variant only open in weekends. Today (run date) is a weekday evening: the next weekday is closed.
   w = await widgetWorkspace(page, info, { hours: [{ days: ["sat", "sun"], open: "09:00", close: "13:00" }] });
   const api = await (await page.request.get(`http://localhost:8200/api/v1/public/webchat/${w.key}/callback-windows`)).json();

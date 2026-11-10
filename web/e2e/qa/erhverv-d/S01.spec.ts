@@ -32,6 +32,7 @@ test("S01 · adresse, åbningstider og primært sprog rettes, gemmes automatisk 
 });
 
 test("S01 · kategorier og tidszone kan ses og rettes på virksomhedssiden", async ({ page }, info) => {
+  test.fail(true, "F-E2D-12-S01: S2 new – Virksomhedssiden (/app/settings/business → /opsaetning/1) viser hverken kategorier eller …");
   const { wsId } = await freshOwner(page, info);
   // a category exists (as trin 1 derives it), the page must show it and let the owner change it
   await page.request.post(`/api/backend/workspaces/${wsId}/categories`, { headers: CSRF, data: { label: "Gulvafslibning", slug: null, is_primary: true } });

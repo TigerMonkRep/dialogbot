@@ -235,6 +235,7 @@ def test_x12_double_tap_install_and_uninstall_never_500(api, pv, db, app, key):
     assert all(c < 500 for c in off), ("disable", off)
 
 
+@pytest.mark.xfail(strict=True, reason="F-P2-06-X12: S3 new – «Slå til» er ikke idempotent efter prøveperioden: en plan-app, der allerede er slået til (den forbliver …")
 def test_x12_reinstall_after_the_trial_ended_is_still_idempotent(api, pv):
     """An app that is already on answers «on» to another «Slå til» – also after the trial ended (it stays on by design,
     addons.py docstring), instead of 409 needs_plan for something the user already has."""

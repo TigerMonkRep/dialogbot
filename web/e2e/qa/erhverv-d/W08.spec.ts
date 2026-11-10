@@ -25,6 +25,7 @@ test("W08 · serverfejl (500): dansk fejlbesked, Send virker igen, og næste for
 });
 
 test("W08 · forbindelsen er væk: den besøgende får en dansk besked og kan prøve igen uden at skrive beskeden forfra", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-08-W08: S2 new – Mister den besøgende forbindelsen, viser widgetten browserens rå fejl «Failed to fetch» …");
   w = await widgetWorkspace(page, info);
   const { v, chat, close } = await visitor(browser, page);
   await v.context().route("**/conversations**", (route) => route.abort("internetdisconnected"));
@@ -44,6 +45,7 @@ test("W08 · forbindelsen er væk: den besøgende får en dansk besked og kan pr
 });
 
 test("W08 · chatten bliver utilgængelig midt i samtalen: besked + virksomhedens kontaktoplysninger som udvej", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-09-W08: S3 new – Når chatten bliver utilgængelig, siger widgetten «Kontakt virksomheden direkte» uden at sige …");
   w = await widgetWorkspace(page, info);
   // the business's phone number (canonical demo data) in the profile
   const prof = await (await page.request.get(`/api/backend/workspaces/${w.wsId}/profile`)).json();

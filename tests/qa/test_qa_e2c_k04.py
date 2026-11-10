@@ -62,6 +62,7 @@ def test_k04_validation_rejects_inverted_dates_and_bad_operator(api, two_workspa
     assert r.status_code == 422
 
 
+@pytest.mark.xfail(strict=True, reason="F-E2C-07-K04: S2 new – API'et validerer ikke rabatprocenten: et tilbud med 150 %, -10 % eller «femten» accepteres (201) og kan …")
 def test_k04_discount_percent_is_validated(api, two_workspaces):
     """F-E2C-07: validate_content checks operator, threshold and dates but not the discount. An approved offer with
     150 % or -10 % reaches the assistant (the UI field has min=1 max=100, the API does not)."""

@@ -7,6 +7,7 @@ import { api, snap } from "./e2b";
 const ID = "G03";
 
 test("G03 · opgave-URL fra API'et kan åbnes; «Jeg gør resten senere» returnerer til I dag og husker valget", async ({ page }, info) => {
+  test.fail(true, "F-E2B-10-G03: S2 new – På mobil er «Jeg gør resten senere» skjult i trin 1 og 2, så en ny bruger på telefonen ikke kan …");
   const { wsId } = await freshOwner(page, info);
   await page.context().clearCookies({ name: "db_setup_later" });
   const plan = (await api(page).get(`/workspaces/${wsId}/setup/plan`)).body;

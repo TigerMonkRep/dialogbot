@@ -44,6 +44,7 @@ test("C03 · serverfejl ved import: fejlen vises, intet importeres, listen bevar
 });
 
 test("C03 · krav: API-kilde eller skrivebeskyttet database som kontaktkilde med forbindelsesstatus (ikke bygget)", async ({ page }, info) => {
+  test.fail(true, "C03: not-implemented – API-kilde/skrivebeskyttet database som kontaktkilde");
   test.info().annotations.push({ type: "not-implemented", description: "C03: only CSV upload/paste exists (kampagner/client.tsx ImportContacts); no API/database source or connection state" });
   const { wsId } = await campaignOwner(page, info);
   const c = await newCampaign(page.request, wsId, `QA-E2C C03 kilde ${Date.now()}`);

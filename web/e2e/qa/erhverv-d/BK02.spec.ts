@@ -72,6 +72,7 @@ test("BK02 · aftalekortet: kilde, kontakt, «Afventer bekræftelse», udbyder, 
 });
 
 test("BK02 · aftalen har sin egen adresse (/app/bookings/:id), så push, mail og opgaver kan linke direkte til den", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-11-BK02: S3 new – En aftale har ingen egen side: /app/bookings/:id giver 404 (kun /app/bookings → /app/aftaler …");
   test.setTimeout(120_000);
   const b = await pendingWidgetBooking(page, browser, info);
   const r = await page.request.get(`/app/bookings/${b.id}`, { maxRedirects: 5 });

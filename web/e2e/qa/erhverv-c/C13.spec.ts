@@ -48,6 +48,7 @@ test("C13 · afsluttet kampagne: udfald pr. kontakt, tællere = API, kan ikke ge
 });
 
 test("C13 · krav: eksport, slutrapport og leveringsstatus (ikke bygget)", async ({ page }, info) => {
+  test.fail(true, "C13: not-implemented – eksport, slutrapport og leveringsstatus");
   test.info().annotations.push({ type: "not-implemented", description: "C13: no export, final report or delivery status on the campaign page or API" });
   const { c } = await completed(page, info);
   await page.goto(`/app/kampagner/${c.id}`);

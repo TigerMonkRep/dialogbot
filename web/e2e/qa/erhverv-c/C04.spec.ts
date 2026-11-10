@@ -31,6 +31,7 @@ test("C04 · samtykke er påkrævet – også for virksomheder – og gemmes pr.
 });
 
 test("C04 · krav: kolonne-mapping, kontaktens sprog og godkendt variabel-mapping (ikke bygget)", async ({ page }, info) => {
+  test.fail(true, "C04: not-implemented – kolonne-mapping, kontaktsprog, variabel-mapping");
   test.info().annotations.push({ type: "not-implemented", description: "C04: no mapping step; no per-contact language; variables limited to {navn}/{virksomhed} with no mapping UI" });
   const { wsId } = await campaignOwner(page, info);
   const c = await newCampaign(page.request, wsId, `QA-E2C C04 mapping ${Date.now()}`);

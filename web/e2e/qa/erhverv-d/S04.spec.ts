@@ -38,6 +38,7 @@ test("S04 · webhook-URL der ikke er https afvises med en forståelig fejl", asy
 });
 
 test("S04 · kravets detaljeadresse /app/settings/integrations/:id findes (fx google_calendar → BK07/aftaler)", async ({ page }, info) => {
+  test.fail(true, "F-E2D-15-S04: S3 new – Kravets adresser /app/settings/integrations og /app/settings/integrations/:id giver 404 – kun …");
   await freshOwner(page, info);
   const r = await page.request.get("/app/settings/integrations/google_calendar", { maxRedirects: 5 });
   test.info().annotations.push({ type: "status", description: `${r.status()} ${r.url()}` });

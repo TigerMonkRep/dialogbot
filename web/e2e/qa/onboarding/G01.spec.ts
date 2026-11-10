@@ -39,6 +39,7 @@ test("G01 · /app/setup sender til præcis næste trin; ny session genoptager; f
 });
 
 test("G01 · ærlig fremdrift: forbundet kalender vises som færdigt trin 2 – også set fra trin 1 og 3", async ({ page }, info) => {
+  test.fail(true, "F-E2B-06-G01: S2 new – Opsætningen regnes som «færdig», så snart trin 1 er udfyldt, hvis telefonen ikke er valgt – også …");
   const { wsId } = await freshOwner(page, info);
   await completeProfile(page, wsId);
   await setGoals(page, wsId, { booking: true });
@@ -81,6 +82,7 @@ test("G01 · trinlinjen er tilgængelig: 3 links med navn, aktuelt trin markeret
 });
 
 test("G01 · ærlig fremdrift: webchat + booking valgt, intet tændt/forbundet → opsætningen må ikke regnes som færdig", async ({ page }, info) => {
+  test.fail(true, "F-E2B-06-G01: S2 new – Opsætningen regnes som «færdig», så snart trin 1 er udfyldt, hvis telefonen ikke er valgt – også …");
   const { wsId } = await freshOwner(page, info);
   await completeProfile(page, wsId);
   await setGoals(page, wsId, { product_intent: "reception", inbound_phone: false, webchat: true, callback: true, booking: true });

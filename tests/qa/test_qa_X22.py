@@ -91,7 +91,7 @@ def test_committed_openapi_equals_the_code():
 
 # --------------------------------------------------------------------------- contract: every 2xx body matches the file
 
-def test_every_success_response_matches_the_openapi_schema(api, keyed, telephony, receiver, db):
+def test_every_success_response_matches_the_openapi_schema(api, keyed, telephony, receiver, db):  # noqa: F811
     t = keyed
     ids = _seed_everything(api, t, db)
     ws = t["ws_a"]
@@ -148,7 +148,8 @@ def test_every_success_response_matches_the_openapi_schema(api, keyed, telephony
 
 # --------------------------------------------------------------------------- contract: error answers
 
-def test_error_answers_are_documented_and_match_the_documented_shape(api, keyed):
+@pytest.mark.xfail(strict=True, reason="F-M2-09-X22: S2 new – OpenAPI-kontrakten (docs/public-openapi.json) dokumenterer ingen fejlsvar ud over 422 – og 422 er …")
+def test_error_answers_are_documented_and_match_the_documented_shape(api, keyed):  # noqa: F811
     """docs/public-api.md lister 401/403/404/409/422/429 med konvolutten {code,message,field_errors,request_id}.
     OpenAPI-filen er «kontrakten» (public-api.md §Versionering) – en genereret klient skal kunne parse fejlene."""
     t = keyed
@@ -188,7 +189,7 @@ def _b64(s: str) -> str:
     return base64.urlsafe_b64encode(s.encode()).decode().rstrip("=")
 
 
-def test_no_500_for_odd_query_values_and_crafted_cursors(api, keyed, telephony, receiver, db):
+def test_no_500_for_odd_query_values_and_crafted_cursors(api, keyed, telephony, receiver, db):  # noqa: F811
     t = keyed
     _seed_everything(api, t, db)
     base = f"{V1}/workspaces/{t['ws_a']}"
@@ -229,7 +230,8 @@ def test_no_500_for_odd_query_values_and_crafted_cursors(api, keyed, telephony, 
 
 # --------------------------------------------------------------------------- pagination
 
-def test_message_list_never_says_last_page_when_it_truncated(api, keyed, db):
+@pytest.mark.xfail(strict=True, reason="F-M2-10-X22: S2 new – GET /v1/…/conversations/{id}/messages afkorter stille ved `limit` (standard 200, maks 500) og svarer …")
+def test_message_list_never_says_last_page_when_it_truncated(api, keyed, db):  # noqa: F811
     """public-api.md §Pagination: `next_cursor: null` = sidste side. /messages svarer altid null, men skærer ved
     limit (standard 200, maks 500) – en lang samtale bliver stille afkortet."""
     t = keyed
@@ -248,7 +250,7 @@ def test_message_list_never_says_last_page_when_it_truncated(api, keyed, db):
         f"fik {got} af 205 beskeder og next_cursor={r['next_cursor']!r} – klienten tror, samtalen er komplet"
 
 
-def test_cursor_is_stable_with_identical_timestamps(api, keyed, db):
+def test_cursor_is_stable_with_identical_timestamps(api, keyed, db):  # noqa: F811
     """Keyset (created_at, id): rækker med samme tidsstempel må hverken gentages eller tabes over sidegrænser."""
     from app.models import Call
 
@@ -275,7 +277,8 @@ def test_cursor_is_stable_with_identical_timestamps(api, keyed, db):
 
 # --------------------------------------------------------------------------- webhooks vs. scopes / key lifecycle
 
-def test_webhook_payload_respects_the_contacts_scope(api, keyed, receiver, db):
+@pytest.mark.xfail(strict=True, reason="F-M2-07-X22: S2 new – En nøgle med kun `webhooks:manage` kan abonnere på lead.created/booking.*/call.completed og få …")
+def test_webhook_payload_respects_the_contacts_scope(api, keyed, receiver, db):  # noqa: F811
     """public-api.md §GDPR: «Telefonnumre og e-mails er maskeret uden contacts:read». En nøgle med KUN
     webhooks:manage kan abonnere på lead.created og få kontaktdata i klartekst – scope-modellen omgås."""
     t = keyed
@@ -299,7 +302,8 @@ def test_webhook_payload_respects_the_contacts_scope(api, keyed, receiver, db):
         "nøgle uden contacts:read/leads:read modtager kontaktdata i klartekst via webhook"
 
 
-def test_revoked_key_its_webhooks_are_visible_or_stopped(api, keyed, receiver, db):
+@pytest.mark.xfail(strict=True, reason="F-M2-08-X22: S2 new – Webhook-endpoints oprettet med en nøgle bliver ved med at modtage data, efter nøglen er tilbagekaldt – og …")
+def test_revoked_key_its_webhooks_are_visible_or_stopped(api, keyed, receiver, db):  # noqa: F811
     """Tilbagekaldelse «virker øjeblikkeligt». Endpoints oprettet af en nøgle bliver ved med at modtage data efter
     tilbagekaldelsen, og ejeren kan ikke se/slette dem i appen (ingen intern rute, ingen UI) – kun med en ny nøgle."""
     t = keyed
@@ -319,6 +323,7 @@ def test_revoked_key_its_webhooks_are_visible_or_stopped(api, keyed, receiver, d
         f"{len(seen)} levering(er) efter tilbagekaldelse, og ingen intern rute viser endpointet ({internal})"
 
 
+@pytest.mark.xfail(strict=True, reason="F-M2-11-X22: S3 new – En udløbet API-nøgle tæller stadig med i grænsen på 2 aktive nøgler; rotation kræver, at man først …")
 def test_expired_key_does_not_block_rotation(api, two_workspaces, db):
     """Højst 2 *aktive* nøgler (public-api.md). En udløbet nøgle er ikke aktiv (public_view → «expired»), men tæller
     stadig med i grænsen (keys.active_count tæller kun revoked_at IS NULL)."""

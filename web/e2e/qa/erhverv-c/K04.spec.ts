@@ -49,6 +49,7 @@ test("K04 · opret tilbud i browseren: ≥ 40 m², datoer inkl., overlever reloa
 });
 
 test("K04 · tilbud uden datoer: fejlbeskeden er forståelig dansk (ikke feltnavne)", async ({ page }, info) => {
+  test.fail(true, "F-E2C-08-K04: S2 new – Gem et tilbud uden datoer → fejlboksen viser «starts_on skal være en ISO-dato» – teknisk …");
   const { wsId } = await freshOwner(page, info, "reception");
   await page.goto("/app/viden");
   await page.getByRole("button", { name: "+ Tilføj et tilbud" }).click();
@@ -62,6 +63,7 @@ test("K04 · tilbud uden datoer: fejlbeskeden er forståelig dansk (ikke feltnav
 });
 
 test("K04 · tilstande: udløbet tilbud vises som udløbet, ikke som aktivt", async ({ page }, info) => {
+  test.fail(true, "F-E2C-06-K04: S2 new – «Tilbud og rabatter» viser ikke tilstand: et udløbet tilbud står præcis som et aktivt (ingen …");
   const { wsId } = await freshOwner(page, info, "reception");
   const it = await (await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/items`, { headers: CSRF, data: { kind: "offer", title: "Sommerrabat", content: { ...OFFER, starts_on: "2026-06-01", ends_on_inclusive: "2026-08-31" } } })).json();
   expect((await page.request.post(`/api/backend/workspaces/${wsId}/knowledge/versions/${it.open_draft.id}/approve`, { headers: { ...CSRF, "idempotency-key": `qa-e2c-${it.open_draft.id}` } })).ok()).toBeTruthy();

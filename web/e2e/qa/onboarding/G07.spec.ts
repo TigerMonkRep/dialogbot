@@ -24,6 +24,7 @@ test("G07 · API: ejer tildeler opgave; medarbejder kan kun tage den selv; læse
 });
 
 test("G07 · UI: kan opsætningen gives videre til en kollega (tildel/inviter) fra byggevejledningen?", async ({ page }, info) => {
+  test.fail(true, "F-E2B-14-G02: S3 new – Kravruterne /app/setup/plan, /app/setup/tasks/:id, /app/setup/team og /app/setup/next giver 404, …");
   await freshOwner(page, info);
   const res = await page.goto("/app/setup/team");
   test.info().annotations.push({ type: "route", description: `${res?.status()} → ${page.url()}` });

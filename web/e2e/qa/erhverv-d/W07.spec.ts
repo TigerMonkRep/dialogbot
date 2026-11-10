@@ -7,6 +7,7 @@ let w: Widget | null = null;
 test.afterEach(async () => { if (w) await closeAll(w.servers); w = null; });
 
 test("W07 · opsummering af det aftalte med «Ret» før afsendelse, og valgfri kvittering", async ({ page, browser }, info) => {
+  test.fail(true, "W07: not-implemented – opsummering med «Ret» og valgfri kvittering");
   w = await widgetWorkspace(page, info);
   const { v, chat, close } = await visitor(browser, page);
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();

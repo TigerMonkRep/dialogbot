@@ -20,6 +20,7 @@ test("S05 · backend: nøgle oprettes med scopes, vises kun én gang, listen er 
 });
 
 test("S05 · UI: /app/settings/api findes (udvikleradgang, nøgler, scopes) – «Vis teknik (API, …)» lover API", async ({ page }, info) => {
+  test.fail(true, "F-E2D-18-S05: S3 new – «Vis teknik (API, webhooks, log)» lover API, men der er ingen udvikleradgang/API-nøgler for …");
   await freshOwner(page, info);
   const r = await page.request.get("/app/settings/api", { maxRedirects: 5 });
   await page.goto("/app/indstillinger");

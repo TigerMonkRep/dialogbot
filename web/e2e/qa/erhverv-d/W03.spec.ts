@@ -68,6 +68,7 @@ test("W03 · dobbeltklik på Send giver ét lead og én opgave", async ({ page, 
 });
 
 test("W03 · formularen spørger om årsag (hvad det drejer sig om), så virksomheden ved, hvorfor den skal ringe", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-03-W03: S2 new – «Bliv kontaktet» spørger ikke om årsagen: formularen har kun navn, e-mail, telefon og tidsrum; …");
   w = await widgetWorkspace(page, info);
   const { v, chat, close } = await visitor(browser, page);
   await chat.getByRole("button", { name: "Bliv kontaktet af en medarbejder" }).click();

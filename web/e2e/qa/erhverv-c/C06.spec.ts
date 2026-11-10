@@ -43,6 +43,7 @@ test("C06 · manuskript: AI-forslag fyldes ind, gemmes, overlever reload; versio
 });
 
 test("C06 · én primær knap pr. skærm på kampagnesiden (brand.md)", async ({ page }, info) => {
+  test.fail(true, "F-E2C-11-C06: S3 new – Kampagnesiden har tre primærknapper samtidig («Tilføj kontakter», «Gem kampagne», «Start kampagne»).");
   const { wsId } = await campaignOwner(page, info);
   const c = await newCampaign(page.request, wsId, `QA-E2C C06 knapper ${Date.now()}`, { opening: "Hej {navn}", questions: ["Hvor mange m²?"] });
   await page.goto(`/app/kampagner/${c.id}`);
@@ -52,6 +53,7 @@ test("C06 · én primær knap pr. skærm på kampagnesiden (brand.md)", async ({
 });
 
 test("C06 · krav: upload af manuskript, forgreninger, personlig forhåndsvisning og versioner (ikke bygget)", async ({ page }, info) => {
+  test.fail(true, "C06: not-implemented – upload af manuskript, forgreninger, forhåndsvisning, versioner");
   test.info().annotations.push({ type: "not-implemented", description: "C06: no script upload, branches, per-contact preview or version history (CampaignEditor has plain fields)" });
   const { wsId } = await campaignOwner(page, info);
   const c = await newCampaign(page.request, wsId, `QA-E2C C06 versioner ${Date.now()}`, { opening: "Hej {navn}" });

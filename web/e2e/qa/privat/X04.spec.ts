@@ -97,6 +97,7 @@ test("6 trin i orange → kode → konto oprettet → checkout med 14 dage → p
 });
 
 test("dybt link til trin 5 uden svar sender tilbage til trin 1", async ({ page }) => {
+  test.fail(true, "F-P2-04-X04: S3 new – Et dybt link (fx /privat/start/5 fra en annonce eller et bogmærke) uden kladde sender den …");
   await page.context().clearCookies();
   await page.goto("/privat/start/5");
   // F-P2-04-X04: a fresh draft has step=1, so reachableStep() sends the visitor to step 2 – step 1 (unanswered) is skipped
@@ -115,6 +116,7 @@ test("honeypot: samme svar, ingen SMS", async ({ request }) => {
 });
 
 test("assistentens navn fra trin 1 bruges i de næste trin (ikke «Peter»)", async ({ page }) => {
+  test.fail(true, "F-P2-03-X04: S3 new – Navngiver man assistenten i trin 1 (fx «Kim»), siger trin 3-5 stadig «Peter» («Hvornår skal …");
   await page.goto("/privat/start");
   await page.getByRole("checkbox", { name: "Tandlægen" }).click();
   await page.getByTestId("assistant-name").fill("Kim");

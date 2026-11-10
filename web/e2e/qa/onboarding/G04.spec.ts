@@ -28,6 +28,7 @@ test("G04 · forklaring pr. trin; Esc lukker; skærmlæser-navn", async ({ page 
 });
 
 test("G04 · rettelse godkendt i hjælpen skal stå i trin 1-felterne bagefter – og næste autogem må ikke give konflikt", async ({ page }, info) => {
+  test.fail(true, "F-E2B-07-G04: S2 new – En rettelse godkendt i «Hjælp» i trin 1 (åbningstider, telefonnummer) vises ikke i felterne …");
   const { wsId } = await freshOwner(page, info);
   await completeProfile(page, wsId);
   await page.goto("/opsaetning/1");
@@ -79,6 +80,7 @@ test("G04 · rettighedsgrænse: læser kan spørge, men får ingen ændringskort
 });
 
 test("G04 · support-overdragelse: hjælpen i opsætningen tilbyder en vej til et menneske/ønske", async ({ page }, info) => {
+  test.fail(true, "F-E2B-15-G04: S3 new – Byggevejledning: «Hjælp» i opsætningen har ingen vej til et menneske eller til «Ønsk en …");
   await freshOwner(page, info);
   await page.goto("/opsaetning/1");
   const d = await open(page, 1);

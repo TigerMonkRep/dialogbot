@@ -67,6 +67,7 @@ test("S03 · kalenderen kan ikke læses ved opslag af ledige tider: forbindelsen
 });
 
 test("S03 · en kalender i fejl tilbyder «Forbind igen» (reconnect), ikke kun «Test» og «Afbryd»", async ({ page }, info) => {
+  test.fail(true, "F-E2D-14-S03: S2 new – En forbindelse i «Fejl» kan ikke forbindes igen: kortet tilbyder kun «Test forbindelse» og …");
   const { wsId, typeId } = await calendarDown(page, info);
   try {
     const sl = (await (await page.request.get(`/api/backend/workspaces/${wsId}/bookings/slots?type_id=${typeId}`)).json()).items;
@@ -84,6 +85,7 @@ test("S03 · en kalender i fejl tilbyder «Forbind igen» (reconnect), ikke kun 
 });
 
 test("S03 · kravets adresse /app/settings/integrations leder til oversigten (som /app/settings/integrationer gør)", async ({ page }, info) => {
+  test.fail(true, "F-E2D-15-S04: S3 new – Kravets adresser /app/settings/integrations og /app/settings/integrations/:id giver 404 – kun …");
   await freshOwner(page, info);
   const r = await page.request.get("/app/settings/integrations", { maxRedirects: 0 });
   test.info().annotations.push({ type: "status", description: String(r.status()) });

@@ -41,6 +41,7 @@ test("C08 · startboks: antal = ventende kontakter fra API, alle vilkår skal kr
 });
 
 test("C08 · krav: vælg hvilke kontakter der er med (udvalg) og fastfrys udvalget ved bekræftelse (ikke bygget)", async ({ page }, info) => {
+  test.fail(true, "C08: not-implemented – udvalg af kontakter og fastfrysning ved bekræftelse");
   test.info().annotations.push({ type: "not-implemented", description: "C08: all pending contacts are always included; no selection; contacts added later are dialled without re-confirmation (F-E2C-03)" });
   const { wsId } = await campaignOwner(page, info);
   const c = await newCampaign(page.request, wsId, `QA-E2C C08 udvalg ${Date.now()}`);

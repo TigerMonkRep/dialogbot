@@ -44,6 +44,7 @@ test("O03 · læser kan ikke ændre mål (UI og API)", async ({ page, browser },
 });
 
 test("O03 · krav: samtalemål, foreslåede spørgsmål og intent-grene kan ses og redigeres af ejeren", async ({ page }, info) => {
+  test.fail(true, "O03: not-implemented – samtalemål, foreslåede spørgsmål og intent-grene");
   const { wsId } = await freshOwner(page, info);
   await completeProfile(page, wsId);
   // The backend can suggest goals (POST …/goals/suggestions). Is any of it visible to the owner anywhere in the setup?

@@ -35,6 +35,7 @@ test("W10 · ydelsesvalg i widgetten: kun aktive typer vises, og den valgte type
 });
 
 test("W10 · ikke bygget: den delte bookingside /book/:business og valg af sted/medarbejder", async ({ page }, info) => {
+  test.fail(true, "W10: not-implemented – delt bookingside /book/:business");
   w = await widgetWorkspace(page, info, { booking: true });
   const ws = await (await page.request.get(`/api/backend/workspaces/${w.wsId}`)).json();
   const r = await page.request.get(`/book/${ws.slug ?? ws.id}`);

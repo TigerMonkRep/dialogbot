@@ -103,6 +103,7 @@ def test_x17_archived_fact_disappears_from_peters_inbound_prompt(client, api, sa
 
 # --------------------------------------------------------------------------- 1b. chat + demo call (F-V2-01: fail)
 
+@pytest.mark.xfail(strict=True, reason="F-V2-01-X17: S2 new – Peter i chatten på dialogbot.dk og i demo-opkaldet får altid de hårdkodede produktpåstande …")
 def test_x17_website_chat_only_claims_what_the_sales_workspace_has_approved(client, api, sales, monkeypatch):  # noqa: F811
     """The sales workspace has approved ONE fact (sales fixture: "Dialogbot – AI-receptionist …"). Nothing approved says
     the product books in a calendar, sends SMS, offers webchat or lets customers keep their number. Peter's chat on
@@ -117,6 +118,7 @@ def test_x17_website_chat_only_claims_what_the_sales_workspace_has_approved(clie
     assert not unapproved_claims, f"product claims outside approved knowledge are in Peter's chat prompt: {unapproved_claims}"
 
 
+@pytest.mark.xfail(strict=True, reason="F-V2-01-X17: S2 new – Peter i chatten på dialogbot.dk og i demo-opkaldet får altid de hårdkodede produktpåstande …")
 def test_x17_demo_call_only_claims_what_the_sales_workspace_has_approved(client, api, sales, db):  # noqa: F811
     system = _demo_system(client, sales, db)
     approved_part = system.split("</godkendt_viden>")[0]
@@ -151,6 +153,7 @@ HUMOUR_RULE = re.compile(r"humor|humør|spøg|munter", re.I)
 AT_EXPENSE = re.compile(r"(aldrig|ikke)[^.]{0,60}(på kundens bekostning|gøre grin med|grine af|gør grin med)", re.I)
 
 
+@pytest.mark.xfail(strict=True, reason="F-V2-02-X17: S3 new – Ingen af Peters prompts (indgående, chat, demo-opkald) siger noget om humor: hverken at lun humor er i …")
 def test_x17_every_peter_prompt_allows_humour_but_never_at_the_callers_expense(client, api, sales, db, monkeypatch):  # noqa: F811
     prompts = {"inbound": _inbound_system(client), "chat": _chat_system(client, monkeypatch),
                "demo": _demo_system(client, sales, db)}

@@ -24,7 +24,6 @@ from sqlalchemy import select
 from app.config import get_settings
 from app.core.errors import ApiError
 from app.models import Call, CallRecording, ConversationMessage, Workspace
-from app.modules.sales import recordings
 from app.modules.telephony import call_recordings
 from app.worker import runner
 from tests.test_call_recordings import _assistant, _turn_on, configured, media, storage  # noqa: F401
@@ -36,6 +35,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 
 # --------------------------------------------------------------------------- the journey itself
 
+@pytest.mark.xfail(strict=True, reason="F-M2-01-S07: S2 new – S07 er ikke bygget: ingen privatlivsside, ingen dataeksport, ingen lukning/sletning af arbejdsrum eller …")
 def test_privacy_center_export_and_closure_exist(api, two_workspaces):
     """S07-ruten /app/settings/privacy og en selvbetjent eksport/lukning. /gdpr og /vilkår lover: «Ved opsigelse kan I
     inden for 30 dage bede om en kopi af jeres data. Derefter sletter vi dem» – intet i koden kan lave kopien eller
@@ -60,7 +60,8 @@ def test_privacy_center_export_and_closure_exist(api, two_workspaces):
         f"intet sætter workspaces.status=closing/closed ({setters!r})")
 
 
-def test_a_closed_workspace_stops_answering_on_phone_and_widget(api, client, two_workspaces, configured, fake, db):
+@pytest.mark.xfail(strict=True, reason="F-M2-02-S07: S2 new – Et lukket arbejdsrum (status='closed') bliver ved med at besvare telefonen og webchat-widgetten og gemme …")
+def test_a_closed_workspace_stops_answering_on_phone_and_widget(api, client, two_workspaces, configured, fake, db):  # noqa: F811
     """Hvis et arbejdsrum lukkes (i dag kun muligt direkte i databasen), afviser app-sessioner og public API det
     (core/auth.py:172, public_api/auth.py:71) – men telefonen og webchat-widgetten bliver ved med at svare og gemme
     nye persondata for virksomheden."""
@@ -88,7 +89,7 @@ def test_a_closed_workspace_stops_answering_on_phone_and_widget(api, client, two
 
 # --------------------------------------------------------------------------- deletion really deletes (recordings)
 
-def test_customer_deleted_recording_is_gone_everywhere(api, client, two_workspaces, configured, storage, db, media):
+def test_customer_deleted_recording_is_gone_everywhere(api, client, two_workspaces, configured, storage, db, media):  # noqa: F811
     t = two_workspaces
     n = _setup(api, t)
     assert _turn_on(api, t, n, recording_retention_days=30).status_code == 200
@@ -115,8 +116,9 @@ def test_customer_deleted_recording_is_gone_everywhere(api, client, two_workspac
     assert api.delete(t["tok_a"], f"/workspaces/{t['ws_a']}/calls/{call.id}/recording").status_code == 409
 
 
-def test_retention_is_not_blocked_by_one_recording_that_fails_to_delete(api, client, two_workspaces, configured, storage,
-                                                                       db, media):
+@pytest.mark.xfail(strict=True, reason="F-M2-03-S07: S2 new – Retention af kundeoptagelser er alt-eller-intet: fejler sletning af én fil i lageret, ruller hele kørslen …")
+def test_retention_is_not_blocked_by_one_recording_that_fails_to_delete(api, client, two_workspaces, configured, storage,  # noqa: F811
+                                                                       db, media):  # noqa: F811
     """Retention kører i én transaktion over alle kunders optagelser (call_recordings.run_retention). Fejler sletning af
     ÉN fil i lageret, ruller hele kørslen tilbage, ingen optagelse slettes, og workeren prøver igen ved hver
     løkke (runner.py:379 sætter først _RETENTION_RAN efter succes) – én defekt fil blokerer retention for alle."""
@@ -148,7 +150,8 @@ def test_retention_is_not_blocked_by_one_recording_that_fails_to_delete(api, cli
     assert left[recs[1].storage_key] == "DELETED", f"én fejlende fil blokerede retention for de andre: {left}"
 
 
-def test_transcript_and_summary_have_a_retention(api, client, two_workspaces, configured, storage, db, media):
+@pytest.mark.xfail(strict=True, reason="F-M2-04-S07: S2 new – Udskrift og resumé af kundens egne opkald har ingen frist og ingen sletning – heller ikke når lyden …")
+def test_transcript_and_summary_have_a_retention(api, client, two_workspaces, configured, storage, db, media):  # noqa: F811
     """Retention gælder kun lyd. Udskrift (conversation_messages) og resumé (calls.summary) for kundens egne opkald
     har ingen frist og ingen sletteknap – heller ikke når lyden slettes efter nummerets frist. Kravets
     «retention controls» og /gdpr's liste («En udskrift af samtalen … Den opsummering …») har ingen slettevej."""
@@ -167,6 +170,7 @@ def test_transcript_and_summary_have_a_retention(api, client, two_workspaces, co
 
 # --------------------------------------------------------------------------- Egen stemme: withdrawal
 
+@pytest.mark.xfail(strict=True, reason="F-M2-05-S07: S2 new – Egen stemme: «Træk samtykke tilbage» sletter optagelserne, men syntetiseret tale i personens stemme bliver …")
 def test_own_voice_withdrawal_also_deletes_cached_synthesis_in_cloud_storage(monkeypatch):
     """«Samtykket er trukket tilbage. Optagelserne er slettet, og stemmen bruges ikke.» Ved tilbagetrækning kalder
     own_voice.withdraw service.invalidate_cache → storage.delete_prefix('cache/ws/<ws>/<profil>'). Med Supabase

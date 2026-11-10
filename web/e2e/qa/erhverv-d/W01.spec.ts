@@ -62,6 +62,7 @@ test("W01 · ikke-tilladt site og slukket widget viser ingen launcher", async ({
 });
 
 test("W01 · widgetten er kundens (client-branded): virksomhedens navn står i chatvinduet, ikke kun «Digital assistent»", async ({ page, browser }, info) => {
+  test.fail(true, "F-E2D-01-W01: S2 new – Webchat-widgetten er ikke kundens: rammen siger altid «Digital assistent» i Dialogbots farver; …");
   w = await widgetWorkspace(page, info);
   const ws = await (await page.request.get(`/api/backend/workspaces/${w.wsId}`)).json();
   const vis = await visitor(browser, page);

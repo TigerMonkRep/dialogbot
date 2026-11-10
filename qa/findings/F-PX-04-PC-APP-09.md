@@ -3,7 +3,7 @@ id: F-PX-04-PC-APP-09
 scenario: PC-APP-09
 reported_by: integrations-qa (PX)
 severity: S2
-status: needs-decision
+status: fixed
 owner_fix: ui-ux-engineer
 related: []
 ---
@@ -29,3 +29,10 @@ PC-APP-09: «"Book"-link har partner-marker og «Annonce»-markering hvis affili
 Markering af affiliate-links (markedsføringsloven) – foreslået: «Annonce · Dialogbot får provision» ved Travelpayouts-resultater og `rel="sponsored"`. Duffel-links (ingen provision) uden mærke.
 
 ## Rodårsag / Rettelse / Verifikation
+
+## Rettelse (udfyldes af fix-engineer)
+- Beslutning (Fürster 2026-11-10): affiliate-links markeres.
+- Rettelse: travel._offer har `sponsored`, som er sand for Travelpayouts med marker (Duffel/fake har den falsk). travel.tsx viser «Annonce · Dialogbot får provision» (privat.json travel.sponsored, 8 sprog) og rel="sponsored noopener noreferrer". Typen i lib/privat/api.ts er udvidet.
+- Test: tests/test_privat_travel.py::test_affiliate_booking_link_is_marked_as_an_ad
+- Filer: app/modules/privat/travel.py, web/src/components/privat/travel.tsx, web/src/lib/privat/api.ts, web/src/i18n/messages/*/privat.json
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)

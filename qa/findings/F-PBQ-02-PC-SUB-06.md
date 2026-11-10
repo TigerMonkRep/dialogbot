@@ -3,7 +3,7 @@ id: F-PBQ-02-PC-SUB-06
 scenario: PC-SUB-06
 reported_by: billing-qa
 severity: S2
-status: needs-decision
+status: fixed
 owner_fix: fix-engineer
 related: [F-PBQ-06-PC-ENT-02, F-PQ-03-X09]
 ---
@@ -33,3 +33,11 @@ B. Fingerprint-kontrol: ved `checkout.session.completed` hentes `payment_method.
 - ::test_pc_inv_08_self_referral_farm_without_any_plan (xfail strict, «inviter farmed 9 credits from 3 free alt-accounts»)
 
 ## Rodårsag / Rettelse / Verifikation
+
+## Rettelse (udfyldes af fix-engineer)
+- Beslutning (Fürster 2026-11-10): ÉT KORT = ÉN PRØVEPERIODE, og henvisningsbonus gives først, når den henviste har betalt en første rigtig periode.
+- Rettelse, kort: ny tabel private_trial_cards (Stripe card fingerprint som PK, workspace_id SET NULL, stripe_subscription_id, first_trial_at). Ny reversibel migration d7f2b9c4e1a8 (oven på c9e4a7d2b1f6), testet op/ned, og alembic check er ren. Ingen kortdata gemmes. I upsert_from_stripe_subscription gælder: når et NYT abonnement kommer i trialing, hentes fingeraftrykket (default_payment_method → GET /payment_methods/{id}). Har kortet allerede givet en prøveperiode til en anden konto, afsluttes prøveperioden med det samme (POST /subscriptions/{id} trial_end=now, idempotency-key), og brugeren får besked («Kortet har allerede haft en prøveperiode …»). Ellers huskes kortet. Kan fingeraftrykket ikke hentes, står prøveperioden ved magt (fail-open, logges). Checkout-siden siger det på forhånd via custom_text.submit («Én prøveperiode pr. kort …», da/en). Rækken bevares ved kontosletning, så sletning og ny tilmelding ikke giver en ny prøveperiode.
+- Rettelse, henvisning (lukker også F-PQ-03): referrals.try_activate belønner først, når paid_once er opfyldt (Stripe-abonnementet er active/past_due, eller opsagt med betalt periode efter prøveperioden). Den forsøges igen, når abonnementet bliver active. Operatørens growth-«activated» betyder derfor nu «har betalt».
+- Tests: test_privat_subscription::test_one_trial_per_card (ny). test_privat_sharing::test_referral_once/needs_activation/monthly_cap/growth_operator_only er tilpasset (belønning kræver betalt periode).
+- Filer: app/models/privat.py, app/models/__init__.py, alembic/versions/d7f2b9c4e1a8_private_trial_cards.py, app/modules/privat/subscriptions.py, app/modules/privat/referrals.py
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)

@@ -3,7 +3,7 @@ id: F-PBQ-08-PC-ACC-04
 scenario: PC-ACC-04
 reported_by: billing-qa
 severity: S2
-status: needs-decision
+status: fixed
 owner_fix: fix-engineer
 related: [PC-SUB-11, PC-SUB-13, PC-SUB-14]
 ---
@@ -28,3 +28,14 @@ B. Dialogbot sender egne Privat-mails (E06-variant) og lytter på `customer.subs
 - tests/qa/test_qa_pd_billing.py::test_pc_acc_04_invoices_only_through_the_stripe_portal, ::test_pc_sub_11_…, ::test_pc_sub_14_… (asserter at der IKKE sendes egne mails = status quo)
 
 ## Rodårsag / Rettelse / Verifikation
+
+## Rettelse (udfyldes af fix-engineer)
+- Beslutning (Fürster 2026-11-10): Dialogbot sender sine EGNE abonnementsmails, også for Privat.
+- Hvad var der i forvejen: Erhverv sendte ingen mails om betaling. Stripe sender selv Erhvervs fakturaer, men der var ingen dunning (E06) og ingen refusionsbekræftelse (billing-qa bølge 1). Privat sendte ingen abonnementsmails overhovedet.
+- Rettelse: nyt modul app/modules/billing/customer_mails.py (receipt, payment_failed, refund, trial_ending) i det brandede layout (Email.audience: Privat = #C4461A og «Dialogbot Privat», Erhverv = blå). Tekster på 8 sprog i email_texts.py. Køres som email.branded med dedupe pr. Stripe-objekt, så et genafspillet webhook aldrig sender to gange.
+  - Privat (subscriptions.on_billing_event, matchet på Privat-kundens Stripe-customer): invoice.paid > 0 → kvittering, invoice.payment_failed → dunning, charge.refunded → refusion bekræftet. customer.subscription.trial_will_end (3 dage før) → «Din prøveperiode slutter om 3 dage» med beløb og dato; sendes ikke, hvis prøveperioden er opsagt.
+  - Erhverv (billing/stripe.py _owner_mail til arbejdsrummets ejere): invoice.payment_failed → dunning, charge.refunded/credit_note → refusion bekræftet. Kvittering for betalt Erhverv-faktura sender Stripe fortsat selv (hosted invoice).
+- Ikke dækket: refusion af kreditpakker (Checkout uden Stripe-customer kan ikke matches; se credit_pack_refund-fundet).
+- Tests: test_privat_subscription::test_privat_sends_its_own_billing_mails, test_stripe_billing::test_erhverv_dunning_and_refund_mails_to_the_owner (nye; simuleret mail via outbox)
+- Filer: app/modules/billing/customer_mails.py (ny), app/modules/billing/stripe.py, app/modules/privat/subscriptions.py, app/modules/integrations/email_templates.py, app/modules/integrations/email_texts.py
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)

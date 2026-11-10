@@ -3,7 +3,7 @@ id: F-PB-02-PC-APP-RING-FOR-MIG-02
 scenario: PC-APP-RING-FOR-MIG-02
 reported_by: e2e-privat (PB)
 severity: S2
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: [PC-APP-RING-FOR-MIG-01, F-UX-01]
 ---
@@ -32,8 +32,10 @@ Teksten skal bygges ud fra `included_in`: «med i alle planer», når basis er m
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rettelse: needs_plan-beskeden siger «alle planer», når appen er med i Basis, Plus og Familie (addons.enable). Til en kunde med rettigheder lyder den «skift plan under Konto» (F-UX-01).
+- Filer: app/modules/privat/addons.py
+- Test: tests/qa/test_qa_pd_apps_b.py::test_01_needs_plan_message_for_ring_for_mig_names_basis (grøn)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

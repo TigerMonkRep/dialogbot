@@ -350,7 +350,7 @@ def test_growth_operator_only(api, pv):
     api.c.get(f"/api/v1/privat/invites/{inv['token']}")
     nina = pv.user("nina@testmail.dk", "Nina Ny")
     _accept(api, nina, inv["token"])
-    pv.start_trial(nina)
+    pv.set_plan(nina, "plus")  # «activated» = rewarded = has paid a first real period (F-PBQ-02)
     pv.make_list(nina, "Lav en liste med te")
     assert api.get(mette, "/operator/privat/growth").status_code == 403
     g = api.get(api.operator(), "/operator/privat/growth").json()

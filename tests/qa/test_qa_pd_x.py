@@ -125,6 +125,7 @@ def test_px_call_03_double_approve_parallel(api, client, pv, db, dialler, same_k
     [t.start() for t in th]
     [t.join() for t in th]
     assert len(dialler.calls) == 1, (results, len(dialler.calls))
+    assert 500 not in results, results  # F-PX-08: never a 500 (the call row is locked and re-read in approve)
     assert pv.me(tok)["calls_used"] == 1
     db.expire_all()
     assert db.query(PrivateCall).filter(PrivateCall.task_id == uuid.UUID(tid)).count() == 1

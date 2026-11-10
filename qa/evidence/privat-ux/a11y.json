@@ -1,0 +1,92 @@
+{
+ "/privat/dag": {
+  "words": 326,
+  "primaries": 1,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\""
+  ]
+ },
+ "/privat/opgaver": {
+  "words": 72,
+  "primaries": 1,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\""
+  ]
+ },
+ "/privat/opgaver/c929372f-f5e9-4748-9e28-0ba0206f7970": {
+  "words": 113,
+  "primaries": 1,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\""
+  ]
+ },
+ "/privat/samtale": {
+  "words": 306,
+  "primaries": 1,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\""
+  ]
+ },
+ "/privat/apps": {
+  "words": 217,
+  "primaries": 1,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\""
+  ]
+ },
+ "/privat/butik": {
+  "words": 381,
+  "primaries": 0,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\""
+  ]
+ },
+ "/privat/butik/rejser": {
+  "words": 170,
+  "primaries": 0,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\""
+  ]
+ },
+ "/privat/apps/foedselsdage": {
+  "words": 124,
+  "primaries": 2,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\"",
+   "select 120x40 \"på dagen\n1 dage før\n3 dage før\""
+  ]
+ },
+ "/privat/folk": {
+  "words": 58,
+  "primaries": 1,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\""
+  ]
+ },
+ "/privat/konto": {
+  "words": 250,
+  "primaries": 2,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\"",
+   "select 105x40 \"Dansk\nEnglish\nDeutsch\nEspañol\n\""
+  ]
+ },
+ "/privat/kalender": {
+  "words": 161,
+  "primaries": 4,
+  "h1": 1,
+  "small": [
+   "a 1x1 \"Spring til indholdet\""
+  ]
+ }
+}

@@ -18,6 +18,8 @@ appSuite({
   panelText: null,
 });
 
+const openList = (p: import("@playwright/test").Page) => p.getByRole("button", { name: "Åbn listen" }).or(p.getByRole("link", { name: "Åbn listen" })).first();
+
 test.describe("ønskeliste-hemmelighed (PB)", () => {
   test.beforeEach(async ({ request }) => { test.skip(!(await needsPrivatStack(request)), "kræver Privat-stakken (:8400)"); });
 
@@ -30,12 +32,12 @@ test.describe("ønskeliste-hemmelighed (PB)", () => {
     const guest = await guestCtx.newPage();
     // the invitation page asks for a FREE private account (no subscription) – that is the rule's «uden abonnement»
     await guest.goto(new URL(share.short_url).pathname);
-    await expect(guest.getByRole("button", { name: "Åbn listen" })).toBeVisible({ timeout: 20_000 });
+    await expect(openList(guest)).toBeVisible({ timeout: 20_000 });
     await shot(guest, info, "PC-APP-OENSKELISTER-03", "guest-invite");
     const g = await pbUser(guest, info, "wish-guest", "none");
     expect((await (await guest.request.get("/api/backend/privat/subscription")).json()).entitled).toBeFalsy();
     await guest.goto(new URL(share.short_url).pathname);
-    await guest.getByRole("button", { name: "Åbn listen" }).click();
+    await openList(guest).click();
     await expect(guest.getByText("Cykelhjelm").first()).toBeVisible({ timeout: 20_000 });
     await shot(guest, info, "PC-APP-OENSKELISTER-03", "guest-list");
     test.info().annotations.push({ type: "guest-ws", description: g.ws });
@@ -44,9 +46,11 @@ test.describe("ønskeliste-hemmelighed (PB)", () => {
     if (canReserve) { await reserve.click(); await guest.waitForTimeout(1500); }
     await guestCtx.close();
     const owner = JSON.stringify(await (await api(page, "GET", `/tasks/${tid}`)).json()).toLowerCase();
-    expect(owner).not.toMatch(/reserved_by|pledged_by|reserveret af|"reserved":\s*true/);
+    // the owner's own view: «reserved» stays null and «reserved_by_me» false for every wish (no name, no flag)
+    expect(owner).not.toMatch(/"reserved":\s*(true|\{|")|"reserved_by_me":\s*true|pledged_by|reserveret af/);
     await gotoPrivat(page, `/privat/opgaver/${tid}`);
-    await expect(page.getByText(/reserveret/i)).toHaveCount(0);
+    // the owner's page explains «Du kan ikke se, hvad der er reserveret» – that sentence is fine; no per-wish badge
+    await expect(page.getByText(/^Reserveret|reserveret af|er reserveret\s*$/i)).toHaveCount(0);
     await shot(page, info, "PC-APP-OENSKELISTER-03", "owner");
     test.info().annotations.push({ type: "guest-reserve-button", description: String(canReserve) });
   });

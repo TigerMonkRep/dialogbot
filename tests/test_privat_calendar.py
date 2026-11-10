@@ -113,7 +113,8 @@ def test_confirmed_call_lands_in_the_calendar_file_and_the_feed(api, client, pv,
     token = feed["url"].rsplit("/", 1)[1].removesuffix(".ics")
     assert pv.me(tok) and token not in api.get(tok, "/privat/calendar").text   # the link is never shown again
 
-    tid, p = _approve(api, pv, tok, monkeypatch)
+    tid, p = _approve(api, pv, tok, monkeypatch)  # the credits path ends the trial …
+    pv.set_plan(tok, "plus")  # … and Kalender needs a plan to run (PC-ENT-02/03, Fürster 2026-11-10)
     assert _report(client, p, "customer-ended-call", ANSWER, seconds=130)["outcome"] == "applied"
     msgs = api.get(tok, f"/privat/messages?task_id={tid}").json()
     assert msgs[-1]["text"] == "Opkaldet er slut. Cykelmageren har bekræftet torsdag kl. 15.30. Tiden er lagt i din kalender."
@@ -150,6 +151,7 @@ def test_other_users_cannot_reach_an_appointment(api, client, pv, db, monkeypatc
     tok = pv.account("mette@testmail.dk")
     _enable(api, tok)
     tid, p = _approve(api, pv, tok, monkeypatch)
+    pv.set_plan(tok, "plus")  # Kalender needs a plan to run (PC-ENT-02/03)
     _report(client, p, "customer-ended-call", ANSWER)
     a = api.get(tok, "/privat/appointments").json()["items"][0]
     ole = pv.account("ole@testmail.dk", name="Ole Berg")
@@ -172,6 +174,7 @@ def test_unclear_time_makes_no_appointment(api, client, pv, db, monkeypatch):
     tok = pv.account("mette@testmail.dk")
     _enable(api, tok)
     tid, p = _approve(api, pv, tok, monkeypatch)
+    pv.set_plan(tok, "plus")  # Kalender needs a plan to run (PC-ENT-02/03)
     msgs = [{"role": "bot", "message": "Hej"}, {"role": "user", "message": "Ja, kom bare forbi torsdag kl. fem eller deromkring."}]
     monkeypatch.setattr("app.modules.privat.calls.classify",
                         lambda *a, **k: {"outcome": "confirmed", "confirmed_text": "Torsdag omkring kl. fem", "starts_at": None})

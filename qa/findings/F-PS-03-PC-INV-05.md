@@ -3,7 +3,7 @@ id: F-PS-03-PC-INV-05
 scenario: PC-INV-05
 reported_by: security-privacy
 severity: S1
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: [F-PS-02-PC-INV-05]
 ---
@@ -29,8 +29,10 @@ Begge svar 429 `rate_limited` «Der er prøvet for mange links fra din forbindel
 app/modules/privat/lookup_limits.py `check()`: det globale miss-loft kastes før opslaget, uanset om koden findes. Forslag: gør det globale loft til en «hårdere» tilstand der kun rammer IP'er/klienter med misses (fx sænk per-IP miss-grænsen til 2/min mens loftet er nået) og lad hits gå igennem; accept for indloggede bør begrænses pr. bruger, ikke globalt. Alarmér operatør når loftet nås. Kræver F-PS-02 for at være robust.
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rettelse: det globale miss-loft afviser nu kun klienter, der selv har haft et miss inden for den sidste time. Hits og accept fra rene adresser går igennem. Når loftet nås, logges privat.lookup_global_ceiling. Robustheden afhænger af F-PS-02.
+- Filer: app/modules/privat/lookup_limits.py; tests/test_privat_sharing.py::test_public_lookups_are_rate_limited er tilpasset den nye regel.
+- Test: tests/qa/test_qa_pd_sec.py::test_ps_inv_05b
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

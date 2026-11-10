@@ -22,6 +22,14 @@ appSuite({
   panelText: null,
 });
 
+/** The task page shows «Næste skridt: Godkend opkaldet» + «Se forslaget og godkend», which opens the proposal. */
+async function openProposal(page: import("@playwright/test").Page) {
+  const see = page.getByRole("button", { name: "Se forslaget og godkend" });
+  const direct = page.getByRole("button", { name: /^Godkend/ });
+  await expect(see.or(direct).first()).toBeVisible({ timeout: 20_000 });
+  if (await see.isVisible()) await see.click();
+}
+
 test.describe("ring-for-mig godkendelse (PB)", () => {
   test.beforeEach(async ({ request }) => { test.skip(!(await needsPrivatStack(request)), "kræver Privat-stakken (:8400)"); });
 
@@ -32,7 +40,8 @@ test.describe("ring-for-mig godkendelse (PB)", () => {
     // decline path
     const a = (await chat(page, SEED)).messages.find((m) => m.task_id)!.task_id!;
     await gotoPrivat(page, `/privat/opgaver/${a}`);
-    await expect(page.getByRole("button", { name: /Godkend/ })).toBeVisible();
+    await openProposal(page);
+    await expect(page.getByRole("button", { name: /^Godkend/ })).toBeVisible();
     await shot(page, info, "PC-APP-RING-FOR-MIG-03", "proposal");
     await page.getByRole("button", { name: "Afvis" }).click();
     await page.waitForTimeout(1500);
@@ -40,10 +49,11 @@ test.describe("ring-for-mig godkendelse (PB)", () => {
     // approve path
     const b = (await chat(page, SEED)).messages.find((m) => m.task_id)!.task_id!;
     await gotoPrivat(page, `/privat/opgaver/${b}`);
+    await openProposal(page);
     const biz = page.getByLabel(/virksomhed/i);
     if (await biz.count()) await biz.check();
     const res = page.waitForResponse((r) => r.url().includes(`/calls/${b}/approve`));
-    await page.getByRole("button", { name: /Godkend/ }).click();
+    await page.getByRole("button", { name: /^Godkend/ }).click();
     expect((await res).ok()).toBeTruthy();
     // dialled now (inside calling hours) or planned for when they open – either way only after the approval
     await expect.poll(async () => (await dialled(page.request)).length > before

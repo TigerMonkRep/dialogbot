@@ -3,7 +3,7 @@ id: F-PK-04-PC-FUN-01
 scenario: PC-FUN-01
 reported_by: e2e-privat (PK)
 severity: S1
-status: new
+status: fixed
 owner_fix: fix-engineer (verify-email-side + e-mailtekst); ui-ux-engineer ved tekst/tema
 related: [F-PQ-02-X07, F-E2A-05-A03]
 ---
@@ -35,8 +35,11 @@ Privat-signup sender `signup_intent: null`. Gem i stedet en server-side markør 
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rodårsag: en Privat-signup sendte signup_intent null. Bekræftelsesmailen og /verify-email kendte kun Erhverv (og /ambassador via localStorage).
+- Rettelse: Privat-signup sender signup_intent «privat» (identity.PRIVAT_INTENT; aldrig en product_intent – workspaces.service og /opsaetning/1 ignorerer den). issue_verification tilføjer &for=privat til linket og audience=privat til mailen. Mailen bruger verify_heading_privat/verify_body_privat (8 sprog i email_texts.py). /verify-email?for=privat vises i orange ramme og har knappen «Fortsæt til din prøveperiode» → /privat/konto?planer=1. Virker også når mailen åbnes i en anden browser.
+- Filer: app/modules/identity/service.py, identity/router.py (doc), workspaces/service.py, integrations/email_texts.py, email_templates.py, app/worker/runner.py, web/src/app/signup/page.tsx, web/src/app/verify-email/page.tsx, web/src/app/opsaetning/1/page.tsx, web/src/i18n/messages/*/auth.json
+- Test: web/e2e/qa/privat-deep/core/brand-funnel.spec.ts (kræver ny stak)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

@@ -3,7 +3,7 @@ id: F-PS-04-PC-INV-04
 scenario: PC-INV-04
 reported_by: security-privacy
 severity: S0
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: []
 ---
@@ -30,8 +30,10 @@ Alvorsgrad S0 efter reglen «enhver hemmelighed i logs»; den praktiske eksponer
 app/core/logging.py:39 `_SECRET_PATHS = re.compile(r"(/privat/calendar/feed/)[^/]+")` – udvid til `(/privat/(?:calendar/feed|invites(?:/by-code)?|group-invites/by-code)/)[^/]+`. Overvej også Erhvervs `/invitations/…`-stier, hvis token står i stien.
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rettelse: logging.redact_path redigerer nu /privat/calendar/feed/, /privat/invites/{token}, /privat/invites/by-code/{code}, /privat/group-invites/by-code/{code}, /invitations/{token} og /public/offers/{token}. db.error-loggen bruger også redact_path.
+- Filer: app/core/logging.py, app/core/errors.py
+- Test: tests/qa/test_qa_pd_sec.py::test_ps_log_01_* (grønne)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

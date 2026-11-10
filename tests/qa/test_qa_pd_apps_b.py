@@ -226,6 +226,23 @@ def test_03_wishlist_owner_never_sees_reservations(pv, plus, api, db):
     sh = pv.api.post(tok, f"/privat/tasks/{tid}/share", {"mode": "wishlist"})
     assert sh.status_code == 200, sh.text
     assert sh.json()["short_url"]
+    before = pv.task(tok, tid).json()
+    # a guest with a FREE account (no subscription) opens the list and reserves; can change nothing else
+    guest = pv.account("pb-wish-guest@testmail.dk", "Ole Berg", trial=False)
+    raw = sh.json().get("token") or sh.json()["short_url"].rstrip("/").rsplit("/", 1)[1]
+    acc = pv.api.post(guest, f"/privat/invites/{raw}/accept")
+    if acc.status_code >= 400:
+        acc = pv.api.post(guest, f"/privat/invites/by-code/{raw}/accept")
+    assert acc.status_code == 200, acc.text
+    gi = pv.task(guest, tid).json()["items"]
+    assert pv.api.post(guest, f"/privat/tasks/{tid}/items/{gi[0]['id']}/reserve").status_code == 200
+    assert pv.api.post(guest, f"/privat/tasks/{tid}/items", {"text": "x"}).status_code == 403
+    assert pv.api.delete(guest, f"/privat/tasks/{tid}/items/{gi[1]['id']}").status_code == 403
+    after = pv.task(tok, tid).json()
+    for b, a in zip(before["items"], after["items"]):
+        assert a.get("reserved") in (None, False) and not a.get("reserved_by_me"), a
+        assert {k: v for k, v in a.items() if "reserv" in k} == {k: v for k, v in b.items() if "reserv" in k}
+    assert "Ole" not in repr(after["items"])
 
 
 def test_03_calendar_appointment_ics_and_feed(pv, plus, client, db):

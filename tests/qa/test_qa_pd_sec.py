@@ -613,14 +613,14 @@ def test_ps_log_02_pii_never_in_log_events(api, pv, capsys):
 
 # =========================================================================================== GDPR
 
-def test_ps_acc_02_03_no_account_deletion_and_no_export_in_privat(app):
-    """PC-ACC-02/03 → F-PS-05 (needs-decision). No route deletes a Privat account or exports its data; the privacy
-    policy promises access, erasure and portability «Skriv til …». This test is the gap register: it turns red the
-    day an endpoint exists, so the gap table gets updated."""
+def test_ps_acc_02_03_account_deletion_and_export_exist_in_privat(app):
+    """PC-ACC-02/03 → F-PS-05. Flipped (fix-engineer #2, 2026-11-10) when fix-engineer #3 built them (0d5634e): Privat
+    has a self-service export (POST/GET /privat/data-export[/download]) and account deletion (POST
+    /privat/account/delete). Their behaviour is tested in tests/test_privat_gdpr.py."""
     routes = {(m, p) for m, p, _ in all_routes(app)}
-    deletes = [p for m, p in routes if m == "DELETE" and re.search(r"/privat/(account|me)$|/auth/me$|/account$", p)]
-    exports = [p for m, p in routes if re.search(r"export|/data-request|/gdpr", p) and "/privat" in p]
-    assert deletes == [] and exports == []
+    deletes = [p for m, p in routes if re.search(r"/privat/account/delete$", p) and m == "POST"]
+    exports = [p for m, p in routes if re.search(r"/privat/data-export", p)]
+    assert deletes and len(exports) >= 2, (deletes, exports)
 
 
 def test_ps_acc_02b_manual_erasure_leaves_personal_data_behind(api, pv, db):

@@ -3,7 +3,7 @@ id: F-PS-01-PC-GRP-04
 scenario: PC-GRP-04
 reported_by: security-privacy
 severity: S0
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: [F-PS-02-PC-INV-05, PC-CALL-12]
 ---
@@ -35,8 +35,10 @@ Forslag: (1) kun +45-mobilnumre (eller en eksplicit landeliste) i group-join og 
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rettelse: SMS-koder sendes kun til danske numre (sales.service.danish_number: +45, 8 cifre, ikke 90xx) – både i gruppe-join (groups._danish_mobile) og /privat/phone/start. Nyt loft CODES_PER_OWNER_HOUR = 20 på tværs af alle ejerens links, så flere links ikke giver flere SMS.
+- Filer: app/modules/privat/groups.py, app/modules/privat/phone.py
+- Test: tests/qa/test_qa_pd_sec.py::test_ps_grp_04*, ::test_ps_call_12 (grønne; bekræftet af security-privacy)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

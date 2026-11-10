@@ -234,6 +234,7 @@ export function DayPage() {
     <div className="w-full max-w-[760px] mx-auto px-4 pt-5 min-h-full flex flex-col gap-5">
       <h1 id="day-ask" className="m-0 font-display font-extrabold text-[30px] xl:text-[40px] leading-[1.08] tracking-[-0.6px]">{t("day.ask")}</h1>
       {mode === "loading" && <p className="m-0 text-[14px] text-muted" role="status">{t("common.loading")}</p>}
+      <PlanNotice />
       <Suspense><WelcomeBanner /></Suspense>
       <InstalledBanner />
       <YourTurn />
@@ -241,6 +242,20 @@ export function DayPage() {
       {own && <FirstOpenInstall />}
       <span className="flex-1" />
       <AskDock empty={mode !== "loading" && tasks.length === 0} quiet={waiting} />
+    </div>
+  );
+}
+
+/** One yellow line when the plan needs the user (trial over, payment missing) – the plan meter itself lives on Konto. */
+function PlanNotice() {
+  const t = useT("privat");
+  const { choosePlan } = usePrivat();
+  const p = usePlan();
+  if (p.status !== "expired" && p.status !== "past_due") return null;
+  return (
+    <div role="status" className="flex items-center gap-3 flex-wrap rounded-xl border-[1.5px] border-ink bg-highlight px-3.5 py-2" data-testid="plan-notice">
+      <span className="flex-1 min-w-[12rem] text-[15px] font-semibold">{p.status === "expired" ? t("plan.status.expired") : t("plan.pastDue")}</span>
+      <Button variant="outline" className="rounded-full" onClick={choosePlan}>{t("day2.room.choosePlan")}</Button>
     </div>
   );
 }

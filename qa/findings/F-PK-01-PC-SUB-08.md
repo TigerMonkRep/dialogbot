@@ -3,7 +3,7 @@ id: F-PK-01-PC-SUB-08
 scenario: PC-SUB-08
 reported_by: e2e-privat (PK)
 severity: S0
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: [PC-SUB-07, F-BQ-002-X08]
 ---
@@ -34,8 +34,9 @@ Se qa/evidence/PC-SUB-08/PK-api-probe.txt: `[200, 200]` → begge `complete` (`s
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rettet sammen med F-PBQ-01/F-PBQ-09: webhooken (upsert_from_stripe_subscription) annullerer et nyt live abonnement på en konto, der allerede har et aktivt (outcome dup_canceled), og refunderer den betalte første faktura, hvis der ingen trial er. Sekventielt: 409 subscription_exists (F-PFX-02).
+- Filer: app/modules/privat/subscriptions.py
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

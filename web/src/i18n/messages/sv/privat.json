@@ -634,7 +634,7 @@
     "fromOwner": "Från {name}"
   },
   "account": {
-    "title": "Konto och krediter",
+    "title": "Konto",
     "privateLine": "Privat konto · {email} · åtskilt från företagskonton",
     "exampleLine": "Du provar med exempeldata. Logga in när du sparar din första uppgift.",
     "simulatedLine": "Privat-API:t är inte påslaget än – allt här är en simulering i din webbläsare.",
@@ -668,7 +668,11 @@
     "reset": "Börja om",
     "installTitle": "Hämta appen",
     "languageTitle": "Språk",
-    "languageText": "Appen och Peters svar följer språket här."
+    "languageText": "Appen och Peters svar följer språket här.",
+    "groupMe": "Du",
+    "groupApp": "Appen",
+    "groupExtra": "Extra samtal",
+    "ledgerAll": "Visa alla ({n})"
   },
   "invite": {
     "title": "Bjud in vänner",
@@ -784,7 +788,8 @@
     "trialBadgeShort": "{plan} · {n|1 dag|# dagar}",
     "planBadge": "{plan}",
     "noPlan": "Ingen plan",
-    "trialDaysShort": "{n} d"
+    "trialDaysShort": "{n} d",
+    "trialDaysLeft": "{n|1 dag|# dagar} kvar"
   },
   "day2": {
     "eyebrow": "Din egen personliga assistent",
@@ -952,7 +957,8 @@
     "codeAsk": "Har du en rabattkod?",
     "codeLabel": "Rabattkod",
     "codePlaceholder": "T.ex. VALKOMMEN",
-    "codeHint": "Rabatten dras av på betalningssidan."
+    "codeHint": "Rabatten dras av på betalningssidan.",
+    "householdMember": "Du ingår i {name}s Familj-plan. {name} sköter planen."
   },
   "funnel": {
     "entry": "Prova på 2 minuter",

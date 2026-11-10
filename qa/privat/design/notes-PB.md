@@ -20,8 +20,10 @@ Fejl står i qa/findings/F-PB-*. Gentager ikke notes-PA.md: eksemplet i Butikken
 ## Små ting
 7. **Regninger: «Fjern» uden fortryd.** Et forkert tryk på 390 px sletter regningen med det samme. Kort-knapperne «Fjern» og påmindelses-vælgeren står tæt. Giv «Fjern» en fortryd-toast (som slå fra har).
 8. **Læge & tandlæge: DELETE af ukendt type svarer 204** (`/health-contacts/hjerteklinik`). Det er ufarligt, men inkonsekvent med de andre apps (404). S3.
-9. **Kommer snart (Pakker, Rejser):** Siden er ærlig («Appen er ikke klar endnu …», «Giv mig besked» huskes efter reload), og der står ingen pris og ingen «Slå til». Godt. Men /privat/pakker (egen rute) bør vise det samme «Kommer snart»-kort i stedet for en tom side, hvis man kommer dertil via et gammelt link.
+9. **Kommer snart (Pakker, Rejser):** Siden er ærlig («Appen er ikke klar endnu …», «Giv mig besked» huskes efter reload), der står ingen pris og ingen «Slå til», og /privat/pakker (egen rute) siger også «kommer snart». Godt – ingen ændring.
 10. **Kæledyr: eksemplet i Butikken bruger «1. marts»**, men assistenten gemmer kun datoer, den kan tolke. Et eksempel med år («1. marts 2027») mindsker risikoen for, at datoen bliver gættet forkert.
+
+11. **Ring for mig-opgave:** «Næste skridt: Godkend opkaldet» + knappen «Se forslaget og godkend» er et ekstra tryk, før man ser, hvad Peter må sige. For en 60-årig er det fint; men «Tidspunkt: –» på kortet, når brugeren skrev «torsdag efter kl. 15», ser ud som om Peter ikke hørte det (vinduet står i titlen, ikke i feltet).
 
 ## Test-harness (ikke design, men til holdet)
 - Fake-modellen svarer «Klaret.» efter ethvert værktøjskald, også når værktøjet svarer «Ikke gemt: brugeren har ikke sagt ja endnu» (madplan) eller «Der er ingen gemt tandlæge» (læge). I QA-stakken ser det ud, som om noget er gjort, uden at noget er sket. Det er ikke en produktfejl med en rigtig model, men demoer på fake-modellen vil lyve. Mine tests asserter derfor altid på data.

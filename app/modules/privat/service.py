@@ -200,10 +200,10 @@ def update_wish(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, item_id
 def can_add(task: PrivateTask, m: PrivateTaskMember) -> None:
     if task.kind != "list":
         raise Conflict("Kun lister har punkter", code="not_a_list")
+    if task.share_mode == "wishlist" and m.role != "owner":  # before «viewer»: wishlist guests are viewers (F-UX-03)
+        raise Forbidden("Kun ejeren tilføjer ønsker til en ønskeliste", code="owner_only")
     if m.role == "viewer":
         raise Forbidden("Du kan kun se denne liste", code="read_only")
-    if task.share_mode == "wishlist" and m.role != "owner":
-        raise Forbidden("Kun ejeren tilføjer ønsker til en ønskeliste", code="owner_only")
 
 
 def add_items(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, texts: list[str], *, note: str | None = None,
@@ -231,10 +231,10 @@ def add_items(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, texts: li
 
 
 def toggle_item(db: OrmSession, task: PrivateTask, m: PrivateTaskMember, item_id: uuid.UUID) -> PrivateTaskItem:
+    if task.share_mode == "wishlist" and m.role != "owner":  # before «viewer»: wishlist guests are viewers (F-UX-03)
+        raise Forbidden("Brug «Jeg køber den» på en ønskeliste", code="use_reserve")
     if m.role == "viewer":
         raise Forbidden("Du kan kun se denne liste", code="read_only")
-    if task.share_mode == "wishlist" and m.role != "owner":
-        raise Forbidden("Brug «Jeg køber den» på en ønskeliste", code="use_reserve")
     it = db.scalar(select(PrivateTaskItem).where(PrivateTaskItem.id == item_id, PrivateTaskItem.task_id == task.id)
                    .with_for_update())
     if it is None:

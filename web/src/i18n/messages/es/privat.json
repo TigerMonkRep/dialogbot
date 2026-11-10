@@ -634,7 +634,7 @@
     "fromOwner": "De {name}"
   },
   "account": {
-    "title": "Cuenta y créditos",
+    "title": "Cuenta",
     "privateLine": "Cuenta privada · {email} · separada de las cuentas de empresa",
     "exampleLine": "Estás probando con datos de ejemplo. Inicia sesión cuando guardes tu primera tarea.",
     "simulatedLine": "La API de Privat aún no está activada: todo aquí es una simulación en tu navegador.",
@@ -668,7 +668,11 @@
     "reset": "Empezar de nuevo",
     "installTitle": "Instalar la app",
     "languageTitle": "Idioma",
-    "languageText": "La app y las respuestas de Peter siguen el idioma elegido aquí."
+    "languageText": "La app y las respuestas de Peter siguen el idioma elegido aquí.",
+    "groupMe": "Tú",
+    "groupApp": "La app",
+    "groupExtra": "Llamadas extra",
+    "ledgerAll": "Ver todo ({n})"
   },
   "invite": {
     "title": "Invita a tus amigos",
@@ -784,7 +788,8 @@
     "trialBadgeShort": "{plan} · {n|1 día|# días}",
     "planBadge": "{plan}",
     "noPlan": "Sin plan",
-    "trialDaysShort": "{n} d"
+    "trialDaysShort": "{n} d",
+    "trialDaysLeft": "{n|1 día|# días} restantes"
   },
   "day2": {
     "eyebrow": "Tu asistente personal",
@@ -952,7 +957,8 @@
     "codeAsk": "¿Tienes un código de descuento?",
     "codeLabel": "Código de descuento",
     "codePlaceholder": "P. ej. BIENVENIDO",
-    "codeHint": "El descuento se aplica en la página de pago."
+    "codeHint": "El descuento se aplica en la página de pago.",
+    "householdMember": "Formas parte del plan Familia de {name}. {name} gestiona el plan."
   },
   "funnel": {
     "entry": "Pruébalo en 2 minutos",

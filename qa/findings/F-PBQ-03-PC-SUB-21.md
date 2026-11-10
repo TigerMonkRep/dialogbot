@@ -3,7 +3,7 @@ id: F-PBQ-03-PC-SUB-21
 scenario: PC-SUB-21
 reported_by: billing-qa
 severity: S0
-status: confirmed
+status: fixed
 owner_fix: fix-engineer
 related: [F-PBQ-05-PC-SUB-21]
 ---
@@ -31,8 +31,11 @@ Fjern `allow_promotion_codes` fra kreditpakkens payload (anbefalet, fordi en abo
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rettelse (konservativ – ingen kunde kan betale for lidt): allow_promotion_codes er fjernet fra kreditpakkens Checkout. En betalt session under prisen giver stadig ingen credits, men logges som error privat.credit_pack_underpaid, så en person refunderer eller giver credits manuelt.
+- needs-decision (Fürster): skal rabatkoder kunne give billigere credits? I så fald skal kuponer have applies_to, og webhooken skal acceptere amount_discount.
+- billing-qa tilpasser test_pc_sub_21 til den valgte vej.
+- Filer: app/modules/privat/payments.py
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

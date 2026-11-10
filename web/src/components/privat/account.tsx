@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui";
 import { useLocale, useT } from "@/i18n/client";
@@ -9,6 +8,7 @@ import { BIG, Eyebrow, LINK, Pill, Sim } from "./bits";
 import { PhoneVerify } from "./cards";
 import { PushPrompt } from "./push";
 import { HouseholdCard } from "./account-household";
+import { household, type Household } from "@/lib/privat/account-api";
 import { MyDataSection } from "./account-data";
 import { InstallApp } from "@/components/install-app";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -33,6 +33,10 @@ export function AccountPane() {
   const [changing, setChanging] = useState(false);
   const [picker, setPicker] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  const [allLedger, setAllLedger] = useState(false);
+  // A household member shares the owner's Familie plan: no «Skift plan» / «Administrér» (GET /privat/household).
+  const [hh, setHh] = useState<Household | null>(null);
+  useEffect(() => { if (mode === "real") household().then(setHh).catch(() => setHh(null)); }, [mode, p.plan]);
   const handled = useRef<string | null>(null);
   // Credits checkout return (unchanged) and the subscription flows: ?abonnement=ok&session_id= (synchronise, then
   // «Dit abonnement er aktivt»), ?abonnement=annulleret, ?portal=simuleret, and ?plan=&interval= (start the checkout).
@@ -121,25 +125,32 @@ export function AccountPane() {
       </div>
     );
   }
+  const member = hh?.role === "member";
+  const thenLine = p.cancelAtPeriodEnd && p.periodEnd
+    ? t("plan.cancelAtEnd", { date: f.date(p.periodEnd) })  // F-PBQ-04: cancelled in the trial – nothing is charged
+    : p.plan === "none" ? t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyText(p.rightsKey) });
+  // ux-audit #11: the plan on top (the one block shadow), then three groups – Dig, Appen, Ekstra – and «Dine data» last.
+  // Everything stays on the page (no hidden sub-pages): the groups are just fewer, quieter boxes.
+  const GROUP = "rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-3";
+  const H = "m-0 eyebrow";
   return (
-    <div className="px-4 pt-5 pb-7 flex flex-col gap-[18px]" aria-label={t("account.title")}>
+    <div className="px-4 pt-5 pb-7 flex flex-col gap-[18px] max-w-[760px] w-full mx-auto" aria-label={t("account.title")}>
       <h2 className="m-0 font-display font-extrabold text-[28px] tracking-[-0.5px]">{t("account.title")}</h2>
-      <p className="m-0 text-[14px] text-ink-soft [overflow-wrap:anywhere]">{line}</p>
       {simulated && <p className="m-0 text-[13px] flex gap-2 items-center flex-wrap"><Sim />{t("account.simulatedLine")}</p>}
       {note && <p className="m-0 rounded-[18px] border-2 border-success bg-success-soft px-4 py-3 text-[15px] font-semibold text-success" role="status" data-testid="account-note">{note}</p>}
 
-      {/* Subscription */}
+      {/* Plan */}
       <section className="rounded-[24px] border-2 border-ink bg-paper p-5 shadow-block flex flex-col gap-3" aria-labelledby="sub-h" data-testid="subscription-card">
         <div className="flex items-start gap-2 flex-wrap">
           <div className="flex-1 min-w-0 flex flex-col gap-1">
             <Eyebrow>{t("plan.title")}</Eyebrow>
             <h3 id="sub-h" className="m-0 font-display font-extrabold text-[26px] leading-tight">{p.entitled ? p.rightsName : t(`plan.status.${p.status}`)}</h3>
           </div>
-          <Pill tone={p.status === "active" ? "ok" : p.status === "trial" ? "highlight" : p.status === "past_due" ? "beta" : "plain"}>{t(`plan.status.${p.status}`)}</Pill>
+          {p.entitled && <Pill tone={p.status === "active" ? "ok" : p.status === "trial" ? "highlight" : p.status === "past_due" ? "beta" : "plain"}>{p.status === "trial" ? t("nav.trialDaysLeft", { n: p.trialDays }) : t(`plan.status.${p.status}`)}</Pill>}
         </div>
-        {p.status === "trial" && <p className="m-0 text-[15px]">{t("plan.trialLine", { n: p.trialDays, plan: p.rightsName })} <span className="text-ink-soft">{p.plan === "none" ? t("plan.trialThenNone") : t("plan.trialThen", { plan: p.rightsName, price: p.monthlyText(p.rightsKey) })}</span></p>}
+        {p.status === "trial" && <p className="m-0 text-[15px] text-ink-soft" suppressHydrationWarning>{thenLine}</p>}
         {p.status === "expired" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.expiredLine")}</p>}
-        {p.status === "none" && <p className="m-0 text-[15px] text-ink-soft">{t("plan.noneLine")}</p>}
+        {!p.entitled && <p className="m-0 text-[15px] text-ink-soft" data-testid="free-tier">{t("account.freeNote")}</p>}
         {p.status === "past_due" && <p className="m-0 text-[15px] text-danger font-semibold">{t("plan.pastDue")}</p>}
         {p.status === "active" && p.periodEnd && <p className="m-0 text-[14px] text-ink-soft" suppressHydrationWarning>{p.cancelAtPeriodEnd ? t("plan.cancelAtEnd", { date: f.date(p.periodEnd) }) : t("plan.renews", { date: f.date(p.periodEnd) })}</p>}
         {p.entitled && (
@@ -148,94 +159,89 @@ export function AccountPane() {
             <div className="h-3 border-2 border-ink rounded-full overflow-hidden bg-paper" role="progressbar" aria-valuemin={0} aria-valuemax={p.callsQuota} aria-valuenow={p.callsUsed} aria-label={t("plan.callsBarAria", { used: p.callsUsed, quota: p.callsQuota })}>
               <div className="h-full bg-accent" style={{ width: `${p.callsQuota ? Math.min(100, (p.callsUsed / p.callsQuota) * 100) : 0}%` }} />
             </div>
-            <p className="m-0 text-[13px] text-muted">{t("plan.unlimited")}</p>
           </div>
         )}
-        <div className="flex gap-2 flex-wrap">
-          {p.plan === "none"
-            ? <Button className={`${BIG} rounded-full`} onClick={togglePicker} aria-expanded={pickerOpen} disabled={mode === "demo"}>{pickerOpen ? t("plan.hidePicker") : t("plan.choose")}</Button>
-            : <>
-              <Button variant="outline" className="border-2 rounded-full" onClick={togglePicker} aria-expanded={pickerOpen}>{pickerOpen ? t("plan.hidePicker") : t("plan.change")}</Button>
-              <Button variant="outline" className="border-2 rounded-full" onClick={portal}>{t("plan.manage")}</Button>
-            </>}
-        </div>
-        {pickerOpen && <PlanPicker onPick={startCheckout} busy={redirecting} />}
+        {member ? (
+          <p className="m-0 text-[14px] text-ink-soft" data-testid="household-member-plan">{t("plan.householdMember", { name: hh?.owner_first_name ?? "" })}</p>
+        ) : (
+          <div className="flex gap-x-4 gap-y-2 flex-wrap items-center">
+            {p.plan === "none"
+              ? <Button variant={pickerOpen ? "outline" : "primary"} className={`${pickerOpen ? "border-2" : BIG} rounded-full`} onClick={togglePicker} aria-expanded={pickerOpen} disabled={mode === "demo"}>{pickerOpen ? t("plan.hidePicker") : t("plan.choose")}</Button>
+              : <>
+                <Button variant="outline" className="border-2 rounded-full" onClick={togglePicker} aria-expanded={pickerOpen}>{pickerOpen ? t("plan.hidePicker") : t("plan.change")}</Button>
+                <button type="button" className={LINK} onClick={portal}>{t("plan.manage")}</button>
+              </>}
+          </div>
+        )}
+        {pickerOpen && !member && <PlanPicker onPick={startCheckout} busy={redirecting} />}
       </section>
 
       <HouseholdCard />
 
-      {!p.entitled && (
-        <div className="rounded-[20px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" data-testid="free-tier">
-          <Eyebrow>{t("account.free")}</Eyebrow>
-          <p className="m-0 text-[15px] text-ink-soft">{t("account.freeNote")}</p>
-        </div>
-      )}
-
-      {/* Credits = «Ekstra opkald» */}
-      <div className="rounded-[20px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5">
-        <Eyebrow>{t("plan.extra")}</Eyebrow>
-        <div className="flex items-baseline gap-2.5 flex-wrap">
-          <span className="font-display font-extrabold text-[36px]" data-testid="credits">{balance?.credits ?? 0}</span><span className="text-[15px] text-ink-soft">{t("plan.extraWord")}</span>
-          {(balance?.reserved ?? 0) > 0 && <Pill tone="progress">{t("account.reserved", { n: balance!.reserved })}</Pill>}
-        </div>
-        <p className="m-0 text-[13px] text-muted">{t("plan.extraNote")}</p>
-        <Button variant={p.entitled ? "outline" : "primary"} className={`${BIG} rounded-full self-start`} onClick={() => openSheet({ kind: "buy" })} disabled={mode === "demo"}>{t("account.buy")}</Button>
-      </div>
-
-      <section className="flex flex-col gap-1.5" aria-labelledby="ledger-h">
-        <h3 id="ledger-h" className="m-0 font-body text-[15px] font-semibold">{t("account.ledger")}</h3>
-        {ledger.length === 0 && <p className="m-0 text-[14px] text-muted">{t("account.ledgerEmpty")}</p>}
-        <ul className="m-0 p-0 list-none" data-testid="ledger">
-          {[...ledger].reverse().map((l) => (
-            <li key={l.id} className="flex gap-2.5 justify-between border-b-[1.5px] border-line py-2 text-[14px]"><span className="[overflow-wrap:anywhere] min-w-0">{l.text}</span><span className="font-bold whitespace-nowrap">{amount(l.kind, l.amount)}</span></li>
-          ))}
-        </ul>
-      </section>
-
+      {/* Dig */}
       {mode !== "demo" && (
-        <section className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" aria-labelledby="phone-h">
-          <h3 id="phone-h" className="m-0 font-display font-bold text-[19px]">{t("account.phone")}</h3>
-          {balance?.phone_verified && !changing ? (
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[17px] font-semibold">{balance.phone_display}</span><Pill tone="ok">{t("account.verified")}</Pill>
-              <button type="button" className={LINK} onClick={() => setChanging(true)}>{t("account.changePhone")}</button>
+        <section className={GROUP} aria-labelledby="me-h" data-testid="account-me">
+          <h3 id="me-h" className={H}>{t("account.groupMe")}</h3>
+          <div className="flex flex-col gap-2" aria-labelledby="phone-h">
+            <h4 id="phone-h" className="m-0 font-body font-semibold text-[16px]">{t("account.phone")}</h4>
+            {balance?.phone_verified && !changing ? (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[17px] font-semibold">{balance.phone_display}</span><Pill tone="ok">{t("account.verified")}</Pill>
+                <button type="button" className={LINK} onClick={() => setChanging(true)}>{t("account.changePhone")}</button>
+              </div>
+            ) : (
+              <>
+                {!balance?.phone_verified && <p className="m-0 text-[14px] text-ink-soft">{t("account.phoneNone")}</p>}
+                <PhoneVerify onDone={() => setChanging(false)} />
+              </>
+            )}
+          </div>
+          <div className="border-t-[1.5px] border-line pt-3 flex flex-col gap-1">
+            <CityRow /><AssistantNameRow />
+            <div className="flex items-center gap-3 flex-wrap" aria-labelledby="lang-h">
+              <span id="lang-h" className="text-[15px] text-muted">{t("account.languageTitle")}:</span>
+              <LanguageSwitcher onSaved={(l) => { if (mode === "real") api.setLocale(l).catch(() => {}); }} />
             </div>
-          ) : (
-            <>
-              {!balance?.phone_verified && <p className="m-0 text-[14px] text-ink-soft">{t("account.phoneNone")}</p>}
-              <PhoneVerify onDone={() => setChanging(false)} />
-            </>
-          )}
+          </div>
         </section>
       )}
 
-      <section className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" aria-labelledby="lang-h">
-        <h3 id="lang-h" className="m-0 font-display font-bold text-[19px]">{t("account.languageTitle")}</h3>
-        <p className="m-0 text-[14px] text-ink-soft">{t("account.languageText")}</p>
-        <LanguageSwitcher className="self-start" onSaved={(l) => { if (mode === "real") api.setLocale(l).catch(() => {}); }} />
+      {/* Appen */}
+      <section className={GROUP} aria-labelledby="install-h">
+        <h3 id="install-h" className={H}>{t("account.groupApp")}</h3>
+        <InstallApp audience="privat" compact enableNotifications={() => enablePush(api).then(() => refresh())} />
+        <div className="border-t-[1.5px] border-line pt-3 flex flex-col gap-2" aria-labelledby="notif-h">
+          <h4 id="notif-h" className="m-0 font-body font-semibold text-[16px]">{t("push.title")}</h4>
+          <PushPrompt moment="account" />
+        </div>
       </section>
 
-      <section className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" aria-labelledby="install-h">
-        <h3 id="install-h" className="m-0 font-display font-bold text-[19px]">{t("account.installTitle")}</h3>
-        <InstallApp audience="privat" enableNotifications={() => enablePush(api).then(() => refresh())} />
+      {/* Ekstra */}
+      <section className={GROUP} aria-labelledby="extra-h">
+        <h3 id="extra-h" className={H}>{t("account.groupExtra")}</h3>
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className="flex items-baseline gap-2"><span className="font-display font-extrabold text-[28px]" data-testid="credits">{balance?.credits ?? 0}</span><span className="text-[15px] text-ink-soft">{t("plan.extraWord")}</span></span>
+          {(balance?.reserved ?? 0) > 0 && <Pill tone="progress">{t("account.reserved", { n: balance!.reserved })}</Pill>}
+          <span className="flex-1" />
+          <Button variant={p.entitled ? "outline" : "primary"} className="border-2 rounded-full" onClick={() => openSheet({ kind: "buy" })} disabled={mode === "demo"}>{t("account.buy")}</Button>
+        </div>
+        <p className="m-0 text-[13px] text-muted">{t("plan.extraNote")}</p>
+        <div className="flex flex-col gap-1" aria-labelledby="ledger-h">
+          <h4 id="ledger-h" className="m-0 font-body text-[15px] font-semibold">{t("account.ledger")}</h4>
+          {ledger.length === 0 && <p className="m-0 text-[14px] text-muted">{t("account.ledgerEmpty")}</p>}
+          <ul className="m-0 p-0 list-none" data-testid="ledger">
+            {[...ledger].reverse().slice(0, allLedger ? undefined : 3).map((l) => (
+              <li key={l.id} className="flex gap-2.5 justify-between border-b-[1.5px] border-line py-2 text-[14px]"><span className="[overflow-wrap:anywhere] min-w-0">{l.text}</span><span className="font-bold whitespace-nowrap">{amount(l.kind, l.amount)}</span></li>
+            ))}
+          </ul>
+          {ledger.length > 3 && !allLedger && <button type="button" className={LINK} onClick={() => setAllLedger(true)}>{t("account.ledgerAll", { n: ledger.length })}</button>}
+        </div>
       </section>
-
-      <section className="rounded-[18px] border-2 border-ink bg-paper p-4 flex flex-col gap-2.5" aria-labelledby="notif-h">
-        <h3 id="notif-h" className="m-0 font-display font-bold text-[19px]">{t("push.title")}</h3>
-        <PushPrompt moment="account" />
-      </section>
-
-      {mode !== "demo" && <><CityRow /><AssistantNameRow /></>}
 
       <InviteFriends />
 
-      <Link href="/privat/apps" className="rounded-[20px] border-2 border-ink bg-paper p-4 flex items-center gap-3 no-underline text-ink hover:bg-panel" data-testid="account-apps">
-        <Tile name="grid" className="bg-accent text-white rounded-[12px] border-2 border-ink" />
-        <span className="flex-1 min-w-0 text-[16px] font-semibold">{t("apps.accountLine", { n: (addons ?? []).filter((a) => a.enabled).length })}</span>
-        <span className="text-[15px] font-semibold text-accent whitespace-nowrap">{t("apps.mine")} →</span>
-      </Link>
-
       <MyDataSection />
+      <p className="m-0 text-[13px] text-muted [overflow-wrap:anywhere]">{line}</p>
 
       {simulated && fake && (
         <div className="rounded-[14px] border-[1.5px] border-dashed border-ink bg-panel p-3 flex flex-col gap-2">
@@ -283,7 +289,8 @@ function PlanPicker({ onPick, busy }: { onPick: (plan: PlanKey, interval: Billin
         ))}
       </div>
       <ul className="m-0 p-0 list-none grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-        {p.plans.map((pl) => {
+        {/* Anbefalet (Plus) first – the first tap used to pick Basis (ux-audit #11). */}
+        {[...p.plans].sort((a, b) => Number(!!b.recommended) - Number(!!a.recommended)).map((pl) => {
           const current = p.plan === pl.key;
           const price = interval === "year" ? pl.yearly_monthly_minor : pl.monthly_minor;
           return (
@@ -340,14 +347,14 @@ function InviteFriends() {
       <div className="flex items-center gap-3"><Tile name="users" /><h3 id="invite-h" className="m-0 font-display font-bold text-[19px]">{t("invite.title")}</h3></div>
       <p className="m-0 text-[15px] text-ink-soft">{t("invite.text")}</p>
       {stats.length > 0 && (
-        <dl className="grid grid-cols-4 gap-2 m-0">
-          {stats.map(([k, v]) => <div key={k} className="rounded-xl bg-panel p-2 text-center"><dt className="text-[11px] font-semibold text-muted uppercase tracking-[0.06em] [overflow-wrap:anywhere]">{k}</dt><dd className="m-0 font-display font-extrabold text-[22px]">{v}</dd></div>)}
+        <dl className="grid grid-cols-2 sm:grid-cols-4 gap-2 m-0">
+          {stats.map(([k, v]) => <div key={k} className="rounded-xl bg-panel px-3 py-2 flex items-baseline justify-between gap-2"><dt className="text-[13px] font-semibold text-muted">{k}</dt><dd className="m-0 font-display font-extrabold text-[20px]">{v}</dd></div>)}
         </dl>
       )}
       {referrals && <p className="m-0 text-[13px] text-muted">{t("invite.monthlyLeft", { n: referrals.monthly_left })}</p>}
       <div className="flex items-center gap-2 rounded-xl bg-panel px-3 py-2"><Ico name="link" size={18} /><span className="flex-1 min-w-0 text-[14px] font-semibold [overflow-wrap:anywhere]">{bareLink(link)}</span></div>
       <div className="flex gap-2 flex-wrap">
-        <a href={smsHref(body, [], platformOf(ua))} className="inline-flex items-center justify-center gap-2 rounded-xl min-h-[44px] px-4 border-2 border-ink bg-accent text-white font-semibold text-[15px] hover:bg-accent-deep"><Ico name="send" size={18} />{t("share.sms")}</a>
+        <a href={smsHref(body, [], platformOf(ua))} className="inline-flex items-center justify-center gap-2 rounded-xl min-h-[44px] px-4 border-2 border-ink bg-paper text-ink font-body font-semibold text-[15px] hover:bg-panel"><Ico name="send" size={18} />{t("share.sms")}</a>
         <Button variant="outline" className="border-2" onClick={() => navigator.clipboard?.writeText(link).catch(() => {})}><Ico name="copy" size={18} />{t("share.copy")}</Button>
       </div>
       <p className="m-0 text-[12px] text-muted">{t("invite.noMarketing")}</p>

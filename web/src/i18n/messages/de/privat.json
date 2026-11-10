@@ -634,7 +634,7 @@
     "fromOwner": "Von {name}"
   },
   "account": {
-    "title": "Konto und Credits",
+    "title": "Konto",
     "privateLine": "Privates Konto · {email} · getrennt von Firmenkonten",
     "exampleLine": "Du testest mit Beispieldaten. Melde dich an, wenn du deine erste Aufgabe speicherst.",
     "simulatedLine": "Die Privat-API ist noch nicht eingeschaltet – alles hier ist eine Simulation in deinem Browser.",
@@ -668,7 +668,11 @@
     "reset": "Von vorn beginnen",
     "installTitle": "App holen",
     "languageTitle": "Sprache",
-    "languageText": "Die App und Peters Antworten folgen der Sprache hier."
+    "languageText": "Die App und Peters Antworten folgen der Sprache hier.",
+    "groupMe": "Du",
+    "groupApp": "Die App",
+    "groupExtra": "Extra-Anrufe",
+    "ledgerAll": "Alle anzeigen ({n})"
   },
   "invite": {
     "title": "Freunde einladen",
@@ -784,7 +788,8 @@
     "trialBadgeShort": "{plan} · {n|1 Tag|# Tage}",
     "planBadge": "{plan}",
     "noPlan": "Kein Plan",
-    "trialDaysShort": "{n} T"
+    "trialDaysShort": "{n} T",
+    "trialDaysLeft": "{n|1 Tag|# Tage} übrig"
   },
   "day2": {
     "eyebrow": "Dein persönlicher Assistent",
@@ -952,7 +957,8 @@
     "codeAsk": "Hast du einen Rabattcode?",
     "codeLabel": "Rabattcode",
     "codePlaceholder": "Z. B. WILLKOMMEN",
-    "codeHint": "Der Rabatt wird auf der Bezahlseite abgezogen."
+    "codeHint": "Der Rabatt wird auf der Bezahlseite abgezogen.",
+    "householdMember": "Du bist in {name}s Familien-Plan. {name} verwaltet den Plan."
   },
   "funnel": {
     "entry": "In 2 Minuten ausprobieren",

@@ -919,7 +919,8 @@ def enable(db: OrmSession, ws_id: uuid.UUID, key: str) -> Addon:
     ent = subscriptions.entitlements(db, ws_id)
     if not included(db, ws_id, a, ent):
         names = [n for n in ("Plus", "Familie", "Basis") if n.lower() in a.included_in]
-        where = ' og '.join(names[:2]) if names else 'et abonnement'
+        # every plan: say so («alle planer», F-PB-02) – not just the first two
+        where = "alle planer" if len(names) == 3 else (' og '.join(names[:2]) if names else 'et abonnement')
         # Already in a trial or on a plan (e.g. Basis): «start 14 dage gratis» would be wrong – they need another
         # plan (F-UX-01).
         msg = (f"«{a.name}» er med i {where} – skift plan under Konto" if ent.get("entitled")

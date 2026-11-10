@@ -634,7 +634,7 @@
     "fromOwner": "Da {name}"
   },
   "account": {
-    "title": "Account e crediti",
+    "title": "Account",
     "privateLine": "Account privato · {email} · separato dagli account aziendali",
     "exampleLine": "Stai provando con dati di esempio. Accedi quando salvi la tua prima attività.",
     "simulatedLine": "L'API Privat non è ancora attiva – qui è tutto una simulazione nel tuo browser.",
@@ -668,7 +668,11 @@
     "reset": "Ricomincia",
     "installTitle": "Installa l'app",
     "languageTitle": "Lingua",
-    "languageText": "L'app e le risposte di Peter seguono la lingua scelta qui."
+    "languageText": "L'app e le risposte di Peter seguono la lingua scelta qui.",
+    "groupMe": "Tu",
+    "groupApp": "L’app",
+    "groupExtra": "Chiamate extra",
+    "ledgerAll": "Vedi tutto ({n})"
   },
   "invite": {
     "title": "Invita amici",
@@ -784,7 +788,8 @@
     "trialBadgeShort": "{plan} · {n|1 giorno|# giorni}",
     "planBadge": "{plan}",
     "noPlan": "Nessun piano",
-    "trialDaysShort": "{n} g"
+    "trialDaysShort": "{n} g",
+    "trialDaysLeft": "{n|1 giorno|# giorni} rimasti"
   },
   "day2": {
     "eyebrow": "Il tuo assistente personale",
@@ -952,7 +957,8 @@
     "codeAsk": "Hai un codice sconto?",
     "codeLabel": "Codice sconto",
     "codePlaceholder": "Es. BENVENUTO",
-    "codeHint": "Lo sconto viene applicato nella pagina di pagamento."
+    "codeHint": "Lo sconto viene applicato nella pagina di pagamento.",
+    "householdMember": "Fai parte del piano Famiglia di {name}. {name} gestisce il piano."
   },
   "funnel": {
     "entry": "Provalo in 2 minuti",

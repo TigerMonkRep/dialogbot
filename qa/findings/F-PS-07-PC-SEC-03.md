@@ -3,7 +3,7 @@ id: F-PS-07-PC-SEC-03
 scenario: PC-SEC-03
 reported_by: security-privacy
 severity: S1
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: [e2e-privat (PC-SEC-03 ejer – dedupe hvis de også indberetter), ui-ux-engineer]
 ---
@@ -31,8 +31,10 @@ Simuleringen startes uden besked; kun enkelte kort (opkald, konto-siden) bærer 
 store.tsx: for `session.loggedIn` brug ALDRIG fake; vis en fejl-/venteliste-tilstand ved `privat_not_enabled`, og en almindelig fejl ved 404. Behold fake kun for `FORCE_FAKE` og anonyme demo-besøg. Gør header-mærket synligt på mobil, når simulering er aktiv.
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rodårsag: web/src/components/privat/store.tsx skiftede en indlogget bruger til in-browser-simuleringen ved 404/privat_not_enabled/disabled.
+- Rettelse: en indlogget bruger kommer aldrig i simulering. Mode er «real», og fejlen vises ærligt (privat.json errors.notEnabled / errors.unavailable, 8 sprog: «… Intet af det, du gør her, bliver gemt eller udført»). <Sim/> på mobil er rettet af ui-ux-engineer i shell.tsx. Anonyme demo-sider er uændrede. Samme rettelse dækker F-PK-03.
+- Filer: web/src/components/privat/store.tsx, web/src/i18n/messages/*/privat.json
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

@@ -34,8 +34,11 @@ Lad status være «active», indtil brugeren selv bekræfter («Jeg har sendt de
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rodårsag: chat.tool_cancel_subscription kaldte subs_app.mark_cancelling, allerede når brevet blev skrevet.
+- Rettelse: kaldet er fjernet. Abonnementet forbliver aktivt, så påmindelsen om sidste opsigelsesdag kører videre. (Der findes ingen «brevet er sendt»-handling endnu; mark_cancelling er ladt stå til den.)
+- Filer: app/modules/privat/chat.py
+- Test: tests/qa/test_qa_pd_apps_a.py::test_pa_app13_letter_marks_cancelling_before_the_user_sends_it (grøn)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest (e2e-privat PA, 2026-11-10): pytest qa_pd2 grøn; live :8400 på 451d53b – qa/evidence/PC-APP-13/PA-reverify-451d53b.txt: oversigten efter brevet er «Telia, 199 kr. pr. md., binding til 10. december 2026» (ingen «under opsigelse»). Browser-genkørsel afventer, at :3400 serverer sine chunks (500 kl. 23:04).

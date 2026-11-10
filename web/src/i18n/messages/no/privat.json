@@ -634,7 +634,7 @@
     "fromOwner": "Fra {name}"
   },
   "account": {
-    "title": "Konto og kreditter",
+    "title": "Konto",
     "privateLine": "Privat konto · {email} · atskilt fra bedriftskontoer",
     "exampleLine": "Du prøver med eksempeldata. Logg inn når du lagrer din første oppgave.",
     "simulatedLine": "Privat-API-et er ikke slått på ennå – alt her er en simulering i nettleseren din.",
@@ -668,7 +668,11 @@
     "reset": "Start på nytt",
     "installTitle": "Hent appen",
     "languageTitle": "Språk",
-    "languageText": "Appen og Peters svar følger språket her."
+    "languageText": "Appen og Peters svar følger språket her.",
+    "groupMe": "Deg",
+    "groupApp": "Appen",
+    "groupExtra": "Ekstra samtaler",
+    "ledgerAll": "Se alle ({n})"
   },
   "invite": {
     "title": "Inviter venner",
@@ -784,7 +788,8 @@
     "trialBadgeShort": "{plan} · {n|1 dag|# dager}",
     "planBadge": "{plan}",
     "noPlan": "Ingen plan",
-    "trialDaysShort": "{n} d"
+    "trialDaysShort": "{n} d",
+    "trialDaysLeft": "{n|1 dag|# dager} igjen"
   },
   "day2": {
     "eyebrow": "Din egen personlige assistent",
@@ -952,7 +957,8 @@
     "codeAsk": "Har du en rabattkode?",
     "codeLabel": "Rabattkode",
     "codePlaceholder": "F.eks. VELKOMMEN",
-    "codeHint": "Rabatten trekkes fra på betalingssiden."
+    "codeHint": "Rabatten trekkes fra på betalingssiden.",
+    "householdMember": "Du er med i {name}s Familie-plan. {name} styrer planen."
   },
   "funnel": {
     "entry": "Prøv på 2 minutter",

@@ -3,7 +3,7 @@ id: F-PK-03-PC-SEC-03
 scenario: PC-SEC-03
 reported_by: e2e-privat (PK)
 severity: S1
-status: new
+status: fixed
 owner_fix: fix-engineer (ui-ux-engineer ejer shell.tsx-layoutet; koordinér)
 related: []
 ---
@@ -35,8 +35,8 @@ Vis `<Sim />` i headeren på alle bredder. Det kan fx erstatte plan-chippen, nå
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Dublet af F-PS-07 (samme rod, store.tsx). Se F-PS-07. Mobil-mærket rettet af ui-ux-engineer (shell.tsx).
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

@@ -3,7 +3,7 @@ id: F-PB-01-PC-APP-KAELEDYR-04
 scenario: PC-APP-KAELEDYR-04
 reported_by: e2e-privat (PB)
 severity: S1
-status: new
+status: fixed
 owner_fix: fix-engineer
 related: [PC-APP-KAELEDYR-03, alle husstandsapps der bruger app_kit.find]
 ---
@@ -33,8 +33,11 @@ Ved oprettelse/«gem» kun eksakt match på `key_of(name)`. Delstrengsmatch kan 
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rodårsag: app_kit.find faldt tilbage til delstrengsmatch, og gem-veje brugte det til at vælge den række, der blev overskrevet.
+- Rettelse: find(..., exact=False|True). Alle gem-, opret- og upsert-veje bruger exact=True: pets.save_pet, subs_app.add, party.create og home (standardopgaver og egne opgaver). Opslag bevarer delstrengsmatch.
+- Filer: app/modules/privat/app_kit.py, pets.py, subs_app.py, party.py, home.py
+- Test: tests/qa/test_qa_pd_apps_b.py::test_04_pets_new_name_containing_an_existing_name_is_a_new_pet (grøn)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

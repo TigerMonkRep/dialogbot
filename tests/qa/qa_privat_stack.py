@@ -154,7 +154,9 @@ DIALLED: list[dict] = []
 def fake_create_call(payload: dict) -> dict:
     with LOCK:
         DIALLED.append({"at": datetime.now(UTC).isoformat(), "payload": payload})
-        return {"id": f"qa_call_{len(DIALLED)}"}
+        # unique across restarts and DELETE /__qa/calls: the DB keeps private_calls.vapi_call_id (UNIQUE), so a counter
+        # that starts again at 1 made «Godkend opkald» answer 500 UniqueViolation (PB, 2026-11-10)
+        return {"id": f"qa_call_{len(DIALLED)}_{uuid.uuid4().hex[:8]}"}
 
 
 campaigns.create_call = fake_create_call  # type: ignore[assignment]

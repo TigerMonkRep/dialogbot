@@ -3,7 +3,7 @@ id: F-PBQ-01-PC-SUB-07
 scenario: PC-SUB-07
 reported_by: billing-qa
 severity: S0
-status: confirmed
+status: fixed
 owner_fix: fix-engineer
 related: []
 ---
@@ -39,8 +39,11 @@ To Checkout-sessioner, der åbnes før nogen af dem er gennemført, giver to Str
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rodårsag: upsert overskrev stripe_subscription_id med det nyeste abonnement uden at håndtere det andet.
+- Rettelse: når en konto, der allerede har et entitled abonnement, får et andet live abonnement, annulleres det nye hos Stripe (DELETE /subscriptions/{id}) og logges (privat.duplicate_subscription_canceled / _not_canceled). Rækken beholder det første. outcome = dup_canceled (≤ 16 tegn til webhook_events.outcome).
+- Filer: app/modules/privat/subscriptions.py
+- Test: tests/qa/test_qa_pd_billing.py::test_pc_sub_07b (grøn)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest:

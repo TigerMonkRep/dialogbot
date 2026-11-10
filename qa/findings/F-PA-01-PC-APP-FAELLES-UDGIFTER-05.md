@@ -35,8 +35,11 @@ Enten sletter `delete_data` også de opgaver, appen har oprettet (task_id i appd
 ## Rodårsag (udfyldes af fix-engineer)
 
 ## Rettelse (udfyldes af fix-engineer)
-- Filer:
-- Commit:
+- Rodårsag: app_status.delete_data slettede kun private_app_data; listerne, appen selv oprettede (create_digital, med task_id gemt i appens data), blev liggende.
+- Rettelse: delete_data sletter også alle PrivateTask-id'er, der står som `task_id` i appens data (`_task_ids`). Det dækker Fælles udgifter, Flytning og Pakkeliste. Madplan gemmer nu plan og indkøbsliste under `lists` (meals.save_plan). Madplaner fra før rettelsen er ikke registreret og bliver liggende.
+- Filer: app/modules/privat/app_status.py, app/modules/privat/meals.py
+- Test: tests/qa/test_qa_pd_apps_a.py::test_pa_delete_data_removes_the_lists_the_app_made, tests/qa/test_qa_pd_apps_b.py::test_05_* (grønne)
+- Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
 ## Verifikation (udfyldes af verifier)
 - Gentest (e2e-privat PA, 2026-11-10): pytest qa_pd2 grøn; live :8400 på 451d53b – qa/evidence/PC-APP-FAELLES-UDGIFTER-05/PA-reverify-451d53b.txt: efter slet data er begge lister væk (deleted=2 pr. app). Browser-genkørsel afventer, at :3400 serverer sine chunks (500 kl. 23:04).

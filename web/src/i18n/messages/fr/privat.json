@@ -634,7 +634,7 @@
     "fromOwner": "De la part de {name}"
   },
   "account": {
-    "title": "Compte et crédits",
+    "title": "Compte",
     "privateLine": "Compte privé · {email} · séparé des comptes entreprise",
     "exampleLine": "Vous essayez avec des données d'exemple. Connectez-vous en enregistrant votre première tâche.",
     "simulatedLine": "L'API Privat n'est pas encore activée – tout ici est une simulation dans votre navigateur.",
@@ -668,7 +668,11 @@
     "reset": "Recommencer",
     "installTitle": "Installer l'app",
     "languageTitle": "Langue",
-    "languageText": "L'application et les réponses de Peter suivent la langue choisie ici."
+    "languageText": "L'application et les réponses de Peter suivent la langue choisie ici.",
+    "groupMe": "Vous",
+    "groupApp": "L’app",
+    "groupExtra": "Appels supplémentaires",
+    "ledgerAll": "Tout voir ({n})"
   },
   "invite": {
     "title": "Inviter des amis",
@@ -784,7 +788,8 @@
     "trialBadgeShort": "{plan} · {n|1 jour|# jours}",
     "planBadge": "{plan}",
     "noPlan": "Sans forfait",
-    "trialDaysShort": "{n} j"
+    "trialDaysShort": "{n} j",
+    "trialDaysLeft": "{n|1 jour|# jours} restants"
   },
   "day2": {
     "eyebrow": "Votre assistant personnel",
@@ -952,7 +957,8 @@
     "codeAsk": "Vous avez un code de réduction ?",
     "codeLabel": "Code de réduction",
     "codePlaceholder": "Ex. BIENVENUE",
-    "codeHint": "La réduction est appliquée sur la page de paiement."
+    "codeHint": "La réduction est appliquée sur la page de paiement.",
+    "householdMember": "Vous faites partie du forfait Famille de {name}. {name} gère le forfait."
   },
   "funnel": {
     "entry": "Essayer en 2 minutes",

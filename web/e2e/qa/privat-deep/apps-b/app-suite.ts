@@ -65,12 +65,14 @@ export function appSuite(c: AppCfg) {
         expect((await r.json()).code).toBe("needs_plan");
         await api(page, "POST", `/addons/${c.key}/disable`); // expired keeps defaults on – take it off to see the shop
         await gotoPrivat(page, `/privat/butik/${c.key}`);
-        await page.getByTestId("needs-plan").click();
+        // shop page: «Prøv gratis»/«Vælg plan» (needs-plan); kept page (was on by default): «Vælg plan»
+        await page.getByTestId("needs-plan").or(page.getByRole("button", { name: /^(Vælg plan|Prøv gratis)$/ })).first().click();
         const radios = page.getByRole("dialog").getByRole("radio");
-        const names = (await radios.allInnerTexts()).map((x) => x.split("\n")[0].trim());
-        expect(names.some((n) => n.startsWith("Plus"))).toBeTruthy();
-        expect(names.some((n) => n.startsWith("Familie"))).toBeTruthy();
-        expect(names.some((n) => n.startsWith("Basis")), `Basis i plan-arket (${persona})`).toBe(c.plans === "all");
+        await expect(radios.first()).toBeVisible();
+        const names = (await radios.allInnerTexts()).map((x) => x.replace(/\s+/g, " ").trim());
+        expect(names.some((n) => /\bPlus\b/.test(n)), names.join(" | ")).toBeTruthy();
+        expect(names.some((n) => /\bFamilie\b/.test(n)), names.join(" | ")).toBeTruthy();
+        expect(names.some((n) => /\bBasis\b/.test(n)), `Basis i plan-arket (${persona}): ${names.join(" | ")}`).toBe(c.plans === "all");
         await shot(page, info, `${c.sid}-02`, `plansheet-${persona}`);
         expect(enabledRows(ws, c.key)).toBe(0);
         await page.context().clearCookies();

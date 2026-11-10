@@ -40,7 +40,17 @@ export function AccountPane() {
     if (c === "cancel") setNote(t("account.purchaseCancelled"));
   }, [params, setNote, t]);
   useEffect(() => {
-    if (mode === "loading" || mode === "demo") return;
+    if (mode === "loading") return;
+    if (mode === "demo") {
+      // An anonymous visitor (demo account) who came to pay (?plan= from «Prøv gratis i 14 dage» or a plan card):
+      // sign up first, then back here to the checkout. Without ?plan= the demo stays as it is (QA F-PQ-02-X07).
+      const key = params.toString();
+      if (isPlanKey(params.get("plan")) && handled.current !== `signup:${key}`) {
+        handled.current = `signup:${key}`;
+        window.location.assign(`/signup?next=${encodeURIComponent(`/privat/konto?${key}`)}`);
+      }
+      return;
+    }
     const key = params.toString();
     if (!key || handled.current === key) return;
     const ab = params.get("abonnement");

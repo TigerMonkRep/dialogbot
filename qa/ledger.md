@@ -28,3 +28,5 @@
 | 15:15 | qa-lead → verifier | handoff | alle fixed | gentest, before/after-bevis for S0/S1, fuld suite, journeys, CI-checks |
 | 16:05 | verifier → qa-lead, fix-engineer | verdict | 48 fixed | 47 closed, 1 reopened (F-EA-07: docs/openapi.json ikke regenereret → CI rød); nye fund F-VR-01 (tidsafhængig test, rettet), F-VR-02 (needs-decision), F-VR-03 (idempotens-race → 500, flaky CI) |
 | 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | batch 6 | F-EA-07 (openapi regen), F-VR-03-X11 (insert-first idempotency, x11 10/10), F-PQ-02-X07 (hero-CTA → trial checkout); ikke committet |
+| 16:30 | verifier → qa-lead, fix-engineer | verdict | batch 6 | F-VR-03 closed (10/10, 680 idem-tests), F-EA-07 closed (openapi cmp ok), F-PQ-02 reopened (anonym CTA → demo, account.tsx:43); nyt F-VR-04 (S3 stale-overtagelse) |
+| 2026-11-10 | fix-engineer → qa-lead, verifier | fix-ready | batch 7 | F-PQ-02 (demo + ?plan → signup), F-VR-04-X11 (atomisk overtagelse + tests/test_idempotency.py); ikke committet |

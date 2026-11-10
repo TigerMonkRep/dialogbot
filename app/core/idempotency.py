@@ -15,10 +15,10 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import timedelta
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import func, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
@@ -65,9 +65,18 @@ class IdempotencyGuard:
         if existing.payload_hash != self.hash:
             raise Conflict("Idempotency-Key er allerede brugt med et andet payload", code="idempotency_payload_mismatch")
         if existing.response_status == IN_PROGRESS:
-            created = existing.created_at if existing.created_at.tzinfo else existing.created_at.replace(tzinfo=UTC)
-            if datetime.now(UTC) - created > STALE_AFTER:
-                self._row_id = existing.id  # an abandoned reservation: this request takes it over
+            # An abandoned reservation is taken over atomically: a conditional UPDATE that only one request can win
+            # (the row lock serialises them; the loser re-checks the condition and matches nothing).
+            won = db.execute(
+                update(IdempotencyKey)
+                .where(IdempotencyKey.id == existing.id, IdempotencyKey.response_status == IN_PROGRESS,
+                       IdempotencyKey.created_at < func.now() - STALE_AFTER)
+                .values(created_at=func.now(), payload_hash=self.hash)
+                .returning(IdempotencyKey.id)
+                .execution_options(synchronize_session=False)
+            ).scalar()
+            if won is not None:
+                self._row_id = won
                 return
             raise Conflict("Den samme handling er allerede i gang – vent et øjeblik", code="idempotency_in_progress")
         self.replay = (existing.response_status, existing.response_body)

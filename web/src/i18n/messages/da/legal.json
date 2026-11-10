@@ -184,7 +184,7 @@
     },
     "label": "Vilkår",
     "title": "Abonnements- og handelsbetingelser",
-    "updated": "Version 1 · gældende fra 6. oktober 2026.",
+    "updated": "Version 2 · gældende fra 10. november 2026.",
     "intro": "Disse vilkår gælder, når en virksomhed opretter en konto og bruger Dialogbot. Dialogbot sælges kun til erhvervsdrivende. \"Vi\" er {name} (CVR-nr. {cvr}), {address}. \"I\" er den virksomhed, der har oprettet arbejdsrummet.",
     "sections": [
       {
@@ -202,8 +202,8 @@
             "type": "ul",
             "items": [
               [{ "b": "Abonnement:" }, " fra {pMonthly} pr. måned. Der er ingen pris pr. henvendelse."],
-              [{ "b": "Kampagner (udgående opkald):" }, " {pTermsV1Call} pr. udgående opkald plus {pMinute} pr. påbegyndt samtaleminut. Hvert opkald, der ringes, tæller, også et nyt forsøg (højst 2 forsøg og højst 3 samtaleminutter pr. kontakt). Den højeste mulige pris vises, før en kampagne startes."],
-              [{ "b": "Indgående opkald:" }, " et dansk telefonnummer til assistenten og 300 påbegyndte samtaleminutter pr. kalendermåned er inkluderet. Minutter derudover koster {pExtraMinute} pr. påbegyndt minut og afregnes på månedens faktura. Forbruget kan følges løbende i Dialogbot."]
+              [{ "b": "Minutpakke:" }, " et dansk telefonnummer til assistenten og 300 påbegyndte samtaleminutter pr. kalendermåned er inkluderet. Minutterne er én fælles pulje til både indgående opkald og udgående kampagneopkald og bruges i den rækkefølge, opkaldene sker. Der er ingen pris pr. opkald – et ubesvaret opkald koster intet. Ved kampagner ringes en kontakt højst 2 gange og taler højst 3 minutter, og den højeste mulige pris vises, før en kampagne startes."],
+              [{ "b": "Minutter ud over pakken:" }, " {pExtraMinute} pr. påbegyndt indgående minut og {pMinute} pr. påbegyndt udgående minut. De afregnes på månedens faktura, og forbruget kan følges løbende i Dialogbot pr. opkald. Minutter krediteres kun, når I klager over et bestemt opkald, og vi godkender klagen: er måneden ikke faktureret, går minutterne tilbage i pakken; er den faktureret, krediteres beløbet på næste faktura."]
             ]
           },
           { "type": "p", "text": "Kommer I via en ambassadør, får I 50 % rabat på jeres første fakturerede måned. Vi kan ændre priserne med mindst 30 dages varsel på e-mail; ændringen gælder fra den første hele måned efter varslet." }

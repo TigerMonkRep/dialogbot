@@ -26,8 +26,7 @@ SCANNED = ["app", "web/src", "web/public/materiale", "web/public/llms.txt", "des
            "docs/social-media.md", "docs/sales", "docs/ambassadors", "docs/telephony"]
 OLD = re.compile(r"1\.495|\b149 kr|\b149,00|pr\. godkendt henvendelse|[Mm]odel [AB]\b|kontaktpakke|9 kr\. pr\. kontakt|9,00 kr|[Gg]ratis (personlig )?opsætning|opsætning(en)? (koster )?0 kr|intet opstartsgebyr")
 SUFFIXES = {".py", ".ts", ".tsx", ".html", ".txt", ".md"}
-# The per-call fee and the inbound-only package, gone since 2026-11-10 (design-reference mock-ups are history; the
-# published terms v1 render the old fee through their own token, {pTermsV1Call}).
+# The per-call fee and the inbound-only package, gone since 2026-11-10 (design-reference mock-ups are history).
 OLD_CALL_FEE = re.compile(r"4 kr\. pr\. (udgående )?(kampagne)?opkald|\{pCall\}|\{pCall3Min\}|minutters indgående opkald|"
                           r"300 indgående minutter")
 CALL_FEE_ALLOWED = ALLOWED | {"app/modules/sales/outbound.py"}
@@ -68,12 +67,27 @@ def test_the_per_call_fee_and_the_inbound_only_package_are_gone():
     hits = []
     for f in _files():
         rel = f.relative_to(ROOT).as_posix()
-        if rel in CALL_FEE_ALLOWED or rel.startswith("design-reference/") or rel.endswith("/legal.json"):
+        if rel in CALL_FEE_ALLOWED or rel.startswith("design-reference/"):
             continue
         for n, line in enumerate(f.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
             if OLD_CALL_FEE.search(line):
                 hits.append(f"{rel}:{n}: {line.strip()[:110]}")
     assert not hits, "per-call fee or inbound-only package found:\n" + "\n".join(hits)
+
+
+def test_the_terms_state_the_shared_package_in_every_language():
+    """Terms version 2 (from 10 November 2026): one package for inbound and outbound minutes, no price per call, the
+    minute prices above it per direction, credits only after a complaint about a call."""
+    for loc in ("da", "en", "de", "es", "fr", "it", "no", "sv"):
+        terms = json.loads((ROOT / f"web/src/i18n/messages/{loc}/legal.json").read_text(encoding="utf-8"))["terms"]
+        assert terms["updated"].split()[1] == "2" and "2026" in terms["updated"], loc
+        text = json.dumps(terms, ensure_ascii=False)
+        assert "{pExtraMinute}" in text and "{pMinute}" in text and "300" in text, loc
+        assert "pCall" not in text and "pTermsV1Call" not in text, loc
+    da = json.dumps(json.loads((ROOT / "web/src/i18n/messages/da/legal.json").read_text(encoding="utf-8"))["terms"],
+                    ensure_ascii=False)
+    assert "Version 2 · gældende fra 10. november 2026." in da and "ingen pris pr. opkald" in da
+    assert "fælles pulje til både indgående opkald og udgående kampagneopkald" in da and "klager over et bestemt opkald" in da
 
 
 def _da_render(text: str) -> str:

@@ -16,7 +16,6 @@ type PriceTable = {
   currencies: Currency[];
   localeCurrency: Record<string, Currency>;
   includedMinutes: number;
-  termsV1Call: Record<Currency, number>;
   privatTrialDays: number;
   erhverv: Record<Currency, Record<ErhvervItem, number>>;
   privat: Record<Currency, Record<PrivatPlanKey, PrivatPrice>>;
@@ -141,7 +140,7 @@ export function market(locale: Locale | string) {
  *  …Num = the amount without currency (for big figures with the unit beside); pCur = the currency sign. */
 export const PRICE_TOKENS = [
   "pMonthly", "pMinute", "pExtraMinute", "pSetup",
-  "pMonthlyNum", "pMinuteNum", "pSetupNum", "pTermsV1Call",
+  "pMonthlyNum", "pMinuteNum", "pSetupNum",
   "pIncluded", "pCur",
   "pBasis", "pPlus", "pFamilie", "pBasisYear", "pPlusYear", "pFamilieYear",
   "pBasisYearTotal", "pPlusYearTotal", "pFamilieYearTotal",
@@ -165,7 +164,6 @@ export function priceVars(locale: Locale | string): Record<PriceToken, string | 
     // pMinute = outbound minute above the package, pExtraMinute = inbound minute above it
     pMonthly: f(e.monthly), pMinute: f(e.outbound_extra_minute), pExtraMinute: f(e.extra_minute), pSetup: f(e.setup),
     pMonthlyNum: n(e.monthly), pMinuteNum: n(e.outbound_extra_minute), pSetupNum: n(e.setup),
-    pTermsV1Call: f(P.termsV1Call[c]),  // only the published terms v1 (legal.json) – no longer charged
     pIncluded: INCLUDED_MINUTES, pCur: currencySymbol(c, locale),
     pBasis: f(pv.basis.monthly), pPlus: f(pv.plus.monthly), pFamilie: f(pv.familie.monthly),
     pBasisYear: f(pv.basis.yearly_monthly), pPlusYear: f(pv.plus.yearly_monthly), pFamilieYear: f(pv.familie.yearly_monthly),

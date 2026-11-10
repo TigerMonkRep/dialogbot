@@ -63,9 +63,6 @@ ERHVERV: dict[Currency, dict[str, int]] = {
     "EUR": {"monthly": 32_900, "extra_minute": 20, "outbound_extra_minute": 27, "setup": 66_900},
 }
 INBOUND_INCLUDED_MINUTES = prices.INBOUND_INCLUDED_MINUTES
-# The per-call fee as written in the published terms, version 1 (legal.json renders it with {pTermsV1Call}). It is no
-# longer charged (decision 2026-11-10); a new terms version is Fürster's decision, so the v1 text stays as published.
-TERMS_V1_CALL: dict[Currency, int] = {"DKK": 400, "SEK": 590, "NOK": 630, "EUR": 55}
 INCLUDED_MINUTES = prices.INCLUDED_MINUTES
 
 # --------------------------------------------------------------------------- Privat (INCL. VAT, minor units)
@@ -198,7 +195,6 @@ def export() -> dict:
         "currencies": list(CURRENCIES),
         "localeCurrency": LOCALE_CURRENCY,
         "includedMinutes": INCLUDED_MINUTES,  # the package: inbound and outbound minutes together
-        "termsV1Call": TERMS_V1_CALL,
         "privatTrialDays": prices.PRIVAT_TRIAL_DAYS,
         "erhverv": ERHVERV,
         "privat": PRIVAT,

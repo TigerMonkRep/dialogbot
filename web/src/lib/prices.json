@@ -17,12 +17,6 @@
     "it": "EUR"
   },
   "includedMinutes": 300,
-  "termsV1Call": {
-    "DKK": 400,
-    "SEK": 590,
-    "NOK": 630,
-    "EUR": 55
-  },
   "privatTrialDays": 14,
   "erhverv": {
     "DKK": {

@@ -303,5 +303,6 @@ def test_c13_results_follow_up_lead_and_completion(api, two_workspaces, db, monk
                     {"csv": "Ole;21222324", "kind": "business", "consent_source": CONSENT}).status_code == 409
     assert api.post(tok, f"/workspaces/{ws}/campaigns/{c['id']}/start",
                     {"expected_version": out["version"], "legal_confirmed": True, "accept_max_net_minor": 10**9}).status_code == 409
+    db.expire_all()  # the test's own session still holds the contact as dispatch() left it («calling»); read the committed row
     assert db.get(Campaign, uuid.UUID(c["id"])).status == "completed"
     assert db.query(CampaignContact).filter_by(campaign_id=uuid.UUID(c["id"])).one().status == "done"

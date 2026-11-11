@@ -1,6 +1,6 @@
 import "server-only";
 import { cookies, headers as requestHeaders } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { API_BASE_URL, PROTECTED_PATH_HEADER, SESSION_COOKIE, WORKSPACE_COOKIE } from "./config";
 import { safeNext } from "./safe-next";
 
@@ -19,6 +19,18 @@ export async function backend<T>(path: string, init: RequestInit = {}): Promise<
   if (r.status === 401) await expiredSession();
   if (!r.ok) throw Object.assign(new Error(body.message ?? "Fejl"), { ...body, status: r.status }) as ApiError;
   return body as T;
+}
+
+/** A detail page whose id the backend does not know (404) or cannot parse (422, e.g. a path segment that is not a
+ *  UUID) shows «findes ikke» with status 404 – not the error boundary with a 500. */
+export async function orNotFound<T>(call: Promise<T>): Promise<T> {
+  try {
+    return await call;
+  } catch (e) {
+    const status = (e as Partial<ApiError>).status;
+    if (status === 404 || status === 422) notFound();
+    throw e;
+  }
 }
 
 export async function currentWorkspaceId(): Promise<string | null> {

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { backend } from "@/lib/api.server";
+import { backend, orNotFound } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { Icon } from "@/components/ui";
 import { callbackWindow, sourceLabel, type Lead, when } from "../format";
@@ -16,7 +16,7 @@ export default async function LeadPage({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const canApprove = ws.role === "owner" || ws.role === "admin";
   const [lead, agreement] = await Promise.all([
-    backend<Lead>(`/workspaces/${ws.id}/leads/${encodeURIComponent(id)}`),
+    orNotFound(backend<Lead>(`/workspaces/${ws.id}/leads/${encodeURIComponent(id)}`)),
     canApprove ? backend<Agreement>(`/workspaces/${ws.id}/agreement`) : Promise.resolve({ current: null } as Agreement),
   ]);
   return (

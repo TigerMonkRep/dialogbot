@@ -68,16 +68,27 @@ test("I01–I05 · Opkald: listen, søgning, filter, detalje, henvendelse og opg
 });
 
 test("I03 · «I dag»-flisen «Henvendelser» og ukendte id'er giver ikke en serverfejl", async ({ page }, info) => {
-  test.fail(true, "F-V2-04-I03: S2 new – Flisen «Henvendelser» på I dag linker til `/app/opkald/henvendelser`, som giver HTTP 500 med en …");
+  // F-V2-04-I03 (fixed): /app/opkald/henvendelser and /app/opkald/opgaver have their own page («Til dig»), so they no
+  // longer fall through to /app/opkald/[id]; an id the backend rejects (404/422) is a 404 page, not a 500.
   await freshOwner(page, info);
   // the tile on I dag links here (web/src/app/app/(admin)/page.tsx: href="/app/opkald/henvendelser")
-  const list = await page.goto("/app/opkald/henvendelser");
+  await page.goto("/app");
+  await page.locator('a[href="/app/opkald/henvendelser"]').first().click();
+  await expect(page).toHaveURL(/\/app\/opkald\?f=to_you$/);
+  await expect(page.getByText("Siden kunne ikke vises")).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await page.screenshot({ path: `${EVID}/I03/${info.project.name}-henvendelser-liste.png`, fullPage: true });
-  expect(list!.status(), "the «Henvendelser» tile on I dag leads to a server error").toBeLessThan(500);
+  for (const p of ["/app/opkald/henvendelser", "/app/opkald/opgaver"]) {
+    const list = await page.goto(p);
+    expect(list!.status(), `${p} (I dag tile / assistant chip) leads to a server error`).toBeLessThan(400);
+    await expect(page).toHaveURL(/\/app\/opkald\?f=to_you$/);
+  }
   const unknown = await page.goto("/app/opkald/00000000-0000-4000-8000-000000000000");
   expect(unknown!.status(), "an unknown/foreign conversation id must be 404, not 500").toBe(404);
   const unknownLead = await page.goto("/app/opkald/henvendelser/00000000-0000-4000-8000-000000000000");
   expect(unknownLead!.status(), "an unknown/foreign enquiry id must be 404, not 500").toBe(404);
+  const notUuid = await page.goto("/app/opkald/henvendelser/ikke-et-id");
+  expect(notUuid!.status(), "a malformed enquiry id must be 404, not 500").toBe(404);
 });
 
 test("R04–R07 · gamle receptionsadresser fra kravene ender ikke på en 404", async ({ page }, info) => {

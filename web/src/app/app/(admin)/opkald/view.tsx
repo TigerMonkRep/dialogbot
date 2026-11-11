@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { backend } from "@/lib/api.server";
+import { backend, orNotFound } from "@/lib/api.server";
 import { requireWorkspace } from "@/lib/workspace.server";
 import { PushAsk } from "@/components/push-ask";
 import { Icon } from "@/components/ui";
@@ -44,10 +44,10 @@ export async function OpkaldView({ selected, f = "all", q = "", days = 30 }: { s
   if (ws.role === "reader") return <p className="rounded-2xl border-2 border-ink bg-paper p-6 text-[15px] text-ink-soft">{t("calls.staffOnly")}</p>;
   const feed = await backend<Feed>(`/workspaces/${ws.id}/conversations/feed?f=${encodeURIComponent(f)}&q=${encodeURIComponent(q)}&days=${days}`);
   const activeId = selected ?? feed.items[0]?.id;
-  const [item, detail] = activeId ? await Promise.all([
+  const [item, detail] = activeId ? await orNotFound(Promise.all([
     feed.items.find((i) => i.id === activeId) ? Promise.resolve(feed.items.find((i) => i.id === activeId)!) : backend<Item>(`/workspaces/${ws.id}/conversations/${encodeURIComponent(activeId)}/summary`),
     backend<Detail>(`/workspaces/${ws.id}/conversations/${encodeURIComponent(activeId)}`),
-  ]) : [null, null];
+  ])) : [null, null];
   const href = (id?: string, over: Record<string, string | number | undefined> = {}) => {
     const p = new URLSearchParams();
     const v = { f, q, days: String(days), ...over };

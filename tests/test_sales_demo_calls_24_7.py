@@ -127,6 +127,6 @@ def test_a_queued_call_the_worker_missed_is_dropped_not_rung_late(client, sales,
 
     sales["clock"][0] = WED_2130
     assert _web(client, consent_version=service.CONSENT_VERSION_WEB_LATER).json()["status"] == "scheduled"
-    sales["clock"][0] = THU_0800 + timedelta(hours=13)  # the worker was down all day
+    sales["clock"][0] = THU_0800 + timedelta(days=1)  # the worker was down all day; next in-hours tick (Fri 08:00)
     assert service.place_due(db) == 0 and sales["calls"] == []
     assert db.query(DemoCall).one().status == "skipped"

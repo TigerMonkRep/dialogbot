@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { unlock } from "../qa/erhverv-p1a/p1a-helpers";
 
 /** QA journey audit, Dialogbot Privat (F-JP-*): the Privat person followed through auth pages, links and error pages.
  *  Real stack (BASE_URL=http://localhost:3500, API on :8500, ENABLE_DEV_TOOLS=true). 390 px first, then 1280 px.
@@ -11,6 +12,8 @@ const audienceOf = (page: Page) => page.locator("[data-audience]").first().getAt
 for (const width of [390, 1280]) {
   test.describe(`Privat-rejsen @${width}px`, () => {
     test.use({ viewport: { width, height: width === 390 ? 844 : 900 } });
+    // /signup sits behind the preview gate (PREVIEW_GATE=on in CI); unlock like a visitor with a code would
+    test.beforeEach(async ({ page }) => { await unlock(page); });
 
     test("#179: /verify-email?for=privat er orange og fører til /privat/konto", async ({ page }) => {
       await page.goto("/verify-email?for=privat");
@@ -25,7 +28,7 @@ for (const width of [390, 1280]) {
     test("F-JP-04: «Opret konto» fra et gruppelink har ingen Erhverv-produktvalg", async ({ page }) => {
       await page.goto(`/signup?next=${encodeURIComponent("/g/ABCDEFGH")}`);
       expect(await audienceOf(page)).toBe("privat");
-      await expect(page.getByRole("combobox")).toHaveCount(0);
+      await expect(page.locator("select:has(option[value=reception])")).toHaveCount(0);  // the Erhverv product choice (the header's language picker is a combobox too)
     });
 
     test("F-JP-10: «Bekræft din e-mail» fra Privat-appen viser ikke «arbejdsrummet»/«virksomheder»", async ({ page }) => {
@@ -45,14 +48,14 @@ for (const width of [390, 1280]) {
       const r = await page.goto("/privat/findes-ikke");
       expect(r?.status()).toBe(404);
       await expect(page.locator("[data-theme=privat]")).toHaveCount(1);
-      await expect(page.getByRole("link", { name: /Dialogbot|forside|Min dag/i })).toBeVisible();
+      await expect(page.getByRole("link", { name: /Til Min dag|Til forsiden/i }).first()).toBeVisible();  // the 404 has both ways back
     });
 
     test("F-JP-05: invitation → «Opret gratis konto» er orange, uden prøveperiode og uden produktvalg", async ({ page }) => {
       await page.goto(`/signup?next=${encodeURIComponent("/privat/invitation/ABCDEFGH?accept=1")}`);
       expect(await audienceOf(page)).toBe("privat");
       await expect(page.locator("body")).not.toContainText(/prøveperiode|14 dage|Plus/i);
-      await expect(page.getByRole("combobox")).toHaveCount(0);
+      await expect(page.locator("select:has(option[value=reception])")).toHaveCount(0);  // the Erhverv product choice (the header's language picker is a combobox too)
     });
 
     test("/privat/offline er Privat-temaet", async ({ page }) => {

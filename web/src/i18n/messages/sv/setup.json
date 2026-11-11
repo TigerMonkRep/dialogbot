@@ -104,7 +104,11 @@
       "theSite": "sidan",
       "approveAll": "Godkänn alla {n}",
       "fixYellow": "Rätta det gula",
-      "allApproved": "Allt är godkänt och används nu av Dialogbot."
+      "allApproved": "Allt är godkänt och används nu av Dialogbot.",
+      "siteLabel": "Webbplats",
+      "fileLabel": "Ladda upp fil",
+      "textLabel": "Klistra in text",
+      "docsReview": "{n} förslag från filer och text · godkänn eller rätta"
     },
     "b": {
       "title": "Om er",
@@ -126,7 +130,12 @@
       "address": "Adress",
       "postalCode": "Postnummer",
       "city": "Ort",
-      "cvrLooked": "Uppslaget: {note}"
+      "cvrLooked": "Uppslaget: {note}",
+      "categories": "Branscher (en eller flera)",
+      "categoryAdd": "Lägg till en bransch",
+      "categoryPlaceholder": "T.ex. Golvslipning",
+      "categoryAddButton": "Lägg till",
+      "categoryRemove": "Ta bort {label}"
     },
     "c": {
       "title": "Vad ska den göra åt er?",

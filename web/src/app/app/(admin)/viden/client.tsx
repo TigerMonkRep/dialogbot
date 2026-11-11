@@ -6,6 +6,7 @@ import { ErrorBox, Icon, inputCls, useSubmit } from "@/components/ui";
 import type { Item, Profile, SourceImport, Version } from "./types";
 import { DAYS, UNITS, kindLabel, parsePrice, summarize, unitLabel, type Fmt } from "./format";
 import { useLocale, useRaw, useT } from "@/i18n/client";
+import { FileDrop, ImportStatus, NoteLine, PasteText, ReviewGroups, useImport, type Import } from "@/components/knowledge-import";
 import { HTML_LANG } from "@/i18n/config";
 
 type Content = Record<string, unknown>;
@@ -310,6 +311,7 @@ export function DraftCard({ wsId, item, canApprove, canDraft, note }: { wsId: st
     <div className="flex flex-col gap-3 rounded-xl border-2 border-dashed border-ink p-4">
       <span className="eyebrow">{note ?? t("knowledge.draft.suggests")} · {kindLabel(t, item.kind)}</span>
       <p className="text-[16px] font-semibold text-ink">{item.kind === "known_answer" ? `«${next.headline}»` : v.title}</p>
+      {v.source_type === "extraction" && <NoteLine note={v.review_note} sourceRef={v.source_ref} />}
       {was && <p className="text-[14px] text-ink-soft"><b className="text-ink">{t("knowledge.draft.now")}</b> {was.headline}{was.detail ? ` – ${was.detail}` : ""}</p>}
       <p className="text-[14px] text-ink-soft">{was && <b className="text-ink">{t("knowledge.draft.proposal")} </b>}{item.kind === "known_answer" ? next.detail : `${next.headline}${next.detail ? ` – ${next.detail}` : ""}`}</p>
       <div className="flex flex-wrap items-center gap-2.5">
@@ -333,42 +335,48 @@ export function More({ children, count, label }: { children: React.ReactNode; co
   return <>{open && children}<button type="button" aria-expanded={open} className="self-start min-h-[44px] text-[14px] font-semibold text-accent hover:underline" onClick={() => setOpen(!open)}>{open ? t("knowledge.showFewer") : label}</button></>;
 }
 
-/** «Hent fra hjemmesiden»: the backend reads the site and creates drafts; they show up in the boxes as «Dialogbot foreslår». */
-export function ImportFromSite({ wsId, defaultUrl, initial, aiReady, openByDefault }: { wsId: string; defaultUrl: string; initial: SourceImport | null; aiReady: boolean; openByDefault: boolean }) {
+/** Three ways in, side by side: «Hent fra hjemmesiden», «Upload fil» (drag and drop) and «Indsæt tekst». Every way creates
+ *  drafts (grouped in «Forslag til gennemgang»); nothing is live before approval. One import runs at a time. */
+export function Sources({ wsId, defaultUrl, initial, aiReady, openWith }: { wsId: string; defaultUrl: string; initial: SourceImport | null; aiReady: boolean; openWith: "site" | "file" | "text" | null }) {
   const router = useRouter();
   const tr = useT("app");
-  const [open, setOpen] = useState(openByDefault);
+  const [open, setOpen] = useState<"site" | "file" | "text" | null>(openWith);
   const [url, setUrl] = useState(defaultUrl);
-  const [imp, setImp] = useState<SourceImport | null>(initial);
+  const [imp, setImp] = useImport(wsId, initial as Import | null, () => router.refresh());
   const running = imp?.status === "running";
-  const start = useSubmit(async () => { setImp(await api<SourceImport>(`/workspaces/${wsId}/knowledge/import`, { method: "POST", body: JSON.stringify({ url }) })); return true; });
-  useEffect(() => {
-    if (!running) return;
-    const t = setInterval(async () => {
-      const r = await api<{ import: SourceImport | null }>(`/workspaces/${wsId}/knowledge/imports/latest`).catch(() => null);
-      if (r?.import && r.import.status !== "running") { setImp(r.import); router.refresh(); }
-    }, 3000);
-    return () => clearInterval(t);
-  }, [running, wsId, router]);
+  const start = useSubmit(async () => { setImp(await api<Import>(`/workspaces/${wsId}/knowledge/import`, { method: "POST", body: JSON.stringify({ url }) })); return true; });
+  const tab = (k: "site" | "file" | "text", icon: string, label: string) => (
+    <button type="button" className={`${BTN} gap-1.5 ${open === k ? "bg-ink text-paper hover:bg-ink" : ""}`} aria-expanded={open === k} aria-controls={`src-${k}`} onClick={() => setOpen(open === k ? null : k)}><Icon name={icon} size={18} />{label}</button>
+  );
   return (
-    <div className="flex flex-col gap-3">
-      <button type="button" className={BTN} aria-expanded={open} onClick={() => setOpen(!open)}><Icon name="download" size={18} />&nbsp;{tr("knowledge.import.button")}</button>
+    <div className="flex flex-col gap-3 w-full md:w-auto md:max-w-[640px]">
+      <div className="grid grid-cols-1 min-[420px]:grid-cols-3 gap-2" role="group" aria-label={tr("knowledge.sources.title")}>
+        {tab("site", "download", tr("knowledge.import.button"))}
+        {tab("file", "upload_file", tr("knowledge.sources.file"))}
+        {tab("text", "notes", tr("knowledge.sources.text"))}
+      </div>
       {open && (
-        <div className="flex flex-col gap-3 rounded-2xl border-2 border-ink bg-paper p-4 max-w-[640px]">
-          <p className="text-[14px] text-ink-soft">{tr("knowledge.import.intro")}</p>
-          {!aiReady ? <p className="text-[14px] text-ink">{tr("knowledge.import.needsAi")}</p> : (
-            <form className="flex flex-col sm:flex-row gap-3" onSubmit={(e) => { e.preventDefault(); start.run(); }}>
-              <label htmlFor="imp-url" className="sr-only">{tr("knowledge.import.url")}</label>
-              <input id="imp-url" className={inputCls} placeholder={tr("knowledge.import.urlPlaceholder")} value={url} onChange={(e) => setUrl(e.target.value)} disabled={running} />
-              <button type="submit" className={`${BTN_PRIMARY} shrink-0`} disabled={start.pending || running || !url.trim()}>{running ? tr("knowledge.import.reading") : tr("knowledge.import.fetch")}</button>
-            </form>
-          )}
-          <ErrorBox error={start.error} />
-          {running && <p role="status" className="text-[14px] text-ink-soft">{tr("knowledge.import.running")}</p>}
-          {imp?.status === "failed" && <p role="alert" className="text-[14px] text-danger">{imp.error ?? tr("knowledge.import.failed")}</p>}
-          {imp?.status === "done" && <p role="status" className="text-[14px] text-ink">{imp.created_items.length === 0 ? tr("knowledge.import.noNew") : tr("knowledge.import.created", { n: imp.created_items.length })} · {tr("knowledge.import.pages", { n: imp.pages.length })}</p>}
+        <div id={`src-${open}`} className="flex flex-col gap-3 rounded-2xl border-2 border-ink bg-paper p-4">
+          {!aiReady ? <p className="text-[14px] text-ink">{tr("knowledge.import.needsAi")}</p> : open === "site" ? (
+            <>
+              <p className="text-[14px] text-ink-soft">{tr("knowledge.import.intro")}</p>
+              <form className="flex flex-col sm:flex-row gap-3" onSubmit={(e) => { e.preventDefault(); start.run(); }}>
+                <label htmlFor="imp-url" className="sr-only">{tr("knowledge.import.url")}</label>
+                <input id="imp-url" className={inputCls} placeholder={tr("knowledge.import.urlPlaceholder")} value={url} onChange={(e) => setUrl(e.target.value)} disabled={running} />
+                <button type="submit" className={`${BTN_PRIMARY} shrink-0`} disabled={start.pending || running || !url.trim()}>{running ? tr("knowledge.import.reading") : tr("knowledge.import.fetch")}</button>
+              </form>
+              <ErrorBox error={start.error} />
+            </>
+          ) : open === "file" ? <FileDrop wsId={wsId} disabled={running} onStarted={setImp} /> : <PasteText wsId={wsId} disabled={running} onStarted={setImp} />}
+          <ImportStatus imp={imp} />
         </div>
       )}
+      {!open && imp && imp.status !== "done" && <ImportStatus imp={imp} />}
     </div>
   );
+}
+
+/** «Forslag til gennemgang»: every imported suggestion (website, file, text), grouped per category, with inline editing. */
+export function ReviewQueue({ wsId, items, canApprove, canDraft }: { wsId: string; items: Item[]; canApprove: boolean; canDraft: boolean }) {
+  return <ReviewGroups wsId={wsId} items={items} canApprove={canApprove} card={(i) => <DraftCard wsId={wsId} item={i} canApprove={canApprove} canDraft={canDraft} />} />;
 }

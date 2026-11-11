@@ -198,6 +198,8 @@ class FakeProvider:
                               usage=Usage(input_tokens=len(out) // 4, output_tokens=12), request_id="fake-req")
         if system.startswith("WEBSITE_EXTRACTION"):
             return self._extract(question)
+        if system.startswith("DOCUMENT_EXTRACTION"):
+            return self._document(question)
         if system.startswith(("SALES_RESEARCH", "SALES_SIM_CUSTOMER", "SALES_ACCEPTS")):
             return self._sales(system, question, messages)
         if system.startswith("ASSISTANT_CHANGE"):
@@ -425,6 +427,74 @@ class FakeProvider:
                              "close": f"{int(h.group(2)):02d}:00"}], "note": None} if h else None
         out = json.dumps({"services": services, "facts": facts, "faq": [], "profile": profile, "opening_hours": hours},
                          ensure_ascii=False)
+        return Completion(text=out, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
+                          usage=Usage(input_tokens=len(text) // 4, output_tokens=len(out) // 4), request_id="fake-req")
+
+
+    def _document(self, text: str) -> Completion:
+        """Deterministic 'document extraction' (document-extract-v1), one line at a time:
+        «Navn: … kr …» → service (price quoted) · «Spørgsmål: …» + «Svar: …» → faq · «Åbningstider … hverdage 8-16» →
+        opening_hours · afbestilling/betaling/garanti/vilkår → policy · e-mail/telefon → contact · «Vi dækker: a, b» →
+        coverage_area · «N % rabat» → offer · «Vi må ikke …» → rule · other sentences ≥ 40 chars → fact.
+        A catalogue entry with the same title is pointed at (existing). «HALLUCINER» adds an item whose quote is not in
+        the text (the server must drop it)."""
+        import json
+        import re
+
+        cat = {}
+        m = re.search(r"<katalog>\n(.*?)\n</katalog>", text, re.S)
+        for ln in (m.group(1).split("\n") if m else []):
+            parts = ln.split(" · ", 2)
+            if len(parts) == 3:
+                cat[(parts[1], parts[2].split(":", 1)[0].strip().lower())] = parts[0]
+        items: list[dict] = []
+
+        def add(category: str, kind: str, title: str, line: str, ref: str, **extra):
+            items.append({"category": category, "title": title, "quote": line[:200], "source": ref,
+                          "existing": cat.get((kind, title.lower())), "conflict": None, **extra})
+
+        for ref, body in re.findall(r'<afsnit ref="([^"]*)">\n(.*?)\n</afsnit>', text, re.S):
+            lines = [ln.strip() for ln in body.split("\n") if ln.strip()]
+            for i, ln in enumerate(lines):
+                low = ln.lower().lstrip("#- ").strip()
+                price = re.search(r"\d[\d.]*(?:,\d+)?\s*kr\.?[^\n;]*", ln)
+                if low.startswith(("spørgsmål:", "q:")):
+                    ans = lines[i + 1] if i + 1 < len(lines) else ""
+                    if ans.lower().startswith(("svar:", "a:")):
+                        q = ln.split(":", 1)[1].strip()
+                        add("faq", "known_answer", q, ln, ref, question=q, text=ans.split(":", 1)[1].strip())
+                elif low.startswith(("svar:", "a:")):
+                    continue
+                elif "åbningstider" in low or re.search(r"hverdage \d{1,2}-\d{1,2}", low):
+                    h = re.search(r"(\d{1,2})-(\d{1,2})", ln)
+                    if h:
+                        add("opening_hours", "opening_hours", "Åbningstider", ln, ref,
+                            weekly=[{"days": ["mon", "tue", "wed", "thu", "fri"], "open": f"{int(h.group(1)):02d}:00",
+                                     "close": f"{int(h.group(2)):02d}:00"}], note=None)
+                elif re.search(r"(\d+)\s*%\s*rabat", low):
+                    pct = re.search(r"(\d+)\s*%", low).group(1)
+                    add("offer", "offer", ln.split(":", 1)[0][:60] if ":" in ln else "Rabat", ln, ref,
+                        discount_percent=int(pct), text=ln)
+                elif low.startswith("vi dækker") or low.startswith("område:"):
+                    zones = [z.strip(" .") for z in ln.split(":", 1)[-1].split(",") if z.strip(" .")]
+                    add("coverage_area", "coverage_area", "Område", ln, ref, zones=zones)
+                elif low.startswith(("vi må ikke", "giv aldrig", "lov aldrig")):
+                    add("rule", "unknown_answer", ln[:80], ln, ref, text=ln)
+                elif any(w in low for w in ("afbestil", "betaling", "garanti", "vilkår", "reklamation")):
+                    title = ln.split(":", 1)[0].lstrip("#- ").strip() if ":" in ln[:60] else "Vilkår"
+                    add("policy", "fact", title, ln, ref, text=ln.split(":", 1)[-1].strip() if ":" in ln[:60] else ln)
+                elif price and ":" in ln.split(price.group(0))[0]:
+                    title = ln.split(":", 1)[0].lstrip("#- ").strip()
+                    add("service", "service", title, ln, ref, text=ln.split(":", 1)[1].strip(),
+                        price_text=price.group(0).strip(" ."), unit="m2" if "m²" in ln or "m2" in ln else "job")
+                elif "@" in ln or low.startswith(("telefon", "tlf", "kontakt")):
+                    add("contact", "fact", "Kontakt", ln, ref, text=ln)
+                elif len(ln) >= 40 and not ln.startswith("#"):
+                    add("fact", "fact", ln.split(".")[0][:60], ln, ref, text=ln)
+            if "HALLUCINER" in body:
+                add("service", "service", "Opfundet ydelse", "Opfundet ydelse til 999 kr. pr. time", ref,
+                    text="Findes ikke i teksten", price_text="999 kr. pr. time", unit="hour")
+        out = json.dumps({"items": items}, ensure_ascii=False)
         return Completion(text=out, stop_reason="end_turn", requested_model=self.model, served_model=self.model,
                           usage=Usage(input_tokens=len(text) // 4, output_tokens=len(out) // 4), request_id="fake-req")
 

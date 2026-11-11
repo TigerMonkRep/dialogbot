@@ -377,6 +377,7 @@ def run(import_id: uuid.UUID, fetcher=None, pages: list[dict] | None = None) -> 
 def import_out(imp: SourceImport | None) -> dict | None:
     if imp is None:
         return None
-    return {"id": str(imp.id), "url": imp.url, "status": imp.status, "pages": imp.pages,
+    return {"id": str(imp.id), "url": imp.url, "source_type": imp.source_type or "website",
+            "source_name": imp.source_name, "summary": imp.summary or {}, "status": imp.status, "pages": imp.pages,
             "created_items": imp.created_items, "skipped": imp.skipped, "profile_suggestion": imp.profile_suggestion, "error": imp.error,
             "created_at": imp.created_at.isoformat(), "finished_at": imp.finished_at.isoformat() if imp.finished_at else None}

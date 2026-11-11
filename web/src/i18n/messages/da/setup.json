@@ -104,7 +104,11 @@
       "theSite": "siden",
       "approveAll": "Godkend alle {n}",
       "fixYellow": "Ret det gule",
-      "allApproved": "Alt er godkendt og bruges nu af Dialogbot."
+      "allApproved": "Alt er godkendt og bruges nu af Dialogbot.",
+      "siteLabel": "Hjemmeside",
+      "fileLabel": "Upload fil",
+      "textLabel": "Indsæt tekst",
+      "docsReview": "{n} forslag fra filer og tekst · godkend eller ret"
     },
     "b": {
       "title": "Om jer",
@@ -126,7 +130,12 @@
       "address": "Adresse",
       "postalCode": "Postnummer",
       "city": "By",
-      "cvrLooked": "Slået op: {note}"
+      "cvrLooked": "Slået op: {note}",
+      "categories": "Brancher (en eller flere)",
+      "categoryAdd": "Tilføj en branche",
+      "categoryPlaceholder": "Fx Gulvafslibning",
+      "categoryAddButton": "Tilføj",
+      "categoryRemove": "Fjern {label}"
     },
     "c": {
       "title": "Hvad skal den gøre for jer?",

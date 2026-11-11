@@ -104,7 +104,11 @@
       "theSite": "the site",
       "approveAll": "Approve all {n}",
       "fixYellow": "Fix the yellow ones",
-      "allApproved": "Everything is approved and now used by Dialogbot."
+      "allApproved": "Everything is approved and now used by Dialogbot.",
+      "siteLabel": "Website",
+      "fileLabel": "Upload file",
+      "textLabel": "Paste text",
+      "docsReview": "{n} suggestions from files and text · approve or edit"
     },
     "b": {
       "title": "About you",
@@ -126,7 +130,12 @@
       "address": "Address",
       "postalCode": "Postcode",
       "city": "City",
-      "cvrLooked": "Looked up: {note}"
+      "cvrLooked": "Looked up: {note}",
+      "categories": "Industries (one or more)",
+      "categoryAdd": "Add an industry",
+      "categoryPlaceholder": "E.g. Floor sanding",
+      "categoryAddButton": "Add",
+      "categoryRemove": "Remove {label}"
     },
     "c": {
       "title": "What should it do for you?",

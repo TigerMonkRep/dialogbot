@@ -104,7 +104,11 @@
       "theSite": "der Seite",
       "approveAll": "Alle {n} bestätigen",
       "fixYellow": "Gelbe Einträge korrigieren",
-      "allApproved": "Alles ist bestätigt und wird jetzt von Dialogbot verwendet."
+      "allApproved": "Alles ist bestätigt und wird jetzt von Dialogbot verwendet.",
+      "siteLabel": "Website",
+      "fileLabel": "Datei hochladen",
+      "textLabel": "Text einfügen",
+      "docsReview": "{n} Vorschläge aus Dateien und Text · freigeben oder ändern"
     },
     "b": {
       "title": "Über Sie",
@@ -126,7 +130,12 @@
       "address": "Adresse",
       "postalCode": "Postleitzahl",
       "city": "Ort",
-      "cvrLooked": "Nachgeschlagen: {note}"
+      "cvrLooked": "Nachgeschlagen: {note}",
+      "categories": "Branchen (eine oder mehrere)",
+      "categoryAdd": "Branche hinzufügen",
+      "categoryPlaceholder": "Z. B. Parkettschleifen",
+      "categoryAddButton": "Hinzufügen",
+      "categoryRemove": "{label} entfernen"
     },
     "c": {
       "title": "Was soll er für Sie tun?",

@@ -66,8 +66,12 @@ nettopriser (`markets.privat_extra_call`), afrundet half-up til hele øre ét st
 - **Opkaldssaldo** (`credit_ledger`, beløb i øre): optankning via Stripe Checkout (mode=payment) med 50, 100 eller 200 kr.
   inkl. moms (`POST /privat/balance/checkout`); webhooken lægger kun beløbet til, når det betalte dækker det. Velkomstbonus 10 kr.;
   henvisning 10 kr. til hver efter den henvistes første betalte periode (højst 10 pr. måned); ekstra opgave ud over grænsen 3 kr.
-  (eller et sponsorindslag). Gamle credits er konverteret med 1 credit = 2,90 kr. (migration `f3a8c6d2b5e9`). En booking på
-  virksomhedens hjemmeside (browser-worker) koster indtil videre den konverterede 2,90 kr. (ingen egen pris besluttet).
+  (eller et sponsorindslag). Gamle credits er konverteret med 1 credit = 2,90 kr. (migration `f3a8c6d2b5e9`).
+- **Booking på virksomhedens hjemmeside** (browser-worker) er med i alle planer: den tæller som en almindelig opgave og trækker
+  intet fra Opkaldssaldoen (beslutning 2026-11-11, F-PDEC-02). Uden plan er den ikke mulig – som «Ring for mig»: 409 `needs_plan`
+  med CTA «Kræver en plan» → `/privat/konto`. Fair use: et skjult loft pr. kalendermåned (Europe/Copenhagen) pr. workspace
+  (`prices.PRIVAT_BROWSER_BOOKINGS_PER_MONTH`); ved loftet en venlig 429 `browser_booking_limit` «Du har brugt månedens
+  hjemmesidebookinger – prøv igen næste måned». Loftet vises aldrig som en pris og eksporteres ikke til prices.json.
   Stripe: inline `price_data` (tax_behavior inclusive) eller faste price-id'er via `PRIVAT_STRIPE_PRICE_<PLAN>_<INTERVAL>`.
 
 ## Rabatkoder (operatører laver dem under Admin → Rabatkoder)

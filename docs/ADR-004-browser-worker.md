@@ -86,10 +86,10 @@ Modellen siger kun, **hvad brugeren vil** (virksomhed, ydelse, tidsvinduer og ku
 sporet** (`app/modules/browser/routing.py`), i denne rækkefølge: (1) brugeren sagde «ring» → telefon, «skriv» → browser, hvis det kan lade sig gøre
 (ellers telefon, og vi siger hvorfor), uden spørgsmål; (2) ønsket er ikke «book» (flyt/aflys er ikke automatiseret i v1) → telefon; (3) hjemmeside
 fundet, motor kendt og tilladt, bookingadresse findes, og brugeren har navn og bekræftet mobil på profilen → browser (kræver også, at workeren er
-slået til, og at bookingprisen er på Opkaldssaldoen); (4) ellers telefon. Assistenten **siger altid, hvilket spor** den tager («Jeg prøver at booke online hos X – du får et
+slået til); (4) ellers telefon. Assistenten **siger altid, hvilket spor** den tager («Jeg prøver at booke online hos X – du får et
 forslag at godkende» / «Jeg ringer til X i åbningstiden, når du har godkendt opkaldet»). Enhver fejl i browsersporet giver et færdigt opkaldsforslag
 uden et ekstra «skal jeg ringe?», men opkaldet kræver stadig brugerens almindelige godkendelse, fordi et opkald er en handling med omkostning. «Ring i
-stedet» stopper en kørsel, der endnu ikke har trykket bekræft, og frigiver reservationen; efter bekræft-klikket kan den ikke fortrydes (`browser_run_confirming`).
+stedet» stopper en kørsel, der endnu ikke har trykket bekræft; efter bekræft-klikket kan den ikke fortrydes (`browser_run_confirming`).
 
 **Hvad en kørsel aldrig må:** starte uden en konkret booking (ydelse + mindst én dateret tidsramme; ellers spørger assistenten), og udfylde andet end brugerens
 eget navn og bekræftede mobilnummer (aldrig e-mailadressen).
@@ -99,9 +99,11 @@ eget navn og bekræftede mobilnummer (aldrig e-mailadressen).
 springes hjemmeside-opslaget over, og sporet bliver telefonen. Resultatet gemmes i `external_business_contacts`, så det samme opslag ikke betales to gange; Googles
 indhold (hjemmeside, åbningstider) droppes efter `GOOGLE_PLACES_CACHE_DAYS`, kun `place_id` bliver. Opslag i CVR på navn er **ikke eksternt verificeret**.
 
-**Pris:** en browser-booking koster 2,90 kr. fra Opkaldssaldoen (`BROWSER_BOOKING_MINOR` = den tidligere ene credit omregnet med 2,90 kr.; F-PDEC-01 – egen pris er ikke besluttet). Reserveres ved start, bruges når kørslen ender i en
-booking (eller i et klik, der kan have booket), frigives ellers. Prisen er den samme for alle, også med en plan; det er ikke afgjort, om en plans
-opkaldskvote skal gælde for browser-bookinger.
+**Pris:** en booking på hjemmesiden er med i alle planer (beslutning Fürster 2026-11-11, F-PDEC-02): den tæller som en almindelig opgave og
+trækker intet fra Opkaldssaldoen. Uden plan (eller prøveperiode) er den ikke mulig: 409 `needs_plan` med CTA «Kræver en plan» → `/privat/konto`,
+præcis som «Ring for mig». Fair use: et skjult loft pr. kalendermåned (Europe/Copenhagen) pr. workspace (`prices.PRIVAT_BROWSER_BOOKINGS_PER_MONTH`,
+talt på startede kørsler); derefter 429 `browser_booking_limit` med en venlig tekst – aldrig som en pris. Kørsler startet før beslutningen havde
+reserveret den omregnede credit; den reservation frigives, når kørslen slutter.
 
 ## Juridisk forbehold
 

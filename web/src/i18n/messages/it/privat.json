@@ -322,7 +322,9 @@
     "label": "Prenotazione sul sito · in attesa del tuo sì",
     "before": "Ora",
     "after": "Proposta",
-    "note": "Non viene prenotato nulla finché non approvi."
+    "note": "Non viene prenotato nulla finché non approvi.",
+    "needsPlanText": "Le prenotazioni sui siti sono incluse in tutti i piani. Senza piano non si può prenotare, nemmeno con il saldo chiamate.",
+    "limit": "Hai già usato le prenotazioni sul sito di questo mese – riprova il mese prossimo"
   },
   "call": {
     "proposal": "Proposta · attende il tuo sì",

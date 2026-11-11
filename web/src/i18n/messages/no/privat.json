@@ -322,7 +322,9 @@
     "label": "Bestilling på nettsiden · venter på ja fra deg",
     "before": "Nå",
     "after": "Forslag",
-    "note": "Ingenting bestilles før du godkjenner."
+    "note": "Ingenting bestilles før du godkjenner.",
+    "needsPlanText": "Bestilling på nettsider er med i alle planer. Uten plan kan det ikke bestilles – heller ikke med samtalesaldoen.",
+    "limit": "Du har brukt månedens bestillinger på nettsider – prøv igjen neste måned"
   },
   "call": {
     "proposal": "Forslag · venter på ditt ja",

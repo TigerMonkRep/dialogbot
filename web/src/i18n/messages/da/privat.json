@@ -322,7 +322,9 @@
     "label": "Booking på hjemmesiden · afventer dit ja",
     "before": "Nu",
     "after": "Forslag",
-    "note": "Intet er booket, før du godkender."
+    "note": "Intet er booket, før du godkender.",
+    "needsPlanText": "Booking på hjemmesider er med i alle planer. Uden en plan kan der ikke bookes – heller ikke med opkaldssaldoen.",
+    "limit": "Du har brugt månedens hjemmesidebookinger – prøv igen næste måned"
   },
   "call": {
     "proposal": "Forslag · afventer dit ja",

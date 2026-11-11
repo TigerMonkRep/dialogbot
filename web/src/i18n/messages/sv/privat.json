@@ -322,7 +322,9 @@
     "label": "Bokning på webbplatsen · väntar på ditt ja",
     "before": "Nu",
     "after": "Förslag",
-    "note": "Inget bokas förrän du godkänner."
+    "note": "Inget bokas förrän du godkänner.",
+    "needsPlanText": "Bokning på webbplatser ingår i alla planer. Utan plan kan inget bokas – inte heller med samtalssaldot.",
+    "limit": "Du har använt månadens bokningar på webbplatser – försök igen nästa månad"
   },
   "call": {
     "proposal": "Förslag · väntar på ditt ja",

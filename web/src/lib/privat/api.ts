@@ -594,6 +594,9 @@ export function isUnavailable(e: unknown): boolean {
 /** Clarify option ids the web handles itself: ask for the location (geolocation only after a tap, or a typed city/postcode),
  *  then the same message is sent again. Business results use ids "place:<place_id>" (demo results "place:demo-…"). */
 export const LOCATION_OPTION = { geo: "location:geo", city: "location:city" } as const;
+/** Markers on an assistant `text` message when the API stopped a website booking (F-PDEC-02): no plan (CTA «Kræver en
+ *  plan» → /privat/konto) or the month's fair-use cap (friendly text, no number, no price). Never answered. */
+export const NOTICE = { needsPlan: "cta:needs_plan", limit: "notice:browser_booking_limit" } as const;
 export const isPlaceOption = (id: string) => id.startsWith("place:");
 export const isDemoPlace = (id: string) => id.startsWith("place:demo");
 

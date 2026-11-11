@@ -322,7 +322,9 @@
     "label": "Booking on the website · waiting for your yes",
     "before": "Now",
     "after": "Proposal",
-    "note": "Nothing is booked until you approve."
+    "note": "Nothing is booked until you approve.",
+    "needsPlanText": "Website bookings are included in every plan. Without a plan nothing can be booked – not even with your call balance.",
+    "limit": "You've used this month's website bookings – try again next month"
   },
   "call": {
     "proposal": "Proposal · waiting for your yes",

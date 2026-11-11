@@ -322,7 +322,9 @@
     "label": "Réservation sur le site · en attente de votre accord",
     "before": "Actuellement",
     "after": "Proposition",
-    "note": "Rien n'est réservé tant que vous n'avez pas approuvé."
+    "note": "Rien n'est réservé tant que vous n'avez pas approuvé.",
+    "needsPlanText": "Les réservations sur les sites sont incluses dans toutes les formules. Sans formule, aucune réservation n'est possible – pas même avec le solde d'appels.",
+    "limit": "Vous avez utilisé les réservations en ligne de ce mois – réessayez le mois prochain"
   },
   "call": {
     "proposal": "Proposition · attend votre oui",

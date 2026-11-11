@@ -671,7 +671,7 @@ def answer_option(db: OrmSession, ctx, message_id: uuid.UUID, option_id: str) ->
     if m is None or not m.options:
         raise NotFound("Beskeden findes ikke")
     opt = next((o for o in m.options if o.get("id") == option_id), None)
-    if opt is None:
+    if opt is None or opt.get("action") == "notice":  # a marker for the app (F-PDEC-02), not an answer
         raise NotFound("Valget findes ikke")
     if m.answered_option_id:
         return []  # answered before: a repeated tap changes nothing

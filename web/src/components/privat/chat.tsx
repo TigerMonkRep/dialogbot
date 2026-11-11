@@ -1,10 +1,11 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { Button, ErrorBox } from "@/components/ui";
 import { useT } from "@/i18n/client";
-import { LOCATION_OPTION, isDemoPlace, isPlaceOption, type ChatMessage, type Task } from "@/lib/privat/api";
+import { LOCATION_OPTION, NOTICE, isDemoPlace, isPlaceOption, type ChatMessage, type Task } from "@/lib/privat/api";
 import { useState } from "react";
-import { CHIP, ROW, SR, StatusBadge } from "./bits";
+import { BIG, CHIP, ROW, SR, StatusBadge } from "./bits";
 import { AddonCard, BrowserApprovalCard, CallCard, DraftCard, ListCard, MoveCard, ReminderCard, ShareProposalCard } from "./cards";
 import { Composer, Shortcuts } from "./day";
 import { Ico } from "./icons";
@@ -66,6 +67,18 @@ function Message({ m, latestCard, open, prevUser }: { m: ChatMessage; latestCard
     if (m.kind === "share_proposal") return <ShareProposalCard task={tk} text={m.text} groupId={m.options?.[0]?.id} />;
     return <TaskCardFor task={tk} />;
   }
+  // A booking on a website stopped by the API (F-PDEC-02): no plan → «Kræver en plan» → Konto, like «Ring for mig»;
+  // the month's fair-use cap → the friendly text in the user's language. Markers, never answers (no pick).
+  const notice = m.kind === "text" ? (m.options ?? []).find((o) => o.id === NOTICE.needsPlan || o.id === NOTICE.limit) : undefined;
+  if (notice?.id === NOTICE.needsPlan) {
+    return (
+      <div className="self-start max-w-[90%] flex flex-col gap-2" data-testid="browser-needs-plan">
+        <div className={BOT.replace("max-w-[90%] ", "")}>{t("browser.needsPlanText")}</div>
+        <Link href="/privat/konto" className={`self-start inline-flex items-center justify-center rounded-xl font-semibold ${BIG} bg-accent text-white hover:bg-accent-deep`}>{t("call.needsPlan")}</Link>
+      </div>
+    );
+  }
+  if (notice?.id === NOTICE.limit) return <div className={BOT} data-testid="browser-limit">{t("browser.limit")}</div>;
   switch (m.kind) {
     case "move": return <MoveCard task={tk} before={m.before ?? ""} after={m.after ?? ""} />;
     case "addon": return <AddonCard addonKey={m.addon_key ?? ""} retryText={prevUser} />;

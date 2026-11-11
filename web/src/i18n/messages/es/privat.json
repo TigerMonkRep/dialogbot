@@ -322,7 +322,9 @@
     "label": "Reserva en el sitio web · esperando tu sí",
     "before": "Ahora",
     "after": "Propuesta",
-    "note": "No se reserva nada hasta que lo apruebes."
+    "note": "No se reserva nada hasta que lo apruebes.",
+    "needsPlanText": "Las reservas en sitios web van incluidas en todos los planes. Sin plan no se puede reservar, ni siquiera con el saldo de llamadas.",
+    "limit": "Ya has usado las reservas web de este mes – inténtalo de nuevo el mes que viene"
   },
   "call": {
     "proposal": "Propuesta · espera tu sí",

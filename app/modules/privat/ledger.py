@@ -7,7 +7,8 @@ Currency: the account's Privat currency (private_subscriptions.currency – kept
 The welcome bonus is granted in DKK before any Checkout; when the first Checkout gives the account another currency,
 `adopt_currency` moves the DKK balance over once (two 'convert' rows, markets.privat_from_dkk).
 
-Extra calls (calls.py) and website bookings (browser/service.py) reserve first and settle once:
+Extra calls (calls.py) reserve first and settle once (a website booking is included in the plan and moves nothing,
+F-PDEC-02; a run started before that releases its old reservation when it ends):
   reserve  −held                      (<what>:<id>:reserve)
   capture  +(held − price)            (<what>:<id>:capture)  the rest comes back, the price stays spent
   release  +held                      (<what>:<id>:release)  nothing was spent

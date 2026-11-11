@@ -432,12 +432,16 @@ BrowserRun = {id, task_id, engine, mode: "playbook"|"llm"|null,
 |---|---|
 | `find_business(name, city?)` | Slår virksomheden op (CVR + Google Places), gemmer opslaget. Svarer med `business_id` og fakta. Opfinder intet |
 | `start_booking(business_id, intent, service, preferred_windows[], user_said_track?)` | Vælger spor efter faste regler (se nedenfor), siger hvilket, og starter enten en browser-kørsel eller et opkaldsforslag |
-| `switch_to_phone(task_id?)` | «Ring i stedet»: stopper en kørsel, der ikke har trykket bekræft, frigiver reservationen og laver opkaldsforslaget |
+| `switch_to_phone(task_id?)` | «Ring i stedet»: stopper en kørsel, der ikke har trykket bekræft, og laver opkaldsforslaget |
 
 Sporregler, i rækkefølge (kode i `app/modules/browser/routing.py`; modellen vælger ikke): 1. brugeren sagde «ring» → telefon; «skriv» → browser, hvis det kan lade sig gøre,
 ellers telefon med forklaring; 2. ønsket er ikke `book` → telefon; 3. hjemmeside fundet + kendt og tilladt motor + bookingadresse + brugerens navn og bekræftede mobil på profilen
-(+ workeren slået til + bookingprisen på Opkaldssaldoen) → browser; 4. ellers telefon. Er ydelse eller tidsramme ikke konkret, spørger assistenten; der startes intet.
-En browser-booking koster **2,90 kr.** fra Opkaldssaldoen (1 tidligere credit omregnet; ingen egen pris besluttet) (reserveres, bruges ved booking, frigives ellers). Kørslen får kun brugerens eget navn og mobilnummer.
+(+ workeren slået til) → browser; 4. ellers telefon. Er ydelse eller tidsramme ikke konkret, spørger assistenten; der startes intet.
+En booking på hjemmesiden er **med i alle planer** (F-PDEC-02): den tæller som en almindelig opgave (`paid_by:"plan"`, `usage_text` «Med i Plus» / «Med i prøveperioden») og
+trækker intet fra Opkaldssaldoen. Uden plan: 409 `needs_plan` `extra {addon, plans, cta: {label:"Kræver en plan", href:"/privat/konto"}}` – som «Ring for mig»; saldoen betaler aldrig i stedet.
+Fair use: ved månedens loft (kalendermåned, Europe/Copenhagen, pr. workspace) 429 `browser_booking_limit` «Du har brugt månedens hjemmesidebookinger – prøv igen næste måned»
+(intet tal, ingen pris). I chatten bliver begge til en `text`-besked med én markør i `options` (`cta:needs_plan` med `sub` = `/privat/konto`, eller `notice:browser_booking_limit`),
+som appen viser som knap/oversat tekst; markøren kan ikke besvares (404). Kørslen får kun brugerens eget navn og mobilnummer.
 
 ## Kalender (tilføjelsen «Kalender»)
 

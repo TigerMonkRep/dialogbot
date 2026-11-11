@@ -64,10 +64,12 @@ PRIVAT_TOPUPS_GROSS_MINOR = (5_000, 10_000, 20_000)  # top-ups at Stripe Checkou
 PRIVAT_WELCOME_BONUS_MINOR = 1_000        # 10 kr. once, when the account is created
 PRIVAT_REFERRAL_BONUS_MINOR = 1_000       # 10 kr. to each, after the invitee's first paid period
 PRIVAT_EXTRA_TASK_MINOR = 300             # 3 kr. for a task beyond the month's limit (or a sponsor spot)
-# The old credits were converted at 1 credit = 2,90 kr. (29 kr. for 10). A website booking (browser worker) cost
-# 1 credit and has no price of its own yet, so it costs the converted 2,90 kr. until Fürster decides one.
+# The old credits were converted at 1 credit = 2,90 kr. (29 kr. for 10; migration f3a8c6d2b5e9).
 PRIVAT_CREDIT_VALUE_MINOR = 290
-PRIVAT_BROWSER_BOOKING_MINOR = PRIVAT_CREDIT_VALUE_MINOR
+# A booking on a business's website (browser worker) is included in every plan and costs nothing (decision Fürster
+# 2026-11-11, F-PDEC-02). Fair use: at most this many per calendar month (Europe/Copenhagen) per workspace. A hidden
+# cap – never shown as a price, never exported to prices.json.
+PRIVAT_BROWSER_BOOKINGS_PER_MONTH = 30
 PRIVAT_FREE_TASKS_PER_MONTH = 0  # the free tier only receives shared lists; a plan (14-day card trial) does the rest
 
 # Dialogbot Privat subscriptions (app/modules/privat/subscriptions.py). Consumer prices, so INCL. 25 % VAT, in øre.

@@ -4,6 +4,9 @@ import { defineConfig, devices } from "@playwright/test";
  *  Every journey runs at 1440 px (desktop reference) and 390 px (mobile reference). */
 export default defineConfig({
   testDir: "./e2e",
+  // e2e/qa/** is the QA scenario catalogue; CI runs it in its own sharded job (.github/workflows/e2e.yml qa-catalog),
+  // so the journeys job sets PW_SKIP_QA=1. Locally: `npx playwright test e2e/qa`.
+  testIgnore: process.env.PW_SKIP_QA ? ["qa/**"] : [],
   timeout: 60_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,

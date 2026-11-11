@@ -3,7 +3,7 @@ id: F-PB-03-PC-APP-REGNINGER-05
 scenario: PC-APP-REGNINGER-05
 reported_by: e2e-privat (PB)
 severity: S2
-status: fixed
+status: reopened
 owner_fix: ui-ux-engineer (apps.tsx) / fix-engineer
 related: [PC-APP-MADPLAN-05, PC-APP-KALENDER-05, PC-APP-KAELEDYR-05, PC-APP-LAEGE-OG-TANDLAEGE-05, PC-APP-OENSKELISTER-05, F-UX-04]
 ---
@@ -37,8 +37,8 @@ Render EnableSheet uden for `!a.enabled`-grenen (som `DisableSheet` i den slåed
 - Filer:
 - Commit:
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: e2e apps-b app-suite «-05» fejler i 14 af 14 kørsler (7 apps × 2 viewports × 2 kørsler): `F-PB-03 enabledKept – getByText('Alt, den havde gemt, er her igen.') element(s) not found` (app-suite.ts:154). Teksten findes i privat.json og apps.tsx:452, men arket vises ikke efter «Slå til igen»
+- Fejler testen uden rettelsen? -
+- Naboscenarier kørt: e2e kaeledyr/kalender/laege/madplan/oenskelister/pakkeliste/regninger/ring-for-mig
+- Dom: reopened

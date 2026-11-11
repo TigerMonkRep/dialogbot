@@ -3,7 +3,7 @@ id: F-PX-02-PC-APP-04
 scenario: PC-APP-04
 reported_by: voice-qa (PX)
 severity: S2
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -36,3 +36,9 @@ Butikkens løfte (addons.py, ring-for-mig + laege-og-tandlaege): «Siger kun dit
 - Filer: app/modules/privat/calls.py
 - Test: tests/qa/test_qa_pd_x.py::test_px_app_04_health_purpose_and_may_not (grøn)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_px_app_04_health_purpose_and_may_not
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: samme testfil
+- Dom: closed

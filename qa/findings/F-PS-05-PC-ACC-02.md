@@ -3,7 +3,7 @@ id: F-PS-05-PC-ACC-02
 scenario: PC-ACC-02
 reported_by: security-privacy
 severity: S2
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [PC-ACC-03, PC-ACC-05]
 ---
@@ -47,6 +47,8 @@ Der var hverken bygget eksport eller sletning. Fürster besluttede 2026-11-10 21
 - Ikke bygget: opbevaringsfrist for chat/opkaldsresuméer (beslutning 3) – stadig needs-decision.
 - Commit: ingen (qa-lead committer).
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_privat_gdpr.py, test_ps_acc_02_03
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: samme testfil
+- Dom: closed

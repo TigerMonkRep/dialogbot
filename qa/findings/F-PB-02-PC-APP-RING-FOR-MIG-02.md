@@ -3,7 +3,7 @@ id: F-PB-02-PC-APP-RING-FOR-MIG-02
 scenario: PC-APP-RING-FOR-MIG-02
 reported_by: e2e-privat (PB)
 severity: S2
-status: fixed
+status: reopened
 owner_fix: fix-engineer
 related: [PC-APP-RING-FOR-MIG-01, F-UX-01]
 ---
@@ -37,8 +37,8 @@ Teksten skal bygges ud fra `included_in`: «med i alle planer», når basis er m
 - Test: tests/qa/test_qa_pd_apps_b.py::test_01_needs_plan_message_for_ring_for_mig_names_basis (grøn)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: API rettet («med i alle planer»), men plan-arket for en bruger uden plan har stadig overskriften «Ring for mig kræver Plus» og eyebrow «MED I PLUS OG FAMILIE» over brødteksten «Ring for mig er med i alle planer» (privat.json apps.planTitle «{name} kræver Plus», apps.planEyebrow «Med i Plus og Familie» – hårdkodet for alle apps). Screenshot /home/claude/verifier-final/shots/gate-05-slaa-til.png. Desuden siger chatkortet «Ring for mig er ikke slået til – Slå til» i stedet for «Kræver en plan»
+- Fejler testen uden rettelsen? -
+- Naboscenarier kørt: PREVIEW_GATE=on :3401, gæst uden plan
+- Dom: reopened

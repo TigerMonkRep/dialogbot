@@ -3,7 +3,7 @@ id: F-PK-01-PC-SUB-08
 scenario: PC-SUB-08
 reported_by: e2e-privat (PK)
 severity: S0
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [PC-SUB-07, F-BQ-002-X08]
 ---
@@ -38,8 +38,8 @@ Se qa/evidence/PC-SUB-08/PK-api-probe.txt: `[200, 200]` → begge `complete` (`s
 - Filer: app/modules/privat/subscriptions.py
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: live :8400: tests/qa/test_qa_pd_core.py::test_sub08 3/3 grøn. NB: første kørsel rød fordi fake Stripe ikke simulerede DELETE /subscriptions (log privat.duplicate_subscription_not_canceled) – harness rettet, og testen tjekker nu levende abonnementer, ikke kun gennemførte sessioner
+- Fejler testen uden rettelsen? indirekte – samme rettelse som F-PBQ-01 (test_pc_sub_07b fejler på f2b3d11)
+- Naboscenarier kørt: test_qa_pd_core.py (16), test_qa_pd_billing.py
+- Dom: closed

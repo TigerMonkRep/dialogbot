@@ -3,7 +3,7 @@ id: F-PX-07-PC-APP-04
 scenario: PC-APP-04
 reported_by: voice-qa (PX)
 severity: S3
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [F-PX-02-PC-APP-04]
 ---
@@ -33,3 +33,9 @@ Naturligt dansk (voice-qa: «Danish number reading, times …», brand: kort og 
 - Filer: app/modules/privat/calls.py
 - Test: tests/test_privat.py::test_default_may_ask_reads_right_whatever_the_purpose (rød før: «Om de kan aflever cyklen … torsdag efter kl. 15 torsdag efter kl. 15»; grøn efter)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_default_may_ask_reads_right_whatever_the_purpose
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: samme testfil
+- Dom: closed

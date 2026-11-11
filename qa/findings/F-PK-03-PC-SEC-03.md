@@ -3,7 +3,7 @@ id: F-PK-03-PC-SEC-03
 scenario: PC-SEC-03
 reported_by: e2e-privat (PK)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer (ui-ux-engineer ejer shell.tsx-layoutet; koordinér)
 related: []
 ---
@@ -38,8 +38,8 @@ Vis `<Sim />` i headeren på alle bredder. Det kan fx erstatte plan-chippen, nå
 - Dublet af F-PS-07 (samme rod, store.tsx). Se F-PS-07. Mobil-mærket rettet af ui-ux-engineer (shell.tsx).
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: Ingen stille simulering og ingen falsk «14 d»/«1 af 10» (e2e-assert `lies` grøn begge viewports). Afsendelse på Min dag viser «Dialogbot Privat er ikke slået til», Butikken «Apps kan ikke hentes lige nu». e2e sikkerhed.spec.ts er stadig rød 2/2 fordi Min dag/Butik ikke viser en fejl FØR første handling – restpunkt som F-VF-06 (S3)
+- Fejler testen uden rettelsen? ja – på f2b3d11 skifter store.tsx til simulering (F-PS-07)
+- Naboscenarier kørt: e2e core/sikkerhed.spec.ts, test_ps_sim_01
+- Dom: closed

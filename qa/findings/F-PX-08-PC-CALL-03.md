@@ -3,7 +3,7 @@ id: F-PX-08-PC-CALL-03
 scenario: PC-CALL-03
 reported_by: voice-qa (PX)
 severity: S2
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -35,3 +35,9 @@ IdempotencyGuard: fang IntegrityError ved indsættelse af nøglen → 409 `idemp
 - Filer: app/modules/privat/calls.py
 - Test: tests/qa/test_qa_pd_x.py::test_px_call_03_double_approve_parallel (+ assert «500 not in results»)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: Ingen 500 i pytest eller i 6 e2e-kørsler. Restsymptom: dobbeltklik med SAMME nøgle mens det første kald kører giver 409 (2/6 e2e) – dokumenteret valg i rettelsen; se F-VF-08
+- Fejler testen uden rettelsen? nej – test_px_call_03 er også grøn på f2b3d11 (racen reproduceres ikke deterministisk)
+- Naboscenarier kørt: e2e x/voice-calls.spec.ts
+- Dom: closed

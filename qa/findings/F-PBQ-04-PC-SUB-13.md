@@ -3,7 +3,7 @@ id: F-PBQ-04-PC-SUB-13
 scenario: PC-SUB-13
 reported_by: billing-qa
 severity: S2
-status: fixed
+status: closed
 owner_fix: ui-ux-engineer
 related: []
 ---
@@ -31,3 +31,9 @@ Backend er korrekt: adgangen varer til trial_end, derefter `entitled=false`, og 
 I trial-linjen: når `p.cancelAtPeriodEnd` er sat, vis `plan.cancelAtEnd` med `trial_ends_at` i stedet for `trialThen`. Filen ejes af ui-ux-engineer i fase 2.
 
 ## Rodårsag / Rettelse / Verifikation
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_pc_sub_13_ui (testen var rød på HEAD: kildegrep fandt ikke cancelAtPeriodEnd efter Konto-omskrivningen; rettelsen ligger i `thenLine`, testen tilpasset)
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: test_qa_pd_billing.py
+- Dom: closed

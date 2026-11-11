@@ -39,7 +39,9 @@ export function appSuite(c: AppCfg) {
         const a = await addon(page, c.key);
         const where = await openFromShop(page, c.key);
         if (where === "app") {
-          // F-PB-04: a default-on app's icon opens its app page, which has no «Hvad den gør»
+          // F-PB-04 (rettet): the app page has «Om appen» (a <details> fold) with «Hvad den gør» – open it first
+          const about = page.getByTestId("app-about");
+          if (await about.count()) await about.locator("summary").click();
           await expect.soft(page.getByText(a.what, { exact: true }), "F-PB-04 «Hvad den gør» for en app, der er slået til").toBeVisible({ timeout: 5_000 });
           await shot(page, info, `${c.sid}-01`, `app-page-${persona}`);
           await page.context().clearCookies();

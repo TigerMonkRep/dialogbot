@@ -3,7 +3,7 @@ id: F-PFX-03-PC-APP-01
 scenario: PC-APP-01
 reported_by: fix-engineer #2 (katalog qa/privat/scenarios.csv)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -17,8 +17,8 @@ Garanti lovede «Gemmer ikke billeder af kvitteringer», men appen gemmer kvitte
 - Bemærk: F-PS-08 (kvitteringsfoto med GPS-metadata) er ikke rørt.
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: addons.py garanti.permissions siger nu «Gemmer et foto af kvitteringen, hvis du selv tilføjer ét …»; addons-catalog.json cmp OK
+- Fejler testen uden rettelsen? ja – f2b3d11 har «Gemmer ikke billeder af kvitteringer»
+- Naboscenarier kørt: cmp addons-catalog.json
+- Dom: closed

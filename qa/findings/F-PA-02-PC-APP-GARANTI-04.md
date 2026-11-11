@@ -3,7 +3,7 @@ id: F-PA-02-PC-APP-GARANTI-04
 scenario: PC-APP-GARANTI-04
 reported_by: e2e-privat (PA)
 severity: S2
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -33,3 +33,9 @@ Ret, når produkt+butik+købsdato er ens (eller produkt+butik inden for få dage
 - Filer: app/modules/privat/warranty.py
 - Test: tests/qa/test_qa_pd_apps_a.py::test_pa_04_garanti_same_purchase_twice_is_two_rows (grøn)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_pa_04_garanti_same_purchase_twice_is_two_rows
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: samme testfil
+- Dom: closed

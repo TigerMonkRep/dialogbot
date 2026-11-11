@@ -3,7 +3,7 @@ id: F-PFX-05-PC-ENT-02
 scenario: PC-ENT-02/03
 reported_by: fix-engineer #2 (katalog qa/privat/scenarios.csv)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -20,8 +20,8 @@ Fürsters beslutning 2026-11-10: apps, der kræver plan, skal stoppe, når plane
 - UI: ui-ux-engineer skal vise `needs_plan` som «Kræver plan» med vej til Konto/checkout.
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_plan_app_stops_when_the_plan_lapses_and_comes_back_with_its_data
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: test_privat_apps_state.py
+- Dom: closed

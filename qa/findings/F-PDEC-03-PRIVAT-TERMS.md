@@ -3,7 +3,7 @@ id: F-PDEC-03-PRIVAT-TERMS
 scenario: PC-SUB / PC-CALL / juridisk (Privat)
 reported_by: qa-lead (beslutning Fürster 2026-11-11 «ja» til egne Privat-vilkår)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer #11
 related: [F-PDEC-01-PC-CALL-EXTRA]
 ---
@@ -107,8 +107,8 @@ Erhvervs tilmelding); kun salgstilbud har `terms_version`.
   7 dage, Google/Microsoft).
 - Ingen browser-/e2e-kørsel (ingen stak/build efter ordre). Siden er ikke set visuelt.
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_the_privat_terms_exist_in_every_language_with_every_price_from_prices_json. /privat/vilkaar ved 390 px og 1440 px: Privat-tema, «Ubrugt saldo refunderes ikke …», 14 dages fortrydelsesret, 17,50/2,50 kr. til stede. 15c3704 (deleteText ×8) tjekket i JSON. Rest: 5 px vandret scroll ved 390 px (samme rod som F-VER4-02), se F-VF-07 om sletteadvarsel vs. fortrydelsesret
+- Fejler testen uden rettelsen? ja – fejler på 5ca402c (mangler) og 823f5e2 («da»: refusionstekst)
+- Naboscenarier kørt: test_prices.py
+- Dom: closed

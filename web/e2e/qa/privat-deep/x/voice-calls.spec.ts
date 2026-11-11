@@ -29,7 +29,7 @@ async function verifyPhone(page: Page, phone: string) {
   const e164 = "+45" + phone.replace(/\D/g, "");
   let code = "";
   await expect.poll(() => {
-    const lines = readFileSync("/home/claude/pd-api.log", "utf8").split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164));
+    const lines = readFileSync(process.env.QA_PRIV_LOG ?? "/home/claude/pd-api.log", "utf8").split("\n").filter((l) => l.includes("sms.simulated") && l.includes(e164));
     const m = lines.at(-1)?.match(/er (\d{6})/);
     code = m?.[1] ?? "";
     return code;

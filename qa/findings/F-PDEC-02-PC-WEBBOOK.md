@@ -3,7 +3,7 @@ id: F-PDEC-02-PC-WEBBOOK
 scenario: PC-CALL / PC-ENT (browser-worker i Privat)
 reported_by: qa-lead (beslutning Fürster 2026-11-11)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer #10
 related: [F-PDEC-01-PC-CALL-EXTRA]
 ---
@@ -80,3 +80,9 @@ plankontrol: uden plan betalte saldoen (velkomstbonus). Der var heller intet lof
 - Der er ingen ny prisside-tekst om hjemmesidebooking. Prissiderne nævnte den ikke før. Hvis Fürster vil have «med i alle
   planer» på plankortene, kræver det tekst på 8 sprog, og det er hans beslutning.
 - `ruff check` på hele `tests/` giver 30 fejl i `tests/qa/*`. De findes allerede på 5ca402c og er ikke rørt.
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – tests/test_browser_booking_plan.py, test_privat_round_amounts.py
+- Fejler testen uden rettelsen? ja – 13/16 + 8/10 fejler på 5ca402c (de 3+2 grønne er kontrolprøver)
+- Naboscenarier kørt: test_browser_*.py, test_privat_round_amounts.py
+- Dom: closed

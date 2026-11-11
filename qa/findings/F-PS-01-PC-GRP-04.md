@@ -3,7 +3,7 @@ id: F-PS-01-PC-GRP-04
 scenario: PC-GRP-04
 reported_by: security-privacy
 severity: S0
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [F-PS-02-PC-INV-05, PC-CALL-12]
 ---
@@ -40,8 +40,8 @@ Forslag: (1) kun +45-mobilnumre (eller en eksplicit landeliste) i group-join og 
 - Test: tests/qa/test_qa_pd_sec.py::test_ps_grp_04*, ::test_ps_call_12 (grønne; bekræftet af security-privacy)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_ps_grp_04, test_ps_grp_04b
+- Fejler testen uden rettelsen? ja – på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent): «100 verification SMS to non-Danish numbers», (200, sent:true)
+- Naboscenarier kørt: test_qa_pd_sec.py
+- Dom: closed

@@ -17,17 +17,14 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 import sqlalchemy as sa
-from sqlalchemy import select, text
+from sqlalchemy import text
 
 from app.db import Base
 from app.models import (
     OutboxEvent,
-    PrivateCall,
     PrivateProfile,
     PrivateSubscription,
     PrivateTask,
-    PrivateTaskItem,
-    User,
 )
 from app.modules.campaigns import service as campaigns
 from app.modules.integrations.connectors.fakes import WORLD
@@ -219,6 +216,7 @@ def test_ps_inv_04_public_previews_carry_only_the_allowlisted_fields(api, pv):
             assert leak not in low, (k, leak, r.text[:300])
 
 
+@pytest.mark.xfail(strict=True, reason="F-PS-02-PC-INV-05 (open, needs-decision): X-Forwarded-For rotation bypasses the per-IP lookup limits")
 def test_ps_inv_05a_forwarded_for_rotation_bypasses_the_per_ip_lookup_limits(api, pv):
     """PC-INV-05 → F-PS-02. lookup_limits.client_ip trusts the FIRST X-Forwarded-For entry, which the client writes
     itself whenever it reaches the API directly (api.dialogbot.dk is a public Render web service; a proxy APPENDS to
@@ -277,7 +275,7 @@ def test_ps_grp_04_sms_pumping_through_group_join_links_is_unbounded(api, pv):
     before = len(_sms())
     ip = 0
     for code in codes:
-        for n in range(20):
+        for _ in range(20):
             ip += 1
             api.c.post(f"{P}/group-invites/by-code/{code}/join",
                        json={"name": "X", "phone": f"+88213{ip:06d}"},
@@ -432,7 +430,7 @@ def test_ps_list_02_idor_sweep_every_privat_route_with_the_victims_ids(app, api,
             vals = {p: (vid if p == params[0] else (ids.get(p) or [str(uuid.uuid4())])[0]) for p in path_params(path)}
             vals.setdefault("option_id", "yes")
             vals.setdefault("key", "oenskelister")
-            url = PARAM_RE.sub(lambda mm: str(vals.get(mm.group(1), "x")), path)
+            url = PARAM_RE.sub(lambda mm: str(vals.get(mm.group(1), "x")), path)  # noqa: B023 (called at once)
             body = body_for(spec, request_schema(spec, m, path), vid, _ws) if m in ("POST", "PUT", "PATCH") else None
             resp = api.c.request(m, url, json=body, headers=api.h(eve, **{"Idempotency-Key": str(uuid.uuid4())}))
             swept += 1
@@ -496,8 +494,9 @@ def test_ps_sec_02_dev_files_needs_a_valid_signature(api, pv):
     for q in ("key=privat/x/oensker/a.png&exp=9999999999&sig=00", f"key=../../etc/passwd&exp={int(time.time()) + 60}&sig=00",
               "key=privat/x/oensker/a.png&exp=1&sig=00"):
         assert api.c.get(f"{P}/dev-files?{q}").status_code in (404, 422)
-    from app.modules.privat import wishes_router
     import inspect
+
+    from app.modules.privat import wishes_router
 
     src = inspect.getsource(wishes_router.dev_file)
     assert '"staging", "prod"' in src  # never served in production
@@ -533,7 +532,7 @@ def test_ps_cal_02_feed_stops_when_the_calendar_app_is_off(api, pv):
 
 # =========================================================================================== CALL – after withdrawal
 
-def _scheduled_call(api, pv, db, fake_places):
+def _scheduled_call(api, pv, db, fake_places):  # noqa: F811 (pytest fixture)
     fake_places([{"id": "fona-1", "name": "Fona", "phone": "+4586112233", "periods": _periods([4])}])
     tok = pv.account("ps-sched@testmail.dk")
     api.c.patch(f"{P}/me/location", json={"city": "Aarhus"}, headers=api.h(tok))
@@ -554,7 +553,7 @@ def _run_due(pv, db):
 
 
 @pytest.mark.parametrize("withdrawal", ["control", "app_off", "plan_ended", "phone_removed"])
-def test_ps_call_06_scheduled_call_is_not_dialled_after_the_basis_is_withdrawn(api, pv, db, fake_places, dial, withdrawal):
+def test_ps_call_06_scheduled_call_is_not_dialled_after_the_basis_is_withdrawn(api, pv, db, fake_places, dial, withdrawal):  # noqa: F811
     """PC-CALL-06 (regression; fixed in calls._still_allowed before this round). «Ring ved næste åbningstid» approved; before the opening the user switches «Ring for mig»
     off / the plan ends / the verified number is gone. handle_call_due re-checks none of it and dials (with
     share_phone=True the assistant gives out a number the account no longer has verified)."""
@@ -656,6 +655,7 @@ def test_ps_acc_02b_manual_erasure_leaves_personal_data_behind(api, pv, db):
     assert error is None and leftovers == [], (error, leftovers)
 
 
+@pytest.mark.xfail(strict=True, reason="F-PS-10-PC-ACC-05 (open): trip searches are kept but marked not deletable")
 def test_ps_acc_05_trip_searches_are_kept_but_marked_not_deletable(api, pv, db):
     """PC-ACC-05 → F-PS-10 (S2). Rejser saves the user's searches (where/when they travel) in private_app_data, but
     app_status.deletable("rejser") is False, so «Slet appens data» is not offered and the rows are never removed."""
@@ -726,6 +726,7 @@ def test_ps_wish_11_wish_images_validation_and_exif(api, pv, db):
     assert c.status_code == 409 and c.json()["code"] == "not_a_wishlist"
 
 
+@pytest.mark.xfail(strict=True, reason="F-PS-06-PC-WISH-11 (open): /wishes/images has no rate limit or quota")
 def test_ps_wish_11b_wish_images_have_no_rate_limit_or_quota(api, pv):
     """PC-WISH-11 → F-PS-06 (S2). /wishes/images stores every upload (6 MB each) with no add-on check, rate limit or
     per-account quota, and nothing references or cleans up an image that is never saved on a wish."""
@@ -752,6 +753,7 @@ def test_ps_app_02_warranty_photo_upload_checks(api, pv, db):
     assert up(tok, "a1b2c3d4e5", b"\xff\xd8\xff" + b"0" * (6 * 1024 * 1024 + 1)).status_code in (413, 422)
 
 
+@pytest.mark.xfail(strict=True, reason="F-PS-08-PC-APP-02 (open): the warranty receipt photo keeps GPS EXIF")
 def test_ps_app_02b_warranty_receipt_photo_keeps_gps_exif(api, pv, db):
     """→ F-PS-08 (S2, data minimisation). Receipt photos are stored byte-for-byte (files.sniff + files.put): a phone
     photo taken at home keeps its EXIF GPS position (wish images are re-encoded and lose it)."""
@@ -901,6 +903,7 @@ def test_ps_sim_01_logged_in_user_never_silently_falls_back_to_the_simulation():
     assert not (silent and hidden_on_mobile)
 
 
+@pytest.mark.xfail(strict=True, reason="F-PS-09-PC-PWA-03 (open): logout leaves the simulation state")
 def test_ps_pwa_03_logout_clears_the_simulation_state():
     """PC-PWA-03 → F-PS-09 (S3): logout removes the fake LOGIN flag but not the fake DATA (sessionStorage FAKE_KEY)."""
     shell = (WEB / "components" / "privat" / "shell.tsx").read_text()

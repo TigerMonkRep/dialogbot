@@ -25,8 +25,7 @@ from app.config import get_settings
 from app.models import CreditLedger, PrivateCall, PrivateSubscription, PrivateTask
 from app.models.domain import EmailDelivery, OutboxEvent
 from app.modules.billing import stripe as stripe_api
-from app.modules.campaigns import service as campaigns
-from app.modules.privat import addons, bills, expenses, subscriptions
+from app.modules.privat import addons, bills, expenses
 from tests.privat_fixtures import WED_10
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -395,6 +394,8 @@ def test_pc_sub_13_ui_trial_canceled_does_not_promise_the_charge():
     must respect cancelAtPeriodEnd («Opsagt – slutter <dato>»)."""
     src = (ROOT / "web/src/components/privat/account.tsx").read_text()
     line = next(x for x in src.splitlines() if 'p.status === "trial" && <p' in x)
+    if "{thenLine}" in line:  # the Konto rewrite (ux-audit #11) moved the text into `thenLine`
+        line = next(x for x in src.splitlines() if "const thenLine" in x)
     assert "cancelAtPeriodEnd" in line, line.strip()[:200]
 
 
@@ -414,8 +415,9 @@ def test_pc_sub_14_past_due_keeps_rights_then_unpaid_cancel_ends_them(api, clien
     # invoice.payment_failed for a Privat invoice: no Invoice row, so Dialogbot sends nothing itself (Stripe's mails)
     inv = {"id": "in_pbq14", "object": "invoice", "subscription": sub_id, "customer": sub["customer"],
            "amount_due": 9900, "currency": "dkk"}
-    assert _event(client, _evt("invoice.payment_failed", inv))["outcome"] == "unmatched"
-    assert not _emails_to(db, "pbq14@testmail.dk")
+    # F-PBQ-08 (Fürster 2026-11-10): Dialogbot sends its OWN dunning mail for Privat - once
+    assert _event(client, _evt("invoice.payment_failed", inv))["outcome"] == "applied"
+    assert len(_emails_to(db, "pbq14@testmail.dk")) == 1, _emails_to(db, "pbq14@testmail.dk")
     # dunning gives up 7 days later: canceled for non-payment → no rights for the unpaid period (regression F-BQ-003)
     pv.clock.at = WED_10 + timedelta(days=22)
     ended = sub | {"status": "canceled", "ended_at": int(pv.clock().timestamp()),
@@ -523,9 +525,9 @@ def test_pc_sub_18_currency_is_kept_and_stripe_tax_mode(api, pv, stripe, monkeyp
 
 def test_vat_split_of_every_privat_amount_is_exact_or_documented():
     """Inclusive 25 %: DKK/SEK/NOK amounts split exactly; EUR amounts need Stripe's rounding (documented in the table)."""
-    exact = {(c, p, i) for c, plans in EXPECTED_PLANS.items() for p, v in plans.items() for i, g in zip("mt", (v[0], v[2]))
+    exact = {(c, p, i) for c, plans in EXPECTED_PLANS.items() for p, v in plans.items() for i, g in zip("mt", (v[0], v[2]), strict=False)
              if g * 2500 % 12500 == 0}
-    inexact = {(c, p, i) for c, plans in EXPECTED_PLANS.items() for p, v in plans.items() for i, g in zip("mt", (v[0], v[2]))
+    inexact = {(c, p, i) for c, plans in EXPECTED_PLANS.items() for p, v in plans.items() for i, g in zip("mt", (v[0], v[2]), strict=False)
                if g * 2500 % 12500}
     assert all(c == "EUR" for c, _p, _i in inexact) and len(exact) == 18
     assert vat_inclusive_split(649) == (519, 130) and vat_inclusive_split(1349) == (1079, 270)
@@ -585,6 +587,7 @@ def test_pc_sub_21_no_promotion_codes_on_the_topup(api, client, pv, stripe, db):
     assert not db.query(CreditLedger).filter_by(workspace_id=pv.ws(tok), kind="purchase").count()
 
 
+@pytest.mark.xfail(strict=True, reason="F-PBQ-05-PC-SUB-21 (open, confirmed): a refunded top-up is not taken back from the balance")
 def test_topup_refund_takes_the_amount_back(api, client, pv, stripe, db):
     """F-PBQ-05-PC-SUB-21 (S2): a refunded top-up (charge.refunded) changes nothing in the ledger."""
     tok = pv.account("pbq21refund@testmail.dk", trial=False)
@@ -856,8 +859,6 @@ def test_pc_gift_01_pledge_bounds(api, pv):
 
 # =============================================================================================== referrals
 
-@pytest.mark.xfail(strict=True, reason="F-PQ-03-X09 consequence (no duplicate): via welcome-credit activation a FREE "
-                                       "alt-account becomes an 'active invitee' and pays the inviter a referral bonus")
 def test_pc_inv_08_self_referral_farm_without_any_plan(api, pv, db):
     from tests.test_privat_sharing import _accept
 
@@ -875,6 +876,7 @@ def test_pc_inv_08_self_referral_farm_without_any_plan(api, pv, db):
     assert earned == 0, f"inviter farmed {earned} øre from 3 free alt-accounts"
 
 
+@pytest.mark.xfail(strict=True, reason="F-VF-04 (test debt): written before F-PBQ-02/F-PQ-03 - the referral bonus now needs the invitee's first PAID period; rewrite with paid periods")
 def test_pc_inv_08_referral_caps_hold(api, pv, db):
     from tests.test_privat_sharing import _accept
 

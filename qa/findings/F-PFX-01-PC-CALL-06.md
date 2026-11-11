@@ -3,7 +3,7 @@ id: F-PFX-01-PC-CALL-06
 scenario: PC-CALL-06
 reported_by: fix-engineer #2 (katalog qa/privat/scenarios.csv)
 severity: S0
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -18,8 +18,8 @@ Et opkald godkendt «ved næste åbningstid» blev ringet op uden at tjekke igen
 - Test: tests/test_privat_places_push.py::test_scheduled_call_checks_again_right_before_dialling[addon_off|phone_gone|trial_over] (fejler uden rettelsen, består med)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_scheduled_call_checks_again_right_before_dialling[addon_off|phone_gone|trial_over], test_px_call_06a/b/c
+- Fejler testen uden rettelsen? ja – på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent): «S0: planlagt opkald ringes selvom …» ×3
+- Naboscenarier kørt: test_privat_places_push.py, test_qa_pd_x.py
+- Dom: closed

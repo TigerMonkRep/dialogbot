@@ -17,7 +17,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from sqlalchemy import select
 
-from app.models import CreditLedger, OutboxEvent, PrivateCall, PrivateProfile, PrivateTask
+from app.models import OutboxEvent, PrivateCall, PrivateProfile
 from app.modules.campaigns import service as campaigns
 from tests.test_privat import VAPI_H, _assistant_request, _propose, _report
 
@@ -330,8 +330,8 @@ def test_px_voice_script_language_names_and_peter(api, pv, db, dialler):
 def test_px_app_04_health_purpose_and_may_not(api, pv, db, dialler):
     """PC-APP-04: læge/tandlæge. Kun klinikkens navn+nummer gemmes; opkaldet siger kun formålet; may_not skal stadig
     indeholde de generelle forbud (betale, sige ja til andet)."""
-    from app.modules.privat import chat
     from app.models import PrivateAppData
+    from app.modules.privat import chat
 
     tok = pv.account("px-app04@example.com")
     pv.verify_phone(tok)
@@ -525,9 +525,9 @@ def test_px_wish_09_import_link_cases(api, pv, monkeypatch):
     readable=false; aldrig 500; rate limit pr. time."""
     from app.modules.privat import safe_fetch, wishes
 
-    ld = ('<html><head><script type="application/ld+json">{"@context":"https://schema.org","@type":"Product",'
-          '"name":"Lego Technic 42143","image":"https://shop.example/img.jpg","offers":{"@type":"Offer",'
-          '"price":"1499.95","priceCurrency":"DKK"}}</script></head><body>x</body></html>').encode()
+    ld = (b'<html><head><script type="application/ld+json">{"@context":"https://schema.org","@type":"Product",'
+          b'"name":"Lego Technic 42143","image":"https://shop.example/img.jpg","offers":{"@type":"Offer",'
+          b'"price":"1499.95","priceCurrency":"DKK"}}</script></head><body>x</body></html>')
     pages = {"https://shop.example/lego": (200, "text/html; charset=utf-8", ld),
              "https://shop.example/plain": (200, "text/html", b"<html><body>Hej</body></html>"),
              "https://shop.example/404": (404, "text/html", b"nope"),

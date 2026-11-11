@@ -3,7 +3,7 @@ id: F-PBQ-03-PC-SUB-21
 scenario: PC-SUB-21
 reported_by: billing-qa
 severity: S0
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [F-PBQ-05-PC-SUB-21]
 ---
@@ -37,8 +37,8 @@ Fjern `allow_promotion_codes` fra kreditpakkens payload (anbefalet, fordi en abo
 - Filer: app/modules/privat/payments.py
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_pc_sub_21_no_promotion_codes_on_the_topup, topup_once_per_session
+- Fejler testen uden rettelsen? ja – f2b3d11 payments.py:50 har allow_promotion_codes=True (testen 404 på baseline pga. omdøbt endpoint)
+- Naboscenarier kørt: test_privat_call_balance.py, test_qa_pd_billing.py
+- Dom: closed

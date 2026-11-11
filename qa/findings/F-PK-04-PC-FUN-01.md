@@ -3,7 +3,7 @@ id: F-PK-04-PC-FUN-01
 scenario: PC-FUN-01
 reported_by: e2e-privat (PK)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer (verify-email-side + e-mailtekst); ui-ux-engineer ved tekst/tema
 related: [F-PQ-02-X07, F-E2A-05-A03]
 ---
@@ -41,8 +41,8 @@ Privat-signup sender `signup_intent: null`. Gem i stedet en server-side markør 
 - Test: web/e2e/qa/privat-deep/core/brand-funnel.spec.ts (kræver ny stak)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: Manuel rejse begge viewports: /privat → «Prøv gratis» → /signup → «Bekræft din e-mail» → link → «Fortsæt til din prøveperiode» → fake Checkout → /privat/konto. brand-funnel.spec.ts PC-FUN-01 var rød (forventede /privat/konto lige efter tilmelding – forældet efter F-JP-01); testen er tilpasset og nu 3/3 × 2 viewports grøn
+- Fejler testen uden rettelsen? ja – F-JP-01-testene fejler på 2715783
+- Naboscenarier kørt: JP-journey.spec.ts 8/8 ×2 ×2
+- Dom: closed

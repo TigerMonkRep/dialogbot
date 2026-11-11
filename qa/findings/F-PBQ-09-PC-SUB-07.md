@@ -3,7 +3,7 @@ id: F-PBQ-09-PC-SUB-07
 scenario: PC-SUB-07
 reported_by: billing-qa
 severity: S0
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [F-PBQ-01-PC-SUB-07]
 ---
@@ -35,3 +35,9 @@ I `_cancel_duplicate`: hvis abonnementet ikke er `trialing`, så hent `latest_in
 - Filer: app/modules/privat/subscriptions.py
 - Test: tests/qa/test_qa_pd_billing.py::test_pc_sub_07c (grøn)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_pc_sub_07c_paid_duplicate_without_trial_is_refunded
+- Fejler testen uden rettelsen? ja – på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent): ['applied','applied'] uden refusion
+- Naboscenarier kørt: test_qa_pd_billing.py
+- Dom: closed

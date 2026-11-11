@@ -20,8 +20,13 @@ from datetime import timedelta
 import pytest
 from sqlalchemy import select
 
-from app.models import (OutboxEvent, PrivateAddonEnabled, PrivateAppData, PrivateAppointment, PrivateBill, PrivateCall,
-                        PrivateTask, PrivateTaskItem)
+from app.models import (
+    OutboxEvent,
+    PrivateAddonEnabled,
+    PrivateAppData,
+    PrivateBill,
+    PrivateCall,
+)
 from app.modules.privat import addons, app_kit, bills
 from app.worker import runner
 
@@ -239,7 +244,7 @@ def test_03_wishlist_owner_never_sees_reservations(pv, plus, api, db):
     assert pv.api.post(guest, f"/privat/tasks/{tid}/items", {"text": "x"}).status_code == 403
     assert pv.api.delete(guest, f"/privat/tasks/{tid}/items/{gi[1]['id']}").status_code == 403
     after = pv.task(tok, tid).json()
-    for b, a in zip(before["items"], after["items"]):
+    for b, a in zip(before["items"], after["items"], strict=False):
         assert a.get("reserved") in (None, False) and not a.get("reserved_by_me"), a
         assert {k: v for k, v in a.items() if "reserv" in k} == {k: v for k, v in b.items() if "reserv" in k}
     assert "Ole" not in repr(after["items"])
@@ -530,7 +535,7 @@ def test_05_not_deletable_apps(pv, plus, key):
 def test_05_wishlist_disable_pauses_sharing_and_keeps_list(pv, plus, client, db):
     tok = plus("wishoff")
     tid = pv.make_list(tok, "Lav en ønskeliste med cykelhjelm og en god bog")
-    url = pv.api.post(tok, f"/privat/tasks/{tid}/share", {"mode": "wishlist"}).json()["short_url"]
+    assert pv.api.post(tok, f"/privat/tasks/{tid}/share", {"mode": "wishlist"}).json()["short_url"]
     pv.api.post(tok, "/privat/addons/oenskelister/disable")
     assert pv.task(tok, tid).status_code == 200  # owner keeps it
     a = _addon(pv.api, tok, "oenskelister")

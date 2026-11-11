@@ -53,7 +53,8 @@ test("PC-FUN-01: «Prøv gratis i 14 dage» → opret konto → bekræft e-mail 
   await page.getByLabel("Adgangskode", { exact: true }).fill("Korrekt-Hest-Batteri-42");
   for (const c of await page.getByRole("checkbox").all()) await c.check().catch(() => {});
   await page.getByRole("button", { name: /^Opret/ }).click();
-  await page.waitForURL(/\/privat\/konto/, { timeout: 30_000 });
+  // F-JP-01 (rettet): efter tilmelding venter «Bekræft din e-mail» (/verify-email?for=privat&next=…) – ikke demo-Dag
+  await page.waitForURL(/\/privat\/konto|\/verify-email\?.*for=privat/, { timeout: 30_000 });
   await page.waitForTimeout(2000);
   await shot(page, info, "PC-FUN-01", "efter-signup");
   const box = (await (await page.request.get("/api/backend/dev/mailbox")).json()) as { items: { body_text: string }[] };
@@ -68,6 +69,7 @@ test("PC-FUN-01: «Prøv gratis i 14 dage» → opret konto → bekræft e-mail 
   const next = page.getByRole("link", { name: /Fortsæt/ }).first();
   const href = (await next.count()) ? await next.getAttribute("href") : page.url();
   expect.soft(href ?? "", "efter bekræftelse: videre til Privat-checkout, ikke /onboarding/workspace").toMatch(/\/privat/);
+  if (await next.count()) { await next.click(); await page.waitForTimeout(4000); }  // «Fortsæt til din prøveperiode»
   if (!(await page.locator("[data-testid=fake-stripe]").count())) {
     // Back to the plan the visitor chose (the page the e-mail link returns to, or Konto with the chosen plan)
     if (!/\/privat\/konto/.test(page.url())) await page.goto("/privat/konto?plan=plus&interval=month");

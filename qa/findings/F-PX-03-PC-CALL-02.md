@@ -3,7 +3,7 @@ id: F-PX-03-PC-CALL-02
 scenario: PC-CALL-02
 reported_by: voice-qa (PX)
 severity: S2
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -34,3 +34,9 @@ Tilføj `own` som keyterm/customVocabulary også når `ws is None` (kun forretni
 - Filer: app/modules/telephony/vapi.py
 - Test: tests/test_privat.py::test_privat_call_gives_its_names_to_the_transcriber; test_telephony, test_linden, test_voices, test_stemmetest og test_sales_demo_calls er grønne
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_px_voice_script_language_names_and_peter, test_privat_call_gives_its_names_to_the_transcriber
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: samme testfil
+- Dom: closed

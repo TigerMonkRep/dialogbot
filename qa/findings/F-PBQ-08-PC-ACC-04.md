@@ -3,7 +3,7 @@ id: F-PBQ-08-PC-ACC-04
 scenario: PC-ACC-04
 reported_by: billing-qa
 severity: S2
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [PC-SUB-11, PC-SUB-13, PC-SUB-14]
 ---
@@ -39,3 +39,9 @@ B. Dialogbot sender egne Privat-mails (E06-variant) og lytter på `customer.subs
 - Tests: test_privat_subscription::test_privat_sends_its_own_billing_mails, test_stripe_billing::test_erhverv_dunning_and_refund_mails_to_the_owner (nye; simuleret mail via outbox)
 - Filer: app/modules/billing/customer_mails.py (ny), app/modules/billing/stripe.py, app/modules/privat/subscriptions.py, app/modules/integrations/email_templates.py, app/modules/integrations/email_texts.py
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_privat_sends_its_own_billing_mails; 19 Privat-mails × 8 sprog orange (#C4461A, ingen #2456F6) via privat_mails.samples
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: samme testfil
+- Dom: closed

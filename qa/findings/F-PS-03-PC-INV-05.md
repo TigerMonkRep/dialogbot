@@ -3,7 +3,7 @@ id: F-PS-03-PC-INV-05
 scenario: PC-INV-05
 reported_by: security-privacy
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [F-PS-02-PC-INV-05]
 ---
@@ -34,8 +34,8 @@ app/modules/privat/lookup_limits.py `check()`: det globale miss-loft kastes før
 - Test: tests/qa/test_qa_pd_sec.py::test_ps_inv_05b
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_ps_inv_05b, test_public_lookups_are_rate_limited
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: test_qa_pd_sec.py, test_privat_sharing.py
+- Dom: closed

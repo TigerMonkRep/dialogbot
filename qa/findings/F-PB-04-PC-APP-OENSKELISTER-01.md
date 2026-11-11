@@ -3,7 +3,7 @@ id: F-PB-04-PC-APP-OENSKELISTER-01
 scenario: PC-APP-OENSKELISTER-01
 reported_by: e2e-privat (PB)
 severity: S2
-status: fixed
+status: closed
 owner_fix: ui-ux-engineer (apps.tsx) – evt. needs-decision (Fürster)
 related: [PC-APP-RING-FOR-MIG-01, PC-APP-DELTE-LISTER-01]
 ---
@@ -34,3 +34,9 @@ Vis `what` øverst på app-siden (én linje), eller behold slåede-til apps i Bu
 - ui-ux-engineer (fase 2, punkt 2): apps.tsx – app-siden har «Om appen»-fold med «Hvad den gør» + «Den får lov til» for ALLE apps; Butikken linker «N apps er slået til – se Mine apps»
 - Filer:
 - Commit:
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: «Om appen»-folden har «Hvad den gør» på app-siden. e2e app-suite «-01» var rød (teksten ligger i en lukket <details>); testen åbner nu folden: OENSKELISTER-01 og RING-FOR-MIG-01 3/3 × 2 viewports grøn
+- Fejler testen uden rettelsen? ikke kørt (UI)
+- Naboscenarier kørt: e2e apps-b
+- Dom: closed

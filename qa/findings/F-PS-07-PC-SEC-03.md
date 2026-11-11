@@ -3,7 +3,7 @@ id: F-PS-07-PC-SEC-03
 scenario: PC-SEC-03
 reported_by: security-privacy
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [e2e-privat (PC-SEC-03 ejer – dedupe hvis de også indberetter), ui-ux-engineer]
 ---
@@ -36,8 +36,8 @@ store.tsx: for `session.loggedIn` brug ALDRIG fake; vis en fejl-/venteliste-tils
 - Filer: web/src/components/privat/store.tsx, web/src/i18n/messages/*/privat.json
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: Som F-PK-03 (samme rod). test_ps_sim_01 grøn på HEAD
+- Fejler testen uden rettelsen? ja – test_ps_sim_01 fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: e2e core/sikkerhed.spec.ts
+- Dom: closed

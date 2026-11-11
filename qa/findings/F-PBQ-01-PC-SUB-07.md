@@ -3,7 +3,7 @@ id: F-PBQ-01-PC-SUB-07
 scenario: PC-SUB-07
 reported_by: billing-qa
 severity: S0
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -45,8 +45,8 @@ To Checkout-sessioner, der åbnes før nogen af dem er gennemført, giver to Str
 - Test: tests/qa/test_qa_pd_billing.py::test_pc_sub_07b (grøn)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_pc_sub_07b; live :8400: test_sub08 3/3 grøn efter harness-rettelse (fake Stripe DELETE /subscriptions), log privat.duplicate_subscription_canceled ×3
+- Fejler testen uden rettelsen? ja – på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent): «2 live Stripe subscriptions … 14800 øre/md.»
+- Naboscenarier kørt: test_qa_pd_billing.py (alle), test_privat_subscription.py, test_qa_pd_core.py
+- Dom: closed

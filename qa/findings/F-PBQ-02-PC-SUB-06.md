@@ -3,7 +3,7 @@ id: F-PBQ-02-PC-SUB-06
 scenario: PC-SUB-06
 reported_by: billing-qa
 severity: S2
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [F-PBQ-06-PC-ENT-02, F-PQ-03-X09]
 ---
@@ -41,3 +41,9 @@ B. Fingerprint-kontrol: ved `checkout.session.completed` hentes `payment_method.
 - Tests: test_privat_subscription::test_one_trial_per_card (ny). test_privat_sharing::test_referral_once/needs_activation/monthly_cap/growth_operator_only er tilpasset (belønning kræver betalt periode).
 - Filer: app/models/privat.py, app/models/__init__.py, alembic/versions/d7f2b9c4e1a8_private_trial_cards.py, app/modules/privat/subscriptions.py, app/modules/privat/referrals.py
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_one_trial_per_card (NB: den gamle xfail-test test_pc_sub_06 dokumenterer en forkastet løsning – checkout-payload – og står stadig som xfail)
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: samme testfil
+- Dom: closed

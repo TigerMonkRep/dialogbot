@@ -3,7 +3,7 @@ id: F-PFX-07-PC-CALL-DIALLING
 scenario: PC-CALL
 reported_by: fix-engineer #2 (katalog qa/privat/scenarios.csv)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -18,8 +18,8 @@ Ved en fejl hos Vapi, der ikke er en ApiError (harness-500 set af PB), blev et g
 - Test: tests/test_privat.py::test_provider_crash_never_leaves_the_call_dialling
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_provider_crash_never_leaves_the_call_dialling
+- Fejler testen uden rettelsen? ja – «harness 500» på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: test_privat.py
+- Dom: closed

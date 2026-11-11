@@ -3,7 +3,7 @@ id: F-PA-03-PC-APP-13
 scenario: PC-APP-13
 reported_by: e2e-privat (PA)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [PC-APP-ABONNEMENTER-03]
 ---
@@ -40,8 +40,8 @@ Lad status være «active», indtil brugeren selv bekræfter («Jeg har sendt de
 - Test: tests/qa/test_qa_pd_apps_a.py::test_pa_app13_letter_marks_cancelling_before_the_user_sends_it (grøn)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest (e2e-privat PA, 2026-11-10): pytest qa_pd2 grøn; live :8400 på 451d53b – qa/evidence/PC-APP-13/PA-reverify-451d53b.txt: oversigten efter brevet er «Telia, 199 kr. pr. md., binding til 10. december 2026» (ingen «under opsigelse»). Browser-genkørsel afventer, at :3400 serverer sine chunks (500 kl. 23:04).
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_pa_app13_letter_marks_cancelling_before_the_user_sends_it
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: test_qa_pd_apps_a.py
+- Dom: closed

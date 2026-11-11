@@ -3,7 +3,7 @@ id: F-PBQ-07-PC-ENT-08
 scenario: PC-ENT-08
 reported_by: billing-qa
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -50,8 +50,8 @@ Husstanden var aldrig bygget: `people_limit` var kun et tal i `entitlements()`, 
 - Kendt rest: to medlemmer, der godkender et opkald i præcis samme sekund, kan give 26 af 25 (approve låser kun egen profil). Det er ikke rettet, fordi det kræver calls.py, som #2 arbejder i.
 - Commit: ingen (qa-lead committer). Med i mellemcommit 451d53b + arbejdskopien.
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – tests/test_privat_familie.py, test_pc_ent_08_household_limit_shared_quota_and_end_of_plan
+- Fejler testen uden rettelsen? ja – på f2b3d11 findes PrivateHouseholdMember ikke (import-fejl) og husstands-endpoint svarer 404
+- Naboscenarier kørt: test_privat_familie.py, test_qa_pd_billing.py
+- Dom: closed

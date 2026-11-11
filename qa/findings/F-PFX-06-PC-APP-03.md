@@ -3,7 +3,7 @@ id: F-PFX-06-PC-APP-03
 scenario: PC-APP-03
 reported_by: fix-engineer #2 (katalog qa/privat/scenarios.csv)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -18,8 +18,8 @@ Fitness lover «Gemmer aldrig vægt, sygdom … medicin», men det blev kun hån
 - Test: tests/qa/test_qa_pd_apps_a.py::test_pa_fitness_server_has_no_guard_for_health_words (grøn)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_pa_fitness_server_has_no_guard_for_health_words
+- Fejler testen uden rettelsen? ja – på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent): «helbredsord gemt: 92 kg»
+- Naboscenarier kørt: test_qa_pd_apps_a.py
+- Dom: closed

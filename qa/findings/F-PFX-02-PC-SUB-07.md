@@ -3,7 +3,7 @@ id: F-PFX-02-PC-SUB-07
 scenario: PC-SUB-07
 reported_by: fix-engineer #2 (katalog qa/privat/scenarios.csv)
 severity: S0
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -19,8 +19,8 @@ En kunde med et kørende abonnement kunne starte endnu en Checkout og få to Str
 - Test: tests/test_privat_subscription.py::test_no_second_checkout_while_a_subscription_runs
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_no_second_checkout_while_a_subscription_runs, test_pc_sub_07
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: test_privat_subscription.py
+- Dom: closed

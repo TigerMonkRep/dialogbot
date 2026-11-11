@@ -3,7 +3,7 @@ id: F-PB-01-PC-APP-KAELEDYR-04
 scenario: PC-APP-KAELEDYR-04
 reported_by: e2e-privat (PB)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [PC-APP-KAELEDYR-03, alle husstandsapps der bruger app_kit.find]
 ---
@@ -39,8 +39,8 @@ Ved oprettelse/«gem» kun eksakt match på `key_of(name)`. Delstrengsmatch kan 
 - Test: tests/qa/test_qa_pd_apps_b.py::test_04_pets_new_name_containing_an_existing_name_is_a_new_pet (grøn)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_04_pets_new_name_containing_an_existing_name_is_a_new_pet; e2e kaeledyr 01-04 grønne 2×2
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent) («Misser» overskrevet)
+- Naboscenarier kørt: test_qa_pd_apps_b.py
+- Dom: closed

@@ -3,7 +3,7 @@ id: F-PX-04-PC-APP-09
 scenario: PC-APP-09
 reported_by: integrations-qa (PX)
 severity: S2
-status: fixed
+status: closed
 owner_fix: ui-ux-engineer
 related: []
 ---
@@ -36,3 +36,9 @@ Markering af affiliate-links (markedsføringsloven) – foreslået: «Annonce ·
 - Test: tests/test_privat_travel.py::test_affiliate_booking_link_is_marked_as_an_ad
 - Filer: app/modules/privat/travel.py, web/src/components/privat/travel.tsx, web/src/lib/privat/api.ts, web/src/i18n/messages/*/privat.json
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
+
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_affiliate_booking_link_is_marked_as_an_ad
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: samme testfil
+- Dom: closed

@@ -3,7 +3,7 @@ id: F-PS-04-PC-INV-04
 scenario: PC-INV-04
 reported_by: security-privacy
 severity: S0
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: []
 ---
@@ -35,8 +35,8 @@ app/core/logging.py:39 `_SECRET_PATHS = re.compile(r"(/privat/calendar/feed/)[^/
 - Test: tests/qa/test_qa_pd_sec.py::test_ps_log_01_* (grønne)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_ps_log_01 (7 stier)
+- Fejler testen uden rettelsen? ja – 6 af 7 stier fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent) (kalender-feed var allerede ok)
+- Naboscenarier kørt: test_qa_pd_sec.py
+- Dom: closed

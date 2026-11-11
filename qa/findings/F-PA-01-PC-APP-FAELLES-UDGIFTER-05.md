@@ -3,7 +3,7 @@ id: F-PA-01-PC-APP-FAELLES-UDGIFTER-05
 scenario: PC-APP-FAELLES-UDGIFTER-05
 reported_by: e2e-privat (PA)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer
 related: [PC-APP-FLYTNING-05, PC-ACC-02]
 ---
@@ -41,8 +41,8 @@ Enten sletter `delete_data` også de opgaver, appen har oprettet (task_id i appd
 - Test: tests/qa/test_qa_pd_apps_a.py::test_pa_delete_data_removes_the_lists_the_app_made, tests/qa/test_qa_pd_apps_b.py::test_05_* (grønne)
 - Commit: (qa-lead committer; arbejdskopi /home/claude/wt-privat)
 
-## Verifikation (udfyldes af verifier)
-- Gentest (e2e-privat PA, 2026-11-10): pytest qa_pd2 grøn; live :8400 på 451d53b – qa/evidence/PC-APP-FAELLES-UDGIFTER-05/PA-reverify-451d53b.txt: efter slet data er begge lister væk (deleted=2 pr. app). Browser-genkørsel afventer, at :3400 serverer sine chunks (500 kl. 23:04).
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – test_pa_delete_data_removes_the_lists_the_app_made + apps_b test_05_delete_data_of_packing_list/mealplan
+- Fejler testen uden rettelsen? ja – fejler på f2b3d11 (før Privat-rettelserne; HEAD's tests/ lagt oven på, fixture uden signup_intent)
+- Naboscenarier kørt: test_qa_pd_apps_a.py, test_qa_pd_apps_b.py; e2e faelles-udgifter/pakkeliste/madplan
+- Dom: closed

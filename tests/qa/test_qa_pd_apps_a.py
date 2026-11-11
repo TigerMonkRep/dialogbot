@@ -14,15 +14,22 @@ Run:  source /home/claude/qa-env.sh && export TEST_DATABASE_URL=postgresql+psyco
 from __future__ import annotations
 
 import threading
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime
 
 import pytest
 from sqlalchemy import select
 
-from app.models import (OutboxEvent, PrivateAddonEnabled, PrivateAppData, PrivateBirthday, PrivateCall, PrivateTask,
-                        PrivateTaskItem)
+from app.models import (
+    OutboxEvent,
+    PrivateAddonEnabled,
+    PrivateAppData,
+    PrivateBirthday,
+    PrivateCall,
+    PrivateTask,
+    PrivateTaskItem,
+)
 from app.modules.campaigns import service as campaigns
-from app.modules.privat import addons, app_kit, app_status, birthdays, car, meals, rules
+from app.modules.privat import addons, app_kit, app_status, birthdays, car, meals
 from app.modules.privat import app_kit as kit
 
 PLAN_APPS = ["abonnementer", "bil-og-syn", "fitness-og-sundhed", "flytning", "foedselsdage", "garanti", "haandvaerker",
@@ -449,7 +456,7 @@ def test_pa_05_off_keeps_data_stops_tools_and_reminders_then_back(api, pv, db, k
     before = len(_outbox(db))
     at = datetime(2026, 11, 10, 10, 0, tzinfo=UTC)
     with __import__("app.db", fromlist=["x"]).get_session_factory()() as s:
-        n = birthdays.send_due(s, at) if key == "foedselsdage" else car.send_due(s, at) if key == "bil-og-syn" \
+        birthdays.send_due(s, at) if key == "foedselsdage" else car.send_due(s, at) if key == "bil-og-syn" \
             else kit.send_due(s, at)
         s.commit()
     mine = [e for e in _outbox(db)[before:] if str(ws) in repr(e.payload)]
@@ -595,8 +602,8 @@ def test_pa_app13_letter_marks_cancelling_before_the_user_sends_it(api, pv):
     _on(api, tok, "abonnementer")
     pv.say(tok, "Jeg har Telia til 199 kr. om måneden med binding til 2026-12-10")   # last notice day 10 Nov
     ws = pv.ws(tok)
-    from app.modules.privat import appdata
     from app.db import get_session_factory
+    from app.modules.privat import appdata
     with get_session_factory()() as s:
         assert subs_app.due(appdata.get(s, ws, "abonnementer"), date(2026, 11, 4)), "påmindelse før opsigelsesbrevet"
     pv.say(tok, "Opsig Telia")

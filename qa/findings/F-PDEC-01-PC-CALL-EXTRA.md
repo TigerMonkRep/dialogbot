@@ -3,7 +3,7 @@ id: F-PDEC-01-PC-CALL-EXTRA
 scenario: PC-CALL / PC-SUB-21 / PC-ENT
 reported_by: qa-lead (beslutning Fürster 2026-11-11)
 severity: S1
-status: fixed
+status: closed
 owner_fix: fix-engineer #7
 related: [F-PFX-07-PC-CALL-DIALLING, F-PBQ-03-PC-SUB-21, F-PBQ-05-PC-SUB-21, F-PQ-03-X09]
 ---
@@ -86,8 +86,8 @@ triviel konflikt. Erhvervs egen fakturering er ikke rørt på denne branch.
 - Ingen browser-/e2e-kørsel (ingen stak/build efter ordre); e2e/privat.spec.ts er tilpasset, ikke kørt.
 - Refusion af en optankning (F-PBQ-05) trækker stadig ikke beløbet tilbage – uændret kendt fund, testen er tilpasset til øre.
 
-## Verifikation (udfyldes af verifier)
-- Gentest:
-- Fejler testen uden rettelsen? ja/nej
-- Naboscenarier kørt:
-- Dom: closed | reopened
+## Verifikation (verifier, endelig Privat-runde 2026-11-11, HEAD 15c3704)
+- Gentest: HEAD 15c3704: grøn i fuld pytest (2 shards, egne db'er qa_privfinal_t/_t2) – tests/test_privat_call_balance.py 21/21. Browser :3400: Plus-prøve, 10 planopkald godkendt, 11. opkald viser «5 kr. / 1,25 / 0,31 + 2,50 kr./påbegyndt min, højst 17,50 kr.» og «fyld op»; «Fyld op» 50 kr. via fake Checkout → saldo 10→60 kr.; godkend → 17,50 reserveret (42,50 + 17,50 held); Vapi-rapport besvaret 61 s → 10 kr. trukket, rest frigivet (50 kr., held 0). Screenshots /home/claude/verifier-final/shots/desk-1*.png
+- Fejler testen uden rettelsen? ja – 21/21 fejler på 480aafe
+- Naboscenarier kørt: test_privat*.py, test_qa_pd_billing.py, e2e privat-deep x/voice-calls
+- Dom: closed

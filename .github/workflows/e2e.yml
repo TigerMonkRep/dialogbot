@@ -69,8 +69,7 @@ jobs:
         working-directory: web
         run: |
           npm ci
-          getent hosts azure.archive.ubuntu.com >/dev/null || { echo "azure apt mirror unresolvable – using archive.ubuntu.com"; sudo sed -i "s#azure.archive.ubuntu.com#archive.ubuntu.com#g" /etc/apt/apt-mirrors.txt /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null || true; }  # GitHub's Azure apt mirror outage 11/11
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium || { echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; npx playwright install chromium; }
           npm run build
           nohup npm run start -- -p 3000 > ../web.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/login && break; sleep 1; done
@@ -163,8 +162,7 @@ jobs:
         working-directory: web
         run: |
           npm ci
-          getent hosts azure.archive.ubuntu.com >/dev/null || { echo "azure apt mirror unresolvable – using archive.ubuntu.com"; sudo sed -i "s#azure.archive.ubuntu.com#archive.ubuntu.com#g" /etc/apt/apt-mirrors.txt /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null || true; }  # GitHub's Azure apt mirror outage 11/11
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium || { echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; npx playwright install chromium; }
           npm run build
           nohup npm run start -- -p 3000 > ../web.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/login && break; sleep 1; done
@@ -205,8 +203,7 @@ jobs:
         working-directory: web
         run: |
           npm ci
-          getent hosts azure.archive.ubuntu.com >/dev/null || { echo "azure apt mirror unresolvable – using archive.ubuntu.com"; sudo sed -i "s#azure.archive.ubuntu.com#archive.ubuntu.com#g" /etc/apt/apt-mirrors.txt /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null || true; }  # GitHub's Azure apt mirror outage 11/11
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium || { echo "apt unreachable (GitHub runner DNS 11/11) – chromium without apt; the runner image carries its libraries"; npx playwright install chromium; }
           npm run build
           nohup npm run start -- -p 3000 > ../web.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null localhost:3000/privat && break; sleep 1; done

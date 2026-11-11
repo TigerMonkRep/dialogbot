@@ -1,5 +1,4 @@
 import { expect, test, type Page } from "@playwright/test";
-import { unlock } from "../qa/erhverv-p1a/p1a-helpers";
 
 /** QA journey audit, Dialogbot Privat (F-JP-*): the Privat person followed through auth pages, links and error pages.
  *  Real stack (BASE_URL=http://localhost:3500, API on :8500, ENABLE_DEV_TOOLS=true). 390 px first, then 1280 px.
@@ -12,8 +11,8 @@ const audienceOf = (page: Page) => page.locator("[data-audience]").first().getAt
 for (const width of [390, 1280]) {
   test.describe(`Privat-rejsen @${width}px`, () => {
     test.use({ viewport: { width, height: width === 390 ? 844 : 900 } });
-    // /signup sits behind the preview gate (PREVIEW_GATE=on in CI); unlock like a visitor with a code would
-    test.beforeEach(async ({ page }) => { await unlock(page); });
+    // No unlock(): CI runs with PREVIEW_GATE=on, and a person with a shared list/group link has no preview code –
+    // /signup?next=<shared list> must not land on /preview (F-JP-16).
 
     test("#179: /verify-email?for=privat er orange og fører til /privat/konto", async ({ page }) => {
       await page.goto("/verify-email?for=privat");

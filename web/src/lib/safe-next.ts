@@ -7,7 +7,7 @@ const BASE = "https://next.invalid";
 export function safeNext(next: string | null | undefined, fallback = "/app"): string {
   if (!next || next.length > 2048 || !next.startsWith("/") || next.startsWith("//")) return fallback;
   // eslint-disable-next-line no-control-regex
-  if (/[\u0000- \u007f\\]/.test(next) || /%2e%2e|%2f|%5c/i.test(next)) return fallback;
+  if (/[\u0000- \u007f\\]/.test(next) || /%2e%2e|%2f|%5c|%[01][0-9a-f]|%7f|%20/i.test(next)) return fallback;
   try {
     const u = new URL(next, BASE);
     if (u.origin !== BASE) return fallback;
